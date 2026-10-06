@@ -1,0 +1,412 @@
+
+# Core Data
+
+## Overview
+
+**Core principle**: Core Data is a mature object graph and persistence framework. Use it when needing features SwiftData doesn't support, or when targeting older iOS versions.
+
+**When to use Core Data vs SwiftData**:
+- **SwiftData** (iOS 17+) — New apps, simpler API, Swift-native
+- **Core Data** — Features SwiftData lacks (public CloudKit database, custom migration logic), existing codebases
+
+## Quick Decision Tree
+
+```
+Which persistence framework?
+
+├─ Simple data model? → SwiftData (recommended)
+├─ Need public CloudKit database? → Core Data (SwiftData is private-only)
+├─ Need custom migration logic? → Core Data (more control)
+├─ Existing Core Data app? → Keep Core Data or migrate gradually
+└─ Need both? → Use Core Data with SwiftData wrapper (advanced)
+```
+
+## Red Flags
+
+If ANY of these appear, STOP:
+
+- ❌ "Access managed objects on any thread" — Thread-confinement violation
+- ❌ "Skip migration testing on real device" — Simulator hides schema issues
+- ❌ "Use a singleton context everywhere" — Leads to concurrency crashes
+- ❌ "Force lightweight migration always" — Complex changes need mapping models
+- ❌ "Fetch in view body" — Use @FetchRequest or observe in view model
+
+## Core Data Stack Setup
+
+### Modern Stack (iOS 10+)
+
+```swift
+import CoreData
+
+final class CoreDataStack: Sendable {
+    static let shared = CoreDataStack()
+
+    let persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "Model")
+
+        // Configure for CloudKit if needed
+        // container.persistentStoreDescriptions.first?.cloudKitContainerOptions =
+        //     NSPersistentCloudKitContainerOptions(containerIdentifier: "iCloud.com.app")
+
+        container.loadPersistentStores { description, error in
+            if let error = error {
+                // Handle appropriately for production
+                fatalError("Failed to load store: \(error)")
+            }
+        }
+
+        // Enable automatic merging
+        container.viewContext.automaticallyMergesChangesFromParent = true
+        container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+
+        return container
+    }()
+
+    var viewContext: NSManagedObjectContext {
+        persistentContainer.viewContext
+    }
+
+    func newBackgroundContext() -> NSManagedObjectContext {
+        persistentContainer.newBackgroundContext()
+    }
+}
+```
+
+### CloudKit Integration
+
+```swift
+import CoreData
+
+class CloudKitStack {
+    lazy var container: NSPersistentCloudKitContainer = {
+        let container = NSPersistentCloudKitContainer(name: "Model")
+
+        guard let description = container.persistentStoreDescriptions.first else {
+            fatalError("No store description")
+        }
+
+        // Enable CloudKit sync
+        description.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(
+            containerIdentifier: "iCloud.com.yourapp"
+        )
+
+        // Enable history tracking for sync
+        description.setOption(true as NSNumber,
+                             forKey: NSPersistentHistoryTrackingKey)
+        description.setOption(true as NSNumber,
+                             forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+
+        container.loadPersistentStores { _, error in
+            if let error = error {
+                fatalError("CloudKit store failed: \(error)")
+            }
+        }
+
+        container.viewContext.automaticallyMergesChangesFromParent = true
+
+        return container
+    }()
+}
+```
+
+## Concurrency Patterns
+
+> **Threading errors are isolation bugs.** If you're seeing `Illegal attempt to establish a relationship between objects in different contexts`, or a trap in `_PFAssertSafeMultiThreadedAccess_`, this is a Swift 6 isolation problem expressed through Core Data's threading rules. Read this section AND axiom-concurrency (skills/isolation-inheritance-diag.md) for the runtime-crash catalog. Core Data's own trap: `perform` closures are `@Sendable`, so they never inherit `@MainActor` — touching main-actor state inside one is diagnosed (`#ActorIsolatedCall`) and runs off the main actor. Hop with `Task { @MainActor in }`, or use the context's own queue.
+
+### The Golden Rule
+
+**NEVER pass NSManagedObject across threads.** Pass objectID instead.
+
+```swift
+// ❌ WRONG: Passing object across threads
+let user = try viewContext.fetch(User.fetchRequest()).first!  // Main thread
+let userID = user.objectID
+
+Task.detached {
+    print(user.name)  // Silent by default — a race, not a crash
+}
+
+// ✅ CORRECT: Pass objectID, fetch on target context
+// `Task.detached` here illustrates a real off-main hop; in production code
+// `newBackgroundContext().perform { ... }` is the canonical Core Data form
+// (it implicitly runs the closure on the context's private queue).
+Task.detached {
+    let bgContext = CoreDataStack.shared.newBackgroundContext()
+    let user = bgContext.object(with: userID) as! User
+    print(user.name)  // Safe
+}
+```
+
+Off-queue access is not self-policing: it compiles, and it usually returns the right value. Launch with `-com.apple.CoreData.ConcurrencyDebug 1` to turn it into an immediate trap in `_PFAssertSafeMultiThreadedAccess_` instead of a silent race.
+
+### Background Processing
+
+```swift
+// ✅ CORRECT: Background context for heavy work
+func importData(_ items: [ImportItem]) async throws {
+    let context = CoreDataStack.shared.newBackgroundContext()
+
+    try await context.perform {
+        for item in items {
+            let entity = Entity(context: context)
+            entity.configure(from: item)
+        }
+
+        try context.save()
+    }
+}
+
+// Changes automatically merge to viewContext if configured
+```
+
+### Async/Await (iOS 15+)
+
+```swift
+// Modern async context operations
+func fetchUsers() async throws -> [User] {
+    let context = CoreDataStack.shared.viewContext
+
+    return try await context.perform {
+        let request = User.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        return try context.fetch(request)
+    }
+}
+```
+
+## Relationship Modeling
+
+### One-to-Many
+
+```swift
+// In User entity
+@NSManaged var posts: NSSet?
+
+// Convenience accessors
+extension User {
+    var postsArray: [Post] {
+        (posts?.allObjects as? [Post]) ?? []
+    }
+
+    func addPost(_ post: Post) {
+        mutableSetValue(forKey: "posts").add(post)
+    }
+}
+```
+
+### Many-to-Many
+
+```swift
+// Both sides have NSSet
+// User.tags <-> Tag.users
+
+extension User {
+    func addTag(_ tag: Tag) {
+        mutableSetValue(forKey: "tags").add(tag)
+        // Core Data automatically adds to tag.users
+    }
+}
+```
+
+### Delete Rules
+
+| Rule | Behavior | Use Case |
+|------|----------|----------|
+| **Nullify** | Set relationship to nil | Optional relationships |
+| **Cascade** | Delete related objects | Owned children (User → Posts) |
+| **Deny** | Prevent deletion if related objects exist | Protect referenced data |
+| **No Action** | Do nothing (manual cleanup required) | Rarely appropriate |
+
+## Fetching Patterns
+
+### SwiftUI Integration
+
+```swift
+struct UserList: View {
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \User.name, ascending: true)],
+        predicate: NSPredicate(format: "isActive == YES"),
+        animation: .default
+    )
+    private var users: FetchedResults<User>
+
+    var body: some View {
+        List(users) { user in
+            Text(user.name ?? "Unknown")
+        }
+    }
+}
+
+// Dynamic predicates
+struct FilteredList: View {
+    @FetchRequest var items: FetchedResults<Item>
+
+    init(category: String) {
+        _items = FetchRequest(
+            sortDescriptors: [NSSortDescriptor(keyPath: \Item.date, ascending: false)],
+            predicate: NSPredicate(format: "category == %@", category)
+        )
+    }
+}
+```
+
+### Batch Fetching (Avoid N+1)
+
+```swift
+// ❌ WRONG: N+1 queries
+let users = try context.fetch(User.fetchRequest())
+for user in users {
+    print(user.posts?.count ?? 0)  // Fault fired for each user
+}
+
+// ✅ CORRECT: Prefetch relationships
+let request = User.fetchRequest()
+request.relationshipKeyPathsForPrefetching = ["posts"]
+let users = try context.fetch(request)
+for user in users {
+    print(user.posts?.count ?? 0)  // Already loaded
+}
+```
+
+### Batch Size for Large Datasets
+
+```swift
+let request = User.fetchRequest()
+request.fetchBatchSize = 20  // Load 20 at a time as needed
+request.returnsObjectsAsFaults = true  // Default, memory efficient
+```
+
+## Schema Migration
+
+### Lightweight Migration (Automatic)
+
+Handled automatically for:
+- Adding optional attributes
+- Removing attributes
+- Renaming (with renaming identifier)
+- Adding relationships with optional or default value
+
+```swift
+let description = NSPersistentStoreDescription()
+description.shouldMigrateStoreAutomatically = true
+description.shouldInferMappingModelAutomatically = true
+```
+
+### When Mapping Model Is Needed
+
+- Changing attribute types
+- Splitting/merging entities
+- Complex relationship changes
+- Data transformation during migration
+
+```swift
+// Create mapping model in Xcode:
+// File → New → Mapping Model
+// Select source and destination models
+```
+
+### Migration Testing Checklist
+
+**MANDATORY before shipping**:
+
+1. ✓ Test on REAL DEVICE with a copy of production data (a reset simulator starts from an empty store, so the upgrade path never runs)
+2. ✓ Install old version, create data
+3. ✓ Install new version over it
+4. ✓ Verify all data accessible
+5. ✓ Check migration performance (large datasets)
+
+## Anti-Patterns
+
+### 1. Singleton Context for Everything
+
+```swift
+// ❌ WRONG: One context for all operations
+class DataManager {
+    let context = CoreDataStack.shared.viewContext
+
+    func importInBackground() {
+        // Main context used off the main queue — not a crash, a silent race
+        for item in largeDataset {
+            let entity = Entity(context: context)
+        }
+    }
+}
+
+// ✅ CORRECT: Context per operation type
+func importInBackground() {
+    let bgContext = CoreDataStack.shared.newBackgroundContext()
+    bgContext.perform {
+        // Safe background work
+    }
+}
+```
+
+### 2. Fetching in View Body
+
+```swift
+// ❌ WRONG: Fetch on every render
+var body: some View {
+    let users = try? context.fetch(User.fetchRequest())  // Called repeatedly!
+    List(users ?? []) { ... }
+}
+
+// ✅ CORRECT: Use @FetchRequest
+@FetchRequest(sortDescriptors: [])
+var users: FetchedResults<User>
+
+var body: some View {
+    List(users) { ... }  // Automatic updates
+}
+```
+
+### 3. Ignoring Merge Policy
+
+```swift
+// ❌ WRONG: Leaving the default NSErrorMergePolicy — a conflict fails the save
+// and hands you back the object IDs to reconcile yourself
+let context = container.viewContext
+
+// ✅ CORRECT: Choose a resolution instead of surfacing the error
+context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+context.automaticallyMergesChangesFromParent = true
+```
+
+## Performance Tips
+
+1. **Use fetchBatchSize** for large result sets
+2. **Prefetch relationships** that will be accessed
+3. **Use background contexts** for imports/exports
+4. **Batch save** — don't save after each insert
+5. **Use fetchLimit** when only first N results are needed
+6. **Profile with SQL debug**: `-com.apple.CoreData.SQLDebug 1`
+
+## Pressure Scenarios
+
+### Scenario 1: "SwiftData is simpler, let's migrate now"
+
+**Situation**: New iOS 17 features available, temptation to migrate mid-project.
+
+**Risk**: Migration is complex. Mixed Core Data + SwiftData has sharp edges.
+
+**Response**: "Complete current milestone first. Migration needs dedicated time and testing."
+
+### Scenario 2: "Skip migration testing, simulator works"
+
+**Situation**: Schema change tested only in simulator.
+
+**Risk**: A reset simulator starts from an empty store, so the old→new migration never runs. Real devices keep the existing store and crash on the mismatch.
+
+**Response**: "MANDATORY: Test on real device with real data. 15 minutes now prevents production crash."
+
+## tvOS
+
+**CoreData + CloudKit is dangerous on tvOS.** CloudKit metadata causes significant space inflation in the local store, and no tvOS directory is dependable once your app is not running — the system can delete Application Support, Caches and tmp alike. The inflated store plus purgeable storage is a worst-case combination.
+
+**Recommendation**: Use SQLiteData with CloudKit SyncEngine instead for tvOS data persistence. See axiom-swift (skills/tvos.md) for full tvOS storage constraints.
+
+## Related Skills
+
+- `skills/core-data-diag.md` — Debugging migrations, thread errors, N+1 queries
+- `skills/swiftdata.md` — Modern alternative for iOS 17+
+- `skills/database-migration.md` — Safe schema evolution patterns
+- `axiom-concurrency` — Async/await patterns for Core Data
