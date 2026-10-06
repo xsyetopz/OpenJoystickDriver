@@ -71,8 +71,10 @@
           DeveloperValueRow(
             label: OJDLocalized.string("developer.usbEndpoints"),
             value: String(
-              format: "Input 0x%02X · Output 0x%02X",
+              format: "%@ 0x%02X · %@ 0x%02X",
+              OJDLocalized.string("common.inputEndpoint"),
               device.inputEndpoint,
+              OJDLocalized.string("common.outputEndpoint"),
               device.outputEndpoint
             )
           )
@@ -159,7 +161,8 @@
     var body: some View {
       VStack(alignment: .leading, spacing: 2) {
         Text(label).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
-        Text(value).font(.system(.body, design: .monospaced)).lineLimit(2)
+        // The monospaced design draws Arabic letters unjoined, so only digits are fixed-width.
+        Text(value).font(.body.monospacedDigit()).lineLimit(2)
           .textSelection(.enabled)
       }.accessibilityElement(children: .combine)
     }
