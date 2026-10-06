@@ -26,8 +26,8 @@ struct EndpointFixture {
 func withEndpointServer(
   identity: CodeSigningIdentity? = EndpointFixture.tool,
   feeds: VirtualFeedRegistry? = nil,
-  _ body: (EndpointServer, EndpointFixture) throws -> Void
-) throws {
+  _ body: (EndpointServer, EndpointFixture) async throws -> Void
+) async throws {
   let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
     UUID().uuidString,
     isDirectory: true
@@ -50,7 +50,15 @@ func withEndpointServer(
     server.stop()
     try? FileManager.default.removeItem(at: directory)
   }
-  try body(server, fixture)
+  try await body(server, fixture)
+}
+
+/// Runs the blocking `work` on a thread of its own and resumes with its result, so a wait for the
+/// server holds no thread of Swift's cooperative pool, which the server's tasks need.
+func offPool<Result: Sendable>(_ work: @escaping @Sendable () -> Result) async -> Result {
+  await withCheckedContinuation { continuation in
+    Thread.detachNewThread { continuation.resume(returning: work()) }
+  }
 }
 
 /// The `hello` of a token client, with the proof the endpoint documents: HMAC-SHA256, keyed with
@@ -74,29 +82,34 @@ func tokenHello(
     + #""proof":"\#(proof)"}"#
 }
 
-/// A blocking endpoint client with a 5-second read timeout.
-final class EndpointTestClient {
+/// An endpoint client whose socket calls block with a 5-second read timeout, so each runs off the
+/// cooperative pool. The calls of one client never overlap.
+final class EndpointTestClient: @unchecked Sendable {
   /// The nonce of the challenge that the service sent first.
   private(set) var nonce = ""
   private let descriptor: Int32
   private var buffer = Data()
 
-  init(path: String) throws {
-    descriptor = socket(AF_UNIX, SOCK_STREAM, 0)
-    var address = try LocalServiceRPCTransport.socketAddress(path: path)
-    let status = withUnsafePointer(to: &address) {
-      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-        connect(descriptor, $0, LocalServiceRPCTransport.socketAddressLength(path: path))
+  init(path: String) async throws {
+    let descriptor = socket(AF_UNIX, SOCK_STREAM, 0)
+    self.descriptor = descriptor
+    let address = try LocalServiceRPCTransport.socketAddress(path: path)
+    let length = LocalServiceRPCTransport.socketAddressLength(path: path)
+    let error = await offPool { () -> Int32? in
+      var address = address
+      let status = withUnsafePointer(to: &address) {
+        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { connect(descriptor, $0, length) }
       }
+      return status == 0 ? nil : errno
     }
-    guard status == 0 else {
+    if let error {
       close(descriptor)
-      throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
+      throw POSIXError(POSIXErrorCode(rawValue: error) ?? .EIO)
     }
     var noSignal: Int32 = 1
     setsockopt(descriptor, SOL_SOCKET, SO_NOSIGPIPE, &noSignal, socklen_t(MemoryLayout<Int32>.size))
     try LocalServiceRPCTransport.setTimeout(descriptor, seconds: 5)
-    let challenge = try readObject()
+    let challenge = try await readObject()
     #expect(challenge["type"] as? String == "challenge")
     nonce = challenge["nonce"] as? String ?? ""
   }
@@ -104,38 +117,45 @@ final class EndpointTestClient {
   deinit { close(descriptor) }
 
   /// A client that said hello, read its welcome, and subscribed to controllers.
-  static func subscribed(to path: String) throws -> EndpointTestClient {
-    let client = try EndpointTestClient(path: path)
-    client.send(#"{"type":"hello","protocol":1,"scopes":["read"]}"#)
-    guard try client.readObject()["type"] as? String == "welcome" else {
+  static func subscribed(to path: String) async throws -> EndpointTestClient {
+    let client = try await EndpointTestClient(path: path)
+    await client.send(#"{"type":"hello","protocol":1,"scopes":["read"]}"#)
+    guard try await client.readObject()["type"] as? String == "welcome" else {
       throw POSIXError(.EPROTO)
     }
-    client.send(#"{"type":"subscribe","stream":"controllers"}"#)
+    await client.send(#"{"type":"subscribe","stream":"controllers"}"#)
     return client
   }
 
-  func send(_ line: String) {
+  func send(_ line: String) async {
     let data = Data((line + "\n").utf8)
-    _ = data.withUnsafeBytes { Darwin.send(descriptor, $0.baseAddress, $0.count, 0) }
+    let descriptor = descriptor
+    await offPool {
+      _ = data.withUnsafeBytes { Darwin.send(descriptor, $0.baseAddress, $0.count, 0) }
+    }
   }
 
   /// The next line, or nil when the service closed the connection or the timeout passed.
-  func readLine() -> String? {
-    var chunk = [UInt8](repeating: 0, count: 4_096)
+  func readLine() async -> String? {
+    let descriptor = descriptor
     while true {
       if let newline = buffer.firstIndex(of: UInt8(ascii: "\n")) {
         let line = String(bytes: buffer[buffer.startIndex..<newline], encoding: .utf8) ?? ""
         buffer.removeSubrange(buffer.startIndex...newline)
         return line
       }
-      let count = recv(descriptor, &chunk, chunk.count, 0)
-      guard count > 0 else { return nil }
-      buffer.append(contentsOf: chunk[0..<count])
+      let chunk = await offPool { () -> [UInt8] in
+        var chunk = [UInt8](repeating: 0, count: 4_096)
+        let count = recv(descriptor, &chunk, chunk.count, 0)
+        return count > 0 ? Array(chunk[0..<count]) : []
+      }
+      guard !chunk.isEmpty else { return nil }
+      buffer.append(contentsOf: chunk)
     }
   }
 
-  func readObject() throws -> [String: Any] {
-    try object(try #require(readLine()))
+  func readObject() async throws -> [String: Any] {
+    try object(try #require(await readLine()))
   }
 
   func object(_ line: String) throws -> [String: Any] {
@@ -143,9 +163,10 @@ final class EndpointTestClient {
   }
 }
 
-/// A blocking HTTP and WebSocket client on `127.0.0.1` with a 5-second read timeout, written
-/// against RFC 6455 so the tests control every header and frame.
-final class EndpointWebTestClient {
+/// An HTTP and WebSocket client on `127.0.0.1` whose socket calls block with a 5-second read
+/// timeout, so each runs off the cooperative pool; written against RFC 6455 so the tests control
+/// every header and frame. The calls of one client never overlap.
+final class EndpointWebTestClient: @unchecked Sendable {
   struct Response {
     let status: Int
     /// Lowercased names.
@@ -160,22 +181,27 @@ final class EndpointWebTestClient {
   private let descriptor: Int32
   private var buffer = Data()
 
-  init(port: Int, address: String = "127.0.0.1") throws {
-    descriptor = socket(AF_INET, SOCK_STREAM, 0)
-    var socketAddress = sockaddr_in()
-    socketAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
-    socketAddress.sin_family = sa_family_t(AF_INET)
-    socketAddress.sin_port = in_port_t(UInt16(port).bigEndian)
-    inet_pton(AF_INET, address, &socketAddress.sin_addr)
-    let status = withUnsafePointer(to: &socketAddress) {
-      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-        connect(descriptor, $0, socklen_t(MemoryLayout<sockaddr_in>.size))
+  init(port: Int, address: String = "127.0.0.1") async throws {
+    let descriptor = socket(AF_INET, SOCK_STREAM, 0)
+    self.descriptor = descriptor
+    var target = sockaddr_in()
+    target.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
+    target.sin_family = sa_family_t(AF_INET)
+    target.sin_port = in_port_t(UInt16(port).bigEndian)
+    inet_pton(AF_INET, address, &target.sin_addr)
+    let socketAddress = target
+    let error = await offPool { () -> Int32? in
+      var socketAddress = socketAddress
+      let status = withUnsafePointer(to: &socketAddress) {
+        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+          connect(descriptor, $0, socklen_t(MemoryLayout<sockaddr_in>.size))
+        }
       }
+      return status == 0 ? nil : errno
     }
-    guard status == 0 else {
-      let error = POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
+    if let error {
       close(descriptor)
-      throw error
+      throw POSIXError(POSIXErrorCode(rawValue: error) ?? .EIO)
     }
     var noSignal: Int32 = 1
     setsockopt(descriptor, SOL_SOCKET, SO_NOSIGPIPE, &noSignal, socklen_t(MemoryLayout<Int32>.size))
@@ -199,17 +225,17 @@ final class EndpointWebTestClient {
     origin: String,
     name: String = "overlay",
     token: String
-  ) throws -> EndpointWebTestClient {
-    let client = try EndpointWebTestClient(port: port)
+  ) async throws -> EndpointWebTestClient {
+    let client = try await EndpointWebTestClient(port: port)
     let response = try #require(
-      client.request("/endpoint", headers: upgradeHeaders(port: port, origin: origin))
+      await client.request("/endpoint", headers: upgradeHeaders(port: port, origin: origin))
     )
     #expect(response.status == 101)
-    try client.readChallenge()
-    client.send(
+    try await client.readChallenge()
+    await client.send(
       tokenHello(name: name, token: token, nonce: client.nonce, origin: origin, port: String(port))
     )
-    #expect(try client.readObject()["type"] as? String == "welcome")
+    #expect(try await client.readObject()["type"] as? String == "welcome")
     return client
   }
 
@@ -218,16 +244,16 @@ final class EndpointWebTestClient {
     _ path: String,
     method: String = "GET",
     headers: [String: String?]
-  ) -> Response? {
+  ) async -> Response? {
     var text = "\(method) \(path) HTTP/1.1\r\n"
     for (name, value) in headers.sorted(by: { $0.key < $1.key }) {
       if let value { text += "\(name): \(value)\r\n" }
     }
-    sendBytes(Data((text + "\r\n").utf8))
+    await sendBytes(Data((text + "\r\n").utf8))
     let end = Data("\r\n\r\n".utf8)
     var found = buffer.range(of: end)
     while found == nil {
-      guard receive() else { return nil }
+      guard await receive() else { return nil }
       found = buffer.range(of: end)
     }
     guard let range = found,
@@ -243,15 +269,15 @@ final class EndpointWebTestClient {
         .trimmingCharacters(in: .whitespaces)
     }
     guard status != 101 else { return Response(status: status, headers: fields, body: Data()) }
-    while receive() {}
+    while await receive() {}
     defer { buffer.removeAll() }
     return Response(status: status, headers: fields, body: buffer)
   }
 
   /// Sends one masked text frame.
-  func send(_ text: String) { sendFrame(opcode: 0x1, payload: Data(text.utf8)) }
+  func send(_ text: String) async { await sendFrame(opcode: 0x1, payload: Data(text.utf8)) }
 
-  func sendFrame(opcode: UInt8, payload: Data, final: Bool = true, masked: Bool = true) {
+  func sendFrame(opcode: UInt8, payload: Data, final: Bool = true, masked: Bool = true) async {
     var frame = Data([(final ? 0x80 : 0) | opcode])
     let maskBit: UInt8 = masked ? 0x80 : 0
     switch payload.count {
@@ -264,17 +290,17 @@ final class EndpointWebTestClient {
       frame.append(contentsOf: withUnsafeBytes(of: UInt64(payload.count).bigEndian, Array.init))
     }
     guard masked else {
-      sendBytes(frame + payload)
+      await sendBytes(frame + payload)
       return
     }
     let mask: [UInt8] = [0x12, 0x34, 0x56, 0x78]
     frame.append(contentsOf: mask)
     frame.append(contentsOf: payload.enumerated().map { $0.element ^ mask[$0.offset % 4] })
-    sendBytes(frame)
+    await sendBytes(frame)
   }
 
   /// The next frame from the service, which must not be masked; nil when the connection ended.
-  func readFrame() -> (opcode: UInt8, payload: Data)? {
+  func readFrame() async -> (opcode: UInt8, payload: Data)? {
     while true {
       if buffer.count >= 2 {
         let bytes = [UInt8](buffer.prefix(10))
@@ -295,20 +321,20 @@ final class EndpointWebTestClient {
           return (bytes[0] & 0x0F, payload)
         }
       }
-      guard receive() else { return nil }
+      guard await receive() else { return nil }
     }
   }
 
   /// Reads the challenge that follows the upgrade and keeps its nonce.
-  func readChallenge() throws {
-    let challenge = try readObject()
+  func readChallenge() async throws {
+    let challenge = try await readObject()
     #expect(challenge["type"] as? String == "challenge")
     nonce = challenge["nonce"] as? String ?? ""
   }
 
   /// The next text message; nil at a close frame or the end of the connection.
-  func readLine() -> String? {
-    while let frame = readFrame() {
+  func readLine() async -> String? {
+    while let frame = await readFrame() {
       switch frame.opcode {
       case 0x1: return String(bytes: frame.payload, encoding: .utf8)
       case 0x8: return nil
@@ -318,8 +344,8 @@ final class EndpointWebTestClient {
     return nil
   }
 
-  func readObject() throws -> [String: Any] {
-    try object(try #require(readLine()))
+  func readObject() async throws -> [String: Any] {
+    try object(try #require(await readLine()))
   }
 
   func object(_ line: String) throws -> [String: Any] {
@@ -332,15 +358,22 @@ final class EndpointWebTestClient {
     return Data(Insecure.SHA1.hash(data: Data(text.utf8))).base64EncodedString()
   }
 
-  func sendBytes(_ data: Data) {
-    _ = data.withUnsafeBytes { Darwin.send(descriptor, $0.baseAddress, $0.count, 0) }
+  func sendBytes(_ data: Data) async {
+    let descriptor = descriptor
+    await offPool {
+      _ = data.withUnsafeBytes { Darwin.send(descriptor, $0.baseAddress, $0.count, 0) }
+    }
   }
 
-  private func receive() -> Bool {
-    var chunk = [UInt8](repeating: 0, count: 65_536)
-    let count = recv(descriptor, &chunk, chunk.count, 0)
-    guard count > 0 else { return false }
-    buffer.append(contentsOf: chunk[0..<count])
+  private func receive() async -> Bool {
+    let descriptor = descriptor
+    let chunk = await offPool { () -> [UInt8] in
+      var chunk = [UInt8](repeating: 0, count: 65_536)
+      let count = recv(descriptor, &chunk, chunk.count, 0)
+      return count > 0 ? Array(chunk[0..<count]) : []
+    }
+    guard !chunk.isEmpty else { return false }
+    buffer.append(contentsOf: chunk)
     return true
   }
 }

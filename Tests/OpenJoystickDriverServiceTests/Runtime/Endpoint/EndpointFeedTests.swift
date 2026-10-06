@@ -11,31 +11,31 @@ struct EndpointFeedTests {
   private static let tool = EndpointFixture.tool
 
   @Test
-  func aFrameReachesTheVirtualGamepad() throws {
+  func aFrameReachesTheVirtualGamepad() async throws {
     let factory = FakeFeedFactory()
-    try withEndpointServer(feeds: factory.registry()) { server, _ in
-      let client = try feeding(server)
-      client.send(#"{"buttons":["south"],"axes":{"left_stick_y":0.5}}"#)
+    try await withEndpointServer(feeds: factory.registry()) { server, _ in
+      let client = try await feeding(server)
+      await client.send(#"{"buttons":["south"],"axes":{"left_stick_y":0.5}}"#)
 
       let device = try #require(factory.devices.first)
       #expect(device.profile == .generic)
-      try Self.wait { device.sent.contains { $0.buttons.contains(.south) } }
+      try await Self.wait { device.sent.contains { $0.buttons.contains(.south) } }
       let state = try #require(device.sent.last { $0.buttons.contains(.south) })
       #expect(state.axes[.leftStickY] == -0.5)
     }
   }
 
   @Test
-  func theHostsRumbleArrivesAsALine() throws {
+  func theHostsRumbleArrivesAsALine() async throws {
     let factory = FakeFeedFactory()
-    try withEndpointServer(feeds: factory.registry()) { server, _ in
-      let client = try feeding(server)
+    try await withEndpointServer(feeds: factory.registry()) { server, _ in
+      let client = try await feeding(server)
       let device = try #require(factory.devices.first)
       device.receive(.setRumble(.off, duration: .milliseconds(200)))
       device.receive(.stopRumble)
 
       for type in ["set-rumble", "stop-rumble"] {
-        let line = try #require(client.readLine())
+        let line = try #require(await client.readLine())
         #expect(try JSONSchemaFiles.issues(in: line, against: "endpoint.schema.json").isEmpty)
         #expect(try client.object(line)["type"] as? String == type)
       }
@@ -43,82 +43,82 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func closingTheClientRemovesTheGamepad() throws {
+  func closingTheClientRemovesTheGamepad() async throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry()
-    try withEndpointServer(feeds: feeds) { server, _ in
-      var client: EndpointTestClient? = try feeding(server)
+    try await withEndpointServer(feeds: feeds) { server, _ in
+      var client: EndpointTestClient? = try await feeding(server)
       let device = try #require(factory.devices.first)
       client = nil
       _ = client
 
-      try Self.wait { device.closeCount == 1 }
+      try await Self.wait { device.closeCount == 1 }
       #expect(feeds.openFeedCount == 0)
     }
   }
 
   @Test
-  func closingTheClientWhileTheQueueIsFullRemovesTheGamepad() throws {
+  func closingTheClientWhileTheQueueIsFullRemovesTheGamepad() async throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry()
-    try withEndpointServer(feeds: feeds) { server, _ in
-      var client: EndpointTestClient? = try feeding(server)
+    try await withEndpointServer(feeds: feeds) { server, _ in
+      var client: EndpointTestClient? = try await feeding(server)
       let device = try #require(factory.devices.first)
       for index in 0..<(VirtualFeedExchangeResult.maximumQueuedFrames + 20) {
         let button = index.isMultiple(of: 2) ? "south" : "east"
-        client?.send(#"{"buttons":["\#(button)"],"holdMilliseconds":60000}"#)
+        await client?.send(#"{"buttons":["\#(button)"],"holdMilliseconds":60000}"#)
       }
-      try Self.wait { !device.sent.isEmpty }
+      try await Self.wait { !device.sent.isEmpty }
       client = nil
       _ = client
 
-      try Self.wait { device.closeCount == 1 }
+      try await Self.wait { device.closeCount == 1 }
       #expect(feeds.openFeedCount == 0)
     }
   }
 
   @Test
-  func revokingControlWhileTheGamepadStartsEndsTheFeed() throws {
+  func revokingControlWhileTheGamepadStartsEndsTheFeed() async throws {
     let factory = FakeFeedFactory()
     factory.hangsActivation = true
     let feeds = factory.registry(activationTimeout: 60)
     defer { factory.release() }
-    try withEndpointServer(feeds: feeds) { server, _ in
-      let client = try welcomed(server)
-      client.send(#"{"type":"feed","as":"hid-generic"}"#)
-      try Self.wait { !factory.devices.isEmpty }
+    try await withEndpointServer(feeds: feeds) { server, _ in
+      let client = try await welcomed(server)
+      await client.send(#"{"type":"feed","as":"hid-generic"}"#)
+      try await Self.wait { !factory.devices.isEmpty }
       try server.revoke(id: Self.tool.accessID, scopes: [.control])
 
-      #expect(try client.readObject()["code"] as? String == "E1006")
-      try Self.wait { factory.devices.first?.closeCount == 1 }
+      #expect(try await client.readObject()["code"] as? String == "E1006")
+      try await Self.wait { factory.devices.first?.closeCount == 1 }
       #expect(feeds.openFeedCount == 0)
     }
   }
 
   @Test
-  func closingTheClientWhileTheGamepadStartsEndsTheFeed() throws {
+  func closingTheClientWhileTheGamepadStartsEndsTheFeed() async throws {
     let factory = FakeFeedFactory()
     factory.hangsActivation = true
     let feeds = factory.registry(activationTimeout: 60)
     defer { factory.release() }
-    try withEndpointServer(feeds: feeds) { server, _ in
-      var client: EndpointTestClient? = try welcomed(server)
-      client?.send(#"{"type":"feed","as":"hid-generic"}"#)
-      try Self.wait { !factory.devices.isEmpty }
+    try await withEndpointServer(feeds: feeds) { server, _ in
+      var client: EndpointTestClient? = try await welcomed(server)
+      await client?.send(#"{"type":"feed","as":"hid-generic"}"#)
+      try await Self.wait { !factory.devices.isEmpty }
       client = nil
       _ = client
 
-      try Self.wait { factory.devices.first?.closeCount == 1 }
+      try await Self.wait { factory.devices.first?.closeCount == 1 }
       #expect(feeds.openFeedCount == 0)
     }
   }
 
   /// The client neither reads nor writes, so only the pump sees the closing connection.
   @Test
-  func aClosingConnectionRemovesTheGamepadWhileTheReaderAndWriterBlock() throws {
+  func aClosingConnectionRemovesTheGamepadWhileTheReaderAndWriterBlock() async throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry()
-    try withEndpointServer(feeds: feeds) { server, _ in
+    try await withEndpointServer(feeds: feeds) { server, _ in
       let transport = BlockedTransport()
       defer { transport.release() }
       let connection = EndpointConnection(descriptor: -1, kind: .socket, transport: transport)
@@ -127,56 +127,56 @@ struct EndpointFeedTests {
         server.feed(connection, profile: "hid-generic")
         finished.signal()
       }
-      try Self.wait { factory.devices.first?.activated != nil }
+      try await Self.wait { factory.devices.first?.activated != nil }
       connection.close(EndpointError(code: .revoked, message: "Revoked."))
 
-      try Self.wait { factory.devices.first?.closeCount == 1 }
+      try await Self.wait { factory.devices.first?.closeCount == 1 }
       #expect(feeds.openFeedCount == 0)
       transport.release()
-      #expect(finished.wait(timeout: .now() + 5) == .success)
+      #expect(await offPool { finished.wait(timeout: .now() + 5) } == .success)
     }
   }
 
   @Test
-  func revokingControlEndsTheFeed() throws {
+  func revokingControlEndsTheFeed() async throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry()
-    try withEndpointServer(feeds: feeds) { server, _ in
-      let client = try feeding(server)
+    try await withEndpointServer(feeds: feeds) { server, _ in
+      let client = try await feeding(server)
       try server.revoke(id: Self.tool.accessID, scopes: [.control])
 
-      #expect(try client.readObject()["code"] as? String == "E1006")
-      #expect(client.readLine() == nil)
-      try Self.wait { factory.devices.first?.closeCount == 1 }
+      #expect(try await client.readObject()["code"] as? String == "E1006")
+      #expect(await client.readLine() == nil)
+      try await Self.wait { factory.devices.first?.closeCount == 1 }
       #expect(feeds.openFeedCount == 0)
     }
   }
 
   @Test
-  func aFeedWithoutFrameLinesClosesAfterTheIdleTimeout() throws {
+  func aFeedWithoutFrameLinesClosesAfterTheIdleTimeout() async throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry(idleTimeout: 0.3)
-    try withEndpointServer(feeds: feeds) { server, _ in
-      let client = try feeding(server)
-      client.send(#"{"buttons":["east"]}"#)
+    try await withEndpointServer(feeds: feeds) { server, _ in
+      let client = try await feeding(server)
+      await client.send(#"{"buttons":["east"]}"#)
       let device = try #require(factory.devices.first)
-      try Self.wait { device.sent.contains { $0.buttons.contains(.east) } }
+      try await Self.wait { device.sent.contains { $0.buttons.contains(.east) } }
 
-      #expect(try client.readObject()["code"] as? String == "E1009")
-      try Self.wait { device.closeCount == 1 }
+      #expect(try await client.readObject()["code"] as? String == "E1009")
+      try await Self.wait { device.closeCount == 1 }
       #expect(feeds.openFeedCount == 0)
     }
   }
 
   @Test
-  func aFeedThatKeepsSendingFramesOutlivesTheIdleTimeout() throws {
+  func aFeedThatKeepsSendingFramesOutlivesTheIdleTimeout() async throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry(idleTimeout: 0.5)
-    try withEndpointServer(feeds: feeds) { server, _ in
-      let client = try feeding(server)
+    try await withEndpointServer(feeds: feeds) { server, _ in
+      let client = try await feeding(server)
       for _ in 0..<8 {
-        client.send(#"{"buttons":["east"]}"#)
-        usleep(150_000)
+        await client.send(#"{"buttons":["east"]}"#)
+        try await Task.sleep(nanoseconds: 150_000_000)
       }
 
       #expect(feeds.openFeedCount == 1)
@@ -185,29 +185,32 @@ struct EndpointFeedTests {
   }
 
   @Test
-  func aFifthFeedIsRefused() throws {
+  func aFifthFeedIsRefused() async throws {
     let factory = FakeFeedFactory()
-    try withEndpointServer(feeds: factory.registry()) { server, _ in
-      let clients = try (0..<VirtualFeedRegistry.maximumFeeds).map { _ in try feeding(server) }
-      let client = try welcomed(server)
-      client.send(#"{"type":"feed","as":"hid-generic"}"#)
+    try await withEndpointServer(feeds: factory.registry()) { server, _ in
+      var clients: [EndpointTestClient] = []
+      for _ in 0..<VirtualFeedRegistry.maximumFeeds {
+        clients.append(try await feeding(server))
+      }
+      let client = try await welcomed(server)
+      await client.send(#"{"type":"feed","as":"hid-generic"}"#)
 
-      let line = try #require(client.readLine())
+      let line = try #require(await client.readLine())
       #expect(try JSONSchemaFiles.issues(in: line, against: "endpoint.schema.json").isEmpty)
       #expect(try client.object(line)["code"] as? String == "E1008")
-      #expect(client.readLine() == nil)
+      #expect(await client.readLine() == nil)
       #expect(clients.count == VirtualFeedRegistry.maximumFeeds)
     }
   }
 
   @Test(arguments: ["hid-unknown", "Hid-Generic"])
-  func anUnknownProfileIsInvalid(profile: String) throws {
+  func anUnknownProfileIsInvalid(profile: String) async throws {
     let factory = FakeFeedFactory()
-    try withEndpointServer(feeds: factory.registry()) { server, _ in
-      let client = try welcomed(server)
-      client.send(#"{"type":"feed","as":"\#(profile)"}"#)
+    try await withEndpointServer(feeds: factory.registry()) { server, _ in
+      let client = try await welcomed(server)
+      await client.send(#"{"type":"feed","as":"\#(profile)"}"#)
 
-      #expect(try client.readObject()["code"] as? String == "E1004")
+      #expect(try await client.readObject()["code"] as? String == "E1004")
       #expect(factory.devices.isEmpty)
     }
   }
@@ -223,52 +226,52 @@ struct EndpointFeedTests {
     #"{"buttons":["south"],"turbo":true}"#,
     "nonsense",
   ])
-  func aLineThatIsNotAFrameEndsTheFeed(line: String) throws {
+  func aLineThatIsNotAFrameEndsTheFeed(line: String) async throws {
     let factory = FakeFeedFactory()
     let feeds = factory.registry()
-    try withEndpointServer(feeds: feeds) { server, _ in
-      let client = try feeding(server)
-      client.send(line)
+    try await withEndpointServer(feeds: feeds) { server, _ in
+      let client = try await feeding(server)
+      await client.send(line)
 
-      let error = try #require(client.readLine())
+      let error = try #require(await client.readLine())
       #expect(try JSONSchemaFiles.issues(in: error, against: "endpoint.schema.json").isEmpty)
       #expect(try client.object(error)["code"] as? String == "E1004")
-      try Self.wait { factory.devices.first?.closeCount == 1 }
+      try await Self.wait { factory.devices.first?.closeCount == 1 }
       #expect(feeds.openFeedCount == 0)
     }
   }
 
   @Test
-  func aSessionWithoutControlCannotFeed() throws {
+  func aSessionWithoutControlCannotFeed() async throws {
     let factory = FakeFeedFactory()
-    try withEndpointServer(feeds: factory.registry()) { server, _ in
+    try await withEndpointServer(feeds: factory.registry()) { server, _ in
       try server.setEnabled(true)
       try server.grant(Self.tool, path: "/Tool", scopes: [.read])
-      let client = try EndpointTestClient(path: server.socketPath)
-      client.send(#"{"type":"hello","protocol":1,"scopes":["read"]}"#)
-      #expect(try client.readObject()["type"] as? String == "welcome")
-      client.send(#"{"type":"feed","as":"hid-generic"}"#)
+      let client = try await EndpointTestClient(path: server.socketPath)
+      await client.send(#"{"type":"hello","protocol":1,"scopes":["read"]}"#)
+      #expect(try await client.readObject()["type"] as? String == "welcome")
+      await client.send(#"{"type":"feed","as":"hid-generic"}"#)
 
-      #expect(try client.readObject()["code"] as? String == "E1002")
+      #expect(try await client.readObject()["code"] as? String == "E1002")
       #expect(factory.devices.isEmpty)
     }
   }
 
   @Test
-  func anOriginlessTokenFeedsOverTheWebSocket() throws {
+  func anOriginlessTokenFeedsOverTheWebSocket() async throws {
     let factory = FakeFeedFactory()
-    try withEndpointServer(feeds: factory.registry()) { server, _ in
+    try await withEndpointServer(feeds: factory.registry()) { server, _ in
       try server.setWebEnabled(true, port: nil)
       let pad = try server.grantToken(name: "pad", origins: [], scopes: [.control])
       let port = try #require(server.status().web.port)
-      let client = try EndpointWebTestClient(port: port)
-      let response = client.request(
+      let client = try await EndpointWebTestClient(port: port)
+      let response = await client.request(
         "/endpoint",
         headers: EndpointWebTestClient.upgradeHeaders(port: port, origin: nil)
       )
       #expect(response?.status == 101)
-      try client.readChallenge()
-      client.send(
+      try await client.readChallenge()
+      await client.send(
         tokenHello(
           name: "pad",
           token: pad.token,
@@ -277,35 +280,35 @@ struct EndpointFeedTests {
           scopes: ["control"]
         )
       )
-      #expect(try client.readObject()["type"] as? String == "welcome")
-      client.send(#"{"type":"feed","as":"hid-xbox-one-s-bt"}"#)
-      let feeding = try #require(client.readLine())
+      #expect(try await client.readObject()["type"] as? String == "welcome")
+      await client.send(#"{"type":"feed","as":"hid-xbox-one-s-bt"}"#)
+      let feeding = try #require(await client.readLine())
       #expect(try JSONSchemaFiles.issues(in: feeding, against: "endpoint.schema.json").isEmpty)
       #expect(try client.object(feeding)["as"] as? String == "hid-xbox-one-s-bt")
-      client.send(#"{"dpad":["up"]}"#)
+      await client.send(#"{"dpad":["up"]}"#)
 
       let device = try #require(factory.devices.first)
-      try Self.wait { device.sent.contains { $0.dpad.contains(.up) } }
+      try await Self.wait { device.sent.contains { $0.dpad.contains(.up) } }
     }
   }
 
   // MARK: - Helpers
 
   /// A signed client granted `control`, welcomed with it.
-  private func welcomed(_ server: EndpointServer) throws -> EndpointTestClient {
+  private func welcomed(_ server: EndpointServer) async throws -> EndpointTestClient {
     try server.setEnabled(true)
     try server.grant(Self.tool, path: "/Tool", scopes: [.control])
-    let client = try EndpointTestClient(path: server.socketPath)
-    client.send(#"{"type":"hello","protocol":1,"scopes":["control"]}"#)
-    #expect(try client.readObject()["type"] as? String == "welcome")
+    let client = try await EndpointTestClient(path: server.socketPath)
+    await client.send(#"{"type":"hello","protocol":1,"scopes":["control"]}"#)
+    #expect(try await client.readObject()["type"] as? String == "welcome")
     return client
   }
 
   /// A welcomed client that started a `hid-generic` feed and read `feeding`.
-  private func feeding(_ server: EndpointServer) throws -> EndpointTestClient {
-    let client = try welcomed(server)
-    client.send(#"{"type":"feed","as":"hid-generic"}"#)
-    let line = try #require(client.readLine())
+  private func feeding(_ server: EndpointServer) async throws -> EndpointTestClient {
+    let client = try await welcomed(server)
+    await client.send(#"{"type":"feed","as":"hid-generic"}"#)
+    let line = try #require(await client.readLine())
     #expect(try JSONSchemaFiles.issues(in: line, against: "endpoint.schema.json").isEmpty)
     let feeding = try client.object(line)
     #expect(feeding["type"] as? String == "feeding")
@@ -313,12 +316,12 @@ struct EndpointFeedTests {
     return client
   }
 
-  /// Waits up to 5 seconds until `condition` holds.
-  private static func wait(until condition: () -> Bool) throws {
+  /// Waits up to 5 seconds until `condition` holds, without holding a thread.
+  private static func wait(until condition: () -> Bool) async throws {
     let deadline = Date() + 5
     while !condition() {
       guard Date() < deadline else { throw POSIXError(.ETIMEDOUT) }
-      usleep(2_000)
+      try await Task.sleep(nanoseconds: 2_000_000)
     }
   }
 }
