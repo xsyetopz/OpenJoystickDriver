@@ -108,6 +108,7 @@ enum CLICommandTree {
     case ["virtual", "set"]: ["hid-generic", "045E:028E"]
     case ["virtual", "feed"]: ["--as", "hid-generic"]
     case ["record", "draft"], ["record", "show"], ["record", "remove"]: ["045E:028E"]
+    case ["record", "test"]: ["045E:028E", "--packets", "-", "--expect", "-"]
     case ["record", "validate"], ["record", "install"], ["profile", "import"],
       ["profile", "validate"]:
       ["-"]

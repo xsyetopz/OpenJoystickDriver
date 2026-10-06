@@ -8,6 +8,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Added
 
+- `ojd record test VVVV:PPPP --packets CAPTURE --expect STATE` replays the received packets of an `ojd controller capture --json` file through a controller record's parser and compares the resulting state with an expected state. A mismatch lists the fields that differ and exits with code 1 and the new error `E2022`.
 - `~/Library/Application Support/OpenJoystickDriver/Defaults.json` sets a `tuning` default for every controller (`Resources/Schemas/v1beta1/defaults.schema.json`). A value takes the first layer that sets it: user record, bundled record, `Defaults.json`, driver default. `ojd config show [--controller VVVV:PPPP] [--json]` prints each effective value and the layer that set it. See the [command reference](wiki/Command-Reference.md#config).
 - Every error has a stable code. The endpoint's error lines carry `E1001` to `E1009` in `code` instead of the old kebab-case names, and a refusal records `E1002`. The command line prints `error[E2xxx]: <message>` to stderr, remapping errors from the service carry `E3xxx` codes (the app shows them as a suffix, for example `(E3011)`), and [Error codes](wiki/Error-Codes.md) lists them all.
 - `ojd explain CODE` prints what an error code means, its area, and its exit code or wire value. It works offline and ignores case. An unknown code is a usage error. See the [command reference](wiki/Command-Reference.md).

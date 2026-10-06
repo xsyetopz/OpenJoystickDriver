@@ -14,6 +14,7 @@ struct RecordCommand: AsyncParsableCommand {
     subcommands: [
       RecordDraftCommand.self, RecordListCommand.self, RecordShowCommand.self,
       RecordValidateCommand.self, RecordInstallCommand.self, RecordRemoveCommand.self,
+      RecordTestCommand.self,
     ]
   )
 

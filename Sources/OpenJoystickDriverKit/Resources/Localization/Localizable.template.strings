@@ -1340,6 +1340,18 @@
 "cli.record.show.abstract" = "Show the effective record of one controller model and the layer of each part.";
 "cli.record.show.not_found" = "No controller record for %@. 'ojd record list' shows every record.";
 "cli.record.skipped" = "Skipped %@: %@";
+"cli.record.test.abstract" = "Replay captured reports through a record's parser and compare the parsed state.";
+"cli.record.test.capture_invalid" = "%@ is not a packet capture: %@";
+"cli.record.test.difference" = "%@: expected %@, got %@";
+"cli.record.test.discussion" = "Replays the received packets of a capture through the parser of the record, then compares the controller state after the last input report with the expected state. The capture is the JSON lines of 'ojd controller capture --json'. The expected state is one JSON object in the shape of a line of 'ojd controller watch --json'. The command lists each field that differs and exits with code 1 when any does. It compares every field except connection, which the running service sets. It needs no running service.";
+"cli.record.test.expect" = "The expected controller state, as a JSON file.";
+"cli.record.test.expect_invalid" = "%@ is not a controller state: %@";
+"cli.record.test.matched" = "%@ matches the expected state: %lld input reports replayed.";
+"cli.record.test.mismatch" = "The state that the parser of %@ produced differs from %@ in %lld fields.";
+"cli.record.test.no_input" = "No report in %@ carried input for %@. Capture again while you press the controls.";
+"cli.record.test.no_parser" = "The family of %@ has no parser that runs without a controller.";
+"cli.record.test.packets" = "A packet capture, as the JSON lines of 'ojd controller capture --json'.";
+"cli.record.test.parse_failed" = "The parser of %@ rejected received packet %lld of %@.";
 "cli.record.usb_not_claimed" = "The family uses raw USB, and the USB extension cannot claim this controller, because its product list is signed by Apple. OJD reaches it only through direct USB access, when macOS allows it.";
 "cli.record.usb_only_switch2" = "USB only: add bluetoothLE.vibrationCharacteristic to this Switch 2 record to connect the controller over Bluetooth LE.";
 "cli.record.validate.abstract" = "Check a controller record without installing it.";
@@ -1550,6 +1562,7 @@
 "error.E2019" = "The update check did not finish. Check your network connection and try again.";
 "error.E2020" = "The installed OpenJoystickDriver app is older than this ojd. Run './Scripts/ojd build install-fast dev', or set OJD_RUN_REPOSITORY_CLI=1 to run this build.";
 "error.E2021" = "A repository build of ojd could not hand the command to the installed app. Reinstall OpenJoystickDriver.app and run the command again.";
+"error.E2022" = "The state that the record's parser produced from the captured reports differs from the expected state. Read the fields that the command lists.";
 "error.E3001" = "The controller is not connected or not ready for remapping. Reconnect it and try again.";
 "error.E3002" = "The selected Joy-Cons could not be paired. Refresh the connected controllers and try again.";
 "error.E3003" = "The controller does not report motion data. Choose a controller with motion sensors, or leave motion options off.";

@@ -1114,6 +1114,46 @@
 				}
 			]
 		},
+		"recordTest": {
+			"type": "object",
+			"required": ["differences", "identity", "inputReports", "matches"],
+			"additionalProperties": false,
+			"properties": {
+				"differences": {
+					"description": "The fields of the controller state that differ. Empty when the states match.",
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": ["actual", "expected", "field"],
+						"additionalProperties": false,
+						"properties": {
+							"actual": {
+								"description": "The parsed value of the field, as JSON text.",
+								"type": "string"
+							},
+							"expected": {
+								"description": "The expected value of the field, as JSON text.",
+								"type": "string"
+							},
+							"field": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"identity": {
+					"type": "string",
+					"pattern": "^[0-9A-F]{4}:[0-9A-F]{4}$"
+				},
+				"inputReports": {
+					"type": "integer",
+					"minimum": 1
+				},
+				"matches": {
+					"type": "boolean"
+				}
+			}
+		},
 		"recordDraft": {
 			"type": "object",
 			"required": [

@@ -54,6 +54,7 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E2019 | Command line | The update check did not finish. Check your network connection and try again. Exit code 1. |
 | E2020 | Command line | The installed OpenJoystickDriver app is older than this ojd. Run './Scripts/ojd build install-fast dev', or set OJD_RUN_REPOSITORY_CLI=1 to run this build. Exit code 1. |
 | E2021 | Command line | A repository build of ojd could not hand the command to the installed app. Reinstall OpenJoystickDriver.app and run the command again. Exit code 127. |
+| E2022 | Command line | The state that the record's parser produced from the captured reports differs from the expected state. Read the fields that the command lists. Exit code 1. |
 | E3001 | Remapping | The controller is not connected or not ready for remapping. Reconnect it and try again. Wire value `controller_unavailable`. |
 | E3002 | Remapping | The selected Joy-Cons could not be paired. Refresh the connected controllers and try again. Wire value `joy_con_pair_unavailable`. |
 | E3003 | Remapping | The controller does not report motion data. Choose a controller with motion sensors, or leave motion options off. Wire value `motion_unavailable`. |

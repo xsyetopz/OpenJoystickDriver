@@ -109,7 +109,7 @@ struct RecordDraftCommand: AsyncParsableCommand {
     var reports: [[UInt8]] = []
     _ = try await pollController(duration: duration) {
       for entry in cursor.consume(snapshot: try await read()) where entry.direction == .received {
-        reports.append(entry.hex.split(separator: " ").compactMap { UInt8($0, radix: 16) })
+        reports.append(entry.reportBytes)
       }
       return false
     }

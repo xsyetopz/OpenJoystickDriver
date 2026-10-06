@@ -203,6 +203,13 @@
 			"exitCode": 127
 		},
 		{
+			"code": "E2022",
+			"domain": "cli",
+			"name": "recordTestMismatch",
+			"status": "active",
+			"exitCode": 1
+		},
+		{
 			"code": "E3001",
 			"domain": "remapping",
 			"name": "controllerUnavailable",
