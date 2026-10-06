@@ -1,0 +1,11 @@
+{
+	"$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
+	"operation": "patch",
+	"vendorID": 1406,
+	"productID": 8297,
+	"set": {
+		"bluetoothLE": {
+			"vibrationCharacteristic": "CC483F51-9258-427D-A939-630C31F72B05"
+		}
+	}
+}

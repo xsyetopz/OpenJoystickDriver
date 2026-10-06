@@ -50,6 +50,9 @@
 						"usb": {
 							"$ref": "controller.schema.json#/$defs/usbOverride"
 						},
+						"bluetoothLE": {
+							"$ref": "controller.schema.json#/$defs/bluetoothLE"
+						},
 						"ownership": {
 							"$ref": "controller.schema.json#/$defs/ownership"
 						},

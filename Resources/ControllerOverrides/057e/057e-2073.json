@@ -8,6 +8,9 @@
     "protocol": {
       "family": "nintendo.switch1",
       "quirks": ["switch-2", "gamecube"]
+    },
+    "bluetoothLE": {
+      "vibrationCharacteristic": "3F8FB670-AB25-45BF-B540-38C72834D064"
     }
   }
 }

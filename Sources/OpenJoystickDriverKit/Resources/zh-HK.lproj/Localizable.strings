@@ -1328,6 +1328,7 @@
 "cli.record.show.not_found" = "沒有 %@ 的控制器記錄。「ojd record list」會顯示所有記錄。";
 "cli.record.skipped" = "已略過 %@：%@";
 "cli.record.usb_not_claimed" = "此系列使用原始 USB，USB 延伸功能無法接管此控制器，因為其產品清單由 Apple 簽署。只有在 macOS 允許時，OJD 才能透過直接 USB 存取使用它。";
+"cli.record.usb_only_switch2" = "僅限 USB：如要透過低功耗藍牙連接控制器，請將 bluetoothLE.vibrationCharacteristic 加入此 Switch 2 記錄。";
 "cli.record.validate.abstract" = "檢查控制器記錄，但不安裝。";
 "cli.record.validate.discussion" = "檢查記錄的結構、各欄位之間的一致性，以及與內置目錄的契合度，並說明該控制器是否需要 USB 延伸功能。記錄無效時以結束碼 1 結束。";
 "cli.record.validate.valid" = "%@ 是有效的 %@ 記錄，適用於 %@ (%@)。請用「ojd record install」安裝。";

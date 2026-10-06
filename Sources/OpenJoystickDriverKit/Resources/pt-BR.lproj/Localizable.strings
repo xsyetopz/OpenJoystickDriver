@@ -1328,6 +1328,7 @@
 "cli.record.show.not_found" = "Nenhum registro de controle para %@. «ojd record list» mostra todos os registros.";
 "cli.record.skipped" = "%@ ignorado: %@";
 "cli.record.usb_not_claimed" = "A família usa USB bruto, e a extensão USB não consegue assumir este controle, porque a lista de produtos dela é assinada pela Apple. O OJD só o alcança por acesso USB direto, quando o macOS permite.";
+"cli.record.usb_only_switch2" = "Somente USB: adicione bluetoothLE.vibrationCharacteristic a este registro do Switch 2 para conectar o controle por Bluetooth LE.";
 "cli.record.validate.abstract" = "Verificar um registro de controle sem instalá-lo.";
 "cli.record.validate.discussion" = "Verifica a estrutura do registro, seus campos entre si e sua compatibilidade com o catálogo incluído, e informa se o controle precisa da extensão USB. Termina com código 1 quando o registro é inválido.";
 "cli.record.validate.valid" = "%@ é um registro %@ válido para %@ (%@). Instale-o com «ojd record install».";

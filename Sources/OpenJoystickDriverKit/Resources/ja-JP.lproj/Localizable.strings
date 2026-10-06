@@ -1328,6 +1328,7 @@
 "cli.record.show.not_found" = "%@ のコントローラレコードはありません。「ojd record list」ですべてのレコードを確認できます。";
 "cli.record.skipped" = "%@ をスキップしました: %@";
 "cli.record.usb_not_claimed" = "このファミリは生の USB を使用しますが、製品リストが Apple によって署名されているため、USB 機能拡張はこのコントローラを占有できません。OJD は、macOS が許可する場合にのみ、直接 USB アクセスでこのコントローラに接続します。";
+"cli.record.usb_only_switch2" = "USB のみ。コントローラを Bluetooth LE で接続するには、この Switch 2 レコードに bluetoothLE.vibrationCharacteristic を追加してください。";
 "cli.record.validate.abstract" = "コントローラのレコードをインストールせずに確認します。";
 "cli.record.validate.discussion" = "レコードの構造、フィールド間の整合性、同梱カタログとの適合性を確認し、コントローラに USB 機能拡張が必要かどうかを示します。レコードが無効な場合は終了コード 1 で終了します。";
 "cli.record.validate.valid" = "%@ は有効な %@ レコードです。対象: %@ (%@)。「ojd record install」でインストールできます。";

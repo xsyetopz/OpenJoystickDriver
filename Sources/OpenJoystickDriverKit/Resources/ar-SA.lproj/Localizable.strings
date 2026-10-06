@@ -1328,6 +1328,7 @@
 "cli.record.show.not_found" = "لا يوجد سجل وحدة تحكم لـ %@. يعرض «ojd record list» كل السجلات.";
 "cli.record.skipped" = "تم تخطي %@: %@";
 "cli.record.usb_not_claimed" = "تستخدم العائلة USB الخام، ولا يمكن لامتداد USB الاستحواذ على وحدة التحكم هذه لأن قائمة منتجاته موقّعة من Apple. لا يصل OJD إليها إلا عبر الوصول المباشر إلى USB، عندما يسمح macOS بذلك.";
+"cli.record.usb_only_switch2" = "USB فقط: أضف bluetoothLE.vibrationCharacteristic إلى سجل Switch 2 هذا لتوصيل وحدة التحكم عبر Bluetooth LE.";
 "cli.record.validate.abstract" = "افحص سجل وحدة تحكم دون تثبيته.";
 "cli.record.validate.discussion" = "يفحص شكل السجل، وحقوله بالنسبة لبعضها، وتوافقه مع الكتالوج المضمّن، ويذكر ما إذا كانت وحدة التحكم تحتاج إلى امتداد USB. ينتهي بالرمز 1 عندما يكون السجل غير صالح.";
 "cli.record.validate.valid" = "%@ سجل %@ صالح لـ %@ (%@). ثبّته باستخدام «ojd record install».";

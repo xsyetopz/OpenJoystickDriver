@@ -1328,6 +1328,7 @@
 "cli.record.show.not_found" = "Tidak ada catatan pengontrol untuk %@. “ojd record list” menampilkan setiap catatan.";
 "cli.record.skipped" = "%@ dilewati: %@";
 "cli.record.usb_not_claimed" = "Famili ini menggunakan USB mentah, dan ekstensi USB tidak dapat mengklaim pengontrol ini, karena daftar produknya ditandatangani Apple. OJD hanya menjangkaunya melalui akses USB langsung, jika macOS mengizinkan.";
+"cli.record.usb_only_switch2" = "Hanya USB: tambahkan bluetoothLE.vibrationCharacteristic ke catatan Switch 2 ini untuk menghubungkan pengontrol melalui Bluetooth LE.";
 "cli.record.validate.abstract" = "Periksa catatan pengontrol tanpa menginstalnya.";
 "cli.record.validate.discussion" = "Memeriksa bentuk catatan, kesesuaian antarbidangnya, dan kecocokannya dengan katalog bawaan, serta menyatakan apakah pengontrol memerlukan ekstensi USB. Keluar dengan kode 1 jika catatan tidak valid.";
 "cli.record.validate.valid" = "%@ adalah catatan %@ yang valid untuk %@ (%@). Instal dengan “ojd record install”.";

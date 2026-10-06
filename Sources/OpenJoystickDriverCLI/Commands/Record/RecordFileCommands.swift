@@ -58,6 +58,11 @@ struct RecordValidation: Encodable, Equatable {
       "cli.record.usb_not_claimed"
     )
   }
+
+  /// Why OJD reaches a Switch 2 record without `bluetoothLE` only over USB.
+  static func bluetoothLENote(_ record: ControllerRecord) -> String? {
+    record.isSwitch2WithoutBluetoothLE ? CLILocalized.text("cli.record.usb_only_switch2") : nil
+  }
 }
 
 /// The `FILE|-` operand of `record validate` and `record install`.
@@ -110,6 +115,9 @@ struct RecordValidateCommand: AsyncParsableCommand {
           )
         )
         if let note = RecordValidation.usbNote(validated) { CLIOutput.stdout(note) }
+        if let note = RecordValidation.bluetoothLENote(validated.record) {
+          CLIOutput.stdout(note)
+        }
       }
     }
   }

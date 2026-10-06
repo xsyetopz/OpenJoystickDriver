@@ -1328,6 +1328,7 @@
 "cli.record.show.not_found" = "Aucune fiche de manette pour %@. « ojd record list » affiche toutes les fiches.";
 "cli.record.skipped" = "Ignoré %@ : %@";
 "cli.record.usb_not_claimed" = "La famille utilise l’USB brut, et l’extension USB ne peut pas prendre en charge cette manette, car sa liste de produits est signée par Apple. OJD ne l’atteint que par un accès USB direct, lorsque macOS l’autorise.";
+"cli.record.usb_only_switch2" = "USB uniquement. Ajoutez bluetoothLE.vibrationCharacteristic à cette fiche Switch 2 pour connecter la manette en Bluetooth LE.";
 "cli.record.validate.abstract" = "Vérifier une fiche de manette sans l’installer.";
 "cli.record.validate.discussion" = "Vérifie la forme de la fiche, la cohérence de ses champs entre eux et son adéquation au catalogue intégré, et indique si la manette a besoin de l’extension USB. Se termine avec le code 1 lorsque la fiche est invalide.";
 "cli.record.validate.valid" = "%@ est une fiche %@ valide pour %@ (%@). Installez-la avec « ojd record install ».";

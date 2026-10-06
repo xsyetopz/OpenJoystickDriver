@@ -24,30 +24,45 @@ public struct RemappingJoyConPairSettings: Codable, Equatable, Sendable {
   }
 }
 
-/// The side of a Joy-Con half that a paired session accepts, for every Joy-Con generation.
+/// The side of a Joy-Con half that a paired session accepts, from the `joy-con-left` and
+/// `joy-con-right` quirks of the current controller records.
 public enum JoyConHalf: Equatable, Sendable {
   case left
   case right
 
-  private static let nintendoVendorID: UInt16 = 0x057E
-  /// Left and right product IDs of the Switch Joy-Con and the Switch 2 Joy-Con.
-  private static let generations: [(left: UInt16, right: UInt16)] = [
-    (0x2006, 0x2007), (0x2067, 0x2066),
-  ]
-
   public init?(vendorID: UInt16, productID: UInt16) {
-    guard vendorID == Self.nintendoVendorID else { return nil }
-    if Self.generations.contains(where: { $0.left == productID }) {
+    let quirks =
+      DeviceCatalog.current.withLock { $0 }
+      .record(for: DeviceIdentifier(vendorID: vendorID, productID: productID))?.quirks ?? []
+    if quirks.contains(.joyConLeft) {
       self = .left
-    } else if Self.generations.contains(where: { $0.right == productID }) {
+    } else if quirks.contains(.joyConRight) {
       self = .right
     } else {
       return nil
     }
   }
 
-  /// The left and right product IDs of the generation that owns a left-half product ID.
+  /// A left-half product ID followed by the right halves of its generation: the records of the
+  /// same vendor and the same Switch 2 membership. Empty when no record declares a left half.
   public static func generationProductIDs(forLeft productID: UInt16) -> [UInt16] {
-    generations.first { $0.left == productID }.map { [$0.left, $0.right] } ?? []
+    let catalog = DeviceCatalog.current.withLock { $0 }
+    let halves = catalog.hidProfileIdentifiers.compactMap { identifier in
+      catalog.record(for: identifier).map {
+        (identity: identifier.controllerIdentity, quirks: $0.quirks)
+      }
+    }
+    let lefts = halves.filter {
+      $0.identity.productID == productID && $0.quirks.contains(.joyConLeft)
+    }
+    guard !lefts.isEmpty else { return [] }
+    let rights = halves.filter { right in
+      right.quirks.contains(.joyConRight)
+        && lefts.contains {
+          $0.identity.vendorID == right.identity.vendorID
+            && $0.quirks.contains(.switch2) == right.quirks.contains(.switch2)
+        }
+    }
+    return [productID] + rights.map(\.identity.productID)
   }
 }

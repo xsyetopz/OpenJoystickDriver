@@ -1328,6 +1328,7 @@
 "cli.record.show.not_found" = "ไม่มีระเบียนคอนโทรลเลอร์สำหรับ %@ “ojd record list” แสดงระเบียนทั้งหมด";
 "cli.record.skipped" = "ข้าม %@: %@";
 "cli.record.usb_not_claimed" = "กลุ่มนี้ใช้ USB ดิบ และส่วนขยาย USB ครอบครองคอนโทรลเลอร์นี้ไม่ได้ เพราะรายการผลิตภัณฑ์ลงนามโดย Apple OJD เข้าถึงได้ผ่านการเข้าถึง USB โดยตรงเท่านั้น เมื่อ macOS อนุญาต";
+"cli.record.usb_only_switch2" = "USB เท่านั้น: เพิ่ม bluetoothLE.vibrationCharacteristic ในระเบียน Switch 2 นี้เพื่อเชื่อมต่อคอนโทรลเลอร์ผ่าน Bluetooth LE";
 "cli.record.validate.abstract" = "ตรวจสอบระเบียนคอนโทรลเลอร์โดยไม่ติดตั้ง";
 "cli.record.validate.discussion" = "ตรวจสอบรูปแบบของระเบียน ความสอดคล้องของช่องต่างๆ และความเข้ากันกับแค็ตตาล็อกที่รวมมาให้ และบอกว่าคอนโทรลเลอร์ต้องใช้ส่วนขยาย USB หรือไม่ ออกด้วยรหัส 1 เมื่อระเบียนไม่ถูกต้อง";
 "cli.record.validate.valid" = "%@ เป็นระเบียน %@ ที่ถูกต้องสำหรับ %@ (%@) ติดตั้งด้วย “ojd record install”";

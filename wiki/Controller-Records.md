@@ -13,6 +13,7 @@ This page explains how to add a controller that OpenJoystickDriver does not know
 - [Send Fixed Reports At Startup](#send-fixed-reports-at-startup)
 - [Tune Timings and the Stick Deadzone](#tune-timings-and-the-stick-deadzone)
 - [Select a Model With a Quirk](#select-a-model-with-a-quirk)
+- [Connect a Switch 2 Controller Over Bluetooth LE][toc-2]
 - [Draft a Record From a Connected Controller][toc-1]
 - [Install a Record](#install-a-record)
 - [Check Which Records Apply](#check-which-records-apply)
@@ -20,6 +21,7 @@ This page explains how to add a controller that OpenJoystickDriver does not know
 - [Further Reading](#further-reading)
 
 [toc-1]: #draft-a-record-from-a-connected-controller
+[toc-2]: #connect-a-switch-2-controller-over-bluetooth-le
 
 ## How Records Work
 
@@ -28,7 +30,7 @@ A controller record tells OpenJoystickDriver which protocol family drives one co
 A record has one of two operations:
 
 - `add`: a complete record for a model that has no bundled record.
-- `patch`: new values for the `protocol`, `usb`, `ownership`, `output`, `input`, or `tuning` fields of a bundled record. The other fields stay bundled. A field you set replaces the bundled field whole, except `protocol`: when it names the bundled family, OJD keeps the bundled protocol values you leave out, and the `quirks` you list are added to the bundled quirks. A patch cannot remove a bundled quirk. A `protocol` with a different family replaces the bundled one whole, with its quirks.
+- `patch`: new values for the `protocol`, `usb`, `ownership`, `output`, `input`, `tuning`, or `bluetoothLE` fields of a bundled record. The other fields stay bundled. A field you set replaces the bundled field whole, except `protocol`: when it names the bundled family, OJD keeps the bundled protocol values you leave out, and the `quirks` you list are added to the bundled quirks. A patch cannot remove a bundled quirk. A `protocol` with a different family replaces the bundled one whole, with its quirks.
 
 A record for a model that uses raw USB works only when macOS lets OpenJoystickDriver open the device directly. The Xbox USB part of the [OJD driver extension](Connecting-Controllers.md#xbox-usb-driver-extension) claims only the Xbox models in its signed product list, and your record cannot add a model to that list. `ojd record validate` says when this applies.
 
@@ -164,6 +166,20 @@ Some families drive several models that differ in one detail. A quirk in the rec
 - `receiver` (`sony.dualsense`): a third-party DualSense wireless receiver, which reports with no controller paired. OJD treats the controller as connected only while the packet sequence advances.
 
 A DualShock 4 record takes at most one of `wireless-adapter` and `strikepad`, and a `hid.descriptor` record takes at most one layout quirk. A `sony.dualsense` record with a vendor ID other than Sony's (`054C`) runs as a third-party controller, and its quirks describe that model; a Sony record takes no quirks. Because a `patch` adds quirks and cannot remove them, a patch cannot change a bundled model or layout quirk to another one.
+
+## Connect a Switch 2 Controller Over Bluetooth LE
+
+OpenJoystickDriver connects a Nintendo Switch 2 controller over Bluetooth LE only when its record names the GATT characteristic that carries vibration:
+
+```json
+"bluetoothLE": {
+  "vibrationCharacteristic": "FA19B0FB-CD1F-46A7-84A1-BBB09E00C149"
+}
+```
+
+Write the UUID in uppercase. Only a `nintendo.switch1` record with the `switch-2` quirk takes `bluetoothLE`. The service looks for Switch 2 advertisements with the Nintendo vendor ID (`057E`) only.
+
+A Switch 2 record without `bluetoothLE` connects over USB only, and `ojd record validate` and `ojd record show` say so. The bundled Switch 2 records have the section, and a `patch` that leaves `bluetoothLE` out keeps the bundled value. An `add` for a new Switch 2 model needs its own `bluetoothLE`.
 
 ## Draft a Record From a Connected Controller
 

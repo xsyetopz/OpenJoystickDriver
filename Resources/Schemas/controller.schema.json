@@ -24,6 +24,9 @@
 		"usb": {
 			"$ref": "#/$defs/usbOverride"
 		},
+		"bluetoothLE": {
+			"$ref": "#/$defs/bluetoothLE"
+		},
 		"capabilities": {
 			"$ref": "#/$defs/capabilities"
 		},
@@ -600,6 +603,17 @@
 				}
 			},
 			"minProperties": 1
+		},
+		"bluetoothLE": {
+			"type": "object",
+			"required": ["vibrationCharacteristic"],
+			"additionalProperties": false,
+			"properties": {
+				"vibrationCharacteristic": {
+					"type": "string",
+					"pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$"
+				}
+			}
 		},
 		"tuning": {
 			"type": "object",
@@ -1386,6 +1400,28 @@
 								}
 							]
 						}
+					}
+				}
+			}
+		},
+		{
+			"if": {
+				"required": ["bluetoothLE"]
+			},
+			"then": {
+				"properties": {
+					"protocol": {
+						"properties": {
+							"family": {
+								"const": "nintendo.switch1"
+							},
+							"quirks": {
+								"contains": {
+									"const": "switch-2"
+								}
+							}
+						},
+						"required": ["quirks"]
 					}
 				}
 			}

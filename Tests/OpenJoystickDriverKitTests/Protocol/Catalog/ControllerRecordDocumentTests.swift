@@ -364,6 +364,43 @@ struct ControllerRecordDocumentTests {
     }
   }
 
+  static let vibrationUUID = "FA19B0FB-CD1F-46A7-84A1-BBB09E00C149"
+  static let switch2: [String: any Sendable] = [
+    "family": "nintendo.switch1", "quirks": ["switch-2"],
+  ]
+
+  @Test
+  func decodesTheBluetoothLEVibrationCharacteristicOfASwitch2Controller() throws {
+    let document = try decode(
+      protocol: Self.switch2,
+      extra: ["bluetoothLE": ["vibrationCharacteristic": Self.vibrationUUID]]
+    )
+    #expect(document.bluetoothLE?.vibrationCharacteristic == Self.vibrationUUID)
+    #expect(
+      try DeviceCatalog.makeRuntimeProfile(document).bluetoothLEVibrationCharacteristic
+        == Self.vibrationUUID
+    )
+  }
+
+  @Test(
+    arguments: [
+      (["family": "nintendo.switch1"], ["vibrationCharacteristic": vibrationUUID]),
+      (["family": "sony.dualsense"], ["vibrationCharacteristic": vibrationUUID]),
+      (switch2, ["vibrationCharacteristic": vibrationUUID.lowercased()]),
+      (switch2, ["vibrationCharacteristic": "FA19B0FB"]),
+      (switch2, [:]),
+      (switch2, ["vibrationCharacteristic": vibrationUUID, "service": vibrationUUID]),
+    ] as [([String: any Sendable], [String: any Sendable])]
+  )
+  func rejectsBluetoothLEOutsideSwitch2OrMalformed(
+    protocolInfo: [String: any Sendable],
+    bluetoothLE: [String: any Sendable]
+  ) {
+    #expect(throws: DecodingError.self) {
+      try decode(protocol: protocolInfo, extra: ["bluetoothLE": bluetoothLE])
+    }
+  }
+
   private static func controllerSchema() throws -> [String: Any] {
     let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()

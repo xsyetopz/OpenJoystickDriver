@@ -34,6 +34,13 @@ public struct ControllerRecord: Sendable {
   /// Whether the family reaches the controller through raw USB rather than HID.
   public var usesRawUSB: Bool { profile.usesRawUSB }
 
+  /// Whether the record is a Switch 2 controller without `bluetoothLE`, which OJD reaches only
+  /// over USB, because the Bluetooth LE central needs the vibration characteristic.
+  public var isSwitch2WithoutBluetoothLE: Bool {
+    profile.physicalProtocolID == .nintendoSwitch1 && profile.quirks.contains(.switch2)
+      && profile.bluetoothLEVibrationCharacteristic == nil
+  }
+
   /// `user` when a user file adds or patches the record, `bundled` otherwise.
   public var layer: ControllerRecordLayer { userFile == nil ? .bundled : .user }
 }
@@ -212,10 +219,12 @@ public struct ControllerRecordSet: Sendable {
       else { throw ControllerRecordProblem("vendorID must be 1...65535 and productID 0...65535") }
       let identity = ControllerIdentity(vendorID: vendorID, productID: productID)
       guard let fields = document["set"] as? [String: Any], !fields.isEmpty,
-        Set(fields.keys).isSubset(of: ["protocol", "usb", "ownership", "output", "input", "tuning"])
+        Set(fields.keys).isSubset(of: [
+          "protocol", "usb", "bluetoothLE", "ownership", "output", "input", "tuning",
+        ])
       else {
         throw ControllerRecordProblem(
-          "set must hold protocol, usb, ownership, output, input, or tuning"
+          "set must hold protocol, usb, bluetoothLE, ownership, output, input, or tuning"
         )
       }
       guard let upstream = bundled.records[identity],

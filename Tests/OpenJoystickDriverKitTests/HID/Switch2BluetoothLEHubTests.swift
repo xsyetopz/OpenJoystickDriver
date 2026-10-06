@@ -60,6 +60,20 @@ struct Switch2BluetoothLEHubTests {
   }
 
   @Test
+  func vibrationCharacteristicsComeFromTheBundledRecords() {
+    let expected: [UInt16: String] = [
+      0x2066: "FA19B0FB-CD1F-46A7-84A1-BBB09E00C149",
+      0x2067: "289326CB-A471-485D-A8F4-240C14F18241",
+      0x2069: "CC483F51-9258-427D-A939-630C31F72B05",
+      0x2073: "3F8FB670-AB25-45BF-B540-38C72834D064",
+    ]
+    for (productID, uuid) in expected {
+      #expect(Switch2BluetoothLEProfile.vibrationUUID(productID: productID) == uuid)
+    }
+    #expect(Switch2BluetoothLEProfile.vibrationUUID(productID: 0x2009) == nil)
+  }
+
+  @Test
   func connectionsAreExclusiveBluetoothLEHIDConnectionsReplayedToEachStream() async {
     let (hub, location) = Self.connectedHub()
     #expect(location == Switch2BluetoothLEHub.firstRoutingLocationID)

@@ -1328,6 +1328,7 @@
 "cli.record.show.not_found" = "Nessun record del controller per %@. «ojd record list» mostra ogni record.";
 "cli.record.skipped" = "Ignorato %@: %@";
 "cli.record.usb_not_claimed" = "La famiglia usa USB grezzo e l’estensione USB non può acquisire questo controller, perché il suo elenco di prodotti è firmato da Apple. OJD lo raggiunge solo tramite accesso USB diretto, quando macOS lo consente.";
+"cli.record.usb_only_switch2" = "Solo USB: aggiungi bluetoothLE.vibrationCharacteristic a questo record Switch 2 per collegare il controller tramite Bluetooth LE.";
 "cli.record.validate.abstract" = "Controlla un record del controller senza installarlo.";
 "cli.record.validate.discussion" = "Controlla la forma del record, i suoi campi tra loro e la sua compatibilità con il catalogo incluso, e indica se il controller richiede l’estensione USB. Termina con 1 se il record non è valido.";
 "cli.record.validate.valid" = "%@ è un record %@ valido per %@ (%@). Installalo con «ojd record install».";

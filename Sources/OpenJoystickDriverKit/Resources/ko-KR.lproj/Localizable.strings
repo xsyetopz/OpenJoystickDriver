@@ -1328,6 +1328,7 @@
 "cli.record.show.not_found" = "%@에 대한 컨트롤러 레코드가 없습니다. ‘ojd record list’로 모든 레코드를 확인할 수 있습니다.";
 "cli.record.skipped" = "%@ 건너뜀: %@";
 "cli.record.usb_not_claimed" = "이 제품군은 원시 USB를 사용하며, 제품 목록이 Apple에서 서명되어 있으므로 USB 확장 프로그램이 이 컨트롤러를 점유할 수 없습니다. OJD는 macOS가 허용하는 경우에만 직접 USB 접근으로 이 컨트롤러에 도달합니다.";
+"cli.record.usb_only_switch2" = "USB 전용: 컨트롤러를 Bluetooth LE로 연결하려면 이 Switch 2 레코드에 bluetoothLE.vibrationCharacteristic을 추가하십시오.";
 "cli.record.validate.abstract" = "컨트롤러 레코드를 설치하지 않고 확인합니다.";
 "cli.record.validate.discussion" = "레코드의 형식, 필드 간 일치 여부, 번들 카탈로그와의 적합성을 확인하고 컨트롤러에 USB 확장 프로그램이 필요한지 알려 줍니다. 레코드가 올바르지 않으면 종료 코드 1로 끝납니다.";
 "cli.record.validate.valid" = "%@은(는) 유효한 %@ 레코드입니다(대상: %@, %@). ‘ojd record install’로 설치하세요.";

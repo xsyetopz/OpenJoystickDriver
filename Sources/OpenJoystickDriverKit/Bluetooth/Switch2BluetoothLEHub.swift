@@ -18,14 +18,16 @@ public enum Switch2BluetoothLEProfile {
   public static let commandUUID = "649D4AC9-8EB7-4E6C-AF44-1EA54FE5F005"
   public static let commandReplyUUID = "C765A961-D9D8-4D36-A20A-5315B111836A"
 
-  /// The vibration characteristic of each model, keyed by product ID.
-  public static let vibrationUUIDs: [UInt16: String] = [
-    0x2066: "FA19B0FB-CD1F-46A7-84A1-BBB09E00C149", 0x2067: "289326CB-A471-485D-A8F4-240C14F18241",
-    0x2069: "CC483F51-9258-427D-A939-630C31F72B05", 0x2073: "3F8FB670-AB25-45BF-B540-38C72834D064",
-  ]
-
   static let nintendoCompanyID: UInt16 = 0x0553
   static let nintendoVendorID: UInt16 = 0x057E
+
+  /// The vibration characteristic UUID that the current controller record of a Nintendo product
+  /// declares in its `bluetoothLE` section; nil for a product without one.
+  public static func vibrationUUID(productID: UInt16) -> String? {
+    DeviceCatalog.current.withLock { $0 }
+      .record(for: DeviceIdentifier(vendorID: nintendoVendorID, productID: productID))?
+      .bluetoothLEVibrationCharacteristic
+  }
 
   /// The product ID of a Switch 2 controller advertisement, or nil for any other advertisement.
   /// `manufacturerData` starts with the little-endian company ID, as CoreBluetooth delivers it.
@@ -35,7 +37,7 @@ public enum Switch2BluetoothLEProfile {
     func word(_ offset: Int) -> UInt16 { UInt16(bytes[offset]) | UInt16(bytes[offset + 1]) << 8 }
     guard word(0) == nintendoCompanyID, word(5) == nintendoVendorID else { return nil }
     let productID = word(7)
-    return vibrationUUIDs[productID] == nil ? nil : productID
+    return vibrationUUID(productID: productID) == nil ? nil : productID
   }
 }
 

@@ -117,7 +117,7 @@ extension Switch2BluetoothLECentral: CBPeripheralDelegate {
   func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: (any Error)?) {
     guard let link = links[peripheral.identifier],
       let service = peripheral.services?.first(where: { $0.uuid == serviceUUID }),
-      let vibration = Switch2BluetoothLEProfile.vibrationUUIDs[link.productID]
+      let vibration = Switch2BluetoothLEProfile.vibrationUUID(productID: link.productID)
     else {
       drop(peripheral)
       return
@@ -134,7 +134,7 @@ extension Switch2BluetoothLECentral: CBPeripheralDelegate {
     error: (any Error)?
   ) {
     guard var link = links[peripheral.identifier],
-      let vibrationUUID = Switch2BluetoothLEProfile.vibrationUUIDs[link.productID]
+      let vibrationUUID = Switch2BluetoothLEProfile.vibrationUUID(productID: link.productID)
     else {
       drop(peripheral)
       return

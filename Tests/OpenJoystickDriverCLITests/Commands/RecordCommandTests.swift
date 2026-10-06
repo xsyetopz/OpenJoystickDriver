@@ -141,6 +141,33 @@ struct RecordCommandTests {
   }
 
   @Test
+  func validateAndShowNoteThatASwitch2RecordWithoutBluetoothLEIsUSBOnly() async throws {
+    let directory = Directory()
+    let switch2 = Data(
+      """
+      {"$schema": "\(ControllerRecordSet.overrideSchemaID)", "operation": "add", "record": {
+       "$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/\
+      Resources/Schemas/controller.schema.json",
+       "vendorID": 1406, "productID": 8447,
+       "protocol": {"family": "nintendo.switch1", "quirks": ["switch-2"]}}}
+      """.utf8
+    )
+    try directory.write(switch2, as: "057e-20ff.json")
+    let note = CLILocalized.text("cli.record.usb_only_switch2")
+
+    let validate = await run(["validate", "-"], in: directory, stdin: switch2)
+    let show = await run(["show", "057E:20FF"], in: directory)
+    let bundled = await run(["show", "057E:2066"], in: directory)
+
+    #expect(validate.code == 0, "\(validate.standardError)")
+    #expect(validate.standardOutput.contains(note))
+    #expect(show.code == 0, "\(show.standardError)")
+    #expect(show.standardOutput.contains(note))
+    #expect(bundled.code == 0, "\(bundled.standardError)")
+    #expect(!bundled.standardOutput.contains(note))
+  }
+
+  @Test
   func installNeedsForceToReplaceWithoutATerminalAndHonorsDryRun() async throws {
     let directory = Directory()
     let installed = Data("{}".utf8)

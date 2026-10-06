@@ -8,5 +8,8 @@
       "switch-2",
       "joy-con-left"
     ]
+  },
+  "bluetoothLE": {
+    "vibrationCharacteristic": "289326CB-A471-485D-A8F4-240C14F18241"
   }
 }

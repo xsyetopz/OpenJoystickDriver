@@ -9,6 +9,8 @@ package struct CLI {
   @MainActor
   package func run(arguments: [String]) async -> Never {
     installCLIShutdownHandlers()
+    // Profile validation reads the same bundled and user records as the app.
+    ControllerRecordSet.load().activate()
     let code = await Self.execute(arguments: arguments)
     fflush(stdout)
     exit(code)

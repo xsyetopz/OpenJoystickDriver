@@ -1328,6 +1328,7 @@
 "cli.record.show.not_found" = "%@ के लिए कोई कंट्रोलर रिकॉर्ड नहीं है। “ojd record list” हर रिकॉर्ड दिखाता है।";
 "cli.record.skipped" = "%@ छोड़ा गया: %@";
 "cli.record.usb_not_claimed" = "यह परिवार रॉ USB इस्तेमाल करता है, और USB एक्सटेंशन इस कंट्रोलर को क्लेम नहीं कर सकता, क्योंकि उसकी प्रोडक्ट सूची पर Apple के हस्ताक्षर हैं। OJD उस तक केवल सीधे USB एक्सेस से पहुँचता है, जब macOS अनुमति देता है।";
+"cli.record.usb_only_switch2" = "केवल USB: कंट्रोलर को Bluetooth LE से कनेक्ट करने के लिए इस Switch 2 रिकॉर्ड में bluetoothLE.vibrationCharacteristic जोड़ें।";
 "cli.record.validate.abstract" = "इंस्टॉल किए बिना कंट्रोलर रिकॉर्ड जाँचें।";
 "cli.record.validate.discussion" = "रिकॉर्ड का ढाँचा, उसके फ़ील्ड का आपसी मेल और बंडल किए गए कैटलॉग से उसकी संगति जाँचता है, और बताता है कि कंट्रोलर को USB एक्सटेंशन चाहिए या नहीं। रिकॉर्ड अमान्य होने पर कोड 1 के साथ बाहर निकलता है।";
 "cli.record.validate.valid" = "%@ एक मान्य %@ रिकॉर्ड है, %@ (%@) के लिए। इसे “ojd record install” से इंस्टॉल करें।";

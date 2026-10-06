@@ -1331,6 +1331,7 @@
 "cli.record.show.not_found" = "No controller record for %@. 'ojd record list' shows every record.";
 "cli.record.skipped" = "Skipped %@: %@";
 "cli.record.usb_not_claimed" = "The family uses raw USB, and the USB extension cannot claim this controller, because its product list is signed by Apple. OJD reaches it only through direct USB access, when macOS allows it.";
+"cli.record.usb_only_switch2" = "USB only: add bluetoothLE.vibrationCharacteristic to this Switch 2 record to connect the controller over Bluetooth LE.";
 "cli.record.validate.abstract" = "Check a controller record without installing it.";
 "cli.record.validate.discussion" = "Checks the record's shape, its fields against each other, and its fit with the bundled catalog, and says whether the controller needs the USB extension. Exits 1 when the record is invalid.";
 "cli.record.validate.valid" = "%@ is a valid %@ record for %@ (%@). Install it with 'ojd record install'.";

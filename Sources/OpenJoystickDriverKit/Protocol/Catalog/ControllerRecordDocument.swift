@@ -13,6 +13,8 @@ struct ControllerRecordDocument: Decodable {
   let productID: Int
   let protocolInfo: ProtocolInfo
   let usb: USBOverride?
+  /// Present exactly for Switch 2 controllers that connect over Bluetooth LE.
+  let bluetoothLE: BluetoothLE?
   let capabilities: ControllerCapabilityDelta
   /// Nil leaves a controller macOS supports to macOS.
   let ownership: ControllerOwnership?
@@ -26,8 +28,8 @@ struct ControllerRecordDocument: Decodable {
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: DocumentKey.self)
     try container.rejectUnknown(allowed: [
-      "$schema", "vendorID", "productID", "protocol", "usb", "capabilities", "ownership", "output",
-      "input", "tuning",
+      "$schema", "vendorID", "productID", "protocol", "usb", "bluetoothLE", "capabilities",
+      "ownership", "output", "input", "tuning",
     ])
     let schema = try container.decode(String.self, for: "$schema")
     guard schema == Self.schemaID else {
@@ -41,6 +43,7 @@ struct ControllerRecordDocument: Decodable {
     productID = try container.decode(Int.self, for: "productID")
     protocolInfo = try container.decode(ProtocolInfo.self, for: "protocol")
     usb = try container.decodeOptional(USBOverride.self, for: "usb")
+    bluetoothLE = try container.decodeOptional(BluetoothLE.self, for: "bluetoothLE")
     capabilities =
       try container.decodeOptional(CapabilityDelta.self, for: "capabilities")?.delta ?? .none
     ownership = try container.decodeOptional(String.self, for: "ownership").map { name in
@@ -60,6 +63,7 @@ struct ControllerRecordDocument: Decodable {
     tuning = try container.decodeOptional(Tuning.self, for: "tuning")?.tuning ?? .none
     try validateOwnershipAndOutput(codingPath: decoder.codingPath)
     try validateTuning(codingPath: decoder.codingPath)
+    try validateBluetoothLE(codingPath: decoder.codingPath)
     // The vendor ID selects third-party DualSense mode; its model quirks mean nothing on Sony's.
     guard
       !(protocolInfo.protocolID == .sonyDualSense && vendorID == Int(dualSenseSonyVendorID)

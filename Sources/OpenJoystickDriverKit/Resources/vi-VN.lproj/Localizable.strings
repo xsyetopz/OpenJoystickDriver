@@ -1328,6 +1328,7 @@
 "cli.record.show.not_found" = "Không có bản ghi bộ điều khiển nào cho %@. “ojd record list” hiển thị mọi bản ghi.";
 "cli.record.skipped" = "Đã bỏ qua %@: %@";
 "cli.record.usb_not_claimed" = "Họ thiết bị này dùng USB thô, và phần mở rộng USB không thể chiếm bộ điều khiển này, vì danh sách sản phẩm của nó do Apple ký. OJD chỉ truy cập được nó qua truy cập USB trực tiếp, khi macOS cho phép.";
+"cli.record.usb_only_switch2" = "Chỉ USB: thêm bluetoothLE.vibrationCharacteristic vào bản ghi Switch 2 này để kết nối bộ điều khiển qua Bluetooth LE.";
 "cli.record.validate.abstract" = "Kiểm tra một bản ghi bộ điều khiển mà không cài đặt.";
 "cli.record.validate.discussion" = "Kiểm tra cấu trúc của bản ghi, các trường đối chiếu với nhau, và độ khớp với danh mục đi kèm, đồng thời cho biết bộ điều khiển có cần phần mở rộng USB hay không. Thoát với mã 1 khi bản ghi không hợp lệ.";
 "cli.record.validate.valid" = "%@ là bản ghi %@ hợp lệ cho %@ (%@). Hãy cài đặt bằng “ojd record install”.";

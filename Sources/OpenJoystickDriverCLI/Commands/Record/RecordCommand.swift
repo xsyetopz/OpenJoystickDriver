@@ -139,6 +139,7 @@ struct RecordShowCommand: AsyncParsableCommand {
       case .human:
         let file = record.userFile.map { " (\($0.path))" } ?? ""
         CLIOutput.stdout("\(identity.text)  \(record.family)  \(record.layer.rawValue)\(file)")
+        if let note = RecordValidation.bluetoothLENote(record) { CLIOutput.stdout(note) }
         let width = fields.keys.map(\.count).max() ?? 0
         for (field, layer) in fields.sorted(by: { $0.key < $1.key }) {
           CLIOutput.stdout(

@@ -1328,6 +1328,7 @@
 "cli.record.show.not_found" = "%@ için kontrolcü kaydı yok. “ojd record list” tüm kayıtları gösterir.";
 "cli.record.skipped" = "%@ atlandı: %@";
 "cli.record.usb_not_claimed" = "Bu aile ham USB kullanır ve ürün listesi Apple tarafından imzalandığı için USB uzantısı bu kontrolcüyü sahiplenemez. OJD ona yalnızca macOS izin verdiğinde doğrudan USB erişimiyle ulaşır.";
+"cli.record.usb_only_switch2" = "Yalnızca USB: Kontrolcüyü Bluetooth LE üzerinden bağlamak için bu Switch 2 kaydına bluetoothLE.vibrationCharacteristic ekleyin.";
 "cli.record.validate.abstract" = "Bir kontrolcü kaydını yüklemeden denetler.";
 "cli.record.validate.discussion" = "Kaydın biçimini, alanlarının birbiriyle uyumunu ve birlikte gelen katalogla uyumunu denetler ve kontrolcünün USB uzantısına ihtiyaç duyup duymadığını söyler. Kayıt geçersizse 1 koduyla çıkar.";
 "cli.record.validate.valid" = "%@ geçerli bir %@ kaydıdır; kontrolcü: %@ (%@). “ojd record install” ile yükleyin.";

@@ -268,6 +268,8 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   public let inputLayout: ControllerInputLayout?
   /// The record's timing and deadzone values; nil fields keep the driver defaults.
   public let tuning: ControllerTuning
+  /// The record's Bluetooth LE vibration characteristic UUID; set only for Switch 2 controllers.
+  public var bluetoothLEVibrationCharacteristic: String?
 
   /// Whether this row is reached through raw USB rather than IOHID.
   public var usesRawUSB: Bool {
