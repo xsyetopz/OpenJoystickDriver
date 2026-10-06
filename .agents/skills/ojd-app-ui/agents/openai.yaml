@@ -1,6 +1,0 @@
-interface:
-  display_name: "App UI"
-  short_description: "Change menu-bar and settings flows with explicit states"
-  default_prompt: "Use $ojd-app-ui to change this settings flow through ApplicationServiceGateway with explicit states, localized copy, and accessibility checks."
-policy:
-  allow_implicit_invocation: false
