@@ -28,6 +28,28 @@ class DispatcherTests(unittest.TestCase):
     def test_help_route_succeeds(self) -> None:
         self.assertEqual(self.run_ojd("--help").returncode, 0)
 
+    def test_help_flags_and_help_word_succeed_on_stdout(self) -> None:
+        for argument in ("-h", "--help", "help"):
+            with self.subTest(argument=argument):
+                result = self.run_ojd(argument)
+                self.assertEqual(result.returncode, 0)
+                self.assertTrue(result.stdout.strip())
+                self.assertEqual(result.stderr, "")
+
+    def test_version_reports_the_app_version(self) -> None:
+        result = self.run_ojd("--version")
+        self.assertEqual(result.returncode, 0)
+        self.assertIn(dispatcher.project_version(), result.stdout)
+
+    def test_errors_use_lowercase_prefix_on_stderr(self) -> None:
+        for arguments in (("unknown",), ("build", "nuke"), ("--bogus",)):
+            with self.subTest(arguments=arguments):
+                result = self.run_ojd(*arguments)
+                self.assertEqual(result.returncode, 2)
+                self.assertEqual(result.stdout, "")
+                self.assertIn("error:", result.stderr)
+                self.assertNotIn("ERROR:", result.stderr)
+
     def test_build_help_route_succeeds(self) -> None:
         self.assertEqual(self.run_ojd("build", "help").returncode, 0)
 

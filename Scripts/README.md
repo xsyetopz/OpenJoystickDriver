@@ -4,7 +4,7 @@
 
 The dispatcher owns command parsing; `Scripts/Command/` owns process execution, while `Scripts/Platform/` owns capability models, resolution, and route requirements. The remaining feature groups own narrow implementations.
 
-Use `./Scripts/ojd help` for supported routes. Run the standard tools directly or use the equivalent `just lint`, `just check-fast`, and `just check` recipes:
+Use `./Scripts/ojd --help` for supported routes and `./Scripts/ojd --version` for the project version. This dispatcher is not the product `ojd`; the shipped CLI is the app binary, run as `ojd`. Run the standard tools directly or use the equivalent `just lint`, `just check-fast`, and `just check` recipes:
 
 ```bash
 ./Scripts/ojd check profiles

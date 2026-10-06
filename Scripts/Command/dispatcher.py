@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import argparse
 import os
+import plistlib
 import subprocess
 import sys
 from pathlib import Path
@@ -14,20 +16,22 @@ SCRIPT_DIR = Path(__file__).resolve().parents[1]
 PROJECT_DIR = SCRIPT_DIR.parent
 ENVIRONMENT = SCRIPT_DIR / "Platform/environment.sh"
 SCHEMA_PYTHON = PROJECT_DIR / ".build" / "schema-validator" / "bin" / "python"
+APP_INFO = PROJECT_DIR / "Sources/OpenJoystickDriver/App/Info.plist"
+
+HELP_DESCRIPTION = """OpenJoystickDriver repository dev helper.
+
+This is the repository dispatcher, not the product `ojd`. The shipped CLI is
+the app binary, run as `ojd` once installed.
+
+"""
 
 
 def die(message: str) -> NoReturn:
-    print(f"ERROR: {message}", file=sys.stderr)
+    print(f"error: {message}", file=sys.stderr)
     raise SystemExit(2)
 
 
-def usage() -> None:
-    print("""OpenJoystickDriver dev helper
-
-Usage:
-  ./Scripts/ojd <command> [args]
-
-Commands:
+COMMAND_HELP = """Commands:
   build dev                   Build + sign app bundle into `.build/` (no dext)
   build release               Build + sign app bundle for release (no dext)
   build dext                  Build DriverKit `.dext` and embed into `.build/` app
@@ -99,7 +103,32 @@ Examples:
 
 Notes:
   - Most commands expect the app to be installed to /Applications.
-  - DriverKit upgrades can require a reboot; use build install-fast while streaming.""")
+  - DriverKit upgrades can require a reboot; use build install-fast while streaming.
+"""
+
+
+def project_version() -> str:
+    with APP_INFO.open("rb") as handle:
+        return str(plistlib.load(handle)["CFBundleShortVersionString"])
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="./Scripts/ojd",
+        usage="./Scripts/ojd [-h] [--version] <command> [args]",
+        description=HELP_DESCRIPTION + COMMAND_HELP,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"OpenJoystickDriver repository dispatcher {project_version()}",
+    )
+    return parser
+
+
+def usage() -> None:
+    build_parser().print_help()
 
 
 def package_usage() -> None:
@@ -189,8 +218,10 @@ from .execution import (
 def dispatch(argv: list[str]) -> int:
     command = argv[0] if argv else ""
     rest = argv[1:]
+    if command.startswith("-"):
+        build_parser().parse_args(argv[:1])
     match command:
-        case "" | "-h" | "--help" | "help":
+        case "" | "help":
             usage()
             return 0
         case "build":

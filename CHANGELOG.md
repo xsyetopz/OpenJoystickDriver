@@ -194,6 +194,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 ### Changed
 
 - Consult device-level compatibility availability when exposing a virtual identity, rather than the physical-family overload alone.
+- Give `./Scripts/ojd` an `argparse` `--help` and `--version` (the app version from `Info.plist`), print `error:` instead of `ERROR:`, and state in the help that it is the repository dispatcher, not the product `ojd`.
 - **BREAKING:** Repository automation now uses `Scripts/` and `Tools/`. `./Scripts/ojd` is the only supported script entry point; lowercase aliases were removed.
 - **BREAKING:** OpenJoystickDriver JSON now has one unversioned lowerCamelCase contract. Profiles and remapping libraries reject schema-version tags and legacy snake-case names.
 - Name wire families XID, XUSB, GIP, and HID; rename catalog driver `Xbox360` to `XUSB`. Automatic publishing is family-specific: XUSB uses Xbox 360, GIP uses Xbox Series, matching HID dialects use their first-party identity, and other HID or XID devices use Generic HID.
