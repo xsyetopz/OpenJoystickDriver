@@ -937,7 +937,7 @@
 "cli.option.no_input" = "입력을 요청하지 않으며, 값이 없으면 실패합니다.";
 "cli.option.plain" = "탭으로 구분된 레코드를 stdout에 출력합니다.";
 "cli.option.quiet" = "성공 메시지를 stderr에 출력하지 않습니다.";
-"cli.option.timeout" = "각 서비스 요청을 기다릴 시간(초, 기본값: 0.5) 또는 ‘service’, ‘virtual set’, ‘virtual reset’ 명령이 끝날 때까지 기다릴 시간(초, 기본값: 5)입니다.";
+"cli.option.timeout" = "각 서비스 요청을 기다릴 시간(초, 기본값: %g) 또는 ‘service’, ‘virtual set’, ‘virtual reset’ 명령이 끝날 때까지 기다릴 시간(초, 기본값: %g)입니다.";
 "cli.root.abstract" = "macOS 게임패드 드라이버인 OpenJoystickDriver를 구성하고 점검합니다.";
 "cli.root.discussion" = "여기서 시작하세요:\n  ojd status             서비스, 확장 프로그램, 권한을 확인합니다.\n  ojd diagnose           모든 검사를 실행하고 문제를 보고합니다.\n  ojd controller list    연결된 컨트롤러를 나열합니다.\n\n예시:\n  # 컨트롤러 하나의 입력이 바뀔 때마다 출력\n  ojd controller watch 045E:028E\n  # 연결된 컨트롤러를 JSON으로 나열\n  ojd --json controller list\n\n환경 변수(플래그가 변수보다 우선합니다):\n  OJD_NO_INPUT=1         --no-input과 같습니다.\n  OJD_TIMEOUT=SECONDS    --timeout과 같습니다.\n  OJD_COLOR=WHEN         auto, always(터미널이 아니어도 색상 사용), 또는 never.\n\n셸 자동 완성:\n  ojd --generate-completion-script zsh|bash|fish\n\n종료 코드:\n  0    성공.\n  1    명령이 실패했습니다.\n  64   사용법 오류.\n  69   서비스가 실행 중이 아닙니다. ‘ojd service start’로 시작하세요.\n  77   macOS 권한이 없습니다.\n  127  저장소 빌드가 명령을 설치된 앱에 넘기지 못했습니다.\n  130  중단됨.";
 "cli.help.global_options" = "모든 명령은 전역 옵션도 받습니다. 목록은 ‘ojd --help’에서 확인하세요.";

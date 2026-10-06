@@ -16,7 +16,7 @@ func pollController(duration: Double?, _ body: () async throws -> Bool) async th
 }
 
 func validateDuration(_ duration: Double?) throws {
-  if let duration, !(duration.isFinite && duration > 0) {
+  if let duration, !isPositiveSeconds(duration) {
     throw ValidationError(
       CLILocalized.text(
         "cli.controller.error.duration"

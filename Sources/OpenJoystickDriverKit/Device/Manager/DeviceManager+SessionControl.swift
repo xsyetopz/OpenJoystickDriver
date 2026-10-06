@@ -86,7 +86,7 @@ extension DeviceManager {
     vendorID: UInt16,
     productID: UInt16,
     runtimeIdentifier: String?,
-    timeoutNanoseconds: UInt64 = 3_000_000_000
+    timeoutNanoseconds: UInt64 = UInt64(ServiceTimeouts.bluetoothDisconnect * 1_000_000_000)
   ) async -> WirelessControllerDisconnectResult {
     let model = DeviceIdentifier(vendorID: vendorID, productID: productID)
     guard

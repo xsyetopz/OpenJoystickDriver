@@ -189,11 +189,12 @@ struct BindingOptions: ParsableArguments {
       return nil
     }
     return RemappingAxisTuning(
-      deadzone: deadzone ?? 0.1,
-      gain: gain ?? 1,
+      deadzone: deadzone ?? RemappingAxisTuning.defaultDeadzone,
+      gain: gain ?? RemappingAxisTuning.defaultGain,
       inverted: invert,
       responseCurve: responseCurve ?? .linear,
-      digitalActivationThreshold: digitalThreshold ?? 0.5
+      digitalActivationThreshold: digitalThreshold
+        ?? RemappingAxisTuning.defaultDigitalActivationThreshold
     )
   }
 

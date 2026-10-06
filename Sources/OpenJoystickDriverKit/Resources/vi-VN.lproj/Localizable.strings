@@ -937,7 +937,7 @@
 "cli.option.no_input" = "Không bao giờ nhắc nhập; báo lỗi khi thiếu giá trị.";
 "cli.option.plain" = "In các bản ghi phân tách bằng tab ra stdout.";
 "cli.option.quiet" = "Không in thông báo thành công ra stderr.";
-"cli.option.timeout" = "Số giây chờ cho mỗi yêu cầu dịch vụ (mặc định: 0.5), hoặc để các lệnh “service”, “virtual set” và “virtual reset” hoàn tất (mặc định: 5).";
+"cli.option.timeout" = "Số giây chờ cho mỗi yêu cầu dịch vụ (mặc định: %g), hoặc để các lệnh “service”, “virtual set” và “virtual reset” hoàn tất (mặc định: %g).";
 "cli.root.abstract" = "Cấu hình và kiểm tra OpenJoystickDriver, trình điều khiển tay cầm chơi game cho macOS.";
 "cli.root.discussion" = "Bắt đầu tại đây:\n  ojd status             Kiểm tra dịch vụ, tiện ích mở rộng và quyền.\n  ojd diagnose           Chạy mọi kiểm tra và báo cáo điều gì đang sai.\n  ojd controller list    Liệt kê các tay cầm đang kết nối.\n\nVí dụ:\n  # In đầu vào của một tay cầm khi nó thay đổi\n  ojd controller watch 045E:028E\n  # Liệt kê các tay cầm đang kết nối dưới dạng JSON\n  ojd --json controller list\n\nMôi trường (cờ được ưu tiên hơn biến):\n  OJD_NO_INPUT=1         Giống --no-input.\n  OJD_TIMEOUT=SECONDS    Giống --timeout.\n  OJD_COLOR=WHEN         auto, always (có màu cả ngoài terminal) hoặc never.\n\nHoàn tất lệnh trong shell:\n  ojd --generate-completion-script zsh|bash|fish\n\nMã thoát:\n  0    Thành công.\n  1    Lệnh thất bại.\n  64   Lỗi cách dùng.\n  69   Dịch vụ chưa chạy. Hãy khởi động bằng “ojd service start”.\n  77   Thiếu quyền của macOS.\n  127  Bản build từ kho mã không thể chuyển lệnh cho ứng dụng đã cài.\n  130  Bị ngắt.";
 "cli.help.global_options" = "Mọi lệnh đều nhận các tùy chọn chung; “ojd --help” liệt kê chúng.";

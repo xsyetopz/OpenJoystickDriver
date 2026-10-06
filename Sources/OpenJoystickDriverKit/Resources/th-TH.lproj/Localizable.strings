@@ -937,7 +937,7 @@
 "cli.option.no_input" = "ไม่ถามเด็ดขาด ล้มเหลวเมื่อไม่มีค่า";
 "cli.option.plain" = "พิมพ์เรกคอร์ดที่คั่นด้วยแท็บไปยัง stdout";
 "cli.option.quiet" = "ไม่พิมพ์ข้อความสำเร็จไปยัง stderr";
-"cli.option.timeout" = "จำนวนวินาทีที่รอแต่ละคำขอของบริการ (ค่าเริ่มต้น: 0.5) หรือรอให้คำสั่ง “service”, “virtual set” และ “virtual reset” เสร็จสิ้น (ค่าเริ่มต้น: 5)";
+"cli.option.timeout" = "จำนวนวินาทีที่รอแต่ละคำขอของบริการ (ค่าเริ่มต้น: %g) หรือรอให้คำสั่ง “service”, “virtual set” และ “virtual reset” เสร็จสิ้น (ค่าเริ่มต้น: %g)";
 "cli.root.abstract" = "กำหนดค่าและตรวจสอบ OpenJoystickDriver ไดรเวอร์เกมแพดสำหรับ macOS";
 "cli.root.discussion" = "เริ่มที่นี่:\n  ojd status             ตรวจสอบบริการ ส่วนขยาย และสิทธิ์\n  ojd diagnose           รันการตรวจสอบทั้งหมดและรายงานสิ่งที่ผิดปกติ\n  ojd controller list    แสดงรายการคอนโทรลเลอร์ที่เชื่อมต่อ\n\nตัวอย่าง:\n  # พิมพ์อินพุตของคอนโทรลเลอร์หนึ่งตัวเมื่อมีการเปลี่ยนแปลง\n  ojd controller watch 045E:028E\n  # แสดงรายการคอนโทรลเลอร์ที่เชื่อมต่อเป็น JSON\n  ojd --json controller list\n\nสภาพแวดล้อม (แฟล็กมีผลเหนือตัวแปร):\n  OJD_NO_INPUT=1         เหมือน --no-input\n  OJD_TIMEOUT=SECONDS    เหมือน --timeout\n  OJD_COLOR=WHEN         auto, always (มีสีแม้นอกเทอร์มินัล) หรือ never\n\nการเติมคำสั่งอัตโนมัติของเชลล์:\n  ojd --generate-completion-script zsh|bash|fish\n\nรหัสออก:\n  0    สำเร็จ\n  1    คำสั่งล้มเหลว\n  64   ข้อผิดพลาดการใช้งาน\n  69   บริการไม่ได้ทำงานอยู่ เริ่มด้วย “ojd service start”\n  77   ไม่มีสิทธิ์ของ macOS\n  127  บิลด์จากรีพอสิทอรีส่งคำสั่งต่อไปยังแอปที่ติดตั้งไว้ไม่ได้\n  130  ถูกขัดจังหวะ";
 "cli.help.global_options" = "ทุกคำสั่งรับตัวเลือกส่วนกลางด้วย “ojd --help” จะแสดงรายการตัวเลือกเหล่านั้น";

@@ -937,7 +937,7 @@
 "cli.option.no_input" = "Asla sormaz; bir değer eksikse başarısız olur.";
 "cli.option.plain" = "Sekmeyle ayrılmış kayıtları stdout’a yazdırır.";
 "cli.option.quiet" = "Başarı iletilerini stderr’e yazdırmaz.";
-"cli.option.timeout" = "Her servis isteği için (varsayılan: 0.5) veya “service”, “virtual set” ve “virtual reset” komutlarının bitmesi için (varsayılan: 5) beklenecek saniye.";
+"cli.option.timeout" = "Her servis isteği için (varsayılan: %g) veya “service”, “virtual set” ve “virtual reset” komutlarının bitmesi için (varsayılan: %g) beklenecek saniye.";
 "cli.root.abstract" = "macOS oyun kontrolcüsü sürücüsü OpenJoystickDriver’ı yapılandırın ve inceleyin.";
 "cli.root.discussion" = "Buradan başlayın:\n  ojd status             Servisi, uzantıyı ve izinleri denetler.\n  ojd diagnose           Tüm denetimleri çalıştırır, sorunu bildirir.\n  ojd controller list    Bağlı kontrolcüleri listeler.\n\nÖrnekler:\n  # Bir kontrolcünün girdisini değiştikçe yazdır\n  ojd controller watch 045E:028E\n  # Bağlı kontrolcüleri JSON olarak listele\n  ojd --json controller list\n\nOrtam (seçenek, değişkenin önüne geçer):\n  OJD_NO_INPUT=1         --no-input ile aynı.\n  OJD_TIMEOUT=SECONDS    --timeout ile aynı.\n  OJD_COLOR=WHEN         auto, always (terminal dışında da renkli) veya never.\n\nKabuk tamamlama:\n  ojd --generate-completion-script zsh|bash|fish\n\nÇıkış kodları:\n  0    Başarılı.\n  1    Komut başarısız oldu.\n  64   Kullanım hatası.\n  69   Servis çalışmıyor. “ojd service start” ile başlatın.\n  77   Bir macOS izni eksik.\n  127  Depo derlemesi komutu kurulu uygulamaya aktaramadı.\n  130  Kesintiye uğradı.";
 "cli.help.global_options" = "Her komut genel seçenekleri de kabul eder; “ojd --help” bunları listeler.";

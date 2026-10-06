@@ -940,7 +940,7 @@
 "cli.option.no_input" = "Never prompt; fail when a value is missing.";
 "cli.option.plain" = "Print tab-separated records on stdout.";
 "cli.option.quiet" = "Do not print success messages on stderr.";
-"cli.option.timeout" = "Seconds to wait for each service request (default: 0.5), or for 'service', 'virtual set', and 'virtual reset' commands to finish (default: 5).";
+"cli.option.timeout" = "Seconds to wait for each service request (default: %g), or for 'service', 'virtual set', and 'virtual reset' commands to finish (default: %g).";
 "cli.root.abstract" = "Configure and inspect OpenJoystickDriver, the macOS gamepad driver.";
 "cli.root.discussion" = "Start here:\n  ojd status             Check the service, extension, and permissions.\n  ojd diagnose           Run every check and report what is wrong.\n  ojd controller list    List connected controllers.\n\nExamples:\n  # Print the input of one controller as it changes\n  ojd controller watch 045E:028E\n  # List connected controllers as JSON\n  ojd --json controller list\n\nEnvironment (a flag beats its variable):\n  OJD_NO_INPUT=1         Same as --no-input.\n  OJD_TIMEOUT=SECONDS    Same as --timeout.\n  OJD_COLOR=WHEN         auto, always (color even off a terminal), or never.\n\nShell completion:\n  ojd --generate-completion-script zsh|bash|fish\n\nExit codes:\n  0    Success.\n  1    The command failed.\n  64   Usage error.\n  69   The service is not running. Start it with 'ojd service start'.\n  77   A macOS permission is missing.\n  127  A repository build could not hand the command to the installed app.\n  130  Interrupted.";
 "cli.help.global_options" = "Every command also takes the global options; 'ojd --help' lists them.";

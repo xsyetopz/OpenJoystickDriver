@@ -937,7 +937,7 @@
 "cli.option.no_input" = "कभी प्रॉम्प्ट न करें; कोई मान न होने पर विफल हों।";
 "cli.option.plain" = "stdout पर टैब से अलग किए गए रिकॉर्ड प्रिंट करें।";
 "cli.option.quiet" = "stderr पर सफलता के संदेश प्रिंट न करें।";
-"cli.option.timeout" = "हर सेवा अनुरोध के लिए प्रतीक्षा के सेकंड (डिफ़ॉल्ट: 0.5), या “service”, “virtual set” और “virtual reset” कमांड पूरे होने तक (डिफ़ॉल्ट: 5)।";
+"cli.option.timeout" = "हर सेवा अनुरोध के लिए प्रतीक्षा के सेकंड (डिफ़ॉल्ट: %g), या “service”, “virtual set” और “virtual reset” कमांड पूरे होने तक (डिफ़ॉल्ट: %g)।";
 "cli.root.abstract" = "macOS के गेमपैड ड्राइवर OpenJoystickDriver को कॉन्फ़िगर और जाँचें।";
 "cli.root.discussion" = "यहाँ से शुरू करें:\n  ojd status             सेवा, एक्सटेंशन और अनुमतियाँ जाँचें।\n  ojd diagnose           हर जाँच चलाएँ और गड़बड़ी बताएँ।\n  ojd controller list    जुड़े हुए कंट्रोलर सूचीबद्ध करें।\n\nउदाहरण:\n  # एक कंट्रोलर का इनपुट बदलते ही प्रिंट करें\n  ojd controller watch 045E:028E\n  # जुड़े हुए कंट्रोलर JSON में सूचीबद्ध करें\n  ojd --json controller list\n\nएनवायरनमेंट (फ़्लैग अपने वैरिएबल पर भारी पड़ता है):\n  OJD_NO_INPUT=1         --no-input के समान।\n  OJD_TIMEOUT=SECONDS    --timeout के समान।\n  OJD_COLOR=WHEN         auto, always (टर्मिनल के बाहर भी रंग) या never।\n\nशेल कंप्लीशन:\n  ojd --generate-completion-script zsh|bash|fish\n\nएग्ज़िट कोड:\n  0    सफलता।\n  1    कमांड विफल रही।\n  64   उपयोग त्रुटि।\n  69   सेवा चालू नहीं है। इसे “ojd service start” से शुरू करें।\n  77   macOS की कोई अनुमति नहीं मिली है।\n  127  रिपॉज़िटरी बिल्ड कमांड को इंस्टॉल किए गए ऐप तक नहीं पहुँचा सका।\n  130  बाधित।";
 "cli.help.global_options" = "हर कमांड ग्लोबल विकल्प भी लेती है; “ojd --help” उन्हें सूचीबद्ध करता है।";

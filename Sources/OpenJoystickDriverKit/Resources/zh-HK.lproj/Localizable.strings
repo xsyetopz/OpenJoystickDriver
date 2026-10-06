@@ -937,7 +937,7 @@
 "cli.option.no_input" = "絕不提示輸入；缺少值時失敗。";
 "cli.option.plain" = "在 stdout 上輸出以 Tab 字元分隔的記錄。";
 "cli.option.quiet" = "不在 stderr 上輸出成功訊息。";
-"cli.option.timeout" = "等待每個服務要求的秒數（預設：0.5），或等待「service」「virtual set」「virtual reset」指令完成的秒數（預設：5）。";
+"cli.option.timeout" = "等待每個服務要求的秒數（預設：%g），或等待「service」「virtual set」「virtual reset」指令完成的秒數（預設：%g）。";
 "cli.root.abstract" = "設定並檢查 macOS 遊戲控制器驅動程式 OpenJoystickDriver。";
 "cli.root.discussion" = "從這裡開始：\n  ojd status             檢查服務、延伸功能和權限。\n  ojd diagnose           執行所有檢查並回報問題。\n  ojd controller list    列出已連接的控制器。\n\n範例：\n  # 在輸入變化時列印某個控制器的輸入\n  ojd controller watch 045E:028E\n  # 以 JSON 列出已連接的控制器\n  ojd --json controller list\n\n環境變數（旗標優先於變數）：\n  OJD_NO_INPUT=1         與 --no-input 相同。\n  OJD_TIMEOUT=SECONDS    與 --timeout 相同。\n  OJD_COLOR=WHEN         auto、always（即使不在終端機中也使用顏色）或 never。\n\nShell 自動完成：\n  ojd --generate-completion-script zsh|bash|fish\n\n結束碼：\n  0    成功。\n  1    指令失敗。\n  64   用法錯誤。\n  69   服務未在執行。請用「ojd service start」啟動。\n  77   缺少 macOS 權限。\n  127  儲存庫建置無法將指令交給已安裝的 App。\n  130  已中斷。";
 "cli.help.global_options" = "每個指令也接受全域選項；「ojd --help」會列出它們。";

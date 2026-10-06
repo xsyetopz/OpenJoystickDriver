@@ -937,7 +937,7 @@
 "cli.option.no_input" = "لا تطلب إدخالًا أبدًا؛ وأخفق عند غياب قيمة.";
 "cli.option.plain" = "اطبع سجلات مفصولة بعلامات جدولة على stdout.";
 "cli.option.quiet" = "لا تطبع رسائل النجاح على stderr.";
-"cli.option.timeout" = "عدد الثواني لانتظار كل طلب إلى الخدمة (الافتراضي: 0.5)، أو لانتظار انتهاء الأوامر «service» و«virtual set» و«virtual reset» (الافتراضي: 5).";
+"cli.option.timeout" = "عدد الثواني لانتظار كل طلب إلى الخدمة (الافتراضي: %g)، أو لانتظار انتهاء الأوامر «service» و«virtual set» و«virtual reset» (الافتراضي: %g).";
 "cli.root.abstract" = "اضبط OpenJoystickDriver، مشغّل أذرع اللعب لنظام macOS، وافحصه.";
 "cli.root.discussion" = "ابدأ من هنا:\n  ojd status             فحص الخدمة والامتداد والأذونات.\n  ojd diagnose           تشغيل كل الفحوصات والإبلاغ عن الخلل.\n  ojd controller list    عرض وحدات التحكم المتصلة.\n\nأمثلة:\n  # طباعة مدخلات وحدة تحكم واحدة عند تغيّرها\n  ojd controller watch 045E:028E\n  # عرض وحدات التحكم المتصلة بصيغة JSON\n  ojd --json controller list\n\nالبيئة (الخيار يتغلب على متغيره):\n  OJD_NO_INPUT=1         مثل --no-input.\n  OJD_TIMEOUT=SECONDS    مثل --timeout.\n  OJD_COLOR=WHEN         auto أو always (ألوان حتى خارج الطرفية) أو never.\n\nإكمال الصدفة:\n  ojd --generate-completion-script zsh|bash|fish\n\nرموز الخروج:\n  0    نجاح.\n  1    فشل الأمر.\n  64   خطأ في الاستخدام.\n  69   الخدمة غير قيد التشغيل. ابدأها باستخدام «ojd service start».\n  77   إذن macOS مفقود.\n  127  تعذّر على بناء المستودع تسليم الأمر إلى التطبيق المثبّت.\n  130  تمت المقاطعة.";
 "cli.help.global_options" = "كل أمر يقبل الخيارات العامة أيضًا؛ يعرضها «ojd --help».";

@@ -144,13 +144,13 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
-  /// The service waits up to 5 seconds for Bluetooth; this leaves room for its reply.
-  static let minimumTimeout: Double = 6
-
   func run() async throws {
     try await global.run {
       let selector = controller
-      let timeout = max(Self.minimumTimeout, CLIContext.current.requestTimeout)
+      let timeout = max(
+        ServiceTimeouts.bluetoothDisconnectRequest,
+        CLIContext.current.requestTimeout
+      )
       let (device, result) = try await ServiceConnection.request(timeout: timeout) { client in
         let device = try await selector.resolve(with: client)
         let result = try await client.disconnectWirelessController(

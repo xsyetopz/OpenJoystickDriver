@@ -1,5 +1,6 @@
 import ArgumentParser
 import Foundation
+import OpenJoystickDriverKit
 
 /// The flags every `ojd` command accepts, before or after the subcommand.
 ///
@@ -39,14 +40,15 @@ struct GlobalOptions: ParsableArguments {
   )
   var noInput = false
 
-  @Option(
-    help: ArgumentHelp(
-      CLILocalized.text(
-        "cli.option.timeout"
-      ),
-      valueName: "seconds"
-    )
+  /// Formatted once, because the parser builds this group many times per parse. No locale, so
+  /// the defaults read as `--timeout` parses them ("0.5", not "0,5").
+  private static let timeoutHelp = String(
+    format: CLILocalized.text("cli.option.timeout"),
+    ServiceTimeouts.request,
+    ServiceTimeouts.wait
   )
+
+  @Option(help: ArgumentHelp(timeoutHelp, valueName: "seconds"))
   var timeout: Double?
 
   func validate() throws {
@@ -55,7 +57,7 @@ struct GlobalOptions: ParsableArguments {
         CLILocalized.text("cli.error.json_plain")
       )
     }
-    if let timeout, !Self.isTimeout(timeout) {
+    if let timeout, !isPositiveSeconds(timeout) {
       throw ValidationError(
         CLILocalized.text("cli.error.timeout_value")
       )
@@ -78,8 +80,6 @@ struct GlobalOptions: ParsableArguments {
       timeout: timeout ?? fallback.timeout
     )
   }
-
-  static func isTimeout(_ seconds: Double) -> Bool { seconds.isFinite && seconds > 0 }
 
   /// Runs `body` with these options as the task's `CLIContext`.
   func run(_ body: () async throws -> Void) async throws {
@@ -109,7 +109,7 @@ struct EnvironmentFallback {
     default: throw ValidationError(CLILocalized.text("cli.error.env_no_input"))
     }
     if let value = environment["OJD_TIMEOUT"], !value.isEmpty {
-      guard let seconds = Double(value), GlobalOptions.isTimeout(seconds) else {
+      guard let seconds = Double(value), isPositiveSeconds(seconds) else {
         throw ValidationError(CLILocalized.text("cli.error.env_timeout"))
       }
       timeout = seconds
@@ -131,9 +131,6 @@ struct CLIContext: Sendable {
     case plain
   }
 
-  static let defaultRequestTimeout: Double = 0.5
-  static let defaultWaitTimeout: Double = 5
-
   @TaskLocal
   static var current = Self()
 
@@ -145,7 +142,7 @@ struct CLIContext: Sendable {
   var noInput = false
   var timeout: Double?
 
-  var requestTimeout: Double { timeout ?? Self.defaultRequestTimeout }
+  var requestTimeout: Double { timeout ?? ServiceTimeouts.request }
 
-  var waitTimeout: Double { timeout ?? Self.defaultWaitTimeout }
+  var waitTimeout: Double { timeout ?? ServiceTimeouts.wait }
 }

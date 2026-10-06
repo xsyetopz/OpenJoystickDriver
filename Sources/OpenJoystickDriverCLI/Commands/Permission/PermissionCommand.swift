@@ -124,7 +124,7 @@ struct PermissionRequestCommand: AsyncParsableCommand {
       let requested = ids.compactMap(PermissionID.init)
       let targets = requested.isEmpty ? PermissionID.requestable : requested
       let snapshot = try await ServiceConnection.request(
-        timeout: CLIContext.current.timeout ?? Self.defaultRequestTimeout
+        timeout: CLIContext.current.timeout ?? ServiceTimeouts.permissionRequest
       ) { client in
         guard let first = requested.first else { return try await client.requestRequiredAccess() }
         var latest = try await client.requestAccess(first.accessRequirement)
@@ -145,9 +145,6 @@ struct PermissionRequestCommand: AsyncParsableCommand {
       )
     }
   }
-
-  /// Seconds the service may take, since it waits for macOS to register the request.
-  static let defaultRequestTimeout: Double = 10
 }
 
 extension PermissionID {

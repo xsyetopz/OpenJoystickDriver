@@ -937,7 +937,7 @@
 "cli.option.no_input" = "从不提示输入；缺少值时失败。";
 "cli.option.plain" = "在 stdout 上输出以制表符分隔的记录。";
 "cli.option.quiet" = "不在 stderr 上输出成功消息。";
-"cli.option.timeout" = "等待每个服务请求的秒数（默认：0.5），或等待“service”“virtual set”“virtual reset”命令完成的秒数（默认：5）。";
+"cli.option.timeout" = "等待每个服务请求的秒数（默认：%g），或等待“service”“virtual set”“virtual reset”命令完成的秒数（默认：%g）。";
 "cli.root.abstract" = "配置并检查 macOS 游戏手柄驱动程序 OpenJoystickDriver。";
 "cli.root.discussion" = "从这里开始：\n  ojd status             检查服务、扩展和权限。\n  ojd diagnose           运行所有检查并报告问题。\n  ojd controller list    列出已连接的控制器。\n\n示例：\n  # 在输入变化时打印某个控制器的输入\n  ojd controller watch 045E:028E\n  # 以 JSON 列出已连接的控制器\n  ojd --json controller list\n\n环境变量（标志优先于变量）：\n  OJD_NO_INPUT=1         与 --no-input 相同。\n  OJD_TIMEOUT=SECONDS    与 --timeout 相同。\n  OJD_COLOR=WHEN         auto、always（即使不在终端中也使用颜色）或 never。\n\nShell 补全：\n  ojd --generate-completion-script zsh|bash|fish\n\n退出码：\n  0    成功。\n  1    命令失败。\n  64   用法错误。\n  69   服务未运行。请用“ojd service start”启动。\n  77   缺少 macOS 权限。\n  127  仓库构建无法将命令交给已安装的 App。\n  130  已中断。";
 "cli.help.global_options" = "每个命令也接受全局选项；“ojd --help”会列出它们。";
