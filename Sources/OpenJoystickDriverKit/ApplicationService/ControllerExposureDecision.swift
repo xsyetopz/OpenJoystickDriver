@@ -81,7 +81,7 @@ public struct ControllerExposureDecision: Equatable, Sendable {
         duplicateRisk: duplicateRisk
       )
     case .profile:
-      if ownership == .nativeHIDVisible || ownership == .exclusiveHID {
+      if ownership == .nativeHIDVisible {
         return Self(
           ownership: ownership,
           intent: intent,

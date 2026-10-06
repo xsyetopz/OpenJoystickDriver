@@ -28,12 +28,13 @@ struct ControllerExposureDecisionTests {
   }
 
   @Test
-  func automaticExclusiveHIDUsesPassThrough() {
+  func seizedHIDInputPublishesTheSelectedProfile() {
     let decision = ControllerExposureDecision.decide(
       ownership: .exclusiveHID,
       intent: .profile(.generic)
     )
-    #expect(decision.eligibility == .suppressedNativeHIDPassThrough)
+    #expect(decision.eligibility == .eligible)
+    #expect(decision.duplicateRisk == .none)
   }
 
   @Test
