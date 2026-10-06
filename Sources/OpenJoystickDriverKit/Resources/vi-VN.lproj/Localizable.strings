@@ -1132,9 +1132,11 @@
 "cli.config.show.abstract" = "In từng giá trị tinh chỉnh và lớp đã đặt giá trị đó.";
 "cli.config.show.controller" = "Hiển thị tinh chỉnh hiệu lực của một bộ điều khiển, dạng VVVV:PPPP, thay cho mặc định chung.";
 "cli.config.show.defaults_ignored" = "Đã bỏ qua %@: %@";
-"cli.config.show.discussion" = "Không có --controller, in các khóa mà Defaults.json đặt. Khi có, in bản ghi của bộ điều khiển sau khi Defaults.json, bản ghi của bạn và bản ghi đi kèm được xếp thành lớp. Khóa mà không lớp nào đặt sẽ hiển thị “mặc định của trình điều khiển”.";
+"cli.config.show.discussion" = "Không có --controller, in mọi khóa tinh chỉnh cùng giá trị của chúng trong Defaults.json, và các họ có bản ghi đọc những khóa đó. Khi có, in bản ghi của bộ điều khiển sau khi Defaults.json, bản ghi của bạn và bản ghi đi kèm được xếp thành lớp. Khóa mà không lớp nào đặt sẽ hiển thị “mặc định của trình điều khiển”.";
 "cli.config.show.read_by" = "được đọc bởi: %@";
 "cli.config.show.unread" = "Defaults.json đặt %@, nhưng không có bộ điều khiển nào đang kết nối đọc khóa này. Các họ đọc khóa này: %@.";
+"cli.config.show.unread_skipped_no_controller" = "Không có bộ điều khiển nào được kết nối nên đã bỏ qua bước kiểm tra các khóa Defaults.json mà không bộ điều khiển nào đọc.";
+"cli.config.show.unread_skipped_no_service" = "Dịch vụ không chạy nên đã bỏ qua bước kiểm tra các khóa Defaults.json mà không bộ điều khiển nào đang kết nối đọc.";
 "cli.config.show.unset" = "mặc định của trình điều khiển";
 "cli.setting.abstract" = "Liệt kê, đọc hoặc thay đổi cài đặt ứng dụng OpenJoystickDriver.";
 "cli.setting.bad_value" = "“%@” không phải là giá trị của %@. Hãy dùng true hoặc false.";

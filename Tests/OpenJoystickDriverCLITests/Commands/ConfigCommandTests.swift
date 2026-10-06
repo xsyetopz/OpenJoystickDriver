@@ -226,17 +226,37 @@ struct ConfigCommandTests {
   }
 
   @Test
-  func showDoesNotWarnWithoutAConnectedController() async throws {
+  func showNotesASkippedCheckWithoutAConnectedController() async throws {
     let run = try await runWithService(defaults: #"{"inputLivenessTimeoutMs":900}"#, devices: [])
 
     #expect(run.code == 0, "\(run.standardError)")
-    #expect(run.standardError.isEmpty)
+    #expect(
+      run.standardError.trimmingCharacters(in: .whitespacesAndNewlines)
+        == CLILocalized.text("cli.config.show.unread_skipped_no_controller")
+    )
+    #expect(try values(run)["inputLivenessTimeoutMs"]?["value"] as? Double == 900)
   }
 
   @Test
-  func showDoesNotWarnWithoutARunningService() async throws {
+  func showNotesASkippedCheckWithoutARunningService() async throws {
     let root = Root()
     try root.writeDefaults(#"{"inputLivenessTimeoutMs":900}"#)
+
+    let run = await ServiceConnection.$socketPath.withValue(temporarySocketPath()) {
+      await self.run(["show", "--json"], in: root)
+    }
+
+    #expect(run.code == 0, "\(run.standardError)")
+    #expect(
+      run.standardError.trimmingCharacters(in: .whitespacesAndNewlines)
+        == CLILocalized.text("cli.config.show.unread_skipped_no_service")
+    )
+  }
+
+  @Test
+  func showStaysQuietWhenDefaultsJSONSetsNoKey() async throws {
+    let root = Root()
+    try root.writeDefaults("{}")
 
     let run = await ServiceConnection.$socketPath.withValue(temporarySocketPath()) {
       await self.run(["show", "--json"], in: root)

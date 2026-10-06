@@ -1132,9 +1132,11 @@
 "cli.config.show.abstract" = "Imprime cada valor de ajuste e a camada que o definiu.";
 "cli.config.show.controller" = "Mostra o ajuste efetivo de um controle, como VVVV:PPPP, em vez dos padrões globais.";
 "cli.config.show.defaults_ignored" = "%@ ignorado: %@";
-"cli.config.show.discussion" = "Sem --controller, imprime as chaves que o Defaults.json define. Com ele, imprime o registro do controle depois que Defaults.json, seu registro e o registro incluído são sobrepostos. Uma chave que nenhuma camada define mostra «padrão do driver».";
+"cli.config.show.discussion" = "Sem --controller, imprime todas as chaves de ajuste com o valor delas em Defaults.json e as famílias cujos registros as leem. Com ele, imprime o registro do controle depois que Defaults.json, seu registro e o registro incluído são sobrepostos. Uma chave que nenhuma camada define mostra «padrão do driver».";
 "cli.config.show.read_by" = "lido por: %@";
 "cli.config.show.unread" = "Defaults.json define %@, mas nenhum controle conectado a lê. Famílias que a leem: %@.";
+"cli.config.show.unread_skipped_no_controller" = "Nenhum controle está conectado, então a verificação das chaves do Defaults.json que nenhum controle lê foi ignorada.";
+"cli.config.show.unread_skipped_no_service" = "O serviço não está em execução, então a verificação das chaves do Defaults.json que nenhum controle conectado lê foi ignorada.";
 "cli.config.show.unset" = "padrão do driver";
 "cli.setting.abstract" = "Lista, lê ou altera os ajustes do app OpenJoystickDriver.";
 "cli.setting.bad_value" = "«%@» não é um valor válido para %@. Use true ou false.";

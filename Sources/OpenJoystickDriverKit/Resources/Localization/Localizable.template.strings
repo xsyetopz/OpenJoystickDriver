@@ -1135,9 +1135,11 @@
 "cli.config.show.abstract" = "Print each tuning value and the layer that set it.";
 "cli.config.show.controller" = "Show the effective tuning of one controller, as VVVV:PPPP, instead of the global defaults.";
 "cli.config.show.defaults_ignored" = "Ignored %@: %@";
-"cli.config.show.discussion" = "Without --controller, prints the keys Defaults.json sets. With it, prints the controller's record after Defaults.json, your record, and the bundled record are layered. A key no layer sets shows 'driver default'.";
+"cli.config.show.discussion" = "Without --controller, prints every tuning key with its value from Defaults.json, and the families whose records read it. With it, prints the controller's record after Defaults.json, your record, and the bundled record are layered. A key no layer sets shows 'driver default'.";
 "cli.config.show.read_by" = "read by: %@";
 "cli.config.show.unread" = "Defaults.json sets %@, but no connected controller reads it. Families that read it: %@.";
+"cli.config.show.unread_skipped_no_controller" = "No controller is connected, so the check for Defaults.json keys that no controller reads was skipped.";
+"cli.config.show.unread_skipped_no_service" = "The service is not running, so the check for Defaults.json keys that no connected controller reads was skipped.";
 "cli.config.show.unset" = "driver default";
 "cli.setting.abstract" = "List, read, or change OpenJoystickDriver app settings.";
 "cli.setting.bad_value" = "'%@' is not a value for %@. Use true or false.";

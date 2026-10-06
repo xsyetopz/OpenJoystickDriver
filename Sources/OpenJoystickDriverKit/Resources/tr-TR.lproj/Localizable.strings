@@ -1132,9 +1132,11 @@
 "cli.config.show.abstract" = "Her ayar değerini ve onu belirleyen katmanı yazdırır.";
 "cli.config.show.controller" = "Genel varsayılanlar yerine tek bir kontrolcünün etkin ayarını VVVV:PPPP biçiminde gösterir.";
 "cli.config.show.defaults_ignored" = "%@ yok sayıldı: %@";
-"cli.config.show.discussion" = "--controller olmadan Defaults.json’ın belirlediği anahtarları yazdırır. Seçenekle birlikte, Defaults.json, sizin kaydınız ve pakete dahil kayıt katmanlandıktan sonra kontrolcünün kaydını yazdırır. Hiçbir katmanın belirlemediği anahtar “sürücü varsayılanı” olarak görünür.";
+"cli.config.show.discussion" = "--controller olmadan tüm ayar anahtarlarını Defaults.json’daki değerleriyle ve kayıtları bu anahtarları okuyan aileleri yazdırır. Seçenekle birlikte, Defaults.json, sizin kaydınız ve pakete dahil kayıt katmanlandıktan sonra kontrolcünün kaydını yazdırır. Hiçbir katmanın belirlemediği anahtar “sürücü varsayılanı” olarak görünür.";
 "cli.config.show.read_by" = "okuyanlar: %@";
 "cli.config.show.unread" = "Defaults.json %@ anahtarını ayarlıyor, ancak bağlı hiçbir denetleyici bu anahtarı okumuyor. Bu anahtarı okuyan aileler: %@.";
+"cli.config.show.unread_skipped_no_controller" = "Bağlı denetleyici yok, bu yüzden Defaults.json içinde hiçbir denetleyicinin okumadığı anahtarların denetimi atlandı.";
+"cli.config.show.unread_skipped_no_service" = "Hizmet çalışmıyor, bu yüzden Defaults.json içinde bağlı hiçbir denetleyicinin okumadığı anahtarların denetimi atlandı.";
 "cli.config.show.unset" = "sürücü varsayılanı";
 "cli.setting.abstract" = "OpenJoystickDriver uygulama ayarlarını listeler, okur veya değiştirir.";
 "cli.setting.bad_value" = "“%@”, %@ için geçerli bir değer değil. true veya false kullanın.";

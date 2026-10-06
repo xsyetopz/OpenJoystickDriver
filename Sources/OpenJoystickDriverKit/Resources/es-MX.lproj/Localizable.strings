@@ -1132,9 +1132,11 @@
 "cli.config.show.abstract" = "Imprime cada valor de ajuste y la capa que lo estableció.";
 "cli.config.show.controller" = "Muestra el ajuste efectivo de un control, como VVVV:PPPP, en lugar de los valores predeterminados globales.";
 "cli.config.show.defaults_ignored" = "%@ ignorado: %@";
-"cli.config.show.discussion" = "Sin --controller, imprime las claves que establece Defaults.json. Con él, imprime el registro del control una vez apilados Defaults.json, tu registro y el registro incluido. Una clave que ninguna capa establece muestra «valor predeterminado del driver».";
+"cli.config.show.discussion" = "Sin --controller, imprime todas las claves de ajuste con su valor de Defaults.json y las familias cuyos registros las leen. Con él, imprime el registro del control una vez apilados Defaults.json, tu registro y el registro incluido. Una clave que ninguna capa establece muestra «valor predeterminado del driver».";
 "cli.config.show.read_by" = "lo leen: %@";
 "cli.config.show.unread" = "Defaults.json define %@, pero ningún control conectado la lee. Familias que la leen: %@.";
+"cli.config.show.unread_skipped_no_controller" = "No hay ningún control conectado, así que se omitió la comprobación de las claves de Defaults.json que ningún control lee.";
+"cli.config.show.unread_skipped_no_service" = "El servicio no se está ejecutando, así que se omitió la comprobación de las claves de Defaults.json que ningún control conectado lee.";
 "cli.config.show.unset" = "valor predeterminado del driver";
 "cli.setting.abstract" = "Lista, lee o cambia los ajustes de la app OpenJoystickDriver.";
 "cli.setting.bad_value" = "«%@» no es un valor válido para %@. Usa true o false.";

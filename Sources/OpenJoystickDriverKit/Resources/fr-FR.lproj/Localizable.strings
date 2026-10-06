@@ -1132,9 +1132,11 @@
 "cli.config.show.abstract" = "Affiche chaque valeur de réglage et la couche qui l’a définie.";
 "cli.config.show.controller" = "Affiche le réglage effectif d’une manette, sous la forme VVVV:PPPP, au lieu des valeurs par défaut globales.";
 "cli.config.show.defaults_ignored" = "%@ ignoré : %@";
-"cli.config.show.discussion" = "Sans --controller, affiche les clés que définit Defaults.json. Avec cette option, affiche la fiche de la manette une fois Defaults.json, votre fiche et la fiche fournie superposés. Une clé qu’aucune couche ne définit affiche « valeur par défaut du pilote ».";
+"cli.config.show.discussion" = "Sans --controller, affiche toutes les clés de réglage avec leur valeur dans Defaults.json, ainsi que les familles dont les fiches les lisent. Avec cette option, affiche la fiche de la manette une fois Defaults.json, votre fiche et la fiche fournie superposés. Une clé qu’aucune couche ne définit affiche « valeur par défaut du pilote ».";
 "cli.config.show.read_by" = "lu par : %@";
 "cli.config.show.unread" = "Defaults.json définit %@, mais aucune manette connectée ne la lit. Familles qui la lisent : %@.";
+"cli.config.show.unread_skipped_no_controller" = "Aucune manette n’est connectée ; la vérification des clés de Defaults.json qu’aucune manette ne lit a donc été ignorée.";
+"cli.config.show.unread_skipped_no_service" = "Le service n’est pas en cours d’exécution ; la vérification des clés de Defaults.json qu’aucune manette connectée ne lit a donc été ignorée.";
 "cli.config.show.unset" = "valeur par défaut du pilote";
 "cli.setting.abstract" = "Liste, lit ou modifie les paramètres de l’app OpenJoystickDriver.";
 "cli.setting.bad_value" = "« %@ » n’est pas une valeur valide pour %@. Utilisez true ou false.";

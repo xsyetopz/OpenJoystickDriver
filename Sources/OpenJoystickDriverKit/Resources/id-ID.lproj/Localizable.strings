@@ -1132,9 +1132,11 @@
 "cli.config.show.abstract" = "Cetak setiap nilai penyetelan dan lapisan yang menetapkannya.";
 "cli.config.show.controller" = "Tampilkan penyetelan efektif satu pengontrol, sebagai VVVV:PPPP, bukan default global.";
 "cli.config.show.defaults_ignored" = "%@ diabaikan: %@";
-"cli.config.show.discussion" = "Tanpa --controller, mencetak kunci yang ditetapkan Defaults.json. Dengan opsi itu, mencetak rekaman pengontrol setelah Defaults.json, rekaman Anda, dan rekaman bawaan disusun berlapis. Kunci yang tidak ditetapkan lapisan mana pun menampilkan “default driver”.";
+"cli.config.show.discussion" = "Tanpa --controller, mencetak setiap kunci penyetelan beserta nilainya dari Defaults.json, dan keluarga yang rekamannya membaca kunci tersebut. Dengan opsi itu, mencetak rekaman pengontrol setelah Defaults.json, rekaman Anda, dan rekaman bawaan disusun berlapis. Kunci yang tidak ditetapkan lapisan mana pun menampilkan “default driver”.";
 "cli.config.show.read_by" = "dibaca oleh: %@";
 "cli.config.show.unread" = "Defaults.json mengatur %@, tetapi tidak ada kontroler terhubung yang membacanya. Keluarga yang membacanya: %@.";
+"cli.config.show.unread_skipped_no_controller" = "Tidak ada kontroler yang terhubung, sehingga pemeriksaan kunci Defaults.json yang tidak dibaca kontroler mana pun dilewati.";
+"cli.config.show.unread_skipped_no_service" = "Layanan tidak berjalan, sehingga pemeriksaan kunci Defaults.json yang tidak dibaca kontroler terhubung mana pun dilewati.";
 "cli.config.show.unset" = "default driver";
 "cli.setting.abstract" = "Tampilkan daftar, baca, atau ubah pengaturan app OpenJoystickDriver.";
 "cli.setting.bad_value" = "“%@” bukan nilai untuk %@. Gunakan true atau false.";

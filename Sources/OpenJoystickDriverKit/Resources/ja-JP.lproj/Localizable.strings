@@ -1132,9 +1132,11 @@
 "cli.config.show.abstract" = "各チューニング値と、その値を設定したレイヤを出力します。";
 "cli.config.show.controller" = "グローバルのデフォルトではなく、1 台のコントローラの有効なチューニングを VVVV:PPPP の形式で表示します。";
 "cli.config.show.defaults_ignored" = "%@ を無視しました: %@";
-"cli.config.show.discussion" = "--controller を指定しない場合は、Defaults.json が設定するキーを出力します。指定した場合は、Defaults.json、ユーザのレコード、同梱レコードを重ねたあとのコントローラのレコードを出力します。どのレイヤも設定しないキーには「ドライバのデフォルト」と表示されます。";
+"cli.config.show.discussion" = "--controller を指定しない場合は、すべての調整キーとその Defaults.json の値、およびそのキーを読み取るレコードを持つファミリを出力します。指定した場合は、Defaults.json、ユーザのレコード、同梱レコードを重ねたあとのコントローラのレコードを出力します。どのレイヤも設定しないキーには「ドライバのデフォルト」と表示されます。";
 "cli.config.show.read_by" = "読み取るファミリ: %@";
 "cli.config.show.unread" = "Defaults.json は %@ を設定していますが、接続中のコントローラはこのキーを読み取りません。読み取るファミリ: %@。";
+"cli.config.show.unread_skipped_no_controller" = "コントローラが接続されていないため、どのコントローラも読み取らない Defaults.json のキーの確認をスキップしました。";
+"cli.config.show.unread_skipped_no_service" = "サービスが実行されていないため、接続中のどのコントローラも読み取らない Defaults.json のキーの確認をスキップしました。";
 "cli.config.show.unset" = "ドライバのデフォルト";
 "cli.setting.abstract" = "OpenJoystickDriver のアプリ設定を一覧表示、読み取り、変更します。";
 "cli.setting.bad_value" = "「%@」は %@ の値として使えません。true または false を使用してください。";

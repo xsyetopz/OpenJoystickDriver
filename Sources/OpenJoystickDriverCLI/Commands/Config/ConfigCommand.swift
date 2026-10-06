@@ -58,12 +58,23 @@ struct ConfigShowCommand: AsyncParsableCommand {
         activeProfile: await Self.activeProfile(for: controller)
       )
       if controller == nil {
-        for key in await Self.unreadDefaults(in: set) {
+        switch await Self.unreadDefaults(in: set) {
+        case .ran(let keys):
+          for key in keys {
+            CLIOutput.stderr(
+              CLILocalized.format(
+                "cli.config.show.unread",
+                key.rawValue,
+                Self.families(reading: key, in: set).joined(separator: ", ")
+              )
+            )
+          }
+        case .skipped(let serviceRunning):
           CLIOutput.stderr(
-            CLILocalized.format(
-              "cli.config.show.unread",
-              key.rawValue,
-              Self.families(reading: key, in: set).joined(separator: ", ")
+            CLILocalized.text(
+              serviceRunning
+                ? "cli.config.show.unread_skipped_no_controller"
+                : "cli.config.show.unread_skipped_no_service"
             )
           )
         }
@@ -114,20 +125,28 @@ struct ConfigShowCommand: AsyncParsableCommand {
     Set(set.records.values.filter { $0.reads(key) }.map(\.family)).sorted()
   }
 
-  /// The keys `Defaults.json` sets that no connected controller reads, in key order. Empty when
-  /// the service is not running or no controller is connected, because then no controller can be
-  /// named. The service is asked only when some record ignores a key `Defaults.json` sets.
-  private static func unreadDefaults(in set: ControllerRecordSet) async -> [ControllerTuning.Key] {
+  /// The outcome of checking the keys `Defaults.json` sets against the connected controllers.
+  private enum UnreadCheck {
+    /// The keys no connected controller reads, in key order.
+    case ran([ControllerTuning.Key])
+    /// The check could not name the connected controllers.
+    case skipped(serviceRunning: Bool)
+  }
+
+  /// Checks the keys `Defaults.json` sets against the connected controllers. The service is asked
+  /// only when some record ignores a key `Defaults.json` sets. Without a running service or a
+  /// connected controller the check is skipped, so the caller can say so instead of looking clean.
+  private static func unreadDefaults(in set: ControllerRecordSet) async -> UnreadCheck {
     let keys = ControllerTuning.Key.allCases.filter { key in
       set.defaults?.tuning.setKeys.contains(key) == true
         && set.records.values.contains { !$0.reads(key) }
     }
-    guard !keys.isEmpty,
-      let devices = try? await ServiceConnection.request({ try await $0.getStatus() })
-        .connectedDevices,
-      !devices.isEmpty
-    else { return [] }
-    return unreadKeys(keys, in: set, connected: devices)
+    guard !keys.isEmpty else { return .ran([]) }
+    guard let status = try? await ServiceConnection.request({ try await $0.getStatus() }) else {
+      return .skipped(serviceRunning: false)
+    }
+    guard !status.connectedDevices.isEmpty else { return .skipped(serviceRunning: true) }
+    return .ran(unreadKeys(keys, in: set, connected: status.connectedDevices))
   }
 
   /// The members of `keys` that no record of a `connected` controller reads. A controller without

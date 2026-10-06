@@ -1132,9 +1132,11 @@
 "cli.config.show.abstract" = "打印每个调校值以及设置它的层。";
 "cli.config.show.controller" = "以 VVVV:PPPP 的形式显示单个控制器的有效调校，而不是全局默认值。";
 "cli.config.show.defaults_ignored" = "已忽略 %@：%@";
-"cli.config.show.discussion" = "不带 --controller 时，打印 Defaults.json 设置的键。带该选项时，在 Defaults.json、您的记录和内置记录叠加后，打印该控制器的记录。没有任何层设置的键显示为“驱动程序默认值”。";
+"cli.config.show.discussion" = "不带 --controller 时，打印所有调校键及其在 Defaults.json 中的值，以及记录会读取这些键的系列。带该选项时，在 Defaults.json、您的记录和内置记录叠加后，打印该控制器的记录。没有任何层设置的键显示为“驱动程序默认值”。";
 "cli.config.show.read_by" = "读取它的系列：%@";
 "cli.config.show.unread" = "Defaults.json 设置了 %@，但没有已连接的控制器读取它。读取它的系列：%@。";
+"cli.config.show.unread_skipped_no_controller" = "没有已连接的控制器，因此已跳过对没有控制器读取的 Defaults.json 键的检查。";
+"cli.config.show.unread_skipped_no_service" = "服务未运行，因此已跳过对没有已连接控制器读取的 Defaults.json 键的检查。";
 "cli.config.show.unset" = "驱动程序默认值";
 "cli.setting.abstract" = "列出、读取或更改 OpenJoystickDriver App 设置。";
 "cli.setting.bad_value" = "“%@” 不是 %@ 的有效值。请使用 true 或 false。";

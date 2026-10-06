@@ -1132,9 +1132,11 @@
 "cli.config.show.abstract" = "각 튜닝 값과 그 값을 설정한 레이어를 출력합니다.";
 "cli.config.show.controller" = "전역 기본값 대신 컨트롤러 하나의 유효한 튜닝을 VVVV:PPPP 형식으로 표시합니다.";
 "cli.config.show.defaults_ignored" = "%@ 무시됨: %@";
-"cli.config.show.discussion" = "--controller가 없으면 Defaults.json이 설정하는 키를 출력합니다. 지정하면 Defaults.json, 사용자 레코드, 번들 레코드를 쌓은 뒤의 컨트롤러 레코드를 출력합니다. 어떤 레이어도 설정하지 않는 키는 ‘드라이버 기본값’으로 표시됩니다.";
+"cli.config.show.discussion" = "--controller가 없으면 모든 조정 키와 Defaults.json의 값, 그리고 레코드가 해당 키를 읽는 패밀리를 출력합니다. 지정하면 Defaults.json, 사용자 레코드, 번들 레코드를 쌓은 뒤의 컨트롤러 레코드를 출력합니다. 어떤 레이어도 설정하지 않는 키는 ‘드라이버 기본값’으로 표시됩니다.";
 "cli.config.show.read_by" = "읽는 패밀리: %@";
 "cli.config.show.unread" = "Defaults.json이 %@을(를) 설정했지만 연결된 컨트롤러 중 이 키를 읽는 것이 없습니다. 이 키를 읽는 패밀리: %@.";
+"cli.config.show.unread_skipped_no_controller" = "연결된 컨트롤러가 없어 어떤 컨트롤러도 읽지 않는 Defaults.json 키 확인을 건너뛰었습니다.";
+"cli.config.show.unread_skipped_no_service" = "서비스가 실행 중이 아니어서 연결된 어떤 컨트롤러도 읽지 않는 Defaults.json 키 확인을 건너뛰었습니다.";
 "cli.config.show.unset" = "드라이버 기본값";
 "cli.setting.abstract" = "OpenJoystickDriver 앱 설정을 나열, 읽기 또는 변경합니다.";
 "cli.setting.bad_value" = "‘%@’은(는) %@의 값이 아닙니다. true 또는 false를 사용하십시오.";

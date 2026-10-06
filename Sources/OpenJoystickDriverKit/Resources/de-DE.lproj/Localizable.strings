@@ -1132,9 +1132,11 @@
 "cli.config.show.abstract" = "Gibt jeden Tuning-Wert und die Ebene aus, die ihn festgelegt hat.";
 "cli.config.show.controller" = "Zeigt das effektive Tuning eines Controllers als VVVV:PPPP an, statt der globalen Standardwerte.";
 "cli.config.show.defaults_ignored" = "%@ ignoriert: %@";
-"cli.config.show.discussion" = "Ohne --controller werden die Schlüssel ausgegeben, die Defaults.json festlegt. Mit --controller wird der Eintrag des Controllers ausgegeben, nachdem Defaults.json, dein Eintrag und der mitgelieferte Eintrag in Ebenen zusammengeführt wurden. Ein Schlüssel, den keine Ebene festlegt, zeigt „Treiberstandard“.";
+"cli.config.show.discussion" = "Ohne --controller werden alle Tuning-Schlüssel mit ihrem Wert aus Defaults.json ausgegeben, dazu die Familien, deren Einträge sie lesen. Mit --controller wird der Eintrag des Controllers ausgegeben, nachdem Defaults.json, dein Eintrag und der mitgelieferte Eintrag in Ebenen zusammengeführt wurden. Ein Schlüssel, den keine Ebene festlegt, zeigt „Treiberstandard“.";
 "cli.config.show.read_by" = "gelesen von: %@";
 "cli.config.show.unread" = "Defaults.json legt %@ fest, aber kein verbundener Controller liest diesen Schlüssel. Familien, die ihn lesen: %@.";
+"cli.config.show.unread_skipped_no_controller" = "Es ist kein Controller verbunden, daher wurde die Prüfung auf Schlüssel in Defaults.json, die kein Controller liest, übersprungen.";
+"cli.config.show.unread_skipped_no_service" = "Der Dienst läuft nicht, daher wurde die Prüfung auf Schlüssel in Defaults.json, die kein verbundener Controller liest, übersprungen.";
 "cli.config.show.unset" = "Treiberstandard";
 "cli.setting.abstract" = "Listet die Einstellungen der App OpenJoystickDriver auf, liest oder ändert sie.";
 "cli.setting.bad_value" = "„%@“ ist kein Wert für %@. Verwende true oder false.";

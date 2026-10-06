@@ -1132,9 +1132,11 @@
 "cli.config.show.abstract" = "اطبع كل قيمة ضبط والطبقة التي حدّدتها.";
 "cli.config.show.controller" = "اعرض الضبط الفعلي لوحدة تحكم واحدة، بالصيغة VVVV:PPPP، بدلًا من الإعدادات الافتراضية العامة.";
 "cli.config.show.defaults_ignored" = "تم تجاهل %@: %@";
-"cli.config.show.discussion" = "من دون --controller، يطبع المفاتيح التي يحدّدها Defaults.json. ومعه، يطبع سجل وحدة التحكم بعد ترتيب Defaults.json وسجلك والسجل المرفق في طبقات. المفتاح الذي لا تحدّده أي طبقة يظهر بالقيمة «الإعداد الافتراضي للمشغّل».";
+"cli.config.show.discussion" = "من دون --controller، يطبع كل مفتاح ضبط مع قيمته من Defaults.json، والعائلات التي تقرؤه سجلاتها. ومعه، يطبع سجل وحدة التحكم بعد ترتيب Defaults.json وسجلك والسجل المرفق في طبقات. المفتاح الذي لا تحدّده أي طبقة يظهر بالقيمة «الإعداد الافتراضي للمشغّل».";
 "cli.config.show.read_by" = "يقرؤه: %@";
 "cli.config.show.unread" = "يعيّن Defaults.json القيمة %@، لكن لا توجد وحدة تحكم متصلة تقرؤها. العائلات التي تقرؤها: %@.";
+"cli.config.show.unread_skipped_no_controller" = "لا توجد وحدة تحكم متصلة، لذا تم تخطي التحقق من مفاتيح Defaults.json التي لا تقرؤها أي وحدة تحكم.";
+"cli.config.show.unread_skipped_no_service" = "الخدمة غير قيد التشغيل، لذا تم تخطي التحقق من مفاتيح Defaults.json التي لا تقرؤها أي وحدة تحكم متصلة.";
 "cli.config.show.unset" = "الإعداد الافتراضي للمشغّل";
 "cli.setting.abstract" = "اعرض إعدادات تطبيق OpenJoystickDriver أو اقرأها أو غيّرها.";
 "cli.setting.bad_value" = "«%@» ليست قيمة صالحة لـ %@. استخدم true أو false.";
