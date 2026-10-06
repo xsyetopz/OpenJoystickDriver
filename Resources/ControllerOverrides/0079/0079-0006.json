@@ -1,0 +1,12 @@
+{
+	"$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller-override.schema.json",
+	"operation": "patch",
+	"vendorID": 121,
+	"productID": 6,
+	"set": {
+		"protocol": {
+			"family": "hid.descriptor",
+			"quirks": ["dragonrise"]
+		}
+	}
+}

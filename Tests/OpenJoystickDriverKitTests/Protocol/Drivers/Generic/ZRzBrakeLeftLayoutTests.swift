@@ -18,7 +18,8 @@ struct ZRzBrakeLeftLayoutTests {
     let isGameSir = identifier.controllerIdentity.vendorID == 0x3537
     return HIDDescriptorDriver(
       identifier: identifier,
-      reportDescriptor: isGameSir ? RecordedHIDDescriptors.gameSirG7SE : nil
+      reportDescriptor: isGameSir ? RecordedHIDDescriptors.gameSirG7SE : nil,
+      quirks: isGameSir ? [] : [.zRzBrakeLeft]
     )
   }
 

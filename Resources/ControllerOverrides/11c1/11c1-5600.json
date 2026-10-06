@@ -6,7 +6,8 @@
 		"vendorID": 4545,
 		"productID": 22016,
 		"protocol": {
-			"family": "hid.descriptor"
+			"family": "hid.descriptor",
+			"quirks": ["wr007"]
 		},
 		"tuning": {
 			"stickDeadzone": 0.02

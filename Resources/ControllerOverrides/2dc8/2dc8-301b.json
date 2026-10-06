@@ -6,7 +6,8 @@
 		"vendorID": 11720,
 		"productID": 12315,
 		"protocol": {
-			"family": "hid.descriptor"
+			"family": "hid.descriptor",
+			"quirks": ["z-rz-brake-left"]
 		}
 	}
 }

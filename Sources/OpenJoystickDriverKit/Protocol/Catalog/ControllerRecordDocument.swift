@@ -262,6 +262,8 @@ struct ControllerRecordDocument: Decodable {
           "a Steam Controller row selects at most one hardware generation"
         } else if quirks.contains(.wirelessAdapter) && quirks.contains(.strikePad) {
           "a DualShock 4 row selects at most one model"
+        } else if protocolID == .hidDescriptor && quirks.count > 1 {
+          "a HID descriptor row selects at most one layout"
         } else if quirks.contains(.neptune) && protocolVariant != .wired {
           "the Steam Deck controller is an internal USB device"
         } else if protocolID == .vendorGameSir && protocolVariant == .usb && !quirks.isEmpty {

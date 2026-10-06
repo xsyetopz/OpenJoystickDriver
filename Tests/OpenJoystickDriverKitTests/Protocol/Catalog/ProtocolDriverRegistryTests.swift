@@ -195,6 +195,25 @@ struct ProtocolDriverRegistryTests {
     #expect(try shield(0x7214).outputCapabilities == .none)
   }
 
+  /// The generic HID driver takes its axis layout from the record quirks.
+  @Test(
+    arguments: [
+      (0x11C1, 0x5600, .wr007), (0x2E95, 0x434D, .envision), (0x2DC8, 0x301B, .zRzBrakeLeft),
+      (0x2DC8, 0x301C, .zRzBrakeLeft), (0x0079, 0x0006, .dragonRise), (0x3537, 0x100A, .standard),
+    ] as [(UInt16, UInt16, HIDDescriptorDriver.AxisLayout)]
+  )
+  func recordQuirksSelectTheHIDAxisLayout(
+    vendorID: UInt16,
+    productID: UInt16,
+    layout: HIDDescriptorDriver.AxisLayout
+  ) throws {
+    let driver = try #require(
+      try catalogParser(DeviceIdentifier(vendorID: vendorID, productID: productID))
+        as? HIDDescriptorDriver
+    )
+    #expect(driver.axisLayout == layout)
+  }
+
   @Test
   func everyFamilyAndVariantBuildsThroughTheValidatingFactory() throws {
     var built: Set<String> = []

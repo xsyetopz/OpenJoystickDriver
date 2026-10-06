@@ -140,6 +140,16 @@ public enum ControllerQuirk: String, CaseIterable, Sendable {
   /// 2015 NVIDIA SHIELD controller (SDL `SDL_hidapi_shield.c` V103): plain rumble output report
   /// and a touchpad click; without it the driver runs the input-only 2017 controller.
   case shield2015 = "shield-2015"
+  /// WR007 layout: Z/Rz right stick, Accelerator as LT and Brake as RT, and its button order.
+  case wr007 = "wr007"
+  /// SCUF Envision layout: input only from report 6, buttons 1-10, and Z/Rz swapped with Rx/Ry.
+  case scufEnvision = "scuf-envision"
+  /// WR007's Z/Rz right stick and button order, with Brake as LT and a Home button. Records name
+  /// it for pads whose descriptor is not recorded; a descriptor of this shape selects it anyway.
+  case zRzBrakeLeft = "z-rz-brake-left"
+  /// DragonRise generic USB PCB: Z/Rz right stick and DirectInput button order, where 1-4 are Y,
+  /// B, A, X and 7-8 are digital L2 and R2.
+  case dragonRise = "dragonrise"
 
   /// The protocol driver that declares this quirk.
   public var protocolID: PhysicalProtocolID {
@@ -152,6 +162,7 @@ public enum ControllerQuirk: String, CaseIterable, Sendable {
     case .dpadPressure: .vendorPS3ThirdParty
     case .factoryCalibration, .wirelessAdapter, .strikePad: .sonyDualShock4
     case .shield2015: .vendorNVIDIAShield
+    case .wr007, .scufEnvision, .zRzBrakeLeft, .dragonRise: .hidDescriptor
     }
   }
 }

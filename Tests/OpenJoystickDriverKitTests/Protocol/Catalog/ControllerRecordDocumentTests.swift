@@ -41,6 +41,14 @@ struct ControllerRecordDocumentTests {
     }
   }
 
+  @Test
+  func decodesHIDDescriptorLayoutQuirks() throws {
+    for quirk in [ControllerQuirk.wr007, .scufEnvision, .zRzBrakeLeft, .dragonRise] {
+      let document = try decode(protocol: ["family": "hid.descriptor", "quirks": [quirk.rawValue]])
+      #expect(document.protocolInfo.quirks == [quirk])
+    }
+  }
+
   @Test(arguments: PhysicalProtocolID.allCases.filter(\.storesVariant))
   func decodesEveryStoredVariant(family: PhysicalProtocolID) throws {
     for variant in family.variants {
@@ -109,6 +117,9 @@ struct ControllerRecordDocumentTests {
       ["family": "sony.dualshock4", "quirks": ["wireless-adapter", "strikepad"]],
       ["family": "sony.dualshock4", "quirks": ["shield-2015"]],
       ["family": "vendor.nvidia-shield", "quirks": ["factory-calibration"]],
+      ["family": "hid.descriptor", "quirks": ["wr007", "dragonrise"]],
+      ["family": "hid.descriptor", "quirks": ["wireless-adapter"]],
+      ["family": "sony.dualshock4", "quirks": ["wr007"]],
       ["family": "xbox.gip", "startupPackets": ["xbox.gip/power-on"]],
       ["family": "xbox.gip", "initialization": ["powerOn"]],
       ["family": "xbox.gip", "initialization": [String]()],

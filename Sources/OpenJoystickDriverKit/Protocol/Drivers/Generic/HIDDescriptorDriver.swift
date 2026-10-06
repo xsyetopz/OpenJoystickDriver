@@ -23,17 +23,8 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   private static let usageRecord: UInt32 = 0xB2
   private static let usageACHome: UInt32 = 0x223
   private static let usageACBack: UInt32 = 0x224
-  private static let wr007VendorID: UInt16 = 0x11C1
-  private static let wr007ProductID: UInt16 = 0x5600
-  private static let envisionVendorID: UInt16 = 0x2E95
-  private static let envisionProductID: UInt16 = 0x434D
-  /// 8BitDo Ultimate 2C Wireless over Bluetooth LE (`2DC8:301B`) and its HID receiver
-  /// (`2DC8:301C`), whose descriptors are not recorded; others are detected from the descriptor.
-  private static let zRzBrakeLeftDevices: Set<[UInt16]> = [[0x2DC8, 0x301B], [0x2DC8, 0x301C]]
-  /// DragonRise generic USB PCB (`0079:0006`), sold under several gamepad brands.
-  private static let dragonRiseDevice: [UInt16] = [0x0079, 0x0006]
 
-  private enum AxisLayout {
+  enum AxisLayout {
     case standard
     case wr007
     case envision
@@ -55,41 +46,38 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   private var leftY: Float = 0
   private var rightX: Float = 0
   private var rightY: Float = 0
-  private let axisLayout: AxisLayout
+  let axisLayout: AxisLayout
   /// Whether the descriptor declares a Consumer Record button, which Xbox Series pads send as
   /// Share over Bluetooth.
   private let hasShareButton: Bool
 
   /// Creates a new HIDDescriptorDriver for the given device identifier.
   ///
-  /// `reportDescriptor` is the bound interface's HID report descriptor, when observed. A
-  /// descriptor with Z and Rz, a Brake or Accelerator, and no Rx or Ry selects the Z/Rz layout:
-  /// Z/Rz is the right stick, Brake and Accelerator are the triggers, and buttons follow Linux
-  /// hid-input's `BTN_GAMEPAD` order. The Xbox One S and Series Bluetooth descriptors in Linux
-  /// mode (xpadneo `docs/descriptors/xb1s_linux.md`, `xbxs.md`) and the GameSir G7 SE
+  /// `reportDescriptor` is the bound interface's HID report descriptor, when observed. `quirks`
+  /// are the record's layout quirks; a record selects at most one. Without one, a descriptor with
+  /// Z and Rz, a Brake or Accelerator, and no Rx or Ry selects the Z/Rz layout: Z/Rz is the right
+  /// stick, Brake and Accelerator are the triggers, and buttons follow Linux hid-input's
+  /// `BTN_GAMEPAD` order. The Xbox One S and Series Bluetooth descriptors in Linux mode (xpadneo
+  /// `docs/descriptors/xb1s_linux.md`, `xbxs.md`) and the GameSir G7 SE
   /// (`incompat/gamesir_g7_se.md`) have that shape.
-  public init(identifier: DeviceIdentifier, reportDescriptor: Data? = nil) {
+  public init(
+    identifier: DeviceIdentifier,
+    reportDescriptor: Data? = nil,
+    quirks: [ControllerQuirk] = []
+  ) {
     self.identifier = identifier
     let fields =
       reportDescriptor.flatMap { HIDReportDescriptorParser.parse(descriptor: Array($0))?.fields }
       ?? []
     let usages = Set(fields.map { HIDUsage(usagePage: $0.usagePage, usage: $0.usage) })
     hasShareButton = usages.contains(Self.usage(Self.consumerUsagePage, Self.usageRecord))
-    if identifier.controllerIdentity.vendorID == Self.wr007VendorID
-      && identifier.controllerIdentity.productID == Self.wr007ProductID
-    {
+    if quirks.contains(.wr007) {
       axisLayout = .wr007
-    } else if identifier.controllerIdentity.vendorID == Self.envisionVendorID
-      && identifier.controllerIdentity.productID == Self.envisionProductID
-    {
+    } else if quirks.contains(.scufEnvision) {
       axisLayout = .envision
-    } else if Self.zRzBrakeLeftDevices.contains([
-      identifier.controllerIdentity.vendorID, identifier.controllerIdentity.productID,
-    ]) {
+    } else if quirks.contains(.zRzBrakeLeft) {
       axisLayout = .zRzBrakeLeft
-    } else if [identifier.controllerIdentity.vendorID, identifier.controllerIdentity.productID]
-      == Self.dragonRiseDevice
-    {
+    } else if quirks.contains(.dragonRise) {
       axisLayout = .dragonRise
     } else if Self.hasZRzBrakeLeftShape(usages) {
       axisLayout = .zRzBrakeLeft

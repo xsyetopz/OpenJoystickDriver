@@ -10,7 +10,10 @@ struct SCUFEnvisionParserTests {
   }
 
   private func parser() -> HIDDescriptorDriver {
-    HIDDescriptorDriver(identifier: DeviceIdentifier(vendorID: 0x2E95, productID: 0x434D))
+    HIDDescriptorDriver(
+      identifier: DeviceIdentifier(vendorID: 0x2E95, productID: 0x434D),
+      quirks: [.scufEnvision]
+    )
   }
 
   @Test

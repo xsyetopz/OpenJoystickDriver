@@ -155,8 +155,12 @@ Some families drive several models that differ in one detail. A quirk in the rec
 - `wireless-adapter` (`sony.dualshock4`): the Sony DUALSHOCK 4 USB wireless adapter. Output waits until a controller connects to the adapter.
 - `strikepad` (`sony.dualshock4`): a controller whose motion reports half the acceleration in the opposite direction on all axes.
 - `shield-2015` (`vendor.nvidia-shield`): the 2015 SHIELD controller, which has rumble. Without it, the driver treats the controller as the 2017 model, which is input-only on macOS.
+- `wr007` (`hid.descriptor`): Z and Rz are the right stick, Accelerator is LT and Brake is RT, with the WR007 button order.
+- `scuf-envision` (`hid.descriptor`): input comes only from report 6, buttons 1 to 10 are mapped, and Z and Rz swap with Rx and Ry.
+- `z-rz-brake-left` (`hid.descriptor`): Z and Rz are the right stick, Brake is LT and Accelerator is RT, and button 13 is Home. A controller without a record gets this layout when its report descriptor has Z, Rz, a Brake or Accelerator, and no Rx or Ry.
+- `dragonrise` (`hid.descriptor`): Z and Rz are the right stick, buttons follow the DirectInput order (1 to 4 are Y, B, A, X), and buttons 7 and 8 are digital L2 and R2.
 
-A DualShock 4 record takes at most one of `wireless-adapter` and `strikepad`. Because a `patch` adds quirks and cannot remove them, a patch cannot change a bundled model quirk to the other one.
+A DualShock 4 record takes at most one of `wireless-adapter` and `strikepad`, and a `hid.descriptor` record takes at most one layout quirk. Because a `patch` adds quirks and cannot remove them, a patch cannot change a bundled model or layout quirk to another one.
 
 ## Draft a Record From a Connected Controller
 

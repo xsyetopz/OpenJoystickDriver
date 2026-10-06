@@ -362,7 +362,11 @@
 						"properties": {
 							"quirks": {
 								"items": {
-									"enum": ["factory-calibration", "wireless-adapter", "strikepad"]
+									"enum": [
+										"factory-calibration",
+										"wireless-adapter",
+										"strikepad"
+									]
 								},
 								"not": {
 									"allOf": [
@@ -407,6 +411,32 @@
 					"if": {
 						"properties": {
 							"family": {
+								"const": "hid.descriptor"
+							}
+						},
+						"required": ["family"]
+					},
+					"then": {
+						"properties": {
+							"quirks": {
+								"items": {
+									"enum": [
+										"wr007",
+										"scuf-envision",
+										"z-rz-brake-left",
+										"dragonrise"
+									]
+								},
+								"maxItems": 1,
+								"type": "array"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"family": {
 								"not": {
 									"enum": [
 										"xbox.gip",
@@ -415,7 +445,8 @@
 										"vendor.gamesir",
 										"vendor.ps3-third-party",
 										"sony.dualshock4",
-										"vendor.nvidia-shield"
+										"vendor.nvidia-shield",
+										"hid.descriptor"
 									]
 								}
 							}

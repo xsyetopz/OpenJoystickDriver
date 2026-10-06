@@ -5,6 +5,6 @@
 		"$schema": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/controller.schema.json",
 		"vendorID": 11925,
 		"productID": 17229,
-		"protocol": { "family": "hid.descriptor" }
+		"protocol": { "family": "hid.descriptor", "quirks": ["scuf-envision"] }
 	}
 }

@@ -160,7 +160,11 @@ public final class ProtocolDriverRegistry: Sendable {
     switch protocolID {
     case .hidDescriptor:
       return .success(
-        HIDDescriptorDriver(identifier: identifier, reportDescriptor: reportDescriptor)
+        HIDDescriptorDriver(
+          identifier: identifier,
+          reportDescriptor: reportDescriptor,
+          quirks: record.quirks
+        )
       )
     case .hidReportLayout:
       // Only a record carries a layout; a family profile has nothing to decode with.

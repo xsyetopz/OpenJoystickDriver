@@ -3,6 +3,9 @@
   "vendorID": 121,
   "productID": 6,
   "protocol": {
-    "family": "hid.descriptor"
+    "family": "hid.descriptor",
+    "quirks": [
+      "dragonrise"
+    ]
   }
 }
