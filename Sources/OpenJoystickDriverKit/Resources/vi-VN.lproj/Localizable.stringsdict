@@ -87,15 +87,15 @@
 			<key>zero</key>
 			<string>Không phát hiện thiết bị nào</string>
 			<key>one</key>
-			<string>Đã phát hiện %d</string>
+			<string>Đã phát hiện %d thiết bị</string>
 			<key>two</key>
-			<string>Đã phát hiện %d</string>
+			<string>Đã phát hiện %d thiết bị</string>
 			<key>few</key>
-			<string>Đã phát hiện %d</string>
+			<string>Đã phát hiện %d thiết bị</string>
 			<key>many</key>
-			<string>Đã phát hiện %d</string>
+			<string>Đã phát hiện %d thiết bị</string>
 			<key>other</key>
-			<string>Đã phát hiện %d</string>
+			<string>Đã phát hiện %d thiết bị</string>
 		</dict>
 	</dict>
 	<key>debug.outputDevices</key>
