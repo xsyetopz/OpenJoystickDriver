@@ -609,12 +609,10 @@ def load_overrides(
             raise CatalogError(f"{path}: invalid override shape")
         if operation == "add":
             record = document["record"]
-            temporary = path.with_name(".record-validation.json")
-            temporary.write_text(json.dumps(record))
-            try:
+            with tempfile.TemporaryDirectory() as directory:
+                temporary = pathlib.Path(directory) / path.name
+                temporary.write_text(json.dumps(record))
                 validator.validate_record(temporary, enforce_path=False)
-            finally:
-                temporary.unlink(missing_ok=True)
             key = record_key(record)
             payload = record
         else:
