@@ -115,7 +115,7 @@ struct Switch2BluetoothLEHubTests {
 
     // A stale reply is dropped when the next command is written.
     hub.receivedReply(peripheralID: Self.peripheral, bytes: [0xEE])
-    #expect(try await session.write(endpoint: 0x02, data: [0x02, 0x91, 0x01], timeout: 500) == 3)
+    #expect(try session.write(endpoint: 0x02, data: [0x02, 0x91, 0x01], timeout: 500) == 3)
     #expect(writer.commands == [[0x02, 0x91, 0x01]])
     let reply = [UInt8](0..<0x50)
     hub.receivedReply(peripheralID: Self.peripheral, bytes: reply)
@@ -123,32 +123,32 @@ struct Switch2BluetoothLEHubTests {
     #expect(try await session.read(endpoint: 0x82, length: 16, timeout: 500) == Array(reply[64...]))
 
     // A reply that fills the read exactly is followed by an empty read, which ends the reply.
-    _ = try await session.write(endpoint: 0x02, data: [0x03], timeout: 500)
+    _ = try session.write(endpoint: 0x02, data: [0x03], timeout: 500)
     hub.receivedReply(peripheralID: Self.peripheral, bytes: [UInt8](repeating: 7, count: 64))
     #expect(try await session.read(endpoint: 0x82, length: 64, timeout: 500).count == 64)
     #expect(try await session.read(endpoint: 0x82, length: 16, timeout: 500).isEmpty)
 
     // A reply that arrives while the read waits resumes it.
-    _ = try await session.write(endpoint: 0x02, data: [0x04], timeout: 500)
+    _ = try session.write(endpoint: 0x02, data: [0x04], timeout: 500)
     let waiting = Task { try await session.read(endpoint: 0x82, length: 64, timeout: 2_000) }
     try await Task.sleep(nanoseconds: 20_000_000)
     hub.receivedReply(peripheralID: Self.peripheral, bytes: [1, 2, 3])
     #expect(try await waiting.value == [1, 2, 3])
 
-    _ = try await session.write(endpoint: 0x02, data: [0x05], timeout: 500)
+    _ = try session.write(endpoint: 0x02, data: [0x05], timeout: 500)
     await #expect(throws: USBTransportError.timeout) {
       try await session.read(endpoint: 0x82, length: 64, timeout: 10)
     }
     writer.accepts = false
-    await #expect(throws: USBTransportError.inputOutput) {
-      try await session.write(endpoint: 0x02, data: [0], timeout: 500)
+    #expect(throws: USBTransportError.inputOutput) {
+      try session.write(endpoint: 0x02, data: [0], timeout: 500)
     }
     await #expect(throws: USBTransportError.notSupported) {
       try await session.read(endpoint: 0x02, length: 64, timeout: 500)
     }
     hub.linkDisconnected(peripheralID: Self.peripheral)
-    await #expect(throws: USBTransportError.disconnected) {
-      try await session.write(endpoint: 0x02, data: [0], timeout: 500)
+    #expect(throws: USBTransportError.disconnected) {
+      try session.write(endpoint: 0x02, data: [0], timeout: 500)
     }
   }
 
@@ -171,7 +171,7 @@ struct Switch2BluetoothLEHubTests {
     let report = driver.encoded(.setRumble(full, duration: .milliseconds(100))).onlyReport
 
     #expect(hub.setOutputReport(locationID: location, report: report).succeeded)
-    let sent = try? #require(writer.vibrations.first)
+    let sent = writer.vibrations.first
     #expect(sent?.count == 42 && sent?.first == 0)
     #expect(sent.map { Array($0[1...]) } == Array(report.bytes[1..<42]))
     #expect(hub.setOutputReport(locationID: location &+ 1, report: report).succeeded == false)

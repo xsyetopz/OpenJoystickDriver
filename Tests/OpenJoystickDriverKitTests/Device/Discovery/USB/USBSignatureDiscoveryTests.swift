@@ -33,7 +33,7 @@ struct USBSignatureDiscoveryTests {
     let description = try #require(await manager.connectedDeviceDescriptions().first)
     #expect(description.protocolBinding.rawValue == "xbox.gip:usb")
     #expect((description.inputEndpoint, description.outputEndpoint) == (0x81, 0x01))
-    let result = try #require(description.bindingResult)
+    let result = description.bindingResult
     #expect((result.outcome, result.rule) == (.bound, .interfaceSignature))
     #expect(result.catalogRecordID == nil)
     await manager.stop()

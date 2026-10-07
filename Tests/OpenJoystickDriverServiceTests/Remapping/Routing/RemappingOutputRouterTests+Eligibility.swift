@@ -42,7 +42,7 @@ extension RemappingOutputRouterTests {
     #expect(await harness.router.status(for: device)?.eligibility == .postEventAccessNotAuthorized)
 
     harness.foreground.set("com.example.Other")
-    try await harness.router.setOutputSuppressed(true)
+    harness.router.setOutputSuppressed(true)
     try await harness.router.refreshEligibility()
     #expect(await harness.router.status(for: device)?.eligibility == .outputSuppressed)
     #expect(harness.recorder.snapshot() == [.system(.keyDown(.space)), .system(.keyUp(.space))])
@@ -140,10 +140,10 @@ extension RemappingOutputRouterTests {
     let virtualOutput = remappingRouterDevice(2, vendorID: 1356, productID: 2508)
     try await harness.router.dispatchCausally(changes: [.press(.faceSouth)], from: device)
     try await harness.router.dispatchCausally(changes: [.press(.faceEast)], from: virtualOutput)
-    try await harness.router.setOutputSuppressed(true)
-    try await harness.router.setOutputSuppressed(true)
+    harness.router.setOutputSuppressed(true)
+    harness.router.setOutputSuppressed(true)
     try await harness.router.dispatchCausally(changes: [.press(.faceEast)], from: device)
-    try await harness.router.setOutputSuppressed(false)
+    harness.router.setOutputSuppressed(false)
 
     #expect(
       harness.recorder.snapshot() == [

@@ -329,9 +329,9 @@ extension RemappingOutputRouterTests {
     let virtualOutput = remappingRouterDevice(2, vendorID: 1356, productID: 2508)
     try await harness.router.dispatchCausally(changes: [.press(.faceEast)], from: virtualOutput)
 
-    try await harness.router.setOutputSuppressed(true)
+    harness.router.setOutputSuppressed(true)
     try await harness.router.dispatchCausally(changes: [.press(.faceSouth)], from: virtualOutput)
-    try await harness.router.setOutputSuppressed(true)
+    harness.router.setOutputSuppressed(true)
 
     #expect(
       harness.recorder.snapshot() == [
@@ -343,7 +343,7 @@ extension RemappingOutputRouterTests {
       await harness.router.status(for: virtualOutput)?.eligibility == .virtualOutputSuppressed
     )
 
-    try await harness.router.setOutputSuppressed(false)
+    harness.router.setOutputSuppressed(false)
     #expect(await harness.router.status(for: virtualOutput)?.eligibility == .eligible)
     try await harness.router.dispatchCausally(changes: [.press(.faceEast)], from: virtualOutput)
     #expect(

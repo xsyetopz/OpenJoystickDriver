@@ -40,7 +40,7 @@ struct NominalMotionConversionTests {
       write(value, into: &bytes, at: 13 + index * 2)
     }
     let events = try DualShock4Driver().parseReport(Data(bytes))
-    let sample = try #require((events?.motion ?? []).first)
+    let sample = try #require(events?.motion.first)
     #expect(sample.calibrationSource == .nominalDeviceScale)
     // Sensor (1, -1, 0) °/s and (1, 0, -1) g land canonical as (x, -z, y).
     #expect(isClose(sample.angularVelocity, radiansPerSecond(1, 0, -1)))

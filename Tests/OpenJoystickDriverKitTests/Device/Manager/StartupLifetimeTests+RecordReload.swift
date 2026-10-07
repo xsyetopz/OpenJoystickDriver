@@ -38,8 +38,10 @@ extension StartupLifetimeTests {
     try await Self.waitForHIDInitializations(of: manager)
 
     #expect(Set(await manager.pipelines.keys) == [changedID, otherID])
-    #expect(try #require(await manager.pipelines[changedID]) !== changedPipeline)
-    #expect(try #require(await manager.pipelines[otherID]) === otherPipeline)
+    let reloadedChanged = try #require(await manager.pipelines[changedID])
+    let reloadedOther = try #require(await manager.pipelines[otherID])
+    #expect(reloadedChanged !== changedPipeline)
+    #expect(reloadedOther === otherPipeline)
     #expect(await manager.deviceInfos[changedID]?.hidConnectionID == changed.connectionID)
     await manager.stop()
   }

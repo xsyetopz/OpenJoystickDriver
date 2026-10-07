@@ -32,14 +32,14 @@ struct SonySensorSamplesTests {
     report.replaceSubrange(33..<41, with: [5, 0x34, 0xA2, 0x12, 0x87, 1, 0, 0])
     let parser = DualSenseDriver()
     let events = try parser.parseReport(Data(report))
-    let motion = try #require((events?.motion ?? []).first)
+    let motion = try #require(events?.motion.first)
     // Raw gyro (-32768, 32767, -1) and accel (1, -256, 256) at nominal scale, as (x, -z, y).
     #expect(isClose(motion.angularVelocity, radiansPerSecond(-2048, 1.0 / 16, 32_767.0 / 16)))
     #expect(
       isClose(motion.acceleration, metresPerSecondSquared(1.0 / 8192, -256.0 / 8192, -256.0 / 8192))
     )
     #expect(motion.timestamp.rawCounter == 0xFFFF_FFFE)
-    let touch = try #require((events?.touchFrames ?? []).first)
+    let touch = try #require(events?.touchFrames.first)
     // Raw (564, 298) and (1, 0) on 1920x1080: round(raw * 65535 / (span - 1)). The tracking IDs
     // 5 and 7 are not slots; slots follow wire order.
     #expect(
@@ -71,7 +71,7 @@ struct SonySensorSamplesTests {
     let touches = (events?.touchFrames ?? [])
     // Raw X 0, 100, 200 on a 1920-wide pad keep wire order and share the report's time.
     #expect(touches.map { $0.contacts[0].x } == [0, 3415, 6830])
-    let motion = try #require((events?.motion ?? []).first)
+    let motion = try #require(events?.motion.first)
     #expect(touches.allSatisfy { $0.timestamp == motion.timestamp.monotonic })
     #expect(isClose(motion.angularVelocity, radiansPerSecond(-2.0 / 16, 0, 0)))
     report[33] = 4
