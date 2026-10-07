@@ -36,11 +36,32 @@ public struct VirtualFeedFrame: Codable, Equatable, Sendable {
     case dpad
     case axes
     case holdMilliseconds
+    case apiVersion
+    case kind
   }
+
+  /// The `kind` of a frame that carries the envelope, as the endpoint's frames do.
+  public static let kind = "Frame"
 
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let container = try decoder.container(keyedBy: CodingKeys.self)
+    if let apiVersion = try container.decodeIfPresent(String.self, forKey: .apiVersion),
+      apiVersion != OpenJoystickDriverAPI.version
+    {
+      throw DecodingError.dataCorruptedError(
+        forKey: .apiVersion,
+        in: container,
+        debugDescription: "Unsupported apiVersion: \(apiVersion)"
+      )
+    }
+    if let kind = try container.decodeIfPresent(String.self, forKey: .kind), kind != Self.kind {
+      throw DecodingError.dataCorruptedError(
+        forKey: .kind,
+        in: container,
+        debugDescription: "Unexpected kind: \(kind)"
+      )
+    }
     buttons = try Self.decodeUnique(RemappingButton.self, forKey: .buttons, in: container)
     dpad = try Self.decodeUnique(RemappingDpadDirection.self, forKey: .dpad, in: container)
     let named = try container.decodeIfPresent([String: Double].self, forKey: .axes) ?? [:]
@@ -102,6 +123,45 @@ public struct VirtualFeedFrame: Codable, Equatable, Sendable {
         result[entry.key] = flipsY ? -entry.value : entry.value
       }
     )
+  }
+}
+
+/// One rumble command that the host sent to a virtual gamepad, as a line of `ojd virtual feed` and
+/// of the endpoint's feed: the `RumbleCommand` object without its `apiVersion` and `kind`.
+///
+/// JSON: `{"type":"setRumble","intensities":{...},"durationMilliseconds":450}` or
+/// `{"type":"stopRumble"}`. A `setRumble` that lasts until the next rumble command has no
+/// `durationMilliseconds`. Virtual gamepads receive only rumble commands.
+public struct RumbleCommandLine: Encodable, Equatable, Sendable {
+  public static let kind = "RumbleCommand"
+
+  public enum Kind: String, Encodable, Sendable {
+    case setRumble
+    case stopRumble
+  }
+
+  public let type: Kind
+  public let intensities: RumbleIntensities?
+  /// Nil for a `setRumble` that is held until the next rumble command, and for `stopRumble`.
+  public let durationMilliseconds: Int?
+
+  /// Nil for a command that is not a rumble command.
+  public init?(_ command: ControllerOutputCommand) {
+    switch command {
+    case .setRumble(let intensities, let duration):
+      type = .setRumble
+      self.intensities = intensities
+      if case .milliseconds(let milliseconds) = duration {
+        durationMilliseconds = milliseconds
+      } else {
+        durationMilliseconds = nil
+      }
+    case .stopRumble:
+      type = .stopRumble
+      intensities = nil
+      durationMilliseconds = nil
+    default: return nil
+    }
   }
 }
 

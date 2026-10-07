@@ -79,7 +79,7 @@ struct PermissionCommandTests {
 
     #expect(jsonRun.code == 0, "\(jsonRun.standardError)")
     #expect(jsonRun.standardError.isEmpty)
-    let entries = try #require(try jsonRun.json()["permissions"] as? [[String: String]])
+    let entries = try #require(try jsonRun.json()["items"] as? [[String: String]])
     #expect(entries.map { $0["id"] } == ["input-monitoring", "accessibility", "driver-extension"])
     #expect(entries.map { $0["state"] } == ["denied", "granted", "unknown"])
     #expect(entries[0]["name"] == "Input Monitoring")
@@ -96,7 +96,7 @@ struct PermissionCommandTests {
 
     #expect(result.code == 0)
     #expect(!result.standardError.isEmpty)
-    let entries = try #require(try result.json()["permissions"] as? [[String: String]])
+    let entries = try #require(try result.json()["items"] as? [[String: String]])
     #expect(entries.map { $0["state"] } == ["denied", "granted", "unknown"])
   }
 

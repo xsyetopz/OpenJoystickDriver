@@ -2,7 +2,7 @@
 
 This page explains how to add a controller that OpenJoystickDriver does not know, or change how it drives a known one, with your own controller record.
 
-> **Note:** This page applies to OpenJoystickDriver 0.5.0-beta.5 and later. Version 0.5.0-beta.4 and earlier do not have all of the features on this page.
+> **Note:** This page applies to OpenJoystickDriver 0.6.0-alpha.1 and later. Version 0.5.0-beta.4 and earlier do not have all of the features on this page.
 
 ## Contents
 
@@ -254,7 +254,7 @@ Each file that OJD reads declares its schema version in `$schema`, and the versi
 - At 1.0 the schemas are promoted to `v1`. A `v1` schema takes only additive changes: a new optional field, or a new value where a reader can ignore it.
 - A change that is not additive needs a new version, `v2`. OJD names the IDs it accepts, so a file for an unknown version is rejected rather than half read.
 
-The `--json` output schema has its own release check: within a major version it only gains keys and values. See [Using the command line](Command-Line.md).
+The `--json` output schema has its own release check: within a major version, or a minor version before 1.0, it only gains keys and values. See [Using the command line](Command-Line.md).
 
 ## Further Reading
 

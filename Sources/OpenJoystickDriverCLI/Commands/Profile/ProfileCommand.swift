@@ -61,7 +61,7 @@ struct ProfileListCommand: AsyncParsableCommand {
     abstract: CLILocalized.text("cli.profile.list.abstract")
   )
 
-  /// The `--json` result. `issues` names each saved profile the service could not load.
+  /// The listed profiles. `issues` names each saved profile the service could not load.
   struct Result: Encodable, Equatable {
     struct Issue: Encodable, Equatable {
       let id: String
@@ -86,7 +86,8 @@ struct ProfileListCommand: AsyncParsableCommand {
         }
       )
       switch CLIContext.current.format {
-      case .json: try CLIOutput.json(result)
+      case .json:
+        try CLIOutput.json(CLIList(items: result.profiles))
       case .plain: CLIOutput.plain(result.profiles.map(\.row))
       case .human:
         if result.profiles.isEmpty {
@@ -98,22 +99,20 @@ struct ProfileListCommand: AsyncParsableCommand {
         }
         for profile in result.profiles { CLIOutput.stdout(profile.line) }
       }
-      if CLIContext.current.format != .json {
-        for issue in result.issues {
-          CLIOutput.stderr(
-            CLILocalized.format(
-              "cli.profile.list.issue",
-              issue.message
-            )
+      for issue in result.issues {
+        CLIOutput.stderr(
+          CLILocalized.format(
+            "cli.profile.list.issue",
+            issue.message
           )
-        }
-        if !result.issues.isEmpty {
-          CLIOutput.stderr(
-            CLILocalized.text(
-              "cli.profile.list.recover_hint"
-            )
+        )
+      }
+      if !result.issues.isEmpty {
+        CLIOutput.stderr(
+          CLILocalized.text(
+            "cli.profile.list.recover_hint"
           )
-        }
+        )
       }
     }
   }
@@ -392,7 +391,7 @@ struct ProfileDeleteCommand: AsyncParsableCommand {
         }
       }
       switch CLIContext.current.format {
-      case .json: try CLIOutput.json(Result(deleted: summary, dryRun: dryRun))
+      case .json: try CLIOutput.json(CLIStatus(details: Result(deleted: summary, dryRun: dryRun)))
       case .plain: CLIOutput.plain([summary.row])
       case .human:
         if dryRun {

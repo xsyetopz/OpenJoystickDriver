@@ -1507,7 +1507,7 @@
 "cli.profile.vanished" = "Dịch vụ không giữ cấu hình. Hãy kiểm tra bằng “ojd profile list”.";
 "error.E1001" = "Điểm cuối đã tắt. Hãy bật bằng “ojd access enable” và kết nối lại.";
 "error.E1002" = "Dịch vụ đã từ chối máy khách này. Nó không có quyền cho các phạm vi đã yêu cầu, hoặc chữ ký hay bằng chứng của nó không hợp lệ. Hãy chạy “ojd access list”, cấp quyền cho máy khách bằng “ojd access grant”, và kết nối lại.";
-"error.E1003" = "Dịch vụ không hỗ trợ phiên bản giao thức trong hello. Hãy gửi một trong các phiên bản trong supported, và kết nối lại.";
+"error.E1003" = "Dịch vụ không hỗ trợ apiVersion trong Hello. Hãy gửi một trong các phiên bản trong details.supportedAPIVersions, và kết nối lại.";
 "error.E1004" = "Dịch vụ không thể chấp nhận dòng này. Nó không hợp lệ, hoặc đến sai thời điểm. Hãy gửi hello trước, rồi một yêu cầu, và kiểm tra từng dòng theo lược đồ điểm cuối.";
 "error.E1005" = "Điểm cuối đã phục vụ 8 kết nối cho mỗi phương thức truyền (socket và WebSocket mỗi loại). Hãy đóng một kết nối bạn không cần, và kết nối lại.";
 "error.E1006" = "Quyền của máy khách này đã bị gỡ khi nó đang kết nối. Hãy cấp lại bằng “ojd access grant”, và kết nối lại.";

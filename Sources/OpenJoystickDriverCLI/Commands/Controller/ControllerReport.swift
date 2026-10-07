@@ -1,9 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
 
-/// The `ojd controller list --json` result.
-struct ControllerListReport: Encodable, Equatable { let controllers: [ControllerSummary] }
-
 /// The `ojd controller show --json` result.
 struct ControllerShowReport: Encodable, Equatable {
   struct Ownership: Encodable, Equatable {
@@ -131,6 +128,11 @@ struct ControllerShowReport: Encodable, Equatable {
   }
 
   let controller: Detail
+
+  /// Encodes the fields of `controller` at the top level; the document is the controller.
+  func encode(to encoder: any Encoder) throws {
+    try controller.encode(to: encoder)
+  }
 
   /// `record` is the effective record of the device's model, if there is one.
   /// `sharesModel` is whether another connected controller has the same VID:PID, so the output

@@ -81,36 +81,36 @@ public enum PhysicalProtocolVariantID: String, Sendable {
 
 /// Machine-readable reasons a device is not bound.
 public enum ProtocolBindingReason: String, CaseIterable, Codable, Error, Sendable {
-  case noProtocolMatch = "no-protocol-match"
-  case ambiguousProtocolMatch = "ambiguous-protocol-match"
-  case interfaceContractMismatch = "interface-contract-mismatch"
-  case descriptorContractMismatch = "descriptor-contract-mismatch"
-  case packetContractMismatch = "packet-contract-mismatch"
-  case unsupportedProtocolVariant = "unsupported-protocol-variant"
-  case unsupportedTransportVariant = "unsupported-transport-variant"
-  case requiredInitializationFailed = "required-initialization-failed"
-  case catalogConflict = "catalog-conflict"
-  case virtualProfileUnavailable = "virtual-profile-unavailable"
+  case noProtocolMatch
+  case ambiguousProtocolMatch
+  case interfaceContractMismatch
+  case descriptorContractMismatch
+  case packetContractMismatch
+  case unsupportedProtocolVariant
+  case unsupportedTransportVariant
+  case requiredInitializationFailed
+  case catalogConflict
+  case virtualProfileUnavailable
 }
 
 /// Observed facts that supported a binding.
 public enum ProtocolPredicate: String, Codable, Sendable {
-  case catalogIdentity = "catalog-identity"
-  case catalogAccessPath = "catalog-access-path"
-  case hostTransport = "host-transport"
-  case interfaceSignature = "interface-signature"
+  case catalogIdentity
+  case catalogAccessPath
+  case hostTransport
+  case interfaceSignature
   /// The device descriptor's class triple on an unconfigured device with no interface facts.
-  case deviceClassSignature = "device-class-signature"
-  case interruptEndpointPair = "interrupt-endpoint-pair"
-  case hidDescriptorContract = "hid-descriptor-contract"
+  case deviceClassSignature
+  case interruptEndpointPair
+  case hidDescriptorContract
 }
 
 /// One selected protocol for one physical device.
 public struct ProtocolBinding: Equatable, Sendable {
   public enum Rule: String, Codable, Sendable {
-    case catalogRecord = "catalog-record"
-    case interfaceSignature = "interface-signature"
-    case hidDescriptor = "hid-descriptor"
+    case catalogRecord
+    case interfaceSignature
+    case hidDescriptor
   }
 
   public let protocolID: PhysicalProtocolID

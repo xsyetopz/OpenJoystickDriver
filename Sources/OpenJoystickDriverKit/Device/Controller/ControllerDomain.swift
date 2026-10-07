@@ -106,13 +106,13 @@ public enum ControlID: String, CaseIterable, Codable, Sendable {
 public enum HatDirection: String, Codable, Sendable {
   case neutral
   case north
-  case northEast = "north-east"
+  case northEast
   case east
-  case southEast = "south-east"
+  case southEast
   case south
-  case southWest = "south-west"
+  case southWest
   case west
-  case northWest = "north-west"
+  case northWest
 }
 
 /// Battery charge at the precision the device reports, never a synthesized midpoint.
@@ -156,7 +156,7 @@ public struct ControllerConnectionState: Codable, Equatable, Sendable {
     case discharging
     case charging
     case full
-    case notChargeable = "not-chargeable"
+    case notChargeable
   }
 
   /// Power facts a driver decodes from its own reports.

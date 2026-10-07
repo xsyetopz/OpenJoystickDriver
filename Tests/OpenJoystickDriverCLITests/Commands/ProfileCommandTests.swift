@@ -24,7 +24,7 @@ struct ProfileCommandTests {
     let plain = await service.run(["profile", "list", "--plain"])
 
     #expect(json.code == 0, "\(json.standardError)")
-    let profiles = try #require(try json.json()["profiles"] as? [[String: Any]])
+    let profiles = try #require(try json.json()["items"] as? [[String: Any]])
     #expect(profiles.map { $0["name"] as? String } == ["Racing", "Menus"])
     #expect(profiles.map { $0["active"] as? Bool } == [true, false])
     #expect(profiles.first?["controller"] as? String == "045E:028E")
@@ -115,7 +115,7 @@ struct ProfileCommandTests {
     #expect(refused.code == 64)
     #expect(refused.standardError.contains("--force"))
     #expect(dryRun.code == 0, "\(dryRun.standardError)")
-    #expect(try dryRun.json()["dryRun"] as? Bool == true)
+    #expect(try dryRun.details()["dryRun"] as? Bool == true)
     #expect(deleted.code == 0, "\(deleted.standardError)")
     #expect(library.stored.isEmpty)
   }
@@ -142,9 +142,9 @@ struct ProfileCommandTests {
     #expect(refused.code == 64)
     #expect(refused.standardError.contains("--force"))
     #expect(dryRun.code == 0, "\(dryRun.standardError)")
-    #expect(try dryRun.json()["dryRun"] as? Bool == true)
+    #expect(try dryRun.details()["dryRun"] as? Bool == true)
     #expect(recovered.code == 0, "\(recovered.standardError)")
-    let ids = try #require(try recovered.json()["recovered"] as? [[String: Any]]).map {
+    let ids = try #require(try recovered.details()["recovered"] as? [[String: Any]]).map {
       $0["id"] as? String
     }
     #expect(ids == [damaged.id.uuidString, selections.id.uuidString])

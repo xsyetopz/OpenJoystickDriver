@@ -1507,7 +1507,7 @@
 "cli.profile.vanished" = "Servis profili saklamadı. “ojd profile list” ile kontrol edin.";
 "error.E1001" = "Uç nokta kapalı. “ojd access enable” komutuyla açın ve yeniden bağlanın.";
 "error.E1002" = "Servis bu istemciyi reddetti. İstemcinin istediği kapsamlar için izni yok ya da imzası veya kanıtı geçerli değil. “ojd access list” komutunu çalıştırın, istemciye “ojd access grant” komutuyla izin verin ve yeniden bağlanın.";
-"error.E1003" = "Servis hello içindeki protokol sürümünü desteklemiyor. supported içindeki sürümlerden birini gönderin ve yeniden bağlanın.";
+"error.E1003" = "Servis Hello içindeki apiVersion değerini desteklemiyor. details.supportedAPIVersions içindeki sürümlerden birini gönderin ve yeniden bağlanın.";
 "error.E1004" = "Servis satırı kabul edemedi. Satır geçersiz ya da yanlış zamanda geldi. Önce hello, sonra bir istek gönderin ve her satırı uç noktanın şemasıyla denetleyin.";
 "error.E1005" = "Uç nokta, taşıma başına (soket ve WebSocket ayrı ayrı) zaten 8 bağlantıya hizmet ediyor. İhtiyacınız olmayan bir bağlantıyı kapatın ve yeniden bağlanın.";
 "error.E1006" = "Bu istemcinin izni, bağlıyken kaldırıldı. Ona “ojd access grant” komutuyla yeniden izin verin ve yeniden bağlanın.";

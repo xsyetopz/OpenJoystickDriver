@@ -1507,7 +1507,7 @@
 "cli.profile.vanished" = "El servicio no ha conservado el perfil. Compruébalo con «ojd profile list».";
 "error.E1001" = "El punto de conexión está desactivado. Actívalo con «ojd access enable» y vuelve a conectar.";
 "error.E1002" = "El servicio rechazó a este cliente. No tiene permiso para los ámbitos que pidió, o su firma o prueba no es válida. Ejecuta «ojd access list», concede permiso al cliente con «ojd access grant» y vuelve a conectar.";
-"error.E1003" = "El servicio no admite la versión del protocolo de hello. Envía una de las versiones de supported y vuelve a conectar.";
+"error.E1003" = "El servicio no admite la apiVersion de Hello. Envía una de las versiones de details.supportedAPIVersions y vuelve a conectar.";
 "error.E1004" = "El servicio no pudo aceptar la línea. No es válida o llegó en un momento incorrecto. Envía primero hello, después una solicitud, y comprueba cada línea con el esquema del punto de conexión.";
 "error.E1005" = "El punto de conexión ya atiende 8 conexiones por transporte (socket y WebSocket cada uno). Cierra una conexión que no necesites y vuelve a conectar.";
 "error.E1006" = "El permiso de este cliente se quitó mientras estaba conectado. Concédeselo de nuevo con «ojd access grant» y vuelve a conectar.";

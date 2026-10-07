@@ -243,7 +243,7 @@ struct ControllerWatchCommand: AsyncParsableCommand {
       )
     }
     switch CLIContext.current.format {
-    case .json: try CLIOutput.json(press)
+    case .json: try CLIOutput.json(press, kind: "ControlPress")
     case .plain: CLIOutput.plain([[press.control] + (press.direction.map { [$0] } ?? [])])
     case .human: CLIOutput.stdout(press.direction.map { "\(press.control) \($0)" } ?? press.control)
     }
@@ -366,10 +366,27 @@ struct ControllerCaptureCommand: AsyncParsableCommand {
     }
   }
 
+  /// One `USBPacket` line of `--json`: the log entry with its time as an RFC 3339 `captureTime`.
+  private struct JSONPacket: Encodable {
+    let direction: PacketLogDirection
+    let hex: String
+    let length: Int
+    let captureTime: String
+
+    init(_ entry: PacketLogEntry) {
+      direction = entry.direction
+      hex = entry.hex
+      length = entry.length
+      let formatter = ISO8601DateFormatter()
+      formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+      captureTime = formatter.string(from: Date(timeIntervalSince1970: entry.timestamp))
+    }
+  }
+
   private static func print(_ entry: PacketLogEntry) throws {
     let time = String(format: "%.3f", entry.timestamp)
     switch CLIContext.current.format {
-    case .json: try CLIOutput.jsonLine(entry)
+    case .json: try CLIOutput.jsonLine(JSONPacket(entry))
     case .plain:
       CLIOutput.plain([[time, entry.direction.rawValue, String(entry.length), entry.hex]])
     case .human:

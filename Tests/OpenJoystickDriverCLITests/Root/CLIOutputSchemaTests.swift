@@ -5,6 +5,15 @@ import Testing
 /// `CLIRun.run` checks every `--json` document the tests print against these definitions.
 struct CLIOutputSchemaTests {
   @Test
+  func jsonLineWithoutEnvelopePrintsOneSortedLineWithoutAPIVersionOrKind() async throws {
+    let capture = CLIOutputCapture()
+    try await CLIOutput.$capture.withValue(capture) {
+      try CLIOutput.jsonLineWithoutEnvelope(["type": "added", "object": "pad"])
+    }
+    #expect(capture.standardOutput == "{\"object\":\"pad\",\"type\":\"added\"}\n")
+  }
+
+  @Test
   func everyCommandHasOneOutputDefinition() {
     let names = CLICommandTree.leafPaths.filter { !CLIOutputSchema.exempt.contains($0) }
       .map(CLIOutputSchema.definitionName(for:))
@@ -29,19 +38,39 @@ struct CLIOutputSchemaTests {
   }
 
   @Test
+  func outputKindsComeFromTheKindTable() {
+    #expect(CLI.outputKind(of: ControllerShowCommand.self) == "Controller")
+    #expect(CLI.outputKind(of: AccessWebEnableCommand.self) == "WebAccess")
+    #expect(CLI.outputKind(of: StatusCommand.self) == "SystemStatus")
+    #expect(CLI.outputKind(of: BindingClearCommand.self) == "Status")
+    #expect(CLI.outputKind(of: ProfileCreateCommand.self) == "Profile")
+  }
+
+  @Test
   func outputThatBreaksItsDefinitionIsReported() throws {
-    #expect(try CLIOutputSchema.issues(in: #"{"path":"/tmp/a"}"#, path: ["log", "path"]).isEmpty)
-    #expect(try !CLIOutputSchema.issues(in: #"{"path":1}"#, path: ["log", "path"]).isEmpty)
-    #expect(try !CLIOutputSchema.issues(in: #"{}"#, path: ["log", "path"]).isEmpty)
+    let envelope = #""apiVersion":"openjoystickdriver.io/v1beta1","kind":"LogLocation""#
+    let logPath = ["log", "path"]
+    #expect(try CLIOutputSchema.issues(in: #"{\#(envelope),"path":"/a"}"#, path: logPath).isEmpty)
+    #expect(try !CLIOutputSchema.issues(in: #"{\#(envelope),"path":1}"#, path: logPath).isEmpty)
+    #expect(try !CLIOutputSchema.issues(in: #"{\#(envelope)}"#, path: logPath).isEmpty)
+    #expect(try !CLIOutputSchema.issues(in: #"{"path":"/a"}"#, path: logPath).isEmpty)
     #expect(
-      try !CLIOutputSchema.issues(in: #"{"path":"/a","extra":true}"#, path: ["log", "path"])
+      try !CLIOutputSchema.issues(
+        in: #"{"apiVersion":"openjoystickdriver.io/v1beta1","kind":"LogShow","path":"/a"}"#,
+        path: logPath
+      ).isEmpty
+    )
+    #expect(
+      try !CLIOutputSchema.issues(in: #"{\#(envelope),"path":"/a","extra":true}"#, path: logPath)
         .isEmpty
     )
   }
 
   @Test
   func eachLineOfAStreamIsChecked() throws {
-    let good = #"{"direction":"rx","hex":"01 02","length":2,"timestamp":1.5}"#
+    let good =
+      #"{"apiVersion":"openjoystickdriver.io/v1beta1","kind":"USBPacket","#
+      + #""direction":"rx","hex":"01 02","length":2,"captureTime":"1970-01-01T00:00:01.500Z"}"#
     #expect(
       try CLIOutputSchema.issues(in: good + "\n" + good, path: ["controller", "capture"]).isEmpty
     )

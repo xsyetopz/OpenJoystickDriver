@@ -56,7 +56,7 @@ enum PermissionID: String, CaseIterable, Sendable {
   }
 }
 
-/// The `ojd permission list --json` result.
+/// The `ojd permission request --json` result, and the items of `ojd permission list --json`.
 struct PermissionReport: Encodable, Equatable {
   struct Entry: Encodable, Equatable {
     let id: String

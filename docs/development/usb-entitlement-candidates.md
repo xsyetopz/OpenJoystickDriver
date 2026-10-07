@@ -2,13 +2,13 @@
 
 These catalog identities are candidates for a future Apple USB DriverKit entitlement application.
 
-Raw USB controllers use one of two access backends. The `usb-driverkit` backend covers the identities in the checked-in DEXT entitlement and personality: seven Microsoft GIP identities, `045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`, `045E:0B00`, `045E:0B0A`, and `045E:0B12` (`Sources/OpenJoystickDriverUSB/Configuration.swift`). Every other raw USB controller uses the `iousbhost` backend.
+Raw USB controllers use one of two access backends. The `usbDriverKit` backend covers the identities in the checked-in DEXT entitlement and personality: seven Microsoft GIP identities, `045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`, `045E:0B00`, `045E:0B0A`, and `045E:0B12` (`Sources/OpenJoystickDriverUSB/Configuration.swift`). Every other raw USB controller uses the `ioUSBHost` backend.
 
-The identities below pass the catalog's raw-USB parser predicate (`DeviceCatalog.supportsRawUSBPipeline`: `usb` transport with a `GIP`, `XUSB`, `XID`, or `GameSir` driver) and use `iousbhost`. The owner decided not to re-apply for entitlement coverage now, because re-adding every identity can take weeks. Moving an identity to `usb-driverkit` needs that coverage.
+The identities below pass the catalog's raw-USB parser predicate (`DeviceCatalog.supportsRawUSBPipeline`: `usb` transport with a `GIP`, `XUSB`, `XID`, or `GameSir` driver) and use `ioUSBHost`. The owner decided not to re-apply for entitlement coverage now, because re-adding every identity can take weeks. Moving an identity to `usbDriverKit` needs that coverage.
 
 Listing an identity here does not mean it was observed on hardware. Each one is a conditional catalog candidate from the generated records in `Sources/OpenJoystickDriverKit/Resources/Controllers/`. When the catalog changes, recompute the list with the same predicate.
 
-To move an identity to `usb-driverkit`: obtain Apple-issued USB transport entitlement coverage, add the pair to the DEXT configuration and entitlement, pass the signing-profile validation in `Scripts/Build/driverkit.sh`, and record hardware results under `docs/testing/`.
+To move an identity to `usbDriverKit`: obtain Apple-issued USB transport entitlement coverage, add the pair to the DEXT configuration and entitlement, pass the signing-profile validation in `Scripts/Build/driverkit.sh`, and record hardware results under `docs/testing/`.
 
 ## GIP (77)
 

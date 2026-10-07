@@ -101,8 +101,6 @@ struct SettingListCommand: AsyncParsableCommand {
     let description: String
   }
 
-  struct Result: Encodable, Equatable { let settings: [Entry] }
-
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
@@ -116,7 +114,7 @@ struct SettingListCommand: AsyncParsableCommand {
         )
       }
       switch CLIContext.current.format {
-      case .json: try CLIOutput.json(Result(settings: entries))
+      case .json: try CLIOutput.json(CLIList(items: entries))
       case .plain: CLIOutput.plain(entries.map { [$0.key, String($0.value)] })
       case .human:
         let width = entries.map(\.key.count).max() ?? 0

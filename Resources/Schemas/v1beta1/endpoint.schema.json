@@ -2,7 +2,7 @@
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"$id": "https://raw.githubusercontent.com/xsyetopz/OpenJoystickDriver/main/Resources/Schemas/v1beta1/endpoint.schema.json",
 	"title": "OpenJoystickDriver endpoint protocol",
-	"description": "One JSON object per line on the endpoint socket, or per text message on the WebSocket. A client sends hello, waits for welcome, then sends subscribe or feed. After subscribe the service sends controllers stream lines; after feed and feeding the client sends frame lines and the service sends the host's rumble lines. An error line is the last line before the service closes the connection.",
+	"description": "One JSON object per line on the endpoint socket, or per text message on the WebSocket. Every line except a watch line carries apiVersion and kind. A client sends Hello, waits for Welcome, then sends Subscription or FeedRequest. After Subscription the service sends watch lines, {type, object}, identical to 'ojd controller watch --all --json'; after FeedRequest and FeedSession the client sends Frame lines and the service sends the host's RumbleCommand lines. A Status line with status Failure is the last line before the service closes the connection. A line without apiVersion, or with a missing or unknown kind, is answered with Status E1004; a Hello with another apiVersion is answered with E1003.",
 	"oneOf": [
 		{
 			"$ref": "#/$defs/clientLine"
@@ -18,10 +18,10 @@
 					"$ref": "#/$defs/hello"
 				},
 				{
-					"$ref": "#/$defs/subscribe"
+					"$ref": "#/$defs/subscription"
 				},
 				{
-					"$ref": "#/$defs/feed"
+					"$ref": "#/$defs/feedRequest"
 				},
 				{
 					"$ref": "#/$defs/frame"
@@ -43,25 +43,26 @@
 					"$ref": "cli-output.schema.json#/$defs/sharedControllerWatchEvent"
 				},
 				{
-					"$ref": "#/$defs/feeding"
+					"$ref": "#/$defs/feedSession"
 				},
 				{
-					"$ref": "cli-output.schema.json#/$defs/virtualFeed"
+					"$ref": "cli-output.schema.json#/$defs/sharedVirtualFeedLine"
 				}
 			]
 		},
+		"apiVersion": {
+			"$ref": "cli-output.schema.json#/$defs/sharedAPIVersion"
+		},
 		"hello": {
 			"type": "object",
-			"required": ["protocol", "scopes", "type"],
+			"required": ["apiVersion", "kind", "scopes"],
 			"additionalProperties": false,
 			"properties": {
-				"type": {
-					"const": "hello"
+				"apiVersion": {
+					"$ref": "#/$defs/apiVersion"
 				},
-				"protocol": {
-					"type": "integer",
-					"minimum": 1,
-					"description": "The protocol version the client speaks."
+				"kind": {
+					"const": "Hello"
 				},
 				"scopes": {
 					"type": "array",
@@ -92,12 +93,15 @@
 		},
 		"challenge": {
 			"type": "object",
-			"required": ["nonce", "type"],
+			"required": ["apiVersion", "kind", "nonce"],
 			"additionalProperties": false,
 			"description": "The first line on every connection.",
 			"properties": {
-				"type": {
-					"const": "challenge"
+				"apiVersion": {
+					"$ref": "#/$defs/apiVersion"
+				},
+				"kind": {
+					"const": "Challenge"
 				},
 				"nonce": {
 					"type": "string",
@@ -108,14 +112,14 @@
 		},
 		"welcome": {
 			"type": "object",
-			"required": ["protocol", "scopes", "type", "version"],
+			"required": ["apiVersion", "kind", "scopes", "version"],
 			"additionalProperties": false,
 			"properties": {
-				"type": {
-					"const": "welcome"
+				"apiVersion": {
+					"$ref": "#/$defs/apiVersion"
 				},
-				"protocol": {
-					"const": 1
+				"kind": {
+					"const": "Welcome"
 				},
 				"version": {
 					"type": "string",
@@ -131,45 +135,54 @@
 				}
 			}
 		},
-		"subscribe": {
+		"subscription": {
 			"type": "object",
-			"required": ["stream", "type"],
+			"required": ["apiVersion", "kind", "stream"],
 			"additionalProperties": false,
 			"properties": {
-				"type": {
-					"const": "subscribe"
+				"apiVersion": {
+					"$ref": "#/$defs/apiVersion"
+				},
+				"kind": {
+					"const": "Subscription"
 				},
 				"stream": {
 					"const": "controllers"
 				},
 				"output": {
 					"type": "boolean",
-					"description": "Adds the virtual gamepad's values to input lines. Defaults to false."
+					"description": "Adds the virtual gamepad's values to the objects of the watch lines. Defaults to false."
 				}
 			}
 		},
-		"feed": {
+		"feedRequest": {
 			"type": "object",
-			"required": ["as", "type"],
+			"required": ["apiVersion", "as", "kind"],
 			"additionalProperties": false,
 			"description": "Publishes a virtual gamepad that the connection drives; needs the control scope. Closing the connection removes the gamepad.",
 			"properties": {
-				"type": {
-					"const": "feed"
+				"apiVersion": {
+					"$ref": "#/$defs/apiVersion"
+				},
+				"kind": {
+					"const": "FeedRequest"
 				},
 				"as": {
 					"$ref": "#/$defs/virtualProfile"
 				}
 			}
 		},
-		"feeding": {
+		"feedSession": {
 			"type": "object",
-			"required": ["as", "type"],
+			"required": ["apiVersion", "as", "kind"],
 			"additionalProperties": false,
-			"description": "The answer to feed: the virtual gamepad exists and takes frame lines.",
+			"description": "The answer to FeedRequest: the virtual gamepad exists and takes Frame lines.",
 			"properties": {
-				"type": {
-					"const": "feeding"
+				"apiVersion": {
+					"$ref": "#/$defs/apiVersion"
+				},
+				"kind": {
+					"const": "FeedSession"
 				},
 				"as": {
 					"$ref": "#/$defs/virtualProfile"
@@ -182,9 +195,16 @@
 		},
 		"frame": {
 			"type": "object",
+			"required": ["apiVersion", "kind"],
 			"additionalProperties": false,
-			"description": "One input frame after feeding, as in 'ojd virtual feed'. Missing controls are neutral. The service shows frames in order, each for at least 8 ms; it stops reading while 256 frames wait. Closing the connection removes the virtual gamepad at once and drops the frames that have not played, unlike 'ojd virtual feed', so a client stays connected until its last frame has played.",
+			"description": "One input frame after FeedSession, as in 'ojd virtual feed', which takes the same line without apiVersion and kind. Missing controls are neutral. The service shows frames in order, each for at least 8 ms; it stops reading while 256 frames wait. Closing the connection removes the virtual gamepad at once and drops the frames that have not played, unlike 'ojd virtual feed', so a client stays connected until its last frame has played.",
 			"properties": {
+				"apiVersion": {
+					"$ref": "#/$defs/apiVersion"
+				},
+				"kind": {
+					"const": "Frame"
+				},
 				"buttons": {
 					"type": "array",
 					"uniqueItems": true,
@@ -219,11 +239,18 @@
 		},
 		"error": {
 			"type": "object",
-			"required": ["code", "message", "type"],
+			"required": ["apiVersion", "code", "kind", "message", "status"],
 			"additionalProperties": false,
+			"description": "A Status line: the failure that ends the connection.",
 			"properties": {
-				"type": {
-					"const": "error"
+				"apiVersion": {
+					"$ref": "#/$defs/apiVersion"
+				},
+				"kind": {
+					"const": "Status"
+				},
+				"status": {
+					"const": "Failure"
 				},
 				"code": {
 					"description": "A stable E#### code from Resources/ErrorCodes.json; ./Scripts/ojd errors regenerate keeps the enum equal to the active endpoint codes.",
@@ -243,12 +270,20 @@
 					"type": "string",
 					"description": "English text for logs; clients branch on code."
 				},
-				"supported": {
-					"type": "array",
-					"items": {
-						"type": "integer"
-					},
-					"description": "The protocol versions the service speaks; only with E1003."
+				"details": {
+					"type": "object",
+					"required": ["supportedAPIVersions"],
+					"additionalProperties": false,
+					"properties": {
+						"supportedAPIVersions": {
+							"type": "array",
+							"minItems": 1,
+							"items": {
+								"$ref": "#/$defs/apiVersion"
+							},
+							"description": "The apiVersion values the service speaks; only with E1003."
+						}
+					}
 				}
 			},
 			"if": {
@@ -259,11 +294,11 @@
 				}
 			},
 			"then": {
-				"required": ["supported"]
+				"required": ["details"]
 			},
 			"else": {
 				"not": {
-					"required": ["supported"]
+					"required": ["details"]
 				}
 			}
 		}

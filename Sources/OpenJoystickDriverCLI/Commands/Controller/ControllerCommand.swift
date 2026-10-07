@@ -48,12 +48,12 @@ struct ControllerListCommand: AsyncParsableCommand {
     try await global.run {
       let devices = try await ServiceConnection.request { try await $0.getStatus() }
         .connectedDevices
-      let report = ControllerListReport(controllers: devices.map(ControllerSummary.init))
+      let report = CLIList(items: devices.map(ControllerSummary.init))
       switch CLIContext.current.format {
       case .json: try CLIOutput.json(report)
       case .plain:
         CLIOutput.plain(
-          report.controllers.map {
+          report.items.map {
             [
               $0.id, deviceIdentity(vendorID: $0.vendorID, productID: $0.productID), $0.connection,
               $0.session, $0.name, $0.unit ?? "", $0.power?.battery.percentageText ?? "",
@@ -62,17 +62,17 @@ struct ControllerListCommand: AsyncParsableCommand {
           }
         )
       case .human:
-        guard !report.controllers.isEmpty else {
+        guard !report.items.isEmpty else {
           CLIOutput.stderr(
             CLILocalized.text("cli.controller.list.empty")
           )
           return
         }
-        let idWidth = report.controllers.map(\.id.count).max() ?? 0
-        let unitWidth = report.controllers.map { $0.unit?.count ?? 0 }.max() ?? 0
+        let idWidth = report.items.map(\.id.count).max() ?? 0
+        let unitWidth = report.items.map { $0.unit?.count ?? 0 }.max() ?? 0
         let batteryWidth =
-          report.controllers.map { $0.power?.battery.percentageText?.count ?? 0 }.max() ?? 0
-        for controller in report.controllers {
+          report.items.map { $0.power?.battery.percentageText?.count ?? 0 }.max() ?? 0
+        for controller in report.items {
           let id = controller.id.padding(toLength: idWidth, withPad: " ", startingAt: 0)
           let unit =
             unitWidth == 0

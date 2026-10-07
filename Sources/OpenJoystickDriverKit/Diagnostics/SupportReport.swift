@@ -66,7 +66,7 @@ public struct SupportReport: Codable, Sendable {
     public let inputEndpoint: UInt8
     public let outputEndpoint: UInt8
     public let needsSetConfiguration: Bool
-    public let postHandshakeSettleMs: Int
+    public let postHandshakeSettleMilliseconds: Int
     public let preferredBackends: [String]
     public let physicalOutputCapabilities: PhysicalControllerOutputCapabilities
     public let connectionState: ControllerConnectionState?
@@ -180,7 +180,7 @@ public struct SupportReport: Codable, Sendable {
         inputEndpoint: $0.inputEndpoint,
         outputEndpoint: $0.outputEndpoint,
         needsSetConfiguration: $0.needsSetConfiguration,
-        postHandshakeSettleMs: $0.postHandshakeSettleMs,
+        postHandshakeSettleMilliseconds: $0.postHandshakeSettleMs,
         preferredBackends: $0.preferredBackends.sorted(),
         physicalOutputCapabilities: $0.physicalOutputCapabilities,
         connectionState: $0.connectionState,

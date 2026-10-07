@@ -297,7 +297,8 @@ struct RecordRemoveCommand: AsyncParsableCommand {
         }
       }
       switch CLIContext.current.format {
-      case .json: try CLIOutput.json(Result(removed: target.path, dryRun: dryRun))
+      case .json:
+        try CLIOutput.json(CLIStatus(details: Result(removed: target.path, dryRun: dryRun)))
       case .plain: CLIOutput.plain([[target.path]])
       case .human:
         if dryRun {

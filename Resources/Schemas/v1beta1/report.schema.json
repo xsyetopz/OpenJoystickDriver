@@ -223,7 +223,7 @@
 				"inputEndpoint",
 				"outputEndpoint",
 				"needsSetConfiguration",
-				"postHandshakeSettleMs",
+				"postHandshakeSettleMilliseconds",
 				"preferredBackends",
 				"physicalOutputCapabilities",
 				"sessionState",
@@ -279,7 +279,7 @@
 				"needsSetConfiguration": {
 					"type": "boolean"
 				},
-				"postHandshakeSettleMs": {
+				"postHandshakeSettleMilliseconds": {
 					"type": "integer",
 					"minimum": 0
 				},
@@ -338,13 +338,13 @@
 				"transport": {
 					"enum": [
 						"usb",
-						"bluetooth-classic",
-						"bluetooth-le",
-						"proprietary-radio-receiver"
+						"bluetoothClassic",
+						"bluetoothLE",
+						"proprietaryRadioReceiver"
 					]
 				},
 				"backend": {
-					"enum": ["iohid", "iousbhost", "usb-driverkit"]
+					"enum": ["ioHID", "ioUSBHost", "usbDriverKit"]
 				},
 				"isConnected": {
 					"type": "boolean"
@@ -360,7 +360,7 @@
 								"discharging",
 								"charging",
 								"full",
-								"not-chargeable"
+								"notChargeable"
 							]
 						},
 						"battery": {
@@ -472,25 +472,25 @@
 			"properties": {
 				"outcome": { "enum": ["bound", "unsupported"] },
 				"reason": { "$ref": "#/$defs/bindingReason" },
-				"accessBackend": { "enum": ["iohid", "iousbhost", "usb-driverkit"] },
+				"accessBackend": { "enum": ["ioHID", "ioUSBHost", "usbDriverKit"] },
 				"interfaces": {
 					"type": "array",
 					"items": { "$ref": "#/$defs/bindingInterface" }
 				},
 				"rule": {
-					"enum": ["catalog-record", "interface-signature", "hid-descriptor"]
+					"enum": ["catalogRecord", "interfaceSignature", "hidDescriptor"]
 				},
 				"matchedPredicates": {
 					"type": "array",
 					"items": {
 						"enum": [
-							"catalog-identity",
-							"catalog-access-path",
-							"host-transport",
-							"interface-signature",
-							"device-class-signature",
-							"interrupt-endpoint-pair",
-							"hid-descriptor-contract"
+							"catalogIdentity",
+							"catalogAccessPath",
+							"hostTransport",
+							"interfaceSignature",
+							"deviceClassSignature",
+							"interruptEndpointPair",
+							"hidDescriptorContract"
 						]
 					}
 				},
@@ -537,9 +537,9 @@
 				"hostTransport": {
 					"enum": [
 						"usb",
-						"bluetooth-classic",
-						"bluetooth-le",
-						"proprietary-radio-receiver"
+						"bluetoothClassic",
+						"bluetoothLE",
+						"proprietaryRadioReceiver"
 					]
 				},
 				"primaryUsage": {
@@ -594,16 +594,16 @@
 		},
 		"bindingReason": {
 			"enum": [
-				"no-protocol-match",
-				"ambiguous-protocol-match",
-				"interface-contract-mismatch",
-				"descriptor-contract-mismatch",
-				"packet-contract-mismatch",
-				"unsupported-protocol-variant",
-				"unsupported-transport-variant",
-				"required-initialization-failed",
-				"catalog-conflict",
-				"virtual-profile-unavailable"
+				"noProtocolMatch",
+				"ambiguousProtocolMatch",
+				"interfaceContractMismatch",
+				"descriptorContractMismatch",
+				"packetContractMismatch",
+				"unsupportedProtocolVariant",
+				"unsupportedTransportVariant",
+				"requiredInitializationFailed",
+				"catalogConflict",
+				"virtualProfileUnavailable"
 			]
 		},
 		"hidGamepad": {

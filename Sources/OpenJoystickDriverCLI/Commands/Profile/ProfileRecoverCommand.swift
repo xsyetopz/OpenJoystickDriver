@@ -71,7 +71,7 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
         dryRun: dryRun
       )
       switch CLIContext.current.format {
-      case .json: try CLIOutput.json(result)
+      case .json: try CLIOutput.json(CLIStatus(details: result))
       case .plain: CLIOutput.plain(result.recovered.map { [$0.id, $0.kind] })
       case .human:
         if issues.isEmpty {

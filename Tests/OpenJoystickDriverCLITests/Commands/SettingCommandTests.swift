@@ -66,7 +66,7 @@ struct SettingCommandTests {
     let human = await run(["setting", "list"], socketPath: socketPath)
 
     #expect(json.code == 0, "\(json.standardError)")
-    let settings = try #require(try json.json()["settings"] as? [[String: Any]])
+    let settings = try #require(try json.json()["items"] as? [[String: Any]])
     #expect(settings.count == ApplicationSettingKey.allCases.count)
     let login = try #require(settings.first { $0["key"] as? String == "launch-at-login" })
     #expect(login["value"] as? Bool == true)

@@ -126,8 +126,8 @@ struct ControllerOutputCommandCodableTests {
     )
     #expect(
       ControllerOutputResult.Outcome.allCases.map(\.rawValue) == [
-        "delivered", "not-found", "unsupported-capability", "not-ready", "invalid-value",
-        "write-failed", "cancelled",
+        "delivered", "notFound", "unsupportedCapability", "notReady", "invalidValue",
+        "writeFailed", "cancelled",
       ]
     )
   }

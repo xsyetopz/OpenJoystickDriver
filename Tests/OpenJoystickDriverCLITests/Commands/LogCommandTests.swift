@@ -150,7 +150,7 @@ struct LogCommandTests {
     #expect(again.code == 1)
     #expect(again.standardError.contains("--force"))
     #expect(forced.code == 0, "\(forced.standardError)")
-    #expect(try forced.json()["lines"] as? Int == 2)
+    #expect(try forced.details()["lines"] as? Int == 2)
     #expect(requested.withLock { $0 } == [2000, 2000, 2000, 2000, 5, 5])
   }
 

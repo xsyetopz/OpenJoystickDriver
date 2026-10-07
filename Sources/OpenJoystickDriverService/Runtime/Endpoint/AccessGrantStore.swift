@@ -192,7 +192,7 @@ struct AccessRefusalLog: Sendable {
       path: path,
       scopes: scopes,
       reason: ErrorCode.notGranted.rawValue,
-      refusedAt: ISO8601DateFormatter().string(from: date)
+      refusalTime: ISO8601DateFormatter().string(from: date)
     )
     entries.removeAll {
       $0.client.id == client.id || date.timeIntervalSince($0.date) > Self.retention
@@ -215,7 +215,7 @@ struct AccessRefusalLog: Sendable {
       transport: transport,
       scopes: scopes,
       reason: ErrorCode.notGranted.rawValue,
-      refusedAt: ISO8601DateFormatter().string(from: date)
+      refusalTime: ISO8601DateFormatter().string(from: date)
     )
     tokenEntries.removeAll {
       ($0.token.name, $0.token.origin, $0.token.transport) == (name, origin, transport)

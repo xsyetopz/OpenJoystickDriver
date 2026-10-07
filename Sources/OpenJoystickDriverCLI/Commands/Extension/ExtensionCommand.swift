@@ -94,7 +94,7 @@ struct ExtensionResult: Encodable, Equatable {
   enum State: String, Encodable {
     case active
     case inactive
-    case awaitingApproval = "awaiting-approval"
+    case awaitingApproval
   }
 
   let state: State

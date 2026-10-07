@@ -88,7 +88,7 @@ struct VirtualCommandTests {
     }
     let result = await service.run(["virtual", "reset", "--all", "--force", "--json"])
     #expect(result.code == 0, "\(result.standardError)")
-    #expect(try result.json()["reset"] as? String == "all")
+    #expect(try result.details()["reset"] as? String == "all")
     #expect(service.arguments(of: .resetSettings).count == 1)
   }
 

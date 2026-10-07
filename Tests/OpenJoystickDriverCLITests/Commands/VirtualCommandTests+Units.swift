@@ -89,7 +89,7 @@ extension VirtualCommandTests {
     let result = await service.run(["controller", "list", "--json"])
 
     #expect(result.code == 0, "\(result.standardError)")
-    let controllers = try #require(try result.json()["controllers"] as? [[String: Any]])
+    let controllers = try #require(try result.json()["items"] as? [[String: Any]])
     #expect(controllers.map { $0["unit"] as? String } == [Self.unit, nil])
   }
 }

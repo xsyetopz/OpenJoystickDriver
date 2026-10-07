@@ -32,7 +32,7 @@ struct AccessClient {
     if let grant = status.grants.first(where: { $0.id == text }) {
       return Self(
         identity: CodeSigningIdentity(
-          kind: grant.kind,
+          kind: grant.identityKind.kind,
           identifier: grant.identifier,
           teamIdentifier: grant.teamIdentifier
         ),
@@ -203,7 +203,7 @@ struct AccessGrantCommand: AsyncParsableCommand {
       try await $0.grantTokenAccess(name: name, origins: origins, scopes: scopes)
     }
     switch CLIContext.current.format {
-    case .json: try CLIOutput.json(result)
+    case .json: try CLIOutput.json(result, kind: "AccessToken")
     case .plain:
       CLIOutput.plain([[result.token, result.grant.id, AccessText.scopes(result.grant.scopes)]])
     case .human:
@@ -295,7 +295,7 @@ struct AccessRevokeCommand: AsyncParsableCommand {
         try await $0.revokeAccess(id: id, scopes: scopes)
       }
       switch CLIContext.current.format {
-      case .json: try CLIOutput.json(result)
+      case .json: try CLIOutput.json(CLIStatus(details: result))
       case .plain:
         CLIOutput.plain([
           [

@@ -52,6 +52,9 @@ struct LogShowCommand: AsyncParsableCommand {
     )
   )
 
+  /// The `kind` of each `--json` line with `--follow`.
+  private static let streamedLineKind = "LogEntry"
+
   @Flag(
     name: .shortAndLong,
     help: ArgumentHelp(
@@ -134,7 +137,10 @@ struct LogShowCommand: AsyncParsableCommand {
     case .json where jsonLines:
       for snapshot in snapshots {
         for line in snapshot.lines {
-          try printLine(StreamedLine(stream: snapshot.stream, line: line))
+          try CLIOutput.jsonLine(
+            StreamedLine(stream: snapshot.stream, line: line),
+            kind: Self.streamedLineKind
+          )
         }
       }
     case .json: try CLIOutput.json(Snapshots(logs: snapshots))
@@ -173,7 +179,11 @@ struct LogShowCommand: AsyncParsableCommand {
         group.addTask {
           for await line in environment.follow(snapshot.stream, snapshot.fileSizeBytes) {
             switch format {
-            case .json: try? printLine(StreamedLine(stream: line.stream, line: line.text))
+            case .json:
+              try? CLIOutput.jsonLine(
+                StreamedLine(stream: line.stream, line: line.text),
+                kind: Self.streamedLineKind
+              )
             case .plain: CLIOutput.plain([[line.stream.rawValue, line.text]])
             case .human: CLIOutput.stdout(line.text)
             }
@@ -182,11 +192,5 @@ struct LogShowCommand: AsyncParsableCommand {
       }
     }
     try Task.checkCancellation()
-  }
-
-  private static func printLine(_ line: StreamedLine) throws {
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
-    CLIOutput.stdout(String(bytes: try encoder.encode(line), encoding: .utf8) ?? "")
   }
 }

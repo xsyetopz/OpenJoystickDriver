@@ -49,6 +49,15 @@ class EndpointReferenceClientTests(unittest.TestCase):
         self.client_lines = validator("clientLine")
         self.service_lines = validator("serviceLine")
 
+    def envelope(self, kind: str, **fields: Any) -> dict[str, Any]:
+        return {"apiVersion": self.client["API_VERSION"], "kind": kind, **fields}
+
+    def feed_request(self) -> dict[str, Any]:
+        return self.envelope("FeedRequest", **{"as": "hid-generic"})
+
+    def frame_lines(self) -> list[dict[str, Any]]:
+        return [self.envelope("Frame", **frame) for frame in self.client["FRAMES"]]
+
     def test_proof_matches_the_vector_the_swift_tests_use(self) -> None:
         vector = json.loads(VECTOR.read_text(encoding="utf-8"))
         self.assertEqual((vector["origin"], vector["port"]), ("", ""))
@@ -60,8 +69,8 @@ class EndpointReferenceClientTests(unittest.TestCase):
         nonce = json.loads(VECTOR.read_text(encoding="utf-8"))["nonce"]
         lines = [
             self.client["hello"](nonce),
-            {"type": "feed", "as": "hid-generic"},
-            *self.client["FRAMES"],
+            self.feed_request(),
+            *self.frame_lines(),
         ]
         for line in lines:
             with self.subTest(line=line):
@@ -69,13 +78,21 @@ class EndpointReferenceClientTests(unittest.TestCase):
 
     def test_schema_rejects_a_frame_with_a_repeated_button(self) -> None:
         with self.assertRaises(validate_schemas.ValidationError):
-            self.client_lines.validate({"buttons": ["south", "south"]})
+            self.client_lines.validate(
+                self.envelope("Frame", buttons=["south", "south"])
+            )
+
+    def test_schema_rejects_a_frame_without_the_envelope(self) -> None:
+        with self.assertRaises(validate_schemas.ValidationError):
+            self.client_lines.validate({"buttons": ["south"]})
 
     def test_service_lines_match_the_schema(self) -> None:
         lines = [
-            {"type": "feeding", "as": "hid-generic"},
+            self.envelope("FeedSession", **{"as": "hid-generic"}),
             {
-                "type": "set-rumble",
+                "apiVersion": self.client["API_VERSION"],
+                "kind": "RumbleCommand",
+                "type": "setRumble",
                 "intensities": {
                     "leftMain": 65535,
                     "rightMain": 0,
@@ -84,10 +101,31 @@ class EndpointReferenceClientTests(unittest.TestCase):
                     "leftHaptic": 0,
                     "rightHaptic": 0,
                 },
-                "duration": {"milliseconds": 200},
+                "durationMilliseconds": 200,
             },
-            {"type": "stop-rumble"},
-            {"type": "error", "code": "E1008", "message": "Full."},
+            self.envelope("RumbleCommand", type="stopRumble"),
+            self.envelope("Status", status="Failure", code="E1008", message="Full."),
+            self.envelope(
+                "Status",
+                status="Failure",
+                code="E1003",
+                message="Unsupported.",
+                details={"supportedAPIVersions": [self.client["API_VERSION"]]},
+            ),
+            {
+                "type": "ADDED",
+                "object": self.envelope(
+                    "Controller",
+                    id="pad-1",
+                    name="Test Pad",
+                    vendorID=1118,
+                    productID=654,
+                    connection="usb",
+                    hasSerialNumber=False,
+                    protocol="xbox.xbox360",
+                    session="active",
+                ),
+            },
         ]
         for line in lines:
             with self.subTest(line=line):
@@ -96,7 +134,7 @@ class EndpointReferenceClientTests(unittest.TestCase):
     def test_client_runs_against_a_fake_endpoint(self) -> None:
         """A fake endpoint, not the service: it checks the client's order of lines."""
         nonce = json.loads(VECTOR.read_text(encoding="utf-8"))["nonce"]
-        rumble = {"type": "stop-rumble"}
+        rumble = self.envelope("RumbleCommand", type="stopRumble")
         received: list[dict[str, Any]] = []
         with tempfile.TemporaryDirectory(dir="/tmp") as directory:
             path = str(Path(directory) / "endpoint.sock")
@@ -113,18 +151,13 @@ class EndpointReferenceClientTests(unittest.TestCase):
                             lines.write(json.dumps(message) + "\n")
                             lines.flush()
 
-                        send({"type": "challenge", "nonce": nonce})
+                        send(self.envelope("Challenge", nonce=nonce))
                         received.append(json.loads(lines.readline()))
                         send(
-                            {
-                                "type": "welcome",
-                                "protocol": 1,
-                                "version": "test",
-                                "scopes": ["control"],
-                            }
+                            self.envelope("Welcome", version="test", scopes=["control"])
                         )
                         received.append(json.loads(lines.readline()))
-                        send({"type": "feeding", "as": "hid-generic"})
+                        send(self.envelope("FeedSession", **{"as": "hid-generic"}))
                         send(rumble)
                         received.extend(json.loads(line) for line in lines)
 
@@ -143,7 +176,7 @@ class EndpointReferenceClientTests(unittest.TestCase):
         self.assertEqual(received[0], self.client["hello"](nonce))
         self.assertEqual(
             received[1:],
-            [{"type": "feed", "as": "hid-generic"}, *self.client["FRAMES"]],
+            [self.feed_request(), *self.frame_lines()],
         )
         self.assertEqual(json.loads(output.getvalue()), rumble)
 
@@ -166,18 +199,11 @@ class EndpointReferenceClientTests(unittest.TestCase):
                             lines.write(json.dumps(message) + "\n")
                             lines.flush()
 
-                        send({"type": "challenge", "nonce": nonce})
+                        send(self.envelope("Challenge", nonce=nonce))
                         lines.readline()
-                        send(
-                            {
-                                "type": "welcome",
-                                "protocol": 1,
-                                "version": "test",
-                                "scopes": [],
-                            }
-                        )
+                        send(self.envelope("Welcome", version="test", scopes=[]))
                         lines.readline()
-                        send({"type": "feeding", "as": "hid-generic"})
+                        send(self.envelope("FeedSession", **{"as": "hid-generic"}))
                         after_feeding(send)
 
                 server = threading.Thread(target=serve, daemon=True)
@@ -193,11 +219,12 @@ class EndpointReferenceClientTests(unittest.TestCase):
         return exit_info.exception
 
     def test_client_exits_with_the_error_line_the_endpoint_sends(self) -> None:
-        error = {
-            "type": "error",
-            "code": "E1009",
-            "message": "The virtual gamepad closed.",
-        }
+        error = self.envelope(
+            "Status",
+            status="Failure",
+            code="E1009",
+            message="The virtual gamepad closed.",
+        )
         exit_info = self.run_until_feeding(lambda send: send(error))
 
         self.assertIn("E1009", str(exit_info.code))

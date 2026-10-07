@@ -37,17 +37,18 @@ struct EndpointWebSocketTests {
           port: String(port)
         )
       )
-      await client.send(#"{"type":"subscribe","stream":"controllers"}"#)
+      await client.send(clientLine("Subscription", #","stream":"controllers""#))
 
       var lines = [challenge]
       for _ in 0..<3 { lines.append(try #require(await client.readLine())) }
       for line in lines {
         #expect(try JSONSchemaFiles.issues(in: line, against: "endpoint.schema.json").isEmpty)
       }
-      #expect(
-        try lines.map { try client.object($0)["type"] as? String }
-          == ["challenge", "welcome", "connected", "input"]
-      )
+      let kinds = try lines.map { line -> String? in
+        let object = try client.object(line)
+        return object["type"] as? String ?? object["kind"] as? String
+      }
+      #expect(kinds == ["Challenge", "Welcome", "ADDED", "MODIFIED"])
       #expect(
         try server.status().connections == [
           AccessConnection(
@@ -137,7 +138,7 @@ struct EndpointWebSocketTests {
         }
       let hello =
         switch kind {
-        case "none": #"{"type":"hello","protocol":1,"scopes":["read"]}"#
+        case "none": clientLine("Hello", #","scopes":["read"]"#)
         default:
           tokenHello(
             name: name,
@@ -215,7 +216,7 @@ struct EndpointWebSocketTests {
         )
       )
 
-      #expect(try await client.readObject()["type"] as? String == "welcome")
+      #expect(try await client.readObject()["kind"] as? String == "Welcome")
     }
   }
 
@@ -249,7 +250,7 @@ struct EndpointWebSocketTests {
       )
 
       let welcome = try await client.readObject()
-      #expect(welcome["type"] as? String == "welcome")
+      #expect(welcome["kind"] as? String == "Welcome")
       #expect(welcome["scopes"] as? [String] == ["control"])
     }
   }
@@ -350,7 +351,7 @@ struct EndpointWebSocketTests {
       let pong = try #require(await client.readFrame())
       #expect(pong.opcode == 0xA)
       #expect(pong.payload == Data("ping".utf8))
-      #expect(try await client.readObject()["type"] as? String == "welcome")
+      #expect(try await client.readObject()["kind"] as? String == "Welcome")
     }
   }
 
@@ -692,7 +693,7 @@ struct EndpointWebSocketTests {
         $0.pointee.sin_addr
       }
       inet_ntop(AF_INET, &ipv4, &text, socklen_t(text.count))
-      return String(cString: text)
+      return String(bytes: text.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }, encoding: .utf8)
     }
     return nil
   }

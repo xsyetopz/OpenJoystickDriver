@@ -9,12 +9,12 @@ public struct ControllerOutputResult: Codable, Equatable, Hashable, Sendable {
   public enum Outcome: String, Codable, CaseIterable, Hashable, Sendable {
     case delivered
     /// No connected controller matches the selector exactly once.
-    case notFound = "not-found"
-    case unsupportedCapability = "unsupported-capability"
+    case notFound
+    case unsupportedCapability
     /// The protocol session cannot carry the command yet.
-    case notReady = "not-ready"
-    case invalidValue = "invalid-value"
-    case writeFailed = "write-failed"
+    case notReady
+    case invalidValue
+    case writeFailed
     /// The controller disconnected or was replaced before the command was written.
     case cancelled
 

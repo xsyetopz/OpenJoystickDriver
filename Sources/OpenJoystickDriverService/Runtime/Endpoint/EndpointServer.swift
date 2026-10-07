@@ -14,7 +14,6 @@ import OpenJoystickDriverKit
 final class EndpointServer: @unchecked Sendable {
   typealias Identify = @Sendable (LocalSocketPeer) -> EndpointClient?
 
-  static let protocolVersion = 1
   /// The most connections each transport serves, so web pages cannot starve socket clients.
   static let maximumConnections = 8
   static let maximumLineBytes = 65_536

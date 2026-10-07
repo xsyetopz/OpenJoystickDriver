@@ -1507,7 +1507,7 @@
 "cli.profile.vanished" = "Der Dienst hat das Profil nicht behalten. Prüfe es mit „ojd profile list“.";
 "error.E1001" = "Der Endpunkt ist aus. Schalte ihn mit „ojd access enable“ ein und verbinde dich erneut.";
 "error.E1002" = "Der Dienst hat diesen Client abgelehnt. Er hat keine Freigabe für die angeforderten Bereiche, oder seine Signatur oder sein Nachweis ist ungültig. Führe „ojd access list“ aus, gib den Client mit „ojd access grant“ frei und verbinde dich erneut.";
-"error.E1003" = "Der Dienst unterstützt die Protokollversion in hello nicht. Sende eine der Versionen in supported und verbinde dich erneut.";
+"error.E1003" = "Der Dienst unterstützt die apiVersion in Hello nicht. Sende eine der Versionen in details.supportedAPIVersions und verbinde dich erneut.";
 "error.E1004" = "Der Dienst konnte die Zeile nicht annehmen. Sie ist ungültig oder kam zur falschen Zeit. Sende zuerst hello, dann eine Anfrage, und prüfe jede Zeile gegen das Endpunkt-Schema.";
 "error.E1005" = "Der Endpunkt bedient bereits 8 Verbindungen pro Transportweg (je Socket und WebSocket). Schließe eine Verbindung, die du nicht brauchst, und verbinde dich erneut.";
 "error.E1006" = "Die Freigabe dieses Clients wurde entfernt, während er verbunden war. Gib ihn mit „ojd access grant“ erneut frei und verbinde dich erneut.";

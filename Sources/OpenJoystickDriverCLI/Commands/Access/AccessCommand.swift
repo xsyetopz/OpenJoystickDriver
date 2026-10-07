@@ -207,14 +207,14 @@ struct AccessListCommand: AsyncParsableCommand {
         CLIOutput.plain(
           status.grants.map {
             [
-              "granted", $0.id, $0.kind.rawValue, $0.identifier, $0.teamIdentifier ?? "",
-              AccessText.scopes($0.scopes),
+              "granted", $0.id, $0.identityKind.kind.rawValue, $0.identifier,
+              $0.teamIdentifier ?? "", AccessText.scopes($0.scopes),
             ]
           }
             + status.refused.map {
               [
-                "refused", $0.id, $0.kind.rawValue, $0.identifier, $0.teamIdentifier ?? "",
-                AccessText.scopes($0.scopes),
+                "refused", $0.id, $0.identityKind.kind.rawValue, $0.identifier,
+                $0.teamIdentifier ?? "", AccessText.scopes($0.scopes),
               ]
             }
             + status.tokens.map {
@@ -234,7 +234,7 @@ struct AccessListCommand: AsyncParsableCommand {
         }
         for grant in status.grants {
           CLIOutput.stdout(
-            "  \(grant.id)  \(AccessText.signer(grant.kind, grant.teamIdentifier))  "
+            "  \(grant.id)  \(AccessText.signer(grant.identityKind.kind, grant.teamIdentifier))  "
               + "\(grant.identifier)  \(AccessText.scopes(grant.scopes))  \(grant.path)"
           )
         }
@@ -246,7 +246,8 @@ struct AccessListCommand: AsyncParsableCommand {
         }
         for client in status.refused {
           CLIOutput.stdout(
-            "  \(client.id)  \(AccessText.signer(client.kind, client.teamIdentifier))  "
+            "  \(client.id)  "
+              + "\(AccessText.signer(client.identityKind.kind, client.teamIdentifier))  "
               + "\(client.identifier)  \(AccessText.scopes(client.scopes))  \(client.path ?? "")"
           )
         }

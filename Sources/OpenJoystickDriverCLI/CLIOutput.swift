@@ -18,16 +18,36 @@ enum CLIOutput {
     stderr(message)
   }
 
-  /// Prints `value` as sorted, pretty-printed JSON on stdout.
-  static func json(_ value: some Encodable) throws {
+  /// The `apiVersion` of every `--json` document and stream line.
+  static let apiVersion = OpenJoystickDriverAPI.version
+
+  /// The `kind` of the running command's `--json` output; see ``CLI/outputKinds``.
+  @TaskLocal
+  static var kind = ""
+
+  /// Prints `value` as sorted, pretty-printed JSON on stdout, with `apiVersion` and `kind`.
+  ///
+  /// `kind` replaces the running command's kind for a command whose output kind depends on its
+  /// options.
+  static func json(_ value: some Encodable, kind: String? = nil) throws {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-    let data = try encoder.encode(value)
+    let data = try encoder.encode(CLIDocument(kind: kind ?? self.kind, value: value))
     stdout(String(bytes: data, encoding: .utf8) ?? "")
   }
 
-  /// Prints `value` as one line of sorted JSON on stdout, for a `--json` stream.
-  static func jsonLine(_ value: some Encodable) throws {
+  /// Prints `value` as one line of sorted JSON on stdout, with `apiVersion` and `kind`, for a
+  /// `--json` stream.
+  static func jsonLine(_ value: some Encodable, kind: String? = nil) throws {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+    let data = try encoder.encode(CLIDocument(kind: kind ?? self.kind, value: value))
+    stdout(String(bytes: data, encoding: .utf8) ?? "")
+  }
+
+  /// Prints `value` as one line of sorted JSON on stdout, without `apiVersion` and `kind`, such as
+  /// a watch line `{type, object}`.
+  static func jsonLineWithoutEnvelope(_ value: some Encodable) throws {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
     let data = try encoder.encode(value)
@@ -52,6 +72,38 @@ enum CLIOutput {
       return
     }
     handle.write(Data(text.utf8))
+  }
+}
+
+/// The `--json` result of a list command, as a Kubernetes list: the listed `items`, and the data
+/// about the list in `metadata`.
+struct CLIList<Item: Encodable, Metadata: Encodable>: Encodable {
+  let metadata: Metadata
+  let items: [Item]
+}
+
+/// The `metadata` of a list that has no data besides its items.
+struct CLINoMetadata: Encodable {}
+
+extension CLIList where Metadata == CLINoMetadata {
+  init(items: [Item]) { self.init(metadata: CLINoMetadata(), items: items) }
+}
+
+/// A `--json` document: the keys of `value`, an object, with `apiVersion` and `kind` added.
+private struct CLIDocument<Value: Encodable>: Encodable {
+  let kind: String
+  let value: Value
+
+  private enum CodingKeys: String, CodingKey {
+    case apiVersion
+    case kind
+  }
+
+  func encode(to encoder: any Encoder) throws {
+    try value.encode(to: encoder)
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(CLIOutput.apiVersion, forKey: .apiVersion)
+    try container.encode(kind, forKey: .kind)
   }
 }
 

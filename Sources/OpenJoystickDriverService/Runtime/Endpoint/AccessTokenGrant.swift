@@ -37,7 +37,7 @@ struct AccessTokenGrant: Codable, Equatable, Sendable {
   var id: String { "token:\(name)" }
 
   var summary: AccessTokenSummary {
-    AccessTokenSummary(name: name, origins: origins, scopes: scopes, grantedAt: grantedAt)
+    AccessTokenSummary(name: name, origins: origins, scopes: scopes, grantTime: grantedAt)
   }
 
   /// `ojd_` and 32 random bytes in unpadded base64url.

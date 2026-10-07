@@ -1,36 +1,68 @@
 import Foundation
 
-/// One line of `ojd controller watch --all` and of the endpoint's `controllers` stream.
-public struct ControllerWatchEvent: Encodable, Equatable, Sendable {
-  public enum Kind: String, Encodable, Sendable {
-    case connected
-    case input
-    case disconnected
-  }
+/// A controller as a watch line carries it: the `Controller` object with the fields of a
+/// ``ControllerSummary``, and the last input and output once the controller has any.
+public struct WatchedController: Encodable, Equatable, Sendable {
+  public static let kind = "Controller"
 
-  public let type: Kind
-  /// The ID from `ojd controller list`.
-  public let id: String
-  /// Present on `connected` lines.
-  public var controller: ControllerSummary?
-  /// Present on `input` lines.
+  public var summary: ControllerSummary
   public var input: ControllerState?
-  /// Present on `input` lines that asked for output while a virtual gamepad publishes the
-  /// controller.
+  /// Present while a virtual gamepad publishes the controller and the watch asked for output.
   public var output: ApplicationServiceVirtualOutputState?
 
+  /// The ID from `ojd controller list`.
+  public var id: String { summary.id }
+
   public init(
-    type: Kind,
-    id: String,
-    controller: ControllerSummary? = nil,
+    summary: ControllerSummary,
     input: ControllerState? = nil,
     output: ApplicationServiceVirtualOutputState? = nil
   ) {
-    self.type = type
-    self.id = id
-    self.controller = controller
+    self.summary = summary
     self.input = input
     self.output = output
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case apiVersion
+    case kind
+    case input
+    case output
+  }
+
+  public func encode(to encoder: any Encoder) throws {
+    try summary.encode(to: encoder)
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(OpenJoystickDriverAPI.version, forKey: .apiVersion)
+    try container.encode(Self.kind, forKey: .kind)
+    try container.encodeIfPresent(input, forKey: .input)
+    try container.encodeIfPresent(output, forKey: .output)
+  }
+}
+
+/// One line of `ojd controller watch --all` and of the endpoint's `controllers` stream, shaped
+/// like a Kubernetes watch event: `{"type":"ADDED","object":{...}}`.
+///
+/// The line has no `apiVersion` and `kind` of its own; its `object` does.
+public struct ControllerWatchEvent: Encodable, Equatable, Sendable {
+  public enum Kind: String, Encodable, Sendable {
+    /// A controller connected, or was connected when the watch started.
+    case added = "ADDED"
+    /// The controller's input, or with output, its virtual gamepad's values, changed.
+    case modified = "MODIFIED"
+    /// The controller disconnected; the object is the last one the watch saw.
+    case deleted = "DELETED"
+  }
+
+  public let type: Kind
+  public var object: WatchedController
+
+  /// The ID from `ojd controller list`.
+  public var id: String { object.id }
+
+  public init(type: Kind, object: WatchedController) {
+    self.type = type
+    self.object = object
   }
 }
 
@@ -67,13 +99,15 @@ public struct ControllerWatchPoller {
   private let source: any ControllerWatchSource
   private var connected: [ApplicationServiceDeviceDescription] = []
   private var previous: [String: Sample] = [:]
+  /// The latest object of each connected controller, which a `DELETED` line carries.
+  private var objects: [String: WatchedController] = [:]
   private var listedAt: UInt64?
 
   public init(source: any ControllerWatchSource) { self.source = source }
 
   /// Reads the controllers once and returns what changed since the last poll.
   ///
-  /// The first poll reports a `connected` event for each controller already connected. `now` is
+  /// The first poll reports an `ADDED` event for each controller already connected. `now` is
   /// an uptime in nanoseconds; the controller list is read again once `deviceListInterval` passed.
   public mutating func poll(now: UInt64, includeOutput: Bool) async throws -> [Update] {
     var updates: [Update] = []
@@ -83,21 +117,19 @@ public struct ControllerWatchPoller {
       let ids = Set(devices.map(\.runtimeIdentifier))
       for device in connected where !ids.contains(device.runtimeIdentifier) {
         previous[device.runtimeIdentifier] = nil
+        let last = objects.removeValue(forKey: device.runtimeIdentifier)
+        let object = last ?? WatchedController(summary: ControllerSummary(device))
         updates.append(
-          Update(
-            event: ControllerWatchEvent(type: .disconnected, id: device.runtimeIdentifier),
-            device: device
-          )
+          Update(event: ControllerWatchEvent(type: .deleted, object: object), device: device)
         )
       }
       let known = Set(connected.map(\.runtimeIdentifier))
       for device in devices where !known.contains(device.runtimeIdentifier) {
-        let event = ControllerWatchEvent(
-          type: .connected,
-          id: device.runtimeIdentifier,
-          controller: ControllerSummary(device)
+        let object = WatchedController(summary: ControllerSummary(device))
+        objects[device.runtimeIdentifier] = object
+        updates.append(
+          Update(event: ControllerWatchEvent(type: .added, object: object), device: device)
         )
-        updates.append(Update(event: event, device: device))
       }
       connected = devices
     }
@@ -107,13 +139,15 @@ public struct ControllerWatchPoller {
       let sample = Sample(input: input, output: output)
       guard sample != previous[device.runtimeIdentifier] else { continue }
       previous[device.runtimeIdentifier] = sample
-      let event = ControllerWatchEvent(
-        type: .input,
-        id: device.runtimeIdentifier,
+      let object = WatchedController(
+        summary: ControllerSummary(device),
         input: input,
         output: output
       )
-      updates.append(Update(event: event, device: device))
+      objects[device.runtimeIdentifier] = object
+      updates.append(
+        Update(event: ControllerWatchEvent(type: .modified, object: object), device: device)
+      )
     }
     return updates
   }

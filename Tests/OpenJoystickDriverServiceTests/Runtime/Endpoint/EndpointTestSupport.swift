@@ -78,8 +78,13 @@ func tokenHello(
   let proof = HMAC<SHA256>.authenticationCode(for: Data(message.utf8), using: key)
     .map { String(format: "%02x", $0) }.joined()
   let scopes = scopes.map { #""\#($0)""# }.joined(separator: ",")
-  return #"{"type":"hello","protocol":1,"scopes":[\#(scopes)],"tokenName":"\#(name)","#
-    + #""proof":"\#(proof)"}"#
+  return #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"Hello","#
+    + #""scopes":[\#(scopes)],"tokenName":"\#(name)","proof":"\#(proof)"}"#
+}
+
+/// A client line of `kind` with the apiVersion of the endpoint and the JSON members in `fields`.
+func clientLine(_ kind: String, _ fields: String = "") -> String {
+  #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"\#(kind)"\#(fields)}"#
 }
 
 /// An endpoint client whose socket calls block with a 5-second read timeout, so each runs off the
@@ -110,20 +115,21 @@ final class EndpointTestClient: @unchecked Sendable {
     setsockopt(descriptor, SOL_SOCKET, SO_NOSIGPIPE, &noSignal, socklen_t(MemoryLayout<Int32>.size))
     try LocalServiceRPCTransport.setTimeout(descriptor, seconds: 5)
     let challenge = try await readObject()
-    #expect(challenge["type"] as? String == "challenge")
+    #expect(challenge["kind"] as? String == "Challenge")
+    #expect(challenge["apiVersion"] as? String == OpenJoystickDriverAPI.version)
     nonce = challenge["nonce"] as? String ?? ""
   }
 
   deinit { close(descriptor) }
 
-  /// A client that said hello, read its welcome, and subscribed to controllers.
+  /// A client that said Hello, read its Welcome, and subscribed to controllers.
   static func subscribed(to path: String) async throws -> EndpointTestClient {
     let client = try await EndpointTestClient(path: path)
-    await client.send(#"{"type":"hello","protocol":1,"scopes":["read"]}"#)
-    guard try await client.readObject()["type"] as? String == "welcome" else {
+    await client.send(clientLine("Hello", #","scopes":["read"]"#))
+    guard try await client.readObject()["kind"] as? String == "Welcome" else {
       throw POSIXError(.EPROTO)
     }
-    await client.send(#"{"type":"subscribe","stream":"controllers"}"#)
+    await client.send(clientLine("Subscription", #","stream":"controllers""#))
     return client
   }
 
@@ -235,7 +241,7 @@ final class EndpointWebTestClient: @unchecked Sendable {
     await client.send(
       tokenHello(name: name, token: token, nonce: client.nonce, origin: origin, port: String(port))
     )
-    #expect(try await client.readObject()["type"] as? String == "welcome")
+    #expect(try await client.readObject()["kind"] as? String == "Welcome")
     return client
   }
 
@@ -328,7 +334,8 @@ final class EndpointWebTestClient: @unchecked Sendable {
   /// Reads the challenge that follows the upgrade and keeps its nonce.
   func readChallenge() async throws {
     let challenge = try await readObject()
-    #expect(challenge["type"] as? String == "challenge")
+    #expect(challenge["kind"] as? String == "Challenge")
+    #expect(challenge["apiVersion"] as? String == OpenJoystickDriverAPI.version)
     nonce = challenge["nonce"] as? String ?? ""
   }
 

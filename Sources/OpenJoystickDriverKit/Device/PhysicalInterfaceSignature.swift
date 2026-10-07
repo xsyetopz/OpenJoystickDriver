@@ -3,18 +3,45 @@ import Foundation
 
 /// Transport/link kind; each interface signature distinguishes host-facing from
 /// controller-side evidence.
-public enum PhysicalTransport: String, Codable, Equatable, Sendable {
+///
+/// The kebab-case `rawValue` is the spelling controller records use. Encoded output (reports,
+/// `--json`, the endpoint) uses the lowerCamelCase `outputName`; decoding accepts only that.
+public enum PhysicalTransport: String, CaseIterable, Codable, Equatable, Sendable {
   case usb
   case bluetoothClassic = "bluetooth-classic"
   case bluetoothLE = "bluetooth-le"
   case proprietaryRadioReceiver = "proprietary-radio-receiver"
+
+  public var outputName: String {
+    switch self {
+    case .usb: "usb"
+    case .bluetoothClassic: "bluetoothClassic"
+    case .bluetoothLE: "bluetoothLE"
+    case .proprietaryRadioReceiver: "proprietaryRadioReceiver"
+    }
+  }
+
+  public init(from decoder: any Decoder) throws {
+    let name = try decoder.singleValueContainer().decode(String.self)
+    guard let transport = Self.allCases.first(where: { $0.outputName == name }) else {
+      throw DecodingError.dataCorrupted(
+        .init(codingPath: decoder.codingPath, debugDescription: "Unknown transport: \(name)")
+      )
+    }
+    self = transport
+  }
+
+  public func encode(to encoder: any Encoder) throws {
+    var container = encoder.singleValueContainer()
+    try container.encode(outputName)
+  }
 }
 
 /// Access-backend vocabulary: IOKit HID, or raw USB through IOUSBHost or the DEXT.
 public enum DeviceAccessBackend: String, Codable, Equatable, Sendable {
-  case ioHID = "iohid"
-  case ioUSBHost = "iousbhost"
-  case usbDriverKit = "usb-driverkit"
+  case ioHID
+  case ioUSBHost
+  case usbDriverKit
 
   public init(route: USBTransportRoute) {
     switch route {

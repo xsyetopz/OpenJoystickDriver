@@ -76,8 +76,11 @@ struct BindingCommandTests {
     let human = await service.run(["binding", "list", "Pad"])
 
     #expect(json.code == 0, "\(json.standardError)")
-    let bindings = try #require(try json.json()["bindings"] as? [[String: Any]])
+    let bindings = try #require(try json.json()["items"] as? [[String: Any]])
     #expect(bindings.first?["id"] as? String == binding.id.uuidString)
+    #expect((bindings.first?["profile"] as? [String: Any])?["name"] as? String == "Pad")
+    #expect(bindings.first?["kind"] == nil)
+    #expect((try json.json()["metadata"] as? [String: Any])?.isEmpty == true)
     #expect(human.standardOutput == "button:south -> key:space\n")
   }
 
@@ -95,7 +98,7 @@ struct BindingCommandTests {
 
     #expect(missing.code == 1)
     #expect(cleared.code == 0, "\(cleared.standardError)")
-    #expect(try cleared.json()["removed"] as? [String] == ["button:south"])
+    #expect(try cleared.details()["removed"] as? [String] == ["button:south"])
     #expect(library.stored.first?.bindings.map(\.source) == [.button(.east)])
   }
 
@@ -117,7 +120,7 @@ struct BindingCommandTests {
     let cleared = await service.run(["binding", "clear", "Pad", "--all", "-f"])
 
     #expect(refused.code == 64)
-    #expect(try dryRun.json()["removed"] as? [String] == ["button:south"])
+    #expect(try dryRun.details()["removed"] as? [String] == ["button:south"])
     #expect(humanDryRun.standardOutput.contains("Pad"))
     #expect(cleared.code == 0, "\(cleared.standardError)")
     #expect(cleared.standardError.contains("Pad"))
@@ -146,7 +149,7 @@ struct BindingCommandTests {
     let cleared = await service.run(["binding", "clear", "Pad", "--all", "-f", "--json"])
 
     #expect(cleared.code == 0, "\(cleared.standardError)")
-    #expect(try cleared.json()["all"] as? Bool == true)
+    #expect(try cleared.details()["all"] as? Bool == true)
     #expect(cleared.standardError.contains("ojd profile deactivate") == warns)
     #expect(cleared.standardError.isEmpty == !warns)
   }

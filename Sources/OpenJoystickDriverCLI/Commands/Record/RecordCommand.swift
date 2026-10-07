@@ -33,12 +33,6 @@ struct RecordListCommand: AsyncParsableCommand {
     )
   )
 
-  /// The `--json` result. `skipped` is absent with `--bundled`.
-  struct Result: Encodable, Equatable {
-    let records: [RecordEntry]
-    let skipped: [SkippedRecord]?
-  }
-
   @Flag(
     help: ArgumentHelp(
       CLILocalized.text("cli.record.list.bundled")
@@ -59,9 +53,7 @@ struct RecordListCommand: AsyncParsableCommand {
       }.map(RecordEntry.init)
       switch CLIContext.current.format {
       case .json:
-        try CLIOutput.json(
-          Result(records: records, skipped: bundled ? nil : set.problems.map(SkippedRecord.init))
-        )
+        try CLIOutput.json(CLIList(items: records))
       case .plain:
         CLIOutput.plain(records.map { [$0.identity, $0.family, $0.layer, $0.file ?? ""] })
       case .human:

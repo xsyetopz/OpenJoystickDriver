@@ -361,7 +361,7 @@ struct VirtualResetCommand: AsyncParsableCommand {
       )
     }
     switch CLIContext.current.format {
-    case .json: try CLIOutput.json(["reset": "all"])
+    case .json: try CLIOutput.json(CLIStatus(details: ["reset": "all"]), kind: "Status")
     case .plain: CLIOutput.plain([["reset", "all"]])
     case .human:
       CLIOutput.success(

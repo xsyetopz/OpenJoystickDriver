@@ -24,7 +24,7 @@ struct ControllerShowAppliedTests {
     let human = await service.run(["controller", "show", "pad-1"])
 
     #expect(json.code == 0, "\(json.standardError)")
-    let controller = try #require(try json.json()["controller"] as? [String: Any])
+    let controller = try json.json()
     let tuning = try #require(controller["tuning"] as? [String: Any])
     #expect(tuning["stickDeadzone"] as? Double == 0.2)
     #expect(tuning["inputLivenessTimeoutMs"] as? Int == 1500)
@@ -51,7 +51,7 @@ struct ControllerShowAppliedTests {
     let json = await service.run(["controller", "show", "pad-1", "--json"])
     let plain = await service.run(["controller", "show", "pad-1", "--plain"])
 
-    let controller = try #require(try json.json()["controller"] as? [String: Any])
+    let controller = try json.json()
     #expect(controller["tuning"] == nil)
     #expect(!plain.standardOutput.contains("\ntuning\t"))
   }
@@ -66,7 +66,7 @@ struct ControllerShowAppliedTests {
     let plain = await service.run(["controller", "show", "pad-1", "--plain"])
     let human = await service.run(["controller", "show", "pad-1"])
 
-    let controller = try #require(try json.json()["controller"] as? [String: Any])
+    let controller = try json.json()
     let capabilities = try #require(controller["capabilities"] as? [String: Any])
     #expect(capabilities["outputOwner"] as? String == "macos")
     #expect(plain.standardOutput.contains("\noutput-owner\tmacos\n"))
@@ -85,7 +85,7 @@ struct ControllerShowAppliedTests {
     let json = await service.run(["controller", "show", "pad-1", "--json"])
     let human = await service.run(["controller", "show", "pad-1"])
 
-    let controller = try #require(try json.json()["controller"] as? [String: Any])
+    let controller = try json.json()
     let capabilities = try #require(controller["capabilities"] as? [String: Any])
     #expect(capabilities["outputOwner"] as? String == "ojd")
     let label = CLILocalized.text("cli.controller.show.label.output_owner")

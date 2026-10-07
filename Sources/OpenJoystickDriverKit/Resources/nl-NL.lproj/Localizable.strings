@@ -1507,7 +1507,7 @@
 "cli.profile.vanished" = "De service heeft het profiel niet bewaard. Controleer het met ‘ojd profile list’.";
 "error.E1001" = "Het eindpunt staat uit. Zet het aan met „ojd access enable” en maak opnieuw verbinding.";
 "error.E1002" = "De service heeft deze client geweigerd. Hij heeft geen toestemming voor de gevraagde bereiken, of zijn handtekening of bewijs is ongeldig. Voer „ojd access list” uit, geef de client toestemming met „ojd access grant” en maak opnieuw verbinding.";
-"error.E1003" = "De service ondersteunt de protocolversie in hello niet. Stuur een van de versies in supported en maak opnieuw verbinding.";
+"error.E1003" = "De service ondersteunt de apiVersion in Hello niet. Stuur een van de versies in details.supportedAPIVersions en maak opnieuw verbinding.";
 "error.E1004" = "De service kon de regel niet accepteren. De regel is ongeldig of kwam op het verkeerde moment. Stuur eerst hello, dan één verzoek, en controleer elke regel met het schema van het eindpunt.";
 "error.E1005" = "Het eindpunt bedient al 8 verbindingen per transport (socket en WebSocket elk apart). Sluit een verbinding die je niet nodig hebt en maak opnieuw verbinding.";
 "error.E1006" = "De toestemming van deze client is ingetrokken terwijl hij verbonden was. Geef hem opnieuw toestemming met „ojd access grant” en maak opnieuw verbinding.";

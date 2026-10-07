@@ -1,6 +1,6 @@
 import Foundation
 
-/// One controller in `ojd controller list --json` and on `connected` watch lines.
+/// One controller in `ojd controller list --json` and in the object of watch lines.
 ///
 /// The serial number is never printed; `hasSerialNumber` says whether the controller reports one.
 public struct ControllerSummary: Encodable, Equatable, Sendable {

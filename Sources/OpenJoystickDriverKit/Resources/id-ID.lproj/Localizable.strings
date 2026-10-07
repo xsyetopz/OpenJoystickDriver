@@ -1507,7 +1507,7 @@
 "cli.profile.vanished" = "Layanan tidak menyimpan profil. Periksa dengan “ojd profile list”.";
 "error.E1001" = "Endpoint mati. Aktifkan dengan “ojd access enable” dan hubungkan lagi.";
 "error.E1002" = "Layanan menolak klien ini. Klien tidak memiliki akses untuk cakupan yang diminta, atau tanda tangan atau buktinya tidak valid. Jalankan “ojd access list”, beri akses ke klien dengan “ojd access grant”, dan hubungkan lagi.";
-"error.E1003" = "Layanan tidak mendukung versi protokol di hello. Kirim salah satu versi di supported, dan hubungkan lagi.";
+"error.E1003" = "Layanan tidak mendukung apiVersion di Hello. Kirim salah satu versi di details.supportedAPIVersions, dan hubungkan lagi.";
 "error.E1004" = "Layanan tidak dapat menerima baris itu. Baris tidak valid, atau datang pada waktu yang salah. Kirim hello lebih dulu, lalu satu permintaan, dan periksa setiap baris terhadap skema endpoint.";
 "error.E1005" = "Endpoint sudah melayani 8 koneksi per transport (soket dan WebSocket masing-masing). Tutup koneksi yang tidak Anda perlukan, dan hubungkan lagi.";
 "error.E1006" = "Akses klien ini dihapus saat terhubung. Beri akses lagi dengan “ojd access grant”, dan hubungkan lagi.";

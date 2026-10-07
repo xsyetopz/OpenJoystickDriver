@@ -49,35 +49,37 @@ extension EndpointServer {
     connection.setReceiveTimeout(seconds: 0)
 
     guard let request = readRequest(connection) else { return }
-    if request.type == .feed {
+    if request.kind == .feedRequest {
       guard connection.session?.scopes.contains(.control) == true else {
         connection.close(
-          EndpointError(code: .notGranted, message: "Feed needs the control scope.")
+          EndpointError(code: .notGranted, message: "FeedRequest needs the control scope.")
         )
         return
       }
       guard let profile = request.as else {
-        connection.close(Self.invalid("Send feed with a virtual HID profile."))
+        connection.close(Self.invalid("Send FeedRequest with a virtual HID profile."))
         return
       }
       feed(connection, profile: profile)
       return
     }
-    guard request.type == .subscribe, request.stream == "controllers" else {
-      connection.close(Self.invalid("Send subscribe with the controllers stream, or feed."))
+    guard request.kind == .subscription, request.stream == "controllers" else {
+      connection.close(
+        Self.invalid("Send Subscription with the controllers stream, or FeedRequest.")
+      )
       return
     }
     guard connection.session?.scopes.contains(.read) == true else {
       connection.close(
-        EndpointError(code: .notGranted, message: "Subscribe needs the read scope.")
+        EndpointError(code: .notGranted, message: "Subscription needs the read scope.")
       )
       return
     }
     lock.withLock { subscribe(connection, output: request.output ?? false) }
 
-    // The protocol has no line after `subscribe`; any line ends the connection.
+    // The protocol has no line after `Subscription`; any line ends the connection.
     if readRequest(connection) != nil {
-      connection.close(Self.invalid("Only one subscribe is accepted."))
+      connection.close(Self.invalid("Only one Subscription is accepted."))
     }
   }
 
@@ -92,21 +94,22 @@ extension EndpointServer {
     origin: String?,
     challenge: Challenge
   ) -> Bool {
-    guard let hello = readRequest(connection) else { return false }
-    guard hello.type == .hello, let requestedProtocol = hello.protocol,
-      let requested = hello.scopes,
-      !requested.isEmpty
-    else {
-      connection.close(Self.invalid("Send hello with a protocol and at least one scope first."))
+    guard let hello = readRequest(connection, isHello: true) else { return false }
+    guard hello.kind == .hello else {
+      connection.close(Self.invalid("Send Hello with at least one scope first."))
       return false
     }
-    guard requestedProtocol == Self.protocolVersion else {
+    guard hello.apiVersion == OpenJoystickDriverAPI.version else {
       var error = EndpointError(
         code: .unsupportedProtocol,
-        message: "Protocol \(requestedProtocol) is not supported."
+        message: "The apiVersion \(hello.apiVersion) is not supported."
       )
-      error.supported = [Self.protocolVersion]
+      error.details = .init(supportedAPIVersions: [OpenJoystickDriverAPI.version])
       connection.close(error)
+      return false
+    }
+    guard let requested = hello.scopes, !requested.isEmpty else {
+      connection.close(Self.invalid("Send Hello with at least one scope first."))
       return false
     }
     let scopes = EndpointScope.allCases.filter(requested.contains)
@@ -148,7 +151,7 @@ extension EndpointServer {
       }
       connection.welcome(
         session,
-        line: EndpointWelcome(protocol: Self.protocolVersion, version: version, scopes: scopes)
+        line: EndpointWelcome(version: version, scopes: scopes)
       )
       return true
     }
@@ -214,8 +217,12 @@ extension EndpointServer {
   }
 
   /// The next request; nil after the client closed, the timeout passed, or an invalid line, which
-  /// is answered with `E1004`.
-  private func readRequest(_ connection: EndpointConnection) -> EndpointRequest? {
+  /// is answered with `E1004`. So is a line whose `apiVersion` is not supported, unless it is the
+  /// `Hello`, which `handshake` answers with `E1003`.
+  private func readRequest(
+    _ connection: EndpointConnection,
+    isHello: Bool = false
+  ) -> EndpointRequest? {
     switch connection.readMessage() {
     case .end: return nil
     case .tooLong:
@@ -226,7 +233,15 @@ extension EndpointServer {
       return nil
     case .message(let data):
       guard let request = try? JSONDecoder().decode(EndpointRequest.self, from: data) else {
-        connection.close(Self.invalid("The message is not a request."))
+        connection.close(
+          Self.invalid("The message is not a request: it needs a known kind and an apiVersion.")
+        )
+        return nil
+      }
+      guard isHello || request.apiVersion == OpenJoystickDriverAPI.version else {
+        connection.close(
+          Self.invalid("The apiVersion \(request.apiVersion) is not the one the Hello used.")
+        )
         return nil
       }
       return request

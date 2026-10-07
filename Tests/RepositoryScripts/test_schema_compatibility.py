@@ -297,14 +297,24 @@ class BaselineTests(unittest.TestCase):
         current = {ROOT: {"$defs": {}}}
 
         plist.write_bytes(
-            plistlib.dumps({"CFBundleShortVersionString": "0.2.0-beta.1"})
+            plistlib.dumps({"CFBundleShortVersionString": "0.1.1-beta.1"})
         )
         with self.assertRaises(schema_compatibility.IncompatibleSchemaError) as raised:
             schema_compatibility.check(root, current)
         self.assertIn("controllerList: command output removed", str(raised.exception))
 
-        plist.write_bytes(plistlib.dumps({"CFBundleShortVersionString": "1.0.0"}))
-        self.assertIn("1.0.0", schema_compatibility.check(root, current))
+        for version in ("0.2.0-alpha.1", "1.0.0"):
+            plist.write_bytes(plistlib.dumps({"CFBundleShortVersionString": version}))
+            self.assertIn(version, schema_compatibility.check(root, current))
+
+    def test_a_major_version_is_the_minor_version_before_1_0(self) -> None:
+        for version, major in (
+            ("0.5.0-beta.4", "0.5"),
+            ("0.6.0-alpha.1", "0.6"),
+            ("1.2.3", "1"),
+            ("2.0.0-rc.1", "2"),
+        ):
+            self.assertEqual(schema_compatibility.major_version(version), major)
 
 
 if __name__ == "__main__":

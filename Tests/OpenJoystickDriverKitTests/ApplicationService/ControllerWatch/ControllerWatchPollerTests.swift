@@ -21,14 +21,17 @@ struct ControllerWatchPollerTests {
     )
 
     #expect(
-      first.map(\.summary) == ["connected pad-1", "connected pad-2", "input pad-1", "input pad-2"]
+      first.map(\.summary) == ["ADDED pad-1", "ADDED pad-2", "MODIFIED pad-1", "MODIFIED pad-2"]
     )
     #expect(second.isEmpty)
     // The list is read again only after the interval, so pad-2 is still read until then.
-    #expect(third.map(\.summary) == ["input pad-1", "input pad-2"])
-    #expect(fourth.map(\.summary) == ["disconnected pad-2"])
-    #expect(first[0].event.controller?.id == "pad-1")
-    #expect(first[2].event.input == ControllerState(pressed: [.faceSouth]))
+    #expect(third.map(\.summary) == ["MODIFIED pad-1", "MODIFIED pad-2"])
+    #expect(fourth.map(\.summary) == ["DELETED pad-2"])
+    #expect(first[0].event.object.id == "pad-1")
+    #expect(first[0].event.object.input == nil)
+    #expect(first[2].event.object.input == ControllerState(pressed: [.faceSouth]))
+    // A deleted controller's object is the last one the watch saw.
+    #expect(fourth[0].event.object.input == ControllerState(pressed: [.faceEast]))
   }
 
   @Test
@@ -41,9 +44,9 @@ struct ControllerWatchPollerTests {
     let with = try await poller.poll(now: 16_000_000, includeOutput: true)
 
     #expect(source.outputReads == 1)
-    #expect(without.last?.event.output == nil)
-    #expect(with.map(\.summary) == ["input pad-1"])
-    #expect(with.last?.event.output == source.output)
+    #expect(without.last?.event.object.output == nil)
+    #expect(with.map(\.summary) == ["MODIFIED pad-1"])
+    #expect(with.last?.event.object.output == source.output)
   }
 }
 

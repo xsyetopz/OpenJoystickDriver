@@ -119,8 +119,16 @@ struct RecordTestCommand: AsyncParsableCommand {
   }
 
   /// The received packets of a capture, in order.
-  /// The capture holds one `PacketLogEntry` JSON object per line,
-  /// as `ojd controller capture --json` prints them.
+  /// The capture holds one packet JSON object per line, as `ojd controller capture --json` prints
+  /// them. A line's time field (`captureTime`, or the older `timestamp`) is not read.
+  private struct CaptureLine: Decodable {
+    let direction: PacketLogDirection
+    let hex: String
+    let length: Int
+
+    var reportBytes: [UInt8] { hex.split(separator: " ").compactMap { UInt8($0, radix: 16) } }
+  }
+
   static func receivedReports(in data: Data, path: String) throws -> [[UInt8]] {
     var reports: [[UInt8]] = []
     guard let text = String(bytes: data, encoding: .utf8) else {
@@ -128,8 +136,8 @@ struct RecordTestCommand: AsyncParsableCommand {
     }
     let lines = text.split(omittingEmptySubsequences: false, whereSeparator: \.isNewline)
     for (offset, line) in lines.enumerated() where !line.allSatisfy(\.isWhitespace) {
-      let entry: PacketLogEntry
-      do { entry = try JSONDecoder().decode(PacketLogEntry.self, from: Data(line.utf8)) } catch {
+      let entry: CaptureLine
+      do { entry = try JSONDecoder().decode(CaptureLine.self, from: Data(line.utf8)) } catch {
         throw invalidCapture(path, line: offset + 1, error.localizedDescription)
       }
       guard entry.reportBytes.count == entry.length else {

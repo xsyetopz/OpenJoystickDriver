@@ -1507,7 +1507,7 @@
 "cli.profile.vanished" = "Le service n’a pas conservé le profil. Vérifiez-le avec « ojd profile list ».";
 "error.E1001" = "Le point d’accès est désactivé. Activez-le avec « ojd access enable » et reconnectez-vous.";
 "error.E1002" = "Le service a refusé ce client. Il n’a pas d’autorisation pour les portées demandées, ou sa signature ou sa preuve n’est pas valide. Exécutez « ojd access list », autorisez le client avec « ojd access grant » et reconnectez-vous.";
-"error.E1003" = "Le service ne prend pas en charge la version de protocole indiquée dans hello. Envoyez l’une des versions de supported et reconnectez-vous.";
+"error.E1003" = "Le service ne prend pas en charge l’apiVersion indiquée dans Hello. Envoyez l’une des versions de details.supportedAPIVersions et reconnectez-vous.";
 "error.E1004" = "Le service n’a pas pu accepter la ligne. Elle n’est pas valide ou elle est arrivée au mauvais moment. Envoyez d’abord hello, puis une seule requête, et vérifiez chaque ligne avec le schéma du point d’accès.";
 "error.E1005" = "Le point d’accès sert déjà 8 connexions par transport (socket et WebSocket comptés séparément). Fermez une connexion dont vous n’avez pas besoin et reconnectez-vous.";
 "error.E1006" = "L’autorisation de ce client a été retirée pendant qu’il était connecté. Autorisez-le de nouveau avec « ojd access grant » et reconnectez-vous.";

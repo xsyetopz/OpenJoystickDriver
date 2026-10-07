@@ -39,9 +39,22 @@ struct BindingListCommand: AsyncParsableCommand {
     abstract: CLILocalized.text("cli.binding.list.abstract")
   )
 
-  struct Result: Encodable, Equatable {
+  /// One item of the `--json` list: a binding and the profile it came from.
+  struct Item: Encodable, Equatable {
     let profile: ProfileSummary
-    let bindings: [BindingSummary]
+    let id: String
+    let source: String
+    let target: String
+    let behavior: String
+
+    init(_ binding: RemappingBinding, profile: ProfileSummary) {
+      let summary = BindingSummary(binding)
+      self.profile = profile
+      id = summary.id
+      source = summary.source
+      target = summary.target
+      behavior = summary.behavior
+    }
   }
 
   @Argument(help: profileArgumentHelp)
@@ -58,11 +71,9 @@ struct BindingListCommand: AsyncParsableCommand {
       }
       switch CLIContext.current.format {
       case .json:
+        let profile = ProfileSummary(document, snapshot: snapshot)
         try CLIOutput.json(
-          Result(
-            profile: ProfileSummary(document, snapshot: snapshot),
-            bindings: document.bindings.map(BindingSummary.init)
-          )
+          CLIList(items: document.bindings.map { Item($0, profile: profile) })
         )
       case .plain:
         CLIOutput.plain(
@@ -275,7 +286,7 @@ struct BindingClearCommand: AsyncParsableCommand {
         dryRun: dryRun
       )
       switch CLIContext.current.format {
-      case .json: try CLIOutput.json(result)
+      case .json: try CLIOutput.json(CLIStatus(details: result))
       case .plain: CLIOutput.plain(result.removed.map { [$0] })
       case .human:
         let message =

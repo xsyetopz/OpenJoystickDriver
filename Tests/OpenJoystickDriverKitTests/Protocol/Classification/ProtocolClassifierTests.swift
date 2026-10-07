@@ -12,10 +12,10 @@ struct ProtocolClassifierTests {
   func bindingReasonsAreTheTypedReasonIDs() {
     #expect(
       ProtocolBindingReason.allCases.map(\.rawValue) == [
-        "no-protocol-match", "ambiguous-protocol-match", "interface-contract-mismatch",
-        "descriptor-contract-mismatch", "packet-contract-mismatch", "unsupported-protocol-variant",
-        "unsupported-transport-variant", "required-initialization-failed", "catalog-conflict",
-        "virtual-profile-unavailable",
+        "noProtocolMatch", "ambiguousProtocolMatch", "interfaceContractMismatch",
+        "descriptorContractMismatch", "packetContractMismatch", "unsupportedProtocolVariant",
+        "unsupportedTransportVariant", "requiredInitializationFailed", "catalogConflict",
+        "virtualProfileUnavailable",
       ]
     )
   }

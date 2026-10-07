@@ -318,7 +318,7 @@ extension ApplicationServiceServer {
     let notPublished = { (reason: String) in
       ApplicationServicePublicationStatus(state: .notPublished, reason: reason)
     }
-    guard let automatic else { return notPublished("output-disabled") }
+    guard let automatic else { return notPublished("outputDisabled") }
     let recorded = automatic.publicationStatus(runtimeIdentifier: device.runtimeIdentifier)
     if let recorded, recorded.state != .notPublished { return recorded }
     switch ControllerExposureDecision.decide(
@@ -327,15 +327,15 @@ extension ApplicationServiceServer {
     ).eligibility {
     case .suppressedNativeHIDPassThrough:
       return notPublished(
-        device.physicalOwnership == .nativeGamepad ? "native-gamepad" : "native-hid-pass-through"
+        device.physicalOwnership == .nativeGamepad ? "nativeGamepad" : "nativeHIDPassThrough"
       )
-    case .suppressedUpstreamVirtualDevice: return notPublished("upstream-virtual-device")
-    case .suppressedOutputDisabled: return notPublished("output-disabled")
+    case .suppressedUpstreamVirtualDevice: return notPublished("upstreamVirtualDevice")
+    case .suppressedOutputDisabled: return notPublished("outputDisabled")
     case .eligible: break
     }
-    if device.sessionState == .suspended { return notPublished("session-suspended") }
-    if unavailable { return notPublished("no-virtual-profile") }
-    return recorded ?? notPublished("no-input-yet")
+    if device.sessionState == .suspended { return notPublished("sessionSuspended") }
+    if unavailable { return notPublished("noVirtualProfile") }
+    return recorded ?? notPublished("noInputYet")
   }
 
   /// Clears every virtual HID profile override.

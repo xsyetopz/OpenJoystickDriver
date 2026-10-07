@@ -2,7 +2,7 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension ControllerWatchCommand {
-  /// Prints a `connected` line for each controller already connected, then input and connection
+  /// Prints an `ADDED` line for each controller already connected, then input and connection
   /// changes for every controller until `duration` elapses or the command is interrupted.
   func watchAll() async throws {
     let client = try await ServiceConnection.open()
@@ -32,15 +32,16 @@ extension ControllerWatchCommand {
     _ event: ControllerWatchEvent,
     device: ApplicationServiceDeviceDescription
   ) throws {
+    let object = event.object
     switch (CLIContext.current.format, event.type) {
-    case (.json, _): try CLIOutput.jsonLine(event)
-    case (.plain, .connected):
+    case (.json, _): try CLIOutput.jsonLineWithoutEnvelope(event)
+    case (.plain, .added):
       CLIOutput.plain([["connected", event.id, device.identity, device.name]])
-    case (.plain, .disconnected): CLIOutput.plain([["disconnected", event.id]])
-    case (.plain, .input):
-      let input = event.input.map(Self.plainRow) ?? []
-      CLIOutput.plain([["input", event.id] + input + (output ? Self.plainRow(event.output) : [])])
-    case (.human, .connected):
+    case (.plain, .deleted): CLIOutput.plain([["disconnected", event.id]])
+    case (.plain, .modified):
+      let input = object.input.map(Self.plainRow) ?? []
+      CLIOutput.plain([["input", event.id] + input + (output ? Self.plainRow(object.output) : [])])
+    case (.human, .added):
       CLIOutput.stdout(
         CLILocalized.format(
           "cli.controller.watch.connected",
@@ -49,13 +50,13 @@ extension ControllerWatchCommand {
           device.identity
         )
       )
-    case (.human, .disconnected):
+    case (.human, .deleted):
       CLIOutput.stdout(
         CLILocalized.format("cli.controller.watch.disconnected", event.id)
       )
-    case (.human, .input):
-      if let input = event.input { CLIOutput.stdout("\(event.id) " + Self.formatted(input)) }
-      if output { CLIOutput.stdout("\(event.id) " + Self.formatted(event.output)) }
+    case (.human, .modified):
+      if let input = object.input { CLIOutput.stdout("\(event.id) " + Self.formatted(input)) }
+      if output { CLIOutput.stdout("\(event.id) " + Self.formatted(object.output)) }
     }
   }
 }

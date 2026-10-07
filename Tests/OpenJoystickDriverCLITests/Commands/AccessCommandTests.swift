@@ -25,13 +25,13 @@ struct AccessCommandTests {
     path: "/tmp/tool",
     scopes: [.read],
     reason: "E1002",
-    refusedAt: "2026-10-03T20:01:00Z"
+    refusalTime: "2026-10-03T20:01:00Z"
   )
   private static let token = AccessTokenSummary(
     name: "overlay",
     origins: ["http://localhost:8080"],
     scopes: [.read],
-    grantedAt: "2026-10-03T20:02:00Z"
+    grantTime: "2026-10-03T20:02:00Z"
   )
   private static let refusedToken = AccessRefusedToken(
     name: nil,
@@ -39,7 +39,7 @@ struct AccessCommandTests {
     transport: .web,
     scopes: [.read],
     reason: "E1002",
-    refusedAt: "2026-10-03T20:03:00Z"
+    refusalTime: "2026-10-03T20:03:00Z"
   )
 
   /// A service with one grant and one refused client that answers each access method.
@@ -81,7 +81,7 @@ struct AccessCommandTests {
               name: value.name,
               origins: value.origins,
               scopes: value.scopes,
-              grantedAt: "now"
+              grantTime: "now"
             )
           )
         )
@@ -143,7 +143,8 @@ struct AccessCommandTests {
     #expect(
       (try list.json()["grants"] as? [[String: Any]])?.first?["id"] as? String == Self.grant.id
     )
-    #expect((try list.json()["refused"] as? [[String: Any]])?.first?["kind"] as? String == "ad-hoc")
+    let refused = try list.json()["refused"] as? [[String: Any]]
+    #expect(refused?.first?["identityKind"] as? String == "adHoc")
     #expect(plain.standardOutput.contains("granted\t\(Self.grant.id)\tteam\tcom.example.reader"))
     #expect(plain.standardOutput.contains("token\ttoken:overlay\thttp://localhost:8080\tread"))
     #expect(plain.standardOutput.contains("refused-token\t\thttp://evil.example\tread\tweb"))
@@ -221,7 +222,7 @@ struct AccessCommandTests {
     let result = await service.run(["access", "revoke", "token:overlay", "--json"])
 
     #expect(result.code == 0, "\(result.standardError)")
-    #expect(try result.json()["closedConnections"] as? Int == 2)
+    #expect(try result.details()["closedConnections"] as? Int == 2)
     #expect(service.arguments(of: .getAccessStatus).isEmpty)
     let sent = try service.arguments(of: .revokeAccess).map {
       try JSONDecoder().decode(AccessRevokeArguments.self, from: $0)
@@ -333,9 +334,9 @@ struct AccessCommandTests {
     ])
 
     #expect(whole.code == 0, "\(whole.standardError)")
-    #expect(try whole.json()["grant"] == nil)
-    #expect(try whole.json()["closedConnections"] as? Int == 1)
-    #expect((try partial.json()["grant"] as? [String: Any])?["scopes"] as? [String] == ["read"])
+    #expect(try whole.details()["grant"] == nil)
+    #expect(try whole.details()["closedConnections"] as? Int == 1)
+    #expect((try partial.details()["grant"] as? [String: Any])?["scopes"] as? [String] == ["read"])
     let sent = try service.arguments(of: .revokeAccess).map {
       try JSONDecoder().decode(AccessRevokeArguments.self, from: $0)
     }

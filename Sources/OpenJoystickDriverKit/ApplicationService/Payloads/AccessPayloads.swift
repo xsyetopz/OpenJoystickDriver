@@ -55,23 +55,51 @@ public struct AccessGrant: Codable, Equatable, Sendable {
   }
 }
 
+/// Who signed a client, as `ojd access --json` and the endpoint name it.
+///
+/// ``CodeSigningIdentity/Kind`` keeps its kebab-case raw value because `AccessGrants.json` stores
+/// it; this type is the lowerCamelCase output spelling.
+public enum AccessIdentityKind: String, Codable, Sendable {
+  case team
+  case apple
+  case adHoc
+
+  public init(_ kind: CodeSigningIdentity.Kind) {
+    switch kind {
+    case .team: self = .team
+    case .apple: self = .apple
+    case .adHoc: self = .adHoc
+    }
+  }
+
+  public var kind: CodeSigningIdentity.Kind {
+    switch self {
+    case .team: .team
+    case .apple: .apple
+    case .adHoc: .adHoc
+    }
+  }
+}
+
 /// A grant as `ojd access` prints it, with its client ID.
 public struct AccessGrantSummary: Codable, Equatable, Sendable {
   public let id: String
-  public let kind: CodeSigningIdentity.Kind
+  /// The grant's `kind`, renamed because every `--json` document has its own `kind`.
+  public let identityKind: AccessIdentityKind
   public let identifier: String
   public let teamIdentifier: String?
   public let scopes: [EndpointScope]
-  public let grantedAt: String
+  /// RFC 3339 time of the latest grant.
+  public let grantTime: String
   public let path: String
 
   public init(_ grant: AccessGrant) {
     id = grant.identity.accessID
-    kind = grant.kind
+    identityKind = AccessIdentityKind(grant.kind)
     identifier = grant.identifier
     teamIdentifier = grant.teamIdentifier
     scopes = grant.scopes
-    grantedAt = grant.grantedAt
+    grantTime = grant.grantedAt
     path = grant.path
   }
 }
@@ -79,7 +107,7 @@ public struct AccessGrantSummary: Codable, Equatable, Sendable {
 /// A client the endpoint refused in the last 24 hours.
 public struct AccessRefusedClient: Codable, Equatable, Sendable {
   public let id: String
-  public let kind: CodeSigningIdentity.Kind
+  public let identityKind: AccessIdentityKind
   public let identifier: String
   public let teamIdentifier: String?
   /// The client's executable, when the service could read it.
@@ -87,28 +115,32 @@ public struct AccessRefusedClient: Codable, Equatable, Sendable {
   public let scopes: [EndpointScope]
   /// The error code the client got, such as `E1002`.
   public let reason: String
-  /// ISO 8601 time of the latest refusal.
-  public let refusedAt: String
+  /// RFC 3339 time of the latest refusal.
+  public let refusalTime: String
 
   public init(
     identity: CodeSigningIdentity,
     path: String?,
     scopes: [EndpointScope],
     reason: String,
-    refusedAt: String
+    refusalTime: String
   ) {
     id = identity.accessID
-    kind = identity.kind
+    identityKind = AccessIdentityKind(identity.kind)
     identifier = identity.identifier
     teamIdentifier = identity.teamIdentifier
     self.path = path
     self.scopes = Array(Set(scopes)).sorted()
     self.reason = reason
-    self.refusedAt = refusedAt
+    self.refusalTime = refusalTime
   }
 
   public var identity: CodeSigningIdentity {
-    CodeSigningIdentity(kind: kind, identifier: identifier, teamIdentifier: teamIdentifier)
+    CodeSigningIdentity(
+      kind: identityKind.kind,
+      identifier: identifier,
+      teamIdentifier: teamIdentifier
+    )
   }
 }
 
@@ -152,14 +184,15 @@ public struct AccessTokenSummary: Codable, Equatable, Sendable {
   /// The web origins, as `scheme://host[:port]`, whose pages may use the token on the WebSocket.
   public let origins: [String]
   public let scopes: [EndpointScope]
-  public let grantedAt: String
+  /// RFC 3339 time of the latest grant.
+  public let grantTime: String
 
-  public init(name: String, origins: [String], scopes: [EndpointScope], grantedAt: String) {
+  public init(name: String, origins: [String], scopes: [EndpointScope], grantTime: String) {
     id = "token:\(name)"
     self.name = name
     self.origins = origins
     self.scopes = scopes
-    self.grantedAt = grantedAt
+    self.grantTime = grantTime
   }
 }
 
@@ -172,7 +205,8 @@ public struct AccessRefusedToken: Codable, Equatable, Sendable {
   public let transport: AccessTransport
   public let scopes: [EndpointScope]
   public let reason: String
-  public let refusedAt: String
+  /// RFC 3339 time of the latest refusal.
+  public let refusalTime: String
 
   public init(
     name: String?,
@@ -180,14 +214,14 @@ public struct AccessRefusedToken: Codable, Equatable, Sendable {
     transport: AccessTransport,
     scopes: [EndpointScope],
     reason: String,
-    refusedAt: String
+    refusalTime: String
   ) {
     self.name = name
     self.origin = origin
     self.transport = transport
     self.scopes = Array(Set(scopes)).sorted()
     self.reason = reason
-    self.refusedAt = refusedAt
+    self.refusalTime = refusalTime
   }
 }
 

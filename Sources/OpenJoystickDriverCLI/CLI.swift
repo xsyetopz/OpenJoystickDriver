@@ -50,7 +50,9 @@ package struct CLI {
       return CLIExitCode.success.rawValue
     }
     do {
-      try await asyncCommand.run()
+      try await CLIOutput.$kind.withValue(outputKind(of: type(of: asyncCommand)) ?? "") {
+        try await asyncCommand.run()
+      }
       return CLIExitCode.success.rawValue
     } catch { return report(error) }
   }

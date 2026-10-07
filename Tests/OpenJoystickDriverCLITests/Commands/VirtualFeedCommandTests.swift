@@ -140,12 +140,19 @@ struct VirtualFeedCommandTests {
     #expect(result.code == 0, "\(result.standardError)")
     let lines = result.standardOutput.split(separator: "\n").map(String.init)
     #expect(lines.count == 2)
-    #expect(lines.last == #"{"type":"stop-rumble"}"#)
-    let first = try JSONDecoder().decode(
-      ControllerOutputCommand.self,
-      from: Data((lines.first ?? "").utf8)
+    #expect(
+      lines.last
+        == #"{"apiVersion":"openjoystickdriver.io/v1beta1","kind":"RumbleCommand","#
+        + #""type":"stopRumble"}"#
     )
-    #expect(first == .setRumble(.off, duration: .milliseconds(200)))
+    let first = try #require(
+      try JSONSerialization.jsonObject(with: Data((lines.first ?? "").utf8)) as? [String: Any]
+    )
+    #expect(first["apiVersion"] as? String == "openjoystickdriver.io/v1beta1")
+    #expect(first["kind"] as? String == "RumbleCommand")
+    #expect(first["type"] as? String == "setRumble")
+    #expect(first["durationMilliseconds"] as? Int == 200)
+    #expect(first["duration"] == nil)
   }
 
   @Test(arguments: [

@@ -74,7 +74,8 @@ final class EndpointConnection: @unchecked Sendable {
     send(line)
   }
 
-  /// Starts the stream with `snapshot`, the controllers connected before the client subscribed.
+  /// Starts the stream with `snapshot`, an `ADDED` event with the current object of each
+  /// controller connected before the client subscribed.
   func subscribe(output: Bool, snapshot: [ControllerWatchEvent]) {
     lock.withLock {
       subscribed = true
@@ -98,25 +99,25 @@ final class EndpointConnection: @unchecked Sendable {
     }
   }
 
-  /// Queues `event`, replacing a waiting `input` line of the same controller; closes the
+  /// Queues `event`, replacing a waiting `MODIFIED` line of the same controller; closes the
   /// connection with `E1007` when the queue is full.
   func deliver(_ event: ControllerWatchEvent) {
     lock.withLock {
       guard subscribed, !closing else { return }
       var event = event
       if !wantsOutput {
-        event.output = nil
+        event.object.output = nil
         switch event.type {
-        case .input:
-          guard let input = event.input, lastInput[event.id] != input else { return }
+        case .modified:
+          guard let input = event.object.input, lastInput[event.id] != input else { return }
           lastInput[event.id] = input
-        case .disconnected: lastInput[event.id] = nil
-        case .connected: break
+        case .deleted: lastInput[event.id] = nil
+        case .added: lastInput[event.id] = event.object.input
         }
       }
-      if event.type == .input,
+      if event.type == .modified,
         let index = pending.lastIndex(where: { Self.controllerID(of: $0) == event.id }),
-        case .event(let waiting) = pending[index], waiting.type == .input
+        case .event(let waiting) = pending[index], waiting.type == .modified
       {
         pending[index] = .event(event)
         return
@@ -201,7 +202,7 @@ final class EndpointConnection: @unchecked Sendable {
     if case .event(let event) = outgoing { event.id } else { nil }
   }
 
-  /// The encoding of `ojd controller watch --json`, so both print the same lines.
+  /// The encoding of `ojd controller watch --all --json`, so both print the same lines.
   private static func encoder() -> JSONEncoder {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]

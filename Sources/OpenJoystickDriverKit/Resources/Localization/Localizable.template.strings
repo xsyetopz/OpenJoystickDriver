@@ -1509,7 +1509,7 @@
 "cli.profile.vanished" = "The service did not keep the profile. Check it with 'ojd profile list'.";
 "error.E1001" = "The endpoint is off. Turn it on with 'ojd access enable' and connect again.";
 "error.E1002" = "The service refused this client. It has no grant for the scopes it asked for, or its signature or proof is not valid. Run 'ojd access list', grant the client with 'ojd access grant', and connect again.";
-"error.E1003" = "The service does not speak the protocol version in hello. Send one of the versions in supported, and connect again.";
+"error.E1003" = "The service does not speak the apiVersion in Hello. Send one of the versions in details.supportedAPIVersions, and connect again.";
 "error.E1004" = "The service could not accept the line. It is not valid, or it came at the wrong time. Send hello first, then one request, and check each line against the endpoint schema.";
 "error.E1005" = "The endpoint already serves 8 connections per transport (socket and WebSocket each). Close a connection that you do not need, and connect again.";
 "error.E1006" = "The grant of this client was removed while it was connected. Grant it again with 'ojd access grant', and connect again.";

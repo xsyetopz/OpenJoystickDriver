@@ -121,7 +121,7 @@ struct ExtensionCommandTests {
     #expect(human.code == 0)
     #expect(!human.standardError.isEmpty)
     #expect(!quiet.standardError.isEmpty)
-    #expect(try json.json()["state"] as? String == "awaiting-approval")
+    #expect(try json.json()["state"] as? String == "awaitingApproval")
   }
 
   @Test(arguments: [SystemExtensionSetupRequestResult.failed, .timedOut])

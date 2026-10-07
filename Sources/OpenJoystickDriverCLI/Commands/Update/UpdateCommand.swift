@@ -48,7 +48,7 @@ struct UpdateCheckCommand: AsyncParsableCommand {
   /// The `--json` result.
   struct Result: Encodable, Equatable {
     enum Status: String, Encodable {
-      case upToDate = "up-to-date"
+      case upToDate
       case available
     }
 

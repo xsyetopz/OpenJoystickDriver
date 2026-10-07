@@ -6,7 +6,7 @@ import Testing
 
 @testable import OpenJoystickDriverService
 
-/// The socket buffers hold a few dozen `connected` lines, so a client that does not read blocks
+/// The socket buffers hold a few dozen `ADDED` lines, so a client that does not read blocks
 /// the writer and later lines wait in the connection's queue.
 struct EndpointConnectionTests {
   @Test
@@ -17,16 +17,24 @@ struct EndpointConnectionTests {
     for index in 0..<50 {
       let control: ControlID = index.isMultiple(of: 2) ? .faceSouth : .faceEast
       connection.deliver(
-        ControllerWatchEvent(type: .input, id: "pad-0", input: ControllerState(pressed: [control]))
+        ControllerWatchEvent(
+          type: .modified,
+          object: WatchedController(
+            summary: ControllerSummary(.fixture(id: "pad-0")),
+            input: ControllerState(pressed: [control])
+          )
+        )
       )
     }
     connection.finish()
 
     let objects = Self.readAll(reader)
-    let inputs = objects.filter { $0["type"] as? String == "input" }
+    let modified = objects.filter { $0["type"] as? String == "MODIFIED" }
+    let object = modified.first?["object"] as? [String: Any]
     #expect(objects.count == 101)
-    #expect(inputs.count == 1)
-    #expect((inputs.first?["input"] as? [String: Any])?["pressed"] as? [String] == ["face-east"])
+    #expect(modified.count == 1)
+    #expect(object?["kind"] as? String == "Controller")
+    #expect((object?["input"] as? [String: Any])?["pressed"] as? [String] == ["face-east"])
   }
 
   @Test
@@ -64,9 +72,8 @@ struct EndpointConnectionTests {
 
   private static func connected(_ id: String) -> ControllerWatchEvent {
     ControllerWatchEvent(
-      type: .connected,
-      id: id,
-      controller: ControllerSummary(.fixture(id: id))
+      type: .added,
+      object: WatchedController(summary: ControllerSummary(.fixture(id: id)))
     )
   }
 

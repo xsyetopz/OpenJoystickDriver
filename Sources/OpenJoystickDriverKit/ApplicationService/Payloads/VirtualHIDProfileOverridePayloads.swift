@@ -60,7 +60,7 @@ public struct LocalServiceRPCVirtualHIDProfileOverrideResetArguments: Codable, S
 
 /// Why a virtual HID profile override request did not take full effect.
 ///
-/// Encoded as `{"code": String, "detail": String?}`; only `activation-failed` carries a detail.
+/// Encoded as `{"code": String, "detail": String?}`; only `activationFailed` carries a detail.
 public enum VirtualHIDProfileOverrideFailure: Codable, Equatable, Sendable {
   /// The requested profile identifier names no profile. Nothing was stored.
   case unknownProfile
@@ -84,13 +84,13 @@ public enum VirtualHIDProfileOverrideFailure: Codable, Equatable, Sendable {
   /// The wire identifier of the failure.
   public var code: String {
     switch self {
-    case .unknownProfile: "unknown-profile"
-    case .controllerNotFound: "controller-not-found"
-    case .overrideRejectedByController: "override-rejected-by-controller"
-    case .activationFailed: "activation-failed"
-    case .outputDisabled: "output-disabled"
-    case .serverStopped: "server-stopped"
-    case .persistenceFailed: "persistence-failed"
+    case .unknownProfile: "unknownProfile"
+    case .controllerNotFound: "controllerNotFound"
+    case .overrideRejectedByController: "overrideRejectedByController"
+    case .activationFailed: "activationFailed"
+    case .outputDisabled: "outputDisabled"
+    case .serverStopped: "serverStopped"
+    case .persistenceFailed: "persistenceFailed"
     }
   }
 
@@ -103,14 +103,14 @@ public enum VirtualHIDProfileOverrideFailure: Codable, Equatable, Sendable {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let code = try container.decode(String.self, forKey: .code)
     switch code {
-    case "unknown-profile": self = .unknownProfile
-    case "controller-not-found": self = .controllerNotFound
-    case "override-rejected-by-controller": self = .overrideRejectedByController
-    case "activation-failed":
+    case "unknownProfile": self = .unknownProfile
+    case "controllerNotFound": self = .controllerNotFound
+    case "overrideRejectedByController": self = .overrideRejectedByController
+    case "activationFailed":
       self = .activationFailed(detail: try container.decode(String.self, forKey: .detail))
-    case "output-disabled": self = .outputDisabled
-    case "server-stopped": self = .serverStopped
-    case "persistence-failed": self = .persistenceFailed
+    case "outputDisabled": self = .outputDisabled
+    case "serverStopped": self = .serverStopped
+    case "persistenceFailed": self = .persistenceFailed
     default:
       throw DecodingError.dataCorruptedError(
         forKey: .code,
@@ -133,7 +133,7 @@ public struct VirtualHIDProfileOverrideResult: Codable, Equatable, Sendable {
   public let requested: VirtualHIDProfileID?
   /// The profile the controller publishes after the request; nil when none is live.
   public let live: VirtualHIDProfileID?
-  /// How the live profile was selected: `automatic`, `override`, or `automatic-after-rejecting`.
+  /// How the live profile was selected: `automatic`, `override`, or `automaticAfterRejecting`.
   /// With no live profile, `override` when virtual output is disabled and the model has a stored
   /// override, else `automatic`.
   public let source: String
@@ -158,7 +158,7 @@ public struct VirtualHIDProfileOverrideResult: Codable, Equatable, Sendable {
 public struct ApplicationServiceVirtualHIDProfileStatus: Codable, Equatable, Sendable {
   /// The selected profile; nil before selection, when output is disabled, or when unavailable.
   public let profile: VirtualHIDProfileID?
-  /// How `profile` was selected: `automatic`, `override`, or `automatic-after-rejecting`; nil
+  /// How `profile` was selected: `automatic`, `override`, or `automaticAfterRejecting`; nil
   /// when no profile is selected.
   public let source: String?
   /// The stored Advanced override in effect for this controller: its unit's, else its model's;
@@ -199,7 +199,7 @@ extension VirtualHIDProfileSelector.Selection.Source {
     switch self {
     case .automatic: "automatic"
     case .override: "override"
-    case .automaticAfterRejecting: "automatic-after-rejecting"
+    case .automaticAfterRejecting: "automaticAfterRejecting"
     }
   }
 }

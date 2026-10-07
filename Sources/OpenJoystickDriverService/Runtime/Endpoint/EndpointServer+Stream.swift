@@ -3,20 +3,17 @@ import OpenJoystickDriverKit
 
 /// The shared `controllers` stream: one poll task for every subscriber.
 struct EndpointStream {
-  private struct Controller {
-    let connected: ControllerWatchEvent
-    var input: ControllerWatchEvent?
-  }
-
   /// Bumped on each start, so a cancelled task that is still finishing a poll delivers nothing.
   var generation = 0
   var task: Task<Void, Never>?
-  /// The connected controllers in connection order with their last input, for late subscribers.
-  private var controllers: [Controller] = []
+  /// The connected controllers in connection order, each as of its last event, for late
+  /// subscribers.
+  private var controllers: [WatchedController] = []
 
-  /// The events that bring a new subscriber up to date.
+  /// The events that bring a new subscriber up to date: an `ADDED` with the full current object
+  /// of each controller.
   var snapshot: [ControllerWatchEvent] {
-    controllers.flatMap { [$0.connected] + ($0.input.map { [$0] } ?? []) }
+    controllers.map { ControllerWatchEvent(type: .added, object: $0) }
   }
 
   /// Cancels the task and forgets the controllers; the generation stays, so the old task's last
@@ -29,13 +26,11 @@ struct EndpointStream {
 
   mutating func record(_ event: ControllerWatchEvent) {
     switch event.type {
-    case .connected: controllers.append(Controller(connected: event))
-    case .input:
-      guard let index = controllers.firstIndex(where: { $0.connected.id == event.id }) else {
-        return
-      }
-      controllers[index].input = event
-    case .disconnected: controllers.removeAll { $0.connected.id == event.id }
+    case .added: controllers.append(event.object)
+    case .modified:
+      guard let index = controllers.firstIndex(where: { $0.id == event.id }) else { return }
+      controllers[index] = event.object
+    case .deleted: controllers.removeAll { $0.id == event.id }
     }
   }
 }

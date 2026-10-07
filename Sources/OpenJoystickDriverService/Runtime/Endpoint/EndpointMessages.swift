@@ -2,60 +2,90 @@ import Foundation
 import OpenJoystickDriverKit
 import Security
 
-/// The first line on every connection: a random nonce that a token client signs in its `hello`.
+/// The first line on every connection: a random nonce that a token client signs in its `Hello`.
 struct EndpointChallenge: Encodable, Sendable {
-  let type = "challenge"
+  let apiVersion = OpenJoystickDriverAPI.version
+  let kind = "Challenge"
   /// 32 random bytes in unpadded base64url.
   let nonce: String
 }
 
-/// A line that a client sends: `hello` first, then `subscribe` or `feed`.
+/// A line that a client sends: `Hello` first, then `Subscription` or `FeedRequest`.
+///
+/// A line with no `apiVersion`, or a missing or unknown `kind`, does not decode and is answered
+/// like any other line that is not a request, with `E1004`.
 struct EndpointRequest: Decodable, Sendable {
   enum Kind: String, Decodable, Sendable {
-    case hello
-    case subscribe
-    case feed
+    case hello = "Hello"
+    case subscription = "Subscription"
+    case feedRequest = "FeedRequest"
   }
 
-  let type: Kind
-  /// `hello` only.
-  let `protocol`: Int?
-  /// `hello` only.
+  let apiVersion: String
+  let kind: Kind
+  /// `Hello` only.
   let scopes: [EndpointScope]?
-  /// `hello` only; the name of a token from `ojd access grant --token`, instead of the signature.
+  /// `Hello` only; the name of a token from `ojd access grant --token`, instead of the signature.
   let tokenName: String?
-  /// `hello` only, with `tokenName`; the lowercase hex HMAC-SHA256 of the challenge, keyed with
+  /// `Hello` only, with `tokenName`; the lowercase hex HMAC-SHA256 of the challenge, keyed with
   /// the SHA-256 of the token.
   let proof: String?
-  /// `subscribe` only; `controllers` is the one stream.
+  /// `Subscription` only; `controllers` is the one stream.
   let stream: String?
-  /// `subscribe` only; adds the virtual gamepad's values to `input` lines.
+  /// `Subscription` only; adds the virtual gamepad's values to the objects of the watch lines.
   let output: Bool?
-  /// `feed` only; the virtual HID profile of the gamepad, such as `hid-generic`.
+  /// `FeedRequest` only; the virtual HID profile of the gamepad, such as `hid-generic`.
   let `as`: String?
 }
 
 struct EndpointWelcome: Encodable, Sendable {
-  let type = "welcome"
-  let `protocol`: Int
+  let apiVersion = OpenJoystickDriverAPI.version
+  let kind = "Welcome"
   let version: String
   let scopes: [EndpointScope]
 }
 
-/// The answer to `feed`: the virtual gamepad exists and takes frame lines.
-struct EndpointFeeding: Encodable, Sendable {
-  let type = "feeding"
+/// The answer to `FeedRequest`: the virtual gamepad exists and takes `Frame` lines.
+struct EndpointFeedSession: Encodable, Sendable {
+  let apiVersion = OpenJoystickDriverAPI.version
+  let kind = "FeedSession"
   let `as`: String
 }
 
-/// An error line; `code` is an endpoint-domain `ErrorCode`, described in `endpoint.schema.json`.
+/// A `RumbleCommand` line: the host's rumble command with `apiVersion` and `kind`.
+struct EndpointRumbleCommand: Encodable, Sendable {
+  let command: RumbleCommandLine
+
+  init(_ command: RumbleCommandLine) { self.command = command }
+
+  private enum CodingKeys: String, CodingKey {
+    case apiVersion
+    case kind
+  }
+
+  func encode(to encoder: any Encoder) throws {
+    try command.encode(to: encoder)
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(OpenJoystickDriverAPI.version, forKey: .apiVersion)
+    try container.encode(RumbleCommandLine.kind, forKey: .kind)
+  }
+}
+
+/// A `Status` failure line; `code` is an endpoint-domain `ErrorCode`, described in
+/// `endpoint.schema.json`.
 struct EndpointError: Encodable, Sendable {
-  let type = "error"
+  struct Details: Encodable, Sendable {
+    /// The `apiVersion` values the service accepts; `E1003` only.
+    let supportedAPIVersions: [String]
+  }
+
+  let apiVersion = OpenJoystickDriverAPI.version
+  let kind = "Status"
+  let status = "Failure"
   let code: ErrorCode
   /// English text for logs; clients branch on `code`.
   let message: String
-  /// The protocol versions the service accepts; `E1003` only.
-  var supported: [Int]?
+  var details: Details?
 }
 
 /// The client behind an endpoint connection, as its code signature identifies it.

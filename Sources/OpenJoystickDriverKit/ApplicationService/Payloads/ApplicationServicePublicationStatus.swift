@@ -6,16 +6,16 @@ public struct ApplicationServicePublicationStatus: Codable, Equatable, Sendable 
     /// A virtual device is installed for the controller.
     case published
     /// No virtual device is installed; `reason` says why.
-    case notPublished = "not-published"
+    case notPublished
     /// The last send to the virtual device failed; `reason` carries the failure.
     case failed
   }
 
   public let state: State
-  /// Why the controller is not published: `output-disabled`, `native-gamepad`,
-  /// `native-hid-pass-through`, `upstream-virtual-device`, `session-suspended`,
-  /// `no-virtual-profile`, `suppressed`, or `no-input-yet`; the failure text when `state` is
-  /// `failed`; nil when published.
+  /// Why the controller is not published: `outputDisabled`, `nativeGamepad`,
+  /// `nativeHIDPassThrough`, `upstreamVirtualDevice`, `sessionSuspended`, `noVirtualProfile`,
+  /// `suppressed`, or `noInputYet`; the failure text when `state` is `failed`; nil when
+  /// published.
   public let reason: String?
   /// The virtual HID profile the controller publishes or tries to publish.
   public let target: VirtualHIDProfileID?

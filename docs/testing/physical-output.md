@@ -46,9 +46,9 @@ The CLI and the GUI send each output through the app's `sendControllerOutput` ap
 - `set-light-brightness`: `brightness` `0...65535`.
 - `set-adaptive-trigger`: `trigger` (`left` or `right`) and `effect` (`kind` `off` or `resistance`, `startPosition`, and `strength`, each `0...1`).
 
-The reply is a result, for example `{"outcome": "delivered", "droppedRumbleChannels": ["leftHaptic", "rightHaptic"]}`. `outcome` is `delivered`, `not-found`, `unsupported-capability`, `not-ready`, `invalid-value`, `write-failed`, or `cancelled`. `invalid-value` reports a value that decodes but is out of range, such as an adaptive-trigger position above 1. A controller that lacks the capability is `unsupported-capability` before any value is checked. Malformed JSON, an unknown `type`, or a component outside its integer range fails the request itself instead of returning a result.
+The reply is a result, for example `{"outcome": "delivered", "droppedRumbleChannels": ["leftHaptic", "rightHaptic"]}`. `outcome` is `delivered`, `notFound`, `unsupportedCapability`, `notReady`, `invalidValue`, `writeFailed`, or `cancelled`. `invalidValue` reports a value that decodes but is out of range, such as an adaptive-trigger position above 1. A controller that lacks the capability is `unsupportedCapability` before any value is checked. Malformed JSON, an unknown `type`, or a component outside its integer range fails the request itself instead of returning a result.
 
-`droppedRumbleChannels` lists the requested channels the controller lacks, which were not driven. The CLI and the GUI mirror the main motors onto the Steam Controller trackpad haptics, so their requests list `leftHaptic` and `rightHaptic` as dropped on other controllers and the main motors as dropped on a Steam Controller. A rumble command is `unsupported-capability` only when the controller has no rumble channel at all.
+`droppedRumbleChannels` lists the requested channels the controller lacks, which were not driven. The CLI and the GUI mirror the main motors onto the Steam Controller trackpad haptics, so their requests list `leftHaptic` and `rightHaptic` as dropped on other controllers and the main motors as dropped on a Steam Controller. A rumble command is `unsupportedCapability` only when the controller has no rumble channel at all.
 
 ## Record Results
 

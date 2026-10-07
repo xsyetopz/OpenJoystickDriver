@@ -2,7 +2,7 @@
 
 Use `ojd`, the OpenJoystickDriver command line, to check status, start or stop the service, and manage controllers and controller records.
 
-> **Note:** This page applies to OpenJoystickDriver 0.5.0-beta.5 and later. Version 0.5.0-beta.4 and earlier do not have all of the features on this page.
+> **Note:** This page applies to OpenJoystickDriver 0.6.0-alpha.1 and later. Version 0.5.0-beta.4 and earlier do not have all of the features on this page.
 
 This page explains how to run `ojd`, which options apply to every command, how to read its output, and what its exit codes mean.
 
@@ -51,7 +51,7 @@ These options work on every command, before or after the command name. `ojd --js
 - `--no-input`: Never ask a question. A command that needs a missing value fails and names the option that gives it.
 - `--timeout SECONDS`: How long to wait for each request to the service. The default is 0.5 seconds. For `service`, `virtual set`, and `virtual reset` commands, it bounds the whole command, and the default is 5 seconds. For `permission request`, the default is 10 seconds. The value must be a number above 0.
 - `-h`, `--help`: Show help on standard output.
-- `--version`: Show the version alone, for example `0.5.0-beta.5`.
+- `--version`: Show the version alone, for example `0.6.0-alpha.1`.
 
 `--json` and `--plain` cannot be used together.
 
@@ -81,7 +81,7 @@ A command that needs the service exits with code 69 when the service is not runn
 
 - Data goes to standard output. Progress messages, warnings, and errors go to standard error.
 - Human-readable output is translated and can change between releases. Do not parse it in scripts.
-- `--json` output is one JSON object. A command that streams, such as `ojd controller watch`, prints one object per line. Keys and values are stable identifiers and are never translated. [`cli-output.schema.json`](../Resources/Schemas/v1beta1/cli-output.schema.json) describes the output of each command. The schema is strict: it lists every key and value that its release prints, and rejects others. Within a major version, the output only gains keys and values: a later release never removes a key, a value, or a command's output, never makes an always-present key optional, and never gives a value a new type such as `null`.
+- `--json` output is one JSON object. A command that streams, such as `ojd controller watch`, prints one object per line. Each object and each line has `apiVersion` (`openjoystickdriver.io/v1beta1`) and `kind`, the singular UpperCamelCase name of what the command prints, such as `Controller` for `ojd controller show`. The lines of `ojd controller watch --all` are the exception: each has a `type` (`ADDED`, `MODIFIED`, or `DELETED`) and an `object` that has its own `apiVersion` and `kind`. A command that lists things, such as `ojd controller list`, prints a `kind` that ends in `List`, with the entries in `items` and an empty `metadata`. A command that changes or removes something and has no object to print, such as `ojd profile delete`, prints a `Status`, with `status` `Success` and its data in `details`. A command that fails prints no JSON: it exits with a non-zero code and writes the error on standard error. Values that OJD defines in output, such as `notFound`, are lowerCamelCase. Keys and values are stable identifiers and are never translated. [`cli-output.schema.json`](../Resources/Schemas/v1beta1/cli-output.schema.json) describes the output of each command. The schema is strict: it lists every key and value that its release prints, and rejects others. Within a major version, the output only gains keys and values: a later release never removes a key, a value, or a command's output, never makes an always-present key optional, and never gives a value a new type such as `null`. Before 1.0, each minor version counts as a major version, so 0.6 can break the output of 0.5.
   A program that reads one release's output keeps working with later releases of the same major version.
   Because a later release can add keys and values, validate output against the schema from the same release.
 - `--plain` output has one record per line, with tab-separated fields. The first field names the kind of record. Fields are stable identifiers and are never translated.

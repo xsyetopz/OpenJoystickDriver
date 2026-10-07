@@ -36,7 +36,7 @@ extension EndpointServer {
       pump.cancel()
       Task { await feeds.close(token: token) }
     }
-    connection.send(EndpointFeeding(as: profile))
+    connection.send(EndpointFeedSession(as: profile))
 
     while true {
       switch connection.readMessage() {
@@ -50,7 +50,7 @@ extension EndpointServer {
       case .message(let data):
         guard let frame = Self.frame(data) else {
           connection.close(
-            Self.invalid(#"Send frames after feeding, such as {"buttons":["south"]}."#)
+            Self.invalid("Send Frame lines with apiVersion and kind after FeedSession.")
           )
           return
         }
@@ -63,9 +63,23 @@ extension EndpointServer {
     }
   }
 
-  /// The frame on the line; nil for anything else, such as a line with a `type`.
+  /// The `apiVersion` and `kind` that an endpoint frame line must carry.
+  private struct FrameEnvelope: Decodable {
+    let apiVersion: String
+    let kind: String
+  }
+
+  /// The frame on the line; nil for anything else, such as a line without the `Frame` envelope.
+  ///
+  /// Decodes each line twice, the envelope and then the frame, because ``VirtualFeedFrame``
+  /// takes the envelope as optional for the CLI's stdin lines.
   private static func frame(_ data: Data) -> VirtualFeedFrame? {
-    try? JSONDecoder().decode(VirtualFeedFrame.self, from: data)
+    let decoder = JSONDecoder()
+    guard let envelope = try? decoder.decode(FrameEnvelope.self, from: data),
+      envelope.apiVersion == OpenJoystickDriverAPI.version,
+      envelope.kind == VirtualFeedFrame.kind
+    else { return nil }
+    return try? decoder.decode(VirtualFeedFrame.self, from: data)
   }
 
   private static func feedError(_ error: any Error, profile: String) -> EndpointError {
@@ -152,7 +166,9 @@ private final class FeedExchanger: @unchecked Sendable {
         connection.close(EndpointError(code: .feedClosed, message: "The virtual gamepad closed."))
         return nil
       }
-      for command in result.feedback { connection.send(command, bounded: true) }
+      for command in result.feedback.compactMap(RumbleCommandLine.init) {
+        connection.send(EndpointRumbleCommand(command), bounded: true)
+      }
       return result.accepted
     }
   }

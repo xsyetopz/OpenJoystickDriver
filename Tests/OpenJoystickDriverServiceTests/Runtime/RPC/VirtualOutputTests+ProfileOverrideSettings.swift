@@ -198,7 +198,7 @@ extension VirtualOutputTests {
       VirtualHIDProfileOverrideResult(
         requested: .generic,
         live: .xboxOneSBluetooth,
-        source: "automatic-after-rejecting",
+        source: "automaticAfterRejecting",
         failure: .overrideRejectedByController
       ),
       VirtualHIDProfileOverrideResult(
@@ -223,8 +223,8 @@ extension VirtualOutputTests {
     }
     #expect(
       codes == [
-        "unknown-profile", "controller-not-found", "override-rejected-by-controller",
-        "activation-failed", "output-disabled", "server-stopped", "persistence-failed",
+        "unknownProfile", "controllerNotFound", "overrideRejectedByController",
+        "activationFailed", "outputDisabled", "serverStopped", "persistenceFailed",
       ]
     )
     let requested = try JSONEncoder().encode(results[0])

@@ -59,7 +59,7 @@ struct RecordCommandTests {
     #expect(result["identity"] as? String == "366C:0005")
     #expect(result["fileName"] as? String == "366c-0005.json")
     #expect(result["transport"] as? String == "usb")
-    #expect(result["usbExtension"] as? String == "does-not-claim")
+    #expect(result["usbExtension"] as? String == "doesNotClaim")
     #expect(human.standardOutput.contains("366C:0005"))
     #expect(directory.fileNames.isEmpty)
   }
@@ -122,14 +122,14 @@ struct RecordCommandTests {
     let bundled = await run(["list", "--bundled", "--json"], in: directory)
 
     #expect(list.code == 0)
-    let skipped = try #require(try list.json()["skipped"] as? [[String: String]])
-    #expect(skipped.count == 1)
-    #expect(skipped.first?["problem"]?.contains("366c-0005.json") == true)
+    let metadata = try #require(try list.json()["metadata"] as? [String: Any])
+    #expect(metadata.isEmpty)
     #expect(list.standardError.contains("wrong.json"))
-    let records = try #require(try bundled.json()["records"] as? [[String: Any]])
+    #expect(list.standardError.contains("366c-0005.json"))
+    let records = try #require(try bundled.json()["items"] as? [[String: Any]])
     #expect(records.count == ControllerRecordSet.bundled.records.count)
     #expect(records.allSatisfy { $0["layer"] as? String == "bundled" })
-    #expect(try bundled.json()["skipped"] == nil)
+    #expect((try bundled.json()["metadata"] as? [String: Any])?.isEmpty == true)
   }
 
   @Test
@@ -202,7 +202,7 @@ struct RecordCommandTests {
     let dryRun = await run(["remove", "366C:0005", "--dry-run", "--json"], in: directory)
     let unforced = await run(["remove", "366C:0005", "--no-input"], in: directory)
     #expect(dryRun.code == 0)
-    #expect(try dryRun.json()["dryRun"] as? Bool == true)
+    #expect(try dryRun.details()["dryRun"] as? Bool == true)
     #expect(unforced.code == 64)
     #expect(directory.fileNames == ["366c-0005.json"])
 

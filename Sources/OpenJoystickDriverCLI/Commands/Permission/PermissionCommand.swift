@@ -15,8 +15,10 @@ struct PermissionCommand: AsyncParsableCommand {
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
-  static func print(_ report: PermissionReport) throws {
+  /// Prints `report`; as a list of `items` for `ojd permission list --json`.
+  static func print(_ report: PermissionReport, asList: Bool = false) throws {
     switch CLIContext.current.format {
+    case .json where asList: try CLIOutput.json(CLIList(items: report.permissions))
     case .json: try CLIOutput.json(report)
     case .plain: CLIOutput.plain(report.plainRows)
     case .human:
@@ -67,7 +69,8 @@ struct PermissionListCommand: AsyncParsableCommand {
         )
       }
       try PermissionCommand.print(
-        PermissionReport(snapshot: snapshot, extensionStatus: StatusCommand.extensionProbe())
+        PermissionReport(snapshot: snapshot, extensionStatus: StatusCommand.extensionProbe()),
+        asList: true
       )
     }
   }

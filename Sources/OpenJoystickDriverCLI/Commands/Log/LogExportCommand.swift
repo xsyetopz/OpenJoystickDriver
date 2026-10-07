@@ -95,7 +95,11 @@ struct LogExportCommand: AsyncParsableCommand {
       CLIOutput.stderr(ApplicationServiceLogService.sharingWarning)
       switch CLIContext.current.format {
       case .json:
-        try CLIOutput.json(Result(path: url.path, lines: snapshots.map(\.lines.count).reduce(0, +)))
+        try CLIOutput.json(
+          CLIStatus(
+            details: Result(path: url.path, lines: snapshots.map(\.lines.count).reduce(0, +))
+          )
+        )
       case .plain: CLIOutput.plain([[url.path]])
       case .human:
         CLIOutput.success(

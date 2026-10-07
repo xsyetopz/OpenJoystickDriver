@@ -37,7 +37,7 @@ struct ControllerStateTests {
     let data = try encoder.encode(state)
     let object = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
     #expect(object["pressed"] as? [String] == ["face-south", "menu", "guide"])
-    #expect(object["hat"] as? String == "north-west")
+    #expect(object["hat"] as? String == "northWest")
     #expect(try JSONDecoder().decode(ControllerState.self, from: data) == state)
   }
 

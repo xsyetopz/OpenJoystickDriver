@@ -7,6 +7,7 @@ or a `oneOf`, `anyOf`, or `allOf` branch;
 when a key that was always present becomes optional;
 or when a value can take a type that it could not take before.
 A new major version can make any of these changes.
+Before 1.0, each minor version is a major version, as in SemVer.
 The comparison follows `$ref`s on both sides, also into the other schema documents.
 """
 
@@ -254,6 +255,12 @@ def breaking_changes(old: Documents, new: Documents) -> list[str]:
     return comparison.problems
 
 
+def major_version(version: str) -> str:
+    """The major version of `version`: its major number, or `0.MINOR` before 1.0, as in SemVer."""
+    major, minor = version.split(".")[:2]
+    return f"0.{minor}" if major == "0" else major
+
+
 def check(root: Path, current: Documents) -> str:
     """Compares `current` with the last release and returns a summary line.
 
@@ -262,7 +269,7 @@ def check(root: Path, current: Documents) -> str:
     tag = last_release_tag(root)
     with (root / INFO_PLIST).open("rb") as source:
         version = str(plistlib.load(source)["CFBundleShortVersionString"])
-    if version.split(".")[0] != tag.split(".")[0]:
+    if major_version(version) != major_version(tag):
         return f"{version} is a new major version, so its output can drop keys and values of {tag}."
     released = documents_at(root, tag)
     if released is None:

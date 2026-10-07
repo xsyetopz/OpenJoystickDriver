@@ -142,7 +142,9 @@ struct VirtualFeedCommand: AsyncParsableCommand {
         }
         input.withLock { $0.pending.removeFirst(min(result.accepted, frames.count)) }
         queued = result.queued
-        for command in result.feedback { try CLIOutput.jsonLine(command) }
+        for line in result.feedback.compactMap(RumbleCommandLine.init) {
+          try CLIOutput.jsonLine(line)
+        }
         if result.closed {
           throw CLIFailure(
             .serviceRequestFailed,

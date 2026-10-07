@@ -2,7 +2,8 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
-/// The `--json` result of `ojd controller rumble`, `light`, and `player`.
+/// The `--json` result of `ojd controller rumble`, `light`, and `player`: the `details` of a
+/// `Success` status. A result the controller does not deliver fails the command instead.
 struct ControllerOutputReport: Encodable, Equatable {
   struct Entry: Encodable, Equatable {
     let command: String
@@ -48,7 +49,7 @@ private func sendOutput(_ requests: [OutputRequest], to selector: ControllerSele
   }
   let report = ControllerOutputReport(controller: entries.0.runtimeIdentifier, results: entries.1)
   switch CLIContext.current.format {
-  case .json: try CLIOutput.json(report)
+  case .json: try CLIOutput.json(CLIStatus(details: report))
   case .plain:
     CLIOutput.plain(
       report.results.map {
@@ -260,7 +261,7 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
       ]
     )
     switch CLIContext.current.format {
-    case .json: try CLIOutput.json(report)
+    case .json: try CLIOutput.json(CLIStatus(details: report))
     case .plain:
       CLIOutput.plain([
         [

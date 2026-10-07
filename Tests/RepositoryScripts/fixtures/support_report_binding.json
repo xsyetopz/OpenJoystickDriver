@@ -8,7 +8,7 @@
 		"controllers": [
 			{
 				"binding": {
-					"accessBackend": "iousbhost",
+					"accessBackend": "ioUSBHost",
 					"interfaces": [
 						{
 							"alternateSetting": 0,
@@ -18,14 +18,14 @@
 							"interfaceSubclass": 71
 						}
 					],
-					"matchedPredicates": ["interface-signature"],
+					"matchedPredicates": ["interfaceSignature"],
 					"outcome": "bound",
 					"rejectedCandidates": [],
-					"rule": "interface-signature"
+					"rule": "interfaceSignature"
 				},
 				"connection": "USB",
 				"connectionState": {
-					"backend": "iousbhost",
+					"backend": "ioUSBHost",
 					"isConnected": true,
 					"power": {
 						"battery": {},
@@ -52,7 +52,7 @@
 						"rightTrigger"
 					]
 				},
-				"postHandshakeSettleMs": 0,
+				"postHandshakeSettleMilliseconds": 0,
 				"preferredBackends": ["userSpaceHID"],
 				"productID": 22136,
 				"protocolBinding": "xbox.gip:usb",
@@ -93,7 +93,7 @@
 		"unboundDevices": [
 			{
 				"binding": {
-					"accessBackend": "iohid",
+					"accessBackend": "ioHID",
 					"interfaces": [
 						{
 							"descriptorFingerprint": "0f776a810f493f1f40fafdf98f2ce3a57a132ba1007e685d45167a97df075af3",
@@ -102,11 +102,11 @@
 					],
 					"matchedPredicates": [],
 					"outcome": "unsupported",
-					"reason": "ambiguous-protocol-match",
+					"reason": "ambiguousProtocolMatch",
 					"rejectedCandidates": [
 						{
 							"protocolID": "hid.descriptor",
-							"reason": "ambiguous-protocol-match"
+							"reason": "ambiguousProtocolMatch"
 						}
 					]
 				},

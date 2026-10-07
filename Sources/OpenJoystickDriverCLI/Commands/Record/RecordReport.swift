@@ -79,7 +79,7 @@ enum RecordTransport: String, Encodable, Equatable {
 /// product list Apple signs, so a user record cannot add a product to it.
 enum RecordUSBExtension: String, Encodable, Equatable {
   case claims
-  case doesNotClaim = "does-not-claim"
+  case doesNotClaim
 
   init?(_ record: ControllerRecord) {
     guard record.usesRawUSB else { return nil }

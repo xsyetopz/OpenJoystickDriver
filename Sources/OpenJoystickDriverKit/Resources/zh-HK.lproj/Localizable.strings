@@ -1507,7 +1507,7 @@
 "cli.profile.vanished" = "服務未保留該設定檔。請用 「ojd profile list」 檢查。";
 "error.E1001" = "端點已關閉。請用「ojd access enable」開啟，然後重新連線。";
 "error.E1002" = "服務拒絕了此用戶端。它沒有所要求範圍的授權，或它的簽章或證明無效。請執行「ojd access list」，用「ojd access grant」授權該用戶端，然後重新連線。";
-"error.E1003" = "服務不支援 hello 中的協定版本。請傳送 supported 中的某個版本，然後重新連線。";
+"error.E1003" = "服務不支援 Hello 中的 apiVersion。請傳送 details.supportedAPIVersions 中的某個版本，然後重新連線。";
 "error.E1004" = "服務無法接受該行。該行無效，或抵達的時機不對。請先傳送 hello，再傳送一個要求，並依端點結構描述檢查每一行。";
 "error.E1005" = "端點已在處理 8 個連線（socket 和 WebSocket 各 8 個）。請關閉不需要的連線，然後重新連線。";
 "error.E1006" = "此用戶端的授權在其連線期間被移除。請用「ojd access grant」重新授權，然後重新連線。";

@@ -53,6 +53,14 @@ struct CLIRun {
     let object = try JSONSerialization.jsonObject(with: Data(standardOutput.utf8))
     return try #require(object as? [String: Any])
   }
+
+  /// The `details` of a `Status` document, after checking that it reports success.
+  func details() throws -> [String: Any] {
+    let status = try json()
+    #expect(status["kind"] as? String == "Status")
+    #expect(status["status"] as? String == "Success")
+    return try #require(status["details"] as? [String: Any])
+  }
 }
 
 enum CLICommandTree {

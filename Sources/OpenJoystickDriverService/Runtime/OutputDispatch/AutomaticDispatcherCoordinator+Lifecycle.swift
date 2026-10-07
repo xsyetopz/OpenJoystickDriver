@@ -149,7 +149,7 @@ extension AutomaticDispatcherCoordinator {
       } else if entry.installed != nil {
         (state, reason) = (.published, nil)
       } else {
-        (state, reason) = (.notPublished, suppressed ? "suppressed" : "no-input-yet")
+        (state, reason) = (.notPublished, suppressed ? "suppressed" : "noInputYet")
       }
       statuses[element.key] = ApplicationServicePublicationStatus(
         state: state,

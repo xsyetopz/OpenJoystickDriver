@@ -34,7 +34,7 @@ struct ControllerCommandTests {
     let plainRun = await service.run(["controller", "list", "--plain"])
 
     #expect(jsonRun.code == 0, "\(jsonRun.standardError)")
-    let controllers = try #require(try jsonRun.json()["controllers"] as? [[String: Any]])
+    let controllers = try #require(try jsonRun.json()["items"] as? [[String: Any]])
     #expect(controllers.map { $0["id"] as? String } == ["pad-1"])
     #expect(plainRun.code == 0, "\(plainRun.standardError)")
     let row = plainRun.standardOutput.split(separator: "\t").map(String.init)
@@ -81,7 +81,8 @@ struct ControllerCommandTests {
     )
     let result = await service.run(["controller", "player", "054C:0CE6", "2", "--json"])
     #expect(result.code == 0, "\(result.standardError)")
-    #expect(try result.json()["controller"] as? String == "pad-2")
+    let details = try #require(try result.json()["details"] as? [String: Any])
+    #expect(details["controller"] as? String == "pad-2")
     let arguments = try #require(service.arguments(of: .sendControllerOutput).first)
     let sent = try JSONDecoder().decode(
       LocalServiceRPCControllerOutputArguments.self,
@@ -221,7 +222,7 @@ struct ControllerCommandTests {
     ])
     let result = await service.run(["controller", "show", "pad-1", "--json"])
     #expect(result.code == 0, "\(result.standardError)")
-    let controller = try #require(try result.json()["controller"] as? [String: Any])
+    let controller = try result.json()
     #expect(controller["id"] as? String == "pad-1")
   }
 
@@ -246,7 +247,7 @@ struct ControllerCommandTests {
     var device = ApplicationServiceDeviceDescription.fixture(id: "pad-1")
     device.publication = ApplicationServicePublicationStatus(
       state: .notPublished,
-      reason: "native-gamepad",
+      reason: "nativeGamepad",
       target: .xboxOneSBluetooth
     )
     let service = try FakeService(devices: [device])
@@ -256,13 +257,13 @@ struct ControllerCommandTests {
     let human = await service.run(["controller", "show", "pad-1"])
 
     #expect(json.code == 0, "\(json.standardError)")
-    let controller = try #require(try json.json()["controller"] as? [String: Any])
+    let controller = try json.json()
     let publication = try #require(controller["publication"] as? [String: Any])
-    #expect(publication["state"] as? String == "not-published")
-    #expect(publication["reason"] as? String == "native-gamepad")
+    #expect(publication["state"] as? String == "notPublished")
+    #expect(publication["reason"] as? String == "nativeGamepad")
     #expect(publication["target"] as? String == VirtualHIDProfileID.xboxOneSBluetooth.rawValue)
-    #expect(plain.standardOutput.contains("\npublication\tnot-published\tnative-gamepad\n"))
-    #expect(Self.rows(human, endingIn: "not-published (native-gamepad)").count == 1)
+    #expect(plain.standardOutput.contains("\npublication\tnotPublished\tnativeGamepad\n"))
+    #expect(Self.rows(human, endingIn: "notPublished (nativeGamepad)").count == 1)
   }
 
   @Test
@@ -299,7 +300,7 @@ struct ControllerCommandTests {
     let human = await service.run(["controller", "list"])
 
     #expect(json.code == 0, "\(json.standardError)")
-    let controllers = try #require(try json.json()["controllers"] as? [[String: Any]])
+    let controllers = try #require(try json.json()["items"] as? [[String: Any]])
     let power = controllers.map { $0["power"] as? [String: Any] }
     #expect(power[0]?["charging"] as? String == "charging")
     #expect((power[0]?["battery"] as? [String: Any])?["percentage"] as? [Int] == [73, 73])
@@ -333,7 +334,7 @@ struct ControllerCommandTests {
     let absentHuman = await service.run(["controller", "show", "pad-4"])
 
     #expect(json.code == 0, "\(json.standardError)")
-    let controller = try #require(try json.json()["controller"] as? [String: Any])
+    let controller = try json.json()
     let power = try #require(controller["power"] as? [String: Any])
     #expect(power["charging"] as? String == "charging")
     #expect(plain.standardOutput.contains("\npower\tdischarging\t0-9%\t\n"))
@@ -480,7 +481,7 @@ struct ControllerCommandTests {
     let plain = try await Self.show(["--plain"])
 
     #expect(json.result.code == 0, "\(json.result.standardError)")
-    let controller = try #require(try json.result.json()["controller"] as? [String: Any])
+    let controller = try json.result.json()
     #expect(controller["record"] as? [String: String] == ["layer": "bundled"])
     let bundled = CLILocalized.text("cli.controller.show.record.bundled")
     #expect(Self.rows(human.result, endingIn: bundled).count == 1)
@@ -494,7 +495,7 @@ struct ControllerCommandTests {
     let plain = try await Self.show(["--plain"], userRecord: Self.userPatch)
 
     #expect(json.result.code == 0, "\(json.result.standardError)")
-    let controller = try #require(try json.result.json()["controller"] as? [String: Any])
+    let controller = try json.result.json()
     #expect((controller["record"] as? [String: String])?.keys.sorted() == ["file", "layer"])
     #expect((controller["record"] as? [String: String])?["layer"] == "user")
     #expect((controller["record"] as? [String: String])?["file"]?.hasSuffix(json.file) == true)
@@ -513,7 +514,7 @@ struct ControllerCommandTests {
     let plain = try await Self.show(["--plain"], vendorID: 0x1234, productID: 0x5678)
 
     #expect(json.result.code == 0, "\(json.result.standardError)")
-    let controller = try #require(try json.result.json()["controller"] as? [String: Any])
+    let controller = try json.result.json()
     #expect(controller["record"] == nil)
     let none = CLILocalized.text("cli.controller.show.record.none")
     #expect(Self.rows(human.result, endingIn: none).count == 1)
@@ -531,7 +532,11 @@ struct ControllerCommandTests {
     )
     let result = await service.run(arguments + ["--json"])
     #expect(result.code == 0, "\(result.standardError)")
-    let results = try #require(try result.json()["results"] as? [[String: Any]])
+    let status = try result.json()
+    #expect(status["kind"] as? String == "Status")
+    #expect(status["status"] as? String == "Success")
+    let details = try #require(status["details"] as? [String: Any])
+    let results = try #require(details["results"] as? [[String: Any]])
     #expect(results.allSatisfy { $0["outcome"] as? String == "delivered" })
   }
 
@@ -569,7 +574,11 @@ struct ControllerCommandTests {
       "controller", "capture", "pad-1", "--duration", "0.3", "--json",
     ])
     #expect(result.code == 0, "\(result.standardError)")
-    #expect(result.standardOutput == packet + "\n")
+    #expect(
+      result.standardOutput
+        == #"{"apiVersion":"openjoystickdriver.io/v1beta1","captureTime":"1970-01-01T00:00:01.500Z","#
+        + #""direction":"rx","hex":"01 02","kind":"USBPacket","length":2}"# + "\n"
+    )
   }
 
   @Test
@@ -608,16 +617,24 @@ struct ControllerCommandTests {
     let lines = try result.standardOutput.split(separator: "\n").map {
       try #require(try JSONSerialization.jsonObject(with: Data($0.utf8)) as? [String: Any])
     }
-    let events = lines.map { "\($0["type"] ?? "") \($0["id"] ?? "")" }
+    let objects = try lines.map { try #require($0["object"] as? [String: Any]) }
+    let events = zip(lines, objects).map { "\($0["type"] ?? "") \($1["id"] ?? "")" }
     #expect(
       events == [
-        "connected pad-1", "connected pad-2", "input pad-1", "input pad-2", "disconnected pad-2",
+        "ADDED pad-1", "ADDED pad-2", "MODIFIED pad-1", "MODIFIED pad-2", "DELETED pad-2",
       ]
     )
-    let connected = try #require(lines[1]["controller"] as? [String: Any])
-    #expect(connected["unit"] as? String == unit)
-    let input = try #require(lines[2]["input"] as? [String: Any])
+    #expect(lines.allSatisfy { $0["apiVersion"] == nil && $0["kind"] == nil })
+    #expect(
+      objects.allSatisfy {
+        $0["apiVersion"] as? String == "openjoystickdriver.io/v1beta1"
+          && $0["kind"] as? String == "Controller"
+      }
+    )
+    #expect(objects[1]["unit"] as? String == unit)
+    let input = try #require(objects[2]["input"] as? [String: Any])
     #expect(input["pressed"] as? [String] == ["face-south"])
+    #expect(objects[4]["input"] != nil)
   }
 
   @Test
