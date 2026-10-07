@@ -1138,7 +1138,7 @@
 "cli.config.show.unread_skipped_no_controller" = "No controller is connected, so the check for Defaults.json keys that no controller reads was skipped.";
 "cli.config.show.unread_skipped_no_service" = "The service is not running, so the check for Defaults.json keys that no connected controller reads was skipped.";
 "cli.config.show.unset" = "driver default";
-"cli.setting.abstract" ="List, read, or change OpenJoystickDriver app settings.";
+"cli.setting.abstract" = "List, read, or change OpenJoystickDriver app settings.";
 "cli.setting.bad_value" = "'%@' is not a value for %@. Use true or false.";
 "cli.setting.developer_tools" = "Show the developer tools in the Settings window.";
 "cli.setting.discussion" = "The running service applies each setting, so every setting command needs it.";

@@ -167,7 +167,7 @@
 "controllers.activeProfileSentence" = "Profil actif: %@.";
 "controllers.profileUnavailableSentence" = "Profil actif indisponible: %@";
 "controllers.profileErrorSentence" = "Erreur du profil actif: %@";
-"controllers.accessibilityDetails" = "%@. %@. Protocole: %@. Parser: %@. Numéro de série: %@. USB VID/PID: %@. Point de terminaison d’entrée: %@. Point de terminaison de sortie: %@.";
+"controllers.accessibilityDetails" = "%@. %@. Protocole: %@. Analyseur: %@. Numéro de série: %@. USB VID/PID: %@. Point de terminaison d’entrée: %@. Point de terminaison de sortie: %@.";
 "controllers.publishedAs" = "Publié comme";
 "controllers.nativeGamepadNotPublished" = "Manette native de macOS, non publiée";
 "virtualProfile.advanced" = "Avancé";

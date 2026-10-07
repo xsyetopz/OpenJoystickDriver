@@ -747,7 +747,7 @@
 "motion.calibration.title" = "體感校準";
 
 /* Calibration guidance. Non-English translation pending. */
-"motion.calibration.controllerUnavailable" = "請重新連接控制器，然後重新整理校準狀態。";
+"motion.calibration.controllerUnavailable" = "請重新連線控制器，然後重新整理校準狀態。";
 "motion.calibration.motionUnavailable" = "請為這個控制器啟用重新對應設定檔，並確認體感可用。";
 "motion.calibration.waiting" = "正在等待體感樣本。重新整理以再次檢查。";
 "motion.calibration.continues" = "關閉此視窗後仍會繼續收集。使用「暫停」停止收集。";
@@ -917,7 +917,7 @@
 "controllers.disconnectWirelessButton" = "中斷連線…";
 "controllers.disconnectWirelessSummary" = "停止此藍牙連線，不影響其他控制器。";
 "controllers.disconnectWirelessConfirmTitle" = "要中斷無線控制器連線嗎？";
-"controllers.disconnectWirelessConfirmMessage" = "%@ 會保持中斷連線，直到您手動重新連接。";
+"controllers.disconnectWirelessConfirmMessage" = "%@ 會保持中斷連線，直到您手動重新連線。";
 "controllers.disconnectWirelessConfirm" = "中斷連線";
 
 "notifications.controllerNeedsAttention" = "控制器需要注意";
@@ -1202,7 +1202,7 @@
 "cli.controller.list.suspended" = "（已暫停）";
 "cli.controller.option.duration" = "經過這段秒數後停止。未指定時，會持續執行到您按下 Control-C。";
 "cli.controller.output.failed" = "%@ 未接受 %@ 指令 (%@)。請用 「ojd log show」 檢查。";
-"cli.controller.output.gone" = "%@ 在指令送出前已中斷連線。請重新連接後再試一次。";
+"cli.controller.output.gone" = "%@ 在指令送出前已中斷連線。請重新連線後再試一次。";
 "cli.controller.output.not_ready" = "%@ 尚未準備好接收輸出。請稍後再試。";
 "cli.controller.output.sent" = "已將 %@ 傳送至 %@。";
 "cli.controller.output.unsupported" = "%@ 沒有%@。請執行 「ojd controller show %@」 查看它支援的功能。";
@@ -1226,7 +1226,7 @@
 "cli.controller.selector.ambiguous" = "「%@」 符合 %lld 個控制器。請使用下列其中一個 ID：";
 "cli.controller.selector.none_connected" = "沒有控制器符合 「%@」，因為沒有已連接的控制器。請連接一個，然後執行 「ojd controller list」。";
 "cli.controller.selector.not_found" = "沒有已連接的控制器符合 「%@」。請使用此清單中的 ID 或 VVVV:PPPP：";
-"cli.controller.session.not_found" = "「%@」 在請求送達前已中斷連線。請重新連接後再試一次。";
+"cli.controller.session.not_found" = "「%@」 在請求送達前已中斷連線。請重新連線後再試一次。";
 "cli.controller.show.abstract" = "顯示控制器的身分、擁有者、功能和虛擬遊戲控制器。";
 "cli.controller.show.discussion" = "也會列出輸出檢查：驅動每個震動馬達和燈光的指令，以及應觀察的現象。";
 "cli.controller.show.label.battery" = "電池";

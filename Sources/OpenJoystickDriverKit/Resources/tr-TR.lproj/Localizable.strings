@@ -1136,7 +1136,7 @@
 "cli.config.show.read_by" = "okuyanlar: %@";
 "cli.config.show.unread" = "Defaults.json %@ anahtarını ayarlıyor, ancak bağlı hiçbir kontrolcü bu anahtarı okumuyor. Bu anahtarı okuyan aileler: %@.";
 "cli.config.show.unread_skipped_no_controller" = "Bağlı kontrolcü yok, bu yüzden Defaults.json içinde hiçbir kontrolcünün okumadığı anahtarların kontrolü atlandı.";
-"cli.config.show.unread_skipped_no_service" = "Hizmet çalışmıyor, bu yüzden Defaults.json içinde bağlı hiçbir kontrolcünün okumadığı anahtarların kontrolü atlandı.";
+"cli.config.show.unread_skipped_no_service" = "Servis çalışmıyor, bu yüzden Defaults.json içinde bağlı hiçbir kontrolcünün okumadığı anahtarların kontrolü atlandı.";
 "cli.config.show.unset" = "sürücü varsayılanı";
 "cli.setting.abstract" = "OpenJoystickDriver uygulama ayarlarını listeler, okur veya değiştirir.";
 "cli.setting.bad_value" = "“%@”, %@ için geçerli bir değer değil. true veya false kullanın.";
@@ -1346,7 +1346,7 @@
 "cli.record.test.abstract" = "Yakalanan raporları bir kaydın ayrıştırıcısından geçirir ve ayrıştırılan durumu karşılaştırır.";
 "cli.record.test.capture_invalid" = "%@ bir paket yakalaması değil: %@";
 "cli.record.test.difference" = "%@: beklenen %@, alınan %@";
-"cli.record.test.discussion" = "Bir yakalamanın alınan paketlerini kaydın ayrıştırıcısından yeniden oynatır, ardından son giriş raporundan sonraki kontrolcü durumunu beklenen durumla karşılaştırır. Yakalama, “ojd controller capture --json” çıktısının JSON satırlarıdır. Beklenen durum, “ojd controller watch --json” çıktısının bir satırı biçiminde tek bir JSON nesnesidir. Komut, farklı olan her alanı listeler ve herhangi biri farklıysa 1 koduyla çıkar. Çalışan hizmetin ayarladığı connection dışında her alanı karşılaştırır. Çalışan bir hizmet gerektirmez.";
+"cli.record.test.discussion" = "Bir yakalamanın alınan paketlerini kaydın ayrıştırıcısından yeniden oynatır, ardından son giriş raporundan sonraki kontrolcü durumunu beklenen durumla karşılaştırır. Yakalama, “ojd controller capture --json” çıktısının JSON satırlarıdır. Beklenen durum, “ojd controller watch --json” çıktısının bir satırı biçiminde tek bir JSON nesnesidir. Komut, farklı olan her alanı listeler ve herhangi biri farklıysa 1 koduyla çıkar. Çalışan servisin ayarladığı connection dışında her alanı karşılaştırır. Çalışan bir servis gerektirmez.";
 "cli.record.test.expect" = "JSON dosyası olarak beklenen kontrolcü durumu.";
 "cli.record.test.expect_invalid" = "%@ bir kontrolcü durumu değil: %@";
 "cli.record.test.matched" = "%@ beklenen durumla eşleşiyor: %lld giriş raporu yeniden oynatıldı.";
