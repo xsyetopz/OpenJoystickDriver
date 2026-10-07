@@ -1308,7 +1308,7 @@
 "cli.virtual.show.unavailable" = "没有合适的虚拟游戏手柄";
 "cli.diagnose.records.applied" = "已应用的用户记录：%lld";
 "cli.diagnose.records.config_ok" = "Defaults.json 和人设文件有效";
-"cli.diagnose.records.config_problems" = "已忽略或跳过 %@；请修复后用「ojd status」检查";
+"cli.diagnose.records.config_problems" = "已忽略或跳过 %@；请修复后用“ojd status”检查";
 "cli.diagnose.records.skipped" = "已跳过 %@；请用“ojd record list”检查";
 "cli.record.abstract" = "起草、列出、检查、安装或移除控制器记录。";
 "cli.record.discussion" = "控制器记录告诉 OpenJoystickDriver 如何驱动某一型号的控制器。你的记录存储在 ~/Library/Application Support/OpenJoystickDriver/Controllers，可添加型号，或修补内置型号。目录发生变化时，运行中的服务会应用这些记录。只有“ojd record draft”需要服务。";
@@ -1346,14 +1346,14 @@
 "cli.record.test.abstract" = "用记录的解析器重放已捕获的报告，并比较解析出的状态。";
 "cli.record.test.capture_invalid" = "%@ 不是数据包捕获文件：%@";
 "cli.record.test.difference" = "%@：期望 %@，实际 %@";
-"cli.record.test.discussion" = "用记录的解析器重放捕获文件中收到的数据包，然后将最后一个输入报告之后的控制器状态与期望状态比较。捕获文件是 'ojd controller capture --json' 输出的 JSON 行。期望状态是一个 JSON 对象，形状与 'ojd controller watch --json' 的一行相同。命令会列出每个不同的字段，只要有字段不同就以退出码 1 结束。它比较除 connection 之外的所有字段，connection 由运行中的服务设置。无需运行中的服务。";
+"cli.record.test.discussion" = "用记录的解析器重放捕获文件中收到的数据包，然后将最后一个输入报告之后的控制器状态与期望状态比较。捕获文件是 “ojd controller capture --json” 输出的 JSON 行。期望状态是一个 JSON 对象，形状与 “ojd controller watch --json” 的一行相同。命令会列出每个不同的字段，只要有字段不同就以退出码 1 结束。它比较除 connection 之外的所有字段，connection 由运行中的服务设置。无需运行中的服务。";
 "cli.record.test.expect" = "期望的控制器状态，JSON 文件。";
 "cli.record.test.expect_invalid" = "%@ 不是控制器状态：%@";
 "cli.record.test.matched" = "%@ 与期望状态一致：已重放 %lld 个输入报告。";
 "cli.record.test.mismatch" = "%@ 的解析器生成的状态与 %@ 在 %lld 个字段上不同。";
 "cli.record.test.no_input" = "%@ 中没有任何报告包含 %@ 的输入。请在按下控制器按键的同时重新捕获。";
 "cli.record.test.no_parser" = "%@ 的系列没有无需控制器即可运行的解析器。";
-"cli.record.test.packets" = "数据包捕获文件，即 'ojd controller capture --json' 输出的 JSON 行。";
+"cli.record.test.packets" = "数据包捕获文件，即 “ojd controller capture --json” 输出的 JSON 行。";
 "cli.record.test.parse_failed" = "%@ 的解析器拒绝了收到的第 %lld 个数据包（%@）。";
 "error.E2022" = "记录的解析器根据已捕获报告生成的状态与期望状态不同。请查看命令列出的字段。";
 "cli.record.usb_not_claimed" = "该系列使用原始 USB，USB 扩展无法接管此控制器，因为其产品列表由 Apple 签名。只有在 macOS 允许时，OJD 才能通过直接 USB 访问使用它。";

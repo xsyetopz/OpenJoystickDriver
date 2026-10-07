@@ -1308,7 +1308,7 @@
 "cli.virtual.show.unavailable" = "ningún mando virtual encaja";
 "cli.diagnose.records.applied" = "registros de usuario aplicados: %lld";
 "cli.diagnose.records.config_ok" = "Defaults.json y los archivos de persona son válidos";
-"cli.diagnose.records.config_problems" = "ignorados u omitidos: %@; corrígelos y compruébalo con 'ojd status'";
+"cli.diagnose.records.config_problems" = "ignorados u omitidos: %@; corrígelos y compruébalo con «ojd status»";
 "cli.diagnose.records.skipped" = "omitidos: %@; revísalos con «ojd record list»";
 "cli.record.abstract" = "Redacta, lista, comprueba, instala o elimina registros de mando.";
 "cli.record.discussion" = "Un registro de mando indica a OpenJoystickDriver cómo manejar un modelo de mando. Tus registros están en ~/Library/Application Support/OpenJoystickDriver/Controllers y añaden un modelo o modifican uno incluido. El servicio en ejecución los aplica cuando cambia el directorio. Solo «ojd record draft» necesita el servicio.";
@@ -1346,14 +1346,14 @@
 "cli.record.test.abstract" = "Reproducir informes capturados con el analizador de un registro y comparar el estado analizado.";
 "cli.record.test.capture_invalid" = "%@ no es una captura de paquetes: %@";
 "cli.record.test.difference" = "%@: se esperaba %@, se obtuvo %@";
-"cli.record.test.discussion" = "Reproduce los paquetes recibidos de una captura con el analizador del registro y compara el estado del mando tras el último informe de entrada con el estado esperado. La captura son las líneas JSON de 'ojd controller capture --json'. El estado esperado es un objeto JSON con la forma de una línea de 'ojd controller watch --json'. El comando enumera cada campo que difiere y termina con el código 1 si alguno difiere. Compara todos los campos salvo connection, que establece el servicio en ejecución. No necesita un servicio en ejecución.";
+"cli.record.test.discussion" = "Reproduce los paquetes recibidos de una captura con el analizador del registro y compara el estado del mando tras el último informe de entrada con el estado esperado. La captura son las líneas JSON de «ojd controller capture --json». El estado esperado es un objeto JSON con la forma de una línea de «ojd controller watch --json». El comando enumera cada campo que difiere y termina con el código 1 si alguno difiere. Compara todos los campos salvo connection, que establece el servicio en ejecución. No necesita un servicio en ejecución.";
 "cli.record.test.expect" = "El estado esperado del mando, como archivo JSON.";
 "cli.record.test.expect_invalid" = "%@ no es un estado de mando: %@";
 "cli.record.test.matched" = "%@ coincide con el estado esperado: %lld informes de entrada reproducidos.";
 "cli.record.test.mismatch" = "El estado que produjo el analizador de %@ difiere de %@ en %lld campos.";
 "cli.record.test.no_input" = "Ningún informe de %@ contenía entrada para %@. Captura de nuevo mientras pulsas los controles.";
 "cli.record.test.no_parser" = "La familia de %@ no tiene un analizador que funcione sin un mando.";
-"cli.record.test.packets" = "Una captura de paquetes, como las líneas JSON de 'ojd controller capture --json'.";
+"cli.record.test.packets" = "Una captura de paquetes, como las líneas JSON de «ojd controller capture --json».";
 "cli.record.test.parse_failed" = "El analizador de %@ rechazó el paquete recibido %lld de %@.";
 "error.E2022" = "El estado que el analizador del registro produjo a partir de los informes capturados difiere del estado esperado. Lee los campos que enumera el comando.";
 "cli.record.usb_not_claimed" = "La familia usa USB sin procesar, y la extensión USB no puede reclamar este mando, porque su lista de productos está firmada por Apple. OJD solo llega a él mediante acceso USB directo, cuando macOS lo permite.";

@@ -1132,7 +1132,7 @@
 "cli.config.show.abstract" = "각 튜닝 값과 그 값을 설정한 레이어를 출력합니다.";
 "cli.config.show.controller" = "전역 기본값 대신 컨트롤러 하나의 유효한 튜닝을 VVVV:PPPP 형식으로 표시합니다.";
 "cli.config.show.defaults_ignored" = "%@ 무시됨: %@";
-"cli.config.show.discussion" = "--controller가 없으면 모든 조정 키와 Defaults.json의 값, 그리고 레코드가 해당 키를 읽는 패밀리를 출력합니다. 지정하면 Defaults.json, 사용자 레코드, 번들 레코드를 쌓은 뒤의 컨트롤러 레코드를 출력합니다. 어떤 레이어도 설정하지 않는 키는 ‘드라이버 기본값’으로 표시됩니다.";
+"cli.config.show.discussion" = "--controller가 없으면 모든 튜닝 키와 Defaults.json의 값, 그리고 레코드가 해당 키를 읽는 패밀리를 출력합니다. 지정하면 Defaults.json, 사용자 레코드, 번들 레코드를 쌓은 뒤의 컨트롤러 레코드를 출력합니다. 어떤 레이어도 설정하지 않는 키는 ‘드라이버 기본값’으로 표시됩니다.";
 "cli.config.show.read_by" = "읽는 패밀리: %@";
 "cli.config.show.unread" = "Defaults.json이 %@을(를) 설정했지만 연결된 컨트롤러 중 이 키를 읽는 것이 없습니다. 이 키를 읽는 패밀리: %@.";
 "cli.config.show.unread_skipped_no_controller" = "연결된 컨트롤러가 없어 어떤 컨트롤러도 읽지 않는 Defaults.json 키 확인을 건너뛰었습니다.";
@@ -1308,7 +1308,7 @@
 "cli.virtual.show.unavailable" = "맞는 가상 게임패드 없음";
 "cli.diagnose.records.applied" = "적용된 사용자 레코드: %lld";
 "cli.diagnose.records.config_ok" = "Defaults.json 및 페르소나 파일이 유효합니다";
-"cli.diagnose.records.config_problems" = "무시 또는 건너뜀: %@; 수정한 뒤 'ojd status'로 확인하세요";
+"cli.diagnose.records.config_problems" = "무시 또는 건너뜀: %@; 수정한 뒤 ‘ojd status’로 확인하세요";
 "cli.diagnose.records.skipped" = "%@ 건너뜀. ‘ojd record list’로 확인하세요";
 "cli.record.abstract" = "컨트롤러 레코드의 초안을 만들거나 나열, 확인, 설치 또는 제거합니다.";
 "cli.record.discussion" = "컨트롤러 레코드는 OpenJoystickDriver가 컨트롤러 모델 하나를 어떻게 구동할지 알려 줍니다. 사용자 레코드는 ~/Library/Application Support/OpenJoystickDriver/Controllers에 저장되며, 모델을 추가하거나 번들 모델을 수정합니다. 실행 중인 서비스는 디렉터리가 바뀌면 이를 적용합니다. ‘ojd record draft’만 서비스가 필요합니다.";
@@ -1346,14 +1346,14 @@
 "cli.record.test.abstract" = "캡처한 리포트를 레코드의 파서로 재생하고 파싱된 상태를 비교합니다.";
 "cli.record.test.capture_invalid" = "%@은(는) 패킷 캡처가 아닙니다: %@";
 "cli.record.test.difference" = "%@: 예상 %@, 실제 %@";
-"cli.record.test.discussion" = "캡처에서 수신한 패킷을 레코드의 파서로 재생한 뒤, 마지막 입력 리포트 이후의 컨트롤러 상태를 예상 상태와 비교합니다. 캡처는 'ojd controller capture --json'의 JSON 줄입니다. 예상 상태는 'ojd controller watch --json'의 한 줄 형태인 JSON 객체 하나입니다. 이 명령은 다른 필드를 모두 나열하고, 하나라도 다르면 종료 코드 1로 끝납니다. 실행 중인 서비스가 설정하는 connection을 제외한 모든 필드를 비교합니다. 실행 중인 서비스가 필요 없습니다.";
+"cli.record.test.discussion" = "캡처에서 수신한 패킷을 레코드의 파서로 재생한 뒤, 마지막 입력 리포트 이후의 컨트롤러 상태를 예상 상태와 비교합니다. 캡처는 ‘ojd controller capture --json’의 JSON 줄입니다. 예상 상태는 ‘ojd controller watch --json’의 한 줄 형태인 JSON 객체 하나입니다. 이 명령은 다른 필드를 모두 나열하고, 하나라도 다르면 종료 코드 1로 끝납니다. 실행 중인 서비스가 설정하는 connection을 제외한 모든 필드를 비교합니다. 실행 중인 서비스가 필요 없습니다.";
 "cli.record.test.expect" = "예상 컨트롤러 상태(JSON 파일)입니다.";
 "cli.record.test.expect_invalid" = "%@은(는) 컨트롤러 상태가 아닙니다: %@";
 "cli.record.test.matched" = "%@이(가) 예상 상태와 일치합니다: 입력 리포트 %lld개를 재생했습니다.";
 "cli.record.test.mismatch" = "%@의 파서가 만든 상태가 %@와 %lld개 필드에서 다릅니다.";
 "cli.record.test.no_input" = "%@의 어떤 리포트에도 %@의 입력이 없습니다. 컨트롤을 누르면서 다시 캡처하세요.";
-"cli.record.test.no_parser" = "%@의 계열에는 컨트롤러 없이 실행되는 파서가 없습니다.";
-"cli.record.test.packets" = "패킷 캡처('ojd controller capture --json'의 JSON 줄)입니다.";
+"cli.record.test.no_parser" = "%@의 패밀리에는 컨트롤러 없이 실행되는 파서가 없습니다.";
+"cli.record.test.packets" = "패킷 캡처(‘ojd controller capture --json’의 JSON 줄)입니다.";
 "cli.record.test.parse_failed" = "%@의 파서가 수신 패킷 %lld(%@)을(를) 거부했습니다.";
 "error.E2022" = "레코드의 파서가 캡처한 리포트로 만든 상태가 예상 상태와 다릅니다. 명령이 나열한 필드를 확인하세요.";
 "cli.record.usb_not_claimed" = "이 제품군은 원시 USB를 사용하며, 제품 목록이 Apple에서 서명되어 있으므로 USB 확장 프로그램이 이 컨트롤러를 점유할 수 없습니다. OJD는 macOS가 허용하는 경우에만 직접 USB 접근으로 이 컨트롤러에 도달합니다.";

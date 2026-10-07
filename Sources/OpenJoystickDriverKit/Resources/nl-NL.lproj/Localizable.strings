@@ -1132,7 +1132,7 @@
 "cli.config.show.abstract" = "Drukt elke afstelwaarde af en de laag die hem heeft ingesteld.";
 "cli.config.show.controller" = "Toont de effectieve afstelling van één controller, als VVVV:PPPP, in plaats van de algemene standaardwaarden.";
 "cli.config.show.defaults_ignored" = "%@ genegeerd: %@";
-"cli.config.show.discussion" = "Zonder --controller worden alle afstemmingssleutels met hun waarde uit Defaults.json afgedrukt, plus de families waarvan de records ze lezen. Met --controller wordt het record van de controller afgedrukt nadat Defaults.json, jouw record en het meegeleverde record op elkaar zijn gelegd. Een sleutel die geen enkele laag instelt, toont ‘standaard van het stuurprogramma’.";
+"cli.config.show.discussion" = "Zonder --controller worden alle afstelsleutels met hun waarde uit Defaults.json afgedrukt, plus de families waarvan de records ze lezen. Met --controller wordt het record van de controller afgedrukt nadat Defaults.json, jouw record en het meegeleverde record op elkaar zijn gelegd. Een sleutel die geen enkele laag instelt, toont ‘standaard van het stuurprogramma’.";
 "cli.config.show.read_by" = "gelezen door: %@";
 "cli.config.show.unread" = "Defaults.json stelt %@ in, maar geen aangesloten controller leest die sleutel. Families die hem lezen: %@.";
 "cli.config.show.unread_skipped_no_controller" = "Er is geen controller aangesloten, dus de controle op sleutels in Defaults.json die geen enkele controller leest is overgeslagen.";
@@ -1308,7 +1308,7 @@
 "cli.virtual.show.unavailable" = "geen virtueel gamepad past";
 "cli.diagnose.records.applied" = "gebruikersrecords toegepast: %lld";
 "cli.diagnose.records.config_ok" = "Defaults.json en persona-bestanden zijn geldig";
-"cli.diagnose.records.config_problems" = "genegeerd of overgeslagen: %@; herstel ze en controleer met 'ojd status'";
+"cli.diagnose.records.config_problems" = "genegeerd of overgeslagen: %@; herstel ze en controleer met ‘ojd status’";
 "cli.diagnose.records.skipped" = "%@ overgeslagen; controleer ze met ‘ojd record list’";
 "cli.record.abstract" = "Maakt concepten van controllerrecords, toont, controleert, installeert of verwijdert ze.";
 "cli.record.discussion" = "Een controllerrecord vertelt OpenJoystickDriver hoe één controllermodel moet worden aangestuurd. Je records staan in ~/Library/Application Support/OpenJoystickDriver/Controllers en voegen een model toe of passen een meegeleverd model aan. De draaiende service past ze toe wanneer de map verandert. Alleen ‘ojd record draft’ heeft de service nodig.";
@@ -1346,14 +1346,14 @@
 "cli.record.test.abstract" = "Speel vastgelegde rapporten af via de parser van een record en vergelijk de geparste status.";
 "cli.record.test.capture_invalid" = "%@ is geen pakketopname: %@";
 "cli.record.test.difference" = "%@: verwacht %@, gekregen %@";
-"cli.record.test.discussion" = "Speelt de ontvangen pakketten van een opname af via de parser van het record en vergelijkt daarna de controllerstatus na het laatste invoerrapport met de verwachte status. De opname bestaat uit de JSON-regels van 'ojd controller capture --json'. De verwachte status is één JSON-object in de vorm van een regel van 'ojd controller watch --json'. De opdracht toont elk afwijkend veld en stopt met code 1 als er een afwijkt. Ze vergelijkt elk veld behalve connection, dat de draaiende service instelt. Er is geen draaiende service nodig.";
+"cli.record.test.discussion" = "Speelt de ontvangen pakketten van een opname af via de parser van het record en vergelijkt daarna de controllerstatus na het laatste invoerrapport met de verwachte status. De opname bestaat uit de JSON-regels van ‘ojd controller capture --json’. De verwachte status is één JSON-object in de vorm van een regel van ‘ojd controller watch --json’. De opdracht toont elk afwijkend veld en stopt met code 1 als er een afwijkt. Ze vergelijkt elk veld behalve connection, dat de draaiende service instelt. Er is geen draaiende service nodig.";
 "cli.record.test.expect" = "De verwachte controllerstatus, als JSON-bestand.";
 "cli.record.test.expect_invalid" = "%@ is geen controllerstatus: %@";
 "cli.record.test.matched" = "%@ komt overeen met de verwachte status: %lld invoerrapporten afgespeeld.";
 "cli.record.test.mismatch" = "De status die de parser van %@ opleverde, wijkt van %@ af in %lld velden.";
-"cli.record.test.no_input" = "Geen enkel rapport in %@ bevatte invoer voor %@. Neem opnieuw op terwijl je de bedieningselementen indrukt.";
+"cli.record.test.no_input" = "Geen enkel rapport in %@ bevatte invoer voor %@. Leg opnieuw vast terwijl je de bedieningselementen indrukt.";
 "cli.record.test.no_parser" = "De familie van %@ heeft geen parser die zonder controller werkt.";
-"cli.record.test.packets" = "Een pakketopname, als de JSON-regels van 'ojd controller capture --json'.";
+"cli.record.test.packets" = "Een pakketopname, als de JSON-regels van ‘ojd controller capture --json’.";
 "cli.record.test.parse_failed" = "De parser van %@ heeft ontvangen pakket %lld van %@ geweigerd.";
 "error.E2022" = "De status die de parser van het record uit de vastgelegde rapporten opleverde, wijkt af van de verwachte status. Lees de velden die de opdracht toont.";
 "cli.record.usb_not_claimed" = "De familie gebruikt onbewerkte USB en de USB-extensie kan deze controller niet claimen, omdat de productlijst door Apple is ondertekend. OJD bereikt hem alleen via directe USB-toegang, wanneer macOS dat toestaat.";
