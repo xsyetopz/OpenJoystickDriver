@@ -16,6 +16,9 @@ from another.
 T4 Kaleid and the White G7 Pro dongle report shares that identity. Existing
 Linux-backed `3537:100F` and `1010` routes are also unchanged.
 
+The wired GameSir K1 (`3537:1082`) is not decoded by the GameSir parser; see
+[GameSir K1](gamesir-k1.md).
+
 ## Validate Records And Input
 
 Run from the repository root:

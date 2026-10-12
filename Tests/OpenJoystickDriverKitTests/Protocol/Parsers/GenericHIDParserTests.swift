@@ -65,6 +65,33 @@ struct GenericHIDParserTests {
   }
 
   @Test
+  func mapsGameSirK1SimulationTriggersAndSparseButtons() {
+    let parser = GenericHIDParser(identifier: DeviceIdentifier(vendorID: 13_623, productID: 4_226))
+    let brake = value(page: 0x02, usage: 0xC5, minimum: 0, maximum: 255, integer: 255)
+    let accelerator = value(page: 0x02, usage: 0xC4, minimum: 0, maximum: 255, integer: 255)
+
+    #expect(parser.parse(elementValue: brake) == [.leftTriggerChanged(1)])
+    #expect(parser.parse(elementValue: accelerator) == [.rightTriggerChanged(1)])
+    #expect(
+      parser.parse(elementValue: axis(usage: 0x32, integer: 255)) == [
+        .rightStickChanged(x: 1, y: 0)
+      ]
+    )
+    #expect(
+      parser.parse(elementValue: axis(usage: 0x35, integer: 0)) == [.rightStickChanged(x: 1, y: 1)]
+    )
+    let buttons: [(UInt32, Button)] = [(4, .x), (11, .back), (12, .start), (13, .guide)]
+    for (usage, button) in buttons {
+      let pressed = value(page: 0x09, usage: usage, minimum: 0, maximum: 1, integer: 1)
+      #expect(parser.parse(elementValue: pressed) == [.buttonPressed(button)])
+    }
+    #expect(
+      parser.parse(elementValue: value(page: 0x09, usage: 3, minimum: 0, maximum: 1, integer: 1))
+        .isEmpty
+    )
+  }
+
+  @Test
   func rawReportsRemainUnusedForDescriptorDrivenFallback() throws {
     let parser = GenericHIDParser(identifier: identifier)
     #expect(try parser.parse(data: Data([1, 2, 3])).isEmpty)

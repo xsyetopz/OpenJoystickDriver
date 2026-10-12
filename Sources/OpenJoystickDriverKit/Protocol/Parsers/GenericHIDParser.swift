@@ -21,11 +21,17 @@ public final class GenericHIDParser: InputParser, HIDElementValueParser {
   private static let wr007ProductID: UInt16 = 0x5600
   private static let envisionVendorID: UInt16 = 0x2E95
   private static let envisionProductID: UInt16 = 0x434D
+  private static let gameSirK1VendorID: UInt16 = 0x3537
+  private static let gameSirK1ProductID: UInt16 = 0x1082
 
   private enum AxisLayout {
     case standard
     case wr007
+    /// WR-007 usages with Brake as the left trigger and Accelerator as the right.
+    case gameSirK1
     case envision
+
+    var usesSimulationTriggers: Bool { self == .wr007 || self == .gameSirK1 }
   }
 
   private let identifier: DeviceIdentifier
@@ -46,6 +52,10 @@ public final class GenericHIDParser: InputParser, HIDElementValueParser {
       && identifier.productID == Self.envisionProductID
     {
       axisLayout = .envision
+    } else if identifier.vendorID == Self.gameSirK1VendorID
+      && identifier.productID == Self.gameSirK1ProductID
+    {
+      axisLayout = .gameSirK1
     } else {
       axisLayout = .standard
     }
@@ -65,7 +75,7 @@ public final class GenericHIDParser: InputParser, HIDElementValueParser {
         Self.usageHatSwitch,
       ].contains(usage)
     case Self.simulationControlsUsagePage:
-      axisLayout == .wr007 && [Self.usageAccelerator, Self.usageBrake].contains(usage)
+      axisLayout.usesSimulationTriggers && [Self.usageAccelerator, Self.usageBrake].contains(usage)
     default: false
     }
   }
@@ -107,7 +117,7 @@ public final class GenericHIDParser: InputParser, HIDElementValueParser {
       leftY = -Self.normalizedAxis(value)
       return [.leftStickChanged(x: leftX, y: leftY)]
     case Self.usageZ:
-      if axisLayout == .wr007 {
+      if axisLayout.usesSimulationTriggers {
         rightX = Self.normalizedAxis(value)
         return [.rightStickChanged(x: rightX, y: rightY)]
       }
@@ -119,7 +129,7 @@ public final class GenericHIDParser: InputParser, HIDElementValueParser {
       rightY = -Self.normalizedAxis(value)
       return [.rightStickChanged(x: rightX, y: rightY)]
     case Self.usageRz:
-      if axisLayout == .wr007 {
+      if axisLayout.usesSimulationTriggers {
         rightY = -Self.normalizedAxis(value)
         return [.rightStickChanged(x: rightX, y: rightY)]
       }
@@ -140,10 +150,12 @@ public final class GenericHIDParser: InputParser, HIDElementValueParser {
   }
 
   private func parseSimulationControl(_ value: HIDElementValue) -> [ControllerEvent] {
-    guard axisLayout == .wr007 else { return [] }
-    switch value.usage {
-    case Self.usageAccelerator: return [.leftTriggerChanged(Self.normalizedTrigger(value))]
-    case Self.usageBrake: return [.rightTriggerChanged(Self.normalizedTrigger(value))]
+    guard axisLayout.usesSimulationTriggers else { return [] }
+    switch (axisLayout, value.usage) {
+    case (.wr007, Self.usageAccelerator), (.gameSirK1, Self.usageBrake):
+      return [.leftTriggerChanged(Self.normalizedTrigger(value))]
+    case (.wr007, Self.usageBrake), (.gameSirK1, Self.usageAccelerator):
+      return [.rightTriggerChanged(Self.normalizedTrigger(value))]
     default: return []
     }
   }
@@ -169,7 +181,8 @@ public final class GenericHIDParser: InputParser, HIDElementValueParser {
   }
 
   private func button(for usage: UInt32) -> Button? {
-    if axisLayout == .wr007 {
+    if axisLayout.usesSimulationTriggers {
+      if axisLayout == .gameSirK1, usage == 13 { return .guide }
       return [
         1: .a, 2: .b, 4: .x, 5: .y, 7: .leftBumper, 8: .rightBumper, 11: .back, 12: .start,
         14: .leftStick, 15: .rightStick,

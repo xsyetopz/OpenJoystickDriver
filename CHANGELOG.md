@@ -9,6 +9,9 @@ The project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Map the wired GameSir K1 (`3537:1082`) through Generic HID: the WR-007 layout
+  (sparse Xbox-style buttons, Z/Rz as the right stick, Simulation triggers) with
+  Brake as the left trigger and Accelerator as the right, and Guide on button 13.
 - Decode Flydigi Vader 4 Pro over Bluetooth Low Energy (`D7D7:0041`). Face
   buttons, D-pad, sticks, analog triggers, bumpers, Select, Start, stick
   clicks, and Home map from the captured 15-byte report. C, Z, and M1–M4 stay
