@@ -1,15 +1,197 @@
+diff --git a/Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift b/Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift
+index f002349..30706f9 100644
+--- a/Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift
++++ b/Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift
+@@ -83,7 +83,8 @@ public enum Xbox360LEDPattern: UInt8, Sendable {
+ ///   byte 2 : LED pattern (see Xbox360LEDPattern)
+ /// ```
+ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPlayerIndicatorOutput,
+-  USBStartupOutputProvider, ControllerInputConnectionLifecycle, USBInputConnectionOutputProvider
++  USBStartupOutputProvider, ControllerInputConnectionLifecycle, USBInputConnectionOutputProvider,
++  ControllerInputReportObserver
+ {
+   private let outEndpoint: UInt8
+   private let isWirelessReceiver: Bool
+@@ -98,6 +99,13 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
+   private var prevRSX: Int16 = 0
+   private var prevRSY: Int16 = 0
+ 
++  /// Absolute controls from the latest validated 20-byte XUSB report.
++  ///
++  /// Wired Xbox 360 reports are complete snapshots. Publishing them lets
++  /// ``DevicePipeline`` reconcile normalized state from the full report instead of
++  /// depending only on edge deltas when a consumer drops or races a transition.
++  public private(set) var latestInputReportObservation: ControllerInputReportObservation?
++
+   /// Creates a new Xbox360Parser.
+   /// - Parameters:
+   ///   - outEndpoint: Interrupt OUT endpoint address (default 0x01).
+@@ -155,6 +163,19 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
+     let rsx = Int16(bitPattern: UInt16(bytes[10]) | (UInt16(bytes[11]) << 8))
+     let rsy = Int16(bitPattern: UInt16(bytes[12]) | (UInt16(bytes[13]) << 8))
+ 
++    latestInputReportObservation = ControllerInputReportObservation(
++      controls: Self.absoluteControlEvents(
++        buttons: buttons,
++        lt: lt,
++        rt: rt,
++        lsx: lsx,
++        lsy: lsy,
++        rsx: rsx,
++        rsy: rsy
++      ),
++      isFresh: true
++    )
++
+     var events: [ControllerEvent] = []
+     events += parseButtons(curr: buttons)
+     events += parseDpad(curr: buttons)
+@@ -172,6 +193,61 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
+     return events
+   }
+ 
++  /// Builds an absolute control snapshot from one wired XUSB report body.
++  static func absoluteControlEvents(
++    buttons: UInt16,
++    lt: UInt8,
++    rt: UInt8,
++    lsx: Int16,
++    lsy: Int16,
++    rsx: Int16,
++    rsy: Int16
++  ) -> [ControllerEvent] {
++    var events: [ControllerEvent] = [
++      .leftStickChanged(x: normalizeStickStatic(lsx), y: -normalizeStickStatic(lsy)),
++      .rightStickChanged(x: normalizeStickStatic(rsx), y: -normalizeStickStatic(rsy)),
++      .leftTriggerChanged(Float(lt) / xbox360TriggerMax),
++      .rightTriggerChanged(Float(rt) / xbox360TriggerMax),
++      .dpadChanged(mapDpadStatic(buttons & 0x000F)),
++    ]
++
++    func appendPressed(_ bit: Int, _ button: Button) {
++      if buttons & UInt16(1 << bit) != 0 { events.append(.buttonPressed(button)) }
++    }
++
++    appendPressed(4, .start)
++    appendPressed(5, .back)
++    appendPressed(6, .leftStick)
++    appendPressed(7, .rightStick)
++    appendPressed(8, .leftBumper)
++    appendPressed(9, .rightBumper)
++    appendPressed(10, .guide)
++    appendPressed(12, .a)
++    appendPressed(13, .b)
++    appendPressed(14, .x)
++    appendPressed(15, .y)
++    return events
++  }
++
++  private static func normalizeStickStatic(_ raw: Int16) -> Float {
++    if raw == Int16.min { return -1.0 }
++    return Float(raw) / xbox360StickMax
++  }
++
++  private static func mapDpadStatic(_ value: UInt16) -> DpadDirection {
++    switch value {
++    case 1: .north
++    case 2: .south
++    case 4: .west
++    case 8: .east
++    case 9: .northEast
++    case 5: .northWest
++    case 10: .southEast
++    case 6: .southWest
++    default: .neutral
++    }
++  }
++
+   // MARK: - Output
+ 
+   /// Sends a rumble command to the physical controller.
+@@ -244,6 +320,7 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
+       prevLSY = 0
+       prevRSX = 0
+       prevRSY = 0
++      latestInputReportObservation = nil
+     }
+   }
+ 
 diff --git a/Tests/OpenJoystickDriverKitTests/Protocol/Parsers/Xbox360ParserTests.swift b/Tests/OpenJoystickDriverKitTests/Protocol/Parsers/Xbox360ParserTests.swift
-index 43ac0ae..400f6e7 100644
+index 4b42697..400f6e7 100644
 --- a/Tests/OpenJoystickDriverKitTests/Protocol/Parsers/Xbox360ParserTests.swift
 +++ b/Tests/OpenJoystickDriverKitTests/Protocol/Parsers/Xbox360ParserTests.swift
-@@ -420,8 +420,9 @@ struct Xbox360ParserTests {
-   @Test
-   func testAbsoluteControlEventsMatchLinuxXpadFaceBits() {
-     // data[3]=0x10 → A, 0x20 → B, 0x40 → X, 0x80 → Y (xpad / PR #24)
+@@ -366,4 +366,74 @@ struct Xbox360ParserTests {
+         is USBStartupOutputProvider)
+     )
+   }
++
++  /// Real interrupt-IN captures from a wired `045E:028E` clone on macOS Monterey.
++  /// Rest axes sit at `0xFFFF` / `0x0000`; face buttons toggle `data[3]` bits 4–7.
++  @Test
++  func testRealMontereyClonePacketsPublishAbsoluteObservationAndDeltas() throws {
++    let parser = Xbox360Parser()
++    let idle = Data([
++      0x00, 0x14, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00,
++      0x00, 0x00, 0x00, 0x00, 0x00,
++    ])
++    let aPressed = Data([
++      0x00, 0x14, 0x00, 0x10, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00,
++      0x00, 0x00, 0x00, 0x00, 0x00,
++    ])
++    let xPressed = Data([
++      0x00, 0x14, 0x00, 0x40, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00,
++      0x00, 0x00, 0x00, 0x00, 0x00,
++    ])
++    let xbPressed = Data([
++      0x00, 0x14, 0x00, 0x60, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00,
++      0x00, 0x00, 0x00, 0x00, 0x00,
++    ])
++
++    let idleEvents = try parser.parse(data: idle)
++    #expect(idleEvents.contains { if case .leftStickChanged = $0 { return true }; return false })
++    #expect(parser.latestInputReportObservation?.isFresh == true)
++    #expect(parser.latestInputReportObservation?.controls.contains(.buttonPressed(.a)) != true)
++
++    let aEvents = try parser.parse(data: aPressed)
++    #expect(aEvents.contains(.buttonPressed(.a)))
++    #expect(parser.latestInputReportObservation?.controls.contains(.buttonPressed(.a)) == true)
++
++    var observed = DeviceInputState(vendorID: 0x045E, productID: 0x028E)
++    observed.apply(events: parser.latestInputReportObservation?.controls ?? [])
++    #expect(observed.pressedButtons.contains(Button.a.rawValue))
++    #expect(abs(observed.leftStickX + (1.0 / Float(Int16.max))) < 0.0001)
++
++    let xEvents = try parser.parse(data: xPressed)
++    #expect(xEvents.contains(.buttonReleased(.a)))
++    #expect(xEvents.contains(.buttonPressed(.x)))
++    observed = DeviceInputState(vendorID: 0x045E, productID: 0x028E)
++    observed.apply(events: parser.latestInputReportObservation?.controls ?? [])
++    #expect(observed.pressedButtons == [Button.x.rawValue])
++
++    let xbEvents = try parser.parse(data: xbPressed)
++    #expect(xbEvents.contains(.buttonPressed(.b)))
++    observed = DeviceInputState(vendorID: 0x045E, productID: 0x028E)
++    observed.apply(events: parser.latestInputReportObservation?.controls ?? [])
++    #expect(Set(observed.pressedButtons) == Set([Button.x.rawValue, Button.b.rawValue]))
++  }
++
++  @Test
++  func testAbsoluteControlEventsMatchLinuxXpadFaceBits() {
++    // data[3]=0x10 → A, 0x20 → B, 0x40 → X, 0x80 → Y (xpad / PR #24)
 +    // UInt16 LE = byte2 | (byte3 << 8), so face nibble lives in bits 12–15.
-     let controls = Xbox360Parser.absoluteControlEvents(
--      buttons: 0x10 | 0x20 | 0x40 | 0x80,
++    let controls = Xbox360Parser.absoluteControlEvents(
 +      buttons: (0x10 | 0x20 | 0x40 | 0x80) << 8,
-       lt: 0,
-       rt: 0,
-       lsx: 0,
++      lt: 0,
++      rt: 0,
++      lsx: 0,
++      lsy: 0,
++      rsx: 0,
++      rsy: 0
++    )
++    #expect(controls.contains(.buttonPressed(.a)))
++    #expect(controls.contains(.buttonPressed(.b)))
++    #expect(controls.contains(.buttonPressed(.x)))
++    #expect(controls.contains(.buttonPressed(.y)))
++    #expect(controls.contains(.dpadChanged(.neutral)))
++  }
+ }
