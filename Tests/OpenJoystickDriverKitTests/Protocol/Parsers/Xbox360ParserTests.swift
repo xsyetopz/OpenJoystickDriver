@@ -420,8 +420,9 @@ struct Xbox360ParserTests {
   @Test
   func testAbsoluteControlEventsMatchLinuxXpadFaceBits() {
     // data[3]=0x10 → A, 0x20 → B, 0x40 → X, 0x80 → Y (xpad / PR #24)
+    // UInt16 LE = byte2 | (byte3 << 8), so face nibble lives in bits 12–15.
     let controls = Xbox360Parser.absoluteControlEvents(
-      buttons: 0x10 | 0x20 | 0x40 | 0x80,
+      buttons: (0x10 | 0x20 | 0x40 | 0x80) << 8,
       lt: 0,
       rt: 0,
       lsx: 0,
