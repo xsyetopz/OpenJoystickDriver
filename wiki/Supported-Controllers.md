@@ -39,8 +39,11 @@ A tester used the controller on real hardware, and it worked. The table names th
 | --- | --- | --- | --- | --- |
 | 8BitDo Ultimate 2C Wireless | `2DC8:310A` | 2.4 GHz dongle, XInput mode | Buttons, sticks, triggers at rest, D-pad, stick clicks, rumble | Not recorded |
 | ZD Ultimate Legend | `413D:2204` | 2.4 GHz dongle, XInput mode | Input, OJD rumble, back-button keyboard bindings, mode switching | Not recorded |
+| Xbox Nano Controller | `045E:0B4F` | Bluetooth LE, `game-controller-compatible` profile | Buttons, sticks, triggers, D-pad, stick clicks. The Xbox button and Share do not work | Rumble, Steam |
 
 Two testers tested the 8BitDo Ultimate 2C Wireless on tester build `1.5.71`. One tester (gornobatov) tested the ZD Ultimate Legend on macOS 26.7.1. For the 8BitDo details, see [the test record](../docs/testing/8bitdo-ultimate-2c.md).
+
+One tester tested the Xbox Nano Controller on macOS 26.5.2. For the details, see [the test record](../docs/testing/xbox-nano.md).
 
 The 8BitDo Ultimate 2C Wireless has a different VID:PID in each mode. The Bluetooth mode `2DC8:301B` and the HID receiver mode `2DC8:301C` have no verification. They may work.
 
