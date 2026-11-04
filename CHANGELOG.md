@@ -6,6 +6,14 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ## [Unreleased]
 
+### Added
+
+- Add the Turtle Beach / PDP Xbox Rematch Advanced Wired Controller
+  (`10F5:711E`) as a GIP Xbox One record: interrupt endpoints `0x81`/`0x02`
+  and USB configuration 1 before claim, matching the hardware descriptors.
+  Face buttons, D-pad, sticks, and triggers are hardware-verified over the
+  direct IOUSBHost route; rumble and the player indicator are not claimed.
+
 ## [0.6.0-alpha.1] - 2026-10-23
 
 ### Added
