@@ -1,0 +1,146 @@
+# Verify the Xbox 360 absolute-observation fix on Intel + Swift 6.3+.
+# Produces test/build logs, a clean patch, and a signing assessment.
+# Does NOT upload certificates, profiles, or claim Virtual HID works without Apple-signed entitlements.
+name: Monterey XUSB verify
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - monterey-xusb-absolute-observation
+  pull_request:
+    paths:
+      - "Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift"
+      - "Tests/OpenJoystickDriverKitTests/Protocol/Parsers/Xbox360ParserTests.swift"
+      - ".github/workflows/monterey-xusb-verify.yml"
+      - "ci/monterey-xusb-verify/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: monterey-xusb-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-x86_64:
+    name: Intel tests + macOS 12 deploy build
+    runs-on: macos-26-intel
+    timeout-minutes: 60
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+      OJD_USE_LOCAL_SWIFTERKIT: "0"
+      MACOSX_DEPLOYMENT_TARGET: "12.0"
+      ARTIFACT_DIR: ci-artifacts/monterey-xusb-verify
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Prepare artifact directory
+        run: mkdir -p "$ARTIFACT_DIR"
+
+      - name: Toolchain gate (Swift ≥ 6.3, x86_64)
+        run: |
+          {
+            echo "## Runner"
+            sw_vers
+            uname -m
+            echo
+            echo "## Xcode / Swift"
+            xcodebuild -version
+            xcrun --find swiftc
+            swift --version
+          } | tee "$ARTIFACT_DIR/toolchain.txt"
+
+          arch="$(uname -m)"
+          if [[ "$arch" != "x86_64" ]]; then
+            echo "ERROR: expected x86_64 runner, got $arch" | tee -a "$ARTIFACT_DIR/toolchain.txt"
+            exit 1
+          fi
+
+          swift --version | tee -a "$ARTIFACT_DIR/toolchain.txt" | grep -E "Swift version 6\.(3|[4-9]|[1-9][0-9])" >/dev/null
+
+      - name: Signing assessment (no secrets)
+        run: |
+          python3 ci/monterey-xusb-verify/write-signing-assessment.py \
+            --output "$ARTIFACT_DIR/SIGNING-ASSESSMENT.md" \
+            --repo-root "$GITHUB_WORKSPACE"
+
+      - name: Generate source patch artifact
+        run: |
+          git diff --binary HEAD -- \
+            Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift \
+            Tests/OpenJoystickDriverKitTests/Protocol/Parsers/Xbox360ParserTests.swift \
+            > "$ARTIFACT_DIR/0001-xbox360-absolute-observation.patch" || true
+          # If already committed on the branch, emit the last commit touching the parser.
+          if [[ ! -s "$ARTIFACT_DIR/0001-xbox360-absolute-observation.patch" ]]; then
+            git log -1 --pretty=format:'%H %s%n' -- \
+              Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift \
+              > "$ARTIFACT_DIR/patch-commit.txt"
+            git show --binary HEAD -- \
+              Sources/OpenJoystickDriverKit/Protocol/Parsers/Xbox360Parser.swift \
+              Tests/OpenJoystickDriverKitTests/Protocol/Parsers/Xbox360ParserTests.swift \
+              > "$ARTIFACT_DIR/0001-xbox360-absolute-observation.patch" || true
+          fi
+          cp -f ci/monterey-xusb-verify/MAINTAINER-REQUEST.md \
+            "$ARTIFACT_DIR/MAINTAINER-REQUEST.md"
+          cp -f ci/monterey-xusb-verify/README.md \
+            "$ARTIFACT_DIR/README.md"
+
+      - name: Build OpenJoystickDriverKit (x86_64, deployment 12.0)
+        run: |
+          set -o pipefail
+          {
+            echo "MACOSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET"
+            echo "swift build -c release --arch x86_64 --product OpenJoystickDriverKit"
+            swift build -c release --arch x86_64 --product OpenJoystickDriverKit
+            echo
+            echo "## Built products"
+            find .build -type f \( -name 'libOpenJoystickDriverKit*' -o -name 'OpenJoystickDriverKit*' \) \
+              2>/dev/null | head -50 || true
+            echo
+            echo "## Deployment target probe"
+            # Confirm the link command / env used macOS 12 when present in build description.
+            if [[ -d .build ]]; then
+              rg -n "macosx12|MACOSX_DEPLOYMENT_TARGET|minos" .build -g '*.json' -g '*.txt' 2>/dev/null \
+                | head -40 || echo "(no macosx12 markers found in .build metadata; env was set for the process)"
+            fi
+          } | tee "$ARTIFACT_DIR/swift-build-x86_64-macos12.log"
+
+      - name: Test Xbox360ParserTests
+        run: |
+          set -o pipefail
+          {
+            echo "swift test --filter Xbox360ParserTests"
+            swift test --filter Xbox360ParserTests --no-parallel
+          } | tee "$ARTIFACT_DIR/xbox360-parser-tests.log"
+
+      - name: Explicit Virtual HID capability note
+        run: |
+          cat > "$ARTIFACT_DIR/VIRTUAL-HID-STATUS.txt" <<'EOF'
+          RESULT: CI compiled and unit-tested the parser fix only.
+
+          Virtual HID for GeForce NOW requires a host app signed with the restricted
+          entitlement com.apple.developer.hid.virtual.device, backed by the project's
+          Apple-issued provisioning profile (see docs/development/signing.md).
+
+          This workflow intentionally does NOT:
+          - import Developer ID certificates or provisioning profiles
+          - ad-hoc sign Host.entitlements and claim Virtual HID works
+          - disable SIP / AMFI
+          - produce a consumer-ready OpenJoystickDriver.app for Monterey
+
+          Next step for a working Monterey + GFN build: maintainer-signed tester DMG
+          (just package-tester) that includes this patch. See MAINTAINER-REQUEST.md.
+          EOF
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: monterey-xusb-verify-${{ github.run_id }}
+          path: |
+            ci-artifacts/monterey-xusb-verify/**
+          if-no-files-found: error
+          retention-days: 30

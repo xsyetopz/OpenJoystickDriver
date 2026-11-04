@@ -83,7 +83,8 @@ public enum Xbox360LEDPattern: UInt8, Sendable {
 ///   byte 2 : LED pattern (see Xbox360LEDPattern)
 /// ```
 public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPlayerIndicatorOutput,
-  USBStartupOutputProvider, ControllerInputConnectionLifecycle, USBInputConnectionOutputProvider
+  USBStartupOutputProvider, ControllerInputConnectionLifecycle, USBInputConnectionOutputProvider,
+  ControllerInputReportObserver
 {
   private let outEndpoint: UInt8
   private let isWirelessReceiver: Bool
@@ -97,6 +98,13 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
   private var prevLSY: Int16 = 0
   private var prevRSX: Int16 = 0
   private var prevRSY: Int16 = 0
+
+  /// Absolute controls from the latest validated 20-byte XUSB report.
+  ///
+  /// Wired Xbox 360 reports are complete snapshots. Publishing them lets
+  /// ``DevicePipeline`` reconcile normalized state from the full report instead of
+  /// depending only on edge deltas when a consumer drops or races a transition.
+  public private(set) var latestInputReportObservation: ControllerInputReportObservation?
 
   /// Creates a new Xbox360Parser.
   /// - Parameters:
@@ -155,6 +163,19 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
     let rsx = Int16(bitPattern: UInt16(bytes[10]) | (UInt16(bytes[11]) << 8))
     let rsy = Int16(bitPattern: UInt16(bytes[12]) | (UInt16(bytes[13]) << 8))
 
+    latestInputReportObservation = ControllerInputReportObservation(
+      controls: Self.absoluteControlEvents(
+        buttons: buttons,
+        lt: lt,
+        rt: rt,
+        lsx: lsx,
+        lsy: lsy,
+        rsx: rsx,
+        rsy: rsy
+      ),
+      isFresh: true
+    )
+
     var events: [ControllerEvent] = []
     events += parseButtons(curr: buttons)
     events += parseDpad(curr: buttons)
@@ -170,6 +191,61 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
     prevRSY = rsy
 
     return events
+  }
+
+  /// Builds an absolute control snapshot from one wired XUSB report body.
+  static func absoluteControlEvents(
+    buttons: UInt16,
+    lt: UInt8,
+    rt: UInt8,
+    lsx: Int16,
+    lsy: Int16,
+    rsx: Int16,
+    rsy: Int16
+  ) -> [ControllerEvent] {
+    var events: [ControllerEvent] = [
+      .leftStickChanged(x: normalizeStickStatic(lsx), y: -normalizeStickStatic(lsy)),
+      .rightStickChanged(x: normalizeStickStatic(rsx), y: -normalizeStickStatic(rsy)),
+      .leftTriggerChanged(Float(lt) / xbox360TriggerMax),
+      .rightTriggerChanged(Float(rt) / xbox360TriggerMax),
+      .dpadChanged(mapDpadStatic(buttons & 0x000F)),
+    ]
+
+    func appendPressed(_ bit: Int, _ button: Button) {
+      if buttons & UInt16(1 << bit) != 0 { events.append(.buttonPressed(button)) }
+    }
+
+    appendPressed(4, .start)
+    appendPressed(5, .back)
+    appendPressed(6, .leftStick)
+    appendPressed(7, .rightStick)
+    appendPressed(8, .leftBumper)
+    appendPressed(9, .rightBumper)
+    appendPressed(10, .guide)
+    appendPressed(12, .a)
+    appendPressed(13, .b)
+    appendPressed(14, .x)
+    appendPressed(15, .y)
+    return events
+  }
+
+  private static func normalizeStickStatic(_ raw: Int16) -> Float {
+    if raw == Int16.min { return -1.0 }
+    return Float(raw) / xbox360StickMax
+  }
+
+  private static func mapDpadStatic(_ value: UInt16) -> DpadDirection {
+    switch value {
+    case 1: .north
+    case 2: .south
+    case 4: .west
+    case 8: .east
+    case 9: .northEast
+    case 5: .northWest
+    case 10: .southEast
+    case 6: .southWest
+    default: .neutral
+    }
   }
 
   // MARK: - Output
@@ -244,6 +320,7 @@ public final class Xbox360Parser: InputParser, PhysicalRumbleOutput, PhysicalPla
       prevLSY = 0
       prevRSX = 0
       prevRSY = 0
+      latestInputReportObservation = nil
     }
   }
 

@@ -366,4 +366,73 @@ struct Xbox360ParserTests {
         is USBStartupOutputProvider)
     )
   }
+
+  /// Real interrupt-IN captures from a wired `045E:028E` clone on macOS Monterey.
+  /// Rest axes sit at `0xFFFF` / `0x0000`; face buttons toggle `data[3]` bits 4–7.
+  @Test
+  func testRealMontereyClonePacketsPublishAbsoluteObservationAndDeltas() throws {
+    let parser = Xbox360Parser()
+    let idle = Data([
+      0x00, 0x14, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00,
+    ])
+    let aPressed = Data([
+      0x00, 0x14, 0x00, 0x10, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00,
+    ])
+    let xPressed = Data([
+      0x00, 0x14, 0x00, 0x40, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00,
+    ])
+    let xbPressed = Data([
+      0x00, 0x14, 0x00, 0x60, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0x00,
+    ])
+
+    let idleEvents = try parser.parse(data: idle)
+    #expect(idleEvents.contains { if case .leftStickChanged = $0 { return true }; return false })
+    #expect(parser.latestInputReportObservation?.isFresh == true)
+    #expect(parser.latestInputReportObservation?.controls.contains(.buttonPressed(.a)) != true)
+
+    let aEvents = try parser.parse(data: aPressed)
+    #expect(aEvents.contains(.buttonPressed(.a)))
+    #expect(parser.latestInputReportObservation?.controls.contains(.buttonPressed(.a)) == true)
+
+    var observed = DeviceInputState(vendorID: 0x045E, productID: 0x028E)
+    observed.apply(events: parser.latestInputReportObservation?.controls ?? [])
+    #expect(observed.pressedButtons.contains(Button.a.rawValue))
+    #expect(abs(observed.leftStickX + (1.0 / Float(Int16.max))) < 0.0001)
+
+    let xEvents = try parser.parse(data: xPressed)
+    #expect(xEvents.contains(.buttonReleased(.a)))
+    #expect(xEvents.contains(.buttonPressed(.x)))
+    observed = DeviceInputState(vendorID: 0x045E, productID: 0x028E)
+    observed.apply(events: parser.latestInputReportObservation?.controls ?? [])
+    #expect(observed.pressedButtons == [Button.x.rawValue])
+
+    let xbEvents = try parser.parse(data: xbPressed)
+    #expect(xbEvents.contains(.buttonPressed(.b)))
+    observed = DeviceInputState(vendorID: 0x045E, productID: 0x028E)
+    observed.apply(events: parser.latestInputReportObservation?.controls ?? [])
+    #expect(Set(observed.pressedButtons) == Set([Button.x.rawValue, Button.b.rawValue]))
+  }
+
+  @Test
+  func testAbsoluteControlEventsMatchLinuxXpadFaceBits() {
+    // data[3]=0x10 → A, 0x20 → B, 0x40 → X, 0x80 → Y (xpad / PR #24)
+    let controls = Xbox360Parser.absoluteControlEvents(
+      buttons: 0x10 | 0x20 | 0x40 | 0x80,
+      lt: 0,
+      rt: 0,
+      lsx: 0,
+      lsy: 0,
+      rsx: 0,
+      rsy: 0
+    )
+    #expect(controls.contains(.buttonPressed(.a)))
+    #expect(controls.contains(.buttonPressed(.b)))
+    #expect(controls.contains(.buttonPressed(.x)))
+    #expect(controls.contains(.buttonPressed(.y)))
+    #expect(controls.contains(.dpadChanged(.neutral)))
+  }
 }
