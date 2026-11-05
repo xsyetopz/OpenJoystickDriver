@@ -203,5 +203,10 @@ extension DeviceManager {
   /// The session state of one connected controller; output routing checks it per input report.
   public func controllerSessionState(
     for identifier: LogicalControllerID
-  ) async -> ControllerSessionState? { await pipelines[identifier]?.controllerSessionState() }
+  ) async -> ControllerSessionState? {
+    guard let pipeline = pipelines[identifier],
+      await pipeline.hasConnectedController(), pipelines[identifier] === pipeline
+    else { return nil }
+    return await pipeline.controllerSessionState()
+  }
 }

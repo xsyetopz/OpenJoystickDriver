@@ -71,7 +71,7 @@ extension DriverParseCharacterizationTests {
       ]
   }
 
-  /// Receiver envelopes: pad data before presence is ignored, and a disconnect releases nothing.
+  /// Receiver envelopes: input establishes presence, and a disconnect carries no input state.
   static var xusbReceiverSteps: [Step] {
     let neutral = Array(ProtocolPacketFixtures.XUSBReceiver.padData())
     func pad(_ buttons: UInt16) -> [UInt8] {

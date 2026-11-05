@@ -1,6 +1,23 @@
 {
   "cases": [
     {
+      "name": "XboxXUSB refuses presence inquiry resend tuning",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha1",
+        "kind": "Controller",
+        "vendorID": 1118,
+        "productID": 681,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": { "family": "XboxXUSB", "variant": "Receiver" }
+          }
+        ],
+        "tuning": { "presenceResendReports": 16 }
+      }
+    },
+    {
       "name": "rejects invalid modes: empty modes",
       "code": "E5007",
       "schema": true,

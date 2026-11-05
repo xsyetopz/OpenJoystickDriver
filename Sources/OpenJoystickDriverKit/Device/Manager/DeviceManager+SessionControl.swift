@@ -5,7 +5,7 @@ extension DeviceManager {
     _ controller: ControllerReference
   ) async -> ControllerSuspendResult {
     guard
-      let identifier = connectedIdentifier(for: controller),
+      let identifier = await connectedIdentifier(for: controller),
       let pipeline = pipelines[identifier]
     else { return ControllerSuspendResult(state: .active, failure: .notFound) }
     guard await pipeline.controllerSessionState() == .active else {
@@ -24,7 +24,7 @@ extension DeviceManager {
     _ controller: ControllerReference
   ) async -> ControllerResumeResult {
     guard
-      let identifier = connectedIdentifier(for: controller),
+      let identifier = await connectedIdentifier(for: controller),
       let pipeline = pipelines[identifier], let info = deviceInfos[identifier]
     else { return ControllerResumeResult(state: .suspended, failure: .notFound) }
     let hidConnection: HIDDeviceConnection?
@@ -81,7 +81,7 @@ extension DeviceManager {
     timeoutNanoseconds: UInt64 = UInt64(ServiceTimeouts.bluetoothDisconnect * 1_000_000_000)
   ) async -> WirelessControllerDisconnectResult {
     guard
-      let identifier = connectedIdentifier(for: controller),
+      let identifier = await connectedIdentifier(for: controller),
       let pipeline = pipelines[identifier], let info = deviceInfos[identifier]
     else { return WirelessControllerDisconnectResult(state: .active, failure: .notFound) }
     // CoreBluetooth cancels only connections the calling app holds, and IOBluetooth closes only

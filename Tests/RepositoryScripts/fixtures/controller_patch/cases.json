@@ -1789,7 +1789,7 @@
       }
     },
     {
-      "name": "an all patch gives an XUSB record its USB transfer timeout and inquiry resend",
+      "name": "an all patch gives an XUSB record its USB transfer timeout without inquiry resend",
       "record": {
         "apiVersion": "openjoystickdriver/v1alpha1",
         "kind": "Controller",
@@ -1846,8 +1846,7 @@
         },
         "server": "System",
         "tuning": {
-          "usbTransferTimeoutMs": 750,
-          "presenceResendReports": 4
+          "usbTransferTimeoutMs": 750
         }
       }
     },

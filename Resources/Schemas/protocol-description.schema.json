@@ -908,12 +908,6 @@
           "minimum": 1,
           "maximum": 100
         },
-        "receiverInquiryResendLimit": {
-          "description": "The most presence inquiry resends for a receiver slot.",
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 100
-        },
         "commandChannel": {
           "description": "The USB interface that carries commands and their replies: its number, the IN endpoint, the largest reply read after each command, and the reply read timeout over USB and over Bluetooth LE.",
           "type": "object",

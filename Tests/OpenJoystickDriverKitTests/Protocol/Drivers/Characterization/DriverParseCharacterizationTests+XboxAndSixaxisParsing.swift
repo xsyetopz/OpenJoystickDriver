@@ -138,21 +138,21 @@ extension DriverParseCharacterizationTests {
     )
   }
 
-  /// Receiver pad data gated on presence; a disconnect releases nothing today.
+  /// Receiver input establishes presence; the pipeline handles disconnect neutralization.
   @Test
   func xusbReceiver() throws {
     let lines = try transcript(Subjects.xusbReceiver, Self.xusbReceiverSteps)
     #expect(
       lines == [
-        "early-a [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0",
-        "connect [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0",
+        "early-a [South] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0",
+        "connect [South] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0",
         "neutral [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0",
         "a [South] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0",
         "lsx=max [] hat=Neutral ls=32767,0 rs=0,0 lt=0 rt=0",
         "a+up [South] hat=North ls=0,0 rs=0,0 lt=0 rt=0",
         "disconnect [South] hat=North ls=0,0 rs=0,0 lt=0 rt=0",
-        "late-b [South] hat=North ls=0,0 rs=0,0 lt=0 rt=0",
-        "short [South] hat=North ls=0,0 rs=0,0 lt=0 rt=0",
+        "late-b [East] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0",
+        "short [East] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0",
       ]
     )
   }

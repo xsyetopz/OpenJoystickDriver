@@ -40,7 +40,7 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
     case .nintendoSwitch1: ["subcommands"]
     case .nintendoSwitch2: ["commandChannel", "trailingStopPackets"]
     case .xboxGIP: ["namedPackets", "handshakeAttempts", "announceResendLimit"]
-    case .xboxXUSB: ["receiverInquiryResendLimit"]
+    case .xboxXUSB: []
     case .valveSteamController: ["activation", "deactivation"]
     case .valveSteamTriton: ["activation", "deactivation"]
     case .valveSteamDeck: ["activation", "deactivation"]

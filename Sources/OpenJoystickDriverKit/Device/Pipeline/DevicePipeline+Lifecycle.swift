@@ -184,6 +184,8 @@ extension DevicePipeline {
     plan.requiresInputConnectionBeforeOutput
   }
 
+  func hasConnectedController() -> Bool { inputConnectionActive }
+
   func hidDeactivationWrites() -> [PhysicalOutputWrite] {
     if requiresInputConnectionBeforeOutput(), !inputConnectionActive { return [] }
     return driver.deactivationWrites()

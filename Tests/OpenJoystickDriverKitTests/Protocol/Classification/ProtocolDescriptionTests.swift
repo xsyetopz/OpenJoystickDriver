@@ -87,7 +87,6 @@ struct ProtocolDescriptionTests {
     #expect(bundled[.nintendoSwitch2]?.tuning?.usbCommandTimeoutMilliseconds == 1_000)
     #expect(bundled[.vendorGameSir]?.tuning?.usbCommandTimeoutMilliseconds == 2_000)
     #expect(bundled[.xboxGIP]?.tuning?.presenceResendReports == 4)
-    #expect(bundled[.xboxXUSB]?.tuning?.presenceResendReports == 16)
     #expect(bundled[.xboxGIP]?.tuning?.usbStartupIntervalMilliseconds == 50)
     #expect(bundled[.xboxGIP]?.tuning?.usbStartupRetryDelayMilliseconds == 1_000)
     #expect(bundled[.xboxGIP]?.tuning?.usbTransferTimeoutMilliseconds == 2_000)
@@ -95,7 +94,6 @@ struct ProtocolDescriptionTests {
     #expect(bundled[.xboxXID]?.tuning?.usbTransferTimeoutMilliseconds == 2_000)
     #expect(bundled[.xboxGIP]?.handshakeAttempts == 3)
     #expect(bundled[.xboxGIP]?.announceResendLimit == 8)
-    #expect(bundled[.xboxXUSB]?.receiverInquiryResendLimit == 8)
     #expect(bundled[.sonyDualShock4]?.tuning?.adapterDisconnectDelayMilliseconds == 500)
     #expect(bundled[.sonyDualSense]?.tuning?.adapterDisconnectDelayMilliseconds == 500)
     let switch1 = try #require(bundled[.nintendoSwitch1])
@@ -133,7 +131,7 @@ struct ProtocolDescriptionTests {
     #expect(
       ControllerTuning.scope(protocolID: .xboxXUSB, variant: nil)
         == [
-          .stickDeadzone, .frameQueueCapacity, .presenceResendReports, .usbTransferTimeoutMs,
+          .stickDeadzone, .frameQueueCapacity, .usbTransferTimeoutMs,
         ]
     )
     #expect(
@@ -300,7 +298,7 @@ struct ProtocolDescriptionTests {
   func aFamilySpecificSessionFieldOfAnotherFamilyIsRefused() {
     let foreign: [(PhysicalProtocolID, String)] = [
       (.xboxXUSB, "handshakeAttempts"), (.xboxXUSB, "announceResendLimit"),
-      (.xboxGIP, "receiverInquiryResendLimit"), (.xboxXID, "handshakeAttempts"),
+      (.xboxXID, "handshakeAttempts"),
       (.sonyDualSense, "announceResendLimit"), (.sonyDualSense, "trailingStopPackets"),
     ]
     for (family, key) in foreign {
@@ -320,7 +318,6 @@ struct ProtocolDescriptionTests {
     let missing: [(PhysicalProtocolID, String)] = [
       (.xboxGIP, #""rawUSB": true"#),
       (.xboxGIP, #""rawUSB": true, "defaults": {"session": {"handshakeAttempts": 3}}"#),
-      (.xboxXUSB, #""rawUSB": true"#),
       (.nintendoSwitch1, ""),
       (.valveSteamDeck, ""),
     ]
@@ -362,9 +359,7 @@ struct ProtocolDescriptionTests {
   func sessionLimitsComeFromTheirFamily() throws {
     let gip = try decode(family: .xboxGIP, #""rawUSB": true"#)
     #expect(gip.handshakeAttempts == 3 && gip.announceResendLimit == 8)
-    #expect(gip.receiverInquiryResendLimit == nil)
     let xusb = try decode(family: .xboxXUSB, #""rawUSB": true"#)
-    #expect(xusb.receiverInquiryResendLimit == 8)
     #expect(xusb.handshakeAttempts == nil && xusb.announceResendLimit == nil)
   }
 
@@ -372,7 +367,6 @@ struct ProtocolDescriptionTests {
     arguments: [
       (PhysicalProtocolID.xboxGIP, "handshakeAttempts", 1, 10),
       (.xboxGIP, "announceResendLimit", 1, 100),
-      (.xboxXUSB, "receiverInquiryResendLimit", 1, 100),
     ]
   )
   func sessionLimitsHaveRanges(
@@ -978,8 +972,7 @@ enum ProtocolDescriptionFixture {
     .xboxGIP: [
       "handshakeAttempts": 3, "announceResendLimit": 8,
       "namedPackets": [["id": "XboxGIP/power-on", "bytes": "05 20 00 01 00", "sessionByte": 2]],
-    ],
-    .xboxXUSB: ["receiverInquiryResendLimit": 8],
+    ]
   ]
 
   /// Decodes a description of `family` whose body after the header is `body`, with the family's

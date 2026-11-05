@@ -6,6 +6,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ## [Unreleased]
 
+### Fixed
+
+- Xbox 360 wireless receivers decode state reports independently of the wired `00 14` header, including captured `045E:02A9` reports with `00 13`. Valid input establishes controller presence when its notification is missed. Empty receiver slots no longer appear as connected controllers or qualify for virtual publication; a model selector resolves the paired controller instead of matching every slot.
+- Removed the XboxXUSB presence-inquiry resend settings. A receiver's valid input establishes presence directly; the startup presence inquiry remains.
+
 ## [0.6.0-alpha.1] - 2026-10-23
 
 ### Added

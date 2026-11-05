@@ -9,7 +9,7 @@ extension DeviceManager {
     _ command: ControllerOutputCommand,
     for controller: ControllerReference
   ) async -> ControllerOutputResult {
-    guard let key = connectedIdentifier(for: controller) else {
+    guard let key = await connectedIdentifier(for: controller) else {
       return ControllerOutputResult(.notFound)
     }
     return await sendControllerOutput(command, toConnected: key)

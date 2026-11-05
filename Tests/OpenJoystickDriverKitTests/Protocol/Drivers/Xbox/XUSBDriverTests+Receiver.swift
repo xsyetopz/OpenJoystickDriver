@@ -25,35 +25,84 @@ extension XUSBDriverTests {
   }
 
   @Test
-  func testWirelessReceiverPadDataBeforePresenceYieldsNothingAndAsksAgain() throws {
+  func testWirelessReceiverInputEstablishesPresenceWithoutNotification() throws {
     let parser = XUSBDriver(isWirelessReceiver: true)
 
-    #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)) == nil)
-    #expect(parser.consumeInputConnectionStateChange() == nil)
-    #expect(parser.drainPendingWrites() == [Self.inquiry()])
-
-    // Dropped pad data leaves no state behind, so the first report after presence is a change.
-    #expect(try parser.parseReport(Receiver.presenceConnected) == nil)
+    #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)).contains(.press(.south)))
     #expect(parser.consumeInputConnectionStateChange() == .connected)
+    #expect(parser.drainPendingWrites().isEmpty)
+
+    #expect(try parser.parseReport(Receiver.presenceConnected) == nil)
+    #expect(parser.consumeInputConnectionStateChange() == nil)
     #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)).contains(.press(.south)))
     #expect(parser.drainPendingWrites().isEmpty)
   }
 
   @Test
-  func testWirelessReceiverPresenceInquiryResendIsBounded() throws {
+  func testWirelessReceiverCapturedPacketDecodesControls() throws {
     let parser = XUSBDriver(isWirelessReceiver: true)
-    var resends: [Int] = []
+    // 045E:02A9 capture: 29-byte envelope with inner header 00 13.
+    let captured: [UInt8] = [
+      0x00, 0x01, 0x00, 0xF0, 0x00, 0x13, 0x00, 0x00, 0x00, 0x00,
+      0x04, 0x01, 0x6E, 0x00, 0xE1, 0x09, 0x0A, 0x04,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    ]
+    let state = try #require(parser.parseReport(Data(captured))?.state)
+    #expect(state.leftStick.x == BipolarValue(260))
+    #expect(state.leftStick.y == BipolarValue(-110))
+    #expect(state.rightStick.x == BipolarValue(2_529))
+    #expect(state.rightStick.y == BipolarValue(-1_034))
+    #expect(parser.consumeInputConnectionStateChange() == .connected)
 
-    for report in 0..<200 {
-      _ = try parser.parseReport(Receiver.padData())
-      if !parser.drainPendingWrites().isEmpty { resends.append(report) }
-    }
-
-    #expect(resends == [0, 16, 32, 48, 64, 80, 96, 112])
+    var pressed = captured
+    pressed[6] = 0x11  // D-pad up and Start.
+    pressed[7] = 0x11  // A and left shoulder.
+    pressed[8] = 0xFF
+    pressed[9] = 0x80
+    let input = try #require(try parser.parseReport(Data(pressed)))
+    #expect(input.holds(.press(.south)))
+    #expect(input.holds(.press(.start)))
+    #expect(input.holds(.press(.leftShoulder)))
+    #expect(input.state.hat == .north)
+    #expect(input.state.leftTrigger == .max)
+    #expect(input.state.rightTrigger == UnipolarValue(normalized: Float(128) / 255))
   }
 
   @Test
-  func testWirelessReceiverPresenceGatesPadDataSequence() throws {
+  func testWirelessReceiverRejectsTruncatedAndNonInputPacketsWithoutConnecting() throws {
+    let report = Array(Receiver.padData(buttons: 1 << 12))
+    for length in 0..<18 {
+      let parser = XUSBDriver(isWirelessReceiver: true)
+      #expect(try parser.parseReport(Data(report.prefix(length))) == nil)
+      #expect(parser.consumeInputConnectionStateChange() == nil)
+    }
+    for offset in [1, 4] {
+      let parser = XUSBDriver(isWirelessReceiver: true)
+      var invalid = report
+      invalid[offset] = 0x02
+      #expect(try parser.parseReport(Data(invalid)) == nil)
+      #expect(parser.consumeInputConnectionStateChange() == nil)
+    }
+  }
+
+  @Test
+  func testWirelessReceiverNeedsOnlyStateBytesButWiredValidationStaysStrict() throws {
+    var report = Array(Receiver.padData(buttons: 1 << 12).prefix(18))
+    report[5] = 0x13
+    let parser = XUSBDriver(isWirelessReceiver: true)
+    #expect(try parser.parseReport(Data(report)).contains(.press(.south)))
+
+    let wired = XUSBDriver()
+    var wiredReport = Array(report.dropFirst(4))
+    #expect(try wired.parseReport(Data(wiredReport)) == nil)
+    wiredReport += [UInt8](repeating: 0, count: 6)
+    #expect(try wired.parseReport(Data(wiredReport)) == nil)
+    wiredReport[1] = 0x14
+    #expect(try wired.parseReport(Data(wiredReport)).contains(.press(.south)))
+  }
+
+  @Test
+  func testWirelessReceiverPresenceAndInputTrackConnectionSequence() throws {
     let parser = XUSBDriver(isWirelessReceiver: true)
 
     #expect(try parser.parseReport(Receiver.presenceConnected) == nil)
@@ -64,8 +113,8 @@ extension XUSBDriverTests {
 
     #expect(try parser.parseReport(Receiver.presenceDisconnected) == nil)
     #expect(parser.consumeInputConnectionStateChange() == .disconnected)
-    #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)) == nil)
-    #expect(parser.consumeInputConnectionStateChange() == nil)
+    #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)).contains(.press(.south)))
+    #expect(parser.consumeInputConnectionStateChange() == .connected)
   }
 
   @Test
@@ -90,10 +139,8 @@ extension XUSBDriverTests {
     parser.resetProtocolState()
 
     #expect(parser.consumeInputConnectionStateChange() == nil)
-    #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)) == nil)
-    _ = try parser.parseReport(Receiver.presenceConnected)
-    #expect(parser.consumeInputConnectionStateChange() == .connected)
     #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)).contains(.press(.south)))
+    #expect(parser.consumeInputConnectionStateChange() == .connected)
   }
 
   /// The manager assigns a receiver slot's ring LED from the pool wired pads share, so the

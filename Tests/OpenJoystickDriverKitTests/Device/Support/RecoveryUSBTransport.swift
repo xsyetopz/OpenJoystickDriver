@@ -110,6 +110,10 @@ actor RecoveryUSBSession: USBTransportSession {
     throw readError
   }
 
+  func enqueueReads(_ results: [Result<[UInt8], USBTransportError>]) {
+    readResults.append(contentsOf: results)
+  }
+
   func close() {
     guard closeCount == 0 else { return }
     closeCount = 1

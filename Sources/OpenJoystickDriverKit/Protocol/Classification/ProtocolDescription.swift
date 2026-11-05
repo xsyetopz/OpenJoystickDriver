@@ -178,8 +178,6 @@ struct ProtocolDescription: Sendable {
   let handshakeAttempts: Int?
   /// The most startup resends after announces before the first input. Only `XboxGIP` has it.
   let announceResendLimit: Int?
-  /// The most presence inquiry resends for a receiver slot. Only `XboxXUSB` has it.
-  let receiverInquiryResendLimit: Int?
   /// The USB interface that carries commands and their replies. Only `NintendoSwitch2` has it.
   let commandChannel: CommandChannel?
   /// The zero-amplitude packets the rumble refresh sends after a stop. Only `NintendoSwitch2` has
@@ -501,7 +499,6 @@ struct ProtocolDescription: Sendable {
       namedPackets: document.defaults?.session?.namedPackets,
       handshakeAttempts: document.defaults?.session?.handshakeAttempts,
       announceResendLimit: document.defaults?.session?.announceResendLimit,
-      receiverInquiryResendLimit: document.defaults?.session?.receiverInquiryResendLimit,
       commandChannel: document.defaults?.session?.commandChannel,
       trailingStopPackets: document.defaults?.session?.trailingStopPackets,
       inputLayout: document.defaults?.input?.layout,

@@ -72,7 +72,6 @@ extension ProtocolDescription {
       let namedPackets: NamedPacketPlan?
       let handshakeAttempts: Int?
       let announceResendLimit: Int?
-      let receiverInquiryResendLimit: Int?
       let commandChannel: ProtocolDescription.CommandChannel?
       let trailingStopPackets: Int?
       /// The keys every family may set. The description schema lists the same keys as
@@ -86,7 +85,7 @@ extension ProtocolDescription {
         try container.rejectUnknown(allowed: [
           "startup", "rumble", "keepAlive", "activation", "deactivation", "subcommands",
           "namedPackets", "handshakeAttempts",
-          "announceResendLimit", "receiverInquiryResendLimit", "commandChannel",
+          "announceResendLimit", "commandChannel",
           "trailingStopPackets",
         ])
         familyFields = Set(container.allKeys.map(\.stringValue)).subtracting(Self.generalKeys)
@@ -123,7 +122,6 @@ extension ProtocolDescription {
         }
         handshakeAttempts = try count("handshakeAttempts", 1...10)
         announceResendLimit = try count("announceResendLimit", 1...100)
-        receiverInquiryResendLimit = try count("receiverInquiryResendLimit", 1...100)
         commandChannel = try container.decodeOptional(
           ProtocolDescription.CommandChannel.self,
           for: "commandChannel"

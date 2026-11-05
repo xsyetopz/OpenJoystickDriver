@@ -7,7 +7,7 @@ extension DeviceManager {
   public func controllerState(
     for controller: ControllerReference
   ) async -> ControllerState? {
-    guard let key = connectedIdentifier(for: controller)
+    guard let key = await connectedIdentifier(for: controller)
     else { return nil }
     return await pipelines[key]?.inputState()
   }
@@ -25,7 +25,7 @@ extension DeviceManager {
   public func packetLog(
     for controller: ControllerReference
   ) async -> [PacketLogEntry] {
-    guard let key = connectedIdentifier(for: controller)
+    guard let key = await connectedIdentifier(for: controller)
     else { return [] }
     return await pipelines[key]?.getPacketLog() ?? []
   }
@@ -54,8 +54,9 @@ extension DeviceManager {
 
   /// Stamps the endpoint delivery on the newest frame of the controller attached as `token`; a
   /// token that no connected controller holds stamps nothing.
-  public func endpointDelivered(session token: ControllerSessionToken, at nanoseconds: UInt64) {
-    guard let identifier = connectedIdentifier(for: .session(token)) else { return }
+  public func endpointDelivered(session token: ControllerSessionToken, at nanoseconds: UInt64) async
+  {
+    guard let identifier = await connectedIdentifier(for: .session(token)) else { return }
     frameTimings.endpointDelivered(for: identifier, at: nanoseconds)
   }
 
@@ -83,6 +84,7 @@ extension DeviceManager {
   ) async -> ConnectedDeviceSnapshot? {
     // A pipeline is registered only after its DeviceInfo; a missing one is mid-teardown.
     guard let pipeline = pipelines[id], let info = deviceInfos[id] else { return nil }
+    guard await pipeline.hasConnectedController(), pipelines[id] === pipeline else { return nil }
     let record = protocolDriverRegistry.runtimeProfile(for: info.binding)
     // A raw-USB pipeline runs on the profile resolved from the device's descriptor.
     let transportProfile =
@@ -144,13 +146,23 @@ extension DeviceManager {
   }
 
   /// Returns live identifiers for connected controller pipelines.
-  public func connectedLogicalControllerIDs() -> [LogicalControllerID] { Array(pipelines.keys) }
+  public func connectedLogicalControllerIDs() async -> [LogicalControllerID] {
+    var identifiers: [LogicalControllerID] = []
+    for (identifier, pipeline) in pipelines {
+      if await pipeline.hasConnectedController(), pipelines[identifier] === pipeline {
+        identifiers.append(identifier)
+      }
+    }
+    return identifiers
+  }
 
   /// Returns controllers whose sessions can currently publish virtual output.
   public func activeLogicalControllerIDs() async -> [LogicalControllerID] {
     var identifiers: [LogicalControllerID] = []
-    for (identifier, pipeline) in pipelines where await pipeline.controllerSessionState() == .active
-    { identifiers.append(identifier) }
+    for identifier in await connectedLogicalControllerIDs()
+    where await pipelines[identifier]?.controllerSessionState() == .active {
+      identifiers.append(identifier)
+    }
     return identifiers
   }
 }

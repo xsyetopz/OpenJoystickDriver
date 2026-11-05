@@ -29,7 +29,7 @@
     "base": "Xbox",
     "add": ["Guide"]
   },
-  "rawUSBTuningKeys": ["presenceResendReports", "usbTransferTimeoutMs"],
+  "rawUSBTuningKeys": ["usbTransferTimeoutMs"],
   "defaults": {
     "session": {
       "startup": [
@@ -39,11 +39,9 @@
           "toleratesRejection": true,
           "variants": ["Receiver"]
         }
-      ],
-      "receiverInquiryResendLimit": 8
+      ]
     },
     "tuning": {
-      "presenceResendReports": 16,
       "usbTransferTimeoutMs": 2000
     },
     "variants": {
