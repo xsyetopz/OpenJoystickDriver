@@ -305,6 +305,9 @@ public struct ProtocolBinding: Equatable, Sendable {
     case interfaceSignature = "InterfaceSignature"
     /// The HID descriptor contract identified the protocol.
     case hidDescriptor = "HIDDescriptor"
+    /// The HID descriptor contract identified the protocol and an SDL_GameControllerDB line maps
+    /// its inputs.
+    case sdlGameControllerDB = "SDLGameControllerDB"
   }
 
   /// The protocol family.
@@ -322,6 +325,14 @@ public struct ProtocolBinding: Equatable, Sendable {
   public let matchedPredicates: [ProtocolPredicate]
   /// The catalog record that applied; nil when none did.
   public let record: DeviceRuntimeProfile?
+  /// What the database gave a HID pad without a record; nil for a record or another family.
+  var sdl: SDLBindingResolution?
+
+  /// Where the HID usage map of a `HIDDescriptor` binding comes from; nil for another family.
+  public var inputMapping: InputMapping? {
+    guard protocolID == .hidDescriptor else { return nil }
+    return sdl?.inputMapping ?? (record == nil ? .standardHIDUsageMap : .record)
+  }
 
   /// The binding as a family and variant.
   public var id: ProtocolBindingID { ProtocolBindingID(protocolID, variant: variant) }
@@ -359,7 +370,8 @@ enum ProtocolClassifier {
     _ device: PhysicalDevice,
     backend: DeviceAccessBackend,
     catalog: DeviceCatalog,
-    modeID: String? = nil
+    modeID: String? = nil,
+    database: SDLGameControllerDatabase = .bundled
   ) -> ProtocolClassification {
     let interfaces = (device.interfaces ?? []).sorted {
       ($0.interfaceNumber ?? .max, $0.alternateSetting ?? .max) < (
@@ -382,17 +394,35 @@ enum ProtocolClassifier {
     }
     guard !backend.usesRawUSB else { return .unsupported(.noProtocolMatch) }
     guard let interface = descriptorInterface(interfaces) else {
-      return .unsupported(.descriptorContractMismatch)
+      guard let line = database.match(for: device) else {
+        return .unsupported(.descriptorContractMismatch)
+      }
+      return .unsupported(
+        .descriptorContractMismatch,
+        rejected: ProtocolBindingResult.RejectedCandidate(
+          protocolID: .hidDescriptor,
+          reason: .descriptorContractMismatch,
+          inputMapping: InputMapping(
+            source: .none,
+            guid: line.guid.description,
+            match: line.tier,
+            unmapped: [],
+            rejection: nil
+          )
+        )
+      )
     }
+    let resolution = database.resolve(device: device, interface: interface)
     return .bound(
       ProtocolBinding(
         protocolID: .hidDescriptor,
         variant: nil,
         accessBackend: backend,
         interfaceNumber: interface.interfaceNumber,
-        rule: .hidDescriptor,
+        rule: resolution.usageMap == nil ? .hidDescriptor : .sdlGameControllerDB,
         matchedPredicates: [.hidDescriptorContract],
-        record: nil
+        record: nil,
+        sdl: resolution
       )
     )
   }

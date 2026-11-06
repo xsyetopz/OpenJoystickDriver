@@ -17,6 +17,8 @@ enum HIDToolMode: String, CaseIterable {
   case list = "--list"
   /// Dump the report descriptor of a device.
   case dump = "--dump"
+  /// Print the input elements of a device as JSON.
+  case dumpElements = "--dump-elements"
   /// Open matching HID devices directly.
   case open = "--open"
   /// Print the input callbacks of matching HID devices.
@@ -116,7 +118,7 @@ func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
   let owned: Set<String>
   switch mode {
   case .list: owned = []
-  case .dump: owned = ["--vid", "--pid"]
+  case .dump, .dumpElements: owned = ["--vid", "--pid"]
   case .open: owned = ["--vid", "--pid", "--service-open", "--set-report"]
   case .monitor: owned = ["--vid", "--pid", "--seconds"]
   case .usbMonitor: owned = ["--vid", "--pid", "--endpoint", "--length", "--seconds"]
@@ -150,7 +152,7 @@ func parseHIDToolArguments(_ arguments: [String]) throws -> HIDToolArguments? {
     try validate("--endpoint", range: 0...255)
     try validate("--length", range: 1...1024)
   }
-  if mode == .dump || mode == .usbPassive || mode == .open {
+  if mode == .dump || mode == .dumpElements || mode == .usbPassive || mode == .open {
     for required in ["--vid", "--pid"] where values[required] == nil {
       throw HIDToolArgumentError.message("'\(mode.rawValue)' requires '\(required)'")
     }
@@ -280,6 +282,7 @@ func printUsageAndExit(_ code: Int32) -> Never {
     Usage:
       OpenJoystickDriverHIDTool --list
       OpenJoystickDriverHIDTool --dump --vid 0x1209 --pid 0x4a4f
+      OpenJoystickDriverHIDTool --dump-elements --vid 0x1209 --pid 0x4a4f
       OpenJoystickDriverHIDTool --open --vid 0x1209 --pid 0x4a4f [--service-open] [--set-report]
       OpenJoystickDriverHIDTool --monitor [--vid <int> --pid <int>] [--seconds 10]
       OpenJoystickDriverHIDTool --usb-monitor --vid 0x1209
@@ -291,6 +294,8 @@ func printUsageAndExit(_ code: Int32) -> Never {
     Options:
       --list           List HID devices (vid/pid/product/transport + report sizes).
       --dump           Dump the report descriptor for one device (as hex and Swift [UInt8]).
+      --dump-elements  Print the input elements (usage page, usage, cookie, logical range, arrival
+                       order) of one device as JSON, the input of an SDL_GameControllerDB mapping.
       --open           Directly call IOHIDDeviceOpen on matching devices.
       --service-open   With --open, recreate the device from IOHIDDeviceGetService first.
       --set-report     With --open, send one Xbox 360-style rumble output report.

@@ -68,17 +68,22 @@ public struct ProtocolBindingResult: Codable, Equatable, Sendable {
     public let reason: ProtocolBindingReason
     /// The catalog record whose row named this family; nil when no row did.
     public let catalogRecordID: String?
+    /// The SDL_GameControllerDB line found for a HID pad that failed the descriptor contract; nil
+    /// when none was.
+    public let inputMapping: InputMapping?
 
-    /// Creates a candidate from its family, the reason it did not bind, and the catalog record that
-    /// named it.
+    /// Creates a candidate from its family, the reason it did not bind, the catalog record that
+    /// named it and the database line found for it.
     public init(
       protocolID: PhysicalProtocolID,
       reason: ProtocolBindingReason,
-      catalogRecordID: String? = nil
+      catalogRecordID: String? = nil,
+      inputMapping: InputMapping? = nil
     ) {
       self.protocolID = protocolID
       self.reason = reason
       self.catalogRecordID = catalogRecordID
+      self.inputMapping = inputMapping
     }
   }
 
@@ -96,6 +101,8 @@ public struct ProtocolBindingResult: Codable, Equatable, Sendable {
   public let matchedPredicates: [ProtocolPredicate]
   /// The applied catalog record, named like its `vvvv-pppp.json` file; nil when none applied.
   public let catalogRecordID: String?
+  /// Where the HID usage map comes from; nil unless the `HIDDescriptor` protocol bound.
+  public let inputMapping: InputMapping?
   /// The candidates that matched or competed but did not bind.
   public let rejectedCandidates: [RejectedCandidate]
 
@@ -108,6 +115,7 @@ public struct ProtocolBindingResult: Codable, Equatable, Sendable {
     rule = binding.rule
     matchedPredicates = binding.matchedPredicates
     catalogRecordID = binding.record?.recordID
+    inputMapping = binding.inputMapping
     rejectedCandidates = []
   }
 
@@ -127,6 +135,7 @@ public struct ProtocolBindingResult: Codable, Equatable, Sendable {
     rule = nil
     matchedPredicates = []
     catalogRecordID = nil
+    inputMapping = nil
     self.rejectedCandidates = rejectedCandidates
   }
 }

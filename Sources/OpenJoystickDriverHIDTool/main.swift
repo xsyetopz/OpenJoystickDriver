@@ -22,6 +22,8 @@ do {
 let list = parsedArguments.mode == .list
 /// Whether `--dump` is selected.
 let dump = parsedArguments.mode == .dump
+/// Whether `--dump-elements` is selected.
+let dumpElements = parsedArguments.mode == .dumpElements
 /// Whether `--open` is selected.
 let open = parsedArguments.mode == .open
 /// Whether `--service-open` is set.
@@ -344,9 +346,9 @@ if open {
   exit(failures == 0 ? 0 : 3)
 }
 
-if dump {
+if dump || dumpElements {
   guard let vidS = argValue("--vid"), let pidS = argValue("--pid") else {
-    fputs("ERROR: --dump requires --vid and --pid.\n", stderr)
+    fputs("ERROR: \(parsedArguments.mode.rawValue) requires --vid and --pid.\n", stderr)
     printUsageAndExit(2)
   }
   guard let vid = parseInt(vidS), let pid = parseInt(pidS) else {
@@ -359,6 +361,18 @@ if dump {
   guard let dev = devs.first else {
     fputs("ERROR: Device not found. Is it connected?\n", stderr)
     exit(1)
+  }
+  if dumpElements {
+    let elements = IOHIDDeviceCopyMatchingElements(dev, nil, IOOptionBits(kIOHIDOptionsTypeNone))
+    let listing = HIDElementDescription.inputs(of: elements as? [IOHIDElement] ?? [])
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+    guard let data = try? encoder.encode(listing) else {
+      fputs("ERROR: Could not encode the elements.\n", stderr)
+      exit(1)
+    }
+    print(String(decoding: data, as: UTF8.self))
+    exit(0)
   }
   guard let desc = dataProp(dev, kIOHIDReportDescriptorKey as String) else {
     fputs("ERROR: Device has no report descriptor property.\n", stderr)

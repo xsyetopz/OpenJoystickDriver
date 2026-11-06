@@ -71,7 +71,8 @@ extension HIDDeviceStream {
       primaryUsage: primaryUsage.usagePage == nil && primaryUsage.usage == nil ? nil : primaryUsage,
       collectionUsages: collectionUsages,
       reportDescriptor: descriptor,
-      reports: reports
+      reports: reports,
+      elements: elements.map(HIDElementDescription.inputs(of:)) ?? []
     )
     return PhysicalDevice(
       platformUniqueIdentifier: IOHIDDeviceGetProperty(
@@ -147,7 +148,7 @@ extension HIDDeviceStream {
 
   /// Returns the kind of report that `element` belongs to, or nil for an element that is not part
   /// of a report.
-  private static func reportKind(for element: IOHIDElement) -> PhysicalHIDReportKind? {
+  static func reportKind(for element: IOHIDElement) -> PhysicalHIDReportKind? {
     switch IOHIDElementGetType(element) {
     case kIOHIDElementTypeInput_Misc, kIOHIDElementTypeInput_Button, kIOHIDElementTypeInput_Axis,
       kIOHIDElementTypeInput_ScanCodes, kIOHIDElementTypeInput_NULL:

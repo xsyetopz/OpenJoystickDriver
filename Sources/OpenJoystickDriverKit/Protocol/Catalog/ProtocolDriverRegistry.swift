@@ -144,7 +144,11 @@ public final class ProtocolDriverRegistry: Sendable {
     guard let record = runtimeProfile(for: binding) else {
       guard binding.protocolID == .hidDescriptor else { return .failure(.noProtocolMatch) }
       return .success(
-        HIDDescriptorDriver(model: model, reportDescriptor: reportDescriptor)
+        HIDDescriptorDriver(
+          model: model,
+          reportDescriptor: reportDescriptor,
+          usageMap: binding.sdl?.usageMap
+        )
       )
     }
     var transportProfile = record.transportProfile

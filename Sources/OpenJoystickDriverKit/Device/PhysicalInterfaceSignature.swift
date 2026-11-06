@@ -162,6 +162,8 @@ public struct HIDLayoutSummary: Equatable, Sendable {
   public let reports: [PhysicalHIDReportSignature]?
   /// The lowercase SHA-256 of ``reportDescriptor``, or nil without a descriptor.
   public let descriptorFingerprint: String?
+  /// The input elements in the order the backend listed them; empty when it listed none.
+  public let elements: [HIDElementDescription]
 
   /// Creates a layout summary and derives ``descriptorFingerprint`` from `reportDescriptor`.
   public init(
@@ -170,8 +172,10 @@ public struct HIDLayoutSummary: Equatable, Sendable {
     primaryUsage: HIDUsageSignature? = nil,
     collectionUsages: [HIDUsageSignature]? = nil,
     reportDescriptor: Data? = nil,
-    reports: [PhysicalHIDReportSignature]? = nil
+    reports: [PhysicalHIDReportSignature]? = nil,
+    elements: [HIDElementDescription] = []
   ) {
+    self.elements = elements
     self.hasGamePadOrJoystickCollection = hasGamePadOrJoystickCollection
     self.hasUsableElements = hasUsableElements
     self.primaryUsage = primaryUsage
