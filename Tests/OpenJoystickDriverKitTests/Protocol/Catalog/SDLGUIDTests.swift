@@ -12,7 +12,10 @@ struct SDLGUIDTests {
     product: "Pad"
   )
 
-  private static func database(_ guids: [SDLGUID], names: [String]? = nil) throws
+  private static func database(
+    _ guids: [SDLGUID],
+    names: [String]? = nil
+  ) throws
     -> SDLGameControllerDatabase
   {
     try SDLGameControllerDatabase(
@@ -141,5 +144,13 @@ struct SDLGUIDTests {
     let match = try #require(SDLGameControllerDatabase.bundled.match(sn30))
     #expect(match.tier == .guidWithoutNameCRC)
     #expect(match.name == "8BitDo SN30 Pro")
+  }
+
+  @Test
+  func indexingTheBundledFileTakesUnderASecond() throws {
+    let text = SDLGameControllerDatabase.bundledText
+    let elapsed = try ContinuousClock().measure { _ = try SDLGameControllerDatabase(text: text) }
+    print("[SDLGUIDTests] indexed \(text.utf8.count) bytes in \(elapsed)")
+    #expect(elapsed < .seconds(1))
   }
 }

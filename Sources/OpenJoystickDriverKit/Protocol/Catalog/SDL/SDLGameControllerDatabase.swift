@@ -46,12 +46,19 @@ struct SDLGameControllerDatabase: Sendable {
   /// The lines by GUID; when a GUID has several lines, the last wins.
   private let lines: [SDLGUID: Line]
 
+  /// The text of the database shipped in the bundle.
+  static let bundledText: String = {
+    guard let url = Bundle.module.url(forResource: "sdl-gamecontrollerdb", withExtension: "txt"),
+      let text = try? String(contentsOf: url, encoding: .utf8)
+    else { fatalError("[SDLGameControllerDatabase] The bundled database is missing") }
+    return text
+  }()
+
   /// The database shipped in the bundle.
   static let bundled: SDLGameControllerDatabase = {
-    guard let url = Bundle.module.url(forResource: "sdl-gamecontrollerdb", withExtension: "txt"),
-      let text = try? String(contentsOf: url, encoding: .utf8),
-      let database = try? SDLGameControllerDatabase(text: text)
-    else { fatalError("[SDLGameControllerDatabase] The bundled database is missing or malformed") }
+    guard let database = try? SDLGameControllerDatabase(text: bundledText) else {
+      fatalError("[SDLGameControllerDatabase] The bundled database is malformed")
+    }
     return database
   }()
 
