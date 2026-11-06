@@ -6,7 +6,7 @@ import Testing
 @Suite("Build identity")
 struct BuildIdentityTests {
   @Test
-  func JSONUsesTypedLowerCamelFields() throws {
+  func jsonUsesTypedLowerCamelFields() throws {
     let identity = BuildIdentity(
       semanticVersion: "0.5.0-beta.4",
       appBundleVersion: "1.4.89",
@@ -34,6 +34,18 @@ struct BuildIdentityTests {
     #expect(identity.display == "0.5.0-beta.4+build.1.4.89.sha.0123456789ab.dirty")
     let parsed = try #require(SemanticVersion(identity.display))
     #expect(parsed == SemanticVersion("0.5.0-beta.4"))
+  }
+
+  @Test
+  func aboutLineAddsTheBundleVersionAsTheAboutPanelShowsIt() {
+    let identity = BuildIdentity(
+      semanticVersion: "0.6.0-alpha.1",
+      appBundleVersion: "1.19.57",
+      sourceCommit: "558c65ce01964e6d031769b23eabba1cf14cbc61",
+      sourceState: .clean
+    )
+
+    #expect(identity.aboutLine == "0.6.0-alpha.1+build.1.19.57.sha.558c65ce0196 (1.19.57)")
   }
 
   @Test

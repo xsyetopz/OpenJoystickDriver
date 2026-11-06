@@ -1,5 +1,6 @@
 import ArgumentParser
 import Foundation
+import OpenJoystickDriverKit
 import Testing
 
 @testable import OpenJoystickDriverCLI
@@ -165,7 +166,7 @@ struct CommandTreeTests {
   func versionPrintsOnStandardOutput() async {
     let result = await CLIRun.run(["--version"])
     #expect(result.code == 0)
-    #expect(!result.standardOutput.isEmpty)
+    #expect(result.standardOutput == ApplicationVersion.buildIdentity.aboutLine + "\n")
     #expect(result.standardError.isEmpty)
   }
 }

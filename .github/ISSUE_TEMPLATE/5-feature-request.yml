@@ -14,7 +14,9 @@ body:
     id: version
     attributes:
       label: OpenJoystickDriver version
-      description: The whole line from **About OpenJoystickDriver**.
+      description: >-
+        Click the menu-bar item, choose **About OpenJoystickDriver**, and copy the text after **Version**.
+        [Other ways](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#finding-the-version). `alpha`, `beta`, or `latest` is not a version.
       placeholder: 0.6.0-alpha.1+build.1.8.74.sha.08bc747d93f6.dirty (1.8.74)
     validations:
       required: true

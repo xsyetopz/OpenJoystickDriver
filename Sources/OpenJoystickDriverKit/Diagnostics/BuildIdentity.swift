@@ -2,21 +2,33 @@ import Foundation
 
 /// A build identity that the bundle's Info.plist cannot describe.
 public enum BuildIdentityError: Error, Equatable {
+  /// The bundle's `OJDSourceState` is not a ``BuildIdentity/SourceState``; the value is the text
+  /// found.
   case invalidSourceState(String)
 }
 
+/// Which release and source tree a build comes from, as the app bundle's Info.plist records it.
 public struct BuildIdentity: Codable, Equatable, Sendable {
+  /// Whether the source tree of the build had uncommitted changes.
   public enum SourceState: String, Codable, Sendable {
+    /// The tree matched the commit.
     case clean = "Clean"
+    /// The tree had uncommitted changes.
     case dirty = "Dirty"
+    /// The Info.plist records no source state, as for an executable outside an app bundle.
     case unknown = "Unknown"
   }
 
+  /// The release version, from `CFBundleShortVersionString`; `unknown` when absent.
   public let semanticVersion: String
+  /// The build number, from `CFBundleVersion`; `unknown` when absent.
   public let appBundleVersion: String
+  /// The Git commit of the source tree, from `OJDSourceCommit`; `unknown` when absent.
   public let sourceCommit: String
+  /// Whether the source tree matched `sourceCommit`.
   public let sourceState: SourceState
 
+  /// Creates an identity from its values.
   public init(
     semanticVersion: String,
     appBundleVersion: String,
@@ -37,8 +49,10 @@ public struct BuildIdentity: Codable, Equatable, Sendable {
     do { return try Self(info: info) } catch { preconditionFailure("\(error)") }
   }
 
-  /// The identity an Info.plist dictionary describes. A missing `OJDSourceState` is `Unknown`, as
-  /// for an executable outside an app bundle; a present value must be a `SourceState`.
+  /// The identity an Info.plist dictionary describes.
+  ///
+  /// A missing `OJDSourceState` is `Unknown`, as for an executable outside an app bundle; a
+  /// present value must be a `SourceState`.
   package init(info: [String: Any]) throws {
     let state: SourceState
     switch info["OJDSourceState"] {
@@ -80,6 +94,7 @@ public struct BuildIdentity: Codable, Equatable, Sendable {
   }
 
   /// Why `codesign --verify --deep --strict` rejects `bundle`, or nil when it accepts it.
+  ///
   /// Throws when `codesign` does not run.
   package static func signatureProblem(of bundle: URL) throws -> String? {
     let result = try BoundedProcessRunner.run(
@@ -106,7 +121,9 @@ public struct BuildIdentity: Codable, Equatable, Sendable {
   }
 
   /// The release version with SemVer build metadata for provenance, such as
-  /// `0.5.0+build.1.4.89.sha.0123456789ab.dirty`. Metadata never orders versions.
+  /// `0.5.0+build.1.4.89.sha.0123456789ab.dirty`.
+  ///
+  /// Metadata never orders versions.
   public var display: String {
     let shortCommit = sourceCommit.count == 40 ? String(sourceCommit.prefix(12)) : sourceCommit
     var metadata = ["build", appBundleVersion, "sha", shortCommit]
@@ -114,10 +131,19 @@ public struct BuildIdentity: Codable, Equatable, Sendable {
     return "\(semanticVersion)+\(metadata.joined(separator: "."))"
   }
 
+  /// The version line of the About panel without its localized label, as `ojd --version` prints
+  /// it: `display`, then the bundle version in parentheses.
+  public var aboutLine: String { "\(display) (\(appBundleVersion))" }
+
+  /// The keys of the JSON encoding.
   private enum CodingKeys: String, CodingKey {
+    /// The `semanticVersion` key.
     case semanticVersion
+    /// The `appBundleVersion` key.
     case appBundleVersion
+    /// The `sourceCommit` key.
     case sourceCommit
+    /// The `sourceState` key.
     case sourceState
   }
 }

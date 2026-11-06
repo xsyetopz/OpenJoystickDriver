@@ -10,7 +10,7 @@ Report it privately through [GitHub private vulnerability reporting](https://git
 
 Include:
 
-- The OpenJoystickDriver version: the whole line from **About OpenJoystickDriver**, such as `0.6.0-alpha.1+build.1.8.74.sha.08bc747d93f6.dirty (1.8.74)`.
+- The OpenJoystickDriver version: the whole line from **About OpenJoystickDriver**, such as `0.6.0-alpha.1+build.1.8.74.sha.08bc747d93f6.dirty (1.8.74)`. [Finding the Version](CONTRIBUTING.md#finding-the-version) shows how to get it.
 - The macOS version and build from `sw_vers`.
 - The part affected: the app, the service, the `ojd` command, the endpoint, the Xbox USB driver extension, profiles, or mod packages.
 - Numbered steps that show the problem, and what an attacker gains.
