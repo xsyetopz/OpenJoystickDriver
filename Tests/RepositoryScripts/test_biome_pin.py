@@ -33,7 +33,7 @@ class BiomePinTests(unittest.TestCase):
 def install(root: Path, version: str) -> Path:
     binary = root / "node_modules/.bin/biome"
     binary.parent.mkdir(parents=True)
-    binary.write_text(f"#!/bin/sh\necho 'Version: {version}'\n", encoding="utf-8")
+    binary.write_text(f"console.log('Version: {version}');\n", encoding="utf-8")
     binary.chmod(0o755)
     return binary
 

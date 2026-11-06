@@ -3,6 +3,7 @@
 The binary is `node_modules/.bin/biome` of the checkout's top level, else of the main
 worktree (a linked worktree has no `bun install` of its own). Its version must equal the
 `@biomejs/biome` pin in the checkout's `package.json`. A Biome on `PATH` is never used.
+The binary is a Node script, which `command` runs with Bun: the repository installs no Node.
 Run as `python3 -m Scripts.Quality.biome_binary TOPLEVEL`, it prints the binary path.
 """
 
@@ -28,9 +29,13 @@ def pinned_version(toplevel: pathlib.Path) -> str:
     return str(package["devDependencies"]["@biomejs/biome"])
 
 
+def command(binary: pathlib.Path) -> list[str]:
+    return ["bun", "run", str(binary)]
+
+
 def installed_version(binary: pathlib.Path) -> str:
     result = subprocess.run(
-        [str(binary), "--version"], capture_output=True, check=False, text=True
+        [*command(binary), "--version"], capture_output=True, check=False, text=True
     )
     match = re.search(r"\d+\.\d+\.\d+\S*", result.stdout)
     if result.returncode or match is None:

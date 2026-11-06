@@ -6,7 +6,7 @@ import pathlib
 import subprocess
 import tempfile
 
-from Scripts.Quality.biome_binary import BiomeBinaryError, resolve
+from Scripts.Quality.biome_binary import BiomeBinaryError, command, resolve
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 
@@ -33,7 +33,7 @@ def format_json(texts: dict[pathlib.Path, str]) -> dict[pathlib.Path, str]:
         try:
             result = subprocess.run(
                 [
-                    str(binary),
+                    *command(binary),
                     "format",
                     "--write",
                     f"--config-path={ROOT / 'biome.json'}",
@@ -45,7 +45,9 @@ def format_json(texts: dict[pathlib.Path, str]) -> dict[pathlib.Path, str]:
                 text=True,
             )
         except FileNotFoundError as error:
-            raise BiomeError(f"{binary} could not run; run: bun install") from error
+            raise BiomeError(
+                "bun is not installed; run: ./Scripts/ojd setup"
+            ) from error
         if result.returncode:
             detail = result.stderr.strip() or result.stdout.strip()
             raise BiomeError(f"biome format failed: {detail}")
