@@ -134,16 +134,16 @@ struct SDLGUIDTests {
 
   @Test
   func theBundledDatabaseHoldsTheMacLines() throws {
-    let sn30 = SDLGUID(
+    let fc30 = SDLGUID(
       vendorID: 0x2DC8,
-      productID: 0x6001,
+      productID: 0x9000,
       version: 1,
       manufacturer: nil,
-      product: "8BitDo SN30 Pro"
+      product: "8BitDo FC30 Pro"
     )
-    let match = try #require(SDLGameControllerDatabase.bundled.match(sn30))
+    let match = try #require(SDLGameControllerDatabase.bundled.match(fc30))
     #expect(match.tier == .guidWithoutNameCRC)
-    #expect(match.name == "8BitDo SN30 Pro")
+    #expect(match.name == "8BitDo FC30 Pro")
   }
 
   @Test

@@ -77,8 +77,22 @@ struct SDLMappingBindingTests {
   @Test
   func padWithARecordIgnoresTheDatabase() throws {
     let device = hidDevice(0x2DC8, 0x301B, version: 1)
-    #expect(SDLGameControllerDatabase.bundled.match(for: device) != nil)
-    let binding = try binding(device)
+    let guid = try #require(SDLGameControllerDatabase.guid(of: device))
+    let database = try SDLGameControllerDatabase(
+      text: "\(guid),Pad,a:b0,platform:Mac OS X,\n"
+    )
+    #expect(database.match(for: device) != nil)
+    guard
+      case .bound(let binding) = ProtocolClassifier.classify(
+        device,
+        backend: .hid,
+        catalog: Self.catalog,
+        database: database
+      )
+    else {
+      Issue.record("expected a binding")
+      return
+    }
     #expect(binding.rule == .catalogRecord)
     #expect(binding.inputMapping == .record)
   }
