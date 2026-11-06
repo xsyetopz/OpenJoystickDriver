@@ -1,0 +1,56 @@
+# Design: SDL_GameControllerDB import
+
+Status: proposal.
+
+## Context
+
+Evidence read on `main`:
+
+- Without a record, a HID pad is accepted as generic HID only when its descriptor has a Joystick, Game Pad or Multi-axis Controller collection with a stick or hat and a button, and no unsupported items; otherwise `ojd status` lists it as unbound with a reason (`wiki/Supported-Controllers.md:90-115`). Binding results (rule, matched predicates, catalog record ID) and `unboundDevices` are described in `docs/development/architecture.md:113`.
+- `HIDDescriptorDriver` folds IOKit element values through a `HIDUsageMap`: the record's, else the shape's, else the standard one (`HIDDescriptorDriver.swift:3-9`). `HIDElementValue` carries usage page, usage, logical range and value but no cookie (`Sources/OpenJoystickDriverKit/HID/DeviceEvents.swift:52-64`).
+- The platform layer copies the device's elements with `IOHIDDeviceCopyMatchingElements` (`HIDDeviceStream+DeviceProperties.swift:35`); the HID tool does the same (`Sources/OpenJoystickDriverHIDTool/Support.swift:237`).
+- `ControllerSources.lock.json` pins `linux` and `sdl` revisions with SHA-256 per file (`ControllerSources.lock.json:2-40`); `docs/development/xpad-import.md:3` says moving branches are not runtime inputs, and `:40` describes the SDL controller list.
+- `THIRD_PARTY_NOTICES.md` has sections for GamepadMotionHelpers (`:3`) and LiveKitWebRTC (`:19`).
+- Recorded descriptors exist as byte evidence in `Tests/OpenJoystickDriverKitTests/Protocol/Drivers/Generic/RecordedHIDDescriptors.swift`.
+- `ojd controller show` prints a Record line and omits `record` for a model with no record (`wiki/Command-Reference.md:82`); `ojd record draft CONTROLLER` builds a starting record for a connected controller (`wiki/Controller-Records.md:486`).
+- SDL facts below come from the research notes (`/tmp/ojd-research/input-config.md:8-9`, summarizing the SDL IOKit joystick backend and the database syntax). They are not re-read from SDL source in this proposal; task 1.1 and 2.4 pin each one against a test with real data.
+
+## Goals / Non-Goals
+
+Goals: a matching database line makes an unrecorded pad usable, and the user can see that and why; no hidden choice between sources.
+
+Non-goals: see the proposal's Out of scope.
+
+## Decisions
+
+1. **Convert at connect, from the live element list** (the maintainer's decision). The database holds indexes, the live device holds the element list, so conversion needs both; this is the only way to cover pads whose descriptor OJD never captured.
+2. **Licensing and attribution.** The project license is PolyForm Noncommercial 1.0.0 plus a commercial license (maintainer decision, 2026-10-25), so GPL and AGPL code cannot be ported into it; this change ports none. SDL_GameControllerDB and SDL are zlib, which allows use in this project with attribution. The shipped file keeps its zlib license text, and `THIRD_PARTY_NOTICES.md` gets an entry naming the upstream repository, the pinned commit and the license. The owner of the upstream repository is confirmed when the pin is written. Wiring the SDL element order is done from the documented behavior and tests, not by copying GPL sources such as wiiuse.
+3. **Pin in the lock, filtered at generation.** `ControllerSources.lock.json` gets an `sdlGameControllerDB` entry (`repository`, `commit`, `files.gamecontrollerdb.path`, `sha256`) next to `linux` and `sdl`. A generator in `Scripts/Catalog/` downloads the pinned file, verifies the SHA-256, keeps `platform:Mac OS X` lines, drops lines that fail to parse (counted, never silent, as for xpad rows: `xpad-import.md`), and writes a deterministic resource under `Sources/OpenJoystickDriverKit/Resources/`. The resource is generated and never hand-edited; `./Scripts/ojd catalog regenerate --check` covers it. Reason: a pinned input makes the app reproducible and the license obligations traceable.
+4. **Skip protocol-family pads at generation and at connect.** The generator drops lines whose vendor and product appear in the pinned `controller_list.h` rows (SDL's HIDAPI drivers, lock `sdl.files.controller_list`) or in the catalog records, and counts them. At connect, a pad with a record never consults the database, which covers records added later by users or packages. Reason: for HIDAPI pads the indexes mean something else (`input-config.md:9`).
+5. **Only when the descriptor contract passes.** The converted map replaces the standard map for a pad that `HIDDescriptorContract` accepts. A pad the contract rejects stays unbound, and its `unboundDevices` entry notes that a database line exists. Reason: the contract exists because OJD cannot decode what it rejects; a map cannot fix that.
+6. **GUID matching, in named tiers.** The pad's GUID is built from the IOKit properties as SDL builds it: bus, CRC16 of the name, vendor, product, version, driver signature (`input-config.md:8`). Tiers, tried in order: `ExactGUID`, then `GUIDWithoutNameCRC` (the CRC bytes zeroed, for lines that carry no name hash). The matched tier is reported. Whether SDL tries further tiers (for example ignoring the version) and which line wins when a GUID has two Mac lines are open questions (below); the generator counts duplicate GUIDs so the question is measured. Reason: an unnamed fuzzy match would be hidden behavior.
+7. **Element order reproduces SDL's IOKit order.** From the element list, three lists are built: axes (Generic Desktop X, Y, Z, Rx, Ry, Rz, Slider, Dial, Wheel, then Simulation Rudder, Throttle, Accelerator, Brake), hats, and buttons (Button page, then Consumer page, then Generic Desktop D-pad, Start, Select, System Main Menu). Each list is sorted ascending by usage number only; elements with equal usage keep IOKit arrival order; an element that repeats a seen cookie is dropped (`input-config.md:8`). `b#`, `a#`, `h#.#` then index these lists. The element type `HIDElementDescription` (usage page, usage, cookie, logical range, arrival order), carries this; `HIDElementValue` has no cookie. The ordering function is pure and has no IOKit dependency.
+8. **Syntax coverage.** The converter reads `b#`, `a#`, `h#.#`, `+a#`, `-a#` and the inversion mark `~`, and the control names of the database (`a`, `b`, `x`, `y`, `back`, `guide`, `start`, `leftstick`, `rightstick`, `leftshoulder`, `rightshoulder`, `dpup`, `dpdown`, `dpleft`, `dpright`, `leftx`, `lefty`, `rightx`, `righty`, `lefttrigger`, `righttrigger`, extra buttons), through an authored table from database names to `Control` ids, checked against `vocabulary.schema.json` by a test. Binding kinds:
+   - `b#` to a button control: `Button`; to a trigger: `ButtonTrigger`; to a D-pad direction: not expressible (D-pad comes from `h#.#`).
+   - `a#` to a stick axis: `Axis`; to a trigger: `Axis`; to a button: `AxisButton`; to a D-pad direction: `AxisDpad`.
+   - `+a#` and `-a#`: `HalfAxis` for a trigger, `AxisButton` or `AxisDpad` for a button or direction.
+   - `h#.#`: `Hat` (direction bits 1, 2, 4, 8 become the hat range of the element).
+   A field the table or the kinds cannot express (a stick on a half axis, a control OJD lacks) is listed as unmapped by name, and the rest still applies. The `AxisButton` and `AxisDpad` threshold is one named constant, `sdlAxisButtonThreshold`, set by the first golden test against SDL's probe reading and documented in the wiki.
+9. **The result is a binding fact, not a record field.** Records hold facts only (the `controller-records` rule "Facts only"). The origin lives in the binding result (`architecture.md:113`): rule `SDLGameControllerDB`, the GUID, the tier, the unmapped controls. `controller show` prints an `Input mapping` row with one of `Record`, `SDLGameControllerDB`, `StandardHIDUsageMap`, and `--json` carries `inputMapping` with `source`, `guid`, `match` and `unmapped`; `record` stays absent for a pad with no record. `status` and `diagnose` carry the same row; the app's controller detail shows "Mapped from SDL_GameControllerDB" or "Standard HID usage map". Text is in the localization bundles and reviewed against `LOCALIZATION.md`; "SDL_GameControllerDB" is not translated.
+10. **A line that cannot be used is a named failure.** A line that indexes an element the pad lacks, or has no usable control, is rejected whole, the pad keeps the standard map, and the surfaces say "SDL_GameControllerDB line rejected: <reason>" with an error code added to `Resources/ErrorCodes.json` (regenerated with `./Scripts/ojd errors regenerate --write`). Reason: a half-applied mapping is worse than a named standard map.
+11. **Saving.** `ojd record draft CONTROLLER --from-sdl` writes the converted map as a `HIDDescriptor` record with a `hidUsageMap`; the output has no mark of its origin. Once saved, the pad has a record and the database is not consulted.
+12. **Tests use recorded element lists.** Fixtures are element lists captured with the HID tool (`dump-elements` added to `OpenJoystickDriverHIDTool`), each with its database line and the expected `hidUsageMap`. Descriptor-only fixtures built from `RecordedHIDDescriptors.swift` give approximate cookies and arrival order and are labeled as such; the hardware list checks real order.
+
+## Risks
+
+- The element order is the fragile part: one wrong tie-break shifts every index. Mitigation: golden tests with real captured lists, a pure ordering function, and hardware checks by testers on pads whose lines are known to work in SDL.
+- A database line may be wrong for the tester's pad even when the GUID matches. Mitigation: the source is named in every surface, and `record draft --from-sdl` lets the user fix and keep it.
+- Wrong control semantics for half axes (`input-config.md:9`). Mitigation: unmapped controls are listed, not guessed.
+- Size and startup cost of the resource. Not measured here; the loader indexes by GUID on first use, and task 3.4 records the size and the time.
+- Licensing: attribution text must be exact. Mitigation: a test that the resource starts with the upstream license header.
+
+## Open Questions
+
+- Does SDL try tiers beyond exact and name-CRC-zeroed, and which line wins for a duplicated GUID? Read from SDL source at the pinned commit in task 2.4; until then the generator counts duplicates and keeps the last line, which is a stated assumption.
+- Is the sort key for the buttons list the usage number alone across pages, or per page? The notes say "ascending by usage number only"; task 1.1 settles it with a captured list from a pad that has both Button-page and Consumer-page buttons.
+- `sdlAxisButtonThreshold` value (task 1.5).
