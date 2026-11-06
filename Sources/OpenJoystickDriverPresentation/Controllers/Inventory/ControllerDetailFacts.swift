@@ -43,6 +43,8 @@ struct ControllerFact: Equatable, Identifiable {
     case outputOwner
     /// Where the controller's record comes from.
     case record
+    /// Where the HID usage map comes from.
+    case inputMapping
     /// The controls the parser emits.
     case controls
     /// How the startup commands went.
@@ -199,6 +201,12 @@ enum ControllerDetailFacts {
         .startupStatus,
         "ui.controllers.startupStatus",
         OJDValue(device.startupCommandStatus)
+      ),
+      fact(
+        .inputMapping,
+        "cli.controller.show.labelInputMapping",
+        device.bindingResult.inputMapping.map { .text($0.rowText(localize: OJDLocalized.string)) }
+          ?? .none
       ),
       fact(.inputReportFormat, "ui.controllers.inputReportFormat", OJDValue(health.reportFormat)),
       fact(

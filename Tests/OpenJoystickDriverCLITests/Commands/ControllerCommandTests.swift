@@ -629,6 +629,19 @@ struct ControllerCommandTests {
     #expect(plain.result.standardOutput.contains("record\tnone\t\n"))
   }
 
+  @Test
+  func showReportsTheInputMapping() async throws {
+    let json = try await Self.show(["--json"])
+    let human = try await Self.show([])
+    let plain = try await Self.show(["--plain"])
+
+    let mapping = try #require(try json.result.json()["inputMapping"] as? [String: Any])
+    #expect(mapping["source"] as? String == "StandardHIDUsageMap")
+    let standard = CLILocalized.text("cli.controller.show.inputMappingStandard")
+    #expect(Self.rows(human.result, endingIn: standard).count == 1)
+    #expect(plain.result.standardOutput.contains("input-mapping\t"))
+  }
+
   @Test(arguments: [
     ["controller", "rumble", token("pad-1"), "--left", "100"],
     ["controller", "light", token("pad-1"), "--color", "#00FF00"],

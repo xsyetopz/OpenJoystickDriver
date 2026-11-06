@@ -122,3 +122,29 @@ extension SDLGameControllerDatabase {
     }
   }
 }
+
+extension InputMapping {
+  /// The text of the Input mapping row.
+  ///
+  /// - Parameter localize: Returns the localized format for a key of the en-US catalog.
+  public func rowText(localize: (String) -> String) -> String {
+    switch source {
+    case .record: return localize("cli.controller.show.inputMappingRecord")
+    case .sdlGameControllerDB:
+      return String(
+        format: localize("cli.controller.show.inputMappingSDL"),
+        match?.rawValue ?? "",
+        guid ?? ""
+      )
+    case .none:
+      return String(
+        format: localize("cli.controller.show.inputMappingUnbound"),
+        match?.rawValue ?? "",
+        guid ?? ""
+      )
+    case .standardHIDUsageMap:
+      guard let rejection else { return localize("cli.controller.show.inputMappingStandard") }
+      return String(format: localize("cli.controller.show.inputMappingRejected"), rejection)
+    }
+  }
+}

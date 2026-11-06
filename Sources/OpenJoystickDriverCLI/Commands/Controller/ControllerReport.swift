@@ -240,6 +240,9 @@ struct ControllerShowReport: Encodable, Equatable {
     let parameters: [String]
     /// The effective record of the model, when one exists.
     let record: Record?
+    /// Where the HID usage map comes from; absent unless the `HIDDescriptor` protocol drives the
+    /// controller.
+    let inputMapping: InputMapping?
     /// Absent when the controller's record sets no tuning.
     let tuning: Tuning?
     /// What the controller can read and do.
@@ -307,6 +310,7 @@ struct ControllerShowReport: Encodable, Equatable {
       serving: Serving(device.servingDecision),
       parameters: device.parameters,
       record: record.map(Record.init),
+      inputMapping: device.bindingResult.inputMapping,
       tuning: Tuning(device.tuning),
       capabilities: Capabilities(
         controls: Control.allCases.filter(device.capabilities.controls.contains).map(\.rawValue),
@@ -344,5 +348,15 @@ struct ControllerShowReport: Encodable, Equatable {
         OutputCheck(id: $0.id, command: $0.command, expected: $0.expectedObservation)
       }
     )
+  }
+}
+
+extension InputMapping {
+  /// The `--plain` fields: source, match tier, GUID and the unmapped controls; empty when absent.
+  var plainFields: [String] {
+    [
+      CommandLineName.kebab(source.rawValue), match.map { CommandLineName.kebab($0.rawValue) } ?? "",
+      guid ?? "", unmapped.joined(separator: ","),
+    ]
   }
 }

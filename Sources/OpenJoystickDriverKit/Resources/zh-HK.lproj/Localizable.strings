@@ -2337,6 +2337,10 @@
 "cli.controller.show.labelProtocol" = "通訊協定";
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "記錄";
+/* Row label in the output of 'ojd controller show' and in the controller detail. Where the HID usage map of the controller comes from follows. */
+"cli.controller.show.labelInputMapping" = "輸入對應";
+/* Row label in the output of 'ojd controller show' and in the controller detail. The controls that the SDL_GameControllerDB line names but the driver cannot map follow. */
+"cli.controller.show.labelUnmapped" = "未對應的控制項";
 /* Row label in the output of 'ojd controller show'. The list of rumble motors the controller has follows. */
 "cli.controller.show.labelRumble" = "震動";
 /* Row label in the output of 'ojd controller show'. The state of the session follows, such as active or suspended. */
@@ -2361,6 +2365,16 @@
 "cli.controller.show.recordNone" = "無（沒有相符的記錄）";
 /* Value of the Record row of 'ojd controller show' when the record is the user's own file. %@ is the file name. */
 "cli.controller.show.recordUser" = "您的記錄，%@";
+/* Value of the Input mapping row of 'ojd controller show' and of the controller detail when a controller record sets the map. */
+"cli.controller.show.inputMappingRecord" = "記錄";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line sets the map. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingSDL" = "已從 SDL_GameControllerDB 對應（相符 %1$@，GUID %2$@）";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when the standard HID usage map applies. */
+"cli.controller.show.inputMappingStandard" = "標準 HID 用法對應";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line matched but cannot drive the controller. SDL_GameControllerDB is a project name and stays as written. %@ is the reason. */
+"cli.controller.show.inputMappingRejected" = "標準 HID 用法對應（SDL_GameControllerDB 行被拒絕：%@）";
+/* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingUnbound" = "未套用，描述元合約不符（找到 SDL_GameControllerDB 行，相符 %1$@，GUID %2$@）";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
 "cli.controller.suspend.abstract" = "在您恢復之前，停止 OpenJoystickDriver 驅動控制器。";
 /* Message of 'ojd controller suspend' when the controller is suspended. %@ is the controller name. */

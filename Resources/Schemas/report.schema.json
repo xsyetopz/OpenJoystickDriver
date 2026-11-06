@@ -635,7 +635,12 @@
           "items": { "$ref": "#/$defs/bindingInterface" }
         },
         "rule": {
-          "enum": ["CatalogRecord", "InterfaceSignature", "HIDDescriptor"]
+          "enum": [
+            "CatalogRecord",
+            "InterfaceSignature",
+            "HIDDescriptor",
+            "SDLGameControllerDB"
+          ]
         },
         "matchedPredicates": {
           "type": "array",
@@ -652,6 +657,7 @@
           }
         },
         "catalogRecordID": { "$ref": "#/$defs/catalogRecordID" },
+        "inputMapping": { "$ref": "#/$defs/inputMapping" },
         "rejectedCandidates": {
           "type": "array",
           "items": { "$ref": "#/$defs/rejectedCandidate" }
@@ -669,7 +675,8 @@
         "not": {
           "anyOf": [
             { "required": ["rule"] },
-            { "required": ["catalogRecordID"] }
+            { "required": ["catalogRecordID"] },
+            { "required": ["inputMapping"] }
           ]
         }
       }
@@ -746,7 +753,35 @@
           ]
         },
         "reason": { "$ref": "#/$defs/bindingReason" },
-        "catalogRecordID": { "$ref": "#/$defs/catalogRecordID" }
+        "catalogRecordID": { "$ref": "#/$defs/catalogRecordID" },
+        "inputMapping": { "$ref": "#/$defs/inputMapping" }
+      }
+    },
+    "inputMapping": {
+      "description": "Where a HID pad's usage map comes from. A matching SDL_GameControllerDB line is named by GUID and match tier.",
+      "type": "object",
+      "required": ["source", "unmapped"],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "enum": [
+            "Record",
+            "SDLGameControllerDB",
+            "StandardHIDUsageMap",
+            "None"
+          ]
+        },
+        "guid": { "type": "string", "pattern": "^[0-9a-f]{32}$" },
+        "match": {
+          "enum": [
+            "ExactGUID",
+            "GUIDWithoutNameCRC",
+            "GUIDWithoutVersion",
+            "GUIDWithoutVersionAndNameCRC"
+          ]
+        },
+        "unmapped": { "type": "array", "items": { "type": "string" } },
+        "rejection": { "type": "string" }
       }
     },
     "catalogRecordID": {

@@ -2337,6 +2337,10 @@
 "cli.controller.show.labelProtocol" = "โปรโตคอล";
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "ระเบียน";
+/* Row label in the output of 'ojd controller show' and in the controller detail. Where the HID usage map of the controller comes from follows. */
+"cli.controller.show.labelInputMapping" = "การแมปอินพุต";
+/* Row label in the output of 'ojd controller show' and in the controller detail. The controls that the SDL_GameControllerDB line names but the driver cannot map follow. */
+"cli.controller.show.labelUnmapped" = "ตัวควบคุมที่ไม่ได้แมป";
 /* Row label in the output of 'ojd controller show'. The list of rumble motors the controller has follows. */
 "cli.controller.show.labelRumble" = "แรงสั่น";
 /* Row label in the output of 'ojd controller show'. The state of the session follows, such as active or suspended. */
@@ -2361,6 +2365,16 @@
 "cli.controller.show.recordNone" = "ไม่มี (ไม่มีระเบียนที่ตรงกัน)";
 /* Value of the Record row of 'ojd controller show' when the record is the user's own file. %@ is the file name. */
 "cli.controller.show.recordUser" = "ระเบียนของคุณ, %@";
+/* Value of the Input mapping row of 'ojd controller show' and of the controller detail when a controller record sets the map. */
+"cli.controller.show.inputMappingRecord" = "ระเบียน";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line sets the map. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingSDL" = "แมปจาก SDL_GameControllerDB (ตรงกัน %1$@, GUID %2$@)";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when the standard HID usage map applies. */
+"cli.controller.show.inputMappingStandard" = "แมปการใช้งาน HID มาตรฐาน";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line matched but cannot drive the controller. SDL_GameControllerDB is a project name and stays as written. %@ is the reason. */
+"cli.controller.show.inputMappingRejected" = "แมปการใช้งาน HID มาตรฐาน (ปฏิเสธบรรทัด SDL_GameControllerDB: %@)";
+/* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingUnbound" = "ไม่ได้ใช้ เพราะไม่เป็นไปตามสัญญาของตัวบอกลักษณะ (พบบรรทัด SDL_GameControllerDB, ตรงกัน %1$@, GUID %2$@)";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
 "cli.controller.suspend.abstract" = "หยุด OpenJoystickDriver จากการควบคุมคอนโทรลเลอร์จนกว่าคุณจะทำต่อ";
 /* Message of 'ojd controller suspend' when the controller is suspended. %@ is the controller name. */

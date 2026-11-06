@@ -977,6 +977,10 @@
             "type": "string"
           }
         },
+        "inputMapping": {
+          "description": "Where the HID usage map comes from. Absent unless the HIDDescriptor protocol drives the controller.",
+          "$ref": "report.schema.json#/$defs/inputMapping"
+        },
         "record": {
           "description": "The effective record for the controller's model. Absent when no record matches.",
           "type": "object",
@@ -3603,6 +3607,9 @@
               "id": {
                 "type": "string"
               },
+              "inputMapping": {
+                "$ref": "report.schema.json#/$defs/inputMapping"
+              },
               "name": {
                 "type": "string"
               },
@@ -3724,6 +3731,9 @@
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 65535
+              },
+              "inputMapping": {
+                "$ref": "report.schema.json#/$defs/inputMapping"
               },
               "reason": {
                 "$ref": "report.schema.json#/$defs/bindingReason"

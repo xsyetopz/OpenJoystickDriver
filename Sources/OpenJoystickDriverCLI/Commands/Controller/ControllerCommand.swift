@@ -213,6 +213,9 @@ struct ControllerShowCommand: AsyncParsableCommand {
       "record", detail.record.map { CommandLineName.kebab($0.layer) } ?? "none",
       detail.record?.file ?? "",
     ])
+    if let mapping = detail.inputMapping {
+      rows.append(["input-mapping"] + mapping.plainFields)
+    }
     if let tuning = detail.tuning { rows.append(["tuning"] + tuning.rows) }
     if let virtual = detail.virtual {
       rows.append([
@@ -314,6 +317,24 @@ struct ControllerShowCommand: AsyncParsableCommand {
         detail.serving.persona.map(CommandLineName.kebab) ?? none
       ),
       (CLILocalized.text("cli.controller.show.labelRecord"), recordText(detail.record)),
+    ]
+    if let mapping = detail.inputMapping {
+      rows.append(
+        (
+          CLILocalized.text("cli.controller.show.labelInputMapping"),
+          mapping.rowText(localize: CLILocalized.text)
+        )
+      )
+      if !mapping.unmapped.isEmpty {
+        rows.append(
+          (
+            CLILocalized.text("cli.controller.show.labelUnmapped"),
+            mapping.unmapped.joined(separator: ", ")
+          )
+        )
+      }
+    }
+    rows += [
       (
         CLILocalized.text("cli.controller.show.labelControls"),
         list(detail.capabilities.controls.map(CommandLineName.kebab))

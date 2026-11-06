@@ -177,6 +177,9 @@ struct StatusReport: Encodable, Equatable {
     let productID: Int
     /// How the controller connects.
     let connection: String
+    /// Where the HID usage map comes from; absent unless the `HIDDescriptor` protocol drives the
+    /// controller.
+    let inputMapping: InputMapping?
   }
 
   /// A device that OJD sees but does not map to a controller.
@@ -189,6 +192,9 @@ struct StatusReport: Encodable, Equatable {
     let connection: String
     /// Why the device has no binding; absent for a device that passes through.
     let reason: String?
+    /// The SDL_GameControllerDB line found for a HID pad that fails the descriptor contract; absent
+    /// when none was.
+    let inputMapping: InputMapping?
   }
 
   /// The state of the service.
@@ -265,7 +271,8 @@ struct StatusReport: Encodable, Equatable {
         name: $0.name,
         vendorID: Int($0.vendorID),
         productID: Int($0.productID),
-        connection: $0.connection
+        connection: $0.connection,
+        inputMapping: $0.bindingResult.inputMapping
       )
     }
     unboundDevices = payload.unboundDevices.map {
@@ -273,7 +280,8 @@ struct StatusReport: Encodable, Equatable {
         vendorID: Int($0.vendorID),
         productID: Int($0.productID),
         connection: $0.connection,
-        reason: $0.reason.rawValue
+        reason: $0.reason.rawValue,
+        inputMapping: $0.rejectedCandidates.lazy.compactMap(\.inputMapping).first
       )
     }
     passThroughDevices = payload.passThroughDevices.map {
@@ -281,7 +289,8 @@ struct StatusReport: Encodable, Equatable {
         vendorID: Int($0.vendorID),
         productID: Int($0.productID),
         connection: $0.connection,
-        reason: nil
+        reason: nil,
+        inputMapping: nil
       )
     }
   }

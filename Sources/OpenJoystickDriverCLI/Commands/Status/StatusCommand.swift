@@ -129,12 +129,21 @@ struct StatusCommand: AsyncParsableCommand {
         deviceIdentity(vendorID: controller.vendorID, productID: controller.productID),
         controller.connection, controller.name,
       ])
+      if let mapping = controller.inputMapping {
+        rows.append(["input-mapping", controller.id] + mapping.plainFields)
+      }
     }
     for device in report.unboundDevices ?? [] {
       rows.append([
         "unbound", deviceIdentity(vendorID: device.vendorID, productID: device.productID),
         device.connection, device.reason.map(CommandLineName.kebab) ?? "",
       ])
+      if let mapping = device.inputMapping {
+        rows.append(
+          ["input-mapping", deviceIdentity(vendorID: device.vendorID, productID: device.productID)]
+            + mapping.plainFields
+        )
+      }
     }
     for device in report.passThroughDevices ?? [] {
       rows.append([
@@ -237,6 +246,15 @@ struct StatusCommand: AsyncParsableCommand {
     }
   }
 
+  /// Prints the Input mapping row under a device.
+  private static func printMapping(_ mapping: InputMapping?) {
+    guard let mapping else { return }
+    CLIOutput.stdout(
+      "    \(CLILocalized.text("cli.controller.show.labelInputMapping")): "
+        + mapping.rowText(localize: CLILocalized.text)
+    )
+  }
+
   /// Prints the connected controllers and the devices that have no binding or that pass through.
   private static func printDevices(_ report: StatusReport) {
     if let controllers = report.controllers {
@@ -252,6 +270,7 @@ struct StatusCommand: AsyncParsableCommand {
         CLIOutput.stdout(
           "  \(identity)  \(controller.name)  \(controller.connection)  \(controller.id)"
         )
+        printMapping(controller.inputMapping)
       }
     }
     if let unbound = report.unboundDevices, !unbound.isEmpty {
@@ -267,6 +286,7 @@ struct StatusCommand: AsyncParsableCommand {
         if let key = device.reason.flatMap(ProtocolBindingReason.init(rawValue:))?.explanationKey {
           CLIOutput.stdout("    \(CLILocalized.text(key))")
         }
+        printMapping(device.inputMapping)
       }
     }
     if let passThrough = report.passThroughDevices, !passThrough.isEmpty {
