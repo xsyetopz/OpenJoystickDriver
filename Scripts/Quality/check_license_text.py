@@ -35,9 +35,13 @@ def problems(root: pathlib.Path = ROOT) -> list[str]:
         actual.pop()
     for number, (want, got) in enumerate(zip(expected, actual, strict=False), start=1):
         if want != got:
-            return [f"{LICENSE} differs from {PINNED} at line {number}: {got!r} != {want!r}"]
+            return [
+                f"{LICENSE} differs from {PINNED} at line {number}: {got!r} != {want!r}"
+            ]
     if len(actual) != len(expected):
-        return [f"{LICENSE} has {len(actual)} license lines; {PINNED} has {len(expected)}"]
+        return [
+            f"{LICENSE} has {len(actual)} license lines; {PINNED} has {len(expected)}"
+        ]
     return []
 
 

@@ -16,6 +16,7 @@ Each reader of a document file parses it its own way. A Controller file is read 
 ## Capabilities
 
 ### New Capabilities
+
 - `document-decoding`: how OJD reads Controller, ControllerPatch and VirtualDevice files. One reader per kind, and the same verdict from every command that reads a file.
 
 ### Modified Capabilities

@@ -1,7 +1,7 @@
 import Foundation
 
-/// HID report descriptors recorded by xpadneo (`docs/descriptors`, GPL-3.0) from Linux sysfs,
-/// kept here as byte evidence only.
+/// HID report descriptors that xpadneo recorded from Linux sysfs (`docs/descriptors`), kept here as
+/// byte evidence only.
 enum RecordedHIDDescriptors {
   /// Xbox One S (`045E:02FD`) over Bluetooth, Linux mode (`xb1s_linux.md`).
   ///

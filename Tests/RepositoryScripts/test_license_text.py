@@ -30,7 +30,9 @@ class LicenseTextTests(unittest.TestCase):
         self.assertEqual(check.problems(self.root), [])
 
     def test_one_word_edit_names_the_line(self) -> None:
-        self.write_license(f"{self.text.replace('strict obligations', 'loose obligations')}\n{NOTICE}\n")
+        self.write_license(
+            f"{self.text.replace('strict obligations', 'loose obligations')}\n{NOTICE}\n"
+        )
         [problem] = check.problems(self.root)
         self.assertIn("at line 7", problem)
 

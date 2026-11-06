@@ -25,8 +25,10 @@ class LicenseHeaderTests(unittest.TestCase):
             self.assertEqual(
                 check.violations(root),
                 [
-                    "Sources/Kit/Driver.swift:1: "
-                    "// SPDX-License-Identifier: GPL-2.0-or-later"
+                    (
+                        "Sources/Kit/Driver.swift:1: "
+                        "// SPDX-License-Identifier: GPL-2.0-or-later"
+                    )
                 ],
             )
 
@@ -54,7 +56,11 @@ class LicenseHeaderTests(unittest.TestCase):
     def test_word_containing_the_letters_passes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            write(root, "Resources/notes.txt", "GPLAYER and LGPLX are not license names.\n")
+            write(
+                root,
+                "Resources/notes.txt",
+                "GPLAYER and LGPLX are not license names.\n",
+            )
             self.assertEqual(check.violations(root), [])
 
 

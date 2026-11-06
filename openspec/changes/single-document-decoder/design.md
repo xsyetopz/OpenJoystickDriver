@@ -5,7 +5,7 @@
 See proposal.md (Why). The readers today:
 
 | Reader | Parse |
-|---|---|
+| --- | --- |
 | `ControllerRecordSet.loadCatalog` (bundle, `OJDRepositoryTool validate controllers`) | `requireUTF8`, `JSONSerialization`, `OrderedJSON.parse` |
 | `ControllerRecordSet.parse` (user folder, packages, `ojd record install`, `ojd config`, Library) | `requireUTF8`, `JSONSerialization` (for the header check), `OrderedJSON.parse` |
 | `RepositoryValidation` record and patch files (`apply-patches`) | `requireUTF8`, `OrderedJSON.parse`, `JSONSerialization` |
@@ -20,10 +20,12 @@ The `JSONSerialization` pass before `OrderedJSON.parse` was kept in commit 54398
 ## Goals / Non-Goals
 
 **Goals:**
+
 - `OrderedJSON.parse` is the only text reader of Controller and ControllerPatch files.
 - One typed decode for VirtualDevice files, with the strict-key helpers the profile and record decoders use.
 
 **Non-Goals:**
+
 - The typed decode of a merged record (`ControllerRecordSet.decode`: `foundationValue()`, `JSONSerialization.data`, `JSONDecoder`) stays. It decodes an in-memory merge, not a file, and replacing it needs a `Decoder` over `OrderedJSON`, which costs more than it removes.
 - `ControllerRecordWriter`'s edit of `[String: Any]` stays; it runs after `validate` has accepted the file.
 - Profiles, Settings, AccessGrants, mod.json and the endpoint wire format already use one `JSONDecoder` each and are untouched.

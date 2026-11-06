@@ -46,7 +46,9 @@ def violations(root: pathlib.Path = ROOT) -> list[str]:
             continue
         for number, line in enumerate(text.splitlines(), start=1):
             if GPL_FAMILY.search(line):
-                found.append(f"{path.relative_to(root).as_posix()}:{number}: {line.strip()}")
+                found.append(
+                    f"{path.relative_to(root).as_posix()}:{number}: {line.strip()}"
+                )
     return found
 
 
