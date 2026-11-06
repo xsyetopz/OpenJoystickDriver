@@ -2,25 +2,31 @@
 import Foundation
 import PackageDescription
 
+/// The directory that holds this manifest.
 let packageDirectory = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
-// OJD_USE_LOCAL_SWIFTERKIT=1 builds the sibling ../SwifterKit working tree instead of the pinned
-// remote.
+/// Whether `OJD_USE_LOCAL_SWIFTERKIT=1` asks for the sibling `../SwifterKit` working tree instead
+/// of the pinned remote.
 let useLocalSwifterKit = ProcessInfo.processInfo.environment["OJD_USE_LOCAL_SWIFTERKIT"] == "1"
+/// The path of the sibling SwifterKit working tree.
 let localSwifterKitPath = packageDirectory.appendingPathComponent("../SwifterKit")
   .standardizedFileURL.path
+/// The SwifterKit package: the local working tree when asked for and present, else the remote.
 let swifterKitDependency: Package.Dependency =
   useLocalSwifterKit && FileManager.default.fileExists(atPath: localSwifterKitPath)
   ? .package(path: localSwifterKitPath)
-  : .package(url: "https://github.com/xsyetopz/SwifterKit.git", from: "0.3.0")
+  : .package(url: "https://github.com/xsyetopz/SwifterKit.git", from: "0.4.1")
 
 #if arch(arm64)
+  /// The target triple of the Swift Testing targets on this host.
   let testTargetTriple = "arm64-apple-macosx14.0"
 #elseif arch(x86_64)
+  /// The target triple of the Swift Testing targets on this host.
   let testTargetTriple = "x86_64-apple-macosx14.0"
 #else
   #error("Unsupported host architecture for Swift Testing target triple")
 #endif
 
+/// The OpenJoystickDriver package.
 let package = Package(
   name: "OpenJoystickDriver",
   defaultLocalization: "en-US",
