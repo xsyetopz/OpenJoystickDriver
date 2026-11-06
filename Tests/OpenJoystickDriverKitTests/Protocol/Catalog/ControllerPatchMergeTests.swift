@@ -23,8 +23,9 @@ struct ControllerPatchMergeTests {
     try OrderedJSON.parse(Data(text.utf8))
   }
 
-  /// The patches of one layer. An item is a patch document, or `{"owner", "document"}` to name
-  /// the package that holds it.
+  /// The patches of one layer.
+  ///
+  /// An item is a patch document, or `{"owner", "document"}` to name the package that holds it.
   private static func entries(
     _ value: Any?,
     file: String

@@ -35,6 +35,11 @@ func inputLayout(_ json: String) throws -> ControllerInputLayout {
   try JSONDecoder().decode(ControllerRecordDocument.InputLayout.self, from: Data(json.utf8)).layout
 }
 
+/// A driver for the one layout.
+func layoutDriver(_ layout: ControllerInputLayout) throws -> ReportLayoutDriver {
+  ReportLayoutDriver(layouts: try ControllerInputLayouts(layouts: [layout]))
+}
+
 @Suite
 struct ReportLayoutDriverTests {
   static let family = PhysicalProtocolID.hidReportLayout
@@ -46,7 +51,7 @@ struct ReportLayoutDriverTests {
   func probeFreePadsBindTheReportLayoutFamily(model: ControllerModelID) throws {
     let record = try #require(DeviceCatalog().record(for: model))
     #expect(record.physicalProtocolID == .hidReportLayout)
-    #expect(record.inputLayout != nil)
+    #expect(record.inputLayouts != nil)
     let driver = try catalogDriver(model)
     #expect(driver.startupFeatureReads().isEmpty)
   }
@@ -85,6 +90,7 @@ struct ReportLayoutDriverTests {
   }
 
   /// The report an owner's hidapi script drove on hardware; weak motor in byte 2, strong in 3.
+  ///
   /// The GP100 record's rumble template encodes it.
   @Test
   func gp100RumbleUsesTheHardwareVerifiedReport() throws {
@@ -176,10 +182,10 @@ struct ReportLayoutDriverTests {
 
   @Test
   func reportWithAnotherIDIsIgnored() throws {
-    let driver = ReportLayoutDriver(
-      layout: try inputLayout(
+    let driver = try layoutDriver(
+      try inputLayout(
         #"{"report": {"id": 5, "length": {"atLeast": 2}}, "#
-          + #""buttons": [{"control": "South", "byte": 1, "mask": 1}]}"#
+          + #""buttons": [{"control": "South", "bitOffset": 8, "bitSize": 1}]}"#
       )
     )
     #expect(try driver.parseReport(Data([6, 1])) == nil)
@@ -193,9 +199,9 @@ struct ReportLayoutDriverTests {
     let layout = try inputLayout(
       """
       {"report": {"length": {"atLeast": 4}}, "axes": [
-        {"control": "LeftStickX", "byte": 0, "bits": 16, "signed": true},
-        {"control": "LeftStickY", "byte": 2, "inverted": true},
-        {"control": "RightStickX", "byte": 3, "min": 0, "max": 200}
+        {"control": "LeftStickX", "bitOffset": 0, "bitSize": 16, "signed": true},
+        {"control": "LeftStickY", "bitOffset": 16, "bitSize": 8, "inverted": true},
+        {"control": "RightStickX", "bitOffset": 24, "bitSize": 8, "min": 0, "max": 200}
       ]}
       """
     )
@@ -216,7 +222,7 @@ struct ReportLayoutDriverTests {
   func triggerButtonReadsAsFullyPulled() throws {
     let layout = try inputLayout(
       #"{"report": {"length": {"atLeast": 2}}, "#
-        + #""leftTrigger": {"byte": 0, "button": {"byte": 1, "mask": 4}}}"#
+        + #""leftTrigger": {"bitOffset": 0, "bitSize": 8, "button": {"bitOffset": 10, "bitSize": 1}}}"#
     )
     let trigger = try #require(layout.leftTrigger)
     #expect(trigger.value(in: [0x00, 0x04]) == UnipolarValue(normalized: 1))

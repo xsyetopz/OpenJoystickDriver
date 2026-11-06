@@ -333,6 +333,7 @@ private final class StartupRecordingOutputDispatcher: OutputDispatcher,
 
 struct HIDStartupPlayerIndicatorTests {
   /// A Sixaxis lights no player LED on its own, and macOS sets none on a controller OJD serves.
+  ///
   /// A USB Sixaxis ignores the LED report written right after its startup feature reads, so the
   /// assigned slot follows its first input report. Three pads of one model light three slots.
   @Test

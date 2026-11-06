@@ -28,10 +28,12 @@ extension HIDDeviceStream {
     }
   }
 
+  /// Returns the connections that the manager currently lists, or nil when there is no manager.
   func currentConnectionSnapshots() async -> [HIDDeviceConnectionSnapshot]? {
     await MainActor.run { self.currentConnectionSnapshotsOnMainRunLoop() }
   }
 
+  /// Returns the connections that the manager currently lists; runs on the main run loop.
   @MainActor
   private func currentConnectionSnapshotsOnMainRunLoop() -> [HIDDeviceConnectionSnapshot]? {
     guard let manager, let devices = IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice> else {
@@ -88,7 +90,9 @@ extension HIDDeviceStream {
   }
 
   /// Unschedules the HID manager from the run loop, closes the devices this stream opened, and
-  /// finishes the async stream. Runs on main.
+  /// finishes the async stream.
+  ///
+  /// Runs on main.
   func cleanup() {
     guard let continuation else { return }
     self.continuation = nil
@@ -119,6 +123,7 @@ extension HIDDeviceStream {
     continuation.finish()
   }
 
+  /// Sends an output report to the devices at `locationID`.
   package func setOutputReport(
     locationID: UInt32,
     report: PhysicalHIDOutputReport
@@ -126,6 +131,7 @@ extension HIDDeviceStream {
     setReport(locationID: locationID, report: report, type: kIOHIDReportTypeOutput, label: "Output")
   }
 
+  /// Sends an output report to the device of `connection`, on the main actor.
   package func setOutputReport(
     connection: HIDDeviceConnection,
     report: PhysicalHIDOutputReport
@@ -140,6 +146,7 @@ extension HIDDeviceStream {
     }
   }
 
+  /// Sends a feature report to the devices at `locationID`.
   package func setFeatureReport(
     locationID: UInt32,
     report: PhysicalHIDOutputReport
@@ -152,6 +159,7 @@ extension HIDDeviceStream {
     )
   }
 
+  /// Sends a feature report to the device of `connection`, on the main actor.
   package func setFeatureReport(
     connection: HIDDeviceConnection,
     report: PhysicalHIDOutputReport
@@ -166,6 +174,7 @@ extension HIDDeviceStream {
     }
   }
 
+  /// Reads the feature report that `request` names from the devices at `locationID`.
   package func getFeatureReport(
     locationID: UInt32,
 
@@ -222,8 +231,10 @@ extension HIDDeviceStream {
     }
   }
 
-  /// Seizes again the devices ``releaseInputClaim(locationID:)`` released. When one seize is
-  /// refused, the devices seized so far return to a shared open and the refusal is the result.
+  /// Seizes again the devices ``releaseInputClaim(locationID:)`` released.
+  ///
+  /// When one seize is refused, the devices seized so far return to a shared open and the refusal
+  /// is the result.
   package func reacquireInputClaim(locationID: UInt32) -> PhysicalHIDClaimResult {
     seizeLock.withLock {
       guard let devices = releasedByLocation[locationID], !devices.isEmpty else {
@@ -290,9 +301,10 @@ extension HIDDeviceStream {
     }
   }
 
-  /// The tracked devices at `locationID` whose seize was refused or failed, in ID order. Each is
-  /// retried whether or not it has a shared open: while another client seizes a device, macOS
-  /// refuses the shared open too.
+  /// The tracked devices at `locationID` whose seize was refused or failed, in ID order.
+  ///
+  /// Each is retried whether or not it has a shared open: while another client seizes a device,
+  /// macOS refuses the shared open too.
   static func inputClaimRetryCandidates(
     tracked: [UInt64: HIDDeviceConnection],
     locationID: UInt32,
@@ -307,6 +319,10 @@ extension HIDDeviceStream {
     }.sorted()
   }
 
+  /// Sends `report` of the given IOHID report `type` to the devices at `locationID`.
+  ///
+  /// `label` names the report type in the failure text. The result is unavailable when the location
+  /// has no seized device or does not accept feedback.
   private func setReport(
     locationID: UInt32,
     report: PhysicalHIDOutputReport,
@@ -342,7 +358,9 @@ extension HIDDeviceStream {
   }
 
   /// Reads a feature report only from the exact connection lifetime, never a sibling at its
-  /// location. It waits for the device on the main actor, as the startup reads always have.
+  /// location.
+  ///
+  /// It waits for the device on the main actor, as the startup reads always have.
   package func getFeatureReport(
     connection: HIDDeviceConnection,
     request: PhysicalHIDFeatureReadRequest
@@ -354,8 +372,9 @@ extension HIDDeviceStream {
     }
   }
 
-  /// Reads a feature report for a mode probe, off the main actor and bounded by `timeout`. While
-  /// an earlier probe read of the same connection has not returned, it fails with
+  /// Reads a feature report for a mode probe, off the main actor and bounded by `timeout`.
+  ///
+  /// While an earlier probe read of the same connection has not returned, it fails with
   /// `kIOReturnBusy` instead of reading.
   func probeFeatureReport(
     connection: HIDDeviceConnection,
@@ -373,6 +392,7 @@ extension HIDDeviceStream {
     }
   }
 
+  /// Reads the feature report that `request` names from `device`.
   private static func readFeatureReport(
     _ device: IOHIDDevice,
     request: PhysicalHIDFeatureReadRequest
@@ -393,6 +413,7 @@ extension HIDDeviceStream {
     return .success(Data(bytes.prefix(reportLength)))
   }
 
+  /// Sends `report` of the given IOHID report `type` to the device of `connection`.
   @MainActor
   private func setReport(
     connection: HIDDeviceConnection,
@@ -449,7 +470,10 @@ extension HIDDeviceStream {
   // MARK: - Event handlers
 }
 
-/// An `IOHIDDevice` handed to the queue that reads it. IOKit device calls are thread-safe.
+/// An `IOHIDDevice` handed to the queue that reads it.
+///
+/// IOKit device calls are thread-safe.
 private struct UncheckedSendableDevice: @unchecked Sendable {
+  /// The device, wrapped so that it can cross concurrency domains.
   let device: IOHIDDevice
 }

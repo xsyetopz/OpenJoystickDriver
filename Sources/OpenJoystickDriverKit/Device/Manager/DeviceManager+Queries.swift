@@ -60,6 +60,7 @@ extension DeviceManager {
   }
 
   /// Returns a snapshot of every connected controller.
+  ///
   /// Used by the application service to report its live device list.
   public func connectedDeviceDescriptions() async -> [ConnectedDeviceSnapshot] {
     var descriptions: [ConnectedDeviceSnapshot] = []
@@ -78,6 +79,8 @@ extension DeviceManager {
     for identifier: LogicalControllerID
   ) async -> ConnectedDeviceSnapshot? { await deviceDescription(forPipeline: identifier) }
 
+  /// Builds the description of the controller under `id`; nil when its pipeline or its device
+  /// information is missing.
   private func deviceDescription(
     forPipeline id: LogicalControllerID
   ) async -> ConnectedDeviceSnapshot? {

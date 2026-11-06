@@ -1,22 +1,36 @@
 import Foundation
 
+/// A touch position on a surface.
 struct RemappingTouchPoint: Equatable {
+  /// Horizontal position as a fraction of the surface span.
   let x: Double
+  /// Vertical position as a fraction of the surface span.
   let y: Double
 }
 
+/// Where a touch contact began and where it is.
 struct RemappingTouchContactState: Equatable {
+  /// Position of the first frame of the contact.
   let start: RemappingTouchPoint
+  /// Position of the latest frame of the contact.
   let position: RemappingTouchPoint
 }
 
-/// Contacts are keyed by their slot within the surface's frames.
+/// Contacts of one touch surface, keyed by their slot within the surface's frames.
 struct RemappingTouchSurfaceState {
+  /// Active contacts by slot.
   var contacts: [UInt8: RemappingTouchContactState]
+  /// Slot of the primary contact, or `nil` when nothing touches.
   var primaryContactID: UInt8?
 }
 
 extension RemappingEngineState {
+  /// Applies one touch frame of a controller.
+  ///
+  /// The primary contact is the lowest slot and stays primary while it touches. The frame changes
+  /// the touch contact and touch grid sources. A swipe source fires when the primary contact lifts
+  /// after a long enough movement. The pointer or virtual stick mapping of the surface follows the
+  /// primary contact.
   mutating func processTouch(
     _ sample: ControllerTouchSample,
     for identifier: LogicalControllerID,
@@ -124,12 +138,14 @@ extension RemappingEngineState {
     return actions
   }
 
-  /// Each axis is a fraction of its own surface span, so pointer motion and radii are per axis.
+  /// Normalizes a contact position by the full range of its own axis, so each axis is a fraction of
+  /// its own surface span.
   private static func normalizedPoint(_ contact: ControllerTouchContact) -> RemappingTouchPoint {
     let span = Double(UInt16.max)
     return RemappingTouchPoint(x: Double(contact.x) / span, y: Double(contact.y) / span)
   }
 
+  /// Returns the grid cell, as column and row, that a position falls in.
   private static func gridCell(
     for point: RemappingTouchPoint,
     columns: Int,
@@ -138,6 +154,7 @@ extension RemappingEngineState {
     (min(columns - 1, Int(point.x * Double(columns))), min(rows - 1, Int(point.y * Double(rows))))
   }
 
+  /// Returns the main direction of a movement, or `nil` when the position did not change.
   private static func swipeDirection(
     from start: RemappingTouchPoint,
     to end: RemappingTouchPoint
@@ -149,6 +166,7 @@ extension RemappingEngineState {
     return y < 0 ? .up : .down
   }
 
+  /// Returns the travel of a swipe along its direction, as a surface fraction.
   private static func swipeDistance(
     from start: RemappingTouchPoint,
     to end: RemappingTouchPoint,
@@ -160,6 +178,10 @@ extension RemappingEngineState {
     }
   }
 
+  /// Returns the virtual stick position of a contact.
+  ///
+  /// The drag from the start point, divided by the stick radius, is limited to the unit circle and
+  /// cut by the dead zone.
   private static func stickValue(
     _ contact: RemappingTouchContactState,
     mapping: RemappingTouchMapping
@@ -179,10 +201,14 @@ extension RemappingEngineState {
     )
   }
 
+  /// Orders touch sources so that actions are emitted in a stable order.
   private static func touchSourceLessThan(_ lhs: RemappingSource, _ rhs: RemappingSource) -> Bool {
     touchSourceSortKey(lhs) < touchSourceSortKey(rhs)
   }
 
+  /// Returns the sort key of a touch source.
+  ///
+  /// Touch contacts sort before grids, grids before swipes, and swipes before other sources.
   private static func touchSourceSortKey(_ source: RemappingSource) -> String {
     switch source {
     case .touchContact(let surface): return "0:\(surface.rawValue)"
@@ -196,6 +222,7 @@ extension RemappingEngineState {
 }
 
 extension RemappingSource {
+  /// Touch surface that the source reads, or `nil` for a source that is not a touch source.
   var touchSurface: RemappingTouchSurface? {
     switch self {
     case .touchContact(let surface): surface
@@ -207,6 +234,7 @@ extension RemappingSource {
 }
 
 extension RemappingProfile {
+  /// Returns the touch sources on a surface that any part of the profile uses.
   func touchSources(on surface: RemappingTouchSurface) -> Set<RemappingSource> {
     var sources = Set(bindings.map(\.source))
     sources.formUnion(chords.flatMap(\.sources))

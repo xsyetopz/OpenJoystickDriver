@@ -7,6 +7,7 @@
 
   extension CaptureAssignmentSheet {
 
+    /// The capture status as VoiceOver reads it.
     private var captureStatusAccessibilityValue: String {
       switch viewModel.inputCaptureState {
       case .idle: return OJDLocalized.string("ui.capture.ready")
@@ -36,6 +37,10 @@
       }
     }
 
+    /// Announces the capture state to VoiceOver: the start of listening, the detected control, or
+    /// the failure.
+    ///
+    /// A detection on another controller than the selected one is not announced.
     func announceCaptureState(_ captureState: RuntimeInputCaptureState) {
       let message: String
       switch captureState {
@@ -64,6 +69,8 @@
       )
     }
 
+    /// The capture status line: the progress, the detected control with the held buttons, or the
+    /// failure in red.
     @ViewBuilder
     var captureStatus: some View {
       Group {
@@ -109,6 +116,7 @@
       }.ojdAccessibilityLabel(OJDLocalized.string("ui.capture.status"))
         .ojdAccessibilityValue(captureStatusAccessibilityValue)
     }
+    /// Returns the buttons held in `state`, or the text that says none is.
     private func heldControlsText(_ state: ControllerState) -> String {
       let held = Control.allCases.filter(state.pressed.contains)
       guard !held.isEmpty else {

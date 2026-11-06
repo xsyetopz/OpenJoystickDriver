@@ -2,10 +2,17 @@ import Foundation
 
 /// Normalized gamepad output owned by one exact remapping session.
 public struct RemappingGamepadState: Equatable, Sendable {
+  /// Buttons that are down, limited to those a virtual gamepad supports.
   public let buttons: Set<Control>
+  /// D-pad directions that are down; opposite directions cancel each other.
   public let dpad: Set<RemappingDpadDirection>
+  /// Nonzero axis values: sticks from -1 to 1 and triggers from 0 to 1.
   public let axes: [RemappingAxis: Double]
 
+  /// Creates a state from buttons, d-pad directions and axis values.
+  ///
+  /// Unsupported buttons are dropped. Opposite d-pad directions cancel. Axis values that are not
+  /// finite or are zero are dropped, and the others are clamped to their range.
   public init(
     buttons: Set<Control> = [],
     dpad: Set<RemappingDpadDirection> = [],
@@ -27,22 +34,30 @@ public struct RemappingGamepadState: Equatable, Sendable {
     }
   }
 
+  /// State with nothing pressed.
   public static let neutral = Self()
 
-  /// Missing axes are neutral, including after a contribution is released.
+  /// Returns the value of an axis, or 0 when the state has none for it.
   public func value(for axis: RemappingAxis) -> Double { axes[axis, default: 0] }
 
+  /// Whether an axis is one of the triggers.
   static func isTrigger(_ axis: RemappingAxis) -> Bool {
     axis == .leftTrigger || axis == .rightTrigger
   }
 }
 
-/// Retains independent binding contributions so releasing one cannot release another.
+/// Keeps the contribution of each owner apart, so releasing one cannot release another.
+///
+/// Stick axes add up across owners and trigger axes take the largest value.
 struct RemappingGamepadAccumulator: Sendable {
+  /// Contribution of each owner.
   private var contributions: [UUID: RemappingGamepadState] = [:]
+  /// Aggregate of all contributions.
   private(set) var state = RemappingGamepadState.neutral
 
-  /// Returns a changed aggregate, including neutral; unchanged aggregates return nil.
+  /// Sets the contribution of an owner and returns the aggregate when it changed.
+  ///
+  /// A neutral contribution removes the owner. Returns `nil` when the aggregate did not change.
   mutating func update(
     _ contribution: RemappingGamepadState,
     for bindingID: UUID
@@ -55,15 +70,20 @@ struct RemappingGamepadAccumulator: Sendable {
     return recompute()
   }
 
+  /// Removes the contribution of an owner and returns the aggregate when it changed.
   mutating func release(_ bindingID: UUID) -> RemappingGamepadState? {
     update(.neutral, for: bindingID)
   }
 
+  /// Removes all contributions and returns the aggregate when it changed.
   mutating func drain() -> RemappingGamepadState? {
     contributions.removeAll()
     return recompute()
   }
 
+  /// Recomputes the aggregate and returns it when it changed.
+  ///
+  /// A stable owner order makes floating-point sums independent of insertion order.
   private mutating func recompute() -> RemappingGamepadState? {
     var buttons: Set<Control> = []
     var dpad: Set<RemappingDpadDirection> = []

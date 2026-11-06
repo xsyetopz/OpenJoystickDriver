@@ -2,9 +2,13 @@ import Foundation
 
 extension ProtocolDescription {
   /// `defaults.session.commandChannel`: the USB interface that carries a family's commands and
-  /// their replies. Only `NintendoSwitch2` has it.
+  /// their replies.
+  ///
+  /// Only `NintendoSwitch2` has it.
   struct CommandChannel: Decodable, Equatable, Sendable {
+    /// The USB interface number of the channel.
     let interface: UInt8
+    /// The IN endpoint address that carries replies.
     let inEndpoint: UInt8
     /// Largest reply read after each command.
     let replyLength: Int
@@ -13,6 +17,8 @@ extension ProtocolDescription {
     /// Timeout of each reply read over Bluetooth LE.
     let bluetoothLEReplyTimeoutMilliseconds: UInt32
 
+    /// Decodes `interface`, `inEndpoint`, `replyLength` and the two reply timeouts; an unknown key
+    /// or a value outside its range is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [

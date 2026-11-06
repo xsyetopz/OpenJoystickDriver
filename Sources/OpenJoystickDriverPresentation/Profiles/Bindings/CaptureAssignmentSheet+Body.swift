@@ -7,6 +7,7 @@
 
   extension CaptureAssignmentSheet {
 
+    /// The control picker, the destination and the Cancel and Add Assignment buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 15) {
         Text(OJDLocalized.string("ui.capture.pressControl"))
@@ -96,6 +97,7 @@
       }
     }
 
+    /// The step controls of a touch grid or swipe source; any other source shows none.
     @ViewBuilder
     private var touchSourceControls: some View {
       switch source {
@@ -160,6 +162,9 @@
       }
     }
 
+    /// Returns a binding to one number of the touch grid source: its columns, rows, column or row.
+    ///
+    /// Setting a number keeps the chosen cell inside the grid.
     private func touchGridValue(_ keyPath: KeyPath<RemappingTouchGridSource, Int>) -> Binding<Int> {
       Binding(
         get: {
@@ -194,6 +199,8 @@
       )
     }
 
+    /// Whether the Add Assignment button is enabled: the controller supports the source and the
+    /// destination, and a keyboard destination holds a key.
     private var canAddAssignment: Bool {
       guard ProfileCapabilityPolicy.supports(source, capabilities: capabilities),
         ProfileCapabilityPolicy.supports(destination, capabilities: capabilities)
@@ -202,6 +209,7 @@
       return true
     }
 
+    /// Whether the capture listens to the selected controller.
     private var isListening: Bool {
       guard let selectedDeviceSelector else { return false }
       if case .listening(let selector) = viewModel.inputCaptureState {
@@ -210,6 +218,8 @@
       return false
     }
 
+    /// The destination picker's binding; choosing a destination marks the keyboard key as not
+    /// cleared.
     private var destinationBinding: Binding<RemappingDestination> {
       Binding(
         get: { destination },
@@ -220,6 +230,8 @@
       )
     }
 
+    /// The source picker's binding; choosing a source keeps the destination when it still fits the
+    /// source, and else takes the first destination that does.
     private var sourceBinding: Binding<RemappingSource> {
       Binding(
         get: { source },
@@ -241,11 +253,16 @@
       )
     }
 
+    /// The connected controllers, or none while the status is not loaded.
     private var connectedDevices: [ApplicationServiceDeviceDescription] {
       guard case .available(let status) = viewModel.statusState else { return [] }
       return status.devices
     }
 
+    /// The picker's binding to the session token of the controller to listen to; the first
+    /// connected controller until one is chosen.
+    ///
+    /// Choosing another controller stops listening.
     private var selectedDeviceBinding: Binding<String> {
       Binding(
         get: { selectedSessionToken ?? connectedDevices.first?.sessionToken.rawValue ?? "" },
@@ -256,6 +273,7 @@
       )
     }
 
+    /// The reference to the controller to listen to, or nil when no controller is connected.
     var selectedDeviceSelector: ControllerReference? {
       guard
         let device = connectedDevices.first(where: {
@@ -266,24 +284,29 @@
       return ControllerReference.session(device.sessionToken)
     }
 
+    /// Selects the first connected controller when none is selected.
     private func selectInitialDevice() {
       guard selectedSessionToken == nil else { return }
       selectedSessionToken = connectedDevices.first?.sessionToken.rawValue
     }
 
+    /// Stops listening, announces the cancellation and dismisses the sheet.
     private func cancelCapture() {
       stopListening()
       announce(OJDLocalized.string("ui.capture.canceled"))
       presentationMode.wrappedValue.dismiss()
     }
 
+    /// Starts the input capture on the controller `selector`.
     private func beginListening(for selector: ControllerReference) {
       viewModel.cancelInputCapture()
       Task { @MainActor in await viewModel.listenForInput(for: selector) }
     }
 
+    /// Stops the input capture.
     private func stopListening() { viewModel.cancelInputCapture() }
 
+    /// Announces `message` to VoiceOver.
     private func announce(_ message: String) {
       NSAccessibility.post(
         element: NSApp as Any,
@@ -292,6 +315,8 @@
       )
     }
 
+    /// Takes the source that the capture detected on the selected controller; other states change
+    /// nothing.
     private func handleCaptureState(_ captureState: RuntimeInputCaptureState) {
       switch captureState {
       case .detected(let selector, _, let detected):
@@ -301,6 +326,8 @@
       }
     }
 
+    /// Sets the source to `detected` when the controller supports it, and keeps the destination
+    /// when it still fits the source, else takes the first destination that does.
     private func applyDetectedSource(_ detected: RemappingSource) {
       guard ProfileCapabilityPolicy.supports(detected, capabilities: capabilities) else { return }
       source = detected
@@ -317,6 +344,8 @@
       keyboardDestinationCleared = false
     }
 
+    /// The destination as VoiceOver reads it; a keyboard destination without a key reads as no
+    /// key.
     private var destinationAccessibilityValue: String {
       if case .keyboard = destination, keyboardDestinationCleared {
         return OJDLocalized.string("ui.keyboard.noKey")

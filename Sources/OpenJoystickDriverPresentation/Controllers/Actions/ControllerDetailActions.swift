@@ -7,21 +7,30 @@ import OpenJoystickDriverKit
 final class ControllerDetailActions: ObservableObject {
   /// A capture that runs for a duration the user picks in a sheet.
   enum TimedKind: Identifiable, Equatable {
+    /// A controller record drafted from the packets.
     case draftRecord
+    /// The packets as a JSON file.
     case capturePackets
 
+    /// The kind itself.
     var id: Self { self }
   }
 
+  /// Where the timed capture is.
   enum TimedState: Equatable {
+    /// No capture runs.
     case idle
+    /// A capture runs.
     case capturing
+    /// The capture failed; the value is the message for the sheet.
     case failed(String)
   }
 
   /// A file to ask the user where to save.
   struct SaveRequest: Equatable {
+    /// The contents of the file.
     let data: Data
+    /// The suggested file name.
     let fileName: String
     /// The folder the panel opens in, when it exists.
     let directory: URL?
@@ -33,29 +42,41 @@ final class ControllerDetailActions: ObservableObject {
   struct Notice: Equatable {
     /// The action that ended in the notice, so each action shows only its own.
     enum Source: Equatable {
+      /// Exporting the mapping of a virtual gamepad.
       case exportMapping
+      /// A timed capture.
       case timedCapture
     }
 
+    /// The action that ended in the notice.
     let source: Source
+    /// The text of the notice.
     let text: String
+    /// Whether the notice reports a failure.
     let isError: Bool
   }
 
+  /// The kind of the timed capture whose sheet is open, or nil.
   @Published
   var timedKind: TimedKind?
+  /// Where the timed capture is.
   @Published
   private(set) var timedState: TimedState = .idle
+  /// The file waiting for the user to choose where to save it, or nil.
   @Published
   private(set) var pendingSave: SaveRequest?
+  /// The result of the latest action, or nil.
   @Published
   private(set) var notice: Notice?
+  /// How the latest launch went, or nil.
   @Published
   private(set) var launchOutcome: VirtualGamepadLaunch.Outcome?
 
+  /// The task of the running capture.
   private var timedTask: Task<Void, Never>?
-  /// Names the latest capture; an older one that ends later changes nothing.
+  /// Names the latest capture; an earlier one that ends later changes nothing.
   private var timedGeneration: UInt64 = 0
+  /// The program that the latest launch started.
   private var launched: Process?
   /// Names the latest launch; the end of an earlier program does not replace its outcome.
   private var launchGeneration: UInt64 = 0
@@ -63,7 +84,16 @@ final class ControllerDetailActions: ObservableObject {
   // MARK: - Timed captures
 
   /// Captures `device` for `seconds`, then asks for a place to save the result: the packets as
-  /// JSON, or the record drafted from them. A failure stays in ``timedState`` for the sheet.
+  /// JSON, or the record drafted from them.
+  ///
+  /// A failure stays in ``timedState`` for the sheet.
+  ///
+  /// - Parameters:
+  ///   - kind: Whether to capture packets or to draft a record.
+  ///   - device: The controller to capture.
+  ///   - gateway: The gateway that streams the packets.
+  ///   - seconds: How long to capture.
+  ///   - descriptor: Reads the report descriptor of the controller, off the main actor.
   func startTimed(
     _ kind: TimedKind,
     device: ApplicationServiceDeviceDescription,
@@ -100,6 +130,15 @@ final class ControllerDetailActions: ObservableObject {
     }
   }
 
+  /// Turns the captured packets into the file to save: the packets as JSON, or the drafted record.
+  ///
+  /// A capture without packets, or a draft without a layout, fails the sheet.
+  ///
+  /// - Parameters:
+  ///   - kind: Whether the packets or a drafted record are saved.
+  ///   - device: The captured controller.
+  ///   - packets: The captured packets.
+  ///   - descriptor: The report descriptor of the controller, or nil.
   private func finishCapture(
     _ kind: TimedKind,
     device: ApplicationServiceDeviceDescription,
@@ -150,6 +189,8 @@ final class ControllerDetailActions: ObservableObject {
   }
 
   /// Writes the pending file to `url`, or drops it when the user cancelled the panel.
+  ///
+  /// - Parameter url: Where the user chose to save, or nil when the user cancelled.
   func finishSave(to url: URL?) {
     guard let request = pendingSave else { return }
     pendingSave = nil
@@ -160,6 +201,11 @@ final class ControllerDetailActions: ObservableObject {
   // MARK: - Export
 
   /// Writes the mapping of `profile` in `format` to `url`.
+  ///
+  /// - Parameters:
+  ///   - format: The mapping format.
+  ///   - profile: The virtual gamepad profile.
+  ///   - url: Where to write the file.
   func exportMapping(
     format: VirtualMappingFormat,
     profile: VirtualHIDProfileID,
@@ -177,6 +223,13 @@ final class ControllerDetailActions: ObservableObject {
     }
   }
 
+  /// Writes the data to `url` and sets the notice to the saved file or the error.
+  ///
+  /// - Parameters:
+  ///   - data: The contents of the file.
+  ///   - url: Where to write the file.
+  ///   - summary: Said ahead of the file name, or nil.
+  ///   - source: The action that the notice belongs to.
   private func write(
     _ data: Data,
     to url: URL,
@@ -194,12 +247,20 @@ final class ControllerDetailActions: ObservableObject {
     } catch { notice = Notice(source: source, text: error.localizedDescription, isError: true) }
   }
 
+  /// Clears the notice.
   func clearNotice() { notice = nil }
 
   // MARK: - Launch
 
-  /// Starts `program` with the mapping of every virtual gamepad in `devices`. The outcome shows
-  /// that it started, why it could not, and with which status it ended.
+  /// Starts `program` with the mapping of every virtual gamepad in `devices`.
+  ///
+  /// The outcome shows that it started, why it could not, and with which status it ended.
+  ///
+  /// - Parameters:
+  ///   - program: The program to start.
+  ///   - devices: The connected controllers.
+  ///   - gameControllerBackend: Whether the program uses a game controller backend.
+  ///   - baseEnvironment: The environment the program starts with, before the mapping is added.
   func launch(
     program: URL,
     devices: [ApplicationServiceDeviceDescription],

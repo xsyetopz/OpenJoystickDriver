@@ -2,11 +2,15 @@ import Foundation
 
 /// An observed device that no protocol driver bound, with the typed rejection.
 public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
+  /// The USB vendor ID.
   public let vendorID: UInt16
+  /// The USB product ID.
   public let productID: UInt16
   /// Connection label (e.g. "USB", "Bluetooth").
   public let connection: String
+  /// How OJD reaches the device.
   public let accessBackend: DeviceAccessBackend
+  /// Why no driver bound the device.
   public let reason: ProtocolBindingReason
   /// Protocol families that matched or competed and were rejected, each with its own reason;
   /// empty when none matched.
@@ -14,6 +18,7 @@ public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
   /// Class facts of the interfaces observed when the device was rejected.
   public let interfaces: [ProtocolBindingResult.InterfaceSummary]
 
+  /// Creates the description from its values.
   public init(
     vendorID: UInt16,
     productID: UInt16,
@@ -44,6 +49,7 @@ public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
 }
 
 extension ApplicationServiceUnboundDevice {
+  /// Creates the description from the service's unbound-device snapshot.
   package init(snapshot: UnboundDeviceSnapshot) {
     self.init(
       vendorID: snapshot.vendorID,
@@ -59,11 +65,14 @@ extension ApplicationServiceUnboundDevice {
 
 /// An observed device the running macOS exposes as a native gamepad, which OJD leaves unbound.
 public struct ApplicationServicePassThroughDevice: Codable, Equatable, Sendable {
+  /// The USB vendor ID.
   public let vendorID: UInt16
+  /// The USB product ID.
   public let productID: UInt16
   /// Connection label (e.g. "USB", "Bluetooth").
   public let connection: String
 
+  /// Creates the description from its values.
   public init(vendorID: UInt16, productID: UInt16, connection: String) {
     self.vendorID = vendorID
     self.productID = productID
@@ -72,6 +81,7 @@ public struct ApplicationServicePassThroughDevice: Codable, Equatable, Sendable 
 }
 
 extension ApplicationServicePassThroughDevice {
+  /// Creates the description from the service's pass-through snapshot.
   package init(snapshot: PassThroughDeviceSnapshot) {
     self.init(
       vendorID: snapshot.vendorID,
@@ -103,7 +113,9 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
   /// Status of the user-space virtual gamepad; encoded as its `wireValue` string.
   public let userSpaceVirtualDeviceStatus: VirtualOutputBackendStatus?
   /// Why the stored virtual HID profile overrides cannot be read; nil when they are absent or
-  /// valid. While set, every controller selects automatically.
+  /// valid.
+  ///
+  /// While set, every controller selects automatically.
   public let virtualHIDProfileOverrideError: String?
 
   /// Creates a new ApplicationServiceStatusPayload.
@@ -129,15 +141,25 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     self.virtualHIDProfileOverrideError = virtualHIDProfileOverrideError
   }
 
+  /// The keys of the JSON encoding.
   private enum CodingKeys: String, CodingKey {
+    /// The `buildIdentity` key.
     case buildIdentity
+    /// The `inputRead` key.
     case inputRead
+    /// The `inputInject` key.
     case inputInject
+    /// The `connectedDevices` key.
     case connectedDevices
+    /// The `unboundDevices` key.
     case unboundDevices
+    /// The `passThroughDevices` key.
     case passThroughDevices
+    /// The `userSpaceVirtualDeviceEnabled` key.
     case userSpaceVirtualDeviceEnabled
+    /// The `userSpaceVirtualDeviceStatus` key.
     case userSpaceVirtualDeviceStatus
+    /// The `virtualHIDProfileOverrideError` key.
     case virtualHIDProfileOverrideError
   }
 }

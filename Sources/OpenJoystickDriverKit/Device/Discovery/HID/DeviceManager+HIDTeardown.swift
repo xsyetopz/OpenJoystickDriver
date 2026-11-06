@@ -1,6 +1,12 @@
 import Foundation
 
 extension DeviceManager {
+  /// Tears down the controllers that HID `connection` bound once the backend reports it gone.
+  ///
+  /// It also forgets the unbound, pass-through and yielded records of the connection and its
+  /// pending initialization. A protocol role's disconnect ends only that role. A suspension carries
+  /// over when a record reload removed the connection and the backend still lists another one at
+  /// its location.
   func handleHIDDeviceDisconnected(connection: HIDDeviceConnection) async {
     clearUnboundDevice(.hid(connection.connectionID))
     clearPassThroughDevice(connection.connectionID)
@@ -35,8 +41,10 @@ extension DeviceManager {
     }
   }
 
-  /// User-requested wireless disconnects are keyed by the selected LogicalControllerID, not by a
-  /// backend detach event. They retain their existing location-scoped behavior.
+  /// Tears down every HID controller at `address` after a user-requested wireless disconnect.
+  ///
+  /// The request names the selected ``LogicalControllerID``, not a backend detach event, so the
+  /// controllers are found by routing address, and `vendorID` and `productID` serve only the log.
   func handleHIDDeviceDisconnected(
     vendorID: UInt16,
     productID: UInt16,
@@ -59,6 +67,12 @@ extension DeviceManager {
     }
   }
 
+  /// Removes the HID controller `identifier`: neutralizes its physical outputs, sends its
+  /// deactivation writes, stops its pipeline and forgets its device information.
+  ///
+  /// A detach for a `connection` that differs from the device information is ignored as stale.
+  /// A physical disconnect ends the user's suspension. Without a `connection`, `logVendorID` and
+  /// `logProductID` fill the log line.
   func tearDownHIDDevice(
     identifier: LogicalControllerID,
     connection: HIDDeviceConnection? = nil,
@@ -117,6 +131,8 @@ extension DeviceManager {
     )
   }
 
+  /// Whether `identifier` still has the HID device information `expectedInfo`: the same connection
+  /// and physical device.
   func isCurrentHIDDeviceInfo(
     _ expectedInfo: DeviceInfo,
     for identifier: LogicalControllerID
@@ -128,6 +144,8 @@ extension DeviceManager {
       && currentInfo.physicalDevice == expectedInfo.physicalDevice
   }
 
+  /// Sends the deactivation writes of `pipeline` to a detaching controller, whose `expectedInfo`
+  /// this manager still owns for neutralization.
   private func sendHIDDeactivationWritesIfCurrent(
     pipeline: DevicePipeline?,
     address: ControllerConnectionAddress,
@@ -145,6 +163,7 @@ extension DeviceManager {
     )
   }
 
+  /// Sends the deactivation writes of `pipeline` to `address`; does nothing without a pipeline.
   func sendHIDDeactivationWritesIfNeeded(
     pipeline: DevicePipeline?,
     address: ControllerConnectionAddress
@@ -158,6 +177,7 @@ extension DeviceManager {
     )
   }
 
+  /// Feeds one HID element value to the pipeline that the input of `connectionID` routes to.
   func routeHIDElementValue(
     address: ControllerConnectionAddress,
     connectionID: UUID,

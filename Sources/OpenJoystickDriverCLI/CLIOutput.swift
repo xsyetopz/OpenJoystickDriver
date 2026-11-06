@@ -3,6 +3,8 @@ import Dispatch
 import Foundation
 import OpenJoystickDriverKit
 
+/// The writers for everything `ojd` prints: human text, raw values, `--json` documents and
+/// `--plain` records.
 enum CLIOutput {
   /// Prints human text on stdout, with each path under the home folder written as `~`.
   static func stdout(_ message: String = "", terminator: String = "\n") {
@@ -39,8 +41,11 @@ enum CLIOutput {
   /// The members of the envelope and of a Swift value are sorted by name. An embedded
   /// ``OrderedJSON`` keeps its member order and the text of its numbers.
   ///
-  /// `kind` replaces the running command's kind for a command whose output kind depends on its
-  /// options.
+  /// - Parameters:
+  ///   - value: The value to print.
+  ///   - kind: Replaces the running command's kind for a command whose output kind depends on its
+  ///     options.
+  /// - Throws: The failure of ``OrderedJSONEncoder`` to encode `value`.
   static func json(_ value: some Encodable, kind: String? = nil) throws {
     let document = try OrderedJSONEncoder().encode(
       CLIDocument(kind: kind ?? self.kind, value: value)
@@ -49,7 +54,9 @@ enum CLIOutput {
   }
 
   /// Prints `value` as one line of JSON on stdout, with `apiVersion` and `kind`, for a `--json`
-  /// stream. Members are sorted by name.
+  /// stream.
+  ///
+  /// Members are sorted by name.
   static func jsonLine(_ value: some Encodable, kind: String? = nil) throws {
     let document = try OrderedJSONEncoder().encode(
       CLIDocument(kind: kind ?? self.kind, value: value)
@@ -57,15 +64,18 @@ enum CLIOutput {
     raw(document.compact())
   }
 
-  /// Prints `value` as one line of JSON on stdout, without `apiVersion` and `kind`, such as a
-  /// watch line `{type, object}`. Members are sorted by name.
+  /// Prints `value` as one line of JSON on stdout, without `apiVersion` and `kind`, such as a watch
+  /// line `{type, object}`.
+  ///
+  /// Members are sorted by name.
   static func jsonLineWithoutEnvelope(_ value: some Encodable) throws {
     raw(try OrderedJSONEncoder().encode(value).compact())
   }
 
-  /// Prints one tab-separated record per row on stdout, for `--plain`. A tab or a newline character
-  /// (line feed, carriage return, NEL, line and paragraph separators) inside a field becomes a
-  /// space, so a field never splits a row or a record.
+  /// Prints one tab-separated record per row on stdout, for `--plain`.
+  ///
+  /// A tab or a newline character (line feed, carriage return, NEL, line and paragraph separators)
+  /// inside a field becomes a space, so a field never splits a row or a record.
   static func plain(_ rows: [[String]]) {
     for row in rows {
       let fields = row.map { field in
@@ -85,6 +95,7 @@ enum CLIOutput {
   @TaskLocal
   static var capture: CLIOutputCapture?
 
+  /// Writes `message` and `terminator` to `handle`, or to ``capture`` when it is set.
   private static func write(_ message: String, terminator: String, to handle: FileHandle) {
     let text = message + terminator
     if let capture {
@@ -98,7 +109,9 @@ enum CLIOutput {
 /// The `--json` result of a list command, as a Kubernetes list: the listed `items`, and the data
 /// about the list in `metadata`.
 struct CLIList<Item: Encodable, Metadata: Encodable>: Encodable {
+  /// The data about the list.
   let metadata: Metadata
+  /// The listed objects.
   let items: [Item]
 }
 
@@ -106,19 +119,26 @@ struct CLIList<Item: Encodable, Metadata: Encodable>: Encodable {
 struct CLINoMetadata: Encodable {}
 
 extension CLIList where Metadata == CLINoMetadata {
+  /// Creates a list that has only `items`.
   init(items: [Item]) { self.init(metadata: CLINoMetadata(), items: items) }
 }
 
 /// A `--json` document: the keys of `value`, an object, with `apiVersion` and `kind` added.
 private struct CLIDocument<Value: Encodable>: Encodable {
+  /// The `kind` of the document.
   let kind: String
+  /// The object whose keys the document holds.
   let value: Value
 
+  /// The keys that the envelope adds to `value`.
   private enum CodingKeys: String, CodingKey {
+    /// The `apiVersion` key.
     case apiVersion
+    /// The `kind` key.
     case kind
   }
 
+  /// Encodes the value with the `apiVersion` and `kind` keys added.
   func encode(to encoder: any Encoder) throws {
     try value.encode(to: encoder)
     var container = encoder.container(keyedBy: CodingKeys.self)
@@ -127,15 +147,23 @@ private struct CLIDocument<Value: Encodable>: Encodable {
   }
 }
 
+/// Output that ``CLIOutput`` collected instead of writing, safe to append to from any task.
 final class CLIOutputCapture: @unchecked Sendable {
+  /// Guards the two text buffers.
   private let lock = NSLock()
+  /// The collected standard output text.
   private var standardOutputText = ""
+  /// The collected standard error text.
   private var standardErrorText = ""
 
+  /// Everything written to standard output so far.
   var standardOutput: String { lock.withLock { standardOutputText } }
 
+  /// Everything written to standard error so far.
   var standardError: String { lock.withLock { standardErrorText } }
 
+  /// Adds `text` to standard error when `toStandardError` is true, and to standard output
+  /// otherwise.
   func append(_ text: String, toStandardError: Bool) {
     lock.withLock {
       if toStandardError { standardErrorText += text } else { standardOutputText += text }
@@ -143,9 +171,15 @@ final class CLIOutputCapture: @unchecked Sendable {
   }
 }
 
+/// The cleanup that runs when `ojd` receives SIGINT or SIGTERM, or nil when none is set.
 private let cliShutdownCleanup = Locked<(@Sendable () async -> Void)?>(nil)
+/// The dispatch sources that watch for SIGINT and SIGTERM.
 private let cliShutdownSources = Locked<[DispatchSourceSignal]>([])
 
+/// Makes SIGINT and SIGTERM run the current cleanup, flush the output and exit with 128 plus the
+/// signal number.
+///
+/// Does nothing once installed.
 func installCLIShutdownHandlers() {
   guard cliShutdownSources.withLock({ $0.isEmpty }) else { return }
   for signalNumber in [SIGINT, SIGTERM] {
@@ -168,6 +202,12 @@ func installCLIShutdownHandlers() {
   }
 }
 
+/// Runs `body` with `cleanup` as the signal cleanup, and restores the previous cleanup afterwards.
+///
+/// - Parameters:
+///   - cleanup: Runs before the process exits on SIGINT or SIGTERM while `body` runs.
+///   - body: The work that runs with `cleanup` in place.
+/// - Returns: The result of `body`.
 func withCLIShutdownCleanup<T>(
   _ cleanup: @escaping @Sendable () async -> Void,
   _ body: () async throws -> T

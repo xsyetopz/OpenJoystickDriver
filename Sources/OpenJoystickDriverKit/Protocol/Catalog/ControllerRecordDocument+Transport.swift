@@ -1,8 +1,9 @@
 extension ControllerRecordDocument {
-  /// The record-level sections that depend on a mode's transport. Each holds for every mode of the
-  /// record, whether it has one mode or many: `usb` and `route` need raw-USB modes only, `server`
-  /// needs HID modes only, `bluetoothLE` needs modes whose driver reads it, and `usb.endpoints`
-  /// differs from the default endpoints of every mode's family.
+  /// The record-level sections that depend on a mode's transport.
+  ///
+  /// Each holds for every mode of the record, whether it has one mode or many: `usb` and `route`
+  /// need raw-USB modes only, `server` needs HID modes only, `bluetoothLE` needs modes whose driver
+  /// reads it, and `usb.endpoints` differs from the default endpoints of every mode's family.
   func validateTransportSections(codingPath: [any CodingKey]) throws {
     func fail(_ key: String, _ message: String) -> DecodingError {
       .dataCorrupted(

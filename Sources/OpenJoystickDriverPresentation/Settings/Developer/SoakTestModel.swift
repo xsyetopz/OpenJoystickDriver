@@ -3,11 +3,16 @@ import OpenJoystickDriverKit
 
 /// A number the Soak Test sheet asks for; each is an option of `ojd diagnose --soak`.
 enum SoakTestField: CaseIterable {
+  /// The duration in seconds (`--soak`).
   case seconds
+  /// The time between samples in milliseconds (`--interval-ms`).
   case interval
+  /// The resident size limit in MiB (`--rss-limit-mib`).
   case residentLimit
+  /// The footprint limit in MiB (`--footprint-limit-mib`).
   case footprintLimit
 
+  /// The localization key of the field's label.
   var labelKey: String {
     switch self {
     case .seconds: "ui.developer.soakDuration"
@@ -30,10 +35,14 @@ enum SoakTestField: CaseIterable {
 
 /// Why the entered numbers cannot start a soak test.
 enum SoakTestProblem: Error, Equatable {
+  /// The text of the field is not a whole number.
   case notANumber(SoakTestField)
+  /// The number is outside the range of the field.
   case outOfRange(SoakTestField)
+  /// The run would take more samples than the maximum; the value is the sample count.
   case tooManySamples(Int)
 
+  /// The text that the sheet shows for the problem.
   var message: String {
     switch self {
     case .notANumber(let field):
@@ -53,11 +62,16 @@ enum SoakTestProblem: Error, Equatable {
 
 /// The numbers of one soak test, all within the ranges of `ojd diagnose --soak`.
 struct SoakTestSettings: Equatable {
+  /// The duration of the run.
   let seconds: Int
+  /// The time between samples.
   let intervalMilliseconds: Int
+  /// The resident size limit in MiB; 0 sets none.
   let residentLimitMiB: Int
+  /// The footprint limit in MiB.
   let footprintLimitMiB: Int
 
+  /// The limits that the run checks against.
   var policy: RuntimeHealthPolicy {
     RuntimeHealthPolicy(residentLimitMiB: residentLimitMiB, footprintLimitMiB: footprintLimitMiB)
   }
@@ -67,11 +81,16 @@ struct SoakTestSettings: Equatable {
 /// run, which is the shortest the runtime health verdict accepts, one sample per second, no
 /// resident size limit and a 512 MiB footprint limit.
 struct SoakTestForm: Equatable {
+  /// The text of the duration field.
   var seconds = "60"
+  /// The text of the sample interval field.
   var interval = "1000"
+  /// The text of the resident size limit field.
   var residentLimit = "0"
+  /// The text of the footprint limit field.
   var footprintLimit = "512"
 
+  /// Returns the text of a field.
   func text(of field: SoakTestField) -> String {
     switch field {
     case .seconds: seconds
@@ -108,8 +127,11 @@ struct SoakTestForm: Equatable {
   }
 }
 
+/// Where the soak test is.
 enum SoakTestState: Equatable {
+  /// The sheet asks for the numbers.
   case idle
+  /// A run is in progress.
   case running
   /// The `runtime-health` check of `ojd diagnose --soak`, as a pass, warning, failure or skip.
   case finished(ActivityCheckRow)
@@ -123,11 +145,15 @@ final class SoakTestModel: ObservableObject {
   struct Source {
     /// Asks the service once, as `ojd diagnose` does; a stopped or failing service never throws.
     let snapshot: @MainActor () async -> DiagnoseServiceSnapshot
-    /// The service process identifier, or nil when nothing answers. It connects to the service's
-    /// socket, so it runs off the main actor.
+    /// The service process identifier, or nil when nothing answers.
+    ///
+    /// It connects to the service's socket, so it runs off the main actor.
     let processIdentifier: @Sendable () async -> Int32?
+    /// Samples the process with the identifier for the length of time the settings give, and
+    /// returns its health.
     let sample: @Sendable (Int32, SoakTestSettings) async throws -> RuntimeHealthSummary
 
+    /// Returns the source that reads the running service through `gateway`.
     static func service(gateway: any ApplicationServiceGateway) -> Self {
       Self(
         snapshot: { await ActivityDiagnosticsChecks.serviceSnapshot(gateway) },
@@ -146,16 +172,22 @@ final class SoakTestModel: ObservableObject {
     }
   }
 
+  /// The text fields of the sheet.
   @Published
   var form = SoakTestForm()
+  /// Where the test is.
   @Published
   private(set) var state = SoakTestState.idle
 
+  /// Where the model reads the service from.
   private let source: Source
+  /// The run in progress, or nil for none.
   private var task: Task<Void, Never>?
 
+  /// Creates the model on a source.
   init(source: Source) { self.source = source }
 
+  /// Whether a run is in progress.
   var isRunning: Bool { state == .running }
 
   /// The first problem with the entered numbers; nil when they can start a run.

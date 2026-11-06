@@ -18,8 +18,10 @@ extension RemappingProfile {
 
 extension ApplicationServiceRemappingSnapshotPayload {
   /// Whether an active profile posts keyboard, pointer or scroll events, so Post Event access is
-  /// needed. An active profile without its record is an incomplete snapshot and counts as
-  /// requiring it, so the answer never claims output is safe to dispatch.
+  /// needed.
+  ///
+  /// An active profile without its record is an incomplete snapshot and counts as requiring it, so
+  /// the answer never claims output is safe to dispatch.
   public var requiresPostEventAccess: Bool {
     activeProfiles.contains { activeProfile in
       guard let profile = profiles.first(where: { $0.id == activeProfile.profileID }) else {

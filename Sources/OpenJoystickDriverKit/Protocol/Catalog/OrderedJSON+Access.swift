@@ -19,15 +19,18 @@ extension OrderedJSON {
     return text
   }
 
-  /// A JSON integer: digits with an optional minus sign. A number written with a fraction or an
-  /// exponent, such as `1.0` or `1e3`, a boolean, and a string are not.
+  /// A JSON integer: digits with an optional minus sign.
+  ///
+  /// A number written with a fraction or an exponent, such as `1.0` or `1e3`, a boolean, and a
+  /// string are not.
   var integer: Int? {
     guard case .number(let text) = self else { return nil }
     return Int(text)
   }
 
-  /// The value as `JSONSerialization` reads it, for code that reads typed fields. A number
-  /// becomes an `NSNumber` there, so the result is never written back as record text.
+  /// The value as `JSONSerialization` reads it, for code that reads typed fields.
+  ///
+  /// A number becomes an `NSNumber` there, so the result is never written back as record text.
   func foundationValue() throws -> Any {
     try JSONSerialization.jsonObject(
       with: Data(compact().utf8),
@@ -58,11 +61,13 @@ extension OrderedJSON {
     }
   }
 
+  /// The sign, significant digits and power of ten of a JSON number.
   private typealias CanonicalNumber = (negative: Bool, digits: String, exponent: Int)
 
   /// The sign, significant digits and power of ten of the JSON number `text`, with no leading or
-  /// trailing zero in the digits, so numbers of the same value give the same result. Zero has no
-  /// sign and no digits. Nil when the exponent does not fit an `Int`.
+  /// trailing zero in the digits, so numbers of the same value give the same result.
+  ///
+  /// Zero has no sign and no digits. Nil when the exponent does not fit an `Int`.
   private static func canonicalNumber(_ text: String) -> CanonicalNumber? {
     var rest = Substring(text)
     let negative = rest.hasPrefix("-")

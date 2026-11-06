@@ -1,17 +1,26 @@
 extension ControllerRecordDocument {
   /// A startup write that names one of the family's packets (`defaults.session.namedPackets`).
+  ///
   /// Only a protocol description has them.
   struct StartupPacketReference: Equatable, Sendable {
+    /// The ID of the named packet.
     let id: String
+    /// The condition under which the packet is sent.
     let condition: StartupWriteCondition
   }
 
   /// One startup write of either format, or a reference to a named packet.
   struct StartupWrite: Decodable {
+    /// The HID report write; nil unless the entry has a `report`.
     let hid: RecordStartupWrite?
+    /// The raw-USB write; nil unless the entry is a raw-USB packet.
     let usb: USBStartupWrite?
+    /// The named packet reference; nil unless the entry has a `packet`.
     let packet: StartupPacketReference?
 
+    /// Decodes a `packet` reference, a HID write with a `report`, or a raw-USB write, together with
+    /// the optional `variants` and `when` conditions; an unknown key for the entry's kind, or a
+    /// write its type rejects, is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       let condition = try StartupWriteCondition.decode(from: container, decoder: decoder)
@@ -54,12 +63,15 @@ extension ControllerRecordDocument {
       }
     }
 
+    /// Reads the `bytes` hex string of a startup write.
     static func bytes(
       _ container: KeyedDecodingContainer<DocumentKey>
     ) throws -> [UInt8] {
       try HexBytes.decode(container, for: "bytes", what: "startup")
     }
 
+    /// Reads a HID startup write with its `condition`; throws when a field is missing or outside
+    /// its range.
     static func hidWrite(
       _ container: KeyedDecodingContainer<DocumentKey>,
       condition: StartupWriteCondition
@@ -100,6 +112,8 @@ extension ControllerRecordDocument {
       )
     }
 
+    /// Reads a raw-USB startup write with its `condition`; throws when a field is missing or
+    /// outside its range.
     static func usbWrite(
       _ container: KeyedDecodingContainer<DocumentKey>,
       condition: StartupWriteCondition

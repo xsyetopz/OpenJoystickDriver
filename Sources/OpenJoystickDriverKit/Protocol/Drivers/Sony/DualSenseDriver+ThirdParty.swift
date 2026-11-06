@@ -2,21 +2,32 @@ import Foundation
 
 /// SDL's `k_EPS5FeatureReportIdCapabilities`; a valid reply is 48 bytes with `0x28` at byte 2.
 let dualSenseCapabilitiesReportID: UInt8 = 0x03
+/// The length of a capability reply in bytes.
 let dualSenseCapabilitiesReportLength = 48
+/// The marker byte at offset 2 of a valid capability reply.
 let dualSenseCapabilitiesMarker: UInt8 = 0x28
 /// SDL's `PS5StatePacketAlt_t` is 48 bytes; SDL checks a dongle's sequence only in a full packet.
 let dualSenseAlternatePayloadLength = 48
 
-/// The features of a DualSense-protocol controller. Sony controllers have all of them;
-/// third-party controllers report theirs through SDL's capability probe.
+/// The features of a DualSense-protocol controller.
+///
+/// Sony controllers have all of them; third-party controllers report theirs through SDL's
+/// capability probe.
 struct DualSenseFeatures: OptionSet {
+  /// The bit set of the features.
   let rawValue: UInt8
 
+  /// The controller has motion sensors.
   static let sensors = Self(rawValue: 0x01)
+  /// The controller has a lightbar.
   static let lightbar = Self(rawValue: 0x02)
+  /// The controller has vibration motors.
   static let vibration = Self(rawValue: 0x04)
+  /// The controller has a touchpad.
   static let touchpad = Self(rawValue: 0x08)
+  /// The controller has a player indicator.
   static let playerIndicator = Self(rawValue: 0x10)
+  /// Every feature.
   static let all: Self = [.sensors, .lightbar, .vibration, .touchpad, .playerIndicator]
 
   /// Decodes SDL's capability reply: byte 4 carries sensors `0x02`, lightbar `0x04`, vibration
@@ -33,11 +44,14 @@ struct DualSenseFeatures: OptionSet {
     self = features
   }
 
+  /// Creates a feature set from its raw bits.
   init(rawValue: UInt8) { self.rawValue = rawValue }
 }
 
 /// A controller that speaks the DualSense protocol but is not Sony's, which its record marks with
-/// the `ThirdParty` maker. It is handled as SDL's `HIDAPI_DriverPS5` handles non-Sony vendor IDs.
+/// the `ThirdParty` maker.
+///
+/// It is handled as SDL's `HIDAPI_DriverPS5` handles non-Sony vendor IDs.
 ///
 /// SDL reads capability report `0x03`. A valid reply lists the controller's features and
 /// switches it to SDL's alternate input report, which moves the touch contacts to payload bytes
@@ -88,8 +102,10 @@ extension DualSenseDriver {
   }
 
   /// SDL's dongle check: a dongle repeats its last packet sequence while no controller is
-  /// connected. The first packet only anchors the sequence. A repeat for 500 ms disconnects the
-  /// controller; a new sequence connects it. Returns whether the report carries live input.
+  /// connected.
+  ///
+  /// The first packet only anchors the sequence. A repeat for 500 ms disconnects the controller; a
+  /// changed sequence connects it. Returns whether the report carries live input.
   func acceptsDongleReport(_ payload: [UInt8], receivedAt: UInt64) -> Bool {
     guard thirdParty?.isDongle == true, payload.count >= dualSenseAlternatePayloadLength else {
       return true
@@ -110,6 +126,8 @@ extension DualSenseDriver {
     return true
   }
 
+  /// Records whether the dongle has a controller connected and queues the change; a disconnect
+  /// resets the input state and the sensor clock.
   private func setDongleConnected(_ connected: Bool) {
     dongleConnected = connected
     pendingConnectionState = connected ? .connected : .disconnected
@@ -119,6 +137,7 @@ extension DualSenseDriver {
     }
   }
 
+  /// Forgets the dongle's packet sequence and connection, so the next report anchors it again.
   func resetDonglePresence() {
     lastPacketSequence = nil
     lastLiveReportAt = nil

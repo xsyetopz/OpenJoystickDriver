@@ -7,7 +7,9 @@ import SwifterKit
 /// exclusive Microsoft GIP ownership case. It does not define the scope of the
 /// generic `OpenJoystickDriverUSB` host facade.
 public enum USBDriverKitExtensionConfiguration {
+  /// The bundle identifier of the DriverKit transport extension.
   public static let extensionID = "com.openjoystickdriver.XboxUSBDevice"
+  /// The Microsoft USB vendor ID.
   public static let microsoftVendorID: UInt16 = 0x045E
   /// The Microsoft product IDs in Apple's `transport.usb` grant; the extension matches no others.
   public static let microsoftProductIDs: [UInt16] = [
@@ -33,6 +35,7 @@ public enum USBDriverKitExtensionConfiguration {
     models.filter { !isGranted($0) }.sorted()
   }
 
+  /// Tells whether the entitlement grant covers `model`.
   private static func isGranted(_ model: ControllerModelID) -> Bool {
     model.vendorID == microsoftVendorID && microsoftProductIDs.contains(model.productID)
   }

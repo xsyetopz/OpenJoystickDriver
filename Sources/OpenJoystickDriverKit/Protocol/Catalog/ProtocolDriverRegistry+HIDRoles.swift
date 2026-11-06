@@ -12,8 +12,10 @@ enum HIDConnectionRole: Equatable {
 }
 
 extension ProtocolDriverRegistry {
-  /// Exact catalog models whose family declares HID roles. The HID backend reports each
-  /// connection of these models as disconnected on its own, not only once its location empties.
+  /// Exact catalog models whose family declares HID roles.
+  ///
+  /// The HID backend reports each connection of these models as disconnected on its own, not only
+  /// once its location empties.
   public var hidRoleModels: [ControllerModelID] {
     hidModels.filter { record(for: $0).map(Self.declaresHIDRoles) == true }
   }
@@ -54,6 +56,7 @@ extension ProtocolDriverRegistry {
   /// one of them.
   func declaresHIDRoles(_ device: PhysicalDevice) -> Bool { hidRoleRecord(of: device) != nil }
 
+  /// The catalog record of `device` when its family declares HID roles; nil otherwise.
   private func hidRoleRecord(of device: PhysicalDevice) -> DeviceRuntimeProfile? {
     guard let vendorID = device.vendorID, let productID = device.productID,
       let record = record(for: ControllerModelID(vendorID: vendorID, productID: productID)),
@@ -62,16 +65,15 @@ extension ProtocolDriverRegistry {
     return record
   }
 
-  /// The driver-owned assembly policy a binding's catalog row names.
+  /// The driver-owned assembly policy that a binding's catalog row names.
   ///
-  /// Nil means each protocol role is its own logical controller. The policy vocabulary is empty
-  /// (``ControllerAssemblyPolicy``), so today this is nil for every row: discovery consumes the
-  /// selection, and no row can produce one until a row with multi-interface evidence adds the
-  /// first policy.
+  /// Nil means each protocol role is its own logical controller. ``ControllerAssemblyPolicy`` has
+  /// no cases, so no catalog row names a policy and the result is always nil.
   func assemblyPolicy(for binding: ProtocolBinding) -> ControllerAssemblyPolicy? {
     binding.record?.assemblyPolicy
   }
 
+  /// Whether the family of `record` is one of the Valve families that declare HID roles.
   private static func declaresHIDRoles(_ record: DeviceRuntimeProfile) -> Bool {
     [.valveSteamController, .valveSteamTriton, .valveSteamDeck].contains(record.physicalProtocolID)
   }

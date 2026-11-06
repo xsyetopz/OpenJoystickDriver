@@ -156,7 +156,9 @@ extension EndpointServer {
     }
   }
 
-  /// The session of a signed client, or nil after recording the refusal. Call with `lock` held.
+  /// The session of a signed client, or nil after recording the refusal.
+  ///
+  /// Call with `lock` held.
   private func clientSession(
     _ client: EndpointClient,
     scopes: [EndpointScope],
@@ -175,7 +177,9 @@ extension EndpointServer {
     return AccessConnection(identity: client.identity, scopes: scopes)
   }
 
-  /// The session of a token client, or nil after recording the refusal. Call with `lock` held.
+  /// The session of a token client, or nil after recording the refusal.
+  ///
+  /// Call with `lock` held.
   ///
   /// The refusal names the token only when the proof is right, so that a guessed name is not
   /// recorded as that token's.
@@ -217,7 +221,9 @@ extension EndpointServer {
 
   /// The next request, one of the `accepted` kinds; nil after the client closed, the timeout
   /// passed, or a line that is refused: see ``EndpointHeader`` for `E1009` to `E1011`, and `E1003`
-  /// for a line that is not a request. With no `accepted` kind, any request is refused.
+  /// for a line that is not a request.
+  ///
+  /// With no `accepted` kind, any request is refused.
   private func readRequest(
     _ connection: EndpointConnection,
     accepting accepted: [String]
@@ -245,11 +251,15 @@ extension EndpointServer {
 
   /// What a token client signs: the connection's nonce, and on the WebSocket its origin and port.
   struct Challenge {
+    /// The random value that the server sent for this connection.
     let nonce: String
+    /// The `Origin` of the connection, empty when it has none.
     let origin: String
+    /// The port the connection reached, as text.
     let port: String
   }
 
+  /// An `InvalidMessage` error with `message`.
   static func invalid(_ message: String) -> EndpointError {
     EndpointError(code: .invalidMessage, message: message)
   }

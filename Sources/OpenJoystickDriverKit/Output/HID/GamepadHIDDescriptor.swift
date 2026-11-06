@@ -95,13 +95,21 @@ public enum GamepadHIDDescriptor {
     /// Null / neutral — no direction pressed. Value below Logical Minimum,
     /// which the HID system interprets as the null state.
     case neutral = 0
+    /// Up.
     case north = 1
+    /// Up and right.
     case northEast = 2
+    /// Right.
     case east = 3
+    /// Down and right.
     case southEast = 4
+    /// Down.
     case south = 5
+    /// Down and left.
     case southWest = 6
+    /// Left.
     case west = 7
+    /// Up and left.
     case northWest = 8
   }
 
@@ -113,27 +121,44 @@ public enum GamepadHIDDescriptor {
   /// these bits onto its own layout. The generic `1209:4A4F` order is in the
   /// ``GamepadHIDDescriptor`` documentation.
   public enum ButtonBit: Int {
+    /// The A button.
     case a = 0  // Xbox A
+    /// The B button.
     case b = 1  // Xbox B
+    /// The X button.
     case x = 2  // Xbox X
+    /// The Y button.
     case y = 3  // Xbox Y
+    /// The left bumper.
     case leftBumper = 4  // LB
+    /// The right bumper.
     case rightBumper = 5  // RB
+    /// The left stick click.
     case leftStick = 6  // LS click / L3
+    /// The right stick click.
     case rightStick = 7  // RS click / R3
+    /// The Start or Menu button.
     case start = 8  // Start / Menu
+    /// The Back or View button.
     case back = 9  // Back / View
+    /// The Guide button.
     case guide = 10  // Xbox / Guide
+    /// The D-pad up button.
     case dpadUp = 11
+    /// The D-pad down button.
     case dpadDown = 12
+    /// The D-pad left button.
     case dpadLeft = 13
+    /// The D-pad right button.
     case dpadRight = 14
+    /// The Share button.
     case share = 15
   }
 
   // MARK: - D-pad button bitmask helper
 
-  /// Returns the button bitmask bits for D-pad directions (bits 11–14).
+  /// Returns the button bitmask bits for D-pad directions (bits 11–14 ).
+  ///
   /// Used alongside the hat switch for dual encoding.
   public static func dpadButtonBits(for hat: Hat) -> UInt32 {
     switch hat {

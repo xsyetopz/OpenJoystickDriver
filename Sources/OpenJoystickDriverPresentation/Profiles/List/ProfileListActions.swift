@@ -7,17 +7,29 @@
   import UniformTypeIdentifiers
 
   extension ProfilesView {
+    /// Selects the first profile when none is selected.
     func selectFirstProfileIfNeeded() {
       if selectedProfileID == nil { selectedProfileID = profiles.first?.id }
     }
 
+    /// Asks the runtime to refresh the remapping snapshot.
     func refreshProfiles() { Task { @MainActor in await viewModel.refresh() } }
 
+    /// Selects the profile through the editor's discard check; selecting the selected profile does
+    /// nothing.
+    ///
+    /// - Parameter profileID: The profile to select.
     func selectProfile(_ profileID: UUID) {
       guard profileID != selectedProfileID else { return }
       requestProfileAction(.select(profileID))
     }
 
+    /// Deletes a damaged profile file or resets an unusable library through the service, closes the
+    /// alert and shows a failure in the error banner.
+    ///
+    /// - Parameters:
+    ///   - issueID: The identifier of the profile issue.
+    ///   - resetLibrary: Whether to reset the library instead of deleting the damaged file.
     func recoverProfileIssue(_ issueID: UUID, resetLibrary: Bool) {
       activeAlert = nil
       Task { @MainActor in
@@ -32,14 +44,26 @@
       }
     }
 
+    /// Records whether the editor holds unsaved edits in the screen and the main window.
+    ///
+    /// A clean editor also drops the profile preserved from a deleted selection.
+    ///
+    /// - Parameter dirty: Whether the editor holds unsaved edits.
     func setEditorDirty(_ dirty: Bool) {
       profileEditorTransition.setDirty(dirty)
       if !dirty { preservedEditorProfile = nil }
       navigation.setProfilesEditorDirty(dirty)
     }
 
+    /// Whether the editor holds unsaved edits.
     var editorHasUnsavedChanges: Bool { profileEditorTransition.isDirty }
 
+    /// Requests an editor action; it runs at once when the edits are clean, and else the discard
+    /// alert asks first.
+    ///
+    /// Does nothing while profile actions are blocked.
+    ///
+    /// - Parameter action: The action to request.
     func requestProfileAction(_ action: ProfileEditorAction) {
       guard !isProfileActionBlocked else { return }
       switch profileEditorTransition.request(action) {
@@ -49,6 +73,11 @@
       }
     }
 
+    /// Runs an editor action: selects the profile, or imports it through the profile library.
+    ///
+    /// Does nothing while profile actions are blocked.
+    ///
+    /// - Parameter action: The action to run.
     func performProfileAction(_ action: ProfileEditorAction) {
       guard !isProfileActionBlocked else { return }
       switch action {
@@ -65,17 +94,27 @@
       }
     }
 
+    /// Selects the profile that a create or import just added; selecting the selected profile does
+    /// nothing.
+    ///
+    /// - Parameter profileID: The profile to select.
     func selectCompletedProfile(_ profileID: UUID) {
       guard profileID != selectedProfileID else { return }
       preservedEditorProfile = nil
       selectedProfileID = profileID
     }
 
+    /// Drops the action that waited for the person to confirm discarding the edits, and closes the
+    /// alert.
     func cancelPendingProfileAction() {
       profileEditorTransition.cancelPendingAction()
       activeAlert = nil
     }
 
+    /// Returns whether the profile is active in the snapshot that the screen shows.
+    ///
+    /// - Parameter profile: The profile to check.
+    /// - Returns: Whether the profile is active in the snapshot that the screen shows.
     func isActive(_ profile: RemappingProfile) -> Bool {
       let snapshot: ApplicationServiceRemappingSnapshotPayload?
       switch viewModel.remappingState {
@@ -86,8 +125,10 @@
       return snapshot.activeProfiles.contains { $0.profileID == profile.id }
     }
 
-    /// Adds `profile` to the library: a new profile from the creation sheet, or a copy from the
+    /// Adds `profile` to the library: a profile from the creation sheet, or a copy from the
     /// Duplicate sheet.
+    ///
+    /// - Parameter profile: The profile to add.
     func createProfile(_ profile: RemappingProfile) {
       guard !isProfileActionBlocked else { return }
       let request = RuntimeMutationRequest(operation: .create(profileID: profile.id))
@@ -98,6 +139,12 @@
       }
     }
 
+    /// Deletes the profile through the profile library after the person confirmed the alert.
+    ///
+    /// If the deleted profile is the selected one, its unsaved edits are dropped, and they come
+    /// back when the delete fails.
+    ///
+    /// - Parameter profileID: The profile to delete.
     func deleteProfile(_ profileID: UUID) {
       guard !isProfileActionBlocked else { return }
       activeAlert = nil
@@ -116,10 +163,17 @@
       }
     }
 
+    /// Asks where to save the profile and writes it there.
+    ///
+    /// - Parameter profile: The profile to export.
     func exportProfile(_ profile: RemappingProfile) { screen.exportProfile(profile) }
 
     /// Imports a profile chosen through the screen model, from the Profiles screen or the File
     /// menu.
+    ///
+    /// An import made while profile actions are blocked shows the import-blocked message instead.
+    ///
+    /// - Parameter profile: The profile that was read from the chosen file.
     func receiveChosenImportProfile(_ profile: RemappingProfile) {
       screen.chosenImportProfile = nil
       guard !isProfileActionBlocked else {
@@ -129,6 +183,10 @@
       requestProfileAction(.importProfile(profile))
     }
 
+    /// Follows the profile library's request state: settles the request in flight with the main
+    /// window and the editor, and settles the latest request once its state is not saving.
+    ///
+    /// - Parameter mutation: The state of the latest request.
     func handleProfileMutation(_ mutation: RuntimeMutationState) {
       reconcileActiveProfileMutation()
       if case .saving = mutation { return }
@@ -148,6 +206,13 @@
       }
     }
 
+    /// Settles the result of a profile request.
+    ///
+    /// A success of a create or an import selects the new profile or refreshes the editor, and a
+    /// success of a delete of the selected profile selects the first profile. A conflict, failure
+    /// or rejection of a profile action shows its message in the error banner.
+    ///
+    /// - Parameter result: How the request ended.
     func handleProfileMutationResult(_ result: RuntimeMutationResult) {
       switch result {
       case .succeeded(let mutationID, let operation):
@@ -194,6 +259,12 @@
       }
     }
 
+    /// Releases the main window's and the editor's ownership of a request that ended.
+    ///
+    /// - Parameters:
+    ///   - request: The request that ended.
+    ///   - succeeded: Whether it succeeded.
+    /// - Returns: Whether this screen owned the request and what to do with the editor.
     func finishProfileMutation(
       _ request: RuntimeMutationRequest,
       succeeded: Bool
@@ -207,6 +278,12 @@
       return finish
     }
 
+    /// Takes the main window's and the editor's ownership of a request.
+    ///
+    /// - Parameters:
+    ///   - request: The request to start.
+    ///   - restoresDirtyOnFailure: Whether a failure brings the unsaved edits back.
+    /// - Returns: Whether the screen may start the request.
     func beginProfileMutation(
       _ request: RuntimeMutationRequest,
       restoresDirtyOnFailure: Bool = false
@@ -225,6 +302,7 @@
       return true
     }
 
+    /// Settles the request that the profile library reports as in flight, if there is one.
     func reconcileActiveProfileMutation() {
       guard let operation = library.activeMutationOperation,
         let mutationID = library.activeMutationID
@@ -232,11 +310,20 @@
       _ = reconcileProfileMutation(RuntimeMutationRequest(operation: operation, id: mutationID))
     }
 
+    /// Settles a request that the profile library reports against what the main window and the
+    /// editor own.
+    ///
+    /// - Parameter request: The request in flight.
+    /// - Returns: Whether both accept it.
     func reconcileProfileMutation(_ request: RuntimeMutationRequest) -> Bool {
       guard navigation.reconcileProfilesEditorMutation(request) else { return false }
       return profileEditorTransition.reconcileRuntimeMutation(request).isAccepted
     }
 
+    /// Returns whether the operation is a profile action: not an update from the editor.
+    ///
+    /// - Parameter operation: The operation of a request.
+    /// - Returns: Whether the operation is a profile action: not an update from the editor.
     func isProfileAction(_ operation: RuntimeMutationOperation) -> Bool {
       switch operation {
       case .create, .delete, .activate, .deactivate, .importProfile: return true
@@ -244,28 +331,38 @@
       }
     }
 
+    /// Whether a request runs or the editor is blocked.
     var isMutationActive: Bool {
       library.activeMutationOperation != nil || profileEditorTransition.isEditingBlocked
     }
 
+    /// Whether profile creation, import, delete and the like must wait.
     var isProfileActionBlocked: Bool {
       screen.isActionBlocked(library: library, runtime: viewModel)
     }
 
+    /// Whether the snapshot lists damaged profiles or an unusable library.
     var profileLibraryNeedsRecovery: Bool { !(currentSnapshot?.profileIssues.isEmpty ?? true) }
 
+    /// The connected controllers, or none while the status is not loaded.
     var connectedDevices: [ApplicationServiceDeviceDescription] {
       guard case .available(let status) = viewModel.statusState else { return [] }
       return status.devices
     }
   }
 
+  /// The alerts of the Profiles screen.
   enum ProfilesAlert: Identifiable {
+    /// Asks to delete the profile.
     case delete(UUID)
+    /// Asks to discard the unsaved edits.
     case discard(UUID)
+    /// Asks to delete the damaged profile file of the issue.
     case deleteDamagedProfile(UUID)
+    /// Asks to reset the library of the issue.
     case resetLibrary(UUID)
 
+    /// A string that tells the alerts apart, including the profile or issue.
     var id: String {
       switch self {
       case .delete(let profileID): return "delete-\(profileID.uuidString)"
@@ -276,8 +373,11 @@
     }
   }
 
+  /// What the profile list has selected.
   enum ProfileListSelection: Hashable {
+    /// A profile.
     case profile(UUID)
+    /// A damaged profile or unusable library.
     case issue(UUID)
   }
 

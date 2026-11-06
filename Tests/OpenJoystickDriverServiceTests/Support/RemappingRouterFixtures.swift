@@ -230,7 +230,7 @@ final class RemappingTickerProbe: @unchecked Sendable {
       defer { pendingSleeps.removeAll() }
       return pendingSleeps
     }
-    sleeps.forEach { $0.continuation.resume() }
+    for sleep in sleeps { sleep.continuation.resume() }
   }
 }
 

@@ -1,9 +1,13 @@
 import Foundation
 
+/// Error for a source or target operand of `ojd binding` that does not parse.
 public enum RemappingCommandValueError: Error, Equatable, LocalizedError, Sendable {
+  /// The source operand is invalid; the value is the operand.
   case invalidSource(String)
+  /// The target operand is invalid; the value is the operand.
   case invalidDestination(String)
 
+  /// Message that names the operand that does not parse.
   public var errorDescription: String? {
     switch self {
     case .invalidSource(let raw): "Invalid source '\(raw)'."
@@ -12,11 +16,15 @@ public enum RemappingCommandValueError: Error, Equatable, LocalizedError, Sendab
   }
 }
 
-/// Parses the colon-separated source and target operands of `ojd binding`. Every part that is an
-/// enumerated value (control, axis, direction, key, modifier, surface, motor) is the lowercase
-/// kebab-case form of its profile value (`CommandLineName`), such as `axis:left-stick-x:negative`.
-/// Fixed words (`button`, `key`, `mods=`) and numbers are written as they are.
+/// Parses the colon-separated source and target operands of `ojd binding`.
+///
+/// Every part that is an enumerated value (control, axis, direction, key, modifier, surface, motor)
+/// is the lowercase kebab-case form of its profile value (`CommandLineName`), such as
+/// `axis:left-stick-x:negative`. Fixed words (`button`, `key`, `mods=`) and numbers are written as
+/// they are.
 public enum RemappingCommandValueParser {
+  /// Parses a source operand.
+  /// - Throws: ``RemappingCommandValueError/invalidSource(_:)`` when no source form matches.
   public static func source(_ raw: String) throws -> RemappingSource {
     let parts = raw.split(separator: ":", omittingEmptySubsequences: false).map(String.init)
     if parts.count == 2, parts[0] == "button",
@@ -90,6 +98,11 @@ public enum RemappingCommandValueParser {
     throw RemappingCommandValueError.invalidSource(raw)
   }
 
+  /// Parses a target operand.
+  ///
+  /// Keyboard modifiers follow `mods=` as a nonempty comma-separated list without repeats. Physical
+  /// intensities, positions and strengths are numbers from 0 to 1.
+  /// - Throws: ``RemappingCommandValueError/invalidDestination(_:)`` when no target form matches.
   public static func destination(_ raw: String) throws -> RemappingDestination {
     let parts = raw.split(separator: ":", omittingEmptySubsequences: false).map(String.init)
     if parts.count == 3, parts[0] == "gamepad", parts[1] == "axis",
@@ -186,6 +199,7 @@ public enum RemappingCommandValueParser {
     throw RemappingCommandValueError.invalidDestination(raw)
   }
 
+  /// Parses a finite number from 0 to 1, or returns `nil`.
   private static func boundedUnit(_ raw: String) -> Double? {
     guard let value = Double(raw), value.isFinite, (0...1).contains(value) else { return nil }
     return value

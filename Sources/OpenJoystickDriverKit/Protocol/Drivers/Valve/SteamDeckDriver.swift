@@ -1,6 +1,8 @@
 import Foundation
 
+/// The message type of a Steam Deck state report.
 let steamDeckStateMessageID: UInt8 = 0x09
+/// The command byte of the simple rumble feature report.
 let steamDeckTriggerRumbleCommand: UInt8 = 0xEB
 
 /// Driver for the Steam Deck's built-in controller (Neptune).
@@ -11,11 +13,15 @@ let steamDeckTriggerRumbleCommand: UInt8 = 0xEB
 /// feature reports with report ID 0, as on the wired Steam Controller. The IMU runs by default.
 public final class SteamDeckDriver: PhysicalProtocolDriver {
 
+  /// The state after the latest state report.
   var state = ControllerState.neutral
+  /// Decodes the IMU sample of each state report.
   var motionSamples = SteamMotionSamples(layout: .steamDeck)
 
+  /// Creates the driver for the Steam Deck's built-in controller.
   public init() {}
 
+  /// The controls of the description.
   public var capabilities: ControllerCapabilities {
     PhysicalProtocolID.valveSteamDeck.describedControls
   }
@@ -28,11 +34,13 @@ public final class SteamDeckDriver: PhysicalProtocolDriver {
     )
   }
 
+  /// No default colour: the controller has no light to restore.
   public var defaultColor: ControllerColor? { nil }
 
-  /// The description's keep-alive interval is OJD's watchdog feed period. SDL feeds after 200
-  /// update passes and Linux disables the watchdog instead; the Deck reports every 4 ms, so one
-  /// second stays well inside SDL's cadence.
+  /// The description's keep-alive interval is OJD's watchdog feed period.
+  ///
+  /// SDL feeds after 200 update passes and Linux disables the watchdog instead; the Deck reports
+  /// every 4 ms, so one second stays well inside SDL's cadence.
   public var sessionPlan: DriverSessionPlan {
     DriverSessionPlan(
       keepAliveChannels: [.hid]
@@ -42,14 +50,17 @@ public final class SteamDeckDriver: PhysicalProtocolDriver {
   /// The Deck's controller is built in, so it has no logical connection state.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
+  /// Clears the state and the motion samples, so the next report starts from neutral.
   public func resetProtocolState() {
     state = .neutral
     motionSamples.reset()
   }
 
   /// SDL `DisableDeckLizardMode`: clear the digital mappings, then trackpad mouse and haptic click
-  /// off. Linux `steam_set_lizard_mode` also turns off the watchdog that restores lizard mode
-  /// while Steam is not running.
+  /// off.
+  ///
+  /// Linux `steam_set_lizard_mode` also turns off the watchdog that restores lizard mode while
+  /// Steam is not running.
   public func activationWrites() -> [PhysicalOutputWrite] {
     PhysicalProtocolID.valveSteamDeck.protocolDescription.activationWrites(over: nil)
   }
@@ -87,6 +98,7 @@ public final class SteamDeckDriver: PhysicalProtocolDriver {
     return PhysicalOutputPlan(writes: [.hidFeature(Self.featureReport(rumble))])
   }
 
+  /// A 64-byte feature report with report ID 0 that carries `command`, zero-padded.
   static func featureReport(_ command: [UInt8]) -> PhysicalHIDOutputReport {
     var bytes = [UInt8](repeating: 0, count: steamControllerReportLength)
     bytes.replaceSubrange(0..<command.count, with: command)

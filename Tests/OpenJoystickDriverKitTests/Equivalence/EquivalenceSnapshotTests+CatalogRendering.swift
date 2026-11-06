@@ -28,7 +28,8 @@ extension EquivalenceSnapshotCatalogTests {
   }
 
   private static func field(_ field: ReportBitField) -> String {
-    "\(field.byte)&\(String(format: "%02X", field.mask))"
+    let mask = ((1 << field.bitSize) - 1) << (field.bitOffset % 8)
+    return "\(field.bitOffset / 8)&\(String(format: "%02X", mask))"
   }
 
   private static func layoutLines(_ layout: ControllerInputLayout) -> [String] {
@@ -44,8 +45,9 @@ extension EquivalenceSnapshotCatalogTests {
     }
     for axis in layout.axes {
       lines.append(
-        "inputLayout axis \(axis.control.rawValue) byte=\(axis.byte) bits=\(axis.bits)"
-          + " signed=\(axis.isSigned) range=\(axis.minimum)...\(axis.maximum)"
+        "inputLayout axis \(axis.control.rawValue) byte=\(axis.field.bitOffset / 8)"
+          + " bits=\(axis.field.bitSize) signed=\(axis.field.isSigned)"
+          + " range=\(axis.field.minimum)...\(axis.field.maximum)"
           + " inverted=\(axis.isInverted)"
       )
     }
@@ -68,7 +70,7 @@ extension EquivalenceSnapshotCatalogTests {
     for (name, trigger) in [("left", layout.leftTrigger), ("right", layout.rightTrigger)] {
       guard let trigger else { continue }
       lines.append(
-        "inputLayout trigger \(name) byte=\(trigger.byte.map(String.init) ?? "-")"
+        "inputLayout trigger \(name) byte=\(trigger.analog.map { String($0.bitOffset / 8) } ?? "-")"
           + " button=\(trigger.button.map(field) ?? "-")"
       )
     }
@@ -171,7 +173,9 @@ extension EquivalenceSnapshotCatalogTests {
     if let template = profile.rumbleTemplate {
       lines.append(rumbleTemplateLine(template))
     }
-    if let layout = profile.inputLayout { lines += layoutLines(layout) }
+    if let layouts = profile.inputLayouts {
+      for layout in layouts.layouts { lines += layoutLines(layout) }
+    }
     if let uuid = profile.bluetoothLEVibrationCharacteristic {
       lines.append("bluetoothLEVibrationCharacteristic \(uuid)")
     }
@@ -182,8 +186,10 @@ extension EquivalenceSnapshotCatalogTests {
     return lines
   }
 
-  /// The snapshot spelled a `HIDDescriptor` record's usage map as the `usageLayout` parameter
-  /// that selected it. Each name is a record that declares the layout.
+  /// The records whose HID usage map the snapshot renders as `usageLayout=<name>`.
+  ///
+  /// Each name is a record that declares the layout; `usageLayoutEntries` renders the first one
+  /// whose map equals the profile's.
   private static let legacyUsageLayouts: [(name: String, vendorID: UInt16, productID: UInt16)] = [
     ("Wr007", 0x11C1, 0x5600), ("ScufEnvision", 0x2E95, 0x434D),
     ("ZRzBrakeLeft", 0x2DC8, 0x301B), ("DragonRise", 0x0079, 0x0006),

@@ -2,7 +2,10 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd log export` command: writes the last lines of each service log to a file, with the home
+/// folder shown as `~`.
 struct LogExportCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "export",
     abstract: CLILocalized.text(
@@ -10,6 +13,7 @@ struct LogExportCommand: AsyncParsableCommand {
     )
   )
 
+  /// The file to write.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.log.export.file"),
@@ -18,6 +22,7 @@ struct LogExportCommand: AsyncParsableCommand {
   )
   var file: String
 
+  /// `--lines`: how many of the last lines of each log to export.
   @Option(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
@@ -27,6 +32,7 @@ struct LogExportCommand: AsyncParsableCommand {
   )
   var lines = ApplicationServiceLogService.defaultExportLines
 
+  /// `-f`, `--force`: replace an existing file.
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(
@@ -35,14 +41,21 @@ struct LogExportCommand: AsyncParsableCommand {
   )
   var force = false
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The `--json` result.
   private struct Result: Encodable {
+    /// The path of the file.
     let path: String
+    /// The number of lines written.
     let lines: Int
   }
 
+  /// Checks that `lines` is within the range that the service allows.
+  ///
+  /// - Throws: ``ValidationError`` when it is not.
   func validate() throws {
     guard ApplicationServiceLogService.linesRange.contains(lines) else {
       throw ValidationError(
@@ -51,6 +64,7 @@ struct LogExportCommand: AsyncParsableCommand {
     }
   }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let environment = LogCommand.environment

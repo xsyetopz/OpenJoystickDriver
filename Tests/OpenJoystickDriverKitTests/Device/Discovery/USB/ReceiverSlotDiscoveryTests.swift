@@ -5,8 +5,10 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// One raw-USB pipeline per Xbox 360 receiver slot. The receiver's interface layout is the
-/// synthetic 8-interface descriptor of ``ReceiverSlotProvider``; see its comment.
+/// One raw-USB pipeline per Xbox 360 receiver slot.
+///
+/// The receiver's interface layout is the synthetic 8-interface descriptor of
+/// ``ReceiverSlotProvider``; see its comment.
 @Suite(.timeLimit(.minutes(2)))
 struct ReceiverSlotDiscoveryTests {
   private typealias Receiver = ProtocolPacketFixtures.XUSBReceiver

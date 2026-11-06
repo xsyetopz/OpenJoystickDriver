@@ -2,6 +2,12 @@ import Foundation
 
 extension PassiveUSBConfigurationDescriptorParser {
 
+  /// Parses a configuration descriptor blob and checks its structure.
+  ///
+  /// `negotiatedSpeed` and `superSpeedPlusContext` tighten the checks of intervals and companion
+  /// descriptors.
+  ///
+  /// - Throws: ``PassiveUSBDescriptorBlobError`` for the first structure rule that the blob breaks.
   public static func parse(
     _ bytes: [UInt8],
     negotiatedSpeed: PassiveUSBNegotiatedSpeed? = nil,
@@ -240,6 +246,9 @@ extension PassiveUSBConfigurationDescriptorParser {
     )
   }
 
+  /// Checks the SuperSpeed companion descriptor `chunk` against its `endpoint`.
+  ///
+  /// - Throws: ``PassiveUSBDescriptorBlobError/invalidCompanionDescriptor`` when it does not fit.
   private static func validateSuperSpeedCompanion(
     chunk: [UInt8],
     endpoint: PassiveUSBDescriptorEndpoint
@@ -297,6 +306,7 @@ extension PassiveUSBConfigurationDescriptorParser {
     }
   }
 
+  /// Creates an interface descriptor from the fields that the parser collected.
   private static func makeInterface(
     _ value: (
       number: UInt8, alternate: UInt8, cls: UInt8, sub: UInt8, proto: UInt8,

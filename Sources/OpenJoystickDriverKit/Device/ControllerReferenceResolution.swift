@@ -19,6 +19,8 @@ package struct ConnectedController: ControllerReferenceable, Hashable, Sendable 
   /// The controller's port key under the installation key; nil when it has no location ID.
   package let portKey: ControllerPortKey?
 
+  /// Creates the connected controller for `logicalControllerID` and derives its port key from
+  /// `installationKey`.
   package init(
     logicalControllerID: LogicalControllerID,
     sessionToken: ControllerSessionToken,
@@ -29,6 +31,7 @@ package struct ConnectedController: ControllerReferenceable, Hashable, Sendable 
     self.portKey = ControllerPortKey.of(logicalControllerID, installationKey: installationKey)
   }
 
+  /// The hardware model of the logical controller.
   package var model: ControllerModelID { logicalControllerID.model }
 }
 
@@ -63,8 +66,8 @@ extension ControllerReference {
 
   /// The one controller in `controllers` this reference names.
   ///
-  /// Throws ``ControllerReferenceError/notFound(_:)`` when none matches, and
-  /// ``ControllerReferenceError/ambiguous(_:matches:)`` with every match when several do.
+  /// - Throws: ``ControllerReferenceError/notFound(_:)`` when none matches, and
+  ///   ``ControllerReferenceError/ambiguous(_:matches:)`` with every match when several do.
   public func resolve<Controller: ControllerReferenceable>(
     in controllers: [Controller]
   ) throws(ControllerReferenceError) -> Controller {

@@ -6,9 +6,10 @@ import Testing
 
 @Suite
 struct CommandLineNameTests {
-  /// `Tests/CommandLineNames/samples.json`: test data that only this suite reads. It lists the
-  /// spellings `CommandLineName.kebab` must produce, and document values whose spellings must all
-  /// differ.
+  /// `Tests/CommandLineNames/samples.json`: test data that only this suite reads.
+  ///
+  /// It lists the spellings `CommandLineName.kebab` must produce, and document values whose
+  /// spellings must all differ.
   private struct Samples: Decodable {
     let spellings: [String: String]
     let values: [String]

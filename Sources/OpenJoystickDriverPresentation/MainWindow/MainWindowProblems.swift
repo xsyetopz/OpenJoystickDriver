@@ -1,8 +1,10 @@
 import Foundation
 import OpenJoystickDriverKit
 
-/// Something that stops controllers from working, shown in the main window's problem banner
-/// while it lasts. A healthy app has none, and the banner is then absent.
+/// Something that stops controllers from working, shown in the main window's problem banner while
+/// it lasts.
+///
+/// A healthy app has none, and the banner is then absent.
 enum MainWindowProblem: Equatable, Sendable, Identifiable {
   /// The application service did not answer; the message says why.
   case serviceUnavailable(String)
@@ -16,6 +18,7 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
   /// service repeatedly instead.
   case liveUpdatesPolling(ControllerLiveUpdateFailure)
 
+  /// The identity of the banner row; the two service problems share one row.
   var id: String {
     switch self {
     case .serviceUnavailable, .listenerStopped: return "service"
@@ -25,6 +28,7 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     }
   }
 
+  /// The localization key of the banner row's title.
   var titleKey: String {
     switch self {
     case .serviceUnavailable, .listenerStopped: return "ui.banner.service.title"
@@ -34,7 +38,7 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     }
   }
 
-  /// Localization key of the detail, or nil when the detail is the service's own message.
+  /// The localization key of the detail, or nil when the detail is the service's own message.
   var detailKey: String? {
     switch self {
     case .serviceUnavailable, .listenerStopped: return nil
@@ -52,6 +56,7 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     }
   }
 
+  /// The button of the banner row, or nil when the row offers no fix.
   var action: MainWindowProblemAction? {
     switch self {
     case .serviceUnavailable: return .retryService
@@ -69,7 +74,9 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     }
   }
 
-  /// Problems that stop every controller are failures; the rest need the user's attention.
+  /// Whether the problem stops every controller.
+  ///
+  /// The other problems need the user's attention.
   var isFailure: Bool {
     switch self {
     case .serviceUnavailable, .listenerStopped: return true
@@ -78,8 +85,10 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     }
   }
 
-  /// The problems of the current state, most blocking first: without the service nothing else
-  /// can be read, and without the driver Xbox USB controllers cannot connect.
+  /// Returns the problems of the current state, most blocking first.
+  ///
+  /// Without the service nothing else can be read, and without the driver Xbox USB controllers
+  /// cannot connect.
   static func current(
     permissions: RuntimePermissionLoadState,
     status: RuntimeStatusState,
@@ -109,13 +118,20 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
   }
 }
 
+/// The fix that a banner row's button runs.
 enum MainWindowProblemAction: Equatable, Sendable {
+  /// Reads the service again.
   case retryService
+  /// Restarts the service's request listener.
   case restartListener
+  /// Opens System Settings to approve the driver extension.
   case openDriverApproval
+  /// Repairs the driver extension.
   case repairDriver
+  /// Shows the Access area.
   case showAccess
 
+  /// The localization key of the button title.
   var titleKey: String {
     switch self {
     case .retryService: return "action.tryAgain"

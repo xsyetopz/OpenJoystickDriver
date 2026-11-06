@@ -4,8 +4,9 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// Report-`0x03` segments and chunked state packets in the layout of SDL `SDL_hidapi_steam.c`
-/// (`WriteSegmentToSteamControllerPacketAssembler`, `UpdateBLESteamControllerState`). They come
-/// from the source, not from a hardware capture.
+/// (`WriteSegmentToSteamControllerPacketAssembler`, `UpdateBLESteamControllerState`).
+///
+/// They come from the source, not from a hardware capture.
 private enum BLEReport {
   /// One 20-byte segment: report ID, header, and up to 18 payload bytes.
   static func segment(_ payload: [UInt8], number: UInt8 = 0, last: Bool = true) -> Data {

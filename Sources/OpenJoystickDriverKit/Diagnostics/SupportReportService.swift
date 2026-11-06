@@ -1,6 +1,11 @@
 import Foundation
 
+/// Builds, names and writes the support report.
 package enum SupportReportService {
+  /// Builds a ``SupportReport`` from the service's snapshots and the local build and system facts.
+  ///
+  /// `status` and `virtualDiagnostics` are nil when the service did not answer; the report then
+  /// says so in its notes.
   package static func make(
     status: ApplicationServiceStatusPayload?,
     virtualDiagnostics: ApplicationServiceVirtualDeviceDiagnosticsPayload?,
@@ -32,6 +37,8 @@ package enum SupportReportService {
     )
   }
 
+  /// The name of a support report file for `date`, such as
+  /// `OpenJoystickDriver-support-20260102-030405.json`, with the time in UTC.
   package static func defaultFilename(at date: Date = Date()) -> String {
     let formatter = DateFormatter()
     formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -40,6 +47,10 @@ package enum SupportReportService {
     return "OpenJoystickDriver-support-\(formatter.string(from: date)).json"
   }
 
+  /// Writes `report` to `outputURL` atomically.
+  ///
+  /// - Throws: An `NSError` of code `NSFileWriteFileExistsError` when a file exists at `outputURL`
+  ///   and `overwrite` is false, or the error of the encoding or the write.
   package static func write(
     _ report: SupportReport,
     to outputURL: URL,
@@ -58,6 +69,7 @@ package enum SupportReportService {
     try report.encodedJSON().write(to: outputURL, options: .atomic)
   }
 
+  /// The name of the operating system that OJD was built for.
   private static var osName: String {
     #if os(macOS)
       return "macOS"
@@ -70,6 +82,7 @@ package enum SupportReportService {
     #endif
   }
 
+  /// The processor architecture that OJD was built for.
   private static var architecture: String {
     #if arch(arm64)
       return "arm64"

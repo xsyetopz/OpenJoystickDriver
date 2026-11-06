@@ -1,8 +1,12 @@
 import Foundation
 
+/// The raw stick value at the center.
 private let ps3ThirdPartyAxisCenter: Float = 128
+/// The largest distance above the center of a raw stick value.
 private let ps3ThirdPartyAxisPositiveMax: Float = 127
+/// The largest distance below the center of a raw stick value.
 private let ps3ThirdPartyAxisNegativeMax: Float = 128
+/// The maximum raw value of an analog trigger.
 private let ps3ThirdPartyTriggerMax: Float = 255
 /// A pressure byte counts as pressed once bit 7 is set, so light pressure and noise are ignored.
 private let ps3ThirdPartyPressedThreshold: UInt8 = 0x80
@@ -36,46 +40,70 @@ private let ps3ThirdPartyProbeMarker: UInt8 = 0x26
 /// driver sends no output, because some of these pads then rumble without stopping.
 public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
 
+  /// The layout of an input report, by its length.
   private enum Layout {
     /// Reports of 19 bytes or more.
     case standard
     /// 18-byte reports (Logitech ChillStream).
     case compact
 
+    /// The offset of the first stick byte.
     var stickOffset: Int { self == .standard ? 3 : 2 }
+    /// The offset of the first pressure byte.
     var pressureOffset: Int { self == .standard ? 7 : 6 }
+    /// The offset of the first analog trigger byte.
     var triggerOffset: Int { self == .standard ? 17 : 16 }
   }
 
   /// Pressure byte order from the layout's pressure offset.
   private enum Pressure {
+    /// The pressure index of the D-pad right button.
     static let dpadRight = 0
+    /// The pressure index of the D-pad left button.
     static let dpadLeft = 1
+    /// The pressure index of the D-pad up button.
     static let dpadUp = 2
+    /// The pressure index of the D-pad down button.
     static let dpadDown = 3
+    /// The pressure index of the north button.
     static let north = 4
+    /// The pressure index of the east button.
     static let east = 5
+    /// The pressure index of the south button.
     static let south = 6
+    /// The pressure index of the west button.
     static let west = 7
+    /// The pressure index of the left shoulder.
     static let leftShoulder = 8
+    /// The pressure index of the right shoulder.
     static let rightShoulder = 9
   }
 
+  /// The feature report that probes for the third-party report format.
   private enum ProbeReport {
+    /// The report ID of the probe that includes the report ID byte in its reply.
     static let withReportID: UInt8 = 0x03
+    /// The report ID of the probe whose reply lacks the report ID byte.
     static let withoutReportID: UInt8 = 0x00
+    /// The length of the probe request.
     static let length = 64
+    /// The length of a valid probe reply.
     static let replyLength = 8
   }
 
+  /// The driver that maps the controller through its HID descriptor until the probe succeeds.
   private let descriptorFallback: HIDDescriptorDriver
+  /// Whether the hat comes from the D-pad pressure bytes alone.
   private let hatFromPressureOnly: Bool
+  /// The rumble report of the record; nil without rumble.
   private let rumbleTemplate: RumbleOutputTemplate?
   /// Set once the hat nibble has been nonzero in this session.
   private var hatIsLive = false
   /// Set once the device is known to send the third-party report format.
   private(set) var decodesRawReports: Bool
+  /// The state after the latest report.
   private var state = ControllerState.neutral
+  /// The rumble that the latest command set.
   private var lastRumble = RumbleIntensities.off
 
   /// Creates a driver for a controller of `model`. `rumbleTemplate` and
@@ -91,8 +119,9 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     decodesRawReports = false
   }
 
-  /// A new transport session starts from neutral input. The probe result describes the device,
-  /// so it survives.
+  /// Clears the state of the session: neutral input and no rumble.
+  ///
+  /// The probe result describes the device, so it survives.
   public func resetProtocolState() {
     state = .neutral
     lastRumble = .off
@@ -100,6 +129,8 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     descriptorFallback.resetProtocolState()
   }
 
+  /// The session plan: HID element values and validated feature replies, with the rumble resend of
+  /// the template.
   public var sessionPlan: DriverSessionPlan {
     DriverSessionPlan(parsesHIDElementValues: true, validatesFeatureReplies: true)
       .withRumbleResend(of: rumbleTemplate)
@@ -111,13 +142,17 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     else { return [] }
     return [rumbleTemplate.write(intensities)]
   }
+  /// The rumble motors of the rumble template; none without a template.
   public var outputCapabilities: PhysicalControllerOutputCapabilities {
     rumbleTemplate?.outputCapabilities ?? .none
   }
+  /// No default colour: the controller has no light to restore.
   public var defaultColor: ControllerColor? { nil }
 
+  /// Always nil: the report carries no logical connection.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
+  /// The controls of the description.
   public var capabilities: ControllerCapabilities {
     PhysicalProtocolID.vendorPS3ThirdParty.describedControls
   }
@@ -132,6 +167,7 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     return plan
   }
 
+  /// The probe feature reads of the startup; none once the third-party format is known.
   public func startupFeatureReads() -> [PhysicalHIDFeatureReadRequest] {
     guard !decodesRawReports else { return [] }
     return [
@@ -143,9 +179,11 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     ]
   }
 
-  /// Accepts SDL's probe reply. IOKit returns the report-ID byte for report `0x03` but not for
-  /// report `0x00`, where hidapi prepends one, so SDL's byte 2 is byte 1 of that reply.
-  /// A rejected reply leaves the descriptor mapping in place.
+  /// Accepts SDL's probe reply.
+  ///
+  /// IOKit returns the report-ID byte for report `0x03` but not for report `0x00`, where hidapi
+  /// prepends one, so SDL's byte 2 is byte 1 of that reply. A rejected reply leaves the descriptor
+  /// mapping in place.
   public func consumeFeatureReply(_ data: Data, request: PhysicalHIDFeatureReadRequest) -> Bool {
     // The first accepted probe decides; a later request has nothing left to prove.
     guard !decodesRawReports else { return true }
@@ -163,6 +201,8 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     return true
   }
 
+  /// Decodes an element value through the descriptor mapping until the probe succeeds; afterwards
+  /// it is ignored.
   public func parse(
     elementValue value: HIDElementValue,
     receivedAt: MonotonicTimestamp
@@ -199,6 +239,7 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     return ControllerEvent(timestamp: receivedAt, state: next)
   }
 
+  /// Sets the face buttons, shoulders, and system buttons of `next` from `bytes`.
   private func decodeButtons(
     _ bytes: [UInt8],
     digital: UInt8,
@@ -242,6 +283,7 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
     )
   }
 
+  /// Reads a trigger as fully pressed when its digital bit is set, else scales the analog byte.
   private static func trigger(_ raw: UInt8, digital: Bool) -> UnipolarValue {
     UnipolarValue(normalized: digital ? 1 : Float(raw) / ps3ThirdPartyTriggerMax)
   }

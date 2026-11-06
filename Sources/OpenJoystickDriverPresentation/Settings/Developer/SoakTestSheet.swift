@@ -7,11 +7,14 @@
   /// The Soak Test section of the developer tools: what the test does and the button that opens
   /// its sheet, which runs `ojd diagnose --soak`.
   struct DeveloperSoakTestSection: View {
+    /// The soak test that the sheet runs.
     @ObservedObject
     var model: SoakTestModel
+    /// Whether the Soak Test sheet is open.
     @State
     private var showsSheet = false
 
+    /// The Soak test section: a description and the button that opens the sheet.
     var body: some View {
       Section(OJDLocalized.string("ui.developer.soakTest")) {
         Text(OJDLocalized.string("ui.developer.soakTestDescription")).font(.caption)
@@ -28,11 +31,14 @@
   /// Asks for the soak test's duration, sample interval and memory limits, runs the test and shows
   /// its result as pass, warning, failure or skip.
   struct SoakTestSheet: View {
+    /// The soak test that the sheet runs.
     @ObservedObject
     var model: SoakTestModel
+    /// Dismisses the sheet.
     @Environment(\.presentationMode)
     private var presentationMode
 
+    /// The title, the content of the test and the buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
         Text(OJDLocalized.string("ui.developer.soakTest")).font(.headline)
@@ -51,6 +57,7 @@
       presentationMode.wrappedValue.dismiss()
     }
 
+    /// The entry fields, the running indicator or the result, as the state of the test says.
     @ViewBuilder
     private var content: some View {
       switch model.state {
@@ -101,6 +108,8 @@
       }
     }
 
+    /// The buttons of the state: Cancel and Start while the numbers are asked for, Stop while a run
+    /// is in progress, and Start and Done after a result.
     @ViewBuilder
     private var buttons: some View {
       switch model.state {

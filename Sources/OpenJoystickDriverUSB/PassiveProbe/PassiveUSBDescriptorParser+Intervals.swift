@@ -2,6 +2,8 @@ import Foundation
 
 extension PassiveUSBConfigurationDescriptorParser {
 
+  /// Returns the nominal interval in microseconds of an endpoint, or nil when the speed or the
+  /// interval has none.
   static func nominalIntervalMicroseconds(
     transferType: UInt8,
     interval: UInt8,
@@ -20,6 +22,7 @@ extension PassiveUSBConfigurationDescriptorParser {
     }
   }
 
+  /// Tells whether `interval` is valid for the transfer type and speed.
   static func intervalResult(
     transferType: UInt8,
     interval: UInt8,

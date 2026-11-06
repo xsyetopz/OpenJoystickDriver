@@ -1,12 +1,14 @@
 import Foundation
 
 extension RemappingBinding {
+  /// The binding followed by its additional actions, each as a binding of the same source.
   var expandedActions: [RemappingBinding] {
     [self] + additionalActions.map { $0.binding(source: source, axisTuning: axisTuning) }
   }
 }
 
 extension RemappingDeviceState {
+  /// Returns the action with an identifier among the profile and layer bindings, or `nil`.
   func actionBinding(id: UUID) -> RemappingBinding? {
     let sources = Set(profile.bindings.map(\.source)).union(
       profile.layers.flatMap { $0.bindings.map(\.source) }
@@ -21,6 +23,7 @@ extension RemappingDeviceState {
 }
 
 extension RemappingEngineState {
+  /// Releases the outputs of every action whose source is in a set and forgets their timers.
   mutating func cancelActions(
     for sources: Set<RemappingSource>,
     device: inout RemappingDeviceState
@@ -43,6 +46,11 @@ extension RemappingEngineState {
     return actions
   }
 
+  /// Applies one source change to one action and returns the output actions.
+  ///
+  /// A suppressed action does nothing. Other behaviors follow ``RemappingBindingBehavior``. A hold
+  /// action with a long hold or double tap goes through the activation tracker. A hold action with
+  /// turbo starts or stops its repeat.
   mutating func processAction(
     _ binding: RemappingBinding,
     isActive: Bool,
@@ -100,6 +108,11 @@ extension RemappingEngineState {
     return setBinding(id, destination: destination, isDown: isActive, device: &device)
   }
 
+  /// Applies a source change to an action that has a long hold or double tap.
+  ///
+  /// A press within the double-tap window of the previous release fires the double tap. A later
+  /// press taps the default destination first. A release taps the default destination when no
+  /// double tap is configured, and releases a fired destination otherwise.
   private mutating func processTimedAction(
     _ binding: RemappingBinding,
     isActive: Bool,

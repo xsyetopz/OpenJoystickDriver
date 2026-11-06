@@ -4,6 +4,8 @@ import OpenJoystickDriverKit
 /// Gathers the facts for the checks of `ojd diagnose` and runs them through the same
 /// `DiagnosticsService` that the command uses.
 enum ActivityDiagnosticsChecks {
+  /// Returns the results of the checks of `ojd diagnose` that the app lists, after asking the
+  /// service through `gateway`.
   static func run(gateway: any ApplicationServiceGateway) async -> [DiagnoseCheck] {
     let snapshot = await serviceSnapshot(gateway)
     let bundleURL = Bundle.main.bundleURL

@@ -11,10 +11,11 @@
     ]
 
     /// One sRGB shade, `0xRRGGBB`, per appearance in ``appearances``; nil for space, which shows
-    /// nothing and keeps the label color. Every shade reaches at least 4.5:1 against
-    /// `textBackgroundColor` (at least 7:1 with increased contrast), which the system blue,
-    /// green and orange do not on white. Punctuation has the lowest contrast of the kinds, so it
-    /// recedes behind keys and values.
+    /// nothing and keeps the label color.
+    ///
+    /// Every shade reaches at least 4.5:1 against `textBackgroundColor` (at least 7:1 with
+    /// increased contrast), which the system blue, green and orange do not on white. Punctuation
+    /// has the lowest contrast of the kinds, so it recedes behind keys and values.
     var shades: [UInt32]? {
       switch self {
       case .key: [0x0550AE, 0x79C0FF, 0x023B95, 0xB5DCFF]
@@ -26,10 +27,8 @@
       }
     }
 
-    /// The index in ``appearances`` of the shade for the appearance that
-    /// `NSAppearance.bestMatch(from:)` found. It finds none for an appearance that is neither
-    /// light, dark nor either with increased contrast, and that appearance gets the light shade
-    /// (index 0, `.aqua`), because the system's default appearance is light.
+    /// Returns the index in ``appearances`` of the shade for the appearance that
+    /// `NSAppearance.bestMatch(from:)` found, or the light shade when it found none.
     static func shadeIndex(matching name: NSAppearance.Name?) -> Int {
       name.flatMap(appearances.firstIndex(of:)) ?? lightShadeIndex
     }
@@ -47,7 +46,7 @@
       }
     }
 
-    /// The sRGB color `0xRRGGBB`.
+    /// Returns the color for `value`, a shade `0xRRGGBB` in sRGB.
     static func color(_ value: UInt32) -> NSColor {
       NSColor(
         srgbRed: CGFloat((value >> 16) & 0xFF) / 255,
@@ -83,13 +82,16 @@
   /// identifier reading sits after its line as a separate element that selection and copying
   /// leave out.
   struct LibraryRecordTextView: View {
+    /// The record text to show.
     let text: LibraryRecordText
 
+    /// The monospaced font of the code and the readings.
     private static let font = Font.system(.body, design: .monospaced)
 
     /// The space between the end of a line and its reading.
     private static let gap = "   "
 
+    /// The highlighted, selectable record text with its readings, and a menu that copies it.
     var body: some View {
       ScrollView(.horizontal) {
         Text(text.highlighted).font(Self.font).textSelection(.enabled)
@@ -103,8 +105,10 @@
       }
     }
 
-    /// One row per line of the block. Each row lays out a hidden copy of its line in the same
-    /// font, so the row is as tall as the line and a reading starts where its line ends.
+    /// One row per line of the block.
+    ///
+    /// Each row lays out a hidden copy of its line in the same font, so the row is as tall as the
+    /// line and a reading starts where its line ends.
     private var readings: some View {
       VStack(alignment: .leading, spacing: 0) {
         ForEach(Array(text.lines.enumerated()), id: \.offset) { index, line in

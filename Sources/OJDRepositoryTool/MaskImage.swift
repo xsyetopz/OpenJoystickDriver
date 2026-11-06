@@ -6,14 +6,24 @@ import UniformTypeIdentifiers
 /// A rectangle in global points with a top-left origin, written `x,y,width,height` as
 /// `screencapture -R` takes it.
 struct ScreenRectangle {
+  /// The text that the rectangle is parsed from, kept for error messages.
   let text: String
+  /// The left edge in points.
   let minX: Double
+  /// The top edge in points.
   let minY: Double
+  /// The width in points; greater than zero.
   let width: Double
+  /// The height in points; greater than zero.
   let height: Double
+  /// The right edge in points.
   var maxX: Double { minX + width }
+  /// The bottom edge in points.
   var maxY: Double { minY + height }
 
+  /// Parses `text` as four comma-separated finite numbers with a positive width and height.
+  ///
+  /// - Throws: ``UsageError`` when `text` is not four finite numbers or the rectangle has no area.
   init(_ text: String) throws {
     let values = text.split(separator: ",", omittingEmptySubsequences: false).map {
       Double(String($0))
@@ -31,16 +41,25 @@ struct ScreenRectangle {
     self.height = height
   }
 
+  /// Whether `other` lies entirely inside this rectangle, edges included.
   func contains(_ other: Self) -> Bool {
     other.minX >= minX && other.minY >= minY && other.maxX <= maxX && other.maxY <= maxY
   }
 }
 
+/// The `mask-image` subcommand of `OJDRepositoryTool`.
+///
 /// Makes every pixel of a `screencapture -R <frame>` PNG that lies outside all `keep` rectangles
 /// fully transparent and leaves the pixels inside them unchanged. The pixels per point come from
 /// the image size over the frame size on each axis, since the image is at the display's backing
 /// scale. A keep rectangle covers every pixel it touches, so its edges stay whole.
 enum MaskImage {
+  /// Masks the PNG at `arguments[0]` in place, keeping the rectangles in `arguments[2...]`.
+  ///
+  /// - Parameter arguments: The image path, the frame rectangle, then one or more rectangles to
+  ///   keep.
+  /// - Throws: ``UsageError`` when the arguments are too few, a keep rectangle is outside the
+  ///   frame, or the file is not an RGB PNG that can be masked, encoded and written.
   static func run(_ arguments: [String]) throws {
     guard arguments.count >= 3, let path = arguments.first else {
       throw UsageError(message: "mask-image takes an image, a frame and a rectangle to keep")
@@ -107,8 +126,7 @@ enum MaskImage {
     }
   }
 
-  /// The pixels of `rectangle` in an image of `frame`, in the bottom-left origin of a
-  /// `CGContext`.
+  /// The pixels of `rectangle` in an image of `frame`, in the bottom-left origin of a `CGContext`.
   private static func pixels(
     _ rectangle: ScreenRectangle,
     frame: ScreenRectangle,

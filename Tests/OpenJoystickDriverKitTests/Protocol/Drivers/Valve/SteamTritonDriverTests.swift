@@ -4,8 +4,10 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// Reports in the SDL `TritonMTUNoQuat_t` (`0x42`, `0x45`) and `TritonMTUNoQuat32TS_t` (`0x47`)
-/// layouts, with the report ID at byte 0. The layouts come from SDL `controller_structs.h` at
-/// `release-3.4.16`; they are not a hardware capture.
+/// layouts, with the report ID at byte 0.
+///
+/// The layouts come from SDL `controller_structs.h` at `release-3.4.16`; they are not a hardware
+/// capture.
 private enum TritonReport {
   static func state(
     id: UInt8 = 0x42,

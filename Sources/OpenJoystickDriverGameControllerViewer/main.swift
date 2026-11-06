@@ -9,12 +9,19 @@ import SwiftUI
 
 /// One change of one element, printed as a JSON line.
 struct ElementChange: Encodable {
+  /// The time of the change in milliseconds since 1970.
   let time: Int
+  /// The controller name.
   let controller: String
+  /// The element name.
   let element: String
+  /// Whether a button is pressed; nil for other elements.
   let pressed: Bool?
+  /// The value of a button or an axis; nil for other elements.
   let value: Float?
+  /// The horizontal value of a direction pad; nil for other elements.
   let x: Float?
+  /// The vertical value of a direction pad; nil for other elements.
   let y: Float?
 }
 
@@ -58,7 +65,9 @@ func change(of element: GCControllerElement, on controller: String) -> ElementCh
   }
 }
 
-/// The value text of an element. Adding zero turns -0 into 0.
+/// The value text of an element.
+///
+/// Adding zero turns -0 into 0.
 func describe(_ change: ElementChange) -> String {
   if let x = change.x, let y = change.y {
     return String(format: "x %+.2f  y %+.2f", x + 0, y + 0)
@@ -90,18 +99,26 @@ func layoutOrder(of controller: GCController) -> [GCControllerElement] {
 /// One connected controller: its controls in layout order, and every other element that
 /// GameController lists, such as the directions of a D-pad and the raw axes.
 struct ControllerRow: Identifiable {
+  /// The identity of the controller object.
   let id: ObjectIdentifier
+  /// The controller name.
   let name: String
+  /// The controls in layout order.
   let controls: [ElementChange]
+  /// Every other element that GameController lists.
   let others: [ElementChange]
 }
 
+/// The state that the window shows: the controllers and which of their groups are open.
 @MainActor
 final class ViewerModel: ObservableObject {
+  /// The connected controllers.
   @Published
   var controllers: [ControllerRow] = []
+  /// The controllers whose control list is closed.
   @Published
   var collapsed: Set<ObjectIdentifier> = []
+  /// The controllers whose list of other elements is open.
   @Published
   var othersShown: Set<ObjectIdentifier> = []
 
@@ -126,13 +143,19 @@ final class ViewerModel: ObservableObject {
 
 /// A group whose whole title toggles it, not only its arrow.
 struct ElementGroup<Footer: View>: View {
+  /// The title of the group.
   let title: String
+  /// The elements of the group.
   let elements: [ElementChange]
+  /// Whether the group is open.
   let expanded: Binding<Bool>
+  /// Whether the title is bold.
   let bold: Bool
+  /// The content that follows the elements.
   @ViewBuilder
   let footer: () -> Footer
 
+  /// The disclosure group with one row per element.
   var body: some View {
     DisclosureGroup(isExpanded: expanded) {
       ForEach(elements, id: \.element) { element in
@@ -155,10 +178,13 @@ struct ElementGroup<Footer: View>: View {
   }
 }
 
+/// The window content: one group per controller, or a hint when none is connected.
 struct ViewerView: View {
+  /// The state that the view shows.
   @ObservedObject
   var model: ViewerModel
 
+  /// The list of controllers, or a hint when none is connected.
   var body: some View {
     if model.controllers.isEmpty {
       Text("No controller. Connect one.").frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -182,13 +208,20 @@ struct ViewerView: View {
   }
 }
 
+/// The application delegate: opens the window, attaches the connected controllers and prints
+/// each change.
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
+  /// The state that the window shows.
   private let model = ViewerModel()
+  /// The window of the viewer.
   private var window: NSWindow?
+  /// The observers of the controller connection notifications.
   private var observers: [NSObjectProtocol] = []
+  /// The encoder of the JSON lines.
   private let encoder = JSONEncoder()
 
+  /// Opens the window and starts to follow the controllers.
   func applicationDidFinishLaunching(_ notification: Notification) {
     let window = NSWindow(
       contentRect: NSRect(x: 0, y: 0, width: 520, height: 640),
@@ -214,6 +247,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     attachControllers()
   }
 
+  /// Ends the viewer when the window closes.
   func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { true }
 
   /// Attaches every connected controller and refreshes the element list.
@@ -248,6 +282,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     redraw()
   }
 
+  /// Refreshes the shown controllers from the controllers that are connected.
   private func redraw() {
     model.controllers = GCController.controllers().map { controller in
       let name = "\(controller.vendorName ?? "Controller") (\(controller.productCategory))"
@@ -266,7 +301,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   }
 }
 
+/// The shared application.
 let app = NSApplication.shared
+/// The delegate of the application.
 let delegate = AppDelegate()
 app.delegate = delegate
 app.setActivationPolicy(.regular)

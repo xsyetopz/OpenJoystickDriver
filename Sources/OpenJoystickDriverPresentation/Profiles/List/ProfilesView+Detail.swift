@@ -8,6 +8,7 @@
 
   extension ProfilesView {
 
+    /// A binding to the list selection: a damaged entry wins over the selected profile.
     var profileListSelection: Binding<ProfileListSelection?> {
       Binding(
         get: {
@@ -26,6 +27,8 @@
       )
     }
 
+    /// The detail of the selection: the recovery detail of a damaged entry, the editor of a
+    /// profile, or the state of the load.
     @ViewBuilder
     var profileDetail: some View {
       if let selectedRecoveryIssue {
@@ -84,6 +87,10 @@
       }
     }
 
+    /// The Delete or Reset Library detail of a damaged entry.
+    ///
+    /// - Parameter issue: The damaged profile or unusable library.
+    /// - Returns: The detail of the entry.
     private func profileRecoveryDetail(
       _ issue: ApplicationServiceRemappingProfileIssue
     ) -> some View {
@@ -108,6 +115,10 @@
       }.ojdGroupedForm()
     }
 
+    /// The Joy-Con pair row of a profile: Pair Joy-Cons, or Unpair Joy-Cons for each active pair.
+    ///
+    /// - Parameter profile: The profile that pairs Joy-Con controllers.
+    /// - Returns: The row.
     @ViewBuilder
     func joyConPairControls(_ profile: RemappingProfile) -> some View {
       let sessions = currentSnapshot?.joyConPairs.filter { $0.profileID == profile.id } ?? []
@@ -137,11 +148,13 @@
       }.padding(.horizontal, 28).padding(.top, 10)
     }
 
+    /// The snapshot of the available state, or the last snapshot.
     var currentSnapshot: ApplicationServiceRemappingSnapshotPayload? {
       if case .available(let snapshot) = viewModel.remappingState { return snapshot }
       return lastKnownSnapshot
     }
 
+    /// Whether a left and a right Joy-Con are connected.
     var hasAvailableJoyConPair: Bool {
       connectedDevices.contains {
         JoyConHalf(vendorID: $0.vendorID, productID: $0.productID) == .left
@@ -151,6 +164,7 @@
         }
     }
 
+    /// The state that says there are no profiles.
     var noProfilesState: some View {
       EmptyStateView(
         symbol: "slider.horizontal.3",
@@ -159,16 +173,28 @@
       )
     }
 
+    /// Returns the text for the number of assignments.
+    ///
+    /// - Parameter count: The number of assignments.
+    /// - Returns: The text for the number of assignments.
     func assignmentCountLabel(_ count: Int) -> String {
       OJDLocalized.plural("ui.profiles.assignments", count: count)
     }
 
+    /// Returns the text VoiceOver reads after a profile's name: the assignment count, with the
+    /// active state for an active profile.
+    ///
+    /// - Parameter profile: The profile in the list.
+    /// - Returns: The text VoiceOver reads after a profile's name: the assignment count, with the
+    ///   active state for an active profile.
     func profileAccessibilityValue(_ profile: RemappingProfile) -> String {
       let count = assignmentCountLabel(profile.bindings.count)
       guard isActive(profile) else { return count }
       return OJDLocalized.formatted("ui.profiles.activeAssignmentCount", count)
     }
 
+    /// The banner that says the profiles are refreshing, or that the state is unavailable or failed
+    /// to refresh and the draft is kept.
     @ViewBuilder
     var refreshStatus: some View {
       switch viewModel.remappingState {

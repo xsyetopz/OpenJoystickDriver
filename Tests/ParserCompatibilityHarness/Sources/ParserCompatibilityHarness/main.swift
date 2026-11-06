@@ -1,6 +1,6 @@
 import Foundation
-import ProtocolPacketFixtures
 import OpenJoystickDriverKit
+import ProtocolPacketFixtures
 
 func require(_ condition: @autoclosure () -> Bool, _ message: String) {
   if !condition() {

@@ -212,8 +212,10 @@ struct ControllerRecordSetTests {
     #expect(Self.problem(badFamily) == "record.modes.[0].protocol: unknown family xbox.unknown")
   }
 
-  /// A file declares its version through `apiVersion` and its type through `kind`. A missing or
-  /// unsupported version, or a kind that is not one it is read as, is rejected and named.
+  /// A file declares its version through `apiVersion` and its type through `kind`.
+  ///
+  /// A missing or unsupported version, or a kind that is not one it is read as, is rejected and
+  /// named.
   @Test
   func aMissingOrUnsupportedHeaderIsRejected() throws {
     let supported = "the supported apiVersion is \(OpenJoystickDriverAPI.version)"
@@ -351,8 +353,10 @@ struct ControllerRecordSetTests {
     #expect(set.problems.first?.problem?.hasPrefix("E5001: ") == true)
   }
 
-  /// The stored-file rule: OJD does not migrate a stored file. A file it can read keeps working;
-  /// a file it cannot read is dropped, reported with its reason, and left as it was.
+  /// The stored-file rule: OJD does not migrate a stored file.
+  ///
+  /// A file it can read keeps working; a file it cannot read is dropped, reported with its reason,
+  /// and left as it was.
   @Test
   func aStoredFileKeepsWorkingOrIsDroppedUnchanged() throws {
     let directory = MacOSDataDirectory().url(for: .temporary).appendingPathComponent(
@@ -499,9 +503,10 @@ struct ControllerRecordSetTests {
     }
   }
 
-  /// The merged record keeps the member order of the bundled record where the patch merges into
-  /// an object and appends the members the patch adds in the patch's order. An array the patch
-  /// replaces has the patch's order.
+  /// The merged record keeps the member order of the bundled record where the patch merges into an
+  /// object and appends the members the patch adds in the patch's order.
+  ///
+  /// An array the patch replaces has the patch's order.
   @Test
   func aPatchMergeKeepsTheOrderOfTheBundledRecord() throws {
     let record = try Self.record(

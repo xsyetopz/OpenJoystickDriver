@@ -7,29 +7,43 @@ import OpenJoystickDriverKit
 ///
 /// - Note: `@unchecked Sendable` because the mutable fields are guarded by `lock`.
 final class EndpointConnection: @unchecked Sendable {
+  /// A line waiting to be written.
   private enum Outgoing {
+    /// A line that is always written.
     case message(Data)
     /// A `bounded` line, dropped like an event when the connection closes.
     case feedback(Data)
+    /// A controller event.
     case event(ControllerWatchEvent)
   }
 
+  /// The connected socket.
   let descriptor: Int32
+  /// The transport the client connected through.
   let kind: AccessTransport
+  /// The framing of the messages.
   private let transport: any EndpointTransport
+  /// The lock that guards the queue and the flags.
   private let lock = NSLock()
+  /// The serial queue that writes the lines.
   private let writer = DispatchQueue(label: "com.openjoystickdriver.endpoint.writer")
+  /// The lines waiting to be written.
   private var pending: [Outgoing] = []
+  /// Whether a drain of the queue is scheduled.
   private var draining = false
   /// Set when the connection sends its last line; nothing is queued after it.
   private var closing = false
+  /// The client and its scopes, once the handshake succeeded.
   private var welcomed: AccessConnection?
+  /// Whether the client subscribed to the controller stream.
   private var subscribed = false
+  /// Whether the subscription adds the output values.
   private var wantsOutput = false
   /// The last input sent per controller to a client without output, so a poll that changed only
   /// output values sends that client nothing.
   private var lastInput: [String: ControllerState] = [:]
 
+  /// Creates the connection on `descriptor`.
   init(descriptor: Int32, kind: AccessTransport, transport: any EndpointTransport) {
     self.descriptor = descriptor
     self.kind = kind
@@ -48,9 +62,11 @@ final class EndpointConnection: @unchecked Sendable {
   /// The client and its scopes once the handshake succeeded.
   var session: AccessConnection? { lock.withLock { welcomed } }
 
+  /// Whether the client subscribed and the connection is open.
   var isSubscribed: Bool { lock.withLock { subscribed && !closing } }
   /// Whether the connection sent its last line or its peer went away.
   var isClosing: Bool { lock.withLock { closing } }
+  /// Whether the client subscribed with output values and the connection is open.
   var wantsOutputValues: Bool { lock.withLock { subscribed && wantsOutput && !closing } }
 
   /// Whether the peer closed or shut down its side, even while unread messages wait.
@@ -69,6 +85,7 @@ final class EndpointConnection: @unchecked Sendable {
     setsockopt(descriptor, SOL_SOCKET, SO_RCVTIMEO, &timeout, socklen_t(MemoryLayout<timeval>.size))
   }
 
+  /// Stores `session` and sends the `Welcome` line `line`.
   func welcome(_ session: AccessConnection, line: EndpointWelcome) {
     lock.withLock { welcomed = session }
     send(line)
@@ -146,6 +163,9 @@ final class EndpointConnection: @unchecked Sendable {
 
   // MARK: - Private
 
+  /// Queues `error` as the last line, drops the waiting events and feedback lines, and closes.
+  ///
+  /// Call with `lock` held.
   private func closeLocked(_ error: EndpointError?) {
     guard !closing else { return }
     // Events and rumble lines waiting behind the error are dropped; the challenge and welcome
@@ -158,12 +178,17 @@ final class EndpointConnection: @unchecked Sendable {
     scheduleDrain()
   }
 
+  /// Starts a drain of the queue on the writer queue, unless one is scheduled.
   private func scheduleDrain() {
     guard !draining else { return }
     draining = true
     writer.async { self.drain() }
   }
 
+  /// Writes the queued lines in order and shuts the socket down after the last line of a closing
+  /// connection.
+  ///
+  /// A failed write closes the connection and drops the queue.
   private func drain() {
     let encoder = Self.encoder()
     // `closing` is read in the same lock that ends the drain: a close that queues its error after
@@ -202,6 +227,7 @@ final class EndpointConnection: @unchecked Sendable {
     }
   }
 
+  /// Returns the controller ID of the event `outgoing`, or nil for another line.
   private static func controllerID(of outgoing: Outgoing) -> String? {
     if case .event(let event) = outgoing { event.id } else { nil }
   }

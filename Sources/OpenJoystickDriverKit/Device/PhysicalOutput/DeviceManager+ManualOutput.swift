@@ -1,10 +1,11 @@
 import Foundation
 
 extension DeviceManager {
-  /// Sends one output command to the one connected controller `controller` names. The command
-  /// is admitted against the pipeline's (native-narrowed) capabilities, then its values are
-  /// checked, then it is recorded as the manual claim and the effective output of its channel is
-  /// written. A failed command withdraws only its own claim.
+  /// Sends one output command to the one connected controller `controller` names.
+  ///
+  /// The command is admitted against the pipeline's (native-narrowed) capabilities, then its values
+  /// are checked, then it is recorded as the manual claim and the effective output of its channel
+  /// is written. A failed command withdraws only its own claim.
   public func sendControllerOutput(
     _ command: ControllerOutputCommand,
     for controller: ControllerReference
@@ -46,6 +47,14 @@ extension DeviceManager {
     return ControllerOutputResult(outcome, droppedRumbleChannels: admission.droppedRumbleChannels)
   }
 
+  /// Applies an admitted manual command as a claim on the controller and writes it.
+  ///
+  /// - Parameters:
+  ///   - admitted: The command after admission dropped the motors that the controller lacks.
+  ///   - command: The command as requested, which tells whether a rumble has an active motor.
+  ///   - key: The controller that receives the command.
+  ///   - pipeline: The pipeline of that controller, which writes the output.
+  /// - Returns: The outcome of the claim and write.
   private func applyManualOutput(
     _ admitted: ControllerOutputCommand,
     requested command: ControllerOutputCommand,
@@ -76,9 +85,10 @@ extension DeviceManager {
     return outcome
   }
 
-  /// Keeps a delivered manual claim and withdraws a failed one. When the failed claim was the
-  /// newest on its channel, a write another request made meanwhile may have carried it, so the
-  /// channel's effective output is written once more.
+  /// Keeps a delivered manual claim and withdraws a failed one.
+  ///
+  /// When the failed claim was the newest on its channel, a write another request made meanwhile
+  /// may have carried it, so the channel's effective output is written once more.
   private func finishManualClaim(
     _ claim: UInt64,
     on channels: Set<PhysicalOutputChannel>,
@@ -96,9 +106,10 @@ extension DeviceManager {
     _ = await applyPhysicalChannel(channel, for: key, pipeline: pipeline)
   }
 
-  /// Claims every supported motor at its intensity and sends the effective rumble. A bounded
-  /// duration of 0 ms sends, then releases the manual claim and sends again; a longer one, at most
-  /// `maxRumbleDurationMs`, schedules that release.
+  /// Claims every supported motor at its intensity and sends the effective rumble.
+  ///
+  /// A bounded duration of 0 ms sends, then releases the manual claim and sends again; a longer
+  /// one, at most `maxRumbleDurationMs`, schedules that release.
   private func applyManualRumble(
     _ intensities: RumbleIntensities,
     duration: RumbleDuration,
@@ -138,8 +149,10 @@ extension DeviceManager {
   }
 
   /// Releases the manual rumble claim, cancels a pending scheduled stop, and writes the effective
-  /// rumble once, so an active mapping claim still shows through. A failed write does not restore
-  /// the claim: its scheduled stop is gone, so the restored rumble would never stop.
+  /// rumble once, so an active mapping claim still shows through.
+  ///
+  /// A failed write does not restore the claim: its scheduled stop is gone, so the restored rumble
+  /// would never stop.
   private func stopManualRumble(
     for key: LogicalControllerID,
     pipeline: DevicePipeline
@@ -150,8 +163,9 @@ extension DeviceManager {
   }
 
   /// Resolves `request` to a command and writes its whole encoded plan as one operation on the
-  /// interface's output queue, so a stateful encoder's reports go out in encode order. An
-  /// effective request reads ownership inside the operation, when it runs, so a write never
+  /// interface's output queue, so a stateful encoder's reports go out in encode order.
+  ///
+  /// An effective request reads ownership inside the operation, when it runs, so a write never
   /// carries a claim that a later change has replaced. A command the driver cannot encode
   /// (unsupported or not ready), or one cancelled while queued, fails without writing.
   internal func sendPhysicalOutput(
@@ -183,6 +197,11 @@ extension DeviceManager {
     }
   }
 
+  /// Encodes and writes `request` inside the output queue operation `operation`.
+  ///
+  /// - Returns: `.cancelled` when the controller was replaced or removed while the request waited,
+  ///   the outcome of the encoder's error when it fails, and otherwise whether the write was
+  ///   delivered.
   private func performPhysicalOutput(
     _ request: PhysicalOutputRequest,
     for identifier: LogicalControllerID,
@@ -213,8 +232,9 @@ extension DeviceManager {
     return written ? .delivered : .writeFailed
   }
 
-  /// Restores the channels a failed write changed. Teardown clears claims and must not have them
-  /// restored while it neutralizes the controller.
+  /// Restores the channels a failed write changed.
+  ///
+  /// Teardown clears claims and must not have them restored while it neutralizes the controller.
   internal func rollBackPhysicalOutputs(to state: PhysicalOutputOwnership.ChannelState) {
     guard !isStopping else { return }
     physicalOutputOwnership.restore(state)

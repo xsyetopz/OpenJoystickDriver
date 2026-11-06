@@ -6,8 +6,9 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// Two controllers of one uncatalogued identity (ZD Ultimate Legend dongle `413D:2204`, no serial
-/// number) at different USB locations, bound by interface signature. Each must light its own
-/// player slot and take only its own rumble.
+/// number) at different USB locations, bound by interface signature.
+///
+/// Each must light its own player slot and take only its own rumble.
 struct SameIdentityDongleTests {
   private typealias Receiver = ProtocolPacketFixtures.XUSBReceiver
 

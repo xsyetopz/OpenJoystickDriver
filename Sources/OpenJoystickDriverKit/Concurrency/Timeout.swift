@@ -2,6 +2,7 @@ import Foundation
 
 /// Thrown by `withTimeout` when the deadline passes before the operation finishes.
 package struct TimeoutError: Error, Equatable {
+  /// The deadline that passed, in seconds.
   package let seconds: Double
 }
 

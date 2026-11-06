@@ -2,7 +2,9 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd controller` command group: list, inspect, watch and test the connected controllers.
 struct ControllerCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "controller",
     abstract: CLILocalized.text(
@@ -24,11 +26,12 @@ struct ControllerCommand: AsyncParsableCommand {
     ]
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
-/// The shared `CONTROLLER` argument help.
+/// The shared help of the `CONTROLLER` argument.
 let controllerArgumentHelp = ArgumentHelp(
   CLILocalized.text(
     "cli.controller.group.argument"
@@ -36,15 +39,19 @@ let controllerArgumentHelp = ArgumentHelp(
   valueName: "controller"
 )
 
+/// The `ojd controller list` command: prints the connected controllers.
 struct ControllerListCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "list",
     abstract: CLILocalized.text("cli.controller.list.abstract")
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let devices = try await ServiceConnection.request { try await $0.getStatus() }
@@ -118,7 +125,10 @@ struct ControllerListCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd controller show` command: prints one controller's identity, ownership, capabilities,
+/// effective record and virtual gamepad.
 struct ControllerShowCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "show",
     abstract: CLILocalized.text(
@@ -129,12 +139,15 @@ struct ControllerShowCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The controller to show.
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let selector = controller
@@ -157,6 +170,7 @@ struct ControllerShowCommand: AsyncParsableCommand {
     }
   }
 
+  /// The `--plain` rows of `controller show`, one per field.
   static func plainRows(_ detail: ControllerShowReport.Detail) -> [[String]] {
     var rows = [["id", detail.id]]
     if let unit = detail.unit { rows.append(["unit", unit]) }
@@ -228,6 +242,7 @@ struct ControllerShowCommand: AsyncParsableCommand {
     }
   }
 
+  /// Prints the labelled rows of `controller show` for people.
   private static func printHuman(_ detail: ControllerShowReport.Detail) {
     let none = CLILocalized.text("cli.controller.show.none")
     func list(_ values: [String]) -> String {

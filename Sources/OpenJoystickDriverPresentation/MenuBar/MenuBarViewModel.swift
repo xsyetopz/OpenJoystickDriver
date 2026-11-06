@@ -3,16 +3,21 @@
   import Foundation
   import OpenJoystickDriverKit
 
+  /// Reads the runtime state for the status item and the main menu.
   @MainActor
   final class MenuBarViewModel {
+    /// The runtime state that the menu bar item reads.
     let runtime: RuntimeViewModel
+    /// Formats the status line.
     private let localization: Localization
 
+    /// Creates the view model on `runtime`.
     init(runtime: RuntimeViewModel, localization: Localization = Localization()) {
       self.runtime = runtime
       self.localization = localization
     }
 
+    /// The connected controllers, or none while the service status is not available.
     var devices: [ApplicationServiceDeviceDescription] {
       guard case .available(let status) = runtime.statusState else { return [] }
       return status.devices
@@ -27,6 +32,9 @@
       )
     }
 
+    /// The status line: readiness, controller count and active profile.
+    ///
+    /// The active profile is the global one when there is one, else the last active profile.
     var summaryTitle: String {
       let readiness: String
       let controllerSummary: String
@@ -63,6 +71,7 @@
       )
     }
 
+    /// The data that the status menu is built from.
     var statusItemState: StatusItemState {
       var profiles: [StatusItemState.Profile] = []
       var snapshot: ApplicationServiceRemappingSnapshotPayload?
@@ -93,9 +102,10 @@
       )
     }
 
-    /// The profiles of the snapshot that apply to the controller: its model, and its unit when
-    /// the profile names one. The active one is the profile routing uses for the controller's
-    /// model.
+    /// The profiles of the snapshot that apply to the controller: its model, and its unit when the
+    /// profile names one.
+    ///
+    /// The active one is the profile routing uses for the controller's model.
     static func profiles(
       applyingTo device: ApplicationServiceDeviceDescription,
       in snapshot: ApplicationServiceRemappingSnapshotPayload?
@@ -111,6 +121,7 @@
       }.map { StatusItemState.Profile(id: $0.id, name: $0.name, isActive: $0.id == activeID) }
     }
 
+    /// The state whose symbol sits beside the status line.
     var summarySemanticState: SemanticState {
       switch runtime.statusState {
       case .loading: return .loading
@@ -119,11 +130,13 @@
       }
     }
 
+    /// Reads the driver extension setup and the service status again.
     func refresh() async {
       await runtime.refreshSystemExtensionSetup()
       await runtime.refresh()
     }
 
+    /// Reads the live service status again and returns whether it changed.
     func refreshLiveStatus() async -> Bool { await runtime.refreshLiveStatus() }
   }
 

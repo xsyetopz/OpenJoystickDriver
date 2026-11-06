@@ -1,9 +1,9 @@
-import OpenJoystickDriverTestSupport
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
-@testable import OpenJoystickDriverService
 @testable import OpenJoystickDriverKit
+@testable import OpenJoystickDriverService
 
 private final class NativePublicationProbe: VirtualOutputDispatching,
   VirtualOutputControllerActivating, @unchecked Sendable

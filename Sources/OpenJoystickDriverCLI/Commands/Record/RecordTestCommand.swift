@@ -2,7 +2,12 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd record test` command: replays captured reports through a model's record and compares
+/// the parsed controller state with the expected state.
+///
+/// It needs no service.
 struct RecordTestCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "test",
     abstract: CLILocalized.text("cli.record.test.abstract"),
@@ -13,20 +18,29 @@ struct RecordTestCommand: AsyncParsableCommand {
   struct Result: Encodable, Equatable {
     /// One field of the controller state that differs; `expected` and `actual` are its JSON.
     struct Difference: Encodable, Equatable {
+      /// The field of the controller state.
       let field: String
+      /// The expected value as JSON.
       let expected: String
+      /// The parsed value as JSON.
       let actual: String
     }
 
+    /// The controller model as `VVVV:PPPP`.
     let identity: String
+    /// Whether the parsed state matches the expected state.
     let matches: Bool
+    /// The number of received packets that were replayed.
     let inputReports: Int
+    /// The fields that differ.
     let differences: [Difference]
   }
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The model whose record parses the packets.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.record.group.identity"),
@@ -35,6 +49,7 @@ struct RecordTestCommand: AsyncParsableCommand {
   )
   var model: ControllerModelID
 
+  /// `--packets`: the capture file, with the lines that `ojd controller capture --json` prints.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text("cli.record.test.packets"),
@@ -43,6 +58,7 @@ struct RecordTestCommand: AsyncParsableCommand {
   )
   var packets: String
 
+  /// `--expect`: the JSON file with the expected controller state.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text("cli.record.test.expect"),
@@ -51,6 +67,7 @@ struct RecordTestCommand: AsyncParsableCommand {
   )
   var expect: String
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let set = RecordStore.load()
@@ -89,6 +106,10 @@ struct RecordTestCommand: AsyncParsableCommand {
     }
   }
 
+  /// Replays `capture` through `record` and compares the parsed state with `expectation`.
+  ///
+  /// - Throws: ``CLIFailure`` with `invalidInputFile` when the capture or the expectation is not
+  ///   usable.
   private func test(
     _ record: ControllerRecord,
     capture: Data,
@@ -104,6 +125,7 @@ struct RecordTestCommand: AsyncParsableCommand {
     }
   }
 
+  /// Prints `result` as JSON, as `--plain` rows of the differences, or as text.
   private func print(_ result: Result) throws {
     switch CLIContext.current.format {
     case .json: try CLIOutput.json(result)

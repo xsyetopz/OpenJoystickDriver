@@ -2,14 +2,22 @@ import Foundation
 
 /// An independently owned output action within a control assignment.
 public struct RemappingAction: Codable, Equatable, Hashable, Identifiable, Sendable {
+  /// Stable identity of the action inside its profile.
   public let id: UUID
+  /// Output that the action drives.
   public let destination: RemappingDestination
+  /// How the source drives the destination.
   public let behavior: RemappingBindingBehavior
+  /// Time the destination stays down for ``RemappingBindingBehavior/pulse``, in milliseconds.
   public let pulseDurationMs: Double
+  /// Repeat setting for a button destination while the source is held.
   public let turbo: RemappingTurbo?
+  /// Alternate action when the source is held past a duration.
   public let longHold: RemappingLongHold?
+  /// Alternate action when the source is pressed twice in a window.
   public let doubleTap: RemappingDoubleTap?
 
+  /// Creates an action.
   public init(
     id: UUID = UUID(),
     destination: RemappingDestination,
@@ -28,13 +36,27 @@ public struct RemappingAction: Codable, Equatable, Hashable, Identifiable, Senda
     self.doubleTap = doubleTap
   }
 
+  /// Profile document keys of an action.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    case id, destination, behavior, turbo
+    /// The JSON key of `id`.
+    case id
+    /// The JSON key of `destination`.
+    case destination
+    /// The JSON key of `behavior`.
+    case behavior
+    /// The JSON key of `turbo`.
+    case turbo
+    /// The JSON key of `pulseDurationMs`.
     case pulseDurationMs
+    /// The JSON key of `longHold`.
     case longHold
+    /// The JSON key of `doubleTap`.
     case doubleTap
   }
 
+  /// Decodes an action from a profile document; omitted behavior and pulse duration take their
+  /// defaults.
+  /// - Throws: `DecodingError` for an unknown key, a missing key or a bad value.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -49,6 +71,7 @@ public struct RemappingAction: Codable, Equatable, Hashable, Identifiable, Senda
     doubleTap = try values.decodeIfPresent(RemappingDoubleTap.self, forKey: .doubleTap)
   }
 
+  /// Encodes an action and leaves out the fields that hold their default.
   public func encode(to encoder: any Encoder) throws {
     var values = encoder.container(keyedBy: CodingKeys.self)
     try values.encode(id, forKey: .id)
@@ -62,6 +85,7 @@ public struct RemappingAction: Codable, Equatable, Hashable, Identifiable, Senda
     try values.encodeIfPresent(doubleTap, forKey: .doubleTap)
   }
 
+  /// Returns the action as a binding of the given source and axis tuning.
   func binding(source: RemappingSource, axisTuning: RemappingAxisTuning?) -> RemappingBinding {
     RemappingBinding(
       id: id,

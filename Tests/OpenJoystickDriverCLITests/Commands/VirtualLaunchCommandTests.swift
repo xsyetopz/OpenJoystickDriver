@@ -42,8 +42,9 @@ struct VirtualLaunchCommandTests {
     return (run, try #require(String(bytes: data, encoding: .utf8)))
   }
 
-  /// The variables `env` printed. A value may span lines, so a line without a name continues
-  /// the variable before it.
+  /// The variables `env` printed.
+  ///
+  /// A value may span lines, so a line without a name continues the variable before it.
   private static func variables(_ printed: String) -> [String: String] {
     var result: [String: String] = [:]
     var name: String?

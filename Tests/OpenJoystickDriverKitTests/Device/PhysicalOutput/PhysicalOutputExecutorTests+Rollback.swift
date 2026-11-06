@@ -56,8 +56,10 @@ extension PhysicalOutputExecutorTests {
     await started.manager.stop()
   }
 
-  /// A failed rumble does not erase a later rumble that was delivered. Each write reads the
-  /// effective claim when it runs, so the first write fails carrying the second claim.
+  /// A failed rumble does not erase a later rumble that was delivered.
+  ///
+  /// Each write reads the effective claim when it runs, so the first write fails carrying the
+  /// second claim.
   @Test
   func failedRumbleKeepsLaterDeliveredClaim() async throws {
     let started = try await startSixaxis(locationID: 529)

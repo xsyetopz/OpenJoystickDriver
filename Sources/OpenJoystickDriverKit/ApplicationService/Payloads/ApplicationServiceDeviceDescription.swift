@@ -2,10 +2,14 @@ import Foundation
 
 /// Structured description of a connected controller, used in ``ApplicationServiceStatusPayload``.
 public struct ApplicationServiceDeviceDescription: Codable, Sendable {
-  /// The token of this attachment; a reconnect gets a new one. See ``ControllerSessionToken``.
+  /// The token of this attachment; a reconnect gets a new one.
+  ///
+  /// See ``ControllerSessionToken``.
   public let sessionToken: ControllerSessionToken
   /// The controller's port key, which lasts across reconnects and service restarts; nil when the
-  /// controller reports no location ID. See ``ControllerPortKey``.
+  /// controller reports no location ID.
+  ///
+  /// See ``ControllerPortKey``.
   public let portKey: ControllerPortKey?
   /// Human-readable controller name.
   public let name: String
@@ -18,7 +22,9 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   /// Connection type (e.g. "USB", "HID").
   public let connection: String
   /// USB interface number the controller is reached through: the claimed interface of a raw-USB
-  /// pipeline, or the parent interface observed for a HID connection. Nil when none was observed.
+  /// pipeline, or the parent interface observed for a HID connection.
+  ///
+  /// Nil when none was observed.
   public let interfaceNumber: UInt8?
   /// Discovery route that owns the live controller pipeline.
   public let discoverySource: DeviceDiscoverySource
@@ -54,8 +60,10 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   /// ``physicalOutputCapabilities`` holds only what macOS leaves undone.
   public let physicalOutputOwner: ControllerServer
   /// Who the controller record says serves the model after the bundled, package, and user layers:
-  /// `ojd` when a layer sets it, `macOS` otherwise. Unlike ``physicalOutputOwner``, it stays `ojd`
-  /// while OJD serves a model that macOS also supports.
+  /// `ojd` when a layer sets it, `macOS` otherwise.
+  ///
+  /// Unlike ``physicalOutputOwner``, it stays `ojd` while OJD serves a model that macOS also
+  /// supports.
   public let recordServer: ControllerServer
   /// How the controller record reaches the controller; `system` when it names no other route.
   public let recordAccessRoute: ControllerAccessRoute
@@ -144,6 +152,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     self.inputHealth = inputHealth
   }
 
+  /// Decodes the value from `decoder`.
   public init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.sessionToken = try container.decode(ControllerSessionToken.self, forKey: .sessionToken)
@@ -214,39 +223,73 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     )
   }
 
+  /// The keys of the JSON encoding.
   private enum CodingKeys: String, CodingKey {
+    /// The `name` key.
     case name
+    /// The `sessionToken` key.
     case sessionToken
+    /// The `portKey` key.
     case portKey
+    /// The `vendorID` key.
     case vendorID
+    /// The `productID` key.
     case productID
+    /// The `protocolBinding` key.
     case protocolBinding
+    /// The `connection` key.
     case connection
+    /// The `interfaceNumber` key.
     case interfaceNumber
+    /// The `discoverySource` key.
     case discoverySource
+    /// The `physicalOwnership` key.
     case physicalOwnership
+    /// The `hidInputOwnership` key.
     case hidInputOwnership
+    /// The `inputOwner` key.
     case inputOwner
+    /// The `duplicateExposureRisk` key.
     case duplicateExposureRisk
+    /// The `serialNumber` key.
     case serialNumber
+    /// The `parameters` key.
     case parameters
+    /// The `bindingResult` key.
     case bindingResult
+    /// The `inputEndpoint` key.
     case inputEndpoint
+    /// The `outputEndpoint` key.
     case outputEndpoint
+    /// The `needsSetConfiguration` key.
     case needsSetConfiguration
+    /// The `postHandshakeSettleMs` key.
     case postHandshakeSettleMs
+    /// The `preferredBackends` key.
     case preferredBackends
+    /// The `physicalOutputCapabilities` key.
     case physicalOutputCapabilities
+    /// The `physicalOutputOwner` key.
     case physicalOutputOwner
+    /// The `recordServer` key.
     case recordServer
+    /// The `recordAccessRoute` key.
     case recordAccessRoute
+    /// The `tuning` key.
     case tuning
+    /// The `capabilities` key.
     case capabilities
+    /// The `connectionState` key.
     case connectionState
+    /// The `sessionState` key.
     case sessionState
+    /// The `startupCommandStatus` key.
     case startupCommandStatus
+    /// The `inputHealth` key.
     case inputHealth
+    /// The `virtualHIDProfile` key.
     case virtualHIDProfile
+    /// The `publication` key.
     case publication
   }
 }

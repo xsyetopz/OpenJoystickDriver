@@ -1,5 +1,6 @@
-@testable import OpenJoystickDriverKit
 import Testing
+
+@testable import OpenJoystickDriverKit
 
 struct SCUFEnvisionParserTests {
   private func parse(

@@ -5,8 +5,10 @@ import OpenJoystickDriverKit
 ///
 /// Holds the server weakly, because the server owns the endpoint that owns this source.
 struct ApplicationServiceWatchSource: ControllerWatchSource {
+  /// The server that supplies the controllers; nil once it is gone.
   weak var server: ApplicationServiceServer?
 
+  /// Returns the connected controllers, with their virtual HID profiles described.
   func devices() async throws -> [ApplicationServiceDeviceDescription] {
     guard let server else { return [] }
     return server.describingVirtualHIDProfiles(
@@ -16,10 +18,12 @@ struct ApplicationServiceWatchSource: ControllerWatchSource {
     )
   }
 
+  /// Returns the current state of `device`, or nil when it is not connected.
   func state(of device: ApplicationServiceDeviceDescription) async throws -> ControllerState? {
     await server?.deviceManager.controllerState(for: .session(device.sessionToken))
   }
 
+  /// Returns the virtual output state of `device`, or nil when no virtual output covers it.
   func output(
     of device: ApplicationServiceDeviceDescription
   ) async throws

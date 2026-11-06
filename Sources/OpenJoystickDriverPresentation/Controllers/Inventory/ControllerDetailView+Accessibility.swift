@@ -7,6 +7,8 @@
 
   extension ControllerDetailView {
 
+    /// The sentence VoiceOver reads for the detail: the connection, the active profile, the
+    /// protocol, the serial number as shown, the IDs, the endpoints and the battery.
     var accessibilityValue: String {
       let details = OJDLocalized.formatted(
         "ui.controllers.accessibilityDetails",
@@ -28,6 +30,7 @@
       return "\(details) \(battery)"
     }
 
+    /// The sentence about the active profile: checking, none, its name, or the failure.
     private var profileAccessibilityValue: String {
       switch activeProfile {
       case .loading:

@@ -1,9 +1,12 @@
-/// A family's subcommand reports (`defaults.session.subcommands` in its protocol description):
-/// the report id, the rule of the rolling packet counter that every output report of the family
-/// shares, the requests sent in order at startup and the player-indicator subcommand. A record
-/// never carries one.
+/// A family's subcommand reports (`defaults.session.subcommands` in its protocol description): the
+/// report id, the rule of the rolling packet counter that every output report of the family shares,
+/// the requests sent in order at startup and the player-indicator subcommand.
+///
+/// A record never carries one.
 struct SubcommandPlan: Equatable, Sendable {
+  /// The accepted values of `counterModulus`.
   static let counterModulusRange = 2...256
+  /// The accepted number of requests.
   static let requestsRange = 1...16
 
   /// The id of the output report that carries a subcommand.
@@ -15,6 +18,8 @@ struct SubcommandPlan: Equatable, Sendable {
   /// The subcommand that lights the player indicator.
   let playerIndicator: PlayerIndicatorSubcommand
 
+  /// Creates a plan; throws when the modulus or request count is outside its range or two SPI reads
+  /// share a purpose.
   init(
     reportID: UInt8,
     counterModulus: Int,
@@ -59,7 +64,9 @@ struct SubcommandPlan: Equatable, Sendable {
 
 /// The player-indicator subcommand: its id and the one data byte that lights each player.
 struct PlayerIndicatorSubcommand: Equatable, Sendable {
+  /// The id of the player-indicator subcommand.
   let subcommand: UInt8
+  /// The data byte that lights each player indicator.
   let patterns: [PhysicalPlayerIndicator: UInt8]
 
   /// Fails unless every indicator has a pattern.
@@ -91,24 +98,36 @@ struct SubcommandRequest: Equatable, Sendable {
   /// A read of the controller's SPI flash: the address goes out as four little-endian bytes and
   /// then the length.
   struct SPIRead: Equatable, Sendable {
+    /// What an SPI read fetches.
     enum Purpose: String, Equatable, Sendable {
+      /// The factory calibration of the motion sensors.
       case factoryMotionCalibration = "FactoryMotionCalibration"
+      /// The user calibration of the motion sensors.
       case userMotionCalibration = "UserMotionCalibration"
     }
 
+    /// The accepted values of `length`.
     static let lengthRange = 1...29
 
+    /// The SPI flash address.
     let address: UInt32
+    /// The number of bytes to read.
     let length: UInt8
+    /// What the read fetches.
     let purpose: Purpose
   }
 
+  /// The accepted number of data bytes.
   static let dataRange = 1...16
 
+  /// The subcommand id.
   let subcommand: UInt8
+  /// The data bytes that follow the subcommand id.
   let data: [UInt8]
+  /// The SPI read the request performs; nil for a fixed-data request.
   let spiRead: SPIRead?
 
+  /// Creates a request with fixed data; throws when the data count is outside `dataRange`.
   init(subcommand: UInt8, data: [UInt8]) throws(ControllerRecordProblem) {
     guard Self.dataRange.contains(data.count) else {
       throw ControllerRecordProblem(
@@ -121,6 +140,10 @@ struct SubcommandRequest: Equatable, Sendable {
     spiRead = nil
   }
 
+  /// Creates a request that reads SPI flash; the data is the address as four little-endian bytes
+  /// and the length.
+  ///
+  /// Throws when the length is outside `SPIRead.lengthRange`.
   init(subcommand: UInt8, spiRead: SPIRead) throws(ControllerRecordProblem) {
     guard SPIRead.lengthRange.contains(Int(spiRead.length)) else {
       throw ControllerRecordProblem(code: .invalidControllerRecord, "an SPI read length is 1...29")

@@ -218,8 +218,10 @@ enum LocalizationCatalogAudit {
   }
 
   /// The format specifiers of each key, in sorted order: a translation may reorder its numbered
-  /// specifiers. A `.stringsdict` entry lists each distinct specifier once, because a language
-  /// carries only the plural categories it needs and every category repeats the same specifiers.
+  /// specifiers.
+  ///
+  /// A `.stringsdict` entry lists each distinct specifier once, because a language carries only the
+  /// plural categories it needs and every category repeats the same specifiers.
   static func placeholderSignatures(for localization: String) -> [String: [String]] {
     var result =
       stringsData(for: localization).map {
@@ -245,7 +247,9 @@ enum LocalizationCatalogAudit {
   }
 
   /// The problems of `entries`: an entry with no plural variable, and a plural variable that lacks
-  /// a category of `required`. Each variable needs every category on its own.
+  /// a category of `required`.
+  ///
+  /// Each variable needs every category on its own.
   static func pluralCategoryProblems(in entries: [String: Any], required: Set<String>) -> [String] {
     var problems: [String] = []
     for (key, entry) in entries.sorted(by: { $0.key < $1.key }) {

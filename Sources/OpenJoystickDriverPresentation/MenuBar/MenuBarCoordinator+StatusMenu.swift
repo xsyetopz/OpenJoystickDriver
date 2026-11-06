@@ -9,8 +9,10 @@
 
   /// Carries a status-item action through `NSMenuItem.representedObject`.
   final class StatusItemActionBox: NSObject {
+    /// The action that the menu item runs.
     let action: StatusItemAction
 
+    /// Creates a box that carries `action`.
     init(_ action: StatusItemAction) { self.action = action }
   }
 
@@ -18,15 +20,20 @@
   /// replaced while it is showing.
   @MainActor
   final class StatusMenuTracker: NSObject, NSMenuDelegate {
+    /// Whether the menu is open now.
     private(set) var isOpen = false
+    /// Called when the menu is about to open.
     var onWillOpen: () -> Void = {}
+    /// Called when the menu has closed.
     var onDidClose: () -> Void = {}
 
+    /// Marks the menu open and calls ``onWillOpen``.
     func menuWillOpen(_ menu: NSMenu) {
       isOpen = true
       onWillOpen()
     }
 
+    /// Marks the menu closed and calls ``onDidClose``.
     func menuDidClose(_ menu: NSMenu) {
       isOpen = false
       onDidClose()
@@ -42,6 +49,10 @@
       return menu
     }
 
+    /// Returns the menu item for `entry`: a separator, or an item with its state, symbol, submenu
+    /// or action.
+    ///
+    /// Settings gets `Command-,` and Quit gets `Command-Q`.
     private func makeMenuItem(for entry: StatusItemEntry) -> NSMenuItem {
       if entry.isSeparator { return .separator() }
       let title: String
@@ -72,6 +83,7 @@
       return item
     }
 
+    /// Runs the action of the chosen status menu item.
     @objc
     func performStatusItemAction(_ sender: Any?) {
       guard let box = (sender as? NSMenuItem)?.representedObject as? StatusItemActionBox else {
@@ -98,11 +110,14 @@
       }
     }
 
+    /// Opens the web address in the default browser, and does nothing when it is not a valid URL.
     func open(urlString: String) {
       guard let url = URL(string: urlString) else { return }
       NSWorkspace.shared.open(url)
     }
 
+    /// Runs `action` on the connected controller with `sessionToken`, then shows its failure if the
+    /// action recorded one.
     private func runControllerAction(
       _ sessionToken: String,
       _ action: @escaping @MainActor (ApplicationServiceDeviceDescription) async -> Void
@@ -120,6 +135,7 @@
       }
     }
 
+    /// Asks to confirm, then disconnects the wireless controller with `sessionToken`.
     private func disconnectWirelessController(sessionToken: String) {
       guard
         let device = menuBarViewModel.devices.first(where: {
@@ -162,6 +178,8 @@
       }
     }
 
+    /// Runs the profile operation through the main window, and shows an alert when it is refused or
+    /// fails.
     private func changeProfile(_ operation: StatusItemProfileOperation) {
       Task { @MainActor in
         guard let mainWindow else { return }
@@ -179,6 +197,7 @@
       }
     }
 
+    /// Shows an alert that names the failed action and gives `message`.
     private func presentFailure(_ message: String) {
       let alert = NSAlert()
       alert.alertStyle = .warning
@@ -188,6 +207,7 @@
       alert.runActivatingApp()
     }
 
+    /// Returns the template SF Symbol `symbol` for a menu item, or nil when it does not exist.
     func menuImage(symbol: String) -> NSImage? {
       let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
       image?.isTemplate = true

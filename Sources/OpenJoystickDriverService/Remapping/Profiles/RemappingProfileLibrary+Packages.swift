@@ -4,7 +4,9 @@ import OpenJoystickDriverKit
 extension RemappingProfileLibrary {
   /// A profile that an installed mod package ships, with the name of that package.
   struct PackageProfile: Equatable, Sendable {
+    /// The profile.
     let profile: RemappingProfile
+    /// The name of the package that ships it.
     let packageName: String
   }
 
@@ -57,8 +59,9 @@ extension RemappingProfileLibrary {
     return served
   }
 
-  /// The package profiles that the user's profiles do not shadow. A user profile with the same id
-  /// or name wins.
+  /// The package profiles that the user's profiles do not shadow.
+  ///
+  /// A user profile with the same id or name wins.
   func servedPackageProfiles(
     shadowedBy user: [RemappingProfile],
     from candidates: [PackageProfile]? = nil

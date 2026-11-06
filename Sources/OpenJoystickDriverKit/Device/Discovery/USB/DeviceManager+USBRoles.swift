@@ -1,11 +1,16 @@
 import Foundation
 
-/// One protocol role of a raw-USB service, validated before its pipeline exists. Its driver is
-/// built again when the pipeline is created, since a driver is not sendable across the actor
-/// suspensions between roles; construction is pure, so it repeats the validated result.
+/// One protocol role of a raw-USB service, validated before its pipeline exists.
+///
+/// Its driver is built again when the pipeline is created, since a driver is not sendable across
+/// the actor suspensions between roles; construction is pure, so it repeats the validated result.
 struct USBRoleAdmission {
+  /// The logical controller that the role serves.
   let identifier: LogicalControllerID
+  /// The transport profile and physical facts resolved for the role.
   let resolution: USBTransportResolution
+  /// The role's index among the service's roles, which selects the receiver slot of a wireless
+  /// receiver.
   let slotOrdinal: Int
 }
 
@@ -89,6 +94,7 @@ extension DeviceManager {
   }
 
   /// Removes one raw-USB role from the inventory and returns its pipeline for the caller to stop.
+  ///
   /// Detach and admission rollback share it, so both clear the role's output state alike.
   func removeUSBRole(_ identifier: LogicalControllerID) -> DevicePipeline? {
     let pipeline = pipelines.removeValue(forKey: identifier)
@@ -101,6 +107,7 @@ extension DeviceManager {
   }
 
   /// Stops the started roles of an admission that must be retried, removing those still owned.
+  ///
   /// Every started pipeline is stopped; a pipeline already stopped elsewhere ignores it.
   private func discardUSBRoles(
     _ started: [(identifier: LogicalControllerID, pipeline: DevicePipeline)],

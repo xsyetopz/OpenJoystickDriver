@@ -6,6 +6,9 @@ import OpenJoystickDriverKit
 /// The work reads logs, probes the service, and writes files, so each method runs it through
 /// `BlockingWork` instead of on the `@MainActor` state that awaits it.
 nonisolated struct SupportExportService: Sendable {
+  /// Writes the support report to `outputURL`.
+  ///
+  /// - Throws: the error of ``SupportReportService`` when the report cannot be written.
   func writeReport(
     status: ApplicationServiceStatusPayload?,
     virtualDiagnostics: ApplicationServiceVirtualDeviceDiagnosticsPayload?,

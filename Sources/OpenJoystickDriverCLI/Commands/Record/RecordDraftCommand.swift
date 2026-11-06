@@ -2,7 +2,10 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd record draft` command: reads a connected controller's HID report descriptor, captures
+/// its input reports while the user presses each control, and prints a record to start from.
 struct RecordDraftCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "draft",
     abstract: CLILocalized.text(
@@ -15,18 +18,30 @@ struct RecordDraftCommand: AsyncParsableCommand {
 
   /// The `--json` result. `report` is absent when nothing chose an input report.
   struct Result: Encodable, Equatable {
+    /// The input report that the draft maps.
     struct Report: Encodable, Equatable {
+      /// The report ID, or nil when the controller uses no report IDs.
       let id: Int?
+      /// The report length in bytes.
       let length: Int
     }
 
+    /// The controller model as `VVVV:PPPP`.
     let identity: String
+    /// The controller name.
     let name: String
+    /// Whether the draft is a `Controller` for a model without a bundled record, or a
+    /// `ControllerPatch`.
     let operation: String
+    /// The protocol family of the draft.
     let family: String
+    /// The input report that the draft maps.
     let report: Report?
+    /// The number of input reports captured.
     let capturedReports: Int
+    /// The bytes that changed during the capture, with their smallest and largest values.
     let changedBytes: [ControllerRecordDraft.ChangedByte]
+    /// The drafted record.
     let record: OrderedJSON
   }
 
@@ -36,12 +51,15 @@ struct RecordDraftCommand: AsyncParsableCommand {
     PlatformHosts.current.physicalReportDescriptor(vendorID: $0, productID: $1)
   }
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The controller to draft a record for.
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
+  /// `--duration`: how many seconds to capture input reports.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -52,8 +70,10 @@ struct RecordDraftCommand: AsyncParsableCommand {
   )
   var duration: Double = 10
 
+  /// Checks the duration.
   func validate() throws { try validateDuration(duration) }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       try await withController(controller) { client, device in
@@ -112,6 +132,7 @@ struct RecordDraftCommand: AsyncParsableCommand {
     return reports
   }
 
+  /// Prints the draft as JSON, as the changed bytes in `--plain` rows, or as text with the record.
   private func print(
     _ draft: ControllerRecordDraft,
     _ device: ApplicationServiceDeviceDescription

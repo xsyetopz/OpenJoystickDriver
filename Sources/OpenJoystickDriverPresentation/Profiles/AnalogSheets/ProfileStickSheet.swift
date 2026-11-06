@@ -2,19 +2,31 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The sheet that edits the left and right stick mappings of a profile, one stick at a time.
   struct ProfileStickSheet: View {
+    /// Receives the stick mappings that are enabled when the person chooses Save.
     let onSave: ([RemappingStickMapping]) throws -> Void
+    /// Dismisses the sheet.
     @Environment(\.presentationMode)
     private var presentationMode
+    /// The left stick being edited.
     @State
     private var left: ProfileStickDraft
+    /// The right stick being edited.
     @State
     private var right: ProfileStickDraft
+    /// The stick the fields show.
     @State
     private var selected: RemappingStickSource = .left
+    /// The message of the failed validation, or nil.
     @State
     private var errorMessage: String?
 
+    /// Creates the sheet on the current stick mappings.
+    ///
+    /// - Parameters:
+    ///   - mappings: The stick mappings to edit.
+    ///   - onSave: Receives the validated mappings.
     init(
       mappings: [RemappingStickMapping],
       onSave: @escaping ([RemappingStickMapping]) throws -> Void
@@ -34,6 +46,7 @@
       )
     }
 
+    /// The title, the left or right stick picker, its fields, an error if any, and the buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
         Text(OJDLocalized.string("ui.profiles.stick.title")).font(.headline)

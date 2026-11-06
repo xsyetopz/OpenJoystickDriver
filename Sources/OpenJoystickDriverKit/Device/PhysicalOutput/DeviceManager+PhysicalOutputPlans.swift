@@ -2,10 +2,12 @@ import Foundation
 
 extension DeviceManager {
   /// Writes one user-output plan inside the output queue operation of its command, so the whole
-  /// plan is atomic. Each run of writes goes to the body its destination names: USB packets to
-  /// the pipeline's USB session, HID output reports to ``performHIDOutputPlan`` with the output
-  /// rate limit, and feature reports to ``performHIDFeatureReports``, both behind the native write
-  /// gate. Stops at the first failed run.
+  /// plan is atomic.
+  ///
+  /// Each run of writes goes to the body its destination names: USB packets to the pipeline's USB
+  /// session, HID output reports to ``performHIDOutputPlan`` with the output rate limit, and
+  /// feature reports to ``performHIDFeatureReports``, both behind the native write gate. Stops at
+  /// the first failed run.
   internal func performPhysicalOutputPlan(
     _ plan: PhysicalOutputPlan,
     for identifier: LogicalControllerID,

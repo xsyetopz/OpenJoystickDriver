@@ -1,7 +1,9 @@
 import Foundation
 
 extension RemappingEngineState {
-  /// Cancels matching contributions owned by this exact controller.
+  /// Releases the held bindings and turbo repeats of this controller that drive a destination.
+  ///
+  /// Pulse deadlines of those bindings are cleared with them.
   mutating func releaseDestination(
     _ destination: RemappingDestination,
     device: inout RemappingDeviceState

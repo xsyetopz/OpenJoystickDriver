@@ -8,6 +8,7 @@
   import UserNotifications
 
   extension MenuBarCoordinator: NSMenuDelegate, NSMenuItemValidation {
+    /// Builds the main menu bar and registers its Services, Window and Help menus with the app.
     func makeApplicationMenu() -> NSMenu {
       let rendered = MainMenuRenderer.render(target: self)
       let application = NSApplication.shared
@@ -53,6 +54,8 @@
       return state
     }
 
+    /// Updates the titles of the main menu items before `menu` opens, and lists the profiles in the
+    /// Activate Profile submenu.
     package func menuNeedsUpdate(_ menu: NSMenu) {
       let state = mainMenuState()
       if menu.supermenu?.items.first(where: { $0.submenu === menu })?.identifier?.rawValue
@@ -79,6 +82,7 @@
       }
     }
 
+    /// Returns whether the main menu item is enabled in the current state.
     package func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
       guard let id = menuItem.identifier?.rawValue,
         let item = MainMenuModel.allItems.first(where: { $0.id == id })
@@ -86,6 +90,7 @@
       return MainMenuModel.isEnabled(item, state: mainMenuState())
     }
 
+    /// Runs the action of the chosen main menu item.
     @objc
     func performMainMenuItem(_ sender: NSMenuItem) {
       guard let id = sender.identifier?.rawValue,
@@ -94,6 +99,9 @@
       performMainMenu(item.action)
     }
 
+    /// Runs `action` of the main menu on the main window, the Settings window or the service.
+    ///
+    /// Responder-chain actions never arrive here.
     func performMainMenu(_ action: MainMenuAction) {
       let state = mainMenuState()
       switch action {
@@ -155,6 +163,10 @@
       }
     }
 
+    /// Fills the Activate Profile submenu with a row for each profile, or with one disabled row
+    /// that says why there is none.
+    ///
+    /// The active profile shows a checkmark and cannot be chosen again.
     private func populateActivateProfileMenu(_ menu: NSMenu) {
       menu.removeAllItems()
       guard case .available(let snapshot) = viewModel.remappingState, !snapshot.profiles.isEmpty
@@ -190,6 +202,8 @@
       }
     }
 
+    /// Activates the chosen profile after asking about a profile that produces no output, and shows
+    /// an alert when the activation fails.
     @objc
     func activateProfileFromMenu(_ sender: NSMenuItem) {
       guard let profileID = sender.representedObject as? UUID,
@@ -224,12 +238,14 @@
       }
     }
 
+    /// Returns the connected controller that `controller` stands for, or nil when it is gone.
     private func device(
       for controller: MainMenuControllerState
     ) -> ApplicationServiceDeviceDescription? {
       menuBarViewModel.devices.first { $0.sessionToken.rawValue == controller.id }
     }
 
+    /// Shows an alert with a title, a message and an OK button.
     private func showMainMenuAlert(
       title: String,
       message: String,
@@ -243,6 +259,7 @@
       alert.runActivatingApp()
     }
 
+    /// Asks to confirm, then disconnects the wireless link of `device`.
     private func confirmDisconnectWireless(_ device: ApplicationServiceDeviceDescription) {
       let confirmation = WirelessDisconnectConfirmation(controllerName: device.name)
       let alert = NSAlert()
@@ -255,6 +272,8 @@
       Task { @MainActor in await viewModel.disconnectWirelessController(device) }
     }
 
+    /// Deactivates the active profile of the controller model of `device`, and shows an alert when
+    /// it is refused or fails.
     private func deactivateProfiles(of device: ApplicationServiceDeviceDescription) {
       let request = RuntimeMutationRequest(operation: .deactivate(profileID: nil))
       Task { @MainActor in
@@ -292,6 +311,7 @@
       }
     }
 
+    /// Copies the support report and shows an alert that says whether it worked.
     private func copySupportReportWithFeedback() {
       Task { @MainActor in
         let copied = await supportReport.copySupportReport()
@@ -310,6 +330,7 @@
       }
     }
 
+    /// Asks where to save the support report and writes it, then shows an alert when saving fails.
     private func beginSaveSupportReport() {
       let panel = NSSavePanel()
       panel.title = OJDLocalized.string("ui.debug.saveReportPanel")
@@ -330,6 +351,7 @@
       }
     }
 
+    /// Asks where to save the logs and writes them, then shows an alert when saving fails.
     private func beginSaveActivityLog() {
       let panel = NSSavePanel()
       panel.title = OJDLocalized.string("ui.debug.saveLogsPanel")
@@ -350,12 +372,14 @@
       }
     }
 
+    /// Opens the project page in the default browser.
     @objc
     func openProjectPage(_ sender: Any?) {
       guard let url = URL(string: "https://github.com/xsyetopz/OpenJoystickDriver") else { return }
       NSWorkspace.shared.open(url)
     }
 
+    /// Shows the About panel with the app version and a link to the project page.
     @objc
     func showAbout(_ sender: Any?) {
       let repositoryTitle = OJDLocalized.string("ui.menu.projectPage")
@@ -375,6 +399,7 @@
 
 #else
 
+  /// A placeholder on a platform without AppKit and SwiftUI.
   final class MenuBarCoordinator {}
 
 #endif

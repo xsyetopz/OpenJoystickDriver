@@ -12,8 +12,10 @@ extension PhysicalProtocolID {
   }
 
   /// The startup write of the named packet `identifier` in this family's description, with the
-  /// sequence number byte left for the driver to stamp. Nil when the description names no such
-  /// packet; a record never selects one, because its decoder rejects the id.
+  /// sequence number byte left for the driver to stamp.
+  ///
+  /// Nil when the description names no such packet; a record never selects one, because its decoder
+  /// rejects the id.
   func namedPacketWrite(_ identifier: String) -> USBStartupWrite? {
     protocolDescription.namedPackets?.packet(named: identifier)?.write
   }

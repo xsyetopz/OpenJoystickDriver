@@ -1,61 +1,121 @@
 import Foundation
 
+/// Why a profile failed ``RemappingProfile/validate()``.
+///
+/// Cases with an `index` name the position of the binding, chord, sequence or layer in its list.
 public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable {
+  /// A binding's behavior does not fit its destination, pulse duration or timed actions.
   case bindingBehaviorConflict(index: Int)
+  /// The virtual gamepad cannot output this button.
   case unsupportedGamepadButton(Control)
+  /// A virtual gamepad destination or stick output is used while the output policy has no virtual
+  /// gamepad.
   case virtualOutputRequired
+  /// A physical-controller output value is out of range.
   case invalidPhysicalOutput
+  /// The motion tuning has an invalid field.
   case invalidMotionTuning(RemappingMotionTuningError)
+  /// The gyro output has an invalid field.
   case invalidGyroOutput(RemappingGyroOutputError)
+  /// A Joy-Con pair profile does not target a left Joy-Con model.
   case invalidJoyConPairDevice
+  /// The mapping of this stick has an invalid field.
   case invalidStickMapping(RemappingStickSource)
+  /// Two mappings read this stick.
   case duplicateStickMapping(RemappingStickSource)
+  /// The mapping of this trigger has an invalid field.
   case invalidTriggerMapping(RemappingTriggerSource)
+  /// Two mappings read this trigger.
   case duplicateTriggerMapping(RemappingTriggerSource)
+  /// A binding reads a stage of this trigger, which has no dual-stage mapping.
   case triggerStageWithoutMapping(RemappingTriggerSource)
+  /// A binding reads a motion lean, but no motion tuning defines one.
   case motionLeanWithoutMapping
+  /// The touch mapping of this surface has an invalid field.
   case invalidTouchMapping(RemappingTouchSurface)
+  /// Two touch mappings read this surface.
   case duplicateTouchMapping(RemappingTouchSurface)
+  /// A touch grid source has invalid dimensions or cell coordinates.
   case invalidTouchGrid
+  /// A touch swipe source has an invalid minimum distance.
   case invalidTouchSwipe
+  /// The profile name is empty, too long, padded with whitespace or holds control characters.
   case invalidProfileName
+  /// The profile holds more mappings than the limit; the value is the count.
   case tooManyBindings(Int)
+  /// Two bindings, chords, sequences, actions or touch mappings share this identifier.
   case duplicateBindingID(UUID)
+  /// Two layers share this identifier.
   case duplicateLayerID(UUID)
+  /// Two bindings of one scope read this source.
   case duplicateSource(RemappingSource)
+  /// The application bundle identifier is not valid; the value is the identifier.
   case invalidAppID(String)
+  /// An axis source has no axis tuning.
   case axisTuningRequired(index: Int)
+  /// A source that is not an axis has axis tuning.
   case axisTuningNotApplicable(index: Int)
+  /// The source and destination do not fit: an axis source needs a continuous destination and any
+  /// other source a discrete one.
   case incompatibleSourceAndDestination(index: Int)
+  /// An axis tuning field is not finite.
   case nonFiniteTuning(index: Int, field: String)
+  /// An axis tuning field is out of range.
   case tuningOutOfRange(index: Int, field: String)
+  /// Turbo is set on a continuous or physical destination.
   case turboNotSupported(index: Int)
+  /// A turbo field is not finite.
   case nonFiniteTurbo(index: Int, field: String)
+  /// A turbo field is out of range.
   case turboOutOfRange(index: Int, field: String)
+  /// A long hold is set on an axis source or a continuous destination.
   case longHoldNotSupported(index: Int)
+  /// A long-hold field is not finite.
   case nonFiniteLongHold(index: Int, field: String)
+  /// A long-hold field is out of range.
   case longHoldOutOfRange(index: Int, field: String)
+  /// A double tap is set on an axis source or a continuous destination.
   case doubleTapNotSupported(index: Int)
+  /// A double-tap field is not finite.
   case nonFiniteDoubleTap(index: Int, field: String)
+  /// A double-tap field is out of range.
   case doubleTapOutOfRange(index: Int, field: String)
+  /// Turbo is combined with a long hold or a double tap.
   case turboAndActivationConflict(index: Int)
+  /// A chord window is out of range.
   case chordWindowOutOfRange(index: Int)
+  /// A chord has fewer than two sources.
   case chordTooFewSources(index: Int)
+  /// A chord has an axis source.
   case chordContinuousSource(index: Int)
+  /// A chord has a continuous destination.
   case chordContinuousDestination(index: Int)
+  /// A chord has the same source set as an earlier chord.
   case duplicateChordSources(index: Int)
+  /// A sequence has fewer than two sources.
   case sequenceTooFewSources(index: Int)
+  /// A sequence has an axis source.
   case sequenceContinuousSource(index: Int)
+  /// A sequence has a continuous destination.
   case sequenceContinuousDestination(index: Int)
+  /// A sequence window is not finite or is out of range.
   case sequenceWindowOutOfRange(index: Int)
+  /// A sequence has the same source order as an earlier sequence.
   case duplicateSequenceSources(index: Int)
+  /// A layer name is empty, too long, padded with whitespace or holds control characters.
   case layerNameInvalid(index: Int)
+  /// A layer activator is an axis.
   case layerActivatorNotDiscrete(index: Int)
+  /// A layer has the same activator as an earlier layer.
   case duplicateLayerActivator(index: Int)
+  /// A layer activator also has a binding.
   case layerActivatorAlsoBound(index: Int)
+  /// The profile could not be encoded.
   case encodingFailed
+  /// The encoded profile is over the size limit; the value is its size in bytes.
   case encodedSizeExceeded(Int)
 
+  /// Message that tells the user what to review in the profile.
   public var errorDescription: String? {
     switch self {
     case .invalidStickMapping(let source): "Review the settings for the \(source.rawValue) stick."

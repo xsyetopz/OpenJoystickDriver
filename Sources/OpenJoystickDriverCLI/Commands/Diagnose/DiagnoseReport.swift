@@ -1,14 +1,20 @@
 import Foundation
 import OpenJoystickDriverKit
 
-/// The `ojd diagnose --json` result. `output` is absent unless `--output` wrote a file. `timings`
-/// holds the newest per-stage frame timestamps and the window summary of each connected
-/// controller; it is empty when the service is stopped or has no frames.
+/// The `ojd diagnose --json` result.
+///
+/// `output` is absent unless `--output` wrote a file. `timings` holds the newest per-stage frame
+/// timestamps and the window summary of each connected controller; it is empty when the service is
+/// stopped or has no frames.
 struct DiagnoseReport: Encodable, Equatable {
+  /// The result of each check.
   let checks: [DiagnoseCheck]
+  /// The frame timings of each connected controller.
   let timings: [ControllerFrameTimings]
+  /// The path of the support report, when `--output` wrote one.
   let output: String?
 
+  /// The number of checks that failed.
   var failureCount: Int { checks.filter { $0.status == .fail }.count }
 
   /// One `id`, `status`, `detail` row per check, then the `timing-summary` rows of each
@@ -30,8 +36,10 @@ struct DiagnoseReport: Encodable, Equatable {
       }
   }
 
-  /// The `timing-summary` rows of `controller`. The first two columns are `timing-summary` and
-  /// the controller ID; the third names the row, and the columns after it depend on the name:
+  /// The `timing-summary` rows of `controller`.
+  ///
+  /// The first two columns are `timing-summary` and the controller ID; the third names the row, and
+  /// the columns after it depend on the name:
   ///
   /// - `window`: frames in the window, time span in nanoseconds, the seconds of `--frames` (empty
   ///   for the whole ring).

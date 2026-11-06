@@ -4,8 +4,9 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// A reader that answers each report from a table and counts its reads. It implements only the
-/// read, like every ``ControllerModeProbeReader``.
+/// A reader that answers each report from a table and counts its reads.
+///
+/// It implements only the read, like every ``ControllerModeProbeReader``.
 private final class ScriptedProbeReader: ControllerModeProbeReader {
   private let replies: [UInt8: PhysicalHIDReportResult<Data>]
   private let reads = Locked<[UInt8]>([])
@@ -453,7 +454,7 @@ struct ControllerModeTests {
     }
     let layout: [String: Any] = [
       "report": ["length": ["atLeast": 8]],
-      "buttons": [["control": "South", "byte": 0, "mask": 1]],
+      "buttons": [["control": "South", "bitOffset": 0, "bitSize": 1]],
     ]
     let rumble: [String: Any] = [
       "rumble": [

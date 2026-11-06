@@ -4,8 +4,10 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// Raw-USB records may list alternative modes, selected from the passive facts of the enumerated
-/// device, and a raw-USB mode's session names USB packets. Every mode obeys the record-level rules
-/// the same way in a record with one mode and a record with several.
+/// device, and a raw-USB mode's session names USB packets.
+///
+/// Every mode obeys the record-level rules the same way in a record with one mode and a record with
+/// several.
 struct RawUSBModeTests {
   private static let model = ControllerModelID(vendorID: 0x1234, productID: 0xABCD)
 
@@ -178,7 +180,7 @@ struct RawUSBModeTests {
   func aSingleModeRecordObeysTheSamePerModeChecks() throws {
     let layout: [String: Any] = [
       "report": ["length": ["atLeast": 8]],
-      "buttons": [["control": "South", "byte": 0, "mask": 1]],
+      "buttons": [["control": "South", "bitOffset": 0, "bitSize": 1]],
     ]
     let rumble: [String: Any] = [
       "rumble": [

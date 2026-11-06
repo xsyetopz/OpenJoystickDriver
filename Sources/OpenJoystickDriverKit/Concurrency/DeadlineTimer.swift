@@ -7,12 +7,15 @@ import Foundation
 /// hung call is itself held up by the hang. Each timer here owns a serial dispatch queue, so its
 /// expiry runs at once. Tests inject a manual timer to drive a deadline without real time.
 package struct DeadlineTimer: Sendable {
+  /// Cancels a scheduled deadline.
   package typealias Cancel = @Sendable () -> Void
+  /// The handler that runs when a deadline passes.
   package typealias Fire = @Sendable () -> Void
 
   /// Schedules `fire` after `nanoseconds` and returns a closure that cancels it.
   package let schedule: @Sendable (_ nanoseconds: UInt64, _ fire: @escaping Fire) -> Cancel
 
+  /// Creates a timer from a `schedule` function.
   package init(
     schedule: @escaping @Sendable (_ nanoseconds: UInt64, _ fire: @escaping Fire) -> Cancel
   ) {
@@ -56,13 +59,25 @@ extension DeadlineTimer {
 /// Resumes one sleeping task exactly once, whichever of the timer, a cancellation, or an early
 /// arrival comes first.
 private final class SleepGate: @unchecked Sendable {
-  private enum Outcome { case fired, cancelled }
+  /// What ended the sleep.
+  private enum Outcome {
+    /// The timer fired.
+    case fired
+    /// The task was cancelled.
+    case cancelled
+  }
 
+  /// Guards the stored values.
   private let lock = NSLock()
+  /// The sleeping task; nil before `arm(_:cancelTimer:)` and after it resumes.
   private var continuation: CheckedContinuation<Void, Error>?
+  /// Cancels the timer; nil before `arm(_:cancelTimer:)`.
   private var cancelTimer: DeadlineTimer.Cancel?
+  /// The outcome that arrived before the task armed the gate.
   private var early: Outcome?
 
+  /// Stores the sleeping task and its timer cancellation, or finishes at once when an outcome
+  /// arrived early.
   func arm(
     _ continuation: CheckedContinuation<Void, Error>,
     cancelTimer: @escaping DeadlineTimer.Cancel
@@ -78,10 +93,13 @@ private final class SleepGate: @unchecked Sendable {
     resume(continuation, outcome)
   }
 
+  /// Ends the sleep because the timer fired.
   func fire() { finish(.fired) }
 
+  /// Ends the sleep because the task was cancelled.
   func cancel() { finish(.cancelled) }
 
+  /// Records the first `outcome`, cancels the timer and resumes the sleeping task.
   private func finish(_ outcome: Outcome) {
     let pending = lock.withLock {
       () -> (CheckedContinuation<Void, Error>, DeadlineTimer.Cancel?)? in
@@ -99,6 +117,8 @@ private final class SleepGate: @unchecked Sendable {
     resume(continuation, outcome)
   }
 
+  /// Resumes `continuation` normally for a fired timer, or with `CancellationError` for a
+  /// cancellation.
   private func resume(_ continuation: CheckedContinuation<Void, Error>, _ outcome: Outcome) {
     switch outcome {
     case .fired: continuation.resume()

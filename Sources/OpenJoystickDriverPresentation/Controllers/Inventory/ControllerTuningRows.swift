@@ -10,6 +10,7 @@ struct ControllerTuningRow: Equatable, Identifiable {
   /// The layer that sets the value, such as `user`; nil while only the driver default applies.
   let layer: String?
 
+  /// The key, which names the row.
   var id: String { name }
 
   /// The value and its layer as the row shows them, such as `0.1 (user)`.
@@ -19,8 +20,14 @@ struct ControllerTuningRow: Equatable, Identifiable {
 /// The Tuning section of the Controllers detail, from the same layered record and active profile
 /// as `ojd config show --controller`.
 enum ControllerTuningRows {
-  /// Every tuning key of `record` in record-file order, then the inner deadzone of each stick
-  /// mapping of the active profile, keyed as `profile get` names it.
+  /// Returns every tuning key of `record` in record-file order, then the inner deadzone of each
+  /// stick mapping of the active profile, keyed as `profile get` names it.
+  ///
+  /// - Parameters:
+  ///   - record: The effective record of the controller's model.
+  ///   - activeProfile: The profile that is active for the controller, or nil.
+  /// - Returns: Every tuning key of `record` in record-file order, then the inner deadzone of each
+  ///   stick mapping of the active profile, keyed as `profile get` names it.
   static func rows(
     for record: ControllerRecord,
     activeProfile: RemappingProfile?
@@ -45,6 +52,10 @@ enum ControllerTuningRows {
     return keys + profile
   }
 
+  /// Returns the number without a fraction when it is whole.
+  ///
+  /// - Parameter value: The number.
+  /// - Returns: The number without a fraction when it is whole.
   private static func number(_ value: Double) -> String {
     value == value.rounded() ? String(Int(value)) : String(value)
   }

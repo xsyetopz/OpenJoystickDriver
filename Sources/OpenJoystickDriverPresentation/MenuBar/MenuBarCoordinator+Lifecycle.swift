@@ -9,6 +9,7 @@
 
   extension MenuBarCoordinator {
 
+    /// Runs the app until it quits and then exits the process; it never returns.
     package func run() -> Never {
       Self.activeCoordinator = self
       let application = NSApplication.shared
@@ -26,6 +27,8 @@
       exit(0)
     }
 
+    /// Connects the notification center, the settings, the Dock icon, the menu-bar item and the
+    /// live updates, then offers settings recovery when the file cannot be read.
     package func applicationDidFinishLaunching(_ notification: Notification) {
       bundledNotificationCenter?.delegate = notificationPresenter
       refreshStatus()
@@ -69,6 +72,7 @@
       updates.start()
     }
 
+    /// The launch update check, as the settings enable it.
     private var launchUpdateCheck: LaunchUpdateCheck {
       LaunchUpdateCheck(
         settingsError: { [preferences] in preferences.settingsFileError },
@@ -104,10 +108,12 @@
       }
     }
 
+    /// Reads the driver extension setup again when the app becomes active.
     package func applicationDidBecomeActive(_ notification: Notification) {
       Task { @MainActor in await viewModel.refreshSystemExtensionSetup() }
     }
 
+    /// Reads the live status, opens the main window and returns true.
     package func applicationShouldHandleReopen(
       _ sender: NSApplication,
       hasVisibleWindows flag: Bool
@@ -117,6 +123,8 @@
       return true
     }
 
+    /// Stops the live status, the menu-bar item, the Input Test window and the runtime before the
+    /// app quits.
     package func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply
     {
       termination.request {
@@ -131,8 +139,10 @@
       }
     }
 
+    /// Quits the app after a shutdown signal.
     func terminateFromShutdownSignal() { NSApplication.shared.terminate(nil) }
 
+    /// Quits the running coordinator after a shutdown signal and returns whether one was running.
     @discardableResult
     package static func terminateFromShutdownSignalIfRunning() -> Bool {
       guard let activeCoordinator else { return false }
@@ -140,18 +150,22 @@
       return true
     }
 
+    /// Stops the live status and removes the menu-bar item when the app terminates.
     package func applicationWillTerminate(_ notification: Notification) {
       stopLiveStatus()
       removeStatusItem()
     }
 
+    /// Quits the app from the Quit menu item.
     @objc
     func quit(_ sender: Any?) { NSApplication.shared.terminate(sender) }
 
+    /// Quits the app and relaunches it after the teardown.
     private func restartApplication() {
       termination.requestRelaunch { NSApplication.shared.terminate(nil) }
     }
 
+    /// Opens a new instance of the app and logs a failure to standard error.
     private func relaunchApplication() async {
       let configuration = NSWorkspace.OpenConfiguration()
       configuration.createsNewApplicationInstance = true
@@ -192,6 +206,7 @@
       }
     }
 
+    /// Shows the Input Test window for `device`, creating the window when needed.
     private func openInputTest(for device: ApplicationServiceDeviceDescription) {
       if inputTestWindowController == nil {
         inputTestWindowController = InputTestWindowController(
@@ -202,6 +217,7 @@
       inputTestWindowController?.show(device: device)
     }
 
+    /// Adds the menu-bar item with its image, tooltip and menu.
     private func installStatusItem() {
       let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
       statusItem = item
@@ -221,11 +237,13 @@
       updateStatusMenu()
     }
 
+    /// Stops following the service's changes.
     private func stopLiveStatus() {
       controllerLiveUpdates?.stop()
       controllerLiveUpdates = nil
     }
 
+    /// Removes the menu-bar item and its menu.
     private func removeStatusItem() {
       guard let item = statusItem else { return }
       NSStatusBar.system.removeStatusItem(item)
@@ -233,6 +251,7 @@
       statusMenu = nil
     }
 
+    /// Rebuilds the status menu, reads the service status and then rebuilds the menu again.
     private func refreshStatus() {
       updateStatusMenu()
       Task { @MainActor [weak self] in
@@ -243,10 +262,12 @@
       }
     }
 
+    /// Reads the live service status in the background.
     private func refreshLiveStatus() {
       Task { @MainActor [weak self] in await self?.refreshLiveStatusNow() }
     }
 
+    /// Reads the live service status and rebuilds the status menu when it changed.
     private func refreshLiveStatusNow() async {
       let statusChanged = await menuBarViewModel.refreshLiveStatus()
       notificationMonitor.observe(RuntimeNotificationSnapshot(viewModel: viewModel))
@@ -254,6 +275,7 @@
     }
 
     /// Installs the current menu as the status item's menu, which AppKit places under the button.
+    ///
     /// An open menu is left alone and replaced when it closes.
     private func updateStatusMenu() {
       guard !statusMenuTracker.isOpen else { return }

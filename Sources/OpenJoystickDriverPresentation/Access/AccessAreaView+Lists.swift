@@ -17,6 +17,7 @@
       if layout.showsConnections { connectionsSection(status) }
     }
 
+    /// Returns the section of programs that are granted access, each with a Revoke control.
     private func grantsSection(_ status: AccessStatusPayload) -> some View {
       Section(header: Text(OJDLocalized.string("ui.access.grants"))) {
         ForEach(status.grants, id: \.id) { grant in
@@ -38,6 +39,7 @@
       }
     }
 
+    /// Returns the section of tokens, each with a Revoke control.
     private func tokensSection(_ status: AccessStatusPayload) -> some View {
       Section(header: Text(OJDLocalized.string("ui.access.tokens"))) {
         ForEach(status.tokens, id: \.id) { token in
@@ -61,6 +63,8 @@
       }
     }
 
+    /// Returns the section of clients and tokens that the service refused, where a client can be
+    /// granted.
     private func refusedSection(_ status: AccessStatusPayload) -> some View {
       Section(
         header: Text(OJDLocalized.string("ui.access.refused")),
@@ -101,6 +105,7 @@
       }
     }
 
+    /// Returns the section of the connections that are open now.
     private func connectionsSection(_ status: AccessStatusPayload) -> some View {
       Section(header: Text(OJDLocalized.string("ui.access.connections"))) {
         ForEach(status.connections, id: \.id) { connection in

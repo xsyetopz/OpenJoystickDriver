@@ -1,7 +1,8 @@
 import Foundation
 
-/// Where one part of an effective controller record comes from. The cases are in precedence
-/// order, lowest first: a later layer wins over an earlier one.
+/// Where one part of an effective controller record comes from.
+///
+/// The cases are in precedence order, lowest first: a later layer wins over an earlier one.
 public enum ControllerRecordLayer: String, Codable, CaseIterable, Sendable {
   /// OJD's built-in default, used when no other layer sets a value.
   case driver = "Driver"
@@ -28,6 +29,7 @@ public enum ControllerRecordOperation: String, Codable, Sendable {
 /// One effective controller record: a bundled record, a Controller file that adds one, or a
 /// record with package and user patches applied.
 public struct ControllerRecord: Sendable {
+  /// The controller model the record describes.
   public let model: ControllerModelID
   /// The merged record as a `controller.schema.json` document, in the record file text of
   /// ``OrderedJSON/formatted()``.
@@ -36,13 +38,17 @@ public struct ControllerRecord: Sendable {
   /// `productID`.
   public let fieldLayers: [String: ControllerRecordLayer]
   /// The layer of each effective `tuning` key, by its JSON name: `Bundled`, `User`, or `Global`.
+  ///
   /// A key no layer sets is absent, and the driver default applies.
   public let tuningLayers: [String: ControllerRecordLayer]
-  /// The user file that adds or patches this record, or nil for a bundled record. An `all` patch
-  /// is not listed here.
+  /// The user file that adds or patches this record, or nil for a bundled record.
+  ///
+  /// An `all` patch is not listed here.
   public let userFile: URL?
   /// The file of an installed package that adds or patches this record, or nil when no package
-  /// does. A user file over it wins, and ``layer`` names the user.
+  /// does.
+  ///
+  /// A user file over it wins, and ``layer`` names the user.
   public let packageFile: URL?
   /// The protocol family.
   public let protocolID: PhysicalProtocolID
@@ -50,6 +56,7 @@ public struct ControllerRecord: Sendable {
   public var family: String { protocolID.rawValue }
   /// The tuning keys this record's family reads.
   let tuningScope: Set<ControllerTuning.Key>
+  /// The runtime profile built from the record.
   let profile: DeviceRuntimeProfile
 
   /// The effective tuning: the global defaults under the record's own values, per key.
@@ -87,9 +94,11 @@ public struct ControllerRecord: Sendable {
 /// One file in the user's controller-record directory, or the directory itself when it cannot be
 /// read, and whether OJD could apply it.
 public struct ControllerRecordFile: Sendable {
+  /// The location of the file.
   public let url: URL
   /// The model the file names, when it could be read.
   public let model: ControllerModelID?
+  /// The operation the file performs; nil when the file could not be read.
   public let operation: ControllerRecordOperation?
   /// Why OJD skipped the file, or nil when it applied it.
   public let problem: String?
@@ -97,9 +106,11 @@ public struct ControllerRecordFile: Sendable {
 
 /// A user record file that passed validation, before it is written or applied.
 public struct ValidatedControllerRecord: Sendable {
+  /// The operation the file performs.
   public let operation: ControllerRecordOperation
-  /// The record the file gives: the Controller file's own, or the patched record. Nil for an
-  /// `all` patch, which applies to every record.
+  /// The record the file gives: the Controller file's own, or the patched record.
+  ///
+  /// Nil for an `all` patch, which applies to every record.
   public let record: ControllerRecord?
   /// The selector of a patch file, or nil for a Controller file.
   public let selector: ControllerPatch.Selector?
@@ -116,12 +127,16 @@ extension ControllerRecord {
   public var document: Data { Data(text.utf8) }
 }
 
-/// Why a controller record, patch or related document, such as a virtual device, is invalid. It
-/// carries ``ErrorCode/invalidControllerRecord``. ``description`` leaves the code out.
+/// Why a controller record, patch or related document, such as a virtual device, is invalid.
+///
+/// It carries ``ErrorCode/invalidControllerRecord``. ``description`` leaves the code out.
 public struct ControllerRecordProblem: Error, Equatable, Sendable, CustomStringConvertible {
+  /// The reason the record or file was rejected.
   public let description: String
+  /// The error code of the rejection.
   public let code: ErrorCode
 
+  /// Creates a problem from an error code and a description.
   init(code: ErrorCode, _ description: String) {
     self.code = code
     self.description = description
@@ -141,6 +156,7 @@ public struct ControllerRecordSet: Sendable {
   /// The user's `all` patch, applied to every record; none for the bundled catalog alone.
   public let defaults: ControllerDefaults?
 
+  /// Creates a set from the effective records, the user files and the user's `all` patch.
   init(
     records: [ControllerModelID: ControllerRecord],
     userFiles: [ControllerRecordFile],
@@ -208,9 +224,10 @@ public struct ControllerRecordSet: Sendable {
   }
 
   /// The records of the Controller files `urls` in file-name order, and a problem for each file
-  /// that is not a valid record of the catalog: one that fails the record rules, whose file name
-  /// is not its record's ``fileName(for:)``, or whose identity an earlier file holds. The
-  /// bundled catalog and ``RepositoryValidation/records(in:)`` load through this check.
+  /// that is not a valid record of the catalog: one that fails the record rules, whose file name is
+  /// not its record's ``fileName(for:)``, or whose identity an earlier file holds.
+  ///
+  /// The bundled catalog and ``RepositoryValidation/records(in:)`` load through this check.
   static func loadCatalog(
     _ urls: [URL]
   ) -> (records: [ControllerModelID: ControllerRecord], problems: [RepositoryProblem]) {
@@ -246,6 +263,7 @@ public struct ControllerRecordSet: Sendable {
     return (records, problems)
   }
 
+  /// Whether `name` is `vvvv-pppp.json` with hex digits.
   private static func isRecordFileName(_ name: String) -> Bool {
     guard name.count == 14, name.hasSuffix(".json") else { return false }
     let stem = name.dropLast(5)
@@ -253,9 +271,10 @@ public struct ControllerRecordSet: Sendable {
     return stem.enumerated().allSatisfy { offset, character in offset == 4 || character.isHexDigit }
   }
 
-  /// The model and the typed document of `record`. The typed document is read from the
-  /// Foundation view of `record` (``OrderedJSON/foundationValue()``) and is never written back as
-  /// text.
+  /// The model and the typed document of `record`.
+  ///
+  /// The typed document is read from the Foundation view of `record`
+  /// (``OrderedJSON/foundationValue()``) and is never written back as text.
   static func decode(
     _ record: OrderedJSON
   ) throws -> (model: ControllerModelID, document: ControllerRecordDocument) {
@@ -275,17 +294,19 @@ public struct ControllerRecordSet: Sendable {
     return (ControllerModelID(vendorID: vendorID, productID: productID), document)
   }
 
-  /// The members of `data` in file order. Text that is not plain UTF-8, such as a file with a
-  /// byte order mark or a UTF-16 file, and an object that names a member twice are
-  /// `invalidControllerRecord`.
+  /// The members of `data` in file order.
+  ///
+  /// Text that is not plain UTF-8, such as a file with a byte order mark or a UTF-16 file, and an
+  /// object that names a member twice are `invalidControllerRecord`.
   static func ordered(_ data: Data) throws -> OrderedJSON {
     do { return try OrderedJSON.parse(data) } catch {
       throw ControllerRecordProblem(code: .invalidControllerRecord, "\(error)")
     }
   }
 
-  /// The JSON object in `data`, which is plain UTF-8. Text that is not JSON, and JSON that is not
-  /// an object, are `invalidControllerRecord`.
+  /// The JSON object in `data`, which is plain UTF-8.
+  ///
+  /// Text that is not JSON, and JSON that is not an object, are `invalidControllerRecord`.
   static func jsonObject(_ data: Data) throws -> [String: Any] {
     let value: Any
     do { value = try JSONSerialization.jsonObject(with: data) } catch {
@@ -334,6 +355,7 @@ public struct ControllerRecordSet: Sendable {
     )
   }
 
+  /// The member names of `record` other than `apiVersion`, `kind`, `vendorID` and `productID`.
   static func fieldNames(of record: OrderedJSON) -> [String] {
     (record.members ?? []).map(\.key).filter {
       !["apiVersion", "kind", "vendorID", "productID"].contains($0)
@@ -350,9 +372,10 @@ public struct ControllerRecordSet: Sendable {
   }
 
   /// The error code of a record that is refused: ``ErrorCode/unsupportedAPIVersion`` for its
-  /// `apiVersion`, and ``ErrorCode/invalidControllerRecord`` for any other failed rule, including
-  /// a record whose values ``OrderedJSON`` cannot write. Nil when
-  /// `error` is not about the record's content, such as a file that cannot be read.
+  /// `apiVersion`, and ``ErrorCode/invalidControllerRecord`` for any other failed rule, including a
+  /// record whose values ``OrderedJSON`` cannot write.
+  ///
+  /// Nil when `error` is not about the record's content, such as a file that cannot be read.
   public static func problemCode(_ error: any Error) -> ErrorCode? {
     switch error {
     case let problem as DocumentHeaderProblem: problem.code ?? .invalidControllerRecord

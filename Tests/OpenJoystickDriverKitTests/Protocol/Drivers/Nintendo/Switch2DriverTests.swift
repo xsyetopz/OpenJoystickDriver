@@ -3,8 +3,10 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// Reports and command replies in the layout of SDL `SDL_hidapi_switch2.c` and the Switch 2
-/// command notes it follows. They come from the source, not from a hardware capture.
+/// Reports and command replies in the layout of SDL `SDL_hidapi_switch2.c` and the Switch 2 command
+/// notes it follows.
+///
+/// They come from the source, not from a hardware capture.
 private enum Switch2Report {
   static func state(
     buttons: UInt32 = 0,

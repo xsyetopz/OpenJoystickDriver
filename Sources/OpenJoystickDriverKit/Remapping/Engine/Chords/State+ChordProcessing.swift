@@ -2,6 +2,13 @@ import Foundation
 
 extension RemappingEngineState {
 
+  /// Handles a source change of a layer activator.
+  ///
+  /// Returns `nil` when the source activates no layer, and an empty list when the active layers do
+  /// not change. A hold layer is active while its activator is. A toggle layer switches on every
+  /// press. A layer change that changes the motion tuning also clears the gyro and motion outputs
+  /// and resets motion calibration. Every layer change releases the outputs that stopped applying,
+  /// clears the sequence history and turns held-back presses into replayed ones.
   mutating func handleLayerActivator(
     _ source: RemappingSource,
     isActive: Bool,
@@ -64,10 +71,15 @@ extension RemappingEngineState {
     return actions
   }
 
+  /// Whether a source belongs to a chord that is selected now.
   func sourceCompletesChord(_ source: RemappingSource, in device: RemappingDeviceState) -> Bool {
     device.selectedChords().contains { $0.sources.contains(source) }
   }
 
+  /// Starts the chords that became selected and releases the chords that stopped being selected.
+  ///
+  /// Starting a chord cancels the actions of its sources and clears their held-back presses and
+  /// sequence history.
   mutating func processChords(
     for device: inout RemappingDeviceState,
     releasing source: RemappingSource? = nil
@@ -96,7 +108,12 @@ extension RemappingEngineState {
     return actions
   }
 
-  /// Checks if recent input history matches any defined sequence.
+  /// Checks recent input history against the sequences that apply and fires the first one that
+  /// matches.
+  ///
+  /// A sequence matches when the latest history entries equal its sources in order, inside its
+  /// window. It taps its destination at once, or after the held-back presses of its entries
+  /// resolve.
   mutating func processSequences(
     for device: inout RemappingDeviceState,
     at uptimeNanoseconds: UInt64

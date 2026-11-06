@@ -56,9 +56,11 @@ struct PhysicalOutputExecutorTests {
   }
 
   /// Concurrent rumble and player commands, each changing one field, at mixed priorities while
-  /// other requests contend for the manager. Written in encode order, every report differs from
-  /// the one before it in at most that one field; a report written out of encode order carries a
-  /// later command's field without an earlier one's.
+  /// other requests contend for the manager.
+  ///
+  /// Written in encode order, every report differs from the one before it in at most that one
+  /// field; a report written out of encode order carries a later command's field without an earlier
+  /// one's.
   @Test
   func concurrentStatefulCommandsWriteInEncodeOrder() async throws {
     let started = try await startSixaxis(locationID: 520)

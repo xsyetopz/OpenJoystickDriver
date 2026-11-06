@@ -2,15 +2,18 @@ import Foundation
 
 /// Why a mod package is refused, with the `mod` error code that names the kind of refusal.
 public struct ModPackageError: Error, Equatable, Sendable, CustomStringConvertible {
+  /// The error code that names the kind of refusal.
   public let code: ErrorCode
   /// What is wrong and where, in words for the person who wrote the package.
   public let detail: String
 
+  /// Creates an error from `code` and `detail`.
   init(_ code: ErrorCode, _ detail: String) {
     self.code = code
     self.detail = detail
   }
 
+  /// The error as text: the code, then the detail.
   public var description: String { "\(code.rawValue): \(detail)" }
 }
 
@@ -18,17 +21,24 @@ public struct ModPackageError: Error, Equatable, Sendable, CustomStringConvertib
 public struct ModPackageManifest: Equatable, Sendable {
   /// The `kind` of a manifest.
   public static let kind = "ModPackage"
+  /// The file name of a manifest.
   public static let fileName = "mod.json"
 
   /// The OJD versions the package runs on: `minimum` up to, but not including, `below`.
   public struct Requires: Equatable, Sendable {
+    /// The lowest OJD version the package runs on, a SemVer version.
     public let minimum: String
+    /// The first OJD version the package does not run on; nil when there is no upper bound.
     public let below: String?
   }
 
+  /// The package name: lowercase letters, digits and hyphens.
   public let name: String
+  /// The package version, a SemVer version.
   public let version: String
+  /// The author; not empty.
   public let author: String
+  /// The OJD versions the package runs on.
   public let requires: Requires
   /// `Controller` files of the package's `Controllers/` folder.
   public let controllers: [String]
@@ -62,6 +72,7 @@ public struct ModPackageManifest: Equatable, Sendable {
     } catch { throw ModPackageError(.invalidManifest, error.localizedDescription) }
   }
 
+  /// The text of a decoding problem, prefixed with its coding path.
   private static func located(_ context: DecodingError.Context, _ text: String? = nil) -> String {
     let path = context.codingPath.map { $0.intValue.map { "[\($0)]" } ?? $0.stringValue }
     return (path.isEmpty ? "" : path.joined(separator: ".") + ": ")
@@ -70,11 +81,15 @@ public struct ModPackageManifest: Equatable, Sendable {
 }
 
 extension ModPackageManifest: Decodable {
+  /// The keys of a manifest.
   private enum Key: String, CodingKey, CaseIterable {
+    /// The keys of the document header.
     case apiVersion, kind
+    /// The package metadata and the lists of files.
     case name, version, author, requires, controllers, patches, profiles, virtualDevices
   }
 
+  /// Decodes the value from `decoder`.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(Key.self)
     let container = try decoder.container(keyedBy: Key.self)
@@ -117,12 +132,17 @@ extension ModPackageManifest: Decodable {
 
   // The patterns of `mod-package.schema.json`, with `\A` and `\z` for the ECMA `^` and `$`, so
   // that a trailing newline fails. `ModPackageManifestSchemaTests` feeds both the same manifests.
+  /// The file name of a `Controller` file: `vvvv-pppp.json`.
   private static let controllerFilePattern = "\\A[0-9a-f]{4}-[0-9a-f]{4}\\.json\\z"
+  /// The file name of a `ControllerPatch` file: a model patch or `all.patch.json`.
   private static let patchFilePattern =
     "\\A(?:(?:model-)?[0-9a-f]{4}-[0-9a-f]{4}\\.patch\\.json|all\\.patch\\.json)\\z"
+  /// The file name of a profile file.
   private static let profileFilePattern = "\\A[A-Za-z0-9][A-Za-z0-9._-]*\\.json\\z"
+  /// The file name of a `VirtualDevice` file: `vvvv-pppp.json`, with an optional unit.
   private static let virtualDeviceFilePattern =
     "\\A[0-9a-f]{4}-[0-9a-f]{4}(-U-[A-Za-z0-9_-]{16})?\\.json\\z"
+  /// A SemVer 2.0.0 version.
   private static let semanticVersionPattern =
     "\\A(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"
     + "(-(0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)"
@@ -159,8 +179,15 @@ extension ModPackageManifest: Decodable {
 }
 
 extension ModPackageManifest.Requires: Decodable {
-  private enum Key: String, CodingKey, CaseIterable { case minimum, below }
+  /// The keys of a version range.
+  private enum Key: String, CodingKey, CaseIterable {
+    /// The `minimum` key.
+    case minimum
+    /// The `below` key.
+    case below
+  }
 
+  /// Decodes the value from `decoder`.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(Key.self)
     let container = try decoder.container(keyedBy: Key.self)

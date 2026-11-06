@@ -5,15 +5,22 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The sheet that creates a profile: its name, controller, target app and output policy.
   struct ProfileNameSheet: View {
+    /// The title of the sheet.
     let title: String
+    /// What the sheet offers.
     let context: ProfileCreationContext
+    /// Receives the profile when the person chooses Create.
     let onCreate: (RemappingProfile) -> Void
+    /// Dismisses the sheet.
     @Environment(\.presentationMode)
     private var presentationMode
+    /// The edits of the sheet.
     @State
     private var fields = ProfileCreationFields()
 
+    /// The name, controller, target app and output policy fields and the Cancel and Create buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
         Text(title).font(.headline)
@@ -89,8 +96,11 @@
       }.padding(20).frame(width: 420)
     }
 
+    /// The profile the fields describe, or nil.
     private var proposedProfile: RemappingProfile? { fields.proposedProfile(in: context) }
 
+    /// The message about the name in the name field: a name another profile has, or one that is
+    /// empty once trimmed; nil when the name is acceptable.
     private var nameProblem: String? {
       let name = fields.name(in: context)
       if fields.isNameTaken(in: context) { return OJDLocalized.string("ui.error.duplicateProfile") }
@@ -100,6 +110,7 @@
       return nil
     }
 
+    /// The name field's binding; typing sets the edited name.
     private var nameBinding: Binding<String> {
       Binding(
         get: { fields.name(in: context) },
@@ -107,6 +118,7 @@
       )
     }
 
+    /// The controller picker's binding to the identifier of the choice.
     private var controllerBinding: Binding<String> {
       Binding(
         get: { fields.controller(in: context)?.id ?? "" },
@@ -115,16 +127,23 @@
     }
   }
 
-  /// Asks for the name of a copy of a profile; the name starts as the default copy name.
+  /// The sheet that asks for the name of a copy of a profile; the name starts as the default copy
+  /// name.
   struct ProfileDuplicateSheet: View {
+    /// The profile to copy.
     let source: RemappingProfile
+    /// The existing profiles, whose names the copy must not take.
     let profiles: [RemappingProfile]
+    /// Receives the copy when the person chooses Duplicate.
     let onDuplicate: (RemappingProfile) -> Void
+    /// Dismisses the sheet.
     @Environment(\.presentationMode)
     private var presentationMode
+    /// The name the person typed, or nil before an edit.
     @State
     private var name: String?
 
+    /// The name field and the Cancel and Duplicate buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
         Text(OJDLocalized.string("action.duplicate")).font(.headline)
@@ -152,12 +171,15 @@
       }.padding(20).frame(width: 420)
     }
 
+    /// The name in the field.
     private var shownName: String { name ?? defaultDuplicateName(of: source, in: profiles) }
 
+    /// The name field's binding.
     private var nameBinding: Binding<String> {
       Binding(get: { shownName }, set: { name = $0 })
     }
 
+    /// The copy under the name in the field, or nil when the name is not acceptable.
     private var duplicate: RemappingProfile? {
       duplicatedProfile(source, named: shownName, in: profiles)
     }

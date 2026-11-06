@@ -7,18 +7,25 @@
   /// The virtual gamepad actions of one controller: export its mapping, launch a game with it,
   /// and return every override to automatic.
   struct VirtualGamepadActionsView: View {
+    /// The controller.
     let device: ApplicationServiceDeviceDescription
     /// Every connected controller; nil while the service status is not available.
     let connectedDevices: [ApplicationServiceDeviceDescription]?
+    /// The model of the app's view of the service, which resets the overrides.
     @ObservedObject
     var viewModel: RuntimeViewModel
+    /// The state and results of the actions.
     @ObservedObject
     var actions: ControllerDetailActions
+    /// Whether the reset confirmation shows.
     @State
     private var confirmsResetAll = false
+    /// The message of the latest failed reset, or nil.
     @State
     private var resetAllFailure: String?
 
+    /// The Export Mapping and Launch rows when the controller has a virtual gamepad profile, the
+    /// Reset row, and the results of the actions.
     var body: some View {
       Group {
         if let profile = VirtualGamepadExport.profile(for: device) {
@@ -51,6 +58,8 @@
       }
     }
 
+    /// The Launch row and, under it, the SDL hints note for each profile that needs a game
+    /// controller backend.
     @ViewBuilder
     private var launchRows: some View {
       OJDLabeledRow(OJDLocalized.string("ui.controllers.launch")) {
@@ -78,11 +87,18 @@
       }
     }
 
+    /// Returns whether the launch ended in a failure.
+    ///
+    /// - Parameter outcome: The outcome of the launch.
+    /// - Returns: Whether the launch ended in a failure.
     private func isFailure(_ outcome: VirtualGamepadLaunch.Outcome) -> Bool {
       if case .failed = outcome { return true }
       return false
     }
 
+    /// Asks where to save the mapping and writes it there.
+    ///
+    /// - Parameter profile: The virtual gamepad profile to export.
     private func export(_ profile: VirtualHIDProfileID) {
       actions.clearNotice()
       ControllerFilePanels.exportMapping(profile: profile) { choice in
@@ -91,6 +107,7 @@
       }
     }
 
+    /// Asks for a program and launches it with the mapping of every connected virtual gamepad.
     private func launch() {
       guard let connectedDevices else { return }
       ControllerFilePanels.chooseProgram { choice in
@@ -106,9 +123,12 @@
 
   /// A result line under an action; a failure is red with the failure symbol.
   struct ControllerNoticeText: View {
+    /// The text of the line.
     let text: String
+    /// Whether the line reports a failure.
     let isError: Bool
 
+    /// The line.
     var body: some View {
       Text(text).font(.caption).foregroundColor(
         isError
@@ -120,9 +140,11 @@
 
   /// The Capture Packets and Draft Record buttons, under Advanced.
   struct ControllerTimedActionRows: View {
+    /// The state and results of the actions.
     @ObservedObject
     var actions: ControllerDetailActions
 
+    /// The two buttons and the result of the latest timed capture.
     var body: some View {
       Group {
         Button(OJDLocalized.string("ui.controllers.capturePackets")) {
@@ -142,22 +164,32 @@
 
   /// The sheet of a timed capture: the duration, the instruction, and the progress.
   struct ControllerTimedActionSheet: View {
+    /// Whether the sheet captures packets or drafts a controller record.
     let kind: ControllerDetailActions.TimedKind
+    /// The controller to capture.
     let device: ApplicationServiceDeviceDescription
+    /// The gateway that streams the packets.
     let gateway: any ControllerDiagnosticsGateway
+    /// The state and results of the actions.
     @ObservedObject
     var actions: ControllerDetailActions
+    /// The capture duration as typed.
     @State
     private var durationText = CaptureDuration.text(for: CaptureDuration.defaultSeconds)
 
+    /// The duration in seconds, or nil when the text is not a valid duration.
     private var seconds: Double? { CaptureDuration.parse(durationText) }
 
+    /// The vendor and product ID of the controller.
     private var identity: String {
       String(format: "%04X:%04X", device.vendorID, device.productID)
     }
 
+    /// Whether a capture runs.
     private var isCapturing: Bool { actions.timedState == .capturing }
 
+    /// The title, the instruction, the duration field, the failures, and the Cancel and Start
+    /// Capture buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 12) {
         Text(
@@ -200,6 +232,7 @@
       }.padding(20).frame(width: 420)
     }
 
+    /// The instruction for the kind of capture, with the controller's name and ID.
     private var instruction: String {
       OJDLocalized.formatted(
         kind == .draftRecord ? "cli.record.draft.started" : "cli.controller.capture.started",
@@ -208,6 +241,8 @@
       )
     }
 
+    /// Starts the capture for the typed duration; the controller's report descriptor is read when
+    /// the capture ends.
     private func start() {
       guard let seconds else { return }
       let device = device

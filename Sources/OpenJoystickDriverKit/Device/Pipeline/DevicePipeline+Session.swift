@@ -1,6 +1,10 @@
 import Foundation
 
 extension DevicePipeline {
+  /// Suspends the controller session: releases the output, drops the held input and tells the
+  /// dispatcher that the controller stopped.
+  ///
+  /// - Returns: False when the pipeline is inactive or its session is not active.
   func suspendControllerSession() async -> Bool {
     guard isActive, sessionState == .active else { return false }
     sessionState = .suspended
@@ -15,6 +19,10 @@ extension DevicePipeline {
     return true
   }
 
+  /// Resumes a suspended session with neutral input and restarted liveness monitoring, then
+  /// activates the output.
+  ///
+  /// - Returns: False when the pipeline is inactive or its session is not suspended.
   func resumeControllerSession() async -> Bool {
     guard isActive, sessionState == .suspended else { return false }
     currentInputState = .neutral
@@ -36,6 +44,7 @@ extension DevicePipeline {
     return await performUSBHandshake(handle: handle)
   }
 
+  /// Reads the power state of the driver into ``currentPower``.
   func snapshotPower() { currentPower = driver.power }
 
   /// Dispatches the exact neutral state, releasing every control, stick, trigger and touch at
@@ -59,6 +68,10 @@ extension DevicePipeline {
     lastDispatchedState = .neutral
   }
 
+  /// Releases the output after the input reports went overdue, and keeps it released until a fresh
+  /// neutral report arrives.
+  ///
+  /// Does nothing while the pipeline already waits for that report.
   func retireOutputAfterLivenessLoss() async {
     guard !awaitingNeutralAfterLivenessLoss else { return }
     currentInputState = .neutral
@@ -68,8 +81,10 @@ extension DevicePipeline {
     await notifyControllerDidStop()
   }
 
-  /// Handles a pending logical connection change. USB writes for it are performed here; the
-  /// HID writes are returned for the caller to perform on the HID device.
+  /// Handles a pending logical connection change.
+  ///
+  /// USB writes for it are performed here; the HID writes are returned for the caller to perform on
+  /// the HID device.
   func handleInputConnectionStateChangeIfNeeded() async -> [PhysicalOutputWrite] {
     guard let state = driver.consumeInputConnectionStateChange() else { return [] }
     var hidWrites: [PhysicalOutputWrite] = []
@@ -113,6 +128,7 @@ extension DevicePipeline {
     print("[DevicePipeline] Input controller disconnected: \(identifier)")
   }
 
+  /// Appends `bytes` to the packet log in `direction`.
   func appendToPacketLog(bytes: [UInt8], direction: PacketLogDirection) {
     packetLog.append(bytes: bytes, direction: direction)
   }
@@ -136,6 +152,10 @@ extension DevicePipeline {
     }
   }
 
+  /// Writes one packet through ``usbOutputWriteQueue`` and returns the number of bytes written.
+  ///
+  /// - Throws: ``CancellationError`` when the session or run changed, or the error of the transport
+  ///   write.
   func writeUSBPacket(
     handle: any USBTransportSession,
     endpoint: UInt8,
@@ -174,6 +194,9 @@ extension DevicePipeline {
     return written
   }
 
+  /// Whether a write on `handle` may still go out: the pipeline is active, `handle` is the current
+  /// session, the teardown rule allows the write, and `runGeneration`, when given, is the current
+  /// run.
   func isCurrentUSBWrite(handle: any USBTransportSession, runGeneration: UInt64?) -> Bool {
     guard isActive, usbHandle === handle,
       !acceptsOnlyTeardownOutput || ControllerTeardownOutput.isActive
@@ -197,6 +220,7 @@ extension DevicePipeline {
     return event
   }
 
+  /// Parses one descriptor-decoded HID element value into an event; nil when it carries no input.
   func parseElementValue(_ value: HIDElementValue, receivedAt: UInt64) -> ControllerEvent? {
     let event = driver.parse(
       elementValue: value,

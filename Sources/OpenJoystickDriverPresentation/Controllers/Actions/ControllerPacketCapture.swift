@@ -7,7 +7,13 @@ enum CaptureDuration {
   /// The duration the sheet starts with, as `ojd record draft`.
   static let defaultSeconds = 10.0
 
-  /// The seconds `text` names in `locale`, or nil when it is not a finite number above 0.
+  /// Returns the seconds `text` names in `locale`, or nil when it is not a finite number above 0.
+  ///
+  /// - Parameters:
+  ///   - text: The text of the duration field.
+  ///   - locale: The locale whose number format the text follows.
+  /// - Returns: The seconds `text` names in `locale`, or nil when it is not a finite number above
+  ///   0.
   static func parse(_ text: String, locale: Locale = .current) -> Double? {
     let formatter = NumberFormatter()
     formatter.locale = locale
@@ -19,7 +25,12 @@ enum CaptureDuration {
     return seconds.isFinite && seconds > 0 ? seconds : nil
   }
 
-  /// The text the field starts with.
+  /// Returns the text the field starts with.
+  ///
+  /// - Parameters:
+  ///   - seconds: The duration.
+  ///   - locale: The locale whose number format the text follows.
+  /// - Returns: The text the field starts with.
   static func text(for seconds: Double, locale: Locale = .current) -> String {
     return seconds.formatted(.number.locale(locale).precision(.fractionLength(0...3)))
   }
@@ -31,8 +42,17 @@ enum ControllerPacketCapture {
   /// The pause between reads of the packet log, the CLI's polling interval.
   static let pollIntervalNanoseconds: UInt64 = 16_000_000
 
-  /// The packets that arrive after the call, read from `read` every ``pollIntervalNanoseconds``
-  /// until `seconds` have passed on `uptime`. Throws when a read fails or the task is cancelled.
+  /// Returns the packets that arrive after the call, read from `read` every
+  /// ``pollIntervalNanoseconds`` until `seconds` have passed on `uptime`.
+  ///
+  /// - Parameters:
+  ///   - seconds: How long to collect.
+  ///   - read: Reads the packet log.
+  ///   - uptime: Returns the uptime in nanoseconds.
+  ///   - sleep: Waits for the number of nanoseconds.
+  /// - Returns: The packets that arrive after the call, read from `read` every
+  ///   ``pollIntervalNanoseconds`` until `seconds` have passed on `uptime`.
+  /// - Throws: The error of a failed read, or `CancellationError` when the task is cancelled.
   static func collect(
     seconds: Double,
     read: @Sendable () async throws -> [PacketLogEntry],
@@ -50,7 +70,14 @@ enum ControllerPacketCapture {
     return packets
   }
 
-  /// The packets of `device`, read from `gateway`.
+  /// Returns the packets of `device`, read from `gateway`.
+  ///
+  /// - Parameters:
+  ///   - device: The controller to read.
+  ///   - gateway: The gateway that streams the packets.
+  ///   - seconds: How long to collect.
+  /// - Returns: The packets of `device`, read from `gateway`.
+  /// - Throws: The error of a failed read, or `CancellationError` when the task is cancelled.
   static func collect(
     from device: ApplicationServiceDeviceDescription,
     gateway: any ControllerDiagnosticsGateway,
@@ -60,14 +87,21 @@ enum ControllerPacketCapture {
     return try await collect(seconds: seconds) { try await gateway.packetLog(for: selector) }
   }
 
-  /// The captured packets as the JSON the Developer tools export.
+  /// Returns the captured packets as the JSON the Developer tools export.
+  ///
+  /// - Parameter packets: The captured packets.
+  /// - Returns: The captured packets as the JSON the Developer tools export.
+  /// - Throws: The error of the JSON encoder.
   static func exportData(_ packets: [PacketLogEntry]) throws -> Data {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     return try encoder.encode(packets)
   }
 
-  /// The suggested file name of a capture of `device`.
+  /// Returns the suggested file name of a capture of `device`.
+  ///
+  /// - Parameter device: The captured controller.
+  /// - Returns: The suggested file name of a capture of `device`.
   static func fileName(for device: ApplicationServiceDeviceDescription) -> String {
     String(
       format: "OpenJoystickDriver-packets-%04X-%04X.json",
@@ -79,15 +113,21 @@ enum ControllerPacketCapture {
 
 /// Drafts a controller record from a capture, as `ojd record draft` does.
 enum ControllerRecordDrafting {
+  /// The error of a capture from which no layout could be drafted.
   struct NoLayout: Error, Equatable {
+    /// The vendor and product ID of the controller.
     let identity: String
 
+    /// The message for the sheet.
     var message: String {
       OJDLocalized.formatted("ui.controllers.draftRecord.noLayout", identity)
     }
   }
 
-  /// The report descriptor of the controller model, read from the system.
+  /// Returns the report descriptor of the controller model, read from the system.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: The report descriptor of the controller model, read from the system.
   static func physicalDescriptor(for device: ApplicationServiceDeviceDescription) -> [UInt8]? {
     PlatformHosts.current.physicalReportDescriptor(
       vendorID: Int(device.vendorID),
@@ -95,9 +135,17 @@ enum ControllerRecordDrafting {
     )
   }
 
-  /// The record drafted from the input reports among `packets` and the controller's HID report
-  /// `descriptor`. Throws ``NoLayout`` when no control could be read and the model's bundled
-  /// record already names its family.
+  /// Returns the record drafted from the input reports among `packets` and the controller's HID
+  /// report `descriptor`.
+  ///
+  /// - Parameters:
+  ///   - device: The controller.
+  ///   - packets: The captured packets.
+  ///   - descriptor: The report descriptor of the controller, or nil.
+  /// - Returns: The record drafted from the input reports among `packets` and the controller's HID
+  ///   report `descriptor`.
+  /// - Throws: ``NoLayout`` when no control could be read and the model's bundled record already
+  ///   names its family.
   static func draft(
     for device: ApplicationServiceDeviceDescription,
     packets: [PacketLogEntry],
@@ -115,7 +163,10 @@ enum ControllerRecordDrafting {
     return draft
   }
 
-  /// The suggested file name of the record, `VVVV-PPPP.json`.
+  /// Returns the suggested file name of the record, `VVVV-PPPP.json`.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: The suggested file name of the record, `VVVV-PPPP.json`.
   static func fileName(for device: ApplicationServiceDeviceDescription) -> String {
     String(format: "%04X-%04X.json", device.vendorID, device.productID)
   }

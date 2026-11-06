@@ -8,14 +8,21 @@
   /// a `disabledReason`, the reason follows the description as a second line and is the switch's
   /// tooltip.
   struct SettingsSwitchRow: View {
+    /// The title of the switch.
     let title: String
+    /// The line below the switch.
     let description: String
+    /// Whether the switch is on.
     let isOn: Binding<Bool>
+    /// Whether the switch can be changed.
     var isEnabled = true
+    /// The reason the switch is disabled, or nil for none.
     var disabledReason: String?
 
+    /// The reason to show: the disabled reason while the switch is disabled, otherwise nil.
     private var lockReason: String? { isEnabled ? nil : disabledReason }
 
+    /// The toggle with its description and, while it is locked, the reason.
     var body: some View {
       VStack(alignment: .leading, spacing: 2) {
         Toggle(title, isOn: isOn).disabled(!isEnabled).help(lockReason ?? "")
@@ -24,6 +31,7 @@
       }
     }
 
+    /// Returns a line of secondary text.
     private func footnote(_ text: String) -> some View {
       Text(text).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
         horizontal: false,
@@ -35,9 +43,11 @@
   /// The inline error of the preferences model as a form section, with the notification
   /// permission shortcut; it is empty while there is no error.
   struct SettingsErrorSection: View {
+    /// The preferences model whose error shows.
     @ObservedObject
     var preferences: SettingsPreferencesModel
 
+    /// The error message in a section; nothing while no error exists.
     var body: some View {
       if let errorMessage = preferences.errorMessage
         ?? preferences.settingsFileError?.localizedDescription

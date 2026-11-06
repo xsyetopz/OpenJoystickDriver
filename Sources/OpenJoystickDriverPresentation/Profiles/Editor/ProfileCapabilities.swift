@@ -1,6 +1,13 @@
 import OpenJoystickDriverKit
 
+/// Works out what the controller of a profile can do.
 enum ProfileCapabilityResolver {
+  /// Returns the capabilities of the controller that `profile` is scoped to, or nil when they are
+  /// not known.
+  ///
+  /// Several connected controllers of the model share what all of them have; with none connected,
+  /// the registry's record of the model answers. A Joy-Con pair profile also takes the input of the
+  /// other half.
   static func resolve(
     profile: RemappingProfile,
     connectedDevices: [ApplicationServiceDeviceDescription],
@@ -25,6 +32,8 @@ enum ProfileCapabilityResolver {
     )
   }
 
+  /// Returns the capabilities of the profile's controller from the connected controllers, else
+  /// from the registry.
   private static func deviceCapabilities(
     profile: RemappingProfile,
     connectedDevices: [ApplicationServiceDeviceDescription],
@@ -43,6 +52,7 @@ enum ProfileCapabilityResolver {
     )
   }
 
+  /// Returns the capabilities that `device` reports.
   private static func capabilities(
     for device: ApplicationServiceDeviceDescription
   ) -> ControllerProfileCapabilities {
@@ -53,7 +63,11 @@ enum ProfileCapabilityResolver {
   }
 }
 
+/// Decides whether a controller supports a source or a destination.
 enum ProfileCapabilityPolicy {
+  /// Returns whether the controller has the control behind `source`.
+  ///
+  /// Unknown capabilities mean it does.
   static func supports(
     _ source: RemappingSource,
     capabilities: ControllerProfileCapabilities?
@@ -74,6 +88,9 @@ enum ProfileCapabilityPolicy {
     }
   }
 
+  /// Returns whether the controller can play `destination`.
+  ///
+  /// Only a physical output depends on the capabilities; unknown capabilities support everything.
   static func supports(
     _ destination: RemappingDestination,
     capabilities: ControllerProfileCapabilities?
@@ -90,6 +107,7 @@ enum ProfileCapabilityPolicy {
     }
   }
 
+  /// Returns whether the controller has the touch surface.
   private static func supports(
     _ surface: RemappingTouchSurface,
     input: ControllerCapabilities

@@ -3,7 +3,9 @@ import OpenJoystickDriverKit
 
 /// Reads and changes whether macOS opens the main app at login.
 struct LaunchAtLoginControl: Sendable {
+  /// Reads whether the login item is on.
   let isEnabled: @Sendable () -> Bool
+  /// Turns the login item on or off.
   let setEnabled: @Sendable (Bool) throws -> Void
 
   /// The macOS login item, recording the choice in `settings`.

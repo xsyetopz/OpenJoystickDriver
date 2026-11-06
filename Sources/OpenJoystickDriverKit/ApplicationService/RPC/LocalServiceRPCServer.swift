@@ -1,25 +1,39 @@
 import Darwin
 import Foundation
 
+/// The server of the service's local RPC socket.
+///
+/// It accepts connections on a Unix socket that only the current user can open, asks the
+/// authentication closure whether the peer may call, and passes each request to the handler.
 public final class LocalServiceRPCServer: @unchecked Sendable {
+  /// Decides whether a peer may call; the server turns away a peer for which it returns false.
   public typealias Authentication = @Sendable (LocalSocketPeer) -> Bool
-  /// Answers a request. For a method that holds its reply open
-  /// (``ApplicationServiceRPCMethod/holdsReplyOpen``) the task is cancelled when the client
-  /// closes its end first; every other request runs to completion.
+  /// Answers a request.
+  ///
+  /// For a method that holds its reply open (``ApplicationServiceRPCMethod/holdsReplyOpen``) the
+  /// task is cancelled when the client closes its end first; every other request runs to
+  /// completion.
   public typealias Handler = @Sendable (LocalServiceRPCRequest) async -> LocalServiceRPCResponse
 
+  /// Decides whether a peer may call.
   private let authentication: Authentication
+  /// Answers each request.
   private let handler: Handler
+  /// The path of the Unix socket the server listens on.
   package let socketPath: String
+  /// Guards `listener`, `starting` and `stopRequested`.
   private let stateLock = NSLock()
+  /// The sockets of the started server; nil while it is stopped.
   private var listener: Listener?
   /// True while a `start()` call sets up the sockets, so a second call is refused.
   private var starting = false
   /// True when `stop()` ran while `starting`; `start()` stops the server it finished.
   private var stopRequested = false
 
-  /// Told after every change of the listener's failure: the failure when the accept loop ends
-  /// on a fatal error, nil when a start clears it. The service sets it before `start()`.
+  /// Told after every change of the listener's failure: the failure when the accept loop ends on a
+  /// fatal error, nil when a start clears it.
+  ///
+  /// The service sets it before `start()`.
   package var listenerFailureChanged: (@Sendable (ServiceListenerFailure?) -> Void)?
 
   // The hooks below belong to tests; set them before `start()`.
@@ -42,21 +56,29 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
   package var resourceWaitMilliseconds = AcceptFailure.resourceWaitMilliseconds
   /// Receives the accept loop's reports; they go to standard output.
   package var report: @Sendable (String) -> Void = { print($0) }
+  /// The name that the server's reports carry.
   private static let name = "LocalServiceRPCServer"
   /// The process that runs the server, written into every listener failure record.
   private let process = ServiceListenerFailure.ProcessIdentity.current
 
-  /// One started server's sockets. The accept loop closes `socket` and `wakeRead`. Whoever clears
-  /// `listener` closes `wakeWrite`: `stop()`, or the loop when it ends on its own. The loop sees
-  /// the hang-up of `wakeRead` when `wakeWrite` closes. `id` tells servers apart that get the
-  /// same descriptor numbers one after another.
+  /// One started server's sockets.
+  ///
+  /// The accept loop closes `socket` and `wakeRead`. Whoever clears `listener` closes
+  /// `wakeWrite`: `stop()`, or the loop when it ends on its own. The loop sees the hang-up of
+  /// `wakeRead` when `wakeWrite` closes. `id` tells servers apart that get the same descriptor
+  /// numbers one after another.
   private struct Listener {
+    /// Tells this listener from another that gets the same descriptor numbers.
     let id = UUID()
+    /// The listening socket.
     let socket: Int32
+    /// The read end of the pipe that wakes the accept loop.
     let wakeRead: Int32
+    /// The write end of the pipe that wakes the accept loop.
     let wakeWrite: Int32
   }
 
+  /// Creates a server for the service's default socket.
   public convenience init(authentication: @escaping Authentication, handler: @escaping Handler) {
     self.init(
       socketPath: LocalServiceRPCTransport.defaultSocketPath,
@@ -65,6 +87,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     )
   }
 
+  /// Creates a server for the socket at `socketPath`.
   package init(
     socketPath: String,
     authentication: @escaping Authentication,
@@ -75,6 +98,11 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     self.handler = handler
   }
 
+  /// Starts listening and accepting connections.
+  ///
+  /// - Throws: ``LocalServiceRPCError/alreadyRunning`` when this server or another process already
+  ///   serves the socket, and ``LocalServiceRPCError/connectionFailed(_:)`` with the error number
+  ///   of a failed socket call.
   public func start() throws {
     try stateLock.withLock {
       guard listener == nil, !starting else { throw LocalServiceRPCError.alreadyRunning }
@@ -88,7 +116,8 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
       throw error
     }
     if stateLock.withLock({
-      defer { stopRequested = false }; return stopRequested
+      defer { stopRequested = false }
+      return stopRequested
     }) {
       stop()
     }
@@ -133,9 +162,10 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     }
   }
 
-  /// Stops the server and deletes the record of a listener failure, also when the listener
-  /// already stopped on its own: an orderly stop leaves nothing for `ojd` to report. A call while
-  /// `start()` still sets up the sockets takes effect as soon as that call returns.
+  /// Stops the server and deletes the record of a listener failure, also when the listener already
+  /// stopped on its own: an orderly stop leaves nothing for `ojd` to report.
+  ///
+  /// A call while `start()` still sets up the sockets takes effect as soon as that call returns.
   public func stop() {
     stateLock.withLock {
       deleteListenerFailureRecord()
@@ -153,6 +183,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
 
   /// Ends the server when the loop stops on its own: the loop owns `wakeWrite` then, unless
   /// `stop()` already took the listener.
+  ///
   /// Returns whether the loop ended the server, as opposed to `stop()` having done so. A fatal
   /// `failure` is recorded under the same lock, so a start that follows clears the record after it
   /// was written and a late write never replaces that clear.
@@ -167,9 +198,11 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     }
   }
 
-  /// Runs the loop. A loop that ends on a fatal error records why in a file beside the socket and
-  /// in `listenerFailureChanged`, because the RPC socket cannot carry the reason once it is gone.
-  /// The process keeps running.
+  /// Runs the loop.
+  ///
+  /// A loop that ends on a fatal error records why in a file beside the socket and in
+  /// `listenerFailureChanged`, because the RPC socket cannot carry the reason once it is gone. The
+  /// process keeps running.
   private func acceptConnections(_ listener: Listener) {
     let failure = acceptUntilEnd(listener)
     _ = release(listener, failure: failure)
@@ -223,6 +256,8 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     }
   }
 
+  /// Writes the failure record beside the socket for the fatal accept error `code` and tells
+  /// ``listenerFailureChanged``.
   private func recordListenerFailure(errno code: Int32) {
     let failure = ServiceListenerFailure(
       errorNumber: code,
@@ -238,12 +273,15 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     }
   }
 
-  /// A listener that starts deletes the record of the last failure. Runs under `stateLock`.
+  /// A listener that starts deletes the record of the last failure.
+  ///
+  /// Runs under `stateLock`.
   private func clearListenerFailure() {
     deleteListenerFailureRecord()
     listenerFailureChanged?(nil)
   }
 
+  /// Deletes the failure record beside the socket and reports a failure to delete it.
   private func deleteListenerFailureRecord() {
     do { try ServiceListenerFailure.clear(socketPath: socketPath) } catch {
       report(
@@ -253,6 +291,7 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     }
   }
 
+  /// The report line for a fatal accept error `code`.
   private func endMessage(_ code: Int32) -> String {
     AcceptFailure.message(
       server: Self.name,
@@ -262,6 +301,8 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     )
   }
 
+  /// Authenticates the peer of `descriptor`, reads one request and answers it, then closes the
+  /// connection.
   private func handleConnection(_ descriptor: Int32) {
     guard let peer = LocalSocketPeer.authenticated(descriptor) else {
       Darwin.close(descriptor)
@@ -370,6 +411,11 @@ public final class LocalServiceRPCServer: @unchecked Sendable {
     return (ends[0], ends[1])
   }
 
+  /// Deletes a socket file that no server answers on.
+  ///
+  /// - Throws: ``LocalServiceRPCError/alreadyRunning`` when a server answers on `path`,
+  ///   ``LocalServiceRPCError/peerRejected`` when the file is not a socket of the current user, and
+  ///   ``LocalServiceRPCError/connectionFailed(_:)`` when the file cannot be deleted.
   private func removeStaleSocket(at path: String) throws {
     guard FileManager.default.fileExists(atPath: path) else { return }
     if LocalServiceRPCClient.serverProcessIdentifier(socketPath: path) != nil {

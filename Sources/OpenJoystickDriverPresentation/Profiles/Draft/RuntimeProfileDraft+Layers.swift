@@ -3,6 +3,9 @@ import OpenJoystickDriverKit
 
 extension RuntimeProfileDraft {
 
+  /// Returns the draft with a chord added.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError`` when the chord breaks a profile rule.
   func addingChord(
     sources: Set<RemappingSource>,
     destination: RemappingDestination,
@@ -14,8 +17,14 @@ extension RuntimeProfileDraft {
     }
   }
 
+  /// Returns the draft without the chord.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError/chordNotFound(_:)`` when the profile has no such chord.
   func removingChord(_ chordID: UUID) throws -> Self { try editing { try $0.removeChord(chordID) } }
 
+  /// Returns the draft with a sequence added.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError`` when the sequence breaks a profile rule.
   func addingSequence(
     sources: [RemappingSource],
     windowMs: Double,
@@ -26,10 +35,17 @@ extension RuntimeProfileDraft {
     }
   }
 
+  /// Returns the draft without the sequence.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError/sequenceNotFound(_:)`` when the profile has no such
+  ///   sequence.
   func removingSequence(_ sequenceID: UUID) throws -> Self {
     try editing { try $0.removeSequence(sequenceID) }
   }
 
+  /// Returns the draft with a layer added.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError`` when the layer breaks a profile rule.
   func addingLayer(
     name: String,
     activator: RemappingSource,
@@ -40,8 +56,17 @@ extension RuntimeProfileDraft {
     }
   }
 
+  /// Returns the draft without the layer.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError/layerNotFound(_:)`` when the profile has no such layer.
   func removingLayer(_ layerID: UUID) throws -> Self { try editing { try $0.removeLayer(layerID) } }
 
+  /// Returns the draft with the assignment of `source` in the layer set to `destination`.
+  ///
+  /// Behavior, pulse duration and additional actions of an existing assignment stay.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError`` when the layer is missing or the assignment breaks a
+  ///   profile rule.
   func settingLayerBinding(
     layerID: UUID,
     source: RemappingSource,
@@ -69,6 +94,9 @@ extension RuntimeProfileDraft {
     }
   }
 
+  /// Returns the draft with the axis tuning of a layer assignment set.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError`` when the layer or assignment is missing.
   func settingLayerBindingAxisTuning(
     layerID: UUID,
     bindingID: UUID,
@@ -90,6 +118,11 @@ extension RuntimeProfileDraft {
     }
   }
 
+  /// Returns the draft with the behaviors of a layer assignment set.
+  ///
+  /// The pulse duration applies only to the pulse behavior.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError`` when the layer or assignment is missing.
   func settingLayerBindingBehaviors(
     behavior: RemappingBindingBehavior? = nil,
     pulseDurationMs: Double? = nil,
@@ -116,6 +149,9 @@ extension RuntimeProfileDraft {
     }
   }
 
+  /// Returns the draft without the layer assignment.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError`` when the layer or assignment is missing.
   func removingLayerBinding(layerID: UUID, bindingID: UUID) throws -> Self {
     try editing { profile in
       let bindings = try profile.layer(layerID).bindings
@@ -126,6 +162,9 @@ extension RuntimeProfileDraft {
     }
   }
 
+  /// Returns the draft with the layer assignment replaced by `transform`.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError`` when the layer or assignment is missing.
   func replacingLayerBinding(
     layerID: UUID,
     bindingID: UUID,
@@ -141,6 +180,10 @@ extension RuntimeProfileDraft {
     }
   }
 
+  /// Returns the draft with the assignment replaced by the result of `makeBinding`.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError`` when the assignment is missing or the result breaks a
+  ///   profile rule.
   func replacingBinding(
     _ bindingID: UUID,
     _ makeBinding: (RemappingBinding) -> RemappingBinding
@@ -153,7 +196,11 @@ extension RuntimeProfileDraft {
     return Self(profile: try Self.validate(profile.replacing(bindings: bindings)))
   }
 
-  /// Applies a shared Kit edit and maps its errors to draft errors.
+  /// Applies `edit` to a copy of the profile and returns the draft of the copy.
+  ///
+  /// The errors of the shared editing map to ``RuntimeProfileDraftError``.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError`` when the edit fails.
   func editing(_ edit: (inout RemappingProfile) throws -> Void) throws -> Self {
     var candidate = profile
     do { try edit(&candidate) } catch let error as RuntimeProfileDraftError {
@@ -170,12 +217,16 @@ extension RuntimeProfileDraft {
     return Self(profile: candidate)
   }
 
+  /// Returns the axis tuning a source starts with: the default for an axis, nil for any other.
   static func defaultTuning(for source: RemappingSource) -> RemappingAxisTuning? {
     switch source {
     case .axis, .axisDirection: .default
     case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe: nil
     }
   }
+  /// Returns `profile` after validating it.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError/validation(_:)`` when it breaks a profile rule.
   static func validate(_ profile: RemappingProfile) throws -> RemappingProfile {
     do {
       try profile.validate()

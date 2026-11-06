@@ -35,8 +35,10 @@ struct HIDDescriptorDriverTests {
     #expect(parse(parser, axis(usage: 0x34, integer: 255)).contains(.rightStick(x: -1, y: 1)))
   }
 
-  /// HID Generic Desktop Y and Ry put the logical minimum away from the user (up), so canonical
-  /// Y, which points up, is at its maximum there. The elements carry this descriptor's ranges.
+  /// HID Generic Desktop Y and Ry put the logical minimum away from the user (up), so canonical Y,
+  /// which points up, is at its maximum there.
+  ///
+  /// The elements carry this descriptor's ranges.
   @Test
   func explicitDescriptorLogicalMinimumYIsUp() {
     // Usage Page (Generic Desktop), Usage (Game Pad), Collection (Application),
@@ -98,8 +100,9 @@ struct HIDDescriptorDriverTests {
   }
 
   /// SDL's two `0079:0006` gamepad mappings agree on the buttons: 1-4 are Y, B, A, X, 7-8 are
-  /// digital L2 and R2, and 9-12 are back, start, and the stick clicks. Z and Rz carry the right
-  /// stick.
+  /// digital L2 and R2, and 9-12 are back, start, and the stick clicks.
+  ///
+  /// Z and Rz carry the right stick.
   @Test
   func dragonRiseUsesItsButtonOrderAndZRzRightStick() throws {
     let parser = HIDDescriptorDriver(

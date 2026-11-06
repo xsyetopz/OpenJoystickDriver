@@ -12,6 +12,7 @@ public struct USBExclusiveOwner: Codable, Equatable, Sendable {
   /// The process name or the kernel driver class.
   public let name: String
 
+  /// Creates an owner from a process ID, nil for a kernel driver, and the holder's name.
   public init(processID: Int32?, name: String) {
     self.processID = processID
     self.name = name
@@ -19,7 +20,11 @@ public struct USBExclusiveOwner: Codable, Equatable, Sendable {
 
   /// The user-facing sentence that names the holder and says OpenJoystickDriver serves the
   /// controller when the holder releases it.
-  /// `localize` returns the catalog text of a key.
+  ///
+  /// - Parameters:
+  ///   - owner: The holder, or nil when the interface names none.
+  ///   - localize: Returns the catalog text of a key.
+  /// - Returns: The localized sentence.
   public static func heldMessage(
     for owner: Self?,
     localize: (String) -> String
@@ -35,7 +40,7 @@ public struct USBExclusiveOwner: Codable, Equatable, Sendable {
     )
   }
 
-  /// Parses the registry value; nil for an empty value, which names no owner.
+  /// Parses the `UsbExclusiveOwner` registry value; nil for an empty value, which names no owner.
   public init?(registryValue: String) {
     let value = registryValue.trimmingCharacters(in: .whitespaces)
     guard !value.isEmpty else { return nil }

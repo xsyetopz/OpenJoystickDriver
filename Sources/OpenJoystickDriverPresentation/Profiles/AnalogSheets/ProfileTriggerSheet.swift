@@ -2,19 +2,31 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The sheet that edits the left and right trigger mappings of a profile, one trigger at a time.
   struct ProfileTriggerSheet: View {
+    /// Receives the trigger mappings that are enabled when the person chooses Save.
     let onSave: ([RemappingTriggerMapping]) throws -> Void
+    /// Dismisses the sheet.
     @Environment(\.presentationMode)
     private var presentationMode
+    /// The left trigger being edited.
     @State
     private var left: ProfileTriggerDraft
+    /// The right trigger being edited.
     @State
     private var right: ProfileTriggerDraft
+    /// The trigger the fields show.
     @State
     private var selected: RemappingTriggerSource = .left
+    /// The message of the failed validation, or nil.
     @State
     private var errorMessage: String?
 
+    /// Creates the sheet on the current trigger mappings.
+    ///
+    /// - Parameters:
+    ///   - mappings: The trigger mappings to edit.
+    ///   - onSave: Receives the validated mappings.
     init(
       mappings: [RemappingTriggerMapping],
       onSave: @escaping ([RemappingTriggerMapping]) throws -> Void
@@ -34,6 +46,7 @@
       )
     }
 
+    /// The title, the trigger picker, its fields and the buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
         Text(OJDLocalized.string("ui.profiles.trigger.title")).font(

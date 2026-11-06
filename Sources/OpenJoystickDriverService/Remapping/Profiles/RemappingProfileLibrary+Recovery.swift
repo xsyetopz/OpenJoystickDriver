@@ -4,7 +4,9 @@ import OpenJoystickDriverKit
 extension RemappingProfileLibrary {
   /// A file the library could not use, with the bytes it read so recovery acts on that content.
   enum RecoveryIssue: Equatable, Sendable {
+    /// A profile file that could not be read, with its name, bytes and error code.
     case damagedProfile(fileName: String, data: Data, code: ErrorCode)
+    /// The list of active profiles could not be read, with its bytes.
     case unusableLibrary(data: Data)
   }
 
@@ -37,7 +39,9 @@ extension RemappingProfileLibrary {
     return RemappingProfileMutationImpact(modelsNeedingRefresh: [])
   }
 
-  /// Backs up unreadable selections and replaces them with none. The profiles are kept.
+  /// Backs up unreadable selections and replaces them with none.
+  ///
+  /// The profiles are kept.
   @discardableResult
   func resetDamagedLibrary(issueID: UUID) throws -> RemappingProfileMutationImpact {
     _ = try loadIfNeeded()
@@ -63,6 +67,9 @@ extension RemappingProfileLibrary {
     return Set(previous.keys).union(current.keys).filter { previous[$0] != current[$0] }
   }
 
+  /// Captures the files and permissions of the library.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError`` when a file cannot be read.
   func checkpoint() throws -> RemappingProfileLibraryCheckpoint {
     let manager = FileManager.default
     var profileFiles: [String: RemappingProfileLibraryCheckpoint.File] = [:]
@@ -88,6 +95,9 @@ extension RemappingProfileLibrary {
     return checkpoint
   }
 
+  /// Writes the files and permissions of `checkpoint` back and restores the cached state.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError/unwritableLibrary`` when a file cannot be restored.
   func restore(_ checkpoint: RemappingProfileLibraryCheckpoint) throws {
     let manager = FileManager.default
     do {
@@ -114,11 +124,15 @@ extension RemappingProfileLibrary {
     profileIssues = checkpoint.cachedIssues
   }
 
+  /// An active selection with its profile resolved.
   private struct ResolvedSelection: Equatable {
+    /// The applications the selection applies to, or nil for every application.
     let applicationScope: RemappingApplicationScope?
+    /// The profile, or nil when it is missing.
     let profile: RemappingProfile?
   }
 
+  /// Returns the active selections of `state` with their profiles, by model.
   private func resolvedSelections(
     _ state: RemappingProfileLibraryState
   ) -> [RemappingProfileModel: [ResolvedSelection]] {
@@ -133,6 +147,10 @@ extension RemappingProfileLibrary {
     }
   }
 
+  /// Throws unless the file at `url` still holds `expected`.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError/profileIssueNotFound(_:)`` for `issueID` when it
+  ///   differs.
   private func requireCurrentData(_ expected: Data, at url: URL, issueID: UUID) throws {
     guard (try? Data(contentsOf: url)) == expected else {
       library = nil
@@ -155,6 +173,7 @@ extension RemappingProfileLibrary {
     }
   }
 
+  /// Reads the data and permissions of the file at `url`.
   private static func persistedFile(at url: URL) throws -> RemappingProfileLibraryCheckpoint.File {
     RemappingProfileLibraryCheckpoint.File(
       data: try read(url),
@@ -162,6 +181,7 @@ extension RemappingProfileLibrary {
     )
   }
 
+  /// Writes the data of `file` to `url` when it differs and sets the permissions of `file`.
   private static func restore(_ file: RemappingProfileLibraryCheckpoint.File, at url: URL) throws {
     if (try? Data(contentsOf: url)) != file.data { try file.data.write(to: url, options: .atomic) }
     try FileManager.default.setAttributes(

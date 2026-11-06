@@ -7,19 +7,34 @@ import OpenJoystickDriverKit
 /// `kIOMessageServiceWasClosed` is sent when a client closes the service and
 /// `kIOMessageServiceIsTerminated` when the service goes away (`IOMessage.h`; both are
 /// function-like macros that Swift does not import). Any other message ends the wait only once the
-/// interface no longer names an owner.
+/// interface names no owner.
 final class InterfaceReleaseWatch: @unchecked Sendable {
+  /// The IOKit message type that says a client closed the service.
   private static let wasClosed: UInt32 = 0xE000_0110
+  /// The IOKit message type that says the service terminated.
   private static let isTerminated: UInt32 = 0xE000_0010
 
+  /// The lock that guards `continuation` and `finished`.
   private let lock = NSLock()
+  /// The waiting task, until the watch finishes.
   private var continuation: CheckedContinuation<Void, Never>?
+  /// Whether the watch finished.
   private var finished = false
+  /// The notification port.
   private var port: IONotificationPortRef?
+  /// The interest notification object.
   private var notification: io_object_t = 0
+  /// The queue that delivers the notifications.
   private let queue = DispatchQueue(label: "com.openjoystickdriver.iousbhost.release")
+  /// The watched interface service, retained until ``stop()``.
   private var service: io_service_t = 0
 
+  /// Registers the interest notification on `service`.
+  ///
+  /// Finishes at once when the interface already names no owner.
+  ///
+  /// - Throws: ``USBTransportError/platform(code:message:)`` when the port cannot be created, and
+  ///   the mapped IOKit error when the registration fails.
   func start(service: io_service_t) throws {
     guard let port = IONotificationPortCreate(kIOMainPortDefault) else {
       throw USBTransportError.platform(code: 0, message: "IONotificationPortCreate failed")
@@ -48,6 +63,7 @@ final class InterfaceReleaseWatch: @unchecked Sendable {
     if !hasOwnerKey(service) { finish() }
   }
 
+  /// Suspends until the watch finishes.
   func wait() async {
     await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
       lock.lock()
@@ -61,6 +77,7 @@ final class InterfaceReleaseWatch: @unchecked Sendable {
     }
   }
 
+  /// Ends the watch and resumes the waiting task.
   func finish() {
     lock.lock()
     finished = true
@@ -75,6 +92,7 @@ final class InterfaceReleaseWatch: @unchecked Sendable {
     queue.sync(execute: release)
   }
 
+  /// Releases the notification, the port and the service.
   private func release() {
     if notification != 0 {
       IOObjectRelease(notification)
@@ -90,12 +108,14 @@ final class InterfaceReleaseWatch: @unchecked Sendable {
     }
   }
 
+  /// Finishes the watch for a close or terminate message, or when the interface names no owner.
   private func received(_ messageType: UInt32) {
     if messageType == Self.wasClosed || messageType == Self.isTerminated || !hasOwnerKey(service) {
       finish()
     }
   }
 
+  /// Tells whether `service` still names an exclusive owner.
   private func hasOwnerKey(_ service: io_service_t) -> Bool {
     IORegistryEntryCreateCFProperty(
       service,

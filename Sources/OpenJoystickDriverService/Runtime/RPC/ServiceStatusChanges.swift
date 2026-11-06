@@ -22,18 +22,25 @@ import OpenJoystickDriverKit
 /// through the workspace.
 /// - Note: `@unchecked Sendable` because `generation` and `waiters` are guarded by `lock`.
 final class ServiceStatusChanges: @unchecked Sendable {
+  /// The pending test notification, with the requests that wait for its outcome.
   private final class Announcement {
+    /// The identity that a wait and a report name.
     let id = UUID()
-    /// The requests waiting for the outcome, by identifier. A request whose caller left gets nil.
+    /// The requests waiting for the outcome, by identifier.
+    ///
+    /// A request whose caller left gets nil.
     var requests: [UUID: CheckedContinuation<TestNotificationOutcome?, Never>]
+    /// Whether a wait took the announcement.
     var taken = false
     /// When the pickup deadline falls; an announcement given back is picked up before it.
     let pickupBy: Date
-    /// Names the deadline now running, so an earlier deadline that fires late cannot end the
+    /// Names the deadline that is running, so an earlier deadline that fires late cannot end the
     /// announcement in a later phase.
     var deadlineToken = UUID()
+    /// The task that ends the announcement when its deadline falls.
     var deadline: Task<Void, Never>?
 
+    /// Creates an announcement for the request `id` that `request` resumes.
     init(
       _ id: UUID,
       _ request: CheckedContinuation<TestNotificationOutcome?, Never>,
@@ -44,24 +51,38 @@ final class ServiceStatusChanges: @unchecked Sendable {
     }
   }
 
+  /// A wait that is held until the next change.
   private final class Waiter {
+    /// The wait's continuation, resumed once with its reply.
     let continuation: CheckedContinuation<ServiceStatusReply, Never>
+    /// The task that ends the wait when the hold time passes.
     var hold: Task<Void, Never>?
 
+    /// Creates a waiter that resumes `continuation`.
     init(_ continuation: CheckedContinuation<ServiceStatusReply, Never>) {
       self.continuation = continuation
     }
   }
 
+  /// Guards `generation`, `waiters`, `pending` and the deadlines.
   private let lock = NSLock()
+  /// The identity of this service instance, which a revision carries.
   private let instance: UUID
+  /// The count of status changes.
   private var generation: UInt64 = 0
+  /// The held waits, by identity.
   private var waiters: [UUID: Waiter] = [:]
+  /// The test notification announcement that waits for an answer.
   private var pending: Announcement?
+  /// How long an announcement waits for a wait to take it, in seconds.
   private let pickupSeconds: TimeInterval
+  /// How long a taker has to report the outcome, in seconds.
   private let answerSeconds: TimeInterval
+  /// The center that posts the status changes.
   private let center: NotificationCenter
+  /// The center that posts workspace activations.
   private let workspaceCenter: NotificationCenter
+  /// The observers on both centers.
   private var observers: [NSObjectProtocol] = []
 
   // The hooks below belong to tests; set them before the first wait.
@@ -74,6 +95,7 @@ final class ServiceStatusChanges: @unchecked Sendable {
   /// Runs after a test notification request is withdrawn because its caller left.
   var testNotificationRequestDidWithdraw: (@Sendable () -> Void)?
 
+  /// Creates a counter over the two notification centers.
   init(
     center: NotificationCenter = .default,
     workspaceCenter: NotificationCenter = NSWorkspace.shared.notificationCenter,
@@ -113,8 +135,9 @@ final class ServiceStatusChanges: @unchecked Sendable {
   /// Returns at once when `after` is nil (`firstRead`), differs from the current revision,
   /// including by service instance (`statusChange`), or a test notification waits for a taker
   /// (`testNotification`); otherwise waits for the next change, or for a test notification, and
-  /// returns the current revision as `holdElapsed` after `holdSeconds` with none. A cancelled
-  /// wait returns at once as `holdElapsed`.
+  /// returns the current revision as `holdElapsed` after `holdSeconds` with none.
+  ///
+  /// A cancelled wait returns at once as `holdElapsed`.
   func wait(after: ServiceStatusRevision?, holdSeconds: TimeInterval) async -> ServiceStatusReply {
     let id = UUID()
     let reply = await withTaskCancellationHandler {
@@ -162,6 +185,7 @@ final class ServiceStatusChanges: @unchecked Sendable {
     return ServiceStatusReply(revision: reply.revision, event: .holdElapsed)
   }
 
+  /// Counts a change and ends every held wait with a status change reply.
   private func recordChange() {
     let (released, revision) = lock.withLock { () -> ([Waiter], ServiceStatusRevision) in
       generation &+= 1
@@ -179,6 +203,7 @@ final class ServiceStatusChanges: @unchecked Sendable {
   }
 
   /// Announces a test notification and returns how it ended, or nil when the caller left first.
+  ///
   /// A held wait takes it at once; otherwise it stays pending until the next wait arrives or
   /// `pickupSeconds` pass.
   func announceTestNotification() async -> TestNotificationOutcome? {
@@ -210,7 +235,9 @@ final class ServiceStatusChanges: @unchecked Sendable {
     }
   }
 
-  /// Gives `announcement` to a held wait, if one is held. Call with `lock` held.
+  /// Gives `announcement` to a held wait, if one is held.
+  ///
+  /// Call with `lock` held.
   private func handToHeldWait(_ announcement: Announcement) -> (Waiter, ServiceStatusReply)? {
     guard let key = waiters.keys.first, let waiter = waiters.removeValue(forKey: key) else {
       return nil
@@ -227,6 +254,7 @@ final class ServiceStatusChanges: @unchecked Sendable {
     )
   }
 
+  /// Resumes the wait of `handoff` with its reply.
   private func deliver(_ handoff: (Waiter, ServiceStatusReply)) {
     let (waiter, reply) = handoff
     waiter.hold?.cancel()
@@ -235,9 +263,10 @@ final class ServiceStatusChanges: @unchecked Sendable {
   }
 
   /// Puts announcement `id`, taken by a wait that was cancelled before it returned, back to
-  /// pending: the next wait takes it, or a wait already held does now. The pickup deadline stays
-  /// the one the request set; when it has passed, the announcement ends with `noAnswer` and no
-  /// wait, held or later, takes it.
+  /// pending: the next wait takes it, or a wait already held does at once.
+  ///
+  /// The pickup deadline stays the one the request set; when it has passed, the announcement ends
+  /// with `noAnswer` and no wait, held or later, takes it.
   private func giveBack(_ id: UUID) {
     let handoff = lock.withLock { () -> (Waiter, ServiceStatusReply)? in
       guard let pending, pending.id == id, pending.taken else { return nil }
@@ -249,6 +278,7 @@ final class ServiceStatusChanges: @unchecked Sendable {
     if let handoff { deliver(handoff) }
   }
 
+  /// Removes the request from the pending announcement, which is dropped with its last request.
   private func withdrawTestNotificationRequest(_ requestID: UUID) {
     let request = lock.withLock { () -> CheckedContinuation<TestNotificationOutcome?, Never>? in
       guard let pending, let request = pending.requests.removeValue(forKey: requestID) else {
@@ -266,6 +296,7 @@ final class ServiceStatusChanges: @unchecked Sendable {
   }
 
   /// Ends the pending announcement `id` with `outcome`, which is `shown`, `denied` or `failed`.
+  ///
   /// Returns false when `id` is not pending and taken, because it ended already or never existed.
   func reportTestNotification(_ id: UUID, outcome: TestNotificationOutcome) -> Bool {
     let requests = lock.withLock { () -> [CheckedContinuation<TestNotificationOutcome?, Never>]? in
@@ -279,7 +310,9 @@ final class ServiceStatusChanges: @unchecked Sendable {
     return true
   }
 
-  /// Marks the pending announcement taken and starts its answer deadline. Call with `lock` held.
+  /// Marks the pending announcement taken and starts its answer deadline.
+  ///
+  /// Call with `lock` held.
   private func takePending() -> UUID? {
     guard let pending, !pending.taken else { return nil }
     pending.taken = true
@@ -287,7 +320,9 @@ final class ServiceStatusChanges: @unchecked Sendable {
     return pending.id
   }
 
-  /// Replaces the deadline of `announcement`. Call with `lock` held.
+  /// Replaces the deadline of `announcement`.
+  ///
+  /// Call with `lock` held.
   private func schedule(_ announcement: Announcement, after seconds: TimeInterval) {
     announcement.deadline?.cancel()
     let id = announcement.id
@@ -310,6 +345,7 @@ final class ServiceStatusChanges: @unchecked Sendable {
     for request in requests ?? [] { request.resume(returning: .noAnswer) }
   }
 
+  /// Ends the held wait `id` with a hold-elapsed reply.
   private func release(_ id: UUID) {
     let (waiter, revision) = lock.withLock {
       (

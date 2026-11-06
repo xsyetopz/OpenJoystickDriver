@@ -1,33 +1,47 @@
 import Foundation
 
+/// How one permission reads in the Access area: its text, its tone and whether it can be acted on.
 struct AccessReadinessStatus: Equatable {
+  /// The text that the row shows, such as Allowed or Needs attention.
   let value: String
+  /// The color role of the text.
   let tone: SemanticTone
+  /// Whether the row offers a button for it.
   let isActionable: Bool
 }
 
 extension AccessReadinessStatus {
-  /// Whether the permission is missing or needs a change in System Settings. A permission that
-  /// is allowed, not needed or still being checked has nothing to act on.
+  /// Whether the permission is missing or needs a change in System Settings.
+  ///
+  /// A permission that is allowed, not needed or still being checked has nothing to act on.
   var isMissing: Bool { isActionable && tone == .caution }
 }
 
 /// One permission row of the Access form.
 struct AccessPermissionRow: Equatable, Identifiable {
+  /// The permission that a row stands for.
   enum Kind: String, CaseIterable {
+    /// Reading input from controllers.
     case inputRead
+    /// Injecting input into the Mac.
     case inputInject
+    /// Posting keyboard and pointer events.
     case postEvent
+    /// Posting notifications.
     case notification
   }
 
+  /// The permission.
   let kind: Kind
+  /// How the permission reads.
   let status: AccessReadinessStatus
   /// Whether macOS has not been asked yet, so the button asks instead of opening System Settings.
   var needsRequest = false
 
+  /// The row's identity, which is its kind.
   var id: String { kind.rawValue }
 
+  /// The localization key of the row's title.
   var titleKey: String {
     switch kind {
     case .inputRead: return "platform.macos.term.inputRead"
@@ -46,15 +60,22 @@ struct AccessPermissionRow: Equatable, Identifiable {
 
 /// The macOS permissions the app and its service need, as the Access area shows them.
 struct AccessReadiness {
+  /// The app's own reading of the permissions.
   let permissionState: RuntimePermissionLoadState
+  /// The service status, which holds the permissions as the service sees them.
   let statusState: RuntimeStatusState
+  /// Whether the app may post notifications.
   let notificationState: RuntimeNotificationAuthorizationState
+  /// The alert style and sound setting of the notifications.
   let notificationSettings: RuntimeNotificationSettings
 
+  /// How the Input Read permission reads.
   var inputRead: AccessReadinessStatus { permissionStatus(for: permissionSummary?.inputRead) }
 
+  /// How the Input Inject permission reads.
   var inputInject: AccessReadinessStatus { permissionStatus(for: permissionSummary?.inputInject) }
 
+  /// How the Post Event permission reads: not needed when the active profile does not require it.
   var postEvent: AccessReadinessStatus {
     guard case .available(let status) = statusState,
       let requiresPostEventAccess = status.requiresPostEventAccess
@@ -73,6 +94,9 @@ struct AccessReadiness {
     }
   }
 
+  /// How the notification permission reads.
+  ///
+  /// Notifications that are allowed but without banners or sounds need attention.
   var notification: AccessReadinessStatus {
     switch notificationState {
     case .checking: return Self.checking(isActionable: false)
@@ -102,7 +126,9 @@ struct AccessReadiness {
     }
   }
 
-  /// The rows to show, in order. A permission the app does not need is left out.
+  /// The rows to show, in order.
+  ///
+  /// A permission the app does not need is left out.
   var rows: [AccessPermissionRow] {
     var rows = [
       AccessPermissionRow(kind: .inputRead, status: inputRead),
@@ -121,6 +147,7 @@ struct AccessReadiness {
     return rows
   }
 
+  /// Whether the service reports that the active profile needs no Post Event access.
   private var postEventIsNotNeeded: Bool {
     guard case .available(let status) = statusState else { return false }
     return status.requiresPostEventAccess == false
@@ -171,8 +198,10 @@ struct AccessReadiness {
   }
 
   /// The permissions as read: the app's own reading, or the service status when the app has not
-  /// read them. While a read or request is running, or after it failed, the status holds a
-  /// placeholder, so there is no reading.
+  /// read them.
+  ///
+  /// While a read or request is running, or after it failed, the status holds a placeholder, so
+  /// there is no reading.
   private var permissionSummary: RuntimePermissionSummary? {
     switch permissionState {
     case .available(let permissions): return permissions
@@ -183,6 +212,7 @@ struct AccessReadiness {
     }
   }
 
+  /// Returns how a permission state reads, or Checking while the permission is being read.
   private func permissionStatus(for state: RuntimePermissionState?) -> AccessReadinessStatus {
     switch state {
     case .granted: return Self.allowed
@@ -195,6 +225,7 @@ struct AccessReadiness {
     }
   }
 
+  /// The status of an allowed permission.
   private static var allowed: AccessReadinessStatus {
     AccessReadinessStatus(
       value: OJDLocalized.string("status.allowed"),
@@ -203,6 +234,7 @@ struct AccessReadiness {
     )
   }
 
+  /// The status of a permission that needs attention.
   private static var needsAttention: AccessReadinessStatus {
     AccessReadinessStatus(
       value: OJDLocalized.string("status.needsAttention"),
@@ -211,6 +243,7 @@ struct AccessReadiness {
     )
   }
 
+  /// The status of a permission that is being checked.
   private static func checking(isActionable: Bool) -> AccessReadinessStatus {
     AccessReadinessStatus(
       value: OJDLocalized.string("status.checking"),

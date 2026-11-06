@@ -1,14 +1,23 @@
 import Foundation
 
 extension ProtocolDescription {
+  /// The JSON document of a protocol description.
   struct Document: Decodable {
+    /// One interface signature that binds a variant.
     struct Signature: Decodable {
+      /// The name of the variant the signature binds.
       let variant: String
+      /// The USB interface class.
       let interfaceClass: UInt8
+      /// The USB interface subclass.
       let interfaceSubclass: UInt8
+      /// The USB interface protocol.
       let interfaceProtocol: UInt8
+      /// The interface number that carries data; nil when any interface does.
       let interfaceNumber: UInt8?
 
+      /// Decodes `variant`, the class triple and an optional `interfaceNumber`; an unknown key is
+      /// rejected.
       init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: DocumentKey.self)
         try container.rejectUnknown(allowed: [
@@ -22,15 +31,21 @@ extension ProtocolDescription {
       }
     }
 
+    /// The defaults that the family's records layer over.
     struct Defaults: Decodable {
+      /// The session defaults; nil when the description sets none.
       let session: Session?
+      /// The input defaults; nil when the description sets none.
       let input: ControllerRecordDocument.Input?
+      /// The tuning defaults; nil when the description sets none.
       let tuning: ControllerTuning?
       /// Tuning by variant name, layered over `tuning` for that variant.
       let variantTuning: [String: ControllerTuning]
       /// Rumble templates by variant name, each overriding the flat `session.rumble`.
       let variantRumble: [String: RumbleOutputTemplate]
 
+      /// Decodes `session`, `input`, `tuning` and `variants`; an unknown key or an empty section is
+      /// rejected.
       init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: DocumentKey.self)
         try container.rejectUnknown(allowed: [
@@ -59,28 +74,44 @@ extension ProtocolDescription {
       }
     }
 
-    /// `defaults.session`: what runs while the device is open. The startup writes and rumble
-    /// template, the keep-alive, the Switch 1 subcommands, the GIP named packets and the counts
-    /// that bound the startup resends.
+    /// `defaults.session`: what runs while the device is open.
+    ///
+    /// The startup writes and rumble template, the keep-alive, the Switch 1 subcommands, the GIP
+    /// named packets and the counts that bound the startup resends.
     struct Session: Decodable {
+      /// The startup writes; nil when the description sets none.
       let startup: ControllerRecordDocument.StartupList?
+      /// The rumble template; nil when the description sets none.
       let rumble: RumbleOutputTemplate?
+      /// The keep-alive; nil when the description sets none.
       let keepAlive: KeepAlive?
+      /// For the Valve families, the reports sent in order when the controller is activated.
       let activation: [RecordStartupWrite]?
+      /// For the Valve families, the reports sent in order when the controller is deactivated.
       let deactivation: [RecordStartupWrite]?
+      /// The subcommand reports; nil when the description sets none.
       let subcommands: SubcommandPlan?
+      /// The named packets; nil when the description sets none.
       let namedPackets: NamedPacketPlan?
+      /// The startup attempts a raw-USB handshake makes before it fails.
       let handshakeAttempts: Int?
+      /// The most startup resends after announces before the first input.
       let announceResendLimit: Int?
+      /// The most presence inquiry resends for a receiver slot.
       let receiverInquiryResendLimit: Int?
+      /// The USB interface that carries commands and their replies.
       let commandChannel: ProtocolDescription.CommandChannel?
+      /// The zero-amplitude packets the rumble refresh sends after a stop.
       let trailingStopPackets: Int?
-      /// The keys every family may set. The description schema lists the same keys as
-      /// `$defs/generalSessionKeys`, which a test pins this to.
+      /// The keys every family may set.
+      ///
+      /// The description schema lists the same keys as `$defs/generalSessionKeys`, which a test
+      /// pins this to.
       static let generalKeys: Set<String> = ["startup", "rumble", "keepAlive"]
       /// The keys of the session that only some families have: every key but the general ones.
       let familyFields: Set<String>
 
+      /// Decodes the session keys; an unknown key or a count outside its range is rejected.
       init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: DocumentKey.self)
         try container.rejectUnknown(allowed: [
@@ -135,8 +166,11 @@ extension ProtocolDescription {
     /// `defaults.session.activation` or `deactivation`: 1...16 HID reports sent in order, each
     /// with a report, its bytes and optionally the one transport it is sent on.
     struct SessionWriteList: Decodable {
+      /// The writes in the order they are sent.
       let writes: [RecordStartupWrite]
 
+      /// Decodes 1...16 writes, each with `report`, `bytes` and an optional `transport`; any other
+      /// count or key is rejected.
       init(from decoder: any Decoder) throws {
         var list = try decoder.unkeyedContainer()
         var writes: [RecordStartupWrite] = []
@@ -167,9 +201,13 @@ extension ProtocolDescription {
 
     /// `inputStart`: a known action and the unique variant names it is limited to.
     struct InputStartDocument: Decodable {
+      /// The action that starts input.
       let action: InputStartAction
+      /// The variant names the action is limited to; every variant when empty.
       let variants: [String]
 
+      /// Decodes `action` and optional unique `variants`; an unknown action, a repeated or empty
+      /// variant list, or an unknown key is rejected.
       init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: DocumentKey.self)
         try container.rejectUnknown(allowed: ["action", "variants"])
@@ -192,9 +230,12 @@ extension ProtocolDescription {
 
     /// `defaults.variants.<variant>`: the tuning and rumble template a variant starts from.
     struct VariantDefaults: Decodable {
+      /// The variant's tuning; nil when it sets none.
       let tuning: ControllerTuning?
+      /// The variant's rumble template; nil when it sets none.
       let rumble: RumbleOutputTemplate?
 
+      /// Decodes `tuning` and `session`; an unknown key or an empty variant is rejected.
       init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: DocumentKey.self)
         try container.rejectUnknown(allowed: ["tuning", "session"])
@@ -211,8 +252,10 @@ extension ProtocolDescription {
 
     /// `defaults.variants.<variant>.session`: the rumble template that overrides the family's.
     struct VariantSession: Decodable {
+      /// The rumble template that overrides the family's.
       let rumble: RumbleOutputTemplate
 
+      /// Decodes `rumble`; any other key is rejected.
       init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: DocumentKey.self)
         try container.rejectUnknown(allowed: ["rumble"])
@@ -221,32 +264,53 @@ extension ProtocolDescription {
       }
     }
 
+    /// The version of the API that the document declares.
     let apiVersion: String?
+    /// The kind of the document.
     let kind: String?
+    /// The name of the protocol family.
     let family: String
+    /// The family's implemented variants.
     let variants: [PhysicalProtocolVariantID]
+    /// Whether catalog records store the family's variant.
     let storesVariant: Bool
+    /// The default USB endpoints.
     let endpoints: Endpoints
+    /// How the family reaches raw USB; nil when it never does.
     let rawUSB: RawUSBDeclaration?
+    /// The record sections the family's driver reads.
     let recordSections: Set<RecordSection>
     /// The general `defaults.session` keys the driver reads beyond the rumble template.
     let sessionKeys: Set<SessionKey>
+    /// The tuning keys the family reads through IOHID beyond the always-read keys.
     let tuningKeys: Set<ControllerTuning.Key>
+    /// The tuning keys a raw-USB variant reads beyond the always-read keys.
     let rawUSBTuningKeys: Set<ControllerTuning.Key>
+    /// The controls every controller of the family has; nil when they follow the layout.
     let controls: ControllerCapabilities?
+    /// The capability deltas a record may declare.
     let recordCapabilities: RecordCapabilityRules
+    /// What OJD still sends when macOS serves the controller.
     let macOSOwnedOutput: MacOSOwnedOutput
+    /// What the user does before a controller sends input; nil when input starts on its own.
     let inputStart: InputStartDocument?
+    /// The interface signatures that bind the variants.
     let interfaceSignatures: [Signature]
+    /// The parameters records may set, by name.
     let parameters: [String: ParameterType]
+    /// The rules the parameters obey beyond their types.
     let parameterRules: [ParameterRule]
+    /// The transports an activation or deactivation write may name.
     let writeTransports: Set<PhysicalTransport>
+    /// The defaults that the family's records layer over; nil when there are none.
     let defaults: Defaults?
 
     /// `parameterRules[]`: a kind, the parameters it lists and the variants it limits itself to.
     struct RuleDocument: Decodable {
+      /// The decoded rule.
       let rule: ParameterRule
 
+      /// Decodes `rule` with its `parameters` and `variants`; an unknown key or kind is rejected.
       init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: DocumentKey.self)
         try container.rejectUnknown(allowed: ["rule", "parameters", "variants"])
@@ -292,6 +356,8 @@ extension ProtocolDescription {
       return Set(elements)
     }
 
+    /// Decodes a full protocol description; an unknown key, an empty section, a repeated variant, a
+    /// missing field, or a combination of fields that the description rules reject is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [

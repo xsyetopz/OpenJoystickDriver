@@ -18,15 +18,24 @@ final class EndpointFeedSource: InputSource, @unchecked Sendable {
     case closed
   }
 
+  /// The origin of the input, an endpoint feed.
   let origin = InputOrigin.endpointFeed
+  /// The sink that queues the frames of the client.
   let sink: any OutputSink
+  /// The registry of the virtual feeds.
   private let feeds: VirtualFeedRegistry
+  /// The token of the feed.
   private let token: UUID
+  /// The connection of the client.
   private weak var connection: EndpointConnection?
+  /// The intake sink, which also counts a keep-alive as activity.
   private let intake: VirtualFeedIntakeSink
+  /// The lock that guards `closed`.
   private let lock = NSLock()
+  /// Whether the feed was closed.
   private var closed = false
 
+  /// Creates the source for the feed `token` of `connection`.
   init(feeds: VirtualFeedRegistry, token: UUID, connection: EndpointConnection) {
     self.feeds = feeds
     self.token = token
@@ -35,8 +44,9 @@ final class EndpointFeedSource: InputSource, @unchecked Sendable {
     sink = intake
   }
 
-  /// Queues `frame` on the feed. A closing connection closes the feed, and a closed feed closes
-  /// the connection with `E1008`.
+  /// Queues `frame` on the feed.
+  ///
+  /// A closing connection closes the feed, and a closed feed closes the connection with `E1008`.
   func submit(_ frame: VirtualFeedFrame) async -> Outcome {
     guard live() else { return .closed }
     do {
@@ -71,8 +81,8 @@ final class EndpointFeedSource: InputSource, @unchecked Sendable {
     return live()
   }
 
-  /// Watches the feed until the task is cancelled: a connection that is closing closes the feed
-  /// now, though the reader may stay blocked until the connection's writer drains, and a feed
+  /// Watches the feed until the task is cancelled: a connection that is closing closes the feed at
+  /// once, though the reader may stay blocked until the connection's writer drains, and a feed
   /// that closed on its own (an idle client, a failed send) closes the connection.
   func watch() async {
     while !Task.isCancelled, live(), feeds.isOpen(token: token) {
@@ -94,6 +104,7 @@ final class EndpointFeedSource: InputSource, @unchecked Sendable {
     }
   }
 
+  /// Closes the connection with `E1008` unless the source is already closed.
   private func feedClosed() {
     let connection = lock.withLock { () -> EndpointConnection? in
       guard !closed else { return nil }
@@ -118,15 +129,23 @@ enum VirtualFeedIntakeRefusal: Error, Equatable {
 /// ``VirtualFeedIntakeRefusal/queueFull`` while the queue has no room, which is the client's
 /// backpressure, and `feedClosed` once the feed is gone.
 final class VirtualFeedIntakeSink: OutputSink {
+  /// The destination of the frames, a virtual device.
   let destination = OutputDestination.virtualDevice
+  /// The registry of the virtual feeds.
   private let feeds: VirtualFeedRegistry
+  /// The token of the feed.
   private let token: UUID
 
+  /// Creates the sink for the feed `token`.
   init(feeds: VirtualFeedRegistry, token: UUID) {
     self.feeds = feeds
     self.token = token
   }
 
+  /// Queues the feed frame and calls `onDelivered`.
+  ///
+  /// - Throws: ``VirtualFeedIntakeRefusal`` when the feed is closed or its queue is full, and
+  ///   ``StreamBoundaryError/unsupported(_:)`` for a frame that is not a feed frame.
   func consume(
     _ frame: StreamFrame,
     onDelivered: @escaping @Sendable () -> Void
@@ -148,11 +167,17 @@ final class VirtualFeedIntakeSink: OutputSink {
 /// to the client as a `RumbleCommand` line, on the connection's bounded queue.
 /// - Note: `@unchecked Sendable` because `connection` is weak and only read.
 final class EndpointFeedReturnSink: OutputSink, @unchecked Sendable {
+  /// The destination of the commands, an endpoint feed client.
   let destination = OutputDestination.endpointFeedClient
+  /// The connection of the client.
   private weak var connection: EndpointConnection?
 
+  /// Creates the sink for `connection`.
   init(connection: EndpointConnection) { self.connection = connection }
 
+  /// Sends the rumble line of `command` to the client, and ignores a command that has none.
+  ///
+  /// - Throws: ``StreamBoundaryError/rejected(_:_:)`` when the connection is closing.
   func consume(
     _ command: ControllerOutputCommand,
     for _: LogicalControllerID

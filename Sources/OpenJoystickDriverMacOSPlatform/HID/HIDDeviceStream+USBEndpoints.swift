@@ -9,7 +9,9 @@ import OpenJoystickDriverKit
 /// that gives a HID mode an `endpoints` key is refused, because that mode could never be selected.
 extension HIDDeviceStream {
   /// The retained `IOUSBHostInterface` a HID device is published on, found by walking the
-  /// IORegistry service-plane parents. The caller releases it. Nil when there is none.
+  /// IORegistry service-plane parents.
+  ///
+  /// The caller releases it. Nil when there is none.
   static func retainedUSBInterfaceEntry(for device: IOHIDDevice) -> io_registry_entry_t? {
     var entry = IOHIDDeviceGetService(device)
     guard entry != 0, IOObjectRetain(entry) == KERN_SUCCESS else { return nil }

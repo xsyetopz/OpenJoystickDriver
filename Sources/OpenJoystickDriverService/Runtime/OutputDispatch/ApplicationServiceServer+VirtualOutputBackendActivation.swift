@@ -10,8 +10,9 @@ extension ApplicationServiceServer {
     }
   }
 
-  /// Builds, activates, and publishes the automatic dispatcher when no output is live. A failure
-  /// closes the candidate and leaves output unavailable with the failure as its status.
+  /// Builds, activates, and publishes the automatic dispatcher when no output is live.
+  ///
+  /// A failure closes the candidate and leaves output unavailable with the failure as its status.
   func performVirtualOutputBackendActivation() async -> Bool {
     guard !isVirtualOutputServerStopped() else { return false }
     let isLive = userSpaceLock.withLock { userSpaceEnabled && userSpaceDispatcher != nil }
@@ -97,6 +98,7 @@ extension ApplicationServiceServer {
     }
   }
 
+  /// Records that the backend is unavailable with `error` as its status, unless the server stopped.
   private func recordVirtualOutputBackendUnavailable(_ error: any Error) {
     withUserSpaceState {
       guard !virtualOutputServerStopped else { return }

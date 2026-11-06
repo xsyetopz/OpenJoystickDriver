@@ -1,7 +1,9 @@
 import Foundation
 import Testing
 
-/// Lists the controls in the app sources that VoiceOver cannot name. The list must stay empty.
+/// Lists the controls in the app sources that VoiceOver cannot name.
+///
+/// The list must stay empty.
 ///
 /// The audit is a text scan, so it cannot see:
 /// - custom `NSView` controls that draw themselves or handle mouse events,

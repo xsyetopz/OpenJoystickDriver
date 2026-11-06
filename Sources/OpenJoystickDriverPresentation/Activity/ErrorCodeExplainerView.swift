@@ -4,26 +4,33 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// Holds the code that the user typed in the Explain Error Code sheet and the answer.
   @MainActor
   final class ErrorCodeExplainerModel: ObservableObject {
     /// Whether the main window shows the Explain Error Code sheet.
     @Published
     var isPresented = false
+    /// The code that the user typed.
     @Published
     var typedCode = ""
+    /// The answer for the typed code, or nil before the first lookup.
     @Published
     private(set) var answer: ErrorCodeExplanation?
 
+    /// Looks up the typed code.
     func explain() { answer = ErrorCodeExplanation.lookup(typedCode) }
   }
 
   /// The Explain Error Code sheet: the text `ojd explain` prints for a code.
   struct ErrorCodeExplainerView: View {
+    /// Holds the typed code and the answer.
     @ObservedObject
     private var model: ErrorCodeExplainerModel
 
+    /// Creates the sheet on `model`.
     init(model: ErrorCodeExplainerModel) { self.model = model }
 
+    /// The title, the code field, the answer and the buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 12) {
         Text(OJDLocalized.string("ui.console.explain.title")).font(.headline)
@@ -42,6 +49,8 @@
       }.padding(20).frame(width: 420)
     }
 
+    /// The answer for the typed code: its facts and explanation, a note that the code is unknown,
+    /// or nothing before the first lookup.
     @ViewBuilder
     private var answer: some View {
       switch model.answer {
@@ -81,9 +90,11 @@
 
   /// Presents the Explain Error Code sheet over the window that holds it.
   struct ErrorCodeExplainerSheetHost: View {
+    /// The model of the sheet.
     @ObservedObject
     var model: ErrorCodeExplainerModel
 
+    /// An invisible host of the sheet that presents the explainer while the model says so.
     var body: some View {
       Color.clear.sheet(isPresented: $model.isPresented) { ErrorCodeExplainerView(model: model) }
     }

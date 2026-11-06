@@ -4,28 +4,46 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The sheet that edits the details of a profile: name, vendor and product ID, target app and
+  /// Joy-Con pair.
   struct ProfileMetadataSheet: View {
+    /// The profile being edited.
     let profile: RemappingProfile
+    /// Receives the edited profile when the person chooses Apply.
     let onSave: (RemappingProfile) -> Void
+    /// Dismisses the sheet.
     @Environment(\.presentationMode)
     var presentationMode
+    /// The name of the profile.
     @State
     private var name: String
+    /// The vendor ID, as typed.
     @State
     private var vendorID: String
+    /// The product ID, as typed.
     @State
     private var productID: String
+    /// Whether the profile applies to every app or to one app.
     @State
     private var scopeKind: ProfileScopeKind
+    /// The identifier of the app when the profile applies to one app.
     @State
     private var appID: String
+    /// Whether the profile pairs two Joy-Con controllers.
     @State
     private var joyConPairEnabled: Bool
+    /// The Joy-Con half whose gyro the pair uses, or none.
     @State
     private var joyConGyroSelection: RemappingJoyConGyroSelection
+    /// The message of the failed validation, or nil.
     @State
     private var errorMessage: String?
 
+    /// Creates the sheet on the details of `profile`.
+    ///
+    /// - Parameters:
+    ///   - profile: The profile to edit.
+    ///   - onSave: Receives the edited profile.
     init(profile: RemappingProfile, onSave: @escaping (RemappingProfile) -> Void) {
       self.profile = profile
       self.onSave = onSave
@@ -44,6 +62,7 @@
       _joyConGyroSelection = State(initialValue: profile.joyConPair?.gyroSelection ?? .right)
     }
 
+    /// The details form and its Cancel and Apply buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 15) {
         Text(OJDLocalized.string("ui.profiles.details")).font(
@@ -113,6 +132,9 @@
       }.padding(28).frame(width: 440)
     }
 
+    /// Validates the fields and passes the edited profile to ``onSave``.
+    ///
+    /// A failure shows in ``errorMessage`` and keeps the sheet open.
     private func save() {
       guard let vendorID = ProfileIdentifierInput.parse(vendorID),
         let productID = ProfileIdentifierInput.parse(productID)
@@ -152,41 +174,71 @@
       } catch { errorMessage = RuntimePresentation.userFacingError(error) }
     }
 
+    /// Dismisses the sheet.
     func dismiss() { presentationMode.wrappedValue.dismiss() }
   }
 
+  /// The sheet that edits how an assignment acts: its behavior, turbo, long hold, double tap and
+  /// additional actions.
   struct BindingBehaviorSheet: View {
+    /// The assignment being edited.
     let binding: RemappingBinding
+    /// Receives the behavior settings when the person chooses Apply.
     let onSave: SaveAction
+    /// Whether the sheet shows the additional actions.
     let showsAdditionalActions: Bool
+    /// What the controller has, or nil when it is not known.
     let capabilities: ControllerProfileCapabilities?
+    /// Dismisses the sheet.
     @Environment(\.presentationMode)
     var presentationMode
+    /// The additional actions.
     @State
     var additionalActions: [RemappingAction]
+    /// The behavior.
     @State
     var behavior: RemappingBindingBehavior
+    /// The pulse duration in milliseconds.
     @State
     var pulseDurationMs: Double
+    /// Whether turbo is on.
     @State
     var turboEnabled: Bool
+    /// The turbo repeat rate in hertz.
     @State
     var turboRate: Double
+    /// The turbo duty cycle.
     @State
     var turboDuty: Double
+    /// Whether long hold is on.
     @State
     var longHoldEnabled: Bool
+    /// The long hold duration in milliseconds.
     @State
     var longHoldDuration: Double
+    /// The destination of the long hold.
     @State
     var longHoldDestination: RemappingDestination
+    /// Whether double tap is on.
     @State
     var doubleTapEnabled: Bool
+    /// The double tap window in milliseconds.
     @State
     var doubleTapWindow: Double
+    /// The destination of the double tap.
     @State
     var doubleTapDestination: RemappingDestination
 
+    /// Creates the sheet on the settings of `binding`.
+    ///
+    /// Turbo starts at 12 Hz with a duty cycle of 0.5, a long hold at 500 ms and a double tap at
+    /// 300 ms, each with the Space key as its destination.
+    ///
+    /// - Parameters:
+    ///   - binding: The assignment to edit.
+    ///   - showsAdditionalActions: Whether the sheet shows the additional actions.
+    ///   - capabilities: What the controller has, or nil when it is not known.
+    ///   - onSave: Receives the behavior settings.
     init(
       binding: RemappingBinding,
       showsAdditionalActions: Bool = true,

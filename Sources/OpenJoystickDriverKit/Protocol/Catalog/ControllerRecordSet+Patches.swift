@@ -2,16 +2,20 @@ import Foundation
 
 /// One file of a layer, and the package that holds it, or nil for the user's file.
 struct ControllerLayerEntry {
+  /// The location of the file.
   let url: URL
+  /// The name of the package that holds the file; nil for the user's file.
   let owner: String?
 }
 
 extension ControllerRecordSet {
-  /// The bundled catalog with the records and patches of the installed packages applied, then
-  /// those of the valid `.json` files in `directory`. A missing directory holds no records; one
-  /// that cannot be read is listed in ``userFiles`` with its reason. `all.patch.json` in
-  /// `directory` is the user's global ``ControllerDefaults``; it is the first patch of the user
-  /// layer and is reported in ``defaults`` rather than in ``userFiles``.
+  /// The bundled catalog with the records and patches of the installed packages applied, then those
+  /// of the valid `.json` files in `directory`.
+  ///
+  /// A missing directory holds no records; one that cannot be read is listed in ``userFiles`` with
+  /// its reason. `all.patch.json` in `directory` is the user's global ``ControllerDefaults``; it is
+  /// the first patch of the user layer and is reported in ``defaults`` rather than in
+  /// ``userFiles``.
   public static func load(userDirectory directory: URL = userDirectory) -> Self {
     var packaged = packageRecords(in: ModPackageStore.directory(besides: directory))
     var defaults = ControllerDefaults.load(from: ControllerDefaults.file(in: directory))
@@ -61,11 +65,12 @@ extension ControllerRecordSet {
     )
   }
 
-  /// Applies the files of one layer to `records`: the Controller files first, which add or
-  /// replace a record, then the patches in the order of ``ControllerPatchMerge/ordered(_:)``,
-  /// with a package name breaking a tie. A file that fails is skipped and reported in the
-  /// returned files, which follow the order of `entries`. `replaced` lists the models a user
-  /// Controller file replaced.
+  /// Applies the files of one layer to `records`: the Controller files first, which add or replace
+  /// a record, then the patches in the order of ``ControllerPatchMerge/ordered(_:)``, with a
+  /// package name breaking a tie.
+  ///
+  /// A file that fails is skipped and reported in the returned files, which follow the order of
+  /// `entries`. `replaced` lists the models a user Controller file replaced.
   static func applyLayer(
     _ entries: [ControllerLayerEntry],
     layer: ControllerRecordLayer,
@@ -129,8 +134,11 @@ extension ControllerRecordSet {
         failure = "\(patch.selector.description) is not a known controller; use a Controller file"
       }
       for target in targets {
+        guard let record = records[target] else {
+          preconditionFailure("every target comes from the keys of records")
+        }
         do {
-          records[target] = try apply(patch, to: records[target]!, layer: layer, file: entry.url)
+          records[target] = try apply(patch, to: record, layer: layer, file: entry.url)
         } catch { failure = failure ?? problemDescription(error, document: "record") }
       }
       let model: ControllerModelID? =
@@ -151,13 +159,17 @@ extension ControllerRecordSet {
 
   /// A file of a layer, read.
   enum ParsedFile {
+    /// A ``ControllerRecord`` file.
     case record(ControllerRecord)
+    /// A ``ControllerPatch`` file.
     case patch(ControllerPatch)
   }
 
-  /// Reads one Controller or ControllerPatch file. A document of any other kind is refused by
-  /// the ControllerPatch header check. Both kinds refuse, by ``ordered(_:)``, text that is not
-  /// plain UTF-8 and an object that names a member twice.
+  /// Reads one Controller or ControllerPatch file.
+  ///
+  /// A document of any other kind is refused by the ControllerPatch header check. Both kinds
+  /// refuse, by ``ordered(_:)``, text that is not plain UTF-8 and an object that names a member
+  /// twice.
   static func parse(_ data: Data, file: URL?, layer: ControllerRecordLayer) throws -> ParsedFile {
     try requireUTF8(data)
     guard let object = try? JSONSerialization.jsonObject(with: data),
@@ -196,10 +208,12 @@ extension ControllerRecordSet {
 
   /// Validates one record file against the bundled catalog: a Controller file's shape and
   /// cross-field checks, or a ControllerPatch file's shape and the record it gives when applied
-  /// over the bundled record of its selector. `file` becomes the record's
-  /// ``ControllerRecord/userFile``, or its ``ControllerRecord/packageFile`` when `layer` is
-  /// `Package`. A patch of a model with no bundled record applies over its record in `packages`,
-  /// the installed package records. An `all` patch gives no record; its `tuning` is range-checked.
+  /// over the bundled record of its selector.
+  ///
+  /// `file` becomes the record's ``ControllerRecord/userFile``, or its
+  /// ``ControllerRecord/packageFile`` when `layer` is `Package`. A patch of a model with no bundled
+  /// record applies over its record in `packages`, the installed package records. An `all` patch
+  /// gives no record; its `tuning` is range-checked.
   public static func validate(
     _ data: Data,
     file: URL? = nil,
@@ -233,7 +247,9 @@ extension ControllerRecordSet {
   }
 
   /// `upstream` with `patch` merged in by ``ControllerPatchMerge/apply(_:to:)`` and validated as a
-  /// record. An `all` patch sets only the tuning keys the family reads, and attributes them to
+  /// record.
+  ///
+  /// An `all` patch sets only the tuning keys the family reads, and attributes them to
   /// ``ControllerRecordLayer/global``.
   static func apply(
     _ patch: ControllerPatch,

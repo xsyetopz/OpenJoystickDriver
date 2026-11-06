@@ -142,7 +142,9 @@ struct ControllerModeMatchTests {
 
   /// A receiver or dongle record is the evidence of the radio link: macOS reports the dongle as a
   /// USB device, so discovery sees the host link `usb` and the record supplies the controller-side
-  /// link. A model whose record is no receiver never reports it.
+  /// link.
+  ///
+  /// A model whose record is no receiver never reports it.
   @Test
   func aReceiverRecordReportsTheRadioLinkAndSelectsItsMode() async throws {
     func profile(variant: String?) throws -> DeviceRuntimeProfile {
@@ -322,7 +324,9 @@ struct ControllerModeMatchTests {
   }
 
   /// A HID route reports no endpoint set, so a HID mode that names `endpoints` could never be
-  /// selected; the record is refused. The same signature on a raw-USB mode is accepted.
+  /// selected; the record is refused.
+  ///
+  /// The same signature on a raw-USB mode is accepted.
   @Test
   func aHIDModeWithEndpointsIsRefusedAndARawUSBModeIsNot() throws {
     let endpoints: [[String: Any]] = [["direction": "In", "transferType": "Interrupt"]]

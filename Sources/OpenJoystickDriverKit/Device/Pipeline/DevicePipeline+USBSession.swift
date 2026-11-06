@@ -7,8 +7,10 @@ extension DevicePipeline {
   /// The session of the mode this pipeline runs; a pipeline without a record runs none.
   var recordSession: ControllerSession { binding?.record?.session ?? .none }
 
-  /// Runs the mode's vendor control transfers in the order listed, each only when its `match`
-  /// holds for `device`. A rejected transfer fails startup unless it tolerates rejection.
+  /// Runs the mode's vendor control transfers in the order listed, each only when its `match` holds
+  /// for `device`.
+  ///
+  /// A rejected transfer fails startup unless it tolerates rejection.
   func performControlTransfers(
     handle: any USBTransportSession,
     device: USBTransportDevice?,
@@ -64,8 +66,9 @@ extension DevicePipeline {
     }
   }
 
-  /// Sends the mode's shutdown packets. The session is closing, so a failed packet is logged and
-  /// the rest still go out.
+  /// Sends the mode's shutdown packets.
+  ///
+  /// The session is closing, so a failed packet is logged and the rest still go out.
   func sendUSBShutdownWrites(handle: any USBTransportSession) async {
     for write in recordSession.shutdownWrites {
       guard

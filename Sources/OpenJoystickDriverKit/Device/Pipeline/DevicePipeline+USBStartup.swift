@@ -1,6 +1,9 @@
 import Foundation
 
-/// Checks whether USB startup can continue after the device rejects one startup write.
+/// Whether USB startup may go on after the device rejected `write`.
+///
+/// Only a write that tolerates rejection is ignorable, and only for an I/O error, a missing
+/// endpoint, an unsupported transfer or a timeout.
 public func isIgnorableUSBStartupOutputError(
   _ write: PhysicalOutputWrite,
   error: USBTransportError
@@ -13,18 +16,29 @@ public func isIgnorableUSBStartupOutputError(
 }
 
 extension DevicePipeline {
+  /// How the USB run goes on after its input loop ended.
   enum USBInputLoopRecovery: Equatable {
+    /// Open the device again after the reconnect wait.
     case reconnect
+    /// Open the device again after the access-contention wait.
     case accessDenied
   }
 
+  /// The outcome of opening the USB device.
   enum USBOpenResult {
+    /// The session that opened.
     case opened(any USBTransportSession)
+    /// The transport error that ended the open attempts.
     case unavailable(USBTransportError)
   }
 
   // MARK: - Private USB pipeline
 
+  /// Runs the USB session loop of one run: opens the device, performs the handshake, reads input,
+  /// and opens again after a failure for as long as the run is current.
+  ///
+  /// An interface that another client holds is waited for, not seized. The waits between attempts
+  /// grow with the reconnect policy.
   func startUSBPipeline(device: USBTransportDevice, generation: UInt64) async {
     guard let provider = usbTransportProvider else {
       print("[DevicePipeline] Missing USB transport provider for \(identifier)")
@@ -142,8 +156,9 @@ extension DevicePipeline {
     }
   }
 
-  /// Waits for the platform to announce that the exclusive owner let go of the interface. Returns
-  /// false when the wait failed, so the caller retries after its backoff.
+  /// Waits for the platform to announce that the exclusive owner let go of the interface.
+  ///
+  /// Returns false when the wait failed, so the caller retries after its backoff.
   func waitForUSBRelease(
     provider: any USBTransportProvider,
     device: USBTransportDevice
@@ -162,16 +177,23 @@ extension DevicePipeline {
     }
   }
 
+  /// Whether the run `generation` is the current run: the pipeline is active, the generation
+  /// matches and the task is not cancelled.
   func isCurrentUSBRun(_ generation: UInt64) -> Bool {
     isActive && usbRunGeneration == generation && !Task.isCancelled
   }
 
+  /// Whether a USB operation may go on: its task is not cancelled and, when it names a run, that
+  /// run is current.
   func isCurrentUSBOperation(_ generation: UInt64?) -> Bool {
     guard !Task.isCancelled else { return false }
     if let generation { return isActive && usbRunGeneration == generation }
     return true
   }
 
+  /// Tells the dispatcher who owns the USB input of the controller, when it listens for that.
+  ///
+  /// The report in flight is counted, so ``stop()`` waits for it.
   func reportUSBInputOwnership(_ ownership: HIDInputOwnership) async {
     if let listener = dispatcher as? any ControllerInputOwnershipListener {
       usbOwnershipReportsInFlight += 1
@@ -180,6 +202,13 @@ extension DevicePipeline {
     }
   }
 
+  /// Runs the control transfers and the startup output of a USB session, retrying after the delays
+  /// of the session plan.
+  ///
+  /// The result is kept as the startup output status. After the last failed attempt it closes
+  /// `handle`.
+  ///
+  /// - Returns: Whether startup succeeded.
   func performUSBHandshake(
     handle: any USBTransportSession,
     device: USBTransportDevice? = nil,
@@ -219,10 +248,11 @@ extension DevicePipeline {
     return false
   }
 
-  /// A controller that stayed attached through system sleep can open again but fail every write
-  /// as disconnected until its port is reset. A Razer Wolverine Tournament Edition (1532:0A15) did
-  /// this after wake. The reset enumerates the device again, as a replug does, and the device
-  /// manager starts a new pipeline for the returned device.
+  /// Resets the USB port of the device once when its startup failed as disconnected.
+  ///
+  /// A controller that stayed attached through system sleep can open again but fail every write as
+  /// disconnected until its port is reset. The reset enumerates the device again, as a replug does,
+  /// and the device manager starts a new pipeline for the returned device.
   func resetUSBDeviceIfUnresponsive(
     _ device: USBTransportDevice,
     provider: any USBTransportProvider
@@ -244,8 +274,9 @@ extension DevicePipeline {
     return driver.startupWrites() + assignedPlayerIndicatorWrites()
   }
 
-  /// The write lighting the manager-assigned player slot. A pad that rejects only its ring LED
-  /// still starts, so the write tolerates rejection.
+  /// The write lighting the manager-assigned player slot.
+  ///
+  /// A pad that rejects only its ring LED still starts, so the write tolerates rejection.
   func assignedPlayerIndicatorWrites() -> [PhysicalOutputWrite] {
     guard let indicator = startupPlayerIndicator,
       let plan = try? driver.encode(.setPlayerIndicator(indicator))
@@ -256,6 +287,13 @@ extension DevicePipeline {
     }
   }
 
+  /// Sends the startup writes in order, spaced by the startup interval of the plan, or by the delay
+  /// that a write names for itself.
+  ///
+  /// A rejected write that tolerates rejection is logged and skipped.
+  ///
+  /// - Throws: ``CancellationError`` when the run or session changes, or the ``USBTransportError``
+  ///   of a write that must succeed.
   func sendUSBStartupOutputPackets(
     handle: any USBTransportSession,
     runGeneration: UInt64? = nil
@@ -292,6 +330,11 @@ extension DevicePipeline {
     }
   }
 
+  /// Opens `device`, retrying after the open waits of the recovery policy.
+  ///
+  /// An access denial or an exclusive owner ends the retries at once.
+  ///
+  /// - Returns: The opened session, or the last error.
   func openDeviceWithRetry(
     provider: any USBTransportProvider,
     device: USBTransportDevice,
@@ -332,6 +375,7 @@ extension DevicePipeline {
     return .unavailable(lastError)
   }
 
+  /// Logs the failed open attempt `attempt`, counted from zero.
   func handleOpenDeviceError(_ error: Error, attempt: Int) {
     print("[DevicePipeline] Open attempt \(attempt + 1) failed" + " for \(identifier): \(error)")
   }

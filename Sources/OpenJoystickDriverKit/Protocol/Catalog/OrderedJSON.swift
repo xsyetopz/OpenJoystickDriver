@@ -10,18 +10,27 @@ import Foundation
 /// line with as many numbers as fit, as `biome` does. A line's width is counted in columns: an
 /// East Asian wide or fullwidth character and an emoji take two, a combining mark none.
 public indirect enum OrderedJSON: Equatable, Sendable {
+  /// An object, whose members keep their order.
   case object([Member])
+  /// An array.
   case array([Self])
+  /// A string.
   case string(String)
   /// A number as JSON text, such as `-1.5e3`.
   case number(String)
+  /// A boolean.
   case bool(Bool)
+  /// The `null` value.
   case null
 
+  /// One member of an object.
   public struct Member: Equatable, Sendable {
+    /// The member name.
     public let key: String
+    /// The member value.
     public let value: OrderedJSON
 
+    /// Creates a member from a name and a value.
     public init(key: String, value: OrderedJSON) {
       self.key = key
       self.value = value
@@ -30,6 +39,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
 
   /// A JSON text that does not parse, or a value JSON cannot hold.
   public struct Problem: Error, Equatable, CustomStringConvertible, Sendable {
+    /// Why JSON text or a Foundation value was refused.
     public enum Reason: Equatable, Sendable {
       /// The text starts with the UTF-8 byte order mark `EF BB BF`, which record files do not
       /// carry.
@@ -52,10 +62,12 @@ public indirect enum OrderedJSON: Equatable, Sendable {
       case notAJSONValue(String)
     }
 
+    /// Why the text or value was refused.
     public let reason: Reason
     /// The byte of the text where the problem is; nil for a Foundation value.
     public let offset: Int?
 
+    /// A message that names the reason and, when known, the byte offset.
     public var description: String {
       let message =
         switch reason {
@@ -76,6 +88,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
 
   /// The widest line the array layout keeps on one line.
   static let lineWidth = 80
+  /// The number of spaces of one indent level.
   static let indentWidth = 2
 
   // MARK: Foundation values
@@ -179,10 +192,11 @@ public indirect enum OrderedJSON: Equatable, Sendable {
 
   // MARK: Parsing
 
-  /// The value in `data`, a UTF-8 JSON document without a byte order mark. A member name that
-  /// appears twice in one object is refused, because a reader keeps only one of its values; so
-  /// are two names that differ in their scalars only by canonical equivalence, because a
-  /// `[String: Any]` reader merges them.
+  /// The value in `data`, a UTF-8 JSON document without a byte order mark.
+  ///
+  /// A member name that appears twice in one object is refused, because a reader keeps only one of
+  /// its values; so are two names that differ in their scalars only by canonical equivalence,
+  /// because a `[String: Any]` reader merges them.
   public static func parse(_ data: Data) throws -> Self {
     let bytes = [UInt8](data)
     try requireUTF8(bytes)
@@ -194,11 +208,15 @@ public indirect enum OrderedJSON: Equatable, Sendable {
     return value
   }
 
-  /// Refuses text that is not plain UTF-8: a byte order mark, UTF-16 or UTF-32 text, or bytes
-  /// that do not decode as UTF-8. A zero byte after the first four is a ``Problem/Reason/syntax``
-  /// problem, because JSON text cannot carry one, not even in a string.
+  /// Refuses text that is not plain UTF-8: a byte order mark, UTF-16 or UTF-32 text, or bytes that
+  /// do not decode as UTF-8.
+  ///
+  /// A zero byte after the first four is a ``Problem/Reason/syntax`` problem, because JSON text
+  /// cannot carry one, not even in a string.
   public static func requireUTF8(_ data: Data) throws { try requireUTF8([UInt8](data)) }
 
+  /// Throws a ``Problem`` unless `bytes` is UTF-8 without a byte order mark and without a zero
+  /// byte.
   private static func requireUTF8(_ bytes: [UInt8]) throws {
     if bytes.starts(with: [0xEF, 0xBB, 0xBF]) {
       throw Problem(reason: .byteOrderMark, offset: 0)
@@ -223,6 +241,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
     }
   }
 
+  /// The `syntax` message for a zero byte in the text.
   static let zeroByteWords = "a zero byte, which JSON text cannot carry"
 
   // MARK: Formatting
@@ -357,6 +376,8 @@ public indirect enum OrderedJSON: Equatable, Sendable {
     text.unicodeScalars.reduce(0) { $0 + columns(of: $1) }
   }
 
+  /// The number of columns a scalar takes: 0 for a combining or format mark, 2 for a wide character
+  /// or an emoji, otherwise 1.
   private static func columns(of scalar: Unicode.Scalar) -> Int {
     let value = scalar.value
     switch scalar.properties.generalCategory {
@@ -380,6 +401,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
     0x30000...0x3FFFD,
   ]
 
+  /// `text` as a JSON string literal with its quotes and escapes.
   static func quoted(_ text: String) -> String {
     var output = "\""
     for scalar in text.unicodeScalars {

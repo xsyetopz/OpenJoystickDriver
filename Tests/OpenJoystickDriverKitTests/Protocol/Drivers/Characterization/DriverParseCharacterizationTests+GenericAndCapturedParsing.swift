@@ -142,10 +142,12 @@ extension DriverParseCharacterizationTests {
     )
   }
 
-  /// Switch Pro 0x30 IMU after an SPI factory-calibration reply. The reply sets gyro offsets
-  /// (10, -20, 30) and a 9360-count gyro range, so 936 °/s over 9360 counts is 0.1 °/s per count
-  /// after the offset; the accel range of 8192 counts gives 4 g / 8192 per count, no offset.
-  /// Pro maps calibrated raw (x, y, z) to canonical (-y, x, z). Expected values, by hand:
+  /// Switch Pro 0x30 IMU after an SPI factory-calibration reply.
+  ///
+  /// The reply sets gyro offsets (10, -20, 30) and a 9360-count gyro range, so 936 °/s over 9360
+  /// counts is 0.1 °/s per count after the offset; the accel range of 8192 counts gives 4 g / 8192
+  /// per count, no offset. Pro maps calibrated raw (x, y, z) to canonical (-y, x, z). Expected
+  /// values, by hand:
   /// - sample 0: gyro raw (110, 480, -270) → (10, 50, -30) °/s → (-50, 10, -30) °/s
   ///   = (-0.8727, 0.1745, -0.5236) rad/s; accel raw (512, -4096, -3072) → (0.25, -2, -1.5) g
   ///   → (2, 0.25, -1.5) g = (19.6133, 2.4517, -14.7100) m/s².
@@ -191,10 +193,12 @@ extension DriverParseCharacterizationTests {
     )
   }
 
-  /// Steam Controller IMU at the nominal scale, 2000 °/s and 2 g per 32768 counts, with SDL's
-  /// gyro (x, -y, z) and accel (x, y, z). Expected values, by hand: gyro raw (2048, -4096, 8192)
-  /// → (125, -250, 500) °/s → (125, 250, 500) °/s = (2.1817, 4.3633, 8.7266) rad/s; accel raw
-  /// (4096, -32768, 24576) → (0.25, -2, 1.5) g = (2.4517, -19.6133, 14.7100) m/s².
+  /// Steam Controller IMU at the nominal scale, 2000 °/s and 2 g per 32768 counts, with SDL's gyro
+  /// (x, -y, z) and accel (x, y, z).
+  ///
+  /// Expected values, by hand: gyro raw (2048, -4096, 8192) → (125, -250, 500) °/s → (125, 250,
+  /// 500) °/s = (2.1817, 4.3633, 8.7266) rad/s; accel raw (4096, -32768, 24576) → (0.25, -2, 1.5) g
+  /// = (2.4517, -19.6133, 14.7100) m/s².
   @Test
   func steamWiredMotion() throws {
     typealias Steam = ProtocolPacketFixtures.Steam

@@ -28,7 +28,9 @@ public struct ControllerDefaults: Equatable, Sendable {
     controllers.appendingPathComponent(fileName)
   }
 
-  /// Reads and validates `url`. A missing file holds no defaults.
+  /// Reads and validates `url`.
+  ///
+  /// A missing file holds no defaults.
   public static func load(from url: URL = userFile) -> Self {
     let data: Data
     do { data = try Data(contentsOf: url) } catch CocoaError.fileReadNoSuchFile {
@@ -49,8 +51,10 @@ public struct ControllerDefaults: Equatable, Sendable {
     }
   }
 
-  /// The patch and the range-checked `tuning` of an `all` patch document. Like every patch, it
-  /// refuses text that is not plain UTF-8 and an object that names a member twice.
+  /// The patch and the range-checked `tuning` of an `all` patch document.
+  ///
+  /// Like every patch, it refuses text that is not plain UTF-8 and an object that names a member
+  /// twice.
   static func validate(
     _ data: Data,
     file: String? = nil

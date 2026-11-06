@@ -2,7 +2,12 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd profile recover` command: repairs the problems that `profile list` reports.
+///
+/// It removes a damaged profile file and resets an unusable profile library. The service backs up
+/// each file first.
 struct ProfileRecoverCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "recover",
     abstract: CLILocalized.text(
@@ -15,16 +20,20 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
 
   /// The `--json` result. `recovered` names each issue the command acted on.
   struct Result: Encodable, Equatable {
+    /// The issues the command acted on.
     let recovered: [ProfileListCommand.Result.Issue]
+    /// Whether `--dry-run` is set, so nothing changes.
     let dryRun: Bool
   }
 
+  /// `-f`, `--force`: skip the confirmation.
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
   )
   var force = false
 
+  /// `-n`, `--dry-run`: print what would change and change nothing.
   @Flag(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
@@ -33,9 +42,11 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
   )
   var dryRun = false
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let client = try await ServiceConnection.open()
@@ -85,6 +96,7 @@ struct ProfileRecoverCommand: AsyncParsableCommand {
     }
   }
 
+  /// Prints what the command does, or would do with `--dry-run`, for `issue`.
   private static func printAction(_ issue: ApplicationServiceRemappingProfileIssue, dryRun: Bool) {
     let id = issue.id.uuidString
     switch (issue.kind, dryRun) {

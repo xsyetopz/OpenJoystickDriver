@@ -1,6 +1,6 @@
-import OpenJoystickDriverTestSupport
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverService
@@ -204,7 +204,7 @@ actor DescriptionLookupGate {
   func recordLookup() {
     lookups += 1
     if lookups == 1 {
-      firstLookupWaiters.forEach { $0.resume() }
+      for waiter in firstLookupWaiters { waiter.resume() }
       firstLookupWaiters.removeAll()
     }
   }
@@ -221,7 +221,7 @@ actor DescriptionLookupGate {
 
   func release() {
     released = true
-    releaseWaiters.forEach { $0.resume() }
+    for waiter in releaseWaiters { waiter.resume() }
     releaseWaiters.removeAll()
   }
 

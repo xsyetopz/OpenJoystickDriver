@@ -1,6 +1,8 @@
 import Foundation
 
+/// The report ID of the rumble output report.
 let steamTritonRumbleReportID: UInt8 = 0x80
+/// The length of the rumble output report in bytes.
 let steamTritonRumbleReportLength = 10
 
 /// Driver for the 2026 Steam Controller (Triton) over USB, Bluetooth LE, and its dongles.
@@ -12,14 +14,23 @@ let steamTritonRumbleReportLength = 10
 /// interface has no controller until a wireless status or state report says so.
 public final class SteamTritonDriver: PhysicalProtocolDriver {
 
+  /// The state after the latest state report.
   var state = ControllerState.neutral
+  /// Converts the IMU counter to sample time; nil until the first IMU sample.
   var imuClock: SonySensorClock?
+  /// The IMU counter of the latest sample; a repeated counter is skipped.
   var lastIMUCounter: UInt32?
+  /// The battery and charging state from the latest battery report.
   var storedPower: ControllerConnectionState.Power?
+  /// Whether the interface is a dongle's, which has no controller until a report shows one.
   let isDongle: Bool
+  /// Whether a logical controller is connected; always true unless a dongle says otherwise.
   var isLogicalControllerConnected: Bool
+  /// The connection change that ``consumeInputConnectionStateChange()`` has not returned.
   var pendingConnectionStateChange: ControllerInputConnectionState?
+  /// The latest rumble levels, left and right.
   var rumble: (left: UInt16, right: UInt16) = (0, 0)
+  /// The number of keep-alive ticks since activation.
   var keepAliveTick = 0
   /// Keep-alive ticks between lizard-mode-off resends (`lizardResendTicks`): SDL resends every
   /// 3000 ms, and the firmware watchdog restores lizard mode if the resends stop.
@@ -36,6 +47,7 @@ public final class SteamTritonDriver: PhysicalProtocolDriver {
     isLogicalControllerConnected = !isDongle
   }
 
+  /// The controls of the description.
   public var capabilities: ControllerCapabilities {
     PhysicalProtocolID.valveSteamTriton.describedControls
   }
@@ -48,8 +60,10 @@ public final class SteamTritonDriver: PhysicalProtocolDriver {
     )
   }
 
+  /// No default colour: the controller has no light to restore.
   public var defaultColor: ControllerColor? { nil }
 
+  /// The battery state of the latest report.
   public var power: ControllerConnectionState.Power? { storedPower }
 
   /// The description's keep-alive interval is SDL `TRITON_RUMBLE_RESEND_INTERVAL_MS`: the firmware
@@ -61,12 +75,14 @@ public final class SteamTritonDriver: PhysicalProtocolDriver {
     ).withKeepAlive(of: .valveSteamTriton)
   }
 
+  /// Clears the state and the motion clock, so the next report starts from neutral.
   public func resetProtocolState() {
     state = .neutral
     imuClock?.reset()
     lastIMUCounter = nil
   }
 
+  /// Returns the pending connection change and clears it.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? {
     let change = pendingConnectionStateChange
     pendingConnectionStateChange = nil
@@ -79,12 +95,16 @@ public final class SteamTritonDriver: PhysicalProtocolDriver {
     return PhysicalProtocolID.valveSteamTriton.protocolDescription.activationWrites(over: nil)
   }
 
-  /// IMU off. SDL sends no lizard-mode-on: the firmware restores it once the resends stop.
+  /// IMU off.
+  ///
+  /// SDL sends no lizard-mode-on: the firmware restores it once the resends stop.
   public func deactivationWrites() -> [PhysicalOutputWrite] {
     rumble = (0, 0)
     return PhysicalProtocolID.valveSteamTriton.protocolDescription.deactivationWrites(over: nil)
   }
 
+  /// The writes that follow a change of the controller's connection: activation on connect; on
+  /// disconnect the rumble is cleared and nothing is written.
   public func inputConnectionWrites(
     for state: ControllerInputConnectionState
   ) -> [PhysicalOutputWrite] {

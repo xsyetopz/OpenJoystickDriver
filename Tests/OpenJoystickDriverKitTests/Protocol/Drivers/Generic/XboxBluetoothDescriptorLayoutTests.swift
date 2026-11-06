@@ -3,10 +3,12 @@ import OpenJoystickDriverKit
 import Testing
 
 /// Xbox One S and Series pads over Bluetooth, mapped from their recorded report descriptors
-/// (``RecordedHIDDescriptors``). Linux mode puts the right stick on Z/Rz and the triggers on
-/// Simulation Brake and Accelerator (10-bit), View on Consumer AC Back (One S) and Share on
-/// Consumer Record (Series), and Guide on Consumer AC Home in report 2. Windows mode puts the
-/// right stick on Rx/Ry, the triggers on Z/Rz, and Guide on System Main Menu in report 2.
+/// (``RecordedHIDDescriptors``).
+///
+/// Linux mode puts the right stick on Z/Rz and the triggers on Simulation Brake and Accelerator
+/// (10-bit), View on Consumer AC Back (One S) and Share on Consumer Record (Series), and Guide on
+/// Consumer AC Home in report 2. Windows mode puts the right stick on Rx/Ry, the triggers on Z/Rz,
+/// and Guide on System Main Menu in report 2.
 struct XboxBluetoothDescriptorLayoutTests {
   private static let xboxOneS = ControllerModelID(vendorID: 0x045E, productID: 0x02FD)
   private static let xboxSeries = ControllerModelID(vendorID: 0x045E, productID: 0x0B13)

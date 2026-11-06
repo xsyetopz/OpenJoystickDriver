@@ -79,6 +79,7 @@ extension ProtocolDriverRegistry {
     )
   }
 
+  /// `profile` with the configuration left as it is, so the driver does not select it again.
   private static func leavingConfiguration(
     _ profile: DeviceTransportProfile
   ) -> DeviceTransportProfile {
@@ -135,6 +136,10 @@ extension ProtocolDriverRegistry {
     return nil
   }
 
+  /// Whether the class of `interface` is one that the family of `binding` drives.
+  ///
+  /// Xbox USB families need a signature of the binding's variant and interface number, XID accepts
+  /// any interface, and GameSir needs the vendor-specific class (0xFF). No other family is raw USB.
   private static func acceptsInterfaceClass(
     _ interface: PhysicalInterfaceSignature,
     for binding: ProtocolBinding
@@ -156,6 +161,8 @@ extension ProtocolDriverRegistry {
     }
   }
 
+  /// Whether `interface` has interrupt endpoints at the profile's IN and OUT addresses; `exactPair`
+  /// also requires that they are its only two endpoints.
   private static func hasProfileEndpoints(
     _ interface: PhysicalInterfaceSignature,
     _ profile: DeviceTransportProfile,

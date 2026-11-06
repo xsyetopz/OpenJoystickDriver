@@ -6,9 +6,11 @@ import OpenJoystickDriverKit
 /// The WebSocket on `127.0.0.1`, and the overlay pages on the same port.
 extension EndpointServer {
   /// Saves the switch and the port and opens or closes the WebSocket; disabling closes every web
-  /// connection with `E1001`. Nil keeps the saved port, and without one the system picks a free
-  /// port; 0 picks a free port even when one is saved. The picked port is saved, so no fixed port
-  /// is there for another program to take first.
+  /// connection with `E1001`.
+  ///
+  /// Nil keeps the saved port, and without one the system picks a free port; 0 picks a free port
+  /// even when one is saved. The picked port is saved, so no fixed port is there for another
+  /// program to take first.
   func setWebEnabled(_ enabled: Bool, port: Int?) throws {
     try lock.withLock {
       var file = try store.load()
@@ -101,8 +103,9 @@ extension EndpointServer {
 
   // MARK: - Private
 
-  /// Owns the listener: waits on it and on its wake pipe, and closes it when it ends. The
-  /// descriptor stays open until then, so its number cannot belong to a later listener. A
+  /// Owns the listener: waits on it and on its wake pipe, and closes it when it ends.
+  ///
+  /// The descriptor stays open until then, so its number cannot belong to a later listener. A
   /// connection accepted after the listener was replaced is dropped.
   private func acceptWebConnections(_ listener: AcceptListener, generation: Int) {
     defer {
@@ -163,6 +166,7 @@ extension EndpointServer {
     }
   }
 
+  /// Answers the request on `descriptor`, then serves the endpoint on it when it upgraded.
   private func serveWeb(_ descriptor: Int32, port: Int) {
     let upgrade = answer(descriptor, port: port)
     lock.withLock { pendingWebRequests -= 1 }
@@ -252,7 +256,9 @@ extension EndpointServer {
   /// A request that upgraded to a WebSocket: its normalized `Origin`, nil when it sent none, and
   /// the bytes after it.
   private struct WebUpgrade {
+    /// The `Origin` header, normalized; nil when the request sent none.
     let origin: String?
+    /// The bytes that arrived after the request head.
     let rest: Data
   }
 

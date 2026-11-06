@@ -2,7 +2,9 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd log` command group: show, export and locate the service logs.
 struct LogCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "log",
     abstract: CLILocalized.text(
@@ -11,15 +13,19 @@ struct LogCommand: AsyncParsableCommand {
     subcommands: [LogShowCommand.self, LogPathCommand.self, LogExportCommand.self]
   )
 
-  /// Tests replace it so they never read real logs or spawn a pager.
+  /// The environment that `ojd log` reads logs through; tests replace it so they never read real
+  /// logs or spawn a pager.
   @TaskLocal
   static var environment = LogEnvironment.system
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
+/// The `ojd log path` command: prints the folder that holds the service logs.
 struct LogPathCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "path",
     abstract: CLILocalized.text(
@@ -27,11 +33,17 @@ struct LogPathCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
-  private struct Result: Encodable { let path: String }
+  /// The `--json` result.
+  private struct Result: Encodable {
+    /// The path of the log folder.
+    let path: String
+  }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let path = LogCommand.environment.directory().path
@@ -43,7 +55,11 @@ struct LogPathCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd log show` command: prints the last lines of each service log, or follows them.
+///
+/// On a terminal the output goes through `$PAGER`.
 struct LogShowCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "show",
     abstract: CLILocalized.text("cli.log.show.abstract"),
@@ -55,6 +71,7 @@ struct LogShowCommand: AsyncParsableCommand {
   /// The `kind` of each `--json` line with `--follow`.
   private static let streamedLineKind = "LogEntry"
 
+  /// `--follow`: keep printing appended lines until interrupted.
   @Flag(
     name: .shortAndLong,
     help: ArgumentHelp(
@@ -63,6 +80,7 @@ struct LogShowCommand: AsyncParsableCommand {
   )
   var follow = false
 
+  /// `--lines`: how many of the last lines of each log to print.
   @Option(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
@@ -72,15 +90,26 @@ struct LogShowCommand: AsyncParsableCommand {
   )
   var lines = ApplicationServiceLogService.defaultMaximumLines
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
-  private struct Snapshots: Encodable { let logs: [ApplicationServiceLogSnapshot] }
+  /// The `--json` result: the snapshot of each log.
+  private struct Snapshots: Encodable {
+    /// The snapshot of each log.
+    let logs: [ApplicationServiceLogSnapshot]
+  }
+  /// One `--json` line of `--follow`.
   private struct StreamedLine: Encodable {
+    /// The log that the line came from.
     let stream: ApplicationServiceLogStream
+    /// The text of the line.
     let line: String
   }
 
+  /// Checks that `lines` is within the range that the service allows.
+  ///
+  /// - Throws: ``ValidationError`` when it is not.
   func validate() throws {
     guard ApplicationServiceLogService.linesRange.contains(lines) else {
       throw ValidationError(
@@ -89,6 +118,7 @@ struct LogShowCommand: AsyncParsableCommand {
     }
   }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let environment = LogCommand.environment
@@ -128,6 +158,7 @@ struct LogShowCommand: AsyncParsableCommand {
     return trimmed.isEmpty ? nil : trimmed
   }
 
+  /// Prints the snapshots as JSON, `--plain` rows or text, through the pager on a terminal.
   private static func printSnapshots(
     _ snapshots: [ApplicationServiceLogSnapshot],
     format: CLIContext.Format,
@@ -154,6 +185,7 @@ struct LogShowCommand: AsyncParsableCommand {
     }
   }
 
+  /// Prints the lines appended to the logs after `snapshots` until the task is cancelled.
   private static func stream(
     _ snapshots: [ApplicationServiceLogSnapshot],
     environment: LogEnvironment,

@@ -5,34 +5,67 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The size limits of the main window and its three columns.
   enum MainWindowSizingPolicy {
+    /// The minimum and maximum width of the sidebar.
     static let sidebarWidth = (minimum: CGFloat(170), maximum: CGFloat(260))
+    /// The minimum and maximum width of the content list column.
     static let listWidth = (minimum: CGFloat(200), maximum: CGFloat(320))
+    /// The minimum width of the detail column.
     static let minimumDetailWidth: CGFloat = 420
+    /// The content size of a new main window.
     static let defaultContentSize = NSSize(width: 1_040, height: 700)
+    /// The smallest content size that the window allows.
     static let minimumContentSize = NSSize(width: 960, height: 560)
 
+    /// Returns the smallest frame size of `window` whose content area is
+    /// ``MainWindowSizingPolicy/minimumContentSize``.
     @MainActor
     static func minimumFrameSize(for window: NSWindow) -> NSSize {
       window.frameRect(forContentRect: NSRect(origin: .zero, size: minimumContentSize)).size
     }
   }
 
+  /// The main window: a sidebar, a content list column and a detail column, with a toolbar.
+  ///
+  /// Closing the window hides it, which keeps the selected area, the screens' state and the window
+  /// geometry.
   @MainActor
   final class MainWindowController: NSWindowController, NSWindowDelegate, MainWindowPresenting,
     MenuProfileMutating
   {
+    /// Decides which area is selected and guards switches away from a profile editor with edits.
     let navigation: MainWindowNavigationModel
+    /// The models of every area's screen.
     let screens: MainWindowScreens
+    /// Reports to the app whether the window is visible.
     private let visibilityChanged: @MainActor (Bool) -> Void
+    /// The split view that holds the sidebar, the list column and the detail column.
     private let splitViewController = NSSplitViewController()
+    /// The content list column, collapsed for an area without a list.
     private let listItem: NSSplitViewItem
+    /// Keeps the window title and the toolbar in step with the selected area.
     private var areaObservation: AnyCancellable?
+    /// Re-validates the toolbar items when any state that enables them changes.
     private var toolbarEnablementObservation: AnyCancellable?
+    /// Updates the toolbar actions and log following when Activity switches its view.
     private var activityModeObservation: AnyCancellable?
+    /// Keeps the window subtitle in step with the service status.
     private var summaryObservation: AnyCancellable?
+    /// Whether a resize is being corrected, so that the correction does not repeat.
     private var isEnforcingMinimumSize = false
 
+    /// Creates the main window with its screens, split view and toolbar.
+    ///
+    /// The window restores its saved frame, or centers when there is none.
+    /// - Parameters:
+    ///   - runtime: The runtime state that every area reads.
+    ///   - supportReport: The support report and log export model.
+    ///   - restartApplication: Restarts the app, for the Access area.
+    ///   - openInputTest: Opens the Input Test window for a controller.
+    ///   - visibilityChanged: Called with true when the window is shown and false when it is
+    ///     hidden.
+    ///   - persistence: Where the selected area is saved between launches.
     init(
       runtime: RuntimeViewModel,
       supportReport: SupportReportModel,
@@ -160,16 +193,21 @@
       }
     }
 
+    /// Unavailable, because the window controller is created in code only.
+    ///
+    /// - Parameter coder: The decoder, which is not used.
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     // MARK: MainWindowPresenting
 
+    /// Shows the main window, on `area` when it is not nil.
     func showMainWindow(area: MainWindowArea?) {
       if let area { navigation.requestArea(area) }
       present()
     }
 
+    /// Shows Controllers with the controller selected.
     func showController(id: String) {
       guard navigation.requestArea(.controllers) else {
         present()
@@ -179,15 +217,18 @@
       present()
     }
 
+    /// Shows the main window with the Explain Error Code sheet open.
     func showErrorCodeExplainer() {
       present()
       screens.errorCodeExplainer.isPresented = true
     }
 
+    /// The session token of the selected controller, or nil when none is selected.
     var selectedControllerID: String? {
       screens.controllers.selectedDevice?.sessionToken.rawValue
     }
 
+    /// Shows the Input Test window for the controller, after selecting it in Controllers.
     func showInputTest(controllerID: String) {
       guard navigation.requestArea(.controllers) else {
         present()
@@ -205,8 +246,9 @@
     // MARK: Profile mutations from menus
 
     /// Runs a profile mutation of the status or main menu on the shared library under the
-    /// Profiles editor's mutation tracking. Returns nil, without running `mutation`, when the
-    /// editor holds a mutation.
+    /// Profiles editor's mutation tracking.
+    ///
+    /// Returns nil, without running `mutation`, when the editor holds a mutation.
     func performMenuProfileMutation(
       _ request: RuntimeMutationRequest,
       _ mutation: @MainActor (ProfileLibraryModel) async -> RuntimeMutationResult
@@ -218,6 +260,7 @@
       }
     }
 
+    /// Shows Profiles and asks for a profile file to import.
     func importProfile() {
       present()
       navigation.perform(in: .profiles) { [weak self] in
@@ -225,6 +268,7 @@
       }
     }
 
+    /// Shows Profiles and asks where to save the selected profile.
     func exportProfile() {
       present()
       navigation.perform(in: .profiles) { [weak self] in
@@ -233,8 +277,11 @@
       }
     }
 
+    /// Whether a saved profile is selected in the Profiles screen.
     var hasSelectedProfile: Bool { selectedProfile != nil }
 
+    /// The selected profile, or nil while the runtime is unavailable, a damaged entry is selected
+    /// or nothing is selected.
     private var selectedProfile: RemappingProfile? {
       guard case .available(let snapshot) = screens.runtime.remappingState,
         screens.profiles.selectedRecoveryIssueID == nil,
@@ -243,6 +290,7 @@
       return snapshot.profiles.first { $0.id == selectedID }
     }
 
+    /// Shows Library and asks for a record file or mod folder to install.
     func installRecordOrMod() {
       present()
       navigation.perform(in: .library) { [weak self] in
@@ -253,6 +301,7 @@
 
     // MARK: Window
 
+    /// Sizes the window, shows it in front and activates the app.
     private func present() {
       guard let window else { return }
       window.minSize = MainWindowSizingPolicy.minimumFrameSize(for: window)
@@ -263,6 +312,7 @@
       updateLogFollowing(area: navigation.selectedArea)
     }
 
+    /// Hides the window instead of closing it and returns false.
     func windowShouldClose(_ sender: NSWindow) -> Bool {
       // Hiding keeps the selected area, the screens' state and the window geometry.
       sender.orderOut(nil)
@@ -271,6 +321,7 @@
       return false
     }
 
+    /// Keeps the window from being resized below its minimum frame size.
     func windowWillResize(_ sender: NSWindow, toFrameSize frameSize: NSSize) -> NSSize {
       WindowFramePolicy.fittingSize(
         frameSize,
@@ -278,14 +329,17 @@
       )
     }
 
+    /// Stops following the logs while the window is miniaturized.
     func windowDidMiniaturize(_ notification: Notification) {
       updateLogFollowing(area: navigation.selectedArea)
     }
 
+    /// Resumes following the logs when the window returns from the Dock.
     func windowDidDeminiaturize(_ notification: Notification) {
       updateLogFollowing(area: navigation.selectedArea)
     }
 
+    /// Grows the window back to its minimum frame size after a resize that made it smaller.
     func windowDidResize(_ notification: Notification) {
       guard !isEnforcingMinimumSize, let window = notification.object as? NSWindow else { return }
       let minimumFrameSize = MainWindowSizingPolicy.minimumFrameSize(for: window)
@@ -296,6 +350,7 @@
       isEnforcingMinimumSize = false
     }
 
+    /// Moves the window inside the visible frame of its new screen.
     func windowDidChangeScreen(_ notification: Notification) {
       guard let window else { return }
       WindowFramePolicy.clamp(
@@ -304,6 +359,7 @@
       )
     }
 
+    /// Applies the minimum sizes, restores the saved frame and keeps the window on screen.
     private func installSizingPolicy(on window: NSWindow) {
       window.contentMinSize = MainWindowSizingPolicy.minimumContentSize
       window.minSize = MainWindowSizingPolicy.minimumFrameSize(for: window)
@@ -315,6 +371,7 @@
       WindowFramePolicy.clamp(window, minimumSize: window.minSize)
     }
 
+    /// Gives the window its unified toolbar, with no user customization.
     private func configureToolbar(for window: NSWindow) {
       let toolbar = NSToolbar(identifier: MainWindowToolbarLayout.toolbar)
       toolbar.delegate = self
@@ -325,6 +382,8 @@
       if #available(macOS 11.0, *) { window.toolbarStyle = .unified }
     }
 
+    /// Collapses or shows the list column and updates the toolbar, log following, title and
+    /// subtitle for `area`.
     private func reflect(area: MainWindowArea) {
       listItem.isCollapsed = !area.hasListColumn
       showToolbarActions(of: area)
@@ -346,6 +405,7 @@
       }
     }
 
+    /// Runs the action of the clicked toolbar item when it is enabled.
     @objc
     func performToolbarAction(_ sender: NSToolbarItem) {
       guard let action = MainWindowToolbarAction(identifier: sender.itemIdentifier),
@@ -387,11 +447,13 @@
       }
     }
 
+    /// Filters the Library list by the text in the toolbar search field.
     @objc
     func librarySearchChanged(_ sender: NSSearchField) {
       screens.libraryArea.searchText = sender.stringValue
     }
 
+    /// Whether the toolbar item for `action` is enabled in the current state.
     func isEnabled(_ action: MainWindowToolbarAction) -> Bool {
       switch action {
       case .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .exportProfile,
@@ -408,6 +470,7 @@
       }
     }
 
+    /// The Profiles toolbar's view of the selection, blocking and unsaved edits.
     private var profileToolbarState: ProfileToolbarState {
       ProfileToolbarState(
         hasSelection: selectedProfile != nil,
@@ -421,6 +484,8 @@
   }
 
   extension MainWindowController: NSToolbarItemValidation {
+    /// Enables the toolbar item for its action, and explains in its tooltip why a profile action
+    /// waits for unsaved edits.
     func validateToolbarItem(_ item: NSToolbarItem) -> Bool {
       guard let action = MainWindowToolbarAction(identifier: item.itemIdentifier) else {
         return true
@@ -436,10 +501,12 @@
   }
 
   extension MainWindowController: NSToolbarDelegate {
+    /// Returns the fixed items and every area action.
     func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
       MainWindowToolbarLayout.allowedItems
     }
 
+    /// Returns the fixed items and the actions of the selected area.
     func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
       MainWindowToolbarLayout.items(
         for: navigation.selectedArea,
@@ -447,10 +514,12 @@
       )
     }
 
+    /// Returns no identifiers, because no toolbar item stays selected.
     func toolbarSelectableItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
       []
     }
 
+    /// Returns the toolbar item for `itemIdentifier`: the sidebar separator or an area action.
     func toolbar(
       _ toolbar: NSToolbar,
       itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,

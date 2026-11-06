@@ -2,8 +2,9 @@ import Foundation
 
 @testable import OpenJoystickDriverKit
 
-/// One change a test applies to a controller's previous snapshot. Stick Y is positive down, as in
-/// the controller state and the engine.
+/// One change a test applies to a controller's previous snapshot.
+///
+/// Stick Y is positive down, as in the controller state and the engine.
 enum InputChange: Equatable {
   case press(Control)
   case release(Control)
@@ -64,10 +65,11 @@ extension ControllerEvent {
   }
 }
 
-/// The snapshot each controller last received through one test object, so a test can script
-/// changes the way the pipeline turns reports into snapshots. The `changes:`/`inputs:` helpers
-/// below treat a scripted change list as a sequence of reports, one change each; pins that need
-/// several changes in one report build the event themselves.
+/// The snapshot each controller last received through one test object, so a test can script changes
+/// the way the pipeline turns reports into snapshots.
+///
+/// The `changes:`/`inputs:` helpers below treat a scripted change list as a sequence of reports,
+/// one change each; pins that need several changes in one report build the event themselves.
 final class InputScript: @unchecked Sendable {
   private static let registryLock = NSLock()
   nonisolated(unsafe) private static var registry:
@@ -113,6 +115,7 @@ final class InputScript: @unchecked Sendable {
 }
 
 /// Each change of a scripted sequence as its own report; an empty sequence is one unchanged report.
+///
 /// A press of a control `base` already holds is a fresh physical press: a release report first.
 func reports(_ changes: [InputChange], after base: ControllerState) -> [[InputChange]] {
   guard !changes.isEmpty else { return [[]] }
@@ -202,8 +205,10 @@ extension RemappingEngineState {
 }
 
 extension ControllerEvent {
-  /// Whether this snapshot holds `change`'s value: a pressed or released control, the hat, or a
-  /// stick or trigger position; a sample is carried by the event.
+  /// Whether this snapshot holds the value that `change` sets.
+  ///
+  /// The value is a pressed or released control, the hat, or a stick or trigger position; a sample
+  /// is carried by the event.
   func holds(_ change: InputChange) -> Bool {
     switch change {
     case .press(let control): state.pressed.contains(control)
@@ -237,7 +242,7 @@ extension PhysicalProtocolDriver {
 }
 
 extension ControllerEvent? {
-  /// Whether a parsed snapshot exists and holds `change`'s value.
+  /// Whether a parsed snapshot exists and holds the value that `change` sets.
   func contains(_ change: InputChange) -> Bool { self?.holds(change) ?? false }
 }
 

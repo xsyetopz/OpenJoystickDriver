@@ -12,6 +12,7 @@ struct VirtualFeedClock: Sendable {
   /// Suspends until `now()` reaches the given time; throws `CancellationError` when cancelled.
   let sleep: @Sendable (_ until: TimeInterval) async throws -> Void
 
+  /// The uptime clock, whose sleep waits on a timer thread.
   static let system = Self(
     now: { ProcessInfo.processInfo.systemUptime },
     sleep: { time in

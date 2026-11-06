@@ -4,7 +4,9 @@
 
   /// Opens the System Settings page where the user approves the Xbox USB driver extension.
   enum SystemExtensionApproval {
-    /// Returns false when System Settings did not open any of the pages.
+    /// Opens the approval page in System Settings.
+    ///
+    /// Returns false when no page opens.
     @MainActor
     static func openSystemSettings() -> Bool {
       settingsURLs.contains { NSWorkspace.shared.open($0) }
@@ -15,7 +17,12 @@
     /// General.
     static var settingsURLs: [URL] {
       if #available(macOS 15, *) {
-        return [URL(string: "x-apple.systempreferences:com.apple.LoginItems-Settings.extension")!]
+        guard
+          let url = URL(string: "x-apple.systempreferences:com.apple.LoginItems-Settings.extension")
+        else {
+          preconditionFailure("the Login Items settings URL is a valid URL literal")
+        }
+        return [url]
       }
       return PermissionAccessActions.privacySettingsURLs(pane: "General")
     }

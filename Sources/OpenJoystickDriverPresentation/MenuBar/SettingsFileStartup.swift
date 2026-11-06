@@ -8,9 +8,12 @@
   /// While the settings file can't be read, the menu bar item shows, whatever Show in menu bar
   /// would say, and an alert offers Reset Settings, Show in Finder, and Quit.
   enum SettingsFileStartup: Equatable {
+    /// Continue the launch.
     case proceed
+    /// Offer to reset the file, show it in Finder or quit.
     case offerRecovery(SettingsStoreError)
 
+    /// Returns ``offerRecovery(_:)`` for a settings error, else ``proceed``.
     static func decide(settingsError: SettingsStoreError?) -> Self {
       settingsError.map(Self.offerRecovery) ?? .proceed
     }
@@ -27,9 +30,14 @@
   /// out.
   @MainActor
   struct SettingsRecoveryFollowUp {
+    /// The launch update check.
     let updateCheck: LaunchUpdateCheck
+    /// Registers the login item.
     let registerLogin: () throws -> Void
 
+    /// Runs the update check and the login registration.
+    ///
+    /// A failed registration goes to standard error.
     func run() {
       updateCheck.run()
       do { try registerLogin() } catch {
@@ -42,11 +50,15 @@
 
   /// The button the user pressed in the alert for an unreadable settings file.
   enum SettingsUnreadableChoice: Equatable {
+    /// Show the settings file in Finder.
     case showInFinder
+    /// Reset the settings.
     case resetSettings
+    /// Quit the app.
     case quit
 
-    /// The buttons in the order the alert adds them.
+    /// Maps the alert's button response: the first button is Show in Finder, the second is Reset
+    /// Settings, and any other response is Quit.
     init(response: NSApplication.ModalResponse) {
       switch response {
       case .alertFirstButtonReturn: self = .showInFinder
@@ -56,9 +68,12 @@
     }
   }
 
+  /// The alert for a settings file that cannot be read.
   enum SettingsUnreadableAlert {
-    /// Show in Finder is the default button; Reset Settings is a normal button marked
-    /// destructive, and Quit answers Escape.
+    /// Returns the alert for `reason`.
+    ///
+    /// Show in Finder is the default button; Reset Settings is a normal button marked destructive,
+    /// and Quit answers Escape.
     @MainActor
     static func make(reason: String) -> NSAlert {
       let alert = NSAlert()
@@ -85,10 +100,12 @@
 
   /// The log line for a feature that does nothing while the settings file can't be read.
   enum SettingsSkipLog {
+    /// Returns the standard error line that names the skipped feature, the file and the error.
     static func message(feature: String, file: String, error: any Error) -> String {
       "[Settings] \(file) cannot be read, skipping \(feature): \(error.localizedDescription)\n"
     }
 
+    /// Writes the line of ``message(feature:file:error:)`` to standard error.
     static func write(feature: String, file: String, error: any Error) {
       FileHandle.standardError.write(
         Data(message(feature: feature, file: file, error: error).utf8)

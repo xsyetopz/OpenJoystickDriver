@@ -127,9 +127,11 @@ extension DriverParseCharacterizationTests {
       ]
   }
 
-  /// The 64-byte enhanced report 0x12: byte sticks at 1–4, face buttons and hat code (neutral
-  /// 8) at 5, meta buttons at 6, motion counter at 7, triggers at 8–9, gyro at 14 and accel at
-  /// 20, battery at 35–36, extras at 60. The motion counter advances except on the repeat.
+  /// The 64-byte enhanced report 0x12: byte sticks at 1–4, face buttons and hat code (neutral 8) at
+  /// 5, meta buttons at 6, motion counter at 7, triggers at 8–9, gyro at 14 and accel at 20,
+  /// battery at 35–36, extras at 60.
+  ///
+  /// The motion counter advances except on the repeat.
   static var gameSirEnhancedSteps: [Step] {
     var base = [UInt8](repeating: 0, count: 64)
     base.replaceSubrange(0..<6, with: [0x12, 0x80, 0x80, 0x80, 0x80, 0x08])
@@ -167,8 +169,10 @@ extension DriverParseCharacterizationTests {
     )
   }
 
-  /// IOKit element values: buttons 1–12, generic-desktop X/Y/Z/Rx/Ry/Rz over 0–255, and a
-  /// 0–7 hat whose out-of-range value is null. Raw reports are ignored by this driver.
+  /// IOKit element values: buttons 1–12, generic-desktop X/Y/Z/Rx/Ry/Rz over 0–255, and a 0–7 hat
+  /// whose out-of-range value is null.
+  ///
+  /// Raw reports are ignored by this driver.
   static var hidDescriptorSteps: [Step] {
     let buttons = (1...12).flatMap { usage in
       [

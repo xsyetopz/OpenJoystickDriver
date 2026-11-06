@@ -4,10 +4,12 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct FrameTimingSummaryTests {
-  /// 101 frames. Read intervals are 1 ms except 2 ms before frame 40 and 10 ms before frame 70.
-  /// Parse follows read by 10, 20, 30 or 40 microseconds in turn, dispatch follows parse by 5
-  /// microseconds, even frames reach the virtual device 50 microseconds after dispatch, and only
-  /// the last frame reaches the endpoint, 700 microseconds after dispatch.
+  /// A window of 101 frames with fixed stage delays.
+  ///
+  /// Read intervals are 1 ms except 2 ms before frame 40 and 10 ms before frame 70. Parse follows
+  /// read by 10, 20, 30 or 40 microseconds in turn, dispatch follows parse by 5 microseconds, even
+  /// frames reach the virtual device 50 microseconds after dispatch, and only the last frame
+  /// reaches the endpoint, 700 microseconds after dispatch.
   private static func window() -> [FrameTiming] {
     var read: UInt64 = 1_000
     return (0..<101).map { index in

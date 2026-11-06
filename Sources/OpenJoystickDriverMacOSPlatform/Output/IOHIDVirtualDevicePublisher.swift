@@ -4,9 +4,11 @@ import IOKit.hid
 import OpenJoystickDriverKit
 import Security
 
-/// Publishes virtual gamepads as `IOHIDUserDevice`s. Creating one needs the virtual-device
-/// entitlement.
+/// Publishes virtual gamepads as `IOHIDUserDevice`s.
+///
+/// Creating one needs the virtual-device entitlement.
 package struct IOHIDVirtualDevicePublisher: VirtualHIDDevicePublisher {
+  /// The entitlement that creating an `IOHIDUserDevice` needs.
   static let requiredVirtualDeviceEntitlement = "com.apple.developer.hid.virtual.device"
 
   /// Explains a failed create by the permission that is missing.
@@ -22,6 +24,11 @@ package struct IOHIDVirtualDevicePublisher: VirtualHIDDevicePublisher {
     access = MacOSAccessControlSystem()
   }
 
+  /// Creates an unpublished virtual device for the controller `identifier` from `profile` and
+  /// `format`.
+  ///
+  /// - Throws: ``UserSpaceOutputDispatcher/CreationError`` that names the missing permission, or
+  ///   `createFailed` when IOKit refuses the device.
   package func createDevice(
     for identifier: LogicalControllerID,
     profile: VirtualDeviceProfile,
@@ -51,6 +58,8 @@ package struct IOHIDVirtualDevicePublisher: VirtualHIDDevicePublisher {
   /// Deferred creation until `IOHIDUserDeviceActivate` avoids dropped get/set report calls.
   static let deviceCreationOptions = IOOptionBits(IOHIDUserDeviceOptions.createOnActivate.rawValue)
 
+  /// Returns the error to throw for a failed creation: the permission that is not granted, or
+  /// `createFailed` when both are.
   static func creationFailure(
     inputRead: PermissionManager.AccessState,
     inputInject: PermissionManager.AccessState
@@ -112,10 +121,13 @@ package struct IOHIDVirtualDevicePublisher: VirtualHIDDevicePublisher {
     return properties
   }
 
+  /// Returns the size of the report buffer, one byte more than the payload when the report has an
+  /// ID.
   static func reportBufferSize(payloadSize: Int, reportID: UInt8?) -> Int {
     reportID == nil ? payloadSize : payloadSize + 1
   }
 
+  /// Tells whether this process holds the boolean entitlement `entitlement`.
   static func hasEntitlement(_ entitlement: String) -> Bool {
     guard let task = SecTaskCreateFromSelf(nil),
       let value = SecTaskCopyValueForEntitlement(task, entitlement as CFString, nil),

@@ -7,7 +7,9 @@ import Testing
 /// The Swift manifest decoder and `mod-package.schema.json` must accept and reject the same
 /// manifests.
 struct ModPackageManifestSchemaTests {
-  /// A valid manifest with `changes` applied. A nil value removes the key.
+  /// A valid manifest with `changes` applied.
+  ///
+  /// A nil value removes the key.
   private static func manifest(_ changes: [String: Any?]) -> [String: Any] {
     var document: [String: Any] = [
       "apiVersion": OpenJoystickDriverAPI.version, "kind": ModPackageManifest.kind,

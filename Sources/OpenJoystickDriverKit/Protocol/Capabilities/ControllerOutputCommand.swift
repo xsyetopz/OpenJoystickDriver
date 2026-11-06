@@ -1,13 +1,19 @@
 /// Intensity for every rumble channel a `set-rumble` command can name; `.min` is off.
 public struct RumbleIntensities: Equatable, Hashable, Sendable {
+  /// Intensity of the low-frequency (main) motor.
   public var lowFrequency: UnipolarValue
+  /// Intensity of the high-frequency (main) motor.
   public var highFrequency: UnipolarValue
+  /// Intensity of the left trigger motor.
   public var leftTrigger: UnipolarValue
+  /// Intensity of the right trigger motor.
   public var rightTrigger: UnipolarValue
   /// Steam Controller trackpad haptics.
   public var leftHaptic: UnipolarValue
+  /// Intensity of the right trackpad haptic.
   public var rightHaptic: UnipolarValue
 
+  /// Creates intensities; every channel not given is off.
   public init(
     lowFrequency: UnipolarValue = .min,
     highFrequency: UnipolarValue = .min,
@@ -24,8 +30,10 @@ public struct RumbleIntensities: Equatable, Hashable, Sendable {
     self.rightHaptic = rightHaptic
   }
 
+  /// Intensities with every channel off.
   public static let off = Self()
 
+  /// The intensity of one rumble channel.
   public subscript(motor: PhysicalRumbleMotor) -> UnipolarValue {
     get {
       switch motor {
@@ -78,7 +86,9 @@ public struct RumbleIntensities: Equatable, Hashable, Sendable {
 /// How long a `set-rumble` command runs: a bounded number of milliseconds, or until the next
 /// rumble command.
 public enum RumbleDuration: Equatable, Hashable, Sendable {
+  /// The command runs for the given number of milliseconds.
   case milliseconds(Int)
+  /// The command runs until the next rumble command.
   case held
 
   /// The duration of a manual rumble test that names none.
@@ -89,11 +99,17 @@ public enum RumbleDuration: Equatable, Hashable, Sendable {
 
 /// One normalized physical output command.
 public enum ControllerOutputCommand: Equatable, Hashable, Sendable {
+  /// Drives the rumble channels at the given intensities for the given duration.
   case setRumble(RumbleIntensities, duration: RumbleDuration)
+  /// Stops all rumble.
   case stopRumble
+  /// Selects the player indicator the controller shows.
   case setPlayerIndicator(PhysicalPlayerIndicator)
+  /// Sets the controller light to a colour.
   case setRGB(ControllerColor)
+  /// Sets the brightness of the controller light.
   case setLightBrightness(UnipolarValue)
+  /// Applies an effect to one adaptive trigger.
   case setAdaptiveTrigger(PhysicalAdaptiveTrigger, PhysicalAdaptiveTriggerEffect)
 
   /// The capability a controller needs to carry out this command; a rumble command names its
@@ -112,24 +128,33 @@ public enum ControllerOutputCommand: Equatable, Hashable, Sendable {
 
 /// A physical output capability an output command can require.
 public enum ControllerOutputCapability: Equatable, Hashable, Sendable {
+  /// Rumble on the given channel.
   case rumble(PhysicalRumbleMotor)
+  /// The player indicator.
   case playerIndicator
+  /// The programmable light colour.
   case rgb
+  /// The programmable light brightness.
   case lightBrightness
+  /// The given adaptive trigger.
   case adaptiveTrigger(PhysicalAdaptiveTrigger)
 }
 
 /// Why a controller did not accept or encode an output command.
 public enum ControllerOutputError: Error, Equatable, Hashable, Sendable {
+  /// The controller lacks the capability the command requires.
   case unsupportedCapability(ControllerOutputCapability)
   /// The protocol session cannot carry the command yet.
   case notReady
+  /// The command carries a value the protocol cannot encode.
   case invalidValue
 }
 
 extension PhysicalControllerOutputCapabilities {
   /// The command this controller can carry, with the rumble channels it lacks set to zero, and
-  /// those channels. A rumble command is unsupported only when the controller has no rumble motor.
+  /// those channels.
+  ///
+  /// A rumble command is unsupported only when the controller has no rumble motor.
   public func admit(
     _ command: ControllerOutputCommand
   ) throws(ControllerOutputError) -> (

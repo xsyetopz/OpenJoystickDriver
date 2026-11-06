@@ -1,6 +1,9 @@
 import Foundation
 
 extension RemappingEngineState {
+  /// Feeds a stick sample to its stick runtime and returns the output actions.
+  ///
+  /// Returns no actions when the profile has no mapping for the stick.
   mutating func processAdvancedStick(
     _ source: RemappingStickSource,
     x: Float,
@@ -21,6 +24,7 @@ extension RemappingEngineState {
 }
 
 extension RemappingDeviceState {
+  /// Advances every stick runtime of a controller to an uptime and returns the output actions.
   mutating func advanceSticks(at uptime: UInt64) -> [RemappingEngineAction] {
     var actions: [RemappingEngineAction] = []
     for source in RemappingStickSource.allCases {
@@ -31,6 +35,9 @@ extension RemappingDeviceState {
     return actions
   }
 
+  /// Turns the output of a stick runtime into pointer, scroll and virtual gamepad actions.
+  ///
+  /// Non-finite and zero pointer and scroll movement is dropped.
   mutating func stickActions(
     _ output: RemappingStickRuntimeOutput,
     bindingID: UUID

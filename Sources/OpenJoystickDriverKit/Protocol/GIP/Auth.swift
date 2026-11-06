@@ -1,26 +1,26 @@
 import Foundation
 
-/// Handles the GIP authentication sub-protocol (CMD 0x06).
+/// Answers the GIP authentication sub-protocol (command 0x06) of a controller.
 ///
-/// Responds to device auth messages with correctly framed dummy payloads.
-/// Windows driver analysis shows that structurally valid but cryptographically
-/// empty responses let the device reach FULL_POWER through xboxgip.sys
-/// retry/timeout logic.
+/// Each answer has the right framing and a zero-filled payload. The handler tracks the device
+/// power state as authentication progresses.
 final class GIPAuthHandler {
-  /// Current device power state, driven by auth progress.
+  /// The power state of the device, driven by the auth messages it sent.
   private(set) var deviceState: GIPDeviceState = .start
 
-  /// Maps device auth states to the host response state we should send.
+  /// The host state that answers each device state.
   private static let responseMap: [GIPAuthState: GIPAuthState] = [
     .devInit: .hostInit, .devCertificate: .hostResponse1, .devIntermediate: .hostResponse2,
     .devData1: .hostResponse3, .devData2: .hostResponse4, .devFinal: .hostResponse5,
     .devComplete: .hostComplete,
   ]
 
-  /// Handle an incoming CMD 0x06 auth message from the device.
+  /// Reads an auth message from the device and builds the packet that answers it.
   ///
-  /// Parses the auth sub-header, determines the appropriate response,
-  /// and returns it for the transport owner to send. Updates `deviceState` on key transitions.
+  /// The first message moves the device state from start to enroll, and a complete or status
+  /// message moves it from enroll to full power. The sub-header is checked first.
+  /// - Returns: The packet to send, or nil when the payload is too short, is not from the device,
+  ///   names an unknown state, or needs no answer.
   func handleAuthMessage(payload: Data, sequencer: inout GIPSequencer) -> [UInt8]? {
     guard payload.count >= 6 else {
       print("[GIPAuth] Auth payload too short: \(payload.count) bytes")
@@ -68,9 +68,10 @@ final class GIPAuthHandler {
     return packet
   }
 
-  /// Build a complete auth sub-protocol payload for a host->device response.
+  /// The auth payload of the host's answer in `state`: the type, version, state, a zero byte, the
+  /// big-endian payload size, and a zero-filled body.
   ///
-  /// Format: [Type=0x41] [Version=0x01] [State] [0x00] [Length BE: 2B] [Payload zeros...]
+  /// Empty when `state` is not a host state.
   func buildAuthResponse(state: GIPAuthState) -> [UInt8] {
     guard let size = state.expectedPayloadSize else { return [] }
     var response: [UInt8] = [
@@ -81,7 +82,9 @@ final class GIPAuthHandler {
     return response
   }
 
-  /// Wrap an auth sub-protocol payload in a GIP CMD 0x06 packet.
+  /// Wraps `payload` in a command 0x06 packet.
+  ///
+  /// A payload over 127 bytes uses a two-byte length with the high bit set on the first byte.
   private func authPacket(payload: [UInt8], sequencer: inout GIPSequencer) -> [UInt8] {
     let seq = sequencer.next(for: GIPCommand.authenticate, options: GIPOption.internal)
     var packet: [UInt8] = [GIPCommand.authenticate, GIPOption.internal, seq]

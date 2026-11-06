@@ -5,9 +5,10 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// Steam Controller HID roles. The interface layouts follow Linux `hid-steam.c`
-/// (hid-steam.c:1098–1108) through ``steamHIDInterface(number:gamepad:)``; they are not a macOS
-/// capture.
+/// Steam Controller HID roles.
+///
+/// The interface layouts follow Linux `hid-steam.c` (hid-steam.c:1098–1108) through
+/// ``steamHIDInterface(number:gamepad:)``; they are not a macOS capture.
 struct SteamHIDRoleTests {
   static let dongleLocation: UInt32 = 0x0031_0000
 

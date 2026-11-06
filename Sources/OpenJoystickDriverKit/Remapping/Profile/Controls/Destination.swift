@@ -1,16 +1,26 @@
 import Foundation
 
-/// The system-input destination of a binding.
+/// The output a binding drives: virtual gamepad, keyboard, pointer, or physical controller.
 public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
+  /// A button of the virtual gamepad.
   case gamepadButton(Control)
+  /// A d-pad direction of the virtual gamepad.
   case gamepadDpad(RemappingDpadDirection)
+  /// An axis of the virtual gamepad.
   case gamepadAxis(RemappingAxis)
+  /// A keyboard key with its modifiers.
   case keyboard(key: RemappingKeyboardKey, modifiers: Set<RemappingKeyModifier>)
+  /// A pointer button.
   case mouseButton(RemappingMouseButton)
+  /// Pointer movement along one axis.
   case mouseMovement(RemappingPointerAxis)
+  /// Scrolling along one axis.
   case scroll(RemappingPointerAxis)
+  /// A channel of the physical controller, such as rumble or light.
   case physical(RemappingPhysicalOutput)
 
+  /// Whether the destination can repeat as turbo: a keyboard key, pointer button or virtual gamepad
+  /// button or d-pad direction.
   public var acceptsTurbo: Bool {
     switch self {
     case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad: true
@@ -18,6 +28,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     }
   }
 
+  /// Whether the destination takes a continuous amount: pointer movement, scrolling or a virtual
+  /// gamepad axis.
   public var isContinuous: Bool {
     switch self {
     case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad, .physical: false
@@ -25,16 +37,26 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     }
   }
 
+  /// Value of the `type` field that selects the case in a profile document.
   private enum Kind: String, Codable {
+    /// The `Keyboard` case.
     case keyboard = "Keyboard"
+    /// The `GamepadButton` case.
     case gamepadButton = "GamepadButton"
+    /// The `GamepadDpad` case.
     case gamepadDpad = "GamepadDpad"
+    /// The `GamepadAxis` case.
     case gamepadAxis = "GamepadAxis"
+    /// The `MouseButton` case.
     case mouseButton = "MouseButton"
+    /// The `MouseMovement` case.
     case mouseMovement = "MouseMovement"
+    /// The `Scroll` case.
     case scroll = "Scroll"
+    /// The `Physical` case.
     case physical = "Physical"
 
+    /// Keys that a profile document may give for this case, which `type` selects.
     var fields: [CodingKeys] {
       switch self {
       case .keyboard: [.type, .key, .modifiers]
@@ -46,16 +68,28 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     }
   }
 
+  /// Profile document keys of a destination, merged across all cases.
   private enum CodingKeys: String, CodingKey, CaseIterable {
+    /// The JSON key of `type`.
     case type
+    /// The JSON key of `key`.
     case key
+    /// The JSON key of `modifiers`.
     case modifiers
+    /// The JSON key of `button`.
     case button
+    /// The JSON key of `axis`.
     case axis
+    /// The JSON key of `direction`.
     case direction
+    /// The JSON key of `physical`.
     case physical
   }
 
+  /// Decodes a destination from a profile document.
+  ///
+  /// The `type` field selects the case, and keys that belong to another case are rejected.
+  /// - Throws: `DecodingError` for an unknown or misplaced key, a missing key or a bad value.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -83,6 +117,7 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     }
   }
 
+  /// Encodes the case under its `type` value with only its own keys; keyboard modifiers are sorted.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     switch self {

@@ -7,19 +7,24 @@ private func modFolderHelp() -> ArgumentHelp {
   ArgumentHelp(CLILocalized.text("cli.mod.group.folder"), valueName: "FOLDER")
 }
 
+/// The `ojd mod validate` command: checks a package folder without installing it.
 struct ModValidateCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "validate",
     abstract: CLILocalized.text("cli.mod.validate.abstract"),
     discussion: CLILocalized.text("cli.mod.validate.discussion")
   )
 
+  /// The package folder that holds `mod.json`.
   @Argument(help: modFolderHelp())
   var folder: String
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let manifest = try ModPackageValidation.check(folder)
@@ -42,7 +47,11 @@ struct ModValidateCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd mod install` command: checks a package and installs it to `Packages/NAME`.
+///
+/// A package of the same name that is installed is refused unless `--force` is set.
 struct ModInstallCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "install",
     abstract: CLILocalized.text("cli.mod.install.abstract"),
@@ -51,30 +60,39 @@ struct ModInstallCommand: AsyncParsableCommand {
 
   /// The `--json` result.
   struct Result: Encodable, Equatable {
+    /// The path of the installed package.
     let installed: String
+    /// Whether the command replaces an installed package of the same name.
     let replaced: Bool
+    /// Whether `--dry-run` is set, so nothing is installed.
     let dryRun: Bool
+    /// The validation of the package.
     let package: ModPackageValidation
   }
 
+  /// The package folder that holds `mod.json`.
   @Argument(help: modFolderHelp())
   var folder: String
 
+  /// `-f`, `--force`: replace an installed package of the same name.
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(CLILocalized.text("cli.mod.install.force"))
   )
   var force = false
 
+  /// `-n`, `--dry-run`: check the package and print where it would go, and write nothing.
   @Flag(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(CLILocalized.text("cli.shared.option.dryRun"))
   )
   var dryRun = false
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       // Validation never depends on `--force`, so `requires` and clashes always refuse.
@@ -119,16 +137,20 @@ struct ModInstallCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd mod list` command: prints each installed package with its version, author and files.
 struct ModListCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "list",
     abstract: CLILocalized.text("cli.mod.list.abstract"),
     discussion: CLILocalized.text("cli.mod.list.discussion")
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let entries = ModStore.store.list().map(ModPackageEntry.init)
@@ -158,7 +180,9 @@ struct ModListCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd mod remove` command: deletes one installed package.
 struct ModRemoveCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "remove",
     abstract: CLILocalized.text("cli.mod.remove.abstract"),
@@ -167,28 +191,35 @@ struct ModRemoveCommand: AsyncParsableCommand {
 
   /// The `--json` result.
   struct Result: Encodable, Equatable {
+    /// The path of the package folder.
     let removed: String
+    /// Whether `--dry-run` is set, so nothing is removed.
     let dryRun: Bool
   }
 
+  /// The name of the installed package.
   @Argument(help: ArgumentHelp(CLILocalized.text("cli.mod.group.name"), valueName: "NAME"))
   var name: String
 
+  /// `-f`, `--force`: skip the confirmation.
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
   )
   var force = false
 
+  /// `-n`, `--dry-run`: print what would change and change nothing.
   @Flag(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(CLILocalized.text("cli.shared.option.dryRun"))
   )
   var dryRun = false
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let target = ModStore.directory.appendingPathComponent(name, isDirectory: true)

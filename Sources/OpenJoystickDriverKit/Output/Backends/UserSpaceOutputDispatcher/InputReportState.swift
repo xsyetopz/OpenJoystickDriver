@@ -3,9 +3,13 @@ import Foundation
 /// Owns the current virtual state and the exact report exposed through both push and get-report
 /// APIs.
 final class UserSpaceInputReportState: Sendable {
+  /// The state that the lock guards.
   private struct Current {
+    /// The virtual gamepad state last built.
     var state = VirtualGamepadState()
+    /// The input report built from ``state``.
     var report: [UInt8]
+    /// Whether the state comes from remapping.
     var remapped = false
     /// The input report input delivery last published; nil once another path published.
     var deliveredReport: [UInt8]?
@@ -15,11 +19,15 @@ final class UserSpaceInputReportState: Sendable {
     var closed = false
   }
 
+  /// The report format of the device.
   private let format: any VirtualGamepadReportFormat
+  /// The current state and reports.
   private let current: Locked<Current>
 
+  /// Whether the state comes from remapping.
   var isRemapped: Bool { current.withLock { $0.remapped } }
 
+  /// Creates the state for `format`, at the neutral gamepad state.
   init(format: any VirtualGamepadReportFormat) {
     self.format = format
     let neutral = VirtualGamepadState()
@@ -34,6 +42,9 @@ final class UserSpaceInputReportState: Sendable {
   /// The controller state last built.
   func currentState() -> VirtualGamepadState { current.withLock { $0.state } }
 
+  /// Changes the state with `body`, rebuilds the input report and returns it.
+  ///
+  /// `remapped` records whether the new state comes from remapping.
   func update(remapped: Bool = false, _ body: (inout VirtualGamepadState) -> Void) -> [UInt8] {
     current.withLock { current in
       current.remapped = remapped
@@ -43,6 +54,7 @@ final class UserSpaceInputReportState: Sendable {
     }
   }
 
+  /// The current input report.
   func currentReport() -> [UInt8] { current.withLock { $0.report } }
 
   /// Records `report` for delivery and returns whether consumers do not hold it yet.
@@ -67,6 +79,8 @@ final class UserSpaceInputReportState: Sendable {
     }
   }
 
+  /// Returns the state to neutral, forgets the delivered report and returns the neutral input
+  /// report.
   func reset() -> [UInt8] {
     current.withLock { current in
       current.state = VirtualGamepadState()
@@ -77,8 +91,10 @@ final class UserSpaceInputReportState: Sendable {
     }
   }
 
+  /// Marks the device closed, so host report requests fail.
   func close() { current.withLock { $0.closed = true } }
 
+  /// Whether the device is closed.
   var isClosed: Bool { current.withLock { $0.closed } }
 
   /// The command a host output report requests of this device's format.

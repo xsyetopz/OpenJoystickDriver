@@ -1,6 +1,7 @@
 import Foundation
 
 extension PassiveUSBRegistryFactParser {
+  /// Reads the speed properties of `node` and its descendants into one observation.
   static func observeSpeed(_ node: PassiveUSBRegistryNode) -> PassiveUSBSpeedObservation {
     let keys = ["USBSpeed", "Device Speed", "UsbLinkSpeed", "USB Speed"]
     var candidates: [(String, PassiveUSBNegotiatedSpeed)] = []
@@ -50,6 +51,7 @@ extension PassiveUSBRegistryFactParser {
     )
   }
 
+  /// Decodes the speed that the property `key` shows with `value`, or nil when it does not decode.
   static func speedValue(
     key: String,
     value: PassiveUSBRegistryNode.Value
@@ -100,6 +102,7 @@ extension PassiveUSBRegistryFactParser {
     }
   }
 
+  /// Returns the name of the type of `value`.
   static func rawType(_ value: PassiveUSBRegistryNode.Value) -> String {
     switch value {
     case .unsignedInteger: return "unsignedInteger"
@@ -108,6 +111,7 @@ extension PassiveUSBRegistryFactParser {
     }
   }
 
+  /// Returns `value` as text; a byte array shows only its length.
   static func rawValue(_ value: PassiveUSBRegistryNode.Value) -> String {
     switch value {
     case .unsignedInteger(let raw): return String(raw)

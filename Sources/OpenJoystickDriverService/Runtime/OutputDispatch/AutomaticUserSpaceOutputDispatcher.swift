@@ -1,34 +1,54 @@
 import Foundation
 import OpenJoystickDriverKit
 
+/// Publishes a user-space virtual gamepad per controller, choosing and replacing the profile of
+/// each backend as the controller, its ownership and the personas change.
+///
+/// Each controller's backend is built on demand by the coordinator, so a controller with no profile
+/// that can represent it publishes nothing and is reported through ``status``.
+/// - Note: `@unchecked Sendable` because `stateLock` guards every mutable property.
 final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   VirtualOutputControllerActivating, ControllerLifecycleListener, ControllerInputOwnershipListener,
   RemappingGamepadSink, RemappingGamepadOutputControlling, @unchecked Sendable
 {
+  /// Supplies the connected controllers and their sessions.
   private let deviceManager: DeviceManager
+  /// Reports who holds the input of a controller.
   private let ownershipProvider:
     @Sendable (LogicalControllerID) async -> ControllerOwnershipObservation
+  /// Describes every connected controller.
   private let descriptionsProvider:
     @Sendable () async -> [LogicalControllerID: ApplicationServiceDeviceDescription]
+  /// Describes one controller; nil when it is not connected.
   private let descriptionProvider:
     @Sendable (LogicalControllerID) async -> ApplicationServiceDeviceDescription?
+  /// Reports the session state of one controller.
   private let sessionStateProvider: @Sendable (LogicalControllerID) async -> ControllerSessionState?
+  /// Builds the backend for a profile.
   private let builder: @Sendable (VirtualHIDProfileID) throws -> any VirtualOutputDispatching
+  /// Returns the profile that an override selects for a controller, or nil when it has none.
   private let overrideProvider:
     @Sendable (ApplicationServiceDeviceDescription) -> VirtualHIDProfileID?
   /// The identity of the controller's custom persona, which `identityBuilder` publishes over the
   /// built-in descriptor.
   private let identityProvider:
     @Sendable (ApplicationServiceDeviceDescription) -> VirtualPersona.Identity?
+  /// Builds the backend for a profile and a custom persona identity.
   private let identityBuilder:
     @Sendable (VirtualHIDProfileID, VirtualPersona.Identity) throws -> any VirtualOutputDispatching
   /// Internal so tests can observe when a stop reaches the coordinator.
   let coordinator = AutomaticDispatcherCoordinator()
+  /// Guards the mutable state below.
   private let stateLock = NSLock()
+  /// Whether all virtual output is suppressed.
   private var suppressedOutput = false
+  /// Whether remapping output is suppressed on the backends.
   private var remappingSuppressedOutput = false
+  /// The profile that each installed backend publishes, for ``status``.
   private var diagnosticTargets: [LogicalControllerID: VirtualHIDProfileID] = [:]
+  /// The publication diagnostic line of each controller, for ``status``.
   private var publicationDiagnostics: [String] = []
+  /// The publication state of each controller.
   private var publicationStatuses: [LogicalControllerID: ApplicationServicePublicationStatus] = [:]
   /// Per-controller descriptions whose declared controls are fixed for the controller's binding.
   private var descriptionCache: [LogicalControllerID: ApplicationServiceDeviceDescription] = [:]
@@ -37,13 +57,30 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   private var descriptionCacheGeneration: [LogicalControllerID: UInt64] = [:]
   /// Controllers whose declared controls no profile can represent, surfaced through `status`.
   private var unavailableControllers: Set<LogicalControllerID> = []
-  /// Each controller's selected profile and how it was selected. Selection runs once per
-  /// physical session, and only a successful `retarget` changes it, so delivery never reselects.
+  /// Each controller's selected profile and how it was selected.
+  ///
+  /// Selection runs once per physical session, and only a successful `retarget` changes it, so
+  /// delivery never reselects.
   private var selections: [LogicalControllerID: VirtualHIDProfileSelector.Selection] = [:]
-  /// The persona identity each controller's backends publish. It changes through `retarget`,
-  /// which a change to the persona files triggers, and a new session reads it again.
+  /// The persona identity each controller's backends publish.
+  ///
+  /// It changes through `retarget`, which a change to the persona files triggers, and the next
+  /// session reads it again.
   private var identities: [LogicalControllerID: VirtualPersona.Identity] = [:]
 
+  /// Creates a dispatcher over `deviceManager` that builds each backend with `builder`.
+  ///
+  /// The providers default to the device manager; tests replace them.
+  ///
+  /// - Parameters:
+  ///   - deviceManager: The source of controllers, sessions and ownership.
+  ///   - ownershipProvider: Reports who holds a controller's input.
+  ///   - builder: Builds the backend for a profile.
+  ///   - descriptionsProvider: Describes every connected controller.
+  ///   - overrideProvider: Returns the profile that the Advanced override selects for a controller.
+  ///   - identityProvider: Returns the custom persona identity of a controller.
+  ///   - identityBuilder: Builds the backend for a profile with a custom identity; defaults to
+  ///     `builder`, which ignores the identity.
   init(
     deviceManager: DeviceManager,
     ownershipProvider: (@Sendable (LogicalControllerID) async -> ControllerOwnershipObservation)? =
@@ -99,8 +136,9 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     self.identityBuilder = identityBuilder ?? { profileID, _ in try builder(profileID) }
   }
 
-  /// Builds a backend for `identifier`'s selected profile, with its persona identity when it has
-  /// one. The identity is read when the backend is built, after selection recorded it.
+  /// Builds a backend for the profile selected for a controller, with its persona identity.
+  ///
+  /// The identity is read when the backend is built, after selection recorded it.
   private func factory(
     for identifier: LogicalControllerID
   ) -> AutomaticDispatcherCoordinator.Factory {
@@ -112,11 +150,15 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     }
   }
 
+  /// Whether all virtual output is suppressed.
   var suppressOutput: Bool {
     get { stateLock.withLock { suppressedOutput } }
     set { stateLock.withLock { suppressedOutput = newValue } }
   }
 
+  /// Starts the session of `identifier` and publishes its selected profile.
+  ///
+  /// - Throws: `CancellationError` when the dispatcher is closed, or the failure of the build.
   func activate(controller identifier: LogicalControllerID) async throws {
     let generation = cacheGeneration(for: identifier)
     try await coordinator.activateOne(
@@ -134,6 +176,10 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     await synchronizeDiagnostics()
   }
 
+  /// Publishes the selected profile of each of `identifiers`.
+  ///
+  /// - Throws: ``UserSpaceOutputDispatcher/CreationError/createFailed`` when the dispatcher is
+  ///   closed or already holds controllers, and the failure of the first controller that fails.
   func activate(for identifiers: [LogicalControllerID]) async throws {
     let generations = stateLock.withLock {
       identifiers.reduce(into: [LogicalControllerID: UInt64]()) { generations, identifier in
@@ -155,17 +201,20 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     await synchronizeDiagnostics()
   }
 
+  /// Sets whether all virtual output is suppressed and applies it to the backends.
   func setOutputSuppressed(_ suppressed: Bool) async {
     suppressOutput = suppressed
     await coordinator.synchronizeSuppression { self.suppressOutput }
   }
 
+  /// Sets whether remapping output is suppressed and applies it to the backends.
   func setRemappingOutputSuppressed(_ suppressed: Bool) async {
     stateLock.withLock { remappingSuppressedOutput = suppressed }
     await coordinator.synchronizeRemappingSuppression {
       self.stateLock.withLock { self.remappingSuppressedOutput }
     }
   }
+  /// The targets and publication state of the backends, as a status line.
   var status: VirtualOutputBackendStatus {
     stateLock.withLock {
       let targets = Set(diagnosticTargets.values.map(\.rawValue)).sorted()
@@ -178,7 +227,9 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
       return .backend("automatic\(suffix)\(diagnostics)\(unavailable)")
     }
   }
+  /// Always nil: the automatic dispatcher reports no rumble status.
   var lastRumbleStatus: String? { nil }
+  /// Publishes `event` from `identifier` and ignores a failure.
   func dispatch(
     _ event: ControllerEvent,
     from identifier: LogicalControllerID
@@ -191,6 +242,10 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     )
   }
 
+  /// Publishes `event` from `identifier`; `onPublished` runs once the backend has published it.
+  ///
+  /// - Throws: ``RemappingEventEngineError/sinkUnavailable`` when no backend can publish, or the
+  ///   failure of the backend, which also starts recovery of the publication.
   func dispatchPublishing(
     _ event: ControllerEvent,
     from identifier: LogicalControllerID,
@@ -205,7 +260,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     await synchronizeDiagnostics()
   }
 
-  /// Activation marks the start of a controller session, so it also starts a new physical
+  /// Activation marks the start of a controller session, so it also begins a physical
   /// session for a controller whose earlier session stopped.
   func activateOutput(for identifier: LogicalControllerID) async {
     await coordinator.beginSession(identifier)
@@ -213,6 +268,12 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     await synchronizeDiagnostics()
   }
 
+  /// Sends the remapped gamepad `state` of `identifier`.
+  ///
+  /// A neutral state goes only to an existing backend and never creates one.
+  ///
+  /// - Throws: ``RemappingEventEngineError/sinkUnavailable`` when no backend can take the state, or
+  ///   the failure of the backend, which also starts recovery of the publication.
   func send(_ state: RemappingGamepadState, for identifier: LogicalControllerID) async throws {
     guard state == .neutral else {
       try await activate(controller: identifier)
@@ -238,6 +299,12 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     await synchronizeDiagnostics()
   }
 
+  /// Publishes `delivery` through the leased backend of `identifier` and records the attempt.
+  ///
+  /// A failed publication starts recovery.
+  ///
+  /// - Throws: ``RemappingEventEngineError/sinkUnavailable`` when no backend can publish, or the
+  ///   failure of the backend.
   private func deliver(
     _ delivery: AutomaticOutputDelivery,
     from identifier: LogicalControllerID,
@@ -274,6 +341,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     await synchronizeDiagnostics()
   }
 
+  /// Records whether another client holds the input of `identifier`.
   func controllerInputOwnershipChanged(
     _ ownership: HIDInputOwnership,
     for identifier: LogicalControllerID
@@ -282,6 +350,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     await synchronizeDiagnostics()
   }
 
+  /// Forgets the selection of `identifier` and stops its session.
   func controllerDidStop(_ identifier: LogicalControllerID) async {
     stateLock.withLock {
       _ = descriptionCache.removeValue(forKey: identifier)
@@ -294,6 +363,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     await synchronizeDiagnostics()
   }
 
+  /// Copies the coordinator state into the status and posts a change when it differs.
   private func synchronizeDiagnostics() async {
     let targets = await coordinator.installedTargets()
     let publication = await coordinator.publicationDiagnostics()
@@ -311,8 +381,9 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
   }
 
   /// The controller's selected profile; nil when no virtual profile can represent its declared
-  /// controls, which leaves the controller without a virtual device. Selects only when the
-  /// physical session has no selection yet.
+  /// controls, which leaves the controller without a virtual device.
+  ///
+  /// Selects only when the physical session has no selection yet.
   private func profile(
     for identifier: LogicalControllerID,
     description: ApplicationServiceDeviceDescription,
@@ -337,10 +408,11 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     ServingPolicy.publishedPersona(for: description, override: overrideProvider(description))
   }
 
-  /// Records the controller's selection, or records it as unavailable when no profile can
-  /// represent it so `status` surfaces the failure instead of the dispatcher silently leaving the
-  /// controller without a virtual device. A controller that stopped since `generation` was read
-  /// keeps no entry.
+  /// Records the controller's selection, or records it as unavailable when no profile can represent
+  /// it so `status` surfaces the failure instead of the dispatcher silently leaving the controller
+  /// without a virtual device.
+  ///
+  /// A controller that stopped since `generation` was read keeps no entry.
   private func commit(
     _ selection: VirtualHIDProfileSelector.Selection?,
     identity: VirtualPersona.Identity?,
@@ -365,12 +437,14 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     if changed { NotificationCenter.postServiceStatusChanged(from: self) }
   }
 
+  /// The generation of the description cache of `identifier`.
   private func cacheGeneration(for identifier: LogicalControllerID) -> UInt64 {
     stateLock.withLock { descriptionCacheGeneration[identifier, default: 0] }
   }
 
-  /// How `identifier`'s current profile was selected; nil before selection or when no profile
-  /// can represent the controller.
+  /// How the current profile of a controller was selected.
+  ///
+  /// Nil before selection or when no profile can represent the controller.
   func selectionSource(
     for identifier: LogicalControllerID
   ) -> VirtualHIDProfileSelector.Selection.Source? {
@@ -394,22 +468,25 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     stateLock.withLock { publicationStatuses[identifier] }
   }
 
-  /// The values `identifier`'s virtual gamepad last reported; nil when no user-space virtual
-  /// gamepad publishes it.
+  /// The values the virtual gamepad of a controller last reported.
+  ///
+  /// Nil when no user-space virtual gamepad publishes it.
   func virtualOutputState(for identifier: LogicalControllerID) async -> VirtualGamepadState? {
     guard let backend = await coordinator.installedBackend(for: identifier) else { return nil }
     return (backend as? UserSpaceOutputDispatcher)?.virtualOutputState(for: identifier)
   }
 
   /// Reselects the profile for one controller and, when the profile changes, replaces only that
-  /// controller's backend. The new selection is recorded only once the replacement succeeds.
+  /// controller's backend.
+  ///
+  /// The selection is recorded only once the replacement succeeds.
   ///
   /// The replacement is built and activated while the live backend keeps publishing, and the
   /// live backend is neutralized before it is retired; when the replacement cannot be built or
   /// activated, the live backend and its selection stay and the error is rethrown. The cost of
   /// that order: for a moment both virtual devices exist with the same serial number and
   /// LocationID, and consumers may see a second pad. A controller with no live backend (during
-  /// suppression, recovery, or before activation) publishes the new profile when it next installs.
+  /// suppression, recovery, or before activation) publishes the selection when it next installs.
   func retarget(controller identifier: LogicalControllerID) async throws {
     let generation = cacheGeneration(for: identifier)
     guard let description = await cachedDescription(for: identifier),
@@ -423,7 +500,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     guard current != selection || identityChanged else { return }
     var identity = liveIdentity
     if current?.profileID != selection.profileID || identityChanged {
-      // The replacement is built with the persona identity as it is now. The identity is fixed
+      // The replacement is built with the current persona identity. The identity is fixed
       // when a device is created, so an identity change alone rebuilds the same profile.
       identity = currentIdentity
       stateLock.withLock { identities[identifier] = identity }
@@ -447,6 +524,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     await synchronizeDiagnostics()
   }
 
+  /// Returns the cached description of `identifier`, reading it first when it is not cached.
   private func cachedDescription(
     for identifier: LogicalControllerID
   ) async -> ApplicationServiceDeviceDescription? {
@@ -461,6 +539,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     return description
   }
 
+  /// Whether `identifier` has an active session and the serving policy publishes `profile` for it.
   private func isEligible(
     _ identifier: LogicalControllerID,
     profile: VirtualHIDProfileID
@@ -473,6 +552,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
     return ServingPolicy.route(input).publishesVirtualDevice
   }
 
+  /// Closes the coordinator and clears the cache.
   func close() async {
     await coordinator.close()
     stateLock.withLock { descriptionCache.removeAll() }

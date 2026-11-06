@@ -2,8 +2,10 @@ import Foundation
 
 extension DevicePipeline {
   /// Sends packets on the driver's ``USBCommandChannel`` of a controller bound over HID, reading
-  /// one reply after each into the driver. The channel opens on first use and stays open until the
-  /// pipeline stops or a write fails. Callers serialize this through the interface's output queue.
+  /// one reply after each into the driver.
+  ///
+  /// The channel opens on first use and stays open until the pipeline stops or a write fails.
+  /// Callers serialize this through the interface's output queue.
   func sendUSBCommands(
     _ packets: [PhysicalUSBOutputPacket],
     intervalNanoseconds: UInt64
@@ -39,12 +41,16 @@ extension DevicePipeline {
     return true
   }
 
+  /// Closes the command session and forgets it; with `session`, only when that session is still the
+  /// current one.
   func closeUSBCommandSession(_ session: (any USBTransportSession)? = nil) async {
     guard let current = usbCommandSession, session.map({ $0 === current }) ?? true else { return }
     usbCommandSession = nil
     await current.close()
   }
 
+  /// The open command session, which opens on first use through the transport provider; nil when
+  /// the route is not HID, no provider exists, or the open failed.
   private func openUSBCommandSession(
     _ channel: USBCommandChannel
   ) async -> (any USBTransportSession)? {
@@ -72,8 +78,9 @@ extension DevicePipeline {
     return session
   }
 
-  /// Reads up to `replyLength` bytes in max-packet chunks, ending at a short transfer. A failed
-  /// read ends the reply: a command need not answer.
+  /// Reads up to `replyLength` bytes in max-packet chunks, ending at a short transfer.
+  ///
+  /// A failed read ends the reply: a command need not answer.
   private func readUSBCommandReply(
     _ session: any USBTransportSession,
     channel: USBCommandChannel

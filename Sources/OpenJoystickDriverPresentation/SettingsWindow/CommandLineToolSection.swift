@@ -7,11 +7,14 @@
   /// The `ojd` link section of Settings > Advanced: install or uninstall, where uninstalling asks
   /// first in a window-modal sheet.
   struct CommandLineToolSection: View {
+    /// The command-line tool link and its actions.
     @ObservedObject
     var commandLineTool: CommandLineToolModel
+    /// Whether the Uninstall confirmation alert is open.
     @State
     private var confirmingUninstall = false
 
+    /// The command-line tool status and the button for its state.
     var body: some View {
       Section(OJDLocalized.string("ui.settings.commandLine.tool")) {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -37,6 +40,7 @@
       }.alert(isPresented: $confirmingUninstall, content: uninstallAlert)
     }
 
+    /// Returns the alert that asks to confirm uninstalling the link.
     private func uninstallAlert() -> Alert {
       Alert(
         title: Text(OJDLocalized.string("ui.settings.commandLine.uninstallTitle")),
@@ -53,6 +57,7 @@
       )
     }
 
+    /// Returns the sentence that describes the state of the link at `path`.
     static func statusText(_ status: CommandLineToolLinkStatus, linkPath path: String) -> String {
       switch status.state {
       case .missing:

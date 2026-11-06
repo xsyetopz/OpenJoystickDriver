@@ -1,16 +1,27 @@
 import Foundation
 
+/// A bound HID controller that HID teardown may remove, with the state that teardown must find
+/// unchanged.
 private struct HIDTeardownCandidate {
+  /// The identifier of the controller.
   let identifier: LogicalControllerID
+  /// The device information at the time the candidate was listed.
   let info: DeviceManager.DeviceInfo
+  /// The physical device of the connection.
   let physicalDevice: PhysicalDevice
+  /// The ID of the HID connection that the controller was admitted on.
   let connectionID: UUID
+  /// The pipeline that ran at that time; nil when none ran.
   let pipeline: DevicePipeline?
 }
 
 extension DeviceManager {
   // MARK: - HID detection (class 0x03)
 
+  /// Starts HID detection when Input Monitoring is granted, and ends it and removes the HID
+  /// pipelines when the permission is unknown or denied.
+  ///
+  /// Does nothing while the manager stops, or when detection already runs.
   func ensureHIDDetectionState(for state: PermissionManager.AccessState) async {
     guard !isStopping else { return }
     switch state {
@@ -28,6 +39,11 @@ extension DeviceManager {
     }
   }
 
+  /// Reads the events of the HID backend for one detection session until the session ends.
+  ///
+  /// A native pass-through connection binds inline; any other connection initializes in its own
+  /// task. While the manager stops, events are dropped but the session stays open for teardown
+  /// output.
   private func runHIDDetection(sessionID: UUID) async {
     defer { finishHIDDetection(sessionID: sessionID) }
     guard hidDetectionSessionID == sessionID, !isStopping, !Task.isCancelled else { return }
@@ -104,16 +120,24 @@ extension DeviceManager {
   /// Holds the events that arrive while their consumer is busy, so it takes them all at once and
   /// in order.
   final class EventBatches<Element: Sendable>: Sendable {
+    /// The state of the batches: the events not yet taken, whether they finished, and the consumer
+    /// that waits.
     private struct State: Sendable {
+      /// The events appended since the last take.
       var pending: [Element] = []
+      /// Whether ``finish()`` ran.
       var finished = false
+      /// The consumer that waits in ``next()``; nil when none waits.
       var waiter: CheckedContinuation<[Element]?, Never>?
     }
 
+    /// The state, behind a lock.
     private let state = Locked(State())
 
-    /// The events appended since the last call, waiting while there are none; nil once
-    /// `finish()` ran and every event was taken. Cancelling the calling task finishes the batches.
+    /// The events appended since the last call, waiting while there are none; nil once `finish()`
+    /// ran and every event was taken.
+    ///
+    /// Cancelling the calling task finishes the batches.
     func next() async -> [Element]? {
       await withTaskCancellationHandler {
         await withCheckedContinuation { continuation in
@@ -161,12 +185,17 @@ extension DeviceManager {
     }
   }
 
+  /// Ends the bookkeeping of the detection session `sessionID` when it is still the current one.
   func finishHIDDetection(sessionID: UUID) {
     guard hidDetectionSessionID == sessionID else { return }
     hidDetectionSessionID = nil
     hidDetectionTask = nil
   }
 
+  /// Initializes `connection` in its own task under its initialization key and cancels the pending
+  /// initialization under that key.
+  ///
+  /// Does nothing while the manager stops.
   func scheduleHIDDeviceInitialization(
     connection: HIDDeviceConnection,
     ownership: HIDInputOwnership
@@ -182,6 +211,8 @@ extension DeviceManager {
     hidInitializationTasks[key] = HIDDeviceInitialization(connection: connection, task: task)
   }
 
+  /// Ends the initialization record of `connection` when it is still the one under its key, and
+  /// removes the device information that an aborted replacement left behind.
   func finishHIDDeviceInitialization(connection: HIDDeviceConnection) {
     let key = hidInitializationKey(for: connection)
     if hidInitializationTasks[key]?.connection.connectionID == connection.connectionID {
@@ -210,7 +241,9 @@ extension DeviceManager {
     }
   }
 
-  /// Whether a seize that was refused or failed and now differs restarts the pipeline.
+  /// Whether the change of ownership of a refused or failed seize admits the pipeline again: from
+  /// another client's ownership to anything else, and from a failed acquisition to an exclusive
+  /// seize.
   private static func readmitsHIDPipeline(
     from old: HIDInputOwnership,
     to new: HIDInputOwnership
@@ -243,6 +276,12 @@ extension DeviceManager {
     }
   }
 
+  /// Applies the HID input ownership of a routing address to every HID controller there.
+  ///
+  /// A seize that another client took stops the pipeline after its physical outputs are
+  /// neutralized. A refused or failed seize that succeeds admits the controller again with a fresh
+  /// parser, so controls held before the access loss are not replayed. A native pass-through
+  /// controller is skipped, because the ownership describes OJD's seize of other interfaces.
   func updateHIDOwnership(
     _ ownership: HIDInputOwnership,
     address: ControllerConnectionAddress
@@ -281,6 +320,12 @@ extension DeviceManager {
     }
   }
 
+  /// Removes every HID pipeline and its device information, after it clears the unbound,
+  /// pass-through and yielded records.
+  ///
+  /// Pending initializations are cancelled and awaited first. The physical outputs of a pipeline
+  /// are neutralized before it stops. A controller that a replacement changed in the meantime is
+  /// left alone.
   private func removeHIDPipelines() async {
     clearUnboundHIDDevices()
     clearPassThroughDevices()
@@ -342,6 +387,8 @@ extension DeviceManager {
     }
   }
 
+  /// Whether `candidate` still matches the state it was listed with: its device information, no
+  /// pending initialization, and the same pipeline or none.
   private func isCurrentHIDTeardownCandidate(_ candidate: HIDTeardownCandidate) -> Bool {
     guard isCurrentHIDTeardownInfo(candidate) else { return false }
     guard
@@ -355,6 +402,8 @@ extension DeviceManager {
     return expected === current
   }
 
+  /// Whether the device information of `candidate` still names its HID connection and physical
+  /// device.
   private func isCurrentHIDTeardownInfo(_ candidate: HIDTeardownCandidate) -> Bool {
     guard let info = deviceInfos[candidate.identifier], case .hid = info.discoverySource else {
       return false
@@ -363,6 +412,11 @@ extension DeviceManager {
       && info.physicalDevice == candidate.physicalDevice
   }
 
+  /// Removes the device information, output queue and periodic output task that an aborted
+  /// replacement of `connection` left behind.
+  ///
+  /// Does nothing while the manager stops, or while the information still names the connection, a
+  /// pipeline runs, or an initialization is pending.
   private func removeOrphanedHIDInfo(after connection: HIDDeviceConnection) {
     guard !isStopping,
       let identifier = hidIdentifier(

@@ -15,6 +15,9 @@ func pollController(duration: Double?, _ body: () async throws -> Bool) async th
   return false
 }
 
+/// Refuses a `--duration` that is not a positive number.
+///
+/// - Throws: `ValidationError` for the refused value.
 func validateDuration(_ duration: Double?) throws {
   if let duration, !isPositiveSeconds(duration) {
     throw ValidationError(
@@ -25,6 +28,7 @@ func validateDuration(_ duration: Double?) throws {
   }
 }
 
+/// The shared help of `--duration`.
 let durationHelp = ArgumentHelp(
   CLILocalized.text(
     "cli.controller.group.optionDuration"
@@ -33,6 +37,8 @@ let durationHelp = ArgumentHelp(
 )
 
 /// Opens one service connection, resolves the controller, and runs `body` with both.
+///
+/// - Throws: ``CLIFailure`` when the service is not running or the controller is not found.
 func withController(
   _ selector: ControllerSelector,
   _ body: (ApplicationServiceClient, ApplicationServiceDeviceDescription) async throws -> Void
@@ -46,7 +52,9 @@ func withController(
 
 /// A control pressed during `ojd controller watch --first-press`.
 struct ControllerFirstPress: Encodable, Equatable {
+  /// The control, such as `south` or `left-shoulder`.
   let control: String
+  /// The D-pad direction, when the control is the D-pad.
   let direction: String?
 
   /// The first control pressed in `state` that `previous` did not hold, in `Control` order,
@@ -66,7 +74,9 @@ struct ControllerFirstPress: Encodable, Equatable {
   }
 }
 
+/// The `ojd controller watch` command: prints a controller's input state each time it changes.
 struct ControllerWatchCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "watch",
     abstract: CLILocalized.text(
@@ -80,12 +90,15 @@ struct ControllerWatchCommand: AsyncParsableCommand {
       ) + "\n\n" + CLILocalized.text("cli.controller.watch.examples")
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The controller to watch; omitted with `--all`.
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector?
 
+  /// `--all`: watch every controller, with connection events.
   @Flag(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -95,9 +108,11 @@ struct ControllerWatchCommand: AsyncParsableCommand {
   )
   var all = false
 
+  /// `--duration`: stop after this many seconds.
   @Option(help: durationHelp)
   var duration: Double?
 
+  /// `--first-press`: print the first control pressed and exit.
   @Flag(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -107,6 +122,7 @@ struct ControllerWatchCommand: AsyncParsableCommand {
   )
   var firstPress = false
 
+  /// `--output`: also print the values of the controller's virtual gamepad.
   @Flag(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -116,12 +132,17 @@ struct ControllerWatchCommand: AsyncParsableCommand {
   )
   var output = false
 
-  /// One poll: the controller's input state and, with --output, its virtual gamepad's values.
+  /// One poll: the controller's input state and, with `--output`, its virtual gamepad's values.
   struct Sample: Encodable, Equatable {
+    /// The input state.
     let input: ControllerState
+    /// The virtual gamepad's values, or nil when none is published or `--output` is off.
     let output: ApplicationServiceVirtualOutputState?
   }
 
+  /// Checks the duration and that the command names either `--all` or one controller.
+  ///
+  /// - Throws: ``ValidationError`` otherwise.
   func validate() throws {
     try validateDuration(duration)
     if all == (controller != nil) {
@@ -140,6 +161,7 @@ struct ControllerWatchCommand: AsyncParsableCommand {
     }
   }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       guard let controller else { return try await watchAll() }
@@ -170,6 +192,7 @@ struct ControllerWatchCommand: AsyncParsableCommand {
     }
   }
 
+  /// Prints each change of the controller's state until `duration` elapses.
   private func watch(
     _ device: ApplicationServiceDeviceDescription,
     read: () async throws -> Sample?
@@ -205,6 +228,9 @@ struct ControllerWatchCommand: AsyncParsableCommand {
     }
   }
 
+  /// Waits for the first control pressed and prints it.
+  ///
+  /// - Throws: ``CLIFailure`` when `--duration` passes first.
   private func waitForFirstPress(
     _ device: ApplicationServiceDeviceDescription,
     read: () async throws -> ControllerState?
@@ -291,16 +317,21 @@ struct ControllerWatchCommand: AsyncParsableCommand {
       + " LT=\(state.leftTrigger) RT=\(state.rightTrigger)"
   }
 
+  /// `buttons` as a hex number.
   private static func hex(_ buttons: UInt32) -> String {
     "0x" + String(buttons, radix: 16, uppercase: true)
   }
 
+  /// The names of the pressed controls in `Control` order.
   private static func pressedControls(_ state: ControllerState) -> [String] {
     Control.allCases.filter(state.pressed.contains).map(\.rawValue)
   }
 }
 
+/// The `ojd controller capture` command: prints the raw packets that a controller sends and
+/// receives.
 struct ControllerCaptureCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "capture",
     abstract: CLILocalized.text(
@@ -311,17 +342,22 @@ struct ControllerCaptureCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The controller to capture.
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
+  /// `--duration`: stop after this many seconds.
   @Option(help: durationHelp)
   var duration: Double?
 
+  /// Checks the duration.
   func validate() throws { try validateDuration(duration) }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       try await withController(controller) { client, device in
@@ -365,11 +401,16 @@ struct ControllerCaptureCommand: AsyncParsableCommand {
 
   /// One `RawReport` line of `--json`: the log entry with its time as an RFC 3339 `captureTime`.
   private struct JSONPacket: Encodable {
+    /// `Rx` or `Tx`.
     let direction: PacketLogDirection
+    /// The packet bytes as hex.
     let hex: String
+    /// The packet length in bytes.
     let length: Int
+    /// The time of the packet.
     let captureTime: String
 
+    /// Creates the line from `entry`.
     init(_ entry: PacketLogEntry) {
       direction = entry.direction
       hex = entry.hex
@@ -380,6 +421,7 @@ struct ControllerCaptureCommand: AsyncParsableCommand {
     }
   }
 
+  /// Prints `entry` as JSON, as a `--plain` row or as a human line.
   private static func print(_ entry: PacketLogEntry) throws {
     let time = String(format: "%.3f", entry.timestamp)
     switch CLIContext.current.format {

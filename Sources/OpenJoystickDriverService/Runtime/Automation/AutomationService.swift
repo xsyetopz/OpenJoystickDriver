@@ -5,13 +5,22 @@ import OpenJoystickDriverKit
 ///
 /// `ApplicationServiceServer` implements it without the RPC socket.
 package protocol AutomationService: Sendable {
-  /// The controllers that the service drives now.
+  /// The controllers that the service drives.
   func connectedDevices() async -> [ApplicationServiceDeviceDescription]
+  /// Returns the snapshot of the remapping profiles, routes and issues.
+  ///
+  /// - Throws: ``ApplicationServiceRemappingRPCError`` when the snapshot fails.
   func getRemappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload
+  /// Activates the profile `id`; `allowEmpty` lets a profile that produces no output activate.
+  ///
+  /// - Throws: ``ApplicationServiceRemappingRPCError`` when the activation fails.
   func activateRemappingProfile(
     id: UUID,
     allowEmpty: Bool
   ) async throws -> ApplicationServiceRemappingSnapshotPayload
+  /// Deactivates the profile `id`.
+  ///
+  /// - Throws: ``ApplicationServiceRemappingRPCError`` when the deactivation fails.
   func deactivateRemappingProfile(
     id: UUID
   ) async throws
@@ -23,6 +32,7 @@ package struct AutomationController: Equatable, Sendable {
   /// The port key, which lasts while the controller stays on the same port, or the session token
   /// when the controller has no port key; for a match by model, the `VVVV:PPPP` text itself.
   package let id: String
+  /// The controller's name.
   package let name: String
   /// `VVVV:PPPP`, the vendor and product ID as `ojd` prints them.
   package let model: String
@@ -31,6 +41,7 @@ package struct AutomationController: Equatable, Sendable {
   /// The charge in percent as the controller reports it; `nil` when it reports no level.
   package let battery: ClosedRange<UInt8>?
 
+  /// Creates the entry of a connected controller.
   package init(_ device: ApplicationServiceDeviceDescription) {
     id = device.portKey?.rawValue ?? device.sessionToken.rawValue
     name = device.name
@@ -51,9 +62,12 @@ package struct AutomationController: Equatable, Sendable {
 
 /// A controller model in a Shortcuts action matches more than one connected controller.
 package struct AutomationAmbiguousModelError: Error, Equatable, LocalizedError, Sendable {
+  /// The `VVVV:PPPP` text that matched several controllers.
   package let model: String
+  /// The controllers that the model matched.
   package let controllers: [AutomationController]
 
+  /// The message that names the model and lists the controllers.
   package var errorDescription: String? {
     let message = Localization().plural(
       "cli.controller.group.selectorAmbiguous",
@@ -63,18 +77,23 @@ package struct AutomationAmbiguousModelError: Error, Equatable, LocalizedError, 
   }
 }
 
+/// Returns the `VVVV:PPPP` text of the vendor and product ID.
 private func automationModel(vendorID: UInt16, productID: UInt16) -> String {
   String(format: "%04X:%04X", vendorID, productID)
 }
 
 /// A saved remapping profile as Shortcuts shows it.
 package struct AutomationProfile: Equatable, Sendable {
+  /// The profile's identity.
   package let id: UUID
+  /// The profile's name.
   package let name: String
   /// `VVVV:PPPP` of the controller model that the profile applies to.
   package let model: String
+  /// Whether the profile is active.
   package let isActive: Bool
 
+  /// Creates the entry of `profile`, active when `snapshot` lists it as active.
   package init(_ profile: RemappingProfile, snapshot: ApplicationServiceRemappingSnapshotPayload) {
     id = profile.id
     name = profile.name
@@ -121,6 +140,9 @@ extension AutomationService {
     }
   }
 
+  /// Returns every saved profile.
+  ///
+  /// - Throws: ``ApplicationServiceRemappingRPCError`` when the snapshot fails.
   package func profiles() async throws -> [AutomationProfile] {
     let snapshot = try await getRemappingSnapshot()
     return snapshot.profiles.map { AutomationProfile($0, snapshot: snapshot) }
@@ -134,18 +156,21 @@ extension AutomationService {
     }
   }
 
-  /// Activates the profile with `id` and returns it as the service now reports it.
+  /// Activates the profile with `id` and returns it as the service reports it afterward.
   ///
   /// Shortcuts cannot confirm, so a profile that produces no output is refused.
   package func activateProfile(id: UUID) async throws -> AutomationProfile {
     try Self.profile(id: id, in: try await activateRemappingProfile(id: id, allowEmpty: false))
   }
 
-  /// Deactivates the profile with `id` and returns it as the service now reports it.
+  /// Deactivates the profile with `id` and returns it as the service reports it afterward.
   package func deactivateProfile(id: UUID) async throws -> AutomationProfile {
     try Self.profile(id: id, in: try await deactivateRemappingProfile(id: id))
   }
 
+  /// Returns the entry of the profile `id` in `snapshot`.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError/profileNotFound(_:)`` when the snapshot lacks it.
   private static func profile(
     id: UUID,
     in snapshot: ApplicationServiceRemappingSnapshotPayload

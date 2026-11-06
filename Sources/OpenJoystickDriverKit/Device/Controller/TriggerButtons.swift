@@ -10,9 +10,11 @@ import Foundation
 /// button, applied here to the canonical value with no dead zone. A remapped trigger axis sets the
 /// virtual digital trigger by the same rule.
 enum TriggerButtonDerivation {
+  /// The analog trigger value at which a trigger presses.
   static let pressThreshold = UnipolarValue(
     normalized: Float(RemappingAxisTuning.defaultDigitalActivationThreshold)
   )
+  /// The analog trigger value at or below which a pressed trigger releases.
   static let releaseThreshold = UnipolarValue(
     normalized: Float(
       RemappingAxisTuning.defaultDigitalActivationThreshold - RemappingTransform.hysteresisWidth

@@ -5,10 +5,15 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
-  // Keyboard remapping row: SF Symbol when this macOS has it, localized text otherwise.
+  /// The label of a remapping destination: for a keyboard key, the symbols of its modifiers and
+  /// key, and text for every other destination.
+  ///
+  /// A key shows an SF Symbol when this macOS has it and localized text otherwise.
   struct KeyboardDestinationLabel: View {
+    /// The destination to label.
     let destination: RemappingDestination
 
+    /// The label of the destination: the key row for a keyboard key, else the destination's text.
     var body: some View {
       switch destination {
       case .keyboard(let key, let modifiers): keyboardRow(key: key, modifiers: modifiers)
@@ -18,6 +23,7 @@
       }
     }
 
+    /// Returns the modifier and key symbols, which VoiceOver reads as the label of the destination.
     private func keyboardRow(
       key: RemappingKeyboardKey,
       modifiers: Set<RemappingKeyModifier>
@@ -37,6 +43,7 @@
       )
     }
 
+    /// Returns the SF Symbol of the key, or its text when the key has no symbol.
     @ViewBuilder
     private func keyGlyph(_ key: RemappingKeyboardKey) -> some View {
       if let name = RuntimePresentation.keyboardSystemSymbolName(key) {

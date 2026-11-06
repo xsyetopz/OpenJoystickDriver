@@ -7,12 +7,17 @@
 
   extension ProfileEditorView {
 
+    /// The form that shows the selected section.
+    ///
+    /// - Parameter width: The width of the editor, which decides the layout of the assignment rows.
+    /// - Returns: The form.
     func editorContent(width: CGFloat) -> some View {
       Form {
         sectionContent(assignmentLayout: ProfilePresentationPolicy.assignmentRowLayout(for: width))
       }.ojdGroupedForm().id(selectedSection)
     }
 
+    /// The content of the selected section.
     @ViewBuilder
     func sectionContent(assignmentLayout: ProfileAssignmentRowLayout) -> some View {
       switch selectedSection {
@@ -45,6 +50,8 @@
       }
     }
 
+    /// The Assignments section: the header with the add and clear buttons, and the assignments by
+    /// group.
     @ViewBuilder
     func assignmentsSection(rowLayout: ProfileAssignmentRowLayout) -> some View {
       Section(
@@ -87,6 +94,7 @@
       }
     }
 
+    /// The footer: the latest refused edit, the save status and the Save button.
     var editorFooter: some View {
       VStack(alignment: .leading, spacing: 8) {
         if let localError {
@@ -105,6 +113,7 @@
       }.padding(.horizontal, 28).padding(.vertical, 14)
     }
 
+    /// The save status: the progress while a save runs, then its label.
     @ViewBuilder
     var saveStatusView: some View {
       HStack(spacing: 6) {
@@ -115,6 +124,7 @@
       ).ojdAccessibilityValue(saveStatus.accessibilityValue)
     }
 
+    /// Whether a save or another change of the profile library runs.
     var isMutationActive: Bool {
       if saveInFlight { return true }
       if library.activeMutationOperation != nil { return true }
@@ -122,8 +132,10 @@
       return false
     }
 
+    /// Whether edits are ignored: the editor is blocked or a change runs.
     var isEditingDisabled: Bool { isEditingBlocked || isMutationActive }
 
+    /// The save status of the draft: saving, failed, unsaved or saved.
     var saveStatus: ProfileSaveStatus {
       if saveInFlight { return .saving }
       if saveError != nil { return .error }
@@ -131,6 +143,7 @@
       return .saved
     }
 
+    /// A binding to the profile name in the draft.
     var nameBinding: Binding<String> {
       Binding(
         get: { draft.profile.name },
@@ -143,6 +156,7 @@
       )
     }
 
+    /// The assignments of the draft grouped by section, in the order of the sections.
     var bindingGroups: [BindingGroup] {
       let grouped = Dictionary(grouping: draft.profile.bindings) { profileSourceGroup($0.source) }
       return BindingGroup.Order.allCases.compactMap { order in

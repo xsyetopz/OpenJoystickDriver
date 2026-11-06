@@ -2,7 +2,12 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd status` command: reports the service, the DriverKit extension, the `ojd` link, the
+/// input permissions, the virtual gamepad, and the connected and unbound devices.
+///
+/// It reads the extension, the link and the skipped records without the service.
 struct StatusCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "status",
     abstract: CLILocalized.text(
@@ -27,9 +32,11 @@ struct StatusCommand: AsyncParsableCommand {
     CommandLineToolLinkStatus.probe()
   }
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let payload: ApplicationServiceStatusPayload?
@@ -59,9 +66,14 @@ struct StatusCommand: AsyncParsableCommand {
     }
   }
 
+  /// Fails after the report when the stopped service left a listener failure that needs attention.
+  ///
   /// A service that is unreachable because its request listener stopped fails with `E2034`, and one
-  /// whose record of that cannot be used with `E2035`, after the report. A record of a service
-  /// that is not running only informs.
+  /// whose record of that cannot be used with `E2035`. A record of a service that is not running
+  /// only informs.
+  ///
+  /// - Throws: ``CLIFailure`` with the failure code of the record, or
+  ///   `damagedListenerFailureRecord`.
   static func failIfListenerBroken(_ reading: ServiceListenerFailure.Reading) throws {
     switch reading {
     case .absent, .earlier: return
@@ -72,6 +84,7 @@ struct StatusCommand: AsyncParsableCommand {
     }
   }
 
+  /// Returns the `--plain` rows of `report`.
   static func plainRows(_ report: StatusReport) -> [[String]] {
     var rows = [
       [
@@ -141,8 +154,10 @@ struct StatusCommand: AsyncParsableCommand {
     return rows
   }
 
-  /// Off, the backend's error, or the names of the controllers a virtual gamepad publishes. The
-  /// per-controller diagnostics stay in `--json`, `--plain` and `ojd diagnose`.
+  /// Summarizes the virtual gamepad for the text output: off, the backend's error, or the names of
+  /// the controllers it publishes.
+  ///
+  /// The per-controller diagnostics stay in `--json`, `--plain` and `ojd diagnose`.
   static func virtualDeviceSummary(
     _ virtual: StatusReport.VirtualDevice,
     controllers: [StatusReport.Controller]
@@ -157,6 +172,7 @@ struct StatusCommand: AsyncParsableCommand {
       : CLILocalized.format("cli.status.group.virtualPublished", names.joined(separator: ", "))
   }
 
+  /// Prints `report` as labeled rows, then the devices.
   private static func printHuman(_ report: StatusReport) {
     let transport = report.transportExtension
     var rows: [(String, String)] = [
@@ -221,6 +237,7 @@ struct StatusCommand: AsyncParsableCommand {
     }
   }
 
+  /// Prints the connected controllers and the devices that have no binding or that pass through.
   private static func printDevices(_ report: StatusReport) {
     if let controllers = report.controllers {
       CLIOutput.stdout("")

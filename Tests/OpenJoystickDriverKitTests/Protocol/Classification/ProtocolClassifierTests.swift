@@ -13,8 +13,7 @@ struct ProtocolClassifierTests {
     #expect(
       ProtocolBindingReason.allCases.map(\.rawValue) == [
         "NoProtocolMatch", "AmbiguousProtocolMatch", "InterfaceContractMismatch",
-        "DescriptorContractMismatch", "PacketContractMismatch", "UnsupportedProtocolVariant",
-        "UnsupportedTransportVariant", "RequiredInitializationFailed", "CatalogConflict",
+        "DescriptorContractMismatch", "UnsupportedProtocolVariant", "UnsupportedTransportVariant",
         "VirtualProfileUnavailable", "DeviceInUse", "ConfigurationUnreadable",
       ]
     )

@@ -12,22 +12,26 @@
 public struct VirtualGamepadMapping: Equatable, Sendable {
   /// One control driven alone, and the descriptor fields its report changed.
   public struct Probe: Equatable, Sendable {
+    /// The control that was driven.
     public let control: Control
     /// The changed fields as `usagePage:usage`.
     public let fields: [String]
-    /// `bN`, `aN`, `aN~` (the axis runs opposite to the
-    /// control) or `h0.<mask>`, or nil when the report carries the control nowhere.
+    /// How the report binds the control: `bN`, `aN`, `aN~` when the axis runs opposite to the
+    /// control, or `h0.<mask>`; nil when the report carries the control nowhere.
     public let binding: String?
   }
 
   /// One entry of the W3C standard layout: its index and the device input that supplies it.
   public struct W3CEntry: Equatable, Sendable {
+    /// The index in the W3C standard layout.
     public let index: Int
+    /// The control at that index.
     public let control: Control
     /// The same `bN`, `aN`, `aN~` or `h0.<mask>` binding the SDL mapping uses.
     public let source: String
   }
 
+  /// The persona the mapping describes.
   public let profile: VirtualHIDProfileID
   /// The product name of the persona.
   public let name: String
@@ -35,6 +39,7 @@ public struct VirtualGamepadMapping: Equatable, Sendable {
   public let guid: String
   /// Whether SDL recognizes the persona with its default hints, from the persona's definition.
   public let worksWithDefaultSDLHints: Bool
+  /// The probe of each control the persona can represent.
   public let probes: [Probe]
   /// The controls with no SDL binding, sorted by name.
   public let unmapped: [Control]
@@ -42,23 +47,32 @@ public struct VirtualGamepadMapping: Equatable, Sendable {
   public let sdlMapping: String
   /// The browser id: product name, vendor and product.
   public let w3cID: String
-  /// The standard layout's buttons, ascending by index. A trigger is a button whose source is an
-  /// axis.
+  /// The standard layout's buttons, ascending by index.
+  ///
+  /// A trigger is a button whose source is an axis.
   public let w3cButtons: [W3CEntry]
   /// The standard layout's axes, ascending by index.
   public let w3cAxes: [W3CEntry]
 }
 
+/// Why a mapping cannot be built.
 public enum VirtualGamepadMappingError: Error, Equatable, Sendable {
+  /// The descriptor of the persona does not parse.
   case descriptorNotParsable(VirtualHIDProfileID)
 }
 
-/// What SDL and the W3C Gamepad API call one control. A control absent here has no SDL name.
+/// What SDL and the W3C Gamepad API call one control.
+///
+/// A control absent here has no SDL name.
 struct ControlNames {
+  /// The name in an SDL mapping.
   let sdl: String
+  /// The index among the W3C standard buttons; nil when the control has none.
   let w3cButton: Int?
+  /// The index among the W3C standard axes; nil when the control has none.
   let w3cAxis: Int?
 
+  /// The names by control.
   static let table: [Control: Self] = [
     .south: .init(sdl: "a", w3cButton: 0, w3cAxis: nil),
     .east: .init(sdl: "b", w3cButton: 1, w3cAxis: nil),
@@ -99,7 +113,13 @@ struct ControlNames {
 }
 
 extension VirtualHIDProfileID {
-  /// The SDL mapping and W3C description this persona's descriptor and report codec yield.
+  /// The SDL mapping and W3C description of this persona.
+  ///
+  /// Each control the persona can represent is driven alone through the report codec, and the HID
+  /// fields that its input reports change give the binding.
+  ///
+  /// - Throws: ``VirtualGamepadMappingError/descriptorNotParsable(_:)`` when the descriptor does
+  ///   not parse, or the error of ``makeProfile()``.
   public func gamepadMapping() throws -> VirtualGamepadMapping {
     let profile = try makeProfile()
     guard let parsed = HIDReportDescriptorParser.parse(descriptor: profile.descriptor) else {
@@ -153,6 +173,8 @@ extension VirtualHIDProfileID {
     return Self.assemble(self, identity: profile.identity, probes: probes)
   }
 
+  /// Builds the mapping from the probes: the SDL line with the bindings in SDL's field order, the
+  /// W3C entries, and the controls with no binding.
   private static func assemble(
     _ id: VirtualHIDProfileID,
     identity: VirtualDeviceProfile,
@@ -265,6 +287,7 @@ extension VirtualHIDProfileID {
     return raw - (1 << field.bitSize)
   }
 
+  /// Two bytes of `value` as four hex digits, low byte first.
   private static func hex(_ value: Int) -> String {
     let digits = String(UInt16(truncatingIfNeeded: value), radix: 16)
     let padded = String(repeating: "0", count: 4 - digits.count) + digits

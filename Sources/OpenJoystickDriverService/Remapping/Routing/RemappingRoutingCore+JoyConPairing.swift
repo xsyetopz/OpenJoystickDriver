@@ -2,6 +2,13 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension RemappingRoutingCore {
+  /// Pairs the connected Joy-Cons `left` and `right` under `profile` and returns the session ID.
+  ///
+  /// Both controllers' routes are retired first. The pair then routes through the left Joy-Con.
+  ///
+  /// - Throws: ``RemappingJoyConPairError`` when a Joy-Con is not connected, is not on the expected
+  ///   side, is already paired, or the profile has no pair settings, and the failure of the
+  ///   profile's validation.
   func pairJoyCons(
     left: LogicalControllerID,
     right: LogicalControllerID,
@@ -57,6 +64,9 @@ extension RemappingRoutingCore {
     return session.id
   }
 
+  /// Ends the pair `sessionID` and selects the output of each connected member again.
+  ///
+  /// - Throws: ``RemappingJoyConPairError/sessionUnavailable`` when the session does not exist.
   func unpairJoyCons(
     _ sessionID: UUID,
     requiring proposedPermit: RemappingEmissionPermit?
@@ -73,12 +83,17 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Ends every pair session.
   func cancelAllJoyConPairs(requiring permit: RemappingEmissionPermit) async throws {
     for session in joyConPairs.values.sorted(by: { $0.id.uuidString < $1.id.uuidString }) {
       try await cancelJoyConPair(session, requiring: permit)
     }
   }
 
+  /// Ends the pair that `identifier` belongs to and forgets `identifier`.
+  ///
+  /// Returns false when `identifier` is not paired; otherwise the other member's selection is
+  /// loaded again and the result is true.
   func stopPairedJoyCon(
     _ identifier: LogicalControllerID,
     requiring proposedPermit: RemappingEmissionPermit?
@@ -96,6 +111,7 @@ extension RemappingRoutingCore {
     return true
   }
 
+  /// Returns the pair session that `identifier` belongs to, or nil when it is not paired.
   func pairSession(for identifier: LogicalControllerID) -> RemappingJoyConPairSession? {
     joyConPairByMember[identifier].flatMap { joyConPairs[$0] }
   }
@@ -120,10 +136,12 @@ extension RemappingRoutingCore {
     )
   }
 
+  /// Returns the pair sessions in session ID order.
   func sortedJoyConPairs() -> [RemappingJoyConPairSession] {
     joyConPairs.values.sorted { $0.id.uuidString < $1.id.uuidString }
   }
 
+  /// Applies the eligibility of the pair `session` to the engine and to the routes of both members.
   func reconcileJoyConPair(
     _ session: RemappingJoyConPairSession,
     environment: RemappingEligibilityEnvironment,
@@ -155,6 +173,10 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Returns the eligibility of the pair `session`.
+  ///
+  /// The profile's application scope, the post-event access and the output suppression decide it
+  /// first. A profile that needs exclusive input also needs both members to be exclusive.
   private func joyConPairEligibility(
     _ session: RemappingJoyConPairSession,
     environment: RemappingEligibilityEnvironment
@@ -176,6 +198,7 @@ extension RemappingRoutingCore {
     return .eligible
   }
 
+  /// Removes the route of `identifier` and releases its output.
   private func retireCurrentRoute(
     for identifier: LogicalControllerID,
     requiring permit: RemappingEmissionPermit
@@ -190,6 +213,9 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Releases the output of the pair `session` and removes it with its members' routes.
+  ///
+  /// - Throws: The failure to release the output, after the session was removed.
   private func cancelJoyConPair(
     _ session: RemappingJoyConPairSession,
     requiring permit: RemappingEmissionPermit

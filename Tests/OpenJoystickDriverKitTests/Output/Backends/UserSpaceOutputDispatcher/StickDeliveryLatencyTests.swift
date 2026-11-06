@@ -13,7 +13,7 @@ private actor HoldGate {
 
   func hold() async {
     entered = true
-    enteredWaiters.forEach { $0.resume() }
+    for waiter in enteredWaiters { waiter.resume() }
     enteredWaiters.removeAll()
     if !opened { await withCheckedContinuation { waiters.append($0) } }
   }
@@ -24,13 +24,14 @@ private actor HoldGate {
 
   func open() {
     opened = true
-    waiters.forEach { $0.resume() }
+    for waiter in waiters { waiter.resume() }
     waiters.removeAll()
   }
 }
 
-/// Holds the first native send until the test opens it; every later send completes at once. A held
-/// send stands for one slow `IOHIDUserDeviceHandleReportWithTimeStamp` call.
+/// Holds the first native send until the test opens it; every later send completes at once.
+///
+/// A held send stands for one slow `IOHIDUserDeviceHandleReportWithTimeStamp` call.
 private final class FirstSendHeldBackend: VirtualDeviceBackend,
   @unchecked Sendable
 {
@@ -141,9 +142,11 @@ struct StickDeliveryLatencyTests {
     )
   }
 
-  /// Feeds batch 0, waits until its native send is held, queues `burst` (default: every other
-  /// batch) while it is held, then releases the send and drains the consumer loop. The result is
-  /// read before `stop()`, whose neutral report and close are not part of the burst.
+  /// Feeds batch 0, waits until its native send is held, queues `burst`, then releases the send.
+  ///
+  /// `burst` defaults to every other batch. It queues while the send is held, and the consumer
+  /// loop drains after the release. The result is read before `stop()`, whose neutral report and
+  /// close are not part of the burst.
   private static func deliverBurst(
     _ batches: [[InputChange]],
     burst: [HIDDeviceEvent]? = nil,
@@ -180,9 +183,10 @@ struct StickDeliveryLatencyTests {
     return result
   }
 
-  /// Upstream backlog: ten stick positions arrive while one send is in flight. Once that send
-  /// completes, the newest position must be next, within about one send time, and no older
-  /// position may follow a newer one. Holds for the report format of each persona.
+  /// Upstream backlog: ten stick positions arrive while one send is in flight.
+  ///
+  /// Once that send completes, the newest position must be next, within about one send time, and
+  /// no older position may follow a newer one. Holds for the report format of each persona.
   @Test(arguments: VirtualHIDProfileID.allCases)
   func newestStickPositionFollowsTheSlowSendWithoutStaleBacklog(
     persona: VirtualHIDProfileID
@@ -357,8 +361,9 @@ struct StickDeliveryLatencyTests {
     #expect(published == 1)
   }
 
-  /// The mean cost of one stick report through `DevicePipeline.feedHIDData` and the dispatcher
-  /// with an instant backend. The bound is loose on purpose; the measured mean is in the message.
+  /// The mean cost of one stick report through `DevicePipeline.feedHIDData` and the dispatcher.
+  ///
+  /// The backend is instant. The bound is loose on purpose; the measured mean is in the message.
   @Test
   func oneStickReportCostsFarLessThanAReportInterval() async {
     let count = 1_000

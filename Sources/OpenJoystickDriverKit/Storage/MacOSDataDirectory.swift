@@ -4,10 +4,13 @@ import Foundation
 ///
 /// This type is the only place allowed to build platform paths.
 public struct MacOSDataDirectory: DataDirectory {
+  /// The name of the OJD folder inside each `~/Library` folder it uses.
   public static let directoryName = "OpenJoystickDriver"
 
+  /// Creates the macOS data directory.
   public init() {}
 
+  /// The folder of `location` on macOS.
   public func url(for location: DataLocation) -> URL {
     switch location {
     case .applicationData: return library("Application Support")

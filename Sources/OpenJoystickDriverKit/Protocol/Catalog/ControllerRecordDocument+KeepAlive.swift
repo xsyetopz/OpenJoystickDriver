@@ -1,4 +1,6 @@
 extension KeepAlive: Decodable {
+  /// Decodes `intervalMilliseconds` and an optional `writes` list; an unknown key, an explicitly
+  /// empty `writes`, or a value that `KeepAlive` rejects is rejected.
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: DocumentKey.self)
     try container.rejectUnknown(allowed: ["intervalMilliseconds", "writes"])
@@ -22,8 +24,9 @@ extension KeepAlive: Decodable {
 }
 
 extension KeepAliveWrite: Decodable {
-  /// A write with a `report` is a HID write; one without is a raw-USB write. Its keys are the
-  /// startup write's, less `phase`, `delayMilliseconds`, `transport`, `crc32Seed`,
+  /// A write with a `report` is a HID write; one without is a raw-USB write.
+  ///
+  /// Its keys are the startup write's, less `phase`, `delayMilliseconds`, `transport`, `crc32Seed`,
   /// `toleratesRejection` and `when`, and plus `resendTuning`.
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: DocumentKey.self)

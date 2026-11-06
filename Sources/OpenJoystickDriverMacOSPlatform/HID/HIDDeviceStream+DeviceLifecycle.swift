@@ -5,8 +5,10 @@ import IOKit.hid
 import OpenJoystickDriverKit
 
 extension HIDDeviceStream {
-  /// Admits a physical device, opens it, and yields a `.connected` event into the stream. A device
-  /// the running macOS exposes as a native gamepad is opened shared for input but never seized.
+  /// Admits a physical device, opens it, and yields a `.connected` event into the stream.
+  ///
+  /// A device the running macOS exposes as a native gamepad is opened shared for input but never
+  /// seized.
   ///
   /// Returns the stream-level access failure instead of admitting the device when
   /// `failingOnAccessDenial` is set and the shared open is denied.
@@ -101,10 +103,11 @@ extension HIDDeviceStream {
       }
   }
 
-  /// Admits again each tracked device of a model in `models` whose native pass-through no
-  /// longer matches the current records, so a changed `ownership` seizes or releases it without a
-  /// replug. Every tracked interface at an affected location is removed before any is added, so no
-  /// sibling keeps the old native flag. Returns the connections it admitted.
+  /// Admits again each tracked device of a model in `models` whose native pass-through differs
+  /// from the current records, so a changed `ownership` seizes or releases it without a replug.
+  ///
+  /// Every tracked interface at an affected location is removed before any is added, so no sibling
+  /// keeps the native flag it had. Returns the connections it admitted.
   @MainActor
   func reevaluateOwnership(of models: Set<ControllerModelID>) -> Set<UUID> {
     guard let manager, let devices = IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice> else {
@@ -170,8 +173,10 @@ extension HIDDeviceStream {
     }
   }
 
-  /// Routes input reports of one opened device into this stream. Element values are routed only
-  /// after a bound driver asks for them, since IOKit decodes every element of every report.
+  /// Routes input reports of one opened device into this stream.
+  ///
+  /// Element values are routed only after a bound driver asks for them, since IOKit decodes every
+  /// element of every report.
   func attachInput(_ device: IOHIDDevice, deviceID: UInt64) {
     let size = max(Int(unsignedProperty(device, kIOHIDMaxInputReportSizeKey) ?? 0), 1)
     sizeReportQueue(device)
@@ -193,8 +198,10 @@ extension HIDDeviceStream {
   }
 
   /// Sizes the kernel report queue of an open device so a reader that is late by a second or more
-  /// loses no report. A refused size leaves the default queue and is written to the log; the drop
-  /// count of `ojd diagnose` shows what the default queue loses.
+  /// loses no report.
+  ///
+  /// A refused size leaves the default queue and is written to the log; the drop count of `ojd
+  /// diagnose` shows what the default queue loses.
   func sizeReportQueue(_ device: IOHIDDevice) {
     let reportSize = Int(unsignedProperty(device, kIOHIDMaxInputReportSizeKey) ?? 0)
     guard !HIDInputReportQueue.size(device, maxInputReportSize: reportSize) else { return }
@@ -216,16 +223,20 @@ extension HIDDeviceStream {
   }
 
   /// Never-freed report buffer a closed device is pointed at before its own buffer is freed.
+  ///
   /// IOKit keeps the buffer of the last registration with a non-nil callback: a nil-callback
   /// registration does not replace it, so a later delivery on the device object would write into
   /// the freed buffer. Input callbacks run only on main, so only main writes this buffer, and IOKit
   /// copies at most its one-byte length.
   nonisolated(unsafe) private static let detachedReportBuffer = UnsafeMutablePointer<UInt8>
     .allocate(capacity: 1)
+  /// A report callback that does nothing, set in place of the input callback when a device
+  /// detaches.
   private static let detachedReportCallback: IOHIDReportCallback = { _, _, _, _, _, _, _ in }
 
-  /// Unregisters a shared open's callbacks, closes it, and frees its report buffer. Runs on main,
-  /// where input callbacks are delivered, so no callback is using the buffer.
+  /// Unregisters a shared open's callbacks, closes it, and frees its report buffer.
+  ///
+  /// Runs on main, where input callbacks are delivered, so no callback is using the buffer.
   func closeSharedOpen(_ sharedOpen: SharedOpenDevice) {
     let device = sharedOpen.device
     let reportBuffer = sharedOpen.reportBuffer
@@ -242,6 +253,7 @@ extension HIDDeviceStream {
     reportBuffer.deallocate()
   }
 
+  /// Returns the IORegistry entry ID of `device`, or nil when it has no service.
   private func registryEntryID(for device: IOHIDDevice) -> UInt64? {
     let service = IOHIDDeviceGetService(device)
     var entryID: UInt64 = 0
@@ -352,6 +364,7 @@ extension HIDDeviceStream {
     )
   }
 
+  /// Returns the ID that identifies `device` while the stream tracks it.
   func trackingID(for device: IOHIDDevice) -> UInt64 {
     UInt64(UInt(bitPattern: Unmanaged.passUnretained(device).toOpaque()))
   }

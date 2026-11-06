@@ -48,7 +48,9 @@ public enum ControllerRecordWriter {
     public let data: Data?
   }
 
-  /// Why the change was refused. The file is unchanged.
+  /// Why the change was refused.
+  ///
+  /// The file is unchanged.
   public enum Failure: Error, Equatable, Sendable {
     /// The user directory has no file for the model and neither the bundled catalog nor an
     /// installed package has a record of it, so there is nothing to patch. `ojd record draft`
@@ -61,8 +63,11 @@ public enum ControllerRecordWriter {
     case invalidResult(String)
   }
 
-  /// Why a tuning change was refused. The file is unchanged.
+  /// Why a tuning change was refused.
+  ///
+  /// The file is unchanged.
   public enum TuningFailure: Error, Equatable, Sendable {
+    /// The record write was refused.
     case refused(Failure)
     /// The user file does not set the tuning key, so there is nothing to remove.
     case notSet(ControllerTuning.Key)
@@ -130,12 +135,15 @@ public enum ControllerRecordWriter {
 
   /// A tuning removal found no value to remove.
   private struct NotSet: Error {
+    /// The tuning key that is not set.
     let key: ControllerTuning.Key
   }
 
   /// Why ``plan(for:tuningKey:records:directory:edit:)`` refused: the record, or the edit.
   private enum Refusal<EditFailure: Error>: Error {
+    /// The record could not be changed.
     case record(Failure)
+    /// The edit could not be applied.
     case edit(EditFailure)
   }
 
@@ -240,7 +248,9 @@ public enum ControllerRecordWriter {
 
 extension ControllerRecordWriter {
   /// `fields`, the members of a Controller file or the `patch` of a ControllerPatch file, with
-  /// `edit` applied. A whole number is written without a fraction, so an integer key reads it.
+  /// `edit` applied.
+  ///
+  /// A whole number is written without a fraction, so an integer key reads it.
   private static func apply(_ edit: TuningEdit, to fields: inout [String: Any]) throws(NotSet) {
     var tuning = fields["tuning"] as? [String: Any] ?? [:]
     switch edit {

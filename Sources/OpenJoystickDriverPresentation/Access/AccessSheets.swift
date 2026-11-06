@@ -5,11 +5,15 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The sheet that asks to confirm an access operation, with the scope toggles of a program grant.
   struct AccessConfirmationSheet: View {
+    /// The state and actions of the Access area.
     @ObservedObject
     var model: AccessViewModel
+    /// The operation to confirm.
     let pending: AccessPending
 
+    /// The title and lines of the confirmation, with scope toggles for a client grant.
     var body: some View {
       let confirmation = model.confirmation(for: pending)
       VStack(alignment: .leading, spacing: 14) {
@@ -33,16 +37,20 @@
       }.padding(20).frame(width: 440)
     }
 
+    /// Whether a program grant has no scope chosen, which disables the confirm button.
     private var grantsNothing: Bool {
       if case .grantClient = pending { return model.grantScopes.isEmpty }
       return false
     }
   }
 
+  /// The sheet with the form that creates a token: a name, web origins and scopes.
   struct AccessTokenFormSheet: View {
+    /// The state and actions of the Access area, which hold the draft.
     @ObservedObject
     var model: AccessViewModel
 
+    /// The token name, origins and scopes, a failure if any, and the Cancel and Continue buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 14) {
         Text(OJDLocalized.string("ui.access.token.form.title")).font(.headline)
@@ -70,10 +78,14 @@
     }
   }
 
+  /// The sheet that shows a created token once, with a Copy button.
   struct AccessIssuedTokenSheet: View {
+    /// The token that was created.
     let issued: AccessIssuedToken
+    /// Closes the sheet.
     let close: () -> Void
 
+    /// The issued token with its message, a Copy button and a Done button.
     var body: some View {
       VStack(alignment: .leading, spacing: 14) {
         Text(OJDLocalized.formatted("ui.access.token.issued.title", issued.name)).font(.headline)
@@ -121,6 +133,7 @@
     }
   }
 
+  /// Opens the file panel for choosing a program.
   @MainActor
   enum AccessFilePicker {
     /// A program or app bundle that is to be granted access.

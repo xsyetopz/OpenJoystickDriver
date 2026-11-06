@@ -9,14 +9,21 @@ import OpenJoystickDriverKit
 public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
   USBPhysicalDeviceObservationProvider
 {
+  /// The provider of the raw USB route, backed by IOUSBHost.
   private let ioUSBHostProvider: any USBTransportProvider
+  /// The provider of the extension route, backed by the USBDriverKit extension.
   private let usbDriverKitProvider: any USBTransportProvider
   /// Reads the catalog's raw-USB models; the service changes them when user records change.
   private let rawUSBModels: @Sendable () -> Set<ControllerModelID>
+  /// The catalog's raw-USB models, read afresh on each use.
   private var supportedRawUSBModels: Set<ControllerModelID> { rawUSBModels() }
+  /// The models that only the extension route may serve.
   private let requiredDriverKitModels: Set<ControllerModelID>
+  /// Reads the passive USB observation of a raw USB device.
   private let ioUSBHostObservation: @Sendable (USBTransportDevice) throws -> PhysicalDevice?
+  /// The signature decision per registry service ID, kept while the service stays enumerated.
   private var signatureAdmissions: [UInt64: Bool] = [:]
+  /// Reads the passive USB observation of a raw USB device for one configuration value.
   private let ioUSBHostConfigurationObservation:
     @Sendable (USBTransportDevice, UInt8) throws -> PhysicalDevice?
 
@@ -30,6 +37,8 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     }
   )
 
+  /// Creates the facade over the IOUSBHost and USBDriverKit providers and the protocol driver
+  /// registry's raw USB models.
   public init() {
     ioUSBHostProvider = IOUSBHostTransportProvider()
     usbDriverKitProvider = USBDriverKitTransportProvider()
@@ -40,6 +49,7 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     ioUSBHostConfigurationObservation = Self.readConfigurationObservation
   }
 
+  /// Creates the facade over the given providers, models and observation readers.
   init(
     ioUSBHostProvider: any USBTransportProvider,
     usbDriverKitProvider: any USBTransportProvider,
@@ -60,6 +70,10 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     self.ioUSBHostConfigurationObservation = ioUSBHostConfigurationObservation
   }
 
+  /// Reads the cached configuration descriptor `configurationValue` of `device` into an
+  /// observation.
+  ///
+  /// Returns nil when the device has no such cached descriptor.
   private static func readConfigurationObservation(
     _ device: USBTransportDevice,
     configurationValue: UInt8
@@ -76,6 +90,12 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     )
   }
 
+  /// Lists the devices that OJD serves, from both providers, in vendor, product, location, route
+  /// and service order.
+  ///
+  /// A provider that fails is skipped when the other one answers.
+  ///
+  /// - Throws: The error of the IOUSBHost provider when both providers fail.
   public func devices() async throws -> [USBTransportDevice] {
     let direct: Result<[USBTransportDevice], Error>
     do { direct = .success(try await ioUSBHostProvider.devices()) } catch {
@@ -114,8 +134,9 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     }
   }
 
-  /// Uncatalogued direct devices whose passive facts carry a known Xbox USB signature. The DEXT
-  /// matches only catalogued models, so these are reached through IOUSBHost.
+  /// Uncatalogued direct devices whose passive facts carry a known Xbox USB signature.
+  ///
+  /// The DEXT matches only catalogued models, so these are reached through IOUSBHost.
   ///
   /// The decision is cached per registry service while it stays enumerated, so each poll does not
   /// re-read every device and a transient read failure cannot drop an admitted device. A negative
@@ -147,6 +168,8 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     return admitted
   }
 
+  /// Returns the passive observation of `device` from the provider of its route, or nil when none
+  /// matches the device's service address.
   public func physicalDeviceObservation(for device: USBTransportDevice) async -> PhysicalDevice? {
     switch device.route {
     case .rawUSB:
@@ -168,6 +191,9 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     return observation?.serviceAddress == device.serviceAddress ? observation : nil
   }
 
+  /// Opens `device` through the provider of its route.
+  ///
+  /// - Throws: The error of that provider. A failed open is not retried on the other route.
   public func open(
     _ device: USBTransportDevice,
     options: USBTransportOpenOptions
@@ -184,6 +210,9 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     return try await ioUSBHostProvider.exclusiveOwner(of: device)
   }
 
+  /// Resets `device` through the provider of its route.
+  ///
+  /// - Throws: The error of that provider.
   public func resetDevice(_ device: USBTransportDevice) async throws {
     switch device.route {
     case .rawUSB: try await ioUSBHostProvider.resetDevice(device)
@@ -200,6 +229,10 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     )
   }
 
+  /// Returns the transport profile to use for `device`, with the observation it is based on.
+  ///
+  /// A raw USB device takes the profile that its observed descriptors resolve to. An extension
+  /// device keeps `configured`. A failed or mismatched observation also keeps `configured`.
   public func resolveTransport(
     for device: USBTransportDevice,
     configured: DeviceTransportProfile
@@ -232,6 +265,8 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
       return USBTransportResolution(profile: configured, physicalDevice: observation)
     }
   }
+  /// Returns `configured` unless `route` is raw USB and `observation` is present, in which case the
+  /// descriptors resolve the profile.
   static func resolveTransportProfile(
     route: USBTransportRoute,
     configured: DeviceTransportProfile,
@@ -241,6 +276,11 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     return USBDescriptorTransportResolver.resolve(configured: configured, observed: observation)
   }
 
+  /// Returns the observations of the listed devices.
+  ///
+  /// A device whose observation cannot be read is left out, without failing the others.
+  ///
+  /// - Throws: The error of ``devices()``.
   public func physicalDeviceObservations() async throws -> [PhysicalDevice] {
     // Observation is deliberately best-effort. A descriptor read failure must
     // not change the exact supported-device selection or prevent diagnostics
@@ -269,6 +309,7 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     }
   }
 
+  /// Returns the extension provider's observation that matches `device`, or nil when none does.
   private func usbDriverKitObservation(for device: USBTransportDevice) async -> PhysicalDevice? {
     guard let provider = usbDriverKitProvider as? any USBPhysicalDeviceObservationProvider,
       let observations = try? await provider.physicalDeviceObservations()
@@ -276,6 +317,8 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     return observations.first { Self.driverKitObservation($0, matches: device) }
   }
 
+  /// Tells whether `observation` is the same device as `device`: the same service address, IDs,
+  /// names, serial number and location.
   private static func driverKitObservation(
     _ observation: PhysicalDevice,
     matches device: USBTransportDevice
@@ -286,6 +329,11 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
       && observation.physicalLocationIdentifier == device.observedPhysicalLocationIdentifier
   }
 
+  /// Selects the devices that OJD serves from the two routes' lists.
+  ///
+  /// A raw USB device is selected when its model is in the catalog or its service ID is in
+  /// `signatureServiceIDs`, its model is not extension-only, and the extension does not list its
+  /// location. An extension device is selected when its model is in the catalog.
   static func selectDevices(
     direct: [USBTransportDevice],
     driverKit: [USBTransportDevice],
@@ -306,6 +354,7 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
     return (selectedDriverKit + selectedDirect).sorted(by: deviceOrder)
   }
 
+  /// Orders devices by vendor, product, location, route and service ID.
   private static func deviceOrder(_ lhs: USBTransportDevice, _ rhs: USBTransportDevice) -> Bool {
     (lhs.vendorID, lhs.productID, lhs.locationID, lhs.route.rawValue, lhs.serviceID) < (
       rhs.vendorID, rhs.productID, rhs.locationID, rhs.route.rawValue, rhs.serviceID
@@ -320,11 +369,16 @@ extension ControllerModelID {
   }
 }
 
+/// The vendor, product and location that identify where a device sits.
 private struct USBTransportLocation: Hashable, Sendable {
+  /// The USB vendor ID.
   let vendorID: UInt16
+  /// The USB product ID.
   let productID: UInt16
+  /// The USB location ID.
   let locationID: UInt32
 
+  /// Creates the location of `device`.
   init(_ device: USBTransportDevice) {
     vendorID = device.vendorID
     productID = device.productID

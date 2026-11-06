@@ -1,9 +1,11 @@
 import Foundation
 import Testing
 
-/// Suspends until `condition` holds. The condition is re-evaluated every millisecond with no
-/// iteration limit, so passing does not depend on scheduling speed; the deadline, in seconds, only
-/// bounds a condition that never becomes true and records it as a failure.
+/// Suspends until `condition` holds.
+///
+/// The condition is re-evaluated every millisecond with no iteration limit, so passing does not
+/// depend on scheduling speed; the deadline, in seconds, only bounds a condition that never becomes
+/// true and records it as a failure.
 package func waitUntil(
   _ description: String,
   deadline: TimeInterval = 60,

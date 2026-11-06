@@ -2,9 +2,13 @@ import Foundation
 
 /// What a set of package or user files covers: controller identities, virtual devices, profiles.
 private struct ModPackageClaims {
+  /// The `Controller` and `ControllerPatch` file names.
   var controllerFiles: Set<String> = []
+  /// The `VirtualDevice` file names.
   var virtualDevices: Set<String> = []
+  /// The profile UUIDs.
   var profileIDs: Set<UUID> = []
+  /// The profile names, lowercased.
   var profileNames: Set<String> = []
 
   /// Records a profile, and returns false when this set already holds its UUID or name.
@@ -33,10 +37,11 @@ private struct ModPackageClaims {
 }
 
 extension ModPackageStore {
-  /// Checks the package in `folder`: its manifest, that it runs on this version, that its files
-  /// are the listed ones and valid, and that none clashes with the user's files or another
-  /// installed package. A package of the same name is the one an install replaces, so it is not
-  /// a clash.
+  /// Checks the package in `folder`: its manifest, that it runs on this version, that its files are
+  /// the listed ones and valid, and that none clashes with the user's files or another installed
+  /// package.
+  ///
+  /// A package of the same name is the one an install replaces, so it is not a clash.
   ///
   /// - Returns: The manifest.
   /// - Throws: ``ModPackageError`` with the E4xxx code of the first problem.
@@ -65,10 +70,13 @@ extension ModPackageStore {
     return manifest
   }
 
+  /// The folder that holds the user's `Controllers`, `VirtualDevices` and `Profiles` folders.
   private var userRoot: URL { directory.deletingLastPathComponent() }
 
-  /// The E4002 refusal of `manifest` on the running version, or nil when its `requires` admits
-  /// that version. A running version that is not a SemVer version is refused.
+  /// The E4002 refusal of `manifest` on the running version, or nil when its `requires` admits that
+  /// version.
+  ///
+  /// A running version that is not a SemVer version is refused.
   func requiresProblem(of manifest: ModPackageManifest) -> ModPackageError? {
     guard let running = SemanticVersion(runningVersion) else {
       return ModPackageError(
@@ -162,7 +170,9 @@ extension ModPackageStore {
   }
 
   /// Refuses a Controller file listed under `patches`, and a ControllerPatch file listed under
-  /// `controllers`. A file of any other kind is left to the record validation.
+  /// `controllers`.
+  ///
+  /// A file of any other kind is left to the record validation.
   private static func requireKind(
     of data: Data,
     listedAs operation: ControllerRecordOperation
@@ -180,7 +190,9 @@ extension ModPackageStore {
   }
 
   /// Refuses a link anywhere in `folder`, and an entry beside `mod.json` that is not one of the
-  /// three kind folders. Hidden entries are skipped here, and an install does not copy them.
+  /// three kind folders.
+  ///
+  /// Hidden entries are skipped here, and an install does not copy them.
   private static func checkLayout(of folder: URL) throws {
     guard !isLink(folder) else {
       throw ModPackageError(.invalidPackageContent, "\(folder.lastPathComponent) is a link")
@@ -224,8 +236,9 @@ extension ModPackageStore {
     }
   }
 
-  /// The claims of an installed package, from its listed files. A profile that cannot be read
-  /// claims nothing.
+  /// The claims of an installed package, from its listed files.
+  ///
+  /// A profile that cannot be read claims nothing.
   private static func claims(of folder: URL, _ manifest: ModPackageManifest) -> ModPackageClaims {
     var claims = ModPackageClaims()
     claims.controllerFiles = Set(manifest.controllers + manifest.patches)

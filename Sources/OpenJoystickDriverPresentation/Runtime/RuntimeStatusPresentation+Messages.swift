@@ -3,14 +3,16 @@ import OpenJoystickDriverKit
 
 extension RuntimeStatusPresentation {
 
-  /// `copy` with this presentation's unserved devices, which a presentation built from parts
-  /// does not take.
+  /// Returns `copy` with this presentation's unserved devices, which a presentation built from
+  /// parts does not take.
   private func carryingUnservedDevices(to copy: Self) -> Self {
     var carrying = copy
     carrying.unservedDevices = unservedDevices
     return carrying
   }
 
+  /// Returns the presentation with `state` as the Post Event access and the readiness worked out
+  /// again.
   func applyingPostEventAccess(_ state: RemappingPostEventAccessState?) -> Self {
     carryingUnservedDevices(
       to: Self(
@@ -32,6 +34,7 @@ extension RuntimeStatusPresentation {
     )
   }
 
+  /// Returns the presentation with `permissions` and the readiness worked out again.
   func applyingPermissions(_ permissions: RuntimePermissionSummary) -> Self {
 
     carryingUnservedDevices(
@@ -54,6 +57,8 @@ extension RuntimeStatusPresentation {
     )
   }
 
+  /// Returns the presentation with whether the snapshot requires Post Event access, with
+  /// `postEventAccess`, and with the readiness worked out again.
   func applyingRemappingSnapshot(
     _ snapshot: ApplicationServiceRemappingSnapshotPayload,
     postEventAccess: RemappingPostEventAccessState?
@@ -79,10 +84,13 @@ extension RuntimeStatusPresentation {
     )
   }
 
+  /// The label of the Post Event access.
   var postEventAccessLabel: String { RuntimePresentation.postEventAccessLabel(postEventAccess) }
 
+  /// The label of the readiness.
   var readinessLabel: String { RuntimePresentation.readinessLabel(readiness) }
 
+  /// The phrase for the number of connected controllers.
   var deviceCountLabel: String { RuntimePresentation.deviceCountLabel(devices.count) }
 
   /// Service-wide problems with stored virtual HID profile overrides, one line each.
@@ -99,6 +107,14 @@ extension RuntimeStatusPresentation {
     return messages
   }
 
+  /// Returns whether two statuses show the same permissions, devices, output and readiness.
+  ///
+  /// The comparison reads every field of each device description, including the input health.
+  ///
+  /// - Parameters:
+  ///   - lhs: The first status.
+  ///   - rhs: The second status.
+  /// - Returns: True when the fields that the messages read are equal.
   static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.permissions == rhs.permissions
       && lhs.devices.elementsEqual(rhs.devices, by: deviceDescriptionsEqual)
@@ -109,6 +125,7 @@ extension RuntimeStatusPresentation {
       && lhs.readiness == rhs.readiness
   }
 
+  /// Returns whether two device descriptions are equal in every field, including the input health.
   private static func deviceDescriptionsEqual(
     _ lhs: ApplicationServiceDeviceDescription,
     _ rhs: ApplicationServiceDeviceDescription
@@ -134,6 +151,11 @@ extension RuntimeStatusPresentation {
       && lhs.recordServer == rhs.recordServer
   }
 
+  /// Returns the readiness.
+  ///
+  /// It needs attention until the permissions are granted, the output is ready, it is known whether
+  /// Post Event access is required and, when it is, granted, and the input of every controller is
+  /// healthy. With those met, it is Connect a Controller while none is connected, otherwise Ready.
   static func readiness(
     permissions: RuntimePermissionSummary,
     outputState: RuntimeOutputState,

@@ -2,21 +2,38 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The sheet that edits the motion tuning of a profile, with the gyro output when it applies.
   struct ProfileMotionSheet: View {
+    /// Whether the sheet shows the gyro output fields above the motion fields.
     let showsGyroOutput: Bool
+    /// Clears the motion tuning of the profile so that it inherits; nil hides the Inherit button.
     let onInherit: (() -> Void)?
+    /// Receives the validated tuning and gyro output when the person chooses Save.
     let onSave: (RemappingMotionTuning, RemappingGyroOutput) -> Void
+    /// Dismisses the sheet.
     @Environment(\.presentationMode)
     private var presentationMode
+    /// The motion tuning being edited.
     @State
     private var draft: ProfileMotionDraft
+    /// The message of the failed validation, or nil.
     @State
     private var errorMessage: String?
+    /// The text of each numeric field as typed, by key.
     @State
     private var numericText: [String: String]
+    /// The gyro output being edited.
     @State
     private var gyro: ProfileGyroDraft
 
+    /// Creates the sheet on the current motion tuning and gyro output.
+    ///
+    /// - Parameters:
+    ///   - tuning: The motion tuning to edit.
+    ///   - output: The gyro output to edit.
+    ///   - showsGyroOutput: Whether the sheet shows the gyro output fields.
+    ///   - onInherit: Clears the motion tuning; nil hides the Inherit button.
+    ///   - onSave: Receives the validated tuning and gyro output.
     init(
       tuning: RemappingMotionTuning,
       output: RemappingGyroOutput,
@@ -32,6 +49,8 @@
       _gyro = State(initialValue: ProfileGyroDraft(output))
     }
 
+    /// The title, the gyro output fields, the motion tuning and the Inherit, Cancel and Save
+    /// buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
         Text(label("title")).font(.headline)
@@ -164,10 +183,20 @@
       }.padding(28).frame(width: 500, height: 600)
     }
 
+    /// Returns the text of the motion field called `key`.
     private func label(_ key: String) -> String {
       OJDLocalized.string("ui.profiles.motion." + key)
     }
 
+    /// A slider with a text field for the number called `key`, from 0 to `maximum`.
+    ///
+    /// A typed value that is not a number in the range leaves the slider where it was.
+    ///
+    /// - Parameters:
+    ///   - key: The key of the field.
+    ///   - value: The number to edit.
+    ///   - maximum: The largest value.
+    /// - Returns: The slider with its text field.
     private func slider(
       _ key: String,
       value: Binding<Double>,

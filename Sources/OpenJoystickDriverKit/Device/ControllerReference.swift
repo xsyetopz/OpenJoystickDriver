@@ -6,8 +6,11 @@ import Foundation
 /// The text form is the session token (`E-…`), the port key (`U-…`), or the model as `VVVV:PPPP`.
 /// A model reference names every connected unit of that model.
 public enum ControllerReference: Hashable, Sendable {
+  /// Names one attachment of a controller by its session token.
   case session(ControllerSessionToken)
+  /// Names the controller on one port by its port key.
   case port(ControllerPortKey)
+  /// Names every connected unit of one model.
   case model(ControllerModelID)
 
   /// The reference written as `text`, or nil when `text` is none of the three forms.

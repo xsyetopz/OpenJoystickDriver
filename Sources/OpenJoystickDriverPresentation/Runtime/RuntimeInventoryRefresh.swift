@@ -2,13 +2,21 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension RuntimeViewModel {
-  /// Refreshes connection- and profile-sensitive state without replacing the UI with loading state.
+  /// Reads the service status and the profile library again without replacing the views with a
+  /// loading state.
+  ///
+  /// A call made while another refresh or a change runs waits for it. Returns whether the status,
+  /// the profiles, the permissions or the load state changed.
   @discardableResult
   func refreshLiveStatus() async -> Bool { await enqueueScopedRefresh(.live) }
 
-  /// Refreshes controller inventory and permission observations without touching unrelated panes.
+  /// Reads the service status again, for the connected controllers and the permissions, without
+  /// reading the profile library.
   func refreshControllerInventory() async { _ = await enqueueScopedRefresh(.inventory) }
 
+  /// Starts the scoped refresh, or waits for the refresh or change that runs and covers it.
+  ///
+  /// Returns whether the state changed.
   private func enqueueScopedRefresh(_ refresh: ScopedRefresh) async -> Bool {
     let previousStatusState = statusState
     let previousRemappingState = remappingState
@@ -31,7 +39,7 @@ extension RuntimeViewModel {
       setScopedRefreshInFlight(false)
       let waiters = scopedRefreshWaiters
       scopedRefreshWaiters = []
-      waiters.forEach { $0.resume() }
+      for waiter in waiters { waiter.resume() }
     }
 
     while !pendingScopedRefreshes.isEmpty, !fullRefreshInFlight, !mutationInFlight {
@@ -68,11 +76,14 @@ extension RuntimeViewModel {
     )
   }
 
+  /// Sets whether a scoped refresh runs and publishes the value.
   private func setScopedRefreshInFlight(_ isInFlight: Bool) {
     isScopedRefreshInFlight = isInFlight
     scopedRefreshInFlightPublisher.send(isInFlight)
   }
 
+  /// Returns whether the status, the profile library, the permissions, the Post Event access or the
+  /// load state differs from the previous values.
   private func scopedRefreshChanged(
     statusState previousStatusState: RuntimeStatusState,
     remappingState previousRemappingState: RuntimeRemappingState,
@@ -85,6 +96,11 @@ extension RuntimeViewModel {
       || previousPostEventAccessState != postEventAccessState || previousLoadState != loadState
   }
 
+  /// Reads the service status and updates the status, the permissions and the controller list in
+  /// place.
+  ///
+  /// A failure shows as an error only while the status is loading; otherwise it sets
+  /// ``liveStatusError`` and keeps the last list.
   private func refreshStatusRetainingPresentation(generation: Int) async {
     do {
       let payload = try await gateway.status()
@@ -135,6 +151,8 @@ extension RuntimeViewModel {
     }
   }
 
+  /// Publishes the session tokens of the connected controllers when they differ, and drops the
+  /// finished override states of controller models that are not connected.
   func publishControllerInventory(_ devices: [ApplicationServiceDeviceDescription]) {
     let connectedModels = Set(devices.map(RuntimeControllerModel.init))
     let staleModels = virtualHIDProfileOverrideStates.filter { model, state in
@@ -147,23 +165,27 @@ extension RuntimeViewModel {
     controllerInventoryGeneration &+= 1
   }
 
+  /// Returns when the running scoped refresh ends; returns at once when none runs.
   func waitForScopedRefreshCompletion() async {
     guard isScopedRefreshInFlight else { return }
     await withCheckedContinuation { scopedRefreshWaiters.append($0) }
   }
 
+  /// Returns when no full refresh and no change runs.
   func waitForExclusiveOperationCompletion() async {
     while fullRefreshInFlight || mutationInFlight {
       await withCheckedContinuation { exclusiveOperationWaiters.append($0) }
     }
   }
 
+  /// Resumes the callers that wait for an exclusive operation.
   func resumeExclusiveOperationWaiters() {
     let waiters = exclusiveOperationWaiters
     exclusiveOperationWaiters = []
-    waiters.forEach { $0.resume() }
+    for waiter in waiters { waiter.resume() }
   }
 
+  /// Runs the pending scoped refreshes, if there are any.
   func schedulePendingScopedRefresh() {
     guard !pendingScopedRefreshes.isEmpty else { return }
     Task { @MainActor in _ = await enqueueScopedRefresh([]) }

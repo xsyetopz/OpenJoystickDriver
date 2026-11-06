@@ -3,6 +3,7 @@ import Foundation
 /// What one output-queue operation writes: a fixed command, or the effective output of claimed
 /// channels, which is read from ownership when the operation runs.
 enum PhysicalOutputRequest: Equatable, Sendable {
+  /// A fixed command.
   case command(ControllerOutputCommand)
   /// Every motor's effective intensity at `duration`; all zero is a stop.
   case effectiveRumble(RumbleDuration)
@@ -27,7 +28,9 @@ extension DeviceManager {
     )
   }
 
-  /// Sends the effective output of one channel. Rumble re-encodes are held until the next command.
+  /// Sends the effective output of one channel.
+  ///
+  /// Rumble re-encodes are held until the next command.
   internal func applyPhysicalChannel(
     _ channel: PhysicalOutputChannel,
     for identifier: LogicalControllerID,
@@ -48,7 +51,9 @@ extension DeviceManager {
     )
   }
 
-  /// The command `request` stands for now. Called inside the queue operation that writes it.
+  /// The command that `request` resolves to at the time it is written.
+  ///
+  /// Called inside the queue operation that writes it.
   internal func resolve(
     _ request: PhysicalOutputRequest,
     for identifier: LogicalControllerID,

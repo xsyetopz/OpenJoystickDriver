@@ -5,6 +5,10 @@ import OpenJoystickDriverKit
 
 extension CoreGraphicsSystemInputSink {
 
+  /// Posts `action` as a keyboard or pointer event.
+  ///
+  /// - Throws: ``CoreGraphicsSystemInputSinkError`` when post-event access is not granted, the key
+  ///   is unsupported, or CoreGraphics cannot prepare or post the event.
   public func send(_ action: RemappingSystemInputAction) throws {
     lock.lock()
     defer { lock.unlock() }
@@ -18,6 +22,7 @@ extension CoreGraphicsSystemInputSink {
     } catch { throw CoreGraphicsSystemInputSinkError.eventPostingFailed }
   }
 
+  /// Posts `action` once access is known to be granted.
   private func sendAuthorized(_ action: RemappingSystemInputAction) throws {
     switch action {
     case .modifierDown(let modifier): try postModifier(modifier, isDown: true)
@@ -33,6 +38,7 @@ extension CoreGraphicsSystemInputSink {
     }
   }
 
+  /// Posts a modifier key press or release and updates the held modifiers.
   private func postModifier(_ modifier: RemappingKeyModifier, isDown: Bool) throws {
     let flag = CoreGraphicsMapping.coreGraphicsFlag(for: modifier)
     var candidate = modifierFlags
@@ -43,6 +49,7 @@ extension CoreGraphicsSystemInputSink {
     modifierFlags = candidate
   }
 
+  /// Posts a key press or release with the held modifiers.
   private func postKey(_ key: RemappingKeyboardKey, isDown: Bool) throws {
     guard let virtualKey = translator.virtualKey(for: key) else {
       throw CoreGraphicsSystemInputSinkError.unsupportedKeyboardKey(key)
@@ -50,12 +57,16 @@ extension CoreGraphicsSystemInputSink {
     try poster.post(.keyboard(virtualKey: virtualKey, isDown: isDown, flags: modifierFlags))
   }
 
+  /// Posts a mouse button press or release at the current pointer position.
   private func postMouseButton(_ button: RemappingMouseButton, isDown: Bool) throws {
     let location = try poster.currentPointerLocation()
     let cgButton = CoreGraphicsMapping.coreGraphicsButton(for: button)
     try poster.post(.mouseButton(button: cgButton, isDown: isDown, location: location))
   }
 
+  /// Moves the pointer along `axis` by `amount`, from -1 to 1, of the points of a full action.
+  ///
+  /// The current pointer position is read for each action, so physical mouse movement is kept.
   private func postPointer(axis: RemappingPointerAxis, amount: Double) throws {
     guard amount.isFinite else { throw CoreGraphicsSystemInputSinkError.eventPreparationFailed }
     if amount == 0 { return }
@@ -69,6 +80,7 @@ extension CoreGraphicsSystemInputSink {
     try poster.post(.pointer(location: destination, deltaX: deltaX, deltaY: deltaY))
   }
 
+  /// Moves the pointer by `x` and `y` points.
   private func postPointerDelta(x: Double, y: Double) throws {
     guard x.isFinite, y.isFinite else {
       throw CoreGraphicsSystemInputSinkError.eventPreparationFailed
@@ -82,6 +94,9 @@ extension CoreGraphicsSystemInputSink {
     try poster.post(.pointer(location: destination, deltaX: x, deltaY: y))
   }
 
+  /// Scrolls along `axis` by `amount`, from -1 to 1, of the lines of a full action.
+  ///
+  /// The part of a line that is not scrolled yet carries over to the next scroll.
   private func postScroll(axis: RemappingPointerAxis, amount: Double) throws {
     guard amount.isFinite else { throw CoreGraphicsSystemInputSinkError.eventPreparationFailed }
     if amount == 0 {
@@ -105,6 +120,7 @@ extension CoreGraphicsSystemInputSink {
     scrollResidualY = candidateY
   }
 
+  /// Scrolls by `x` and `y` lines; the part of a line that is not scrolled yet carries over.
   private func postScrollDelta(x: Double, y: Double) throws {
     guard x.isFinite, y.isFinite else {
       throw CoreGraphicsSystemInputSinkError.eventPreparationFailed

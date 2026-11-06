@@ -18,10 +18,12 @@ func gamepadHIDInterface(host: PhysicalTransport?) -> PhysicalInterfaceSignature
   )
 }
 
-/// A USB HID interface of a Steam Controller, numbered as Linux `hid-steam.c` describes the
-/// layout (hid-steam.c:1098–1108). The descriptors are synthetic, not a macOS capture: a
-/// gamepad interface is a vendor collection with a 64-byte input and a 64-byte feature report,
-/// the only kind with a feature report; any other interface is a boot keyboard without one.
+/// A USB HID interface of a Steam Controller, numbered as Linux `hid-steam.c` describes the layout
+/// (hid-steam.c:1098–1108).
+///
+/// The descriptors are synthetic, not a macOS capture: a gamepad interface is a vendor collection
+/// with a 64-byte input and a 64-byte feature report, the only kind with a feature report; any
+/// other interface is a boot keyboard without one.
 func steamHIDInterface(number: UInt8, gamepad: Bool = true) -> PhysicalInterfaceSignature {
   let descriptor: [UInt8] =
     gamepad
@@ -57,9 +59,11 @@ func catalogUsageMap(_ vendorID: UInt16, _ productID: UInt16) throws -> HIDUsage
   return try #require(record.hidUsageMap)
 }
 
-/// Binds a catalog model on its family's access path, as discovery does, and returns the
-/// driver the runtime would construct. A HID row is observed over `host`, or its default host;
-/// a raw-USB row claims `transportProfile`, or the record's profile, without interface facts.
+/// Binds a catalog model on its family's access path, as discovery does, and returns the driver the
+/// runtime would construct.
+///
+/// A HID row is observed over `host`, or its default host; a raw-USB row claims `transportProfile`,
+/// or the record's profile, without interface facts.
 func catalogParser(
   _ model: ControllerModelID,
   host: PhysicalTransport? = nil,
@@ -130,7 +134,7 @@ extension DeviceRuntimeProfile {
       assemblyPolicy: assemblyPolicy,
       server: server,
       session: session,
-      inputLayout: inputLayout,
+      inputLayouts: inputLayouts,
       hidUsageMap: hidUsageMap,
       tuning: newTuning ?? tuning,
       modes: modes

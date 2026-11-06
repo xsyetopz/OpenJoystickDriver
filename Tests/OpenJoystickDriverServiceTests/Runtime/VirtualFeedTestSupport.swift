@@ -87,7 +87,7 @@ final class FakeFeedDevice: VirtualFeedDevice, @unchecked Sendable {
       defer { hung = [] }
       return hung
     }
-    waiting.forEach { $0.resume() }
+    for waiter in waiting { waiter.resume() }
   }
 
   private func waitForRelease() async {
@@ -117,7 +117,7 @@ final class FakeFeedFactory: @unchecked Sendable {
   var devices: [FakeFeedDevice] { lock.withLock { devicesValue } }
 
   /// Releases every hung device.
-  func release() { devices.forEach { $0.release() } }
+  func release() { for device in devices { device.release() } }
 
   func registry(
     idleTimeout: TimeInterval = 60,

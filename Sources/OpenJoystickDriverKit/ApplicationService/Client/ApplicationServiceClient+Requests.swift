@@ -12,10 +12,18 @@ extension ApplicationServiceClient {
     stateLock.withLock { connected = false }
   }
 
+  /// Marks the client as disconnected, so later calls throw
+  /// ``ApplicationServiceClientError/notConnected``.
   public func disconnect() { stateLock.withLock { connected = false } }
 
+  /// Whether ``connect(timeoutSeconds:)`` found the service's local server and no ``disconnect()``
+  /// followed.
   public var isConnected: Bool { stateLock.withLock { connected } }
 
+  /// Reads the service's status.
+  ///
+  /// - Throws: ``ApplicationServiceClientError/invalidResponse`` when the reply is not an
+  ///   ``ApplicationServiceStatusPayload``.
   public func getStatus() async throws -> ApplicationServiceStatusPayload {
     let data: Data = try await call(.getStatus, LocalServiceRPCEmptyArguments())
     guard let payload = try? JSONDecoder().decode(ApplicationServiceStatusPayload.self, from: data)
@@ -23,16 +31,19 @@ extension ApplicationServiceClient {
     return payload
   }
 
+  /// Asks macOS for every permission the service requires and returns the permission snapshot.
   public func requestRequiredAccess() async throws -> PermissionManager.Snapshot {
     try await call(.requestRequiredAccess, LocalServiceRPCEmptyArguments())
   }
 
+  /// Asks macOS for the permission `requirement` and returns the permission snapshot.
   public func requestAccess(
     _ requirement: PermissionManager.Requirement
   ) async throws -> PermissionManager.Snapshot {
     try await call(.requestAccess, LocalServiceRPCPermissionArguments(requirement: requirement))
   }
 
+  /// Reads the input state of `controller`; nil when the controller has no input state.
   public func controllerState(
     for controller: ControllerReference
   ) async throws -> ControllerState? {
@@ -61,6 +72,10 @@ extension ApplicationServiceClient {
     return try JSONDecoder().decode(ApplicationServiceVirtualOutputState.self, from: data)
   }
 
+  /// Reads the packet log of `controller`.
+  ///
+  /// - Throws: ``ApplicationServiceClientError/invalidResponse`` when the reply is not a list of
+  ///   ``PacketLogEntry``.
   public func packetLog(
     for controller: ControllerReference
   ) async throws -> [PacketLogEntry] {
@@ -90,6 +105,9 @@ extension ApplicationServiceClient {
     )
   }
 
+  /// Previews a color on the physical controller `controller`, held under `token`.
+  ///
+  /// - Returns: Whether the service applied the preview.
   public func previewPhysicalColor(
     for controller: ControllerReference,
     token: UUID,
@@ -109,6 +127,9 @@ extension ApplicationServiceClient {
     )
   }
 
+  /// Ends the physical color preview that `token` holds on `controller`.
+  ///
+  /// - Returns: Whether the service released the preview.
   public func releasePhysicalColorPreview(
     for controller: ControllerReference,
     token: UUID
@@ -122,13 +143,14 @@ extension ApplicationServiceClient {
     )
   }
 
-  /// Waits until the service's status differs from revision `after`, the service's hold time
-  /// passes with no change, or the service announces a test notification, and returns the
-  /// service's current revision with the reason it answered. A nil `after` returns the current
-  /// revision at once. When the service closes the connection without a reply during a wait,
-  /// the wait throws ``LocalServiceRPCError/serviceClosedConnection``: the first reply proved the
-  /// service accepts this process. A reply that rejects this process throws
-  /// ``LocalServiceRPCError/peerRejected``.
+  /// Waits until the service's status differs from revision `after`, the service's hold time passes
+  /// with no change, or the service announces a test notification, and returns the service's
+  /// current revision with the reason it answered.
+  ///
+  /// A nil `after` returns the current revision at once. When the service closes the connection
+  /// without a reply during a wait, the wait throws
+  /// ``LocalServiceRPCError/serviceClosedConnection``: the first reply proved the service accepts
+  /// this process. A reply that rejects this process throws ``LocalServiceRPCError/peerRejected``.
   public func waitForServiceStatusChange(
     after: ServiceStatusRevision?
   ) async throws -> ServiceStatusReply {
@@ -152,9 +174,10 @@ extension ApplicationServiceClient {
     )
   }
 
-  /// Answers a test notification the app took from `waitForServiceStatusChange`. Returns false
-  /// when the service no longer waits for that announcement because it ended or another answer
-  /// came first.
+  /// Answers a test notification the app took from `waitForServiceStatusChange`.
+  ///
+  /// Returns false when the service does not wait for that announcement because it ended or
+  /// another answer came first.
   public func reportTestNotificationResult(
     announcement: UUID,
     outcome: TestNotificationOutcome
@@ -166,8 +189,9 @@ extension ApplicationServiceClient {
   }
 
   /// Returns the frame timings of every connected controller: the frames read within the last
-  /// `lastSeconds` seconds, or the whole ring when `lastSeconds` is nil. The service refuses a
-  /// value outside ``FrameTimingRecorder/windowSecondsRange``.
+  /// `lastSeconds` seconds, or the whole ring when `lastSeconds` is nil.
+  ///
+  /// The service refuses a value outside ``FrameTimingRecorder/windowSecondsRange``.
   public func getFrameTimings(
     lastSeconds: Int?
   ) async throws -> ApplicationServiceFrameTimingsPayload {
@@ -184,6 +208,10 @@ extension ApplicationServiceClient {
     return payload
   }
 
+  /// Reads the diagnostics of the virtual devices that the service publishes.
+  ///
+  /// - Throws: ``ApplicationServiceClientError/invalidResponse`` when the reply is not an
+  ///   ``ApplicationServiceVirtualDeviceDiagnosticsPayload``.
   public func getVirtualDeviceDiagnostics() async throws
     -> ApplicationServiceVirtualDeviceDiagnosticsPayload
   {
@@ -273,8 +301,10 @@ extension ApplicationServiceClient {
   }
 
   /// Queues `frames` on the feed and returns the output commands queued since the previous
-  /// exchange. Send the frames past ``VirtualFeedExchangeResult/accepted`` again later. Exchange
-  /// at least every ``VirtualFeedExchangeResult/idleTimeoutSeconds`` to keep the feed open.
+  /// exchange.
+  ///
+  /// Send the frames past ``VirtualFeedExchangeResult/accepted`` again later. Exchange at least
+  /// every ``VirtualFeedExchangeResult/idleTimeoutSeconds`` to keep the feed open.
   ///
   /// Only OpenJoystickDriver's own signed executables can call this; other programs use
   /// `ojd virtual feed`.
@@ -297,6 +327,10 @@ extension ApplicationServiceClient {
     try await call(.closeVirtualFeed, LocalServiceRPCVirtualFeedCloseArguments(token: token))
   }
 
+  /// Suspends the session of `controller`.
+  ///
+  /// - Throws: ``ApplicationServiceClientError/invalidResponse`` when the reply is not a
+  ///   ``ControllerSuspendResult``.
   public func suspendController(
     _ controller: ControllerReference
   ) async throws -> ControllerSuspendResult {
@@ -312,6 +346,10 @@ extension ApplicationServiceClient {
     return result
   }
 
+  /// Resumes the suspended session of `controller`.
+  ///
+  /// - Throws: ``ApplicationServiceClientError/invalidResponse`` when the reply is not a
+  ///   ``ControllerResumeResult``.
   public func resumeController(
     _ controller: ControllerReference
   ) async throws -> ControllerResumeResult {
@@ -327,6 +365,10 @@ extension ApplicationServiceClient {
     return result
   }
 
+  /// Disconnects the wireless `controller`; the result names the failed stage when it fails.
+  ///
+  /// - Throws: ``ApplicationServiceClientError/invalidResponse`` when the reply is not a
+  ///   ``WirelessControllerDisconnectResult``.
   public func disconnectWirelessController(
     _ controller: ControllerReference
   ) async throws -> WirelessControllerDisconnectResult {
@@ -343,6 +385,7 @@ extension ApplicationServiceClient {
     return result
   }
 
+  /// Resets the app settings.
   public func resetSettings() async throws -> Bool {
     try await call(.resetSettings, LocalServiceRPCEmptyArguments())
   }
@@ -408,10 +451,14 @@ extension ApplicationServiceClient {
     try await call(.setWebAccess, AccessWebArguments(enabled: enabled, port: port))
   }
 
+  /// Reads the remapping profiles, the active profile of each controller model, the routes and the
+  /// Joy-Con pairs.
   public func getRemappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {
     try await call(.getRemappingSnapshot, LocalServiceRPCEmptyArguments())
   }
 
+  /// Reads the motion calibration status of `controller` after it applies `command`, when one is
+  /// given.
   public func remappingMotionCalibration(
     for controller: ControllerReference,
     command: RemappingMotionCalibrationCommand? = nil

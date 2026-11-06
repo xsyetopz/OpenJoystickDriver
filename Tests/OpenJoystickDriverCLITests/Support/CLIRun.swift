@@ -1,9 +1,8 @@
 import ArgumentParser
 import Foundation
-import Testing
-
 import OpenJoystickDriverKit
 import OpenJoystickDriverTestSupport
+import Testing
 
 @testable import OpenJoystickDriverCLI
 

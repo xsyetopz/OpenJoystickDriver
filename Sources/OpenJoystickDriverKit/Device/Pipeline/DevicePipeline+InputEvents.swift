@@ -4,6 +4,7 @@ extension DevicePipeline {
 
   /// Takes the snapshot of one parsed input, or nil for a frame that carried no input, normalizes
   /// it, and dispatches it when output may see it and it differs from the last dispatched state.
+  ///
   /// With `laterReportQueued`, an input that changes no button, hat, or touch frame is kept in
   /// `coalescedInput` for the later report instead.
   func handleParsedEvent(
@@ -99,8 +100,10 @@ extension DevicePipeline {
     await dispatch(output)
   }
 
-  /// Whether a remapping route consumes this controller's input. Its bindings derive button edges
-  /// from analog thresholds, so it must see every report, and no report is merged for it.
+  /// Whether a remapping route consumes this controller's input.
+  ///
+  /// Its bindings derive button edges from analog thresholds, so it must see every report, and no
+  /// report is merged for it.
   var inputFeedsRemapping: Bool {
     (dispatcher as? any ObservedInputDemand)?.wantsObservedInput(from: identifier) == true
   }

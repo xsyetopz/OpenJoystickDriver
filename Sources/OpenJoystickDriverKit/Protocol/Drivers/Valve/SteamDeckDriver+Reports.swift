@@ -4,24 +4,39 @@ extension SteamDeckDriver {
 
   /// `SteamDeckStatePacket_t` offsets with the 4-byte `ValveInReportHeader_t` at 0.
   private enum Offset {
+    /// The low button word.
     static let buttonsLow = 8
+    /// The high button word.
     static let buttonsHigh = 12
+    /// The left pad X coordinate; Y follows it.
     static let leftPadX = 16
+    /// The right pad X coordinate; Y follows it.
     static let rightPadX = 20
+    /// The left trigger.
     static let leftTrigger = 44
+    /// The right trigger.
     static let rightTrigger = 46
+    /// The left stick X.
     static let leftStickX = 48
+    /// The left stick Y.
     static let leftStickY = 50
+    /// The right stick X.
     static let rightStickX = 52
+    /// The right stick Y.
     static let rightStickY = 54
+    /// The left pad pressure.
     static let leftPadPressure = 56
+    /// The right pad pressure.
     static let rightPadPressure = 58
   }
 
+  /// The maximum value of a trigger.
   private static let triggerMax: Float = 32767
 
-  /// SDL's output mapping for `ulButtonsL`. SDL reports no digital trigger or pad-touch buttons;
-  /// OJD exposes those bits as the Triton driver does.
+  /// SDL's output mapping for `ulButtonsL`.
+  ///
+  /// SDL reports no digital trigger or pad-touch buttons; OJD exposes those bits as the Triton
+  /// driver does.
   private static let lowButtons: [(UInt32, Control)] = [
     (0x0000_0001, .rightTrigger), (0x0000_0002, .leftTrigger),
     (0x0000_0004, .rightShoulder), (0x0000_0008, .leftShoulder), (0x0000_0010, .north),
@@ -37,11 +52,17 @@ extension SteamDeckDriver {
     (0x0000_0200, .leftPaddle1), (0x0000_0400, .rightPaddle1), (0x0000_4000, .leftStickTouch),
     (0x0000_8000, .rightStickTouch), (0x0004_0000, .auxiliary1),
   ]
+  /// The D-pad up bit of the low button word.
   private static let dpadUp: UInt32 = 0x0100
+  /// The D-pad right bit of the low button word.
   private static let dpadRight: UInt32 = 0x0200
+  /// The D-pad left bit of the low button word.
   private static let dpadLeft: UInt32 = 0x0400
+  /// The D-pad down bit of the low button word.
   private static let dpadDown: UInt32 = 0x0800
+  /// The bit of the low button word that shows a finger on the left pad.
   private static let leftPadTouch: UInt32 = 0x0008_0000
+  /// The bit of the low button word that shows a finger on the right pad.
   private static let rightPadTouch: UInt32 = 0x0010_0000
 
   /// Decodes a Deck state report; SDL ignores every other report.
@@ -88,6 +109,8 @@ extension SteamDeckDriver {
   }
 
   // swiftlint:disable:next function_parameter_count
+  /// The touch frame of the pad whose X coordinate is at `x`, with the pressure at `pressureOffset`
+  /// while a finger is on it.
   private func touchFrame(
     _ surface: ControllerTouchSurface,
     _ bytes: [UInt8],
@@ -118,6 +141,7 @@ extension SteamDeckDriver {
     )
   }
 
+  /// The hat direction of the D-pad bits of `buttons`.
   private static func hat(_ buttons: UInt32) -> HatDirection {
     let up = buttons & dpadUp != 0
     let down = buttons & dpadDown != 0
@@ -148,14 +172,17 @@ extension SteamDeckDriver {
     return StickPosition(x: max(-1, min(1, rawX)), y: max(-1, min(1, rawY)))
   }
 
+  /// The little-endian unsigned 32-bit value at `offset`.
   private func u32(_ bytes: [UInt8], _ offset: Int) -> UInt32 {
     UInt32(u16(bytes, offset)) | UInt32(u16(bytes, offset + 2)) << 16
   }
 
+  /// The little-endian unsigned 16-bit value at `offset`.
   private func u16(_ bytes: [UInt8], _ offset: Int) -> UInt16 {
     UInt16(bytes[offset]) | (UInt16(bytes[offset + 1]) << 8)
   }
 
+  /// The little-endian signed 16-bit value at `offset`.
   private func s16(_ bytes: [UInt8], _ offset: Int) -> Int16 {
     Int16(bitPattern: u16(bytes, offset))
   }

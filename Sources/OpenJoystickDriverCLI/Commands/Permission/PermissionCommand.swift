@@ -2,7 +2,10 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd permission` command group: list the macOS permissions OJD needs, or ask the service to
+/// request them.
 struct PermissionCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "permission",
     abstract: CLILocalized.text(
@@ -11,6 +14,7 @@ struct PermissionCommand: AsyncParsableCommand {
     subcommands: [PermissionListCommand.self, PermissionRequestCommand.self]
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
@@ -41,7 +45,11 @@ struct PermissionCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd permission list` command: prints each permission, its state and what OJD uses it for.
+///
+/// Without a running service it reads the permissions of its own process.
 struct PermissionListCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "list",
     abstract: CLILocalized.text(
@@ -52,9 +60,11 @@ struct PermissionListCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let snapshot: PermissionManager.Snapshot
@@ -110,7 +120,12 @@ struct PermissionListCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd permission request` command: asks the service to request the named permissions.
+///
+/// macOS shows its own prompt; the command never prompts in the terminal. It fails with exit code
+/// 77 when a permission is still not granted.
 struct PermissionRequestCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "request",
     abstract: CLILocalized.text(
@@ -121,6 +136,7 @@ struct PermissionRequestCommand: AsyncParsableCommand {
     )
   )
 
+  /// The permissions to request; both `input-read` and `input-inject` when none is named.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -131,9 +147,13 @@ struct PermissionRequestCommand: AsyncParsableCommand {
   )
   var ids: [String] = []
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Checks that every ID is a permission that can be requested.
+  ///
+  /// - Throws: ``ValidationError`` that lists the valid IDs.
   func validate() throws {
     let valid = PermissionID.requestable.map(\.commandLineName)
     for id in ids where !valid.contains(id) {
@@ -147,6 +167,7 @@ struct PermissionRequestCommand: AsyncParsableCommand {
     }
   }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let requested = ids.compactMap { CommandLineName.value(of: $0, in: PermissionID.self) }
@@ -176,6 +197,7 @@ struct PermissionRequestCommand: AsyncParsableCommand {
 }
 
 extension PermissionID {
+  /// The permission as the requirement that the service requests.
   var accessRequirement: PermissionManager.Requirement {
     self == .inputInject ? .inputInject : .inputRead
   }

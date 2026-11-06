@@ -2,16 +2,40 @@ import Darwin
 import Foundation
 import OpenJoystickDriverKit
 
+/// Hands a command-line run over to the `ojd` in the installed app.
+///
+/// A repository build forwards to the installed app when that app is current, and fails when it is
+/// older than the repository sources.
 package enum InstalledCLIForwarder {
+  /// Where a command-line run executes.
   enum Resolution: Equatable {
+    /// This executable runs the command.
     case local
+    /// The installed executable at the URL runs the command.
     case forward(URL)
+    /// The installed executable at the URL is older than the repository sources, so the run fails.
     case staleInstallation(URL)
   }
 
+  /// The `OpenJoystickDriver` executable inside the installed app bundle.
   static let installedExecutableURL = BuildIdentity.installedApplicationBundleURL
     .appendingPathComponent("Contents/MacOS/OpenJoystickDriver", isDirectory: false)
 
+  /// Decides where a run executes.
+  ///
+  /// A run from an app bundle, or with `OJD_RUN_REPOSITORY_CLI` set to `1`, stays local. So does a
+  /// run when the installed executable is missing or is this executable.
+  ///
+  /// - Parameters:
+  ///   - currentExecutableURL: The executable that is running.
+  ///   - mainBundleURL: The bundle of the running process.
+  ///   - installedExecutableURL: The executable in the installed app.
+  ///   - repositoryCLIOverride: Whether the environment forces the repository build to run.
+  ///   - isExecutableFile: Tells whether a path is an executable file.
+  ///   - installedCLIIsCurrent: Tells whether the installed executable is not older than the
+  ///     sources.
+  /// - Returns: ``Resolution/local`` to run here, ``Resolution/forward(_:)`` to run the installed
+  ///   executable, or ``Resolution/staleInstallation(_:)`` when that executable is out of date.
   static func resolve(
     currentExecutableURL: URL,
     mainBundleURL: URL,
@@ -32,6 +56,10 @@ package enum InstalledCLIForwarder {
     return .forward(installed)
   }
 
+  /// Replaces this process with the installed `ojd` when `resolve` chooses to forward.
+  ///
+  /// It prints the failure and exits when the installed executable is older than the sources or
+  /// `execv` fails.
   package static func forwardIfNeeded(
     arguments: [String],
     currentExecutableURL: URL = Bundle.main.executableURL
@@ -66,6 +94,7 @@ package enum InstalledCLIForwarder {
     Self.exit(with: execFailure(String(cString: strerror(errno))))
   }
 
+  /// The failure for an installed executable that is older than the repository sources.
   static var staleInstallationFailure: CLIFailure {
     CLIFailure(
       .staleInstallation,
@@ -75,6 +104,7 @@ package enum InstalledCLIForwarder {
     )
   }
 
+  /// The failure for a memory allocation that failed while building the arguments.
   static var allocationFailure: CLIFailure {
     CLIFailure(
       .installedCLIFailed,
@@ -95,15 +125,21 @@ package enum InstalledCLIForwarder {
     )
   }
 
+  /// Prints `failure` on standard error and exits with its code.
   private static func exit(with failure: CLIFailure) -> Never {
     fputs(failure.line + "\n", stderr)
     Darwin.exit(failure.code.rawValue)
   }
 
+  /// Frees the argument strings in `pointers`.
   private static func release(_ pointers: [UnsafeMutablePointer<CChar>?]) {
     for pointer in pointers { if let pointer { free(UnsafeMutableRawPointer(pointer)) } }
   }
 
+  /// Tells whether the installed executable is no older than every repository file that built
+  /// this executable.
+  ///
+  /// It is true when this executable is not in a repository.
   private static func installedCLIIsCurrent(
     sourceExecutableURL: URL,
     installedExecutableURL: URL
@@ -139,6 +175,7 @@ package enum InstalledCLIForwarder {
     return true
   }
 
+  /// Tells whether `file` changed no later than `date`.
   private static func fileIsNotNewer(_ file: URL, than date: Date) -> Bool {
     guard
       let modificationDate = try? file.resourceValues(forKeys: [.contentModificationDateKey])
@@ -147,6 +184,8 @@ package enum InstalledCLIForwarder {
     return modificationDate <= date
   }
 
+  /// Returns the repository that contains `executableURL`, found by the `Package.swift` and
+  /// `Sources/OpenJoystickDriver` it holds; nil when there is none.
   private static func repositoryRoot(containing executableURL: URL) -> URL? {
     var directory = executableURL.resolvingSymlinksInPath().deletingLastPathComponent()
     while directory.path != "/" {

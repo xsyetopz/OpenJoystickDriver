@@ -1,11 +1,25 @@
 import Foundation
 import OpenJoystickDriverKit
 
+/// A destination the destination pickers list, with its title and whether the controller
+/// supports it.
 struct DestinationOption: Hashable {
+  /// The destination.
   let destination: RemappingDestination
+  /// The title in the picker.
   let title: String
+  /// Whether the controller supports the destination.
   let isSupported: Bool
 
+  /// Returns the destinations that fit `source` and that the controller supports, and `current`
+  /// when it fits the source and is not among them.
+  ///
+  /// - Parameters:
+  ///   - source: The source the destinations must fit.
+  ///   - current: The destination to keep in the list.
+  ///   - capabilities: What the controller has; nil means every destination is supported.
+  /// - Returns: The destinations that fit `source` and that the controller supports, and `current`
+  ///   when it fits the source and is not among them.
   static func options(
     for source: RemappingSource,
     including current: RemappingDestination? = nil,
@@ -29,6 +43,9 @@ struct DestinationOption: Hashable {
     return options
   }
 
+  /// Every destination the pickers know: keyboard keys, with modifier groups for the arrow and
+  /// function keys, mouse buttons, pointer movement and scroll, gamepad outputs and physical
+  /// outputs.
   static let all: [Self] = {
     // Keep the ordinary keyboard destination first so source changes can fall back to a useful,
     // conventional choice instead of an arbitrary enum ordering.  Modifier combinations are
@@ -91,6 +108,8 @@ struct DestinationOption: Hashable {
     return keyboard + mouse + pointer + gamepad + physical
   }()
 
+  /// Returns whether `destination` fits `source`: an axis takes a continuous destination, any
+  /// other source a discrete one, and a gamepad button needs virtual output.
   private static func isCompatible(
     _ destination: RemappingDestination,
     with source: RemappingSource
@@ -105,13 +124,20 @@ struct DestinationOption: Hashable {
   }
 }
 
+/// Why an edit of the profile draft failed.
 enum RuntimeProfileDraftError: Error, LocalizedError, Equatable, Sendable {
+  /// No assignment has the identifier.
   case bindingNotFound(UUID)
+  /// No chord has the identifier.
   case chordNotFound(UUID)
+  /// No layer has the identifier.
   case layerNotFound(UUID)
+  /// No sequence has the identifier.
   case sequenceNotFound(UUID)
+  /// The result breaks a profile rule.
   case validation(RemappingValidationError)
 
+  /// The message of the failure: the missing item, or the result that breaks a profile rule.
   var errorDescription: String? {
     switch self {
     case .bindingNotFound, .chordNotFound, .layerNotFound, .sequenceNotFound:
@@ -126,11 +152,21 @@ enum RuntimeProfileDraftError: Error, LocalizedError, Equatable, Sendable {
   }
 }
 
+/// A profile the editor changes; every edit returns a validated copy.
 struct RuntimeProfileDraft: Sendable, Equatable {
+  /// The profile.
   let profile: RemappingProfile
 
+  /// Returns the profile after validating it.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError/validation(_:)`` when it breaks a profile rule.
   func validatedProfile() throws -> RemappingProfile { try Self.validate(profile) }
 
+  /// Returns the draft with the additional actions of an assignment set, in the layer when
+  /// `layerID` is given.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError`` when the layer or assignment is missing or the result
+  ///   breaks a profile rule.
   func settingAdditionalActions(
     _ actions: [RemappingAction],
     for bindingID: UUID,
@@ -156,6 +192,9 @@ struct RuntimeProfileDraft: Sendable, Equatable {
     return try replacingBinding(bindingID, transform)
   }
 
+  /// Returns the draft with the profile's name, device scope and application scope set.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError/validation(_:)`` when they break a profile rule.
   func settingMetadata(
     name: String,
     device: RemappingDeviceScope,
@@ -168,14 +207,21 @@ struct RuntimeProfileDraft: Sendable, Equatable {
     )
   }
 
+  /// Returns the draft with the output policy set.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError/validation(_:)`` when it breaks a profile rule.
   func settingOutputPolicy(_ outputPolicy: RemappingOutputPolicy) throws -> Self {
     Self(profile: try Self.validate(profile.replacing(outputPolicy: outputPolicy)))
   }
 
+  /// Returns the draft with the physical color set; nil clears it.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError/validation(_:)`` when it breaks a profile rule.
   func settingPhysicalColor(_ physicalColor: ControllerColor?) throws -> Self {
     Self(profile: try Self.validate(profile.replacing(physicalColor: .some(physicalColor))))
   }
 
+  /// Returns the draft with the name set.
   func settingName(_ name: String) -> Self { Self(profile: profile.replacing(name: name)) }
 
 }

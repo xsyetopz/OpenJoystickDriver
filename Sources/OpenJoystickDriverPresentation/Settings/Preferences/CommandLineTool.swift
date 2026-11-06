@@ -9,11 +9,17 @@
   /// The executable acts as the command line when it runs under the name `ojd`, and the link keeps
   /// the app's code signature, so the service accepts the command line as a client.
   struct CommandLineToolLink: Sendable {
+    /// Why installing or removing the link failed.
     enum Failure: LocalizedError, Equatable {
+      /// The user cancelled the administrator password prompt.
       case cancelled
+      /// A file that is not a link is at the link path; the value is the path.
       case blockedByFile(String)
+      /// The administrator command failed; the value is the error text.
       case failed(String)
 
+      /// The message for the failure: the cancelled prompt, the path of the blocking file or the
+      /// error text.
       var errorDescription: String? {
         switch self {
         case .cancelled:
@@ -28,13 +34,18 @@
       }
     }
 
+    /// The path of the link: `/usr/local/bin/ojd`.
     static let defaultLinkPath = CommandLineToolLinkStatus.defaultPath
 
+    /// Where the link is.
     let linkURL: URL
+    /// The app executable that the link points to.
     let executableURL: URL
     /// Runs a shell command with administrator rights after macOS asks for a password.
     let runAsAdministrator: @Sendable (String) throws -> Void
 
+    /// The link at the default path, to the running app executable, created with the administrator
+    /// password prompt.
     static let system = Self(
       linkURL: URL(fileURLWithPath: defaultLinkPath),
       executableURL: Bundle.main.executableURL ?? URL(fileURLWithPath: CommandLine.arguments[0]),
@@ -46,6 +57,14 @@
       .probe(path: linkURL.path, executable: executableURL)
     }
 
+    /// Creates the link, with the administrator password prompt when the folder or the link needs
+    /// it.
+    ///
+    /// A link that points elsewhere is replaced.
+    ///
+    /// - Throws: ``Failure/blockedByFile(_:)`` when a file that is not a link is at the link path;
+    ///   ``Failure/cancelled`` when the user cancels the password prompt; ``Failure/failed(_:)``
+    ///   when the administrator command fails; the file manager's error for any other failure.
     func install() throws {
       if status.state == .blockedByFile { throw Failure.blockedByFile(linkURL.path) }
       let fileManager = FileManager.default
@@ -64,7 +83,12 @@
       }
     }
 
-    /// Removes the link; a file that is not a link is left alone.
+    /// Removes the link, with the administrator password prompt when it needs it; a file that is
+    /// not a link is left alone.
+    ///
+    /// - Throws: ``Failure/cancelled`` when the user cancels the password prompt;
+    ///   ``Failure/failed(_:)`` when the administrator command fails; the file manager's error for
+    ///   any other failure.
     func uninstall() throws {
       guard (try? FileManager.default.destinationOfSymbolicLink(atPath: linkURL.path)) != nil else {
         return
@@ -74,6 +98,7 @@
       { try runAsAdministrator("/bin/rm -f \(Self.quoted(linkURL.path))") }
     }
 
+    /// Returns whether the error says that the change needs administrator rights.
     private static func needsAdministrator(_ error: any Error) -> Bool {
       let error = error as NSError
       if error.domain == NSCocoaErrorDomain { return error.code == NSFileWriteNoPermissionError }
@@ -89,8 +114,14 @@
 
   /// Runs shell commands through the macOS administrator password prompt.
   enum AdministratorShell {
+    /// The error number that AppleScript reports when the user cancels the password prompt.
     private static let userCancelled = -128
 
+    /// Runs `command` as a shell command with administrator rights.
+    ///
+    /// - Throws: ``CommandLineToolLink/Failure/cancelled`` when the user cancels the password
+    ///   prompt; ``CommandLineToolLink/Failure/failed(_:)`` with the error text for any other
+    ///   failure.
     static func run(_ command: String) throws {
       let literal = command.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(
         of: "\"",
@@ -116,26 +147,37 @@
     }
   }
 
+  /// The state of the `ojd` link for Settings > Advanced, with its Install and Uninstall actions.
   @MainActor
   final class CommandLineToolModel: ObservableObject {
+    /// What is at the link path.
     @Published
     private(set) var status: CommandLineToolLinkStatus
+    /// The text of the last failed install or uninstall; a cancelled password prompt sets none.
     @Published
     private(set) var errorMessage: String?
 
+    /// The link to install and remove.
     let link: CommandLineToolLink
 
+    /// Creates the model and reads the status of the link.
     init(link: CommandLineToolLink = .system) {
       self.link = link
       self.status = link.status
     }
 
+    /// Reads the status of the link again.
     func refresh() { status = link.status }
 
+    /// Installs the link and reads the status; a failure shows in ``errorMessage``.
     func install() { perform(link.install) }
 
+    /// Removes the link and reads the status; a failure shows in ``errorMessage``.
     func uninstall() { perform(link.uninstall) }
 
+    /// Clears the error, runs `change`, and reads the status.
+    ///
+    /// A failure shows in ``errorMessage``, unless the user cancelled the password prompt.
     private func perform(_ change: () throws -> Void) {
       errorMessage = nil
       do { try change() } catch CommandLineToolLink.Failure.cancelled {} catch {

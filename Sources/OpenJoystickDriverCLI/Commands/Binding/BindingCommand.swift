@@ -2,7 +2,9 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd binding` command group: list, set and clear the bindings of a profile.
 struct BindingCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "binding",
     abstract: CLILocalized.text(
@@ -14,17 +16,23 @@ struct BindingCommand: AsyncParsableCommand {
     subcommands: [BindingListCommand.self, BindingSetCommand.self, BindingClearCommand.self]
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
 /// One binding in `--json` output.
 struct BindingSummary: Encodable, Equatable {
+  /// The binding ID.
   let id: String
+  /// The source in the `SOURCE` form of `ojd binding set`, such as `button:south`.
   let source: String
+  /// The target in the `TARGET` form of `ojd binding set`, such as `key:key-a`.
   let target: String
+  /// When the target fires, in kebab-case, such as `hold` or `tap-on-press`.
   let behavior: String
 
+  /// Creates the summary from `binding`.
   init(_ binding: RemappingBinding) {
     id = binding.id.uuidString
     source = ProfileText.source(binding.source)
@@ -33,7 +41,9 @@ struct BindingSummary: Encodable, Equatable {
   }
 }
 
+/// The `ojd binding list` command: prints the bindings of a profile.
 struct BindingListCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "list",
     abstract: CLILocalized.text("cli.binding.list.abstract")
@@ -41,12 +51,18 @@ struct BindingListCommand: AsyncParsableCommand {
 
   /// One item of the `--json` list: a binding and the profile it came from.
   struct Item: Encodable, Equatable {
+    /// The profile that holds the binding.
     let profile: ProfileSummary
+    /// The binding ID.
     let id: String
+    /// The source in the `SOURCE` form.
     let source: String
+    /// The target in the `TARGET` form.
     let target: String
+    /// When the target fires.
     let behavior: String
 
+    /// Creates the item from `binding` and the `profile` that holds it.
     init(_ binding: RemappingBinding, profile: ProfileSummary) {
       let summary = BindingSummary(binding)
       self.profile = profile
@@ -57,12 +73,15 @@ struct BindingListCommand: AsyncParsableCommand {
     }
   }
 
+  /// The profile to list, by ID or name.
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let selector = profile
@@ -96,7 +115,11 @@ struct BindingListCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd binding set` command: binds a source to a target in a profile.
+///
+/// A source has one binding, so this replaces the binding that the source has and keeps its ID.
 struct BindingSetCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "set",
     abstract: CLILocalized.text(
@@ -106,15 +129,21 @@ struct BindingSetCommand: AsyncParsableCommand {
       + CLILocalized.text("cli.binding.set.examples")
   )
 
+  /// The `--json` result of `binding set`.
   struct Result: Encodable, Equatable {
+    /// The profile that the command changes.
     let profile: ProfileSummary
+    /// The binding that the command writes.
     let binding: BindingSummary
+    /// Whether the source already had a binding that this one replaced.
     let replaced: Bool
   }
 
+  /// The profile to change, by ID or name.
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// The `SOURCE` to bind, such as `button:south` or `axis:left-stick-x:positive`.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.binding.set.source"),
@@ -123,6 +152,7 @@ struct BindingSetCommand: AsyncParsableCommand {
   )
   var source: String
 
+  /// The `TARGET` to send, such as `key:key-a` or `gamepad:button:south`.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.binding.set.target"),
@@ -131,12 +161,15 @@ struct BindingSetCommand: AsyncParsableCommand {
   )
   var target: String
 
+  /// The options that shape how the binding fires.
   @OptionGroup
   var options: BindingOptions
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let source = try parseSource(source)
@@ -176,7 +209,12 @@ struct BindingSetCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd binding clear` command: removes the bindings of the given sources, or every binding
+/// with `--all`.
+///
+/// It changes nothing and fails when a source has no binding.
 struct BindingClearCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "clear",
     abstract: CLILocalized.text(
@@ -187,16 +225,23 @@ struct BindingClearCommand: AsyncParsableCommand {
     )
   )
 
+  /// The `--json` result of `binding clear`.
   struct Result: Encodable, Equatable {
+    /// The profile that the command changes.
     let profile: ProfileSummary
+    /// The sources whose bindings were or would be removed.
     let removed: [String]
+    /// Whether `--all` is set.
     let all: Bool
+    /// Whether `--dry-run` is set, so nothing changes.
     let dryRun: Bool
   }
 
+  /// The profile to change, by ID or name.
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// The sources whose bindings to remove.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.binding.clear.sources"),
@@ -205,6 +250,7 @@ struct BindingClearCommand: AsyncParsableCommand {
   )
   var sources: [String] = []
 
+  /// `--all`: remove every binding, chord, sequence and layer.
   @Flag(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -214,12 +260,14 @@ struct BindingClearCommand: AsyncParsableCommand {
   )
   var all = false
 
+  /// `-f`, `--force`: skip the confirmation that `--all` asks for.
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
   )
   var force = false
 
+  /// `-n`, `--dry-run`: print what would change and change nothing.
   @Flag(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
@@ -228,9 +276,13 @@ struct BindingClearCommand: AsyncParsableCommand {
   )
   var dryRun = false
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Checks that the command names either `--all` or at least one source, and not both.
+  ///
+  /// - Throws: ``ValidationError`` otherwise.
   func validate() throws {
     guard all != !sources.isEmpty else {
       throw ValidationError(
@@ -239,6 +291,7 @@ struct BindingClearCommand: AsyncParsableCommand {
     }
   }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let parsed = try sources.map(parseSource)
@@ -318,6 +371,7 @@ struct BindingClearCommand: AsyncParsableCommand {
     }
   }
 
+  /// `profile` without the bindings of `sources`, or without any binding when `all` is true.
   static func clearing(
     _ profile: RemappingProfile,
     sources: [RemappingSource],

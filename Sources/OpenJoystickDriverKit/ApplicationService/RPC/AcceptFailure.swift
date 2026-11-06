@@ -15,6 +15,7 @@ package enum AcceptFailure: Equatable, Sendable {
   /// Milliseconds an accept loop waits after `waitForResources`.
   package static let resourceWaitMilliseconds: Int32 = 500
 
+  /// Classifies the error number `code` of a failed `accept`.
   package init(errno code: Int32) {
     switch code {
     case EINTR, ECONNABORTED, EAGAIN: self = .retry
@@ -23,8 +24,9 @@ package enum AcceptFailure: Equatable, Sendable {
     }
   }
 
-  /// The line that reports a failure of `server`'s accept loop. A fatal one carries `ended`, the
-  /// code that explains to the user what stopped.
+  /// The line that reports a failure of the accept loop of `server`.
+  ///
+  /// A fatal one carries `ended`, the code that explains to the user what stopped.
   package static func message(
     server: String,
     errno code: Int32,
@@ -53,7 +55,8 @@ package enum AcceptFailure: Equatable, Sendable {
     case ended(Int32)
   }
 
-  /// Applies the failure `code` of `server`'s accept loop and returns whether the loop goes on.
+  /// Applies the failure `code` of the accept loop of `server` and returns whether the loop goes
+  /// on.
   package static func continuesAfter(
     errno code: Int32,
     server: String,
@@ -74,7 +77,8 @@ package enum AcceptFailure: Equatable, Sendable {
     ) == .goOn
   }
 
-  /// Applies the failure `code` of `server`'s accept loop and returns what the loop does next.
+  /// Applies the failure `code` of the accept loop of `server` and returns what the loop does next.
+  ///
   /// A wait for resources ends early, and the loop stops, when `wake` becomes readable or hangs
   /// up.
   package static func continuation(

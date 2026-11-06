@@ -5,8 +5,9 @@ import Testing
 // Pinned neutralize transcripts; the rendering rules are on `OutputCharacterizationTests`.
 extension OutputCharacterizationTests {
   /// Neutralizing dispatches exactly `.neutral`: every control, stick and trigger is released,
-  /// including sub-threshold ones, under both the default and the rescaled transfer. A second
-  /// neutralize changes nothing.
+  /// including sub-threshold ones, under both the default and the rescaled transfer.
+  ///
+  /// A second neutralize changes nothing.
   @Test
   func neutralizeReleasesSubThresholdInput() async {
     let held: [InputChange] = [

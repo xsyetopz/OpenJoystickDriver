@@ -1,7 +1,8 @@
 import Foundation
 
-/// The operating system's answer to, and request flow for, the access the driver needs. The host
-/// platform implements it; ``PermissionManager`` tracks and polls through it.
+/// The operating system's answer to, and request flow for, the access the driver needs.
+///
+/// The host platform implements it; ``PermissionManager`` tracks and polls through it.
 package protocol AccessControlSystem: Sendable {
   /// Whether this process may read input from physical controllers.
   func inputReadAccessState() -> PermissionManager.AccessState

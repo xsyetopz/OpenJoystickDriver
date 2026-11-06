@@ -1,28 +1,51 @@
 import OpenJoystickDriverKit
 
+/// One stick mapping as the stick sheet edits it, with the numbers as text.
 struct ProfileStickDraft {
+  /// The stick.
   let source: RemappingStickSource
+  /// Whether the stick has a mapping.
   var enabled: Bool
+  /// The mode of the mapping.
   var mode: RemappingStickMode
+  /// The inner dead zone.
   var innerDeadzone: String
+  /// The outer dead zone.
   var outerDeadzone: String
+  /// The response exponent.
   var responseExponent: String
+  /// Whether the X axis is inverted.
   var invertX: Bool
+  /// Whether the Y axis is inverted.
   var invertY: Bool
+  /// The aim rate in degrees per second.
   var aimDegreesPerSecond: String
+  /// The pointer points per degree.
   var pointerPointsPerDegree: String
+  /// The flick duration in milliseconds.
   var flickDurationMs: String
+  /// The flick threshold.
   var flickThreshold: String
+  /// The flick hysteresis.
   var flickHysteresis: String
+  /// The pointer radius in points.
   var pointerRadiusPoints: String
+  /// The degrees per scrolled line.
   var scrollDegreesPerLine: String
+  /// The scroll axis.
   var scrollAxis: RemappingStickScrollAxis
+  /// The rotation direction.
   var rotationDirection: RemappingStickRotationDirection
+  /// The steering degrees at full scale.
   var steeringDegreesAtFullScale: String
+  /// The steering return rate in degrees per second.
   var steeringReturnDegreesPerSecond: String
+  /// The stick that steering moves.
   var steeringOutput: RemappingStickSteeringOutput
+  /// Whether the stick keeps acting as itself.
   var passthrough: Bool
 
+  /// Creates the draft of `source` from its mapping, or the defaults when it has none.
   init(source: RemappingStickSource, mapping: RemappingStickMapping?) {
     self.source = source
     enabled = mapping != nil
@@ -48,6 +71,12 @@ struct ProfileStickDraft {
     passthrough = value.passthrough
   }
 
+  /// Returns the mapping that the draft describes, or nil when the stick has none.
+  ///
+  /// - Parameter decimalSeparator: The separator the person types in the numbers.
+  /// - Returns: The mapping that the draft describes, or nil when the stick has none.
+  /// - Throws: ``RemappingStickMappingError`` when a number cannot be read, and the error of the
+  ///   mapping's validation when its values are out of range.
   func validatedMapping(decimalSeparator: String = ".") throws -> RemappingStickMapping? {
     guard enabled else { return nil }
     func number(_ raw: String, _ field: String) throws -> Double {

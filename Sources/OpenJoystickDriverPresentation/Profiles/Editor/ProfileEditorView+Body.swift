@@ -7,35 +7,44 @@
 
   extension ProfileEditorView {
 
+    /// The draft being edited, kept in ``editor``.
     var draft: RuntimeProfileDraft {
       get { editor.draft }
       nonmutating set { editor.draft = newValue }
     }
+    /// The stored profile that the draft is compared with, kept in ``editor``.
     var expectedCurrent: RemappingProfile {
       get { editor.expectedCurrent }
       nonmutating set { editor.expectedCurrent = newValue }
     }
+    /// The sheet that is open, or nil, kept in ``editor``.
     var activeSheet: ProfileEditorSheet? {
       get { editor.activeSheet }
       nonmutating set { editor.activeSheet = newValue }
     }
+    /// Whether the conflict banner shows, kept in ``editor``.
     var showingConflict: Bool {
       get { editor.showingConflict }
       nonmutating set { editor.showingConflict = newValue }
     }
+    /// The message of the latest refused edit, or nil, kept in ``editor``.
     var localError: String? {
       get { editor.localError }
       nonmutating set { editor.localError = newValue }
     }
+    /// The message of the latest failed save, or nil, kept in ``editor``.
     var saveError: String? {
       get { editor.saveError }
       nonmutating set { editor.saveError = newValue }
     }
+    /// The save that is in flight, kept in ``editor``.
     var saveState: ProfileEditorSaveState {
       get { editor.saveState }
       nonmutating set { editor.saveState = newValue }
     }
 
+    /// The profile editor: the header, the section navigation, the section content and the footer,
+    /// with the sheets and confirmations it opens.
     var body: some View {
       GeometryReader { proxy in
         VStack(alignment: .leading, spacing: 0) {
@@ -215,6 +224,11 @@
       }
     }
 
+    /// The header: the profile's name, the details and activation buttons, the actions menu, the
+    /// facts, the conflict banner and the warning about suppressed input.
+    ///
+    /// - Parameter width: The width of the editor, which decides how the facts are laid out.
+    /// - Returns: The header.
     func editorHeader(width: CGFloat) -> some View {
       VStack(alignment: .leading, spacing: 10) {
         HStack(alignment: .center, spacing: 10) {
@@ -270,6 +284,7 @@
       }.padding(.horizontal, 28).padding(.vertical, 18)
     }
 
+    /// The target, the number of assignments and the activation state of the profile.
     @ViewBuilder
     var profileFacts: some View {
       Text(RuntimePresentation.profileScopeLabel(draft.profile.applicationScope)).foregroundColor(
@@ -281,6 +296,7 @@
       Text(activationLabel).foregroundColor(Color(NSColor.secondaryLabelColor))
     }
 
+    /// The Set Active or Deactivate button; a Joy-Con pair profile has none.
     @ViewBuilder
     var primaryActivationAction: some View {
       if profile.joyConPair == nil {
@@ -292,6 +308,7 @@
       }
     }
 
+    /// The Actions menu.
     var profileActionMenu: some View {
       Picker(
         OJDLocalized.string("ui.profiles.actions"),
@@ -309,6 +326,11 @@
         .disabled(isMutationActive)
     }
 
+    /// The picker of the editor section: a segmented control, or a pop-up menu when the editor is
+    /// narrow.
+    ///
+    /// - Parameter width: The width of the editor.
+    /// - Returns: The picker.
     func sectionNavigation(width: CGFloat) -> some View {
       Group {
         if ProfilePresentationPolicy.navigationStyle(for: width) == .segmented {

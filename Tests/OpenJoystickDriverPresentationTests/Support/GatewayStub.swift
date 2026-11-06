@@ -132,7 +132,7 @@ actor GatewayStub: ApplicationServiceGateway {
     statusCallCount += 1
     let readyWaiters = statusCallWaiters.filter { statusCallCount >= $0.count }
     statusCallWaiters.removeAll { statusCallCount >= $0.count }
-    readyWaiters.forEach { $0.continuation.resume() }
+    for waiter in readyWaiters { waiter.continuation.resume() }
     activeStatusCalls += 1
     maximumConcurrentStatusCalls = max(maximumConcurrentStatusCalls, activeStatusCalls)
     defer { activeStatusCalls -= 1 }
@@ -421,7 +421,7 @@ actor GatewayStub: ApplicationServiceGateway {
     overrideRequestsAreGated = false
     let continuations = overrideContinuations
     overrideContinuations = []
-    continuations.forEach { $0.resume() }
+    for continuation in continuations { continuation.resume() }
   }
 
   private func recordOverrideRequest(

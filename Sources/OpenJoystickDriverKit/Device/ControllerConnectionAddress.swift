@@ -36,10 +36,11 @@ public enum ControllerConnectionAddress: Hashable, Sendable {
 }
 
 extension ControllerConnectionAddress: Comparable {
-  /// Orders IOKit addresses first, then USB service addresses, then GATT peripherals. IOKit
-  /// addresses order by location ID, then by interface number with no interface first; USB
-  /// service addresses order by route name, then registry ID; GATT peripherals order by
-  /// identifier text.
+  /// Orders IOKit addresses first, then USB service addresses, then GATT peripherals.
+  ///
+  /// IOKit addresses order by location ID, then by interface number with no interface first; USB
+  /// service addresses order by route name, then registry ID; GATT peripherals order by identifier
+  /// text.
   public static func < (lhs: Self, rhs: Self) -> Bool {
     switch (lhs, rhs) {
     case (
@@ -54,6 +55,7 @@ extension ControllerConnectionAddress: Comparable {
     }
   }
 
+  /// The position of the address kind in the ordering across kinds.
   private var rank: Int {
     switch self {
     case .ioKit: 0

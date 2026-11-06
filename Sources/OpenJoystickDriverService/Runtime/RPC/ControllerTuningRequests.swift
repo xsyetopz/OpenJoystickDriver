@@ -2,9 +2,10 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension ApplicationServiceServer {
-  /// Sets `key` to `value` in the model's user record, or removes it when `value` is nil. The
-  /// record watcher then applies the change to every connected controller of the model without a
-  /// replug.
+  /// Sets `key` to `value` in the model's user record, or removes it when `value` is nil.
+  ///
+  /// The record watcher then applies the change to every connected controller of the model without
+  /// a replug.
   public func setControllerTuning(
     vendorID: Int,
     productID: Int,
@@ -21,8 +22,9 @@ extension ApplicationServiceServer {
     return result
   }
 
-  /// Writes `key` to the model's user record in `directory`. A value the record refuses, such as
-  /// a `stickDeadzone` out of range, changes nothing.
+  /// Writes `key` to the model's user record in `directory`.
+  ///
+  /// A value the record refuses, such as a `stickDeadzone` out of range, changes nothing.
   static func setControllerTuning(
     vendorID: Int,
     productID: Int,

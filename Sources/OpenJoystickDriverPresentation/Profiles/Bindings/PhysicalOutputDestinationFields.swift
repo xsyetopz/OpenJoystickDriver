@@ -2,10 +2,14 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The fields of a physical output destination: the rumble motor and intensity, the player
+  /// indicator, the color, the brightness, or the adaptive trigger.
   struct PhysicalOutputDestinationFields: View {
+    /// The destination being edited; the fields show only for a physical output.
     @Binding
     var destination: RemappingDestination
 
+    /// The fields of a physical output destination; nothing for any other destination.
     var body: some View {
       if case .physical(let output) = destination {
         VStack(alignment: .leading, spacing: 8) {
@@ -88,6 +92,7 @@
       }
     }
 
+    /// Returns a binding that sets the motor of a rumble destination and keeps `intensity`.
     private func rumbleMotor(
       _ motor: PhysicalRumbleMotor,
       intensity: Double
@@ -98,6 +103,7 @@
       )
     }
 
+    /// Returns a binding that sets the intensity of a rumble destination and keeps `motor`.
     private func rumbleIntensity(_ motor: PhysicalRumbleMotor, intensity: Double) -> Binding<Double>
     {
       Binding(
@@ -106,12 +112,14 @@
       )
     }
 
+    /// Returns a binding that sets the player indicator.
     private func playerIndicator(
       _ indicator: PhysicalPlayerIndicator
     ) -> Binding<PhysicalPlayerIndicator> {
       Binding(get: { indicator }, set: { destination = .physical(.playerIndicator($0)) })
     }
 
+    /// Returns a binding to one color component, `0` for red, `1` for green and `2` for blue.
     private func colorComponent(_ color: ControllerColor, component: Int) -> Binding<Double> {
       Binding(
         get: { Double([color.red, color.green, color.blue][component]) },
@@ -125,10 +133,13 @@
       )
     }
 
+    /// Returns a binding that sets the brightness.
     private func brightness(_ intensity: Double) -> Binding<Double> {
       Binding(get: { intensity }, set: { destination = .physical(.brightness($0)) })
     }
 
+    /// Returns a binding that sets the trigger of an adaptive trigger destination and keeps
+    /// `effect`.
     private func adaptiveTrigger(
       _ trigger: PhysicalAdaptiveTrigger,
       effect: PhysicalAdaptiveTriggerEffect
@@ -136,6 +147,8 @@
       Binding(get: { trigger }, set: { destination = .physical(.adaptiveTrigger($0, effect)) })
     }
 
+    /// Returns a binding that sets the effect kind: Off, or resistance with the start position
+    /// and strength of `effect`.
     private func adaptiveKind(
       _ trigger: PhysicalAdaptiveTrigger,
       effect: PhysicalAdaptiveTriggerEffect
@@ -159,6 +172,7 @@
       )
     }
 
+    /// Returns a binding to the start position of the resistance effect.
     private func adaptiveStart(
       _ trigger: PhysicalAdaptiveTrigger,
       effect: PhysicalAdaptiveTriggerEffect
@@ -180,6 +194,7 @@
       )
     }
 
+    /// Returns a binding to the strength of the resistance effect.
     private func adaptiveStrength(
       _ trigger: PhysicalAdaptiveTrigger,
       effect: PhysicalAdaptiveTriggerEffect
@@ -201,6 +216,7 @@
       )
     }
 
+    /// A slider from 0 to 1 that shows the value as a percentage beside `title`.
     private func unitSlider(_ title: String, value: Binding<Double>) -> some View {
       VStack(alignment: .leading, spacing: 4) {
         Text("\(title): \(Int((value.wrappedValue * 100).rounded()))%").font(.caption)
@@ -208,6 +224,7 @@
       }
     }
 
+    /// A slider from 0 to 255 that shows the value beside `title`.
     private func colorSlider(_ title: String, value: Binding<Double>) -> some View {
       VStack(alignment: .leading, spacing: 4) {
         Text("\(title): \(Int(value.wrappedValue.rounded()))").font(.caption)

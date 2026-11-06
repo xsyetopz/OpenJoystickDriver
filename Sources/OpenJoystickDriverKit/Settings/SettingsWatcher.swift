@@ -6,10 +6,13 @@ import Foundation
 /// miss, so this watches the folder. The handler can also run for a change to another file in the
 /// folder, such as the lock file; it should reload the settings and compare.
 public final class SettingsWatcher: @unchecked Sendable {
+  /// The event source that watches the settings folder.
   private let source: any DispatchSourceFileSystemObject
 
-  /// Starts watching, creating the folder when it is missing. Returns nil when the folder
-  /// cannot be created or opened; the caller then has no live refresh.
+  /// Starts watching, creating the folder when it is missing.
+  ///
+  /// Returns nil when the folder cannot be created or opened; the caller then has no live
+  /// refresh.
   @preconcurrency
   public init?(
     store: SettingsStore,

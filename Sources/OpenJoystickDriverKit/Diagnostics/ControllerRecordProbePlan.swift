@@ -5,17 +5,33 @@ import Foundation
 /// The plan uses the runtime's profile construction and driver factory, so a probed
 /// record behaves exactly as the runtime would drive it.
 public struct ControllerRecordProbePlan: Equatable, Sendable {
+  /// The probe's name for the controller, from its vendor and product IDs.
   public let name: String
+  /// The USB vendor ID of the record.
   public let vendorID: UInt16
+  /// The USB product ID of the record.
   public let productID: UInt16
+  /// The raw USB protocol binding of the record.
   public let protocolBinding: ProtocolBindingID
+  /// The USB transport profile of the record.
   public let transportProfile: DeviceTransportProfile
+  /// The GIP startup packets of the record; empty for a protocol other than GIP.
   public let startupPackets: [String]
+  /// How the probe keeps a GIP controller alive.
   public let keepAlivePolicy: GIPKeepAlivePolicy
+  /// The runtime profile that the record builds.
   private let profile: DeviceRuntimeProfile
 
+  /// Loads the record file at `url`.
+  ///
+  /// - Throws: The error of reading the file, or the errors of ``init(data:)``.
   public init(contentsOf url: URL) throws { try self.init(data: Data(contentsOf: url)) }
 
+  /// Decodes and validates a controller record in `data`.
+  ///
+  /// - Throws: ``ControllerRecordProbeError/invalidProfile(_:)`` when the record does not decode or
+  ///   does not build a runtime profile, and ``ControllerRecordProbeError/unsupportedProtocol(_:)``
+  ///   when its protocol is not `XboxGIP` or `XboxXUSB` or it has no raw USB binding.
   public init(data: Data) throws {
     let profile: DeviceRuntimeProfile
     let document: ControllerRecordDocument
@@ -52,8 +68,9 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     self.profile = profile
   }
 
-  /// Builds the record's driver without an observed device, to render the plan. A probe that
-  /// writes to a device uses ``makeDriver(for:claimed:)``.
+  /// Builds the record's driver without an observed device, to render the plan.
+  ///
+  /// A probe that writes to a device uses ``makeDriver(for:claimed:)``.
   public func makeUnobservedDriver() -> any PhysicalProtocolDriver {
     let result = ProtocolDriverRegistry.makeUnobservedDriver(
       protocolID: profile.physicalProtocolID,
@@ -97,9 +114,12 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
 
 /// Errors reported before the probe opens or writes to a physical device.
 public enum ControllerRecordProbeError: Error, Equatable, LocalizedError, Sendable {
+  /// The record does not decode or does not build a runtime profile; the value is the reason.
   case invalidProfile(String)
+  /// The record's protocol is one the probe cannot drive; the value names it.
   case unsupportedProtocol(String)
 
+  /// The description of the error for the user.
   public var errorDescription: String? {
     switch self {
     case .invalidProfile(let message): message

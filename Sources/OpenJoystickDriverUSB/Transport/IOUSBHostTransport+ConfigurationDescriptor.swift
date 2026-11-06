@@ -5,8 +5,10 @@ import OpenJoystickDriverKit
 
 extension IOUSBHostTransportProvider {
   /// Copies the descriptor of configuration `configurationValue` without claiming an interface or
-  /// sending SET_CONFIGURATION. IOUSBHost answers from its descriptor cache and otherwise issues a
-  /// GET_DESCRIPTOR read. Nil when the descriptor is shorter than its own header.
+  /// sending SET_CONFIGURATION.
+  ///
+  /// IOUSBHost answers from its descriptor cache and otherwise issues a GET_DESCRIPTOR read. Nil
+  /// when the descriptor is shorter than its own header.
   ///
   /// The IORegistry publishes interface class triples but never endpoint descriptors, so this is
   /// the only source of the endpoint addresses that `xpad_probe` walks.

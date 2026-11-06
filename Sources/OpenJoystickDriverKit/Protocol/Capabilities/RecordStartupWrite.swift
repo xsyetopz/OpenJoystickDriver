@@ -6,23 +6,29 @@ public enum StartupPhase: String, CaseIterable, Sendable {
   case activation = "Activation"
 }
 
-/// One fixed HID report sent when OJD starts a controller it owns. A controller record carries
-/// them for a pad whose enable sequence never changes; a protocol description carries the ones
-/// every controller of its family needs, and a record's own writes replace them.
+/// One fixed HID report sent when OJD starts a controller it owns.
+///
+/// A controller record carries them for a pad whose enable sequence never changes; a protocol
+/// description carries the ones every controller of its family needs, and a record's own writes
+/// replace them.
 public struct RecordStartupWrite: Equatable, Sendable {
   /// Transports a startup write may be limited to; OJD reaches a HID controller over these.
   static let transports: [PhysicalTransport] = [.usb, .bluetoothClassic, .bluetoothLE]
   /// The longest report a startup write sends.
   static let lengthRange = 2...128
 
+  /// The report the write sends.
   public let report: ControllerTemplateReport
   /// Every byte after a nonzero report ID, or the whole report when the ID is zero.
   public let bytes: [UInt8]
-  /// The wait before this write. Nil waits the startup interval before a `startup` write and
-  /// nothing before an `activation` write.
+  /// The wait before this write.
+  ///
+  /// Nil waits the startup interval before a `startup` write and nothing before an `activation`
+  /// write.
   public let delayMilliseconds: Int?
   /// The only transport this write is sent on; nil sends it on every transport.
   public let transport: PhysicalTransport?
+  /// When the write is sent.
   public let phase: StartupPhase
   /// When set, the last four bytes of the report are replaced by the CRC-32 that Sony Bluetooth
   /// reports carry, seeded with this HID transaction header byte.
@@ -107,9 +113,11 @@ public struct RecordStartupWrite: Equatable, Sendable {
   }
 }
 
-/// One fixed raw-USB packet sent when OJD starts a raw-USB controller. A protocol description
-/// carries the packets every controller of its family needs.
+/// One fixed raw-USB packet sent when OJD starts a raw-USB controller.
+///
+/// A protocol description carries the packets every controller of its family needs.
 public struct USBStartupWrite: Equatable, Sendable {
+  /// The packet bytes.
   public let bytes: [UInt8]
   /// The OUT endpoint; nil uses the controller's own output endpoint.
   public let endpoint: UInt8?
@@ -122,10 +130,14 @@ public struct USBStartupWrite: Equatable, Sendable {
   public let sessionByte: Int?
   /// Whether a rejected transfer is logged and skipped instead of failing startup.
   public let toleratesRejection: Bool
+  /// Which controllers the write is for.
   public let condition: StartupWriteCondition
 
+  /// The accepted packet lengths.
   static let bytesRange = 1...64
+  /// The accepted endpoint numbers.
   static let endpointRange = 1...127
+  /// The accepted timeout values, in milliseconds.
   static let timeoutRange = 1...60_000
 
   /// Fails unless `bytes` is 1...64 long, the endpoint is 1...127, the timeout is 1...60000 ms,

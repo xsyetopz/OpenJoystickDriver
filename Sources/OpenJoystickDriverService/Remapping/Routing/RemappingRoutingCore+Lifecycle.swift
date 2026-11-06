@@ -2,11 +2,14 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension RemappingRoutingCore {
+  /// Returns the virtual gamepad for a nil profile or a Joy-Con pair profile, and the remapping
+  /// route for any other profile.
   func independentSelection(for profile: RemappingProfile?) -> RemappingSelectedRoute {
     guard let profile, profile.joyConPair == nil else { return .virtualGamepad }
     return .remapping(profile)
   }
 
+  /// Returns a route to the virtual gamepad with the current eligibility.
   func virtualGamepadRoute() -> RemappingControllerRoute {
     RemappingControllerRoute(
       selection: .virtualGamepad,
@@ -18,6 +21,7 @@ extension RemappingRoutingCore {
     )
   }
 
+  /// Marks every remapping route unavailable because the engine failed with `error`.
   func recordEngineFailure(_ error: RemappingEventEngineError) {
     for identifier in sortedIdentifiers {
       guard var route = routes[identifier], case .remapping = route.selection else { continue }
@@ -27,6 +31,7 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Reads the frontmost application and the post-event access state.
   func sampleEligibilityEnvironment() -> RemappingEligibilityEnvironment {
     RemappingEligibilityEnvironment(
       frontmostAppID: foregroundApplication.frontmostAppID(),
@@ -34,6 +39,7 @@ extension RemappingRoutingCore {
     )
   }
 
+  /// The connected controllers in order.
   var sortedIdentifiers: [LogicalControllerID] {
     connectedIdentifiers.sorted()
   }
@@ -44,20 +50,26 @@ extension RemappingRoutingCore {
     controls.outputSuppressed ? .virtualOutputSuppressed : .eligible
   }
 
-  /// Forgets the engine baselines of sources the route no longer feeds to the engine, so input
+  /// Forgets the engine baselines of sources the route stopped feeding to the engine, so input
   /// that changed meanwhile is diffed against neutral when feeding resumes.
   func endSources(_ sources: some Sequence<LogicalControllerID>) async {
     for source in sources { await engine.endSource(source) }
   }
 
+  /// Tells the virtual gamepad output that `identifier` stopped, if it listens.
   func notifyVirtualGamepadStop(_ identifier: LogicalControllerID) async {
     await (virtualOutput as? any ControllerLifecycleListener)?.controllerDidStop(identifier)
   }
 
+  /// Throws ``RemappingOutputRoutingError/shutDown`` once shutdown was requested.
   func ensureRunning() throws {
     guard !terminationRequested else { throw RemappingOutputRoutingError.shutDown }
   }
 
+  /// Returns `permit` when the emission barrier still permits it.
+  ///
+  /// - Throws: ``RemappingOutputRoutingError/shutDown`` when the barrier is terminated, and
+  ///   ``RemappingEventEngineError/outputSuspended`` when `permit` is nil or not permitted.
   @discardableResult
   func requireOperationalPermit(
     _ permit: RemappingEmissionPermit?
@@ -69,6 +81,10 @@ extension RemappingRoutingCore {
     return permit
   }
 
+  /// Releases the output of `identifier` and tells the virtual gamepad that it stopped when
+  /// `profile` publishes one.
+  ///
+  /// - Throws: The failure to release the output, after the virtual gamepad was told.
   func releaseAndRetire(
     for identifier: LogicalControllerID,
     profile: RemappingProfile,
@@ -84,6 +100,12 @@ extension RemappingRoutingCore {
     if let releaseError { throw releaseError }
   }
 
+  /// Releases everything that the engine holds for `identifier`.
+  ///
+  /// An output suspension ends the release without failing, unless the barrier is terminated.
+  ///
+  /// - Throws: ``RemappingOutputRoutingError`` for a failure of the engine, and
+  ///   ``RemappingOutputRoutingError/shutDown`` once the barrier is terminated.
   func releaseAllSafely(
     for identifier: LogicalControllerID,
     requiring proposedPermit: RemappingEmissionPermit?

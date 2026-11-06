@@ -13,14 +13,21 @@ public enum VirtualHIDProfileOverrideError: Error, Equatable, Sendable {
 public struct VirtualPersona: Equatable, Sendable {
   /// The identity strings, IDs, and glyph family a user defined over the descriptor.
   public struct Identity: Equatable, Sendable {
+    /// The USB vendor ID.
     public let vendorID: UInt16
+    /// The USB product ID.
     public let productID: UInt16
+    /// The version number; nil when the persona sets none.
     public let versionNumber: Int?
+    /// The product name.
     public let productName: String
+    /// The manufacturer name.
     public let manufacturer: String
+    /// The glyph family of the published product.
     public let glyphFamily: VirtualIdentityGlyphFamily
   }
 
+  /// The built-in descriptor that the persona uses.
   public let descriptor: VirtualHIDProfileID
   /// Nil for a persona that only selects the descriptor, which `ojd virtual` writes.
   public let identity: Identity?
@@ -29,6 +36,7 @@ public struct VirtualPersona: Equatable, Sendable {
 /// One file of the `VirtualDevices` directory or of a package, or the folder that OJD does not
 /// read, and whether OJD applied it.
 public struct VirtualPersonaFile: Equatable, Sendable {
+  /// The file or folder.
   public let url: URL
   /// Why OJD skipped the file, or nil when it applied it.
   public let problem: String?
@@ -58,37 +66,55 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
   /// The name of the folder of `VirtualDevice` files, in the user data folder and in a package.
   public static let directoryName = "VirtualDevices"
 
-  /// The folder name `Personas`, which OJD does not read. The concept is a persona, but the files
-  /// are `VirtualDevice` documents and live in ``directoryName``; ``files`` lists this folder when
-  /// it holds a visible file, so that its files do not go unnoticed.
+  /// The folder name `Personas`, which OJD does not read.
+  ///
+  /// The concept is a persona, but the files are `VirtualDevice` documents and live in
+  /// ``directoryName``; ``files`` lists this folder when it holds a visible file, so that its files
+  /// do not go unnoticed.
   public static let unreadFolderName = "Personas"
 
+  /// Formats the messages about files.
   private static let localization = Localization()
 
   /// A controller model, or one unit of it when `unit` is set.
   struct Model: Hashable {
+    /// The USB vendor ID of the controller.
     let vendorID: UInt16
+    /// The USB product ID of the controller.
     let productID: UInt16
+    /// The unit ID of one controller of the model; nil for the whole model.
     var unit: String?
 
+    /// The name of the persona file: `vvvv-pppp.json`, with `-<unit>` before the extension for a
+    /// unit.
     var fileName: String {
       String(format: "%04x-%04x", vendorID, productID) + (unit.map { "-\($0)" } ?? "") + ".json"
     }
   }
 
+  /// A persona and the file it came from.
   private struct Found {
+    /// The persona.
     let persona: VirtualPersona
+    /// The file that holds the persona.
     let url: URL
-    /// Whether an installed package holds the file. A package file is never written or removed.
+    /// Whether an installed package holds the file.
+    ///
+    /// A package file is never written or removed.
     var fromPackage = false
   }
 
+  /// The personas and files that a load found.
   private struct Loaded {
+    /// The personas by model.
     var personas: [Model: Found] = [:]
+    /// Every file seen, with the reason it was skipped.
     var files: [VirtualPersonaFile] = []
   }
 
+  /// The directory of the persona files.
   private let directory: URL
+  /// The installed packages, whose personas apply too.
   private let packages: ModPackageStore
 
   /// The store of `directory`, with the personas of the packages installed in the `Packages`
@@ -217,7 +243,9 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
   }
 
   /// Returns one controller model, or one unit of it, to automatic selection by removing its
-  /// descriptor-only persona file. Resetting a unit leaves its model's persona in effect.
+  /// descriptor-only persona file.
+  ///
+  /// Resetting a unit leaves its model's persona in effect.
   ///
   /// - Throws: The load error while the directory cannot be read or written, and
   ///   ``VirtualHIDProfileOverrideError/keptFile(_:)`` for a persona with a custom identity or
@@ -236,8 +264,9 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
     }
   }
 
-  /// Removes every descriptor-only persona file of the `VirtualDevices` directory. Package files
-  /// and files OJD skipped stay.
+  /// Removes every descriptor-only persona file of the `VirtualDevices` directory.
+  ///
+  /// Package files and files OJD skipped stay.
   ///
   /// - Returns: The paths of the user files that set their own identity, which stay, and of the
   ///   files that could not be removed.
@@ -256,6 +285,7 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
     return kept.sorted()
   }
 
+  /// Loads the user files, then the files of the installed packages.
   private func load() -> Result<Loaded, VirtualHIDProfileOverrideError> {
     loadUserFiles().map { user in
       var loaded = user
@@ -264,10 +294,11 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
     }
   }
 
-  /// Adds the personas of the installed packages, in package-name order. A package that cannot be
-  /// used, such as one whose `requires` leaves out the running version, adds none, and its
-  /// `mod.json` is listed with the reason. A persona whose match a user file or an earlier package
-  /// already holds is skipped and listed with that reason.
+  /// Adds the personas of the installed packages, in package-name order.
+  ///
+  /// A package that cannot be used, such as one whose `requires` leaves out the running version,
+  /// adds none, and its `mod.json` is listed with the reason. A persona whose match a user file or
+  /// an earlier package already holds is skipped and listed with that reason.
   private func addPackageFiles(to loaded: inout Loaded) {
     for package in packages.list() {
       if let problem = package.problem {
@@ -304,6 +335,7 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
     }
   }
 
+  /// Loads the persona files of the directory in file-name order; a missing directory holds none.
   private func loadUserFiles() -> Result<Loaded, VirtualHIDProfileOverrideError> {
     let urls: [URL]
     do {
@@ -340,6 +372,9 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
   }
 
   /// Decodes one `virtual-device.schema.json` document that selects a persona.
+  ///
+  /// - Throws: The error of decoding the document, or `ControllerRecordProblem` when the document
+  ///   holds no `match`.
   static func parse(_ data: Data) throws -> (Model, VirtualPersona) {
     let device = try VirtualDevice.decode(data, source: .unnamed, requiresMatch: true)
     guard let model = device.match else {

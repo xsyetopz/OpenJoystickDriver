@@ -1,7 +1,9 @@
 import Foundation
 
-/// The operating-system services the neutral command grammar reaches for. A host adapter module
-/// conforms to it and the executable installs the conformance before any command runs.
+/// The operating-system services the neutral command grammar reaches for.
+///
+/// A host adapter module conforms to it and the executable installs the conformance before any
+/// command runs.
 package protocol PlatformHost: Sendable {
   /// The bundle identifier of the DriverKit extension the host installs.
   var extensionID: String { get }
@@ -43,6 +45,7 @@ package protocol PlatformHost: Sendable {
 
 /// Holds the installed `PlatformHost`.
 package enum PlatformHosts {
+  /// The installed host; nil until `install` runs.
   private static let installed = Locked<(any PlatformHost)?>(nil)
 
   /// Installs `host`; the executable calls it once at launch, and tests call it to inject a fake.
@@ -50,7 +53,9 @@ package enum PlatformHosts {
     installed.withLock { $0 = host }
   }
 
-  /// The installed host. Reading it before `install` is a programming error.
+  /// The installed host.
+  ///
+  /// Reading it before `install` is a programming error.
   package static var current: any PlatformHost {
     guard let host = installed.withLock({ $0 }) else {
       preconditionFailure("No PlatformHost installed; the executable installs one at launch.")
@@ -61,5 +66,6 @@ package enum PlatformHosts {
 
 /// The ports the access WebSocket may listen on.
 package enum AccessWebPorts {
+  /// The ports the WebSocket may listen on.
   package static let allowed = 1_024...65_535
 }

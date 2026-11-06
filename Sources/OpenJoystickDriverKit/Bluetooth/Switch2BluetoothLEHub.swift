@@ -1,6 +1,8 @@
 import Foundation
 
-/// GATT writes to one connected Switch 2 controller. Each returns false when the link cannot send.
+/// GATT writes to one connected Switch 2 controller.
+///
+/// Each returns false when the link cannot send.
 public protocol Switch2BluetoothLEWriter: Sendable {
   /// Writes one command to the command characteristic, without response.
   func writeCommand(_ bytes: [UInt8]) -> Bool
@@ -11,12 +13,18 @@ public protocol Switch2BluetoothLEWriter: Sendable {
 /// Switch 2 GATT identifiers and advertisement format, from ndeadly's switch2_controller_research
 /// and joycon2cpp.
 public enum Switch2BluetoothLEProfile {
+  /// The UUID of the GATT service of a Switch 2 controller.
   public static let serviceUUID = "AB7DE9BE-89FE-49AD-828F-118F09DF7FD0"
+  /// The UUID of the characteristic that notifies input frames.
   public static let inputUUID = "AB7DE9BE-89FE-49AD-828F-118F09DF7FD2"
+  /// The UUID of the characteristic that takes commands.
   public static let commandUUID = "649D4AC9-8EB7-4E6C-AF44-1EA54FE5F005"
+  /// The UUID of the characteristic that notifies command replies.
   public static let commandReplyUUID = "C765A961-D9D8-4D36-A20A-5315B111836A"
 
+  /// The Nintendo company ID that starts the manufacturer data of an advertisement.
   static let nintendoCompanyID: UInt16 = 0x0553
+  /// Nintendo's USB vendor ID, which the advertisement repeats.
   static let nintendoVendorID: UInt16 = 0x057E
   /// The `Transport` property value the host HID stack reports for a Bluetooth LE device.
   static let hidTransportProperty = "BluetoothLowEnergy"
@@ -51,27 +59,42 @@ public final class Switch2BluetoothLEHub: @unchecked Sendable {
   /// The console's vibration report length on every model.
   static let vibrationReportLength = 0x2A
 
+  /// A read that waits for the next command reply.
   private struct ReplyWaiter {
+    /// Tells this waiter from a later one of the same link.
     let token: UInt64
+    /// Resumed with the reply, or nil when the read times out or the link goes.
     let continuation: CheckedContinuation<[UInt8]?, Never>
   }
 
+  /// One connected controller.
   private struct Link {
+    /// The peripheral's Core Bluetooth identifier.
     let peripheralID: UUID
+    /// The HID connection that the hub presents.
     let connection: HIDDeviceConnection
+    /// The writer for the controller's GATT characteristics.
     let writer: any Switch2BluetoothLEWriter
+    /// The command replies that no read has taken.
     var replies: [[UInt8]] = []
     /// The unread rest of the reply being read, empty after a reply read to its end.
     var current: [UInt8]?
+    /// The read that waits for a reply; nil when none waits.
     var waiter: ReplyWaiter?
   }
 
+  /// Guards the links, the waiter counter and the event stream.
   private let lock = NSLock()
+  /// The connected controllers by peripheral identifier.
   private var links: [UUID: Link] = [:]
+  /// The token of the latest waiter.
   private var nextWaiterToken: UInt64 = 0
+  /// The continuation of the current event stream; nil when no stream is open.
   private var continuation: AsyncStream<HIDDeviceEvent>.Continuation?
+  /// Tells event streams apart, so a finished stream does not clear a newer one.
   private var streamGeneration: UInt64 = 0
 
+  /// Creates a hub with no connected controllers.
   public init() {}
 
   // MARK: - CoreBluetooth central input
@@ -143,6 +166,7 @@ public final class Switch2BluetoothLEHub: @unchecked Sendable {
     waiter?.continuation.resume(returning: bytes)
   }
 
+  /// Removes the controller `peripheralID` and ends the read that waits on it.
   public func linkDisconnected(peripheralID: UUID) {
     let removed = lock.withLock { () -> (Link, AsyncStream<HIDDeviceEvent>.Continuation?)? in
       guard let link = links.removeValue(forKey: peripheralID) else { return nil }
@@ -184,6 +208,7 @@ public final class Switch2BluetoothLEHub: @unchecked Sendable {
     return stream
   }
 
+  /// The snapshots of the connected controllers, sorted by routing address.
   func connectionSnapshots() -> [HIDDeviceConnectionSnapshot] {
     lock.withLock {
       links.values.map {
@@ -192,8 +217,9 @@ public final class Switch2BluetoothLEHub: @unchecked Sendable {
     }.sorted { $0.connection.routingAddress < $1.connection.routingAddress }
   }
 
-  /// Sends a USB-layout vibration report. Over Bluetooth LE the report-ID byte is zero and the
-  /// report is 42 bytes on every model.
+  /// Sends a USB-layout vibration report.
+  ///
+  /// Over Bluetooth LE the report-ID byte is zero and the report is 42 bytes on every model.
   func setOutputReport(
     peripheralID: UUID,
     report: PhysicalHIDOutputReport
@@ -219,8 +245,10 @@ public final class Switch2BluetoothLEHub: @unchecked Sendable {
     guard writer.writeCommand(bytes) else { throw USBTransportError.inputOutput }
   }
 
-  /// Reads at most `length` bytes of the next reply. A read that ends exactly at a reply's end is
-  /// followed by one empty read, so a caller reading until a short transfer stops at each reply.
+  /// Reads at most `length` bytes of the next reply.
+  ///
+  /// A read that ends exactly at a reply's end is followed by one empty read, so a caller reading
+  /// until a short transfer stops at each reply.
   func readReply(
     peripheralID: UUID,
     length: Int,
@@ -244,6 +272,7 @@ public final class Switch2BluetoothLEHub: @unchecked Sendable {
     lock.withLock { links[peripheralID]?.waiter != nil }
   }
 
+  /// Takes up to `length` bytes of `reply` and keeps the rest for the next read of `peripheralID`.
   private func take(_ length: Int, of reply: [UInt8], peripheralID: UUID) -> [UInt8] {
     let chunk = Array(reply.prefix(length))
     lock.withLock {
@@ -252,11 +281,16 @@ public final class Switch2BluetoothLEHub: @unchecked Sendable {
     return chunk
   }
 
+  /// The start of a wait for a reply.
   private enum WaitStart {
+    /// A reply, or nil when the link is gone, is ready.
     case ready([UInt8]?)
+    /// The read waits; the token identifies its waiter.
     case waiting(token: UInt64)
   }
 
+  /// Waits up to `timeout` milliseconds for the next reply of `peripheralID`; nil when none
+  /// arrives.
   private func nextReply(peripheralID: UUID, timeout: UInt32) async -> [UInt8]? {
     await withCheckedContinuation { (continuation: CheckedContinuation<[UInt8]?, Never>) in
       let (start, abandoned) = lock.withLock { () -> (WaitStart, ReplyWaiter?) in

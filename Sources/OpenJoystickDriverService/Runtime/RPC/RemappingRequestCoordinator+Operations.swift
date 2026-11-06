@@ -2,10 +2,12 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension RemappingRequestCoordinator {
+  /// Returns the profiles, active profiles, routes, Joy-Con pairs and issues as one snapshot.
   func snapshot() async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
     await exclusively { try await makeSnapshot() }
   }
 
+  /// Runs the motion calibration `command` on the controller that `arguments` names.
   func motionCalibration(
     _ arguments: ApplicationServiceMotionCalibrationArguments
   ) async -> RemappingRequestResult<RemappingMotionCalibrationStatus> {
@@ -23,6 +25,7 @@ extension RemappingRequestCoordinator {
     }
   }
 
+  /// Pairs the two Joy-Con controllers under the profile and returns the snapshot.
   func pairJoyCons(
     _ arguments: ApplicationServiceJoyConPairArguments
   ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
@@ -43,6 +46,7 @@ extension RemappingRequestCoordinator {
     }
   }
 
+  /// Ends the Joy-Con pair session and returns the snapshot.
   func unpairJoyCons(
     _ arguments: ApplicationServiceJoyConUnpairArguments
   ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
@@ -52,6 +56,7 @@ extension RemappingRequestCoordinator {
     }
   }
 
+  /// Returns the profile `id`, or a profile-not-found error.
   func profile(id: UUID) async -> RemappingRequestResult<RemappingProfile> {
     await exclusively {
       guard let profile = try await library.profile(id: id) else {
@@ -62,12 +67,14 @@ extension RemappingRequestCoordinator {
     }
   }
 
+  /// Adds `profile` to the library and returns the snapshot.
   func create(
     _ profile: RemappingProfile
   ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
     await mutate { try await library.create(profile) }
   }
 
+  /// Replaces the profile if the stored one equals `expectedCurrent`, and returns the snapshot.
   func update(
     _ profile: RemappingProfile,
     expectedCurrent: RemappingProfile
@@ -78,15 +85,18 @@ extension RemappingRequestCoordinator {
     )
   }
 
+  /// Adds `profile` as an imported profile and returns the snapshot.
   func importProfile(
     _ profile: RemappingProfile
   ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
     await mutate { try await library.importProfile(profile) }
   }
 
+  /// Deletes the profile `id` and returns the snapshot.
   func delete(id: UUID) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload>
   { await mutate { try await library.delete(id: id) } }
 
+  /// Deletes the damaged profile of the issue `issueID` and returns the snapshot.
   func deleteDamagedProfile(
     issueID: UUID
   ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
@@ -96,6 +106,7 @@ extension RemappingRequestCoordinator {
     }
   }
 
+  /// Resets the damaged library of the issue `issueID` and returns the snapshot.
   func resetDamagedLibrary(
     issueID: UUID
   ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
@@ -122,6 +133,8 @@ extension RemappingRequestCoordinator {
     }
   }
 
+  /// Activates the profile `id` for its model; `allowEmpty` lets a profile that produces no output
+  /// activate.
   func activate(
     id: UUID,
     allowEmpty: Bool
@@ -129,6 +142,7 @@ extension RemappingRequestCoordinator {
     await mutate { try await library.activate(profileID: id, allowEmpty: allowEmpty) }
   }
 
+  /// Deactivates every profile of the model and returns the snapshot.
   func deactivate(
     vendorID: UInt16,
     productID: UInt16
@@ -136,16 +150,19 @@ extension RemappingRequestCoordinator {
     await mutate { try await library.deactivateAll(vendorID: vendorID, productID: productID) }
   }
 
+  /// Deactivates the profile `profileID` and returns the snapshot.
   func deactivate(
     profileID: UUID
   ) async -> RemappingRequestResult<ApplicationServiceRemappingSnapshotPayload> {
     await mutate { try await library.deactivate(profileID: profileID) }
   }
 
+  /// Returns the state of the access to post system input events.
   func currentPostEventAccess() async -> RemappingRequestResult<RemappingPostEventAccessState> {
     await exclusively { postEventAccess.currentState() }
   }
 
+  /// Requests the access to post system input events and refreshes route eligibility.
   func requestPostEventAccess() async -> RemappingRequestResult<RemappingPostEventAccessState> {
     await changing {
       let state = postEventAccess.requestAccess()
@@ -154,6 +171,14 @@ extension RemappingRequestCoordinator {
     }
   }
 
+  /// Applies a library change as one transaction on the library and the routes.
+  ///
+  /// A failure rolls the library and the routes back and is reported as the original error.
+  ///
+  /// - Parameters:
+  ///   - preflight: Checks the request before the library changes.
+  ///   - operation: Changes the library and returns the models that need a refresh.
+  /// - Returns: The result of the request, with the snapshot of the remapping state.
   private func mutate(
     preflight: @Sendable () async throws -> Void = {},
     operation: () async throws -> RemappingProfileMutationImpact
@@ -182,6 +207,12 @@ extension RemappingRequestCoordinator {
     }
   }
 
+  /// Builds the snapshot of the library and the router.
+  ///
+  /// When `validateResponse` is set, the payload must fit the response limits.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError/corruptLibrary`` when an active profile is missing,
+  ///   or ``ApplicationServiceRemappingRPCError`` when the payload does not fit.
   private func makeSnapshot(
     validateResponse: Bool = true
   ) async throws -> ApplicationServiceRemappingSnapshotPayload {
@@ -232,6 +263,10 @@ extension RemappingRequestCoordinator {
     return payload
   }
 
+  /// Restores the library and the routes to their state before a failed mutation.
+  ///
+  /// - Throws: ``ApplicationServiceRemappingRPCError`` with the unreconciled code when either
+  ///   restoration fails.
   private func rollBack(
     checkpoint: RemappingProfileLibraryCheckpoint,
     transaction: RemappingProfileTransaction,
@@ -255,6 +290,9 @@ extension RemappingRequestCoordinator {
     }
   }
 
+  /// Checks that `value` and its response frame fit the response limits.
+  ///
+  /// - Throws: ``ApplicationServiceRemappingRPCError`` when encoding fails or a limit is exceeded.
   private func ensurePayloadFits<Value: Encodable>(_ value: Value) throws {
     let encoded: Data
     do { encoded = try JSONEncoder().encode(value) } catch {
@@ -294,6 +332,7 @@ extension RemappingRequestCoordinator {
     return result
   }
 
+  /// Runs `operation` after every earlier operation and captures its outcome.
   private func exclusively<Value: Sendable>(
     _ operation: () async throws -> Value
   ) async -> RemappingRequestResult<Value> {
@@ -313,16 +352,20 @@ extension RemappingRequestCoordinator {
     return await capture(operation)
   }
 
+  /// Returns the value of `operation` or the RPC error that maps its failure.
   private func capture<Value: Sendable>(
     _ operation: () async throws -> Value
   ) async -> RemappingRequestResult<Value> {
     do { return .success(try await operation()) } catch { return .failure(Self.rpcError(error)) }
   }
 
+  /// Returns `models` ordered by vendor ID, then product ID.
   private static func sorted(_ models: Set<RemappingProfileModel>) -> [RemappingProfileModel] {
     models.sorted { ($0.vendorID, $0.productID) < ($1.vendorID, $1.productID) }
   }
 
+  /// Returns the payload of a Joy-Con pair, or nil when its profile has no pair settings or a
+  /// member has no session token.
   private static func joyConPairPayload(
     _ session: RemappingJoyConPairSession,
     tokens: [LogicalControllerID: ControllerSessionToken]
@@ -340,6 +383,7 @@ extension RemappingRequestCoordinator {
     )
   }
 
+  /// Returns the payload of a route for the controller session `sessionToken`.
   private static func routePayload(
     _ status: RemappingRouteStatus,
     sessionToken: ControllerSessionToken
@@ -369,6 +413,7 @@ extension RemappingRequestCoordinator {
     )
   }
 
+  /// Maps a routing eligibility to its RPC value.
   private static func routeEligibility(
     _ eligibility: RemappingRouteEligibility
   ) -> ApplicationServiceRemappingRouteEligibility {

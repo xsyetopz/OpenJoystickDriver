@@ -1,12 +1,14 @@
-@testable import OpenJoystickDriverKit
 import Testing
 
-/// The Z/Rz right-stick layout with Brake as LT and a Home button. Recorded from a wired GameSir G7
-/// SE (firmware 6.6.4) in its HID mode, report 0x05: 15 buttons, hat, X Y Z Rz and Simulation Brake
-/// then Accelerator, all 8-bit 0...255. The 8BitDo Ultimate 2C Wireless over Bluetooth LE
-/// (`2DC8:301B`) was confirmed on hardware to use the same usages (issue #34); its HID receiver
-/// (`2DC8:301C`) is assumed to match. The GameSir is not listed by identity; its recorded
-/// descriptor selects the layout.
+@testable import OpenJoystickDriverKit
+
+/// The Z/Rz right-stick layout with Brake as LT and a Home button.
+///
+/// Recorded from a wired GameSir G7 SE (firmware 6.6.4) in its HID mode, report 0x05: 15 buttons,
+/// hat, X Y Z Rz and Simulation Brake then Accelerator, all 8-bit 0...255. The 8BitDo Ultimate 2C
+/// Wireless over Bluetooth LE (`2DC8:301B`) was confirmed on hardware to use the same usages; its
+/// HID receiver (`2DC8:301C`) is assumed to match. The GameSir is not listed by identity; its
+/// recorded descriptor selects the layout.
 struct ZRzBrakeLeftLayoutTests {
   static let models = [
     ControllerModelID(vendorID: 0x3537, productID: 0x1082),

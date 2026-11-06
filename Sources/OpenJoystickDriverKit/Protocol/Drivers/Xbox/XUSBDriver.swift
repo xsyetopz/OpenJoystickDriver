@@ -2,8 +2,9 @@ import Foundation
 
 /// Report type byte for Xbox 360 input reports.
 private let xbox360InputReportType: UInt8 = 0x00
-/// Expected length byte and minimum size for a wired Xbox 360 input report.
+/// The length byte of a wired Xbox 360 input report.
 private let xbox360InputReportLengthByte: UInt8 = 0x14
+/// The minimum size of a wired Xbox 360 input report in bytes.
 private let xbox360InputReportLength = 20
 /// Maximum value for a trigger axis (UInt8).
 private let xbox360TriggerMax: Float = 255
@@ -12,7 +13,9 @@ private let xbox360StickMax = Float(Int16.max)
 
 /// Xbox 360 ring-of-light LED patterns.
 public enum Xbox360LEDPattern: UInt8, Sendable {
+  /// All LEDs off.
   case allOff = 0x00
+  /// All LEDs blink.
   case allBlink = 0x01
   /// Player 1: flash then hold.
   case player1Flash = 0x02
@@ -30,11 +33,17 @@ public enum Xbox360LEDPattern: UInt8, Sendable {
   case player3On = 0x08
   /// Player 4: steady on.
   case player4On = 0x09
+  /// The LEDs rotate.
   case rotate = 0x0A
+  /// The current player's LED blinks.
   case blinkCurrent = 0x0B
+  /// The current player's LED blinks slowly.
   case slowBlinkCurrent = 0x0C
+  /// Two LEDs rotate.
   case rotateTwo = 0x0D
+  /// All LEDs blink.
   case blinkAll = 0x0E
+  /// The pattern blinks once, then the previous pattern returns.
   case blinkOnceThenRestore = 0x0F
 }
 
@@ -83,11 +92,18 @@ public enum Xbox360LEDPattern: UInt8, Sendable {
 ///   byte 2 : LED pattern (see Xbox360LEDPattern)
 /// ```
 public final class XUSBDriver: PhysicalProtocolDriver {
+  /// The address of the interrupt OUT endpoint.
   private let outEndpoint: UInt8
+  /// Whether reports use the Xbox 360 receiver envelope.
   private let isWirelessReceiver: Bool
+  /// Whether the receiver reports a controller in this slot.
   private var receiverConnected = false
+  /// The latest connection change that ``consumeInputConnectionStateChange()`` has not returned.
   private var pendingConnectionState: ControllerInputConnectionState?
+  /// Writes produced while parsing, returned by ``drainPendingWrites()``.
   private var pendingWrites: [PhysicalOutputWrite] = []
+  /// Pad reports of the slot since the last presence report that arrived while it was not
+  /// present.
   private var padReportsWithoutPresence = 0
   /// Pad reports seen without presence between inquiry resends (`presenceResendReports`).
   let inquiryResendInterval: Int
@@ -98,15 +114,19 @@ public final class XUSBDriver: PhysicalProtocolDriver {
   /// The packet that carries the motor intensities.
   private let rumbleTemplate: RumbleOutputTemplate
 
+  /// The state after the latest report.
   private var state = ControllerState.neutral
+  /// The latest rumble sent, which the keep-alive repeats.
   private var lastRumble = RumbleIntensities.off
 
-  /// Creates a new XUSBDriver.
+  /// Creates the driver for a wired Xbox 360 controller, or for a receiver slot when
+  /// `isWirelessReceiver` is true.
   /// - Parameters:
   ///   - outEndpoint: Interrupt OUT endpoint address (default 0x01).
   ///   - isWirelessReceiver: Whether reports use the Xbox 360 receiver envelope.
   ///   - tuning: The effective tuning of the controller's record; the description's defaults
   ///     when nil.
+  ///   - usbStartupWrites: The record's startup packets; the description's when empty.
   ///   - rumbleTemplate: The record's rumble template; the description's for the variant when
   ///     nil.
   public init(
@@ -134,9 +154,15 @@ public final class XUSBDriver: PhysicalProtocolDriver {
   }
 
   /// Creates the driver for one Xbox 360 wireless receiver slot, or nil outside slots 0–3.
+  ///
   /// - Parameters:
   ///   - outEndpoint: Interrupt OUT endpoint address (default 0x01).
   ///   - slotOrdinal: Zero-based receiver slot in interface order.
+  ///   - tuning: The effective tuning of the controller's record; the description's defaults
+  ///     when nil.
+  ///   - usbStartupWrites: The record's startup packets; the description's when empty.
+  ///   - rumbleTemplate: The record's rumble template; the description's for the receiver
+  ///     variant when nil.
   public convenience init?(
     outEndpoint: UInt8 = 0x01,
     slotOrdinal: Int,
@@ -154,10 +180,13 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     )
   }
 
+  /// The controls of the description.
   public var capabilities: ControllerCapabilities {
     PhysicalProtocolID.xboxXUSB.describedControls
   }
 
+  /// The session plan: the rumble resend of the template, and the start of output only after a
+  /// wireless receiver reports a controller.
   public var sessionPlan: DriverSessionPlan {
     DriverSessionPlan(
       requiresInputConnectionBeforeOutput: isWirelessReceiver,
@@ -165,8 +194,9 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     ).withRumbleResend(of: rumbleTemplate)
   }
 
-  /// The last rumble again while a motor runs, when the template names a resend interval. A
-  /// receiver sends it only while its controller is connected.
+  /// The last rumble again while a motor runs, when the template names a resend interval.
+  ///
+  /// A receiver sends it only while its controller is connected.
   public func keepAliveWrites() -> [PhysicalOutputWrite] {
     guard !isWirelessReceiver || receiverConnected,
       let intensities = rumbleTemplate.resendIntensities(after: lastRumble)
@@ -174,6 +204,7 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     return [.usb(outputPacket(rumbleTemplate.reportBytes(intensities)))]
   }
 
+  /// Returns the pending connection change and clears it.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? {
     defer { pendingConnectionState = nil }
     return pendingConnectionState
@@ -181,18 +212,21 @@ public final class XUSBDriver: PhysicalProtocolDriver {
 
   // MARK: - PhysicalProtocolDriver
 
-  /// A wired Xbox 360 starts input without a handshake and sends no startup output. The manager
-  /// assigns every wired pad and receiver slot its ring LED from one pool of free player slots,
-  /// so two pads never both show player 1 (xpad numbers pads from one global `pad_nr` pool).
-  /// A receiver slot asks for presence so a controller already paired before the interface
-  /// opened reports itself (xpad.c:1845–1864). Either device that rejects its write still
-  /// starts: xpad fails start only when it cannot submit the write (xpad.c:1473).
+  /// A wired Xbox 360 starts input without a handshake and sends no startup output.
+  ///
+  /// The manager assigns every wired pad and receiver slot its ring LED from one pool of free
+  /// player slots, so two pads never both show player 1 (xpad numbers pads from one global `pad_nr`
+  /// pool). A receiver slot asks for presence so a controller already paired before the interface
+  /// opened reports itself (xpad.c:1845–1864). Either device that rejects its write still starts:
+  /// xpad fails start only when it cannot submit the write (xpad.c:1473).
   public func startupWrites() -> [PhysicalOutputWrite] {
     presenceInquiryWrites
   }
 
-  /// A new transport session learns receiver presence again from the device; the pipeline drops
-  /// its own connection state with the old session.
+  /// Clears the state of the session.
+  ///
+  /// A receiver slot learns presence again from the device, and the pipeline drops its own
+  /// connection state with the session.
   public func resetProtocolState() {
     state = .neutral
     lastRumble = .off
@@ -203,6 +237,7 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     padReportsWithoutPresence = 0
   }
 
+  /// Returns the queued writes and clears the queue.
   public func drainPendingWrites() -> [PhysicalOutputWrite] {
     defer { pendingWrites.removeAll(keepingCapacity: true) }
     return pendingWrites
@@ -241,6 +276,8 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     }
   }
 
+  /// Queues the presence inquiry again after every `inquiryResendInterval` pad reports that came
+  /// without a presence report, up to the description's limit.
   private func resendPresenceInquiry() {
     defer { padReportsWithoutPresence += 1 }
     guard padReportsWithoutPresence.isMultiple(of: inquiryResendInterval),
@@ -284,6 +321,7 @@ public final class XUSBDriver: PhysicalProtocolDriver {
 
   // MARK: - Output
 
+  /// The rumble motors of the template and the player indicator.
   public var outputCapabilities: PhysicalControllerOutputCapabilities {
     PhysicalControllerOutputCapabilities(
       rumbleMotors: rumbleTemplate.outputCapabilities.rumbleMotors,
@@ -291,8 +329,11 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     )
   }
 
+  /// No default colour: the controller has no light to restore.
   public var defaultColor: ControllerColor? { nil }
 
+  /// Encodes a rumble, a rumble stop or a player indicator command; any other command is rejected
+  /// as unsupported.
   public func encode(
     _ command: ControllerOutputCommand
   ) throws(ControllerOutputError) -> PhysicalOutputPlan {
@@ -311,14 +352,18 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     return PhysicalOutputPlan(writes: [.usb(packet)])
   }
 
+  /// The bytes of the LED output report for `pattern`; a receiver slot uses the wireless envelope.
   func ledPacket(pattern: Xbox360LEDPattern) -> [UInt8] {
     isWirelessReceiver ? wirelessLEDPacket(pattern: pattern) : [0x01, 0x03, pattern.rawValue]
   }
 
+  /// The wireless-receiver envelope of the LED output report for `pattern`.
   private func wirelessLEDPacket(pattern: Xbox360LEDPattern) -> [UInt8] {
     [0x00, 0x00, 0x08, 0x40 + pattern.rawValue, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
   }
 
+  /// Records whether the receiver reports a controller in this slot and queues the change; a
+  /// disconnect resets the state and the rumble.
   private func updateReceiverConnection(isConnected: Bool) {
     guard receiverConnected != isConnected else { return }
     receiverConnected = isConnected
@@ -330,6 +375,7 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     }
   }
 
+  /// The ring LED pattern that shows `indicator`.
   static func ledPattern(for indicator: PhysicalPlayerIndicator) -> Xbox360LEDPattern {
     switch indicator {
     case .off: .allOff
@@ -340,10 +386,12 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     }
   }
 
+  /// The USB output packet that sets the ring LED to `pattern`.
   private func ledOutputPacket(pattern: Xbox360LEDPattern) -> PhysicalUSBOutputPacket {
     outputPacket(ledPacket(pattern: pattern))
   }
 
+  /// The USB output packet that carries `bytes` to the OUT endpoint.
   private func outputPacket(_ bytes: [UInt8]) -> PhysicalUSBOutputPacket {
     PhysicalUSBOutputPacket(
       endpoint: outEndpoint,
@@ -354,11 +402,13 @@ public final class XUSBDriver: PhysicalProtocolDriver {
 
   // MARK: - Private parsing
 
+  /// The stick axis `raw` as -1...1.
   private func normalizeStick(_ raw: Int16) -> Float {
     if raw == Int16.min { return -1.0 }
     return Float(raw) / xbox360StickMax
   }
 
+  /// The hat direction of the D-pad bits of the button word.
   private func mapDpad(_ value: UInt16) -> HatDirection {
     // bits: up=1, down=2, left=4, right=8
     switch value {

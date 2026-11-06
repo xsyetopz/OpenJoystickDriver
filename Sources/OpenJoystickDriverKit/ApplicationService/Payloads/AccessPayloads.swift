@@ -3,14 +3,25 @@ import Foundation
 
 /// What an endpoint client may do: `Read` controller events, or `Control` a virtual gamepad.
 public enum EndpointScope: String, Codable, CaseIterable, Comparable, Sendable {
+  /// The client may receive controller events.
   case read = "Read"
+  /// The client may drive a virtual gamepad.
   case control = "Control"
 
   /// The scope on the command line: the lowercase kebab-case form of its name, such as `read`.
   public var commandLineName: String { CommandLineName.kebab(rawValue) }
 
+  /// Whether `lhs` ranks below `rhs`: `Read` is below `Control`.
   public static func < (lhs: Self, rhs: Self) -> Bool {
-    allCases.firstIndex(of: lhs)! < allCases.firstIndex(of: rhs)!
+    lhs.declarationIndex < rhs.declarationIndex
+  }
+
+  /// The position of this scope in `allCases`.
+  private var declarationIndex: Int {
+    guard let index = Self.allCases.firstIndex(of: self) else {
+      preconditionFailure("every case of a CaseIterable enum is in allCases")
+    }
+    return index
   }
 }
 
@@ -25,8 +36,11 @@ extension CodeSigningIdentity {
 
 /// A client the user allowed to use the endpoint, as stored in `AccessGrants.json`.
 public struct AccessGrant: Codable, Equatable, Sendable {
+  /// How the client is signed.
   public let kind: CodeSigningIdentity.Kind
+  /// The client's signing identifier.
   public let identifier: String
+  /// The publisher's ID; nil when the signing kind has none.
   public let publisherID: String?
   /// Sorted, without repeats.
   public let scopes: [EndpointScope]
@@ -38,29 +52,44 @@ public struct AccessGrant: Codable, Equatable, Sendable {
   /// with a `control` scope but no mark is damaged.
   public let controlGrantedAt: String?
 
+  /// The keys of the JSON encoding.
   private enum CodingKeys: String, CodingKey, CaseIterable {
+    /// The `publisher` key.
     case publisher
+    /// The `identifier` key.
     case identifier
+    /// The `scopes` key.
     case scopes
+    /// The `grantedAt` key.
     case grantedAt
+    /// The `path` key.
     case path
+    /// The `controlGrantedAt` key.
     case controlGrantedAt
   }
 
+  /// The `publisher` object of a stored grant.
   private struct StoredPublisher: Codable {
+    /// How the client is signed.
     let kind: CodeSigningIdentity.Kind
+    /// The publisher's ID; nil when the signing kind has none.
     let id: String?
 
+    /// The keys of the JSON encoding.
     private enum CodingKeys: String, CodingKey, CaseIterable {
+      /// The `kind` key.
       case kind
+      /// The `id` key.
       case id
     }
 
+    /// Creates the stored publisher from its values.
     init(kind: CodeSigningIdentity.Kind, id: String?) {
       self.kind = kind
       self.id = id
     }
 
+    /// Decodes the value from `decoder`.
     init(from decoder: any Decoder) throws {
       try decoder.rejectUnknownKeys(CodingKeys.self)
       let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -69,6 +98,7 @@ public struct AccessGrant: Codable, Equatable, Sendable {
     }
   }
 
+  /// Decodes the value from `decoder`.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -82,6 +112,7 @@ public struct AccessGrant: Codable, Equatable, Sendable {
     controlGrantedAt = try container.decodeIfPresent(String.self, forKey: .controlGrantedAt)
   }
 
+  /// Encodes the value into `encoder`.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(StoredPublisher(kind: kind, id: publisherID), forKey: .publisher)
@@ -92,6 +123,10 @@ public struct AccessGrant: Codable, Equatable, Sendable {
     try container.encodeIfPresent(controlGrantedAt, forKey: .controlGrantedAt)
   }
 
+  /// Creates a grant for the client `identity`.
+  ///
+  /// The grant keeps `scopes` sorted and without repeats, and sets ``controlGrantedAt`` when they
+  /// include `control`.
   public init(
     identity: CodeSigningIdentity,
     scopes: [EndpointScope],
@@ -107,6 +142,7 @@ public struct AccessGrant: Codable, Equatable, Sendable {
     controlGrantedAt = scopes.contains(.control) ? grantedAt : nil
   }
 
+  /// The signing identity of the client.
   public var identity: CodeSigningIdentity {
     CodeSigningIdentity(kind: kind, identifier: identifier, publisherID: publisherID)
   }
@@ -114,9 +150,12 @@ public struct AccessGrant: Codable, Equatable, Sendable {
 
 /// Who published a client: how it was signed, and the publisher's ID when it has one.
 public struct AccessPublisher: Codable, Equatable, Sendable {
+  /// How the client is signed.
   public let kind: CodeSigningIdentity.Kind
+  /// The publisher's ID; nil when the signing kind has none.
   public let id: String?
 
+  /// Creates a publisher from its values.
   public init(kind: CodeSigningIdentity.Kind, id: String?) {
     self.kind = kind
     self.id = id
@@ -125,15 +164,20 @@ public struct AccessPublisher: Codable, Equatable, Sendable {
 
 /// A grant as `ojd access` prints it, with its client ID.
 public struct AccessGrantSummary: Codable, Equatable, Sendable {
+  /// The client ID, the short ID that `ojd access` shows.
   public let id: String
   /// The publisher, a sub-object because every `--json` document has its own `kind`.
   public let publisher: AccessPublisher
+  /// The client's signing identifier.
   public let identifier: String
+  /// What the client may do.
   public let scopes: [EndpointScope]
   /// RFC 3339 time of the latest grant.
   public let grantTime: String
+  /// Where the client was when it was granted.
   public let path: String
 
+  /// Creates the summary of `grant`.
   public init(_ grant: AccessGrant) {
     id = grant.identity.accessID
     publisher = AccessPublisher(kind: grant.kind, id: grant.publisherID)
@@ -146,17 +190,22 @@ public struct AccessGrantSummary: Codable, Equatable, Sendable {
 
 /// A client the endpoint refused in the last 24 hours.
 public struct AccessRefusedClient: Codable, Equatable, Sendable {
+  /// The client ID, the short ID that `ojd access` shows.
   public let id: String
+  /// Who published the client.
   public let publisher: AccessPublisher
+  /// The client's signing identifier.
   public let identifier: String
   /// The client's executable, when the service could read it.
   public let path: String?
+  /// What the client asked for.
   public let scopes: [EndpointScope]
   /// The error code the client got, such as `E1002`.
   public let reason: String
   /// RFC 3339 time of the latest refusal.
   public let refusalTime: String
 
+  /// Creates a refused-client entry for `identity`; `scopes` is sorted and without repeats.
   public init(
     identity: CodeSigningIdentity,
     path: String?,
@@ -173,6 +222,7 @@ public struct AccessRefusedClient: Codable, Equatable, Sendable {
     self.refusalTime = refusalTime
   }
 
+  /// The signing identity of the refused client.
   public var identity: CodeSigningIdentity {
     CodeSigningIdentity(
       kind: publisher.kind,
@@ -184,7 +234,9 @@ public struct AccessRefusedClient: Codable, Equatable, Sendable {
 
 /// How a client reaches the endpoint: the Unix socket, or the WebSocket on `127.0.0.1`.
 public enum AccessTransport: String, Codable, Sendable {
+  /// The client connected through the Unix socket.
   case socket = "Socket"
+  /// The client connected through the WebSocket.
   case web = "Web"
 }
 
@@ -194,9 +246,12 @@ public struct AccessConnection: Codable, Equatable, Sendable {
   public let id: String
   /// The signing identifier, or the token name.
   public let identifier: String
+  /// What the client may do.
   public let scopes: [EndpointScope]
+  /// How the client reached the endpoint.
   public let transport: AccessTransport
 
+  /// Creates a connection entry from its values.
   public init(id: String, identifier: String, scopes: [EndpointScope], transport: AccessTransport) {
     self.id = id
     self.identifier = identifier
@@ -204,6 +259,7 @@ public struct AccessConnection: Codable, Equatable, Sendable {
     self.transport = transport
   }
 
+  /// Creates the entry of a socket client signed as `identity`.
   public init(identity: CodeSigningIdentity, scopes: [EndpointScope]) {
     self.init(
       id: identity.accessID,
@@ -218,13 +274,16 @@ public struct AccessConnection: Codable, Equatable, Sendable {
 public struct AccessTokenSummary: Codable, Equatable, Sendable {
   /// `token:NAME`.
   public let id: String
+  /// The name of the token grant.
   public let name: String
   /// The web origins, as `scheme://host[:port]`, whose pages may use the token on the WebSocket.
   public let origins: [String]
+  /// What the token may do.
   public let scopes: [EndpointScope]
   /// RFC 3339 time of the latest grant.
   public let grantTime: String
 
+  /// Creates a token summary whose ID is `token:` followed by `name`.
   public init(name: String, origins: [String], scopes: [EndpointScope], grantTime: String) {
     id = "token:\(name)"
     self.name = name
@@ -240,12 +299,16 @@ public struct AccessRefusedToken: Codable, Equatable, Sendable {
   public let name: String?
   /// The page's origin; WebSocket only.
   public let origin: String?
+  /// How the client reached the endpoint.
   public let transport: AccessTransport
+  /// What the client asked for; sorted and without repeats.
   public let scopes: [EndpointScope]
+  /// Why the endpoint refused the token.
   public let reason: String
   /// RFC 3339 time of the latest refusal.
   public let refusalTime: String
 
+  /// Creates a refused-token entry from its values; `scopes` is sorted and without repeats.
   public init(
     name: String?,
     origin: String?,
@@ -265,7 +328,9 @@ public struct AccessRefusedToken: Codable, Equatable, Sendable {
 
 /// The WebSocket and the overlay pages on `127.0.0.1`.
 public struct AccessWebStatus: Codable, Equatable, Sendable {
+  /// Whether the user turned the WebSocket on.
   public let enabled: Bool
+  /// Whether the WebSocket accepts connections now.
   public let listening: Bool
   /// Nil until the first `ojd access web enable`, which picks a free port unless one is given.
   public let port: Int?
@@ -276,6 +341,7 @@ public struct AccessWebStatus: Codable, Equatable, Sendable {
   /// The folder the overlay pages are served from.
   public let pagesPath: String
 
+  /// Creates the status; the URLs follow from `port`.
   public init(enabled: Bool, listening: Bool, port: Int?, pagesPath: String) {
     self.enabled = enabled
     self.listening = listening
@@ -288,16 +354,24 @@ public struct AccessWebStatus: Codable, Equatable, Sendable {
 
 /// The endpoint's state, its grants, and the clients it refused recently.
 public struct AccessStatusPayload: Codable, Equatable, Sendable {
+  /// Whether the endpoint is turned on.
   public let enabled: Bool
   /// Where the endpoint listens while it is enabled.
   public let socketPath: String
+  /// The clients connected now.
   public let connections: [AccessConnection]
+  /// The clients the user allowed.
   public let grants: [AccessGrantSummary]
+  /// The clients the endpoint refused in the last 24 hours.
   public let refused: [AccessRefusedClient]
+  /// The state of the WebSocket.
   public let web: AccessWebStatus
+  /// The token grants.
   public let tokens: [AccessTokenSummary]
+  /// The tokens the endpoint refused in the last 24 hours.
   public let refusedTokens: [AccessRefusedToken]
 
+  /// Creates the status from its values.
   public init(
     enabled: Bool,
     socketPath: String,
@@ -321,38 +395,55 @@ public struct AccessStatusPayload: Codable, Equatable, Sendable {
 
 /// The result of `ojd access grant --token`: the token, which is shown only this once.
 public struct AccessTokenGrantResult: Codable, Equatable, Sendable {
+  /// The token, which the service does not keep.
   public let token: String
+  /// The grant the token belongs to.
   public let grant: AccessTokenSummary
 
+  /// Creates the result from its values.
   public init(token: String, grant: AccessTokenSummary) {
     self.token = token
     self.grant = grant
   }
 }
 
+/// The arguments of `setAccessEnabled`.
 package struct AccessEnabledArguments: Codable, Sendable {
+  /// Whether to turn the endpoint on.
   package let enabled: Bool
 }
 
+/// The arguments of `grantAccess`.
 package struct AccessGrantArguments: Codable, Sendable {
+  /// The signing identity of the client to allow.
   package let identity: CodeSigningIdentity
+  /// Where the client is; for display only.
   package let path: String
+  /// The scopes to add to the client's grant.
   package let scopes: [EndpointScope]
 }
 
+/// The arguments of `grantTokenAccess`.
 package struct AccessTokenGrantArguments: Codable, Sendable {
+  /// The name of the token grant.
   package let name: String
+  /// The web origins whose pages may use the token.
   package let origins: [String]
+  /// The scopes of the token.
   package let scopes: [EndpointScope]
 }
 
+/// The arguments of `setWebAccess`.
 package struct AccessWebArguments: Codable, Sendable {
+  /// Whether to turn the WebSocket on.
   package let enabled: Bool
   /// Nil keeps the saved port; 0 lets the system pick a free port.
   package let port: Int?
 }
 
+/// The arguments of `revokeAccess`.
 package struct AccessRevokeArguments: Codable, Sendable {
+  /// The client ID or `token:NAME` of the grant.
   package let id: String
   /// Nil revokes every scope.
   package let scopes: [EndpointScope]?
@@ -360,6 +451,7 @@ package struct AccessRevokeArguments: Codable, Sendable {
 
 /// The result of `ojd access revoke`.
 public struct AccessRevokeResult: Codable, Equatable, Sendable {
+  /// The ID of the client or token that was revoked.
   public let id: String
   /// The client grant left after the revoke; nil when no scope is left or `id` is a token.
   public let grant: AccessGrantSummary?
@@ -368,6 +460,7 @@ public struct AccessRevokeResult: Codable, Equatable, Sendable {
   /// Live connections that were closed with `E1005`.
   public let closedConnections: Int
 
+  /// Creates the result from its values.
   public init(
     id: String,
     grant: AccessGrantSummary?,

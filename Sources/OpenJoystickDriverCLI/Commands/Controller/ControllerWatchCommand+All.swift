@@ -28,6 +28,7 @@ extension ControllerWatchCommand {
     }
   }
 
+  /// Prints one watch event as a JSON line, a `--plain` row or a human line.
   private func emit(
     _ event: ControllerWatchEvent,
     device: ApplicationServiceDeviceDescription
@@ -63,21 +64,26 @@ extension ControllerWatchCommand {
 
 /// Reads controllers through the service socket, each read bounded by the request timeout.
 private struct ServiceWatchSource: ControllerWatchSource {
+  /// The open service connection.
   let client: ApplicationServiceClient
+  /// The seconds that each read may take.
   let timeout: Double
 
+  /// Reads the connected devices from the service.
   func devices() async throws -> [ApplicationServiceDeviceDescription] {
     try await ServiceConnection.withDeadline(seconds: timeout) {
       try await client.getStatus().connectedDevices
     }
   }
 
+  /// Reads the input state of `device` from the service.
   func state(of device: ApplicationServiceDeviceDescription) async throws -> ControllerState? {
     try await ServiceConnection.withDeadline(seconds: timeout) {
       try await client.controllerState(for: .session(device.sessionToken))
     }
   }
 
+  /// Reads the virtual output state of `device` from the service.
   func output(
     of device: ApplicationServiceDeviceDescription
   ) async throws

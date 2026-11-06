@@ -1,12 +1,14 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
-import OpenJoystickDriverTestSupport
 
 /// The documents the Swift decoders refuse, read from `SchemaRejections/controller.json` and
-/// `protocol-description.json`. Each case has a unique name and input and names the `ErrorCode`
-/// its decoder gives. A case with `schema: true` is also rejected by the JSON Schema alone, which
+/// `protocol-description.json`.
+///
+/// Each case has a unique name and input and names the `ErrorCode` its decoder gives. A case with
+/// `schema: true` is also rejected by the JSON Schema alone, which
 /// `Tests/RepositoryScripts/test_schema_rejection_flags.py` checks.
 struct SchemaRejectionTests {
   private static func cases(_ file: String) throws -> [[String: Any]] {

@@ -4,19 +4,25 @@ import OpenJoystickDriverKit
 
 /// A program that a grant names: its signature and where it was read.
 struct AccessClientCandidate: Equatable, Identifiable {
+  /// The program's code signature.
   let identity: CodeSigningIdentity
+  /// Where the program was read.
   let path: String
 
+  /// The signature's access identifier.
   var id: String { identity.accessID }
 }
 
 /// The input of the token form.
 struct AccessTokenDraft: Equatable {
+  /// The token's name.
   var name = ""
   /// One web origin per line; empty for a token that only local programs use.
   var originsText = ""
+  /// The scopes that the token carries; read by default.
   var scopes: Set<EndpointScope> = [.read]
 
+  /// The web origins in ``originsText``, one per non-empty line.
   var origins: [String] {
     originsText.split(whereSeparator: \.isNewline).map {
       $0.trimmingCharacters(in: .whitespaces)
@@ -26,14 +32,20 @@ struct AccessTokenDraft: Equatable {
 
 /// An operation that waits for the person's confirmation in a window-modal sheet.
 enum AccessPending: Identifiable, Equatable {
+  /// Enable the local endpoint.
   case enableEndpoint
+  /// Enable the WebSocket on `port`; nil keeps the saved port and 0 asks for a free one.
   case enableWeb(port: Int?)
+  /// Grant the program access.
   case grantClient(AccessClientCandidate)
+  /// Create a token with the name for the web origins.
   case grantToken(name: String, origins: [String])
   /// `scope` nil removes the whole grant; otherwise only that scope.
   case revokeGrant(id: String, name: String, scope: EndpointScope?)
+  /// Revoke a token, or only `scope` of it.
   case revokeToken(id: String, name: String, scope: EndpointScope?)
 
+  /// The identity of the pending operation, which tells the sheets apart.
   var id: String {
     switch self {
     case .enableEndpoint: "enableEndpoint"
@@ -48,27 +60,39 @@ enum AccessPending: Identifiable, Equatable {
 
 /// The text and button of a confirmation sheet; its wording matches the action.
 struct AccessConfirmation: Equatable {
+  /// The sheet's title.
   let title: String
-  /// Warnings first, then the question.
+  /// The sheet's lines.
   let lines: [String]
+  /// The title of the confirm button.
   let confirmTitle: String
+  /// Whether the confirm button is marked destructive.
   let isDestructive: Bool
 }
 
-/// The token a grant created. The service does not keep it, so the sheet that shows it is the
-/// only place it can be read.
+/// The token a grant created.
+///
+/// The service does not keep it, so the sheet that shows it is the only place it can be read.
 struct AccessIssuedToken: Identifiable, Equatable {
+  /// The token's name.
   let name: String
+  /// The token's secret text.
   let token: String
 
+  /// The identity of the token, which is its name.
   var id: String { name }
 }
 
+/// The sheet over the Access area.
 enum AccessSheet: Identifiable, Equatable {
+  /// The confirmation of a pending operation.
   case confirm(AccessPending)
+  /// The form that creates a token.
   case tokenForm
+  /// The sheet that shows a created token once.
   case issuedToken(AccessIssuedToken)
 
+  /// The identity of the sheet, which tells the sheets apart.
   var id: String {
     switch self {
     case .confirm(let pending): "confirm.\(pending.id)"
@@ -78,30 +102,41 @@ enum AccessSheet: Identifiable, Equatable {
   }
 }
 
+/// The state and actions of the Access area: the service endpoint, the WebSocket, program grants
+/// and tokens.
 @MainActor
 final class AccessViewModel: ObservableObject {
+  /// The status of the Access area as loaded from the service.
   enum Load: Equatable {
+    /// The status has not loaded yet.
     case loading
+    /// The status as loaded.
     case loaded(AccessStatusPayload)
+    /// The status could not be loaded.
     case failed(AccessFailure)
   }
 
+  /// The status of the Access area.
   @Published
   private(set) var load = Load.loading
+  /// Whether a request is running.
   @Published
   private(set) var busy = false
   /// Why the latest operation failed.
   @Published
   private(set) var failure: AccessFailure?
+  /// The open sheet, or nil when none is open.
   @Published
   var sheet: AccessSheet?
   /// The scopes of the grant that the open confirmation sheet asks for.
   @Published
   var grantScopes: Set<EndpointScope> = [.read]
+  /// The input of the token form.
   @Published
   var tokenDraft = AccessTokenDraft()
-  /// The port field of the WebSocket form. It shows the saved port until the person edits it;
-  /// empty keeps the saved port.
+  /// The port field of the WebSocket form.
+  ///
+  /// It shows the saved port until the person edits it; empty keeps the saved port.
   @Published
   var portText = "" {
     didSet {
@@ -114,11 +149,16 @@ final class AccessViewModel: ObservableObject {
   @Published
   private(set) var choosesAutomaticPort = false
 
+  /// Whether the person edited the port field, which stops it from following the saved port.
   private var portEdited = false
+  /// Whether the model is filling the port field, which is not an edit by the person.
   private var isFillingPort = false
+  /// Sends the access requests to the service.
   private let service: any AccessService
+  /// Reads the code signature of the program at a path.
   private let identityAtPath: (URL) -> CodeSigningIdentity?
 
+  /// Creates the model on a service and a signature reader.
   init(
     service: any AccessService = ApplicationServiceAccessService(),
     identityAtPath: @escaping (URL) -> CodeSigningIdentity? = {
@@ -129,6 +169,7 @@ final class AccessViewModel: ObservableObject {
     self.identityAtPath = identityAtPath
   }
 
+  /// The loaded status, or nil while it is loading or failed.
   var status: AccessStatusPayload? {
     if case .loaded(let status) = load { return status }
     return nil
@@ -153,8 +194,9 @@ final class AccessViewModel: ObservableObject {
     choosesAutomaticPort = true
   }
 
-  /// The port the field names: nil keeps the saved port, 0 asks for a free one. A failure names
-  /// a port outside the range a user may bind.
+  /// The port the field names: nil keeps the saved port, 0 asks for a free one.
+  ///
+  /// A failure names a port outside the range a user may bind.
   func webPort() throws -> Int? {
     if choosesAutomaticPort { return 0 }
     let text = portText.trimmingCharacters(in: .whitespaces)
@@ -172,8 +214,12 @@ final class AccessViewModel: ObservableObject {
     return port
   }
 
+  /// Clears the failure message.
   func dismissFailure() { failure = nil }
 
+  /// Loads the access status from the service.
+  ///
+  /// A failure shows in ``load``.
   func refresh() async {
     do { show(try await service.status()) } catch {
       load = .failed(AccessFailure(error))
@@ -182,20 +228,26 @@ final class AccessViewModel: ObservableObject {
 
   // MARK: Requests that need no confirmation
 
+  /// Turns the local endpoint off.
   func disableEndpoint() async { await apply { try await service.setEnabled(false) } }
 
+  /// Turns the WebSocket off.
   func disableWeb() async { await apply { try await service.setWeb(enabled: false, port: nil) } }
 
   // MARK: Requests that ask first
 
+  /// Asks to confirm turning the local endpoint on.
   func requestEnableEndpoint() { sheet = .confirm(.enableEndpoint) }
 
+  /// Asks to confirm turning the WebSocket on at the port that ``webPort()`` returns, or shows the
+  /// failure for a port outside the allowed range.
   func requestEnableWeb() {
     perform {
       sheet = .confirm(.enableWeb(port: try webPort()))
     }
   }
 
+  /// Asks to grant `candidate`, or shows a failure for a program with an ad hoc signature.
   func requestGrant(_ candidate: AccessClientCandidate) {
     guard candidate.identity.kind != .adHoc else {
       failure = AccessFailure(
@@ -221,8 +273,10 @@ final class AccessViewModel: ObservableObject {
     requestGrant(AccessClientCandidate(identity: identity, path: url.path))
   }
 
-  /// Asks to grant a refused client. A client whose executable the service could not read has no
-  /// path to record, so the grant is refused.
+  /// Asks to grant a refused client.
+  ///
+  /// A client whose executable the service could not read has no path to record, so the grant is
+  /// refused.
   func requestRefusedGrant(_ client: AccessRefusedClient) {
     guard let path = client.path else {
       failure = AccessFailure(
@@ -234,6 +288,7 @@ final class AccessViewModel: ObservableObject {
     requestGrant(AccessClientCandidate(identity: client.identity, path: path))
   }
 
+  /// Opens the token form with an empty draft.
   func requestTokenForm() {
     tokenDraft = AccessTokenDraft()
     sheet = .tokenForm
@@ -259,8 +314,9 @@ final class AccessViewModel: ObservableObject {
     sheet = .confirm(.grantToken(name: draft.name, origins: draft.origins))
   }
 
-  /// The scopes of a grant that can be revoked one at a time. A grant with a single scope has
-  /// none: revoking it removes the whole grant.
+  /// The scopes of a grant that can be revoked one at a time.
+  ///
+  /// A grant with a single scope has none: revoking it removes the whole grant.
   static func scopeChoices(of scopes: [EndpointScope]) -> [EndpointScope] {
     scopes.count > 1 ? scopes : []
   }
@@ -275,10 +331,13 @@ final class AccessViewModel: ObservableObject {
     sheet = .confirm(.revokeToken(id: token.id, name: token.name, scope: scope))
   }
 
+  /// Closes the open sheet.
   func cancelSheet() { sheet = nil }
 
+  /// Closes the sheet that shows the created token.
   func closeIssuedToken() { sheet = nil }
 
+  /// Closes the sheet and runs the confirmed operation, then shows the status that follows.
   func confirm(_ pending: AccessPending) async {
     sheet = nil
     switch pending {
@@ -313,6 +372,7 @@ final class AccessViewModel: ObservableObject {
 
   // MARK: Confirmation text
 
+  /// Returns the wording of the confirmation sheet for `pending`.
   func confirmation(for pending: AccessPending) -> AccessConfirmation {
     switch pending {
     case .enableEndpoint:
@@ -401,6 +461,7 @@ final class AccessViewModel: ObservableObject {
     }
   }
 
+  /// Returns the confirmation for revoking only `scope`.
   private func partialRevoke(
     title: String,
     name: String,
@@ -420,12 +481,13 @@ final class AccessViewModel: ObservableObject {
 
   // MARK: Private
 
+  /// Clears the failure and runs `body`, which shows its error as the failure.
   private func perform(_ body: () throws -> Void) {
     failure = nil
     do { try body() } catch { failure = AccessFailure(error) }
   }
 
-  /// Runs a request that returns the endpoint's state afterward.
+  /// Runs a request that returns the endpoint's state afterward, with ``busy`` set while it runs.
   private func apply(_ request: () async throws -> AccessStatusPayload) async {
     failure = nil
     busy = true

@@ -5,11 +5,14 @@
   import SwiftUI
 
   extension BindingBehaviorSheet {
+    /// Receives the behavior, pulse duration in milliseconds, turbo, long hold, double tap and
+    /// additional actions when the person chooses Apply.
     typealias SaveAction = (
       RemappingBindingBehavior, Double, RemappingTurbo?, RemappingLongHold?, RemappingDoubleTap?,
       [RemappingAction]
     ) -> Void
 
+    /// The behavior sheet's fields and its Cancel and Apply buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
         Text(OJDLocalized.string("ui.profiles.bindingBehavior")).font(
@@ -127,6 +130,8 @@
       }.padding(28).frame(width: 470)
     }
 
+    /// Whether the assignment's source can start a long hold or double tap: any discrete source
+    /// with a discrete destination.
     private var supportsActivation: Bool {
       switch binding.source {
       case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe:
@@ -135,6 +140,15 @@
       }
     }
 
+    /// A slider for `value` with `title` and the formatted value beside it.
+    ///
+    /// - Parameters:
+    ///   - title: The text above the slider.
+    ///   - value: The number to edit.
+    ///   - range: The values the slider allows.
+    ///   - format: The `String(format:)` pattern of the value shown.
+    ///   - multiplier: Scales the value before it is formatted, such as 100 for a percentage.
+    /// - Returns: The slider with the title and the formatted value.
     private func valueSlider(
       title: String,
       value: Binding<Double>,
@@ -154,6 +168,7 @@
       }
     }
 
+    /// A picker of the discrete destinations, with the fields of a physical output.
     private func destinationPicker(selection: Binding<RemappingDestination>) -> some View {
       VStack(alignment: .leading, spacing: 8) {
         Picker(
@@ -168,6 +183,7 @@
       }
     }
 
+    /// Dismisses the sheet.
     func dismiss() { presentationMode.wrappedValue.dismiss() }
   }
 

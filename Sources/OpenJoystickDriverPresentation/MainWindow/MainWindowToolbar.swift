@@ -5,31 +5,53 @@
 
   /// An area action shown in the main window's toolbar while its area is selected.
   enum MainWindowToolbarAction: String, CaseIterable {
+    /// Starts a new profile.
     case newProfile
+    /// Chooses a profile file to import.
     case importProfile
+    /// Checks a profile file without importing it.
     case validateProfileFile
+    /// Duplicates the selected profile.
     case duplicateProfile
+    /// Saves the selected profile to a file.
     case exportProfile
+    /// Asks to delete the selected profile.
     case deleteProfile
+    /// Installs a controller record or mod folder into the Library.
     case installLibraryItem
+    /// Grants a program access to the service.
     case grantProgram
+    /// Opens the form that creates an access token.
     case createToken
+    /// Validates a controller record or mod folder.
     case validateLibraryItem
+    /// Tests the selected Library record against a capture and its expectation.
     case testLibraryRecord
+    /// Asks to remove the selected Library item.
     case removeLibraryItem
+    /// The Library search field.
     case searchLibrary
+    /// The view switch of Activity.
     case activityMode
+    /// The menu of the log stream filter and line count.
     case activityFilter
+    /// The Activity log search field.
     case activitySearch
+    /// Copies the visible log lines.
     case copyActivityLog
+    /// Saves the logs to a file.
     case saveActivityLog
+    /// Reveals the log file in Finder.
     case showActivityLogInFinder
+    /// Runs the diagnostic checks.
     case runDiagnostics
 
+    /// The toolbar item identifier of the action.
     var identifier: NSToolbarItem.Identifier {
       NSToolbarItem.Identifier("OpenJoystickDriver.MainWindowToolbar.\(rawValue)")
     }
 
+    /// Creates the action whose ``identifier`` is `identifier`, or nil when none matches.
     init?(identifier: NSToolbarItem.Identifier) {
       guard let action = Self.allCases.first(where: { $0.identifier == identifier }) else {
         return nil
@@ -37,6 +59,7 @@
       self = action
     }
 
+    /// The SF Symbol of the toolbar item.
     var symbolName: String {
       switch self {
       case .newProfile: return "plus"
@@ -62,7 +85,7 @@
       }
     }
 
-    /// Localization key of the item's label.
+    /// The localization key of the item's label.
     var labelKey: String {
       switch self {
       case .newProfile: return "ui.profiles.new"
@@ -88,7 +111,7 @@
       }
     }
 
-    /// Localization key of the item's tooltip and accessibility description.
+    /// The localization key of the item's tooltip and accessibility description.
     var descriptionKey: String {
       switch self {
       case .newProfile: return "ui.profiles.new"
@@ -126,11 +149,12 @@
   }
 
   extension MainWindowToolbarAction {
-    /// Duplicate and Export act on the saved profile, so they wait for the editor's changes to
-    /// be saved.
+    /// Whether the action acts on the saved profile.
+    ///
+    /// Duplicate and Export wait for the editor's changes to be saved.
     var needsSavedProfile: Bool { self == .duplicateProfile || self == .exportProfile }
 
-    /// Whether a Profiles action is enabled; other actions are always enabled here.
+    /// Whether a Profiles action is enabled in `state`; other actions are always enabled here.
     func isEnabled(profile state: ProfileToolbarState) -> Bool {
       switch self {
       case .newProfile, .importProfile: return !state.isBlocked
@@ -150,7 +174,9 @@
   }
 
   extension MainWindowArea {
-    /// The toolbar actions of the area, in order. Activity's depend on which of its views is shown.
+    /// The toolbar actions of the area, in order.
+    ///
+    /// Activity's depend on which of its views is shown.
     func toolbarActions(activityMode: ActivityMode) -> [MainWindowToolbarAction] {
       switch self {
       case .controllers: return []
@@ -189,19 +215,24 @@
     }
   }
 
-  /// Toolbar layout of the main window: the sidebar toggle, then the separator that follows the
+  /// The toolbar layout of the main window: the sidebar toggle, then the separator that follows the
   /// sidebar's edge, then flexible space that pushes the selected area's actions to the trailing
-  /// edge. The window title and subtitle sit after the separator.
+  /// edge.
+  ///
+  /// The window title and subtitle sit after the separator.
   enum MainWindowToolbarLayout {
     /// The width of a toolbar search field, as in Mail and Finder.
     static let searchFieldWidth: CGFloat = 220
 
+    /// The identifier of the main window's toolbar.
     static let toolbar = NSToolbar.Identifier("OpenJoystickDriver.MainWindowToolbar")
 
+    /// The items that every area shows, before its actions.
     static let fixedItems: [NSToolbarItem.Identifier] = [
       .toggleSidebar, .sidebarTrackingSeparator, .flexibleSpace,
     ]
 
+    /// Returns the fixed items followed by the actions of `area`.
     static func items(
       for area: MainWindowArea,
       activityMode: ActivityMode
@@ -209,10 +240,14 @@
       fixedItems + area.toolbarActions(activityMode: activityMode).map(\.identifier)
     }
 
+    /// Returns the fixed items and every action.
     static var allowedItems: [NSToolbarItem.Identifier] {
       fixedItems + MainWindowToolbarAction.allCases.map(\.identifier)
     }
 
+    /// Returns a toolbar item for `action`, with its label, tooltip and symbol.
+    ///
+    /// The Library search action gets a search field item.
     @MainActor
     static func makeItem(for action: MainWindowToolbarAction) -> NSToolbarItem {
       let item =

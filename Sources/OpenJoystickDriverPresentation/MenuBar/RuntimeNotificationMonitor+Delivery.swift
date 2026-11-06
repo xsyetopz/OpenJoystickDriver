@@ -7,6 +7,10 @@
 
   extension RuntimeNotificationMonitor {
 
+    /// Compares `snapshot` with the previous one and delivers a notification for each change.
+    ///
+    /// The first snapshot only sets the baseline. No notification is delivered while the settings
+    /// file cannot be read.
     func observe(_ snapshot: RuntimeNotificationSnapshot) {
       guard let previousSnapshot else {
         self.previousSnapshot = snapshot
@@ -28,6 +32,9 @@
       for event in events { deliver(event) }
     }
 
+    /// Delivers the notification for `event` when its preference is on.
+    ///
+    /// Controller Needs Attention follows the controller connected preference.
     func deliver(_ event: RuntimeNotificationEvent) {
       switch event {
       case .controllerConnected(let name):
@@ -80,8 +87,11 @@
       }
     }
 
+    /// Whether notification sounds are enabled.
     private var notificationSoundIsEnabled: Bool { preferenceIsEnabled(.notifySounds) }
 
+    /// Returns whether the preference `key` is on.
+    ///
     /// A settings file that cannot be read is logged with its path, and the preference counts as
     /// off, so the notification is not delivered on a default.
     private func preferenceIsEnabled(_ key: ApplicationSettingKey) -> Bool {
@@ -95,6 +105,8 @@
       }
     }
 
+    /// Returns the notification text for a change from `previousName` to `currentName`, which is
+    /// nil for no active profile.
     private func profileChangeBody(from previousName: String?, to currentName: String?) -> String {
       switch (previousName, currentName) {
       case (.some(let previous), .some(let current)):

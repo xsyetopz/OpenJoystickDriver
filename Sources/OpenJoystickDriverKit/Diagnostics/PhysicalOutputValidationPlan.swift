@@ -2,11 +2,16 @@ import Foundation
 
 /// Redacted, capability-driven manual validation instructions for physical controller output.
 public struct PhysicalOutputValidationPlan: Equatable, Sendable {
+  /// One `ojd controller` command to run and what the tester should see.
   public struct Step: Equatable, Sendable, Identifiable {
+    /// The name of the step, such as `left-trigger`.
     public let id: String
+    /// The `ojd controller` command to run.
     public let command: String
+    /// What the controller shows when the command works.
     public let expectedObservation: String
 
+    /// Creates a step from its values.
     public init(id: String, command: String, expectedObservation: String) {
       self.id = id
       self.command = command
@@ -14,10 +19,16 @@ public struct PhysicalOutputValidationPlan: Equatable, Sendable {
     }
   }
 
+  /// The USB vendor ID of the controller.
   public let vendorID: UInt16
+  /// The USB product ID of the controller.
   public let productID: UInt16
+  /// The protocol family bound to the controller.
   public let protocolBinding: ProtocolBindingID
+  /// The steps that match the controller's motors, player indicators and lighting, in the order to
+  /// run them.
   public let steps: [Step]
+  /// The notes to read before testing.
   public let notes: [String]
 
   /// `selector` names the controller in the commands; it defaults to its `VVVV:PPPP` identity.
@@ -31,6 +42,9 @@ public struct PhysicalOutputValidationPlan: Equatable, Sendable {
     )
   }
 
+  /// Creates a plan for a controller with `capabilities`.
+  ///
+  /// `selector` names the controller in the commands; it defaults to its `VVVV:PPPP` identity.
   public init(
     vendorID: UInt16,
     productID: UInt16,
@@ -52,6 +66,9 @@ public struct PhysicalOutputValidationPlan: Equatable, Sendable {
     ]
   }
 
+  /// The steps for `capabilities`; each capability the controller lacks adds none.
+  ///
+  /// `identity` names the controller in the commands.
   private static func steps(
     selector identity: String,
     capabilities: PhysicalControllerOutputCapabilities

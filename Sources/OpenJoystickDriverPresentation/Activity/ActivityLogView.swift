@@ -3,16 +3,20 @@
   import AppKit
   import SwiftUI
 
-  /// A full-height table of the service log lines. The toolbar holds the filter, the search and
-  /// the actions.
+  /// A full-height table of the service log lines.
+  ///
+  /// The toolbar holds the filter, the search and the actions.
   struct ActivityLogView: View {
+    /// The log's model.
     @ObservedObject
     var model: ActivityLogModel
 
+    /// The log content.
     var body: some View {
       content
     }
 
+    /// The load failure with a retry button, a note for no lines, or the table.
     @ViewBuilder
     private var content: some View {
       if let failure = model.loadFailure {

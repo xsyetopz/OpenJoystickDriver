@@ -3,21 +3,30 @@ import Foundation
 import OpenJoystickDriverKit
 import OpenJoystickDriverUSB
 
+/// Keeps the protocol driver of a record probe on one actor, so the startup writes and the input
+/// monitor share the driver's state.
 private actor ControllerRecordProbeIsolation {
+  /// The protocol driver that the record selects.
   private let driver: any PhysicalProtocolDriver
   /// Produced once, so the RECORD line shows the exact writes sent, sequence numbers included.
   private lazy var startupWrites = driver.startupWrites()
 
+  /// Creates the isolation around `driver`.
   init(driver: sending any PhysicalProtocolDriver) { self.driver = driver }
 
+  /// Prints the RECORD line of `plan` with the startup writes of the driver.
   func printRecord(plan: ControllerRecordProbePlan, transport: DeviceTransportProfile) {
     renderProbeRecord(plan: plan, startup: startupWrites, transport: transport)
   }
 
+  /// Sends the startup writes of the driver over `session`.
   func sendStartupPackets(session: any USBTransportSession) async throws {
     try await writeProbeStartupPackets(startupWrites, session: session)
   }
 
+  /// Reads input packets from `session` for `seconds` and parses them with the driver.
+  ///
+  /// - Returns: The number of packets, events and parse errors.
   func monitor(
     transport: DeviceTransportProfile,
     session: any USBTransportSession,
@@ -33,6 +42,17 @@ private actor ControllerRecordProbeIsolation {
   }
 }
 
+/// Runs the record probe and exits with 0 on success, 2 when no raw USB device matches the record,
+/// and another code on a failure.
+///
+/// With `validateOnly`, it checks the record with an unobserved driver and opens no hardware.
+/// Otherwise it opens the matching raw USB device, sends the startup writes of the record and
+/// monitors the input for `seconds`.
+///
+/// - Parameters:
+///   - recordPath: The controller record file.
+///   - seconds: How long to monitor the input.
+///   - validateOnly: Whether to stop after validating the record.
 func runControllerRecordProbe(recordPath: String, seconds: Int, validateOnly: Bool) -> Never {
   let exitCode = Locked<Int32>(0)
   let done = DispatchSemaphore(value: 0)
@@ -163,6 +183,8 @@ private func refuseProbeDevice(reason: String, message: String, exitCode: Locked
   exitCode.withLock { $0 = 4 }
 }
 
+/// Prints the RECORD line: the identity, the USB transport profile and the startup packets of
+/// `plan`.
 private func renderProbeRecord(
   plan: ControllerRecordProbePlan,
   startup: [PhysicalOutputWrite],
@@ -180,6 +202,11 @@ private func renderProbeRecord(
   )
 }
 
+/// Writes each of `startup` to `session` and prints a USB_TX line for it.
+///
+/// A write that the transport reports as an ignorable startup output error is printed as ignored.
+///
+/// - Throws: ``USBTransportError`` for any other write failure.
 private func writeProbeStartupPackets(
   _ startup: [PhysicalOutputWrite],
   session: any USBTransportSession
@@ -211,6 +238,10 @@ private func writeProbe(_ write: PhysicalOutputWrite, session: any USBTransportS
   print("USB_TX endpoint=\(write.probeEndpoint) bytes=\(write.hexBytes)")
 }
 
+/// Reads input packets for `seconds`, prints each event and parse error, and sends the keep-alive
+/// and lifecycle packets that the driver asks for.
+///
+/// - Returns: The number of packets, events and parse errors.
 private func monitorProbeInput(
   driver: any PhysicalProtocolDriver,
   transport: DeviceTransportProfile,
@@ -277,6 +308,7 @@ private func monitorProbeInput(
   return (packetCount, eventCount, parseErrorCount)
 }
 
+/// Sends the writes that follow a connection state change that the driver reports.
 private func sendLifecyclePackets(
   driver: any PhysicalProtocolDriver,
   session: any USBTransportSession,
@@ -289,13 +321,16 @@ private func sendLifecyclePackets(
   }
 }
 
+/// Returns `value` as `0x`-prefixed lowercase hex.
 private func hex<T: BinaryInteger>(_ value: T) -> String { "0x" + String(value, radix: 16) }
 
 extension [UInt8] {
+  /// The bytes as lowercase hex pairs separated by spaces.
   var hexBytes: String { map { String(format: "%02x", $0) }.joined(separator: " ") }
 }
 
 extension PhysicalOutputWrite {
+  /// The endpoint of a USB write, or the report ID of a HID write, as hex.
   var probeEndpoint: String {
     switch self {
     case .usb(let packet, _): hex(packet.endpoint)
@@ -303,6 +338,7 @@ extension PhysicalOutputWrite {
     }
   }
 
+  /// The bytes of the write as lowercase hex pairs separated by spaces.
   var hexBytes: String {
     switch self {
     case .usb(let packet, _): packet.bytes.hexBytes

@@ -1,7 +1,17 @@
 import Foundation
 
 extension RemappingDeviceState {
-  /// Rebuilds the unmapped contribution using the same aggregate as explicit destinations.
+  /// Rebuilds the unmapped contribution to the virtual gamepad and returns the action when it
+  /// changed.
+  ///
+  /// It uses the same aggregate as explicit destinations and only runs for the passthrough virtual
+  /// gamepad policy. Active buttons and d-pad directions, and physical axis values, are included
+  /// unless the profile binds or reserves them.
+  /// - Parameters:
+  ///   - replayingAxis: An axis value to use in place of the recorded one, for a replayed press.
+  ///   - lookup: Reports whether the right pad of a controller is its right stick.
+  /// - Returns: The action that sets the unmapped contribution, or an empty array when the policy
+  ///   is not passthrough or the contribution did not change.
   mutating func updatePassthrough(
     replayingAxis: (RemappingAxis, Float)? = nil,
     rightPadIsRightStick lookup: (LogicalControllerID) -> Bool =
@@ -56,7 +66,11 @@ extension RemappingDeviceState {
     return [.gamepad(state, identifier)]
   }
 
-  /// Combination inputs stay out of raw output while their recognizers own them.
+  /// Sources withheld from passthrough because a recognizer owns them.
+  ///
+  /// Those are layer activators, axes of stick and trigger mappings that do not pass through, gyro
+  /// activation and trackball sources that the gyro consumes, held-back and consumed chord sources,
+  /// modifier chord sources, and sequence sources.
   private var reservedPassthroughSources: Set<RemappingSource> {
     var sources = Set(profile.layers.map(\.activator))
     for mapping in profile.stickMappings where !mapping.passthrough {

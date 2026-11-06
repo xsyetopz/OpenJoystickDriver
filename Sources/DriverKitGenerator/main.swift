@@ -3,11 +3,21 @@ import OpenJoystickDriverKit
 import OpenJoystickDriverUSB
 import SwifterKit
 
+/// The command-line options of `DriverKitGenerator`: the folder to write and the versions to stamp.
 private struct Arguments {
+  /// The folder that receives the generated DriverKit project; it must not exist yet.
   let output: URL
+  /// The marketing version (`CFBundleShortVersionString`) written into the generated project.
   let shortVersion: String
+  /// The build version (`CFBundleVersion`) written into the generated project.
   let buildVersion: String
 
+  /// Reads `--output`, `--short-version` and `--build-version` from `values`.
+  ///
+  /// - Parameter values: The command-line arguments after the executable name, as option and value
+  ///   pairs.
+  /// - Throws: ``ArgumentError`` when an option has no value, an option is unknown, or one of
+  ///   the three options is missing.
   init(_ values: [String]) throws {
     var output: String?
     var shortVersion: String?
@@ -32,11 +42,16 @@ private struct Arguments {
   }
 }
 
+/// The ways that the command-line arguments of `DriverKitGenerator` are refused.
 private enum ArgumentError: Error, CustomStringConvertible {
+  /// An option is the last argument and has no value; carries the option.
   case missingValue(String)
+  /// The argument is not one of the three options; carries the argument.
   case unknownOption(String)
+  /// One of `--output`, `--short-version` or `--build-version` is missing.
   case usage
 
+  /// The message that the generator prints on standard error for the refused argument.
   var description: String {
     switch self {
     case .missingValue(let option): "missing value for \(option)"
@@ -46,10 +61,13 @@ private enum ArgumentError: Error, CustomStringConvertible {
   }
 }
 
-/// Records that ask for the extension but are outside Apple's `transport.usb` grant.
+/// Thrown when a bundled controller record asks for the extension but its model is outside Apple's
+/// `transport.usb` grant.
 private struct OutsideGrantError: Error, CustomStringConvertible {
+  /// The models that are extension-owned and outside the grant.
   let models: [ControllerModelID]
 
+  /// The message that lists the offending models.
   var description: String {
     "ExtensionOwned records outside Apple's grant: "
       + models.map(\.description).joined(separator: ", ")

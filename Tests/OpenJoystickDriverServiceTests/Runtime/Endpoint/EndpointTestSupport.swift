@@ -75,6 +75,7 @@ func offPool<Result: Sendable>(_ work: @escaping @Sendable () -> Result) async -
 /// Whether the kernel reports that this process's dispatch workqueue reached
 /// `kern.wq_max_constrained_threads`, the limit on threads that Grand Central Dispatch's global
 /// queues run blocked work on (`WQ_EXCEEDED_CONSTRAINED_THREAD_LIMIT` in `sys/proc_info.h`).
+///
 /// The flag is set while blocked items queue behind the limit and clears once they finish. A
 /// process with no workqueue, which `proc_pidinfo` answers with `ESRCH`, has not reached it.
 func dispatchPoolIsSaturated() -> Bool {
@@ -87,8 +88,9 @@ func dispatchPoolIsSaturated() -> Bool {
 }
 
 /// Parks blocked work items on Grand Central Dispatch's global queues until the kernel reports the
-/// pool's thread limit reached (`dispatchPoolIsSaturated`), runs `body`, then releases them. A
-/// connection that depends on a pool thread starves meanwhile.
+/// pool's thread limit reached (`dispatchPoolIsSaturated`), runs `body`, then releases them.
+///
+/// A connection that depends on a pool thread starves meanwhile.
 func withSaturatedDispatchPool(_ body: () async throws -> Void) async rethrows {
   let release = DispatchSemaphore(value: 0)
   let items = 512
@@ -125,7 +127,9 @@ func clientLine(_ kind: String, _ fields: String = "") -> String {
 }
 
 /// An endpoint client whose socket calls block with a 5-second read timeout, so each runs off the
-/// cooperative pool. The calls of one client never overlap.
+/// cooperative pool.
+///
+/// The calls of one client never overlap.
 final class EndpointTestClient: @unchecked Sendable {
   /// The nonce of the challenge that the service sent first.
   private(set) var nonce = ""
@@ -211,7 +215,9 @@ final class EndpointTestClient: @unchecked Sendable {
 
 /// An HTTP and WebSocket client on `127.0.0.1` whose socket calls block with a 5-second read
 /// timeout, so each runs off the cooperative pool; written against RFC 6455 so the tests control
-/// every header and frame. The calls of one client never overlap.
+/// every header and frame.
+///
+/// The calls of one client never overlap.
 final class EndpointWebTestClient: @unchecked Sendable {
   struct Response {
     let status: Int

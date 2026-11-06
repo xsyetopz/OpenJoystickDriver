@@ -3,28 +3,49 @@
   import AppKit
   import OpenJoystickDriverKit
   import SwiftUI
+  /// What a combination sheet adds.
   enum ProfileCombinationKind {
+    /// A chord: controls pressed together.
     case chord
+    /// A sequence: controls pressed one after the other.
     case sequence
   }
 
+  /// The sheet that adds a chord or a sequence: its controls, its time window and its
+  /// destination.
   struct ProfileCombinationSheet: View {
+    /// Whether the sheet adds a chord or a sequence.
     let kind: ProfileCombinationKind
+    /// What the controller has, which marks unsupported sources and destinations.
     let capabilities: ControllerProfileCapabilities
+    /// Receives the sources, chord mode, window in milliseconds and destination.
     typealias SaveAction = ([RemappingSource], RemappingChordMode, Double, RemappingDestination) ->
       Void
+    /// Receives the combination when the person chooses Add.
     let onSave: SaveAction
+    /// Dismisses the sheet.
     @Environment(\.presentationMode)
     private var presentationMode
+    /// The controls of the combination.
     @State
     private var sources: [RemappingSource]
+    /// How a chord counts as pressed.
     @State
     private var chordMode: RemappingChordMode
+    /// The time window in milliseconds.
     @State
     private var windowMs: Double
+    /// The destination of the combination.
     @State
     private var destination: RemappingDestination
 
+    /// Creates the sheet with two controls, a modifier chord and a window of 50 ms for a chord or
+    /// 1000 ms for a sequence.
+    ///
+    /// - Parameters:
+    ///   - kind: Whether the sheet adds a chord or a sequence.
+    ///   - capabilities: What the controller has.
+    ///   - onSave: Receives the combination.
     init(
       kind: ProfileCombinationKind,
       capabilities: ControllerProfileCapabilities,
@@ -39,6 +60,7 @@
       _destination = State(initialValue: .keyboard(key: .space, modifiers: []))
     }
 
+    /// The control pickers, the timing, the destination and the Cancel and Add buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 15) {
         Text(title).font(.headline.weight(.semibold))
@@ -132,6 +154,7 @@
       }.padding(28).frame(width: 480)
     }
 
+    /// The title of the sheet.
     private var title: String {
       switch kind {
       case .chord: return OJDLocalized.string("ui.profiles.addChord")
@@ -139,15 +162,18 @@
       }
     }
 
+    /// The first control that the combination does not hold yet.
     private var nextSource: RemappingSource {
       discreteSources(capabilities: capabilities).first { !sources.contains($0.source) }?.source
         ?? .button(.south)
     }
 
+    /// Returns a binding to the control at `index`.
     private func sourceBinding(at index: Int) -> Binding<RemappingSource> {
       Binding(get: { sources[index] }, set: { sources[index] = $0 })
     }
 
+    /// A slider for `value` in milliseconds, with `title` and the value beside it.
     private func valueSlider(
       title: String,
       value: Binding<Double>,
@@ -165,21 +191,30 @@
       }
     }
 
+    /// Dismisses the sheet.
     private func dismiss() { presentationMode.wrappedValue.dismiss() }
   }
 
+  /// The sheet that adds a layer: its name, the control that activates it and how.
   struct ProfileLayerSheet: View {
+    /// What the controller has, which marks unsupported sources.
     let capabilities: ControllerProfileCapabilities
+    /// Receives the name, activator and activation mode when the person chooses Add.
     let onSave: (String, RemappingSource, RemappingLayerActivation) -> Void
+    /// Dismisses the sheet.
     @Environment(\.presentationMode)
     private var presentationMode
+    /// The name of the layer.
     @State
     private var name = ""
+    /// The control that activates the layer.
     @State
     private var activator: RemappingSource = .button(.leftShoulder)
+    /// Whether the layer is active while the activator is held or after it is toggled.
     @State
     private var activationMode = RemappingLayerActivation.hold
 
+    /// The layer name, activator and activation mode with the Cancel and Add buttons.
     var body: some View {
       ProfileSheetScaffold(title: OJDLocalized.string("ui.profiles.addLayer")) {
         TextField(OJDLocalized.string("ui.profiles.layerName"), text: $name)
@@ -212,20 +247,29 @@
       }
     }
 
+    /// Dismisses the sheet.
     private func dismiss() { presentationMode.wrappedValue.dismiss() }
   }
 
+  /// The sheet that adds an assignment to a layer.
   struct ProfileLayerBindingSheet: View {
+    /// The layer that receives the assignment.
     let layer: RemappingLayer
+    /// What the controller has, which marks unsupported sources and destinations.
     let capabilities: ControllerProfileCapabilities
+    /// Receives the source and destination when the person chooses Add.
     let onSave: (RemappingSource, RemappingDestination) -> Void
+    /// Dismisses the sheet.
     @Environment(\.presentationMode)
     private var presentationMode
+    /// The source of the assignment.
     @State
     private var source: RemappingSource = .button(.south)
+    /// The destination of the assignment.
     @State
     private var destination: RemappingDestination = .keyboard(key: .space, modifiers: [])
 
+    /// The source and destination pickers with the Cancel and Add buttons.
     var body: some View {
       ProfileSheetScaffold(
         title: OJDLocalized.formatted(
@@ -267,6 +311,8 @@
       }
     }
 
+    /// The source picker's binding; choosing a source keeps the destination when it still fits
+    /// the source, and else takes the first destination that does.
     private var sourceBinding: Binding<RemappingSource> {
       Binding(
         get: { source },
@@ -285,9 +331,11 @@
       )
     }
 
+    /// Dismisses the sheet.
     private func dismiss() { presentationMode.wrappedValue.dismiss() }
   }
 
+  /// Returns the sources that a chord, sequence or layer can use: every source except an axis.
   private func discreteSources(capabilities: ControllerProfileCapabilities) -> [SourceOption] {
     SourceOption.options(capabilities: capabilities).filter { option in
       switch option.source {
@@ -299,10 +347,13 @@
     }
   }
 
+  /// Returns the destinations of a discrete source, including `current`.
   func discreteDestinations(including current: RemappingDestination) -> [DestinationOption] {
     DestinationOption.options(for: .button(.south), including: current)
   }
 
+  /// Returns the destinations of a discrete source that fit `capabilities`, including
+  /// `current`.
   func discreteDestinations(
     including current: RemappingDestination,
     capabilities: ControllerProfileCapabilities

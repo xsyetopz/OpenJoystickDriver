@@ -1,31 +1,54 @@
 import Foundation
 
+/// Where gyro motion goes.
 public enum RemappingGyroOutputMode: String, Codable, CaseIterable, Sendable {
+  /// Gyro motion produces no output.
   case disabled = "Disabled"
+  /// Gyro motion moves the pointer.
   case mouse = "Mouse"
+  /// Gyro motion drives the left stick of the virtual gamepad.
   case leftStick = "LeftStick"
+  /// Gyro motion drives the right stick of the virtual gamepad.
   case rightStick = "RightStick"
 }
 
+/// When gyro output is active.
 public enum RemappingGyroActivationMode: String, Codable, CaseIterable, Sendable {
+  /// Gyro output is always active.
   case always = "Always"
+  /// Gyro output is active while the activation source is held.
   case whileHeld = "WhileHeld"
+  /// Gyro output is active while the activation source is not held.
   case whileReleased = "WhileReleased"
+  /// Each press of the activation source switches gyro output on or off.
   case toggle = "Toggle"
 }
 
 /// Converts tuned angular motion to a native output with explicit physical units.
 public struct RemappingGyroOutput: Codable, Equatable, Sendable {
+  /// Where gyro motion goes.
   public let mode: RemappingGyroOutputMode
+  /// Logical screen points of pointer movement per degree of rotation in
+  /// ``RemappingGyroOutputMode/mouse``.
   public let pointerPointsPerDegree: Double
+  /// Rotation speed that gives full stick deflection, in degrees per second.
   public let fullStickDegreesPerSecond: Double
+  /// When gyro output is active.
   public let activationMode: RemappingGyroActivationMode
+  /// Source that ``activationMode`` reads; `nil` exactly when the mode is
+  /// ``RemappingGyroActivationMode/always``.
   public let activationSource: RemappingSource?
+  /// Keeps the activation source out of passthrough output.
   public let consumesActivationSource: Bool
+  /// Held-velocity mode that keeps turning after the motion stops, or `nil` for direct motion.
   public let trackball: RemappingGyroTrackball?
 
+  /// Gyro output that is disabled.
   public static let `default` = Self()
 
+  /// Creates a gyro output.
+  ///
+  /// The initializer does not validate; call ``validate()``.
   public init(
     mode: RemappingGyroOutputMode = .disabled,
     pointerPointsPerDegree: Double = 1,
@@ -44,6 +67,11 @@ public struct RemappingGyroOutput: Codable, Equatable, Sendable {
     self.trackball = trackball
   }
 
+  /// Checks the trackball, the activation source and the numeric ranges.
+  ///
+  /// An activation source is required unless the mode is ``RemappingGyroActivationMode/always``,
+  /// and it cannot be an analog axis.
+  /// - Throws: ``RemappingGyroOutputError/invalidField(_:)`` with the snake_case field name.
   public func validate() throws {
     try trackball?.validate()
     guard (activationMode == .always) == (activationSource == nil) else {
@@ -60,15 +88,28 @@ public struct RemappingGyroOutput: Codable, Equatable, Sendable {
     }
   }
 
+  /// Profile document keys of a gyro output.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    case mode, trackball
+    /// The JSON key of `mode`.
+    case mode
+    /// The JSON key of `trackball`.
+    case trackball
+    /// The JSON key of `pointerPointsPerDegree`.
     case pointerPointsPerDegree
+    /// The JSON key of `fullStickDegreesPerSecond`.
     case fullStickDegreesPerSecond
+    /// The JSON key of `activationMode`.
     case activationMode
+    /// The JSON key of `activationSource`.
     case activationSource
+    /// The JSON key of `consumesActivationSource`.
     case consumesActivationSource
   }
 
+  /// Decodes a gyro output from a profile document.
+  ///
+  /// Omitted fields take the initializer defaults.
+  /// - Throws: `DecodingError` for an unknown key or a bad value, or the error of ``validate()``.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -97,9 +138,12 @@ public struct RemappingGyroOutput: Codable, Equatable, Sendable {
   }
 }
 
+/// Error for an invalid gyro output or trackball.
 public enum RemappingGyroOutputError: Error, Equatable, LocalizedError, Sendable {
+  /// A field is outside its valid range or inconsistent with the others.
   case invalidField(String)
 
+  /// Message that names the field that is outside its valid range.
   public var errorDescription: String? {
     switch self {
     case .invalidField(let field): "Gyro output field '\(field)' is outside its valid range."

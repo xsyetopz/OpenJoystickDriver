@@ -1,13 +1,17 @@
 import Foundation
 import OpenJoystickDriverKit
 
-/// A call that the tool refuses. It exits with ``exitCode``, which no check result uses, and names
-/// the call on standard error.
+/// A call that the tool refuses.
+///
+/// It exits with ``exitCode``, which no check result uses, and names the call on standard error.
 struct UsageError: Error {
+  /// The exit status of a refused call.
   static let exitCode: Int32 = 64
+  /// What is wrong with the call.
   let message: String
 }
 
+/// The usage text that the tool prints on standard error after a refused call.
 private let usage = """
   usage:
     OJDRepositoryTool validate controllers <directory>
@@ -38,6 +42,9 @@ private let usage = """
   0 without a problem, 1 with one, and 64 for a call that the tool refuses.
   """
 
+/// The folder at `path`.
+///
+/// - Throws: ``UsageError`` when `path` is not a directory.
 private func directory(_ path: String) throws -> URL {
   var isDirectory: ObjCBool = false
   guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory),
@@ -48,6 +55,8 @@ private func directory(_ path: String) throws -> URL {
 
 /// The files that `paths` name, in the order given; a directory stands for its `.json` files in
 /// file-name order.
+///
+/// - Throws: ``UsageError`` when no path is given or a path does not exist.
 private func files(_ paths: [String]) throws -> [URL] {
   guard !paths.isEmpty else { throw UsageError(message: "no path given") }
   return try paths.flatMap { path -> [URL] in
@@ -64,6 +73,9 @@ private func files(_ paths: [String]) throws -> [URL] {
   }
 }
 
+/// The values of the `names` options in `arguments`, which are option and value pairs.
+///
+/// - Throws: ``UsageError`` when an option is unknown, has no value, is given twice, or is missing.
 private func options(_ arguments: [String], names: [String]) throws -> [String: String] {
   var values: [String: String] = [:]
   var index = 0
@@ -81,6 +93,9 @@ private func options(_ arguments: [String], names: [String]) throws -> [String: 
   return values
 }
 
+/// Runs a `validate` or `apply-patches` subcommand and returns the problems it found.
+///
+/// - Throws: ``UsageError`` when the subcommand, its kind or its arguments are not valid.
 private func run(_ arguments: [String]) throws -> [RepositoryProblem] {
   guard let command = arguments.first else { throw UsageError(message: "no subcommand given") }
   let rest = Array(arguments.dropFirst())
@@ -112,6 +127,7 @@ private func run(_ arguments: [String]) throws -> [RepositoryProblem] {
   }
 }
 
+/// The JSON line, ending in a newline, that reports `problem` on standard output.
 private func line(_ problem: RepositoryProblem) throws -> Data {
   let object: [String: Any] = [
     "file": problem.file, "code": problem.code.rawValue, "message": problem.message,
@@ -122,7 +138,10 @@ private func line(_ problem: RepositoryProblem) throws -> Data {
   ) + Data("\n".utf8)
 }
 
-/// The JSON object a fact subcommand prints, or nil when `arguments` name a check.
+/// The JSON object that the `facts` or `kebab` subcommand prints, or nil when `arguments` name a
+/// check.
+///
+/// - Throws: ``UsageError`` when `facts` takes an argument or `kebab` has no value.
 private func document(_ arguments: [String]) throws -> [String: Any]? {
   let rest = Array(arguments.dropFirst())
   switch arguments.first {

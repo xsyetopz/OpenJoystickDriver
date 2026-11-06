@@ -1,37 +1,64 @@
 import Foundation
 
+/// Physical stick that feeds a ``RemappingStickMapping``.
 public enum RemappingStickSource: String, Codable, CaseIterable, Hashable, Sendable {
+  /// The left stick.
   case left = "Left"
+  /// The right stick.
   case right = "Right"
 }
 
+/// How a ``RemappingStickMapping`` turns stick motion into output.
 public enum RemappingStickMode: String, Codable, CaseIterable, Hashable, Sendable {
+  /// Deflection turns the pointer continuously, scaled by
+  /// ``RemappingStickMapping/aimDegreesPerSecond``.
   case aim = "Aim"
+  /// A rim flick turns the pointer by the flick angle, and rotating along the rim keeps turning it.
   case flick = "Flick"
+  /// Only the rim flick turns the pointer; rim rotation is ignored.
   case flickOnly = "FlickOnly"
+  /// Only rotating along the rim turns the pointer; the flick at the start is ignored.
   case rotateOnly = "RotateOnly"
+  /// The pointer sits at the stick deflection scaled to
+  /// ``RemappingStickMapping/pointerRadiusPoints``.
   case pointerArea = "PointerArea"
+  /// The pointer sits on a ring of ``RemappingStickMapping/pointerRadiusPoints`` in the stick
+  /// direction.
   case pointerRing = "PointerRing"
+  /// Rotating the stick along the rim emits scroll lines.
   case scrollWheel = "ScrollWheel"
+  /// Rotating the stick along the rim accumulates a virtual steering wheel on a virtual gamepad
+  /// axis.
   case steering = "Steering"
 }
 
+/// Axis along which ``RemappingStickMode/scrollWheel`` scrolls.
 public enum RemappingStickScrollAxis: String, Codable, CaseIterable, Hashable, Sendable {
+  /// Scrolls sideways.
   case horizontal = "Horizontal"
+  /// Scrolls up and down.
   case vertical = "Vertical"
 }
 
+/// Rim rotation direction that counts as positive for scrolling and steering.
 public enum RemappingStickRotationDirection: String, Codable, CaseIterable, Hashable, Sendable {
+  /// Clockwise rotation produces positive scroll lines or steering degrees.
   case clockwise = "Clockwise"
+  /// Counterclockwise rotation produces positive scroll lines or steering degrees.
   case counterclockwise = "Counterclockwise"
 
+  /// Sign applied to a counterclockwise angle change so the chosen direction is positive.
   var multiplier: Double { self == .clockwise ? -1 : 1 }
 }
 
+/// Virtual gamepad axis that ``RemappingStickMode/steering`` drives.
 public enum RemappingStickSteeringOutput: String, Codable, CaseIterable, Hashable, Sendable {
+  /// The left stick horizontal axis of the virtual gamepad.
   case leftStickX = "LeftStickX"
+  /// The right stick horizontal axis of the virtual gamepad.
   case rightStickX = "RightStickX"
 
+  /// Virtual gamepad axis that carries the steering value.
   var axis: RemappingAxis {
     switch self {
     case .leftStickX: .leftStickX
@@ -40,30 +67,46 @@ public enum RemappingStickSteeringOutput: String, Codable, CaseIterable, Hashabl
   }
 }
 
-/// Angular stick output, calibrated separately from logical screen-point conversion.
+/// Advanced behavior of one physical stick: pointer aim, flick, scroll or steering output.
 public struct RemappingStickMapping: Codable, Equatable, Hashable, Sendable {
+  /// Physical stick that this mapping reads.
   public let source: RemappingStickSource
+  /// How stick motion becomes output.
   public let mode: RemappingStickMode
+  /// Deadzone and response calibration applied before the mode runs.
   public let tuning: RemappingStickTuning
+  /// Pointer turn rate at full deflection in ``RemappingStickMode/aim``, in degrees per second.
   public let aimDegreesPerSecond: Double
+  /// Logical screen points of pointer movement per degree of angular output.
   public let pointerPointsPerDegree: Double
+  /// Time over which one flick angle is spread, in milliseconds.
   public let flickDurationMs: Double
+  /// Deflection magnitude at which a rim touch starts a flick.
   public let flickThreshold: Double
+  /// Margin below ``flickThreshold`` within which rim rotation keeps tracking.
   public let flickHysteresis: Double
   /// Pointer displacement from the activation anchor, in logical screen points.
   public let pointerRadiusPoints: Double
-  /// Angular stick travel that emits one logical scroll line.
+  /// Angular stick travel that emits one logical scroll line, in degrees.
   public let scrollDegreesPerLine: Double
+  /// Axis that scroll lines go to.
   public let scrollAxis: RemappingStickScrollAxis
+  /// Rim rotation direction that counts as positive.
   public let rotationDirection: RemappingStickRotationDirection
-  /// Accumulated wheel rotation that represents full virtual steering output.
+  /// Accumulated wheel rotation that represents full virtual steering output, in degrees.
   public let steeringDegreesAtFullScale: Double
-  /// Automatic return speed while the stick is not fully deflected.
+  /// Automatic return speed toward center while the stick is not fully deflected, in degrees per
+  /// second.
   public let steeringReturnDegreesPerSecond: Double
+  /// Virtual gamepad axis that steering drives.
   public let steeringOutput: RemappingStickSteeringOutput
   /// Keeps the physical stick axes in passthrough output in addition to this mapping.
   public let passthrough: Bool
 
+  /// Creates a stick mapping.
+  ///
+  /// Defaults match the values a profile document gets when it omits a field. The initializer does
+  /// not validate; call ``validate()``.
   public init(
     source: RemappingStickSource,
     mode: RemappingStickMode = .aim,
@@ -100,6 +143,13 @@ public struct RemappingStickMapping: Codable, Equatable, Hashable, Sendable {
     self.passthrough = passthrough
   }
 
+  /// Checks every field against its allowed range.
+  ///
+  /// Each numeric field must be finite and inside its range, and ``flickHysteresis`` must be below
+  /// ``flickThreshold``.
+  /// - Throws: ``RemappingStickMappingError/invalidField(_:)`` with the snake_case field name, or
+  ///   the
+  ///   ``RemappingStickTuningError`` of ``tuning``.
   public func validate() throws {
     try tuning.validate()
     let fields: [(String, Double, ClosedRange<Double>)] = [
@@ -120,23 +170,46 @@ public struct RemappingStickMapping: Codable, Equatable, Hashable, Sendable {
     }
   }
 
+  /// Profile document keys of a stick mapping.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    case source, mode, tuning
+    /// The JSON key of `source`.
+    case source
+    /// The JSON key of `mode`.
+    case mode
+    /// The JSON key of `tuning`.
+    case tuning
+    /// The JSON key of `aimDegreesPerSecond`.
     case aimDegreesPerSecond
+    /// The JSON key of `pointerPointsPerDegree`.
     case pointerPointsPerDegree
+    /// The JSON key of `flickDurationMs`.
     case flickDurationMs
+    /// The JSON key of `flickThreshold`.
     case flickThreshold
+    /// The JSON key of `flickHysteresis`.
     case flickHysteresis
+    /// The JSON key of `pointerRadiusPoints`.
     case pointerRadiusPoints
+    /// The JSON key of `scrollDegreesPerLine`.
     case scrollDegreesPerLine
+    /// The JSON key of `scrollAxis`.
     case scrollAxis
+    /// The JSON key of `rotationDirection`.
     case rotationDirection
+    /// The JSON key of `steeringDegreesAtFullScale`.
     case steeringDegreesAtFullScale
+    /// The JSON key of `steeringReturnDegreesPerSecond`.
     case steeringReturnDegreesPerSecond
+    /// The JSON key of `steeringOutput`.
     case steeringOutput
+    /// The JSON key of `passthrough`.
     case passthrough
   }
 
+  /// Decodes a stick mapping from a profile document.
+  ///
+  /// Omitted fields take the initializer defaults.
+  /// - Throws: `DecodingError` for an unknown key or a bad value, or the error of ``validate()``.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -181,4 +254,8 @@ public struct RemappingStickMapping: Codable, Equatable, Hashable, Sendable {
   }
 }
 
-public enum RemappingStickMappingError: Error, Equatable, Sendable { case invalidField(String) }
+/// Error for an invalid stick mapping.
+public enum RemappingStickMappingError: Error, Equatable, Sendable {
+  /// A field is not finite or is out of range; the payload names it.
+  case invalidField(String)
+}

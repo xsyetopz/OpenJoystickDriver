@@ -27,6 +27,7 @@ public struct ControllerPatch: Equatable, Sendable {
       }
     }
 
+    /// A short name of the selector for messages.
     public var description: String {
       switch self {
       case .all: "all controllers"
@@ -63,6 +64,7 @@ public struct ControllerPatch: Equatable, Sendable {
     "tuning",
   ]
 
+  /// The records the patch applies to.
   public let selector: Selector
   /// The merge patch, an object, with the member order and the number text of the patch file.
   let body: OrderedJSON
@@ -87,7 +89,9 @@ public struct ControllerPatch: Equatable, Sendable {
     ]
   }
 
-  /// Checks and reads a patch document. A document of another kind fails the header check.
+  /// Checks and reads a patch document.
+  ///
+  /// A document of another kind fails the header check.
   static func parse(_ document: OrderedJSON, file: String? = nil) throws -> Self {
     guard let fields = try? document.foundationValue() as? [String: Any] else {
       throw ControllerRecordProblem(code: .invalidControllerRecord, "the file is not a JSON object")
@@ -118,6 +122,8 @@ public struct ControllerPatch: Equatable, Sendable {
     return Self(selector: parsed, body: .object(body))
   }
 
+  /// Reads a patch selector: `all`, a vendor ID with a product ID, or a model ID; any other shape
+  /// is rejected.
   private static func parseSelector(_ selector: OrderedJSON) throws -> Selector {
     guard let members = selector.members else {
       throw ControllerRecordProblem(
@@ -158,6 +164,7 @@ public struct ControllerPatch: Equatable, Sendable {
     }
   }
 
+  /// Whether `text` is `vvvv-pppp` in lowercase hex.
   private static func isModelID(_ text: String) -> Bool {
     let characters = Array(text)
     return characters.count == 9 && characters[4] == "-"
@@ -169,8 +176,9 @@ public struct ControllerPatch: Equatable, Sendable {
 
 /// The RFC 7396 merge that layers controller patches over a record.
 enum ControllerPatchMerge {
-  /// RFC 7396 `MergePatch` over ``OrderedJSON``: `null` deletes, an array or scalar replaces. An
-  /// object patch over a value that is not an object starts from an empty object.
+  /// RFC 7396 `MergePatch` over ``OrderedJSON``: `null` deletes, an array or scalar replaces.
+  ///
+  /// An object patch over a value that is not an object starts from an empty object.
   ///
   /// Where both are objects the members stay in the target's order and the members the target
   /// lacks come after, in the patch's order, at every depth. A value the patch replaces has the
@@ -219,10 +227,11 @@ enum ControllerPatchMerge {
     ordered(patches) { ($0, nil) }
   }
 
-  /// The merge patch that `patch` gives to the record `document`, or nil when it changes nothing
-  /// to apply. A patch with a selector other than `all` gives its whole body. An `all` patch gives
-  /// only the `tuning` keys that the record's family reads; a `tuning` that is not an object gives
-  /// nothing.
+  /// The merge patch that `patch` gives to the record `document`, or nil when it changes nothing to
+  /// apply.
+  ///
+  /// A patch with a selector other than `all` gives its whole body. An `all` patch gives only the
+  /// `tuning` keys that the record's family reads; a `tuning` that is not an object gives nothing.
   static func appliedBody(of patch: ControllerPatch, to document: OrderedJSON) -> OrderedJSON? {
     guard patch.selector == .all else { return patch.body }
     let scope = Set(ControllerTuning.scope(ofDocument: document).map(\.rawValue))
@@ -236,9 +245,10 @@ enum ControllerPatchMerge {
     return mergePatch(document, body)
   }
 
-  /// `record` with the built-in, package, and user patches applied in that order. A package layer
-  /// entry may name its owner. A record with no valid `vendorID` and `productID` is returned
-  /// unchanged.
+  /// `record` with the built-in, package, and user patches applied in that order.
+  ///
+  /// A package layer entry may name its owner. A record with no valid `vendorID` and `productID` is
+  /// returned unchanged.
   static func effective(
     record: OrderedJSON,
     builtin: [ControllerPatch],

@@ -7,12 +7,18 @@
 
   /// The SwiftUI content of one pane.
   private struct SettingsPaneContent: View {
+    /// The pane to show.
     let pane: SettingsWindowPane
+    /// The switches of General, Notifications and Advanced.
     let preferences: SettingsPreferencesModel
+    /// The command-line tool link that Advanced shows.
     let commandLineTool: CommandLineToolModel
+    /// The developer tools that Advanced shows while they are on.
     let developerTools: DeveloperToolsViewModel
+    /// The driver extension state and actions that Advanced shows.
     let runtime: RuntimeViewModel
 
+    /// The view of the pane.
     var body: some View {
       switch pane {
       case .general: GeneralPaneView(preferences: preferences)
@@ -30,10 +36,13 @@
 
   /// The pane the Settings window shows: the content of the selected pane.
   private struct SettingsWindowContent: View {
+    /// The selection of the pane.
     @ObservedObject
     var panes: SettingsWindowPaneModel
+    /// Returns the content of a pane.
     let content: (SettingsWindowPane) -> SettingsPaneContent
 
+    /// The content of the selected pane.
     var body: some View { content(panes.selected) }
   }
 
@@ -42,25 +51,39 @@
   final class SettingsWindowController: NSWindowController, NSWindowDelegate,
     SettingsWindowPresenting
   {
+    /// The identifier of the Settings window's toolbar.
     private static let toolbarIdentifier = NSToolbar.Identifier(
       "OpenJoystickDriver.SettingsToolbar"
     )
+    /// The selected pane.
     private let panes: SettingsWindowPaneModel
+    /// The developer tools of Advanced; the window starts and stops their reads.
     let developerTools: DeveloperToolsViewModel
+    /// The switches of General, Notifications and Advanced.
     private let preferences: SettingsPreferencesModel
+    /// The command-line tool link of Advanced.
     private let commandLineTool: CommandLineToolModel
     /// Whether the app left the foreground after the window last read the pane state, so that
     /// coming back reads it once; showing the window reads it and clears this, so the activation
     /// that follows a show reads nothing more.
     private var refreshOnActivation = false
+    /// Whether the window is on screen.
     private var isShown = false
+    /// Whether the developer tools are reading controller diagnostics.
     private var developerToolsAreRunning = false
+    /// The toolbar whose buttons choose the pane.
     private weak var toolbar: NSToolbar?
+    /// Called with true when the window is shown and false when it closes.
     private let visibilityChanged: @MainActor (Bool) -> Void
+    /// Returns the content of a pane, for the window and for measuring a pane's height.
     private let makeContent: (SettingsWindowPane) -> SettingsPaneContent
+    /// The subscriptions that fit the window to its content and read the pane state on activation.
     private var contentChanges: [AnyCancellable] = []
+    /// Fits the window to the pane after its content changes.
     private var fitting: RunLoopCoalescer?
 
+    /// Creates the Settings window with the General pane selected.
+    ///
     /// - Parameters:
     ///   - gateway: the service connection the developer tools in Advanced read.
     ///   - runtime: the driver extension state and actions of Advanced.
@@ -151,9 +174,13 @@
       ]
     }
 
+    /// Unavailable, because the window controller is created in code only.
+    ///
+    /// - Parameter coder: The decoder, which is not used.
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
+    /// Shows the Settings window in front, on `pane` when given and otherwise on the selected pane.
     func showSettings(pane: SettingsWindowPane?) {
       if let pane {
         panes.select(pane)
@@ -169,8 +196,13 @@
     }
 
     /// Fits the window to the screen it moved to, whose visible area may be smaller.
+    ///
+    /// - Parameter notification: The notification of the screen change.
     func windowDidChangeScreen(_ notification: Notification) { paneChanged(animated: false) }
 
+    /// Marks the window as hidden, syncs the developer tools and reports that it is not visible.
+    ///
+    /// - Parameter notification: The notification of the closing window.
     func windowWillClose(_ notification: Notification) {
       isShown = false
       syncDeveloperTools()
@@ -178,8 +210,9 @@
     }
 
     /// Reads the state the selected pane shows from the system: the notification permission for
-    /// Notifications, the command-line tool link for Advanced. The window drives these reads, so
-    /// the offscreen view that measures a pane never starts them.
+    /// Notifications, the command-line tool link for Advanced.
+    ///
+    /// The window drives these reads, so the offscreen view that measures a pane never starts them.
     func refreshPaneState() {
       guard isShown else { return }
       switch panes.selected {
@@ -190,7 +223,9 @@
     }
 
     /// Reads the controller diagnostics while the window shows Advanced with developer tools on,
-    /// and stops them otherwise. This is the only place that starts or stops the reads.
+    /// and stops them otherwise.
+    ///
+    /// This is the only place that starts or stops the reads.
     func syncDeveloperTools() {
       let wanted = isShown && panes.selected == .advanced && preferences.developerToolsEnabled
       guard wanted != developerToolsAreRunning else { return }
@@ -198,6 +233,7 @@
       if wanted { developerTools.requestRefresh() } else { developerTools.close() }
     }
 
+    /// Adds the toolbar whose buttons choose the pane.
     private func configureToolbar(on window: NSWindow) {
       let toolbar = NSToolbar(identifier: Self.toolbarIdentifier)
       toolbar.delegate = self
@@ -254,6 +290,7 @@
       return Double(probe.fittingSize.height)
     }
 
+    /// Selects the pane of the clicked toolbar button.
     @objc
     private func paneButtonClicked(_ sender: NSToolbarItem) {
       guard let pane = SettingsWindowPane(toolbarItemIdentifier: sender.itemIdentifier.rawValue)
@@ -266,22 +303,43 @@
   }
 
   extension SettingsWindowController: NSToolbarDelegate {
+    /// The toolbar item identifiers of the panes, in order.
     private var paneIdentifiers: [NSToolbarItem.Identifier] {
       panes.panes.map { NSToolbarItem.Identifier($0.toolbarItemIdentifier) }
     }
 
+    /// Returns the identifiers of the panes.
+    ///
+    /// - Parameter toolbar: The toolbar of the window.
+    /// - Returns: The identifiers, in the order of the panes.
     func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
       paneIdentifiers
     }
 
+    /// Returns the identifiers of the panes.
+    ///
+    /// - Parameter toolbar: The toolbar of the window.
+    /// - Returns: The identifiers, in the order of the panes.
     func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
       paneIdentifiers
     }
 
+    /// Returns the identifiers of the panes.
+    ///
+    /// - Parameter toolbar: The toolbar of the window.
+    /// - Returns: The identifiers, in the order of the panes.
     func toolbarSelectableItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
       paneIdentifiers
     }
 
+    /// Creates the toolbar button of a pane.
+    ///
+    /// - Parameters:
+    ///   - toolbar: The toolbar of the window.
+    ///   - itemIdentifier: The identifier of the pane.
+    ///   - flag: Whether the toolbar inserts the item.
+    /// - Returns: The item with the pane's title, symbol and description, or nil for an identifier
+    ///   that names no pane.
     func toolbar(
       _ toolbar: NSToolbar,
       itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,

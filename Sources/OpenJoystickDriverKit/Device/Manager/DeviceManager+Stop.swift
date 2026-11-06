@@ -1,11 +1,12 @@
 import Foundation
 
 extension DeviceManager {
+  /// Posts the notification that the service status changed.
   func notifyServiceStatusChanged() {
     NotificationCenter.postServiceStatusChanged(from: self)
   }
 
-  /// Stop all detection and pipelines.
+  /// Stops all detection and every device pipeline.
   public func stop() async {
     // Sleep is system state; a stopped manager still waits for wake before a new start() runs.
     isStarted = false

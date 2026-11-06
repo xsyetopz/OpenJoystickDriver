@@ -6,18 +6,24 @@ import Foundation
 /// `set-rumble` is `Delivered` on the channels the controller has and lists the rest in
 /// `droppedRumbleChannels`.
 public struct ControllerOutputResult: Codable, Equatable, Hashable, Sendable {
+  /// The outcome of an output command.
   public enum Outcome: String, Codable, CaseIterable, Hashable, Sendable {
+    /// The command was written to the controller.
     case delivered = "Delivered"
     /// No connected controller matches the selector exactly once.
     case notFound = "NotFound"
+    /// The controller lacks the capability the command requires.
     case unsupportedCapability = "UnsupportedCapability"
     /// The protocol session cannot carry the command yet.
     case notReady = "NotReady"
+    /// The command carries a value the protocol cannot encode.
     case invalidValue = "InvalidValue"
+    /// The write to the controller failed.
     case writeFailed = "WriteFailed"
     /// The controller disconnected or was replaced before the command was written.
     case cancelled = "Cancelled"
 
+    /// Maps an encoding error to the outcome that reports it.
     init(_ error: ControllerOutputError) {
       switch error {
       case .unsupportedCapability: self = .unsupportedCapability
@@ -27,15 +33,18 @@ public struct ControllerOutputResult: Codable, Equatable, Hashable, Sendable {
     }
   }
 
+  /// The outcome of the command.
   public var outcome: Outcome
   /// The requested rumble channels the controller lacks, which were not driven.
   public var droppedRumbleChannels: [PhysicalRumbleMotor]
 
+  /// Creates a result from an outcome and the rumble channels that were not driven.
   public init(_ outcome: Outcome, droppedRumbleChannels: [PhysicalRumbleMotor] = []) {
     self.outcome = outcome
     self.droppedRumbleChannels = droppedRumbleChannels
   }
 
+  /// Whether the command was delivered.
   public var isDelivered: Bool { outcome == .delivered }
 }
 
@@ -43,6 +52,8 @@ public struct ControllerOutputResult: Codable, Equatable, Hashable, Sendable {
 /// example `{"lowFrequency":65535,"highFrequency":0,...}`. A missing channel decodes as off; a key
 /// that names no motor fails decoding.
 extension RumbleIntensities: Codable {
+  /// Decodes a channel-keyed intensity object; a key that names no motor is rejected and a missing
+  /// channel is off.
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: PhysicalRumbleMotorKey.self)
     let names = Set(PhysicalRumbleMotor.allCases.map(\.recordKey))
@@ -62,6 +73,7 @@ extension RumbleIntensities: Codable {
     }
   }
 
+  /// Encodes every channel, keyed by its motor name.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: PhysicalRumbleMotorKey.self)
     for motor in PhysicalRumbleMotor.allCases {
@@ -69,11 +81,17 @@ extension RumbleIntensities: Codable {
     }
   }
 
+  /// A coding key that is a motor's record key.
   private struct PhysicalRumbleMotorKey: CodingKey {
+    /// The motor's record key.
     let stringValue: String
+    /// Always `nil`, because the keys are strings.
     var intValue: Int? { nil }
+    /// Creates the key of a motor.
     init(_ motor: PhysicalRumbleMotor) { stringValue = motor.recordKey }
+    /// Creates a key from any string; `init(from:)` rejects names that are no motor.
     init?(stringValue: String) { self.stringValue = stringValue }
+    /// Always fails, because the keys are strings.
     init?(intValue: Int) { nil }
   }
 }
@@ -81,9 +99,16 @@ extension RumbleIntensities: Codable {
 /// JSON: `"held"`, or `{"milliseconds":450}` with milliseconds in `0...5000`
 /// (`maxRumbleDurationMs`).
 extension RumbleDuration: Codable {
-  private enum CodingKeys: String, CodingKey { case milliseconds }
+  /// The JSON key of `milliseconds`.
+  private enum CodingKeys: String, CodingKey {
+    /// The key of the duration in milliseconds.
+    case milliseconds
+  }
+  /// The JSON string that encodes a held duration.
   private static let heldName = "held"
 
+  /// Decodes `"held"` or a `milliseconds` object; any other string or a value outside
+  /// `0...maxRumbleDurationMs` is rejected.
   public init(from decoder: any Decoder) throws {
     if let name = try? decoder.singleValueContainer().decode(String.self) {
       guard name == Self.heldName else {
@@ -106,6 +131,7 @@ extension RumbleDuration: Codable {
     self = .milliseconds(milliseconds)
   }
 
+  /// Encodes a held duration as `"held"` and a bounded one as a `milliseconds` object.
   public func encode(to encoder: any Encoder) throws {
     switch self {
     case .held:
@@ -126,28 +152,48 @@ extension RumbleDuration: Codable {
 /// - `{"type":"set-light-brightness","brightness":32896}`
 /// - `{"type":"set-adaptive-trigger","trigger":"Left","effect":{"kind":"Resistance",...}}`
 extension ControllerOutputCommand: Codable {
+  /// The `type` discriminator of a command in JSON.
   private enum Kind: String, Codable {
+    /// The `type` of `setRumble`.
     case setRumble = "set-rumble"
+    /// The `type` of `stopRumble`.
     case stopRumble = "stop-rumble"
+    /// The `type` of `setPlayerIndicator`.
     case setPlayerIndicator = "set-player-indicator"
+    /// The `type` of `setRGB`.
     case setRGB = "set-rgb"
+    /// The `type` of `setLightBrightness`.
     case setLightBrightness = "set-light-brightness"
+    /// The `type` of `setAdaptiveTrigger`.
     case setAdaptiveTrigger = "set-adaptive-trigger"
   }
 
+  /// The JSON keys of a command.
   private enum CodingKeys: String, CodingKey {
+    /// The JSON key of the command type.
     case type
+    /// The JSON key of `intensities`.
     case intensities
+    /// The JSON key of `duration`.
     case duration
+    /// The JSON key of `player`.
     case player
+    /// The JSON key of the red channel.
     case red
+    /// The JSON key of the green channel.
     case green
+    /// The JSON key of the blue channel.
     case blue
+    /// The JSON key of `brightness`.
     case brightness
+    /// The JSON key of `trigger`.
     case trigger
+    /// The JSON key of `effect`.
     case effect
   }
 
+  /// Decodes the command named by `type`; an unknown `type` or a missing or invalid payload key is
+  /// rejected.
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     switch try container.decode(Kind.self, forKey: .type) {
@@ -179,6 +225,7 @@ extension ControllerOutputCommand: Codable {
     }
   }
 
+  /// Encodes the `type` and the payload keys of the command.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     switch self {

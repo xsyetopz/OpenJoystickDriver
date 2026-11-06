@@ -9,9 +9,13 @@ import OpenJoystickDriverKit
 /// `echo ... > file`.
 @MainActor
 final class ControllerRecordWatcher {
+  /// The directory of the user's controller records.
   private let directory: URL
+  /// Runs with the models whose effective record changed.
   private let onChange: @MainActor (Set<ControllerModelID>) -> Void
+  /// Makes a loaded record set current and returns the models whose record changed.
   private let activate: @MainActor (ControllerRecordSet) -> Set<ControllerModelID>
+  /// The watcher of the record and package directories; nil while stopped.
   private var watcher: FileChangeWatcher?
 
   /// `onChange` runs with the models whose effective record a change to the directory
@@ -29,8 +33,10 @@ final class ControllerRecordWatcher {
     self.onChange = onChange
   }
 
-  /// Applies the current records and starts watching. A directory that cannot be created or opened
-  /// is watched once it exists; until then the bundled catalog and any records already read apply.
+  /// Applies the current records and starts watching.
+  ///
+  /// A directory that cannot be created or opened is watched once it exists; until then the bundled
+  /// catalog and any records already read apply.
   func start() {
     guard watcher == nil else { return }
     let packages = ModPackageStore.directory(besides: directory)
@@ -60,6 +66,7 @@ final class ControllerRecordWatcher {
     watcher.start()
   }
 
+  /// Stops watching.
   func stop() {
     watcher?.stop()
     watcher = nil

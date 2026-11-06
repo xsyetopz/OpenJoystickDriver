@@ -311,8 +311,10 @@ struct ProtocolDriverRegistryTests {
     #expect(reason == .interfaceContractMismatch)
   }
 
-  /// The DriverKit route observes no interface facts, so a catalog row's claim has nothing to
-  /// check and builds on the record's profile. Only the record vouches for the interface there.
+  /// The DriverKit route observes no interface facts, so a catalog row's claim has nothing to check
+  /// and builds on the record's profile.
+  ///
+  /// Only the record vouches for the interface there.
   @Test
   func driverKitClaimWithoutObservedFactsBuildsACatalogRow() throws {
     let model = ControllerModelID(vendorID: 0x045E, productID: 0x02EA)
@@ -394,9 +396,10 @@ struct ProtocolDriverRegistryTests {
     return binding
   }
 
-  /// Whether `driver` is the parser of family `id`. A family whose description holds the input
-  /// layout is decoded by a `ReportLayoutDriver` that reads that layout and advertises the
-  /// description's controls.
+  /// Whether `driver` is the parser of family `id`.
+  ///
+  /// A family whose description holds the input layout is decoded by a `ReportLayoutDriver` that
+  /// reads that layout and advertises the description's controls.
   static func driver(_ driver: any PhysicalProtocolDriver, belongsTo id: PhysicalProtocolID) -> Bool
   {
     switch id {
@@ -425,8 +428,8 @@ struct ProtocolDriverRegistryTests {
     of family: PhysicalProtocolID
   ) -> Bool {
     guard let layoutDriver = driver as? ReportLayoutDriver,
-      let described = family.protocolDescription.inputLayout
+      let described = family.protocolDescription.inputLayouts
     else { return false }
-    return layoutDriver.layout == described && layoutDriver.capabilities == family.describedControls
+    return layoutDriver.layouts == described && layoutDriver.capabilities == family.describedControls
   }
 }

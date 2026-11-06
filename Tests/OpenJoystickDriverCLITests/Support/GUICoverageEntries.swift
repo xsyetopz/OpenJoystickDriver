@@ -20,20 +20,24 @@ struct GUICoverageEntry: Equatable {
 
 /// A leaf or option that a window cannot naturally perform (D10).
 struct CLIOnlyItem: Equatable {
-  /// The command path. For an option, nil means every command that has it.
+  /// The command path.
+  ///
+  /// For an option, nil means every command that has it.
   let command: [String]?
   let option: String?
   let reason: String
 }
 
-/// The per-leaf and per-option coverage of the real command tree. D10 says what a window cannot
-/// naturally do; everything else names the GUI symbol that does it.
+/// The per-leaf and per-option coverage of the real command tree.
+///
+/// D10 says what a window cannot naturally do; everything else names the GUI symbol that does it.
 enum GUICoverageEntries {
   static let entries: [GUICoverageEntry] =
     status + controller + profile + binding + virtual + record + mod + access + system
 
-  /// Leaves and options only a terminal or script performs. The D10 text names each of them, and
-  /// `GUICoverageTests` checks that.
+  /// Leaves and options only a terminal or script performs.
+  ///
+  /// The D10 text names each of them, and `GUICoverageTests` checks that.
   static let cliOnly: [CLIOnlyItem] =
     [
       CLIOnlyItem(
@@ -297,8 +301,9 @@ enum GUISources {
     let description: String
   }
 
-  /// Every GUI Swift file's code, joined, with comments and string literals removed. A missing
-  /// directory or an unreadable file stops the test run.
+  /// Every GUI Swift file's code, joined, with comments and string literals removed.
+  ///
+  /// A missing directory or an unreadable file stops the test run.
   static let text: String = {
     do {
       return try readCode()
@@ -356,8 +361,9 @@ enum GUISources {
     )
   }
 
-  /// Swift source without line comments, nested block comments or string literal text. The code
-  /// inside string interpolations stays, because it runs.
+  /// Swift source without line comments, nested block comments or string literal text.
+  ///
+  /// The code inside string interpolations stays, because it runs.
   static func strippingCommentsAndStrings(_ source: String) -> String {
     let chars = Array(source)
     var output = ""
@@ -444,8 +450,9 @@ enum GUISources {
 }
 
 /// The CLI surface read from the real command tree: leaves and their options and flags, hidden ones
-/// included, named by the long name or, where there is none, the short one. Positional operands are
-/// excluded.
+/// included, named by the long name or, where there is none, the short one.
+///
+/// Positional operands are excluded.
 struct CLISurfaceItem: Hashable {
   let command: [String]
   let option: String?

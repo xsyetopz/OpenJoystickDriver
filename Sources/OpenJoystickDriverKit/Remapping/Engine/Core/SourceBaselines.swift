@@ -1,22 +1,33 @@
 import Foundation
 
 /// One input change the engine applies, found by diffing a source's snapshot against its baseline.
+///
 /// Axes are in the remapping frame: Y points down.
 enum RemappingInputChange: Equatable {
+  /// A button was pressed or released.
   case button(Control, isPressed: Bool)
+  /// The hat direction changed.
   case dpad(HatDirection)
+  /// The left stick moved.
   case leftStick(x: Float, y: Float)
+  /// The right stick moved.
   case rightStick(x: Float, y: Float)
+  /// The left trigger value changed.
   case leftTrigger(Float)
+  /// The right trigger value changed.
   case rightTrigger(Float)
+  /// A motion sample arrived.
   case motion(ControllerMotionSample)
+  /// A touch frame arrived.
   case touch(ControllerTouchSample)
 }
 
 extension RemappingEngineState {
   /// Diffs `event` against the last snapshot `source` delivered and applies the changes to
-  /// `target`. Each source keeps its own baseline, so two sources feeding one target (a Joy-Con
-  /// pair) never release each other's controls.
+  /// `target`.
+  ///
+  /// Each source keeps its own baseline, so two sources feeding one target (a Joy-Con pair) never
+  /// release each other's controls.
   mutating func process(
     _ event: ControllerEvent,
     from source: LogicalControllerID,
@@ -33,9 +44,11 @@ extension RemappingEngineState {
     return process(changes: changes, from: target, profile: profile, at: uptimeNanoseconds)
   }
 
-  /// Changes from `old` to `new`: every button release before any button press, so a report that
-  /// swaps one held button for another never shows both held; releases and presses each follow
-  /// ``controlOrder``. The hat, left stick, right stick, left trigger and right trigger follow.
+  /// Returns the changes from one snapshot to another.
+  ///
+  /// Every button release comes before any button press, so a report that swaps one held button for
+  /// another never shows both held. Releases and presses each follow ``controlOrder``. The hat,
+  /// left stick, right stick, left trigger and right trigger follow.
   static func changes(
     from old: ControllerState,
     to new: ControllerState

@@ -7,16 +7,25 @@ import OpenJoystickDriverKit
 enum ConfigChange {
   /// The `--json` result. `value` is absent for `unset`, and `previous` while no layer set the key.
   struct Result: Encodable, Equatable {
+    /// The tuning key.
     let key: String
+    /// The number that `set` writes, or nil for `unset`.
     let value: Double?
+    /// The number the user's record held before, or nil when no layer set the key.
     let previous: Double?
+    /// The controller model as `VVVV:PPPP`, or nil for `all.patch.json`.
     let controller: String?
+    /// The path of the file that the command writes.
     let file: String
+    /// Whether the file did not exist before.
     let created: Bool
+    /// Whether the change removes the file because it holds nothing else.
     let removesFile: Bool
   }
 
   /// The tuning key named `name`.
+  ///
+  /// - Throws: `ValidationError` when `name` is not a tuning key.
   static func key(_ name: String) throws -> ControllerTuning.Key {
     guard let key = ControllerTuning.Key(rawValue: name) else {
       throw ValidationError(
@@ -30,8 +39,11 @@ enum ConfigChange {
     return key
   }
 
-  /// The number written as `text`: digits with an optional `-` and one `.`. Hexadecimal floats,
-  /// exponents, `nan` and `inf` are not numbers here.
+  /// The number written as `text`: digits with an optional `-` and one `.`.
+  ///
+  /// Hexadecimal floats, exponents, `nan` and `inf` are not numbers here.
+  ///
+  /// - Throws: `ValidationError` when `text` is not such a number.
   static func number(_ text: String) throws -> Double {
     let digits = text.hasPrefix("-") ? text.dropFirst() : Substring(text)
     let isDecimal =
@@ -44,12 +56,19 @@ enum ConfigChange {
   }
 
   /// The edit that `KEY` and `VALUE` name; a nil `value` removes the key.
+  ///
+  /// - Throws: `ValidationError` when the key or the number is not valid.
   static func edit(key name: String, value: String?) throws -> ControllerRecordWriter.TuningEdit {
     let key = try key(name)
     guard let value else { return .remove(key) }
     return .set(key, try number(value))
   }
 
+  /// Applies `edit` to the record of `model`, or to `all.patch.json` without a model, and prints
+  /// the result.
+  ///
+  /// - Throws: ``CLIFailure`` when the model has no record, the file or the result is not valid, an
+  ///   `unset` key is not set, or the file cannot be written.
   static func run(
     _ edit: ControllerRecordWriter.TuningEdit,
     controller model: ControllerModelID?,
@@ -82,6 +101,7 @@ enum ConfigChange {
     }
   }
 
+  /// Prints the success message on stderr for `set` or `unset`.
   private static func printHuman(_ result: Result) {
     CLIOutput.success(
       result.value.map {
@@ -95,6 +115,10 @@ enum ConfigChange {
     )
   }
 
+  /// The change that `edit` makes to the file for `target`, before it is written.
+  ///
+  /// - Throws: ``CLIFailure`` with `notFound`, `invalidInputFile` or `usage` when the writer
+  ///   refuses the edit.
   private static func change(
     _ edit: ControllerRecordWriter.TuningEdit,
     for target: ControllerRecordWriter.Target
@@ -133,6 +157,9 @@ enum ConfigChange {
     }
   }
 
+  /// Writes `change` to disk.
+  ///
+  /// - Throws: ``CLIFailure`` with `fileAccessFailed` when the file cannot be written.
   private static func write(_ change: ControllerRecordWriter.Change) throws {
     do { try ControllerRecordWriter.write(change) } catch {
       throw CLIFailure(

@@ -7,9 +7,12 @@ import Foundation
 /// Usage numbers are scoped to their page. Keeping both values prevents a
 /// controller-specific input from colliding with a standard Button-page input.
 public struct HIDInputUsage: Hashable, Sendable {
+  /// The usage page.
   public let page: Int
+  /// The usage within the page.
   public let usage: Int
 
+  /// Creates an identifier from a usage page and a usage.
   public init(page: Int, usage: Int) {
     self.page = page
     self.usage = usage
@@ -18,6 +21,7 @@ public struct HIDInputUsage: Hashable, Sendable {
 
 /// The control value an axis field carries.
 public enum HIDAxisRole: CaseIterable, Sendable {
+  /// One of the six analog axes of the gamepad state.
   case leftStickX, leftStickY, rightStickX, rightStickY, leftTrigger, rightTrigger
 
   /// Generic Desktop usages: left stick on X/Y, right stick on Rx/Ry, triggers on Z/Rz.
@@ -31,16 +35,25 @@ public enum HIDAxisRole: CaseIterable, Sendable {
   ]
 }
 
+/// Packs a gamepad state into the input report that a parsed descriptor declares.
 struct HIDReportPacker: Sendable {
+  /// The HID Button usage page.
   private static let buttonUsagePage = 0x09
+  /// The HID Generic Desktop usage page.
   private static let genericDesktopUsagePage = 0x01
+  /// The Button usages that count as gamepad buttons.
   private static let buttonUsageRange = 1...32
+  /// The Generic Desktop usages of the axes X to Rz.
   private static let axisUsageRange = 0x30...0x35
+  /// The Generic Desktop usage of the hat switch.
   private static let hatSwitchUsage = 0x39
 
+  /// The report ID; 0 for an unnumbered report.
   let reportID: UInt8
+  /// The payload size, without the report ID byte.
   let payloadSizeBytes: Int
 
+  /// The input fields of the report by usage.
   let fields: [HIDInputUsage: HIDField]
   /// Maps normalized button bits to descriptor usages for profile-specific layouts.
   let buttonUsageMap: [Int: Int]
@@ -48,8 +61,13 @@ struct HIDReportPacker: Sendable {
   let digitalUsageMap: [Int: HIDInputUsage]
   /// Maps each axis role to the usage of the field that carries it.
   let axisUsageMap: [HIDAxisRole: HIDInputUsage]
+  /// The hat switch field; nil when the report has none.
   let hatField: HIDField?
 
+  /// Chooses the report with the most gamepad-like fields and builds a packer for it.
+  ///
+  /// The score counts buttons, axes, a hat switch and the payload size. Returns nil when the
+  /// descriptor declares no input field.
   static func bestEffortGamepadPacker(
     from parsed: HIDParsedDescriptor,
     buttonUsageMap: [Int: Int] = [:],
@@ -101,6 +119,7 @@ struct HIDReportPacker: Sendable {
     )
   }
 
+  /// Packs `state` into an input report, with the report ID first when the report is numbered.
   func pack(state: VirtualGamepadState) -> [UInt8] {
     var payload = [UInt8](repeating: 0, count: max(0, payloadSizeBytes))
 

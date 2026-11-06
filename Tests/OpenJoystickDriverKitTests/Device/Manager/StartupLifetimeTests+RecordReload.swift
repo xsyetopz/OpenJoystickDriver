@@ -6,7 +6,9 @@ import Testing
 
 extension StartupLifetimeTests {
   /// Without raw-USB detection, a record reload re-admits each tracked HID connection of the
-  /// changed model at once. The GameSir connections are synthetic, as in `HIDLocationRoutingTests`.
+  /// changed model at once.
+  ///
+  /// The GameSir connections are synthetic, as in `HIDLocationRoutingTests`.
   @Test
   func controllerRecordReloadReadmitsOnlyTrackedHIDConnectionsOfTheChangedModel() async throws {
     let backend = ScriptedHIDAccessBackend()

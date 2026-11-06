@@ -16,9 +16,11 @@ import OpenJoystickDriverService
 @MainActor
 final class HeadlessApplicationHost {
   #if canImport(AppKit) && canImport(SwiftUI)
+    /// The menu bar item of the app, when the app has a presentation layer.
     private var presentation: MenuBarCoordinator?
   #endif
 
+  /// Starts the service runtime and runs the main loop; it never returns.
   func run() -> Never {
     registerForLoginIfNeeded()
     let runtime: ApplicationServiceRuntime
@@ -66,6 +68,7 @@ final class HeadlessApplicationHost {
   }
 
   /// Prints why the service cannot start and exits.
+  ///
   /// The service never runs without its port key or its runtime.
   private func failStartup(_ error: any Error) -> Never {
     fputs(
@@ -75,6 +78,9 @@ final class HeadlessApplicationHost {
     exit(EXIT_FAILURE)
   }
 
+  /// Registers the app as a login item when it runs from an app bundle.
+  ///
+  /// A settings file that cannot be read skips the registration, because the opt-out is unknown.
   private func registerForLoginIfNeeded() {
     guard Bundle.main.bundleURL.pathExtension == "app" else { return }
     do { try ApplicationServiceManager.installByDefaultIfNeeded() } catch let error

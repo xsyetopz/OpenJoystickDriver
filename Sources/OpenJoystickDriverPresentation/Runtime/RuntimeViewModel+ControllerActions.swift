@@ -2,6 +2,11 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension RuntimeViewModel {
+  /// Waits for the user to press a control of the controller and publishes the detected source in
+  /// ``inputCaptureState``.
+  ///
+  /// It compares each input state with the one before it, reads every 100 ms at most 50 times, and
+  /// reports that no control was detected when none arrives.
   func listenForInput(for selector: ControllerReference) async {
     inputGeneration += 1
     let generation = inputGeneration
@@ -48,11 +53,15 @@ extension RuntimeViewModel {
     )
   }
 
+  /// Ends the input capture.
   func cancelInputCapture() {
     inputGeneration += 1
     inputCaptureState = .idle
   }
 
+  /// Pairs two Joy-Con controllers under a profile.
+  ///
+  /// Returns the message of a failure, or nil; a running change refuses the request.
   func pairRemappingJoyCons(
     left: ControllerReference,
     right: ControllerReference,
@@ -71,6 +80,9 @@ extension RuntimeViewModel {
     } catch { return RuntimePresentation.userFacingError(error) }
   }
 
+  /// Unpairs a Joy-Con session.
+  ///
+  /// Returns the message of a failure, or nil; a running change refuses the request.
   func unpairRemappingJoyCons(sessionID: UUID) async -> String? {
     guard !mutationInFlight else {
       return OJDLocalized.string(
@@ -83,9 +95,12 @@ extension RuntimeViewModel {
     } catch { return RuntimePresentation.userFacingError(error) }
   }
 
-  /// Stores `profile` as the virtual HID profile override of `device`'s model, or of `device`
-  /// alone for the `.unit` scope, or clears that override when `profile` is nil so the controller
-  /// selects automatically.
+  /// Stores `profile` as the virtual HID profile override of the model of `device`, or of `device`
+  /// alone for the unit scope.
+  ///
+  /// A nil `profile` clears the override, so the controller selects automatically. The request
+  /// stays in ``virtualHIDProfileOverrideStates`` until the refreshed status shows the result, and
+  /// a failure stays there.
   func setVirtualHIDProfileOverride(
     _ profile: VirtualHIDProfileID?,
     for device: ApplicationServiceDeviceDescription,
@@ -113,7 +128,7 @@ extension RuntimeViewModel {
       }
       failure = result.failure.map(RuntimePresentation.virtualHIDProfileOverrideFailure)
     } catch { failure = RuntimePresentation.userFacingError(error) }
-    // Keep the request in flight until the refreshed status carries the model's new profile.
+    // Keep the request in flight until the refreshed status carries the model's profile.
     await refreshControllerInventory()
     virtualHIDProfileOverrideStates[model] = failure.map {
       RuntimeVirtualHIDProfileOverrideState(failure: $0)
@@ -121,7 +136,9 @@ extension RuntimeViewModel {
   }
 
   /// Returns every controller model, also those not connected, to automatic virtual HID profile
-  /// selection and refreshes the inventory. Returns why the service could not apply it, or nil.
+  /// selection and refreshes the inventory.
+  ///
+  /// Returns why the service could not apply it, or nil.
   func resetAllVirtualHIDProfileOverrides() async -> String? {
     var failure: String?
     do {
@@ -133,9 +150,11 @@ extension RuntimeViewModel {
     return failure
   }
 
-  /// Sets who serves `device`'s model, `server`: macOS natively, or OpenJoystickDriver as a virtual
-  /// controller. A refusal shows in the controller's detail, with the service's detail text for a
-  /// record that is invalid or cannot be written.
+  /// Sets who serves the model of `device` to `server`: macOS natively, or OpenJoystickDriver as a
+  /// virtual controller.
+  ///
+  /// A refusal shows in the controller's detail, with the service's detail text for a record that
+  /// is invalid or cannot be written.
   func setControllerServer(
     _ server: ControllerServer,
     for device: ApplicationServiceDeviceDescription
@@ -159,9 +178,11 @@ extension RuntimeViewModel {
     await waitForRecordServer(server, of: model)
   }
 
-  /// Sets the stick dead zone of `device`'s model in the user's controller record, or removes it
-  /// when `value` is nil. A refusal shows in the controller's detail, with the service's detail
-  /// text for a record that is invalid or cannot be written. Returns whether the service wrote it.
+  /// Sets the stick dead zone of the model of `device` in the user's controller record, or removes
+  /// it when `value` is nil.
+  ///
+  /// A refusal shows in the controller's detail, with the service's detail text for a record that
+  /// is invalid or cannot be written. Returns whether the service wrote it.
   @discardableResult
   func setStickDeadzone(
     _ value: Double?,
@@ -188,9 +209,11 @@ extension RuntimeViewModel {
     pendingControllerServers[RuntimeControllerModel(device)] ?? device.recordServer
   }
 
-  /// Refreshes the inventory every 200 ms, for at most 2 seconds, until a controller of `model`
-  /// reports `server`. The service reloads the records after it answers, so the first refresh
-  /// can still carry the old value.
+  /// Refreshes the inventory every 200 ms, at most 10 times, until a controller of `model` reports
+  /// `server`.
+  ///
+  /// The service reloads the records after it answers, so the first refresh can still carry the
+  /// previous server.
   private func waitForRecordServer(
     _ server: ControllerServer,
     of model: RuntimeControllerModel
@@ -208,6 +231,9 @@ extension RuntimeViewModel {
     }
   }
 
+  /// Suspends the controller; a controller that is suspended already counts as success.
+  ///
+  /// A failure shows in the controller's detail.
   func suspendController(_ device: ApplicationServiceDeviceDescription) async {
     await performControllerAction(device) {
       let result = try await gateway.suspendController(
@@ -220,6 +246,9 @@ extension RuntimeViewModel {
     }
   }
 
+  /// Resumes the controller; a controller that is active already counts as success.
+  ///
+  /// A failure shows in the controller's detail.
   func resumeController(_ device: ApplicationServiceDeviceDescription) async {
     await performControllerAction(device) {
       let result = try await gateway.resumeController(
@@ -232,6 +261,9 @@ extension RuntimeViewModel {
     }
   }
 
+  /// Disconnects the wireless link of the controller.
+  ///
+  /// A failure shows in the controller's detail, and its stage and code are printed.
   func disconnectWirelessController(_ device: ApplicationServiceDeviceDescription) async {
     await performControllerAction(device) {
       let result = try await gateway.disconnectWirelessController(

@@ -4,16 +4,22 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
-  /// One rumble motor's control. It observes the output settings itself, so its slider and
-  /// value follow each change; rows built inside `ForEach` are not re-rendered by a parent
-  /// that observes the settings.
+  /// One rumble motor's control.
+  ///
+  /// It observes the output settings itself, so its slider and value follow each change; rows built
+  /// inside `ForEach` are not re-rendered by a parent that observes the settings.
   struct InputTestRumbleMotorControl: View {
+    /// The values of the output controls.
     @ObservedObject
     var settings: InputTestOutputSettings
+    /// The motor.
     let motor: PhysicalRumbleMotor
+    /// The name of the motor.
     let title: String
+    /// Whether the motor is full or off, with no intensity.
     let isBinary: Bool
 
+    /// A switch for a binary motor, or a slider for the intensity.
     var body: some View {
       let value = Binding<Double>(
         get: { settings.rumbleIntensities[motor] ?? 0 },
@@ -36,15 +42,27 @@
     }
   }
 
-  /// A slider on one form row: the title leads, the slider fills the trailing column and the
-  /// value follows in a fixed-width monospaced-digit column so every slider ends at the same edge.
+  /// A slider on one form row: the title leads, the slider fills the trailing column and the value
+  /// follows in a fixed-width monospaced-digit column so every slider ends at the same edge.
+  ///
   /// The row names the slider with `accessibilityLabel` and gives it `valueText` as its value.
   struct InputTestSliderRow<Control: View>: View {
+    /// The title of the row.
     let title: String
+    /// The value beside the slider.
     let valueText: String
+    /// The name VoiceOver reads for the slider.
     let accessibilityLabel: String
+    /// The slider.
     let control: Control
 
+    /// Creates the row.
+    ///
+    /// - Parameters:
+    ///   - title: The title of the row.
+    ///   - valueText: The value beside the slider.
+    ///   - accessibilityLabel: The name VoiceOver reads for the slider.
+    ///   - control: The slider.
     init(
       title: String,
       valueText: String,
@@ -57,6 +75,7 @@
       self.control = control()
     }
 
+    /// The row.
     var body: some View {
       OJDLabeledRow(title) {
         HStack(spacing: 8) {
@@ -72,6 +91,7 @@
   }
 
   extension InputTestView {
+    /// The form: the controller header and the sections the controller supports.
     var body: some View {
       Form {
         Section { controllerHeader }
@@ -106,6 +126,8 @@
       }
     }
 
+    /// The header: the session state with its symbol, and the connection, protocol and ID of the
+    /// controller.
     private var controllerHeader: some View {
       HStack(spacing: 10) {
         OJDSystemSymbol(name: statusSemanticState.presentation.symbolName, fallback: statusLabel)
@@ -131,17 +153,23 @@
       Self.presentation(of: model.device)
     }
 
+    /// Returns the identity glyphs of the controller, or the generic glyphs for none.
+    ///
+    /// - Parameter device: The selected controller, or nil.
+    /// - Returns: The identity glyphs of the controller, or the generic glyphs for none.
     static func presentation(
       of device: ApplicationServiceDeviceDescription?
     ) -> VirtualIdentityPresentation {
       device?.publishedIdentityPresentation ?? .generic
     }
 
+    /// The live input of the controller.
     var liveInput: some View {
       InputTestLiveInputView(liveState: model.liveState, presentation: presentation)
         .frame(maxWidth: .infinity, alignment: .topLeading)
     }
 
+    /// The rumble controls, or the note that the controller has no rumble.
     @ViewBuilder
     private var rumbleContent: some View {
       if model.capabilities.supportsRumble {
@@ -180,6 +208,7 @@
       }
     }
 
+    /// The player indicator, color and brightness controls that the controller supports.
     @ViewBuilder
     private var lightingContent: some View {
       Group {
@@ -225,12 +254,17 @@
       }.disabled(!model.canSendOutput || model.isOutputBusy)
     }
 
+    /// Returns whether the latest failed output test is one of `operations`.
+    ///
+    /// - Parameter operations: The output tests of the section.
+    /// - Returns: Whether the latest failed output test is one of `operations`.
     private func outputErrorBelongs(to operations: Set<InputTestViewModel.OutputOperation>) -> Bool
     {
       guard case .failed(let operation) = model.outputState else { return false }
       return operations.contains(operation)
     }
 
+    /// The message of the failed output test.
     @ViewBuilder
     private var outputErrorView: some View {
       if let error = model.outputError {
@@ -243,6 +277,10 @@
       }
     }
 
+    /// Returns the control of one rumble motor.
+    ///
+    /// - Parameter motor: The motor.
+    /// - Returns: The control of one rumble motor.
     private func rumbleControl(for motor: PhysicalRumbleMotor) -> some View {
       InputTestRumbleMotorControl(
         settings: model.outputSettings,
@@ -252,10 +290,18 @@
       )
     }
 
+    /// Returns the note that an output is unavailable.
+    ///
+    /// - Parameter message: The text of the note.
+    /// - Returns: The note that an output is unavailable.
     private func unavailableOutputLabel(_ message: String) -> some View {
       Text(message).foregroundColor(Color(NSColor.secondaryLabelColor))
     }
 
+    /// Returns the progress, Done or Failed for the latest output test of `operation`.
+    ///
+    /// - Parameter operation: The output test.
+    /// - Returns: The progress, Done or Failed for the latest output test of `operation`.
     @ViewBuilder
     private func outputStatus(for operation: InputTestViewModel.OutputOperation) -> some View {
       switch model.outputState {
@@ -272,6 +318,7 @@
       }
     }
 
+    /// The binding between the color well and the red, green and blue values.
     private var colorBinding: Binding<NSColor> {
       Binding(
         get: {
@@ -291,6 +338,7 @@
       )
     }
 
+    /// The binding to the rumble test length.
     private var rumbleDurationBinding: Binding<Double> {
       Binding(
         get: { model.rumbleDurationMilliseconds },
@@ -298,10 +346,12 @@
       )
     }
 
+    /// The binding to the player indicator.
     private var playerIndicatorBinding: Binding<PhysicalPlayerIndicator> {
       Binding(get: { model.playerIndicator }, set: { model.playerIndicator = $0 })
     }
 
+    /// The binding to the brightness.
     private var brightnessBinding: Binding<Double> {
       Binding(get: { model.brightness }, set: { model.brightness = $0 })
     }

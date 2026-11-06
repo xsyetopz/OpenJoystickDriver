@@ -1,9 +1,17 @@
 import Foundation
 
+/// Smooths and scales a gyro projection.
 struct RemappingMotionTransform {
+  /// Smoothed pitch and yaw velocity, or `nil` before the first sample.
   private var smoothed: SIMD2<Double>?
+  /// Tuning of the previous sample; smoothing restarts when it changes.
   private var previousTuning: RemappingMotionTuning?
 
+  /// Returns the tuned projection, or `nil` when the tuning or the input is invalid.
+  ///
+  /// Applies, in order, the threshold, the smoothing, the sensitivities and the inversions. The
+  /// threshold removes that much speed from the combined pitch and yaw velocity. Smoothing restarts
+  /// after invalid input, a tuning change, or a time step of zero.
   mutating func apply(
     _ projection: RemappingGyroProjection,
     deltaTime: Double,

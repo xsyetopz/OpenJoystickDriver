@@ -10,15 +10,24 @@ public enum RemappingLayerActivation: String, Codable, Equatable, Hashable, Send
 
 /// An alternate mapping set activated by a designated button or dpad direction.
 public struct RemappingLayer: Codable, Equatable, Hashable, Identifiable, Sendable {
+  /// Stable identity of the layer inside its profile.
   public let id: UUID
+  /// Name shown to the user.
   public let name: String
+  /// How the activator turns the layer on.
   public let activationMode: RemappingLayerActivation
+  /// Source that turns the layer on; it cannot also have a binding.
   public let activator: RemappingSource
+  /// Bindings that replace the base binding of the same source while the layer is active.
   public let bindings: [RemappingBinding]
+  /// Chords that replace the base chord of the same source set while the layer is active.
   public let chords: [RemappingChord]
+  /// Sequences that apply in addition to the base sequences while the layer is active.
   public let sequences: [RemappingSequence]
+  /// Motion tuning that replaces the profile's while the layer is active, or `nil` to keep it.
   public let motionTuning: RemappingMotionTuning?
 
+  /// Creates a layer.
   public init(
     id: UUID = UUID(),
     name: String,
@@ -39,17 +48,28 @@ public struct RemappingLayer: Codable, Equatable, Hashable, Identifiable, Sendab
     self.motionTuning = motionTuning
   }
 
+  /// Profile document keys of a layer.
   private enum CodingKeys: String, CodingKey, CaseIterable {
+    /// The JSON key of `id`.
     case id
+    /// The JSON key of `name`.
     case name
+    /// The JSON key of `activationMode`.
     case activationMode
+    /// The JSON key of `activator`.
     case activator
+    /// The JSON key of `bindings`.
     case bindings
+    /// The JSON key of `chords`.
     case chords
+    /// The JSON key of `sequences`.
     case sequences
+    /// The JSON key of `motionTuning`.
     case motionTuning
   }
 
+  /// Decodes a layer from a profile document; every field except the motion tuning is required.
+  /// - Throws: `DecodingError` for an unknown key, a missing key or a bad value.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let values = try decoder.container(keyedBy: CodingKeys.self)

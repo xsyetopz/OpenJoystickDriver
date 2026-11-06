@@ -2,10 +2,14 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The gyro output fields of the motion sheet: the output, its scale, the trackball and the
+  /// activation.
   struct ProfileGyroFields: View {
+    /// The gyro output being edited.
     @Binding
     var draft: ProfileGyroDraft
 
+    /// The gyro output picker and the fields of the chosen output.
     var body: some View {
       VStack(alignment: .leading, spacing: 12) {
         Picker(label("output"), selection: $draft.mode) {
@@ -48,6 +52,7 @@
       }
     }
 
+    /// The sources that can activate the gyro output; an axis cannot.
     private var sources: [SourceOption] {
       SourceOption.options(including: draft.activationSource).filter {
         if case .axis = $0.source { return false }
@@ -55,6 +60,7 @@
       }
     }
 
+    /// Returns the text of the gyro field called `key`.
     private func label(_ key: String) -> String {
       OJDLocalized.string("ui.profiles.gyro." + key)
     }

@@ -2,10 +2,13 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The fields of one trigger mapping: the dual-stage mode, the thresholds and pass-through.
   struct ProfileTriggerFields: View {
+    /// The trigger mapping being edited.
     @Binding
     var draft: ProfileTriggerDraft
 
+    /// The enabled toggle and, while it is on, the mode and the settings of the trigger.
     var body: some View {
       VStack(alignment: .leading, spacing: 12) {
         Toggle(label("enabled"), isOn: $draft.enabled)
@@ -26,6 +29,7 @@
       }
     }
 
+    /// A labeled text field for the trigger setting called `key`.
     private func field(_ key: String, _ value: Binding<String>) -> some View {
       VStack(alignment: .leading, spacing: 4) {
         Text(label(key))
@@ -33,6 +37,7 @@
       }
     }
 
+    /// Returns the name of a dual-stage trigger mode.
     private func modeLabel(_ mode: RemappingDualStageTriggerMode) -> String {
       switch mode {
       case .simultaneous: return label("simultaneous")
@@ -47,6 +52,7 @@
       }
     }
 
+    /// Returns the text of the trigger field called `key`.
     private func label(_ key: String) -> String {
       OJDLocalized.string("ui.profiles.trigger." + key)
     }

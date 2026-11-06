@@ -26,9 +26,10 @@ final class ReceiverSlotDispatcher: OutputDispatcher, ControllerLifecycleListene
   }
 }
 
-/// Cancels the admitting task at its second inventory change, the moment the second slot's
-/// pipeline exists, so that slot's post-start check fails the whole admission. Only a task that
-/// binds ``counter`` is affected; other tests post the same notification.
+/// Cancels the admitting task at its second inventory change, the moment the second slot's pipeline
+/// exists, so that slot's post-start check fails the whole admission.
+///
+/// Only a task that binds ``counter`` is affected; other tests post the same notification.
 enum ReceiverSlotAdmissionCanceller {
   final class Counter: @unchecked Sendable {
     private let lock = NSLock()

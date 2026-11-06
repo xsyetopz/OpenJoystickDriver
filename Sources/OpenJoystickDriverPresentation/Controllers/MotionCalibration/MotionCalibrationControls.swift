@@ -2,25 +2,35 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The Motion calibration controls of the Input Test window: the instructions, the status, and
+  /// the Start, Pause and Reset buttons.
   struct MotionCalibrationControls: View {
+    /// The model of the calibration.
     @ObservedObject
     var model: MotionCalibrationViewModel
+    /// Counts the retries of a failed load.
     @State
     private var attempt = 0
 
+    /// Names a load: the selected controller and the retry count.
     private struct LoadID: Equatable {
+      /// The selected controller, or nil.
       let selector: ControllerReference?
+      /// The retry count.
       let attempt: Int
     }
 
     /// Loads the calibration status of the selected controller, and keeps it current while the
-    /// service can still change it. A new selection or a retry starts the load again.
+    /// service can still change it.
+    ///
+    /// A different selection or a retry starts the load again.
     var body: some View {
       content.task(id: LoadID(selector: model.selector, attempt: attempt)) {
         await model.refreshWhileCalibrating()
       }
     }
 
+    /// The instructions, the status, the error with Try Again, and the buttons.
     private var content: some View {
       VStack(alignment: .leading, spacing: 8) {
         Text(

@@ -2,22 +2,38 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The sheet that edits the touch surface mappings of a profile, one surface at a time.
   struct ProfileTouchSheet: View {
+    /// Receives the touch mappings that are enabled when the person chooses Save.
     let onSave: ([RemappingTouchMapping]) throws -> Void
+    /// What the controller has, which decides the surfaces that can be selected.
     let capabilities: ControllerProfileCapabilities
+    /// Dismisses the sheet.
     @Environment(\.presentationMode)
     private var presentationMode
+    /// The primary surface being edited.
     @State
     private var primary: ProfileTouchDraft
+    /// The left surface being edited.
     @State
     private var left: ProfileTouchDraft
+    /// The right surface being edited.
     @State
     private var right: ProfileTouchDraft
+    /// The surface the fields show.
     @State
     private var selected: RemappingTouchSurface = .primary
+    /// The message of the failed validation, or nil.
     @State
     private var errorMessage: String?
 
+    /// Creates the sheet on the current touch mappings and selects the first mapped surface, or
+    /// else the first surface the controller has.
+    ///
+    /// - Parameters:
+    ///   - mappings: The touch mappings to edit.
+    ///   - capabilities: What the controller has.
+    ///   - onSave: Receives the validated mappings.
     init(
       mappings: [RemappingTouchMapping],
       capabilities: ControllerProfileCapabilities,
@@ -34,6 +50,7 @@
       _selected = State(initialValue: mappings.first?.surface ?? available ?? .primary)
     }
 
+    /// The title, the surface picker, its fields and the buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
         Text(OJDLocalized.string("ui.profiles.touch.title")).font(
@@ -76,6 +93,7 @@
       )
     }
 
+    /// The edit of the selected surface.
     private var selectedDraft: Binding<ProfileTouchDraft> {
       switch selected {
       case .primary: $primary
@@ -84,11 +102,14 @@
       }
     }
 
+    /// Returns whether the person can select `surface`: the controller has it, or its mapping is
+    /// enabled.
     private func canSelect(_ surface: RemappingTouchSurface) -> Bool {
       ProfileCapabilityPolicy.supports(.touchContact(surface), capabilities: capabilities)
         || [primary, left, right].contains { $0.surface == surface && $0.enabled }
     }
 
+    /// Sets the selected surface to the defaults.
     private func resetSelected() {
       switch selected {
       case .primary: primary = ProfileTouchDraft(surface: .primary, mapping: nil)
@@ -97,6 +118,9 @@
       }
     }
 
+    /// Validates all surfaces and passes the enabled mappings to ``onSave``.
+    ///
+    /// A failure shows in ``errorMessage`` and keeps the sheet open.
     private func save() {
       do {
         let separator = Locale.current.decimalSeparator ?? "."
@@ -108,6 +132,7 @@
       } catch { errorMessage = RuntimePresentation.userFacingError(error) }
     }
 
+    /// Returns the edit of `surface` from its mapping in `mappings`, or the defaults.
     private static func draft(
       _ surface: RemappingTouchSurface,
       mappings: [RemappingTouchMapping]

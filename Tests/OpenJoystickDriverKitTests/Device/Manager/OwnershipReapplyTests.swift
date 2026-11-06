@@ -4,15 +4,17 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// A changed `ownership` reaches a connected controller without a replug. The GameSir connections
-/// are synthetic, as in `HIDLocationRoutingTests`.
+/// A changed `ownership` reaches a connected controller without a replug.
+///
+/// The GameSir connections are synthetic, as in `HIDLocationRoutingTests`.
 @Suite(.timeLimit(.minutes(2)))
 struct OwnershipReapplyTests {
   private static let changedModel = ControllerModelID(vendorID: 0x3537, productID: 0x100B)
 
-  /// A record reload lets the HID backend admit a changed model again with its new native flag,
-  /// and `readmitHIDConnections` does not admit it a second time. Other models keep their
-  /// sessions.
+  /// A record reload lets the HID backend admit a changed model again with its changed native flag,
+  /// and `readmitHIDConnections` does not admit it a second time.
+  ///
+  /// Other models keep their sessions.
   @Test
   func recordReloadReadmitsTheChangedModelOnceWithItsNewNativeFlag() async throws {
     let scripted = ScriptedHIDAccessBackend()

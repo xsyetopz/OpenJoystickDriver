@@ -2,8 +2,10 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// Stick Y is positive down. Each test starts from the physical stick pushed up (`y: -1`) and
-/// follows it to the direction of the event that leaves the engine.
+/// Stick Y is positive down.
+///
+/// Each test starts from the physical stick pushed up (`y: -1`) and follows it to the direction of
+/// the event that leaves the engine.
 struct StickYDirectionTests {
   private let device = LogicalControllerID(vendorID: 1, productID: 2, locationID: 1)
 

@@ -177,6 +177,7 @@ struct VirtualHIDProfileTests {
   }
 
   /// An unnumbered vendor report: marker `0x4F`, four motor bytes, and a little-endian 500.
+  ///
   /// No virtual HID profile reads it.
   private static let unnumberedVendorReport: [UInt8] = [0x4F, 1, 2, 3, 4, 0xF4, 0x01]
 }

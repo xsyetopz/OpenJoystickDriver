@@ -46,9 +46,11 @@ extension OutputCharacterizationTests {
   }
 
   /// Passthrough analog triggers (clamped to `0...1`; from half a pull they also set the digital
-  /// flag), trigger clicks (the digital flag and the effective full-scale byte), the d-pad (hat
-  /// and bits) and both sticks. Unlike the virtual output path, a neutral hat leaves a d-pad
-  /// direction held by a d-pad button source.
+  /// flag), trigger clicks (the digital flag and the effective full-scale byte), the d-pad (hat and
+  /// bits) and both sticks.
+  ///
+  /// Unlike the virtual output path, a neutral hat leaves a d-pad direction held by a d-pad button
+  /// source.
   @Test
   func remappedTriggersDpadAndSticks() async throws {
     let session = EngineSession(Self.profile(.passthrough))

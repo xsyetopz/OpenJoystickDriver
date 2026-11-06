@@ -10,6 +10,7 @@ package struct RepositoryProblem: Error, Equatable, Sendable {
   /// The reason, without the code.
   package let message: String
 
+  /// Creates a problem for a file, the code of the failed rule and the reason.
   package init(file: String, code: ErrorCode, message: String) {
     self.file = file
     self.code = code
@@ -19,9 +20,11 @@ package struct RepositoryProblem: Error, Equatable, Sendable {
   /// The problem that `error` reports for `file`, with the code that
   /// ``ControllerRecordSet/problemCode(_:)`` gives and the reason that
   /// ``ControllerRecordSet/problemDescription(_:includingCode:document:)`` gives for a `document`
-  /// of that kind. A ``RepositoryProblem`` is reported as it is. The record, patch and virtual
-  /// device checks throw only errors that ``ControllerRecordSet/problemCode(_:)`` names, so any
-  /// other error stops the tool.
+  /// of that kind.
+  ///
+  /// A ``RepositoryProblem`` is reported as it is. The record, patch and virtual device checks
+  /// throw only errors that ``ControllerRecordSet/problemCode(_:)`` names, so any other error stops
+  /// the tool.
   init(file: String, error: any Error, document: String) {
     if let problem = error as? Self {
       self = problem
@@ -52,8 +55,10 @@ package struct RepositoryProblem: Error, Equatable, Sendable {
   }
 }
 
-/// The checks that the repository tool runs over files outside the bundle. Each check is the one
-/// the bundled files and the user's files pass, applied to the files it is given.
+/// The checks that the repository tool runs over files outside the bundle.
+///
+/// Each check is the one the bundled files and the user's files pass, applied to the files it is
+/// given.
 package enum RepositoryValidation {
   /// The problems of the Controller files under `directory`, found recursively, by
   /// ``ControllerRecordSet``: each file's record rules, the file name its record needs, and an
@@ -86,7 +91,9 @@ package enum RepositoryValidation {
   }
 
   /// The problem of the remapping profile file `url`, or nil when ``RemappingProfileFileStore``
-  /// loads it. A file that cannot be read is ``ErrorCode/fileAccessFailed``.
+  /// loads it.
+  ///
+  /// A file that cannot be read is ``ErrorCode/fileAccessFailed``.
   package static func profile(at url: URL) -> RepositoryProblem? {
     do {
       _ = try RemappingProfileFileStore.load(from: try RepositoryProblem.read(url))
@@ -106,9 +113,10 @@ package enum RepositoryValidation {
     return nil
   }
 
-  /// The problem of the `VirtualDevice` file `url`, or nil when
-  /// ``VirtualHIDProfileOverrideStore`` reads it. A file that cannot be read is
-  /// ``ErrorCode/fileAccessFailed``.
+  /// The problem of the `VirtualDevice` file `url`, or nil when ``VirtualHIDProfileOverrideStore``
+  /// reads it.
+  ///
+  /// A file that cannot be read is ``ErrorCode/fileAccessFailed``.
   package static func virtualDevice(at url: URL) -> RepositoryProblem? {
     do { _ = try VirtualHIDProfileOverrideStore.parse(try RepositoryProblem.read(url)) } catch {
       return RepositoryProblem(file: url.path, error: error, document: "virtualDevice")

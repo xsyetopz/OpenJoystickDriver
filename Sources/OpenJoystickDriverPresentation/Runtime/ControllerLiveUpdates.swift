@@ -11,10 +11,14 @@ protocol ControllerChangeSource: Sendable {
 
 /// Why the wait for service status changes failed, as the banner states it.
 enum ControllerLiveUpdateFailure: Equatable, Sendable {
+  /// The service closed the connection.
   case serviceClosedConnection
+  /// The wait timed out.
   case timeout
+  /// Any other error.
   case other
 
+  /// Creates the failure for an error.
   init(_ error: any Error) {
     switch error {
     case LocalServiceRPCError.serviceClosedConnection: self = .serviceClosedConnection
@@ -61,20 +65,33 @@ enum ControllerLiveUpdateMode: Equatable {
 /// refreshes nothing, because the status did not change.
 @MainActor
 final class ControllerLiveUpdates {
+  /// The default seconds between reads while polling.
   static let fallbackPollSeconds: Double = 1
+  /// How many consecutive failures pass before ``modeChanged`` reports polling.
   static let failuresBeforeReporting = 3
 
+  /// How the app learns of status changes.
   private(set) var mode = ControllerLiveUpdateMode.starting
+  /// Waits on the service for changes.
   private let source: any ControllerChangeSource
+  /// Reads the service and updates the views.
   private let refresh: @MainActor () async -> Void
+  /// Writes a log line.
   private let log: @MainActor (String) -> Void
+  /// Called with the announcement of a test notification that a reply carries.
   private let answerTestNotification: @MainActor (UUID) -> Void
+  /// Called when the mode is reported: polling after enough failures, and the restored wait.
   private let modeChanged: @MainActor (ControllerLiveUpdateMode) -> Void
+  /// The seconds between reads while polling.
   private let fallbackPollSeconds: Double
+  /// The task that runs the wait loop, or nil while stopped.
   private var task: Task<Void, Never>?
+  /// How many waits failed in a row.
   private var consecutiveFailures = 0
+  /// The kind of failure that ``modeChanged`` last reported, or nil.
   private var reportedFailure: ControllerLiveUpdateFailure?
 
+  /// Creates the updates on a source of changes.
   init(
     source: any ControllerChangeSource,
     fallbackPollSeconds: Double = ControllerLiveUpdates.fallbackPollSeconds,
@@ -91,16 +108,19 @@ final class ControllerLiveUpdates {
     self.fallbackPollSeconds = fallbackPollSeconds
   }
 
+  /// Starts the wait loop; does nothing while it runs.
   func start() {
     guard task == nil else { return }
     task = Task { @MainActor [weak self] in await self?.run() }
   }
 
+  /// Stops the wait loop.
   func stop() {
     task?.cancel()
     task = nil
   }
 
+  /// Waits for changes until cancelled, refreshing after each change and after each failed wait.
   private func run() async {
     var revision: ServiceStatusRevision?
     while !Task.isCancelled {
@@ -122,6 +142,8 @@ final class ControllerLiveUpdates {
     }
   }
 
+  /// Records a wait that succeeded: polling ends and the restored wait is reported when polling had
+  /// been reported.
   private func recordSuccess() {
     if case .polling = mode {
       log("[ControllerLiveUpdates] Service subscription restored; polling stopped.")
@@ -134,6 +156,8 @@ final class ControllerLiveUpdates {
     }
   }
 
+  /// Records a failed wait: the mode becomes polling, the first failure is logged, and polling is
+  /// reported after ``failuresBeforeReporting`` failures in a row and again when the kind changes.
   private func recordFailure(_ error: any Error) {
     consecutiveFailures += 1
     let failure = ControllerLiveUpdateFailure(error)
@@ -159,6 +183,11 @@ final class ControllerLiveUpdates {
 }
 
 extension ApplicationServiceClientGateway: ControllerChangeSource {
+  /// Waits for the service to report a status change or announce an event.
+  ///
+  /// - Parameter revision: The revision the caller has; nil returns the current one at once.
+  /// - Returns: The service's reply.
+  /// - Throws: The error of the request.
   func waitForChange(
     after revision: ServiceStatusRevision?
   ) async throws -> ServiceStatusReply {

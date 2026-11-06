@@ -6,6 +6,7 @@ import OpenJoystickDriverKit
 import OpenJoystickDriverMacOSPlatform
 import OpenJoystickDriverUSB
 
+/// The parsed command line.
 let parsedArguments: HIDToolArguments
 do {
   guard let parsed = try parseHIDToolArguments(Array(CommandLine.arguments.dropFirst())) else {
@@ -17,16 +18,25 @@ do {
   printUsageAndExit(2)
 }
 
+/// Whether `--list` is selected.
 let list = parsedArguments.mode == .list
+/// Whether `--dump` is selected.
 let dump = parsedArguments.mode == .dump
+/// Whether `--open` is selected.
 let open = parsedArguments.mode == .open
+/// Whether `--service-open` is set.
 let serviceOpen = parsedArguments.flags.contains("--service-open")
+/// Whether `--set-report` is set.
 let setReport = parsedArguments.flags.contains("--set-report")
+/// Whether `--monitor` is selected.
 let monitor = parsedArguments.mode == .monitor
+/// Whether `--usb-monitor` is selected.
 let usbMonitor = parsedArguments.mode == .usbMonitor
 
+/// Returns the value of the option `name`, or nil when it is absent.
 func argValue(_ name: String) -> String? { parsedArguments.values[name] }
 
+/// Returns the integer value of the option `name`, or `defaultValue` when it is absent.
 func intArg(_ name: String, default defaultValue: Int) -> Int {
   parsedArguments.int(name, default: defaultValue)
 }
@@ -39,6 +49,10 @@ if let recordPath = argValue("--record-probe") {
   )
 }
 
+/// Prints the interrupt IN packets of the raw USB device that `--vid` and `--pid` select.
+///
+/// It reads the endpoint of `--endpoint`, or sweeps 0x81 to 0x8F, with the `--length` read length
+/// and for `--seconds`.
 func runRawUSBMonitor() {
   let vendorID = UInt16(clamping: intArg("--vid", default: 0))
   let productID = UInt16(clamping: intArg("--pid", default: 0))

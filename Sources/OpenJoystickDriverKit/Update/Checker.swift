@@ -1,10 +1,15 @@
 import Foundation
 
+/// A release that is newer than the running version.
 public struct UpdateInfo: Equatable, Sendable {
+  /// The Git tag of the release.
   public let tagName: String
+  /// The version that the tag names.
   public let version: SemanticVersion
+  /// The GitHub page of the tag.
   public let htmlURL: URL
 
+  /// Creates the description of a release.
   public init(tagName: String, version: SemanticVersion, htmlURL: URL) {
     self.tagName = tagName
     self.version = version
@@ -12,28 +17,43 @@ public struct UpdateInfo: Equatable, Sendable {
   }
 }
 
+/// Why an update check failed.
 public enum UpdateCheckFailureReason: Equatable, Sendable {
+  /// The running version is not a SemVer version.
   case invalidCurrentVersion
+  /// No tag is a SemVer version, or a stable one when prereleases are left out.
   case noValidTags
+  /// The tag pages link to a page that was already read.
   case paginationCycle
+  /// The link to the next page leaves the scheme, host or port of the tags URL.
   case unsafePaginationLink
+  /// The response is not HTTP, or does not decode as tags.
   case invalidResponse
+  /// GitHub answered with this HTTP status.
   case httpStatus(Int)
+  /// The request failed before a response arrived.
   case transport
 }
 
+/// The failure of an update check.
 public struct UpdateCheckFailure: Equatable, Sendable {
+  /// Why the check failed.
   public let reason: UpdateCheckFailureReason
+  /// A description of the failure.
   public let message: String
 
+  /// Creates a failure from its reason and message.
   public init(reason: UpdateCheckFailureReason, message: String) {
     self.reason = reason
     self.message = message
   }
 }
 
+/// The state of an update check.
 public enum UpdateCheckState: Equatable, Sendable {
+  /// No check has run.
   case idle
+  /// A check is running.
   case checking
   /// The running version equals the latest release.
   case upToDate(current: String, latest: String)
@@ -41,13 +61,18 @@ public enum UpdateCheckState: Equatable, Sendable {
   case available(UpdateInfo)
   /// The running version is newer than the latest release.
   case aheadOfLatestRelease(current: String, latest: String)
+  /// The check failed.
   case failed(UpdateCheckFailure)
 }
 
+/// Looks for the latest release among the GitHub tags of the OJD repository.
 public struct UpdateChecker: Sendable {
+  /// The timeout of one request, in seconds.
   public static let requestTimeoutSeconds: TimeInterval = 15
+  /// The HTTP status codes of a successful response.
   private static let httpSuccessStatusRange = 200...299
 
+  /// The URL of the first page of the repository's tags, 100 to a page.
   public static var defaultTagsURL: URL {
     var components = URLComponents()
     components.scheme = "https"
@@ -57,6 +82,7 @@ public struct UpdateChecker: Sendable {
     return components.url ?? URL(fileURLWithPath: "/")
   }
 
+  /// The URL of the repository on GitHub.
   public static var defaultRepositoryURL: URL {
     var components = URLComponents()
     components.scheme = "https"
@@ -65,17 +91,28 @@ public struct UpdateChecker: Sendable {
     return components.url ?? URL(fileURLWithPath: "/")
   }
 
-  private struct GitHubTag: Decodable { let name: String }
+  /// A tag in the GitHub tags response.
+  private struct GitHubTag: Decodable {
+    /// The name of the tag.
+    let name: String
+  }
 
+  /// A tag with the version it names.
   private struct Candidate {
+    /// The tag.
     let tag: GitHubTag
+    /// The version that the tag names.
     let version: SemanticVersion
   }
 
+  /// The URL of the first page of tags.
   public let tagsURL: URL
+  /// The URL of the repository, which the tag pages are built on.
   public let repositoryURL: URL
+  /// The session that sends the requests.
   public let session: URLSession
 
+  /// Creates a checker for the tags at `tagsURL` of the repository at `repositoryURL`.
   public init(
     tagsURL: URL = Self.defaultTagsURL,
     repositoryURL: URL = Self.defaultRepositoryURL,
@@ -86,6 +123,11 @@ public struct UpdateChecker: Sendable {
     self.session = session
   }
 
+  /// Compares `rawCurrentVersion` with the latest tag.
+  ///
+  /// Tags that are not SemVer versions are skipped, and so are prereleases unless
+  /// `includePrereleases` is set. A failure is returned as ``UpdateCheckState/failed(_:)``, not
+  /// thrown.
   public func check(
     currentVersion rawCurrentVersion: String,
     includePrereleases: Bool = false
@@ -118,6 +160,10 @@ public struct UpdateChecker: Sendable {
     }
   }
 
+  /// The tag with the highest version.
+  ///
+  /// - Throws: An error with ``UpdateCheckFailureReason/noValidTags`` when no tag qualifies, or the
+  ///   error of reading the tags.
   private func latestTag(includePrereleases: Bool) async throws -> Candidate {
     let tags = try await allTags()
     let candidates = tags.compactMap { tag -> Candidate? in
@@ -132,6 +178,10 @@ public struct UpdateChecker: Sendable {
     return latest
   }
 
+  /// Every tag of the repository, followed through the pages of the response.
+  ///
+  /// - Throws: An error with ``UpdateCheckFailureReason/paginationCycle`` when a page repeats, or
+  ///   the error of reading a page.
   private func allTags() async throws -> [GitHubTag] {
     var tags: [GitHubTag] = []
     var nextURL: URL? = tagsURL
@@ -150,6 +200,10 @@ public struct UpdateChecker: Sendable {
     return tags
   }
 
+  /// Reads one page of tags and its response.
+  ///
+  /// - Throws: An error with ``UpdateCheckFailureReason/invalidResponse`` or
+  ///   ``UpdateCheckFailureReason/httpStatus(_:)``, or the error of the request.
   private func tagPage(url: URL) async throws -> (tags: [GitHubTag], response: HTTPURLResponse) {
     var request = URLRequest(url: url)
     request.timeoutInterval = Self.requestTimeoutSeconds
@@ -171,6 +225,10 @@ public struct UpdateChecker: Sendable {
     }
   }
 
+  /// The URL of the next page, from the `Link` header of `response`; nil when there is none.
+  ///
+  /// - Throws: An error with ``UpdateCheckFailureReason/unsafePaginationLink`` when the link leaves
+  ///   the scheme, host or port of the tags URL.
   private func nextPageURL(response: HTTPURLResponse, currentURL: URL) throws -> URL? {
     guard let link = response.value(forHTTPHeaderField: "Link") else { return nil }
 
@@ -200,14 +258,19 @@ public struct UpdateChecker: Sendable {
     return nil
   }
 
+  /// The GitHub page of the tag `tagName`.
   private func tagURL(_ tagName: String) -> URL {
     repositoryURL.appendingPathComponent("tree").appendingPathComponent(tagName)
   }
 }
 
+/// A failure of the update check with its reason.
 private struct UpdateCheckerError: Error {
+  /// Why the check failed.
   let reason: UpdateCheckFailureReason
+  /// A description of the failure.
   let message: String
+  /// Creates an error from a reason and a message.
   init(_ reason: UpdateCheckFailureReason, _ message: String) {
     self.reason = reason
     self.message = message

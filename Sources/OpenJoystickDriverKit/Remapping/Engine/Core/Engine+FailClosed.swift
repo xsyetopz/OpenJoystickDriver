@@ -2,6 +2,11 @@ import Foundation
 
 extension RemappingEventEngine {
 
+  /// Discards all mapping state, marks the engine faulted, and tries to release every output that
+  /// may still be held.
+  ///
+  /// Gamepad and physical output that was held becomes uncertain. A failed release leaves the
+  /// output in the uncertain sets for ``recover()``.
   func failClosed(potentiallyHeld: Set<RemappingHeldOutput>) async {
     state = RemappingEngineState()
     faulted = true
@@ -13,6 +18,7 @@ extension RemappingEventEngine {
     try? await releaseUncertainOutputs()
   }
 
+  /// Updates held outputs for an action that the sink accepted.
   static func accountForDelivered(
     _ action: RemappingSystemInputAction,
     in heldOutputs: inout Set<RemappingHeldOutput>
@@ -28,6 +34,10 @@ extension RemappingEventEngine {
     }
   }
 
+  /// Adds the output of an action whose delivery is uncertain to the held outputs.
+  ///
+  /// The action may or may not have taken effect, so its key, modifier or pointer button counts as
+  /// held.
   static func accountForUncertain(
     _ action: RemappingSystemInputAction,
     in heldOutputs: inout Set<RemappingHeldOutput>
@@ -42,6 +52,9 @@ extension RemappingEventEngine {
     }
   }
 
+  /// Orders held outputs for release: keys, then pointer buttons, then modifiers.
+  ///
+  /// Modifiers are released in reverse stable-name order.
   static func releaseOrder(_ outputs: Set<RemappingHeldOutput>) -> [RemappingHeldOutput] {
     outputs.sorted { lhs, rhs in
       if lhs.releaseOrder != rhs.releaseOrder { return lhs.releaseOrder < rhs.releaseOrder }

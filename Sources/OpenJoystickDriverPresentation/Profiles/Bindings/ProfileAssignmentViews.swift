@@ -5,6 +5,7 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// Returns the title of the section that lists assignments with `source`.
   func profileSourceGroup(_ source: RemappingSource) -> String {
     switch source {
     case .button(let button):
@@ -33,21 +34,35 @@
     }
   }
 
+  /// The assignments of one section of the profile editor.
   struct BindingGroup {
+    /// The title of the section.
     let title: String
+    /// The assignments in the section.
     let bindings: [RemappingBinding]
 
+    /// The sections of the profile editor's assignment list, in the order they appear.
     enum Order: CaseIterable {
+      /// Face buttons.
       case face
+      /// Shoulder buttons.
       case shoulders
+      /// The directional pad.
       case dpad
+      /// The sticks.
       case sticks
+      /// The triggers.
       case triggers
+      /// The stick clicks.
       case clicks
+      /// Touch.
       case touch
+      /// Motion.
       case motion
+      /// System controls.
       case system
 
+      /// The title of the section.
       var title: String {
         switch self {
         case .face:
@@ -68,20 +83,33 @@
     }
   }
 
+  /// One section of assignment rows in the profile editor.
   struct AssignmentGroupView: View {
+    /// The title of the section.
     let title: String
+    /// The assignments in the section.
     let bindings: [RemappingBinding]
+    /// What the controller has, which marks unsupported sources and destinations.
     let capabilities: ControllerProfileCapabilities
+    /// The profile being edited.
     @Binding
     var draft: RuntimeProfileDraft
+    /// Whether the rows ignore edits.
     let isEditingDisabled: Bool
+    /// Removes the assignment with the identifier.
     let onRemove: (UUID) -> Void
+    /// Shows an error message.
     let onError: (String) -> Void
+    /// Opens the sheet that adjusts the axis tuning of an assignment.
     let onAdjust: (RemappingBinding) -> Void
+    /// Opens the sheet that edits the behavior of an assignment.
     let onBehavior: (RemappingBinding) -> Void
+    /// Called after an edit changed the draft.
     let onEditingStateChanged: () -> Void
+    /// Whether the source and destination pickers sit side by side or one above the other.
     let rowLayout: ProfileAssignmentRowLayout
 
+    /// The assignments of the group in a section.
     var body: some View {
       Section(header: Text(title)) {
         ForEach(bindings) { binding in
@@ -102,19 +130,32 @@
     }
   }
 
+  /// The row of one assignment: pickers for its source and destination, and the Adjust,
+  /// Behavior and Remove buttons.
   private struct AssignmentRow: View {
+    /// The assignment.
     let binding: RemappingBinding
+    /// What the controller has, which marks unsupported sources and destinations.
     let capabilities: ControllerProfileCapabilities
+    /// The profile being edited.
     @Binding
     var draft: RuntimeProfileDraft
+    /// Whether the row ignores edits.
     let isEditingDisabled: Bool
+    /// Removes the assignment with the identifier.
     let onRemove: (UUID) -> Void
+    /// Shows an error message.
     let onError: (String) -> Void
+    /// Opens the sheet that adjusts the axis tuning of the assignment.
     let onAdjust: (RemappingBinding) -> Void
+    /// Opens the sheet that edits the behavior of the assignment.
     let onBehavior: (RemappingBinding) -> Void
+    /// Called after an edit changed the draft.
     let onEditingStateChanged: () -> Void
+    /// Whether the source and destination pickers sit side by side or one above the other.
     let layout: ProfileAssignmentRowLayout
 
+    /// The source, the destination and their fields of one assignment.
     var body: some View {
       VStack(alignment: .leading, spacing: 7) {
         if layout == .inline {
@@ -162,6 +203,7 @@
         .ojdAccessibilityValue(assignmentAccessibilityValue)
     }
 
+    /// The picker of the controller control.
     private var sourceField: some View {
       VStack(alignment: .leading, spacing: 4) {
         Text(OJDLocalized.string("ui.capture.controllerControl")).font(
@@ -178,6 +220,8 @@
       }.frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    /// The picker of the destination, with the fields of a physical output and a note when the
+    /// controller lacks the source or the destination.
     private var destinationField: some View {
       VStack(alignment: .leading, spacing: 4) {
         Text(OJDLocalized.string("term.destination")).font(.caption)
@@ -212,6 +256,8 @@
       }.frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    /// The assignment as VoiceOver reads it; an assignment with axis tuning reads with its own
+    /// summary.
     private var assignmentAccessibilityValue: String {
       let source = RuntimePresentation.sourceLabel(binding.source)
       let destination = RuntimePresentation.destinationLabel(binding.destination)
@@ -229,10 +275,12 @@
       )
     }
 
+    /// The source picker's binding; a refused change shows through ``onError``.
     private var sourceBinding: Binding<RemappingSource> {
       Binding(get: { binding.source }, set: { setSource($0) })
     }
 
+    /// The destination picker's binding; a refused change shows through ``onError``.
     private var destinationBinding: Binding<RemappingDestination> {
       Binding(
         get: { binding.destination },
@@ -246,6 +294,7 @@
       )
     }
 
+    /// Sets the source of the assignment in the draft and reports a refusal through ``onError``.
     private func setSource(_ source: RemappingSource) {
       guard !isEditingDisabled else { return }
       do {

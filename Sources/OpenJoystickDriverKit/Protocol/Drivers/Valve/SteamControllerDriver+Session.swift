@@ -2,24 +2,38 @@ import Foundation
 
 extension SteamControllerDriver {
 
+  /// The offsets of the fields in the 64-byte report.
   private enum ReportOffset {
+    /// The message type.
     static let messageType = 2
+    /// The wireless status.
     static let wirelessStatus = 4
+    /// The first button byte.
     static let buttons0 = 8
+    /// The second button byte.
     static let buttons1 = 9
+    /// The third button byte.
     static let buttons2 = 10
+    /// The left trigger.
     static let leftTrigger = 11
+    /// The right trigger.
     static let rightTrigger = 12
+    /// The left stick or left pad X.
     static let leftX = 16
+    /// The left stick or left pad Y.
     static let leftY = 18
+    /// The right pad X.
     static let rightPadX = 20
+    /// The right pad Y.
     static let rightPadY = 22
   }
 
+  /// The controls that the Steam Controller description gives every controller.
   public var capabilities: ControllerCapabilities {
     PhysicalProtocolID.valveSteamController.describedControls
   }
 
+  /// Haptic pulses on both pads and programmable brightness.
   public var outputCapabilities: PhysicalControllerOutputCapabilities {
     PhysicalControllerOutputCapabilities(
       rumbleMotors: [.leftHaptic, .rightHaptic],
@@ -27,28 +41,35 @@ extension SteamControllerDriver {
     )
   }
 
+  /// None: the controller has no default color.
   public var defaultColor: ControllerColor? { nil }
 
+  /// Output waits for a logical controller when the controller is behind a receiver.
   public var sessionPlan: DriverSessionPlan {
     DriverSessionPlan(requiresInputConnectionBeforeOutput: isWirelessReceiver)
   }
 
+  /// Returns and clears the connection change that is pending.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? {
     let state = pendingConnectionStateChange
     pendingConnectionStateChange = nil
     return state
   }
 
-  /// The description's activation reports for the transport. Over Bluetooth LE they also select
-  /// wireless packet version 2, as SDL `ResetSteamController` does.
+  /// The description's activation reports for the transport.
+  ///
+  /// Over Bluetooth LE they also select wireless packet version 2, as SDL `ResetSteamController`
+  /// does.
   public func activationWrites() -> [PhysicalOutputWrite] {
     PhysicalProtocolID.valveSteamController.protocolDescription.activationWrites(over: transport)
   }
 
+  /// The description's deactivation reports for the transport.
   public func deactivationWrites() -> [PhysicalOutputWrite] {
     PhysicalProtocolID.valveSteamController.protocolDescription.deactivationWrites(over: transport)
   }
 
+  /// The transport the controller is reached over.
   private var transport: PhysicalTransport { isBluetooth ? .bluetoothLE : .usb }
 
   /// A dongle controller connecting or disconnecting activates or deactivates it.
@@ -61,10 +82,11 @@ extension SteamControllerDriver {
     }
   }
 
-  /// Brightness as a settings feature report. Rumble is trackpad haptic pulses as feature
-  /// reports, none while no logical controller is connected; a held pulse lasts 65 ms. Stop
-  /// sends nothing: neither Linux `hid-steam.c` nor SDL documents a form that ends a running
-  /// pulse train.
+  /// Brightness as a settings feature report.
+  ///
+  /// Rumble is trackpad haptic pulses as feature reports, none while no logical controller is
+  /// connected; a held pulse lasts 65 ms. Stop sends nothing: neither Linux `hid-steam.c` nor SDL
+  /// documents a form that ends a running pulse train.
   public func encode(
     _ command: ControllerOutputCommand
   ) throws(ControllerOutputError) -> PhysicalOutputPlan {
@@ -93,6 +115,10 @@ extension SteamControllerDriver {
     }
   }
 
+  /// The pulse reports for a rumble of intensities `left` and `right` that lasts `durationMs`, none
+  /// while no logical controller is connected.
+  ///
+  /// A duration of 0 stands for a held pulse.
   private func hapticReports(
     left: UInt8,
     right: UInt8,
@@ -126,6 +152,7 @@ extension SteamControllerDriver {
     return reports
   }
 
+  /// The wireless-state query for a receiver; nil otherwise.
   public func presenceRequestWrite() -> PhysicalOutputWrite? {
     guard isWirelessReceiver else { return nil }
     return steamFeatureReports([steamControllerGetWirelessStateCommand]).first.map {
@@ -172,6 +199,10 @@ extension SteamControllerDriver {
     }
   }
 
+  /// Applies a wireless status message: a connected or disconnected value changes the logical
+  /// controller connection and queues the change.
+  ///
+  /// Other values, and any message on a controller without a receiver, change nothing.
   private func parseWirelessStatus(_ bytes: [UInt8]) {
     guard isWirelessReceiver else { return }
     let nextConnected: Bool
@@ -186,6 +217,8 @@ extension SteamControllerDriver {
     resetPreviousReportState()
   }
 
+  /// Marks the logical controller connected when a status message arrives on a receiver that held
+  /// it disconnected.
   private func parseWirelessStatusFallback() {
     guard isWirelessReceiver, !isLogicalControllerConnected else { return }
     isLogicalControllerConnected = true
@@ -193,6 +226,7 @@ extension SteamControllerDriver {
     resetPreviousReportState()
   }
 
+  /// The state after the buttons, hat, triggers, sticks and right pad of the state report `bytes`.
   private func decodeControllerState(_ bytes: [UInt8]) -> ControllerState {
     let b1 = bytes[ReportOffset.buttons1]
     let b2 = bytes[ReportOffset.buttons2]
@@ -238,6 +272,7 @@ extension SteamControllerDriver {
     (ReportOffset.buttons2, 0x40, .leftStickClick),
   ]
 
+  /// The haptic pulse command for `pad` (1 left, 0 right) with a gain that grows with `intensity`.
   private func hapticPulseReports(
     pad: UInt8,
     intensity: UInt8,
@@ -264,6 +299,7 @@ extension SteamControllerDriver {
     return [PhysicalHIDOutputReport(reportID: 0, bytes: report)]
   }
 
+  /// Clears the held input, motion time and Bluetooth LE framing.
   private func resetPreviousReportState() {
     motionSamples.reset()
     touchSamples = SteamTouchSamples()
@@ -273,21 +309,26 @@ extension SteamControllerDriver {
     bluetoothState = SteamBluetoothState()
   }
 
+  /// The little-endian signed 16-bit value at `offset`, with `Int16.min` raised to `-Int16.max`.
   private func readInt16LE(_ bytes: [UInt8], offset: Int) -> Int16 {
     clampedInt16(Int16(bitPattern: UInt16(bytes[offset]) | (UInt16(bytes[offset + 1]) << 8)))
   }
 
+  /// `value`, with `Int16.min` raised to `-Int16.max` so that it negates safely.
   private func clampedInt16(_ value: Int16) -> Int16 { value == Int16.min ? -Int16.max : value }
 
+  /// The negated little-endian signed 16-bit value at `offset`.
   private func clampedNegatedInt16LE(_ bytes: [UInt8], offset: Int) -> Int16 {
     -readInt16LE(bytes, offset: offset)
   }
 
+  /// `value` as -1...1.
   private func normalizeAxis(_ value: Int16) -> Float {
     let normalized = Float(value) / steamControllerStickMax
     return max(-1, min(1, normalized))
   }
 
+  /// The hat direction of the D-pad bits: up 1, right 2, left 4, down 8.
   private func mapDpad(_ value: UInt8) -> HatDirection {
     let up = (value & 0x01) != 0
     let right = (value & 0x02) != 0

@@ -4,13 +4,20 @@ import Foundation
 package final class UserSpaceHostReportHandler: Sendable {
   /// Serializes consuming a request with enqueueing it, so publication follows callback order.
   private let lock = NSLock()
+  /// The controller the device belongs to.
   private let identifier: LogicalControllerID
+  /// The input report state of the device.
   private let input: UserSpaceInputReportState
+  /// The sender that publishes the reports.
   private let sender: UserSpaceReportSender
+  /// Whether the dispatcher is open.
   private let isOpen: @Sendable () -> Bool
+  /// The handler for the output commands that the host sends; nil when none is set.
   private let onOutput: UserSpaceOutputDispatcher.OutputCommandHandler?
+  /// The handler that receives the text of the latest rumble request.
   private let onRumbleStatus: @Sendable (String) -> Void
 
+  /// Creates a handler from its parts.
   init(
     identifier: LogicalControllerID,
     input: UserSpaceInputReportState,
@@ -28,6 +35,7 @@ package final class UserSpaceHostReportHandler: Sendable {
   }
 
   /// Native callbacks follow the IOKit/HIDAPI convention: numbered buffers include byte-zero ID.
+  ///
   /// The callback acknowledges validated enqueueing, not publication.
   func setReport(
     type: VirtualHostReportType,
@@ -63,6 +71,10 @@ package final class UserSpaceHostReportHandler: Sendable {
     _ = try setReport(type: type, reportID: reportID, bytes: bytes)
   }
 
+  /// The report of `type` and `reportID` that the host asks for, at most `maxSize` bytes.
+  ///
+  /// - Throws: ``VirtualHostReportError/closed`` when the dispatcher is closed, or the error of the
+  ///   input report state.
   package func getReport(
     type: VirtualHostReportType,
     reportID: UInt32,

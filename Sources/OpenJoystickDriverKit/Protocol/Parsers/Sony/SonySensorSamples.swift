@@ -1,27 +1,38 @@
-/// Unwraps an ordered device counter. A decrease denotes one wrap; a transport reset re-anchors.
-/// Multiple wraps during a report gap cannot be recovered from the wire counter alone.
-/// Sample time is the first counted report's receipt time plus the unwrapped counter time.
+/// Unwraps an ordered device counter to a monotonic sample time.
+///
+/// A decrease denotes one wrap; a transport reset re-anchors. Multiple wraps during a report gap
+/// cannot be recovered from the wire counter alone. Sample time is the first counted report's
+/// receipt time plus the unwrapped counter time.
 struct SonySensorClock {
+  /// The bit mask of the counter's width.
   let mask: UInt32
+  /// The numerator of the tick length in nanoseconds; the denominator is 3.
   let tickNumerator: UInt32
+  /// The receipt time of the first counted report.
   private var anchor: UInt64?
+  /// The masked counter of the previous report.
   private var previous: UInt32?
+  /// The counter time since the anchor in nanoseconds.
   private var elapsed: UInt64 = 0
+  /// The part of the scaled ticks, in thirds of a nanosecond, that `elapsed` does not hold yet.
   private var remainder: UInt64 = 0
+  /// The sequence index of the latest timestamp; ``reset()`` keeps it.
   private var sequence: UInt64 = 0
 
+  /// Creates a clock for a counter of width `mask` and tick length `tickNumerator` / 3 nanoseconds.
   init(mask: UInt32, tickNumerator: UInt32) {
     self.mask = mask
     self.tickNumerator = tickNumerator
   }
 
-  /// Starts a new time session at the next report; the sequence index keeps counting.
+  /// Starts a fresh time session at the next report; the sequence index keeps counting.
   mutating func reset() {
     let next = anchor == nil ? sequence : sequence + 1
     self = Self(mask: mask, tickNumerator: tickNumerator)
     sequence = next
   }
 
+  /// The timestamp of a report that carries `counter`, received at `receivedAt` nanoseconds.
   mutating func timestamp(_ counter: UInt32, receivedAt: UInt64) -> ControllerSampleTimestamp {
     let raw = counter & mask
     if let previous {
@@ -46,13 +57,16 @@ struct SonySensorClock {
 
 /// The ordered samples of one report.
 struct ControllerReportSamples: Equatable {
+  /// The motion samples.
   var motion: [ControllerMotionSample] = []
+  /// The touch samples.
   var touch: [ControllerTouchSample] = []
 }
 
 /// Packet facts follow Linux hid-playstation; `SonyMotionCalibration.sample` converts to SI.
-/// Touch frames carry the report's sensor-clock time: DS4 history frames have no timed counter,
-/// so every frame of one report shares that report's time.
+///
+/// Touch frames carry the report's sensor-clock time: DS4 history frames have no timed counter, so
+/// every frame of one report shares that report's time.
 enum SonySensorSamples {
   /// hid-playstation `DS4_TOUCHPAD_WIDTH`/`HEIGHT` and `DS_TOUCHPAD_WIDTH`/`HEIGHT`; raw Y grows
   /// downward from the top edge.
@@ -63,6 +77,7 @@ enum SonySensorSamples {
     height: 942,
     rawYIncreasesUpward: false
   )
+  /// The DualSense touchpad geometry, 1920 by 1080; raw Y grows downward from the top edge.
   static let dualSenseTouchpad = ControllerTouchGeometry(
     originX: 0,
     originY: 0,
@@ -71,6 +86,10 @@ enum SonySensorSamples {
     rawYIncreasesUpward: false
   )
 
+  /// Decodes the motion and touch samples of a DualShock 4 report from USB or `bluetooth`.
+  ///
+  /// A Bluetooth report carries up to four touch frames and a USB report up to three. A report
+  /// under 32 bytes gives no samples.
   static func dualShock4(
     _ bytes: [UInt8],
     bluetooth: Bool,
@@ -98,6 +117,9 @@ enum SonySensorSamples {
     return samples
   }
 
+  /// Decodes the motion and touch samples of a DualSense report.
+  ///
+  /// A report under 40 bytes gives no samples.
   static func dualSense(
     _ bytes: [UInt8],
     receivedAt: UInt64,
@@ -140,6 +162,8 @@ enum SonySensorSamples {
     )
   }
 
+  /// The motion sample of the vectors at `offset` (gyro) and `offset + 6` (accelerometer), as a
+  /// list with none when `calibration` gives none.
   private static func motion(
     _ bytes: [UInt8],
     at offset: Int,
@@ -154,6 +178,7 @@ enum SonySensorSamples {
     return sample.map { [$0] } ?? []
   }
 
+  /// The raw vector of the three little-endian values that start at `offset`.
   private static func vector(_ bytes: [UInt8], at offset: Int) -> ControllerRawSensorVector {
     ControllerRawSensorVector(
       x: Int16(bitPattern: unsigned16(bytes, at: offset)),
@@ -162,11 +187,14 @@ enum SonySensorSamples {
     )
   }
 
+  /// The little-endian unsigned 16-bit value at `offset`.
   private static func unsigned16(_ bytes: [UInt8], at offset: Int) -> UInt16 {
     UInt16(bytes[offset]) | (UInt16(bytes[offset + 1]) << 8)
   }
 
-  /// Slot is the contact's index in the report, as in hid-playstation's `input_mt_slot` loop; the
+  /// The two contacts at `offset`, four bytes apart.
+  ///
+  /// A slot is the contact's index in the report, as in hid-playstation's `input_mt_slot` loop; the
   /// low seven bits of each contact byte are a per-finger tracking counter and are not published.
   private static func contacts(
     _ bytes: [UInt8],

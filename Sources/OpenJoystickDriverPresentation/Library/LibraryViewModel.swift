@@ -4,11 +4,16 @@ import OpenJoystickDriverKit
 
 /// An operation that waits for the person's confirmation in a window-modal sheet.
 enum LibraryPending: Identifiable, Equatable {
+  /// Installing a record file, with its data and what validation found.
   case installRecord(data: Data, check: LibraryRecordCheck)
+  /// Installing a mod folder, with what validation found.
   case installMod(folder: URL, check: LibraryModCheck)
+  /// Removing a record file.
   case removeRecord(LibraryRecordItem)
+  /// Removing a mod package.
   case removeMod(LibraryModItem)
 
+  /// The kind of the change with the file name, name or identity of its item.
   var id: String {
     switch self {
     case .installRecord(_, let check): "installRecord.\(check.fileName)"
@@ -21,13 +26,19 @@ enum LibraryPending: Identifiable, Equatable {
 
 /// The text and button of a confirmation sheet; its wording matches the action.
 struct LibraryConfirmation: Equatable {
+  /// The question the sheet asks.
   let title: String
+  /// The explanation under the question.
   let message: String
+  /// The title of the confirming button.
   let confirmTitle: String
+  /// Whether the operation replaces or removes something.
   let isDestructive: Bool
 }
 
 extension LibraryPending {
+  /// The sheet text for the operation: Install or Replace for an install that finds a file of the
+  /// same name, and Remove for a removal.
   var confirmation: LibraryConfirmation {
     switch self {
     case .installRecord(_, let check):
@@ -79,10 +90,14 @@ extension LibraryPending {
 
 /// Which records the Library list shows: those a file or a mod adds, or those the app comes with.
 enum LibraryScope: String, CaseIterable, Identifiable {
+  /// Records and mods that a file or a package adds.
   case installed
+  /// The records that the app comes with.
   case builtIn
 
+  /// The raw value, which identifies the scope.
   var id: String { rawValue }
+  /// The localization key of the scope's title in the switch.
   var titleKey: String {
     switch self {
     case .installed: return "ui.library.installed"
@@ -93,12 +108,17 @@ enum LibraryScope: String, CaseIterable, Identifiable {
 
 /// The record or mod the detail column shows.
 enum LibrarySelection: Hashable {
+  /// A record, by its vendor and product ID.
   case record(ControllerModelID)
+  /// A mod, by its name.
   case mod(String)
 }
 
+/// The state of the Library area: the scope, the search text, the selection and the operation
+/// that waits for confirmation.
 @MainActor
 final class LibraryViewModel: ObservableObject {
+  /// Which records the list shows; a change of scope clears the selection.
   @Published
   var scope: LibraryScope = .installed {
     didSet { if scope != oldValue { select(nil) } }
@@ -108,29 +128,41 @@ final class LibraryViewModel: ObservableObject {
   var searchText = "" {
     didSet { if searchText != oldValue { select(selection) } }
   }
+  /// The selected record or mod, or nil.
   @Published
   private(set) var selection: LibrarySelection?
+  /// The records of both scopes and the skipped files.
   @Published
   private(set) var records = LibraryRecordListing()
+  /// The installed mods.
   @Published
   private(set) var mods: [LibraryModItem] = []
-  /// The full record of the selected record.
+  /// The full record of the selected record, or nil.
   @Published
   private(set) var recordDetail: LibraryRecordDetail?
-  /// The latest test of the selected record.
+  /// The latest test of the selected record, or nil.
   @Published
   private(set) var testRun: LibraryTestRun?
+  /// The failure of the latest operation, or nil.
   @Published
   private(set) var failure: LibraryFailure?
-  /// The result of the latest successful operation, in words.
+  /// The result of the latest successful operation, in words, or nil.
   @Published
   private(set) var notice: String?
+  /// The operation that waits for the person's confirmation, or nil.
   @Published
   var pending: LibraryPending?
 
+  /// The store that reads and changes the records and packages.
   private let store: any LibraryStore
+  /// Reads a file the person chose.
   private let readFile: (URL) throws -> Data
 
+  /// Creates the model on a store and a file reader.
+  ///
+  /// - Parameters:
+  ///   - store: The store; the default works on the user's record folder.
+  ///   - readFile: Reads the data of a file; the default reads from disk.
   init(
     store: any LibraryStore = DirectoryLibraryStore(),
     readFile: @escaping (URL) throws -> Data = { try Data(contentsOf: $0) }
@@ -139,7 +171,7 @@ final class LibraryViewModel: ObservableObject {
     self.readFile = readFile
   }
 
-  /// The records the list shows under ``scope``.
+  /// The records the list shows under ``scope``, filtered by ``searchText``.
   var visibleRecords: [LibraryRecordItem] {
     (scope == .installed ? records.installed : records.builtIn).filter {
       $0.matches(searchText)
@@ -151,6 +183,7 @@ final class LibraryViewModel: ObservableObject {
     scope == .installed ? mods.filter { $0.matches(searchText) } : []
   }
 
+  /// The selected mod, or nil when a record or nothing is selected.
   var selectedMod: LibraryModItem? {
     guard case .mod(let name) = selection else { return nil }
     return mods.first { $0.name == name }
@@ -162,8 +195,11 @@ final class LibraryViewModel: ObservableObject {
     return recordDetail?.item.isRemovable == true
   }
 
+  /// Whether a record is selected, so that Test applies.
   var canTestSelection: Bool { recordDetail != nil }
 
+  /// Reads the records and mods from the store and keeps the selection when the list still
+  /// shows it.
   func reload() {
     records = store.records()
     mods = store.installedMods()
@@ -187,11 +223,15 @@ final class LibraryViewModel: ObservableObject {
     if testRun?.model != recordDetail?.item.model { testRun = nil }
   }
 
+  /// Clears the failure.
   func dismissFailure() { failure = nil }
 
+  /// Clears the notice.
   func dismissNotice() { notice = nil }
 
   /// Checks the record file or mod folder at `url` without installing it; a folder is a mod.
+  ///
+  /// The result shows as the notice or the failure.
   func validate(at url: URL) {
     perform {
       if try isFolder(url) {
@@ -208,6 +248,8 @@ final class LibraryViewModel: ObservableObject {
     }
   }
 
+  /// Starts installing the record file at `url`: it validates the file and waits for the
+  /// person's confirmation in ``pending``.
   func beginInstallRecord(from url: URL) {
     perform {
       let data = try read(url)
@@ -222,6 +264,9 @@ final class LibraryViewModel: ObservableObject {
     }
   }
 
+  /// Returns whether `url` is a folder.
+  ///
+  /// - Throws: ``LibraryFailure`` when the file system cannot say.
   private func isFolder(_ url: URL) throws -> Bool {
     do { return try url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true } catch {
       throw LibraryFailure(
@@ -235,6 +280,8 @@ final class LibraryViewModel: ObservableObject {
     }
   }
 
+  /// Starts installing the mod in `folder`: it validates the package and waits for the person's
+  /// confirmation in ``pending``.
   func beginInstallMod(from folder: URL) {
     perform { pending = .installMod(folder: folder, check: try store.checkMod(folder: folder)) }
   }
@@ -248,8 +295,10 @@ final class LibraryViewModel: ObservableObject {
     }
   }
 
-  /// Replays the capture at `capture` through the selected record's parser and compares the
-  /// state with the one at `expectation`.
+  /// Replays the capture at `capture` through the selected record's parser and compares the state
+  /// with the one at `expectation`.
+  ///
+  /// The result shows in ``testRun`` or ``failure``.
   func testSelectedRecord(capture: URL, expectation: URL) {
     guard let model = recordDetail?.item.model else { return }
     perform {
@@ -269,9 +318,12 @@ final class LibraryViewModel: ObservableObject {
     }
   }
 
+  /// Drops the operation that waits for confirmation.
   func cancelPending() { pending = nil }
 
-  /// Runs the confirmed operation. Returns whether it changed the library.
+  /// Runs the confirmed operation, reloads the Library and shows the result as the notice.
+  ///
+  /// Returns whether it changed the library.
   @discardableResult
   func confirmPending() -> Bool {
     guard let operation = pending else { return false }
@@ -295,6 +347,9 @@ final class LibraryViewModel: ObservableObject {
     }
   }
 
+  /// Reads the file at `url` through ``readFile``.
+  ///
+  /// - Throws: ``LibraryFailure`` with the file access error code when the file cannot be read.
   private func read(_ url: URL) throws -> Data {
     do { return try readFile(url) } catch {
       throw LibraryFailure(
@@ -308,6 +363,9 @@ final class LibraryViewModel: ObservableObject {
     }
   }
 
+  /// Runs `body` after clearing the failure and the notice.
+  ///
+  /// A thrown error becomes ``failure``. Returns whether `body` finished without an error.
   @discardableResult
   private func perform(_ body: () throws -> Void) -> Bool {
     failure = nil

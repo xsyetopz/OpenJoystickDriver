@@ -142,8 +142,9 @@ struct RemappingOutputSchedulerTests {
 
 }
 
-/// Gives already-scheduled work many turns to run. Callers assert that nothing happened, so no
-/// signal exists to wait on.
+/// Gives already-scheduled work many turns to run.
+///
+/// Callers assert that nothing happened, so no signal exists to wait on.
 private func letPendingWorkRun() async {
   for _ in 0..<1_000 { await Task.yield() }
 }

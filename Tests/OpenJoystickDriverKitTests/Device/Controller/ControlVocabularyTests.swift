@@ -93,6 +93,7 @@ struct ControlVocabularyTests {
   }
 
   /// Each system name leads back to the control: the reverse index of a name contains its id.
+  ///
   /// Two ids may share a name (`MISC1` is Capture and Microphone), so the index holds sets.
   @Test
   func crosswalkRoundTripsEveryControl() throws {

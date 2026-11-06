@@ -1,7 +1,7 @@
+import OpenJoystickDriverKit
 import Testing
 
 @testable import OpenJoystickDriverPresentation
-import OpenJoystickDriverKit
 
 struct ProfilePhysicalOutputDraftTests {
   @Test

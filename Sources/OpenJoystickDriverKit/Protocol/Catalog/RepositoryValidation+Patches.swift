@@ -3,7 +3,9 @@ import Foundation
 extension RepositoryValidation {
   /// Applies the built-in patches under `patches` to the Controller files under `controllers` with
   /// ``ControllerPatchMerge`` and writes each effective record to the same relative path under
-  /// `output`. Nothing is written when any problem is found.
+  /// `output`.
+  ///
+  /// Nothing is written when any problem is found.
   ///
   /// A record's members are written in the order of its file, then the members that patches add
   /// in the order of the patch that adds them, at every depth. An array or value that a patch
@@ -73,17 +75,27 @@ extension RepositoryValidation {
     return []
   }
 
+  /// A patch file read from the patch directory.
   private struct PatchFile {
+    /// The location of the file.
     let url: URL
+    /// The parsed patch.
     let patch: ControllerPatch
   }
 
+  /// A record file read from the record directory.
   private struct RecordFile {
+    /// The path of the file below the record directory.
     let relativePath: String
+    /// The controller model that the record describes.
     let model: ControllerModelID
+    /// The record as written, with its member order.
     let document: OrderedJSON
   }
 
+  /// Reads each JSON file under `directory` as a record and appends a problem to `problems` for
+  /// each file that is not a valid record.
+  /// - Returns: The records that read.
   private static func readRecords(
     under directory: URL,
     problems: inout [RepositoryProblem]
@@ -124,6 +136,9 @@ extension RepositoryValidation {
     return files
   }
 
+  /// Reads each JSON file under `directory` as a patch and appends a problem to `problems` for each
+  /// file that is not a valid patch or that is not stored at the path of its selector.
+  /// - Returns: The patches that read.
   private static func readPatches(
     under directory: URL,
     problems: inout [RepositoryProblem]
@@ -164,6 +179,7 @@ extension RepositoryValidation {
     return String(format: "%04x/", model.vendorID) + selector.fileName
   }
 
+  /// The path of `url` below `directory`, with `/` between components.
   private static func relativePath(of url: URL, under directory: URL) -> String {
     let root = directory.standardizedFileURL.pathComponents
     return url.standardizedFileURL.pathComponents.dropFirst(root.count).joined(separator: "/")

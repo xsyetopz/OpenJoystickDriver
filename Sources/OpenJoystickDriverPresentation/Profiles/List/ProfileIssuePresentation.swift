@@ -5,10 +5,14 @@ import OpenJoystickDriverKit
 /// title and text of its kind and the error code of the profile issue, the same code
 /// `ojd profile list --json` prints.
 struct ProfileIssuePresentation: Equatable {
+  /// The title of the issue's kind.
   let title: String
+  /// The text of the issue's kind.
   let message: String
+  /// The error code of the issue.
   let code: String
 
+  /// Creates the presentation of `issue` from its kind and error code.
   init(_ issue: ApplicationServiceRemappingProfileIssue) {
     switch issue.kind {
     case .damagedProfile:

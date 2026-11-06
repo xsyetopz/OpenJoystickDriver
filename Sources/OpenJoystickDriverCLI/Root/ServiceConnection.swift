@@ -16,6 +16,9 @@ enum ServiceConnection {
   }
 
   /// Connects to a running service and runs `body` within the `--timeout` request deadline.
+  ///
+  /// - Throws: ``CLIFailure`` when the service is not running, the deadline passes, or a request
+  ///   fails.
   static func request<T: Sendable>(
     timeout: Double = CLIContext.current.requestTimeout,
     _ body: @escaping @Sendable (ApplicationServiceClient) async throws -> T
@@ -27,9 +30,11 @@ enum ServiceConnection {
 
   /// Connects to a running service for a command that sends many requests, such as a stream.
   ///
-  /// The caller disconnects the client and bounds each request with `withDeadline`.
+  /// The caller disconnects the client and bounds each request with ``withDeadline(seconds:_:)``.
   ///
-  /// `client` is the connection to try; tests pass one whose probes they count.
+  /// - Parameter client: The connection to try; tests pass one whose probes they count.
+  /// - Returns: The connected client.
+  /// - Throws: ``CLIFailure`` with the service-unavailable code when nothing answers.
   static func open(
     client: ApplicationServiceClient = ApplicationServiceClient(socketPath: socketPath)
   ) async throws -> ApplicationServiceClient {
@@ -40,7 +45,8 @@ enum ServiceConnection {
 
   /// Runs `operation` until it finishes or `seconds` elapse.
   ///
-  /// Kit client errors become `CLIFailure` values; a missed deadline names `--timeout`.
+  /// - Throws: ``CLIFailure`` for a missed deadline, which names `--timeout`, and for a failed
+  ///   request, through ``failure(for:)``.
   static func withDeadline<T: Sendable>(
     seconds: Double,
     _ operation: @escaping @Sendable () async throws -> T
@@ -53,6 +59,10 @@ enum ServiceConnection {
     }
   }
 
+  /// The error that `ojd` reports for `error` from a service request.
+  ///
+  /// Client and transport errors map to a ``CLIFailure``; a rejected profile name and a read-only
+  /// package profile get their own messages.
   static func failure(for error: any Error) -> any Error {
     switch error {
     case ApplicationServiceClientError.notConnected: CLIFailure.serviceUnavailable
@@ -83,6 +93,8 @@ enum ServiceConnection {
 }
 
 extension CLIFailure {
+  /// A request timeout: `seconds` names the `--timeout` value that elapsed, and nil gives the
+  /// message without a number.
   static func timedOut(seconds: Double?) -> Self {
     guard let seconds else {
       return Self(
@@ -101,6 +113,7 @@ extension CLIFailure {
     )
   }
 
+  /// The service rejected this process as a client.
   static var peerRejected: Self {
     Self(
       .peerRejected,
@@ -112,10 +125,12 @@ extension CLIFailure {
 }
 
 extension Double {
-  /// Seconds as a localized value with a unit symbol, such as `0.5s` or `5 с`. A symbol needs
-  /// no plural agreement, so messages read correctly for any value.
+  /// Seconds as a localized value with a unit symbol, such as `0.5s` or `5 с`.
+  ///
+  /// A symbol needs no plural agreement, so messages read correctly for any value.
   var durationText: String { durationText(locale: .current) }
 
+  /// The same text formatted for `locale`.
   func durationText(locale: Locale) -> String {
     Measurement(value: self, unit: UnitDuration.seconds)
       .formatted(.measurement(width: .narrow, numberFormatStyle: .number).locale(locale))

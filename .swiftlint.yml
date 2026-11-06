@@ -47,6 +47,7 @@ opt_in_rules:
   - legacy_objc_type
   - local_doc_comment
   - lower_acl_than_parent
+  - missing_docs
   - modifier_order
   - multiline_arguments
   - multiline_parameters
@@ -67,7 +68,6 @@ opt_in_rules:
   - shorthand_optional_binding
   - sorted_first_last
   - static_operator
-  - strict_fileprivate
   - superfluous_else
   - toggle_bool
   - trailing_closure
@@ -100,6 +100,13 @@ line_length:
 
 unused_import:
   severity: error
+
+# Google: document every open and public declaration; OJD documents every declaration.
+# Members of conforming types count too, so excludes_inherited_types stays false.
+missing_docs:
+  error: [open, public, package, internal, fileprivate, private]
+  excludes_extensions: true
+  excludes_inherited_types: false
 
 trailing_whitespace:
   severity: error

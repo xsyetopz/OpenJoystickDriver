@@ -4,9 +4,12 @@ import IOKit
 import IOKit.hid
 import OpenJoystickDriverKit
 
+/// Lists the HID gamepads on the system for the virtual device diagnostics.
 enum VirtualDeviceDiagnostics {
+  /// The registry key of the driver class of a device.
   private static let ioUserClassKey = "IOUserClass"
 
+  /// Returns the HID gamepads on the system, the virtual ones of OJD first.
   static func enumerateHIDGamepads() -> [ApplicationServiceHIDGamepadSnapshot] {
     let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
     IOHIDManagerSetDeviceMatching(
@@ -19,6 +22,7 @@ enum VirtualDeviceDiagnostics {
     return devices.compactMap(snapshot).sorted(by: snapshotOrder)
   }
 
+  /// Describes `device` if it is an OJD virtual gamepad or looks like a gamepad; nil otherwise.
   private static func snapshot(_ device: IOHIDDevice) -> ApplicationServiceHIDGamepadSnapshot? {
     let location = intProp(device, kIOHIDLocationIDKey)
     let serial = strProp(device, kIOHIDSerialNumberKey)
@@ -67,20 +71,24 @@ enum VirtualDeviceDiagnostics {
     }
   }
 
+  /// Returns the integer property `key` of `device`, or 0 when it has none.
   private static func intProp(_ device: IOHIDDevice, _ key: String) -> Int {
     IOHIDDeviceGetProperty(device, key as CFString) as? Int ?? 0
   }
 
+  /// Returns the string property `key` of `device`, or nil when it has none.
   private static func strProp(_ device: IOHIDDevice, _ key: String) -> String? {
     IOHIDDeviceGetProperty(device, key as CFString) as? String
   }
 }
 
+/// Classifies a serial number as absent, present, or one of the OJD user-space devices.
 private func serialKind(_ serial: String?) -> ApplicationServiceSerialKind {
   guard let serial, !serial.isEmpty else { return .none }
   return UserSpaceVirtualDeviceConstants.isOJDUserSpaceSerial(serial) ? .ojdUserSpace : .present
 }
 
+/// Orders the OJD virtual devices first, then by vendor ID and product ID.
 private func snapshotOrder(
   _ lhs: ApplicationServiceHIDGamepadSnapshot,
   _ rhs: ApplicationServiceHIDGamepadSnapshot

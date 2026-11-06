@@ -4,6 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// Reports in the SDL `SteamDeckStatePacket_t` layout after the 4-byte `ValveInReportHeader_t`.
+///
 /// The layout comes from SDL `steam/controller_structs.h`; it is not a hardware capture.
 private enum DeckReport {
   static func state(

@@ -5,8 +5,9 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// An ownership toggle keeps the user's suspension of a controller that the HID backend admits
-/// again; a physical disconnect still ends it. The GameSir connections are synthetic, as in
-/// `OwnershipReapplyTests`.
+/// again; a physical disconnect still ends it.
+///
+/// The GameSir connections are synthetic, as in `OwnershipReapplyTests`.
 @Suite(.timeLimit(.minutes(2)))
 struct OwnershipSuspensionTests {
   private static let model = ControllerModelID(vendorID: 0x3537, productID: 0x100B)

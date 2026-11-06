@@ -1,6 +1,14 @@
 import Foundation
 
 extension DevicePipeline {
+  /// Reads the interrupt IN endpoint of `handle` and dispatches the parsed input until the run
+  /// ends.
+  ///
+  /// An idle pass lasts at least the loop cadence, so a transport that completes timeouts at once
+  /// cannot spin. Repeated I/O errors back off and then end the session.
+  ///
+  /// - Returns: How the caller goes on: reconnect, or wait before opening again after an access
+  ///   denial.
   func runUSBInputLoop(
     handle: any USBTransportSession,
     generation: UInt64
@@ -120,13 +128,16 @@ extension DevicePipeline {
     }
   }
 
+  /// Cancels the keep-alive timer.
   func stopUSBKeepAlive() {
     usbKeepAliveTask?.cancel()
     usbKeepAliveTask = nil
   }
 
-  /// Skips the writes while the session is suspended; the timer keeps running, so keep-alives
-  /// return on resume. Linux xpad sends no periodic GIP keep-alive at all.
+  /// Sends one keep-alive run unless the run or session changed or the controller session is
+  /// suspended.
+  ///
+  /// The timer keeps running while the session is suspended, so keep-alives return on resume.
   func runKeepAlive(handle: any USBTransportSession, generation: UInt64) async {
     guard isCurrentUSBRun(generation), usbHandle === handle, sessionState != .suspended else {
       return
@@ -142,7 +153,9 @@ extension DevicePipeline {
     }
   }
 
-  /// Produces and sends one keep-alive run. Runs inside ``usbOutputWriteQueue``.
+  /// Produces and sends one keep-alive run.
+  ///
+  /// Runs inside ``usbOutputWriteQueue``.
   private func sendKeepAliveWrites(handle: any USBTransportSession, generation: UInt64) async {
     guard isCurrentUSBRun(generation), usbHandle === handle, sessionState != .suspended else {
       return
@@ -162,6 +175,7 @@ extension DevicePipeline {
     }
   }
 
+  /// Reads one interrupt packet from `inEndpoint`.
   func readInterrupt(handle: any USBTransportSession, inEndpoint: UInt8) async throws -> [UInt8] {
     try await handle.read(
       endpoint: inEndpoint,
@@ -170,6 +184,8 @@ extension DevicePipeline {
     )
   }
 
+  /// Sends the writes that the driver deferred while it parsed; stops when the run or session
+  /// changes.
   func sendPendingUSBWrites(handle: any USBTransportSession, generation: UInt64) async {
     guard isCurrentUSBRun(generation), usbHandle === handle else { return }
     for write in driver.drainPendingWrites() {
@@ -180,6 +196,7 @@ extension DevicePipeline {
     }
   }
 
+  /// Starts the task that checks input liveness at the monitor interval, replacing the earlier one.
   func startIdleMonitor() {
     idleMonitorTask?.cancel()
     idleMonitorTask = Task {
@@ -190,6 +207,8 @@ extension DevicePipeline {
     }
   }
 
+  /// Releases the output when no fresh input report arrived within the liveness timeout of the
+  /// plan.
   func evaluateIdleSleep() async {
     guard isActive else { return }
     if let timeout = plan.inputReportLivenessTimeoutNanoseconds,
@@ -200,6 +219,11 @@ extension DevicePipeline {
     }
   }
 
+  /// Closes `handle` after its shutdown writes when it is still the current session, and resets the
+  /// driver.
+  ///
+  /// A plan that needs a presence reply before output also ends the input connection, so the next
+  /// session connects it again.
   func invalidateUSBHandle(_ handle: any USBTransportSession) async {
     guard let current = usbHandle, ObjectIdentifier(current) == ObjectIdentifier(handle) else {
       return

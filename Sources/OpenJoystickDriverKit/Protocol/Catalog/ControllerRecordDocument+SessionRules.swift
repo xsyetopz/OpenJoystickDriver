@@ -1,11 +1,12 @@
 extension ControllerRecordDocument.ModeDocument {
-  /// Why this mode's session cannot run on its own protocol, or nil. HID startup writes go to HID
-  /// modes, raw-USB startup packets go to raw-USB families that read them and name no
-  /// initialization list, a keep-alive extends a raw-USB family whose description declares none,
-  /// settle, shutdown and control transfers belong to raw-USB modes, and only a driver that
-  /// encodes a rumble template for the mode's variant and parameters may name one, a usb packet
-  /// in a raw-USB mode and a HID report in a HID mode, and a template's resend interval needs
-  /// neither a session keep-alive nor a family whose description declares one.
+  /// Why this mode's session cannot run on its own protocol, or nil.
+  ///
+  /// HID startup writes go to HID modes, raw-USB startup packets go to raw-USB families that read
+  /// them and name no initialization list, a keep-alive extends a raw-USB family whose description
+  /// declares none, settle, shutdown and control transfers belong to raw-USB modes, and only a
+  /// driver that encodes a rumble template for the mode's variant and parameters may name one, a
+  /// usb packet in a raw-USB mode and a HID report in a HID mode, and a template's resend interval
+  /// needs neither a session keep-alive nor a family whose description declares one.
   func sessionViolation() -> String? {
     let info = protocolInfo
     let rawUSB = info.protocolID.usesRawUSB(storedVariant: info.protocolVariant)

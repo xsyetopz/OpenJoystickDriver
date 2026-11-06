@@ -1,4 +1,6 @@
-/// Full Steam Controller state packets carry raw IMU vectors and a sequence number, not time.
+/// Decodes the IMU sample of a Steam Controller or Steam Deck state packet, which carries raw IMU
+/// vectors and a counter but no time.
+///
 /// Sample time is the first sample's receipt time plus the clamped receipt time elapsed since.
 struct SteamMotionSamples {
   /// Where a state packet carries its IMU vectors and how its gyro maps to the canonical frame.
@@ -8,26 +10,38 @@ struct SteamMotionSamples {
     /// `SteamDeckStatePacket_t`: accel at 24, gyro at 30, raw axes (see ``sample``).
     case steamDeck
 
+    /// The byte offset of the accelerometer vector.
     var accelOffset: Int { self == .steamController ? 28 : 24 }
+    /// The byte offset of the gyro vector, six bytes after the accelerometer's.
     var gyroOffset: Int { accelOffset + 6 }
+    /// Whether the canonical gyro Y is the negated raw Y.
     var reflectsGyroY: Bool { self == .steamController }
   }
 
+  /// Where the packet carries its vectors.
   private(set) var layout = Layout.steamController
+  /// The sensor counter of the previous sample; a packet with the same counter is a duplicate.
   private var previousCounter: UInt32?
+  /// The receipt time of the first sample of the session.
   private var firstReceipt: UInt64?
+  /// The receipt time elapsed since `firstReceipt`, never decreasing.
   private var elapsed: UInt64 = 0
+  /// The sequence index of the next sample; ``reset()`` keeps it.
   private var sequence: UInt64 = 0
 
+  /// Creates a decoder for state packets with `layout`.
   init(layout: Layout = .steamController) { self.layout = layout }
 
-  /// Starts a new time and duplicate-tracking session; the sequence index keeps counting.
+  /// Starts a fresh time and duplicate-tracking session; the sequence index keeps counting.
   mutating func reset() {
     let next = sequence
     self = Self(layout: layout)
     sequence = next
   }
 
+  /// Decodes the IMU sample of the state packet `bytes`, received at `receivedAt` nanoseconds.
+  ///
+  /// Nil when the packet is too short or repeats the previous counter.
   mutating func decode(_ bytes: [UInt8], receivedAt: UInt64) -> ControllerMotionSample? {
     guard bytes.count >= layout.gyroOffset + 6 else { return nil }
     let counter = UInt32(unsigned16(bytes, at: 4)) | (UInt32(unsigned16(bytes, at: 6)) << 16)
@@ -55,15 +69,16 @@ struct SteamMotionSamples {
 
   /// Steam Controller transform: raw counts, nominal scale (no factory calibration is read), SI,
   /// then gyro (x, y, z) → (x, -y, z) and accel (x, y, z) → (x, y, z).
+  ///
   /// Source: SDL `HIDAPI_DriverSteam_UpdateDevice` in `src/joystick/hidapi/SDL_hidapi_steam.c` at
   /// SDL `1ce4c5bc` scales gyro by 2000 °/s and accel by 2 g per 32768 counts and maps them into
   /// its sensor frame (X right, Y up, Z toward the player) as gyro (x, z, y) and accel (x, z, -y).
-  /// The canonical frame takes SDL's +Z (toward the player) as -Y and SDL's +Y (up) as +Z.
-  /// Linux `hid-steam.c` `steam_controller_imu_mappings` (used by `steam_do_sensors_event`) at
-  /// Linux `fd179f8a` maps the same bytes the same way: accel rows `ABS_X` +28, `ABS_Z` -30,
-  /// `ABS_Y` +32, i.e. (x, z, -y); gyro rows `ABS_RX` +34, `ABS_RZ` +36, `ABS_RY` +38, i.e.
-  /// (x, z, y). Both sources give gyro and accel mappings that differ by a reflection of Y, so at
-  /// most one is right-handed; it is kept until hardware confirms it. Linux's accel resolution
+  /// The canonical frame takes SDL's +Z (toward the player) as -Y and SDL's +Y (up) as +Z. Linux
+  /// `hid-steam.c` `steam_controller_imu_mappings` (used by `steam_do_sensors_event`) at Linux
+  /// `fd179f8a` maps the same bytes the same way: accel rows `ABS_X` +28, `ABS_Z` -30, `ABS_Y` +32,
+  /// i.e. (x, z, -y); gyro rows `ABS_RX` +34, `ABS_RZ` +36, `ABS_RY` +38, i.e. (x, z, y). Both
+  /// sources give gyro and accel mappings that differ by a reflection of Y, so at most one is
+  /// right-handed; it is kept until hardware confirms it. Linux's accel resolution
   /// (`STEAM_ACCEL_RES_PER_G` 16384) matches SDL's 2 g per 32768 counts. Linux declares 16 counts
   /// per °/s (`STEAM_GYRO_RES_PER_DPS`) where SDL uses 16.384; the SDL scale is kept.
   ///
@@ -94,10 +109,12 @@ struct SteamMotionSamples {
     )
   }
 
+  /// The little-endian unsigned 16-bit value at `offset`.
   private func unsigned16(_ bytes: [UInt8], at offset: Int) -> UInt16 {
     UInt16(bytes[offset]) | (UInt16(bytes[offset + 1]) << 8)
   }
 
+  /// The raw vector of the three little-endian values that start at `offset`.
   private func vector(_ bytes: [UInt8], at offset: Int) -> ControllerRawSensorVector {
     ControllerRawSensorVector(
       x: Int16(bitPattern: unsigned16(bytes, at: offset)),

@@ -9,25 +9,41 @@ import Foundation
 /// - Note: `@unchecked Sendable` because `buffer` is touched only by the reading thread and
 ///   `closeSent` only under `writeLock`.
 final class EndpointWebSocketTransport: EndpointTransport, @unchecked Sendable {
+  /// The opcodes of the frames that the transport handles.
   private enum Opcode {
+    /// A continuation of a text message.
     static let continuation: UInt8 = 0x0
+    /// A text message.
     static let text: UInt8 = 0x1
+    /// A binary message.
     static let binary: UInt8 = 0x2
+    /// A close frame.
     static let close: UInt8 = 0x8
+    /// A ping frame.
     static let ping: UInt8 = 0x9
+    /// A pong frame.
     static let pong: UInt8 = 0xA
   }
 
+  /// The result of reading one frame.
   private enum Frame {
+    /// A frame with its final flag, opcode and unmasked payload.
     case frame(final: Bool, opcode: UInt8, payload: Data)
+    /// The peer closed the stream.
     case end
+    /// The frame is longer than the limit.
     case tooLong
+    /// The frame is not accepted, with the reason.
     case invalid(String)
   }
 
+  /// The connected socket.
   private let descriptor: Int32
+  /// The lock that serializes writes.
   private let writeLock = NSLock()
+  /// Whether the close frame was sent.
   private var closeSent = false
+  /// The bytes read and not yet used.
   private var buffer: Data
 
   /// `buffered` holds bytes that arrived after the upgrade request.
@@ -36,6 +52,7 @@ final class EndpointWebSocketTransport: EndpointTransport, @unchecked Sendable {
     buffer = buffered
   }
 
+  /// Reads frames until a whole text message arrives, and answers ping and close frames itself.
   func readMessage() -> EndpointReadResult {
     var message: Data?
     while true {
@@ -74,6 +91,7 @@ final class EndpointWebSocketTransport: EndpointTransport, @unchecked Sendable {
     }
   }
 
+  /// Writes `data` as one text frame; false when a close was sent or the peer is gone.
   func writeMessage(_ data: Data) -> Bool {
     writeLock.withLock {
       !closeSent && endpointSendAll(descriptor, Self.frame(Opcode.text, data))
@@ -91,6 +109,7 @@ final class EndpointWebSocketTransport: EndpointTransport, @unchecked Sendable {
 
   // MARK: - Private
 
+  /// Reads one client frame and unmasks its payload.
   private func readFrame() -> Frame {
     guard fill(2) else { return .end }
     let first = buffer[buffer.startIndex]

@@ -2,7 +2,9 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd update` command group: checks for a release of OJD.
 struct UpdateCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "update",
     abstract: CLILocalized.text(
@@ -11,11 +13,15 @@ struct UpdateCommand: AsyncParsableCommand {
     subcommands: [UpdateCheckCommand.self]
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
+/// The `ojd update check` command: asks GitHub for the latest release and compares it with the
+/// installed version.
 struct UpdateCheckCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "check",
     abstract: CLILocalized.text(
@@ -35,6 +41,7 @@ struct UpdateCheckCommand: AsyncParsableCommand {
       await UpdateChecker().check(currentVersion: current, includePrereleases: prereleases)
     }
 
+  /// `--prerelease`: consider prereleases as well as releases.
   @Flag(
     help: ArgumentHelp(
       CLILocalized.text("cli.update.check.prerelease")
@@ -42,24 +49,35 @@ struct UpdateCheckCommand: AsyncParsableCommand {
   )
   var prerelease = false
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
   /// The `--json` result.
   struct Result: Encodable, Equatable {
+    /// How the installed version compares with the latest release.
     enum Status: String, Encodable {
+      /// The installed version is the latest release.
       case upToDate = "UpToDate"
+      /// A later release exists.
       case available = "Available"
+      /// The installed version is later than the latest release.
       case aheadOfLatestRelease = "AheadOfLatestRelease"
     }
 
+    /// How the installed version compares with the latest release.
     let status: Status
+    /// The installed version.
     let currentVersion: String
+    /// The latest release version.
     let latestVersion: String
+    /// The page of the later release, when there is one.
     let releaseURL: String?
+    /// Whether prereleases were considered.
     let includePrereleases: Bool
   }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let current = ApplicationVersion.current
@@ -101,6 +119,7 @@ struct UpdateCheckCommand: AsyncParsableCommand {
     }
   }
 
+  /// Prints `result` as JSON, as a `--plain` row, or as a sentence.
   private static func print(_ result: Result) throws {
     switch CLIContext.current.format {
     case .json: try CLIOutput.json(result)
@@ -143,6 +162,8 @@ struct UpdateCheckCommand: AsyncParsableCommand {
     }
   }
 
+  /// Returns the failure for a check that did not finish, with `detail` as its reason.
+  ///
   /// Only a network failure points at the connection; other failures state their reason alone.
   private static func failure(_ detail: String, network: Bool) -> CLIFailure {
     let message =

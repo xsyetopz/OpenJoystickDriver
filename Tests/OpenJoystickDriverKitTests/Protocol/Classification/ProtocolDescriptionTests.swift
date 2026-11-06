@@ -7,8 +7,8 @@ import Testing
 @Suite
 struct ProtocolDescriptionTests {
   private static let minimalInput =
-    #"{"report": {"length": {"atLeast": 1}}, "#
-    + #""buttons": [{"control": "South", "byte": 0, "mask": 1}]}"#
+    #"{"layouts": [{"report": {"length": {"atLeast": 1}}, "#
+    + #""buttons": [{"control": "South", "bitOffset": 0, "bitSize": 1}]}]}"#
   private static let rumbleTemplate =
     #"{"report": {"kind": "Output", "id": 1, "length": 4}, "lowFrequency": {"byte": 1}}"#
   private static let startupWrite =
@@ -198,7 +198,7 @@ struct ProtocolDescriptionTests {
       #""recordSections": ["input"], "#
         + #""defaults": {"input": \#(Self.minimalInput), "tuning": {"stickDeadzone": 0.1}}"#
     )
-    #expect(layout.inputLayout?.controls == [.south])
+    #expect(layout.inputLayouts?.controls == [.south])
     #expect(layout.tuning == ControllerTuning(stickDeadzone: 0.1))
 
     let hid = try decode(
@@ -222,7 +222,7 @@ struct ProtocolDescriptionTests {
       #""rawUSB": true, "recordSections": ["input"], "#
         + #""defaults": {"input": \#(Self.minimalInput)}"#
     )
-    #expect(description.inputLayout?.controls == [.south])
+    #expect(description.inputLayouts?.controls == [.south])
   }
 
   @Test
@@ -763,8 +763,10 @@ struct ProtocolDescriptionTests {
     #expect(mixed.rumbleTemplate(variant: .bluetoothClassic)?.report?.reportID == 2)
   }
 
-  /// The spec scenario: a family's interval is edited in its description, and every record of
-  /// the family follows it. A record has no interval of its own.
+  /// The spec scenario: a family's interval is edited in its description, and every record of the
+  /// family follows it.
+  ///
+  /// A record has no interval of its own.
   @Test
   func aFamilysKeepAliveIntervalComesFromItsDescription() throws {
     let edited = try decode(

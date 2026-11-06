@@ -1,13 +1,18 @@
 import Foundation
 
+/// A source of registry nodes.
 public protocol PassiveUSBRegistrySource: Sendable {
+  /// Returns the nodes of the services of `className` whose numeric properties equal
+  /// `numericProperties`.
   func matchingServices(
     className: String,
     numericProperties: [String: UInt64]
   ) throws -> [PassiveUSBRegistryNode]
 }
 
+/// Turns a registry node into a probe result.
 public enum PassiveUSBRegistryFactParser {
+  /// Parses `root` into a probe result for `tuple` with the given catalog inference.
   public static func parse(
     root: PassiveUSBRegistryNode,
     tuple: PassiveUSBDescriptorTuple,
@@ -133,17 +138,23 @@ public enum PassiveUSBRegistryFactParser {
     )
   }
 
+  /// A descriptor blob with the property and node it came from.
   private struct Blob {
+    /// The registry property key.
     let key: String
+    /// The bytes of the blob.
     let bytes: [UInt8]
+    /// The node that holds the property.
     let node: PassiveUSBRegistryNode
   }
 
+  /// The registry property keys that can hold a configuration descriptor blob.
   static let descriptorKeys = [
     "Configuration Descriptor", "kUSBConfigurationDescriptor", "USB Configuration Descriptor",
     "DescriptorBytes", "descriptorBytes",
   ]
 
+  /// Returns the descriptor blobs that `node` holds.
   private static func findDescriptorBlobs(_ node: PassiveUSBRegistryNode) -> [Blob] {
     var result: [Blob] = []
     for key in descriptorKeys {
@@ -155,16 +166,22 @@ public enum PassiveUSBRegistryFactParser {
     return result
   }
 
+  /// Returns the unsigned integer property `key` of `node` as an 8-bit value, or nil when it does
+  /// not fit.
   private static func uint8(_ node: PassiveUSBRegistryNode, _ key: String) -> UInt8? {
     uint64(node, key).flatMap(UInt8.init(exactly:))
   }
+  /// Returns the unsigned integer property `key` of `node` as a 16-bit value, or nil when it does
+  /// not fit.
   private static func uint16(_ node: PassiveUSBRegistryNode, _ key: String) -> UInt16? {
     uint64(node, key).flatMap(UInt16.init(exactly:))
   }
+  /// Returns the unsigned integer property `key` of `node`, or nil when it has none.
   private static func uint64(_ node: PassiveUSBRegistryNode, _ key: String) -> UInt64? {
     guard case .unsignedInteger(let value) = node.properties[key] else { return nil }
     return value
   }
+  /// Returns the string property `key` of `node`, or nil when it has none.
   private static func string(_ node: PassiveUSBRegistryNode, _ key: String) -> String? {
     guard case .string(let value) = node.properties[key] else { return nil }
     return value

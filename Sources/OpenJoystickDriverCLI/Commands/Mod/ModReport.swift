@@ -11,6 +11,7 @@ enum ModStore {
   @TaskLocal
   static var runningVersion: String?
 
+  /// The package store at ``directory``.
   static var store: ModPackageStore {
     ModPackageStore(directory: directory, runningVersion: runningVersion)
   }
@@ -26,14 +27,22 @@ enum ModStore {
 
 /// The `--json` result of `mod validate`, and the `package` of `mod install`.
 struct ModPackageValidation: Encodable, Equatable {
+  /// Whether the package is accepted.
   let valid: Bool
+  /// Why the package is refused.
   let problem: String?
+  /// The E4xxx or E5001 code of the refusal.
   let code: String?
+  /// The package name.
   let name: String?
+  /// The package version.
   let version: String?
+  /// The package author.
   let author: String?
+  /// The files the package lists.
   let files: [String]?
 
+  /// Describes an accepted package.
   init(_ manifest: ModPackageManifest) {
     valid = true
     problem = nil
@@ -44,6 +53,7 @@ struct ModPackageValidation: Encodable, Equatable {
     files = manifest.listedFiles
   }
 
+  /// Describes the refusal `error`.
   init(_ error: ModPackageError) {
     valid = false
     problem = error.detail
@@ -54,8 +64,12 @@ struct ModPackageValidation: Encodable, Equatable {
     files = nil
   }
 
-  /// Validates `folder`. A refused package prints `valid: false` with `--json` and fails with
-  /// the E4xxx code of the refusal.
+  /// Validates `folder`.
+  ///
+  /// A refused package prints `valid: false` with `--json` and fails with the E4xxx code of the
+  /// refusal.
+  ///
+  /// - Throws: ``CLIFailure`` with the code of the refusal.
   static func check(_ folder: String) throws -> ModPackageManifest {
     do { return try ModStore.store.validate(ModStore.folder(folder)) } catch let error
       as ModPackageError
@@ -68,12 +82,18 @@ struct ModPackageValidation: Encodable, Equatable {
 
 /// One installed package in `mod list --json`. `problem` is why the package is not used.
 struct ModPackageEntry: Encodable, Equatable {
+  /// The package name.
   let name: String
+  /// The package version.
   let version: String?
+  /// The package author.
   let author: String?
+  /// The files the package installs.
   let files: [String]
+  /// Why OJD does not use the package, or nil when it does.
   let problem: String?
 
+  /// Describes `package`.
   init(_ package: ModPackage) {
     name = package.name
     version = package.manifest?.version

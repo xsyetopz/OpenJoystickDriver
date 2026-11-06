@@ -1,15 +1,31 @@
 import Foundation
 
+/// Byte-exact input reports and packets of each protocol family, for tests that feed a driver or
+/// parser.
 public enum ProtocolPacketFixtures {
+  /// Both sticks of a report with one byte per axis.
   public typealias ByteSticks = (left: (x: UInt8, y: UInt8), right: (x: UInt8, y: UInt8))
+  /// Both triggers of a report with one byte per trigger.
   public typealias ByteTriggers = (left: UInt8, right: UInt8)
+  /// One 16-bit signed stick or pad position.
   public typealias SignedAxes = (x: Int16, y: Int16)
+  /// Both sticks of a report with one 16-bit value per axis.
   public typealias WordSticks = (left: (x: UInt16, y: UInt16), right: (x: UInt16, y: UInt16))
 
+  /// DualShock 3 and Sixaxis reports.
   public enum DS3 {
+    /// The report ID of the Bluetooth operational-mode feature report.
     public static let bluetoothOperationalReportID: UInt8 = 0xF4
+    /// The Bluetooth operational-mode feature report, which starts with its report ID.
     public static let bluetoothOperationalReport: [UInt8] = [0xF4, 0x42, 0x03, 0x00, 0x00]
 
+    /// Builds a 49-byte input report 0x01.
+    ///
+    /// - Parameters:
+    ///   - buttons: The two button bytes and whether the PS button is held.
+    ///   - sticks: The left and right stick bytes.
+    ///   - triggers: The left and right trigger bytes.
+    /// - Returns: The report.
     public static func inputReport(
       buttons: (first: UInt8, second: UInt8, ps: Bool) = (0, 0, false),
       sticks: ByteSticks = ((128, 128), (128, 128)),
@@ -30,7 +46,15 @@ public enum ProtocolPacketFixtures {
     }
   }
 
+  /// DualSense reports and the CRC-32 of its Bluetooth reports.
   public enum DualSense {
+    /// Builds a 64-byte USB input report 0x01.
+    ///
+    /// - Parameters:
+    ///   - sticks: The left and right stick bytes.
+    ///   - triggers: The left and right trigger bytes.
+    ///   - buttons: The three button bytes.
+    /// - Returns: The report.
     public static func usbInputReport(
       sticks: ByteSticks = ((128, 128), (128, 128)),
       triggers: ByteTriggers = (0, 0),
@@ -50,6 +74,13 @@ public enum ProtocolPacketFixtures {
       return Data(report)
     }
 
+    /// Builds a 78-byte Bluetooth input report 0x31 that ends in its CRC-32.
+    ///
+    /// - Parameters:
+    ///   - sticks: The left and right stick bytes.
+    ///   - triggers: The left and right trigger bytes.
+    ///   - buttons: The three button bytes.
+    /// - Returns: The report.
     public static func bluetoothInputReport(
       sticks: ByteSticks = ((128, 128), (128, 128)),
       triggers: ByteTriggers = (0, 0),
@@ -70,10 +101,18 @@ public enum ProtocolPacketFixtures {
       return Data(report)
     }
 
+    /// Computes the CRC-32 of a Bluetooth output report under transaction byte 0xA2.
+    ///
+    /// - Parameter report: The report, whose last four bytes hold the checksum and are not covered.
+    /// - Returns: The checksum.
     public static func bluetoothOutputCRC32(_ report: [UInt8]) -> UInt32 {
       bluetoothCRC32(report, transaction: 0xA2)
     }
 
+    /// Computes the CRC-32 of a Bluetooth input report under transaction byte 0xA1.
+    ///
+    /// - Parameter report: The report, whose last four bytes hold the checksum and are not covered.
+    /// - Returns: The checksum.
     public static func bluetoothInputCRC32(_ report: [UInt8]) -> UInt32 {
       bluetoothCRC32(report, transaction: 0xA1)
     }
@@ -94,7 +133,16 @@ public enum ProtocolPacketFixtures {
     }
   }
 
+  /// Steam Controller reports.
   public enum Steam {
+    /// Builds a 64-byte input report.
+    ///
+    /// - Parameters:
+    ///   - buttons: The three button bytes.
+    ///   - triggers: The left and right trigger bytes.
+    ///   - left: The left pad position.
+    ///   - rightPad: The right pad position.
+    /// - Returns: The report.
     public static func inputReport(
       buttons: (first: UInt8, second: UInt8, third: UInt8) = (0, 0, 0),
       triggers: ByteTriggers = (0, 0),
@@ -115,12 +163,17 @@ public enum ProtocolPacketFixtures {
       return Data(report)
     }
 
+    /// Builds a 64-byte wireless connection report.
+    ///
+    /// - Parameter status: The connection status byte.
+    /// - Returns: The report.
     public static func wirelessReport(status: UInt8) -> Data {
       var report = [UInt8](repeating: 0, count: 64)
       report.replaceSubrange(0..<5, with: [0x01, 0x00, 0x03, 1, status])
       return Data(report)
     }
 
+    /// A 64-byte status report whose byte 16 is 85.
     public static var statusReport: Data {
       var report = [UInt8](repeating: 0, count: 64)
       report.replaceSubrange(0..<4, with: [0x01, 0x00, 0x04, 11])
@@ -128,16 +181,30 @@ public enum ProtocolPacketFixtures {
       return Data(report)
     }
 
+    /// The leading bytes of the startup settings write.
     public static let startupSettingsPrefix: [UInt8] = [
       0x87, 9, 0x07, 0x07, 0, 0x08, 0x07, 0, 48, 0x18, 0,
     ]
 
+    /// Stores a 16-bit signed value as two little-endian bytes.
+    ///
+    /// - Parameters:
+    ///   - value: The value to store.
+    ///   - bytes: The buffer that receives it.
+    ///   - offset: The index of the low byte.
     public static func writeInt16LE(_ value: Int16, into bytes: inout [UInt8], at offset: Int) {
       ProtocolPacketFixtures.writeInt16LE(value, into: &bytes, at: offset)
     }
   }
 
+  /// Switch Pro Controller reports and startup byte sequences.
   public enum SwitchPro {
+    /// Builds a 49-byte input report 0x30.
+    ///
+    /// - Parameters:
+    ///   - buttons: The button bits; their low 24 bits fill bytes 3 to 5.
+    ///   - sticks: The left and right stick values, packed as 12-bit pairs.
+    /// - Returns: The report.
     public static func inputReport(
       buttons: UInt32 = 0,
       sticks: WordSticks = ((2048, 2048), (2048, 2048))
@@ -157,12 +224,22 @@ public enum ProtocolPacketFixtures {
     public static let usbStartupReportIDs: [UInt8] = [0x01, 0x01, 0x01, 0x01, 0x01]
     /// The Linux USB init slice's handshake commands, in order.
     public static let usbHandshakeCommands: [UInt8] = [0x02, 0x03, 0x02, 0x04]
+    /// The report IDs the driver sends itself over Bluetooth at startup.
     public static let bluetoothStartupReportIDs: [UInt8] = [0x01, 0x01, 0x01, 0x01, 0x01]
+    /// The subcommand IDs the driver sends over Bluetooth at startup, in order.
     public static let bluetoothStartupSubcommands: [UInt8] = [0x03, 0x40, 0x48, 0x10, 0x10]
+    /// The four rumble bytes that request no vibration.
     public static let neutralRumble: [UInt8] = [0x00, 0x01, 0x40, 0x40]
   }
 
+  /// Xbox GIP packets.
   public enum GIP {
+    /// Wraps a payload in a GIP input packet header.
+    ///
+    /// - Parameters:
+    ///   - payload: The bytes after the four-byte header.
+    ///   - sequence: The sequence byte.
+    /// - Returns: The packet.
     public static func inputPacket(payload: Data, sequence: UInt8 = 0) -> Data {
       Data([0x20, 0x20, sequence, UInt8(payload.count)]) + payload
     }
@@ -170,7 +247,9 @@ public enum ProtocolPacketFixtures {
 
   /// Xbox 360 wireless receiver slot envelopes (Linux xpad `xpad360w_process_packet`).
   public enum XUSBReceiver {
+    /// The envelope that reports a pad connected.
     public static let presenceConnected = Data([0x08, 0x80])
+    /// The envelope that reports a pad disconnected.
     public static let presenceDisconnected = Data([0x08, 0x00])
 
     /// Pad data: the four-byte envelope with `data[1] == 0x01`, then one wired-format report.
@@ -184,18 +263,30 @@ public enum ProtocolPacketFixtures {
     }
   }
 
+  /// Xbox One GIP reports.
   public enum XboxOneGIP {
-    /// GIP command 0x20, options, sequence, length 14, then buttons, triggers and sticks. The Y
-    /// axes are the complement of zero, which SDL reads as centred.
+    /// A neutral input report: GIP command 0x20, options, sequence, length 14, then buttons,
+    /// triggers and sticks.
+    ///
+    /// The Y axes are the complement of zero, which SDL reads as centred.
     public static let neutralInputReport: [UInt8] = [
       0x20, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0xFF, 0xFF, 0, 0, 0xFF, 0xFF,
     ]
   }
 
+  /// USB configuration descriptors for passive probing.
   public enum PassiveUSB {
+    /// A configuration descriptor that declares no interface.
     public static let emptyConfiguration: [UInt8] = [9, 2, 9, 0, 0, 1, 0, 0x80, 0x32]
+    /// An interface descriptor of vendor class 0xFF with subclass 0x47 and protocol 0xD0.
     public static let vendorInterface: [UInt8] = [9, 4, 0, 0, 0, 0xFF, 0x47, 0xD0, 0]
 
+    /// Builds a nine-byte configuration descriptor header.
+    ///
+    /// - Parameters:
+    ///   - totalLength: The total length of the configuration descriptor, written little-endian.
+    ///   - interfaces: The number of interfaces it declares.
+    /// - Returns: The header.
     public static func configurationHeader(totalLength: UInt16, interfaces: UInt8 = 1) -> [UInt8] {
       [
         9, 2, UInt8(truncatingIfNeeded: totalLength), UInt8(truncatingIfNeeded: totalLength >> 8),

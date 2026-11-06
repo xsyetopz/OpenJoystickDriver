@@ -7,19 +7,30 @@ import Foundation
 /// discards what was captured, so no input history outlives the diagnostic session.
 /// The input path stores only timestamp, direction, and raw bytes; hex formatting waits for a read.
 final class PacketLogBuffer: Sendable {
+  /// One packet as the input path stores it.
   private struct BufferedPacket: Sendable {
+    /// When the packet was captured, in seconds since 1970.
     let timestamp: TimeInterval
+    /// The transfer direction.
     let direction: PacketLogDirection
+    /// The raw bytes.
     let bytes: [UInt8]
   }
 
+  /// The ring of packets and the capture lease.
   private struct Ring: Sendable {
+    /// The slots of the ring; nil for a slot that holds no packet.
     var bufferedPackets: [BufferedPacket?]
+    /// The slot the next packet takes.
     var nextWriteIndex = 0
+    /// The number of packets held.
     var entryCount = 0
+    /// The uptime when the capture lease lapses, in nanoseconds.
     var captureDeadline: UInt64 = 0
+    /// Whether a timer will check the lease.
     var expiryScheduled = false
 
+    /// Drops every packet.
     mutating func clear() {
       for index in bufferedPackets.indices { bufferedPackets[index] = nil }
       nextWriteIndex = 0
@@ -27,12 +38,17 @@ final class PacketLogBuffer: Sendable {
     }
   }
 
+  /// The most packets the ring holds.
   private let maxEntries: Int
+  /// How long one lease lasts, in nanoseconds.
   private let captureLeaseNanoseconds: UInt64
+  /// The clock that times the lease, in nanoseconds of uptime.
   private let uptimeNanoseconds: @Sendable () -> UInt64
   // Guards the bounded raw entry array and the lease. Formatting uses a copied snapshot.
+  /// The packets and the capture lease.
   private let ring: Locked<Ring>
 
+  /// Creates a buffer of `maxEntries` packets with a capture lease of `captureLeaseNanoseconds`.
   init(
     maxEntries: Int,
     captureLeaseNanoseconds: UInt64 = 5_000_000_000,
@@ -44,7 +60,9 @@ final class PacketLogBuffer: Sendable {
     self.ring = Locked(Ring(bufferedPackets: Array(repeating: nil, count: self.maxEntries)))
   }
 
-  /// Starts or extends capture for one lease period. A lapsed lease starts from an empty ring.
+  /// Starts or extends capture for one lease period.
+  ///
+  /// A lapsed lease starts from an empty ring.
   func armCapture() {
     let now = uptimeNanoseconds()
     let schedule = ring.withLock { ring in
@@ -70,6 +88,7 @@ final class PacketLogBuffer: Sendable {
     if let remaining { scheduleExpiry(afterNanoseconds: remaining) }
   }
 
+  /// Checks the lease again after `delay` nanoseconds, but not sooner than 100 ms.
   private func scheduleExpiry(afterNanoseconds delay: UInt64) {
     // A floor keeps a renewed lease from rescheduling in a tight loop near its deadline.
     let nanoseconds = Int(clamping: max(delay, 100_000_000))
@@ -78,6 +97,8 @@ final class PacketLogBuffer: Sendable {
     }
   }
 
+  /// Stores a packet while the capture lease holds; once the lease has lapsed it drops the stored
+  /// packets instead.
   func append(
     bytes: [UInt8],
     direction: PacketLogDirection,
@@ -100,6 +121,7 @@ final class PacketLogBuffer: Sendable {
     }
   }
 
+  /// The stored packets, oldest first, with their bytes formatted as hex.
   func entries() -> [PacketLogEntry] {
     let snapshot: [BufferedPacket] = ring.withLock { ring in
       guard ring.entryCount > 0 else { return [] }
@@ -118,6 +140,7 @@ final class PacketLogBuffer: Sendable {
     }
   }
 
+  /// The bytes as upper-case hex pairs separated by spaces; an empty string for no bytes.
   private static func hexString(for bytes: [UInt8]) -> String {
     guard !bytes.isEmpty else { return "" }
 

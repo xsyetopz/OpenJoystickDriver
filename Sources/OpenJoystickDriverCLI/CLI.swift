@@ -4,8 +4,15 @@ import OpenJoystickDriverKit
 
 /// The `ojd` entry point.
 package struct CLI {
+  /// Creates the entry point.
   package init() {}
 
+  /// Runs one `ojd` invocation and exits the process with its exit code.
+  ///
+  /// Loads the bundled and user controller records first, because profile validation reads the same
+  /// records as the app.
+  ///
+  /// - Parameter arguments: The command-line arguments after the executable name.
   @MainActor
   package func run(arguments: [String]) async -> Never {
     installCLIShutdownHandlers()
@@ -17,6 +24,8 @@ package struct CLI {
   }
 
   /// Parses and runs one `ojd` invocation, prints its failure, and returns its exit code.
+  ///
+  /// The hidden subcommand options are shown only while a completion script is generated.
   static func execute(arguments: [String]) async -> Int32 {
     let completing = arguments.contains("--generate-completion-script")
     return await GlobalOptions.$subcommandVisibility.withValue(completing ? .default : .hidden) {
@@ -24,6 +33,11 @@ package struct CLI {
     }
   }
 
+  /// Parses `arguments` with ``OJDCommand``, runs the command within its output kind, and returns
+  /// the exit code of the result.
+  ///
+  /// A mistyped subcommand prints the nearest command name from ``CommandSuggestion`` and exits
+  /// with the usage code.
   private static func parseAndRun(arguments: [String]) async -> Int32 {
     var command: any ParsableCommand
     do { command = try OJDCommand.parseAsRoot(arguments) } catch {
@@ -57,6 +71,8 @@ package struct CLI {
     } catch { return report(error) }
   }
 
+  /// The exit code that `error` produces: a ``CLIFailure`` carries its own, a cancellation is the
+  /// interrupted code, a parser exit keeps the parser's, and any other error is the failure code.
   static func exitCode(for error: any Error) -> Int32 {
     switch error {
     case let failure as CLIFailure: failure.code.rawValue
@@ -66,6 +82,7 @@ package struct CLI {
     }
   }
 
+  /// Prints `error` on standard error and returns its exit code.
   private static func report(_ error: any Error) -> Int32 {
     switch error {
     case let failure as CLIFailure: CLIOutput.stderr(failure.line)
@@ -83,8 +100,9 @@ package struct CLI {
     return exitCode(for: error)
   }
 
-  /// Prints a parser result: help and the version on stdout, usage errors on stderr. A usage
-  /// error carries the usage code unless `code` names another.
+  /// Prints a parser result: help and the version on stdout, usage errors on stderr.
+  ///
+  /// A usage error carries the usage code unless `errorCode` names another.
   private static func reportLibraryError(
     _ error: any Error,
     code errorCode: ErrorCode = .usage

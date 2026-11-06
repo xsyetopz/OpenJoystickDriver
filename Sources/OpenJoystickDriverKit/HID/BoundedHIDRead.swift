@@ -1,14 +1,19 @@
 import Foundation
 
 /// Runs a synchronous HID read off the caller's actor and gives up after a deadline, so a device
-/// that never answers cannot hold up the caller. A synchronous host read has no timeout of its
-/// own, and a read that timed out keeps its thread until the system call returns. A device with
-/// such a read outstanding is not read again: the next read fails at once with
-/// `PhysicalHIDFailure.busy`, so a silent device cannot pile up blocked threads.
+/// that never answers cannot hold up the caller.
+///
+/// A synchronous host read has no timeout of its own, and a read that timed out keeps its thread
+/// until the system call returns. A device with such a read outstanding is not read again: the next
+/// read fails at once with `PhysicalHIDFailure.busy`, so a silent device cannot pile up blocked
+/// threads.
 package final class BoundedHIDRead: Sendable {
+  /// The keys of the devices with a read that has not returned.
   private let outstanding = Locked<Set<UUID>>([])
+  /// Schedules the deadline of a read.
   private let scheduleDeadline: DeadlineScheduler
 
+  /// Runs an action once the given seconds have passed.
   package typealias DeadlineScheduler =
     @Sendable (TimeInterval, @escaping @Sendable () -> Void) -> Void
 
@@ -18,6 +23,7 @@ package final class BoundedHIDRead: Sendable {
     self.scheduleDeadline = scheduleDeadline
   }
 
+  /// Runs `action` on a global queue after `timeout` seconds.
   @Sendable
   private static func dispatchAfter(
     _ timeout: TimeInterval,

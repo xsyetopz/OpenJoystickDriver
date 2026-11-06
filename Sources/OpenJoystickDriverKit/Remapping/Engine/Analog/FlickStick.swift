@@ -1,17 +1,29 @@
 import Foundation
 
 /// Tracks outward flicks and shortest-path rim rotation in clockwise degrees from forward.
+///
 /// Timing and output scaling belong to the shared output scheduler.
 struct RemappingFlickStick {
+  /// What a stick sample means for the flick tracker.
   enum Event: Equatable {
+    /// The stick reached the rim at an angle.
     case flick(degrees: Double)
+    /// The stick turned along the rim by an angle.
     case rotation(degrees: Double)
   }
 
+  /// Rim angle at the previous sample, or `nil` while the stick is off the rim.
   private var previousAngle: Double?
 
+  /// Forgets the rim angle.
   mutating func reset() { previousAngle = nil }
 
+  /// Feeds a stick sample and returns a flick or a rim rotation.
+  ///
+  /// The first sample at or above `threshold` is a flick. Later samples stay on the rim while the
+  /// deflection is at or above `threshold` minus `hysteresis`, and each gives the shortest rotation
+  /// since the previous one, or `nil` when the angle did not change. Invalid parameters, or a
+  /// sample off the rim, reset the tracker and return `nil`.
   mutating func process(
     x: Double,
     y: Double,

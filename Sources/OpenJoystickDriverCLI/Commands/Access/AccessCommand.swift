@@ -2,7 +2,10 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd access` command group: turn the endpoint on or off and choose which programs and tokens
+/// may use it.
 struct AccessCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "access",
     abstract: CLILocalized.text(
@@ -18,15 +21,19 @@ struct AccessCommand: AsyncParsableCommand {
     ]
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
 /// The `--json` result of `access enable` and `access disable`.
 struct AccessEnabledResult: Encodable, Equatable {
+  /// Whether the endpoint is on.
   let enabled: Bool
+  /// The path of the endpoint's local socket.
   let socketPath: String
 
+  /// Prints the result as JSON, as one `--plain` record, or as a success message on stderr.
   func print() throws {
     switch CLIContext.current.format {
     case .json: try CLIOutput.json(self)
@@ -46,7 +53,10 @@ struct AccessEnabledResult: Encodable, Equatable {
   }
 }
 
+/// The `ojd access status` command: prints whether the endpoint is on, its socket, the WebSocket,
+/// the connected clients and the counts of grants and tokens.
 struct AccessStatusCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "status",
     abstract: CLILocalized.text(
@@ -54,9 +64,11 @@ struct AccessStatusCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let status = try await ServiceConnection.request { try await $0.accessStatus() }
@@ -117,7 +129,11 @@ struct AccessStatusCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd access enable` command: turns the endpoint on after a confirmation.
+///
+/// In a script it needs `--force`.
 struct AccessEnableCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "enable",
     abstract: CLILocalized.text("cli.access.enable.abstract"),
@@ -126,15 +142,18 @@ struct AccessEnableCommand: AsyncParsableCommand {
     )
   )
 
+  /// `-f`, `--force`: skip the confirmation.
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
   )
   var force = false
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       try CLITerminal.confirm(
@@ -150,7 +169,11 @@ struct AccessEnableCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd access disable` command: turns the endpoint off and closes its connections.
+///
+/// The grants stay.
 struct AccessDisableCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "disable",
     abstract: CLILocalized.text(
@@ -158,9 +181,11 @@ struct AccessDisableCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let status = try await ServiceConnection.request { try await $0.setAccessEnabled(false) }
@@ -169,7 +194,10 @@ struct AccessDisableCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd access list` command: prints the granted clients and tokens, and the clients and tokens
+/// that the endpoint refused.
 struct AccessListCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "list",
     abstract: CLILocalized.text(
@@ -180,16 +208,23 @@ struct AccessListCommand: AsyncParsableCommand {
     )
   )
 
+  /// The `--json` result of `access list`.
   struct Result: Encodable, Equatable {
+    /// The clients that hold a grant.
     let grants: [AccessGrantSummary]
+    /// The clients that the endpoint refused.
     let refused: [AccessRefusedClient]
+    /// The tokens that hold a grant.
     let tokens: [AccessTokenSummary]
+    /// The token connections that the endpoint refused.
     let refusedTokens: [AccessRefusedToken]
   }
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let status = try await ServiceConnection.request { try await $0.accessStatus() }
@@ -256,6 +291,7 @@ struct AccessListCommand: AsyncParsableCommand {
     }
   }
 
+  /// Prints the granted and the refused tokens in the human output of `access list`.
   private func printTokens(_ status: AccessStatusPayload) {
     CLIOutput.stdout(CLILocalized.text("cli.access.list.tokens"))
     if status.tokens.isEmpty {
@@ -286,13 +322,14 @@ struct AccessListCommand: AsyncParsableCommand {
 
 /// Text that several `ojd access` commands print.
 enum AccessText {
+  /// The message that says `--force` is needed to confirm without a terminal.
   static var needsForce: String {
     CLILocalized.text(
       "cli.access.group.needsForce"
     )
   }
 
-  /// `WebSocket: on at ws://…, pages at http://…`, or off.
+  /// The WebSocket line of `access status`: `WebSocket: on at ws://…, pages at http://…`, or off.
   static func web(_ web: AccessWebStatus) -> String {
     guard web.enabled else {
       return CLILocalized.text("cli.access.status.webOff")
@@ -311,11 +348,12 @@ enum AccessText {
     )
   }
 
+  /// The scopes as a comma-separated list of their command-line names.
   static func scopes(_ scopes: [EndpointScope]) -> String {
     scopes.map(\.commandLineName).joined(separator: ",")
   }
 
-  /// `signed ABCDE12345`, `platform`, or `ad-hoc`.
+  /// The signer of a client: `signed ABCDE12345`, `platform`, or `ad-hoc`.
   static func signer(_ kind: CodeSigningIdentity.Kind, _ team: String?) -> String {
     [CommandLineName.kebab(kind.rawValue), kind == .signed ? team : nil].compactMap(\.self).joined(
       separator: " "

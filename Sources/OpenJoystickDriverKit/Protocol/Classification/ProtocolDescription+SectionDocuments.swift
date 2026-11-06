@@ -5,8 +5,10 @@ import Foundation
 extension ProtocolDescription {
   /// `endpoints`: the default input and output endpoint addresses.
   struct EndpointsDocument: Decodable {
+    /// The decoded endpoints.
     let endpoints: Endpoints
 
+    /// Decodes `in` and `out`; any other key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["in", "out"])
@@ -23,9 +25,13 @@ extension ProtocolDescription {
 
   /// `rawUSB`: `true` for every variant, or the variants that are raw USB.
   enum RawUSBDeclaration: Decodable {
+    /// Every variant is reached through raw USB.
     case always
+    /// The named variants are reached through raw USB.
     case variants([String])
 
+    /// Decodes `true` or a nonempty list of unique variant names; `false` or a repeated name is
+    /// rejected.
     init(from decoder: any Decoder) throws {
       let single = try decoder.singleValueContainer()
       if let flag = try? single.decode(Bool.self) {
@@ -50,8 +56,11 @@ extension ProtocolDescription {
   /// `controls`: the controls every controller of the family has, as the Xbox layout with
   /// `remove` taken away and `add` put in, plus its digital triggers, touch contacts and motion.
   struct ControlsDocument: Decodable {
+    /// The decoded capabilities.
     let value: ControllerCapabilities
 
+    /// Decodes `base`, `remove`, `add`, `digitalTriggers`, `touchContactCount` and `motion`; an
+    /// unknown key or a `base` other than `Xbox` is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
@@ -96,8 +105,10 @@ extension ProtocolDescription {
 
   /// `recordCapabilities`: the capability deltas a record of the family may declare.
   struct RecordCapabilitiesDocument: Decodable {
+    /// The decoded rules.
     let value: RecordCapabilityRules
 
+    /// Decodes `present` and `rumbleAbsent`; any other key or a repeated control is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["present", "rumbleAbsent"])
@@ -118,8 +129,10 @@ extension ProtocolDescription {
 
   /// `macOSOwnedOutput`: lighting, rumble and reports OJD still sends to a controller macOS serves.
   struct MacOSOwnedOutputDocument: Decodable {
+    /// The decoded output.
     let value: MacOSOwnedOutput
 
+    /// Decodes the keys of the macOS-owned output section; an unknown key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
@@ -163,8 +176,11 @@ extension ProtocolDescription {
 
   /// A parameter declaration: `{type: Flag}`, `{type: Enum, values}` or `{type: Object, fields}`.
   struct Declaration: Decodable {
+    /// The decoded parameter type.
     let type: ParameterType
 
+    /// Decodes a `Flag`, an `Enum` with unique UpperCamelCase `values`, or an `Object` with integer
+    /// `fields`; an unknown type, key or an empty list is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       let name = try container.decode(String.self, for: "type")
@@ -209,9 +225,13 @@ extension ProtocolDescription {
     }
   }
 
+  /// An integer field of an object parameter, bounded by `minimum` and `maximum`.
   struct IntegerField: Decodable {
+    /// The inclusive range of the field.
     let range: ClosedRange<Int>
 
+    /// Decodes `type` (`Integer`), `minimum` and `maximum`; an unknown key, another type, or a
+    /// `minimum` above the `maximum` is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["type", "minimum", "maximum"])

@@ -127,6 +127,10 @@ extension VirtualDevice {
     )
   }
 
+  /// The model, and optionally the unit, that a document's `match` names.
+  ///
+  /// - Throws: `ControllerRecordProblem` when `match` holds other fields, or a vendor ID, product
+  ///   ID or unit that is out of range.
   private static func match(_ value: Any) throws -> VirtualHIDProfileOverrideStore.Model {
     let match = try fields(
       value,
@@ -145,6 +149,9 @@ extension VirtualDevice {
     )
   }
 
+  /// The identity of a document's `identity` object.
+  ///
+  /// - Throws: `ControllerRecordProblem` when a field is missing, unknown, empty or out of range.
   private static func identity(_ value: Any) throws -> Identity {
     let fields = try fields(
       value,
@@ -171,6 +178,10 @@ extension VirtualDevice {
     )
   }
 
+  /// The fields of the object `value` named `name`.
+  ///
+  /// - Throws: `ControllerRecordProblem` when `value` is not an object, lacks a required field, or
+  ///   holds a field that is neither required nor optional.
   private static func fields(
     _ value: Any?,
     named name: String,
@@ -189,6 +200,10 @@ extension VirtualDevice {
     return object
   }
 
+  /// The integer ID in `minimum...65535` that `value` holds.
+  ///
+  /// - Throws: `ControllerRecordProblem` naming `name` when `value` is not a whole number in that
+  ///   range.
   private static func id(_ value: Any?, _ name: String, from minimum: Int) throws -> UInt16 {
     // swiftlint:disable:next legacy_objc_type
     guard let number = value as? NSNumber, CFGetTypeID(number) != CFBooleanGetTypeID(),

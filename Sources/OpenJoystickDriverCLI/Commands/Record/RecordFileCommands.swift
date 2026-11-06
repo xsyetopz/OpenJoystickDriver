@@ -4,15 +4,24 @@ import OpenJoystickDriverKit
 
 /// The `--json` result of `record validate` and `record install`.
 struct RecordValidation: Encodable, Equatable {
+  /// Whether the record is valid.
   let valid: Bool
+  /// Why the record is not valid.
   let problem: String?
+  /// Whether the record is a `Controller` or a `ControllerPatch`.
   let operation: String?
+  /// The controller model as `VVVV:PPPP`.
   let identity: String?
+  /// The protocol family of the record.
   let family: String?
+  /// The file name that an installed record gets.
   let fileName: String?
+  /// How OJD reaches the controller.
   let transport: RecordTransport?
+  /// Whether the DriverKit extension can claim a raw-USB controller.
   let transportClaim: RecordTransportClaim?
 
+  /// Describes a valid record.
   init(_ validated: ValidatedControllerRecord) {
     valid = true
     problem = nil
@@ -26,6 +35,7 @@ struct RecordValidation: Encodable, Equatable {
     transportClaim = validated.record.flatMap(RecordTransportClaim.init)
   }
 
+  /// Describes an invalid record by its `problem`.
   init(problem: String) {
     valid = false
     self.problem = problem
@@ -37,8 +47,11 @@ struct RecordValidation: Encodable, Equatable {
     transportClaim = nil
   }
 
-  /// Validates the bytes read from `path`, `-` for stdin. An invalid record prints
-  /// `valid: false` with `--json` and exits 1.
+  /// Validates the bytes read from `path`, `-` for stdin.
+  ///
+  /// An invalid record prints `valid: false` with `--json` and exits 1.
+  ///
+  /// - Throws: ``CLIFailure`` when the record is not valid.
   static func check(_ path: String, data: Data) throws -> ValidatedControllerRecord {
     do { return try ControllerRecordSet.validate(data) } catch {
       let problem = ControllerRecordSet.problemDescription(
@@ -63,7 +76,9 @@ private func recordFileHelp() -> ArgumentHelp {
   )
 }
 
+/// The `ojd record validate` command: checks a record without installing it.
 struct RecordValidateCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "validate",
     abstract: CLILocalized.text(
@@ -74,12 +89,15 @@ struct RecordValidateCommand: AsyncParsableCommand {
     )
   )
 
+  /// The record file to read, or `-` for standard input.
   @Argument(help: recordFileHelp())
   var file: String
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let validated = try RecordValidation.check(file, data: RecordStore.read(file))
@@ -115,7 +133,12 @@ struct RecordValidateCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd record install` command: checks a record and writes it to the user's record folder as
+/// `vvvv-pppp.json`.
+///
+/// Replacing an installed record needs a confirmation, or `--force` without a terminal.
 struct RecordInstallCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "install",
     abstract: CLILocalized.text(
@@ -128,21 +151,28 @@ struct RecordInstallCommand: AsyncParsableCommand {
 
   /// The `--json` result.
   struct Result: Encodable, Equatable {
+    /// The path of the installed record.
     let installed: String
+    /// Whether the command replaces an installed record.
     let replaced: Bool
+    /// Whether `--dry-run` is set, so nothing is written.
     let dryRun: Bool
+    /// The validation of the record.
     let record: RecordValidation
   }
 
+  /// The record file to read, or `-` for standard input.
   @Argument(help: recordFileHelp())
   var file: String
 
+  /// `-f`, `--force`: skip the confirmation.
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
   )
   var force = false
 
+  /// `-n`, `--dry-run`: check the record and print where it would go, and write nothing.
   @Flag(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
@@ -151,9 +181,11 @@ struct RecordInstallCommand: AsyncParsableCommand {
   )
   var dryRun = false
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let data = try RecordStore.read(file)
@@ -196,6 +228,9 @@ struct RecordInstallCommand: AsyncParsableCommand {
     }
   }
 
+  /// Writes `data` to `destination`.
+  ///
+  /// - Throws: ``CLIFailure`` when the file cannot be written.
   private func write(_ data: Data, to destination: URL) throws {
     do {
       try FileManager.default.createDirectory(
@@ -216,7 +251,9 @@ struct RecordInstallCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd record remove` command: deletes the user's record for a model.
 struct RecordRemoveCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "remove",
     abstract: CLILocalized.text(
@@ -229,10 +266,13 @@ struct RecordRemoveCommand: AsyncParsableCommand {
 
   /// The `--json` result.
   struct Result: Encodable, Equatable {
+    /// The paths of the removed record files.
     let removed: String
+    /// Whether `--dry-run` is set, so nothing is removed.
     let dryRun: Bool
   }
 
+  /// The model whose record to remove.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.record.group.identity"),
@@ -241,12 +281,14 @@ struct RecordRemoveCommand: AsyncParsableCommand {
   )
   var model: ControllerModelID
 
+  /// `-f`, `--force`: skip the confirmation.
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
   )
   var force = false
 
+  /// `-n`, `--dry-run`: print what would change and change nothing.
   @Flag(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
@@ -255,9 +297,11 @@ struct RecordRemoveCommand: AsyncParsableCommand {
   )
   var dryRun = false
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let targets = [

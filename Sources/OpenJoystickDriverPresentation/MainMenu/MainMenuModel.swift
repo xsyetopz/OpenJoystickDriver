@@ -1,19 +1,26 @@
 import Foundation
 
 /// The main menu as data: titles, key equivalents, actions, enabled rules and GUI counterparts.
+///
 /// The test checks this; ``MainMenuRenderer`` renders it to an `NSMenu`.
 enum MainMenuModel {
+  /// The menus of the menu bar in order: the app menu, File, Edit, View, Controller, Profile,
+  /// Window and Help.
   static let sections: [MainMenuSection] = [
     appSection, fileSection, editSection, viewSection, controllerSection, profileSection,
     windowSection, helpSection,
   ]
 
+  /// Every item of every menu in order.
   static var allItems: [MainMenuItem] { sections.flatMap(\.items) }
 
+  /// Returns the first item with the action, or nil when no item has it.
   static func item(for action: MainMenuAction) -> MainMenuItem? {
     allItems.first { $0.action == action }
   }
 
+  /// Returns whether the item is enabled in the state; an item on the responder chain counts as
+  /// enabled, because AppKit validates it.
   static func isEnabled(_ item: MainMenuItem, state: MainMenuState) -> Bool {
     switch item.enabled {
     case .responderChain: return true
@@ -48,8 +55,9 @@ enum MainMenuModel {
     profileListRead ? noProfilesTitleKey : profilesUnavailableTitleKey
   }
 
-  /// The identifier of the menu bar item that opens a section's menu. The `menu.` prefix keeps
-  /// it apart from every item id, which the coordinator looks items up by.
+  /// The identifier of the menu bar item that opens a section's menu.
+  ///
+  /// The `menu.` prefix keeps it apart from every item id, which the coordinator looks items up by.
   static func menuBarItemIdentifier(sectionID: String) -> String {
     "menu.\(sectionID)"
   }
@@ -76,6 +84,9 @@ enum MainMenuModel {
     }
   }
 
+  /// Returns the entry of an item.
+  ///
+  /// The modifiers apply only when `key` is not empty.
   private static func entry(
     _ id: String,
     _ titleKey: String,
@@ -100,8 +111,10 @@ enum MainMenuModel {
     )
   }
 
+  /// The rule of the items that need the main window.
   private static let needsMainWindow = MainMenuEnabledRule.requires([.mainWindow])
 
+  /// The app menu: About, Settings, Services, Hide, Hide Others, Show All and Quit.
   private static let appSection = MainMenuSection(
     id: "app",
     titleKey: "term.app.name",
@@ -154,6 +167,8 @@ enum MainMenuModel {
     ]
   )
 
+  /// The File menu: importing and exporting profiles, installing a record or mod, closing the
+  /// window, and saving the support report and the activity log.
   private static let fileSection = MainMenuSection(
     id: "file",
     titleKey: "ui.menu.file.title",
@@ -205,6 +220,7 @@ enum MainMenuModel {
     ]
   )
 
+  /// The Edit menu: Undo, Redo, Cut, Copy, Paste, Delete and Select All.
   private static let editSection = MainMenuSection(
     id: "edit",
     titleKey: "ui.menu.edit.title",
@@ -269,6 +285,8 @@ enum MainMenuModel {
     ]
   )
 
+  /// The View menu: one item for each area of the main window, then the toolbar, sidebar and full
+  /// screen items.
   private static let viewSection = MainMenuSection(
     id: "view",
     titleKey: "ui.menu.view.title",
@@ -317,6 +335,8 @@ enum MainMenuModel {
     ]
   )
 
+  /// The Controller menu: the target row, Suspend or Resume, Test Input, Disconnect Wireless Link
+  /// and Show in Window.
   private static let controllerSection = MainMenuSection(
     id: "controller",
     titleKey: "ui.menu.controller.title",
@@ -362,6 +382,7 @@ enum MainMenuModel {
     ]
   )
 
+  /// The Profile menu: Activate Profile and Deactivate Profile.
   private static let profileSection = MainMenuSection(
     id: "profile",
     titleKey: "ui.menu.profile.title",
@@ -383,6 +404,7 @@ enum MainMenuModel {
     ]
   )
 
+  /// The Window menu: Minimize, Zoom and Bring All to Front.
   private static let windowSection = MainMenuSection(
     id: "window",
     titleKey: "ui.menu.window.title",
@@ -413,6 +435,8 @@ enum MainMenuModel {
     ]
   )
 
+  /// The Help menu: the Activity area, Explain Error Code, Copy Support Report, Report Problem and
+  /// the project page.
   private static let helpSection = MainMenuSection(
     id: "help",
     titleKey: "ui.menu.help.title",

@@ -6,6 +6,7 @@ enum JSONSyntaxKind: Equatable, Sendable {
   case key
   /// A string value, with its quotes.
   case string
+  /// A number value.
   case number
   /// `true`, `false` or `null`.
   case literal
@@ -15,25 +16,33 @@ enum JSONSyntaxKind: Equatable, Sendable {
   case space
 }
 
-/// One run of the text. The runs of a text, joined, give the text back.
+/// One run of the text.
+///
+/// The runs of a text, joined, give the text back.
 struct JSONSyntaxToken: Equatable, Sendable {
+  /// The kind of the run.
   let kind: JSONSyntaxKind
+  /// The exact characters of the run.
   let text: String
-  /// How many objects and arrays enclose the token. A bracket is not inside the container it
-  /// opens or closes.
+  /// How many objects and arrays enclose the token.
+  ///
+  /// A bracket is not inside the container it opens or closes.
   let depth: Int
 }
 
-/// Text the tokenizer cannot read because it breaks the JSON grammar. The text is a record's
-/// ``ControllerRecord/text``, which the catalog lays out with ``OrderedJSON/formatted()``, so a
-/// failure means the catalog handed the Library text that is not one standard JSON value; the
-/// tokenizer checks the grammar only, not duplicate member names or the encoding. It is a
-/// defect in the catalog's text, not a user's input.
+/// Text the tokenizer cannot read because it breaks the JSON grammar.
+///
+/// The text is a record's ``ControllerRecord/text``, which the catalog lays out with
+/// ``OrderedJSON/formatted()``, so a failure means the catalog handed the Library text that is not
+/// one standard JSON value; the tokenizer checks the grammar only, not duplicate member names or
+/// the encoding. It is a defect in the catalog's text, not a user's input.
 struct JSONSyntaxError: Error, Equatable, CustomStringConvertible {
   /// The position in unicode scalars from the start of the text.
   let offset: Int
+  /// Why the grammar rejects the text, in words.
   let reason: String
 
+  /// The offset and the reason on one line.
   var description: String { "JSON text, scalar \(offset): \(reason)" }
 }
 
@@ -43,6 +52,11 @@ struct JSONSyntaxError: Error, Equatable, CustomStringConvertible {
 /// follows the JSON grammar, so a token where JSON does not allow it (`[1 2]`, `{,}`, `{"a" 1}`,
 /// a trailing comma, a second top-level value) or a container left open or closed twice throws.
 enum JSONSyntax {
+  /// Splits `text` into runs whose kinds the record view colors.
+  ///
+  /// - Parameter text: One JSON value in any spacing, as ``OrderedJSON/formatted()`` lays it out.
+  /// - Returns: The runs in text order, spaces included.
+  /// - Throws: ``JSONSyntaxError`` when the text breaks the JSON grammar.
   static func tokens(in text: String) throws(JSONSyntaxError) -> [JSONSyntaxToken] {
     var scanner = Scanner(scalars: Array(text.unicodeScalars))
     return try scanner.run()
@@ -66,22 +80,34 @@ enum JSONSyntax {
     case end
   }
 
+  /// The state of one pass over the text: the position, the runs found and the open containers.
   private struct Scanner {
+    /// The scalars of the text.
     let scalars: [Unicode.Scalar]
+    /// The index in ``scalars`` of the next scalar to read.
     var position = 0
+    /// The runs found so far.
     var tokens: [JSONSyntaxToken] = []
     /// `true` for an object, `false` for an array.
     var containers: [Bool] = []
+    /// What the grammar allows at ``position``.
     var expectation = Expectation.value
 
+    /// Creates a scanner at the start of `scalars`.
     init(scalars: [Unicode.Scalar]) { self.scalars = scalars }
 
+    /// Returns the error for `reason`, at `offset` or, when nil, at ``position``.
     func failure(_ reason: String, at offset: Int? = nil) -> JSONSyntaxError {
       JSONSyntaxError(offset: offset ?? position, reason: reason)
     }
 
+    /// Whether the grammar allows a value at ``position``.
     var expectsValue: Bool { expectation == .value || expectation == .valueOrClose }
 
+    /// Reads the whole text and returns its runs.
+    ///
+    /// - Throws: ``JSONSyntaxError`` at the first scalar the grammar does not allow, or when a
+    ///   container is left open or the text holds no value.
     mutating func run() throws(JSONSyntaxError) -> [JSONSyntaxToken] {
       while position < scalars.count {
         let scalar = scalars[position]
@@ -152,6 +178,7 @@ enum JSONSyntax {
       failure("unexpected \(String(scalar).debugDescription) where JSON expects \(expected)")
     }
 
+    /// The words that say what the grammar expects, for an error message.
     var expected: String {
       switch expectation {
       case .value: "a value"
@@ -167,6 +194,7 @@ enum JSONSyntax {
     /// A value ended: the container that holds it takes a comma or its closing bracket next.
     mutating func endValue() { expectation = containers.isEmpty ? .end : .commaOrClose }
 
+    /// Appends the run from `start` to `length` scalars later, or to ``position`` when nil.
     mutating func emit(_ kind: JSONSyntaxKind, from start: Int, length: Int? = nil) {
       let end = length.map { start + $0 } ?? position
       var text = String.UnicodeScalarView()
@@ -174,6 +202,10 @@ enum JSONSyntax {
       tokens.append(JSONSyntaxToken(kind: kind, text: String(text), depth: containers.count))
     }
 
+    /// Reads a string with its quotes, from the opening quote to the closing one.
+    ///
+    /// - Throws: ``JSONSyntaxError`` for a control character, an unknown or short escape, or a
+    ///   string that is not closed.
     mutating func string() throws(JSONSyntaxError) {
       position += 1
       while position < scalars.count {
@@ -207,6 +239,9 @@ enum JSONSyntax {
       throw failure("a string is not closed")
     }
 
+    /// Reads `true`, `false` or `null`.
+    ///
+    /// - Throws: ``JSONSyntaxError`` when none of the three words starts at ``position``.
     mutating func literal() throws(JSONSyntaxError) {
       for word in ["true", "false", "null"] {
         let expected = Array(word.unicodeScalars)
@@ -220,12 +255,17 @@ enum JSONSyntax {
       throw failure("expected true, false or null")
     }
 
+    /// Reads a run of decimal digits and returns how many it read.
     mutating func digits() -> Int {
       let begin = position
       while position < scalars.count, ("0"..."9").contains(scalars[position]) { position += 1 }
       return position - begin
     }
 
+    /// Reads a number: an optional minus sign, an integer part, and optional fraction and exponent.
+    ///
+    /// - Throws: ``JSONSyntaxError`` when the minus sign, the decimal point or the exponent has no
+    ///   digits after it.
     mutating func number() throws(JSONSyntaxError) {
       if scalars[position] == "-" { position += 1 }
       if position < scalars.count, scalars[position] == "0" {

@@ -11,12 +11,16 @@ import Foundation
 /// ``Failure/superseded``.
 /// Closing revokes new submissions and detaches the backend before the active native send drains.
 final class UserSpaceReportSender: Sendable {
+  /// Why a submission does not reach the device.
   enum Failure: Error, Equatable, LocalizedError, Sendable {
+    /// The queue holds only host replies, and one more arrived.
     case queueOverflow
+    /// The native send exceeded its deadline.
     case sendTimedOut
     /// A newer frame took the place of this one in a full queue.
     case superseded
 
+    /// The description of the error for the user.
     var errorDescription: String? {
       switch self {
       case .queueOverflow: "Virtual controller publication queue overflowed."
@@ -29,14 +33,20 @@ final class UserSpaceReportSender: Sendable {
   /// Matches the virtual output transition deadline used to retire native virtual devices.
   static let defaultNativeSendDeadlineNanoseconds: UInt64 = 2_000_000_000
 
+  /// The outcome of one submission.
   final class SubmissionReceipt: Sendable {
+    /// The result and the tasks that wait for it.
     private struct State: Sendable {
+      /// The result; nil until the submission ends.
       var result: Result<Void, any Error>?
+      /// The tasks that wait for the result.
       var waiters: [CheckedContinuation<Void, any Error>] = []
     }
 
+    /// The result and its waiters.
     private let state = Locked(State())
 
+    /// Sets the result and resumes every waiter; only the first call counts.
     func finish(_ result: Result<Void, any Error>) {
       let waiters = state.withLock { state -> [CheckedContinuation<Void, any Error>] in
         guard state.result == nil else { return [] }
@@ -47,6 +57,9 @@ final class UserSpaceReportSender: Sendable {
       for waiter in waiters { waiter.resume(with: result) }
     }
 
+    /// Waits for the result.
+    ///
+    /// - Throws: The error of the submission, such as ``Failure/superseded``.
     func value() async throws {
       try await withCheckedThrowingContinuation { continuation in
         let result = state.withLock { state -> Result<Void, any Error>? in
@@ -66,16 +79,25 @@ final class UserSpaceReportSender: Sendable {
   /// worker past the deadline. Cancelling the waiting publisher (closing) must also not cut the
   /// deadline short, so the send can still drain until then.
   private final class NativeSendOperation: Sendable {
+    /// The progress of the send.
     private struct State: Sendable {
+      /// Whether the send ended.
       var completed = false
+      /// Whether the waiting publisher was cancelled.
       var cancellationRequested = false
+      /// The task that runs the native send.
       var sendTask: Task<Void, Never>?
+      /// Stops the deadline timer.
       var cancelDeadline: DeadlineTimer.Cancel?
+      /// The waiting publisher.
       var continuation: CheckedContinuation<Void, any Error>?
     }
 
+    /// The progress of the send.
     private let state = Locked(State())
 
+    /// Starts the native send of `report` through `backend`; it fails with ``Failure/sendTimedOut``
+    /// after `deadlineNanoseconds`, closing `backend`.
     func start(
       report: [UInt8],
       backend: any VirtualDeviceBackend,
@@ -111,6 +133,7 @@ final class UserSpaceReportSender: Sendable {
       }
     }
 
+    /// Cancels the native send; the deadline then ends the wait with a cancellation.
     func cancel() {
       let sendTask = state.withLock { state -> Task<Void, Never>? in
         state.cancellationRequested = true
@@ -119,8 +142,10 @@ final class UserSpaceReportSender: Sendable {
       sendTask?.cancel()
     }
 
+    /// Whether the waiting publisher was cancelled.
     private func isCancellationRequested() -> Bool { state.withLock { $0.cancellationRequested } }
 
+    /// Ends the send with `result`; only the first call counts.
     private func finish(_ result: Result<Void, any Error>) {
       let (continuation, cancelDeadline) = state.withLock {
         state -> (CheckedContinuation<Void, any Error>?, DeadlineTimer.Cancel?) in
@@ -134,36 +159,54 @@ final class UserSpaceReportSender: Sendable {
     }
   }
 
+  /// One request for reports.
   private struct Submission: Sendable {
+    /// The outcome that the submitter waits for.
     let completion: SubmissionReceipt
     /// Whether a newer frame may take this submission's place in a full queue.
     let isFrame: Bool
+    /// Whether the reports still apply.
     let whileActive: @Sendable () -> Bool
+    /// Whether a report that does not apply any more fails the submission instead of ending it.
     let requireActive: Bool
+    /// Builds the reports to send.
     let reports: @Sendable () throws -> [[UInt8]]
   }
 
+  /// The state that the lock guards.
   private struct State: Sendable {
+    /// The device that receives the reports; nil before ``attach(_:)`` and after closing.
     var backend: (any VirtualDeviceBackend)?
+    /// The task that sends the queued submissions in order.
     var worker: Task<Void, Never>?
+    /// The outcome of every submission that is waiting or being sent.
     var pending: [ObjectIdentifier: SubmissionReceipt] = [:]
     /// The submissions waiting for the worker, oldest first; never longer than the capacity.
     var queue: [Submission] = []
+    /// The submission being sent.
     var active: SubmissionReceipt?
+    /// The task that closing started.
     var closeTask: Task<Void, Never>?
+    /// Whether the sender is closed.
     var closed = false
   }
 
+  /// The state that the lock guards.
   private let state = Locked(State())
   /// Wakes the worker; one pending wake covers every submission queued before it runs.
   private let continuation: AsyncStream<Void>.Continuation
+  /// The deadline of one native send, in nanoseconds.
   private let nativeSendDeadlineNanoseconds: UInt64
+  /// The timer that enforces the deadline.
   private let deadlineTimer: DeadlineTimer
+  /// The most submissions that wait behind the one being sent.
   private let queueCapacity: Int
 
   /// The number of submissions waiting behind the one being sent.
   var queuedCount: Int { state.withLock { $0.queue.count } }
 
+  /// Creates a sender with a queue of `queueCapacity` submissions and a native send deadline of
+  /// `nativeSendDeadlineNanoseconds`.
   init(
     nativeSendDeadlineNanoseconds: UInt64 = defaultNativeSendDeadlineNanoseconds,
     queueCapacity: Int = ControllerTuning.defaultFrameQueueCapacity,
@@ -192,6 +235,8 @@ final class UserSpaceReportSender: Sendable {
 
   deinit { _ = beginClose() }
 
+  /// Sets the device that receives the reports; a closed sender or a second device is closed at
+  /// once.
   func attach(_ backend: any VirtualDeviceBackend) {
     let rejected = state.withLock { state in
       guard !state.closed, state.backend == nil else { return true }
@@ -201,6 +246,7 @@ final class UserSpaceReportSender: Sendable {
     if rejected { backend.close() }
   }
 
+  /// Takes the oldest waiting submission.
   private func dequeue() -> Submission? {
     state.withLock { $0.queue.isEmpty ? nil : $0.queue.removeFirst() }
   }
@@ -251,6 +297,7 @@ final class UserSpaceReportSender: Sendable {
     return completion
   }
 
+  /// Sends the reports of `submission` in order and ends its outcome.
   private func publish(_ submission: Submission) async {
     state.withLock { $0.active = submission.completion }
     defer {
@@ -278,6 +325,9 @@ final class UserSpaceReportSender: Sendable {
     } catch { submission.completion.finish(.failure(error)) }
   }
 
+  /// Sends `report` to `backend` within the deadline.
+  ///
+  /// - Throws: ``Failure/sendTimedOut``, a `CancellationError` or the error of the backend.
   private func send(
     _ report: [UInt8],
     to backend: any VirtualDeviceBackend
@@ -298,6 +348,7 @@ final class UserSpaceReportSender: Sendable {
     }
   }
 
+  /// Closes the sender without waiting; the returned task ends when the device is gone.
   @discardableResult
   func beginClose() -> Task<Void, Never> {
     let result = state.withLock {
@@ -328,7 +379,7 @@ final class UserSpaceReportSender: Sendable {
       return (task, backend, cancellations)
     }
     result.1?.close()
-    result.2.forEach { $0.finish(.failure(CancellationError())) }
+    for cancellation in result.2 { cancellation.finish(.failure(CancellationError())) }
     return result.0
   }
 }

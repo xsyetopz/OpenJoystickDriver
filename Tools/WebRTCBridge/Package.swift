@@ -1,6 +1,7 @@
 // swift-tools-version: 6.4
 import PackageDescription
 
+/// The `ojd-webrtc-bridge` tool, which joins two endpoints over a WebRTC data channel.
 let package = Package(
   name: "WebRTCBridge",
   platforms: [.macOS(.v12)],

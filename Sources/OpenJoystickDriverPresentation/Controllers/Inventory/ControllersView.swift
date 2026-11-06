@@ -7,14 +7,26 @@
 
   // MARK: - Controllers
 
+  /// The Controllers area of the main window: the list of connected controllers and the detail of
+  /// the selected one.
   struct ControllersView: View {
+    /// The state of the Controllers list.
     @ObservedObject
     private var screen: ControllersViewModel
+    /// The column of the main window that the view fills.
     let column: MainWindowColumn
+    /// Opens the Input Test window for a controller.
     let openInputTest: @MainActor (ApplicationServiceDeviceDescription) -> Void
+    /// The Bluetooth link closure that waits for confirmation, or nil.
     @State
     private var wirelessDisconnectRequest: WirelessDisconnectRequest?
 
+    /// Creates the view.
+    ///
+    /// - Parameters:
+    ///   - screen: The state of the Controllers list.
+    ///   - column: The column of the main window that the view fills.
+    ///   - openInputTest: Opens the Input Test window for a controller.
     init(
       screen: ControllersViewModel,
       column: MainWindowColumn,
@@ -25,8 +37,10 @@
       self.openInputTest = openInputTest
     }
 
+    /// The model of the app's view of the service.
     private var viewModel: RuntimeViewModel { screen.runtime }
 
+    /// The controller list or the detail column.
     var body: some View {
       switch column {
       case .list: controllerList
@@ -39,10 +53,13 @@
       }
     }
 
+    /// The connected controllers.
     private var devices: [ApplicationServiceDeviceDescription] { screen.devices }
 
+    /// The selected controller, or nil.
     private var selectedDevice: ApplicationServiceDeviceDescription? { screen.selectedDevice }
 
+    /// The list column: the loading state, the failure with Try Again, or the rows.
     private var controllerList: some View {
       VStack(alignment: .leading, spacing: 8) {
         switch viewModel.statusState {
@@ -88,6 +105,7 @@
       }
     }
 
+    /// The rows of the connected controllers, then those of the controllers OJD does not serve.
     private var controllerListRows: some View {
       List(selection: selectedDeviceIdentifier) {
         ForEach(devices, id: \.sessionToken) { device in
@@ -128,6 +146,9 @@
     }
 
     /// The Controller menu's session commands for one controller.
+    ///
+    /// - Parameter device: The controller.
+    /// - Returns: The buttons for the session state of the controller.
     @ViewBuilder
     private func sessionCommands(for device: ApplicationServiceDeviceDescription) -> some View {
       if device.sessionState == .suspended {
@@ -146,6 +167,10 @@
       }
     }
 
+    /// Returns the alert that confirms closing a controller's Bluetooth link.
+    ///
+    /// - Parameter request: The pending closure.
+    /// - Returns: The alert that confirms closing a controller's Bluetooth link.
     private func wirelessDisconnectAlert(for request: WirelessDisconnectRequest) -> Alert {
       let confirmation = request.confirmation
       let device = request.device
@@ -159,6 +184,7 @@
       )
     }
 
+    /// The binding between the list selection and the selected controller's session token.
     private var selectedDeviceIdentifier: Binding<String?> {
       Binding(
         get: { selectedDevice?.sessionToken.rawValue },
@@ -171,6 +197,7 @@
       )
     }
 
+    /// The detail of the selected controller, or the state of the load.
     @ViewBuilder
     private var controllerDetail: some View {
       if let selectedDevice {
@@ -219,14 +246,21 @@
       }
     }
 
+    /// Refreshes the controller inventory.
     private func refresh() { screen.refresh() }
 
+    /// Returns the profile that is active for the controller, or why none shows.
+    ///
+    /// - Parameter device: The controller.
+    /// - Returns: The profile that is active for the controller, or why none shows.
     private func activeProfileState(
       for device: ApplicationServiceDeviceDescription
     ) -> RuntimeActiveProfileState { screen.activeProfileState(for: device) }
   }
 
   extension VirtualIdentityGlyphFamily {
+    /// The color of the controller's glyph: the Xbox brand green for the Xbox family, else the
+    /// secondary label color.
     var controllerSymbolColor: Color {
       switch self {
       case .xbox: return Color(Self.xboxBrandColor)
@@ -234,6 +268,7 @@
       }
     }
 
+    /// The Xbox brand green, lighter in the dark appearance.
     private static let xboxBrandColor = NSColor(name: nil) { appearance in
       let isDark =
         appearance.bestMatch(from: [NSAppearance.Name.aqua, NSAppearance.Name.darkAqua])
@@ -271,10 +306,12 @@
       )
     }
 
+    /// The glyphs of the identity shown for this controller.
     var publishedIdentityPresentation: VirtualIdentityPresentation {
       presentedIdentity.presentation
     }
 
+    /// The caption of the identity shown for this controller.
     var publishedIdentityLabel: String { presentedIdentity.label }
 
     /// The serving route of ``servingDecision``, the same route `ojd controller show` prints
@@ -293,8 +330,11 @@
   /// Icon and caption of one controller: the virtual identity when OJD publishes a virtual
   /// device for it, else the physical family.
   struct PresentedControllerIdentity: Equatable {
+    /// Whether OJD publishes a virtual device for the controller.
     let publishesVirtualDevice: Bool
+    /// The glyphs of the identity.
     let presentation: VirtualIdentityPresentation
+    /// The caption of the identity.
     let label: String
   }
 

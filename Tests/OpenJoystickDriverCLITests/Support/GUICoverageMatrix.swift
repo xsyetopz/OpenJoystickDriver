@@ -1,5 +1,6 @@
-/// The CLI-to-GUI coverage matrix of `design.md` D10, held as data. It lives with the tests
-/// because only the coverage tests read it; the GUI does not consume it.
+/// The CLI-to-GUI coverage matrix of `design.md` D10, held as data.
+///
+/// It lives with the tests because only the coverage tests read it; the GUI does not consume it.
 ///
 /// D10 states the area matrix per command group, so a `GUIPlace` covers every command whose path
 /// starts with its `prefix`. Every command maps to a place. `GUICoverageEntries` names, per leaf
@@ -17,8 +18,10 @@ struct GUIPlace: Equatable {
 }
 
 /// The GUI place of one `--json` field, for a field a command prints that the GUI shows as a named
-/// element. The command-group table above says where a command lives; this one says where a field
-/// of its output shows.
+/// element.
+///
+/// The command-group table above says where a command lives; this one says where a field of its
+/// output shows.
 struct GUIField: Equatable {
   /// The command path, such as `["controller", "show"]`.
   let command: [String]

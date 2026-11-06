@@ -13,16 +13,22 @@ import OpenJoystickDriverMacOSPlatform
 ///   revoke changes and the handshake's grant check hold it too, so a client cannot be welcomed
 ///   with a grant that a concurrent revoke already removed.
 final class EndpointServer: @unchecked Sendable {
+  /// Identifies the program at the other end of a socket.
   typealias Identify = @Sendable (LocalSocketPeer) -> EndpointClient?
 
   /// The most connections each transport serves, so web pages cannot starve socket clients.
   static let maximumConnections = 8
+  /// The longest line that a client may send, in bytes.
   static let maximumLineBytes = 65_536
+  /// The seconds a client has to finish its handshake.
   static let handshakeSeconds = 5
+  /// The most lines that wait to be written to one connection.
   static let maximumQueuedLines = 256
   /// Web connections that have not upgraded or finished their page request yet.
   static let maximumPendingWebRequests = 16
+  /// The most bytes of a web request that the server reads.
   static let maximumRequestBytes = 8_192
+  /// The name of the Unix socket file.
   static let socketName = "com.openjoystickdriver.endpoint.sock"
 
   /// The socket in the per-user temporary folder, which only the user can open.
@@ -30,25 +36,36 @@ final class EndpointServer: @unchecked Sendable {
     MacOSDataDirectory().fileURL(socketName, in: .runtime).path
   }
 
+  /// The path of the Unix socket.
   let socketPath: String
+  /// The store of the access grants.
   let store: AccessGrantStore
+  /// The source of the controller events.
   let source: any ControllerWatchSource
+  /// The version of the service that `Welcome` reports.
   let version: String
-  /// The virtual gamepads that `feed` connections drive; shared with `ojd virtual feed`. Nil
-  /// refuses every feed.
+  /// The virtual gamepads that `feed` connections drive; shared with `ojd virtual feed`.
+  ///
+  /// Nil refuses every feed.
   let feeds: VirtualFeedRegistry?
+  /// Identifies the program at the other end of a socket.
   let identify: Identify
   /// Told when a stream line about a controller went to the subscribers, with the uptime in
   /// nanoseconds just after the send.
   let streamDelivered: (@Sendable (ControllerSessionToken, UInt64) async -> Void)?
+  /// The lock that guards the mutable state.
   let lock = NSLock()
+  /// The listener of the Unix socket, while the endpoint is on.
   private var listener: AcceptListener?
   /// Changes each time the socket starts or stops listening; ends the earlier listener's loop.
   private var socketGeneration = 0
+  /// The number of socket accept loops that are running.
   private var runningSocketAcceptLoops = 0
+  /// The listener of the WebSocket, while it is on.
   var webListener: AcceptListener?
   /// Changes each time the WebSocket starts or stops listening; ends the earlier listener's loop.
   var webGeneration = 0
+  /// The number of web connections that did not finish their request yet.
   var pendingWebRequests = 0
   /// Every accepted connection, including those still in the handshake.
   var connections: [ObjectIdentifier: EndpointConnection] = [:]
@@ -57,6 +74,7 @@ final class EndpointServer: @unchecked Sendable {
   /// The number of socket accept loops that have not returned, including stale ones that a
   /// stopped listener is still waking.
   var socketAcceptLoopCount: Int { lock.withLock { runningSocketAcceptLoops } }
+  /// The number of WebSocket accept loops that are running.
   var runningWebAcceptLoops = 0
   /// The number of WebSocket accept loops that have not returned, including stale ones that a
   /// stopped listener is still waking.
@@ -70,9 +88,12 @@ final class EndpointServer: @unchecked Sendable {
   let resourceWaitMilliseconds: Int32
   /// Receives the accept loops' reports; they go to standard output.
   let report: @Sendable (String) -> Void
+  /// The clients and tokens that the endpoint refused.
   var refusals = AccessRefusalLog()
+  /// The state of the controller stream.
   var stream = EndpointStream()
 
+  /// Creates the server with its socket path, grant store, event source and test seams.
   init(
     socketPath: String = EndpointServer.defaultSocketPath,
     store: AccessGrantStore = AccessGrantStore(),
@@ -130,6 +151,10 @@ final class EndpointServer: @unchecked Sendable {
     }
   }
 
+  /// Returns whether the endpoint and its WebSocket are on, the grants, the tokens and the
+  /// refusals.
+  ///
+  /// - Throws: ``AccessGrantStoreError`` when the grants file cannot be read.
   func status() throws -> AccessStatusPayload {
     try lock.withLock {
       let file = try store.load()
@@ -176,6 +201,10 @@ final class EndpointServer: @unchecked Sendable {
     }
   }
 
+  /// Grants `scopes` to the client `identity` and returns the grant.
+  ///
+  /// - Throws: ``AccessGrantStoreError`` when the client cannot be granted, no scope is named, or
+  ///   the file cannot be read or written.
   @discardableResult
   func grant(
     _ identity: CodeSigningIdentity,
@@ -216,7 +245,7 @@ final class EndpointServer: @unchecked Sendable {
   }
 
   /// Removes `scopes`, or the whole grant when nil, from a client or a `token:NAME` grant, and
-  /// closes with `E1005` every connection that holds a scope no longer granted.
+  /// closes with `E1005` every connection that holds a scope that is not granted.
   func revoke(id: String, scopes: [EndpointScope]?) throws -> AccessRevokeResult {
     try lock.withLock {
       var file = try store.load()
@@ -323,8 +352,9 @@ final class EndpointServer: @unchecked Sendable {
     guard unlink(socketPath) == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
   }
 
-  /// Owns the listener: waits on it and on its wake pipe, and closes it when it ends. The
-  /// descriptor stays open until then, so its number cannot belong to a later listener. A
+  /// Owns the listener: waits on it and on its wake pipe, and closes it when it ends.
+  ///
+  /// The descriptor stays open until then, so its number cannot belong to a later listener. A
   /// connection accepted after the listener was replaced is dropped.
   private func acceptConnections(_ listener: AcceptListener, generation: Int) {
     defer {

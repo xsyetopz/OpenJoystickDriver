@@ -1,6 +1,6 @@
-import OpenJoystickDriverTestSupport
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverService

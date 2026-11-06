@@ -2,7 +2,9 @@ import Foundation
 
 /// The bundled records with the records of the installed packages applied, and the package files.
 struct ControllerPackageRecords {
+  /// The records by model, as the installed packages leave them.
   var records: [ControllerModelID: ControllerRecord]
+  /// The package files that were read, each with the reason it was skipped, if any.
   var files: [ControllerRecordFile] = []
 
   /// Lists the package file of `model` as skipped, because the user's file `url` replaces it.
@@ -20,14 +22,14 @@ struct ControllerPackageRecords {
 }
 
 extension ControllerRecordSet {
-  /// The records of the packages in `directory`, in package-name order. A package that cannot be
-  /// used, such as one whose `requires` leaves out the running version, is skipped and its
-  /// `mod.json` is listed with the reason. A package record that fails validation, has the wrong
-  /// file name, or repeats the model of an earlier package's record is skipped and listed with
-  /// its reason. `runningVersion` is the OJD version that the
-  /// `requires` of a package is checked against; nil means the running one. Package Controller
-  /// files apply first, then the package patches in the order of
-  /// ``ControllerPatchMerge/ordered(_:)``.
+  /// The records of the packages in `directory`, in package-name order.
+  ///
+  /// A package that cannot be used, such as one whose `requires` leaves out the running version, is
+  /// skipped and its `mod.json` is listed with the reason. A package record that fails validation,
+  /// has the wrong file name, or repeats the model of an earlier package's record is skipped and
+  /// listed with its reason. `runningVersion` is the OJD version that the `requires` of a package
+  /// is checked against; nil means the running one. Package Controller files apply first, then the
+  /// package patches in the order of ``ControllerPatchMerge/ordered(_:)``.
   static func packageRecords(
     in directory: URL,
     runningVersion: String? = nil

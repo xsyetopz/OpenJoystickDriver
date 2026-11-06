@@ -7,6 +7,7 @@ enum ProfileText {
   private static func word<Value: RawRepresentable>(_ value: Value) -> String
   where Value.RawValue == String { CommandLineName.kebab(value.rawValue) }
 
+  /// The app scope: `global` or `app:BUNDLE-ID`.
   static func scope(_ scope: RemappingApplicationScope) -> String {
     switch scope {
     case .global: "global"
@@ -14,6 +15,7 @@ enum ProfileText {
     }
   }
 
+  /// The binding source in its `SOURCE` form.
   static func source(_ source: RemappingSource) -> String {
     switch source {
     case .button(let value): "button:\(word(value))"
@@ -30,6 +32,7 @@ enum ProfileText {
     }
   }
 
+  /// The binding target in its `TARGET` form.
   static func destination(_ destination: RemappingDestination) -> String {
     switch destination {
     case .gamepadAxis(let axis): return "gamepad:axis:\(word(axis))"
@@ -47,6 +50,7 @@ enum ProfileText {
     }
   }
 
+  /// The physical output in its `physical:...` target form.
   private static func physicalOutput(_ output: RemappingPhysicalOutput) -> String {
     switch output {
     case .rumble(let motor, let intensity): return "physical:rumble:\(word(motor)):\(intensity)"

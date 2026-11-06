@@ -6,16 +6,23 @@
   import SwiftUI
 
   /// The Access area: what macOS lets the app do, and which programs and web pages may use the
-  /// endpoint that `ojd access` manages. One grouped form; Grant and Create are toolbar actions.
+  /// endpoint that `ojd access` manages.
+  ///
+  /// One grouped form; Grant and Create are toolbar actions.
   struct AccessAreaView: View {
+    /// Runtime state, which holds the macOS permissions and the service status.
     @ObservedObject
     var runtime: RuntimeViewModel
+    /// The state and actions of the Access area.
     @ObservedObject
     var model: AccessViewModel
+    /// Restarts the app, which an input permission needs before it takes effect.
     let restartApplication: @MainActor () -> Void
+    /// Reads and requests the notification permission.
     @StateObject
     private var notificationPermission: NotificationPermissionModel
 
+    /// Creates the Access area on `runtime` and `model`.
     @MainActor
     init(
       runtime: RuntimeViewModel,
@@ -28,6 +35,7 @@
       _notificationPermission = StateObject(wrappedValue: NotificationPermissionModel())
     }
 
+    /// The macOS permissions as the permission rows show them.
     private var readiness: AccessReadiness {
       AccessReadiness(
         permissionState: runtime.permissionState,
@@ -37,6 +45,8 @@
       )
     }
 
+    /// The Access form: the failure, if any, the permissions, then the load state or the endpoints
+    /// and lists.
     var body: some View {
       Form {
         if let failure = model.failure {
@@ -72,6 +82,8 @@
       }
     }
 
+    /// Returns an inline error with a button that runs `action`; `actionTitle` is a localization
+    /// key.
     private func errorView(
       _ failure: AccessFailure,
       actionTitle: String,
@@ -92,6 +104,8 @@
 
     // MARK: macOS permissions
 
+    /// The section of macOS permission rows, with a restart button while an input permission is
+    /// missing.
     private var permissionsSection: some View {
       let readiness = readiness
       return Section(header: Text(OJDLocalized.string("ui.settings.notifications.accessReadiness")))
@@ -107,6 +121,7 @@
       }
     }
 
+    /// Returns the row for a permission, with a button when the permission is missing.
     private func permissionRow(_ row: AccessPermissionRow) -> some View {
       let title = OJDLocalized.string(row.titleKey)
       return OJDLabeledRow(title) {
@@ -123,6 +138,7 @@
       }
     }
 
+    /// Asks macOS for the permission that the row stands for.
     private func requestPermission(_ kind: AccessPermissionRow.Kind) {
       switch kind {
       case .inputRead:
@@ -139,6 +155,7 @@
 
     // MARK: Endpoints
 
+    /// Returns the section of the local endpoint toggle, the WebSocket toggle and the port field.
     private func endpointsSection(_ status: AccessStatusPayload) -> some View {
       Section {
         Toggle(
@@ -206,6 +223,7 @@
       }
     }
 
+    /// Returns a button that copies the endpoint's socket path.
     private func copySocketPathButton(_ status: AccessStatusPayload) -> some View {
       Button(OJDLocalized.string("ui.access.socket.copy")) {
         NSPasteboard.general.clearContents()

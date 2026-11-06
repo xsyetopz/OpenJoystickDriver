@@ -42,8 +42,9 @@ extension USBPipelineRecoveryTests {
     #expect(await manager.suspendedControllerIdentities.isEmpty)
   }
 
-  /// Admission publishes a pipeline before it starts it, so a detach can stop it first. The late
-  /// start must not open a session that no later stop would close.
+  /// Admission publishes a pipeline before it starts it, so a detach can stop it first.
+  ///
+  /// The late start must not open a session that no later stop would close.
   @Test
   func startAfterStopOpensNothing() async {
     let session = RecoveryUSBSession(readError: .timeout)

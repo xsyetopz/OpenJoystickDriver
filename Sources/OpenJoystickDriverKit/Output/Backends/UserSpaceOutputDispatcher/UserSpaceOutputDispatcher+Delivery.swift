@@ -2,6 +2,15 @@ import Foundation
 
 extension UserSpaceOutputDispatcher {
 
+  /// Builds the report of a controller state and submits it to the device of `identifier`.
+  ///
+  /// A remapped state replaces `input` as the source. The neutral remapped state reaches a device
+  /// that exists even when output is suppressed, and it never creates a device. `onPublished` runs
+  /// after the report reaches the device.
+  ///
+  /// - Throws: `CancellationError` when the dispatcher is closed or when output is suppressed for a
+  ///   remapped state that is not neutral, or the error of creating the device or sending the
+  ///   report; the last two also set the status to an error.
   internal func deliver(
     input: ControllerState?,
     from identifier: LogicalControllerID,
@@ -76,6 +85,14 @@ extension UserSpaceOutputDispatcher {
     }
   }
 
+  /// The device entry of `identifier`; it creates the device when none exists.
+  ///
+  /// One creation runs at a time per controller, and a failure delays the next attempt by the retry
+  /// policy.
+  ///
+  /// - Throws: `CancellationError` when the dispatcher closes during creation,
+  ///   `CreationError.createFailed` when the retry policy still waits, or the error of creating the
+  ///   device.
   internal func entry(for identifier: LogicalControllerID) async throws -> Entry {
     let result: (task: Task<Entry, Error>, generation: UInt64) = try registryLock.withLock {
       guard lifecycle.isOpen else { throw CancellationError() }
@@ -134,6 +151,10 @@ extension UserSpaceOutputDispatcher {
     return result
   }
 
+  /// Sets the status from the entries: `off` without a device, otherwise `on` with the device
+  /// count.
+  ///
+  /// The caller holds `registryLock`.
   internal func recomputeStatusLocked() {
     _status = entries.isEmpty ? .off : .backend("on (devices=\(entries.count))")
   }

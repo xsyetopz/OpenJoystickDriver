@@ -9,6 +9,7 @@ extension VirtualMappingFormat: ExpressibleByArgument {
     self = format
   }
 
+  /// The format names that the command line accepts.
   public static var allValueStrings: [String] {
     allCases.map { CommandLineName.kebab($0.rawValue) }
   }
@@ -17,13 +18,19 @@ extension VirtualMappingFormat: ExpressibleByArgument {
 /// The `ojd virtual export-mapping --json` result: one entry per persona, carrying only the
 /// requested format.
 struct VirtualMappingExport: Encodable, Equatable {
+  /// The mapping of one persona.
   struct Entry: Encodable, Equatable {
+    /// The persona name.
     let profile: String
+    /// The SDL mapping; present with the SDL format.
     let sdl: VirtualSDLReport?
+    /// The W3C description; present with the W3C format.
     let w3c: VirtualW3CReport?
   }
 
+  /// The requested format.
   let format: String
+  /// The mapping of each persona.
   let mappings: [Entry]
 }
 
@@ -33,16 +40,21 @@ func sdlHintsNote(_ profile: String) -> String {
   CLILocalized.format("cli.virtual.group.sdlHintsNote", CommandLineName.kebab(profile))
 }
 
+/// The `ojd virtual export-mapping` command: prints the SDL mapping or the W3C description of one
+/// persona or of every persona.
 struct VirtualExportMappingCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "export-mapping",
     abstract: CLILocalized.text("cli.virtual.exportMapping.abstract"),
     discussion: CLILocalized.text("cli.virtual.exportMapping.discussion")
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The persona to export; every persona when omitted.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.virtual.exportMapping.profile"),
@@ -51,11 +63,13 @@ struct VirtualExportMappingCommand: AsyncParsableCommand {
   )
   var profile: VirtualHIDProfileID?
 
+  /// `--format`: the format to export, `sdl` or `w3c`.
   @Option(
     help: ArgumentHelp(CLILocalized.text("cli.virtual.exportMapping.format"), valueName: "format")
   )
   var format: VirtualMappingFormat = .sdl
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let personas = profile.map { [$0] } ?? VirtualHIDProfileID.allCases
@@ -78,6 +92,7 @@ struct VirtualExportMappingCommand: AsyncParsableCommand {
     }
   }
 
+  /// Returns the `--plain` rows of `report`.
   private static func plainRows(_ report: VirtualMappingExport) -> [[String]] {
     report.mappings.flatMap { entry -> [[String]] in
       if let sdl = entry.sdl {
@@ -93,8 +108,9 @@ struct VirtualExportMappingCommand: AsyncParsableCommand {
     }
   }
 
-  /// SDL prints one mapping line per persona, which is a valid SDL mapping file. W3C prints one
-  /// JSON array of the descriptions.
+  /// SDL prints one mapping line per persona, which is a valid SDL mapping file.
+  ///
+  /// W3C prints one JSON array of the descriptions.
   private static func printHuman(
     _ format: VirtualMappingFormat,
     _ personas: [VirtualHIDProfileID]

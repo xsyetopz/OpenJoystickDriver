@@ -6,10 +6,12 @@ enum AccessPresentation {
   /// A client's program or folder path, with the home folder written as `~`.
   static func location(_ path: String) -> String { HomeFolder.redacting(path) }
 
+  /// Returns the localized names of `scopes`, joined with commas.
   static func scopes(_ scopes: [EndpointScope]) -> String {
     scopes.map(scope).joined(separator: ", ")
   }
 
+  /// Returns the localized name of the scope.
   static func scope(_ scope: EndpointScope) -> String {
     switch scope {
     case .read: OJDLocalized.string("ui.access.scope.read")
@@ -28,6 +30,7 @@ enum AccessPresentation {
     }
   }
 
+  /// Returns the localized name of the way a client connects.
   static func transport(_ transport: AccessTransport) -> String {
     switch transport {
     case .socket: OJDLocalized.string("ui.access.transport.socket")

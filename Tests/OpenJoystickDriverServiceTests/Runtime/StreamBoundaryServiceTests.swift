@@ -126,7 +126,7 @@ struct StreamBoundaryServiceTests {
     let commands: [ControllerOutputCommand] = [
       .setRumble(.off, duration: .held), .stopRumble, .setRumble(.off, duration: .held),
     ]
-    commands.forEach { device.receive($0) }
+    for command in commands { device.receive(command) }
     try await Task.sleep(nanoseconds: 20_000_000)
     #expect(sink.commands.isEmpty)
 

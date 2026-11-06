@@ -3,10 +3,11 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// Apple's GameController framework binds a virtual HID device only when its personality kext
-/// lists the device's IDs with `GCIOMatchVirtual` true. GameController reads no input from the
-/// GIP reports of `SDLCompatible`, so that persona must not be bound, and
-/// `GameControllerCompatible` must be.
+/// Apple's GameController framework binds a virtual HID device only when its personality kext lists
+/// the device's IDs with `GCIOMatchVirtual` true.
+///
+/// GameController reads no input from the GIP reports of `SDLCompatible`, so that persona must not
+/// be bound, and `GameControllerCompatible` must be.
 struct GameControllerPersonalityMatchTests {
   private static let kext = URL(
     fileURLWithPath:

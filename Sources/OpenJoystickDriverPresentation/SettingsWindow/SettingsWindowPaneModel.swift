@@ -2,7 +2,9 @@ import Foundation
 
 /// A content size in points, kept free of AppKit so the pane rules can be tested.
 struct SettingsPaneSize: Equatable, Sendable {
+  /// The width of the content.
   let width: Double
+  /// The height of the content.
   let height: Double
 }
 
@@ -55,18 +57,23 @@ extension SettingsWindowPane {
 /// Which pane of the Settings window is selected.
 @MainActor
 final class SettingsWindowPaneModel: ObservableObject {
+  /// The panes in toolbar order.
   let panes = SettingsWindowPane.allCases
 
+  /// The selected pane.
   @Published
   private(set) var selected: SettingsWindowPane
 
+  /// Creates the model with `selected` as the selected pane.
   init(selected: SettingsWindowPane = .general) { self.selected = selected }
 
   /// The window title while the pane is selected.
   var titleKey: String { selected.titleKey }
 
+  /// The position of the selected pane in ``panes``.
   var selectedIndex: Int { panes.firstIndex(of: selected) ?? 0 }
 
+  /// Selects the pane.
   func select(_ pane: SettingsWindowPane) { selected = pane }
 
   /// Selects the pane at a toolbar group position; a position outside the panes selects nothing.

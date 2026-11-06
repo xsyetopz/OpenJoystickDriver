@@ -4,18 +4,27 @@ import OpenJoystickDriverKit
 
 /// The `--json` result of `ojd controller suspend`, `resume`, and `disconnect`.
 struct ControllerSessionReport: Encodable, Equatable {
-  /// The session after the command. Only `disconnect` reports `Disconnected`.
+  /// The session after the command.
+  ///
+  /// Only `disconnect` reports `Disconnected`.
   enum Session: String, Encodable {
+    /// The service drives the controller.
     case active = "Active"
+    /// The service does not drive the controller until it resumes.
     case suspended = "Suspended"
+    /// The controller is disconnected.
     case disconnected = "Disconnected"
   }
 
+  /// The session ID of the controller.
   let controller: String
+  /// The session after the command.
   let session: Session
+  /// Whether the command changed the session.
   let changed: Bool
 }
 
+/// Prints `report` as JSON, as a `--plain` row, or as `message` on stderr.
 private func printSession(_ report: ControllerSessionReport, message: String) throws {
   switch CLIContext.current.format {
   case .json: try CLIOutput.json(report)
@@ -27,6 +36,7 @@ private func printSession(_ report: ControllerSessionReport, message: String) th
   }
 }
 
+/// The failure for a controller that has no session.
 private func sessionNotFound(_ selector: ControllerSelector) -> CLIFailure {
   CLIFailure(
     .controllerRequestFailed,
@@ -37,7 +47,9 @@ private func sessionNotFound(_ selector: ControllerSelector) -> CLIFailure {
   )
 }
 
+/// The `ojd controller suspend` command: stops OJD from driving a controller until it resumes.
 struct ControllerSuspendCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "suspend",
     abstract: CLILocalized.text(
@@ -45,12 +57,15 @@ struct ControllerSuspendCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The controller to suspend.
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let selector = controller
@@ -79,7 +94,9 @@ struct ControllerSuspendCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd controller resume` command: lets OJD drive a suspended controller again.
 struct ControllerResumeCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "resume",
     abstract: CLILocalized.text(
@@ -87,12 +104,15 @@ struct ControllerResumeCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The controller to resume.
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let selector = controller
@@ -121,7 +141,9 @@ struct ControllerResumeCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd controller disconnect` command: closes a classic Bluetooth controller's connection.
 struct ControllerDisconnectCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "disconnect",
     abstract: CLILocalized.text(
@@ -132,12 +154,15 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The controller to disconnect.
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let selector = controller
@@ -165,6 +190,7 @@ struct ControllerDisconnectCommand: AsyncParsableCommand {
     }
   }
 
+  /// The failure for a disconnect that did not succeed, named for the controller.
   static func failure(
     _ result: WirelessControllerDisconnectResult,
     _ device: ApplicationServiceDeviceDescription

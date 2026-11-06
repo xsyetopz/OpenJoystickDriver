@@ -2,7 +2,9 @@ import Foundation
 
 extension BipolarValue {
   /// Quantizes a normalized `-1...1` value by truncation toward zero, the quantization the virtual
-  /// output applies to the same value. Values outside the range clamp; non-finite is center.
+  /// output applies to the same value.
+  ///
+  /// Values outside the range clamp; non-finite is center.
   public init(normalized value: Float) {
     guard value.isFinite else {
       self = .center
@@ -16,8 +18,9 @@ extension BipolarValue {
 }
 
 extension UnipolarValue {
-  /// Quantizes a normalized `0...1` value by truncation toward zero. Values outside the range
-  /// clamp; a non-finite value is released.
+  /// Quantizes a normalized `0...1` value by truncation toward zero.
+  ///
+  /// Values outside the range clamp; a non-finite value is released.
   public init(normalized value: Float) {
     guard value.isFinite else {
       self = .min
@@ -30,21 +33,28 @@ extension UnipolarValue {
   public var normalized: Float { Float(rawValue) / Float(UInt16.max) }
 }
 
-/// One analog stick: positive X is right, positive Y is down. That is the one frame of every
-/// record, profile, frame, and command that leaves or enters OpenJoystickDriver.
+/// One analog stick: positive X is right, positive Y is down.
+///
+/// That is the one frame of every record, profile, frame, and command that leaves or enters
+/// OpenJoystickDriver.
 public struct StickPosition: Hashable, Codable, Sendable {
+  /// The stick at rest, with both axes centered.
   public static let center = Self(x: .center, y: .center)
 
+  /// The horizontal position; positive is right.
   public var x: BipolarValue
+  /// The vertical position; positive is down.
   public var y: BipolarValue
 
+  /// Creates a stick position from its two axes.
   public init(x: BipolarValue, y: BipolarValue) {
     self.x = x
     self.y = y
   }
 
-  /// Quantizes normalized `-1...1` axes. Y is positive down; a driver whose report grows upward
-  /// negates it once, at parse.
+  /// Quantizes normalized `-1...1` axes.
+  ///
+  /// Y is positive down; a driver whose report grows upward negates it once, at parse.
   init(x: Float, y: Float) {
     self.init(x: BipolarValue(normalized: x), y: BipolarValue(normalized: y))
   }
@@ -55,20 +65,29 @@ public struct StickPosition: Hashable, Codable, Sendable {
 /// A driver decodes every accepted input report into a full snapshot: a control absent from
 /// `pressed` is released. Raw report bytes never appear here.
 public struct ControllerState: Equatable, Codable, Sendable {
+  /// The state with nothing pressed, a neutral hat, centered sticks and released triggers.
   public static let neutral = Self()
 
-  /// Digital controls currently held. The hat is not listed here.
+  /// Digital controls currently held.
+  ///
+  /// The hat is not listed here.
   public var pressed: Set<Control>
+  /// The direction of the hat or D-pad.
   public var hat: HatDirection
+  /// The position of the left stick.
   public var leftStick: StickPosition
+  /// The position of the right stick.
   public var rightStick: StickPosition
+  /// The left trigger value.
   public var leftTrigger: UnipolarValue
+  /// The right trigger value.
   public var rightTrigger: UnipolarValue
   /// Latest complete contact frame of each touch surface the controller reports.
   public var touch: [ControllerTouchSample]
   /// Link and power state, stamped by the pipeline; nil where no binding describes the link.
   public var connection: ControllerConnectionState?
 
+  /// Creates a state from its controls, axes, touch frames and connection.
   public init(
     pressed: Set<Control> = [],
     hat: HatDirection = .neutral,
@@ -102,10 +121,29 @@ public struct ControllerState: Equatable, Codable, Sendable {
     }
   }
 
+  /// The coded keys of a controller state.
   private enum CodingKeys: String, CodingKey {
-    case pressed, hat, leftStick, rightStick, leftTrigger, rightTrigger, touch, connection
+    /// The JSON key of `pressed`.
+    case pressed
+    /// The JSON key of `hat`.
+    case hat
+    /// The JSON key of `leftStick`.
+    case leftStick
+    /// The JSON key of `rightStick`.
+    case rightStick
+    /// The JSON key of `leftTrigger`.
+    case leftTrigger
+    /// The JSON key of `rightTrigger`.
+    case rightTrigger
+    /// The JSON key of `touch`.
+    case touch
+    /// The JSON key of `connection`.
+    case connection
   }
 
+  /// Decodes a controller state from a profile of keyed values.
+  ///
+  /// - Throws: `DecodingError` for a missing key other than `connection` or a bad value.
   public init(from decoder: any Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
     pressed = Set(try values.decode([Control].self, forKey: .pressed))
@@ -137,6 +175,7 @@ public struct ControllerState: Equatable, Codable, Sendable {
 public struct ControllerEvent: Equatable, Sendable {
   /// Host receipt time of the report.
   public let timestamp: MonotonicTimestamp
+  /// The controller's full state after the report.
   public let state: ControllerState
   /// Every motion sample of the report in wire order, including repeated readings.
   public let motion: [ControllerMotionSample]
@@ -146,6 +185,7 @@ public struct ControllerEvent: Equatable, Sendable {
   /// liveness.
   public let isFresh: Bool
 
+  /// Creates an event from the report's receipt time, the state after it and its ordered samples.
   public init(
     timestamp: MonotonicTimestamp,
     state: ControllerState,

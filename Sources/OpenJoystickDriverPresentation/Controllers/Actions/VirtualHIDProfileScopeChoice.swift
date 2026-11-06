@@ -1,11 +1,14 @@
 import OpenJoystickDriverKit
 
-/// Whose virtual HID profile an override changes, as `ojd virtual set` and `reset` choose it with
-/// `--unit`: every controller of the model, or only the one controller by its unit ID.
+/// Whose virtual HID profile an override changes, as `ojd virtual set` and `reset` choose it
+/// with `--unit`: every controller of the model, or only the one controller by its unit ID.
 enum VirtualHIDProfileScopeChoice: Hashable, CaseIterable {
+  /// Every controller of the model.
   case model
+  /// Only the one controller, by its unit ID.
   case unit
 
+  /// The scope the service stores the override in.
   var scope: VirtualHIDProfileOverrideScope {
     switch self {
     case .model: .model
@@ -13,6 +16,7 @@ enum VirtualHIDProfileScopeChoice: Hashable, CaseIterable {
     }
   }
 
+  /// The localization key of the choice's title.
   var titleKey: String {
     switch self {
     case .model: "ui.controllers.virtual.scope.model"
@@ -20,17 +24,28 @@ enum VirtualHIDProfileScopeChoice: Hashable, CaseIterable {
     }
   }
 
+  /// Creates the choice of the service's `scope`.
+  ///
+  /// - Parameter scope: The scope of an override.
   init(_ scope: VirtualHIDProfileOverrideScope) {
     self = scope == .unit ? .unit : .model
   }
 
-  /// The choices for `device`. The unit scope needs a unit ID, which the service refuses to
-  /// resolve for a controller that reports no location.
+  /// Returns the choices for `device`.
+  ///
+  /// The unit scope needs a unit ID, which the service refuses to resolve for a controller that
+  /// reports no location.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: The choices for `device`.
   static func offered(for device: ApplicationServiceDeviceDescription) -> [Self] {
     device.portKey == nil ? [.model] : [.model, .unit]
   }
 
-  /// The scope of the stored override when one exists, else the model.
+  /// Returns the scope of the stored override when one exists, else the model.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: The scope of the stored override when one exists, else the model.
   static func initial(for device: ApplicationServiceDeviceDescription) -> Self {
     guard device.portKey != nil, let scope = device.virtualHIDProfile?.overrideScope else {
       return .model
@@ -39,8 +54,9 @@ enum VirtualHIDProfileScopeChoice: Hashable, CaseIterable {
   }
 }
 
-/// What choosing a profile in a scope does, given the override the controller reports. The
-/// report names only the override in effect, which is its unit's when one exists, else its
+/// What choosing a profile in a scope does, given the override the controller reports.
+///
+/// The report names only the override in effect, which is its unit's when one exists, else its
 /// model's.
 enum VirtualHIDProfileOverrideDecision: Equatable {
   /// The scope already holds this choice.
@@ -51,6 +67,13 @@ enum VirtualHIDProfileOverrideDecision: Equatable {
   /// scope, and clearing this scope would change nothing.
   case otherScopeHolds(VirtualHIDProfileScopeChoice)
 
+  /// Returns what choosing `profile` in `scope` does for `device`.
+  ///
+  /// - Parameters:
+  ///   - profile: The profile chosen, or nil for Automatic.
+  ///   - scope: The scope the person chose.
+  ///   - device: The controller.
+  /// - Returns: What choosing `profile` in `scope` does for `device`.
   static func decide(
     profile: VirtualHIDProfileID?,
     scope: VirtualHIDProfileScopeChoice,
@@ -64,7 +87,10 @@ enum VirtualHIDProfileOverrideDecision: Equatable {
     return profile == effective && holder == scope ? .unchanged : .send
   }
 
-  /// The scope of the override in effect; nil when the controller selects automatically.
+  /// Returns the scope of the override in effect; nil when the controller selects automatically.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: The scope of the override in effect; nil when the controller selects automatically.
   static func currentScope(
     for device: ApplicationServiceDeviceDescription
   ) -> VirtualHIDProfileScopeChoice? {

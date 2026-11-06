@@ -3,9 +3,12 @@ import Foundation
 
 /// One line a followed log stream produced.
 public struct ApplicationServiceLogLine: Equatable, Sendable {
+  /// The log the line came from.
   public let stream: ApplicationServiceLogStream
+  /// The line without its newline.
   public let text: String
 
+  /// Creates a line from its stream and text.
   public init(stream: ApplicationServiceLogStream, text: String) {
     self.stream = stream
     self.text = text
@@ -14,10 +17,13 @@ public struct ApplicationServiceLogLine: Equatable, Sendable {
 
 /// Polls a log file for appended lines.
 public enum ApplicationServiceLogFollower {
+  /// The pause between two reads of the log file, in nanoseconds.
   static let pollNanoseconds: UInt64 = 200_000_000
 
-  /// The lines appended to the log of `stream` after `offset` bytes, until the task that
-  /// iterates the stream is cancelled. Bytes that are not UTF-8 show as replacement characters.
+  /// The lines appended to the log of `stream` after `offset` bytes, until the task that iterates
+  /// the stream is cancelled.
+  ///
+  /// Bytes that are not UTF-8 show as replacement characters.
   public static func lines(
     of stream: ApplicationServiceLogStream,
     from offset: UInt64
@@ -25,6 +31,7 @@ public enum ApplicationServiceLogFollower {
     lines(of: stream, at: ApplicationServiceLogService.url(for: stream), from: offset)
   }
 
+  /// Follows the log file at `url`; the public overload passes the file of `stream`.
   static func lines(
     of stream: ApplicationServiceLogStream,
     at url: URL,
@@ -63,8 +70,10 @@ public enum ApplicationServiceLogFollower {
     return UInt64(info.st_ino)
   }
 
-  /// Reads what `url` gained after `position` and moves `position` to the end. A file that shrank
-  /// or was replaced by another file belongs to a later session, so it is read from the start.
+  /// Reads what `url` gained after `position` and moves `position` to the end.
+  ///
+  /// A file that shrank or was replaced by another file belongs to a later session, so it is read
+  /// from the start.
   private static func readAppended(
     _ url: URL,
     position: inout UInt64,

@@ -3,6 +3,8 @@ import Foundation
 extension GameSirDriver {
 
   // Share is emitted but not yet declared until per-model evidence confirms it.
+  /// Keep-alives run on the USB and HID channels of the wired G7 Pro, and on the HID channel
+  /// otherwise.
   public var sessionPlan: DriverSessionPlan {
     // The driver names the channels it keeps alive; the description's
     // `defaults.session.keepAlive` holds the interval.
@@ -11,8 +13,10 @@ extension GameSirDriver {
     ).withDefaults(of: .vendorGameSir)
   }
 
+  /// Always nil: a GameSir controller reports no logical connection change.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
+  /// The controls of the description, with the inner grips added where the model has them.
   public var capabilities: ControllerCapabilities {
     // The wired G7 Pro telemetry always reports the inner grips.
     let innerGrips: Set<Control> =
@@ -23,11 +27,13 @@ extension GameSirDriver {
     )
   }
 
+  /// The battery and charging state of the latest telemetry; nil until a report carries one.
   public var power: ControllerConnectionState.Power? {
     storedPower
 
   }
 
+  /// Decodes a wired G7 Pro or an enhanced HID report; nil for a report that carries no input.
   public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
     let bytes = [UInt8](data)
 
@@ -45,6 +51,8 @@ extension GameSirDriver {
     }
   }
 
+  /// Clears the state of the session: both parsers, the sequence number, the readiness and the
+  /// lighting state.
   public func resetProtocolState() {
     standardParser = XUSBDriver()
     state = .neutral
@@ -72,6 +80,7 @@ extension GameSirDriver {
     }
   }
 
+  /// Rumble on enhanced HID controllers, and brightness everywhere; color only on enhanced HID.
   public var outputCapabilities: PhysicalControllerOutputCapabilities {
     let lighting: [PhysicalLightingFeature] =
       switch gameSirProtocol {
@@ -85,6 +94,7 @@ extension GameSirDriver {
     )
   }
 
+  /// The lightbar color a GameSir controller shows before the host sets one: light blue.
   public var defaultColor: ControllerColor? { ControllerColor(red: 0, green: 128, blue: 255) }
 
   /// Colour and brightness wait for the session and, on slot-based models, the active lighting
@@ -140,8 +150,10 @@ extension GameSirDriver {
   }
 
   /// Wired G7 Pro brightness goes to the bound USB endpoint; enhanced HID writes lighting memory
-  /// and records the value the next colour record carries. Nil, changing nothing, until the
-  /// session is ready and, on slot-based models, the active slot is known.
+  /// and records the value the next colour record carries.
+  ///
+  /// Nil, changing nothing, until the session is ready and, on slot-based models, the active slot
+  /// is known.
   private func brightnessPlan(_ brightness: UInt8) -> PhysicalOutputPlan? {
     guard sessionReady else { return nil }
     let value = UInt8((Double(brightness) * 100 / Double(UInt8.max)).rounded())
@@ -166,6 +178,7 @@ extension GameSirDriver {
     )
   }
 
+  /// Decodes a wired G7 Pro telemetry report; nil when it holds no input.
   private func parseG7Telemetry(
     _ bytes: [UInt8],
     receivedAt: MonotonicTimestamp
@@ -187,6 +200,7 @@ extension GameSirDriver {
     return ControllerEvent(timestamp: receivedAt, state: state)
   }
 
+  /// Decodes an enhanced HID report; nil when it holds no input.
   private func parseEnhanced(_ bytes: [UInt8], receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     guard bytes.count == gameSirReportLength else { return nil }
     if bytes[0] == 0x10, bytes[1] == 0x05, bytes[2] == 0x20, bytes[3] == 0, bytes[4] == 0,
@@ -227,6 +241,8 @@ extension GameSirDriver {
     )
   }
 
+  /// Applies the extra button byte: Guide, Capture, the back paddles and, where
+  /// `includesInnerGrips` is true, the inner grips.
   private func setExtraButtons(
     _ value: UInt8,
     includesInnerGrips: Bool,
@@ -240,15 +256,18 @@ extension GameSirDriver {
     for (mask, control) in table { state.set(control, pressed: value & mask != 0) }
   }
 
+  /// A wired G7 packet with the next sequence number, padded to the report length.
   private func g7Packet(command: UInt8, payload: [UInt8]) -> [UInt8] {
     sequence &+= 1
     return Self.padded([0x0F, 0x00, sequence, command] + payload)
   }
 
+  /// A HID output report with ID `0x0F` carrying `bytes`, padded to the report length.
   private static func hidReport(_ bytes: [UInt8]) -> PhysicalHIDOutputReport {
     PhysicalHIDOutputReport(reportID: 0x0F, bytes: padded(bytes))
   }
 
+  /// The HID reports that write `data` to `address` in memory bank `bank`, 48 bytes at a time.
   private static func bareWriteReports(
     bank: UInt8,
     address: UInt16,
@@ -266,15 +285,18 @@ extension GameSirDriver {
     }
   }
 
+  /// `bytes` zero-padded or cut to the report length.
   private static func padded(_ bytes: [UInt8]) -> [UInt8] {
     Array((bytes + Array(repeating: 0, count: gameSirReportLength)).prefix(gameSirReportLength))
   }
 
+  /// The stick axis `value` as -1...1, centered on 128.
   static func axis(_ value: UInt8) -> Float {
     let centered = Float(Int(value) - 128)
     return max(-1, min(1, centered / (centered < 0 ? 128 : 127)))
   }
 
+  /// The hat direction of the D-pad nibble.
   static func dpadDirection(_ value: UInt8) -> HatDirection {
     switch value {
     case 0: .north
@@ -289,6 +311,7 @@ extension GameSirDriver {
     }
   }
 
+  /// The hue in degrees and the saturation in percent of an RGB color.
   static func hueAndSaturation(red: UInt8, green: UInt8, blue: UInt8) -> (UInt16, UInt8) {
     let r = Double(red) / 255
     let g = Double(green) / 255
@@ -309,6 +332,7 @@ extension GameSirDriver {
     return (UInt16((rawHue < 0 ? rawHue + 360 : rawHue).rounded()) % 360, saturation)
   }
 
+  /// A lighting frame of five RGB triplets that all hold one color.
   static func solidColorFrame(red: UInt8, green: UInt8, blue: UInt8) -> [UInt8] {
     stride(from: 0, to: 15, by: 3).reduce(into: [UInt8](repeating: 0, count: 15)) {
       result,

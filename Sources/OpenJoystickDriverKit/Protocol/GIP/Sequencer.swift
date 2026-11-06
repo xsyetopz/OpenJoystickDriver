@@ -7,13 +7,17 @@ import Foundation
 /// ([MS-GIPUSB] 2.2.10.3). No counter yields 0:
 /// it starts at 1 and wraps from 255 to 1, as in the Linux GIP driver.
 public struct GIPSequencer: Sendable {
+  /// The command ID of extended messages, which have their own counter.
   private static let extendedCommand: UInt8 = 0x1E
+  /// The command ID of audio messages, which have their own counter.
   private static let audioCommand: UInt8 = 0x60
+  /// The counter key bit that marks a vendor message type.
   private static let vendorChannel = 0x100
 
+  /// The latest sequence number for each counter.
   private var counters: [Int: UInt8] = [:]
 
-  /// Creates a new GIPSequencer with every counter before 1.
+  /// Creates a sequencer whose every counter starts before 1.
   public init() {}
 
   /// Returns the next sequence number for a message with the given command ID and options.
@@ -24,6 +28,8 @@ public struct GIPSequencer: Sendable {
     return next
   }
 
+  /// Returns the counter that a message uses: the vendor channel of its command, or for a system
+  /// message the shared one, the authenticate, extended or audio one.
   private static func channel(commandID: UInt8, options: UInt8) -> Int {
     guard options & GIPOption.internal != 0 else { return vendorChannel | Int(commandID) }
     switch commandID {

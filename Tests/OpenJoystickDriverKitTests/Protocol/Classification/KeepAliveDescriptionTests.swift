@@ -3,10 +3,11 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// The keep-alive interval and fixed writes of GameSir, GIP, Switch 2 and the Steam
-/// Deck and Triton come from `defaults.session.keepAlive` in the family's description. The decoder
-/// is the only validator of these documents (the protocol description tests),
-/// and each driver sends the description's bytes at the description's interval.
+/// The keep-alive interval and fixed writes of GameSir, GIP, Switch 2 and the Steam Deck and Triton
+/// come from `defaults.session.keepAlive` in the family's description.
+///
+/// The decoder is the only validator of these documents (the protocol description tests), and each
+/// driver sends the description's bytes at the description's interval.
 private let writes500 = #"{"intervalMilliseconds": 500, "writes": ["#
 private let hidWriteHead =
   #"{"report": {"kind": "Feature", "id": 1, "length": 4}, "bytes": "01 02 03", "#

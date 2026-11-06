@@ -4,14 +4,22 @@ import OpenJoystickDriverKit
 
 /// One JSON value in a profile file, for `ojd profile get` and `ojd profile set`.
 indirect enum ProfileValue: Codable, Equatable {
+  /// JSON `null`.
   case null
+  /// A JSON boolean.
   case bool(Bool)
+  /// A JSON number without a fraction.
   case integer(Int64)
+  /// A JSON number with a fraction.
   case number(Double)
+  /// A JSON string.
   case string(String)
+  /// A JSON array.
   case array([Self])
+  /// A JSON object.
   case object([String: Self])
 
+  /// Decodes a JSON value of any type.
   init(from decoder: any Decoder) throws {
     let container = try decoder.singleValueContainer()
     if container.decodeNil() {
@@ -31,6 +39,7 @@ indirect enum ProfileValue: Codable, Equatable {
     }
   }
 
+  /// Encodes the value as plain JSON.
   func encode(to encoder: any Encoder) throws {
     var container = encoder.singleValueContainer()
     switch self {
@@ -45,6 +54,8 @@ indirect enum ProfileValue: Codable, Equatable {
   }
 
   /// The profile as the JSON tree that `ojd profile export` writes.
+  ///
+  /// - Throws: What the profile encoder or the JSON decoder throws.
   init(_ profile: RemappingProfile) throws {
     let text = try RemappingProfileFileStore.encodedJSON(profile)
     self = try JSONDecoder().decode(Self.self, from: Data(text.utf8))
@@ -63,6 +74,7 @@ indirect enum ProfileValue: Codable, Equatable {
     return (try? encoder.encode(self)).flatMap { String(bytes: $0, encoding: .utf8) } ?? ""
   }
 
+  /// The value at `key`, a path of member names and array indexes, or nil when there is none.
   func value(at key: ArraySlice<String>) -> Self? {
     guard let first = key.first else { return self }
     switch self {
@@ -111,9 +123,12 @@ indirect enum ProfileValue: Codable, Equatable {
 
 /// The `KEY` argument: member names and array indexes joined by dots.
 struct ProfileKey: ExpressibleByArgument, Equatable, Sendable {
+  /// The argument as typed.
   let text: String
+  /// The member names and array indexes.
   let components: [String]
 
+  /// Parses `argument`; fails when a component is empty.
   init?(argument: String) {
     let components = argument.split(separator: ".", omittingEmptySubsequences: false)
       .map(String.init)
@@ -123,6 +138,7 @@ struct ProfileKey: ExpressibleByArgument, Equatable, Sendable {
   }
 }
 
+/// The shared help of the `KEY` argument.
 private let profileKeyHelp = ArgumentHelp(
   CLILocalized.text(
     "cli.profile.group.key"
@@ -130,7 +146,11 @@ private let profileKeyHelp = ArgumentHelp(
   valueName: "key"
 )
 
+/// The `ojd profile get` command: prints one value from a profile file.
+///
+/// A string prints alone, and any other value prints as JSON. A key with no value exits 1.
 struct ProfileGetCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "get",
     abstract: CLILocalized.text("cli.profile.get.abstract"),
@@ -141,19 +161,25 @@ struct ProfileGetCommand: AsyncParsableCommand {
 
   /// The `--json` result.
   struct Result: Encodable, Equatable {
+    /// The key as typed.
     let key: String
+    /// The value at the key.
     let value: ProfileValue
   }
 
+  /// The profile to read.
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// The key of the value.
   @Argument(help: profileKeyHelp)
   var key: ProfileKey
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let selector = profile
@@ -178,7 +204,12 @@ struct ProfileGetCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd profile set` command: changes one value in a profile file.
+///
+/// The value is read as JSON, or as a string when it is not JSON. The whole profile must stay
+/// valid.
 struct ProfileSetCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "set",
     abstract: CLILocalized.text("cli.profile.set.abstract"),
@@ -187,12 +218,15 @@ struct ProfileSetCommand: AsyncParsableCommand {
     ) + "\n\n" + CLILocalized.text("cli.profile.set.examples")
   )
 
+  /// The profile to change.
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// The key of the value.
   @Argument(help: profileKeyHelp)
   var key: ProfileKey
 
+  /// The value as JSON text.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.profile.set.value"),
@@ -201,9 +235,11 @@ struct ProfileSetCommand: AsyncParsableCommand {
   )
   var value: String
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let selector = profile
@@ -233,6 +269,9 @@ struct ProfileSetCommand: AsyncParsableCommand {
   }
 
   /// `profile` with `value` at `key`, checked by the strict decoder.
+  ///
+  /// - Throws: ``CLIFailure`` with the usage code when the key has no parent or the result is not a
+  ///   valid profile.
   static func change(
     _ profile: RemappingProfile,
     key: ProfileKey,

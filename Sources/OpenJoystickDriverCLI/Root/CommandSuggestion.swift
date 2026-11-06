@@ -1,8 +1,10 @@
 import ArgumentParser
 
-/// Finds the subcommand a mistyped command name most likely meant. It only suggests; a
-/// suggestion never runs.
+/// Finds the subcommand a mistyped command name most likely meant.
+///
+/// It only suggests; a suggestion never runs.
 enum CommandSuggestion {
+  /// A command word that names no subcommand, with the nearest subcommand.
   struct Match: Equatable {
     /// The word the user typed.
     let typed: String
@@ -15,8 +17,10 @@ enum CommandSuggestion {
   private static let valueOptions: Set<String> = ["--timeout"]
 
   /// Walks the command words in `arguments` and returns the first word that names no
-  /// subcommand, with its nearest subcommand. Returns nil once a command without subcommands
-  /// is reached, because its words are arguments, not command names.
+  /// subcommand, with its nearest subcommand.
+  ///
+  /// Returns nil once a command without subcommands is reached, because its words are arguments,
+  /// not command names.
   static func match(
     arguments: [String],
     root: any ParsableCommand.Type = OJDCommand.self
@@ -49,6 +53,9 @@ enum CommandSuggestion {
   }
 
   /// The closest name within a small edit distance; the first declared name wins a tie.
+  ///
+  /// The limit is one edit for a typed word of up to four characters and two edits for a longer
+  /// one.
   static func nearest(to typed: String, in names: [String]) -> String? {
     let limit = typed.count <= 4 ? 1 : 2
     var best: (name: String, distance: Int)?

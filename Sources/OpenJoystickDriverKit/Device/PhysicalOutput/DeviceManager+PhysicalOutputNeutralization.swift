@@ -2,6 +2,12 @@ import Foundation
 
 extension DeviceManager {
 
+  /// Sets every physical output of the controller to its neutral value and drops its claims.
+  ///
+  /// A pending rumble stop is cancelled first. The rumble stops if the controller supports it, and
+  /// each supported player indicator, colour, brightness and adaptive trigger returns to its
+  /// neutral value in a stable channel order. With `detachedInfo`, the writes go to a detached HID
+  /// connection that this manager still owns.
   func neutralizePhysicalOutputs(
     for identifier: LogicalControllerID,
     pipeline: DevicePipeline,
@@ -38,6 +44,8 @@ extension DeviceManager {
     }
   }
 
+  /// Drops the claims and the pending rumble stop of `identifier` without writing to the
+  /// controller.
   func discardPhysicalOutputs(for identifier: LogicalControllerID) {
     rumbleStopTasks.removeValue(forKey: identifier)?.cancel()
     rumbleStopTokens.remove(identifier)
@@ -70,6 +78,12 @@ extension DeviceManager {
     }
   }
 
+  /// Waits until the minimum interval of the pipeline between physical HID writes has passed since
+  /// the last one, then records the time of the write.
+  ///
+  /// Does nothing when the pipeline names no minimum interval.
+  ///
+  /// - Throws: ``CancellationError`` when the task is cancelled while it waits.
   internal func enforcePhysicalHIDOutputInterval(
     for identifier: LogicalControllerID,
     pipeline: DevicePipeline
@@ -114,9 +128,11 @@ extension DeviceManager {
   }
 
   /// Writes output reports in order at `intervalNanoseconds` spacing inside an output queue
-  /// operation. User output stops at the first failed report and keeps the physical output rate
-  /// limit; a `lifecycle` plan (startup, recovery, keep-alive) is paced only by its own interval
-  /// and sends every report, failing if any report failed.
+  /// operation.
+  ///
+  /// User output stops at the first failed report and keeps the physical output rate limit; a
+  /// `lifecycle` plan (startup, recovery, keep-alive) is paced only by its own interval and sends
+  /// every report, failing if any report failed.
   internal func performHIDOutputPlan(
     _ reports: [PhysicalHIDOutputReport],
     intervalNanoseconds: UInt64,
@@ -197,6 +213,8 @@ extension DeviceManager {
     return succeeded
   }
 
+  /// The current backend snapshot of the HID connection that `detachedInfo` names, or nil when the
+  /// connection is gone, differs, or takes no output.
   func currentDetachedHIDConnection(
     identifier: LogicalControllerID,
     pipeline: DevicePipeline,
@@ -220,6 +238,12 @@ extension DeviceManager {
     return snapshot.connection
   }
 
+  /// Whether physical HID output for `identifier` may be written now.
+  ///
+  /// With `detachedInfo`, the controller must be detached, its device information and the backend's
+  /// connection must be unchanged, and `startupConnection` must be nil. Otherwise the pipeline must
+  /// be current, and `startupConnection` too when given. While the manager stops, only teardown
+  /// output passes.
   func isCurrentPhysicalHIDOutput(
     identifier: LogicalControllerID,
     pipeline: DevicePipeline,
@@ -273,6 +297,8 @@ extension DeviceManager {
     return true
   }
 
+  /// Whether `detachedInfo` still owns the neutralization of `identifier`: no pipeline runs, and
+  /// the device information names the same HID connection and physical device.
   private func isOwnedDetachedHIDNeutralization(
     identifier: LogicalControllerID,
     pipeline: DevicePipeline,

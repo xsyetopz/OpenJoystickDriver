@@ -106,8 +106,10 @@ extension DriverLifecycleCharacterizationTests {
       + (driver.encoded(.setLightBrightness(UnipolarValue(byte: value))).map(render) ?? ["  nil"])
   }
 
-  /// Rumble then player 2 on one driver. The Switch player subcommand embeds the last rumble
-  /// data; the Sixaxis report 0x01 carries both.
+  /// Rumble then player 2 on one driver.
+  ///
+  /// The Switch player subcommand embeds the last rumble data; the Sixaxis report 0x01 carries
+  /// both.
   func rumbleThenPlayerLines(_ subject: Subject) throws -> [String] {
     let driver = try driver(subject)
     return rumbleLines(driver, Self.rumbleIntensities, durationMs: 100, label: "rumble")

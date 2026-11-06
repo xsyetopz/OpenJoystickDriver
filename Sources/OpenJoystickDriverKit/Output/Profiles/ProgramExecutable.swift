@@ -1,8 +1,10 @@
 import Foundation
 
-/// Finds the file that runs for a program name and builds the process that runs it. The command
-/// line and the app both launch a game this way.
+/// Finds the file that runs for a program name and builds the process that runs it.
+///
+/// The command line and the app both launch a game this way.
 public enum ProgramExecutable {
+  /// Why a program name has no executable file.
   public enum Failure: Error, Equatable, Sendable {
     /// The `.app` bundle has no main executable.
     case noExecutable
@@ -39,8 +41,9 @@ public enum ProgramExecutable {
     throw Failure.notFound
   }
 
-  /// A process that runs `executable` with `environment`. Its output goes to `standardOutput`
-  /// when given, else to the standard output of this process.
+  /// A process that runs `executable` with `environment`.
+  ///
+  /// Its output goes to `standardOutput` when given, else to the standard output of this process.
   public static func process(
     executable: URL,
     arguments: [String],

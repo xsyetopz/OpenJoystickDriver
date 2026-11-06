@@ -1,7 +1,7 @@
 import Foundation
 
 extension DeviceManager {
-  /// Start device detection and input processing.
+  /// Starts device detection and input processing.
   public func start() async {
     guard !isStopping else { return }
     isStarted = true
@@ -39,6 +39,8 @@ extension DeviceManager {
     print("[DeviceManager] Started" + " - dual detection active")
   }
 
+  /// Starts the task that checks the host's access state once per second, which starts or ends HID
+  /// detection and retries the HID input claims; does nothing while that task runs.
   func startPermissionWatch() {
     guard permissionWatchTask == nil else { return }
     permissionWatchTask = Task { [weak self] in
@@ -66,8 +68,10 @@ extension DeviceManager {
     print("[DeviceManager] Suspended for system sleep")
   }
 
-  /// Re-admits each connected controller of a model in `models`, whose records changed, so it
-  /// binds with the current controller records. Other controllers keep their sessions.
+  /// Re-admits each connected controller of a model in `models`, whose records changed, so it binds
+  /// with the current controller records.
+  ///
+  /// Other controllers keep their sessions.
   ///
   /// Each affected connection is torn down as for a detach and admitted again, but keeps the
   /// user's suspension. With raw-USB detection running, its next poll does this for USB and HID
@@ -138,6 +142,8 @@ extension DeviceManager {
     }
   }
 
+  /// Whether OJD tracks the HID connection in any form: bound, unbound, left to macOS, yielded to
+  /// raw USB or initializing.
   private func tracksHIDConnection(_ connectionID: UUID) -> Bool {
     deviceInfos.values.contains { $0.hidConnectionID == connectionID }
       || unboundDevices[.hid(connectionID)] != nil || passThroughDevices[connectionID] != nil
@@ -145,6 +151,8 @@ extension DeviceManager {
       || hidInitializationTasks.values.contains { $0.connection.connectionID == connectionID }
   }
 
+  /// Whether the manager holds a controller of a model in `models` in any form, such as a
+  /// pipeline, an unbound device, a pass-through device or a pending initialization.
   private func seesController(in models: Set<ControllerModelID>) -> Bool {
     let seen = pipelines.keys.map(\.model) + deviceInfos.keys.map(\.model)
     return seen.contains { models.contains($0) }

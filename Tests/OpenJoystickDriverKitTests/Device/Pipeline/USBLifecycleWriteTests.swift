@@ -117,7 +117,9 @@ struct USBLifecycleWriteTests {
   }
 
   /// A controller that stayed attached through sleep can open but fail its startup writes as
-  /// disconnected until its port is reset. The pipeline resets it once and keeps retrying.
+  /// disconnected until its port is reset.
+  ///
+  /// The pipeline resets it once and keeps retrying.
   @Test
   func startupFailingAsDisconnectedResetsTheDeviceOnce() async {
     let driver = LifecycleWriteDriver(startup: [Self.write(endpoint: 0x02, bytes: [0x10])])

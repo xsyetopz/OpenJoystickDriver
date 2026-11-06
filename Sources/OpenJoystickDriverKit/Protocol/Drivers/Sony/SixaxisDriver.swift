@@ -1,17 +1,30 @@
 import Foundation
 
+/// The report ID of the input report.
 private let ds3InputReportID: UInt8 = 0x01
+/// The length of the input report in bytes.
 private let ds3InputReportLength = 49
+/// The raw stick value at the center.
 private let ds3AxisCenter: Float = 128
+/// The largest distance above the center of a raw stick value.
 private let ds3AxisPositiveMax: Float = 127
+/// The largest distance below the center of a raw stick value.
 private let ds3AxisNegativeMax: Float = 128
+/// The maximum raw value of a trigger.
 private let ds3TriggerMax: Float = 255
+/// The ID of the first operational feature report.
 private let ds3OperationalReportF2: UInt8 = 0xF2
+/// The length of the first operational feature report in bytes.
 private let ds3OperationalReportF2Length = 17
+/// The ID of the second operational feature report.
 private let ds3OperationalReportF5: UInt8 = 0xF5
+/// The length of the second operational feature report in bytes.
 private let ds3OperationalReportF5Length = 8
+/// The report ID of the output report.
 private let ds3OutputReportID: UInt8 = 0x01
+/// The length of the output report in bytes.
 private let ds3OutputReportLength = 49
+/// The output report that the driver copies and fills in with the rumble and player LED bytes.
 private let ds3OutputReportTemplate: [UInt8] = [
   0x01, 0x01, 0xFF, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x27, 0x10, 0x00, 0x32,
   0xFF, 0x27, 0x10, 0x00, 0x32, 0xFF, 0x27, 0x10, 0x00, 0x32, 0xFF, 0x27, 0x10, 0x00, 0x32, 0x00,
@@ -32,35 +45,54 @@ private let ds3OutputReportTemplate: [UInt8] = [
 /// motors, so it ignores the rumble fields.
 public final class SixaxisDriver: PhysicalProtocolDriver {
 
+  /// The byte offsets of the input report.
   private enum ReportOffset {
+    /// The offset of the report ID.
     static let reportID = 0
+    /// The offset of the first button byte.
     static let buttons0 = 2
+    /// The offset of the second button byte.
     static let buttons1 = 3
+    /// The offset of the third button byte.
     static let buttons2 = 4
+    /// The offset of the left stick's horizontal axis.
     static let leftX = 6
+    /// The offset of the left stick's vertical axis.
     static let leftY = 7
+    /// The offset of the right stick's horizontal axis.
     static let rightX = 8
+    /// The offset of the right stick's vertical axis.
     static let rightY = 9
+    /// The offset of the analog left trigger.
     static let l2Analog = 18
+    /// The offset of the analog right trigger.
     static let r2Analog = 19
   }
 
+  /// The state after the latest report.
   private var state = ControllerState.neutral
+  /// The strength of the left rumble motor.
   private var physicalRumbleLeft: UInt8 = 0
+  /// Whether the right rumble motor, which is on or off only, runs.
   private var physicalRumbleRightOn = false
+  /// The player indicator of the next output report.
   private var physicalPlayerIndicator: PhysicalPlayerIndicator = .player1
-  /// The bound variant: USB reads the operational feature reports. The Bluetooth enable report
-  /// is a startup write in the controller's record.
+  /// The bound variant: USB reads the operational feature reports.
+  ///
+  /// The Bluetooth enable report is a startup write in the controller's record.
   private let isBluetooth: Bool
 
+  /// Creates the driver for the USB or the Bluetooth variant.
   public init(isBluetooth: Bool = false) { self.isBluetooth = isBluetooth }
 
-  /// A new transport session starts from neutral input.
+  /// Clears the state of the session: neutral input.
   public func resetProtocolState() { state = .neutral }
 
-  /// A Sixaxis lights no player LED until the host sets one. Over USB it ignores the LED report
-  /// written right after the startup feature reads and takes it once it streams input. The
-  /// description's USB variant sets the input timeout, because a USB Sixaxis streams while idle.
+  /// A Sixaxis lights no player LED until the host sets one.
+  ///
+  /// Over USB it ignores the LED report written right after the startup feature reads and takes it
+  /// once it streams input. The description's USB variant sets the input timeout, because a USB
+  /// Sixaxis streams while idle.
   public var sessionPlan: DriverSessionPlan {
     DriverSessionPlan(
       assignsStartupPlayerIndicator: true,
@@ -68,12 +100,15 @@ public final class SixaxisDriver: PhysicalProtocolDriver {
     ).withDefaults(of: .sonySixaxis, variant: isBluetooth ? .bluetoothClassic : .usb)
   }
 
+  /// Always nil: the report carries no logical connection.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
+  /// The controls of the description.
   public var capabilities: ControllerCapabilities {
     PhysicalProtocolID.sonySixaxis.describedControls
   }
 
+  /// The rumble motors and the player indicator.
   public var outputCapabilities: PhysicalControllerOutputCapabilities {
     PhysicalControllerOutputCapabilities(
       rumbleMotors: [.lowFrequency, .highFrequency],
@@ -82,8 +117,10 @@ public final class SixaxisDriver: PhysicalProtocolDriver {
     )
   }
 
+  /// No default colour: the controller has no light to restore.
   public var defaultColor: ControllerColor? { nil }
 
+  /// The operational feature reports that USB reads at startup; Bluetooth reads none.
   public func startupFeatureReads() -> [PhysicalHIDFeatureReadRequest] {
     guard !isBluetooth else { return [] }
     return [
@@ -99,7 +136,9 @@ public final class SixaxisDriver: PhysicalProtocolDriver {
   }
 
   /// One report carries both the rumble state and the player LED, so each command repeats the
-  /// other's current value. The right motor is on/off only.
+  /// other's current value.
+  ///
+  /// The right motor is on/off only.
   public func encode(
     _ command: ControllerOutputCommand
   ) throws(ControllerOutputError) -> PhysicalOutputPlan {
@@ -116,6 +155,7 @@ public final class SixaxisDriver: PhysicalProtocolDriver {
     return PhysicalOutputPlan(writes: [.hidOutput(physicalOutputReport())])
   }
 
+  /// Builds the output report from the current rumble state and player indicator.
   private func physicalOutputReport() -> PhysicalHIDOutputReport {
     var bytes = ds3OutputReportTemplate
     precondition(bytes.count == ds3OutputReportLength)
@@ -131,6 +171,8 @@ public final class SixaxisDriver: PhysicalProtocolDriver {
     return PhysicalHIDOutputReport(reportID: ds3OutputReportID, bytes: bytes)
   }
 
+  /// Decodes an input report; a short report, another report ID or a report with byte 1 equal to
+  /// `0xFF` is ignored.
   public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
     let bytes = Array(data)
     guard bytes.count >= ds3InputReportLength, bytes[ReportOffset.reportID] == ds3InputReportID,
@@ -182,6 +224,7 @@ public final class SixaxisDriver: PhysicalProtocolDriver {
     ]
   }
 
+  /// Scales a stick or trigger byte to -1...1 around the center.
   private func normalizeAxis(_ value: UInt8) -> Float {
     let centered = Float(value) - ds3AxisCenter
     let divisor = centered >= 0 ? ds3AxisPositiveMax : ds3AxisNegativeMax
@@ -189,6 +232,7 @@ public final class SixaxisDriver: PhysicalProtocolDriver {
     return max(-1, min(1, normalized))
   }
 
+  /// The hat direction of four D-pad flags.
   private func mapDpad(up: Bool, right: Bool, down: Bool, left: Bool) -> HatDirection {
     switch (up, right, down, left) {
     case (true, false, false, false): return .north

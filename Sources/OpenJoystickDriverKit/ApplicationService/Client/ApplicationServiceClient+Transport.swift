@@ -1,6 +1,12 @@
 import Foundation
 
 extension ApplicationServiceClient {
+  /// Calls the RPC `method` with `arguments` and decodes the reply as `Value`.
+  ///
+  /// `closedWithoutReply` names the error for a connection that closes before the service replies.
+  ///
+  /// - Throws: ``ApplicationServiceClientError/notConnected`` before the client is connected, and
+  ///   ``ApplicationServiceClientError/timeout`` when no reply arrives within `timeoutSeconds`.
   func call<Arguments: Encodable & Sendable, Value: Decodable & Sendable>(
     _ method: ApplicationServiceRPCMethod,
     _ arguments: Arguments,

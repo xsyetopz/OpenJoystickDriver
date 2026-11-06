@@ -9,12 +9,25 @@ import OpenJoystickDriverKit
 /// DriverKit extension. Services that require OJD's restricted DEXT are filtered
 /// by `OpenJoystickDriverUSBTransportProvider` before callers see them.
 public actor IOUSBHostTransportProvider: USBTransportProvider {
+  /// Creates the provider.
   public init() {}
 
+  /// Lists the raw USB devices that the IOUSBHost registry shows, in vendor, product, location and
+  /// service order.
+  ///
+  /// - Throws: ``USBTransportError`` when the registry cannot be matched.
   public func devices() throws -> [USBTransportDevice] {
     try Self.devices(from: Self.deviceFacts())
   }
 
+  /// Opens the interface `options.interfaceNumber` of `device` for raw USB transfers.
+  ///
+  /// The configuration is set first, only when the device does not already run it. The open waits
+  /// up to one second for the interface service to appear.
+  ///
+  /// - Throws: ``USBTransportError/notSupported`` for a device that is not on the raw USB route,
+  ///   ``USBTransportError/notFound`` when the interface does not appear, and the error that
+  ///   ``openError(_:interfaceOwner:processID:)`` maps when IOUSBHost refuses the open.
   public func open(
     _ device: USBTransportDevice,
     options: USBTransportOpenOptions
@@ -72,6 +85,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     return interfaceExclusiveOwner(of: service)
   }
 
+  /// Returns the `UsbExclusiveOwner` property of `interfaceService`, or nil when it has none.
   static func interfaceExclusiveOwner(of interfaceService: io_service_t) -> String? {
     IORegistryEntryCreateCFProperty(
       interfaceService,
@@ -84,6 +98,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
   /// The IORegistry property that names the client holding a USB device or interface open.
   static let exclusiveOwnerKey = "UsbExclusiveOwner"
 
+  /// Maps the open failure `error` of the interface `interfaceService` to a transport error.
   private static func openError(_ error: Error, interfaceService: io_service_t) -> USBTransportError
   {
     openError(
@@ -96,6 +111,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
   /// A failed open of an interface that names an owner other than process `processID` is
   /// ``USBTransportError/ownedByAnotherClient(owner:)`` whatever `code` is, because macOS 27
   /// refuses such an open with `kIOReturnInternalError` as well as `kIOReturnExclusiveAccess`.
+  ///
   /// Access refusals stay `accessDenied`.
   static func openError(
     _ code: IOReturn,
@@ -114,8 +130,9 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     return .ownedByAnotherClient(owner: interfaceOwner)
   }
 
-  /// The device's own `UsbExclusiveOwner` registry property, such as `pid 11070, steam_osx`. It
-  /// is read without a parent search, because a hub's owner is not the device's.
+  /// The device's own `UsbExclusiveOwner` registry property, such as `pid 11070, steam_osx`.
+  ///
+  /// It is read without a parent search, because a hub's owner is not the device's.
   public func exclusiveOwner(of device: USBTransportDevice) throws -> String? {
     guard device.route == .rawUSB else { throw USBTransportError.notSupported }
     let service = try Self.deviceService(for: device)
@@ -128,6 +145,11 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     )?.takeRetainedValue() as? String
   }
 
+  /// Resets the USB device.
+  ///
+  /// - Throws: ``USBTransportError/notSupported`` for a device that is not on the raw USB route,
+  ///   ``USBTransportError/notFound`` when it is not listed, and the mapped IOUSBHost error
+  ///   otherwise.
   public func resetDevice(_ device: USBTransportDevice) throws {
     guard device.route == .rawUSB else { throw USBTransportError.notSupported }
     let service = try Self.deviceService(for: device)
@@ -144,6 +166,8 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     } catch { throw Self.transportError(error) }
   }
 
+  /// Converts the device `facts` to raw USB transport devices, sorted by vendor, product, location
+  /// and service ID.
   static func devices(from facts: [IOUSBHostDeviceFacts]) -> [USBTransportDevice] {
     facts.map { device in
       USBTransportDevice(
@@ -201,6 +225,9 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     } catch { throw transportError(error) }
   }
 
+  /// Polls up to 20 times, 50 ms apart, until the interface `interfaceNumber` of `device` appears.
+  ///
+  /// - Throws: ``USBTransportError/notFound`` when it never appears.
   private static func waitForInterfaceService(
     device: USBTransportDevice,
     interfaceNumber: UInt8
@@ -214,6 +241,8 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     throw USBTransportError.notFound
   }
 
+  /// Reads the facts of every `IOUSBHostDevice` service that has a vendor, product, location and
+  /// registry entry ID.
   private static func deviceFacts() throws -> [IOUSBHostDeviceFacts] {
     try matchingServices(className: "IOUSBHostDevice") { service in
       guard let vendorID = uint16Property(service, key: "idVendor"),
@@ -234,6 +263,10 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     }
   }
 
+  /// Returns the `IOUSBHostInterface` service `interfaceNumber` of `device`, or nil when none
+  /// matches.
+  ///
+  /// Only the vendor-specific class and the original Xbox class match.
   private static func interfaceService(
     for device: USBTransportDevice,
     interfaceNumber: UInt8
@@ -249,6 +282,10 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     }
   }
 
+  /// Returns the `IOUSBHostDevice` service of `device`.
+  ///
+  /// - Throws: ``USBTransportError/notFound`` when no service matches the vendor, product and
+  ///   location.
   static func deviceService(for device: USBTransportDevice) throws -> io_service_t {
     guard
       let service = try firstMatchingService(
@@ -263,6 +300,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     return service
   }
 
+  /// Returns the non-nil results of `transform` over the services of `className`.
   private static func matchingServices<T>(
     className: String,
     transform: (io_service_t) -> T?
@@ -284,6 +322,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     return values
   }
 
+  /// Returns the first service of `className` for which `matches` is true, or nil when none is.
   private static func firstMatchingService(
     className: String,
     matches: (io_service_t) -> Bool
@@ -304,10 +343,12 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     return nil
   }
 
+  /// The options that make a property search look through the parents of a service.
   private static let recursiveParentSearch = IOOptionBits(
     kIORegistryIterateRecursively | kIORegistryIterateParents
   )
 
+  /// Searches the property `key` on `service` and then on its parents.
   private static func property(_ service: io_service_t, key: String) -> AnyObject? {
     IORegistryEntrySearchCFProperty(
       service,
@@ -318,32 +359,42 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     )
   }
 
+  /// Reads the property `key` as an 8-bit unsigned integer, or nil when it is missing or out of
+  /// range.
   private static func uint8Property(_ service: io_service_t, key: String) -> UInt8? {
     uint64Property(service, key: key).flatMap(UInt8.init(exactly:))
   }
 
+  /// Reads the property `key` as a 16-bit unsigned integer, or nil when it is missing or out of
+  /// range.
   private static func uint16Property(_ service: io_service_t, key: String) -> UInt16? {
     uint64Property(service, key: key).flatMap(UInt16.init(exactly:))
   }
 
+  /// Reads the property `key` as a 32-bit unsigned integer, or nil when it is missing or out of
+  /// range.
   private static func uint32Property(_ service: io_service_t, key: String) -> UInt32? {
     uint64Property(service, key: key).flatMap(UInt32.init(exactly:))
   }
 
+  /// Reads the property `key` as a 64-bit unsigned integer, or nil when it is missing or not one.
   private static func uint64Property(_ service: io_service_t, key: String) -> UInt64? {
     property(service, key: key) as? UInt64
   }
 
+  /// Returns the first string property among `keys`, or nil when none is a string.
   private static func stringProperty(_ service: io_service_t, keys: [String]) -> String? {
     for key in keys { if let value = property(service, key: key) as? String { return value } }
     return nil
   }
 
+  /// Returns the registry entry ID of `service`, or nil when IOKit refuses it.
   private static func registryEntryID(_ service: io_service_t) -> UInt64? {
     var value: UInt64 = 0
     return IORegistryEntryGetRegistryEntryID(service, &value) == kIOReturnSuccess ? value : nil
   }
 
+  /// Converts `request` to the IOUSBHost device request.
   static func deviceRequest(for request: USBControlTransferRequest) -> IOUSBDeviceRequest {
     IOUSBDeviceRequest(
       bmRequestType: request.requestType,
@@ -363,11 +414,13 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
   static func pipeCompletionTimeout(endpointAttributes: UInt8, milliseconds: UInt32) -> TimeInterval
   { endpointAttributes & 0x03 == 0x02 ? completionTimeout(milliseconds: milliseconds) : 0 }
 
+  /// Maps `error` to a transport error by its IOReturn code.
   static func transportError(_ error: Error) -> USBTransportError {
     let nsError = error as NSError
     return transportError(IOReturn(truncatingIfNeeded: nsError.code))
   }
 
+  /// Maps the IOReturn `code` to a transport error without an owner.
   static func transportError(_ code: IOReturn) -> USBTransportError {
     transportError(code, exclusiveOwner: nil)
   }
@@ -391,39 +444,65 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
   }
 }
 
+/// The facts of one `IOUSBHostDevice` service.
 struct IOUSBHostDeviceFacts: Equatable, Sendable {
+  /// The registry entry ID of the service.
   let serviceID: UInt64
+  /// The USB vendor ID.
   let vendorID: UInt16
+  /// The USB product ID.
   let productID: UInt16
+  /// The USB location ID.
   let locationID: UInt32
+  /// The product name, when the registry has one.
   let productName: String?
+  /// The serial number, when the registry has one.
   let serialNumber: String?
+  /// The manufacturer name, when the registry has one.
   var manufacturer: String?
+  /// The `bcdDevice` release number, when the registry has one.
   var deviceRelease: UInt16?
 }
 
 // `@unchecked Sendable` because `IOUSBHostPipe` is not annotated `Sendable`, and awaiting its
 // nonisolated `enqueueIORequest` sends it out of the session actor. Only the session actor
 // creates, aborts, and drops pipes; the box carries one across that single await.
+/// A box that carries an `IOUSBHostPipe` across the one await that sends it out of the session
+/// actor.
 private final class IOUSBHostPipeBox: @unchecked Sendable {
+  /// The boxed pipe.
   let pipe: IOUSBHostPipe
+  /// Boxes `pipe`.
   init(_ pipe: IOUSBHostPipe) { self.pipe = pipe }
 }
 
+/// The raw USB session of one opened IOUSBHost interface.
 private actor IOUSBHostTransportSession: USBTransportSession {
+  /// The opened interface.
   private let interface: IOUSBHostInterface
+  /// The pipes opened so far, by endpoint address.
   private var pipes: [UInt8: IOUSBHostPipeBox] = [:]
+  /// Whether the session is closed.
   private var isClosed = false
+  /// Whether the interface has been destroyed.
   private var isDestroyed = false
   // Actor methods are reentrant at every `await`, so `close()` can run while a transfer is
   // suspended. The interface owns the `ioData` buffers, so it is destroyed only once no
   // transfer is in flight.
+  /// The number of transfers that are in flight.
   private var inFlightTransfers = 0
 
+  /// Exclusive while the session is open, and unknown after it closes.
   var inputOwnership: HIDInputOwnership { isClosed ? .unknown : .exclusive }
 
+  /// Creates the session for `interface`.
   init(interface: IOUSBHostInterface) { self.interface = interface }
 
+  /// Writes `data` to the OUT endpoint `endpoint` and returns the number of bytes written.
+  ///
+  /// - Throws: ``USBTransportError/disconnected`` when the session is closed,
+  ///   ``USBTransportError/notSupported`` for an endpoint that is not OUT or for empty data, and
+  ///   the mapped IOUSBHost error otherwise.
   func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) async throws -> Int {
     guard !isClosed else { throw USBTransportError.disconnected }
     guard USBEndpointDirection(endpointAddress: endpoint) == .out, !data.isEmpty else {
@@ -438,6 +517,11 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     } catch { throw closeIfDisconnected(error) }
   }
 
+  /// Reads up to `length` bytes from the IN endpoint `endpoint`.
+  ///
+  /// - Throws: ``USBTransportError/disconnected`` when the session is closed,
+  ///   ``USBTransportError/notSupported`` for an endpoint that is not IN or for a length of zero,
+  ///   and the mapped IOUSBHost error otherwise.
   func read(endpoint: UInt8, length: Int, timeout: UInt32) async throws -> [UInt8] {
     guard !isClosed else { throw USBTransportError.disconnected }
     guard USBEndpointDirection(endpointAddress: endpoint) == .in, length > 0 else {
@@ -453,6 +537,10 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     } catch { throw closeIfDisconnected(error) }
   }
 
+  /// Sends the control transfer `request` and returns the bytes it received.
+  ///
+  /// - Throws: ``USBTransportError/disconnected`` when the session is closed, and the mapped
+  ///   IOUSBHost error otherwise.
   @discardableResult
   func controlTransfer(
     _ request: USBControlTransferRequest,
@@ -485,6 +573,7 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     } catch { throw closeIfDisconnected(error) }
   }
 
+  /// Aborts the pipes and destroys the interface once no transfer is in flight.
   func close() {
     guard !isClosed else { return }
     isClosed = true
@@ -493,19 +582,23 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     destroyInterfaceIfIdle()
   }
 
+  /// Counts a transfer as in flight.
   private func beginTransfer() { inFlightTransfers += 1 }
 
+  /// Counts a transfer as finished and destroys the interface if the session is closed and idle.
   private func endTransfer() {
     inFlightTransfers -= 1
     destroyInterfaceIfIdle()
   }
 
+  /// Destroys the interface when the session is closed and no transfer is in flight.
   private func destroyInterfaceIfIdle() {
     guard isClosed, inFlightTransfers == 0, !isDestroyed else { return }
     isDestroyed = true
     interface.destroy()
   }
 
+  /// Runs one transfer of `buffer` on the pipe of `endpoint` and returns the byte count.
   private func transfer(endpoint: UInt8, buffer: NSMutableData, timeout: UInt32) async throws -> Int
   {
     let pipe = try pipe(for: endpoint)
@@ -526,6 +619,7 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     }
   }
 
+  /// Copies `data` into `buffer`.
   private static func copy(_ data: [UInt8], into buffer: NSMutableData) {
     data.withUnsafeBytes { source in
       guard let baseAddress = source.baseAddress else { return }
@@ -533,6 +627,7 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     }
   }
 
+  /// Maps `error` to a transport error and closes the session when it means a disconnect.
   private func closeIfDisconnected(_ error: Error) -> USBTransportError {
     let transportError =
       error as? USBTransportError ?? IOUSBHostTransportProvider.transportError(error)
@@ -540,6 +635,7 @@ private actor IOUSBHostTransportSession: USBTransportSession {
     return transportError
   }
 
+  /// Returns the pipe of `endpoint`, opening it on first use.
   private func pipe(for endpoint: UInt8) throws -> IOUSBHostPipeBox {
     if let pipe = pipes[endpoint] { return pipe }
     do {

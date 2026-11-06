@@ -16,6 +16,7 @@ public struct ServiceStatusRevision: Codable, Equatable, Sendable {
   /// Status changes recorded since that process started.
   public let generation: UInt64
 
+  /// Creates a revision from the service process `instance` and its `generation`.
   public init(instance: UUID, generation: UInt64) {
     self.instance = instance
     self.generation = generation
@@ -25,8 +26,10 @@ public struct ServiceStatusRevision: Codable, Equatable, Sendable {
 /// Arguments of `waitForServiceStatusChange`: the revision the caller last saw, or nil to read
 /// the current one at once.
 public struct LocalServiceRPCStatusChangeArguments: Codable, Sendable {
+  /// The revision the caller last saw; nil reads the current revision at once.
   public let after: ServiceStatusRevision?
 
+  /// Creates the arguments from the revision the caller last saw.
   public init(after: ServiceStatusRevision?) { self.after = after }
 }
 
@@ -48,11 +51,14 @@ public enum ServiceStatusEventKind: String, Codable, Equatable, Sendable {
 /// answered now, and for a test notification the announcement the caller answers with
 /// `reportTestNotificationResult`.
 public struct ServiceStatusReply: Codable, Equatable, Sendable {
+  /// The service's current revision.
   public let revision: ServiceStatusRevision
+  /// Why the service answered now.
   public let event: ServiceStatusEventKind
   /// Present exactly when `event` is `testNotification`.
   public let announcement: UUID?
 
+  /// Creates a reply; `announcement` belongs to the `testNotification` event alone.
   public init(
     revision: ServiceStatusRevision,
     event: ServiceStatusEventKind,
@@ -63,6 +69,7 @@ public struct ServiceStatusReply: Codable, Equatable, Sendable {
     self.announcement = announcement
   }
 
+  /// Decodes the value from `decoder`.
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     revision = try container.decode(ServiceStatusRevision.self, forKey: .revision)
@@ -93,9 +100,26 @@ public enum TestNotificationOutcome: Codable, Equatable, Sendable {
   /// that took it did not report within `TestNotificationDeadlines.answerSeconds`.
   case noAnswer
 
-  private enum CodingKeys: String, CodingKey { case kind, reason }
-  private enum Kind: String, Codable { case shown, denied, failed, noAnswer }
+  /// The keys of the JSON encoding.
+  private enum CodingKeys: String, CodingKey {
+    /// The `kind` key.
+    case kind
+    /// The `reason` key.
+    case reason
+  }
+  /// The `kind` value on the wire.
+  private enum Kind: String, Codable {
+    /// The notification was shown.
+    case shown
+    /// Notifications are not allowed for the app.
+    case denied
+    /// The app reported an error.
+    case failed
+    /// No app answered in time.
+    case noAnswer
+  }
 
+  /// Decodes the value from `decoder`.
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let reason = try container.decodeIfPresent(String.self, forKey: .reason)
@@ -115,6 +139,7 @@ public enum TestNotificationOutcome: Codable, Equatable, Sendable {
     }
   }
 
+  /// Encodes the value into `encoder`.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     switch self {
@@ -134,20 +159,26 @@ public enum TestNotificationOutcome: Codable, Equatable, Sendable {
 /// several apps connected, the first wait to reach the service takes the announcement and that
 /// app alone answers; the others see nothing.
 public enum TestNotificationDeadlines {
-  /// From the request until a wait takes the announcement. An app re-arms its wait within a
-  /// second, so a longer gap means no app is connected.
+  /// From the request until a wait takes the announcement.
+  ///
+  /// An app re-arms its wait within a second, so a longer gap means no app is connected.
   public static let pickupSeconds: TimeInterval = 3
-  /// From the pickup until the app reports. It covers the system prompt that asks permission,
-  /// which the user may leave open for a while.
+  /// From the pickup until the app reports.
+  ///
+  /// It covers the system prompt that asks permission, which the user may leave open for a while.
   public static let answerSeconds: TimeInterval = 30
 }
 
-/// Arguments of `reportTestNotificationResult`: the announcement being answered and how it
-/// ended. The outcome is `shown`, `denied` or `failed`.
+/// Arguments of `reportTestNotificationResult`: the announcement being answered and how it ended.
+///
+/// The outcome is `shown`, `denied` or `failed`.
 public struct TestNotificationReport: Codable, Equatable, Sendable {
+  /// The announcement that the app answers.
   public let announcement: UUID
+  /// How the test notification ended.
   public let outcome: TestNotificationOutcome
 
+  /// Creates the report from an announcement and its outcome.
   public init(announcement: UUID, outcome: TestNotificationOutcome) {
     self.announcement = announcement
     self.outcome = outcome

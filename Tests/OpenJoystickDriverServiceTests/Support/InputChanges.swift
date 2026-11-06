@@ -1,10 +1,11 @@
 import Foundation
 
-@testable import OpenJoystickDriverService
 @testable import OpenJoystickDriverKit
+@testable import OpenJoystickDriverService
 
-/// One change a test applies to a controller's previous snapshot. Stick Y is positive down, as in
-/// the controller state and the engine.
+/// One change a test applies to a controller's previous snapshot.
+///
+/// Stick Y is positive down, as in the controller state and the engine.
 enum InputChange: Equatable {
   case press(Control)
   case release(Control)
@@ -109,6 +110,7 @@ final class InputScript: @unchecked Sendable {
 }
 
 /// Each change of a scripted sequence as its own report; an empty sequence is one unchanged report.
+///
 /// A press of a control `base` already holds is a fresh physical press: a release report first.
 func reports(_ changes: [InputChange], after base: ControllerState) -> [[InputChange]] {
   guard !changes.isEmpty else { return [[]] }

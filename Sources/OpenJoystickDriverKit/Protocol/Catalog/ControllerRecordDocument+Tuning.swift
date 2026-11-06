@@ -3,8 +3,11 @@ import Foundation
 extension ControllerRecordDocument {
   /// The record's `tuning` section, with each value range-checked as the schema does.
   struct Tuning: Decodable {
+    /// The decoded tuning.
     let tuning: ControllerTuning
 
+    /// Decodes the tuning keys of a record; an unknown key or a value outside its range is
+    /// rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [

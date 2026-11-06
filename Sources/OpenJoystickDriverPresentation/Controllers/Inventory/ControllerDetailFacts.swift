@@ -3,30 +3,93 @@ import OpenJoystickDriverKit
 
 /// One labelled fact of the Controllers detail.
 struct ControllerFact: Equatable, Identifiable {
+  /// What a fact says, which names the row.
   enum Kind: Hashable {
-    case publication, serving, controllerProtocol, serialNumber, inputHealth
-    case battery, chargingState, cableState
-    case rumble, lighting, adaptiveTriggers, motion, touchContacts
-    case unitID, parser, ownership, duplicateExposureRisk, outputOwner, record, controls
-    case startupStatus, inputReportFormat, inputRecoveries
-    case publicationAttempted, publicationCompleted
-    case usbIdentifier, inputEndpoint, outputEndpoint
-    case exclusiveOwner, alsoListedBySystem
+    /// Whether a virtual device publishes the controller.
+    case publication
+    /// The route that serves the controller.
+    case serving
+    /// The protocol binding of the controller.
+    case controllerProtocol
+    /// The serial number.
+    case serialNumber
+    /// The health of the input session.
+    case inputHealth
+    /// The battery level.
+    case battery
+    /// Whether the controller charges.
+    case chargingState
+    /// Whether the controller is on a cable.
+    case cableState
+    /// The rumble motors.
+    case rumble
+    /// The lighting features.
+    case lighting
+    /// The adaptive triggers.
+    case adaptiveTriggers
+    /// Whether the controller has a motion sensor.
+    case motion
+    /// The number of touch contacts.
+    case touchContacts
+    /// The unit ID.
+    case unitID
+    /// The binding that parses the controller's input.
+    case parser
+    /// Who owns the controller's input and output.
+    case ownership
+    /// Whether the system lists the controller too.
+    case duplicateExposureRisk
+    /// The owner of the controller's output, when it is the system.
+    case outputOwner
+    /// Where the controller's record comes from.
+    case record
+    /// The controls the parser emits.
+    case controls
+    /// How the startup commands went.
+    case startupStatus
+    /// The format of the input reports.
+    case inputReportFormat
+    /// How many times the input recovered.
+    case inputRecoveries
+    /// When the last publication was attempted.
+    case publicationAttempted
+    /// When the last publication completed.
+    case publicationCompleted
+    /// The vendor and product ID.
+    case usbIdentifier
+    /// The endpoint that sends input.
+    case inputEndpoint
+    /// The endpoint that takes output.
+    case outputEndpoint
+    /// The client that holds the controller exclusively.
+    case exclusiveOwner
+    /// Whether the system also lists the controller.
+    case alsoListedBySystem
   }
 
+  /// What the fact says.
   let kind: Kind
+  /// The localized name of the fact.
   let label: String
+  /// The value of the fact.
   let value: OJDValue
 
+  /// The kind, which names the fact.
   var id: Kind { kind }
 }
 
 /// The facts the Controllers detail lists for one controller, from the same service description
-/// `ojd controller show` reads. A fact that applies but has no value shows "None"; a fact the
-/// controller cannot have, such as an unreported battery or a motion sensor it lacks, is left out.
+/// `ojd controller show` reads.
+///
+/// A fact that applies but has no value shows "None"; a fact the controller cannot have, such as an
+/// unreported battery or a motion sensor it lacks, is left out.
 enum ControllerDetailFacts {
-  /// The facts every user wants: what is published and how, the controller's state, and what it
-  /// can do.
+  /// Returns the facts every user wants: what is published and how, the controller's state, and
+  /// what it can do.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: The facts every user wants: what is published and how, the controller's state, and
+  ///   what it can do.
   static func general(
     for device: ApplicationServiceDeviceDescription
   ) -> [ControllerFact] {
@@ -98,10 +161,16 @@ enum ControllerDetailFacts {
     return always + input + held + listed + (power + capabilities).filter { $0.value != .none }
   }
 
-  /// The technical facts, shown under Advanced: identifiers, the parser (the binding that parses
-  /// the controller's input, in its `ojd` spelling, such as `xbox-xusb:receiver`), ownership, the
-  /// record, publication timing, and the controls the parser emits. `record` is the controller
-  /// model's effective record, if one matches.
+  /// Returns the technical facts, shown under Advanced: identifiers, the parser (the binding that
+  /// parses the controller's input, in its `ojd` spelling, such as `xbox-xusb:receiver`),
+  /// ownership, the record, publication timing, and the controls the parser emits.
+  ///
+  /// - Parameters:
+  ///   - device: The controller.
+  ///   - record: The controller model's effective record, if one matches.
+  /// - Returns: The technical facts, shown under Advanced: identifiers, the parser (the binding
+  ///   that parses the controller's input, in its `ojd` spelling, such as `xbox-xusb:receiver`),
+  ///   ownership, the record, publication timing, and the controls the parser emits.
   static func advanced(
     for device: ApplicationServiceDeviceDescription,
     record: ControllerRecord?
@@ -165,9 +234,14 @@ enum ControllerDetailFacts {
     ]
   }
 
-  /// The Automatic choice of the Virtual HID profile picker. It names the profile the service
-  /// selected on its own, so the picker is the one place the published profile is shown; it is
-  /// plain "Automatic" while an override is the selection or when no profile is selected.
+  /// Returns the Automatic choice of the Virtual HID profile picker.
+  ///
+  /// It names the profile the service selected on its own, so the picker is the one place the
+  /// published profile is shown; it is plain "Automatic" while an override is the selection or when
+  /// no profile is selected.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: The Automatic choice of the Virtual HID profile picker.
   static func automaticProfileLabel(_ device: ApplicationServiceDeviceDescription) -> String {
     let automatic = OJDLocalized.string("ui.mapping.automatic")
     guard let status = device.virtualHIDProfile, let profile = status.profile,
@@ -179,13 +253,20 @@ enum ControllerDetailFacts {
     )
   }
 
-  /// Whether a virtual device publishes the controller, why not, and for a failed send the
-  /// failure text, localized; "None" when the service reports none.
+  /// Returns whether a virtual device publishes the controller, why not, and for a failed send
+  /// the failure text, localized; "None" when the service reports none.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: Whether a virtual device publishes the controller, why not, and for a failed send
+  ///   the failure text, localized; "None" when the service reports none.
   static func publication(_ device: ApplicationServiceDeviceDescription) -> OJDValue {
     device.publication.map { .text(publicationText($0)) } ?? .none
   }
 
-  /// The route, with why it publishes nothing when it does not.
+  /// Returns the route, with why it publishes nothing when it does not.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: The route, with why it publishes nothing when it does not.
   static func servingText(_ device: ApplicationServiceDeviceDescription) -> String {
     guard let reason = device.servingDecision.route.disabledReason else {
       return device.servingRouteLabel
@@ -197,7 +278,10 @@ enum ControllerDetailFacts {
     )
   }
 
-  /// The input health state, with its failure reason when it has one.
+  /// Returns the input health state, with its failure reason when it has one.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: The input health state, with its failure reason when it has one.
   static func inputHealthText(_ device: ApplicationServiceDeviceDescription) -> String {
     let state = OJDLocalized.string(inputHealthKey(device.inputHealth.state))
     guard let reason = device.inputHealth.failureReason else { return state }
@@ -208,6 +292,10 @@ enum ControllerDetailFacts {
     )
   }
 
+  /// Returns where the controller was found and who owns its physical and HID input.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: Where the controller was found and who owns its physical and HID input.
   static func ownershipText(_ device: ApplicationServiceDeviceDescription) -> String {
     OJDLocalized.formatted(
       "ui.controllers.ownership.value",
@@ -217,7 +305,10 @@ enum ControllerDetailFacts {
     )
   }
 
-  /// The duplicate-exposure concern of the physical ownership, localized.
+  /// Returns the duplicate-exposure concern of the physical ownership, localized.
+  ///
+  /// - Parameter risk: The concern.
+  /// - Returns: The duplicate-exposure concern of the physical ownership, localized.
   static func duplicateExposureText(_ risk: DuplicateExposureRisk) -> String {
     switch risk {
     case .none: return OJDLocalized.string("status.none")
@@ -233,7 +324,10 @@ enum ControllerDetailFacts {
     }
   }
 
-  /// The record layer, and the file when a user or package file sets the record.
+  /// Returns the record layer, and the file when a user or package file sets the record.
+  ///
+  /// - Parameter record: The controller model's effective record, or nil.
+  /// - Returns: The record layer, and the file when a user or package file sets the record.
   static func recordText(_ record: ControllerRecord?) -> String {
     guard let record else { return OJDLocalized.string("cli.controller.show.recordNone") }
     guard let file = record.file else {
@@ -242,11 +336,18 @@ enum ControllerDetailFacts {
     return recordLocation(file.path)
   }
 
-  /// The record row for a user or package file, with the home folder written as `~`.
+  /// Returns the record row for a user or package file, with the home folder written as `~`.
+  ///
+  /// - Parameter path: The path of the record file.
+  /// - Returns: The record row for a user or package file, with the home folder written as `~`.
   static func recordLocation(_ path: String) -> String {
     OJDLocalized.formatted("cli.controller.show.recordUser", HomeFolder.redacting(path))
   }
 
+  /// Returns the localization key of the input health state.
+  ///
+  /// - Parameter state: The state.
+  /// - Returns: The localization key of the input health state.
   private static func inputHealthKey(_ state: ControllerInputHealthState) -> String {
     switch state {
     case .healthy: return "ui.controllers.inputHealth.healthy"
@@ -255,6 +356,10 @@ enum ControllerDetailFacts {
     }
   }
 
+  /// Returns the localization key of the publication state.
+  ///
+  /// - Parameter state: The state.
+  /// - Returns: The localization key of the publication state.
   private static func publicationKey(_ state: ApplicationServicePublicationStatus.State) -> String {
     switch state {
     case .published: return "ui.controllers.publication.published"
@@ -263,11 +368,19 @@ enum ControllerDetailFacts {
     }
   }
 
-  /// The record layer that sets the controller's server, by the name the Library gives it.
+  /// Returns the record layer that sets the controller's server, by the name the Library gives it.
+  ///
+  /// - Parameter record: The controller model's effective record.
+  /// - Returns: The record layer that sets the controller's server, by the name the Library gives
+  ///   it.
   static func serverSourceText(_ record: ControllerRecord) -> String {
     (record.fieldLayers["server"] ?? .driver).libraryTitle
   }
 
+  /// Returns the publication state, with the reason or the failure when it has one.
+  ///
+  /// - Parameter publication: The publication status the service reported.
+  /// - Returns: The publication state, with the reason or the failure when it has one.
   static func publicationText(_ publication: ApplicationServicePublicationStatus) -> String {
     let state = OJDLocalized.string(publicationKey(publication.state))
     let detail: String
@@ -283,18 +396,34 @@ enum ControllerDetailFacts {
     return OJDLocalized.formatted("ui.controllers.publication.withReason", state, detail)
   }
 
+  /// Returns the serial number as reported.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: The serial number as reported.
   static func serialNumber(_ device: ApplicationServiceDeviceDescription) -> OJDValue {
     .reported(device.serialNumber)
   }
 
+  /// Returns the vendor and product ID.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: The vendor and product ID.
   static func usbIdentifier(_ device: ApplicationServiceDeviceDescription) -> OJDValue {
     .usbIdentifier(vendorID: device.vendorID, productID: device.productID)
   }
 
+  /// Returns the battery level, or none when the controller reports none.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: The battery level, or none when the controller reports none.
   static func battery(_ device: ApplicationServiceDeviceDescription) -> OJDValue {
     OJDValue(device.connectionState?.power.battery.percentageText)
   }
 
+  /// Returns the charging state, or none while it is unknown.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: The charging state, or none while it is unknown.
   static func chargingState(_ device: ApplicationServiceDeviceDescription) -> OJDValue {
     switch device.connectionState?.power.charging ?? .unknown {
     case .discharging: return .text(OJDLocalized.string("ui.controllers.discharging"))
@@ -305,6 +434,10 @@ enum ControllerDetailFacts {
     }
   }
 
+  /// Returns whether the controller is on a cable, or none when it does not report it.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: Whether the controller is on a cable, or none when it does not report it.
   static func cableState(_ device: ApplicationServiceDeviceDescription) -> OJDValue {
     switch device.connectionState?.power.wiredPower {
     case true?:
@@ -315,7 +448,12 @@ enum ControllerDetailFacts {
     }
   }
 
-  /// How long before `now` the system uptime `nanoseconds` was, as relative text.
+  /// Returns how long before `now` the system uptime `nanoseconds` was, as relative text.
+  ///
+  /// - Parameters:
+  ///   - nanoseconds: The uptime of the event, or nil.
+  ///   - now: The uptime now.
+  /// - Returns: How long before `now` the system uptime `nanoseconds` was, as relative text.
   static func age(_ nanoseconds: UInt64?, now: UInt64) -> OJDValue {
     guard let nanoseconds, nanoseconds <= now else { return .none }
     let seconds = Double(now - nanoseconds) / 1_000_000_000
@@ -327,6 +465,13 @@ enum ControllerDetailFacts {
     )
   }
 
+  /// Returns the fact with the localized label.
+  ///
+  /// - Parameters:
+  ///   - kind: What the fact says.
+  ///   - key: The localization key of the label.
+  ///   - value: The value of the fact.
+  /// - Returns: The fact with the localized label.
   private static func fact(
     _ kind: ControllerFact.Kind,
     _ key: String,
@@ -337,7 +482,10 @@ enum ControllerDetailFacts {
     ControllerFact(kind: kind, label: OJDLocalized.string(key), value: value)
   }
 
-  /// The comma-separated names, or no value when there are none.
+  /// Returns the comma-separated names, or no value when there are none.
+  ///
+  /// - Parameter names: The names.
+  /// - Returns: The comma-separated names, or no value when there are none.
   private static func list(_ names: [String]) -> OJDValue {
     names.isEmpty ? .none : .text(names.joined(separator: ", "))
   }

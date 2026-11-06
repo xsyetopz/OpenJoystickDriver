@@ -4,8 +4,10 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// The families whose descriptions hold the input layout, which `ReportLayoutDriver` decodes:
-/// `XboxXID`, `NintendoSwitchInputOnly` and `VendorFlydigi`. Their decoded frames are pinned by
-/// `DriverParseCharacterizationTests`, `XboxXIDFieldSweepTests` and each family's parser suite.
+/// `XboxXID`, `NintendoSwitchInputOnly` and `VendorFlydigi`.
+///
+/// Their decoded frames are pinned by `DriverParseCharacterizationTests`, `XboxXIDFieldSweepTests`
+/// and each family's parser suite.
 struct DescribedLayoutFamilyTests {
   private static let described: [PhysicalProtocolID] = [
     .xboxXID, .nintendoSwitchInputOnly, .vendorFlydigi,
@@ -15,13 +17,13 @@ struct DescribedLayoutFamilyTests {
   func descriptionsDeclareTheirLayoutThroughTheInputSection(family: PhysicalProtocolID) {
     let description = family.protocolDescription
     #expect(description.recordSections.contains(.input))
-    #expect(description.inputLayout != nil)
+    #expect(description.inputLayouts != nil)
     #expect(!family.requiresRecordInputLayout)
   }
 
   @Test(arguments: described)
   func advertisedControlsContainEveryControlTheLayoutDecodes(family: PhysicalProtocolID) throws {
-    let layout = try #require(family.protocolDescription.inputLayout)
+    let layout = try #require(family.protocolDescription.inputLayouts)
     #expect(layout.controls.isSubset(of: family.describedControls.controls))
     let driver = ReportLayoutDriver(
       describedBy: family,
@@ -38,7 +40,7 @@ struct DescribedLayoutFamilyTests {
   @Test
   func exactlyTheDescribedFamiliesSetAnInputLayout() {
     let withLayout = PhysicalProtocolID.allCases.filter {
-      $0.protocolDescription.inputLayout != nil
+      $0.protocolDescription.inputLayouts != nil
     }
     #expect(Set(withLayout) == Set(Self.described))
   }
@@ -73,7 +75,7 @@ struct DescribedLayoutFamilyTests {
 
   @Test
   func xidDeclaresTheTwentyByteReportOfAnyLength() throws {
-    let layout = try #require(ProtocolDescription.bundled[.xboxXID]?.inputLayout)
+    let layout = try #require(ProtocolDescription.bundled[.xboxXID]?.inputLayouts?.layouts.first)
     #expect(layout.reportID == nil)
     #expect(layout.minimumLength == 20)
     #expect(!layout.requiresExactLength)
@@ -81,7 +83,7 @@ struct DescribedLayoutFamilyTests {
 
   @Test
   func switchInputOnlyDeclaresTheSevenByteReportWithoutAnID() throws {
-    let layout = try #require(ProtocolDescription.bundled[.nintendoSwitchInputOnly]?.inputLayout)
+    let layout = try #require(ProtocolDescription.bundled[.nintendoSwitchInputOnly]?.inputLayouts?.layouts.first)
     #expect(layout.reportID == nil)
     #expect(layout.minimumLength == 7)
     #expect(!layout.requiresExactLength)
@@ -89,7 +91,7 @@ struct DescribedLayoutFamilyTests {
 
   @Test
   func flydigiDeclaresExactlyFifteenBytesWithReportID1() throws {
-    let layout = try #require(ProtocolDescription.bundled[.vendorFlydigi]?.inputLayout)
+    let layout = try #require(ProtocolDescription.bundled[.vendorFlydigi]?.inputLayouts?.layouts.first)
     #expect(layout.reportID == 1)
     #expect(layout.minimumLength == 15)
     #expect(layout.requiresExactLength)

@@ -1,17 +1,24 @@
 import Foundation
 
-/// The five areas of the main window, in sidebar order. `Command-1` to `Command-5` select them
-/// in this order. The window opens on Controllers until another area was chosen.
+/// The five areas of the main window, in sidebar order.
+///
+/// `Command-1` to `Command-5` select them in this order.
 public enum MainWindowArea: String, CaseIterable, Identifiable, Hashable, Sendable {
+  /// The Controllers area.
   case controllers
+  /// The Profiles area.
   case profiles
+  /// The Library area.
   case library
+  /// The Access area.
   case access
+  /// The Activity area.
   case activity
 
+  /// The raw value, which identifies the area.
   public var id: String { rawValue }
 
-  /// The key equivalent digit that selects this area with `Command`.
+  /// The digit that selects this area with `Command`.
   public var keyEquivalent: String {
     switch self {
     case .controllers: return "1"
@@ -22,7 +29,7 @@ public enum MainWindowArea: String, CaseIterable, Identifiable, Hashable, Sendab
     }
   }
 
-  /// SF Symbol of the area's sidebar row, shown before its title.
+  /// The SF Symbol of the area's sidebar row, shown before its title.
   public var symbolName: String {
     switch self {
     case .controllers: return "gamecontroller"
@@ -33,7 +40,7 @@ public enum MainWindowArea: String, CaseIterable, Identifiable, Hashable, Sendab
     }
   }
 
-  /// Localization key of the area's title: its sidebar row, its View menu item and the window
+  /// The localization key of the area's title: its sidebar row, its View menu item and the window
   /// title while it is selected.
   public var titleKey: String { "ui.sidebar.\(rawValue).title" }
 
@@ -46,18 +53,21 @@ public enum MainWindowArea: String, CaseIterable, Identifiable, Hashable, Sendab
   }
 }
 
-/// The half of a list and detail area that a view renders: the content list column or the
-/// detail column.
+/// The half of a list and detail area that a view renders.
 enum MainWindowColumn {
+  /// The content list column.
   case list
+  /// The detail column.
   case detail
 }
 
-/// Opens the main window on an area. The status item, the main menu and other windows reach
-/// the main window only through this.
+/// Opens the main window on an area.
+///
+/// The status item, the main menu and other windows reach the main window only through this.
 @preconcurrency
 @MainActor
 public protocol MainWindowPresenting: AnyObject {
+  /// Shows the main window on `area`, or on the area it already shows when nil.
   func showMainWindow(area: MainWindowArea?)
   /// Shows the Explain Error Code sheet over the main window, in the area it is in.
   func showErrorCodeExplainer()
@@ -79,16 +89,25 @@ public protocol MainWindowPresenting: AnyObject {
 
 /// The panes of the Settings window, in toolbar order.
 public enum SettingsWindowPane: String, CaseIterable, Identifiable, Hashable, Sendable {
+  /// The General pane.
   case general
+  /// The Notifications pane.
   case notifications
+  /// The Advanced pane.
   case advanced
 
+  /// The raw value, which identifies the pane.
   public var id: String { rawValue }
+  /// The localization key of the pane's title.
   public var titleKey: String { "ui.settings.\(rawValue).title" }
 }
 
+/// Opens the Settings window on a pane.
+///
+/// The status item and the main menu reach it only through this.
 @preconcurrency
 @MainActor
 public protocol SettingsWindowPresenting: AnyObject {
+  /// Shows the Settings window on `pane`, or on the pane it already shows when nil.
   func showSettings(pane: SettingsWindowPane?)
 }

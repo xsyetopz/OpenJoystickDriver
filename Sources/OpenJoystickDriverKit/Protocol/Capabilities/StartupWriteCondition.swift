@@ -1,15 +1,19 @@
 import Foundation
 
-/// Which controllers of a family a startup write in its protocol description is for. Records
-/// never carry a condition: a record's write is for that record.
+/// Which controllers of a family a startup write in its protocol description is for.
+///
+/// Records never carry a condition: a record's write is for that record.
 public struct StartupWriteCondition: Equatable, Sendable {
   /// A rule on one enumeration parameter of the controller's record.
   public struct Rule: Equatable, Sendable {
+    /// The name of the enumeration parameter the rule tests.
     public let parameter: String
+    /// The parameter values the rule lists.
     public let values: [String]
     /// True for `isNot`, which also matches a controller that leaves the parameter unset.
     public let negated: Bool
 
+    /// Whether the rule holds for a controller whose record sets `parameters`.
     func matches(_ parameters: ProtocolParameters) -> Bool {
       let value = parameters.enumerationValue(parameter)
       let listed = value.map(values.contains) ?? false
@@ -19,19 +23,24 @@ public struct StartupWriteCondition: Equatable, Sendable {
 
   /// The stored variants the write is sent on; nil for every variant.
   public let variants: [PhysicalProtocolVariantID]?
+  /// The rule on a record parameter that the controller must satisfy; nil for none.
   public let rule: Rule?
 
+  /// The condition that every controller satisfies.
   public static let always = Self(variants: nil, rule: nil)
 
+  /// Creates a condition from the variants and the parameter rule.
   public init(variants: [PhysicalProtocolVariantID]? = nil, rule: Rule? = nil) {
     self.variants = variants
     self.rule = rule
   }
 
+  /// Whether the condition holds for every controller.
   public var isAlways: Bool { variants == nil && rule == nil }
 
-  /// Whether a controller on `variant` whose record sets `parameters` receives the write. A
-  /// controller with no stored variant matches only a write that names none.
+  /// Whether a controller on `variant` whose record sets `parameters` receives the write.
+  ///
+  /// A controller with no stored variant matches only a write that names none.
   public func matches(
     variant: PhysicalProtocolVariantID?,
     parameters: ProtocolParameters
@@ -44,9 +53,13 @@ public struct StartupWriteCondition: Equatable, Sendable {
 extension CodingUserInfoKey {
   /// Set while a protocol description decodes: only a description's startup writes may carry
   /// a `variants` or `when` condition.
-  static let startupConditionsAllowed = CodingUserInfoKey(
-    rawValue: "OpenJoystickDriver.startupConditionsAllowed"
-  )!
+  static let startupConditionsAllowed: CodingUserInfoKey = {
+    let name = "OpenJoystickDriver.startupConditionsAllowed"
+    guard let key = CodingUserInfoKey(rawValue: name) else {
+      preconditionFailure("CodingUserInfoKey accepts every raw value")
+    }
+    return key
+  }()
 }
 
 extension StartupWriteCondition {
@@ -86,9 +99,13 @@ extension StartupWriteCondition {
     return Self(variants: variants, rule: rule)
   }
 
+  /// The JSON object of a `when` key.
   private struct When: Decodable {
+    /// The rule the object states.
     let rule: Rule
 
+    /// Decodes `parameter` and exactly one of `is` or `isNot`; an unknown key, an unknown
+    /// parameter, or a value count outside 1...16 is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["parameter", "is", "isNot"])

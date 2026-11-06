@@ -8,8 +8,11 @@ public enum PacketLogDirection: String, Codable, Sendable {
   case transmitted = "Tx"
 }
 
+/// Whether a packet is controller traffic or routine upkeep.
 public enum PacketLogClassification: Sendable, Equatable {
+  /// A packet that carries input or output.
   case activity
+  /// A GIP announce or status command.
   case gipHousekeeping
 }
 
@@ -58,21 +61,29 @@ public struct PacketLogEntry: Codable, Sendable {
 
 /// Tracks newly appended entries across snapshots of a bounded packet ring.
 public struct PacketLogSnapshotCursor: Sendable {
+  /// The entries of the snapshot that `consume(snapshot:)` last saw.
   private var previous: [PacketLogEntry]
 
+  /// Creates a cursor that treats `snapshot` as already seen.
   public init(snapshot: [PacketLogEntry] = []) { previous = snapshot }
 
+  /// The entries of `snapshot` that are new since the last snapshot.
+  ///
+  /// It finds the longest run at the start of `snapshot` that ends the previous snapshot, because
+  /// the ring drops its oldest entries as it fills.
   public mutating func consume(snapshot: [PacketLogEntry]) -> [PacketLogEntry] {
     let overlap = Self.overlap(previous: previous, snapshot: snapshot)
     previous = snapshot
     return Array(snapshot.dropFirst(overlap))
   }
 
+  /// Whether the two entries have the same timestamp, direction, length and hex text.
   private static func matches(_ pair: (PacketLogEntry, PacketLogEntry)) -> Bool {
     pair.0.timestamp == pair.1.timestamp && pair.0.direction == pair.1.direction
       && pair.0.length == pair.1.length && pair.0.hex == pair.1.hex
   }
 
+  /// The number of entries at the start of `snapshot` that repeat the end of `previous`.
   private static func overlap(previous: [PacketLogEntry], snapshot: [PacketLogEntry]) -> Int {
     var sequence = snapshot.map(Optional.some)
     sequence.append(nil)
@@ -90,9 +101,11 @@ public struct PacketLogSnapshotCursor: Sendable {
     return min(prefix[sequence.count - 1], snapshot.count)
   }
 
+  /// Whether the two optional entries match; two nil values match, which marks the join of the two
+  /// sequences.
   private static func matches(_ lhs: PacketLogEntry?, _ rhs: PacketLogEntry?) -> Bool {
     switch (lhs, rhs) {
-    case let (.some(lhs), .some(rhs)): return matches((lhs, rhs))
+    case (.some(let lhs), .some(let rhs)): return matches((lhs, rhs))
     case (.none, .none): return true
     default: return false
     }

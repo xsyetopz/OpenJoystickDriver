@@ -4,13 +4,18 @@
   import SwiftUI
 
   /// The Xbox USB driver extension section of Settings > Advanced: its state, and Uninstall while
-  /// it is active. Problems with the driver show in the main window's problem banner.
+  /// it is active.
+  ///
+  /// Problems with the driver show in the main window's problem banner.
   struct DriverExtensionSection: View {
+    /// The driver extension state and its uninstall action.
     @ObservedObject
     var runtime: RuntimeViewModel
+    /// Whether the Uninstall confirmation alert is open.
     @State
     private var confirmsUninstall = false
 
+    /// The driver extension status and its uninstall button, with the confirmation.
     var body: some View {
       Section(OJDLocalized.string("ui.setup.driverTitle")) {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -35,6 +40,7 @@
       }
     }
 
+    /// The localization key of the sentence that describes the driver extension state.
     private var detailKey: String {
       switch runtime.systemExtensionSetupState {
       case .checking: return "ui.setup.checkingDetail"

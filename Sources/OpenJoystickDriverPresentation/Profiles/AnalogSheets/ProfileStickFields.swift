@@ -2,10 +2,14 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The fields of one stick mapping: the mode, the dead zones, the response and the settings of
+  /// the mode.
   struct ProfileStickFields: View {
+    /// The stick mapping being edited.
     @Binding
     var draft: ProfileStickDraft
 
+    /// The enabled toggle and, while it is on, the mode and the settings of the stick.
     var body: some View {
       VStack(alignment: .leading, spacing: 12) {
         Toggle(label("enabled"), isOn: $draft.enabled)
@@ -75,6 +79,7 @@
       }
     }
 
+    /// The picker of the rotation direction.
     private var rotationPicker: some View {
       Picker(label("rotationDirection"), selection: $draft.rotationDirection) {
         Text(label("clockwise")).tag(RemappingStickRotationDirection.clockwise)
@@ -84,6 +89,7 @@
       }
     }
 
+    /// A labeled text field for the stick setting called `key`.
     private func field(_ key: String, _ value: Binding<String>) -> some View {
       VStack(alignment: .leading, spacing: 4) {
         Text(label(key))
@@ -91,6 +97,7 @@
       }
     }
 
+    /// Returns the text of the stick field called `key`.
     private func label(_ key: String) -> String {
       OJDLocalized.string("ui.profiles.stick." + key)
     }

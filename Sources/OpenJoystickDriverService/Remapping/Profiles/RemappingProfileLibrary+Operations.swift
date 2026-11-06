@@ -2,10 +2,16 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension RemappingProfileLibrary {
+  /// Returns every profile, local and from packages, sorted by name.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError`` when the library cannot be loaded.
   func profiles() throws -> [RemappingProfile] {
     try allProfiles(loadIfNeeded()).sorted(by: Self.profileOrder)
   }
 
+  /// Returns the profiles, the active selections and the issues of the library.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError`` when the library cannot be loaded.
   func snapshot() throws -> RemappingProfileLibrarySnapshot {
     let loaded = try loadIfNeeded()
     return RemappingProfileLibrarySnapshot(
@@ -40,12 +46,19 @@ extension RemappingProfileLibrary {
     )
   }
 
+  /// Returns the profile `id`, or nil when none has it.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError`` when the library cannot be loaded or is unusable.
   func profile(id: UUID) throws -> RemappingProfile? {
     let loaded = try loadIfNeeded()
     try requireUsableLibrary()
     return allProfiles(loaded).first { $0.id == id }
   }
 
+  /// Adds `profile` to the library.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError`` when the profile exists, is a package profile, is
+  ///   invalid or has a name in use, or when the library needs recovery or cannot be written.
   @discardableResult
   func create(_ profile: RemappingProfile) throws -> RemappingProfileMutationImpact {
     var proposed = try loadIfNeeded()
@@ -60,6 +73,11 @@ extension RemappingProfileLibrary {
     return RemappingProfileMutationImpact(modelsNeedingRefresh: [])
   }
 
+  /// Checks that the library still holds `expectedCurrent` as the profile `profileID`.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError/profileUpdateConflict(_:)`` when it differs,
+  ///   ``RemappingProfileLibraryError/profileNotFound(_:)`` when it is missing and
+  ///   ``RemappingProfileLibraryError/packageProfileReadOnly`` for a package profile.
   func requireCurrent(_ expectedCurrent: RemappingProfile, profileID: UUID) throws {
     guard expectedCurrent.id == profileID else {
       throw RemappingProfileLibraryError.profileUpdateConflict(profileID)
@@ -74,6 +92,13 @@ extension RemappingProfileLibrary {
     }
   }
 
+  /// Replaces the profile `profile.id` when the library still holds `expectedCurrent`.
+  ///
+  /// A profile that changes its model or becomes a Joy-Con pair profile is deactivated.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError`` when the profile is missing, changed, a package
+  ///   profile, invalid or has a name in use, or when the library needs recovery or cannot be
+  ///   written.
   @discardableResult
   func update(
     _ profile: RemappingProfile,
@@ -133,6 +158,10 @@ extension RemappingProfileLibrary {
     return RemappingProfileMutationImpact(modelsNeedingRefresh: modelsNeedingRefresh)
   }
 
+  /// Removes the profile `id` and its active selections.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError/profileNotFound(_:)`` when no local profile has the
+  ///   ID, and the other failures of a library change.
   @discardableResult
   func delete(id: UUID) throws -> RemappingProfileMutationImpact {
     var proposed = try loadIfNeeded()
@@ -186,6 +215,10 @@ extension RemappingProfileLibrary {
     return RemappingProfileMutationImpact(modelsNeedingRefresh: [model])
   }
 
+  /// Removes the active selection of the profile `profileID`.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError/profileNotFound(_:)`` when the profile is not active,
+  ///   and the other failures of a library change.
   @discardableResult
   func deactivate(profileID: UUID) throws -> RemappingProfileMutationImpact {
     var proposed = try loadIfNeeded()
@@ -198,6 +231,10 @@ extension RemappingProfileLibrary {
     return RemappingProfileMutationImpact(modelsNeedingRefresh: [existing.model])
   }
 
+  /// Removes every active selection of the model `vendorID` and `productID`.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError`` when the library needs recovery or cannot be
+  ///   written.
   @discardableResult
   func deactivateAll(vendorID: UInt16, productID: UInt16) throws -> RemappingProfileMutationImpact {
     var proposed = try loadIfNeeded()
@@ -208,6 +245,10 @@ extension RemappingProfileLibrary {
     return RemappingProfileMutationImpact(modelsNeedingRefresh: [model])
   }
 
+  /// Returns the active profile for the unit `unit` of the model, whatever the frontmost
+  /// application.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError`` when the library cannot be loaded or is unusable.
   func activeProfile(
     vendorID: UInt16,
     productID: UInt16,
@@ -221,8 +262,10 @@ extension RemappingProfileLibrary {
     )
   }
 
-  /// The profile that drives one controller. Profiles for another unit of the model never apply;
-  /// within each tier below, a profile for `unit` wins over one for every unit.
+  /// The profile that drives one controller.
+  ///
+  /// Profiles for another unit of the model never apply; within each tier below, a profile for
+  /// `unit` wins over one for every unit.
   func activeProfile(
     vendorID: UInt16,
     productID: UInt16,
