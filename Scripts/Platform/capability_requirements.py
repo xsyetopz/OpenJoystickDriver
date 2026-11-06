@@ -135,7 +135,6 @@ def requirements_for(argv: list[str]) -> tuple[Capability, ...]:
             Capability.JUST,
             Capability.BUN,
             Capability.RUFF,
-            Capability.PYRIGHT,
             Capability.SHELLCHECK,
             Capability.SWIFTLINT,
         )

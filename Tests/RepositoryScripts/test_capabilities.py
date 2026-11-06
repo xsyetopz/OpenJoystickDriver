@@ -257,7 +257,7 @@ class CapabilityResolverTests(unittest.TestCase):
             self.assertIn("bun install", raised.exception.outcome.detail)
             binary = root / "node_modules/.bin/biome"
             binary.parent.mkdir(parents=True)
-            binary.write_text("#!/bin/sh\necho 'Version: 2.5.15'\n", encoding="utf-8")
+            binary.write_text("console.log('Version: 2.5.15');\n", encoding="utf-8")
             binary.chmod(0o755)
             outcomes = resolver.resolve([Capability.BIOME])
             self.assertEqual(outcomes[0].kind, OutcomeKind.AVAILABLE)

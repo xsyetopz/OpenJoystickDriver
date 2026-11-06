@@ -66,9 +66,9 @@ driverkit-check:
 lint:
     ruff format --check Scripts Tests/RepositoryScripts
     ruff check Scripts Tests/RepositoryScripts
-    pyright
+    bun run node_modules/.bin/pyright
     find Scripts -type f \( -name '*.sh' -o -name ojd \) -print0 | xargs -0 shellcheck --external-sources --source-path=SCRIPTDIR
-    git ls-files -z -co --exclude-standard -- '*.md' ':!.agents/' | xargs -0 markdownlint-cli2
+    git ls-files -z -co --exclude-standard -- '*.md' ':!.agents/' | xargs -0 bun run node_modules/.bin/markdownlint-cli2
     biome="$(python3 -m Scripts.Quality.biome_binary "$PWD")" && git ls-files -z -co --exclude-standard -- '*.json' '*.jsonc' | xargs -0 bun run "$biome" ci
     swift-format lint --recursive --strict Package.swift Sources Tests Tools
     xcode="${DEVELOPER_DIR:-$(find /Applications -maxdepth 1 -type d -name 'Xcode*.app' -exec test -x '{}/Contents/Developer/usr/bin/xcodebuild' ';' -print | sort -r | head -n1)/Contents/Developer}"; DEVELOPER_DIR="$xcode" swiftlint lint --no-cache --strict

@@ -22,7 +22,6 @@ class Capability(Enum):
     RELEASE_SIGNING = "release signing"
     NOTARIZATION = "notarization credentials"
     RUFF = "Ruff"
-    PYRIGHT = "Pyright"
     XMAKE = "Xmake"
     BIOME = "pinned Biome"
 
@@ -59,7 +58,6 @@ FORMULAS: dict[Capability, tuple[str, str]] = {
     Capability.SDL3: ("sdl3", "sdl3"),
     Capability.GH: ("gh", "gh"),
     Capability.RUFF: ("ruff", "ruff"),
-    Capability.PYRIGHT: ("pyright", "pyright"),
     Capability.XMAKE: ("xmake", "xmake"),
 }
 

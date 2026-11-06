@@ -4,7 +4,9 @@
     "@biomejs/biome": "2.6.6",
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "markdownlint-cli2": "0.24.0",
+    "pyright": "1.1.414"
   },
   "scripts": {
     "prepare": "husky && bash Scripts/Quality/pin-hooks-path.sh"
