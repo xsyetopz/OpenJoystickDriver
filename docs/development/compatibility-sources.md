@@ -65,6 +65,12 @@ The evidence classes used for this decision are official documentation, upstream
 [24]: https://github.com/libsdl-org/SDL/blob/8adc0f98837db84fd24f17c339e59dcf36a17156/src/joystick/hidapi/SDL_hidapi_gip.c
 [25]: https://github.com/atar-axis/xpadneo/blob/547eb90cd9f01de64db888b558f7e1a606c71965/hid-xpadneo/src/xpadneo/xpadneo.h
 
+## Pinned Flydigi Evidence
+
+- **Community:** [`flydigi-space-station-mac`, `docs/protocol.md` at `649b9f36cbba80deb7e7ac11309615d44f382a8e`][26] (MIT, Copyright (c) 2026 Uilton Lopes and contributors; the notice is in [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md)) gives the Apex 4 DInput interface (`04B4:2412`, usage page `0xFFA0`, input report 4, output report 5) and the byte and bit layout of its report 4 (section 9). The notes say they were verified on an Apex 4; OJD has no capture of its own, so the `04B4:2412` record is source-derived and unverified. No code is copied.
+
+[26]: https://github.com/uiltonlopes/flydigi-space-station-mac/blob/649b9f36cbba80deb7e7ac11309615d44f382a8e/docs/protocol.md
+
 ## Current Evidence Boundaries
 
 - [ControllerSources.lock.json](../../ControllerSources.lock.json) pins Linux commit `44696aa3a489d2baf58efa61b37833f100072bee` and per-file hashes for `xpad.c`, `hid-playstation.c`, `hid-sony.c`, `hid-nintendo.c`, and `hid-steam.c`. These upstream references establish protocol or identity context, not macOS descriptors, endpoints, TCC behavior, or hardware success. This record reviews the `xpad.c` SPDX identifier only; the other files support separate physical protocol work and were not license-reviewed here.

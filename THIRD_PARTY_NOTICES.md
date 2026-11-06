@@ -99,3 +99,31 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 
 [3]: https://github.com/mdqinc/SDL_GameControllerDB/tree/07af1d50187e94c861c9f9f5d8a55b148f11306b
+
+## flydigi-space-station-mac
+
+The `04B4:2412` record follows the report layout in `docs/protocol.md` of [flydigi-space-station-mac][4], commit `649b9f36cbba80deb7e7ac11309615d44f382a8e`. No code is copied. The project is under the MIT license:
+
+MIT License
+
+Copyright (c) 2026 Uilton Lopes and contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+[4]: https://github.com/uiltonlopes/flydigi-space-station-mac/tree/649b9f36cbba80deb7e7ac11309615d44f382a8e

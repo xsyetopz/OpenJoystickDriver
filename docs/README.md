@@ -40,6 +40,7 @@ This directory holds the development notes and hardware-evidence records for Ope
 - [Consumer-Binding Evidence](testing/consumer-binding.md): How to interpret compatibility claims, with observed consumer results.
 - [Test A Controller Record](testing/controller-record.md): Validating candidate OJD JSON records without Apple Developer Program membership.
 - [Flydigi Tester Checks](testing/flydigi-tester-checks.md): The cards testers follow to check each Flydigi record.
+- [Flydigi Apex 4 (DInput)](testing/flydigi-apex-4.md): The DInput identity `04B4:2412`, a source-derived record that no tester has confirmed.
 - [Flydigi Vader 4 Pro (Bluetooth)](testing/flydigi-vader-4-pro.md): The Bluetooth identity `D7D7:0041` observed on macOS 26.5.
 - [Test The GameSir G7 Pro, Cyclone 2, and G7 Pro 8K PC](testing/gamesir-family.md): Source-backed records that are not hardware-verified.
 - [Probe macOS Haptics Backends](testing/haptics-backends.md): Diagnostics that separate backend inventory, GameController haptics, SDL output, and direct rumble.

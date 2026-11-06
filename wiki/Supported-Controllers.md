@@ -49,9 +49,17 @@ The 8BitDo Ultimate 2C Wireless has a different VID:PID in each mode. The Blueto
 
 ### Unverified
 
-OJD includes a built-in catalog of 696 controller records. The Unverified tier is every catalog controller that this page does not list as Official or Community-verified. A record does not prove that the controller works. Nobody tested these controllers on real hardware. The catalog includes the NVIDIA SHIELD controllers of 2015 (`0955:7210`) and 2017 (`0955:7214`). On macOS the 2017 controller sends input only, with no rumble.
+OJD includes a built-in catalog of 697 controller records. The Unverified tier is every catalog controller that this page does not list as Official or Community-verified. A record does not prove that the controller works. Nobody tested these controllers on real hardware. The catalog includes the NVIDIA SHIELD controllers of 2015 (`0955:7210`) and 2017 (`0955:7214`). On macOS the 2017 controller sends input only, with no rumble.
 
 An unverified controller may work, may partly work, or may not work. The tier does not mean that the controller is broken or fake.
+
+### Flydigi Records
+
+These Flydigi records are source-derived and unverified. The files a tester sends decide what each record maps; the checks are in [Flydigi tester checks](../docs/testing/flydigi-tester-checks.md).
+
+| Controller | VID:PID | Mode | Test record |
+| --- | --- | --- | --- |
+| Flydigi Apex 4 | `04B4:2412` | DInput; the XInput mode is the Microsoft `045E:028E` record | [Apex 4](../docs/testing/flydigi-apex-4.md) |
 
 To find out whether your controller is in the catalog:
 
