@@ -2370,9 +2370,9 @@
 /* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line sets the map. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
 "cli.controller.show.inputMappingSDL" = "zugeordnet aus SDL_GameControllerDB (Treffer %1$@, GUID %2$@)";
 /* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when the standard HID usage map applies. */
-"cli.controller.show.inputMappingStandard" = "Standard-HID-Usage-Map";
+"cli.controller.show.inputMappingStandard" = "Standard-HID-Nutzungszuordnung";
 /* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line matched but cannot drive the controller. SDL_GameControllerDB is a project name and stays as written. %@ is the reason. */
-"cli.controller.show.inputMappingRejected" = "Standard-HID-Usage-Map (SDL_GameControllerDB-Zeile abgelehnt: %@)";
+"cli.controller.show.inputMappingRejected" = "Standard-HID-Nutzungszuordnung (SDL_GameControllerDB-Zeile abgelehnt: %@)";
 /* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
 "cli.controller.show.inputMappingUnbound" = "nicht angewendet, der Deskriptor-Vertrag ist nicht erfüllt (SDL_GameControllerDB-Zeile gefunden, Treffer %1$@, GUID %2$@)";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */

@@ -2338,9 +2338,9 @@
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "Запись";
 /* Row label in the output of 'ojd controller show' and in the controller detail. Where the HID usage map of the controller comes from follows. */
-"cli.controller.show.labelInputMapping" = "Сопоставление ввода";
+"cli.controller.show.labelInputMapping" = "Назначение ввода";
 /* Row label in the output of 'ojd controller show' and in the controller detail. The controls that the SDL_GameControllerDB line names but the driver cannot map follow. */
-"cli.controller.show.labelUnmapped" = "Несопоставленные элементы управления";
+"cli.controller.show.labelUnmapped" = "Неназначенные элементы управления";
 /* Row label in the output of 'ojd controller show'. The list of rumble motors the controller has follows. */
 "cli.controller.show.labelRumble" = "Вибрация";
 /* Row label in the output of 'ojd controller show'. The state of the session follows, such as active or suspended. */
@@ -2368,7 +2368,7 @@
 /* Value of the Input mapping row of 'ojd controller show' and of the controller detail when a controller record sets the map. */
 "cli.controller.show.inputMappingRecord" = "запись";
 /* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line sets the map. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
-"cli.controller.show.inputMappingSDL" = "сопоставлено из SDL_GameControllerDB (совпадение %1$@, GUID %2$@)";
+"cli.controller.show.inputMappingSDL" = "назначено из SDL_GameControllerDB (совпадение %1$@, GUID %2$@)";
 /* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when the standard HID usage map applies. */
 "cli.controller.show.inputMappingStandard" = "стандартная карта использований HID";
 /* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line matched but cannot drive the controller. SDL_GameControllerDB is a project name and stays as written. %@ is the reason. */
