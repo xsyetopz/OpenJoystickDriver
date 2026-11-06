@@ -20,6 +20,8 @@ OpenJoystickDriver splits the package into SwiftPM targets whose dependencies en
 | `OpenJoystickDriverGameControllerProbe` | isolated GameController visibility probe |
 | `OpenJoystickDriverGameControllerViewer` | window that shows every GameController input element of each connected controller and prints each change as a JSON line, to test GameController input by hand; not shipped |
 
+`OpenJoystickDriverHIDTool` is internal. `OJDRepositoryTool` is a development tool that neither the app nor `ojd` ships; it needs no localization, because its message text is the Kit error description, and it depends only on Kit. It prints one JSON line `{code, file, message}` for each problem and exits 1 when there is one, and 64 for a call it refuses: `swift run OJDRepositoryTool validate controllers|descriptions <directory>`, `validate profiles|virtual-devices <path>...`, and `apply-patches --controllers <directory> --patches <directory> --out <directory>`.
+
 ## Dependency Graph
 
 `Package.swift` declares these dependencies; the compiler rejects any import outside them.

@@ -13,7 +13,7 @@ Delete these comments before you submit.
 
 ## Checks
 
-<!-- Each command you ran and its result. `just check` runs them all. -->
+<!-- Each command you ran and its result. `just check` runs them all. Install a missing tool with `./Scripts/ojd setup` instead of writing "not installed" (CONTRIBUTING.md#ai-agents). -->
 
 ## Hardware Testing
 
@@ -21,7 +21,7 @@ Delete these comments before you submit.
 
 - Controller and VID:PID:
 - Connection:
-- OpenJoystickDriver version (the whole line from About OpenJoystickDriver):
+- OpenJoystickDriver version (the whole line from About OpenJoystickDriver of the build you tested; [Finding the Version](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#finding-the-version)):
 - macOS version and build (`sw_vers`):
 - What I tested and what I saw:
 

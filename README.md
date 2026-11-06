@@ -1,97 +1,128 @@
-# OpenJoystickDriver
+<div align="center">
 
-Use the controller you already own with Mac games.
+<img src="docs/images/app-icon.png" alt="" width="128">
 
-OpenJoystickDriver (OJD) is a free, open-source menu-bar app.
-It reads a controller over USB, Bluetooth, or a 2.4 GHz dongle and shows it to games as a standard virtual controller, including controllers that macOS does not support.
+<h1>OpenJoystickDriver</h1>
 
-[![Latest release][release-badge]][releases] [![macOS 12 or later][macos-badge]](#requirements) [![License][license-badge]](LICENSE) [![GitHub Sponsors][sponsor-badge]][sponsor]
+<h3>Play Mac games with the controller macOS does not support.</h3>
 
-![The Controllers area with a DualShock 3 that OJD serves as a virtual gamepad](docs/screenshots/main-controllers.png)
+<p>
+  <a href="https://github.com/xsyetopz/OpenJoystickDriver/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/xsyetopz/OpenJoystickDriver/ci.yml?branch=main&style=flat-square" alt="CI"></a>
+  <a href="https://github.com/xsyetopz/OpenJoystickDriver/releases"><img src="https://img.shields.io/github/v/release/xsyetopz/OpenJoystickDriver?include_prereleases&style=flat-square" alt="Latest release"></a>
+  <a href="https://github.com/xsyetopz/OpenJoystickDriver/releases"><img src="https://img.shields.io/github/downloads/xsyetopz/OpenJoystickDriver/total?style=flat-square" alt="Downloads"></a>
+  <a href="https://github.com/sponsors/xsyetopz"><img src="https://img.shields.io/badge/sponsor-30363D?logo=githubsponsors&logoColor=EA4AAA&style=flat-square" alt="GitHub Sponsors"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-PolyForm%20Noncommercial-blue?style=flat-square" alt="License: PolyForm Noncommercial"></a>
+</p>
+
+<p>
+  <a href="https://github.com/xsyetopz/OpenJoystickDriver/wiki">Wiki</a> ·
+  <a href="https://github.com/xsyetopz/OpenJoystickDriver/wiki/Supported-Controllers">Supported controllers</a> ·
+  <a href="CHANGELOG.md">Changelog</a>
+</p>
+
+</div>
+
+![The Controllers window with a DualShock 3 served as a virtual gamepad](docs/screenshots/main-controllers.png)
+
+macOS reads a short list of game controllers and ignores the rest, such as the DualShock 3 above. OpenJoystickDriver (OJD) is a menu-bar app that reads those controllers over USB, Bluetooth or a 2.4 GHz dongle and gives games a virtual Xbox or generic gamepad. A controller macOS already handles is left to macOS. OJD runs in your user session with one DriverKit extension and no kernel extension, so SIP and AMFI stay on.
 
 > [!WARNING]
-> OJD is alpha software.
 > Many controllers have no hardware test yet, and some games do not read the virtual controller.
 > Check [Supported controllers][wiki-supported] and [Playing games][wiki-games] before you rely on it.
 
-## Features
+## Quickstart
 
-- **696 controller records:** Xbox, PlayStation, Nintendo Switch, Steam, GameSir, NVIDIA SHIELD, Flydigi, and generic HID gamepads.
-  The [support table][wiki-supported] shows which ones have a hardware test.
-- **Three virtual controller profiles:** an Xbox Adaptive Controller for SDL games and Steam (`SDLCompatible`), an Xbox Wireless Controller for Apple's Game Controller framework (`GameControllerCompatible`), or a generic gamepad (`Generic`), one for each physical controller.
-- **SDL mappings:** `ojd virtual launch` starts a game with the mapping of your virtual controllers.
-- **Remapping:** buttons, combinations, sequences, and layers, plus keyboard, pointer, and scroll output.
-- **Input test:** see each button, stick, and trigger before you play.
-- **Mods:** install shared controllers, patches, profiles, and virtual devices with `ojd mod install`.
-- **No kernel extension:** SIP and AMFI stay on.
+Requires macOS 12 or later, on Apple silicon or Intel.
 
-## Requirements
-
-- macOS 12 (Monterey) or later, on Apple silicon or Intel.
-
-## Install
-
-1. Download the `.dmg` from the [latest release][releases].
-2. Drag **OpenJoystickDriver.app** into **Applications**, and open it from there.
-3. If macOS asks, allow the login item in **System Settings** > **General** > **Login Items**.
-4. For an Xbox One or Xbox Series controller on USB, also allow the driver extension in **System Settings** > **General** > **Login Items & Extensions** > **Driver Extensions**.
-
-To build the app yourself, see [Building from source][wiki-build].
-
-## Quick Start
-
-1. Click the controller icon in the menu bar.
-   If it shows **Grant Access**, click it and allow OJD in **Input Monitoring** and **Accessibility**.
-2. Connect your controller.
-3. Select it in **Controllers** and click **Open Input Test...** to check each control.
+1. Download the `.dmg` from the [latest release][releases], drag **OpenJoystickDriver.app** into **Applications** and open it.
+2. Click the controller icon in the menu bar. If it shows **Grant Access**, allow OJD in **Input Monitoring** and **Accessibility**.
+3. Connect the controller, select it under **Controllers** and click **Open Input Test...** to watch each control respond live.
 4. Start a game.
 
-If something does not work, see [Troubleshooting][wiki-troubleshooting].
+An Xbox One or Series controller on USB also needs the driver extension, under **System Settings** > **General** > **Login Items & Extensions** > **Driver Extensions**. Stuck? See [Troubleshooting][wiki-troubleshooting].
+
+## Features
+
+- 600+ controller records across Xbox, PlayStation, Nintendo Switch, Steam, GameSir, NVIDIA SHIELD, Flydigi and generic HID gamepads.
+- Three virtual profiles per controller: `SDLCompatible` (an Xbox Adaptive Controller for SDL games and Steam), `GameControllerCompatible` (an Xbox Wireless Controller for Apple's Game Controller framework) and `Generic`.
+- Remapping with combinations, sequences and layers, plus keyboard, pointer and scroll output.
+- A live input test for every button, stick and trigger.
+- Mods that add controller records, patches, profiles and virtual devices without touching the signed app.
+- `ojd`, a command-line tool with JSON output for scripts.
+
+## Usage
+
+Install `ojd` from **Settings** > **Install Command-Line Tool**, which links `/usr/local/bin/ojd`. Check the service, extension and permissions, then list connected controllers:
+
+```bash
+ojd status
+ojd controller list
+```
+
+Start an SDL game with your virtual controllers' mappings in `SDL_GAMECONTROLLERCONFIG`:
+
+```bash
+ojd virtual launch /Applications/PCSX2.app
+```
+
+Check a mod package, then install it:
+
+```bash
+ojd mod install ~/Downloads/my-controller-mod --dry-run
+ojd mod install ~/Downloads/my-controller-mod
+```
+
+The wiki covers the rest: [Getting started][wiki-start], [Using the app][wiki-app], [Remapping profiles][wiki-remap] and the [Command reference][wiki-cli].
 
 <details>
-<summary>More screenshots</summary>
+<summary>Screenshots</summary>
 
-![The menu-bar item menu](docs/screenshots/menu-bar-item.png)
-![The Library area with an installed controller record](docs/screenshots/main-library.png)
-![The Activity area showing the live log](docs/screenshots/main-activity.png)
-![The General pane of the Settings window](docs/screenshots/settings-general.png)
+![The menu-bar menu](docs/screenshots/menu-bar-item.png)
+![The Library window with an installed controller record](docs/screenshots/main-library.png)
+![The Activity window with the live log](docs/screenshots/main-activity.png)
+![The General pane of Settings](docs/screenshots/settings-general.png)
 
 </details>
 
-## Documentation
+## FAQ
 
-- [Wiki][wiki]: [Getting started][wiki-start], [Using the app][wiki-app], [Remapping profiles][wiki-remap], [Command reference][wiki-cli].
-- [Reporting a bug][wiki-bug]: send a bug or a controller test result.
-- [CONTRIBUTING.md](CONTRIBUTING.md), [LOCALIZATION.md](LOCALIZATION.md), and [SECURITY.md](SECURITY.md).
+<details>
+<summary>Do I need to disable SIP or AMFI?</summary>
 
-## Support
+No. OJD needs neither, in any build.
 
-Star the repository to help other Mac players find it.
-[GitHub Sponsors][sponsor] pays for the tools that build the app and for the controllers tested on the maintainer's Macs: Apple silicon on macOS 27 and Intel on macOS 12.
+</details>
 
-[![Star History Chart][star-chart]][star-history]
+<details>
+<summary>Does it work with Steam?</summary>
+
+Yes, with the `SDLCompatible` profile: Steam read every control and drove the rumble motors on macOS 27. With `Generic`, Steam was erratic and slow to respond. See [Playing games][wiki-games].
+
+</details>
+
+<details>
+<summary>Why does my controller work in one app but not another?</summary>
+
+Each app reads controllers through its own API, and some SDL apps cannot read the virtual controller. See [Game does not see the controller][wiki-not-seen].
+
+</details>
+
+## Contributing
+
+Run `./Scripts/ojd setup` and `just check` before opening a pull request; see [CONTRIBUTING.md](CONTRIBUTING.md). Bugs and controller test results go through [Reporting a bug][wiki-bug]. [Sponsorship][sponsor] pays for the controllers and Macs that tests run on; if your company uses OJD, please sponsor it.
 
 ## License
 
-[MIT](LICENSE).
-Xbox and PlayStation are trademarks of [Microsoft](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks) and [Sony](https://www.playstation.com/en-us/legal/copyright-and-trademark-notice/).
-This project is not affiliated with either.
+[PolyForm Noncommercial 1.0.0](LICENSE) © 2026 Krystian J., from 0.6.0-alpha.2 on. Commercial use needs a separate license; see [COMMERCIAL.md](COMMERCIAL.md). Releases up to and including 0.6.0-alpha.1 are MIT. Xbox and PlayStation are trademarks of Microsoft and Sony; OJD is not affiliated with either.
 
-[release-badge]: https://img.shields.io/github/v/release/xsyetopz/OpenJoystickDriver?include_prereleases
-[macos-badge]: https://img.shields.io/badge/macOS-12%2B-000000?logo=apple
-[license-badge]: https://img.shields.io/github/license/xsyetopz/OpenJoystickDriver
-[sponsor-badge]: https://img.shields.io/badge/sponsor-30363D?logo=githubsponsors&logoColor=EA4AAA
 [releases]: https://github.com/xsyetopz/OpenJoystickDriver/releases
 [sponsor]: https://github.com/sponsors/xsyetopz
-[wiki]: https://github.com/xsyetopz/OpenJoystickDriver/wiki
 [wiki-supported]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Supported-Controllers
 [wiki-games]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Playing-Games
-[wiki-build]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Building-from-Source
 [wiki-troubleshooting]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Troubleshooting
+[wiki-not-seen]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Troubleshooting#game-does-not-see-the-controller
 [wiki-start]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Getting-Started
 [wiki-app]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Using-the-App
 [wiki-remap]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Remapping-Profiles
 [wiki-cli]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Command-Reference
 [wiki-bug]: https://github.com/xsyetopz/OpenJoystickDriver/wiki/Reporting-a-Bug
-[star-chart]: https://api.star-history.com/chart?repos=xsyetopz/OpenJoystickDriver&type=date&legend=top-left&sealed_token=PjXIM3WljCuileJs_cIh3xVcAUk_S-XIvzSI-4YZXyrdXUDv_5yKL-bki0BDGSsz92-vhQ9_yqKPxyBC0RsY1Cd0C-e0YWUXePQkgLZcoXOiDCgazJpBqvW2rzdCZb8gK-1y7jncPZsFa8yqvijYWxA1UuP7Kw2Knvq2XnUuoMlTbtNobOEAx47QZF0U
-[star-history]: https://www.star-history.com/?repos=xsyetopz%2FOpenJoystickDriver&type=date&legend=top-left
