@@ -53,7 +53,12 @@ class SwiftToolchainTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.strip(), f"ran:{xcode}:build --show-bin-path")
 
-    def test_an_xcode_swift_that_is_not_the_pinned_version_stops(self) -> None:
+    def test_an_xcode_swift_newer_than_the_pinned_version_runs(self) -> None:
+        result, xcode = self.run_swift("99.0.1")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.strip(), f"ran:{xcode}:build --show-bin-path")
+
+    def test_an_xcode_swift_older_than_the_pinned_version_stops(self) -> None:
         result, _ = self.run_swift("6.3")
         self.assertEqual(result.returncode, 2)
         self.assertIn(".swift-version", result.stderr)
