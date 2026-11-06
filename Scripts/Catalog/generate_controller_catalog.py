@@ -15,6 +15,7 @@ import urllib.error
 import urllib.request
 from typing import Any
 
+from Scripts.Catalog import generate_sdl_gamecontrollerdb as sdl_database
 from Scripts.Catalog import protocol_descriptions
 from Scripts.Catalog.catalog_rules import load_rules, parse_id, parse_identity
 from Scripts.Catalog.schema_header import KINDS, header
@@ -31,6 +32,14 @@ OUTPUT_DIR = ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "Control
 PROTOCOL_DIR = ROOT / "Resources" / "Protocols"
 PROTOCOL_OUTPUT_DIR = (
     ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "Protocols"
+)
+DATABASE_OUTPUT = (
+    ROOT
+    / "Sources"
+    / "OpenJoystickDriverKit"
+    / "Resources"
+    / "SDLGameControllerDB"
+    / "sdl-gamecontrollerdb.txt"
 )
 VIRTUAL_DEVICE_DIR = ROOT / "Resources" / "VirtualDevices"
 VIRTUAL_DEVICE_OUTPUT_DIR = (
@@ -472,6 +481,13 @@ def load_lock() -> dict[str, Any]:
             raise CatalogError("SDL commit must be a full SHA")
         if len(sdl["files"]["controller_list"]["sha256"]) != 64:
             raise CatalogError("SDL controller_list SHA-256 is invalid")
+        database = lock["sdlGameControllerDB"]
+        if database["repository"] != "mdqinc/SDL_GameControllerDB":
+            raise CatalogError("unsupported SDL_GameControllerDB repository")
+        if len(database["commit"]) != 40:
+            raise CatalogError("SDL_GameControllerDB commit must be a full SHA")
+        if any(len(file["sha256"]) != 64 for file in database["files"].values()):
+            raise CatalogError("SDL_GameControllerDB SHA-256 is invalid")
         return lock
     except (OSError, KeyError, TypeError, json.JSONDecodeError) as error:
         raise CatalogError(f"invalid {LOCK_PATH.name}: {error}") from error
@@ -609,6 +625,29 @@ def build_catalog() -> dict[tuple[int, int], str]:
     return texts
 
 
+def build_database(records: dict[tuple[int, int], str]) -> str:
+    """The shipped SDL_GameControllerDB text, reduced against the SDL list and `records`."""
+    lock = load_lock()
+    pin = lock["sdlGameControllerDB"]
+    files = load_locked_files(pin)
+    controller_list = {
+        (vendor_id, product_id)
+        for vendor_id, product_id, _ in parse_sdl_controllers(
+            load_locked_files(lock["sdl"])["controller_list"]
+        )
+    }
+    text, counts = sdl_database.reduce_database(
+        files["gamecontrollerdb"],
+        files["license"],
+        f"{pin['repository']}@{pin['commit']} {pin['files']['gamecontrollerdb']['path']} "
+        f"sha256:{pin['files']['gamecontrollerdb']['sha256']}",
+        controller_list,
+        set(records),
+    )
+    print(counts.summary())
+    return text
+
+
 def sdl_summary(rows: list[tuple[int, int, str]], counts: dict[str, int]) -> str:
     unmapped = sum(
         value
@@ -688,6 +727,18 @@ def write_catalog(records: dict[tuple[int, int], str]) -> None:
     )
 
 
+def check_database(text: str) -> None:
+    if not DATABASE_OUTPUT.exists() or DATABASE_OUTPUT.read_text() != text:
+        raise CatalogError(
+            f"catalog differs from generated output:\nchanged {DATABASE_OUTPUT.relative_to(ROOT)}"
+        )
+
+
+def write_database(text: str) -> None:
+    DATABASE_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    DATABASE_OUTPUT.write_text(text)
+
+
 def write_files(
     directories: tuple[pathlib.Path, ...], files: dict[pathlib.Path, str]
 ) -> None:
@@ -714,11 +765,14 @@ def main() -> int:
             )
             repository_tool.binary.cache_clear()
         records = build_catalog()
+        database = build_database(records)
         if args.check:
             check_catalog(records)
+            check_database(database)
             verb = "Verified"
         else:
             write_catalog(records)
+            write_database(database)
             verb = "Generated"
     except (CatalogError, OSError, KeyError, TypeError, ValueError) as error:
         print(f"ERROR: {error}", file=sys.stderr)
