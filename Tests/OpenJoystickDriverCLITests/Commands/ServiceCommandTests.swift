@@ -91,7 +91,7 @@ struct ServiceCommandTests {
     let report = try json.json()
     let defaults = try #require(report["ignoredDefaults"] as? [String: String])
     #expect(defaults["file"]?.hasSuffix("/Controllers/all.patch.json") == true)
-    #expect(defaults["problem"] == "the file is not a JSON object")
+    #expect(defaults["problem"] == "JSON text, byte 1: expected a member name")
     let skipped = try #require(report["skippedVirtualDevices"] as? [[String: String]])
     #expect(skipped.map { $0["file"]?.hasSuffix("/VirtualDevices/broken.json") } == [true])
     #expect(plain.standardOutput.contains("ignored-defaults\t"))

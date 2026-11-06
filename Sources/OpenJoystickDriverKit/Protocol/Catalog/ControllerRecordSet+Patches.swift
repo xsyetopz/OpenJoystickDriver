@@ -172,16 +172,15 @@ extension ControllerRecordSet {
   /// twice.
   static func parse(_ data: Data, file: URL?, layer: ControllerRecordLayer) throws -> ParsedFile {
     try requireUTF8(data)
-    guard let object = try? JSONSerialization.jsonObject(with: data),
-      let fields = object as? [String: Any]
-    else {
+    let document = try ordered(data)
+    guard document.members != nil else {
       throw ControllerRecordProblem(code: .invalidControllerRecord, "the file is not a JSON object")
     }
-    let document = try ordered(data)
     if document["kind"]?.string == ControllerRecordDocument.kind {
       try OpenJoystickDriverAPI.requireHeader(
-        fields,
-        kind: ControllerRecordDocument.kind,
+        apiVersion: document["apiVersion"],
+        kind: document["kind"],
+        expected: ControllerRecordDocument.kind,
         file: file?.lastPathComponent
       )
       let decoded = try decode(document)

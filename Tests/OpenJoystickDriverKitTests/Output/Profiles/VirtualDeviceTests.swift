@@ -87,4 +87,47 @@ struct VirtualDeviceTests {
     #expect(problem?.code == .invalidControllerRecord)
     #expect(problem.flatMap { ControllerRecordSet.problemCode($0) } == .invalidControllerRecord)
   }
+
+  @Test(arguments: [
+    #""persona":"Generic","colour":1"#,
+    #""persona":7"#,
+    #""persona":"Generic","match":{"vendorID":"1","productID":2}"#,
+    #""persona":"Generic","match":{"vendorID":1,"productID":2,"colour":1}"#,
+  ])
+  func aFileThatIsNotTheSchemaIsRefusedWithE5007(members: String) {
+    let document = "{\(Self.header),\(members)}"
+    let problem = #expect(throws: ControllerRecordProblem.self) {
+      try VirtualDevice.decode(Data(document.utf8), source: .unnamed, requiresMatch: false)
+    }
+    #expect(problem?.code == .invalidControllerRecord)
+  }
+
+  @Test(arguments: ["[]", "{"])
+  func textThatIsNotAJSONObjectIsRefusedWithE5007(document: String) {
+    let problem = #expect(throws: ControllerRecordProblem.self) {
+      try VirtualDevice.decode(Data(document.utf8), source: .unnamed, requiresMatch: false)
+    }
+    #expect(problem?.code == .invalidControllerRecord)
+  }
+
+  @Test
+  func aKindOfAnotherDocumentIsRefusedWithE5001() {
+    let document = #"{"apiVersion":"openjoystickdriver/v1alpha2","kind":"Controller","colour":1}"#
+    let problem = #expect(throws: DocumentHeaderProblem.self) {
+      try VirtualDevice.decode(Data(document.utf8), source: .file("a.json"), requiresMatch: false)
+    }
+    #expect(problem?.code == .unsupportedAPIVersion)
+  }
+
+  @Test
+  func aSelectionIsDecodedWithItsMatch() throws {
+    let document =
+      "{\(Self.header),\"persona\":\"Generic\",\"match\":{\"vendorID\":1,\"productID\":2}}"
+    let device = try VirtualDevice.decode(
+      Data(document.utf8),
+      source: .unnamed,
+      requiresMatch: true
+    )
+    #expect(device.match == .init(vendorID: 1, productID: 2, unit: nil))
+  }
 }

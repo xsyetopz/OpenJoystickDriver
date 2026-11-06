@@ -34,6 +34,8 @@ A file in that folder is one of two kinds:
 - `Controller`: a complete record for a model that has no bundled record. Name it `VVVV-PPPP.json`.
 - `ControllerPatch`: new values for a model that already has a record. Name it `VVVV-PPPP.patch.json`. Its `selector` names the model by `vendorID` and `productID`, and its `patch` holds the fields to change.
 
+Every command that reads one of these files gives the same verdict: the app, `ojd record validate` and `install`, `ojd config`, `ojd diagnose record` and a mod package. Each refuses with `E5007` a file that is not plain UTF-8 (a byte order mark and UTF-16 text included), that is not one JSON object, that names a member twice in one object, or that nests arrays and objects deeper than 64 levels. The app, `ojd record install` and a package also refuse a `Controller` file for a model that already has a bundled record: write a patch instead. `ojd diagnose record` probes a bundled model.
+
 A patch follows RFC 7396 JSON Merge Patch. An object in `patch` merges into the record key by key, a value you give overrides the record's value, an array overrides the whole array, and `null` deletes the key. Deleting the last key of a section leaves an empty section, which a record does not accept, so set the whole section (`tuning`) to `null` instead. An array overrides the whole array, so a patch that changes the protocol restates the whole `modes` list, including the `default` mode, as in [Offer Alternative Modes](#offer-alternative-modes-chosen-by-link-keys-and-probes).
 
 ```json

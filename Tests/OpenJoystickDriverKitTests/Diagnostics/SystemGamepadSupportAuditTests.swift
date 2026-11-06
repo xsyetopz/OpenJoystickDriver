@@ -72,6 +72,24 @@ struct SystemGamepadSupportAuditTests {
   }
 
   @Test
+  func bundledRecordsAreTheModelsOfTheLoadedCatalog() throws {
+    let resources = URL(fileURLWithPath: #filePath)
+      .deletingLastPathComponent()  // Diagnostics
+      .deletingLastPathComponent()  // OpenJoystickDriverKitTests
+      .deletingLastPathComponent()  // Tests
+      .deletingLastPathComponent()
+      .appendingPathComponent("Sources/OpenJoystickDriverKit/Resources/Controllers")
+    let walker = try #require(
+      FileManager.default.enumerator(at: resources, includingPropertiesForKeys: nil)
+    )
+    let files = (walker.allObjects as? [URL] ?? []).filter { $0.pathExtension == "json" }
+    let models = SystemGamepadSupportAuditor.bundledOJDRecords()
+    #expect(models.count == files.count)
+    #expect(models == models.sorted())
+    #expect(models.contains(ControllerModelID(vendorID: 0x1532, productID: 0x0a43)))
+  }
+
+  @Test
   func malformedBundlesRemainExplicitEvidence() {
     let snapshot = SystemGamepadSupportAuditor.snapshot(
       bundleInfoData: [Data("not a plist".utf8)],

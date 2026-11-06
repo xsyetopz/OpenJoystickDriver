@@ -27,17 +27,18 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
   /// - Throws: The error of reading the file, or the errors of ``init(data:)``.
   public init(contentsOf url: URL) throws { try self.init(data: Data(contentsOf: url)) }
 
-  /// Decodes and validates a controller record in `data`.
+  /// Decodes and validates a controller record in `data` as the catalog reads a record file: plain
+  /// UTF-8, one JSON object, no member named twice.
   ///
   /// - Throws: ``ControllerRecordProbeError/invalidProfile(_:)`` when the record does not decode or
   ///   does not build a runtime profile, and ``ControllerRecordProbeError/unsupportedProtocol(_:)``
   ///   when its protocol is not `XboxGIP` or `XboxXUSB` or it has no raw USB binding.
   public init(data: Data) throws {
     let profile: DeviceRuntimeProfile
-    let document: ControllerRecordDocument
+    let decoded: (model: ControllerModelID, document: ControllerRecordDocument)
     do {
-      document = try JSONDecoder().decode(ControllerRecordDocument.self, from: data)
-      profile = try DeviceCatalog.makeRuntimeProfile(document)
+      decoded = try ControllerRecordSet.decode(ControllerRecordSet.ordered(data))
+      profile = try DeviceCatalog.makeRuntimeProfile(decoded.document)
     } catch {
       // A coded reason leads with its code, like every other `E5001: ...` message.
       let reason =
@@ -58,9 +59,9 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     guard let binding = profile.rawUSBBinding else {
       throw ControllerRecordProbeError.unsupportedProtocol(profile.physicalProtocolID.rawValue)
     }
-    vendorID = UInt16(document.vendorID)
-    productID = UInt16(document.productID)
-    name = String(format: "Controller %04x:%04x", document.vendorID, document.productID)
+    vendorID = decoded.model.vendorID
+    productID = decoded.model.productID
+    name = String(format: "Controller %04x:%04x", vendorID, productID)
     protocolBinding = binding
     transportProfile = profile.transportProfile
     startupPackets = profile.physicalProtocolID == .xboxGIP ? profile.gipStartupPackets : []

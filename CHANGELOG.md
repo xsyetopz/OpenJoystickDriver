@@ -14,6 +14,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Changed
 
+- **BREAKING:** `ojd diagnose record` reads a controller record as the catalog does, and refuses text that is not plain UTF-8, such as a file with a byte order mark, and an object that names a member twice, with `E5007`. Every other reader of a `Controller` or `ControllerPatch` file already did. A file that is not JSON gives the parser's message with its byte offset, such as `JSON text, byte 1: expected a member name`, in place of `the file is not a JSON object`, and text nested deeper than 64 levels is refused.
+- A `VirtualDevice` file is decoded against its schema: a member the schema does not name or a value of the wrong type is `E5007`, and a wrong `apiVersion` or `kind` is `E5001`. The message names the field that failed, such as `virtualDevice.match.vendorID: ...`.
+- The system gamepad support audit counts the models of the bundled controller catalog. It had looked for the keys `vendor_id` and `product_id`, which no bundled record has, and listed no record.
+
 - **BREAKING:** Every input field of a controller record, protocol description and `ControllerPatch` is `bitOffset` and `bitSize`, with bit 0 as the least significant bit of report byte 0, instead of `byte`, `mask` and `bits`, and `input` is `{ "layouts": [...] }`. The keys `byte`, `mask` and `bits` are refused as unknown keys of an input field. Rumble `byte` keys are unchanged.
 
 - **BREAKING:** OJD is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE) from this release on. Commercial use needs a separate license ([COMMERCIAL.md](COMMERCIAL.md)), and each pull request needs a signed [Contributor License Agreement](CLA.md). Releases up to and including 0.6.0-alpha.1 stay under the MIT License. The About panel names the license.

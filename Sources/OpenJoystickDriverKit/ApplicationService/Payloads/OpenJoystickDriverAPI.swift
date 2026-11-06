@@ -41,19 +41,22 @@ public enum OpenJoystickDriverAPI {
     return nil
   }
 
-  /// Requires `document` to carry the supported `apiVersion` and the `kind` it is read as.
+  /// Requires the `apiVersion` and `kind` read from a document to be the supported `apiVersion`
+  /// and the `kind` it is read as.
   ///
-  /// A `file` name leads the reason.
+  /// A `file` name leads the reason. A value that is not a string is reported as written.
   static func requireHeader(
-    _ document: [String: Any],
-    kind: String,
+    apiVersion: OrderedJSON?,
+    kind: OrderedJSON?,
+    expected: String,
     file: String? = nil
   ) throws {
+    func text(_ value: OrderedJSON?) -> Any? { value.map { $0.string ?? $0.compact() } }
     guard
       let problem = headerProblem(
-        apiVersion: document["apiVersion"],
-        kind: document["kind"],
-        expected: kind
+        apiVersion: text(apiVersion),
+        kind: text(kind),
+        expected: expected
       )
     else { return }
     throw file.map { problem.located(in: $0) } ?? problem

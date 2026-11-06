@@ -135,22 +135,6 @@ public enum SystemGamepadSupportAuditor {
     let snapshot: SystemGamepadCatalogSnapshot
   }
 
-  /// The two IDs of a controller record file.
-  private struct ProfileDocument: Decodable {
-    /// The USB vendor ID.
-    let vendorID: Int
-    /// The USB product ID.
-    let productID: Int
-
-    /// The keys of the record file.
-    enum CodingKeys: String, CodingKey {
-      /// The `vendor_id` key.
-      case vendorID = "vendor_id"
-      /// The `product_id` key.
-      case productID = "product_id"
-    }
-  }
-
   /// The folders that hold the catalog assets, in the order to try them.
   private static let catalogRoots: [(SystemGamepadCatalogSource, URL)] = [
     (
@@ -189,33 +173,9 @@ public enum SystemGamepadSupportAuditor {
     )
   }
 
-  /// The vendor and product IDs of the controller records in the Kit resources.
+  /// The models of the bundled controller catalog, in ID order.
   public static func bundledOJDRecords() -> [ControllerModelID] {
-    let urls = Bundle.module.urls(forResourcesWithExtension: "json", subdirectory: nil) ?? []
-    let decoder = JSONDecoder()
-    var models: Set<ControllerModelID> = []
-    for url in urls where isControllerRecordFilename(url.lastPathComponent) {
-      guard let data = try? Data(contentsOf: url),
-        let document = try? decoder.decode(ProfileDocument.self, from: data),
-        (1...65_535).contains(document.vendorID), (0...65_535).contains(document.productID)
-      else { continue }
-      models.insert(
-        ControllerModelID(
-          vendorID: UInt16(document.vendorID),
-          productID: UInt16(document.productID)
-        )
-      )
-    }
-    return models.sorted()
-  }
-
-  /// Whether `name` names a controller record file: four hex digits, a hyphen, four hex digits and
-  /// `.json`.
-  private static func isControllerRecordFilename(_ name: String) -> Bool {
-    guard name.count == 14, name.hasSuffix(".json") else { return false }
-    let stem = name.dropLast(5)
-    guard stem[stem.index(stem.startIndex, offsetBy: 4)] == "-" else { return false }
-    return stem.enumerated().allSatisfy { offset, character in offset == 4 || character.isHexDigit }
+    ControllerRecordSet.bundled.records.keys.sorted()
   }
 
   /// Compares `snapshot` with `records`.

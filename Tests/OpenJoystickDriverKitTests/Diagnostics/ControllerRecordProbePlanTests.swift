@@ -215,6 +215,32 @@ struct ControllerRecordProbePlanTests {
   }
 
   @Test
+  func aBundledModelStillBuildsAPlan() throws {
+    let plan = try ControllerRecordProbePlan(data: try recordData())
+    let model = ControllerModelID(vendorID: plan.vendorID, productID: plan.productID)
+    #expect(ControllerRecordSet.bundled.records[model] != nil)
+  }
+
+  @Test
+  func aMemberNamedTwiceIsRefusedLikeTheCatalogDoes() throws {
+    let text = try #require(String(bytes: try recordData(), encoding: .utf8))
+    let doubled = Data(text.replacingOccurrences(of: "{", with: #"{"productID":2627,"#).utf8)
+    let error = #expect(throws: ControllerRecordProbeError.self) {
+      try ControllerRecordProbePlan(data: doubled)
+    }
+    #expect(error?.errorDescription?.hasPrefix("E5007: ") == true)
+  }
+
+  @Test
+  func aByteOrderMarkIsRefusedLikeTheCatalogDoes() throws {
+    let marked = Data([0xEF, 0xBB, 0xBF]) + (try recordData())
+    let error = #expect(throws: ControllerRecordProbeError.self) {
+      try ControllerRecordProbePlan(data: marked)
+    }
+    #expect(error?.errorDescription?.hasPrefix("E5007: ") == true)
+  }
+
+  @Test
   func rejectsUnknownFields() {
     #expect(throws: ControllerRecordProbeError.self) {
       try ControllerRecordProbePlan(data: try recordData(extraRootField: "notAField"))

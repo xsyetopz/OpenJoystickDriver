@@ -20,9 +20,12 @@ struct GameControllerPersonalityMatchTests {
       try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any]
     )
     let personalities = try #require(plist["IOKitPersonalities"] as? [String: [String: Any]])
+    // A personality lists one `ProductID` or several in `ProductIDArray`, as macOS 27 does.
     return personalities.values.contains {
-      $0["VendorID"] as? Int == Int(profile.vendorID)
-        && $0["ProductID"] as? Int == Int(profile.productID)
+      let single = $0["ProductID"] as? Int
+      let products = ($0["ProductIDArray"] as? [Int] ?? []) + [single].compactMap(\.self)
+      return $0["VendorID"] as? Int == Int(profile.vendorID)
+        && products.contains(Int(profile.productID))
         && $0["GCIOMatchVirtual"] as? Bool == true
     }
   }

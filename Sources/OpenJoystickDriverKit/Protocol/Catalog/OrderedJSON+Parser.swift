@@ -7,6 +7,14 @@ extension OrderedJSON {
     let bytes: [UInt8]
     /// The offset of the next byte to read.
     var position = 0
+    /// How many arrays and objects enclose the next value.
+    private var depth = 0
+    /// The deepest nesting accepted.
+    ///
+    /// The recursion would exhaust the stack of a small thread
+    /// well before the 512 levels `JSONSerialization` allows, and no record nests past a few
+    /// levels.
+    static let maxDepth = 64
 
     /// Creates a parser at the start of `bytes`.
     init(bytes: [UInt8]) { self.bytes = bytes }
@@ -43,8 +51,8 @@ extension OrderedJSON {
     mutating func value() throws -> OrderedJSON {
       guard position < bytes.count else { throw problem("the text ends early") }
       switch bytes[position] {
-      case UInt8(ascii: "{"): return try object()
-      case UInt8(ascii: "["): return try array()
+      case UInt8(ascii: "{"): return try nested { try $0.object() }
+      case UInt8(ascii: "["): return try nested { try $0.array() }
       case UInt8(ascii: "\""): return .string(try string())
       case UInt8(ascii: "t"):
         try literal("true")
@@ -57,6 +65,17 @@ extension OrderedJSON {
         return .null
       default: return try number()
       }
+    }
+
+    /// Reads one object or array with `read`, one level deeper.
+    /// - Throws: ``OrderedJSON/Problem`` when the nesting passes ``maxDepth``.
+    private mutating func nested(_ read: (inout Self) throws -> OrderedJSON) throws -> OrderedJSON {
+      guard depth < Self.maxDepth else {
+        throw problem("nesting is deeper than \(Self.maxDepth) levels")
+      }
+      depth += 1
+      defer { depth -= 1 }
+      return try read(&self)
     }
 
     /// Reads the exact word `word`, which is `true`, `false` or `null`.

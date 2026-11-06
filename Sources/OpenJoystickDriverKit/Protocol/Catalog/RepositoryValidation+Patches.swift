@@ -112,7 +112,6 @@ extension RepositoryValidation {
       do {
         let data = try RepositoryProblem.read(url)
         try ControllerRecordSet.requireUTF8(data)
-        _ = try ControllerRecordSet.jsonObject(data)
         let document = try ControllerRecordSet.ordered(data)
         guard let vendorID = document["vendorID"]?.integer.flatMap(UInt16.init(exactly:)),
           let productID = document["productID"]?.integer.flatMap(UInt16.init(exactly:))
@@ -156,7 +155,6 @@ extension RepositoryValidation {
         let data = try RepositoryProblem.read(url)
         try ControllerRecordSet.requireUTF8(data)
         let order = try ControllerRecordSet.ordered(data)
-        _ = try ControllerRecordSet.jsonObject(data)
         let patch = try ControllerPatch.parse(order, file: url.lastPathComponent)
         let expected = patchPath(of: patch.selector)
         guard relativePath(of: url, under: directory) == expected else {

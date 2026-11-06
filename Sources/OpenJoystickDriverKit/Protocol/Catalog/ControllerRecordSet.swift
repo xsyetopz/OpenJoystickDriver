@@ -237,7 +237,6 @@ public struct ControllerRecordSet: Sendable {
       do {
         let data = try RepositoryProblem.read(url)
         try requireUTF8(data)
-        _ = try jsonObject(data)
         let document = try ordered(data)
         let layers = Dictionary(
           uniqueKeysWithValues: fieldNames(of: document).map { ($0, ControllerRecordLayer.bundled) }
@@ -302,20 +301,6 @@ public struct ControllerRecordSet: Sendable {
     do { return try OrderedJSON.parse(data) } catch {
       throw ControllerRecordProblem(code: .invalidControllerRecord, "\(error)")
     }
-  }
-
-  /// The JSON object in `data`, which is plain UTF-8.
-  ///
-  /// Text that is not JSON, and JSON that is not an object, are `invalidControllerRecord`.
-  static func jsonObject(_ data: Data) throws -> [String: Any] {
-    let value: Any
-    do { value = try JSONSerialization.jsonObject(with: data) } catch {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, error.localizedDescription)
-    }
-    guard let document = value as? [String: Any] else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "not a JSON object")
-    }
-    return document
   }
 
   /// Refuses `data` unless it is plain UTF-8, with the problem ``ordered(_:)`` gives, before a

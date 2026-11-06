@@ -136,7 +136,9 @@ struct ControllerRecordWriterTests {
       let file = directory.appendingPathComponent("2c22-2000.patch.json")
       try Data("{".utf8).write(to: file)
       #expect(
-        throws: ControllerRecordWriter.Failure.invalidFile("the file is not a JSON object")
+        throws: ControllerRecordWriter.Failure.invalidFile(
+          "JSON text, byte 1: expected a member name"
+        )
       ) { try Self.change(Self.bundledHID, to: .ojd, in: directory) }
       #expect(try Data(contentsOf: file) == Data("{".utf8))
     }

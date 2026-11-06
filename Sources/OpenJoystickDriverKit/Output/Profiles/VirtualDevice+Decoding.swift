@@ -9,6 +9,159 @@ extension VirtualDevice {
     case unnamed
   }
 
+  /// The `apiVersion` and `kind` of a document, read before the rest so that a document of
+  /// another version is refused for its version whatever else it holds.
+  private struct Header: Decodable {
+    /// The `apiVersion` as written; nil when absent.
+    let apiVersion: Value?
+    /// The `kind` as written; nil when absent.
+    let kind: Value?
+
+    /// A header member of any scalar type, kept as text for the header problem.
+    struct Value: Decodable {
+      /// The member as text.
+      let text: String
+
+      /// Reads the member as text, whatever its scalar type.
+      init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let text = try? container.decode(String.self) {
+          self.text = text
+        } else if let number = try? container.decode(Double.self) {
+          self.text = "\(number)"
+        } else if let flag = try? container.decode(Bool.self) {
+          self.text = "\(flag)"
+        } else {
+          self.text = "a value that is not a string"
+        }
+      }
+    }
+  }
+
+  /// The members of a `virtual-device.schema.json` document, before the persona and match rules.
+  private struct Document: Decodable {
+    /// The `match` object of a selection.
+    struct Match: Decodable {
+      /// The vendor ID.
+      let vendorID: Int
+      /// The product ID.
+      let productID: Int
+      /// The unit ID; nil for the whole model.
+      let unit: String?
+
+      /// The members of `match`.
+      enum CodingKeys: String, CodingKey, CaseIterable {
+        /// The vendor ID.
+        case vendorID
+        /// The product ID.
+        case productID
+        /// The unit ID.
+        case unit
+      }
+
+      /// Decodes `match`, refusing a member it does not name.
+      init(from decoder: any Decoder) throws {
+        try decoder.rejectUnknownKeys(CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        vendorID = try container.decode(Int.self, forKey: .vendorID)
+        productID = try container.decode(Int.self, forKey: .productID)
+        unit = try container.decodeIfPresent(String.self, forKey: .unit)
+      }
+    }
+
+    /// The `identity` object of a definition.
+    struct Identity: Decodable {
+      /// The vendor ID.
+      let vendorID: Int
+      /// The product ID.
+      let productID: Int
+      /// The version number; nil when absent.
+      let version: Int?
+      /// The product name.
+      let productName: String
+      /// The manufacturer name.
+      let manufacturer: String
+
+      /// The members of `identity`.
+      enum CodingKeys: String, CodingKey, CaseIterable {
+        /// The vendor ID.
+        case vendorID
+        /// The product ID.
+        case productID
+        /// The version number.
+        case version
+        /// The product name.
+        case productName
+        /// The manufacturer name.
+        case manufacturer
+      }
+
+      /// Decodes `identity`, refusing a member it does not name.
+      init(from decoder: any Decoder) throws {
+        try decoder.rejectUnknownKeys(CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        vendorID = try container.decode(Int.self, forKey: .vendorID)
+        productID = try container.decode(Int.self, forKey: .productID)
+        version = try container.decodeIfPresent(Int.self, forKey: .version)
+        productName = try container.decode(String.self, forKey: .productName)
+        manufacturer = try container.decode(String.self, forKey: .manufacturer)
+      }
+    }
+
+    /// The persona name, not yet checked against the personas.
+    let persona: String?
+    /// The `match` object; nil for a definition.
+    let match: Match?
+    /// The layout name, not yet checked against the layouts.
+    let layout: String?
+    /// The transport name, not yet checked.
+    let transport: String?
+    /// The glyph family name, not yet checked.
+    let labels: String?
+    /// Whether SDL recognizes the device with its default hints.
+    let worksWithDefaultSDLHints: Bool?
+    /// The `identity` object.
+    let identity: Identity?
+
+    /// The members of the document; the header members are read by ``Header``.
+    enum CodingKeys: String, CodingKey, CaseIterable {
+      /// The `apiVersion`, read by ``Header``.
+      case apiVersion
+      /// The `kind`, read by ``Header``.
+      case kind
+      /// The persona.
+      case persona
+      /// The model selection.
+      case match
+      /// The report layout.
+      case layout
+      /// The transport.
+      case transport
+      /// The glyph family.
+      case labels
+      /// The identity.
+      case identity
+      /// Whether SDL recognizes the device with its default hints.
+      case worksWithDefaultSDLHints
+    }
+
+    /// Decodes the document, refusing a member it does not name.
+    init(from decoder: any Decoder) throws {
+      try decoder.rejectUnknownKeys(CodingKeys.self)
+      let container = try decoder.container(keyedBy: CodingKeys.self)
+      persona = try container.decodeIfPresent(String.self, forKey: .persona)
+      match = try container.decodeIfPresent(Match.self, forKey: .match)
+      layout = try container.decodeIfPresent(String.self, forKey: .layout)
+      transport = try container.decodeIfPresent(String.self, forKey: .transport)
+      labels = try container.decodeIfPresent(String.self, forKey: .labels)
+      worksWithDefaultSDLHints = try container.decodeIfPresent(
+        Bool.self,
+        forKey: .worksWithDefaultSDLHints
+      )
+      identity = try container.decodeIfPresent(Identity.self, forKey: .identity)
+    }
+  }
+
   /// Decodes one `virtual-device.schema.json` document. `requiresMatch` refuses a document
   /// without `match`, which would otherwise be read as a persona definition.
   ///
@@ -19,34 +172,30 @@ extension VirtualDevice {
     source: Source,
     requiresMatch: Bool
   ) throws -> Self {
-    guard let object = try? JSONSerialization.jsonObject(with: data),
-      let document = object as? [String: Any]
-    else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "the file is not a JSON object")
-    }
-    if let problem = OpenJoystickDriverAPI.headerProblem(
-      apiVersion: document["apiVersion"],
-      kind: document["kind"],
-      expected: kind
-    ) {
-      let located: String
-      switch source {
-      case .file(let name): located = problem.located(in: name).message
-      case .unnamed: located = problem.message
+    let decoder = JSONDecoder()
+    let document: Document
+    do {
+      let header = try decoder.decode(Header.self, from: data)
+      if let problem = OpenJoystickDriverAPI.headerProblem(
+        apiVersion: header.apiVersion?.text,
+        kind: header.kind?.text,
+        expected: kind
+      ) {
+        let located: String
+        switch source {
+        case .file(let name): located = problem.located(in: name).message
+        case .unnamed: located = problem.message
+        }
+        throw DocumentHeaderProblem(code: .unsupportedAPIVersion, located)
       }
-      throw DocumentHeaderProblem(code: .unsupportedAPIVersion, located)
-    }
-    let allowed: Set<String> = [
-      "apiVersion", "kind", "persona", "match", "layout", "transport", "labels", "identity",
-      "worksWithDefaultSDLHints",
-    ]
-    guard Set(document.keys).isSubset(of: allowed) else {
+      document = try decoder.decode(Document.self, from: data)
+    } catch let error as DecodingError {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
-        "the file must hold only \(allowed.sorted().joined(separator: ", "))"
+        ControllerRecordSet.problemDescription(error, document: "virtualDevice")
       )
     }
-    guard let persona = (document["persona"] as? String).flatMap(VirtualHIDProfileID.init)
+    guard let persona = document.persona.flatMap(VirtualHIDProfileID.init)
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
@@ -54,12 +203,12 @@ extension VirtualDevice {
           + VirtualHIDProfileID.allCases.map(\.rawValue).joined(separator: ", ")
       )
     }
-    if requiresMatch, document["match"] == nil {
+    if requiresMatch, document.match == nil {
       throw ControllerRecordProblem(code: .invalidControllerRecord, "the file must hold match")
     }
-    let match = try document["match"].map(Self.match)
-    let layout = try document["layout"].map { value in
-      guard let layout = (value as? String).flatMap(VirtualDeviceLayout.init) else {
+    let match = try document.match.map(Self.match)
+    let layout = try document.layout.map { value in
+      guard let layout = VirtualDeviceLayout(rawValue: value) else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
           "layout must be one of "
@@ -68,17 +217,14 @@ extension VirtualDevice {
       }
       return layout
     }
-    let transport = try document["transport"].map { value in
-      guard let transport = value as? String, ["USB", "Bluetooth"].contains(transport) else {
-        throw ControllerRecordProblem(
-          code: .invalidControllerRecord,
-          "transport must be USB or Bluetooth"
-        )
-      }
-      return transport
+    if let transport = document.transport, !["USB", "Bluetooth"].contains(transport) {
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        "transport must be USB or Bluetooth"
+      )
     }
-    let labels = try document["labels"].map { value in
-      guard let labels = (value as? String).flatMap(VirtualIdentityGlyphFamily.init) else {
+    let labels = try document.labels.map { value in
+      guard let labels = VirtualIdentityGlyphFamily(rawValue: value) else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
           "labels must be Xbox or Generic"
@@ -86,19 +232,10 @@ extension VirtualDevice {
       }
       return labels
     }
-    let worksWithDefaultSDLHints = try document["worksWithDefaultSDLHints"].map { value in
-      // swiftlint:disable:next legacy_objc_type
-      guard let number = value as? NSNumber, CFGetTypeID(number) == CFBooleanGetTypeID() else {
-        throw ControllerRecordProblem(
-          code: .invalidControllerRecord,
-          "worksWithDefaultSDLHints must be true or false"
-        )
-      }
-      return number.boolValue
-    }
-    let identity = try document["identity"].map(Self.identity)
+    let identity = try document.identity.map(Self.identity)
     if match != nil {
-      guard layout == nil, transport == nil, worksWithDefaultSDLHints == nil else {
+      guard layout == nil, document.transport == nil, document.worksWithDefaultSDLHints == nil
+      else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
           "a file with match selects a persona and holds no layout, transport, or "
@@ -106,8 +243,8 @@ extension VirtualDevice {
         )
       }
     } else {
-      guard layout != nil, transport != nil, labels != nil, worksWithDefaultSDLHints != nil,
-        let identity, identity.versionNumber != nil
+      guard layout != nil, document.transport != nil, labels != nil,
+        document.worksWithDefaultSDLHints != nil, let identity, identity.versionNumber != nil
       else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
@@ -120,47 +257,34 @@ extension VirtualDevice {
       persona: persona,
       match: match,
       layout: layout,
-      transport: transport,
+      transport: document.transport,
       labels: labels,
-      worksWithDefaultSDLHints: worksWithDefaultSDLHints,
+      worksWithDefaultSDLHints: document.worksWithDefaultSDLHints,
       identity: identity
     )
   }
 
   /// The model, and optionally the unit, that a document's `match` names.
   ///
-  /// - Throws: `ControllerRecordProblem` when `match` holds other fields, or a vendor ID, product
-  ///   ID or unit that is out of range.
-  private static func match(_ value: Any) throws -> VirtualHIDProfileOverrideStore.Model {
-    let match = try fields(
-      value,
-      named: "match",
-      required: ["vendorID", "productID"],
-      optional: ["unit"]
-    )
-    let unit = match["unit"] as? String
-    if match["unit"] != nil, unit.flatMap(ControllerPortKey.init(rawValue:)) == nil {
+  /// - Throws: `ControllerRecordProblem` when a vendor ID, product ID or unit is out of range.
+  private static func match(_ match: Document.Match) throws -> VirtualHIDProfileOverrideStore.Model
+  {
+    if let unit = match.unit, ControllerPortKey(rawValue: unit) == nil {
       throw ControllerRecordProblem(code: .invalidControllerRecord, "match.unit is not a unit ID")
     }
     return VirtualHIDProfileOverrideStore.Model(
-      vendorID: try id(match["vendorID"], "match.vendorID", from: 1),
-      productID: try id(match["productID"], "match.productID", from: 0),
-      unit: unit
+      vendorID: try id(match.vendorID, "match.vendorID", from: 1),
+      productID: try id(match.productID, "match.productID", from: 0),
+      unit: match.unit
     )
   }
 
   /// The identity of a document's `identity` object.
   ///
-  /// - Throws: `ControllerRecordProblem` when a field is missing, unknown, empty or out of range.
-  private static func identity(_ value: Any) throws -> Identity {
-    let fields = try fields(
-      value,
-      named: "identity",
-      required: ["vendorID", "productID", "productName", "manufacturer"],
-      optional: ["version"]
-    )
-    func text(_ key: String) throws -> String {
-      guard let value = fields[key] as? String, !value.isEmpty else {
+  /// - Throws: `ControllerRecordProblem` when a name is empty or an ID is out of range.
+  private static func identity(_ fields: Document.Identity) throws -> Identity {
+    func text(_ key: String, _ value: String) throws -> String {
+      guard !value.isEmpty else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
           "identity.\(key) must be a nonempty string"
@@ -168,48 +292,21 @@ extension VirtualDevice {
       }
       return value
     }
-    let version = try fields["version"].map { try id($0, "identity.version", from: 0) }
+    let version = try fields.version.map { try id($0, "identity.version", from: 0) }
     return Identity(
-      vendorID: try id(fields["vendorID"], "identity.vendorID", from: 1),
-      productID: try id(fields["productID"], "identity.productID", from: 0),
+      vendorID: try id(fields.vendorID, "identity.vendorID", from: 1),
+      productID: try id(fields.productID, "identity.productID", from: 0),
       versionNumber: version.map(Int.init),
-      productName: try text("productName"),
-      manufacturer: try text("manufacturer")
+      productName: try text("productName", fields.productName),
+      manufacturer: try text("manufacturer", fields.manufacturer)
     )
   }
 
-  /// The fields of the object `value` named `name`.
+  /// The ID in `minimum...65535` that `value` holds.
   ///
-  /// - Throws: `ControllerRecordProblem` when `value` is not an object, lacks a required field, or
-  ///   holds a field that is neither required nor optional.
-  private static func fields(
-    _ value: Any?,
-    named name: String,
-    required: Set<String>,
-    optional: Set<String>
-  ) throws -> [String: Any] {
-    guard let object = value as? [String: Any],
-      Set(object.keys).isSubset(of: required.union(optional)),
-      required.isSubset(of: Set(object.keys))
-    else {
-      throw ControllerRecordProblem(
-        code: .invalidControllerRecord,
-        "\(name) must hold \(required.union(optional).sorted().joined(separator: ", "))"
-      )
-    }
-    return object
-  }
-
-  /// The integer ID in `minimum...65535` that `value` holds.
-  ///
-  /// - Throws: `ControllerRecordProblem` naming `name` when `value` is not a whole number in that
-  ///   range.
-  private static func id(_ value: Any?, _ name: String, from minimum: Int) throws -> UInt16 {
-    // swiftlint:disable:next legacy_objc_type
-    guard let number = value as? NSNumber, CFGetTypeID(number) != CFBooleanGetTypeID(),
-      let integer = Int(exactly: number.doubleValue), integer >= minimum,
-      let id = UInt16(exactly: integer)
-    else {
+  /// - Throws: `ControllerRecordProblem` naming `name` when `value` is outside that range.
+  private static func id(_ value: Int, _ name: String, from minimum: Int) throws -> UInt16 {
+    guard value >= minimum, let id = UInt16(exactly: value) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
         "\(name) must be \(minimum)...65535"

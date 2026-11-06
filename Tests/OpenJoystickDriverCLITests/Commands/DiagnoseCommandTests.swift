@@ -561,7 +561,9 @@ struct DiagnoseCommandTests {
     let checks = try #require(try result.json()["checks"] as? [[String: String]])
     let records = try #require(checks.first { $0["id"] == "controller-records" })
     #expect(records["status"] == "Warn")
-    #expect(records["detail"]?.contains("broken.json (the file is not a JSON object)") == true)
+    #expect(
+      records["detail"]?.contains("broken.json (JSON text, byte 1: expected a member name)") == true
+    )
   }
 
   @Test
@@ -590,8 +592,11 @@ struct DiagnoseCommandTests {
     let checks = try #require(try result.json()["checks"] as? [[String: String]])
     let config = try #require(checks.first { $0["id"] == "config-files" })
     #expect(config["status"] == "Warn")
-    #expect(config["detail"]?.contains("all.patch.json (the file is not a JSON object)") == true)
-    #expect(config["detail"]?.contains("broken.json (the file is not a JSON object)") == true)
+    #expect(
+      config["detail"]?.contains("all.patch.json (JSON text, byte 1: expected a member name)")
+        == true
+    )
+    #expect(config["detail"]?.contains("broken.json (The given data was not valid JSON.)") == true)
     let clean = await run(["--json"], socketPath: temporarySocketPath())
     let cleanChecks = try #require(try clean.json()["checks"] as? [[String: String]])
     #expect(cleanChecks.first { $0["id"] == "config-files" }?["status"] == "Pass")

@@ -60,9 +60,6 @@ public struct ControllerDefaults: Equatable, Sendable {
     file: String? = nil
   ) throws -> (patch: ControllerPatch, tuning: ControllerTuning) {
     try ControllerRecordSet.requireUTF8(data)
-    guard (try? JSONSerialization.jsonObject(with: data)) is [String: Any] else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "the file is not a JSON object")
-    }
     let patch = try ControllerPatch.parse(try ControllerRecordSet.ordered(data), file: file)
     guard patch.selector == .all else {
       throw ControllerRecordProblem(

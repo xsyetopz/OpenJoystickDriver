@@ -93,11 +93,16 @@ public struct ControllerPatch: Equatable, Sendable {
   ///
   /// A document of another kind fails the header check.
   static func parse(_ document: OrderedJSON, file: String? = nil) throws -> Self {
-    guard let fields = try? document.foundationValue() as? [String: Any] else {
+    guard let members = document.members else {
       throw ControllerRecordProblem(code: .invalidControllerRecord, "the file is not a JSON object")
     }
-    try OpenJoystickDriverAPI.requireHeader(fields, kind: kind, file: file)
-    guard Set(fields.keys) == ["apiVersion", "kind", "selector", "patch"],
+    try OpenJoystickDriverAPI.requireHeader(
+      apiVersion: document["apiVersion"],
+      kind: document["kind"],
+      expected: kind,
+      file: file
+    )
+    guard Set(members.map(\.key)) == ["apiVersion", "kind", "selector", "patch"],
       let selector = document["selector"], case .object(let body)? = document["patch"]
     else {
       throw ControllerRecordProblem(

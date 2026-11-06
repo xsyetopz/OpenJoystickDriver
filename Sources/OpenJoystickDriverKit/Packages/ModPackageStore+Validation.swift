@@ -177,8 +177,7 @@ extension ModPackageStore {
     of data: Data,
     listedAs operation: ControllerRecordOperation
   ) throws {
-    let found =
-      (try? JSONSerialization.jsonObject(with: data) as? [String: Any])?["kind"] as? String
+    let found = (try? OrderedJSON.parse(data))?["kind"]?.string
     let kinds = [ControllerRecordDocument.kind, ControllerPatch.kind]
     let expected = operation == .add ? ControllerRecordDocument.kind : ControllerPatch.kind
     guard let found, found != expected, kinds.contains(found) else { return }
