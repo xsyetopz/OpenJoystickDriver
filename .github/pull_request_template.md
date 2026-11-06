@@ -42,3 +42,4 @@ AI agents: fill both lines, follow CONTRIBUTING.md#ai-agents, and keep the attri
 - [ ] I did not hand-edit generated controller records or generated DriverKit files.
 - [ ] I updated the docs, wiki pages, and localization strings this change affects.
 - [ ] AI agents only: every commit keeps the harness attribution trailer.
+- [ ] I signed the [Contributor License Agreement](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CLA.md), and any third-party code comes from an MIT, BSD, zlib, CC0 or Apache-2.0 source with its notice in `THIRD_PARTY_NOTICES.md`.

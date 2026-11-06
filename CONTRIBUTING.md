@@ -48,6 +48,13 @@ Capture a candidate with `./Scripts/ojd diagnose record /tmp/controller-candidat
 - Check a bug against that branch before you open an issue.
 - List the branches with `git ls-remote --heads origin 'feat/*'`. The highest version wins.
 
+## License
+
+OJD is licensed under the PolyForm Noncommercial License 1.0.0 and sold under separate commercial licenses ([COMMERCIAL.md](COMMERCIAL.md)). Sign the [Contributor License Agreement](CLA.md) on your first pull request, so the maintainer can license your contribution both ways; the CLA check fails until you do.
+
+- Code may come only from sources under MIT, BSD, zlib, CC0 or Apache-2.0. Add each source's notice to `THIRD_PARTY_NOTICES.md` in the same commit.
+- GPL, LGPL, AGPL and unlicensed sources give facts only, such as byte values or IDs, and the code for those facts is written independently. `Scripts/Quality/check_license_headers.py` (part of `just check`) rejects GPL-family license text under `Sources`, `Tests`, `Tools`, `Resources` and `Scripts`.
+
 ## Issues and Pull Requests
 
 Use the issue forms; each has a human and an **(AI Agent)** variant. A pull request holds one logical change and fills every section of its template, with the checks run and whether you tested on your own hardware. Report security problems privately, as [`SECURITY.md`](SECURITY.md) describes. Open tasks: [issues](https://github.com/xsyetopz/OpenJoystickDriver/issues).
