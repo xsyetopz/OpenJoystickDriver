@@ -279,7 +279,7 @@ struct ControllerRecordDocumentTests {
       protocol: ["family": "HIDReportLayout"],
       extra: ["input": Self.minimalInput]
     )
-    #expect(document.inputLayout?.controls == [.south])
+    #expect(document.inputLayouts?.controls == [.south])
     #expect(throws: DecodingError.self) { try decode(protocol: ["family": "HIDReportLayout"]) }
     #expect(throws: DecodingError.self) {
       try decode(protocol: ["family": "HIDDescriptor"], extra: ["input": Self.minimalInput])
@@ -288,8 +288,12 @@ struct ControllerRecordDocumentTests {
 
   /// The smallest valid `input` section: one button in a one-byte report.
   static let minimalInput: [String: any Sendable] = [
-    "report": ["length": ["atLeast": 1]] as [String: [String: Int]],
-    "buttons": [["control": "South", "byte": 0, "mask": 1] as [String: any Sendable]],
+    "layouts": [
+      [
+        "report": ["length": ["atLeast": 1]] as [String: [String: Int]],
+        "buttons": [["control": "South", "bitOffset": 0, "bitSize": 1] as [String: any Sendable]],
+      ] as [String: any Sendable]
+    ]
   ]
 
   @Test

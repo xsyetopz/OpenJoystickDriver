@@ -50,10 +50,11 @@ extension ProtocolDescription {
     return nil
   }
 
-  /// Why the defaults name something the family's driver does not read, or nil. The rule reads
-  /// only this description, so it holds while the bundle is still loading.
+  /// Why the defaults name something the family's driver does not read, or nil.
+  ///
+  /// The rule reads only this description, so it holds while the bundle is still loading.
   var scopeViolation: String? {
-    if inputLayout != nil, !recordSections.contains(.input) {
+    if inputLayouts != nil, !recordSections.contains(.input) {
       return "an input layout applies only to a family that reads one"
     }
     if hidUsageMap != nil || !hidUsageShapes.isEmpty, !recordSections.contains(.hidUsageMap) {
@@ -130,9 +131,10 @@ extension ProtocolDescription {
   }
 
   /// Why a rumble template targets a packet kind that its variants do not use, or nil: a raw-USB
-  /// variant's template is a usb packet and a HID variant's is a HID report. The flat template
-  /// is checked against each variant of the family that has no template of its own; a family
-  /// with no variants has the one unnamed variant.
+  /// variant's template is a usb packet and a HID variant's is a HID report.
+  ///
+  /// The flat template is checked against each variant of the family that has no template of its
+  /// own; a family with no variants has the one unnamed variant.
   var rumbleTargetViolation: String? {
     let mismatch =
       "a raw-USB variant's rumble template is a usb packet, and a HID variant's is a HID report"

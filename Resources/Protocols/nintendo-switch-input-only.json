@@ -1,5 +1,5 @@
 {
-  "apiVersion": "openjoystickdriver/v1alpha1",
+  "apiVersion": "openjoystickdriver/v1alpha2",
   "kind": "ProtocolDescription",
   "family": "NintendoSwitchInputOnly",
   "variants": ["USB", "BluetoothClassic"],
@@ -16,104 +16,114 @@
   },
   "defaults": {
     "input": {
-      "report": {
-        "length": { "atLeast": 7 }
-      },
-      "buttons": [
+      "layouts": [
         {
-          "control": "West",
-          "byte": 0,
-          "mask": 1
-        },
-        {
-          "control": "South",
-          "byte": 0,
-          "mask": 2
-        },
-        {
-          "control": "East",
-          "byte": 0,
-          "mask": 4
-        },
-        {
-          "control": "North",
-          "byte": 0,
-          "mask": 8
-        },
-        {
-          "control": "LeftShoulder",
-          "byte": 0,
-          "mask": 16
-        },
-        {
-          "control": "RightShoulder",
-          "byte": 0,
-          "mask": 32
-        },
-        {
-          "control": "LeftTrigger",
-          "byte": 0,
-          "mask": 64
-        },
-        {
-          "control": "RightTrigger",
-          "byte": 0,
-          "mask": 128
-        },
-        {
-          "control": "Back",
-          "byte": 1,
-          "mask": 1
-        },
-        {
-          "control": "Start",
-          "byte": 1,
-          "mask": 2
-        },
-        {
-          "control": "LeftStickClick",
-          "byte": 1,
-          "mask": 4
-        },
-        {
-          "control": "RightStickClick",
-          "byte": 1,
-          "mask": 8
-        },
-        {
-          "control": "Guide",
-          "byte": 1,
-          "mask": 16
-        },
-        {
-          "control": "Capture",
-          "byte": 1,
-          "mask": 32
-        }
-      ],
-      "axes": [
-        {
-          "control": "LeftStickX",
-          "byte": 3
-        },
-        {
-          "control": "LeftStickY",
-          "byte": 4
-        },
-        {
-          "control": "RightStickX",
-          "byte": 5
-        },
-        {
-          "control": "RightStickY",
-          "byte": 6
-        }
-      ],
-      "hat": [
-        {
-          "encoding": "EightWay",
-          "byte": 2,
-          "mask": 255
+          "report": {
+            "length": {
+              "atLeast": 7
+            }
+          },
+          "buttons": [
+            {
+              "control": "West",
+              "bitOffset": 0,
+              "bitSize": 1
+            },
+            {
+              "control": "South",
+              "bitOffset": 1,
+              "bitSize": 1
+            },
+            {
+              "control": "East",
+              "bitOffset": 2,
+              "bitSize": 1
+            },
+            {
+              "control": "North",
+              "bitOffset": 3,
+              "bitSize": 1
+            },
+            {
+              "control": "LeftShoulder",
+              "bitOffset": 4,
+              "bitSize": 1
+            },
+            {
+              "control": "RightShoulder",
+              "bitOffset": 5,
+              "bitSize": 1
+            },
+            {
+              "control": "LeftTrigger",
+              "bitOffset": 6,
+              "bitSize": 1
+            },
+            {
+              "control": "RightTrigger",
+              "bitOffset": 7,
+              "bitSize": 1
+            },
+            {
+              "control": "Back",
+              "bitOffset": 8,
+              "bitSize": 1
+            },
+            {
+              "control": "Start",
+              "bitOffset": 9,
+              "bitSize": 1
+            },
+            {
+              "control": "LeftStickClick",
+              "bitOffset": 10,
+              "bitSize": 1
+            },
+            {
+              "control": "RightStickClick",
+              "bitOffset": 11,
+              "bitSize": 1
+            },
+            {
+              "control": "Guide",
+              "bitOffset": 12,
+              "bitSize": 1
+            },
+            {
+              "control": "Capture",
+              "bitOffset": 13,
+              "bitSize": 1
+            }
+          ],
+          "axes": [
+            {
+              "control": "LeftStickX",
+              "bitOffset": 24,
+              "bitSize": 8
+            },
+            {
+              "control": "LeftStickY",
+              "bitOffset": 32,
+              "bitSize": 8
+            },
+            {
+              "control": "RightStickX",
+              "bitOffset": 40,
+              "bitSize": 8
+            },
+            {
+              "control": "RightStickY",
+              "bitOffset": 48,
+              "bitSize": 8
+            }
+          ],
+          "hat": [
+            {
+              "encoding": "EightWay",
+              "bitOffset": 16,
+              "bitSize": 8
+            }
+          ]
         }
       ]
     }

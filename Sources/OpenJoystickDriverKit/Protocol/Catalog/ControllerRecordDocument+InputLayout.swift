@@ -1,10 +1,36 @@
 import Foundation
 
 extension ControllerRecordDocument {
-  /// The record's `input` section: a fixed report layout for the `HIDReportLayout` family.
+  /// The record's `input` section: the fixed report layouts for the `HIDReportLayout` family.
+  struct InputLayouts: Decodable {
+    /// The decoded layouts.
+    let layouts: ControllerInputLayouts
+
+    /// Decodes `layouts`, a nonempty list of layouts with distinct report selectors; an unknown
+    /// key, an empty list, or overlapping selectors are rejected.
+    init(from decoder: any Decoder) throws {
+      let container = try decoder.container(keyedBy: DocumentKey.self)
+      try container.rejectUnknown(allowed: ["layouts"])
+      do {
+        layouts = try ControllerInputLayouts(
+          layouts: try container.decode([InputLayout].self, for: "layouts").map(\.layout)
+        )
+      } catch let problem as ControllerRecordProblem {
+        throw DecodingError.dataCorrupted(
+          .init(codingPath: decoder.codingPath, debugDescription: problem.description)
+        )
+      }
+    }
+  }
+
+  /// One layout of the `input` section and the reports it selects.
   struct InputLayout: Decodable {
+    /// The decoded layout.
     let layout: ControllerInputLayout
 
+    /// Decodes `report` and the optional `buttons`, `axes`, `hat`, `leftTrigger` and
+    /// `rightTrigger`; an unknown key, an empty list, or a layout that `ControllerInputLayout`
+    /// rejects is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
@@ -41,9 +67,13 @@ extension ControllerRecordDocument {
 
   /// An input report's `length`: exactly one of `atLeast` and `exactly`.
   struct LengthRule: Decodable {
+    /// The report length in bytes.
     let length: Int
+    /// Whether the report must have exactly `length` bytes.
     let isExact: Bool
 
+    /// Decodes exactly one of `atLeast` and `exactly`; any other key, or both or neither, is
+    /// rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["atLeast", "exactly"])
@@ -67,11 +97,16 @@ extension ControllerRecordDocument {
     }
   }
 
+  /// An input report's `id` and `length`.
   struct InputReport: Decodable {
+    /// The report ID; nil for a report without one.
     let reportID: UInt8?
+    /// The report length in bytes.
     let length: Int
+    /// Whether the report must have exactly `length` bytes.
     let requiresExactLength: Bool
 
+    /// Decodes `length` and an optional `id` of 1...255; any other key or an ID of 0 is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["id", "length"])
@@ -91,75 +126,127 @@ extension ControllerRecordDocument {
     }
   }
 
+  /// A bit field named by its `bitOffset` and `bitSize`.
   struct InputField: Decodable {
+    /// The decoded bit field.
     let field: ReportBitField
 
+    /// Decodes `bitOffset` and `bitSize`; any other key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
-      try container.rejectUnknown(allowed: ["byte", "mask"])
+      try container.rejectUnknown(allowed: ["bitOffset", "bitSize"])
       field = try Self.field(in: container, codingPath: decoder.codingPath)
     }
 
-    /// Reads `byte` and `mask` from a container that may hold other keys.
+    /// Reads `bitOffset` and `bitSize` from a container that may hold other keys.
     static func field(
       in container: KeyedDecodingContainer<DocumentKey>,
       codingPath: [any CodingKey]
     ) throws -> ReportBitField {
-      let byte = try container.decode(Int.self, for: "byte")
-      guard let mask = UInt8(exactly: try container.decode(Int.self, for: "mask")) else {
+      let bitOffset = try container.decode(Int.self, for: "bitOffset")
+      let bitSize = try container.decode(Int.self, for: "bitSize")
+      guard bitOffset >= 0, (1...ReportBitField.maximumBitSize).contains(bitSize) else {
         throw DecodingError.dataCorrupted(
-          .init(codingPath: codingPath, debugDescription: "mask must be 1...255")
+          .init(
+            codingPath: codingPath,
+            debugDescription:
+              "bitOffset is 0 or more and bitSize is 1...\(ReportBitField.maximumBitSize)"
+          )
         )
       }
-      return ReportBitField(byte: byte, mask: mask)
+      return ReportBitField(bitOffset: bitOffset, bitSize: bitSize)
+    }
+
+    /// Reads a numeric field from a container that may hold other keys: `bitOffset` and
+    /// `bitSize`, with optional `byteOrder`, `signed`, `min` and `max`; `min` and `max` default to
+    /// the full range of the size.
+    static func valueField(
+      in container: KeyedDecodingContainer<DocumentKey>,
+      codingPath: [any CodingKey]
+    ) throws -> ReportValueField {
+      let bits = try field(in: container, codingPath: codingPath)
+      let byteOrder: ReportByteOrder
+      if let name = try container.decodeOptional(String.self, for: "byteOrder") {
+        guard let order = ReportByteOrder(rawValue: name) else {
+          throw DecodingError.dataCorrupted(
+            .init(
+              codingPath: codingPath,
+              debugDescription: "byteOrder is LittleEndian or BigEndian"
+            )
+          )
+        }
+        byteOrder = order
+      } else {
+        byteOrder = .littleEndian
+      }
+      let isSigned = try container.decodeOptional(Bool.self, for: "signed") ?? false
+      let range = ReportValueField.fullRange(bitSize: bits.bitSize, isSigned: isSigned)
+      return ReportValueField(
+        bitOffset: bits.bitOffset,
+        bitSize: bits.bitSize,
+        byteOrder: byteOrder,
+        isSigned: isSigned,
+        minimum: try container.decodeOptional(Int.self, for: "min") ?? range.lowerBound,
+        maximum: try container.decodeOptional(Int.self, for: "max") ?? range.upperBound
+      )
     }
   }
 
+  /// A digital control and the bit field that presses it.
   struct InputButton: Decodable {
+    /// The control the field presses.
     let control: Control
+    /// The bit field that presses the control.
     let field: ReportBitField
 
+    /// Decodes `control`, `bitOffset` and `bitSize`; any other key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
-      try container.rejectUnknown(allowed: ["control", "byte", "mask"])
+      try container.rejectUnknown(allowed: ["control", "bitOffset", "bitSize"])
       control = try container.decode(Control.self, for: "control")
       field = try InputField.field(in: container, codingPath: decoder.codingPath)
     }
   }
 
+  /// A stick axis entry.
   struct InputAxis: Decodable {
+    /// The decoded axis.
     let axis: ControllerInputLayout.Axis
 
+    /// Decodes `control`, `bitOffset` and `bitSize`, with optional `byteOrder`, `signed`, `min`,
+    /// `max`, `inverted` and `symmetric`; `min` and `max` default to the full range of the size.
+    ///
+    /// An unknown key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
-        "control", "byte", "bits", "signed", "min", "max", "inverted", "symmetric",
+        "control", "bitOffset", "bitSize", "byteOrder", "signed", "min", "max", "inverted",
+        "symmetric",
       ])
-      let bits = try container.decodeOptional(Int.self, for: "bits") ?? 8
-      let isSigned = try container.decodeOptional(Bool.self, for: "signed") ?? false
-      let fullRange = ControllerInputLayout.Axis.fullRange(bits: bits, isSigned: isSigned)
       axis = ControllerInputLayout.Axis(
         control: try container.decode(Control.self, for: "control"),
-        byte: try container.decode(Int.self, for: "byte"),
-        bits: bits,
-        isSigned: isSigned,
-        minimum: try container.decodeOptional(Int.self, for: "min") ?? fullRange.lowerBound,
-        maximum: try container.decodeOptional(Int.self, for: "max") ?? fullRange.upperBound,
+        field: try InputField.valueField(in: container, codingPath: decoder.codingPath),
         isInverted: try container.decodeOptional(Bool.self, for: "inverted") ?? false,
         isSymmetric: try container.decodeOptional(Bool.self, for: "symmetric") ?? false
       )
     }
   }
 
+  /// One source of the hat.
   struct InputHatSource: Decodable {
+    /// The decoded source.
     let source: ControllerInputLayout.HatSource
 
+    /// Decodes an `EightWay`, `Directions` or `Table` hat source with the keys that encoding
+    /// allows; any other encoding or key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       let encoding = try container.decode(String.self, for: "encoding")
       switch encoding {
       case "EightWay":
-        try container.rejectUnknown(allowed: ["encoding", "byte", "mask", "neutralUntilNonzero"])
+        try container.rejectUnknown(allowed: [
+          "encoding", "bitOffset", "bitSize", "neutralUntilNonzero",
+        ])
         source = .eightWay(
           try InputField.field(in: container, codingPath: decoder.codingPath),
           neutralUntilNonzero: try container.decodeOptional(Bool.self, for: "neutralUntilNonzero")
@@ -174,7 +261,7 @@ extension ControllerRecordDocument {
           left: try container.decode(InputField.self, for: "left").field
         )
       case "Table":
-        try container.rejectUnknown(allowed: ["encoding", "byte", "mask", "values"])
+        try container.rejectUnknown(allowed: ["encoding", "bitOffset", "bitSize", "values"])
         source = .table(
           try InputField.field(in: container, codingPath: decoder.codingPath),
           try Self.directions(in: container, codingPath: decoder.codingPath)
@@ -212,14 +299,31 @@ extension ControllerRecordDocument {
     }
   }
 
+  /// A trigger entry.
   struct InputTrigger: Decodable {
+    /// The decoded trigger.
     let trigger: ControllerInputLayout.Trigger
 
+    /// Decodes an analog value (`bitOffset` and `bitSize`, with optional `byteOrder`, `signed`,
+    /// `min` and `max`), a `button` field, or both; any other key, or a value key without
+    /// `bitOffset` and `bitSize`, is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
-      try container.rejectUnknown(allowed: ["byte", "button"])
+      let valueKeys: Set = ["bitOffset", "bitSize", "byteOrder", "signed", "min", "max"]
+      try container.rejectUnknown(allowed: valueKeys.union(["button"]))
+      let hasAnalog =
+        container.contains(DocumentKey("bitOffset")) || container.contains(DocumentKey("bitSize"))
+      guard hasAnalog || valueKeys.allSatisfy({ !container.contains(DocumentKey($0)) }) else {
+        throw DecodingError.dataCorrupted(
+          .init(
+            codingPath: decoder.codingPath,
+            debugDescription: "a trigger value needs bitOffset and bitSize"
+          )
+        )
+      }
       trigger = ControllerInputLayout.Trigger(
-        byte: try container.decodeOptional(Int.self, for: "byte"),
+        analog: hasAnalog
+          ? try InputField.valueField(in: container, codingPath: decoder.codingPath) : nil,
         button: try container.decodeOptional(InputField.self, for: "button")?.field
       )
     }

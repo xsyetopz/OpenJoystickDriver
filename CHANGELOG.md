@@ -6,7 +6,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ## [Unreleased]
 
+### Added
+
+- A mode's `input` lists `layouts`, each selected by report ID and length. A report that no layout selects is ignored, a layout changes only the controls it names, and two layouts whose selectors match the same report are rejected.
+- Input fields take `byteOrder` (`LittleEndian` or `BigEndian`) and read 1 to 32 bits at any bit position, so a 12-bit stick that crosses a byte or a signed 16-bit big-endian value is data.
+- A `hidUsageMap` takes the kinds `HalfAxis`, `AxisDpad`, `AxisButton` and `ButtonTrigger`, which bind one half of an axis to a trigger, a D-pad direction or a button, and a button to a trigger. A usage may appear in several half-axis entries when no two name the same half.
+
 ### Changed
+
+- **BREAKING:** Every input field of a controller record, protocol description and `ControllerPatch` is `bitOffset` and `bitSize`, with bit 0 as the least significant bit of report byte 0, instead of `byte`, `mask` and `bits`, and `input` is `{ "layouts": [...] }`. The keys `byte`, `mask` and `bits` are refused as unknown keys of an input field. Rumble `byte` keys are unchanged.
 
 - **BREAKING:** OJD is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE) from this release on. Commercial use needs a separate license ([COMMERCIAL.md](COMMERCIAL.md)), and each pull request needs a signed [Contributor License Agreement](CLA.md). Releases up to and including 0.6.0-alpha.1 stay under the MIT License. The About panel names the license.
 - **BREAKING:** The `apiVersion` of every document, schema, CLI output line and endpoint message is `openjoystickdriver/v1alpha2`, and each schema `$id` starts with `https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/`. OJD refuses each `openjoystickdriver/v1alpha1` file from 0.6.0-alpha.1 with `E5001` and leaves it unchanged: settings, access grants, profiles, your controller records, virtual device files and mods. [Update from 0.6.0-alpha.1](wiki/Updating-and-Uninstalling.md#update-from-060-alpha1) lists the step for each file.

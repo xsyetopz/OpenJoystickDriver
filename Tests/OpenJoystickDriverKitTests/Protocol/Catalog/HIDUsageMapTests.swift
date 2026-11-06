@@ -240,4 +240,131 @@ struct HIDUsageMapTests {
     #expect(throws: (any Error).self) { try decode(button, family: "HIDReportLayout") }
     #expect(throws: (any Error).self) { try decode(button, key: "descriptorShapes") }
   }
+
+  // MARK: - Half axes, axis buttons and button triggers
+
+  private func half(
+    _ kind: String,
+    _ half: String,
+    _ control: String,
+    _ options: String = ""
+  ) -> String {
+    #"{"kind":"\#(kind)","page":1,"usage":50,"half":"\#(half)","control":"\#(control)"\#(options)}"#
+  }
+
+  private func z(_ value: Int) -> HIDElementValue { element(usage: 50, value, range: -100...100) }
+
+  @Test
+  func aCombinedTriggerAxisReadsEachHalfAsOneTrigger() throws {
+    let driver = try makeDriver(
+      half("HalfAxis", "Positive", "LeftTrigger") + ","
+        + half("HalfAxis", "Negative", "RightTrigger")
+    )
+    let high = try #require(state(driver, z(100)))
+    #expect(high.leftTrigger.normalized == 1 && high.rightTrigger.normalized == 0)
+    let low = try #require(state(driver, z(-100)))
+    #expect(low.leftTrigger.normalized == 0 && low.rightTrigger.normalized == 1)
+    let middle = try #require(state(driver, z(0)))
+    #expect(middle.leftTrigger.normalized == 0 && middle.rightTrigger.normalized == 0)
+    let quarter = try #require(state(driver, z(50)))
+    #expect(abs(quarter.leftTrigger.normalized - 0.5) < 0.01)
+  }
+
+  @Test
+  func aHalfAxisMayBeInverted() throws {
+    let driver = try makeDriver(half("HalfAxis", "Positive", "LeftTrigger", #","inverted":true"#))
+    #expect(state(driver, z(100))?.leftTrigger.normalized == 0)
+    #expect(state(driver, z(0))?.leftTrigger.normalized == 1)
+  }
+
+  @Test
+  func anAxisDpadPressesTheDirectionAtOrPastTheThreshold() throws {
+    let driver = try makeDriver(
+      half("AxisDpad", "Negative", "DpadLeft", #","threshold":0.5"#)
+    )
+    #expect(state(driver, z(-60))?.hat == .west)
+    #expect(state(driver, z(-50))?.hat == .west)
+    #expect(state(driver, z(-40))?.hat == .neutral)
+    #expect(state(driver, z(60))?.hat == .neutral)
+  }
+
+  @Test
+  func anAxisAndAHatDriveTheSameDirectionTogether() throws {
+    let driver = try makeDriver(
+      half("AxisDpad", "Negative", "DpadLeft", #","threshold":0.5"#)
+        + #",{"kind":"Hat","page":1,"usage":57}"#
+    )
+    #expect(state(driver, element(usage: 57, 0, range: 0...7))?.hat == .north)
+    #expect(state(driver, z(-60))?.hat == .northWest)
+    #expect(state(driver, element(usage: 57, 8, range: 0...7))?.hat == .west)
+    #expect(state(driver, z(0))?.hat == .neutral)
+  }
+
+  @Test
+  func anAxisButtonPressesTheButtonAtOrPastTheThreshold() throws {
+    let driver = try makeDriver(
+      half("AxisButton", "Positive", "East", #","threshold":0.75"#)
+    )
+    #expect(state(driver, z(80))?.pressed.contains(.east) == true)
+    #expect(state(driver, z(75))?.pressed.contains(.east) == true)
+    #expect(state(driver, z(70))?.pressed.contains(.east) == false)
+    #expect(state(driver, z(-100))?.pressed.contains(.east) == false)
+  }
+
+  @Test
+  func aButtonTriggerReadsOneWhileTheButtonIsNonzero() throws {
+    let driver = try makeDriver(
+      #"{"kind":"ButtonTrigger","page":9,"usage":7,"control":"RightTrigger"}"#
+    )
+    #expect(
+      state(driver, element(page: 9, usage: 7, 1, range: 0...1))?.rightTrigger.normalized == 1
+    )
+    #expect(
+      state(driver, element(page: 9, usage: 7, 0, range: 0...1))?.rightTrigger.normalized == 0
+    )
+  }
+
+  @Test
+  func bothHalvesOfOneUsageAreAccepted() throws {
+    let entries =
+      half("HalfAxis", "Positive", "LeftTrigger") + ","
+      + half("AxisDpad", "Negative", "DpadLeft", #","threshold":0.5"#)
+    #expect(try decode(entries).hidUsageMap?.entries.count == 2)
+    #expect(
+      try makeDriver(entries).capabilities.controls.isSuperset(of: [.leftTrigger, .dpadLeft])
+    )
+  }
+
+  @Test
+  func theDecoderRejectsInvalidHalfBindings() {
+    let invalid = [
+      // A missing, zero or full threshold.
+      half("AxisButton", "Positive", "East"),
+      half("AxisDpad", "Positive", "DpadUp"),
+      half("AxisButton", "Positive", "East", #","threshold":0"#),
+      half("AxisButton", "Positive", "East", #","threshold":1"#),
+      // The same half twice, in one kind or across kinds.
+      half("HalfAxis", "Positive", "LeftTrigger") + ","
+        + half("HalfAxis", "Positive", "RightTrigger"),
+      half("HalfAxis", "Positive", "LeftTrigger") + ","
+        + half("AxisButton", "Positive", "East", #","threshold":0.5"#),
+      // A whole axis, a hat or a button trigger next to a half of the same usage.
+      #"{"kind":"Axis","page":1,"usage":50,"control":"LeftStickX"},"#
+        + half("HalfAxis", "Positive", "LeftTrigger"),
+      half("HalfAxis", "Positive", "LeftTrigger")
+        + #",{"kind":"ButtonTrigger","page":1,"usage":50,"control":"RightTrigger"}"#,
+      // A control of the wrong kind, an unknown half and a key of another kind.
+      half("HalfAxis", "Positive", "South"),
+      half("AxisDpad", "Positive", "South", #","threshold":0.5"#),
+      half("AxisButton", "Positive", "DpadUp", #","threshold":0.5"#),
+      half("AxisButton", "Positive", "LeftStickX", #","threshold":0.5"#),
+      half("HalfAxis", "Both", "LeftTrigger"),
+      half("HalfAxis", "Positive", "LeftTrigger", #","threshold":0.5"#),
+      #"{"kind":"ButtonTrigger","page":9,"usage":7,"control":"South"}"#,
+      #"{"kind":"ButtonTrigger","page":9,"usage":7,"control":"RightTrigger","half":"Positive"}"#,
+    ]
+    for entries in invalid {
+      #expect(throws: (any Error).self, "\(entries)") { try decode(entries) }
+    }
+  }
 }

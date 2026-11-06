@@ -1,5 +1,5 @@
 {
-  "apiVersion": "openjoystickdriver/v1alpha1",
+  "apiVersion": "openjoystickdriver/v1alpha2",
   "kind": "Controller",
   "vendorID": 4617,
   "productID": 1,
@@ -12,83 +12,93 @@
     }
   ],
   "input": {
-    "report": {
-      "length": {
-        "atLeast": 8
+    "layouts": [
+      {
+        "report": {
+          "length": {
+            "atLeast": 8
+          }
+        },
+        "buttons": [
+          {
+            "control": "South",
+            "bitOffset": 0,
+            "bitSize": 1
+          },
+          {
+            "control": "East",
+            "bitOffset": 1,
+            "bitSize": 1
+          },
+          {
+            "control": "West",
+            "bitOffset": 2,
+            "bitSize": 1
+          },
+          {
+            "control": "North",
+            "bitOffset": 3,
+            "bitSize": 1
+          },
+          {
+            "control": "LeftShoulder",
+            "bitOffset": 4,
+            "bitSize": 1
+          },
+          {
+            "control": "RightShoulder",
+            "bitOffset": 5,
+            "bitSize": 1
+          },
+          {
+            "control": "Back",
+            "bitOffset": 6,
+            "bitSize": 1
+          },
+          {
+            "control": "Start",
+            "bitOffset": 7,
+            "bitSize": 1
+          }
+        ],
+        "axes": [
+          {
+            "control": "LeftStickX",
+            "bitOffset": 16,
+            "bitSize": 8
+          },
+          {
+            "control": "LeftStickY",
+            "bitOffset": 24,
+            "bitSize": 8
+          },
+          {
+            "control": "RightStickX",
+            "bitOffset": 32,
+            "bitSize": 8
+          },
+          {
+            "control": "RightStickY",
+            "bitOffset": 40,
+            "bitSize": 8
+          }
+        ],
+        "hat": [
+          {
+            "encoding": "EightWay",
+            "bitOffset": 8,
+            "bitSize": 4
+          }
+        ],
+        "leftTrigger": {
+          "bitOffset": 48,
+          "bitSize": 8
+        },
+        "rightTrigger": {
+          "bitOffset": 56,
+          "bitSize": 8
+        }
       }
-    },
-    "buttons": [
-      {
-        "control": "South",
-        "byte": 0,
-        "mask": 1
-      },
-      {
-        "control": "East",
-        "byte": 0,
-        "mask": 2
-      },
-      {
-        "control": "West",
-        "byte": 0,
-        "mask": 4
-      },
-      {
-        "control": "North",
-        "byte": 0,
-        "mask": 8
-      },
-      {
-        "control": "LeftShoulder",
-        "byte": 0,
-        "mask": 16
-      },
-      {
-        "control": "RightShoulder",
-        "byte": 0,
-        "mask": 32
-      },
-      {
-        "control": "Back",
-        "byte": 0,
-        "mask": 64
-      },
-      {
-        "control": "Start",
-        "byte": 0,
-        "mask": 128
-      }
-    ],
-    "axes": [
-      {
-        "control": "LeftStickX",
-        "byte": 2
-      },
-      {
-        "control": "LeftStickY",
-        "byte": 3
-      },
-      {
-        "control": "RightStickX",
-        "byte": 4
-      },
-      {
-        "control": "RightStickY",
-        "byte": 5
-      }
-    ],
-    "hat": [
-      {
-        "encoding": "EightWay",
-        "byte": 1,
-        "mask": 15
-      }
-    ],
-    "leftTrigger": {
-      "byte": 6
-    },
-    "rightTrigger": {
-      "byte": 7
-    }
+    ]
   }
 }

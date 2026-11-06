@@ -3,22 +3,27 @@ import Foundation
 /// Why a protocol description is invalid, in words for the person who wrote it, with the
 /// catalog code that names the failure.
 struct ProtocolDescriptionProblem: Error, Equatable, Sendable, CustomStringConvertible {
+  /// The error code of the rejection.
   let code: ErrorCode
+  /// What the description got wrong.
   let detail: String
 
+  /// Creates a problem from an error code and the detail.
   init(_ code: ErrorCode, _ detail: String) {
     self.code = code
     self.detail = detail
   }
 
+  /// The raw value of the code and the detail, joined by a colon.
   var description: String { "\(code.rawValue): \(detail)" }
 }
 
 /// One family's protocol description (`Resources/Protocols/<file stem>.json`): the interface
 /// signatures that bind its variants, the typed parameters its records may set, the facts its
-/// driver reads (endpoints, raw USB, record sections, tuning keys, what OJD still
-/// sends when macOS serves the controller), and the defaults its records layer over. Drivers read
-/// these values; they hold no copy.
+/// driver reads (endpoints, raw USB, record sections, tuning keys, what OJD still sends when macOS
+/// serves the controller), and the defaults its records layer over.
+///
+/// Drivers read these values; they hold no copy.
 struct ProtocolDescription: Sendable {
   /// A parameter's declared type.
   enum ParameterType: Equatable, Sendable {
@@ -32,16 +37,23 @@ struct ProtocolDescription: Sendable {
 
   /// The default USB endpoint addresses of a raw-USB family.
   struct Endpoints: Equatable, Sendable {
+    /// The IN endpoint address.
     let input: Int
+    /// The OUT endpoint address.
     let output: Int
   }
 
   /// Which variants of a family are reached through raw USB.
   enum RawUSB: Equatable, Sendable {
+    /// No variant is reached through raw USB.
     case never
+    /// Every variant is reached through raw USB.
     case always
+    /// The listed variants are reached through raw USB.
     case variants(Set<PhysicalProtocolVariantID>)
 
+    /// Whether `variant` is reached through raw USB; `never` and `always` ignore the variant, and
+    /// a nil variant is not in `variants`.
     func applies(to variant: PhysicalProtocolVariantID?) -> Bool {
       switch self {
       case .never: false
@@ -67,6 +79,7 @@ struct ProtocolDescription: Sendable {
 
   /// A rule on the parameters a record sets beyond each parameter's own type.
   struct ParameterRule: Equatable, Sendable {
+    /// The kinds of rule.
     enum Kind: String, Sendable {
       /// No parameter is set.
       case none = "None"
@@ -78,11 +91,14 @@ struct ProtocolDescription: Sendable {
       case requires = "Requires"
     }
 
+    /// The kind of the rule.
     let kind: Kind
+    /// The parameter names the rule is about.
     let parameters: Set<String>
     /// The variants the rule applies to; every variant when empty.
     let variants: Set<PhysicalProtocolVariantID>
 
+    /// Whether the rule applies to `variant`; a rule without variants applies to every variant.
     func applies(to variant: PhysicalProtocolVariantID?) -> Bool {
       variants.isEmpty || variant.map(variants.contains) ?? false
     }
@@ -116,14 +132,18 @@ struct ProtocolDescription: Sendable {
   /// The `kind` of a protocol description.
   static let kind = "ProtocolDescription"
 
+  /// The protocol family the description is for.
   let family: PhysicalProtocolID
   /// The family's implemented variants; empty when it has one contract.
   let variants: [PhysicalProtocolVariantID]
   /// Whether catalog records store the family's variant; otherwise classification derives it from
   /// the observed transport.
   let storesVariant: Bool
+  /// The default USB endpoints of the family.
   let endpoints: Endpoints
+  /// Which variants are reached through raw USB.
   let rawUSB: RawUSB
+  /// The record sections the family's driver reads.
   let recordSections: Set<RecordSection>
   /// The general `defaults.session` keys the driver reads beyond the rumble template, which
   /// `recordSections` governs; none when the description lists none.
@@ -138,6 +158,7 @@ struct ProtocolDescription: Sendable {
   /// What the user does before a controller of the family sends input; nil when input starts on
   /// its own.
   let inputStart: InputStart?
+  /// The interface signatures that bind the family's variants.
   let interfaceSignatures: [ProtocolInterfaceSignature]
   /// The parameters records of this family may set, by name.
   let parameters: [String: ParameterType]
@@ -145,11 +166,14 @@ struct ProtocolDescription: Sendable {
   let parameterRules: [ParameterRule]
   /// The transports an activation or deactivation write may name.
   let writeTransports: Set<PhysicalTransport>
-  /// The controls every controller of the family has; a driver adds only what its record or
-  /// layout makes true. Nil for a family whose controls follow its layout.
+  /// The controls every controller of the family has; a driver adds only what its record or layout
+  /// makes true.
+  ///
+  /// Nil for a family whose controls follow its layout.
   let controls: ControllerCapabilities?
   /// The capability deltas a record of this family may declare.
   let recordCapabilities: RecordCapabilityRules
+  /// The family's rumble template; nil when the family has none.
   let rumbleTemplate: RumbleOutputTemplate?
   /// The family's HID initialization writes, sent when a controller starts unless its record
   /// carries its own.
@@ -161,35 +185,53 @@ struct ProtocolDescription: Sendable {
   /// writes of each run.
   let keepAlive: KeepAlive?
   /// The HID reports sent in order when a Valve controller is activated, each limited by its
-  /// transport. Only the Valve families have them.
+  /// transport.
+  ///
+  /// Only the Valve families have them.
   let activation: [RecordStartupWrite]
   /// The HID reports sent in order when a Valve controller is deactivated, each limited by its
-  /// transport. Only the Valve families have them.
+  /// transport.
+  ///
+  /// Only the Valve families have them.
   let deactivation: [RecordStartupWrite]
   /// The family-specific `defaults.session` keys the document sets, as written.
   let presentSessionFields: Set<String>
   /// The family's subcommand reports: the report id, the rolling counter rule and the startup
-  /// requests. Only `NintendoSwitch1` has them.
+  /// requests.
+  ///
+  /// Only `NintendoSwitch1` has them.
   let subcommands: SubcommandPlan?
   /// The family's named packets, which a record selects by id in `protocol.initialization`.
+  ///
   /// Only `XboxGIP` has them.
   let namedPackets: NamedPacketPlan?
-  /// The startup attempts a raw-USB handshake makes before it fails. Only `XboxGIP` has it.
+  /// The startup attempts a raw-USB handshake makes before it fails.
+  ///
+  /// Only `XboxGIP` has it.
   let handshakeAttempts: Int?
-  /// The most startup resends after announces before the first input. Only `XboxGIP` has it.
+  /// The most startup resends after announces before the first input.
+  ///
+  /// Only `XboxGIP` has it.
   let announceResendLimit: Int?
-  /// The most presence inquiry resends for a receiver slot. Only `XboxXUSB` has it.
+  /// The most presence inquiry resends for a receiver slot.
+  ///
+  /// Only `XboxXUSB` has it.
   let receiverInquiryResendLimit: Int?
-  /// The USB interface that carries commands and their replies. Only `NintendoSwitch2` has it.
+  /// The USB interface that carries commands and their replies.
+  ///
+  /// Only `NintendoSwitch2` has it.
   let commandChannel: CommandChannel?
-  /// The zero-amplitude packets the rumble refresh sends after a stop. Only `NintendoSwitch2` has
-  /// it.
+  /// The zero-amplitude packets the rumble refresh sends after a stop.
+  ///
+  /// Only `NintendoSwitch2` has it.
   let trailingStopPackets: Int?
-  let inputLayout: ControllerInputLayout?
+  /// The family's input-report layout; nil when the family has none.
+  let inputLayouts: ControllerInputLayouts?
   /// The map every `HIDDescriptor` record layers over (``HIDUsageMap``).
   let hidUsageMap: HIDUsageMap?
   /// Descriptor shapes that select another map, first match first.
   let hidUsageShapes: [HIDUsageShape]
+  /// The family's default tuning; nil when it sets none.
   let tuning: ControllerTuning?
   /// Tuning defaults by stored variant, layered over `tuning` for that variant.
   let variantTuning: [PhysicalProtocolVariantID: ControllerTuning]
@@ -199,11 +241,16 @@ struct ProtocolDescription: Sendable {
   /// The capability deltas a record may declare: exactly this set of present controls (or none),
   /// and rumble absent.
   struct RecordCapabilityRules: Equatable, Sendable {
+    /// The controls whose presence a record may declare.
     let presentControls: Set<Control>
+    /// Whether a record may declare rumble absent.
     let rumbleAbsent: Bool
 
+    /// The rules that permit no capability delta.
     static let none = Self(presentControls: [], rumbleAbsent: false)
 
+    /// Whether the rules permit `delta`: its present controls are none or exactly
+    /// `presentControls`, and rumble is absent only if `rumbleAbsent`.
     func permits(_ delta: ControllerCapabilityDelta) -> Bool {
       (delta.presentControls.isEmpty || delta.presentControls == presentControls)
         && (!delta.rumbleAbsent || rumbleAbsent)
@@ -213,7 +260,9 @@ struct ProtocolDescription: Sendable {
   /// `inputStart`: the action that starts input on the listed variants, or on every variant when
   /// the list is empty.
   struct InputStart: Equatable, Sendable {
+    /// The action that starts input.
     let action: InputStartAction
+    /// The variants the action applies to; every variant when empty.
     let variants: Set<PhysicalProtocolVariantID>
   }
 
@@ -246,6 +295,7 @@ struct ProtocolDescription: Sendable {
     }
   }()
 
+  /// Loads the descriptions bundled with the module; throws on the first invalid one.
   private static func loadBundled() throws -> [PhysicalProtocolID: Self] {
     let urls = PhysicalProtocolID.allCases.compactMap {
       Bundle.module.url(forResource: $0.descriptionFileStem, withExtension: "json")
@@ -258,12 +308,13 @@ struct ProtocolDescription: Sendable {
   }
 
   /// The descriptions of the files `urls`, and a problem for each file that is not a valid
-  /// description and for each family that has no file; `source` names where the files are, in
-  /// the problem of a missing one. The problems come in family order, a missing file at its
-  /// family's place, then those of the files that name no family in file-name order. Files of one
-  /// name are taken in path order, and each after the first that names a family is a problem
-  /// naming both files and is not loaded. A file that cannot be read is
-  /// ``ErrorCode/fileAccessFailed``. The bundled descriptions and
+  /// description and for each family that has no file; `source` names where the files are, in the
+  /// problem of a missing one.
+  ///
+  /// The problems come in family order, a missing file at its family's place, then those of the
+  /// files that name no family in file-name order. Files of one name are taken in path order, and
+  /// each after the first that names a family is a problem naming both files and is not loaded. A
+  /// file that cannot be read is ``ErrorCode/fileAccessFailed``. The bundled descriptions and
   /// ``RepositoryValidation/descriptions(in:)`` load through this check.
   static func loadCatalog(
     _ urls: [URL],
@@ -336,6 +387,8 @@ struct ProtocolDescription: Sendable {
     )
   }
 
+  /// Decodes one description from `data`; throws a problem when the document is invalid or its
+  /// family differs from `protocolID`.
   private static func decode(
     _ data: Data,
     expectedFamily protocolID: PhysicalProtocolID?,
@@ -504,7 +557,7 @@ struct ProtocolDescription: Sendable {
       receiverInquiryResendLimit: document.defaults?.session?.receiverInquiryResendLimit,
       commandChannel: document.defaults?.session?.commandChannel,
       trailingStopPackets: document.defaults?.session?.trailingStopPackets,
-      inputLayout: document.defaults?.input?.layout,
+      inputLayouts: document.defaults?.input?.layouts,
       hidUsageMap: document.defaults?.input?.usageMap,
       hidUsageShapes: document.defaults?.input?.shapes ?? [],
       tuning: document.defaults?.tuning,
@@ -527,7 +580,9 @@ struct ProtocolDescription: Sendable {
   }
 
   /// The raw-USB startup packets of `startup`: its own, or the named packets it refers to, each
-  /// with the condition of its reference. A reference to a packet the description lacks fails.
+  /// with the condition of its reference.
+  ///
+  /// A reference to a packet the description lacks fails.
   private static func resolvedUSBStartup(
     _ startup: ControllerRecordDocument.StartupList?,
     namedPackets: NamedPacketPlan?,
@@ -555,6 +610,7 @@ struct ProtocolDescription: Sendable {
   }
 
   /// The fixed keep-alive writes that a controller on `variant` receives from this description.
+  ///
   /// A keep-alive write has no `when`. A record's mode adds a keep-alive only for a family whose
   /// description declares none.
   func keepAliveWrites(variant: PhysicalProtocolVariantID?) -> [KeepAliveWrite] {

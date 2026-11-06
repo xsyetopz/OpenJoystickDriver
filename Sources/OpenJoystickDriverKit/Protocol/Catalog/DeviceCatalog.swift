@@ -2,16 +2,21 @@ import Foundation
 
 /// The controller records the runtime binds with: the bundled catalog and any user records.
 package struct DeviceCatalog: Sendable {
-  /// The catalog every ``ProtocolDriverRegistry`` reads. The service replaces it when the user's
-  /// controller records change.
+  /// The catalog every ``ProtocolDriverRegistry`` reads.
+  ///
+  /// The service replaces it when the user's controller records change.
   package static let current = Locked(Self())
 
+  /// The runtime profile of each model.
   private let profiles: [ControllerModelID: DeviceRuntimeProfile]
   /// Each record's merged document, to tell whether a new record set changes anything.
   let documents: [ControllerModelID: Data]
+  /// The models whose records run a raw-USB protocol, in model order.
   let rawUSBModels: [ControllerModelID]
+  /// The models whose records run a HID protocol, in model order.
   let hidModels: [ControllerModelID]
 
+  /// Creates a catalog from a record set, sorting each model into the raw-USB or HID list.
   init(records: ControllerRecordSet = .bundled) {
     var hid: [ControllerModelID] = []
     var rawUSB: [ControllerModelID] = []
@@ -36,8 +41,10 @@ package struct DeviceCatalog: Sendable {
     profiles[model]?.applying(modeID: modeID)
   }
 
-  /// Whether the record sets `server: ojd`, so OJD seizes the controller even when macOS
-  /// serves it natively. The stream reads it when a device is added.
+  /// Whether the record sets `server: ojd`, so OJD seizes the controller even when macOS serves it
+  /// natively.
+  ///
+  /// The stream reads it when a device is added.
   package func takesOwnership(of model: ControllerModelID) -> Bool {
     record(for: model)?.server == .ojd
   }
@@ -88,7 +95,7 @@ package struct DeviceCatalog: Sendable {
       assemblyPolicy: protocolInfo.assembly,
       server: record.server ?? .system,
       session: session,
-      inputLayout: record.inputLayout,
+      inputLayouts: record.inputLayouts,
       hidUsageMap: record.hidUsageMap,
       tuning: record.tuning,
       route: record.route,
@@ -98,9 +105,11 @@ package struct DeviceCatalog: Sendable {
     )
   }
 
-  /// The runtime profile of a row that names only this family and stored variant: default
-  /// endpoints on interface 0, the default GIP initialization and keep-alive, and no parameters or
-  /// capability deltas. Interface-signature bindings of uncatalogued devices run with it.
+  /// The runtime profile of a row that names only this family and stored variant: default endpoints
+  /// on interface 0, the default GIP initialization and keep-alive, and no parameters or capability
+  /// deltas.
+  ///
+  /// Interface-signature bindings of uncatalogued devices run with it.
   static func familyRuntimeProfile(
     _ protocolID: PhysicalProtocolID,
     variant: PhysicalProtocolVariantID?,
@@ -124,7 +133,7 @@ package struct DeviceCatalog: Sendable {
       assemblyPolicy: nil,
       server: .system,
       session: .none,
-      inputLayout: nil,
+      inputLayouts: nil,
       tuning: .none
     )
   }

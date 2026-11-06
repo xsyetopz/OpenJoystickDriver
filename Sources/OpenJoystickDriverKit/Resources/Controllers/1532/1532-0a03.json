@@ -1,5 +1,5 @@
 {
-  "apiVersion": "openjoystickdriver/v1alpha1",
+  "apiVersion": "openjoystickdriver/v1alpha2",
   "kind": "Controller",
   "vendorID": 5426,
   "productID": 2563,

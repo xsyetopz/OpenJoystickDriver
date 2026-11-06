@@ -1,5 +1,5 @@
 {
-  "apiVersion": "openjoystickdriver/v1alpha1",
+  "apiVersion": "openjoystickdriver/v1alpha2",
   "kind": "Controller",
   "vendorID": 9571,
   "productID": 1397,
@@ -27,112 +27,122 @@
     }
   ],
   "input": {
-    "report": {
-      "length": {
-        "atLeast": 19
-      }
-    },
-    "buttons": [
+    "layouts": [
       {
-        "control": "North",
-        "byte": 11,
-        "mask": 128
-      },
-      {
-        "control": "East",
-        "byte": 12,
-        "mask": 128
-      },
-      {
-        "control": "South",
-        "byte": 13,
-        "mask": 128
-      },
-      {
-        "control": "West",
-        "byte": 14,
-        "mask": 128
-      },
-      {
-        "control": "LeftShoulder",
-        "byte": 15,
-        "mask": 128
-      },
-      {
-        "control": "RightShoulder",
-        "byte": 16,
-        "mask": 128
-      },
-      {
-        "control": "Back",
-        "byte": 1,
-        "mask": 1
-      },
-      {
-        "control": "Start",
-        "byte": 1,
-        "mask": 2
-      },
-      {
-        "control": "LeftStickClick",
-        "byte": 1,
-        "mask": 4
-      },
-      {
-        "control": "RightStickClick",
-        "byte": 1,
-        "mask": 8
-      },
-      {
-        "control": "Guide",
-        "byte": 1,
-        "mask": 16
-      }
-    ],
-    "axes": [
-      {
-        "control": "LeftStickX",
-        "byte": 3
-      },
-      {
-        "control": "LeftStickY",
-        "byte": 4
-      },
-      {
-        "control": "RightStickX",
-        "byte": 5
-      },
-      {
-        "control": "RightStickY",
-        "byte": 6
-      }
-    ],
-    "hat": [
-      {
-        "encoding": "Directions",
-        "up": {
-          "byte": 9,
-          "mask": 128
+        "report": {
+          "length": {
+            "atLeast": 19
+          }
         },
-        "right": {
-          "byte": 7,
-          "mask": 128
+        "buttons": [
+          {
+            "control": "North",
+            "bitOffset": 95,
+            "bitSize": 1
+          },
+          {
+            "control": "East",
+            "bitOffset": 103,
+            "bitSize": 1
+          },
+          {
+            "control": "South",
+            "bitOffset": 111,
+            "bitSize": 1
+          },
+          {
+            "control": "West",
+            "bitOffset": 119,
+            "bitSize": 1
+          },
+          {
+            "control": "LeftShoulder",
+            "bitOffset": 127,
+            "bitSize": 1
+          },
+          {
+            "control": "RightShoulder",
+            "bitOffset": 135,
+            "bitSize": 1
+          },
+          {
+            "control": "Back",
+            "bitOffset": 8,
+            "bitSize": 1
+          },
+          {
+            "control": "Start",
+            "bitOffset": 9,
+            "bitSize": 1
+          },
+          {
+            "control": "LeftStickClick",
+            "bitOffset": 10,
+            "bitSize": 1
+          },
+          {
+            "control": "RightStickClick",
+            "bitOffset": 11,
+            "bitSize": 1
+          },
+          {
+            "control": "Guide",
+            "bitOffset": 12,
+            "bitSize": 1
+          }
+        ],
+        "axes": [
+          {
+            "control": "LeftStickX",
+            "bitOffset": 24,
+            "bitSize": 8
+          },
+          {
+            "control": "LeftStickY",
+            "bitOffset": 32,
+            "bitSize": 8
+          },
+          {
+            "control": "RightStickX",
+            "bitOffset": 40,
+            "bitSize": 8
+          },
+          {
+            "control": "RightStickY",
+            "bitOffset": 48,
+            "bitSize": 8
+          }
+        ],
+        "hat": [
+          {
+            "encoding": "Directions",
+            "up": {
+              "bitOffset": 79,
+              "bitSize": 1
+            },
+            "right": {
+              "bitOffset": 63,
+              "bitSize": 1
+            },
+            "down": {
+              "bitOffset": 87,
+              "bitSize": 1
+            },
+            "left": {
+              "bitOffset": 71,
+              "bitSize": 1
+            }
+          }
+        ],
+        "leftTrigger": {
+          "bitOffset": 136,
+          "bitSize": 8
         },
-        "down": {
-          "byte": 10,
-          "mask": 128
-        },
-        "left": {
-          "byte": 8,
-          "mask": 128
+        "rightTrigger": {
+          "bitOffset": 144,
+          "bitSize": 8
         }
       }
-    ],
-    "leftTrigger": {
-      "byte": 17
-    },
-    "rightTrigger": {
-      "byte": 18
-    }
+    ]
   }
 }

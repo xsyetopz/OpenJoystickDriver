@@ -9,7 +9,9 @@ struct ControllerRecordDocument: Decodable {
   /// The `kind` of a controller record.
   static let kind = "Controller"
 
+  /// The USB vendor ID of the model.
   let vendorID: Int
+  /// The USB product ID of the model.
   let productID: Int
   /// The `default` mode, which runs when no other mode matches.
   let defaultMode: ModeDocument
@@ -18,20 +20,25 @@ struct ControllerRecordDocument: Decodable {
   /// The record's modes: `default` and the alternatives of an HID controller, which are tried in
   /// order.
   let modes: [ModeDocument]
+  /// The USB configuration and endpoint overrides; nil when the record sets none.
   let usb: USBOverride?
   /// Present exactly for Switch 2 controllers that connect over Bluetooth LE.
   let bluetoothLE: BluetoothLE?
+  /// The corrections to the family's declared capabilities.
   let capabilities: ControllerCapabilityDelta
   /// Nil leaves a controller macOS supports to macOS.
   let server: ControllerServer?
   /// Set only on raw-USB records that OJD's USB extension serves.
   let route: ControllerRecordRoute?
   /// Present exactly for the `HIDReportLayout` family.
-  let inputLayout: ControllerInputLayout?
+  let inputLayouts: ControllerInputLayouts?
   /// Present only for the `HIDDescriptor` family, which then replaces the description's map.
   let hidUsageMap: HIDUsageMap?
+  /// The tuning values the record sets.
   let tuning: ControllerTuning
 
+  /// Decodes the record's `apiVersion`, `kind`, IDs, modes, sections and tuning; an unknown key, a
+  /// wrong `kind` or an invalid combination of sections is rejected.
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: DocumentKey.self)
     let apiVersion = try container.decodeOptional(String.self, for: "apiVersion")
@@ -89,7 +96,7 @@ struct ControllerRecordDocument: Decodable {
       return route
     }
     let input = try container.decodeOptional(Input.self, for: "input")
-    inputLayout = input?.layout
+    inputLayouts = input?.layouts
     hidUsageMap = input?.usageMap
     guard input?.shapes.isEmpty ?? true else {
       throw DecodingError.dataCorrupted(
@@ -110,9 +117,14 @@ struct ControllerRecordDocument: Decodable {
     protocolID.protocolDescription.recordCapabilities.permits(capabilities)
   }
 
+  /// The rumble template of a record, as a `report` target with its motor fields.
   struct RumbleTemplate: Decodable {
+    /// The decoded template.
     let template: RumbleOutputTemplate
 
+    /// Decodes `report`, `bytes`, `counter`, `resendIntervalMilliseconds` and one field per
+    /// template motor; an unknown key or a template that `RumbleOutputTemplate` rejects is
+    /// rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       let motors = RumbleOutputTemplate.templateMotors
@@ -151,8 +163,11 @@ struct ControllerRecordDocument: Decodable {
   /// A rumble template's report: a HID output or feature report, or a raw-USB packet of
   /// `length` bytes to the family's output endpoint.
   struct RumbleTarget: Decodable {
+    /// The decoded target.
     let target: RumbleOutputTemplate.Target
 
+    /// Decodes a `USB` target with `length`, or a HID target with `kind`, `id` and `length`; an
+    /// unknown key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       if try container.decode(String.self, for: "kind") == "USB" {
@@ -166,8 +181,11 @@ struct ControllerRecordDocument: Decodable {
 
   /// Where a rumble template writes one motor: its first byte and the value's encoding.
   struct MotorField: Decodable {
+    /// The decoded motor field.
     let field: RumbleOutputTemplate.MotorField
 
+    /// Decodes `byte` and an optional `encoding`; an unknown key or an unknown encoding is
+    /// rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["byte", "encoding"])
@@ -185,9 +203,12 @@ struct ControllerRecordDocument: Decodable {
     }
   }
 
+  /// A HID report named by `kind`, `id` and `length`.
   struct TemplateReport: Decodable {
+    /// The decoded report.
     let report: ControllerTemplateReport
 
+    /// Decodes `kind`, `id` and `length`; an unknown key or kind is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["kind", "id", "length"])
@@ -210,9 +231,12 @@ struct ControllerRecordDocument: Decodable {
     }
   }
 
+  /// A byte offset named by `byte`.
   struct TemplateByte: Decodable {
+    /// The decoded offset.
     let byte: Int
 
+    /// Decodes `byte`; any other key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["byte"])
@@ -220,17 +244,23 @@ struct ControllerRecordDocument: Decodable {
     }
   }
 
+  /// A mode's `protocol` section.
   struct ProtocolInfo: Decodable {
+    /// The protocol family the mode runs.
     let protocolID: PhysicalProtocolID
     /// Nil unless the family stores its variant (``PhysicalProtocolID/storesVariant``).
     let protocolVariant: PhysicalProtocolVariantID?
+    /// The protocol parameters the mode sets.
     let parameters: ProtocolParameters
     /// Named GIP initialization actions; nil selects the driver's default sequence.
     let initialization: [String]?
+    /// Whether the GIP keep-alive is enabled; nil leaves the driver's default.
     let keepAliveEnabled: Bool?
     /// The named assembly policy; its vocabulary is empty, so every name fails.
     let assembly: ControllerAssemblyPolicy?
 
+    /// Decodes `family`, `variant`, `parameters`, `initialization`, `keepAlive` and `assembly`; an
+    /// unknown key, or a combination that the family's parameter rules reject, is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
@@ -273,6 +303,8 @@ struct ControllerRecordDocument: Decodable {
       try validate(codingPath: decoder.codingPath)
     }
 
+    /// Throws a decoding error at `codingPath` when the family, variant, parameters and
+    /// initialization do not fit together.
     private func validate(codingPath: [any CodingKey]) throws {
       let violation: String? =
         if let problem = parameters.violation(family: protocolID, variant: protocolVariant) {
@@ -294,8 +326,10 @@ struct ControllerRecordDocument: Decodable {
 
   /// Capability corrections against the bound parser's declared defaults.
   struct CapabilityDelta: Decodable {
+    /// The decoded delta.
     let delta: ControllerCapabilityDelta
 
+    /// Decodes `absent`, `present` and `rumble`; an unknown key or a repeated control is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["absent", "present", "rumble"])
@@ -321,10 +355,14 @@ struct ControllerRecordDocument: Decodable {
     }
   }
 
+  /// A record's `usb` section.
   struct USBOverride: Decodable {
+    /// The name of the USB configuration to claim; nil when the record names none.
     let configuration: String?
+    /// The IN and OUT endpoint numbers; nil when the record names none.
     let endpoints: Endpoints?
 
+    /// Decodes `configuration` and `endpoints`; an unknown key or an empty section is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["configuration", "endpoints"])
@@ -338,10 +376,15 @@ struct ControllerRecordDocument: Decodable {
     }
   }
 
+  /// The IN and OUT endpoint numbers of a record's `usb` section.
   struct Endpoints: Decodable {
+    /// The IN endpoint number.
     let input: Int
+    /// The OUT endpoint number.
     let output: Int
 
+    /// Decodes `in` and `out`; the IN number must be 128...255 and the OUT number 1...127, and any
+    /// other key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["in", "out"])
@@ -363,19 +406,26 @@ struct ControllerRecordDocument: Decodable {
 
 /// A coding key for any field name, so the strict decoders can name and reject fields.
 struct DocumentKey: CodingKey, Hashable {
+  /// The field name.
   let stringValue: String
+  /// Always `nil`, because the keys are strings.
   let intValue: Int? = nil
 
+  /// Creates a key from a field name.
   init(_ value: String) { stringValue = value }
+  /// Creates a key from any string.
   init?(stringValue: String) { self.init(stringValue) }
+  /// Creates a key from the decimal text of an integer.
   init?(intValue: Int) { self.init(String(intValue)) }
 }
 
 extension KeyedDecodingContainer where Key == DocumentKey {
+  /// Decodes the value under `key`.
   func decode<T: Decodable>(_ type: T.Type, for key: String) throws -> T {
     try decode(type, forKey: DocumentKey(key))
   }
 
+  /// Decodes the value under `key`, or nil when the key is absent; an explicit null fails.
   func decodeOptional<T: Decodable>(_ type: T.Type, for key: String) throws -> T? {
     let codingKey = DocumentKey(key)
     guard contains(codingKey) else { return nil }
@@ -406,8 +456,10 @@ extension KeyedDecodingContainer where Key == DocumentKey {
     return values
   }
 
-  /// Decodes a nonempty list of unique ids of named packets that `family`'s description defines;
-  /// any other id fails.
+  /// Decodes a nonempty list of unique ids of named packets that the description of `family`
+  /// defines.
+  ///
+  /// Any other id fails.
   func decodeNamedPacketList(of family: PhysicalProtocolID, for key: String) throws -> [String]? {
     guard let names = try decodeOptional([String].self, for: key) else { return nil }
     let plan = ProtocolDescription.bundled[family]?.namedPackets
@@ -424,6 +476,8 @@ extension KeyedDecodingContainer where Key == DocumentKey {
     return names
   }
 
+  /// Fails when the container holds a key outside `allowed`.
+  /// - Throws: `DecodingError.dataCorrupted` naming the unknown fields.
   func rejectUnknown(allowed: Set<String>) throws {
     let unknown = Set(allKeys.map(\.stringValue)).subtracting(allowed).sorted()
     guard unknown.isEmpty else {

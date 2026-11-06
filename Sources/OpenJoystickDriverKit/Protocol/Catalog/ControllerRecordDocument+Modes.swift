@@ -4,18 +4,25 @@ extension ControllerRecordDocument {
   /// One entry of the record's `modes`: an ID, the protocol that mode runs, and, for every mode
   /// but `default`, the match keys that select it.
   struct ModeDocument: Decodable {
+    /// The ID of the mode that has no match keys.
     static let defaultID = "default"
 
+    /// The mode ID: lowercase words joined by hyphens.
     let id: String
+    /// The protocol, variant and parameters the mode runs.
     let protocolInfo: ProtocolInfo
     /// Nil exactly for the `default` mode.
     let match: ControllerModeMatch?
+    /// The device interfaces the mode drives; nil keeps the default binding.
     let interfaceRange: ClosedRange<UInt8>?
     /// The steps this mode runs; a mode without a `session` runs none.
     let session: ControllerSession
 
+    /// Whether this is the `default` mode.
     var isDefault: Bool { id == Self.defaultID }
 
+    /// Decodes `id`, `protocol` and the optional `match`, `interface` and `session`; an unknown
+    /// key, a malformed ID, a `default` mode with a match, or another mode without one is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["id", "protocol", "match", "interface", "session"])
@@ -44,6 +51,7 @@ extension ControllerRecordDocument {
         try container.decodeOptional(SessionDocument.self, for: "session")?.session ?? .none
     }
 
+    /// Creates the decoding error that names `key` in the current coding path with `message`.
     static func invalid(
       _ key: String,
       _ message: String,
@@ -86,8 +94,10 @@ extension ControllerRecordDocument {
 
   /// A mode's `interface`: an inclusive range of interface numbers.
   struct ModeInterfaceDocument: Decodable {
+    /// The inclusive interface-number range.
     let range: ClosedRange<UInt8>
 
+    /// Decodes `first` and `last`; any other key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["first", "last"])
@@ -107,8 +117,11 @@ extension ControllerRecordDocument {
 
   /// A mode's match keys; every key present must hold.
   struct ModeMatchDocument: Decodable {
+    /// The decoded match keys.
     let match: ControllerModeMatch
 
+    /// Decodes the match keys `link`, `interfaceSignature`, `manufacturer`, `product`, `bcdDevice`
+    /// and `probes`; an unknown key or an empty string is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(
@@ -148,6 +161,7 @@ extension ControllerRecordDocument {
       self.match = match
     }
 
+    /// Reads an optional string for `key`; an empty string is rejected.
     private static func text(
       _ key: String,
       _ container: KeyedDecodingContainer<DocumentKey>,
@@ -163,8 +177,11 @@ extension ControllerRecordDocument {
 
   /// An interface the device must expose: its USB class triple and, optionally, its HID usage.
   struct ModeInterfaceSignatureDocument: Decodable {
+    /// The decoded interface signature.
     let signature: ControllerModeMatch.InterfaceSignature
 
+    /// Decodes an interface's class triple, optional HID usage and optional endpoint set; an
+    /// unknown key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(
@@ -208,8 +225,11 @@ extension ControllerRecordDocument {
 
   /// One endpoint of an interface signature's endpoint set.
   struct ModeEndpointDocument: Decodable {
+    /// The decoded endpoint pattern.
     let endpoint: ControllerModeMatch.InterfaceSignature.Endpoint
 
+    /// Decodes `address`, `direction`, `transferType` and `maxPacketSize`; an unknown key, a
+    /// direction other than In or Out, or a packet size outside 0...65535 is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
@@ -258,8 +278,10 @@ extension ControllerRecordDocument {
 
   /// An inclusive range of `bcdDevice` values.
   struct BCDRangeDocument: Decodable {
+    /// The decoded release range.
     let range: ClosedRange<UInt16>
 
+    /// Decodes `min` and `max`, 0...65535 with `min` not above `max`; any other key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["min", "max"])
@@ -279,8 +301,12 @@ extension ControllerRecordDocument {
 
   /// A probe: a read of one feature report, with no way to write.
   struct ModeProbeDocument: Decodable {
+    /// The decoded probe.
     let probe: ControllerModeProbe
 
+    /// Decodes `report`, `length`, `expect` and the `offset` and `bytes` of a byte expectation; an
+    /// unknown key, an unknown expectation, or `offset` and `bytes` on any expectation but `Bytes`
+    /// is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["report", "length", "expect", "offset", "bytes"])
@@ -314,16 +340,18 @@ extension ControllerRecordDocument {
       probe = ControllerModeProbe(reportID: reportID, length: length, expectation: expectation)
     }
 
+    /// Creates the decoding error for a probe with `message`.
     private static func invalid(_ message: String, _ decoder: any Decoder) -> DecodingError {
       .dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: message))
     }
   }
 
-  /// The record's modes: unique IDs and exactly one `default`; every mode's protocol obeys the
-  /// same record-level rules the default protocol does, whether the record has one mode or many.
-  /// A mode's session runs only what its own protocol can (see `sessionViolation`), and
-  /// `interface` selects among HID interfaces, so a raw-USB mode has none. A HID route reports
-  /// no endpoint set, so only a raw-USB mode's interface signature may carry `endpoints`.
+  /// The record's modes: unique IDs and exactly one `default`; every mode's protocol obeys the same
+  /// record-level rules the default protocol does, whether the record has one mode or many.
+  ///
+  /// A mode's session runs only what its own protocol can (see `sessionViolation`), and `interface`
+  /// selects among HID interfaces, so a raw-USB mode has none. A HID route reports no endpoint set,
+  /// so only a raw-USB mode's interface signature may carry `endpoints`.
   func validateModes(codingPath: [any CodingKey]) throws {
     let path = codingPath + [DocumentKey("modes")]
     func fail(_ message: String) -> DecodingError {
@@ -351,7 +379,7 @@ extension ControllerRecordDocument {
             + " an interface's endpoint set"
         )
       }
-      if (inputLayout != nil) != info.protocolID.requiresRecordInputLayout {
+      if (inputLayouts != nil) != info.protocolID.requiresRecordInputLayout {
         throw fail(
           "every mode needs the record's input layout exactly when it is HIDReportLayout"
         )

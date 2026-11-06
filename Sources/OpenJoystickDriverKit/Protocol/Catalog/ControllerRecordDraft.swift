@@ -10,8 +10,11 @@ import Foundation
 public struct ControllerRecordDraft: Sendable {
   /// One report byte that took more than one value during the capture.
   public struct ChangedByte: Codable, Equatable, Sendable {
+    /// The index of the report byte.
     public let byte: Int
+    /// The lowest value the byte took during the capture.
     public let minimum: Int
+    /// The highest value the byte took during the capture.
     public let maximum: Int
   }
 
@@ -23,9 +26,11 @@ public struct ControllerRecordDraft: Sendable {
   public let family: PhysicalProtocolID
   /// The input report the draft reads, or nil when nothing chose one.
   public let reportID: UInt8?
+  /// The length of the chosen input report, or nil when nothing chose one.
   public let reportLength: Int?
   /// The number of reports captured with the chosen ID and at least the chosen length.
   public let capturedReports: Int
+  /// The report bytes that took more than one value, in byte order.
   public let changedBytes: [ChangedByte]
   /// The record document in the record file text of ``OrderedJSON/formatted()``, as
   /// `ojd record install` reads it.
@@ -126,6 +131,8 @@ public struct ControllerRecordDraft: Sendable {
     return counts.max { ($0.value, $0.key) < ($1.value, $1.key) }?.key
   }
 
+  /// Finds the bytes of `reports` that took more than one value, with the lowest and highest value
+  /// of each; `length` bytes are compared.
   private static func changedBytes(in reports: [[UInt8]], length: Int) -> [ChangedByte] {
     guard let first = reports.first else { return [] }
     return (0..<length).compactMap { index in
@@ -148,15 +155,23 @@ public struct ControllerRecordDraft: Sendable {
 
 /// The `input` section of a draft for one report of a parsed descriptor.
 private struct DraftLayout {
+  /// The report ID, or nil when the descriptor uses no report IDs.
   let reportID: UInt8?
+  /// The report length in bytes, including the ID byte.
   let length: Int
+  /// The mapped buttons, as `input.buttons` entries.
   private var buttons: [[String: Any]] = []
+  /// The mapped stick axes, as `input.axes` entries.
   private var axes: [[String: Any]] = []
+  /// The mapped hat, as an `input.hat` entry; nil when none maps.
   private var hat: [String: Any]?
+  /// The mapped triggers, by their `input` key.
   private var triggers: [String: [String: Any]] = [:]
 
+  /// The number of controls that mapped.
   var controlCount: Int { buttons.count + axes.count + (hat == nil ? 0 : 1) + triggers.count }
 
+  /// The layout as the `input` section of a record.
   var json: [String: Any] {
     var report: [String: Any] = ["length": ["atLeast": length]]
     if let reportID { report["id"] = Int(reportID) }
@@ -165,7 +180,7 @@ private struct DraftLayout {
     if !axes.isEmpty { input["axes"] = axes }
     if let hat { input["hat"] = [hat] }
     for (key, trigger) in triggers { input[key] = trigger }
-    return input
+    return ["layouts": [input]]
   }
 
   /// The button order the `HIDDescriptor` family reads in its standard layout.
@@ -173,9 +188,11 @@ private struct DraftLayout {
     .south, .east, .west, .north, .leftShoulder, .rightShoulder, .back, .start,
     .leftStickClick, .rightStickClick, .guide,
   ]
+  /// The Generic Desktop usages of the stick axes (X, Y, Rx, Ry) and the controls they map to.
   private static let stickAxes: [Int: Control] = [
     0x30: .leftStickX, 0x31: .leftStickY, 0x33: .rightStickX, 0x34: .rightStickY,
   ]
+  /// The Generic Desktop usages of the trigger axes (Z, Rz) and their `input` keys.
   private static let triggerAxes = [0x32: "leftTrigger", 0x35: "rightTrigger"]
 
   /// Nil when no control of report `reportID` maps, or the report is longer than 64 bytes with
@@ -190,16 +207,16 @@ private struct DraftLayout {
     var named = Set<Control>()
     var triggerKeys = Set<String>()
     for field in parsed.fields where field.reportID == id && !field.flags.isRelative {
-      let byte = base + field.bitOffset / 8
+      let bitOffset = base * 8 + field.bitOffset
       let shift = field.bitOffset % 8
       switch (field.usagePage, field.usage) {
       case (0x09, 1...Self.standardButtons.count) where field.bitSize == 1:
         let control = Self.standardButtons[field.usage - 1]
         guard named.insert(control).inserted else { continue }
-        buttons.append(["control": control.rawValue, "byte": byte, "mask": 1 << shift])
+        buttons.append(["control": control.rawValue, "bitOffset": bitOffset, "bitSize": 1])
       case (0x01, let usage) where Self.stickAxes[usage] != nil:
         guard axes.count < 4, let control = Self.stickAxes[usage], !named.contains(control),
-          let axis = Self.axis(field, control: control, byte: byte)
+          let axis = Self.axis(field, control: control, bitOffset: bitOffset)
         else { continue }
         named.insert(control)
         axes.append(axis)
@@ -207,12 +224,12 @@ private struct DraftLayout {
         guard let key = Self.triggerAxes[usage], field.bitSize == 8, shift == 0,
           field.logicalMin == 0, triggerKeys.insert(key).inserted
         else { continue }
-        triggers[key] = ["byte": byte]
+        triggers[key] = ["bitOffset": bitOffset, "bitSize": 8]
       case (0x01, 0x39):
         guard hat == nil, (3...8).contains(field.bitSize), shift + field.bitSize <= 8,
           field.logicalMin == 0
         else { continue }
-        hat = ["encoding": "EightWay", "byte": byte, "mask": ((1 << field.bitSize) - 1) << shift]
+        hat = ["encoding": "EightWay", "bitOffset": bitOffset, "bitSize": field.bitSize]
       default: continue
       }
     }
@@ -220,17 +237,18 @@ private struct DraftLayout {
   }
 
   /// A byte-aligned 8- or 16-bit axis, with its logical range when it is not the full range.
-  private static func axis(_ field: HIDField, control: Control, byte: Int) -> [String: Any]? {
+  private static func axis(_ field: HIDField, control: Control, bitOffset: Int) -> [String: Any]? {
     guard field.bitOffset.isMultiple(of: 8), field.bitSize == 8 || field.bitSize == 16 else {
       return nil
     }
     let isSigned = field.logicalMin < 0
-    let full = ControllerInputLayout.Axis.fullRange(bits: field.bitSize, isSigned: isSigned)
+    let full = ReportValueField.fullRange(bitSize: field.bitSize, isSigned: isSigned)
     guard full.contains(field.logicalMin), full.contains(field.logicalMax),
       field.logicalMin < field.logicalMax
     else { return nil }
-    var axis: [String: Any] = ["control": control.rawValue, "byte": byte]
-    if field.bitSize == 16 { axis["bits"] = 16 }
+    var axis: [String: Any] = [
+      "control": control.rawValue, "bitOffset": bitOffset, "bitSize": field.bitSize,
+    ]
     if isSigned { axis["signed"] = true }
     if field.logicalMin != full.lowerBound || field.logicalMax != full.upperBound {
       axis["min"] = field.logicalMin

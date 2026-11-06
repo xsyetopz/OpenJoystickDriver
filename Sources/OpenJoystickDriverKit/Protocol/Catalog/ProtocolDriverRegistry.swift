@@ -9,6 +9,7 @@ public final class ProtocolDriverRegistry: Sendable {
   /// The current catalog; it changes when the service applies new user controller records.
   private var catalog: DeviceCatalog { DeviceCatalog.current.withLock { $0 } }
 
+  /// Creates a registry that reads the current catalog.
   public init() {}
 
   /// Exact catalog models whose records declare raw USB access, read when called.
@@ -95,16 +96,18 @@ public final class ProtocolDriverRegistry: Sendable {
   }
 
   /// Whether passively observed USB facts carry a known Xbox USB interface or device signature.
+  ///
   /// Raw-USB enumeration admits an uncatalogued device only then, so classification can report it.
   public static func carriesProtocolSignature(_ device: PhysicalDevice) -> Bool {
     ProtocolClassifier.carriesSignature(device)
   }
 
   /// The runtime profile a binding runs with: its catalog record or, for an interface-signature
-  /// binding, the family defaults. GIP devices enumerate unconfigured on macOS (their device class
-  /// is vendor-specific), so a GIP signature binding sets configuration 1 before the claim whether
-  /// this attach saw the device or interface signature, like the catalogued G7 SE row. Nil for
-  /// `HIDDescriptor` without a record.
+  /// binding, the family defaults.
+  ///
+  /// GIP devices enumerate unconfigured on macOS (their device class is vendor-specific), so a GIP
+  /// signature binding sets configuration 1 before the claim whether this attach saw the device or
+  /// interface signature, like the catalogued G7 SE row. Nil for `HIDDescriptor` without a record.
   func runtimeProfile(for binding: ProtocolBinding) -> DeviceRuntimeProfile? {
     if let record = binding.record { return record }
     guard binding.rule == .interfaceSignature else { return nil }
@@ -167,9 +170,10 @@ public final class ProtocolDriverRegistry: Sendable {
     )
   }
 
-  /// Builds the driver for one family, variant and record without checking any observed
-  /// interface. Not a runtime path: profile capabilities and record rendering have no device,
-  /// and ``makeDriver(for:model:claimed:)`` calls it only after validation.
+  /// Builds the driver for one family, variant and record without checking any observed interface.
+  ///
+  /// Not a runtime path: profile capabilities and record rendering have no device, and
+  /// ``makeDriver(for:model:claimed:)`` calls it only after validation.
   static func makeUnobservedDriver(
     protocolID: PhysicalProtocolID,
     variant: PhysicalProtocolVariantID?,
@@ -196,8 +200,8 @@ public final class ProtocolDriverRegistry: Sendable {
       )
     case .hidReportLayout:
       // Only a record carries a layout; a family profile has nothing to decode with.
-      guard let layout = record.inputLayout else { return .failure(.noProtocolMatch) }
-      return .success(ReportLayoutDriver(layout: layout, rumbleTemplate: record.rumbleTemplate))
+      guard let layouts = record.inputLayouts else { return .failure(.noProtocolMatch) }
+      return .success(ReportLayoutDriver(layouts: layouts, rumbleTemplate: record.rumbleTemplate))
     case .xboxXID, .nintendoSwitchInputOnly, .vendorFlydigi:
       return .success(
         ReportLayoutDriver(

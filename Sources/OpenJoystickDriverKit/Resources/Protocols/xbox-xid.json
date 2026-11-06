@@ -1,5 +1,5 @@
 {
-  "apiVersion": "openjoystickdriver/v1alpha1",
+  "apiVersion": "openjoystickdriver/v1alpha2",
   "kind": "ProtocolDescription",
   "family": "XboxXID",
   "variants": ["Gamepad"],
@@ -44,124 +44,132 @@
       }
     },
     "input": {
-      "report": {
-        "length": { "atLeast": 20 }
-      },
-      "buttons": [
+      "layouts": [
         {
-          "control": "Start",
-          "byte": 2,
-          "mask": 16
-        },
-        {
-          "control": "Back",
-          "byte": 2,
-          "mask": 32
-        },
-        {
-          "control": "LeftStickClick",
-          "byte": 2,
-          "mask": 64
-        },
-        {
-          "control": "RightStickClick",
-          "byte": 2,
-          "mask": 128
-        },
-        {
-          "control": "South",
-          "byte": 4,
-          "mask": 255
-        },
-        {
-          "control": "East",
-          "byte": 5,
-          "mask": 255
-        },
-        {
-          "control": "West",
-          "byte": 6,
-          "mask": 255
-        },
-        {
-          "control": "North",
-          "byte": 7,
-          "mask": 255
-        },
-        {
-          "control": "LeftShoulder",
-          "byte": 8,
-          "mask": 255
-        },
-        {
-          "control": "RightShoulder",
-          "byte": 9,
-          "mask": 255
-        }
-      ],
-      "axes": [
-        {
-          "control": "LeftStickX",
-          "byte": 12,
-          "bits": 16,
-          "signed": true,
-          "min": -32768,
-          "max": 32767,
-          "symmetric": true
-        },
-        {
-          "control": "LeftStickY",
-          "byte": 14,
-          "bits": 16,
-          "signed": true,
-          "min": -32768,
-          "max": 32767,
-          "inverted": true,
-          "symmetric": true
-        },
-        {
-          "control": "RightStickX",
-          "byte": 16,
-          "bits": 16,
-          "signed": true,
-          "min": -32768,
-          "max": 32767,
-          "symmetric": true
-        },
-        {
-          "control": "RightStickY",
-          "byte": 18,
-          "bits": 16,
-          "signed": true,
-          "min": -32768,
-          "max": 32767,
-          "inverted": true,
-          "symmetric": true
-        }
-      ],
-      "hat": [
-        {
-          "encoding": "Table",
-          "byte": 2,
-          "mask": 15,
-          "values": {
-            "1": "North",
-            "2": "South",
-            "4": "West",
-            "8": "East",
-            "9": "NorthEast",
-            "10": "SouthEast",
-            "6": "SouthWest",
-            "5": "NorthWest"
+          "report": {
+            "length": {
+              "atLeast": 20
+            }
+          },
+          "buttons": [
+            {
+              "control": "Start",
+              "bitOffset": 20,
+              "bitSize": 1
+            },
+            {
+              "control": "Back",
+              "bitOffset": 21,
+              "bitSize": 1
+            },
+            {
+              "control": "LeftStickClick",
+              "bitOffset": 22,
+              "bitSize": 1
+            },
+            {
+              "control": "RightStickClick",
+              "bitOffset": 23,
+              "bitSize": 1
+            },
+            {
+              "control": "South",
+              "bitOffset": 32,
+              "bitSize": 8
+            },
+            {
+              "control": "East",
+              "bitOffset": 40,
+              "bitSize": 8
+            },
+            {
+              "control": "West",
+              "bitOffset": 48,
+              "bitSize": 8
+            },
+            {
+              "control": "North",
+              "bitOffset": 56,
+              "bitSize": 8
+            },
+            {
+              "control": "LeftShoulder",
+              "bitOffset": 64,
+              "bitSize": 8
+            },
+            {
+              "control": "RightShoulder",
+              "bitOffset": 72,
+              "bitSize": 8
+            }
+          ],
+          "axes": [
+            {
+              "control": "LeftStickX",
+              "bitOffset": 96,
+              "bitSize": 16,
+              "signed": true,
+              "min": -32768,
+              "max": 32767,
+              "symmetric": true
+            },
+            {
+              "control": "LeftStickY",
+              "bitOffset": 112,
+              "bitSize": 16,
+              "signed": true,
+              "min": -32768,
+              "max": 32767,
+              "inverted": true,
+              "symmetric": true
+            },
+            {
+              "control": "RightStickX",
+              "bitOffset": 128,
+              "bitSize": 16,
+              "signed": true,
+              "min": -32768,
+              "max": 32767,
+              "symmetric": true
+            },
+            {
+              "control": "RightStickY",
+              "bitOffset": 144,
+              "bitSize": 16,
+              "signed": true,
+              "min": -32768,
+              "max": 32767,
+              "inverted": true,
+              "symmetric": true
+            }
+          ],
+          "hat": [
+            {
+              "encoding": "Table",
+              "bitOffset": 16,
+              "bitSize": 4,
+              "values": {
+                "1": "North",
+                "2": "South",
+                "4": "West",
+                "8": "East",
+                "9": "NorthEast",
+                "10": "SouthEast",
+                "6": "SouthWest",
+                "5": "NorthWest"
+              }
+            }
+          ],
+          "leftTrigger": {
+            "bitOffset": 80,
+            "bitSize": 8
+          },
+          "rightTrigger": {
+            "bitOffset": 88,
+            "bitSize": 8
           }
         }
-      ],
-      "leftTrigger": {
-        "byte": 10
-      },
-      "rightTrigger": {
-        "byte": 11
-      }
+      ]
     }
   }
 }

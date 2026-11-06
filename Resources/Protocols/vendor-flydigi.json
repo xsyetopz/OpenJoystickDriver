@@ -1,5 +1,5 @@
 {
-  "apiVersion": "openjoystickdriver/v1alpha1",
+  "apiVersion": "openjoystickdriver/v1alpha2",
   "kind": "ProtocolDescription",
   "family": "VendorFlydigi",
   "endpoints": {
@@ -15,138 +15,146 @@
   },
   "defaults": {
     "input": {
-      "report": {
-        "id": 1,
-        "length": { "exactly": 15 }
-      },
-      "buttons": [
+      "layouts": [
         {
-          "control": "South",
-          "byte": 9,
-          "mask": 16
-        },
-        {
-          "control": "East",
-          "byte": 9,
-          "mask": 32
-        },
-        {
-          "control": "West",
-          "byte": 9,
-          "mask": 64
-        },
-        {
-          "control": "North",
-          "byte": 9,
-          "mask": 128
-        },
-        {
-          "control": "LeftShoulder",
-          "byte": 10,
-          "mask": 1
-        },
-        {
-          "control": "RightShoulder",
-          "byte": 10,
-          "mask": 2
-        },
-        {
-          "control": "LeftTrigger",
-          "byte": 10,
-          "mask": 4
-        },
-        {
-          "control": "RightTrigger",
-          "byte": 10,
-          "mask": 8
-        },
-        {
-          "control": "Back",
-          "byte": 10,
-          "mask": 16
-        },
-        {
-          "control": "Start",
-          "byte": 10,
-          "mask": 32
-        },
-        {
-          "control": "LeftStickClick",
-          "byte": 10,
-          "mask": 64
-        },
-        {
-          "control": "RightStickClick",
-          "byte": 10,
-          "mask": 128
-        },
-        {
-          "control": "Guide",
-          "byte": 12,
-          "mask": 128
-        }
-      ],
-      "axes": [
-        {
-          "control": "LeftStickX",
-          "byte": 1,
-          "bits": 8,
-          "signed": true,
-          "min": -128,
-          "max": 127,
-          "symmetric": true
-        },
-        {
-          "control": "LeftStickY",
-          "byte": 2,
-          "bits": 8,
-          "signed": true,
-          "min": -128,
-          "max": 127,
-          "symmetric": true
-        },
-        {
-          "control": "RightStickX",
-          "byte": 3,
-          "bits": 8,
-          "signed": true,
-          "min": -128,
-          "max": 127,
-          "symmetric": true
-        },
-        {
-          "control": "RightStickY",
-          "byte": 4,
-          "bits": 8,
-          "signed": true,
-          "min": -128,
-          "max": 127,
-          "symmetric": true
-        }
-      ],
-      "hat": [
-        {
-          "encoding": "Table",
-          "byte": 9,
-          "mask": 15,
-          "values": {
-            "1": "North",
-            "2": "NorthEast",
-            "3": "East",
-            "4": "SouthEast",
-            "5": "South",
-            "6": "SouthWest",
-            "7": "West",
-            "8": "NorthWest"
+          "report": {
+            "id": 1,
+            "length": {
+              "exactly": 15
+            }
+          },
+          "buttons": [
+            {
+              "control": "South",
+              "bitOffset": 76,
+              "bitSize": 1
+            },
+            {
+              "control": "East",
+              "bitOffset": 77,
+              "bitSize": 1
+            },
+            {
+              "control": "West",
+              "bitOffset": 78,
+              "bitSize": 1
+            },
+            {
+              "control": "North",
+              "bitOffset": 79,
+              "bitSize": 1
+            },
+            {
+              "control": "LeftShoulder",
+              "bitOffset": 80,
+              "bitSize": 1
+            },
+            {
+              "control": "RightShoulder",
+              "bitOffset": 81,
+              "bitSize": 1
+            },
+            {
+              "control": "LeftTrigger",
+              "bitOffset": 82,
+              "bitSize": 1
+            },
+            {
+              "control": "RightTrigger",
+              "bitOffset": 83,
+              "bitSize": 1
+            },
+            {
+              "control": "Back",
+              "bitOffset": 84,
+              "bitSize": 1
+            },
+            {
+              "control": "Start",
+              "bitOffset": 85,
+              "bitSize": 1
+            },
+            {
+              "control": "LeftStickClick",
+              "bitOffset": 86,
+              "bitSize": 1
+            },
+            {
+              "control": "RightStickClick",
+              "bitOffset": 87,
+              "bitSize": 1
+            },
+            {
+              "control": "Guide",
+              "bitOffset": 103,
+              "bitSize": 1
+            }
+          ],
+          "axes": [
+            {
+              "control": "LeftStickX",
+              "bitOffset": 8,
+              "bitSize": 8,
+              "signed": true,
+              "min": -128,
+              "max": 127,
+              "symmetric": true
+            },
+            {
+              "control": "LeftStickY",
+              "bitOffset": 16,
+              "bitSize": 8,
+              "signed": true,
+              "min": -128,
+              "max": 127,
+              "symmetric": true
+            },
+            {
+              "control": "RightStickX",
+              "bitOffset": 24,
+              "bitSize": 8,
+              "signed": true,
+              "min": -128,
+              "max": 127,
+              "symmetric": true
+            },
+            {
+              "control": "RightStickY",
+              "bitOffset": 32,
+              "bitSize": 8,
+              "signed": true,
+              "min": -128,
+              "max": 127,
+              "symmetric": true
+            }
+          ],
+          "hat": [
+            {
+              "encoding": "Table",
+              "bitOffset": 72,
+              "bitSize": 4,
+              "values": {
+                "1": "North",
+                "2": "NorthEast",
+                "3": "East",
+                "4": "SouthEast",
+                "5": "South",
+                "6": "SouthWest",
+                "7": "West",
+                "8": "NorthWest"
+              }
+            }
+          ],
+          "leftTrigger": {
+            "bitOffset": 104,
+            "bitSize": 8
+          },
+          "rightTrigger": {
+            "bitOffset": 112,
+            "bitSize": 8
           }
         }
-      ],
-      "leftTrigger": {
-        "byte": 13
-      },
-      "rightTrigger": {
-        "byte": 14
-      }
+      ]
     }
   }
 }

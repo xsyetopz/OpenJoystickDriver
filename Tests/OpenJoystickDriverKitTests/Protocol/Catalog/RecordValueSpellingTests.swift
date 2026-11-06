@@ -148,9 +148,9 @@ struct RecordValueSpellingTests {
     RecordCase(
       name: "hat encoding",
       fields: modes(#"{"family": "HIDReportLayout"}"#)
-        + #", "input": {"report": {"length": {"atLeast": 4}}, "#
-        + #""buttons": [{"control": "South", "byte": 0, "mask": 1}], "#
-        + #""hat": [{"encoding": "VALUE", "byte": 1, "mask": 15}]}"#,
+        + #", "input": {"layouts": [{"report": {"length": {"atLeast": 4}}, "#
+        + #""buttons": [{"control": "South", "bitOffset": 0, "bitSize": 1}], "#
+        + #""hat": [{"encoding": "VALUE", "bitOffset": 8, "bitSize": 4}]}]}"#,
       current: "EightWay",
       rejected: ["8-way", "banana"]
     ),

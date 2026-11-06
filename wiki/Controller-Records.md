@@ -67,38 +67,43 @@ Some controllers send fixed input reports that their HID descriptor describes wr
 ```json
 "modes": [{ "id": "default", "protocol": { "family": "HIDReportLayout" } }],
 "input": {
-  "report": { "length": { "atLeast": 19 } },
-  "buttons": [
-    { "control": "South", "byte": 13, "mask": 128 },
-    { "control": "Back", "byte": 1, "mask": 1 }
-  ],
-  "axes": [
-    { "control": "LeftStickX", "byte": 3 },
-    { "control": "LeftStickY", "byte": 4 }
-  ],
-  "hat": [
+  "layouts": [
     {
-      "encoding": "Directions",
-      "up": { "byte": 9, "mask": 128 },
-      "right": { "byte": 7, "mask": 128 },
-      "down": { "byte": 10, "mask": 128 },
-      "left": { "byte": 8, "mask": 128 }
+      "report": { "length": { "atLeast": 19 } },
+      "buttons": [
+        { "control": "South", "bitOffset": 111, "bitSize": 1 },
+        { "control": "Back", "bitOffset": 8, "bitSize": 1 }
+      ],
+      "axes": [
+        { "control": "LeftStickX", "bitOffset": 24, "bitSize": 8 },
+        { "control": "LeftStickY", "bitOffset": 32, "bitSize": 8 }
+      ],
+      "hat": [
+        {
+          "encoding": "Directions",
+          "up": { "bitOffset": 79, "bitSize": 1 },
+          "right": { "bitOffset": 63, "bitSize": 1 },
+          "down": { "bitOffset": 87, "bitSize": 1 },
+          "left": { "bitOffset": 71, "bitSize": 1 }
+        }
+      ],
+      "leftTrigger": { "bitOffset": 136, "bitSize": 8 },
+      "rightTrigger": { "bitOffset": 144, "bitSize": 8 }
     }
-  ],
-  "leftTrigger": { "byte": 17 },
-  "rightTrigger": { "byte": 18 }
+  ]
 }
 ```
 
-Offsets count from the first byte of the report as macOS delivers it.
+Offsets count from the first byte of the report as macOS delivers it. A `bitOffset` counts bits from bit 0, the least significant bit, of byte 0, so bit 7 of byte 13 is `bitOffset` 111. A field is 1 to 32 bits (`bitSize`), lies inside the report length, and with a report `id` lies after byte 0.
 
-- `report`: `length` is `{ "atLeast": N }` or `{ "exactly": N }`, with N from 1 to 64 and exactly one of the two keys. `atLeast` reads every report of N bytes or more; `exactly` reads only reports of N bytes. With `id`, from 1 to 255, byte 0 must hold that report ID, and N counts it. OpenJoystickDriver ignores shorter reports, reports of another length under `exactly`, and reports with another ID.
-- `buttons`: each entry names a control, a `byte`, and a `mask`. The button is pressed while any masked bit is set. Repeat a control to read it from several places. A button cannot be a D-pad direction or a stick axis. A `LeftTrigger` or `RightTrigger` button reports the digital press of that trigger; the analog value comes from `leftTrigger` and `rightTrigger`.
-- `axes`: each entry names a stick axis and its `byte`. `bits` is 8, the default, or 16 for a little-endian value in `byte` and the next byte. `signed` reads the value as two's complement. `min` and `max` set the raw range, which defaults to the full range of the width. `inverted` flips the direction. `symmetric` reads a signed value as the raw value divided by `max`, so the lowest raw value reads as full negative; it requires `signed`; `min` and `max` default to the full range, and if given must be negative and positive. X grows right and Y grows down, as in HID.
-- `hat`: a list of sources; the first that reads a direction wins. An `EightWay` source reads the masked bits as 0 for north, clockwise to 7 for north-west, and any other value as centered. With `neutralUntilNonzero`, 0 also reads centered until the bits have been nonzero once, for a controller that sends 0 before its hat is live. A `directions` source names one bit for each direction; opposing directions cancel. A `table` source takes a `byte`, a `mask`, and `values`, which maps each masked number, written in decimal without leading zeros, to a direction name from `north`, `northEast`, `east`, `southEast`, `south`, `southWest`, `west`, and `northWest`; any other number reads as centered.
-- `leftTrigger` and `rightTrigger`: a `byte` read from 0 to 255, a `button` that reads as fully pulled, or both.
+- `layouts`: one or more layouts, each with the keys below. A layout reads the reports its `report` selects, by ID and length. The selectors of two layouts cannot match the same report, and `ojd record validate` rejects a record that has such a pair. A report that no layout selects is ignored, and every control keeps its value. A layout changes only the controls it names, so a control that report 0x31 names and report 0x30 does not keeps its value from report 0x31 while report 0x30 arrives. The record's controls are those of all its layouts.
+- `report`: `length` is `{ "atLeast": N }` or `{ "exactly": N }`, with N from 1 to 64 and exactly one of the two keys. `atLeast` reads every report of N bytes or more; `exactly` reads only reports of N bytes. With `id`, from 1 to 255, byte 0 must hold that report ID, and N counts it. OpenJoystickDriver ignores shorter reports, reports of another length under `exactly`, and reports with another ID. A length above 64 is rejected.
+- `buttons`: each entry names a control, a `bitOffset` and a `bitSize`. The button is pressed while any of its bits is set. Repeat a control to read it from several places. A button cannot be a D-pad direction or a stick axis. A `LeftTrigger` or `RightTrigger` button reports the digital press of that trigger; the analog value comes from `leftTrigger` and `rightTrigger`.
+- `axes`: each entry names a stick axis, a `bitOffset` and a `bitSize`. The value is unsigned unless `signed` reads it as two's complement. `byteOrder` is `LittleEndian`, the default, or `BigEndian`; `BigEndian` needs a `bitOffset` divisible by 8 and a `bitSize` of 16, 24 or 32. `min` and `max` set the raw range, which defaults to the full range of the `bitSize`. `inverted` flips the direction. `symmetric` reads a signed value as the raw value divided by `max`, so the lowest raw value reads as full negative; it requires `signed`; `min` and `max` default to the full range, and if given must be negative and positive. X grows right and Y grows down, as in HID.
+- `hat`: a list of sources; the first that reads a direction wins. An `EightWay` source reads `bitSize` bits (3 to 8) as 0 for north, clockwise to 7 for north-west, and any other value as centered. With `neutralUntilNonzero`, 0 also reads centered until the bits have been nonzero once, for a controller that sends 0 before its hat is live. A `Directions` source names one field for each direction (`up`, `right`, `down`, `left`, each a `bitOffset` and `bitSize`); opposing directions cancel. A `Table` source takes a `bitOffset`, a `bitSize`, and `values`, which maps each number the bits can hold, written in decimal without leading zeros, to a direction name from `North`, `NorthEast`, `East`, `SouthEast`, `South`, `SouthWest`, `West`, and `NorthWest`; any other number reads as centered.
+- `leftTrigger` and `rightTrigger`: an analog value (`bitOffset` and `bitSize`, with `byteOrder`, `signed`, `min` and `max` as for an axis) read from `min` to `max` as 0 to 1, a `button` field that reads as fully pulled, or both.
 
-Name at least one control. `ojd record validate` checks that every field lies inside the report.
+Name at least one control in each layout. `ojd record validate` checks that every field lies inside the report.
 
 ## Add Rumble To a Controller
 
@@ -315,8 +320,12 @@ A `HIDDescriptor` record maps the usages of its report descriptor to controls in
 - `button`: the control is pressed while the value is nonzero. It cannot be a D-pad id or a stick axis.
 - `axis`: the control is a stick axis (`LeftStickX`, `LeftStickY`, `RightStickX`, `RightStickY`) or `LeftTrigger` or `RightTrigger`. A stick reads -1 to 1 and a trigger 0 to 1 across the element's logical range. `range` (`{"min": 0, "max": 100}`, `min` below `max`) replaces that range, `inverted` reverses the axis, and `deadZone` (above 0 and below 1) reads 0 within that fraction of full travel and rescales the rest.
 - `hat`: the entry has no `control`; it drives `DpadUp`, `DpadDown`, `DpadLeft` and `DpadRight`. `range` is `{"min": 0, "max": 7}` or `{"min": 1, "max": 8}` and names the value of north, then clockwise; any other value is neutral. Without `range`, the element's logical minimum is north.
+- `HalfAxis`: with `half` (`Positive` or `Negative`), `control` (`LeftTrigger` or `RightTrigger`) and optionally `inverted`, one half of the element's range reads 0 to 1. Binding the positive half to `LeftTrigger` and the negative half to `RightTrigger` reads a combined trigger axis.
+- `AxisDpad`: with `half`, a `control` that is a D-pad direction and a `threshold` above 0 and below 1, the direction is pressed while that half's travel is at or past `threshold`. A hat and an `AxisDpad` entry that name the same direction combine: either one presses it.
+- `AxisButton`: with `half`, a button `control` and a `threshold` above 0 and below 1, the button is pressed while that half's travel is at or past `threshold`.
+- `ButtonTrigger`: with a `control` of `LeftTrigger` or `RightTrigger`, the trigger reads 1 while the value is nonzero and 0 otherwise.
 
-`reportID` limits the map to one report. A usage the map does not name is ignored, and both the app and `./Scripts/ojd check profiles` reject a usage named twice or an axis `range` whose `min` is not below its `max`. The description may also list `descriptorShapes` that choose a map from the usages a controller's report descriptor declares: the shape in `hid-descriptor.json` gives a controller with Z, Rz, a Brake or Accelerator and no Rx or Ry the Z/Rz layout, with Brake as LT and Accelerator as RT. The records for the WR007 (`11C1:5600`), SCUF Envision (`2E95:434D`), 8BitDo Ultimate 2C (`2DC8:301B`, `301C`) and DragonRise (`0079:0006`, by patch) show complete maps.
+`reportID` limits the map to one report. A usage the map does not name is ignored, and both the app and `./Scripts/ojd check profiles` reject a usage named twice, except that a usage may appear in several `HalfAxis`, `AxisDpad` and `AxisButton` entries when no two name the same `half`, and reject an axis `range` whose `min` is not below its `max`. The description may also list `descriptorShapes` that choose a map from the usages a controller's report descriptor declares: the shape in `hid-descriptor.json` gives a controller with Z, Rz, a Brake or Accelerator and no Rx or Ry the Z/Rz layout, with Brake as LT and Accelerator as RT. The records for the WR007 (`11C1:5600`), SCUF Envision (`2E95:434D`), 8BitDo Ultimate 2C (`2DC8:301B`, `301C`) and DragonRise (`0079:0006`, by patch) show complete maps.
 
 ## Control Names and Other Vocabularies
 

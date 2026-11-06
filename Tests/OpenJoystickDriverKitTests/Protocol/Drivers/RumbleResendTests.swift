@@ -131,10 +131,10 @@ struct RumbleResendTests {
   func reportLayoutResendsOnTheHIDChannel() throws {
     let layout = try inputLayout(
       #"{"report": {"length": {"atLeast": 2}}, "#
-        + #""buttons": [{"control": "South", "byte": 1, "mask": 1}]}"#
+        + #""buttons": [{"control": "South", "bitOffset": 8, "bitSize": 1}]}"#
     )
     let driver = ReportLayoutDriver(
-      layout: layout,
+      layouts: try ControllerInputLayouts(layouts: [layout]),
       rumbleTemplate: try Self.hidTemplate(resend: 20)
     )
     #expect(driver.sessionPlan.hidKeepAliveIntervalNanoseconds == 20_000_000)
@@ -144,7 +144,7 @@ struct RumbleResendTests {
     _ = try driver.encode(.stopRumble)
     #expect(driver.keepAliveWrites().isEmpty)
     let plain = ReportLayoutDriver(
-      layout: layout,
+      layouts: try ControllerInputLayouts(layouts: [layout]),
       rumbleTemplate: try Self.hidTemplate(resend: nil)
     )
     #expect(plain.sessionPlan.hidKeepAliveIntervalNanoseconds == nil)

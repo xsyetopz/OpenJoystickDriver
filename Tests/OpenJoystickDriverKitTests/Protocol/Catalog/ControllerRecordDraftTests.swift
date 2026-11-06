@@ -38,21 +38,26 @@ struct ControllerRecordDraftTests {
     let document = try #require(
       JSONSerialization.jsonObject(with: draft.document) as? [String: Any]
     )
-    let input = try #require(document["input"] as? [String: Any])
+    let layouts = try #require(
+      (document["input"] as? [String: Any])?["layouts"] as? [[String: Any]]
+    )
+    let input = try #require(layouts.first)
+    #expect(layouts.count == 1)
     let report = input["report"] as? [String: Any]
     #expect((report?["length"] as? [String: Int]) == ["atLeast": 6])
     #expect(report?["id"] as? Int == 1)
     let buttons = try #require(input["buttons"] as? [[String: Any]])
     #expect(buttons.compactMap { $0["control"] as? String }.first == "South")
-    #expect(buttons.compactMap { $0["mask"] as? Int } == [1, 2, 4, 8, 16, 32, 64, 128])
-    #expect(buttons.allSatisfy { $0["byte"] as? Int == 1 })
+    #expect(buttons.compactMap { $0["bitOffset"] as? Int } == Array(8...15))
+    #expect(buttons.allSatisfy { $0["bitSize"] as? Int == 1 })
     let axes = try #require(input["axes"] as? [[String: Any]])
-    #expect(axes.map { $0.count } == [2, 2])
-    #expect(axes.compactMap { $0["byte"] as? Int } == [3, 4])
+    #expect(axes.map { $0.count } == [3, 3])
+    #expect(axes.compactMap { $0["bitOffset"] as? Int } == [24, 32])
+    #expect(axes.allSatisfy { $0["bitSize"] as? Int == 8 })
     let hat = try #require((input["hat"] as? [[String: Any]])?.first)
-    #expect(hat["encoding"] as? String == "EightWay" && hat["byte"] as? Int == 2)
-    #expect(hat["mask"] as? Int == 15)
-    #expect(input["leftTrigger"] as? [String: Int] == ["byte": 5])
+    #expect(hat["encoding"] as? String == "EightWay" && hat["bitOffset"] as? Int == 16)
+    #expect(hat["bitSize"] as? Int == 4)
+    #expect(input["leftTrigger"] as? [String: Int] == ["bitOffset": 40, "bitSize": 8])
     #expect(input["rightTrigger"] == nil)
 
     let validated = try ControllerRecordSet.validate(draft.document)
@@ -148,8 +153,8 @@ struct ControllerRecordDraftTests {
     #expect(text.contains("\n  \"vendorID\": 4660,\n  \"productID\": 22136,\n"))
     #expect(
       text.contains(
-        "\"report\": {\n      \"id\": 1,\n      \"length\": {\n"
-          + "        \"atLeast\": 6\n      }\n    }"
+        "\"report\": {\n          \"id\": 1,\n          \"length\": {\n"
+          + "            \"atLeast\": 6\n          }\n        }"
       )
     )
     #expect(text.contains("{\n      \"id\": \"default\",\n      \"protocol\": {\n"))

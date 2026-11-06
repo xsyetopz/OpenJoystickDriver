@@ -143,6 +143,32 @@ struct HIDDescriptorDriverTests {
   }
 
   @Test
+  func theHalvesOfOneUsageDriveSeparateControlsAndASessionResetReleasesThem() throws {
+    let z = HIDUsage(usagePage: 1, usage: 50)
+    let map = try HIDUsageMap(entries: [
+      .init(
+        usage: z,
+        binding: .axisDpad(.init(half: .negative, control: .dpadLeft, threshold: 0.5))
+      ),
+      .init(
+        usage: z,
+        binding: .axisButton(.init(half: .positive, control: .east, threshold: 0.5))
+      ),
+    ])
+    let parser = HIDDescriptorDriver(model: model, usageMap: map)
+    func zValue(_ integer: Int) -> HIDElementValue {
+      value(page: 1, usage: 50, minimum: -100, maximum: 100, integer: integer)
+    }
+    #expect(parse(parser, zValue(-80))?.state.hat == .west)
+    #expect(parse(parser, zValue(80))?.state == snapshot(.press(.east)))
+    #expect(parse(parser, zValue(-80)).contains(.release(.east)))
+
+    parser.resetProtocolState()
+
+    #expect(parse(parser, zValue(0))?.state == .neutral)
+  }
+
+  @Test
   func rawReportsRemainUnusedForDescriptorDrivenFallback() throws {
     let parser = HIDDescriptorDriver(model: model)
     #expect(try parser.parseReport(Data([1, 2, 3])) == nil)
