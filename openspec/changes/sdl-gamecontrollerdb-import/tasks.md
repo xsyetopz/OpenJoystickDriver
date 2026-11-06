@@ -57,7 +57,7 @@ Verify: `bunx markdownlint-cli2` over the changed files.
 - [x] 4.1 Add a section on the database to `docs/development/xpad-import.md` (pin, filter, skip counts) and a line to `docs/development/architecture.md:117` naming the third pinned source. Verify: markdownlint exits 0. Done: the database section of xpad-import.md and the third pinned source in architecture.md.
 - [x] 4.2 Update `wiki/Supported-Controllers.md` (Generic HID Controllers: mapped from SDL_GameControllerDB, the standard map, the rejection), `wiki/Command-Reference.md` (`controller show` row and JSON, `record draft --from-sdl`, `status`, `diagnose`) and `wiki/Controller-Records.md` (saving the mapping). Verify: markdownlint exits 0; a scan of added lines finds none of the words renamed, was, now, new, old, legacy. Done: Supported-Controllers.md (Mapping Source), Command-Reference.md (controller show, status) and Controller-Records.md; markdownlint clean and no listed word in added lines. `--from-sdl` is not documented because 2.6 is open; `diagnose` has no row.
 - [x] 4.3 Add `CHANGELOG.md` entries under `[Unreleased]` (Added). Verify: markdownlint exits 0. Done: an Added entry under [Unreleased].
-- [ ] 4.4 Run the full check list from the repository `CLAUDE.md` once. Verify: `just check` exits 0.
+- [x] 4.4 Run the full check list from the repository `CLAUDE.md` once. Verify: `just check` exits 0. Done: the run found lint findings, a stale DriverKit SwifterKit bound and a catalog test that wrote the shipped database; each is fixed and its step passes.
 
 ## Hardware Checks (Maintainer)
 

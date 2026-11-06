@@ -21,4 +21,4 @@ Each task names its check. Error codes stay as they are; only message text may c
 ## 4. Docs and Whole Check
 
 - [x] 4.1 Update `wiki/Controller-Records.md` so it lists the commands that read a file and give the same verdict, and add a CHANGELOG entry (`ojd diagnose record` now refuses non-UTF-8 text and a member named twice). Verify: markdownlint passes on both files. Done: the CHANGELOG entry also lists the message and VirtualDevice changes.
-- [ ] 4.2 Run the full check. Verify: `just check` passes; rerun only failures.
+- [x] 4.2 Run the full check. Verify: `just check` passes; rerun only failures. Done: every step passes after the lint and build-check fixes.
