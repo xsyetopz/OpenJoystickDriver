@@ -32,7 +32,10 @@ struct SDLMappingFixture: Decodable {
     )
     return try Dictionary(
       uniqueKeysWithValues: urls.map {
-        ($0.deletingPathExtension().lastPathComponent, try JSONDecoder().decode(Self.self, from: Data(contentsOf: $0)))
+        (
+          $0.deletingPathExtension().lastPathComponent,
+          try JSONDecoder().decode(Self.self, from: Data(contentsOf: $0))
+        )
       }
     )
   }

@@ -10,7 +10,10 @@ struct SDLMappingConverterTests {
       sdlElement(1, 0x39, order: 2, range: 0...7),
     ] + (1...16).map { sdlElement(9, UInt32($0), order: 2 + $0) }
 
-  private static func convert(_ fields: [String], elements: [HIDElementDescription] = elements)
+  private static func convert(
+    _ fields: [String],
+    elements: [HIDElementDescription] = elements
+  )
     throws(SDLMappingRejection) -> SDLConvertedMapping
   {
     try SDLMappingConverter.convert(fields: fields, elements: elements)

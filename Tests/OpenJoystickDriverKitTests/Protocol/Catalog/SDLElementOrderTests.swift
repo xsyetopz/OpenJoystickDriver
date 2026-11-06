@@ -69,7 +69,9 @@ struct SDLElementOrderTests {
   @Test
   func otherUsagesJoinNoList() {
     let lists = SDLElementLists(
-      elements: [sdlElement(0xFF00, 1, order: 0), sdlElement(1, 0x01, order: 1), sdlElement(8, 1, order: 2)]
+      elements: [
+        sdlElement(0xFF00, 1, order: 0), sdlElement(1, 0x01, order: 1), sdlElement(8, 1, order: 2),
+      ]
     )
     #expect(lists.axes.isEmpty && lists.hats.isEmpty && lists.buttons.isEmpty)
   }
