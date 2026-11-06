@@ -33,7 +33,10 @@ package enum PhysicalReportDescriptor {
   }
 
   /// The preferred connected device of the model and its report descriptor.
-  private static func preferredDevice(vendorID: Int, productID: Int) -> (IOHIDDevice, descriptor: Data)? {
+  private static func preferredDevice(
+    vendorID: Int,
+    productID: Int
+  ) -> (IOHIDDevice, descriptor: Data)? {
     let matching = AppleGameControllerSyntheticHID.ioHIDMatchingExcludingSynthetics([
       kIOHIDVendorIDKey as String: vendorID, kIOHIDProductIDKey as String: productID,
     ])

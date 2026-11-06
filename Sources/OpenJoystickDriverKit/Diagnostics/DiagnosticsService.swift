@@ -320,7 +320,9 @@ public enum DiagnosticsService {
         )
       }
     }
-    guard rejected.isEmpty else { return DiagnoseCheck(id, .warn, rejected.joined(separator: "; ")) }
+    guard rejected.isEmpty else {
+      return DiagnoseCheck(id, .warn, rejected.joined(separator: "; "))
+    }
     return DiagnoseCheck(id, .pass, localization.string("cli.diagnose.group.inputMappingApplied"))
   }
 

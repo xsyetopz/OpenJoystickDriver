@@ -2,7 +2,7 @@ import Foundation
 
 /// Why a database line cannot drive a pad.
 struct SDLMappingRejection: Error, Equatable, CustomStringConvertible {
-  /// The reason, as a fragment that follows the text "SDL_GameControllerDB line rejected:".
+  /// The reason, as a fragment that follows "SDL_GameControllerDB line rejected" in each message.
   let reason: String
 
   /// The reason.

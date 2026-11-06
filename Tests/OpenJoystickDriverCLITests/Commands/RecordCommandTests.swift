@@ -291,20 +291,29 @@ struct RecordCommandTests {
   }
 
   /// Runs `record draft --from-sdl` for a controller of the model, whose pad is `pad`.
-  private func draftFromSDL(vendorID: UInt16, productID: UInt16, pad: PhysicalDevice?) async throws
+  private func draftFromSDL(
+    vendorID: UInt16,
+    productID: UInt16,
+    pad: PhysicalDevice?
+  ) async throws
     -> CLIRun
   {
     let service = try FakeService(devices: [
       ApplicationServiceDeviceDescription.fixture(
-        id: "pad-1", vendorID: vendorID, productID: productID)
+        id: "pad-1",
+        vendorID: vendorID,
+        productID: productID
+      )
     ])
-    return await RecordDraftCommand.$physicalDevice.withValue({ _, _ in pad }) {
+    let read: @Sendable (Int, Int) -> PhysicalDevice? = { _, _ in pad }
+    return await RecordDraftCommand.$physicalDevice.withValue(read) {
       await service.run(["record", "draft", token("pad-1"), "--from-sdl"])
     }
   }
 
   /// A pad of the model with a valid descriptor and no input elements.
-  private func pad(vendorID: UInt16, productID: UInt16, version: UInt16 = 0x0100) -> PhysicalDevice {
+  private func pad(vendorID: UInt16, productID: UInt16, version: UInt16 = 0x0100) -> PhysicalDevice
+  {
     PhysicalDevice(
       vendorID: vendorID,
       productID: productID,
@@ -314,7 +323,9 @@ struct RecordCommandTests {
           hostTransport: .usb,
           accessBackend: .hid,
           hidLayout: HIDLayoutSummary(
-            reportDescriptor: Data(GamepadHIDDescriptor.descriptor), elements: [])
+            reportDescriptor: Data(GamepadHIDDescriptor.descriptor),
+            elements: []
+          )
         )
       ]
     )
@@ -330,7 +341,10 @@ struct RecordCommandTests {
   @Test
   func fromSDLOfAPadWithNoDatabaseLineExitsOneWithE2012() async throws {
     let result = try await draftFromSDL(
-      vendorID: 0x1234, productID: 0x5678, pad: pad(vendorID: 0x1234, productID: 0x5678))
+      vendorID: 0x1234,
+      productID: 0x5678,
+      pad: pad(vendorID: 0x1234, productID: 0x5678)
+    )
     #expect(result.code == 1)
     #expect(result.standardError.hasPrefix("error[E2012]: "))
   }
@@ -338,7 +352,10 @@ struct RecordCommandTests {
   @Test
   func fromSDLOfALineThatDoesNotConvertExitsOneWithE5008() async throws {
     let result = try await draftFromSDL(
-      vendorID: 0x358A, productID: 0x0201, pad: pad(vendorID: 0x358A, productID: 0x0201))
+      vendorID: 0x358A,
+      productID: 0x0201,
+      pad: pad(vendorID: 0x358A, productID: 0x0201)
+    )
     #expect(result.code == 1)
     #expect(result.standardError.hasPrefix("error[E5008]: "))
   }
@@ -346,7 +363,10 @@ struct RecordCommandTests {
   @Test
   func fromSDLOfABundledModelExitsOneWithE2013() async throws {
     let result = try await draftFromSDL(
-      vendorID: 0x045E, productID: 0x028E, pad: pad(vendorID: 0x045E, productID: 0x028E))
+      vendorID: 0x045E,
+      productID: 0x028E,
+      pad: pad(vendorID: 0x045E, productID: 0x028E)
+    )
     #expect(result.code == 1)
     #expect(result.standardError.hasPrefix("error[E2013]: "))
   }

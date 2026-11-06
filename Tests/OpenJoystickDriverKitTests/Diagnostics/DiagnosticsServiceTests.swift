@@ -29,7 +29,8 @@ struct DiagnosticsServiceTests {
     )
   }
 
-  private func snapshot(devices: [ApplicationServiceDeviceDescription]?) -> DiagnoseServiceSnapshot {
+  private func snapshot(devices: [ApplicationServiceDeviceDescription]?) -> DiagnoseServiceSnapshot
+  {
     DiagnoseServiceSnapshot(
       availability: devices == nil ? .stopped : .running,
       status: devices.map {
