@@ -3,7 +3,7 @@
 ### Requirement: REQ-13 Sample package
 
 `docs/sdk/sample/` MUST hold a package that `ojd mod validate` accepts, with at least one controller record, one profile, and one virtual device, all for the pid.codes test ID `1209:0001`, and `swift test` MUST validate it and run `ojd record test` on its record.
-Every file of the package MUST validate against the `v1alpha1` schemas, and `./Scripts/ojd check schemas` MUST cover `docs/sdk/sample/**`.
+Every file of the package MUST validate against the `v1alpha2` schemas, and `./Scripts/ojd check schemas` MUST cover `docs/sdk/sample/**`.
 
 #### Scenario: Validate the sample
 

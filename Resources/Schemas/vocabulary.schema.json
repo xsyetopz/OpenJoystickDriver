@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/vocabulary.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/vocabulary.schema.json",
   "description": "The control vocabulary: the one definition of the control ids every document, endpoint message, profile and controller record uses. A Swift enum (Control) mirrors $defs/control, and a test keeps them equal. The other definitions are subsets for places that accept only some controls.",
   "$defs": {
     "control": {

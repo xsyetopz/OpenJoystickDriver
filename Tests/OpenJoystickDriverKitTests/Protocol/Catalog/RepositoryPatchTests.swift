@@ -28,7 +28,7 @@ struct RepositoryPatchTests {
 
   private static let record = """
     {
-      "apiVersion": "openjoystickdriver/v1alpha1",
+      "apiVersion": "openjoystickdriver/v1alpha2",
       "kind": "Controller",
       "vendorID": 1234,
       "productID": 5678,
@@ -48,7 +48,7 @@ struct RepositoryPatchTests {
 
   private static let patch = """
     {
-      "apiVersion": "openjoystickdriver/v1alpha1",
+      "apiVersion": "openjoystickdriver/v1alpha2",
       "kind": "ControllerPatch",
       "selector": {"vendorID": 1234, "productID": 5678},
       "patch": {
@@ -66,7 +66,7 @@ struct RepositoryPatchTests {
 
   private static let secondPatch = """
     {
-      "apiVersion": "openjoystickdriver/v1alpha1",
+      "apiVersion": "openjoystickdriver/v1alpha2",
       "kind": "ControllerPatch",
       "selector": {"model": "04d2-162e"},
       "patch": {
@@ -108,7 +108,7 @@ struct RepositoryPatchTests {
       #expect(
         written == """
           {
-            "apiVersion": "openjoystickdriver/v1alpha1",
+            "apiVersion": "openjoystickdriver/v1alpha2",
             "kind": "Controller",
             "vendorID": 1234,
             "productID": 5678,
@@ -170,7 +170,7 @@ struct RepositoryPatchTests {
       )
       let patch = """
         {
-          "apiVersion": "openjoystickdriver/v1alpha1",
+          "apiVersion": "openjoystickdriver/v1alpha2",
           "kind": "ControllerPatch",
           "selector": {"vendorID": 1234, "productID": 5678},
           "patch": {"usb": {"interface": 0.0}}
@@ -199,7 +199,7 @@ struct RepositoryPatchTests {
       )
       let patch = """
         {
-          "apiVersion": "openjoystickdriver/v1alpha1",
+          "apiVersion": "openjoystickdriver/v1alpha2",
           "kind": "ControllerPatch",
           "selector": {"vendorID": 1234, "productID": 5678},
           "patch": {"usb": {"scale": 1.29e2, "ratio": 0.50}}

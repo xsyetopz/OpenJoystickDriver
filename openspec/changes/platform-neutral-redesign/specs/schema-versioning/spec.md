@@ -2,7 +2,7 @@
 
 ### Requirement: Every document carries apiVersion and kind
 
-Every OJD-owned persisted or wire document SHALL carry `apiVersion: openjoystickdriver/v1alpha1` and a `kind`. This covers Controller, ControllerPatch, Profile, VirtualDevice, ModPackage, ErrorCatalog, AccessGrants, Settings, SupportDiagnostic data, CLI output and endpoint messages.
+Every OJD-owned persisted or wire document SHALL carry `apiVersion: openjoystickdriver/v1alpha2` and a `kind`. This covers Controller, ControllerPatch, Profile, VirtualDevice, ModPackage, ErrorCatalog, AccessGrants, Settings, SupportDiagnostic data, CLI output and endpoint messages.
 
 #### Scenario: Missing header
 
@@ -25,12 +25,12 @@ A document whose `apiVersion` is not supported SHALL be rejected with a dedicate
 
 ### Requirement: Flat schema files with hosted ids
 
-Schema sources SHALL be flat files `Resources/Schemas/<kind>.schema.json` with the version written inside each file. Each `$id` SHALL be `https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/<kind>.schema.json`. Instances SHALL NOT carry `$schema`. Schemas SHALL NOT be fetched at run time.
+Schema sources SHALL be flat files `Resources/Schemas/<kind>.schema.json` with the version written inside each file. Each `$id` SHALL be `https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/<kind>.schema.json`. Instances SHALL NOT carry `$schema`. Schemas SHALL NOT be fetched at run time.
 
 #### Scenario: No version folder
 
 - **WHEN** `Resources/Schemas/` is listed
-- **THEN** it has no `v1beta1` or `v1alpha1` directory
+- **THEN** it has no `v1beta1` or `v1alpha2` directory
 
 ### Requirement: Single version constant
 

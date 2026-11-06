@@ -60,7 +60,7 @@ struct CLIOutputSchemaTests {
 
   @Test
   func outputThatBreaksItsDefinitionIsReported() throws {
-    let envelope = #""apiVersion":"openjoystickdriver/v1alpha1","kind":"LogLocation""#
+    let envelope = #""apiVersion":"openjoystickdriver/v1alpha2","kind":"LogLocation""#
     let logPath = ["log", "path"]
     #expect(try CLIOutputSchema.issues(in: #"{\#(envelope),"path":"/a"}"#, path: logPath).isEmpty)
     #expect(try !CLIOutputSchema.issues(in: #"{\#(envelope),"path":1}"#, path: logPath).isEmpty)
@@ -68,7 +68,7 @@ struct CLIOutputSchemaTests {
     #expect(try !CLIOutputSchema.issues(in: #"{"path":"/a"}"#, path: logPath).isEmpty)
     #expect(
       try !CLIOutputSchema.issues(
-        in: #"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"LogShow","path":"/a"}"#,
+        in: #"{"apiVersion":"openjoystickdriver/v1alpha2","kind":"LogShow","path":"/a"}"#,
         path: logPath
       ).isEmpty
     )
@@ -81,7 +81,7 @@ struct CLIOutputSchemaTests {
   @Test(arguments: ["USBPacket", "JoyConPair", "rawReport"])
   func aStreamLineOfAnUnknownKindIsRefused(kind: String) throws {
     let line =
-      #"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"\#(kind)","#
+      #"{"apiVersion":"openjoystickdriver/v1alpha2","kind":"\#(kind)","#
       + #""direction":"Rx","hex":"01 02","length":2,"captureTime":"1970-01-01T00:00:01.500Z"}"#
     #expect(try !CLIOutputSchema.issues(in: line, path: ["controller", "capture"]).isEmpty)
   }
@@ -89,11 +89,11 @@ struct CLIOutputSchemaTests {
   @Test
   func theCurrentPairAndSessionDocumentsPass() throws {
     let pair =
-      #"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"ControllerPair","gyro":"Left","#
+      #"{"apiVersion":"openjoystickdriver/v1alpha2","kind":"ControllerPair","gyro":"Left","#
       + #""left":"a","profile":"p","right":"b","session":"01234567-89AB-CDEF-0123-456789ABCDEF"}"#
     #expect(try CLIOutputSchema.issues(in: pair, path: ["controller", "pair"]).isEmpty)
     let session =
-      #"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"ControllerSession","#
+      #"{"apiVersion":"openjoystickdriver/v1alpha2","kind":"ControllerSession","#
       + #""changed":false,"controller":"c","session":"Suspended"}"#
     #expect(try CLIOutputSchema.issues(in: session, path: ["controller", "suspend"]).isEmpty)
   }
@@ -101,7 +101,7 @@ struct CLIOutputSchemaTests {
   @Test(arguments: ["JoyConPair", "controllerPair", "RawReport"])
   func aPairDocumentOfAnUnknownKindIsRefused(kind: String) throws {
     let document =
-      #"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"\#(kind)","gyro":"Left","#
+      #"{"apiVersion":"openjoystickdriver/v1alpha2","kind":"\#(kind)","gyro":"Left","#
       + #""left":"a","profile":"p","right":"b","session":"01234567-89AB-CDEF-0123-456789ABCDEF"}"#
     #expect(try !CLIOutputSchema.issues(in: document, path: ["controller", "pair"]).isEmpty)
   }
@@ -109,7 +109,7 @@ struct CLIOutputSchemaTests {
   @Test(arguments: ["active", "suspended", "disconnected"])
   func aSessionOfAnUnknownSpellingIsRefused(session: String) throws {
     let document =
-      #"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"ControllerSession","#
+      #"{"apiVersion":"openjoystickdriver/v1alpha2","kind":"ControllerSession","#
       + #""changed":false,"controller":"c","session":"\#(session)"}"#
     #expect(
       try !CLIOutputSchema.issues(in: document, path: ["controller", "suspend"]).isEmpty
@@ -119,7 +119,7 @@ struct CLIOutputSchemaTests {
   @Test
   func eachLineOfAStreamIsChecked() throws {
     let good =
-      #"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"RawReport","#
+      #"{"apiVersion":"openjoystickdriver/v1alpha2","kind":"RawReport","#
       + #""direction":"Rx","hex":"01 02","length":2,"captureTime":"1970-01-01T00:00:01.500Z"}"#
     #expect(
       try CLIOutputSchema.issues(in: good + "\n" + good, path: ["controller", "capture"]).isEmpty

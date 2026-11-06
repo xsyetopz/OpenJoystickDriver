@@ -2,7 +2,7 @@
 
 ### Requirement: Public endpoint
 
-The service SHALL expose a local endpoint that speaks `openjoystickdriver/v1alpha1` messages (Challenge, Hello, Welcome, Subscription, FeedRequest, FeedSession, Frame, KeepAlive, Status), documented in `docs/sdk/` and described by `endpoint.schema.json`. Access SHALL need a grant from `AccessGrants`.
+The service SHALL expose a local endpoint that speaks `openjoystickdriver/v1alpha2` messages (Challenge, Hello, Welcome, Subscription, FeedRequest, FeedSession, Frame, KeepAlive, Status), documented in `docs/sdk/` and described by `endpoint.schema.json`. Access SHALL need a grant from `AccessGrants`.
 
 #### Scenario: No grant
 
@@ -30,7 +30,7 @@ A client sending an unsupported `apiVersion` SHALL receive an error that lists t
 #### Scenario: Old client
 
 - **WHEN** a client sends `openjoystickdriver.io/v1beta1`
-- **THEN** the error lists `openjoystickdriver/v1alpha1`
+- **THEN** the error lists `openjoystickdriver/v1alpha2`
 
 ### Requirement: Reference client
 

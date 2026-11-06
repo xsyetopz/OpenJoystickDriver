@@ -1,5 +1,5 @@
 {
-  "apiVersion": "openjoystickdriver/v1alpha1",
+  "apiVersion": "openjoystickdriver/v1alpha2",
   "kind": "ModPackage",
   "name": "ojd-sample",
   "version": "1.0.0",

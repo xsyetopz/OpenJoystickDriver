@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/settings.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/settings.schema.json",
   "title": "OpenJoystickDriver settings",
   "description": "The file Settings.json in the user's OpenJoystickDriver Application Support folder, which 'ojd setting set' and the app write. Every setting is optional; a setting the file leaves out takes its built-in default. The layers, lowest to highest: built-in defaults, the user file.",
   "type": "object",
@@ -8,7 +8,7 @@
   "additionalProperties": false,
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha1"
+      "const": "openjoystickdriver/v1alpha2"
     },
     "kind": {
       "const": "Settings"

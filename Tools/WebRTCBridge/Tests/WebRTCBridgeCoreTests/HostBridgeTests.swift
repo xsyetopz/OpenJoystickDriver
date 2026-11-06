@@ -5,28 +5,38 @@ import XCTest
 
 /// A data channel in memory: the test plays the peer.
 private final class FakeChannel: PeerChannel, @unchecked Sendable {
+  /// Guards `handler` and `messages`.
   private let lock = NSLock()
+  /// The handler that the bridge sets.
   private var handler: (@Sendable (Data) -> Void)?
+  /// The messages that the bridge sent.
   private var messages: [Data] = []
 
+  /// The handler for the messages of the peer, read and written under the lock.
   var onMessage: (@Sendable (Data) -> Void)? {
     get { lock.withLock { handler } }
     set { lock.withLock { handler = newValue } }
   }
 
+  /// The messages that the bridge sent to the peer.
   var sent: [Data] { lock.withLock { messages } }
 
+  /// Records the message and accepts it.
   func send(_ data: Data) -> Bool {
     lock.withLock { messages.append(data) }
     return true
   }
 
+  /// Delivers the text to the bridge as a message of the peer.
   func peerSends(_ text: String) { onMessage?(Data(text.utf8)) }
 }
 
+/// Checks that ``HostBridge`` passes valid peer frames to the endpoint and rumble to the peer.
 final class HostBridgeTests: XCTestCase {
-  private static let header = #""apiVersion":"openjoystickdriver/v1alpha1""#
+  /// The `apiVersion` member that every message carries, as JSON text.
+  private static let header = #""apiVersion":"openjoystickdriver/v1alpha2""#
 
+  /// Serves one connection on the endpoint and starts a bridge on a fake channel.
   private func started(
     _ endpoint: FakeEndpoint
   ) throws -> (bridge: HostBridge, channel: FakeChannel) {
@@ -43,6 +53,7 @@ final class HostBridgeTests: XCTestCase {
     return (bridge, channel)
   }
 
+  /// Invalid peer messages produce no write to the endpoint.
   func testAnInvalidPeerMessageProducesNoEndpointWrite() async throws {
     let endpoint = try FakeEndpoint()
     let (bridge, channel) = try started(endpoint)
@@ -56,6 +67,7 @@ final class HostBridgeTests: XCTestCase {
     bridge.stop()
   }
 
+  /// One frame is sent once, and an idle feed gets only `KeepAlive` lines.
   func testAFrameIsSentOnceAndAnIdleFeedGetsOnlyKeepAlive() async throws {
     let endpoint = try FakeEndpoint()
     let (bridge, channel) = try started(endpoint)
@@ -69,6 +81,7 @@ final class HostBridgeTests: XCTestCase {
     bridge.stop()
   }
 
+  /// Only a valid, short `RumbleCommand` of the endpoint is sent to the peer.
   func testOnlyAValidRumbleCommandOfTheEndpointGoesToThePeer() async throws {
     let rumble: [String: Any] = [
       "apiVersion": endpointAPIVersion, "kind": "RumbleCommand", "type": "StopRumble",

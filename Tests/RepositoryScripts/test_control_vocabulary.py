@@ -6,7 +6,7 @@ from typing import Any
 
 from Scripts.Quality import validate_schemas
 
-VERSION = "openjoystickdriver/v1alpha1"
+VERSION = "openjoystickdriver/v1alpha2"
 ROOT = validate_schemas.ROOT
 CROSSWALK = ROOT / "Resources" / "Vocabulary" / "crosswalk.json"
 SAMPLE_PROFILE = ROOT / "docs" / "sdk" / "sample" / "Profiles" / "sample-pad.json"

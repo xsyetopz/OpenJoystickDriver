@@ -4,7 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct VirtualDeviceTests {
-  private static let header = #""apiVersion":"openjoystickdriver/v1alpha1","kind":"VirtualDevice""#
+  private static let header = #""apiVersion":"openjoystickdriver/v1alpha2","kind":"VirtualDevice""#
 
   @Test
   func theBundledRecordsDefineBothPersonasWithTheirIdentities() throws {
@@ -59,8 +59,8 @@ struct VirtualDeviceTests {
   @Test(arguments: [
     #"{"apiVersion":"openjoystickdriver/v2","kind":"VirtualDevice","persona":"Generic"}"#,
     #"{"kind":"VirtualDevice","persona":"Generic"}"#,
-    #"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"Persona","persona":"Generic"}"#,
-    #"{"apiVersion":"openjoystickdriver/v1alpha1","persona":"Generic"}"#,
+    #"{"apiVersion":"openjoystickdriver/v1alpha2","kind":"Persona","persona":"Generic"}"#,
+    #"{"apiVersion":"openjoystickdriver/v1alpha2","persona":"Generic"}"#,
   ])
   func aBadHeaderIsRefusedWithE5001(document: String) {
     let problem = #expect(throws: DocumentHeaderProblem.self) {

@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/virtual-device.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/virtual-device.schema.json",
   "description": "A virtual device record. Without match it defines a persona: the HID layout, transport, identity and control labels a virtual controller publishes. With match it selects a persona for one controller model or unit; its identity and labels replace the persona's.",
   "type": "object",
   "additionalProperties": false,
   "required": ["apiVersion", "kind", "persona"],
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha1"
+      "const": "openjoystickdriver/v1alpha2"
     },
     "kind": {
       "const": "VirtualDevice"

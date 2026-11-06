@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/crosswalk.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/crosswalk.schema.json",
   "title": "OpenJoystickDriver control crosswalk",
   "description": "The authored table Resources/Vocabulary/crosswalk.json. It maps each control id to the name the W3C Gamepad, SDL3, Linux evdev, HID and Apple GameController documents give the same control, and records the source of each column. It is documentation: no schema accepts or maps any name in it.",
   "type": "object",
@@ -11,7 +11,7 @@
       "type": "string"
     },
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha1"
+      "const": "openjoystickdriver/v1alpha2"
     },
     "kind": {
       "const": "Crosswalk"

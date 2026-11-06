@@ -283,7 +283,7 @@ struct OJDRepositoryToolTests {
   // MARK: profiles and virtual devices
 
   private static let profile = #"""
-    {"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Profile", "name": "Pad"}
+    {"apiVersion": "openjoystickdriver/v1alpha2", "kind": "Profile", "name": "Pad"}
     """#
 
   @Test
@@ -328,7 +328,7 @@ struct OJDRepositoryToolTests {
       let document = { (persona: String) in
         Data(
           """
-          {"apiVersion": "openjoystickdriver/v1alpha1", "kind": "VirtualDevice",
+          {"apiVersion": "openjoystickdriver/v1alpha2", "kind": "VirtualDevice",
            "match": {"vendorID": 1118, "productID": 654}, "persona": "\(persona)"}
           """.utf8
         )

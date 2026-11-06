@@ -263,6 +263,13 @@ struct ProfileCommandTests {
     #expect(unsupportedVersion.standardError.hasPrefix("error[E5001]: "))
     #expect(unsupportedVersion.standardError.contains("unsupported.example/v9"))
     #expect(unsupportedVersion.standardError.contains(OpenJoystickDriverAPI.version))
+    let alpha1 = await run(
+      Data(#"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"Profile","name":"Pad"}"#.utf8),
+      []
+    )
+    #expect(alpha1.code == 1)
+    #expect(alpha1.standardError.hasPrefix("error[E5001]: "))
+    #expect(alpha1.standardError.contains("openjoystickdriver/v1alpha1"))
   }
 
   @Test

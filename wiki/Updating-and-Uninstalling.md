@@ -9,6 +9,7 @@ Check for a new OpenJoystickDriver version, and remove the app and its data when
   - [Release Builds and Tester Builds](#release-builds-and-tester-builds)
   - [Check For Updates](#check-for-updates)
   - [Install a New Version](#install-a-new-version)
+  - [Update from 0.6.0-alpha.1](#update-from-060-alpha1)
   - [Get a Fix](#get-a-fix)
 - [Uninstall](#uninstall)
   - [Remove the App](#remove-the-app)
@@ -36,7 +37,7 @@ A tester build is a private, notarized DMG that the maintainer sends to testers.
 
 An update check does not find tester builds. The maintainer sends them directly.
 
-### Check For Updates
+### Check for Updates
 
 1. Open OJD.
 2. Open **Settings**.
@@ -57,6 +58,21 @@ ojd update check
 4. Open OJD.
 
 Your profiles stay in place because they are stored outside the app.
+
+### Update from 0.6.0-alpha.1
+
+OJD 0.6.0-alpha.2 reads only files with `apiVersion: openjoystickdriver/v1alpha2`. It refuses each file from 0.6.0-alpha.1, which has `openjoystickdriver/v1alpha1`, with error `E5001`, and it does not change the file. The message names the file, the version it found, and the supported version.
+
+| File | What OJD does | What you do |
+| --- | --- | --- |
+| `Settings.json` | The app shows an alert at launch. | Click **Reset Settings** in the alert, or run `ojd setting reset`. |
+| `AccessGrants.json` | The endpoint stays off, and each `ojd access` command fails with `E5001`. | Change the `apiVersion` line to `openjoystickdriver/v1alpha2`, or move the file to the Trash and grant each program again. |
+| Profiles in `Profiles/` | The profile shows as damaged. | Change the `apiVersion` line, then run `ojd profile validate FILE`. |
+| Your controller records | OJD skips the file and uses the bundled record. `ojd record list` names it. | Change the `apiVersion` line, then run `ojd record validate FILE`. |
+| Your virtual device files | OJD skips the file. | Change the `apiVersion` line. |
+| Installed mods | `ojd mod validate` refuses the package. | Install a version of the mod made for 0.6.0-alpha.2. |
+
+Change only the `apiVersion` line. When the validate command reports another error, the file uses a field that changed in this version; the `CHANGELOG.md` file lists those fields.
 
 ### Get a Fix
 
@@ -92,7 +108,7 @@ Removing the app alone leaves a login item, privacy entries, a system extension,
 
 Both commands work only from the copy in `/Applications`.
 
-### Files That Stay On Your Mac
+### Files That Stay on Your Mac
 
 Removing the app does not remove these items.
 

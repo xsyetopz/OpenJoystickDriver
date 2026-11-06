@@ -10,7 +10,7 @@ struct ProfileSchemaTests {
   /// Uses every kind of source, destination, physical output, and mapping.
   static let richDocument = #"""
     {
-      "apiVersion": "openjoystickdriver/v1alpha1",
+      "apiVersion": "openjoystickdriver/v1alpha2",
       "kind": "Profile",
       "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E",
       "name": "Everything",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/mod-package.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/mod-package.schema.json",
   "title": "OpenJoystickDriver mod package manifest",
   "description": "The mod.json of a package folder. The folder holds Controllers/, Profiles/, and VirtualDevices/; each list names the files of one document kind in the subfolder that holds it.",
   "type": "object",
@@ -8,7 +8,7 @@
   "required": ["apiVersion", "kind", "name", "version", "author", "requires"],
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha1"
+      "const": "openjoystickdriver/v1alpha2"
     },
     "kind": {
       "const": "ModPackage"

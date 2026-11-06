@@ -169,6 +169,7 @@ struct SettingsStoreTests {
   @Test(arguments: [
     #"{"kind": "Settings"}"#,
     #"{"apiVersion": "openjoystickdriver/v0", "kind": "Settings"}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Settings"}"#,
   ])
   func aMissingOrUnsupportedAPIVersionIsE5001NamingTheFile(json: String) throws {
     try write(json, to: .applicationData)
@@ -201,9 +202,9 @@ struct SettingsStoreTests {
 
   @Test(arguments: [
     "not json",
-    #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Settings", "mystery": true}"#,
-    #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Settings", "notify": {"mystery": 1}}"#,
-    #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Settings", "developerTools": "yes"}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha2", "kind": "Settings", "mystery": true}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha2", "kind": "Settings", "notify": {"mystery": 1}}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha2", "kind": "Settings", "developerTools": "yes"}"#,
   ])
   func aDamagedFileIsAnErrorNotAnEmptyLayer(json: String) throws {
     try write(json, to: .applicationData)

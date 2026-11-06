@@ -1,5 +1,5 @@
 {
-  "apiVersion": "openjoystickdriver/v1alpha1",
+  "apiVersion": "openjoystickdriver/v1alpha2",
   "kind": "Profile",
   "id": "3B0F9C52-6E1D-4A8B-9C27-5D4E8F1A0B01",
   "name": "Sample Pad: Start on Space",

@@ -22,7 +22,7 @@
 
 ### Requirement: Package files carry a header
 
-`mod.json` and every file that it lists MUST carry `apiVersion` and `kind`: `mod.json` has `apiVersion: openjoystickdriver/v1alpha1` and `kind: ModPackage`, and a listed file has the `kind` of its document.
+`mod.json` and every file that it lists MUST carry `apiVersion` and `kind`: `mod.json` has `apiVersion: openjoystickdriver/v1alpha2` and `kind: ModPackage`, and a listed file has the `kind` of its document.
 A missing or unsupported `apiVersion` MUST be refused with E5001, any other invalid `mod.json` with E4001, and any other invalid listed file with E4003.
 
 #### Scenario: Unsupported apiVersion
@@ -67,7 +67,7 @@ A missing or unsupported `apiVersion` MUST be refused with E5001, any other inva
 
 ### Requirement: REQ-10 Mod output envelopes
 
-Each `ojd mod` command MUST print the `apiVersion`/`kind` envelope with `apiVersion: openjoystickdriver/v1alpha1`, and `Resources/Schemas/cli-output.schema.json` MUST have one `$defs` entry per `ojd mod` command path.
+Each `ojd mod` command MUST print the `apiVersion`/`kind` envelope with `apiVersion: openjoystickdriver/v1alpha2`, and `Resources/Schemas/cli-output.schema.json` MUST have one `$defs` entry per `ojd mod` command path.
 
 #### Scenario: JSON output matches the schema
 

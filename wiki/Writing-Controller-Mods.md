@@ -41,7 +41,7 @@ The `mod.json` file names the package and lists every file it holds. This is the
 
 ```json
 {
-  "apiVersion": "openjoystickdriver/v1alpha1",
+  "apiVersion": "openjoystickdriver/v1alpha2",
   "kind": "ModPackage",
   "name": "ojd-sample",
   "version": "1.0.0",
@@ -53,7 +53,7 @@ The `mod.json` file names the package and lists every file it holds. This is the
 }
 ```
 
-- `apiVersion`: `openjoystickdriver/v1alpha1`. OJD rejects a missing or any other version, and names the file, the version it found, and the supported one.
+- `apiVersion`: `openjoystickdriver/v1alpha2`. OJD rejects a missing or any other version, and names the file, the version it found, and the supported one.
 - `kind`: `ModPackage`.
 - `name`: Lowercase letters, digits, and hyphens. The package installs into a folder of this name.
 - `version`: A SemVer version without a `v` prefix.

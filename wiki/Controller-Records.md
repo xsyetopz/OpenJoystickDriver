@@ -38,7 +38,7 @@ A patch follows RFC 7396 JSON Merge Patch. An object in `patch` merges into the 
 
 ```json
 {
-  "apiVersion": "openjoystickdriver/v1alpha1",
+  "apiVersion": "openjoystickdriver/v1alpha2",
   "kind": "ControllerPatch",
   "selector": { "vendorID": 1118, "productID": 746 },
   "patch": { "tuning": { "stickDeadzone": 0.08 } }
@@ -263,7 +263,7 @@ Change a default by editing the description: every record of the family follows 
 
 ```json
 {
-  "apiVersion": "openjoystickdriver/v1alpha1",
+  "apiVersion": "openjoystickdriver/v1alpha2",
   "kind": "ControllerPatch",
   "selector": { "all": true },
   "patch": { "tuning": { "stickDeadzone": 0.05 } }
@@ -280,7 +280,7 @@ A `VirtualDevice` file in `~/Library/Application Support/OpenJoystickDriver/Virt
 
 ```json
 {
-  "apiVersion": "openjoystickdriver/v1alpha1",
+  "apiVersion": "openjoystickdriver/v1alpha2",
   "kind": "VirtualDevice",
   "match": { "vendorID": 1356, "productID": 3302 },
   "persona": "SDLCompatible"
@@ -494,7 +494,7 @@ The record maps what the HID report descriptor states plainly: buttons 1 to 11 i
 ## Install a Record
 
 1. Find the VID:PID of your controller. For more information, see [Finding your controller ID](Connecting-Controllers.md#finding-your-controller-id).
-2. Write the record file. Set `apiVersion` to `openjoystickdriver/v1alpha1` and `kind` to `Controller` or `ControllerPatch`.
+2. Write the record file. Set `apiVersion` to `openjoystickdriver/v1alpha2` and `kind` to `Controller` or `ControllerPatch`.
 3. Check the file. Run `ojd record validate FILE`.
 4. Install the file. Run `ojd record install FILE`.
 
@@ -517,9 +517,9 @@ The command removes the `Controller` file and the patch file of that model. A bu
 
 ## Schema Versions
 
-Each file that OJD reads declares `apiVersion: openjoystickdriver/v1alpha1` and its `kind`, such as `Controller`, `ControllerPatch`, `VirtualDevice`, `Profile`, or `ModPackage`. Files do not declare `$schema`. OJD accepts only the `apiVersion` it supports and rejects every other one, a missing one, and a `kind` it does not read there. The error names the file, the version it found, and the supported one. It does not convert files. The schemas are flat files in `Resources/Schemas/`, and each `$id` is `https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/<kind>.schema.json`. Those IDs are not published.
+Each file that OJD reads declares `apiVersion: openjoystickdriver/v1alpha2` and its `kind`, such as `Controller`, `ControllerPatch`, `VirtualDevice`, `Profile`, or `ModPackage`. Files do not declare `$schema`. OJD accepts only the `apiVersion` it supports and rejects every other one, a missing one, and a `kind` it does not read there. The error names the file, the version it found, and the supported one. It does not convert files. The schemas are flat files in `Resources/Schemas/`, and each `$id` is `https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/<kind>.schema.json`. Those IDs are not published.
 
-- Before 1.0, a `v1alpha1` schema may change incompatibly. The release notes list each such change.
+- Before 1.0, a `v1alpha2` schema may change incompatibly. The release notes list each such change.
 - At 1.0 the schemas are promoted to `v1`. A `v1` schema takes only additive changes: a new optional field, or a new value where a reader can ignore it.
 - A change that is not additive needs a new version, `v2`. OJD names the version it accepts, so a file for an unknown version is rejected rather than half read.
 
