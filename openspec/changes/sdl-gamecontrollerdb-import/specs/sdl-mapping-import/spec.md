@@ -144,7 +144,7 @@ A pad with a controller record from the catalog, a package or the user SHALL NOT
 
 ### Requirement: Saving the converted mapping
 
-`ojd record draft CONTROLLER --from-sdl` SHALL write the converted mapping as a controller record with a usage map, and SHALL fail with a named error when the pad has no matching line. The record SHALL carry no mark of its origin.
+`ojd record draft CONTROLLER --from-sdl` SHALL write the converted mapping as a controller record with a usage map, and SHALL fail with a named error when the pad has no matching line, when the line does not convert, or when the model already has a record. A rejected line SHALL be reported under error code `E5008` by this command and by `ojd diagnose`. The record SHALL carry no mark of its origin.
 
 #### Scenario: Save and reuse
 
@@ -155,3 +155,13 @@ A pad with a controller record from the catalog, a package or the user SHALL NOT
 
 - **WHEN** the command runs for a pad with no matching line
 - **THEN** it exits with an error that says no database line matched
+
+#### Scenario: Line that does not convert
+
+- **WHEN** the command runs for a pad whose matching line indexes an element the pad lacks
+- **THEN** it exits with error `E5008` and the reason, and writes no record
+
+#### Scenario: Model with a record
+
+- **WHEN** the command runs for a model that has a bundled record
+- **THEN** it exits with an error that says the model has a record, and writes no record

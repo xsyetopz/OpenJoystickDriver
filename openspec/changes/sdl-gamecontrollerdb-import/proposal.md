@@ -1,6 +1,6 @@
 # Proposal: SDL_GameControllerDB import
 
-Status: implemented except `record draft --from-sdl` and the hardware checks. Target release: alpha.2 (maintainer decision, 2026-10-25: every area is part of alpha.2). Hardware checks go to the Discord testers through tester builds (`docs/development/tester-builds.md`).
+Status: implemented except the hardware checks. Target release: alpha.2 (maintainer decision, 2026-10-25: every area is part of alpha.2). Hardware checks go to the Discord testers through tester builds (`docs/development/tester-builds.md`).
 
 ## Why
 

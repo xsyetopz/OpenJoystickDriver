@@ -13,6 +13,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - A `hidUsageMap` takes the kinds `HalfAxis`, `AxisDpad`, `AxisButton` and `ButtonTrigger`, which bind one half of an axis to a trigger, a D-pad direction or a button, and a button to a trigger. A usage may appear in several half-axis entries when no two name the same half.
 
 - OJD ships the Mac lines of SDL_GameControllerDB (zlib), pinned in `ControllerSources.lock.json`. A HID gamepad with no record whose descriptor passes the contract is matched by its SDL GUID in four tiers and its line is converted against the live element list, in SDL's element order, into a usage map. `ojd controller show`, `ojd status`, the support report and the app's controller detail name the source (`Record`, `SDLGameControllerDB`, `StandardHIDUsageMap`), the GUID, the match tier, the unmapped controls and the reason a line was rejected. `OpenJoystickDriverHIDTool --dump-elements` prints a pad's elements as JSON.
+- `ojd record draft CONTROLLER --from-sdl` writes the converted SDL_GameControllerDB mapping of a connected controller as a `Controller` record. A rejected line is error `E5008` (`sdlLineRejected`), which `ojd diagnose` shows in its new `input-mapping` check.
 
 ### Changed
 
