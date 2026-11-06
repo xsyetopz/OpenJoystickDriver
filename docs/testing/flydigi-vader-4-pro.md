@@ -33,7 +33,7 @@ Bytes 5–8 were `0x00` in every observed report.
 
 Byte 10's digital trigger bits accompany, not replace, analog values; the parser reads position only from bytes 13 and 14.
 
-C, Z, and M1 through M4 are decoded but have no `Button` case and no bit in the 16-button compatibility report, so they do not reach a consumer.
+C and Z reach consumers as Auxiliary 1 and Auxiliary 2. M1 through M4 reach them as Left Paddle 1, Left Paddle 2, Right Paddle 1 and Right Paddle 2. Which physical back button each paddle name stands for is not verified; a tester has to name them. The same identity on a Vader 3 or Vader 3 Pro is not verified either.
 
 ## Status
 

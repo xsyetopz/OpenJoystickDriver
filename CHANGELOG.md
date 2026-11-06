@@ -14,6 +14,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 - OJD ships the Mac lines of SDL_GameControllerDB (zlib), pinned in `ControllerSources.lock.json`. A HID gamepad with no record whose descriptor passes the contract is matched by its SDL GUID in four tiers and its line is converted against the live element list, in SDL's element order, into a usage map. `ojd controller show`, `ojd status`, the support report and the app's controller detail name the source (`Record`, `SDLGameControllerDB`, `StandardHIDUsageMap`), the GUID, the match tier, the unmapped controls and the reason a line was rejected. `OpenJoystickDriverHIDTool --dump-elements` prints a pad's elements as JSON.
 - `ojd record draft CONTROLLER --from-sdl` writes the converted SDL_GameControllerDB mapping of a connected controller as a `Controller` record. A rejected line is error `E5008` (`sdlLineRejected`), which `ojd diagnose` shows in its new `input-mapping` check.
+- The Vader 4 Pro (`D7D7:0041`) delivers C and Z as Auxiliary 1 and 2 and M1 to M4 as Left Paddle 1 and 2 and Right Paddle 1 and 2. The order of the four back buttons is unverified until a tester names them. [Flydigi tester checks](docs/testing/flydigi-tester-checks.md) lists what testers are asked to send for each Flydigi identity.
 
 ### Changed
 

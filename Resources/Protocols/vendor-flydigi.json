@@ -10,7 +10,15 @@
   "tuningKeys": ["hidStartupIntervalMs", "minimumHIDOutputIntervalMs"],
   "controls": {
     "base": "Xbox",
-    "add": ["Guide"],
+    "add": [
+      "Guide",
+      "Auxiliary1",
+      "Auxiliary2",
+      "LeftPaddle1",
+      "LeftPaddle2",
+      "RightPaddle1",
+      "RightPaddle2"
+    ],
     "digitalTriggers": ["LeftTrigger", "RightTrigger"]
   },
   "defaults": {
@@ -82,6 +90,36 @@
             {
               "control": "RightStickClick",
               "bitOffset": 87,
+              "bitSize": 1
+            },
+            {
+              "control": "Auxiliary1",
+              "bitOffset": 88,
+              "bitSize": 1
+            },
+            {
+              "control": "Auxiliary2",
+              "bitOffset": 89,
+              "bitSize": 1
+            },
+            {
+              "control": "LeftPaddle1",
+              "bitOffset": 90,
+              "bitSize": 1
+            },
+            {
+              "control": "LeftPaddle2",
+              "bitOffset": 91,
+              "bitSize": 1
+            },
+            {
+              "control": "RightPaddle1",
+              "bitOffset": 92,
+              "bitSize": 1
+            },
+            {
+              "control": "RightPaddle2",
+              "bitOffset": 93,
               "bitSize": 1
             },
             {
