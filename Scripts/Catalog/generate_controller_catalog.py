@@ -640,13 +640,20 @@ def expected_files(
     files = format_json(
         {record_path(OUTPUT_DIR, key): text for key, text in sorted(records.items())}
     )
-    # The bundle ships the authored protocol descriptions unchanged.
-    for path in sorted(PROTOCOL_DIR.glob("*.json")):
-        files[PROTOCOL_OUTPUT_DIR / path.name] = path.read_text()
-    # It ships the authored virtual device records unchanged.
-    for path in sorted(VIRTUAL_DEVICE_DIR.glob("*.json")):
-        files[VIRTUAL_DEVICE_OUTPUT_DIR / path.name] = path.read_text()
-    return files
+    return {**files, **bundled_copies()}
+
+
+def bundled_copies() -> dict[pathlib.Path, str]:
+    """The authored protocol descriptions and virtual device records, which the bundle ships
+    unchanged."""
+    return {
+        output / path.name: path.read_text()
+        for source, output in (
+            (PROTOCOL_DIR, PROTOCOL_OUTPUT_DIR),
+            (VIRTUAL_DEVICE_DIR, VIRTUAL_DEVICE_OUTPUT_DIR),
+        )
+        for path in sorted(source.glob("*.json"))
+    }
 
 
 def check_catalog(records: dict[tuple[int, int], str]) -> None:
@@ -675,11 +682,19 @@ def check_catalog(records: dict[tuple[int, int], str]) -> None:
 
 
 def write_catalog(records: dict[tuple[int, int], str]) -> None:
-    expected = expected_files(records)
-    for directory in (OUTPUT_DIR, PROTOCOL_OUTPUT_DIR, VIRTUAL_DEVICE_OUTPUT_DIR):
+    write_files(
+        (OUTPUT_DIR, PROTOCOL_OUTPUT_DIR, VIRTUAL_DEVICE_OUTPUT_DIR),
+        expected_files(records),
+    )
+
+
+def write_files(
+    directories: tuple[pathlib.Path, ...], files: dict[pathlib.Path, str]
+) -> None:
+    for directory in directories:
         if directory.exists():
             shutil.rmtree(directory)
-    for path, text in expected.items():
+    for path, text in files.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text)
 
@@ -691,6 +706,13 @@ def main() -> int:
     action.add_argument("--write", action="store_true")
     args = parser.parse_args()
     try:
+        if args.write:
+            # Record validation runs Swift, which loads the bundled copies; the tool that loading
+            # the rules built at import ships the earlier ones, so it is built again.
+            write_files(
+                (PROTOCOL_OUTPUT_DIR, VIRTUAL_DEVICE_OUTPUT_DIR), bundled_copies()
+            )
+            repository_tool.binary.cache_clear()
         records = build_catalog()
         if args.check:
             check_catalog(records)

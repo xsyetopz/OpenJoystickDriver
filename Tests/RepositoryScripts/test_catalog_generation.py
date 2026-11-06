@@ -664,6 +664,30 @@ class ProtocolCopyTests(unittest.TestCase):
             sorted(path.name for path in self.bundled.iterdir()), ["xbox-xid.json"]
         )
 
+    def test_write_refreshes_the_copies_before_the_records_are_built(self) -> None:
+        (self.authored / "xbox-xid.json").write_text('{"family": "XboxXUSB"}\n')
+        seen: list[str] = []
+        builds: list[str] = []
+
+        def build_catalog() -> dict[tuple[int, int], str]:
+            catalog.repository_tool.binary()
+            seen.append((self.bundled / "xbox-xid.json").read_text())
+            return {}
+
+        with (
+            patch.object(catalog.repository_tool, "build", builds.append),
+            patch.object(catalog, "build_catalog", build_catalog),
+            patch("sys.argv", ["generate_controller_catalog.py", "--write"]),
+            patch("sys.stdout", io.StringIO()),
+        ):
+            catalog.repository_tool.binary.cache_clear()
+            catalog.repository_tool.binary()
+            self.assertEqual(catalog.main(), 0)
+        catalog.repository_tool.binary.cache_clear()
+        self.assertEqual(seen, ['{"family": "XboxXUSB"}\n'])
+        # The tool built at import ships the stale copies, so it is built again after them.
+        self.assertEqual(builds, ["OJDRepositoryTool", "OJDRepositoryTool"])
+
 
 class CommittedCatalogTests(unittest.TestCase):
     """Data-level invariants of the generated catalog; no network needed."""
