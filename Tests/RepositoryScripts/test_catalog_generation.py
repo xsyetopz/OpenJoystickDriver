@@ -629,6 +629,7 @@ class ProtocolCopyTests(unittest.TestCase):
             ("PROTOCOL_OUTPUT_DIR", self.bundled),
             ("VIRTUAL_DEVICE_DIR", root / "Resources" / "VirtualDevices"),
             ("VIRTUAL_DEVICE_OUTPUT_DIR", root / "Kit" / "VirtualDevices"),
+            ("DATABASE_OUTPUT", root / "Kit" / "sdl-gamecontrollerdb.txt"),
         ):
             patcher = patch.object(catalog, name, value)
             patcher.start()
