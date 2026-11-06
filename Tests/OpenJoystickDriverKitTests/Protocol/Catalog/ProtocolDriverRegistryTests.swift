@@ -430,6 +430,7 @@ struct ProtocolDriverRegistryTests {
     guard let layoutDriver = driver as? ReportLayoutDriver,
       let described = family.protocolDescription.inputLayouts
     else { return false }
-    return layoutDriver.layouts == described && layoutDriver.capabilities == family.describedControls
+    return layoutDriver.layouts == described
+      && layoutDriver.capabilities == family.describedControls
   }
 }

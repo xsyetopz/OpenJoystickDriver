@@ -2,9 +2,10 @@ import Foundation
 
 /// Why a database line cannot drive a pad.
 struct SDLMappingRejection: Error, Equatable, CustomStringConvertible {
-  /// The reason, in a sentence fragment that follows "SDL_GameControllerDB line rejected: ".
+  /// The reason, as a fragment that follows the text "SDL_GameControllerDB line rejected:".
   let reason: String
 
+  /// The reason.
   var description: String { reason }
 }
 
@@ -49,8 +50,11 @@ enum SDLMappingConverter {
 
   /// What a field's right-hand side names.
   private enum Source {
+    /// `b#`: the button at an index.
     case button(Int)
+    /// `a#`: the axis at an index, or one half of it, possibly inverted.
     case axis(Int, half: HIDUsageMap.Half?, inverted: Bool)
+    /// `h#.#`: one direction bit of the hat at an index.
     case hat(Int, bit: Int)
   }
 

@@ -367,11 +367,12 @@ if dump || dumpElements {
     let listing = HIDElementDescription.inputs(of: elements as? [IOHIDElement] ?? [])
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-    guard let data = try? encoder.encode(listing) else {
+    guard let data = try? encoder.encode(listing), let text = String(bytes: data, encoding: .utf8)
+    else {
       fputs("ERROR: Could not encode the elements.\n", stderr)
       exit(1)
     }
-    print(String(decoding: data, as: UTF8.self))
+    print(text)
     exit(0)
   }
   guard let desc = dataProp(dev, kIOHIDReportDescriptorKey as String) else {

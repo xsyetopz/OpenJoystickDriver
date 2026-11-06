@@ -28,7 +28,7 @@ public struct InputMapping: Codable, Equatable, Sendable {
   public let rejection: String?
 
   /// The mapping of a pad with a controller record.
-  static let record = InputMapping(
+  static let record = Self(
     source: .record,
     guid: nil,
     match: nil,
@@ -37,7 +37,7 @@ public struct InputMapping: Codable, Equatable, Sendable {
   )
 
   /// The mapping of a pad with neither a record nor a database line.
-  static let standardHIDUsageMap = InputMapping(
+  static let standardHIDUsageMap = Self(
     source: .standardHIDUsageMap,
     guid: nil,
     match: nil,
@@ -127,6 +127,7 @@ extension InputMapping {
   /// The text of the Input mapping row.
   ///
   /// - Parameter localize: Returns the localized format for a key of the en-US catalog.
+  /// - Returns: The row text in the language `localize` uses.
   public func rowText(localize: (String) -> String) -> String {
     switch source {
     case .record: return localize("cli.controller.show.inputMappingRecord")

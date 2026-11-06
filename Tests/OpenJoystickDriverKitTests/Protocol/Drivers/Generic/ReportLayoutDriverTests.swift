@@ -221,8 +221,8 @@ struct ReportLayoutDriverTests {
   @Test
   func triggerButtonReadsAsFullyPulled() throws {
     let layout = try inputLayout(
-      #"{"report": {"length": {"atLeast": 2}}, "#
-        + #""leftTrigger": {"bitOffset": 0, "bitSize": 8, "button": {"bitOffset": 10, "bitSize": 1}}}"#
+      #"{"report": {"length": {"atLeast": 2}}, "leftTrigger": {"bitOffset": 0, "bitSize": 8, "#
+        + #""button": {"bitOffset": 10, "bitSize": 1}}}"#
     )
     let trigger = try #require(layout.leftTrigger)
     #expect(trigger.value(in: [0x00, 0x04]) == UnipolarValue(normalized: 1))

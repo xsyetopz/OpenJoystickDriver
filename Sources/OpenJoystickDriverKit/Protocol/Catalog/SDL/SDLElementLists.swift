@@ -16,7 +16,14 @@ struct SDLElementLists: Equatable, Sendable {
   let buttons: [HIDElementDescription]
 
   /// The list an element belongs to.
-  private enum Kind { case axis, hat, button }
+  private enum Kind {
+    /// An element of ``axes``.
+    case axis
+    /// An element of ``hats``.
+    case hat
+    /// An element of ``buttons``.
+    case button
+  }
 
   /// Builds the lists from `elements`, in any order.
   init(elements: [HIDElementDescription]) {

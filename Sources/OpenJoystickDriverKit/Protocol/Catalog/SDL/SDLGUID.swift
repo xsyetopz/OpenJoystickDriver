@@ -29,31 +29,33 @@ struct SDLGUID: Hashable, Sendable, CustomStringConvertible {
 
   /// The GUID written as `text`, or nil unless it is 32 hexadecimal digits.
   init?(_ text: String) {
-    let digits = Array(text.utf8)
+    let digits = Array(text)
     guard digits.count == 32 else { return nil }
     var bytes: [UInt8] = []
     for pair in stride(from: 0, to: 32, by: 2) {
-      guard let byte = UInt8(String(decoding: digits[pair..<pair + 2], as: UTF8.self), radix: 16)
-      else { return nil }
+      guard let byte = UInt8(String(digits[pair..<pair + 2]), radix: 16) else { return nil }
       bytes.append(byte)
     }
     self.bytes = bytes
   }
 
+  /// The GUID made of `bytes`.
   private init(bytes: [UInt8]) { self.bytes = bytes }
 
   /// This GUID with the CRC bytes zeroed.
-  var withoutNameCRC: SDLGUID { zeroing(2..<4) }
+  var withoutNameCRC: Self { zeroing(2..<4) }
 
   /// This GUID with the version bytes zeroed.
-  var withoutVersion: SDLGUID { zeroing(12..<14) }
+  var withoutVersion: Self { zeroing(12..<14) }
 
+  /// The 32 lowercase hexadecimal digits.
   var description: String { bytes.map { String(format: "%02x", $0) }.joined() }
 
-  private func zeroing(_ range: Range<Int>) -> SDLGUID {
+  /// This GUID with the bytes in `range` zeroed.
+  private func zeroing(_ range: Range<Int>) -> Self {
     var bytes = bytes
     for index in range { bytes[index] = 0 }
-    return SDLGUID(bytes: bytes)
+    return Self(bytes: bytes)
   }
 
   /// CRC-16/ARC of `bytes`, as SDL's `SDL_crc16` computes it from 0.

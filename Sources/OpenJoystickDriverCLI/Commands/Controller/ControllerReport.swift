@@ -355,7 +355,8 @@ extension InputMapping {
   /// The `--plain` fields: source, match tier, GUID and the unmapped controls; empty when absent.
   var plainFields: [String] {
     [
-      CommandLineName.kebab(source.rawValue), match.map { CommandLineName.kebab($0.rawValue) } ?? "",
+      CommandLineName.kebab(source.rawValue),
+      match.map { CommandLineName.kebab($0.rawValue) } ?? "",
       guid ?? "", unmapped.joined(separator: ","),
     ]
   }

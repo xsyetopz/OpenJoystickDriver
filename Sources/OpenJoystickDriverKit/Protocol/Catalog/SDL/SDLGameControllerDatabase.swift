@@ -39,7 +39,9 @@ struct SDLDatabaseProblem: Error, Equatable, CustomStringConvertible {
 struct SDLGameControllerDatabase: Sendable {
   /// A line's name and fields.
   private struct Line: Sendable {
+    /// The controller name.
     let name: String
+    /// The `key:binding` fields, in line order.
     let fields: [String]
   }
 
@@ -55,8 +57,8 @@ struct SDLGameControllerDatabase: Sendable {
   }()
 
   /// The database shipped in the bundle.
-  static let bundled: SDLGameControllerDatabase = {
-    guard let database = try? SDLGameControllerDatabase(text: bundledText) else {
+  static let bundled: Self = {
+    guard let database = try? Self(text: bundledText) else {
       fatalError("[SDLGameControllerDatabase] The bundled database is malformed")
     }
     return database
@@ -72,7 +74,7 @@ struct SDLGameControllerDatabase: Sendable {
       let line = raw.trimmingCharacters(in: .whitespaces)
       guard !line.isEmpty, !line.hasPrefix("#") else { continue }
       var parts = line.split(separator: ",", omittingEmptySubsequences: false).map(String.init)
-      if parts.last == "" { parts.removeLast() }
+      if parts.last?.isEmpty == true { parts.removeLast() }
       guard parts.count >= 3, let guid = SDLGUID(parts[0]) else {
         throw SDLDatabaseProblem(
           lineNumber: index + 1,

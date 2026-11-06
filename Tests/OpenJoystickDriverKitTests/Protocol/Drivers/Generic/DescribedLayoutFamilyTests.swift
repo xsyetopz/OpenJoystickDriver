@@ -83,7 +83,9 @@ struct DescribedLayoutFamilyTests {
 
   @Test
   func switchInputOnlyDeclaresTheSevenByteReportWithoutAnID() throws {
-    let layout = try #require(ProtocolDescription.bundled[.nintendoSwitchInputOnly]?.inputLayouts?.layouts.first)
+    let layout = try #require(
+      ProtocolDescription.bundled[.nintendoSwitchInputOnly]?.inputLayouts?.layouts.first
+    )
     #expect(layout.reportID == nil)
     #expect(layout.minimumLength == 7)
     #expect(!layout.requiresExactLength)
@@ -91,7 +93,9 @@ struct DescribedLayoutFamilyTests {
 
   @Test
   func flydigiDeclaresExactlyFifteenBytesWithReportID1() throws {
-    let layout = try #require(ProtocolDescription.bundled[.vendorFlydigi]?.inputLayouts?.layouts.first)
+    let layout = try #require(
+      ProtocolDescription.bundled[.vendorFlydigi]?.inputLayouts?.layouts.first
+    )
     #expect(layout.reportID == 1)
     #expect(layout.minimumLength == 15)
     #expect(layout.requiresExactLength)

@@ -20,13 +20,14 @@ struct SDLMappingFixture: Decodable {
   let elements: [HIDElementDescription]
   let line: String
   let expectedTier: String
-  /// The entries of the usage map as `page/usage kind control [detail]`; the order is not significant.
+  /// The entries of the usage map as `page/usage kind control [detail]`; the order is not
+  /// significant.
   let expected: [String]
   /// The database control names the conversion leaves out, in line order.
   let expectedUnmapped: [String]
 
   /// The fixture files, by name.
-  static func all() throws -> [String: SDLMappingFixture] {
+  static func all() throws -> [String: Self] {
     let urls = try #require(
       Bundle.module.urls(forResourcesWithExtension: "json", subdirectory: "SDLMappingFixtures")
     )
