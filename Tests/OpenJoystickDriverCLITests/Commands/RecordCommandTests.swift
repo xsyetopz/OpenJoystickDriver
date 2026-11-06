@@ -290,6 +290,67 @@ struct RecordCommandTests {
     #expect(result.standardError.contains("ojd record show 045E:028E"))
   }
 
+  /// Runs `record draft --from-sdl` for a controller of the model, whose pad is `pad`.
+  private func draftFromSDL(vendorID: UInt16, productID: UInt16, pad: PhysicalDevice?) async throws
+    -> CLIRun
+  {
+    let service = try FakeService(devices: [
+      ApplicationServiceDeviceDescription.fixture(
+        id: "pad-1", vendorID: vendorID, productID: productID)
+    ])
+    return await RecordDraftCommand.$physicalDevice.withValue({ _, _ in pad }) {
+      await service.run(["record", "draft", token("pad-1"), "--from-sdl"])
+    }
+  }
+
+  /// A pad of the model with a valid descriptor and no input elements.
+  private func pad(vendorID: UInt16, productID: UInt16, version: UInt16 = 0x0100) -> PhysicalDevice {
+    PhysicalDevice(
+      vendorID: vendorID,
+      productID: productID,
+      deviceRelease: version,
+      interfaces: [
+        PhysicalInterfaceSignature(
+          hostTransport: .usb,
+          accessBackend: .hid,
+          hidLayout: HIDLayoutSummary(
+            reportDescriptor: Data(GamepadHIDDescriptor.descriptor), elements: [])
+        )
+      ]
+    )
+  }
+
+  @Test
+  func fromSDLWithNoPadReadableExitsOneWithE2013() async throws {
+    let result = try await draftFromSDL(vendorID: 0x1234, productID: 0x5678, pad: nil)
+    #expect(result.code == 1)
+    #expect(result.standardError.hasPrefix("error[E2013]: "))
+  }
+
+  @Test
+  func fromSDLOfAPadWithNoDatabaseLineExitsOneWithE2012() async throws {
+    let result = try await draftFromSDL(
+      vendorID: 0x1234, productID: 0x5678, pad: pad(vendorID: 0x1234, productID: 0x5678))
+    #expect(result.code == 1)
+    #expect(result.standardError.hasPrefix("error[E2012]: "))
+  }
+
+  @Test
+  func fromSDLOfALineThatDoesNotConvertExitsOneWithE5008() async throws {
+    let result = try await draftFromSDL(
+      vendorID: 0x358A, productID: 0x0201, pad: pad(vendorID: 0x358A, productID: 0x0201))
+    #expect(result.code == 1)
+    #expect(result.standardError.hasPrefix("error[E5008]: "))
+  }
+
+  @Test
+  func fromSDLOfABundledModelExitsOneWithE2013() async throws {
+    let result = try await draftFromSDL(
+      vendorID: 0x045E, productID: 0x028E, pad: pad(vendorID: 0x045E, productID: 0x028E))
+    #expect(result.code == 1)
+    #expect(result.standardError.hasPrefix("error[E2013]: "))
+  }
+
   /// A user record keeps the member order and the number text of its file in `record show
   /// --json`, while the members of the envelope stay sorted by name.
   @Test

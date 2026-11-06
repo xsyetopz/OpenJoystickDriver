@@ -1829,6 +1829,10 @@
 "cli.access.web.portRange" = "--port 必須介於 1024 和 65535 之間。";
 /* One-line summary of 'ojd diagnose' in the command list and at the top of its help. */
 "cli.diagnose.group.abstract" = "執行所有檢查並回報問題。";
+/* Detail of the input mapping check of 'ojd diagnose' when no connected controller has a rejected database line. SDL_GameControllerDB is a project name and stays as written. */
+"cli.diagnose.group.inputMappingApplied" = "沒有被拒絕的 SDL_GameControllerDB 行";
+/* Detail of the input mapping check of 'ojd diagnose' for one controller whose database line was rejected. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller name, %2$@ is the reason in English and %3$@ is the error code, which stays as written. */
+"cli.diagnose.group.inputMappingRejected" = "%1$@ 的 SDL_GameControllerDB 行被拒絕：%2$@（%3$@）";
 /* Help text of the --output option of 'ojd diagnose'. A support bundle is a file with the diagnostic report for a bug report. */
 "cli.diagnose.group.output" = "同時將支援套件寫入此檔案。";
 /* Error of 'ojd diagnose --output' when the support bundle could not be written. %@ is the reason from the system. --output stays as written. */
@@ -2595,10 +2599,22 @@
 "cli.record.draft.discussion" = "讀取控制器的 HID 報告描述元，並在您按下每個控制項時擷取其輸入報告，然後輸出一筆可作為起點的記錄。該記錄對應描述元明確說明的按鈕、搖桿、扳機和方向鍵。擷取期間變化的位元組顯示其他控制項所在的位置。需要服務。";
 /* Help text of the duration option of 'ojd record draft'. */
 "cli.record.draft.duration" = "擷取輸入報告的秒數。";
+/* Help text of the --from-sdl flag of 'ojd record draft'. SDL_GameControllerDB is a project name and stays as written. */
+"cli.record.draft.fromSDL" = "根據控制器的 SDL_GameControllerDB 行產生草稿，而不是擷取輸入報告。";
 /* Hint printed after 'ojd record draft'. The command in quotes stays as written, including FILE. */
 "cli.record.draft.next" = "將記錄儲存到檔案，檢查每個控制項，然後執行「ojd record validate FILE」。";
 /* Message of 'ojd record draft' when the descriptor of the controller yields no controls and the bundled record names the family. %1$@ is the controller identity, VVVV:PPPP, and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
 "cli.record.draft.noLayout" = "無法從 %1$@ 的 HID 報告描述元讀取任何控制項，而且其內建記錄已指定協定系列。「ojd record show %2$@」會顯示該記錄。";
+/* Message of 'ojd record draft --from-sdl' when the HID report descriptor of the controller fails the HIDDescriptor contract. SDL_GameControllerDB is a project name and HIDDescriptor is a protocol family name; both stay as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the name of the violated rule, which stays as written. */
+"cli.record.draft.sdl.contract" = "%1$@ 的 HID 報告描述符違反 HIDDescriptor 約定（%2$@），因此任何 SDL_GameControllerDB 行都無法綁定它。";
+/* Message of 'ojd record draft --from-sdl' when the controller model already has a bundled record. SDL_GameControllerDB is a project name and stays as written. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.hasRecord" = "%@ 有內建記錄，任何 SDL_GameControllerDB 行都不會取代它。";
+/* Message of 'ojd record draft --from-sdl' when the database has no line for the controller. SDL_GameControllerDB is a project name and stays as written. GUID is the SDL controller identifier. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is its GUID, which stays as written. */
+"cli.record.draft.sdl.noLine" = "SDL_GameControllerDB 中沒有 %1$@（GUID %2$@）的行。";
+/* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.noPad" = "%@ 未以此指令可讀取的 HID 裝置連接。";
+/* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
+"cli.record.draft.sdl.rejected" = "%1$@ 的 SDL_GameControllerDB 行被拒絕：%2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.record.draft.started" = "按下 %1$@（%2$@）上的每個控制項，並移動每個搖桿和扳機。";
 /* Error of the 'ojd record' commands when a record file cannot be read. %1$@ is the file path and %2$@ is the reason from the system. */
@@ -3771,6 +3787,8 @@
 "error.E5006.message" = "無法讀取單元 ID 的金鑰檔案 PortKeyInstallation.key，或其大小不是 32 位元組。請從備份回復該檔案。如果改為刪除它，OpenJoystickDriver 會建立新金鑰，所有單元 ID 都會改變。";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "控制器記錄或 patch 無效。請對照其結構描述檢查該檔案，並修正訊息指出的欄位。";
+/* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
+"error.E5008.message" = "控制器的 SDL_GameControllerDB 行無法驅動該控制器。訊息會指出原因。請用 ojd record draft 為它編寫控制器記錄。";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */
 "ui.error.withCode" = "%1$@ (%2$@)";
 /* Message printed by 'ojd update check' when the installed version is newer than the latest release. %1$@ is the installed version and %2$@ is the latest release. */

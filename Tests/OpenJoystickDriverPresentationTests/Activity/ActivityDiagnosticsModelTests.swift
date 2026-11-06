@@ -92,7 +92,8 @@ struct ActivityDiagnosticsModelTests {
     #expect(
       checks.map(\.id) == [
         "transport-extension-bundle", "transport-extension-registration", "service", "input-read",
-        "input-inject", "virtual-device", "controller-records", "config-files", "usb-access",
+        "input-inject", "virtual-device", "controller-records", "input-mapping", "config-files",
+        "usb-access",
       ]
     )
   }

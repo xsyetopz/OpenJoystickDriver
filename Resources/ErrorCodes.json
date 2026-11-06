@@ -523,6 +523,11 @@
       "code": "E5007",
       "domain": "Document",
       "name": "invalidControllerRecord"
+    },
+    {
+      "code": "E5008",
+      "domain": "Document",
+      "name": "sdlLineRejected"
     }
   ]
 }

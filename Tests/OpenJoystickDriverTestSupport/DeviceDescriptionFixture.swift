@@ -42,7 +42,8 @@ extension ApplicationServiceDeviceDescription {
     duplicateExposureRisk: DuplicateExposureRisk = .unknownOwnership,
     physicalOutputOwner: ControllerServer = .ojd,
     tuning: ControllerTuning = .none,
-    protocolBinding: ProtocolBindingID = ProtocolBindingID(.hidDescriptor)
+    protocolBinding: ProtocolBindingID = ProtocolBindingID(.hidDescriptor),
+    bindingResult: ProtocolBindingResult = .hidDescriptorFixture
   ) -> ApplicationServiceDeviceDescription {
     ApplicationServiceDeviceDescription(
       name: name,
@@ -55,7 +56,7 @@ extension ApplicationServiceDeviceDescription {
       inputOwner: inputOwner,
       duplicateExposureRisk: duplicateExposureRisk,
       serialNumber: nil,
-      bindingResult: .hidDescriptorFixture,
+      bindingResult: bindingResult,
       physicalOutputCapabilities: outputs,
       physicalOutputOwner: physicalOutputOwner,
       recordServer: .system,

@@ -71,6 +71,11 @@ struct ActivityCheckKind: Equatable {
       action: .noGUIAction
     ),
     Self(id: "controller-records", nameKey: "ui.library.records", action: .fix(.showLibrary)),
+    Self(
+      id: "input-mapping",
+      nameKey: "cli.controller.show.labelInputMapping",
+      action: .noGUIAction
+    ),
     Self(id: "config-files", nameKey: "ui.activity.check.configFiles", action: .noGUIAction),
     Self(id: "usb-access", nameKey: "ui.activity.check.usbAccess", action: .fix(.requestInputRead)),
   ]

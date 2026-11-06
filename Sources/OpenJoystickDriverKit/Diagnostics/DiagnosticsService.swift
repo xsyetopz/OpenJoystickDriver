@@ -141,6 +141,7 @@ public enum DiagnosticsService {
     checks.append(contentsOf: permissionChecks(snapshot))
     checks.append(virtualDeviceCheck(snapshot))
     checks.append(recordCheck(records))
+    checks.append(inputMappingCheck(snapshot))
     checks.append(configFilesCheck(defaults: records.defaults, virtualDevices: virtualDevices))
     checks.append(usbCheck(usb))
     return checks
@@ -301,6 +302,26 @@ public enum DiagnosticsService {
       return DiagnoseCheck(id, .warn, localization.string("cli.diagnose.group.virtualDisabled"))
     }
     return DiagnoseCheck(id, .pass, backend)
+  }
+
+  /// The `input-mapping` check.
+  ///
+  /// It is skipped without a status and warns for each connected controller whose
+  /// SDL_GameControllerDB line was rejected, with the reason and ``ErrorCode/sdlLineRejected``;
+  /// that controller keeps the standard HID usage map.
+  public static func inputMappingCheck(_ snapshot: DiagnoseServiceSnapshot) -> DiagnoseCheck {
+    let id = "input-mapping"
+    guard let status = snapshot.status else { return skipped(id, snapshot) }
+    let rejected = status.connectedDevices.compactMap { device in
+      device.bindingResult.inputMapping?.rejection.map {
+        localization.formatted(
+          "cli.diagnose.group.inputMappingRejected",
+          arguments: [device.name, $0, ErrorCode.sdlLineRejected.rawValue]
+        )
+      }
+    }
+    guard rejected.isEmpty else { return DiagnoseCheck(id, .warn, rejected.joined(separator: "; ")) }
+    return DiagnoseCheck(id, .pass, localization.string("cli.diagnose.group.inputMappingApplied"))
   }
 
   /// The `controller-records` check; it warns and names each controller record file that OJD

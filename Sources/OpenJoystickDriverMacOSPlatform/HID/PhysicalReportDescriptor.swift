@@ -13,6 +13,27 @@ package enum PhysicalReportDescriptor {
     vendorID: Int,
     productID: Int
   ) -> [UInt8]? {
+    preferredDevice(vendorID: vendorID, productID: productID).map { [UInt8]($0.descriptor) }
+  }
+
+  /// Reads the identity and HID elements of the device that ``copy(vendorID:productID:)`` reads
+  /// the descriptor of; nil when no such device is connected.
+  package static func physicalDevice(vendorID: Int, productID: Int) -> PhysicalDevice? {
+    guard let (device, _) = preferredDevice(vendorID: vendorID, productID: productID),
+      let vendor = UInt16(exactly: vendorID), let product = UInt16(exactly: productID)
+    else { return nil }
+    return HIDDeviceStream().physicalDeviceObservation(
+      for: device,
+      vendorID: vendor,
+      productID: product,
+      transportProperty: IOHIDDeviceGetProperty(device, kIOHIDTransportKey as CFString) as? String,
+      nativePassThrough: false,
+      systemListsGameController: false
+    )
+  }
+
+  /// The preferred connected device of the model and its report descriptor.
+  private static func preferredDevice(vendorID: Int, productID: Int) -> (IOHIDDevice, descriptor: Data)? {
     let matching = AppleGameControllerSyntheticHID.ioHIDMatchingExcludingSynthetics([
       kIOHIDVendorIDKey as String: vendorID, kIOHIDProductIDKey as String: productID,
     ])
@@ -53,7 +74,7 @@ package enum PhysicalReportDescriptor {
     for (dev, s) in candidates {
       if s <= Int.min / 4 { continue }
       if let data = IOHIDDeviceGetProperty(dev, kIOHIDReportDescriptorKey as CFString) as? Data {
-        return [UInt8](data)
+        return (dev, data)
       }
     }
     return nil

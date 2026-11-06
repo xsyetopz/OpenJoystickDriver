@@ -61,6 +61,11 @@ package struct MacOSPlatformHost: PlatformHost {
     PhysicalReportDescriptor.copy(vendorID: vendorID, productID: productID)
   }
 
+  /// Reads the identity and HID elements of the connected device with `vendorID` and `productID`.
+  package func physicalDevice(vendorID: Int, productID: Int) -> PhysicalDevice? {
+    PhysicalReportDescriptor.physicalDevice(vendorID: vendorID, productID: productID)
+  }
+
   /// Returns the dropped HID input report counts that the IORegistry holds for `processID`.
   package func droppedHIDInputReports(processID: Int32) -> [HIDInputDropObservation] {
     HIDInputReportDrops.observations(processID: processID)

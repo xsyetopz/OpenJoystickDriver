@@ -51,6 +51,12 @@ struct RecordDraftCommand: AsyncParsableCommand {
     PlatformHosts.current.physicalReportDescriptor(vendorID: $0, productID: $1)
   }
 
+  /// Reads the identity and HID elements of a connected controller model; tests replace it.
+  @TaskLocal
+  static var physicalDevice: @Sendable (_ vendorID: Int, _ productID: Int) -> PhysicalDevice? = {
+    PlatformHosts.current.physicalDevice(vendorID: $0, productID: $1)
+  }
+
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
@@ -70,6 +76,13 @@ struct RecordDraftCommand: AsyncParsableCommand {
   )
   var duration: Double = 10
 
+  /// `--from-sdl`: draft from the SDL_GameControllerDB line instead of a capture.
+  @Flag(
+    name: .customLong("from-sdl"),
+    help: ArgumentHelp(CLILocalized.text("cli.record.draft.fromSDL"))
+  )
+  var fromSDL = false
+
   /// Checks the duration.
   func validate() throws { try validateDuration(duration) }
 
@@ -77,6 +90,10 @@ struct RecordDraftCommand: AsyncParsableCommand {
   func run() async throws {
     try await global.run {
       try await withController(controller) { client, device in
+        if fromSDL {
+          try print(try sdlDraft(for: device), device)
+          return
+        }
         if CLIContext.current.format == .human {
           CLIOutput.success(
             CLILocalized.format(
@@ -106,6 +123,47 @@ struct RecordDraftCommand: AsyncParsableCommand {
           )
         }
         try print(draft, device)
+      }
+    }
+  }
+
+  /// The record drafted from the SDL_GameControllerDB line of the connected controller.
+  private func sdlDraft(
+    for device: ApplicationServiceDeviceDescription
+  ) throws -> ControllerRecordDraft {
+    guard let pad = Self.physicalDevice(Int(device.vendorID), Int(device.productID)) else {
+      throw CLIFailure(
+        .controllerRequestFailed,
+        CLILocalized.format("cli.record.draft.sdl.noPad", device.identity)
+      )
+    }
+    do {
+      return try ControllerRecordDraft(
+        model: ControllerModelID(vendorID: device.vendorID, productID: device.productID),
+        sdlDevice: pad
+      )
+    } catch {
+      switch error {
+      case .hasRecord:
+        throw CLIFailure(
+          .controllerRequestFailed,
+          CLILocalized.format("cli.record.draft.sdl.hasRecord", device.identity)
+        )
+      case .descriptorContract(let violation):
+        throw CLIFailure(
+          .controllerRequestFailed,
+          CLILocalized.format("cli.record.draft.sdl.contract", device.identity, violation.rawValue)
+        )
+      case .noLine(let guid):
+        throw CLIFailure(
+          .notFound,
+          CLILocalized.format("cli.record.draft.sdl.noLine", device.identity, guid ?? "")
+        )
+      case .rejected(let reason):
+        throw CLIFailure(
+          .sdlLineRejected,
+          CLILocalized.format("cli.record.draft.sdl.rejected", device.identity, reason)
+        )
       }
     }
   }

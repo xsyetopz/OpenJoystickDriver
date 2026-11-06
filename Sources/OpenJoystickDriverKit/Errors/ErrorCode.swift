@@ -192,6 +192,8 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
   case damagedPortKey = "E5006"
   /// A controller record or patch is invalid.
   case invalidControllerRecord = "E5007"
+  /// An SDL_GameControllerDB line matched a controller but cannot drive it.
+  case sdlLineRejected = "E5008"
 
   /// The part of the product that raises a code; the first digit of the number.
   public enum Domain: String, CaseIterable, Sendable {
@@ -258,7 +260,8 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
       .packageAlreadyInstalled, .packageNotInstalled, .packageStoreUnwritable:
       .mod
     case .unsupportedAPIVersion, .invalidProtocolDescription, .protocolDescriptionFamilyMismatch,
-      .unknownProtocolVariant, .damagedAccessGrants, .damagedPortKey, .invalidControllerRecord:
+      .unknownProtocolVariant, .damagedAccessGrants, .damagedPortKey, .invalidControllerRecord,
+      .sdlLineRejected:
       .document
     }
   }

@@ -1829,6 +1829,10 @@
 "cli.access.web.portRange" = "--port must be between 1024 and 65535.";
 /* One-line summary of 'ojd diagnose' in the command list and at the top of its help. */
 "cli.diagnose.group.abstract" = "Run every check and report what is wrong.";
+/* Detail of the input mapping check of 'ojd diagnose' when no connected controller has a rejected database line. SDL_GameControllerDB is a project name and stays as written. */
+"cli.diagnose.group.inputMappingApplied" = "no SDL_GameControllerDB line was rejected";
+/* Detail of the input mapping check of 'ojd diagnose' for one controller whose database line was rejected. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller name, %2$@ is the reason in English and %3$@ is the error code, which stays as written. */
+"cli.diagnose.group.inputMappingRejected" = "SDL_GameControllerDB line rejected for %1$@: %2$@ (%3$@)";
 /* Help text of the --output option of 'ojd diagnose'. A support bundle is a file with the diagnostic report for a bug report. */
 "cli.diagnose.group.output" = "Also write a support bundle to this file.";
 /* Error of 'ojd diagnose --output' when the support bundle could not be written. %@ is the reason from the system. --output stays as written. */
@@ -2595,10 +2599,22 @@
 "cli.record.draft.discussion" = "Reads the controller's HID report descriptor and captures its input reports while you press each control, then prints a record to start from. The record maps the buttons, sticks, triggers, and hat the descriptor states plainly. The bytes that changed during the capture show where the other controls sit. Needs the service.";
 /* Help text of the duration option of 'ojd record draft'. */
 "cli.record.draft.duration" = "Capture input reports for this many seconds.";
+/* Help text of the --from-sdl flag of 'ojd record draft'. SDL_GameControllerDB is a project name and stays as written. */
+"cli.record.draft.fromSDL" = "Draft from the SDL_GameControllerDB line of the controller instead of capturing input reports.";
 /* Hint printed after 'ojd record draft'. The command in quotes stays as written, including FILE. */
 "cli.record.draft.next" = "Save the record to a file, check each control, then run 'ojd record validate FILE'.";
 /* Message of 'ojd record draft' when the descriptor of the controller yields no controls and the bundled record names the family. %1$@ is the controller identity, VVVV:PPPP, and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
 "cli.record.draft.noLayout" = "No control of %1$@ could be read from its HID report descriptor, and its bundled record already names its family. 'ojd record show %2$@' shows that record.";
+/* Message of 'ojd record draft --from-sdl' when the HID report descriptor of the controller fails the HIDDescriptor contract. SDL_GameControllerDB is a project name and HIDDescriptor is a protocol family name; both stay as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the name of the violated rule, which stays as written. */
+"cli.record.draft.sdl.contract" = "The HID report descriptor of %1$@ fails the HIDDescriptor contract (%2$@), so no SDL_GameControllerDB line can bind it.";
+/* Message of 'ojd record draft --from-sdl' when the controller model already has a bundled record. SDL_GameControllerDB is a project name and stays as written. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.hasRecord" = "%@ has a bundled record, which no SDL_GameControllerDB line replaces.";
+/* Message of 'ojd record draft --from-sdl' when the database has no line for the controller. SDL_GameControllerDB is a project name and stays as written. GUID is the SDL controller identifier. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is its GUID, which stays as written. */
+"cli.record.draft.sdl.noLine" = "SDL_GameControllerDB has no line for %1$@ (GUID %2$@).";
+/* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.noPad" = "%@ is not connected as a HID device that this command can read.";
+/* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
+"cli.record.draft.sdl.rejected" = "SDL_GameControllerDB line rejected for %1$@: %2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.record.draft.started" = "Press every control on %1$@ (%2$@), and move each stick and trigger.";
 /* Error of the 'ojd record' commands when a record file cannot be read. %1$@ is the file path and %2$@ is the reason from the system. */
@@ -3217,6 +3233,8 @@
 "error.E5006.message" = "The key file of the unit IDs, PortKeyInstallation.key, cannot be read or is not 32 bytes. Restore the file from a backup. If you delete it instead, OpenJoystickDriver creates a new key and every unit ID changes.";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "A controller record or patch is invalid. Check the file against its schema and fix the field that the message names.";
+/* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
+"error.E5008.message" = "The SDL_GameControllerDB line for a controller cannot drive it. The message names the reason. Write a controller record for the controller with ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */
 "ui.error.withCode" = "%1$@ (%2$@)";
 

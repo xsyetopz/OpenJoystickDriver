@@ -1829,6 +1829,10 @@
 "cli.access.web.portRange" = "--port muss zwischen 1024 und 65535 liegen.";
 /* One-line summary of 'ojd diagnose' in the command list and at the top of its help. */
 "cli.diagnose.group.abstract" = "Führt alle Prüfungen aus und meldet, was nicht stimmt.";
+/* Detail of the input mapping check of 'ojd diagnose' when no connected controller has a rejected database line. SDL_GameControllerDB is a project name and stays as written. */
+"cli.diagnose.group.inputMappingApplied" = "keine SDL_GameControllerDB-Zeile abgelehnt";
+/* Detail of the input mapping check of 'ojd diagnose' for one controller whose database line was rejected. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller name, %2$@ is the reason in English and %3$@ is the error code, which stays as written. */
+"cli.diagnose.group.inputMappingRejected" = "SDL_GameControllerDB-Zeile für %1$@ abgelehnt: %2$@ (%3$@)";
 /* Help text of the --output option of 'ojd diagnose'. A support bundle is a file with the diagnostic report for a bug report. */
 "cli.diagnose.group.output" = "Schreibt zusätzlich ein Support-Paket in diese Datei.";
 /* Error of 'ojd diagnose --output' when the support bundle could not be written. %@ is the reason from the system. --output stays as written. */
@@ -2595,10 +2599,22 @@
 "cli.record.draft.discussion" = "Liest den HID-Report-Deskriptor des Controllers und zeichnet seine Eingabe-Reports auf, während du jedes Bedienelement betätigst, und gibt dann einen Eintrag als Ausgangspunkt aus. Der Eintrag ordnet die Tasten, Sticks, Trigger und das Steuerkreuz zu, die der Deskriptor eindeutig angibt. Die Bytes, die sich während der Aufzeichnung geändert haben, zeigen, wo die übrigen Bedienelemente liegen. Braucht den Dienst.";
 /* Help text of the duration option of 'ojd record draft'. */
 "cli.record.draft.duration" = "Eingabe-Reports so viele Sekunden lang aufzeichnen.";
+/* Help text of the --from-sdl flag of 'ojd record draft'. SDL_GameControllerDB is a project name and stays as written. */
+"cli.record.draft.fromSDL" = "Erstellt den Entwurf aus der SDL_GameControllerDB-Zeile des Controllers, statt Eingabeberichte aufzuzeichnen.";
 /* Hint printed after 'ojd record draft'. The command in quotes stays as written, including FILE. */
 "cli.record.draft.next" = "Speichere den Eintrag in einer Datei, prüfe jedes Bedienelement und führe dann „ojd record validate FILE“ aus.";
 /* Message of 'ojd record draft' when the descriptor of the controller yields no controls and the bundled record names the family. %1$@ is the controller identity, VVVV:PPPP, and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
 "cli.record.draft.noLayout" = "Aus dem HID-Report-Deskriptor von %1$@ ließ sich kein Bedienelement auslesen, und der mitgelieferte Eintrag nennt bereits die Familie. „ojd record show %2$@“ zeigt diesen Eintrag.";
+/* Message of 'ojd record draft --from-sdl' when the HID report descriptor of the controller fails the HIDDescriptor contract. SDL_GameControllerDB is a project name and HIDDescriptor is a protocol family name; both stay as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the name of the violated rule, which stays as written. */
+"cli.record.draft.sdl.contract" = "Der HID-Report-Deskriptor von %1$@ verletzt den HIDDescriptor-Vertrag (%2$@), daher kann keine SDL_GameControllerDB-Zeile ihn binden.";
+/* Message of 'ojd record draft --from-sdl' when the controller model already has a bundled record. SDL_GameControllerDB is a project name and stays as written. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.hasRecord" = "%@ hat einen mitgelieferten Eintrag, den keine SDL_GameControllerDB-Zeile ersetzt.";
+/* Message of 'ojd record draft --from-sdl' when the database has no line for the controller. SDL_GameControllerDB is a project name and stays as written. GUID is the SDL controller identifier. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is its GUID, which stays as written. */
+"cli.record.draft.sdl.noLine" = "SDL_GameControllerDB hat keine Zeile für %1$@ (GUID %2$@).";
+/* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.noPad" = "%@ ist nicht als HID-Gerät verbunden, das dieser Befehl lesen kann.";
+/* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
+"cli.record.draft.sdl.rejected" = "SDL_GameControllerDB-Zeile für %1$@ abgelehnt: %2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.record.draft.started" = "Betätige jedes Bedienelement an %1$@ (%2$@) und bewege jeden Stick und jeden Trigger.";
 /* Error of the 'ojd record' commands when a record file cannot be read. %1$@ is the file path and %2$@ is the reason from the system. */
@@ -3217,6 +3233,8 @@
 "error.E5006.message" = "Die Schlüsseldatei der Geräte-IDs, PortKeyInstallation.key, kann nicht gelesen werden oder ist nicht 32 Byte groß. Stellen Sie die Datei aus einer Sicherung wieder her. Wenn Sie sie stattdessen löschen, erstellt OpenJoystickDriver einen neuen Schlüssel, und jede Geräte-ID ändert sich.";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "Ein Controller-Eintrag oder -Patch ist ungültig. Prüfe die Datei gegen ihr Schema und korrigiere das Feld, das die Meldung nennt.";
+/* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
+"error.E5008.message" = "Die SDL_GameControllerDB-Zeile eines Controllers kann ihn nicht steuern. Die Meldung nennt den Grund. Schreibe mit ojd record draft einen Controller-Eintrag für den Controller.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */
 "ui.error.withCode" = "%1$@ (%2$@)";
 

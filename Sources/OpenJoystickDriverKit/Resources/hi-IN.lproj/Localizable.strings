@@ -1829,6 +1829,10 @@
 "cli.access.web.portRange" = "--port 1024 और 65535 के बीच होना चाहिए।";
 /* One-line summary of 'ojd diagnose' in the command list and at the top of its help. */
 "cli.diagnose.group.abstract" = "सभी जाँचें चलाएँ और बताएँ कि क्या गड़बड़ है।";
+/* Detail of the input mapping check of 'ojd diagnose' when no connected controller has a rejected database line. SDL_GameControllerDB is a project name and stays as written. */
+"cli.diagnose.group.inputMappingApplied" = "SDL_GameControllerDB की कोई पंक्ति अस्वीकृत नहीं हुई";
+/* Detail of the input mapping check of 'ojd diagnose' for one controller whose database line was rejected. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller name, %2$@ is the reason in English and %3$@ is the error code, which stays as written. */
+"cli.diagnose.group.inputMappingRejected" = "%1$@ के लिए SDL_GameControllerDB पंक्ति अस्वीकृत: %2$@ (%3$@)";
 /* Help text of the --output option of 'ojd diagnose'. A support bundle is a file with the diagnostic report for a bug report. */
 "cli.diagnose.group.output" = "सपोर्ट बंडल भी इस फ़ाइल में लिखें।";
 /* Error of 'ojd diagnose --output' when the support bundle could not be written. %@ is the reason from the system. --output stays as written. */
@@ -2595,10 +2599,22 @@
 "cli.record.draft.discussion" = "कंट्रोलर का HID रिपोर्ट डिस्क्रिप्टर पढ़ता है और हर नियंत्रण दबाने के दौरान उसकी इनपुट रिपोर्ट कैप्चर करता है, फिर शुरुआत के लिए एक रिकॉर्ड प्रिंट करता है। रिकॉर्ड उन बटनों, स्टिक, ट्रिगर और दिशा-पैड को मैप करता है जिन्हें डिस्क्रिप्टर स्पष्ट रूप से बताता है। कैप्चर के दौरान जो बाइट बदले, वे दिखाते हैं कि बाकी नियंत्रण कहाँ हैं। सेवा की ज़रूरत होती है।";
 /* Help text of the duration option of 'ojd record draft'. */
 "cli.record.draft.duration" = "इतने सेकंड तक इनपुट रिपोर्ट कैप्चर करें।";
+/* Help text of the --from-sdl flag of 'ojd record draft'. SDL_GameControllerDB is a project name and stays as written. */
+"cli.record.draft.fromSDL" = "इनपुट रिपोर्ट कैप्चर करने के बजाय कंट्रोलर की SDL_GameControllerDB पंक्ति से ड्राफ़्ट बनाएँ।";
 /* Hint printed after 'ojd record draft'. The command in quotes stays as written, including FILE. */
 "cli.record.draft.next" = "रिकॉर्ड को फ़ाइल में सहेजें, हर नियंत्रण जाँचें, फिर “ojd record validate FILE” चलाएँ।";
 /* Message of 'ojd record draft' when the descriptor of the controller yields no controls and the bundled record names the family. %1$@ is the controller identity, VVVV:PPPP, and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
 "cli.record.draft.noLayout" = "%1$@ का कोई भी नियंत्रण उसके HID रिपोर्ट डिस्क्रिप्टर से पढ़ा नहीं जा सका, और उसका बंडल किया गया रिकॉर्ड पहले से उसका परिवार बताता है। “ojd record show %2$@” वह रिकॉर्ड दिखाता है।";
+/* Message of 'ojd record draft --from-sdl' when the HID report descriptor of the controller fails the HIDDescriptor contract. SDL_GameControllerDB is a project name and HIDDescriptor is a protocol family name; both stay as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the name of the violated rule, which stays as written. */
+"cli.record.draft.sdl.contract" = "%1$@ का HID रिपोर्ट डिस्क्रिप्टर HIDDescriptor अनुबंध (%2$@) का उल्लंघन करता है, इसलिए कोई SDL_GameControllerDB पंक्ति उसे बाँध नहीं सकती।";
+/* Message of 'ojd record draft --from-sdl' when the controller model already has a bundled record. SDL_GameControllerDB is a project name and stays as written. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.hasRecord" = "%@ का बंडल किया हुआ रिकॉर्ड है, जिसे कोई SDL_GameControllerDB पंक्ति नहीं बदलती।";
+/* Message of 'ojd record draft --from-sdl' when the database has no line for the controller. SDL_GameControllerDB is a project name and stays as written. GUID is the SDL controller identifier. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is its GUID, which stays as written. */
+"cli.record.draft.sdl.noLine" = "SDL_GameControllerDB में %1$@ (GUID %2$@) के लिए कोई पंक्ति नहीं है।";
+/* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.noPad" = "%@ ऐसे HID डिवाइस के रूप में कनेक्ट नहीं है जिसे यह कमांड पढ़ सके।";
+/* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
+"cli.record.draft.sdl.rejected" = "%1$@ के लिए SDL_GameControllerDB पंक्ति अस्वीकृत: %2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.record.draft.started" = "%1$@ (%2$@) के हर नियंत्रण को दबाएँ, और हर स्टिक व ट्रिगर को घुमाएँ।";
 /* Error of the 'ojd record' commands when a record file cannot be read. %1$@ is the file path and %2$@ is the reason from the system. */
@@ -3771,6 +3787,8 @@
 "error.E5006.message" = "यूनिट ID की कुंजी फ़ाइल PortKeyInstallation.key पढ़ी नहीं जा सकती, या वह 32 बाइट की नहीं है। फ़ाइल को बैकअप से वापस लाएँ। अगर आप इसे हटा देते हैं, तो OpenJoystickDriver एक नई कुंजी बनाता है और हर यूनिट ID बदल जाती है।";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "कंट्रोलर रिकॉर्ड या patch अमान्य है। फ़ाइल को उसके स्कीमा से जाँचें और संदेश में बताए गए फ़ील्ड को ठीक करें।";
+/* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
+"error.E5008.message" = "किसी कंट्रोलर की SDL_GameControllerDB पंक्ति उसे चला नहीं सकती। संदेश कारण बताता है। ojd record draft से उस कंट्रोलर के लिए कंट्रोलर रिकॉर्ड लिखें।";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */
 "ui.error.withCode" = "%1$@ (%2$@)";
 /* Message printed by 'ojd update check' when the installed version is newer than the latest release. %1$@ is the installed version and %2$@ is the latest release. */
