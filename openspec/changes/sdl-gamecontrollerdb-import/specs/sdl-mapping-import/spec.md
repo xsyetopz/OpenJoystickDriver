@@ -52,6 +52,16 @@ When a HID pad with no controller record connects and its report descriptor pass
 - **WHEN** an unrecorded pad connects and the database has no line for its GUID
 - **THEN** the pad keeps the standard HID usage map and its mapping source is reported as `StandardHIDUsageMap`
 
+#### Scenario: Version-independent tiers
+
+- **WHEN** no line matches the version
+- **THEN** a line with the exact CRC and no version matches as `GUIDWithoutVersion`, else a line with no version and a zero name CRC matches as `GUIDWithoutVersionAndNameCRC`
+
+#### Scenario: Duplicate GUID
+
+- **WHEN** the database holds two lines with the same GUID
+- **THEN** the last one is used
+
 #### Scenario: Descriptor rejected
 
 - **WHEN** the pad's descriptor fails the HID descriptor contract and the database has a line for it
@@ -87,7 +97,7 @@ The axes list SHALL hold Generic Desktop X, Y, Z, Rx, Ry, Rz, Slider, Dial and W
 
 ### Requirement: Fields that cannot be mapped are named
 
-A database field that the conversion cannot express SHALL be listed by name as unmapped, and the remaining fields SHALL still apply. A line that indexes an element the pad does not have SHALL be rejected whole, the pad SHALL keep the standard HID usage map, and the rejection SHALL be reported with a reason and an error code.
+A database field that the conversion cannot express SHALL be listed by name as unmapped, and the remaining fields SHALL still apply. A line that indexes an element the pad does not have SHALL be rejected whole, the pad SHALL keep the standard HID usage map, and the rejection SHALL be reported with its reason.
 
 #### Scenario: Unmapped control
 
@@ -98,6 +108,11 @@ A database field that the conversion cannot express SHALL be listed by name as u
 
 - **WHEN** a line names `b14` and the pad has 12 listed buttons
 - **THEN** the line is rejected, the pad uses the standard HID usage map, and the report shows the rejection reason
+
+#### Scenario: D-pad direction on a button
+
+- **WHEN** a line maps `dpup:b3`
+- **THEN** `dpup` is listed as unmapped and the other controls work
 
 ### Requirement: Mapping source is named
 

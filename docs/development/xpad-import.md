@@ -37,6 +37,12 @@ Supported Linux input mappings:
 
 Protocol-default endpoints and the default initialization sequence are omitted. The pinned source revision and hashes remain in `ControllerSources.lock.json`; generated runtime records contain only operational controller facts. Unknown types, quirks, mappings, or startup macros are skipped with an explicit count. Linux xpad's `0xFFFF:0xFFFF` catch-all row is skipped; it is not a USB identity. Partial source-table parsing fails generation.
 
+## SDL_GameControllerDB
+
+`mdqinc/SDL_GameControllerDB` is the third pinned upstream: the `sdlGameControllerDB` entry of `ControllerSources.lock.json` names the repository, the commit and the SHA-256 of `gamecontrollerdb.txt` and of its license. `regenerate` downloads the file, verifies the hash and writes `Sources/OpenJoystickDriverKit/Resources/SDLGameControllerDB/sdl-gamecontrollerdb.txt`, which starts with the upstream zlib license text and a line naming the pin. The resource is generated: never edit it by hand.
+
+The generator keeps lines whose `platform` field is `Mac OS X` and counts every other line. It also drops a line whose vendor and product are in the pinned `controller_list.h` rows (SDL's HIDAPI drivers read those pads with another report format, so the `b#`, `a#` and `h#.#` indexes mean something else) or in a catalog record (a pad with a record never consults the database). A line that does not parse fails generation. `regenerate` prints the counts: kept, other platform, unparsable, skipped controller list, skipped catalog record and duplicate GUIDs. The Kit converts a line against the pad's element list at connect; see [architecture](architecture.md).
+
 ## SDL Controller List
 
 SDL's `src/joystick/controller_list.h` is the second pinned upstream (currently `release-3.4.16`). Its `arrControllers` rows are `{ MAKE_CONTROLLER_ID( vid, pid ), k_eControllerType_<type>, name }`; commented rows are ignored and any other unparsed row inside the table fails generation. Each row is identity evidence only, admitted through the source lock; the record carries no source field.

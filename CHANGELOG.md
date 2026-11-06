@@ -12,6 +12,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Input fields take `byteOrder` (`LittleEndian` or `BigEndian`) and read 1 to 32 bits at any bit position, so a 12-bit stick that crosses a byte or a signed 16-bit big-endian value is data.
 - A `hidUsageMap` takes the kinds `HalfAxis`, `AxisDpad`, `AxisButton` and `ButtonTrigger`, which bind one half of an axis to a trigger, a D-pad direction or a button, and a button to a trigger. A usage may appear in several half-axis entries when no two name the same half.
 
+- OJD ships the Mac lines of SDL_GameControllerDB (zlib), pinned in `ControllerSources.lock.json`. A HID gamepad with no record whose descriptor passes the contract is matched by its SDL GUID in four tiers and its line is converted against the live element list, in SDL's element order, into a usage map. `ojd controller show`, `ojd status`, the support report and the app's controller detail name the source (`Record`, `SDLGameControllerDB`, `StandardHIDUsageMap`), the GUID, the match tier, the unmapped controls and the reason a line was rejected. `OpenJoystickDriverHIDTool --dump-elements` prints a pad's elements as JSON.
+
 ### Changed
 
 - **BREAKING:** `ojd diagnose record` reads a controller record as the catalog does, and refuses text that is not plain UTF-8, such as a file with a byte order mark, and an object that names a member twice, with `E5007`. Every other reader of a `Controller` or `ControllerPatch` file already did. A file that is not JSON gives the parser's message with its byte offset, such as `JSON text, byte 1: expected a member name`, in place of `the file is not a JSON object`, and text nested deeper than 64 levels is refused.

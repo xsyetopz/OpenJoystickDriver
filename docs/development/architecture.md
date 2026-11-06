@@ -114,7 +114,9 @@ Devices that do not bind are recorded in the application-service payload's `unbo
 
 Under the Automatic intent, `AutomaticUserSpaceOutputDispatcher` publishes one virtual profile per eligible controller. `VirtualHIDProfileSelector` chooses it from the controller's declared controls alone: `SDLCompatible` (`045E:0B0C`) when it can carry every primary control, otherwise `Generic`. Protocol binding, foreground app and browser engine play no part. Both profiles carry every primary control today, so Automatic always selects `SDLCompatible`. `GameControllerCompatible` (`045E:0B13`) is published only on an override.
 
-The catalog is generated from Linux `xpad.c` and SDL `controller_list.h`, pinned in `ControllerSources.lock.json`, plus authored overrides; see [xpad import](xpad-import.md).
+The catalog is generated from Linux `xpad.c` and SDL `controller_list.h`, pinned in `ControllerSources.lock.json`, plus authored overrides; see [xpad import](xpad-import.md). The same lock pins a third source, SDL_GameControllerDB, whose Mac lines ship as data and drive HID pads that have no record.
+
+A HID pad with no record whose descriptor passes the contract is matched against that database by its SDL GUID. `ProtocolDriverRegistry` computes the GUID from the device properties, converts the line against `HIDLayoutSummary.elements` and passes the resulting `HIDUsageMap` to `HIDDescriptorDriver`; `ProtocolClassifier` stays pure. The binding result carries an `inputMapping` fact (`Record`, `SDLGameControllerDB`, `StandardHIDUsageMap` or `None`).
 
 ## Composite Devices and Roles
 

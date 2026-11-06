@@ -121,6 +121,19 @@ For more information about `ojd`, see [Using the command line](Command-Line.md).
 
 Some controllers are not standard. Their descriptor may put sticks or triggers on unusual axes. These controllers need a record.
 
+### Mapping Source
+
+A controller without a record that passes the descriptor checks gets its mapping from one of two places. OJD ships the Mac lines of [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB). When a line matches the controller, OJD applies it to the controller's elements, and `ojd controller show` reads "mapped from SDL_GameControllerDB" with the GUID and the match tier. The tiers, in order, are:
+
+1. `ExactGUID`: the version and the name hash match.
+2. `GUIDWithoutNameCRC`: the version matches and the line has no name hash.
+3. `GUIDWithoutVersion`: the name hash matches and the version does not.
+4. `GUIDWithoutVersionAndNameCRC`: only the vendor and product match.
+
+When a GUID has several lines, the last one wins. An axis that stands for a button presses it when it moves past half of its range from the center. A line can name controls OJD cannot express, such as a D-pad direction on a button. `ojd controller show` lists them as unmapped and the other controls still work.
+
+When no line matches, the controller keeps the standard map described under What Works and the row reads "standard HID usage map". When a line matches but names an element the controller lacks, OJD rejects the whole line, keeps the standard map, and the row says why. A controller whose descriptor fails the checks stays unbound whatever the database holds, and `ojd controller show` says a line exists. A controller with a record never reads the database.
+
 ## Further Reading
 
 - [Finding your controller ID](Connecting-Controllers.md#finding-your-controller-id)

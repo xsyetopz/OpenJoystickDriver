@@ -1,6 +1,6 @@
 # Proposal: SDL_GameControllerDB import
 
-Status: proposal. This folder holds planning files only; no code is changed by it. Target release: alpha.2 (maintainer decision, 2026-10-25: every area is part of alpha.2). Hardware checks go to the Discord testers through tester builds (`docs/development/tester-builds.md`).
+Status: implemented except `record draft --from-sdl` and the hardware checks. Target release: alpha.2 (maintainer decision, 2026-10-25: every area is part of alpha.2). Hardware checks go to the Discord testers through tester builds (`docs/development/tester-builds.md`).
 
 ## Why
 
@@ -31,8 +31,8 @@ None.
 ## Impact
 
 - `ControllerSources.lock.json` (an `sdlGameControllerDB` entry), `Scripts/Catalog/` (a generator for the reduced database; the lock reader in `xpad_io.py`), `docs/development/xpad-import.md`, `docs/development/architecture.md`.
-- `Sources/OpenJoystickDriverKit/Resources/` (the generated database), `Sources/OpenJoystickDriverKit/Protocol/Classification/` (binding when no record exists), `Protocol/Catalog/` (GUID and converter), `Sources/OpenJoystickDriverMacOSPlatform/HID/` (the element list with cookies), `Sources/OpenJoystickDriverHIDTool/` (element dump for fixtures).
-- CLI and app: `status`, `diagnose`, `controller show`, `record draft`; `Resources/Schemas/` for `cli-output` and `report`; `Resources/ErrorCodes.json`; localization bundles.
+- `Sources/OpenJoystickDriverKit/Resources/` (the generated database), `Sources/OpenJoystickDriverKit/Protocol/Classification/` (binding when no record exists), `Protocol/Catalog/` (GUID and converter), `Sources/OpenJoystickDriverMacOSPlatform/HID/` (the element list with cookies), `Sources/OpenJoystickDriverHIDTool/` (`--dump-elements`).
+- CLI and app: `status`, `diagnose`, `controller show`, `record draft`; `Resources/Schemas/` for `cli-output` and `report`; localization bundles.
 - `THIRD_PARTY_NOTICES.md` (a zlib entry), `wiki/` (`Supported-Controllers.md`, `Command-Reference.md`, `Controller-Records.md`), `CHANGELOG.md`.
 - Tests: conversion fixtures under `Tests/`.
 

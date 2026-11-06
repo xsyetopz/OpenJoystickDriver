@@ -502,6 +502,8 @@ A Switch 2 record without `bluetoothLE` connects over USB only, and `ojd record 
 
 The record maps what the HID report descriptor states plainly: buttons 1 to 11 in the order the `HIDDescriptor` family reads them, X, Y, Rx, and Ry sticks, Z and Rz triggers, and the hat, with the `HIDReportLayout` family. When nothing maps, it names `HIDDescriptor` instead. Check every control against the changed bytes and correct the record before you install it. The draft is a `ControllerPatch` for a model with a bundled record and a `Controller` otherwise.
 
+A controller without a record can already be driven by a line of SDL_GameControllerDB; `ojd controller show` names that in its Input mapping row. A record you install replaces it, because a controller with a record never reads the database. `ojd record draft` does not copy the database mapping; write the `hidUsageMap` into the record yourself, see [Map HID usages](#map-hid-usages).
+
 ## Install a Record
 
 1. Find the VID:PID of your controller. For more information, see [Finding your controller ID](Connecting-Controllers.md#finding-your-controller-id).
