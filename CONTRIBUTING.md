@@ -11,7 +11,7 @@ cd OpenJoystickDriver
 just check
 ```
 
-In an interactive terminal, each `./Scripts/ojd` route offers to install the Homebrew formulas it is missing; `setup` installs `just`, `bun`, `ruff`, `shellcheck`, `swiftlint`, the Git hooks and the Bun packages of `package.json`. Xcode, Apple assets, credentials, permissions, publication, destructive writes and hardware actions keep their own authorization flows. CI never prompts or installs host software.
+In an interactive terminal, each `./Scripts/ojd` route offers to install the Homebrew formulas it is missing; `setup` installs `just`, `ruff`, `shellcheck`, `swiftlint` and the Git hooks. Xcode, Apple assets, credentials, permissions, publication, destructive writes and hardware actions keep their own authorization flows. CI never prompts or installs host software.
 
 - Prerequisites, Git hooks, commit messages and screenshots: `docs/development/building-from-source.md`.
 - Toolchain and environment variables: `docs/development/environment.md`.

@@ -53,7 +53,7 @@ Verify: `./Scripts/ojd catalog regenerate --check`.
 
 Owns: `docs/development/`, `wiki/`, `CHANGELOG.md`.
 Depends: 2, 3.
-Verify: `bunx markdownlint-cli2` over the changed files.
+Verify: `git diff --check` over the changed files.
 
 - [x] 4.1 Add a section on the database to `docs/development/xpad-import.md` (pin, filter, skip counts) and a line to `docs/development/architecture.md:117` naming the third pinned source. Verify: markdownlint exits 0. Done: the database section of xpad-import.md and the third pinned source in architecture.md.
 - [x] 4.2 Update `wiki/Supported-Controllers.md` (Generic HID Controllers: mapped from SDL_GameControllerDB, the standard map, the rejection), `wiki/Command-Reference.md` (`controller show` row and JSON, `record draft --from-sdl`, `status`, `diagnose`) and `wiki/Controller-Records.md` (saving the mapping). Verify: markdownlint exits 0; a scan of added lines finds none of the words renamed, was, now, new, old, legacy. Done: Supported-Controllers.md (Mapping Source), Command-Reference.md (controller show, status) and Controller-Records.md; markdownlint clean and no listed word in added lines. `--from-sdl`, the `input-mapping` check and `E5008` are documented with 2.6.

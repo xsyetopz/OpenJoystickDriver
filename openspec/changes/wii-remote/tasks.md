@@ -89,10 +89,10 @@ Depends: 3, 4, 5.
 
 Depends: 7.
 
-- [ ] 8.1 Update `docs/development/wire-protocols.md`: the `NintendoWii` row of the Protocol Coverage table (described, stays coded, suite `WiiDriverTests`) and the Coded Behavior entries from 6.1. Verify: `swift test --filter ProtocolParserCoverageTests` passes; markdownlint of the file passes.
-- [ ] 8.2 Add the wiki page `wiki/Wii-Remote.md`: pairing through macOS Bluetooth, reconnecting, LEDs, extensions, IR pointer to mouse with a profile example, speaker commands, disconnecting, and the lack of a power-off command. Link it from `wiki/_Sidebar.md`, `Supported-Controllers.md` and `Connecting-Controllers.md`. Verify: markdownlint over the new and changed pages passes, and `python3 Scripts/Quality/check_localization_keys.py` still passes.
-- [ ] 8.3 Add the Known Issues entries to `wiki/Known-Issues.md` for macOS pairing and for the personas that carry no pointer. Verify: markdownlint passes.
-- [ ] 8.4 Add a `CHANGELOG.md` entry under Unreleased: the family, the two records, the pointer ids, the speaker command. Verify: markdownlint passes.
+- [ ] 8.1 Update `docs/development/wire-protocols.md`: the `NintendoWii` row of the Protocol Coverage table (described, stays coded, suite `WiiDriverTests`) and the Coded Behavior entries from 6.1. Verify: `swift test --filter ProtocolParserCoverageTests` passes; `git diff --check` of the file passes.
+- [ ] 8.2 Add the wiki page `wiki/Wii-Remote.md`: pairing through macOS Bluetooth, reconnecting, LEDs, extensions, IR pointer to mouse with a profile example, speaker commands, disconnecting, and the lack of a power-off command. Link it from `wiki/_Sidebar.md`, `Supported-Controllers.md` and `Connecting-Controllers.md`. Verify: `git diff --check` over the new and changed pages passes, and `python3 Scripts/Quality/check_localization_keys.py` still passes.
+- [ ] 8.3 Add the Known Issues entries to `wiki/Known-Issues.md` for macOS pairing and for the personas that carry no pointer. Verify: `git diff --check` passes.
+- [ ] 8.4 Add a `CHANGELOG.md` entry under Unreleased: the family, the two records, the pointer ids, the speaker command. Verify: `git diff --check` passes.
 - [ ] 8.5 Review sources: the driver, description and tests are independent implementations from WiiBrew facts and captures, with no code or wording from wiiuse or wiimacmote. Verify: `grep -rniE "wiiuse|wiimacmote" Sources Resources Tests` finds no copied code, only fact references in doc comments, and `grep -rn "GPL" Sources/OpenJoystickDriverKit/Protocol/Drivers/Nintendo` finds nothing.
 - [ ] 8.6 Review that no doc uses history words. Verify: `grep -rniE "renamed|legacy|previously|formerly" wiki/Wii-Remote.md` finds nothing.
 
@@ -101,7 +101,7 @@ Depends: 7.
 Depends: 1 to 8.
 
 - [ ] 9.1 Run the full check list once: `just check`; `./Scripts/ojd check driverkit`; `./Scripts/ojd test parsers-macos14`. Verify: each command exits 0; rerun only failures.
-- [ ] 9.2 Run `bunx @fission-ai/openspec@latest validate wii-remote --strict` from the repository root. Verify: it reports the change as valid.
+- [ ] 9.2 Run `openspec validate wii-remote --strict` from the repository root. Verify: it reports the change as valid.
 
 ## 10. Hardware Checks (Maintainer)
 

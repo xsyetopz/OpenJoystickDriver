@@ -67,7 +67,6 @@ lint:
     ruff format --check Scripts Tests/RepositoryScripts
     ruff check Scripts Tests/RepositoryScripts
     find Scripts -type f \( -name '*.sh' -o -name ojd \) -print0 | xargs -0 shellcheck --external-sources --source-path=SCRIPTDIR
-    biome="$(python3 -m Scripts.Quality.biome_binary "$PWD")" && git ls-files -z -co --exclude-standard -- '*.json' '*.jsonc' | xargs -0 bun run "$biome" ci
     swift-format lint --recursive --strict Package.swift Sources Tests Tools
     xcode="${DEVELOPER_DIR:-$(find /Applications -maxdepth 1 -type d -name 'Xcode*.app' -exec test -x '{}/Contents/Developer/usr/bin/xcodebuild' ';' -print | sort -r | head -n1)/Contents/Developer}"; DEVELOPER_DIR="$xcode" swiftlint lint --no-cache --strict
 

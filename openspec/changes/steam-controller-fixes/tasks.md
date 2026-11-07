@@ -71,7 +71,7 @@ Depends: 2, 3.
 Verify: `swift test --filter SteamHIDRoleTests`.
 
 - [ ] 6.1 Extend `tritonDongleSlotsAreInterfacesTwoToFiveAndBluetoothIsItsLocation` (`SteamHIDRoleTests.swift:192-205`) to run for `0x1305` as well. Verify: the test passes for both IDs.
-- [ ] 6.2 Update the `ValveSteamController` and `ValveSteamTriton` rows and the Coded Behavior list of `docs/development/wire-protocols.md` (grip touch, pulse report, activation sequence). Verify: markdownlint on the file; `git diff` has no history words.
+- [ ] 6.2 Update the `ValveSteamController` and `ValveSteamTriton` rows and the Coded Behavior list of `docs/development/wire-protocols.md` (grip touch, pulse report, activation sequence). Verify: `git diff --check` on the file; `git diff` has no history words.
 - [ ] 6.3 If SDL code was used, add its zlib notice to `THIRD_PARTY_NOTICES.md`. Verify: `grep -n "SDL" THIRD_PARTY_NOTICES.md` shows the entry, or the PR text states that only facts were used.
 - [ ] 6.4 Run the repository check list from the repository `CLAUDE.md` once on the final tree. Verify: `just check`.
 

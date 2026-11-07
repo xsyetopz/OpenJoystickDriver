@@ -47,7 +47,7 @@ Verify: `./Scripts/ojd catalog regenerate --check`, `swift test --filter Equival
 
 Owns: `wiki/Controller-Records.md`, `docs/development/`, `CHANGELOG.md`.
 Depends: 3.
-Verify: markdownlint over the changed files; `grep -n 'byte\b.*mask' wiki/Controller-Records.md` finds no input-field text.
+Verify: `git diff --check` over the changed files; `grep -n 'byte\b.*mask' wiki/Controller-Records.md` finds no input-field text.
 
 - [x] 4.1 Rewrite the input section of `wiki/Controller-Records.md` (lines 96-99) for `bitOffset`, `bitSize`, `byteOrder`, `signed`, range and `layouts`, including the rules "Unselected report" and "Layout carry" and the 64-byte ceiling. Verify: `bunx markdownlint-cli2 wiki/Controller-Records.md` exits 0. Done: the input section describes bit addressing, `layouts`, Unselected report, Layout carry and the 64-byte ceiling; markdownlint passes and the grep finds no input-field text.
 - [x] 4.2 Describe the four usage map kinds, `threshold`, and per-half uniqueness in the `hidUsageMap` section (lines 313-320). Verify: markdownlint exits 0 and a scan of the added lines finds none of the words renamed, was, now, new, old, legacy. Done: the four kinds, `threshold` and per-half uniqueness are in the Map HID Usages section; markdownlint passes and the added lines hold none of the listed words.

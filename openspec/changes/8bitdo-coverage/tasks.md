@@ -17,13 +17,13 @@ The user's decision (2026-10-25): every area is part of alpha.2, the work makes 
 
 Owns: `docs/testing/8bitdo-tester-checks.md` and the rule that `2DC8:3208` and `2DC8:5750` get no traffic.
 Depends: none.
-Verify: `swift test --filter BootloaderGuard`, `markdownlint docs/testing/8bitdo-tester-checks.md`.
+Verify: `swift test --filter BootloaderGuard`, `git diff --check`.
 
-- [ ] 1.1 Write `docs/testing/8bitdo-tester-checks.md` with one card per Hardware Checks entry below (T1 to T9). Each card names the tester build, the mode, the exact commands, the control order and the files to send back. Verify: `grep -c '^## T[0-9]' docs/testing/8bitdo-tester-checks.md` prints 9, and `markdownlint` over the file reports nothing.
+- [ ] 1.1 Write `docs/testing/8bitdo-tester-checks.md` with one card per Hardware Checks entry below (T1 to T9). Each card names the tester build, the mode, the exact commands, the control order and the files to send back. Verify: `grep -c '^## T[0-9]' docs/testing/8bitdo-tester-checks.md` prints 9, and `git diff --check` over the file reports nothing.
 - [ ] 1.2 Write the bootloader test first: for each bootloader identity, drive startup, probe, keep-alive, rumble, light, configuration and the generic interface-signature binding against a fake transport, and assert that the transport records zero writes. Verify: `swift test --filter BootloaderGuard` fails before 1.3 and the failure names the path that sent.
 - [ ] 1.3 Read the binding, startup and probe code to list every path that writes to a device with no record, then place the refusal where one decision covers them (record data if the format can express it, otherwise one named check in the binding code). Verify: the list is in the commit message and `swift test --filter BootloaderGuard` passes.
 - [ ] 1.4 Add the log line and the controller-detail sentence, with localization keys per `LOCALIZATION.md`, and a test for each. Verify: `swift test --filter BootloaderGuard`, `python3 Scripts/Quality/check_localization_keys.py`.
-- [ ] 1.5 Document the rule in `docs/testing/8bitdo-ultimate-2c.md` (section "Bootloader Identities") and `wiki/Supported-Controllers.md`. Verify: `grep -n "3208" wiki/Supported-Controllers.md docs/testing/8bitdo-ultimate-2c.md` finds the rule and `markdownlint` over both reports nothing.
+- [ ] 1.5 Document the rule in `docs/testing/8bitdo-ultimate-2c.md` (section "Bootloader Identities") and `wiki/Supported-Controllers.md`. Verify: `grep -n "3208" wiki/Supported-Controllers.md docs/testing/8bitdo-ultimate-2c.md` finds the rule and `git diff --check` over both reports nothing.
 
 ## 2. Ultimate 2C Family: 301B, 301C, 301D, 3109
 
@@ -35,7 +35,7 @@ Verify: `swift test --filter EightBitDo`, `./Scripts/ojd catalog regenerate --ch
 - [ ] 2.2 Correct `Resources/Controllers/2dc8/2dc8-301b.json` so that `Rx` and `Ry` (usages 51 and 52) map to nothing (D3, D5). Verify: `swift test --filter EightBitDo` passes the `301B` tests.
 - [ ] 2.3 Reduce `2dc8-301c.json` to a record that maps no controls (D4) and keep `3109` as it is, with the document saying both are unverified. Verify: `./Scripts/ojd catalog regenerate --write` then `--check` pass and the 2.1 tests pass.
 - [ ] 2.4 Add `Resources/Controllers/2dc8/2dc8-301d.json` from the sources, with no paddle mapping (the 2C rear buttons default to L3 and R3). Verify: `./Scripts/ojd diagnose record Resources/Controllers/2dc8/2dc8-301d.json --validate-only` exits 0 and the replay test passes.
-- [ ] 2.5 Update `docs/testing/8bitdo-ultimate-2c.md` (modes table with `301D`, the stick description, the unverified tier of `301B`, `301C`, `301D` and `3109`) and the 8BitDo rows of `wiki/Supported-Controllers.md` and `wiki/Connecting-Controllers.md`; add `CHANGELOG.md` entries under Unreleased. Verify: `grep -n "301D" docs/testing/8bitdo-ultimate-2c.md wiki/Supported-Controllers.md` finds the rows and `markdownlint` over the changed files reports nothing.
+- [ ] 2.5 Update `docs/testing/8bitdo-ultimate-2c.md` (modes table with `301D`, the stick description, the unverified tier of `301B`, `301C`, `301D` and `3109`) and the 8BitDo rows of `wiki/Supported-Controllers.md` and `wiki/Connecting-Controllers.md`; add `CHANGELOG.md` entries under Unreleased. Verify: `grep -n "301D" docs/testing/8bitdo-ultimate-2c.md wiki/Supported-Controllers.md` finds the rows and `git diff --check` over the changed files reports nothing.
 - [ ] 2.6 Apply the tester result of T1 to T4 (`301B` over Bluetooth LE, `301C`, `3109`, `301D`): replace each source-derived fixture with the captured one, correct any mapping the capture disproves, and move the rows to Community-Verified. Verify: `swift test --filter EightBitDo` passes with the `capture` fixtures and `grep -rn "source" Tests/.../8bitdo` lists no `301B` source fixture. Open until the tester's files arrive.
 
 ## 3. Ultimate 2 Family: 6012, 6013, 3107, 310B, Gyro
@@ -47,7 +47,7 @@ Verify: `swift test --filter EightBitDo`, `./Scripts/ojd catalog regenerate --ch
 - [ ] 3.1 Write tests from sources: a replay per `6012` connection from one usage map (button usages 1 to 15 in the 2C order plus four rear usages mapped to the four paddle controls, D5), a test that `6013` and `3107` map no controls, and a mode-selection test for `310B` (one name for both models). Verify: `swift test --filter EightBitDo` shows them failing before 3.2 and 3.3.
 - [ ] 3.2 Add `2dc8-6012.json`, `2dc8-6013.json` and `2dc8-3107.json` to `Resources/Controllers/2dc8/`; `6013` and `3107` map no controls (D1). Verify: `./Scripts/ojd catalog regenerate --write` then `--check` pass and `./Scripts/ojd diagnose record FILE --validate-only` exits 0 for each file.
 - [ ] 3.3 Add the `310B` patch in `Resources/ControllerPatches/2dc8/` that names both models (D4). Verify: `swift test --filter EightBitDo` passes the `310B` test and `./Scripts/ojd catalog regenerate --check` passes.
-- [ ] 3.4 Write `docs/testing/8bitdo-ultimate-2.md` (identities, the starting usage map, paddle order, gyro status, the unverified tier) and update the wiki rows and `CHANGELOG.md`. Verify: `grep -n "6012" wiki/Supported-Controllers.md docs/testing/8bitdo-ultimate-2.md` finds the rows and `markdownlint` reports nothing.
+- [ ] 3.4 Write `docs/testing/8bitdo-ultimate-2.md` (identities, the starting usage map, paddle order, gyro status, the unverified tier) and update the wiki rows and `CHANGELOG.md`. Verify: `grep -n "6012" wiki/Supported-Controllers.md docs/testing/8bitdo-ultimate-2.md` finds the rows and `git diff --check` reports nothing.
 - [ ] 3.5 Apply the tester result of T5 to T7 (`6012` cable and dongle, `6013` and `3107`, `310B` with an Ultimate 2 and a Pro 3): replace fixtures, apply D3 and D4 outcomes, record the gyro report offsets if a capture shows motion (D6). Verify: `swift test --filter EightBitDo` passes with the `capture` fixtures. Open until the tester's files arrive.
 
 ## 4. Ultimate 3-mode: 901B
@@ -58,7 +58,7 @@ Verify: `swift test --filter EightBitDo`, `./Scripts/ojd catalog regenerate --ch
 
 - [ ] 4.1 Write the replay test from sources (a Bluetooth gamepad that follows the Xbox button order). Verify: `swift test --filter EightBitDo` shows it failing before 4.2.
 - [ ] 4.2 Add `2dc8-901b.json` with the protocol the sources give (`HIDDescriptor`, Xbox mode over Bluetooth). Verify: the test passes and `./Scripts/ojd catalog regenerate --check` passes.
-- [ ] 4.3 Document the model and mode in `docs/testing/8bitdo-ultimate-2.md`, the wiki rows and `CHANGELOG.md`, as unverified. Verify: `grep -n "901B" wiki/Supported-Controllers.md` finds the row and `markdownlint` reports nothing.
+- [ ] 4.3 Document the model and mode in `docs/testing/8bitdo-ultimate-2.md`, the wiki rows and `CHANGELOG.md`, as unverified. Verify: `grep -n "901B" wiki/Supported-Controllers.md` finds the row and `git diff --check` reports nothing.
 - [ ] 4.4 Apply the tester result of T8 (`901B`). Verify: `swift test --filter EightBitDo` passes with the `capture` fixture. Open until the tester's files arrive.
 
 ## 5. Watchdog and Idle Dongle on macOS
@@ -67,9 +67,9 @@ Owns: the macOS measurement and, only if it shows a drop while served, one named
 Depends: 2 and 3.
 Verify: `swift test --filter EightBitDo`, `./Scripts/ojd catalog regenerate --check`.
 
-- [ ] 5.1 Write the document section that states the question and the three outcomes of D7, and the test for the outcome "no keep-alive" (the record has no `session.keepAlive`). Verify: `swift test --filter EightBitDo` passes and `markdownlint` reports nothing.
+- [ ] 5.1 Write the document section that states the question and the three outcomes of D7, and the test for the outcome "no keep-alive" (the record has no `session.keepAlive`). Verify: `swift test --filter EightBitDo` passes and `git diff --check` reports nothing.
 - [ ] 5.2 Apply the tester result of T9 (`310A` and `6012` served, then suspended). If the measurement shows a drop while served on a raw-USB pad, add `session.keepAlive` to the record with the measured interval and a packet test; for a HID pad, write the finding. Verify: `swift test --filter EightBitDo` passes and `./Scripts/ojd catalog regenerate --check` passes. Open until the tester's files arrive.
-- [ ] 5.3 Document the result in `docs/testing/8bitdo-ultimate-2.md`; when a keep-alive is added, also in `docs/development/wire-protocols.md` and `CHANGELOG.md`. Verify: `markdownlint` over the changed files reports nothing.
+- [ ] 5.3 Document the result in `docs/testing/8bitdo-ultimate-2.md`; when a keep-alive is added, also in `docs/development/wire-protocols.md` and `CHANGELOG.md`. Verify: `git diff --check` over the changed files reports nothing.
 
 ## 6. Coverage of the Documents
 

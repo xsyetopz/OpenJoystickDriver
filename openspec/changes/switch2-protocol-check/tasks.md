@@ -42,7 +42,7 @@ Verify: `swift test --filter Switch2DriverTests`.
 - [ ] 3.1 Write tests from the 2.1 to 2.3 captures: every button and both sticks per controller and transport decode to the controls the capture action names; the other report ID (if present) changes no state. Verify: the tests fail wherever the current driver disagrees with a capture, or pass if it agrees; the PR text says which.
 - [ ] 3.2 Apply the D2 row: keep `0x05`, ignore `0x09` explicitly, or add a `0x09` table to the description (data) with the decoder reading it. Verify: the 3.1 tests pass; `./Scripts/ojd check schemas`; `swift test --filter ProtocolDescription`.
 - [ ] 3.3 If a Bluetooth LE bit differs from the USB table, add a per-transport button table to the description and select it by link. Verify: the 3.1 Bluetooth LE tests pass; `swift test --filter Switch2DriverTests`.
-- [ ] 3.4 Update the type comment of `Switch2Driver` (`Switch2Driver.swift:86-96`) and the `NintendoSwitch2` rows of `docs/development/wire-protocols.md` to state the settled report IDs, tables and sources. Verify: markdownlint on the doc; `git diff` has no history words.
+- [ ] 3.4 Update the type comment of `Switch2Driver` (`Switch2Driver.swift:86-96`) and the `NintendoSwitch2` rows of `docs/development/wire-protocols.md` to state the settled report IDs, tables and sources. Verify: `git diff --check` on the doc; `git diff` has no history words.
 
 ## 4. IMU (tests first)
 

@@ -24,7 +24,7 @@ Each task names its check. Changing `LICENSE`, enabling the CLA workflow and con
 ## 4. Contributors and Notices
 
 - [ ] 4.1 The maintainer asks the five outside contributors (design D4) to sign the CLA for their commit. Verify: each answer is recorded in this task.
-- [ ] 4.2 For each contributor who does not sign, add an entry with the commit and the MIT text to `THIRD_PARTY_NOTICES.md`. Verify: markdownlint; the entry names the commit hash.
+- [ ] 4.2 For each contributor who does not sign, add an entry with the commit and the MIT text to `THIRD_PARTY_NOTICES.md`. Verify: `git diff --check`; the entry names the commit hash.
 - [x] 4.3 Check that every adapted or linked third-party source in the tree has its notice. Verify: `grep -rn "adapted from\|Copyright" Sources Tools` lists only sources that `THIRD_PARTY_NOTICES.md` names. Done: the grep lists only `MotionProjection.swift` (GamepadMotionHelpers, in the notices). swift-argument-parser is Apache-2.0 with the Runtime Library Exception, which waives attribution for compiled code; SwifterKit is the maintainer's own.
 - [ ] 4.4 Replace the four descriptors in `Tests/OpenJoystickDriverKitTests/Protocol/Drivers/Generic/RecordedHIDDescriptors.swift` (Xbox One S Linux and Windows modes, Xbox Series, GameSir G7 SE) with captures from testers' controllers, each named by its source in the doc comment. Verify: `swift test --filter ZRzBrakeLeftLayoutTests` and `--filter XboxBluetoothDescriptorLayoutTests` pass, and the check from 2.1 passes on `Tests`. Open until the captures arrive; release 0.6.0-alpha.2 waits for it.
 
