@@ -4,7 +4,7 @@ Each task names its check. Changing `LICENSE`, enabling the CLA workflow and con
 
 ## 1. Decisions before Any File Changes
 
-- [ ] 1.1 The maintainer has a lawyer review `design.md` D3, D4 and D5 and the drafts of `CLA.md` and `COMMERCIAL.md`. Verify: the maintainer records the outcome in this task; release 0.6.0-alpha.2 waits for it.
+- [x] 1.1 The maintainer decides `design.md` D3, D4 and D5 and the drafts of `CLA.md` and `COMMERCIAL.md`. The project is community-run and has no legal review. Verify: the maintainer records the decision in this task. Done: on 2026-11-07 the maintainer accepted D3, D4 and D5 as written, with no legal review.
 - [x] 1.2 The maintainer picks the contact for commercial licenses (design Open Question 1). Verify: the contact is written into `COMMERCIAL.md` in task 3.2. Done: the commercial tier on GitHub Sponsors, written into `COMMERCIAL.md`.
 
 ## 2. Checks First
@@ -16,7 +16,7 @@ Each task names its check. Changing `LICENSE`, enabling the CLA workflow and con
 ## 3. License Files
 
 - [x] 3.1 Replace `LICENSE` with the fetched PolyForm text and the `Required Notice:` line (design D1). Verify: the check from 2.2 passes. Done: the text check passes.
-- [x] 3.2 Write `COMMERCIAL.md` (design D2) and `CLA.md` (design D3) from the reviewed drafts. Verify: markdownlint passes; each file states what the spec requires. Done: drafts written; markdownlint passes. The lawyer review stays in 1.1.
+- [x] 3.2 Write `COMMERCIAL.md` (design D2) and `CLA.md` (design D3) from the drafts that 1.1 accepts. Verify: markdownlint passes; each file states what the spec requires. Done: drafts written; markdownlint passes.
 - [x] 3.3 Update `README.md`: the License section, the static badge, and the sponsorship paragraph addressed to commercial users. Verify: markdownlint; the section names both licenses and links `COMMERCIAL.md`. Done: markdownlint passes.
 - [x] 3.4 Add the License section to `CONTRIBUTING.md` (CLA and the source rule), and a CLA checkbox to `.github/pull_request_template.md`. Verify: markdownlint. Done: markdownlint passes.
 - [x] 3.5 Add `NSHumanReadableCopyright` to the app's Info.plist; the line holds only names and a version, so it is not localized. Verify: the Info.plist of a built app has the key; the About panel shows the line. Done: the plist has the key, and the dev app's About panel lists `© 2026 Krystian J. PolyForm Noncommercial 1.0.0.` as static text (`Scripts/GUI/ax.js labels`).

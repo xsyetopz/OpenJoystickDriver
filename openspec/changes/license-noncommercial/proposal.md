@@ -29,10 +29,10 @@ None.
 - The app: the About panel's copyright line (`NSHumanReadableCopyright`, which no Info.plist sets yet) names the license.
 - Contributors: five outside contributors have one commit each under MIT (design D4).
 - The other alpha.2 changes (`wii-remote`, `sdl-gamecontrollerdb-import`, `remapper-actions`, `xbox360-xusb-fixes`, `steam-controller-fixes`, `switch2-protocol-check`, `8bitdo-coverage`, `flydigi-vendor-protocol`) already follow the source rule.
-- Legal review: this plan is not legal advice. A lawyer reviews `COMMERCIAL.md`, `CLA.md` and design D4 and D5 before the release (task 1.1).
+- Legal review: none. The project is community-run, and the maintainer decides `COMMERCIAL.md`, `CLA.md` and design D3, D4 and D5 (task 1.1).
 
 ## Out of Scope
 
-- The commercial license contract itself: the maintainer and a lawyer write it. `COMMERCIAL.md` only says how to ask for one.
+- The commercial license contract itself: the maintainer writes it. `COMMERCIAL.md` only says how to ask for one.
 - Licensing of user-made mods: a mod is the author's own data, and this change does not license it.
 - Changing the license of published releases.

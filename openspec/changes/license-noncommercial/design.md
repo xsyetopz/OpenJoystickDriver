@@ -42,7 +42,7 @@ Alternatives:
 
 ### D3. CLA, Checked in CI
 
-`CLA.md` grants the maintainer a perpetual, worldwide, royalty-free license to each contribution, with the right to sublicense it under any terms, the commercial license included. It also has the contributor confirm that they have the right to submit the contribution. The contributor keeps their copyright. The CLA text is drafted from the Apache Individual CLA, which may be reused, and a lawyer reviews it (task 1.1).
+`CLA.md` grants the maintainer a perpetual, worldwide, royalty-free license to each contribution, with the right to sublicense it under any terms, the commercial license included. It also has the contributor confirm that they have the right to submit the contribution. The contributor keeps their copyright. The CLA text is drafted from the Apache Individual CLA, which may be reused, and the maintainer accepts it (task 1.1).
 
 The check is the `contributor-assistant/github-action` workflow. It records each signature as a PR comment, in a file on a separate branch of this repository, so no outside service holds the list. It runs on `pull_request_target` with the least permissions it needs. Bots and the maintainer are on its allow list. A PR fails the check until its author signs, and the failure says what to do.
 
@@ -50,15 +50,14 @@ Alternative: the DCO confirms origin but grants no right to license commercially
 
 ### D4. the MIT Contributions of Outside Contributors
 
-MIT lets anyone sublicense the code under other terms, as long as the MIT notice stays. Each of the five outside contributors is asked to sign the CLA for their earlier commit (task 4.1). For each one who does not sign, `THIRD_PARTY_NOTICES.md` names the commit and keeps the MIT text with that contributor's name. Their code stays in OJD under that notice. This is the proposed reading, for the lawyer to confirm.
+MIT lets anyone sublicense the code under other terms, as long as the MIT notice stays. Each of the five outside contributors is asked to sign the CLA for their earlier commit (task 4.1). For each one who does not sign, `THIRD_PARTY_NOTICES.md` names the commit and keeps the MIT text with that contributor's name. Their code stays in OJD under that notice. This is the project's reading (task 1.1).
 
 ### D5. Facts from GPL Sources
 
 - The catalog generator reads vendor and product IDs and protocol family names from `xpad.c`. It copies no code.
 - Drivers are written from protocol facts, never from GPL code.
-- Whether a generated ID table from a GPL file can ship under PolyForm is a question for the lawyer (task 1.1).
-- If the answer is no, the importer change is a separate change, and alpha.2 waits for it.
-- The four xpadneo descriptors in `RecordedHIDDescriptors.swift` are replaced with descriptors that OJD testers capture from their own controllers (task 4.4). Whether a descriptor read from a device is a fact or part of the GPL work is the lawyer's call, and the replacement does not wait on it.
+- A generated ID table holds IDs and names, which are facts, so it ships under PolyForm (task 1.1).
+- The four xpadneo descriptors in `RecordedHIDDescriptors.swift` are replaced with descriptors that OJD testers capture from their own controllers (task 4.4).
 
 ### D6. a Check against GPL Headers
 
@@ -75,10 +74,9 @@ MIT lets anyone sublicense the code under other terms, as long as the MIT notice
 
 - **Contributors leave.** A CLA is a barrier. The CI failure message and the CONTRIBUTING section state the reason in two sentences.
 - **Packaging.** Homebrew core and some distributions refuse non-OSI licenses. OJD ships its own DMG, so no current channel is affected.
-- **Legal uncertainty.** D4 and D5 are proposed readings, not advice. Release 0.6.0-alpha.2 waits for the review in task 1.1.
+- **Legal uncertainty.** D4 and D5 are the project's readings, with no legal review (task 1.1).
 - **Forks of 0.6.0-alpha.1 stay MIT.** This is accepted: those releases keep their license.
 
 ## Open Questions
 
 1. The contact for commercial licenses: an email, or a GitHub Sponsors tier (task 1.2).
-2. Whether the lawyer accepts D4 and D5 as written.
