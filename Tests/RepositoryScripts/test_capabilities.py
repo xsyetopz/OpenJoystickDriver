@@ -8,7 +8,6 @@ import unittest
 from pathlib import Path
 
 from Scripts.Platform.capabilities import (
-    FORMULAS,
     Capability,
     CapabilityError,
     OutcomeKind,
@@ -228,45 +227,9 @@ class CapabilityResolverTests(unittest.TestCase):
     def test_setup_includes_shellcheck(self) -> None:
         self.assertIn(Capability.SHELLCHECK, requirements_for(["setup"]))
 
-    def test_json_writers_and_the_hook_require_biome(self) -> None:
-        for route in (
-            ["catalog", "regenerate", "--write"],
-            ["errors", "regenerate", "--check"],
-            ["catalog", "xpad"],
-        ):
-            self.assertIn(Capability.BIOME, requirements_for(route))
-        self.assertNotIn(Capability.BIOME, FORMULAS)
-        self.assertNotIn(Capability.BIOME, requirements_for(["setup"]))
-        self.assertNotIn(Capability.BIOME, requirements_for(["hooks", "install"]))
-
-    def test_biome_is_the_pinned_binary_without_a_path_fallback(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
-            (root / "package.json").write_text(
-                '{"devDependencies": {"@biomejs/biome": "2.5.15"}}', encoding="utf-8"
-            )
-            resolver = Resolver(
-                root,
-                environ={"CI": "1"},
-                which=lambda executable, path: f"/usr/bin/{executable}",
-            )
-            with self.assertRaises(CapabilityError) as raised:
-                resolver.resolve([Capability.BIOME])
-            self.assertEqual(raised.exception.outcome.kind, OutcomeKind.UNSUPPORTED)
-            self.assertIn("bun install", raised.exception.outcome.detail)
-            binary = root / "node_modules/.bin/biome"
-            binary.parent.mkdir(parents=True)
-            binary.write_text("console.log('Version: 2.5.15');\n", encoding="utf-8")
-            binary.chmod(0o755)
-            outcomes = resolver.resolve([Capability.BIOME])
-            self.assertEqual(outcomes[0].kind, OutcomeKind.AVAILABLE)
-
-    def test_setup_and_hooks_require_bun_with_formula(self) -> None:
-        self.assertIn(Capability.BUN, requirements_for(["setup"]))
-        self.assertEqual(requirements_for(["hooks", "install"]), (Capability.BUN,))
-        self.assertEqual(requirements_for(["hooks", "validate"]), (Capability.BUN,))
-        self.assertEqual(FORMULAS[Capability.BUN], ("bun", "bun"))
+    def test_hook_routes_need_no_installed_tool(self) -> None:
+        self.assertEqual(requirements_for(["hooks", "install"]), ())
+        self.assertEqual(requirements_for(["hooks", "validate"]), ())
 
     def test_ci_notary_secrets_need_no_keychain_repair(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

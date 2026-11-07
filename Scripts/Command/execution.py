@@ -135,13 +135,15 @@ def run_commands(commands: list[list[str]]) -> int:
     return 0
 
 
-HOOKS_PATH = ".husky/_"
-HOOK_FILES = ("commit-msg", "pre-commit", "pre-push")
+HOOKS_PATH = ".githooks"
+HOOK_FILES = ("pre-push",)
 
 
 def install_hooks() -> int:
-    """`bun install` runs the `prepare` script: husky, then pin-hooks-path.sh."""
-    return run_commands([["bun", "install"]])
+    """Points the shared `core.hooksPath` at the main checkout's hooks, so every worktree runs them."""
+    return run_commands(
+        [["git", "config", "core.hooksPath", str(main_checkout_dir() / HOOKS_PATH)]]
+    )
 
 
 def main_checkout_dir(directory: Path = PROJECT_DIR) -> Path:
@@ -184,11 +186,11 @@ def validate_hooks() -> int:
         )
         return 1
     missing = [
-        name for name in HOOK_FILES if not (PROJECT_DIR / ".husky" / name).is_file()
+        name for name in HOOK_FILES if not (PROJECT_DIR / HOOKS_PATH / name).is_file()
     ]
     if missing:
         print(
-            f"error: missing hook files: {', '.join(f'.husky/{name}' for name in missing)}",
+            f"error: missing hook files: {', '.join(f'{HOOKS_PATH}/{name}' for name in missing)}",
             file=sys.stderr,
         )
         return 1

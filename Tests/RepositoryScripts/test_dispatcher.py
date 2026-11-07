@@ -447,35 +447,40 @@ class DispatcherTests(unittest.TestCase):
         self.assertEqual(count(NO_TESTS_RUN), 0)
         self.assertEqual(count(""), 0)
 
-    def test_hooks_install_runs_bun_install(self) -> None:
+    def test_hooks_install_points_hooks_path_at_the_main_checkout(self) -> None:
         completed = subprocess.CompletedProcess([], 0)
-        with patch(
-            "Scripts.Command.execution.subprocess.run", return_value=completed
-        ) as run:
+        with (
+            patch(
+                "Scripts.Command.execution.main_checkout_dir",
+                return_value=Path("/main"),
+            ),
+            patch(
+                "Scripts.Command.execution.subprocess.run", return_value=completed
+            ) as run,
+        ):
             self.assertEqual(dispatcher.dispatch(["hooks", "install"]), 0)
-        self.assertEqual(run.call_args.args[0], ["bun", "install"])
+        self.assertEqual(
+            run.call_args.args[0],
+            ["git", "config", "core.hooksPath", "/main/.githooks"],
+        )
 
     def test_hooks_validate_checks_hooks_path_and_hook_files(self) -> None:
-        all_files = ("commit-msg", "pre-commit", "pre-push")
-        main = "<main>/.husky/_"
-        for configured, generated, files, expected in (
-            (main, True, all_files, 0),
-            (".husky/_", True, all_files, 1),
-            ("", True, all_files, 1),
-            ("other/hooks", True, all_files, 1),
-            (main, False, all_files, 1),
-            (main, True, ("pre-commit", "pre-push"), 1),
+        main = "<main>/.githooks"
+        for configured, files, expected in (
+            (main, ("pre-push",), 0),
+            (".githooks", ("pre-push",), 1),
+            ("", ("pre-push",), 1),
+            ("other/hooks", ("pre-push",), 1),
+            (main, (), 1),
         ):
             with (
-                self.subTest(configured=configured, generated=generated, files=files),
+                self.subTest(configured=configured, files=files),
                 tempfile.TemporaryDirectory() as directory,
             ):
                 root = Path(directory)
-                (root / ".husky").mkdir()
-                if generated:
-                    (root / ".husky" / "_").mkdir()
+                (root / ".githooks").mkdir()
                 for name in files:
-                    (root / ".husky" / name).write_text("")
+                    (root / ".githooks" / name).write_text("")
                 value = configured.replace("<main>", str(root))
                 completed = subprocess.CompletedProcess([], 0, value + "\n", "")
                 with (

@@ -11,9 +11,6 @@ from collections.abc import Callable, Iterable, Mapping
 from pathlib import Path
 from typing import TextIO
 
-from Scripts.Quality.biome_binary import BiomeBinaryError
-from Scripts.Quality.biome_binary import resolve as resolve_biome
-
 from .capability_model import (
     FORMULAS,
     Capability,
@@ -70,8 +67,6 @@ class Resolver:
     def ensure(self, capability: Capability) -> RepairOutcome:
         if capability in FORMULAS:
             return self._ensure_formula(capability)
-        if capability == Capability.BIOME:
-            return self._ensure_biome()
         if capability == Capability.SCHEMA_PYTHON:
             return self._ensure_schema_python()
         if capability == Capability.SWIFT_TOOLCHAIN:
@@ -143,13 +138,6 @@ class Resolver:
             stderr=subprocess.DEVNULL,
         )
         return result.returncode == 0
-
-    def _ensure_biome(self) -> RepairOutcome:
-        try:
-            resolve_biome(self.project_dir)
-        except (BiomeBinaryError, KeyError, ValueError) as error:
-            return RepairOutcome(Capability.BIOME, OutcomeKind.UNSUPPORTED, str(error))
-        return RepairOutcome(Capability.BIOME, OutcomeKind.AVAILABLE)
 
     def _ensure_schema_python(self) -> RepairOutcome:
         destination = self.project_dir / ".build/schema-validator"

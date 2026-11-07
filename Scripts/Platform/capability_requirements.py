@@ -12,19 +12,17 @@ def requirements_for(argv: list[str]) -> tuple[Capability, ...]:
     if route[:2] == ("catalog", "regenerate") and len(route) >= 3:
         return (
             Capability.SCHEMA_PYTHON,
-            Capability.BIOME,
             Capability.SWIFT_TOOLCHAIN,
             Capability.FULL_XCODE,
         )
     if route[:2] == ("errors", "regenerate") and len(route) >= 3:
         return (
             Capability.SCHEMA_PYTHON,
-            Capability.BIOME,
             Capability.SWIFT_TOOLCHAIN,
             Capability.FULL_XCODE,
         )
     if route[:2] == ("catalog", "xpad"):
-        return (Capability.BIOME, Capability.SWIFT_TOOLCHAIN, Capability.FULL_XCODE)
+        return (Capability.SWIFT_TOOLCHAIN, Capability.FULL_XCODE)
     if route == ("check", "profiles"):
         return (
             Capability.SCHEMA_PYTHON,
@@ -126,14 +124,9 @@ def requirements_for(argv: list[str]) -> tuple[Capability, ...]:
         )
     if route[:1] == ("snapshots",) or route == ("test", "parsers-macos14"):
         return (Capability.SWIFT_TOOLCHAIN, Capability.FULL_XCODE)
-    if route[:2] == ("hooks", "install"):
-        return (Capability.BUN,)
-    if route[:2] == ("hooks", "validate"):
-        return (Capability.BUN,)
     if route == ("setup",):
         return (
             Capability.JUST,
-            Capability.BUN,
             Capability.RUFF,
             Capability.SHELLCHECK,
             Capability.SWIFTLINT,

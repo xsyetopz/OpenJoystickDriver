@@ -5,8 +5,6 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from Scripts.Quality.biome_binary import resolve
-
 
 class GitHookTests(unittest.TestCase):
     root = Path(__file__).resolve().parents[2]
@@ -61,38 +59,3 @@ class GitHookTests(unittest.TestCase):
 
         self.assertNotEqual(invalid_result.returncode, 0)
         self.assertIn("trailing whitespace", invalid_result.stdout)
-
-    def test_pre_commit_formats_only_the_json_files_biome_includes(self) -> None:
-        unformatted = '{"key" : 1}\n'
-        with tempfile.TemporaryDirectory() as directory:
-            repository = Path(directory)
-            self.git(repository, "init", "--quiet")
-            for name in ("biome.json", "package.json"):
-                (repository / name).write_text((self.root / name).read_text())
-            (repository / "node_modules").symlink_to(resolve(self.root).parents[1])
-            (repository / "Scripts").symlink_to(self.root / "Scripts")
-            (repository / "Tests/EquivalenceSnapshots").mkdir(parents=True)
-            (repository / "Tests/EquivalenceSnapshots/snapshot.json").write_text(
-                unformatted
-            )
-            (repository / "record.json").write_text(unformatted)
-            self.git(
-                repository,
-                "add",
-                "Tests/EquivalenceSnapshots/snapshot.json",
-                "record.json",
-            )
-
-            subprocess.run(
-                ["bash", str(self.root / "Scripts/Quality/format-staged-json.sh")],
-                cwd=repository,
-                capture_output=True,
-                check=True,
-            )
-            snapshot = self.git(
-                repository, "show", ":Tests/EquivalenceSnapshots/snapshot.json"
-            )
-            record = self.git(repository, "show", ":record.json")
-
-        self.assertEqual(snapshot, unformatted.strip())
-        self.assertEqual(record, '{ "key": 1 }')
