@@ -3,7 +3,7 @@ extension ControllerRecordDocument {
   ///
   /// Each holds for every mode of the record, whether it has one mode or many: `usb` and `route`
   /// need raw-USB modes only, `server` needs HID modes only, `bluetoothLE` needs modes whose driver
-  /// reads it, and `usb.endpoints` differs from the default endpoints of every mode's family.
+  /// reads it, and `usb.endpoints` differs from the default endpoints of some mode's family.
   func validateTransportSections(codingPath: [any CodingKey]) throws {
     func fail(_ key: String, _ message: String) -> DecodingError {
       .dataCorrupted(
@@ -32,7 +32,7 @@ extension ControllerRecordDocument {
       throw fail("bluetoothLE", "bluetoothLE requires a driver that reads it")
     }
     if let endpoints = usb?.endpoints {
-      let isDefault = infos.contains {
+      let isDefault = infos.allSatisfy {
         let defaults = $0.protocolID.protocolDescription.endpoints
         return (endpoints.input, endpoints.output) == (defaults.input, defaults.output)
       }

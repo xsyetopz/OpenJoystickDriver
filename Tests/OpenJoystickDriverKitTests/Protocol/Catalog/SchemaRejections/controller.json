@@ -1682,7 +1682,7 @@
       }
     },
     {
-      "name": "usb endpoints differ from every mode default",
+      "name": "usb endpoints differ from the default of some mode",
       "code": "E5007",
       "document": {
         "apiVersion": "openjoystickdriver/v1alpha2",
@@ -1693,7 +1693,8 @@
           {
             "id": "default",
             "protocol": {
-              "family": "XboxGIP"
+              "family": "XboxXUSB",
+              "variant": "Receiver"
             }
           },
           {

@@ -133,15 +133,25 @@ struct ControllerModeConditionalTests {
   }
 
   @Test
-  func usbEndpointsDifferFromEveryModeDefault() {
+  func usbEndpointsDifferFromTheDefaultOfSomeMode() {
     Self.expectRejected(
       Self.record(
-        default: Self.gip,
+        default: ["family": "XboxXUSB", "variant": "Receiver"],
         second: ["family": "XboxXUSB", "variant": "Wired"],
         match: Self.usbMatch,
         fields: ["usb": ["endpoints": ["in": 129, "out": 1]]]
       ),
       "protocol-default endpoints must be omitted"
+    )
+    #expect(
+      Self.problem(
+        Self.record(
+          default: Self.gip,
+          second: ["family": "XboxXUSB", "variant": "Wired"],
+          match: Self.usbMatch,
+          fields: ["usb": ["endpoints": ["in": 129, "out": 1]]]
+        )
+      ) == nil
     )
   }
 
