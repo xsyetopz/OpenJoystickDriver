@@ -2877,8 +2877,8 @@
 "cli.binding.group.sourceInvalid" = "“%@” não é uma origem. “ojd binding set --help” lista as formas de origem.";
 /* Error of 'ojd binding set' when the target cannot be parsed. %@ is the text the user gave. The command in quotes stays as written. */
 "cli.binding.group.targetInvalid" = "“%@” não é um destino. “ojd binding set --help” lista as formas de destino.";
-/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given. Both option names stay as written. */
-"cli.binding.group.turboPair" = "--turbo-rate e --turbo-duty devem ser informados juntos.";
+/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given, or --turbo-delay or --turbo-max is given without both. All four option names stay as written. */
+"cli.binding.group.turboPair" = "--turbo-rate e --turbo-duty devem ser informados juntos, e --turbo-delay e --turbo-max precisam de ambos.";
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "O turbo não funciona com destinos de movimento do ponteiro nem de rolagem.";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */

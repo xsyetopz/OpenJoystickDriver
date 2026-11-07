@@ -136,8 +136,11 @@ enum CLICommandTree {
     case ["profile", "create"]: ["Pad", "--controller", "045E:028E"]
     case ["profile", "duplicate"], ["profile", "rename"]: ["Pad", "Copy"]
     case ["profile", "show"], ["profile", "delete"], ["profile", "activate"],
-      ["profile", "deactivate"], ["profile", "export"], ["profile", "edit"], ["binding", "list"]:
+      ["profile", "deactivate"], ["profile", "export"], ["profile", "edit"], ["binding", "list"],
+      ["macro", "list"]:
       ["Pad"]
+    case ["macro", "show"], ["macro", "remove"]: ["Pad", "combo"]
+    case ["macro", "set"]: ["Pad", "combo", "--step", "tap:key:key-a"]
     case ["profile", "get"]: ["Pad", "name"]
     case ["profile", "set"]: ["Pad", "name", "Main"]
     case ["binding", "set"]: ["Pad", "button:south", "key:space"]

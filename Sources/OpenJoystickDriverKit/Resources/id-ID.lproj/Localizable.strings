@@ -2877,8 +2877,8 @@
 "cli.binding.group.sourceInvalid" = "“%@” bukan sumber. “ojd binding set --help” mencantumkan bentuk sumber.";
 /* Error of 'ojd binding set' when the target cannot be parsed. %@ is the text the user gave. The command in quotes stays as written. */
 "cli.binding.group.targetInvalid" = "“%@” bukan target. “ojd binding set --help” mencantumkan bentuk target.";
-/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given. Both option names stay as written. */
-"cli.binding.group.turboPair" = "--turbo-rate dan --turbo-duty harus diberikan bersamaan.";
+/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given, or --turbo-delay or --turbo-max is given without both. All four option names stay as written. */
+"cli.binding.group.turboPair" = "--turbo-rate dan --turbo-duty harus diberikan bersamaan, dan --turbo-delay serta --turbo-max memerlukan keduanya.";
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "Turbo tidak berfungsi dengan target gerakan penunjuk atau pengguliran.";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */

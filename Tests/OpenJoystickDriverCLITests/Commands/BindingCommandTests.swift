@@ -88,6 +88,20 @@ struct BindingCommandTests {
   }
 
   @Test
+  func setRejectsTurboDelayWithoutRateAndDuty() async throws {
+    let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
+    let service = try FakeService(devices: [], respond: library.respond)
+
+    let result = await service.run([
+      "binding", "set", "Pad", "button:south", "key:key-a", "--turbo-delay", "400",
+    ])
+
+    #expect(result.code != 0)
+    #expect(result.standardError.contains("--turbo-delay"))
+    #expect(library.stored.first?.bindings.isEmpty == true)
+  }
+
+  @Test
   func setRejectsDoubleTapAndAMalformedMultiTap() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try FakeService(devices: [], respond: library.respond)
