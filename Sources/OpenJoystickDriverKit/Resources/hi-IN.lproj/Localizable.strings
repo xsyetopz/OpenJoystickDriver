@@ -4154,3 +4154,55 @@
 "ui.controllers.exclusiveOwner" = "विशेष एक्सेस";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
 "ui.controllers.alsoListedBySystem" = "सिस्टम द्वारा भी सूचीबद्ध";
+/* Label of a macro as the destination of an assignment when the profile has no macro of that identifier, and name of the macro destination kind. */
+"term.macro" = "मैक्रो";
+/* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
+"ui.profiles.macros" = "मैक्रो";
+/* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */
+"ui.profiles.addMacro" = "मैक्रो जोड़ें";
+/* Tooltip and VoiceOver label of the button on a macro row in the profile editor that opens the sheet to edit the macro. */
+"ui.profiles.editMacro" = "मैक्रो संपादित करें";
+/* Message in the macros section of the profile editor when none exists. */
+"ui.profiles.noMacros" = "कोई मैक्रो कॉन्फ़िगर नहीं है।";
+/* Label of the name field in the macro editor sheet. */
+"ui.macros.name" = "मैक्रो का नाम";
+/* Heading of the list of steps in the macro editor sheet. */
+"ui.macros.steps" = "चरण";
+/* Title of the menu in the macro editor sheet that adds a step to the macro. */
+"ui.macros.addStep" = "चरण जोड़ें";
+/* Name of the macro step that presses and releases a key or button at once. Also the label of its destination picker. */
+"ui.macros.stepTap" = "टैप";
+/* Name of the macro step that presses a key or button and keeps it down. Also the label of its destination picker. */
+"ui.macros.stepPress" = "दबाएँ";
+/* Name of the macro step that releases a key or button that a press step holds. Also the label of its destination picker. */
+"ui.macros.stepRelease" = "छोड़ें";
+/* Name of the macro step that presses several keys or buttons together, holds them, and releases them. Also the label of each destination picker of the step. */
+"ui.macros.stepChord" = "कॉर्ड";
+/* Name of the macro step that waits before the next step, and the label of its time slider. */
+"ui.macros.stepWait" = "प्रतीक्षा";
+/* Label of the slider in a chord step of the macro editor for how long the chord is held. */
+"ui.macros.holdTime" = "दबाए रखने का समय";
+/* Button in a chord step of the macro editor that adds one more key or button to the chord. */
+"ui.macros.addChordKey" = "कॉर्ड में कुंजी जोड़ें";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place earlier. */
+"ui.macros.moveUp" = "चरण ऊपर ले जाएँ";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place later. */
+"ui.macros.moveDown" = "चरण नीचे ले जाएँ";
+/* Tooltip and VoiceOver label of the button in the macro editor that removes a step. */
+"ui.macros.removeStep" = "चरण हटाएँ";
+/* Label of the popup in the macro editor that chooses how often the macro runs its steps. */
+"ui.macros.repeat" = "दोहराएँ";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps a set number of times. */
+"ui.macros.repeatCounted" = "तय संख्या में";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps again and again until the control is released. */
+"ui.macros.repeatWhileHeld" = "दबाए रखने तक";
+/* Label of the stepper in the macro editor for how many times the macro runs its steps. The number follows the label. */
+"ui.macros.repeatTimes" = "बार";
+/* Label of the popup in the macro editor for what happens when the control is pressed again while the macro runs. */
+"ui.macros.whileRunning" = "चलते समय दोबारा दबाने पर";
+/* Choice of the popup in the macro editor: the macro keeps running and the new press does nothing. */
+"ui.macros.whileRunningIgnore" = "अनदेखा करें";
+/* Choice of the popup in the macro editor: the macro stops, releases everything it holds, and starts again. */
+"ui.macros.whileRunningRestart" = "फिर से शुरू करें";
+/* Label of the switch in the macro editor: releasing the control stops the macro and releases everything it holds. */
+"ui.macros.interruptOnRelease" = "छोड़ने पर रोकें";

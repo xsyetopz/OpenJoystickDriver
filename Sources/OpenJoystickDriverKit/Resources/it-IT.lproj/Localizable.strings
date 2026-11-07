@@ -4155,3 +4155,55 @@
 "ui.controllers.exclusiveOwner" = "Accesso esclusivo";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
 "ui.controllers.alsoListedBySystem" = "Elencato anche dal sistema";
+/* Label of a macro as the destination of an assignment when the profile has no macro of that identifier, and name of the macro destination kind. */
+"term.macro" = "Macro";
+/* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
+"ui.profiles.macros" = "Macro";
+/* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */
+"ui.profiles.addMacro" = "Aggiungi macro";
+/* Tooltip and VoiceOver label of the button on a macro row in the profile editor that opens the sheet to edit the macro. */
+"ui.profiles.editMacro" = "Modifica macro";
+/* Message in the macros section of the profile editor when none exists. */
+"ui.profiles.noMacros" = "Nessuna macro configurata.";
+/* Label of the name field in the macro editor sheet. */
+"ui.macros.name" = "Nome della macro";
+/* Heading of the list of steps in the macro editor sheet. */
+"ui.macros.steps" = "Passaggi";
+/* Title of the menu in the macro editor sheet that adds a step to the macro. */
+"ui.macros.addStep" = "Aggiungi passaggio";
+/* Name of the macro step that presses and releases a key or button at once. Also the label of its destination picker. */
+"ui.macros.stepTap" = "Tocca";
+/* Name of the macro step that presses a key or button and keeps it down. Also the label of its destination picker. */
+"ui.macros.stepPress" = "Premi";
+/* Name of the macro step that releases a key or button that a press step holds. Also the label of its destination picker. */
+"ui.macros.stepRelease" = "Rilascia";
+/* Name of the macro step that presses several keys or buttons together, holds them, and releases them. Also the label of each destination picker of the step. */
+"ui.macros.stepChord" = "Accordo";
+/* Name of the macro step that waits before the next step, and the label of its time slider. */
+"ui.macros.stepWait" = "Attendi";
+/* Label of the slider in a chord step of the macro editor for how long the chord is held. */
+"ui.macros.holdTime" = "Durata della pressione";
+/* Button in a chord step of the macro editor that adds one more key or button to the chord. */
+"ui.macros.addChordKey" = "Aggiungi tasto all’accordo";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place earlier. */
+"ui.macros.moveUp" = "Sposta passaggio su";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place later. */
+"ui.macros.moveDown" = "Sposta passaggio giù";
+/* Tooltip and VoiceOver label of the button in the macro editor that removes a step. */
+"ui.macros.removeStep" = "Rimuovi passaggio";
+/* Label of the popup in the macro editor that chooses how often the macro runs its steps. */
+"ui.macros.repeat" = "Ripeti";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps a set number of times. */
+"ui.macros.repeatCounted" = "Numero fisso di volte";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps again and again until the control is released. */
+"ui.macros.repeatWhileHeld" = "Finché premuto";
+/* Label of the stepper in the macro editor for how many times the macro runs its steps. The number follows the label. */
+"ui.macros.repeatTimes" = "Volte";
+/* Label of the popup in the macro editor for what happens when the control is pressed again while the macro runs. */
+"ui.macros.whileRunning" = "Nuova pressione durante l’esecuzione";
+/* Choice of the popup in the macro editor: the macro keeps running and the new press does nothing. */
+"ui.macros.whileRunningIgnore" = "Ignora";
+/* Choice of the popup in the macro editor: the macro stops, releases everything it holds, and starts again. */
+"ui.macros.whileRunningRestart" = "Riavvia";
+/* Label of the switch in the macro editor: releasing the control stops the macro and releases everything it holds. */
+"ui.macros.interruptOnRelease" = "Interrompi al rilascio";

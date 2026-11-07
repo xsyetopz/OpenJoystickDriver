@@ -18,16 +18,21 @@ struct DestinationOption: Hashable {
   ///   - source: The source the destinations must fit.
   ///   - current: The destination to keep in the list.
   ///   - capabilities: What the controller has; nil means every destination is supported.
+  ///   - macros: The macros of the profile, offered as destinations of a discrete source.
   /// - Returns: The destinations that fit `source` and that the controller supports, and `current`
   ///   when it fits the source and is not among them.
   static func options(
     for source: RemappingSource,
     including current: RemappingDestination? = nil,
-    capabilities: ControllerProfileCapabilities? = nil
+    capabilities: ControllerProfileCapabilities? = nil,
+    macros: [RemappingMacro] = []
   ) -> [Self] {
     var options = all.filter {
       isCompatible($0.destination, with: source)
         && ProfileCapabilityPolicy.supports($0.destination, capabilities: capabilities)
+    }
+    options += macros.filter { isCompatible(.macro($0.id), with: source) }.map {
+      Self(destination: .macro($0.id), title: $0.name, isSupported: true)
     }
     if let current, isCompatible(current, with: source),
       !options.contains(where: { $0.destination == current })

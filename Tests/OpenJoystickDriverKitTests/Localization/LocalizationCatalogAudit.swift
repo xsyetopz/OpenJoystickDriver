@@ -37,7 +37,7 @@ enum LocalizationCatalogAudit {
     "ui.profiles.trackball.enabled", "ui.profiles.turbo",
     "ui.library.mods", "ui.access.scope.control", "ui.access.socket", "ui.access.transport.socket",
     "ui.access.tokens", "ui.access.token.issued.title", "ui.access.token.named",
-    "ui.settings.general.title", "ui.controllers.server.ojd",
+    "ui.settings.general.title", "ui.controllers.server.ojd", "term.macro", "ui.profiles.macros",
   ]
   private static let frenchTerms: Set<String> = [
     "ui.library.field.source", "ui.library.field.transport", "ui.library.field.version",
@@ -51,7 +51,7 @@ enum LocalizationCatalogAudit {
     "ui.profiles.touch.surface", "ui.profiles.trackball.enabled", "ui.profiles.turbo",
     "ui.settings.notifications.notifications", "ui.settings.general.version",
     "ui.access.transport.socket", "ui.access.web.port",
-    "ui.library.mods",
+    "ui.library.mods", "term.macro", "ui.profiles.macros",
   ]
 
   private static let sourceIdenticalTermsByLocale: [String: Set<String>] = [
@@ -109,6 +109,7 @@ enum LocalizationCatalogAudit {
       "ui.shortcuts.controller.model", "ui.menu.file.title", "ui.menu.edit.title",
     ],
     "it-IT": [
+      "term.macro",
       "term.parser", "term.protocolVariant.dongle",
       "ui.access.token.issued.title", "ui.access.token.named",
       "ui.menu.controller.title", "ui.menu.file.title", "ui.menu.window.zoom",
@@ -132,6 +133,7 @@ enum LocalizationCatalogAudit {
       "term.key.alt", "term.key.return", "term.key.shift",
     ],
     "nl-NL": [
+      "term.macro",
       "term.parser", "term.protocolVariant.dongle",
       "ui.library.field.transport", "ui.access.details", "ui.library.details", "ui.activity.filter",
       "ui.activity.column.details",
@@ -161,6 +163,7 @@ enum LocalizationCatalogAudit {
       "ui.shortcuts.controller.type", "ui.shortcuts.parameter.controller",
     ],
     "pt-BR": [
+      "term.macro", "ui.profiles.macros",
       "term.parser",
       "ui.activity.mode.log",
       "ui.access.token.issued.title", "ui.access.token.named",
@@ -190,6 +193,7 @@ enum LocalizationCatalogAudit {
       "ui.shortcuts.controller.model",
     ],
     "vi-VN": [
+      "term.macro",
       "ui.access.socket", "ui.access.transport.socket",
       "cli.access.status.socket", "ui.inputTest.home", "ui.inputTest.menu", "term.key.capsLock",
       "term.key.meta", "term.key.control", "term.key.delete", "term.key.escape",

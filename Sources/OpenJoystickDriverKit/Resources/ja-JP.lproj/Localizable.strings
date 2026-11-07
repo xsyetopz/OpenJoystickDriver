@@ -4154,3 +4154,55 @@
 "ui.controllers.exclusiveOwner" = "排他アクセス";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
 "ui.controllers.alsoListedBySystem" = "システムにも表示";
+/* Label of a macro as the destination of an assignment when the profile has no macro of that identifier, and name of the macro destination kind. */
+"term.macro" = "マクロ";
+/* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
+"ui.profiles.macros" = "マクロ";
+/* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */
+"ui.profiles.addMacro" = "マクロを追加";
+/* Tooltip and VoiceOver label of the button on a macro row in the profile editor that opens the sheet to edit the macro. */
+"ui.profiles.editMacro" = "マクロを編集";
+/* Message in the macros section of the profile editor when none exists. */
+"ui.profiles.noMacros" = "マクロは設定されていません。";
+/* Label of the name field in the macro editor sheet. */
+"ui.macros.name" = "マクロ名";
+/* Heading of the list of steps in the macro editor sheet. */
+"ui.macros.steps" = "ステップ";
+/* Title of the menu in the macro editor sheet that adds a step to the macro. */
+"ui.macros.addStep" = "ステップを追加";
+/* Name of the macro step that presses and releases a key or button at once. Also the label of its destination picker. */
+"ui.macros.stepTap" = "タップ";
+/* Name of the macro step that presses a key or button and keeps it down. Also the label of its destination picker. */
+"ui.macros.stepPress" = "押す";
+/* Name of the macro step that releases a key or button that a press step holds. Also the label of its destination picker. */
+"ui.macros.stepRelease" = "離す";
+/* Name of the macro step that presses several keys or buttons together, holds them, and releases them. Also the label of each destination picker of the step. */
+"ui.macros.stepChord" = "コード";
+/* Name of the macro step that waits before the next step, and the label of its time slider. */
+"ui.macros.stepWait" = "待機";
+/* Label of the slider in a chord step of the macro editor for how long the chord is held. */
+"ui.macros.holdTime" = "保持時間";
+/* Button in a chord step of the macro editor that adds one more key or button to the chord. */
+"ui.macros.addChordKey" = "コードにキーを追加";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place earlier. */
+"ui.macros.moveUp" = "ステップを上へ";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place later. */
+"ui.macros.moveDown" = "ステップを下へ";
+/* Tooltip and VoiceOver label of the button in the macro editor that removes a step. */
+"ui.macros.removeStep" = "ステップを削除";
+/* Label of the popup in the macro editor that chooses how often the macro runs its steps. */
+"ui.macros.repeat" = "繰り返し";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps a set number of times. */
+"ui.macros.repeatCounted" = "回数を指定";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps again and again until the control is released. */
+"ui.macros.repeatWhileHeld" = "押している間";
+/* Label of the stepper in the macro editor for how many times the macro runs its steps. The number follows the label. */
+"ui.macros.repeatTimes" = "回";
+/* Label of the popup in the macro editor for what happens when the control is pressed again while the macro runs. */
+"ui.macros.whileRunning" = "実行中に再度押したとき";
+/* Choice of the popup in the macro editor: the macro keeps running and the new press does nothing. */
+"ui.macros.whileRunningIgnore" = "無視";
+/* Choice of the popup in the macro editor: the macro stops, releases everything it holds, and starts again. */
+"ui.macros.whileRunningRestart" = "再起動";
+/* Label of the switch in the macro editor: releasing the control stops the macro and releases everything it holds. */
+"ui.macros.interruptOnRelease" = "離したら停止";

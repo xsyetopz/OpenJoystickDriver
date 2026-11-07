@@ -208,9 +208,15 @@ enum RuntimePresentation {
   }
 
   /// Returns the label of a remapping destination.
-  static func destinationLabel(_ destination: RemappingDestination) -> String {
+  ///
+  /// A macro shows its name when `macros` holds it.
+  static func destinationLabel(
+    _ destination: RemappingDestination,
+    macros: [RemappingMacro] = []
+  ) -> String {
     switch destination {
-    case .macro: return "Macro"
+    case .macro(let id):
+      return macros.first { $0.id == id }?.name ?? OJDLocalized.string("term.macro")
     case .gamepadAxis(let axis): return axisLabel(axis)
     case .gamepadDpad(let direction): return sourceLabel(.dpad(direction))
     case .gamepadButton(let button): return buttonLabel(button)

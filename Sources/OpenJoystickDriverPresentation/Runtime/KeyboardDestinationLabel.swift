@@ -12,6 +12,8 @@
   struct KeyboardDestinationLabel: View {
     /// The destination to label.
     let destination: RemappingDestination
+    /// The macros of the profile, which name a macro destination.
+    var macros: [RemappingMacro] = []
 
     /// The label of the destination: the key row for a keyboard key, else the destination's text.
     var body: some View {
@@ -19,7 +21,7 @@
       case .keyboard(let key, let modifiers): keyboardRow(key: key, modifiers: modifiers)
       case .mouseButton, .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis,
         .physical, .macro:
-        Text(RuntimePresentation.destinationLabel(destination))
+        Text(RuntimePresentation.destinationLabel(destination, macros: macros))
       }
     }
 

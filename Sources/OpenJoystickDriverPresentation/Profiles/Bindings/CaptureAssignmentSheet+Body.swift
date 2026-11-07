@@ -63,7 +63,8 @@
             DestinationOption.options(
               for: source,
               including: destination,
-              capabilities: capabilities
+              capabilities: capabilities,
+              macros: macros
             ),
             id: \.destination
           ) { option in Text(option.title).tag(option.destination).disabled(!option.isSupported) }
@@ -240,7 +241,8 @@
           let options = DestinationOption.options(
             for: newSource,
             including: destination,
-            capabilities: capabilities
+            capabilities: capabilities,
+            macros: macros
           )
           if !options.contains(where: { $0.destination == destination }),
             let replacement = options.first
@@ -334,7 +336,8 @@
       let options = DestinationOption.options(
         for: detected,
         including: destination,
-        capabilities: capabilities
+        capabilities: capabilities,
+        macros: macros
       )
       if !options.contains(where: { $0.destination == destination }),
         let replacement = options.first

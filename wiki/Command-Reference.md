@@ -188,7 +188,7 @@ With `--json`, a binding is an object with `id`, `source`, `target`, and `behavi
 
 ## macro
 
-List, show, set, and remove the macros of a profile. A macro is a named list of steps that a binding runs with the target `macro:NAME`. Every `macro` command needs the service running.
+List, show, set, and remove the macros of a profile. A macro is a named list of steps that a binding runs with the target `macro:NAME`. Every `macro` command needs the service running. Hardware status: Not checked.
 
 ```sh
 ojd macro list PROFILE

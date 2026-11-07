@@ -165,7 +165,8 @@
         bindings: profile.bindings,
         chords: profile.chords,
         sequences: profile.sequences,
-        layers: profile.layers
+        layers: profile.layers,
+        macros: profile.macros
       )
       do {
         try candidate.validate()

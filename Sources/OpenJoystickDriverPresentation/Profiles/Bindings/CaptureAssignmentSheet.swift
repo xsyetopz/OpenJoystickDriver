@@ -12,6 +12,8 @@
     var viewModel: RuntimeViewModel
     /// What the controller has, which decides the sources and destinations that can be chosen.
     let capabilities: ControllerProfileCapabilities
+    /// The macros of the profile, which the destination picker offers.
+    let macros: [RemappingMacro]
     /// Receives the source and destination when the person chooses Add Assignment.
     let onAdd: (RemappingSource, RemappingDestination) -> Void
     /// Dismisses the sheet.

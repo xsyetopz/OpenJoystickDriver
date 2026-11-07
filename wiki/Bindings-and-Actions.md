@@ -5,6 +5,7 @@ Bindings connect controller controls to destinations, and combinations and layer
 ## Contents
 
 - [Assigning Buttons and Actions](#assigning-buttons-and-actions)
+- [Macros](#macros)
 - [Combinations, Sequences, and Layers](#combinations-sequences-and-layers)
 - [Further Reading](#further-reading)
 
@@ -28,6 +29,7 @@ An assignment connects one controller control to one destination, such as a keyb
 | Scroll | Horizontal or vertical | Continuous |
 | Gamepad button, D-pad, or axis | A virtual controller control | Needs virtual gamepad output |
 | Physical output | Rumble, player indicator, color, brightness, adaptive trigger | Only on controllers that support it |
+| Macro | A macro of the profile | Discrete sources only; see [Macros](#macros) |
 
 A gamepad destination fails validation if the profile output policy has the virtual gamepad disabled. Some controls, such as paddles, grips, and function buttons, cannot be a virtual controller output. For the controls each virtual controller carries, see [What the virtual controller carries](Automating-OpenJoystickDriver.md#what-the-virtual-controller-carries). For more information, see [About profiles](Remapping-Profiles.md#about-profiles).
 
@@ -108,6 +110,28 @@ With multi-tap entries, the base destination waits for the longest tap window to
 The command line options are `--turbo-rate`, `--turbo-duty`, `--turbo-delay MS`, `--turbo-max COUNT`, `--long-hold MS:TARGET`, and `--multi-tap COUNT:MS:TARGET`. `--turbo-delay` and `--turbo-max` need `--turbo-rate` and `--turbo-duty`. Repeat `--multi-tap` for more counts. For example, `--long-hold 500:key:key-b` and `--multi-tap 3:300:key:key-b`. The command line help lists these options for keyboard and mouse button destinations only. Whether the command line accepts them for gamepad destinations is not verified.
 
 You can also add more actions to one assignment. In the behavior sheet, use **Add action**, **Move up**, **Move down**, and **Remove**. The command line option is `--actions-json`.
+
+### Macros
+
+A macro is a named list of steps that runs when its source becomes active. A profile holds up to 16 macros of up to 32 steps. Hardware status: Not checked.
+
+1. Open the **Macros** section and click **Add macro**.
+2. Enter a **Macro name** (1 to 40 characters, unique in the profile).
+3. Use **Add step** to add a step. Use the arrow buttons to reorder steps and the minus button to remove one. The steps are:
+   - **Tap**: press and release a key or button at once.
+   - **Press** and **Release**: hold a key or button down, then let it go.
+   - **Chord**: press several keys or buttons together, hold them for the **Hold time**, then release them in reverse order. Use **Add key to chord** for more.
+   - **Wait**: pause 0 to 5000 ms before the next step.
+4. Set **Repeat** to **Fixed number of times** (1 to 500) or **While held**, which runs again until you release the control.
+5. Set **When pressed again while running** to **Ignore** or **Restart**.
+6. Turn on **Stop when released** to stop the macro and release everything it holds when you release the control.
+7. Confirm the sheet, then click **Save**.
+
+To run a macro, choose it as the **Destination** of an assignment. The destination list shows the macros of the profile for any source that is not a continuous axis. A step can be a keyboard key, a mouse button, a virtual gamepad button, or a D-pad direction. A step cannot be another macro. A macro that is the destination of an assignment cannot be removed until you change that assignment.
+
+A macro stops and releases every key and button it holds when its source is released with **Stop when released** on, when the profile changes or stops, and when the controller disconnects. One pass takes at most 30 seconds, and a fixed repeat at most 5 minutes, counting the waits and chord hold times; OJD rejects a longer macro when it saves.
+
+The command line is `ojd macro` and the target `macro:NAME` of `ojd binding set`. For more information, see [Command reference](Command-Reference.md#macro).
 
 ### Tune an Analog Control
 

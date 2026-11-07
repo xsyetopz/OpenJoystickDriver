@@ -28,6 +28,8 @@
     case sequence
     /// The sheet that adds a layer.
     case layer
+    /// The sheet that adds a macro, or edits the given one.
+    case macro(RemappingMacro?)
     /// The sheet that adds an assignment to a layer.
     case layerBinding(RemappingLayer)
     /// The sheet that adjusts the axis tuning of an assignment of a layer, with the layer's
@@ -51,6 +53,7 @@
       case .chord: return "chord"
       case .sequence: return "sequence"
       case .layer: return "layer"
+      case .macro(let macro): return "macro-\(macro?.id.uuidString ?? "new")"
       case .layerBinding(let layer): return "layer-binding-\(layer.id.uuidString)"
       case .layerAdjustment(let layerID, let binding):
         return "layer-adjustment-\(layerID.uuidString)-\(binding.id.uuidString)"

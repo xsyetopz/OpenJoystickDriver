@@ -62,6 +62,7 @@ A profile file contains one profile object. An exported profile file has the sam
 | `motionTuning`, `gyroOutput`, `joyConPair` | No | Motion settings |
 | `stickMappings`, `triggerMappings`, `touchMappings` | No | Analog and touch settings |
 | `chords`, `sequences`, `layers` | No | Combinations and layers |
+| `macros` | No | Named macros that a `Macro` destination runs |
 
 A profile with `device.unit` applies only to the controller with that unit ID, and wins over an active profile for the whole model in the same application scope. Activating it replaces only the active profile of that unit and scope.
 
@@ -72,6 +73,19 @@ OJD rejects unknown keys anywhere in a profile. The file declares `apiVersion: o
 A binding's `turbo` object has `repeatRateHz` and `dutyCycle`, and optionally `initialDelayMs` (0 to 2500, the time from the first press to the first repeat; 0 when omitted) and `maxRepeats` (1 to 500; omitted repeats while held).
 
 A binding's `multiTap` list has entries with `count` (2 to 5, unique in the list), `windowMs` (50 to 1000, from one tap's release to the next press), and `destination`.
+
+## Macro Fields
+
+A macro in `macros` has `id` (UUID), `name`, `steps`, `repeat`, `whileRunning`, and `interruptOnRelease`, and no other key. A binding runs it with the destination `{"type":"Macro","macro":"ID"}`.
+
+- `repeat` is a count from 1 to 500, or the string `WhileHeld`.
+- `whileRunning` is `Ignore` or `Restart`.
+- `interruptOnRelease` is `true` or `false`.
+- A step is one of `{"type":"Tap","destination":D}`, `{"type":"Press","destination":D}`, `{"type":"Release","destination":D}`, `{"type":"Chord","destinations":[D],"holdMs":MS}`, or `{"type":"Wait","durationMs":MS}`. `D` is a keyboard, mouse button, gamepad button, or gamepad D-pad destination. A `Macro` destination in a step is rejected.
+- `holdMs` and `durationMs` are 0 to 5000.
+
+OJD rejects a macro name that is not unique without regard to case, a `Macro` destination whose ID is not in `macros`, a pass longer than 30 seconds (the sum of its waits and chord holds), and a counted macro longer than 5 minutes in total. Hardware status: Not checked.
+
 ## Limits
 
 | Item | Limit |
@@ -81,6 +95,9 @@ A binding's `multiTap` list has entries with `count` (2 to 5, unique in the list
 | Size of one profile file or `ActiveProfiles.json` | 4 MiB |
 | Profile name length | 1 to 80 characters |
 | Layer name length | 1 to 40 characters |
+| Macros in one profile | 16 |
+| Steps in one macro | 32 |
+| Macro name length | 1 to 40 characters |
 | Bundle identifier length | 3 to 255 characters |
 
 Profile names must be unique. OJD compares names without regard to case.

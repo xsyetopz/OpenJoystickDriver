@@ -54,7 +54,8 @@ func duplicatedProfile(
     bindings: source.bindings,
     chords: source.chords,
     sequences: source.sequences,
-    layers: source.layers
+    layers: source.layers,
+    macros: source.macros
   )
   return (try? copy.validate()) == nil ? nil : copy
 }

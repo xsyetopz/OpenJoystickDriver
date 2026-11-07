@@ -11,6 +11,8 @@
     case combinations
     /// The layers.
     case layers
+    /// The macros.
+    case macros
     /// The controller's details, output policy and settings.
     case controller
 
@@ -24,6 +26,7 @@
       case .combinations:
         return OJDLocalized.string("ui.profiles.combinations")
       case .layers: return OJDLocalized.string("ui.profiles.layers")
+      case .macros: return OJDLocalized.string("ui.profiles.macros")
       case .controller: return OJDLocalized.string("term.controller")
       }
     }

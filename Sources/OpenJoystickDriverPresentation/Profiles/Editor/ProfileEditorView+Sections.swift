@@ -37,6 +37,12 @@
           removeLayer: removeLayer,
           removeBinding: removeLayerBinding
         )
+      case .macros:
+        ProfileMacrosSection(
+          macros: draft.profile.macros,
+          openSheet: { activeSheet = $0 },
+          removeMacro: removeMacro
+        )
       case .controller:
         ProfileControllerSection(
           profile: draft.profile,

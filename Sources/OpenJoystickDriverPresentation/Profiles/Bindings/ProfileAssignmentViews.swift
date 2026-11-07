@@ -231,16 +231,20 @@
             DestinationOption.options(
               for: binding.source,
               including: binding.destination,
-              capabilities: capabilities
+              capabilities: capabilities,
+              macros: draft.profile.macros
             ),
             id: \.destination
           ) { option in
-            KeyboardDestinationLabel(destination: option.destination).tag(option.destination)
+            KeyboardDestinationLabel(destination: option.destination, macros: draft.profile.macros)
+              .tag(option.destination)
               .disabled(!option.isSupported)
           }
         }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
           OJDLocalized.string("term.destination")
-        ).ojdAccessibilityValue(RuntimePresentation.destinationLabel(binding.destination))
+        ).ojdAccessibilityValue(
+          RuntimePresentation.destinationLabel(binding.destination, macros: draft.profile.macros)
+        )
         PhysicalOutputDestinationFields(destination: destinationBinding).disabled(
           !ProfileCapabilityPolicy.supports(binding.destination, capabilities: capabilities)
         )

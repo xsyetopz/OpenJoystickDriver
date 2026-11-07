@@ -208,6 +208,12 @@
       }
     }
 
+    /// Adds the macro to the draft, or replaces the macro with its identifier.
+    func saveMacro(_ macro: RemappingMacro) { applyDraftChange { try draft.settingMacro(macro) } }
+
+    /// Removes the macro from the draft.
+    func removeMacro(_ id: UUID) { applyDraftChange { try draft.removingMacro(id) } }
+
     /// Removes the layer from the draft.
     func removeLayer(_ id: UUID) { applyDraftChange { try draft.removingLayer(id) } }
 

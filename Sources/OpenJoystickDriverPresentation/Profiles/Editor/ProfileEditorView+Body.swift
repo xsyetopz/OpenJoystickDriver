@@ -96,7 +96,11 @@
               }
             )
           case .capture:
-            CaptureAssignmentSheet(viewModel: viewModel, capabilities: capabilities) {
+            CaptureAssignmentSheet(
+              viewModel: viewModel,
+              capabilities: capabilities,
+              macros: draft.profile.macros
+            ) {
               source,
               destination in addBinding(source: source, destination: destination)
             }
@@ -143,6 +147,8 @@
             ProfileLayerSheet(capabilities: capabilities) { name, activator, mode in
               addLayer(name: name, activator: activator, mode: mode)
             }
+          case .macro(let macro):
+            MacroEditorSheet(macro: macro, capabilities: capabilities) { saveMacro($0) }
           case .layerBinding(let layer):
             ProfileLayerBindingSheet(layer: layer, capabilities: capabilities) {
               source,
