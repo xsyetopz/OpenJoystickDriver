@@ -49,7 +49,7 @@ None. `release-readiness` lists the check commands; this change adds no command 
 
 ## Impact
 
-- `Sources/OpenJoystickDriverKit/Remapping` (`Profile/Controls`, `Profile/Validation`, `Engine/Actions`, `Engine/Chords`, `Engine/Analog`, `Engine/Core/Sink.swift`), a system-action boundary protocol in the core, and its macOS implementation in `Sources/OpenJoystickDriverMacOSPlatform` (the core stays free of AppKit; `Scripts/Quality/check_neutral_core_imports.py` enforces it).
+- `Sources/OpenJoystickDriverKit/Remapping` (`Profile/Controls`, `Profile/Validation`, `Engine/Actions`, `Engine/Chords`, `Engine/Analog`, `Engine/Core/Sink.swift`), a system-action boundary protocol in the core, and its macOS implementation in `Sources/OpenJoystickDriverMacOSPlatform` (the core stays free of AppKit; `docs/development/source-topology.md` enforces it).
 - `Sources/OpenJoystickDriverService/Remapping` (routing, profile switch), `Sources/OpenJoystickDriverCLI/Commands/Binding` and `Profile`, `Sources/OpenJoystickDriverPresentation/Profiles` (behavior sheet, assignment editor, analog sheets, Access area).
 - `Resources/Schemas/profile.schema.json`, `Resources/ErrorCodes.json` (then `./Scripts/ojd errors regenerate --write`), 22 localization bundles, `wiki/Bindings-and-Actions.md`, `wiki/Sticks-Triggers-Touchpad-and-Motion.md`, `wiki/Profile-File-Reference.md`, `wiki/Permissions-and-Security.md`, `wiki/Command-Reference.md`, `docs/testing/gyro-stick.md`, `CHANGELOG.md`.
 - Profile files that use `doubleTap` are rejected like any invalid input; there is no reader for them.

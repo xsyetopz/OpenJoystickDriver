@@ -9,7 +9,7 @@ Facts read from the repository on 2026-10-25:
 - Timed output exists for turbo and pulse (`Engine/Actions/TurboOutput.swift`, tests `PulseTests.swift`, `ScheduleTests.swift`).
 - Gyro to stick exists: `RemappingGyroOutputMode` has `leftStick` and `rightStick` (`Profile/Motion/GyroOutput.swift`), routed by `Engine/Motion/GyroRouting.swift` through `updateGyroStick`; validation requires the virtual gamepad (`Profile/Validation/Profile+Validation.swift:53`); tests with `rightStick` are in `Tests/OpenJoystickDriverKitTests/Remapping/Engine/Motion/GyroRoutingTests+Activation.swift` and `+SampleTiming.swift`. Hardware behavior is not verified (the wiki says so). No profile template or preset mechanism exists in the repository.
 - Sources: `touch:SURFACE:grid` and `axis:NAME:negative|positive` exist (`wiki/Bindings-and-Actions.md`); stick rings, N pressure bands and free rectangles do not.
-- The core must not import AppKit (`Scripts/Quality/check_neutral_core_imports.py`); macOS code lives in `OpenJoystickDriverMacOSPlatform`.
+- The core must not import AppKit (`docs/development/source-topology.md` lists the imports Kit may use); macOS code lives in `OpenJoystickDriverMacOSPlatform`.
 - Three repository rules shape every decision: no compatibility before v1.0.0, no hidden behavior (a failure is named, tested and shown), and no history words in docs or comments.
 - Decisions of the user on 2026-10-25: OJD moves to PolyForm Noncommercial 1.0.0 plus a commercial license; this change ships in `0.6.0-alpha.2`.
 
@@ -107,7 +107,7 @@ OJD moves to PolyForm Noncommercial 1.0.0 plus a commercial license (the user, 2
 
 ### D12. MIDI and Speech Are Output Kinds Behind Core Protocols
 
-`MidiNote`, `MidiControlChange` and `Speak` are destinations like `Keyboard`. The core declares `RemappingMIDIOutput` and `RemappingSpeechOutput` protocols, because `Sources/OpenJoystickDriverKit` may not import CoreMIDI or AVFoundation (`Scripts/Quality/check_neutral_core_imports.py`); `OpenJoystickDriverMacOSPlatform` implements them with a virtual CoreMIDI source and `AVSpeechSynthesizer`. The MIDI source exists only while an active profile uses it, so a Mac without such a profile shows no extra MIDI device. Neither needs Accessibility access. Speech uses `RestartOnPress` so a repeated press never queues phrases.
+`MidiNote`, `MidiControlChange` and `Speak` are destinations like `Keyboard`. The core declares `RemappingMIDIOutput` and `RemappingSpeechOutput` protocols, because `Sources/OpenJoystickDriverKit` may not import CoreMIDI or AVFoundation (`docs/development/source-topology.md` lists the imports Kit may use); `OpenJoystickDriverMacOSPlatform` implements them with a virtual CoreMIDI source and `AVSpeechSynthesizer`. The MIDI source exists only while an active profile uses it, so a Mac without such a profile shows no extra MIDI device. Neither needs Accessibility access. Speech uses `RestartOnPress` so a repeated press never queues phrases.
 
 ## Risks and Trade-Offs
 
