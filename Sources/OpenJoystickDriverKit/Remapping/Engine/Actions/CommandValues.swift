@@ -149,12 +149,32 @@ public enum RemappingCommandValueParser {
     return nil
   }
 
+  /// Parses `system-key:NAME`, `system:mission-control`, `open-app:BUNDLE-ID`, `open-url:URL`,
+  /// `shortcut:NAME` and `text:STRING`, whose value keeps every colon after the first.
+  private static func systemDestination(_ raw: String) -> RemappingDestination? {
+    guard let colon = raw.firstIndex(of: ":") else { return nil }
+    let value = String(raw[raw.index(after: colon)...])
+    switch raw[..<colon] {
+    case "system-key":
+      return CommandLineName.value(of: value, in: RemappingSystemKey.self).map { .systemKey($0) }
+    case "system":
+      return CommandLineName.value(of: value, in: RemappingSystemActionKind.self)
+        .map { .systemAction($0) }
+    case "open-app": return .openApplication(bundleIdentifier: value)
+    case "open-url": return .openURL(value)
+    case "shortcut": return .runShortcut(value)
+    case "text": return .typeText(value)
+    default: return nil
+    }
+  }
+
   /// Parses a target operand.
   ///
   /// Keyboard modifiers follow `mods=` as a nonempty comma-separated list without repeats. Physical
   /// intensities, positions and strengths are numbers from 0 to 1.
   /// - Throws: ``RemappingCommandValueError/invalidDestination(_:)`` when no target form matches.
   public static func destination(_ raw: String) throws -> RemappingDestination {
+    if let system = systemDestination(raw) { return system }
     let parts = raw.split(separator: ":", omittingEmptySubsequences: false).map(String.init)
     if parts.count == 3, parts[0] == "gamepad", parts[1] == "axis",
       let axis = CommandLineName.value(of: parts[2], in: RemappingAxis.self)

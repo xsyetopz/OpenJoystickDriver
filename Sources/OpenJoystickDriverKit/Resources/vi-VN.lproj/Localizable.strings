@@ -3931,6 +3931,10 @@
 "error.E3030.message" = "Hành động không chạy vì quyền truy cập Post Event chưa được cấp. Hãy cấp quyền này cho OpenJoystickDriver rồi thử lại.";
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "Hành động không chạy vì quyền truy cập Tự động hóa chưa được cấp. Hãy cấp quyền này cho OpenJoystickDriver rồi thử lại.";
+/* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
+"error.E3032.message" = "Hành động không chạy vì Secure Input đang bật. Hãy đóng ứng dụng đã bật nó, chẳng hạn ô mật khẩu, rồi thử lại.";
+/* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
+"error.E3033.message" = "Hành động đã thất bại.";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "Tệp kê khai gói mod.json bị thiếu hoặc không hợp lệ. Hãy kiểm tra nó theo lược đồ mod-package rồi chạy lại lệnh.";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

@@ -604,6 +604,10 @@ public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, Lo
     case postEventAccessMissing = "post_event_access_missing"
     /// An action needs Automation access, which is not granted.
     case automationAccessMissing = "automation_access_missing"
+    /// An action needs to send keys while Secure Input blocks them.
+    case secureInputEnabled = "secure_input_enabled"
+    /// A system action failed.
+    case systemActionFailed = "system_action_failed"
     /// The profile has a missing or unsupported `apiVersion`.
     case unsupportedAPIVersion = "unsupported_api_version"
 
@@ -642,6 +646,8 @@ public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, Lo
       case .packageProfileReadOnly: .packageProfileReadOnly
       case .postEventAccessMissing: .postEventAccessMissing
       case .automationAccessMissing: .automationAccessMissing
+      case .secureInputEnabled: .secureInputEnabled
+      case .systemActionFailed: .systemActionFailed
       }
     }
   }

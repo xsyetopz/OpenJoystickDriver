@@ -3931,6 +3931,10 @@
 "error.E3030.message" = "操作未执行，因为未授予 Post Event 访问权限。请向 OpenJoystickDriver 授予该权限，然后重试。";
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "操作未执行，因为未授予自动化访问权限。请向 OpenJoystickDriver 授予该权限，然后重试。";
+/* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
+"error.E3032.message" = "由于 Secure Input 已开启,操作未执行。请关闭开启它的 App(例如密码输入框),然后重试。";
+/* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
+"error.E3033.message" = "操作失败。";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "缺少包清单 mod.json，或它无效。请对照 mod-package 架构检查，然后重新运行该命令。";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

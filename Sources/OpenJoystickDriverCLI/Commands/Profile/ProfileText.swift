@@ -65,6 +65,12 @@ enum ProfileText {
     case .layerSet(let layer, let mode):
       return "layer:\(layers.first { $0.id == layer }?.name ?? layer.uuidString):\(word(mode))"
     case .pause(let mode): return "pause:\(word(mode))"
+    case .systemKey(let key): return "system-key:\(word(key))"
+    case .systemAction(let action): return "system:\(word(action))"
+    case .openApplication(let identifier): return "open-app:\(identifier)"
+    case .openURL(let url): return "open-url:\(url)"
+    case .runShortcut(let name): return "shortcut:\(name)"
+    case .typeText(let text): return "text:\(text)"
     }
   }
 

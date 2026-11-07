@@ -3931,6 +3931,10 @@
 "error.E3030.message" = "لم يتم تنفيذ الإجراء لأن إذن Post Event غير ممنوح. امنحه لـ OpenJoystickDriver وحاول مرة أخرى.";
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "لم يتم تنفيذ الإجراء لأن إذن الأتمتة غير ممنوح. امنحه لـ OpenJoystickDriver وحاول مرة أخرى.";
+/* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
+"error.E3032.message" = "لم يُنفَّذ الإجراء لأن Secure Input قيد التشغيل. أغلق التطبيق الذي شغّله، مثل حقل كلمة المرور، ثم حاول مرة أخرى.";
+/* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
+"error.E3033.message" = "فشل الإجراء.";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "ملف بيان الحزمة mod.json مفقود أو غير صالح. تحقق منه وفق مخطط mod-package ثم شغّل الأمر مرة أخرى.";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

@@ -36,16 +36,44 @@ public enum RemappingSystemKey: String, Codable, CaseIterable, Sendable {
   case keyboardIlluminationDown = "KeyboardIlluminationDown"
 }
 
+/// A system action without a parameter.
+public enum RemappingSystemActionKind: String, Codable, CaseIterable, Sendable {
+  /// Opens Mission Control.
+  case missionControl = "MissionControl"
+}
+
+/// One call to a ``RemappingSystemActionPerforming``, as the engine produces it.
+enum RemappingSystemActionRequest: Equatable, Sendable {
+  /// A system key down or up.
+  case key(RemappingSystemKey, pressed: Bool)
+  /// Open Mission Control.
+  case missionControl
+  /// Open the application with the bundle identifier.
+  case openApplication(String)
+  /// Open the URL.
+  case openURL(String)
+  /// Run the shortcut with the name.
+  case runShortcut(String)
+  /// Type the text.
+  case typeText(String)
+}
+
 /// A system action that did not run.
 public enum RemappingSystemActionError: Error, Equatable, LocalizedError, Sendable {
   /// The permission is not granted, so the action sent nothing.
   case permissionMissing(RemappingPermission, action: String)
+  /// Secure event input is on, so typing would reach no field.
+  case secureInputEnabled
+  /// The action ran and failed, for the reason given.
+  case failed(action: String, reason: String)
 
   /// The catalog code of the failure.
   public var errorCode: ErrorCode {
     switch self {
     case .permissionMissing(.postEvent, _): .postEventAccessMissing
     case .permissionMissing(.automation, _): .automationAccessMissing
+    case .secureInputEnabled: .secureInputEnabled
+    case .failed: .systemActionFailed
     }
   }
 
@@ -53,6 +81,9 @@ public enum RemappingSystemActionError: Error, Equatable, LocalizedError, Sendab
   public var errorDescription: String? {
     switch self {
     case .permissionMissing(_, let action): "\(action): \(errorCode.localizedExplanation)"
+    case .secureInputEnabled: errorCode.localizedExplanation
+    case .failed(let action, let reason):
+      "\(action): \(errorCode.localizedExplanation) \(reason)"
     }
   }
 }
@@ -74,6 +105,24 @@ public protocol RemappingSystemActionPerforming: Sendable {
   func runShortcut(name: String) async throws
   /// Types the text in order, leaving no modifier down.
   func typeText(_ text: String) async throws
+}
+
+extension RemappingSystemActionPerforming {
+  /// Performs a request, with a URL that does not parse reported as a failure.
+  func perform(_ request: RemappingSystemActionRequest) async throws {
+    switch request {
+    case .key(let key, let pressed): try await postSystemKey(key, pressed: pressed)
+    case .missionControl: try await openMissionControl()
+    case .openApplication(let identifier): try await openApplication(bundleIdentifier: identifier)
+    case .openURL(let text):
+      guard let url = URL(string: text) else {
+        throw RemappingSystemActionError.failed(action: "OpenURL", reason: text)
+      }
+      try await openURL(url)
+    case .runShortcut(let name): try await runShortcut(name: name)
+    case .typeText(let text): try await typeText(text)
+    }
+  }
 }
 
 extension RemappingProfile {

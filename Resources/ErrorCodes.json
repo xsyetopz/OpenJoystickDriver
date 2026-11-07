@@ -466,6 +466,18 @@
       "wire": "automation_access_missing"
     },
     {
+      "code": "E3032",
+      "domain": "Remapping",
+      "name": "secureInputEnabled",
+      "wire": "secure_input_enabled"
+    },
+    {
+      "code": "E3033",
+      "domain": "Remapping",
+      "name": "systemActionFailed",
+      "wire": "system_action_failed"
+    },
+    {
       "code": "E4001",
       "domain": "Mod",
       "name": "invalidManifest"

@@ -15,6 +15,10 @@ public actor RemappingEventEngine {
   let physicalOutputSink: (any RemappingPhysicalOutputSink)?
   /// Receives profile switch requests, or `nil` when there is none.
   let profileSwitcher: (any RemappingProfileSwitching)?
+  /// Performs system actions, or `nil` when there is none.
+  let systemActionPerformer: (any RemappingSystemActionPerforming)?
+  /// Receives each failure of a system action, which does not fault the engine.
+  let reportSystemActionFailure: @Sendable (any Error) -> Void
   /// Controllers whose virtual gamepad state was sent and not yet neutralized.
   var heldGamepadDevices: Set<LogicalControllerID> = []
   /// Controllers whose virtual gamepad state may still be held after a failure.
@@ -42,15 +46,21 @@ public actor RemappingEventEngine {
   ///   - gamepadSink: Receives virtual gamepad state.
   ///   - physicalOutputSink: Receives physical output claims.
   ///   - profileSwitcher: Receives profile switch requests.
+  ///   - systemActionPerformer: Performs system actions.
+  ///   - reportSystemActionFailure: Receives the failure of a system action.
   ///   - emissionBarrier: Admits output operations.
   public init(
     sink: any RemappingSystemInputSink,
     gamepadSink: (any RemappingGamepadSink)? = nil,
     physicalOutputSink: (any RemappingPhysicalOutputSink)? = nil,
     profileSwitcher: (any RemappingProfileSwitching)? = nil,
+    systemActionPerformer: (any RemappingSystemActionPerforming)? = nil,
+    reportSystemActionFailure: @escaping @Sendable (any Error) -> Void = { _ in },
     emissionBarrier: RemappingEmissionBarrier = RemappingEmissionBarrier()
   ) {
     self.profileSwitcher = profileSwitcher
+    self.systemActionPerformer = systemActionPerformer
+    self.reportSystemActionFailure = reportSystemActionFailure
     self.sink = sink
     self.gamepadSink = gamepadSink
     self.physicalOutputSink = physicalOutputSink

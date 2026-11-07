@@ -3931,6 +3931,10 @@
 "error.E3030.message" = "Post Event 접근 권한이 허용되지 않아 동작이 실행되지 않았습니다. OpenJoystickDriver에 권한을 허용하고 다시 시도하십시오.";
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "자동화 접근 권한이 허용되지 않아 동작이 실행되지 않았습니다. OpenJoystickDriver에 권한을 허용하고 다시 시도하십시오.";
+/* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
+"error.E3032.message" = "Secure Input이 켜져 있어 동작이 실행되지 않았습니다. 암호 입력란처럼 이를 켠 앱을 닫고 다시 시도하세요.";
+/* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
+"error.E3033.message" = "동작에 실패했습니다.";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "패키지 매니페스트 mod.json이 없거나 올바르지 않습니다. mod-package 스키마에 맞는지 확인한 뒤 명령을 다시 실행하세요.";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

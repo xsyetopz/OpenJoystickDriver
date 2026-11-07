@@ -454,6 +454,7 @@ extension RemappingEventEngine {
           if let profileSwitcher {
             Task { await profileSwitcher.switchProfile(target, from: current, for: identifier) }
           }
+        case .systemAction(let request): await perform(request)
         case .physical(let output, let active, let owner, let identifier):
           guard let physicalOutputSink else { throw RemappingEventEngineError.sinkUnavailable }
           try await physicalOutputSink.set(output, active: active, owner: owner, for: identifier)
@@ -478,5 +479,23 @@ extension RemappingEventEngine {
       }
     }
     state = candidate
+  }
+
+  /// Performs a system action; a failure is reported and leaves the engine running.
+  ///
+  /// A Shortcut runs in its own task, because one that asks for input would hold the engine.
+  private func perform(_ request: RemappingSystemActionRequest) async {
+    guard let performer = systemActionPerformer else {
+      reportSystemActionFailure(RemappingEventEngineError.sinkUnavailable)
+      return
+    }
+    let report = reportSystemActionFailure
+    if case .runShortcut = request {
+      Task {
+        do { try await performer.perform(request) } catch { report(error) }
+      }
+      return
+    }
+    do { try await performer.perform(request) } catch { report(error) }
   }
 }

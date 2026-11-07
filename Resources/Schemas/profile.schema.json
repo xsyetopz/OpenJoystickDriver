@@ -630,6 +630,104 @@
         },
         {
           "type": "object",
+          "required": ["systemKey", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "systemKey": {
+              "enum": [
+                "PlayPause",
+                "NextTrack",
+                "PreviousTrack",
+                "FastForward",
+                "Rewind",
+                "VolumeUp",
+                "VolumeDown",
+                "Mute",
+                "BrightnessUp",
+                "BrightnessDown",
+                "KeyboardIlluminationUp",
+                "KeyboardIlluminationDown"
+              ]
+            },
+            "type": {
+              "const": "SystemKey"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["action", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "enum": ["MissionControl"]
+            },
+            "type": {
+              "const": "SystemAction"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["bundleIdentifier", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "bundleIdentifier": {
+              "type": "string",
+              "minLength": 1
+            },
+            "type": {
+              "const": "OpenApplication"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "url"],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "OpenURL"
+            },
+            "url": {
+              "description": "An absolute URL with a scheme other than file.",
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["name", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            "type": {
+              "const": "RunShortcut"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["text", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "type": {
+              "const": "TypeText"
+            }
+          }
+        },
+        {
+          "type": "object",
           "required": ["profile", "type"],
           "additionalProperties": false,
           "properties": {

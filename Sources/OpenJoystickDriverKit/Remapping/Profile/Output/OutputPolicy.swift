@@ -214,9 +214,9 @@ extension RemappingDestination {
   /// Identifies destinations that require operating-system input-posting authorization.
   public var isSystemInput: Bool {
     switch self {
-    case .keyboard, .mouseButton, .mouseMovement, .scroll: true
+    case .keyboard, .mouseButton, .mouseMovement, .scroll, .systemKey, .typeText: true
     case .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet,
-      .pause:
+      .pause, .systemAction, .openApplication, .openURL, .runShortcut:
       false
     }
   }
@@ -226,7 +226,8 @@ extension RemappingDestination {
     switch self {
     case .gamepadButton, .gamepadDpad, .gamepadAxis: true
     case .keyboard, .mouseButton, .mouseMovement, .scroll, .physical, .macro, .profileSwitch,
-      .layerSet, .pause:
+      .layerSet, .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut,
+      .typeText:
       false
     }
   }

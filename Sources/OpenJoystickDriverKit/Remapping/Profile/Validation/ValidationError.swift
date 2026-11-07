@@ -137,6 +137,8 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
   case macroRunTimeExceeded(index: Int, limit: String)
   /// A destination runs a macro that the profile does not hold.
   case unknownMacro(UUID)
+  /// A system action destination has a value outside its limits; the value is the action name.
+  case invalidSystemAction(action: String)
   /// A destination sets a layer that the profile does not hold.
   case unknownLayer(UUID)
   /// A destination switches to a profile that does not exist.
@@ -245,6 +247,7 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
       "Macro \(index) runs longer than the \(limit) limit."
     case .unknownMacro(let id):
       "A destination runs the macro \(id.uuidString), which does not exist."
+    case .invalidSystemAction(let action): "The \(action) destination has an invalid value."
     case .unknownLayer(let id):
       "A destination sets the layer \(id.uuidString), which does not exist."
     case .unknownSwitchProfile(let id):

@@ -167,6 +167,10 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
   case postEventAccessMissing = "E3030"
   /// An action needs Automation access, which is not granted.
   case automationAccessMissing = "E3031"
+  /// An action needs to send keys while Secure Input blocks them.
+  case secureInputEnabled = "E3032"
+  /// A system action failed.
+  case systemActionFailed = "E3033"
   /// The package manifest `mod.json` is missing or invalid.
   case invalidManifest = "E4001"
   /// The package requires a different version of OJD than the one that runs.
@@ -259,7 +263,8 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
       .transactionUnreconciled, .unreadableLibrary, .profileRecoveryRequired, .unwritableLibrary,
       .remappingUnexpected, .profileProducesNoOutput, .motionGyroNotSelected,
       .motionProfileInactive, .motionSessionChanged, .packageProfileReadOnly,
-      .postEventAccessMissing, .automationAccessMissing:
+      .postEventAccessMissing, .automationAccessMissing, .secureInputEnabled,
+      .systemActionFailed:
       .remapping
     case .invalidManifest, .requiresExcludesVersion, .invalidPackageContent, .packageClash,
       .packageAlreadyInstalled, .packageNotInstalled, .packageStoreUnwritable:

@@ -312,6 +312,8 @@ extension RemappingEngineState {
     case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro,
       .profileSwitch, .layerSet, .pause:
       return []
+    case .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText:
+      return destination.systemActionRequest(isDown: true).map { [.systemAction($0)] } ?? []
     }
   }
 
@@ -336,6 +338,8 @@ extension RemappingEngineState {
     case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro,
       .profileSwitch, .layerSet, .pause:
       return []
+    case .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText:
+      return destination.systemActionRequest(isDown: false).map { [.systemAction($0)] } ?? []
     }
   }
 

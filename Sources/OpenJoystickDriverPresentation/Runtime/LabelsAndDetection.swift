@@ -273,6 +273,12 @@ enum RuntimePresentation {
     case .pause(.on): return OJDLocalized.string("ui.mapping.pauseOn")
     case .pause(.off): return OJDLocalized.string("ui.mapping.pauseOff")
     case .pause(.toggle): return OJDLocalized.string("ui.mapping.pauseToggle")
+    case .systemKey(let key): return key.rawValue
+    case .systemAction(let action): return action.rawValue
+    case .openApplication(let identifier): return identifier
+    case .openURL(let url): return url
+    case .runShortcut(let name): return name
+    case .typeText(let text): return text
     case .gamepadAxis(let axis): return axisLabel(axis)
     case .gamepadDpad(let direction): return sourceLabel(.dpad(direction))
     case .gamepadButton(let button): return buttonLabel(button)

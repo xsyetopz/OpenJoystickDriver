@@ -380,6 +380,8 @@ enum RemappingEngineAction: Equatable, Sendable {
   case physical(RemappingPhysicalOutput, active: Bool, owner: UUID, LogicalControllerID)
   /// A request to activate another profile for a controller.
   case profileSwitch(RemappingProfileTarget, from: UUID, LogicalControllerID)
+  /// A system action for the platform to perform.
+  case systemAction(RemappingSystemActionRequest)
 }
 
 /// Switches the active profile of a controller when a `ProfileSwitch` destination fires.

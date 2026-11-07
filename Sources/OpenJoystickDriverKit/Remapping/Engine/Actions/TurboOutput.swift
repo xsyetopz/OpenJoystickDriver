@@ -115,7 +115,8 @@ enum RemappingContinuousDestination: CaseIterable, Hashable {
     case .scroll(.x): self = .scrollX
     case .scroll(.y): self = .scrollY
     case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro,
-      .profileSwitch, .layerSet, .pause:
+      .profileSwitch, .layerSet, .pause, .systemKey, .systemAction, .openApplication, .openURL,
+      .runShortcut, .typeText:
       return nil
     }
   }

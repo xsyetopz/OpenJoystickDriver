@@ -3377,6 +3377,10 @@
 "error.E3030.message" = "A ação não foi executada porque o acesso Post Event não foi concedido. Conceda-o ao OpenJoystickDriver e tente novamente.";
 /* Text of error E3031, returned when an action needs Automation access and it is not granted. */
 "error.E3031.message" = "A ação não foi executada porque o acesso de Automação não foi concedido. Conceda-o ao OpenJoystickDriver e tente novamente.";
+/* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
+"error.E3032.message" = "A ação não foi executada porque o Secure Input está ativado. Feche o app que o ativou, como um campo de senha, e tente novamente.";
+/* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
+"error.E3033.message" = "A ação falhou.";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "O manifesto do pacote mod.json está ausente ou é inválido. Verifique-o com o esquema mod-package e execute o comando novamente.";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

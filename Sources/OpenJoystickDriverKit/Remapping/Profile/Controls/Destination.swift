@@ -26,6 +26,18 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
   case layerSet(layer: UUID, mode: RemappingSwitchMode)
   /// Sets the controller's pause on, off or flips it.
   case pause(RemappingSwitchMode)
+  /// Sends one system-defined key such as volume up; it follows the source, down then up.
+  case systemKey(RemappingSystemKey)
+  /// Runs a system action that has no parameter.
+  case systemAction(RemappingSystemActionKind)
+  /// Opens the application with this bundle identifier.
+  case openApplication(bundleIdentifier: String)
+  /// Opens this absolute URL.
+  case openURL(String)
+  /// Runs the Shortcut with this name.
+  case runShortcut(String)
+  /// Types this text.
+  case typeText(String)
 
   /// Whether the destination can repeat as turbo: a keyboard key, pointer button or virtual gamepad
   /// button or d-pad direction.
@@ -33,7 +45,7 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     switch self {
     case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad: true
     case .mouseMovement, .scroll, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet,
-      .pause:
+      .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText:
       false
     }
   }
@@ -43,7 +55,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
   public var isContinuous: Bool {
     switch self {
     case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad, .physical, .macro, .profileSwitch,
-      .layerSet, .pause:
+      .layerSet, .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut,
+      .typeText:
       false
     case .mouseMovement, .scroll, .gamepadAxis: true
     }
@@ -75,6 +88,18 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case layerSet = "LayerSet"
     /// The `Pause` case.
     case pause = "Pause"
+    /// The `SystemKey` case.
+    case systemKey = "SystemKey"
+    /// The `SystemAction` case.
+    case systemAction = "SystemAction"
+    /// The `OpenApplication` case.
+    case openApplication = "OpenApplication"
+    /// The `OpenURL` case.
+    case openURL = "OpenURL"
+    /// The `RunShortcut` case.
+    case runShortcut = "RunShortcut"
+    /// The `TypeText` case.
+    case typeText = "TypeText"
 
     /// Keys that a profile document may give for this case, which `type` selects.
     var fields: [CodingKeys] {
@@ -88,6 +113,12 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
       case .profileSwitch: [.type, .profile]
       case .layerSet: [.type, .layer, .mode]
       case .pause: [.type, .mode]
+      case .systemKey: [.type, .systemKey]
+      case .systemAction: [.type, .action]
+      case .openApplication: [.type, .bundleIdentifier]
+      case .openURL: [.type, .url]
+      case .runShortcut: [.type, .name]
+      case .typeText: [.type, .text]
       }
     }
   }
@@ -116,6 +147,18 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case layer
     /// The JSON key of `mode`.
     case mode
+    /// The JSON key of `systemKey`.
+    case systemKey
+    /// The JSON key of `action`.
+    case action
+    /// The JSON key of `bundleIdentifier`.
+    case bundleIdentifier
+    /// The JSON key of `url`.
+    case url
+    /// The JSON key of `name`.
+    case name
+    /// The JSON key of `text`.
+    case text
   }
 
   /// Decodes a destination from a profile document.
@@ -155,6 +198,17 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
         mode: try container.decode(RemappingSwitchMode.self, forKey: .mode)
       )
     case .pause: self = .pause(try container.decode(RemappingSwitchMode.self, forKey: .mode))
+    case .systemKey:
+      self = .systemKey(try container.decode(RemappingSystemKey.self, forKey: .systemKey))
+    case .systemAction:
+      self = .systemAction(try container.decode(RemappingSystemActionKind.self, forKey: .action))
+    case .openApplication:
+      self = .openApplication(
+        bundleIdentifier: try container.decode(String.self, forKey: .bundleIdentifier)
+      )
+    case .openURL: self = .openURL(try container.decode(String.self, forKey: .url))
+    case .runShortcut: self = .runShortcut(try container.decode(String.self, forKey: .name))
+    case .typeText: self = .typeText(try container.decode(String.self, forKey: .text))
     }
   }
 
@@ -200,6 +254,24 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case .pause(let mode):
       try container.encode(Kind.pause, forKey: .type)
       try container.encode(mode, forKey: .mode)
+    case .systemKey(let key):
+      try container.encode(Kind.systemKey, forKey: .type)
+      try container.encode(key, forKey: .systemKey)
+    case .systemAction(let action):
+      try container.encode(Kind.systemAction, forKey: .type)
+      try container.encode(action, forKey: .action)
+    case .openApplication(let bundleIdentifier):
+      try container.encode(Kind.openApplication, forKey: .type)
+      try container.encode(bundleIdentifier, forKey: .bundleIdentifier)
+    case .openURL(let url):
+      try container.encode(Kind.openURL, forKey: .type)
+      try container.encode(url, forKey: .url)
+    case .runShortcut(let name):
+      try container.encode(Kind.runShortcut, forKey: .type)
+      try container.encode(name, forKey: .name)
+    case .typeText(let text):
+      try container.encode(Kind.typeText, forKey: .type)
+      try container.encode(text, forKey: .text)
     }
   }
 }

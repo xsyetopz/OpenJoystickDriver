@@ -264,6 +264,9 @@ extension RemappingProfile {
     if case .macro(let id) = destination, !macros.contains(where: { $0.id == id }) {
       throw RemappingValidationError.unknownMacro(id)
     }
+    if let action = destination.invalidSystemActionName {
+      throw RemappingValidationError.invalidSystemAction(action: action)
+    }
     if case .layerSet(let id, _) = destination, !layers.contains(where: { $0.id == id }) {
       throw RemappingValidationError.unknownLayer(id)
     }
@@ -319,6 +322,11 @@ extension RemappingProfile {
       else { throw RemappingValidationError.bindingBehaviorConflict(index: index) }
     }
     if binding.destination.isProfileControl, ![.hold, .tapOnPress].contains(binding.behavior) {
+      throw RemappingValidationError.bindingBehaviorConflict(index: index)
+    }
+    if binding.destination.isSystemTrigger,
+      ![.hold, .tapOnPress, .tapOnRelease, .press].contains(binding.behavior)
+    {
       throw RemappingValidationError.bindingBehaviorConflict(index: index)
     }
     try validateDestination(binding.destination)

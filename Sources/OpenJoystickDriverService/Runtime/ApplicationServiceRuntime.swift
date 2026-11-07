@@ -56,7 +56,9 @@ package final class ApplicationServiceRuntime {
       sink: CoreGraphicsSystemInputSink(access: postEventAccess),
       gamepadSink: dispatcher,
       physicalOutputSink: physicalOutputBridge,
-      profileSwitcher: profileSwitchBridge
+      profileSwitcher: profileSwitchBridge,
+      systemActionPerformer: MacOSSystemActionPerformer(),
+      reportSystemActionFailure: { print("System action failed: \($0.localizedDescription)") }
     )
     let remappingRouter = RemappingOutputRouter(
       library: remappingProfileLibrary,
