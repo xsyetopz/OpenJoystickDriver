@@ -176,6 +176,17 @@ struct ControllerRecordProbePlanTests {
     }
   }
 
+  @Test(arguments: [0x3208, 0x5750])
+  func rejectsABootloaderIdentityBeforeHardwareAccess(productID: Int) throws {
+    let data = try mutatedRecord {
+      $0["vendorID"] = 0x2DC8
+      $0["productID"] = productID
+    }
+    #expect(throws: ControllerRecordProbeError.bootloaderIdentity) {
+      try ControllerRecordProbePlan(data: data)
+    }
+  }
+
   @Test
   func rejectsHIDFamilyBeforeHardwareAccess() {
     #expect(throws: ControllerRecordProbeError.self) {

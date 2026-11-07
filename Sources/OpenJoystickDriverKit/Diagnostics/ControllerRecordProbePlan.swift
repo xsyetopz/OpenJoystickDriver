@@ -32,9 +32,13 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
   ///
   /// - Throws: ``ControllerRecordProbeError/invalidProfile(_:)`` when the record does not decode or
   ///   does not build a runtime profile, and ``ControllerRecordProbeError/unsupportedProtocol(_:)``
-  ///   when its protocol is not `XboxGIP` or `XboxXUSB` or it has no raw USB binding.
+  ///   when its protocol is not `XboxGIP` or `XboxXUSB` or it has no raw USB binding, and
+  ///   ``ControllerRecordProbeError/bootloaderIdentity`` when it names an 8BitDo bootloader identity.
   public init(data: Data) throws {
     let (decoded, profile) = try Self.validatedRecord(data)
+    guard !decoded.model.isBootloaderIdentity else {
+      throw ControllerRecordProbeError.bootloaderIdentity
+    }
     // The signing-free probe drives only the raw-USB Xbox families it can start safely.
     guard Self.probeableProtocols.contains(profile.physicalProtocolID) else {
       throw ControllerRecordProbeError.unsupportedProtocol(profile.physicalProtocolID.rawValue)
@@ -140,11 +144,14 @@ public enum ControllerRecordProbeError: Error, Equatable, LocalizedError, Sendab
   case invalidProfile(String)
   /// The record's protocol is one the probe cannot drive; the value names it.
   case unsupportedProtocol(String)
+  /// The record names an 8BitDo bootloader identity, which OJD sends nothing.
+  case bootloaderIdentity
 
   /// The description of the error for the user.
   public var errorDescription: String? {
     switch self {
     case .invalidProfile(let message): message
+    case .bootloaderIdentity: "The record probe sends nothing to a controller in bootloader mode"
     case .unsupportedProtocol(let binding):
       "The signing-free record probe does not support protocol \(binding)"
     }
