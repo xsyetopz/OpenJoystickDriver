@@ -19,6 +19,8 @@ extension WiiDriver {
     case motionPlusActivation
     /// The ID read that names the Motion Plus kind after the activation.
     case motionPlusIdentify
+    /// The IR camera setup (`IRSetupSpacing`).
+    case irSetup
   }
 
   /// An exchange that ended without its data (`ExtensionHandshakeFailed` for the handshake).
@@ -58,6 +60,10 @@ extension WiiDriver {
     var received: [UInt8] = []
     /// The time at which the outstanding step counts as unanswered.
     var deadline: MonotonicTimestamp
+    /// When the step was written.
+    var sentAt = MonotonicTimestamp(nanoseconds: 0)
+    /// The earliest time the step may be written; nil once it is on the wire.
+    var notBefore: MonotonicTimestamp?
   }
 
   /// The zero point and the force of gravity of each accelerometer axis, 10 bits each.
@@ -103,6 +109,7 @@ extension WiiDriver {
     case .motionPlusActivation: steps = scripts.motionPlus
     // The handshake's last step reads the six ID bytes; its writes would switch Motion Plus off.
     case .motionPlusIdentify: steps = Array(scripts.handshake.suffix(1))
+    case .irSetup: steps = scripts.ir
     }
     exchanges.append(Exchange(purpose: purpose, steps: steps, deadline: now))
   }
@@ -116,10 +123,13 @@ extension WiiDriver {
   /// Takes an acknowledgement or a memory reply for the outstanding step; any other one is not
   /// for it.
   func handleReply(_ bytes: [UInt8], at now: MonotonicTimestamp) {
-    guard let exchange = exchanges.first else { return }
-    switch (bytes[0], exchange.steps[exchange.step]) {
-    case (Self.acknowledgementReportID, .write), (Self.acknowledgementReportID, .motionPlusMode):
-      guard bytes.count >= 5, bytes[3] == Self.memoryWriteOutputID else { return }
+    guard let exchange = exchanges.first, exchange.notBefore == nil else { return }
+    let step = exchange.steps[exchange.step]
+    switch (bytes[0], step) {
+    case (Self.acknowledgementReportID, .write), (Self.acknowledgementReportID, .motionPlusMode),
+      (Self.acknowledgementReportID, .sensitivity), (Self.acknowledgementReportID, .irMode),
+      (Self.acknowledgementReportID, .report):
+      guard bytes.count >= 5, bytes[3] == step.outputID else { return }
       if bytes[4] == 0 { advance(at: now) } else { fail(.error(bytes[4]), at: now) }
     case (Self.memoryReplyReportID, .read(let address, let length)):
       guard bytes.count >= 6 else { return }
@@ -156,29 +166,44 @@ extension WiiDriver {
     gyro = nil
   }
 
+  /// Writes the waiting step of the first exchange once its time has come.
+  func sendDueStep(at now: MonotonicTimestamp) {
+    if let due = exchanges.first?.notBefore, now >= due { sendStep(at: now) }
+  }
+
   /// Writes the step of the first exchange, with the clock of its reply timeout started.
   private func sendStep(at now: MonotonicTimestamp) {
     exchanges[0].deadline = MonotonicTimestamp(
       nanoseconds: now.nanoseconds + replyTimeoutNanoseconds
     )
+    exchanges[0].sentAt = now
+    exchanges[0].notBefore = nil
     let exchange = exchanges[0]
     switch exchange.steps[exchange.step] {
     case .write(let address, let bytes):
-      // The report always carries sixteen data bytes, zero-padded.
-      let data = bytes + [UInt8](repeating: 0, count: 16 - bytes.count)
-      pendingWrites.append(
-        memoryOutput(Self.memoryWriteOutputID, address, [UInt8(bytes.count)] + data)
-      )
+      pendingWrites.append(registerWrite(address, bytes))
     case .read(let address, let length):
       pendingWrites.append(memoryOutput(Self.memoryReadOutputID, address, [0, UInt8(length)]))
     case .motionPlusMode(let address):
       let key = Self.passthroughModeKeys[passthroughBase ?? ""] ?? "standalone"
-      let mode = wii.motionPlusModeBytes[key] ?? 0
-      let data = [1, mode] + [UInt8](repeating: 0, count: 15)
-      pendingWrites.append(memoryOutput(Self.memoryWriteOutputID, address, data))
-    default:
-      preconditionFailure("an exchange runs only the write, read and mode steps of its script")
+      pendingWrites.append(registerWrite(address, [wii.motionPlusModeBytes[key] ?? 0]))
+    case .report(let id, let data):
+      pendingWrites.append(outputReport([id] + data))
+    case .sensitivity(let block, let address):
+      let level = wii.irSensitivityLevels[wii.defaultIRSensitivityLevel - 1]
+      pendingWrites.append(registerWrite(address, block == 1 ? level.block1 : level.block2))
+    case .irMode(let address):
+      pendingWrites.append(registerWrite(address, [wii.irModeBytes[irFormat ?? .irBasic] ?? 0]))
     }
+  }
+
+  /// A memory write of `bytes`; the report always carries sixteen data bytes, zero-padded.
+  private func registerWrite(_ address: UInt32, _ bytes: [UInt8]) -> PhysicalOutputWrite {
+    memoryOutput(
+      Self.memoryWriteOutputID,
+      address,
+      [UInt8(bytes.count)] + bytes + [UInt8](repeating: 0, count: 16 - bytes.count)
+    )
   }
 
   /// An output report of memory report `id`: the space flag, the 24-bit address, then `tail`.
@@ -186,14 +211,25 @@ extension WiiDriver {
   {
     let space = address > 0xFFFF ? Self.registerSpaceFlag : 0
     let head = [id, space] + (0..<3).map { UInt8(address >> (16 - 8 * UInt32($0)) & 0xFF) }
-    return .hidOutput(PhysicalHIDOutputReport(reportID: id, bytes: head + tail))
+    return outputReport(head + tail)
   }
 
   /// Moves to the next step of the first exchange, or finishes it.
   private func advance(at now: MonotonicTimestamp) {
     exchanges[0].step += 1
     if exchanges[0].step < exchanges[0].steps.count {
-      sendStep(at: now)
+      if exchanges[0].purpose == .irSetup {
+        let due = MonotonicTimestamp(
+          nanoseconds: exchanges[0].sentAt.nanoseconds + irWriteIntervalNanoseconds
+        )
+        exchanges[0].notBefore = due
+        exchanges[0].deadline = MonotonicTimestamp(
+          nanoseconds: due.nanoseconds + replyTimeoutNanoseconds
+        )
+        sendDueStep(at: now)
+      } else {
+        sendStep(at: now)
+      }
       return
     }
     let finished = exchanges.removeFirst()
@@ -210,6 +246,8 @@ extension WiiDriver {
     case .motionPlusActivation:
       motionPlusActive = true
       queue(.motionPlusIdentify, at: now)
+    case .irSetup:
+      isIRReady = true
     }
     if chosenFeatures != mode { pendingWrites.append(reportModeWrite()) }
     if !exchanges.isEmpty { sendStep(at: now) }
@@ -221,5 +259,13 @@ extension WiiDriver {
     if exchange.purpose == .motionPlusIdentify { motionPlusActive = false }
     failure = ExchangeFailure(purpose: exchange.purpose, step: exchange.step, reason: reason)
     if !exchanges.isEmpty { sendStep(at: now) }
+  }
+}
+
+extension ProtocolDescription.WiiRemote.Step {
+  /// The output report whose acknowledgement answers the step.
+  fileprivate var outputID: UInt8 {
+    if case .report(let id, _) = self { return id }
+    return WiiDriver.memoryWriteOutputID
   }
 }

@@ -7,7 +7,8 @@ import Foundation
 /// The report layouts, the button and accelerometer bits, the report-mode choice and the register
 /// scripts come from the `wiiRemote` field of `nintendo-wii.json`. Facts are from WiiBrew's
 /// Wiimote page. Nunchuk, Classic and Motion Plus data and the remote's motion sample are
-/// decoded; IR, the speaker, LEDs and rumble are not decoded or written yet.
+/// decoded, and so are the IR camera, the LEDs and the rumble motor; the speaker is not written
+/// yet.
 public final class WiiDriver: PhysicalProtocolDriver {
   /// The input report that answers a status request and carries the battery.
   static let statusReportID: UInt8 = 0x20
@@ -15,6 +16,8 @@ public final class WiiDriver: PhysicalProtocolDriver {
   static let memoryReplyReportID: UInt8 = 0x21
   /// The input report that acknowledges an output report.
   static let acknowledgementReportID: UInt8 = 0x22
+  /// The output report that drives only the rumble motor.
+  static let rumbleOutputID: UInt8 = 0x10
   /// The output report that writes memory.
   static let memoryWriteOutputID: UInt8 = 0x16
   /// The output report that reads memory.
@@ -50,6 +53,8 @@ public final class WiiDriver: PhysicalProtocolDriver {
   let wii: ProtocolDescription.WiiRemote
   /// The wait for the reply to a memory read or write, in nanoseconds.
   let replyTimeoutNanoseconds: UInt64
+  /// The least time between two writes of the IR setup, in nanoseconds (`IRSetupSpacing`).
+  let irWriteIntervalNanoseconds: UInt64
   /// The state after the latest report.
   var state = ControllerState.neutral
   /// The features the driver asks the report mode to carry; a decoded extension adds its own.
@@ -80,6 +85,18 @@ public final class WiiDriver: PhysicalProtocolDriver {
   var passthroughBase: String?
   /// The index of the next motion sample in the session.
   var motionSequence: UInt64 = 0
+  /// Whether the motor runs; every output report carries it (`RumbleBitCarry`).
+  var isRumbling = false
+  /// The IR format the user asked for; it outlives the session, whose setup runs it again.
+  var irFormat: ProtocolDescription.WiiRemote.BlockKind?
+  /// Whether the session has queued the IR setup.
+  var hasRequestedIR = false
+  /// Whether the session finished the IR setup; IR bytes are decoded only then.
+  var isIRReady = false
+  /// The latest IR points by slot; nil for a slot with no point.
+  var irPoints = [IRPoint?](repeating: nil, count: 4)
+  /// The pointer the IR points gave; it holds its values while fewer than two points show.
+  var pointer = Pointer()
   /// The latest exchange that ended in a failure; the driver does not retry it.
   var failure: ExchangeFailure?
   /// The latest memory reply the driver refused.
@@ -102,6 +119,9 @@ public final class WiiDriver: PhysicalProtocolDriver {
     replyTimeoutNanoseconds =
       UInt64(PhysicalProtocolID.nintendoWii.described(\.replyTimeoutMilliseconds, in: tuning))
       * 1_000_000
+    irWriteIntervalNanoseconds =
+      UInt64(PhysicalProtocolID.nintendoWii.described(\.irWriteIntervalMilliseconds, in: tuning))
+      * 1_000_000
   }
 
   /// The core buttons, every control an extension layout drives, and motion.
@@ -122,8 +142,14 @@ public final class WiiDriver: PhysicalProtocolDriver {
     DriverSessionPlan().withDefaults(of: .nintendoWii, variant: .bluetoothClassic)
   }
 
-  /// No output yet.
-  public var outputCapabilities: PhysicalControllerOutputCapabilities { .none }
+  /// The one binary motor and the four player LEDs.
+  public var outputCapabilities: PhysicalControllerOutputCapabilities {
+    PhysicalControllerOutputCapabilities(
+      rumbleMotors: [.lowFrequency],
+      lightingFeatures: [.playerIndicator],
+      binaryRumbleMotors: [.lowFrequency]
+    )
+  }
 
   /// No colour: the remote has no light to restore.
   public var defaultColor: ControllerColor? { nil }
@@ -131,8 +157,10 @@ public final class WiiDriver: PhysicalProtocolDriver {
   /// Always nil: the report carries no logical connection.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
-  /// Clears the state of the session: neutral input, no reading, no extension, no calibration and
-  /// no exchange.
+  /// Ends the session (`SessionEndOnDisconnect`).
+  ///
+  /// Input is neutral, and the reading, extension, calibration, exchanges, IR setup, rumble and
+  /// pointer are dropped. The requested features and the IR format are settings and stay.
   public func resetProtocolState() {
     state = .neutral
     acceleration = nil
@@ -150,12 +178,17 @@ public final class WiiDriver: PhysicalProtocolDriver {
     motionSequence = 0
     failure = nil
     refusedReply = nil
+    isRumbling = false
+    hasRequestedIR = false
+    isIRReady = false
+    pointer = Pointer()
+    irPoints = [IRPoint?](repeating: nil, count: 4)
   }
 
   /// A status request, then the report mode that carries the buttons and the accelerometer.
   public func startupWrites() -> [PhysicalOutputWrite] {
     [
-      .hidOutput(PhysicalHIDOutputReport(reportID: Self.statusRequestOutputID, bytes: [0x15, 0])),
+      outputReport([Self.statusRequestOutputID, 0]),
       reportModeWrite(),
     ]
   }
@@ -182,12 +215,9 @@ public final class WiiDriver: PhysicalProtocolDriver {
       preconditionFailure("nintendo-wii.json chooses no mode for \(chosenFeatures)")
     }
     let continuous = mode.blocks.contains { $0.kind != .buttons }
-    return .hidOutput(
-      PhysicalHIDOutputReport(
-        reportID: Self.reportModeOutputID,
-        bytes: [Self.reportModeOutputID, continuous ? Self.continuousBit : 0, choice.mode]
-      )
-    )
+    return outputReport([
+      Self.reportModeOutputID, continuous ? Self.continuousBit : 0, choice.mode,
+    ])
   }
 
   /// Decodes a status report into the power facts, and a data report that has a `Buttons` block
@@ -196,6 +226,7 @@ public final class WiiDriver: PhysicalProtocolDriver {
     let bytes = Array(data)
     guard let id = bytes.first else { return nil }
     expireExchange(at: receivedAt)
+    sendDueStep(at: receivedAt)
     switch id {
     case Self.statusReportID: return parseStatus(bytes, at: receivedAt)
     case Self.memoryReplyReportID, Self.acknowledgementReportID:
@@ -226,8 +257,17 @@ public final class WiiDriver: PhysicalProtocolDriver {
     if acceleration != nil, mode.blocks.contains(where: { $0.kind == .accelerometer }) {
       motion = motionSamples(at: receivedAt)
     }
+    var touchFrames: [ControllerTouchSample] = []
+    if isIRReady, let frame = decodeIR(mode, bytes, into: &next, at: receivedAt) {
+      touchFrames = [frame]
+    }
     state = next
-    return ControllerEvent(timestamp: receivedAt, state: next, motion: motion)
+    return ControllerEvent(
+      timestamp: receivedAt,
+      state: next,
+      motion: motion,
+      touchFrames: touchFrames
+    )
   }
 
   /// Takes the battery level, restores the report mode and follows the extension flag.
@@ -253,6 +293,10 @@ public final class WiiDriver: PhysicalProtocolDriver {
     if !hasRequestedCalibration {
       hasRequestedCalibration = true
       begin(.accelerometerCalibration, at: now)
+    }
+    if irFormat != nil, !hasRequestedIR {
+      hasRequestedIR = true
+      begin(.irSetup, at: now)
     }
     if added { begin(motionPlusActive ? .motionPlusIdentify : .extensionHandshake, at: now) }
     return removed ? ControllerEvent(timestamp: now, state: state) : nil

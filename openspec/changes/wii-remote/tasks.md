@@ -62,11 +62,11 @@ Owns: `WiiDriver+Output.swift`, `WiiDriver+IR.swift`, `WiiSpeaker*.swift`, `Cont
 Depends: 4.
 
 - [ ] 5.1 Implement LEDs (`PlayerIndicator`) and the rumble bit carried by every output builder (`RumbleBitCarry`); the rumble motor is binary. Verify: a test iterates every output report builder with rumble on and off and asserts bit 0; `ojd controller rumble` fixture test passes.
-- [ ] 5.2 Implement IR setup with the 50 ms spacing (`IRSetupSpacing`) using an injected clock. Verify: a test asserts consecutive write timestamps differ by at least 50 ms for all seven steps and that a tuning value of 20 is refused (2.1).
-- [ ] 5.3 Implement IR decode (basic, extended, full), touch contacts, pointer math (`IRPointerLost` rule: hold values, `PointerTracking` false). Verify: fixture tests for 0, 1, 2 and 4 points, centered pointer is 0, a roll-compensation case with a recorded accelerometer sample.
+- [x] 5.2 Implement IR setup with the 50 ms spacing (`IRSetupSpacing`) using an injected clock. Verify: a test asserts consecutive write timestamps differ by at least 50 ms for all seven steps and that a tuning value of 20 is refused (2.1).
+- [x] 5.3 Implement IR decode (basic, extended, full), touch contacts, pointer math (`IRPointerLost` rule: hold values, `PointerTracking` false). Verify: fixture tests for 0, 1, 2 and 4 points, centered pointer is 0, a roll-compensation case with a recorded accelerometer sample.
 - [ ] 5.4 Implement the ADPCM encoder and the speaker script. Verify: an encoder test against a reference vector from WiiBrew's published step table; a packetization test that 20-byte packets carry the length field in the first byte's high bits; `SpeakerStream` test with an injected clock for pacing.
 - [ ] 5.5 Implement `ojd controller speaker play|stop` with PCM WAV input, mix-down, resampling, `--volume`, `speakerMaxSeconds` and the errors `SpeakerUnavailable` and unsupported file. Verify: CLI tests for success, a non-WAV file, a record without the capability, and stop during playback.
-- [ ] 5.6 Implement the session end on disconnect (neutral input, state dropped, startup again on reconnect). Verify: a test disconnects with IR on and asserts the setup script runs again before any IR point appears.
+- [x] 5.6 Implement the session end on disconnect (neutral input, state dropped, startup again on reconnect). Verify: a test disconnects with IR on and asserts the setup script runs again before any IR point appears.
 
 ## 6. Layout reuse check
 
