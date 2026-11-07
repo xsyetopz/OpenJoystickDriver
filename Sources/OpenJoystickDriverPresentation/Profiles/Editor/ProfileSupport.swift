@@ -32,8 +32,8 @@
         Button(OJDLocalized.string("action.dismiss"), action: dismiss)
       }.padding(12).background(Color(NSColor.controlBackgroundColor))
         .accessibilityElement(children: .contain).ojdAccessibilityLabel(
-        OJDLocalized.string("ui.profiles.actionErrorTitle")
-      ).ojdAccessibilityValue(message)
+          OJDLocalized.string("ui.profiles.actionErrorTitle")
+        ).ojdAccessibilityValue(message)
     }
   }
 

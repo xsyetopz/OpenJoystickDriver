@@ -71,7 +71,11 @@ extension RemappingEngineState {
           at: uptimeNanoseconds
         )
       case .pointer(let x, let y):
-        return processAxes([(.pointerX, x), (.pointerY, y)], for: identifier, at: uptimeNanoseconds)
+        return processAxes(
+          [(.pointerX, x), (.pointerY, y)],
+          for: identifier,
+          at: uptimeNanoseconds
+        )
       case .leftTrigger(let value):
         return processAxes([(.leftTrigger, value)], for: identifier, at: uptimeNanoseconds)
       case .rightTrigger(let value):

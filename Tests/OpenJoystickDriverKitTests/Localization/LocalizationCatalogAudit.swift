@@ -331,9 +331,11 @@ enum LocalizationCatalogAudit {
     }.keys.sorted()
   }
 
-  /// Keys whose in-progress source text loses its ellipsis in `localization`: `C` keeps `...`, a
-  /// translation writes `…`, and neither keeps an ASCII `...`. A source that ends in the ellipsis
-  /// ends in it in the translation; a source with an instruction after it keeps text after it.
+  /// Keys whose in-progress source text loses its ellipsis in `localization`.
+  ///
+  /// `C` keeps `...`, a translation writes `…`, and neither keeps an ASCII `...`. A source that
+  /// ends in the ellipsis ends in it in the translation; a source with an instruction after it
+  /// keeps text after it.
   static func lostEllipsisKeys(for localization: String) -> [String] {
     let source = values(for: Localization.sourceLocalization)
     let localized = values(for: localization)

@@ -88,13 +88,13 @@
         }
       }.padding(28).frame(width: 470).accessibilityElement(children: .contain)
         .ojdAccessibilityLabel(OJDLocalized.string("ui.capture.title")).background(
-        EscapeKeyMonitor(isCapturing: { keyboardCaptureActive }, onEscape: { cancelCapture() })
-      ).onAppear { selectInitialDevice() }.onDisappear { stopListening() }.onReceive(
-        viewModel.$inputCaptureState
-      ) { captureState in
-        handleCaptureState(captureState)
-        announceCaptureState(captureState)
-      }
+          EscapeKeyMonitor(isCapturing: { keyboardCaptureActive }, onEscape: { cancelCapture() })
+        ).onAppear { selectInitialDevice() }.onDisappear { stopListening() }.onReceive(
+          viewModel.$inputCaptureState
+        ) { captureState in
+          handleCaptureState(captureState)
+          announceCaptureState(captureState)
+        }
     }
 
     /// The step controls of a touch grid or swipe source; any other source shows none.

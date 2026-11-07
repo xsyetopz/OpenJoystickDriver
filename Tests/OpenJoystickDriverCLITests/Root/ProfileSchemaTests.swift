@@ -225,8 +225,10 @@ struct ProfileSchemaTests {
     ("unknown key", #""name": "Everything""#, #""name": "Everything", "unexpected": true"#),
     ("deadzone out of range", #""deadzone": 0.1, "gain""#, #""deadzone": 0.96, "gain""#),
     ("unknown curve", #""EaseIn""#, #""quadratic""#),
-    ("pointer as a gamepad axis", #""GamepadAxis", "axis": "RightStickX""#,
-      #""GamepadAxis", "axis": "PointerX""#),
+    (
+      "pointer as a gamepad axis", #""GamepadAxis", "axis": "RightStickX""#,
+      #""GamepadAxis", "axis": "PointerX""#
+    ),
     (
       "unknown D-pad direction", #"{"type": "Dpad", "direction": "DpadUp"}"#,
       #"{"type": "Dpad", "direction": "notAName"}"#

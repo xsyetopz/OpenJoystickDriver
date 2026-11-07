@@ -82,8 +82,9 @@ public struct ControllerState: Equatable, Codable, Sendable {
   public var leftTrigger: UnipolarValue
   /// The right trigger value.
   public var rightTrigger: UnipolarValue
-  /// The aim of a pointing device; positive Y is down. It holds its last value while
-  /// `pointerTracking` is released.
+  /// The aim of a pointing device; positive Y is down.
+  ///
+  /// It holds its last value while `pointerTracking` is released.
   public var pointer: StickPosition
   /// Latest complete contact frame of each touch surface the controller reports.
   public var touch: [ControllerTouchSample]

@@ -10,7 +10,8 @@ struct LocalRPCBridgeTests {
   private static let controllerMethodNames: Set = [
     "getStatus", "requestRequiredAccess", "requestAccess", "getControllerState", "getPacketLog",
     "getVirtualOutputState",
-    "sendControllerOutput", "playControllerSpeaker", "stopControllerSpeaker", "previewPhysicalColor", "releasePhysicalColorPreview",
+    "sendControllerOutput", "playControllerSpeaker", "stopControllerSpeaker",
+    "previewPhysicalColor", "releasePhysicalColorPreview",
     "getVirtualDeviceDiagnostics", "getFrameTimings", "waitForServiceStatusChange",
     "sendTestNotification", "reportTestNotificationResult", "setVirtualHIDProfileOverride",
     "resetVirtualHIDProfileOverride", "setControllerServer", "setControllerTuning",
