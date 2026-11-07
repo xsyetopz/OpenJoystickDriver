@@ -35,7 +35,7 @@ A `SystemKey` destination MUST send one system-defined key event through the pub
 
 ### Requirement: REQ-38 Type Text
 
-A `TypeText` destination MUST hold 1 to 128 characters. OJD MUST type the text through Core Graphics Unicode key events, in order, without a modifier left down. When secure event input is enabled in macOS, OJD MUST NOT type; it MUST report a named error that tells the user that a secure field has input. A `TypeText` destination MUST be rejected with any behavior other than a press.
+A `TypeText` destination MUST hold 1 to 128 characters. OJD MUST type the text through Core Graphics Unicode key events, in order, without a modifier left down. When secure event input is enabled in macOS, OJD MUST NOT type; it MUST report a named error that tells the user that a secure field has input. Like every trigger-only destination (`SystemAction`, `OpenApplication`, `OpenURL`, `RunShortcut`, `TypeText`), a `TypeText` destination MUST be rejected with `Toggle`, `Release` and `Pulse`, and accepted with `Hold`, `TapOnPress`, `TapOnRelease` and `Press`.
 
 #### Scenario: Type a Phrase
 

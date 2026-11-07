@@ -86,7 +86,7 @@ extension RuntimeProfileDraftTests {
     let options = DestinationOption.options(for: .button(.south))
 
     #expect(options.first?.destination == .keyboard(key: .space, modifiers: []))
-    #expect(options.count < 400)
+    #expect(options.count < 420)
     #expect(
       options.contains {
         $0.destination == .keyboard(key: .arrowUp, modifiers: [.meta, .shift])
@@ -102,6 +102,31 @@ extension RuntimeProfileDraftTests {
         $0.destination == .mouseMovement(.x)
       }
     )
+  }
+
+  @Test
+  func systemDestinationsAreListedForDiscreteSourcesAndLabeledInWords() {
+    let discrete = DestinationOption.options(for: .button(.south))
+    let axis = DestinationOption.options(for: .axis(.leftStickX))
+
+    #expect(discrete.contains { $0.destination == .systemKey(.volumeUp) })
+    #expect(discrete.contains { $0.destination == .systemAction(.missionControl) })
+    #expect(!axis.contains { $0.destination == .systemKey(.volumeUp) })
+    #expect(RuntimePresentation.destinationLabel(.systemKey(.volumeUp)) == "System key Volume Up")
+    #expect(
+      RuntimePresentation.destinationLabel(.systemAction(.missionControl))
+        == "System action Mission Control"
+    )
+    #expect(
+      RuntimePresentation.destinationLabel(.openApplication(bundleIdentifier: "com.apple.Safari"))
+        == "Open com.apple.Safari"
+    )
+    #expect(
+      RuntimePresentation.destinationLabel(.openURL("https://example.com"))
+        == "Open URL https://example.com"
+    )
+    #expect(RuntimePresentation.destinationLabel(.runShortcut("Dim")) == "Run Shortcut Dim")
+    #expect(RuntimePresentation.destinationLabel(.typeText("hi")) == "Type hi")
   }
 
   @Test

@@ -1,5 +1,17 @@
 /* Product name in the title of the application menu of the menu bar. It stays OpenJoystickDriver in every language. */
 "term.app.name" = "OpenJoystickDriver";
+/* Name of a destination that opens an application. %@ is the bundle identifier of the application. */
+"ui.mapping.openApplication" = "%@ を開く";
+/* Name of a destination that opens a URL. %@ is the URL. */
+"ui.mapping.openURL" = "URL %@ を開く";
+/* Name of a destination that runs a Shortcut. Shortcuts is the Apple app. %@ is the name of the shortcut. */
+"ui.mapping.runShortcut" = "ショートカット %@ を実行";
+/* Name of a system action destination. %@ is the name of the action, such as Mission Control. */
+"ui.mapping.systemAction" = "システムアクション %@";
+/* Name of a system key destination, such as volume up. %@ is the name of the key. */
+"ui.mapping.systemKey" = "システムキー %@";
+/* Name of a destination that types text. %@ is the text. */
+"ui.mapping.typeText" = "%@ を入力";
 /* Button of the problem banner in the Access area that quits and opens the app again so that a granted permission takes effect. OpenJoystickDriver is the product name. */
 "ui.permissions.restartApplication" = "OpenJoystickDriver を再起動";
 /* Menu item in the application menu that opens the project page on GitHub. GitHub is a product name and stays as written. */

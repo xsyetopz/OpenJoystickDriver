@@ -25,7 +25,7 @@ Non-goals: private APIs, stick gestures, keyboard or mouse as input, InputConfig
 
 Macro, SystemKey, SystemAction, OpenApplication, OpenURL, RunShortcut, TypeText, ProfileSwitch, LayerSet and Pause are new `RemappingDestination` cases. An action keeps its shape, so behaviors, layers, chords and sequences work with them unchanged. Reason: one place to validate, to edit and to document. Cost: the destination `Kind` and coding switch grow; each case keeps the strict `fields` check.
 
-Trigger-only destinations (all but SystemKey) take only the press behaviors (`TapOnPress`, `TapOnRelease`, `Press`). `SystemKey` follows Hold, so volume and brightness keys can repeat under turbo. Validation names the rejected behavior.
+Trigger-only destinations (all but SystemKey) take exactly `Hold`, `TapOnPress`, `TapOnRelease` and `Press`; `Toggle`, `Release` and `Pulse` fail validation with `bindingBehaviorConflict`. They act once on the press, and the release does nothing. Profile control destinations are stricter and take only `Hold` and `TapOnPress`. `SystemKey` sends key down on the press and key up on the release, takes every behavior, and does not take turbo. Validation names the rejected behavior.
 
 ### D2. Macros Are Profile Data, Scheduled by the Engine
 

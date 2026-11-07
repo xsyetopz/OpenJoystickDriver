@@ -7,6 +7,7 @@ Bindings connect controller controls to destinations, and combinations and layer
 - [Assigning Buttons and Actions](#assigning-buttons-and-actions)
 - [Macros](#macros)
 - [Switch Profiles, Set Layers, and Pause](#switch-profiles-set-layers-and-pause)
+- [System Actions](#system-actions)
 - [Combinations, Sequences, and Layers](#combinations-sequences-and-layers)
 - [Further Reading](#further-reading)
 
@@ -34,6 +35,12 @@ An assignment connects one controller control to one destination, such as a keyb
 | Profile switch | The next or previous profile, or a named profile of the same controller model | Discrete sources only; fires on press; see [Switch profiles, set layers, and pause](#switch-profiles-set-layers-and-pause) |
 | Layer set | Turn a layer of the profile on or off, or flip it | Discrete sources only; fires on press |
 | Pause | Pause or resume the controller, or flip it | Discrete sources only; fires on press |
+| System key | Play/pause, next or previous track, fast-forward, rewind, volume up or down, mute, display brightness, keyboard backlight | Discrete sources only; needs Accessibility access; see [System actions](#system-actions) |
+| System action | Mission Control | Discrete sources only; fires on press; see [System actions](#system-actions) |
+| Open application | An application by bundle identifier | Discrete sources only; fires on press; command line or profile file only |
+| Open URL | A web or other non-file URL | Discrete sources only; fires on press; command line or profile file only |
+| Run Shortcut | A shortcut of the Shortcuts app, by name | Discrete sources only; fires on press; command line or profile file only |
+| Type text | A fixed string | Discrete sources only; fires on press; needs Accessibility access; command line or profile file only |
 
 A gamepad destination fails validation if the profile output policy has the virtual gamepad disabled. Some controls, such as paddles, grips, and function buttons, cannot be a virtual controller output. For the controls each virtual controller carries, see [What the virtual controller carries](Automating-OpenJoystickDriver.md#what-the-virtual-controller-carries). For more information, see [About profiles](Remapping-Profiles.md#about-profiles).
 
@@ -186,6 +193,34 @@ ojd binding set Racing button:guide pause:toggle
 ```
 
 The layer in `layer:NAME:MODE` is a layer of the profile, found by name without regard to case. The modes are `on`, `off`, and `toggle`.
+
+## System Actions
+
+These destinations make the Mac do something instead of sending a key or a button. Hardware status: Not checked.
+
+- **System key** sends a media, volume, display brightness, or keyboard backlight key. It sends the key down when you press the control and the key up when you release it, so holding the control repeats the key as holding the key does. The names are `play-pause`, `next-track`, `previous-track`, `fast-forward`, `rewind`, `volume-up`, `volume-down`, `mute`, `brightness-up`, `brightness-down`, `keyboard-illumination-up`, and `keyboard-illumination-down`. It does not take turbo.
+- **Mission Control** opens Mission Control.
+- **Open application** opens an application by its bundle identifier, such as `com.apple.TextEdit`.
+- **Open URL** opens a URL in its default application. A `file:` URL is rejected.
+- **Run Shortcut** runs a shortcut of the Shortcuts app by name. A shortcut that asks for input waits for you. OJD does not wait for it to finish.
+- **Type text** types a fixed string as keyboard events. While macOS has secure input on, such as in a password field, macOS may not deliver the keys, and OJD reports that secure input is on.
+
+All of them except System key act once when you press the control and do nothing on release. They take the behaviors **Hold**, **Tap on press**, **Tap on release**, and **Press**. **Toggle**, **Release**, and **Pulse** fail validation. A failed action writes its error to the Activity log and the service log, and the profile keeps working. To read the log, run `ojd log`.
+
+To assign them with the command line, use these targets with `ojd binding set`:
+
+```sh
+ojd binding set Racing button:north system-key:volume-up
+ojd binding set Racing button:west system:mission-control
+ojd binding set Racing button:east open-app:com.apple.TextEdit
+ojd binding set Racing button:south open-url:https://example.com
+ojd binding set Racing button:start shortcut:"Dim Lights"
+ojd binding set Racing button:back text:hello
+```
+
+The app lists the system keys and Mission Control in the destination pickers. The other four have no picker: set them with the command line or in the profile file.
+
+OJD does not offer Show Desktop, App Exposé, Launchpad, or a display brightness setting that needs private macOS interfaces: DisplayServices, CoreDock, SkyLight, CGS, and MediaRemote. To get one of them, set a keyboard shortcut for it in **System Settings**, then assign a **Keyboard** destination with that shortcut.
 
 ## Combinations, Sequences, and Layers
 

@@ -71,9 +71,12 @@ struct DestinationOption: Hashable {
     }
   }
 
-  /// Every destination the pickers know: keyboard keys, with modifier groups for the arrow and
-  /// function keys, mouse buttons, pointer movement and scroll, gamepad outputs and physical
-  /// outputs.
+  /// Every destination the pickers know.
+  ///
+  /// These are keyboard keys, with modifier groups for the arrow and function keys, mouse buttons,
+  /// pointer movement and scroll, system keys and actions, gamepad outputs and physical outputs.
+  /// Open application, open URL, run Shortcut and type text carry a value, so a picker cannot list
+  /// them; the CLI and profile files set them.
   static let all: [Self] = {
     // Keep the ordinary keyboard destination first so source changes can fall back to a useful,
     // conventional choice instead of an arbitrary enum ordering.  Modifier combinations are
@@ -133,7 +136,17 @@ struct DestinationOption: Hashable {
         isSupported: true
       )
     }
-    return keyboard + mouse + pointer + gamepad + physical
+    let systemDestinations =
+      RemappingSystemKey.allCases.map(RemappingDestination.systemKey)
+      + RemappingSystemActionKind.allCases.map(RemappingDestination.systemAction)
+    let system = systemDestinations.map { destination in
+      Self(
+        destination: destination,
+        title: RuntimePresentation.destinationLabel(destination),
+        isSupported: true
+      )
+    }
+    return keyboard + mouse + pointer + system + gamepad + physical
   }()
 
   /// Returns whether `destination` fits `source`: an axis takes a continuous destination, any

@@ -61,8 +61,10 @@ OJD reads the permission state every second. A request result is not treated as 
 | --- | --- | --- |
 | Input Monitoring | Read reports from a physical controller | Always |
 | Accessibility | Publish the virtual controller | Always |
-| Keyboard & pointer | Send keyboard, mouse, or scroll events from a profile | Only when a profile does so |
+| Keyboard & pointer | Send keyboard, mouse, or scroll events from a profile, including system keys and typed text | Only when a profile does so |
 | Notifications | Show notifications | Optional |
+
+Open application, open URL, Mission Control, and Run Shortcut need no permission of their own. The Shortcuts app may ask its own questions. OJD does not use private macOS interfaces for system actions: DisplayServices, CoreDock, SkyLight, CGS, and MediaRemote are out of scope. Not checked on hardware: which prompts these actions raise.
 
 Not verified on hardware: the **Keyboard & pointer** row and the **Accessibility** row may use the same switch in **System Settings**.
 
