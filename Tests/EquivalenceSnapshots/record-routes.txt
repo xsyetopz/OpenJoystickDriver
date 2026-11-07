@@ -241,6 +241,9 @@ system ownership=macos
 ## 046D:F301
 raw-access
 
+## 04B4:2412
+system ownership=macos
+
 ## 0502:1305
 raw-access
 

@@ -869,6 +869,40 @@ keepAlive[0] usb ep=2 timeoutMs=2000 tolerated=false 03200303000000
 gip keepAlive=enabled startup=[0520000100,0A200003000114,062000020100]
 parameters=
 
+## 04B4:2412
+protocol=hid-report-layout variant=- ownership=macos
+transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+tuning -
+controls [Auxiliary1,Auxiliary2,Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftPaddle1,LeftPaddle2,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightPaddle1,RightPaddle2,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
+session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+inputLayout reportID=4 minimumLength=32
+inputLayout button Auxiliary1 7&01
+inputLayout button Auxiliary2 7&02
+inputLayout button LeftPaddle1 7&04
+inputLayout button LeftPaddle2 7&08
+inputLayout button RightPaddle1 7&10
+inputLayout button RightPaddle2 7&20
+inputLayout button Guide 8&08
+inputLayout button South 9&10
+inputLayout button East 9&20
+inputLayout button Back 9&40
+inputLayout button West 9&80
+inputLayout button North 10&01
+inputLayout button Start 10&02
+inputLayout button LeftShoulder 10&04
+inputLayout button RightShoulder 10&08
+inputLayout button LeftStickClick 10&40
+inputLayout button RightStickClick 10&80
+inputLayout axis LeftStickX byte=17 bits=8 signed=false range=0...255 inverted=false
+inputLayout axis LeftStickY byte=19 bits=8 signed=false range=0...255 inverted=false
+inputLayout axis RightStickX byte=21 bits=8 signed=false range=0...255 inverted=false
+inputLayout axis RightStickY byte=22 bits=8 signed=false range=0...255 inverted=false
+inputLayout hat directions up=9&01 right=9&02 down=9&04 left=9&08
+inputLayout trigger left byte=23 button=10&10
+inputLayout trigger right byte=24 button=10&20
+parameters=
+
 ## 0502:1305
 protocol=xbox-xusb variant=wired ownership=macos
 transport in=129 out=1 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
@@ -7508,7 +7542,7 @@ parameters=
 protocol=vendor-flydigi variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Auxiliary1,Auxiliary2,Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftPaddle1,LeftPaddle2,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightPaddle1,RightPaddle2,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
