@@ -1001,7 +1001,7 @@ enum ProtocolDescriptionFixture {
     .xboxGIP: [
       "handshakeAttempts": 3, "announceResendLimit": 8,
       "namedPackets": [["id": "XboxGIP/power-on", "bytes": "05 20 00 01 00", "sessionByte": 2]],
-    ],
+    ]
   ]
 
   /// Decodes a description of `family` whose body after the header is `body`, with the family's

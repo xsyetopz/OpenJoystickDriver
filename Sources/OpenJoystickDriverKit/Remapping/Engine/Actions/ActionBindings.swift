@@ -134,7 +134,10 @@ extension RemappingEngineState {
         }
       }
       tracker = RemappingActivationTracker(
-        pressUptime: uptime, tapCount: count, pendingDefault: true)
+        pressUptime: uptime,
+        tapCount: count,
+        pendingDefault: true
+      )
       if let entry = binding.multiTap.first(where: { $0.count == count }),
         binding.multiTap.continuationWindowMs(after: count) == 0
       {

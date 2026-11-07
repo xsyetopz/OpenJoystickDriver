@@ -3,15 +3,18 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// The 8BitDo Ultimate 2C records, from sources only: the HID usage tables and the Z/Rz layout of
-/// `docs/testing/8bitdo-ultimate-2c.md`. No capture of `2DC8:301B` or `2DC8:3109` backs them; a
-/// tester's capture replaces these usages.
+/// `docs/testing/8bitdo-ultimate-2c.md`.
+///
+/// No capture of `2DC8:301B` or `2DC8:3109` backs them; a tester's capture replaces these usages.
 struct EightBitDoUltimate2CTests {
   private static let bluetooth = ControllerModelID(vendorID: 0x2DC8, productID: 0x301B)
   private static let adapter = ControllerModelID(vendorID: 0x2DC8, productID: 0x3109)
 
-  private func parse(_ parser: HIDDescriptorDriver, usage: UInt32, _ integer: Int)
-    -> ControllerEvent?
-  {
+  private func parse(
+    _ parser: HIDDescriptorDriver,
+    usage: UInt32,
+    _ integer: Int
+  ) -> ControllerEvent? {
     parser.parse(
       elementValue: HIDElementValue(
         usagePage: 1,

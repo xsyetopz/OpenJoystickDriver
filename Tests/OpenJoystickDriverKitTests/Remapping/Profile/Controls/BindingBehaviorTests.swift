@@ -33,7 +33,10 @@ struct RemappingBindingBehaviorTests {
       multiTap: configuration == 3
         ? [
           RemappingMultiTap(
-            count: 2, windowMs: 200, destination: .keyboard(key: .b, modifiers: []))
+            count: 2,
+            windowMs: 200,
+            destination: .keyboard(key: .b, modifiers: [])
+          )
         ] : []
     )
     #expect(throws: RemappingValidationError.bindingBehaviorConflict(index: 0)) {

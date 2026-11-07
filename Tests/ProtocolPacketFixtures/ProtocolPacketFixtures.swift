@@ -256,7 +256,9 @@ public enum ProtocolPacketFixtures {
     }
 
     /// The pad haptic pulse output report: id `0x81`, side, on, off and repeat count as
-    /// little-endian 16-bit values; 8 bytes. SDL declares the layout; the side values are
+    /// little-endian 16-bit values; 8 bytes.
+    ///
+    /// SDL declares the layout; the side values are
     /// unestablished until a hardware capture.
     ///
     /// - Parameters:

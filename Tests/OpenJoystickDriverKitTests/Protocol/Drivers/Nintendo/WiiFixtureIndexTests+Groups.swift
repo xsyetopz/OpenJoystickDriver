@@ -102,7 +102,8 @@ extension WiiFixtureIndexTests {
     }
     func write(_ target: UInt32, _ bytes: [UInt8]) -> Data {
       let padding = [UInt8](repeating: 0, count: 16 - bytes.count)
-      return Data([0x16, register | bit] + address(target) + [UInt8(bytes.count)] + bytes + padding)
+      let header = [0x16, register | bit] + address(target) + [UInt8(bytes.count)]
+      return Data(header + bytes + padding)
     }
     return try steps.map { step in
       switch step {
@@ -111,7 +112,8 @@ extension WiiFixtureIndexTests {
       case .write(let target, let bytes):
         return write(target, bytes)
       case .read(let target, let length):
-        return Data([0x17, register | bit] + address(target) + [UInt8(length >> 8), UInt8(length)])
+        let size = [UInt8(length >> 8), UInt8(length)]
+        return Data([0x17, register | bit] + address(target) + size)
       case .sensitivity(let block, let target):
         return write(target, block == 1 ? level.block1 : level.block2)
       case .irMode(let target):
