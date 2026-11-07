@@ -64,15 +64,20 @@ The behavior sheet keys `ui.profiles.addMultiTap`, `multiTap`, `tapCount`, `tapD
 
 ### D5. System Actions Use Public APIs Only
 
-| Action | API | Permission to expect (the task records the result) | Out of scope |
-| --- | --- | --- | --- |
-| Media, volume, brightness, keyboard illumination keys | system-defined `CGEvent` posted to the HID event tap; key codes from the public `IOKit/hidsystem/ev_keymap.h` (`NX_KEYTYPE_*`) | Post Event | DisplayServices and IODisplay brightness calls |
-| Mission Control | `NSWorkspace` opens the Mission Control application | none expected | `CoreDockSendNotification`, SkyLight, CGS; Launchpad, App Exposé and Show Desktop actions that need them |
-| Open application, open URL | `NSWorkspace` | none expected | URLs that do not parse |
-| Run Shortcut | `Process` runs `/usr/bin/shortcuts run NAME` | none expected; Shortcuts may ask its own question | AppleScript to Shortcuts Events (would need Automation) unless the task finds `shortcuts run` insufficient |
-| Type text | `CGEvent` Unicode string key events | Post Event; blocked by secure event input, which `IsSecureEventInputEnabled()` reports | none |
+| Action | API | Documentation | Permission to expect (the task records the result) | Out of scope |
+| --- | --- | --- | --- | --- |
+| Media, volume, brightness, keyboard illumination keys: event | `NSEvent.otherEvent(with: .systemDefined, ..., subtype:data1:data2:)`, then `NSEvent.cgEvent`, then `CGEvent.post(tap:)` (the documented CGEvent initializers cover keyboard, mouse and scroll events, not system-defined ones) | [otherEvent](https://developer.apple.com/documentation/appkit/nsevent/otherevent(with:location:modifierflags:timestamp:windownumber:context:subtype:data1:data2:)) (macOS), [cgEvent](https://developer.apple.com/documentation/appkit/nsevent/cgevent) (macOS 10.5), [post(tap:)](https://developer.apple.com/documentation/coregraphics/cgevent/post(tap:)) (macOS 10.4) | Post Event | DisplayServices and IODisplay brightness calls |
+| Media, volume, brightness, keyboard illumination keys: codes | `NX_KEYTYPE_*` from `IOKit/hidsystem/ev_keymap.h`; `NX_SUBTYPE_AUX_CONTROL_BUTTONS` (8) from `IOKit/hidsystem/IOLLEvent.h` | unconfirmed: both are in the macOS SDK headers (read on this Mac), with no documentation page found | Post Event | |
+| System-defined event `data1` layout | key code and key-down state packed in `data1` | unconfirmed: no documentation found for the layout | Post Event | |
+| Mission Control: launch | `NSWorkspace.openApplication(at:configuration:completionHandler:)` | [openApplication](https://developer.apple.com/documentation/appkit/nsworkspace/openapplication(at:configuration:completionhandler:)) (macOS 10.15) | none expected | `CoreDockSendNotification`, SkyLight, CGS; Launchpad, App Exposé and Show Desktop actions that need them |
+| Mission Control: path | `/System/Applications/Mission Control.app` | unconfirmed: the path exists on this Mac (macOS 27.2); no documentation page found | none expected | |
+| Open application | `NSWorkspace.openApplication(at:configuration:completionHandler:)` | [openApplication](https://developer.apple.com/documentation/appkit/nsworkspace/openapplication(at:configuration:completionhandler:)) (macOS 10.15) | none expected | |
+| Open URL | `NSWorkspace.open(_:configuration:completionHandler:)` | [open](https://developer.apple.com/documentation/appkit/nsworkspace/open(_:configuration:completionhandler:)) (macOS 10.15) | none expected | URLs that do not parse |
+| Run Shortcut | `Process` runs `/usr/bin/shortcuts run NAME`; exit status 0 on success, 1 on error; a shortcut that asks for input pauses the process | [Shortcuts User Guide](https://support.apple.com/guide/shortcuts-mac/apd455c82f02/mac); `/usr/bin/shortcuts --help` on this Mac lists `run` | none expected; Shortcuts may ask its own question | AppleScript to Shortcuts Events (would need Automation) unless the task finds `shortcuts run` insufficient |
+| Type text: events | `CGEvent(keyboardEventSource:virtualKey:keyDown:)`, then `keyboardSetUnicodeString(stringLength:unicodeString:)` | [init](https://developer.apple.com/documentation/coregraphics/cgevent/init(keyboardeventsource:virtualkey:keydown:)) (macOS 10.4), [keyboardSetUnicodeString](https://developer.apple.com/documentation/coregraphics/cgevent/keyboardsetunicodestring(stringlength:unicodestring:)) (macOS 10.4) | Post Event | none |
+| Type text: secure input | `IsSecureEventInputEnabled()` | unconfirmed: [TN2150](https://developer.apple.com/library/mac/technotes/tn2150/_index.html) names the function without a signature, and states that secure input stops keyboard events reaching event taps, HID seizing and `GetKeys`; its effect on posted events is not documented | Post Event | |
 
-The `data1` layout of the system-defined event is a convention rather than a documented contract. The task for REQ-36 therefore ends with a hardware check on this Mac, and the wiki says `Not checked` until it passes. If a named API behaves differently on macOS 27, the task changes this table first. The API names come from my knowledge of macOS, not from a lookup in this session; the first task of the group confirms each one against Apple's documentation before code starts.
+The `data1` layout of the system-defined event is a convention rather than a documented contract. The task for REQ-36 therefore ends with a hardware check on this Mac, and the wiki says `Not checked` until it passes. If a named API behaves differently on macOS 27, the task changes this table first. Every row above carries a documentation URL or `unconfirmed`; each `unconfirmed` row is an open question below.
 
 Boundary: the core declares `RemappingSystemActionPerforming` (one async method per action kind that returns a typed result or a named error). `OpenJoystickDriverMacOSPlatform` implements it with AppKit and Core Graphics. Reason: the neutral-core import check forbids AppKit in the core, and a test double lets engine tests run without macOS services.
 
@@ -129,5 +134,8 @@ OJD moves to PolyForm Noncommercial 1.0.0 plus a commercial license (the user, 2
 1. Should a layer be able to override `pointerSpeed`?
 2. Should `Next` and `Previous` profile switching use name order, or a user-defined cycle list in the profile?
 3. The tap count range 2 to 5 and the pointer scale range 0 to 10 are not yet confirmed.
+4. Which documentation defines the `NX_KEYTYPE_*` codes, `NX_SUBTYPE_AUX_CONTROL_BUTTONS` and the `data1` layout of a system-defined key event? Only SDK headers were found; the REQ-36 hardware check decides.
+5. Which documentation names the Mission Control application path? Only its presence on this Mac was read.
+6. What is the signature of `IsSecureEventInputEnabled`, and does secure event input block posted keyboard events? TN2150 covers event taps only; the REQ-36 hardware check decides.
 
 None of these blocks a task.

@@ -15,7 +15,7 @@ Each group owns its tests and documentation. Order follows dependencies: tests f
 ## 1. Baseline and Gyro-to-Stick Confirmation
 
 - [ ] 1.1 Run the existing gyro stick tests and list which of rotation, activation, deadzone and virtual-gamepad requirements they cover. Verify: `swift test --filter OpenJoystickDriverKitTests.GyroRoutingTests` passes, and the listing is added to this task's closing note.
-- [ ] 1.2 Confirm each Apple API of design D5 against Apple's documentation: system-defined `CGEvent` key events, `NSWorkspace` open for an application and a URL, the Mission Control application path, `/usr/bin/shortcuts run`, `CGEventKeyboardSetUnicodeString`, `IsSecureEventInputEnabled`. Correct the table in `design.md` where it differs. Verify: every row of the D5 table carries a documentation URL or the word `unconfirmed`, and each `unconfirmed` row is moved to Open Questions.
+- [x] 1.2 Confirm each Apple API of design D5 against Apple's documentation: system-defined `CGEvent` key events, `NSWorkspace` open for an application and a URL, the Mission Control application path, `/usr/bin/shortcuts run`, `CGEventKeyboardSetUnicodeString`, `IsSecureEventInputEnabled`. Correct the table in `design.md` where it differs. Verify: every row of the D5 table carries a documentation URL or the word `unconfirmed`, and each `unconfirmed` row is moved to Open Questions.
 - [ ] 1.3 Record the permission each D5 API needs on this Mac with a throwaway program outside the repository (not committed). Verify: a table of API, permission prompt seen or not, macOS version from `sw_vers`, is pasted into the closing note.
 
 ## 2. Permissions Foundation (REQ-50 to REQ-52)
