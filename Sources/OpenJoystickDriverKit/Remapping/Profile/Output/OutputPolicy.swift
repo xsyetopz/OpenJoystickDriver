@@ -157,7 +157,10 @@ extension RemappingProfile {
       case .openURL(let url): line = "OpenURL: \(url)"
       case .runShortcut(let name): line = "RunShortcut: \(name)"
       case .typeText(let text): line = "TypeText: \(text)"
-      default: return false
+      case .keyboard, .mouseButton, .mouseMovement, .scroll, .gamepadButton, .gamepadDpad,
+        .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet, .pause, .systemKey,
+        .systemAction, .speak, .midiNote, .midiControlChange:
+        return false
       }
       if !lines.contains(line) { lines.append(line) }
       return false

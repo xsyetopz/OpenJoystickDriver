@@ -12,17 +12,26 @@
 
     /// The activation of the profile, or nil when the person declines.
     ///
-    /// A profile that produces no output is activated only after `confirmEmpty` returns true, as
-    /// `ojd profile activate` requires `--allow-empty` for it. A profile the library does not hold
-    /// is activated without the allowance, so the service decides.
+    /// A profile that produces no output, launches actions or needs a permission that is missing
+    /// is activated only after `confirm` returns true for its confirmation, as the profile editor
+    /// asks. `ojd profile activate` requires `--allow-empty` and `--confirm-actions` for them. A
+    /// profile the library does not hold is activated without the allowance, so the service
+    /// decides.
     static func activation(
       of profileID: UUID,
       in profiles: [RemappingProfile],
-      confirmEmpty: (RemappingProfile) -> Bool
+      postEventAccess: RemappingPostEventAccessState?,
+      confirm: (ProfileEditorConfirmation) -> Bool
     ) -> Self? {
-      guard let profile = profiles.first(where: { $0.id == profileID }), profile.producesNoOutput
+      guard let profile = profiles.first(where: { $0.id == profileID }),
+        let needed = ProfileEditorConfirmation.activation(
+          of: profile,
+          postEventAccess: postEventAccess
+        )
       else { return .activate(profileID: profileID, allowEmpty: false) }
-      return confirmEmpty(profile) ? .activate(profileID: profileID, allowEmpty: true) : nil
+      guard confirm(needed) else { return nil }
+      if case .activateEmpty = needed { return .activate(profileID: profileID, allowEmpty: true) }
+      return .activate(profileID: profileID, allowEmpty: false)
     }
 
     /// The mutation request that tracks the operation.

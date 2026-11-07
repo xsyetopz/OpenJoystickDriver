@@ -158,8 +158,8 @@
       }
     }
 
-    /// The activation of a profile, after asking about a profile that produces no output; nil when
-    /// the person declines.
+    /// The activation of a profile, after asking about a profile that produces no output, launches
+    /// actions or needs a permission that is missing; nil when the person declines.
     func confirmedActivation(of profileID: UUID) -> StatusItemProfileOperation? {
       let profiles: [RemappingProfile]
       if case .available(let snapshot) = viewModel.remappingState {
@@ -167,11 +167,22 @@
       } else {
         profiles = []
       }
-      return StatusItemProfileOperation.activation(of: profileID, in: profiles) { _ in
+      var postEventAccess: RemappingPostEventAccessState?
+      if case .available(let state) = viewModel.postEventAccessState { postEventAccess = state }
+      return StatusItemProfileOperation.activation(
+        of: profileID,
+        in: profiles,
+        postEventAccess: postEventAccess
+      ) { confirmation in
         let alert = NSAlert()
         alert.alertStyle = .warning
-        alert.messageText = OJDLocalized.string("ui.profiles.emptyActivationTitle")
-        alert.informativeText = OJDLocalized.string("ui.profiles.emptyActivationMessage")
+        if case .activateNotice(let message) = confirmation {
+          alert.messageText = OJDLocalized.string("ui.profiles.activationTitle")
+          alert.informativeText = message
+        } else {
+          alert.messageText = OJDLocalized.string("ui.profiles.emptyActivationTitle")
+          alert.informativeText = OJDLocalized.string("ui.profiles.emptyActivationMessage")
+        }
         alert.addButton(withTitle: OJDLocalized.string("action.setActive"))
         alert.addButton(withTitle: OJDLocalized.string("action.cancel"))
         return alert.runActivatingApp() == .alertFirstButtonReturn

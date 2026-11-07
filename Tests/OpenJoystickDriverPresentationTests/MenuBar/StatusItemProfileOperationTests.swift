@@ -63,7 +63,11 @@ struct StatusItemProfileOperationTests {
   @Test
   func aProfileWithOutputIsActivatedWithoutAsking() {
     let profile = makeProfile()
-    let operation = StatusItemProfileOperation.activation(of: profile.id, in: [profile]) { _ in
+    let operation = StatusItemProfileOperation.activation(
+      of: profile.id,
+      in: [profile],
+      postEventAccess: .granted
+    ) { _ in
       Issue.record("Asked about a profile that produces output")
       return false
     }
@@ -74,10 +78,18 @@ struct StatusItemProfileOperationTests {
   func aProfileWithNoOutputIsActivatedOnlyAfterConfirmation() {
     let profile = Self.emptyProfile()
     #expect(profile.producesNoOutput)
-    let confirmed = StatusItemProfileOperation.activation(of: profile.id, in: [profile]) { _ in
+    let confirmed = StatusItemProfileOperation.activation(
+      of: profile.id,
+      in: [profile],
+      postEventAccess: .granted
+    ) { _ in
       true
     }
-    let declined = StatusItemProfileOperation.activation(of: profile.id, in: [profile]) { _ in
+    let declined = StatusItemProfileOperation.activation(
+      of: profile.id,
+      in: [profile],
+      postEventAccess: .granted
+    ) { _ in
       false
     }
     #expect(confirmed == .activate(profileID: profile.id, allowEmpty: true))
@@ -88,8 +100,42 @@ struct StatusItemProfileOperationTests {
   func aProfileTheLibraryLacksIsActivatedWithoutTheAllowance() {
     let id = UUID()
     #expect(
-      StatusItemProfileOperation.activation(of: id, in: []) { _ in true }
+      StatusItemProfileOperation.activation(of: id, in: [], postEventAccess: nil) { _ in true }
         == .activate(profileID: id, allowEmpty: false)
     )
+  }
+
+  @Test
+  func aLaunchingProfileIsActivatedOnlyAfterConfirmationWithoutTheEmptyAllowance() {
+    let profile = RemappingProfile(
+      id: UUID(),
+      name: "Actions",
+      device: RemappingDeviceScope(vendorID: 0x1234, productID: 0x5678),
+      applicationScope: .global,
+      bindings: [
+        RemappingBinding(source: .button(.south), destination: .openURL("https://example.com/x"))
+      ]
+    )
+    var asked: ProfileEditorConfirmation?
+    let confirmed = StatusItemProfileOperation.activation(
+      of: profile.id,
+      in: [profile],
+      postEventAccess: .granted
+    ) {
+      asked = $0
+      return true
+    }
+    let declined = StatusItemProfileOperation.activation(
+      of: profile.id,
+      in: [profile],
+      postEventAccess: .granted
+    ) { _ in false }
+    guard case .activateNotice(let message)? = asked else {
+      Issue.record("No notice for an OpenURL profile")
+      return
+    }
+    #expect(message.contains("https://example.com/x"))
+    #expect(confirmed == .activate(profileID: profile.id, allowEmpty: false))
+    #expect(declined == nil)
   }
 }
