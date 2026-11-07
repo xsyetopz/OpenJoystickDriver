@@ -182,6 +182,7 @@ let package = Package(
     .target(
       name: "ProtocolPacketFixtures",
       path: "Tests/ProtocolPacketFixtures",
+      resources: [.copy("Switch2")],
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
       linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
     ),

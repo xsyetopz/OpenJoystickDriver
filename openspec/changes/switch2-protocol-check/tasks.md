@@ -17,9 +17,9 @@ Owns: packet capture, fixture folder.
 Depends: none.
 Verify: `swift test --filter PacketCapture` and a capture of a Switch 1 controller that shows every report ID.
 
-- [ ] 1.1 Read `ControllerPacketCapture.swift` and the USB and HID receive paths and check that a capture keeps reports whose ID the driver ignores (a `0x09` report on a Switch 2 interface). If it drops them, add the report to the capture before the driver filter, with a test. Verify: a test feeds a report with an ignored ID and finds it in the capture.
+- [x] 1.1 Read `ControllerPacketCapture.swift` and the USB and HID receive paths and check that a capture keeps reports whose ID the driver ignores (a `0x09` report on a Switch 2 interface). If it drops them, add the report to the capture before the driver filter, with a test. Verify: a test feeds a report with an ignored ID and finds it in the capture.
 - [ ] 1.2 After each edit of `Resources/Protocols/nintendo-switch2.json`, run `./Scripts/ojd catalog regenerate --write`. Verify: `./Scripts/ojd catalog regenerate --check` passes.
-- [ ] 1.3 Add a fixture folder `Tests/ProtocolPacketFixtures` section `Switch2` with a loader for capture text files (controller, transport, action, reports as hex). Verify: `swift test --filter Switch2DriverTests` passes with a sample file that holds a report built from the SDL offsets of `HandleSwitchProState`, marked as synthetic in its header.
+- [x] 1.3 Add a fixture folder `Tests/ProtocolPacketFixtures` section `Switch2` with a loader for capture text files (controller, transport, action, reports as hex). Verify: `swift test --filter Switch2DriverTests` passes with a sample file that holds a report built from the SDL offsets of `HandleSwitchProState`, marked as synthetic in its header.
 
 ## 2. Captures and reconciliation (hardware, before code)
 
@@ -71,7 +71,7 @@ Owns: `Resources/ControllerPatches/057e/`.
 Depends: 2.
 Verify: `./Scripts/ojd catalog regenerate --check`.
 
-- [ ] 6.1 Write a test that each record binds `NintendoSwitch2` with the layout of the table in `design.md` (`2066` JoyConRight, `2067` JoyConLeft, `2069` the family default Pro, `2073` GameCube). Verify: `swift test --filter Switch2DriverTests`.
+- [x] 6.1 Write a test that each record binds `NintendoSwitch2` with the layout of the table in `design.md` (`2066` JoyConRight, `2067` JoyConLeft, `2069` the family default Pro, `2073` GameCube). Verify: `swift test --filter Switch2DriverTests`.
 - [ ] 6.2 Compare each record's patch (`057e-2066`, `2067`, `2069` patch files) with the captures (interface numbers, endpoints, Bluetooth LE vibration characteristic) and fix differences in the patch, then run `./Scripts/ojd catalog regenerate --write`. Verify: `./Scripts/ojd catalog regenerate --check` prints no diff.
 - [ ] 6.3 If a Joy-Con pair device (`057E:2068`) appears in any capture, add a record from that capture; otherwise record in the PR text that no capture exists. Verify: the PR text states which.
 - [ ] 6.4 If SDL or `procon2-mac` code is used, add its notice to `THIRD_PARTY_NOTICES.md`. Verify: `grep -n "SDL\|procon2" THIRD_PARTY_NOTICES.md` shows the entry, or the PR text states that only facts were used.
