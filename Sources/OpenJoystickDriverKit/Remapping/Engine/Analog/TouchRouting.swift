@@ -76,8 +76,11 @@ extension RemappingEngineState {
             return Self.gridCell(for: contact.position, columns: grid.columns, rows: grid.rows) == (
               grid.column, grid.row
             )
+          case .touchArea(let area): return contacts.values.contains { area.contains($0.position) }
           case .touchSwipe: return false
-          case .button, .dpad, .axis, .axisDirection, .triggerStage, .motionLean: return false
+          case .button, .dpad, .axis, .axisDirection, .triggerStage, .motionLean, .stickRegion,
+            .triggerBand:
+            return false
           }
         }
       )
@@ -216,7 +219,11 @@ extension RemappingEngineState {
       return "1:\(grid.surface.rawValue):\(grid.columns):\(grid.rows):\(grid.column):\(grid.row)"
     case .touchSwipe(let swipe):
       return "2:\(swipe.surface.rawValue):\(swipe.direction.rawValue):\(swipe.minimumDistance)"
-    case .button, .dpad, .axis, .axisDirection, .triggerStage, .motionLean: return "3"
+    case .touchArea(let area):
+      return "3:\(area.surface.rawValue):\(area.x):\(area.y):\(area.width):\(area.height)"
+    case .button, .dpad, .axis, .axisDirection, .triggerStage, .motionLean, .stickRegion,
+      .triggerBand:
+      return "4"
     }
   }
 }
@@ -228,7 +235,10 @@ extension RemappingSource {
     case .touchContact(let surface): surface
     case .touchGrid(let grid): grid.surface
     case .touchSwipe(let swipe): swipe.surface
-    case .button, .dpad, .axis, .axisDirection, .triggerStage, .motionLean: nil
+    case .touchArea(let area): area.surface
+    case .button, .dpad, .axis, .axisDirection, .triggerStage, .motionLean, .stickRegion,
+      .triggerBand:
+      nil
     }
   }
 }
@@ -236,15 +246,6 @@ extension RemappingSource {
 extension RemappingProfile {
   /// Returns the touch sources on a surface that any part of the profile uses.
   func touchSources(on surface: RemappingTouchSurface) -> Set<RemappingSource> {
-    var sources = Set(bindings.map(\.source))
-    sources.formUnion(chords.flatMap(\.sources))
-    sources.formUnion(sequences.flatMap(\.sources))
-    for layer in layers {
-      sources.insert(layer.activator)
-      sources.formUnion(layer.bindings.map(\.source))
-      sources.formUnion(layer.chords.flatMap(\.sources))
-      sources.formUnion(layer.sequences.flatMap(\.sources))
-    }
-    return sources.filter { $0.touchSurface == surface }
+    allSources.filter { $0.touchSurface == surface }
   }
 }

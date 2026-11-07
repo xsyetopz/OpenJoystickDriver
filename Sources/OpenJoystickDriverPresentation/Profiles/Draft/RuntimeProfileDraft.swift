@@ -123,7 +123,7 @@ struct DestinationOption: Hashable {
     switch source {
     case .axis: return destination.isContinuous
     case .axisDirection, .triggerStage, .motionLean, .button, .dpad, .touchContact, .touchGrid,
-      .touchSwipe:
+      .touchSwipe, .stickRegion, .triggerBand, .touchArea:
       return !destination.isContinuous
     }
   }

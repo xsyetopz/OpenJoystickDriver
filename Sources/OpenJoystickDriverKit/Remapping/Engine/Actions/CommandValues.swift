@@ -95,7 +95,58 @@ public enum RemappingCommandValueParser {
         )
       )
     }
+    if let region = regionSource(parts) { return region }
     throw RemappingCommandValueError.invalidSource(raw)
+  }
+
+  /// Parses the `stick-region`, `trigger-band` and `touch:SURFACE:area` forms.
+  ///
+  /// A range is two numbers joined by `-`. Hysteresis is the default of the source.
+  private static func regionSource(_ parts: [String]) -> RemappingSource? {
+    func range(_ text: String) -> (Double, Double)? {
+      let ends = text.split(separator: "-", omittingEmptySubsequences: false).map { Double($0) }
+      guard ends.count == 2, let low = ends[0], let high = ends[1], low.isFinite, high.isFinite
+      else { return nil }
+      return (low, high)
+    }
+    if parts.count == 3 || parts.count == 4, parts[0] == "stick-region",
+      let stick = CommandLineName.value(of: parts[1], in: RemappingStickSource.self),
+      let ring = range(parts[2])
+    {
+      let sector = parts.count == 4 ? range(parts[3]) : nil
+      guard parts.count == 3 || sector != nil else { return nil }
+      return .stickRegion(
+        RemappingStickRegionSource(
+          stick: stick,
+          innerRadius: ring.0,
+          outerRadius: ring.1,
+          fromDegrees: sector?.0,
+          toDegrees: sector?.1
+        )
+      )
+    }
+    if parts.count == 3, parts[0] == "trigger-band",
+      let trigger = CommandLineName.value(of: parts[1], in: RemappingTriggerSource.self),
+      let band = range(parts[2])
+    {
+      return .triggerBand(RemappingTriggerBandSource(trigger: trigger, from: band.0, to: band.1))
+    }
+    if parts.count == 7, parts[0] == "touch", parts[2] == "area",
+      let surface = CommandLineName.value(of: parts[1], in: RemappingTouchSurface.self)
+    {
+      let values = parts[3...].compactMap { Double($0) }
+      guard values.count == 4, values.allSatisfy(\.isFinite) else { return nil }
+      return .touchArea(
+        RemappingTouchAreaSource(
+          surface: surface,
+          x: values[0],
+          y: values[1],
+          width: values[2],
+          height: values[3]
+        )
+      )
+    }
+    return nil
   }
 
   /// Parses a target operand.

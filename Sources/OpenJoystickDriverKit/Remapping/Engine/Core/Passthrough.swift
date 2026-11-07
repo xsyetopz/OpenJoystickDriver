@@ -43,7 +43,7 @@ extension RemappingDeviceState {
         )
       case .dpad(let direction): directions.insert(direction)
       case .axis, .axisDirection, .triggerStage, .motionLean, .touchContact, .touchGrid,
-        .touchSwipe:
+        .touchSwipe, .stickRegion, .triggerBand, .touchArea:
         break
       }
     }

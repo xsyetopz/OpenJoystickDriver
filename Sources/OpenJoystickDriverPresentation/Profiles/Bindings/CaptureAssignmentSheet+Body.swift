@@ -158,7 +158,8 @@
               swipe.minimumDistance.formatted(.percent.precision(.fractionLength(0)))
             )
         }.padding(.leading, 8)
-      case .button, .dpad, .axis, .axisDirection, .triggerStage, .motionLean, .touchContact:
+      case .button, .dpad, .axis, .axisDirection, .triggerStage, .motionLean, .touchContact,
+        .stickRegion, .triggerBand, .touchArea:
         EmptyView()
       }
     }

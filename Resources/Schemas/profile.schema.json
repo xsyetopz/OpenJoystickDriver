@@ -1318,6 +1318,125 @@
               "const": "TouchSwipe"
             }
           }
+        },
+        {
+          "type": "object",
+          "required": ["hysteresis", "innerRadius", "outerRadius", "stick", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "fromDegrees": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMaximum": 360
+            },
+            "hysteresis": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 0.25
+            },
+            "innerRadius": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMaximum": 1
+            },
+            "outerRadius": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "stick": {
+              "$ref": "#/$defs/stickSide"
+            },
+            "toDegrees": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 360
+            },
+            "type": {
+              "const": "StickRegion"
+            }
+          },
+          "oneOf": [
+            {
+              "required": ["fromDegrees", "toDegrees"]
+            },
+            {
+              "not": {
+                "anyOf": [
+                  {
+                    "required": ["fromDegrees"]
+                  },
+                  {
+                    "required": ["toDegrees"]
+                  }
+                ]
+              }
+            }
+          ],
+          "description": "innerRadius is less than outerRadius, fromDegrees differs from toDegrees and a sector runs clockwise from up, past 0 when toDegrees is below fromDegrees. Regions of one stick do not overlap."
+        },
+        {
+          "type": "object",
+          "required": ["from", "hysteresis", "to", "trigger", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "from": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMaximum": 1
+            },
+            "hysteresis": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 0.25
+            },
+            "to": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "trigger": {
+              "$ref": "#/$defs/triggerSide"
+            },
+            "type": {
+              "const": "TriggerBand"
+            }
+          },
+          "description": "from is less than to. Bands of one trigger do not overlap, and a trigger with a triggerMappings entry has no bands."
+        },
+        {
+          "type": "object",
+          "required": ["height", "surface", "type", "width", "x", "y"],
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "surface": {
+              "$ref": "#/$defs/touchSurface"
+            },
+            "type": {
+              "const": "TouchArea"
+            },
+            "width": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "x": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMaximum": 1
+            },
+            "y": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMaximum": 1
+            }
+          },
+          "description": "x plus width and y plus height are at most 1."
         }
       ]
     },

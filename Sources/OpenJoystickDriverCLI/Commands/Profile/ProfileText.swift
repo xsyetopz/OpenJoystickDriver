@@ -29,6 +29,12 @@ enum ProfileText {
       "touch:\(word(grid.surface)):grid:\(grid.columns):\(grid.rows):\(grid.column):\(grid.row)"
     case .touchSwipe(let swipe):
       "touch:\(word(swipe.surface)):swipe:\(word(swipe.direction)):\(swipe.minimumDistance)"
+    case .stickRegion(let region):
+      "stick-region:\(word(region.stick)):\(region.innerRadius)-\(region.outerRadius)"
+        + (region.fromDegrees.flatMap { from in region.toDegrees.map { ":\(from)-\($0)" } } ?? "")
+    case .triggerBand(let band): "trigger-band:\(word(band.trigger)):\(band.from)-\(band.to)"
+    case .touchArea(let area):
+      "touch:\(word(area.surface)):area:\(area.x):\(area.y):\(area.width):\(area.height)"
     }
   }
 

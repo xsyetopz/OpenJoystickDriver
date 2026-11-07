@@ -85,6 +85,11 @@ enum ProfileCapabilityPolicy {
     case .touchContact(let surface): return supports(surface, input: input)
     case .touchGrid(let source): return supports(source.surface, input: input)
     case .touchSwipe(let source): return supports(source.surface, input: input)
+    case .stickRegion(let region):
+      return input.controls.contains(region.stick == .left ? .leftStickX : .rightStickX)
+    case .triggerBand(let band):
+      return input.controls.contains(band.trigger == .left ? .leftTrigger : .rightTrigger)
+    case .touchArea(let area): return supports(area.surface, input: input)
     }
   }
 

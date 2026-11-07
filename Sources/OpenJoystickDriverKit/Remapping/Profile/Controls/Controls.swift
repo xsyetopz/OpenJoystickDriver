@@ -68,6 +68,12 @@ public enum RemappingSource: Codable, Equatable, Hashable, Sendable {
   case touchGrid(RemappingTouchGridSource)
   /// A swipe on a touch surface.
   case touchSwipe(RemappingTouchSwipeSource)
+  /// A ring and optional sector of a stick.
+  case stickRegion(RemappingStickRegionSource)
+  /// A pressure band of a trigger.
+  case triggerBand(RemappingTriggerBandSource)
+  /// A rectangle of a touch surface.
+  case touchArea(RemappingTouchAreaSource)
 
   /// Value of the `type` field that selects the case in a profile document.
   private enum Kind: String, Codable {
@@ -89,6 +95,12 @@ public enum RemappingSource: Codable, Equatable, Hashable, Sendable {
     case touchGrid = "TouchGrid"
     /// The `TouchSwipe` case.
     case touchSwipe = "TouchSwipe"
+    /// The `StickRegion` case.
+    case stickRegion = "StickRegion"
+    /// The `TriggerBand` case.
+    case triggerBand = "TriggerBand"
+    /// The `TouchArea` case.
+    case touchArea = "TouchArea"
 
     /// Keys that a profile document may give for this case, which `type` selects.
     var fields: [CodingKeys] {
@@ -101,6 +113,10 @@ public enum RemappingSource: Codable, Equatable, Hashable, Sendable {
       case .touchContact: [.type, .surface]
       case .touchGrid: [.type, .surface, .columns, .rows, .column, .row]
       case .touchSwipe: [.type, .surface, .direction, .minimumDistance]
+      case .stickRegion:
+        [.type, .stick, .innerRadius, .outerRadius, .fromDegrees, .toDegrees, .hysteresis]
+      case .triggerBand: [.type, .trigger, .from, .to, .hysteresis]
+      case .touchArea: [.type, .surface, .x, .y, .width, .height]
       }
     }
   }
@@ -131,6 +147,30 @@ public enum RemappingSource: Codable, Equatable, Hashable, Sendable {
     case trigger
     /// The JSON key of `stage`.
     case stage
+    /// The JSON key of `stick`.
+    case stick
+    /// The JSON key of `innerRadius`.
+    case innerRadius
+    /// The JSON key of `outerRadius`.
+    case outerRadius
+    /// The JSON key of `fromDegrees`.
+    case fromDegrees
+    /// The JSON key of `toDegrees`.
+    case toDegrees
+    /// The JSON key of `hysteresis`.
+    case hysteresis
+    /// The JSON key of `from`.
+    case from
+    /// The JSON key of `to`.
+    case to
+    /// The JSON key of `x`.
+    case x
+    /// The JSON key of `y`.
+    case y
+    /// The JSON key of `width`.
+    case width
+    /// The JSON key of `height`.
+    case height
   }
 
   /// Decodes a source from a profile document.
@@ -180,6 +220,45 @@ public enum RemappingSource: Codable, Equatable, Hashable, Sendable {
           minimumDistance: try container.decode(Double.self, forKey: .minimumDistance)
         )
       )
+    case .stickRegion:
+      let from = try container.decodeIfPresent(Double.self, forKey: .fromDegrees)
+      let to = try container.decodeIfPresent(Double.self, forKey: .toDegrees)
+      guard (from == nil) == (to == nil) else {
+        throw DecodingError.dataCorruptedError(
+          forKey: .toDegrees,
+          in: container,
+          debugDescription: "fromDegrees and toDegrees come together."
+        )
+      }
+      self = .stickRegion(
+        RemappingStickRegionSource(
+          stick: try container.decode(RemappingStickSource.self, forKey: .stick),
+          innerRadius: try container.decode(Double.self, forKey: .innerRadius),
+          outerRadius: try container.decode(Double.self, forKey: .outerRadius),
+          fromDegrees: from,
+          toDegrees: to,
+          hysteresis: try container.decode(Double.self, forKey: .hysteresis)
+        )
+      )
+    case .triggerBand:
+      self = .triggerBand(
+        RemappingTriggerBandSource(
+          trigger: try container.decode(RemappingTriggerSource.self, forKey: .trigger),
+          from: try container.decode(Double.self, forKey: .from),
+          to: try container.decode(Double.self, forKey: .to),
+          hysteresis: try container.decode(Double.self, forKey: .hysteresis)
+        )
+      )
+    case .touchArea:
+      self = .touchArea(
+        RemappingTouchAreaSource(
+          surface: try container.decode(RemappingTouchSurface.self, forKey: .surface),
+          x: try container.decode(Double.self, forKey: .x),
+          y: try container.decode(Double.self, forKey: .y),
+          width: try container.decode(Double.self, forKey: .width),
+          height: try container.decode(Double.self, forKey: .height)
+        )
+      )
     }
   }
 
@@ -222,6 +301,27 @@ public enum RemappingSource: Codable, Equatable, Hashable, Sendable {
       try container.encode(source.surface, forKey: .surface)
       try container.encode(source.direction, forKey: .direction)
       try container.encode(source.minimumDistance, forKey: .minimumDistance)
+    case .stickRegion(let source):
+      try container.encode(Kind.stickRegion, forKey: .type)
+      try container.encode(source.stick, forKey: .stick)
+      try container.encode(source.innerRadius, forKey: .innerRadius)
+      try container.encode(source.outerRadius, forKey: .outerRadius)
+      try container.encodeIfPresent(source.fromDegrees, forKey: .fromDegrees)
+      try container.encodeIfPresent(source.toDegrees, forKey: .toDegrees)
+      try container.encode(source.hysteresis, forKey: .hysteresis)
+    case .triggerBand(let source):
+      try container.encode(Kind.triggerBand, forKey: .type)
+      try container.encode(source.trigger, forKey: .trigger)
+      try container.encode(source.from, forKey: .from)
+      try container.encode(source.to, forKey: .to)
+      try container.encode(source.hysteresis, forKey: .hysteresis)
+    case .touchArea(let source):
+      try container.encode(Kind.touchArea, forKey: .type)
+      try container.encode(source.surface, forKey: .surface)
+      try container.encode(source.x, forKey: .x)
+      try container.encode(source.y, forKey: .y)
+      try container.encode(source.width, forKey: .width)
+      try container.encode(source.height, forKey: .height)
     }
   }
 }

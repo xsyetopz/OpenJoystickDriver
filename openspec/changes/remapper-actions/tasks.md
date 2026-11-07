@@ -61,9 +61,9 @@ Each group owns its tests and documentation. Order follows dependencies: tests f
 
 ## 7. Analog Regions (REQ-43 to REQ-45)
 
-- [ ] 7.1 Write failing tests first: ring edges with hysteresis, eight sectors, overlap rejected, release-before-press on a region change, three trigger bands, dual-stage plus bands rejected, touch rectangle contact. Verify: `swift test --filter OpenJoystickDriverKitTests.RegionSourceTests` fails for the stated reason.
-- [ ] 7.2 Add the three source cases to model, validation, schema and the source parser used by `ojd binding set`. Verify: the validation cases of `RegionSourceTests` and `./Scripts/ojd check schemas` pass.
-- [ ] 7.3 Implement activation in `Engine/Analog` reusing the stick deadzone and trigger hysteresis paths. Verify: `swift test --filter OpenJoystickDriverKitTests.RegionSourceTests` and `swift test --filter OpenJoystickDriverKitTests.StickRoutingTests` pass.
+- [x] 7.1 Write failing tests first: ring edges with hysteresis, eight sectors, overlap rejected, release-before-press on a region change, three trigger bands, dual-stage plus bands rejected, touch rectangle contact. Verify: `swift test --filter OpenJoystickDriverKitTests.RegionSourceTests` fails for the stated reason.
+- [x] 7.2 Add the three source cases to model, validation, schema and the source parser used by `ojd binding set`. Verify: the validation cases of `RegionSourceTests` and `./Scripts/ojd check schemas` pass.
+- [x] 7.3 Implement activation in `Engine/Analog` reusing the stick deadzone and trigger hysteresis paths. Verify: `swift test --filter OpenJoystickDriverKitTests.RegionSourceTests` and `swift test --filter OpenJoystickDriverKitTests.StickRoutingTests` pass.
 - [ ] 7.4 Add the region editor with a live position view in the Controller section. Verify: `swift test --filter OpenJoystickDriverPresentationTests` passes.
 - [ ] 7.5 Localization keys in 22 bundles; document in `wiki/Sticks-Triggers-Touchpad-and-Motion.md` and `wiki/Bindings-and-Actions.md`. Verify: `python3 Scripts/Quality/check_localization_keys.py` and `git diff --check` pass.
 

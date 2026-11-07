@@ -146,7 +146,8 @@
     /// with a discrete destination.
     var supportsActivation: Bool {
       switch binding.source {
-      case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe:
+      case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe,
+        .stickRegion, .triggerBand, .touchArea:
         return !binding.destination.isContinuous
       case .axis, .axisDirection: return false
       }

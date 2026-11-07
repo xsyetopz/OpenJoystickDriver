@@ -195,6 +195,12 @@ enum RuntimePresentation {
         touchSurfaceLabel(swipe.surface),
         humanized(swipe.direction.rawValue)
       )
+    case .stickRegion(let region):
+      return "\(humanized(region.stick.rawValue)) \(region.innerRadius)-\(region.outerRadius)"
+    case .triggerBand(let band):
+      return "\(humanized(band.trigger.rawValue)) \(band.from)-\(band.to)"
+    case .touchArea(let area):
+      return "\(touchSurfaceLabel(area.surface)) \(area.x),\(area.y) \(area.width)x\(area.height)"
     }
   }
 

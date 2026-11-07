@@ -341,7 +341,7 @@
       switch option.source {
       case .axis: false
       case .axisDirection, .triggerStage, .motionLean, .button, .dpad, .touchContact, .touchGrid,
-        .touchSwipe:
+        .touchSwipe, .stickRegion, .triggerBand, .touchArea:
         true
       }
     }

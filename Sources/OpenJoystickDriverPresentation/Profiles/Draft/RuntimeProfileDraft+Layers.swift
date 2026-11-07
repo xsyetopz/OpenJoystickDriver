@@ -221,7 +221,9 @@ extension RuntimeProfileDraft {
   static func defaultTuning(for source: RemappingSource) -> RemappingAxisTuning? {
     switch source {
     case .axis, .axisDirection: .default
-    case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe: nil
+    case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe,
+      .stickRegion, .triggerBand, .touchArea:
+      nil
     }
   }
   /// Returns `profile` after validating it.

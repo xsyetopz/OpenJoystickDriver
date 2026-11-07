@@ -87,6 +87,7 @@ extension RemappingProfile {
     try validateChords(chords, identifiers: &bindingIDs)
     try validateSequences(sequences, identifiers: &bindingIDs)
     try validateLayers(identifiers: &bindingIDs)
+    try validateRegionOverlap()
 
     let encodedSize: Int
     do { encodedSize = try JSONEncoder().encode(self).count } catch {
@@ -145,7 +146,7 @@ extension RemappingProfile {
         switch source {
         case .axis: throw RemappingValidationError.chordContinuousSource(index: index)
         case .button, .dpad, .axisDirection, .triggerStage, .motionLean, .touchContact, .touchGrid,
-          .touchSwipe:
+          .touchSwipe, .stickRegion, .triggerBand, .touchArea:
           break
         }
       }
@@ -176,7 +177,7 @@ extension RemappingProfile {
         switch source {
         case .axis: throw RemappingValidationError.sequenceContinuousSource(index: index)
         case .button, .dpad, .axisDirection, .triggerStage, .motionLean, .touchContact, .touchGrid,
-          .touchSwipe:
+          .touchSwipe, .stickRegion, .triggerBand, .touchArea:
           break
         }
       }
@@ -222,7 +223,7 @@ extension RemappingProfile {
       switch layer.activator {
       case .axis: throw RemappingValidationError.layerActivatorNotDiscrete(index: index)
       case .button, .dpad, .axisDirection, .triggerStage, .motionLean, .touchContact, .touchGrid,
-        .touchSwipe:
+        .touchSwipe, .stickRegion, .triggerBand, .touchArea:
         break
       }
       guard activators.insert(layer.activator).inserted else {
@@ -291,6 +292,15 @@ extension RemappingProfile {
       guard swipe.minimumDistance.isFinite,
         RemappingTouchSwipeSource.minimumDistanceRange.contains(swipe.minimumDistance)
       else { throw RemappingValidationError.invalidTouchSwipe }
+    case .stickRegion(let region):
+      guard region.isValid else { throw RemappingValidationError.invalidStickRegion }
+    case .triggerBand(let band):
+      guard band.isValid else { throw RemappingValidationError.invalidTriggerBand }
+      guard !triggerMappings.contains(where: { $0.source == band.trigger }) else {
+        throw RemappingValidationError.triggerBandWithDualStage(band.trigger)
+      }
+    case .touchArea(let area):
+      guard area.isValid else { throw RemappingValidationError.invalidTouchArea }
     case .button, .dpad, .axis, .axisDirection, .touchContact: break
     }
   }
@@ -317,7 +327,8 @@ extension RemappingProfile {
     let isAxisSource: Bool
     switch binding.source {
     case .axis, .axisDirection: isAxisSource = true
-    case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe:
+    case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe,
+      .stickRegion, .triggerBand, .touchArea:
       isAxisSource = false
     }
 
@@ -336,7 +347,7 @@ extension RemappingProfile {
         throw RemappingValidationError.incompatibleSourceAndDestination(index: index)
       }
     case .axisDirection, .triggerStage, .motionLean, .button, .dpad, .touchContact, .touchGrid,
-      .touchSwipe:
+      .touchSwipe, .stickRegion, .triggerBand, .touchArea:
       guard !binding.destination.isContinuous else {
         throw RemappingValidationError.incompatibleSourceAndDestination(index: index)
       }

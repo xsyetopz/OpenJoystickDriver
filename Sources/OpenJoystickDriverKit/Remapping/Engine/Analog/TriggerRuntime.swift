@@ -144,7 +144,7 @@ struct RemappingDualStageTriggerRuntime {
   ///
   /// A value at or above the threshold activates it. Once active, it stays active while the value
   /// is above the threshold minus the hysteresis.
-  private static func active(
+  static func active(
     value: Double,
     threshold: Double,
     hysteresis: Double,

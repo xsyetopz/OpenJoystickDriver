@@ -39,6 +39,16 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
   case invalidTouchGrid
   /// A touch swipe source has an invalid minimum distance.
   case invalidTouchSwipe
+  /// A stick region has a radius, sector or hysteresis out of range.
+  case invalidStickRegion
+  /// A trigger band has a pressure or hysteresis out of range.
+  case invalidTriggerBand
+  /// A touch area is empty or outside the surface.
+  case invalidTouchArea
+  /// A trigger has bands and a dual-stage mapping.
+  case triggerBandWithDualStage(RemappingTriggerSource)
+  /// Two regions of one stick, or two bands of one trigger, share a position.
+  case overlappingRegions
   /// The profile name is empty, too long, padded with whitespace or holds control characters.
   case invalidProfileName
   /// The profile holds more mappings than the limit; the value is the count.
@@ -157,6 +167,13 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
       "The \(surface.rawValue) touch surface has multiple continuous mappings."
     case .invalidTouchGrid: "A touch grid source has invalid dimensions or cell coordinates."
     case .invalidTouchSwipe: "A touch swipe source has an invalid minimum distance."
+    case .invalidStickRegion:
+      "A stick region needs 0 <= inner < outer <= 1, both angles or none, hysteresis 0 to 0.25."
+    case .invalidTriggerBand: "A trigger band needs 0 <= from < to <= 1 and hysteresis 0 to 0.25."
+    case .invalidTouchArea: "A touch area must be nonempty and inside the surface."
+    case .triggerBandWithDualStage(let trigger):
+      "The \(trigger.rawValue) trigger has bands and a dual-stage mapping."
+    case .overlappingRegions: "Regions of one stick, or bands of one trigger, must not overlap."
     case .invalidMotionTuning(let error): error.localizedDescription
     case .invalidGyroOutput(let error): error.localizedDescription
     case .invalidJoyConPairDevice:

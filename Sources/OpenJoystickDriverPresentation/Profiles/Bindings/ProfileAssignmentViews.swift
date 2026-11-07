@@ -29,8 +29,10 @@
       }
     case .triggerStage: return OJDLocalized.string("ui.profiles.sectionTriggers")
     case .motionLean: return OJDLocalized.string("ui.profiles.sectionMotion")
-    case .touchContact, .touchGrid, .touchSwipe:
+    case .touchContact, .touchGrid, .touchSwipe, .touchArea:
       return OJDLocalized.string("ui.profiles.sectionTouch")
+    case .stickRegion: return OJDLocalized.string("ui.profiles.sectionSticks")
+    case .triggerBand: return OJDLocalized.string("ui.profiles.sectionTriggers")
     }
   }
 

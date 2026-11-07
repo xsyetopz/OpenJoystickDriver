@@ -74,7 +74,8 @@ extension RuntimeProfileDraft {
       let tuning: RemappingAxisTuning?
       switch source {
       case .axis, .axisDirection: tuning = binding.axisTuning ?? .default
-      case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe:
+      case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe,
+        .stickRegion, .triggerBand, .touchArea:
         tuning = nil
       }
       let destination = Self.destination(for: source, preserving: binding.destination)
@@ -171,7 +172,8 @@ extension RuntimeProfileDraft {
     let tuning: RemappingAxisTuning?
     switch source {
     case .axis, .axisDirection: tuning = axisTuning ?? .default
-    case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe:
+    case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe,
+      .stickRegion, .triggerBand, .touchArea:
       tuning = nil
     }
     let binding = RemappingBinding(source: source, destination: destination, axisTuning: tuning)

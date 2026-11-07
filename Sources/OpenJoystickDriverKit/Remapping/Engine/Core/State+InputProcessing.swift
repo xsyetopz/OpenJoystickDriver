@@ -86,6 +86,7 @@ extension RemappingEngineState {
       let actions = processAdvancedStick(.left, x: x, y: y, for: identifier, at: uptimeNanoseconds)
       return actions
         + processAxes([(.leftStickX, x), (.leftStickY, y)], for: identifier, at: uptimeNanoseconds)
+        + processStickRegions(.left, x: x, y: y, for: identifier, at: uptimeNanoseconds)
     case .rightStick(let x, let y):
       let actions = processAdvancedStick(.right, x: x, y: y, for: identifier, at: uptimeNanoseconds)
       return actions
@@ -93,13 +94,15 @@ extension RemappingEngineState {
           [(.rightStickX, x), (.rightStickY, y)],
           for: identifier,
           at: uptimeNanoseconds
-        )
+        ) + processStickRegions(.right, x: x, y: y, for: identifier, at: uptimeNanoseconds)
     case .leftTrigger(let value):
       return processAdvancedTrigger(.left, value: value, for: identifier, at: uptimeNanoseconds)
         + processAxes([(.leftTrigger, value)], for: identifier, at: uptimeNanoseconds)
+        + processTriggerBands(.left, value: value, for: identifier, at: uptimeNanoseconds)
     case .rightTrigger(let value):
       return processAdvancedTrigger(.right, value: value, for: identifier, at: uptimeNanoseconds)
         + processAxes([(.rightTrigger, value)], for: identifier, at: uptimeNanoseconds)
+        + processTriggerBands(.right, value: value, for: identifier, at: uptimeNanoseconds)
     case .motion(let sample): return processMotion(sample, for: identifier)
     case .touch(let sample): return processTouch(sample, for: identifier, at: uptimeNanoseconds)
     }
