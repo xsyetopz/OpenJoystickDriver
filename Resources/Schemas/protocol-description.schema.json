@@ -188,26 +188,6 @@
   "allOf": [
     {
       "if": {
-        "properties": {
-          "family": {
-            "not": {
-              "const": "XboxXUSB"
-            }
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "defaults": {
-            "not": {
-              "required": ["receiverPowerOff"]
-            }
-          }
-        }
-      }
-    },
-    {
-      "if": {
         "required": ["recordSections"],
         "properties": {
           "recordSections": {
@@ -362,6 +342,26 @@
                   }
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "family": {
+            "not": {
+              "const": "XboxXUSB"
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "defaults": {
+            "not": {
+              "required": ["receiverPowerOff"]
             }
           }
         }

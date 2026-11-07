@@ -234,6 +234,10 @@ EXCEPTIONS: dict[tuple[str, str], tuple[tuple[str, ...], str]] = {
         MODE_ID,
     ),
     ("controller", "/$defs/mode/if/properties/id/const"): (("default",), MODE_ID),
+    ("controller", "/then/properties/modes/contains/properties/id/const"): (
+        ("default",),
+        MODE_ID,
+    ),
 }
 
 # Property-name maps a field-name enum is checked against. A source is a list of

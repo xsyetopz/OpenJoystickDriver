@@ -759,7 +759,8 @@ class PinnedSDLDataTests(unittest.TestCase):
 
     def test_real_exclusions_hold_and_every_admissible_row_is_committed(self) -> None:
         existing = {
-            key: proto(record)["family"] for key, record in committed_records().items()
+            key: catalog.default_family(record)
+            for key, record in committed_records().items()
         }
         records, counts = catalog.build_sdl_records(self.rows, existing)
         self.assertEqual(records, {})
