@@ -1,0 +1,38 @@
+{
+  "apiVersion": "openjoystickdriver/v1alpha2",
+  "kind": "Controller",
+  "vendorID": 11720,
+  "productID": 36891,
+  "modes": [
+    {
+      "id": "default",
+      "protocol": {
+        "family": "HIDDescriptor"
+      }
+    }
+  ],
+  "input": {
+    "hidUsageMap": {
+      "usages": [
+        { "kind": "Button", "page": 9, "usage": 1, "control": "South" },
+        { "kind": "Button", "page": 9, "usage": 2, "control": "East" },
+        { "kind": "Button", "page": 9, "usage": 3, "control": "West" },
+        { "kind": "Button", "page": 9, "usage": 4, "control": "North" },
+        { "kind": "Button", "page": 9, "usage": 5, "control": "LeftShoulder" },
+        { "kind": "Button", "page": 9, "usage": 6, "control": "RightShoulder" },
+        { "kind": "Button", "page": 9, "usage": 7, "control": "Back" },
+        { "kind": "Button", "page": 9, "usage": 8, "control": "Start" },
+        { "kind": "Button", "page": 9, "usage": 9, "control": "LeftStickClick" },
+        { "kind": "Button", "page": 9, "usage": 10, "control": "RightStickClick" },
+        { "kind": "Axis", "page": 1, "usage": 48, "control": "LeftStickX" },
+        { "kind": "Axis", "page": 1, "usage": 49, "control": "LeftStickY" },
+        { "kind": "Axis", "page": 1, "usage": 50, "control": "RightStickX" },
+        { "kind": "Axis", "page": 1, "usage": 53, "control": "RightStickY" },
+        { "kind": "Axis", "page": 2, "usage": 196, "control": "RightTrigger" },
+        { "kind": "Axis", "page": 2, "usage": 197, "control": "LeftTrigger" },
+        { "kind": "Hat", "page": 1, "usage": 57 },
+        { "kind": "Button", "page": 12, "usage": 547, "control": "Guide" }
+      ]
+    }
+  }
+}

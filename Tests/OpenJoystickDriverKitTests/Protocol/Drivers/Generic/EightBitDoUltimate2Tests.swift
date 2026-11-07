@@ -2,7 +2,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// The Ultimate 2 records, from sources only.
+/// The Ultimate 2 and Ultimate 3-mode records, from sources only.
 ///
 /// No capture of an Ultimate 2 backs them, and no source
 /// gives its rear-button usages, so the records map no paddle: paddles wait for tester check T5.
@@ -36,5 +36,28 @@ struct EightBitDoUltimate2Tests {
     let record = try #require(ProtocolDriverRegistry().record(for: model))
     #expect(record.isIdle)
     #expect(record.hidUsageMap == nil)
+  }
+
+  @Test
+  func ultimate3ModeReplaysTheXboxButtonOrder() throws {
+    let model = ControllerModelID(vendorID: 0x2DC8, productID: 0x901B)
+    let parser = HIDDescriptorDriver(model: model, usageMap: try catalogUsageMap(0x2DC8, 0x901B))
+    let order: [Control] = [
+      .south, .east, .west, .north, .leftShoulder, .rightShoulder, .back, .start,
+      .leftStickClick, .rightStickClick,
+    ]
+    for (index, button) in order.enumerated() {
+      let press = Base.parse(parser, page: 9, usage: UInt32(index + 1), 1)
+      #expect(press.contains(.press(button)), "usage \(index + 1)")
+    }
+    #expect(Base.parse(parser, page: 12, usage: 547, 1).contains(.press(.guide)))
+    #expect(Base.parse(parser, usage: 0x32, 255).contains(.rightStick(x: 1, y: 0)))
+  }
+
+  @Test(arguments: [UInt16(0x6012), 0x6013, 0x3107, 0x901B])
+  func recordsHaveNoKeepAlive(productID: UInt16) throws {
+    let model = ControllerModelID(vendorID: 0x2DC8, productID: productID)
+    let record = try #require(ProtocolDriverRegistry().record(for: model))
+    #expect(record.session.keepAlive == nil)
   }
 }

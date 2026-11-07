@@ -51,6 +51,26 @@ The 8BitDo Ultimate 2 in DInput mode (`2DC8:6012`, cable and 2.4 GHz dongle) has
 
 The 8BitDo bootloader identities `2DC8:3208` and `2DC8:5750` are never served. OJD sends them no data, because a write to a pad in bootloader state risks a bad firmware image. The Controllers page lists such a pad as unserved with the reason `BootloaderIdentity`. For the rule, see [the test record](../docs/testing/8bitdo-ultimate-2c.md#bootloader-identities).
 
+Every 8BitDo `2DC8` identity that has a record. Only `2DC8:310A` is Community-Verified; every other row is Unverified.
+
+| VID:PID | Model and mode | Protocol |
+| --- | --- | --- |
+| `2DC8:2000`, `2DC8:2002` | No source names the model | `XboxGIP` |
+| `2DC8:200F` | No source names the model | `XboxGIP`, with the Share button read from the end of the report |
+| `2DC8:3106`, `2DC8:6001` | No source names the model | `XboxXUSB`, wired |
+| `2DC8:3107` | Ultimate 2 dongle | Idle |
+| `2DC8:3109` | Ultimate 2C USB adapter | `XboxXUSB`, wired |
+| `2DC8:310A` | Ultimate 2C, 2.4 GHz dongle, XInput | `XboxXUSB`, wired |
+| `2DC8:310B` | Ultimate 2 and Pro 3 may share this identity; no capture confirms it or shows how the host tells them apart | `XboxXUSB`, wired |
+| `2DC8:301B` | Ultimate 2C, Bluetooth LE | `HIDDescriptor` |
+| `2DC8:301C` | Ultimate 2C HID receiver | Idle |
+| `2DC8:301D` | Ultimate 2C, wired, DInput | `HIDDescriptor` |
+| `2DC8:6012` | Ultimate 2, DInput, cable and 2.4 GHz dongle | `HIDDescriptor` |
+| `2DC8:6013` | Ultimate 2 receiver | Idle |
+| `2DC8:901B` | Ultimate 3-mode, Bluetooth, Xbox mode | `HIDDescriptor`, Xbox button order |
+
+The Ultimate 3-mode record (`2DC8:901B`) has no capture; see [the Ultimate 2 test record](../docs/testing/8bitdo-ultimate-2.md).
+
 ### Unverified
 
 OJD includes a built-in catalog of 697 controller records. The Unverified tier is every catalog controller that this page does not list as Official or Community-verified. A record does not prove that the controller works. Nobody tested these controllers on real hardware. The catalog includes the NVIDIA SHIELD controllers of 2015 (`0955:7210`) and 2017 (`0955:7214`). On macOS the 2017 controller sends input only, with no rumble.

@@ -47,7 +47,7 @@ Verify: `swift test --filter EightBitDo`, `./Scripts/ojd catalog regenerate --ch
 - [ ] 3.1 Write tests from sources: a replay per `6012` connection from one usage map (button usages 1 to 15 in the 2C order with no rear usage: no source gives the Ultimate 2 rear-button usages, so the four paddle mappings wait for T5, D5), a test that `6013` and `3107` map no controls, and a mode-selection test for `310B` (one name for both models). Verify: `swift test --filter EightBitDo` shows them failing before 3.2 and 3.3 (the `6012` map and the `6013`/`3107` tests landed with 3.2; the paddle test and the `310B` test remain open).
 - [x] 3.2 Add `2dc8-6012.json`, `2dc8-6013.json` and `2dc8-3107.json` to `Resources/Controllers/2dc8/`; `6013` and `3107` are `idle` records (D1, D4). Verify: `./Scripts/ojd catalog regenerate --write` then `--check` pass and `./Scripts/ojd diagnose record FILE --validate-only` exits 0 for each file.
 - [ ] 3.3 Add the `310B` patch in `Resources/ControllerPatches/2dc8/` that names both models (D4). Verify: `swift test --filter EightBitDo` passes the `310B` test and `./Scripts/ojd catalog regenerate --check` passes.
-- [ ] 3.4 Write `docs/testing/8bitdo-ultimate-2.md` (identities, the starting usage map, paddle order, gyro status, the unverified tier) and update the wiki rows and `CHANGELOG.md`. Verify: `grep -n "6012" wiki/Supported-Controllers.md docs/testing/8bitdo-ultimate-2.md` finds the rows and `git diff --check` reports nothing.
+- [x] 3.4 Write `docs/testing/8bitdo-ultimate-2.md` (identities, the starting usage map, paddle order, gyro status, the unverified tier) and update the wiki rows and `CHANGELOG.md`. Verify: `grep -n "6012" wiki/Supported-Controllers.md docs/testing/8bitdo-ultimate-2.md` finds the rows and `git diff --check` reports nothing.
 - [ ] 3.5 Apply the tester result of T5 to T7 (`6012` cable and dongle, `6013` and `3107`, `310B` with an Ultimate 2 and a Pro 3): replace fixtures, apply D3 and D4 outcomes, record the gyro report offsets if a capture shows motion (D6). Verify: `swift test --filter EightBitDo` passes with the `capture` fixtures. Open until the tester's files arrive.
 
 ## 4. Ultimate 3-mode: 901B
@@ -58,7 +58,7 @@ Verify: `swift test --filter EightBitDo`, `./Scripts/ojd catalog regenerate --ch
 
 - [ ] 4.1 Write the replay test from sources (a Bluetooth gamepad that follows the Xbox button order). Verify: `swift test --filter EightBitDo` shows it failing before 4.2.
 - [ ] 4.2 Add `2dc8-901b.json` with the protocol the sources give (`HIDDescriptor`, Xbox mode over Bluetooth). Verify: the test passes and `./Scripts/ojd catalog regenerate --check` passes.
-- [ ] 4.3 Document the model and mode in `docs/testing/8bitdo-ultimate-2.md`, the wiki rows and `CHANGELOG.md`, as unverified. Verify: `grep -n "901B" wiki/Supported-Controllers.md` finds the row and `git diff --check` reports nothing.
+- [x] 4.3 Document the model and mode in `docs/testing/8bitdo-ultimate-2.md`, the wiki rows and `CHANGELOG.md`, as unverified. Verify: `grep -n "901B" wiki/Supported-Controllers.md` finds the row and `git diff --check` reports nothing.
 - [ ] 4.4 Apply the tester result of T8 (`901B`). Verify: `swift test --filter EightBitDo` passes with the `capture` fixture. Open until the tester's files arrive.
 
 ## 5. Watchdog and Idle Dongle on macOS
@@ -77,7 +77,7 @@ Owns: completeness of the model and mode listings.
 Depends: 2 to 5.
 Verify: the loop below, `just check`.
 
-- [ ] 6.1 Confirm every 8BitDo PID with a bundled record appears in the wiki tables and every PID without a record appears as not covered. Verify: `for p in 2000 2002 200f 301b 301c 301d 3106 3107 3109 310a 310b 6001 6012 6013 901b; do grep -qi "2DC8:$p" wiki/Supported-Controllers.md || echo "missing $p"; done` prints nothing.
+- [x] 6.1 Confirm every 8BitDo PID with a bundled record appears in the wiki tables and every PID without a record appears as not covered. Verify: `for p in 2000 2002 200f 301b 301c 301d 3106 3107 3109 310a 310b 6001 6012 6013 901b; do grep -qi "2DC8:$p" wiki/Supported-Controllers.md || echo "missing $p"; done` prints nothing.
 - [ ] 6.2 Run the repository checks on the merged tree. Verify: `just check` passes; rerun only the failed step.
 
 ## Hardware Checks (Testers)
