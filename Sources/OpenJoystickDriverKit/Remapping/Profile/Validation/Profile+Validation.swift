@@ -80,6 +80,7 @@ extension RemappingProfile {
       throw RemappingValidationError.tooManyBindings(mappingCount)
     }
 
+    try validateMacros()
     var bindingIDs: Set<UUID> = []
     for mapping in touchMappings { try validateIdentifier(mapping.id, identifiers: &bindingIDs) }
     try validateBindings(bindings, identifiers: &bindingIDs)
@@ -252,12 +253,15 @@ extension RemappingProfile {
 
   /// Checks that a destination is supported and that virtual gamepad destinations have a virtual
   /// gamepad.
-  private func validateDestination(_ destination: RemappingDestination) throws {
+  func validateDestination(_ destination: RemappingDestination) throws {
     if case .gamepadButton(let button) = destination, !button.supportsVirtualOutput {
       throw RemappingValidationError.unsupportedGamepadButton(button)
     }
     if case .physical(let output) = destination {
       do { try output.validate() } catch { throw RemappingValidationError.invalidPhysicalOutput }
+    }
+    if case .macro(let id) = destination, !macros.contains(where: { $0.id == id }) {
+      throw RemappingValidationError.unknownMacro(id)
     }
     if destination.isVirtualGamepad, outputPolicy.virtualGamepad == .disabled {
       throw RemappingValidationError.virtualOutputRequired

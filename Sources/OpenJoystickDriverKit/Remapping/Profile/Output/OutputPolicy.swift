@@ -115,7 +115,8 @@ extension RemappingProfile {
       bindings: [],
       chords: [],
       sequences: [],
-      layers: []
+      layers: [],
+      macros: []
     )
   }
 
@@ -135,7 +136,8 @@ extension RemappingProfile {
 
   /// Whether a binding, chord, or sequence, in any layer or activation, targets a match.
   private func containsDestination(where matches: (RemappingDestination) -> Bool) -> Bool {
-    Self.containsDestination(bindings: bindings, chords: chords, sequences: sequences, matches)
+    macros.contains { $0.steps.flatMap(\.destinations).contains(where: matches) }
+      || Self.containsDestination(bindings: bindings, chords: chords, sequences: sequences, matches)
       || layers.contains {
         Self.containsDestination(
           bindings: $0.bindings,
@@ -173,7 +175,8 @@ extension RemappingProfile {
     bindings: [RemappingBinding]? = nil,
     chords: [RemappingChord]? = nil,
     sequences: [RemappingSequence]? = nil,
-    layers: [RemappingLayer]? = nil
+    layers: [RemappingLayer]? = nil,
+    macros: [RemappingMacro]? = nil
   ) -> Self {
     Self(
       id: id,
@@ -191,7 +194,8 @@ extension RemappingProfile {
       bindings: bindings ?? self.bindings,
       chords: chords ?? self.chords,
       sequences: sequences ?? self.sequences,
-      layers: layers ?? self.layers
+      layers: layers ?? self.layers,
+      macros: macros ?? self.macros
     )
   }
 }
@@ -201,7 +205,7 @@ extension RemappingDestination {
   public var isSystemInput: Bool {
     switch self {
     case .keyboard, .mouseButton, .mouseMovement, .scroll: true
-    case .gamepadButton, .gamepadDpad, .gamepadAxis, .physical: false
+    case .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro: false
     }
   }
 
@@ -209,7 +213,7 @@ extension RemappingDestination {
   var isVirtualGamepad: Bool {
     switch self {
     case .gamepadButton, .gamepadDpad, .gamepadAxis: true
-    case .keyboard, .mouseButton, .mouseMovement, .scroll, .physical: false
+    case .keyboard, .mouseButton, .mouseMovement, .scroll, .physical, .macro: false
     }
   }
 }

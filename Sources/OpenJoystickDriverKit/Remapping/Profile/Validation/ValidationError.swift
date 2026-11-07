@@ -110,6 +110,23 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
   case duplicateLayerActivator(index: Int)
   /// A layer activator also has a binding.
   case layerActivatorAlsoBound(index: Int)
+  /// The profile holds more macros than the limit; the value is the count.
+  case tooManyMacros(Int)
+  /// Two macros share this identifier.
+  case duplicateMacroID(UUID)
+  /// The macro at this index has the same name as an earlier macro.
+  case duplicateMacroName(index: Int)
+  /// A field of the macro at this index is invalid or out of range; `field` is its path inside
+  /// the macro, such as `steps[2].durationMs`.
+  case invalidMacro(index: Int, field: String)
+  /// A step of a macro has a destination that a step cannot use.
+  case invalidMacroStepDestination(index: Int, step: Int)
+  /// A step of a macro runs a macro.
+  case macroNestingNotAllowed(index: Int, step: Int)
+  /// A macro runs longer than its limit; `limit` names the limit that it exceeds.
+  case macroRunTimeExceeded(index: Int, limit: String)
+  /// A destination runs a macro that the profile does not hold.
+  case unknownMacro(UUID)
   /// The profile could not be encoded.
   case encodingFailed
   /// The encoded profile is over the size limit; the value is its size in bytes.
@@ -193,6 +210,18 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
     case .duplicateLayerActivator(let index): "Layer \(index) duplicates another layer's activator."
     case .layerActivatorAlsoBound(let index):
       "Layer \(index) activator is also bound as a regular source."
+    case .tooManyMacros(let count): "A remapping profile cannot contain \(count) macros."
+    case .duplicateMacroID(let id): "The macro identifier \(id.uuidString) is duplicated."
+    case .duplicateMacroName(let index): "Macro \(index) repeats the name of an earlier macro."
+    case .invalidMacro(let index, let field): "Macro \(index) has an invalid \(field)."
+    case .invalidMacroStepDestination(let index, let step):
+      "Step \(step) of macro \(index) has a destination that a macro step cannot use."
+    case .macroNestingNotAllowed(let index, let step):
+      "Step \(step) of macro \(index) runs a macro, which a macro step cannot do."
+    case .macroRunTimeExceeded(let index, let limit):
+      "Macro \(index) runs longer than the \(limit) limit."
+    case .unknownMacro(let id):
+      "A destination runs the macro \(id.uuidString), which does not exist."
     case .encodingFailed: "The remapping profile could not be encoded."
     case .encodedSizeExceeded(let size):
       "The encoded remapping profile is too large (\(size) bytes)."

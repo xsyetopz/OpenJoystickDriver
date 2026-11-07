@@ -33,7 +33,7 @@ Trigger-only destinations (all but SystemKey) take only the press behaviors (`Ta
 
 ### D3. Runaway Control
 
-Risk: a macro keeps keys down or never ends. Controls, all visible: nesting is forbidden (no recursion); steps, run time and repeat are bounded at load (REQ-30) so a bad macro fails validation instead of being cut short; every stop path releases held outputs through one function (REQ-29) that the existing fail-closed path (`Engine/Core/Engine+FailClosed.swift`) also calls; `whileRunning` has two named values; `WhileHeld` ends only on release, disconnect, pause, profile change, permission loss or shutdown. A test per stop path asserts that no output stays down. All numeric limits are proposed.
+Risk: a macro keeps keys down or never ends. Controls, all visible: nesting is forbidden (no recursion); steps, run time and repeat are bounded at load (REQ-30) so a bad macro fails validation instead of being cut short; every stop path releases held outputs through one function (REQ-29); macro outputs are reference counted with all other held outputs, so the existing fail-closed path (`Engine/Core/Engine+FailClosed.swift`) releases them without a macro-specific call; `whileRunning` has two named values; `WhileHeld` ends only on release, disconnect, pause, profile change, permission loss or shutdown. A test per stop path asserts that no output stays down. All numeric limits are proposed.
 
 ### D4. `doubleTap` Becomes `multiTap`
 

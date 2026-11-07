@@ -42,6 +42,7 @@ extension RemappingEngineState {
       device.outputs.pulseDeadlines.removeValue(forKey: id)
       device.outputs.turbos.removeValue(forKey: id)
       device.outputs.continuous.removeValue(forKey: id)
+      actions += stopMacro(id, device: &device)
     }
     return actions
   }

@@ -449,6 +449,8 @@ public struct RemappingProfile: Codable, Equatable, Identifiable, Sendable {
   public let sequences: [RemappingSequence]
   /// Alternate mapping sets that an activator source turns on.
   public let layers: [RemappingLayer]
+  /// Macros that `Macro` destinations run.
+  public let macros: [RemappingMacro]
 
   /// Creates a profile.
   ///
@@ -469,7 +471,8 @@ public struct RemappingProfile: Codable, Equatable, Identifiable, Sendable {
     bindings: [RemappingBinding],
     chords: [RemappingChord] = [],
     sequences: [RemappingSequence] = [],
-    layers: [RemappingLayer] = []
+    layers: [RemappingLayer] = [],
+    macros: [RemappingMacro] = []
   ) {
     self.id = id
     self.name = name
@@ -487,6 +490,7 @@ public struct RemappingProfile: Codable, Equatable, Identifiable, Sendable {
     self.chords = chords
     self.sequences = sequences
     self.layers = layers
+    self.macros = macros
   }
 
   /// Decodes a profile from a profile document.
@@ -540,5 +544,6 @@ public struct RemappingProfile: Codable, Equatable, Identifiable, Sendable {
     chords = try container.decodeIfPresent([RemappingChord].self, forKey: .chords) ?? []
     sequences = try container.decodeIfPresent([RemappingSequence].self, forKey: .sequences) ?? []
     layers = try container.decodeIfPresent([RemappingLayer].self, forKey: .layers) ?? []
+    macros = try container.decodeIfPresent([RemappingMacro].self, forKey: .macros) ?? []
   }
 }

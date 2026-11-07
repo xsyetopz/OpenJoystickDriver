@@ -18,7 +18,7 @@
       switch destination {
       case .keyboard(let key, let modifiers): keyboardRow(key: key, modifiers: modifiers)
       case .mouseButton, .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis,
-        .physical:
+        .physical, .macro:
         Text(RuntimePresentation.destinationLabel(destination))
       }
     }

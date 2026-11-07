@@ -47,6 +47,7 @@ enum ProfileText {
     case .mouseMovement(let value): return "move:\(word(value))"
     case .scroll(let value): return "scroll:\(word(value))"
     case .physical(let output): return physicalOutput(output)
+    case .macro(let id): return "macro:\(id.uuidString)"
     }
   }
 

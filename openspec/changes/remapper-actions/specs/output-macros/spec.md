@@ -22,11 +22,11 @@ A profile MUST hold named macros. A macro MUST have an `id`, a `name` unique in 
 #### Scenario: Unknown Macro
 
 - **WHEN** a binding has a `Macro` destination whose id is not in `macros`
-- **THEN** `ojd profile validate` rejects the profile and names the binding
+- **THEN** `ojd profile validate` rejects the profile and names the macro id
 
 ### Requirement: REQ-28 Macro Timing and Order
 
-A running macro MUST send its steps in order, and a step MUST NOT start before the earlier `Wait` and `Chord` hold times have elapsed on the monotonic clock. A `Chord` step MUST press its destinations, hold them, then release them in reverse order. A numeric `repeat` MUST run the step list that many times. `WhileHeld` MUST run it again until the source is released.
+A running macro MUST send its steps in order, and a step MUST NOT start before the earlier `Wait` and `Chord` hold times have elapsed on the monotonic clock. A `Chord` step MUST press its destinations, hold them, then release them in reverse order. A numeric `repeat` MUST run the step list that many times. `WhileHeld` MUST run it again until the source is released. A pass MUST start at least 1 ms after the previous pass started.
 
 #### Scenario: Ordered Steps with Waits
 

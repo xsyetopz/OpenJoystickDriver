@@ -210,6 +210,7 @@ enum RuntimePresentation {
   /// Returns the label of a remapping destination.
   static func destinationLabel(_ destination: RemappingDestination) -> String {
     switch destination {
+    case .macro: return "Macro"
     case .gamepadAxis(let axis): return axisLabel(axis)
     case .gamepadDpad(let direction): return sourceLabel(.dpad(direction))
     case .gamepadButton(let button): return buttonLabel(button)

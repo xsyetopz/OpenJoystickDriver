@@ -18,13 +18,15 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
   case scroll(RemappingPointerAxis)
   /// A channel of the physical controller, such as rumble or light.
   case physical(RemappingPhysicalOutput)
+  /// The macro of the profile with this identifier.
+  case macro(UUID)
 
   /// Whether the destination can repeat as turbo: a keyboard key, pointer button or virtual gamepad
   /// button or d-pad direction.
   public var acceptsTurbo: Bool {
     switch self {
     case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad: true
-    case .mouseMovement, .scroll, .gamepadAxis, .physical: false
+    case .mouseMovement, .scroll, .gamepadAxis, .physical, .macro: false
     }
   }
 
@@ -32,7 +34,7 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
   /// gamepad axis.
   public var isContinuous: Bool {
     switch self {
-    case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad, .physical: false
+    case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad, .physical, .macro: false
     case .mouseMovement, .scroll, .gamepadAxis: true
     }
   }
@@ -55,6 +57,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case scroll = "Scroll"
     /// The `Physical` case.
     case physical = "Physical"
+    /// The `Macro` case.
+    case macro = "Macro"
 
     /// Keys that a profile document may give for this case, which `type` selects.
     var fields: [CodingKeys] {
@@ -64,6 +68,7 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
       case .gamepadDpad: [.type, .direction]
       case .gamepadAxis, .mouseMovement, .scroll: [.type, .axis]
       case .physical: [.type, .physical]
+      case .macro: [.type, .macro]
       }
     }
   }
@@ -84,6 +89,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case direction
     /// The JSON key of `physical`.
     case physical
+    /// The JSON key of `macro`.
+    case macro
   }
 
   /// Decodes a destination from a profile document.
@@ -114,6 +121,7 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case .scroll: self = .scroll(try container.decode(RemappingPointerAxis.self, forKey: .axis))
     case .physical:
       self = .physical(try container.decode(RemappingPhysicalOutput.self, forKey: .physical))
+    case .macro: self = .macro(try container.decode(UUID.self, forKey: .macro))
     }
   }
 
@@ -146,6 +154,9 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case .physical(let output):
       try container.encode(Kind.physical, forKey: .type)
       try container.encode(output, forKey: .physical)
+    case .macro(let id):
+      try container.encode(Kind.macro, forKey: .type)
+      try container.encode(id, forKey: .macro)
     }
   }
 }

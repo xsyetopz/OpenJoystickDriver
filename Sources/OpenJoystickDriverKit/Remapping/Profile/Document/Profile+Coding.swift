@@ -40,10 +40,12 @@ extension RemappingProfile {
     case sequences
     /// The JSON key of `layers`.
     case layers
+    /// The JSON key of `macros`.
+    case macros
   }
 
   /// Encodes a profile with the current API version and kind; it leaves out motion tuning, gyro
-  /// output and the stick, trigger and touch mappings that hold their default.
+  /// output, the stick, trigger and touch mappings that hold their default, and an empty macro list.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(OpenJoystickDriverAPI.version, forKey: .apiVersion)
@@ -64,5 +66,6 @@ extension RemappingProfile {
     try container.encode(chords, forKey: .chords)
     try container.encode(sequences, forKey: .sequences)
     try container.encode(layers, forKey: .layers)
+    if !macros.isEmpty { try container.encode(macros, forKey: .macros) }
   }
 }

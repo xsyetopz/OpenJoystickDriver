@@ -45,6 +45,9 @@ extension RemappingEngineState {
         let turboDeadline = turbo.nextTransition(after: currentUptime)
         deadline = min(deadline ?? turboDeadline, turboDeadline)
       }
+      for run in device.outputs.macros.values {
+        deadline = min(deadline ?? run.nextAt, run.nextAt)
+      }
       for (id, tracker) in device.outputs.activations {
         guard let binding = device.actionBinding(id: id) else { continue }
         if let longHold = binding.longHold, let pressTime = tracker.pressUptime,
@@ -128,6 +131,10 @@ extension RemappingEngineState {
         }
       }
 
+      for owner in device.outputs.macros.keys.sorted(by: Self.uuidLessThan) {
+        actions += advanceMacro(owner, device: &device, at: tickUptime)
+      }
+
       for id in device.outputs.activations.keys.sorted(by: Self.uuidLessThan) {
         guard let binding = device.actionBinding(id: id) else { continue }
         guard var tracker = device.outputs.activations[id] else { continue }
@@ -184,7 +191,7 @@ extension RemappingEngineState {
     guard var device = devices[identifier] else { return [] }
     let oldContinuous = continuousTotals()
     devices.removeValue(forKey: identifier)
-    var actions: [RemappingEngineAction] = []
+    var actions = stopMacros(device: &device)
     for bindingID in device.outputs.heldBindings.keys.sorted(by: Self.uuidLessThan) {
       guard let destination = device.outputs.heldBindings[bindingID] else { continue }
       actions += setBinding(bindingID, destination: destination, isDown: false, device: &device)
@@ -223,6 +230,11 @@ extension RemappingEngineState {
       device.outputs.heldBindings.removeValue(forKey: bindingID)
     }
     let effectiveDestination = isDown ? destination : heldDestination
+    if case .macro(let macroID) = effectiveDestination {
+      return isDown
+        ? startMacro(macroID, owner: bindingID, device: &device)
+        : endMacroSource(owner: bindingID, device: &device)
+    }
     let virtualContribution: RemappingGamepadState?
     switch effectiveDestination {
     case .gamepadButton(let button): virtualContribution = RemappingGamepadState(buttons: [button])
@@ -294,7 +306,8 @@ extension RemappingEngineState {
     case .mouseButton(let button):
       return Self.increment(&mouseButtonReferences, key: button) == 1
         ? [.system(.mouseButtonDown(button))] : []
-    case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical: return []
+    case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro:
+      return []
     }
   }
 
@@ -316,7 +329,8 @@ extension RemappingEngineState {
     case .mouseButton(let button):
       return Self.decrement(&mouseButtonReferences, key: button) == 0
         ? [.system(.mouseButtonUp(button))] : []
-    case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical: return []
+    case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro:
+      return []
     }
   }
 

@@ -16,6 +16,8 @@ struct RemappingOutputState {
   var continuous: [UUID: RemappingContinuousOutput] = [:]
   /// Long-hold and multi-tap trackers by action.
   var activations: [UUID: RemappingActivationTracker] = [:]
+  /// Running macros by the action that started them.
+  var macros: [UUID: RemappingMacroRun] = [:]
 }
 
 /// Press history of one action with a long hold or multi-tap.
