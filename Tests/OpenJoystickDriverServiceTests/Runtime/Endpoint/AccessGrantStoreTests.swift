@@ -195,7 +195,7 @@ struct AccessGrantStoreTests {
           Issue.record("the header was accepted")
         } catch let AccessGrantStoreError.unsupported(problem) {
           #expect(problem.code == code)
-          #expect(problem.message == reason)
+          #expect(problem.message == "\(store.url.path): \(reason)")
           #expect(
             AccessGrantStoreError.unsupported(problem).code == code ?? .damagedAccessGrants
           )

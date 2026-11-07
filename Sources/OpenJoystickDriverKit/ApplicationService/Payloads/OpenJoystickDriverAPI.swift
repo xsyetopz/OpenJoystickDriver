@@ -83,7 +83,7 @@ public struct DocumentHeaderProblem: Error, Equatable, Sendable, CustomStringCon
   }
 
   /// The same problem, with `file` leading the message.
-  func located(in file: String) -> Self { Self(code: code, "\(file): \(message)") }
+  public func located(in file: String) -> Self { Self(code: code, "\(file): \(message)") }
 
   /// The problem as text: the code, when there is one, then the message.
   public var description: String { (code.map { "\($0.rawValue): " } ?? "") + message }

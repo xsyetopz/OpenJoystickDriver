@@ -219,7 +219,7 @@ struct AccessGrantStore: Sendable {
     do {
       decoded = try JSONDecoder().decode(AccessGrantFile.self, from: data)
     } catch let problem as AccessGrantHeaderProblem {
-      throw AccessGrantStoreError.unsupported(problem.problem)
+      throw AccessGrantStoreError.unsupported(problem.problem.located(in: url.path))
     } catch {
       decoded = nil
     }
