@@ -59,9 +59,10 @@
     /// Quit the app.
     case quit
 
-    /// Maps the alert's button response: Show in Finder and Reset Settings are the first two
-    /// buttons, any other response is Quit. An alert that `offersMigration` has Migrate first and
-    /// the others after it.
+    /// Maps the alert's button response.
+    ///
+    /// Show in Finder and Reset Settings are the first two buttons, and any other response is Quit.
+    /// An alert that `offersMigration` has Migrate first and the others after it.
     init(response: NSApplication.ModalResponse, offersMigration: Bool = false) {
       let buttons: [Self] = (offersMigration ? [.migrate] : []) + [.showInFinder, .resetSettings]
       let index = response.rawValue - NSApplication.ModalResponse.alertFirstButtonReturn.rawValue
