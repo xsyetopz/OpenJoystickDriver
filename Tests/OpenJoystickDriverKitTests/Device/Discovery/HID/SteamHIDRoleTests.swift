@@ -194,14 +194,16 @@ struct SteamHIDRoleTests {
   @Test
   func tritonDongleSlotsAreInterfacesTwoToFiveAndBluetoothIsItsLocation() {
     let registry = ProtocolDriverRegistry()
-    for number: UInt8 in 0...6 {
-      let dongle = PhysicalDevice(
-        vendorID: 0x28DE,
-        productID: 0x1304,
-        interfaces: [steamHIDInterface(number: number)]
-      )
-      let expected: HIDConnectionRole = (2...5).contains(number) ? .interface(number) : .notARole
-      #expect(registry.hidConnectionRole(of: dongle) == expected)
+    for productID: UInt16 in [0x1304, 0x1305] {
+      for number: UInt8 in 0...6 {
+        let dongle = PhysicalDevice(
+          vendorID: 0x28DE,
+          productID: productID,
+          interfaces: [steamHIDInterface(number: number)]
+        )
+        let expected: HIDConnectionRole = (2...5).contains(number) ? .interface(number) : .notARole
+        #expect(registry.hidConnectionRole(of: dongle) == expected)
+      }
     }
     let bluetooth = PhysicalDevice(
       vendorID: 0x28DE,
