@@ -53,7 +53,8 @@ struct VirtualHIDProfileSelectorTests {
       .guide, .capture, .capture, .touchpadClick, .microphone, .leftPaddle1, .leftPaddle2,
       .rightPaddle1, .rightPaddle2, .auxiliary1, .auxiliary2, .auxiliary3, .auxiliary4, .auxiliary5,
       .auxiliary6, .auxiliary7, .auxiliary8, .leftStickTouch, .rightStickTouch, .leftTrackpadClick,
-      .rightTrackpadClick, .leftTrackpadTouch, .rightTrackpadTouch,
+      .rightTrackpadClick, .leftTrackpadTouch, .rightTrackpadTouch, .pointerX, .pointerY,
+      .pointerTracking,
     ]
     #expect(Set(Control.allCases).subtracting(Selector.primaryControls) == nonPrimary)
   }
