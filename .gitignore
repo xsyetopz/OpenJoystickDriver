@@ -172,7 +172,5 @@ fastlane/test_output/
 # Node.js
 node_modules/
 
-HANDOVER.md
-
 # Local GUI review captures (./Scripts/ojd shots capture)
 .ojd-shots/
