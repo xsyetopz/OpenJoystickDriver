@@ -3243,6 +3243,10 @@
 "error.E3028.message" = "La session de remappage de la manette a changé pendant la requête. Réessayez.";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
 "error.E3029.message" = "Un profil provenant d’un paquet installé ne peut pas être modifié. Dupliquez le profil et modifiez la copie.";
+/* Text of error E3030, returned when an action needs Post Event access and it is not granted. */
+"error.E3030.message" = "L’action n’a pas été exécutée, car l’accès Post Event n’est pas accordé. Accordez-le à OpenJoystickDriver et réessayez.";
+/* Text of error E3031, returned when an action needs Automation access and it is not granted. */
+"error.E3031.message" = "L’action n’a pas été exécutée, car l’accès Automatisation n’est pas accordé. Accordez-le à OpenJoystickDriver et réessayez.";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "Le manifeste du paquet mod.json est absent ou invalide. Vérifiez-le avec le schéma mod-package et relancez la commande.";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

@@ -3243,6 +3243,10 @@
 "error.E3028.message" = "A sessão de remapeamento do controle mudou enquanto a solicitação era executada. Tente novamente.";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
 "error.E3029.message" = "Um perfil de um pacote instalado não pode ser alterado. Duplique o perfil e altere a cópia.";
+/* Text of error E3030, returned when an action needs Post Event access and it is not granted. */
+"error.E3030.message" = "A ação não foi executada porque o acesso Post Event não foi concedido. Conceda-o ao OpenJoystickDriver e tente novamente.";
+/* Text of error E3031, returned when an action needs Automation access and it is not granted. */
+"error.E3031.message" = "A ação não foi executada porque o acesso de Automação não foi concedido. Conceda-o ao OpenJoystickDriver e tente novamente.";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "O manifesto do pacote mod.json está ausente ou é inválido. Verifique-o com o esquema mod-package e execute o comando novamente.";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

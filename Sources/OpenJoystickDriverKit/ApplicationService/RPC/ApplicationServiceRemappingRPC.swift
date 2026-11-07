@@ -600,6 +600,10 @@ public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, Lo
     case motionSessionChanged = "motion_session_changed"
     /// A mod package serves the profile, so it cannot be changed here.
     case packageProfileReadOnly = "package_profile_read_only"
+    /// An action needs Post Event access, which is not granted.
+    case postEventAccessMissing = "post_event_access_missing"
+    /// An action needs Automation access, which is not granted.
+    case automationAccessMissing = "automation_access_missing"
     /// The profile has a missing or unsupported `apiVersion`.
     case unsupportedAPIVersion = "unsupported_api_version"
 
@@ -636,6 +640,8 @@ public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, Lo
       case .motionProfileInactive: .motionProfileInactive
       case .motionSessionChanged: .motionSessionChanged
       case .packageProfileReadOnly: .packageProfileReadOnly
+      case .postEventAccessMissing: .postEventAccessMissing
+      case .automationAccessMissing: .automationAccessMissing
       }
     }
   }

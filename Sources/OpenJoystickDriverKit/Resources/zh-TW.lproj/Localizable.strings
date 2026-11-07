@@ -3797,6 +3797,10 @@
 "error.E3028.message" = "要求執行期間，該控制器的重新對應工作階段已變更。請重試。";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
 "error.E3029.message" = "來自已安裝套件的設定檔無法變更。請複製設定檔並變更副本。";
+/* Text of error E3030, returned when an action needs Post Event access and it is not granted. */
+"error.E3030.message" = "動作未執行，因為未授予 Post Event 存取權限。請對 OpenJoystickDriver 授予該權限，然後重試。";
+/* Text of error E3031, returned when an action needs Automation access and it is not granted. */
+"error.E3031.message" = "動作未執行，因為未授予自動化存取權限。請對 OpenJoystickDriver 授予該權限，然後重試。";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "缺少套件資訊清單 mod.json，或其無效。請對照 mod-package 結構描述檢查，然後重新執行指令。";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

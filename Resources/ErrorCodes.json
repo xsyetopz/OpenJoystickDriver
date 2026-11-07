@@ -454,6 +454,18 @@
       "wire": "package_profile_read_only"
     },
     {
+      "code": "E3030",
+      "domain": "Remapping",
+      "name": "postEventAccessMissing",
+      "wire": "post_event_access_missing"
+    },
+    {
+      "code": "E3031",
+      "domain": "Remapping",
+      "name": "automationAccessMissing",
+      "wire": "automation_access_missing"
+    },
+    {
       "code": "E4001",
       "domain": "Mod",
       "name": "invalidManifest"

@@ -163,6 +163,10 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
   case motionSessionChanged = "E3028"
   /// A profile from an installed package cannot be changed.
   case packageProfileReadOnly = "E3029"
+  /// An action needs Post Event (Accessibility) access, which is not granted.
+  case postEventAccessMissing = "E3030"
+  /// An action needs Automation access, which is not granted.
+  case automationAccessMissing = "E3031"
   /// The package manifest `mod.json` is missing or invalid.
   case invalidManifest = "E4001"
   /// The package requires a different version of OJD than the one that runs.
@@ -254,7 +258,8 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
       .routerLibraryAndEngineUnavailable, .routerLibraryUnavailable, .routerShutDown,
       .transactionUnreconciled, .unreadableLibrary, .profileRecoveryRequired, .unwritableLibrary,
       .remappingUnexpected, .profileProducesNoOutput, .motionGyroNotSelected,
-      .motionProfileInactive, .motionSessionChanged, .packageProfileReadOnly:
+      .motionProfileInactive, .motionSessionChanged, .packageProfileReadOnly,
+      .postEventAccessMissing, .automationAccessMissing:
       .remapping
     case .invalidManifest, .requiresExcludesVersion, .invalidPackageContent, .packageClash,
       .packageAlreadyInstalled, .packageNotInstalled, .packageStoreUnwritable:

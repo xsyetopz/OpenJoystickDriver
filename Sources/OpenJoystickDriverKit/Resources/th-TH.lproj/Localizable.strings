@@ -3797,6 +3797,10 @@
 "error.E3028.message" = "เซสชันการแมปใหม่ของคอนโทรลเลอร์เปลี่ยนไประหว่างที่คำขอทำงาน ลองอีกครั้ง";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
 "error.E3029.message" = "ไม่สามารถเปลี่ยนโปรไฟล์ที่มาจากแพ็กเกจที่ติดตั้งไว้ได้ ทำสำเนาโปรไฟล์แล้วเปลี่ยนสำเนา";
+/* Text of error E3030, returned when an action needs Post Event access and it is not granted. */
+"error.E3030.message" = "ไม่ได้ดำเนินการเพราะยังไม่ได้ให้สิทธิ์เข้าถึง Post Event ให้สิทธิ์นี้แก่ OpenJoystickDriver แล้วลองอีกครั้ง";
+/* Text of error E3031, returned when an action needs Automation access and it is not granted. */
+"error.E3031.message" = "ไม่ได้ดำเนินการเพราะยังไม่ได้ให้สิทธิ์เข้าถึงระบบอัตโนมัติ ให้สิทธิ์นี้แก่ OpenJoystickDriver แล้วลองอีกครั้ง";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "ไม่พบไฟล์ระบุรายการแพ็กเกจ mod.json หรือไฟล์ไม่ถูกต้อง ตรวจสอบกับสคีมา mod-package แล้วเรียกใช้คำสั่งอีกครั้ง";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

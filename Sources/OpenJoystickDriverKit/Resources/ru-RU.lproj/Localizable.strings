@@ -3797,6 +3797,10 @@
 "error.E3028.message" = "Сеанс переназначения контроллера изменился во время выполнения запроса. Повторите попытку.";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
 "error.E3029.message" = "Профиль из установленного пакета нельзя изменить. Дублируйте профиль и измените копию.";
+/* Text of error E3030, returned when an action needs Post Event access and it is not granted. */
+"error.E3030.message" = "Действие не выполнено, потому что доступ Post Event не предоставлен. Предоставьте его OpenJoystickDriver и повторите попытку.";
+/* Text of error E3031, returned when an action needs Automation access and it is not granted. */
+"error.E3031.message" = "Действие не выполнено, потому что доступ к автоматизации не предоставлен. Предоставьте его OpenJoystickDriver и повторите попытку.";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "Манифест пакета mod.json отсутствует или недействителен. Проверьте его по схеме mod-package и запустите команду снова.";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

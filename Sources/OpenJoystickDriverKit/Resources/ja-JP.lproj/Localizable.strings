@@ -3797,6 +3797,10 @@
 "error.E3028.message" = "リクエストの実行中にコントローラのリマッピングセッションが変わりました。もう一度お試しください。";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
 "error.E3029.message" = "インストール済みパッケージのプロファイルは変更できません。プロファイルを複製して、コピーを変更してください。";
+/* Text of error E3030, returned when an action needs Post Event access and it is not granted. */
+"error.E3030.message" = "Post Eventアクセスが許可されていないため、アクションは実行されませんでした。OpenJoystickDriverに許可して、もう一度お試しください。";
+/* Text of error E3031, returned when an action needs Automation access and it is not granted. */
+"error.E3031.message" = "オートメーションのアクセスが許可されていないため、アクションは実行されませんでした。OpenJoystickDriverに許可して、もう一度お試しください。";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "パッケージのマニフェスト mod.json が見つからないか無効です。mod-package スキーマに照らして確認し、コマンドをもう一度実行してください。";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

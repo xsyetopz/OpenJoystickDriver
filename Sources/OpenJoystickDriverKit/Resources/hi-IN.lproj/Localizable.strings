@@ -3797,6 +3797,10 @@
 "error.E3028.message" = "अनुरोध चलने के दौरान कंट्रोलर का रीमैपिंग सत्र बदल गया। फिर कोशिश करें।";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
 "error.E3029.message" = "इंस्टॉल किए गए पैकेज से आई प्रोफ़ाइल बदली नहीं जा सकती। प्रोफ़ाइल की प्रतिलिपि बनाएँ और प्रतिलिपि बदलें।";
+/* Text of error E3030, returned when an action needs Post Event access and it is not granted. */
+"error.E3030.message" = "क्रिया नहीं चली क्योंकि Post Event एक्सेस नहीं दिया गया है। इसे OpenJoystickDriver को दें और फिर कोशिश करें।";
+/* Text of error E3031, returned when an action needs Automation access and it is not granted. */
+"error.E3031.message" = "क्रिया नहीं चली क्योंकि ऑटोमेशन एक्सेस नहीं दिया गया है। इसे OpenJoystickDriver को दें और फिर कोशिश करें।";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "पैकेज मैनिफ़ेस्ट mod.json मौजूद नहीं है या अमान्य है। इसे mod-package स्कीमा से जाँचें और कमांड दोबारा चलाएँ।";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */
