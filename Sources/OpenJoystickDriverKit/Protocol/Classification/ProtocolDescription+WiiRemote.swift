@@ -214,6 +214,8 @@ extension ProtocolDescription {
     struct Scripts: Equatable, Sendable {
       /// The extension handshake.
       let handshake: [Step]
+      /// The read of the accelerometer calibration from the remote's EEPROM.
+      let accelerometerCalibration: [Step]
       /// The Motion Plus activation.
       let motionPlus: [Step]
       /// The IR camera setup.
@@ -359,10 +361,13 @@ extension ProtocolDescription {
       )
       let scriptObject = try root.object(
         "scripts",
-        allowed: ["handshake", "motionPlus", "ir", "speaker", "speakerStop"]
+        allowed: [
+          "handshake", "accelerometerCalibration", "motionPlus", "ir", "speaker", "speakerStop",
+        ]
       )
       scripts = Scripts(
         handshake: try Step.list(scriptObject, "handshake"),
+        accelerometerCalibration: try Step.list(scriptObject, "accelerometerCalibration"),
         motionPlus: try Step.list(scriptObject, "motionPlus"),
         ir: try Step.list(scriptObject, "ir"),
         speaker: try Step.list(scriptObject, "speaker"),

@@ -1,18 +1,32 @@
 import Foundation
 
 /// Driver for the Wii Remote over Bluetooth HID: core buttons, the accelerometer, status and
-/// battery.
+/// battery, with the memory exchanges that read the accelerometer calibration and run the
+/// extension handshake.
 ///
-/// The report layouts, the button and accelerometer bits and the report-mode choice come from the
-/// `wiiRemote` field of `nintendo-wii.json`. Facts are from WiiBrew's Wiimote page. Extensions,
-/// IR, the speaker, LEDs and rumble are not decoded or written yet.
+/// The report layouts, the button and accelerometer bits, the report-mode choice and the register
+/// scripts come from the `wiiRemote` field of `nintendo-wii.json`. Facts are from WiiBrew's
+/// Wiimote page. Extension data, IR, the speaker, LEDs and rumble are not decoded or written yet.
 public final class WiiDriver: PhysicalProtocolDriver {
   /// The input report that answers a status request and carries the battery.
-  private static let statusReportID: UInt8 = 0x20
+  static let statusReportID: UInt8 = 0x20
+  /// The input report that answers a memory read.
+  static let memoryReplyReportID: UInt8 = 0x21
+  /// The input report that acknowledges an output report.
+  static let acknowledgementReportID: UInt8 = 0x22
+  /// The output report that writes memory.
+  static let memoryWriteOutputID: UInt8 = 0x16
+  /// The output report that reads memory.
+  static let memoryReadOutputID: UInt8 = 0x17
+  /// The flag of a memory output report that addresses the control registers; the EEPROM, whose
+  /// addresses fit 16 bits, has it clear.
+  static let registerSpaceFlag: UInt8 = 0x04
   /// The output report that sets the data reporting mode.
   private static let reportModeOutputID: UInt8 = 0x12
   /// The output report that requests a status report.
   private static let statusRequestOutputID: UInt8 = 0x15
+  /// The bit of the status flags that reports an extension.
+  private static let extensionBit: UInt8 = 0x02
   /// The bit of the first data byte of the mode report that makes the remote report on every
   /// cycle, not only on a change.
   private static let continuousBit: UInt8 = 0x04
@@ -32,9 +46,30 @@ public final class WiiDriver: PhysicalProtocolDriver {
   }
 
   /// The family's `wiiRemote` description.
-  private let wii: ProtocolDescription.WiiRemote
+  let wii: ProtocolDescription.WiiRemote
+  /// The wait for the reply to a memory read or write, in nanoseconds.
+  let replyTimeoutNanoseconds: UInt64
   /// The state after the latest report.
-  private var state = ControllerState.neutral
+  var state = ControllerState.neutral
+  /// The features the driver asks the report mode to carry; a decoded extension adds its own.
+  var requestedFeatures: Set<ProtocolDescription.WiiRemote.BlockKind> = [.accelerometer]
+  /// The writes that parsing queued, until the pipeline drains them.
+  var pendingWrites: [PhysicalOutputWrite] = []
+  /// The memory exchanges of the session; the first one is on the wire.
+  var exchanges: [Exchange] = []
+  /// Whether the latest status report showed an extension.
+  var isExtensionPlugged = false
+  /// Whether the session has queued the calibration read.
+  var hasRequestedCalibration = false
+  /// The extension the handshake identified; nil while none is plugged or it is unread.
+  var extensionKind: ExtensionKind?
+  /// The accelerometer calibration read from the remote; nil until read, and when the remote
+  /// returns a block whose gravity equals its zero point (uncalibrated).
+  var accelerometerCalibration: AccelerometerCalibration?
+  /// The latest exchange that ended in a failure; the driver does not retry it.
+  var failure: ExchangeFailure?
+  /// The latest memory reply the driver refused.
+  var refusedReply: ReplyRefusal?
   /// The latest power facts from a status report.
   public private(set) var power: ControllerConnectionState.Power?
   /// Whether the latest status report set the low-battery flag.
@@ -43,11 +78,14 @@ public final class WiiDriver: PhysicalProtocolDriver {
   private(set) var acceleration: RawAcceleration?
 
   /// Creates the driver for the family's description.
-  public init() {
+  public init(tuning: ControllerTuning? = nil) {
     guard let wii = PhysicalProtocolID.nintendoWii.protocolDescription.wiiRemote else {
       preconditionFailure("nintendo-wii.json describes no wiiRemote field")
     }
     self.wii = wii
+    replyTimeoutNanoseconds =
+      UInt64(PhysicalProtocolID.nintendoWii.described(\.replyTimeoutMilliseconds, in: tuning))
+      * 1_000_000
   }
 
   /// The core buttons of the description.
@@ -69,26 +107,57 @@ public final class WiiDriver: PhysicalProtocolDriver {
   /// Always nil: the report carries no logical connection.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
-  /// Clears the state of the session: neutral input and no reading.
+  /// Clears the state of the session: neutral input, no reading, no extension, no calibration and
+  /// no exchange.
   public func resetProtocolState() {
     state = .neutral
     acceleration = nil
+    pendingWrites = []
+    exchanges = []
+    isExtensionPlugged = false
+    hasRequestedCalibration = false
+    extensionKind = nil
+    accelerometerCalibration = nil
+    failure = nil
+    refusedReply = nil
   }
 
   /// A status request, then the report mode that carries the buttons and the accelerometer.
   public func startupWrites() -> [PhysicalOutputWrite] {
-    guard let choice = wii.modeChoices.first(where: { $0.features == [.accelerometer] }) else {
-      preconditionFailure("nintendo-wii.json chooses no mode for the accelerometer")
-    }
-    return [
+    [
       .hidOutput(PhysicalHIDOutputReport(reportID: Self.statusRequestOutputID, bytes: [0x15, 0])),
-      .hidOutput(
-        PhysicalHIDOutputReport(
-          reportID: Self.reportModeOutputID,
-          bytes: [Self.reportModeOutputID, Self.continuousBit, choice.mode]
-        )
-      ),
+      reportModeWrite(),
     ]
+  }
+
+  /// Returns and clears the writes that parsing queued.
+  public func drainPendingWrites() -> [PhysicalOutputWrite] {
+    defer { pendingWrites = [] }
+    return pendingWrites
+  }
+
+  /// The features the report mode carries: the requested ones and, once an extension is read and
+  /// known, the extension bytes.
+  var chosenFeatures: Set<ProtocolDescription.WiiRemote.BlockKind> {
+    guard case .known = extensionKind else { return requestedFeatures }
+    return requestedFeatures.union([.extensionData])
+  }
+
+  /// The `0x12` write for the smallest mode that carries `chosenFeatures`
+  /// (`ReportModeSelect`); the continuous bit is set when the mode carries more than buttons.
+  func reportModeWrite() -> PhysicalOutputWrite {
+    guard let choice = wii.modeChoices.first(where: { $0.features == chosenFeatures }),
+      let mode = wii.reportModes.first(where: { $0.id == choice.mode })
+    else {
+      preconditionFailure("nintendo-wii.json chooses no mode for \(chosenFeatures)")
+    }
+    let continuous = mode.blocks.contains { $0.kind != .buttons }
+    return .hidOutput(
+      PhysicalHIDOutputReport(
+        reportID: Self.reportModeOutputID,
+        bytes: [Self.reportModeOutputID, continuous ? Self.continuousBit : 0, choice.mode]
+      )
+    )
   }
 
   /// Decodes a status report into the power facts, and a data report that has a `Buttons` block
@@ -96,7 +165,14 @@ public final class WiiDriver: PhysicalProtocolDriver {
   public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
     let bytes = Array(data)
     guard let id = bytes.first else { return nil }
-    if id == Self.statusReportID { return parseStatus(bytes) }
+    expireExchange(at: receivedAt)
+    switch id {
+    case Self.statusReportID: return parseStatus(bytes, at: receivedAt)
+    case Self.memoryReplyReportID, Self.acknowledgementReportID:
+      handleReply(bytes, at: receivedAt)
+      return nil
+    default: break
+    }
     guard let mode = wii.reportModes.first(where: { $0.id == id }),
       let buttons = mode.blocks.first(where: { $0.kind == .buttons }),
       bytes.count >= 1 + (mode.blocks.last.map { $0.offset + $0.length } ?? 0)
@@ -116,9 +192,12 @@ public final class WiiDriver: PhysicalProtocolDriver {
     return ControllerEvent(timestamp: receivedAt, state: next)
   }
 
-  /// Takes the battery level and the low-battery flag of a status report; the report carries no
-  /// input event.
-  private func parseStatus(_ bytes: [UInt8]) -> ControllerEvent? {
+  /// Takes the battery level, restores the report mode and follows the extension flag.
+  ///
+  /// The remote drops its report mode after a status report, so the chosen mode goes out again
+  /// (`ReportModeRestore`). Only a removed extension yields an event: the controls it drove return
+  /// to neutral.
+  private func parseStatus(_ bytes: [UInt8], at now: MonotonicTimestamp) -> ControllerEvent? {
     guard bytes.count >= 7 else { return nil }
     isBatteryLow = bytes[3] & Self.batteryLowBit != 0
     let percentage = UInt8(min(100, Int(bytes[6]) * 100 / Self.batteryFull))
@@ -127,7 +206,18 @@ public final class WiiDriver: PhysicalProtocolDriver {
       battery: BatteryLevel(percentage: percentage...percentage),
       wiredPower: nil
     )
-    return nil
+    let plugged = bytes[3] & Self.extensionBit != 0
+    let removed = isExtensionPlugged && !plugged
+    let added = plugged && !isExtensionPlugged
+    isExtensionPlugged = plugged
+    if removed { dropExtension(at: now) }
+    pendingWrites.append(reportModeWrite())
+    if !hasRequestedCalibration {
+      hasRequestedCalibration = true
+      begin(.accelerometerCalibration, at: now)
+    }
+    if added { begin(.extensionHandshake, at: now) }
+    return removed ? ControllerEvent(timestamp: now, state: state) : nil
   }
 
   /// The 10-bit reading of each axis: the high byte, then the low bits from the button bytes.

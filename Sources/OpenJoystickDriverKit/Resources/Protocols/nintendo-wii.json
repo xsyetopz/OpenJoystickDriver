@@ -786,6 +786,13 @@
               "length": 6
             }
           ],
+          "accelerometerCalibration": [
+            {
+              "kind": "Read",
+              "address": "000016",
+              "length": 10
+            }
+          ],
           "motionPlus": [
             {
               "kind": "Write",

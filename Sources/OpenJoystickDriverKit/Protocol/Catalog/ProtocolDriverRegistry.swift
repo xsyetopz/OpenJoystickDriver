@@ -324,7 +324,7 @@ public final class ProtocolDriverRegistry: Sendable {
           hatFromPressureOnly: record.parameters.hatSource == .dpadPressure
         )
       )
-    case .nintendoWii: return .success(WiiDriver())
+    case .nintendoWii: return .success(WiiDriver(tuning: tuning))
     case .vendorNVIDIAShield:
       return .success(
         NVIDIAShieldDriver(

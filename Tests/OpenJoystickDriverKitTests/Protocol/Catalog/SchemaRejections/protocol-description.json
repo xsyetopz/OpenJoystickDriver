@@ -24357,6 +24357,13 @@
                     "length": 6
                   }
                 ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
+                  }
+                ],
                 "motionPlus": [
                   {
                     "kind": "Write",
@@ -25281,6 +25288,13 @@
                     "kind": "Read",
                     "address": "A400FA",
                     "length": 6
+                  }
+                ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
                   }
                 ],
                 "motionPlus": [
@@ -26210,6 +26224,13 @@
                     "length": 6
                   }
                 ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
+                  }
+                ],
                 "motionPlus": [
                   {
                     "kind": "Write",
@@ -27134,6 +27155,13 @@
                     "kind": "Read",
                     "address": "A400FA",
                     "length": 6
+                  }
+                ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
                   }
                 ],
                 "motionPlus": [
@@ -28061,6 +28089,13 @@
                     "length": 6
                   }
                 ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
+                  }
+                ],
                 "motionPlus": [
                   {
                     "kind": "Write",
@@ -28986,6 +29021,13 @@
                     "length": 6
                   }
                 ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
+                  }
+                ],
                 "motionPlus": [
                   {
                     "kind": "Write",
@@ -29909,6 +29951,13 @@
                     "kind": "Read",
                     "address": "A400FA",
                     "length": 6
+                  }
+                ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
                   }
                 ],
                 "motionPlus": [
@@ -30837,6 +30886,13 @@
                     "length": 6
                   }
                 ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
+                  }
+                ],
                 "motionPlus": [
                   {
                     "kind": "Write",
@@ -31762,6 +31818,13 @@
                     "length": 6
                   }
                 ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
+                  }
+                ],
                 "motionPlus": [
                   {
                     "kind": "Write",
@@ -32685,6 +32748,13 @@
                     "kind": "Read",
                     "address": "A400FA",
                     "length": 6
+                  }
+                ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
                   }
                 ],
                 "motionPlus": [
@@ -33613,6 +33683,13 @@
                     "length": 6
                   }
                 ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
+                  }
+                ],
                 "motionPlus": [
                   {
                     "kind": "Write",
@@ -34537,6 +34614,13 @@
                     "kind": "Read",
                     "address": "A400FA",
                     "length": 6
+                  }
+                ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
                   }
                 ],
                 "motionPlus": [
@@ -35464,6 +35548,13 @@
                     "length": 6
                   }
                 ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
+                  }
+                ],
                 "motionPlus": [
                   {
                     "kind": "Write",
@@ -36318,6 +36409,13 @@
                     "kind": "Read",
                     "address": "A400FA",
                     "length": 6
+                  }
+                ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
                   }
                 ],
                 "motionPlus": [
@@ -37250,6 +37348,13 @@
                     "length": 6
                   }
                 ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
+                  }
+                ],
                 "motionPlus": [
                   {
                     "kind": "Write",
@@ -38163,6 +38268,13 @@
                     "kind": "Read",
                     "address": "A400FA",
                     "length": 6
+                  }
+                ],
+                "accelerometerCalibration": [
+                  {
+                    "kind": "Read",
+                    "address": "000016",
+                    "length": 10
                   }
                 ],
                 "motionPlus": [
