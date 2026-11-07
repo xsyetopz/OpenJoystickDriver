@@ -2386,7 +2386,7 @@
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureRumble" = "motor getaran";
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
-"cli.controller.group.featureSpeaker" = "speaker";
+"cli.controller.group.featureSpeaker" = "pengeras suara";
 /* One-line summary of 'ojd controller light' in the command list and at the top of its help. */
 "cli.controller.light.abstract" = "Atur warna atau kecerahan lampu pengontrol.";
 /* Help text of the --brightness option of 'ojd controller light'. LED means light-emitting diode. */
