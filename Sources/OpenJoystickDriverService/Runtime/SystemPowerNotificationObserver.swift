@@ -1,9 +1,12 @@
-import AppKit
 import Foundation
 
-/// Turns the workspace sleep and wake notifications into ordered events for an async handler.
+/// Turns the root power domain messages into ordered events for an async handler.
 ///
-/// The handler receives each event after the previous one finished.
+/// The handler receives each event after the previous one finished. The observer acknowledges a
+/// sleep to the system only after the handler returned for that sleep, and exactly once, so the
+/// system does not sleep before the teardown finishes. It allows an idle sleep at once and never
+/// vetoes it. A teardown that does not return leaves the system to force the sleep after its own
+/// timeout.
 /// - Note: `@unchecked Sendable` because `lock` guards every mutable property.
 final class SystemPowerNotificationObserver: @unchecked Sendable {
   /// A system power change.
@@ -17,16 +20,22 @@ final class SystemPowerNotificationObserver: @unchecked Sendable {
   /// Handles one event and returns when it is done.
   typealias Handler = @Sendable (Event) async -> Void
 
-  /// The center that posts the power notifications.
-  private let notificationCenter: NotificationCenter
+  /// An event and the notification ID of the sleep that waits for it, if any.
+  private struct QueuedEvent: Sendable {
+    /// The event for the handler.
+    let event: Event
+    /// The sleep to acknowledge after the handler returned.
+    let sleepNotificationID: Int?
+  }
+
+  /// The source of power messages and the acknowledgement.
+  private let powerSource: any SystemPowerSource
   /// Handles each event.
   private let handler: Handler
   /// Guards the mutable state below.
   private let lock = NSLock()
-  /// The observers on the center.
-  private var observerTokens: [NSObjectProtocol] = []
   /// The continuation of the stream of events.
-  private var eventContinuation: AsyncStream<Event>.Continuation?
+  private var eventContinuation: AsyncStream<QueuedEvent>.Continuation?
   /// The task that passes the events to the handler.
   private var deliveryTask: Task<Void, Never>?
   /// The task that stops the observer; shared by every caller of ``stop()``.
@@ -36,45 +45,36 @@ final class SystemPowerNotificationObserver: @unchecked Sendable {
   /// Whether ``stop()`` ran, after which the observer delivers nothing.
   private var stopped = false
 
-  /// Creates an observer of the workspace notification center.
-  @MainActor
+  /// Creates an observer of the root power domain.
   convenience init(handler: @escaping Handler) {
-    self.init(notificationCenter: NSWorkspace.shared.notificationCenter, handler: handler)
+    self.init(powerSource: IOKitSystemPowerSource(), handler: handler)
   }
 
-  /// Creates an observer of `notificationCenter`.
-  init(notificationCenter: NotificationCenter, handler: @escaping Handler) {
-    self.notificationCenter = notificationCenter
+  /// Creates an observer of `powerSource`.
+  init(powerSource: any SystemPowerSource, handler: @escaping Handler) {
+    self.powerSource = powerSource
     self.handler = handler
   }
 
-  /// Starts observing sleep and wake notifications; does nothing after ``stop()``.
+  /// Starts observing sleep and wake messages; does nothing after ``stop()``.
   func start() {
     lock.lock()
     defer { lock.unlock() }
     guard !started, !stopped else { return }
     started = true
-    let eventStream = AsyncStream<Event>.makeStream(bufferingPolicy: .unbounded)
+    let eventStream = AsyncStream<QueuedEvent>.makeStream(bufferingPolicy: .unbounded)
     eventContinuation = eventStream.continuation
     let handler = self.handler
+    let powerSource = self.powerSource
     deliveryTask = Task { [weak self] in
-      for await event in eventStream.stream {
-        guard !Task.isCancelled, self?.canDeliver == true else { return }
-        await handler(event)
+      for await queued in eventStream.stream {
+        let canDeliver = !Task.isCancelled && self?.canDeliver == true
+        if canDeliver { await handler(queued.event) }
+        if let id = queued.sleepNotificationID { powerSource.allowPowerChange(notificationID: id) }
+        if !canDeliver { return }
       }
     }
-    observerTokens = [
-      notificationCenter.addObserver(
-        forName: NSWorkspace.willSleepNotification,
-        object: nil,
-        queue: nil
-      ) { [weak self] _ in self?.enqueue(.willSleep) },
-      notificationCenter.addObserver(
-        forName: NSWorkspace.didWakeNotification,
-        object: nil,
-        queue: nil
-      ) { [weak self] _ in self?.enqueue(.didWake) },
-    ]
+    powerSource.start { [weak self] message in self?.receive(message) }
   }
 
   /// Stops observing and returns when the delivery task has finished.
@@ -86,18 +86,16 @@ final class SystemPowerNotificationObserver: @unchecked Sendable {
     guard let stopTask else {
       stopped = true
       started = false
-      let tokens = observerTokens
-      observerTokens.removeAll()
       eventContinuation?.finish()
       eventContinuation = nil
       let deliveryTask = deliveryTask
-      let notificationCenter = notificationCenter
+      let powerSource = powerSource
       let task = Task {
-        for token in tokens { notificationCenter.removeObserver(token) }
         if let deliveryTask {
           deliveryTask.cancel()
           await deliveryTask.value
         }
+        powerSource.stop()
       }
       stopTask = task
       lock.unlock()
@@ -110,17 +108,27 @@ final class SystemPowerNotificationObserver: @unchecked Sendable {
   deinit {
     deliveryTask?.cancel()
     eventContinuation?.finish()
-    for token in observerTokens { notificationCenter.removeObserver(token) }
+    powerSource.stop()
   }
 
-  /// Queues `event` for the handler while the observer runs.
-  private func enqueue(_ event: Event) {
+  /// Queues the event of `message`, or allows an idle sleep at once.
+  private func receive(_ message: SystemPowerMessage) {
+    switch message {
+    case .canSystemSleep(let id): powerSource.allowPowerChange(notificationID: id)
+    case .systemWillSleep(let id): enqueue(QueuedEvent(event: .willSleep, sleepNotificationID: id))
+    case .systemHasPoweredOn: enqueue(QueuedEvent(event: .didWake, sleepNotificationID: nil))
+    }
+  }
+
+  /// Queues `queued` for the handler while the observer runs, or acknowledges a sleep it drops.
+  private func enqueue(_ queued: QueuedEvent) {
     lock.lock()
     guard started, !stopped else {
       lock.unlock()
+      if let id = queued.sleepNotificationID { powerSource.allowPowerChange(notificationID: id) }
       return
     }
-    eventContinuation?.yield(event)
+    eventContinuation?.yield(queued)
     lock.unlock()
   }
 
