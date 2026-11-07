@@ -22,6 +22,10 @@ When two controllers have the same VID:PID, rumble from games and from **System 
 
 Some controllers report the same VID:PID and the same USB serial number, such as two `057E:2009` pads that both report `000000000001`. OJD gives each one its own virtual controller. The first pad to connect keeps the identity that its serial gives. The second pad's identity includes its USB port, so apps may treat it as a new controller after you move it to another port. The two pads may swap virtual identities after a replug or a restart, because the first pad to connect keeps the plain identity.
 
+## A Pad Shows the Identity of a Switch Pro Controller
+
+Some pads report `057E:2009` and the USB serial `000000000001`, the identity and serial of a Nintendo Switch Pro Controller, while in their Switch mode. OJD binds every `057E:2009` pad as a Pro Controller, so such a pad gets that driver. `ojd diagnose` names each one in its `switch-placeholder-serial` check, and the check does not change the binding. Other pads can report the same serial, so the serial alone does not identify a model. The pad reports at its own interval in this mode, which OJD does not change.
+
 ## Unplugging a USB Controller Can Crash the App
 
 If you unplug a USB controller or dongle while OJD runs, OJD may crash. It may also leave stale virtual controllers in **System Settings**. Restart OJD to clear them.
