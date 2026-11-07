@@ -21,7 +21,9 @@ TBD - created by archiving change api-version-v1alpha2. Update Purpose after arc
 
 ### Requirement: Stored alpha.1 Files Are Refused
 
-A stored document with `apiVersion: openjoystickdriver/v1alpha1` SHALL be refused with `E5001`, a message that names both versions, and the file left unchanged. OJD SHALL NOT read, rewrite or migrate it.
+A stored document with `apiVersion: openjoystickdriver/v1alpha1` SHALL be refused with `E5001`, a
+message that names both versions, and the file left unchanged. A reader SHALL NOT read, rewrite or
+migrate it; `ojd migrate` converts it.
 
 #### Scenario: Alpha.1 Profile
 
@@ -31,7 +33,7 @@ A stored document with `apiVersion: openjoystickdriver/v1alpha1` SHALL be refuse
 #### Scenario: Alpha.1 Settings at Launch
 
 - **WHEN** the app starts with a `v1alpha1` `Settings.json`
-- **THEN** it shows the refused-settings alert and leaves the file in place
+- **THEN** it shows the refused-settings alert and leaves the file in place until the user chooses
 
 ### Requirement: Update Path Is Documented
 
