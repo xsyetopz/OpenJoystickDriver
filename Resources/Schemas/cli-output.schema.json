@@ -1074,6 +1074,28 @@
         }
       }
     },
+    "controllerSpeakerPlay": {
+      "$ref": "#/$defs/sharedStatus",
+      "properties": {
+        "status": {
+          "const": "Success"
+        },
+        "details": {
+          "$ref": "#/$defs/sharedControllerOutput"
+        }
+      }
+    },
+    "controllerSpeakerStop": {
+      "$ref": "#/$defs/sharedStatus",
+      "properties": {
+        "status": {
+          "const": "Success"
+        },
+        "details": {
+          "$ref": "#/$defs/sharedControllerOutput"
+        }
+      }
+    },
     "controllerSuspend": {
       "required": ["apiVersion", "kind"],
       "properties": {
@@ -2782,6 +2804,7 @@
         "hat",
         "leftStick",
         "leftTrigger",
+        "pointer",
         "pressed",
         "rightStick",
         "rightTrigger",
@@ -2818,6 +2841,10 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 65535
+        },
+        "pointer": {
+          "description": "The aim of a pointing device, such as the Wii Remote IR camera; positive y is down.",
+          "$ref": "#/$defs/sharedStick"
         },
         "pressed": {
           "type": "array",

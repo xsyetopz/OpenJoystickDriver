@@ -81,7 +81,7 @@ enum GUICoverageMatrix {
       statusItem: "Help submenu"
     )
     + row(
-      [["setting"], ["update"]],
+      [["setting"], ["update"], ["migrate"]],
       area: "Settings window",
       mainMenu: "App > Settings",
       statusItem: "Settings"

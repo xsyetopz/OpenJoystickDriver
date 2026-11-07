@@ -294,6 +294,7 @@ enum GUICoverageEntries {
     leaf("update check", "checkForUpdates"),
     option("update check", "--prerelease", "setIncludePrereleaseUpdates"),
     leaf("explain", "ErrorCodeExplainerView"),
+    leaf("migrate", "migrate"),
   ]
 
   // MARK: Builders

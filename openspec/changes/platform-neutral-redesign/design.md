@@ -244,7 +244,7 @@ The GUI covers every CLI action that a window can naturally perform; the menu ba
 | `record`, `mod` | Library | File > Install Record or Mod | none |
 | `access` | Access | none | Grant Access |
 | `log`, `diagnose`, `explain` | Activity | File > Save Support Report, Save Activity Log; Help | Help submenu |
-| `setting`, `update` | Settings window | App > Settings | Settings |
+| `setting`, `update`, `migrate` | Settings window; `migrate` also as Migrate in the refused-settings alert and the Access error card | App > Settings | Settings |
 
 ### D11 GUI
 

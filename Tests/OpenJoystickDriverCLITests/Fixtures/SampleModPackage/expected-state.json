@@ -9,6 +9,10 @@
     "x": 0,
     "y": 0
   },
+  "pointer": {
+    "x": 0,
+    "y": 0
+  },
   "leftTrigger": 65535,
   "rightTrigger": 0,
   "touch": []
