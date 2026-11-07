@@ -196,6 +196,7 @@ enum GUICoverageEntries {
     option("macro set", "--repeat", "ProfileEditorView"),
     option("macro set", "--while-running", "ProfileEditorView"),
     option("macro set", "--interrupt-on-release", "ProfileEditorView"),
+    option("macro set", "--no-interrupt-on-release", "ProfileEditorView"),
     leaf("macro remove", "ProfileEditorView"),
   ]
 

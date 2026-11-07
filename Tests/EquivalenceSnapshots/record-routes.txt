@@ -1906,6 +1906,9 @@ system ownership=macos
 ## 2DC8:6013
 system ownership=macos
 
+## 2DC8:901B
+system ownership=macos
+
 ## 2E24:0423
 raw-access
 
