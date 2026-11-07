@@ -217,6 +217,19 @@ final class AccessViewModel: ObservableObject {
   /// Clears the failure message.
   func dismissFailure() { failure = nil }
 
+  /// Converts the stale documents, then loads the status again; a document that cannot be
+  /// converted shows its failure.
+  func migrate(using migrator: DocumentMigrator = DocumentMigrator()) async {
+    let failed = migrator.run(dryRun: false).contains { $0.status == .failed }
+    await refresh()
+    if failed {
+      failure = AccessFailure(
+        message: OJDLocalized.string("ui.migrate.failed"),
+        code: .documentNotMigrated
+      )
+    }
+  }
+
   /// Loads the access status from the service.
   ///
   /// A failure shows in ``load``.

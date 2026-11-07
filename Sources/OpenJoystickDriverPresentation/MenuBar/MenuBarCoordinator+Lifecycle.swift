@@ -88,18 +88,27 @@
     }
 
     /// Asks what to do about a settings file that cannot be used, and asks again while a reset
-    /// leaves it unusable.
-    func offerSettingsRecovery() {
+    /// leaves it unusable; `note` goes before the reason.
+    func offerSettingsRecovery(note: String? = nil) {
       guard
         case .offerRecovery(let error) = SettingsFileStartup.decide(
           settingsError: preferences.settingsFileError
         )
       else { return }
-      let reason = preferences.errorMessage ?? error.localizedDescription
+      let reason = [note, preferences.errorMessage ?? error.localizedDescription]
+        .compactMap { $0 }.joined(separator: "\n\n")
+      var offersMigration = false
+      if case .unsupported = error { offersMigration = true }
       switch SettingsUnreadableChoice(
-        response: SettingsUnreadableAlert.make(reason: reason).runActivatingApp()
+        response: SettingsUnreadableAlert.make(reason: reason, offersMigration: offersMigration)
+          .runActivatingApp(),
+        offersMigration: offersMigration
       )
       {
+      case .migrate:
+        let failed = DocumentMigrator().run(dryRun: false).contains { $0.status == .failed }
+        preferences.reloadSettings()
+        offerSettingsRecovery(note: failed ? OJDLocalized.string("ui.migrate.failed") : nil)
       case .showInFinder: preferences.showSettingsFileInFinder()
       case .resetSettings:
         preferences.resetSettings()

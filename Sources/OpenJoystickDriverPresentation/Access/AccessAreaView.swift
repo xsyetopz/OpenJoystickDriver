@@ -60,7 +60,11 @@
           Section { LoadingStateView(message: OJDLocalized.string("ui.access.loading")) }
         case .failed(let failure):
           Section {
-            errorView(failure, actionTitle: "ui.access.tryAgain") { Task { await model.refresh() } }
+            errorView(
+              failure,
+              actionTitle: "ui.access.tryAgain",
+              migrates: failure.code == .unsupportedAPIVersion
+            ) { Task { await model.refresh() } }
           }
         case .loaded(let status):
           endpointsSection(status)
@@ -83,10 +87,11 @@
     }
 
     /// Returns an inline error with a button that runs `action`; `actionTitle` is a localization
-    /// key.
+    /// key. `migrates` adds the Migrate button.
     private func errorView(
       _ failure: AccessFailure,
       actionTitle: String,
+      migrates: Bool = false,
       action: @escaping () -> Void
     ) -> some View {
       InlineErrorView(
@@ -98,7 +103,9 @@
         actionAccessibilityLabel: OJDLocalized.string(
           actionTitle == "ui.access.dismiss" ? "a11y.access.dismissError" : "a11y.access.tryAgain"
         ),
-        action: action
+        action: action,
+        secondaryActionTitle: migrates ? OJDLocalized.string("ui.migrate.action") : nil,
+        secondaryAction: migrates ? { Task { await model.migrate() } } : nil
       )
     }
 

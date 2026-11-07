@@ -50,6 +50,8 @@
 
   /// The button the user pressed in the alert for an unreadable settings file.
   enum SettingsUnreadableChoice: Equatable {
+    /// Convert the stale documents.
+    case migrate
     /// Show the settings file in Finder.
     case showInFinder
     /// Reset the settings.
@@ -57,14 +59,13 @@
     /// Quit the app.
     case quit
 
-    /// Maps the alert's button response: the first button is Show in Finder, the second is Reset
-    /// Settings, and any other response is Quit.
-    init(response: NSApplication.ModalResponse) {
-      switch response {
-      case .alertFirstButtonReturn: self = .showInFinder
-      case .alertSecondButtonReturn: self = .resetSettings
-      default: self = .quit
-      }
+    /// Maps the alert's button response: Show in Finder and Reset Settings are the first two
+    /// buttons, any other response is Quit. An alert that `offersMigration` has Migrate first and
+    /// the others after it.
+    init(response: NSApplication.ModalResponse, offersMigration: Bool = false) {
+      let buttons: [Self] = (offersMigration ? [.migrate] : []) + [.showInFinder, .resetSettings]
+      let index = response.rawValue - NSApplication.ModalResponse.alertFirstButtonReturn.rawValue
+      self = buttons.indices.contains(index) ? buttons[index] : .quit
     }
   }
 
@@ -72,14 +73,15 @@
   enum SettingsUnreadableAlert {
     /// Returns the alert for `reason`.
     ///
-    /// Show in Finder is the default button; Reset Settings is a normal button marked destructive,
-    /// and Quit answers Escape.
+    /// Show in Finder is the default button, or Migrate when the alert `offersMigration`; Reset
+    /// Settings is a normal button marked destructive, and Quit answers Escape.
     @MainActor
-    static func make(reason: String) -> NSAlert {
+    static func make(reason: String, offersMigration: Bool = false) -> NSAlert {
       let alert = NSAlert()
       alert.alertStyle = .warning
       alert.messageText = OJDLocalized.string("ui.settings.advanced.unreadableTitle")
       alert.informativeText = reason
+      if offersMigration { alert.addButton(withTitle: OJDLocalized.string("ui.migrate.action")) }
       alert.addButton(
         withTitle: OJDLocalized.string("platform.macos.ui.settings.advanced.unreadableShowInFinder")
       )

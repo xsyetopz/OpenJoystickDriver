@@ -165,6 +165,20 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
+  func anAlertThatOffersMigrationHasMigrateFirstAndMapsItsButtons() {
+    let alert = SettingsUnreadableAlert.make(reason: "Reason", offersMigration: true)
+
+    #expect(alert.buttons.map(\.title).first == OJDLocalized.string("ui.migrate.action"))
+    #expect(alert.buttons.count == 4)
+    let choices = [
+      NSApplication.ModalResponse.alertFirstButtonReturn, .alertSecondButtonReturn,
+      .alertThirdButtonReturn, NSApplication.ModalResponse(rawValue: 1003),
+    ].map { SettingsUnreadableChoice(response: $0, offersMigration: true) }
+    #expect(choices == [.migrate, .showInFinder, .resetSettings, .quit])
+  }
+
+  @Test
+  @MainActor
   func theLaunchUpdateCheckSkipsWhileTheSettingsFileCannotBeRead() {
     let error = SettingsStoreError.damaged(file: "/tmp/Settings.json")
     var checks = 0

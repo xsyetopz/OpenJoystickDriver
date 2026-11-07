@@ -22,6 +22,10 @@
     let actionAccessibilityLabel: String
     /// Runs when the user presses the action button.
     let action: () -> Void
+    /// The title of a second action button, or nil for none.
+    var secondaryActionTitle: String?
+    /// Runs when the user presses the second action button.
+    var secondaryAction: (() -> Void)?
     /// Whether the explanation of the code is open.
     @State
     private var showsDetails = false
@@ -41,6 +45,9 @@
             if code != nil {
               Button(detailsTitle) { showsDetails.toggle() }
                 .ojdAccessibilityLabel(detailsAccessibilityLabel)
+            }
+            if let secondaryActionTitle, let secondaryAction {
+              Button(secondaryActionTitle, action: secondaryAction)
             }
             Button(actionTitle, action: action).ojdAccessibilityLabel(actionAccessibilityLabel)
           }
