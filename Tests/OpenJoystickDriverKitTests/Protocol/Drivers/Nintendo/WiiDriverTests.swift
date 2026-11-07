@@ -47,12 +47,6 @@ struct WiiDriverTests {
   }
 
   @Test
-  func theCapabilitiesAreTheCoreButtons() throws {
-    let wii = try #require(Self.family.protocolDescription.wiiRemote)
-    #expect(driver.capabilities.controls == Set(wii.coreButtons.map(\.control)))
-  }
-
-  @Test
   func accelerometerReassemblesTenBitsFromTheHighByteAndTheLowBits() throws {
     _ = try driver.parseReport(Data([0x31, 0x40, 0x00, 0x84, 0x00, 0x00]))
     #expect(driver.acceleration?.x == 0x212)

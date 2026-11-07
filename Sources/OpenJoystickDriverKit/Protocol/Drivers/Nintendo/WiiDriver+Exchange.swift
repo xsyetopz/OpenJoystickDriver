@@ -136,6 +136,7 @@ extension WiiDriver {
   /// Returns the controls an extension drove to neutral and ends its handshake.
   func dropExtension(at now: MonotonicTimestamp) {
     extensionKind = nil
+    extensionCenters = [:]
     state = ControllerState(pressed: state.pressed.intersection(wii.coreButtons.map(\.control)))
     if exchanges.first?.purpose == .extensionHandshake {
       exchanges.removeFirst()
@@ -185,6 +186,7 @@ extension WiiDriver {
     case .accelerometerCalibration:
       accelerometerCalibration = AccelerometerCalibration(finished.received)
     case .extensionHandshake:
+      extensionCenters = [:]
       extensionKind =
         wii.extensions.first { $0.id == finished.received }.map { .known($0.kind) }
         ?? .unknown(finished.received)

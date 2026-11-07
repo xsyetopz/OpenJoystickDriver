@@ -190,7 +190,13 @@ struct WiiDriverExchangeTests {
     _ = try feed(acknowledgement(error: 0))
     _ = try feed(acknowledgement(error: 0))
     _ = try feed(reply(address: 0x00FA, data: [0, 0, 0xA4, 0x20, 0, 0]))
-    driver.state.leftStick = StickPosition(x: BipolarValue(normalized: 1), y: .center)
+    func nunchuk(stickX: UInt8) -> Data {
+      Data([0x35, 0, 0, 0x80, 0x80, 0x80, stickX, 0x80, 0x80, 0x80, 0x80, 0x03])
+        + Data(repeating: 0, count: 10)
+    }
+    _ = try feed(nunchuk(stickX: 0x80))
+    #expect(try feed(nunchuk(stickX: 0xFF)).isEmpty)
+    #expect(driver.state.leftStick.x.rawValue > 32_000)
     let event = try driver.parseReport(WiiFixtures.report("20-status-no-extension"), at: 5)
     #expect(event?.state.leftStick == .center)
     #expect(driver.extensionKind == nil)

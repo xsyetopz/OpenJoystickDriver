@@ -6,7 +6,8 @@ import Foundation
 ///
 /// The report layouts, the button and accelerometer bits, the report-mode choice and the register
 /// scripts come from the `wiiRemote` field of `nintendo-wii.json`. Facts are from WiiBrew's
-/// Wiimote page. Extension data, IR, the speaker, LEDs and rumble are not decoded or written yet.
+/// Wiimote page. Nunchuk and Classic data and the remote's motion sample are decoded; Motion Plus,
+/// IR, the speaker, LEDs and rumble are not decoded or written yet.
 public final class WiiDriver: PhysicalProtocolDriver {
   /// The input report that answers a status request and carries the battery.
   static let statusReportID: UInt8 = 0x20
@@ -66,6 +67,10 @@ public final class WiiDriver: PhysicalProtocolDriver {
   /// The accelerometer calibration read from the remote; nil until read, and when the remote
   /// returns a block whose gravity equals its zero point (uncalibrated).
   var accelerometerCalibration: AccelerometerCalibration?
+  /// The raw center of each extension stick, taken from the first sample after the handshake.
+  var extensionCenters: [Control: Int] = [:]
+  /// The index of the next motion sample in the session.
+  var motionSequence: UInt64 = 0
   /// The latest exchange that ended in a failure; the driver does not retry it.
   var failure: ExchangeFailure?
   /// The latest memory reply the driver refused.
@@ -88,9 +93,17 @@ public final class WiiDriver: PhysicalProtocolDriver {
       * 1_000_000
   }
 
-  /// The core buttons of the description.
+  /// The core buttons, every control an extension layout drives, and motion.
+  ///
+  /// The set does not change with the plugged extension.
   public var capabilities: ControllerCapabilities {
-    ControllerCapabilities(controls: Set(wii.coreButtons.map(\.control)))
+    let extensionControls = wii.extensions.compactMap(\.layout).flatMap {
+      $0.buttons.map(\.control) + $0.sticks.map(\.control) + $0.triggers.map(\.control)
+    }
+    return ControllerCapabilities(
+      controls: Set(wii.coreButtons.map(\.control) + extensionControls),
+      motion: true
+    )
   }
 
   /// The session of the description's Bluetooth variant.
@@ -118,6 +131,8 @@ public final class WiiDriver: PhysicalProtocolDriver {
     hasRequestedCalibration = false
     extensionKind = nil
     accelerometerCalibration = nil
+    extensionCenters = [:]
+    motionSequence = 0
     failure = nil
     refusedReply = nil
   }
@@ -182,14 +197,20 @@ public final class WiiDriver: PhysicalProtocolDriver {
     for button in wii.coreButtons {
       next.set(button.control, pressed: core[button.field.byte] & button.field.mask != 0)
     }
+    var motion: [ControllerMotionSample] = []
     if let block = mode.blocks.first(where: { $0.kind == .accelerometer }), block.length == 3 {
       acceleration = rawAcceleration(
         high: Array(bytes[(1 + block.offset)..<(1 + block.offset + 3)]),
         core: core
       )
+      motion = motionSamples(at: receivedAt)
+    }
+    if let block = mode.blocks.first(where: { $0.kind == .extensionData }) {
+      let start = 1 + block.offset
+      decodeExtension(Array(bytes[start..<start + 6]), into: &next)
     }
     state = next
-    return ControllerEvent(timestamp: receivedAt, state: next)
+    return ControllerEvent(timestamp: receivedAt, state: next, motion: motion)
   }
 
   /// Takes the battery level, restores the report mode and follows the extension flag.
