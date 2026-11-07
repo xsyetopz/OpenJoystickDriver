@@ -4440,3 +4440,25 @@
 "status.gyroCalibrating" = "กำลังปรับเทียบ";
 /* Value of the Motion Plus row for a Wii Remote once the driver has measured the resting value of the gyro. */
 "status.gyroReady" = "พร้อม";
+/* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
+"error.E5009.message" = "เอกสารที่บันทึกไว้จากเวอร์ชันเก่าไม่มีการแปลงอัตโนมัติ ojd migrate จึงปล่อยไว้โดยไม่เปลี่ยนแปลง ข้อความระบุไฟล์และฟิลด์ ให้แก้ไขไฟล์ด้วยตนเองเป็น apiVersion ที่รองรับ";
+/* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
+"cli.migrate.abstract" = "แปลงเอกสารที่บันทึกไว้จากเวอร์ชันเก่าเป็นเวอร์ชันปัจจุบัน";
+/* Help text of 'ojd migrate'. Settings.json, AccessGrants.json, apiVersion and Migrated are file, field and folder names and stay as written. */
+"cli.migrate.discussion" = "แปลง Settings.json, AccessGrants.json, โปรไฟล์, ระเบียนและแพตช์คอนโทรลเลอร์ของคุณ และไฟล์อุปกรณ์เสมือนที่มี apiVersion เก่า ไฟล์ต้นฉบับแต่ละไฟล์จะเก็บไว้ในโฟลเดอร์ Migrated ของโฟลเดอร์สนับสนุน ม็อดที่ติดตั้งแล้วจะไม่ถูกแปลง";
+/* Help text of the --dry-run option of 'ojd migrate'. */
+"cli.migrate.dryRun" = "แสดงรายการเอกสารที่จะถูกแปลงโดยไม่เปลี่ยนแปลงสิ่งใด";
+/* Message printed by 'ojd migrate' when no stored document has an older version. */
+"cli.migrate.none" = "ไม่มีเอกสารที่ต้องย้ายข้อมูล";
+/* Line printed by 'ojd migrate' for a converted document. %@ is the path of the document in the support folder. Migrated is a folder name and stays as written. */
+"cli.migrate.converted" = "แปลง %@ แล้ว ไฟล์ต้นฉบับอยู่ในโฟลเดอร์ Migrated";
+/* Line printed by 'ojd migrate --dry-run' for a document it would convert. %@ is the path of the document in the support folder. */
+"cli.migrate.wouldConvert" = "จะแปลง %@";
+/* Line printed by 'ojd migrate' for a document it cannot convert. %1$@ is the path of the document, %2$@ is the reason. */
+"cli.migrate.failed" = "%1$@ ไม่เปลี่ยนแปลง: %2$@";
+/* Error text of 'ojd migrate' when at least one document could not be converted. */
+"cli.migrate.failedSummary" = "แปลงเอกสารบางรายการไม่ได้และยังไม่เปลี่ยนแปลง ผลลัพธ์ระบุแต่ละรายการ";
+/* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
+"ui.migrate.action" = "ย้ายข้อมูล";
+/* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
+"ui.migrate.failed" = "แปลงเอกสารบางรายการไม่ได้และยังไม่เปลี่ยนแปลง เรียกใช้ ojd migrate ใน Terminal เพื่อดูว่ารายการใด";

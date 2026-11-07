@@ -4441,3 +4441,25 @@
 "status.gyroCalibrating" = "Calibrazione in corso";
 /* Value of the Motion Plus row for a Wii Remote once the driver has measured the resting value of the gyro. */
 "status.gyroReady" = "Pronto";
+/* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
+"error.E5009.message" = "Un documento salvato di una versione precedente non ha una conversione automatica, quindi ojd migrate lo lascia invariato. Il messaggio indica il file e il campo. Modifica il file a mano con l'apiVersion supportata.";
+/* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
+"cli.migrate.abstract" = "Converte i documenti salvati di una versione precedente nella versione attuale.";
+/* Help text of 'ojd migrate'. Settings.json, AccessGrants.json, apiVersion and Migrated are file, field and folder names and stay as written. */
+"cli.migrate.discussion" = "Converte Settings.json, AccessGrants.json, i profili, i tuoi record e patch dei controller e i file dei dispositivi virtuali con un apiVersion precedente. Ogni originale resta nella cartella Migrated della cartella di supporto. Le mod installate non vengono convertite.";
+/* Help text of the --dry-run option of 'ojd migrate'. */
+"cli.migrate.dryRun" = "Elenca i documenti che verrebbero convertiti senza modificare nulla.";
+/* Message printed by 'ojd migrate' when no stored document has an older version. */
+"cli.migrate.none" = "Nessun documento richiede la migrazione.";
+/* Line printed by 'ojd migrate' for a converted document. %@ is the path of the document in the support folder. Migrated is a folder name and stays as written. */
+"cli.migrate.converted" = "%@ convertito. L'originale è nella cartella Migrated.";
+/* Line printed by 'ojd migrate --dry-run' for a document it would convert. %@ is the path of the document in the support folder. */
+"cli.migrate.wouldConvert" = "%@ verrebbe convertito.";
+/* Line printed by 'ojd migrate' for a document it cannot convert. %1$@ is the path of the document, %2$@ is the reason. */
+"cli.migrate.failed" = "%1$@ resta invariato: %2$@";
+/* Error text of 'ojd migrate' when at least one document could not be converted. */
+"cli.migrate.failedSummary" = "Alcuni documenti non sono stati convertiti e restano invariati. L'output indica ciascuno di essi.";
+/* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
+"ui.migrate.action" = "Migra";
+/* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
+"ui.migrate.failed" = "Alcuni documenti non sono stati convertiti e restano invariati. Esegui ojd migrate nel Terminale per vedere quali.";

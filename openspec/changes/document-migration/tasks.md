@@ -1,7 +1,7 @@
 ## 1. Kit conversion
 
 - [ ] 1.1 Migration steps per kind and the `DocumentMigrator` (find, convert, check, write, back up)
-- [ ] 1.2 Error codes `E5009` and `E5010` in `Resources/ErrorCodes.json`, regenerated
+- [ ] 1.2 Error code `E5009` in `Resources/ErrorCodes.json`, regenerated
 
 ## 2. CLI
 

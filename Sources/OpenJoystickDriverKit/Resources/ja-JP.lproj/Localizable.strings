@@ -4440,3 +4440,25 @@
 "status.gyroCalibrating" = "キャリブレーション中";
 /* Value of the Motion Plus row for a Wii Remote once the driver has measured the resting value of the gyro. */
 "status.gyroReady" = "準備完了";
+/* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
+"error.E5009.message" = "古いバージョンの保存済みドキュメントには機械的な変換がないため、ojd migrate は変更せずに残します。メッセージにファイルとフィールドが示されます。ファイルを手作業でサポートされている apiVersion に書き換えてください。";
+/* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
+"cli.migrate.abstract" = "古いバージョンの保存済みドキュメントを現在のバージョンに変換します。";
+/* Help text of 'ojd migrate'. Settings.json, AccessGrants.json, apiVersion and Migrated are file, field and folder names and stay as written. */
+"cli.migrate.discussion" = "古い apiVersion を持つ Settings.json、AccessGrants.json、プロファイル、自分のコントローラーレコードとパッチ、仮想デバイスファイルを変換します。元のファイルはサポートフォルダ内の Migrated フォルダに残ります。インストール済みのモッドは変換されません。";
+/* Help text of the --dry-run option of 'ojd migrate'. */
+"cli.migrate.dryRun" = "変換されるドキュメントを一覧表示し、何も変更しません。";
+/* Message printed by 'ojd migrate' when no stored document has an older version. */
+"cli.migrate.none" = "移行が必要なドキュメントはありません。";
+/* Line printed by 'ojd migrate' for a converted document. %@ is the path of the document in the support folder. Migrated is a folder name and stays as written. */
+"cli.migrate.converted" = "%@ を変換しました。元のファイルは Migrated フォルダにあります。";
+/* Line printed by 'ojd migrate --dry-run' for a document it would convert. %@ is the path of the document in the support folder. */
+"cli.migrate.wouldConvert" = "%@ を変換します。";
+/* Line printed by 'ojd migrate' for a document it cannot convert. %1$@ is the path of the document, %2$@ is the reason. */
+"cli.migrate.failed" = "%1$@ は変更されません: %2$@";
+/* Error text of 'ojd migrate' when at least one document could not be converted. */
+"cli.migrate.failedSummary" = "変換できなかったドキュメントがあり、変更されていません。出力にそれぞれが示されます。";
+/* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
+"ui.migrate.action" = "移行";
+/* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
+"ui.migrate.failed" = "変換できなかったドキュメントがあり、変更されていません。どれかは「ターミナル」で ojd migrate を実行して確認してください。";

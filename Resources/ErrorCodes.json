@@ -576,6 +576,11 @@
       "code": "E5008",
       "domain": "Document",
       "name": "sdlLineRejected"
+    },
+    {
+      "code": "E5009",
+      "domain": "Document",
+      "name": "documentNotMigrated"
     }
   ]
 }
