@@ -80,8 +80,8 @@ Depends: 3, 4.
 Owns: `Resources/Controllers/057e/057e-0306.json`, `057e-0330.json`, `Resources/ErrorCodes.json`, `Resources/Localization`.
 Depends: 3, 4, 5.
 
-- [ ] 7.1 Author the two records (authored input only) with the product-string match key. Verify: `./Scripts/ojd catalog regenerate --write` then `./Scripts/ojd catalog regenerate --check` give no diff; `git status` shows the generated `Controllers` change only through the generator.
-- [ ] 7.2 Add a record-set test that `057E:0306` with product string `Nintendo RVL-WBC-01` and `057E:0330` with `Nintendo RVL-CNT-01-UC` match no mode. Verify: `swift test --filter ControllerModeMatchTests`.
+- [x] 7.1 Author the two records (authored input only) with the product-string match key. Verify: `./Scripts/ojd catalog regenerate --write` then `./Scripts/ojd catalog regenerate --check` give no diff; `git status` shows the generated `Controllers` change only through the generator.
+- [x] 7.2 Add a record-set test that `057E:0306` with product string `Nintendo RVL-WBC-01` and `057E:0330` with `Nintendo RVL-CNT-01-UC` match no mode. Verify: `swift test --filter ControllerModeMatchTests`.
 - [ ] 7.3 Add the error codes (`ExtensionHandshakeFailed`, `SpeakerUnavailable`, unsupported audio file) and run `./Scripts/ojd errors regenerate --write`. Verify: `./Scripts/ojd errors regenerate --check` shows no diff and the error-code tests pass.
 - [ ] 7.4 Add the localization keys for every user-facing text of the behavior table in design D9 in all 22 bundles, and review each translation against `LOCALIZATION.md` (Meaning, Punctuation). Verify: `python3 Scripts/Quality/check_localization_keys.py` and `swift test --filter LocalizationTests` pass, and the review is recorded in the task note.
 

@@ -743,4 +743,42 @@ struct ControllerModeMatchTests {
     #expect(neither.0 == .xboxGIP)
     #expect(neither.1.contains { $0.contains("interface classes seen: 03/00/00") })
   }
+
+  /// "Shared product ID": the Balance Board and the Wii U Pro Controller share the Wii Remote
+  /// VID:PID, and the records, which have no default mode, match neither.
+  @Test
+  func theWiiRecordsMatchOnlyTheirProductString() async throws {
+    let cases: [(ControllerModelID, own: String, other: String)] = [
+      (
+        ControllerModelID(vendorID: 0x057E, productID: 0x0306), "Nintendo RVL-CNT-01",
+        "Nintendo RVL-WBC-01"
+      ),
+      (
+        ControllerModelID(vendorID: 0x057E, productID: 0x0330), "Nintendo RVL-CNT-01-TR",
+        "Nintendo RVL-CNT-01-UC"
+      ),
+    ]
+    for (model, own, other) in cases {
+      let profile = try #require(ControllerRecordSet.bundled.records[model]?.profile)
+      func select(_ product: String) async -> ControllerModeSelection {
+        let device = PhysicalDevice(
+          vendorID: model.vendorID,
+          productID: model.productID,
+          productName: product,
+          interfaces: [
+            PhysicalInterfaceSignature(interfaceNumber: 0, hostTransport: .bluetoothClassic)
+          ]
+        )
+        return await ControllerModeSelector.select(
+          from: profile,
+          model: model,
+          backend: .hid,
+          reader: CountingProbeReader(),
+          device: device
+        ) { _ in }
+      }
+      #expect(await select(own) == .matched("wii-remote"))
+      #expect(await select(other) == .noModeMatched)
+    }
+  }
 }

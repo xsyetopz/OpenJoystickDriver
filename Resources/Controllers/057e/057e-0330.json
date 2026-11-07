@@ -1,0 +1,17 @@
+{
+  "apiVersion": "openjoystickdriver/v1alpha2",
+  "kind": "Controller",
+  "vendorID": 1406,
+  "productID": 816,
+  "modes": [
+    {
+      "id": "wii-remote",
+      "protocol": {
+        "family": "NintendoWii"
+      },
+      "match": {
+        "product": "Nintendo RVL-CNT-01-TR"
+      }
+    }
+  ]
+}
