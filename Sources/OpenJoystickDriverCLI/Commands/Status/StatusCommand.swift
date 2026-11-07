@@ -129,6 +129,7 @@ struct StatusCommand: AsyncParsableCommand {
         deviceIdentity(vendorID: controller.vendorID, productID: controller.productID),
         controller.connection, controller.name,
       ])
+      if controller.paused { rows.append(["paused", controller.id]) }
       if let mapping = controller.inputMapping {
         rows.append(["input-mapping", controller.id] + mapping.plainFields)
       }
@@ -270,6 +271,9 @@ struct StatusCommand: AsyncParsableCommand {
         CLIOutput.stdout(
           "  \(identity)  \(controller.name)  \(controller.connection)  \(controller.id)"
         )
+        if controller.paused {
+          CLIOutput.stdout("    " + CLILocalized.text("ui.controllers.paused.value"))
+        }
         printMapping(controller.inputMapping)
       }
     }

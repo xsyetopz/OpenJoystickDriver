@@ -11,7 +11,7 @@ struct ApplicationServiceWatchSource: ControllerWatchSource {
   /// Returns the connected controllers, with their virtual HID profiles described.
   func devices() async throws -> [ApplicationServiceDeviceDescription] {
     guard let server else { return [] }
-    return server.describingVirtualHIDProfiles(
+    return await server.describingVirtualHIDProfiles(
       await server.deviceManager.connectedDeviceDescriptions().map {
         ($0.logicalControllerID, ApplicationServiceDeviceDescription(snapshot: $0))
       }

@@ -3725,7 +3725,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["connection", "id", "name", "productID", "vendorID"],
+            "required": ["connection", "id", "name", "paused", "productID", "vendorID"],
             "additionalProperties": false,
             "properties": {
               "connection": {
@@ -3739,6 +3739,10 @@
               },
               "name": {
                 "type": "string"
+              },
+              "paused": {
+                "description": "Whether a Pause has the controller pass through unmapped.",
+                "type": "boolean"
               },
               "productID": {
                 "type": "integer",

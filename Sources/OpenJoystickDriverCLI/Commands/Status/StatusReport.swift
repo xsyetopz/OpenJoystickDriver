@@ -177,6 +177,8 @@ struct StatusReport: Encodable, Equatable {
     let productID: Int
     /// How the controller connects.
     let connection: String
+    /// Whether a `Pause` has the controller pass through unmapped.
+    let paused: Bool
     /// Where the HID usage map comes from; absent unless the `HIDDescriptor` protocol drives the
     /// controller.
     let inputMapping: InputMapping?
@@ -272,6 +274,7 @@ struct StatusReport: Encodable, Equatable {
         vendorID: Int($0.vendorID),
         productID: Int($0.productID),
         connection: $0.connection,
+        paused: $0.paused,
         inputMapping: $0.bindingResult.inputMapping
       )
     }

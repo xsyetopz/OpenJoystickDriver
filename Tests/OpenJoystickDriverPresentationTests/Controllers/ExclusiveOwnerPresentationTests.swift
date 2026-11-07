@@ -61,6 +61,19 @@ struct ExclusiveOwnerPresentationTests {
   }
 
   @Test
+  func theDetailSaysWhenAPauseHoldsTheController() {
+    var paused = device(ownership: .exclusive, owner: nil)
+    paused.paused = true
+    let fact = ControllerDetailFacts.general(for: paused).first { $0.kind == .paused }
+    #expect(fact?.label == OJDLocalized.string("ui.controllers.paused.label"))
+    #expect(fact?.value == .text(OJDLocalized.string("ui.controllers.paused.value")))
+    #expect(
+      !ControllerDetailFacts.general(for: device(ownership: .exclusive, owner: nil))
+        .contains { $0.kind == .paused }
+    )
+  }
+
+  @Test
   func theDetailSaysWhenMacOSAlsoListsTheController() {
     let listed = ApplicationServiceDeviceDescription.fixture(
       id: "listed",

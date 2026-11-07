@@ -105,14 +105,14 @@ struct ServingPolicyCallersTests {
       let id = LogicalControllerID(vendorID: 0x3537, productID: 0x2222)
 
       let suspended = Self.device(session: .suspended, controls: Control.xboxLayout)
-      let described = server.server.describingVirtualHIDProfiles([(id, suspended)])
+      let described = await server.server.describingVirtualHIDProfiles([(id, suspended)])
       #expect(described.first?.publication?.reason == .sessionSuspended)
 
       // The extension owns the USB link and OJD still publishes the persona, so the controller
       // waits for input like any other.
       let extensionOwned = try #require(ServingFixture.all.first { $0.name == "extension owned" })
       #expect(
-        server.server.describingVirtualHIDProfiles([(id, extensionOwned.device)]).first?
+        await server.server.describingVirtualHIDProfiles([(id, extensionOwned.device)]).first?
           .publication?.reason == .noInputYet
       )
 
@@ -168,7 +168,7 @@ struct ServingPolicyCallersTests {
 
       // Service and endpoint: the description the service builds for its status and watch stream.
       let described = try #require(
-        server.server.describingVirtualHIDProfiles([(id, fixture.device)]).first
+        await server.server.describingVirtualHIDProfiles([(id, fixture.device)]).first
       )
       let service = Answer(
         persona: described.virtualHIDProfile?.profile?.rawValue,

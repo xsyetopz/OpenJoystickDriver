@@ -84,6 +84,9 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   /// Whether a virtual device publishes this controller and why not; set by the service when it
   /// reports status.
   public var publication: ApplicationServicePublicationStatus?
+  /// Whether a `Pause` has the controller pass through unmapped; set by the service when it
+  /// reports status.
+  public var paused = false
 
   /// Creates a new ApplicationServiceDeviceDescription.
   public init(
@@ -221,6 +224,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
       ApplicationServicePublicationStatus.self,
       forKey: .publication
     )
+    self.paused = try container.decode(Bool.self, forKey: .paused)
   }
 
   /// The keys of the JSON encoding.
@@ -291,6 +295,8 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     case virtualHIDProfile
     /// The `publication` key.
     case publication
+    /// The `paused` key.
+    case paused
   }
 }
 

@@ -83,6 +83,11 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
 
   deinit { tickerTask?.cancel() }
 
+  /// Returns whether a `Pause` has `identifier` pass through unmapped.
+  func isPaused(_ identifier: LogicalControllerID) async -> Bool {
+    await core.engine.isPaused(identifier)
+  }
+
   /// Only a remapping route consumes a native controller's input; virtual gamepad output never
   /// publishes for it.
   func wantsObservedInput(from identifier: LogicalControllerID) -> Bool {

@@ -7,6 +7,8 @@ struct ControllerFact: Equatable, Identifiable {
   enum Kind: Hashable {
     /// Whether a virtual device publishes the controller.
     case publication
+    /// Whether a `Pause` has the controller pass through unmapped.
+    case paused
     /// The route that serves the controller.
     case serving
     /// The protocol binding of the controller.
@@ -96,6 +98,15 @@ enum ControllerDetailFacts {
     for device: ApplicationServiceDeviceDescription
   ) -> [ControllerFact] {
     let output = device.physicalOutputCapabilities
+    let paused =
+      device.paused
+      ? [
+        fact(
+          .paused,
+          "ui.controllers.paused.label",
+          .text(OJDLocalized.string("ui.controllers.paused.value"))
+        )
+      ] : []
     let always = [
       fact(.publication, "cli.controller.show.labelPublication", publication(device)),
       fact(.serving, "ui.controllers.serving.label", .text(servingText(device))),
@@ -160,7 +171,8 @@ enum ControllerDetailFacts {
           .text(OJDLocalized.string("status.controllerAlsoListedBySystem"))
         )
       ] : []
-    return always + input + held + listed + (power + capabilities).filter { $0.value != .none }
+    return paused + always + input + held + listed
+      + (power + capabilities).filter { $0.value != .none }
   }
 
   /// Returns the technical facts, shown under Advanced: identifiers, the parser (the binding that

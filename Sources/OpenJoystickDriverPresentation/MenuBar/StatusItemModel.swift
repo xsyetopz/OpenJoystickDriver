@@ -115,6 +115,8 @@ struct StatusItemState: Equatable {
     let isSuspended: Bool
     /// Whether the controller is linked over Bluetooth, from the typed transport.
     let isWireless: Bool
+    /// Whether a `Pause` has the controller pass through unmapped.
+    var isPaused = false
     /// The profiles that apply to this controller (same model, and its unit when a profile names
     /// one). ``Profile/isActive`` tells whether the profile is the one active for it.
     var profiles: [Profile] = []
@@ -279,7 +281,16 @@ enum StatusItemModel {
         action: .suspendController(sessionToken: controller.id)
       )
     }
-    return [
+    let paused =
+      controller.isPaused
+      ? [
+        StatusItemEntry(
+          id: "\(prefix).paused",
+          title: .key("ui.controllers.paused.value"),
+          isEnabled: false
+        )
+      ] : []
+    return paused + [
       suspend,
       StatusItemEntry(
         id: "\(prefix).testInput",

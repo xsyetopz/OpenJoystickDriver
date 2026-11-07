@@ -292,10 +292,12 @@ extension ApplicationServiceServer {
   /// Describes each controller with its virtual HID profile selection and stored override.
   func describingVirtualHIDProfiles(
     _ controllers: [(identifier: LogicalControllerID, device: ApplicationServiceDeviceDescription)]
-  ) -> [ApplicationServiceDeviceDescription] {
+  ) async -> [ApplicationServiceDeviceDescription] {
     let automatic = automaticUserSpaceDispatcher()
-    return controllers.map { identifier, device in
+    var result: [ApplicationServiceDeviceDescription] = []
+    for (identifier, device) in controllers {
       var described = device
+      described.paused = await remappingRouter.isPaused(identifier)
       let unitOverride = device.portKey.flatMap {
         virtualHIDProfileOverrides.storedOverride(
           vendorID: device.vendorID,
@@ -328,8 +330,9 @@ extension ApplicationServiceServer {
         automatic: automatic,
         unavailable: unavailable
       )
-      return described
+      result.append(described)
     }
+    return result
   }
 
   /// The publication reason a route gives for publishing nothing; nil when the route publishes a

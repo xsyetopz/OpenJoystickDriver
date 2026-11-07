@@ -133,7 +133,7 @@ extension VirtualOutputTests {
     _ = await fixture.change(.set("Generic"))
 
     let other = LogicalControllerID(vendorID: 5, productID: 6)
-    let devices = fixture.server.describingVirtualHIDProfiles([
+    let devices = await fixture.server.describingVirtualHIDProfiles([
       (id, description(id)), (other, description(other)),
     ])
 
@@ -178,7 +178,7 @@ extension VirtualOutputTests {
       recordAccessRoute: .system
     )
 
-    let described = fixture.server.describingVirtualHIDProfiles([
+    let described = await fixture.server.describingVirtualHIDProfiles([
       (id, native), (id, description(id)),
     ])
 

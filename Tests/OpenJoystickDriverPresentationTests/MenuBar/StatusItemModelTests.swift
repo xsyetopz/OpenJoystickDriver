@@ -331,6 +331,31 @@ struct StatusItemModelTests {
   }
 
   @Test
+  func pausedControllerShowsADisabledPausedRow() throws {
+    let paused = StatusItemState.Controller(
+      id: Self.pad.id,
+      name: Self.pad.name,
+      isSuspended: false,
+      isWireless: false,
+      isPaused: true
+    )
+    let row = try #require(
+      Self.entry(
+        "controllers.pad-a.paused",
+        in: StatusItemModel.entries(for: Self.state(controllers: [paused]))
+      )
+    )
+    #expect(row.title == .key("ui.controllers.paused.value"))
+    #expect(!row.isEnabled)
+    #expect(
+      Self.entry(
+        "controllers.pad-a.paused",
+        in: StatusItemModel.entries(for: Self.state(controllers: [Self.pad]))
+      ) == nil
+    )
+  }
+
+  @Test
   func wiredControllerLeavesDisconnectDisabled() throws {
     let wired = StatusItemState.Controller(
       id: "pad-b",

@@ -93,6 +93,7 @@
             name: $0.name,
             isSuspended: $0.sessionState == .suspended,
             isWireless: $0.supportsWirelessDisconnect,
+            isPaused: $0.paused,
             profiles: Self.profiles(applyingTo: $0, in: snapshot)
           )
         },
