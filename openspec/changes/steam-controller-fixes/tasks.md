@@ -62,7 +62,7 @@ Verify: `swift test --filter SteamTritonDriverTests`, `swift test --filter Physi
 
 - [ ] 5.1 Write tests of the pulse report encoding from the H3 capture: side values, little-endian times and count, 8-byte length, HID output report id `0x81`. Verify: the tests fail before 5.2; they stay pending until H3 supplies the capture.
 - [ ] 5.2 Add `setPadHapticPulse` and the `padHaptic(side)` capability to the output types, encode it in the Triton driver, reject it on other families with `unsupportedCapability`, and add a CLI diagnostic under the controller output commands (with user-facing text reviewed against `LOCALIZATION.md`). Verify: the 5.1 tests pass; `swift test --filter OpenJoystickDriverCLITests`; `python3 Scripts/Quality/check_localization_keys.py`.
-- [ ] 5.3 Add a test that pins the rumble report: id `80`, bytes 1 to 3 zero, left speed at 4 to 5, left gain 6 zero, right speed at 7 to 8, right gain 9 zero, length 10. Verify: `swift test --filter SteamTritonDriverTests`.
+- [x] 5.3 Add a test that pins the rumble report: id `80`, bytes 1 to 3 zero, left speed at 4 to 5, left gain 6 zero, right speed at 7 to 8, right gain 9 zero, length 10. Verify: `swift test --filter SteamTritonDriverTests`.
 
 ## 6. Dongle interfaces and docs
 

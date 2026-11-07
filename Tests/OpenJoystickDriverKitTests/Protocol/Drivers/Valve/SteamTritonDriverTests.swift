@@ -1,4 +1,5 @@
 import Foundation
+import ProtocolPacketFixtures
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -190,5 +191,25 @@ struct SteamTritonDriverTests {
     #expect(stop.bytes == [0x80] + [UInt8](repeating: 0, count: 9))
     #expect(driver.keepAliveWrites().hidOutputs.isEmpty)
     #expect(driver.encoded(.setPlayerIndicator(.player1)) == nil)
+  }
+
+  /// SDL `MsgHapticRumble`: id `0x80`, bytes 1 to 3 zero, left speed at 4 to 5, left gain 6 zero,
+  /// right speed at 7 to 8, right gain 9 zero, 10 bytes.
+  @Test
+  func rumbleReportKeepsTheReferenceLayout() throws {
+    let driver = SteamTritonDriver()
+    let intensities = RumbleIntensities(
+      lowFrequency: UnipolarValue(0x0102),
+      highFrequency: UnipolarValue(0x0304)
+    )
+    let report = driver.encoded(.setRumble(intensities, duration: .milliseconds(500))).onlyReport
+    #expect(report.reportID == 0x80)
+    #expect(report.bytes.count == 10)
+    #expect(Array(report.bytes[1...3]) == [0, 0, 0])
+    #expect(Array(report.bytes[4...5]) == [0x02, 0x01])
+    #expect(report.bytes[6] == 0)
+    #expect(Array(report.bytes[7...8]) == [0x04, 0x03])
+    #expect(report.bytes[9] == 0)
+    #expect(report.bytes == ProtocolPacketFixtures.Triton.rumbleReport(left: 0x0102, right: 0x0304))
   }
 }
