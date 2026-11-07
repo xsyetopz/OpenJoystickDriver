@@ -203,7 +203,9 @@
       ).filter {
         switch $0.destination {
         case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad: true
-        case .mouseMovement, .scroll, .gamepadAxis, .physical, .macro: false
+        case .mouseMovement, .scroll, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet,
+          .pause:
+          false
         }
       }
     }
