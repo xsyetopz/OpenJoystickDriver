@@ -12,6 +12,20 @@
       "session": {
         "settleMilliseconds": 200
       }
+    },
+    {
+      "id": "xusb",
+      "protocol": {
+        "family": "XboxXUSB",
+        "variant": "Wired"
+      },
+      "match": {
+        "interfaceSignature": {
+          "interfaceClass": 255,
+          "interfaceSubclass": 93,
+          "interfaceProtocol": 1
+        }
+      }
     }
   ],
   "usb": {

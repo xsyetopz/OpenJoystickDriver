@@ -278,7 +278,16 @@ public enum ControllerModeSelector {
         return .matched(mode.id)
       }
     }
-    log("[DeviceManager] No mode of \(name) matched; using the default mode")
+    let seen = (device.interfaces ?? []).compactMap { interface -> String? in
+      guard let kind = interface.interfaceClass, let subclass = interface.interfaceSubclass,
+        let code = interface.interfaceProtocol
+      else { return nil }
+      return String(format: "%02X/%02X/%02X", kind, subclass, code)
+    }
+    log(
+      "[DeviceManager] No mode of \(name) matched; using the default mode"
+        + " (interface classes seen: \(seen.isEmpty ? "none" : seen.joined(separator: " ")))"
+    )
     return .noModeMatched
   }
 }

@@ -657,4 +657,47 @@ struct ControllerModeMatchTests {
       }
     }
   }
+
+  /// Vader 5S: the GIP mode is the default and the XUSB mode is keyed on `FF/5D/01`.
+  @Test
+  func theVader5SRunsGIPOrXUSBFromItsInterfaceSignature() async throws {
+    let vader = ControllerModelID(vendorID: 0x37D7, productID: 0x2801)
+    let profile = try #require(ControllerRecordSet.bundled.records[vader]?.profile)
+    func run(_ triple: (UInt8, UInt8, UInt8)?) async -> (PhysicalProtocolID, [String]) {
+      let interfaces = triple.map {
+        [
+          PhysicalInterfaceSignature(
+            interfaceNumber: 0,
+            interfaceClass: $0.0,
+            interfaceSubclass: $0.1,
+            interfaceProtocol: $0.2,
+            hostTransport: .usb
+          )
+        ]
+      }
+      let lines = Locked<[String]>([])
+      let selection = await ControllerModeSelector.select(
+        from: profile,
+        model: vader,
+        backend: .rawUSB,
+        reader: CountingProbeReader(),
+        device: PhysicalDevice(
+          vendorID: vader.vendorID,
+          productID: vader.productID,
+          interfaces: interfaces
+        )
+      ) { line in lines.withLock { $0.append(line) } }
+      let running = profile.applying(modeID: selection.modeID)
+      return (running?.physicalProtocolID ?? .hidDescriptor, lines.withLock { $0 })
+    }
+    let gip = await run((0xFF, 0x47, 0xD0))
+    let xusb = await run((0xFF, 0x5D, 0x01))
+    let neither = await run((0x03, 0x00, 0x00))
+    #expect(gip.0 == .xboxGIP)
+    #expect(gip.1.contains { $0.contains("interface classes seen: FF/47/D0") })
+    #expect(xusb.0 == .xboxXUSB)
+    #expect(xusb.1.contains { $0.contains("selected mode xusb") })
+    #expect(neither.0 == .xboxGIP)
+    #expect(neither.1.contains { $0.contains("interface classes seen: 03/00/00") })
+  }
 }
