@@ -48,6 +48,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Fixed
 
+- The app builds with `xcodebuild` from a checkout or git worktree that is not named `OpenJoystickDriver`: the `build` routes pass the package name SwiftPM derives from the directory as `OJD_SWIFT_PACKAGE_NAME`.
 - Two controllers with the same VID:PID and USB serial number, such as two `057E:2009` pads, no longer share one virtual controller.
 
 ## [0.6.0-alpha.1] - 2026-10-23

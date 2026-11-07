@@ -58,6 +58,11 @@ An Xcode build is signed to run locally, without the restricted entitlements in 
 Without the `com.apple.developer.hid.virtual.device` entitlement, it cannot create the virtual gamepad.
 Use `./Scripts/ojd build install-fast dev` to test the signed app.
 
+The app target passes `-package-name $(OJD_SWIFT_PACKAGE_NAME)` to see the package's `package` symbols.
+SwiftPM names the package after the checkout directory, lowercased and mangled to a C99 identifier, so the project default `openjoystickdriver` fits only a checkout named `OpenJoystickDriver`.
+The `build` routes pass the name derived from the checkout directory.
+For a direct `xcodebuild` or an Xcode build in a clone or worktree with another name, set `OJD_SWIFT_PACKAGE_NAME` to that name, such as `OJD_SWIFT_PACKAGE_NAME=my_clone`.
+
 When a swift.org toolchain is selected through `TOOLCHAINS`, `xcodebuild` cannot resolve the package.
 The `build` routes unset `TOOLCHAINS`; in a shell, run `env -u TOOLCHAINS xcodebuild`.
 

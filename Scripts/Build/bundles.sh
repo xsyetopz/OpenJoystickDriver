@@ -49,6 +49,15 @@ build_app_bundle() {
     actions=(clean build)
   fi
   echo "Building $configuration app (universal)..."
+  # The app target passes -package-name to see the package's `package` symbols. SwiftPM names the
+  # package after the checkout directory (lowercased, C99-mangled), so a renamed clone or a
+  # worktree must pass that name.
+  local swift_package_name
+  swift_package_name="$(basename "$PROJECT_DIR" | tr '[:upper:]' '[:lower:]' |
+    tr -c 'a-z0-9_\n' '_')"
+  if [[ "$swift_package_name" == [0-9]* ]]; then
+    swift_package_name="_${swift_package_name:1}"
+  fi
   # Xcode extracts the App Intents metadata that Shortcuts reads, which `swift build` cannot.
   # TOOLCHAINS is unset because the package must build with the selected Xcode's own toolchain.
   env -u TOOLCHAINS xcodebuild \
@@ -60,6 +69,7 @@ build_app_bundle() {
     ARCHS="arm64 x86_64" \
     ONLY_ACTIVE_ARCH=NO \
     ENABLE_DEBUG_DYLIB=NO \
+    OJD_SWIFT_PACKAGE_NAME="$swift_package_name" \
     CODE_SIGNING_ALLOWED=NO \
     "${actions[@]}"
   local built_app="$GUI_DERIVED_DATA/Build/Products/$configuration/OpenJoystickDriver.app"

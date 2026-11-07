@@ -187,6 +187,7 @@
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				OJD_SWIFT_PACKAGE_NAME = openjoystickdriver;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -201,6 +202,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				OJD_SWIFT_PACKAGE_NAME = openjoystickdriver;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
@@ -213,7 +215,7 @@
 				CODE_SIGN_STYLE = Manual;
 				INFOPLIST_FILE = Sources/OpenJoystickDriver/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
-				OTHER_SWIFT_FLAGS = "-package-name openjoystickdriver";
+				OTHER_SWIFT_FLAGS = "-package-name $(OJD_SWIFT_PACKAGE_NAME)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.openjoystickdriver;
 				PRODUCT_NAME = OpenJoystickDriver;
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -228,7 +230,7 @@
 				CODE_SIGN_STYLE = Manual;
 				INFOPLIST_FILE = Sources/OpenJoystickDriver/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
-				OTHER_SWIFT_FLAGS = "-package-name openjoystickdriver";
+				OTHER_SWIFT_FLAGS = "-package-name $(OJD_SWIFT_PACKAGE_NAME)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.openjoystickdriver;
 				PRODUCT_NAME = OpenJoystickDriver;
 				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
