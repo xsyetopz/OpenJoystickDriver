@@ -1,0 +1,59 @@
+{
+  "apiVersion": "openjoystickdriver/v1alpha2",
+  "kind": "ControllerPatch",
+  "selector": {
+    "vendorID": 1118,
+    "productID": 654
+  },
+  "patch": {
+    "modes": [
+      {
+        "id": "default",
+        "protocol": {
+          "family": "XboxXUSB",
+          "variant": "Wired"
+        },
+        "session": {
+          "control": [
+            {
+              "bmRequestType": 193,
+              "bRequest": 1,
+              "wValue": 256,
+              "wIndex": 0,
+              "wLength": 20,
+              "timeoutMilliseconds": 100,
+              "toleratesRejection": true,
+              "match": {
+                "manufacturer": "SHANWAN"
+              }
+            },
+            {
+              "bmRequestType": 193,
+              "bRequest": 1,
+              "wValue": 0,
+              "wIndex": 0,
+              "wLength": 8,
+              "timeoutMilliseconds": 100,
+              "toleratesRejection": true,
+              "match": {
+                "manufacturer": "SHANWAN"
+              }
+            },
+            {
+              "bmRequestType": 192,
+              "bRequest": 1,
+              "wValue": 0,
+              "wIndex": 0,
+              "wLength": 4,
+              "timeoutMilliseconds": 100,
+              "toleratesRejection": true,
+              "match": {
+                "manufacturer": "SHANWAN"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

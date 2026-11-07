@@ -18,7 +18,7 @@ Verify: `swift test --filter ProtocolDescription`.
 
 - [ ] 1.1 After each edit of `Resources/Protocols/xbox-xusb.json`, run `./Scripts/ojd catalog regenerate --write`. Verify: `./Scripts/ojd catalog regenerate --check` passes.
 - [x] 1.2 Add fixtures to `Tests/ProtocolPacketFixtures` for the receiver: presence connected and disconnected envelopes, a pad report with no earlier presence report, a pad report with a short length, and a headset-bit presence report. Verify: `swift test --filter XUSBDriverTests` still passes with the fixtures unused.
-- [ ] 1.3 Add the byte table of the three control reads (D4 of `design.md`) as a fixture with its source (`paroj/xpad` `3470f9f`). Verify: a test compares the table with the record datum of task 4.2 once that exists (pending until then).
+- [x] 1.3 Add the byte table of the three control reads (D4 of `design.md`) as a fixture with its source (`paroj/xpad` `3470f9f`). Verify: a test compares the table with the record datum of task 4.2 once that exists (pending until then).
 - [ ] 1.4 Extend the protocol-description schema and loader with `defaults.receiverPowerOff` (one raw-USB packet with `bytes`, `endpoint`, `timeoutMilliseconds`, `variants`), separate from `session.shutdown`, add a case to `Tests/OpenJoystickDriverKitTests/Protocol/Catalog/SchemaRejections/protocol-description.json` for an unknown key, and a family other than `XboxXUSB` that sets it is rejected. Add a pipeline test: an input I/O error on a receiver slot with the datum present calls `invalidateUSBHandle` and writes no power-off packet. Verify: `./Scripts/ojd check schemas` and `swift test --filter ProtocolDescription`.
 
 ## 2. Presence (tests first)
@@ -50,10 +50,10 @@ Owns: `Resources/ControllerPatches/045e/`, record tests.
 Depends: 1.3; the patch ships after H8.
 Verify: `./Scripts/ojd catalog regenerate --check` and `swift test --filter ControllerRecord`.
 
-- [ ] 4.1 Write tests: a device with manufacturer `SHANWAN` and `045e:028e` receives the three control reads in order before the first startup write; a device with manufacturer `Microsoft`, no manufacturer string, or `Logitech` receives none. Verify: the tests fail before 4.2.
-- [ ] 4.2 Add the controller patch for `045e:028e` with `session.control` entries from the 1.3 table, `match.manufacturer: "SHANWAN"`, `timeoutMilliseconds: 100`, `toleratesRejection: true`. Run `./Scripts/ojd catalog regenerate --write`. Verify: `./Scripts/ojd catalog regenerate --check` prints no diff; the 4.1 tests pass; `./Scripts/ojd check profiles`.
-- [ ] 4.3 Add a rejection case for a control entry with a `match` that has no keys (already refused by the loader) only if none exists under `SchemaRejections/`. Verify: `swift test --filter SchemaRejection`.
-- [ ] 4.4 Write every line of the driver and record work from the facts in `design.md`, not from `xpad` source text. If a line is taken from `zeromiyi/x360w` (MIT), add its notice to `THIRD_PARTY_NOTICES.md`. Verify: `git diff` contains no text copied from `xpad.c` (compare the added Swift and JSON against the fetched sources by eye and with `grep -n "kzalloc\|usb_control_msg"` on the diff, which prints nothing); `grep -n "x360w" THIRD_PARTY_NOTICES.md` shows the entry when x360w code is used; `git diff --check` passes on the file.
+- [x] 4.1 Write tests: a device with manufacturer `SHANWAN` and `045e:028e` receives the three control reads in order before the first startup write; a device with manufacturer `Microsoft`, no manufacturer string, or `Logitech` receives none. Verify: the tests fail before 4.2.
+- [x] 4.2 Add the controller patch for `045e:028e` with `session.control` entries from the 1.3 table, `match.manufacturer: "SHANWAN"`, `timeoutMilliseconds: 100`, `toleratesRejection: true`. Run `./Scripts/ojd catalog regenerate --write`. Verify: `./Scripts/ojd catalog regenerate --check` prints no diff; the 4.1 tests pass; `./Scripts/ojd check profiles`.
+- [x] 4.3 Add a rejection case for a control entry with a `match` that has no keys (already refused by the loader) only if none exists under `SchemaRejections/`. Verify: `swift test --filter SchemaRejection`.
+- [x] 4.4 Write every line of the driver and record work from the facts in `design.md`, not from `xpad` source text. If a line is taken from `zeromiyi/x360w` (MIT), add its notice to `THIRD_PARTY_NOTICES.md`. Verify: `git diff` contains no text copied from `xpad.c` (compare the added Swift and JSON against the fetched sources by eye and with `grep -n "kzalloc\|usb_control_msg"` on the diff, which prints nothing); `grep -n "x360w" THIRD_PARTY_NOTICES.md` shows the entry when x360w code is used; `git diff --check` passes on the file.
 
 ## 5. Ownership, slot mapping, docs
 

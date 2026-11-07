@@ -350,6 +350,52 @@ public enum ProtocolPacketFixtures {
     }
   }
 
+  /// The three vendor control reads of a ShanWan-class wired Xbox 360 clone.
+  ///
+  /// The table holds the facts of `paroj/xpad` commit `3470f9f`. The reads go before the first
+  /// input read, and each discards its reply.
+  public enum XUSBCloneControlReads {
+    /// One control read of the table.
+    public struct Read: Equatable, Sendable {
+      /// The `bmRequestType` byte.
+      public let bmRequestType: UInt8
+      /// The `bRequest` byte.
+      public let bRequest: UInt8
+      /// The `wValue` word.
+      public let wValue: UInt16
+      /// The `wIndex` word.
+      public let wIndex: UInt16
+      /// The `wLength` word.
+      public let wLength: UInt16
+
+      /// Creates a read from its five request fields.
+      public init(
+        bmRequestType: UInt8,
+        bRequest: UInt8,
+        wValue: UInt16,
+        wIndex: UInt16,
+        wLength: UInt16
+      ) {
+        self.bmRequestType = bmRequestType
+        self.bRequest = bRequest
+        self.wValue = wValue
+        self.wIndex = wIndex
+        self.wLength = wLength
+      }
+    }
+
+    /// The control timeout in milliseconds.
+    public static let timeoutMilliseconds = 100
+    /// The manufacturer string of the clone that the reads are gated on.
+    public static let manufacturer = "SHANWAN"
+    /// The reads in the order they are sent.
+    public static let reads = [
+      Read(bmRequestType: 0xC1, bRequest: 0x01, wValue: 0x0100, wIndex: 0x0000, wLength: 20),
+      Read(bmRequestType: 0xC1, bRequest: 0x01, wValue: 0x0000, wIndex: 0x0000, wLength: 8),
+      Read(bmRequestType: 0xC0, bRequest: 0x01, wValue: 0x0000, wIndex: 0x0000, wLength: 4),
+    ]
+  }
+
   /// Xbox One GIP reports.
   public enum XboxOneGIP {
     /// A neutral input report: GIP command 0x20, options, sequence, length 14, then buttons,
