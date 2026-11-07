@@ -160,6 +160,10 @@
 "ui.controllers.idleIdentity" = "此裝置不提供任何控制項目，例如未連接控制器的接收器。OJD 不會向其傳送任何資料。";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "電池";
+/* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */
+"ui.controllers.paused.label" = "重新對應";
+/* Value of the pause fact in the Controllers detail, and menu bar menu row under a controller that a Pause assignment holds. */
+"ui.controllers.paused.value" = "已暫停";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "顯示序號";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */
@@ -598,6 +602,24 @@
 "ui.mapping.mouseButton" = "滑鼠「%@」按鈕";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "指標 %@ 移動";
+/* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
+"ui.mapping.profileNext" = "下一個設定檔";
+/* Name of the destination that activates the previous profile of the controller's model and scope in name order, wrapping at the start. */
+"ui.mapping.profilePrevious" = "上一個設定檔";
+/* Name of the destination that activates a specific profile of the same controller model. */
+"ui.mapping.profileSwitch" = "切換設定檔";
+/* Name of the destination that turns a layer on. %@ is the layer name. */
+"ui.mapping.layerOn" = "開啟層 %@";
+/* Name of the destination that turns a layer off. %@ is the layer name. */
+"ui.mapping.layerOff" = "關閉層 %@";
+/* Name of the destination that flips a layer between on and off. %@ is the layer name. */
+"ui.mapping.layerToggle" = "切換層 %@";
+/* Name of the destination that pauses the controller so its input passes through unmapped. */
+"ui.mapping.pauseOn" = "暫停控制器";
+/* Name of the destination that resumes a paused controller so its mappings apply again. */
+"ui.mapping.pauseOff" = "恢復控制器";
+/* Name of the destination that flips the controller between paused and resumed. */
+"ui.mapping.pauseToggle" = "切換暫停";
 /* Name of a scroll destination. %@ is the direction of the scroll. */
 "ui.mapping.scroll" = "捲動 %@";
 /* Name of the bottom face button: A on Xbox, Cross on PlayStation. The slash stays. */
@@ -2939,6 +2961,8 @@
 "cli.binding.group.sourceInvalid" = "「%@」不是來源。「ojd binding set --help」會列出來源的寫法。";
 /* Error of 'ojd binding set' when the target cannot be parsed. %@ is the text the user gave. The command in quotes stays as written. */
 "cli.binding.group.targetInvalid" = "「%@」不是目標。「ojd binding set --help」會列出目標的寫法。";
+/* Error of 'ojd binding set' when the profile has no layer with the name in a layer:NAME:MODE target. %1$@ is the profile name and %2$@ is the layer name. */
+"cli.binding.group.layerMissing" = "「%1$@」沒有名為「%2$@」的層。未變更任何內容。";
 /* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given, or --turbo-delay or --turbo-max is given without both. All four option names stay as written. */
 "cli.binding.group.turboPair" = "--turbo-rate 和 --turbo-duty 必須一起提供，--turbo-delay 和 --turbo-max 需要兩者。";
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
@@ -4228,6 +4252,8 @@
 "ui.controllers.alsoListedBySystem" = "也由系統列出";
 /* Label of a macro as the destination of an assignment when the profile has no macro of that identifier, and name of the macro destination kind. */
 "term.macro" = "巨集";
+/* Label of a layer as the destination of an assignment when the profile has no layer of that identifier, and name of the layer destination kind. */
+"term.layer" = "層";
 /* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
 "ui.profiles.macros" = "巨集";
 /* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */

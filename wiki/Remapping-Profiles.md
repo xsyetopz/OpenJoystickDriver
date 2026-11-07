@@ -48,6 +48,8 @@ OJD picks the profile for a controller in this order:
 
 If no profile is active, OJD passes the controller through to the virtual controller. An app-scoped profile picked by rule 3 does not work until its app is in front.
 
+A **Profile switch** assignment changes the active profile of a controller from a button. For more information, see [Switch profiles, set layers, and pause](Bindings-and-Actions.md#switch-profiles-set-layers-and-pause).
+
 OJD reads the front app when a controller connects, and when you activate, deactivate, or edit a profile. Whether OJD re-evaluates the choice at the instant you switch apps is not verified.
 
 > [!WARNING]

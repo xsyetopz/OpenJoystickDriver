@@ -160,6 +160,10 @@
 "ui.controllers.idleIdentity" = "Bu aygıt hiçbir denetim sunmuyor; örneğin bağlı kontrolcüsü olmayan bir alıcı. OJD ona veri göndermez.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "Pil";
+/* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */
+"ui.controllers.paused.label" = "Yeniden atama";
+/* Value of the pause fact in the Controllers detail, and menu bar menu row under a controller that a Pause assignment holds. */
+"ui.controllers.paused.value" = "Duraklatıldı";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "Seri numarasını göster";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */
@@ -598,6 +602,24 @@
 "ui.mapping.mouseButton" = "Fare “%@” Düğmesi";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "İşaretçi %@ Hareketi";
+/* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
+"ui.mapping.profileNext" = "Sonraki profil";
+/* Name of the destination that activates the previous profile of the controller's model and scope in name order, wrapping at the start. */
+"ui.mapping.profilePrevious" = "Önceki profil";
+/* Name of the destination that activates a specific profile of the same controller model. */
+"ui.mapping.profileSwitch" = "Profil değiştir";
+/* Name of the destination that turns a layer on. %@ is the layer name. */
+"ui.mapping.layerOn" = "%@ katmanını aç";
+/* Name of the destination that turns a layer off. %@ is the layer name. */
+"ui.mapping.layerOff" = "%@ katmanını kapat";
+/* Name of the destination that flips a layer between on and off. %@ is the layer name. */
+"ui.mapping.layerToggle" = "%@ katmanını aç/kapat";
+/* Name of the destination that pauses the controller so its input passes through unmapped. */
+"ui.mapping.pauseOn" = "Kontrolcüyü duraklat";
+/* Name of the destination that resumes a paused controller so its mappings apply again. */
+"ui.mapping.pauseOff" = "Kontrolcüyü sürdür";
+/* Name of the destination that flips the controller between paused and resumed. */
+"ui.mapping.pauseToggle" = "Duraklatmayı aç/kapat";
 /* Name of a scroll destination. %@ is the direction of the scroll. */
 "ui.mapping.scroll" = "%@ Kaydır";
 /* Name of the bottom face button: A on Xbox, Cross on PlayStation. The slash stays. */
@@ -2939,6 +2961,8 @@
 "cli.binding.group.sourceInvalid" = "“%@” bir kaynak değil. Kaynak biçimlerini “ojd binding set --help” listeler.";
 /* Error of 'ojd binding set' when the target cannot be parsed. %@ is the text the user gave. The command in quotes stays as written. */
 "cli.binding.group.targetInvalid" = "“%@” bir hedef değil. Hedef biçimlerini “ojd binding set --help” listeler.";
+/* Error of 'ojd binding set' when the profile has no layer with the name in a layer:NAME:MODE target. %1$@ is the profile name and %2$@ is the layer name. */
+"cli.binding.group.layerMissing" = "“%1$@” profilinde “%2$@” adlı katman yok. Hiçbir şey değişmedi.";
 /* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given, or --turbo-delay or --turbo-max is given without both. All four option names stay as written. */
 "cli.binding.group.turboPair" = "--turbo-rate ve --turbo-duty birlikte verilmelidir; --turbo-delay ve --turbo-max ikisini de gerektirir.";
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
@@ -4228,6 +4252,8 @@
 "ui.controllers.alsoListedBySystem" = "Sistemde de listelenmiş";
 /* Label of a macro as the destination of an assignment when the profile has no macro of that identifier, and name of the macro destination kind. */
 "term.macro" = "Makro";
+/* Label of a layer as the destination of an assignment when the profile has no layer of that identifier, and name of the layer destination kind. */
+"term.layer" = "Katman";
 /* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
 "ui.profiles.macros" = "Makrolar";
 /* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */

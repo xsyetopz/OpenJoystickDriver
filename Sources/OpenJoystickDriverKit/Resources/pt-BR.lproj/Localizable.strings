@@ -160,6 +160,10 @@
 "ui.controllers.idleIdentity" = "Este dispositivo não oferece controles, como um receptor sem nenhum controle conectado. O OJD não envia dados a ele.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "Bateria";
+/* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */
+"ui.controllers.paused.label" = "Remapeamento";
+/* Value of the pause fact in the Controllers detail, and menu bar menu row under a controller that a Pause assignment holds. */
+"ui.controllers.paused.value" = "Em pausa";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "Mostrar número de série";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */
@@ -598,6 +602,24 @@
 "ui.mapping.mouseButton" = "Botão do Mouse %@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "Movimento do Ponteiro %@";
+/* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
+"ui.mapping.profileNext" = "Próximo perfil";
+/* Name of the destination that activates the previous profile of the controller's model and scope in name order, wrapping at the start. */
+"ui.mapping.profilePrevious" = "Perfil anterior";
+/* Name of the destination that activates a specific profile of the same controller model. */
+"ui.mapping.profileSwitch" = "Trocar de perfil";
+/* Name of the destination that turns a layer on. %@ is the layer name. */
+"ui.mapping.layerOn" = "Ativar a camada %@";
+/* Name of the destination that turns a layer off. %@ is the layer name. */
+"ui.mapping.layerOff" = "Desativar a camada %@";
+/* Name of the destination that flips a layer between on and off. %@ is the layer name. */
+"ui.mapping.layerToggle" = "Alternar a camada %@";
+/* Name of the destination that pauses the controller so its input passes through unmapped. */
+"ui.mapping.pauseOn" = "Pausar o controle";
+/* Name of the destination that resumes a paused controller so its mappings apply again. */
+"ui.mapping.pauseOff" = "Retomar o controle";
+/* Name of the destination that flips the controller between paused and resumed. */
+"ui.mapping.pauseToggle" = "Alternar a pausa";
 /* Name of a scroll destination. %@ is the direction of the scroll. */
 "ui.mapping.scroll" = "Rolagem %@";
 /* Name of the bottom face button: A on Xbox, Cross on PlayStation. The slash stays. */
@@ -2939,6 +2961,8 @@
 "cli.binding.group.sourceInvalid" = "“%@” não é uma origem. “ojd binding set --help” lista as formas de origem.";
 /* Error of 'ojd binding set' when the target cannot be parsed. %@ is the text the user gave. The command in quotes stays as written. */
 "cli.binding.group.targetInvalid" = "“%@” não é um destino. “ojd binding set --help” lista as formas de destino.";
+/* Error of 'ojd binding set' when the profile has no layer with the name in a layer:NAME:MODE target. %1$@ is the profile name and %2$@ is the layer name. */
+"cli.binding.group.layerMissing" = "“%1$@” não tem nenhuma camada chamada “%2$@”. Nada foi alterado.";
 /* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given, or --turbo-delay or --turbo-max is given without both. All four option names stay as written. */
 "cli.binding.group.turboPair" = "--turbo-rate e --turbo-duty devem ser informados juntos, e --turbo-delay e --turbo-max precisam de ambos.";
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
@@ -4229,6 +4253,8 @@
 "ui.controllers.alsoListedBySystem" = "Também listado pelo sistema";
 /* Label of a macro as the destination of an assignment when the profile has no macro of that identifier, and name of the macro destination kind. */
 "term.macro" = "Macro";
+/* Label of a layer as the destination of an assignment when the profile has no layer of that identifier, and name of the layer destination kind. */
+"term.layer" = "Camada";
 /* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
 "ui.profiles.macros" = "Macros";
 /* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */

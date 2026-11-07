@@ -55,10 +55,10 @@ Each group owns its tests and documentation. Order follows dependencies: tests f
 
 ## 6. Profile Control Actions (REQ-40 to REQ-42)
 
-- [ ] 6.1 Write failing tests first: switch by id, wrong model rejected, `Next` and `Previous` order and wrap, layer on, off and toggle, pause passes through and keeps the pause binding, pause releases macros, pause state clears on profile change and disconnect, Activity entry. Verify: `swift test --filter OpenJoystickDriverKitTests.ProfileControlActionTests` fails for the stated reason.
-- [ ] 6.2 Add the three destinations to model, validation and schema; route `ProfileSwitch` to the existing activation path (`activateRemappingProfile` in `Sources/OpenJoystickDriverService`). Verify: `swift test --filter OpenJoystickDriverKitTests.ProfileControlActionTests` and `swift test --filter OpenJoystickDriverServiceTests` pass.
-- [ ] 6.3 Show pause in the Controllers area, `ojd status` and the status item; add CLI targets and editor destinations. Verify: `swift test --filter OpenJoystickDriverPresentationTests` and `swift test --filter OpenJoystickDriverKitTests.CommandLine` pass.
-- [ ] 6.4 Localization keys in 22 bundles; document in `wiki/Bindings-and-Actions.md` and `wiki/Remapping-Profiles.md`. Verify: `python3 Scripts/Quality/check_localization_keys.py` and `git diff --check` over the two pages pass.
+- [x] 6.1 Write failing tests first: switch by id, wrong model rejected, `Next` and `Previous` order and wrap, layer on, off and toggle, pause passes through and keeps the pause binding, pause releases macros, pause state clears on profile change and disconnect, Activity entry. Verify: `swift test --filter OpenJoystickDriverKitTests.ProfileControlActionTests` fails for the stated reason.
+- [x] 6.2 Add the three destinations to model, validation and schema; route `ProfileSwitch` to the existing activation path (`activateRemappingProfile` in `Sources/OpenJoystickDriverService`). Verify: `swift test --filter OpenJoystickDriverKitTests.ProfileControlActionTests` and `swift test --filter OpenJoystickDriverServiceTests` pass.
+- [x] 6.3 Show pause in the Controllers area, `ojd status` and the status item; add CLI targets and editor destinations. Verify: `swift test --filter OpenJoystickDriverPresentationTests` and `swift test --filter OpenJoystickDriverKitTests.CommandLine` pass.
+- [x] 6.4 Localization keys in 22 bundles; document in `wiki/Bindings-and-Actions.md` and `wiki/Remapping-Profiles.md`. Verify: `python3 Scripts/Quality/check_localization_keys.py` and `git diff --check` over the two pages pass.
 
 ## 7. Analog Regions (REQ-43 to REQ-45)
 

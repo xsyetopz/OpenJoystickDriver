@@ -45,7 +45,7 @@ With `--json`, the output is one `SystemStatus` object with these keys:
 - `commandLineTool`: the `ojd` link that the app installs. `state` is `Installed` (a link to this app's executable), `LinkedElsewhere` (a link to another existing file, such as another copy of the app), `Broken` (a link whose target is gone), `BlockedByFile` (a file or folder that is not a link; the app never replaces it), or `Missing` (nothing at `path`). `path` is where the link goes, and `target` is what it points at, when it is a link.
 - `permissions`: `inputRead` and `inputInject`.
 - `virtualDevice`: `enabled`, `status` (the backend's diagnostic text, with each controller's generations and send times, which `--plain` and `ojd diagnose` also print), `overrideError`, and `published` (the `id` of each connected controller that a virtual gamepad stands for). The `Virtual gamepad` row of the human output says `Off`, the error, or `On` with the names of those controllers.
-- `controllers`: each with `id`, `name`, `vendorID`, `productID`, and `connection`.
+- `controllers`: each with `id`, `name`, `vendorID`, `productID`, `connection`, and `paused` (`true` while a Pause assignment holds the controller). The human output shows a Paused line under a paused controller, and `--plain` prints a `paused` row with its `id`.
 - `unboundDevices`: devices that OpenJoystickDriver does not support, each with `vendorID`, `productID`, `connection`, and `reason`.
 - `passThroughDevices`: devices that OpenJoystickDriver leaves to macOS.
 - `skippedRecords`: your controller record files that OpenJoystickDriver skipped, each with `file` and `problem`.
@@ -169,6 +169,9 @@ Every part that names a control, direction, key or modifier is lowercase kebab-c
 - `gamepad:button:NAME`, `gamepad:dpad:DIRECTION`, or `gamepad:axis:NAME`
 - `physical:...` for rumble, lights, and adaptive triggers
 - `macro:NAME` for a macro of the profile, matched without regard to case, and created with `ojd macro set`. It exits with code 1 and changes nothing when the profile has no such macro. `binding list` and `profile show` print the macro's name.
+- `profile:switch:next`, `profile:switch:previous`, or `profile:switch:ID` for a profile of the same controller model
+- `layer:NAME:MODE` for a layer of the profile, matched without regard to case, with `MODE` one of `on`, `off`, or `toggle`. It exits with code 1 and changes nothing when the profile has no such layer. `binding list` and `profile show` print the layer's name.
+- `pause:MODE`, with `MODE` one of `on`, `off`, or `toggle`
 
 `ojd profile show` prints bindings in the same forms.
 

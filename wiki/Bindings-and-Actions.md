@@ -6,6 +6,7 @@ Bindings connect controller controls to destinations, and combinations and layer
 
 - [Assigning Buttons and Actions](#assigning-buttons-and-actions)
 - [Macros](#macros)
+- [Switch Profiles, Set Layers, and Pause](#switch-profiles-set-layers-and-pause)
 - [Combinations, Sequences, and Layers](#combinations-sequences-and-layers)
 - [Further Reading](#further-reading)
 
@@ -30,6 +31,9 @@ An assignment connects one controller control to one destination, such as a keyb
 | Gamepad button, D-pad, or axis | A virtual controller control | Needs virtual gamepad output |
 | Physical output | Rumble, player indicator, color, brightness, adaptive trigger | Only on controllers that support it |
 | Macro | A macro of the profile | Discrete sources only; see [Macros](#macros) |
+| Profile switch | The next or previous profile, or a named profile of the same controller model | Discrete sources only; fires on press; see [Switch profiles, set layers, and pause](#switch-profiles-set-layers-and-pause) |
+| Layer set | Turn a layer of the profile on or off, or flip it | Discrete sources only; fires on press |
+| Pause | Pause or resume the controller, or flip it | Discrete sources only; fires on press |
 
 A gamepad destination fails validation if the profile output policy has the virtual gamepad disabled. Some controls, such as paddles, grips, and function buttons, cannot be a virtual controller output. For the controls each virtual controller carries, see [What the virtual controller carries](Automating-OpenJoystickDriver.md#what-the-virtual-controller-carries). For more information, see [About profiles](Remapping-Profiles.md#about-profiles).
 
@@ -161,6 +165,27 @@ SOURCE: stick-region:left|right:INNER-OUTER[:FROM-TO]
 
 - To remove every assignment, select **Clear all inputs**.
 - To return to pass-through, select **Restore Default Input** in the **Profile actions** menu.
+
+## Switch Profiles, Set Layers, and Pause
+
+Three destinations change what OJD does instead of sending input. Each fires when its source is pressed. Hardware status: Not checked.
+
+- **Next profile** and **Previous profile** activate the neighbor of the active profile among the profiles for the same controller model and application scope. The order is the profile name without regard to case, then the profile identifier, and it wraps around. A profile switch to a named profile must name a profile for the same controller model. Otherwise OJD rejects the profile.
+- **Turn layer on**, **Turn layer off**, and **Toggle layer** set a layer of the same profile.
+- **Pause controller**, **Resume controller**, and **Toggle pause** pause the controller. A paused controller releases everything it holds, including running macros, drops its layers, and passes through unmapped. Only the pause assignment keeps working. A profile change or a disconnect ends the pause. While the pause lasts, the Controllers detail lists Remapping as Paused, the menu bar menu shows a disabled Paused row under the controller, and `ojd status` reports `paused`.
+
+Each switch writes a line to the service log with the old and new profile names, and a failed switch writes its error there. To read the log, run `ojd log`.
+
+To assign them with the command line, use these targets with `ojd binding set`:
+
+```sh
+ojd binding set Racing button:start profile:switch:next
+ojd binding set Racing button:back profile:switch:PROFILE-ID
+ojd binding set Racing button:west layer:Aim:toggle
+ojd binding set Racing button:guide pause:toggle
+```
+
+The layer in `layer:NAME:MODE` is a layer of the profile, found by name without regard to case. The modes are `on`, `off`, and `toggle`.
 
 ## Combinations, Sequences, and Layers
 
