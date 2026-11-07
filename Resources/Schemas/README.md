@@ -53,7 +53,7 @@ Each artifact class has one current contract, a flat `<kind>.schema.json` here. 
 
 OJD-owned property names use lowerCamelCase, including `vendorID`, `profileID`, `initialization`, `keepAlive`, and `settleMilliseconds`. JSON Schema keywords, CloudEvents context attributes, external API fields, and dynamic map keys retain their standards' or sources' spelling. Do not recase values: enums, protocol identifiers, hashes, URLs, or user text.
 
-Change a schema atomically with every producer, consumer, authored input, generated output, and test. Do not add a second live version, aliases, migrations, upcasters, fallback readers, crosswalks, or dual writers.
+Change a schema atomically with every producer, consumer, authored input, generated output, and test. Do not add a second live version, aliases, upcasters, fallback readers, crosswalks, or dual writers. Before `v1.0.0` any schema may change in any release, and a reader accepts only the current `apiVersion`. `ojd migrate` is the one explicit step that converts a stale user document (`DocumentMigrator`, in the Kit); a reader never converts.
 
 ## Boundaries
 

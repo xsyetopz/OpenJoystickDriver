@@ -22,6 +22,7 @@ This page lists every `ojd` command. Every command also accepts the global optio
 - [diagnose](#diagnose)
 - [update](#update)
 - [explain](#explain)
+- [migrate](#migrate)
 - [Further Reading](#further-reading)
 
 ## status
@@ -473,6 +474,17 @@ The command works offline.
 It prints the code, its area (endpoint, command line, or remapping), what it means, and the exit code of a command-line code or the wire value of a remapping code.
 An unknown code is a usage error.
 With `--json`, the output is an `ErrorExplanation` with `code`, `area`, `explanation`, and `exitCode` or `wire`.
+
+## migrate
+
+Convert the documents of an older version to the current one.
+
+```text
+ojd migrate [--dry-run]
+```
+
+The command converts each stale `Settings.json`, `AccessGrants.json`, profile, controller record and virtual device file in the support folder, checks the result with the current reader, and copies the original to `Migrated/` before it writes. A file whose backup already exists is not converted. `--dry-run` lists what it would convert and writes nothing. A file it cannot convert stays unchanged, the other files still convert, and the command exits with code 1 and error `E5009`. Installed mods are not converted.
+With `--json`, it prints a `MigrationReport` whose `metadata` has `dryRun` and whose `items` each have `file`, `kind`, `status` (`converted`, `wouldConvert` or `failed`) and, for a failure, `detail`.
 
 ## Further Reading
 

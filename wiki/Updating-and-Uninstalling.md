@@ -63,16 +63,17 @@ Your profiles stay in place because they are stored outside the app.
 
 OJD 0.6.0-alpha.2 reads only files with `apiVersion: openjoystickdriver/v1alpha2`. It refuses each file from 0.6.0-alpha.1, which has `openjoystickdriver/v1alpha1`, with error `E5001`, and it does not change the file. The message names the file, the version it found, and the supported version.
 
-| File | What OJD does | What you do |
-| --- | --- | --- |
-| `Settings.json` | The app shows an alert at launch. | Click **Reset Settings** in the alert, or run `ojd setting reset`. |
-| `AccessGrants.json` | The endpoint stays off, and each `ojd access` command fails with `E5001`. | Change the `apiVersion` line to `openjoystickdriver/v1alpha2`, or move the file to the Trash and grant each program again. |
-| Profiles in `Profiles/` | The profile shows as damaged. | Change the `apiVersion` line, then run `ojd profile validate FILE`. |
-| Your controller records | OJD skips the file and uses the bundled record. `ojd record list` names it. | Change the `apiVersion` line, then run `ojd record validate FILE`. |
-| Your virtual device files | OJD skips the file. | Change the `apiVersion` line. |
-| Installed mods | `ojd mod validate` refuses the package. | Install a version of the mod made for 0.6.0-alpha.2. |
+To convert them, run the following command. The Migrate button in the launch alert and in the **Access** area does the same.
 
-Change only the `apiVersion` line. When the validate command reports another error, the file uses a field that changed in this version; the `CHANGELOG.md` file lists those fields.
+```shell
+ojd migrate
+```
+
+`ojd migrate` converts `Settings.json`, `AccessGrants.json`, your profiles, your controller records and your virtual device files. It copies each original to `Migrated/` in the OJD support folder before it writes the converted file, so nothing is lost. Run `ojd migrate --dry-run` first to list what it would convert without changing a file.
+
+A file that `ojd migrate` cannot convert stays unchanged, and the command exits with error `E5009` and names the file and the reason. Convert that file by hand: change the `apiVersion` line to `openjoystickdriver/v1alpha2`, then run `ojd profile validate FILE` or `ojd record validate FILE` and fix what it reports. The `CHANGELOG.md` file lists the fields that changed.
+
+`ojd migrate` does not convert installed mods, and `ojd mod validate` refuses them. Install a version of the mod made for 0.6.0-alpha.2.
 
 ### Get a Fix
 

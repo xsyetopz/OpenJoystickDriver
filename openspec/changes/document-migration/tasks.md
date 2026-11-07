@@ -20,4 +20,4 @@
 
 ## 5. Docs
 
-- [ ] 5.1 Rule, schema README, wiki and CHANGELOG
+- [x] 5.1 Rule, schema README, wiki and CHANGELOG
