@@ -1,0 +1,506 @@
+{
+  "apiVersion": "openjoystickdriver/v1alpha2",
+  "kind": "ProtocolDescription",
+  "family": "NintendoWii",
+  "variants": ["BluetoothClassic"],
+  "endpoints": {
+    "in": 130,
+    "out": 2
+  },
+  "defaults": {
+    "session": {
+      "wiiRemote": {
+        "rumbleBit": 0,
+        "led": {
+          "report": 17,
+          "firstBit": 4
+        },
+        "coreButtons": [
+          {
+            "control": "DpadLeft",
+            "byte": 0,
+            "mask": 1
+          },
+          {
+            "control": "DpadRight",
+            "byte": 0,
+            "mask": 2
+          },
+          {
+            "control": "DpadDown",
+            "byte": 0,
+            "mask": 4
+          },
+          {
+            "control": "DpadUp",
+            "byte": 0,
+            "mask": 8
+          },
+          {
+            "control": "Start",
+            "byte": 0,
+            "mask": 16
+          },
+          {
+            "control": "North",
+            "byte": 1,
+            "mask": 1
+          },
+          {
+            "control": "West",
+            "byte": 1,
+            "mask": 2
+          },
+          {
+            "control": "East",
+            "byte": 1,
+            "mask": 4
+          },
+          {
+            "control": "South",
+            "byte": 1,
+            "mask": 8
+          },
+          {
+            "control": "Back",
+            "byte": 1,
+            "mask": 16
+          },
+          {
+            "control": "Guide",
+            "byte": 1,
+            "mask": 128
+          }
+        ],
+        "accelerometerLowBits": {
+          "x": {
+            "byte": 0,
+            "mask": 96
+          },
+          "y": {
+            "byte": 1,
+            "mask": 32
+          },
+          "z": {
+            "byte": 1,
+            "mask": 64
+          }
+        },
+        "reportModes": [
+          {
+            "id": 48,
+            "blocks": [
+              {
+                "kind": "Buttons",
+                "offset": 0,
+                "length": 2
+              }
+            ]
+          },
+          {
+            "id": 49,
+            "blocks": [
+              {
+                "kind": "Buttons",
+                "offset": 0,
+                "length": 2
+              },
+              {
+                "kind": "Accelerometer",
+                "offset": 2,
+                "length": 3
+              }
+            ]
+          },
+          {
+            "id": 50,
+            "blocks": [
+              {
+                "kind": "Buttons",
+                "offset": 0,
+                "length": 2
+              },
+              {
+                "kind": "Extension",
+                "offset": 2,
+                "length": 8
+              }
+            ]
+          },
+          {
+            "id": 51,
+            "blocks": [
+              {
+                "kind": "Buttons",
+                "offset": 0,
+                "length": 2
+              },
+              {
+                "kind": "Accelerometer",
+                "offset": 2,
+                "length": 3
+              },
+              {
+                "kind": "IRExtended",
+                "offset": 5,
+                "length": 12
+              }
+            ]
+          },
+          {
+            "id": 52,
+            "blocks": [
+              {
+                "kind": "Buttons",
+                "offset": 0,
+                "length": 2
+              },
+              {
+                "kind": "Extension",
+                "offset": 2,
+                "length": 19
+              }
+            ]
+          },
+          {
+            "id": 53,
+            "blocks": [
+              {
+                "kind": "Buttons",
+                "offset": 0,
+                "length": 2
+              },
+              {
+                "kind": "Accelerometer",
+                "offset": 2,
+                "length": 3
+              },
+              {
+                "kind": "Extension",
+                "offset": 5,
+                "length": 16
+              }
+            ]
+          },
+          {
+            "id": 54,
+            "blocks": [
+              {
+                "kind": "Buttons",
+                "offset": 0,
+                "length": 2
+              },
+              {
+                "kind": "IRBasic",
+                "offset": 2,
+                "length": 10
+              },
+              {
+                "kind": "Extension",
+                "offset": 12,
+                "length": 9
+              }
+            ]
+          },
+          {
+            "id": 55,
+            "blocks": [
+              {
+                "kind": "Buttons",
+                "offset": 0,
+                "length": 2
+              },
+              {
+                "kind": "Accelerometer",
+                "offset": 2,
+                "length": 3
+              },
+              {
+                "kind": "IRBasic",
+                "offset": 5,
+                "length": 10
+              },
+              {
+                "kind": "Extension",
+                "offset": 15,
+                "length": 6
+              }
+            ]
+          },
+          {
+            "id": 61,
+            "blocks": [
+              {
+                "kind": "Extension",
+                "offset": 0,
+                "length": 21
+              }
+            ]
+          },
+          {
+            "id": 62,
+            "blocks": [
+              {
+                "kind": "Buttons",
+                "offset": 0,
+                "length": 2
+              },
+              {
+                "kind": "Accelerometer",
+                "offset": 2,
+                "length": 1
+              },
+              {
+                "kind": "IRFull",
+                "offset": 3,
+                "length": 18
+              }
+            ]
+          },
+          {
+            "id": 63,
+            "blocks": [
+              {
+                "kind": "Buttons",
+                "offset": 0,
+                "length": 2
+              },
+              {
+                "kind": "Accelerometer",
+                "offset": 2,
+                "length": 1
+              },
+              {
+                "kind": "IRFull",
+                "offset": 3,
+                "length": 18
+              }
+            ]
+          }
+        ],
+        "modeChoices": [
+          {
+            "features": [],
+            "mode": 48
+          },
+          {
+            "features": ["Accelerometer"],
+            "mode": 49
+          },
+          {
+            "features": ["Extension"],
+            "mode": 52
+          },
+          {
+            "features": ["Accelerometer", "Extension"],
+            "mode": 53
+          },
+          {
+            "features": ["Accelerometer", "IRExtended"],
+            "mode": 51
+          },
+          {
+            "features": ["Accelerometer", "IRBasic", "Extension"],
+            "mode": 55
+          },
+          {
+            "features": ["IRBasic", "Extension"],
+            "mode": 54
+          },
+          {
+            "features": ["Accelerometer", "IRFull"],
+            "mode": 62
+          }
+        ],
+        "extensions": [
+          {
+            "kind": "Nunchuk",
+            "id": "00 00 A4 20 00 00"
+          },
+          {
+            "kind": "ClassicController",
+            "id": "00 00 A4 20 01 01"
+          },
+          {
+            "kind": "ClassicControllerPro",
+            "id": "01 00 A4 20 01 01"
+          },
+          {
+            "kind": "MotionPlusInactive",
+            "id": "00 00 A6 20 00 05"
+          },
+          {
+            "kind": "MotionPlus",
+            "id": "00 00 A4 20 04 05"
+          },
+          {
+            "kind": "MotionPlusNunchuk",
+            "id": "00 00 A4 20 05 05"
+          },
+          {
+            "kind": "MotionPlusClassic",
+            "id": "00 00 A4 20 07 05"
+          }
+        ],
+        "irSensitivity": {
+          "default": 3,
+          "levels": [
+            {
+              "level": 1,
+              "block1": "02 00 00 71 01 00 64 00 FE",
+              "block2": "FD 05"
+            },
+            {
+              "level": 2,
+              "block1": "02 00 00 71 01 00 96 00 B4",
+              "block2": "B3 04"
+            },
+            {
+              "level": 3,
+              "block1": "02 00 00 71 01 00 AA 00 64",
+              "block2": "63 03"
+            },
+            {
+              "level": 4,
+              "block1": "02 00 00 71 01 00 C8 00 36",
+              "block2": "35 03"
+            },
+            {
+              "level": 5,
+              "block1": "07 00 00 71 01 00 72 00 20",
+              "block2": "1F 03"
+            }
+          ]
+        },
+        "irModeBytes": {
+          "IRBasic": 1,
+          "IRExtended": 3,
+          "IRFull": 5
+        },
+        "motionPlusModeBytes": {
+          "Standalone": 4,
+          "Nunchuk": 5,
+          "Classic": 7
+        },
+        "scripts": {
+          "handshake": [
+            {
+              "kind": "Write",
+              "address": "A400F0",
+              "bytes": "55"
+            },
+            {
+              "kind": "Write",
+              "address": "A400FB",
+              "bytes": "00"
+            },
+            {
+              "kind": "Read",
+              "address": "A400FA",
+              "length": 6
+            }
+          ],
+          "motionPlus": [
+            {
+              "kind": "Write",
+              "address": "A600F0",
+              "bytes": "55"
+            },
+            {
+              "kind": "MotionPlusMode",
+              "address": "A600FE"
+            }
+          ],
+          "ir": [
+            {
+              "kind": "Report",
+              "report": 19,
+              "data": "04"
+            },
+            {
+              "kind": "Report",
+              "report": 26,
+              "data": "04"
+            },
+            {
+              "kind": "Write",
+              "address": "B00030",
+              "bytes": "08"
+            },
+            {
+              "kind": "Sensitivity",
+              "address": "B00000",
+              "block": 1
+            },
+            {
+              "kind": "Sensitivity",
+              "address": "B0001A",
+              "block": 2
+            },
+            {
+              "kind": "IRMode",
+              "address": "B00033"
+            },
+            {
+              "kind": "Write",
+              "address": "B00030",
+              "bytes": "08"
+            }
+          ],
+          "speaker": [
+            {
+              "kind": "Report",
+              "report": 20,
+              "data": "04"
+            },
+            {
+              "kind": "Report",
+              "report": 25,
+              "data": "04"
+            },
+            {
+              "kind": "Write",
+              "address": "A20009",
+              "bytes": "01"
+            },
+            {
+              "kind": "Write",
+              "address": "A20001",
+              "bytes": "08"
+            },
+            {
+              "kind": "Write",
+              "address": "A20001",
+              "bytes": "00 00 D0 07 40 00 00"
+            },
+            {
+              "kind": "Write",
+              "address": "A20008",
+              "bytes": "01"
+            },
+            {
+              "kind": "Report",
+              "report": 25,
+              "data": "00"
+            }
+          ],
+          "speakerStop": [
+            {
+              "kind": "Report",
+              "report": 25,
+              "data": "04"
+            },
+            {
+              "kind": "Report",
+              "report": 20,
+              "data": "00"
+            }
+          ]
+        },
+        "irWriteIntervalMs": 50,
+        "speakerMaxSeconds": 10,
+        "replyTimeoutMs": 500
+      }
+    }
+  }
+}

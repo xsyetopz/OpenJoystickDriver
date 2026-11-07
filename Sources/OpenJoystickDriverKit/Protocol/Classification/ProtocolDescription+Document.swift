@@ -103,6 +103,8 @@ extension ProtocolDescription {
       let commandChannel: ProtocolDescription.CommandChannel?
       /// The zero-amplitude packets the rumble refresh sends after a stop.
       let trailingStopPackets: Int?
+      /// The wire facts of the Wii Remote.
+      let wiiRemote: ProtocolDescription.WiiRemote?
       /// The keys every family may set.
       ///
       /// The description schema lists the same keys as `$defs/generalSessionKeys`, which a test
@@ -118,7 +120,7 @@ extension ProtocolDescription {
           "startup", "rumble", "keepAlive", "activation", "deactivation", "subcommands",
           "namedPackets", "handshakeAttempts",
           "announceResendLimit", "receiverInquiryResendLimit", "commandChannel",
-          "trailingStopPackets",
+          "trailingStopPackets", "wiiRemote",
         ])
         familyFields = Set(container.allKeys.map(\.stringValue)).subtracting(Self.generalKeys)
         guard !container.allKeys.isEmpty else {
@@ -160,6 +162,10 @@ extension ProtocolDescription {
           for: "commandChannel"
         )
         trailingStopPackets = try count("trailingStopPackets", 1...10)
+        wiiRemote = try container.decodeOptional(
+          ProtocolDescription.WiiRemote.self,
+          for: "wiiRemote"
+        )
       }
     }
 

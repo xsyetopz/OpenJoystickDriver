@@ -756,6 +756,8 @@
 "term.protocolFamily.nintendoSwitch2" = "Nintendo Switch 2";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a wired Switch controller that sends input reports and takes no commands. Keep Nintendo Switch as written. */
 "term.protocolFamily.nintendoSwitchInputOnly" = "Nintendo Switch (hanya input)";
+/* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the Wii Remote protocol, used by the Wii Remote and the Wii U Pro Controller over Bluetooth. Nintendo Wii Remote is a brand and product name: keep it as written. */
+"term.protocolFamily.nintendoWii" = "Nintendo Wii Remote";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controller of the PlayStation 5, which Sony names DualSense. Sony DualSense is a brand and product name: keep it as written. */
 "term.protocolFamily.sonyDualSense" = "Sony DualSense";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controller of the PlayStation 4, which Sony names DualShock 4. Sony DualShock 4 is a brand and product name: keep it as written. */

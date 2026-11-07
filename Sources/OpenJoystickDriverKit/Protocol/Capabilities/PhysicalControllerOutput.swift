@@ -133,6 +133,12 @@ public enum PhysicalAdaptiveTriggerEffectError: Error, Equatable, Sendable {
   case invalidValue
 }
 
+/// The audio format a controller's speaker takes.
+public enum PhysicalSpeakerFormat: String, Codable, CaseIterable, Hashable, Sendable {
+  /// 4-bit Yamaha ADPCM at the rate of the remote's speaker, which the Wii Remote has.
+  case yamahaADPCM4Bit = "YamahaADPCM4Bit"
+}
+
 /// Physical output capabilities implemented by the active controller protocol.
 public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable, Sendable {
   /// The motors that can rumble, in declaration order.
@@ -143,13 +149,16 @@ public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable
   public let binaryRumbleMotors: [PhysicalRumbleMotor]
   /// The adaptive triggers, sorted by name.
   public let adaptiveTriggers: [PhysicalAdaptiveTrigger]
+  /// The format of the controller's speaker; nil when it has none.
+  public let speaker: PhysicalSpeakerFormat?
   /// Creates capabilities; each list drops duplicates, and a binary motor that is not a rumble
   /// motor is dropped.
   public init(
     rumbleMotors: [PhysicalRumbleMotor] = [],
     lightingFeatures: [PhysicalLightingFeature] = [],
     binaryRumbleMotors: [PhysicalRumbleMotor] = [],
-    adaptiveTriggers: [PhysicalAdaptiveTrigger] = []
+    adaptiveTriggers: [PhysicalAdaptiveTrigger] = [],
+    speaker: PhysicalSpeakerFormat? = nil
   ) {
     self.rumbleMotors = Set(rumbleMotors).sorted(by: PhysicalRumbleMotor.isDeclaredBefore)
     self.lightingFeatures = Array(Set(lightingFeatures)).sorted { $0.rawValue < $1.rawValue }
@@ -157,6 +166,7 @@ public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable
     self.binaryRumbleMotors = Array(Set(binaryRumbleMotors).intersection(supportedMotors))
       .sorted(by: PhysicalRumbleMotor.isDeclaredBefore)
     self.adaptiveTriggers = Array(Set(adaptiveTriggers)).sorted { $0.rawValue < $1.rawValue }
+    self.speaker = speaker
   }
 
   /// Capabilities with no output.
@@ -178,6 +188,8 @@ public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable
   }
   /// Whether the controller has an adaptive trigger.
   public var supportsAdaptiveTriggers: Bool { !adaptiveTriggers.isEmpty }
+  /// Whether the controller has a speaker.
+  public var supportsSpeaker: Bool { speaker != nil }
 
   /// The keys of the capabilities.
   private enum CodingKeys: String, CodingKey {
@@ -189,9 +201,11 @@ public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable
     case binaryRumbleMotors
     /// The key of the adaptive triggers.
     case adaptiveTriggers
+    /// The key of the speaker format.
+    case speaker
   }
 
-  /// Decodes capabilities; a key that is absent decodes as an empty list.
+  /// Decodes capabilities; a list that is absent decodes as empty and an absent speaker as none.
   public init(from decoder: any Decoder) throws {
     let values = try decoder.container(keyedBy: CodingKeys.self)
     self.init(
@@ -208,7 +222,8 @@ public struct PhysicalControllerOutputCapabilities: Codable, Equatable, Hashable
       adaptiveTriggers: try values.decodeIfPresent(
         [PhysicalAdaptiveTrigger].self,
         forKey: .adaptiveTriggers
-      ) ?? []
+      ) ?? [],
+      speaker: try values.decodeIfPresent(PhysicalSpeakerFormat.self, forKey: .speaker)
     )
   }
 }

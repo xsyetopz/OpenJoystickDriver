@@ -26,6 +26,7 @@ extension EquivalenceSnapshotCatalogTests {
     case .vendorPS3ThirdParty: "vendor-ps3-third-party"
     case .vendorGameSir: "vendor-game-sir"
     case .vendorNVIDIAShield: "vendor-nvidia-shield"
+    case .nintendoWii: "nintendo-wii"
     }
   }
 

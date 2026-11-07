@@ -7,6 +7,7 @@ enum LocalizationCatalogAudit {
   /// requires each to equal `en-US` in every locale.
   static let sameInEveryLocaleKeys: Set<String> = [
     "term.protocolFamily.nintendoSwitch1", "term.protocolFamily.nintendoSwitch2",
+    "term.protocolFamily.nintendoWii",
     "term.protocolFamily.sonyDualSense", "term.protocolFamily.sonyDualShock4",
     "term.protocolFamily.sonySixaxis", "term.protocolFamily.valveSteamController",
     "term.protocolFamily.valveSteamDeck", "term.protocolFamily.valveSteamTriton",

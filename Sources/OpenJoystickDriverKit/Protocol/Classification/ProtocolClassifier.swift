@@ -45,6 +45,8 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
   case vendorGameSir = "VendorGameSir"
   /// The NVIDIA SHIELD controller vendor protocol.
   case vendorNVIDIAShield = "VendorNVIDIAShield"
+  /// The Nintendo Wii Remote (and Wii U Pro Controller) over Bluetooth Classic HID.
+  case nintendoWii = "NintendoWii"
 
   /// The family-specific `defaults.session` fields this family's driver reads.
   ///
@@ -58,6 +60,7 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
     case .valveSteamController: ["activation", "deactivation"]
     case .valveSteamTriton: ["activation", "deactivation"]
     case .valveSteamDeck: ["activation", "deactivation"]
+    case .nintendoWii: ["wiiRemote"]
     default: []
     }
   }
@@ -74,7 +77,7 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
     case .valveSteamTriton, .valveSteamDeck: [.keepAlive]
     case .hidDescriptor, .hidReportLayout, .xboxXID, .sonySixaxis, .sonyDualSense,
       .nintendoSwitchInputOnly, .valveSteamController, .vendorFlydigi, .vendorPS3ThirdParty,
-      .vendorNVIDIAShield:
+      .vendorNVIDIAShield, .nintendoWii:
       []
     }
   }

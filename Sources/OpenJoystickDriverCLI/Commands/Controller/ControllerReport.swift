@@ -52,6 +52,8 @@ struct ControllerShowReport: Encodable, Equatable {
     let lightingFeatures: [String]
     /// The adaptive triggers the controller has.
     let adaptiveTriggers: [String]
+    /// The format of the controller's speaker; absent when it has none.
+    let speaker: String?
     /// `macos` when macOS serves the controller natively, so the output lists above hold only what
     /// macOS leaves undone; `ojd` when OJD drives all of the controller's output.
     let outputOwner: String
@@ -320,6 +322,7 @@ struct ControllerShowReport: Encodable, Equatable {
         binaryRumbleMotors: output.binaryRumbleMotors.map(\.rawValue),
         lightingFeatures: output.lightingFeatures.map(\.rawValue),
         adaptiveTriggers: output.adaptiveTriggers.map(\.rawValue),
+        speaker: output.speaker?.rawValue,
         outputOwner: device.physicalOutputOwner.rawValue
       ),
       virtual: device.virtualHIDProfile.map {

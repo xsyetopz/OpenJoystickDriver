@@ -873,8 +873,273 @@
         "keepAlive": true
       }
     },
+    "wiiBitField": {
+      "description": "The bits of one byte of the two core button bytes.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["byte", "mask"],
+      "properties": {
+        "byte": { "type": "integer", "minimum": 0, "maximum": 1 },
+        "mask": { "type": "integer", "minimum": 1, "maximum": 255 }
+      }
+    },
+    "wiiBlockKind": {
+      "description": "What a block of an input report mode carries.",
+      "enum": [
+        "Buttons",
+        "Accelerometer",
+        "IRBasic",
+        "IRExtended",
+        "IRFull",
+        "Extension"
+      ]
+    },
+    "wiiAddress": {
+      "description": "A register address of the remote: six uppercase hex digits. The driver adds the register space flag.",
+      "type": "string",
+      "pattern": "^[0-9A-F]{6}$"
+    },
+    "wiiStep": {
+      "description": "One script step. Report sets report and data, Write sets address and bytes, Read sets address and length, Sensitivity sets address and block, IRMode and MotionPlusMode set address; a step sets no other field, which a schema cannot say and the validators check.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "Report",
+            "Write",
+            "Read",
+            "Sensitivity",
+            "IRMode",
+            "MotionPlusMode"
+          ]
+        },
+        "report": { "type": "integer", "minimum": 16, "maximum": 26 },
+        "data": {
+          "$ref": "controller.schema.json#/$defs/hexBytes",
+          "maxLength": 59
+        },
+        "address": { "$ref": "#/$defs/wiiAddress" },
+        "bytes": {
+          "$ref": "controller.schema.json#/$defs/hexBytes",
+          "maxLength": 47
+        },
+        "length": { "type": "integer", "minimum": 1, "maximum": 16 },
+        "block": { "type": "integer", "minimum": 1, "maximum": 2 }
+      }
+    },
+    "wiiScript": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": { "$ref": "#/$defs/wiiStep" }
+    },
+    "descriptionWiiRemote": {
+      "description": "The wire facts of the Wii Remote: the motor and LED bits, the core buttons and accelerometer low bits, the input report modes with their blocks (ids 0x30 to 0x3F, no overlap), the report-mode choice table, the extension ids (six bytes), the IR sensitivity levels and mode bytes, the Motion Plus mode bytes, the register scripts and the IR write interval (at least 50 ms), the speaker clip limit and the reply timeout. Cross-checks a schema cannot say (unique ids, blocks in offset order, a choice whose mode carries its features, levels counting up from 1, a step that sets only its kind's fields) are checked by the validators.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rumbleBit",
+        "led",
+        "coreButtons",
+        "accelerometerLowBits",
+        "reportModes",
+        "modeChoices",
+        "extensions",
+        "irSensitivity",
+        "irModeBytes",
+        "motionPlusModeBytes",
+        "scripts",
+        "irWriteIntervalMs",
+        "speakerMaxSeconds",
+        "replyTimeoutMs"
+      ],
+      "properties": {
+        "rumbleBit": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "led": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["report", "firstBit"],
+          "properties": {
+            "report": { "type": "integer", "minimum": 16, "maximum": 26 },
+            "firstBit": { "type": "integer", "minimum": 0, "maximum": 4 }
+          }
+        },
+        "coreButtons": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["control", "byte", "mask"],
+            "properties": {
+              "control": { "$ref": "vocabulary.schema.json#/$defs/control" },
+              "byte": { "type": "integer", "minimum": 0, "maximum": 1 },
+              "mask": { "type": "integer", "minimum": 1, "maximum": 255 }
+            }
+          }
+        },
+        "accelerometerLowBits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["x", "y", "z"],
+          "properties": {
+            "x": { "$ref": "#/$defs/wiiBitField" },
+            "y": { "$ref": "#/$defs/wiiBitField" },
+            "z": { "$ref": "#/$defs/wiiBitField" }
+          }
+        },
+        "reportModes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "blocks"],
+            "properties": {
+              "id": { "type": "integer", "minimum": 48, "maximum": 63 },
+              "blocks": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 4,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["kind", "offset", "length"],
+                  "properties": {
+                    "kind": { "$ref": "#/$defs/wiiBlockKind" },
+                    "offset": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 20
+                    },
+                    "length": { "type": "integer", "minimum": 1, "maximum": 21 }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modeChoices": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["features", "mode"],
+            "properties": {
+              "features": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": { "$ref": "#/$defs/wiiBlockKind" }
+              },
+              "mode": { "type": "integer", "minimum": 48, "maximum": 63 }
+            }
+          }
+        },
+        "extensions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "id"],
+            "properties": {
+              "kind": { "type": "string", "pattern": "^[A-Z][A-Za-z]*$" },
+              "id": {
+                "description": "The six bytes an id read returns.",
+                "type": "string",
+                "pattern": "^[0-9A-F]{2}( [0-9A-F]{2}){5}$"
+              }
+            }
+          }
+        },
+        "irSensitivity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["default", "levels"],
+          "properties": {
+            "default": { "type": "integer", "minimum": 1, "maximum": 9 },
+            "levels": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 9,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["level", "block1", "block2"],
+                "properties": {
+                  "level": { "type": "integer", "minimum": 1, "maximum": 9 },
+                  "block1": {
+                    "description": "The nine bytes written to the first sensitivity register.",
+                    "type": "string",
+                    "pattern": "^[0-9A-F]{2}( [0-9A-F]{2}){8}$"
+                  },
+                  "block2": {
+                    "description": "The two bytes written to the second sensitivity register.",
+                    "type": "string",
+                    "pattern": "^[0-9A-F]{2} [0-9A-F]{2}$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "irModeBytes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["IRBasic", "IRExtended", "IRFull"],
+          "properties": {
+            "IRBasic": { "$ref": "#/$defs/byte" },
+            "IRExtended": { "$ref": "#/$defs/byte" },
+            "IRFull": { "$ref": "#/$defs/byte" }
+          }
+        },
+        "motionPlusModeBytes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["Standalone", "Nunchuk", "Classic"],
+          "properties": {
+            "Standalone": { "$ref": "#/$defs/byte" },
+            "Nunchuk": { "$ref": "#/$defs/byte" },
+            "Classic": { "$ref": "#/$defs/byte" }
+          }
+        },
+        "scripts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "handshake",
+            "motionPlus",
+            "ir",
+            "speaker",
+            "speakerStop"
+          ],
+          "properties": {
+            "handshake": { "$ref": "#/$defs/wiiScript" },
+            "motionPlus": { "$ref": "#/$defs/wiiScript" },
+            "ir": { "$ref": "#/$defs/wiiScript" },
+            "speaker": { "$ref": "#/$defs/wiiScript" },
+            "speakerStop": { "$ref": "#/$defs/wiiScript" }
+          }
+        },
+        "irWriteIntervalMs": {
+          "description": "The wait after each IR register write; WiiBrew asks for at least 50 ms.",
+          "type": "integer",
+          "minimum": 50,
+          "maximum": 1000
+        },
+        "speakerMaxSeconds": { "type": "integer", "minimum": 1, "maximum": 60 },
+        "replyTimeoutMs": { "type": "integer", "minimum": 10, "maximum": 10000 }
+      }
+    },
     "descriptionSession": {
-      "description": "What runs while the device is open: startup writes, the rumble template, the keep-alive, for NintendoSwitch1 its subcommands, for XboxGIP its named packets, handshake attempts and announce resend limit, and for XboxXUSB its receiver inquiry resend limit, and for NintendoSwitch2 its command channel and trailing stop packets. Startup writes are all HID reports, all raw-USB packets, or all references to the family's named packets; a reference names an id that namedPackets lists, which a schema cannot say and the validators check.",
+      "description": "What runs while the device is open: startup writes, the rumble template, the keep-alive, for NintendoSwitch1 its subcommands, for XboxGIP its named packets, handshake attempts and announce resend limit, and for XboxXUSB its receiver inquiry resend limit, and for NintendoSwitch2 its command channel and trailing stop packets, and for NintendoWii its Wii Remote wire facts. Startup writes are all HID reports, all raw-USB packets, or all references to the family's named packets; a reference names an id that namedPackets lists, which a schema cannot say and the validators check.",
       "type": "object",
       "additionalProperties": false,
       "minProperties": 1,
@@ -952,6 +1217,9 @@
               "maximum": 60000
             }
           }
+        },
+        "wiiRemote": {
+          "$ref": "#/$defs/descriptionWiiRemote"
         },
         "trailingStopPackets": {
           "description": "The zero-amplitude packets the rumble refresh sends after a stop.",

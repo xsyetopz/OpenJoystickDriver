@@ -315,7 +315,8 @@
             "VendorFlydigi",
             "VendorPS3ThirdParty",
             "VendorGameSir",
-            "VendorNVIDIAShield"
+            "VendorNVIDIAShield",
+            "NintendoWii"
           ]
         },
         "variant": {

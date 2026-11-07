@@ -69,7 +69,7 @@ extension PhysicalProtocolID {
     case .sonySixaxis, .sonyDualShock4, .sonyDualSense, .vendorPS3ThirdParty: .playstation
     case .hidDescriptor, .hidReportLayout, .nintendoSwitch1, .nintendoSwitch2,
       .nintendoSwitchInputOnly, .valveSteamController, .valveSteamTriton, .valveSteamDeck,
-      .vendorFlydigi, .vendorGameSir, .vendorNVIDIAShield:
+      .vendorFlydigi, .vendorGameSir, .vendorNVIDIAShield, .nintendoWii:
       .generic
     }
   }

@@ -285,6 +285,8 @@ class VocabularyNameTests(unittest.TestCase):
         self.assertTrue(checker.is_valid(base))
         for replaced in ("left", "right"):
             self.assertFalse(checker.is_valid({**base, "adaptiveTriggers": [replaced]}))
+        self.assertTrue(checker.is_valid({**base, "speaker": "YamahaADPCM4Bit"}))
+        self.assertFalse(checker.is_valid({**base, "speaker": "yamahaADPCM4Bit"}))
 
     def test_the_output_schema_refuses_the_spelling_of_a_renamed_behavior_and_surface(
         self,

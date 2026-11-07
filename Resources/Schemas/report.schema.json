@@ -585,6 +585,10 @@
           "items": {
             "enum": ["Left", "Right"]
           }
+        },
+        "speaker": {
+          "description": "The audio format of the controller's speaker; absent when it has none.",
+          "enum": ["YamahaADPCM4Bit"]
         }
       }
     },
@@ -749,7 +753,8 @@
             "VendorFlydigi",
             "VendorPS3ThirdParty",
             "VendorGameSir",
-            "VendorNVIDIAShield"
+            "VendorNVIDIAShield",
+            "NintendoWii"
           ]
         },
         "reason": { "$ref": "#/$defs/bindingReason" },

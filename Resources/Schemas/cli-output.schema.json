@@ -729,6 +729,9 @@
             "adaptiveTriggers": {
               "$ref": "report.schema.json#/$defs/physicalOutputCapabilities/properties/adaptiveTriggers"
             },
+            "speaker": {
+              "$ref": "report.schema.json#/$defs/physicalOutputCapabilities/properties/speaker"
+            },
             "binaryRumbleMotors": {
               "type": "array",
               "items": {

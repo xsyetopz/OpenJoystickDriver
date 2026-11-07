@@ -225,6 +225,11 @@ struct ProtocolDescription: Sendable {
   ///
   /// Only `NintendoSwitch2` has it.
   let trailingStopPackets: Int?
+  /// The wire facts of the Wii Remote: report layouts, button and LED bits, extension ids, register
+  /// scripts and their timing.
+  ///
+  /// Only `NintendoWii` has it.
+  let wiiRemote: WiiRemote?
   /// The family's input-report layout; nil when the family has none.
   let inputLayouts: ControllerInputLayouts?
   /// The map every `HIDDescriptor` record layers over (``HIDUsageMap``).
@@ -557,6 +562,7 @@ struct ProtocolDescription: Sendable {
       receiverInquiryResendLimit: document.defaults?.session?.receiverInquiryResendLimit,
       commandChannel: document.defaults?.session?.commandChannel,
       trailingStopPackets: document.defaults?.session?.trailingStopPackets,
+      wiiRemote: document.defaults?.session?.wiiRemote,
       inputLayouts: document.defaults?.input?.layouts,
       hidUsageMap: document.defaults?.input?.usageMap,
       hidUsageShapes: document.defaults?.input?.shapes ?? [],

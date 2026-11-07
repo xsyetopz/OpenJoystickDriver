@@ -48,7 +48,9 @@ public struct ControllerProfileCapabilities: Equatable, Sendable {
         adaptiveTriggers: intersection(
           physicalOutput.adaptiveTriggers,
           other.physicalOutput.adaptiveTriggers
-        )
+        ),
+        speaker: physicalOutput.speaker == other.physicalOutput.speaker
+          ? physicalOutput.speaker : nil
       )
     )
   }
