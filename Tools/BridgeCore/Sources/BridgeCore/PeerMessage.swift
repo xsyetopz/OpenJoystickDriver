@@ -22,7 +22,8 @@ public enum PeerMessage {
     "Microphone", "TouchpadClick", "LeftPaddle1", "LeftPaddle2", "RightPaddle1", "RightPaddle2",
     "Auxiliary1", "Auxiliary2", "Auxiliary3", "Auxiliary4", "Auxiliary5", "Auxiliary6",
     "Auxiliary7", "Auxiliary8", "LeftStickTouch", "RightStickTouch", "LeftTrackpadClick",
-    "RightTrackpadClick", "LeftTrackpadTouch", "RightTrackpadTouch",
+    "RightTrackpadClick", "LeftTrackpadTouch", "RightTrackpadTouch", "PointerX", "PointerY",
+    "PointerTracking",
   ]
   /// The D-pad directions that a `Frame` lists in `dpad`.
   static let dpad: Set<String> = ["DpadUp", "DpadDown", "DpadLeft", "DpadRight"]
