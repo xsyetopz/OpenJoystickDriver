@@ -162,6 +162,12 @@ public enum Control: String, CaseIterable, Codable, Sendable {
   case leftTrackpadTouch = "LeftTrackpadTouch"
   /// A touch on the right trackpad.
   case rightTrackpadTouch = "RightTrackpadTouch"
+  /// The horizontal position a pointing device aims at, from -1 (left) to 1 (right).
+  case pointerX = "PointerX"
+  /// The vertical position a pointing device aims at, from -1 (top) to 1 (bottom).
+  case pointerY = "PointerY"
+  /// Whether the pointing device sees its target, so that `pointerX` and `pointerY` are live.
+  case pointerTracking = "PointerTracking"
 
   /// The four D-pad ids; a controller with a D-pad or hat has all of them.
   public static let dpad: Set<Control> = [.dpadUp, .dpadDown, .dpadLeft, .dpadRight]
@@ -188,7 +194,7 @@ public enum Control: String, CaseIterable, Codable, Sendable {
     case .microphone, .touchpadClick, .leftPaddle1, .leftPaddle2, .rightPaddle1, .rightPaddle2,
       .auxiliary1, .auxiliary2, .auxiliary3, .auxiliary4, .auxiliary5, .auxiliary6, .auxiliary7,
       .auxiliary8, .leftStickTouch, .rightStickTouch, .leftTrackpadClick, .rightTrackpadClick,
-      .leftTrackpadTouch, .rightTrackpadTouch:
+      .leftTrackpadTouch, .rightTrackpadTouch, .pointerX, .pointerY, .pointerTracking:
       return false
     }
   }

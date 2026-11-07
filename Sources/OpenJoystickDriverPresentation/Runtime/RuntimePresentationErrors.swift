@@ -164,7 +164,7 @@ extension RuntimePresentation {
       return OJDLocalized.string("ui.mapping.rightTriggerClick")
     case .dpadUp, .dpadDown, .dpadLeft, .dpadRight, .leftStickX, .leftStickY, .rightStickX,
       .rightStickY, .auxiliary7, .auxiliary8, .leftStickTouch, .rightStickTouch,
-      .leftTrackpadTouch, .rightTrackpadTouch:
+      .leftTrackpadTouch, .rightTrackpadTouch, .pointerX, .pointerY, .pointerTracking:
       return button.rawValue
     }
   }

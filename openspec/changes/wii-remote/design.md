@@ -77,7 +77,7 @@ A handshake step whose acknowledgement carries an error code, or whose reply doe
 
 ### D6. Motion Plus
 
-Motion Plus sits at I2C address `0xA6`. The driver initializes it with `0x55` to `0xA600F0`, then writes the mode to `0xA600FE` (Motion Plus alone, Nunchuk passthrough or Classic passthrough, by the extension that was present). After activation the extension ID read at `0xA400FA` identifies the passthrough combination. Gyro samples are 14-bit per axis with a slow/fast flag per axis; the driver scales by the flag and subtracts a rest offset measured while the remote reports a still accelerometer (behavior `GyroRestOffset`, with a documented window and a user-visible state while it is measured).
+Motion Plus sits at I2C address `0xA6`. The driver initializes it with `0x55` to `0xA600F0`, then writes the mode to `0xA600FE` (Motion Plus alone, Nunchuk passthrough or Classic passthrough, by the extension that was present). An inactive Motion Plus answers the ID read at `0xA600FA` (`00 00 A6 20 00 05`), not at `0xA400FA`; after activation the ID read at `0xA400FA` identifies the passthrough combination. Gyro samples are 14-bit per axis with a slow/fast flag per axis; the driver scales by the flag and subtracts a rest offset measured while the remote reports a still accelerometer (behavior `GyroRestOffset`, with a documented window and a user-visible state while it is measured).
 
 Motion is exposed through the existing `motion` capability (accelerometer and gyroscope samples). The same sample type as `Switch1Driver`'s motion output is used; units are documented in the wiki.
 
@@ -157,3 +157,11 @@ All driver, description and test code is written independently from WiiBrew fact
 
 - Whether the Wii U Pro Controller, which shares `057E:0330` and the same report family, should be a mode of these records. Left out; decided after Hardware Check 7.
 - Whether the speaker belongs in the SDK endpoint; asked to the endpoint owner after Hardware Check 6.
+
+## Open
+
+Each item blocks the task named; the proposal is for the maintainer to accept or change.
+
+- Extension calibration source (task 4.6). WiiBrew documents no layout for a calibration block at `0xA40020`: the Nunchuk page states the mechanism is unknown, and the Classic Controller page says Nintendo games take the stick centers at power-up or insertion. Proposed: the driver takes each stick's center from the first sample after the handshake and uses a fixed half-range per extension kind (Nunchuk stick 0 to 255 about 128; Classic left stick 6 bits, right stick 5 bits), as `ExtensionCenterFromFirstSample`. Hardware Check 4 records the real `0xA40020` bytes; if they hold a calibration block, a later change reads it.
+- Motion Plus activation trigger (tasks 4.7 and 4.8). D6 says how Motion Plus is activated but not when. Proposed: activate when the driver reads the inactive Motion Plus ID at `0xA600FA` after a status report with the extension flag, and a tuning key `motionPlusActivation` (`Off` or `Auto`, default `Auto`) allows turning it off; the passthrough mode follows from the extension present before activation, which the handshake already identified.
+- Speaker command path (task 5.5). `ojd controller speaker play|stop` needs a service message and an endpoint command that the existing output commands do not have. Proposed: a `ControllerSpeakerCommand` carried over the same endpoint path as rumble commands, with the WAV decode in the CLI and the encoded stream in the driver; the SDK endpoint question stays open as written above.

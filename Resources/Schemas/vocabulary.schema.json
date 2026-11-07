@@ -47,7 +47,10 @@
         "LeftTrackpadClick",
         "RightTrackpadClick",
         "LeftTrackpadTouch",
-        "RightTrackpadTouch"
+        "RightTrackpadTouch",
+        "PointerX",
+        "PointerY",
+        "PointerTracking"
       ]
     },
     "dpadControl": {

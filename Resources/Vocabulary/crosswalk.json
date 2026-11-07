@@ -671,6 +671,30 @@
       "evdev": null,
       "hid": [],
       "apple": null
+    },
+    "PointerX": {
+      "w3cButton": null,
+      "w3cAxis": null,
+      "sdl": null,
+      "evdev": null,
+      "hid": [],
+      "apple": null
+    },
+    "PointerY": {
+      "w3cButton": null,
+      "w3cAxis": null,
+      "sdl": null,
+      "evdev": null,
+      "hid": [],
+      "apple": null
+    },
+    "PointerTracking": {
+      "w3cButton": null,
+      "w3cAxis": null,
+      "sdl": null,
+      "evdev": null,
+      "hid": [],
+      "apple": null
     }
   }
 }

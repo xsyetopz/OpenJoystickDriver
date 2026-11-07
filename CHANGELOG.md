@@ -19,6 +19,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - The Flydigi Apex 4 in DInput mode (`04B4:2412`) has a record that reads its vendor report 4 (buttons, D-pad, sticks, triggers, C, Z and M1 to M4). It follows the layout in the MIT-licensed protocol notes of flydigi-space-station-mac and is unverified until a tester's capture replays. The XInput mode is the Microsoft `045E:028E` record, which this change leaves as it is.
 - The Vader 5S (`37D7:2801`) has a GIP mode, which is the default, and an XUSB mode that runs when the pad shows an interface `FF/5D/01`. Both are unverified until a tester sends the USB dump. When no mode matches, the log names the interface classes the pad exposed. [Vader 5S](docs/testing/flydigi-vader-5s.md) gives the evidence.
 - `ojd diagnose` reports a `057E:2009` controller with serial `000000000001` in its new `switch-placeholder-serial` check, and the Activity table lists it.
+- The control vocabulary has `PointerX`, `PointerY` and `PointerTracking`, for a controller that aims at the screen. The virtual personas do not publish them.
 
 ### Changed
 

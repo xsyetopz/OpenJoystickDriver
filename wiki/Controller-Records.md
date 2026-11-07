@@ -379,6 +379,9 @@ Every document, profile, endpoint message and record names a control with one Up
 | `RightTrackpadClick` | - | - | - | - | - |
 | `LeftTrackpadTouch` | - | - | - | - | - |
 | `RightTrackpadTouch` | - | - | - | - | - |
+| `PointerX` | - | - | - | - | - |
+| `PointerY` | - | - | - | - | - |
+| `PointerTracking` | - | - | - | - | - |
 
 Each column is checked against this source:
 
