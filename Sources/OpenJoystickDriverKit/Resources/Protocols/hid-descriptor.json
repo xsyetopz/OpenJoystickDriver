@@ -120,6 +120,38 @@
             "usage": 57
           },
           {
+            "kind": "AxisDpad",
+            "page": 1,
+            "usage": 144,
+            "half": "Positive",
+            "control": "DpadUp",
+            "threshold": 0.5
+          },
+          {
+            "kind": "AxisDpad",
+            "page": 1,
+            "usage": 145,
+            "half": "Positive",
+            "control": "DpadDown",
+            "threshold": 0.5
+          },
+          {
+            "kind": "AxisDpad",
+            "page": 1,
+            "usage": 146,
+            "half": "Positive",
+            "control": "DpadRight",
+            "threshold": 0.5
+          },
+          {
+            "kind": "AxisDpad",
+            "page": 1,
+            "usage": 147,
+            "half": "Positive",
+            "control": "DpadLeft",
+            "threshold": 0.5
+          },
+          {
             "kind": "Button",
             "page": 1,
             "usage": 133,
@@ -297,6 +329,38 @@
                 "kind": "Hat",
                 "page": 1,
                 "usage": 57
+              },
+              {
+                "kind": "AxisDpad",
+                "page": 1,
+                "usage": 144,
+                "half": "Positive",
+                "control": "DpadUp",
+                "threshold": 0.5
+              },
+              {
+                "kind": "AxisDpad",
+                "page": 1,
+                "usage": 145,
+                "half": "Positive",
+                "control": "DpadDown",
+                "threshold": 0.5
+              },
+              {
+                "kind": "AxisDpad",
+                "page": 1,
+                "usage": 146,
+                "half": "Positive",
+                "control": "DpadRight",
+                "threshold": 0.5
+              },
+              {
+                "kind": "AxisDpad",
+                "page": 1,
+                "usage": 147,
+                "half": "Positive",
+                "control": "DpadLeft",
+                "threshold": 0.5
               },
               {
                 "kind": "Button",

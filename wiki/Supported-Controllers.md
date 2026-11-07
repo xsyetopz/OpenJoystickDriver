@@ -75,7 +75,7 @@ The Ultimate 3-mode record (`2DC8:901B`) has no capture; see [the Ultimate 2 tes
 
 The Wii Remote (`057E:0306` and `057E:0330`) has bundled records and no hardware test. For what OJD reads from it, see [Wii Remote](Wii-Remote.md).
 
-OJD includes a built-in catalog of 697 controller records. The Unverified tier is every catalog controller that this page does not list as Official or Community-verified. A record does not prove that the controller works. Nobody tested these controllers on real hardware. The catalog includes the NVIDIA SHIELD controllers of 2015 (`0955:7210`) and 2017 (`0955:7214`). On macOS the 2017 controller sends input only, with no rumble.
+OJD includes a built-in catalog of 706 controller records. The Unverified tier is every catalog controller that this page does not list as Official or Community-verified. A record does not prove that the controller works. Nobody tested these controllers on real hardware. The catalog includes the NVIDIA SHIELD controllers of 2015 (`0955:7210`) and 2017 (`0955:7214`). On macOS the 2017 controller sends input only, with no rumble.
 
 An unverified controller may work, may partly work, or may not work. The tier does not mean that the controller is broken or fake.
 
@@ -89,6 +89,10 @@ These Flydigi records are source-derived and unverified. The files a tester send
 | Flydigi Vader 5S | `37D7:2801` | USB; GIP, or XUSB when the pad shows interface `FF/5D/01` | Unverified | [Vader 5S](../docs/testing/flydigi-vader-5s.md) |
 | Flydigi Vader 5 Pro dongle | `37D7:2401` | 2.4 GHz USB; HID extended report after startup writes | Unverified | [Vader 5 Pro](../docs/testing/flydigi-vader-5-pro.md) |
 | Flydigi Apex 4 | `04B4:2412` | DInput; the XInput mode is the Microsoft `045E:028E` record | Unverified | [Apex 4](../docs/testing/flydigi-apex-4.md) |
+
+### SteelSeries Nimbus Record
+
+The SteelSeries Nimbus (`1038:1420`, USB) has a source-derived, unverified record. The record maps its eight pressure-sensitive buttons, its pressure D-pad and its Menu button, and it reads the left and right sticks and the L2 and R2 triggers. The record sets no `server`, so macOS serves the Nimbus as its own game controller and OJD only reads its input. The Nimbus has four player LEDs on an output report that records cannot yet describe, so OJD does not drive them. Bluetooth identity `0111:1420` appears only in SDL's database and has no record. The hardware checks are in `openspec/changes/steelseries-nimbus/tasks.md`.
 
 To find out whether your controller is in the catalog:
 

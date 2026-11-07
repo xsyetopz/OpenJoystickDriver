@@ -9,6 +9,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 ### Added
 
 - `ojd migrate [--dry-run]` converts the 0.6.0-alpha.1 documents (`Settings.json`, `AccessGrants.json`, profiles, controller records and virtual device files) to the current version, checks each with the current reader and keeps the original in `Migrated/`. A file it cannot convert stays unchanged and the command fails with error `E5009` (`documentNotMigrated`). The launch alert for refused settings and the **Access** error card have a **Migrate** button.
+- The SteelSeries Nimbus (`1038:1420`, USB) has a controller record that maps its pressure D-pad and buttons through thresholds, its Menu button, sticks and analog L2 and R2. macOS keeps serving it. Not checked on hardware, and the player LEDs are not driven.
 - A stick ring or sector, a trigger band and a touch area are binding sources (`stick-region`, `trigger-band` and `touch:SURFACE:area` in `ojd binding set`), with a hysteresis, validated non-overlap and release-before-press on a region change. The **Regions** sheet in the Controller section of the profile editor adds one and draws the live position of the stick, trigger or touch (`ui.profiles.region.*` and `ui.mapping.stickRegion`, `ui.mapping.stickRegionSector`, `ui.mapping.triggerBand` and `ui.mapping.touchArea`, which need native review in every language but English).
 - A binding can send MIDI: `MidiNote` (note-on and note-off) and `MidiControlChange` (button 127 or 0, trigger or stick axis scaled to 0 to 127, sent on change) through a virtual source named `OpenJoystickDriver` that exists only while an active profile uses MIDI. `ojd binding set` takes `midi-note:CHANNEL:NOTE[:VELOCITY]` and `midi-cc:CHANNEL:CONTROLLER`. A refused source is error `E3032` (`midiSourceRefused`).
 - A profile holds named `macros` of timed steps (key, mouse button, virtual gamepad button and D-pad steps, waits and chords), with a repeat count and an interrupt-on-release rule, and a binding runs one through the `Macro` destination. `ojd macro list|show|set|remove` manages them and `ojd binding set` takes `macro:NAME`. Macro outputs release on every stop path, including fail-closed. Not checked on hardware.
@@ -72,6 +73,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Fixed
 
+- A generic HID controller whose descriptor declares the D-pad as Generic Desktop usages `0x90` to `0x93` reports those directions, and an SDL mapping that binds the D-pad to buttons does too (a press at half the range).
+- The controls that a HID descriptor controller lists come from the usages its descriptor declares, so an SDL-mapped pad no longer claims Back, Start and the stick clicks that it lacks.
 - System sleep waits for controller teardown: the service acknowledges the sleep to macOS (`IOAllowPowerChange`) only after the teardown returned, so the teardown's writes reach the controllers before the machine sleeps.
 - The app builds with `xcodebuild` from a checkout or git worktree that is not named `OpenJoystickDriver`: the `build` routes pass the package name SwiftPM derives from the directory as `OJD_SWIFT_PACKAGE_NAME`.
 - Two controllers with the same VID:PID and USB serial number, such as two `057E:2009` pads, no longer share one virtual controller.

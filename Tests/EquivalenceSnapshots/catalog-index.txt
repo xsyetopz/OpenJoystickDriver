@@ -9,7 +9,7 @@
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=usageLayout=DragonRise
@@ -503,7 +503,7 @@ parameters=
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
@@ -541,7 +541,7 @@ parameters=
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
@@ -576,7 +576,7 @@ parameters=
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
@@ -599,7 +599,7 @@ parameters=
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
@@ -622,7 +622,7 @@ parameters=shareButton.fromEnd=26
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
@@ -631,7 +631,7 @@ parameters=
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
@@ -640,7 +640,7 @@ parameters=
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
@@ -649,7 +649,7 @@ parameters=
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
@@ -4194,6 +4194,15 @@ output rumble=[low-frequency,high-frequency] binary=[] lighting=[] adaptiveTrigg
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
 
+## 1038:1420
+protocol=hid-descriptor variant=- ownership=macos
+transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+tuning -
+controls [DpadDown,DpadLeft,DpadRight,DpadUp,East,LeftShoulder,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickX,RightStickY,RightTrigger,South,Start,West]
+output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
+session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+parameters=usageLayout=unknown
+
 ## 1038:1430
 protocol=xbox-xusb variant=wired ownership=macos
 transport in=129 out=1 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
@@ -4295,7 +4304,7 @@ parameters=
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning stickDeadzone=0.02
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=usageLayout=Wr007
@@ -6767,7 +6776,7 @@ parameters=shareButton.fromEnd=18
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=usageLayout=ZRzBrakeLeft
@@ -6776,7 +6785,7 @@ parameters=usageLayout=ZRzBrakeLeft
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
@@ -6785,7 +6794,7 @@ parameters=
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=usageLayout=ZRzBrakeLeft
@@ -6803,7 +6812,7 @@ parameters=
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
@@ -6848,7 +6857,7 @@ parameters=
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=usageLayout=ZRzBrakeLeft
@@ -6857,7 +6866,7 @@ parameters=usageLayout=ZRzBrakeLeft
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
@@ -6945,7 +6954,7 @@ parameters=shareButton.fromEnd=18
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=usageLayout=ScufEnvision
@@ -7296,7 +7305,7 @@ parameters=
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
@@ -7478,7 +7487,7 @@ parameters=maker=ThirdParty
 protocol=hid-descriptor variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
+controls [Back,Capture,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=

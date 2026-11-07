@@ -29,9 +29,12 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   private var axisDpadPressed: Set<Control> = []
   /// The usage map that binds HID usages to controls.
   let usageMap: HIDUsageMap
-  /// Whether the descriptor declares a usage the map binds to Share, which Xbox Series pads send
-  /// as Consumer Record over Bluetooth.
-  private let hasShareButton: Bool
+  /// The controls the map drives from usages the report descriptor declares.
+  ///
+  /// With no descriptor, every control the map drives.
+  private let declaredControls: Set<Control>
+  /// The triggers the map reads as buttons.
+  private let declaredDigitalTriggers: Set<Control>
 
   /// Creates a driver whose usage map the `HIDDescriptor` description selects.
   public convenience init(model: ControllerModelID, reportDescriptor: Data? = nil) {
@@ -63,10 +66,9 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
         ?? description?.hidUsageMap
     else { preconditionFailure("Resources/Protocols/hid-descriptor.json declares no usage map") }
     self.usageMap = resolved
-    hasShareButton = usages.contains { (hidUsage: HIDUsage) in
-      resolved.bindings(page: UInt32(hidUsage.usagePage), usage: UInt32(hidUsage.usage))
-        .contains(.button(.capture))
-    }
+    let declared = fields.isEmpty ? nil : usages
+    declaredControls = resolved.controls(declaring: declared)
+    declaredDigitalTriggers = resolved.digitalTriggers(declaring: declared)
     print("[HIDDescriptorDriver] Unrecognized controller \(model), using HID descriptors")
   }
 
@@ -89,17 +91,12 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   /// Always nil: element values carry no logical connection.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
-  /// The Xbox control layout; with digital triggers when the usage map reads them as buttons,
-  /// otherwise with Guide and, when the descriptor declares it, Capture.
+  /// The controls the usage map drives from usages the report descriptor declares, with the
+  /// triggers the map reads as buttons as digital triggers.
   public var capabilities: ControllerCapabilities {
-    guard usageMap.digitalTriggers.contains(.leftTrigger) else {
-      return ControllerCapabilities(
-        controls: Control.xboxLayout.union(hasShareButton ? [.guide, .capture] : [.guide])
-      )
-    }
-    return ControllerCapabilities(
-      controls: Control.xboxLayout,
-      digitalTriggers: [.leftTrigger, .rightTrigger]
+    ControllerCapabilities(
+      controls: declaredControls,
+      digitalTriggers: declaredDigitalTriggers
     )
   }
 

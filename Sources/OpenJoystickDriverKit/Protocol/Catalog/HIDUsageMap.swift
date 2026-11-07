@@ -264,9 +264,15 @@ struct HIDUsageMap: Equatable, Sendable {
   }
 
   /// The triggers the map reads as buttons: a physical digital trigger signal.
-  var digitalTriggers: Set<Control> {
+  var digitalTriggers: Set<Control> { digitalTriggers(declaring: nil) }
+
+  /// The controls the map can drive.
+  var controls: Set<Control> { controls(declaring: nil) }
+
+  /// The triggers the map reads as buttons from usages in `usages`; every entry when nil.
+  func digitalTriggers(declaring usages: Set<HIDUsage>?) -> Set<Control> {
     Set(
-      entries.compactMap { entry in
+      entries(declaring: usages).compactMap { entry in
         let control: Control
         switch entry.binding {
         case .button(let pressed): control = pressed
@@ -278,10 +284,13 @@ struct HIDUsageMap: Equatable, Sendable {
     )
   }
 
-  /// The controls the map can drive.
-  var controls: Set<Control> {
+  /// The controls the map drives from usages in `usages`; every entry when nil.
+  ///
+  /// A map that is broader than a pad, such as the standard map, names usages the pad's report
+  /// descriptor lacks; those controls are not the pad's.
+  func controls(declaring usages: Set<HIDUsage>?) -> Set<Control> {
     var controls: Set<Control> = []
-    for entry in entries {
+    for entry in entries(declaring: usages) {
       switch entry.binding {
       case .button(let control): controls.insert(control)
       case .axis(let axis): controls.insert(axis.control)
@@ -292,6 +301,12 @@ struct HIDUsageMap: Equatable, Sendable {
       }
     }
     return controls
+  }
+
+  /// The entries whose usage is in `usages`; every entry when nil.
+  private func entries(declaring usages: Set<HIDUsage>?) -> [Entry] {
+    guard let usages else { return entries }
+    return entries.filter { usages.contains($0.usage) }
   }
 }
 

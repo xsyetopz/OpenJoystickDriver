@@ -98,7 +98,10 @@ struct ControllerCapabilitiesTests {
       ControllerCapabilities(
         controls: normalizedXboxGuide.union([.leftPaddle1, .rightPaddle1, .auxiliary1])
       )
-    ), ("Generic HID", 0x2E95, 0x434D, ControllerCapabilities(controls: normalizedXboxGuide)),
+    ), (
+      "Generic HID", 0x2E95, 0x434D,
+      ControllerCapabilities(controls: normalizedXboxGuide.union([.capture]))
+    ),
     (
       "GIP analog triggers absent", 0x0738, 0x4A01,
       ControllerCapabilities(

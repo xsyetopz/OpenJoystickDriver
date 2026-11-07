@@ -191,6 +191,10 @@
     "9/1 button South",
     "9/2 button East",
     "12/547 button Back",
+    "9/12 axisDpad DpadDown Positive 0.5",
+    "9/14 axisDpad DpadLeft Positive 0.5",
+    "9/13 axisDpad DpadRight Positive 0.5",
+    "9/11 axisDpad DpadUp Positive 0.5",
     "12/548 button Guide",
     "9/5 button LeftShoulder",
     "9/9 button LeftStickClick",
@@ -206,5 +210,5 @@
     "9/3 button West",
     "9/4 button North"
   ],
-  "expectedUnmapped": ["dpdown", "dpleft", "dpright", "dpup"]
+  "expectedUnmapped": []
 }

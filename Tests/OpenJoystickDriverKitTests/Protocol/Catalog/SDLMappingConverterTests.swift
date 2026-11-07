@@ -116,10 +116,18 @@ struct SDLMappingConverterTests {
   // MARK: - Unmapped controls and rejections
 
   @Test
-  func buttonOnAStickOrDpadDirectionIsUnmapped() throws {
-    let converted = try Self.convert(["a:b0", "dpup:b1", "leftx:b2"])
-    #expect(converted.unmapped == ["dpup", "leftx"])
+  func buttonOnAStickAxisIsUnmapped() throws {
+    let converted = try Self.convert(["a:b0", "leftx:b2"])
+    #expect(converted.unmapped == ["leftx"])
     #expect(converted.usageMap.rendered == ["9/1 button South"])
+  }
+
+  @Test
+  func buttonOnADpadDirectionReadsItsPositiveHalf() throws {
+    let map = try Self.convert(["dpup:b1", "dpleft:b4"]).usageMap
+    #expect(
+      map.rendered == ["9/2 axisDpad DpadUp Positive 0.5", "9/5 axisDpad DpadLeft Positive 0.5"]
+    )
   }
 
   @Test
@@ -158,7 +166,7 @@ struct SDLMappingConverterTests {
 
   @Test
   func lineThatMapsNothingIsRejected() {
-    #expect(rejection(["dpup:b1", "platform:Mac OS X"]) == "no control can be mapped")
+    #expect(rejection(["leftx:b1", "platform:Mac OS X"]) == "no control can be mapped")
   }
 
   @Test

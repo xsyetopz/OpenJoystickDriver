@@ -21,7 +21,8 @@ struct SDLConvertedMapping: Equatable, Sendable {
 ///
 /// `b#`, `a#` and `h#.#` index the lists of ``SDLElementLists``. An axis that presses a button or
 /// a D-pad direction presses it when its travel from the center of its range reaches
-/// ``sdlAxisButtonThreshold``.
+/// ``sdlAxisButtonThreshold``. A `b#` that names a D-pad direction reads the element as the
+/// positive half of its range, so a one-bit button and a pressure byte both press it.
 enum SDLMappingConverter {
   /// The fraction of a half range at which an axis presses a button, as SDL reads it.
   static let sdlAxisButtonThreshold: Float = 0.5
@@ -168,8 +169,16 @@ enum SDLMappingConverter {
       return hatBits[control] == bit ? .hat(HIDUsageMap.Hat(range: nil)) : nil
     case .button:
       if isTrigger { return .buttonTrigger(control) }
-      return Control.stickAxes.contains(control) || Control.dpad.contains(control)
-        ? nil : .button(control)
+      if Control.dpad.contains(control) {
+        return .axisDpad(
+          HIDUsageMap.HalfThreshold(
+            half: .positive,
+            control: control,
+            threshold: sdlAxisButtonThreshold
+          )
+        )
+      }
+      return Control.stickAxes.contains(control) ? nil : .button(control)
     case .axis(_, let half, let inverted):
       if Control.stickAxes.contains(control) {
         guard half == nil else { return nil }

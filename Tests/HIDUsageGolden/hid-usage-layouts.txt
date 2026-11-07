@@ -1,5 +1,5 @@
 ## standard
-capabilities [back,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
+capabilities [back,capture,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
 r- p9u1[0...1]=1 [South] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u1[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u2[0...1]=1 [East] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
@@ -288,7 +288,7 @@ r6 p12u224[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r6 p7u4[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 
 ## Wr007
-capabilities [back,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
+capabilities [back,capture,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
 r- p9u1[0...1]=1 [South] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u1[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u2[0...1]=1 [East] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
@@ -577,7 +577,7 @@ r6 p12u224[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=65535 rt=65535
 r6 p7u4[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=65535 rt=65535
 
 ## ScufEnvision
-capabilities [back,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
+capabilities [back,capture,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
 r- p9u1[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u1[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u2[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
@@ -866,7 +866,7 @@ r6 p12u224[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r6 p7u4[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 
 ## ZRzBrakeLeft
-capabilities [back,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
+capabilities [back,capture,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
 r- p9u1[0...1]=1 [South] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u1[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u2[0...1]=1 [East] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
@@ -1155,7 +1155,7 @@ r6 p12u224[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=65535 rt=65535
 r6 p7u4[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=65535 rt=65535
 
 ## DragonRise
-capabilities [back,dpadDown,dpadLeft,dpadRight,dpadUp,east,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
+capabilities [back,capture,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
 r- p9u1[0...1]=1 [North] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u1[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u2[0...1]=1 [East] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
@@ -1444,7 +1444,7 @@ r6 p12u224[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r6 p7u4[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 
 ## descriptor Z/Rz Brake Record
-capabilities [back,capture,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
+capabilities [capture,leftTrigger,rightStickX,rightStickY,rightTrigger]
 r- p9u1[0...1]=1 [South] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u1[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u2[0...1]=1 [East] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
@@ -1733,7 +1733,7 @@ r6 p12u224[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=65535 rt=65535
 r6 p7u4[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=65535 rt=65535
 
 ## descriptor Rx Ry
-capabilities [back,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
+capabilities [leftTrigger,rightStickX,rightStickY,rightTrigger]
 r- p9u1[0...1]=1 [South] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u1[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u2[0...1]=1 [East] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
@@ -2022,7 +2022,7 @@ r6 p12u224[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r6 p7u4[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 
 ## HalfAxis Z
-capabilities [back,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
+capabilities [leftTrigger,rightTrigger]
 r- p9u1[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u1[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u2[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
@@ -2311,7 +2311,7 @@ r6 p12u224[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=65535
 r6 p7u4[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=65535
 
 ## AxisDpad X
-capabilities [back,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
+capabilities [dpadLeft,dpadRight]
 r- p9u1[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u1[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u2[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
@@ -2600,7 +2600,7 @@ r6 p12u224[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r6 p7u4[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 
 ## AxisButton Rz
-capabilities [back,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
+capabilities [east,west]
 r- p9u1[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u1[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u2[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
@@ -2889,7 +2889,7 @@ r6 p12u224[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r6 p7u4[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 
 ## ButtonTrigger 7
-capabilities [back,dpadDown,dpadLeft,dpadRight,dpadUp,east,guide,leftShoulder,leftStickClick,leftStickX,leftStickY,leftTrigger,north,rightShoulder,rightStickClick,rightStickX,rightStickY,rightTrigger,south,start,west]
+capabilities [rightTrigger]
 r- p9u1[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u1[0...1]=0 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
 r- p9u2[0...1]=1 [] hat=Neutral ls=0,0 rs=0,0 lt=0 rt=0
