@@ -154,6 +154,10 @@ enum GUICoverageEntries {
     option("profile create", "--app", "ProfileCreationFields"),
     option("profile create", "--virtual-gamepad", "ProfileOutputPolicyView"),
     option("profile create", "--physical-input", "ProfileOutputPolicyView"),
+    option("profile create", "--template", "ProfileCreationTemplate"),
+    option("profile create", "--stick", "ProfileCreationFields"),
+    // The sheet leaves the gyro always on; the gyro section of the editor sets the control.
+    option("profile create", "--activation", "ProfileGyroDraft"),
     leaf("profile duplicate", "ProfileDuplicateSheet"),
     leaf("profile rename", "updateMetadata"),
     leaf("profile delete", "deleteProfile"),

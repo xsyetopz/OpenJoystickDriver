@@ -78,7 +78,7 @@ Each group owns its tests and documentation. Order follows dependencies: tests f
 ## 9. Gyro-to-Stick Template and Hardware Check (REQ-48, REQ-49)
 
 - [x] 9.1 Write failing tests first: the template output validates and equals the expected profile; a model without a motion sensor fails with the named error; other profiles are unchanged. Verify: `swift test --filter OpenJoystickDriverKitTests.GyroStickTemplateTests` fails for the stated reason.
-- [ ] 9.2 Add `--template gyro-stick`, `--stick` and `--activation` to `ojd profile create`, and the template choice to the New profile sheet. Verify: `swift test --filter OpenJoystickDriverKitTests.GyroStickTemplateTests` and `swift test --filter OpenJoystickDriverPresentationTests` pass.
+- [x] 9.2 Add `--template gyro-stick`, `--stick` and `--activation` to `ojd profile create`, and the template choice to the New profile sheet. Verify: `swift test --filter OpenJoystickDriverKitTests.GyroStickTemplateTests` and `swift test --filter OpenJoystickDriverPresentationTests` pass.
 - [x] 9.3 Write `docs/testing/gyro-stick.md` in the format of the files in `docs/testing/`, and the wiki section in `wiki/Sticks-Triggers-Touchpad-and-Motion.md` with `Not checked` for hardware. Verify: `git diff --check` passes.
 - [x] 9.4 Localization keys in 22 bundles. Verify: `python3 Scripts/Quality/check_localization_keys.py` passes.
 - [ ] 9.5 Run the hardware check with a controller that has motion sensors (operator step). Verify: the operator's result is recorded in `docs/testing/gyro-stick.md` with controller, VID:PID, connection, OJD version and macOS version; the wiki line changes from `Not checked` only with that record.
