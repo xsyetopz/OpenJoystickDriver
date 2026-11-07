@@ -127,3 +127,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 [4]: https://github.com/uiltonlopes/flydigi-space-station-mac/tree/649b9f36cbba80deb7e7ac11309615d44f382a8e
+
+## openflydigi
+
+The frame and command facts for Flydigi vendor output come from `PROTOCOL.md` of [openflydigi][5], commit `11653507bbe4dc77f3c479c2a7aaebf25bbda995`. No code is copied. The author dedicated `PROTOCOL.md` to the public domain under CC0 1.0 Universal (<https://creativecommons.org/publicdomain/zero/1.0/legalcode>); the other files of that repository carry other licenses and are not used.
+
+[5]: https://github.com/mkaliaha/openflydigi/tree/11653507bbe4dc77f3c479c2a7aaebf25bbda995
