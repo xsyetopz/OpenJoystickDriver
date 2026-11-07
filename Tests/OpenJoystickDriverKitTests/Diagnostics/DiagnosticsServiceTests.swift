@@ -68,4 +68,45 @@ struct DiagnosticsServiceTests {
     #expect(DiagnosticsService.inputMappingCheck(snapshot(devices: [pad])).status == .pass)
     #expect(DiagnosticsService.inputMappingCheck(snapshot(devices: nil)).status == .skip)
   }
+
+  @Test
+  func diagnoseWarnsOnPlaceholderSwitchSerial() {
+    let pad = ApplicationServiceDeviceDescription.fixture(
+      id: "pad-1",
+      vendorID: 0x057E,
+      productID: 0x2009,
+      serialNumber: "000000000001"
+    )
+    let check = DiagnosticsService.switchSerialCheck(snapshot(devices: [pad]))
+    #expect(check.id == "switch-placeholder-serial" && check.status == .warn)
+    #expect(check.detail.contains("057E:2009"))
+    #expect(check.detail.contains("000000000001"))
+  }
+
+  @Test
+  func diagnosePassesOtherSwitchSerial() {
+    let genuine = ApplicationServiceDeviceDescription.fixture(
+      id: "pad-1",
+      vendorID: 0x057E,
+      productID: 0x2009,
+      serialNumber: "98:B6:E9:00:00:01"
+    )
+    let none = ApplicationServiceDeviceDescription.fixture(
+      id: "pad-2",
+      vendorID: 0x057E,
+      productID: 0x2009
+    )
+    let check = DiagnosticsService.switchSerialCheck(snapshot(devices: [genuine, none]))
+    #expect(check.status == .pass)
+  }
+
+  @Test
+  func diagnoseSkipsWithoutSwitchIdentity() {
+    let other = ApplicationServiceDeviceDescription.fixture(
+      id: "pad-1",
+      serialNumber: "000000000001"
+    )
+    #expect(DiagnosticsService.switchSerialCheck(snapshot(devices: [other])).status == .skip)
+    #expect(DiagnosticsService.switchSerialCheck(snapshot(devices: nil)).status == .skip)
+  }
 }

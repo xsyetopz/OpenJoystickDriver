@@ -1833,6 +1833,12 @@
 "cli.diagnose.group.inputMappingApplied" = "没有被拒绝的 SDL_GameControllerDB 行";
 /* Detail of the input mapping check of 'ojd diagnose' for one controller whose database line was rejected. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller name, %2$@ is the reason in English and %3$@ is the error code, which stays as written. */
 "cli.diagnose.group.inputMappingRejected" = "%1$@ 的 SDL_GameControllerDB 行被拒绝：%2$@（%3$@）";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no 057E:2009 controller is connected. 057E:2009 stays as written. */
+"cli.diagnose.group.switchSerialNone" = "未连接 057E:2009 控制器";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no connected 057E:2009 controller reports the serial 000000000001. 057E:2009 and the serial stay as written. */
+"cli.diagnose.group.switchSerialOther" = "没有 057E:2009 控制器报告序列号 000000000001";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' for one controller. Nintendo Switch Pro Controller is a product name and stays as written. %1$@ is the controller name, %2$@ is the VID:PID and %3$@ is the serial number, both of which stay as written. */
+"cli.diagnose.group.switchSerialPlaceholder" = "%1$@ 报告了 %2$@ 和序列号 %3$@，这是 Nintendo Switch Pro Controller 的标识和序列号；其他控制器也可能报告相同的序列号。OpenJoystickDriver 将其视为 Pro Controller。";
 /* Help text of the --output option of 'ojd diagnose'. A support bundle is a file with the diagnostic report for a bug report. */
 "cli.diagnose.group.output" = "同时将支持包写入此文件。";
 /* Error of 'ojd diagnose --output' when the support bundle could not be written. %@ is the reason from the system. --output stays as written. */
@@ -3843,6 +3849,8 @@
 "ui.activity.check.transportExtensionRegistration" = "驱动扩展注册";
 /* Name of the check in the diagnostics table that validates the configuration files. */
 "ui.activity.check.configFiles" = "设置文件";
+/* Name of the check in the diagnostics table that reports a controller with the Nintendo Switch Pro Controller identity and serial 000000000001. Nintendo Switch Pro Controller is a product name and stays as written. */
+"ui.activity.check.switchSerial" = "Switch Pro Controller 序列号";
 /* Name of the check in the diagnostics table that tests whether the app can read USB controllers. */
 "ui.activity.check.usbAccess" = "USB 访问";
 /* Button of a failed check in the diagnostics table that opens the Library area. */

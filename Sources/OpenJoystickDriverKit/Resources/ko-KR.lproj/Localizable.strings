@@ -1833,6 +1833,12 @@
 "cli.diagnose.group.inputMappingApplied" = "거부된 SDL_GameControllerDB 줄 없음";
 /* Detail of the input mapping check of 'ojd diagnose' for one controller whose database line was rejected. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller name, %2$@ is the reason in English and %3$@ is the error code, which stays as written. */
 "cli.diagnose.group.inputMappingRejected" = "%1$@의 SDL_GameControllerDB 줄이 거부되었습니다: %2$@ (%3$@)";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no 057E:2009 controller is connected. 057E:2009 stays as written. */
+"cli.diagnose.group.switchSerialNone" = "연결된 057E:2009 컨트롤러 없음";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no connected 057E:2009 controller reports the serial 000000000001. 057E:2009 and the serial stay as written. */
+"cli.diagnose.group.switchSerialOther" = "일련번호 000000000001을 보고하는 057E:2009 컨트롤러 없음";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' for one controller. Nintendo Switch Pro Controller is a product name and stays as written. %1$@ is the controller name, %2$@ is the VID:PID and %3$@ is the serial number, both of which stay as written. */
+"cli.diagnose.group.switchSerialPlaceholder" = "%1$@이(가) Nintendo Switch Pro Controller의 ID인 %2$@와 일련번호 %3$@을(를) 보고합니다. 다른 컨트롤러도 같은 일련번호를 보고할 수 있습니다. OpenJoystickDriver는 이를 Pro Controller로 취급합니다.";
 /* Help text of the --output option of 'ojd diagnose'. A support bundle is a file with the diagnostic report for a bug report. */
 "cli.diagnose.group.output" = "지원용 번들도 이 파일에 기록합니다.";
 /* Error of 'ojd diagnose --output' when the support bundle could not be written. %@ is the reason from the system. --output stays as written. */
@@ -3843,6 +3849,8 @@
 "ui.activity.check.transportExtensionRegistration" = "드라이버 확장 등록";
 /* Name of the check in the diagnostics table that validates the configuration files. */
 "ui.activity.check.configFiles" = "설정 파일";
+/* Name of the check in the diagnostics table that reports a controller with the Nintendo Switch Pro Controller identity and serial 000000000001. Nintendo Switch Pro Controller is a product name and stays as written. */
+"ui.activity.check.switchSerial" = "Switch Pro Controller 일련번호";
 /* Name of the check in the diagnostics table that tests whether the app can read USB controllers. */
 "ui.activity.check.usbAccess" = "USB 접근";
 /* Button of a failed check in the diagnostics table that opens the Library area. */

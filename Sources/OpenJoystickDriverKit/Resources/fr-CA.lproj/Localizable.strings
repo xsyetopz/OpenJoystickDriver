@@ -1833,6 +1833,12 @@
 "cli.diagnose.group.inputMappingApplied" = "aucune ligne SDL_GameControllerDB rejetée";
 /* Detail of the input mapping check of 'ojd diagnose' for one controller whose database line was rejected. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller name, %2$@ is the reason in English and %3$@ is the error code, which stays as written. */
 "cli.diagnose.group.inputMappingRejected" = "ligne SDL_GameControllerDB rejetée pour %1$@ : %2$@ (%3$@)";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no 057E:2009 controller is connected. 057E:2009 stays as written. */
+"cli.diagnose.group.switchSerialNone" = "aucune manette 057E:2009 connectée";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no connected 057E:2009 controller reports the serial 000000000001. 057E:2009 and the serial stay as written. */
+"cli.diagnose.group.switchSerialOther" = "aucune manette 057E:2009 ne signale le numéro de série 000000000001";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' for one controller. Nintendo Switch Pro Controller is a product name and stays as written. %1$@ is the controller name, %2$@ is the VID:PID and %3$@ is the serial number, both of which stay as written. */
+"cli.diagnose.group.switchSerialPlaceholder" = "%1$@ signale %2$@ avec le numéro de série %3$@, l’identité et le numéro de série d’une Nintendo Switch Pro Controller; d’autres manettes peuvent signaler le même numéro de série. OpenJoystickDriver la traite comme une Pro Controller.";
 /* Help text of the --output option of 'ojd diagnose'. A support bundle is a file with the diagnostic report for a bug report. */
 "cli.diagnose.group.output" = "Écrit aussi un lot d’assistance dans ce fichier.";
 /* Error of 'ojd diagnose --output' when the support bundle could not be written. %@ is the reason from the system. --output stays as written. */
@@ -3844,6 +3850,8 @@
 "ui.activity.check.transportExtensionRegistration" = "Enregistrement de l’extension de pilote";
 /* Name of the check in the diagnostics table that validates the configuration files. */
 "ui.activity.check.configFiles" = "Fichiers de configuration";
+/* Name of the check in the diagnostics table that reports a controller with the Nintendo Switch Pro Controller identity and serial 000000000001. Nintendo Switch Pro Controller is a product name and stays as written. */
+"ui.activity.check.switchSerial" = "Numéro de série du Switch Pro Controller";
 /* Name of the check in the diagnostics table that tests whether the app can read USB controllers. */
 "ui.activity.check.usbAccess" = "Accès USB";
 /* Button of a failed check in the diagnostics table that opens the Library area. */

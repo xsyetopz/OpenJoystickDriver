@@ -1833,6 +1833,12 @@
 "cli.diagnose.group.inputMappingApplied" = "SDL_GameControllerDB की कोई पंक्ति अस्वीकृत नहीं हुई";
 /* Detail of the input mapping check of 'ojd diagnose' for one controller whose database line was rejected. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller name, %2$@ is the reason in English and %3$@ is the error code, which stays as written. */
 "cli.diagnose.group.inputMappingRejected" = "%1$@ के लिए SDL_GameControllerDB पंक्ति अस्वीकृत: %2$@ (%3$@)";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no 057E:2009 controller is connected. 057E:2009 stays as written. */
+"cli.diagnose.group.switchSerialNone" = "कोई 057E:2009 कंट्रोलर कनेक्ट नहीं है";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no connected 057E:2009 controller reports the serial 000000000001. 057E:2009 and the serial stay as written. */
+"cli.diagnose.group.switchSerialOther" = "कोई 057E:2009 कंट्रोलर सीरियल 000000000001 नहीं बताता";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' for one controller. Nintendo Switch Pro Controller is a product name and stays as written. %1$@ is the controller name, %2$@ is the VID:PID and %3$@ is the serial number, both of which stay as written. */
+"cli.diagnose.group.switchSerialPlaceholder" = "%1$@ सीरियल %3$@ के साथ %2$@ बताता है, जो Nintendo Switch Pro Controller की पहचान और सीरियल है; अन्य कंट्रोलर भी यही सीरियल बता सकते हैं। OpenJoystickDriver इसे Pro Controller मानता है।";
 /* Help text of the --output option of 'ojd diagnose'. A support bundle is a file with the diagnostic report for a bug report. */
 "cli.diagnose.group.output" = "सपोर्ट बंडल भी इस फ़ाइल में लिखें।";
 /* Error of 'ojd diagnose --output' when the support bundle could not be written. %@ is the reason from the system. --output stays as written. */
@@ -3843,6 +3849,8 @@
 "ui.activity.check.transportExtensionRegistration" = "ड्राइवर एक्सटेंशन पंजीकरण";
 /* Name of the check in the diagnostics table that validates the configuration files. */
 "ui.activity.check.configFiles" = "कॉन्फ़िगरेशन फ़ाइलें";
+/* Name of the check in the diagnostics table that reports a controller with the Nintendo Switch Pro Controller identity and serial 000000000001. Nintendo Switch Pro Controller is a product name and stays as written. */
+"ui.activity.check.switchSerial" = "Switch Pro Controller सीरियल";
 /* Name of the check in the diagnostics table that tests whether the app can read USB controllers. */
 "ui.activity.check.usbAccess" = "USB एक्सेस";
 /* Button of a failed check in the diagnostics table that opens the Library area. */

@@ -142,6 +142,7 @@ public enum DiagnosticsService {
     checks.append(virtualDeviceCheck(snapshot))
     checks.append(recordCheck(records))
     checks.append(inputMappingCheck(snapshot))
+    checks.append(switchSerialCheck(snapshot))
     checks.append(configFilesCheck(defaults: records.defaults, virtualDevices: virtualDevices))
     checks.append(usbCheck(usb))
     return checks
@@ -324,6 +325,35 @@ public enum DiagnosticsService {
       return DiagnoseCheck(id, .warn, rejected.joined(separator: "; "))
     }
     return DiagnoseCheck(id, .pass, localization.string("cli.diagnose.group.inputMappingApplied"))
+  }
+
+  /// The `switch-placeholder-serial` check.
+  ///
+  /// It is skipped without a status or without a connected `057E:2009` controller, warns for each
+  /// such controller whose serial is `000000000001`, and otherwise passes. It does not change
+  /// which driver binds the controller.
+  public static func switchSerialCheck(_ snapshot: DiagnoseServiceSnapshot) -> DiagnoseCheck {
+    let id = "switch-placeholder-serial"
+    guard let status = snapshot.status else { return skipped(id, snapshot) }
+    let switchPads = status.connectedDevices.filter {
+      $0.vendorID == 0x057E && $0.productID == 0x2009
+    }
+    guard !switchPads.isEmpty else {
+      return DiagnoseCheck(id, .skip, localization.string("cli.diagnose.group.switchSerialNone"))
+    }
+    let placeholder = "000000000001"
+    let flagged = switchPads.filter { $0.serialNumber == placeholder }.map {
+      localization.formatted(
+        "cli.diagnose.group.switchSerialPlaceholder",
+        arguments: [
+          $0.name, String(format: "%04X:%04X", $0.vendorID, $0.productID), placeholder,
+        ]
+      )
+    }
+    guard flagged.isEmpty else {
+      return DiagnoseCheck(id, .warn, flagged.joined(separator: " "))
+    }
+    return DiagnoseCheck(id, .pass, localization.string("cli.diagnose.group.switchSerialOther"))
   }
 
   /// The `controller-records` check; it warns and names each controller record file that OJD
