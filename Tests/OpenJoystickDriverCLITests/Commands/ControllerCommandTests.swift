@@ -121,6 +121,26 @@ struct ControllerCommandTests {
   }
 
   @Test
+  func rumbleWithLeftAndRightSendsOneCommandWithBothLevels() async throws {
+    let service = try FakeService(
+      devices: [ApplicationServiceDeviceDescription.fixture(id: "pad-1")],
+      respond: Self.delivered()
+    )
+    let result = await service.run([
+      "controller", "rumble", token("pad-1"), "--left", "128", "--right", "64",
+    ])
+    #expect(result.code == 0, "\(result.standardError)")
+    let commands = try Self.sentCommands(service)
+    #expect(commands.count == 1)
+    guard case .setRumble(let intensities, _) = commands.first else {
+      Issue.record("expected setRumble")
+      return
+    }
+    #expect(intensities.lowFrequency == UnipolarValue(byte: 128))
+    #expect(intensities.highFrequency == UnipolarValue(byte: 64))
+  }
+
+  @Test
   func playerNamesTheControllerLikeTheOtherOutputMessages() async throws {
     let service = try FakeService(
       devices: [ApplicationServiceDeviceDescription.fixture(id: "pad-1")],

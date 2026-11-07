@@ -65,6 +65,18 @@ struct FlydigiGripRumbleTests {
   }
 
   @Test
+  func theCommandLineLevelsLeft128AndRight64SendOneFrame() throws {
+    let intensities = RumbleIntensities(
+      lowFrequency: UnipolarValue(byte: 128),
+      highFrequency: UnipolarValue(byte: 64)
+    )
+    let report = try Self.report(
+      of: try Self.driver().encode(.setRumble(intensities, duration: .held)).writes
+    )
+    #expect(Array(report.bytes[0..<9]) == [0x03, 0x5A, 0xA5, 0x12, 0x06, 0x80, 0x40, 0, 0])
+  }
+
+  @Test
   func stopRumbleZeroesTheMotorBytesAndKeepsTheEnvelope() throws {
     let report = try Self.report(of: try Self.driver().encode(.stopRumble).writes)
     #expect(Array(report.bytes[0..<9]) == [0x03, 0x5A, 0xA5, 0x12, 0x06, 0, 0, 0, 0])
