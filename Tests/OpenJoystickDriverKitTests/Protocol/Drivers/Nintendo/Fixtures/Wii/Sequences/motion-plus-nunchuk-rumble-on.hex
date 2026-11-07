@@ -1,0 +1,5 @@
+# WiiBrew-derived (WiiBrew Wiimote/Extension Controllers/Wii Motion Plus page, revision 120079 of 3 April 2024, output reports in send order, rumble on); replaced by a hardware capture at Hardware Check 4
+# write 0x55 to A600F0
+16 05 A6 00 F0 01 55 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+# write mode 0x05 to A600FE
+16 05 A6 00 FE 01 05 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00

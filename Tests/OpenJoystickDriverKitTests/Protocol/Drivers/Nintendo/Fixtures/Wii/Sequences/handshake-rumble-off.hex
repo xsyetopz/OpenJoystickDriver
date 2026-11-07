@@ -1,0 +1,7 @@
+# WiiBrew-derived (WiiBrew Wiimote/Extension Controllers page, revision 121955 of 13 April 2026, output reports in send order, rumble off); replaced by a hardware capture at Hardware Check 4
+# write 0x55 to A400F0
+16 04 A4 00 F0 01 55 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+# write 0x00 to A400FB
+16 04 A4 00 FB 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+# read 6 bytes at A400FA
+17 04 A4 00 FA 00 06

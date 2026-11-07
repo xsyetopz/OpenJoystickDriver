@@ -1,0 +1,15 @@
+# WiiBrew-derived (WiiBrew Wiimote page, revision 123599 of 3 November 2026, output reports in send order, rumble off); replaced by a hardware capture at Hardware Check 6
+# speaker enable, report 0x14
+14 04
+# speaker mute, report 0x19
+19 04
+# write 0x01 to A20009
+16 04 A2 00 09 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+# write 0x08 to A20001
+16 04 A2 00 01 01 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+# write 7-byte configuration, 4-bit ADPCM at 6000 Hz, to A20001
+16 04 A2 00 01 07 00 00 D0 07 40 00 00 00 00 00 00 00 00 00 00 00
+# write 0x01 to A20008
+16 04 A2 00 08 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+# speaker unmute, report 0x19
+19 00

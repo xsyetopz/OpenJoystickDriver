@@ -1,0 +1,15 @@
+# WiiBrew-derived (WiiBrew Wiimote page, revision 123599 of 3 November 2026, output reports in send order, rumble on); replaced by a hardware capture at Hardware Check 5
+# IR camera enable, report 0x13
+13 05
+# IR camera enable 2, report 0x1A
+1A 05
+# write 0x08 to B00030
+16 05 B0 00 30 01 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+# sensitivity block 1, level 3, to B00000
+16 05 B0 00 00 09 02 00 00 71 01 00 AA 00 64 00 00 00 00 00 00 00
+# sensitivity block 2, level 3, to B0001A
+16 05 B0 00 1A 02 63 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+# write extended mode 0x03 to B00033
+16 05 B0 00 33 01 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+# write 0x08 to B00030
+16 05 B0 00 30 01 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
