@@ -154,6 +154,29 @@ struct ControllerRecordProbePlanTests {
   }
 
   @Test
+  func validationAcceptsAHIDReportLayoutRecordThatNoProbeCanDrive() throws {
+    let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+      .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+    let data = try Data(
+      contentsOf: root.appending(path: "Resources/Controllers/04b4/04b4-2412.json")
+    )
+    let protocolID = try ControllerRecordProbePlan.validate(data: data)
+    #expect(protocolID == .hidReportLayout)
+    #expect(!ControllerRecordProbePlan.probeableProtocols.contains(protocolID))
+    #expect(throws: ControllerRecordProbeError.unsupportedProtocol("HIDReportLayout")) {
+      try ControllerRecordProbePlan(data: data)
+    }
+  }
+
+  @Test
+  func validationRejectsAnInvalidRecord() throws {
+    let data = try mutatedRecord { $0["vendorID"] = "not a number" }
+    #expect(throws: ControllerRecordProbeError.self) {
+      try ControllerRecordProbePlan.validate(data: data)
+    }
+  }
+
+  @Test
   func rejectsHIDFamilyBeforeHardwareAccess() {
     #expect(throws: ControllerRecordProbeError.self) {
       try ControllerRecordProbePlan(data: try recordData(family: "SonyDualShock4", variant: nil))

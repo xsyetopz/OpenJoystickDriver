@@ -34,26 +34,9 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
   ///   does not build a runtime profile, and ``ControllerRecordProbeError/unsupportedProtocol(_:)``
   ///   when its protocol is not `XboxGIP` or `XboxXUSB` or it has no raw USB binding.
   public init(data: Data) throws {
-    let profile: DeviceRuntimeProfile
-    let decoded: (model: ControllerModelID, document: ControllerRecordDocument)
-    do {
-      decoded = try ControllerRecordSet.decode(ControllerRecordSet.ordered(data))
-      profile = try DeviceCatalog.makeRuntimeProfile(decoded.document)
-    } catch {
-      // A coded reason leads with its code, like every other `E5001: ...` message.
-      let reason =
-        ControllerRecordSet.problemCode(error).map {
-          "\($0.rawValue): "
-            + ControllerRecordSet.problemDescription(
-              error,
-              includingCode: false,
-              document: "record"
-            )
-        } ?? "Invalid controller record: \(error)"
-      throw ControllerRecordProbeError.invalidProfile(reason)
-    }
+    let (decoded, profile) = try Self.validatedRecord(data)
     // The signing-free probe drives only the raw-USB Xbox families it can start safely.
-    guard [.xboxGIP, .xboxXUSB].contains(profile.physicalProtocolID) else {
+    guard Self.probeableProtocols.contains(profile.physicalProtocolID) else {
       throw ControllerRecordProbeError.unsupportedProtocol(profile.physicalProtocolID.rawValue)
     }
     guard let binding = profile.rawUSBBinding else {
@@ -67,6 +50,44 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     startupPackets = profile.physicalProtocolID == .xboxGIP ? profile.gipStartupPackets : []
     keepAlivePolicy = profile.gipKeepAlivePolicy
     self.profile = profile
+  }
+
+  /// The protocols whose records the probe can drive.
+  public static let probeableProtocols: [PhysicalProtocolID] = [.xboxGIP, .xboxXUSB]
+
+  /// Checks that `data` is a controller record that builds a runtime profile, without building a
+  /// probe plan, so the check holds for every protocol.
+  ///
+  /// - Returns: The protocol of the record's default mode.
+  /// - Throws: ``ControllerRecordProbeError/invalidProfile(_:)`` when the record does not decode
+  ///   or does not build a runtime profile.
+  public static func validate(data: Data) throws -> PhysicalProtocolID {
+    try validatedRecord(data).profile.physicalProtocolID
+  }
+
+  /// Decodes `data` as the catalog reads a record file and builds its runtime profile.
+  private static func validatedRecord(
+    _ data: Data
+  ) throws -> (
+    decoded: (model: ControllerModelID, document: ControllerRecordDocument),
+    profile: DeviceRuntimeProfile
+  ) {
+    do {
+      let decoded = try ControllerRecordSet.decode(ControllerRecordSet.ordered(data))
+      return (decoded, try DeviceCatalog.makeRuntimeProfile(decoded.document))
+    } catch {
+      // A coded reason leads with its code, like every other `E5001: ...` message.
+      let reason =
+        ControllerRecordSet.problemCode(error).map {
+          "\($0.rawValue): "
+            + ControllerRecordSet.problemDescription(
+              error,
+              includingCode: false,
+              document: "record"
+            )
+        } ?? "Invalid controller record: \(error)"
+      throw ControllerRecordProbeError.invalidProfile(reason)
+    }
   }
 
   /// Builds the record's driver without an observed device, to render the plan.

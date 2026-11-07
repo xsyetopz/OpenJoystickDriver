@@ -60,8 +60,15 @@ func runControllerRecordProbe(recordPath: String, seconds: Int, validateOnly: Bo
   Task {
     defer { done.signal() }
     do {
-      let plan = try ControllerRecordProbePlan(contentsOf: URL(fileURLWithPath: recordPath))
+      let url = URL(fileURLWithPath: recordPath)
       if validateOnly {
+        let protocolID = try ControllerRecordProbePlan.validate(data: Data(contentsOf: url))
+        // Only a protocol the probe drives has a plan to render.
+        guard ControllerRecordProbePlan.probeableProtocols.contains(protocolID) else {
+          print("RECORD_VALIDATION result=valid")
+          return
+        }
+        let plan = try ControllerRecordProbePlan(contentsOf: url)
         await ControllerRecordProbeIsolation(driver: plan.makeUnobservedDriver()).printRecord(
           plan: plan,
           transport: plan.transportProfile
@@ -69,6 +76,7 @@ func runControllerRecordProbe(recordPath: String, seconds: Int, validateOnly: Bo
         print("RECORD_VALIDATION result=valid")
         return
       }
+      let plan = try ControllerRecordProbePlan(contentsOf: url)
 
       let provider = OpenJoystickDriverUSBTransportProvider()
       let devices = try await provider.devices().filter {
