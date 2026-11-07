@@ -71,10 +71,10 @@ public enum PhysicalProtocolID: String, CaseIterable, Codable, Sendable {
   /// shared pipeline, so this names what the family uses, not what its driver reads itself.
   var generalSessionFields: Set<ProtocolDescription.SessionKey> {
     switch self {
-    case .xboxXUSB, .nintendoSwitch1, .sonyDualShock4: [.startup]
+    case .xboxXUSB, .nintendoSwitch1, .sonyDualShock4, .hidReportLayout: [.startup]
     case .xboxGIP, .nintendoSwitch2, .vendorGameSir: [.startup, .keepAlive]
     case .valveSteamTriton, .valveSteamDeck: [.keepAlive]
-    case .hidDescriptor, .hidReportLayout, .xboxXID, .sonySixaxis, .sonyDualSense,
+    case .hidDescriptor, .xboxXID, .sonySixaxis, .sonyDualSense,
       .nintendoSwitchInputOnly, .valveSteamController, .vendorFlydigi, .vendorPS3ThirdParty,
       .vendorNVIDIAShield, .nintendoWii:
       []

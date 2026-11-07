@@ -7506,6 +7506,27 @@ output rumble=[low-frequency,high-frequency] binary=[] lighting=[] adaptiveTrigg
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
 
+## 37D7:2401
+protocol=hid-report-layout variant=- ownership=macos
+transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+tuning -
+controls [LeftStickX,LeftStickY,LeftTrigger,RightStickX,RightStickY,RightTrigger]
+output rumble=[low-frequency,high-frequency,left-trigger,right-trigger] binary=[] lighting=[] adaptiveTriggers=[]
+session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+recordStartup[0] output id=3 length=32 delayMs=0 transport=all 5AA50102030000000000000000000000000000000000000000000000000000
+recordStartup[1] output id=3 length=32 delayMs=0 transport=all 5AA5A102A30000000000000000000000000000000000000000000000000000
+recordStartup[2] output id=3 length=32 delayMs=0 transport=all 5AA50202040000000000000000000000000000000000000000000000000000
+recordStartup[3] output id=3 length=32 delayMs=0 transport=all 5AA51107FF01FFFFFF15000000000000000000000000000000000000000000
+rumbleTemplate output id=3 length=32 motors=high-frequency@6,left-trigger@7,low-frequency@5,right-trigger@8 bytes=035AA51206000000000000000000000000000000000000000000000000000000
+inputLayout reportID=- minimumLength=32
+inputLayout axis LeftStickX byte=3 bits=16 signed=true range=-32768...32767 inverted=false
+inputLayout axis LeftStickY byte=5 bits=16 signed=true range=-32768...32767 inverted=false
+inputLayout axis RightStickX byte=7 bits=16 signed=true range=-32768...32767 inverted=false
+inputLayout axis RightStickY byte=9 bits=16 signed=true range=-32768...32767 inverted=false
+inputLayout trigger left byte=15 button=-
+inputLayout trigger right byte=16 button=-
+parameters=
+
 ## 37D7:2501
 protocol=xbox-xusb variant=wired ownership=macos
 transport in=129 out=1 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0

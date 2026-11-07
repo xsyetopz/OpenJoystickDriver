@@ -2080,6 +2080,9 @@ raw-access
 ## 3767:0101
 raw-access
 
+## 37D7:2401
+system ownership=macos
+
 ## 37D7:2501
 raw-access
 

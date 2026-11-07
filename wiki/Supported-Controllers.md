@@ -65,6 +65,7 @@ These Flydigi records are source-derived and unverified. The files a tester send
 | --- | --- | --- | --- | --- |
 | Flydigi Vader 4 Pro | `D7D7:0041` | Bluetooth LE | Unverified | [Vader 4 Pro](../docs/testing/flydigi-vader-4-pro.md) |
 | Flydigi Vader 5S | `37D7:2801` | USB; GIP, or XUSB when the pad shows interface `FF/5D/01` | Unverified | [Vader 5S](../docs/testing/flydigi-vader-5s.md) |
+| Flydigi Vader 5 Pro dongle | `37D7:2401` | 2.4 GHz USB; HID extended report after startup writes | Unverified | [Vader 5 Pro](../docs/testing/flydigi-vader-5-pro.md) |
 | Flydigi Apex 4 | `04B4:2412` | DInput; the XInput mode is the Microsoft `045E:028E` record | Unverified | [Apex 4](../docs/testing/flydigi-apex-4.md) |
 
 To find out whether your controller is in the catalog:

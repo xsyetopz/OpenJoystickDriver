@@ -7,5 +7,6 @@
     "out": 2
   },
   "recordSections": ["input", "rumble"],
+  "sessionKeys": ["startup"],
   "tuningKeys": ["hidStartupIntervalMs", "minimumHIDOutputIntervalMs"]
 }
