@@ -83,7 +83,8 @@ struct ControllerSpeakerCommandTests {
       ["controller", "speaker", "play", token("wii-1"), path, "--volume", "0"]
     )
     #expect(result.code == 0, "\(result.standardError)")
-    #expect(try Self.played(service).audio.allSatisfy { $0 == 0 })
+    let silence = PhysicalSpeakerFormat.yamahaADPCM4Bit.encode([Int16](repeating: 0, count: 6_000))
+    #expect(try Self.played(service).audio == Data(silence))
   }
 
   @Test
