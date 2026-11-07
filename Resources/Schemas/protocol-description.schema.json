@@ -1093,21 +1093,21 @@
         "irModeBytes": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["IRBasic", "IRExtended", "IRFull"],
+          "required": ["basic", "extended", "full"],
           "properties": {
-            "IRBasic": { "$ref": "#/$defs/byte" },
-            "IRExtended": { "$ref": "#/$defs/byte" },
-            "IRFull": { "$ref": "#/$defs/byte" }
+            "basic": { "$ref": "#/$defs/byte" },
+            "extended": { "$ref": "#/$defs/byte" },
+            "full": { "$ref": "#/$defs/byte" }
           }
         },
         "motionPlusModeBytes": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["Standalone", "Nunchuk", "Classic"],
+          "required": ["standalone", "nunchuk", "classic"],
           "properties": {
-            "Standalone": { "$ref": "#/$defs/byte" },
-            "Nunchuk": { "$ref": "#/$defs/byte" },
-            "Classic": { "$ref": "#/$defs/byte" }
+            "standalone": { "$ref": "#/$defs/byte" },
+            "nunchuk": { "$ref": "#/$defs/byte" },
+            "classic": { "$ref": "#/$defs/byte" }
           }
         },
         "scripts": {

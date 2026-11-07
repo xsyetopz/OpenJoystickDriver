@@ -271,14 +271,16 @@ extension ProtocolDescription {
       }
       irSensitivityLevels = levels
       defaultIRSensitivityLevel = defaultLevel
-      let formats: [BlockKind] = [.irBasic, .irExtended, .irFull]
-      let modeObject = try root.object("irModeBytes", allowed: Set(formats.map(\.rawValue)))
+      let formats: [(key: String, kind: BlockKind)] = [
+        ("basic", .irBasic), ("extended", .irExtended), ("full", .irFull),
+      ]
+      let modeObject = try root.object("irModeBytes", allowed: Set(formats.map(\.key)))
       irModeBytes = Dictionary(
         uniqueKeysWithValues: try formats.map {
-          ($0, UInt8(try modeObject.number($0.rawValue, 0...255)))
+          ($0.kind, UInt8(try modeObject.number($0.key, 0...255)))
         }
       )
-      let plusKeys = ["Standalone", "Nunchuk", "Classic"]
+      let plusKeys = ["standalone", "nunchuk", "classic"]
       let plusObject = try root.object("motionPlusModeBytes", allowed: Set(plusKeys))
       motionPlusModeBytes = Dictionary(
         uniqueKeysWithValues: try plusKeys.map { ($0, UInt8(try plusObject.number($0, 0...255))) }

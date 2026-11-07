@@ -24028,14 +24028,14 @@
                 ]
               },
               "irModeBytes": {
-                "IRBasic": 1,
-                "IRExtended": 3,
-                "IRFull": 5
+                "basic": 1,
+                "extended": 3,
+                "full": 5
               },
               "motionPlusModeBytes": {
-                "Standalone": 4,
-                "Nunchuk": 5,
-                "Classic": 7
+                "standalone": 4,
+                "nunchuk": 5,
+                "classic": 7
               },
               "scripts": {
                 "handshake": [
@@ -24540,14 +24540,14 @@
                 ]
               },
               "irModeBytes": {
-                "IRBasic": 1,
-                "IRExtended": 3,
-                "IRFull": 5
+                "basic": 1,
+                "extended": 3,
+                "full": 5
               },
               "motionPlusModeBytes": {
-                "Standalone": 4,
-                "Nunchuk": 5,
-                "Classic": 7
+                "standalone": 4,
+                "nunchuk": 5,
+                "classic": 7
               },
               "scripts": {
                 "handshake": [
@@ -25052,14 +25052,14 @@
                 ]
               },
               "irModeBytes": {
-                "IRBasic": 1,
-                "IRExtended": 3,
-                "IRFull": 5
+                "basic": 1,
+                "extended": 3,
+                "full": 5
               },
               "motionPlusModeBytes": {
-                "Standalone": 4,
-                "Nunchuk": 5,
-                "Classic": 7
+                "standalone": 4,
+                "nunchuk": 5,
+                "classic": 7
               },
               "scripts": {
                 "handshake": [
@@ -25563,14 +25563,14 @@
                 ]
               },
               "irModeBytes": {
-                "IRBasic": 1,
-                "IRExtended": 3,
-                "IRFull": 5
+                "basic": 1,
+                "extended": 3,
+                "full": 5
               },
               "motionPlusModeBytes": {
-                "Standalone": 4,
-                "Nunchuk": 5,
-                "Classic": 7
+                "standalone": 4,
+                "nunchuk": 5,
+                "classic": 7
               },
               "scripts": {
                 "handshake": [
