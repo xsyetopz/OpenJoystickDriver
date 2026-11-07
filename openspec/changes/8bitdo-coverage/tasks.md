@@ -56,8 +56,8 @@ Owns: the `901B` record.
 Depends: 1.
 Verify: `swift test --filter EightBitDo`, `./Scripts/ojd catalog regenerate --check`.
 
-- [ ] 4.1 Write the replay test from sources (a Bluetooth gamepad that follows the Xbox button order). Verify: `swift test --filter EightBitDo` shows it failing before 4.2.
-- [ ] 4.2 Add `2dc8-901b.json` with the protocol the sources give (`HIDDescriptor`, Xbox mode over Bluetooth). Verify: the test passes and `./Scripts/ojd catalog regenerate --check` passes.
+- [x] 4.1 Write the replay test from sources (a Bluetooth gamepad that follows the Xbox button order). Verify: `swift test --filter EightBitDo` passes with 4.2. The test landed in the same commit as the 4.2 record, so no run shows it failing first.
+- [x] 4.2 Add `2dc8-901b.json` with the protocol the sources give (`HIDDescriptor`, Xbox mode over Bluetooth). Verify: the test passes and `./Scripts/ojd catalog regenerate --check` passes.
 - [x] 4.3 Document the model and mode in `docs/testing/8bitdo-ultimate-2.md`, the wiki rows and `CHANGELOG.md`, as unverified. Verify: `grep -n "901B" wiki/Supported-Controllers.md` finds the row and `git diff --check` reports nothing.
 - [ ] 4.4 Apply the tester result of T8 (`901B`). Verify: `swift test --filter EightBitDo` passes with the `capture` fixture. Open until the tester's files arrive.
 
@@ -67,7 +67,7 @@ Owns: the macOS measurement and, only if it shows a drop while served, one named
 Depends: 2 and 3.
 Verify: `swift test --filter EightBitDo`, `./Scripts/ojd catalog regenerate --check`.
 
-- [ ] 5.1 Write the document section that states the question and the three outcomes of D7, and the test for the outcome "no keep-alive" (the record has no `session.keepAlive`). Verify: `swift test --filter EightBitDo` passes and `git diff --check` reports nothing.
+- [x] 5.1 Write the document section that states the question and the three outcomes of D7, and the test for the outcome "no keep-alive" (the record has no `session.keepAlive`). Verify: `swift test --filter EightBitDo` passes and `git diff --check` reports nothing.
 - [ ] 5.2 Apply the tester result of T9 (`310A` and `6012` served, then suspended). If the measurement shows a drop while served on a raw-USB pad, add `session.keepAlive` to the record with the measured interval and a packet test; for a HID pad, write the finding. Verify: `swift test --filter EightBitDo` passes and `./Scripts/ojd catalog regenerate --check` passes. Open until the tester's files arrive.
 - [ ] 5.3 Document the result in `docs/testing/8bitdo-ultimate-2.md`; when a keep-alive is added, also in `docs/development/wire-protocols.md` and `CHANGELOG.md`. Verify: `git diff --check` over the changed files reports nothing.
 
