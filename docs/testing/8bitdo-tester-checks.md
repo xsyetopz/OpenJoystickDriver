@@ -130,17 +130,18 @@ ojd controller capture 2DC8:6012 --duration 20 --json > dongle-capture.jsonl
 
 Control order: the full [control order](#control-order) in each capture, with the four rear buttons.
 
-Then put the pad in DInput mode and run a motion capture; repeat in Switch mode with `switch-motion.jsonl`. During each, hold the pad still for 3 seconds, then tilt it forward and back, roll it left and right, and turn it left and right.
+Then put the pad in DInput mode and run the first command; repeat in Switch mode with the second. During each, hold the pad still for 3 seconds, then tilt it forward and back, roll it left and right, and turn it left and right.
 
 ```shell
 ojd controller capture 2DC8:6012 --duration 20 --json > dinput-motion.jsonl
+ojd controller capture 2DC8:6012 --duration 20 --json > switch-motion.jsonl
 ```
 
 Send: all files, and the button each rear button acts as on the pad (for example "upper left rear acts as L3").
 
 ## T6 Ultimate 2 Receiver and Dongle (`2DC8:6013`, `2DC8:3107`)
 
-Mode: plug in the receiver with the pad off, run the block, switch the pad on and run it again with `on-` in place of `off-`. Repeat both runs with the dongle and `3107` in place of `6013`.
+Mode: plug in the receiver with the pad off, run the block, switch the pad on and run it again with `on` in place of `off` in the file names. Repeat both runs with the dongle and `3107` in place of `6013`.
 
 ```shell
 ioreg -r -c IOHIDDevice -l -w0 > 6013-off-hid.txt
@@ -150,7 +151,7 @@ ojd controller show 2DC8:6013 > 6013-off-show.txt
 ojd controller capture 2DC8:6013 --duration 20 --json > 6013-off-capture.jsonl
 ```
 
-Control order: the full [control order](#control-order) during each `on-` capture.
+Control order: the full [control order](#control-order) during each `on` capture.
 
 Send: all files, and the PID `ojd controller list` showed in each run.
 
