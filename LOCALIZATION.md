@@ -46,6 +46,7 @@ Capability messages describe the controller or active protocol, not a permanent 
 - English source: ASCII `...` and `'`.
 - Translations: native `…`, quotes (`„…“`, `«…»`, `「…」`), and `→` for arrows. `pt-BR` and `es-MX` quote with `“…”`; `es-ES` keeps `«…»`.
 - French: NBSP before `:` and inside `« »`. `fr-FR` puts a narrow NBSP (U+202F) before `; ? !`; `fr-CA` puts no space there.
+- A text that reports work in progress ends with an ellipsis, as in `Checking...`; a finished action ends with a period, or with an exclamation mark where it fits. An instruction after an in-progress sentence keeps its own period: `Waiting for USB packets... Press a controller button.` A test requires every translation to keep the ellipsis.
 - No ASCII `"` inside a `.strings` value. Numeric ranges stay `0...255`.
 
 ## Meaning

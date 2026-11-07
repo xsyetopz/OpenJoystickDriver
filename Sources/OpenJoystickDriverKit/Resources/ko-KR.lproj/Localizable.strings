@@ -207,7 +207,7 @@
 /* Label of the fact in the Controllers detail that shows the USB vendor ID and product ID. VID and PID are the usual short names. */
 "ui.controllers.usbIdentifier" = "USB VID/PID";
 /* VoiceOver sentence while the app checks which profile is active for the controller. */
-"ui.controllers.profileCheckingSentence" = "활성 프로파일을 확인하는 중입니다.";
+"ui.controllers.profileCheckingSentence" = "활성 프로파일을 확인하는 중입니다…";
 /* VoiceOver sentence when the controller has no active profile. */
 "ui.controllers.noActiveProfileSentence" = "활성 프로파일이 없습니다.";
 /* VoiceOver sentence that names the active profile. %@ is the profile name. The sentence ends with a period. */
@@ -335,9 +335,9 @@
 /* Status in the capture assignment sheet before the capture starts. */
 "ui.capture.ready" = "수신 대기할 준비가 되었습니다.";
 /* Status in the capture assignment sheet while the app waits for a controller control. */
-"ui.capture.listening" = "컨트롤러 조작을 수신 대기하는 중입니다.";
+"ui.capture.listening" = "컨트롤러 조작을 수신 대기하는 중입니다…";
 /* VoiceOver announcement while the app waits for a controller control. Escape is the name of the Escape key. */
-"ui.capture.listeningCancel" = "컨트롤러 조작을 수신 대기하는 중입니다. 취소하려면 Escape를 누르세요.";
+"ui.capture.listeningCancel" = "컨트롤러 조작을 수신 대기하는 중입니다… 취소하려면 Escape를 누르세요.";
 /* Status text in the capture assignment sheet while the app waits for a controller control. Keep the three dots. */
 "ui.capture.listeningEllipsis" = "컨트롤러 조작을 수신 대기하는 중…";
 /* Status in the capture assignment sheet after a control is detected. %@ is the name of the control. The sentence ends with a period. */
@@ -891,7 +891,7 @@
 /* Message about a request to the system extension manager that failed. %1$@ is the error domain, %2$d is the error code and %3$@ is the description from the system. Keep code= as written. */
 "cli.transportExtension.group.failed" = "시스템 확장 요청 실패: %1$@ code=%2$d %3$@";
 /* Message when the system extension manager replaces an installed driver extension. %1$@ is the extension bundle identifier, %2$@ is the installed version and %3$@ is the version that replaces it. Keep the v before the numbers. */
-"cli.transportExtension.group.replacing" = "%1$@ v%2$@을(를) v%3$@로 교체하는 중입니다.";
+"cli.transportExtension.group.replacing" = "%1$@ v%2$@을(를) v%3$@로 교체하는 중입니다…";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller, which OJD reads by the layout its HID report descriptor declares. Keep HID as written. */
 "term.protocolFamily.hidDescriptor" = "일반 HID";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller whose input report layout comes from its controller record, the file OJD keeps for each controller model. Keep HID as written. */
@@ -949,7 +949,7 @@
 /* Label in the controller summary of the developer tools. The value is a list of the pressed buttons. */
 "ui.developer.buttons" = "버튼";
 /* Status next to the Start Capture button while the packet capture runs. */
-"ui.developer.capturing" = "캡처 중";
+"ui.developer.capturing" = "캡처 중…";
 /* Label of the connection kind in the controller summary of the developer tools, for example USB or Bluetooth. */
 "ui.developer.connection" = "연결";
 /* Label of the controller name in the controller summary of the developer tools. */
@@ -1017,7 +1017,7 @@
 /* Label of the USB vendor and product ID in the controller summary of the developer tools. */
 "ui.developer.usbID" = "USB ID";
 /* Message in the packet list of the developer tools while a capture waits for packets. */
-"ui.developer.waitingForPackets" = "USB 패킷을 기다리는 중입니다. 컨트롤러 버튼을 누르세요.";
+"ui.developer.waitingForPackets" = "USB 패킷을 기다리는 중입니다… 컨트롤러 버튼을 누르세요.";
 /* Heading of the soak test section in the developer tools. A soak test measures the service over a long time. */
 "ui.developer.soakTest" = "장시간 테스트";
 /* Description of the soak test section in the developer tools. The test samples memory, file descriptors and CPU of the service. */
@@ -1209,7 +1209,7 @@
 /* Detail line of the problem banner when the driver extension waits for approval. System Settings is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. */
 "platform.macos.ui.setup.approvalDetail" = "지원되는 Microsoft USB 컨트롤러를 사용하려면 시스템 설정에서 드라이버를 승인하세요.";
 /* Detail line in the Driver section of the settings window while the app checks the driver extension for Xbox USB controllers. */
-"ui.setup.checkingDetail" = "설치된 Xbox USB 드라이버를 확인하는 중입니다.";
+"ui.setup.checkingDetail" = "설치된 Xbox USB 드라이버를 확인하는 중입니다…";
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "Xbox USB 드라이버";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
@@ -1409,7 +1409,7 @@
 /* Hint under the motion calibration controls of the input test window: keep the controller still on a surface while the gyro bias, the small constant rotation the sensor reports at rest, is collected. */
 "ui.motion.calibration.instructions" = "자이로 편향을 수집하는 동안 컨트롤러를 가만히 두세요.";
 /* Status line in the motion calibration controls while the service collects gyro bias samples. Bias is the constant rotation offset of the gyro sensor at rest. */
-"ui.motion.calibration.collecting" = "편향 수집 중";
+"ui.motion.calibration.collecting" = "편향 수집 중…";
 /* Status line in the motion calibration controls when the user paused collecting gyro bias samples by hand. */
 "ui.motion.calibration.paused" = "수동 수집 일시 중지됨";
 /* Line in the motion calibration controls that shows the gyro bias found so far, in degrees per second. %1$.3f, %2$.3f and %3$.3f are the X, Y and Z components. Keep the axis letters and the unit. */
@@ -1426,7 +1426,7 @@
 /* Guidance in the motion calibration controls when the controller has no usable motion data: turn on a profile for this controller and check that motion data is available. */
 "ui.motion.calibration.motionUnavailable" = "이 컨트롤러에 리매핑 프로파일을 활성화하고 모션을 사용할 수 있는지 확인하세요.";
 /* Status line in the motion calibration controls while the service has no motion samples yet; Refresh checks again. */
-"ui.motion.calibration.waiting" = "모션 샘플을 기다리는 중입니다. 새로 고쳐 다시 확인하세요.";
+"ui.motion.calibration.waiting" = "모션 샘플을 기다리는 중입니다… 새로 고쳐 다시 확인하세요.";
 /* Note in the motion calibration controls: collecting gyro bias keeps running in the service after the window closes, and the Pause button stops it. */
 "ui.motion.calibration.continues" = "이 창을 닫아도 수집은 계속됩니다. 중지하려면 “일시 중지”를 사용하세요.";
 
@@ -2366,7 +2366,7 @@
 /* Message printed by 'ojd controller capture' when the capture ends without a packet. */
 "cli.controller.capture.noPackets" = "받은 패킷이 없습니다.";
 /* First line of 'ojd controller capture'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
-"cli.controller.capture.started" = "%1$@(%2$@)의 패킷을 캡처하는 중입니다. 컨트롤러 버튼을 누르세요.";
+"cli.controller.capture.started" = "%1$@(%2$@)의 패킷을 캡처하는 중입니다… 컨트롤러 버튼을 누르세요.";
 /* Warning printed by 'ojd controller capture' before the packets. Packets can hold data of the user's controller. */
 "cli.controller.capture.warning" = "패킷 내용은 컨트롤러마다 다릅니다. 공유하기 전에 확인하세요.";
 /* One-line summary of 'ojd controller disconnect' in the command list and at the top of its help. */
@@ -2594,7 +2594,7 @@
 /* Help text of the --all flag of 'ojd controller watch'. */
 "cli.controller.watch.all" = "모든 컨트롤러를 지켜보고 연결되거나 연결 해제되는 컨트롤러를 각각 보고합니다.";
 /* First line of 'ojd controller watch --all'. */
-"cli.controller.watch.allStarted" = "모든 컨트롤러를 지켜보는 중입니다. 컨트롤러 버튼을 누르세요.";
+"cli.controller.watch.allStarted" = "모든 컨트롤러를 지켜보는 중입니다… 컨트롤러 버튼을 누르세요.";
 /* Line of 'ojd controller watch --all' when a controller connects. %1$@ is the controller ID, %2$@ is the controller name and %3$@ is its vendor and product ID. */
 "cli.controller.watch.connected" = "%1$@ 연결됨: %2$@ (%3$@)";
 /* Line of 'ojd controller watch --all' when a controller disconnects. %@ is the controller ID. */
@@ -2618,7 +2618,7 @@
 /* Prompt of 'ojd controller watch --first-press'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.controller.watch.pressPrompt" = "%1$@(%2$@)에서 컨트롤을 누르세요.";
 /* First line of 'ojd controller watch'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
-"cli.controller.watch.started" = "%1$@(%2$@)를 지켜보는 중입니다. 컨트롤러 버튼을 누르세요.";
+"cli.controller.watch.started" = "%1$@(%2$@)를 지켜보는 중입니다… 컨트롤러 버튼을 누르세요.";
 /* Message printed when the user answers no to a confirmation question. */
 "cli.shared.error.confirmDeclined" = "변경된 것이 없습니다.";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
@@ -2744,7 +2744,7 @@
 /* Help text of the profile argument of 'ojd virtual feed'. */
 "cli.virtual.feed.profile" = "게시할 가상 게임패드 프로파일.";
 /* First line of 'ojd virtual feed'. %@ is the profile name. Control-C is the key combination that stops a program in a terminal. */
-"cli.virtual.feed.started" = "%@ 가상 게임패드를 게시하는 중입니다. 프레임을 stdin에 쓰세요. 중지하려면 입력을 끝내거나 Control-C를 누르세요.";
+"cli.virtual.feed.started" = "%@ 가상 게임패드를 게시하는 중입니다… 프레임을 stdin에 쓰세요. 중지하려면 입력을 끝내거나 Control-C를 누르세요.";
 /* One-line summary of 'ojd virtual launch' in the command list and at the top of its help. SDL is a game controller library and stays as written. */
 "cli.virtual.launch.abstract" = "연결된 가상 게임패드의 SDL 매핑으로 프로그램을 실행합니다.";
 /* Help text of the program argument of 'ojd virtual launch'. PATH is the environment variable, .app is the app bundle extension, and -- stays as written. */
@@ -4212,7 +4212,7 @@
 /* Value of the input health fact: input stopped arriving. */
 "ui.controllers.inputHealth.stale" = "업데이트 없음";
 /* Value of the input health fact: the app waits until all controls are at rest before it sends input again. */
-"ui.controllers.inputHealth.waitingForNeutral" = "중립 위치 대기 중";
+"ui.controllers.inputHealth.waitingForNeutral" = "중립 위치 대기 중…";
 /* Error shown when the settings file is damaged. %@ is the path of the file. The command in backticks stays as written, and Trash is the macOS name. */
 "ui.settings.advanced.errorDamaged" = "설정 파일 %@이(가) 손상되었습니다. 수정하거나 `ojd setting reset`을 실행해 휴지통으로 이동하세요.";
 /* Error shown when the settings file has an unsupported version. %@ is the path of the file. apiVersion and the command in backticks stay as written, and Trash is the macOS name. */
@@ -4256,7 +4256,7 @@
 /* Reason the controller has no virtual gamepad: the output is paused. */
 "ui.controllers.publication.reason.suppressed" = "출력 일시 중지됨";
 /* Reason the controller has no virtual gamepad: the first input has not arrived. */
-"ui.controllers.publication.reason.noInputYet" = "첫 입력을 기다리는 중";
+"ui.controllers.publication.reason.noInputYet" = "첫 입력을 기다리는 중…";
 /* Reason the controller has no virtual gamepad: another app holds its input. */
 "ui.controllers.publication.reason.heldByAnotherClient" = "다른 앱이 사용 중임";
 /* Publication state with its reason or failure, for example "Not published (Waiting for the first input)". %1$@ is the state and %2$@ the reason. */

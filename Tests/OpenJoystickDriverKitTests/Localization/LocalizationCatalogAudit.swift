@@ -323,6 +323,30 @@ enum LocalizationCatalogAudit {
     return result
   }
 
+  /// Keys whose source value reports work in progress: its last sentence, or the sentence before an
+  /// instruction that starts with a capital letter, ends in `...`.
+  static func inProgressSourceKeys() -> [String] {
+    values(for: Localization.sourceLocalization).filter { _, value in
+      value.range(of: #"\.\.\.(?= [A-Z]|$)"#, options: .regularExpression) != nil
+    }.keys.sorted()
+  }
+
+  /// Keys whose in-progress source text loses its ellipsis in `localization`: `C` keeps `...`, a
+  /// translation writes `…`, and neither keeps an ASCII `...`. A source that ends in the ellipsis
+  /// ends in it in the translation; a source with an instruction after it keeps text after it.
+  static func lostEllipsisKeys(for localization: String) -> [String] {
+    let source = values(for: Localization.sourceLocalization)
+    let localized = values(for: localization)
+    let isC = localization.caseInsensitiveCompare("C") == .orderedSame
+    let mark = isC ? "..." : "…"
+    return inProgressSourceKeys().filter { key in
+      guard let sourceValue = source[key], let value = localized[key] else { return true }
+      if isC { return value != sourceValue }
+      guard !value.contains("..."), let range = value.range(of: mark) else { return true }
+      return sourceValue.hasSuffix("...") != (range.upperBound == value.endIndex)
+    }
+  }
+
   /// Source texts that one word may translate in any language.
   private static let sharedTranslationSourceGroups: [Set<String>] = [
     ["deactivated", "disabled", "off"], ["delete", "remove", "uninstall"],
