@@ -87,7 +87,10 @@ struct ControllerRecordDraftTests {
   @Test
   func patchesABundledModel() throws {
     let bundled = try #require(
-      ControllerRecordSet.bundled.records.values.first { $0.family == "HIDDescriptor" }
+      ControllerRecordSet.bundled.records.values.sorted { $0.model < $1.model }.first {
+        $0.family == "HIDDescriptor"
+          && ProtocolDriverRegistry().record(for: $0.model)?.isIdle == false
+      }
     )
     let draft = try #require(
       ControllerRecordDraft(
