@@ -214,7 +214,9 @@ extension RuntimeProfileDraftTests {
     draft = try draft.settingBindingBehaviors(
       turbo: nil,
       longHold: RemappingLongHold(durationMs: 500, destination: .keyboard(key: .b, modifiers: [])),
-      doubleTap: RemappingDoubleTap(windowMs: 250, destination: .keyboard(key: .c, modifiers: [])),
+      multiTap: [
+        RemappingMultiTap(count: 2, windowMs: 250, destination: .keyboard(key: .c, modifiers: []))
+      ],
       for: binding.id
     )
 
@@ -222,7 +224,7 @@ extension RuntimeProfileDraftTests {
     #expect(draft.profile.device == RemappingDeviceScope(vendorID: 0x045E, productID: 0x02EA))
     #expect(draft.profile.applicationScope == .application(appID: "com.example.Game"))
     #expect(draft.profile.bindings[0].longHold?.durationMs == 500)
-    #expect(draft.profile.bindings[0].doubleTap?.windowMs == 250)
+    #expect(draft.profile.bindings[0].multiTap.first?.windowMs == 250)
   }
 
   @Test

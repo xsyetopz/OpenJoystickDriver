@@ -115,7 +115,8 @@ struct RemappingActivationSchedulingTests {
           source: .button(.south),
           destination: .keyboard(key: .a, modifiers: []),
           longHold: doubleTap ? nil : RemappingLongHold(durationMs: 500, destination: alternate),
-          doubleTap: doubleTap ? RemappingDoubleTap(windowMs: 200, destination: alternate) : nil
+          multiTap: doubleTap
+            ? [RemappingMultiTap(count: 2, windowMs: 200, destination: alternate)] : []
         )
       ]
     )

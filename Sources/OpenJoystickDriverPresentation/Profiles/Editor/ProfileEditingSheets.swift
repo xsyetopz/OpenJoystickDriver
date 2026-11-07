@@ -260,10 +260,10 @@
       _longHoldDestination = State(
         initialValue: binding.longHold?.destination ?? .keyboard(key: .space, modifiers: [])
       )
-      _doubleTapEnabled = State(initialValue: binding.doubleTap != nil)
-      _doubleTapWindow = State(initialValue: binding.doubleTap?.windowMs ?? 300)
+      _doubleTapEnabled = State(initialValue: !binding.multiTap.isEmpty)
+      _doubleTapWindow = State(initialValue: binding.multiTap.first?.windowMs ?? 300)
       _doubleTapDestination = State(
-        initialValue: binding.doubleTap?.destination ?? .keyboard(key: .space, modifiers: [])
+        initialValue: binding.multiTap.first?.destination ?? .keyboard(key: .space, modifiers: [])
       )
     }
   }

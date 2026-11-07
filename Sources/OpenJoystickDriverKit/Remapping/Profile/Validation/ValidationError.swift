@@ -74,13 +74,13 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
   case nonFiniteLongHold(index: Int, field: String)
   /// A long-hold field is out of range.
   case longHoldOutOfRange(index: Int, field: String)
-  /// A double tap is set on an axis source or a continuous destination.
-  case doubleTapNotSupported(index: Int)
-  /// A double-tap field is not finite.
-  case nonFiniteDoubleTap(index: Int, field: String)
-  /// A double-tap field is out of range.
-  case doubleTapOutOfRange(index: Int, field: String)
-  /// Turbo is combined with a long hold or a double tap.
+  /// A multi-tap field is not finite.
+  case nonFiniteMultiTap(index: Int, field: String)
+  /// A multi-tap field is out of range.
+  case multiTapOutOfRange(index: Int, field: String)
+  /// Two multi-tap entries have the same count.
+  case duplicateMultiTapCount(index: Int)
+  /// Turbo is combined with a long hold or a multi-tap.
   case turboAndActivationConflict(index: Int)
   /// A chord window is out of range.
   case chordWindowOutOfRange(index: Int)
@@ -167,14 +167,14 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
       "Binding \(index) has a non-finite long-hold \(field)."
     case .longHoldOutOfRange(let index, let field):
       "Binding \(index) has an out-of-range long-hold \(field)."
-    case .doubleTapNotSupported(let index):
-      "Binding \(index) uses double-tap with a continuous source or destination."
-    case .nonFiniteDoubleTap(let index, let field):
-      "Binding \(index) has a non-finite double-tap \(field)."
-    case .doubleTapOutOfRange(let index, let field):
-      "Binding \(index) has an out-of-range double-tap \(field)."
+    case .nonFiniteMultiTap(let index, let field):
+      "Binding \(index) has a non-finite multi-tap \(field)."
+    case .multiTapOutOfRange(let index, let field):
+      "Binding \(index) has an out-of-range multi-tap \(field)."
+    case .duplicateMultiTapCount(let index):
+      "Binding \(index) has two multi-tap entries with the same count."
     case .turboAndActivationConflict(let index):
-      "Binding \(index) cannot combine turbo with long-hold or double-tap."
+      "Binding \(index) cannot combine turbo with long-hold or multi-tap."
     case .chordWindowOutOfRange(let index): "Chord \(index) has an out-of-range window."
     case .chordTooFewSources(let index): "Chord \(index) must have at least two sources."
     case .chordContinuousSource(let index): "Chord \(index) uses a continuous (axis) source."

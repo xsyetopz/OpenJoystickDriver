@@ -110,7 +110,7 @@
               pulseDurationMs,
               turbo,
               longHold,
-              doubleTap,
+              multiTap,
               actions in
               applyDraftChange {
                 try draft.settingBindingBehaviors(
@@ -118,7 +118,7 @@
                   pulseDurationMs: pulseDurationMs,
                   turbo: turbo,
                   longHold: longHold,
-                  doubleTap: doubleTap,
+                  multiTap: multiTap,
                   for: binding.id
                 ).settingAdditionalActions(actions, for: binding.id)
               }
@@ -159,7 +159,7 @@
               pulseDurationMs,
               turbo,
               longHold,
-              doubleTap,
+              multiTap,
               actions in
               applyDraftChange {
                 try draft.settingLayerBindingBehaviors(
@@ -169,7 +169,7 @@
                   bindingID: binding.id,
                   turbo: turbo,
                   longHold: longHold,
-                  doubleTap: doubleTap
+                  multiTap: multiTap
                 ).settingAdditionalActions(actions, for: binding.id, layerID: layerID)
               }
             }

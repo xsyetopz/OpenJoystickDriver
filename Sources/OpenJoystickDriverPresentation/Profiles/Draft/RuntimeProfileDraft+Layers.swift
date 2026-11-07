@@ -74,7 +74,7 @@ extension RuntimeProfileDraft {
     axisTuning: RemappingAxisTuning? = nil,
     turbo: RemappingTurbo? = nil,
     longHold: RemappingLongHold? = nil,
-    doubleTap: RemappingDoubleTap? = nil
+    multiTap: [RemappingMultiTap] = []
   ) throws -> Self {
     try editing { profile in
       let existing = try profile.layer(layerID).bindings.first { $0.source == source }
@@ -87,7 +87,7 @@ extension RuntimeProfileDraft {
         axisTuning: axisTuning ?? Self.defaultTuning(for: source),
         turbo: turbo,
         longHold: longHold,
-        doubleTap: doubleTap,
+        multiTap: multiTap,
         additionalActions: existing?.additionalActions ?? []
       )
       try profile.setLayerBinding(binding, in: layerID)
@@ -112,7 +112,7 @@ extension RuntimeProfileDraft {
         axisTuning: axisTuning,
         turbo: binding.turbo,
         longHold: binding.longHold,
-        doubleTap: binding.doubleTap,
+        multiTap: binding.multiTap,
         additionalActions: binding.additionalActions
       )
     }
@@ -130,7 +130,7 @@ extension RuntimeProfileDraft {
     bindingID: UUID,
     turbo: RemappingTurbo?,
     longHold: RemappingLongHold?,
-    doubleTap: RemappingDoubleTap?
+    multiTap: [RemappingMultiTap]
   ) throws -> Self {
     try replacingLayerBinding(layerID: layerID, bindingID: bindingID) { binding in
       RemappingBinding(
@@ -143,7 +143,7 @@ extension RuntimeProfileDraft {
         axisTuning: binding.axisTuning,
         turbo: turbo,
         longHold: longHold,
-        doubleTap: doubleTap,
+        multiTap: multiTap,
         additionalActions: binding.additionalActions
       )
     }

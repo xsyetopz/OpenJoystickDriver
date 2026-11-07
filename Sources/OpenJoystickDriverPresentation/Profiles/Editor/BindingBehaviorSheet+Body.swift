@@ -8,7 +8,7 @@
     /// Receives the behavior, pulse duration in milliseconds, turbo, long hold, double tap and
     /// additional actions when the person chooses Apply.
     typealias SaveAction = (
-      RemappingBindingBehavior, Double, RemappingTurbo?, RemappingLongHold?, RemappingDoubleTap?,
+      RemappingBindingBehavior, Double, RemappingTurbo?, RemappingLongHold?, [RemappingMultiTap],
       [RemappingAction]
     ) -> Void
 
@@ -103,7 +103,7 @@
           valueSlider(
             title: OJDLocalized.string("ui.profiles.tapWindow"),
             value: $doubleTapWindow,
-            range: RemappingDoubleTap.windowRange,
+            range: RemappingMultiTap.windowRange,
             format: "%.0f ms"
           )
           destinationPicker(selection: $doubleTapDestination)
@@ -120,8 +120,13 @@
                 ? RemappingLongHold(durationMs: longHoldDuration, destination: longHoldDestination)
                 : nil,
               doubleTapEnabled
-                ? RemappingDoubleTap(windowMs: doubleTapWindow, destination: doubleTapDestination)
-                : nil,
+                ? [
+                  RemappingMultiTap(
+                    count: 2,
+                    windowMs: doubleTapWindow,
+                    destination: doubleTapDestination
+                  )
+                ] : [],
               additionalActions
             )
             dismiss()

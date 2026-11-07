@@ -14,19 +14,19 @@ struct RemappingOutputState {
   var turbos: [UUID: RemappingTurboOutput] = [:]
   /// Continuous pointer and scroll contributions by owner.
   var continuous: [UUID: RemappingContinuousOutput] = [:]
-  /// Long-hold and double-tap trackers by action.
+  /// Long-hold and multi-tap trackers by action.
   var activations: [UUID: RemappingActivationTracker] = [:]
 }
 
-/// Press history of one action with a long hold or double tap.
+/// Press history of one action with a long hold or multi-tap.
 struct RemappingActivationTracker {
   /// Uptime of the latest press.
   var pressUptime: UInt64?
   /// Uptime of the latest release.
   var releaseUptime: UInt64?
-  /// Taps counted for the latest press: 2 for a double tap, otherwise 1.
+  /// Taps counted up to the latest press.
   var tapCount: Int = 0
-  /// Identifier of the action whose long-hold or double-tap destination is held.
+  /// Identifier of the action whose long-hold or multi-tap destination is held.
   var firedBindingID: UUID?
   /// Whether the latest press still owes a tap of the default destination.
   var pendingDefault: Bool = false

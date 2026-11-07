@@ -34,36 +34,54 @@ public struct RemappingLongHold: Codable, Equatable, Hashable, Sendable {
   }
 }
 
-/// Alternate action fired when a button is pressed twice within a time window.
-public struct RemappingDoubleTap: Codable, Equatable, Hashable, Sendable {
+/// Alternate action fired when a button is tapped a given number of times in a row.
+public struct RemappingMultiTap: Codable, Equatable, Hashable, Sendable {
+  /// Allowed range of ``count``.
+  public static let countRange = 2...5
   /// Allowed range of ``windowMs``.
   public static let windowRange = 50.0...1000.0
 
-  /// Double-tap window in milliseconds (50...1000).
+  /// Number of taps that fire the entry (2...5).
+  public let count: Int
+  /// Time from one tap's release to the next press in milliseconds (50...1000).
   public let windowMs: Double
-  /// Output that the double tap drives.
+  /// Output that the tap count drives.
   public let destination: RemappingDestination
 
-  /// Creates a double-tap action.
-  public init(windowMs: Double, destination: RemappingDestination) {
+  /// Creates a tap-count action.
+  public init(count: Int, windowMs: Double, destination: RemappingDestination) {
+    self.count = count
     self.windowMs = windowMs
     self.destination = destination
   }
 
-  /// Profile document keys of a double-tap action.
+  /// Profile document keys of a tap-count action.
   private enum CodingKeys: String, CodingKey, CaseIterable {
+    /// The JSON key of `count`.
+    case count
     /// The JSON key of `windowMs`.
     case windowMs
     /// The JSON key of `destination`.
     case destination
   }
 
-  /// Decodes a double-tap action from a profile document, which must give both fields.
+  /// Decodes a tap-count action from a profile document, which must give all fields.
   /// - Throws: `DecodingError` for an unknown key, a missing key or a bad value.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let values = try decoder.container(keyedBy: CodingKeys.self)
+    count = try values.decode(Int.self, forKey: .count)
     windowMs = try values.decode(Double.self, forKey: .windowMs)
     destination = try values.decode(RemappingDestination.self, forKey: .destination)
   }
+}
+
+extension [RemappingMultiTap] {
+  /// The longest window among the entries that need more than `taps` taps, or 0 for none.
+  public func continuationWindowMs(after taps: Int) -> Double {
+    filter { $0.count > taps }.map(\.windowMs).max() ?? 0
+  }
+
+  /// The longest window among all entries, or 0 for none.
+  public var longestWindowMs: Double { continuationWindowMs(after: 0) }
 }

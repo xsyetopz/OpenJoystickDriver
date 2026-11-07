@@ -9,7 +9,7 @@ extension RemappingEngineState {
   /// Returns the earliest uptime at which output needs a tick, or `nil` when none does.
   ///
   /// The deadlines come from the expiry of gyro and motion stick output, trigger skip windows,
-  /// held-back chord presses, pulses, turbo repeats, long-hold and double-tap timers, and the
+  /// held-back chord presses, pulses, turbo repeats, long-hold and multi-tap timers, and the
   /// sequence history. Continuous output and sticks that need ticks use the given interval.
   func nextScheduledTick(
     after uptimeNanoseconds: UInt64,
@@ -56,12 +56,15 @@ extension RemappingEngineState {
           )
           deadline = min(deadline ?? holdDeadline, holdDeadline)
         }
-        if let doubleTap = binding.doubleTap, let releaseTime = tracker.releaseUptime,
+        if !binding.multiTap.isEmpty, let releaseTime = tracker.releaseUptime,
           tracker.pendingDefault
         {
           let windowDeadline = Self.saturatingAdd(
             releaseTime,
-            UInt64(doubleTap.windowMs * nanosecondsPerMillisecond)
+            UInt64(
+              binding.multiTap.continuationWindowMs(after: tracker.tapCount)
+                * nanosecondsPerMillisecond
+            )
           )
           deadline = min(deadline ?? windowDeadline, windowDeadline)
         }
@@ -84,8 +87,8 @@ extension RemappingEngineState {
   /// Advances time-driven output to an uptime and returns the actions.
   ///
   /// Controllers advance in sorted order. Each one runs triggers, motion stick expiry, sticks, gyro
-  /// expiry, chords, held-back presses, sequences, pulses, turbo repeats, long holds and double
-  /// taps. Continuous output comes last, across all controllers.
+  /// expiry, chords, held-back presses, sequences, pulses, turbo repeats, long holds and
+  /// multi-taps. Continuous output comes last, across all controllers.
   mutating func tick(at uptimeNanoseconds: UInt64) -> [RemappingEngineAction] {
     var actions: [RemappingEngineAction] = []
     for identifier in sortedLogicalControllerIDs {
@@ -148,15 +151,18 @@ extension RemappingEngineState {
           }
         }
 
-        if let doubleTap = binding.doubleTap, let releaseTime = tracker.releaseUptime,
+        if !binding.multiTap.isEmpty, let releaseTime = tracker.releaseUptime,
           tracker.pendingDefault
         {
           let windowEnd = Self.saturatingAdd(
             releaseTime,
-            UInt64(doubleTap.windowMs * nanosecondsPerMillisecond)
+            UInt64(
+              binding.multiTap.continuationWindowMs(after: tracker.tapCount)
+                * nanosecondsPerMillisecond
+            )
           )
           if tickUptime >= windowEnd {
-            actions += tapBinding(binding.id, destination: binding.destination, device: &device)
+            actions += resolveTaps(binding, tapCount: tracker.tapCount, device: &device)
             tracker = RemappingActivationTracker()
           }
         }

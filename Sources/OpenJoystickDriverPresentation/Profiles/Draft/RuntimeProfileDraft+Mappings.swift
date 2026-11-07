@@ -56,7 +56,7 @@ extension RuntimeProfileDraft {
         axisTuning: binding.axisTuning,
         turbo: binding.turbo,
         longHold: binding.longHold,
-        doubleTap: binding.doubleTap,
+        multiTap: binding.multiTap,
         additionalActions: binding.additionalActions
       )
     }
@@ -87,7 +87,7 @@ extension RuntimeProfileDraft {
         axisTuning: tuning,
         turbo: binding.turbo,
         longHold: binding.longHold,
-        doubleTap: binding.doubleTap,
+        multiTap: binding.multiTap,
         additionalActions: binding.additionalActions
       )
     }
@@ -121,7 +121,7 @@ extension RuntimeProfileDraft {
         axisTuning: axisTuning,
         turbo: binding.turbo,
         longHold: binding.longHold,
-        doubleTap: binding.doubleTap,
+        multiTap: binding.multiTap,
         additionalActions: binding.additionalActions
       )
     }
@@ -138,7 +138,7 @@ extension RuntimeProfileDraft {
     pulseDurationMs: Double? = nil,
     turbo: RemappingTurbo?,
     longHold: RemappingLongHold?,
-    doubleTap: RemappingDoubleTap?,
+    multiTap: [RemappingMultiTap],
     for bindingID: UUID
   ) throws -> Self {
     try replacingBinding(bindingID) { binding in
@@ -152,7 +152,7 @@ extension RuntimeProfileDraft {
         axisTuning: binding.axisTuning,
         turbo: turbo,
         longHold: longHold,
-        doubleTap: doubleTap,
+        multiTap: multiTap,
         additionalActions: binding.additionalActions
       )
     }

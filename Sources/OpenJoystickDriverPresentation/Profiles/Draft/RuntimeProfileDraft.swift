@@ -182,7 +182,7 @@ struct RuntimeProfileDraft: Sendable, Equatable {
         axisTuning: binding.axisTuning,
         turbo: binding.turbo,
         longHold: binding.longHold,
-        doubleTap: binding.doubleTap,
+        multiTap: binding.multiTap,
         additionalActions: actions
       )
     }

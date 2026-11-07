@@ -99,7 +99,7 @@ extension RemappingEventEngine {
   /// Advances time-driven output to an uptime.
   ///
   /// That covers turbo phases, pulses, sticks, triggers, chord and sequence timers, long-hold and
-  /// double-tap timers, and continuous pointer and scroll output.
+  /// multi-tap timers, and continuous pointer and scroll output.
   /// - Throws: ``RemappingEventEngineError/outputSuspended`` when routing admission is closed,
   ///   ``RemappingEventEngineError/faulted`` while faulted, and
   ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails.

@@ -19,14 +19,24 @@ struct RemappingTurboOutput {
 
   /// Whether the destination is down at an uptime.
   ///
-  /// It is down for the first part of each period, set by the duty cycle. Before the start it keeps
-  /// its current state.
+  /// The press is the first period. The first repeat starts after the initial delay, or after one
+  /// period when that is longer, and each repeat is down for the first part of its period, set by
+  /// the duty cycle. After the repeat cap the destination stays up. Before the start it keeps its
+  /// current state.
   func isDown(at uptimeNanoseconds: UInt64) -> Bool {
     guard uptimeNanoseconds >= startedAt else { return outputIsDown }
-    return (uptimeNanoseconds - startedAt) % periodNanoseconds < onDurationNanoseconds
+    let elapsed = uptimeNanoseconds - startedAt
+    guard elapsed >= periodNanoseconds else { return elapsed < onDurationNanoseconds }
+    guard elapsed >= firstRepeatNanoseconds else { return false }
+    let sinceRepeats = elapsed - firstRepeatNanoseconds
+    if let cap = configuration.maxRepeats, sinceRepeats / periodNanoseconds >= UInt64(cap) {
+      return false
+    }
+    return sinceRepeats % periodNanoseconds < onDurationNanoseconds
   }
 
-  /// Returns the uptime at which the destination next changes between down and up.
+  /// Returns the uptime at which the destination next changes between down and up, or the largest
+  /// value when it changes no more.
   ///
   /// Returns the given uptime when the destination is already out of step with the cycle.
   func nextTransition(after uptimeNanoseconds: UInt64) -> UInt64 {
@@ -35,9 +45,30 @@ struct RemappingTurboOutput {
     }
     guard isDown(at: uptimeNanoseconds) == outputIsDown else { return uptimeNanoseconds }
 
-    let phase = (uptimeNanoseconds - startedAt) % periodNanoseconds
-    let remaining = outputIsDown ? onDurationNanoseconds - phase : periodNanoseconds - phase
-    return Self.saturatingAdd(uptimeNanoseconds, remaining)
+    let elapsed = uptimeNanoseconds - startedAt
+    let next: UInt64
+    if elapsed < periodNanoseconds {
+      next = outputIsDown ? onDurationNanoseconds : firstRepeatNanoseconds
+    } else if elapsed < firstRepeatNanoseconds {
+      next = firstRepeatNanoseconds
+    } else {
+      let repeatIndex = (elapsed - firstRepeatNanoseconds) / periodNanoseconds
+      if let cap = configuration.maxRepeats, repeatIndex >= UInt64(cap) { return .max }
+      let repeatStart = firstRepeatNanoseconds + repeatIndex * periodNanoseconds
+      if outputIsDown {
+        next = repeatStart + onDurationNanoseconds
+      } else if let cap = configuration.maxRepeats, repeatIndex + 1 >= UInt64(cap) {
+        return .max
+      } else {
+        next = repeatStart + periodNanoseconds
+      }
+    }
+    return Self.saturatingAdd(startedAt, next)
+  }
+
+  /// Offset of the first repeat from the start in nanoseconds.
+  private var firstRepeatNanoseconds: UInt64 {
+    max(periodNanoseconds, UInt64(configuration.initialDelayMs * nanosecondsPerMillisecond))
   }
 
   /// Length of one repeat period in nanoseconds, at least 1.

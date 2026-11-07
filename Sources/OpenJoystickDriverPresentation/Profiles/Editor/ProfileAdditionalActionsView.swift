@@ -74,7 +74,7 @@
             pulseDurationMs: action.pulseDurationMs,
             turbo: action.turbo,
             longHold: action.longHold,
-            doubleTap: action.doubleTap
+            multiTap: action.multiTap
           ),
           showsAdditionalActions: false,
           capabilities: capabilities
@@ -88,7 +88,7 @@
                 ? duration : RemappingBinding.defaultPulseDurationMs,
               turbo: turbo,
               longHold: hold,
-              doubleTap: tap
+              multiTap: tap
             )
           )
         }
@@ -108,7 +108,7 @@
               pulseDurationMs: action.pulseDurationMs,
               turbo: action.turbo,
               longHold: action.longHold,
-              doubleTap: action.doubleTap
+              multiTap: action.multiTap
             )
           )
         }

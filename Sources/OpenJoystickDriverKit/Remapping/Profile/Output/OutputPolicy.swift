@@ -147,7 +147,7 @@ extension RemappingProfile {
   }
 
   /// Whether any binding, chord or sequence of one scope targets a match, including its long-hold
-  /// and double-tap destinations.
+  /// and multi-tap destinations.
   private static func containsDestination(
     bindings: [RemappingBinding],
     chords: [RemappingChord],
@@ -156,7 +156,7 @@ extension RemappingProfile {
   ) -> Bool {
     bindings.flatMap(\.expandedActions).contains { binding in
       matches(binding.destination) || binding.longHold.map { matches($0.destination) } == true
-        || binding.doubleTap.map { matches($0.destination) } == true
+        || binding.multiTap.contains { matches($0.destination) }
     } || chords.contains { matches($0.destination) }
       || sequences.contains { matches($0.destination) }
   }

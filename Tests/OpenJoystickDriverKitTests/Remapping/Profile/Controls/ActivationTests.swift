@@ -78,7 +78,9 @@ struct RemappingActivationTests {
       RemappingBinding(
         source: .button(.south),
         destination: .keyboard(key: .a, modifiers: []),
-        doubleTap: RemappingDoubleTap(windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
+        multiTap: [
+          RemappingMultiTap(count: 2, windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
+        ]
       )
     ])
     let start: UInt64 = 1_000_000_000
@@ -124,7 +126,9 @@ struct RemappingActivationTests {
       RemappingBinding(
         source: .button(.south),
         destination: .keyboard(key: .a, modifiers: []),
-        doubleTap: RemappingDoubleTap(windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
+        multiTap: [
+          RemappingMultiTap(count: 2, windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
+        ]
       )
     ])
     let start: UInt64 = 1_000_000_000
@@ -175,7 +179,9 @@ struct RemappingActivationTests {
           durationMs: 500,
           destination: .keyboard(key: .b, modifiers: [])
         ),
-        doubleTap: RemappingDoubleTap(windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
+        multiTap: [
+          RemappingMultiTap(count: 2, windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
+        ]
       )
     ])
     let start: UInt64 = 1_000_000_000

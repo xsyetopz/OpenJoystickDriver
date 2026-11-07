@@ -289,7 +289,7 @@ extension RemappingProfile {
   }
 
   /// Checks one binding: behavior, pulse duration, destinations, axis tuning, source and
-  /// destination fit, turbo, long hold and double tap.
+  /// destination fit, turbo, long hold and multi-tap.
   private func validate(_ binding: RemappingBinding, at index: Int) throws {
     guard binding.pulseDurationMs.isFinite,
       RemappingBinding.pulseDurationRange.contains(binding.pulseDurationMs),
@@ -298,12 +298,12 @@ extension RemappingProfile {
     else { throw RemappingValidationError.bindingBehaviorConflict(index: index) }
     if binding.behavior != .hold {
       guard !binding.destination.isContinuous, binding.turbo == nil, binding.longHold == nil,
-        binding.doubleTap == nil
+        binding.multiTap.isEmpty
       else { throw RemappingValidationError.bindingBehaviorConflict(index: index) }
     }
     try validateDestination(binding.destination)
     if let hold = binding.longHold { try validateDestination(hold.destination) }
-    if let tap = binding.doubleTap { try validateDestination(tap.destination) }
+    for tap in binding.multiTap { try validateDestination(tap.destination) }
     let isAxisSource: Bool
     switch binding.source {
     case .axis, .axisDirection: isAxisSource = true
@@ -339,7 +339,7 @@ extension RemappingProfile {
       try Self.validate(turbo, at: index)
     }
 
-    if binding.longHold != nil || binding.doubleTap != nil {
+    if binding.longHold != nil || !binding.multiTap.isEmpty {
       guard !isAxisSource else { throw RemappingValidationError.longHoldNotSupported(index: index) }
       guard !binding.destination.isContinuous else {
         throw RemappingValidationError.longHoldNotSupported(index: index)
@@ -351,7 +351,7 @@ extension RemappingProfile {
 
     if let longHold = binding.longHold { try Self.validate(longHold, at: index) }
 
-    if let doubleTap = binding.doubleTap { try Self.validate(doubleTap, at: index) }
+    try Self.validate(binding.multiTap, at: index)
   }
 
 }

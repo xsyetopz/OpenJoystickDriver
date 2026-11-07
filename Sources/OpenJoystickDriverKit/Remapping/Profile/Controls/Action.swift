@@ -14,8 +14,8 @@ public struct RemappingAction: Codable, Equatable, Hashable, Identifiable, Senda
   public let turbo: RemappingTurbo?
   /// Alternate action when the source is held past a duration.
   public let longHold: RemappingLongHold?
-  /// Alternate action when the source is pressed twice in a window.
-  public let doubleTap: RemappingDoubleTap?
+  /// Alternate actions when the source is tapped several times in a row, by tap count.
+  public let multiTap: [RemappingMultiTap]
 
   /// Creates an action.
   public init(
@@ -25,7 +25,7 @@ public struct RemappingAction: Codable, Equatable, Hashable, Identifiable, Senda
     pulseDurationMs: Double = RemappingBinding.defaultPulseDurationMs,
     turbo: RemappingTurbo? = nil,
     longHold: RemappingLongHold? = nil,
-    doubleTap: RemappingDoubleTap? = nil
+    multiTap: [RemappingMultiTap] = []
   ) {
     self.id = id
     self.destination = destination
@@ -33,7 +33,7 @@ public struct RemappingAction: Codable, Equatable, Hashable, Identifiable, Senda
     self.pulseDurationMs = pulseDurationMs
     self.turbo = turbo
     self.longHold = longHold
-    self.doubleTap = doubleTap
+    self.multiTap = multiTap
   }
 
   /// Profile document keys of an action.
@@ -50,8 +50,8 @@ public struct RemappingAction: Codable, Equatable, Hashable, Identifiable, Senda
     case pulseDurationMs
     /// The JSON key of `longHold`.
     case longHold
-    /// The JSON key of `doubleTap`.
-    case doubleTap
+    /// The JSON key of `multiTap`.
+    case multiTap
   }
 
   /// Decodes an action from a profile document; omitted behavior and pulse duration take their
@@ -68,7 +68,8 @@ public struct RemappingAction: Codable, Equatable, Hashable, Identifiable, Senda
       ?? RemappingBinding.defaultPulseDurationMs
     turbo = try values.decodeIfPresent(RemappingTurbo.self, forKey: .turbo)
     longHold = try values.decodeIfPresent(RemappingLongHold.self, forKey: .longHold)
-    doubleTap = try values.decodeIfPresent(RemappingDoubleTap.self, forKey: .doubleTap)
+    multiTap =
+      try values.decodeIfPresent([RemappingMultiTap].self, forKey: .multiTap) ?? []
   }
 
   /// Encodes an action and leaves out the fields that hold their default.
@@ -82,7 +83,7 @@ public struct RemappingAction: Codable, Equatable, Hashable, Identifiable, Senda
     }
     try values.encodeIfPresent(turbo, forKey: .turbo)
     try values.encodeIfPresent(longHold, forKey: .longHold)
-    try values.encodeIfPresent(doubleTap, forKey: .doubleTap)
+    if !multiTap.isEmpty { try values.encode(multiTap, forKey: .multiTap) }
   }
 
   /// Returns the action as a binding of the given source and axis tuning.
@@ -96,7 +97,7 @@ public struct RemappingAction: Codable, Equatable, Hashable, Identifiable, Senda
       axisTuning: axisTuning,
       turbo: turbo,
       longHold: longHold,
-      doubleTap: doubleTap
+      multiTap: multiTap
     )
   }
 }

@@ -30,6 +30,7 @@ extension RemappingProfile {
     let fields = [
       ("repeat rate", turbo.repeatRateHz, RemappingTurbo.repeatRateHzRange),
       ("duty cycle", turbo.dutyCycle, RemappingTurbo.dutyCycleRange),
+      ("initial delay", turbo.initialDelayMs, RemappingTurbo.initialDelayMsRange),
     ]
     for (field, value, range) in fields {
       guard value.isFinite else {
@@ -38,6 +39,9 @@ extension RemappingProfile {
       guard range.contains(value) else {
         throw RemappingValidationError.turboOutOfRange(index: index, field: field)
       }
+    }
+    if let cap = turbo.maxRepeats, !RemappingTurbo.maxRepeatsRange.contains(cap) {
+      throw RemappingValidationError.turboOutOfRange(index: index, field: "max repeats")
     }
   }
 
@@ -53,15 +57,25 @@ extension RemappingProfile {
     }
   }
 
-  /// Checks that a double-tap window is finite and within its range.
-  /// - Throws: ``RemappingValidationError/nonFiniteDoubleTap(index:field:)`` or
-  ///   ``RemappingValidationError/doubleTapOutOfRange(index:field:)``.
-  internal static func validate(_ doubleTap: RemappingDoubleTap, at index: Int) throws {
-    guard doubleTap.windowMs.isFinite else {
-      throw RemappingValidationError.nonFiniteDoubleTap(index: index, field: "window")
+  /// Checks that tap counts are unique and that each entry has a count and a finite window in
+  /// range.
+  /// - Throws: ``RemappingValidationError/nonFiniteMultiTap(index:field:)``,
+  ///   ``RemappingValidationError/multiTapOutOfRange(index:field:)`` or
+  ///   ``RemappingValidationError/duplicateMultiTapCount(index:)``.
+  internal static func validate(_ multiTap: [RemappingMultiTap], at index: Int) throws {
+    for tap in multiTap {
+      guard tap.windowMs.isFinite else {
+        throw RemappingValidationError.nonFiniteMultiTap(index: index, field: "window")
+      }
+      guard RemappingMultiTap.countRange.contains(tap.count) else {
+        throw RemappingValidationError.multiTapOutOfRange(index: index, field: "count")
+      }
+      guard RemappingMultiTap.windowRange.contains(tap.windowMs) else {
+        throw RemappingValidationError.multiTapOutOfRange(index: index, field: "window")
+      }
     }
-    guard RemappingDoubleTap.windowRange.contains(doubleTap.windowMs) else {
-      throw RemappingValidationError.doubleTapOutOfRange(index: index, field: "window")
+    guard Set(multiTap.map(\.count)).count == multiTap.count else {
+      throw RemappingValidationError.duplicateMultiTapCount(index: index)
     }
   }
 

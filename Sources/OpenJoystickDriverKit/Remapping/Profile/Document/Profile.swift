@@ -197,16 +197,31 @@ public struct RemappingTurbo: Codable, Equatable, Hashable, Sendable {
   public static let repeatRateHzRange = 1.0...60.0
   /// Allowed range of ``dutyCycle``.
   public static let dutyCycleRange = 0.05...0.95
+  /// Allowed range of ``initialDelayMs``.
+  public static let initialDelayMsRange = 0.0...2500.0
+  /// Allowed range of ``maxRepeats``.
+  public static let maxRepeatsRange = 1...500
 
   /// Presses per second.
   public let repeatRateHz: Double
   /// Fraction of each repeat period that the output is down.
   public let dutyCycle: Double
+  /// Time from the first press to the first repeat in milliseconds; 0 when omitted.
+  public let initialDelayMs: Double
+  /// Repeats after the first press until the source is released; `nil` repeats while held.
+  public let maxRepeats: Int?
 
   /// Creates a turbo setting.
-  public init(repeatRateHz: Double, dutyCycle: Double) {
+  public init(
+    repeatRateHz: Double,
+    dutyCycle: Double,
+    initialDelayMs: Double = 0,
+    maxRepeats: Int? = nil
+  ) {
     self.repeatRateHz = repeatRateHz
     self.dutyCycle = dutyCycle
+    self.initialDelayMs = initialDelayMs
+    self.maxRepeats = maxRepeats
   }
 
   /// Profile document keys of a turbo setting.
@@ -215,15 +230,30 @@ public struct RemappingTurbo: Codable, Equatable, Hashable, Sendable {
     case repeatRateHz
     /// The JSON key of `dutyCycle`.
     case dutyCycle
+    /// The JSON key of `initialDelayMs`.
+    case initialDelayMs
+    /// The JSON key of `maxRepeats`.
+    case maxRepeats
   }
 
-  /// Decodes a turbo setting from a profile document, which must give both fields.
+  /// Decodes a turbo setting from a profile document; the rate and duty cycle are required.
   /// - Throws: `DecodingError` for an unknown key, a missing key or a bad value.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let values = try decoder.container(keyedBy: CodingKeys.self)
     repeatRateHz = try values.decode(Double.self, forKey: .repeatRateHz)
     dutyCycle = try values.decode(Double.self, forKey: .dutyCycle)
+    initialDelayMs = try values.decodeIfPresent(Double.self, forKey: .initialDelayMs) ?? 0
+    maxRepeats = try values.decodeIfPresent(Int.self, forKey: .maxRepeats)
+  }
+
+  /// Encodes a turbo setting and leaves out a zero delay and an absent cap.
+  public func encode(to encoder: any Encoder) throws {
+    var values = encoder.container(keyedBy: CodingKeys.self)
+    try values.encode(repeatRateHz, forKey: .repeatRateHz)
+    try values.encode(dutyCycle, forKey: .dutyCycle)
+    if initialDelayMs != 0 { try values.encode(initialDelayMs, forKey: .initialDelayMs) }
+    try values.encodeIfPresent(maxRepeats, forKey: .maxRepeats)
   }
 }
 
@@ -267,8 +297,8 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
   public let turbo: RemappingTurbo?
   /// Alternate action when the source is held past a duration.
   public let longHold: RemappingLongHold?
-  /// Alternate action when the source is pressed twice in a window.
-  public let doubleTap: RemappingDoubleTap?
+  /// Alternate actions when the source is tapped several times in a row, by tap count.
+  public let multiTap: [RemappingMultiTap]
   /// Further actions that the same source triggers.
   public let additionalActions: [RemappingAction]
 
@@ -282,7 +312,7 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
     axisTuning: RemappingAxisTuning? = nil,
     turbo: RemappingTurbo? = nil,
     longHold: RemappingLongHold? = nil,
-    doubleTap: RemappingDoubleTap? = nil,
+    multiTap: [RemappingMultiTap] = [],
     additionalActions: [RemappingAction] = []
   ) {
     self.id = id
@@ -293,7 +323,7 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
     self.axisTuning = axisTuning
     self.turbo = turbo
     self.longHold = longHold
-    self.doubleTap = doubleTap
+    self.multiTap = multiTap
     self.additionalActions = additionalActions
   }
 
@@ -315,8 +345,8 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
     case turbo
     /// The JSON key of `longHold`.
     case longHold
-    /// The JSON key of `doubleTap`.
-    case doubleTap
+    /// The JSON key of `multiTap`.
+    case multiTap
     /// The JSON key of `additionalActions`.
     case additionalActions
   }
@@ -338,7 +368,8 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
     axisTuning = try container.decodeIfPresent(RemappingAxisTuning.self, forKey: .axisTuning)
     turbo = try container.decodeIfPresent(RemappingTurbo.self, forKey: .turbo)
     longHold = try container.decodeIfPresent(RemappingLongHold.self, forKey: .longHold)
-    doubleTap = try container.decodeIfPresent(RemappingDoubleTap.self, forKey: .doubleTap)
+    multiTap =
+      try container.decodeIfPresent([RemappingMultiTap].self, forKey: .multiTap) ?? []
     additionalActions =
       try container.decodeIfPresent([RemappingAction].self, forKey: .additionalActions) ?? []
   }
@@ -356,7 +387,7 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
     try container.encodeIfPresent(axisTuning, forKey: .axisTuning)
     try container.encodeIfPresent(turbo, forKey: .turbo)
     try container.encodeIfPresent(longHold, forKey: .longHold)
-    try container.encodeIfPresent(doubleTap, forKey: .doubleTap)
+    if !multiTap.isEmpty { try container.encode(multiTap, forKey: .multiTap) }
     if !additionalActions.isEmpty {
       try container.encode(additionalActions, forKey: .additionalActions)
     }

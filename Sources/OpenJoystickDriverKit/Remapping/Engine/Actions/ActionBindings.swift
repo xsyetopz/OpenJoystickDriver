@@ -49,7 +49,7 @@ extension RemappingEngineState {
   /// Applies one source change to one action and returns the output actions.
   ///
   /// A suppressed action does nothing. Other behaviors follow ``RemappingBindingBehavior``. A hold
-  /// action with a long hold or double tap goes through the activation tracker. A hold action with
+  /// action with a long hold or multi-tap goes through the activation tracker. A hold action with
   /// turbo starts or stops its repeat.
   mutating func processAction(
     _ binding: RemappingBinding,
@@ -90,7 +90,7 @@ extension RemappingEngineState {
         return setBinding(id, destination: destination, isDown: true, device: &device)
       }
     }
-    if binding.longHold != nil || binding.doubleTap != nil {
+    if binding.longHold != nil || !binding.multiTap.isEmpty {
       return processTimedAction(binding, isActive: isActive, device: &device, at: uptime)
     }
     if let turbo = binding.turbo {
@@ -108,11 +108,12 @@ extension RemappingEngineState {
     return setBinding(id, destination: destination, isDown: isActive, device: &device)
   }
 
-  /// Applies a source change to an action that has a long hold or double tap.
+  /// Applies a source change to an action that has a long hold or multi-tap.
   ///
-  /// A press within the double-tap window of the previous release fires the double tap. A later
-  /// press taps the default destination first. A release taps the default destination when no
-  /// double tap is configured, and releases a fired destination otherwise.
+  /// A press within the longest remaining window of the previous release counts as the next tap.
+  /// A later press first resolves the earlier taps. An entry whose count no higher entry follows
+  /// fires on its press and releases with the source. Otherwise the pending taps resolve when the
+  /// window ends. A release taps the default destination when no multi-tap is configured.
   private mutating func processTimedAction(
     _ binding: RemappingBinding,
     isActive: Bool,
@@ -122,27 +123,24 @@ extension RemappingEngineState {
     var actions: [RemappingEngineAction] = []
     var tracker = device.outputs.activations[binding.id] ?? RemappingActivationTracker()
     if isActive {
-      var secondTap = false
-      if let doubleTap = binding.doubleTap, let released = tracker.releaseUptime,
-        tracker.pendingDefault
-      {
-        let window = UInt64(doubleTap.windowMs * 1_000_000)
-        secondTap = uptime >= released && uptime - released < window
-        if !secondTap {
-          actions += tapBinding(binding.id, destination: binding.destination, device: &device)
+      var count = 1
+      if let released = tracker.releaseUptime, tracker.pendingDefault {
+        let window = UInt64(binding.multiTap.continuationWindowMs(after: tracker.tapCount) * 1_000_000)
+        if uptime >= released && uptime - released < window {
+          count = tracker.tapCount + 1
+        } else {
+          actions += resolveTaps(binding, tapCount: tracker.tapCount, device: &device)
         }
       }
-      tracker = RemappingActivationTracker(
-        pressUptime: uptime,
-        tapCount: secondTap ? 2 : 1,
-        pendingDefault: true
-      )
-      if secondTap, let doubleTap = binding.doubleTap {
+      tracker = RemappingActivationTracker(pressUptime: uptime, tapCount: count, pendingDefault: true)
+      if let entry = binding.multiTap.first(where: { $0.count == count }),
+        binding.multiTap.continuationWindowMs(after: count) == 0
+      {
         tracker.pendingDefault = false
         tracker.firedBindingID = binding.id
         actions += setBinding(
           binding.id,
-          destination: doubleTap.destination,
+          destination: entry.destination,
           isDown: true,
           device: &device
         )
@@ -157,12 +155,24 @@ extension RemappingEngineState {
           device: &device
         )
         tracker = RemappingActivationTracker()
-      } else if tracker.pendingDefault, binding.doubleTap == nil {
+      } else if tracker.pendingDefault, binding.multiTap.isEmpty {
         actions += tapBinding(binding.id, destination: binding.destination, device: &device)
         tracker = RemappingActivationTracker()
       }
     }
     device.outputs.activations[binding.id] = tracker
     return actions
+  }
+
+  /// Taps the destination of the entry with a tap count, or the default destination when no entry
+  /// has that count.
+  mutating func resolveTaps(
+    _ binding: RemappingBinding,
+    tapCount: Int,
+    device: inout RemappingDeviceState
+  ) -> [RemappingEngineAction] {
+    let destination =
+      binding.multiTap.first(where: { $0.count == tapCount })?.destination ?? binding.destination
+    return tapBinding(binding.id, destination: destination, device: &device)
   }
 }

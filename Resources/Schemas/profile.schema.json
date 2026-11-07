@@ -180,14 +180,17 @@
         "destination": {
           "$ref": "#/$defs/destination"
         },
-        "doubleTap": {
-          "$ref": "#/$defs/doubleTap"
-        },
         "id": {
           "$ref": "#/$defs/uuid"
         },
         "longHold": {
           "$ref": "#/$defs/longHold"
+        },
+        "multiTap": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/multiTap"
+          }
         },
         "pulseDurationMs": {
           "type": "number",
@@ -304,14 +307,17 @@
         "destination": {
           "$ref": "#/$defs/destination"
         },
-        "doubleTap": {
-          "$ref": "#/$defs/doubleTap"
-        },
         "id": {
           "$ref": "#/$defs/uuid"
         },
         "longHold": {
           "$ref": "#/$defs/longHold"
+        },
+        "multiTap": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/multiTap"
+          }
         },
         "pulseDurationMs": {
           "type": "number",
@@ -622,21 +628,6 @@
         }
       ]
     },
-    "doubleTap": {
-      "type": "object",
-      "required": ["destination", "windowMs"],
-      "additionalProperties": false,
-      "properties": {
-        "destination": {
-          "$ref": "#/$defs/destination"
-        },
-        "windowMs": {
-          "type": "number",
-          "minimum": 50,
-          "maximum": 1000
-        }
-      }
-    },
     "gyroOutput": {
       "type": "object",
       "description": "activationSource is set exactly when activationMode is not always.",
@@ -865,6 +856,26 @@
           "minimum": 0,
           "maximum": 100,
           "default": 1
+        }
+      }
+    },
+    "multiTap": {
+      "type": "object",
+      "required": ["count", "destination", "windowMs"],
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 5
+        },
+        "destination": {
+          "$ref": "#/$defs/destination"
+        },
+        "windowMs": {
+          "type": "number",
+          "minimum": 50,
+          "maximum": 1000
         }
       }
     },
@@ -1411,6 +1422,17 @@
           "type": "number",
           "minimum": 0.05,
           "maximum": 0.95
+        },
+        "initialDelayMs": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2500,
+          "default": 0
+        },
+        "maxRepeats": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
         },
         "repeatRateHz": {
           "type": "number",

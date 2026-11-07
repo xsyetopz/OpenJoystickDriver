@@ -19,7 +19,7 @@ struct RemappingOutputPolicyTests {
       RemappingBinding(
         source: .button(.south),
         destination: virtual,
-        doubleTap: RemappingDoubleTap(windowMs: 250, destination: system)
+        multiTap: [RemappingMultiTap(count: 2, windowMs: 250, destination: system)]
       ),
     ]
     for binding in alternatives {
