@@ -141,4 +141,13 @@ struct EndpointMessagesTests {
   func aLineOutsideTheSchemaIsRefused(line: String) throws {
     #expect(!(try Self.issues(line).isEmpty), "\(line)")
   }
+
+  @Test(arguments: ["PointerX", "PointerY"])
+  func aFrameWithAPointerAxisIsRefusedByTheSchemaAndSwift(axis: String) throws {
+    let line = clientLine("Frame", #","axes":{"\#(axis)":0.5}"#)
+    #expect(!(try Self.issues(line).isEmpty))
+    #expect(throws: DecodingError.self) {
+      try JSONDecoder().decode(VirtualFeedFrame.self, from: Data(line.utf8))
+    }
+  }
 }

@@ -231,7 +231,7 @@
         "axes": {
           "type": "object",
           "propertyNames": {
-            "$ref": "vocabulary.schema.json#/$defs/axis"
+            "$ref": "vocabulary.schema.json#/$defs/gamepadAxis"
           },
           "additionalProperties": {
             "type": "number"

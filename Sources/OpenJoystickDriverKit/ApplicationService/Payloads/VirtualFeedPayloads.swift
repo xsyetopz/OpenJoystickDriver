@@ -6,7 +6,8 @@ import Foundation
 /// Missing controls are neutral.
 ///
 /// JSON: `{"buttons":["South"],"dpad":["DpadUp"],"axes":{"LeftStickX":0.5},"holdMilliseconds":50}`,
-/// with the names of ``Control``, ``RemappingDpadDirection``, and ``RemappingAxis``.
+/// with the names of ``Control``, ``RemappingDpadDirection``, and ``RemappingAxis`` but the pointer
+/// axes, which the virtual gamepad does not have.
 /// Stick axes run from `-1` to `1` with positive Y down; triggers run from `0` to `1`. Values out
 /// of range are clamped. Buttons without virtual output, such as paddles, are ignored. Decoding
 /// throws on an unknown key and on a button or d-pad direction listed twice.
@@ -80,7 +81,7 @@ public struct VirtualFeedFrame: Codable, Equatable, Sendable {
     dpad = try Self.decodeUnique(RemappingDpadDirection.self, forKey: .dpad, in: container)
     let named = try container.decodeIfPresent([String: Double].self, forKey: .axes) ?? [:]
     axes = try named.reduce(into: [:]) { result, entry in
-      guard let axis = RemappingAxis(rawValue: entry.key) else {
+      guard let axis = RemappingAxis(rawValue: entry.key), !axis.isPointer else {
         throw DecodingError.dataCorruptedError(
           forKey: .axes,
           in: container,

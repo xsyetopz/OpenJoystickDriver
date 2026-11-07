@@ -36,7 +36,7 @@ final class PeerMessageTests: XCTestCase {
     let withoutButtons = try schemaEnum("vocabulary.schema.json", "dpadControl")
       .union(schemaEnum("vocabulary.schema.json", "stickAxis"))
     XCTAssertEqual(PeerMessage.buttons, control.subtracting(withoutButtons))
-    XCTAssertEqual(PeerMessage.axes, try schemaEnum("vocabulary.schema.json", "axis"))
+    XCTAssertEqual(PeerMessage.axes, try schemaEnum("vocabulary.schema.json", "gamepadAxis"))
     XCTAssertEqual(PeerMessage.dpad, try schemaEnum("vocabulary.schema.json", "dpadControl"))
   }
 
