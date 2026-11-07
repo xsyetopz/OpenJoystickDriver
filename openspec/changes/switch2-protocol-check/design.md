@@ -49,6 +49,31 @@ The interval stays description data. It changes only if H5 shows a better result
 
 OJD is licensed under PolyForm Noncommercial 1.0.0 with a commercial license, so GPL code cannot be ported. SDL (zlib) and `procon2-mac` (MIT) code may be used with its notice kept in `THIRD_PARTY_NOTICES.md`. Only the README of `procon2-mac` was read for this plan.
 
+## Source checks
+
+Pin: SDL `release-3.4.16` (the pin of the Context section), file
+`src/joystick/hidapi/SDL_hidapi_switch2.c` (1335 lines), fetched from `raw.githubusercontent.com`
+on 2026-11-07. Line numbers are that file's. Task 4.1 lists its values here.
+
+| Value | Fact | Quote (line) |
+| --- | --- | --- |
+| Flash read request | 16 bytes; address is little-endian 32-bit in bytes 12 to 15 | `flash_read_command[12] = (Uint8)address;` (261) to `[15] = (Uint8)(address >> 24);` (264) |
+| Read length | Reply buffer 0x50 bytes; 0x40 data bytes copied from reply offset 0x10 | `Uint8 buffer[0x50] = {0};` (258); `SDL_memcpy(out, &buffer[0x10], 0x40);` (276) |
+| Gyro bias address | 0x13040; floats at block bytes 4, 8, 12 (x, y, z) | `ReadFlashBlock(ctx, 0x13040, calibration_data);` (442); `ctx->gyro_bias_x = *(float*)&calibration_data[4];` (446) to `[12]` (448) |
+| Accel bias address | 0x13100; floats at block bytes 12, 16, 20 (x, y, z) | `ReadFlashBlock(ctx, 0x13100, calibration_data);` (465); `ctx->accel_bias_x = *(float*)&calibration_data[12];` (469) to `[20]` (471) |
+| Accel bias use | Stored only; the accel decode subtracts nothing | `accel_data[0] = (Sint16)(data[0x31] \| (data[0x32] << 8)) * accel_scale;` (1191) |
+| Initial coefficients | Gyro 34.8, timestamp 10000 | `ctx->sensor_ts_coeff = 10000;` (530); `ctx->gyro_coeff = 34.8f;` (531) |
+| Coefficient rule | Sample 5 fixes the first timestamp; at sample 100 `coeff = 1000 * (ts - first) / (count * 4)`; within 10% of 1000 keeps 34.8 and 10000; else nonzero `coeff` gives timestamp coefficient `10000000000 / coeff` and gyro 40.0; else restart | `Uint64 coeff = 1000 * (sensor_timestamp - ctx->first_sensor_timestamp) / (ctx->sample_count * 4);` (1157); `ctx->gyro_coeff = 40.0f;` (1165) |
+| Gyro scale | `raw * gyro_coeff / INT16_MAX`, bias subtracted for x and z, added for y with negated raw | `gyro_data[0] = (Sint16)(data[0x37] \| (data[0x38] << 8)) * ctx->gyro_coeff / INT16_MAX - ctx->gyro_bias_x;` (1195) |
+| Sensor timestamp | 32-bit little-endian at bytes 0x2B to 0x2E; zero gives no sample; scaled by `ts_coeff / 10` | `Uint64 sensor_timestamp = (Uint32) (data[0x2b] \| ...` (1148); `sensor_timestamp * ctx->sensor_ts_coeff / 10;` (1185) |
+
+Corrections to the IMU row of the research table: SDL measures the rate at sample 100 after the
+first five (1150 to 1157), not "after five samples", and it does not apply the accelerometer
+bias it reads (1191 to 1193).
+
+Spec correction: there is no pull request, so the lists that tasks name as "the PR text" are
+recorded in this section instead.
+
 ## Risks
 
 - Reading the wrong report ID silently freezes input. The capture tasks and an explicit fixture per report prevent it.

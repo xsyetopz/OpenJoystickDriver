@@ -50,7 +50,7 @@ Owns: `Switch2Driver.swift`, `nintendo-switch2.json`.
 Depends: 3.
 Verify: `swift test --filter Switch2DriverTests`.
 
-- [ ] 4.1 Read the pinned SDL `SDL_hidapi_switch2.c` for the sensor-bias flash addresses and read lengths, and the gyro coefficient rule; list them in the PR text. Verify: each value in the list quotes its source line.
+- [x] 4.1 Read the pinned SDL `SDL_hidapi_switch2.c` for the sensor-bias flash addresses and read lengths, and the gyro coefficient rule; list them in `design.md` "Source checks". Verify: each value in the list quotes its source line.
 - [ ] 4.2 Write tests from the 2.1 slow-move capture: a still controller gives accelerometer near 1 g on one axis and gyro near zero after bias; a zero sensor timestamp yields no sample; the sample time follows the timestamp. Verify: the tests fail before 4.3.
 - [ ] 4.3 Add the bias reads to the startup sequence (data when fixed bytes, code for the reply parse), decode accelerometer and gyroscope into the motion path used by the Triton driver, and set the capability so the controller advertises motion. Verify: the 4.2 tests pass; `swift test --filter ControllerCapabilitiesTests`; `swift test --filter Switch2DriverTests`.
 - [ ] 4.4 Check Joy-Con orientation: compare the left and right Joy-Con motion axes with the capture and set the per-layout signs from the capture. Verify: tests per layout pass.
