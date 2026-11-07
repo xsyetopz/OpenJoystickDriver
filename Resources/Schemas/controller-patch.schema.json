@@ -220,6 +220,36 @@
                 }
               ]
             },
+            "irWriteIntervalMs": {
+              "anyOf": [
+                {
+                  "$ref": "controller.schema.json#/$defs/tuning/properties/irWriteIntervalMs"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "speakerMaxSeconds": {
+              "anyOf": [
+                {
+                  "$ref": "controller.schema.json#/$defs/tuning/properties/speakerMaxSeconds"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "replyTimeoutMs": {
+              "anyOf": [
+                {
+                  "$ref": "controller.schema.json#/$defs/tuning/properties/replyTimeoutMs"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
             "frameQueueCapacity": {
               "anyOf": [
                 {

@@ -31,6 +31,12 @@ extension ControllerTuning {
     case usbStartupRetryDelayMs
     /// The timeout of a USB transfer.
     case usbTransferTimeoutMs
+    /// The wait after each Wii Remote IR register write.
+    case irWriteIntervalMs
+    /// The longest clip the Wii Remote speaker plays.
+    case speakerMaxSeconds
+    /// The wait for the reply to a Wii Remote read or write.
+    case replyTimeoutMs
     /// The capacity of the frame queue.
     case frameQueueCapacity
 
@@ -62,6 +68,9 @@ extension ControllerTuning {
     case .usbStartupIntervalMs: usbStartupIntervalMilliseconds.map(String.init)
     case .usbStartupRetryDelayMs: usbStartupRetryDelayMilliseconds.map(String.init)
     case .usbTransferTimeoutMs: usbTransferTimeoutMilliseconds.map(String.init)
+    case .irWriteIntervalMs: irWriteIntervalMilliseconds.map(String.init)
+    case .speakerMaxSeconds: speakerMaxSeconds.map(String.init)
+    case .replyTimeoutMs: replyTimeoutMilliseconds.map(String.init)
     case .frameQueueCapacity: frameQueueCapacity.map(String.init)
     }
   }
@@ -91,6 +100,10 @@ extension ControllerTuning {
         ?? usbStartupRetryDelayMilliseconds,
       usbTransferTimeoutMilliseconds: higher.usbTransferTimeoutMilliseconds
         ?? usbTransferTimeoutMilliseconds,
+      irWriteIntervalMilliseconds: higher.irWriteIntervalMilliseconds
+        ?? irWriteIntervalMilliseconds,
+      speakerMaxSeconds: higher.speakerMaxSeconds ?? speakerMaxSeconds,
+      replyTimeoutMilliseconds: higher.replyTimeoutMilliseconds ?? replyTimeoutMilliseconds,
       frameQueueCapacity: higher.frameQueueCapacity ?? frameQueueCapacity
     )
   }
@@ -121,6 +134,10 @@ extension ControllerTuning {
         ? usbStartupRetryDelayMilliseconds : nil,
       usbTransferTimeoutMilliseconds: keys.contains(.usbTransferTimeoutMs)
         ? usbTransferTimeoutMilliseconds : nil,
+      irWriteIntervalMilliseconds: keys.contains(.irWriteIntervalMs)
+        ? irWriteIntervalMilliseconds : nil,
+      speakerMaxSeconds: keys.contains(.speakerMaxSeconds) ? speakerMaxSeconds : nil,
+      replyTimeoutMilliseconds: keys.contains(.replyTimeoutMs) ? replyTimeoutMilliseconds : nil,
       frameQueueCapacity: keys.contains(.frameQueueCapacity) ? frameQueueCapacity : nil
     )
   }

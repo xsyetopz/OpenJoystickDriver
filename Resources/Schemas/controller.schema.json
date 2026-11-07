@@ -507,6 +507,22 @@
           "minimum": 1,
           "maximum": 60000
         },
+        "irWriteIntervalMs": {
+          "description": "The wait after each Wii Remote IR camera register write; WiiBrew asks for at least 50 ms.",
+          "type": "integer",
+          "minimum": 50,
+          "maximum": 1000
+        },
+        "speakerMaxSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60
+        },
+        "replyTimeoutMs": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 10000
+        },
         "frameQueueCapacity": {
           "type": "integer",
           "minimum": 1,

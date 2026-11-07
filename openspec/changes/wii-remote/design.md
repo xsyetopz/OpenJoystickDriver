@@ -137,6 +137,18 @@ Pairing happens in macOS Bluetooth settings; OJD does not pair. After pairing, p
 
 Reads of memory (`0x17`) arrive as `0x21` reports on the same input stream. The driver matches a reply to its request by address; it has at most one outstanding read.
 
+### D13. Shape of the Extension Layout and the Tuning Keys
+
+`extensions[].layout` is set for `Nunchuk`, `ClassicController` and `ClassicControllerPro`; the Motion Plus kinds have none, because `WiiDriver` decodes them (D6). The layout reads the six data bytes (the `data format 0x01` of the Classic Controller; the driver disables encryption in the handshake).
+
+- A value is a field of one to three parts, most significant part first. A part is `{byte, mask}` with a contiguous mask; the shift and width follow from the mask. The Classic Controller's 5-bit right stick X is three parts (bits 7-6 of byte 0, bits 7-6 of byte 1, bit 7 of byte 2), its 5-bit left trigger two.
+- `buttons` are `{control, byte, mask, pressedWhen}` with `pressedWhen` `Set` or `Clear` (both extensions clear the bit while a button is down). The digital full-press bits of the Classic L and R triggers are left out: the analog triggers carry the same information. The Nunchuk C maps to `LeftShoulder` and Z to `LeftTrigger`; the Classic ZL and ZR map to `LeftShoulder` and `RightShoulder`, and its `a`, `b`, `x`, `y` to `East`, `South`, `North`, `West`.
+- `sticks` are `{control, parts, halfRange}`; `triggers` are `{control, parts}` and run from 0 to `2^bits - 1`; `accelerometer` has `x`, `y`, `z` fields of up to 10 bits (Nunchuk).
+- `stickCenter` is `FirstSample` exactly when `sticks` is set: the first sample after the handshake is the center and `halfRange` is the fixed half-range per kind (128 for the Nunchuk, 32 for the Classic left stick, 16 for its right stick). This is `ExtensionCenterFromFirstSample` of the Open item below, taken as proposed.
+- No two fields share a bit and no control appears twice in a layout; the description rejects both.
+
+The tuning keys `irWriteIntervalMs` (50 to 1000), `speakerMaxSeconds` (1 to 60) and `replyTimeoutMs` (10 to 10000) are record and patch tuning keys, read through `tuningKeys` and `defaults.tuning` of the description like the other families' keys; `ControllerTuning` holds them and the controller, controller-patch and cli-output schemas list them.
+
 ### D12. Sources and Licenses
 
 All driver, description and test code is written independently from WiiBrew facts and recorded captures. wiiuse (GPL-3+) and wiimacmote (no license) are facts-only references: a register address, a byte value or a documented behavior may be taken from them; no code, structure, comment or wording is. Reason: the project license is PolyForm Noncommercial 1.0.0 plus a separate commercial license, which cannot include GPL code, and an unlicensed source grants no right to copy. Fixture headers name WiiBrew or the hardware capture as the source.

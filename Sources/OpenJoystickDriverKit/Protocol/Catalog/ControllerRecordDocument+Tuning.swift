@@ -20,6 +20,9 @@ extension ControllerRecordDocument {
         "usbStartupIntervalMs",
         "usbStartupRetryDelayMs",
         "usbTransferTimeoutMs",
+        "irWriteIntervalMs",
+        "speakerMaxSeconds",
+        "replyTimeoutMs",
         "frameQueueCapacity",
       ])
       guard !container.allKeys.isEmpty else {
@@ -65,6 +68,15 @@ extension ControllerRecordDocument {
         usbStartupIntervalMilliseconds: try integer("usbStartupIntervalMs", 0...60_000),
         usbStartupRetryDelayMilliseconds: try integer("usbStartupRetryDelayMs", 1...60_000),
         usbTransferTimeoutMilliseconds: try integer("usbTransferTimeoutMs", 1...60_000),
+        irWriteIntervalMilliseconds: try integer(
+          "irWriteIntervalMs",
+          ControllerTuning.irWriteIntervalRange
+        ),
+        speakerMaxSeconds: try integer(
+          "speakerMaxSeconds",
+          ControllerTuning.speakerMaxSecondsRange
+        ),
+        replyTimeoutMilliseconds: try integer("replyTimeoutMs", ControllerTuning.replyTimeoutRange),
         frameQueueCapacity: try integer(
           "frameQueueCapacity",
           ControllerTuning.frameQueueCapacityRange

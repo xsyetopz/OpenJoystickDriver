@@ -2869,6 +2869,9 @@
         "usbStartupIntervalMs",
         "usbStartupRetryDelayMs",
         "usbTransferTimeoutMs",
+        "irWriteIntervalMs",
+        "speakerMaxSeconds",
+        "replyTimeoutMs",
         "frameQueueCapacity"
       ]
     },

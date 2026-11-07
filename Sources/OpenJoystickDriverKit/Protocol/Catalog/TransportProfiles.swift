@@ -212,6 +212,12 @@ public struct ControllerTuning: Codable, Equatable, Sendable {
   public let usbStartupRetryDelayMilliseconds: Int?
   /// Timeout of one USB transfer to a GIP controller, for rumble and startup writes.
   public let usbTransferTimeoutMilliseconds: Int?
+  /// Wait after each Wii Remote IR camera register write.
+  public let irWriteIntervalMilliseconds: Int?
+  /// Longest clip the Wii Remote speaker plays.
+  public let speakerMaxSeconds: Int?
+  /// Wait for the reply to a Wii Remote read or the acknowledgement of a write.
+  public let replyTimeoutMilliseconds: Int?
   /// Frames that may wait behind a send to the virtual device; a full queue drops its oldest
   /// frame in favor of the newest.
   public let frameQueueCapacity: Int?
@@ -225,6 +231,13 @@ public struct ControllerTuning: Codable, Equatable, Sendable {
   /// The frame-queue capacities a record, patch or description may set: the schema's `minimum`
   /// and `maximum`.
   public static let frameQueueCapacityRange = 1...1024
+  /// The Wii Remote IR write intervals a record, patch or description may set; WiiBrew asks for
+  /// at least 50 ms between two writes to the camera.
+  public static let irWriteIntervalRange = 50...1000
+  /// The Wii Remote speaker clip limits, in seconds.
+  public static let speakerMaxSecondsRange = 1...60
+  /// The Wii Remote reply timeouts, in milliseconds.
+  public static let replyTimeoutRange = 10...10_000
 
   /// Creates a tuning; every key not given keeps the driver's default.
   public init(
@@ -241,6 +254,9 @@ public struct ControllerTuning: Codable, Equatable, Sendable {
     usbStartupIntervalMilliseconds: Int? = nil,
     usbStartupRetryDelayMilliseconds: Int? = nil,
     usbTransferTimeoutMilliseconds: Int? = nil,
+    irWriteIntervalMilliseconds: Int? = nil,
+    speakerMaxSeconds: Int? = nil,
+    replyTimeoutMilliseconds: Int? = nil,
     frameQueueCapacity: Int? = nil
   ) {
     self.stickDeadzone = stickDeadzone
@@ -256,6 +272,9 @@ public struct ControllerTuning: Codable, Equatable, Sendable {
     self.usbStartupIntervalMilliseconds = usbStartupIntervalMilliseconds
     self.usbStartupRetryDelayMilliseconds = usbStartupRetryDelayMilliseconds
     self.usbTransferTimeoutMilliseconds = usbTransferTimeoutMilliseconds
+    self.irWriteIntervalMilliseconds = irWriteIntervalMilliseconds
+    self.speakerMaxSeconds = speakerMaxSeconds
+    self.replyTimeoutMilliseconds = replyTimeoutMilliseconds
     self.frameQueueCapacity = frameQueueCapacity
   }
 }

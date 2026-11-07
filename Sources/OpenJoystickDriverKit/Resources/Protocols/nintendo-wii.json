@@ -7,6 +7,7 @@
     "in": 130,
     "out": 2
   },
+  "tuningKeys": ["irWriteIntervalMs", "speakerMaxSeconds", "replyTimeoutMs"],
   "defaults": {
     "session": {
       "wiiRemote": {
@@ -315,15 +316,400 @@
         "extensions": [
           {
             "kind": "Nunchuk",
-            "id": "00 00 A4 20 00 00"
+            "id": "00 00 A4 20 00 00",
+            "layout": {
+              "buttons": [
+                {
+                  "control": "LeftTrigger",
+                  "byte": 5,
+                  "mask": 1,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "LeftShoulder",
+                  "byte": 5,
+                  "mask": 2,
+                  "pressedWhen": "Clear"
+                }
+              ],
+              "sticks": [
+                {
+                  "control": "LeftStickX",
+                  "parts": [
+                    {
+                      "byte": 0,
+                      "mask": 255
+                    }
+                  ],
+                  "halfRange": 128
+                },
+                {
+                  "control": "LeftStickY",
+                  "parts": [
+                    {
+                      "byte": 1,
+                      "mask": 255
+                    }
+                  ],
+                  "halfRange": 128
+                }
+              ],
+              "stickCenter": "FirstSample",
+              "accelerometer": {
+                "x": [
+                  {
+                    "byte": 2,
+                    "mask": 255
+                  },
+                  {
+                    "byte": 5,
+                    "mask": 12
+                  }
+                ],
+                "y": [
+                  {
+                    "byte": 3,
+                    "mask": 255
+                  },
+                  {
+                    "byte": 5,
+                    "mask": 48
+                  }
+                ],
+                "z": [
+                  {
+                    "byte": 4,
+                    "mask": 255
+                  },
+                  {
+                    "byte": 5,
+                    "mask": 192
+                  }
+                ]
+              }
+            }
           },
           {
             "kind": "ClassicController",
-            "id": "00 00 A4 20 01 01"
+            "id": "00 00 A4 20 01 01",
+            "layout": {
+              "buttons": [
+                {
+                  "control": "DpadRight",
+                  "byte": 4,
+                  "mask": 128,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "DpadDown",
+                  "byte": 4,
+                  "mask": 64,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "Back",
+                  "byte": 4,
+                  "mask": 16,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "Guide",
+                  "byte": 4,
+                  "mask": 8,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "Start",
+                  "byte": 4,
+                  "mask": 4,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "LeftShoulder",
+                  "byte": 5,
+                  "mask": 128,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "South",
+                  "byte": 5,
+                  "mask": 64,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "West",
+                  "byte": 5,
+                  "mask": 32,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "East",
+                  "byte": 5,
+                  "mask": 16,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "North",
+                  "byte": 5,
+                  "mask": 8,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "RightShoulder",
+                  "byte": 5,
+                  "mask": 4,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "DpadLeft",
+                  "byte": 5,
+                  "mask": 2,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "DpadUp",
+                  "byte": 5,
+                  "mask": 1,
+                  "pressedWhen": "Clear"
+                }
+              ],
+              "sticks": [
+                {
+                  "control": "LeftStickX",
+                  "parts": [
+                    {
+                      "byte": 0,
+                      "mask": 63
+                    }
+                  ],
+                  "halfRange": 32
+                },
+                {
+                  "control": "LeftStickY",
+                  "parts": [
+                    {
+                      "byte": 1,
+                      "mask": 63
+                    }
+                  ],
+                  "halfRange": 32
+                },
+                {
+                  "control": "RightStickX",
+                  "parts": [
+                    {
+                      "byte": 0,
+                      "mask": 192
+                    },
+                    {
+                      "byte": 1,
+                      "mask": 192
+                    },
+                    {
+                      "byte": 2,
+                      "mask": 128
+                    }
+                  ],
+                  "halfRange": 16
+                },
+                {
+                  "control": "RightStickY",
+                  "parts": [
+                    {
+                      "byte": 2,
+                      "mask": 31
+                    }
+                  ],
+                  "halfRange": 16
+                }
+              ],
+              "stickCenter": "FirstSample",
+              "triggers": [
+                {
+                  "control": "LeftTrigger",
+                  "parts": [
+                    {
+                      "byte": 2,
+                      "mask": 96
+                    },
+                    {
+                      "byte": 3,
+                      "mask": 224
+                    }
+                  ]
+                },
+                {
+                  "control": "RightTrigger",
+                  "parts": [
+                    {
+                      "byte": 3,
+                      "mask": 31
+                    }
+                  ]
+                }
+              ]
+            }
           },
           {
             "kind": "ClassicControllerPro",
-            "id": "01 00 A4 20 01 01"
+            "id": "01 00 A4 20 01 01",
+            "layout": {
+              "buttons": [
+                {
+                  "control": "DpadRight",
+                  "byte": 4,
+                  "mask": 128,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "DpadDown",
+                  "byte": 4,
+                  "mask": 64,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "Back",
+                  "byte": 4,
+                  "mask": 16,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "Guide",
+                  "byte": 4,
+                  "mask": 8,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "Start",
+                  "byte": 4,
+                  "mask": 4,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "LeftShoulder",
+                  "byte": 5,
+                  "mask": 128,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "South",
+                  "byte": 5,
+                  "mask": 64,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "West",
+                  "byte": 5,
+                  "mask": 32,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "East",
+                  "byte": 5,
+                  "mask": 16,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "North",
+                  "byte": 5,
+                  "mask": 8,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "RightShoulder",
+                  "byte": 5,
+                  "mask": 4,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "DpadLeft",
+                  "byte": 5,
+                  "mask": 2,
+                  "pressedWhen": "Clear"
+                },
+                {
+                  "control": "DpadUp",
+                  "byte": 5,
+                  "mask": 1,
+                  "pressedWhen": "Clear"
+                }
+              ],
+              "sticks": [
+                {
+                  "control": "LeftStickX",
+                  "parts": [
+                    {
+                      "byte": 0,
+                      "mask": 63
+                    }
+                  ],
+                  "halfRange": 32
+                },
+                {
+                  "control": "LeftStickY",
+                  "parts": [
+                    {
+                      "byte": 1,
+                      "mask": 63
+                    }
+                  ],
+                  "halfRange": 32
+                },
+                {
+                  "control": "RightStickX",
+                  "parts": [
+                    {
+                      "byte": 0,
+                      "mask": 192
+                    },
+                    {
+                      "byte": 1,
+                      "mask": 192
+                    },
+                    {
+                      "byte": 2,
+                      "mask": 128
+                    }
+                  ],
+                  "halfRange": 16
+                },
+                {
+                  "control": "RightStickY",
+                  "parts": [
+                    {
+                      "byte": 2,
+                      "mask": 31
+                    }
+                  ],
+                  "halfRange": 16
+                }
+              ],
+              "stickCenter": "FirstSample",
+              "triggers": [
+                {
+                  "control": "LeftTrigger",
+                  "parts": [
+                    {
+                      "byte": 2,
+                      "mask": 96
+                    },
+                    {
+                      "byte": 3,
+                      "mask": 224
+                    }
+                  ]
+                },
+                {
+                  "control": "RightTrigger",
+                  "parts": [
+                    {
+                      "byte": 3,
+                      "mask": 31
+                    }
+                  ]
+                }
+              ]
+            }
           },
           {
             "kind": "MotionPlusInactive",
@@ -496,11 +882,13 @@
               "data": "00"
             }
           ]
-        },
-        "irWriteIntervalMs": 50,
-        "speakerMaxSeconds": 10,
-        "replyTimeoutMs": 500
+        }
       }
+    },
+    "tuning": {
+      "irWriteIntervalMs": 50,
+      "speakerMaxSeconds": 10,
+      "replyTimeoutMs": 500
     }
   }
 }

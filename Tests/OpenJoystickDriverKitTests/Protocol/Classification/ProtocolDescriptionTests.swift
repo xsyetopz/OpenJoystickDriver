@@ -981,7 +981,9 @@ struct ProtocolDescriptionTests {
     #expect(wii.coreButtons.first { $0.control == .south }?.field == .init(byte: 1, mask: 0x08))
     let nunchuk = wii.extensions.first { $0.kind == "Nunchuk" }
     #expect(nunchuk?.id == [0x00, 0x00, 0xA4, 0x20, 0x00, 0x00])
-    #expect(wii.irWriteIntervalMilliseconds == 50)
+    #expect(description.tuning?.irWriteIntervalMilliseconds == 50)
+    #expect(description.tuning?.speakerMaxSeconds == 10)
+    #expect(description.tuning?.replyTimeoutMilliseconds == 500)
     #expect(wii.defaultIRSensitivityLevel == 3)
     #expect(wii.scripts.ir.count == 7)
     #expect(wii.scripts.handshake.first == .write(address: 0xA400F0, bytes: [0x55]))

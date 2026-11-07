@@ -81,7 +81,10 @@
           "adapterDisconnectDelayMs",
           "usbStartupIntervalMs",
           "usbStartupRetryDelayMs",
-          "usbTransferTimeoutMs"
+          "usbTransferTimeoutMs",
+          "irWriteIntervalMs",
+          "speakerMaxSeconds",
+          "replyTimeoutMs"
         ]
       }
     },
@@ -926,6 +929,90 @@
         "mask": { "type": "integer", "minimum": 1, "maximum": 255 }
       }
     },
+    "wiiExtensionPart": {
+      "description": "Some bits of one byte of the six extension data bytes: a contiguous mask.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["byte", "mask"],
+      "properties": {
+        "byte": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "mask": { "type": "integer", "minimum": 1, "maximum": 255 }
+      }
+    },
+    "wiiExtensionField": {
+      "description": "One value assembled from 1 to 3 parts, the most significant part first.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/wiiExtensionPart" }
+    },
+    "wiiExtensionLayout": {
+      "description": "The decode of the six data bytes of an extension. Every field lies in bits no other field uses, a mask is contiguous, a stick or trigger is 1 to 8 bits wide and an accelerometer axis 1 to 10, controls appear once, and a stick halfRange is at most 2^bits, which a schema cannot say and the validators check. stickCenter is the rule for the center of every stick: FirstSample takes the first sample after the handshake as the center, because the extension has no calibration block that WiiBrew documents.",
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "buttons": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["control", "byte", "mask", "pressedWhen"],
+            "properties": {
+              "control": { "$ref": "vocabulary.schema.json#/$defs/control" },
+              "byte": { "type": "integer", "minimum": 0, "maximum": 5 },
+              "mask": { "type": "integer", "minimum": 1, "maximum": 255 },
+              "pressedWhen": { "enum": ["Set", "Clear"] }
+            }
+          }
+        },
+        "sticks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["control", "parts", "halfRange"],
+            "properties": {
+              "control": {
+                "enum": ["LeftStickX", "LeftStickY", "RightStickX", "RightStickY"]
+              },
+              "parts": { "$ref": "#/$defs/wiiExtensionField" },
+              "halfRange": { "type": "integer", "minimum": 1, "maximum": 128 }
+            }
+          }
+        },
+        "stickCenter": { "enum": ["FirstSample"] },
+        "triggers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["control", "parts"],
+            "properties": {
+              "control": { "enum": ["LeftTrigger", "RightTrigger"] },
+              "parts": { "$ref": "#/$defs/wiiExtensionField" }
+            }
+          }
+        },
+        "accelerometer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["x", "y", "z"],
+          "properties": {
+            "x": { "$ref": "#/$defs/wiiExtensionField" },
+            "y": { "$ref": "#/$defs/wiiExtensionField" },
+            "z": { "$ref": "#/$defs/wiiExtensionField" }
+          }
+        }
+      },
+      "dependentRequired": { "sticks": ["stickCenter"], "stickCenter": ["sticks"] }
+    },
     "wiiBlockKind": {
       "description": "What a block of an input report mode carries.",
       "enum": [
@@ -979,7 +1066,7 @@
       "items": { "$ref": "#/$defs/wiiStep" }
     },
     "descriptionWiiRemote": {
-      "description": "The wire facts of the Wii Remote: the motor and LED bits, the core buttons and accelerometer low bits, the input report modes with their blocks (ids 0x30 to 0x3F, no overlap), the report-mode choice table, the extension ids (six bytes), the IR sensitivity levels and mode bytes, the Motion Plus mode bytes, the register scripts and the IR write interval (at least 50 ms), the speaker clip limit and the reply timeout. Cross-checks a schema cannot say (unique ids, blocks in offset order, a choice whose mode carries its features, levels counting up from 1, a step that sets only its kind's fields) are checked by the validators.",
+      "description": "The wire facts of the Wii Remote: the motor and LED bits, the core buttons and accelerometer low bits, the input report modes with their blocks (ids 0x30 to 0x3F, no overlap), the report-mode choice table, the extension ids (six bytes) with the data layout of each extension that has one, the IR sensitivity levels and mode bytes, the Motion Plus mode bytes and the register scripts; the IR write interval (at least 50 ms), the speaker clip limit and the reply timeout are tuning keys. Cross-checks a schema cannot say (unique ids, blocks in offset order, a choice whose mode carries its features, levels counting up from 1, a step that sets only its kind's fields) are checked by the validators.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -993,10 +1080,7 @@
         "irSensitivity",
         "irModeBytes",
         "motionPlusModeBytes",
-        "scripts",
-        "irWriteIntervalMs",
-        "speakerMaxSeconds",
-        "replyTimeoutMs"
+        "scripts"
       ],
       "properties": {
         "rumbleBit": { "type": "integer", "minimum": 0, "maximum": 7 },
@@ -1098,7 +1182,8 @@
                 "description": "The six bytes an id read returns.",
                 "type": "string",
                 "pattern": "^[0-9A-F]{2}( [0-9A-F]{2}){5}$"
-              }
+              },
+              "layout": { "$ref": "#/$defs/wiiExtensionLayout" }
             }
           }
         },
@@ -1170,15 +1255,7 @@
             "speaker": { "$ref": "#/$defs/wiiScript" },
             "speakerStop": { "$ref": "#/$defs/wiiScript" }
           }
-        },
-        "irWriteIntervalMs": {
-          "description": "The wait after each IR register write; WiiBrew asks for at least 50 ms.",
-          "type": "integer",
-          "minimum": 50,
-          "maximum": 1000
-        },
-        "speakerMaxSeconds": { "type": "integer", "minimum": 1, "maximum": 60 },
-        "replyTimeoutMs": { "type": "integer", "minimum": 10, "maximum": 10000 }
+        }
       }
     },
     "descriptionSession": {

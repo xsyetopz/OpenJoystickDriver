@@ -92,6 +92,9 @@ extension EquivalenceSnapshotCatalogTests {
     case .usbStartupRetryDelayMs: "usbStartupRetryDelayMs"
     case .usbTransferTimeoutMs: "usbTransferTimeoutMs"
     case .frameQueueCapacity: "frameQueueCapacity"
+    case .irWriteIntervalMs: "irWriteIntervalMs"
+    case .speakerMaxSeconds: "speakerMaxSeconds"
+    case .replyTimeoutMs: "replyTimeoutMs"
     }
   }
 

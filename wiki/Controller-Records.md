@@ -220,6 +220,9 @@ A record's `tuning` field changes a value that the protocol driver otherwise set
 | `usbStartupIntervalMs` | 0 to 60000 | `XboxGIP` | The gap between the raw-USB startup writes. The default is 50. |
 | `usbStartupRetryDelayMs` | 1 to 60000 | `XboxGIP` | The wait before the first startup retry; each later retry waits twice as long. The default is 1000. |
 | `usbTransferTimeoutMs` | 1 to 60000 | `XboxGIP`, `XboxXID`, `XboxXUSB` | The timeout of each raw-USB transfer: startup packets, rumble and output. The description gives the default, 2000. |
+| `irWriteIntervalMs` | 50 to 1000 | `NintendoWii` | The wait after each register write of the IR camera setup. WiiBrew asks for at least 50 ms, so a lower value is rejected. The description gives the default, 50. |
+| `speakerMaxSeconds` | 1 to 60 | `NintendoWii` | The longest clip the speaker plays. The description gives the default, 10. |
+| `replyTimeoutMs` | 10 to 10000 | `NintendoWii` | The wait for the reply to a read or the acknowledgement of a write. The description gives the default, 500. |
 | `frameQueueCapacity` | 1 to 1024 | every family | How many virtual gamepad reports may wait behind the one being sent. The default is 64. When the queue is full, the newest state replaces the oldest waiting state, so a slow consumer never grows memory and always receives the newest state. A reply to an app's output report is never dropped. |
 
 ### Set the Deadzone of a Stick That Rests Off Center

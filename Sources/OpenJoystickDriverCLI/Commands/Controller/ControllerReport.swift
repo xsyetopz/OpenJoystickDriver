@@ -92,6 +92,12 @@ struct ControllerShowReport: Encodable, Equatable {
     let usbStartupRetryDelayMs: Int?
     /// The timeout of each raw-USB transfer, in milliseconds.
     let usbTransferTimeoutMs: Int?
+    /// The wait after each Wii Remote IR register write, in milliseconds.
+    let irWriteIntervalMs: Int?
+    /// The longest clip the Wii Remote speaker plays, in seconds.
+    let speakerMaxSeconds: Int?
+    /// The wait for the reply to a Wii Remote read or write, in milliseconds.
+    let replyTimeoutMs: Int?
     /// How many virtual gamepad reports may wait behind the one being sent.
     let frameQueueCapacity: Int?
 
@@ -111,6 +117,9 @@ struct ControllerShowReport: Encodable, Equatable {
       usbStartupIntervalMs = tuning.usbStartupIntervalMilliseconds
       usbStartupRetryDelayMs = tuning.usbStartupRetryDelayMilliseconds
       usbTransferTimeoutMs = tuning.usbTransferTimeoutMilliseconds
+      irWriteIntervalMs = tuning.irWriteIntervalMilliseconds
+      speakerMaxSeconds = tuning.speakerMaxSeconds
+      replyTimeoutMs = tuning.replyTimeoutMilliseconds
       frameQueueCapacity = tuning.frameQueueCapacity
     }
 
@@ -130,6 +139,9 @@ struct ControllerShowReport: Encodable, Equatable {
         usbStartupIntervalMs.map { "usbStartupIntervalMs=\($0)" },
         usbStartupRetryDelayMs.map { "usbStartupRetryDelayMs=\($0)" },
         usbTransferTimeoutMs.map { "usbTransferTimeoutMs=\($0)" },
+        irWriteIntervalMs.map { "irWriteIntervalMs=\($0)" },
+        speakerMaxSeconds.map { "speakerMaxSeconds=\($0)" },
+        replyTimeoutMs.map { "replyTimeoutMs=\($0)" },
         frameQueueCapacity.map { "frameQueueCapacity=\($0)" },
       ].compactMap { $0 }
     }

@@ -95,12 +95,93 @@ extension ProtocolDescription {
       let mode: UInt8
     }
 
-    /// An extension kind and the six bytes its id read returns.
+    /// One value of an extension's six data bytes, assembled from one to three runs of bits.
+    struct ExtensionField: Equatable, Sendable {
+      /// The runs, most significant first; each mask is contiguous.
+      let parts: [BitField]
+
+      /// The width of the value, in bits.
+      var bits: Int { parts.reduce(0) { $0 + $1.mask.nonzeroBitCount } }
+
+      /// The value in `data`, the six data bytes.
+      func value(in data: [UInt8]) -> Int {
+        parts.reduce(0) { value, part in
+          let byte = part.byte < data.count ? data[part.byte] : 0
+          let width = part.mask.nonzeroBitCount
+          return (value << width) | Int((byte & part.mask) >> part.mask.trailingZeroBitCount)
+        }
+      }
+    }
+
+    /// One extension button: its control, its bit and the level of the bit while it is down.
+    struct ExtensionButton: Equatable, Sendable {
+      /// The control the button drives.
+      let control: Control
+      /// The bit, in the six data bytes.
+      let field: BitField
+      /// Whether the bit is set while the button is down; the Nunchuk and the Classic Controller
+      /// clear it.
+      let pressedWhenSet: Bool
+    }
+
+    /// One extension stick axis.
+    struct ExtensionStick: Equatable, Sendable {
+      /// The axis control.
+      let control: Control
+      /// The raw value.
+      let field: ExtensionField
+      /// The distance from the center to the end of the range, in raw steps.
+      let halfRange: Int
+    }
+
+    /// One extension trigger: the raw value runs from 0 to `2^bits - 1`.
+    struct ExtensionTrigger: Equatable, Sendable {
+      /// The trigger control.
+      let control: Control
+      /// The raw value.
+      let field: ExtensionField
+    }
+
+    /// The three accelerometer axes of an extension, each up to 10 bits.
+    struct ExtensionAccelerometer: Equatable, Sendable {
+      /// The X axis.
+      let x: ExtensionField
+      /// The Y axis.
+      let y: ExtensionField
+      /// The Z axis.
+      let z: ExtensionField
+    }
+
+    /// How the driver finds the center of an extension stick.
+    enum StickCenter: String, Equatable, Sendable {
+      /// The first sample after the handshake is the center (`ExtensionCenterFromFirstSample`);
+      /// WiiBrew documents no calibration block.
+      case firstSample = "FirstSample"
+    }
+
+    /// The decode of the six data bytes of an extension.
+    struct ExtensionLayout: Equatable, Sendable {
+      /// The buttons.
+      let buttons: [ExtensionButton]
+      /// The sticks.
+      let sticks: [ExtensionStick]
+      /// The center rule; set exactly when `sticks` is not empty.
+      let stickCenter: StickCenter?
+      /// The triggers.
+      let triggers: [ExtensionTrigger]
+      /// The accelerometer, when the extension has one.
+      let accelerometer: ExtensionAccelerometer?
+    }
+
+    /// An extension kind, the six bytes its id read returns and its data layout.
     struct ExtensionID: Equatable, Sendable {
       /// The kind's name.
       let kind: String
       /// The six bytes of the id.
       let id: [UInt8]
+      /// The decode of its data bytes; nil for a kind the description does not decode, such as
+      /// the Motion Plus, which the driver decodes itself.
+      let layout: ExtensionLayout?
     }
 
     /// One IR sensitivity level: the two blocks written to the camera.
@@ -143,13 +224,6 @@ extension ProtocolDescription {
       let speakerStop: [Step]
     }
 
-    /// The accepted values of `irWriteIntervalMs`.
-    static let irWriteIntervalRange = 50...1000
-    /// The accepted values of `speakerMaxSeconds`.
-    static let speakerMaxSecondsRange = 1...60
-    /// The accepted values of `replyTimeoutMs`.
-    static let replyTimeoutRange = 10...10_000
-
     /// The bit of the first data byte of every output report that drives the motor.
     let rumbleBit: Int
     /// The output report that sets the LEDs.
@@ -177,23 +251,16 @@ extension ProtocolDescription {
     let motionPlusModeBytes: [String: UInt8]
     /// The scripts.
     let scripts: Scripts
-    /// The wait after each IR register write.
-    let irWriteIntervalMilliseconds: Int
-    /// The longest clip the speaker plays.
-    let speakerMaxSeconds: Int
-    /// The wait for the reply to a read or the acknowledgement of a write.
-    let replyTimeoutMilliseconds: Int
 
     /// Decodes and validates the field; an unknown key, a missing key, a value outside its range,
     /// a report mode outside `0x30...0x3F`, overlapping blocks, an extension id that is not six
-    /// bytes or an IR write interval below 50 ms is rejected.
+    /// bytes or an extension layout that reuses a bit or a control is rejected.
     init(from decoder: any Decoder) throws {
       let root = try WiiReader(
         try decoder.container(keyedBy: DocumentKey.self),
         allowed: [
           "rumbleBit", "led", "coreButtons", "accelerometerLowBits", "reportModes", "modeChoices",
           "extensions", "irSensitivity", "irModeBytes", "motionPlusModeBytes", "scripts",
-          "irWriteIntervalMs", "speakerMaxSeconds", "replyTimeoutMs",
         ]
       )
       rumbleBit = try root.number("rumbleBit", 0...7)
@@ -248,8 +315,13 @@ extension ProtocolDescription {
         throw root.fail("modeChoices", "a feature set appears at most once")
       }
       modeChoices = choices
-      let kinds = try root.list("extensions", 1...16, allowed: ["kind", "id"]) {
-        ExtensionID(kind: try $0.string("kind"), id: try $0.bytes("id", 6...6))
+      let kinds = try root.list("extensions", 1...16, allowed: ["kind", "id", "layout"]) {
+        ExtensionID(
+          kind: try $0.string("kind"),
+          id: try $0.bytes("id", 6...6),
+          layout: try $0.keys.contains("layout")
+            ? ExtensionLayout(reader: $0.object("layout", allowed: ExtensionLayout.keys)) : nil
+        )
       }
       guard Set(kinds.map(\.kind)).count == kinds.count,
         Set(kinds.map(\.id)).count == kinds.count
@@ -296,9 +368,106 @@ extension ProtocolDescription {
         speaker: try Step.list(scriptObject, "speaker"),
         speakerStop: try Step.list(scriptObject, "speakerStop")
       )
-      irWriteIntervalMilliseconds = try root.number("irWriteIntervalMs", Self.irWriteIntervalRange)
-      speakerMaxSeconds = try root.number("speakerMaxSeconds", Self.speakerMaxSecondsRange)
-      replyTimeoutMilliseconds = try root.number("replyTimeoutMs", Self.replyTimeoutRange)
+    }
+  }
+}
+
+extension ProtocolDescription.WiiRemote.ExtensionLayout {
+  /// The keys a layout sets.
+  fileprivate static let keys: Set<String> = [
+    "buttons", "sticks", "stickCenter", "triggers", "accelerometer",
+  ]
+
+  /// Reads a layout: contiguous masks, no bit in two fields, a control once, a stick or trigger
+  /// of 1 to 8 bits, a stick half range of at most `2^bits`, an accelerometer axis of 1 to 10
+  /// bits, and a center rule exactly when there are sticks.
+  fileprivate init(reader: WiiReader) throws {
+    typealias Wii = ProtocolDescription.WiiRemote
+    var used = [UInt8](repeating: 0, count: 6)
+    var controls: Set<Control> = []
+
+    func claim(_ field: Wii.ExtensionField, _ widths: ClosedRange<Int>, key: String) throws {
+      guard widths.contains(field.bits) else {
+        throw reader.fail(key, "a \(key) field is \(widths.lowerBound)...\(widths.upperBound) bits")
+      }
+      for part in field.parts {
+        guard used[part.byte] & part.mask == 0 else {
+          throw reader.fail(key, "each bit of the six data bytes belongs to one field")
+        }
+        used[part.byte] |= part.mask
+      }
+    }
+    func claim(_ control: Control, key: String) throws {
+      guard controls.insert(control).inserted else {
+        throw reader.fail(key, "a control appears at most once in a layout")
+      }
+    }
+    func entries<Value>(
+      _ key: String,
+      _ count: ClosedRange<Int>,
+      allowed: Set<String>,
+      _ read: (WiiReader) throws -> Value
+    ) throws -> [Value] {
+      try reader.keys.contains(key) ? reader.list(key, count, allowed: allowed, read) : []
+    }
+
+    guard !reader.keys.isEmpty else {
+      throw reader.fail("layout", "a layout sets at least one field")
+    }
+    buttons = try entries("buttons", 1...16, allowed: ["control", "byte", "mask", "pressedWhen"]) {
+      let control = try $0.control()
+      try claim(control, key: "buttons")
+      let field = try $0.bitField(bytes: 0...5)
+      try claim(Wii.ExtensionField(parts: [field]), 1...8, key: "buttons")
+      let level = try $0.string("pressedWhen")
+      guard ["Set", "Clear"].contains(level) else {
+        throw $0.fail("pressedWhen", "pressedWhen is Set or Clear")
+      }
+      return Wii.ExtensionButton(control: control, field: field, pressedWhenSet: level == "Set")
+    }
+    sticks = try entries("sticks", 1...4, allowed: ["control", "parts", "halfRange"]) {
+      let control = try $0.control()
+      guard Control.stickAxes.contains(control) else {
+        throw $0.fail("control", "a stick drives a stick axis")
+      }
+      try claim(control, key: "sticks")
+      let field = try $0.field("parts")
+      try claim(field, 1...8, key: "sticks")
+      return Wii.ExtensionStick(
+        control: control,
+        field: field,
+        halfRange: try $0.number("halfRange", 1...(1 << field.bits))
+      )
+    }
+    stickCenter =
+      try reader.keys.contains("stickCenter")
+      ? Wii.StickCenter(rawValue: reader.string("stickCenter"))
+        ?? {
+          throw reader.fail("stickCenter", "stickCenter is FirstSample")
+        }() : nil
+    guard (stickCenter != nil) == !sticks.isEmpty else {
+      throw reader.fail("stickCenter", "stickCenter is FirstSample exactly when there are sticks")
+    }
+    triggers = try entries("triggers", 1...2, allowed: ["control", "parts"]) {
+      let control = try $0.control()
+      guard control == .leftTrigger || control == .rightTrigger else {
+        throw $0.fail("control", "a trigger drives LeftTrigger or RightTrigger")
+      }
+      try claim(control, key: "triggers")
+      let field = try $0.field("parts")
+      try claim(field, 1...8, key: "triggers")
+      return Wii.ExtensionTrigger(control: control, field: field)
+    }
+    if reader.keys.contains("accelerometer") {
+      let axes = try reader.object("accelerometer", allowed: ["x", "y", "z"])
+      let fields = try ["x", "y", "z"].map { key -> Wii.ExtensionField in
+        let field = try axes.field(key)
+        try claim(field, 1...10, key: "accelerometer")
+        return field
+      }
+      accelerometer = Wii.ExtensionAccelerometer(x: fields[0], y: fields[1], z: fields[2])
+    } else {
+      accelerometer = nil
     }
   }
 }
@@ -440,6 +609,25 @@ private struct WiiReader {
   /// The `byte` and `mask` of a bit field whose byte lies in `bytes`.
   func bitField(bytes: ClosedRange<Int>) throws -> ProtocolDescription.WiiRemote.BitField {
     .init(byte: try number("byte", bytes), mask: UInt8(try number("mask", 1...255)))
+  }
+
+  /// The control named by the `control` key.
+  func control() throws -> Control {
+    let name = try string("control")
+    guard let control = Control(rawValue: name) else {
+      throw fail("control", "\(name) is not a control")
+    }
+    return control
+  }
+
+  /// The one to three contiguous runs of bits at `key`, most significant first.
+  func field(_ key: String) throws -> ProtocolDescription.WiiRemote.ExtensionField {
+    let parts = try list(key, 1...3, allowed: ["byte", "mask"]) { try $0.bitField(bytes: 0...5) }
+    for part in parts {
+      let run = part.mask >> part.mask.trailingZeroBitCount
+      guard run & (run &+ 1) == 0 else { throw fail(key, "a mask is one run of set bits") }
+    }
+    return .init(parts: parts)
   }
 
   /// The nested object at `key`, limited to the `allowed` keys.
