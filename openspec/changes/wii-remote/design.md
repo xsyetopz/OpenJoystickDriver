@@ -96,9 +96,13 @@ IR setup is the WiiBrew seven-step sequence: enable the IR camera pixel clock (`
 
 IR needs the extended format (12 bytes) in report mode `0x33` or the basic format (10 bytes) in `0x36` and `0x37`; the choice follows the report-mode table of D4. The driver asks for the basic format by default, and the table has the row `Accelerometer` + `IRBasic` for `0x37` so the basic format runs without an extension. Alternative: always full mode. Rejected: it needs the interleaved `0x3E`/`0x3F` pair and halves the update rate.
 
+Sources: WiiBrew Wiimote page (IR camera section) for the registers, the `0x08` writes and the 50 ms spacing; the Linux `hid-wiimote-core.c` powers the IR camera only while a program holds the IR input device open, so always-on IR is a choice of this driver, not of the other projects (see Open).
+
 ### D8. Speaker as an Output
 
 The speaker is an output capability, not a control. `PhysicalControllerOutputCapabilities` gains a speaker capability (a value that states 4-bit Yamaha ADPCM at the remote's rate). The driver sequence from WiiBrew: enable the speaker (`0x14`), mute (`0x19`), write `0x01` to `0xA20009`, `0x08` to `0xA20001`, the seven configuration bytes (format, rate divisor, volume) to `0xA20001`, `0x01` to `0xA20008`, unmute, then stream 20-byte data packets in `0x18` reports at the rate the configuration gives. Stopping mutes and disables the speaker (`0x19`, `0x14`). The setup writes and bytes are description data; the encoder, resampler and pacing are Swift.
+
+Sources: WiiBrew Wiimote page (speaker section) for the sequence, the 6000 Hz configuration and the Yamaha ADPCM name; Dolphin `Source/Core/Core/HW/WiimoteEmu/Speaker.cpp` for the step scale `{230, 230, 230, 230, 307, 409, 512, 614}`. Dolphin expands the high nibble of a byte before the low nibble; the encoder packs the first sample into the low nibble. No other source read states the order, so Hardware Check 6 decides it (see Open).
 
 User surface: `ojd controller speaker play CONTROLLER FILE` (mono or stereo PCM WAV, mixed down and resampled to the speaker rate; any other file is refused with a named error), `ojd controller speaker stop CONTROLLER`, and `--volume 0..1`. Clip length is bounded (tuning key `speakerMaxSeconds`, reason: the 4-bit codec at this rate has low fidelity and the stream holds the output queue). The speaker also needs the rumble bit preserved in each `0x18`, `0x19`, `0x14` report (D10).
 
@@ -173,6 +177,9 @@ All driver, description and test code is written independently from WiiBrew fact
 - Whether the speaker belongs in the SDK endpoint; asked to the endpoint owner after Hardware Check 6.
 
 ## Open
+
+- Speaker nibble order: Dolphin plays the high nibble first, the encoder writes the low nibble first. Blocks Hardware Check 6.
+- IR on every session versus only while a profile binds `PointerX` or `PointerY` (the Linux driver enables IR on demand).
 
 Each item blocks the task named; the proposal is for the maintainer to accept or change.
 
