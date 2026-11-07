@@ -156,6 +156,8 @@
 "ui.controllers.bootloaderIdentity" = "คอนโทรลเลอร์นี้อยู่ในโหมดบูตโหลดเดอร์ OJD จะไม่ส่งข้อมูลใดๆ ไปยังคอนโทรลเลอร์นี้";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
 "ui.controllers.noModeMatched" = "คอนโทรลเลอร์นี้ใช้ ID เดียวกับรุ่นอื่นและไม่ตรงกับรุ่นที่รองรับรุ่นใดเลย OJD จะไม่ส่งข้อมูลใดๆ ไปยังคอนโทรลเลอร์นี้";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected device whose ID OJD recognizes and serves nothing, such as a receiver with no controller connected. OJD sends such a device no data, and the text says so. OJD stays as written. */
+"ui.controllers.idleIdentity" = "อุปกรณ์นี้ไม่มีปุ่มควบคุมให้ใช้ เช่น ตัวรับสัญญาณที่ไม่มีคอนโทรลเลอร์เชื่อมต่ออยู่ OJD จะไม่ส่งข้อมูลใดๆ ไปยังอุปกรณ์นี้";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "แบตเตอรี่";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */

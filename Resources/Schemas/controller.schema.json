@@ -51,6 +51,35 @@
     },
     "tuning": {
       "$ref": "#/$defs/tuning"
+    },
+    "idle": {
+      "description": "Marks an identity OJD recognizes and serves nothing, such as a receiver with no controller connected: OJD sends it no data and creates no virtual gamepad. The record has one default mode and no section that serves controls.",
+      "const": true
+    }
+  },
+  "if": {
+    "required": ["idle"]
+  },
+  "then": {
+    "properties": {
+      "modes": {
+        "maxItems": 1,
+        "contains": {
+          "properties": {
+            "id": {
+              "const": "default"
+            }
+          },
+          "required": ["id"]
+        }
+      },
+      "usb": false,
+      "bluetoothLE": false,
+      "capabilities": false,
+      "server": false,
+      "route": false,
+      "input": false,
+      "tuning": false
     }
   },
   "$defs": {

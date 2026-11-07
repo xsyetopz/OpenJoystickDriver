@@ -156,6 +156,8 @@
 "ui.controllers.bootloaderIdentity" = "이 컨트롤러는 부트로더 모드입니다. OJD는 데이터를 보내지 않습니다.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
 "ui.controllers.noModeMatched" = "이 컨트롤러는 다른 모델과 ID를 공유하며 지원되는 모델 중 어느 것과도 일치하지 않습니다. OJD는 데이터를 보내지 않습니다.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected device whose ID OJD recognizes and serves nothing, such as a receiver with no controller connected. OJD sends such a device no data, and the text says so. OJD stays as written. */
+"ui.controllers.idleIdentity" = "이 장치는 컨트롤을 제공하지 않습니다. 컨트롤러가 연결되지 않은 수신기 등이 해당합니다. OJD는 데이터를 보내지 않습니다.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "배터리";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */

@@ -6,7 +6,7 @@ The Ultimate 2C Wireless enumerates as a different identity in each mode. Test a
 | --- | --- | --- | --- |
 | 2.4 GHz dongle, XInput | `2DC8:310A` | `XboxXUSB` | Hardware-verified by two testers on `0.5.0-beta.4` tester build `1.5.71`: buttons, sticks, triggers at rest, D-pad, stick clicks, rumble |
 | Bluetooth LE | `2DC8:301B` | `HIDDescriptor` | Mapping confirmed on hardware from a patch ([#34](https://github.com/xsyetopz/OpenJoystickDriver/issues/34)); this build is not yet tested |
-| HID receiver | `2DC8:301C` | `HIDDescriptor` | Assumed to share the Bluetooth layout; not verified |
+| HID receiver | `2DC8:301C` | `HIDDescriptor` | Idle receiver: the record is `idle`, maps no controls and reports `IdleIdentity`; the pad is assumed to re-enumerate as `310A` once it connects; not verified |
 
 ## Why Bluetooth Needs a Record
 

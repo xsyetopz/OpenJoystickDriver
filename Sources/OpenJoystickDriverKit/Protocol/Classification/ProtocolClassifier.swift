@@ -264,6 +264,8 @@ public enum ProtocolBindingReason: String, CaseIterable, Codable, Error, Sendabl
   case bootloaderIdentity = "BootloaderIdentity"
   /// The device's record has no `default` mode and no mode of it matched the device.
   case noModeMatched = "NoModeMatched"
+  /// The device's record names an identity that serves nothing, such as an idle receiver.
+  case idleIdentity = "IdleIdentity"
 }
 
 extension ProtocolBindingReason {
@@ -277,6 +279,7 @@ extension ProtocolBindingReason {
     case .configurationUnreadable: return "ui.controllers.configurationUnreadable"
     case .bootloaderIdentity: return "ui.controllers.bootloaderIdentity"
     case .noModeMatched: return "ui.controllers.noModeMatched"
+    case .idleIdentity: return "ui.controllers.idleIdentity"
     case .noProtocolMatch, .ambiguousProtocolMatch, .interfaceContractMismatch,
       .descriptorContractMismatch, .unsupportedProtocolVariant, .unsupportedTransportVariant,
       .virtualProfileUnavailable:
@@ -393,6 +396,7 @@ enum ProtocolClassifier {
         modeID: modeID
       )
     {
+      if record.isIdle { return .unsupported(.idleIdentity) }
       if !record.hasDefaultMode, modeID == nil { return .unsupported(.noModeMatched) }
       return otherXboxFamilyBinding(for: record, interfaces: interfaces, backend: backend)
         ?? bind(record, interfaces: interfaces, backend: backend)

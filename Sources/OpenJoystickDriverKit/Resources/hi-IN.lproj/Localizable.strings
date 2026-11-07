@@ -156,6 +156,8 @@
 "ui.controllers.bootloaderIdentity" = "यह कंट्रोलर बूटलोडर मोड में है। OJD इसे कोई डेटा नहीं भेजता।";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
 "ui.controllers.noModeMatched" = "यह कंट्रोलर अपना ID अन्य मॉडलों के साथ साझा करता है और समर्थित मॉडलों में से किसी से मेल नहीं खाता। OJD इसे कोई डेटा नहीं भेजता।";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected device whose ID OJD recognizes and serves nothing, such as a receiver with no controller connected. OJD sends such a device no data, and the text says so. OJD stays as written. */
+"ui.controllers.idleIdentity" = "यह डिवाइस कोई कंट्रोल उपलब्ध नहीं कराता, जैसे कोई रिसीवर जिससे कोई कंट्रोलर जुड़ा नहीं है। OJD इसे कोई डेटा नहीं भेजता।";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "बैटरी";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */

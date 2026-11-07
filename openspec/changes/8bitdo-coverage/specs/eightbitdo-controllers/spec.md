@@ -63,7 +63,7 @@ The records for `2DC8:301C`, `2DC8:3107` and `2DC8:6013` SHALL map no controls u
 #### Scenario: 301C Is an Idle Receiver
 
 - **WHEN** the record of `2DC8:301C` has no capture
-- **THEN** it maps no controls
+- **THEN** it is an `idle` record: OJD sends it no data, creates no virtual gamepad and reports the reason `IdleIdentity`
 - **AND** the document says the receiver re-enumerates as `2DC8:310A` and that this is unverified
 
 #### Scenario: 301C Shows Gamepad Input

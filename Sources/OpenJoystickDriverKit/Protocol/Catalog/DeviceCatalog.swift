@@ -102,7 +102,8 @@ package struct DeviceCatalog: Sendable {
       bluetoothLEVibrationCharacteristic: record.bluetoothLE?.vibrationCharacteristic,
       interfaceRange: record.baseMode.interfaceRange,
       modes: record.modes.filter { !$0.isDefault }.map(\.mode),
-      hasDefaultMode: record.defaultMode != nil
+      hasDefaultMode: record.defaultMode != nil,
+      isIdle: record.isIdle
     )
   }
 

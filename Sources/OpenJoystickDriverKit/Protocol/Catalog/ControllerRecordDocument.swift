@@ -39,6 +39,8 @@ struct ControllerRecordDocument: Decodable {
   let hidUsageMap: HIDUsageMap?
   /// The tuning values the record sets.
   let tuning: ControllerTuning
+  /// Whether the record names an identity that serves nothing (`idle: true`).
+  let isIdle: Bool
 
   /// Decodes the record's `apiVersion`, `kind`, IDs, modes, sections and tuning; an unknown key, a
   /// wrong `kind` or an invalid combination of sections is rejected.
@@ -60,7 +62,7 @@ struct ControllerRecordDocument: Decodable {
     }
     try container.rejectUnknown(allowed: [
       "apiVersion", "kind", "vendorID", "productID", "modes", "usb",
-      "bluetoothLE", "capabilities", "server", "route", "input", "tuning",
+      "bluetoothLE", "capabilities", "server", "route", "input", "tuning", "idle",
     ])
     vendorID = try container.decode(Int.self, for: "vendorID")
     productID = try container.decode(Int.self, for: "productID")
@@ -74,6 +76,31 @@ struct ControllerRecordDocument: Decodable {
       )
     }
     defaultMode = modes.first(where: \.isDefault)
+    isIdle = try container.decodeOptional(Bool.self, for: "idle") == true
+    guard !container.contains(DocumentKey("idle")) || isIdle else {
+      throw DecodingError.dataCorrupted(
+        .init(
+          codingPath: decoder.codingPath + [DocumentKey("idle")],
+          debugDescription: "idle is true when present"
+        )
+      )
+    }
+    if isIdle {
+      let controlSections: Set<String> = [
+        "usb", "bluetoothLE", "capabilities", "server", "route", "input", "tuning",
+      ]
+      guard modes.count == 1, defaultMode != nil,
+        container.allKeys.allSatisfy({ !controlSections.contains($0.stringValue) })
+      else {
+        throw DecodingError.dataCorrupted(
+          .init(
+            codingPath: decoder.codingPath + [DocumentKey("idle")],
+            debugDescription:
+              "an idle record has one default mode and no section that serves controls"
+          )
+        )
+      }
+    }
     usb = try container.decodeOptional(USBOverride.self, for: "usb")
     bluetoothLE = try container.decodeOptional(BluetoothLE.self, for: "bluetoothLE")
     capabilities =

@@ -805,7 +805,8 @@
         "DeviceInUse",
         "ConfigurationUnreadable",
         "BootloaderIdentity",
-        "NoModeMatched"
+        "NoModeMatched",
+        "IdleIdentity"
       ]
     },
     "hidGamepad": {

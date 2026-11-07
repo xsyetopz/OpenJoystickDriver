@@ -13,34 +13,6 @@
       }
     },
     {
-      "name": "rejects invalid modes: no default mode",
-      "code": "E5007",
-      "schema": true,
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "Controller",
-        "vendorID": 1356,
-        "productID": 616,
-        "modes": [
-          {
-            "id": "x",
-            "protocol": {
-              "family": "SonySixaxis"
-            },
-            "match": {
-              "probes": [
-                {
-                  "report": 239,
-                  "length": 64,
-                  "expect": "Answers"
-                }
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
       "name": "rejects invalid modes: two default modes",
       "code": "E5007",
       "schema": true,
@@ -1159,34 +1131,6 @@
               ]
             }
           },
-          {
-            "id": "a",
-            "protocol": {
-              "family": "SonySixaxis"
-            },
-            "match": {
-              "probes": [
-                {
-                  "report": 239,
-                  "length": 64,
-                  "expect": "Answers"
-                }
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "validator rejects duplicate ids and overflowing bytes: no default mode",
-      "code": "E5007",
-      "schema": true,
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "Controller",
-        "vendorID": 1356,
-        "productID": 616,
-        "modes": [
           {
             "id": "a",
             "protocol": {
@@ -9162,6 +9106,86 @@
                   }
                 ]
               }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects idle false",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha2",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "idle": false,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects idle with a usage map",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha2",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "idle": true,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          }
+        ],
+        "input": {
+          "hidUsageMap": {
+            "usages": [
+              {
+                "kind": "Hat",
+                "page": 1,
+                "usage": 57
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "rejects idle with a second mode",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha2",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "idle": true,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            }
+          },
+          {
+            "id": "other",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "match": {
+              "product": "Receiver"
             }
           }
         ]

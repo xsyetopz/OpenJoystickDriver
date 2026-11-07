@@ -156,6 +156,8 @@
 "ui.controllers.bootloaderIdentity" = "このコントローラはブートローダ モードです。OJD はデータを送信しません。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
 "ui.controllers.noModeMatched" = "このコントローラは ID を他のモデルと共有しており、対応モデルのどれにも一致しません。OJD はデータを送信しません。";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected device whose ID OJD recognizes and serves nothing, such as a receiver with no controller connected. OJD sends such a device no data, and the text says so. OJD stays as written. */
+"ui.controllers.idleIdentity" = "このデバイスは操作系を提供しません。コントローラが接続されていないレシーバなどが該当します。OJD はデータを送信しません。";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "バッテリー";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */

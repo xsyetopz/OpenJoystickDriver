@@ -327,7 +327,7 @@ A `HIDDescriptor` record maps the usages of its report descriptor to controls in
 - `AxisButton`: with `half`, a button `control` and a `threshold` above 0 and below 1, the button is pressed while that half's travel is at or past `threshold`.
 - `ButtonTrigger`: with a `control` of `LeftTrigger` or `RightTrigger`, the trigger reads 1 while the value is nonzero and 0 otherwise.
 
-`reportID` limits the map to one report. A usage the map does not name is ignored, and both the app and `./Scripts/ojd check profiles` reject a usage named twice, except that a usage may appear in several `HalfAxis`, `AxisDpad` and `AxisButton` entries when no two name the same `half`, and reject an axis `range` whose `min` is not below its `max`. The description may also list `descriptorShapes` that choose a map from the usages a controller's report descriptor declares: the shape in `hid-descriptor.json` gives a controller with Z, Rz, a Brake or Accelerator and no Rx or Ry the Z/Rz layout, with Brake as LT and Accelerator as RT. The records for the WR007 (`11C1:5600`), SCUF Envision (`2E95:434D`), 8BitDo Ultimate 2C (`2DC8:301B`, `301C`) and DragonRise (`0079:0006`, by patch) show complete maps.
+`reportID` limits the map to one report. A usage the map does not name is ignored, and both the app and `./Scripts/ojd check profiles` reject a usage named twice, except that a usage may appear in several `HalfAxis`, `AxisDpad` and `AxisButton` entries when no two name the same `half`, and reject an axis `range` whose `min` is not below its `max`. The description may also list `descriptorShapes` that choose a map from the usages a controller's report descriptor declares: the shape in `hid-descriptor.json` gives a controller with Z, Rz, a Brake or Accelerator and no Rx or Ry the Z/Rz layout, with Brake as LT and Accelerator as RT. The records for the WR007 (`11C1:5600`), SCUF Envision (`2E95:434D`), 8BitDo Ultimate 2C (`2DC8:301B`) and DragonRise (`0079:0006`, by patch) show complete maps.
 
 ## Control Names and Other Vocabularies
 
@@ -480,6 +480,10 @@ macOS reports a radio dongle as a USB device, so the `ProprietaryRadioReceiver` 
 The DualShock 3 record has the `bluetooth` mode above, which sends feature report `0xF4` (`42 03 00 00`) when the controller connects over classic Bluetooth, the enable report that Linux `hid-sony.c` sends. It also carries one mode that probes feature report `0xEF`. That mode is a candidate discriminator only: it runs the same protocol as the default, and the record does not say which unit is genuine. The `length` of 49 is a chosen length, the size of a Sixaxis input report, not a size recorded from a DualShock 3 reply.
 
 Pairing is not part of the record. A DualShock 3 has to be paired with the Mac before a Bluetooth link exists, and the pairing steps belong to macOS or to a pairing tool, not to this data. The record describes only what runs once the link is up. Pairing a real DualShock 3 is still an open hardware check, so these docs list no verified steps.
+
+### Record an Identity That Serves Nothing
+
+A record with `"idle": true` names an identity OpenJoystickDriver recognizes and serves nothing, such as a receiver that shows a controller only after it connects and then enumerates under another ID. The value is `true` or the key is absent. The record has exactly one `default` mode and no `usb`, `bluetoothLE`, `capabilities`, `server`, `route`, `input` or `tuning`. The controller is unsupported with the reason `IdleIdentity`: OpenJoystickDriver sends it no data and creates no virtual gamepad, and the Controllers page says that it serves no controls. A record gains controls by replacing `idle` with the mode and `input` of a captured descriptor.
 
 ## Connect a Switch 2 Controller Over Bluetooth LE
 
