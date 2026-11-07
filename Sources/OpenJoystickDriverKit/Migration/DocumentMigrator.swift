@@ -130,7 +130,9 @@ public struct DocumentMigrator: Sendable {
         apiVersion: document["apiVersion"]?.string,
         kind: document["kind"]?.string,
         expected: kind.rawValue
-      ) { throw problem }
+      ) {
+        throw problem
+      }
     }
   }
 

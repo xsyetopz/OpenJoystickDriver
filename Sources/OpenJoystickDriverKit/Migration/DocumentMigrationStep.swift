@@ -129,8 +129,11 @@ enum AlphaOneToAlphaTwo {
       case "buttons": return try list(field, button)
       case "axes": return try list(field, axis)
       case "hat": return try list(field, hat)
-      case "leftTrigger", "rightTrigger": return try .init(
-        key: field.key, value: trigger(field))
+      case "leftTrigger", "rightTrigger":
+        return try .init(
+          key: field.key,
+          value: trigger(field)
+        )
       default: throw noMapping("input.\(field.key)", "is not a field of an input layout")
       }
     }
