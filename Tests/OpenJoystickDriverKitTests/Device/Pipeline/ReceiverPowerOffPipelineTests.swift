@@ -31,6 +31,7 @@ struct ReceiverPowerOffPipelineTests {
       transport: .usb(device: device),
       driver: XUSBDriver(isWirelessReceiver: true, description: description),
       dispatcher: RecoveryOutputDispatcher(),
+      startupPlayerIndicator: .player1,
       usbTransportProvider: RecoveryUSBProvider(sessions: sessions),
       usbRecoveryPolicy: USBPipelineRecoveryPolicy(
         openRetryDelays: [1],
