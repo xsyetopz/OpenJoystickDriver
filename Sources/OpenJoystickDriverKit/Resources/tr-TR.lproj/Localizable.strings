@@ -4445,22 +4445,22 @@
 /* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
 "error.E5009.message" = "Eski bir sürümden kaydedilmiş bir belgenin otomatik dönüşümü yoktur, bu yüzden ojd migrate onu değiştirmeden bırakır. İleti dosyayı ve alanı belirtir. Dosyayı elle desteklenen apiVersion değerine düzenleyin.";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
-"cli.migrate.abstract" = "Eski bir sürümden kaydedilmiş belgeleri geçerli sürüme dönüştürür.";
+"cli.migrate.group.abstract" = "Eski bir sürümden kaydedilmiş belgeleri geçerli sürüme dönüştürür.";
 /* Help text of 'ojd migrate'. Settings.json, AccessGrants.json, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.discussion" = "Eski apiVersion değerine sahip Settings.json, AccessGrants.json, profilleri, denetleyici kayıtlarınızı ve yamalarınızı ve sanal aygıt dosyalarını dönüştürür. Her özgün dosya destek klasörünün Migrated klasöründe saklanır. Yüklü modlar dönüştürülmez.";
+"cli.migrate.group.discussion" = "Eski apiVersion değerine sahip Settings.json, AccessGrants.json, profilleri, denetleyici kayıtlarınızı ve yamalarınızı ve sanal aygıt dosyalarını dönüştürür. Her özgün dosya destek klasörünün Migrated klasöründe saklanır. Yüklü modlar dönüştürülmez.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
-"cli.migrate.dryRun" = "Dönüştürülecek belgeleri listeler ve hiçbir şeyi değiştirmez.";
+"cli.migrate.group.dryRun" = "Dönüştürülecek belgeleri listeler ve hiçbir şeyi değiştirmez.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
-"cli.migrate.none" = "Hiçbir belgenin taşınması gerekmiyor.";
+"cli.migrate.group.none" = "Hiçbir belgenin taşınması gerekmiyor.";
 /* Line printed by 'ojd migrate' for a converted document. %@ is the path of the document in the support folder. Migrated is a folder name and stays as written. */
-"cli.migrate.converted" = "%@ dönüştürüldü. Özgün dosya Migrated klasöründe.";
+"cli.migrate.group.converted" = "%@ dönüştürüldü. Özgün dosya Migrated klasöründe.";
 /* Line printed by 'ojd migrate --dry-run' for a document it would convert. %@ is the path of the document in the support folder. */
-"cli.migrate.wouldConvert" = "%@ dönüştürülecek.";
+"cli.migrate.group.wouldConvert" = "%@ dönüştürülecek.";
 /* Line printed by 'ojd migrate' for a document it cannot convert. %1$@ is the path of the document, %2$@ is the reason. */
-"cli.migrate.failed" = "%1$@ değişmeden kalır: %2$@";
+"cli.migrate.group.failed" = "%1$@ değişmeden kalır: %2$@";
 /* Error text of 'ojd migrate' when at least one document could not be converted. */
-"cli.migrate.failedSummary" = "Bazı belgeler dönüştürülemedi ve değişmeden kaldı. Çıktı her birini belirtir.";
+"cli.migrate.group.failedSummary" = "Bazı belgeler dönüştürülemedi ve değişmeden kaldı. Çıktı her birini belirtir.";
 /* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
 "ui.migrate.action" = "Taşı";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
-"ui.migrate.failed" = "Bazı belgeler dönüştürülemedi ve değişmeden kaldı. Hangileri olduğunu görmek için Terminal'de ojd migrate çalıştırın.";
+"platform.macos.ui.migrate.failed" = "Bazı belgeler dönüştürülemedi ve değişmeden kaldı. Hangileri olduğunu görmek için Terminal'de ojd migrate çalıştırın.";

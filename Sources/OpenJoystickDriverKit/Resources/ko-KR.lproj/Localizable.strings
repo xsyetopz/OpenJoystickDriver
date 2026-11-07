@@ -4445,22 +4445,22 @@
 /* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
 "error.E5009.message" = "이전 버전의 저장된 문서는 자동 변환 방법이 없어서 ojd migrate가 그대로 둡니다. 메시지에 파일과 필드가 표시됩니다. 파일을 직접 지원되는 apiVersion으로 수정하세요.";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
-"cli.migrate.abstract" = "이전 버전의 저장된 문서를 현재 버전으로 변환합니다.";
+"cli.migrate.group.abstract" = "이전 버전의 저장된 문서를 현재 버전으로 변환합니다.";
 /* Help text of 'ojd migrate'. Settings.json, AccessGrants.json, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.discussion" = "이전 apiVersion을 가진 Settings.json, AccessGrants.json, 프로필, 사용자 컨트롤러 레코드와 패치, 가상 장치 파일을 변환합니다. 각 원본은 지원 폴더의 Migrated 폴더에 보관됩니다. 설치된 모드는 변환되지 않습니다.";
+"cli.migrate.group.discussion" = "이전 apiVersion을 가진 Settings.json, AccessGrants.json, 프로필, 사용자 컨트롤러 레코드와 패치, 가상 장치 파일을 변환합니다. 각 원본은 지원 폴더의 Migrated 폴더에 보관됩니다. 설치된 모드는 변환되지 않습니다.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
-"cli.migrate.dryRun" = "변환될 문서를 나열하고 아무것도 변경하지 않습니다.";
+"cli.migrate.group.dryRun" = "변환될 문서를 나열하고 아무것도 변경하지 않습니다.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
-"cli.migrate.none" = "마이그레이션이 필요한 문서가 없습니다.";
+"cli.migrate.group.none" = "마이그레이션이 필요한 문서가 없습니다.";
 /* Line printed by 'ojd migrate' for a converted document. %@ is the path of the document in the support folder. Migrated is a folder name and stays as written. */
-"cli.migrate.converted" = "%@을(를) 변환했습니다. 원본은 Migrated 폴더에 있습니다.";
+"cli.migrate.group.converted" = "%@을(를) 변환했습니다. 원본은 Migrated 폴더에 있습니다.";
 /* Line printed by 'ojd migrate --dry-run' for a document it would convert. %@ is the path of the document in the support folder. */
-"cli.migrate.wouldConvert" = "%@을(를) 변환합니다.";
+"cli.migrate.group.wouldConvert" = "%@을(를) 변환합니다.";
 /* Line printed by 'ojd migrate' for a document it cannot convert. %1$@ is the path of the document, %2$@ is the reason. */
-"cli.migrate.failed" = "%1$@은(는) 변경되지 않습니다: %2$@";
+"cli.migrate.group.failed" = "%1$@은(는) 변경되지 않습니다: %2$@";
 /* Error text of 'ojd migrate' when at least one document could not be converted. */
-"cli.migrate.failedSummary" = "일부 문서를 변환하지 못해 그대로 남아 있습니다. 출력에 각 문서가 표시됩니다.";
+"cli.migrate.group.failedSummary" = "일부 문서를 변환하지 못해 그대로 남아 있습니다. 출력에 각 문서가 표시됩니다.";
 /* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
 "ui.migrate.action" = "마이그레이션";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
-"ui.migrate.failed" = "일부 문서를 변환하지 못해 그대로 남아 있습니다. 어떤 문서인지는 터미널에서 ojd migrate를 실행해 확인하세요.";
+"platform.macos.ui.migrate.failed" = "일부 문서를 변환하지 못해 그대로 남아 있습니다. 어떤 문서인지는 터미널에서 ojd migrate를 실행해 확인하세요.";

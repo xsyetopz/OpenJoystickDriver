@@ -224,7 +224,7 @@ final class AccessViewModel: ObservableObject {
     await refresh()
     if failed {
       failure = AccessFailure(
-        message: OJDLocalized.string("ui.migrate.failed"),
+        message: OJDLocalized.string("platform.macos.ui.migrate.failed"),
         code: .documentNotMigrated
       )
     }

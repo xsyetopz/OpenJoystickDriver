@@ -4446,22 +4446,22 @@
 /* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
 "error.E5009.message" = "Um documento salvo de uma versão anterior não tem conversão automática, então o ojd migrate o deixa sem alterações. A mensagem informa o arquivo e o campo. Edite o arquivo manualmente para a apiVersion compatível.";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
-"cli.migrate.abstract" = "Converte os documentos salvos de uma versão anterior para a versão atual.";
+"cli.migrate.group.abstract" = "Converte os documentos salvos de uma versão anterior para a versão atual.";
 /* Help text of 'ojd migrate'. Settings.json, AccessGrants.json, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.discussion" = "Converte Settings.json, AccessGrants.json, perfis, seus registros e patches de controles e arquivos de dispositivos virtuais com uma apiVersion anterior. Cada original fica guardado na pasta Migrated da pasta de suporte. Os mods instalados não são convertidos.";
+"cli.migrate.group.discussion" = "Converte Settings.json, AccessGrants.json, perfis, seus registros e patches de controles e arquivos de dispositivos virtuais com uma apiVersion anterior. Cada original fica guardado na pasta Migrated da pasta de suporte. Os mods instalados não são convertidos.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
-"cli.migrate.dryRun" = "Lista os documentos que seriam convertidos e não altera nada.";
+"cli.migrate.group.dryRun" = "Lista os documentos que seriam convertidos e não altera nada.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
-"cli.migrate.none" = "Nenhum documento precisa de migração.";
+"cli.migrate.group.none" = "Nenhum documento precisa de migração.";
 /* Line printed by 'ojd migrate' for a converted document. %@ is the path of the document in the support folder. Migrated is a folder name and stays as written. */
-"cli.migrate.converted" = "%@ convertido. O original está na pasta Migrated.";
+"cli.migrate.group.converted" = "%@ convertido. O original está na pasta Migrated.";
 /* Line printed by 'ojd migrate --dry-run' for a document it would convert. %@ is the path of the document in the support folder. */
-"cli.migrate.wouldConvert" = "%@ seria convertido.";
+"cli.migrate.group.wouldConvert" = "%@ seria convertido.";
 /* Line printed by 'ojd migrate' for a document it cannot convert. %1$@ is the path of the document, %2$@ is the reason. */
-"cli.migrate.failed" = "%1$@ permanece sem alterações: %2$@";
+"cli.migrate.group.failed" = "%1$@ permanece sem alterações: %2$@";
 /* Error text of 'ojd migrate' when at least one document could not be converted. */
-"cli.migrate.failedSummary" = "Alguns documentos não puderam ser convertidos e permanecem sem alterações. A saída informa cada um deles.";
+"cli.migrate.group.failedSummary" = "Alguns documentos não puderam ser convertidos e permanecem sem alterações. A saída informa cada um deles.";
 /* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
 "ui.migrate.action" = "Migrar";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
-"ui.migrate.failed" = "Alguns documentos não puderam ser convertidos e permanecem sem alterações. Execute ojd migrate no Terminal para ver quais.";
+"platform.macos.ui.migrate.failed" = "Alguns documentos não puderam ser convertidos e permanecem sem alterações. Execute ojd migrate no Terminal para ver quais.";

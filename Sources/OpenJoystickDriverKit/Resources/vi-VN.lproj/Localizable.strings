@@ -4445,22 +4445,22 @@
 /* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
 "error.E5009.message" = "Tài liệu đã lưu của phiên bản cũ không có cách chuyển đổi tự động, nên ojd migrate để nguyên không đổi. Thông báo nêu tệp và trường. Hãy tự sửa tệp sang apiVersion được hỗ trợ.";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
-"cli.migrate.abstract" = "Chuyển đổi các tài liệu đã lưu của phiên bản cũ sang phiên bản hiện tại.";
+"cli.migrate.group.abstract" = "Chuyển đổi các tài liệu đã lưu của phiên bản cũ sang phiên bản hiện tại.";
 /* Help text of 'ojd migrate'. Settings.json, AccessGrants.json, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.discussion" = "Chuyển đổi Settings.json, AccessGrants.json, hồ sơ, bản ghi và bản vá tay cầm của bạn, và tệp thiết bị ảo có apiVersion cũ. Mỗi bản gốc được giữ trong thư mục Migrated của thư mục hỗ trợ. Mod đã cài đặt không được chuyển đổi.";
+"cli.migrate.group.discussion" = "Chuyển đổi Settings.json, AccessGrants.json, hồ sơ, bản ghi và bản vá tay cầm của bạn, và tệp thiết bị ảo có apiVersion cũ. Mỗi bản gốc được giữ trong thư mục Migrated của thư mục hỗ trợ. Mod đã cài đặt không được chuyển đổi.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
-"cli.migrate.dryRun" = "Liệt kê các tài liệu sẽ được chuyển đổi và không thay đổi gì.";
+"cli.migrate.group.dryRun" = "Liệt kê các tài liệu sẽ được chuyển đổi và không thay đổi gì.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
-"cli.migrate.none" = "Không có tài liệu nào cần di chuyển.";
+"cli.migrate.group.none" = "Không có tài liệu nào cần di chuyển.";
 /* Line printed by 'ojd migrate' for a converted document. %@ is the path of the document in the support folder. Migrated is a folder name and stays as written. */
-"cli.migrate.converted" = "Đã chuyển đổi %@. Bản gốc nằm trong thư mục Migrated.";
+"cli.migrate.group.converted" = "Đã chuyển đổi %@. Bản gốc nằm trong thư mục Migrated.";
 /* Line printed by 'ojd migrate --dry-run' for a document it would convert. %@ is the path of the document in the support folder. */
-"cli.migrate.wouldConvert" = "Sẽ chuyển đổi %@.";
+"cli.migrate.group.wouldConvert" = "Sẽ chuyển đổi %@.";
 /* Line printed by 'ojd migrate' for a document it cannot convert. %1$@ is the path of the document, %2$@ is the reason. */
-"cli.migrate.failed" = "%1$@ giữ nguyên: %2$@";
+"cli.migrate.group.failed" = "%1$@ giữ nguyên: %2$@";
 /* Error text of 'ojd migrate' when at least one document could not be converted. */
-"cli.migrate.failedSummary" = "Một số tài liệu không thể chuyển đổi và giữ nguyên. Kết quả đầu ra nêu từng tài liệu.";
+"cli.migrate.group.failedSummary" = "Một số tài liệu không thể chuyển đổi và giữ nguyên. Kết quả đầu ra nêu từng tài liệu.";
 /* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
 "ui.migrate.action" = "Di chuyển";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
-"ui.migrate.failed" = "Một số tài liệu không thể chuyển đổi và giữ nguyên. Chạy ojd migrate trong Terminal để xem là tài liệu nào.";
+"platform.macos.ui.migrate.failed" = "Một số tài liệu không thể chuyển đổi và giữ nguyên. Chạy ojd migrate trong Terminal để xem là tài liệu nào.";

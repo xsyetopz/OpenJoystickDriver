@@ -4445,22 +4445,22 @@
 /* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
 "error.E5009.message" = "舊版本的已儲存文件沒有自動轉換方式，因此 ojd migrate 會讓它維持不變。訊息會指出檔案和欄位。請手動將檔案改為支援的 apiVersion。";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
-"cli.migrate.abstract" = "將舊版本的已儲存文件轉換為目前版本。";
+"cli.migrate.group.abstract" = "將舊版本的已儲存文件轉換為目前版本。";
 /* Help text of 'ojd migrate'. Settings.json, AccessGrants.json, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.discussion" = "轉換帶有舊 apiVersion 的 Settings.json、AccessGrants.json、設定檔、你的控制器記錄與修補檔，以及虛擬裝置檔案。每個原始檔案都保留在支援資料夾的 Migrated 資料夾中。已安裝的模組不會被轉換。";
+"cli.migrate.group.discussion" = "轉換帶有舊 apiVersion 的 Settings.json、AccessGrants.json、設定檔、你的控制器記錄與修補檔，以及虛擬裝置檔案。每個原始檔案都保留在支援資料夾的 Migrated 資料夾中。已安裝的模組不會被轉換。";
 /* Help text of the --dry-run option of 'ojd migrate'. */
-"cli.migrate.dryRun" = "列出將被轉換的文件，不做任何變更。";
+"cli.migrate.group.dryRun" = "列出將被轉換的文件，不做任何變更。";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
-"cli.migrate.none" = "沒有文件需要遷移。";
+"cli.migrate.group.none" = "沒有文件需要遷移。";
 /* Line printed by 'ojd migrate' for a converted document. %@ is the path of the document in the support folder. Migrated is a folder name and stays as written. */
-"cli.migrate.converted" = "已轉換 %@。原始檔案位於 Migrated 資料夾。";
+"cli.migrate.group.converted" = "已轉換 %@。原始檔案位於 Migrated 資料夾。";
 /* Line printed by 'ojd migrate --dry-run' for a document it would convert. %@ is the path of the document in the support folder. */
-"cli.migrate.wouldConvert" = "將轉換 %@。";
+"cli.migrate.group.wouldConvert" = "將轉換 %@。";
 /* Line printed by 'ojd migrate' for a document it cannot convert. %1$@ is the path of the document, %2$@ is the reason. */
-"cli.migrate.failed" = "%1$@ 維持不變：%2$@";
+"cli.migrate.group.failed" = "%1$@ 維持不變：%2$@";
 /* Error text of 'ojd migrate' when at least one document could not be converted. */
-"cli.migrate.failedSummary" = "部分文件無法轉換，維持不變。輸出會指出每一個。";
+"cli.migrate.group.failedSummary" = "部分文件無法轉換，維持不變。輸出會指出每一個。";
 /* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
 "ui.migrate.action" = "遷移";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
-"ui.migrate.failed" = "部分文件無法轉換，維持不變。請在「終端機」中執行 ojd migrate 查看是哪些。";
+"platform.macos.ui.migrate.failed" = "部分文件無法轉換，維持不變。請在「終端機」中執行 ojd migrate 查看是哪些。";

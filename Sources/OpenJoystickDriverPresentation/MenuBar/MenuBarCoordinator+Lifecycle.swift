@@ -108,7 +108,9 @@
       case .migrate:
         let failed = DocumentMigrator().run(dryRun: false).contains { $0.status == .failed }
         preferences.reloadSettings()
-        offerSettingsRecovery(note: failed ? OJDLocalized.string("ui.migrate.failed") : nil)
+        offerSettingsRecovery(
+          note: failed ? OJDLocalized.string("platform.macos.ui.migrate.failed") : nil
+        )
       case .showInFinder: preferences.showSettingsFileInFinder()
       case .resetSettings:
         preferences.resetSettings()
