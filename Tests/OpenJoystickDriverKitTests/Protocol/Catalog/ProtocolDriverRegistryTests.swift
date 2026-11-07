@@ -290,8 +290,7 @@ struct ProtocolDriverRegistryTests {
         built.insert(binding.id.rawValue)
       }
     }
-    // `NintendoWii` has a description and no driver yet; task 4.2 removes this filter.
-    let registered = PhysicalProtocolID.allCases.filter { $0 != .nintendoWii }.flatMap { id in
+    let registered = PhysicalProtocolID.allCases.flatMap { id in
       id.variants.isEmpty
         ? [ProtocolBindingID(id, variant: nil).rawValue]
         : id.variants.map { ProtocolBindingID(id, variant: $0).rawValue }
@@ -421,8 +420,7 @@ struct ProtocolDriverRegistryTests {
     case .vendorPS3ThirdParty: driver is PS3ThirdPartyDriver
     case .vendorGameSir: driver is GameSirDriver
     case .vendorNVIDIAShield: driver is NVIDIAShieldDriver
-    // The family has a description and no driver yet; task 4.2 adds `WiiDriver`.
-    case .nintendoWii: false
+    case .nintendoWii: driver is WiiDriver
     }
   }
 

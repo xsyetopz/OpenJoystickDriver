@@ -174,6 +174,7 @@ let package = Package(
       path: "Tests/OpenJoystickDriverKitTests",
       resources: [
         .copy("Protocol/Catalog/SchemaRejections"), .copy("Protocol/Catalog/SDLMappingFixtures"),
+        .copy("Protocol/Drivers/Nintendo/Fixtures/Wii"),
       ],
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
       linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]

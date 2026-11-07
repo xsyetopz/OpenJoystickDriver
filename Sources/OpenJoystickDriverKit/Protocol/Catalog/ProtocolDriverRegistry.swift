@@ -324,9 +324,7 @@ public final class ProtocolDriverRegistry: Sendable {
           hatFromPressureOnly: record.parameters.hatSource == .dpadPressure
         )
       )
-    case .nintendoWii:
-      // The family has a description and no driver yet, and no record selects it.
-      return .failure(.noProtocolMatch)
+    case .nintendoWii: return .success(WiiDriver())
     case .vendorNVIDIAShield:
       return .success(
         NVIDIAShieldDriver(
