@@ -2753,7 +2753,7 @@
 "cli.binding.group.actionsInvalid" = "--actions-json не является допустимым списком действий: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
 "cli.binding.group.actionsTooLarge" = "--actions-json слишком велик.";
-/* Error of 'ojd binding set' when the value of --double-tap or --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
+/* Error of 'ojd binding set' when the value of --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
 "cli.binding.group.alternateFormat" = "%@ принимает MS:TARGET, например 500:key:key-b.";
 /* Error of 'ojd binding set' when an axis option is used with a source that is not an axis. The option names stay as written. */
 "cli.binding.group.axisOptionsSource" = "--deadzone, --gain, --invert, --response-curve и --digital-threshold требуют, чтобы источником была ось.";
@@ -2783,6 +2783,8 @@
 "cli.binding.list.abstract" = "Показывает привязки профиля.";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
 "cli.binding.list.empty" = "В профиле «%@» нет привязок. Добавьте привязку командой «ojd binding set».";
+/* Error of 'ojd binding set' when a value of --multi-tap does not have the form COUNT:MS:TARGET. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.multiTapFormat" = "--multi-tap принимает COUNT:MS:TARGET, например 2:300:key:key-c.";
 /* Help text of the --actions-json option of 'ojd binding set'. 'ojd profile export' stays as written. */
 "cli.binding.group.optionActionsJson" = "Дополнительные действия в виде массива JSON в том виде, в каком их записывает «ojd profile export».";
 /* Help text of the --behavior option of 'ojd binding set'. The behavior hold is a value the user types. */
@@ -2791,20 +2793,24 @@
 "cli.binding.group.optionDeadzone" = "Для источников-осей: часть хода, которая игнорируется, от 0 до 0.95. По умолчанию: 0.1.";
 /* Help text of the --digital-threshold option of 'ojd binding set'. It sets the axis travel that counts as a press. */
 "cli.binding.group.optionDigitalThreshold" = "Для источников-осей: ход, который считается нажатием для целей-кнопок. По умолчанию: 0.5.";
-/* Help text of the --double-tap option of 'ojd binding set'. The example 300:key:key-c stays as written. */
-"cli.binding.group.optionDoubleTap" = "Отправить ещё одну цель, если источник нажат дважды за это время, например 300:key:key-c.";
 /* Help text of the --gain option of 'ojd binding set'. Gain scales the axis output. */
 "cli.binding.group.optionGain" = "Для источников-осей: масштаб вывода, от 0.1 до 10. По умолчанию: 1.";
 /* Help text of the --invert flag of 'ojd binding set'. */
 "cli.binding.group.optionInvert" = "Для источников-осей: инвертировать направление.";
 /* Help text of the --long-hold option of 'ojd binding set'. The example 500:key:key-b stays as written. */
 "cli.binding.group.optionLongHold" = "Отправить ещё одну цель, если источник удерживается столько времени, например 500:key:key-b.";
+/* Help text of the --multi-tap option of 'ojd binding set'. COUNT is the number of taps, MS the milliseconds allowed after the last release. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.optionMultiTap" = "Отправить ещё одну цель, если по источнику нажали COUNT раз, каждое нажатие в пределах MS после последнего отпускания, например 2:300:key:key-c. Повторите параметр для других количеств.";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "Как долго импульс удерживает цель, от 1 до 5000 мс. По умолчанию: 100.";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "Для источников-осей: как вывод растёт с ходом. По умолчанию: linear.";
+/* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
+"cli.binding.group.optionTurboDelay" = "Ждать столько перед первым повтором, от 0 до 2500 мс. Требует --turbo-rate и --turbo-duty.";
 /* Help text of the --turbo-duty option of 'ojd binding set'. The duty is the share of each turbo cycle in which the target is held. */
 "cli.binding.group.optionTurboDuty" = "Доля каждого цикла турбо, в течение которой цель удерживается: больше 0 и меньше 1.";
+/* Help text of the --turbo-max option of 'ojd binding set'. The option names stay as written. */
+"cli.binding.group.optionTurboMax" = "Остановиться после стольких повторов, от 1 до 500. Требует --turbo-rate и --turbo-duty.";
 /* Help text of the --turbo-rate option of 'ojd binding set'. --turbo-duty stays as written. */
 "cli.binding.group.optionTurboRate" = "Повторять цель столько раз в секунду, пока источник удерживается. Требует --turbo-duty.";
 /* One-line summary of 'ojd binding set' in the command list and at the top of its help. */

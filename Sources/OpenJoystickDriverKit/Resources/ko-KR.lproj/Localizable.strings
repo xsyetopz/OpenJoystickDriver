@@ -2753,7 +2753,7 @@
 "cli.binding.group.actionsInvalid" = "--actions-json이 올바른 동작 목록이 아닙니다: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
 "cli.binding.group.actionsTooLarge" = "--actions-json이 너무 큽니다.";
-/* Error of 'ojd binding set' when the value of --double-tap or --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
+/* Error of 'ojd binding set' when the value of --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
 "cli.binding.group.alternateFormat" = "%@에는 MS:TARGET 형식이 필요합니다. 예: 500:key:key-b";
 /* Error of 'ojd binding set' when an axis option is used with a source that is not an axis. The option names stay as written. */
 "cli.binding.group.axisOptionsSource" = "--deadzone, --gain, --invert, --response-curve, --digital-threshold에는 축 소스가 필요합니다.";
@@ -2783,6 +2783,8 @@
 "cli.binding.list.abstract" = "프로파일의 할당을 나열합니다.";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
 "cli.binding.list.empty" = "‘%@’에는 할당이 없습니다. ‘ojd binding set’으로 추가하세요.";
+/* Error of 'ojd binding set' when a value of --multi-tap does not have the form COUNT:MS:TARGET. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.multiTapFormat" = "--multi-tap에는 COUNT:MS:TARGET 형식이 필요합니다. 예: 2:300:key:key-c";
 /* Help text of the --actions-json option of 'ojd binding set'. 'ojd profile export' stays as written. */
 "cli.binding.group.optionActionsJson" = "추가 동작을 ‘ojd profile export’가 쓰는 형식의 JSON 배열로 지정합니다.";
 /* Help text of the --behavior option of 'ojd binding set'. The behavior hold is a value the user types. */
@@ -2791,20 +2793,24 @@
 "cli.binding.group.optionDeadzone" = "축 소스: 무시할 이동 범위이며 0~0.95입니다. 기본값: 0.1.";
 /* Help text of the --digital-threshold option of 'ojd binding set'. It sets the axis travel that counts as a press. */
 "cli.binding.group.optionDigitalThreshold" = "축 소스: 버튼 타깃에서 누름으로 간주하는 이동량입니다. 기본값: 0.5.";
-/* Help text of the --double-tap option of 'ojd binding set'. The example 300:key:key-c stays as written. */
-"cli.binding.group.optionDoubleTap" = "이 시간 안에 소스를 두 번 누르면 다른 타깃을 보냅니다. 예: 300:key:key-c";
 /* Help text of the --gain option of 'ojd binding set'. Gain scales the axis output. */
 "cli.binding.group.optionGain" = "축 소스: 출력 배율이며 0.1~10입니다. 기본값: 1.";
 /* Help text of the --invert flag of 'ojd binding set'. */
 "cli.binding.group.optionInvert" = "축 소스: 방향을 반전합니다.";
 /* Help text of the --long-hold option of 'ojd binding set'. The example 500:key:key-b stays as written. */
 "cli.binding.group.optionLongHold" = "소스를 이 시간 동안 누르고 있으면 다른 타깃을 보냅니다. 예: 500:key:key-b";
+/* Help text of the --multi-tap option of 'ojd binding set'. COUNT is the number of taps, MS the milliseconds allowed after the last release. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.optionMultiTap" = "소스를 COUNT번 탭하면 다른 타깃을 보냅니다. 각 누름은 마지막으로 뗀 뒤 MS 안에 있어야 합니다. 예: 2:300:key:key-c. 횟수마다 옵션을 반복할 수 있습니다.";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "펄스가 타깃을 유지하는 시간이며 1~5000ms입니다. 기본값: 100.";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "축 소스: 이동량에 따라 출력이 커지는 방식입니다. 기본값: linear.";
+/* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
+"cli.binding.group.optionTurboDelay" = "첫 반복 전에 이만큼 기다립니다. 0~2500 ms. --turbo-rate와 --turbo-duty가 필요합니다.";
 /* Help text of the --turbo-duty option of 'ojd binding set'. The duty is the share of each turbo cycle in which the target is held. */
 "cli.binding.group.optionTurboDuty" = "각 터보 주기 중 타깃을 유지하는 비율이며 0보다 크고 1보다 작아야 합니다.";
+/* Help text of the --turbo-max option of 'ojd binding set'. The option names stay as written. */
+"cli.binding.group.optionTurboMax" = "이 횟수만큼 반복한 뒤 멈춥니다. 1~500. --turbo-rate와 --turbo-duty가 필요합니다.";
 /* Help text of the --turbo-rate option of 'ojd binding set'. --turbo-duty stays as written. */
 "cli.binding.group.optionTurboRate" = "누르고 있는 동안 타깃을 초당 이 횟수만큼 반복합니다. --turbo-duty가 필요합니다.";
 /* One-line summary of 'ojd binding set' in the command list and at the top of its help. */

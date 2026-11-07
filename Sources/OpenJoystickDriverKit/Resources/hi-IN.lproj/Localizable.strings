@@ -2753,7 +2753,7 @@
 "cli.binding.group.actionsInvalid" = "--actions-json मान्य कार्रवाई सूची नहीं है: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
 "cli.binding.group.actionsTooLarge" = "--actions-json बहुत बड़ा है।";
-/* Error of 'ojd binding set' when the value of --double-tap or --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
+/* Error of 'ojd binding set' when the value of --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
 "cli.binding.group.alternateFormat" = "%@ को MS:TARGET चाहिए, जैसे 500:key:key-b।";
 /* Error of 'ojd binding set' when an axis option is used with a source that is not an axis. The option names stay as written. */
 "cli.binding.group.axisOptionsSource" = "--deadzone, --gain, --invert, --response-curve और --digital-threshold के लिए एक्सिस स्रोत चाहिए।";
@@ -2783,6 +2783,8 @@
 "cli.binding.list.abstract" = "प्रोफ़ाइल के असाइनमेंट की सूची दिखाएँ।";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
 "cli.binding.list.empty" = "“%@” में कोई असाइनमेंट नहीं है। “ojd binding set” से जोड़ें।";
+/* Error of 'ojd binding set' when a value of --multi-tap does not have the form COUNT:MS:TARGET. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.multiTapFormat" = "--multi-tap को COUNT:MS:TARGET चाहिए, जैसे 2:300:key:key-c।";
 /* Help text of the --actions-json option of 'ojd binding set'. 'ojd profile export' stays as written. */
 "cli.binding.group.optionActionsJson" = "अतिरिक्त कार्रवाइयाँ JSON ऐरे के रूप में, उसी रूप में जिसमें “ojd profile export” उन्हें लिखता है।";
 /* Help text of the --behavior option of 'ojd binding set'. The behavior hold is a value the user types. */
@@ -2791,20 +2793,24 @@
 "cli.binding.group.optionDeadzone" = "एक्सिस स्रोत: गति का वह हिस्सा जिसे अनदेखा किया जाता है, 0 से 0.95। डिफ़ॉल्ट: 0.1।";
 /* Help text of the --digital-threshold option of 'ojd binding set'. It sets the axis travel that counts as a press. */
 "cli.binding.group.optionDigitalThreshold" = "एक्सिस स्रोत: गति की वह मात्रा जो बटन लक्ष्यों के लिए दबाना मानी जाती है। डिफ़ॉल्ट: 0.5।";
-/* Help text of the --double-tap option of 'ojd binding set'. The example 300:key:key-c stays as written. */
-"cli.binding.group.optionDoubleTap" = "स्रोत को इतने समय में दो बार दबाने पर एक और लक्ष्य भेजें, जैसे 300:key:key-c।";
 /* Help text of the --gain option of 'ojd binding set'. Gain scales the axis output. */
 "cli.binding.group.optionGain" = "एक्सिस स्रोत: आउटपुट का स्केल, 0.1 से 10। डिफ़ॉल्ट: 1।";
 /* Help text of the --invert flag of 'ojd binding set'. */
 "cli.binding.group.optionInvert" = "एक्सिस स्रोत: दिशा उलटें।";
 /* Help text of the --long-hold option of 'ojd binding set'. The example 500:key:key-b stays as written. */
 "cli.binding.group.optionLongHold" = "स्रोत को इतनी देर दबाए रखने पर एक और लक्ष्य भेजें, जैसे 500:key:key-b।";
+/* Help text of the --multi-tap option of 'ojd binding set'. COUNT is the number of taps, MS the milliseconds allowed after the last release. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.optionMultiTap" = "स्रोत को COUNT बार दबाने पर एक और लक्ष्य भेजें, हर दबाव पिछली रिलीज़ के MS के भीतर, जैसे 2:300:key:key-c। और संख्याओं के लिए विकल्प दोहराएँ।";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "पल्स लक्ष्य को कितनी देर थामे रखता है, 1 से 5000 ms। डिफ़ॉल्ट: 100।";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "एक्सिस स्रोत: गति के साथ आउटपुट कैसे बढ़ता है। डिफ़ॉल्ट: linear।";
+/* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
+"cli.binding.group.optionTurboDelay" = "पहली पुनरावृत्ति से पहले इतना समय रुकें, 0 से 2500 ms। --turbo-rate और --turbo-duty चाहिए।";
 /* Help text of the --turbo-duty option of 'ojd binding set'. The duty is the share of each turbo cycle in which the target is held. */
 "cli.binding.group.optionTurboDuty" = "हर टर्बो चक्र का वह हिस्सा जिसमें लक्ष्य थामा जाता है, 0 से अधिक और 1 से कम।";
+/* Help text of the --turbo-max option of 'ojd binding set'. The option names stay as written. */
+"cli.binding.group.optionTurboMax" = "इतनी पुनरावृत्तियों के बाद रुकें, 1 से 500। --turbo-rate और --turbo-duty चाहिए।";
 /* Help text of the --turbo-rate option of 'ojd binding set'. --turbo-duty stays as written. */
 "cli.binding.group.optionTurboRate" = "दबाए रखने के दौरान लक्ष्य को प्रति सेकंड इतनी बार दोहराएँ। --turbo-duty चाहिए।";
 /* One-line summary of 'ojd binding set' in the command list and at the top of its help. */

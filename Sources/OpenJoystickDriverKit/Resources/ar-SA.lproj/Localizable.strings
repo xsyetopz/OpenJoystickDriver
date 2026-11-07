@@ -2753,7 +2753,7 @@
 "cli.binding.group.actionsInvalid" = "--actions-json ليس قائمة إجراءات صالحة: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
 "cli.binding.group.actionsTooLarge" = "--actions-json كبير جدًا.";
-/* Error of 'ojd binding set' when the value of --double-tap or --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
+/* Error of 'ojd binding set' when the value of --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
 "cli.binding.group.alternateFormat" = "%@ يقبل MS:TARGET، مثل 500:key:key-b.";
 /* Error of 'ojd binding set' when an axis option is used with a source that is not an axis. The option names stay as written. */
 "cli.binding.group.axisOptionsSource" = "تحتاج --deadzone و--gain و--invert و--response-curve و--digital-threshold إلى مصدر محور.";
@@ -2783,6 +2783,8 @@
 "cli.binding.list.abstract" = "اعرض تعيينات ملف تعريف.";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
 "cli.binding.list.empty" = "لا توجد تعيينات في «%@». أضف تعيينًا باستخدام «ojd binding set».";
+/* Error of 'ojd binding set' when a value of --multi-tap does not have the form COUNT:MS:TARGET. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.multiTapFormat" = "--multi-tap يقبل COUNT:MS:TARGET، مثل 2:300:key:key-c.";
 /* Help text of the --actions-json option of 'ojd binding set'. 'ojd profile export' stays as written. */
 "cli.binding.group.optionActionsJson" = "إجراءات إضافية كمصفوفة JSON، بالصيغة التي يكتبها «ojd profile export».";
 /* Help text of the --behavior option of 'ojd binding set'. The behavior hold is a value the user types. */
@@ -2791,20 +2793,24 @@
 "cli.binding.group.optionDeadzone" = "مصادر المحاور: الجزء المُهمَل من مدى الحركة، من 0 إلى 0.95. الافتراضي: 0.1.";
 /* Help text of the --digital-threshold option of 'ojd binding set'. It sets the axis travel that counts as a press. */
 "cli.binding.group.optionDigitalThreshold" = "مصادر المحاور: مدى الحركة الذي يُعدّ ضغطة لأهداف الأزرار. الافتراضي: 0.5.";
-/* Help text of the --double-tap option of 'ojd binding set'. The example 300:key:key-c stays as written. */
-"cli.binding.group.optionDoubleTap" = "أرسل هدفًا آخر عند الضغط على المصدر مرتين خلال هذه المدة، مثل 300:key:key-c.";
 /* Help text of the --gain option of 'ojd binding set'. Gain scales the axis output. */
 "cli.binding.group.optionGain" = "مصادر المحاور: مقياس الإخراج، من 0.1 إلى 10. الافتراضي: 1.";
 /* Help text of the --invert flag of 'ojd binding set'. */
 "cli.binding.group.optionInvert" = "مصادر المحاور: اعكس الاتجاه.";
 /* Help text of the --long-hold option of 'ojd binding set'. The example 500:key:key-b stays as written. */
 "cli.binding.group.optionLongHold" = "أرسل هدفًا آخر عند الإبقاء على الضغط على المصدر هذه المدة، مثل 500:key:key-b.";
+/* Help text of the --multi-tap option of 'ojd binding set'. COUNT is the number of taps, MS the milliseconds allowed after the last release. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.optionMultiTap" = "أرسل هدفًا آخر عند النقر على المصدر COUNT مرات، على أن يقع كل ضغط خلال MS من آخر تحرير، مثل 2:300:key:key-c. كرّر الخيار لأعداد أخرى.";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "المدة التي تُبقي فيها النبضة الهدف فعّالًا، من 1 إلى 5000 مللي ثانية. الافتراضي: 100.";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "مصادر المحاور: كيف ينمو الإخراج مع مدى الحركة. الافتراضي: linear.";
+/* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
+"cli.binding.group.optionTurboDelay" = "انتظر هذه المدة قبل التكرار الأول، من 0 إلى 2500 ms. يحتاج --turbo-rate و--turbo-duty.";
 /* Help text of the --turbo-duty option of 'ojd binding set'. The duty is the share of each turbo cycle in which the target is held. */
 "cli.binding.group.optionTurboDuty" = "نسبة كل دورة توربو التي يبقى فيها الهدف مضغوطًا، أكبر من 0 وأقل من 1.";
+/* Help text of the --turbo-max option of 'ojd binding set'. The option names stay as written. */
+"cli.binding.group.optionTurboMax" = "توقف بعد هذا العدد من التكرارات، من 1 إلى 500. يحتاج --turbo-rate و--turbo-duty.";
 /* Help text of the --turbo-rate option of 'ojd binding set'. --turbo-duty stays as written. */
 "cli.binding.group.optionTurboRate" = "كرّر الهدف هذا العدد من المرات في الثانية أثناء الضغط المستمر. يحتاج --turbo-duty.";
 /* One-line summary of 'ojd binding set' in the command list and at the top of its help. */

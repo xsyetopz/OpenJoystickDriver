@@ -2753,7 +2753,7 @@
 "cli.binding.group.actionsInvalid" = "--actions-json ไม่ใช่รายการการทำงานที่ถูกต้อง: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
 "cli.binding.group.actionsTooLarge" = "--actions-json ใหญ่เกินไป";
-/* Error of 'ojd binding set' when the value of --double-tap or --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
+/* Error of 'ojd binding set' when the value of --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
 "cli.binding.group.alternateFormat" = "%@ รับ MS:TARGET เช่น 500:key:key-b";
 /* Error of 'ojd binding set' when an axis option is used with a source that is not an axis. The option names stay as written. */
 "cli.binding.group.axisOptionsSource" = "--deadzone, --gain, --invert, --response-curve และ --digital-threshold ต้องใช้ต้นทางที่เป็นแกน";
@@ -2783,6 +2783,8 @@
 "cli.binding.list.abstract" = "แสดงรายการการกำหนดของโปรไฟล์";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
 "cli.binding.list.empty" = "“%@” ไม่มีการกำหนด เพิ่มด้วย “ojd binding set”";
+/* Error of 'ojd binding set' when a value of --multi-tap does not have the form COUNT:MS:TARGET. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.multiTapFormat" = "--multi-tap รับ COUNT:MS:TARGET เช่น 2:300:key:key-c";
 /* Help text of the --actions-json option of 'ojd binding set'. 'ojd profile export' stays as written. */
 "cli.binding.group.optionActionsJson" = "การทำงานเพิ่มเติมเป็นอาร์เรย์ JSON ในรูปแบบที่ “ojd profile export” เขียน";
 /* Help text of the --behavior option of 'ojd binding set'. The behavior hold is a value the user types. */
@@ -2791,20 +2793,24 @@
 "cli.binding.group.optionDeadzone" = "ต้นทางที่เป็นแกน: ส่วนของระยะเคลื่อนที่ที่ถูกละเว้น 0 ถึง 0.95 ค่าเริ่มต้น: 0.1";
 /* Help text of the --digital-threshold option of 'ojd binding set'. It sets the axis travel that counts as a press. */
 "cli.binding.group.optionDigitalThreshold" = "ต้นทางที่เป็นแกน: ระยะเคลื่อนที่ที่นับเป็นการกดสำหรับปลายทางที่เป็นปุ่ม ค่าเริ่มต้น: 0.5";
-/* Help text of the --double-tap option of 'ojd binding set'. The example 300:key:key-c stays as written. */
-"cli.binding.group.optionDoubleTap" = "ส่งปลายทางอีกรายการเมื่อกดต้นทางสองครั้งภายในเวลานี้ เช่น 300:key:key-c";
 /* Help text of the --gain option of 'ojd binding set'. Gain scales the axis output. */
 "cli.binding.group.optionGain" = "ต้นทางที่เป็นแกน: สเกลของเอาต์พุต 0.1 ถึง 10 ค่าเริ่มต้น: 1";
 /* Help text of the --invert flag of 'ojd binding set'. */
 "cli.binding.group.optionInvert" = "ต้นทางที่เป็นแกน: กลับทิศทาง";
 /* Help text of the --long-hold option of 'ojd binding set'. The example 500:key:key-b stays as written. */
 "cli.binding.group.optionLongHold" = "ส่งปลายทางอีกรายการเมื่อกดต้นทางค้างไว้นานเท่านี้ เช่น 500:key:key-b";
+/* Help text of the --multi-tap option of 'ojd binding set'. COUNT is the number of taps, MS the milliseconds allowed after the last release. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.optionMultiTap" = "ส่งปลายทางอีกรายการเมื่อแตะต้นทาง COUNT ครั้ง โดยแต่ละครั้งที่กดต้องอยู่ภายใน MS หลังปล่อยครั้งก่อน เช่น 2:300:key:key-c ใช้ตัวเลือกซ้ำได้สำหรับจำนวนครั้งอื่น";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "ระยะเวลาที่พัลส์ค้างปลายทางไว้ 1 ถึง 5000 มิลลิวินาที ค่าเริ่มต้น: 100";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "ต้นทางที่เป็นแกน: เอาต์พุตเพิ่มขึ้นตามระยะเคลื่อนที่อย่างไร ค่าเริ่มต้น: linear";
+/* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
+"cli.binding.group.optionTurboDelay" = "รอเท่านี้ก่อนทำซ้ำครั้งแรก 0 ถึง 2500 ms ต้องใช้ --turbo-rate และ --turbo-duty";
 /* Help text of the --turbo-duty option of 'ojd binding set'. The duty is the share of each turbo cycle in which the target is held. */
 "cli.binding.group.optionTurboDuty" = "สัดส่วนของแต่ละรอบเทอร์โบที่ปลายทางถูกค้างไว้ มากกว่า 0 และน้อยกว่า 1";
+/* Help text of the --turbo-max option of 'ojd binding set'. The option names stay as written. */
+"cli.binding.group.optionTurboMax" = "หยุดหลังทำซ้ำครบเท่านี้ครั้ง 1 ถึง 500 ต้องใช้ --turbo-rate และ --turbo-duty";
 /* Help text of the --turbo-rate option of 'ojd binding set'. --turbo-duty stays as written. */
 "cli.binding.group.optionTurboRate" = "ทำซ้ำปลายทางตามจำนวนครั้งต่อวินาทีนี้ขณะกดค้าง ต้องใช้ --turbo-duty";
 /* One-line summary of 'ojd binding set' in the command list and at the top of its help. */

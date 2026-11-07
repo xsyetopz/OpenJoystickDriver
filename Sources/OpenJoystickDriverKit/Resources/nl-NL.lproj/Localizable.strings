@@ -2753,7 +2753,7 @@
 "cli.binding.group.actionsInvalid" = "--actions-json is geen geldige actielijst: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
 "cli.binding.group.actionsTooLarge" = "--actions-json is te groot.";
-/* Error of 'ojd binding set' when the value of --double-tap or --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
+/* Error of 'ojd binding set' when the value of --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
 "cli.binding.group.alternateFormat" = "%@ verwacht MS:TARGET, zoals 500:key:key-b.";
 /* Error of 'ojd binding set' when an axis option is used with a source that is not an axis. The option names stay as written. */
 "cli.binding.group.axisOptionsSource" = "--deadzone, --gain, --invert, --response-curve en --digital-threshold vereisen een asbron.";
@@ -2783,6 +2783,8 @@
 "cli.binding.list.abstract" = "Toon de koppelingen van een profiel.";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
 "cli.binding.list.empty" = "‘%@’ heeft geen koppelingen. Voeg er een toe met ‘ojd binding set’.";
+/* Error of 'ojd binding set' when a value of --multi-tap does not have the form COUNT:MS:TARGET. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.multiTapFormat" = "--multi-tap verwacht COUNT:MS:TARGET, zoals 2:300:key:key-c.";
 /* Help text of the --actions-json option of 'ojd binding set'. 'ojd profile export' stays as written. */
 "cli.binding.group.optionActionsJson" = "Extra acties als JSON-array, in de vorm die ‘ojd profile export’ schrijft.";
 /* Help text of the --behavior option of 'ojd binding set'. The behavior hold is a value the user types. */
@@ -2791,20 +2793,24 @@
 "cli.binding.group.optionDeadzone" = "Asbronnen: het deel van de slag dat wordt genegeerd, 0 tot 0.95. Standaard: 0.1.";
 /* Help text of the --digital-threshold option of 'ojd binding set'. It sets the axis travel that counts as a press. */
 "cli.binding.group.optionDigitalThreshold" = "Asbronnen: de slag die voor doelen met een knop als indrukken telt. Standaard: 0.5.";
-/* Help text of the --double-tap option of 'ojd binding set'. The example 300:key:key-c stays as written. */
-"cli.binding.group.optionDoubleTap" = "Stuur een ander doel wanneer de bron binnen deze tijd tweemaal wordt ingedrukt, zoals 300:key:key-c.";
 /* Help text of the --gain option of 'ojd binding set'. Gain scales the axis output. */
 "cli.binding.group.optionGain" = "Asbronnen: de uitvoerschaal, 0.1 tot 10. Standaard: 1.";
 /* Help text of the --invert flag of 'ojd binding set'. */
 "cli.binding.group.optionInvert" = "Asbronnen: keer de richting om.";
 /* Help text of the --long-hold option of 'ojd binding set'. The example 500:key:key-b stays as written. */
 "cli.binding.group.optionLongHold" = "Stuur een ander doel wanneer de bron zo lang wordt ingehouden, zoals 500:key:key-b.";
+/* Help text of the --multi-tap option of 'ojd binding set'. COUNT is the number of taps, MS the milliseconds allowed after the last release. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.optionMultiTap" = "Stuur een ander doel wanneer de bron COUNT keer wordt getikt, elke druk binnen MS na het laatste loslaten, zoals 2:300:key:key-c. Herhaal de optie voor andere aantallen.";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "Hoe lang een puls het doel vasthoudt, 1 tot 5000 ms. Standaard: 100.";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "Asbronnen: hoe de uitvoer toeneemt met de slag. Standaard: linear.";
+/* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
+"cli.binding.group.optionTurboDelay" = "Wacht zo lang voor de eerste herhaling, 0 tot 2500 ms. Vereist --turbo-rate en --turbo-duty.";
 /* Help text of the --turbo-duty option of 'ojd binding set'. The duty is the share of each turbo cycle in which the target is held. */
 "cli.binding.group.optionTurboDuty" = "Het deel van elke turbocyclus dat het doel wordt vastgehouden, boven 0 en onder 1.";
+/* Help text of the --turbo-max option of 'ojd binding set'. The option names stay as written. */
+"cli.binding.group.optionTurboMax" = "Stop na zoveel herhalingen, 1 tot 500. Vereist --turbo-rate en --turbo-duty.";
 /* Help text of the --turbo-rate option of 'ojd binding set'. --turbo-duty stays as written. */
 "cli.binding.group.optionTurboRate" = "Herhaal het doel zo vaak per seconde zolang het wordt ingehouden. Vereist --turbo-duty.";
 /* One-line summary of 'ojd binding set' in the command list and at the top of its help. */

@@ -2753,7 +2753,7 @@
 "cli.binding.group.actionsInvalid" = "--actions-json 不是有效的動作清單：%@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
 "cli.binding.group.actionsTooLarge" = "--actions-json 太大。";
-/* Error of 'ojd binding set' when the value of --double-tap or --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
+/* Error of 'ojd binding set' when the value of --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
 "cli.binding.group.alternateFormat" = "%@ 需要 MS:TARGET，例如 500:key:key-b。";
 /* Error of 'ojd binding set' when an axis option is used with a source that is not an axis. The option names stay as written. */
 "cli.binding.group.axisOptionsSource" = "--deadzone、--gain、--invert、--response-curve 和 --digital-threshold 需要軸來源。";
@@ -2783,6 +2783,8 @@
 "cli.binding.list.abstract" = "列出設定檔的對應。";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
 "cli.binding.list.empty" = "「%@」沒有對應。請用「ojd binding set」加入。";
+/* Error of 'ojd binding set' when a value of --multi-tap does not have the form COUNT:MS:TARGET. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.multiTapFormat" = "--multi-tap 需要 COUNT:MS:TARGET，例如 2:300:key:key-c。";
 /* Help text of the --actions-json option of 'ojd binding set'. 'ojd profile export' stays as written. */
 "cli.binding.group.optionActionsJson" = "額外動作，以 JSON 陣列表示，格式與「ojd profile export」寫出的相同。";
 /* Help text of the --behavior option of 'ojd binding set'. The behavior hold is a value the user types. */
@@ -2791,20 +2793,24 @@
 "cli.binding.group.optionDeadzone" = "軸來源：忽略的行程部分，0 到 0.95。預設：0.1。";
 /* Help text of the --digital-threshold option of 'ojd binding set'. It sets the axis travel that counts as a press. */
 "cli.binding.group.optionDigitalThreshold" = "軸來源：對按鈕目標而言算作按下的行程。預設：0.5。";
-/* Help text of the --double-tap option of 'ojd binding set'. The example 300:key:key-c stays as written. */
-"cli.binding.group.optionDoubleTap" = "在此時間內按下來源兩次時，傳送另一個目標，例如 300:key:key-c。";
 /* Help text of the --gain option of 'ojd binding set'. Gain scales the axis output. */
 "cli.binding.group.optionGain" = "軸來源：輸出縮放，0.1 到 10。預設：1。";
 /* Help text of the --invert flag of 'ojd binding set'. */
 "cli.binding.group.optionInvert" = "軸來源：反轉方向。";
 /* Help text of the --long-hold option of 'ojd binding set'. The example 500:key:key-b stays as written. */
 "cli.binding.group.optionLongHold" = "按住來源達到此時間時，傳送另一個目標，例如 500:key:key-b。";
+/* Help text of the --multi-tap option of 'ojd binding set'. COUNT is the number of taps, MS the milliseconds allowed after the last release. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.optionMultiTap" = "輕點來源 COUNT 次時，傳送另一個目標，每次按下都在上次放開後的 MS 內，例如 2:300:key:key-c。其他次數可重複此選項。";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "脈衝讓目標維持多久，1 到 5000 毫秒。預設：100。";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "軸來源：輸出如何隨行程增長。預設：linear。";
+/* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
+"cli.binding.group.optionTurboDelay" = "第一次重複前等待此時間，0 到 2500 ms。需要 --turbo-rate 和 --turbo-duty。";
 /* Help text of the --turbo-duty option of 'ojd binding set'. The duty is the share of each turbo cycle in which the target is held. */
 "cli.binding.group.optionTurboDuty" = "每個連發週期中目標維持按下的比例，大於 0 且小於 1。";
+/* Help text of the --turbo-max option of 'ojd binding set'. The option names stay as written. */
+"cli.binding.group.optionTurboMax" = "重複此次數後停止，1 到 500。需要 --turbo-rate 和 --turbo-duty。";
 /* Help text of the --turbo-rate option of 'ojd binding set'. --turbo-duty stays as written. */
 "cli.binding.group.optionTurboRate" = "按住期間每秒重複目標的次數。需要 --turbo-duty。";
 /* One-line summary of 'ojd binding set' in the command list and at the top of its help. */
