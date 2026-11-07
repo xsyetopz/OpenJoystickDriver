@@ -24,7 +24,7 @@ struct ControllerOutputReport: Encodable, Equatable {
 }
 
 /// One output command and the words that name it in a failure.
-private struct OutputRequest: Sendable {
+struct OutputRequest: Sendable {
   /// The name of the command in a failure message.
   let name: String
   /// The command to send.
@@ -80,7 +80,7 @@ private func sendOutput(_ requests: [OutputRequest], to selector: ControllerSele
 }
 
 /// Fails with ``CLIFailure`` when `result` shows that the controller did not deliver `request`.
-private func check(
+func check(
   _ result: ControllerOutputResult,
   _ request: OutputRequest,
   _ device: ApplicationServiceDeviceDescription

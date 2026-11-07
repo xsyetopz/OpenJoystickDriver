@@ -2385,6 +2385,8 @@
 "cli.controller.group.featurePlayer" = "أضواء مؤشر اللاعب";
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureRumble" = "محرك اهتزاز";
+/* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
+"cli.controller.group.featureSpeaker" = "مكبر صوت";
 /* One-line summary of 'ojd controller light' in the command list and at the top of its help. */
 "cli.controller.light.abstract" = "اضبط لون إضاءة وحدة التحكم أو سطوعها.";
 /* Help text of the --brightness option of 'ojd controller light'. LED means light-emitting diode. */
@@ -2549,6 +2551,28 @@
 "cli.controller.show.inputMappingRejected" = "خريطة استخدام HID القياسية (رُفض سطر SDL_GameControllerDB: %@)";
 /* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
 "cli.controller.show.inputMappingUnbound" = "غير مطبّق، عقد الواصف غير مستوفى (عُثر على سطر في SDL_GameControllerDB، تطابق %1$@، GUID %2$@)";
+/* One-line summary of 'ojd controller speaker' in the command list and at the top of its help. */
+"cli.controller.speaker.abstract" = "شغّل الصوت على مكبر صوت وحدة التحكم.";
+/* One-line summary of 'ojd controller speaker play' in the command list and at the top of its help. */
+"cli.controller.speaker.play.abstract" = "شغّل ملف WAV على مكبر صوت وحدة التحكم.";
+/* Help text of the FILE argument of 'ojd controller speaker play'. PCM and WAV are audio format names and stay as written. */
+"cli.controller.speaker.play.file" = "ملف PCM WAV غير المضغوط المراد تشغيله.";
+/* Help text of the --volume option of 'ojd controller speaker play'. The limits 0 and 1 are fixed. */
+"cli.controller.speaker.play.volume" = "مستوى صوت التشغيل من 0 إلى 1.";
+/* Error of 'ojd controller speaker play' when --volume is outside the allowed range. --volume stays as written. */
+"cli.controller.speaker.play.errorVolume" = "يحتاج --volume إلى رقم من 0 إلى 1.";
+/* Error of 'ojd controller speaker play' when the audio file cannot be read. %1$@ is the file path and %2$@ is the reason the system gives. */
+"cli.controller.speaker.play.errorUnreadable" = "تعذّرت قراءة %1$@: %2$@";
+/* Warning of 'ojd controller speaker play' when the clip is longer than the speaker plays and is cut. %@ is the longest clip length in seconds. */
+"cli.controller.speaker.play.trimmed" = "warning: يتم تشغيل أول %@ ثانية فقط من المقطع.";
+/* Message printed after 'ojd controller speaker play' finished the clip. %1$@ is the file name and %2$@ is the controller name. */
+"cli.controller.speaker.play.played" = "تم تشغيل %1$@ على %2$@.";
+/* Message printed when the playback of 'ojd controller speaker play' was cut by 'ojd controller speaker stop' or by a newer clip. %@ is the controller name. */
+"cli.controller.speaker.play.stopped" = "تم إيقاف التشغيل على %@.";
+/* One-line summary of 'ojd controller speaker stop' in the command list and at the top of its help. */
+"cli.controller.speaker.stop.abstract" = "أوقف الصوت على مكبر صوت وحدة التحكم.";
+/* Message printed after 'ojd controller speaker stop' stopped the speaker. %@ is the controller name. */
+"cli.controller.speaker.stop.stopped" = "تم إيقاف مكبر الصوت في %@.";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
 "cli.controller.suspend.abstract" = "أوقف تحكم OpenJoystickDriver في وحدة تحكم إلى أن تستأنفه.";
 /* Message of 'ojd controller suspend' when the controller is suspended. %@ is the controller name. */

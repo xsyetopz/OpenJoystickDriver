@@ -46,6 +46,21 @@ enum GUICoverageEntries {
         reason: "reads controller frames from standard input"
       ),
       CLIOnlyItem(
+        command: ["controller", "speaker", "play"],
+        option: nil,
+        reason: "no window plays a sound file on a controller's speaker"
+      ),
+      CLIOnlyItem(
+        command: ["controller", "speaker", "stop"],
+        option: nil,
+        reason: "no window plays a sound file on a controller's speaker"
+      ),
+      CLIOnlyItem(
+        command: ["controller", "speaker", "play"],
+        option: "--volume",
+        reason: "no window plays a sound file on a controller's speaker"
+      ),
+      CLIOnlyItem(
         command: ["service", "start"],
         option: nil,
         reason: "the app process hosts the service, so a window cannot start it"

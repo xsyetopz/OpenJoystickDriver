@@ -2385,6 +2385,8 @@
 "cli.controller.group.featurePlayer" = "プレイヤーインジケータライト";
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureRumble" = "振動モーター";
+/* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
+"cli.controller.group.featureSpeaker" = "スピーカー";
 /* One-line summary of 'ojd controller light' in the command list and at the top of its help. */
 "cli.controller.light.abstract" = "コントローラのライトの色または明るさを設定します。";
 /* Help text of the --brightness option of 'ojd controller light'. LED means light-emitting diode. */
@@ -2549,6 +2551,28 @@
 "cli.controller.show.inputMappingRejected" = "標準の HID 使用状況マップ (SDL_GameControllerDB の行を拒否: %@)";
 /* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
 "cli.controller.show.inputMappingUnbound" = "未適用、記述子の契約を満たしません (SDL_GameControllerDB の行あり、一致: %1$@、GUID %2$@)";
+/* One-line summary of 'ojd controller speaker' in the command list and at the top of its help. */
+"cli.controller.speaker.abstract" = "コントローラのスピーカーで音を再生します。";
+/* One-line summary of 'ojd controller speaker play' in the command list and at the top of its help. */
+"cli.controller.speaker.play.abstract" = "コントローラのスピーカーで WAV ファイルを再生します。";
+/* Help text of the FILE argument of 'ojd controller speaker play'. PCM and WAV are audio format names and stay as written. */
+"cli.controller.speaker.play.file" = "再生する非圧縮の PCM WAV ファイル。";
+/* Help text of the --volume option of 'ojd controller speaker play'. The limits 0 and 1 are fixed. */
+"cli.controller.speaker.play.volume" = "再生音量。0 から 1 まで。";
+/* Error of 'ojd controller speaker play' when --volume is outside the allowed range. --volume stays as written. */
+"cli.controller.speaker.play.errorVolume" = "--volume には 0 から 1 までの数値を指定してください。";
+/* Error of 'ojd controller speaker play' when the audio file cannot be read. %1$@ is the file path and %2$@ is the reason the system gives. */
+"cli.controller.speaker.play.errorUnreadable" = "%1$@ を読み取れません: %2$@";
+/* Warning of 'ojd controller speaker play' when the clip is longer than the speaker plays and is cut. %@ is the longest clip length in seconds. */
+"cli.controller.speaker.play.trimmed" = "warning: クリップの最初の %@ 秒だけを再生します。";
+/* Message printed after 'ojd controller speaker play' finished the clip. %1$@ is the file name and %2$@ is the controller name. */
+"cli.controller.speaker.play.played" = "%2$@ で %1$@ を再生しました。";
+/* Message printed when the playback of 'ojd controller speaker play' was cut by 'ojd controller speaker stop' or by a newer clip. %@ is the controller name. */
+"cli.controller.speaker.play.stopped" = "%@ の再生を停止しました。";
+/* One-line summary of 'ojd controller speaker stop' in the command list and at the top of its help. */
+"cli.controller.speaker.stop.abstract" = "コントローラのスピーカーの音を止めます。";
+/* Message printed after 'ojd controller speaker stop' stopped the speaker. %@ is the controller name. */
+"cli.controller.speaker.stop.stopped" = "%@ のスピーカーを停止しました。";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
 "cli.controller.suspend.abstract" = "再開するまで、OpenJoystickDriver によるコントローラの制御を止めます。";
 /* Message of 'ojd controller suspend' when the controller is suspended. %@ is the controller name. */

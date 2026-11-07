@@ -2385,6 +2385,8 @@
 "cli.controller.group.featurePlayer" = "oyuncu göstergesi ışıkları";
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureRumble" = "titreşim motoru";
+/* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
+"cli.controller.group.featureSpeaker" = "hoparlör";
 /* One-line summary of 'ojd controller light' in the command list and at the top of its help. */
 "cli.controller.light.abstract" = "Bir kontrolcünün ışık rengini veya parlaklığını ayarlar.";
 /* Help text of the --brightness option of 'ojd controller light'. LED means light-emitting diode. */
@@ -2549,6 +2551,28 @@
 "cli.controller.show.inputMappingRejected" = "standart HID kullanım haritası (SDL_GameControllerDB satırı reddedildi: %@)";
 /* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
 "cli.controller.show.inputMappingUnbound" = "uygulanmadı, tanımlayıcı sözleşmesi karşılanmıyor (SDL_GameControllerDB satırı bulundu, eşleşme %1$@, GUID %2$@)";
+/* One-line summary of 'ojd controller speaker' in the command list and at the top of its help. */
+"cli.controller.speaker.abstract" = "Bir kontrolcünün hoparlöründe ses çalar.";
+/* One-line summary of 'ojd controller speaker play' in the command list and at the top of its help. */
+"cli.controller.speaker.play.abstract" = "Bir kontrolcünün hoparlöründe WAV dosyası çalar.";
+/* Help text of the FILE argument of 'ojd controller speaker play'. PCM and WAV are audio format names and stay as written. */
+"cli.controller.speaker.play.file" = "Çalınacak sıkıştırılmamış PCM WAV dosyası.";
+/* Help text of the --volume option of 'ojd controller speaker play'. The limits 0 and 1 are fixed. */
+"cli.controller.speaker.play.volume" = "Çalma ses düzeyi, 0 ile 1 arasında.";
+/* Error of 'ojd controller speaker play' when --volume is outside the allowed range. --volume stays as written. */
+"cli.controller.speaker.play.errorVolume" = "--volume için 0 ile 1 arasında bir sayı gerekir.";
+/* Error of 'ojd controller speaker play' when the audio file cannot be read. %1$@ is the file path and %2$@ is the reason the system gives. */
+"cli.controller.speaker.play.errorUnreadable" = "%1$@ okunamıyor: %2$@";
+/* Warning of 'ojd controller speaker play' when the clip is longer than the speaker plays and is cut. %@ is the longest clip length in seconds. */
+"cli.controller.speaker.play.trimmed" = "warning: klibin yalnızca ilk %@ saniyesi çalınır.";
+/* Message printed after 'ojd controller speaker play' finished the clip. %1$@ is the file name and %2$@ is the controller name. */
+"cli.controller.speaker.play.played" = "%1$@, %2$@ üzerinde çalındı.";
+/* Message printed when the playback of 'ojd controller speaker play' was cut by 'ojd controller speaker stop' or by a newer clip. %@ is the controller name. */
+"cli.controller.speaker.play.stopped" = "%@ üzerindeki çalma durduruldu.";
+/* One-line summary of 'ojd controller speaker stop' in the command list and at the top of its help. */
+"cli.controller.speaker.stop.abstract" = "Bir kontrolcünün hoparlöründeki sesi durdurur.";
+/* Message printed after 'ojd controller speaker stop' stopped the speaker. %@ is the controller name. */
+"cli.controller.speaker.stop.stopped" = "%@ üzerindeki hoparlör durduruldu.";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
 "cli.controller.suspend.abstract" = "OpenJoystickDriver’ın bir kontrolcüyü siz sürdürene kadar yönetmesini durdurur.";
 /* Message of 'ojd controller suspend' when the controller is suspended. %@ is the controller name. */

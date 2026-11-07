@@ -145,6 +145,15 @@ public enum PhysicalSpeakerFormat: String, Codable, CaseIterable, Hashable, Send
     case .yamahaADPCM4Bit: 6_000
     }
   }
+
+  /// The bytes of `samples`, mono 16-bit at ``sampleRate``, in this format.
+  public func encode(_ samples: [Int16]) -> [UInt8] {
+    switch self {
+    case .yamahaADPCM4Bit:
+      var encoder = WiiSpeakerEncoder()
+      return encoder.encode(samples)
+    }
+  }
 }
 
 /// Physical output capabilities implemented by the active controller protocol.

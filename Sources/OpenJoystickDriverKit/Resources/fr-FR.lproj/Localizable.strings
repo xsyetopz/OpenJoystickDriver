@@ -2385,6 +2385,8 @@
 "cli.controller.group.featurePlayer" = "les voyants d’indicateur de joueur";
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureRumble" = "le moteur de vibration";
+/* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
+"cli.controller.group.featureSpeaker" = "haut-parleur";
 /* One-line summary of 'ojd controller light' in the command list and at the top of its help. */
 "cli.controller.light.abstract" = "Définir la couleur ou la luminosité du voyant d’une manette.";
 /* Help text of the --brightness option of 'ojd controller light'. LED means light-emitting diode. */
@@ -2549,6 +2551,28 @@
 "cli.controller.show.inputMappingRejected" = "carte standard des usages HID (ligne SDL_GameControllerDB rejetée : %@)";
 /* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
 "cli.controller.show.inputMappingUnbound" = "non appliquée, contrat du descripteur non respecté (ligne SDL_GameControllerDB trouvée, correspondance %1$@, GUID %2$@)";
+/* One-line summary of 'ojd controller speaker' in the command list and at the top of its help. */
+"cli.controller.speaker.abstract" = "Lire un son sur le haut-parleur d’une manette.";
+/* One-line summary of 'ojd controller speaker play' in the command list and at the top of its help. */
+"cli.controller.speaker.play.abstract" = "Lire un fichier WAV sur le haut-parleur d’une manette.";
+/* Help text of the FILE argument of 'ojd controller speaker play'. PCM and WAV are audio format names and stay as written. */
+"cli.controller.speaker.play.file" = "Le fichier WAV PCM non compressé à lire.";
+/* Help text of the --volume option of 'ojd controller speaker play'. The limits 0 and 1 are fixed. */
+"cli.controller.speaker.play.volume" = "Volume de lecture de 0 à 1.";
+/* Error of 'ojd controller speaker play' when --volume is outside the allowed range. --volume stays as written. */
+"cli.controller.speaker.play.errorVolume" = "--volume nécessite un nombre de 0 à 1.";
+/* Error of 'ojd controller speaker play' when the audio file cannot be read. %1$@ is the file path and %2$@ is the reason the system gives. */
+"cli.controller.speaker.play.errorUnreadable" = "Impossible de lire %1$@ : %2$@";
+/* Warning of 'ojd controller speaker play' when the clip is longer than the speaker plays and is cut. %@ is the longest clip length in seconds. */
+"cli.controller.speaker.play.trimmed" = "warning : seules les %@ premières secondes du clip sont lues.";
+/* Message printed after 'ojd controller speaker play' finished the clip. %1$@ is the file name and %2$@ is the controller name. */
+"cli.controller.speaker.play.played" = "%1$@ lu sur %2$@.";
+/* Message printed when the playback of 'ojd controller speaker play' was cut by 'ojd controller speaker stop' or by a newer clip. %@ is the controller name. */
+"cli.controller.speaker.play.stopped" = "Lecture arrêtée sur %@.";
+/* One-line summary of 'ojd controller speaker stop' in the command list and at the top of its help. */
+"cli.controller.speaker.stop.abstract" = "Arrêter le son du haut-parleur d’une manette.";
+/* Message printed after 'ojd controller speaker stop' stopped the speaker. %@ is the controller name. */
+"cli.controller.speaker.stop.stopped" = "Haut-parleur arrêté sur %@.";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
 "cli.controller.suspend.abstract" = "Empêcher OpenJoystickDriver de piloter une manette jusqu’à sa reprise.";
 /* Message of 'ojd controller suspend' when the controller is suspended. %@ is the controller name. */

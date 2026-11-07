@@ -120,6 +120,8 @@ enum CLICommandTree {
       ["045E:028E"]
     case ["controller", "light"]: ["045E:028E", "--color", "FF0000"]
     case ["controller", "player"]: ["045E:028E", "1"]
+    case ["controller", "speaker", "play"]: ["045E:028E", "clip.wav"]
+    case ["controller", "speaker", "stop"]: ["045E:028E"]
     case ["virtual", "set"]: ["generic", "045E:028E"]
     case ["virtual", "feed"]: ["--as", "generic"]
     case ["virtual", "launch"]: ["/usr/bin/true"]

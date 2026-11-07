@@ -30,6 +30,7 @@ struct CommandTreeTests {
       "list", "show", "watch", "capture", "rumble", "light", "player", "suspend", "resume",
       "disconnect", "calibrate", "pair", "unpair",
     ] { #expect(paths.contains(["controller", verb]), "\(verb)") }
+    for verb in ["play", "stop"] { #expect(paths.contains(["controller", "speaker", verb])) }
     for verb in [
       "list", "show", "create", "duplicate", "rename", "delete", "activate", "deactivate", "import",
       "export", "edit", "recover",

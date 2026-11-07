@@ -2385,6 +2385,8 @@
 "cli.controller.group.featurePlayer" = "đèn chỉ báo người chơi";
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureRumble" = "mô-tơ rung";
+/* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
+"cli.controller.group.featureSpeaker" = "loa";
 /* One-line summary of 'ojd controller light' in the command list and at the top of its help. */
 "cli.controller.light.abstract" = "Đặt màu hoặc độ sáng đèn của bộ điều khiển.";
 /* Help text of the --brightness option of 'ojd controller light'. LED means light-emitting diode. */
@@ -2549,6 +2551,28 @@
 "cli.controller.show.inputMappingRejected" = "ánh xạ cách dùng HID chuẩn (dòng SDL_GameControllerDB bị từ chối: %@)";
 /* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
 "cli.controller.show.inputMappingUnbound" = "không áp dụng, hợp đồng bộ mô tả không đạt (tìm thấy dòng SDL_GameControllerDB, khớp %1$@, GUID %2$@)";
+/* One-line summary of 'ojd controller speaker' in the command list and at the top of its help. */
+"cli.controller.speaker.abstract" = "Phát âm thanh trên loa của bộ điều khiển.";
+/* One-line summary of 'ojd controller speaker play' in the command list and at the top of its help. */
+"cli.controller.speaker.play.abstract" = "Phát tệp WAV trên loa của bộ điều khiển.";
+/* Help text of the FILE argument of 'ojd controller speaker play'. PCM and WAV are audio format names and stay as written. */
+"cli.controller.speaker.play.file" = "Tệp PCM WAV không nén cần phát.";
+/* Help text of the --volume option of 'ojd controller speaker play'. The limits 0 and 1 are fixed. */
+"cli.controller.speaker.play.volume" = "Âm lượng phát, từ 0 đến 1.";
+/* Error of 'ojd controller speaker play' when --volume is outside the allowed range. --volume stays as written. */
+"cli.controller.speaker.play.errorVolume" = "--volume cần một số từ 0 đến 1.";
+/* Error of 'ojd controller speaker play' when the audio file cannot be read. %1$@ is the file path and %2$@ is the reason the system gives. */
+"cli.controller.speaker.play.errorUnreadable" = "Không thể đọc %1$@: %2$@";
+/* Warning of 'ojd controller speaker play' when the clip is longer than the speaker plays and is cut. %@ is the longest clip length in seconds. */
+"cli.controller.speaker.play.trimmed" = "cảnh báo: chỉ phát %@ giây đầu của đoạn âm thanh.";
+/* Message printed after 'ojd controller speaker play' finished the clip. %1$@ is the file name and %2$@ is the controller name. */
+"cli.controller.speaker.play.played" = "Đã phát %1$@ trên %2$@.";
+/* Message printed when the playback of 'ojd controller speaker play' was cut by 'ojd controller speaker stop' or by a newer clip. %@ is the controller name. */
+"cli.controller.speaker.play.stopped" = "Đã dừng phát trên %@.";
+/* One-line summary of 'ojd controller speaker stop' in the command list and at the top of its help. */
+"cli.controller.speaker.stop.abstract" = "Dừng âm thanh trên loa của bộ điều khiển.";
+/* Message printed after 'ojd controller speaker stop' stopped the speaker. %@ is the controller name. */
+"cli.controller.speaker.stop.stopped" = "Đã dừng loa trên %@.";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
 "cli.controller.suspend.abstract" = "Không cho OpenJoystickDriver điều khiển một bộ điều khiển cho đến khi bạn tiếp tục.";
 /* Message of 'ojd controller suspend' when the controller is suspended. %@ is the controller name. */

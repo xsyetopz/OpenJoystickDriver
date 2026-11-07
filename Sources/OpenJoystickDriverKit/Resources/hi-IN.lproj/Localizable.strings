@@ -2385,6 +2385,8 @@
 "cli.controller.group.featurePlayer" = "प्लेयर इंडिकेटर लाइट";
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureRumble" = "रंबल मोटर";
+/* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
+"cli.controller.group.featureSpeaker" = "स्पीकर";
 /* One-line summary of 'ojd controller light' in the command list and at the top of its help. */
 "cli.controller.light.abstract" = "कंट्रोलर की लाइट का रंग या ब्राइटनेस सेट करें।";
 /* Help text of the --brightness option of 'ojd controller light'. LED means light-emitting diode. */
@@ -2549,6 +2551,28 @@
 "cli.controller.show.inputMappingRejected" = "मानक HID उपयोग मैप (SDL_GameControllerDB की पंक्ति अस्वीकार: %@)";
 /* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
 "cli.controller.show.inputMappingUnbound" = "लागू नहीं, डिस्क्रिप्टर अनुबंध पूरा नहीं होता (SDL_GameControllerDB की पंक्ति मिली, %1$@ मिलान, GUID %2$@)";
+/* One-line summary of 'ojd controller speaker' in the command list and at the top of its help. */
+"cli.controller.speaker.abstract" = "कंट्रोलर के स्पीकर पर आवाज़ चलाएँ।";
+/* One-line summary of 'ojd controller speaker play' in the command list and at the top of its help. */
+"cli.controller.speaker.play.abstract" = "कंट्रोलर के स्पीकर पर WAV फ़ाइल चलाएँ।";
+/* Help text of the FILE argument of 'ojd controller speaker play'. PCM and WAV are audio format names and stay as written. */
+"cli.controller.speaker.play.file" = "चलाने के लिए बिना संपीड़न वाली PCM WAV फ़ाइल।";
+/* Help text of the --volume option of 'ojd controller speaker play'. The limits 0 and 1 are fixed. */
+"cli.controller.speaker.play.volume" = "प्लेबैक वॉल्यूम, 0 से 1 तक।";
+/* Error of 'ojd controller speaker play' when --volume is outside the allowed range. --volume stays as written. */
+"cli.controller.speaker.play.errorVolume" = "--volume के लिए 0 से 1 तक की संख्या चाहिए।";
+/* Error of 'ojd controller speaker play' when the audio file cannot be read. %1$@ is the file path and %2$@ is the reason the system gives. */
+"cli.controller.speaker.play.errorUnreadable" = "%1$@ नहीं पढ़ा जा सकता: %2$@";
+/* Warning of 'ojd controller speaker play' when the clip is longer than the speaker plays and is cut. %@ is the longest clip length in seconds. */
+"cli.controller.speaker.play.trimmed" = "warning: क्लिप के केवल पहले %@ सेकंड चलते हैं।";
+/* Message printed after 'ojd controller speaker play' finished the clip. %1$@ is the file name and %2$@ is the controller name. */
+"cli.controller.speaker.play.played" = "%2$@ पर %1$@ चलाया गया।";
+/* Message printed when the playback of 'ojd controller speaker play' was cut by 'ojd controller speaker stop' or by a newer clip. %@ is the controller name. */
+"cli.controller.speaker.play.stopped" = "%@ पर प्लेबैक रोका गया।";
+/* One-line summary of 'ojd controller speaker stop' in the command list and at the top of its help. */
+"cli.controller.speaker.stop.abstract" = "कंट्रोलर के स्पीकर की आवाज़ रोकें।";
+/* Message printed after 'ojd controller speaker stop' stopped the speaker. %@ is the controller name. */
+"cli.controller.speaker.stop.stopped" = "%@ पर स्पीकर रोका गया।";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
 "cli.controller.suspend.abstract" = "फिर से शुरू करने तक OpenJoystickDriver को कंट्रोलर चलाने से रोकें।";
 /* Message of 'ojd controller suspend' when the controller is suspended. %@ is the controller name. */
