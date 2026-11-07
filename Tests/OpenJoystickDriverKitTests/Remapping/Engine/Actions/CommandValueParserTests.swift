@@ -14,6 +14,30 @@ struct CommandValueParserTests {
   }
 
   @Test
+  func parsesProfileControlTargets() throws {
+    let id = UUID()
+    #expect(try RemappingCommandValueParser.destination("pause:toggle") == .pause(.toggle))
+    #expect(
+      try RemappingCommandValueParser.destination("profile:switch:previous")
+        == .profileSwitch(.previous)
+    )
+    #expect(
+      try RemappingCommandValueParser.destination("profile:switch:\(id.uuidString)")
+        == .profileSwitch(.profile(id))
+    )
+    let layer = RemappingCommandValueParser.layerTarget("layer:Aim: low:off")
+    #expect(layer?.name == "Aim: low")
+    #expect(layer?.mode == .off)
+    #expect(RemappingCommandValueParser.layerTarget("layer::on") == nil)
+    #expect(RemappingCommandValueParser.layerTarget("layer:Aim:maybe") == nil)
+    for text in ["pause:maybe", "profile:switch:later", "layer:Aim:on"] {
+      #expect(throws: RemappingCommandValueError.invalidDestination(text)) {
+        try RemappingCommandValueParser.destination(text)
+      }
+    }
+  }
+
+  @Test
   func parsesTypedTouchSources() throws {
     #expect(try RemappingCommandValueParser.source("touch:left:contact") == .touchContact(.left))
     #expect(

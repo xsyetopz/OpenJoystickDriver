@@ -247,17 +247,32 @@ enum RuntimePresentation {
 
   /// Returns the label of a remapping destination.
   ///
-  /// A macro shows its name when `macros` holds it.
+  /// A macro shows its name when `macros` holds it, and a layer when `layers` does.
   static func destinationLabel(
     _ destination: RemappingDestination,
-    macros: [RemappingMacro] = []
+    macros: [RemappingMacro] = [],
+    layers: [RemappingLayer] = []
   ) -> String {
     switch destination {
     case .macro(let id):
       return macros.first { $0.id == id }?.name ?? OJDLocalized.string("term.macro")
-    case .profileSwitch: return "Profile"
-    case .layerSet: return "Layer"
-    case .pause: return "Pause"
+    case .profileSwitch(.next): return OJDLocalized.string("ui.mapping.profileNext")
+    case .profileSwitch(.previous): return OJDLocalized.string("ui.mapping.profilePrevious")
+    case .profileSwitch(.profile): return OJDLocalized.string("ui.mapping.profileSwitch")
+    case .layerSet(let layer, let mode):
+      let key =
+        switch mode {
+        case .on: "ui.mapping.layerOn"
+        case .off: "ui.mapping.layerOff"
+        case .toggle: "ui.mapping.layerToggle"
+        }
+      return OJDLocalized.formatted(
+        key,
+        layers.first { $0.id == layer }?.name ?? OJDLocalized.string("term.layer")
+      )
+    case .pause(.on): return OJDLocalized.string("ui.mapping.pauseOn")
+    case .pause(.off): return OJDLocalized.string("ui.mapping.pauseOff")
+    case .pause(.toggle): return OJDLocalized.string("ui.mapping.pauseToggle")
     case .gamepadAxis(let axis): return axisLabel(axis)
     case .gamepadDpad(let direction): return sourceLabel(.dpad(direction))
     case .gamepadButton(let button): return buttonLabel(button)

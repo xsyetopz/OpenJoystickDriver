@@ -32,11 +32,12 @@ struct BindingSummary: Encodable, Equatable {
   /// When the target fires, in kebab-case, such as `hold` or `tap-on-press`.
   let behavior: String
 
-  /// Creates the summary from `binding`; `macros` name a `Macro` target.
-  init(_ binding: RemappingBinding, macros: [RemappingMacro] = []) {
+  /// Creates the summary from `binding`; `macros` and `layers` name a `Macro` and a `LayerSet`
+  /// target.
+  init(_ binding: RemappingBinding, macros: [RemappingMacro] = [], layers: [RemappingLayer] = []) {
     id = binding.id.uuidString
     source = ProfileText.source(binding.source)
-    target = ProfileText.destination(binding.destination, macros: macros)
+    target = ProfileText.destination(binding.destination, macros: macros, layers: layers)
     behavior = binding.behavior.rawValue
   }
 }
@@ -63,8 +64,13 @@ struct BindingListCommand: AsyncParsableCommand {
     let behavior: String
 
     /// Creates the item from `binding` and the `profile` that holds it.
-    init(_ binding: RemappingBinding, profile: ProfileSummary, macros: [RemappingMacro]) {
-      let summary = BindingSummary(binding, macros: macros)
+    init(
+      _ binding: RemappingBinding,
+      profile: ProfileSummary,
+      macros: [RemappingMacro],
+      layers: [RemappingLayer]
+    ) {
+      let summary = BindingSummary(binding, macros: macros, layers: layers)
       self.profile = profile
       id = summary.id
       source = summary.source
@@ -94,13 +100,15 @@ struct BindingListCommand: AsyncParsableCommand {
         try CLIOutput.json(
           CLIList(
             items: document.bindings.map {
-              Item($0, profile: profile, macros: document.macros)
+              Item($0, profile: profile, macros: document.macros, layers: document.layers)
             }
           )
         )
       case .plain:
         CLIOutput.plain(
-          document.bindings.map { BindingSummary($0, macros: document.macros) }.map {
+          document.bindings.map {
+            BindingSummary($0, macros: document.macros, layers: document.layers)
+          }.map {
             [$0.source, $0.target, CommandLineName.kebab($0.behavior)]
           }
         )
@@ -118,6 +126,22 @@ struct BindingListCommand: AsyncParsableCommand {
         }
       }
     }
+  }
+}
+
+extension RemappingProfile {
+  /// The layer whose name equals `name`, ignoring case.
+  ///
+  /// - Throws: ``CLIFailure`` with the not-found code when the profile has no such layer.
+  func layer(named name: String) throws -> RemappingLayer {
+    let wanted = Self.normalizedName(name)
+    guard let layer = layers.first(where: { Self.normalizedName($0.name) == wanted }) else {
+      throw CLIFailure(
+        .notFound,
+        CLILocalized.format("cli.binding.group.layerMissing", self.name, name)
+      )
+    }
+    return layer
   }
 }
 
@@ -184,8 +208,9 @@ struct BindingSetCommand: AsyncParsableCommand {
       let source = try parseSource(source)
       let macroName =
         target.hasPrefix(Self.macroPrefix) ? target.dropFirst(Self.macroPrefix.count) : nil
+      let layerTarget = RemappingCommandValueParser.layerTarget(target)
       let parsed: RemappingDestination =
-        try macroName == nil ? parseTarget(target) : .macro(UUID())
+        try macroName == nil && layerTarget == nil ? parseTarget(target) : .macro(UUID())
       // Reports option errors before the service is contacted.
       _ = try options.binding(source: source, target: parsed, existing: nil)
       let (selector, options) = (profile, options)
@@ -195,6 +220,12 @@ struct BindingSetCommand: AsyncParsableCommand {
         let target =
           try macroName.map {
             RemappingDestination.macro(try current.macro(named: String($0)).id)
+          }
+          ?? layerTarget.map {
+            RemappingDestination.layerSet(
+              layer: try current.layer(named: $0.name).id,
+              mode: $0.mode
+            )
           } ?? parsed
         let binding = try options.binding(source: source, target: target, existing: existing)
         let bindings = current.bindings.map { $0.source == source ? binding : $0 }
@@ -206,7 +237,7 @@ struct BindingSetCommand: AsyncParsableCommand {
       }
       let result = Result(
         profile: try savedSummary(updated.id, in: after),
-        binding: BindingSummary(binding, macros: updated.macros),
+        binding: BindingSummary(binding, macros: updated.macros, layers: updated.layers),
         replaced: replaced
       )
       switch CLIContext.current.format {
@@ -217,7 +248,7 @@ struct BindingSetCommand: AsyncParsableCommand {
           CLILocalized.format(
             "cli.binding.set.done",
             updated.name,
-            ProfileText.binding(binding, macros: updated.macros)
+            ProfileText.binding(binding, macros: updated.macros, layers: updated.layers)
           )
         )
       }

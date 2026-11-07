@@ -1,7 +1,7 @@
 import Foundation
 
 /// How a `LayerSet` or `Pause` destination changes its state.
-public enum RemappingSwitchMode: String, Codable, Equatable, Hashable, Sendable {
+public enum RemappingSwitchMode: String, CaseIterable, Codable, Equatable, Hashable, Sendable {
   /// Turns the state on.
   case on = "On"
   /// Turns the state off.

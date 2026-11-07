@@ -38,10 +38,12 @@ enum ProfileText {
     }
   }
 
-  /// The binding target in its `TARGET` form; a macro shows its name from `macros`.
+  /// The binding target in its `TARGET` form; a macro and a layer show their names from `macros`
+  /// and `layers`.
   static func destination(
     _ destination: RemappingDestination,
-    macros: [RemappingMacro] = []
+    macros: [RemappingMacro] = [],
+    layers: [RemappingLayer] = []
   ) -> String {
     switch destination {
     case .gamepadAxis(let axis): return "gamepad:axis:\(word(axis))"
@@ -60,7 +62,8 @@ enum ProfileText {
     case .profileSwitch(.profile(let id)): return "profile:switch:\(id.uuidString)"
     case .profileSwitch(let target):
       return "profile:switch:\(target == .next ? "next" : "previous")"
-    case .layerSet(let layer, let mode): return "layer:\(layer.uuidString):\(word(mode))"
+    case .layerSet(let layer, let mode):
+      return "layer:\(layers.first { $0.id == layer }?.name ?? layer.uuidString):\(word(mode))"
     case .pause(let mode): return "pause:\(word(mode))"
     }
   }
@@ -83,9 +86,13 @@ enum ProfileText {
   }
 
   /// One binding as `SOURCE -> TARGET`, followed by its behavior and alternate targets.
-  static func binding(_ binding: RemappingBinding, macros: [RemappingMacro] = []) -> String {
+  static func binding(
+    _ binding: RemappingBinding,
+    macros: [RemappingMacro] = [],
+    layers: [RemappingLayer] = []
+  ) -> String {
     var line =
-      "\(source(binding.source)) -> \(destination(binding.destination, macros: macros))"
+      "\(source(binding.source)) -> \(destination(binding.destination, macros: macros, layers: layers))"
     if binding.behavior != .hold { line += "  behavior:\(word(binding.behavior))" }
     if binding.behavior == .pulse { line += "  pulse:\(binding.pulseDurationMs)ms" }
     if let turbo = binding.turbo {
@@ -137,7 +144,7 @@ enum ProfileText {
         + "full:\($0.fullThreshold) passthrough:\($0.passthrough)"
     }
     lines += profile.touchMappings.map { "touch:\(word($0.surface)) mode:\($0.mode.rawValue)" }
-    lines += profile.bindings.map { binding($0, macros: profile.macros) }
+    lines += profile.bindings.map { binding($0, macros: profile.macros, layers: profile.layers) }
     lines += profile.chords.map { chord in
       let sources = chord.sources.map(source).sorted().joined(separator: "+")
       return "chord \(sources) -> \(destination(chord.destination))"

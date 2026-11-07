@@ -128,6 +128,11 @@ extension RemappingEventEngine {
   /// fail-closed handling clears all mapping state.
   public func hasScheduledOutput() -> Bool { state.hasScheduledOutput }
 
+  /// Returns whether a `Pause` has the controller pass through unmapped.
+  public func isPaused(_ identifier: LogicalControllerID) -> Bool {
+    state.devices[identifier]?.isPaused == true
+  }
+
   /// Returns the motion calibration status of a controller, or `nil` when it has no mapping
   /// session.
   public func motionCalibrationStatus(
@@ -447,9 +452,7 @@ extension RemappingEventEngine {
         case .profileSwitch(let target, let current, let identifier):
           // The switch re-enters the engine, so it runs after this operation releases the lock.
           if let profileSwitcher {
-            Task {
-              try? await profileSwitcher.switchProfile(target, from: current, for: identifier)
-            }
+            Task { await profileSwitcher.switchProfile(target, from: current, for: identifier) }
           }
         case .physical(let output, let active, let owner, let identifier):
           guard let physicalOutputSink else { throw RemappingEventEngineError.sinkUnavailable }

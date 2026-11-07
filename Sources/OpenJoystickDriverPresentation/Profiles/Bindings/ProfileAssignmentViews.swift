@@ -234,7 +234,8 @@
               for: binding.source,
               including: binding.destination,
               capabilities: capabilities,
-              macros: draft.profile.macros
+              macros: draft.profile.macros,
+              layers: draft.profile.layers
             ),
             id: \.destination
           ) { option in
@@ -245,7 +246,11 @@
         }.labelsHidden().frame(maxWidth: .infinity, alignment: .leading).ojdAccessibilityLabel(
           OJDLocalized.string("term.destination")
         ).ojdAccessibilityValue(
-          RuntimePresentation.destinationLabel(binding.destination, macros: draft.profile.macros)
+          RuntimePresentation.destinationLabel(
+            binding.destination,
+            macros: draft.profile.macros,
+            layers: draft.profile.layers
+          )
         )
         PhysicalOutputDestinationFields(destination: destinationBinding).disabled(
           !ProfileCapabilityPolicy.supports(binding.destination, capabilities: capabilities)

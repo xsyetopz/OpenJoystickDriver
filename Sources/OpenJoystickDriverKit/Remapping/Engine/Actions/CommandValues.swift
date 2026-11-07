@@ -247,7 +247,41 @@ public enum RemappingCommandValueParser {
         )
       )
     }
+    if parts.count == 2, parts[0] == "pause", let mode = switchMode(parts[1]) {
+      return .pause(mode)
+    }
+    if parts.count == 3, parts[0] == "profile", parts[1] == "switch",
+      let target = profileTarget(parts[2])
+    {
+      return .profileSwitch(target)
+    }
     throw RemappingCommandValueError.invalidDestination(raw)
+  }
+
+  /// Parses a layer target operand into the layer name and the mode, or returns `nil`.
+  ///
+  /// The form is `layer:NAME:on|off|toggle`. The name may hold colons; the mode follows the last.
+  public static func layerTarget(_ raw: String) -> (name: String, mode: RemappingSwitchMode)? {
+    guard raw.hasPrefix("layer:") else { return nil }
+    let rest = raw.dropFirst("layer:".count)
+    guard let colon = rest.lastIndex(of: ":"), colon != rest.startIndex,
+      let mode = switchMode(String(rest[rest.index(after: colon)...]))
+    else { return nil }
+    return (String(rest[..<colon]), mode)
+  }
+
+  /// Parses `on`, `off` or `toggle`, or returns `nil`.
+  private static func switchMode(_ raw: String) -> RemappingSwitchMode? {
+    CommandLineName.value(of: raw, in: RemappingSwitchMode.self)
+  }
+
+  /// Parses a profile identifier, `next` or `previous`, or returns `nil`.
+  private static func profileTarget(_ raw: String) -> RemappingProfileTarget? {
+    switch raw {
+    case "next": .next
+    case "previous": .previous
+    default: UUID(uuidString: raw).map { .profile($0) }
+    }
   }
 
   /// Parses a finite number from 0 to 1, or returns `nil`.

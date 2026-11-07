@@ -385,11 +385,13 @@ enum RemappingEngineAction: Equatable, Sendable {
 /// Switches the active profile of a controller when a `ProfileSwitch` destination fires.
 public protocol RemappingProfileSwitching: AnyObject, Sendable {
   /// Activates the profile that `target` names, as seen from the active profile `current`.
+  ///
+  /// The implementation reports its own failure; the engine does not wait for the result.
   func switchProfile(
     _ target: RemappingProfileTarget,
     from current: UUID,
     for identifier: LogicalControllerID
-  ) async throws
+  ) async
 }
 
 /// Separates remapping admission from the virtual output passthrough gate of a shared backend.

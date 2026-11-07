@@ -19,13 +19,16 @@ struct DestinationOption: Hashable {
   ///   - current: The destination to keep in the list.
   ///   - capabilities: What the controller has; nil means every destination is supported.
   ///   - macros: The macros of the profile, offered as destinations of a discrete source.
+  ///   - layers: The layers of the profile; when given, the profile control destinations of a
+  ///     discrete source are offered with them.
   /// - Returns: The destinations that fit `source` and that the controller supports, and `current`
   ///   when it fits the source and is not among them.
   static func options(
     for source: RemappingSource,
     including current: RemappingDestination? = nil,
     capabilities: ControllerProfileCapabilities? = nil,
-    macros: [RemappingMacro] = []
+    macros: [RemappingMacro] = [],
+    layers: [RemappingLayer]? = nil
   ) -> [Self] {
     var options = all.filter {
       isCompatible($0.destination, with: source)
@@ -33,6 +36,10 @@ struct DestinationOption: Hashable {
     }
     options += macros.filter { isCompatible(.macro($0.id), with: source) }.map {
       Self(destination: .macro($0.id), title: $0.name, isSupported: true)
+    }
+    if let layers {
+      let control = profileControl(layers: layers)
+      options += control.filter { isCompatible($0.destination, with: source) }
     }
     if let current, isCompatible(current, with: source),
       !options.contains(where: { $0.destination == current })
@@ -46,6 +53,22 @@ struct DestinationOption: Hashable {
       )
     }
     return options
+  }
+
+  /// The profile control destinations: the next and previous profile, a pause and a switch of each
+  /// layer, each in the three modes.
+  private static func profileControl(layers: [RemappingLayer]) -> [Self] {
+    let modes = RemappingSwitchMode.allCases
+    let destinations: [RemappingDestination] =
+      [.profileSwitch(.next), .profileSwitch(.previous)] + modes.map { .pause($0) }
+      + layers.flatMap { layer in modes.map { .layerSet(layer: layer.id, mode: $0) } }
+    return destinations.map {
+      Self(
+        destination: $0,
+        title: RuntimePresentation.destinationLabel($0, layers: layers),
+        isSupported: true
+      )
+    }
   }
 
   /// Every destination the pickers know: keyboard keys, with modifier groups for the arrow and
