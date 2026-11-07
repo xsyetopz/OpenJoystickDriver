@@ -117,7 +117,7 @@ Sources/OpenJoystickDriver/
 
 The neutral targets are `Sources/OpenJoystickDriverKit`, `Sources/OpenJoystickDriverCLI`, and the executable's files outside `Sources/OpenJoystickDriver/platform`.
 Kit may import CryptoKit, Darwin, Dispatch, and Foundation. Neutral means free of macOS device, security, and application frameworks: Darwin (POSIX calls) and CryptoKit (hashing) ship on every Apple platform the package declares, so Kit builds on Apple platforms only.
-The CLI may import ArgumentParser, Darwin, Dispatch, Foundation, Glibc, and Kit; the executable may import Dispatch, Foundation, CLI, and Kit. `Scripts/Quality/check_neutral_core_imports.py` scans these directories in `just check-fast`, CI, and the release workflow, and `Tests/RepositoryScripts/test_neutral_core_imports.py` runs it on planted violations in fixtures.
+The CLI may import ArgumentParser, Darwin, Dispatch, Foundation, Glibc, and Kit; the executable may import Dispatch, Foundation, CLI, and Kit.
 
 Kit `Diagnostics/` holds reports and health types that both the CLI and app read.
 

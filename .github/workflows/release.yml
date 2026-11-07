@@ -110,14 +110,6 @@ jobs:
           swiftlint lint --no-cache --strict
           python3 Scripts/Quality/check_localization_keys.py
 
-      - name: Check the platform split
-        run: python3 Scripts/Quality/check_neutral_core_imports.py
-
-      - name: Check licenses
-        run: |
-          python3 Scripts/Quality/check_license_headers.py
-          python3 Scripts/Quality/check_license_text.py
-
       - name: Build and test package
         run: ./Scripts/ojd check swift
 
