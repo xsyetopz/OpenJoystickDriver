@@ -35,12 +35,12 @@ The documents SHALL record, from a tester capture of a full sweep of each stick,
 
 ### Requirement: Vader 5S Serves Each Interface It May Show
 
-The record for `37D7:2801` SHALL hold one `XboxGIP` mode selected by interface signature `FF/47/D0` and one `XboxXUSB` mode selected by `FF/5D/01`. `ojd controller show` SHALL report which mode runs. `docs/testing/flydigi-vader-5s.md` SHALL state that neither mode is verified until a tester sends the USB interface dump.
+The record for `37D7:2801` SHALL hold a default `XboxGIP` mode, which has no match key, and one `XboxXUSB` mode selected by interface signature `FF/5D/01`. `ojd controller show` SHALL report which mode runs. `docs/testing/flydigi-vader-5s.md` SHALL state that neither mode is verified until a tester sends the USB interface dump.
 
 #### Scenario: GIP Interface
 
 - **WHEN** the pad shows an interface `FF/47/D0`
-- **THEN** the `XboxGIP` mode runs
+- **THEN** the default `XboxGIP` mode runs
 
 #### Scenario: XUSB Interface
 

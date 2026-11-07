@@ -11,7 +11,7 @@ Facts checked against the tree and git before planning:
 - `controller.schema.json` allows an input byte offset up to 63 and 8 or 16 bit axes, so a 32-byte report fits a declarative layout. It has no motion fields; gyro and accelerometer data need Swift.
 - Checksum check of the research framing `5A A5 cmd len payload sum8` (len is the payload length plus 2, sum8 is the low byte of cmd + len + payload): `5A A5 01 02 03` gives 0x01+0x02 = 0x03; `5A A5 11 07 FF 01 FF FF FF 15` gives 0x11+0x07+0xFF+0x01+0xFF+0xFF+0xFF = 0x415, low byte 0x15. Both agree with the research bytes.
 - `docs/development/wire-protocols.md` says the Flydigi family "takes no output" and decodes through `ReportLayoutDriver` with no code. `ojd controller capture CONTROLLER --json` and `ojd record test` exist.
-- No `04B4` or `2401` record exists. `wiki/Supported-Controllers.md` has no Flydigi entry.
+- No `2401` record exists. `04B4:2412` has a record; `37D7:2501` has only a generated `XboxXUSB` record imported from xpad and no hand-written record or test document. The wiki lists `D7D7:0041`, `37D7:2801` and `04B4:2412`.
 
 Research claims not confirmed by any source in the tree (each is a starting assumption and a tester check): the `37D7:2801` interface signature, the 2401 endpoint numbers (IN 20 bytes on EP1, OUT 8 on EP5, HID EP2 IN 32 and EP6 OUT 32), the init and test-mode packets of the 2401, the extended report offsets (sticks int16 LE at 3 to 10, buttons 11 to 14, triggers 15 and 16, gyro 17 to 22, accel 23 to 28, 4096 = 1 g), the Apex 4 report sizes (output 5, 63 bytes; input 4, 31 bytes), the Apex 5 output report `0x03` and input `0x04`, and the cmd 18, 81 and 82 payloads.
 
@@ -31,7 +31,7 @@ C and Z map to `Auxiliary1` and `Auxiliary2`; M1 to M4 map to the four paddle co
 
 ### D4: 37D7:2801 Serves Both Interfaces
 
-The record has two modes: `gip` (interface signature `FF/47/D0`, `XboxGIP`, the current endpoints and session) and `xusb` (interface signature `FF/5D/01`, `XboxXUSB`/`Wired`). The mode that matches the connected pad runs; the other never does, and `ojd controller show` reports the mode. One of the two is `default` as the schema requires; the plan makes `gip` the default because it is the mode with a hardware record, and the tester check settles whether `xusb` is the one that appears. Both modes are unverified until a tester sends `usb.txt`. `docs/testing/flydigi-vader-5s.md` cites commit `98b7b0eb6` as evidence about the pad at that commit and states that it is not verification.
+The record has two modes: `default` (`XboxGIP`, the current endpoints and session) and `xusb` (interface signature `FF/5D/01`, `XboxXUSB`/`Wired`). The record format gives the default mode no keys, so GIP is the mode that runs for an interface `FF/47/D0` and for a pad that shows neither signature; the `xusb` mode runs only when its signature holds. `ojd controller show` reports the mode. The plan makes `gip` the default because it is the mode with a hardware record, and the tester check settles whether `xusb` is the one that appears. When no mode matches, the selector log names the interface classes seen, which is how a neither-signature pad shows what it exposed. Both modes are unverified until a tester sends `usb.txt`. `docs/testing/flydigi-vader-5s.md` cites commit `98b7b0eb6` as evidence about the pad at that commit and states that it is not verification.
 
 ### D5: 37D7:2401 Needs Two Interfaces
 
@@ -58,6 +58,10 @@ The model name stays "Vader 4 Pro" in `D7D7:0041` documents. If a tester with a 
 
 New: `docs/testing/flydigi-vader-5s.md`, `docs/testing/flydigi-vader-5-pro.md`, `docs/testing/flydigi-apex-4.md`, `docs/testing/flydigi-tester-checks.md`. Changed: `docs/testing/flydigi-vader-4-pro.md` (byte 11 controls reach consumers; the sentence that they do not is removed), `docs/development/wire-protocols.md`, `wiki/Supported-Controllers.md` (a Flydigi entry for every record, tier Unverified unless a tester verifies it). History goes in `CHANGELOG.md`.
 
+### D10: A Record-Level Endpoint Override Must Change One Mode
+
+`usb` is a record-level section, so its `endpoints` apply to every mode. The validator rejects an override equal to the default endpoints of the family, because it states nothing the family does not already say. With several modes the rule is: the override is rejected when it equals the default of every mode (it would change no mode) and accepted when it differs from the default of at least one mode. `37D7:2801` needs this: the endpoints recorded from hardware in GIP mode (in 129, out 1) are the `XboxXUSB` defaults and differ from the `XboxGIP` defaults (in 130, out 2), so the override moves the GIP mode and leaves the XUSB mode on its defaults. The schema has no per-mode endpoints, and adding them is a larger format change than this rule. `ControllerRecordDocument+Transport.swift` implements the rule with `allSatisfy`; `ControllerModeConditionalTests` and a `SchemaRejections` case (two `XboxXUSB` modes with the XUSB defaults) cover both sides.
+
 ## Risks
 
 - Option 1 of D5 may be impossible with the current mode selection. Task 4.1 reads the code before any record is written.
@@ -70,3 +74,20 @@ New: `docs/testing/flydigi-vader-5s.md`, `docs/testing/flydigi-vader-5-pro.md`, 
 - Which interface `37D7:2801` shows on the maintainer's pad and on a tester's (tester card F2).
 - Whether the Vader 5 Pro dongle needs both modes selectable (task 4.1).
 - Whether `04B4:2412` input uses the report ID in byte 0 of the 31-byte read (task 5.1 reads the descriptor).
+
+## Open
+
+### O1: Where the Vendor Frame Builder Lives and How Output Reaches It (tasks 6.2 to 6.4)
+
+Facts from the pinned openflydigi `PROTOCOL.md` (commit `11653507bbe4dc77f3c479c2a7aaebf25bbda995`, sections 2, 3a and 7), which differ from D7 and the spec:
+
+- Commands 18, 81 and 82 are the three commands whose vendor builders set no checksum byte, and the notes report that a pad accepted them with the checksum field left zero. The other commands end with the sum8 over the bytes from the command. D7 and the "Vendor Output" requirement apply sum8 to every frame.
+- The frame on the `0xFFA0` node is report ID `0x03` followed by `5A A5 cmd len payload`, written as 32 bytes. The length byte counts the payload plus 2 for the SDK's checksummed commands; for 18 the notes give `[4]=6` with grip levels at frame bytes 5 and 6 and trigger motors at 7 and 8, and say the pad accepts a length byte that matches the real payload for 81.
+- A Vader 5 declares no force trigger, so Space Station sends it command 18 and never 81 or 82. Command 82 has no mode byte (`side, bindType, filter, scale, stroke, pressureLevel, strength, frequency`); 81 has an apply flag and a mode byte with the effects `Normal` 0, `Race` 1, `Sniper` 2, `Recoil` 3, `Lock` 4, `Vibration` 5 (never sent by the vendor software), with `Sniper` and `Recoil` labelled the other way round in Space Station's UI.
+
+Proposed decision for the coordinator:
+
+1. The frame builder is one pure function, `FlydigiFrame.build(command:payload:checksum:)`, in `Sources/OpenJoystickDriverKit/Protocol/Drivers/Vendor/` beside the Flydigi driver. `checksum` is a two-case enum, `.sum8` and `.none`, and each command in a record names which it uses. The spec then says: the length byte is the payload length plus 2, and the last byte is sum8 for the commands that list `sum8`; commands 18, 81 and 82 list `none` per the notes until a tester confirms a pad that needs the byte. Hardware evidence: none; both forms are source-derived.
+2. `ojd controller rumble` reaches it through the existing output path for the record: the Flydigi driver's rumble method calls the builder with command 18 and the four levels (`--left`, `--right`, `--left-trigger`, `--right-trigger`), writes the 32-byte frame with report ID `0x03`, and the test uses the fake transport that records writes. No new CLI flag.
+3. The record names the allowed commands in a new `output.vendorCommands` list of `{ "command": 18, "checksum": "None" }` entries on a mode whose family reads it. A command that is not listed sends nothing and fails with a named error. Adding a record field needs the controller schema, `protocol-description` and `Resources/ErrorCodes.json` changes in one commit.
+4. Trigger force modes (6.4) are a profile setting named after the effect enum (`Normal`, `Race`, `Sniper`, `Recoil`, `Lock`), applied through command 81 and offered only for a record whose pad has force triggers. The Vader 5 Pro has none, so 81 and 82 are not listed for it.
