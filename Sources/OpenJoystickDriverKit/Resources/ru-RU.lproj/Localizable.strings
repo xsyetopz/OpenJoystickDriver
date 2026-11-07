@@ -530,6 +530,14 @@
 "ui.profiles.targetApplication" = "Одно приложение";
 /* Option of the target popup: the profile applies to all apps. */
 "ui.profiles.targetGlobal" = "Все приложения";
+/* Label of the popup in the profile creation sheet that picks what the new profile starts from. */
+"ui.profiles.template" = "Шаблон";
+/* Option of the template popup in the profile creation sheet: the profile starts empty. */
+"ui.profiles.templateEmpty" = "Пустой";
+/* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
+"ui.profiles.templateGyroStick" = "Гироскоп на стик";
+/* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
+"ui.profiles.templateNoMotion" = "У %@ нет датчика движения.";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "Переключение";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -2937,6 +2945,8 @@
 "cli.profile.group.argument" = "Профиль: его ID или имя из «ojd profile list».";
 /* One-line summary of 'ojd profile create' in the command list and at the top of its help. */
 "cli.profile.create.abstract" = "Создаёт пустой профиль для одной модели контроллера.";
+/* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.activation" = "Элемент управления, который нужно удерживать для вывода гироскопа (шаблон gyro-stick). Без него вывод гироскопа всегда включён.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
 "cli.profile.create.app" = "Применять профиль, только пока это приложение (по ID приложения) на переднем плане.";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
@@ -2945,6 +2955,14 @@
 "cli.profile.create.discussion" = "Профиль действует во всех приложениях, если --app не указывает одно. По умолчанию виртуальный геймпад передаёт каждый элемент управления, который не использует ни одна привязка. Профиль создаётся неактивным; активируйте его командой «ojd profile activate».";
 /* Message printed after 'ojd profile create'. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.create.done" = "Создан профиль «%1$@» (%2$@).";
+/* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
+"cli.profile.create.noMotion" = "У %@ нет датчика движения.";
+/* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.stick" = "Стик, которым управляет шаблон gyro-stick: left или right. По умолчанию right.";
+/* Help text of the --template option of 'ojd profile create'. gyro-stick is the only template, the user types it, and it stays as written. */
+"cli.profile.create.template" = "Начать с шаблона. Единственный шаблон: gyro-stick.";
+/* Error of 'ojd profile create' when --stick or --activation is given without --template. The three option names stay as written. */
+"cli.profile.create.templateRequired" = "Для --stick и --activation нужен --template.";
 /* Help text of the physical input option of 'ojd profile create'. shared and exclusive are values the user types and stay as written. */
 "platform.macos.cli.profile.create.physicalInput" = "Видит ли macOS контроллер по-прежнему (shared) или его забирает OJD (exclusive).";
 /* Help text of the --virtual-gamepad option of 'ojd profile create'. disabled, mapped and passthrough are values the user types and stay as written. */

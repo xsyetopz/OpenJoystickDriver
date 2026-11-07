@@ -6,7 +6,7 @@
 
 #### Scenario: Create the Template
 
-- **WHEN** the user runs `ojd profile create Gyro --controller 054C:0CE6 --template gyro-stick --activation button:leftShoulder` for a controller with motion
+- **WHEN** the user runs `ojd profile create Gyro --controller 054C:0CE6 --template gyro-stick --activation button:left-shoulder` for a controller with motion
 - **THEN** the profile validates, has `gyroOutput` mode `RightStick` with `WhileHeld` on the left shoulder, and a virtual gamepad is enabled
 
 #### Scenario: No Motion Sensor

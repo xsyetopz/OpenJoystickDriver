@@ -253,6 +253,34 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   )
   var physicalInput: RemappingPhysicalInputPolicy = .shared
 
+  /// `--template`: starts the profile from a template instead of empty.
+  @Option(
+    help: ArgumentHelp(
+      CLILocalized.text("cli.profile.create.template"),
+      valueName: "template"
+    )
+  )
+  var template: ProfileTemplate?
+
+  /// `--stick`: the stick that the `gyro-stick` template drives.
+  @Option(
+    help: ArgumentHelp(
+      CLILocalized.text("cli.profile.create.stick"),
+      valueName: "stick"
+    )
+  )
+  var stick: RemappingGyroStickTemplate.Stick?
+
+  /// `--activation`: the control that must be held for gyro output; without it gyro output is
+  /// always on.
+  @Option(
+    help: ArgumentHelp(
+      CLILocalized.text("cli.profile.create.activation"),
+      valueName: "control"
+    )
+  )
+  var activation: String?
+
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
@@ -260,6 +288,10 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
+      guard template != nil || (stick == nil && activation == nil) else {
+        throw CLIFailure.usage(CLILocalized.text("cli.profile.create.templateRequired"))
+      }
+      let activationSource = try activation.map(parseSource)
       let selector = controller
       let scope = app.map { RemappingApplicationScope.application(appID: $0) } ?? .global
       let policy = RemappingOutputPolicy(
@@ -276,13 +308,34 @@ struct ProfileCreateCommand: AsyncParsableCommand {
           let found = try await selector.resolve(with: client)
           device = RemappingDeviceScope(vendorID: found.vendorID, productID: found.productID)
         }
-        let profile = try RemappingProfile(
-          name: name,
-          device: device,
-          applicationScope: scope,
-          outputPolicy: policy,
-          bindings: []
-        ).validatedForCLI()
+        let profile: RemappingProfile
+        switch template {
+        case .gyroStick:
+          let model = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
+          do {
+            profile = try RemappingGyroStickTemplate.profile(
+              name: name,
+              device: device,
+              applicationScope: scope,
+              stick: stick ?? .right,
+              activation: activationSource,
+              capabilities: ProtocolDriverRegistry().profileCapabilities(for: model) ?? .unknown
+            ).validatedForCLI()
+          } catch RemappingGyroStickTemplate.Failure.noMotionSensor(let model) {
+            throw CLIFailure(
+              .invalidProfile,
+              CLILocalized.format("cli.profile.create.noMotion", model.description)
+            )
+          }
+        case nil:
+          profile = try RemappingProfile(
+            name: name,
+            device: device,
+            applicationScope: scope,
+            outputPolicy: policy,
+            bindings: []
+          ).validatedForCLI()
+        }
         return (profile, try await client.createRemappingProfile(profile))
       }
       try printProfile(

@@ -181,6 +181,14 @@ enum ProfileNaming {
   }
 }
 
+/// What a new profile starts from.
+enum ProfileCreationTemplate: Equatable {
+  /// An empty profile.
+  case empty
+  /// Gyro motion drives a stick of the virtual gamepad.
+  case gyroStick
+}
+
 /// The edits made in the profile creation sheet.
 ///
 /// The controller is the first connected one until the person picks; a pick stays on its model when
@@ -197,6 +205,18 @@ struct ProfileCreationFields: Equatable {
   var appID = ""
   /// The output policy `ojd profile create` starts with.
   var outputPolicy = RemappingOutputPolicy(virtualGamepad: .passthrough, physicalInput: .shared)
+  /// What the profile starts from.
+  var template = ProfileCreationTemplate.empty
+  /// The stick that the gyro-stick template drives.
+  var gyroStick = RemappingGyroStickTemplate.Stick.right
+
+  /// Whether the template needs a motion sensor that the controller lacks.
+  func lacksMotion(in context: ProfileCreationContext) -> Bool {
+    guard template == .gyroStick, let controller = controller(in: context) else { return false }
+    return
+      !(ProtocolDriverRegistry().profileCapabilities(for: controller.model)?.physicalInput
+      .motion ?? false)
+  }
 
   /// The controller the profile belongs to; nil while none is picked and none is connected, or
   /// when the picked model is not offered.
@@ -235,13 +255,35 @@ struct ProfileCreationFields: Equatable {
     case .global: applicationScope = .global
     case .application: applicationScope = .application(appID: appID)
     }
-    let profile = RemappingProfile(
-      name: ProfileNameValidation.trimmedName(name(in: context)),
-      device: RemappingDeviceScope(vendorID: controller.vendorID, productID: controller.productID),
-      applicationScope: applicationScope,
-      outputPolicy: outputPolicy,
-      bindings: []
+    let device = RemappingDeviceScope(
+      vendorID: controller.vendorID,
+      productID: controller.productID
     )
+    let trimmedName = ProfileNameValidation.trimmedName(name(in: context))
+    let profile: RemappingProfile
+    switch template {
+    case .empty:
+      profile = RemappingProfile(
+        name: trimmedName,
+        device: device,
+        applicationScope: applicationScope,
+        outputPolicy: outputPolicy,
+        bindings: []
+      )
+    case .gyroStick:
+      guard
+        let made = try? RemappingGyroStickTemplate.profile(
+          name: trimmedName,
+          device: device,
+          applicationScope: applicationScope,
+          stick: gyroStick,
+          activation: nil,
+          capabilities: ProtocolDriverRegistry().profileCapabilities(for: controller.model)
+            ?? .unknown
+        )
+      else { return nil }
+      profile = made
+    }
     guard (try? profile.validate()) != nil else { return nil }
     return profile
   }

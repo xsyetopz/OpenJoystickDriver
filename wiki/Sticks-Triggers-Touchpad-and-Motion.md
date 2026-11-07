@@ -9,6 +9,7 @@ Analog settings change how a stick, a trigger, a touch surface, or a motion sens
 - [Set Trigger Stages](#set-trigger-stages)
 - [Set Touch Mapping](#set-touch-mapping)
 - [Set Motion Tuning and Gyro Output](#set-motion-tuning-and-gyro-output)
+- [Create a Gyro to Stick Profile](#create-a-gyro-to-stick-profile)
 - [Pair Two Joy-Con Controllers](#pair-two-joy-con-controllers)
 - [Set the Lighting Color](#set-the-lighting-color)
 - [Further Reading](#further-reading)
@@ -118,6 +119,18 @@ To change these settings with the command line, run `ojd profile edit PROFILE` a
 A gyro trackball keeps motion going after you hold a control. **Velocity halvings per second** ranges from 0 to 1000. Zero keeps a constant speed.
 
 Motion sources need a controller with motion sensors. Some controllers provide none.
+
+## Create a Gyro to Stick Profile
+
+The **Gyro to stick** template makes a profile in which turning the controller moves a stick of the virtual gamepad, so a game that reads only sticks gets gyro aiming.
+
+1. Click **New profile** and choose the controller.
+2. Set **Template** to **Gyro to stick**, then choose the **Left stick** or the **Right stick**.
+3. Click **Create**.
+
+The profile turns the virtual gamepad on with every unmapped control passing through, and gyro output is always on. To make it active only while a control is held, set the activation in the motion sheet. With the command line, run `ojd profile create NAME --controller VVVV:PPPP --template gyro-stick`, and add `--stick left` or `--activation button:left-shoulder` to change the stick or to hold a control. If the controller model has no motion sensor, OpenJoystickDriver does not create the profile and says which model lacks one.
+
+Hardware behavior: Not checked. The engine and its tests cover stick output, and [the hardware check](../docs/testing/gyro-stick.md) has not been run on a controller.
 
 ## Pair Two Joy-Con Controllers
 

@@ -530,6 +530,14 @@
 "ui.profiles.targetApplication" = "앱 하나";
 /* Option of the target popup: the profile applies to all apps. */
 "ui.profiles.targetGlobal" = "모든 앱";
+/* Label of the popup in the profile creation sheet that picks what the new profile starts from. */
+"ui.profiles.template" = "템플릿";
+/* Option of the template popup in the profile creation sheet: the profile starts empty. */
+"ui.profiles.templateEmpty" = "비어 있음";
+/* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
+"ui.profiles.templateGyroStick" = "자이로를 스틱으로";
+/* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
+"ui.profiles.templateNoMotion" = "%@에는 모션 센서가 없습니다.";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "토글";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -2937,6 +2945,8 @@
 "cli.profile.group.argument" = "프로파일: ID 또는 ‘ojd profile list’에 나오는 이름입니다.";
 /* One-line summary of 'ojd profile create' in the command list and at the top of its help. */
 "cli.profile.create.abstract" = "컨트롤러 모델 하나를 위한 빈 프로파일을 만듭니다.";
+/* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.activation" = "자이로 출력을 위해 누르고 있어야 하는 컨트롤 (gyro-stick 템플릿). 지정하지 않으면 자이로 출력은 항상 켜져 있습니다.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
 "cli.profile.create.app" = "이 앱(앱 ID로 지정)이 맨 앞에 있을 때만 프로파일을 적용합니다.";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
@@ -2945,6 +2955,14 @@
 "cli.profile.create.discussion" = "--app으로 앱을 지정하지 않으면 프로파일은 모든 앱에 적용됩니다. 기본적으로 가상 게임패드는 어떤 할당도 사용하지 않는 모든 컨트롤을 그대로 전달합니다. 프로파일은 비활성 상태로 시작하며, ‘ojd profile activate’로 활성화하세요.";
 /* Message printed after 'ojd profile create'. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.create.done" = "‘%1$@’(%2$@)을(를) 만들었습니다.";
+/* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
+"cli.profile.create.noMotion" = "%@에는 모션 센서가 없습니다.";
+/* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.stick" = "gyro-stick 템플릿이 조작하는 스틱: left 또는 right. 기본값은 right입니다.";
+/* Help text of the --template option of 'ojd profile create'. gyro-stick is the only template, the user types it, and it stays as written. */
+"cli.profile.create.template" = "템플릿으로 시작합니다. 템플릿은 gyro-stick 하나뿐입니다.";
+/* Error of 'ojd profile create' when --stick or --activation is given without --template. The three option names stay as written. */
+"cli.profile.create.templateRequired" = "--stick과 --activation에는 --template이 필요합니다.";
 /* Help text of the physical input option of 'ojd profile create'. shared and exclusive are values the user types and stay as written. */
 "platform.macos.cli.profile.create.physicalInput" = "macOS가 컨트롤러를 계속 볼 수 있는지(shared), OJD가 가져가는지(exclusive)를 정합니다.";
 /* Help text of the --virtual-gamepad option of 'ojd profile create'. disabled, mapped and passthrough are values the user types and stay as written. */

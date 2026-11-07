@@ -116,6 +116,14 @@ extension RemappingProfile {
   }
 }
 
+/// The templates that `ojd profile create --template` accepts.
+enum ProfileTemplate: String, CaseIterable, ExpressibleByArgument {
+  /// Gyro motion drives a stick of the virtual gamepad.
+  case gyroStick = "gyro-stick"
+}
+
+extension RemappingGyroStickTemplate.Stick: ExpressibleByArgument {}
+
 extension RemappingVirtualGamepadPolicy: ExpressibleByArgument {
   /// Reads a `--virtual-gamepad` value: `disabled`, `mapped` or `passthrough`.
   public init?(argument: String) {

@@ -75,6 +75,49 @@ struct ProfileCommandTests {
   }
 
   @Test
+  func createWithTheGyroStickTemplateDrivesTheChosenStick() async throws {
+    let library = FakeProfileLibrary([])
+    let service = try Self.service(library)
+
+    let result = await service.run([
+      "profile", "create", "Gyro", "--controller", "054c:0ce6", "--template", "gyro-stick",
+      "--activation", "button:left-shoulder", "--json",
+    ])
+
+    #expect(result.code == 0, "\(result.standardError)")
+    let created = try #require(library.stored.first)
+    #expect(created.gyroOutput.mode == .rightStick)
+    #expect(created.gyroOutput.activationMode == .whileHeld)
+    #expect(created.gyroOutput.activationSource == .button(.leftShoulder))
+    #expect(created.outputPolicy.virtualGamepad == .passthrough)
+  }
+
+  @Test
+  func createWithTheGyroStickTemplateFailsForAModelWithoutMotionAndStoresNothing() async throws {
+    let library = FakeProfileLibrary([FakeProfileLibrary.profile("Racing")])
+    let service = try Self.service(library)
+
+    let result = await service.run([
+      "profile", "create", "Gyro", "--controller", "045e:028e", "--template", "gyro-stick",
+    ])
+
+    #expect(result.code == 1)
+    #expect(result.standardError.contains("045E:028E"))
+    #expect(library.stored.map(\.name) == ["Racing"])
+  }
+
+  @Test
+  func stickAndActivationNeedATemplate() async throws {
+    let service = try Self.service(FakeProfileLibrary([]))
+
+    let result = await service.run([
+      "profile", "create", "Gyro", "--controller", "054c:0ce6", "--stick", "left",
+    ])
+
+    #expect(result.code == 64)
+  }
+
+  @Test
   func duplicateAndRenameKeepTheOriginalContents() async throws {
     let binding = RemappingBinding(
       source: .button(.south),

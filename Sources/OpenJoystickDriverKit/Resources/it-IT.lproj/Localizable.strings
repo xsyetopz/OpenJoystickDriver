@@ -530,6 +530,14 @@
 "ui.profiles.targetApplication" = "Un’applicazione";
 /* Option of the target popup: the profile applies to all apps. */
 "ui.profiles.targetGlobal" = "Tutte le applicazioni";
+/* Label of the popup in the profile creation sheet that picks what the new profile starts from. */
+"ui.profiles.template" = "Modello";
+/* Option of the template popup in the profile creation sheet: the profile starts empty. */
+"ui.profiles.templateEmpty" = "Vuoto";
+/* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
+"ui.profiles.templateGyroStick" = "Giroscopio su levetta";
+/* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
+"ui.profiles.templateNoMotion" = "%@ non ha un sensore di movimento.";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "Attiva/Disattiva";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -2937,6 +2945,8 @@
 "cli.profile.group.argument" = "Il profilo: il suo ID o il suo nome da «ojd profile list».";
 /* One-line summary of 'ojd profile create' in the command list and at the top of its help. */
 "cli.profile.create.abstract" = "Crea un profilo vuoto per un modello di controller.";
+/* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.activation" = "Il controllo da tenere premuto per l’uscita del giroscopio (modello gyro-stick). Senza, l’uscita del giroscopio è sempre attiva.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
 "cli.profile.create.app" = "Applica il profilo solo mentre quest’app, indicata dall’ID dell’app, è in primo piano.";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
@@ -2945,6 +2955,14 @@
 "cli.profile.create.discussion" = "Il profilo vale in ogni app, a meno che --app ne indichi una. Per impostazione predefinita il gamepad virtuale lascia passare ogni controllo che nessuna assegnazione usa. Il profilo parte disattivo; attivalo con «ojd profile activate».";
 /* Message printed after 'ojd profile create'. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.create.done" = "Creato «%1$@» (%2$@).";
+/* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
+"cli.profile.create.noMotion" = "%@ non ha un sensore di movimento.";
+/* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.stick" = "La levetta pilotata dal modello gyro-stick: left o right. Il valore predefinito è right.";
+/* Help text of the --template option of 'ojd profile create'. gyro-stick is the only template, the user types it, and it stays as written. */
+"cli.profile.create.template" = "Parti da un modello. L’unico modello è gyro-stick.";
+/* Error of 'ojd profile create' when --stick or --activation is given without --template. The three option names stay as written. */
+"cli.profile.create.templateRequired" = "--stick e --activation richiedono --template.";
 /* Help text of the physical input option of 'ojd profile create'. shared and exclusive are values the user types and stay as written. */
 "platform.macos.cli.profile.create.physicalInput" = "Se macOS vede ancora il controller (shared) oppure se OJD lo prende (exclusive).";
 /* Help text of the --virtual-gamepad option of 'ojd profile create'. disabled, mapped and passthrough are values the user types and stay as written. */

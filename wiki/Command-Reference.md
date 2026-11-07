@@ -105,7 +105,7 @@ Create, change, activate, and move remapping profiles. Every `profile` command n
 ```text
 ojd profile list
 ojd profile show PROFILE
-ojd profile create NAME --controller CONTROLLER [--app BUNDLE-ID] [--virtual-gamepad disabled|mapped|passthrough] [--physical-input shared|exclusive]
+ojd profile create NAME --controller CONTROLLER [--app BUNDLE-ID] [--virtual-gamepad disabled|mapped|passthrough] [--physical-input shared|exclusive] [--template gyro-stick [--stick left|right] [--activation SOURCE]]
 ojd profile duplicate PROFILE NEW-NAME
 ojd profile rename PROFILE NEW-NAME
 ojd profile delete PROFILE [--force] [--dry-run]
@@ -124,7 +124,7 @@ ojd profile set PROFILE KEY VALUE
 
 - `profile list`: List each profile with its ID, name, controller model, app scope, and number of bindings, and show which profiles are active. When a saved profile cannot be loaded, it also reports each issue on stderr, followed by "Repair them with 'ojd profile recover'."
 - `profile show`: Show a profile's settings and bindings. Bindings use the `SOURCE` and `TARGET` forms of `ojd binding set`.
-- `profile create`: Create an empty, inactive profile for one controller model. `--controller` is `VVVV:PPPP` or the ID of a connected controller. The profile applies in every app unless `--app` gives an app ID. `--virtual-gamepad` sets what the virtual gamepad sends: nothing (`disabled`), bound controls only (`mapped`), or also every control that no binding uses (`passthrough`, the default). `--physical-input` sets whether macOS still sees the controller (`shared`, the default) or OpenJoystickDriver takes it (`exclusive`).
+- `profile create`: Create an empty, inactive profile for one controller model. `--controller` is `VVVV:PPPP` or the ID of a connected controller. The profile applies in every app unless `--app` gives an app ID. `--virtual-gamepad` sets what the virtual gamepad sends: nothing (`disabled`), bound controls only (`mapped`), or also every control that no binding uses (`passthrough`, the default). `--physical-input` sets whether macOS still sees the controller (`shared`, the default) or OpenJoystickDriver takes it (`exclusive`). `--template gyro-stick` starts from a gyro to stick profile instead: `--stick` picks `left` or `right` (the default), and `--activation SOURCE`, such as `button:left-shoulder`, makes gyro output active only while that control is held; without it gyro output is always on. `--stick` and `--activation` need `--template`. The command fails for a model with no motion sensor and names the model. See [Create a Gyro to Stick Profile](Sticks-Triggers-Touchpad-and-Motion.md#create-a-gyro-to-stick-profile).
 - `profile duplicate`: Copy a profile under a new name. The copy is inactive.
 - `profile rename`: Give a profile a new name of 1 to 80 characters.
 - `profile delete`: Delete a profile. An active profile stops applying. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing.

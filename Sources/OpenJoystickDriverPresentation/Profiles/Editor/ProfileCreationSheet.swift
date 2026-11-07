@@ -72,7 +72,30 @@
             if fields.scopeKind == .application {
               TextField(OJDLocalized.string("ui.profiles.appID"), text: $fields.appID)
             }
-            ProfileOutputPolicyView(policy: fields.outputPolicy) { fields.outputPolicy = $0 }
+            Picker(OJDLocalized.string("ui.profiles.template"), selection: $fields.template) {
+              Text(OJDLocalized.string("ui.profiles.templateEmpty"))
+                .tag(ProfileCreationTemplate.empty)
+              Text(OJDLocalized.string("ui.profiles.templateGyroStick"))
+                .tag(ProfileCreationTemplate.gyroStick)
+            }
+            if fields.template == .gyroStick {
+              Picker(OJDLocalized.string("ui.profiles.gyro.output"), selection: $fields.gyroStick) {
+                Text(OJDLocalized.string("ui.profiles.gyro.leftStick")).tag(
+                  RemappingGyroStickTemplate.Stick.left
+                )
+                Text(OJDLocalized.string("ui.profiles.gyro.rightStick")).tag(
+                  RemappingGyroStickTemplate.Stick.right
+                )
+              }
+              if fields.lacksMotion(in: context), let controller = fields.controller(in: context) {
+                Text(
+                  OJDLocalized.formatted("ui.profiles.templateNoMotion", controller.label)
+                ).foregroundColor(Color(NSColor.systemRed))
+              }
+            }
+            if fields.template == .empty {
+              ProfileOutputPolicyView(policy: fields.outputPolicy) { fields.outputPolicy = $0 }
+            }
             if fields.showsValidation(isValid: proposedProfile != nil) && nameProblem == nil {
               Text(OJDLocalized.string("ui.profiles.creationValidation"))
                 .foregroundColor(Color(NSColor.systemRed)).fixedSize(
