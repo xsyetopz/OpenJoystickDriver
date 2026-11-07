@@ -6,6 +6,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ## [Unreleased]
 
+## [0.6.0-alpha.2] - 2026-11-07
+
 ### Added
 
 - `ojd migrate [--dry-run]` converts the 0.6.0-alpha.1 documents (`Settings.json`, `AccessGrants.json`, profiles, controller records and virtual device files) to the current version, checks each with the current reader and keeps the original in `Migrated/`. A file it cannot convert stays unchanged and the command fails with error `E5009` (`documentNotMigrated`). The launch alert for refused settings and the **Access** error card have a **Migrate** button.
@@ -655,7 +657,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Fix an output-dispatcher race when creating virtual devices.
 - Keep the menu-bar app alive after launch.
 
-[Unreleased]: https://github.com/xsyetopz/OpenJoystickDriver/compare/0.6.0-alpha.1...HEAD
+[Unreleased]: https://github.com/xsyetopz/OpenJoystickDriver/compare/0.6.0-alpha.2...HEAD
+[0.6.0-alpha.2]: https://github.com/xsyetopz/OpenJoystickDriver/compare/0.6.0-alpha.1...0.6.0-alpha.2
 [0.6.0-alpha.1]: https://github.com/xsyetopz/OpenJoystickDriver/compare/0.5.0-beta.4...0.6.0-alpha.1
 [0.5.0-beta.4]: https://github.com/xsyetopz/OpenJoystickDriver/compare/0.5.0-beta.3...0.5.0-beta.4
 [0.5.0-beta.3]: https://github.com/xsyetopz/OpenJoystickDriver/compare/0.5.0-beta.2...0.5.0-beta.3
