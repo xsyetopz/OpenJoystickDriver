@@ -15,7 +15,7 @@ Owns: `docs/testing/zd-o-plus.md`.
 Depends: none.
 Verify: `git diff --check`.
 
-- [ ] 1.1 Write `docs/testing/zd-o-plus.md` with the steps for any owner of a ZD O+ (or another `11C0` ZD pad). Not run yet. The tester sends back, for each of (i) OJD stopped and (ii) OJD running: the mode the pad shows (`11C0:5505` or `057E:2009`) and its `bInterval`; the `ioreg -l -w0 -r -c IOUSBHostDevice` entry with the USB serial, manufacturer string, product string and `bcdDevice`; and whether the pad comes up as `11C0:5505` when nothing handshakes.
+- [x] 1.1 Write `docs/testing/zd-o-plus.md` with the steps for any owner of a ZD O+ (or another `11C0` ZD pad). Not run yet. The tester sends back, for each of (i) OJD stopped and (ii) OJD running: the mode the pad shows (`11C0:5505` or `057E:2009`) and its `bInterval`; the `ioreg -l -w0 -r -c IOUSBHostDevice` entry with the USB serial, manufacturer string, product string and `bcdDevice`; and whether the pad comes up as `11C0:5505` when nothing handshakes.
 - [ ] 1.2 Apply the result to the Open decision in `design.md` (O1) and record the choice there.
 
 ## 2. Diagnose Check
