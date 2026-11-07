@@ -32,7 +32,7 @@ OJD does not pair a Wii Remote. macOS Bluetooth pairs it, and OJD reads the remo
 
 ## The Virtual Controllers Carry No Pointer
 
-The controls `PointerX`, `PointerY`, and `PointerTracking` are in the control vocabulary, but the `SDLCompatible` and `Generic` personas publish gamepad controls only. A pointer reaches a profile or an SDK client, not a game that reads the virtual controller. The Wii Remote driver sends no pointer value yet, because it does not read the IR camera.
+The controls `PointerX`, `PointerY`, and `PointerTracking` are in the control vocabulary, but the `SDLCompatible` and `Generic` personas publish gamepad controls only. A pointer reaches a profile or an SDK client, not a game that reads the virtual controller. The Wii Remote driver sends only `PointerTracking`, and only while the IR camera runs. Nothing switches the camera on yet, and the driver sends no `PointerX` or `PointerY` value. See [IR pointer](Wii-Remote.md#ir-pointer).
 
 ## Unplugging a USB Controller Can Crash the App
 
