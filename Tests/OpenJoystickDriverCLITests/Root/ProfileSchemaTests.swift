@@ -148,9 +148,10 @@ struct ProfileSchemaTests {
               "effect": {"kind": "Resistance", "startPosition": 0.3, "strength": 0.7}
             }
           },
-          "doubleTap": {
-            "windowMs": 250, "destination": {"type": "GamepadButton", "button": "North"}
-          }
+          "multiTap": [{
+            "count": 2, "windowMs": 250,
+            "destination": {"type": "GamepadButton", "button": "North"}
+          }]
         }
       ],
       "chords": [
