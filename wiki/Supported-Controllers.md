@@ -45,7 +45,7 @@ Two testers tested the 8BitDo Ultimate 2C Wireless on tester build `1.5.71`. One
 
 One tester tested the Xbox Nano Controller on macOS 26.5.2. For the details, see [the test record](../docs/testing/xbox-nano.md).
 
-The 8BitDo Ultimate 2C Wireless has a different VID:PID in each mode. The Bluetooth mode `2DC8:301B` and the HID receiver mode `2DC8:301C` have no verification. They may work.
+The 8BitDo Ultimate 2C Wireless has a different VID:PID in each mode. The Bluetooth mode `2DC8:301B` and the wired DInput mode `2DC8:301D` have no verification. They may work; the rear buttons repeat L3 and R3 and map no paddle. The HID receiver `2DC8:301C` is an idle identity: OJD sends it no data and creates no gamepad, and the pad is assumed to re-enumerate as `2DC8:310A` once it connects. The USB adapter `2DC8:3109` stays an `XboxXUSB` wired record, also unverified.
 
 The 8BitDo Ultimate 2 in DInput mode (`2DC8:6012`, cable and 2.4 GHz dongle) has an unverified record that uses the Ultimate 2C layout and maps no rear button. Its receiver `2DC8:6013` and dongle `2DC8:3107` are idle identities: OJD sends them no data and creates no gamepad. For the details, see [the Ultimate 2 test record](../docs/testing/8bitdo-ultimate-2.md).
 

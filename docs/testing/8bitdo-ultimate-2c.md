@@ -5,7 +5,9 @@ The Ultimate 2C Wireless enumerates as a different identity in each mode. Test a
 | Mode | VID:PID | Route | Status |
 | --- | --- | --- | --- |
 | 2.4 GHz dongle, XInput | `2DC8:310A` | `XboxXUSB` | Hardware-verified by two testers on `0.5.0-beta.4` tester build `1.5.71`: buttons, sticks, triggers at rest, D-pad, stick clicks, rumble |
-| Bluetooth LE | `2DC8:301B` | `HIDDescriptor` | Mapping confirmed on hardware from a patch ([#34](https://github.com/xsyetopz/OpenJoystickDriver/issues/34)); this build is not yet tested |
+| Bluetooth LE | `2DC8:301B` | `HIDDescriptor` | Unverified: the mapping was confirmed on hardware from a patch ([#34](https://github.com/xsyetopz/OpenJoystickDriver/issues/34)), and this record has no capture |
+| Wired, DInput | `2DC8:301D` | `HIDDescriptor` | Unverified: the record reuses the Bluetooth usage map, and no source or capture of this mode exists |
+| USB adapter | `2DC8:3109` | `XboxXUSB` | Unverified: the record stays `XboxXUSB` over a wired link, and what the standby identity means is not known |
 | HID receiver | `2DC8:301C` | `HIDDescriptor` | Idle receiver: the record is `idle`, maps no controls and reports `IdleIdentity`; the pad is assumed to re-enumerate as `310A` once it connects; not verified |
 
 ## Why Bluetooth Needs a Record
@@ -32,7 +34,7 @@ The record binds `HIDDescriptor` with the same layout as the GameSir G7 SE:
 | 14 | L3 |
 | 15 | R3 |
 
-Usages 3 and 6 are the rear buttons and 9 and 10 repeat the triggers as digital bits. They are not mapped.
+Usages 3 and 6 are the rear buttons and 9 and 10 repeat the triggers as digital bits. They are not mapped, and `Rx` and `Ry` (usages 51 and 52) map to nothing. The `301D` record uses this table and the same stick. The rear buttons of the 2C default to L3 and R3 on the pad, so no record maps a paddle until a capture shows a separate bit.
 
 ## Bootloader Identities
 

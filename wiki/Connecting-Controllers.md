@@ -21,7 +21,7 @@ A controller can connect in more than one way. Each mode has its own VID:PID, an
 | Bluetooth | The controller, with the VID:PID of the Bluetooth mode. |
 | 2.4 GHz dongle | The dongle, with its own VID:PID. |
 
-Some controllers change their VID:PID when you change mode. For example, the 8BitDo Ultimate 2C Wireless uses `2DC8:310A` with its 2.4 GHz dongle in XInput mode. It uses `2DC8:301B` over Bluetooth and `2DC8:301C` with its HID receiver.
+Some controllers change their VID:PID when you change mode. For example, the 8BitDo Ultimate 2C Wireless uses `2DC8:310A` with its 2.4 GHz dongle in XInput mode. It uses `2DC8:301B` over Bluetooth, `2DC8:301D` wired in DInput mode and `2DC8:301C` with its HID receiver, which OJD treats as idle.
 
 ### Dongles
 

@@ -1873,8 +1873,14 @@ system ownership=macos
 ## 2DC8:301C
 system ownership=macos
 
+## 2DC8:301D
+system ownership=macos
+
 ## 2DC8:3106
 raw-access
+
+## 2DC8:3107
+system ownership=macos
 
 ## 2DC8:3109
 raw-access
@@ -1887,6 +1893,12 @@ raw-access
 
 ## 2DC8:6001
 raw-access
+
+## 2DC8:6012
+system ownership=macos
+
+## 2DC8:6013
+system ownership=macos
 
 ## 2E24:0423
 raw-access
