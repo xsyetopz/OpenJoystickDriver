@@ -72,8 +72,8 @@ Depends: 4.
 
 Depends: 3, 4.
 
-- [ ] 6.1 List which parts of the description use `declarative-input-layouts` primitives and which parts stay Swift (split fields of the Classic, interleaved modes, calibration, Motion Plus). Verify: the list is in `docs/development/wire-protocols.md` "Coded Behavior" and a grep of the driver for each listed function finds it.
-- [ ] 6.2 Confirm no byte value of the handshake, IR or speaker scripts is in Swift. Verify: `grep -n "0xA400\|0xA600\|0xB000\|0xA200" Sources/OpenJoystickDriverKit/Protocol/Drivers/Nintendo/WiiDriver*.swift` finds no literal, other than in a doc comment that names the description key.
+- [x] 6.1 List which parts of the description use `declarative-input-layouts` primitives and which parts stay Swift (split fields of the Classic, interleaved modes, calibration, Motion Plus). Verify: the list is in `docs/development/wire-protocols.md` "Coded Behavior" and a grep of the driver for each listed function finds it. Done: the list is in `wire-protocols.md` "Coded Behavior" (eight entries, each naming a function that the driver grep finds). The driver does not call `ControllerInputLayout` or `ReportLayoutDriver`: the Wii description holds the same kinds of fact in its own `byte` and `mask` form, and the Classic split fields are description data joined by `ExtensionField.value(in:)`.
+- [x] 6.2 Confirm no byte value of the handshake, IR or speaker scripts is in Swift. Verify: `grep -n "0xA400\|0xA600\|0xB000\|0xA200" Sources/OpenJoystickDriverKit/Protocol/Drivers/Nintendo/WiiDriver*.swift` finds no literal, other than in a doc comment that names the description key. Done: the grep finds nothing in `WiiDriver*.swift`, and no handshake, Motion Plus, IR or speaker byte of the scripts is in Swift; only the report ids `0x15` to `0x17` appear.
 
 ## 7. Records and catalog
 
@@ -89,11 +89,11 @@ Depends: 3, 4, 5.
 
 Depends: 7.
 
-- [ ] 8.1 Update `docs/development/wire-protocols.md`: the `NintendoWii` row of the Protocol Coverage table (described, stays coded, suite `WiiDriverTests`) and the Coded Behavior entries from 6.1. Verify: `swift test --filter ProtocolParserCoverageTests` passes; `git diff --check` of the file passes.
+- [x] 8.1 Update `docs/development/wire-protocols.md`: the `NintendoWii` row of the Protocol Coverage table (described, stays coded, suite `WiiDriverTests`) and the Coded Behavior entries from 6.1. Verify: `swift test --filter ProtocolParserCoverageTests` passes; `git diff --check` of the file passes. Done: the row and the Coded Behavior entries are in; the coverage test and the diff check pass.
 - [ ] 8.2 Add the wiki page `wiki/Wii-Remote.md`: pairing through macOS Bluetooth, reconnecting, LEDs, extensions, IR pointer to mouse with a profile example, speaker commands, disconnecting, and the lack of a power-off command. Link it from `wiki/_Sidebar.md`, `Supported-Controllers.md` and `Connecting-Controllers.md`. Verify: `git diff --check` over the new and changed pages passes, and `python3 Scripts/Quality/check_localization_keys.py` still passes.
 - [x] 8.3 Add the Known Issues entries to `wiki/Known-Issues.md` for macOS pairing and for the personas that carry no pointer. Verify: `git diff --check` passes. Done: two entries; the pairing entry says which paths are not verified.
 - [ ] 8.4 Add a `CHANGELOG.md` entry under Unreleased: the family, the two records, the pointer ids, the speaker command. Verify: `git diff --check` passes.
-- [ ] 8.5 Review sources: the driver, description and tests are independent implementations from WiiBrew facts and captures, with no code or wording from wiiuse or wiimacmote. Verify: `grep -rniE "wiiuse|wiimacmote" Sources Resources Tests` finds no copied code, only fact references in doc comments, and `grep -rn "GPL" Sources/OpenJoystickDriverKit/Protocol/Drivers/Nintendo` finds nothing.
+- [x] 8.5 Review sources: the driver, description and tests are independent implementations from WiiBrew facts and captures, with no code or wording from wiiuse or wiimacmote. Verify: `grep -rniE "wiiuse|wiimacmote" Sources Resources Tests` finds no copied code, only fact references in doc comments, and `grep -rn "GPL" Sources/OpenJoystickDriverKit/Protocol/Drivers/Nintendo` finds nothing. Done: both greps find nothing in `Sources`, `Resources`, `Tests` and the Nintendo drivers. Rerun it when the speaker code (5.4) lands.
 - [x] 8.6 Review that no doc uses history words. Verify: `grep -rniE "renamed|legacy|previously|formerly" wiki/Wii-Remote.md` finds nothing. Done: the grep finds nothing in the page as it stands; rerun it after 8.2 is finished.
 
 ## 9. Integration
