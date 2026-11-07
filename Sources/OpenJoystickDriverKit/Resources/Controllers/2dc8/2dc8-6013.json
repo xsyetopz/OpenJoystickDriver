@@ -1,0 +1,15 @@
+{
+  "apiVersion": "openjoystickdriver/v1alpha2",
+  "kind": "Controller",
+  "vendorID": 11720,
+  "productID": 24595,
+  "idle": true,
+  "modes": [
+    {
+      "id": "default",
+      "protocol": {
+        "family": "HIDDescriptor"
+      }
+    }
+  ]
+}
