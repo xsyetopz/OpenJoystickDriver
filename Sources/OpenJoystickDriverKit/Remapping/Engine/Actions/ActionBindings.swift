@@ -177,7 +177,7 @@ extension RemappingEngineState {
     device: inout RemappingDeviceState
   ) -> [RemappingEngineAction] {
     let destination =
-      binding.multiTap.first(where: { $0.count == tapCount })?.destination ?? binding.destination
+      binding.multiTap.first { $0.count == tapCount }?.destination ?? binding.destination
     return tapBinding(binding.id, destination: destination, device: &device)
   }
 }

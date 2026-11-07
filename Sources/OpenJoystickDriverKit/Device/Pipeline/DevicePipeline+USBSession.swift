@@ -89,6 +89,7 @@ extension DevicePipeline {
     await sendUSBClosingWrites(driver.powerOffWrites(), handle: handle)
   }
 
+  /// Sends each raw-USB write in order; a failed write is logged and the rest still go out.
   private func sendUSBClosingWrites(
     _ writes: [PhysicalOutputWrite],
     handle: any USBTransportSession

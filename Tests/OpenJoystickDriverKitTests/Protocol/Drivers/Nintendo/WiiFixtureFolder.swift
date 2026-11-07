@@ -9,9 +9,9 @@ import Testing
 /// A file has a header line that names the source, then one line of uppercase hex pairs for each
 /// byte string. A line that starts with `#` after the header is a step label.
 struct WiiFixtureFolder {
-  static let extensions = WiiFixtureFolder(name: "Extensions")
-  static let ir = WiiFixtureFolder(name: "IR")
-  static let sequences = WiiFixtureFolder(name: "Sequences")
+  static let extensions = Self(name: "Extensions")
+  static let ir = Self(name: "IR")
+  static let sequences = Self(name: "Sequences")
 
   let name: String
 
