@@ -12,7 +12,7 @@ No Switch 2 controller is in hand for this plan. Testers receive tester builds (
 | The Bluetooth LE layout differs from OJD's one table (bit order, sticks at [10] to [15]). | Corrected. | The hub prepends `0x05` to each notification (`Switch2BluetoothLEHub.swift:137-150`), so notification bytes 4 to 7 are OJD's bytes 5 to 8 and notification bytes 10 to 15 are OJD's 11 to 16. The README's "differs from the BLE layout" compares its own USB `0x09` button measurement with BLE; it does not compare BLE with OJD's table. The positions agree. Whether the bit order of the BLE buttons matches OJD's table is unverified and is a capture task. |
 | Rumble cadence is 4 ms in procon2-mac, 12 ms in OJD. | Confirmed, not a fault. | `nintendo-switch2.json` `keepAlive.intervalMilliseconds` is 12 and a test pins it (`Switch2DriverTests.swift:206`); SDL has `#define RUMBLE_INTERVAL 12`. The README says USB frames stream "every ~4ms" and the BLE pass-through polls every 8 ms. Different consumers feed different frame sources; whether a shorter interval improves feel or only adds traffic is a measurement (H5). |
 | Output report `0x02` with the `0x50` counter byte and the second actuator copy. | Agrees. | The README places the counter at payload byte 0 and the right actuator at payload 16 to 21; OJD writes `0x50` combined with the sequence at byte 1 and the copy at byte `0x11` (`Switch2Driver.swift:328-340`), the same offsets with the ID at byte 0. |
-| The IMU is not decoded. | Confirmed. | `Switch2Driver.swift:92` says so. SDL decodes it: sensor timestamp at bytes `0x2B` to `0x2E` (32-bit), accelerometer at `0x31`, `0x33`, `0x35`, gyroscope at `0x37`, `0x39`, `0x3B` (16-bit little-endian each), with flash bias and a rate-dependent gyro coefficient (34.8 or 40.0) chosen after five samples. The README puts the IMU at payload byte 22 on `0x09`, which is another layout. |
+| The IMU is not decoded. | Confirmed. | `Switch2Driver.swift:92` says so. SDL decodes it: sensor timestamp at bytes `0x2B` to `0x2E` (32-bit), accelerometer at `0x31`, `0x33`, `0x35`, gyroscope at `0x37`, `0x39`, `0x3B` (16-bit little-endian each), with a flash gyro bias and a rate-dependent gyro coefficient (34.8 or 40.0) chosen at sample 100; SDL reads an accelerometer bias but does not apply it (Source checks). The README puts the IMU at payload byte 22 on `0x09`, which is another layout. |
 | PIDs: `2069` Pro 2, `2073` GameCube, `2066`/`2067` Joy-Con 2. | Confirmed with sides. | Records exist for all four. SDL `usb_ids.h`: `2067` Joy-Con left, `2066` Joy-Con right, `2068` Joy-Con pair, `2069` Pro, `2073` GameCube. OJD maps `2066` to `JoyConRight`, `2067` to `JoyConLeft`, `2073` to `GameCube`, and `2069` to the family default with no `layout`. There is no record for `2068`. |
 
 ## Decisions
@@ -39,7 +39,7 @@ Use the captures of tasks 2.2 and 2.3 to compare the bit for each button and bot
 
 ### D4 IMU
 
-After D2 and D3 settle the layout, decode accelerometer and gyroscope with the flash bias and the sensor timestamp, following the facts in the table above (SDL, zlib; the code is written to the repository's motion path used by the Steam Triton driver, which converts a hardware counter into sample time). Units and axis signs follow the other drivers; the Joy-Con left and right orientation swaps are taken from the capture, not copied. Which flash addresses hold the bias is read from the pinned SDL source in task 4.1. A report whose sensor timestamp is zero carries no sample.
+After D2 and D3 settle the layout, decode accelerometer and gyroscope with the flash gyro bias and the sensor timestamp, following the facts in the table above (SDL, zlib; the code is written to the repository's motion path used by the Steam Triton driver, which converts a hardware counter into sample time). Units and axis signs follow the other drivers; the Joy-Con left and right orientation swaps are taken from the capture, not copied. The flash addresses and the coefficient rule are in Source checks. A report whose sensor timestamp is zero carries no sample.
 
 ### D5 Rumble cadence
 
@@ -66,10 +66,6 @@ on 2026-11-07. Line numbers are that file's. Task 4.1 lists its values here.
 | Coefficient rule | Sample 5 fixes the first timestamp; at sample 100 `coeff = 1000 * (ts - first) / (count * 4)`; within 10% of 1000 keeps 34.8 and 10000; else nonzero `coeff` gives timestamp coefficient `10000000000 / coeff` and gyro 40.0; else restart | `Uint64 coeff = 1000 * (sensor_timestamp - ctx->first_sensor_timestamp) / (ctx->sample_count * 4);` (1157); `ctx->gyro_coeff = 40.0f;` (1165) |
 | Gyro scale | `raw * gyro_coeff / INT16_MAX`, bias subtracted for x and z, added for y with negated raw | `gyro_data[0] = (Sint16)(data[0x37] \| (data[0x38] << 8)) * ctx->gyro_coeff / INT16_MAX - ctx->gyro_bias_x;` (1195) |
 | Sensor timestamp | 32-bit little-endian at bytes 0x2B to 0x2E; zero gives no sample; scaled by `ts_coeff / 10` | `Uint64 sensor_timestamp = (Uint32) (data[0x2b] \| ...` (1148); `sensor_timestamp * ctx->sensor_ts_coeff / 10;` (1185) |
-
-Corrections to the IMU row of the research table: SDL measures the rate at sample 100 after the
-first five (1150 to 1157), not "after five samples", and it does not apply the accelerometer
-bias it reads (1191 to 1193).
 
 Spec correction: there is no pull request, so the lists that tasks name as "the PR text" are
 recorded in this section instead.

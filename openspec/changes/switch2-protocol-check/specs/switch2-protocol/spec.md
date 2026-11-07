@@ -35,11 +35,11 @@ Each button and stick over Bluetooth LE SHALL decode from the bit and byte that 
 
 ### Requirement: Motion samples come from the IMU
 
-A Switch 2 controller SHALL report accelerometer and gyroscope samples with the controller's flash bias applied and with a sample time derived from the sensor timestamp. A report whose sensor timestamp is zero SHALL carry no sample.
+A Switch 2 controller SHALL report accelerometer and gyroscope samples, with the controller's flash gyroscope bias applied to the gyroscope, and with a sample time derived from the sensor timestamp. A report whose sensor timestamp is zero SHALL carry no sample.
 
 #### Scenario: Controller at rest
 
-- **WHEN** a still controller's report arrives after the bias was read
+- **WHEN** a still controller's report arrives after the gyroscope bias was read
 - **THEN** the gyroscope sample is near zero and the accelerometer magnitude is near one g
 
 #### Scenario: No timestamp
