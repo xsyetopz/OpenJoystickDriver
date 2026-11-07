@@ -21,7 +21,8 @@
       case .keyboard(let key, let modifiers): keyboardRow(key: key, modifiers: modifiers)
       case .mouseButton, .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis,
         .physical, .macro, .profileSwitch, .layerSet, .pause, .systemKey, .systemAction,
-        .openApplication, .openURL, .runShortcut, .typeText, .speak:
+        .openApplication, .openURL, .runShortcut, .typeText, .speak,
+        .midiNote, .midiControlChange:
         Text(RuntimePresentation.destinationLabel(destination, macros: macros))
       }
     }

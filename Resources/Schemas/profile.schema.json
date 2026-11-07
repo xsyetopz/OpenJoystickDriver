@@ -800,6 +800,51 @@
               "const": "Speak"
             }
           }
+        },
+        {
+          "type": "object",
+          "required": ["channel", "note", "type", "velocity"],
+          "additionalProperties": false,
+          "properties": {
+            "channel": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16
+            },
+            "note": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 127
+            },
+            "type": {
+              "const": "MidiNote"
+            },
+            "velocity": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 127
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["channel", "controller", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "channel": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16
+            },
+            "controller": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 127
+            },
+            "type": {
+              "const": "MidiControlChange"
+            }
+          }
         }
       ]
     },

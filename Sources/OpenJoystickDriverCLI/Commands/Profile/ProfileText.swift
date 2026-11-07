@@ -72,6 +72,10 @@ enum ProfileText {
     case .runShortcut(let name): return "shortcut:\(name)"
     case .typeText(let text): return "text:\(text)"
     case .speak(let text, _): return "speak:\(text)"
+    case .midiNote(let channel, let note, let velocity):
+      return "midi-note:\(channel):\(note):\(velocity)"
+    case .midiControlChange(let channel, let controller):
+      return "midi-cc:\(channel):\(controller)"
     }
   }
 

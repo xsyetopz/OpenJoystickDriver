@@ -612,6 +612,10 @@
 "ui.mapping.axisDirection" = "%1$@ %2$@";
 /* Name of a mouse button destination. %@ is the button, for example left or right. */
 "ui.mapping.mouseButton" = "Кнопка мыши «%@»";
+/* Name of a MIDI note destination. %1$@ is the note number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiNote" = "MIDI-нота %1$@, канал %2$@";
+/* Name of a MIDI control change destination. %1$@ is the controller number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiControlChange" = "MIDI-контроллер %1$@, канал %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "Движение указателя %@";
 /* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
@@ -2962,7 +2966,7 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "Укажите один или несколько источников либо --all.";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "Привязка отправляет TARGET, когда используется SOURCE контроллера.\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW или touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME или physical:... для вибрации, подсветки и адаптивных триггеров.\n\n«ojd profile show» выводит привязки в этих формах. Аккорды, последовательности и слои меняются командой «ojd profile edit».";
+"cli.binding.group.discussion" = "Привязка отправляет TARGET, когда используется SOURCE контроллера.\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW или touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER или physical:... для вибрации, подсветки и адаптивных триггеров.\n\n«ojd profile show» выводит привязки в этих формах. Аккорды, последовательности и слои меняются командой «ojd profile edit».";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "Показывает привязки профиля.";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
@@ -3987,6 +3991,8 @@
 "error.E3032.message" = "Действие не выполнено, потому что включён Secure Input. Закройте приложение, которое его включило, например поле пароля, и повторите попытку.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "Действие не удалось.";
+/* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
+"error.E3034.message" = "MIDI-действие не выполнено, потому что система отказалась создать MIDI-источник OpenJoystickDriver. Повторите попытку.";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "Манифест пакета mod.json отсутствует или недействителен. Проверьте его по схеме mod-package и запустите команду снова.";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

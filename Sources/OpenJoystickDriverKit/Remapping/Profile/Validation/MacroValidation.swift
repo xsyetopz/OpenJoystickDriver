@@ -83,7 +83,8 @@ extension RemappingProfile {
       try validateDestination(destination)
     case .gamepadAxis, .mouseMovement, .scroll, .physical, .profileSwitch, .layerSet, .pause,
       .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText,
-      .speak:
+      .speak,
+      .midiNote, .midiControlChange:
       throw RemappingValidationError.invalidMacroStepDestination(index: macro, step: step)
     }
   }

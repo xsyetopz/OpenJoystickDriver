@@ -72,6 +72,31 @@ struct CommandValueParserTests {
   }
 
   @Test
+  func parsesMIDITargets() throws {
+    #expect(
+      try RemappingCommandValueParser.destination("midi-note:1:60")
+        == .midiNote(channel: 1, note: 60, velocity: 127)
+    )
+    #expect(
+      try RemappingCommandValueParser.destination("midi-note:16:127:1")
+        == .midiNote(channel: 16, note: 127, velocity: 1)
+    )
+    #expect(
+      try RemappingCommandValueParser.destination("midi-cc:3:7")
+        == .midiControlChange(channel: 3, controller: 7)
+    )
+    for raw in [
+      "midi-note:0:60", "midi-note:17:60", "midi-note:1:128", "midi-note:1:60:0",
+      "midi-note:1:60:128", "midi-note:1", "midi-note:1:60:100:1", "midi-note:x:60",
+      "midi-cc:0:1", "midi-cc:1:128", "midi-cc:1", "midi-cc:1:2:3",
+    ] {
+      #expect(throws: RemappingCommandValueError.invalidDestination(raw), "\(raw)") {
+        try RemappingCommandValueParser.destination(raw)
+      }
+    }
+  }
+
+  @Test
   func parsesBoundedPhysicalOutputTargets() throws {
     #expect(
       try RemappingCommandValueParser.destination("physical:rumble:low-frequency:0.5")

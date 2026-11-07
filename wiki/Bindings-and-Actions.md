@@ -43,6 +43,7 @@ An assignment connects one controller control to one destination, such as a keyb
 | Run Shortcut | A shortcut of the Shortcuts app, by name | Discrete sources only; fires on press; command line or profile file only |
 | Type text | A fixed string | Discrete sources only; fires on press; needs Accessibility access; command line or profile file only |
 | Speak | A phrase the Mac says aloud | Discrete sources only; see [Spoken Phrases](#spoken-phrases) |
+| MIDI note or control change | A note on a channel, or a controller number | Needs no access; see [MIDI output](#midi-output) |
 
 A gamepad destination fails validation if the profile output policy has the virtual gamepad disabled. Some controls, such as paddles, grips, and function buttons, cannot be a virtual controller output. For the controls each virtual controller carries, see [What the virtual controller carries](Automating-OpenJoystickDriver.md#what-the-virtual-controller-carries). For more information, see [About profiles](Remapping-Profiles.md#about-profiles).
 
@@ -84,6 +85,8 @@ TARGET: key:KEY[:mods=alt,control,meta,shift]
         physical:player:0...4
         physical:color:RED:GREEN:BLUE
         physical:brightness:0...1
+        midi-note:CHANNEL:NOTE[:VELOCITY]
+        midi-cc:CHANNEL:CONTROLLER
 ```
 
 To remove an assignment, run `ojd binding clear PROFILE SOURCE`. To list the assignments, run `ojd binding list PROFILE`. For the options of `ojd binding set`, see [Command reference](Command-Reference.md).
@@ -241,6 +244,17 @@ ojd binding set Racing button:back text:hello
 The app lists the system keys and Mission Control in the destination pickers. The other four have no picker: set them with the command line or in the profile file.
 
 OJD does not offer Show Desktop, App Exposé, Launchpad, or a display brightness setting that needs private macOS interfaces: DisplayServices, CoreDock, SkyLight, CGS, and MediaRemote. To get one of them, set a keyboard shortcut for it in **System Settings**, then assign a **Keyboard** destination with that shortcut.
+
+## MIDI Output
+
+A **MIDI note** or **MIDI control change** destination sends MIDI to music apps. While an active profile uses one, OJD publishes a MIDI source named `OpenJoystickDriver`; pick it as the input of the app. OJD removes the source after the last note-off, once no active profile uses MIDI. No access permission is needed. If the system refuses to create the source, the assignment fails with error `E3032` and nothing is sent.
+
+| Destination | File type | Sends |
+| --- | --- | --- |
+| MIDI note | `MidiNote` with `channel` 1 to 16, `note` 0 to 127, and `velocity` 1 to 127 | Note-on when the control is pressed and note-off when it is released |
+| MIDI control change | `MidiControlChange` with `channel` 1 to 16 and `controller` 0 to 127 | A button sends 127 when pressed and 0 when released. A trigger sends its position as 0 to 127. A stick axis sends its position with the center at 64. A value is sent only when it changes. |
+
+With the command line, `midi-note:CHANNEL:NOTE` sends velocity 127, and `midi-note:CHANNEL:NOTE:VELOCITY` sets it. For example, `ojd binding set PROFILE button:south midi-note:1:60:100` sends `90 3C 64` on press and `80 3C 00` on release. `midi-cc:CHANNEL:CONTROLLER` takes a control change, and only it fits an axis or trigger source. A macro step cannot send MIDI. Deactivating the profile releases every held note before the source goes away. The app's destination list offers MIDI note 60 on channel 1 and controller 1 on channel 1; edit the profile file for other numbers. For the file format, see [Profile file reference](Profile-File-Reference.md).
 
 ## Combinations, Sequences, and Layers
 

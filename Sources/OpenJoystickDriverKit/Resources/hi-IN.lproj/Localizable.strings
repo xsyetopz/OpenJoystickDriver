@@ -612,6 +612,10 @@
 "ui.mapping.axisDirection" = "%1$@ %2$@";
 /* Name of a mouse button destination. %@ is the button, for example left or right. */
 "ui.mapping.mouseButton" = "माउस %@ बटन";
+/* Name of a MIDI note destination. %1$@ is the note number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiNote" = "MIDI नोट %1$@, चैनल %2$@";
+/* Name of a MIDI control change destination. %1$@ is the controller number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiControlChange" = "MIDI कंट्रोलर %1$@, चैनल %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "पॉइंटर %@ मूवमेंट";
 /* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
@@ -2962,7 +2966,7 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "एक या अधिक स्रोत दें, या --all दें।";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "असाइनमेंट तब TARGET भेजता है जब कंट्रोलर का कोई SOURCE इस्तेमाल होता है।\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW, या touch:SURFACE:swipe:DIRECTION:DISTANCE।\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, या रंबल, लाइट और एडैप्टिव ट्रिगर के लिए physical:...।\n\n“ojd profile show” असाइनमेंट को इन्हीं रूपों में प्रिंट करता है। कॉर्ड, सीक्वेंस और लेयर को “ojd profile edit” से बदलें।";
+"cli.binding.group.discussion" = "असाइनमेंट तब TARGET भेजता है जब कंट्रोलर का कोई SOURCE इस्तेमाल होता है।\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW, या touch:SURFACE:swipe:DIRECTION:DISTANCE।\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER, या रंबल, लाइट और एडैप्टिव ट्रिगर के लिए physical:...।\n\n“ojd profile show” असाइनमेंट को इन्हीं रूपों में प्रिंट करता है। कॉर्ड, सीक्वेंस और लेयर को “ojd profile edit” से बदलें।";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "प्रोफ़ाइल के असाइनमेंट की सूची दिखाएँ।";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
@@ -3987,6 +3991,8 @@
 "error.E3032.message" = "Secure Input चालू होने के कारण क्रिया नहीं चली। इसे चालू करने वाला ऐप, जैसे पासवर्ड फ़ील्ड, बंद करें और फिर से कोशिश करें।";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "क्रिया विफल रही।";
+/* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
+"error.E3034.message" = "MIDI क्रिया नहीं चली क्योंकि सिस्टम ने MIDI स्रोत OpenJoystickDriver बनाने से मना कर दिया। फिर कोशिश करें।";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "पैकेज मैनिफ़ेस्ट mod.json मौजूद नहीं है या अमान्य है। इसे mod-package स्कीमा से जाँचें और कमांड दोबारा चलाएँ।";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

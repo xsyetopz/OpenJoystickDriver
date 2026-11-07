@@ -154,6 +154,8 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
   case invalidSpeech(field: String)
   /// A `Speak` destination names a voice that this Mac does not have.
   case unknownSpeechVoice(String)
+  /// A MIDI destination has a channel, note, controller or velocity out of range.
+  case invalidMIDIDestination
   /// The profile could not be encoded.
   case encodingFailed
   /// The encoded profile is over the size limit; the value is its size in bytes.
@@ -269,6 +271,9 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
     case .invalidSpeech(let field): "A Speak destination has an invalid \(field)."
     case .unknownSpeechVoice(let voice):
       "A Speak destination names the voice \(voice), which this Mac does not have."
+    case .invalidMIDIDestination:
+      "A MIDI destination needs a channel of 1 to 16, a note or controller of 0 to 127, and a "
+        + "velocity of 1 to 127."
     case .encodingFailed: "The remapping profile could not be encoded."
     case .encodedSizeExceeded(let size):
       "The encoded remapping profile is too large (\(size) bytes)."

@@ -179,6 +179,8 @@ extension RemappingEngineState {
         }
       }
 
+      actions += midiControlChange(binding, rawValue: rawValue, device: &device)
+
       if let tuning = binding.axisTuning,
         let continuousDestination = RemappingContinuousDestination(binding.destination)
       {

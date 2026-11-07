@@ -100,6 +100,20 @@ struct ProfileSchemaTests {
           }
         },
         {
+          "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D72",
+          "source": {"type": "Button", "button": "North"},
+          "destination": {"type": "MidiNote", "channel": 1, "note": 60, "velocity": 100}
+        },
+        {
+          "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D73",
+          "source": {"type": "Axis", "axis": "LeftTrigger"},
+          "destination": {"type": "MidiControlChange", "channel": 16, "controller": 127},
+          "axisTuning": {
+            "deadzone": 0, "gain": 1, "inverted": false, "responseCurve": "Linear",
+            "digitalActivationThreshold": 0.6
+          }
+        },
+        {
           "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D65",
           "source": {"type": "TriggerStage", "trigger": "Left", "stage": "Full"},
           "destination": {"type": "MouseButton", "button": "Middle"}
@@ -225,6 +239,10 @@ struct ProfileSchemaTests {
     ("bad app ID", #""com.example.game""#, #""not an app""#),
     ("unknown button", #""button": "South""#, #""button": "a""#),
     ("malformed unit ID", #""U-AbCd_123-xyzW09q""#, #""U-AbCd+123""#),
+    ("MIDI channel 0", #""channel": 1, "note": 60"#, #""channel": 0, "note": 60"#),
+    ("MIDI channel 17", #""channel": 16, "controller""#, #""channel": 17, "controller""#),
+    ("MIDI note 128", #""note": 60"#, #""note": 128"#),
+    ("MIDI velocity 0", #""velocity": 100"#, #""velocity": 0"#),
     (
       "axis in a chord", #"{"type": "Button", "button": "Back"}"#,
       #"{"type": "Axis", "axis": "LeftTrigger"}"#

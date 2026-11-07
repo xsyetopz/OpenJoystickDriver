@@ -168,6 +168,7 @@ Every part that names a control, direction, key or modifier is lowercase kebab-c
 - `mouse:BUTTON`, `move:x`, `move:y`, `scroll:x`, or `scroll:y`
 - `gamepad:button:NAME`, `gamepad:dpad:DIRECTION`, or `gamepad:axis:NAME`
 - `physical:...` for rumble, lights, and adaptive triggers
+- `midi-note:CHANNEL:NOTE[:VELOCITY]` (velocity 127 when omitted) or `midi-cc:CHANNEL:CONTROLLER`, with a channel from 1 to 16 and numbers from 0 to 127; see [MIDI output](Bindings-and-Actions.md#midi-output)
 - `macro:NAME` for a macro of the profile, matched without regard to case, and created with `ojd macro set`. It exits with code 1 and changes nothing when the profile has no such macro. `binding list` and `profile show` print the macro's name.
 - `profile:switch:next`, `profile:switch:previous`, or `profile:switch:ID` for a profile of the same controller model
 - `layer:NAME:MODE` for a layer of the profile, matched without regard to case, with `MODE` one of `on`, `off`, or `toggle`. It exits with code 1 and changes nothing when the profile has no such layer. `binding list` and `profile show` print the layer's name.

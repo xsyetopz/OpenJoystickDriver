@@ -439,6 +439,11 @@ extension RemappingEventEngine {
     let actions = transition(&candidate)
     var potentiallyHeld = previous.heldOutputs
     let pointerScale = candidate.pointerScale
+    if candidate.usesMIDIOutput, !midiIsOpen {
+      guard let midiOutput else { throw RemappingEventEngineError.sinkUnavailable }
+      try midiOutput.open()
+      midiIsOpen = true
+    }
     for action in actions {
       do {
         switch action {
@@ -461,6 +466,10 @@ extension RemappingEventEngine {
           await speechOutput?.speak(text, voice: voice, for: identifier)
         case .stopSpeech(let identifier):
           await speechOutput?.stopSpeech(for: identifier)
+        case .midi(let message):
+          guard let midiOutput else { throw RemappingEventEngineError.sinkUnavailable }
+          try midiOutput.send(message)
+          accountForDelivered(message)
         case .physical(let output, let active, let owner, let identifier):
           guard let physicalOutputSink else { throw RemappingEventEngineError.sinkUnavailable }
           try await physicalOutputSink.set(output, active: active, owner: owner, for: identifier)
@@ -485,6 +494,7 @@ extension RemappingEventEngine {
       }
     }
     state = candidate
+    if midiIsOpen, !candidate.usesMIDIOutput { closeMIDI() }
   }
 
   /// Performs a system action; a failure is reported and leaves the engine running.

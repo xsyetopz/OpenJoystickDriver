@@ -612,6 +612,10 @@
 "ui.mapping.axisDirection" = "%1$@ %2$@";
 /* Name of a mouse button destination. %@ is the button, for example left or right. */
 "ui.mapping.mouseButton" = "마우스 %@ 버튼";
+/* Name of a MIDI note destination. %1$@ is the note number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiNote" = "MIDI 노트 %1$@, 채널 %2$@";
+/* Name of a MIDI control change destination. %1$@ is the controller number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiControlChange" = "MIDI 컨트롤러 %1$@, 채널 %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "포인터 %@ 이동";
 /* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
@@ -2962,7 +2966,7 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "소스를 하나 이상 지정하거나 --all을 사용하세요.";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "할당은 컨트롤러의 SOURCE가 사용될 때 TARGET을 보냅니다.\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW 또는 touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME 또는 진동, 조명, 어댑티브 트리거용 physical:....\n\n‘ojd profile show’는 할당을 이 형식으로 출력합니다. 코드, 시퀀스, 레이어는 ‘ojd profile edit’로 편집하세요.";
+"cli.binding.group.discussion" = "할당은 컨트롤러의 SOURCE가 사용될 때 TARGET을 보냅니다.\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW 또는 touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER 또는 진동, 조명, 어댑티브 트리거용 physical:....\n\n‘ojd profile show’는 할당을 이 형식으로 출력합니다. 코드, 시퀀스, 레이어는 ‘ojd profile edit’로 편집하세요.";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "프로파일의 할당을 나열합니다.";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
@@ -3987,6 +3991,8 @@
 "error.E3032.message" = "Secure Input이 켜져 있어 동작이 실행되지 않았습니다. 암호 입력란처럼 이를 켠 앱을 닫고 다시 시도하세요.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "동작에 실패했습니다.";
+/* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
+"error.E3034.message" = "시스템이 MIDI 소스 OpenJoystickDriver 생성을 거부하여 MIDI 동작이 실행되지 않았습니다. 다시 시도하십시오.";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "패키지 매니페스트 mod.json이 없거나 올바르지 않습니다. mod-package 스키마에 맞는지 확인한 뒤 명령을 다시 실행하세요.";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

@@ -496,6 +496,12 @@
       "wire": "system_action_failed"
     },
     {
+      "code": "E3034",
+      "domain": "Remapping",
+      "name": "midiSourceRefused",
+      "wire": "midi_source_refused"
+    },
+    {
       "code": "E4001",
       "domain": "Mod",
       "name": "invalidManifest"

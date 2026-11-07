@@ -170,6 +170,7 @@ public enum RemappingCommandValueParser {
 
   /// Parses a target operand.
   ///
+  /// MIDI targets are `midi-note:CHANNEL:NOTE[:VELOCITY]` and `midi-cc:CHANNEL:CONTROLLER`.
   /// Keyboard modifiers follow `mods=` as a nonempty comma-separated list without repeats. Physical
   /// intensities, positions and strengths are numbers from 0 to 1.
   /// - Throws: ``RemappingCommandValueError/invalidDestination(_:)`` when no target form matches.
@@ -275,6 +276,7 @@ public enum RemappingCommandValueParser {
     {
       return .profileSwitch(target)
     }
+    if let midi = midiDestination(parts) { return midi }
     throw RemappingCommandValueError.invalidDestination(raw)
   }
 
@@ -302,6 +304,26 @@ public enum RemappingCommandValueParser {
     case "previous": .previous
     default: UUID(uuidString: raw).map { .profile($0) }
     }
+  }
+
+  /// Parses `midi-note:CHANNEL:NOTE[:VELOCITY]`, whose velocity is 127 when omitted, and
+  /// `midi-cc:CHANNEL:CONTROLLER`; the numbers must be in range.
+  private static func midiDestination(_ parts: [String]) -> RemappingDestination? {
+    let numbers = parts.dropFirst().map { Int($0) }
+    guard !numbers.contains(nil), let channel = numbers.first ?? nil else { return nil }
+    let destination: RemappingDestination
+    switch (parts[0], numbers.count) {
+    case ("midi-note", 2...3):
+      destination = .midiNote(
+        channel: channel,
+        note: numbers[1] ?? 0,
+        velocity: numbers.count == 3 ? numbers[2] ?? 0 : RemappingDestination.midiMaxData
+      )
+    case ("midi-cc", 2):
+      destination = .midiControlChange(channel: channel, controller: numbers[1] ?? 0)
+    default: return nil
+    }
+    return destination.midiFieldsAreInRange ? destination : nil
   }
 
   /// Parses a finite number from 0 to 1, or returns `nil`.

@@ -155,7 +155,7 @@ extension RemappingProfile {
   }
 
   /// Whether a binding, chord, or sequence, in any layer or activation, targets a match.
-  private func containsDestination(where matches: (RemappingDestination) -> Bool) -> Bool {
+  func containsDestination(where matches: (RemappingDestination) -> Bool) -> Bool {
     macros.contains { $0.steps.flatMap(\.destinations).contains(where: matches) }
       || Self.containsDestination(bindings: bindings, chords: chords, sequences: sequences, matches)
       || layers.contains {
@@ -227,7 +227,8 @@ extension RemappingDestination {
     switch self {
     case .keyboard, .mouseButton, .mouseMovement, .scroll, .systemKey, .typeText: true
     case .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet,
-      .pause, .systemAction, .openApplication, .openURL, .runShortcut, .speak:
+      .pause, .systemAction, .openApplication, .openURL, .runShortcut, .speak,
+      .midiNote, .midiControlChange:
       false
     }
   }
@@ -238,7 +239,8 @@ extension RemappingDestination {
     case .gamepadButton, .gamepadDpad, .gamepadAxis: true
     case .keyboard, .mouseButton, .mouseMovement, .scroll, .physical, .macro, .profileSwitch,
       .layerSet, .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut,
-      .typeText, .speak:
+      .typeText, .speak,
+      .midiNote, .midiControlChange:
       false
     }
   }

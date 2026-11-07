@@ -612,6 +612,10 @@
 "ui.mapping.axisDirection" = "%1$@ %2$@";
 /* Name of a mouse button destination. %@ is the button, for example left or right. */
 "ui.mapping.mouseButton" = "ปุ่มเมาส์ %@";
+/* Name of a MIDI note destination. %1$@ is the note number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiNote" = "โน้ต MIDI %1$@ ช่อง %2$@";
+/* Name of a MIDI control change destination. %1$@ is the controller number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiControlChange" = "ตัวควบคุม MIDI %1$@ ช่อง %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "การเคลื่อนตัวชี้ %@";
 /* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
@@ -2962,7 +2966,7 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "ระบุต้นทางอย่างน้อยหนึ่งรายการ หรือ --all";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "การกำหนดจะส่ง TARGET เมื่อมีการใช้ SOURCE ของคอนโทรลเลอร์\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW หรือ touch:SURFACE:swipe:DIRECTION:DISTANCE\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME หรือ physical:... สำหรับแรงสั่น ไฟ และทริกเกอร์แบบปรับได้\n\n“ojd profile show” พิมพ์การกำหนดในรูปแบบเหล่านี้ แก้ไขคอร์ด ลำดับ และเลเยอร์ด้วย “ojd profile edit”";
+"cli.binding.group.discussion" = "การกำหนดจะส่ง TARGET เมื่อมีการใช้ SOURCE ของคอนโทรลเลอร์\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW หรือ touch:SURFACE:swipe:DIRECTION:DISTANCE\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER หรือ physical:... สำหรับแรงสั่น ไฟ และทริกเกอร์แบบปรับได้\n\n“ojd profile show” พิมพ์การกำหนดในรูปแบบเหล่านี้ แก้ไขคอร์ด ลำดับ และเลเยอร์ด้วย “ojd profile edit”";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "แสดงรายการการกำหนดของโปรไฟล์";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
@@ -3987,6 +3991,8 @@
 "error.E3032.message" = "ไม่ได้เรียกใช้การทำงานเพราะ Secure Input เปิดอยู่ ปิดแอปที่เปิดไว้ เช่น ช่องรหัสผ่าน แล้วลองอีกครั้ง";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "การทำงานล้มเหลว";
+/* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
+"error.E3034.message" = "ไม่ได้ดำเนินการ MIDI เพราะระบบปฏิเสธการสร้างแหล่ง MIDI OpenJoystickDriver ลองอีกครั้ง";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "ไม่พบไฟล์ระบุรายการแพ็กเกจ mod.json หรือไฟล์ไม่ถูกต้อง ตรวจสอบกับสคีมา mod-package แล้วเรียกใช้คำสั่งอีกครั้ง";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

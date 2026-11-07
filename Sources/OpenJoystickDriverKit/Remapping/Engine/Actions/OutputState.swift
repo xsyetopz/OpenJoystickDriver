@@ -16,6 +16,8 @@ struct RemappingOutputState {
   var continuous: [UUID: RemappingContinuousOutput] = [:]
   /// Long-hold and multi-tap trackers by action.
   var activations: [UUID: RemappingActivationTracker] = [:]
+  /// Last control change value sent by each axis action.
+  var midiValues: [UUID: Int] = [:]
   /// Running macros by the action that started them.
   var macros: [UUID: RemappingMacroRun] = [:]
   /// Whether a `Speak` destination has spoken and nothing has stopped it.

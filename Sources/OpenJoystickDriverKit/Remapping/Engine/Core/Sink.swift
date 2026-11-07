@@ -395,6 +395,8 @@ enum RemappingEngineAction: Equatable, Sendable {
   case speak(String, voice: String?, LogicalControllerID)
   /// A request to stop what a controller is saying.
   case stopSpeech(LogicalControllerID)
+  /// A MIDI message for the virtual source.
+  case midi(RemappingMIDIMessage)
 }
 
 /// Switches the active profile of a controller when a `ProfileSwitch` destination fires.

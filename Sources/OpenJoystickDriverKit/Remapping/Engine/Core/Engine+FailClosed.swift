@@ -15,7 +15,27 @@ extension RemappingEventEngine {
     heldGamepadDevices.removeAll()
     uncertainPhysicalDevices.formUnion(heldPhysicalOwners.keys)
     heldPhysicalOwners.removeAll()
+    closeMIDI()
     try? await releaseUncertainOutputs()
+  }
+
+  /// Ends the notes that are still held and removes the MIDI source.
+  func closeMIDI() {
+    for held in heldMIDINotes.sorted(by: { $0.lexicographicallyPrecedes($1) }) {
+      try? midiOutput?.send(.noteOff(channel: held[0], note: held[1]))
+    }
+    heldMIDINotes.removeAll()
+    midiOutput?.close()
+    midiIsOpen = false
+  }
+
+  /// Tracks which notes are held after a message was delivered.
+  func accountForDelivered(_ message: RemappingMIDIMessage) {
+    switch message {
+    case .noteOn(let channel, let note, _): heldMIDINotes.insert([channel, note])
+    case .noteOff(let channel, let note): heldMIDINotes.remove([channel, note])
+    case .controlChange: break
+    }
   }
 
   /// Updates held outputs for an action that the sink accepted.

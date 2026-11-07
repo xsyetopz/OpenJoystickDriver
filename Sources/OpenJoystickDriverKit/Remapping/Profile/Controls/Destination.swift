@@ -40,6 +40,11 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
   case typeText(String)
   /// Says `text` aloud, with the voice `voice` names or the system voice.
   case speak(text: String, voice: String?)
+  /// A MIDI note: note-on on press, note-off on release. Channel 1 to 16, note 0 to 127, velocity
+  /// 1 to 127.
+  case midiNote(channel: Int, note: Int, velocity: Int)
+  /// A MIDI controller: 127 and 0 for a button, the position scaled to 0 to 127 for an axis.
+  case midiControlChange(channel: Int, controller: Int)
 
   /// Whether the destination can repeat as turbo: a keyboard key, pointer button or virtual gamepad
   /// button or d-pad direction.
@@ -48,7 +53,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad: true
     case .mouseMovement, .scroll, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet,
       .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText,
-      .speak:
+      .speak,
+      .midiNote, .midiControlChange:
       false
     }
   }
@@ -59,7 +65,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     switch self {
     case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad, .physical, .macro, .profileSwitch,
       .layerSet, .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut,
-      .typeText, .speak:
+      .typeText, .speak,
+      .midiNote, .midiControlChange:
       false
     case .mouseMovement, .scroll, .gamepadAxis: true
     }
@@ -105,6 +112,10 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case typeText = "TypeText"
     /// The `Speak` case.
     case speak = "Speak"
+    /// The `MidiNote` case.
+    case midiNote = "MidiNote"
+    /// The `MidiControlChange` case.
+    case midiControlChange = "MidiControlChange"
 
     /// Keys that a profile document may give for this case, which `type` selects.
     var fields: [CodingKeys] {
@@ -125,6 +136,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
       case .runShortcut: [.type, .name]
       case .typeText: [.type, .text]
       case .speak: [.type, .text, .voice]
+      case .midiNote: [.type, .channel, .note, .velocity]
+      case .midiControlChange: [.type, .channel, .controller]
       }
     }
   }
@@ -167,6 +180,14 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case text
     /// The JSON key of `voice`.
     case voice
+    /// The JSON key of `channel`.
+    case channel
+    /// The JSON key of `note`.
+    case note
+    /// The JSON key of `velocity`.
+    case velocity
+    /// The JSON key of `controller`.
+    case controller
   }
 
   /// Decodes a destination from a profile document.
@@ -221,6 +242,26 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
       self = .speak(
         text: try container.decode(String.self, forKey: .text),
         voice: try container.decodeIfPresent(String.self, forKey: .voice)
+      )
+    case .midiNote:
+      self = .midiNote(
+        channel: try container.decode(Int.self, forKey: .channel),
+        note: try container.decode(Int.self, forKey: .note),
+        velocity: try container.decode(Int.self, forKey: .velocity)
+      )
+    case .midiControlChange:
+      self = .midiControlChange(
+        channel: try container.decode(Int.self, forKey: .channel),
+        controller: try container.decode(Int.self, forKey: .controller)
+      )
+    }
+    guard midiFieldsAreInRange else {
+      throw DecodingError.dataCorrupted(
+        DecodingError.Context(
+          codingPath: decoder.codingPath,
+          debugDescription:
+            "MIDI channel is 1 to 16, note and controller 0 to 127, velocity 1 to 127"
+        )
       )
     }
   }
@@ -289,6 +330,15 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
       try container.encode(Kind.speak, forKey: .type)
       try container.encode(text, forKey: .text)
       try container.encodeIfPresent(voice, forKey: .voice)
+    case .midiNote(let channel, let note, let velocity):
+      try container.encode(Kind.midiNote, forKey: .type)
+      try container.encode(channel, forKey: .channel)
+      try container.encode(note, forKey: .note)
+      try container.encode(velocity, forKey: .velocity)
+    case .midiControlChange(let channel, let controller):
+      try container.encode(Kind.midiControlChange, forKey: .type)
+      try container.encode(channel, forKey: .channel)
+      try container.encode(controller, forKey: .controller)
     }
   }
 }

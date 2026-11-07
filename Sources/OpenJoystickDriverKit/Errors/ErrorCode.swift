@@ -177,6 +177,8 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
   case secureInputEnabled = "E3032"
   /// A system action failed.
   case systemActionFailed = "E3033"
+  /// CoreMIDI refused to create the virtual MIDI source for a MIDI destination.
+  case midiSourceRefused = "E3034"
   /// The package manifest `mod.json` is missing or invalid.
   case invalidManifest = "E4001"
   /// The package requires a different version of OJD than the one that runs.
@@ -271,7 +273,7 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
       .remappingUnexpected, .profileProducesNoOutput, .motionGyroNotSelected,
       .motionProfileInactive, .motionSessionChanged, .packageProfileReadOnly,
       .postEventAccessMissing, .automationAccessMissing, .secureInputEnabled,
-      .systemActionFailed:
+      .systemActionFailed, .midiSourceRefused:
       .remapping
     case .invalidManifest, .requiresExcludesVersion, .invalidPackageContent, .packageClash,
       .packageAlreadyInstalled, .packageNotInstalled, .packageStoreUnwritable:

@@ -21,6 +21,12 @@ public actor RemappingEventEngine {
   let reportSystemActionFailure: @Sendable (any Error) -> Void
   /// Speaks `Speak` destinations, or `nil` when there is none.
   let speechOutput: (any RemappingSpeechOutput)?
+  /// Publishes the virtual MIDI source, or `nil` when there is none.
+  let midiOutput: (any RemappingMIDIOutput)?
+  /// Whether the MIDI source is open.
+  var midiIsOpen = false
+  /// Notes sent and not yet ended, as channel and note.
+  var heldMIDINotes: Set<[Int]> = []
   /// Controllers whose virtual gamepad state was sent and not yet neutralized.
   var heldGamepadDevices: Set<LogicalControllerID> = []
   /// Controllers whose virtual gamepad state may still be held after a failure.
@@ -52,6 +58,7 @@ public actor RemappingEventEngine {
   ///   - reportSystemActionFailure: Receives the failure of a system action.
   ///   - emissionBarrier: Admits output operations.
   ///   - speechOutput: Receives spoken phrases.
+  ///   - midiOutput: Publishes the virtual MIDI source.
   public init(
     sink: any RemappingSystemInputSink,
     gamepadSink: (any RemappingGamepadSink)? = nil,
@@ -60,12 +67,14 @@ public actor RemappingEventEngine {
     systemActionPerformer: (any RemappingSystemActionPerforming)? = nil,
     reportSystemActionFailure: @escaping @Sendable (any Error) -> Void = { _ in },
     emissionBarrier: RemappingEmissionBarrier = RemappingEmissionBarrier(),
-    speechOutput: (any RemappingSpeechOutput)? = nil
+    speechOutput: (any RemappingSpeechOutput)? = nil,
+    midiOutput: (any RemappingMIDIOutput)? = nil
   ) {
     self.speechOutput = speechOutput
     self.profileSwitcher = profileSwitcher
     self.systemActionPerformer = systemActionPerformer
     self.reportSystemActionFailure = reportSystemActionFailure
+    self.midiOutput = midiOutput
     self.sink = sink
     self.gamepadSink = gamepadSink
     self.physicalOutputSink = physicalOutputSink

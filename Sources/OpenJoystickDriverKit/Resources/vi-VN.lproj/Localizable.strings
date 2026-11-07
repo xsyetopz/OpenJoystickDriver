@@ -612,6 +612,10 @@
 "ui.mapping.axisDirection" = "%1$@ %2$@";
 /* Name of a mouse button destination. %@ is the button, for example left or right. */
 "ui.mapping.mouseButton" = "Nút %@ của chuột";
+/* Name of a MIDI note destination. %1$@ is the note number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiNote" = "Nốt MIDI %1$@, kênh %2$@";
+/* Name of a MIDI control change destination. %1$@ is the controller number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiControlChange" = "Bộ điều khiển MIDI %1$@, kênh %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "Di chuyển con trỏ %@";
 /* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
@@ -2962,7 +2966,7 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "Hãy đưa một hoặc nhiều nguồn, hoặc --all.";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "Một liên kết gửi một TARGET khi một SOURCE của bộ điều khiển được dùng.\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW, hoặc touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, hoặc physical:... cho rung, đèn và cò thích ứng.\n\n“ojd profile show” in các liên kết theo các dạng này. Chỉnh sửa tổ hợp, chuỗi và lớp bằng “ojd profile edit”.";
+"cli.binding.group.discussion" = "Một liên kết gửi một TARGET khi một SOURCE của bộ điều khiển được dùng.\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW, hoặc touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER, hoặc physical:... cho rung, đèn và cò thích ứng.\n\n“ojd profile show” in các liên kết theo các dạng này. Chỉnh sửa tổ hợp, chuỗi và lớp bằng “ojd profile edit”.";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "Liệt kê các liên kết của một cấu hình.";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
@@ -3987,6 +3991,8 @@
 "error.E3032.message" = "Hành động không chạy vì Secure Input đang bật. Hãy đóng ứng dụng đã bật nó, chẳng hạn ô mật khẩu, rồi thử lại.";
 /* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
 "error.E3033.message" = "Hành động đã thất bại.";
+/* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
+"error.E3034.message" = "Hành động MIDI không chạy vì hệ thống từ chối tạo nguồn MIDI OpenJoystickDriver. Hãy thử lại.";
 /* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
 "error.E4001.message" = "Tệp kê khai gói mod.json bị thiếu hoặc không hợp lệ. Hãy kiểm tra nó theo lược đồ mod-package rồi chạy lại lệnh.";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */

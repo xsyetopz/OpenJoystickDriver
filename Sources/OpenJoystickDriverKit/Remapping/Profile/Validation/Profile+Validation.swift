@@ -279,6 +279,9 @@ extension RemappingProfile {
         throw RemappingValidationError.invalidSpeech(field: "voice")
       }
     }
+    guard destination.midiFieldsAreInRange else {
+      throw RemappingValidationError.invalidMIDIDestination
+    }
     if destination.isVirtualGamepad, outputPolicy.virtualGamepad == .disabled {
       throw RemappingValidationError.virtualOutputRequired
     }
@@ -363,7 +366,7 @@ extension RemappingProfile {
 
     switch binding.source {
     case .axis:
-      guard binding.destination.isContinuous else {
+      guard binding.destination.isContinuous || binding.destination.isMIDIControlChange else {
         throw RemappingValidationError.incompatibleSourceAndDestination(index: index)
       }
     case .axisDirection, .triggerStage, .motionLean, .button, .dpad, .touchContact, .touchGrid,

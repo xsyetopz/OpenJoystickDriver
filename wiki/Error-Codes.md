@@ -109,6 +109,7 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E3031 | Remapping | The action did not run because Automation access is not granted. Grant it to OpenJoystickDriver and try again. Wire value `automation_access_missing`. |
 | E3032 | Remapping | The action did not run because Secure Input is on. Close the app that has it on, such as a password field, and try again. Wire value `secure_input_enabled`. |
 | E3033 | Remapping | The action failed. Wire value `system_action_failed`. |
+| E3034 | Remapping | The MIDI action did not run because the system refused to create the MIDI source OpenJoystickDriver. Try again. Wire value `midi_source_refused`. |
 | E4001 | Mod packages | The package manifest mod.json is missing or invalid. Check it against the mod-package schema and run the command again. |
 | E4002 | Mod packages | The package requires a different version of OpenJoystickDriver than the one that runs. Install a package version that supports this version, or update OpenJoystickDriver. |
 | E4003 | Mod packages | A file of the package is invalid, missing, or not listed in mod.json. Fix the file that the command names and run it again. |

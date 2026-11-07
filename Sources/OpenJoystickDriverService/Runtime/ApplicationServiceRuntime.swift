@@ -60,7 +60,8 @@ package final class ApplicationServiceRuntime {
       profileSwitcher: profileSwitchBridge,
       systemActionPerformer: MacOSSystemActionPerformer(),
       reportSystemActionFailure: { print("System action failed: \($0.localizedDescription)") },
-      speechOutput: speechOutput
+      speechOutput: speechOutput,
+      midiOutput: CoreMIDIOutput()
     )
     let remappingRouter = RemappingOutputRouter(
       library: remappingProfileLibrary,

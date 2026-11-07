@@ -9,6 +9,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 ### Added
 
 - A stick ring or sector, a trigger band and a touch area are binding sources (`stick-region`, `trigger-band` and `touch:SURFACE:area` in `ojd binding set`), with a hysteresis, validated non-overlap and release-before-press on a region change. The **Regions** sheet in the Controller section of the profile editor adds one and draws the live position of the stick, trigger or touch (`ui.profiles.region.*` and `ui.mapping.stickRegion`, `ui.mapping.stickRegionSector`, `ui.mapping.triggerBand` and `ui.mapping.touchArea`, which need native review in every language but English).
+- A binding can send MIDI: `MidiNote` (note-on and note-off) and `MidiControlChange` (button 127 or 0, trigger or stick axis scaled to 0 to 127, sent on change) through a virtual source named `OpenJoystickDriver` that exists only while an active profile uses MIDI. `ojd binding set` takes `midi-note:CHANNEL:NOTE[:VELOCITY]` and `midi-cc:CHANNEL:CONTROLLER`. A refused source is error `E3032` (`midiSourceRefused`).
 - The 8BitDo Ultimate 2 has a record for `2DC8:6012` (DInput, cable and dongle, Ultimate 2C layout, no rear buttons, unverified) and idle records for its receiver `2DC8:6013` and dongle `2DC8:3107`.
 - The 8BitDo Ultimate 3-mode has a record for `2DC8:901B` (Bluetooth, Xbox mode, Xbox button order, unverified).
 - The 8BitDo Ultimate 2C wired in DInput mode (`2DC8:301D`) has a record with the Bluetooth usage map and no paddle (unverified).

@@ -94,6 +94,7 @@ A macro in `macros` has `id` (UUID), `name`, `steps`, `repeat`, `whileRunning`, 
 - `interruptOnRelease` is `true` or `false`.
 - A step is one of `{"type":"Tap","destination":D}`, `{"type":"Press","destination":D}`, `{"type":"Release","destination":D}`, `{"type":"Chord","destinations":[D],"holdMs":MS}`, or `{"type":"Wait","durationMs":MS}`. `D` is a keyboard, mouse button, gamepad button, or gamepad D-pad destination. A `Macro` destination in a step is rejected.
 - `holdMs` and `durationMs` are 0 to 5000.
+- A `MidiNote` or `MidiControlChange` destination in a step is rejected.
 
 OJD rejects a macro name that is not unique without regard to case, a `Macro` destination whose ID is not in `macros`, a pass longer than 30 seconds (the sum of its waits and chord holds), and a counted macro longer than 5 minutes in total. Hardware status: Not checked.
 

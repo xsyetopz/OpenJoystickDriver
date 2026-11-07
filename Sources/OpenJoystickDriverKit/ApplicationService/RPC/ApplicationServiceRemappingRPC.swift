@@ -608,6 +608,8 @@ public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, Lo
     case secureInputEnabled = "secure_input_enabled"
     /// A system action failed.
     case systemActionFailed = "system_action_failed"
+    /// The system refused to create the MIDI source of a MIDI action.
+    case midiSourceRefused = "midi_source_refused"
     /// The profile has a missing or unsupported `apiVersion`.
     case unsupportedAPIVersion = "unsupported_api_version"
 
@@ -648,6 +650,7 @@ public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, Lo
       case .automationAccessMissing: .automationAccessMissing
       case .secureInputEnabled: .secureInputEnabled
       case .systemActionFailed: .systemActionFailed
+      case .midiSourceRefused: .midiSourceRefused
       }
     }
   }

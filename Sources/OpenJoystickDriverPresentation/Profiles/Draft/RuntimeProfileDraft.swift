@@ -150,7 +150,17 @@ struct DestinationOption: Hashable {
         isSupported: true
       )
     }
-    return keyboard + mouse + pointer + system + gamepad + physical
+    let midi = [
+      RemappingDestination.midiNote(channel: 1, note: 60, velocity: 127),
+      .midiControlChange(channel: 1, controller: 1),
+    ].map { destination in
+      Self(
+        destination: destination,
+        title: RuntimePresentation.destinationLabel(destination),
+        isSupported: true
+      )
+    }
+    return keyboard + mouse + pointer + system + gamepad + physical + midi
   }()
 
   /// Returns whether `destination` fits `source`: an axis takes a continuous destination, any
@@ -161,7 +171,7 @@ struct DestinationOption: Hashable {
   ) -> Bool {
     if case .gamepadButton(let button) = destination, !button.supportsVirtualOutput { return false }
     switch source {
-    case .axis: return destination.isContinuous
+    case .axis: return destination.isContinuous || destination.isMIDIControlChange
     case .axisDirection, .triggerStage, .motionLean, .button, .dpad, .touchContact, .touchGrid,
       .touchSwipe, .stickRegion, .triggerBand, .touchArea:
       return !destination.isContinuous

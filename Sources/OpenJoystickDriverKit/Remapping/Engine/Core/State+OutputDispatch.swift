@@ -243,6 +243,27 @@ extension RemappingEngineState {
     if effectiveDestination.isProfileControl {
       return isDown ? runProfileControl(effectiveDestination, device: &device) : []
     }
+    switch effectiveDestination {
+    case .midiNote(let channel, let note, let velocity):
+      return [
+        .midi(
+          isDown
+            ? .noteOn(channel: channel, note: note, velocity: velocity)
+            : .noteOff(channel: channel, note: note)
+        )
+      ]
+    case .midiControlChange(let channel, let controller):
+      return [
+        .midi(
+          .controlChange(
+            channel: channel,
+            controller: controller,
+            value: isDown ? RemappingDestination.midiMaxData : 0
+          )
+        )
+      ]
+    default: break
+    }
     let virtualContribution: RemappingGamepadState?
     switch effectiveDestination {
     case .gamepadButton(let button): virtualContribution = RemappingGamepadState(buttons: [button])
@@ -315,7 +336,8 @@ extension RemappingEngineState {
       return Self.increment(&mouseButtonReferences, key: button) == 1
         ? [.system(.mouseButtonDown(button))] : []
     case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro,
-      .profileSwitch, .layerSet, .pause, .speak:
+      .profileSwitch, .layerSet, .pause, .speak, .midiNote,
+      .midiControlChange:
       return []
     case .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText:
       return destination.systemActionRequest(isDown: true).map { [.systemAction($0)] } ?? []
@@ -341,7 +363,8 @@ extension RemappingEngineState {
       return Self.decrement(&mouseButtonReferences, key: button) == 0
         ? [.system(.mouseButtonUp(button))] : []
     case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro,
-      .profileSwitch, .layerSet, .pause, .speak:
+      .profileSwitch, .layerSet, .pause, .speak, .midiNote,
+      .midiControlChange:
       return []
     case .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText:
       return destination.systemActionRequest(isDown: false).map { [.systemAction($0)] } ?? []
