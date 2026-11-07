@@ -50,7 +50,9 @@
         "RightTrackpadTouch",
         "PointerX",
         "PointerY",
-        "PointerTracking"
+        "PointerTracking",
+        "LeftGripTouch",
+        "RightGripTouch"
       ]
     },
     "dpadControl": {

@@ -98,7 +98,7 @@ extension SteamTritonDriver {
     (0x0020_0000, .rightTrackpadTouch), (0x0040_0000, .rightTrackpadClick),
     (0x0080_0000, .rightTrigger), (0x0100_0000, .leftStickTouch),
     (0x0200_0000, .leftTrackpadTouch), (0x0400_0000, .leftTrackpadClick),
-    (0x0800_0000, .leftTrigger),
+    (0x0800_0000, .leftTrigger), (0x1000_0000, .rightGripTouch), (0x2000_0000, .leftGripTouch),
   ]
   /// The D-pad down bit of the button word.
   private static let dpadDown: UInt32 = 0x0400

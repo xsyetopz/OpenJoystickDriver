@@ -111,7 +111,13 @@ class ControlVocabularyTests(unittest.TestCase):
         self.assertEqual(rows["Capture"]["hid"], [{"page": "Consumer", "usage": 178}])
 
     def test_no_control_without_a_name_has_a_guess(self) -> None:
-        for control in ("LeftStickTouch", "LeftTrackpadClick", "RightTrackpadTouch"):
+        for control in (
+            "LeftStickTouch",
+            "LeftTrackpadClick",
+            "RightTrackpadTouch",
+            "LeftGripTouch",
+            "RightGripTouch",
+        ):
             row = self.crosswalk[control]
             self.assertEqual(row["hid"], [], control)
             for column in ("w3cButton", "w3cAxis", "sdl", "evdev", "apple"):

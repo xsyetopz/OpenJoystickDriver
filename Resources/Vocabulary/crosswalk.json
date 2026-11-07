@@ -695,6 +695,22 @@
       "evdev": null,
       "hid": [],
       "apple": null
+    },
+    "LeftGripTouch": {
+      "w3cButton": null,
+      "w3cAxis": null,
+      "sdl": null,
+      "evdev": null,
+      "hid": [],
+      "apple": null
+    },
+    "RightGripTouch": {
+      "w3cButton": null,
+      "w3cAxis": null,
+      "sdl": null,
+      "evdev": null,
+      "hid": [],
+      "apple": null
     }
   }
 }

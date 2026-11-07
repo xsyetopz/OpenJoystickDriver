@@ -172,7 +172,7 @@ enum VirtualGamepadReportMapping {
       .leftPaddle2, .rightPaddle1, .rightPaddle2, .auxiliary1, .auxiliary2, .auxiliary3,
       .auxiliary4, .auxiliary5, .auxiliary6, .auxiliary7, .auxiliary8, .leftStickTouch,
       .rightStickTouch, .leftTrackpadClick, .leftTrackpadTouch, .rightTrackpadTouch,
-      .pointerX, .pointerY, .pointerTracking:
+      .pointerX, .pointerY, .pointerTracking, .leftGripTouch, .rightGripTouch:
       return nil
     }
   }

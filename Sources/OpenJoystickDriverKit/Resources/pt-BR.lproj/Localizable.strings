@@ -1229,6 +1229,12 @@
 /* Name of the click of the right trackpad of a controller. */
 "ui.mapping.rightPadClick" = "Clique no Painel Direito";
 
+/* Name of the touch sensor on the grip on the back of a controller on the left side. */
+"ui.mapping.leftGripTouch" = "Toque na Empunhadura Esquerda";
+
+/* Name of the touch sensor on the grip on the back of a controller on the right side. */
+"ui.mapping.rightGripTouch" = "Toque na Empunhadura Direita";
+
 /* Title of the sheet that tunes the motion sensor of a controller in a profile. */
 "ui.profiles.motion.title" = "Ajuste de Movimento";
 /* Label of the popup in the motion sheet that picks the coordinate space of the motion. */

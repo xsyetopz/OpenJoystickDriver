@@ -172,7 +172,10 @@ struct ControlVocabularyTests {
     #expect(rows["LeftPaddle2"]?.apple == "XboxPaddleFour")
     #expect(rows["DpadUp"]?.hid.first == .init(page: "GenericDesktop", usage: 144))
     #expect(rows["Capture"]?.hid == [.init(page: "Consumer", usage: 178)])
-    for id in ["LeftStickTouch", "LeftTrackpadClick", "RightTrackpadTouch"] {
+    for id in [
+      "LeftStickTouch", "LeftTrackpadClick", "RightTrackpadTouch", "LeftGripTouch",
+      "RightGripTouch",
+    ] {
       let row = try #require(rows[id])
       #expect(row.hid.isEmpty && row.sdl == nil && row.evdev == nil && row.apple == nil, "\(id)")
     }

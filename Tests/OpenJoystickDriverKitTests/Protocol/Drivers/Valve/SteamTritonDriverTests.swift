@@ -77,6 +77,32 @@ struct SteamTritonDriverTests {
   }
 
   @Test
+  func decodesGripTouchBitsIntoGripControls() throws {
+    let grip = ProtocolPacketFixtures.Triton.Grip.self
+    let fixtures = ProtocolPacketFixtures.Triton.gripReports
+    #expect(fixtures.count == 8)
+    for fixture in fixtures {
+      let event = try #require(try SteamTritonDriver().parseReport(fixture.report))
+      let pressed = event.state.pressed
+      #expect(pressed.contains(.rightGripTouch) == (fixture.buttons & grip.right != 0))
+      #expect(pressed.contains(.leftGripTouch) == (fixture.buttons & grip.left != 0))
+      let lowerReport = TritonReport.state(buttons: fixture.buttons & grip.lowerBits)
+      let lower = try #require(try SteamTritonDriver().parseReport(lowerReport)).state.pressed
+      #expect(pressed.subtracting([.rightGripTouch, .leftGripTouch]) == lower, "\(fixture.name)")
+    }
+  }
+
+  @Test
+  func releasesAGripWhenItsBitClears() throws {
+    let grip = ProtocolPacketFixtures.Triton.Grip.self
+    let driver = SteamTritonDriver()
+    _ = try driver.parseReport(TritonReport.state(buttons: grip.right | grip.left))
+    let events = try driver.parseReport(TritonReport.state(buttons: grip.right))
+    #expect(events.contains(.release(.leftGripTouch)))
+    #expect(events.contains(.press(.rightGripTouch)))
+  }
+
+  @Test
   func decodesTheDPadBitsIntoTheHat() throws {
     let cases: [(UInt32, HatDirection)] = [
       (0x2000, .north), (0x2800, .northEast), (0x0800, .east), (0x0C00, .southEast),

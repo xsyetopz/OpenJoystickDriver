@@ -382,6 +382,8 @@ Every document, profile, endpoint message and record names a control with one Up
 | `PointerX` | - | - | - | - | - |
 | `PointerY` | - | - | - | - | - |
 | `PointerTracking` | - | - | - | - | - |
+| `LeftGripTouch` | - | - | - | - | - |
+| `RightGripTouch` | - | - | - | - | - |
 
 Each column is checked against this source:
 

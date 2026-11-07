@@ -28,7 +28,9 @@
       "LeftTrackpadClick",
       "RightTrackpadClick",
       "LeftTrackpadTouch",
-      "RightTrackpadTouch"
+      "RightTrackpadTouch",
+      "LeftGripTouch",
+      "RightGripTouch"
     ],
     "touchContactCount": 1,
     "motion": true,

@@ -28,10 +28,10 @@ Owns: `Control` type, vocabulary files, mappings, names, localization.
 Depends: 1.2.
 Verify: `./Scripts/ojd vocabulary regenerate --check`, `./Scripts/ojd check schemas`, `swift test --filter ControlVocabularyTests`.
 
-- [ ] 2.1 Run `grep -rn "RightTrackpadTouch\|rightTrackpadTouch" Sources Resources Scripts Tests wiki docs` and list every hit in the PR text. Verify: the list is complete; each hit is changed or marked "no entry needed" with a reason.
+- [ ] 2.1 Run `grep -rn "RightTrackpadTouch\|rightTrackpadTouch" Sources Resources Scripts Tests wiki docs` and list every hit in design.md "Source checks". Verify: the list is complete; each hit is changed or marked "no entry needed" with a reason.
 - [ ] 2.2 Write tests: the Triton driver decodes grip bits into `RightGripTouch` (bit 28) and `LeftGripTouch` (bit 29) press and release events and leaves other controls unchanged; `ControlVocabularyTests` and `test_control_vocabulary.py` list both ids; the crosswalk entries exist. Verify: the tests fail before 2.3.
 - [ ] 2.3 Add `LeftGripTouch` and `RightGripTouch` to the `Control` type, `vocabulary.schema.json`, `crosswalk.json` (null mappings), the capability and mapping tables, and the Triton description's `controls.add`; add the names to the presentation table and all 22 localization bundles. Run `./Scripts/ojd vocabulary regenerate --write` and `./Scripts/ojd catalog regenerate --write`. Verify: `./Scripts/ojd vocabulary regenerate --check`, `./Scripts/ojd catalog regenerate --check`, `python3 Scripts/Quality/check_localization_keys.py`, and the 2.2 tests pass.
-- [ ] 2.4 Review each translation added in 2.3 against `LOCALIZATION.md` (Meaning, Punctuation). Verify: the review notes are in the PR text; `swift test --filter LocalizationTests` passes.
+- [ ] 2.4 Review each translation added in 2.3 against `LOCALIZATION.md` (Meaning, Punctuation). Verify: the review notes are in design.md "Source checks"; `swift test --filter LocalizationTests` passes.
 - [ ] 2.5 Add the table entries to `Buttons` of `SteamTritonDriver+Reports.swift` (`0x1000_0000` right grip, `0x2000_0000` left grip) and update the equivalence snapshots with the helper of the redesign change. Verify: the snapshot helper prints only the grip additions.
 
 ## 3. 2015 activation (tests first)
