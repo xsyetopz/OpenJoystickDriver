@@ -74,12 +74,12 @@ The record for `37D7:2401` SHALL deliver sticks, buttons including C, Z and M1 t
 
 ### Requirement: Vendor Output Is Limited to Named Commands
 
-A Flydigi record SHALL send a frame `5A A5 cmd len payload sum8` only for a command it lists: the `37D7:2401` startup commands (1, 0xA1 and 2), grip rumble (18), trigger force mode (81) and trigger force sync (82). The frame length byte SHALL be the payload length plus 2, and the last byte SHALL be the low byte of the sum of cmd, len and payload. OpenJoystickDriver SHALL NOT send the screen upload (31), UID (4) or any other command.
+A Flydigi record SHALL send a frame `5A A5 cmd len payload` only for a command it lists: the `37D7:2401` startup commands (1, 0xA1 and 2), grip rumble (18), trigger force mode (81) and trigger force sync (82). The startup commands end with a byte that is the low byte of the sum of cmd, len and payload, and their length byte is the payload length plus 2. Commands 18, 81 and 82 carry no checksum byte; their length bytes are 6, 10 and 11. OpenJoystickDriver SHALL NOT send the screen upload (31), UID (4) or any other command.
 
 #### Scenario: Frame Checksum
 
-- **WHEN** the frame builder is given command `0x11` and payload `FF 01 FF FF FF`
-- **THEN** it returns `5A A5 11 07 FF 01 FF FF FF 15`
+- **WHEN** a startup write of the `37D7:2401` record is read
+- **THEN** its last byte is the low byte of the sum of cmd, len and payload, so the test-mode write is `5A A5 11 07 FF 01 FF FF FF 15`
 
 #### Scenario: Unlisted Command
 
@@ -89,7 +89,7 @@ A Flydigi record SHALL send a frame `5A A5 cmd len payload sum8` only for a comm
 #### Scenario: Rumble Request
 
 - **WHEN** the user runs `ojd controller rumble CONTROLLER --left 128 --right 64`
-- **THEN** the pad receives one grip rumble frame with those intensities and a valid checksum
+- **THEN** the pad receives one 32-byte report `03 5A A5 12 06 80 40 00 00` followed by zeros, with no checksum byte
 
 ### Requirement: Apex 4 Has a DInput Record
 

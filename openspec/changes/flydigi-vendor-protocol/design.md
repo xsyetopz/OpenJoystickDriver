@@ -48,7 +48,7 @@ Declarative first: the init writes are fixed HID output reports (`session.startu
 
 ### D7: Vendor Output
 
-Output uses the `5A A5 cmd len payload sum8` frame with sum8 over cmd, len and payload. The records name every command they send; the plan names three: grip rumble (18, with the trigger motors in payload bytes 7 and 8), trigger force mode (81) and the trigger force sync (82). The payloads are written from the CC0 `PROTOCOL.md` at an exact revision. Commands for screen upload (31), UID (4), device info (1, other than the init packet of the 2401) and anything else are not sent. A pure function builds the frame, so a test asserts bytes and checksum without a device. User-facing rumble uses the existing `ojd controller rumble` fields (`--left`, `--right`, `--left-trigger`, `--right-trigger`); trigger force modes need a name and a setting before the GUI or CLI exposes them, which is a task of its own after a tester confirms the grip rumble works. `wire-protocols.md` loses "takes no output" in the same commit that adds output.
+Output uses the `5A A5 cmd len payload` frame in a 32-byte report with ID `0x03`. Whether a trailing sum8 follows depends on the command: the checksummed commands (the `37D7:2401` init and test-mode packets) end with the low byte of cmd + len + payload and have len = payload length + 2 (`flydigi/blobs.py:27-38` of the pinned openflydigi revision); grip rumble (18), trigger force (81) and trigger force sync (82) carry no checksum byte, and the frame stays zero after the payload (`flydigi/device.py:244-253`, `flydigi/effects.py:377-387`, `:355-374`, `:339-352`). Their length bytes are 6, 10 and 11. The records name every command they send; the plan names three: grip rumble (18, with the trigger motors in payload bytes 7 and 8 of the frame), trigger force mode (81) and the trigger force sync (82). Commands for screen upload (31), UID (4), device info (1, other than the init packet of the 2401) and anything else are not sent. User-facing rumble uses the existing `ojd controller rumble` fields (`--left`, `--right`, `--left-trigger`, `--right-trigger`); trigger force modes need a name and a setting before the GUI or CLI exposes them. `wire-protocols.md` loses "takes no output" in the same commit that adds output.
 
 ### D8: Vader 3 Versus 4 Pro
 
@@ -62,6 +62,16 @@ New: `docs/testing/flydigi-vader-5s.md`, `docs/testing/flydigi-vader-5-pro.md`, 
 
 `usb` is a record-level section, so its `endpoints` apply to every mode. The validator rejects an override equal to the default endpoints of the family, because it states nothing the family does not already say. With several modes the rule is: the override is rejected when it equals the default of every mode (it would change no mode) and accepted when it differs from the default of at least one mode. `37D7:2801` needs this: the endpoints recorded from hardware in GIP mode (in 129, out 1) are the `XboxXUSB` defaults and differ from the `XboxGIP` defaults (in 130, out 2), so the override moves the GIP mode and leaves the XUSB mode on its defaults. The schema has no per-mode endpoints, and adding them is a larger format change than this rule. `ControllerRecordDocument+Transport.swift` implements the rule with `allSatisfy`; `ControllerModeConditionalTests` and a `SchemaRejections` case (two `XboxXUSB` modes with the XUSB defaults) cover both sides.
 
+### D11: Grip Rumble Is a Rumble Template; Trigger Force Needs a New Output Kind
+
+Pinned source: openflydigi at `11653507bbe4dc77f3c479c2a7aaebf25bbda995`, `flydigi/` and `tools/` are MIT (the repository `LICENSE`), `PROTOCOL.md` is CC0. The code was read for the frame bytes and no code was copied; the Python is written for Linux hidraw.
+
+Grip rumble (command 18) is `03 5A A5 12 06` followed by left grip, right grip, left trigger and right trigger motor bytes, zero to byte 31 (`flydigi/effects.py:377-387`; the trigger bytes at 7 and 8 are from `PROTOCOL.md` section 3). That is a fixed byte report with four motor bytes, which the existing rumble template (`session.rumble` of a `HIDReportLayout` record, with `lowFrequency`, `highFrequency`, `leftTrigger` and `rightTrigger`) already expresses. So no frame builder, no new record field and no change to `ojd controller rumble` is needed: a record that carries the template gets all four `--left`, `--right`, `--left-trigger` and `--right-trigger` fields. A template sends only its own command; a command kind the driver does not encode fails with `unsupportedCapability`, so an unlisted command sends nothing. `FlydigiGripRumbleTests` asserts the frame through the driver.
+
+A checksummed frame builder is needed only for the `37D7:2401` init packets, which are fixed byte strings in `session.startup`; a pure function is not needed either. Task 4.3 writes them as bytes.
+
+Trigger force (81, 82) takes an effect, a side and parameters, not motor levels (`flydigi/effects.py:255-374`). It needs a new output command kind in `ControllerOutputCommand`, a driver that encodes it, a profile setting named after the effect (`Normal`, `Race`, `Sniper`, `Recoil`, `Lock`) and localization text. No record in the tree has a pad with force triggers, and a Vader 5 sends command 18 and never 81 or 82 (`PROTOCOL.md` section 3a), so task 6.4 stays open until such a record exists.
+
 ## Risks
 
 - Option 1 of D5 may be impossible with the current mode selection. Task 4.1 reads the code before any record is written.
@@ -74,20 +84,3 @@ New: `docs/testing/flydigi-vader-5s.md`, `docs/testing/flydigi-vader-5-pro.md`, 
 - Which interface `37D7:2801` shows on the maintainer's pad and on a tester's (tester card F2).
 - Whether the Vader 5 Pro dongle needs both modes selectable (task 4.1).
 - Whether `04B4:2412` input uses the report ID in byte 0 of the 31-byte read (task 5.1 reads the descriptor).
-
-## Open
-
-### O1: Where the Vendor Frame Builder Lives and How Output Reaches It (tasks 6.2 to 6.4)
-
-Facts from the pinned openflydigi `PROTOCOL.md` (commit `11653507bbe4dc77f3c479c2a7aaebf25bbda995`, sections 2, 3a and 7), which differ from D7 and the spec:
-
-- Commands 18, 81 and 82 are the three commands whose vendor builders set no checksum byte, and the notes report that a pad accepted them with the checksum field left zero. The other commands end with the sum8 over the bytes from the command. D7 and the "Vendor Output" requirement apply sum8 to every frame.
-- The frame on the `0xFFA0` node is report ID `0x03` followed by `5A A5 cmd len payload`, written as 32 bytes. The length byte counts the payload plus 2 for the SDK's checksummed commands; for 18 the notes give `[4]=6` with grip levels at frame bytes 5 and 6 and trigger motors at 7 and 8, and say the pad accepts a length byte that matches the real payload for 81.
-- A Vader 5 declares no force trigger, so Space Station sends it command 18 and never 81 or 82. Command 82 has no mode byte (`side, bindType, filter, scale, stroke, pressureLevel, strength, frequency`); 81 has an apply flag and a mode byte with the effects `Normal` 0, `Race` 1, `Sniper` 2, `Recoil` 3, `Lock` 4, `Vibration` 5 (never sent by the vendor software), with `Sniper` and `Recoil` labelled the other way round in Space Station's UI.
-
-Proposed decision for the coordinator:
-
-1. The frame builder is one pure function, `FlydigiFrame.build(command:payload:checksum:)`, in `Sources/OpenJoystickDriverKit/Protocol/Drivers/Vendor/` beside the Flydigi driver. `checksum` is a two-case enum, `.sum8` and `.none`, and each command in a record names which it uses. The spec then says: the length byte is the payload length plus 2, and the last byte is sum8 for the commands that list `sum8`; commands 18, 81 and 82 list `none` per the notes until a tester confirms a pad that needs the byte. Hardware evidence: none; both forms are source-derived.
-2. `ojd controller rumble` reaches it through the existing output path for the record: the Flydigi driver's rumble method calls the builder with command 18 and the four levels (`--left`, `--right`, `--left-trigger`, `--right-trigger`), writes the 32-byte frame with report ID `0x03`, and the test uses the fake transport that records writes. No new CLI flag.
-3. The record names the allowed commands in a new `output.vendorCommands` list of `{ "command": 18, "checksum": "None" }` entries on a mode whose family reads it. A command that is not listed sends nothing and fails with a named error. Adding a record field needs the controller schema, `protocol-description` and `Resources/ErrorCodes.json` changes in one commit.
-4. Trigger force modes (6.4) are a profile setting named after the effect enum (`Normal`, `Race`, `Sniper`, `Recoil`, `Lock`), applied through command 81 and offered only for a record whose pad has force triggers. The Vader 5 Pro has none, so 81 and 82 are not listed for it.
