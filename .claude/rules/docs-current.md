@@ -3,15 +3,53 @@ paths:
   - "**/*"
 ---
 
-# Docs describe the code as it is now
+# stale_doc
 
-Comments, the wiki, the README, and the schema descriptions say what the code does today. History belongs only in `CHANGELOG.md`.
+- **Severity:** error
+- **Description:** Comments, the wiki, the README, and schema descriptions say what the code does now. Update them in the same commit as the behavior, and document each behavior where users look: the wiki or the CLI help.
 
-- When you change behavior, update every comment and doc that describes it in the same commit.
-- Name each behavior, test it, and document it for users where they will look for it: the wiki page or the CLI help.
-- Write no "now", "previously", "new", "used to", "renamed from", or "no longer" outside `CHANGELOG.md`.
-- Preserve SVG files exactly as they are. Keep secrets out of the repository. Confirm before a destructive write or a publication.
+Non-triggering:
 
-GREEN: `wiki/Wii-Remote.md` says "Pointer X and Pointer Y come from the IR camera while a profile binds them." The `CHANGELOG.md` entry under `[Unreleased]` says the IR pointer was added.
+```markdown
+Pointer X and Pointer Y come from the IR camera while a profile binds them.
+```
 
-RED: a doc comment says "Previously this used the raw report; now it uses the parsed state." That history goes stale, and it doesn't tell the reader what the function does.
+Triggering:
+
+```markdown
+↓The IR camera is not used.   <!-- after the pointer was wired -->
+```
+
+# history_outside_changelog
+
+- **Severity:** warning
+- **Description:** Words like "now", "previously", "new", "used to", "renamed from", and "no longer" belong only in `CHANGELOG.md`.
+
+Non-triggering:
+
+```swift
+/// Reads the pointer from the parsed IR state.
+```
+
+Triggering:
+
+```swift
+/// ↓Previously used the raw report; now reads the parsed IR state.
+```
+
+# protected_content
+
+- **Severity:** error
+- **Description:** Preserve SVGs exactly. Keep secrets out of the repository. Confirm before a destructive write or a publication.
+
+Non-triggering:
+
+```sh
+git diff --stat -- '*.svg'   # empty
+```
+
+Triggering:
+
+```sh
+↓git push --force   # without confirmation
+```
