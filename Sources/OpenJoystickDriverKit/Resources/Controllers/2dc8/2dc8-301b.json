@@ -101,18 +101,6 @@
         {
           "kind": "Axis",
           "page": 1,
-          "usage": 51,
-          "control": "RightStickX"
-        },
-        {
-          "kind": "Axis",
-          "page": 1,
-          "usage": 52,
-          "control": "RightStickY"
-        },
-        {
-          "kind": "Axis",
-          "page": 1,
           "usage": 53,
           "control": "RightStickY"
         },
