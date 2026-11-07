@@ -61,6 +61,7 @@ A profile file contains one profile object. An exported profile file has the sam
 | `physicalColor` | No | Lighting color |
 | `motionTuning`, `gyroOutput`, `joyConPair` | No | Motion settings |
 | `stickMappings`, `triggerMappings`, `touchMappings` | No | Analog and touch settings |
+| `pointerSpeed` | No | Scale of all pointer movement; see [Pointer speed fields](#pointer-speed-fields) |
 | `chords`, `sequences`, `layers` | No | Combinations and layers |
 | `macros` | No | Named macros that a `Macro` destination runs |
 
@@ -73,6 +74,16 @@ OJD rejects unknown keys anywhere in a profile. The file declares `apiVersion: o
 A binding's `turbo` object has `repeatRateHz` and `dutyCycle`, and optionally `initialDelayMs` (0 to 2500, the time from the first press to the first repeat; 0 when omitted) and `maxRepeats` (1 to 500; omitted repeats while held).
 
 A binding's `multiTap` list has entries with `count` (2 to 5, unique in the list), `windowMs` (50 to 1000, from one tap's release to the next press), and `destination`.
+
+## Pointer Speed Fields
+
+`pointerSpeed` has `driver`, `minScale`, `maxScale`, and `curve`, and no other key. All four are required.
+
+- `driver` is `{"type":"Trigger","side":SIDE}` or `{"type":"StickDepth","side":SIDE}`. `SIDE` is `Left` or `Right`.
+- `minScale` applies at driver value 0 and `maxScale` at 1. Both are numbers from 0 to 10.
+- `curve` is `Linear`, `EaseIn`, `EaseOut`, or `SmoothStep`.
+
+The scale multiplies pointer movement, not scrolling. For more information, see [Set pointer speed](Sticks-Triggers-Touchpad-and-Motion.md#set-pointer-speed).
 
 ## Macro Fields
 

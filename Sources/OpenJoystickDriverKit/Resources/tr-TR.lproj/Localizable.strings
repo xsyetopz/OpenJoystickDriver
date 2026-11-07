@@ -748,6 +748,28 @@
 "ui.profiles.region.liveTrigger" = "Basma %.2f";
 /* Line under the live touch position in the regions sheet. %1$.2f is the horizontal and %2$.2f is the vertical position, both as fractions of the surface. */
 "ui.profiles.region.liveTouch" = "%1$.2f, %2$.2f konumunda dokunma";
+/* Title of the sheet that sets the pointer speed of a profile, and label of its row in the controller section. The pointer speed scales all pointer movement. */
+"ui.profiles.pointerSpeed.title" = "İşaretçi hızı";
+/* Label of the switch in the pointer speed sheet that turns on scaling of the pointer movement. */
+"ui.profiles.pointerSpeed.enabled" = "İşaretçi hızını ölçekle";
+/* Label of the popup in the pointer speed sheet that picks the control whose value sets the scale. */
+"ui.profiles.pointerSpeed.driver" = "Sürücü";
+/* Option of the driver popup in the pointer speed sheet: the value of a trigger sets the scale. Also the summary of the pointer speed row when a trigger drives it. */
+"ui.profiles.pointerSpeed.driverTrigger" = "Tetik";
+/* Option of the driver popup in the pointer speed sheet: how far a stick is pushed from the center sets the scale. Also the summary of the pointer speed row when a stick drives it. */
+"ui.profiles.pointerSpeed.driverStickDepth" = "Çubuk eğimi";
+/* Label of the popup in the pointer speed sheet that picks the left or the right trigger or stick as the driver. */
+"ui.profiles.pointerSpeed.side" = "Taraf";
+/* Option of the side popup in the pointer speed sheet: the left trigger or stick. */
+"ui.profiles.pointerSpeed.sideLeft" = "Sol";
+/* Option of the side popup in the pointer speed sheet: the right trigger or stick. */
+"ui.profiles.pointerSpeed.sideRight" = "Sağ";
+/* Label of the field in the pointer speed sheet that sets the pointer scale while the driver is at rest. The scale multiplies the pointer movement. */
+"ui.profiles.pointerSpeed.minScale" = "0’daki ölçek";
+/* Label of the field in the pointer speed sheet that sets the pointer scale while the trigger is fully pulled or the stick is at its rim. The scale multiplies the pointer movement. */
+"ui.profiles.pointerSpeed.maxScale" = "1’deki ölçek";
+/* Line in the pointer speed sheet that shows the scale the pointer has now. %@ is the scale, a number. */
+"ui.profiles.pointerSpeed.live" = "Geçerli ölçek: %@";
 /* Label of the stepper that sets the number of columns of a touch grid in the capture assignment sheet. %d is the number of columns. */
 "ui.capture.touchColumns" = "Izgara Sütunları: %d";
 /* Label of the stepper that sets the number of rows of a touch grid in the capture assignment sheet. %d is the number of rows. */

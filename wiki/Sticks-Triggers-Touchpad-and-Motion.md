@@ -9,6 +9,7 @@ Analog settings change how a stick, a trigger, a touch surface, or a motion sens
 - [Set Trigger Stages](#set-trigger-stages)
 - [Set Touch Mapping](#set-touch-mapping)
 - [Set Regions](#set-regions)
+- [Set Pointer Speed](#set-pointer-speed)
 - [Set Motion Tuning and Gyro Output](#set-motion-tuning-and-gyro-output)
 - [Create a Gyro to Stick Profile](#create-a-gyro-to-stick-profile)
 - [Pair Two Joy-Con Controllers](#pair-two-joy-con-controllers)
@@ -116,6 +117,26 @@ While a controller is connected, the **Live position** drawing shows the region 
 Rings and sectors of one stick cannot overlap, and neither can bands of one trigger; OJD rejects the profile when you save it. A ring or band keeps its output while the input stays within the **Release hysteresis** (0 to 0.25, default 0.05) past an edge. When the input moves from one region into the next, OJD releases the first output before it presses the second.
 
 On the command line, the sources are `stick-region:SIDE:INNER-OUTER[:FROM-TO]`, `trigger-band:SIDE:FROM-TO`, and `touch:SURFACE:area:X:Y:W:H`, for example `ojd binding set Racing stick-region:left:0.8-1 key:key-a`. For the other source syntax, see [Assigning buttons and actions](Bindings-and-Actions.md#region-sources).
+
+## Set Pointer Speed
+
+Pointer speed scales all pointer movement by the value of a trigger or a stick. It covers the stick pointer modes, the touch pointer, the gyro mouse, and the **Mouse movement** destination. Scrolling does not change.
+
+1. In the **Controller** section, click **Adjust** in the **Pointer speed** group.
+2. Select **Scale pointer speed**.
+3. Select the **Driver**: **Trigger** or **Stick depth**, and the **Side**.
+4. Set the **Scale at 0** and the **Scale at 1**, and select a **Curve**.
+5. Click **Save**.
+
+The scale is the **Scale at 0** when the driver is at rest and the **Scale at 1** when the trigger is fully pulled or the stick is at its rim. The curve shapes the values in between. Both scales range from 0 to 10. A scale of 0 stops the pointer. While the controller is connected, the editor shows the current scale.
+
+With several controllers that each have a pointer speed, the scales of all of them apply to the one pointer.
+
+On the command line, the setting is the `pointerSpeed` field of the profile. For example, to slow the pointer to a quarter while the left trigger is fully pulled:
+
+```sh
+ojd profile set Racing pointerSpeed '{"driver":{"type":"Trigger","side":"Left"},"minScale":1,"maxScale":0.25,"curve":"Linear"}'
+```
 
 ## Set Motion Tuning and Gyro Output
 
