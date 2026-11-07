@@ -100,7 +100,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func everyCheckPassingExitsZeroAndSkipsOnlyTheSoak() async throws {
+  func everyCheckPassingExitsZeroAndSkipsOnlyTheSoakAndTheAbsentSwitchPad() async throws {
     let socketPath = temporarySocketPath()
     let server = try serve(socketPath: socketPath)
     defer { server.stop() }
@@ -109,7 +109,11 @@ struct DiagnoseCommandTests {
 
     #expect(result.code == 0, "\(result.standardError)")
     let statuses = try statuses(result)
-    #expect(statuses.filter { $0.value == "Skip" }.keys.sorted() == ["runtime-health"])
+    #expect(
+      statuses.filter { $0.value == "Skip" }.keys.sorted() == [
+        "runtime-health", "switch-placeholder-serial",
+      ]
+    )
     #expect(statuses.values.allSatisfy { $0 == "Pass" || $0 == "Skip" })
     #expect(try result.json()["output"] == nil)
   }
