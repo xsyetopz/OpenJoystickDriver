@@ -301,6 +301,10 @@
             "mode": 51
           },
           {
+            "features": ["Accelerometer", "IRBasic"],
+            "mode": 55
+          },
+          {
             "features": ["Accelerometer", "IRBasic", "Extension"],
             "mode": 55
           },
