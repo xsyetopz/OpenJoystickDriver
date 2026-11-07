@@ -32,11 +32,11 @@ struct BindingSummary: Encodable, Equatable {
   /// When the target fires, in kebab-case, such as `hold` or `tap-on-press`.
   let behavior: String
 
-  /// Creates the summary from `binding`.
-  init(_ binding: RemappingBinding) {
+  /// Creates the summary from `binding`; `macros` name a `Macro` target.
+  init(_ binding: RemappingBinding, macros: [RemappingMacro] = []) {
     id = binding.id.uuidString
     source = ProfileText.source(binding.source)
-    target = ProfileText.destination(binding.destination)
+    target = ProfileText.destination(binding.destination, macros: macros)
     behavior = binding.behavior.rawValue
   }
 }
@@ -63,8 +63,8 @@ struct BindingListCommand: AsyncParsableCommand {
     let behavior: String
 
     /// Creates the item from `binding` and the `profile` that holds it.
-    init(_ binding: RemappingBinding, profile: ProfileSummary) {
-      let summary = BindingSummary(binding)
+    init(_ binding: RemappingBinding, profile: ProfileSummary, macros: [RemappingMacro]) {
+      let summary = BindingSummary(binding, macros: macros)
       self.profile = profile
       id = summary.id
       source = summary.source
@@ -92,11 +92,15 @@ struct BindingListCommand: AsyncParsableCommand {
       case .json:
         let profile = ProfileSummary(document, snapshot: snapshot)
         try CLIOutput.json(
-          CLIList(items: document.bindings.map { Item($0, profile: profile) })
+          CLIList(
+            items: document.bindings.map {
+              Item($0, profile: profile, macros: document.macros)
+            }
+          )
         )
       case .plain:
         CLIOutput.plain(
-          document.bindings.map(BindingSummary.init).map {
+          document.bindings.map { BindingSummary($0, macros: document.macros) }.map {
             [$0.source, $0.target, CommandLineName.kebab($0.behavior)]
           }
         )
@@ -109,7 +113,9 @@ struct BindingListCommand: AsyncParsableCommand {
             )
           )
         }
-        for binding in document.bindings { CLIOutput.stdout(ProfileText.binding(binding)) }
+        for binding in document.bindings {
+          CLIOutput.stdout(ProfileText.binding(binding, macros: document.macros))
+        }
       }
     }
   }
@@ -128,6 +134,9 @@ struct BindingSetCommand: AsyncParsableCommand {
     discussion: BindingCommand.configuration.discussion + "\n\n"
       + CLILocalized.text("cli.binding.set.examples")
   )
+
+  /// The prefix of a target that runs a macro of the profile by name.
+  private static let macroPrefix = "macro:"
 
   /// The `--json` result of `binding set`.
   struct Result: Encodable, Equatable {
@@ -173,13 +182,20 @@ struct BindingSetCommand: AsyncParsableCommand {
   func run() async throws {
     try await global.run {
       let source = try parseSource(source)
-      let target = try parseTarget(target)
+      let macroName =
+        target.hasPrefix(Self.macroPrefix) ? target.dropFirst(Self.macroPrefix.count) : nil
+      let parsed: RemappingDestination =
+        try macroName == nil ? parseTarget(target) : .macro(UUID())
       // Reports option errors before the service is contacted.
-      _ = try options.binding(source: source, target: target, existing: nil)
+      _ = try options.binding(source: source, target: parsed, existing: nil)
       let (selector, options) = (profile, options)
       let (binding, replaced, updated, after) = try await ServiceConnection.request { client in
         let (current, _) = try await selector.resolve(with: client)
         let existing = current.bindings.first { $0.source == source }
+        let target =
+          try macroName.map {
+            RemappingDestination.macro(try current.macro(named: String($0)).id)
+          } ?? parsed
         let binding = try options.binding(source: source, target: target, existing: existing)
         let bindings = current.bindings.map { $0.source == source ? binding : $0 }
         let updated = try current.replacing(
@@ -190,7 +206,7 @@ struct BindingSetCommand: AsyncParsableCommand {
       }
       let result = Result(
         profile: try savedSummary(updated.id, in: after),
-        binding: BindingSummary(binding),
+        binding: BindingSummary(binding, macros: updated.macros),
         replaced: replaced
       )
       switch CLIContext.current.format {
@@ -201,7 +217,7 @@ struct BindingSetCommand: AsyncParsableCommand {
           CLILocalized.format(
             "cli.binding.set.done",
             updated.name,
-            ProfileText.binding(binding)
+            ProfileText.binding(binding, macros: updated.macros)
           )
         )
       }

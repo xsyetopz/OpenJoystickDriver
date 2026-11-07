@@ -2451,6 +2451,40 @@
 "cli.shared.error.confirmDeclined" = "Er is niets gewijzigd.";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "Deze wijziging kan niet ongedaan worden gemaakt. Voeg --force toe om ze zonder vraag te bevestigen.";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "Toon, bekijk, stel in en verwijder de macro’s van een profiel.";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "‘%1$@’ heeft geen macro met de naam ‘%2$@’. Niets gewijzigd.";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "De naam van de macro.";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "‘%@’ is geen stap. Gebruik tap:TARGET, press:TARGET, release:TARGET, wait:MS of chord:MS:TARGET+TARGET.";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "Toon de macro’s van een profiel.";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "‘%@’ heeft geen macro’s.";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "Toon een macro en de stappen ervan.";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "Maak een macro of vervang de macro met dezelfde naam.";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "Een stap van de macro, op volgorde: tap:TARGET, press:TARGET, release:TARGET, wait:MS of chord:MS:TARGET+TARGET. Herhaal de optie voor meer stappen.";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "Hoe vaak de stappen worden uitgevoerd, of while-held om ze te herhalen tot de bron wordt losgelaten.";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "Wat indrukken van de bron doet terwijl de macro loopt: ignore of restart.";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "Of het loslaten van de bron de macro stopt.";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "‘%@’ is geen aantal en niet while-held.";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "Macro ‘%2$@’ bewaard in ‘%1$@’.";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "Verwijder een macro uit een profiel.";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "Macro ‘%1$@’ uit ‘%2$@’ verwijderen?";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "Macro ‘%1$@’ uit ‘%2$@’ verwijderd.";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Modpakketten valideren, installeren, tonen of verwijderen.";
 /* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */

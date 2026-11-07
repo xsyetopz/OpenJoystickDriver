@@ -189,6 +189,14 @@ enum GUICoverageEntries {
     option("binding set", "--actions-json", "ProfileAdditionalActionsView"),
     leaf("binding clear", "removeBinding"),
     option("binding clear", "--all", "removeAllAssignments"),
+    leaf("macro list", "ProfileEditorView"),
+    leaf("macro show", "ProfileEditorView"),
+    leaf("macro set", "ProfileEditorView"),
+    option("macro set", "--step", "ProfileEditorView"),
+    option("macro set", "--repeat", "ProfileEditorView"),
+    option("macro set", "--while-running", "ProfileEditorView"),
+    option("macro set", "--interrupt-on-release", "ProfileEditorView"),
+    leaf("macro remove", "ProfileEditorView"),
   ]
 
   private static let virtual = [

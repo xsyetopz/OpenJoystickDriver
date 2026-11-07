@@ -2451,6 +2451,40 @@
 "cli.shared.error.confirmDeclined" = "변경된 것이 없습니다.";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "이 변경은 되돌릴 수 없습니다. 확인 없이 진행하려면 --force를 추가하세요.";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "프로필의 매크로를 나열, 표시, 설정, 제거합니다.";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "‘%1$@’에 ‘%2$@’ 매크로가 없습니다. 변경된 내용이 없습니다.";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "매크로 이름입니다.";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "‘%@’은(는) 단계가 아닙니다. tap:TARGET, press:TARGET, release:TARGET, wait:MS 또는 chord:MS:TARGET+TARGET을 사용하세요.";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "프로필의 매크로를 나열합니다.";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "‘%@’에 매크로가 없습니다.";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "매크로와 그 단계를 표시합니다.";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "매크로를 만들거나 이름이 같은 매크로를 바꿉니다.";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "매크로의 한 단계를 순서대로 지정합니다: tap:TARGET, press:TARGET, release:TARGET, wait:MS 또는 chord:MS:TARGET+TARGET. 단계를 더 추가하려면 옵션을 반복하세요.";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "단계를 실행하는 횟수입니다. while-held는 소스를 놓을 때까지 반복합니다.";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "매크로가 실행되는 동안 소스를 누르면 일어나는 동작: ignore 또는 restart.";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "소스를 놓을 때 매크로를 멈출지 여부입니다.";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "‘%@’은(는) 횟수도 while-held도 아닙니다.";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "매크로 ‘%2$@’을(를) ‘%1$@’에 저장했습니다.";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "프로필에서 매크로를 제거합니다.";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "‘%2$@’에서 매크로 ‘%1$@’을(를) 제거할까요?";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "‘%2$@’에서 매크로 ‘%1$@’을(를) 제거했습니다.";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "모드 패키지를 검증, 설치, 나열 또는 제거합니다.";
 /* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */

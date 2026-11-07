@@ -32,8 +32,11 @@ enum ProfileText {
     }
   }
 
-  /// The binding target in its `TARGET` form.
-  static func destination(_ destination: RemappingDestination) -> String {
+  /// The binding target in its `TARGET` form; a macro shows its name from `macros`.
+  static func destination(
+    _ destination: RemappingDestination,
+    macros: [RemappingMacro] = []
+  ) -> String {
     switch destination {
     case .gamepadAxis(let axis): return "gamepad:axis:\(word(axis))"
     case .gamepadDpad(let direction): return "gamepad:dpad:\(word(direction))"
@@ -47,7 +50,7 @@ enum ProfileText {
     case .mouseMovement(let value): return "move:\(word(value))"
     case .scroll(let value): return "scroll:\(word(value))"
     case .physical(let output): return physicalOutput(output)
-    case .macro(let id): return "macro:\(id.uuidString)"
+    case .macro(let id): return "macro:\(macros.first { $0.id == id }?.name ?? id.uuidString)"
     }
   }
 
@@ -69,8 +72,9 @@ enum ProfileText {
   }
 
   /// One binding as `SOURCE -> TARGET`, followed by its behavior and alternate targets.
-  static func binding(_ binding: RemappingBinding) -> String {
-    var line = "\(source(binding.source)) -> \(destination(binding.destination))"
+  static func binding(_ binding: RemappingBinding, macros: [RemappingMacro] = []) -> String {
+    var line =
+      "\(source(binding.source)) -> \(destination(binding.destination, macros: macros))"
     if binding.behavior != .hold { line += "  behavior:\(word(binding.behavior))" }
     if binding.behavior == .pulse { line += "  pulse:\(binding.pulseDurationMs)ms" }
     if let turbo = binding.turbo {
@@ -122,7 +126,7 @@ enum ProfileText {
         + "full:\($0.fullThreshold) passthrough:\($0.passthrough)"
     }
     lines += profile.touchMappings.map { "touch:\(word($0.surface)) mode:\($0.mode.rawValue)" }
-    lines += profile.bindings.map(binding)
+    lines += profile.bindings.map { binding($0, macros: profile.macros) }
     lines += profile.chords.map { chord in
       let sources = chord.sources.map(source).sorted().joined(separator: "+")
       return "chord \(sources) -> \(destination(chord.destination))"

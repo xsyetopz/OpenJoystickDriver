@@ -2451,6 +2451,40 @@
 "cli.shared.error.confirmDeclined" = "Nothing changed.";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "This change cannot be undone. Add --force to confirm it without a prompt.";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "List, show, set, and remove the macros of a profile.";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "'%1$@' has no macro named '%2$@'. Nothing changed.";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "The name of the macro.";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "'%@' is not a step. Use tap:TARGET, press:TARGET, release:TARGET, wait:MS, or chord:MS:TARGET+TARGET.";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "List the macros of a profile.";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "'%@' has no macros.";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "Show a macro and its steps.";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "Create a macro, or replace the macro of the same name.";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "A step of the macro, in order: tap:TARGET, press:TARGET, release:TARGET, wait:MS, or chord:MS:TARGET+TARGET. Repeat the option for more steps.";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "How many times the steps run, or while-held to run them until the source is released.";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "What a press of the source does while the macro runs: ignore or restart.";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "Whether releasing the source stops the macro.";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "'%@' is not a count or while-held.";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "Saved the macro '%2$@' in '%1$@'.";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "Remove a macro from a profile.";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "Remove the macro '%1$@' from '%2$@'?";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "Removed the macro '%1$@' from '%2$@'.";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Validate, install, list, or remove mod packages.";
 /* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */

@@ -62,7 +62,7 @@ enum GUICoverageMatrix {
       statusItem: "Controllers submenu"
     )
     + row(
-      [["profile"], ["binding"]],
+      [["profile"], ["binding"], ["macro"]],
       area: "Profiles",
       mainMenu: "Profile menu, File > Import/Export Profile",
       statusItem: "Profiles submenu"

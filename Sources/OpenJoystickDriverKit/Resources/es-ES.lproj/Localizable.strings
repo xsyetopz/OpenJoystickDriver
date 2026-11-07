@@ -2451,6 +2451,40 @@
 "cli.shared.error.confirmDeclined" = "No se ha cambiado nada.";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "Este cambio no se puede deshacer. Añade --force para confirmarlo sin preguntar.";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "Enumera, muestra, define y elimina las macros de un perfil.";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "«%1$@» no tiene ninguna macro llamada «%2$@». No se ha cambiado nada.";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "El nombre de la macro.";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "«%@» no es un paso. Usa tap:TARGET, press:TARGET, release:TARGET, wait:MS o chord:MS:TARGET+TARGET.";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "Enumera las macros de un perfil.";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "«%@» no tiene macros.";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "Muestra una macro y sus pasos.";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "Crea una macro o sustituye la macro del mismo nombre.";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "Un paso de la macro, en orden: tap:TARGET, press:TARGET, release:TARGET, wait:MS o chord:MS:TARGET+TARGET. Repite la opción para añadir más pasos.";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "Cuántas veces se ejecutan los pasos, o while-held para repetirlos hasta soltar el origen.";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "Qué hace una pulsación del origen mientras la macro se ejecuta: ignore o restart.";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "Si soltar el origen detiene la macro.";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "«%@» no es un número ni while-held.";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "Macro «%2$@» guardada en «%1$@».";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "Elimina una macro de un perfil.";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "¿Eliminar la macro «%1$@» de «%2$@»?";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "Macro «%1$@» eliminada de «%2$@».";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Validar, instalar, listar o quitar paquetes de mods.";
 /* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */

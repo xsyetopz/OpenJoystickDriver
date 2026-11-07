@@ -2451,6 +2451,40 @@
 "cli.shared.error.confirmDeclined" = "Nichts wurde geändert.";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "Diese Änderung lässt sich nicht rückgängig machen. Füge --force hinzu, um sie ohne Rückfrage zu bestätigen.";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "Makros eines Profils auflisten, anzeigen, setzen und entfernen.";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "„%1$@“ hat kein Makro namens „%2$@“. Nichts geändert.";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "Der Name des Makros.";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "„%@“ ist kein Schritt. Verwende tap:TARGET, press:TARGET, release:TARGET, wait:MS oder chord:MS:TARGET+TARGET.";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "Makros eines Profils auflisten.";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "„%@“ hat keine Makros.";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "Ein Makro mit seinen Schritten anzeigen.";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "Ein Makro anlegen oder das Makro mit demselben Namen ersetzen.";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "Ein Schritt des Makros, der Reihe nach: tap:TARGET, press:TARGET, release:TARGET, wait:MS oder chord:MS:TARGET+TARGET. Die Option für weitere Schritte wiederholen.";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "Wie oft die Schritte laufen, oder while-held, um sie bis zum Loslassen der Quelle zu wiederholen.";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "Was ein Druck auf die Quelle bewirkt, während das Makro läuft: ignore oder restart.";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "Ob das Loslassen der Quelle das Makro stoppt.";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "„%@“ ist weder eine Anzahl noch while-held.";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "Makro „%2$@“ in „%1$@“ gespeichert.";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "Ein Makro aus einem Profil entfernen.";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "Makro „%1$@“ aus „%2$@“ entfernen?";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "Makro „%1$@“ aus „%2$@“ entfernt.";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Mod-Pakete prüfen, installieren, auflisten oder entfernen.";
 /* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */

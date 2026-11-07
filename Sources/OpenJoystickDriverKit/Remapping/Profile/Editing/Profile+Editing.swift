@@ -27,7 +27,8 @@ extension RemappingProfile {
     bindings: [RemappingBinding]? = nil,
     chords: [RemappingChord]? = nil,
     sequences: [RemappingSequence]? = nil,
-    layers: [RemappingLayer]? = nil
+    layers: [RemappingLayer]? = nil,
+    macros: [RemappingMacro]? = nil
   ) -> Self {
     Self(
       id: id,
@@ -45,7 +46,8 @@ extension RemappingProfile {
       bindings: bindings ?? self.bindings,
       chords: chords ?? self.chords,
       sequences: sequences ?? self.sequences,
-      layers: layers ?? self.layers
+      layers: layers ?? self.layers,
+      macros: macros ?? self.macros
     )
   }
 

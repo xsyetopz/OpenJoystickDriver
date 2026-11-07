@@ -2451,6 +2451,40 @@
 "cli.shared.error.confirmDeclined" = "ไม่มีการเปลี่ยนแปลง";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "การเปลี่ยนแปลงนี้ไม่สามารถเลิกทำได้ เพิ่ม --force เพื่อยืนยันโดยไม่ต้องถาม";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "แสดงรายการ แสดง ตั้งค่า และลบแมโครของโปรไฟล์";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "“%1$@” ไม่มีแมโครชื่อ “%2$@” ไม่มีอะไรเปลี่ยนแปลง";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "ชื่อของแมโคร";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "“%@” ไม่ใช่ขั้นตอน ใช้ tap:TARGET, press:TARGET, release:TARGET, wait:MS หรือ chord:MS:TARGET+TARGET";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "แสดงรายการแมโครของโปรไฟล์";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "“%@” ไม่มีแมโคร";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "แสดงแมโครและขั้นตอนของแมโคร";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "สร้างแมโคร หรือแทนที่แมโครที่มีชื่อเดียวกัน";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "หนึ่งขั้นตอนของแมโครตามลำดับ: tap:TARGET, press:TARGET, release:TARGET, wait:MS หรือ chord:MS:TARGET+TARGET ระบุตัวเลือกซ้ำเพื่อเพิ่มขั้นตอน";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "จำนวนครั้งที่ขั้นตอนทำงาน หรือ while-held เพื่อทำซ้ำจนกว่าจะปล่อยแหล่งอินพุต";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "สิ่งที่เกิดขึ้นเมื่อกดแหล่งอินพุตขณะแมโครทำงาน: ignore หรือ restart";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "ระบุว่าการปล่อยแหล่งอินพุตจะหยุดแมโครหรือไม่";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "“%@” ไม่ใช่จำนวนหรือ while-held";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "บันทึกแมโคร “%2$@” ใน “%1$@” แล้ว";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "ลบแมโครออกจากโปรไฟล์";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "ลบแมโคร “%1$@” ออกจาก “%2$@” หรือไม่";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "ลบแมโคร “%1$@” ออกจาก “%2$@” แล้ว";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "ตรวจสอบ ติดตั้ง แสดงรายการ หรือลบแพ็กเกจม็อด";
 /* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */

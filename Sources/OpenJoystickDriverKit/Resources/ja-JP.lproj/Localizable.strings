@@ -2451,6 +2451,40 @@
 "cli.shared.error.confirmDeclined" = "何も変更していません。";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "この変更は元に戻せません。確認なしで実行するには --force を付けてください。";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "プロファイルのマクロを一覧表示、表示、設定、削除します。";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "「%1$@」には「%2$@」という名前のマクロがありません。何も変更していません。";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "マクロの名前。";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "「%@」はステップではありません。tap:TARGET、press:TARGET、release:TARGET、wait:MS、chord:MS:TARGET+TARGET のいずれかを使います。";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "プロファイルのマクロを一覧表示します。";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "「%@」にはマクロがありません。";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "マクロとそのステップを表示します。";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "マクロを作成するか、同じ名前のマクロを置き換えます。";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "マクロのステップを順に指定します: tap:TARGET、press:TARGET、release:TARGET、wait:MS、chord:MS:TARGET+TARGET。ステップを増やすにはこのオプションを繰り返します。";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "ステップを実行する回数。while-held を指定すると、ソースを離すまで繰り返します。";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "マクロの実行中にソースを押したときの動作: ignore または restart。";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "ソースを離したときにマクロを停止するかどうか。";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "「%@」は回数でも while-held でもありません。";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "マクロ「%2$@」を「%1$@」に保存しました。";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "プロファイルからマクロを削除します。";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "マクロ「%1$@」を「%2$@」から削除しますか?";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "マクロ「%1$@」を「%2$@」から削除しました。";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "MOD パッケージを検証、インストール、一覧表示、削除します。";
 /* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */

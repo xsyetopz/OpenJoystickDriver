@@ -8,6 +8,7 @@ This page lists every `ojd` command. Every command also accepts the global optio
 - [controller](#controller)
 - [profile](#profile)
 - [binding](#binding)
+- [macro](#macro)
 - [virtual](#virtual)
 - [record](#record)
 - [mod](#mod)
@@ -167,6 +168,7 @@ Every part that names a control, direction, key or modifier is lowercase kebab-c
 - `mouse:BUTTON`, `move:x`, `move:y`, `scroll:x`, or `scroll:y`
 - `gamepad:button:NAME`, `gamepad:dpad:DIRECTION`, or `gamepad:axis:NAME`
 - `physical:...` for rumble, lights, and adaptive triggers
+- `macro:NAME` for a macro of the profile, matched without regard to case, and created with `ojd macro set`. It exits with code 1 and changes nothing when the profile has no such macro. `binding list` and `profile show` print the macro's name.
 
 `ojd profile show` prints bindings in the same forms.
 
@@ -183,6 +185,34 @@ Every part that names a control, direction, key or modifier is lowercase kebab-c
 - `binding clear`: Remove the bindings of the given sources. It exits with code 1 and changes nothing when a source has no binding. `--all` removes every binding, chord, sequence, and layer. Stick, trigger, touch, motion, and output settings stay. `--all` asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing. When the result leaves a profile that is active on a connected controller with no inputs while OJD seizes the physical input, the command prints a warning on stderr that names `ojd binding set` and `ojd profile deactivate`, and still exits with code 0.
 
 With `--json`, a binding is an object with `id`, `source`, `target`, and `behavior`. `binding list` prints a `BindingList` with `items`, one binding each, and an empty `metadata`. Each item also has `profile`, the profile it came from. `binding set` prints a `Binding` with `profile`, `binding`, and `replaced`, and `binding clear` prints a `Status`, with `profile`, `removed` (the sources), `all`, and `dryRun` in `details`.
+
+## macro
+
+List, show, set, and remove the macros of a profile. A macro is a named list of steps that a binding runs with the target `macro:NAME`. Every `macro` command needs the service running.
+
+```sh
+ojd macro list PROFILE
+ojd macro show PROFILE NAME
+ojd macro set PROFILE NAME --step STEP... [--repeat COUNT|while-held] [--while-running ignore|restart] [--interrupt-on-release]
+ojd macro remove PROFILE NAME [--force]
+```
+
+A profile holds at most 16 macros, a macro at most 32 steps, and names are 1 to 40 characters and unique without regard to case.
+
+- `macro list`: List a profile's macros with their repeat mode and number of steps.
+- `macro show`: Show a macro's options and steps.
+- `macro set`: Create a macro, or replace the macro of the same name and keep its ID. A replaced macro keeps the options that you leave out. `--step` is one step, in order, and the option repeats for more steps:
+  - `tap:TARGET`, `press:TARGET`, `release:TARGET`: Send the target as a click, a press, or a release. `TARGET` has the forms of `ojd binding set`.
+  - `wait:MS`: Wait 0 to 5000 milliseconds.
+  - `chord:MS:TARGET+TARGET`: Hold the targets together for MS milliseconds.
+  - `--repeat`: How many passes the macro runs, 1 to 500 (the default is 1), or `while-held` to run until the source is released.
+  - `--while-running`: What a press of the source does while the macro runs: `ignore` (the default) or `restart`.
+  - `--interrupt-on-release` or `--no-interrupt-on-release`: Whether releasing the source stops the macro (the default is no).
+- `macro remove`: Remove a macro. It asks first on a terminal and needs `--force` otherwise. It fails and changes nothing while a binding runs the macro; clear or change that binding first.
+
+A step or `--repeat` value that is not in these forms exits with code 64. A macro that does not exist exits with code 1.
+
+With `--json`, a macro is an object with `id`, `name`, `repeat`, `whileRunning`, `interruptOnRelease`, and `steps`, each in the `--step` form. `macro list` prints a `MacroList` with `items`, each with `profile` and `macro`. `macro show` prints a `Macro` with `profile` and `macro`, and `macro set` prints a `Macro` with `profile`, `macro`, and `replaced`. `macro remove` prints a `Status`, with `profile` and `removed` (the name) in `details`.
 
 ## virtual
 

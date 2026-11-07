@@ -2451,6 +2451,40 @@
 "cli.shared.error.confirmDeclined" = "Không có gì thay đổi.";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "Thay đổi này không thể hoàn tác. Thêm --force để xác nhận mà không cần nhắc.";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "Liệt kê, hiển thị, đặt và xóa macro của hồ sơ.";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "“%1$@” không có macro tên “%2$@”. Không có gì thay đổi.";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "Tên của macro.";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "“%@” không phải là một bước. Dùng tap:TARGET, press:TARGET, release:TARGET, wait:MS hoặc chord:MS:TARGET+TARGET.";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "Liệt kê macro của hồ sơ.";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "“%@” không có macro.";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "Hiển thị một macro và các bước của nó.";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "Tạo macro, hoặc thay macro cùng tên.";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "Một bước của macro, theo thứ tự: tap:TARGET, press:TARGET, release:TARGET, wait:MS hoặc chord:MS:TARGET+TARGET. Lặp lại tùy chọn để thêm bước.";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "Số lần chạy các bước, hoặc while-held để lặp lại cho đến khi nguồn được thả.";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "Việc nhấn nguồn làm gì khi macro đang chạy: ignore hoặc restart.";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "Thả nguồn có dừng macro hay không.";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "“%@” không phải là số lần hoặc while-held.";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "Đã lưu macro “%2$@” trong “%1$@”.";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "Xóa macro khỏi hồ sơ.";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "Xóa macro “%1$@” khỏi “%2$@”?";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "Đã xóa macro “%1$@” khỏi “%2$@”.";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Xác thực, cài đặt, liệt kê hoặc gỡ các gói mod.";
 /* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */

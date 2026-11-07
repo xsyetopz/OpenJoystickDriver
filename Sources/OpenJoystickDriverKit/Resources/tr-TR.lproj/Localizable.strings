@@ -2451,6 +2451,40 @@
 "cli.shared.error.confirmDeclined" = "Hiçbir şey değişmedi.";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "Bu değişiklik geri alınamaz. Onay sormadan onaylamak için --force ekleyin.";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "Bir profilin makrolarını listeler, gösterir, ayarlar ve kaldırır.";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "“%1$@” profilinde “%2$@” adlı makro yok. Hiçbir şey değişmedi.";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "Makronun adı.";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "“%@” bir adım değil. tap:TARGET, press:TARGET, release:TARGET, wait:MS veya chord:MS:TARGET+TARGET kullanın.";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "Bir profilin makrolarını listeler.";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "“%@” profilinde makro yok.";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "Bir makroyu ve adımlarını gösterir.";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "Makro oluşturur veya aynı adlı makroyu değiştirir.";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "Makronun sırayla bir adımı: tap:TARGET, press:TARGET, release:TARGET, wait:MS veya chord:MS:TARGET+TARGET. Daha fazla adım için seçeneği tekrarlayın.";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "Adımların kaç kez çalışacağı veya kaynak bırakılana kadar tekrarlamak için while-held.";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "Makro çalışırken kaynağa basmanın ne yaptığı: ignore veya restart.";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "Kaynağı bırakmanın makroyu durdurup durdurmayacağı.";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "“%@” bir sayı veya while-held değil.";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "“%2$@” makrosu “%1$@” profiline kaydedildi.";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "Bir profilden makro kaldırır.";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "“%1$@” makrosu “%2$@” profilinden kaldırılsın mı?";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "“%1$@” makrosu “%2$@” profilinden kaldırıldı.";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Mod paketlerini doğrula, yükle, listele veya kaldır.";
 /* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */

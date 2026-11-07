@@ -1431,6 +1431,98 @@
         }
       ]
     },
+    "macroList": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "metadata", "items"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "MacroList"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["macro", "profile"],
+            "additionalProperties": false,
+            "properties": {
+              "macro": {
+                "$ref": "#/$defs/sharedMacroSummary"
+              },
+              "profile": {
+                "$ref": "#/$defs/sharedProfileSummary"
+              }
+            }
+          }
+        }
+      }
+    },
+    "macroRemove": {
+      "$ref": "#/$defs/sharedStatus",
+      "properties": {
+        "details": {
+          "type": "object",
+          "required": ["profile", "removed"],
+          "additionalProperties": false,
+          "properties": {
+            "profile": {
+              "$ref": "#/$defs/sharedProfileSummary"
+            },
+            "removed": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "macroSet": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "macro", "profile", "replaced"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "Macro"
+        },
+        "macro": {
+          "$ref": "#/$defs/sharedMacroSummary"
+        },
+        "profile": {
+          "$ref": "#/$defs/sharedProfileSummary"
+        },
+        "replaced": {
+          "type": "boolean"
+        }
+      }
+    },
+    "macroShow": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "macro", "profile"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "Macro"
+        },
+        "macro": {
+          "$ref": "#/$defs/sharedMacroSummary"
+        },
+        "profile": {
+          "$ref": "#/$defs/sharedProfileSummary"
+        }
+      }
+    },
     "modInstall": {
       "type": "object",
       "required": [
@@ -3020,6 +3112,35 @@
         "session": {
           "type": "string",
           "pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$"
+        }
+      }
+    },
+    "sharedMacroSummary": {
+      "type": "object",
+      "required": ["id", "interruptOnRelease", "name", "repeat", "steps", "whileRunning"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$"
+        },
+        "interruptOnRelease": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "repeat": {
+          "type": "string"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "whileRunning": {
+          "enum": ["ignore", "restart"]
         }
       }
     },

@@ -2451,6 +2451,40 @@
 "cli.shared.error.confirmDeclined" = "कुछ नहीं बदला।";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "यह बदलाव पूर्ववत नहीं किया जा सकता। बिना पूछे पुष्टि करने के लिए --force जोड़ें।";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "किसी प्रोफ़ाइल के मैक्रो सूचीबद्ध करें, दिखाएँ, सेट करें और हटाएँ।";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "“%1$@” में “%2$@” नाम का कोई मैक्रो नहीं है। कुछ नहीं बदला।";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "मैक्रो का नाम।";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "“%@” कोई चरण नहीं है। tap:TARGET, press:TARGET, release:TARGET, wait:MS या chord:MS:TARGET+TARGET का उपयोग करें।";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "किसी प्रोफ़ाइल के मैक्रो सूचीबद्ध करें।";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "“%@” में कोई मैक्रो नहीं है।";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "मैक्रो और उसके चरण दिखाएँ।";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "मैक्रो बनाएँ, या उसी नाम का मैक्रो बदलें।";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "मैक्रो का एक चरण, क्रम से: tap:TARGET, press:TARGET, release:TARGET, wait:MS या chord:MS:TARGET+TARGET। और चरणों के लिए विकल्प दोहराएँ।";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "चरण कितनी बार चलते हैं, या स्रोत छोड़े जाने तक दोहराने के लिए while-held।";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "मैक्रो चलते समय स्रोत दबाने पर क्या होता है: ignore या restart।";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "क्या स्रोत छोड़ने से मैक्रो रुकता है।";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "“%@” न तो संख्या है और न while-held।";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "मैक्रो “%2$@” को “%1$@” में सहेजा गया।";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "किसी प्रोफ़ाइल से मैक्रो हटाएँ।";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "मैक्रो “%1$@” को “%2$@” से हटाएँ?";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "मैक्रो “%1$@” को “%2$@” से हटाया गया।";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "मॉड पैकेज को सत्यापित, इंस्टॉल, सूचीबद्ध या हटाएँ।";
 /* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */

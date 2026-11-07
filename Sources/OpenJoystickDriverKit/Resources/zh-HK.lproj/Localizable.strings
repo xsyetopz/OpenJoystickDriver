@@ -2451,6 +2451,40 @@
 "cli.shared.error.confirmDeclined" = "沒有任何改動。";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "此更改無法復原。加上 --force 即可免提示確認。";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "列出、顯示、設定和移除設定檔中的巨集。";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "「%1$@」沒有名為「%2$@」的巨集。未變更任何內容。";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "巨集的名稱。";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "「%@」不是步驟。請使用 tap:TARGET、press:TARGET、release:TARGET、wait:MS 或 chord:MS:TARGET+TARGET。";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "列出設定檔中的巨集。";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "「%@」沒有巨集。";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "顯示巨集及其步驟。";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "建立巨集，或取代同名的巨集。";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "巨集的一個步驟，依序：tap:TARGET、press:TARGET、release:TARGET、wait:MS 或 chord:MS:TARGET+TARGET。重複此選項以加入更多步驟。";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "步驟執行的次數，或使用 while-held 重複執行直到放開來源。";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "巨集執行期間按下來源時的行為：ignore 或 restart。";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "放開來源時是否停止巨集。";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "「%@」不是次數，也不是 while-held。";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "已將巨集「%2$@」儲存到「%1$@」。";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "從設定檔中移除巨集。";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "要從「%2$@」中移除巨集「%1$@」嗎？";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "已從「%2$@」中移除巨集「%1$@」。";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "驗證、安裝、列出或移除模組套件。";
 /* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
