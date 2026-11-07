@@ -25,9 +25,28 @@ struct EightBitDoUltimate2Tests {
     #expect(Base.parse(parser, usage: 0x33, 255) == nil)
   }
 
-  @Test(arguments: [UInt32(3), 6, 9, 10])
+  @Test(arguments: [UInt32(3), 6, 9, 10, 16, 17, 18, 19])
   func mapsNoRearButton(usage: UInt32) throws {
     #expect(Base.parse(try parser(), page: 9, usage: usage, 1) == nil)
+  }
+
+  @Test
+  func cableAndDongleShareOneUsageMap() throws {
+    let record = try #require(ProtocolDriverRegistry().record(for: Self.cable))
+    #expect(record.modes.isEmpty)
+    #expect(record.hasDefaultMode)
+  }
+
+  /// The Ultimate 2 and the Pro 3 may both present `2DC8:310B`; one default mode serves either.
+  @Test
+  func sharedIdentitySelectsOneModeForBothModels() throws {
+    let model = ControllerModelID(vendorID: 0x2DC8, productID: 0x310B)
+    let record = try #require(ProtocolDriverRegistry().record(for: model))
+    #expect(record.modes.isEmpty)
+    #expect(record.hasDefaultMode)
+    #expect(!record.isIdle)
+    #expect(record.physicalProtocolID == .xboxXUSB)
+    #expect(record.hidUsageMap == nil)
   }
 
   @Test(arguments: [UInt16(0x6013), 0x3107])
