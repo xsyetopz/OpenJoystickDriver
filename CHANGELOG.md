@@ -8,6 +8,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Added
 
+- The 8BitDo Ultimate 2 has a record for `2DC8:6012` (DInput, cable and dongle, Ultimate 2C layout, no rear buttons, unverified) and idle records for its receiver `2DC8:6013` and dongle `2DC8:3107`.
 - A record may omit its `default` mode and give only modes with a `match`. A device that matches none of them, or whose probe has no route or no usable reply, is unbound with the new reason `NoModeMatched` and receives no data (`ui.controllers.noModeMatched`, which needs native review in every language but English).
 - A record may set `idle: true` for an identity OJD recognizes and serves nothing, such as the 8BitDo Ultimate 2C receiver `2DC8:301C` with no controller connected. Such a device is unbound with the new reason `IdleIdentity`, receives no data and gets no virtual gamepad, and the Controllers page and `ojd status` say that it serves no controls (`ui.controllers.idleIdentity`, which needs native review in every language but English). The `301C` record no longer copies the `301B` layout.
 - OJD sends no data to the 8BitDo bootloader identities `2DC8:3208` and `2DC8:5750`, with or without a record. Such a device is unbound with the new reason `BootloaderIdentity`, and the Controllers page and `ojd status` say that it is in bootloader mode (`ui.controllers.bootloaderIdentity`, which needs native review in every language but English).
