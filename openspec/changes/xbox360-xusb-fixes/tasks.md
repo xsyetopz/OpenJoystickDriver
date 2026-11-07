@@ -16,7 +16,7 @@ Owns: `Tests/ProtocolPacketFixtures`, the description loader.
 Depends: none.
 Verify: `swift test --filter ProtocolDescription`.
 
-- [ ] 1.1 After each edit of `Resources/Protocols/xbox-xusb.json`, run `./Scripts/ojd catalog regenerate --write`. Verify: `./Scripts/ojd catalog regenerate --check` passes.
+- [x] 1.1 After each edit of `Resources/Protocols/xbox-xusb.json`, run `./Scripts/ojd catalog regenerate --write`. Verify: `./Scripts/ojd catalog regenerate --check` passes. Done: `./Scripts/ojd catalog regenerate --check` passes in `just check` on 5af98219b.
 - [x] 1.2 Add fixtures to `Tests/ProtocolPacketFixtures` for the receiver: presence connected and disconnected envelopes, a pad report with no earlier presence report, a pad report with a short length, and a headset-bit presence report. Verify: `swift test --filter XUSBDriverTests` still passes with the fixtures unused.
 - [x] 1.3 Add the byte table of the three control reads (D4 of `design.md`) as a fixture with its source (`paroj/xpad` `3470f9f`). Verify: a test compares the table with the record datum of task 4.2 once that exists (pending until then).
 - [x] 1.4 Extend the protocol-description schema and loader with `defaults.receiverPowerOff` (one raw-USB packet with `bytes`, `endpoint`, `timeoutMilliseconds`, `variants`), separate from `session.shutdown`, add a case to `Tests/OpenJoystickDriverKitTests/Protocol/Catalog/SchemaRejections/protocol-description.json` for an unknown key, and a family other than `XboxXUSB` that sets it is rejected. Add a pipeline test: an input I/O error on a receiver slot with the datum present calls `invalidateUSBHandle` and writes no power-off packet. Verify: `./Scripts/ojd check schemas` and `swift test --filter ProtocolDescription`.
@@ -65,7 +65,7 @@ Verify: `swift test --filter ReceiverRoleProfileTests`.
 - [x] 5.2 Add `ReceiverRoleProfileTests` cases for descriptor orders `0,2,4,6`, `0,1,2,3,4,5,6,7` with audio interfaces of another triple, and a descending list; the slot ordinal follows ascending interface number. Verify: `swift test --filter ReceiverRoleProfileTests`.
 - [x] 5.3 Correct the doc comment at `ProtocolDriverRegistry+InterfaceContract.swift:4` (the manager, not `XUSBDriver`, assigns the ring LED). Verify: `grep -n "lights players" Sources/OpenJoystickDriverKit/Protocol/Catalog/ProtocolDriverRegistry+InterfaceContract.swift` prints nothing.
 - [x] 5.4 Update the `XboxXUSB` row of `docs/development/wire-protocols.md` (startup, shutdown, rumble templates; presence rule; clone control reads) and the Coded Behavior list. Verify: `git diff --check` on the file; `git diff` shows no history words.
-- [ ] 5.5 Run the repository check list from the repository `CLAUDE.md` once on the final tree. Verify: `just check`.
+- [x] 5.5 Run the repository check list from the repository `CLAUDE.md` once on the final tree. Verify: `just check`. Done: `just check` on 5af98219b passed every step; the two Kit tests it failed (Steam startup, idle record pick) were fixed and rerun.
 
 ## Hardware Checks (Maintainer)
 

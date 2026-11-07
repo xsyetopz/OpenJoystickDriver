@@ -35,4 +35,4 @@ Each task names its check. Changing `LICENSE`, enabling the CLA workflow and con
 ## 6. Release Notes
 
 - [x] 6.1 Add a `### Changed` entry to `CHANGELOG.md` `[Unreleased]`: the license is PolyForm Noncommercial 1.0.0 from this release on, commercial use needs a license, and releases up to 0.6.0-alpha.1 stay MIT. Verify: markdownlint. Done: markdownlint passes.
-- [ ] 6.2 Run `just check` once. Verify: exit 0.
+- [x] 6.2 Run `just check` once. Verify: exit 0. Done: `just check` on 5af98219b passed every step; the two Kit tests it failed (Steam startup, idle record pick) were fixed and rerun.

@@ -2,7 +2,37 @@
 
 ### Requirement: Three personas
 
-OJD SHALL provide three virtual personas as bundled `VirtualDevice` records: `Generic` (vendor `1209`, product `4A4F`, a standard HID gamepad), `SDLCompatible` (vendor `045E`, product `0B0C`, Xbox One GIP reports that SDL reads, an ID that Apple's GameController framework does not bind on a virtual device) and `GameControllerCompatible` (vendor `045E`, product `0B13`, the Xbox Series Bluetooth report that Apple's GameController framework reads). Automatic selection SHALL publish `SDLCompatible` when the controller's primary controls fit it and `Generic` otherwise, unless the user selects a persona. Automatic selection SHALL NOT publish `GameControllerCompatible`, because SDL reads its reports as GIP packets.
+OJD SHALL provide three virtual personas as bundled `VirtualDevice` records: `Generic`, `SDLCompatible` and `GameControllerCompatible`.
+
+#### Scenario: Generic record
+
+- **WHEN** the `Generic` record is read
+- **THEN** it has vendor `1209` and product `4A4F` and is a standard HID gamepad
+
+#### Scenario: SDLCompatible record
+
+- **WHEN** the `SDLCompatible` record is read
+- **THEN** it has vendor `045E` and product `0B0C` and uses Xbox One GIP reports that SDL reads
+- **AND** the ID is one that Apple's GameController framework does not bind on a virtual device
+
+#### Scenario: GameControllerCompatible record
+
+- **WHEN** the `GameControllerCompatible` record is read
+- **THEN** it has vendor `045E` and product `0B13` and uses the Xbox Series Bluetooth report that Apple's GameController framework reads
+
+### Requirement: Automatic persona selection
+
+Automatic selection SHALL publish `SDLCompatible` when the controller's primary controls fit it and `Generic` otherwise, unless the user selects a persona. Automatic selection SHALL NOT publish `GameControllerCompatible`, because SDL reads its reports as GIP packets.
+
+#### Scenario: Controls do not fit SDLCompatible
+
+- **WHEN** a controller is served virtually, the user has set no persona and its primary controls do not fit `SDLCompatible`
+- **THEN** the virtual device reports `1209:4A4F`
+
+#### Scenario: Automatic selection skips GameControllerCompatible
+
+- **WHEN** a controller is served virtually and the user has set no persona
+- **THEN** the virtual device does not report `045E:0B13`
 
 #### Scenario: Fresh install
 

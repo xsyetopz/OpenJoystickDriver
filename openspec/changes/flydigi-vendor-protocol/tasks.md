@@ -88,7 +88,7 @@ Depends: 2 to 5.
 Verify: the loop below, `just check`.
 
 - [x] 7.1 Confirm each Flydigi record has a wiki entry with VID:PID, mode, tier and test document link. Verify: `for p in D7D7:0041 37D7:2801 04B4:2412; do grep -qi "$p" wiki/Supported-Controllers.md || echo "missing $p"; done` prints nothing. Done: the loop lists the three records that exist; `37D7:2501` has no hand-written record (only a generated xpad import) and `37D7:2401` has none until 4.3, so both left the loop; add `37D7:2401` back when 4.3 lands.
-- [ ] 7.2 Run the repository checks on the merged tree. Verify: `just check` passes; rerun only the failed step.
+- [x] 7.2 Run the repository checks on the merged tree. Verify: `just check` passes; rerun only the failed step. Done: `just check` on 5af98219b passed every step; the two Kit tests it failed (Steam startup, idle record pick) were fixed and rerun.
 
 ## Hardware Checks (Testers)
 

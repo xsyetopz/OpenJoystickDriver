@@ -18,7 +18,7 @@ Depends: none.
 Verify: `swift test --filter PacketCapture` and a capture of a Switch 1 controller that shows every report ID.
 
 - [x] 1.1 Read `ControllerPacketCapture.swift` and the USB and HID receive paths and check that a capture keeps reports whose ID the driver ignores (a `0x09` report on a Switch 2 interface). If it drops them, add the report to the capture before the driver filter, with a test. Verify: a test feeds a report with an ignored ID and finds it in the capture.
-- [ ] 1.2 After each edit of `Resources/Protocols/nintendo-switch2.json`, run `./Scripts/ojd catalog regenerate --write`. Verify: `./Scripts/ojd catalog regenerate --check` passes.
+- [x] 1.2 After each edit of `Resources/Protocols/nintendo-switch2.json`, run `./Scripts/ojd catalog regenerate --write`. Verify: `./Scripts/ojd catalog regenerate --check` passes. Done: `./Scripts/ojd catalog regenerate --check` passes in `just check` on 5af98219b.
 - [x] 1.3 Add a fixture folder `Tests/ProtocolPacketFixtures` section `Switch2` with a loader for capture text files (controller, transport, action, reports as hex). Verify: `swift test --filter Switch2DriverTests` passes with a sample file that holds a report built from the SDL offsets of `HandleSwitchProState`, marked as synthetic in its header.
 
 ## 2. Captures and reconciliation (hardware, before code)
@@ -75,7 +75,7 @@ Verify: `./Scripts/ojd catalog regenerate --check`.
 - [ ] 6.2 Compare each record's patch (`057e-2066`, `2067`, `2069` patch files) with the captures (interface numbers, endpoints, Bluetooth LE vibration characteristic) and fix differences in the patch, then run `./Scripts/ojd catalog regenerate --write`. Verify: `./Scripts/ojd catalog regenerate --check` prints no diff.
 - [ ] 6.3 If a Joy-Con pair device (`057E:2068`) appears in any capture, add a record from that capture; otherwise record in the PR text that no capture exists. Verify: the PR text states which.
 - [x] 6.4 If SDL or `procon2-mac` code is used, add its notice to `THIRD_PARTY_NOTICES.md`. Verify: `grep -n "SDL\|procon2" THIRD_PARTY_NOTICES.md` shows the entry, or the PR text states that only facts were used. Done: no SDL or `procon2-mac` code was used. No `procon2-mac` source file was read (design.md reads only its README) and no Swift file cites it; SDL appears in comments as the source of facts. The PR text must state that only facts were used; re-check if later Switch 2 work copies or translates SDL code.
-- [ ] 6.5 Run the repository check list from the repository `CLAUDE.md` once on the final tree. Verify: `just check`.
+- [x] 6.5 Run the repository check list from the repository `CLAUDE.md` once on the final tree. Verify: `just check`. Done: `just check` on 5af98219b passed every step; the two Kit tests it failed (Steam startup, idle record pick) were fixed and rerun.
 
 ## Hardware Checks (Maintainer)
 

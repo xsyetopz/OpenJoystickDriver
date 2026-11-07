@@ -11,7 +11,7 @@ Every status-item and main-menu action SHALL exist in the main window or Setting
 
 ### Requirement: Fixed status-item layout
 
-The status item SHALL show, in order: status line; Controllers submenu; Profiles submenu (Activate, Deactivate); Grant Access; Open Window; Settings; Help submenu (Activity Log, Explain Error Code, Report Problem, Project Website); Quit. Items SHALL be disabled when not applicable and SHALL NOT be hidden, except Grant Access, which SHALL be hidden while every permission is granted. A submenu SHALL stay enabled when it holds no available item: it holds one disabled row that says why, so people can open it (Apple HIG, Menus: "Make sure a submenu remains available even when its nested menu items are unavailable", <https://developer.apple.com/design/human-interface-guidelines/menus>). The Activate and per-controller Active Profile submenus take their empty row (No Profiles, or Profiles Unavailable while the profile list is loading or cannot be read) from the same model function and strings as the main menu's Activate Profile submenu; the Deactivate submenu's empty row is No Active Profile, or Profiles Unavailable while the list is not read. Each status item entry carries its model id as its menu item identifier and accessibility identifier, so automation finds it in every UI language.
+The status item SHALL show, in order: status line; Controllers submenu; Profiles submenu (Activate, Deactivate); Grant Access; Open Window; Settings; Help submenu (Activity Log, Explain Error Code, Report Problem, Project Website); Quit. Items SHALL be disabled when not applicable and SHALL NOT be hidden, except Grant Access, which SHALL be hidden while every permission is granted.
 
 #### Scenario: Every permission granted
 
@@ -57,6 +57,38 @@ The status item SHALL show, in order: status line; Controllers submenu; Profiles
 
 - **WHEN** the profile list is read and no profile applies to a connected controller
 - **THEN** that controller's Active Profile submenu stays enabled and holds one disabled No Profiles row
+
+### Requirement: Status-item submenus stay enabled when empty
+
+A submenu SHALL stay enabled when it holds no available item: it holds one disabled row that says why, so people can open it (Apple HIG, Menus: "Make sure a submenu remains available even when its nested menu items are unavailable", <https://developer.apple.com/design/human-interface-guidelines/menus>).
+
+#### Scenario: Submenu with no available item
+
+- **WHEN** a status item submenu has no available item
+- **THEN** the submenu stays enabled and holds one disabled row that says why
+
+### Requirement: Status-item empty profile rows
+
+The Activate and per-controller Active Profile submenus SHALL take their empty row from the same model function and strings as the main menu's Activate Profile submenu. The empty row is No Profiles, or Profiles Unavailable while the profile list is loading or cannot be read. The Deactivate submenu's empty row SHALL be No Active Profile, or Profiles Unavailable while the list is not read.
+
+#### Scenario: Shared empty row
+
+- **WHEN** no profile exists
+- **THEN** Profiles > Activate holds the same No Profiles row as Profile > Activate Profile in the main menu
+
+#### Scenario: Deactivate with the list not read
+
+- **WHEN** the profile list is not read
+- **THEN** Profiles > Deactivate holds one disabled Profiles Unavailable row
+
+### Requirement: Status-item entry identifiers
+
+Each status item entry SHALL carry its model id as its menu item identifier and accessibility identifier, so automation finds it in every UI language.
+
+#### Scenario: Entry identifiers
+
+- **WHEN** automation reads a status item entry in any UI language
+- **THEN** the entry's menu item identifier and accessibility identifier are its model id
 
 ### Requirement: Status-item controller submenus
 

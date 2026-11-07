@@ -101,5 +101,5 @@ Each group owns its tests and documentation. Order follows dependencies: tests f
 ## 12. Integration
 
 - [x] 12.1 Add the `CHANGELOG.md` entry under `0.6.0-alpha.2` (this is the only place for history words). Verify: `git diff --check` passes.
-- [ ] 12.2 Run the full check list from the repository `CLAUDE.md`. The parser check `./Scripts/ojd test parsers-macos14` is not needed because no parser changes. Verify: `just check` exits 0; `openspec validate remapper-actions --strict` passes.
+- [x] 12.2 Run the full check list from the repository `CLAUDE.md`. The parser check `./Scripts/ojd test parsers-macos14` is not needed because no parser changes. Verify: `just check` exits 0; `openspec validate remapper-actions --strict` passes. Done: `just check` on 5af98219b passed every step; the two Kit tests it failed (Steam startup, idle record pick) were fixed and rerun.
 - [ ] 12.3 Run an end-to-end profile on the controller: a macro on a button, a triple tap, a trigger band, pointer speed on the left trigger, a profile switch, a pause, a MIDI note and a spoken phrase. Verify: the operator's result is appended to `docs/testing/system-actions.md` and reported with the OJD and macOS versions.

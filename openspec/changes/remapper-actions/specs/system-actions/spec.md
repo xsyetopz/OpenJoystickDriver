@@ -35,7 +35,8 @@ A `SystemKey` destination MUST send one system-defined key event through the pub
 
 ### Requirement: REQ-38 Type Text
 
-A `TypeText` destination MUST hold 1 to 128 characters. OJD MUST type the text through Core Graphics Unicode key events, in order, without a modifier left down. When secure event input is enabled in macOS, OJD MUST NOT type; it MUST report a named error that tells the user that a secure field has input. Like every trigger-only destination (`SystemAction`, `OpenApplication`, `OpenURL`, `RunShortcut`, `TypeText`), a `TypeText` destination MUST be rejected with `Toggle`, `Release` and `Pulse`, and accepted with `Hold`, `TapOnPress`, `TapOnRelease` and `Press`.
+A `TypeText` destination MUST hold 1 to 128 characters. OJD MUST type the text through Core
+Graphics Unicode key events, in order, without a modifier left down.
 
 #### Scenario: Type a Phrase
 
@@ -46,6 +47,32 @@ A `TypeText` destination MUST hold 1 to 128 characters. OJD MUST type the text t
 
 - **WHEN** the user presses the button while a password field has focus
 - **THEN** nothing is typed and OJD reports the named secure-input error
+
+### Requirement: REQ-58 Type Text Secure Input
+
+When secure event input is enabled in macOS, OJD MUST NOT type. It MUST report a named error
+that tells the user that a secure field has input.
+
+#### Scenario: Secure Event Input Enabled
+
+- **WHEN** secure event input is enabled in macOS and a `TypeText` destination fires
+- **THEN** OJD types nothing and reports the error that a secure field has input
+
+### Requirement: REQ-59 Trigger-Only Destination Modes
+
+A trigger-only destination (`SystemAction`, `OpenApplication`, `OpenURL`, `RunShortcut`,
+`TypeText`) MUST be rejected with `Toggle`, `Release` and `Pulse`, and accepted with `Hold`,
+`TapOnPress`, `TapOnRelease` and `Press`.
+
+#### Scenario: Rejected Mode
+
+- **WHEN** a `TypeText` destination is assigned with `Toggle`, `Release` or `Pulse`
+- **THEN** the assignment is rejected
+
+#### Scenario: Accepted Mode
+
+- **WHEN** a `TypeText` destination is assigned with `Hold`, `TapOnPress`, `TapOnRelease` or `Press`
+- **THEN** the assignment is accepted
 
 ### Requirement: REQ-39 System Action Surfaces
 

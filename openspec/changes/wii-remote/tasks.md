@@ -102,8 +102,8 @@ Depends: 7.
 
 Depends: 1 to 8.
 
-- [ ] 9.1 Run the full check list once: `just check`; `./Scripts/ojd check driverkit`; `./Scripts/ojd test parsers-macos14`. Verify: each command exits 0; rerun only failures.
-- [ ] 9.2 Run `openspec validate wii-remote --strict` from the repository root. Verify: it reports the change as valid.
+- [x] 9.1 Run the full check list once: `just check`; `./Scripts/ojd check driverkit`; `./Scripts/ojd test parsers-macos14`. Verify: each command exits 0; rerun only failures. Done: `just check`, `./Scripts/ojd check driverkit` and `./Scripts/ojd test parsers-macos14` exit 0 on 5af98219b; the two Kit test failures were fixed and rerun.
+- [x] 9.2 Run `openspec validate wii-remote --strict` from the repository root. Verify: it reports the change as valid. Done: it prints "Change 'wii-remote' is valid".
 
 ## 10. Hardware Checks (Maintainer)
 

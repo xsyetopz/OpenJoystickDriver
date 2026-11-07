@@ -2,7 +2,9 @@
 
 ### Requirement: REQ-46 Pointer Speed Driver
 
-A profile MUST accept an optional `pointerSpeed`: a `driver` (trigger pressure or stick depth, left or right), `minScale`, `maxScale` and a `curve`. OJD MUST multiply all pointer movement (stick and touch pointer modes, gyro mouse, `MouseMovement`) by the scale the curve gives for the driver, `minScale` at 0 and `maxScale` at 1. Scroll MUST NOT change. `ojd profile set`, `ojd profile import` and the profile editor MUST reject a driver that the capabilities of the profile's controller model do not list; a model with no catalog entry is not checked. The scale range 0 to 10 is proposed.
+A profile MUST accept an optional `pointerSpeed`: a `driver` (trigger pressure or stick depth,
+left or right), `minScale`, `maxScale` and a `curve`. OJD MUST multiply all pointer movement by
+the scale the curve gives for the driver, `minScale` at 0 and `maxScale` at 1.
 
 #### Scenario: Slow Down by Trigger
 
@@ -18,6 +20,31 @@ A profile MUST accept an optional `pointerSpeed`: a `driver` (trigger pressure o
 
 - **WHEN** a pointer speed is set and the user scrolls with a scroll destination
 - **THEN** the scroll amount is the same as with no pointer speed
+
+#### Scenario: Pointer Modes Covered
+
+- **WHEN** a pointer speed is set
+- **THEN** stick and touch pointer modes, gyro mouse and `MouseMovement` are all multiplied by the scale
+
+### Requirement: REQ-57 Pointer Speed Validation
+
+`ojd profile set`, `ojd profile import` and the profile editor MUST reject a driver that the
+capabilities of the profile's controller model do not list.
+
+#### Scenario: Unsupported Driver
+
+- **WHEN** a profile is set or imported with a driver that the controller model's capabilities do not list
+- **THEN** the command or editor rejects it
+
+#### Scenario: Model Without Catalog Entry
+
+- **WHEN** the profile's controller model has no catalog entry
+- **THEN** the driver is not checked
+
+#### Scenario: Scale Range
+
+- **WHEN** `minScale` or `maxScale` is outside 0 to 10, or not finite
+- **THEN** the profile is rejected
 
 ### Requirement: REQ-47 Pointer Speed Surfaces
 

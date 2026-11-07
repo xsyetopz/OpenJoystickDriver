@@ -74,7 +74,28 @@ The record for `37D7:2401` SHALL deliver sticks, buttons including C, Z and M1 t
 
 ### Requirement: Vendor Output Is Limited to Named Commands
 
-A Flydigi record SHALL send a frame `5A A5 cmd len payload` only for a command it lists: the `37D7:2401` startup commands (1, 0xA1 and 2), grip rumble (18), trigger force mode (81) and trigger force sync (82). The startup commands end with a byte that is the low byte of the sum of cmd, len and payload, and their length byte is the payload length plus 2. Commands 18, 81 and 82 carry no checksum byte; their length bytes are 6, 10 and 11. OpenJoystickDriver SHALL NOT send the screen upload (31), UID (4) or any other command.
+A Flydigi record SHALL send a frame `5A A5 cmd len payload` only for a command it lists.
+
+#### Scenario: Listed Commands
+
+- **WHEN** a record lists vendor commands
+- **THEN** they are the `37D7:2401` startup commands (1, 0xA1 and 2), grip rumble (18), trigger
+  force mode (81) and trigger force sync (82)
+
+#### Scenario: Startup Frame Length
+
+- **WHEN** a startup frame of the `37D7:2401` record is read
+- **THEN** its length byte is the payload length plus 2
+
+#### Scenario: Commands Without Checksum
+
+- **WHEN** a frame for command 18, 81 or 82 is read
+- **THEN** it carries no checksum byte and its length byte is 6, 10 or 11 respectively
+
+#### Scenario: Unsent Commands
+
+- **WHEN** code asks to send the screen upload (31), UID (4) or any other unlisted command
+- **THEN** OpenJoystickDriver does not send it
 
 #### Scenario: Frame Checksum
 

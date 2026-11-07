@@ -78,7 +78,7 @@ Depends: 2 to 5.
 Verify: the loop below, `just check`.
 
 - [x] 6.1 Confirm every 8BitDo PID with a bundled record appears in the wiki tables and every PID without a record appears as not covered. Verify: `for p in 2000 2002 200f 301b 301c 301d 3106 3107 3109 310a 310b 6001 6012 6013 901b; do grep -qi "2DC8:$p" wiki/Supported-Controllers.md || echo "missing $p"; done` prints nothing.
-- [ ] 6.2 Run the repository checks on the merged tree. Verify: `just check` passes; rerun only the failed step.
+- [x] 6.2 Run the repository checks on the merged tree. Verify: `just check` passes; rerun only the failed step. Done: `just check` on 5af98219b passed every step; the two Kit tests it failed (Steam startup, idle record pick) were fixed and rerun.
 
 ## Hardware Checks (Testers)
 
