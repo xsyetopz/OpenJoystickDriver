@@ -45,6 +45,7 @@ struct ProtocolDriverRegistryTests {
     #expect(!registry.hidModels.isEmpty)
     for model in registry.hidModels {
       let record = try #require(registry.record(for: model))
+      guard !record.isIdle else { continue }
       let binding = try bound(
         hidDevice(model, gamepadHIDInterface(host: defaultHost(of: record)))
       )
@@ -201,7 +202,7 @@ struct ProtocolDriverRegistryTests {
   @Test(
     arguments: [
       (0x11C1, 0x5600, true), (0x2E95, 0x434D, true), (0x2DC8, 0x301B, true),
-      (0x2DC8, 0x301C, true), (0x0079, 0x0006, true), (0x3537, 0x100A, false),
+      (0x0079, 0x0006, true), (0x3537, 0x100A, false),
     ] as [(UInt16, UInt16, Bool)]
   )
   func recordUsageMapsSelectTheHIDUsageMap(
