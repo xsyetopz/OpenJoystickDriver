@@ -89,6 +89,8 @@
             }
           }
         }.padding(.leading, 8)
+      } else if let field = valueField {
+        TextField(field.title, text: field.text).padding(.leading, 8)
       } else if case .speak(let text, let voice) = destination {
         VStack(alignment: .leading, spacing: 8) {
           TextField(
@@ -112,6 +114,34 @@
             prompt: Text(OJDLocalized.string("ui.profiles.speak.voicePlaceholder"))
           )
         }.padding(.leading, 8)
+      }
+    }
+
+    /// The title and text of the one value that an open application, open URL, run Shortcut or type
+    /// text destination holds; `nil` for any other destination.
+    private var valueField: (title: String, text: Binding<String>)? {
+      switch destination {
+      case .openApplication(let value):
+        (
+          OJDLocalized.string("ui.profiles.system.application"),
+          Binding(get: { value }, set: { destination = .openApplication(bundleIdentifier: $0) })
+        )
+      case .openURL(let value):
+        (
+          OJDLocalized.string("ui.profiles.system.url"),
+          Binding(get: { value }, set: { destination = .openURL($0) })
+        )
+      case .runShortcut(let value):
+        (
+          OJDLocalized.string("ui.profiles.system.shortcut"),
+          Binding(get: { value }, set: { destination = .runShortcut($0) })
+        )
+      case .typeText(let value):
+        (
+          OJDLocalized.string("ui.profiles.speak.text"),
+          Binding(get: { value }, set: { destination = .typeText($0) })
+        )
+      default: nil
       }
     }
 

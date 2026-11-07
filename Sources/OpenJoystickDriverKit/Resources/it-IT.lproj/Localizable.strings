@@ -1679,6 +1679,14 @@
 "ui.profiles.speak.voicePlaceholder" = "Voce di sistema";
 /* Phrase that a new Speak destination says until the user changes it. */
 "ui.profiles.speak.defaultText" = "Ciao";
+/* Label of the text field in the output destination editor for the bundle identifier of the application that an Open application destination opens. */
+"ui.profiles.system.application" = "Identificatore dell’app";
+/* Label of the text field in the output destination editor for the address that an Open URL destination opens. */
+"ui.profiles.system.url" = "URL";
+/* Label of the text field in the output destination editor for the name of the Shortcut that a Run Shortcut destination runs. */
+"ui.profiles.system.shortcut" = "Nome del comando rapido";
+/* Name that a new Run Shortcut destination holds until the user changes it. */
+"ui.profiles.system.defaultShortcut" = "Comando rapido";
 
 /* Menu item in the profile editor that removes all inputs of the profile. Keep the three dots. */
 "ui.profiles.clearInputs" = "Cancella tutti gli input…";

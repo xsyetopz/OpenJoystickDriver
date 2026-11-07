@@ -75,8 +75,8 @@ struct DestinationOption: Hashable {
   ///
   /// These are keyboard keys, with modifier groups for the arrow and function keys, mouse buttons,
   /// pointer movement and scroll, system keys and actions, gamepad outputs and physical outputs.
-  /// Open application, open URL, run Shortcut and type text carry a value, so a picker cannot list
-  /// them; the CLI and profile files set them.
+  /// Open application, open URL, run Shortcut, type text and speak carry a value, so each is listed
+  /// once with a starting value that the destination fields change.
   static let all: [Self] = {
     // Keep the ordinary keyboard destination first so source changes can fall back to a useful,
     // conventional choice instead of an arbitrary enum ordering.  Modifier combinations are
@@ -143,7 +143,13 @@ struct DestinationOption: Hashable {
     let systemDestinations =
       RemappingSystemKey.allCases.map(RemappingDestination.systemKey)
       + RemappingSystemActionKind.allCases.map(RemappingDestination.systemAction)
-    let system = (systemDestinations + [speak]).map { destination in
+    let valued: [RemappingDestination] = [
+      .openApplication(bundleIdentifier: "com.apple.TextEdit"),
+      .openURL("https://example.com"),
+      .runShortcut(OJDLocalized.string("ui.profiles.system.defaultShortcut")),
+      .typeText(OJDLocalized.string("ui.profiles.speak.defaultText")),
+    ]
+    let system = (systemDestinations + valued + [speak]).map { destination in
       Self(
         destination: destination,
         title: RuntimePresentation.destinationLabel(destination),

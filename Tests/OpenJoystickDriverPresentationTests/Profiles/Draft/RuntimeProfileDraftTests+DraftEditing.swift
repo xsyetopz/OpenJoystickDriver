@@ -112,6 +112,10 @@ extension RuntimeProfileDraftTests {
     #expect(discrete.contains { $0.destination == .systemKey(.volumeUp) })
     #expect(discrete.contains { $0.destination == .systemAction(.missionControl) })
     #expect(!axis.contains { $0.destination == .systemKey(.volumeUp) })
+    #expect(discrete.contains { if case .openApplication = $0.destination { true } else { false } })
+    #expect(discrete.contains { if case .openURL = $0.destination { true } else { false } })
+    #expect(discrete.contains { if case .runShortcut = $0.destination { true } else { false } })
+    #expect(discrete.contains { if case .typeText = $0.destination { true } else { false } })
     #expect(RuntimePresentation.destinationLabel(.systemKey(.volumeUp)) == "System key Volume Up")
     #expect(
       RuntimePresentation.destinationLabel(.systemAction(.missionControl))

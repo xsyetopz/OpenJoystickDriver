@@ -26,7 +26,7 @@ enum LocalizationCatalogAudit {
     "ui.inputTest.yTriangle",
     "ui.mapping.buttonNorth", "ui.mapping.dpadDirection", "ui.menu.projectPage",
     "ui.profiles.sectionDpad",
-    "ui.access.transport.web", "ui.access.web",
+    "ui.access.transport.web", "ui.access.web", "ui.profiles.system.url",
   ])
 
   private static let spanishTerms: Set<String> = [

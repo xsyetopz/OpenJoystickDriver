@@ -241,7 +241,7 @@ ojd binding set Racing button:start shortcut:"Dim Lights"
 ojd binding set Racing button:back text:hello
 ```
 
-The app lists the system keys and Mission Control in the destination pickers. The other four have no picker: set them with the command line or in the profile file.
+The app lists the system keys, Mission Control, and one entry each for Open application, Open URL, Run Shortcut, and Type text in the destination pickers. Choosing one of the four shows a text field for its application identifier, URL, Shortcut name, or text.
 
 OJD does not offer Show Desktop, App Exposé, Launchpad, or a display brightness setting that needs private macOS interfaces: DisplayServices, CoreDock, SkyLight, CGS, and MediaRemote. To get one of them, set a keyboard shortcut for it in **System Settings**, then assign a **Keyboard** destination with that shortcut.
 
