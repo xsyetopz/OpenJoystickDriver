@@ -33,7 +33,7 @@ Verify: `swift test --filter UserSpaceOutputDispatcher`, `swift test --filter IO
 
 Owns: `CHANGELOG.md`, `wiki/Known-Issues.md`.
 Depends: 2.
-Verify: `markdownlint CHANGELOG.md wiki/Known-Issues.md`.
+Verify: `git diff --check`.
 
 - [x] 3.1 Add under `## [Unreleased]` / `### Fixed` in `CHANGELOG.md`: two controllers with the same VID:PID and USB serial, such as two `057E:2009` pads, no longer share one virtual controller.
 - [x] 3.2 Add a short section to `wiki/Known-Issues.md` (near "Rumble Does Not Reach Two Identical Controllers", line 17) saying that same-serial pads get separate virtual controllers and that the second pad's identity follows its port.
