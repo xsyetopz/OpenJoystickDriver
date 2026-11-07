@@ -51,10 +51,12 @@ package final class ApplicationServiceRuntime {
     let remappingProfileLibrary = RemappingProfileLibrary()
     let postEventAccess = CoreGraphicsPostEventAccess()
     let physicalOutputBridge = RemappingPhysicalOutputBridge()
+    let profileSwitchBridge = RemappingProfileSwitchBridge(library: remappingProfileLibrary)
     let remappingEngine = RemappingEventEngine(
       sink: CoreGraphicsSystemInputSink(access: postEventAccess),
       gamepadSink: dispatcher,
-      physicalOutputSink: physicalOutputBridge
+      physicalOutputSink: physicalOutputBridge,
+      profileSwitcher: profileSwitchBridge
     )
     let remappingRouter = RemappingOutputRouter(
       library: remappingProfileLibrary,
@@ -87,6 +89,7 @@ package final class ApplicationServiceRuntime {
       userSpaceDispatcherFactory: Self.makeAutomaticUserSpaceDispatcher(context:)
     )
 
+    profileSwitchBridge.attach(applicationServiceServer)
     self.permissionManager = permissionManager
     self.dispatcher = dispatcher
     self.remappingRouter = remappingRouter

@@ -444,6 +444,13 @@ extension RemappingEventEngine {
           heldGamepadDevices.insert(identifier)
           try await gamepadSink.send(gamepadState, for: identifier)
           if gamepadState == .neutral { heldGamepadDevices.remove(identifier) }
+        case .profileSwitch(let target, let current, let identifier):
+          // The switch re-enters the engine, so it runs after this operation releases the lock.
+          if let profileSwitcher {
+            Task {
+              try? await profileSwitcher.switchProfile(target, from: current, for: identifier)
+            }
+          }
         case .physical(let output, let active, let owner, let identifier):
           guard let physicalOutputSink else { throw RemappingEventEngineError.sinkUnavailable }
           try await physicalOutputSink.set(output, active: active, owner: owner, for: identifier)

@@ -56,6 +56,28 @@ extension RemappingEngineState {
     from identifier: LogicalControllerID,
     at uptimeNanoseconds: UInt64
   ) -> [RemappingEngineAction] {
+    if devices[identifier]?.isPaused == true {
+      switch change {
+      case .leftStick(let x, let y):
+        return processAxes(
+          [(.leftStickX, x), (.leftStickY, y)],
+          for: identifier,
+          at: uptimeNanoseconds
+        )
+      case .rightStick(let x, let y):
+        return processAxes(
+          [(.rightStickX, x), (.rightStickY, y)],
+          for: identifier,
+          at: uptimeNanoseconds
+        )
+      case .leftTrigger(let value):
+        return processAxes([(.leftTrigger, value)], for: identifier, at: uptimeNanoseconds)
+      case .rightTrigger(let value):
+        return processAxes([(.rightTrigger, value)], for: identifier, at: uptimeNanoseconds)
+      case .motion, .touch: return []
+      case .button, .dpad: break
+      }
+    }
     switch change {
     case .button(let button, let isPressed):
       return setSource(.button(button), isActive: isPressed, for: identifier, at: uptimeNanoseconds)
@@ -232,7 +254,9 @@ extension RemappingEngineState {
     }
 
     let oldContinuous = continuousTotals()
-    if let layerActions = handleLayerActivator(source, isActive: isActive, device: &device) {
+    if !device.isPaused,
+      let layerActions = handleLayerActivator(source, isActive: isActive, device: &device)
+    {
       devices[identifier] = device
       return actions + layerActions + stoppedContinuousActions(previous: oldContinuous)
     }
@@ -245,7 +269,8 @@ extension RemappingEngineState {
     let suppress =
       buffered || wasConsumed || modifierOwned
       || (isActive && sourceCompletesChord(source, in: device))
-    for binding in device.binding(for: source)?.expandedActions ?? [] {
+    for binding in device.binding(for: source)?.expandedActions ?? []
+    where !device.isPaused || binding.destination.isPause {
       actions += processAction(
         binding,
         isActive: isActive,

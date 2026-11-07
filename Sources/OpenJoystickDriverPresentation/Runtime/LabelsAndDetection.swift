@@ -217,6 +217,9 @@ enum RuntimePresentation {
     switch destination {
     case .macro(let id):
       return macros.first { $0.id == id }?.name ?? OJDLocalized.string("term.macro")
+    case .profileSwitch: return "Profile"
+    case .layerSet: return "Layer"
+    case .pause: return "Pause"
     case .gamepadAxis(let axis): return axisLabel(axis)
     case .gamepadDpad(let direction): return sourceLabel(.dpad(direction))
     case .gamepadButton(let button): return buttonLabel(button)

@@ -127,6 +127,12 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
   case macroRunTimeExceeded(index: Int, limit: String)
   /// A destination runs a macro that the profile does not hold.
   case unknownMacro(UUID)
+  /// A destination sets a layer that the profile does not hold.
+  case unknownLayer(UUID)
+  /// A destination switches to a profile that does not exist.
+  case unknownSwitchProfile(UUID)
+  /// A destination switches to a profile for another controller model.
+  case switchProfileForOtherModel(UUID)
   /// The profile could not be encoded.
   case encodingFailed
   /// The encoded profile is over the size limit; the value is its size in bytes.
@@ -222,6 +228,12 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
       "Macro \(index) runs longer than the \(limit) limit."
     case .unknownMacro(let id):
       "A destination runs the macro \(id.uuidString), which does not exist."
+    case .unknownLayer(let id):
+      "A destination sets the layer \(id.uuidString), which does not exist."
+    case .unknownSwitchProfile(let id):
+      "A destination switches to the profile \(id.uuidString), which does not exist."
+    case .switchProfileForOtherModel(let id):
+      "A destination switches to the profile \(id.uuidString), which is for another model."
     case .encodingFailed: "The remapping profile could not be encoded."
     case .encodedSizeExceeded(let size):
       "The encoded remapping profile is too large (\(size) bytes)."

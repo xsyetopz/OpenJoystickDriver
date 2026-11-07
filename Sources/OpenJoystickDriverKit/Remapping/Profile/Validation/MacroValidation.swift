@@ -81,7 +81,7 @@ extension RemappingProfile {
     case .macro: throw RemappingValidationError.macroNestingNotAllowed(index: macro, step: step)
     case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad:
       try validateDestination(destination)
-    case .gamepadAxis, .mouseMovement, .scroll, .physical:
+    case .gamepadAxis, .mouseMovement, .scroll, .physical, .profileSwitch, .layerSet, .pause:
       throw RemappingValidationError.invalidMacroStepDestination(index: macro, step: step)
     }
   }

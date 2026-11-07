@@ -627,6 +627,58 @@
               "const": "Macro"
             }
           }
+        },
+        {
+          "type": "object",
+          "required": ["profile", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "profile": {
+              "description": "A profile identifier of the same model, Next or Previous.",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "enum": ["Next", "Previous"]
+                }
+              ]
+            },
+            "type": {
+              "const": "ProfileSwitch"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["layer", "mode", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "layer": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "mode": {
+              "enum": ["On", "Off", "Toggle"]
+            },
+            "type": {
+              "const": "LayerSet"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["mode", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "enum": ["On", "Off", "Toggle"]
+            },
+            "type": {
+              "const": "Pause"
+            }
+          }
         }
       ]
     },

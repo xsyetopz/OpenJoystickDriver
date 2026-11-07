@@ -6,6 +6,7 @@ extension RemappingDeviceState {
   /// A chord of an active layer replaces the profile chord with the same sources, and is added when
   /// no profile chord has them.
   var effectiveChords: [RemappingChord] {
+    guard !isPaused else { return [] }
     var chords = profile.chords
     for layerID in layers.activeLayers {
       guard let layer = profile.layers.first(where: { $0.id == layerID }) else { continue }

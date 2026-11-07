@@ -3,7 +3,8 @@ import Foundation
 extension RemappingDeviceState {
   /// Sequences that apply now: the profile's sequences, then those of each active layer.
   var effectiveSequences: [RemappingSequence] {
-    profile.sequences
+    guard !isPaused else { return [] }
+    return profile.sequences
       + layers.activeLayers.flatMap { id in profile.layers.first { $0.id == id }?.sequences ?? [] }
   }
 

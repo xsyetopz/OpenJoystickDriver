@@ -20,7 +20,7 @@
       switch destination {
       case .keyboard(let key, let modifiers): keyboardRow(key: key, modifiers: modifiers)
       case .mouseButton, .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis,
-        .physical, .macro:
+        .physical, .macro, .profileSwitch, .layerSet, .pause:
         Text(RuntimePresentation.destinationLabel(destination, macros: macros))
       }
     }

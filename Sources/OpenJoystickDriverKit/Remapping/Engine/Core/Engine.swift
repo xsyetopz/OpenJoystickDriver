@@ -13,6 +13,8 @@ public actor RemappingEventEngine {
   let gamepadSink: (any RemappingGamepadSink)?
   /// Sink for physical output claims, or `nil` when there is none.
   let physicalOutputSink: (any RemappingPhysicalOutputSink)?
+  /// Receives profile switch requests, or `nil` when there is none.
+  let profileSwitcher: (any RemappingProfileSwitching)?
   /// Controllers whose virtual gamepad state was sent and not yet neutralized.
   var heldGamepadDevices: Set<LogicalControllerID> = []
   /// Controllers whose virtual gamepad state may still be held after a failure.
@@ -39,13 +41,16 @@ public actor RemappingEventEngine {
   ///   - sink: Receives keyboard and pointer actions.
   ///   - gamepadSink: Receives virtual gamepad state.
   ///   - physicalOutputSink: Receives physical output claims.
+  ///   - profileSwitcher: Receives profile switch requests.
   ///   - emissionBarrier: Admits output operations.
   public init(
     sink: any RemappingSystemInputSink,
     gamepadSink: (any RemappingGamepadSink)? = nil,
     physicalOutputSink: (any RemappingPhysicalOutputSink)? = nil,
+    profileSwitcher: (any RemappingProfileSwitching)? = nil,
     emissionBarrier: RemappingEmissionBarrier = RemappingEmissionBarrier()
   ) {
+    self.profileSwitcher = profileSwitcher
     self.sink = sink
     self.gamepadSink = gamepadSink
     self.physicalOutputSink = physicalOutputSink

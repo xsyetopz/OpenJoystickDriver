@@ -20,13 +20,21 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
   case physical(RemappingPhysicalOutput)
   /// The macro of the profile with this identifier.
   case macro(UUID)
+  /// Activates a profile of the same controller model, as `ojd profile activate` does.
+  case profileSwitch(RemappingProfileTarget)
+  /// Sets a layer of the same profile on, off or flips it.
+  case layerSet(layer: UUID, mode: RemappingSwitchMode)
+  /// Sets the controller's pause on, off or flips it.
+  case pause(RemappingSwitchMode)
 
   /// Whether the destination can repeat as turbo: a keyboard key, pointer button or virtual gamepad
   /// button or d-pad direction.
   public var acceptsTurbo: Bool {
     switch self {
     case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad: true
-    case .mouseMovement, .scroll, .gamepadAxis, .physical, .macro: false
+    case .mouseMovement, .scroll, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet,
+      .pause:
+      false
     }
   }
 
@@ -34,7 +42,9 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
   /// gamepad axis.
   public var isContinuous: Bool {
     switch self {
-    case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad, .physical, .macro: false
+    case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad, .physical, .macro, .profileSwitch,
+      .layerSet, .pause:
+      false
     case .mouseMovement, .scroll, .gamepadAxis: true
     }
   }
@@ -59,6 +69,12 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case physical = "Physical"
     /// The `Macro` case.
     case macro = "Macro"
+    /// The `ProfileSwitch` case.
+    case profileSwitch = "ProfileSwitch"
+    /// The `LayerSet` case.
+    case layerSet = "LayerSet"
+    /// The `Pause` case.
+    case pause = "Pause"
 
     /// Keys that a profile document may give for this case, which `type` selects.
     var fields: [CodingKeys] {
@@ -69,6 +85,9 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
       case .gamepadAxis, .mouseMovement, .scroll: [.type, .axis]
       case .physical: [.type, .physical]
       case .macro: [.type, .macro]
+      case .profileSwitch: [.type, .profile]
+      case .layerSet: [.type, .layer, .mode]
+      case .pause: [.type, .mode]
       }
     }
   }
@@ -91,6 +110,12 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case physical
     /// The JSON key of `macro`.
     case macro
+    /// The JSON key of `profile`.
+    case profile
+    /// The JSON key of `layer`.
+    case layer
+    /// The JSON key of `mode`.
+    case mode
   }
 
   /// Decodes a destination from a profile document.
@@ -122,6 +147,14 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case .physical:
       self = .physical(try container.decode(RemappingPhysicalOutput.self, forKey: .physical))
     case .macro: self = .macro(try container.decode(UUID.self, forKey: .macro))
+    case .profileSwitch:
+      self = .profileSwitch(try container.decode(RemappingProfileTarget.self, forKey: .profile))
+    case .layerSet:
+      self = .layerSet(
+        layer: try container.decode(UUID.self, forKey: .layer),
+        mode: try container.decode(RemappingSwitchMode.self, forKey: .mode)
+      )
+    case .pause: self = .pause(try container.decode(RemappingSwitchMode.self, forKey: .mode))
     }
   }
 
@@ -157,6 +190,16 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case .macro(let id):
       try container.encode(Kind.macro, forKey: .type)
       try container.encode(id, forKey: .macro)
+    case .profileSwitch(let target):
+      try container.encode(Kind.profileSwitch, forKey: .type)
+      try container.encode(target, forKey: .profile)
+    case .layerSet(let layer, let mode):
+      try container.encode(Kind.layerSet, forKey: .type)
+      try container.encode(layer, forKey: .layer)
+      try container.encode(mode, forKey: .mode)
+    case .pause(let mode):
+      try container.encode(Kind.pause, forKey: .type)
+      try container.encode(mode, forKey: .mode)
     }
   }
 }

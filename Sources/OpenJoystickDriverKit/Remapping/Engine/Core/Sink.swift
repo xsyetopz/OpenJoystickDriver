@@ -378,6 +378,18 @@ enum RemappingEngineAction: Equatable, Sendable {
   case gamepad(RemappingGamepadState, LogicalControllerID)
   /// A physical output claim that an owner sets or releases for a controller.
   case physical(RemappingPhysicalOutput, active: Bool, owner: UUID, LogicalControllerID)
+  /// A request to activate another profile for a controller.
+  case profileSwitch(RemappingProfileTarget, from: UUID, LogicalControllerID)
+}
+
+/// Switches the active profile of a controller when a `ProfileSwitch` destination fires.
+public protocol RemappingProfileSwitching: AnyObject, Sendable {
+  /// Activates the profile that `target` names, as seen from the active profile `current`.
+  func switchProfile(
+    _ target: RemappingProfileTarget,
+    from current: UUID,
+    for identifier: LogicalControllerID
+  ) async throws
 }
 
 /// Separates remapping admission from the virtual output passthrough gate of a shared backend.

@@ -51,6 +51,11 @@ enum ProfileText {
     case .scroll(let value): return "scroll:\(word(value))"
     case .physical(let output): return physicalOutput(output)
     case .macro(let id): return "macro:\(macros.first { $0.id == id }?.name ?? id.uuidString)"
+    case .profileSwitch(.profile(let id)): return "profile:switch:\(id.uuidString)"
+    case .profileSwitch(let target):
+      return "profile:switch:\(target == .next ? "next" : "previous")"
+    case .layerSet(let layer, let mode): return "layer:\(layer.uuidString):\(word(mode))"
+    case .pause(let mode): return "pause:\(word(mode))"
     }
   }
 

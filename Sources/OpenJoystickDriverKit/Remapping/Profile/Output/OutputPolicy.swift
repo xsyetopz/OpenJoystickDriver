@@ -134,6 +134,16 @@ extension RemappingProfile {
     return containsDestination(where: \.isSystemInput)
   }
 
+  /// The targets of the `ProfileSwitch` destinations of the profile.
+  var profileSwitchTargets: [RemappingProfileTarget] {
+    var targets: [RemappingProfileTarget] = []
+    _ = containsDestination {
+      if case .profileSwitch(let target) = $0 { targets.append(target) }
+      return false
+    }
+    return targets
+  }
+
   /// Whether a binding, chord, or sequence, in any layer or activation, targets a match.
   private func containsDestination(where matches: (RemappingDestination) -> Bool) -> Bool {
     macros.contains { $0.steps.flatMap(\.destinations).contains(where: matches) }
@@ -205,7 +215,9 @@ extension RemappingDestination {
   public var isSystemInput: Bool {
     switch self {
     case .keyboard, .mouseButton, .mouseMovement, .scroll: true
-    case .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro: false
+    case .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet,
+      .pause:
+      false
     }
   }
 
@@ -213,7 +225,9 @@ extension RemappingDestination {
   var isVirtualGamepad: Bool {
     switch self {
     case .gamepadButton, .gamepadDpad, .gamepadAxis: true
-    case .keyboard, .mouseButton, .mouseMovement, .scroll, .physical, .macro: false
+    case .keyboard, .mouseButton, .mouseMovement, .scroll, .physical, .macro, .profileSwitch,
+      .layerSet, .pause:
+      false
     }
   }
 }

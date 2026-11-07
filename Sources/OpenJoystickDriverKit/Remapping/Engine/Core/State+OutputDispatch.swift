@@ -235,6 +235,9 @@ extension RemappingEngineState {
         ? startMacro(macroID, owner: bindingID, device: &device)
         : endMacroSource(owner: bindingID, device: &device)
     }
+    if effectiveDestination.isProfileControl {
+      return isDown ? runProfileControl(effectiveDestination, device: &device) : []
+    }
     let virtualContribution: RemappingGamepadState?
     switch effectiveDestination {
     case .gamepadButton(let button): virtualContribution = RemappingGamepadState(buttons: [button])
@@ -306,7 +309,8 @@ extension RemappingEngineState {
     case .mouseButton(let button):
       return Self.increment(&mouseButtonReferences, key: button) == 1
         ? [.system(.mouseButtonDown(button))] : []
-    case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro:
+    case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro,
+      .profileSwitch, .layerSet, .pause:
       return []
     }
   }
@@ -329,7 +333,8 @@ extension RemappingEngineState {
     case .mouseButton(let button):
       return Self.decrement(&mouseButtonReferences, key: button) == 0
         ? [.system(.mouseButtonUp(button))] : []
-    case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro:
+    case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro,
+      .profileSwitch, .layerSet, .pause:
       return []
     }
   }
@@ -370,7 +375,7 @@ extension RemappingEngineState {
   ) -> [RemappingKeyModifier] { modifiers.sorted { $0.rawValue < $1.rawValue } }
 
   /// Orders identifiers by their string form.
-  private static func uuidLessThan(_ lhs: UUID, _ rhs: UUID) -> Bool {
+  static func uuidLessThan(_ lhs: UUID, _ rhs: UUID) -> Bool {
     lhs.uuidString < rhs.uuidString
   }
 

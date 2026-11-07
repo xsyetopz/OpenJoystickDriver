@@ -20,6 +20,8 @@ struct RemappingDeviceState {
   var outputs = RemappingOutputState()
   /// Layers that the controller has switched on.
   var layers = RemappingLayerState()
+  /// Whether a `Pause` has the controller pass through unmapped.
+  var isPaused = false
   /// Sources that are active.
   var activeSources: Set<RemappingSource> = []
   /// Uptime at which each active source was pressed, in nanoseconds.
@@ -31,8 +33,12 @@ struct RemappingDeviceState {
 
   /// Returns the binding for a source, or `nil` when none applies.
   ///
-  /// The most recently activated layer that binds the source wins, then the profile.
+  /// The most recently activated layer that binds the source wins, then the profile. While
+  /// paused, only a `Pause` binding of the profile applies.
   func binding(for source: RemappingSource) -> RemappingBinding? {
+    if isPaused {
+      return profile.bindings.first { $0.source == source && $0.destination.isPause }
+    }
     for layerID in layers.activeLayers.reversed() {
       guard let layer = profile.layers.first(where: { $0.id == layerID }) else { continue }
       if let binding = layer.bindings.first(where: { $0.source == source }) { return binding }
