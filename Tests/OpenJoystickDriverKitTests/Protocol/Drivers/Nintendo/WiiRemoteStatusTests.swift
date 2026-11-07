@@ -8,9 +8,9 @@ struct WiiRemoteStatusTests {
   private let english = Localization(preferredLanguages: ["en-US"])
 
   @Test
-  func aFreshSessionShowsTheCoreModeNoExtensionAndMotionPlusOff() throws {
+  func aFreshSessionShowsTheBasicIRModeNoExtensionAndMotionPlusOff() throws {
     let status = try #require(driver.wiiRemoteStatus)
-    #expect(status.reportModeText == "0x31")
+    #expect(status.reportModeText == "0x37")
     #expect(status.extensionText(english) == "None")
     #expect(status.motionPlusText(english) == "Off")
   }

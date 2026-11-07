@@ -338,8 +338,6 @@
 "ui.capture.listening" = "Bir kontrolcü denetimi dinleniyor…";
 /* VoiceOver announcement while the app waits for a controller control. Escape is the name of the Escape key. */
 "ui.capture.listeningCancel" = "Bir kontrolcü denetimi dinleniyor… Vazgeçmek için Escape’e bas.";
-/* Status text in the capture assignment sheet while the app waits for a controller control. Keep the three dots. */
-"ui.capture.listeningEllipsis" = "Bir kontrolcü denetimi dinleniyor…";
 /* Status in the capture assignment sheet after a control is detected. %@ is the name of the control. The sentence ends with a period. */
 "ui.capture.detected" = "Algılandı: %@.";
 /* Label with the detected control in the capture assignment sheet. %@ is the name of the control. It has no final period because other text follows or the label stands alone. */

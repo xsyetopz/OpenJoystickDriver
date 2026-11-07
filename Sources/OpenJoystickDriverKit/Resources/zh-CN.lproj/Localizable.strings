@@ -338,8 +338,6 @@
 "ui.capture.listening" = "正在侦听控制器控件…";
 /* VoiceOver announcement while the app waits for a controller control. Escape is the name of the Escape key. */
 "ui.capture.listeningCancel" = "正在侦听控制器控件…按 Esc 键可取消。";
-/* Status text in the capture assignment sheet while the app waits for a controller control. Keep the three dots. */
-"ui.capture.listeningEllipsis" = "正在侦听控制器控件…";
 /* Status in the capture assignment sheet after a control is detected. %@ is the name of the control. The sentence ends with a period. */
 "ui.capture.detected" = "已检测到：%@。";
 /* Label with the detected control in the capture assignment sheet. %@ is the name of the control. It has no final period because other text follows or the label stands alone. */

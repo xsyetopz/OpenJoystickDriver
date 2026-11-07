@@ -338,8 +338,6 @@
 "ui.capture.listening" = "Escuchando un control del mando…";
 /* VoiceOver announcement while the app waits for a controller control. Escape is the name of the Escape key. */
 "ui.capture.listeningCancel" = "Escuchando un control del mando… Pulsa Esc para cancelar.";
-/* Status text in the capture assignment sheet while the app waits for a controller control. Keep the three dots. */
-"ui.capture.listeningEllipsis" = "Escuchando un control del mando…";
 /* Status in the capture assignment sheet after a control is detected. %@ is the name of the control. The sentence ends with a period. */
 "ui.capture.detected" = "Detectado: %@.";
 /* Label with the detected control in the capture assignment sheet. %@ is the name of the control. It has no final period because other text follows or the label stands alone. */

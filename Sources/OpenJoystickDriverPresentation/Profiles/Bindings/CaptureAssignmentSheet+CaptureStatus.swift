@@ -77,11 +77,7 @@
         switch viewModel.inputCaptureState {
         case .idle: EmptyView()
         case .listening:
-          Text(
-            OJDLocalized.string(
-              "ui.capture.listeningEllipsis"
-            )
-          )
+          Text(OJDLocalized.string("ui.capture.listening"))
         case .received(_, let state):
           VStack(alignment: .leading, spacing: 3) {
             if let detected = RuntimePresentation.detectedSource(from: state) {

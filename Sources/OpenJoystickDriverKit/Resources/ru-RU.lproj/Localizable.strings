@@ -338,8 +338,6 @@
 "ui.capture.listening" = "Ожидание элемента управления контроллера…";
 /* VoiceOver announcement while the app waits for a controller control. Escape is the name of the Escape key. */
 "ui.capture.listeningCancel" = "Ожидание элемента управления контроллера… Нажмите Escape, чтобы отменить.";
-/* Status text in the capture assignment sheet while the app waits for a controller control. Keep the three dots. */
-"ui.capture.listeningEllipsis" = "Ожидание элемента управления контроллера…";
 /* Status in the capture assignment sheet after a control is detected. %@ is the name of the control. The sentence ends with a period. */
 "ui.capture.detected" = "Обнаружено: %@.";
 /* Label with the detected control in the capture assignment sheet. %@ is the name of the control. It has no final period because other text follows or the label stands alone. */

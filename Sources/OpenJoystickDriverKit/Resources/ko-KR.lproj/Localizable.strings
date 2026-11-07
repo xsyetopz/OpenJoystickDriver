@@ -338,8 +338,6 @@
 "ui.capture.listening" = "컨트롤러 조작을 수신 대기하는 중입니다…";
 /* VoiceOver announcement while the app waits for a controller control. Escape is the name of the Escape key. */
 "ui.capture.listeningCancel" = "컨트롤러 조작을 수신 대기하는 중입니다… 취소하려면 Escape를 누르세요.";
-/* Status text in the capture assignment sheet while the app waits for a controller control. Keep the three dots. */
-"ui.capture.listeningEllipsis" = "컨트롤러 조작을 수신 대기하는 중…";
 /* Status in the capture assignment sheet after a control is detected. %@ is the name of the control. The sentence ends with a period. */
 "ui.capture.detected" = "감지됨: %@.";
 /* Label with the detected control in the capture assignment sheet. %@ is the name of the control. It has no final period because other text follows or the label stands alone. */

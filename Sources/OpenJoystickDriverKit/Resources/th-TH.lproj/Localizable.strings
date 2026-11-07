@@ -338,8 +338,6 @@
 "ui.capture.listening" = "กำลังรับฟังตัวควบคุมของคอนโทรลเลอร์…";
 /* VoiceOver announcement while the app waits for a controller control. Escape is the name of the Escape key. */
 "ui.capture.listeningCancel" = "กำลังรับฟังตัวควบคุมของคอนโทรลเลอร์… กด Escape เพื่อยกเลิก";
-/* Status text in the capture assignment sheet while the app waits for a controller control. Keep the three dots. */
-"ui.capture.listeningEllipsis" = "กำลังรับฟังตัวควบคุมของคอนโทรลเลอร์…";
 /* Status in the capture assignment sheet after a control is detected. %@ is the name of the control. The sentence ends with a period. */
 "ui.capture.detected" = "ตรวจพบ: %@";
 /* Label with the detected control in the capture assignment sheet. %@ is the name of the control. It has no final period because other text follows or the label stands alone. */
