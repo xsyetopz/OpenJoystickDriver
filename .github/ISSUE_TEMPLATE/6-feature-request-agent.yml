@@ -11,7 +11,7 @@ body:
         - Write short, plain sentences in the words a user would use. Do not use jargon to sound exact.
         - Fill the fields and nothing else: no preamble, recap, extra headings, or emoji.
         - Write exact values. Write `Not checked` for anything nobody checked. Do not guess.
-        - Check the problem against the newest `feat/<version>` branch. Do not open an issue about `main` or an earlier `feat/` branch while a later one exists: [Target Branch](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#target-branch).
+        - Check the problem against `main`: [Target Branch](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#target-branch).
   - type: input
     id: agent
     attributes:

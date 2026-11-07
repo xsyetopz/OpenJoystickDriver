@@ -9,7 +9,7 @@ body:
         Fill every field with exact values. Write `None` or `Not checked` instead of leaving a field vague.
         `alpha`, `beta`, `latest`, `recent`, `some controllers`, and `doesn't work` are not answers.
         An AI agent writing this issue uses the **(AI Agent)** form instead.
-        Check the problem against the newest `feat/<version>` branch. Do not open an issue about `main` or an earlier `feat/` branch while a later one exists: [Target Branch](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#target-branch).
+        Check the problem against `main`: [Target Branch](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#target-branch).
   - type: input
     id: version
     attributes:

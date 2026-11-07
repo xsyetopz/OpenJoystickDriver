@@ -37,7 +37,7 @@ AI agents: fill both lines, follow CONTRIBUTING.md#ai-agents, and keep the attri
 
 ## Checklist
 
-- [ ] The base branch is the newest `feat/<version>` branch, not `main` or an earlier `feat/` branch ([Target Branch](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#target-branch)).
+- [ ] The base branch is `main` ([Target Branch](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#target-branch)).
 - [ ] One logical change.
 - [ ] I did not hand-edit generated controller records or generated DriverKit files.
 - [ ] I updated the docs, wiki pages, and localization strings this change affects.

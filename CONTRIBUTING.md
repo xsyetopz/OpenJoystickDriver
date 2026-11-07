@@ -42,11 +42,7 @@ Capture a candidate with `./Scripts/ojd diagnose record /tmp/controller-candidat
 
 ## Target Branch
 
-`main` holds the last release. While a `feat/<version>` branch carries a later version, development happens there, and `main` and every earlier `feat/` branch are outdated: a change made on them does not carry over.
-
-- Base every pull request on the newest `feat/<version>` branch.
-- Check a bug against that branch before you open an issue.
-- List the branches with `git ls-remote --heads origin 'feat/*'`. The highest version wins.
+Base every pull request on `main`, and check a bug against `main` before you open an issue. Other branches can be deleted at any time, and deleting a branch closes the pull requests based on it.
 
 ## License
 
