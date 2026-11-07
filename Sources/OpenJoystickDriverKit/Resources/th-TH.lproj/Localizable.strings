@@ -154,6 +154,8 @@
 "ui.controllers.configurationUnreadable" = "อ่านการกำหนดค่า USB ของคอนโทรลเลอร์นี้ไม่ได้ เชื่อมต่อคอนโทรลเลอร์ใหม่";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
 "ui.controllers.bootloaderIdentity" = "คอนโทรลเลอร์นี้อยู่ในโหมดบูตโหลดเดอร์ OJD จะไม่ส่งข้อมูลใดๆ ไปยังคอนโทรลเลอร์นี้";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+"ui.controllers.noModeMatched" = "คอนโทรลเลอร์นี้ใช้ ID เดียวกับรุ่นอื่นและไม่ตรงกับรุ่นที่รองรับรุ่นใดเลย OJD จะไม่ส่งข้อมูลใดๆ ไปยังคอนโทรลเลอร์นี้";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "แบตเตอรี่";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */

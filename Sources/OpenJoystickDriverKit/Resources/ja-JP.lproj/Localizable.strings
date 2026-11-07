@@ -154,6 +154,8 @@
 "ui.controllers.configurationUnreadable" = "このコントローラの USB 構成を読み取れませんでした。コントローラを再接続してください。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
 "ui.controllers.bootloaderIdentity" = "このコントローラはブートローダ モードです。OJD はデータを送信しません。";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+"ui.controllers.noModeMatched" = "このコントローラは ID を他のモデルと共有しており、対応モデルのどれにも一致しません。OJD はデータを送信しません。";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "バッテリー";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */

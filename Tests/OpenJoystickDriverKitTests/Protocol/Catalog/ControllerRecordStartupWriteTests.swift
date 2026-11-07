@@ -33,7 +33,7 @@ struct ControllerRecordStartupWriteTests {
           + #""delayMilliseconds": 50}]"#
       )
     )
-    let session = document.defaultMode.session
+    let session = document.baseMode.session
     #expect(session.rumbleTemplate == nil)
     #expect(session.startupWrites.count == 2)
     let enable = session.startupWrites[0]
@@ -50,7 +50,7 @@ struct ControllerRecordStartupWriteTests {
           PhysicalHIDOutputReport(reportID: 0, bytes: [1, 2], startupDelayMilliseconds: 50)
         )
     )
-    #expect(try decode(Self.modes(Self.sixaxis)).defaultMode.session.startupWrites.isEmpty)
+    #expect(try decode(Self.modes(Self.sixaxis)).baseMode.session.startupWrites.isEmpty)
   }
 
   @Test(
@@ -91,11 +91,11 @@ struct ControllerRecordStartupWriteTests {
         "[{\(Self.hidReport), \"phase\": \"Startup\", " + #""crc32Seed": 162}]"#
       )
     )
-    let writes = document.defaultMode.session.startupWrites
+    let writes = document.baseMode.session.startupWrites
     #expect(writes.first?.phase == .startup)
     #expect(writes.first?.crc32Seed == 162)
     #expect(
-      try decode(Self.startup("[\(Self.enable)]")).defaultMode.session.startupWrites
+      try decode(Self.startup("[\(Self.enable)]")).baseMode.session.startupWrites
         .first?.phase == .activation
     )
   }
@@ -131,7 +131,7 @@ struct ControllerRecordStartupWriteTests {
       #"{"bytes": "01 02", "endpoint": 2, "timeoutMilliseconds": 500, "#
       + #""delayMilliseconds": 5, "sessionByte": 1, "toleratesRejection": true}"#
     for family in [Self.gip, #"{"family": "NintendoSwitch2"}"#] {
-      let session = try decode(Self.startup("[\(write)]", family)).defaultMode.session
+      let session = try decode(Self.startup("[\(write)]", family)).baseMode.session
       #expect(session.startupWrites.isEmpty)
       #expect(session.usbStartupWrites.count == 1)
       #expect(session.usbStartupWrites.first?.endpoint == 2)

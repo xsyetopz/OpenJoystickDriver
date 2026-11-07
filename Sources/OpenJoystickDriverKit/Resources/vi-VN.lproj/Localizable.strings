@@ -154,6 +154,8 @@
 "ui.controllers.configurationUnreadable" = "Không thể đọc cấu hình USB của bộ điều khiển này. Hãy kết nối lại bộ điều khiển.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
 "ui.controllers.bootloaderIdentity" = "Bộ điều khiển này đang ở chế độ bootloader. OJD không gửi dữ liệu nào đến bộ điều khiển này.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+"ui.controllers.noModeMatched" = "Bộ điều khiển này dùng chung ID với các mẫu khác và không khớp với mẫu nào được hỗ trợ. OJD không gửi dữ liệu nào đến bộ điều khiển này.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "Pin";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */

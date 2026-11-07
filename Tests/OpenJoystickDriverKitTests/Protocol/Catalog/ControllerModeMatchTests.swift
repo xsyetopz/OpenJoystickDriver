@@ -610,8 +610,51 @@ struct ControllerModeMatchTests {
     }
   }
 
+  /// A record without a `default` mode leaves a device that matches none of its modes unsupported.
   @Test
-  func theDecoderRejectsAModeListWithoutExactlyOneDefault() throws {
+  func aRecordWithoutADefaultModeLeavesAnUnmatchedDeviceUnsupported() async throws {
+    let record: [String: Any] = [
+      "apiVersion": OpenJoystickDriverAPI.version, "kind": ControllerRecordDocument.kind,
+      "vendorID": Int(Self.model.vendorID), "productID": Int(Self.model.productID),
+      "modes": [Self.mode("named", match: ["product": "Wireless Controller"])],
+    ]
+    let validated = try #require(
+      try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record)).record
+    )
+    let catalog = DeviceCatalog(
+      records: ControllerRecordSet(records: [Self.model: validated], userFiles: [])
+    )
+    let profile = validated.profile
+    #expect(!profile.hasDefaultMode)
+    let reader = CountingProbeReader()
+    let matching = Self.device(product: "Wireless Controller")
+    let other = Self.device(product: "Other")
+    let matched = await Self.select(profile, matching, reader: reader)
+    let unmatched = await Self.select(profile, other, reader: reader)
+    #expect(matched == .matched("named"))
+    #expect(unmatched == .noModeMatched)
+    #expect(reader.readCount == 0)
+    #expect(
+      ProtocolClassifier.classify(
+        matching,
+        backend: .hid,
+        catalog: catalog,
+        modeID: matched.modeID
+      ) != .unsupported(.noModeMatched)
+    )
+    #expect(
+      ProtocolClassifier.classify(
+        other,
+        backend: .hid,
+        catalog: catalog,
+        modeID: unmatched.modeID
+      ) == .unsupported(.noModeMatched)
+    )
+    #expect(ProtocolBindingReason.noModeMatched.explanationKey == "ui.controllers.noModeMatched")
+  }
+
+  @Test
+  func theDecoderRejectsAModeListWithTwoDefaults() throws {
     func decode(_ modes: [[String: Any]]?) throws -> String? {
       var record: [String: Any] = [
         "apiVersion": OpenJoystickDriverAPI.version, "kind": ControllerRecordDocument.kind,
@@ -627,9 +670,9 @@ struct ControllerModeMatchTests {
     let plainDefault: [String: Any] = ["id": "default", "protocol": ["family": "SonySixaxis"]]
     #expect(try decode(nil) != nil)
     #expect(try decode([]) != nil)
-    #expect(try decode([other])?.contains("exactly one mode with the id default") == true)
+    #expect(try decode([other]) == nil)
     #expect(
-      try decode([plainDefault, plainDefault])?.contains("exactly one mode with the id default")
+      try decode([plainDefault, plainDefault])?.contains("at most one mode with the id default")
         == true
     )
     #expect(

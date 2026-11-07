@@ -558,11 +558,17 @@ def apply_built_in_patches(
 
 
 def default_family(record: dict[str, Any]) -> str:
-    """The protocol family of `record`'s `default` mode."""
-    for mode in record["modes"]:
+    """The protocol family of `record`'s `default` mode.
+
+    A record without a `default` mode reports its first mode's family.
+    """
+    modes = record["modes"]
+    if not modes:
+        raise CatalogError(f"{record_key(record)} has no modes")
+    for mode in modes:
         if mode["id"] == "default":
             return str(mode["protocol"]["family"])
-    raise CatalogError(f"{record_key(record)} has no default mode")
+    return str(modes[0]["protocol"]["family"])
 
 
 def merge_sdl_records(

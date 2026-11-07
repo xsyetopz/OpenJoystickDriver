@@ -316,6 +316,11 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   ///
   /// The protocol fields above are the default mode's.
   public internal(set) var modes: [ControllerMode] = []
+  /// Whether the record has a `default` mode.
+  ///
+  /// Without one, a device that matches no mode is unsupported, and the protocol fields above are
+  /// those of the first mode.
+  public internal(set) var hasDefaultMode = true
   /// The selected mode's ID; nil while the default mode runs.
   public internal(set) var modeID: String?
 

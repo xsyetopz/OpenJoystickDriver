@@ -804,7 +804,8 @@
         "VirtualProfileUnavailable",
         "DeviceInUse",
         "ConfigurationUnreadable",
-        "BootloaderIdentity"
+        "BootloaderIdentity",
+        "NoModeMatched"
       ]
     },
     "hidGamepad": {

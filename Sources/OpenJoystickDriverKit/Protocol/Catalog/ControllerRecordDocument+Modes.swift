@@ -346,7 +346,7 @@ extension ControllerRecordDocument {
     }
   }
 
-  /// The record's modes: unique IDs and exactly one `default`; every mode's protocol obeys the same
+  /// The record's modes: unique IDs and at most one `default`; every mode's protocol obeys the same
   /// record-level rules the default protocol does, whether the record has one mode or many.
   ///
   /// A mode's session runs only what its own protocol can (see `sessionViolation`), and `interface`
@@ -358,8 +358,8 @@ extension ControllerRecordDocument {
       .dataCorrupted(.init(codingPath: path, debugDescription: message))
     }
     guard !modes.isEmpty else { throw fail("modes must not be empty") }
-    guard modes.filter(\.isDefault).count == 1 else {
-      throw fail("modes need exactly one mode with the id default")
+    guard modes.filter(\.isDefault).count <= 1 else {
+      throw fail("modes need at most one mode with the id default")
     }
     guard Set(modes.map(\.id)).count == modes.count else { throw fail("mode IDs must be unique") }
     for mode in modes {

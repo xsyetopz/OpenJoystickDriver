@@ -8,6 +8,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Added
 
+- A record may omit its `default` mode and give only modes with a `match`. A device that matches none of them, or whose probe has no route or no usable reply, is unbound with the new reason `NoModeMatched` and receives no data (`ui.controllers.noModeMatched`, which needs native review in every language but English).
 - OJD sends no data to the 8BitDo bootloader identities `2DC8:3208` and `2DC8:5750`, with or without a record. Such a device is unbound with the new reason `BootloaderIdentity`, and the Controllers page and `ojd status` say that it is in bootloader mode (`ui.controllers.bootloaderIdentity`, which needs native review in every language but English).
 - A mode's `input` lists `layouts`, each selected by report ID and length. A report that no layout selects is ignored, a layout changes only the controls it names, and two layouts whose selectors match the same report are rejected.
 - Input fields take `byteOrder` (`LittleEndian` or `BigEndian`) and read 1 to 32 bits at any bit position, so a 12-bit stick that crosses a byte or a signed 16-bit big-endian value is data.

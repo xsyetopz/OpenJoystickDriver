@@ -154,6 +154,8 @@
 "ui.controllers.configurationUnreadable" = "تعذّرت قراءة تكوين USB لوحدة التحكم هذه. أعد توصيل وحدة التحكم.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
 "ui.controllers.bootloaderIdentity" = "وحدة التحكم هذه في وضع المحمّل. لا يرسل OJD إليها أي بيانات.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+"ui.controllers.noModeMatched" = "تشترك وحدة التحكم هذه في معرّفها مع طرازات أخرى ولا تطابق أيًا من الطرازات المدعومة. لا يرسل OJD إليها أي بيانات.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "البطارية";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */

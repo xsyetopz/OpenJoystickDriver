@@ -53,7 +53,7 @@ Reason for the cut: a table can state a fixed byte at a fixed address; it cannot
 
 ### D3. Matching: By Product String, Because the Product IDs Are Shared
 
-`057E:0306` is also the Wii Balance Board and `057E:0330` is also the Wii U Pro Controller. A record mode therefore declares a product-string match key (`Nintendo RVL-CNT-01` for `0306`, `Nintendo RVL-CNT-01-TR` for `0330`; the strings are WiiBrew facts that Hardware Check 1 confirms). A device with the shared VID:PID and any other product string matches no mode of these records; the existing no-match report names it as unsupported. This uses the `device-matching` requirement on match keys (interface signature, strings) and adds no new probe.
+`057E:0306` is also the Wii Balance Board and `057E:0330` is also the Wii U Pro Controller. A record mode therefore declares a product-string match key (`Nintendo RVL-CNT-01` for `0306`, `Nintendo RVL-CNT-01-TR` for `0330`; the strings are WiiBrew facts that Hardware Check 1 confirms). A device with the shared VID:PID and any other product string matches no mode of these records. These records have no `default` mode, so the device is unsupported with the reason `NoModeMatched` and receives no traffic. This uses the `device-matching` requirement on match keys (interface signature, strings) and adds no new probe.
 
 Risk: a clone or a firmware that reports another string is unsupported until a patch adds a mode. That is a visible no-match, not a fallback.
 

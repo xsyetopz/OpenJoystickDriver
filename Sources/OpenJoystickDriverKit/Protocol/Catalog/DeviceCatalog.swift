@@ -70,7 +70,7 @@ package struct DeviceCatalog: Sendable {
         "unsupported USB configuration \(configuration)"
       )
     }
-    let session = record.defaultMode.session
+    let session = record.baseMode.session
     let keepAlivePolicy: GIPKeepAlivePolicy =
       protocolInfo.keepAliveEnabled.map { $0 ? .enabled : .disabled } ?? .enabled
 
@@ -100,8 +100,9 @@ package struct DeviceCatalog: Sendable {
       tuning: record.tuning,
       route: record.route,
       bluetoothLEVibrationCharacteristic: record.bluetoothLE?.vibrationCharacteristic,
-      interfaceRange: record.defaultMode.interfaceRange,
-      modes: record.modes.filter { !$0.isDefault }.map(\.mode)
+      interfaceRange: record.baseMode.interfaceRange,
+      modes: record.modes.filter { !$0.isDefault }.map(\.mode),
+      hasDefaultMode: record.defaultMode != nil
     )
   }
 

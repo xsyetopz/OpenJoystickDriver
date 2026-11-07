@@ -154,6 +154,8 @@
 "ui.controllers.configurationUnreadable" = "Não foi possível ler a configuração USB deste controle. Reconecte o controle.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
 "ui.controllers.bootloaderIdentity" = "Este controle está em modo bootloader. O OJD não envia dados a ele.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+"ui.controllers.noModeMatched" = "Este controle compartilha o ID com outros modelos e não corresponde a nenhum dos compatíveis. O OJD não envia dados a ele.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "Bateria";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */

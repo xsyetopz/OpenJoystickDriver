@@ -191,15 +191,17 @@ public enum ControllerModeSelection: Equatable, Sendable {
   case noModes
   /// Every key of the named mode held.
   case matched(String)
-  /// No mode's keys all held, so the default mode runs.
+  /// No mode's keys all held, so the default mode runs; a record without one leaves the device
+  /// unsupported.
   case noModeMatched
   /// The device is not on an IOHID route, which is the only route a probe can read, so the
-  /// default mode runs.
+  /// default mode runs; a record without one leaves the device unsupported.
   case noProbeRoute
-  /// A probe got no usable reply, so the default mode runs.
+  /// A probe got no usable reply, so the default mode runs; a record without one leaves the device
+  /// unsupported.
   case probeInconclusive(reportID: UInt8)
 
-  /// The selected mode's ID; nil selects the default mode.
+  /// The selected mode's ID; nil selects the default mode, which a record without one lacks.
   public var modeID: String? {
     if case .matched(let id) = self { return id }
     return nil
@@ -210,7 +212,9 @@ public enum ControllerModeSelection: Equatable, Sendable {
 ///
 /// Modes are tried in record order and the first whose keys all hold wins. The keys read from the
 /// enumerated device are checked first, and a mode's probes only once those hold. A probe without a
-/// usable reply ends the selection at the default mode and never disables the controller.
+/// usable reply ends the selection at the default mode and never disables a controller whose
+/// record has one. A record without a `default` mode leaves the device unsupported when no mode is
+/// selected.
 public enum ControllerModeSelector {
   /// Picks the mode of `profile` that `device` runs, and logs the outcome.
   ///
@@ -235,6 +239,7 @@ public enum ControllerModeSelector {
     log: @Sendable (String) -> Void = { print($0) }
   ) async -> ControllerModeSelection {
     guard !profile.modes.isEmpty else { return .noModes }
+    let fallback = profile.hasDefaultMode ? "the default mode is used" : "the device is unsupported"
     let receiverRecord =
       profile.physicalProtocolVariant.map { [.receiver, .dongle].contains($0) } ?? false
     // Two pads of one model differ in the log only by their location.
@@ -249,7 +254,7 @@ public enum ControllerModeSelector {
         guard backend == .hid else {
           log(
             "[DeviceManager] Mode probes of \(name) read HID feature reports; the"
-              + " \(backend.rawValue) route has none, so the default mode is used"
+              + " \(backend.rawValue) route has none, so \(fallback)"
           )
           return .noProbeRoute
         }
@@ -267,7 +272,7 @@ public enum ControllerModeSelector {
         case .inconclusive:
           log(
             "[DeviceManager] Mode probe of \(name) got no reply for report=\(probe.reportID)"
-              + " (mode \(mode.id)); using the default mode"
+              + " (mode \(mode.id)); \(fallback)"
           )
           return .probeInconclusive(reportID: probe.reportID)
         }
@@ -285,7 +290,7 @@ public enum ControllerModeSelector {
       return String(format: "%02X/%02X/%02X", kind, subclass, code)
     }
     log(
-      "[DeviceManager] No mode of \(name) matched; using the default mode"
+      "[DeviceManager] No mode of \(name) matched; \(fallback)"
         + " (interface classes seen: \(seen.isEmpty ? "none" : seen.joined(separator: " ")))"
     )
     return .noModeMatched

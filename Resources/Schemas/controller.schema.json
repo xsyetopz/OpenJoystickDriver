@@ -55,7 +55,7 @@
   },
   "$defs": {
     "modes": {
-      "description": "The modes of one model. Exactly one mode has the id default and no match: it runs when no other mode matches or a probe gets no reply. Every other mode has a match. Non-default modes are tried in order and the first whose match keys all hold is selected.",
+      "description": "The modes of one model. At most one mode has the id default and no match: it runs when no other mode matches or a probe gets no reply. Every other mode has a match. Non-default modes are tried in order and the first whose match keys all hold is selected. A record without a default mode leaves a device that matches no mode unsupported.",
       "type": "array",
       "minItems": 1,
       "items": {
@@ -69,7 +69,7 @@
         },
         "required": ["id"]
       },
-      "minContains": 1,
+      "minContains": 0,
       "maxContains": 1
     },
     "mode": {

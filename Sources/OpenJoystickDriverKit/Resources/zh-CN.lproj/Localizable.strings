@@ -154,6 +154,8 @@
 "ui.controllers.configurationUnreadable" = "无法读取此控制器的 USB 配置。请重新连接控制器。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
 "ui.controllers.bootloaderIdentity" = "此控制器处于引导加载程序模式。OJD 不会向其发送任何数据。";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+"ui.controllers.noModeMatched" = "此控制器与其他型号共用 ID，且不匹配任何受支持的型号。OJD 不会向其发送任何数据。";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "电池";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
