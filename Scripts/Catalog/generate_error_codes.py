@@ -16,7 +16,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from Scripts.Quality.biome_format import format_json
 from Scripts.Quality.repository_tool import (
     command_line_exit_statuses,
     domain_areas,
@@ -159,7 +158,6 @@ def render_wiki(page: str, block: str) -> str:
 
 def render_endpoint_schema(text: str, entries: list[Entry]) -> str:
     codes = [entry["code"] for entry in entries if entry["domain"] == "Endpoint"]
-    enum = ", ".join(json.dumps(code) for code in codes)
     expected = json.loads(text)
     try:
         expected["$defs"]["error"]["properties"]["code"]["enum"] = codes
@@ -167,11 +165,18 @@ def render_endpoint_schema(text: str, entries: list[Entry]) -> str:
         raise ErrorCodeError(f"{ENDPOINT_SCHEMA} has no error code enum") from error
     # Another object can also hold an "error" key; take the match that changes only this enum.
     for match in ENDPOINT_ENUM.finditer(text):
+        key_line = match[1].rsplit("\n", 1)[-1]
+        indent = key_line[: len(key_line) - len(key_line.lstrip())]
+        items = ",\n".join(f"{indent}  {json.dumps(code)}" for code in codes)
         rendered = (
-            text[: match.start()] + match[1] + enum + match[2] + text[match.end() :]
+            text[: match.start()]
+            + match[1]
+            + f"\n{items}\n{indent}"
+            + match[2]
+            + text[match.end() :]
         )
         if json.loads(rendered) == expected:
-            return format_json({ENDPOINT_SCHEMA: rendered})[ENDPOINT_SCHEMA]
+            return rendered
     raise ErrorCodeError(f"{ENDPOINT_SCHEMA} has no error code enum")
 
 

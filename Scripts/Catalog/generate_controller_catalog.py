@@ -22,7 +22,7 @@ from Scripts.Catalog.schema_header import KINDS, header
 from Scripts.Catalog.xpad_io import json_text
 from Scripts.Command.execution import main_checkout_dir
 from Scripts.Quality import repository_tool
-from Scripts.Quality.biome_format import format_json
+from Scripts.Quality.json_format import format_json
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 LOCK_PATH = ROOT / "ControllerSources.lock.json"
