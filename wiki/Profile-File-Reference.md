@@ -67,6 +67,11 @@ A profile with `device.unit` applies only to the controller with that unit ID, a
 
 OJD rejects unknown keys anywhere in a profile. The file declares `apiVersion: openjoystickdriver/v1alpha2` and `kind: Profile`, and OJD rejects a file without them. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes the file. Rules that span fields, such as a source used twice, are not in the schema. Check a file against both with `ojd profile validate FILE`.
 
+## Turbo and Multi-Tap Fields
+
+A binding's `turbo` object has `repeatRateHz` and `dutyCycle`, and optionally `initialDelayMs` (0 to 2500, the time from the first press to the first repeat; 0 when omitted) and `maxRepeats` (1 to 500; omitted repeats while held).
+
+A binding's `multiTap` list has entries with `count` (2 to 5, unique in the list), `windowMs` (50 to 1000, from one tap's release to the next press), and `destination`.
 ## Limits
 
 | Item | Limit |

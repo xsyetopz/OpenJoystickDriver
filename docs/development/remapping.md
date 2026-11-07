@@ -16,7 +16,7 @@ Physical input flows through normalization and remapping to virtual-controller a
 | Capability | Existing foundation | Extension |
 | --- | --- | --- |
 | Output | Exclusive selection of virtual-gamepad or system-event remapping | Mixed output, virtual destinations, per-control consumption and passthrough |
-| Bindings | Long hold, double tap, turbo, sequences | Separate activation actions, toggles, pulses, explicit release, multiple actions |
+| Bindings | Long hold, multi-tap, turbo, sequences | Separate activation actions, toggles, pulses, explicit release, multiple actions |
 | Combinations | Simultaneous active-source chords and layers | Timed combinations, modifier chords, buffered consumption, binding and tuning overrides |
 | Physical input | Buttons, D-pad, sticks, triggers | Timestamped motion, touch contacts, distinct extra buttons |
 | Motion | No normalized motion event | Calibration, fusion, coordinate spaces, gyro mouse/stick |
@@ -43,7 +43,7 @@ Not yet validated, because constructed tests cannot establish them:
 
 ## Native Action Collections
 
-Profiles must declare `apiVersion: openjoystickdriver/v1alpha2`. The decoder rejects any other value before decoding profile fields. Assignments have a primary destination and can contain an ordered `additionalActions` array. Each additional action has its own UUID, destination, behavior, and optional turbo, long-hold, double-tap, or pulse settings. Action IDs share the profile-wide uniqueness requirement. Additional actions count toward the 512-item mapping limit. Continuous actions use the assignment's axis tuning. Permission requirements include every action and its alternate destinations, including actions in inactive layers.
+Profiles must declare `apiVersion: openjoystickdriver/v1alpha2`. The decoder rejects any other value before decoding profile fields. Assignments have a primary destination and can contain an ordered `additionalActions` array. Each additional action has its own UUID, destination, behavior, and optional turbo, long-hold, multi-tap, or pulse settings. Action IDs share the profile-wide uniqueness requirement. Additional actions count toward the 512-item mapping limit. Continuous actions use the assignment's axis tuning. Permission requirements include every action and its alternate destinations, including actions in inactive layers.
 
 The assignment behavior sheet supports adding, removing, reordering, and editing additional actions. CLI `ojd binding set` accepts `--actions-json <JSON-array>` in the native action format. An omitted option preserves the collection; `[]` removes all additional actions. Layer bindings are edited with `ojd profile edit <profile>`.
 

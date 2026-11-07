@@ -43,6 +43,15 @@ Latency: with entries for counts above one, the base destination waits for the l
 
 Repeat with delay extends `turbo` (`initialDelayMs`, `maxRepeats`) instead of adding `repeat`, since turbo already is repeat-while-held.
 
+### D4 Localization Review (CLI Keys)
+
+The CLI help and error keys for `--multi-tap`, `--turbo-delay` and `--turbo-max` (`cli.binding.group.optionMultiTap`, `optionTurboDelay`, `optionTurboMax`, `multiTapFormat`) are in all 22 bundles with a translator comment each; `optionDoubleTap` is gone and the comment of `alternateFormat` names only `--long-hold`. Each value was read back against `en-US`, its call site and LOCALIZATION.md:
+
+- Meaning: `COUNT` and `MS` stay as written in every language, because the user types them; a tap is a touch or press of the control, not a double of anything, so the verbs follow the neighbouring `optionLongHold` and `optionTurboRate` values of each language (for example `Needs` becomes the verb that file already uses). `--turbo-delay` says the time before the first repeat, `--turbo-max` says the number of repeats after the first press.
+- Punctuation: native full stops (`。`, `।`) and spacing rules per file, `’` in French and Italian, no ASCII quotes, ranges as words or the native range sign (`0~2500` in Korean, `0 〜 2500` in Japanese), and `ms` kept as the unit symbol except in Russian (`мс`). `fr-CA` and `fr-FR` take the same text because it has no `; ? !`.
+- Not confirmed by a native speaker: every translation is a reviewed machine translation, as for the rest of the catalog. Thai and Arabic wording of `multiTap` (touch versus press) most needs one.
+- `turboPair` still says that `--turbo-rate` and `--turbo-duty` go together; it also covers `--turbo-delay` and `--turbo-max` given alone, since those two need both.
+
 ### D5. System Actions Use Public APIs Only
 
 | Action | API | Permission to expect (the task records the result) | Out of scope |

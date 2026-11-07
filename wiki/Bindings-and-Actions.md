@@ -93,17 +93,19 @@ The behavior decides how a press turns into output.
 
 The table describes each behavior by its name. Hardware results are not verified. The command line option is `--behavior hold|toggle|tap-on-press|tap-on-release|pulse|press|release`. Use `--pulse-ms 1...5000` with `pulse`.
 
-### Turbo, Long Hold, and Double Tap
+### Turbo, Long Hold, and Multi-Tap
 
-These options are in the **Assignment behavior** sheet. They work only when the behavior is **Hold**. Turbo cannot be combined with long hold or double tap.
+These options are in the **Assignment behavior** sheet. They work only when the behavior is **Hold**. Turbo cannot be combined with long hold or multi-tap.
 
-- **Turbo** repeats the destination while you hold the control. Set the **Repeat rate** (1 to 60 Hz) and the **Duty cycle** (0.05 to 0.95). Turbo works with keyboard, mouse button, gamepad button, and D-pad destinations.
+- **Turbo** repeats the destination while you hold the control. Set the **Repeat rate** (1 to 60 Hz) and the **Duty cycle** (0.05 to 0.95). Optionally set a delay before the first repeat (0 to 2500 ms) and a cap on the number of repeats (1 to 500). Turbo works with keyboard, mouse button, gamepad button, and D-pad destinations.
 - **Long hold** sends a second destination after you hold the control for the **Hold duration** (100 to 5000 ms).
-- **Double tap** sends a second destination when you tap twice within the **Tap window** (50 to 1000 ms).
+- **Multi-tap** sends a second destination when you tap the control 2 to 5 times, each press within the **Tap window** (50 to 1000 ms) of the last release. Each tap count has its own destination, and counts are unique.
 
-Long hold and double tap need a discrete source, such as a button, and a destination that is not continuous.
+Long hold and multi-tap need a discrete source, such as a button, and a destination that is not continuous.
 
-The command line options are `--turbo-rate`, `--turbo-duty`, `--long-hold MS:TARGET`, and `--double-tap MS:TARGET`. For example, `--long-hold 500:key:key-b`. The command line help lists these options for keyboard and mouse button destinations only. Whether the command line accepts them for gamepad destinations is not verified.
+With multi-tap entries, the base destination waits for the longest tap window to see whether another tap follows, so it fires later than without them. `ojd binding list` shows this wait as `tap-delay`.
+
+The command line options are `--turbo-rate`, `--turbo-duty`, `--turbo-delay MS`, `--turbo-max COUNT`, `--long-hold MS:TARGET`, and `--multi-tap COUNT:MS:TARGET`. `--turbo-delay` and `--turbo-max` need `--turbo-rate` and `--turbo-duty`. Repeat `--multi-tap` for more counts. For example, `--long-hold 500:key:key-b` and `--multi-tap 3:300:key:key-b`. The command line help lists these options for keyboard and mouse button destinations only. Whether the command line accepts them for gamepad destinations is not verified.
 
 You can also add more actions to one assignment. In the behavior sheet, use **Add action**, **Move up**, **Move down**, and **Remove**. The command line option is `--actions-json`.
 
