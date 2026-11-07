@@ -3140,7 +3140,7 @@
           }
         },
         "whileRunning": {
-          "enum": ["ignore", "restart"]
+          "enum": ["Ignore", "Restart"]
         }
       }
     },

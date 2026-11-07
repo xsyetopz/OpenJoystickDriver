@@ -45,8 +45,8 @@ struct MacroSummary: Encodable, Equatable {
   let name: String
   /// A pass count, or `while-held`.
   let repeatMode: String
-  /// What a press of the source does while the macro runs: `ignore` or `restart`.
-  let whileRunning: String
+  /// What a press of the source does while the macro runs; JSON carries the document value.
+  let whileRunning: RemappingMacroWhileRunning
   /// Whether releasing the source stops the macro.
   let interruptOnRelease: Bool
   /// The steps in order, such as `tap:key:key-a`.
@@ -68,7 +68,7 @@ struct MacroSummary: Encodable, Equatable {
     case .count(let count): repeatMode = String(count)
     case .whileHeld: repeatMode = Self.whileHeld
     }
-    whileRunning = CommandLineName.kebab(macro.whileRunning.rawValue)
+    whileRunning = macro.whileRunning
     interruptOnRelease = macro.interruptOnRelease
     steps = macro.steps.map(Self.text)
   }
@@ -194,8 +194,9 @@ private func printMacro(_ result: MacroResult) throws {
   case .json: try CLIOutput.json(result)
   case .plain: CLIOutput.plain(macro.steps.map { [macro.name, $0] })
   case .human:
+    let whileRunning = CommandLineName.kebab(macro.whileRunning.rawValue)
     CLIOutput.stdout(
-      "\(macro.name)  repeat:\(macro.repeatMode)  while-running:\(macro.whileRunning)"
+      "\(macro.name)  repeat:\(macro.repeatMode)  while-running:\(whileRunning)"
         + "  interrupt-on-release:\(macro.interruptOnRelease)"
     )
     for step in macro.steps { CLIOutput.stdout("  \(step)") }

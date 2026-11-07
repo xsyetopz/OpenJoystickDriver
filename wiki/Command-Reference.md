@@ -212,7 +212,7 @@ A profile holds at most 16 macros, a macro at most 32 steps, and names are 1 to 
 
 A step or `--repeat` value that is not in these forms exits with code 64. A macro that does not exist exits with code 1.
 
-With `--json`, a macro is an object with `id`, `name`, `repeat`, `whileRunning`, `interruptOnRelease`, and `steps`, each in the `--step` form. `macro list` prints a `MacroList` with `items`, each with `profile` and `macro`. `macro show` prints a `Macro` with `profile` and `macro`, and `macro set` prints a `Macro` with `profile`, `macro`, and `replaced`. `macro remove` prints a `Status`, with `profile` and `removed` (the name) in `details`.
+With `--json`, a macro is an object with `id`, `name`, `repeat`, `whileRunning` (the profile document value, `Ignore` or `Restart`), `interruptOnRelease`, and `steps`, each in the `--step` form. `macro list` prints a `MacroList` with `items`, each with `profile` and `macro`. `macro show` prints a `Macro` with `profile` and `macro`, and `macro set` prints a `Macro` with `profile`, `macro`, and `replaced`. `macro remove` prints a `Status`, with `profile` and `removed` (the name) in `details`.
 
 ## virtual
 
