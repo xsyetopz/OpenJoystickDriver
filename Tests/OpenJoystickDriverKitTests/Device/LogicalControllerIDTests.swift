@@ -253,7 +253,9 @@ struct LogicalControllerIDTests {
       var registry = VirtualIdentityRegistry()
       return [registry.reserve(a), registry.reserve(b)]
     }
-    #expect(run() == run())
+    let firstRun = run()
+    let secondRun = run()
+    #expect(firstRun == secondRun)
   }
 
   @Test

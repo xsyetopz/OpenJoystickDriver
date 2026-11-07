@@ -89,10 +89,12 @@ public enum UserSpaceVirtualDeviceConstants {
     locationID(forKey: stableKey(for: identifier))
   }
 
+  /// The virtual serial number hashed from `key`.
   fileprivate static func serialNumber(forKey key: String) -> String {
     serialPrefix + hex64(fnv1a64(key))
   }
 
+  /// The virtual LocationID hashed from `key`.
   fileprivate static func locationID(forKey key: String) -> UInt32 {
     let low16 = UInt32(truncatingIfNeeded: fnv1a64(key) & 0xFFFF)
     // Avoid 0/1 because some consumers treat these as special/invalid.
@@ -122,7 +124,8 @@ public enum UserSpaceVirtualDeviceConstants {
     // IMPORTANT: this key is only used as hash input; it is not exposed to consumers.
     let identity = identifier.hardware
     let sn = identity.serialNumber ?? ""
-    let loc = (sn.isEmpty || includingLocation) ? ((identifier.address?.locationID).map { "\($0)" } ?? "") : ""
+    let location = (identifier.address?.locationID).map { "\($0)" } ?? ""
+    let loc = (sn.isEmpty || includingLocation) ? location : ""
     let interface = identifier.address?.interfaceNumber.map { "\($0)" } ?? ""
     return "\(identity.model.vendorID):\(identity.model.productID):\(sn):\(loc):\(interface)"
   }
@@ -156,8 +159,10 @@ package struct VirtualDeviceIdentity: Sendable, Equatable {
 /// The first controller of a VID:PID:serial key keeps the plain key. A later controller with the
 /// same key adds its location to the key.
 package struct VirtualIdentityRegistry: Sendable {
+  /// The key and identity each connected controller holds.
   private var held: [LogicalControllerID: (key: String, identity: VirtualDeviceIdentity)] = [:]
 
+  /// A registry that holds no identity.
   package init() {}
 
   /// The identity of `identifier`, the one it already holds or a new one that no other controller

@@ -1,11 +1,12 @@
 import Foundation
 
 extension UserSpaceOutputDispatcher {
-  /// Creates the device for `identifier` with `identity`, then publishes it with the host's report handler
-  /// attached.
+  /// Creates the device for `identifier` with `identity`, then publishes it with the host's report
+  /// handler attached.
   ///
   /// A dispatcher closed in between releases the device without publishing it.
-  internal func createEntry(for identifier: LogicalControllerID,
+  internal func createEntry(
+    for identifier: LogicalControllerID,
     identity: VirtualDeviceIdentity
   ) async throws -> Entry {
     guard lifecycle.isOpen else { throw CancellationError() }
