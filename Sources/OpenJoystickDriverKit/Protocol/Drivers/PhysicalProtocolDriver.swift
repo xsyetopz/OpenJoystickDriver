@@ -363,6 +363,10 @@ public protocol PhysicalProtocolDriver: AnyObject {
   /// Writes for one keep-alive tick at the plan's USB or HID keep-alive interval.
   func keepAliveWrites() -> [PhysicalOutputWrite]
 
+  /// Writes that turn the controller off, sent once by the pipeline's deliberate stop and never
+  /// after an I/O error or an unplug.
+  func powerOffWrites() -> [PhysicalOutputWrite]
+
   /// Returns and clears the writes produced while parsing input, such as acknowledgements.
   ///
   /// Parsing stays synchronous and deterministic; the pipeline performs these writes in order.
@@ -420,6 +424,8 @@ extension PhysicalProtocolDriver {
   public func presenceRequestWrite() -> PhysicalOutputWrite? { nil }
   /// Default: no keep-alive writes.
   public func keepAliveWrites() -> [PhysicalOutputWrite] { [] }
+  /// Default: the controller is left on.
+  public func powerOffWrites() -> [PhysicalOutputWrite] { [] }
   /// Default: no pending writes.
   public func drainPendingWrites() -> [PhysicalOutputWrite] { [] }
 

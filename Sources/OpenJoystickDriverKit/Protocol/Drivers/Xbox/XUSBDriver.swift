@@ -104,6 +104,8 @@ public final class XUSBDriver: PhysicalProtocolDriver {
   private let recordStartup: [USBStartupWrite]
   /// The packet that carries the motor intensities.
   private let rumbleTemplate: RumbleOutputTemplate
+  /// The description's power-off packet for this variant; nil when it sets none.
+  private let powerOffPacket: USBStartupWrite?
 
   /// The state after the latest report.
   private var state = ControllerState.neutral
@@ -120,13 +122,35 @@ public final class XUSBDriver: PhysicalProtocolDriver {
   ///   - usbStartupWrites: The record's startup packets; the description's when empty.
   ///   - rumbleTemplate: The record's rumble template; the description's for the variant when
   ///     nil.
-  public init(
+  public convenience init(
     outEndpoint: UInt8 = 0x01,
     isWirelessReceiver: Bool = false,
     tuning: ControllerTuning? = nil,
     usbStartupWrites: [USBStartupWrite] = [],
     rumbleTemplate: RumbleOutputTemplate? = nil
   ) {
+    self.init(
+      outEndpoint: outEndpoint,
+      isWirelessReceiver: isWirelessReceiver,
+      tuning: tuning,
+      usbStartupWrites: usbStartupWrites,
+      rumbleTemplate: rumbleTemplate,
+      description: PhysicalProtocolID.xboxXUSB.protocolDescription
+    )
+  }
+
+  /// Creates the driver with the power-off packet read from `description`.
+  init(
+    outEndpoint: UInt8 = 0x01,
+    isWirelessReceiver: Bool = false,
+    tuning: ControllerTuning? = nil,
+    usbStartupWrites: [USBStartupWrite] = [],
+    rumbleTemplate: RumbleOutputTemplate? = nil,
+    description: ProtocolDescription
+  ) {
+    powerOffPacket = description.receiverPowerOffWrite(
+      variant: isWirelessReceiver ? .receiver : .wired
+    )
     self.outEndpoint = outEndpoint
     recordStartup = usbStartupWrites
     self.rumbleTemplate = PhysicalProtocolID.xboxXUSB.describedRumbleTemplate(
@@ -189,6 +213,17 @@ public final class XUSBDriver: PhysicalProtocolDriver {
       let intensities = rumbleTemplate.resendIntensities(after: lastRumble)
     else { return [] }
     return [.usb(outputPacket(rumbleTemplate.reportBytes(intensities)))]
+  }
+
+  /// The description's power-off packet for a receiver slot whose controller is connected.
+  public func powerOffWrites() -> [PhysicalOutputWrite] {
+    guard isWirelessReceiver, receiverConnected, let powerOffPacket else { return [] }
+    return [
+      powerOffPacket.write(
+        defaultEndpoint: outEndpoint,
+        defaultTimeoutMilliseconds: usbTimeoutMilliseconds
+      )
+    ]
   }
 
   /// Returns the pending connection change and clears it.

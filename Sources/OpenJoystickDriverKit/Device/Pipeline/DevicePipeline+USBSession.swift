@@ -70,13 +70,31 @@ extension DevicePipeline {
   ///
   /// The session is closing, so a failed packet is logged and the rest still go out.
   func sendUSBShutdownWrites(handle: any USBTransportSession) async {
-    for write in recordSession.shutdownWrites {
-      guard
-        case .usb(let packet, _) = write.write(
+    await sendUSBClosingWrites(
+      recordSession.shutdownWrites.map {
+        $0.write(
           defaultEndpoint: transportProfile.outputEndpoint,
           defaultTimeoutMilliseconds: Int(usbSessionDefaultTimeoutMilliseconds)
         )
-      else { continue }
+      },
+      handle: handle
+    )
+  }
+
+  /// Sends the driver's power-off packets.
+  ///
+  /// Only a deliberate stop calls this: an I/O error or an unplug closes through
+  /// `invalidateUSBHandle`, because a transient error must not turn a controller off.
+  func sendUSBPowerOffWrites(handle: any USBTransportSession) async {
+    await sendUSBClosingWrites(driver.powerOffWrites(), handle: handle)
+  }
+
+  private func sendUSBClosingWrites(
+    _ writes: [PhysicalOutputWrite],
+    handle: any USBTransportSession
+  ) async {
+    for write in writes {
+      guard case .usb(let packet, _) = write else { continue }
       do {
         try await handle.write(
           endpoint: packet.endpoint,
