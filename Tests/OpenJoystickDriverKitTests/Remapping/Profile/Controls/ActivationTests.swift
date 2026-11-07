@@ -71,7 +71,7 @@ struct RemappingActivationTests {
   }
 
   @Test
-  func doubleTapFiresAlternateOnSecondPress() async throws {
+  func multiTapFiresAlternateOnSecondPress() async throws {
     let sink = RemappingTestSink()
     let engine = RemappingEventEngine(sink: sink)
     let currentProfile = profile(bindings: [
@@ -119,7 +119,7 @@ struct RemappingActivationTests {
   }
 
   @Test
-  func doubleTapWindowExpiryFiresDefault() async throws {
+  func multiTapWindowExpiryFiresDefault() async throws {
     let sink = RemappingTestSink()
     let engine = RemappingEventEngine(sink: sink)
     let currentProfile = profile(bindings: [

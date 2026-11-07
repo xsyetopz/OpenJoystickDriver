@@ -390,8 +390,12 @@
 "ui.profiles.addLayer" = "레이어 추가";
 /* Title of the sheet that adds an assignment to a layer. %@ is the name of the layer. */
 "ui.profiles.addLayerAssignment" = "%@에 할당 추가";
+/* Button in the behavior sheet that adds an entry for a tap count, such as a triple tap, to the control. */
+"ui.profiles.addMultiTap" = "탭 횟수 추가";
 /* Button of the combination sheet that adds a sequence. A sequence is a set of controls pressed one after the other. */
 "ui.profiles.addSequence" = "시퀀스 추가";
+/* Heading in the behavior sheet of the entries that send another destination when the control is tapped two to five times. */
+"ui.profiles.multiTap" = "여러 번 탭";
 /* Title of the empty state in the profile editor when the profile has no assignment. */
 "ui.profiles.noAssignments" = "아직 할당 없음";
 /* Instruction in the empty state of the profile editor. The destination is a key, a mouse button or a pointer movement. */
@@ -418,6 +422,16 @@
 "ui.profiles.changedElsewhere" = "프로파일이 다른 곳에서 변경되었습니다.";
 /* Error in the profile editor when the service saved the profile but the app cannot read the state afterwards. */
 "ui.profiles.savedButUnavailable" = "프로파일은 저장되었지만 최신 상태를 사용할 수 없습니다.";
+/* Label of the picker in the behavior sheet that sets how many taps of a control fire an entry. The choices are the numbers 2 to 5. */
+"ui.profiles.tapCount" = "탭 횟수";
+/* Note in the behavior sheet under the tap-count entries. %@ is the longest tap window with its unit, such as 300 ms; the assignment's own destination fires only after that wait. */
+"ui.profiles.tapDelay" = "기본 대상이 최대 %@ 기다릴 수 있음";
+/* Label of the field in the behavior sheet that sets the time from the press to the first repeat of turbo. The value is in milliseconds. */
+"ui.profiles.turboDelay" = "첫 반복 전 지연";
+/* Switch in the behavior sheet that makes turbo stop after a number of repeats. */
+"ui.profiles.turboLimit" = "반복 횟수 제한";
+/* Label of the field in the behavior sheet that sets how many repeats turbo makes after the press before it stops. The value is a number. */
+"ui.profiles.turboMax" = "최대 반복 횟수";
 /* Save status of the profile editor: there are changes that are not saved. */
 "ui.profiles.unsaved" = "저장하지 않은 변경 사항";
 /* Save status of the profile editor while the profile is being saved. Keep the three dots. */
@@ -468,8 +482,6 @@
 "ui.profiles.details" = "프로파일 세부 사항";
 /* Note on an assignment row when the controller or its protocol cannot do what the assignment needs. */
 "ui.profiles.notSupportedByController" = "이 컨트롤러 또는 프로토콜에서 지원하지 않습니다.";
-/* Label of the field in the behavior sheet for the destination of a double tap of a control. */
-"ui.profiles.doubleTap" = "두 번 탭";
 /* Toolbar button in the Profiles area that exports the profile to a file. */
 "ui.profiles.export" = "프로파일 내보내기";
 /* Option of the activation popup in the layer sheet: the layer is on while the control is held. */
@@ -510,7 +522,7 @@
 "ui.profiles.sequenceWindow" = "완료 허용 시간";
 /* Heading of the sequences section in the profile editor. */
 "ui.profiles.sequences" = "시퀀스";
-/* Label of the field in the behavior sheet that sets the time within which a second tap counts as a double tap. The value is in milliseconds. */
+/* Label of the field in the behavior sheet that sets the time from one tap's release to the next press within which the taps of a tap-count entry count together. The value is in milliseconds. */
 "ui.profiles.tapWindow" = "탭 허용 시간";
 /* Label of the popup in the profile creation sheet that picks which apps the profile applies to. */
 "ui.profiles.target" = "대상";

@@ -52,6 +52,16 @@ The CLI help and error keys for `--multi-tap`, `--turbo-delay` and `--turbo-max`
 - Not confirmed by a native speaker: every translation is a reviewed machine translation, as for the rest of the catalog. Thai and Arabic wording of `multiTap` (touch versus press) most needs one.
 - `turboPair` still says that `--turbo-rate` and `--turbo-duty` go together; it also covers `--turbo-delay` and `--turbo-max` given alone, since those two need both.
 
+### D4 Localization Review (Behavior Sheet Keys)
+
+The behavior sheet keys `ui.profiles.addMultiTap`, `multiTap`, `tapCount`, `tapDelay`, `turboDelay`, `turboLimit` and `turboMax` are in all 22 bundles with a translator comment each; `ui.profiles.doubleTap` is gone, the comment of `ui.profiles.tapWindow` now says that the window runs from one tap's release to the next press, and the Remove button reuses `action.remove`. Each value was read back against `en-US`, its call site in `BindingBehaviorSheet+MultiTap.swift` and `BindingBehaviorSheet+Body.swift`, and LOCALIZATION.md:
+
+- Meaning: `multiTap` is a heading and `addMultiTap` a button, so they stay a noun phrase and a verb phrase; "tap" follows the verb already used for `tapWindow` in each language (press in French and Russian, touch in Spanish, Italian and Turkish), so one file keeps one term. `tapDelay` is a note, not a label: it says the base destination can wait the given time, and `%@` carries the number with `ms` from `String(format:)`, so a translation may move it. `turboDelay` is the time from the press to the first repeat, `turboLimit` a switch that turns the cap on, and `turboMax` the cap itself.
+- Punctuation: native ellipsis not needed (no value opens a further step), no ASCII quotes, `ms` kept as the unit symbol in the argument.
+- Not confirmed by a native speaker: every translation is a reviewed machine translation, as for the rest of the catalog. `tapDelay` in Arabic, Hindi, Thai and Korean (word order around `%@`) most needs one.
+- Placement: each key sits at its alphabetical spot in the `ui.profiles` run that starts at `addChord`; the run is not sorted across the whole file.
+- The tap count picker shows the digits 2 to 5 as numbers, which need no key.
+
 ### D5. System Actions Use Public APIs Only
 
 | Action | API | Permission to expect (the task records the result) | Out of scope |

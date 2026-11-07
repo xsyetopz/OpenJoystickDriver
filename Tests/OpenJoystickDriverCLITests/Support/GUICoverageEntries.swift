@@ -185,7 +185,7 @@ enum GUICoverageEntries {
     option("binding set", "--turbo-delay", "turboDelay"),
     option("binding set", "--turbo-max", "turboMax"),
     option("binding set", "--long-hold", "longHoldDuration"),
-    option("binding set", "--multi-tap", "doubleTapWindow"),
+    option("binding set", "--multi-tap", "multiTapSection"),
     option("binding set", "--actions-json", "ProfileAdditionalActionsView"),
     leaf("binding clear", "removeBinding"),
     option("binding clear", "--all", "removeAllAssignments"),

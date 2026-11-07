@@ -178,7 +178,7 @@
     func dismiss() { presentationMode.wrappedValue.dismiss() }
   }
 
-  /// The sheet that edits how an assignment acts: its behavior, turbo, long hold, double tap and
+  /// The sheet that edits how an assignment acts: its behavior, turbo, long hold, tap counts and
   /// additional actions.
   struct BindingBehaviorSheet: View {
     /// The assignment being edited.
@@ -219,20 +219,23 @@
     /// The destination of the long hold.
     @State
     var longHoldDestination: RemappingDestination
-    /// Whether double tap is on.
+    /// The turbo delay before the first repeat in milliseconds.
     @State
-    var doubleTapEnabled: Bool
-    /// The double tap window in milliseconds.
+    var turboDelay: Double
+    /// Whether turbo stops after a number of repeats.
     @State
-    var doubleTapWindow: Double
-    /// The destination of the double tap.
+    var turboLimitEnabled: Bool
+    /// The number of repeats after which turbo stops.
     @State
-    var doubleTapDestination: RemappingDestination
+    var turboMax: Double
+    /// The tap-count entries.
+    @State
+    var multiTapEntries: [RemappingMultiTap]
 
     /// Creates the sheet on the settings of `binding`.
     ///
-    /// Turbo starts at 12 Hz with a duty cycle of 0.5, a long hold at 500 ms and a double tap at
-    /// 300 ms, each with the Space key as its destination.
+    /// Turbo starts at 12 Hz with a duty cycle of 0.5, a long hold at 500 ms and a new tap-count
+    /// entry at 300 ms, each with the Space key as its destination.
     ///
     /// - Parameters:
     ///   - binding: The assignment to edit.
@@ -260,11 +263,10 @@
       _longHoldDestination = State(
         initialValue: binding.longHold?.destination ?? .keyboard(key: .space, modifiers: [])
       )
-      _doubleTapEnabled = State(initialValue: !binding.multiTap.isEmpty)
-      _doubleTapWindow = State(initialValue: binding.multiTap.first?.windowMs ?? 300)
-      _doubleTapDestination = State(
-        initialValue: binding.multiTap.first?.destination ?? .keyboard(key: .space, modifiers: [])
-      )
+      _turboDelay = State(initialValue: binding.turbo?.initialDelayMs ?? 0)
+      _turboLimitEnabled = State(initialValue: binding.turbo?.maxRepeats != nil)
+      _turboMax = State(initialValue: Double(binding.turbo?.maxRepeats ?? 10))
+      _multiTapEntries = State(initialValue: binding.multiTap)
     }
   }
 

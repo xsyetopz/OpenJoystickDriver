@@ -390,8 +390,12 @@
 "ui.profiles.addLayer" = "Thêm lớp";
 /* Title of the sheet that adds an assignment to a layer. %@ is the name of the layer. */
 "ui.profiles.addLayerAssignment" = "Thêm phép gán vào %@";
+/* Button in the behavior sheet that adds an entry for a tap count, such as a triple tap, to the control. */
+"ui.profiles.addMultiTap" = "Thêm số lần chạm";
 /* Button of the combination sheet that adds a sequence. A sequence is a set of controls pressed one after the other. */
 "ui.profiles.addSequence" = "Thêm chuỗi nút";
+/* Heading in the behavior sheet of the entries that send another destination when the control is tapped two to five times. */
+"ui.profiles.multiTap" = "Chạm nhiều lần";
 /* Title of the empty state in the profile editor when the profile has no assignment. */
 "ui.profiles.noAssignments" = "Chưa có phép gán";
 /* Instruction in the empty state of the profile editor. The destination is a key, a mouse button or a pointer movement. */
@@ -418,6 +422,16 @@
 "ui.profiles.changedElsewhere" = "Cấu hình đã được thay đổi ở nơi khác.";
 /* Error in the profile editor when the service saved the profile but the app cannot read the state afterwards. */
 "ui.profiles.savedButUnavailable" = "Cấu hình đã được lưu, nhưng trạng thái mới nhất của nó không khả dụng.";
+/* Label of the picker in the behavior sheet that sets how many taps of a control fire an entry. The choices are the numbers 2 to 5. */
+"ui.profiles.tapCount" = "Số lần chạm";
+/* Note in the behavior sheet under the tap-count entries. %@ is the longest tap window with its unit, such as 300 ms; the assignment's own destination fires only after that wait. */
+"ui.profiles.tapDelay" = "Đích cơ bản có thể chờ %@";
+/* Label of the field in the behavior sheet that sets the time from the press to the first repeat of turbo. The value is in milliseconds. */
+"ui.profiles.turboDelay" = "Độ trễ trước lần lặp đầu tiên";
+/* Switch in the behavior sheet that makes turbo stop after a number of repeats. */
+"ui.profiles.turboLimit" = "Giới hạn số lần lặp";
+/* Label of the field in the behavior sheet that sets how many repeats turbo makes after the press before it stops. The value is a number. */
+"ui.profiles.turboMax" = "Số lần lặp tối đa";
 /* Save status of the profile editor: there are changes that are not saved. */
 "ui.profiles.unsaved" = "Thay đổi chưa lưu";
 /* Save status of the profile editor while the profile is being saved. Keep the three dots. */
@@ -468,8 +482,6 @@
 "ui.profiles.details" = "Chi tiết cấu hình";
 /* Note on an assignment row when the controller or its protocol cannot do what the assignment needs. */
 "ui.profiles.notSupportedByController" = "Không được bộ điều khiển hoặc giao thức này hỗ trợ.";
-/* Label of the field in the behavior sheet for the destination of a double tap of a control. */
-"ui.profiles.doubleTap" = "Nhấn đúp";
 /* Toolbar button in the Profiles area that exports the profile to a file. */
 "ui.profiles.export" = "Xuất cấu hình";
 /* Option of the activation popup in the layer sheet: the layer is on while the control is held. */
@@ -510,7 +522,7 @@
 "ui.profiles.sequenceWindow" = "Khoảng thời gian hoàn tất";
 /* Heading of the sequences section in the profile editor. */
 "ui.profiles.sequences" = "Chuỗi nút";
-/* Label of the field in the behavior sheet that sets the time within which a second tap counts as a double tap. The value is in milliseconds. */
+/* Label of the field in the behavior sheet that sets the time from one tap's release to the next press within which the taps of a tap-count entry count together. The value is in milliseconds. */
 "ui.profiles.tapWindow" = "Khoảng thời gian chạm";
 /* Label of the popup in the profile creation sheet that picks which apps the profile applies to. */
 "ui.profiles.target" = "Đích";
