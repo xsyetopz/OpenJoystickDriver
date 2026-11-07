@@ -138,13 +138,15 @@
     }
   }
 
-  /// The Capture Packets and Draft Record buttons, under Advanced.
+  /// The Capture Packets, Draft Record and Draft Record from SDL buttons, under Advanced.
   struct ControllerTimedActionRows: View {
+    /// The controller the buttons act on.
+    let device: ApplicationServiceDeviceDescription
     /// The state and results of the actions.
     @ObservedObject
     var actions: ControllerDetailActions
 
-    /// The two buttons and the result of the latest timed capture.
+    /// The three buttons and the result of the latest of their actions.
     var body: some View {
       Group {
         Button(OJDLocalized.string("ui.controllers.capturePackets")) {
@@ -154,6 +156,10 @@
         Button(OJDLocalized.string("ui.controllers.draftRecord")) {
           actions.clearNotice()
           actions.timedKind = .draftRecord
+        }
+        Button(OJDLocalized.string("ui.controllers.draftRecordFromSDL")) {
+          actions.clearNotice()
+          actions.draftFromSDL(device: device)
         }
         if let notice = actions.notice, notice.source == .timedCapture {
           ControllerNoticeText(text: notice.text, isError: notice.isError)

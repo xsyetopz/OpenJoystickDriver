@@ -205,6 +205,7 @@ enum GUICoverageEntries {
   private static let record = [
     leaf("record draft", "ControllerRecordDrafting"),
     option("record draft", "--duration", "ControllerTimedActionSheet"),
+    option("record draft", "--from-sdl", "draftFromSDL"),
     leaf("record list", "LibraryListView"),
     option("record list", "--bundled", "LibraryScope"),
     leaf("record show", "LibraryRecordDetail"),

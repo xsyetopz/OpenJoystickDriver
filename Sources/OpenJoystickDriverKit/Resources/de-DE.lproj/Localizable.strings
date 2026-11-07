@@ -3904,6 +3904,10 @@
 "ui.controllers.draftRecord.title" = "Controller-Eintrag entwerfen";
 /* Message when a record cannot be drafted. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.controllers.draftRecord.noLayout" = "Aus dem HID-Berichtsdeskriptor von %@ konnte kein Bedienelement gelesen werden, und der mitgelieferte Eintrag nennt seine Familie bereits.";
+/* Button in the Controllers detail that drafts a controller record from the SDL_GameControllerDB line of the controller. SDL stays as written. Keep the three dots. */
+"ui.controllers.draftRecordFromSDL" = "Eintrag aus SDL entwerfen…";
+/* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
+"ui.controllers.draftRecordFromSDL.noPad" = "%@ ist nicht als HID-Gerät verbunden, das OpenJoystickDriver lesen kann.";
 /* Button in the Controllers detail that starts a packet capture of the controller. Keep the three dots. */
 "ui.controllers.capturePackets" = "Pakete erfassen…";
 /* Title of the sheet that captures packets of the controller. */

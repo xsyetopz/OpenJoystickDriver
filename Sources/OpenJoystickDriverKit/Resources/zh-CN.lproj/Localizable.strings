@@ -3903,6 +3903,10 @@
 "ui.controllers.draftRecord.title" = "起草控制器记录";
 /* Message when a record cannot be drafted. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.controllers.draftRecord.noLayout" = "无法从 %@ 的 HID 报告描述符中读取任何控件，且其内置记录已指明其系列。";
+/* Button in the Controllers detail that drafts a controller record from the SDL_GameControllerDB line of the controller. SDL stays as written. Keep the three dots. */
+"ui.controllers.draftRecordFromSDL" = "从 SDL 起草记录…";
+/* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
+"ui.controllers.draftRecordFromSDL.noPad" = "%@ 未作为 OpenJoystickDriver 可读取的 HID 设备连接。";
 /* Button in the Controllers detail that starts a packet capture of the controller. Keep the three dots. */
 "ui.controllers.capturePackets" = "捕捉数据包…";
 /* Title of the sheet that captures packets of the controller. */

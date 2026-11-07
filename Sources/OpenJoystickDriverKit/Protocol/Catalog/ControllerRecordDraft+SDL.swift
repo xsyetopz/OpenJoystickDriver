@@ -70,3 +70,24 @@ extension ControllerRecordDraft {
     text = json.formatted()
   }
 }
+
+extension ControllerRecordDraft.SDLFailure {
+  /// The message for the failure.
+  ///
+  /// - Parameters:
+  ///   - identity: The vendor and product ID of the controller.
+  ///   - localize: Returns the localized format for a key of the en-US catalog.
+  /// - Returns: The message in the language `localize` uses.
+  public func message(identity: String, localize: (String) -> String) -> String {
+    switch self {
+    case .hasRecord:
+      String(format: localize("cli.record.draft.sdl.hasRecord"), identity)
+    case .descriptorContract(let violation):
+      String(format: localize("cli.record.draft.sdl.contract"), identity, violation.rawValue)
+    case .noLine(let guid):
+      String(format: localize("cli.record.draft.sdl.noLine"), identity, guid ?? "")
+    case .rejected(let reason):
+      String(format: localize("cli.record.draft.sdl.rejected"), identity, reason)
+    }
+  }
+}

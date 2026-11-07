@@ -150,7 +150,7 @@
         ForEach(ControllerDetailFacts.advanced(for: device, record: record)) { fact in
           OJDLabeledValue(fact.label, fact.value)
         }
-        ControllerTimedActionRows(actions: actions)
+        ControllerTimedActionRows(device: device, actions: actions)
       } label: {
         Button(OJDLocalized.string("ui.virtualProfile.advanced")) { showsAdvanced.toggle() }
           .buttonStyle(.plain).frame(maxWidth: .infinity, alignment: .leading)

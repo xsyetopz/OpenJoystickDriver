@@ -143,28 +143,13 @@ struct RecordDraftCommand: AsyncParsableCommand {
         sdlDevice: pad
       )
     } catch {
-      switch error {
-      case .hasRecord:
-        throw CLIFailure(
-          .controllerRequestFailed,
-          CLILocalized.format("cli.record.draft.sdl.hasRecord", device.identity)
-        )
-      case .descriptorContract(let violation):
-        throw CLIFailure(
-          .controllerRequestFailed,
-          CLILocalized.format("cli.record.draft.sdl.contract", device.identity, violation.rawValue)
-        )
-      case .noLine(let guid):
-        throw CLIFailure(
-          .notFound,
-          CLILocalized.format("cli.record.draft.sdl.noLine", device.identity, guid ?? "")
-        )
-      case .rejected(let reason):
-        throw CLIFailure(
-          .sdlLineRejected,
-          CLILocalized.format("cli.record.draft.sdl.rejected", device.identity, reason)
-        )
-      }
+      let code: ErrorCode =
+        switch error {
+        case .noLine: .notFound
+        case .rejected: .sdlLineRejected
+        case .hasRecord, .descriptorContract: .controllerRequestFailed
+        }
+      throw CLIFailure(code, error.message(identity: device.identity, localize: CLILocalized.text))
     }
   }
 

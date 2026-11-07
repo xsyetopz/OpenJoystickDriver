@@ -163,6 +163,44 @@ enum ControllerRecordDrafting {
     return draft
   }
 
+  /// The error of a record that cannot be drafted from the SDL_GameControllerDB line.
+  struct SDLDraftFailure: Error, Equatable {
+    /// The message for the notice.
+    let message: String
+  }
+
+  /// Returns the record drafted from the SDL_GameControllerDB line of the controller, as
+  /// `ojd record draft --from-sdl` does.
+  ///
+  /// - Parameter device: The controller.
+  /// - Returns: The record that names the `HIDDescriptor` family and the converted usage map.
+  /// - Throws: ``SDLDraftFailure`` when the controller is not readable as a HID device, has a
+  ///   bundled record, fails the descriptor contract, or has no line the conversion accepts.
+  static func sdlDraft(
+    for device: ApplicationServiceDeviceDescription
+  ) throws(SDLDraftFailure) -> ControllerRecordDraft {
+    let model = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
+    guard
+      let pad = PlatformHosts.current.physicalDevice(
+        vendorID: Int(device.vendorID),
+        productID: Int(device.productID)
+      )
+    else {
+      let message = OJDLocalized.formatted(
+        "ui.controllers.draftRecordFromSDL.noPad",
+        model.description
+      )
+      throw SDLDraftFailure(message: message)
+    }
+    do {
+      return try ControllerRecordDraft(model: model, sdlDevice: pad)
+    } catch {
+      throw SDLDraftFailure(
+        message: error.message(identity: model.description, localize: OJDLocalized.string)
+      )
+    }
+  }
+
   /// Returns the suggested file name of the record, `VVVV-PPPP.json`.
   ///
   /// - Parameter device: The controller.

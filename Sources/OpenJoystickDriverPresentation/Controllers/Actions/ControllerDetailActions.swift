@@ -164,11 +164,10 @@ final class ControllerDetailActions: ObservableObject {
           packets: packets,
           descriptor: descriptor
         )
-        let directory = ControllerRecordSet.userDirectory
         pendingSave = SaveRequest(
           data: draft.document,
           fileName: ControllerRecordDrafting.fileName(for: device),
-          directory: FileManager.default.fileExists(atPath: directory.path) ? directory : nil,
+          directory: Self.recordDirectory,
           summary: OJDLocalized.formatted("cli.record.draft.captured", draft.capturedReports)
         )
       }
@@ -177,6 +176,30 @@ final class ControllerDetailActions: ObservableObject {
     } catch let error as ControllerRecordDrafting.NoLayout {
       timedState = .failed(error.message)
     } catch { timedState = .failed(RuntimePresentation.userFacingError(error)) }
+  }
+
+  /// The user record folder, when it exists, for the save panel of a drafted record.
+  private static var recordDirectory: URL? {
+    let directory = ControllerRecordSet.userDirectory
+    return FileManager.default.fileExists(atPath: directory.path) ? directory : nil
+  }
+
+  /// Drafts a record from the SDL_GameControllerDB line of `device`, then asks for a place to save
+  /// it.
+  ///
+  /// A failure becomes the notice under the timed actions.
+  ///
+  /// - Parameter device: The controller.
+  func draftFromSDL(device: ApplicationServiceDeviceDescription) {
+    do {
+      let draft = try ControllerRecordDrafting.sdlDraft(for: device)
+      pendingSave = SaveRequest(
+        data: draft.document,
+        fileName: ControllerRecordDrafting.fileName(for: device),
+        directory: Self.recordDirectory,
+        summary: nil
+      )
+    } catch { notice = Notice(source: .timedCapture, text: error.message, isError: true) }
   }
 
   /// Stops a running capture and closes the sheet.

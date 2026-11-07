@@ -82,7 +82,14 @@ struct ControllerCapabilitiesTests {
         motion: true
       )
     ),
-    ("Flydigi", 0xD7D7, 0x0041, ControllerCapabilities(controls: xboxGuide.union(triggerButtons))),
+    (
+      "Flydigi", 0xD7D7, 0x0041,
+      ControllerCapabilities(
+        controls: xboxGuide.union(triggerButtons).union([
+          .auxiliary1, .auxiliary2, .leftPaddle1, .leftPaddle2, .rightPaddle1, .rightPaddle2,
+        ])
+      )
+    ),
     ("GameSir G7 Pro", 0x3537, 0x1003, ControllerCapabilities(controls: gameSirG7Pro)),
     // GameSir motion has no verified scale or frame, so no GameSir row declares motion.
     ("GameSir G7 Pro 8K", 0x3537, 0x10C5, ControllerCapabilities(controls: gameSirG7Pro)),

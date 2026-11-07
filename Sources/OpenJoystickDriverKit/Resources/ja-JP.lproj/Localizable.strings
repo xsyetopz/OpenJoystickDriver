@@ -3903,6 +3903,10 @@
 "ui.controllers.draftRecord.title" = "コントローラのレコードを下書きする";
 /* Message when a record cannot be drafted. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.controllers.draftRecord.noLayout" = "%@ の HID レポート記述子からコントロールを読み取れず、同梱のレコードがすでにファミリーを示しています。";
+/* Button in the Controllers detail that drafts a controller record from the SDL_GameControllerDB line of the controller. SDL stays as written. Keep the three dots. */
+"ui.controllers.draftRecordFromSDL" = "SDL からレコードの下書き…";
+/* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
+"ui.controllers.draftRecordFromSDL.noPad" = "%@ は、OpenJoystickDriver で読み取れる HID デバイスとして接続されていません。";
 /* Button in the Controllers detail that starts a packet capture of the controller. Keep the three dots. */
 "ui.controllers.capturePackets" = "パケットをキャプチャ…";
 /* Title of the sheet that captures packets of the controller. */
