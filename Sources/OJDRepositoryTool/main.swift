@@ -23,6 +23,7 @@ private let usage = """
     OJDRepositoryTool facts
     OJDRepositoryTool kebab <value>...
     OJDRepositoryTool mask-image <png> <frame> <keep>...
+    OJDRepositoryTool format-json <file>...
   A path is a file, or a directory whose .json files are checked.
   validate controllers and descriptions read a directory at any depth. apply-patches reads
   Controller files at any depth and writes each to its relative path, and refuses a patch file
@@ -38,6 +39,9 @@ private let usage = """
   x,y,width,height in global points, and each <keep> lies inside <frame>. The pixels per point
   are the image size over the frame size. It prints nothing and exits 0, or 64 for an image it
   cannot read or write.
+  format-json rewrites each file in the record file text of OrderedJSON.formatted(), keeping the
+  order of keys and the text of numbers. It prints nothing and exits 0, or 64 for a file that is
+  not JSON or cannot be read or written.
   Each problem is one JSON line {"code", "file", "message"} on standard output. The exit status is
   0 without a problem, 1 with one, and 64 for a call that the tool refuses.
   """
@@ -127,6 +131,21 @@ private func run(_ arguments: [String]) throws -> [RepositoryProblem] {
   }
 }
 
+/// Rewrites each of `paths` as ``OrderedJSON/formatted()``.
+///
+/// - Throws: ``UsageError`` when no path is given or a file cannot be read, parsed or written.
+private func formatJSON(_ paths: [String]) throws {
+  guard !paths.isEmpty else { throw UsageError(message: "format-json needs a file") }
+  for path in paths {
+    let url = URL(fileURLWithPath: path)
+    do {
+      try OrderedJSON.parse(Data(contentsOf: url)).formattedData().write(to: url)
+    } catch {
+      throw UsageError(message: "\(path): \(error)")
+    }
+  }
+}
+
 /// The JSON line, ending in a newline, that reports `problem` on standard output.
 private func line(_ problem: RepositoryProblem) throws -> Data {
   let object: [String: Any] = [
@@ -172,6 +191,10 @@ do {
   let arguments = Array(CommandLine.arguments.dropFirst())
   if arguments.first == "mask-image" {
     try MaskImage.run(Array(arguments.dropFirst()))
+    exit(0)
+  }
+  if arguments.first == "format-json" {
+    try formatJSON(Array(arguments.dropFirst()))
     exit(0)
   }
   if let object = try document(arguments) {

@@ -13,9 +13,6 @@
     }
   ],
   "capabilities": {
-    "absent": [
-      "LeftTrigger",
-      "RightTrigger"
-    ]
+    "absent": ["LeftTrigger", "RightTrigger"]
   }
 }
