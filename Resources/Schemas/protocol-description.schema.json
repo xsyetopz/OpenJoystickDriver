@@ -188,6 +188,26 @@
   "allOf": [
     {
       "if": {
+        "properties": {
+          "family": {
+            "not": {
+              "const": "XboxXUSB"
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "defaults": {
+            "not": {
+              "required": ["receiverPowerOff"]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
         "required": ["recordSections"],
         "properties": {
           "recordSections": {
@@ -515,6 +535,9 @@
         "tuning": {
           "$ref": "controller.schema.json#/$defs/tuning"
         },
+        "receiverPowerOff": {
+          "$ref": "#/$defs/descriptionReceiverPowerOff"
+        },
         "variants": {
           "description": "Tuning and the rumble template that differ by variant, over the flat tuning and the flat session rumble template.",
           "type": "object",
@@ -820,6 +843,26 @@
         },
         "when": {
           "$ref": "#/$defs/startupWhen"
+        }
+      }
+    },
+    "descriptionReceiverPowerOff": {
+      "description": "The one raw-USB packet a receiver slot gets when OJD closes it on purpose; variants limits it to those the family lists, which a schema cannot say and the validators check. Only XboxXUSB sets it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bytes"],
+      "properties": {
+        "bytes": {
+          "$ref": "controller.schema.json#/$defs/usbStartupWrite/properties/bytes"
+        },
+        "endpoint": {
+          "$ref": "controller.schema.json#/$defs/usbStartupWrite/properties/endpoint"
+        },
+        "timeoutMilliseconds": {
+          "$ref": "controller.schema.json#/$defs/usbStartupWrite/properties/timeoutMilliseconds"
+        },
+        "variants": {
+          "$ref": "#/$defs/startupVariants"
         }
       }
     },
@@ -1139,7 +1182,7 @@
       }
     },
     "descriptionSession": {
-      "description": "What runs while the device is open: startup writes, the rumble template, the keep-alive, for NintendoSwitch1 its subcommands, for XboxGIP its named packets, handshake attempts and announce resend limit, and for XboxXUSB its receiver inquiry resend limit, and for NintendoSwitch2 its command channel and trailing stop packets, and for NintendoWii its Wii Remote wire facts. Startup writes are all HID reports, all raw-USB packets, or all references to the family's named packets; a reference names an id that namedPackets lists, which a schema cannot say and the validators check.",
+      "description": "What runs while the device is open: startup writes, the rumble template, the keep-alive, for NintendoSwitch1 its subcommands, for XboxGIP its named packets, handshake attempts and announce resend limit, and for NintendoSwitch2 its command channel and trailing stop packets, and for NintendoWii its Wii Remote wire facts. Startup writes are all HID reports, all raw-USB packets, or all references to the family's named packets; a reference names an id that namedPackets lists, which a schema cannot say and the validators check.",
       "type": "object",
       "additionalProperties": false,
       "minProperties": 1,

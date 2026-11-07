@@ -43,13 +43,16 @@ extension ProtocolDescription {
       let variantTuning: [String: ControllerTuning]
       /// Rumble templates by variant name, each overriding the flat `session.rumble`.
       let variantRumble: [String: RumbleOutputTemplate]
+      /// The packet a receiver slot gets when OJD closes it on purpose; nil when the description
+      /// sets none.
+      let receiverPowerOff: USBStartupWrite?
 
-      /// Decodes `session`, `input`, `tuning` and `variants`; an unknown key or an empty section is
-      /// rejected.
+      /// Decodes `session`, `input`, `tuning`, `variants` and `receiverPowerOff`; an unknown key
+      /// or an empty section is rejected.
       init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: DocumentKey.self)
         try container.rejectUnknown(allowed: [
-          "session", "input", "tuning", "variants",
+          "session", "input", "tuning", "variants", "receiverPowerOff",
         ])
         guard !container.allKeys.isEmpty else {
           throw DecodingError.dataCorrupted(
@@ -71,6 +74,36 @@ extension ProtocolDescription {
         }
         variantTuning = variants?.compactMapValues(\.tuning) ?? [:]
         variantRumble = variants?.compactMapValues(\.rumble) ?? [:]
+        receiverPowerOff = try container.decodeOptional(
+          ReceiverPowerOff.self,
+          for: "receiverPowerOff"
+        )?.write
+      }
+    }
+
+    /// `defaults.receiverPowerOff`: one raw-USB packet with `bytes`, and optionally `endpoint`,
+    /// `timeoutMilliseconds` and `variants`.
+    struct ReceiverPowerOff: Decodable {
+      /// The packet.
+      let write: USBStartupWrite
+
+      /// Decodes the packet; an unknown key or a value outside its range is rejected.
+      init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: DocumentKey.self)
+        try container.rejectUnknown(allowed: [
+          "bytes", "endpoint", "timeoutMilliseconds", "variants",
+        ])
+        let condition = try StartupWriteCondition.decode(from: container, decoder: decoder)
+        do {
+          write = try ControllerRecordDocument.StartupWrite.usbWrite(
+            container,
+            condition: condition
+          )
+        } catch let problem as ControllerRecordProblem {
+          throw DecodingError.dataCorrupted(
+            .init(codingPath: decoder.codingPath, debugDescription: problem.description)
+          )
+        }
       }
     }
 

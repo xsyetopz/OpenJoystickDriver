@@ -71,6 +71,9 @@ extension ProtocolDescription {
     {
       return RumbleOutputTemplate.resendWithFamilyKeepAliveProblem
     }
+    if receiverPowerOff != nil, family != .xboxXUSB {
+      return "receiverPowerOff applies only to XboxXUSB"
+    }
     if !startupWrites.isEmpty, rawUSB == .always {
       return "HID startup writes apply only to HID controllers"
     }

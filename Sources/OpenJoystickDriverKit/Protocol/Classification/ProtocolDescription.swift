@@ -181,6 +181,11 @@ struct ProtocolDescription: Sendable {
   /// The family's raw-USB initialization packets, sent when a controller starts unless its record
   /// carries its own.
   let usbStartupWrites: [USBStartupWrite]
+  /// The packet a receiver slot gets when OJD closes it on purpose; nil when the description
+  /// sets none.
+  ///
+  /// Only `XboxXUSB` has it.
+  let receiverPowerOff: USBStartupWrite?
   /// The family's keep-alive: its interval, the one place the interval is set, and the fixed
   /// writes of each run.
   let keepAlive: KeepAlive?
@@ -547,6 +552,7 @@ struct ProtocolDescription: Sendable {
       rumbleTemplate: document.defaults?.session?.rumble,
       startupWrites: document.defaults?.session?.startup?.hid ?? [],
       usbStartupWrites: usbStartupWrites,
+      receiverPowerOff: document.defaults?.receiverPowerOff,
       keepAlive: document.defaults?.session?.keepAlive,
       activation: document.defaults?.session?.activation ?? [],
       deactivation: document.defaults?.session?.deactivation ?? [],
@@ -567,6 +573,7 @@ struct ProtocolDescription: Sendable {
     )
     for condition in description.startupWrites.map(\.condition)
       + description.usbStartupWrites.map(\.condition)
+      + (description.receiverPowerOff.map { [$0.condition] } ?? [])
       + (description.keepAlive?.writes.map(\.payload.condition) ?? [])
     {
       if let problem = description.conditionProblem(condition, fileName: fileName) {
@@ -649,6 +656,13 @@ struct ProtocolDescription: Sendable {
     parameters: ProtocolParameters
   ) -> [USBStartupWrite] {
     usbStartupWrites.filter { $0.condition.matches(variant: variant, parameters: parameters) }
+  }
+
+  /// The packet a controller on `variant` receives when OJD closes it on purpose, or nil.
+  func receiverPowerOffWrite(variant: PhysicalProtocolVariantID?) -> USBStartupWrite? {
+    receiverPowerOff.flatMap {
+      $0.condition.matches(variant: variant, parameters: .none) ? $0 : nil
+    }
   }
 
   /// The tuning keys a controller of this family and stored variant reads: the

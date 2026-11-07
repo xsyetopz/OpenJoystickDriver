@@ -551,6 +551,44 @@ struct ProtocolDescriptionTests {
     )
   }
 
+  private static let powerOff =
+    #""rawUSB": true, "defaults": {"receiverPowerOff": "#
+    + #"{"bytes": "00 00 08 C0 00 00 00 00 00 00 00 00", "variants": ["Receiver"]}}"#
+
+  @Test
+  func readsTheReceiverPowerOffPacketForItsVariantOnly() throws {
+    let description = try decode(family: .xboxXUSB, Self.powerOff)
+
+    #expect(description.receiverPowerOffWrite(variant: .receiver)?.bytes.count == 12)
+    #expect(description.receiverPowerOffWrite(variant: .wired) == nil)
+    #expect(description.receiverPowerOffWrite(variant: nil) == nil)
+  }
+
+  @Test
+  func rejectsAReceiverPowerOffPacketOfAnotherFamily() {
+    #expect(
+      rejection(family: .xboxGIP, #""defaults": {"receiverPowerOff": {"bytes": "00"}}"#)?.code
+        == .invalidProtocolDescription
+    )
+  }
+
+  @Test(
+    arguments: [
+      #"{"bytes": "00 00", "report": {"kind": "Output", "id": 1, "length": 4}}"#,
+      #"{"bytes": "00 00", "delayMilliseconds": 5}"#,
+      #"{"bytes": "00 00", "variants": ["Mobile"]}"#,
+      #"{"bytes": "00 00", "variants": ["Wired", "Wired"]}"#,
+      #"{"bytes": "00 00", "endpoint": 0}"#,
+      #"{"bytes": ""}"#,
+      #"{}"#,
+    ]
+  )
+  func rejectsAnInvalidReceiverPowerOffPacket(packet: String) {
+    let body = #""rawUSB": true, "defaults": {"receiverPowerOff": \#(packet)}"#
+
+    #expect(rejection(family: .xboxXUSB, body) != nil)
+  }
+
   @Test
   func rejectsARumbleResendIntervalInAFamilyWithAKeepAlive() {
     let keepAlive = #""keepAlive": {"intervalMilliseconds": 100}"#

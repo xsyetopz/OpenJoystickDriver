@@ -25447,6 +25447,87 @@
           }
         }
       }
+    },
+    {
+      "name": "a receiver power-off packet with an unknown key is refused",
+      "code": "E5002",
+      "schema": true,
+      "fileName": "xbox-xusb.json",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha2",
+        "kind": "ProtocolDescription",
+        "family": "XboxXUSB",
+        "endpoints": {
+          "in": 129,
+          "out": 1
+        },
+        "variants": [
+          "Wired",
+          "Receiver"
+        ],
+        "storesVariant": true,
+        "rawUSB": true,
+        "sessionKeys": [
+          "startup"
+        ],
+        "defaults": {
+          "receiverPowerOff": {
+            "bytes": "00 00 08 C0 00 00 00 00 00 00 00 00",
+            "delayMilliseconds": 5
+          }
+        }
+      }
+    },
+    {
+      "name": "a receiver power-off packet of another family is refused",
+      "code": "E5002",
+      "schema": true,
+      "fileName": "xbox-xid.json",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha2",
+        "kind": "ProtocolDescription",
+        "family": "XboxXID",
+        "endpoints": {
+          "in": 129,
+          "out": 1
+        },
+        "defaults": {
+          "receiverPowerOff": {
+            "bytes": "00 00 08 C0 00 00 00 00 00 00 00 00"
+          }
+        }
+      }
+    },
+    {
+      "name": "a receiver power-off packet naming a variant the family lacks is refused",
+      "code": "E5004",
+      "fileName": "xbox-xusb.json",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha2",
+        "kind": "ProtocolDescription",
+        "family": "XboxXUSB",
+        "endpoints": {
+          "in": 129,
+          "out": 1
+        },
+        "variants": [
+          "Wired",
+          "Receiver"
+        ],
+        "storesVariant": true,
+        "rawUSB": true,
+        "sessionKeys": [
+          "startup"
+        ],
+        "defaults": {
+          "receiverPowerOff": {
+            "bytes": "00 00 08 C0 00 00 00 00 00 00 00 00",
+            "variants": [
+              "USB"
+            ]
+          }
+        }
+      }
     }
   ]
 }
