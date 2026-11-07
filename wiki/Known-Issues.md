@@ -26,6 +26,14 @@ Some controllers report the same VID:PID and the same USB serial number, such as
 
 Some pads report `057E:2009` and the USB serial `000000000001`, the identity and serial of a Nintendo Switch Pro Controller, while in their Switch mode. OJD binds every `057E:2009` pad as a Pro Controller, so such a pad gets that driver. `ojd diagnose` names each one in its `switch-placeholder-serial` check, and the check does not change the binding. Other pads can report the same serial, so the serial alone does not identify a model. The pad reports at its own interval in this mode, which OJD does not change.
 
+## A Wii Remote May Not Pair With macOS
+
+OJD does not pair a Wii Remote. macOS Bluetooth pairs it, and OJD reads the remote after macOS connects it. Which macOS versions pair the remote, with the 1 and 2 buttons or with the SYNC button, and whether macOS asks for a PIN, is not verified. If the remote does not appear in **System Settings** > **Bluetooth**, OJD cannot see it. For the steps, see [Pair the remote](Wii-Remote.md#pair-the-remote).
+
+## The Virtual Controllers Carry No Pointer
+
+The controls `PointerX`, `PointerY`, and `PointerTracking` are in the control vocabulary, but the `SDLCompatible` and `Generic` personas publish gamepad controls only. A pointer reaches a profile or an SDK client, not a game that reads the virtual controller. The Wii Remote driver sends no pointer value yet, because it does not read the IR camera.
+
 ## Unplugging a USB Controller Can Crash the App
 
 If you unplug a USB controller or dongle while OJD runs, OJD may crash. It may also leave stale virtual controllers in **System Settings**. Restart OJD to clear them.

@@ -91,10 +91,10 @@ Depends: 7.
 
 - [ ] 8.1 Update `docs/development/wire-protocols.md`: the `NintendoWii` row of the Protocol Coverage table (described, stays coded, suite `WiiDriverTests`) and the Coded Behavior entries from 6.1. Verify: `swift test --filter ProtocolParserCoverageTests` passes; `git diff --check` of the file passes.
 - [ ] 8.2 Add the wiki page `wiki/Wii-Remote.md`: pairing through macOS Bluetooth, reconnecting, LEDs, extensions, IR pointer to mouse with a profile example, speaker commands, disconnecting, and the lack of a power-off command. Link it from `wiki/_Sidebar.md`, `Supported-Controllers.md` and `Connecting-Controllers.md`. Verify: `git diff --check` over the new and changed pages passes, and `python3 Scripts/Quality/check_localization_keys.py` still passes.
-- [ ] 8.3 Add the Known Issues entries to `wiki/Known-Issues.md` for macOS pairing and for the personas that carry no pointer. Verify: `git diff --check` passes.
+- [x] 8.3 Add the Known Issues entries to `wiki/Known-Issues.md` for macOS pairing and for the personas that carry no pointer. Verify: `git diff --check` passes. Done: two entries; the pairing entry says which paths are not verified.
 - [ ] 8.4 Add a `CHANGELOG.md` entry under Unreleased: the family, the two records, the pointer ids, the speaker command. Verify: `git diff --check` passes.
 - [ ] 8.5 Review sources: the driver, description and tests are independent implementations from WiiBrew facts and captures, with no code or wording from wiiuse or wiimacmote. Verify: `grep -rniE "wiiuse|wiimacmote" Sources Resources Tests` finds no copied code, only fact references in doc comments, and `grep -rn "GPL" Sources/OpenJoystickDriverKit/Protocol/Drivers/Nintendo` finds nothing.
-- [ ] 8.6 Review that no doc uses history words. Verify: `grep -rniE "renamed|legacy|previously|formerly" wiki/Wii-Remote.md` finds nothing.
+- [x] 8.6 Review that no doc uses history words. Verify: `grep -rniE "renamed|legacy|previously|formerly" wiki/Wii-Remote.md` finds nothing. Done: the grep finds nothing in the page as it stands; rerun it after 8.2 is finished.
 
 ## 9. Integration
 

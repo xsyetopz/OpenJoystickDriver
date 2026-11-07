@@ -6,6 +6,7 @@
 - **Controllers**
   - [Supported controllers](Supported-Controllers.md)
   - [Connecting controllers](Connecting-Controllers.md)
+  - [Wii Remote](Wii-Remote.md)
   - [Controller records](Controller-Records.md)
   - [Writing controller mods](Writing-Controller-Mods.md)
 - **Games**

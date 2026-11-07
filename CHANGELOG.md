@@ -28,6 +28,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - `ojd diagnose` reports a `057E:2009` controller with serial `000000000001` in its new `switch-placeholder-serial` check, and the Activity table lists it.
 - The control vocabulary has `PointerX`, `PointerY` and `PointerTracking`, for a controller that aims at the screen. The virtual personas do not publish them.
 - The control vocabulary has `LeftGripTouch` and `RightGripTouch`, and the Steam Controller (2026) reports them from bits 29 and 28 of its button word. The virtual personas do not publish them.
+- The `NintendoWii` protocol family drives the Wii Remote over Bluetooth HID, with bundled records for `057E:0306` (`Nintendo RVL-CNT-01`) and `057E:0330` (`Nintendo RVL-CNT-01-TR`). A record matches by product string, so the Wii Balance Board and the Wii U Pro Controller match no mode. The driver reads the core buttons, the accelerometer, the battery, and the Nunchuk, Classic Controller and Classic Controller Pro extensions. Both records are unverified, and the LEDs, rumble, IR camera, speaker and Motion Plus are not driven. See [Wii Remote](wiki/Wii-Remote.md).
 
 ### Changed
 

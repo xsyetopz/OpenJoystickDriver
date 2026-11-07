@@ -29,7 +29,7 @@ A dongle is a separate device from the controller. A dongle problem is not the s
 
 ### Bluetooth
 
-OJD never reconnects a Bluetooth controller by itself. To disconnect a controller, select **Disconnect Wireless Controller...** in the controller detail. Then reconnect the controller by hand.
+OJD never reconnects a Bluetooth controller by itself. To disconnect a controller, select **Disconnect Wireless Controller...** in the controller detail. Then reconnect the controller by hand. For the Wii Remote, see [Wii Remote](Wii-Remote.md).
 
 ## Finding Your Controller ID
 
