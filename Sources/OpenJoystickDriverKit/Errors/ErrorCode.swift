@@ -105,6 +105,12 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
   case noApplicationAnswered = "E2036"
   /// Notifications are not allowed for OJD.
   case notificationsDenied = "E2037"
+  /// The selected controller has no speaker.
+  case speakerUnavailable = "E2038"
+  /// The audio file is not an uncompressed PCM WAV file.
+  case unsupportedAudioFile = "E2039"
+  /// The extension on the controller did not answer its setup.
+  case extensionHandshakeFailed = "E2040"
   /// The controller is not connected or not ready for remapping.
   case controllerUnavailable = "E3001"
   /// The selected Joy-Con could not be paired.
@@ -253,7 +259,8 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
       .claimUnsupported, .unknownAccessClient, .ungrantableClient, .noAccessScope,
       .serviceStopping, .duplicateTokenName, .invalidTokenName, .invalidWebOrigin,
       .webPortUnavailable, .controlScopeWithOrigins, .launchFailed, .requestListenerStopped,
-      .damagedListenerFailureRecord, .noApplicationAnswered, .notificationsDenied:
+      .damagedListenerFailureRecord, .noApplicationAnswered, .notificationsDenied,
+      .speakerUnavailable, .unsupportedAudioFile, .extensionHandshakeFailed:
       .commandLine
     case .controllerUnavailable, .joyConPairUnavailable, .motionUnavailable, .argumentTooLarge,
       .corruptLibrary, .duplicateName, .invalidArguments, .invalidProfile, .librarySizeExceeded,

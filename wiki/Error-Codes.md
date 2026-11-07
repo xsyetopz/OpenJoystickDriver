@@ -73,6 +73,9 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E2035 | Command line | The file that records why the request listener stopped cannot be used. Delete the file, then open OpenJoystickDriver again. Exit code 1. |
 | E2036 | Command line | No OpenJoystickDriver app answered the test notification in time. Check that the app is running, then try again. Exit code 69. |
 | E2037 | Command line | Notifications are not allowed for OpenJoystickDriver. Allow them in the system notification settings, then try again. Exit code 77. |
+| E2038 | Command line | The controller has no speaker. Choose a controller that can play sound, then try again. Exit code 1. |
+| E2039 | Command line | The audio file is not supported. Use an uncompressed PCM WAV file, then try again. Exit code 1. |
+| E2040 | Command line | The extension on the controller did not answer its setup. Reconnect the extension, then try again. Exit code 1. |
 | E3001 | Remapping | The controller is not connected or not ready for remapping. Reconnect it and try again. Wire value `controller_unavailable`. |
 | E3002 | Remapping | The selected Joy-Cons could not be paired. Refresh the connected controllers and try again. Wire value `joy_con_pair_unavailable`. |
 | E3003 | Remapping | The controller does not report motion data. Choose a controller with motion sensors, or leave motion options off. Wire value `motion_unavailable`. |

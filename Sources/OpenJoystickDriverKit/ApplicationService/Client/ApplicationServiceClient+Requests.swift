@@ -105,6 +105,26 @@ extension ApplicationServiceClient {
     )
   }
 
+  /// Plays `audio`, bytes in the speaker's format, on the speaker of `controller`; returns when
+  /// the clip ends.
+  public func playControllerSpeaker(
+    _ audio: Data,
+    for controller: ControllerReference
+  ) async throws -> ControllerOutputResult {
+    try await call(
+      .playControllerSpeaker,
+      LocalServiceRPCSpeakerArguments(controller: controller, audio: audio),
+      timeoutSeconds: 3_600
+    )
+  }
+
+  /// Stops the audio on the speaker of `controller` and mutes it.
+  public func stopControllerSpeaker(
+    for controller: ControllerReference
+  ) async throws -> ControllerOutputResult {
+    try await call(.stopControllerSpeaker, LocalServiceRPCDeviceArguments(controller: controller))
+  }
+
   /// Previews a color on the physical controller `controller`, held under `token`.
   ///
   /// - Returns: Whether the service applied the preview.

@@ -78,6 +78,7 @@ extension DeviceManager {
     case .setRGB(let color): output = .color(color)
     case .setLightBrightness(let brightness): output = .brightness(Double(brightness.byte) / 255)
     case .setAdaptiveTrigger(let trigger, let effect): output = .adaptiveTrigger(trigger, effect)
+    case .speaker: return .invalidValue
     }
     let claim = physicalOutputOwnership.setManual(output, for: key)
     let outcome = await applyPhysicalChannel(output.channel, for: key, pipeline: pipeline)

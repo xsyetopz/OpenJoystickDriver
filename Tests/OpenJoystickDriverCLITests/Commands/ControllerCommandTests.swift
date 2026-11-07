@@ -121,6 +121,27 @@ struct ControllerCommandTests {
   }
 
   @Test
+  func rumbleOnAWiiRemoteSendsTheLowFrequencyLevelOfItsOneBinaryMotor() async throws {
+    let wii = PhysicalControllerOutputCapabilities(
+      rumbleMotors: [.lowFrequency],
+      lightingFeatures: [.playerIndicator],
+      binaryRumbleMotors: [.lowFrequency],
+      speaker: .yamahaADPCM4Bit
+    )
+    let service = try FakeService(
+      devices: [ApplicationServiceDeviceDescription.fixture(id: "wii-1", outputs: wii)],
+      respond: Self.delivered(dropping: [.highFrequency])
+    )
+    let result = await service.run(["controller", "rumble", token("wii-1"), "--left", "255"])
+    #expect(result.code == 0, "\(result.standardError)")
+    guard case .setRumble(let intensities, _) = try Self.sentCommands(service).first else {
+      Issue.record("expected setRumble")
+      return
+    }
+    #expect(intensities.lowFrequency != .min)
+  }
+
+  @Test
   func rumbleWithLeftAndRightSendsOneCommandWithBothLevels() async throws {
     let service = try FakeService(
       devices: [ApplicationServiceDeviceDescription.fixture(id: "pad-1")],

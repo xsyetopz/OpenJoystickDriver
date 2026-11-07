@@ -97,6 +97,17 @@ public enum RumbleDuration: Equatable, Hashable, Sendable {
   public static let maximumSeconds = Double(maxRumbleDurationMs) / 1_000
 }
 
+/// One step of speaker playback.
+public enum SpeakerOutput: Equatable, Hashable, Sendable {
+  /// Sets the speaker up and unmutes it for audio of `seconds`; a controller refuses a longer
+  /// clip than its `speakerMaxSeconds`.
+  case start(seconds: Double)
+  /// Plays encoded audio bytes of the speaker's format; one packet holds at most 20.
+  case data([UInt8])
+  /// Mutes and disables the speaker.
+  case stop
+}
+
 /// One normalized physical output command.
 public enum ControllerOutputCommand: Equatable, Hashable, Sendable {
   /// Drives the rumble channels at the given intensities for the given duration.
@@ -111,6 +122,8 @@ public enum ControllerOutputCommand: Equatable, Hashable, Sendable {
   case setLightBrightness(UnipolarValue)
   /// Applies an effect to one adaptive trigger.
   case setAdaptiveTrigger(PhysicalAdaptiveTrigger, PhysicalAdaptiveTriggerEffect)
+  /// Plays audio on the controller's speaker.
+  case speaker(SpeakerOutput)
 
   /// The capability a controller needs to carry out this command; a rumble command names its
   /// first active channel, or the low-frequency motor when none is active.
@@ -122,6 +135,7 @@ public enum ControllerOutputCommand: Equatable, Hashable, Sendable {
     case .setRGB: .rgb
     case .setLightBrightness: .lightBrightness
     case .setAdaptiveTrigger(let trigger, _): .adaptiveTrigger(trigger)
+    case .speaker: .speaker
     }
   }
 }
@@ -138,6 +152,8 @@ public enum ControllerOutputCapability: Equatable, Hashable, Sendable {
   case lightBrightness
   /// The given adaptive trigger.
   case adaptiveTrigger(PhysicalAdaptiveTrigger)
+  /// The speaker.
+  case speaker
 }
 
 /// Why a controller did not accept or encode an output command.
@@ -172,6 +188,7 @@ extension PhysicalControllerOutputCapabilities {
     case .setRGB: supported = lightingFeatures.contains(.programmableColor)
     case .setLightBrightness: supported = supportsProgrammableBrightness
     case .setAdaptiveTrigger(let trigger, _): supported = adaptiveTriggers.contains(trigger)
+    case .speaker: supported = supportsSpeaker
     }
     guard supported else { throw .unsupportedCapability(command.capability) }
     return (command, [])

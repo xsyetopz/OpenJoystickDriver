@@ -2885,6 +2885,12 @@
 "error.E2036.message" = "Geen enkele OpenJoystickDriver-app heeft op tijd op de testmelding geantwoord. Controleer of de app draait en probeer het opnieuw.";
 /* Error E2037, shown by ojd and the app when notifications are not allowed for the app, so the test notification could not be shown. */
 "error.E2037.message" = "Meldingen zijn niet toegestaan voor OpenJoystickDriver. Sta ze toe in de meldingsinstellingen van het systeem en probeer het opnieuw.";
+/* Error E2038, shown by ojd and the app when the selected controller has no speaker to play sound on. */
+"error.E2038.message" = "De controller heeft geen luidspreker. Kies een controller die geluid kan afspelen en probeer het opnieuw.";
+/* Error E2039, shown by ojd when the audio file given to the speaker command is not an uncompressed PCM WAV file. */
+"error.E2039.message" = "Het audiobestand wordt niet ondersteund. Gebruik een ongecomprimeerd PCM-WAV-bestand en probeer het opnieuw.";
+/* Error E2040, shown by ojd and the app when the extension plugged into the controller did not answer its setup. */
+"error.E2040.message" = "De uitbreiding op de controller antwoordde niet op de configuratie. Sluit de uitbreiding opnieuw aan en probeer het opnieuw.";
 /* Note about a controller record whose raw USB family the USB extension cannot claim because Apple signs its product list. OJD is the short product name. */
 "platform.macos.cli.record.group.usbNotClaimed" = "De familie gebruikt onbewerkte USB en de USB-extensie kan deze controller niet claimen, omdat de productlijst door Apple is ondertekend. OJD bereikt hem alleen via directe USB-toegang, wanneer macOS dat toestaat.";
 /* Note about a Switch 2 controller record that connects over USB only. bluetoothLE.vibrationCharacteristic is a field of the record and stays as written. */

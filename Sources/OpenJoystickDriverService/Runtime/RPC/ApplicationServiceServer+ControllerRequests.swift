@@ -77,6 +77,19 @@ extension ApplicationServiceServer {
     await deviceManager.sendControllerOutput(command, for: controller)
   }
 
+  /// Plays `audio` on the speaker of the selected controller.
+  public func playControllerSpeaker(
+    _ audio: Data,
+    for controller: ControllerReference
+  ) async -> ControllerOutputResult {
+    await deviceManager.playSpeaker(audio, for: controller)
+  }
+
+  /// Stops the speaker of the selected controller.
+  public func stopControllerSpeaker(
+    for controller: ControllerReference
+  ) async -> ControllerOutputResult { await deviceManager.stopSpeaker(for: controller) }
+
   /// Suspends the controller and returns the encoded result.
   public func suspendController(_ controller: ControllerReference) async -> Data {
     let result = await deviceManager.suspendController(controller)

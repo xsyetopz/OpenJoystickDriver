@@ -198,7 +198,7 @@ extension WiiDriver {
   }
 
   /// A memory write of `bytes`; the report always carries sixteen data bytes, zero-padded.
-  private func registerWrite(_ address: UInt32, _ bytes: [UInt8]) -> PhysicalOutputWrite {
+  func registerWrite(_ address: UInt32, _ bytes: [UInt8]) -> PhysicalOutputWrite {
     memoryOutput(
       Self.memoryWriteOutputID,
       address,

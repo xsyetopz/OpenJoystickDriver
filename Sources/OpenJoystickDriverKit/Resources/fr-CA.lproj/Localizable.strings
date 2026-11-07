@@ -2885,6 +2885,12 @@
 "error.E2036.message" = "Aucune app OpenJoystickDriver n’a répondu à temps à la notification de test. Vérifiez que l’app est en cours d’exécution, puis réessayez.";
 /* Error E2037, shown by ojd and the app when notifications are not allowed for the app, so the test notification could not be shown. */
 "error.E2037.message" = "Les notifications ne sont pas autorisées pour OpenJoystickDriver. Autorisez-les dans les réglages de notifications du système, puis réessayez.";
+/* Error E2038, shown by ojd and the app when the selected controller has no speaker to play sound on. */
+"error.E2038.message" = "La manette n’a pas de haut-parleur. Choisissez une manette qui peut lire du son, puis réessayez.";
+/* Error E2039, shown by ojd when the audio file given to the speaker command is not an uncompressed PCM WAV file. */
+"error.E2039.message" = "Le fichier audio n’est pas pris en charge. Utilisez un fichier WAV PCM non compressé, puis réessayez.";
+/* Error E2040, shown by ojd and the app when the extension plugged into the controller did not answer its setup. */
+"error.E2040.message" = "L’extension de la manette n’a pas répondu à sa configuration. Rebranchez l’extension, puis réessayez.";
 /* Note about a controller record whose raw USB family the USB extension cannot claim because Apple signs its product list. OJD is the short product name. */
 "platform.macos.cli.record.group.usbNotClaimed" = "La famille utilise l’USB brut, et l’extension USB ne peut pas prendre en charge cette manette, car sa liste de produits est signée par Apple. OJD ne l’atteint que par un accès USB direct, lorsque macOS l’autorise.";
 /* Note about a Switch 2 controller record that connects over USB only. bluetoothLE.vibrationCharacteristic is a field of the record and stays as written. */

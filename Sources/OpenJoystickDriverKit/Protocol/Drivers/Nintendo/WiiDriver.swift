@@ -7,8 +7,8 @@ import Foundation
 /// The report layouts, the button and accelerometer bits, the report-mode choice and the register
 /// scripts come from the `wiiRemote` field of `nintendo-wii.json`. Facts are from WiiBrew's
 /// Wiimote page. Nunchuk, Classic and Motion Plus data and the remote's motion sample are
-/// decoded, and so are the IR camera, the LEDs and the rumble motor; the speaker is not written
-/// yet.
+/// decoded, and so are the IR camera, the LEDs and the rumble motor;
+/// the speaker plays through `encode`.
 public final class WiiDriver: PhysicalProtocolDriver {
   /// The input report that answers a status request and carries the battery.
   static let statusReportID: UInt8 = 0x20
@@ -53,6 +53,8 @@ public final class WiiDriver: PhysicalProtocolDriver {
   let wii: ProtocolDescription.WiiRemote
   /// The wait for the reply to a memory read or write, in nanoseconds.
   let replyTimeoutNanoseconds: UInt64
+  /// The longest audio the speaker takes, in seconds (`speakerMaxSeconds`).
+  let speakerMaxSeconds: Int
   /// The least time between two writes of the IR setup, in nanoseconds (`IRSetupSpacing`).
   let irWriteIntervalNanoseconds: UInt64
   /// The state after the latest report.
@@ -119,6 +121,7 @@ public final class WiiDriver: PhysicalProtocolDriver {
     replyTimeoutNanoseconds =
       UInt64(PhysicalProtocolID.nintendoWii.described(\.replyTimeoutMilliseconds, in: tuning))
       * 1_000_000
+    speakerMaxSeconds = PhysicalProtocolID.nintendoWii.described(\.speakerMaxSeconds, in: tuning)
     irWriteIntervalNanoseconds =
       UInt64(PhysicalProtocolID.nintendoWii.described(\.irWriteIntervalMilliseconds, in: tuning))
       * 1_000_000
@@ -147,7 +150,8 @@ public final class WiiDriver: PhysicalProtocolDriver {
     PhysicalControllerOutputCapabilities(
       rumbleMotors: [.lowFrequency],
       lightingFeatures: [.playerIndicator],
-      binaryRumbleMotors: [.lowFrequency]
+      binaryRumbleMotors: [.lowFrequency],
+      speaker: .yamahaADPCM4Bit
     )
   }
 

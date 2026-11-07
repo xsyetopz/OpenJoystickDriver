@@ -79,6 +79,20 @@ public struct LocalServiceRPCControllerOutputArguments: Codable, Sendable {
     self.command = command
   }
 }
+/// Arguments of `playControllerSpeaker`: the controller and the audio bytes in the speaker's
+/// format.
+public struct LocalServiceRPCSpeakerArguments: Codable, Sendable {
+  /// The controller whose speaker plays.
+  public let controller: ControllerReference
+  /// The encoded audio.
+  public let audio: Data
+
+  /// Creates the arguments from a controller and its audio.
+  public init(controller: ControllerReference, audio: Data) {
+    self.controller = controller
+    self.audio = audio
+  }
+}
 /// The arguments that set the color of a controller.
 public struct LocalServiceRPCColorArguments: Codable, Sendable {
   /// The controller whose color changes.

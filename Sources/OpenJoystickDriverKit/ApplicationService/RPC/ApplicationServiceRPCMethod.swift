@@ -49,6 +49,10 @@ package enum ApplicationServiceRPCMethod: String, CaseIterable, Sendable {
   case resumeController
   /// Disconnects a wireless controller.
   case disconnectWirelessController
+  /// Plays audio on a controller's speaker.
+  case playControllerSpeaker
+  /// Stops the audio on a controller's speaker.
+  case stopControllerSpeaker
   /// Resets the app settings.
   case resetSettings
   /// Reads the app settings.

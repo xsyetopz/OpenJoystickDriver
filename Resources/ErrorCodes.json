@@ -280,6 +280,24 @@
       "exitCode": 77
     },
     {
+      "code": "E2038",
+      "domain": "CLI",
+      "name": "speakerUnavailable",
+      "exitCode": 1
+    },
+    {
+      "code": "E2039",
+      "domain": "CLI",
+      "name": "unsupportedAudioFile",
+      "exitCode": 1
+    },
+    {
+      "code": "E2040",
+      "domain": "CLI",
+      "name": "extensionHandshakeFailed",
+      "exitCode": 1
+    },
+    {
       "code": "E3001",
       "domain": "Remapping",
       "name": "controllerUnavailable",

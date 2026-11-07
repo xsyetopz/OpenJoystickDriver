@@ -159,6 +159,8 @@ public actor DeviceManager {
   var lastPhysicalHIDOutputNanoseconds: [LogicalControllerID: UInt64] = [:]
   /// The pending task that ends the timed rumble of each controller.
   var rumbleStopTasks: [LogicalControllerID: Task<Void, Never>] = [:]
+  /// The speaker playback in progress on each controller.
+  var speakerTasks: [LogicalControllerID: Task<ControllerOutputResult.Outcome, Never>] = [:]
   /// The generations that tell a rumble stop task whether a later request replaced it.
   var rumbleStopTokens = RumbleStopTokenRegistry()
   /// The claims on the physical output channels of each controller.

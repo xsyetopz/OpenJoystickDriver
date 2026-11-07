@@ -26,6 +26,7 @@ extension WiiDriver {
     case .setPlayerIndicator(let player):
       let leds = player == .off ? 0 : 1 << (wii.ledFirstBit + player.rawValue - 1)
       return PhysicalOutputPlan(writes: [outputReport([wii.ledReport, UInt8(leds)])])
+    case .speaker(let output): return try speakerPlan(output)
     default: throw .unsupportedCapability(command.capability)
     }
   }

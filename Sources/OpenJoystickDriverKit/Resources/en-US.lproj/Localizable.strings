@@ -3339,6 +3339,12 @@
 "error.E2036.message" = "No OpenJoystickDriver app answered the test notification in time. Check that the app is running, then try again.";
 /* Error E2037, shown by ojd and the app when notifications are not allowed for the app, so the test notification could not be shown. */
 "error.E2037.message" = "Notifications are not allowed for OpenJoystickDriver. Allow them in the system notification settings, then try again.";
+/* Error E2038, shown by ojd and the app when the selected controller has no speaker to play sound on. */
+"error.E2038.message" = "The controller has no speaker. Choose a controller that can play sound, then try again.";
+/* Error E2039, shown by ojd when the audio file given to the speaker command is not an uncompressed PCM WAV file. */
+"error.E2039.message" = "The audio file is not supported. Use an uncompressed PCM WAV file, then try again.";
+/* Error E2040, shown by ojd and the app when the extension plugged into the controller did not answer its setup. */
+"error.E2040.message" = "The extension on the controller did not answer its setup. Reconnect the extension, then try again.";
 /* Text of error E3001, returned when a remapping request names a controller that is not connected or not ready. */
 "error.E3001.message" = "The controller is not connected or not ready for remapping. Reconnect it and try again.";
 /* Text of error E3002, returned when two Joy-Cons cannot be paired into one controller. Joy-Con is a Nintendo product name. */

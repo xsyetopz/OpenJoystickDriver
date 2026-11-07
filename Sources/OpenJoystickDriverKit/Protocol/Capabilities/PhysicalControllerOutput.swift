@@ -137,6 +137,14 @@ public enum PhysicalAdaptiveTriggerEffectError: Error, Equatable, Sendable {
 public enum PhysicalSpeakerFormat: String, Codable, CaseIterable, Hashable, Sendable {
   /// 4-bit Yamaha ADPCM at the rate of the remote's speaker, which the Wii Remote has.
   case yamahaADPCM4Bit = "YamahaADPCM4Bit"
+
+  /// The samples per second the speaker plays; `nintendo-wii.json` writes the same rate as the
+  /// divisor of its speaker configuration, and a test keeps the two equal.
+  public var sampleRate: Int {
+    switch self {
+    case .yamahaADPCM4Bit: 6_000
+    }
+  }
 }
 
 /// Physical output capabilities implemented by the active controller protocol.

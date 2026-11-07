@@ -214,7 +214,7 @@ extension DualSenseDriver {
       case .right:
         return output(validFlag0: dualSenseRightTriggerEffectFlag, rightTriggerEffect: encoded)
       }
-    case .setLightBrightness: throw .unsupportedCapability(command.capability)
+    case .setLightBrightness, .speaker: throw .unsupportedCapability(command.capability)
     }
   }
 
@@ -227,6 +227,7 @@ extension DualSenseDriver {
     case .setRGB: return output.lightingFeatures.contains(.programmableColor)
     case .setAdaptiveTrigger: return output.supportsAdaptiveTriggers
     case .setLightBrightness: return true
+    case .speaker: return false
     }
   }
 

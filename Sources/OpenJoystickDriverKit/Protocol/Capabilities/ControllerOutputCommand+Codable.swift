@@ -249,6 +249,11 @@ extension ControllerOutputCommand: Codable {
       try container.encode(Kind.setAdaptiveTrigger, forKey: .type)
       try container.encode(trigger, forKey: .trigger)
       try container.encode(effect, forKey: .effect)
+    case .speaker:
+      throw EncodingError.invalidValue(
+        self,
+        .init(codingPath: [], debugDescription: "A speaker step is not part of the JSON shape.")
+      )
     }
   }
 }
