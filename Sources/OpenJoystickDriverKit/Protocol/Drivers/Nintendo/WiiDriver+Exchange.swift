@@ -15,6 +15,10 @@ extension WiiDriver {
     case accelerometerCalibration
     /// The extension handshake (`ExtensionHandshake`).
     case extensionHandshake
+    /// The Motion Plus activation (`MotionPlusActivate`).
+    case motionPlusActivation
+    /// The ID read that names the Motion Plus kind after the activation.
+    case motionPlusIdentify
   }
 
   /// An exchange that ended without its data (`ExtensionHandshakeFailed` for the handshake).
@@ -85,16 +89,22 @@ extension WiiDriver {
   /// Queues `purpose` behind the exchanges before it, and sends its first step when none is on
   /// the wire.
   func begin(_ purpose: ExchangePurpose, at now: MonotonicTimestamp) {
-    let scripts = wii.scripts
-    exchanges.append(
-      Exchange(
-        purpose: purpose,
-        steps: purpose == .extensionHandshake
-          ? scripts.handshake : scripts.accelerometerCalibration,
-        deadline: now
-      )
-    )
+    queue(purpose, at: now)
     if exchanges.count == 1 { sendStep(at: now) }
+  }
+
+  /// Appends `purpose` to the exchanges without writing; the caller sends the first step.
+  private func queue(_ purpose: ExchangePurpose, at now: MonotonicTimestamp) {
+    let scripts = wii.scripts
+    let steps: [ProtocolDescription.WiiRemote.Step]
+    switch purpose {
+    case .accelerometerCalibration: steps = scripts.accelerometerCalibration
+    case .extensionHandshake: steps = scripts.handshake
+    case .motionPlusActivation: steps = scripts.motionPlus
+    // The handshake's last step reads the six ID bytes; its writes would switch Motion Plus off.
+    case .motionPlusIdentify: steps = Array(scripts.handshake.suffix(1))
+    }
+    exchanges.append(Exchange(purpose: purpose, steps: steps, deadline: now))
   }
 
   /// Ends the exchanges that a timeout is due for: the failure is recorded and nothing is
@@ -108,7 +118,7 @@ extension WiiDriver {
   func handleReply(_ bytes: [UInt8], at now: MonotonicTimestamp) {
     guard let exchange = exchanges.first else { return }
     switch (bytes[0], exchange.steps[exchange.step]) {
-    case (Self.acknowledgementReportID, .write):
+    case (Self.acknowledgementReportID, .write), (Self.acknowledgementReportID, .motionPlusMode):
       guard bytes.count >= 5, bytes[3] == Self.memoryWriteOutputID else { return }
       if bytes[4] == 0 { advance(at: now) } else { fail(.error(bytes[4]), at: now) }
     case (Self.memoryReplyReportID, .read(let address, let length)):
@@ -143,6 +153,7 @@ extension WiiDriver {
       if !exchanges.isEmpty { sendStep(at: now) }
     }
     exchanges.removeAll { $0.purpose == .extensionHandshake }
+    gyro = nil
   }
 
   /// Writes the step of the first exchange, with the clock of its reply timeout started.
@@ -160,8 +171,13 @@ extension WiiDriver {
       )
     case .read(let address, let length):
       pendingWrites.append(memoryOutput(Self.memoryReadOutputID, address, [0, UInt8(length)]))
+    case .motionPlusMode(let address):
+      let key = Self.passthroughModeKeys[passthroughBase ?? ""] ?? "standalone"
+      let mode = wii.motionPlusModeBytes[key] ?? 0
+      let data = [1, mode] + [UInt8](repeating: 0, count: 15)
+      pendingWrites.append(memoryOutput(Self.memoryWriteOutputID, address, data))
     default:
-      preconditionFailure("an exchange runs only the write and read steps of its script")
+      preconditionFailure("an exchange runs only the write, read and mode steps of its script")
     }
   }
 
@@ -185,11 +201,15 @@ extension WiiDriver {
     switch finished.purpose {
     case .accelerometerCalibration:
       accelerometerCalibration = AccelerometerCalibration(finished.received)
-    case .extensionHandshake:
+    case .extensionHandshake, .motionPlusIdentify:
       extensionCenters = [:]
       extensionKind =
         wii.extensions.first { $0.id == finished.received }.map { .known($0.kind) }
         ?? .unknown(finished.received)
+      if activatesMotionPlus(after: finished.purpose) { queue(.motionPlusActivation, at: now) }
+    case .motionPlusActivation:
+      motionPlusActive = true
+      queue(.motionPlusIdentify, at: now)
     }
     if chosenFeatures != mode { pendingWrites.append(reportModeWrite()) }
     if !exchanges.isEmpty { sendStep(at: now) }
@@ -198,6 +218,7 @@ extension WiiDriver {
   /// Records a failure of the first exchange and goes on with the next one; nothing is resent.
   private func fail(_ reason: ExchangeFailure.Reason, at now: MonotonicTimestamp) {
     let exchange = exchanges.removeFirst()
+    if exchange.purpose == .motionPlusIdentify { motionPlusActive = false }
     failure = ExchangeFailure(purpose: exchange.purpose, step: exchange.step, reason: reason)
     if !exchanges.isEmpty { sendStep(at: now) }
   }

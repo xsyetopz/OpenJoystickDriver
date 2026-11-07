@@ -6,8 +6,8 @@ import Foundation
 ///
 /// The report layouts, the button and accelerometer bits, the report-mode choice and the register
 /// scripts come from the `wiiRemote` field of `nintendo-wii.json`. Facts are from WiiBrew's
-/// Wiimote page. Nunchuk and Classic data and the remote's motion sample are decoded; Motion Plus,
-/// IR, the speaker, LEDs and rumble are not decoded or written yet.
+/// Wiimote page. Nunchuk, Classic and Motion Plus data and the remote's motion sample are
+/// decoded; IR, the speaker, LEDs and rumble are not decoded or written yet.
 public final class WiiDriver: PhysicalProtocolDriver {
   /// The input report that answers a status request and carries the battery.
   static let statusReportID: UInt8 = 0x20
@@ -69,6 +69,15 @@ public final class WiiDriver: PhysicalProtocolDriver {
   var accelerometerCalibration: AccelerometerCalibration?
   /// The raw center of each extension stick, taken from the first sample after the handshake.
   var extensionCenters: [Control: Int] = [:]
+  /// The latest Motion Plus gyro frame; nil while none is active.
+  var gyro: RawGyro?
+  /// The still-window sums of the gyro rest offset and its result (`GyroRestOffset`).
+  var gyroRest = GyroRest()
+  /// Whether the driver activated Motion Plus in this session and the port has not shown another
+  /// kind since; the handshake would switch it off, so only its ID is read again.
+  var motionPlusActive = false
+  /// The Nunchuk or Classic kind the handshake last identified; the passthrough mode follows it.
+  var passthroughBase: String?
   /// The index of the next motion sample in the session.
   var motionSequence: UInt64 = 0
   /// The latest exchange that ended in a failure; the driver does not retry it.
@@ -79,6 +88,8 @@ public final class WiiDriver: PhysicalProtocolDriver {
   public private(set) var power: ControllerConnectionState.Power?
   /// Whether the latest status report set the low-battery flag.
   public private(set) var isBatteryLow = false
+  /// Whether the gyro rest offset is measured (`GyroRestOffset`: calibrating until then).
+  public var isGyroRestReady: Bool { gyroRest.offset != nil }
   /// The accelerometer reading of the latest report that carried one.
   private(set) var acceleration: RawAcceleration?
 
@@ -132,6 +143,10 @@ public final class WiiDriver: PhysicalProtocolDriver {
     extensionKind = nil
     accelerometerCalibration = nil
     extensionCenters = [:]
+    gyro = nil
+    gyroRest = GyroRest()
+    motionPlusActive = false
+    passthroughBase = nil
     motionSequence = 0
     failure = nil
     refusedReply = nil
@@ -203,11 +218,13 @@ public final class WiiDriver: PhysicalProtocolDriver {
         high: Array(bytes[(1 + block.offset)..<(1 + block.offset + 3)]),
         core: core
       )
-      motion = motionSamples(at: receivedAt)
     }
     if let block = mode.blocks.first(where: { $0.kind == .extensionData }) {
       let start = 1 + block.offset
       decodeExtension(Array(bytes[start..<start + 6]), into: &next)
+    }
+    if acceleration != nil, mode.blocks.contains(where: { $0.kind == .accelerometer }) {
+      motion = motionSamples(at: receivedAt)
     }
     state = next
     return ControllerEvent(timestamp: receivedAt, state: next, motion: motion)
@@ -237,7 +254,7 @@ public final class WiiDriver: PhysicalProtocolDriver {
       hasRequestedCalibration = true
       begin(.accelerometerCalibration, at: now)
     }
-    if added { begin(.extensionHandshake, at: now) }
+    if added { begin(motionPlusActive ? .motionPlusIdentify : .extensionHandshake, at: now) }
     return removed ? ControllerEvent(timestamp: now, state: state) : nil
   }
 

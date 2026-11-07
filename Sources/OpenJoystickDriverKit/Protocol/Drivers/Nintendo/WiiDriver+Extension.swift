@@ -8,9 +8,13 @@ extension WiiDriver {
   /// upward, the state's grows downward. A button that shares a control with a core button only
   /// adds a press.
   func decodeExtension(_ data: [UInt8], into next: inout ControllerState) {
-    guard case .known(let kind) = extensionKind,
-      let layout = wii.extensions.first(where: { $0.kind == kind })?.layout
-    else { return }
+    guard case .known(var kind) = extensionKind else { return }
+    var data = data
+    if Self.motionPlusKinds.contains(kind) {
+      guard let frame = demultiplexMotionPlus(data, kind: kind) else { return }
+      (kind, data) = frame
+    }
+    guard let layout = wii.extensions.first(where: { $0.kind == kind })?.layout else { return }
     let core = Set(wii.coreButtons.map(\.control))
     for button in layout.buttons {
       let down = (data[button.field.byte] & button.field.mask != 0) == button.pressedWhenSet
@@ -39,7 +43,8 @@ extension WiiDriver {
     }
   }
 
-  /// The remote's accelerometer reading in metres per second squared.
+  /// The remote's accelerometer reading in metres per second squared and the Motion Plus gyro in
+  /// radians per second, zero without a gyro frame.
   ///
   /// The axes keep the remote's own order until Hardware Check 3 records them against the
   /// canonical frame. Empty before the calibration is read.
@@ -49,6 +54,7 @@ extension WiiDriver {
       Double(value - zero) / Double(gravity - zero) * ControllerMotionUnits.standardGravity
     }
     defer { motionSequence += 1 }
+    let angularVelocity = gyro.map(gyroVector) ?? ControllerMotionVector(x: 0, y: 0, z: 0)
     return ControllerMotionSample(
       timestamp: ControllerSampleTimestamp(
         rawCounter: 0,
@@ -63,7 +69,7 @@ extension WiiDriver {
         y: metres(raw.y, calibration.zero.y, calibration.gravity.y),
         z: metres(raw.z, calibration.zero.z, calibration.gravity.z)
       ),
-      angularVelocity: ControllerMotionVector(x: 0, y: 0, z: 0),
+      angularVelocity: angularVelocity,
       calibrationSource: .deviceFactory
     ).map { [$0] } ?? []
   }
