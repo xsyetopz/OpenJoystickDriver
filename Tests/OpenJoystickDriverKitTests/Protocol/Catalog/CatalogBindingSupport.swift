@@ -44,9 +44,16 @@ func steamHIDInterface(number: UInt8, gamepad: Bool = true) -> PhysicalInterface
 }
 
 /// The host link a catalog row is observed on by default: USB, except for a Bluetooth-only
-/// pad, whose USB link only charges it.
+/// pad, whose USB link only charges it, and for a family that has only a Bluetooth variant.
 func defaultHost(of record: DeviceRuntimeProfile) -> PhysicalTransport {
-  record.parameters.usbProtocol == .chargingOnly ? .bluetoothClassic : .usb
+  record.parameters.usbProtocol == .chargingOnly
+    || record.physicalProtocolID.variants == [.bluetoothClassic] ? .bluetoothClassic : .usb
+}
+
+/// The mode a test names when it classifies a catalog row: nil for a record with a default mode,
+/// otherwise its first mode, since a device is bound only on a selected mode.
+func classificationModeID(of record: DeviceRuntimeProfile) -> String? {
+  record.hasDefaultMode ? nil : record.modes.first?.id
 }
 
 /// The HID usage map the catalog record for `vendorID:productID` declares.
@@ -77,7 +84,11 @@ func catalogParser(
     productID: model.productID,
     interfaces: isRawUSB ? nil : [gamepadHIDInterface(host: host ?? defaultHost(of: record))]
   )
-  let classification = registry.classify(device, backend: isRawUSB ? .rawUSB : .hid)
+  let classification = registry.classify(
+    device,
+    backend: isRawUSB ? .rawUSB : .hid,
+    modeID: classificationModeID(of: record)
+  )
   guard case .bound(let binding) = classification else {
     Issue.record("\(model) did not bind: \(classification)")
     throw CatalogBindingFailure()

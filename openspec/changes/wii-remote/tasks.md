@@ -29,7 +29,7 @@ Owns: tests for `Resources/Protocols/nintendo-wii.json`.
 Depends: 1.
 
 - [ ] 2.1 Add schema-rejection cases for the description in `Tests/OpenJoystickDriverKitTests/Protocol/Catalog/SchemaRejections/`: an `irWriteIntervalMs` below 50, a report mode id outside `0x30` to `0x3F`, an extension ID of the wrong length, a layout that overlaps two blocks. Verify: `swift test --filter SchemaRejectionTests` fails before 3.1 and passes after it.
-- [ ] 2.2 Add the family to the `ProtocolParserCoverageTests` list with the suite name `WiiDriverTests`. Verify: `swift test --filter ProtocolParserCoverageTests` fails until `WiiDriverTests` exists (task 4.1).
+- [x] 2.2 Add the family to the `ProtocolParserCoverageTests` list with the suite name `WiiDriverTests`. Verify: `swift test --filter ProtocolParserCoverageTests` fails until `WiiDriverTests` exists (task 4.1). Done: `WiiDriverTests` is listed and `ProtocolParserCoverageTests` passes; the catalog-binding test helpers pass the first mode of a record without a default mode and use a Bluetooth host for a Bluetooth-only family.
 
 ## 3. Description and vocabulary
 
@@ -48,7 +48,7 @@ Owns: `Sources/OpenJoystickDriverKit/Protocol/Drivers/Nintendo/WiiDriver*.swift`
 Depends: 3.
 
 - [x] 4.1 Create `WiiDriverTests` with failing cases from the spec scenarios: core buttons to controls (A to `South`), accelerometer 10-bit reassembly (`0x84` with low bits `0b10` is `0x212`), battery `0x64` to 50 percent, each mode fixture decoded. Verify: `swift test --filter WiiDriverTests` fails for the right reason (missing driver). Done: `WiiDriverTests` conforms to the `ParserSuite` shape (family, model `057E:0306`).
-- [ ] 4.2 Implement `WiiDriver` for core buttons, accelerometer, status and battery, with the layout from the description; register `.nintendoWii` in `ProtocolDriverRegistry.makeDriver`. Verify: the 4.1 cases pass and `swift test --filter ProtocolDriverRegistryTests` constructs the driver for a `NintendoWii` record.
+- [x] 4.2 Implement `WiiDriver` for core buttons, accelerometer, status and battery, with the layout from the description; register `.nintendoWii` in `ProtocolDriverRegistry.makeDriver`. Verify: the 4.1 cases pass and `swift test --filter ProtocolDriverRegistryTests` constructs the driver for a `NintendoWii` record.
 - [ ] 4.3 Implement the report-mode choice (`ReportModeSelect`) and the restore after each `0x20` (`ReportModeRestore`), with the continuous bit rule. Verify: tests for all 16 modes, and a test where a status fixture yields exactly one `0x12` with the chosen mode.
 - [ ] 4.4 Implement accelerometer calibration from the EEPROM read (`0x17`, flags 0, address `0x0016`) and memory-reply reassembly (`0x21`, size and error nibble) with one outstanding read. Verify: fixture tests for success, error nibble and a mismatched address (the reply is refused, named).
 - [ ] 4.5 Implement the extension handshake, hot-plug and `Unknown` kinds (`ExtensionHandshake`, `ExtensionRemoved`, `UnknownExtension`, `ExtensionHandshakeFailed`), without retry. Verify: tests with fixture replies for each kind; an unplug test where `LeftStickX` returns to 0; a timeout test with an injected clock that asserts no further write.

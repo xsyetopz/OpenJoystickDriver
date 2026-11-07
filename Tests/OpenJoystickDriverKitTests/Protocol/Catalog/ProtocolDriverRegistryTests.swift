@@ -281,7 +281,13 @@ struct ProtocolDriverRegistryTests {
     for model in registry.hidModels {
       for host in [PhysicalTransport.usb, .bluetoothClassic, .bluetoothLE] {
         let device = hidDevice(model, gamepadHIDInterface(host: host))
-        guard case .bound(let binding) = registry.classify(device, backend: .hid) else {
+        guard
+          case .bound(let binding) = registry.classify(
+            device,
+            backend: .hid,
+            modeID: modeID(of: device)
+          )
+        else {
           continue
         }
         let driver = try registry.makeDriver(for: binding, model: model, claimed: nil)
@@ -384,11 +390,21 @@ struct ProtocolDriverRegistryTests {
     )
   }
 
+  private func modeID(of device: PhysicalDevice) -> String? {
+    guard let vendorID = device.vendorID, let productID = device.productID else { return nil }
+    return registry.record(for: ControllerModelID(vendorID: vendorID, productID: productID))
+      .flatMap(classificationModeID(of:))
+  }
+
   private func bound(
     _ device: PhysicalDevice,
     backend: DeviceAccessBackend = .hid
   ) throws -> ProtocolBinding {
-    let classification = registry.classify(device, backend: backend)
+    let classification = registry.classify(
+      device,
+      backend: backend,
+      modeID: modeID(of: device)
+    )
     guard case .bound(let binding) = classification else {
       Issue.record("\(device.vendorID.map(String.init) ?? "?") did not bind: \(classification)")
       throw CatalogBindingFailure()
