@@ -74,7 +74,7 @@ Verify: `./Scripts/ojd catalog regenerate --check`.
 - [x] 6.1 Write a test that each record binds `NintendoSwitch2` with the layout of the table in `design.md` (`2066` JoyConRight, `2067` JoyConLeft, `2069` the family default Pro, `2073` GameCube). Verify: `swift test --filter Switch2DriverTests`.
 - [ ] 6.2 Compare each record's patch (`057e-2066`, `2067`, `2069` patch files) with the captures (interface numbers, endpoints, Bluetooth LE vibration characteristic) and fix differences in the patch, then run `./Scripts/ojd catalog regenerate --write`. Verify: `./Scripts/ojd catalog regenerate --check` prints no diff.
 - [ ] 6.3 If a Joy-Con pair device (`057E:2068`) appears in any capture, add a record from that capture; otherwise record in the PR text that no capture exists. Verify: the PR text states which.
-- [ ] 6.4 If SDL or `procon2-mac` code is used, add its notice to `THIRD_PARTY_NOTICES.md`. Verify: `grep -n "SDL\|procon2" THIRD_PARTY_NOTICES.md` shows the entry, or the PR text states that only facts were used.
+- [x] 6.4 If SDL or `procon2-mac` code is used, add its notice to `THIRD_PARTY_NOTICES.md`. Verify: `grep -n "SDL\|procon2" THIRD_PARTY_NOTICES.md` shows the entry, or the PR text states that only facts were used. Done: no SDL or `procon2-mac` code was used. No `procon2-mac` source file was read (design.md reads only its README) and no Swift file cites it; SDL appears in comments as the source of facts. The PR text must state that only facts were used; re-check if later Switch 2 work copies or translates SDL code.
 - [ ] 6.5 Run the repository check list from the repository `CLAUDE.md` once on the final tree. Verify: `just check`.
 
 ## Hardware Checks (Maintainer)

@@ -64,7 +64,7 @@ Verify: `swift test --filter ReceiverRoleProfileTests`.
 - [x] 5.1 Add a test that a receiver held by another client reports `ownedByAnotherClient` with the holder name, performs no write, and opens when the release arrives, without a timed retry. Verify: `swift test --filter USBPipelineRecoveryTests` passes and the test names the state.
 - [x] 5.2 Add `ReceiverRoleProfileTests` cases for descriptor orders `0,2,4,6`, `0,1,2,3,4,5,6,7` with audio interfaces of another triple, and a descending list; the slot ordinal follows ascending interface number. Verify: `swift test --filter ReceiverRoleProfileTests`.
 - [x] 5.3 Correct the doc comment at `ProtocolDriverRegistry+InterfaceContract.swift:4` (the manager, not `XUSBDriver`, assigns the ring LED). Verify: `grep -n "lights players" Sources/OpenJoystickDriverKit/Protocol/Catalog/ProtocolDriverRegistry+InterfaceContract.swift` prints nothing.
-- [ ] 5.4 Update the `XboxXUSB` row of `docs/development/wire-protocols.md` (startup, shutdown, rumble templates; presence rule; clone control reads) and the Coded Behavior list. Verify: `git diff --check` on the file; `git diff` shows no history words.
+- [x] 5.4 Update the `XboxXUSB` row of `docs/development/wire-protocols.md` (startup, shutdown, rumble templates; presence rule; clone control reads) and the Coded Behavior list. Verify: `git diff --check` on the file; `git diff` shows no history words.
 - [ ] 5.5 Run the repository check list from the repository `CLAUDE.md` once on the final tree. Verify: `just check`.
 
 ## Hardware Checks (Maintainer)
