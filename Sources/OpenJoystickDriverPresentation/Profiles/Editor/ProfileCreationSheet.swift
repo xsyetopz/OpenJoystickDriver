@@ -69,16 +69,17 @@
               Text(OJDLocalized.string("ui.profiles.targetApplication")).tag(
                 ProfileScopeKind.application
               )
-            }
+            }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.target"))
             if fields.scopeKind == .application {
               TextField(OJDLocalized.string("ui.profiles.appID"), text: $fields.appID)
+                .ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.appID"))
             }
             Picker(OJDLocalized.string("ui.profiles.template"), selection: $fields.template) {
               Text(OJDLocalized.string("ui.profiles.templateEmpty"))
                 .tag(ProfileCreationTemplate.empty)
               Text(OJDLocalized.string("ui.profiles.templateGyroStick"))
                 .tag(ProfileCreationTemplate.gyroStick)
-            }
+            }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.template"))
             if fields.template == .gyroStick {
               Picker(OJDLocalized.string("ui.profiles.gyro.output"), selection: $fields.gyroStick) {
                 Text(OJDLocalized.string("ui.profiles.gyro.leftStick")).tag(
@@ -87,7 +88,7 @@
                 Text(OJDLocalized.string("ui.profiles.gyro.rightStick")).tag(
                   RemappingGyroStickTemplate.Stick.right
                 )
-              }
+              }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.gyro.output"))
               if fields.lacksMotion(in: context), let controller = fields.controller(in: context) {
                 Text(
                   OJDLocalized.formatted("ui.profiles.templateNoMotion", controller.label)

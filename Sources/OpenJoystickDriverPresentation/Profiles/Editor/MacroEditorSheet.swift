@@ -51,7 +51,7 @@
         Picker(OJDLocalized.string("ui.macros.repeat"), selection: repeatsUntilRelease) {
           Text(OJDLocalized.string("ui.macros.repeatCounted")).tag(false)
           Text(OJDLocalized.string("ui.macros.repeatWhileHeld")).tag(true)
-        }
+        }.ojdAccessibilityLabel(OJDLocalized.string("ui.macros.repeat"))
         if case .count(let count) = draft.repeatMode {
           Stepper(
             value: Binding(get: { count }, set: { draft.repeatMode = .count($0) }),
@@ -62,14 +62,14 @@
               Spacer()
               Text(String(count)).foregroundColor(Color(NSColor.secondaryLabelColor))
             }
-          }
+          }.ojdAccessibilityLabel(OJDLocalized.string("ui.macros.repeatTimes"))
         }
         Picker(OJDLocalized.string("ui.macros.whileRunning"), selection: $draft.whileRunning) {
           Text(OJDLocalized.string("ui.macros.whileRunningIgnore"))
             .tag(RemappingMacroWhileRunning.ignore)
           Text(OJDLocalized.string("ui.macros.whileRunningRestart"))
             .tag(RemappingMacroWhileRunning.restart)
-        }
+        }.ojdAccessibilityLabel(OJDLocalized.string("ui.macros.whileRunning"))
         Toggle(OJDLocalized.string("ui.macros.interruptOnRelease"), isOn: $draft.interruptOnRelease)
         HStack {
           Spacer()
@@ -170,7 +170,7 @@
         ForEach(stepDestinations(including: destination), id: \.destination) { option in
           Text(option.title).tag(option.destination).disabled(!option.isSupported)
         }
-      }
+      }.ojdAccessibilityLabel(title)
     }
 
     /// A slider of a time in milliseconds, with the value beside the title.

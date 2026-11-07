@@ -31,7 +31,7 @@
               "ui.profiles.virtualPassthrough"
             )
           ).tag(RemappingVirtualGamepadPolicy.passthrough)
-        }
+        }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.virtualOutput"))
         Toggle(
           OJDLocalized.string(
             "ui.profiles.exclusiveInput"
