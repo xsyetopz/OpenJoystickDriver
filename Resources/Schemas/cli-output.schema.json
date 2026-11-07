@@ -890,6 +890,9 @@
           "description": "The latest power state the controller reports. Absent when the service reports none.",
           "$ref": "report.schema.json#/$defs/controllerConnectionState/properties/power"
         },
+        "wiiRemote": {
+          "$ref": "report.schema.json#/$defs/controllerConnectionState/properties/wiiRemote"
+        },
         "productID": {
           "type": "integer",
           "minimum": 0,

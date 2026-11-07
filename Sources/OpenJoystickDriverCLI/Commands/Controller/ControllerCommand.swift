@@ -187,6 +187,16 @@ struct ControllerShowCommand: AsyncParsableCommand {
         power.wiredPower.map(String.init) ?? "",
       ])
     }
+    if let wii = detail.wiiRemote {
+      let motionPlus =
+        wii.motionPlusActive ? (wii.isGyroRestReady ? "ready" : "calibrating") : "off"
+      rows += [
+        ["report-mode", wii.reportModeText],
+        ["extension", wii.extensionKind.map { CommandLineName.kebab($0.rawValue) } ?? ""],
+        ["unknown-extension-id", wii.unknownExtensionID ?? ""],
+        ["motion-plus", motionPlus],
+      ]
+    }
     rows += [
       ["input-health", CommandLineName.kebab(detail.inputHealth.state)],
       ["ownership", CommandLineName.kebab(detail.ownership.physical)],
@@ -279,6 +289,13 @@ struct ControllerShowCommand: AsyncParsableCommand {
           (power.battery.percentageText ?? none) + charging
         )
       )
+    }
+    if let wii = detail.wiiRemote {
+      rows += [
+        (CLILocalized.text("cli.controller.show.labelReportMode"), wii.reportModeText),
+        (CLILocalized.text("cli.controller.show.labelExtension"), wii.extensionText()),
+        (CLILocalized.text("cli.controller.show.labelMotionPlus"), wii.motionPlusText()),
+      ]
     }
     // A controller that another client holds runs no input session, so it has no input health.
     if detail.ownership.hidInput != HIDInputOwnership.ownedByAnotherClient.rawValue {

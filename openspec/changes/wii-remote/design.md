@@ -125,6 +125,8 @@ Alternative: expose as an SDK endpoint output. Deferred (Out of scope); the endp
 | `SpeakerUnavailable` | speaker command on a record without the capability | error code |
 | `DisconnectNotice` | no power-off report | wiki: disconnect in macOS Bluetooth |
 
+Where the rows are shown: the `ojd controller show` rows (Report mode, Extension, Motion Plus, with `wiiRemote` in `--json`) and the matching rows of the Controllers detail come from `WiiRemoteStatus` in `ControllerConnectionState`, filled by `WiiDriver.wiiRemoteStatus`. Their texts are `cli.controller.show.labelReportMode`, `labelExtension` and `labelMotionPlus`, the extension names `term.wiiExtension.*`, and `status.wiiExtensionUnknown`, `status.motionPlusOff`, `status.gyroCalibrating` and `status.gyroReady`. Battery, rumble result and error texts reuse the generic `ojd controller show`, `ojd controller rumble` and `error.E2038` to `error.E2040` texts; `ojd controller speaker` texts belong to task 5.5.
+
 Error codes go in `Resources/ErrorCodes.json`; run `./Scripts/ojd errors regenerate --write`. Localized strings follow `LOCALIZATION.md` (Meaning, Punctuation) and are reviewed, not only run through `LocalizationTests`.
 
 ### D10. the Rumble Bit Rides on Every Output Report

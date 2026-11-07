@@ -545,6 +545,44 @@
               "type": "boolean"
             }
           }
+        },
+        "wiiRemote": {
+          "description": "The Wii Remote session facts. Absent for every other family.",
+          "type": "object",
+          "required": ["reportMode", "motionPlusActive", "isGyroRestReady"],
+          "additionalProperties": false,
+          "properties": {
+            "reportMode": {
+              "description": "The report mode the driver chose.",
+              "type": "integer",
+              "minimum": 48,
+              "maximum": 63
+            },
+            "extensionKind": {
+              "description": "The extension the handshake identified. Absent while none is plugged or its ID is unknown.",
+              "enum": [
+                "Nunchuk",
+                "ClassicController",
+                "ClassicControllerPro",
+                "MotionPlusInactive",
+                "MotionPlus",
+                "MotionPlusNunchuk",
+                "MotionPlusClassic"
+              ]
+            },
+            "unknownExtensionID": {
+              "description": "The six ID bytes of an extension the table lacks, as twelve uppercase hex digits.",
+              "type": "string",
+              "pattern": "^[0-9A-F]{12}$"
+            },
+            "motionPlusActive": {
+              "type": "boolean"
+            },
+            "isGyroRestReady": {
+              "description": "False while the gyro rest offset is being measured.",
+              "type": "boolean"
+            }
+          }
         }
       }
     },

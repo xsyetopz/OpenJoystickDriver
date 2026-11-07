@@ -242,6 +242,8 @@ struct ControllerShowReport: Encodable, Equatable {
     let session: String
     /// Absent when the service reports no power state.
     let power: ControllerConnectionState.Power?
+    /// The Wii Remote session facts; absent for every other family.
+    let wiiRemote: WiiRemoteStatus?
     /// The status of the startup commands, when the controller takes any.
     let startupCommandStatus: String?
     /// The health of the input.
@@ -303,6 +305,7 @@ struct ControllerShowReport: Encodable, Equatable {
       hasSerialNumber: device.serialNumber.map { !$0.isEmpty } ?? false,
       session: device.sessionState.rawValue,
       power: device.connectionState?.power,
+      wiiRemote: device.connectionState?.wiiRemote,
       startupCommandStatus: device.startupCommandStatus,
       inputHealth: InputHealth(
         state: device.inputHealth.state.rawValue,

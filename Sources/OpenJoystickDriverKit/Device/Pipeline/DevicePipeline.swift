@@ -137,6 +137,12 @@ actor DevicePipeline {
       if oldValue != currentPower { NotificationCenter.postServiceStatusChanged(from: self) }
     }
   }
+  /// The latest Wii Remote facts that the driver reported; a change posts a service status change.
+  var currentWiiRemote: WiiRemoteStatus? {
+    didSet {
+      if oldValue != currentWiiRemote { NotificationCenter.postServiceStatusChanged(from: self) }
+    }
+  }
   /// The recent packets of the controller, captured while a reader renews the capture lease.
   let packetLog: PacketLogBuffer
   /// The task that checks input liveness at the monitor interval; nil when none runs.

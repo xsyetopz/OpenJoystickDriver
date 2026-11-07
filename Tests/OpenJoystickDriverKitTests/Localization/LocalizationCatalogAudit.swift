@@ -15,6 +15,9 @@ enum LocalizationCatalogAudit {
     "term.protocolFamily.vendorNvidiaShield", "term.protocolFamily.xboxGip",
     "term.protocolFamily.xboxXid", "term.protocolFamily.xboxXusb",
     "term.protocolVariant.usb",
+    "cli.controller.show.labelMotionPlus", "term.wiiExtension.nunchuk",
+    "term.wiiExtension.classicController", "term.wiiExtension.classicControllerPro",
+    "term.wiiExtension.motionPlus",
   ]
 
   static let nonLinguisticSourceIdenticalKeys: Set<String> = sameInEveryLocaleKeys.union([
@@ -42,7 +45,7 @@ enum LocalizationCatalogAudit {
   private static let frenchTerms: Set<String> = [
     "ui.library.field.source", "ui.library.field.transport", "ui.library.field.version",
     "ui.capture.gain",
-    "cli.controller.show.labelSession",
+    "cli.controller.show.labelSession", "cli.controller.show.labelExtension",
     "cli.status.group.labelTransportExtension", "cli.status.group.labelService", "term.destination",
     "ui.inputTest.menu", "term.key.alt", "ui.mapping.guide",
     "ui.mapping.start", "ui.motion.calibration.pause",
@@ -69,7 +72,7 @@ enum LocalizationCatalogAudit {
       "ui.access.tokens", "ui.library.mods",
       "ui.capture.linear", "cli.access.status.socket",
       "cli.controller.show.labelName", "term.controller", "term.status", "ui.console.stream",
-      "ui.developer.controller", "ui.developer.controllerDetails",
+      "ui.developer.controller", "ui.developer.controllerDetails", "ui.profiles.speak.text",
       "ui.developer.route", "ui.inputTest.home", "term.key.control", "term.key.escape",
       "ui.mapping.guide",
       "ui.mapping.start", "ui.profiles.physical.motor", "ui.profiles.sectionSticks",

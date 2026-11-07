@@ -213,15 +213,40 @@ public final class WiiDriver: PhysicalProtocolDriver {
   /// The `0x12` write for the smallest mode that carries `chosenFeatures`
   /// (`ReportModeSelect`); the continuous bit is set when the mode carries more than buttons.
   func reportModeWrite() -> PhysicalOutputWrite {
-    guard let choice = wii.modeChoices.first(where: { $0.features == chosenFeatures }),
-      let mode = wii.reportModes.first(where: { $0.id == choice.mode })
-    else {
+    let choice = modeChoice
+    guard let mode = wii.reportModes.first(where: { $0.id == choice.mode }) else {
       preconditionFailure("nintendo-wii.json chooses no mode for \(chosenFeatures)")
     }
     let continuous = mode.blocks.contains { $0.kind != .buttons }
     return outputReport([
       Self.reportModeOutputID, continuous ? Self.continuousBit : 0, choice.mode,
     ])
+  }
+
+  /// The description's choice for `chosenFeatures`.
+  private var modeChoice: ProtocolDescription.WiiRemote.ModeChoice {
+    guard let choice = wii.modeChoices.first(where: { $0.features == chosenFeatures }) else {
+      preconditionFailure("nintendo-wii.json chooses no mode for \(chosenFeatures)")
+    }
+    return choice
+  }
+
+  /// The facts `ojd controller show` and the controller detail present.
+  public var wiiRemoteStatus: WiiRemoteStatus? {
+    var kind: WiiRemoteStatus.ExtensionKind?
+    var unknownID: String?
+    switch extensionKind {
+    case .known(let name)?: kind = WiiRemoteStatus.ExtensionKind(rawValue: name)
+    case .unknown(let bytes)?: unknownID = bytes.map { String(format: "%02X", $0) }.joined()
+    case nil: break
+    }
+    return WiiRemoteStatus(
+      reportMode: modeChoice.mode,
+      extensionKind: kind,
+      unknownExtensionID: unknownID,
+      motionPlusActive: motionPlusActive,
+      isGyroRestReady: isGyroRestReady
+    )
   }
 
   /// Decodes a status report into the power facts, and a data report that has a `Buttons` block

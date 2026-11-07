@@ -23,6 +23,12 @@ struct ControllerFact: Equatable, Identifiable {
     case chargingState
     /// Whether the controller is on a cable.
     case cableState
+    /// The report mode of a Wii Remote.
+    case wiiReportMode
+    /// The extension plugged into a Wii Remote.
+    case wiiExtension
+    /// The Motion Plus state of a Wii Remote.
+    case wiiMotionPlus
     /// The rumble motors.
     case rumble
     /// The lighting features.
@@ -127,6 +133,14 @@ enum ControllerDetailFacts {
       fact(.chargingState, "ui.controllers.chargingState", chargingState(device)),
       fact(.cableState, "ui.controllers.cableState", cableState(device)),
     ]
+    let wiiRemote =
+      device.connectionState?.wiiRemote.map {
+        [
+          fact(.wiiReportMode, "cli.controller.show.labelReportMode", .text($0.reportModeText)),
+          fact(.wiiExtension, "cli.controller.show.labelExtension", .text($0.extensionText())),
+          fact(.wiiMotionPlus, "cli.controller.show.labelMotionPlus", .text($0.motionPlusText())),
+        ]
+      } ?? []
     let capabilities = [
       fact(.rumble, "cli.controller.show.labelRumble", list(output.rumbleMotors.map(\.title))),
       fact(
@@ -172,7 +186,7 @@ enum ControllerDetailFacts {
         )
       ] : []
     return paused + always + input + held + listed
-      + (power + capabilities).filter { $0.value != .none }
+      + (power + wiiRemote + capabilities).filter { $0.value != .none }
   }
 
   /// Returns the technical facts, shown under Advanced: identifiers, the parser (the binding that

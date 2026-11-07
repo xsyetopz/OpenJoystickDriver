@@ -324,6 +324,9 @@ public protocol PhysicalProtocolDriver: AnyObject {
   /// until the device reports it.
   var power: ControllerConnectionState.Power? { get }
 
+  /// The Wii Remote session facts; `nil` for every other family.
+  var wiiRemoteStatus: WiiRemoteStatus? { get }
+
   /// Returns and clears the most recent logical connection state change, if any.
   func consumeInputConnectionStateChange() -> ControllerInputConnectionState?
 
@@ -400,6 +403,8 @@ extension PhysicalProtocolDriver {
   public var latestInputReportFormat: String? { nil }
   /// Default: no power state.
   public var power: ControllerConnectionState.Power? { nil }
+  /// Default: no Wii Remote facts.
+  public var wiiRemoteStatus: WiiRemoteStatus? { nil }
   /// Default: the driver keeps no protocol state to reset.
   public func resetProtocolState() {}
   /// Default: no startup writes.

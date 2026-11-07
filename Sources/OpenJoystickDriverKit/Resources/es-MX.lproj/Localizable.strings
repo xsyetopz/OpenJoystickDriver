@@ -4401,3 +4401,31 @@
 "ui.macros.whileRunningRestart" = "Reiniciar";
 /* Label of the switch in the macro editor: releasing the control stops the macro and releases everything it holds. */
 "ui.macros.interruptOnRelease" = "Detener al soltar";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. The report mode the driver chose follows, a hex byte such as 0x31. */
+"cli.controller.show.labelReportMode" = "Modo de informe";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. The extension plugged into the remote follows, such as a Nunchuk. This is the accessory on the controller, not a system extension. */
+"cli.controller.show.labelExtension" = "Accesorio";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. Motion Plus is a Nintendo product name: keep it as written. The value that follows is off, calibrating or ready. */
+"cli.controller.show.labelMotionPlus" = "Motion Plus";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Nunchuk is a Nintendo product name: keep it as written. */
+"term.wiiExtension.nunchuk" = "Nunchuk";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Classic Controller is a Nintendo product name: keep it as written. */
+"term.wiiExtension.classicController" = "Classic Controller";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Classic Controller Pro is a Nintendo product name: keep it as written. */
+"term.wiiExtension.classicControllerPro" = "Classic Controller Pro";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: a Motion Plus that is plugged in but not switched on yet. Motion Plus is a Nintendo product name: keep it as written. */
+"term.wiiExtension.motionPlusInactive" = "Motion Plus (inactivo)";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with nothing plugged into it. Motion Plus is a Nintendo product name: keep it as written. */
+"term.wiiExtension.motionPlus" = "Motion Plus";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with a Nunchuk plugged into it. Motion Plus and Nunchuk are Nintendo product names: keep them as written. */
+"term.wiiExtension.motionPlusNunchuk" = "Motion Plus con Nunchuk";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with a Classic Controller plugged into it. Motion Plus and Classic Controller are Nintendo product names: keep them as written. */
+"term.wiiExtension.motionPlusClassic" = "Motion Plus con Classic Controller";
+/* Value of the extension row for a Wii Remote extension the driver does not know. %@ is the six ID bytes as twelve hex digits and stays as written. */
+"status.wiiExtensionUnknown" = "Desconocido (ID %@)";
+/* Value of the Motion Plus row for a Wii Remote whose Motion Plus is not switched on. */
+"status.motionPlusOff" = "Apagado";
+/* Value of the Motion Plus row for a Wii Remote while the driver measures the resting value of the gyro. The remote must lie still. */
+"status.gyroCalibrating" = "Calibrando";
+/* Value of the Motion Plus row for a Wii Remote once the driver has measured the resting value of the gyro. */
+"status.gyroReady" = "Listo";

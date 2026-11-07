@@ -44,8 +44,12 @@ extension DevicePipeline {
     return await performUSBHandshake(handle: handle)
   }
 
-  /// Reads the power state of the driver into ``currentPower``.
-  func snapshotPower() { currentPower = driver.power }
+  /// Reads the power state and the Wii Remote facts of the driver into ``currentPower`` and
+  /// ``currentWiiRemote``.
+  func snapshotPower() {
+    currentPower = driver.power
+    currentWiiRemote = driver.wiiRemoteStatus
+  }
 
   /// Dispatches the exact neutral state, releasing every control, stick, trigger and touch at
   /// once, unless it was the last state dispatched.

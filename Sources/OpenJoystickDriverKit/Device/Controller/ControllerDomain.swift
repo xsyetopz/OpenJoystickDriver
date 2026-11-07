@@ -327,14 +327,19 @@ public struct ControllerConnectionState: Codable, Equatable, Sendable {
   public let isConnected: Bool
   /// The power facts of the controller.
   public let power: Power
+  /// The Wii Remote session facts; nil for every other family.
+  public let wiiRemote: WiiRemoteStatus?
 
-  /// Creates a connection state from the link, access path, linked flag and power facts.
+  /// Creates a connection state from the link, access path, linked flag, power facts and Wii
+  /// Remote facts.
   public init(
     transport: PhysicalTransport?,
     backend: DeviceAccessBackend,
     isConnected: Bool,
-    power: Power
+    power: Power,
+    wiiRemote: WiiRemoteStatus? = nil
   ) {
+    self.wiiRemote = wiiRemote
     self.transport = transport
     self.backend = backend
     self.isConnected = isConnected

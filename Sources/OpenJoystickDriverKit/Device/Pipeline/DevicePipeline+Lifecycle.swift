@@ -261,7 +261,8 @@ extension DevicePipeline {
       transport: transport,
       backend: binding.accessBackend,
       isConnected: inputConnectionActive,
-      power: currentPower ?? .unknown
+      power: currentPower ?? .unknown,
+      wiiRemote: currentWiiRemote
     )
   }
   /// The result of the latest startup output; nil before any.
