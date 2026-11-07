@@ -358,7 +358,6 @@
         )
         ForEach(menuActions, id: \.self) { action in Text(action.title).tag(Optional(action)) }
       }.pickerStyle(PopUpButtonPickerStyle()).labelsHidden().frame(width: 132)
-        .ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.actions"))
         .disabled(isMutationActive)
     }
 
@@ -390,9 +389,8 @@
               .ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.editorSection"))
           }
         }
-      }.padding(.horizontal, 28).padding(.vertical, 10).ojdAccessibilityLabel(
-        OJDLocalized.string("ui.profiles.editorSection")
-      ).ojdAccessibilityValue(selectedSection.title)
+      }.padding(.horizontal, 28).padding(.vertical, 10)
+        .ojdAccessibilityValue(selectedSection.title)
     }
   }
 

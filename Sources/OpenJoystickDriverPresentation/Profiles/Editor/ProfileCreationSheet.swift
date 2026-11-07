@@ -34,6 +34,7 @@
             }
           } else {
             TextField(OJDLocalized.string("term.profileName"), text: nameBinding)
+              .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
             if let message = nameProblem {
               Text(message).foregroundColor(Color(NSColor.systemRed)).fixedSize(
                 horizontal: false,
@@ -46,7 +47,7 @@
                   ForEach(section.choices) { choice in Text(choice.label).tag(choice.id) }
                 }
               }
-            }
+            }.ojdAccessibilityLabel(OJDLocalized.string("term.controller"))
             if context.isLoadingCatalog {
               ProgressView().controlSize(.small)
             }
@@ -172,6 +173,7 @@
         Text(OJDLocalized.string("action.duplicate")).font(.headline)
         Form {
           TextField(OJDLocalized.string("term.profileName"), text: nameBinding)
+            .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
           if ProfileNaming.isTaken(shownName, in: profiles) {
             Text(OJDLocalized.string("ui.error.duplicateProfile"))
               .foregroundColor(Color(NSColor.systemRed))

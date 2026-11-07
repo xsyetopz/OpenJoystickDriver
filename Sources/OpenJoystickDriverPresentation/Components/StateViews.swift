@@ -92,7 +92,8 @@
           }
           Spacer(minLength: 0)
         }.padding(4)
-      }.ojdAccessibilityLabel(title).ojdAccessibilityValue(message)
+      }.accessibilityElement(children: .contain).ojdAccessibilityLabel(title)
+        .ojdAccessibilityValue(message)
     }
   }
 

@@ -85,9 +85,8 @@
       }.onReceive(actions.$pendingSave) { request in
         guard let request else { return }
         ControllerFilePanels.save(request) { actions.finishSave(to: $0) }
-      }.ojdGroupedForm().ojdAccessibilityLabel(device.name).ojdAccessibilityValue(
-        accessibilityValue
-      )
+      }.ojdGroupedForm().accessibilityElement(children: .contain)
+        .ojdAccessibilityLabel(device.name).ojdAccessibilityValue(accessibilityValue)
     }
 
     /// Reloads the record when the controller or who serves its model changes.

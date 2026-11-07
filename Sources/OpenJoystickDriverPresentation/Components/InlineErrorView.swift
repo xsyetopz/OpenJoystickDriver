@@ -53,7 +53,7 @@
             }.textSelection(.enabled)
           }
         }.padding(4)
-      }.ojdAccessibilityLabel(message)
+      }.accessibilityElement(children: .contain).ojdAccessibilityLabel(message)
     }
   }
 

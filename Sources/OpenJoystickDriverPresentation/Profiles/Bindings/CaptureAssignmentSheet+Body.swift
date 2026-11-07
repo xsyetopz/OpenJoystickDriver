@@ -27,7 +27,7 @@
         ) {
           ForEach(SourceOption.options(including: source, capabilities: capabilities), id: \.source)
           { option in Text(option.title).tag(option.source).disabled(!option.isSupported) }
-        }
+        }.ojdAccessibilityLabel(OJDLocalized.string("ui.capture.controllerControl"))
 
         touchSourceControls
         if !connectedDevices.isEmpty {
@@ -38,7 +38,7 @@
             ForEach(connectedDevices, id: \.sessionToken) { device in
               Text(device.name).tag(device.sessionToken.rawValue)
             }
-          }
+          }.ojdAccessibilityLabel(OJDLocalized.string("term.controller"))
           if let selector = selectedDeviceSelector {
             Button(
               isListening
@@ -86,9 +86,8 @@
             viewModel.cancelInputCapture()
           }.disabled(!canAddAssignment)
         }
-      }.padding(28).frame(width: 470).ojdAccessibilityLabel(
-        OJDLocalized.string("ui.capture.title")
-      ).background(
+      }.padding(28).frame(width: 470).accessibilityElement(children: .contain)
+        .ojdAccessibilityLabel(OJDLocalized.string("ui.capture.title")).background(
         EscapeKeyMonitor(isCapturing: { keyboardCaptureActive }, onEscape: { cancelCapture() })
       ).onAppear { selectInitialDevice() }.onDisappear { stopListening() }.onReceive(
         viewModel.$inputCaptureState

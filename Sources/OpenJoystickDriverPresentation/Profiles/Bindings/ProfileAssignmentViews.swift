@@ -201,7 +201,8 @@
       }.disabled(isEditingDisabled).frame(maxWidth: .infinity, alignment: .leading).padding(
         .vertical,
         7
-      ).ojdAccessibilityLabel(OJDLocalized.string("term.assignment"))
+      ).accessibilityElement(children: .contain)
+        .ojdAccessibilityLabel(OJDLocalized.string("term.assignment"))
         .ojdAccessibilityValue(assignmentAccessibilityValue)
     }
 

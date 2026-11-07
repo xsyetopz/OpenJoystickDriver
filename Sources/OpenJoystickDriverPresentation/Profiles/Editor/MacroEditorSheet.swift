@@ -32,6 +32,7 @@
     var body: some View {
       VStack(alignment: .leading, spacing: 12) {
         TextField(OJDLocalized.string("ui.macros.name"), text: $draft.name)
+          .ojdAccessibilityLabel(OJDLocalized.string("ui.macros.name"))
         HStack {
           Text(OJDLocalized.string("ui.macros.steps")).font(.headline)
           Spacer()

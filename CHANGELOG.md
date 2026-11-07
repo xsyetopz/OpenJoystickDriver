@@ -74,6 +74,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - System sleep waits for controller teardown: the service acknowledges the sleep to macOS (`IOAllowPowerChange`) only after the teardown returned, so the teardown's writes reach the controllers before the machine sleeps.
 - The app builds with `xcodebuild` from a checkout or git worktree that is not named `OpenJoystickDriver`: the `build` routes pass the package name SwiftPM derives from the directory as `OJD_SWIFT_PACKAGE_NAME`.
 - Two controllers with the same VID:PID and USB serial number, such as two `057E:2009` pads, no longer share one virtual controller.
+- Accessibility labels: the capture assignment sheet no longer gives every control the sheet title, the profile actions menu and the editor section picker are no longer named twice, and the profile name and controller fields in the New profile, Duplicate and Details sheets and the macro name field carry their visible label.
 
 ## [0.6.0-alpha.1] - 2026-10-23
 

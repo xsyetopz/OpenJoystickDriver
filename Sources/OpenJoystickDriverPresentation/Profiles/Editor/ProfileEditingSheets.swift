@@ -69,6 +69,7 @@
           .headline.weight(.semibold)
         )
         TextField(OJDLocalized.string("term.profileName"), text: $name)
+          .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
         HStack(spacing: 12) {
           TextField(
             OJDLocalized.string("ui.profiles.vendorID"),
