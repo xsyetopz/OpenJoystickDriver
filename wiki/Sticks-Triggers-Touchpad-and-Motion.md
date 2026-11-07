@@ -130,6 +130,8 @@ Pointer speed scales all pointer movement by the value of a trigger or a stick. 
 
 The scale is the **Scale at 0** when the driver is at rest and the **Scale at 1** when the trigger is fully pulled or the stick is at its rim. The curve shapes the values in between. Both scales range from 0 to 10. A scale of 0 stops the pointer. While the controller is connected, the editor shows the current scale.
 
+Only a trigger or stick that the controller reports can be the driver.
+
 With several controllers that each have a pointer speed, the scales of all of them apply to the one pointer.
 
 On the command line, the setting is the `pointerSpeed` field of the profile. For example, to slow the pointer to a quarter while the left trigger is fully pulled:

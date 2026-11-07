@@ -83,7 +83,7 @@ A binding's `multiTap` list has entries with `count` (2 to 5, unique in the list
 - `minScale` applies at driver value 0 and `maxScale` at 1. Both are numbers from 0 to 10.
 - `curve` is `Linear`, `EaseIn`, `EaseOut`, or `SmoothStep`.
 
-The scale multiplies pointer movement, not scrolling. For more information, see [Set pointer speed](Sticks-Triggers-Touchpad-and-Motion.md#set-pointer-speed).
+`ojd profile set`, `ojd profile import`, and the profile editor reject a driver that the profile's controller does not report, such as a trigger that only sends a button press. The scale multiplies pointer movement, not scrolling. For more information, see [Set pointer speed](Sticks-Triggers-Touchpad-and-Motion.md#set-pointer-speed).
 
 ## Macro Fields
 
