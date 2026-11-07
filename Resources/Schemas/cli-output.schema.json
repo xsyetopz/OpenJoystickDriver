@@ -1526,6 +1526,61 @@
         }
       }
     },
+    "migrate": {
+      "description": "The stored documents of an older apiVersion, with what happened to each.",
+      "type": "object",
+      "required": ["apiVersion", "kind", "metadata", "items"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "MigrationReport"
+        },
+        "metadata": {
+          "type": "object",
+          "required": ["dryRun"],
+          "additionalProperties": false,
+          "properties": {
+            "dryRun": {
+              "type": "boolean"
+            }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["file", "kind", "status"],
+            "additionalProperties": false,
+            "properties": {
+              "detail": {
+                "type": "string",
+                "description": "Why the document was not converted; only for failed."
+              },
+              "file": {
+                "type": "string",
+                "description": "The path in the support folder, such as Profiles/<id>.json."
+              },
+              "kind": {
+                "enum": [
+                  "AccessGrants",
+                  "Controller",
+                  "ControllerPatch",
+                  "Profile",
+                  "Settings",
+                  "VirtualDevice"
+                ]
+              },
+              "status": {
+                "enum": ["converted", "failed", "wouldConvert"]
+              }
+            }
+          }
+        }
+      }
+    },
     "modInstall": {
       "type": "object",
       "required": [

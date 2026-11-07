@@ -44,6 +44,7 @@ extension CLI {
       (ConfigUnsetCommand.self, "ConfigChange"),
       (DiagnoseCommand.self, "Diagnosis"),
       (ExplainCommand.self, "ErrorExplanation"),
+      (MigrateCommand.self, "MigrationReport"),
       (TransportExtensionStatusCommand.self, "TransportExtension"),
       (TransportExtensionActivateCommand.self, "TransportExtension"),
       (TransportExtensionDeactivateCommand.self, "TransportExtension"),

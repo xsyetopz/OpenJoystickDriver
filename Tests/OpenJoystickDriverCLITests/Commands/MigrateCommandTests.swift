@@ -1,0 +1,71 @@
+import Foundation
+import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
+import Testing
+
+@testable import OpenJoystickDriverCLI
+
+@Suite(.serialized)
+struct MigrateCommandTests {
+  private let directory = RootedDataDirectory.temporary()
+
+  private func write(_ text: String, _ file: String) throws {
+    let url = directory.url(for: .applicationData).appendingPathComponent(file)
+    try FileManager.default.createDirectory(
+      at: url.deletingLastPathComponent(),
+      withIntermediateDirectories: true
+    )
+    try Data(text.utf8).write(to: url)
+  }
+
+  private func run(_ arguments: [String]) async -> CLIRun {
+    let directory = directory
+    return await MigrateCommand.$directory.withValue(directory) {
+      await CLIRun.run(["migrate"] + arguments)
+    }
+  }
+
+  private static let settings =
+    #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Settings", "showInDock": true}"#
+
+  @Test
+  func aDryRunListsTheDocumentAndChangesNothing() async throws {
+    try write(Self.settings, "Settings.json")
+
+    let human = await run(["--dry-run"])
+    let json = await run(["--dry-run", "--json"])
+
+    #expect(human.code == 0, "\(human.standardError)")
+    #expect(human.standardOutput.contains("Settings.json"))
+    #expect(json.code == 0, "\(json.standardError)")
+    #expect(json.standardOutput.contains(#""status": "wouldConvert""#))
+    let settings = SettingsStore(directory: directory)
+    #expect(throws: (any Error).self) { try settings.load() }
+  }
+
+  @Test
+  func theCommandConvertsTheDocumentSoThatItLoads() async throws {
+    try write(Self.settings, "Settings.json")
+
+    let result = await run([])
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(try SettingsStore(directory: directory).load().showInDock == true)
+    #expect(await run([]).standardOutput.contains("No document needs migration."))
+  }
+
+  @Test
+  func anUnconvertibleDocumentFailsWithE5009() async throws {
+    try write(
+      #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "ControllerPatch", "#
+        + #""selector": {"vendorID": 1, "productID": 2}, "patch": {"input": {"buttons": []}}}"#,
+      "Controllers/bad.patch.json"
+    )
+
+    let result = await run([])
+
+    #expect(result.code == 1)
+    #expect(result.standardError.contains("error[E5009]"))
+    #expect(result.standardOutput.contains("Controllers/bad.patch.json"))
+  }
+}
