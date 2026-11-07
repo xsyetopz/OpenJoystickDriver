@@ -66,6 +66,21 @@ OJD reads the permission state every second. A request result is not treated as 
 
 Open application, open URL, Mission Control, and Run Shortcut need no permission of their own. The Shortcuts app may ask its own questions. OJD does not use private macOS interfaces for system actions: DisplayServices, CoreDock, SkyLight, CGS, and MediaRemote are out of scope. Not checked on hardware: which prompts these actions raise.
 
+### Which Process Holds Each Permission
+
+macOS ties a permission to the process that calls the API. The OpenJoystickDriver service runs inside the app, so the app holds every permission in this table. The `ojd` command sends requests to the service and posts no events of its own.
+| Action | Permission it needs | Process that calls the API |
+| --- | --- | --- |
+| Keyboard, mouse, and scroll events | Post Event access | The app, through `CGEvent.post` |
+| System keys (media, volume, brightness, keyboard illumination) | Post Event access | The app, through `CGEvent.post` |
+| Type text | Post Event access | The app, through `CGEvent.post`. The action fails with a named error while secure input is on (`IsSecureEventInputEnabled`) |
+| Open application, open URL, Mission Control | None of its own | The app, through `NSWorkspace` |
+| Run Shortcut | None of its own | The app starts `/usr/bin/shortcuts run NAME` as a child process. The Shortcuts tool does the work |
+| MIDI output | None of its own | The app creates one virtual CoreMIDI source |
+| Speak | None of its own | The app, through `AVSpeechSynthesizer` |
+
+Before the app posts an event, it checks Post Event access. If the permission is missing, the action fails with a named error and posts nothing. No action sends an Apple Event, so no action in this table needs Automation access. `ojd permission` reads the permission from the service when the service runs, and from the `ojd` process when it does not. Not checked on hardware: which prompts these actions raise, and whether macOS attributes the permission of a `shortcuts` child process to the app.
+
 Not verified on hardware: the **Keyboard & pointer** row and the **Accessibility** row may use the same switch in **System Settings**.
 
 OJD does not use camera, microphone, or Full Disk Access permissions. It reads Bluetooth controllers as HID devices, so they need **Input Monitoring**. OJD uses Bluetooth only to disconnect a wireless controller. Whether macOS asks for Bluetooth permission for this is not verified.
