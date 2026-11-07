@@ -40,7 +40,7 @@ Owns: `valve-steam-controller.json`, `SteamControllerDriver+Session.swift`.
 Depends: 1.1; the datum ships after H5.
 Verify: `swift test --filter SteamSessionWritesTests` and `swift test --filter SteamControllerBluetoothTests`.
 
-- [ ] 3.1 Read `controller_constants.h` at the pinned SDL commit and confirm the indexes `SMOOTH_ABSOLUTE_MOUSE` (24 expected), `LEFT_TRACKPAD_MODE` (7), `RIGHT_TRACKPAD_MODE` (8), `IMU_MODE` (48) and `TRACKPAD_NONE` (7). Verify: the PR text quotes the enumerator counts.
+- [x] 3.1 Read `controller_constants.h` at the pinned SDL commit and confirm the indexes `SMOOTH_ABSOLUTE_MOUSE` (24 expected), `LEFT_TRACKPAD_MODE` (7), `RIGHT_TRACKPAD_MODE` (8), `IMU_MODE` (48) and `TRACKPAD_NONE` (7). Verify: design.md "Source checks" quotes the enumerator counts.
 - [ ] 3.2 Write tests of the USB and Bluetooth LE activation sequences: `81`, then `8E 00`, then one settings write with settings 7 = 7, 8 = 7, 24 = 0, 48 = `0x18` (and the Bluetooth LE framing of the existing sequence). Verify: the tests fail before the datum changes.
 - [ ] 3.3 Compare the deactivation with SDL `CloseSteamController` (`85`, `8E 00`, setting 8 = `TRACKPAD_ABSOLUTE_MOUSE`). Verify: a test pins whichever sequence H5 shows restores lizard mouse; if H5 shows `85` and `8E` suffice, the PR text says so.
 - [ ] 3.4 Edit the description with the sequences from 3.2, within the 20-byte Bluetooth LE report and the 64-byte USB report. Verify: the 3.2 tests pass; `./Scripts/ojd check schemas`; `swift test --filter ProtocolDescription`.
@@ -51,7 +51,7 @@ Owns: `valve-steam-triton.json`, `SteamTritonDriver.swift`.
 Depends: H6.
 Verify: `swift test --filter SteamTritonDriverTests`.
 
-- [ ] 4.1 Read the numeric IDs of the `IBEX`, `IBEX_BLE`, `PROTEUS` and `NEREID` devices in `hid-steam.c` and compare them with records `28de-1302` to `1305`. Verify: the PR text lists the mapping; a mismatch ends this group.
+- [x] 4.1 Read the numeric IDs of the `IBEX`, `IBEX_BLE`, `PROTEUS` and `NEREID` devices in `hid-steam.c` and compare them with records `28de-1302` to `1305`. Verify: design.md "Source checks" lists the mapping; a mismatch ends this group.
 - [ ] 4.2 If H6 shows a benefit, write tests of the extended activation (`CLEAR_DIGITAL_MAPPINGS`, settings 9 = 0 and 71 = 0) and of a deactivation that adds default mappings and `LOAD_DEFAULT_SETTINGS`; then edit the description. Verify: the tests pass; the crash check of H6 passes. If H6 shows no benefit, close the task with the result in the PR text.
 
 ## 5. Pad haptic pulse and rumble (tests first)

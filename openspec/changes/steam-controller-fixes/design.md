@@ -52,3 +52,31 @@ OJD is licensed under PolyForm Noncommercial 1.0.0 with a commercial license, so
 
 - Pad haptic exposure in profiles and the GUI: after H3.
 - Whether the dongle interface set is exactly 2 to 5 on the shipped dongles: H7.
+
+## Source checks
+
+Read 2026-11-07. Indexes are zero-based enumerator positions with no explicit values.
+
+Task 3.1, SDL `release-3.4.16`, `src/joystick/hidapi/steam/controller_constants.h`:
+
+- `SETTING_LEFT_TRACKPAD_MODE` = 7 (line 428).
+- `SETTING_RIGHT_TRACKPAD_MODE` = 8 (line 429).
+- `SETTING_SMOOTH_ABSOLUTE_MOUSE` = 24 (line 448).
+- `SETTING_IMU_MODE` = 48 (line 477).
+- `TRACKPAD_NONE` = 7 and `TRACKPAD_ABSOLUTE_MOUSE` = 0 in `TrackpadDPadMode` (lines 401, 394).
+- All five match the expected values; the settings enum starts at line 412.
+
+Task 4.1, Linux tag `v7.3` (commit `c03c1a14507dfaf8b856c2608f9ac216021fc222`):
+
+| Linux name (`drivers/hid/hid-ids.h`) | Line | ID | Record |
+| --- | --- | --- | --- |
+| `USB_DEVICE_ID_STEAM_CONTROLLER_IBEX` | 1395 | `0x1302` | `28de-1302` (4866) |
+| `USB_DEVICE_ID_STEAM_CONTROLLER_IBEX_BLE` | 1396 | `0x1303` | `28de-1303` (4867) |
+| `USB_DEVICE_ID_STEAM_CONTROLLER_PROTEUS` | 1397 | `0x1304` | `28de-1304` (4868) |
+| `USB_DEVICE_ID_STEAM_CONTROLLER_NEREID` | 1398 | `0x1305` | `28de-1305` (4869) |
+
+- `hid-steam.c` lists the four in its device table at lines 2741, 2746, 2751 and 2756.
+- `USB_VENDOR_ID_VALVE` is `0x28de` (10462), as in all four records.
+- No mismatch: the group continues. The records are
+  `Sources/OpenJoystickDriverKit/Resources/Controllers/28de/28de-1302.json` to `28de-1305.json`.
+- Linux tag `v6.19` has no Ibex entries; the IDs first appear in a later release.
