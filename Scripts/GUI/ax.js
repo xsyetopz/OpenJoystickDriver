@@ -20,6 +20,10 @@
 //                              AXIdentifier and presses each item with the given AXIdentifier in
 //                              turn, which opens its submenu
 //   open-status-menu [item-id...] the same for the app's status item (AXExtrasMenuBar)
+//   labels                     "<AXRole>\t<AXTitle>\t<AXDescription>\t<AXValue>" of every element
+//                              of the focused window and its open sheet, one per line, depth
+//                              first; "-" marks an attribute that the element fails to return
+//   press-label <label>        presses the first element of the focused window with that label
 //   press-escape               posts an Escape key press (CGEvent, HID event tap), which closes
 //                              the innermost open menu
 // Menus are matched by AXIdentifier, which the app sets from its menu model ids, so the menu
@@ -106,6 +110,25 @@ function children(element, role) {
 
 function label(element) {
 	return attribute(element, "AXTitle") || attribute(element, "AXDescription");
+}
+
+function focusedWindow(app) {
+	const { value } = read(app, "AXFocusedWindow");
+	if (value === null) throw new Error("the app has no focused window");
+	return value;
+}
+
+// An AppKit text view of the About panel fails some reads with -25200; a listing shows that.
+function shown(element, name) {
+	const { code, value } = readCode(element, name);
+	if (code !== 0) return classifyAxCode(code) === "absent" ? "" : "-";
+	const text = ObjC.unwrap(value);
+	return typeof text === "string" || typeof text === "number" ? String(text) : "";
+}
+
+// Depth-first, so the output follows the reading order of the window.
+function descendants(element) {
+	return items(element, "AXChildren").flatMap((child) => [child, ...descendants(child)]);
 }
 
 function press(element) {
@@ -351,6 +374,19 @@ function run(argv) {
 			const item = statusMenuBarItem(app);
 			pressStatusItem(item);
 			pressPath(item, argument === undefined ? [] : [argument, ...rest]);
+			return "";
+		}
+		case "labels":
+			return descendants(focusedWindow(app))
+				.map((element) =>
+					["AXRole", "AXTitle", "AXDescription", "AXValue"].map((name) => shown(element, name)).join("\t"),
+				)
+				.join("\n");
+		case "press-label": {
+			const target = descendants(focusedWindow(app)).find((element) => label(element) === argument);
+			if (!target) throw new Error("the focused window has no element labeled " + argument);
+			press(target);
+			delay(SETTLE_SECONDS);
 			return "";
 		}
 		case "press-escape": {

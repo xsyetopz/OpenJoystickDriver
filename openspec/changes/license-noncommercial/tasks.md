@@ -19,7 +19,7 @@ Each task names its check. Changing `LICENSE`, enabling the CLA workflow and con
 - [x] 3.2 Write `COMMERCIAL.md` (design D2) and `CLA.md` (design D3) from the reviewed drafts. Verify: markdownlint passes; each file states what the spec requires. Done: drafts written; markdownlint passes. The lawyer review stays in 1.1.
 - [x] 3.3 Update `README.md`: the License section, the static badge, and the sponsorship paragraph addressed to commercial users. Verify: markdownlint; the section names both licenses and links `COMMERCIAL.md`. Done: markdownlint passes.
 - [x] 3.4 Add the License section to `CONTRIBUTING.md` (CLA and the source rule), and a CLA checkbox to `.github/pull_request_template.md`. Verify: markdownlint. Done: markdownlint passes.
-- [ ] 3.5 Add `NSHumanReadableCopyright` to the app's Info.plist; the line holds only names and a version, so it is not localized. Verify: the Info.plist of a built app has the key; the About panel shows the line.
+- [x] 3.5 Add `NSHumanReadableCopyright` to the app's Info.plist; the line holds only names and a version, so it is not localized. Verify: the Info.plist of a built app has the key; the About panel shows the line. Done: the plist has the key, and the dev app's About panel lists `© 2026 Krystian J. PolyForm Noncommercial 1.0.0.` as static text (`Scripts/GUI/ax.js labels`).
 
 ## 4. Contributors and Notices
 
