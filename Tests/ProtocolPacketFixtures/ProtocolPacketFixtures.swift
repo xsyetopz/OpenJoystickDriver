@@ -332,6 +332,10 @@ public enum ProtocolPacketFixtures {
     public static let presenceConnected = Data([0x08, 0x80])
     /// The envelope that reports a pad disconnected.
     public static let presenceDisconnected = Data([0x08, 0x00])
+    /// The connected envelope with the headset bit (`0x40`) set in byte 1.
+    public static let presenceConnectedWithHeadset = Data([0x08, 0xC0])
+    /// A pad data envelope one byte shorter than a pad report needs.
+    public static let padDataTooShort = padData().dropLast()
 
     /// Pad data: the four-byte envelope with `data[1] == 0x01`, then one wired-format report.
     public static func padData(buttons: UInt16 = 0) -> Data {

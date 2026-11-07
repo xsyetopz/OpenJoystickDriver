@@ -51,13 +51,9 @@ public enum Xbox360LEDPattern: UInt8, Sendable {
 /// slot of the Xbox 360 wireless receiver.
 ///
 /// A wired controller needs no handshake: it begins sending 20-byte input reports immediately
-/// after the interface is claimed. A receiver slot is asked for its presence at startup and
-/// yields input only while its receiver envelope reports a controller present.
-///
-/// xpad arms the input read before it sends the inquiry (xpad.c:1849–1860); OJD sends it during
-/// the handshake, before its first read, so the reply can be lost. Pad data from a slot not yet
-/// known to be present means a controller is there, so the inquiry is resent on the first such
-/// report and every sixteenth after it, a bounded number of times.
+/// after the interface is claimed. A receiver slot is asked for its presence at startup. It is
+/// connected when its receiver envelope reports a controller present or when it delivers a valid
+/// pad report, because a pad that sends input is there; that report is decoded in the same call.
 ///
 /// Input report layout (20 bytes, interrupt IN, EP 0x81):
 /// ```
@@ -102,11 +98,6 @@ public final class XUSBDriver: PhysicalProtocolDriver {
   private var pendingConnectionState: ControllerInputConnectionState?
   /// Writes produced while parsing, returned by ``drainPendingWrites()``.
   private var pendingWrites: [PhysicalOutputWrite] = []
-  /// Pad reports of the slot since the last presence report that arrived while it was not
-  /// present.
-  private var padReportsWithoutPresence = 0
-  /// Pad reports seen without presence between inquiry resends (`presenceResendReports`).
-  let inquiryResendInterval: Int
   /// The timeout of one output packet that names none (`usbTransferTimeoutMs`).
   let usbTimeoutMilliseconds: Int
   /// The record's own startup packets; the description's when empty.
@@ -143,10 +134,6 @@ public final class XUSBDriver: PhysicalProtocolDriver {
       record: rumbleTemplate
     )
     self.isWirelessReceiver = isWirelessReceiver
-    inquiryResendInterval = PhysicalProtocolID.xboxXUSB.described(
-      \.presenceResendReports,
-      in: tuning
-    )
     usbTimeoutMilliseconds = PhysicalProtocolID.xboxXUSB.described(
       \.usbTransferTimeoutMilliseconds,
       in: tuning
@@ -234,7 +221,6 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     receiverConnected = false
     pendingConnectionState = nil
     pendingWrites.removeAll()
-    padReportsWithoutPresence = 0
   }
 
   /// Returns the queued writes and clears the queue.
@@ -254,15 +240,14 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     guard isWirelessReceiver else { return decodeWired(data) }
     guard data.count >= 2 else { return nil }
 
-    let reportsPresence = data[0] & 0x08 != 0
-    if reportsPresence { updateReceiverConnection(isConnected: data[1] & 0x80 != 0) }
-    guard data[1] == 0x01, data.count >= xbox360InputReportLength + 4 else { return nil }
-    // Pad data counts only after a presence report connected the slot (xpad.c:1013–1021).
-    guard receiverConnected else {
-      if !reportsPresence { resendPresenceInquiry() }
+    if data[0] & 0x08 != 0 {
+      updateReceiverConnection(isConnected: data[1] & 0x80 != 0)
       return nil
     }
-    return decodeWired(Data(data.dropFirst(4)))
+    guard data[1] == 0x01, data.count >= xbox360InputReportLength + 4 else { return nil }
+    guard let state = decodeWired(Data(data.dropFirst(4))) else { return nil }
+    updateReceiverConnection(isConnected: true)
+    return state
   }
 
   /// The presence inquiry: the description's startup write for a receiver slot (xpad.c:1449–1469).
@@ -274,17 +259,6 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     ).map {
       $0.write(defaultEndpoint: outEndpoint, defaultTimeoutMilliseconds: usbTimeoutMilliseconds)
     }
-  }
-
-  /// Queues the presence inquiry again after every `inquiryResendInterval` pad reports that came
-  /// without a presence report, up to the description's limit.
-  private func resendPresenceInquiry() {
-    defer { padReportsWithoutPresence += 1 }
-    guard padReportsWithoutPresence.isMultiple(of: inquiryResendInterval),
-      padReportsWithoutPresence / inquiryResendInterval
-        < PhysicalProtocolID.xboxXUSB.described(limit: \.receiverInquiryResendLimit)
-    else { return }
-    pendingWrites.append(contentsOf: presenceInquiryWrites)
   }
 
   /// Decodes one wired-format Xbox 360 state report.
@@ -368,7 +342,6 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     guard receiverConnected != isConnected else { return }
     receiverConnected = isConnected
     pendingConnectionState = isConnected ? .connected : .disconnected
-    padReportsWithoutPresence = 0
     if !isConnected {
       state = .neutral
       lastRumble = .off

@@ -25,31 +25,48 @@ extension XUSBDriverTests {
   }
 
   @Test
-  func testWirelessReceiverPadDataBeforePresenceYieldsNothingAndAsksAgain() throws {
+  func testWirelessReceiverPadDataBeforePresenceConnectsAndDecodes() throws {
     let parser = XUSBDriver(isWirelessReceiver: true)
 
-    #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)) == nil)
-    #expect(parser.consumeInputConnectionStateChange() == nil)
-    #expect(parser.drainPendingWrites() == [Self.inquiry()])
-
-    // Dropped pad data leaves no state behind, so the first report after presence is a change.
-    #expect(try parser.parseReport(Receiver.presenceConnected) == nil)
-    #expect(parser.consumeInputConnectionStateChange() == .connected)
     #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)).contains(.press(.south)))
+    #expect(parser.consumeInputConnectionStateChange() == .connected)
+    #expect(parser.consumeInputConnectionStateChange() == nil)
+    #expect(parser.drainPendingWrites().isEmpty)
+
+    // A later presence report for the same state is not a change.
+    #expect(try parser.parseReport(Receiver.presenceConnected) == nil)
+    #expect(parser.consumeInputConnectionStateChange() == nil)
+  }
+
+  @Test
+  func testWirelessReceiverShortOrWrongTypePadDataDoesNotConnect() throws {
+    let parser = XUSBDriver(isWirelessReceiver: true)
+    var wrongType = Receiver.padData()
+    wrongType[4] = 0x01
+
+    #expect(try parser.parseReport(Receiver.padDataTooShort) == nil)
+    #expect(try parser.parseReport(wrongType) == nil)
+    #expect(parser.consumeInputConnectionStateChange() == nil)
     #expect(parser.drainPendingWrites().isEmpty)
   }
 
   @Test
-  func testWirelessReceiverPresenceInquiryResendIsBounded() throws {
+  func testWirelessReceiverHeadsetPresenceConnects() throws {
     let parser = XUSBDriver(isWirelessReceiver: true)
-    var resends: [Int] = []
 
-    for report in 0..<200 {
-      _ = try parser.parseReport(Receiver.padData())
-      if !parser.drainPendingWrites().isEmpty { resends.append(report) }
-    }
+    #expect(try parser.parseReport(Receiver.presenceConnectedWithHeadset) == nil)
+    #expect(parser.consumeInputConnectionStateChange() == .connected)
+  }
 
-    #expect(resends == [0, 16, 32, 48, 64, 80, 96, 112])
+  @Test
+  func testWirelessReceiverDisconnectAfterPadDataResetsState() throws {
+    let parser = XUSBDriver(isWirelessReceiver: true)
+    _ = try parser.parseReport(Receiver.padData(buttons: 1 << 12))
+    #expect(parser.consumeInputConnectionStateChange() == .connected)
+
+    #expect(try parser.parseReport(Receiver.presenceDisconnected) == nil)
+    #expect(parser.consumeInputConnectionStateChange() == .disconnected)
+    #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)).contains(.press(.south)))
   }
 
   @Test
@@ -64,8 +81,6 @@ extension XUSBDriverTests {
 
     #expect(try parser.parseReport(Receiver.presenceDisconnected) == nil)
     #expect(parser.consumeInputConnectionStateChange() == .disconnected)
-    #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)) == nil)
-    #expect(parser.consumeInputConnectionStateChange() == nil)
   }
 
   @Test
@@ -90,10 +105,8 @@ extension XUSBDriverTests {
     parser.resetProtocolState()
 
     #expect(parser.consumeInputConnectionStateChange() == nil)
-    #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)) == nil)
-    _ = try parser.parseReport(Receiver.presenceConnected)
-    #expect(parser.consumeInputConnectionStateChange() == .connected)
     #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)).contains(.press(.south)))
+    #expect(parser.consumeInputConnectionStateChange() == .connected)
   }
 
   /// The manager assigns a receiver slot's ring LED from the pool wired pads share, so the

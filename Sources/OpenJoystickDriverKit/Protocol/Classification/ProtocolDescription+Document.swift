@@ -97,8 +97,6 @@ extension ProtocolDescription {
       let handshakeAttempts: Int?
       /// The most startup resends after announces before the first input.
       let announceResendLimit: Int?
-      /// The most presence inquiry resends for a receiver slot.
-      let receiverInquiryResendLimit: Int?
       /// The USB interface that carries commands and their replies.
       let commandChannel: ProtocolDescription.CommandChannel?
       /// The zero-amplitude packets the rumble refresh sends after a stop.
@@ -119,7 +117,7 @@ extension ProtocolDescription {
         try container.rejectUnknown(allowed: [
           "startup", "rumble", "keepAlive", "activation", "deactivation", "subcommands",
           "namedPackets", "handshakeAttempts",
-          "announceResendLimit", "receiverInquiryResendLimit", "commandChannel",
+          "announceResendLimit", "commandChannel",
           "trailingStopPackets", "wiiRemote",
         ])
         familyFields = Set(container.allKeys.map(\.stringValue)).subtracting(Self.generalKeys)
@@ -156,7 +154,6 @@ extension ProtocolDescription {
         }
         handshakeAttempts = try count("handshakeAttempts", 1...10)
         announceResendLimit = try count("announceResendLimit", 1...100)
-        receiverInquiryResendLimit = try count("receiverInquiryResendLimit", 1...100)
         commandChannel = try container.decodeOptional(
           ProtocolDescription.CommandChannel.self,
           for: "commandChannel"

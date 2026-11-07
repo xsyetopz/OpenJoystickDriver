@@ -96,27 +96,6 @@ struct ProtocolDescriptionDriverTimingTests {
   }
 
   @Test
-  func xusbReadsTheInquiryResend() {
-    #expect(XUSBDriver().inquiryResendInterval == 16)
-    #expect(XUSBDriver(tuning: .init(presenceResendReports: 3)).inquiryResendInterval == 3)
-  }
-
-  @Test
-  func xusbReadsTheReceiverInquiryResendLimit() throws {
-    #expect(PhysicalProtocolID.xboxXUSB.protocolDescription.receiverInquiryResendLimit == 8)
-    let limit = PhysicalProtocolID.xboxXUSB.described(limit: \.receiverInquiryResendLimit)
-    let driver = XUSBDriver(isWirelessReceiver: true)
-    // Pad reports from a slot that has not reported presence.
-    let padReport = Data([0x00, 0x01, 0x00, 0x00] + [UInt8](repeating: 0, count: 20))
-    var resends = 0
-    for _ in 0..<(driver.inquiryResendInterval * (limit + 4)) {
-      _ = try driver.parseReport(padReport)
-      if !driver.drainPendingWrites().isEmpty { resends += 1 }
-    }
-    #expect(resends == limit)
-  }
-
-  @Test
   func xusbReadsTheTransferTimeout() {
     #expect(XUSBDriver().usbTimeoutMilliseconds == 2_000)
     #expect(

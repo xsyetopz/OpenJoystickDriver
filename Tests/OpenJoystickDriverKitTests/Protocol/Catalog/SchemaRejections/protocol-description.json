@@ -504,7 +504,6 @@
         "rawUSB": true,
         "defaults": {
           "session": {
-            "receiverInquiryResendLimit": 8,
             "subcommands": {
               "reportID": 1,
               "counterModulus": 16,
@@ -628,7 +627,6 @@
         "rawUSB": true,
         "defaults": {
           "session": {
-            "receiverInquiryResendLimit": 8,
             "namedPackets": [
               {
                 "id": "XboxGIP/power-on",
@@ -721,7 +719,6 @@
         "rawUSB": true,
         "defaults": {
           "session": {
-            "receiverInquiryResendLimit": 8,
             "handshakeAttempts": 3
           }
         }
@@ -808,102 +805,7 @@
         "rawUSB": true,
         "defaults": {
           "session": {
-            "receiverInquiryResendLimit": 8,
             "announceResendLimit": 8
-          }
-        }
-      }
-    },
-    {
-      "name": "a family specific session field of another family is refused: family=XboxXID, key=receiverInquiryResendLimit",
-      "code": "E5002",
-      "fileName": "xbox-xid.json",
-      "document": {
-        "variants": ["Gamepad"],
-        "storesVariant": true,
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "ProtocolDescription",
-        "family": "XboxXID",
-        "endpoints": {
-          "in": 130,
-          "out": 2
-        },
-        "rawUSB": true,
-        "recordSections": ["input", "rumble"],
-        "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
-        }
-      }
-    },
-    {
-      "name": "a family specific session field of another family is refused: family=SonyDualSense, key=receiverInquiryResendLimit",
-      "code": "E5002",
-      "fileName": "sony-dual-sense.json",
-      "document": {
-        "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "ProtocolDescription",
-        "family": "SonyDualSense",
-        "endpoints": {
-          "in": 130,
-          "out": 2
-        },
-        "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
-        }
-      }
-    },
-    {
-      "name": "a family specific session field of another family is refused: family=NintendoSwitchInputOnly, key=receiverInquiryResendLimit",
-      "code": "E5002",
-      "fileName": "nintendo-switch-input-only.json",
-      "document": {
-        "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "ProtocolDescription",
-        "family": "NintendoSwitchInputOnly",
-        "endpoints": {
-          "in": 130,
-          "out": 2
-        },
-        "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
-        }
-      }
-    },
-    {
-      "name": "a family specific session field of another family is refused: family=another owner, key=receiverInquiryResendLimit",
-      "code": "E5002",
-      "fileName": "xbox-gip.json",
-      "document": {
-        "variants": ["USB"],
-        "sessionKeys": ["startup", "keepAlive"],
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "ProtocolDescription",
-        "family": "XboxGIP",
-        "endpoints": {
-          "in": 130,
-          "out": 2
-        },
-        "rawUSB": true,
-        "defaults": {
-          "session": {
-            "handshakeAttempts": 3,
-            "announceResendLimit": 8,
-            "namedPackets": [
-              {
-                "id": "XboxGIP/power-on",
-                "bytes": "05 20 00 01 00",
-                "sessionByte": 2
-              }
-            ],
-            "receiverInquiryResendLimit": 8
           }
         }
       }
@@ -1007,7 +909,6 @@
         "rawUSB": true,
         "defaults": {
           "session": {
-            "receiverInquiryResendLimit": 8,
             "commandChannel": {
               "interface": 1,
               "inEndpoint": 130,
@@ -1100,7 +1001,6 @@
         "rawUSB": true,
         "defaults": {
           "session": {
-            "receiverInquiryResendLimit": 8,
             "trailingStopPackets": 2
           }
         }
@@ -1214,7 +1114,6 @@
         "rawUSB": true,
         "defaults": {
           "session": {
-            "receiverInquiryResendLimit": 8,
             "activation": [
               {
                 "report": {
@@ -1337,7 +1236,6 @@
         "rawUSB": true,
         "defaults": {
           "session": {
-            "receiverInquiryResendLimit": 8,
             "deactivation": [
               {
                 "report": {
@@ -1430,28 +1328,6 @@
             "handshakeAttempts": 3,
             "announceResendLimit": 8
           }
-        }
-      }
-    },
-    {
-      "name": "a session field the driver reads must be set: family=XboxXUSB, key=receiverInquiryResendLimit",
-      "code": "E5002",
-      "fileName": "xbox-xusb.json",
-      "schema": true,
-      "document": {
-        "variants": ["Wired", "Receiver"],
-        "storesVariant": true,
-        "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "ProtocolDescription",
-        "family": "XboxXUSB",
-        "endpoints": {
-          "in": 130,
-          "out": 2
-        },
-        "rawUSB": true,
-        "defaults": {
-          "session": {}
         }
       }
     },
@@ -6084,9 +5960,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -6115,9 +5989,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -6146,9 +6018,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -6177,9 +6047,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -6208,9 +6076,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -6239,9 +6105,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -14221,7 +14085,7 @@
           "base": "Xbox",
           "add": ["Guide"]
         },
-        "rawUSBTuningKeys": ["presenceResendReports", "usbTransferTimeoutMs"],
+        "rawUSBTuningKeys": ["usbTransferTimeoutMs"],
         "defaults": {
           "session": {
             "startup": [
@@ -14231,11 +14095,9 @@
                 "toleratesRejection": true,
                 "variants": ["Receiver"]
               }
-            ],
-            "receiverInquiryResendLimit": 8
+            ]
           },
           "tuning": {
-            "presenceResendReports": 16,
             "usbTransferTimeoutMs": 2000,
             "frameQueueCapacity": 0
           },
@@ -14314,7 +14176,7 @@
           "base": "Xbox",
           "add": ["Guide"]
         },
-        "rawUSBTuningKeys": ["presenceResendReports", "usbTransferTimeoutMs"],
+        "rawUSBTuningKeys": ["usbTransferTimeoutMs"],
         "defaults": {
           "session": {
             "startup": [
@@ -14324,11 +14186,9 @@
                 "toleratesRejection": true,
                 "variants": ["Receiver"]
               }
-            ],
-            "receiverInquiryResendLimit": 8
+            ]
           },
           "tuning": {
-            "presenceResendReports": 16,
             "usbTransferTimeoutMs": 2000,
             "frameQueueCapacity": 1025
           },
@@ -14407,7 +14267,7 @@
           "base": "Xbox",
           "add": ["Guide"]
         },
-        "rawUSBTuningKeys": ["presenceResendReports", "usbTransferTimeoutMs"],
+        "rawUSBTuningKeys": ["usbTransferTimeoutMs"],
         "defaults": {
           "session": {
             "startup": [
@@ -14417,11 +14277,9 @@
                 "toleratesRejection": true,
                 "variants": ["Receiver"]
               }
-            ],
-            "receiverInquiryResendLimit": 8
+            ]
           },
           "tuning": {
-            "presenceResendReports": 16,
             "usbTransferTimeoutMs": 2000,
             "frameQueueCapacity": 1.5
           },
@@ -14500,7 +14358,7 @@
           "base": "Xbox",
           "add": ["Guide"]
         },
-        "rawUSBTuningKeys": ["presenceResendReports", "usbTransferTimeoutMs"],
+        "rawUSBTuningKeys": ["usbTransferTimeoutMs"],
         "defaults": {
           "session": {
             "startup": [
@@ -14510,11 +14368,9 @@
                 "toleratesRejection": true,
                 "variants": ["Receiver"]
               }
-            ],
-            "receiverInquiryResendLimit": 8
+            ]
           },
           "tuning": {
-            "presenceResendReports": 16,
             "usbTransferTimeoutMs": 2000,
             "frameQueueCapacity": "64"
           },
@@ -15045,9 +14901,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -15077,9 +14931,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -15109,9 +14961,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -15142,9 +14992,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -15180,9 +15028,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -15211,9 +15057,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -15242,9 +15086,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -15273,9 +15115,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -15572,9 +15412,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -15604,9 +15442,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -15635,9 +15471,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -15667,9 +15501,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -16026,9 +15858,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -16057,9 +15887,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -16088,9 +15916,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -16651,9 +16477,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -16683,9 +16507,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -16715,9 +16537,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -16747,9 +16567,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -16823,9 +16641,6 @@
                 ]
               }
             ]
-          },
-          "session": {
-            "receiverInquiryResendLimit": 8
           }
         }
       }
@@ -17086,9 +16901,6 @@
         "defaults": {
           "tuning": {
             "hidStartupIntervalMs": 5
-          },
-          "session": {
-            "receiverInquiryResendLimit": 8
           }
         }
       }
@@ -17219,7 +17031,6 @@
         "rawUSB": true,
         "defaults": {
           "session": {
-            "receiverInquiryResendLimit": 8,
             "rumble": {
               "report": {
                 "kind": "Output",
@@ -17361,9 +17172,7 @@
         "rawUSB": true,
         "interfaceSignatures": [],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -17385,9 +17194,7 @@
         },
         "rawUSB": true,
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         },
         "parameters": {}
       }
@@ -22698,9 +22505,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -22938,9 +22743,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         },
         "vendorID": 1118
       }
@@ -22972,9 +22775,7 @@
           }
         ],
         "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 8
-          }
+          "session": {}
         }
       }
     },
@@ -23387,54 +23188,6 @@
                 "sessionByte": 2
               }
             ]
-          }
-        }
-      }
-    },
-    {
-      "name": "session limits have ranges: key=receiverInquiryResendLimit, value=0",
-      "code": "E5002",
-      "fileName": "xbox-xusb.json",
-      "schema": true,
-      "document": {
-        "variants": ["Wired", "Receiver"],
-        "storesVariant": true,
-        "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "ProtocolDescription",
-        "family": "XboxXUSB",
-        "endpoints": {
-          "in": 130,
-          "out": 2
-        },
-        "rawUSB": true,
-        "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 0
-          }
-        }
-      }
-    },
-    {
-      "name": "session limits have ranges: key=receiverInquiryResendLimit, value=101",
-      "code": "E5002",
-      "fileName": "xbox-xusb.json",
-      "schema": true,
-      "document": {
-        "variants": ["Wired", "Receiver"],
-        "storesVariant": true,
-        "sessionKeys": ["startup"],
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "ProtocolDescription",
-        "family": "XboxXUSB",
-        "endpoints": {
-          "in": 130,
-          "out": 2
-        },
-        "rawUSB": true,
-        "defaults": {
-          "session": {
-            "receiverInquiryResendLimit": 101
           }
         }
       }

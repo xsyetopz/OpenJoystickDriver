@@ -213,10 +213,6 @@ struct ProtocolDescription: Sendable {
   ///
   /// Only `XboxGIP` has it.
   let announceResendLimit: Int?
-  /// The most presence inquiry resends for a receiver slot.
-  ///
-  /// Only `XboxXUSB` has it.
-  let receiverInquiryResendLimit: Int?
   /// The USB interface that carries commands and their replies.
   ///
   /// Only `NintendoSwitch2` has it.
@@ -559,7 +555,6 @@ struct ProtocolDescription: Sendable {
       namedPackets: document.defaults?.session?.namedPackets,
       handshakeAttempts: document.defaults?.session?.handshakeAttempts,
       announceResendLimit: document.defaults?.session?.announceResendLimit,
-      receiverInquiryResendLimit: document.defaults?.session?.receiverInquiryResendLimit,
       commandChannel: document.defaults?.session?.commandChannel,
       trailingStopPackets: document.defaults?.session?.trailingStopPackets,
       wiiRemote: document.defaults?.session?.wiiRemote,
