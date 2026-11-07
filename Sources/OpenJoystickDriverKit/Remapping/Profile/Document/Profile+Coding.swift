@@ -26,6 +26,8 @@ extension RemappingProfile {
     case gyroOutput
     /// The JSON key of `joyConPair`.
     case joyConPair
+    /// The JSON key of `pointerSpeed`.
+    case pointerSpeed
     /// The JSON key of `stickMappings`.
     case stickMappings
     /// The JSON key of `triggerMappings`.
@@ -60,6 +62,7 @@ extension RemappingProfile {
     if motionTuning != .default { try container.encode(motionTuning, forKey: .motionTuning) }
     if gyroOutput != .default { try container.encode(gyroOutput, forKey: .gyroOutput) }
     try container.encodeIfPresent(joyConPair, forKey: .joyConPair)
+    try container.encodeIfPresent(pointerSpeed, forKey: .pointerSpeed)
     if !stickMappings.isEmpty { try container.encode(stickMappings, forKey: .stickMappings) }
     if !triggerMappings.isEmpty { try container.encode(triggerMappings, forKey: .triggerMappings) }
     if !touchMappings.isEmpty { try container.encode(touchMappings, forKey: .touchMappings) }

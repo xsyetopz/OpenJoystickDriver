@@ -13,3 +13,17 @@ struct RemappingAnalogState {
   /// Binding identifiers that hold a virtual gamepad axis contribution.
   var virtualAxisBindings: Set<UUID> = []
 }
+
+extension RemappingEngineState {
+  /// The product of the pointer scales of every controller whose profile sets a pointer speed.
+  ///
+  /// A system action names no controller and continuous totals add up across controllers, so the
+  /// scales apply together to the one pointer.
+  var pointerScale: Double {
+    devices.values.reduce(1) { product, device in
+      guard let speed = device.profile.pointerSpeed else { return product }
+      let axes = device.analog.physicalAxes
+      return product * speed.scale { axes[$0] ?? 0 }
+    }
+  }
+}

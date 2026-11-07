@@ -12,13 +12,7 @@ enum RemappingTransform {
     guard magnitude > tuning.deadzone else { return 0 }
 
     let scaled = min(max((magnitude - tuning.deadzone) / (1 - tuning.deadzone), 0), 1)
-    let curved: Double
-    switch tuning.responseCurve {
-    case .linear: curved = scaled
-    case .easeIn: curved = scaled * scaled
-    case .easeOut: curved = 1 - ((1 - scaled) * (1 - scaled))
-    case .smoothStep: curved = scaled * scaled * (3 - (2 * scaled))
-    }
+    let curved = tuning.responseCurve.shaped(scaled)
 
     let sign = clamped.sign == .minus ? -1.0 : 1.0
     let invertedSign = tuning.inverted ? -sign : sign

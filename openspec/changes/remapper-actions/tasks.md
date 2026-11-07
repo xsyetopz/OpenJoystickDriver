@@ -70,10 +70,10 @@ Each group owns its tests and documentation. Order follows dependencies: tests f
 
 ## 8. Variable Pointer Speed (REQ-46, REQ-47)
 
-- [ ] 8.1 Write failing tests first: trigger driver slows the stick pointer, stick-depth driver scale on each curve, gyro mouse and touch pointer obey it, scroll unchanged, unsupported driver rejected. Verify: `swift test --filter OpenJoystickDriverKitTests.PointerSpeedTests` fails for the stated reason.
-- [ ] 8.2 Add `pointerSpeed` to model, validation and schema; apply it at the one engine point before the system sink. Verify: `swift test --filter OpenJoystickDriverKitTests.PointerSpeedTests` and `swift test --filter OpenJoystickDriverKitTests.TouchRoutingTests` pass.
-- [ ] 8.3 Add the editor with the live scale and the `ojd profile set PROFILE pointerSpeed JSON` example. Verify: `swift test --filter OpenJoystickDriverPresentationTests` passes; the command in REQ-47 validates a temporary profile.
-- [ ] 8.4 Localization keys in 22 bundles; document in `wiki/Sticks-Triggers-Touchpad-and-Motion.md` and `wiki/Profile-File-Reference.md`. Verify: `python3 Scripts/Quality/check_localization_keys.py` and `git diff --check` pass.
+- [x] 8.1 Write failing tests first: trigger driver slows the stick pointer, stick-depth driver scale on each curve, gyro mouse and touch pointer obey it, scroll unchanged, unsupported driver rejected. Verify: `swift test --filter OpenJoystickDriverKitTests.PointerSpeedTests` fails for the stated reason.
+- [x] 8.2 Add `pointerSpeed` to model, validation and schema; apply it at the one engine point before the system sink. Verify: `swift test --filter OpenJoystickDriverKitTests.PointerSpeedTests` and `swift test --filter OpenJoystickDriverKitTests.TouchRoutingTests` pass.
+- [x] 8.3 Add the editor with the live scale and the `ojd profile set PROFILE pointerSpeed JSON` example. Verify: `swift test --filter OpenJoystickDriverPresentationTests` passes; the command in REQ-47 validates a temporary profile.
+- [x] 8.4 Localization keys in 22 bundles; document in `wiki/Sticks-Triggers-Touchpad-and-Motion.md` and `wiki/Profile-File-Reference.md`. Verify: `python3 Scripts/Quality/check_localization_keys.py` and `git diff --check` pass.
 
 ## 9. Gyro-to-Stick Template and Hardware Check (REQ-48, REQ-49)
 

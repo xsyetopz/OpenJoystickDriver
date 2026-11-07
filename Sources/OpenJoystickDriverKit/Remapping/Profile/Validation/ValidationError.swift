@@ -19,6 +19,10 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
   case invalidGyroOutput(RemappingGyroOutputError)
   /// A Joy-Con pair profile does not target a left Joy-Con model.
   case invalidJoyConPairDevice
+  /// The pointer speed has a minimum or maximum scale that is not finite or not 0 to 10.
+  case invalidPointerSpeed
+  /// The pointer speed reads a trigger or stick that the controller does not report.
+  case unsupportedPointerSpeedDriver
   /// The mapping of this stick has an invalid field.
   case invalidStickMapping(RemappingStickSource)
   /// Two mappings read this stick.
@@ -183,6 +187,9 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
     case .overlappingRegions: "Regions of one stick, or bands of one trigger, must not overlap."
     case .invalidMotionTuning(let error): error.localizedDescription
     case .invalidGyroOutput(let error): error.localizedDescription
+    case .invalidPointerSpeed: "Pointer speed scales must be finite numbers from 0 to 10."
+    case .unsupportedPointerSpeedDriver:
+      "The pointer speed reads a trigger or stick that the controller does not report."
     case .invalidJoyConPairDevice:
       "Joy-Con pair profiles must target a Nintendo left Joy-Con model (057e:2006 or 057e:2067)."
     case .bindingBehaviorConflict(let index):

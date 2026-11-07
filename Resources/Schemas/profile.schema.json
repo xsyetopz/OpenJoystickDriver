@@ -96,6 +96,9 @@
     "gyroOutput": {
       "$ref": "#/$defs/gyroOutput"
     },
+    "pointerSpeed": {
+      "$ref": "#/$defs/pointerSpeed"
+    },
     "id": {
       "$ref": "#/$defs/uuid"
     },
@@ -818,6 +821,40 @@
           }
         }
       ]
+    },
+    "pointerSpeed": {
+      "type": "object",
+      "description": "Multiplies all pointer movement, not scroll, by a scale that a trigger or a stick sets: minScale at 0 and maxScale at 1, shaped by curve.",
+      "required": ["curve", "driver", "maxScale", "minScale"],
+      "additionalProperties": false,
+      "properties": {
+        "curve": {
+          "enum": ["Linear", "EaseIn", "EaseOut", "SmoothStep"]
+        },
+        "driver": {
+          "type": "object",
+          "required": ["side", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "side": {
+              "enum": ["Left", "Right"]
+            },
+            "type": {
+              "enum": ["Trigger", "StickDepth"]
+            }
+          }
+        },
+        "maxScale": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "minScale": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        }
+      }
     },
     "gyroOutput": {
       "type": "object",

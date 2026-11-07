@@ -438,12 +438,14 @@ extension RemappingEventEngine {
     var candidate = previous
     let actions = transition(&candidate)
     var potentiallyHeld = previous.heldOutputs
+    let pointerScale = candidate.pointerScale
     for action in actions {
       do {
         switch action {
         case .system(let systemAction):
-          try sink.send(systemAction)
-          Self.accountForDelivered(systemAction, in: &potentiallyHeld)
+          let scaled = systemAction.scalingPointer(by: pointerScale)
+          try sink.send(scaled)
+          Self.accountForDelivered(scaled, in: &potentiallyHeld)
         case .gamepad(let gamepadState, let identifier):
           guard let gamepadSink else { throw RemappingEventEngineError.sinkUnavailable }
           heldGamepadDevices.insert(identifier)

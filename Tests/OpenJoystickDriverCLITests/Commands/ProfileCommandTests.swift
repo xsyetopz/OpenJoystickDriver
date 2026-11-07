@@ -359,6 +359,25 @@ struct ProfileCommandTests {
   }
 
   @Test
+  func setPointerSpeedSavesTheDocumentedExampleAndRejectsOutOfRangeScales() async throws {
+    let library = FakeProfileLibrary([FakeProfileLibrary.profile("Racing")])
+    let service = try Self.service(library)
+    let example =
+      #"{"driver":{"type":"Trigger","side":"Left"},"minScale":1,"maxScale":0.25,"#
+      + #""curve":"Linear"}"#
+
+    let saved = await service.run(["profile", "set", "Racing", "pointerSpeed", example])
+    let outOfRange = await service.run([
+      "profile", "set", "Racing", "pointerSpeed.maxScale", "11",
+    ])
+
+    #expect(saved.code == 0, "\(saved.standardError)")
+    #expect(library.stored.first?.pointerSpeed?.maxScale == 0.25)
+    #expect(outOfRange.code == 1)
+    #expect(outOfRange.standardError.hasPrefix(CLIFailure.prefix(.invalidProfile)))
+  }
+
+  @Test
   func profileValueAddsAndRemovesArrayItemsAndReadsJSONOrText() {
     let tree = ProfileValue.object(["items": .array([.integer(1), .integer(2)])])
     let key = { (text: String) in ProfileKey(argument: text)?.components[...] ?? [] }

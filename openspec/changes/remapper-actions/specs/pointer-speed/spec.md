@@ -2,7 +2,7 @@
 
 ### Requirement: REQ-46 Pointer Speed Driver
 
-A profile MUST accept an optional `pointerSpeed`: a `driver` (trigger pressure or stick depth, left or right), `minScale`, `maxScale` and a `curve`. OJD MUST multiply all pointer movement (stick and touch pointer modes, gyro mouse, `MouseMovement`) by the scale the curve gives for the driver, `minScale` at 0 and `maxScale` at 1. Scroll MUST NOT change. OJD MUST reject a driver the controller does not report. The scale range 0 to 10 is proposed.
+A profile MUST accept an optional `pointerSpeed`: a `driver` (trigger pressure or stick depth, left or right), `minScale`, `maxScale` and a `curve`. OJD MUST multiply all pointer movement (stick and touch pointer modes, gyro mouse, `MouseMovement`) by the scale the curve gives for the driver, `minScale` at 0 and `maxScale` at 1. Scroll MUST NOT change. `ojd profile set`, `ojd profile import` and the profile editor MUST reject a driver that the capabilities of the profile's controller model do not list; a model with no catalog entry is not checked. The scale range 0 to 10 is proposed.
 
 #### Scenario: Slow Down by Trigger
 

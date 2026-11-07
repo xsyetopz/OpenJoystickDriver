@@ -10,7 +10,7 @@ extension RemappingProfile {
   ///
   /// A `nil` argument keeps the current value.
   ///
-  /// For `physicalColor` and `joyConPair`, pass `.some(nil)` to clear the value. The copy is not
+  /// For `physicalColor`, `joyConPair` and `pointerSpeed`, pass `.some(nil)` to clear the value. The copy is not
   /// validated.
   package func replacing(
     name: String? = nil,
@@ -21,6 +21,7 @@ extension RemappingProfile {
     motionTuning: RemappingMotionTuning? = nil,
     gyroOutput: RemappingGyroOutput? = nil,
     joyConPair: RemappingJoyConPairSettings?? = nil,
+    pointerSpeed: RemappingPointerSpeed?? = nil,
     stickMappings: [RemappingStickMapping]? = nil,
     triggerMappings: [RemappingTriggerMapping]? = nil,
     touchMappings: [RemappingTouchMapping]? = nil,
@@ -40,6 +41,7 @@ extension RemappingProfile {
       motionTuning: motionTuning ?? self.motionTuning,
       gyroOutput: gyroOutput ?? self.gyroOutput,
       joyConPair: joyConPair ?? self.joyConPair,
+      pointerSpeed: pointerSpeed ?? self.pointerSpeed,
       stickMappings: stickMappings ?? self.stickMappings,
       triggerMappings: triggerMappings ?? self.triggerMappings,
       touchMappings: touchMappings ?? self.touchMappings,

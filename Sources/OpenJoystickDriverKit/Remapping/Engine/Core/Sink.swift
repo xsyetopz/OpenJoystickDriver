@@ -306,6 +306,15 @@ public enum RemappingSystemInputAction: Equatable, Sendable {
   case scrolled(axis: RemappingPointerAxis, amount: Double)
   /// Integrated high-resolution scroll displacement in logical lines.
   case scrollDelta(deltaX: Double, deltaY: Double)
+
+  /// This action with pointer movement multiplied by `scale`; every other action is unchanged.
+  func scalingPointer(by scale: Double) -> Self {
+    switch self {
+    case .mouseMoved(let axis, let amount): .mouseMoved(axis: axis, amount: amount * scale)
+    case .pointerDelta(let x, let y): .pointerDelta(x: x * scale, y: y * scale)
+    default: self
+    }
+  }
 }
 
 /// Port for delivering remapped keyboard and pointer actions.

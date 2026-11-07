@@ -118,6 +118,16 @@ public enum RemappingResponseCurve: String, Codable, CaseIterable, Hashable, Sen
   case easeOut = "EaseOut"
   /// Output eases in and out along a smooth S curve.
   case smoothStep = "SmoothStep"
+
+  /// Returns the curve output for a deflection from 0 to 1.
+  func shaped(_ value: Double) -> Double {
+    switch self {
+    case .linear: value
+    case .easeIn: value * value
+    case .easeOut: 1 - ((1 - value) * (1 - value))
+    case .smoothStep: value * value * (3 - (2 * value))
+    }
+  }
 }
 
 /// Axis processing applied before a binding reaches its destination.
@@ -435,6 +445,8 @@ public struct RemappingProfile: Codable, Equatable, Identifiable, Sendable {
   public let gyroOutput: RemappingGyroOutput
   /// Settings for a paired left and right Joy-Con session, or `nil` for a single controller.
   public let joyConPair: RemappingJoyConPairSettings?
+  /// Scale of all pointer movement, or `nil` for none.
+  public let pointerSpeed: RemappingPointerSpeed?
   /// Advanced stick mappings, at most one per stick.
   public let stickMappings: [RemappingStickMapping]
   /// Dual-stage trigger mappings, at most one per trigger.
@@ -465,6 +477,7 @@ public struct RemappingProfile: Codable, Equatable, Identifiable, Sendable {
     motionTuning: RemappingMotionTuning = .default,
     gyroOutput: RemappingGyroOutput = .default,
     joyConPair: RemappingJoyConPairSettings? = nil,
+    pointerSpeed: RemappingPointerSpeed? = nil,
     stickMappings: [RemappingStickMapping] = [],
     triggerMappings: [RemappingTriggerMapping] = [],
     touchMappings: [RemappingTouchMapping] = [],
@@ -483,6 +496,7 @@ public struct RemappingProfile: Codable, Equatable, Identifiable, Sendable {
     self.motionTuning = motionTuning
     self.gyroOutput = gyroOutput
     self.joyConPair = joyConPair
+    self.pointerSpeed = pointerSpeed
     self.stickMappings = stickMappings
     self.triggerMappings = triggerMappings
     self.touchMappings = touchMappings
@@ -534,6 +548,7 @@ public struct RemappingProfile: Codable, Equatable, Identifiable, Sendable {
       RemappingJoyConPairSettings.self,
       forKey: .joyConPair
     )
+    pointerSpeed = try container.decodeIfPresent(RemappingPointerSpeed.self, forKey: .pointerSpeed)
     stickMappings =
       try container.decodeIfPresent([RemappingStickMapping].self, forKey: .stickMappings) ?? []
     triggerMappings =

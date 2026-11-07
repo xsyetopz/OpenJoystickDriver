@@ -114,6 +114,29 @@ extension RemappingProfile {
     }
     return self
   }
+
+  /// Checks that the controller reports the trigger or stick of the pointer speed.
+  ///
+  /// The model has no capability data, so this runs where the profile enters: `profile set` and
+  /// `profile import`. A controller that the catalog does not know is not checked.
+  ///
+  /// - Throws: ``CLIFailure`` with the invalid profile code when the controller lacks the driver.
+  func checkingPointerSpeedDriver() throws -> Self {
+    if let speed = pointerSpeed,
+      let capabilities = ProtocolDriverRegistry().profileCapabilities(
+        for: ControllerModelID(vendorID: device.vendorID, productID: device.productID)
+      ), !speed.isSupported(by: capabilities)
+    {
+      throw CLIFailure(
+        .invalidProfile,
+        CLILocalized.format(
+          "cli.profile.group.invalid",
+          RemappingValidationError.unsupportedPointerSpeedDriver.localizedDescription
+        )
+      )
+    }
+    return self
+  }
 }
 
 /// The templates that `ojd profile create --template` accepts.

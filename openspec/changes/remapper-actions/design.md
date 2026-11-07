@@ -97,6 +97,10 @@ A profile is a shareable file. An imported profile that opens URLs, runs a Short
 
 `pointerSpeed` multiplies all pointer movement at one point in the engine (before the system sink), so stick pointer modes, touch pointer, gyro mouse and `MouseMovement` destinations all obey it. A per-mode setting would repeat the same fields in four places. Layers do not override it; see the open questions.
 
+The scale reads the driver from each device's own profile and live axis, and the engine multiplies the scales of all devices that set a `pointerSpeed`. A product, not per-controller scaling, because a `.system` pointer action carries no controller, and `MouseMovement` totals add the contributions of every controller before they reach the sink. With one controller, which is the common case, the product is that controller's scale.
+
+The controller does not report a driver when its capabilities (`ProtocolDriverRegistry().profileCapabilities(for:)`) lack the trigger or stick. The model cannot check this, because it has no capability data, so `ojd profile set`, `ojd profile import` and the editor's save check it where the controller model is known. A model with no catalog entry is not checked.
+
 ### D10. Gyro-to-Stick: Confirm, Template, Hardware Check
 
 Read in code (see Context): the engine and validation already support `gyroOutput` stick modes with a virtual gamepad, and tests cover right-stick output. Missing: a guided way to set it up, wiki text that finds it, and a hardware result. The change adds a `gyro-stick` template (a profile-creation option, not a new document kind), a wiki section, and `docs/testing/gyro-stick.md`. It does not change gyro math. Until an operator runs the check, no text says the output works on hardware.

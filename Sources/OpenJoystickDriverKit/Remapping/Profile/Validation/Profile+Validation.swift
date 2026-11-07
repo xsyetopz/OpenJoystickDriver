@@ -14,6 +14,7 @@ extension RemappingProfile {
     {
       throw RemappingValidationError.invalidJoyConPairDevice
     }
+    if pointerSpeed?.isValid == false { throw RemappingValidationError.invalidPointerSpeed }
     var stickSources: Set<RemappingStickSource> = []
     for mapping in stickMappings {
       guard stickSources.insert(mapping.source).inserted else {

@@ -542,6 +542,7 @@ extension RemappingProfile {
       motionTuning: motionTuning,
       gyroOutput: gyroOutput,
       joyConPair: joyConPair,
+      pointerSpeed: pointerSpeed,
       stickMappings: stickMappings,
       triggerMappings: triggerMappings,
       touchMappings: touchMappings,

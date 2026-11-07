@@ -208,6 +208,7 @@ extension RemappingProfile {
       motionTuning: motionTuning ?? self.motionTuning,
       gyroOutput: gyroOutput ?? self.gyroOutput,
       joyConPair: joyConPair,
+      pointerSpeed: pointerSpeed,
       stickMappings: stickMappings ?? self.stickMappings,
       triggerMappings: triggerMappings ?? self.triggerMappings,
       touchMappings: touchMappings ?? self.touchMappings,

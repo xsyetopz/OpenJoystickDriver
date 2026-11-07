@@ -64,6 +64,7 @@ struct ProfileImportCommand: AsyncParsableCommand {
     try await global.run {
       let source = file == "-" ? "stdin" : file
       let imported = try decodeProfile(try RecordStore.read(file), source: source)
+        .checkingPointerSpeedDriver()
       let (before, after) = try await ServiceConnection.request { client in
         let before = try await client.getRemappingSnapshot()
         return (before, try await client.importRemappingProfile(imported))

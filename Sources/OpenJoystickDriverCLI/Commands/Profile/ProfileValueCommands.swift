@@ -304,6 +304,6 @@ struct ProfileSetCommand: AsyncParsableCommand {
         )
       )
     }
-    return edited
+    return try edited.checkingPointerSpeedDriver()
   }
 }
