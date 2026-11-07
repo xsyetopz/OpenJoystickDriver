@@ -34,8 +34,9 @@ Alternatives:
 
 ### D2. Commercial Use through `COMMERCIAL.md`
 
-`COMMERCIAL.md` says three things:
+The maintainer is one person. `COMMERCIAL.md` says, in plain words:
 
+- That noncommercial use, forks and shared changes are free with no need to ask, as long as the license and its `Required Notice:` line travel with each copy.
 - What counts as commercial: PolyForm's own definitions decide, and the file only points to them.
 - That a commercial license is a separate written agreement with the maintainer, asked for through the contact named there. The maintainer chooses the contact (task 1.2).
 - That GitHub Sponsors is welcome from commercial users, but a sponsorship alone grants no commercial license.

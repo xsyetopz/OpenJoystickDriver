@@ -113,7 +113,7 @@ Run `./Scripts/ojd setup` and `just check` before opening a pull request; see [C
 
 ## License
 
-[PolyForm Noncommercial 1.0.0](LICENSE) © 2026 Krystian J., from 0.6.0-alpha.2 on. Commercial use needs a separate license; see [COMMERCIAL.md](COMMERCIAL.md). Releases up to and including 0.6.0-alpha.1 are MIT. Xbox and PlayStation are trademarks of Microsoft and Sony; OJD is not affiliated with either.
+[PolyForm Noncommercial 1.0.0](LICENSE) © 2026 Krystian J., from 0.6.0-alpha.2 on. Use, fork and share it freely for noncommercial purposes. For commercial use, talk to the maintainer: see [COMMERCIAL.md](COMMERCIAL.md). Releases up to and including 0.6.0-alpha.1 are MIT. Xbox and PlayStation are trademarks of Microsoft and Sony; OJD is not affiliated with either.
 
 [releases]: https://github.com/xsyetopz/OpenJoystickDriver/releases
 [sponsor]: https://github.com/sponsors/xsyetopz

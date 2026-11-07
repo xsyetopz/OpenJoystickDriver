@@ -46,7 +46,7 @@ Base every pull request on `main`, and check a bug against `main` before you ope
 
 ## License
 
-OJD is licensed under the PolyForm Noncommercial License 1.0.0 and sold under separate commercial licenses ([COMMERCIAL.md](COMMERCIAL.md)). Sign the [Contributor License Agreement](CLA.md) on your first pull request, so the maintainer can license your contribution both ways; the CLA check fails until you do.
+OJD is free for noncommercial use under the PolyForm Noncommercial License 1.0.0, and the maintainer licenses commercial use separately ([COMMERCIAL.md](COMMERCIAL.md)). Sign the [Contributor License Agreement](CLA.md) on your first pull request, so the maintainer can license your contribution both ways; the CLA check fails until you do.
 
 - Code may come only from sources under MIT, BSD, zlib, CC0 or Apache-2.0. Add each source's notice to `THIRD_PARTY_NOTICES.md` in the same commit.
 - GPL, LGPL, AGPL and unlicensed sources give facts only, such as byte values or IDs, and the code for those facts is written independently.
