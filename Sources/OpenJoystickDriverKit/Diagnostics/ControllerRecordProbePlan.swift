@@ -33,7 +33,8 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
   /// - Throws: ``ControllerRecordProbeError/invalidProfile(_:)`` when the record does not decode or
   ///   does not build a runtime profile, and ``ControllerRecordProbeError/unsupportedProtocol(_:)``
   ///   when its protocol is not `XboxGIP` or `XboxXUSB` or it has no raw USB binding, and
-  ///   ``ControllerRecordProbeError/bootloaderIdentity`` when it names an 8BitDo bootloader identity.
+  ///   ``ControllerRecordProbeError/bootloaderIdentity`` when it names an 8BitDo bootloader
+  ///   identity.
   public init(data: Data) throws {
     let (decoded, profile) = try Self.validatedRecord(data)
     guard !decoded.model.isBootloaderIdentity else {

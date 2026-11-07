@@ -50,7 +50,11 @@ struct BootloaderGuardTests {
         )
       ]
     )
-    let provider = SignatureDiscoveryProvider(device: device, passive: unconfigured, configured: gip)
+    let provider = SignatureDiscoveryProvider(
+      device: device,
+      passive: unconfigured,
+      configured: gip
+    )
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
       installationKey: testPortKeyInstallationKey,
