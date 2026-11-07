@@ -38,7 +38,7 @@ struct MigrateCommandTests {
     #expect(human.code == 0, "\(human.standardError)")
     #expect(human.standardOutput.contains("Settings.json"))
     #expect(json.code == 0, "\(json.standardError)")
-    #expect(json.standardOutput.contains(#""status": "wouldConvert""#))
+    #expect(json.standardOutput.contains(#""status": "WouldConvert""#))
     let settings = SettingsStore(directory: directory)
     #expect(throws: (any Error).self) { try settings.load() }
   }

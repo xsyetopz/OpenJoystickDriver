@@ -9,11 +9,11 @@ public struct DocumentMigrator: Sendable {
   /// What happened to one document.
   public enum Status: String, Codable, Equatable, Sendable {
     /// The document was converted and its original kept.
-    case converted
+    case converted = "Converted"
     /// A dry run found a document it would convert.
-    case wouldConvert
+    case wouldConvert = "WouldConvert"
     /// The document was not converted and is unchanged.
-    case failed
+    case failed = "Failed"
   }
 
   /// One stale document.

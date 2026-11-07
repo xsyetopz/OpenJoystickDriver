@@ -1596,7 +1596,7 @@
                 ]
               },
               "status": {
-                "enum": ["converted", "failed", "wouldConvert"]
+                "enum": ["Converted", "Failed", "WouldConvert"]
               }
             }
           }

@@ -484,7 +484,7 @@ ojd migrate [--dry-run]
 ```
 
 The command converts each stale `Settings.json`, `AccessGrants.json`, profile, controller record and virtual device file in the support folder, checks the result with the current reader, and copies the original to `Migrated/` before it writes. A file whose backup already exists is not converted. `--dry-run` lists what it would convert and writes nothing. A file it cannot convert stays unchanged, the other files still convert, and the command exits with code 1 and error `E5009`. Installed mods are not converted.
-With `--json`, it prints a `MigrationReport` whose `metadata` has `dryRun` and whose `items` each have `file`, `kind`, `status` (`converted`, `wouldConvert` or `failed`) and, for a failure, `detail`.
+With `--json`, it prints a `MigrationReport` whose `metadata` has `dryRun` and whose `items` each have `file`, `kind`, `status` (`Converted`, `WouldConvert` or `Failed`) and, for a failure, `detail`.
 
 ## Further Reading
 
