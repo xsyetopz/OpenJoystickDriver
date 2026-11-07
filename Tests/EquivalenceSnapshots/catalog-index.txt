@@ -1020,6 +1020,20 @@ output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 parameters=
 
+## 057E:0306
+protocol=nintendo-wii variant=- ownership=macos
+transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+tuning -
+driver none
+parameters=
+
+## 057E:0330
+protocol=nintendo-wii variant=- ownership=macos
+transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
+tuning -
+driver none
+parameters=
+
 ## 057E:2006
 protocol=nintendo-switch1 variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0

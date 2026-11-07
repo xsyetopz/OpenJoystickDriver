@@ -283,6 +283,12 @@ raw-access
 ## 056E:2013
 system ownership=macos
 
+## 057E:0306
+system ownership=macos
+
+## 057E:0330
+system ownership=macos
+
 ## 057E:2006
 system ownership=macos
 
