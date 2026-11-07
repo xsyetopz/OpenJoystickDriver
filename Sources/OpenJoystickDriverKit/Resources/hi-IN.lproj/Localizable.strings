@@ -1645,6 +1645,14 @@
 "ui.profiles.physical.startPosition" = "प्रतिरोध की शुरुआत";
 /* Label of the slider in the output destination editor that sets how strong the resistance of the adaptive trigger is. */
 "ui.profiles.physical.strength" = "प्रतिरोध की शक्ति";
+/* Label of the text field in the output destination editor for the phrase that a Speak destination says. */
+"ui.profiles.speak.text" = "पाठ";
+/* Label of the text field in the output destination editor for the identifier of the voice that a Speak destination uses. */
+"ui.profiles.speak.voice" = "आवाज़ पहचानकर्ता";
+/* Placeholder of the voice field in the output destination editor when a Speak destination uses the system voice. */
+"ui.profiles.speak.voicePlaceholder" = "सिस्टम आवाज़";
+/* Phrase that a new Speak destination says until the user changes it. */
+"ui.profiles.speak.defaultText" = "नमस्ते";
 
 /* Menu item in the profile editor that removes all inputs of the profile. Keep the three dots. */
 "ui.profiles.clearInputs" = "सभी इनपुट साफ़ करें…";
@@ -2951,6 +2959,10 @@
 "cli.binding.group.optionMultiTap" = "स्रोत को COUNT बार दबाने पर एक और लक्ष्य भेजें, हर दबाव पिछली रिलीज़ के MS के भीतर, जैसे 2:300:key:key-c। और संख्याओं के लिए विकल्प दोहराएँ।";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "पल्स लक्ष्य को कितनी देर थामे रखता है, 1 से 5000 ms। डिफ़ॉल्ट: 100।";
+/* Help text of the --voice option of 'ojd binding set'. The option name and speak:TEXT stay as written. */
+"cli.binding.group.optionVoice" = "speak:TEXT लक्ष्य के लिए आवाज़ पहचानकर्ता। डिफ़ॉल्ट: सिस्टम आवाज़।";
+/* Error of 'ojd binding set' when --voice is given with a target that is not speak:TEXT. The option name and speak:TEXT stay as written. */
+"cli.binding.group.voiceNeedsSpeak" = "--voice के लिए speak:TEXT लक्ष्य ज़रूरी है।";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "एक्सिस स्रोत: गति के साथ आउटपुट कैसे बढ़ता है। डिफ़ॉल्ट: linear।";
 /* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
@@ -4270,6 +4282,8 @@
 "term.macro" = "मैक्रो";
 /* Label of a layer as the destination of an assignment when the profile has no layer of that identifier, and name of the layer destination kind. */
 "term.layer" = "परत";
+/* Name of the Speak destination kind in the destination popup; the destination says a short text aloud. */
+"term.speak" = "बोलें";
 /* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
 "ui.profiles.macros" = "मैक्रो";
 /* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */

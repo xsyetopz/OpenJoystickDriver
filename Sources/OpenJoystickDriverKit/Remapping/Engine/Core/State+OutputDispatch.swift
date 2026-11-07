@@ -191,7 +191,7 @@ extension RemappingEngineState {
     guard var device = devices[identifier] else { return [] }
     let oldContinuous = continuousTotals()
     devices.removeValue(forKey: identifier)
-    var actions = stopMacros(device: &device)
+    var actions = stopMacros(device: &device) + stopSpeech(device: &device)
     for bindingID in device.outputs.heldBindings.keys.sorted(by: Self.uuidLessThan) {
       guard let destination = device.outputs.heldBindings[bindingID] else { continue }
       actions += setBinding(bindingID, destination: destination, isDown: false, device: &device)
@@ -234,6 +234,11 @@ extension RemappingEngineState {
       return isDown
         ? startMacro(macroID, owner: bindingID, device: &device)
         : endMacroSource(owner: bindingID, device: &device)
+    }
+    if case .speak(let text, let voice) = effectiveDestination {
+      guard isDown else { return [] }
+      device.outputs.isSpeaking = true
+      return [.speak(text, voice: voice, device.identifier)]
     }
     if effectiveDestination.isProfileControl {
       return isDown ? runProfileControl(effectiveDestination, device: &device) : []
@@ -310,7 +315,7 @@ extension RemappingEngineState {
       return Self.increment(&mouseButtonReferences, key: button) == 1
         ? [.system(.mouseButtonDown(button))] : []
     case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro,
-      .profileSwitch, .layerSet, .pause:
+      .profileSwitch, .layerSet, .pause, .speak:
       return []
     case .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText:
       return destination.systemActionRequest(isDown: true).map { [.systemAction($0)] } ?? []
@@ -336,7 +341,7 @@ extension RemappingEngineState {
       return Self.decrement(&mouseButtonReferences, key: button) == 0
         ? [.system(.mouseButtonUp(button))] : []
     case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro,
-      .profileSwitch, .layerSet, .pause:
+      .profileSwitch, .layerSet, .pause, .speak:
       return []
     case .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText:
       return destination.systemActionRequest(isDown: false).map { [.systemAction($0)] } ?? []

@@ -210,7 +210,7 @@ struct BindingSetCommand: AsyncParsableCommand {
         target.hasPrefix(Self.macroPrefix) ? target.dropFirst(Self.macroPrefix.count) : nil
       let layerTarget = RemappingCommandValueParser.layerTarget(target)
       let parsed: RemappingDestination =
-        try macroName == nil && layerTarget == nil ? parseTarget(target) : .macro(UUID())
+        try macroName == nil && layerTarget == nil ? options.destination(target) : .macro(UUID())
       // Reports option errors before the service is contacted.
       _ = try options.binding(source: source, target: parsed, existing: nil)
       let (selector, options) = (profile, options)

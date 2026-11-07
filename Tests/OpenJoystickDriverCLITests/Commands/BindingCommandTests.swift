@@ -34,6 +34,28 @@ struct BindingCommandTests {
   }
 
   @Test
+  func setStoresASpokenPhraseWithItsVoiceAndRejectsAVoiceOnAnotherTarget() async throws {
+    let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
+    let service = try FakeService(devices: [], respond: library.respond)
+
+    let spoken = await service.run([
+      "binding", "set", "Pad", "button:south", "speak:Hello: there", "--voice", "com.example.voice",
+      "--json",
+    ])
+    let stray = await service.run([
+      "binding", "set", "Pad", "button:north", "key:space", "--voice", "com.example.voice",
+    ])
+
+    #expect(spoken.code == 0, "\(spoken.standardError)")
+    let binding = try #require(library.stored.first?.bindings.first)
+    #expect(binding.destination == .speak(text: "Hello: there", voice: "com.example.voice"))
+    let shown = try #require(try spoken.json()["binding"] as? [String: Any])
+    #expect(shown["target"] as? String == "speak:Hello: there")
+    #expect(stray.code != 0)
+    #expect(library.stored.first?.bindings.count == 1)
+  }
+
+  @Test
   func setBuildsAxisTuningTurboAndAlternateTargets() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try FakeService(devices: [], respond: library.respond)

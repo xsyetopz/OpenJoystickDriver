@@ -15,6 +15,13 @@ extension RemappingEngineState {
     }
   }
 
+  /// Stops the speech of a controller that is speaking.
+  mutating func stopSpeech(device: inout RemappingDeviceState) -> [RemappingEngineAction] {
+    guard device.outputs.isSpeaking else { return [] }
+    device.outputs.isSpeaking = false
+    return [.stopSpeech(device.identifier)]
+  }
+
   /// Turns a layer on, off or flips it, and releases the outputs of bindings that stop applying.
   private mutating func setLayer(
     _ layer: UUID,
@@ -44,7 +51,7 @@ extension RemappingEngineState {
     guard mode.apply(to: device.isPaused) != device.isPaused else { return [] }
     device.isPaused.toggle()
     guard device.isPaused else { return [] }
-    var actions = stopMacros(device: &device)
+    var actions = stopMacros(device: &device) + stopSpeech(device: &device)
     for id in device.outputs.heldBindings.keys.sorted(by: Self.uuidLessThan) {
       guard let destination = device.outputs.heldBindings[id], !destination.isPause else {
         continue

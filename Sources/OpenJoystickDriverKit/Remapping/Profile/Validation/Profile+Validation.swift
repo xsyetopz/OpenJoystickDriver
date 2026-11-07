@@ -270,6 +270,14 @@ extension RemappingProfile {
     if case .layerSet(let id, _) = destination, !layers.contains(where: { $0.id == id }) {
       throw RemappingValidationError.unknownLayer(id)
     }
+    if case .speak(let text, let voice) = destination {
+      guard (1...Self.maximumSpeechCharacters).contains(text.unicodeScalars.count) else {
+        throw RemappingValidationError.invalidSpeech(field: "text")
+      }
+      guard voice?.isEmpty != true else {
+        throw RemappingValidationError.invalidSpeech(field: "voice")
+      }
+    }
     if destination.isVirtualGamepad, outputPolicy.virtualGamepad == .disabled {
       throw RemappingValidationError.virtualOutputRequired
     }
@@ -320,6 +328,9 @@ extension RemappingProfile {
       guard !binding.destination.isContinuous, binding.turbo == nil, binding.longHold == nil,
         binding.multiTap.isEmpty
       else { throw RemappingValidationError.bindingBehaviorConflict(index: index) }
+    }
+    if binding.destination.isSpeak, ![.hold, .tapOnPress].contains(binding.behavior) {
+      throw RemappingValidationError.bindingBehaviorConflict(index: index)
     }
     if binding.destination.isProfileControl, ![.hold, .tapOnPress].contains(binding.behavior) {
       throw RemappingValidationError.bindingBehaviorConflict(index: index)

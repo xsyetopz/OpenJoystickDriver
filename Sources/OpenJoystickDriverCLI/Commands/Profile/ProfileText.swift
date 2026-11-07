@@ -71,6 +71,7 @@ enum ProfileText {
     case .openURL(let url): return "open-url:\(url)"
     case .runShortcut(let name): return "shortcut:\(name)"
     case .typeText(let text): return "text:\(text)"
+    case .speak(let text, _): return "speak:\(text)"
     }
   }
 

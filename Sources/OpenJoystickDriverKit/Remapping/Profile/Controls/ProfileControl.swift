@@ -93,7 +93,26 @@ extension RemappingDestination {
   }
 }
 
+extension RemappingDestination {
+  /// Whether the destination is a `Speak`.
+  var isSpeak: Bool {
+    if case .speak = self { return true }
+    return false
+  }
+}
+
 extension RemappingProfile {
+  /// The longest `Speak` text, in Unicode scalars.
+  static let maximumSpeechCharacters = 128
+
+  /// Checks that this Mac has every voice that a `Speak` destination names.
+  /// - Throws: ``RemappingValidationError/unknownSpeechVoice(_:)``.
+  public func validateSpeechVoices(using speech: any RemappingSpeechOutput) throws {
+    for voice in speechVoices where !speech.hasVoice(voice) {
+      throw RemappingValidationError.unknownSpeechVoice(voice)
+    }
+  }
+
   /// Checks that every `ProfileSwitch` names a profile among `profiles` for the same model.
   ///
   /// `Next` and `Previous` need no check.

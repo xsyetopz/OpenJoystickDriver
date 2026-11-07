@@ -777,6 +777,26 @@
               "const": "Pause"
             }
           }
+        },
+        {
+          "type": "object",
+          "required": ["text", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "voice": {
+              "description": "An AVSpeechSynthesisVoice identifier that the Mac has.",
+              "type": "string",
+              "minLength": 1
+            },
+            "type": {
+              "const": "Speak"
+            }
+          }
         }
       ]
     },

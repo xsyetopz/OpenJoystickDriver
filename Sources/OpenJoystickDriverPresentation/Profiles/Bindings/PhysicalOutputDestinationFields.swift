@@ -2,14 +2,14 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
-  /// The fields of a physical output destination: the rumble motor and intensity, the player
-  /// indicator, the color, the brightness, or the adaptive trigger.
+  /// The fields of a physical output destination (the rumble motor and intensity, the player
+  /// indicator, the color, the brightness, or the adaptive trigger) or of a `Speak` destination.
   struct PhysicalOutputDestinationFields: View {
-    /// The destination being edited; the fields show only for a physical output.
+    /// The destination being edited; the fields show only for a physical output or a `Speak`.
     @Binding
     var destination: RemappingDestination
 
-    /// The fields of a physical output destination; nothing for any other destination.
+    /// The fields of a physical output or `Speak` destination; nothing for any other destination.
     var body: some View {
       if case .physical(let output) = destination {
         VStack(alignment: .leading, spacing: 8) {
@@ -88,6 +88,29 @@
               )
             }
           }
+        }.padding(.leading, 8)
+      } else if case .speak(let text, let voice) = destination {
+        VStack(alignment: .leading, spacing: 8) {
+          TextField(
+            OJDLocalized.string("ui.profiles.speak.text"),
+            text: Binding(
+              get: { text },
+              set: {
+                destination = .speak(
+                  text: String(String.UnicodeScalarView($0.unicodeScalars.prefix(128))),
+                  voice: voice
+                )
+              }
+            )
+          )
+          TextField(
+            OJDLocalized.string("ui.profiles.speak.voice"),
+            text: Binding(
+              get: { voice ?? "" },
+              set: { destination = .speak(text: text, voice: $0.isEmpty ? nil : $0) }
+            ),
+            prompt: Text(OJDLocalized.string("ui.profiles.speak.voicePlaceholder"))
+          )
         }.padding(.leading, 8)
       }
     }

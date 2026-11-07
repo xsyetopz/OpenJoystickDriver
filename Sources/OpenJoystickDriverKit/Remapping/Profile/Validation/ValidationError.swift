@@ -145,6 +145,11 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
   case unknownSwitchProfile(UUID)
   /// A destination switches to a profile for another controller model.
   case switchProfileForOtherModel(UUID)
+  /// A `Speak` destination has an empty or too long text or an empty voice; `field` is `text` or
+  /// `voice`.
+  case invalidSpeech(field: String)
+  /// A `Speak` destination names a voice that this Mac does not have.
+  case unknownSpeechVoice(String)
   /// The profile could not be encoded.
   case encodingFailed
   /// The encoded profile is over the size limit; the value is its size in bytes.
@@ -254,6 +259,9 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
       "A destination switches to the profile \(id.uuidString), which does not exist."
     case .switchProfileForOtherModel(let id):
       "A destination switches to the profile \(id.uuidString), which is for another model."
+    case .invalidSpeech(let field): "A Speak destination has an invalid \(field)."
+    case .unknownSpeechVoice(let voice):
+      "A Speak destination names the voice \(voice), which this Mac does not have."
     case .encodingFailed: "The remapping profile could not be encoded."
     case .encodedSizeExceeded(let size):
       "The encoded remapping profile is too large (\(size) bytes)."

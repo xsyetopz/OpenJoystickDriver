@@ -11,8 +11,8 @@ A profile MUST accept the destination `Speak` with a `text` of 1 to 128 characte
 
 #### Scenario: Unknown Voice
 
-- **WHEN** a profile names a `voice` that is not installed
-- **THEN** `ojd profile validate` rejects the profile and names the destination and the voice
+- **WHEN** a profile that names a `voice` that is not installed is activated
+- **THEN** the activation is rejected with the invalid-profile error, which names the voice
 
 ### Requirement: REQ-56 Speech Stops with the Profile
 

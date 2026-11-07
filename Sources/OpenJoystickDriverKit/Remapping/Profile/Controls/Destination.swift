@@ -38,6 +38,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
   case runShortcut(String)
   /// Types this text.
   case typeText(String)
+  /// Says `text` aloud, with the voice `voice` names or the system voice.
+  case speak(text: String, voice: String?)
 
   /// Whether the destination can repeat as turbo: a keyboard key, pointer button or virtual gamepad
   /// button or d-pad direction.
@@ -45,7 +47,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     switch self {
     case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad: true
     case .mouseMovement, .scroll, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet,
-      .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText:
+      .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText,
+      .speak:
       false
     }
   }
@@ -56,7 +59,7 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     switch self {
     case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad, .physical, .macro, .profileSwitch,
       .layerSet, .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut,
-      .typeText:
+      .typeText, .speak:
       false
     case .mouseMovement, .scroll, .gamepadAxis: true
     }
@@ -100,6 +103,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case runShortcut = "RunShortcut"
     /// The `TypeText` case.
     case typeText = "TypeText"
+    /// The `Speak` case.
+    case speak = "Speak"
 
     /// Keys that a profile document may give for this case, which `type` selects.
     var fields: [CodingKeys] {
@@ -119,6 +124,7 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
       case .openURL: [.type, .url]
       case .runShortcut: [.type, .name]
       case .typeText: [.type, .text]
+      case .speak: [.type, .text, .voice]
       }
     }
   }
@@ -159,6 +165,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case name
     /// The JSON key of `text`.
     case text
+    /// The JSON key of `voice`.
+    case voice
   }
 
   /// Decodes a destination from a profile document.
@@ -209,6 +217,11 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case .openURL: self = .openURL(try container.decode(String.self, forKey: .url))
     case .runShortcut: self = .runShortcut(try container.decode(String.self, forKey: .name))
     case .typeText: self = .typeText(try container.decode(String.self, forKey: .text))
+    case .speak:
+      self = .speak(
+        text: try container.decode(String.self, forKey: .text),
+        voice: try container.decodeIfPresent(String.self, forKey: .voice)
+      )
     }
   }
 
@@ -272,6 +285,10 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case .typeText(let text):
       try container.encode(Kind.typeText, forKey: .type)
       try container.encode(text, forKey: .text)
+    case .speak(let text, let voice):
+      try container.encode(Kind.speak, forKey: .type)
+      try container.encode(text, forKey: .text)
+      try container.encodeIfPresent(voice, forKey: .voice)
     }
   }
 }

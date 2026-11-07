@@ -282,6 +282,7 @@ enum RuntimePresentation {
     case .openURL(let url): return OJDLocalized.formatted("ui.mapping.openURL", url)
     case .runShortcut(let name): return OJDLocalized.formatted("ui.mapping.runShortcut", name)
     case .typeText(let text): return OJDLocalized.formatted("ui.mapping.typeText", text)
+    case .speak: return OJDLocalized.string("term.speak")
     case .gamepadAxis(let axis): return axisLabel(axis)
     case .gamepadDpad(let direction): return sourceLabel(.dpad(direction))
     case .gamepadButton(let button): return buttonLabel(button)

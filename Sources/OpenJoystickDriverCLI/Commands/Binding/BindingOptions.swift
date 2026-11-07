@@ -148,6 +148,30 @@ struct BindingOptions: ParsableArguments {
   )
   var turboMax: Int?
 
+  /// `--voice`: the voice identifier of a `speak:TEXT` target.
+  @Option(
+    help: ArgumentHelp(
+      CLILocalized.text("cli.binding.group.optionVoice"),
+      valueName: "identifier"
+    )
+  )
+  var voice: String?
+
+  /// The destination of a `TARGET` operand: `speak:TEXT` with `--voice`, else ``parseTarget(_:)``.
+  ///
+  /// - Throws: ``CLIFailure`` with the usage code when `--voice` goes with another target or
+  ///   `text` is not a target.
+  func destination(_ text: String) throws -> RemappingDestination {
+    let prefix = "speak:"
+    guard text.hasPrefix(prefix) else {
+      guard voice == nil else {
+        throw CLIFailure.usage(CLILocalized.text("cli.binding.group.voiceNeedsSpeak"))
+      }
+      return try parseTarget(text)
+    }
+    return .speak(text: String(text.dropFirst(prefix.count)), voice: voice)
+  }
+
   /// `--long-hold`: a `MS:TARGET` to send when the source is held for that long.
   @Option(
     help: ArgumentHelp(

@@ -18,6 +18,8 @@ struct RemappingOutputState {
   var activations: [UUID: RemappingActivationTracker] = [:]
   /// Running macros by the action that started them.
   var macros: [UUID: RemappingMacroRun] = [:]
+  /// Whether a `Speak` destination has spoken and nothing has stopped it.
+  var isSpeaking = false
 }
 
 /// Press history of one action with a long hold or multi-tap.

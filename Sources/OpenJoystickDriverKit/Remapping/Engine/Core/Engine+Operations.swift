@@ -455,6 +455,10 @@ extension RemappingEventEngine {
             Task { await profileSwitcher.switchProfile(target, from: current, for: identifier) }
           }
         case .systemAction(let request): await perform(request)
+        case .speak(let text, let voice, let identifier):
+          await speechOutput?.speak(text, voice: voice, for: identifier)
+        case .stopSpeech(let identifier):
+          await speechOutput?.stopSpeech(for: identifier)
         case .physical(let output, let active, let owner, let identifier):
           guard let physicalOutputSink else { throw RemappingEventEngineError.sinkUnavailable }
           try await physicalOutputSink.set(output, active: active, owner: owner, for: identifier)

@@ -1645,6 +1645,14 @@
 "ui.profiles.physical.startPosition" = "จุดเริ่มแรงต้าน";
 /* Label of the slider in the output destination editor that sets how strong the resistance of the adaptive trigger is. */
 "ui.profiles.physical.strength" = "ความแรงของแรงต้าน";
+/* Label of the text field in the output destination editor for the phrase that a Speak destination says. */
+"ui.profiles.speak.text" = "ข้อความ";
+/* Label of the text field in the output destination editor for the identifier of the voice that a Speak destination uses. */
+"ui.profiles.speak.voice" = "ตัวระบุเสียง";
+/* Placeholder of the voice field in the output destination editor when a Speak destination uses the system voice. */
+"ui.profiles.speak.voicePlaceholder" = "เสียงของระบบ";
+/* Phrase that a new Speak destination says until the user changes it. */
+"ui.profiles.speak.defaultText" = "สวัสดี";
 
 /* Menu item in the profile editor that removes all inputs of the profile. Keep the three dots. */
 "ui.profiles.clearInputs" = "ล้างอินพุตทั้งหมด…";
@@ -2951,6 +2959,10 @@
 "cli.binding.group.optionMultiTap" = "ส่งปลายทางอีกรายการเมื่อแตะต้นทาง COUNT ครั้ง โดยแต่ละครั้งที่กดต้องอยู่ภายใน MS หลังปล่อยครั้งก่อน เช่น 2:300:key:key-c ใช้ตัวเลือกซ้ำได้สำหรับจำนวนครั้งอื่น";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "ระยะเวลาที่พัลส์ค้างปลายทางไว้ 1 ถึง 5000 มิลลิวินาที ค่าเริ่มต้น: 100";
+/* Help text of the --voice option of 'ojd binding set'. The option name and speak:TEXT stay as written. */
+"cli.binding.group.optionVoice" = "ตัวระบุเสียงสำหรับเป้าหมาย speak:TEXT ค่าเริ่มต้น: เสียงของระบบ";
+/* Error of 'ojd binding set' when --voice is given with a target that is not speak:TEXT. The option name and speak:TEXT stay as written. */
+"cli.binding.group.voiceNeedsSpeak" = "--voice ต้องใช้กับเป้าหมาย speak:TEXT";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "ต้นทางที่เป็นแกน: เอาต์พุตเพิ่มขึ้นตามระยะเคลื่อนที่อย่างไร ค่าเริ่มต้น: linear";
 /* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
@@ -4270,6 +4282,8 @@
 "term.macro" = "มาโคร";
 /* Label of a layer as the destination of an assignment when the profile has no layer of that identifier, and name of the layer destination kind. */
 "term.layer" = "เลเยอร์";
+/* Name of the Speak destination kind in the destination popup; the destination says a short text aloud. */
+"term.speak" = "พูด";
 /* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
 "ui.profiles.macros" = "มาโคร";
 /* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */

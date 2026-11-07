@@ -8,6 +8,7 @@ Bindings connect controller controls to destinations, and combinations and layer
 - [Macros](#macros)
 - [Switch Profiles, Set Layers, and Pause](#switch-profiles-set-layers-and-pause)
 - [System Actions](#system-actions)
+- [Spoken Phrases](#spoken-phrases)
 - [Combinations, Sequences, and Layers](#combinations-sequences-and-layers)
 - [Further Reading](#further-reading)
 
@@ -41,6 +42,7 @@ An assignment connects one controller control to one destination, such as a keyb
 | Open URL | A web or other non-file URL | Discrete sources only; fires on press; command line or profile file only |
 | Run Shortcut | A shortcut of the Shortcuts app, by name | Discrete sources only; fires on press; command line or profile file only |
 | Type text | A fixed string | Discrete sources only; fires on press; needs Accessibility access; command line or profile file only |
+| Speak | A phrase the Mac says aloud | Discrete sources only; see [Spoken Phrases](#spoken-phrases) |
 
 A gamepad destination fails validation if the profile output policy has the virtual gamepad disabled. Some controls, such as paddles, grips, and function buttons, cannot be a virtual controller output. For the controls each virtual controller carries, see [What the virtual controller carries](Automating-OpenJoystickDriver.md#what-the-virtual-controller-carries). For more information, see [About profiles](Remapping-Profiles.md#about-profiles).
 
@@ -143,6 +145,24 @@ To run a macro, choose it as the **Destination** of an assignment. The destinati
 A macro stops and releases every key and button it holds when its source is released with **Stop when released** on, when the profile changes or stops, and when the controller disconnects. One pass takes at most 30 seconds, and a fixed repeat at most 5 minutes, counting the waits and chord hold times; OJD rejects a longer macro when it saves.
 
 The command line is `ojd macro` and the target `macro:NAME` of `ojd binding set`. For more information, see [Command reference](Command-Reference.md#macro).
+
+### Spoken Phrases
+
+The **Speak** destination makes the Mac say a short text aloud when you press the control. Hardware status: Not checked.
+
+1. Choose **Speak** as the **Destination** of an assignment.
+2. Enter the **Text**, 1 to 128 characters.
+3. Optionally enter a **Voice identifier**, such as `com.apple.voice.compact.en-US.Samantha`. With none, the Mac uses the system voice.
+
+Pressing the control again while the phrase is still speaking stops it and says it again from the start, so repeated presses never queue phrases. Speech stops at once when the profile is paused or deactivated, or when the controller disconnects. Speech needs no Accessibility access. A macro step cannot speak.
+
+OJD rejects an empty text, a text over 128 characters and an empty voice identifier when it loads a profile. It rejects a voice that this Mac does not have when you activate the profile.
+
+The command line target is `speak:TEXT` of `ojd binding set`, with `--voice IDENTIFIER` for the voice:
+
+```sh
+ojd binding set Racing button:north speak:Reloading --voice com.apple.voice.compact.en-US.Samantha
+```
 
 ### Tune an Analog Control
 

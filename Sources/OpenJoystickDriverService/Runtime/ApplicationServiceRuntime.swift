@@ -48,7 +48,8 @@ package final class ApplicationServiceRuntime {
     let installationKey = try PortKeyInstallationStore(directory: MacOSDataDirectory()).load()
     let permissionManager = PermissionManager(system: MacOSAccessControlSystem())
     let dispatcher = VirtualOutputRouter()
-    let remappingProfileLibrary = RemappingProfileLibrary()
+    let speechOutput = AVSpeechOutput()
+    let remappingProfileLibrary = RemappingProfileLibrary(speechOutput: speechOutput)
     let postEventAccess = CoreGraphicsPostEventAccess()
     let physicalOutputBridge = RemappingPhysicalOutputBridge()
     let profileSwitchBridge = RemappingProfileSwitchBridge(library: remappingProfileLibrary)
@@ -58,7 +59,8 @@ package final class ApplicationServiceRuntime {
       physicalOutputSink: physicalOutputBridge,
       profileSwitcher: profileSwitchBridge,
       systemActionPerformer: MacOSSystemActionPerformer(),
-      reportSystemActionFailure: { print("System action failed: \($0.localizedDescription)") }
+      reportSystemActionFailure: { print("System action failed: \($0.localizedDescription)") },
+      speechOutput: speechOutput
     )
     let remappingRouter = RemappingOutputRouter(
       library: remappingProfileLibrary,

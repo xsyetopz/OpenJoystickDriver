@@ -382,6 +382,10 @@ enum RemappingEngineAction: Equatable, Sendable {
   case profileSwitch(RemappingProfileTarget, from: UUID, LogicalControllerID)
   /// A system action for the platform to perform.
   case systemAction(RemappingSystemActionRequest)
+  /// A request to speak a text, replacing what the controller is saying.
+  case speak(String, voice: String?, LogicalControllerID)
+  /// A request to stop what a controller is saying.
+  case stopSpeech(LogicalControllerID)
 }
 
 /// Switches the active profile of a controller when a `ProfileSwitch` destination fires.
@@ -394,6 +398,17 @@ public protocol RemappingProfileSwitching: AnyObject, Sendable {
     from current: UUID,
     for identifier: LogicalControllerID
   ) async
+}
+
+/// Speaks the text of `Speak` destinations.
+public protocol RemappingSpeechOutput: AnyObject, Sendable {
+  /// Stops what the controller is saying and speaks `text` from the start with the voice that
+  /// `voice` names, or the system voice for `nil`.
+  func speak(_ text: String, voice: String?, for identifier: LogicalControllerID) async
+  /// Stops what the controller is saying at once.
+  func stopSpeech(for identifier: LogicalControllerID) async
+  /// Whether this Mac has the voice.
+  func hasVoice(_ identifier: String) -> Bool
 }
 
 /// Separates remapping admission from the virtual output passthrough gate of a shared backend.

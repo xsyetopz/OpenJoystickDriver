@@ -204,7 +204,8 @@
         switch $0.destination {
         case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad: true
         case .mouseMovement, .scroll, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet,
-          .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText:
+          .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText,
+          .speak:
           false
         }
       }

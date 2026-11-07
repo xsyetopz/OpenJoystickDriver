@@ -179,6 +179,7 @@ enum GUICoverageEntries {
     leaf("binding set", "addBinding"),
     option("binding set", "--behavior", "BindingBehaviorSheet"),
     option("binding set", "--pulse-ms", "pulseDurationMs"),
+    option("binding set", "--voice", "PhysicalOutputDestinationFields"),
     option("binding set", "--deadzone", "AxisAdjustmentSheet"),
     option("binding set", "--gain", "AxisAdjustmentSheet"),
     option("binding set", "--invert", "AxisAdjustmentSheet"),

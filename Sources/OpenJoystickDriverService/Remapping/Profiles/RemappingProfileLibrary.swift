@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverMacOSPlatform
 
 /// Stable failures from the locally persisted remapping-profile library.
 enum RemappingProfileLibraryError: Error, Equatable, LocalizedError, Sendable {
@@ -84,11 +85,18 @@ actor RemappingProfileLibrary {
   var packageProfiles: [PackageProfile] = []
   /// The OJD version that the `requires` of a package is checked against; nil for the running one.
   let runningVersion: String?
+  /// The speech output that tells which voices this Mac has.
+  let speechOutput: any RemappingSpeechOutput
 
   /// Creates the library in `directory`.
-  init(directory: URL = RemappingProfileLibrary.defaultDirectory, runningVersion: String? = nil) {
+  init(
+    directory: URL = RemappingProfileLibrary.defaultDirectory,
+    runningVersion: String? = nil,
+    speechOutput: any RemappingSpeechOutput = AVSpeechOutput()
+  ) {
     self.directory = directory
     self.runningVersion = runningVersion
+    self.speechOutput = speechOutput
   }
 
   /// The application data directory.

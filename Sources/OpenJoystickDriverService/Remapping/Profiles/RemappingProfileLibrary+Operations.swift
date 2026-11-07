@@ -195,9 +195,10 @@ extension RemappingProfileLibrary {
     guard allowEmpty || !profile.producesNoOutput else {
       throw RemappingProfileLibraryError.profileProducesNoOutput(profileID)
     }
-    do { try profile.validateProfileSwitches(among: known) } catch let error
-      as RemappingValidationError
-    {
+    do {
+      try profile.validateProfileSwitches(among: known)
+      try profile.validateSpeechVoices(using: speechOutput)
+    } catch let error as RemappingValidationError {
       throw RemappingProfileLibraryError.invalidProfile(error)
     }
     let model = RemappingProfileModel(profile.device)

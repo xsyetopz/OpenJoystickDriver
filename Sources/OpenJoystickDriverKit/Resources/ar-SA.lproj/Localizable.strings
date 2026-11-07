@@ -1645,6 +1645,14 @@
 "ui.profiles.physical.startPosition" = "بداية المقاومة";
 /* Label of the slider in the output destination editor that sets how strong the resistance of the adaptive trigger is. */
 "ui.profiles.physical.strength" = "قوة المقاومة";
+/* Label of the text field in the output destination editor for the phrase that a Speak destination says. */
+"ui.profiles.speak.text" = "النص";
+/* Label of the text field in the output destination editor for the identifier of the voice that a Speak destination uses. */
+"ui.profiles.speak.voice" = "معرّف الصوت";
+/* Placeholder of the voice field in the output destination editor when a Speak destination uses the system voice. */
+"ui.profiles.speak.voicePlaceholder" = "صوت النظام";
+/* Phrase that a new Speak destination says until the user changes it. */
+"ui.profiles.speak.defaultText" = "مرحبًا";
 
 /* Menu item in the profile editor that removes all inputs of the profile. Keep the three dots. */
 "ui.profiles.clearInputs" = "مسح كل الإدخالات…";
@@ -2951,6 +2959,10 @@
 "cli.binding.group.optionMultiTap" = "أرسل هدفًا آخر عند النقر على المصدر COUNT مرات، على أن يقع كل ضغط خلال MS من آخر تحرير، مثل 2:300:key:key-c. كرّر الخيار لأعداد أخرى.";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "المدة التي تُبقي فيها النبضة الهدف فعّالًا، من 1 إلى 5000 مللي ثانية. الافتراضي: 100.";
+/* Help text of the --voice option of 'ojd binding set'. The option name and speak:TEXT stay as written. */
+"cli.binding.group.optionVoice" = "معرّف الصوت لهدف speak:TEXT. الافتراضي: صوت النظام.";
+/* Error of 'ojd binding set' when --voice is given with a target that is not speak:TEXT. The option name and speak:TEXT stay as written. */
+"cli.binding.group.voiceNeedsSpeak" = "يتطلب --voice هدفًا بصيغة speak:TEXT.";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "مصادر المحاور: كيف ينمو الإخراج مع مدى الحركة. الافتراضي: linear.";
 /* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
@@ -4270,6 +4282,8 @@
 "term.macro" = "ماكرو";
 /* Label of a layer as the destination of an assignment when the profile has no layer of that identifier, and name of the layer destination kind. */
 "term.layer" = "الطبقة";
+/* Name of the Speak destination kind in the destination popup; the destination says a short text aloud. */
+"term.speak" = "انطق";
 /* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
 "ui.profiles.macros" = "الماكروات";
 /* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */

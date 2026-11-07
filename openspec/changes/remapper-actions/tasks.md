@@ -92,9 +92,9 @@ Each group owns its tests and documentation. Order follows dependencies: tests f
 
 ## 11. Spoken Phrases (REQ-55, REQ-56)
 
-- [ ] 11.1 Write failing tests first: schema rejections for an empty text, 129 characters and an unknown voice; engine tests with a fake `RemappingSpeechOutput` for one press, `RestartOnPress` and stop on pause and deactivation. Verify: `swift test --filter SpeechOutput` fails on each new test.
-- [ ] 11.2 Add `Speak` to the schema and model, the `RemappingSpeechOutput` protocol in the core and the `AVSpeechSynthesizer` implementation in `OpenJoystickDriverMacOSPlatform`. Verify: the 11.1 tests pass, `./Scripts/ojd check schemas` passes and `grep -rhE '^(@preconcurrency )?import ' Sources/OpenJoystickDriverKit | sort -u` lists only CryptoKit, Darwin, Dispatch and Foundation.
-- [ ] 11.3 Editor, `ojd binding set` target `speak:TEXT` with `--voice`, localization keys in 22 bundles reviewed against `LOCALIZATION.md`, and a wiki section. Verify: CLI tests pass and `python3 Scripts/Quality/check_localization_keys.py` passes.
+- [x] 11.1 Write failing tests first: schema rejections for an empty text, 129 characters and an unknown voice; engine tests with a fake `RemappingSpeechOutput` for one press, `RestartOnPress` and stop on pause and deactivation. Verify: `swift test --filter SpeechOutput` fails on each new test.
+- [x] 11.2 Add `Speak` to the schema and model, the `RemappingSpeechOutput` protocol in the core and the `AVSpeechSynthesizer` implementation in `OpenJoystickDriverMacOSPlatform`. Verify: the 11.1 tests pass, `./Scripts/ojd check schemas` passes and `grep -rhE '^(@preconcurrency )?import ' Sources/OpenJoystickDriverKit | sort -u` lists only CryptoKit, Darwin, Dispatch and Foundation.
+- [x] 11.3 Editor, `ojd binding set` target `speak:TEXT` with `--voice`, localization keys in 22 bundles reviewed against `LOCALIZATION.md`, and a wiki section. Verify: CLI tests pass and `python3 Scripts/Quality/check_localization_keys.py` passes.
 
 ## 12. Integration
 

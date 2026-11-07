@@ -1645,6 +1645,14 @@
 "ui.profiles.physical.startPosition" = "Điểm bắt đầu lực cản";
 /* Label of the slider in the output destination editor that sets how strong the resistance of the adaptive trigger is. */
 "ui.profiles.physical.strength" = "Độ mạnh lực cản";
+/* Label of the text field in the output destination editor for the phrase that a Speak destination says. */
+"ui.profiles.speak.text" = "Văn bản";
+/* Label of the text field in the output destination editor for the identifier of the voice that a Speak destination uses. */
+"ui.profiles.speak.voice" = "Mã định danh giọng nói";
+/* Placeholder of the voice field in the output destination editor when a Speak destination uses the system voice. */
+"ui.profiles.speak.voicePlaceholder" = "Giọng nói hệ thống";
+/* Phrase that a new Speak destination says until the user changes it. */
+"ui.profiles.speak.defaultText" = "Xin chào";
 
 /* Menu item in the profile editor that removes all inputs of the profile. Keep the three dots. */
 "ui.profiles.clearInputs" = "Xóa tất cả đầu vào…";
@@ -2951,6 +2959,10 @@
 "cli.binding.group.optionMultiTap" = "Gửi một đích khác khi nguồn được chạm COUNT lần, mỗi lần nhấn trong vòng MS sau lần nhả trước, như 2:300:key:key-c. Lặp lại tùy chọn cho các số lần khác.";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "Một xung giữ đích trong bao lâu, từ 1 đến 5000 ms. Mặc định: 100.";
+/* Help text of the --voice option of 'ojd binding set'. The option name and speak:TEXT stay as written. */
+"cli.binding.group.optionVoice" = "Mã định danh giọng nói cho đích speak:TEXT. Mặc định: giọng nói hệ thống.";
+/* Error of 'ojd binding set' when --voice is given with a target that is not speak:TEXT. The option name and speak:TEXT stay as written. */
+"cli.binding.group.voiceNeedsSpeak" = "--voice cần đích speak:TEXT.";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "Nguồn trục: đầu ra tăng theo hành trình như thế nào. Mặc định: linear.";
 /* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
@@ -4270,6 +4282,8 @@
 "term.macro" = "Macro";
 /* Label of a layer as the destination of an assignment when the profile has no layer of that identifier, and name of the layer destination kind. */
 "term.layer" = "Lớp";
+/* Name of the Speak destination kind in the destination popup; the destination says a short text aloud. */
+"term.speak" = "Đọc to";
 /* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
 "ui.profiles.macros" = "Macro";
 /* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */

@@ -136,10 +136,14 @@ struct DestinationOption: Hashable {
         isSupported: true
       )
     }
+    let speak = RemappingDestination.speak(
+      text: OJDLocalized.string("ui.profiles.speak.defaultText"),
+      voice: nil
+    )
     let systemDestinations =
       RemappingSystemKey.allCases.map(RemappingDestination.systemKey)
       + RemappingSystemActionKind.allCases.map(RemappingDestination.systemAction)
-    let system = systemDestinations.map { destination in
+    let system = (systemDestinations + [speak]).map { destination in
       Self(
         destination: destination,
         title: RuntimePresentation.destinationLabel(destination),

@@ -1645,6 +1645,14 @@
 "ui.profiles.physical.startPosition" = "Début de résistance";
 /* Label of the slider in the output destination editor that sets how strong the resistance of the adaptive trigger is. */
 "ui.profiles.physical.strength" = "Force de résistance";
+/* Label of the text field in the output destination editor for the phrase that a Speak destination says. */
+"ui.profiles.speak.text" = "Texte";
+/* Label of the text field in the output destination editor for the identifier of the voice that a Speak destination uses. */
+"ui.profiles.speak.voice" = "Identifiant de voix";
+/* Placeholder of the voice field in the output destination editor when a Speak destination uses the system voice. */
+"ui.profiles.speak.voicePlaceholder" = "Voix du système";
+/* Phrase that a new Speak destination says until the user changes it. */
+"ui.profiles.speak.defaultText" = "Bonjour";
 
 /* Menu item in the profile editor that removes all inputs of the profile. Keep the three dots. */
 "ui.profiles.clearInputs" = "Effacer toutes les entrées…";
@@ -2951,6 +2959,10 @@
 "cli.binding.group.optionMultiTap" = "Envoyer une autre cible quand la source est pressée COUNT fois, chaque pression dans les MS suivant le dernier relâchement, par exemple 2:300:key:key-c. Répéter l’option pour d’autres nombres.";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "Durée pendant laquelle une impulsion maintient la cible, de 1 à 5000 ms. Par défaut : 100.";
+/* Help text of the --voice option of 'ojd binding set'. The option name and speak:TEXT stay as written. */
+"cli.binding.group.optionVoice" = "Identifiant de voix pour une cible speak:TEXT. Par défaut : la voix du système.";
+/* Error of 'ojd binding set' when --voice is given with a target that is not speak:TEXT. The option name and speak:TEXT stay as written. */
+"cli.binding.group.voiceNeedsSpeak" = "--voice nécessite une cible speak:TEXT.";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "Sources d’axe : la façon dont la sortie croît avec la course. Par défaut : linear.";
 /* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
@@ -4271,6 +4283,8 @@
 "term.macro" = "Macro";
 /* Label of a layer as the destination of an assignment when the profile has no layer of that identifier, and name of the layer destination kind. */
 "term.layer" = "Couche";
+/* Name of the Speak destination kind in the destination popup; the destination says a short text aloud. */
+"term.speak" = "Parler";
 /* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
 "ui.profiles.macros" = "Macros";
 /* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */
