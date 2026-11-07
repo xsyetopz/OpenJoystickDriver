@@ -59,6 +59,7 @@ public actor RemappingEventEngine {
   ///   - emissionBarrier: Admits output operations.
   ///   - speechOutput: Receives spoken phrases.
   ///   - midiOutput: Publishes the virtual MIDI source.
+  @preconcurrency
   public init(
     sink: any RemappingSystemInputSink,
     gamepadSink: (any RemappingGamepadSink)? = nil,

@@ -9,7 +9,7 @@ package struct MacOSSystemActionPerformer: RemappingSystemActionPerforming {
   package init() {}
 
   /// Posts one system-defined key event to the HID event tap.
-  package func postSystemKey(_ key: RemappingSystemKey, pressed: Bool) async throws {
+  package func postSystemKey(_ key: RemappingSystemKey, pressed: Bool) throws {
     try requirePostEvent("SystemKey")
     let state = pressed ? 0xA00 : 0xB00
     guard
@@ -49,7 +49,7 @@ package struct MacOSSystemActionPerformer: RemappingSystemActionPerforming {
   }
 
   /// Opens the URL in its default handler.
-  package func openURL(_ url: URL) async throws {
+  package func openURL(_ url: URL) throws {
     guard NSWorkspace.shared.open(url) else {
       throw RemappingSystemActionError.failed(action: "OpenURL", reason: url.absoluteString)
     }
@@ -76,7 +76,7 @@ package struct MacOSSystemActionPerformer: RemappingSystemActionPerforming {
   }
 
   /// Types the text one character at a time as keyboard events.
-  package func typeText(_ text: String) async throws {
+  package func typeText(_ text: String) throws {
     try requirePostEvent("TypeText")
     guard !IsSecureEventInputEnabled() else { throw RemappingSystemActionError.secureInputEnabled }
     for character in text {

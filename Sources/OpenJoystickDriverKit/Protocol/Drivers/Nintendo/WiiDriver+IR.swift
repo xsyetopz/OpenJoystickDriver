@@ -50,8 +50,8 @@ extension WiiDriver {
       return nil
     }
     let data = Array(bytes[(1 + block.offset)..<(1 + block.offset + block.length)])
-    /// A point from its two low bytes and the byte whose bits 5-4 and 7-6 are the high bits of X
-    /// and Y.
+    // A point from its two low bytes and the byte whose bits 5-4 and 7-6 are the high bits of X
+    // and Y.
     func point(_ low: ArraySlice<UInt8>, size: Int, high: UInt8) -> IRPoint? {
       let x = Int(low[low.startIndex]) | Int(high >> 4 & 0b11) << 8
       let y = Int(low[low.startIndex + 1]) | Int(high >> 6) << 8

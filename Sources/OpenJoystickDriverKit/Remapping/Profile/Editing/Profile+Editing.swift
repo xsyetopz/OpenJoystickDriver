@@ -10,8 +10,8 @@ extension RemappingProfile {
   ///
   /// A `nil` argument keeps the current value.
   ///
-  /// For `physicalColor`, `joyConPair` and `pointerSpeed`, pass `.some(nil)` to clear the value. The copy is not
-  /// validated.
+  /// For `physicalColor`, `joyConPair` and `pointerSpeed`, pass `.some(nil)` to clear the value.
+  /// The copy is not validated.
   package func replacing(
     name: String? = nil,
     device: RemappingDeviceScope? = nil,

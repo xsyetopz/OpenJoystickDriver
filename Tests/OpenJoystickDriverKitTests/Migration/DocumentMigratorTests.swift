@@ -67,7 +67,7 @@ struct DocumentMigratorTests {
       from: read("Profiles/a.json")
     )
     #expect(profile.bindings.first?.multiTap.map(\.count) == [2])
-    #expect(String(decoding: try read("Migrated/Profiles/a.json"), as: UTF8.self) == Self.profile)
+    #expect(String(bytes: try read("Migrated/Profiles/a.json"), encoding: .utf8) == Self.profile)
   }
 
   @Test
@@ -121,7 +121,7 @@ struct DocumentMigratorTests {
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.status) == [.failed, .converted])
     #expect(entries.first?.detail?.contains("report") == true)
-    #expect(String(decoding: try read("Controllers/bad.patch.json"), as: UTF8.self) == bad)
+    #expect(String(bytes: try read("Controllers/bad.patch.json"), encoding: .utf8) == bad)
     #expect(!exists("Migrated/Controllers/bad.patch.json"))
   }
 
@@ -130,7 +130,7 @@ struct DocumentMigratorTests {
     try write(Self.profile, "Profiles/a.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: true)
     #expect(entries.map(\.status) == [.wouldConvert])
-    #expect(String(decoding: try read("Profiles/a.json"), as: UTF8.self) == Self.profile)
+    #expect(String(bytes: try read("Profiles/a.json"), encoding: .utf8) == Self.profile)
     #expect(!exists("Migrated"))
   }
 
@@ -158,8 +158,8 @@ struct DocumentMigratorTests {
     try write("kept", "Migrated/Profiles/a.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.status) == [.failed])
-    #expect(String(decoding: try read("Profiles/a.json"), as: UTF8.self) == Self.profile)
-    #expect(String(decoding: try read("Migrated/Profiles/a.json"), as: UTF8.self) == "kept")
+    #expect(String(bytes: try read("Profiles/a.json"), encoding: .utf8) == Self.profile)
+    #expect(String(bytes: try read("Migrated/Profiles/a.json"), encoding: .utf8) == "kept")
   }
 
   @Test

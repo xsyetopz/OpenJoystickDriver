@@ -41,9 +41,13 @@ struct WiiSpeakerStream {
   /// The data bytes of one packet.
   static let packetBytes = 20
 
+  /// The packets to send, in order.
   private let packets: [[UInt8]]
+  /// The time between packets in nanoseconds.
   private let interval: UInt64
+  /// The time the first packet was sent, once started.
   private var started: MonotonicTimestamp?
+  /// The number of packets sent so far.
   private var sent = 0
 
   /// Splits `encoded` into packets of 20 bytes, each lasting 40 samples at `rate`.

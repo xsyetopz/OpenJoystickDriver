@@ -315,7 +315,7 @@ public enum RemappingCommandValueParser {
   /// `midi-cc:CHANNEL:CONTROLLER`; the numbers must be in range.
   private static func midiDestination(_ parts: [String]) -> RemappingDestination? {
     let numbers = parts.dropFirst().map { Int($0) }
-    guard !numbers.contains(nil), let channel = numbers.first ?? nil else { return nil }
+    guard !numbers.contains(nil), let first = numbers.first, let channel = first else { return nil }
     let destination: RemappingDestination
     switch (parts[0], numbers.count) {
     case ("midi-note", 2...3):

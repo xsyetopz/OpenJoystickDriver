@@ -21,6 +21,7 @@ extension WiiDriver {
     }
   }
 
+  /// Builds the output write for one speaker protocol step.
   private func speakerWrite(
     _ step: ProtocolDescription.WiiRemote.Step
   ) throws(ControllerOutputError) -> PhysicalOutputWrite {

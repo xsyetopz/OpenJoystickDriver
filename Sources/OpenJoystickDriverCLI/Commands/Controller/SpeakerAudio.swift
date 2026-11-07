@@ -27,7 +27,7 @@ struct SpeakerAudio: Equatable {
     var format: (channels: Int, rate: Int, bits: Int)?
     var offset = 12
     while offset + 8 <= bytes.count {
-      let name = String(decoding: bytes[offset..<offset + 4], as: UTF8.self)
+      let name = String(bytes: bytes[offset..<offset + 4], encoding: .utf8) ?? ""
       let start = offset + 8
       let size = min(little(offset + 4, 4), bytes.count - start)
       if name == "fmt " {

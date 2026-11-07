@@ -67,7 +67,7 @@ struct RemappingPointerBindingTests {
     )
     #expect(throws: (any Error).self) { try button.validate() }
     let data = try JSONEncoder().encode(RemappingDestination.pointerPosition(.y))
-    #expect(String(decoding: data, as: UTF8.self).contains("\"PointerPosition\""))
+    #expect(String(bytes: data, encoding: .utf8)?.contains("\"PointerPosition\"") == true)
     #expect(try JSONDecoder().decode(RemappingDestination.self, from: data) == .pointerPosition(.y))
   }
 

@@ -150,7 +150,8 @@ struct RemappingPointerSpeedTests {
     for json in [
       #"{"driver":{"type":"Gyro","side":"Left"},"minScale":1,"maxScale":1,"curve":"Linear"}"#,
       #"{"driver":{"type":"Trigger","side":"Left"},"minScale":1,"maxScale":1}"#,
-      #"{"driver":{"type":"Trigger","side":"Left"},"minScale":1,"maxScale":1,"curve":"Linear","x":1}"#,
+      #"{"driver":{"type":"Trigger","side":"Left"},"minScale":1,"#
+        + #""maxScale":1,"curve":"Linear","x":1}"#,
     ] {
       #expect(throws: DecodingError.self) {
         try JSONDecoder().decode(RemappingPointerSpeed.self, from: Data(json.utf8))

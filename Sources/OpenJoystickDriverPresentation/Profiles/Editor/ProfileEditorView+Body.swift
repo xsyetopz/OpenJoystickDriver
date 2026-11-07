@@ -97,8 +97,9 @@
                   productID: draft.profile.device.productID
                 )
                 return try? await viewModel.gateway.controllerState(for: .model(model))
-              }
-            ) { speed in applyDraftChange { try draft.settingPointerSpeed(speed) } }
+              },
+              onSave: { speed in applyDraftChange { try draft.settingPointerSpeed(speed) } }
+            )
           case .motion:
             ProfileMotionSheet(tuning: draft.profile.motionTuning, output: draft.profile.gyroOutput)
             { tuning, output in

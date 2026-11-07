@@ -156,9 +156,8 @@ struct SystemActionTests {
     let reporter = ErrorRecorder()
     let engine = RemappingEventEngine(
       sink: RemappingTestSink(),
-      systemActionPerformer: performer,
-      reportSystemActionFailure: { reporter.record($0) }
-    )
+      systemActionPerformer: performer
+    ) { reporter.record($0) }
     try await engine.process(
       event(down: true),
       from: identifier,

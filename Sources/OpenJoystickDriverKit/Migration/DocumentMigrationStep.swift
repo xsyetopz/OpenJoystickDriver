@@ -244,7 +244,7 @@ enum AlphaOneToAlphaTwo {
     _ path: String,
     _ members: [OrderedJSON.Member]
   ) throws -> [OrderedJSON.Member] {
-    switch members.first(where: { $0.key == "encoding" })?.value {
+    switch (members.first { $0.key == "encoding" })?.value {
     case .string("Directions")?:
       return try members.map { $0.key == "encoding" ? $0 : try field($0) }
     case .string("EightWay")?, .string("Table")?: return try masked(path, members)

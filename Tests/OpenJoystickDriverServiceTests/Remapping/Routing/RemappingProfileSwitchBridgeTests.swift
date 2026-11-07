@@ -17,16 +17,16 @@ struct RemappingProfileSwitchBridgeTests {
 
     var activations: [UUID] { state.withLock { $0 } }
 
-    func connectedDevices() async -> [ApplicationServiceDeviceDescription] { [] }
+    func connectedDevices() -> [ApplicationServiceDeviceDescription] { [] }
 
-    func getRemappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {
+    func getRemappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload {
       throw Failure()
     }
 
     func activateRemappingProfile(
       id: UUID,
       allowEmpty: Bool
-    ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+    ) throws -> ApplicationServiceRemappingSnapshotPayload {
       if let failure { throw failure }
       state.withLock { $0.append(id) }
       return ApplicationServiceRemappingSnapshotPayload(
@@ -39,7 +39,7 @@ struct RemappingProfileSwitchBridgeTests {
 
     func deactivateRemappingProfile(
       id: UUID
-    ) async throws -> ApplicationServiceRemappingSnapshotPayload { throw Failure() }
+    ) throws -> ApplicationServiceRemappingSnapshotPayload { throw Failure() }
   }
 
   /// A bridge over a library of `First` and `Second` of one model and `Foreign` of another.

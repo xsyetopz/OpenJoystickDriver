@@ -36,6 +36,7 @@ extension DeviceManager {
     return ControllerOutputResult(await sendSpeaker(.stop, key, pipeline))
   }
 
+  /// Sends one speaker output to the controller behind `key` through `pipeline`.
   private func sendSpeaker(
     _ output: SpeakerOutput,
     _ key: LogicalControllerID,

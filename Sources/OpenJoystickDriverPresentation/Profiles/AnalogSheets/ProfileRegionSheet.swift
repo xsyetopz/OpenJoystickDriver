@@ -249,7 +249,11 @@
               x: center.x + cos(angle) * radius * region.outerRadius,
               y: center.y + sin(angle) * radius * region.outerRadius
             )
-            step == 0 ? wedge.move(to: point) : wedge.addLine(to: point)
+            if step == 0 {
+              wedge.move(to: point)
+            } else {
+              wedge.addLine(to: point)
+            }
           }
           for step in (0...48).reversed() {
             let angle = (start + sweep * Double(step) / 48 - 90) * .pi / 180

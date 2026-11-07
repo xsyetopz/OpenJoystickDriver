@@ -46,6 +46,7 @@ final class RemappingProfileSwitchBridge: RemappingProfileSwitching, Sendable {
     }
   }
 
+  /// Activates the profile that `target` names among the profiles of the same model as `current`.
   private func activate(_ target: RemappingProfileTarget, from current: UUID) async throws {
     guard let server = attached.withLock({ $0.server }) else { return }
     let all = try await library.profiles()

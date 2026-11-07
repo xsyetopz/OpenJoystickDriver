@@ -103,8 +103,8 @@ enum ProfileText {
     macros: [RemappingMacro] = [],
     layers: [RemappingLayer] = []
   ) -> String {
-    var line =
-      "\(source(binding.source)) -> \(destination(binding.destination, macros: macros, layers: layers))"
+    let target = destination(binding.destination, macros: macros, layers: layers)
+    var line = "\(source(binding.source)) -> \(target)"
     if binding.behavior != .hold { line += "  behavior:\(word(binding.behavior))" }
     if binding.behavior == .pulse { line += "  pulse:\(binding.pulseDurationMs)ms" }
     if let turbo = binding.turbo {

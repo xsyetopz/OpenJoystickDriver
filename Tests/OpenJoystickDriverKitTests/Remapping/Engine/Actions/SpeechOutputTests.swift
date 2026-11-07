@@ -17,11 +17,11 @@ final class RecordingSpeechOutput: RemappingSpeechOutput, @unchecked Sendable {
 
   func events() -> [Event] { lock.withLock { recorded } }
 
-  func speak(_ text: String, voice: String?, for identifier: LogicalControllerID) async {
+  func speak(_ text: String, voice: String?, for identifier: LogicalControllerID) {
     lock.withLock { recorded.append(.speak(text, voice, identifier)) }
   }
 
-  func stopSpeech(for identifier: LogicalControllerID) async {
+  func stopSpeech(for identifier: LogicalControllerID) {
     lock.withLock { recorded.append(.stop(identifier)) }
   }
 
