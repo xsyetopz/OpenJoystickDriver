@@ -1,7 +1,7 @@
 import Foundation
 
 extension ProtocolDriverRegistry {
-  /// Controller slots of one Xbox 360 wireless receiver; `XUSBDriver` lights players 1–4.
+  /// Controller slots of one Xbox 360 wireless receiver; the manager gives each a player LED.
   static let receiverSlotCount = 4
 
   /// The protocol roles a raw-USB claim runs, one pipeline each, in slot order.
