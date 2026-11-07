@@ -197,6 +197,86 @@ public enum ProtocolPacketFixtures {
     }
   }
 
+  /// Steam Controller (2026) reports, in the layouts of SDL `TritonMTUNoQuat_t` at `release-3.4.16`.
+  public enum Triton {
+    /// The grip touch bits of the button word of report `0x42`.
+    public enum Grip {
+      /// Bit 28, SDL `TRITON_RIGHT_GRIP_TOUCH`.
+      public static let right: UInt32 = 0x1000_0000
+      /// Bit 29, SDL `TRITON_LEFT_GRIP_TOUCH`.
+      public static let left: UInt32 = 0x2000_0000
+      /// Bits 0 to 27, every button bit below the grip bits.
+      public static let lowerBits: UInt32 = 0x0FFF_FFFF
+    }
+
+    /// One state report of the grip fixtures and the button word it carries.
+    public typealias GripFixture = (name: String, buttons: UInt32, report: Data)
+
+    /// Builds a 64-byte state report `0x42` with `buttons` in bytes 2 to 5 and zero elsewhere.
+    ///
+    /// - Parameter buttons: The button word.
+    /// - Returns: The report.
+    public static func stateReport(buttons: UInt32) -> Data {
+      var report = [UInt8](repeating: 0, count: 64)
+      report[0] = 0x42
+      for index in 0..<4 { report[2 + index] = UInt8(truncatingIfNeeded: buttons >> (8 * index)) }
+      return Data(report)
+    }
+
+    /// Reports with bit 28 only, bit 29 only, both and neither, each with the other button bits
+    /// at zero and with all lower bits set.
+    public static let gripReports: [GripFixture] = {
+      let combinations: [(String, UInt32)] = [
+        ("neither", 0), ("rightOnly", Grip.right), ("leftOnly", Grip.left),
+        ("both", Grip.right | Grip.left),
+      ]
+      return [0, Grip.lowerBits].flatMap { lower in
+        combinations.map { name, grips in
+          let buttons = grips | lower
+          return (
+            name: lower == 0 ? name : "\(name)WithLowerBitsSet", buttons: buttons,
+            report: stateReport(buttons: buttons)
+          )
+        }
+      }
+    }()
+
+    /// The rumble output report: id `0x80`, type 0, intensity 0, speeds, gains 0; 10 bytes.
+    ///
+    /// - Parameters:
+    ///   - left: The left motor speed, at bytes 4 and 5.
+    ///   - right: The right motor speed, at bytes 7 and 8.
+    /// - Returns: The report bytes, which start with the report ID.
+    public static func rumbleReport(left: UInt16, right: UInt16) -> [UInt8] {
+      [
+        0x80, 0, 0, 0, UInt8(truncatingIfNeeded: left), UInt8(truncatingIfNeeded: left >> 8), 0,
+        UInt8(truncatingIfNeeded: right), UInt8(truncatingIfNeeded: right >> 8), 0,
+      ]
+    }
+
+    /// The pad haptic pulse output report: id `0x81`, side, on, off and repeat count as
+    /// little-endian 16-bit values; 8 bytes. SDL declares the layout; the side values are
+    /// unestablished until a hardware capture.
+    ///
+    /// - Parameters:
+    ///   - side: The side byte.
+    ///   - onMicroseconds: The on time.
+    ///   - offMicroseconds: The off time.
+    ///   - repeatCount: The repeat count.
+    /// - Returns: The report bytes, which start with the report ID.
+    public static func padPulseReport(
+      side: UInt8,
+      onMicroseconds: UInt16,
+      offMicroseconds: UInt16,
+      repeatCount: UInt16
+    ) -> [UInt8] {
+      [0x81, side]
+        + [onMicroseconds, offMicroseconds, repeatCount].flatMap {
+          [UInt8(truncatingIfNeeded: $0), UInt8(truncatingIfNeeded: $0 >> 8)]
+        }
+    }
+  }
+
   /// Switch Pro Controller reports and startup byte sequences.
   public enum SwitchPro {
     /// Builds a 49-byte input report 0x30.

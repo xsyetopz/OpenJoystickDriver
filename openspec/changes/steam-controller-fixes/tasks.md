@@ -19,8 +19,8 @@ Depends: none.
 Verify: `swift test --filter SteamTritonDriverTests`.
 
 - [ ] 1.1 After each edit of `Resources/Protocols/valve-steam-*.json`, run `./Scripts/ojd catalog regenerate --write`. Verify: `./Scripts/ojd catalog regenerate --check` passes.
-- [ ] 1.2 Add Triton state-report fixtures for report `0x42`: grip bit 28 only, bit 29 only, both, and neither, with the other button bits at zero and with all lower bits set. Source: SDL `TritonButtons`. Verify: the existing Triton tests still pass with the fixtures unused.
-- [ ] 1.3 Add the SDL rumble report bytes (id `80`, type 0, intensity 0, speeds, gains 0) as a fixture, and the 8-byte pulse report layout (`81`, side, on, off, repeat). Verify: `swift test --filter SteamTritonDriverTests`.
+- [x] 1.2 Add Triton state-report fixtures for report `0x42`: grip bit 28 only, bit 29 only, both, and neither, with the other button bits at zero and with all lower bits set. Source: SDL `TritonButtons`. Verify: the existing Triton tests still pass with the fixtures unused.
+- [x] 1.3 Add the SDL rumble report bytes (id `80`, type 0, intensity 0, speeds, gains 0) as a fixture, and the 8-byte pulse report layout (`81`, side, on, off, repeat). Verify: `swift test --filter SteamTritonDriverTests`.
 
 ## 2. Grip touch and vocabulary (tests first)
 
