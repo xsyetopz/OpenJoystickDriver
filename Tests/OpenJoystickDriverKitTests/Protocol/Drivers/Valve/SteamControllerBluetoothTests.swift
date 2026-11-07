@@ -67,13 +67,14 @@ struct SteamControllerBluetoothTests {
   @Test
   func featureCommandsTravelAsReportThreeSegments() {
     let startup = SteamControllerDriver(isBluetooth: true).activationWrites().hidFeatures
-    #expect(startup.map(\.reportID) == [3, 3])
-    #expect(startup.map(\.bytes.count) == [20, 20])
+    #expect(startup.map(\.reportID) == [3, 3, 3])
+    #expect(startup.map(\.bytes.count) == [20, 20, 20])
     #expect(Array(startup[0].bytes.prefix(3)) == [0x03, 0xC0, 0x81])
+    #expect(Array(startup[1].bytes.prefix(3)) == [0x03, 0xC0, 0x8E])
     // Lizard-mode settings plus SETTING_WIRELESS_PACKET_VERSION 2.
     #expect(
-      Array(startup[1].bytes.prefix(16)) == [
-        0x03, 0xC0, 0x87, 12, 7, 7, 0, 8, 7, 0, 48, 0x18, 0, 49, 2, 0,
+      Array(startup[2].bytes.prefix(19)) == [
+        0x03, 0xC0, 0x87, 15, 7, 7, 0, 8, 7, 0, 24, 0, 0, 48, 0x18, 0, 49, 2, 0,
       ]
     )
 

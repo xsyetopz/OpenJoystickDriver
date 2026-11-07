@@ -31,7 +31,7 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   let usageMap: HIDUsageMap
   /// The controls the map drives from usages the report descriptor declares.
   ///
-  /// With no descriptor, every control the map drives.
+  /// With no descriptor, the Xbox layout, with Guide unless the map reads the triggers as buttons.
   private let declaredControls: Set<Control>
   /// The triggers the map reads as buttons.
   private let declaredDigitalTriggers: Set<Control>
@@ -66,9 +66,16 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
         ?? description?.hidUsageMap
     else { preconditionFailure("Resources/Protocols/hid-descriptor.json declares no usage map") }
     self.usageMap = resolved
-    let declared = fields.isEmpty ? nil : usages
-    declaredControls = resolved.controls(declaring: declared)
-    declaredDigitalTriggers = resolved.digitalTriggers(declaring: declared)
+    if fields.isEmpty {
+      // A broad map names usages, such as Capture, that most pads lack, so with no descriptor to
+      // check them against the driver claims only the Xbox layout.
+      let digital = resolved.digitalTriggers.contains(.leftTrigger)
+      declaredControls = Control.xboxLayout.union(digital ? [] : [.guide])
+      declaredDigitalTriggers = digital ? [.leftTrigger, .rightTrigger] : []
+    } else {
+      declaredControls = resolved.controls(declaring: usages)
+      declaredDigitalTriggers = resolved.digitalTriggers(declaring: usages)
+    }
     print("[HIDDescriptorDriver] Unrecognized controller \(model), using HID descriptors")
   }
 

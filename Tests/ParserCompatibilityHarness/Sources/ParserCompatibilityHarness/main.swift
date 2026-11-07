@@ -157,14 +157,18 @@ func runSteamInputAndFeatureChecks() throws {
 
   let featureParser = SteamControllerDriver()
   let startup = hidReports(featureParser.activationWrites())
-  require(startup.map(\.reportID) == [0, 0], "Steam lizard startup reports should use report ID 0")
   require(
-    startup.map { $0.bytes.count } == [64, 64],
+    startup.map(\.reportID) == [0, 0, 0],
+    "Steam lizard startup reports should use report ID 0"
+  )
+  require(
+    startup.map { $0.bytes.count } == [64, 64, 64],
     "Steam lizard startup reports should be 64 bytes"
   )
   require(startup[0].bytes[0] == 0x81, "Steam startup should clear digital mappings")
+  require(startup[1].bytes[0] == 0x8E, "Steam startup should load default settings")
   require(
-    Array(startup[1].bytes.prefix(11)) == ProtocolPacketFixtures.Steam.startupSettingsPrefix,
+    Array(startup[2].bytes.prefix(14)) == ProtocolPacketFixtures.Steam.startupSettingsPrefix,
     "Steam startup should disable trackpad mouse modes and request raw IMU data"
   )
   let shutdown = hidReports(featureParser.deactivationWrites())

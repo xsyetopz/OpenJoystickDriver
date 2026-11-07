@@ -183,7 +183,7 @@ public enum ProtocolPacketFixtures {
 
     /// The leading bytes of the startup settings write.
     public static let startupSettingsPrefix: [UInt8] = [
-      0x87, 9, 0x07, 0x07, 0, 0x08, 0x07, 0, 48, 0x18, 0,
+      0x87, 12, 0x07, 0x07, 0, 0x08, 0x07, 0, 24, 0, 0, 48, 0x18, 0,
     ]
 
     /// Stores a 16-bit signed value as two little-endian bytes.

@@ -75,8 +75,9 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Fixed
 
+- The 2015 Steam Controller activation over USB and Bluetooth LE sends `81`, then `8E 00` (load default settings), then one settings write that sets the trackpad modes (settings 7 and 8) to none, the smooth absolute mouse (setting 24) to 0 and the IMU mode (setting 48) to `0x18`, as SDL does. It had sent `81` and the settings write without the second and without setting 24. Not checked on hardware.
 - A generic HID controller whose descriptor declares the D-pad as Generic Desktop usages `0x90` to `0x93` reports those directions, and an SDL mapping that binds the D-pad to buttons does too (a press at half the range).
-- The controls that a HID descriptor controller lists come from the usages its descriptor declares, so an SDL-mapped pad no longer claims Back, Start and the stick clicks that it lacks.
+- The controls that a HID descriptor controller lists come from the usages its descriptor declares, so an SDL-mapped pad no longer claims Back, Start and the stick clicks that it lacks. With no descriptor it lists the Xbox layout with Guide, as before.
 - System sleep waits for controller teardown: the service acknowledges the sleep to macOS (`IOAllowPowerChange`) only after the teardown returned, so the teardown's writes reach the controllers before the machine sleeps.
 - The app builds with `xcodebuild` from a checkout or git worktree that is not named `OpenJoystickDriver`: the `build` routes pass the package name SwiftPM derives from the directory as `OJD_SWIFT_PACKAGE_NAME`.
 - Two controllers with the same VID:PID and USB serial number, such as two `057E:2009` pads, no longer share one virtual controller.
