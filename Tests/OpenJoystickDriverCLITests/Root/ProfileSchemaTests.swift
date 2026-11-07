@@ -91,6 +91,15 @@ struct ProfileSchemaTests {
           }
         },
         {
+          "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D74",
+          "source": {"type": "Axis", "axis": "PointerX"},
+          "destination": {"type": "MouseMovement", "axis": "X"},
+          "axisTuning": {
+            "deadzone": 0.1, "gain": 1, "inverted": false, "responseCurve": "Linear",
+            "digitalActivationThreshold": 0.6
+          }
+        },
+        {
           "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D71",
           "source": {"type": "Axis", "axis": "RightTrigger"},
           "destination": {"type": "Scroll", "axis": "Y"},
@@ -216,6 +225,8 @@ struct ProfileSchemaTests {
     ("unknown key", #""name": "Everything""#, #""name": "Everything", "unexpected": true"#),
     ("deadzone out of range", #""deadzone": 0.1, "gain""#, #""deadzone": 0.96, "gain""#),
     ("unknown curve", #""EaseIn""#, #""quadratic""#),
+    ("pointer as a gamepad axis", #""GamepadAxis", "axis": "RightStickX""#,
+      #""GamepadAxis", "axis": "PointerX""#),
     (
       "unknown D-pad direction", #"{"type": "Dpad", "direction": "DpadUp"}"#,
       #"{"type": "Dpad", "direction": "notAName"}"#
@@ -322,6 +333,10 @@ struct ProfileSchemaTests {
     )
     let dpad = try #require((vocabulary["dpadControl"] as? [String: Any])?["enum"] as? [String])
     #expect(dpad == Self.raw(RemappingDpadDirection.self))
+    let gamepadAxes = try #require(
+      (vocabulary["gamepadAxis"] as? [String: Any])?["enum"] as? [String]
+    )
+    #expect(gamepadAxes == RemappingAxis.allCases.filter { !$0.isPointer }.map(\.rawValue))
     let definitions = try #require(
       try CLIOutputSchema.document(named: CLIOutputSchema.profileFileName)["$defs"]
         as? [String: Any]

@@ -50,7 +50,7 @@ extension RemappingDeviceState {
     var axes: [RemappingAxis: Double] = [:]
     var physicalValues = analog.physicalAxes
     if let (axis, value) = replayingAxis { physicalValues[axis] = value }
-    for (axis, value) in physicalValues {
+    for (axis, value) in physicalValues where !axis.isPointer {
       let sources: [RemappingSource] = [
         .axis(axis), .axisDirection(axis, .negative), .axisDirection(axis, .positive),
       ]

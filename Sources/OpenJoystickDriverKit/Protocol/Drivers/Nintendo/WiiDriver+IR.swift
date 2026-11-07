@@ -38,19 +38,6 @@ extension WiiDriver {
   /// The report that carries the third and fourth points of the full format.
   private static let irFullSecondReportID: UInt8 = 0x3F
 
-  /// Asks for the IR camera in `format` and, in a live session, starts its setup.
-  ///
-  /// Points are decoded after the setup finishes, so none appears before it. A session that has
-  /// not read its first status report runs the setup then.
-  func enableIR(_ format: ProtocolDescription.WiiRemote.BlockKind, at now: MonotonicTimestamp) {
-    irFormat = format
-    requestedFeatures = [.accelerometer, format]
-    guard hasRequestedCalibration, !hasRequestedIR else { return }
-    hasRequestedIR = true
-    begin(.irSetup, at: now)
-    pendingWrites.append(reportModeWrite())
-  }
-
   /// Decodes the IR block of `mode` into the touch contacts and the pointer; nil for a mode
   /// without one.
   func decodeIR(
@@ -124,6 +111,7 @@ extension WiiDriver {
     let y = dx * sin(roll) + dy * cos(roll)
     pointer.x = min(max(-x / 511.5, -1), 1)
     pointer.y = min(max(-y / 383.5, -1), 1)
+    next.pointer = StickPosition(x: pointer.x, y: pointer.y)
   }
 
   /// The roll about the pointing axis in radians, from the accelerometer reading in units of

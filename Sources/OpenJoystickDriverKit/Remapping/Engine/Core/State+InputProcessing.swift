@@ -70,6 +70,8 @@ extension RemappingEngineState {
           for: identifier,
           at: uptimeNanoseconds
         )
+      case .pointer(let x, let y):
+        return processAxes([(.pointerX, x), (.pointerY, y)], for: identifier, at: uptimeNanoseconds)
       case .leftTrigger(let value):
         return processAxes([(.leftTrigger, value)], for: identifier, at: uptimeNanoseconds)
       case .rightTrigger(let value):
@@ -95,6 +97,8 @@ extension RemappingEngineState {
           for: identifier,
           at: uptimeNanoseconds
         ) + processStickRegions(.right, x: x, y: y, for: identifier, at: uptimeNanoseconds)
+    case .pointer(let x, let y):
+      return processAxes([(.pointerX, x), (.pointerY, y)], for: identifier, at: uptimeNanoseconds)
     case .leftTrigger(let value):
       return processAdvancedTrigger(.left, value: value, for: identifier, at: uptimeNanoseconds)
         + processAxes([(.leftTrigger, value)], for: identifier, at: uptimeNanoseconds)

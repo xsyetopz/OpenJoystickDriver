@@ -60,7 +60,7 @@ public final class WiiDriver: PhysicalProtocolDriver {
   /// The state after the latest report.
   var state = ControllerState.neutral
   /// The features the driver asks the report mode to carry; a decoded extension adds its own.
-  var requestedFeatures: Set<ProtocolDescription.WiiRemote.BlockKind> = [.accelerometer]
+  var requestedFeatures: Set<ProtocolDescription.WiiRemote.BlockKind>
   /// The writes that parsing queued, until the pipeline drains them.
   var pendingWrites: [PhysicalOutputWrite] = []
   /// The memory exchanges of the session; the first one is on the wire.
@@ -89,7 +89,8 @@ public final class WiiDriver: PhysicalProtocolDriver {
   var motionSequence: UInt64 = 0
   /// Whether the motor runs; every output report carries it (`RumbleBitCarry`).
   var isRumbling = false
-  /// The IR format the user asked for; it outlives the session, whose setup runs it again.
+  /// The IR format the driver asks for, nil for none; it outlives the session, whose setup runs
+  /// it again.
   var irFormat: ProtocolDescription.WiiRemote.BlockKind?
   /// Whether the session has queued the IR setup.
   var hasRequestedIR = false
@@ -113,11 +114,21 @@ public final class WiiDriver: PhysicalProtocolDriver {
   private(set) var acceleration: RawAcceleration?
 
   /// Creates the driver for the family's description.
-  public init(tuning: ControllerTuning? = nil) {
+  ///
+  /// Every session turns on the IR camera in the basic format, which the `0x37` row of the mode
+  /// table carries without an extension.
+  public convenience init(tuning: ControllerTuning? = nil) {
+    self.init(tuning: tuning, irFormat: .irBasic)
+  }
+
+  /// `irFormat` is the IR format the session turns on; nil leaves IR off.
+  init(tuning: ControllerTuning?, irFormat: ProtocolDescription.WiiRemote.BlockKind?) {
     guard let wii = PhysicalProtocolID.nintendoWii.protocolDescription.wiiRemote else {
       preconditionFailure("nintendo-wii.json describes no wiiRemote field")
     }
     self.wii = wii
+    self.irFormat = irFormat
+    requestedFeatures = Set([.accelerometer] + (irFormat.map { [$0] } ?? []))
     replyTimeoutNanoseconds =
       UInt64(PhysicalProtocolID.nintendoWii.described(\.replyTimeoutMilliseconds, in: tuning))
       * 1_000_000
@@ -127,7 +138,8 @@ public final class WiiDriver: PhysicalProtocolDriver {
       * 1_000_000
   }
 
-  /// The core buttons, every control an extension layout drives, and motion.
+  /// The core buttons, every control an extension layout drives, the pointer and four touch
+  /// contacts while IR is on, and motion.
   ///
   /// The set does not change with the plugged extension.
   public var capabilities: ControllerCapabilities {
@@ -135,7 +147,11 @@ public final class WiiDriver: PhysicalProtocolDriver {
       $0.buttons.map(\.control) + $0.sticks.map(\.control) + $0.triggers.map(\.control)
     }
     return ControllerCapabilities(
-      controls: Set(wii.coreButtons.map(\.control) + extensionControls),
+      controls: Set(
+        wii.coreButtons.map(\.control) + extensionControls
+          + (irFormat == nil ? [] : [.pointerX, .pointerY, .pointerTracking])
+      ),
+      touchContactCount: irFormat == nil ? 0 : 4,
       motion: true
     )
   }

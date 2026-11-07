@@ -10,8 +10,7 @@ struct WiiDriverIRTests {
   private func readySession(
     _ format: ProtocolDescription.WiiRemote.BlockKind = .irExtended
   ) throws -> WiiSession {
-    let session = WiiSession()
-    session.driver.enableIR(format, at: MonotonicTimestamp(nanoseconds: 0))
+    let session = WiiSession(irFormat: format)
     try session.startUp()
     try session.answer(from: 2, count: 7)
     #expect(session.driver.isIRReady)
@@ -36,8 +35,7 @@ struct WiiDriverIRTests {
 
   @Test
   func theSetupWritesAllSevenStepsAtLeastFiftyMillisecondsApartAndMatchesTheFixture() throws {
-    let session = WiiSession()
-    session.driver.enableIR(.irExtended, at: MonotonicTimestamp(nanoseconds: 0))
+    let session = WiiSession(irFormat: .irExtended)
     try session.startUp()
     // Every step is acknowledged the moment it is written, so only the spacing delays the next.
     try session.answer(from: 2, count: 7)
@@ -64,8 +62,7 @@ struct WiiDriverIRTests {
 
   @Test
   func noPointAppearsBeforeTheSetupEnds() throws {
-    let session = WiiSession()
-    session.driver.enableIR(.irExtended, at: MonotonicTimestamp(nanoseconds: 0))
+    let session = WiiSession(irFormat: .irExtended)
     try session.startUp()
     let event = try session.feed(
       report33(extended(400, 300) + extended(623, 467) + Self.empty + Self.empty)
@@ -147,6 +144,62 @@ struct WiiDriverIRTests {
     let event = try session.feed(report33(try fixture("extended-1-points")))
     #expect(session.driver.pointer == .init(x: held.x, y: held.y, isTracking: false))
     #expect(event?.state.pressed.contains(.pointerTracking) == false)
+  }
+
+  @Test
+  func aDefaultDriverRunsTheSevenStepScriptAtStartupInTheBasicFormat() throws {
+    let session = WiiSession()
+    try session.startUp()
+    try session.answer(from: 2, count: 7)
+    var expected = try WiiFixtureFolder.sequences.byteStrings("ir-rumble-off").map(Array.init)
+    // The mode step of the extended script writes its mode byte at index 6 of the sixth report.
+    expected[5][6] = 1
+    #expect(session.log.dropFirst(2).map(\.report) == expected)
+    #expect(session.driver.isIRReady)
+    #expect(session.log.contains { $0.report[0] == 0x12 && $0.report[2] == 0x37 })
+  }
+
+  @Test
+  func aDecodedFrameSetsThePointerAxesAndTracking() throws {
+    let session = try readySession()
+    let event = try session.feed(
+      report33(extended(600, 383) + extended(624, 384) + Self.empty + Self.empty)
+    )
+    let state = try #require(event?.state)
+    #expect(abs(state.pointer.x.normalized - session.driver.pointer.x) < 1e-3)
+    #expect(abs(state.pointer.y.normalized - session.driver.pointer.y) < 1e-3)
+    #expect(state.pointer.x != .center)
+    #expect(state.pressed.contains(.pointerTracking))
+  }
+
+  @Test
+  func fewerThanTwoPointsHoldTheAxesAndClearTracking() throws {
+    let session = try readySession()
+    let held = try #require(
+      try session.feed(report33(extended(600, 383) + extended(624, 384) + Self.empty + Self.empty))
+    ).state.pointer
+    let event = try session.feed(report33(try fixture("extended-1-points")))
+    #expect(event?.state.pointer == held)
+    #expect(event?.state.pressed.contains(.pointerTracking) == false)
+  }
+
+  @Test
+  func theHIDPathHandsTheDeferredWritesToTheTransport() async throws {
+    let pipeline = DevicePipeline(
+      identifier: LogicalControllerID(vendorID: 0x057E, productID: 0x0306),
+      transport: .hid(address: .ioKit(locationID: 1, interfaceNumber: nil)),
+      driver: WiiDriver(),
+      dispatcher: CapturingOutputDispatcher()
+    )
+    await pipeline.start()
+    let writes = await pipeline.feedHIDData(Data(try WiiFixtures.report("20-status-no-extension")))
+    let ids = writes.compactMap { write -> UInt8? in
+      if case .hidOutput(let report) = write { report.bytes[0] } else { nil }
+    }
+    // The report mode, then the first calibration read.
+    #expect(ids.contains(0x12))
+    #expect(ids.contains(0x17))
+    await pipeline.stop()
   }
 
   @Test

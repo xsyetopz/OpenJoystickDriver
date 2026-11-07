@@ -138,6 +138,7 @@ struct JoyConPairCharacterizationTests {
       case .dpad(let hat): "hat=\(hat.rawValue)"
       case .leftStick: "ls=\(state.leftStick.x.rawValue),\(state.leftStick.y.rawValue)"
       case .rightStick: "rs=\(state.rightStick.x.rawValue),\(state.rightStick.y.rawValue)"
+      case .pointer: "pointer=\(state.pointer.x.rawValue),\(state.pointer.y.rawValue)"
       case .leftTrigger: "lt=\(state.leftTrigger.rawValue)"
       case .rightTrigger: "rt=\(state.rightTrigger.rawValue)"
       case .motion: "motion"

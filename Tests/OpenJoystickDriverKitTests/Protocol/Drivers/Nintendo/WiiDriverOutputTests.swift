@@ -15,8 +15,7 @@ struct WiiDriverOutputTests {
 
   @Test(arguments: [false, true])
   func everyOutputReportCarriesTheRumbleBit(rumbling: Bool) throws {
-    let session = WiiSession()
-    session.driver.enableIR(.irExtended, at: MonotonicTimestamp(nanoseconds: 0))
+    let session = WiiSession(irFormat: .irExtended)
     if rumbling { _ = try session.driver.encode(Self.on) }
     session.note(session.driver.startupWrites())
     try session.startUp()
@@ -37,8 +36,7 @@ struct WiiDriverOutputTests {
 
   @Test
   func theIRSequenceMatchesTheFixtureWithTheRumbleBitOn() throws {
-    let session = WiiSession()
-    session.driver.enableIR(.irExtended, at: MonotonicTimestamp(nanoseconds: 0))
+    let session = WiiSession(irFormat: .irExtended)
     _ = try session.driver.encode(Self.on)
     try session.startUp()
     try session.answer(from: 2, count: 7)
@@ -48,7 +46,7 @@ struct WiiDriverOutputTests {
 
   @Test
   func theMotorIsBinaryAndRunsForAnyIntensityAboveZero() throws {
-    let driver = WiiDriver()
+    let driver = WiiDriver(tuning: nil, irFormat: nil)
     let faint = ControllerOutputCommand.setRumble(
       RumbleIntensities(lowFrequency: UnipolarValue(1)),
       duration: .held
@@ -61,7 +59,7 @@ struct WiiDriverOutputTests {
 
   @Test
   func eachPlayerLightsItsOwnLEDAndOffLightsNone() throws {
-    let driver = WiiDriver()
+    let driver = WiiDriver(tuning: nil, irFormat: nil)
     let expected: [PhysicalPlayerIndicator: UInt8] = [
       .off: 0, .player1: 0x10, .player2: 0x20, .player3: 0x40, .player4: 0x80,
     ]

@@ -134,6 +134,8 @@ public struct RemappingPointerSpeed: Codable, Equatable, Hashable, Sendable {
       case .rightStickY: state.rightStick.y.normalized
       case .leftTrigger: state.leftTrigger.normalized
       case .rightTrigger: state.rightTrigger.normalized
+      case .pointerX: state.pointer.x.normalized
+      case .pointerY: state.pointer.y.normalized
       }
     }
   }

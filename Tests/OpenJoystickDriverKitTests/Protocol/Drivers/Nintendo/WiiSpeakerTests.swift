@@ -27,7 +27,7 @@ struct WiiSpeakerTests {
 
   @Test
   func aTwentyByteDataReportCarriesItsLengthInTheHighBitsAndTheRumbleBit() throws {
-    let driver = WiiDriver()
+    let driver = WiiDriver(tuning: nil, irFormat: nil)
     let data = [UInt8](repeating: 0xAB, count: 20)
     #expect(reports(try driver.encode(.speaker(.data(data)))) == [[0x18, 0xA0] + data])
     _ = try driver.encode(.setRumble(RumbleIntensities(lowFrequency: .max), duration: .held))
@@ -38,7 +38,7 @@ struct WiiSpeakerTests {
 
   @Test
   func aPacketOfNoBytesOrMoreThanTwentyIsRefused() {
-    let driver = WiiDriver()
+    let driver = WiiDriver(tuning: nil, irFormat: nil)
     #expect(throws: ControllerOutputError.invalidValue) {
       try driver.encode(.speaker(.data([])))
     }
@@ -49,7 +49,7 @@ struct WiiSpeakerTests {
 
   @Test(arguments: [false, true])
   func theStartAndStopScriptsMatchTheSpeakerFixture(rumbling: Bool) throws {
-    let driver = WiiDriver()
+    let driver = WiiDriver(tuning: nil, irFormat: nil)
     if rumbling {
       _ = try driver.encode(.setRumble(RumbleIntensities(lowFrequency: .max), duration: .held))
     }
@@ -63,7 +63,7 @@ struct WiiSpeakerTests {
 
   @Test
   func aClipLongerThanTheTuningLimitOrEmptyIsRefused() {
-    let driver = WiiDriver()
+    let driver = WiiDriver(tuning: nil, irFormat: nil)
     #expect(throws: ControllerOutputError.invalidValue) {
       try driver.encode(.speaker(.start(seconds: 10.5)))
     }

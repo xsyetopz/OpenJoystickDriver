@@ -12,7 +12,10 @@ public enum RemappingDpadDirection: String, Codable, CaseIterable, Hashable, Sen
   case right = "DpadRight"
 }
 
-/// A stick axis or a trigger of the control vocabulary; the raw value is its control id.
+/// A stick axis, a trigger or a pointer axis of the control vocabulary; the raw value is its
+/// control id.
+///
+/// The pointer axes are sources only: the virtual gamepad has no pointer to output.
 public enum RemappingAxis: String, Codable, CaseIterable, Hashable, Sendable {
   /// Left stick horizontal axis.
   case leftStickX = "LeftStickX"
@@ -26,6 +29,10 @@ public enum RemappingAxis: String, Codable, CaseIterable, Hashable, Sendable {
   case leftTrigger = "LeftTrigger"
   /// Right trigger.
   case rightTrigger = "RightTrigger"
+  /// Horizontal axis of a pointing device.
+  case pointerX = "PointerX"
+  /// Vertical axis of a pointing device.
+  case pointerY = "PointerY"
 
   /// The control this axis is.
   public var control: Control {
@@ -36,8 +43,13 @@ public enum RemappingAxis: String, Codable, CaseIterable, Hashable, Sendable {
     case .rightStickY: .rightStickY
     case .leftTrigger: .leftTrigger
     case .rightTrigger: .rightTrigger
+    case .pointerX: .pointerX
+    case .pointerY: .pointerY
     }
   }
+
+  /// Whether this is a pointer axis.
+  public var isPointer: Bool { self == .pointerX || self == .pointerY }
 }
 
 /// Half of an axis range.

@@ -11,6 +11,7 @@ enum InputChange: Equatable {
   case hat(HatDirection)
   case leftStick(x: Float, y: Float)
   case rightStick(x: Float, y: Float)
+  case pointer(x: Float, y: Float)
   case leftTrigger(Float)
   case rightTrigger(Float)
   case motion(ControllerMotionSample)
@@ -36,6 +37,7 @@ extension ControllerState {
           x: BipolarValue(normalized: x),
           y: BipolarValue(normalized: y)
         )
+      case .pointer(let x, let y): next.pointer = StickPosition(x: x, y: y)
       case .leftTrigger(let value): next.leftTrigger = UnipolarValue(normalized: value)
       case .rightTrigger(let value): next.rightTrigger = UnipolarValue(normalized: value)
       case .motion: break
@@ -214,7 +216,7 @@ extension ControllerEvent {
     case .press(let control): state.pressed.contains(control)
     case .release(let control): !state.pressed.contains(control)
     case .hat(let hat): state.hat == hat
-    case .leftStick, .rightStick, .leftTrigger, .rightTrigger:
+    case .leftStick, .rightStick, .pointer, .leftTrigger, .rightTrigger:
       ControllerState.neutral.applying([change]).matches(change, in: state)
     case .motion(let sample): motion.contains(sample)
     case .touch(let sample): touchFrames.contains(sample)
@@ -227,6 +229,7 @@ extension ControllerState {
     switch change {
     case .leftStick: leftStick == other.leftStick
     case .rightStick: rightStick == other.rightStick
+    case .pointer: pointer == other.pointer
     case .leftTrigger: leftTrigger == other.leftTrigger
     case .rightTrigger: rightTrigger == other.rightTrigger
     default: false

@@ -185,6 +185,7 @@ extension RuntimePresentation {
     case .leftTrigger: return OJDLocalized.string("ui.mapping.leftTrigger")
     case .rightTrigger:
       return OJDLocalized.string("ui.mapping.rightTrigger")
+    case .pointerX, .pointerY: return axis.rawValue
     }
   }
 

@@ -38,4 +38,17 @@ struct BindingAxisDefaultsTests {
     #expect(result.code != 0)
     #expect(library.stored.first?.bindings.isEmpty == true)
   }
+
+  @Test
+  func theWiiPointerBindsToMouseMovement() async throws {
+    let library = FakeProfileLibrary([FakeProfileLibrary.profile("Wii")])
+    let service = try FakeService(devices: [], respond: library.respond)
+
+    let result = await service.run(["binding", "set", "Wii", "axis:pointer-x", "move:x"])
+
+    #expect(result.code == 0, "\(result.standardError)")
+    let stored = try #require(library.stored.first?.bindings.first)
+    #expect(stored.source == .axis(.pointerX))
+    #expect(stored.destination == .mouseMovement(.x))
+  }
 }

@@ -86,17 +86,20 @@ The rumble motor has two states. Any intensity above 0 turns it on. `ojd control
 
 ## IR pointer
 
-The remote has an IR camera that sees the two points of a sensor bar. The driver contains the IR camera setup (seven register writes with at least 50 ms between them, set by the tuning key `irWriteIntervalMs`) and the decode of the three IR formats. The decode gives touch contacts on the camera's 1024 by 768 grid and a pointer: the midpoint of the two largest points, turned by the roll of the remote and mirrored. With fewer than two visible points, `PointerTracking` is off.
+The remote has an IR camera that sees the two points of a sensor bar. At the start of every session, after the first status report and the calibration read, the driver runs the IR camera setup in the basic format: seven register writes with at least 50 ms between them, set by the tuning key `irWriteIntervalMs`. The report mode that goes with the basic format is `0x37` (button, accelerometer and IR data, with room for an extension). A reconnect runs the setup again, and no IR point appears before the seventh step is acknowledged. The extended and full formats are decoded, but nothing selects them.
 
-OJD cannot yet aim with the remote:
+The IR points are touch contacts on the camera's 1024 by 768 grid, up to four. The driver also computes a pointer: the midpoint of the two largest points, turned by the roll of the remote and mirrored. The pointer is two axes, `PointerX` and `PointerY`, from -1 to 1 with Y positive down, plus the control `PointerTracking`, which is on while two points are visible. With fewer than two points, `PointerTracking` is off and `PointerX` and `PointerY` keep their last values.
 
-1. No command, setting, or profile switches the IR camera on. Only the driver tests start the setup.
-2. The driver keeps the pointer position, but it does not send `PointerX` and `PointerY` values to profiles. It sends only `PointerTracking`.
-3. The virtual controllers that OJD publishes carry no pointer controls. For the list of controls, see [Controller records](Controller-Records.md).
+The pointer is raw geometry, without smoothing or screen calibration. A profile binds `PointerX` or `PointerY` as a source, and the position of the pointer sets the speed of the mouse: the further from the center, the faster the mouse moves. `PointerX` and `PointerY` are sources only. A binding that sends them to a `gamepad:axis:` target is rejected, because the virtual controllers that OJD publishes carry no pointer controls. For the list of controls, see [Controller records](Controller-Records.md).
 
-The IR setup and the sensitivity level are not verified on a real remote. Until the pointer controls carry values, no profile can move the mouse with the IR pointer.
+The IR setup, the pointer signs and the sensitivity level are not verified on a real remote. These commands send the pointer to the mouse. A test verified that they bind and that the engine moves the mouse. They are not verified on hardware:
 
-The target for mouse movement is `move:x` or `move:y`, and any axis of the remote can drive it today. For example, these commands move the mouse with the stick of a Nunchuk. They are not verified on a real remote:
+```shell
+ojd binding set PROFILE axis:pointer-x move:x
+ojd binding set PROFILE axis:pointer-y move:y
+```
+
+Any other axis can drive the mouse the same way. For example, these commands move the mouse with the stick of a Nunchuk:
 
 ```shell
 ojd binding set PROFILE axis:left-stick-x move:x

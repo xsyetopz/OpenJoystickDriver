@@ -128,7 +128,7 @@ struct DestinationOption: Hashable {
       Control.allCases.filter(\.supportsVirtualOutput).map(
         RemappingDestination.gamepadButton
       ) + RemappingDpadDirection.allCases.map(RemappingDestination.gamepadDpad)
-      + RemappingAxis.allCases.map(RemappingDestination.gamepadAxis)
+      + RemappingAxis.allCases.filter { !$0.isPointer }.map(RemappingDestination.gamepadAxis)
     let gamepad = gamepadDestinations.map { destination in
       Self(
         destination: destination,

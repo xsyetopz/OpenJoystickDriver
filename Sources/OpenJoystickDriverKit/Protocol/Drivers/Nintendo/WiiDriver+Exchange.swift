@@ -157,7 +157,10 @@ extension WiiDriver {
   func dropExtension(at now: MonotonicTimestamp) {
     extensionKind = nil
     extensionCenters = [:]
-    state = ControllerState(pressed: state.pressed.intersection(wii.coreButtons.map(\.control)))
+    state = ControllerState(
+      pressed: state.pressed.intersection(wii.coreButtons.map(\.control) + [.pointerTracking]),
+      pointer: state.pointer
+    )
     if exchanges.first?.purpose == .extensionHandshake {
       exchanges.removeFirst()
       if !exchanges.isEmpty { sendStep(at: now) }

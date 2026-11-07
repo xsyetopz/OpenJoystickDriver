@@ -259,6 +259,9 @@ extension RemappingProfile {
     if case .gamepadButton(let button) = destination, !button.supportsVirtualOutput {
       throw RemappingValidationError.unsupportedGamepadButton(button)
     }
+    if case .gamepadAxis(let axis) = destination, axis.isPointer {
+      throw RemappingValidationError.unsupportedGamepadAxis(axis)
+    }
     if case .physical(let output) = destination {
       do { try output.validate() } catch { throw RemappingValidationError.invalidPhysicalOutput }
     }

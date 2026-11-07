@@ -8,6 +8,8 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
   case bindingBehaviorConflict(index: Int)
   /// The virtual gamepad cannot output this button.
   case unsupportedGamepadButton(Control)
+  /// The virtual gamepad cannot output this axis.
+  case unsupportedGamepadAxis(RemappingAxis)
   /// A virtual gamepad destination or stick output is used while the output policy has no virtual
   /// gamepad.
   case virtualOutputRequired
@@ -198,6 +200,8 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
       "Binding \(index) uses a behavior incompatible with its destination or activation settings."
     case .unsupportedGamepadButton(let button):
       "The virtual controller cannot output \(button.rawValue)."
+    case .unsupportedGamepadAxis(let axis):
+      "The virtual controller cannot output \(axis.rawValue)."
     case .virtualOutputRequired: "Gamepad destinations require virtual gamepad output."
     case .invalidPhysicalOutput: "A physical-controller output value is invalid."
     case .invalidProfileName: "Profile names must contain 1 through 80 printable characters."

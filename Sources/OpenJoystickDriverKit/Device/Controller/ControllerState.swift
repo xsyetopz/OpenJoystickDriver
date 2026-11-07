@@ -82,6 +82,9 @@ public struct ControllerState: Equatable, Codable, Sendable {
   public var leftTrigger: UnipolarValue
   /// The right trigger value.
   public var rightTrigger: UnipolarValue
+  /// The aim of a pointing device; positive Y is down. It holds its last value while
+  /// `pointerTracking` is released.
+  public var pointer: StickPosition
   /// Latest complete contact frame of each touch surface the controller reports.
   public var touch: [ControllerTouchSample]
   /// Link and power state, stamped by the pipeline; nil where no binding describes the link.
@@ -95,6 +98,7 @@ public struct ControllerState: Equatable, Codable, Sendable {
     rightStick: StickPosition = .center,
     leftTrigger: UnipolarValue = .min,
     rightTrigger: UnipolarValue = .min,
+    pointer: StickPosition = .center,
     touch: [ControllerTouchSample] = [],
     connection: ControllerConnectionState? = nil
   ) {
@@ -104,6 +108,7 @@ public struct ControllerState: Equatable, Codable, Sendable {
     self.rightStick = rightStick
     self.leftTrigger = leftTrigger
     self.rightTrigger = rightTrigger
+    self.pointer = pointer
     self.touch = touch
     self.connection = connection
   }
@@ -135,6 +140,8 @@ public struct ControllerState: Equatable, Codable, Sendable {
     case leftTrigger
     /// The JSON key of `rightTrigger`.
     case rightTrigger
+    /// The JSON key of `pointer`.
+    case pointer
     /// The JSON key of `touch`.
     case touch
     /// The JSON key of `connection`.
@@ -152,6 +159,7 @@ public struct ControllerState: Equatable, Codable, Sendable {
     rightStick = try values.decode(StickPosition.self, forKey: .rightStick)
     leftTrigger = try values.decode(UnipolarValue.self, forKey: .leftTrigger)
     rightTrigger = try values.decode(UnipolarValue.self, forKey: .rightTrigger)
+    pointer = try values.decode(StickPosition.self, forKey: .pointer)
     touch = try values.decode([ControllerTouchSample].self, forKey: .touch)
     connection = try values.decodeIfPresent(ControllerConnectionState.self, forKey: .connection)
   }
@@ -165,6 +173,7 @@ public struct ControllerState: Equatable, Codable, Sendable {
     try values.encode(rightStick, forKey: .rightStick)
     try values.encode(leftTrigger, forKey: .leftTrigger)
     try values.encode(rightTrigger, forKey: .rightTrigger)
+    try values.encode(pointer, forKey: .pointer)
     try values.encode(touch, forKey: .touch)
     try values.encodeIfPresent(connection, forKey: .connection)
   }

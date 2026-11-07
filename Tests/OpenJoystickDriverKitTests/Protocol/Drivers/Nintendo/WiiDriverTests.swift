@@ -7,7 +7,7 @@ struct WiiDriverTests {
   static let family = PhysicalProtocolID.nintendoWii
   static let model = ControllerModelID(vendorID: 0x057E, productID: 0x0306)
 
-  private let driver = WiiDriver()
+  private let driver = WiiDriver(tuning: nil, irFormat: nil)
 
   private func event(_ fixture: String) throws -> ControllerEvent? {
     try driver.parseReport(WiiFixtures.report(fixture))

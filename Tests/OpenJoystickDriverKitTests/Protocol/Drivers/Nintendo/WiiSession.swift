@@ -11,9 +11,13 @@ final class WiiSession {
   ]
   static let tick: UInt64 = 10_000_000
 
-  let driver = WiiDriver()
+  let driver: WiiDriver
   private(set) var clock: UInt64 = 0
   private(set) var log: [(at: UInt64, report: [UInt8])] = []
+
+  init(irFormat: ProtocolDescription.WiiRemote.BlockKind? = .irBasic) {
+    driver = WiiDriver(tuning: nil, irFormat: irFormat)
+  }
 
   /// Parses `report` at the clock and logs the writes it queued.
   @discardableResult

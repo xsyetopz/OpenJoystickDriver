@@ -6,7 +6,7 @@ import Testing
 struct WiiDriverMotionPlusTests {
   private typealias Slow = (yaw: Bool, roll: Bool, pitch: Bool)
 
-  private let driver = WiiDriver()
+  private let driver = WiiDriver(tuning: nil, irFormat: nil)
 
   /// A mode `0x35` report: the core bytes, a still accelerometer, then the six extension bytes.
   private func report(_ frame: [UInt8]) throws -> ControllerEvent? {

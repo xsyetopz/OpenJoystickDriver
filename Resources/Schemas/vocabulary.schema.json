@@ -64,7 +64,20 @@
       "enum": ["LeftStickX", "LeftStickY", "RightStickX", "RightStickY"]
     },
     "axis": {
-      "description": "An analog axis: a stick axis or a trigger.",
+      "description": "An analog axis: a stick axis, a trigger or a pointer axis.",
+      "enum": [
+        "LeftStickX",
+        "LeftStickY",
+        "RightStickX",
+        "RightStickY",
+        "LeftTrigger",
+        "RightTrigger",
+        "PointerX",
+        "PointerY"
+      ]
+    },
+    "gamepadAxis": {
+      "description": "An analog axis the virtual gamepad outputs: a stick axis or a trigger.",
       "enum": [
         "LeftStickX",
         "LeftStickY",

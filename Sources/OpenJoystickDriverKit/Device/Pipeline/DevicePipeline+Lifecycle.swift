@@ -90,7 +90,8 @@ extension DevicePipeline {
   /// `laterReportQueued` tells that a later report of this controller already waits; an input that
   /// changes only analog controls is then left for that report to publish.
   ///
-  /// - Returns: The HID writes that a change of the input connection asks for.
+  /// - Returns: The HID writes that a change of the input connection asks for, then the writes
+  ///   the driver deferred while it parsed (the Wii Remote's memory exchanges, IR setup included).
   @discardableResult
   func feedHIDData(_ data: Data, laterReportQueued: Bool = false) async -> [PhysicalOutputWrite] {
     guard isActive else { return [] }
@@ -99,7 +100,8 @@ extension DevicePipeline {
     do {
       let receivedAt = uptimeNanoseconds()
       let event = try parseReport(data, receivedAt: receivedAt)
-      connectionWrites = await handleInputConnectionStateChangeIfNeeded()
+      connectionWrites =
+        await handleInputConnectionStateChangeIfNeeded() + driver.drainPendingWrites()
       if inputConnectionActive {
         await handleParsedEvent(event, now: receivedAt, laterReportQueued: laterReportQueued)
       }

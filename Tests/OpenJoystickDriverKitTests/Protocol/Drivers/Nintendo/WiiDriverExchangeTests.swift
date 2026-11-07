@@ -7,7 +7,7 @@ struct WiiDriverExchangeTests {
   private static let wii = PhysicalProtocolID.nintendoWii.protocolDescription.wiiRemote
   private static let timeout: UInt64 = 500_000_000
 
-  private let driver = WiiDriver()
+  private let driver = WiiDriver(tuning: nil, irFormat: nil)
 
   /// Parses `report` at `nanoseconds` and returns the writes it queued.
   @discardableResult

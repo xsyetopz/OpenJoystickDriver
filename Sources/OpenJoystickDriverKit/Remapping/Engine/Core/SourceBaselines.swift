@@ -12,6 +12,8 @@ enum RemappingInputChange: Equatable {
   case leftStick(x: Float, y: Float)
   /// The right stick moved.
   case rightStick(x: Float, y: Float)
+  /// The pointer moved.
+  case pointer(x: Float, y: Float)
   /// The left trigger value changed.
   case leftTrigger(Float)
   /// The right trigger value changed.
@@ -48,7 +50,7 @@ extension RemappingEngineState {
   ///
   /// Every button release comes before any button press, so a report that swaps one held button for
   /// another never shows both held. Releases and presses each follow ``controlOrder``. The hat,
-  /// left stick, right stick, left trigger and right trigger follow.
+  /// left stick, right stick, pointer, left trigger and right trigger follow.
   static func changes(
     from old: ControllerState,
     to new: ControllerState
@@ -68,6 +70,9 @@ extension RemappingEngineState {
     }
     if old.rightStick != new.rightStick {
       changes.append(.rightStick(x: new.rightStick.x.normalized, y: new.rightStick.y.normalized))
+    }
+    if old.pointer != new.pointer {
+      changes.append(.pointer(x: new.pointer.x.normalized, y: new.pointer.y.normalized))
     }
     if old.leftTrigger != new.leftTrigger {
       changes.append(.leftTrigger(new.leftTrigger.normalized))

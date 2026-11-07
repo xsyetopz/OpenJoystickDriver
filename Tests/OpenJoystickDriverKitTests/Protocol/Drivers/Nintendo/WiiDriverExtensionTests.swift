@@ -5,7 +5,7 @@ import Testing
 
 struct WiiDriverExtensionTests {
   private static let wii = PhysicalProtocolID.nintendoWii.protocolDescription.wiiRemote
-  private let driver = WiiDriver()
+  private let driver = WiiDriver(tuning: nil, irFormat: nil)
 
   /// A mode `0x32` report: the core bytes, the six extension bytes and two spare.
   private func report(_ data: Data) -> Data {
@@ -73,7 +73,12 @@ struct WiiDriverExtensionTests {
       expected.formUnion(layout.sticks.map(\.control))
       expected.formUnion(layout.triggers.map(\.control))
     }
+    let pointer: Set<Control> = [.pointerX, .pointerY, .pointerTracking]
+    let withIR = WiiDriver().capabilities
+    #expect(withIR.controls == expected.union(pointer))
+    #expect(withIR.touchContactCount == 4)
     #expect(driver.capabilities.controls == expected)
+    #expect(driver.capabilities.touchContactCount == 0)
     #expect(driver.capabilities.motion)
     #expect([.leftStickX, .rightStickY, .rightTrigger, .east].allSatisfy(expected.contains))
   }

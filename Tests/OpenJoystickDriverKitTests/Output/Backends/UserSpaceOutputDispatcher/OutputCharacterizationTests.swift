@@ -193,6 +193,8 @@ extension OutputCharacterizationTests {
         parts.append("ls=\(state.leftStick.x.rawValue),\(state.leftStick.y.rawValue)")
       case .rightStick:
         parts.append("rs=\(state.rightStick.x.rawValue),\(state.rightStick.y.rawValue)")
+      case .pointer:
+        parts.append("pointer=\(state.pointer.x.rawValue),\(state.pointer.y.rawValue)")
       case .leftTrigger: parts.append("lt=\(state.leftTrigger.rawValue)")
       case .rightTrigger: parts.append("rt=\(state.rightTrigger.rawValue)")
       case .motion, .touch: break
