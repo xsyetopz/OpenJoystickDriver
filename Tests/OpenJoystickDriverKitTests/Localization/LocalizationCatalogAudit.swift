@@ -79,7 +79,6 @@ enum LocalizationCatalogAudit {
       "ui.profiles.stick.horizontal", "ui.profiles.stick.source", "ui.profiles.trackball.enabled",
       "ui.profiles.trigger.source", "ui.profiles.turbo", "ui.settings.general.updates",
       "ui.settings.general.version", "ui.profiles.pointerSpeed.driverTrigger",
-      "ui.profiles.speak.text",
       "ui.shortcuts.controller.name", "ui.shortcuts.controller.type",
       "ui.shortcuts.parameter.controller",
       "ui.shortcuts.profile.name",
