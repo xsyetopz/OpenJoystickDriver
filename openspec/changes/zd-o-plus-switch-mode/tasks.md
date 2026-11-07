@@ -24,17 +24,17 @@ Owns: `Sources/OpenJoystickDriverKit/Diagnostics/DiagnosticsService.swift`, `Sou
 Depends: none.
 Verify: `swift test --filter Diagnos`.
 
-- [ ] 2.1 Find how the snapshot exposes connected controllers and whether it carries the USB serial; if it does not, record that here and stop before inventing a source.
-- [ ] 2.2 Write `diagnoseWarnsOnPlaceholderSwitchSerial`, `diagnosePassesOtherSwitchSerial` and `diagnoseSkipsWithoutSwitchIdentity`.
-- [ ] 2.3 Add the check beside `recordCheck` and `inputMappingCheck` in `DiagnosticsService.checks`; add the message to the localization files and review translations against `LOCALIZATION.md`.
+- [x] 2.1 Find how the snapshot exposes connected controllers and whether it carries the USB serial; if it does not, record that here and stop before inventing a source.
+- [x] 2.2 Write `diagnoseWarnsOnPlaceholderSwitchSerial`, `diagnosePassesOtherSwitchSerial` and `diagnoseSkipsWithoutSwitchIdentity`.
+- [x] 2.3 Add the check beside `recordCheck` and `inputMappingCheck` in `DiagnosticsService.checks`; add the message to the localization files and review translations against `LOCALIZATION.md`.
 
 ## 3. Docs
 
 Owns: `wiki/Known-Issues.md`, `CHANGELOG.md`.
 Depends: 2.
 
-- [ ] 3.1 Add a Known Issues entry: some pads report `057E:2009` with serial `000000000001` in Switch mode, `ojd diagnose` names them, and the report interval is the pad's own unless group 4 shows otherwise.
-- [ ] 3.2 Add to `CHANGELOG.md` under `[Unreleased]` / `### Added`: `ojd diagnose` reports a `057E:2009` controller with serial `000000000001`.
+- [x] 3.1 Add a Known Issues entry: some pads report `057E:2009` with serial `000000000001` in Switch mode, `ojd diagnose` names them, and the report interval is the pad's own unless group 4 shows otherwise.
+- [x] 3.2 Add to `CHANGELOG.md` under `[Unreleased]` / `### Added`: `ojd diagnose` reports a `057E:2009` controller with serial `000000000001`.
 
 ## 4. Gated: Branch (a) or (b)
 
