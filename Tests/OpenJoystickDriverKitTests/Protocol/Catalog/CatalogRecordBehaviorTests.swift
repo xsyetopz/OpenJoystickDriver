@@ -48,10 +48,14 @@ struct CatalogRecordBehaviorTests {
 
   /// A row's capability delta is evidence against the parser it configures: absences
   /// name declared controls, presences are controls the configured parser emits.
+  ///
+  /// An idle record configures no parser.
   @Test
   func everyCapabilityDeltaMatchesItsConfiguredParser() throws {
     for model in registry.rawUSBModels + registry.hidModels {
-      let delta = try #require(registry.record(for: model)).capabilityDelta
+      let record = try #require(registry.record(for: model))
+      if record.isIdle { continue }
+      let delta = record.capabilityDelta
       let parser = try catalogParser(model, registry: registry)
       #expect(delta.absentControls.isSubset(of: parser.capabilities.controls), "\(model)")
       #expect(delta.presentControls.isSubset(of: parser.capabilities.controls), "\(model)")

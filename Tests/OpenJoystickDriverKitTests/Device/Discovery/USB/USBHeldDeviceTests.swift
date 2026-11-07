@@ -120,7 +120,11 @@ struct USBHeldDeviceTests {
   @Test
   func onlyTheReasonsAPersonCanActOnHaveAnExplanationInTheCatalog() {
     let explained = ProtocolBindingReason.allCases.filter { $0.explanationKey != nil }
-    #expect(explained == [.deviceInUse, .configurationUnreadable, .bootloaderIdentity])
+    #expect(
+      explained == [
+        .deviceInUse, .configurationUnreadable, .bootloaderIdentity, .noModeMatched, .idleIdentity,
+      ]
+    )
     let localization = Localization()
     for reason in explained {
       let key = reason.explanationKey ?? ""

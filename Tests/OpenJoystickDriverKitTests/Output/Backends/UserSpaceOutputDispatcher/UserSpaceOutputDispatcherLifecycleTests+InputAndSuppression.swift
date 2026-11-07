@@ -17,6 +17,7 @@ extension UserSpaceOutputDispatcherLifecycleTests {
       .auxiliary3, .auxiliary4, .auxiliary5, .auxiliary6, .auxiliary7, .auxiliary8, .leftStickTouch,
       .rightStickTouch, .leftTrackpadClick, .rightTrackpadClick, .leftTrackpadTouch,
       .rightTrackpadTouch, .touchpadClick, .microphone, .pointerX, .pointerY, .pointerTracking,
+      .leftGripTouch, .rightGripTouch,
     ]
     let analog: [Control] = [.leftStickX, .leftStickY, .rightStickX, .rightStickY]
     #expect(

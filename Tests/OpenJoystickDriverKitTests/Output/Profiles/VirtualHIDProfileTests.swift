@@ -172,7 +172,7 @@ struct VirtualHIDProfileTests {
     #expect(
       Set(Control.allCases).subtracting(profile.representableControls) == [
         .microphone, .leftTrackpadTouch, .rightTrackpadTouch, .pointerX, .pointerY,
-        .pointerTracking,
+        .pointerTracking, .leftGripTouch, .rightGripTouch,
       ]
     )
   }
