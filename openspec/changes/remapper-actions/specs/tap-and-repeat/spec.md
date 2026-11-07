@@ -30,17 +30,22 @@ When an action has `multiTap` entries, the base destination MUST fire if no furt
 
 ### Requirement: REQ-34 Repeat with Initial Delay and Count
 
-`turbo` MUST accept `initialDelayMs` from 0 to 2500 (0 when omitted) and `maxRepeats` from 1 to 500 (omitted means repeat while held). The first repeat MUST start `initialDelayMs` after the first press, and later repeats MUST follow the `turbo` rate and duty. When `maxRepeats` is reached, repeating MUST stop until the source is released and pressed again. The existing turbo limits MUST still apply.
+`turbo` MUST accept `initialDelayMs` from 0 to 2500 (0 when omitted) and `maxRepeats` from 1 to 500 (omitted means repeat while held). The press itself is not a repeat. The first repeat MUST start `initialDelayMs` or one turbo period after the press, whichever is later; later repeats follow the `turbo` rate and duty. When `maxRepeats` is reached, repeating MUST stop until the source is released and pressed again. The existing turbo limits MUST still apply.
 
 #### Scenario: Delay before Repeat
 
 - **WHEN** a key action has turbo with `initialDelayMs` 400 and the user holds the source
 - **THEN** the key goes down once at the press, and the first repeat starts no earlier than 400 ms after the press
 
+#### Scenario: No Delay
+
+- **WHEN** turbo has `initialDelayMs` 0 and the user holds the source
+- **THEN** the first repeat starts one turbo period after the press, as turbo without the field does
+
 #### Scenario: Repeat Cap
 
 - **WHEN** turbo has `maxRepeats` 5 and the user holds the source for longer than five turbo periods
-- **THEN** the destination repeats five times and then repeats no more until the next press
+- **THEN** the destination goes down at the press, repeats five more times, and then repeats no more until the next press
 
 ### Requirement: REQ-35 Tap and Repeat Surfaces
 
