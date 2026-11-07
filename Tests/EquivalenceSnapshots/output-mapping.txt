@@ -52,6 +52,8 @@ RightTrackpadTouch: unmapped
 PointerX: unmapped
 PointerY: unmapped
 PointerTracking: unmapped
+LeftGripTouch: unmapped
+RightGripTouch: unmapped
 combined: 01 FF FF 01 00 01 00 FF FF FF 03 FF 03 02 41 54 00 | 02 01
 
 ## generic
@@ -105,6 +107,8 @@ RightTrackpadTouch: unmapped
 PointerX: unmapped
 PointerY: unmapped
 PointerTracking: unmapped
+LeftGripTouch: unmapped
+RightGripTouch: unmapped
 combined: 51 66 FF 7F 01 80 01 80 FF 7F FF 7F FF 7F
 
 ## sdl-compatible
@@ -158,4 +162,6 @@ RightTrackpadTouch: unmapped
 PointerX: unmapped
 PointerY: unmapped
 PointerTracking: unmapped
+LeftGripTouch: unmapped
+RightGripTouch: unmapped
 combined: 20 00 00 0E 18 99 FF 03 FF 03 FF 7F FE 7F 01 80 00 80 | 07 20 00 02 01 5B

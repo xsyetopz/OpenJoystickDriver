@@ -23,6 +23,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - The Vader 5S (`37D7:2801`) has a GIP mode, which is the default, and an XUSB mode that runs when the pad shows an interface `FF/5D/01`. Both are unverified until a tester sends the USB dump. When no mode matches, the log names the interface classes the pad exposed. [Vader 5S](docs/testing/flydigi-vader-5s.md) gives the evidence.
 - `ojd diagnose` reports a `057E:2009` controller with serial `000000000001` in its new `switch-placeholder-serial` check, and the Activity table lists it.
 - The control vocabulary has `PointerX`, `PointerY` and `PointerTracking`, for a controller that aims at the screen. The virtual personas do not publish them.
+- The control vocabulary has `LeftGripTouch` and `RightGripTouch`, and the Steam Controller (2026) reports them from bits 29 and 28 of its button word. The virtual personas do not publish them.
 
 ### Changed
 

@@ -6560,7 +6560,7 @@ parameters=
 protocol=valve-steam-triton variant=wired ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Auxiliary1,Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftPaddle1,LeftPaddle2,LeftShoulder,LeftStickClick,LeftStickTouch,LeftStickX,LeftStickY,LeftTrackpadClick,LeftTrackpadTouch,LeftTrigger,North,RightPaddle1,RightPaddle2,RightShoulder,RightStickClick,RightStickTouch,RightStickX,RightStickY,RightTrackpadClick,RightTrackpadTouch,RightTrigger,South,Start,West]
+controls [Auxiliary1,Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftGripTouch,LeftPaddle1,LeftPaddle2,LeftShoulder,LeftStickClick,LeftStickTouch,LeftStickX,LeftStickY,LeftTrackpadClick,LeftTrackpadTouch,LeftTrigger,North,RightGripTouch,RightPaddle1,RightPaddle2,RightShoulder,RightStickClick,RightStickTouch,RightStickX,RightStickY,RightTrackpadClick,RightTrackpadTouch,RightTrigger,South,Start,West]
 output rumble=[low-frequency,high-frequency] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=40 minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 activation[0] hid-feature id=1 01870309000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -6572,7 +6572,7 @@ parameters=
 protocol=valve-steam-triton variant=bluetooth-le ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Auxiliary1,Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftPaddle1,LeftPaddle2,LeftShoulder,LeftStickClick,LeftStickTouch,LeftStickX,LeftStickY,LeftTrackpadClick,LeftTrackpadTouch,LeftTrigger,North,RightPaddle1,RightPaddle2,RightShoulder,RightStickClick,RightStickTouch,RightStickX,RightStickY,RightTrackpadClick,RightTrackpadTouch,RightTrigger,South,Start,West]
+controls [Auxiliary1,Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftGripTouch,LeftPaddle1,LeftPaddle2,LeftShoulder,LeftStickClick,LeftStickTouch,LeftStickX,LeftStickY,LeftTrackpadClick,LeftTrackpadTouch,LeftTrigger,North,RightGripTouch,RightPaddle1,RightPaddle2,RightShoulder,RightStickClick,RightStickTouch,RightStickX,RightStickY,RightTrackpadClick,RightTrackpadTouch,RightTrigger,South,Start,West]
 output rumble=[low-frequency,high-frequency] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=40 minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 activation[0] hid-feature id=1 01870309000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -6584,7 +6584,7 @@ parameters=
 protocol=valve-steam-triton variant=dongle ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Auxiliary1,Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftPaddle1,LeftPaddle2,LeftShoulder,LeftStickClick,LeftStickTouch,LeftStickX,LeftStickY,LeftTrackpadClick,LeftTrackpadTouch,LeftTrigger,North,RightPaddle1,RightPaddle2,RightShoulder,RightStickClick,RightStickTouch,RightStickX,RightStickY,RightTrackpadClick,RightTrackpadTouch,RightTrigger,South,Start,West]
+controls [Auxiliary1,Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftGripTouch,LeftPaddle1,LeftPaddle2,LeftShoulder,LeftStickClick,LeftStickTouch,LeftStickX,LeftStickY,LeftTrackpadClick,LeftTrackpadTouch,LeftTrigger,North,RightGripTouch,RightPaddle1,RightPaddle2,RightShoulder,RightStickClick,RightStickTouch,RightStickX,RightStickY,RightTrackpadClick,RightTrackpadTouch,RightTrigger,South,Start,West]
 output rumble=[low-frequency,high-frequency] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=40 minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 activation[0] hid-feature id=1 01870309000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
@@ -6595,7 +6595,7 @@ parameters=
 protocol=valve-steam-triton variant=dongle ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
-controls [Auxiliary1,Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftPaddle1,LeftPaddle2,LeftShoulder,LeftStickClick,LeftStickTouch,LeftStickX,LeftStickY,LeftTrackpadClick,LeftTrackpadTouch,LeftTrigger,North,RightPaddle1,RightPaddle2,RightShoulder,RightStickClick,RightStickTouch,RightStickX,RightStickY,RightTrackpadClick,RightTrackpadTouch,RightTrigger,South,Start,West]
+controls [Auxiliary1,Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftGripTouch,LeftPaddle1,LeftPaddle2,LeftShoulder,LeftStickClick,LeftStickTouch,LeftStickX,LeftStickY,LeftTrackpadClick,LeftTrackpadTouch,LeftTrigger,North,RightGripTouch,RightPaddle1,RightPaddle2,RightShoulder,RightStickClick,RightStickTouch,RightStickX,RightStickY,RightTrackpadClick,RightTrackpadTouch,RightTrigger,South,Start,West]
 output rumble=[low-frequency,high-frequency] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=40 minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
 activation[0] hid-feature id=1 01870309000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
