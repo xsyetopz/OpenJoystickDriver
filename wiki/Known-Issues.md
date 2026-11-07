@@ -18,6 +18,10 @@ OJD then opens with your profiles and none of them active. Do not activate a sec
 
 When two controllers have the same VID:PID, rumble from games and from **System Settings** does not reach either controller. Rumble from the **Input Test** window works.
 
+## Two Controllers With One USB Serial Number
+
+Some controllers report the same VID:PID and the same USB serial number, such as two `057E:2009` pads that both report `000000000001`. OJD gives each one its own virtual controller. The first pad to connect keeps the identity that its serial gives. The second pad's identity includes its USB port, so apps may treat it as a new controller after you move it to another port. The two pads may swap virtual identities after a replug or a restart, because the first pad to connect keeps the plain identity.
+
 ## Unplugging a USB Controller Can Crash the App
 
 If you unplug a USB controller or dongle while OJD runs, OJD may crash. It may also leave stale virtual controllers in **System Settings**. Restart OJD to clear them.

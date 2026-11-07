@@ -31,10 +31,11 @@ package struct IOHIDVirtualDevicePublisher: VirtualHIDDevicePublisher {
   ///   `createFailed` when IOKit refuses the device.
   package func createDevice(
     for identifier: LogicalControllerID,
+    identity: VirtualDeviceIdentity,
     profile: VirtualDeviceProfile,
     format: any VirtualGamepadReportFormat
   ) throws -> any VirtualDeviceBackend {
-    let properties = Self.deviceProperties(profile: profile, format: format, identifier: identifier)
+    let properties = Self.deviceProperties(profile: profile, format: format, identity: identity)
     let device = IOHIDUserDeviceCreateWithProperties(
       kCFAllocatorDefault,
       properties as CFDictionary,
@@ -84,7 +85,7 @@ package struct IOHIDVirtualDevicePublisher: VirtualHIDDevicePublisher {
   static func deviceProperties(
     profile: VirtualDeviceProfile,
     format: any VirtualGamepadReportFormat,
-    identifier: LogicalControllerID
+    identity: VirtualDeviceIdentity
   ) -> [String: Any] {
     let primaryUsage = Int(kHIDUsage_GD_GamePad)
     var properties: [String: Any] = [
@@ -94,9 +95,8 @@ package struct IOHIDVirtualDevicePublisher: VirtualHIDDevicePublisher {
       kIOHIDVersionNumberKey as String: profile.versionNumber,
       kIOHIDProductKey as String: profile.productName,
       kIOHIDManufacturerKey as String: profile.manufacturer,
-      kIOHIDSerialNumberKey as String: UserSpaceVirtualDeviceConstants.serialNumber(
-        for: identifier
-      ), kIOHIDTransportKey as String: ioHIDTransportValue(for: profile),
+      kIOHIDSerialNumberKey as String: identity.serialNumber,
+      kIOHIDTransportKey as String: ioHIDTransportValue(for: profile),
       kIOHIDMaxInputReportSizeKey as String: reportBufferSize(
         payloadSize: format.inputReportPayloadSize,
         reportID: format.inputReportID
@@ -115,9 +115,7 @@ package struct IOHIDVirtualDevicePublisher: VirtualHIDDevicePublisher {
         reportID: format.outputReportID
       )
     }
-    properties[kIOHIDLocationIDKey as String] = Int64(
-      UserSpaceVirtualDeviceConstants.locationID(for: identifier)
-    )
+    properties[kIOHIDLocationIDKey as String] = Int64(identity.locationID)
     return properties
   }
 

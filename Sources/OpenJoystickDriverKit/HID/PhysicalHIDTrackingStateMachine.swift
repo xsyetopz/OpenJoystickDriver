@@ -81,17 +81,29 @@ public enum UserSpaceVirtualDeviceConstants {
   ///
   /// We hash the physical identifier so we don't leak hardware serial numbers.
   public static func serialNumber(for identifier: LogicalControllerID) -> String {
-    let physicalHash = hex64(fnv1a64(stableKey(for: identifier)))
-    return serialPrefix + physicalHash
+    serialNumber(forKey: stableKey(for: identifier))
   }
 
   /// Computes a stable LocationID in the OJD namespace for this physical identifier.
   public static func locationID(for identifier: LogicalControllerID) -> UInt32 {
-    let h = fnv1a64(stableKey(for: identifier))
-    let low16 = UInt32(truncatingIfNeeded: h & 0xFFFF)
+    locationID(forKey: stableKey(for: identifier))
+  }
+
+  fileprivate static func serialNumber(forKey key: String) -> String {
+    serialPrefix + hex64(fnv1a64(key))
+  }
+
+  fileprivate static func locationID(forKey key: String) -> UInt32 {
+    let low16 = UInt32(truncatingIfNeeded: fnv1a64(key) & 0xFFFF)
     // Avoid 0/1 because some consumers treat these as special/invalid.
     let safeLow16 = (low16 <= 1) ? (low16 &+ 2) : low16
     return VirtualDeviceIdentityConstants.userSpaceLocationIDNamespace | safeLow16
+  }
+
+  /// The LocationID after `locationID`, wrapping within the 16 low bits and skipping 0 and 1.
+  fileprivate static func nextLocationID(after locationID: UInt32) -> UInt32 {
+    let next = (locationID &+ 1) & 0xFFFF
+    return VirtualDeviceIdentityConstants.userSpaceLocationIDNamespace | (next <= 1 ? 2 : next)
   }
 
   // MARK: - Private helpers
@@ -99,15 +111,18 @@ public enum UserSpaceVirtualDeviceConstants {
   /// The text that the hash of a virtual device's identity is taken from.
   ///
   /// It joins the vendor ID, the product ID, the serial number, the location ID (only without a
-  /// serial number) and the interface number.
-  private static func stableKey(for identifier: LogicalControllerID) -> String {
+  /// serial number, or when `includingLocation`) and the interface number.
+  fileprivate static func stableKey(
+    for identifier: LogicalControllerID,
+    includingLocation: Bool = false
+  ) -> String {
     // Prefer physical serial when available, fall back to locationID. A serial identifies the
     // controller across reconnects on another port, so the port must not change the virtual
     // identity. The interface keeps each logical controller of one physical device distinct.
     // IMPORTANT: this key is only used as hash input; it is not exposed to consumers.
     let identity = identifier.hardware
     let sn = identity.serialNumber ?? ""
-    let loc = sn.isEmpty ? ((identifier.address?.locationID).map { "\($0)" } ?? "") : ""
+    let loc = (sn.isEmpty || includingLocation) ? ((identifier.address?.locationID).map { "\($0)" } ?? "") : ""
     let interface = identifier.address?.interfaceNumber.map { "\($0)" } ?? ""
     return "\(identity.model.vendorID):\(identity.model.productID):\(sn):\(loc):\(interface)"
   }
@@ -125,6 +140,52 @@ public enum UserSpaceVirtualDeviceConstants {
 
   /// `v` as 16 lower-case hex digits.
   private static func hex64(_ v: UInt64) -> String { String(format: "%016llx", v) }
+}
+
+/// The serial number and LocationID that one virtual device publishes.
+package struct VirtualDeviceIdentity: Sendable, Equatable {
+  /// The virtual serial number.
+  package let serialNumber: String
+  /// The virtual LocationID in the OJD namespace.
+  package let locationID: UInt32
+}
+
+/// The identities of the connected virtual devices; it gives each controller a serial number and a
+/// LocationID that no other connected controller holds.
+///
+/// The first controller of a VID:PID:serial key keeps the plain key. A later controller with the
+/// same key adds its location to the key.
+package struct VirtualIdentityRegistry: Sendable {
+  private var held: [LogicalControllerID: (key: String, identity: VirtualDeviceIdentity)] = [:]
+
+  package init() {}
+
+  /// The identity of `identifier`, the one it already holds or a new one that no other controller
+  /// holds.
+  package mutating func reserve(_ identifier: LogicalControllerID) -> VirtualDeviceIdentity {
+    if let existing = held[identifier] { return existing.identity }
+    let plainKey = UserSpaceVirtualDeviceConstants.stableKey(for: identifier)
+    let keyIsHeld = held.values.contains { $0.key == plainKey }
+    let key =
+      keyIsHeld
+      ? UserSpaceVirtualDeviceConstants.stableKey(for: identifier, includingLocation: true)
+      : plainKey
+    var locationID = UserSpaceVirtualDeviceConstants.locationID(forKey: key)
+    while held.values.contains(where: { $0.identity.locationID == locationID }) {
+      locationID = UserSpaceVirtualDeviceConstants.nextLocationID(after: locationID)
+    }
+    let identity = VirtualDeviceIdentity(
+      serialNumber: UserSpaceVirtualDeviceConstants.serialNumber(forKey: key),
+      locationID: locationID
+    )
+    held[identifier] = (key, identity)
+    return identity
+  }
+
+  /// Frees the identity of `identifier`.
+  package mutating func release(_ identifier: LogicalControllerID) {
+    held.removeValue(forKey: identifier)
+  }
 }
 
 /// Minimal state machine shared by HID backend adapters for physical-device ownership.

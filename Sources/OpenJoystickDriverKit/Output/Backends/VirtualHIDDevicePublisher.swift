@@ -24,10 +24,12 @@ extension VirtualDeviceBackend {
 ///
 /// The host platform implements it.
 package protocol VirtualHIDDevicePublisher: Sendable {
-  /// Creates the unpublished device that `profile` and `format` describe for `identifier`.
+  /// Creates the unpublished device that `profile` and `format` describe for `identifier`, with
+  /// the serial number and LocationID of `identity`.
   /// Throws when the host refuses to create it.
   func createDevice(
     for identifier: LogicalControllerID,
+    identity: VirtualDeviceIdentity,
     profile: VirtualDeviceProfile,
     format: any VirtualGamepadReportFormat
   ) throws -> any VirtualDeviceBackend

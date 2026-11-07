@@ -41,6 +41,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 - The binding reasons `PacketContractMismatch`, `RequiredInitializationFailed` and `CatalogConflict`, which no code reported. A support report that names one of them fails validation against `report.schema.json`.
 
+### Fixed
+
+- Two controllers with the same VID:PID and USB serial number, such as two `057E:2009` pads, no longer share one virtual controller.
+
 ## [0.6.0-alpha.1] - 2026-10-23
 
 ### Added

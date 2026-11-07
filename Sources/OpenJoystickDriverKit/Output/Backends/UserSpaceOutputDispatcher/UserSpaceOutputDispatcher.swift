@@ -20,13 +20,15 @@ public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
   internal let lifecycle = LifecycleState()
   /// Creates the backend of one controller's device.
   internal let backendFactory:
-    @Sendable (LogicalControllerID) async throws -> any VirtualDeviceBackend
+    @Sendable (LogicalControllerID, VirtualDeviceIdentity) async throws -> any VirtualDeviceBackend
   /// Guards the registry state below.
   internal let registryLock = NSLock()
   /// The created devices by controller.
   internal var entries: [LogicalControllerID: Entry] = [:]
   /// The device creations in progress by controller.
   internal var creationTasks: [LogicalControllerID: Task<Entry, Error>] = [:]
+  /// The serial numbers and LocationIDs of the controllers that have a device or a creation.
+  internal var identityRegistry = VirtualIdentityRegistry()
   /// The pause between failed creation attempts by controller.
   internal var creationRetryPolicies: [LogicalControllerID: UserSpaceDeviceCreationRetryPolicy] =
     [:]
@@ -62,8 +64,13 @@ public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
     self.format = format
     self.onOutputCommand = onOutputCommand
     self.onControllerDidStop = onControllerDidStop
-    self.backendFactory = { identifier in
-      try publisher.createDevice(for: identifier, profile: profile, format: format)
+    self.backendFactory = { identifier, identity in
+      try publisher.createDevice(
+        for: identifier,
+        identity: identity,
+        profile: profile,
+        format: format
+      )
     }
   }
 
@@ -77,7 +84,7 @@ public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
     self.format = format
     onOutputCommand = nil
     self.onControllerDidStop = onControllerDidStop
-    self.backendFactory = testBackendFactory
+    self.backendFactory = { identifier, _ in try await testBackendFactory(identifier) }
   }
 
   deinit { beginClose() }
@@ -90,6 +97,7 @@ extension UserSpaceOutputDispatcher: ControllerLifecycleListener {
       lifecycleGenerations[identifier, default: 0] &+= 1
       let creationTask = creationTasks.removeValue(forKey: identifier)
       creationRetryPolicies.removeValue(forKey: identifier)
+      identityRegistry.release(identifier)
       let removed = entries.removeValue(forKey: identifier)
       recomputeStatusLocked()
       return (removed, creationTask)

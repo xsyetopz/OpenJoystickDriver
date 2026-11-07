@@ -23,6 +23,7 @@ The registry computes the plain key. If a different connected `LogicalController
 - While both are connected, neither identity changes. A pad is not renamed when the other leaves.
 - A pad that took the qualified key keeps it until it stops. If the first pad leaves and returns while the second stays, the returning pad finds the plain key free and takes it again.
 - If both leave and return in the opposite order, the first to return takes the plain key, so macOS may see the two virtual controllers swap serials across a full reconnect. A qualified key includes the port, so the second pad's identity follows the port. This is the least that distinguishes two pads that share a serial; a pad with a unique serial never swaps.
+- Two pads with the same serial may swap virtual identities after a replug or a restart, because the first to connect keeps the plain identity. The user doc says so.
 - Open: whether the plain key should prefer the lower location ID rather than the first to connect. First-to-connect is chosen because it needs no extra knowledge and matches the report ("the first pad keeps the plain key").
 
 ### D4: LocationID Collisions
