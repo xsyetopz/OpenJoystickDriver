@@ -47,6 +47,8 @@ One tester tested the Xbox Nano Controller on macOS 26.5.2. For the details, see
 
 The 8BitDo Ultimate 2C Wireless has a different VID:PID in each mode. The Bluetooth mode `2DC8:301B` and the HID receiver mode `2DC8:301C` have no verification. They may work.
 
+The 8BitDo bootloader identities `2DC8:3208` and `2DC8:5750` are never served. OJD sends them no data, because a write to a pad in bootloader state risks a bad firmware image. The Controllers page lists such a pad as unserved with the reason `BootloaderIdentity`. For the rule, see [the test record](../docs/testing/8bitdo-ultimate-2c.md#bootloader-identities).
+
 ### Unverified
 
 OJD includes a built-in catalog of 697 controller records. The Unverified tier is every catalog controller that this page does not list as Official or Community-verified. A record does not prove that the controller works. Nobody tested these controllers on real hardware. The catalog includes the NVIDIA SHIELD controllers of 2015 (`0955:7210`) and 2017 (`0955:7214`). On macOS the 2017 controller sends input only, with no rumble.

@@ -261,6 +261,8 @@ public enum ProtocolBindingReason: String, CaseIterable, Codable, Error, Sendabl
   /// The device's USB configuration could not be read, and nothing OJD observes clears the cause
   /// before the device reconnects.
   case configurationUnreadable = "ConfigurationUnreadable"
+  /// The device is an 8BitDo bootloader identity, which receives no traffic.
+  case bootloaderIdentity = "BootloaderIdentity"
 }
 
 extension ProtocolBindingReason {
@@ -272,6 +274,7 @@ extension ProtocolBindingReason {
     switch self {
     case .deviceInUse: return "ui.controllers.deviceInUse"
     case .configurationUnreadable: return "ui.controllers.configurationUnreadable"
+    case .bootloaderIdentity: return "ui.controllers.bootloaderIdentity"
     case .noProtocolMatch, .ambiguousProtocolMatch, .interfaceContractMismatch,
       .descriptorContractMismatch, .unsupportedProtocolVariant, .unsupportedTransportVariant,
       .virtualProfileUnavailable:
@@ -381,6 +384,7 @@ enum ProtocolClassifier {
         $1.interfaceNumber ?? .max, $1.alternateSetting ?? .max
       )
     }
+    if device.model?.isBootloaderIdentity == true { return .unsupported(.bootloaderIdentity) }
     if let vendorID = device.vendorID, let productID = device.productID,
       let record = catalog.record(
         for: ControllerModelID(vendorID: vendorID, productID: productID),

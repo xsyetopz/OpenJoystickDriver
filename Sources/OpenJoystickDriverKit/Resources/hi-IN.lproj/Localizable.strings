@@ -152,6 +152,8 @@
 "ui.controllers.deviceInUse" = "कोई अन्य प्रोग्राम इस कंट्रोलर का उपयोग कर रहा है। उसे बंद करें या कंट्रोलर को फिर से कनेक्ट करें।";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose USB configuration OJD could not read. OJD tries again only when the controller reconnects, so the text asks for that. USB stays as written. */
 "ui.controllers.configurationUnreadable" = "इस कंट्रोलर का USB कॉन्फ़िगरेशन पढ़ा नहीं जा सका। कंट्रोलर को फिर से कनेक्ट करें।";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
+"ui.controllers.bootloaderIdentity" = "यह कंट्रोलर बूटलोडर मोड में है। OJD इसे कोई डेटा नहीं भेजता।";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "बैटरी";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */

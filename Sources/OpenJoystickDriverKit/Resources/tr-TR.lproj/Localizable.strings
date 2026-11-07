@@ -152,6 +152,8 @@
 "ui.controllers.deviceInUse" = "Başka bir program bu kontrolcüyü kullanıyor. Programı kapat veya kontrolcüyü yeniden bağla.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose USB configuration OJD could not read. OJD tries again only when the controller reconnects, so the text asks for that. USB stays as written. */
 "ui.controllers.configurationUnreadable" = "Bu kontrolcünün USB yapılandırması okunamadı. Kontrolcüyü yeniden bağla.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
+"ui.controllers.bootloaderIdentity" = "Bu kontrolcü önyükleyici modunda. OJD ona veri göndermez.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "Pil";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */

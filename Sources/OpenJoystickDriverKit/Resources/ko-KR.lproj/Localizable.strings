@@ -152,6 +152,8 @@
 "ui.controllers.deviceInUse" = "다른 프로그램이 이 컨트롤러를 사용 중입니다. 해당 프로그램을 닫거나 컨트롤러를 다시 연결하세요.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose USB configuration OJD could not read. OJD tries again only when the controller reconnects, so the text asks for that. USB stays as written. */
 "ui.controllers.configurationUnreadable" = "이 컨트롤러의 USB 구성을 읽을 수 없습니다. 컨트롤러를 다시 연결하세요.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
+"ui.controllers.bootloaderIdentity" = "이 컨트롤러는 부트로더 모드입니다. OJD는 데이터를 보내지 않습니다.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "배터리";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */

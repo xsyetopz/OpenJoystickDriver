@@ -63,6 +63,9 @@ struct BootloaderGuardTests {
     #expect(await provider.openCount == 0)
     #expect(await provider.session.writes.isEmpty)
     #expect(await manager.connectedDeviceDescriptions().isEmpty)
+    let unbound = await manager.unboundDeviceDescriptions()
+    #expect(unbound.map(\.reason) == [.bootloaderIdentity])
+    #expect(unbound.map(\.productID) == [productID])
     await manager.stop()
   }
 
@@ -98,6 +101,7 @@ struct BootloaderGuardTests {
     #expect(await backend.recordedOutputReports().isEmpty)
     #expect(await backend.recordedFeatureReports().isEmpty)
     #expect(await backend.recordedFeatureReadCount() == 0)
+    #expect(await manager.unboundDeviceDescriptions().map(\.reason) == [.bootloaderIdentity])
     await manager.stop()
   }
 
@@ -110,10 +114,21 @@ struct BootloaderGuardTests {
       interfaces: [gamepadHIDInterface(host: .usb)]
     )
     for backend in [DeviceAccessBackend.hid, .rawUSB] {
-      if case .bound = registry.classify(device, backend: backend) {
-        Issue.record("\(backend) bound a protocol for 2DC8:\(String(productID, radix: 16))")
-      }
+      #expect(registry.classify(device, backend: backend) == .unsupported(.bootloaderIdentity))
     }
+  }
+
+  @Test
+  func theControllerDetailSaysTheDeviceIsABootloader() {
+    let key = ProtocolBindingReason.bootloaderIdentity.explanationKey ?? ""
+    #expect(key == "ui.controllers.bootloaderIdentity")
+    #expect(Localization().string(key) != key)
+  }
+
+  @Test
+  func onlyTheTwoBootloaderIdentitiesAreRefused() {
+    #expect(ControllerModelID(vendorID: 0x2DC8, productID: 0x310A).isBootloaderIdentity == false)
+    #expect(ControllerModelID(vendorID: 0x1234, productID: 0x3208).isBootloaderIdentity == false)
   }
 
   @Test(arguments: identities)

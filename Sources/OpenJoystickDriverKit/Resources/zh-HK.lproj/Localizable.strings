@@ -152,6 +152,8 @@
 "ui.controllers.deviceInUse" = "其他程式正在使用此控制器。請關閉該程式，或重新連接控制器。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose USB configuration OJD could not read. OJD tries again only when the controller reconnects, so the text asks for that. USB stays as written. */
 "ui.controllers.configurationUnreadable" = "無法讀取此控制器的 USB 組態。請重新連接控制器。";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
+"ui.controllers.bootloaderIdentity" = "此控制器處於開機載入程式模式。OJD 不會向其傳送任何資料。";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "電池";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */

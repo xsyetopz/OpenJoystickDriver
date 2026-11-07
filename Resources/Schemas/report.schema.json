@@ -803,7 +803,8 @@
         "UnsupportedTransportVariant",
         "VirtualProfileUnavailable",
         "DeviceInUse",
-        "ConfigurationUnreadable"
+        "ConfigurationUnreadable",
+        "BootloaderIdentity"
       ]
     },
     "hidGamepad": {

@@ -34,6 +34,10 @@ The record binds `HIDDescriptor` with the same layout as the GameSir G7 SE:
 
 Usages 3 and 6 are the rear buttons and 9 and 10 repeat the triggers as digital bits. They are not mapped.
 
+## Bootloader Identities
+
+`2DC8:3208` and `2DC8:5750` are 8BitDo bootloader identities. A write to a pad in bootloader state risks a bad firmware image, so OJD sends these identities no transfer of any kind: no descriptor read beyond what macOS publishes, no startup step, no probe, no keep-alive, no rumble or light output and no configuration packet. The refusal holds with or without a record, including when an interface signature or a gamepad descriptor would bind a protocol for any other device. The classifier returns the unbound reason `BootloaderIdentity` before it looks at a record or an interface, the log has one `left unbound` line that names the VID:PID and the reason, and the controller detail reads "This controller is in bootloader mode. OJD sends it no data." `BootloaderGuardTests` covers the raw-USB and HID paths and the mode probe.
+
 ## Procedure
 
 Connect the controller in the mode under test, then confirm the route (`ojd` is the [command-line tool](../../wiki/Command-Line.md), and `<controller>` is an ID from the list or its `VVVV:PPPP`):
