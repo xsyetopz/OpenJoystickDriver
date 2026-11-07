@@ -47,6 +47,8 @@ actor RemappingRoutingCore {
   }
   /// Controllers a remapping route or Joy-Con pair consumes, for observe-only pipelines.
   let observedInputDemand = RemappingObservedInputDemand()
+  /// Controllers whose active profile binds a pointer axis.
+  let pointerInputDemand = RemappingObservedInputDemand()
   /// The state of the profile transaction.
   var profileTransactionState = RemappingProfileTransactionState.inactive
   /// Whether shutdown was requested.
@@ -75,10 +77,14 @@ actor RemappingRoutingCore {
     self.operationCheckpoint = operationCheckpoint
   }
 
-  /// Publishes the controllers that a remapping route or a Joy-Con pair consumes.
+  /// Publishes the controllers that a remapping route or a Joy-Con pair consumes, and the ones
+  /// whose profile binds a pointer axis.
   private func publishObservedInputDemand() {
     let remapped = routes.compactMap { $0.value.selection.profile == nil ? nil : $0.key }
     observedInputDemand.replace(with: Set(remapped).union(joyConPairByMember.keys))
+    pointerInputDemand.replace(
+      with: Set(routes.compactMap { $0.value.selection.profile?.bindsPointer == true ? $0.key : nil })
+    )
   }
 
   /// Applies `proposed` when it is no older than the current controls, and reconciles the routes.

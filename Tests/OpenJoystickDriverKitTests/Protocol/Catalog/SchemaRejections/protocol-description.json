@@ -24448,6 +24448,18 @@
                     "data": "00"
                   }
                 ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
+                    "data": "00"
+                  }
+                ],
                 "speakerStop": [
                   {
                     "kind": "Report",
@@ -25378,6 +25390,18 @@
                   {
                     "kind": "Report",
                     "report": 25,
+                    "data": "00"
+                  }
+                ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
                     "data": "00"
                   }
                 ],
@@ -26315,6 +26339,18 @@
                     "data": "00"
                   }
                 ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
+                    "data": "00"
+                  }
+                ],
                 "speakerStop": [
                   {
                     "kind": "Report",
@@ -27245,6 +27281,18 @@
                   {
                     "kind": "Report",
                     "report": 25,
+                    "data": "00"
+                  }
+                ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
                     "data": "00"
                   }
                 ],
@@ -28180,6 +28228,18 @@
                     "data": "00"
                   }
                 ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
+                    "data": "00"
+                  }
+                ],
                 "speakerStop": [
                   {
                     "kind": "Report",
@@ -29112,6 +29172,18 @@
                     "data": "00"
                   }
                 ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
+                    "data": "00"
+                  }
+                ],
                 "speakerStop": [
                   {
                     "kind": "Report",
@@ -30041,6 +30113,18 @@
                   {
                     "kind": "Report",
                     "report": 25,
+                    "data": "00"
+                  }
+                ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
                     "data": "00"
                   }
                 ],
@@ -30977,6 +31061,18 @@
                     "data": "00"
                   }
                 ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
+                    "data": "00"
+                  }
+                ],
                 "speakerStop": [
                   {
                     "kind": "Report",
@@ -31909,6 +32005,18 @@
                     "data": "00"
                   }
                 ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
+                    "data": "00"
+                  }
+                ],
                 "speakerStop": [
                   {
                     "kind": "Report",
@@ -32838,6 +32946,18 @@
                   {
                     "kind": "Report",
                     "report": 25,
+                    "data": "00"
+                  }
+                ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
                     "data": "00"
                   }
                 ],
@@ -33774,6 +33894,18 @@
                     "data": "00"
                   }
                 ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
+                    "data": "00"
+                  }
+                ],
                 "speakerStop": [
                   {
                     "kind": "Report",
@@ -34704,6 +34836,18 @@
                   {
                     "kind": "Report",
                     "report": 25,
+                    "data": "00"
+                  }
+                ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
                     "data": "00"
                   }
                 ],
@@ -35639,6 +35783,18 @@
                     "data": "00"
                   }
                 ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
+                    "data": "00"
+                  }
+                ],
                 "speakerStop": [
                   {
                     "kind": "Report",
@@ -36499,6 +36655,18 @@
                   {
                     "kind": "Report",
                     "report": 25,
+                    "data": "00"
+                  }
+                ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
                     "data": "00"
                   }
                 ],
@@ -37439,6 +37607,18 @@
                     "data": "00"
                   }
                 ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
+                    "data": "00"
+                  }
+                ],
                 "speakerStop": [
                   {
                     "kind": "Report",
@@ -38358,6 +38538,18 @@
                   {
                     "kind": "Report",
                     "report": 25,
+                    "data": "00"
+                  }
+                ],
+                "irStop": [
+                  {
+                    "kind": "Report",
+                    "report": 19,
+                    "data": "00"
+                  },
+                  {
+                    "kind": "Report",
+                    "report": 26,
                     "data": "00"
                   }
                 ],

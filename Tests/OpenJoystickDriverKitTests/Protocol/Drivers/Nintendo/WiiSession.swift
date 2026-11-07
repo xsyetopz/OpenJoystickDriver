@@ -17,6 +17,7 @@ final class WiiSession {
 
   init(irFormat: ProtocolDescription.WiiRemote.BlockKind? = .irBasic) {
     driver = WiiDriver(tuning: nil, irFormat: irFormat)
+    driver.setPointerInputWanted(irFormat != nil)
   }
 
   /// Parses `report` at the clock and logs the writes it queued.

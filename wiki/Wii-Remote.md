@@ -38,7 +38,7 @@ Which of the two ways works on which macOS version, and whether macOS asks for a
 
 OJD never reconnects a Bluetooth controller by itself. Press a button on a paired remote to connect it again. Whether a button press reconnects the remote after the Mac sleeps is not verified.
 
-OJD starts a new session each time the remote connects. It asks the remote for its status, sets the report mode, and reads the accelerometer calibration again.
+OJD starts a new session each time the remote connects. It asks the remote for its status, sets the report mode, and reads the accelerometer calibration again. It turns the IR camera on again when the active profile binds the pointer.
 
 ## Buttons, motion, and battery
 
@@ -86,7 +86,7 @@ The rumble motor has two states. Any intensity above 0 turns it on. `ojd control
 
 ## IR pointer
 
-The remote has an IR camera that sees the two points of a sensor bar. At the start of every session, after the first status report and the calibration read, the driver runs the IR camera setup in the basic format: seven register writes with at least 50 ms between them, set by the tuning key `irWriteIntervalMs`. The report mode that goes with the basic format is `0x37` (button, accelerometer and IR data, with room for an extension). A reconnect runs the setup again, and no IR point appears before the seventh step is acknowledged. The extended and full formats are decoded, but nothing selects them.
+The remote has an IR camera that sees the two points of a sensor bar. The driver runs the camera only while the active profile of the remote binds `PointerX` or `PointerY` as a source: in a binding, a combo, a sequence, a layer, or as the activation or trackball source of the gyro. Without such a binding the remote reports buttons and the accelerometer only (report mode `0x31`) and the camera stays off. When a profile that binds the pointer becomes active, the driver runs the IR camera setup in the basic format, seven register writes with at least 50 ms between them, set by the tuning key `irWriteIntervalMs`, and switches to the report mode `0x37` (button, accelerometer and IR data, with room for an extension). No IR point appears before the seventh step is acknowledged. When no active profile binds the pointer any more, the driver turns the camera off, goes back to `0x31`, and the pointer returns to neutral. A reconnect starts without the camera, and the first status report turns it on again while the profile still binds the pointer. The extended and full formats are decoded, but nothing selects them.
 
 The IR points are touch contacts on the camera's 1024 by 768 grid, up to four. The driver also computes a pointer: the midpoint of the two largest points, turned by the roll of the remote and mirrored. The pointer is two axes, `PointerX` and `PointerY`, from -1 to 1 with Y positive down, plus the control `PointerTracking`, which is on while two points are visible. With fewer than two points, `PointerTracking` is off and `PointerX` and `PointerY` keep their last values.
 

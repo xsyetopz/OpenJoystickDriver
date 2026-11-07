@@ -220,6 +220,8 @@ extension ProtocolDescription {
       let motionPlus: [Step]
       /// The IR camera setup.
       let ir: [Step]
+      /// The IR camera disable.
+      let irStop: [Step]
       /// The speaker setup.
       let speaker: [Step]
       /// The speaker stop.
@@ -362,7 +364,8 @@ extension ProtocolDescription {
       let scriptObject = try root.object(
         "scripts",
         allowed: [
-          "handshake", "accelerometerCalibration", "motionPlus", "ir", "speaker", "speakerStop",
+          "handshake", "accelerometerCalibration", "motionPlus", "ir", "irStop", "speaker",
+          "speakerStop",
         ]
       )
       scripts = Scripts(
@@ -370,6 +373,7 @@ extension ProtocolDescription {
         accelerometerCalibration: try Step.list(scriptObject, "accelerometerCalibration"),
         motionPlus: try Step.list(scriptObject, "motionPlus"),
         ir: try Step.list(scriptObject, "ir"),
+        irStop: try Step.list(scriptObject, "irStop"),
         speaker: try Step.list(scriptObject, "speaker"),
         speakerStop: try Step.list(scriptObject, "speakerStop")
       )

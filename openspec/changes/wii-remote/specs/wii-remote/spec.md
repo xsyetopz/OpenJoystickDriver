@@ -136,7 +136,27 @@ The driver SHALL activate Motion Plus (write `0x55` to `0xA600F0`, then the mode
 
 ### Requirement: IR camera setup
 
-The driver SHALL enable the IR camera with the seven-step register sequence, with at least 50 ms between consecutive writes, and SHALL reject a configured interval below 50 ms.
+The driver SHALL enable the IR camera, with the seven-step register sequence and at least 50 ms between consecutive writes, only while the active profile of the controller binds `PointerX` or `PointerY` as a source, and SHALL reject a configured interval below 50 ms. A source counts in a binding, a chord, a sequence, a layer activator or layer mapping, and the gyro activation or trackball source. While no profile binds the pointer, the driver SHALL use the report mode without IR and SHALL write no IR step. When the binding goes away, the driver SHALL disable the camera (reports `0x13` and `0x1A` with bit 2 cleared), return to the report mode without IR and return the pointer to neutral. After a reconnect, and when a profile that binds the pointer becomes active, the driver SHALL run the setup again.
+
+#### Scenario: No pointer binding
+
+- **WHEN** the active profile binds no pointer axis
+- **THEN** the report mode is `0x31` and the driver writes no IR step
+
+#### Scenario: Profile binds the pointer
+
+- **WHEN** a profile that binds `PointerX` becomes active on a connected remote
+- **THEN** the driver runs the IR setup and sets the IR report mode
+
+#### Scenario: Binding removed
+
+- **WHEN** the active profile stops binding the pointer
+- **THEN** the driver writes `0x13` and `0x1A` with bit 2 cleared, sets the report mode without IR, and `PointerX`, `PointerY` and `PointerTracking` return to neutral
+
+#### Scenario: Reconnect
+
+- **WHEN** the remote reconnects while the active profile binds the pointer
+- **THEN** the driver runs the IR setup again after the first status report
 
 #### Scenario: Spacing
 

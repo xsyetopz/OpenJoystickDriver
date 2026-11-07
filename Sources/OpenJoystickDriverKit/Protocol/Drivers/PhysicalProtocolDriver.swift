@@ -370,6 +370,10 @@ public protocol PhysicalProtocolDriver: AnyObject {
   /// after an I/O error or an unplug.
   func powerOffWrites() -> [PhysicalOutputWrite]
 
+  /// Tells the driver whether the active profile binds a pointer axis; the pipeline calls it
+  /// before each report is parsed.
+  func setPointerInputWanted(_ wanted: Bool)
+
   /// Returns and clears the writes produced while parsing input, such as acknowledgements.
   ///
   /// Parsing stays synchronous and deterministic; the pipeline performs these writes in order.
@@ -431,6 +435,8 @@ extension PhysicalProtocolDriver {
   public func keepAliveWrites() -> [PhysicalOutputWrite] { [] }
   /// Default: the controller is left on.
   public func powerOffWrites() -> [PhysicalOutputWrite] { [] }
+  /// Default: the driver has no pointer hardware to turn on.
+  public func setPointerInputWanted(_: Bool) {}
   /// Default: no pending writes.
   public func drainPendingWrites() -> [PhysicalOutputWrite] { [] }
 

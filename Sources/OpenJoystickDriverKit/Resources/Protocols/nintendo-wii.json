@@ -881,6 +881,18 @@
               "data": "00"
             }
           ],
+          "irStop": [
+            {
+              "kind": "Report",
+              "report": 19,
+              "data": "00"
+            },
+            {
+              "kind": "Report",
+              "report": 26,
+              "data": "00"
+            }
+          ],
           "speakerStop": [
             {
               "kind": "Report",

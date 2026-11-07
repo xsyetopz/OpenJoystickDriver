@@ -3,6 +3,15 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
+private final class PointerDemandingDispatcher: OutputDispatcher, PointerInputDemand,
+  @unchecked Sendable
+{
+  var suppressOutput = false
+  func dispatch(_: ControllerEvent, from _: LogicalControllerID) {}
+  func activateOutput(for _: LogicalControllerID) {}
+  func wantsPointerInput(from _: LogicalControllerID) -> Bool { true }
+}
+
 struct WiiDriverIRTests {
   private static let spacing: UInt64 = 50_000_000
 
@@ -224,5 +233,84 @@ struct WiiDriverIRTests {
     try session.answer(from: before + 2, count: 7)
     let event = try session.feed(ir)
     #expect(event?.touchFrames.first?.contacts.filter(\.isActive).count == 2)
+  }
+
+  /// The first session writes of a session with IR available but no profile that binds the pointer.
+  private func unboundSession() throws -> WiiSession {
+    let session = WiiSession(irFormat: .irBasic)
+    session.driver.setPointerInputWanted(false)
+    try session.startUp()
+    return session
+  }
+
+  @Test
+  func withNoPointerBindingTheSessionUsesTheNonIRModeAndWritesNoIRStep() throws {
+    let session = try unboundSession()
+    let reports = session.log.map(\.report)
+    #expect(reports.contains([0x12, 0x04, 0x31]))
+    #expect(!reports.contains { $0.first == 0x13 || $0.first == 0x1A })
+    #expect(!session.driver.isIRReady)
+  }
+
+  @Test
+  func bindingThePointerLaterRunsTheSetupAndSwitchesTheReportMode() throws {
+    let session = try unboundSession()
+    session.driver.setPointerInputWanted(true)
+    let before = session.log.count
+    session.advance()
+    try session.feed([0x30, 0, 0])
+    let written = session.log.dropFirst(before).map(\.report)
+    #expect(written.first == [0x13, 0x04])
+    #expect(written.contains([0x12, 0x04, 0x37]))
+    try session.answer(from: before, count: 8)
+    #expect(session.driver.isIRReady)
+  }
+
+  @Test
+  func unbindingThePointerDisablesTheCameraClearsThePointerAndRestoresTheNonIRMode() throws {
+    let session = try readySession(.irBasic)
+    let before = session.log.count
+    session.driver.setPointerInputWanted(false)
+    session.advance()
+    let event = try session.feed([0x30, 0, 0])
+    #expect(event?.state.pointer == StickPosition(x: 0, y: 0))
+    let written = session.log.dropFirst(before).map(\.report)
+    #expect(written.first == [0x13, 0x00])
+    #expect(written.contains([0x12, 0x04, 0x31]))
+    try session.answer(from: before, count: 3)
+    #expect(session.log.dropFirst(before).map(\.report).contains([0x1A, 0x00]))
+    #expect(!session.driver.isIRReady)
+    #expect(!session.driver.pointer.isTracking)
+  }
+
+  @Test
+  func theCameraTurnsOnAgainAfterAReconnectWhileTheProfileStillBindsThePointer() throws {
+    let session = try readySession(.irBasic)
+    session.driver.resetProtocolState()
+    let before = session.log.count
+    try session.startUp()
+    #expect(session.log.dropFirst(before).map(\.report).contains([0x13, 0x04]))
+  }
+
+  /// The report mode the pipeline hands to the transport for the first status report.
+  private func firstReportMode(dispatcher: any OutputDispatcher) async throws -> UInt8? {
+    let pipeline = DevicePipeline(
+      identifier: LogicalControllerID(vendorID: 0x057E, productID: 0x0306),
+      transport: .hid(address: .ioKit(locationID: 1, interfaceNumber: nil)),
+      driver: WiiDriver(),
+      dispatcher: dispatcher
+    )
+    await pipeline.start()
+    let writes = await pipeline.feedHIDData(Data(try WiiFixtures.report("20-status-no-extension")))
+    await pipeline.stop()
+    return writes.compactMap { write -> UInt8? in
+      if case .hidOutput(let report) = write, report.bytes[0] == 0x12 { report.bytes[2] } else { nil }
+    }.first
+  }
+
+  @Test
+  func thePipelineAsksForIROnlyThroughADispatcherThatWantsThePointer() async throws {
+    #expect(try await firstReportMode(dispatcher: PointerDemandingDispatcher()) == 0x37)
+    #expect(try await firstReportMode(dispatcher: CapturingOutputDispatcher()) == 0x31)
   }
 }

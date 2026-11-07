@@ -21,6 +21,8 @@ extension WiiDriver {
     case motionPlusIdentify
     /// The IR camera setup (`IRSetupSpacing`).
     case irSetup
+    /// The IR camera disable, when no profile binds the pointer any more.
+    case irStop
   }
 
   /// An exchange that ended without its data (`ExtensionHandshakeFailed` for the handshake).
@@ -110,6 +112,7 @@ extension WiiDriver {
     // The handshake's last step reads the six ID bytes; its writes would switch Motion Plus off.
     case .motionPlusIdentify: steps = Array(scripts.handshake.suffix(1))
     case .irSetup: steps = scripts.ir
+    case .irStop: steps = scripts.irStop
     }
     exchanges.append(Exchange(purpose: purpose, steps: steps, deadline: now))
   }
@@ -251,6 +254,8 @@ extension WiiDriver {
       queue(.motionPlusIdentify, at: now)
     case .irSetup:
       isIRReady = true
+    case .irStop:
+      isIRReady = false
     }
     if chosenFeatures != mode { pendingWrites.append(reportModeWrite()) }
     if !exchanges.isEmpty { sendStep(at: now) }

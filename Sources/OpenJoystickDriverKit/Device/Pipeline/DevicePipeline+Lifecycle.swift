@@ -97,6 +97,9 @@ extension DevicePipeline {
     guard isActive else { return [] }
     appendToPacketLog(bytes: Array(data), direction: .received)
     var connectionWrites: [PhysicalOutputWrite] = []
+    driver.setPointerInputWanted(
+      (dispatcher as? any PointerInputDemand)?.wantsPointerInput(from: identifier) == true
+    )
     do {
       let receivedAt = uptimeNanoseconds()
       let event = try parseReport(data, receivedAt: receivedAt)

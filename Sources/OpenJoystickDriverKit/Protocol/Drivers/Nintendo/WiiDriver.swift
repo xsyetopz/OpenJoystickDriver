@@ -59,8 +59,9 @@ public final class WiiDriver: PhysicalProtocolDriver {
   let irWriteIntervalNanoseconds: UInt64
   /// The state after the latest report.
   var state = ControllerState.neutral
-  /// The features the driver asks the report mode to carry; a decoded extension adds its own.
-  var requestedFeatures: Set<ProtocolDescription.WiiRemote.BlockKind>
+  /// The features the driver always asks the report mode to carry; the IR format and a decoded
+  /// extension add their own.
+  var requestedFeatures: Set<ProtocolDescription.WiiRemote.BlockKind> = [.accelerometer]
   /// The writes that parsing queued, until the pipeline drains them.
   var pendingWrites: [PhysicalOutputWrite] = []
   /// The memory exchanges of the session; the first one is on the wire.
@@ -92,7 +93,10 @@ public final class WiiDriver: PhysicalProtocolDriver {
   /// The IR format the driver asks for, nil for none; it outlives the session, whose setup runs
   /// it again.
   var irFormat: ProtocolDescription.WiiRemote.BlockKind?
-  /// Whether the session has queued the IR setup.
+  /// Whether the active profile binds a pointer axis, as the pipeline last reported; it outlives
+  /// the session, so a reconnect turns the camera on again.
+  var wantsPointer = false
+  /// Whether the session has queued the IR setup and not the IR disable after it.
   var hasRequestedIR = false
   /// Whether the session finished the IR setup; IR bytes are decoded only then.
   var isIRReady = false
@@ -115,20 +119,19 @@ public final class WiiDriver: PhysicalProtocolDriver {
 
   /// Creates the driver for the family's description.
   ///
-  /// Every session turns on the IR camera in the basic format, which the `0x37` row of the mode
-  /// table carries without an extension.
+  /// The IR camera runs in the basic format, which the `0x37` row of the mode table carries
+  /// without an extension, only while the active profile binds a pointer axis.
   public convenience init(tuning: ControllerTuning? = nil) {
     self.init(tuning: tuning, irFormat: .irBasic)
   }
 
-  /// `irFormat` is the IR format the session turns on; nil leaves IR off.
+  /// `irFormat` is the IR format the camera runs in; nil leaves IR off.
   init(tuning: ControllerTuning?, irFormat: ProtocolDescription.WiiRemote.BlockKind?) {
     guard let wii = PhysicalProtocolID.nintendoWii.protocolDescription.wiiRemote else {
       preconditionFailure("nintendo-wii.json describes no wiiRemote field")
     }
     self.wii = wii
     self.irFormat = irFormat
-    requestedFeatures = Set([.accelerometer] + (irFormat.map { [$0] } ?? []))
     replyTimeoutNanoseconds =
       UInt64(PhysicalProtocolID.nintendoWii.described(\.replyTimeoutMilliseconds, in: tuning))
       * 1_000_000
@@ -156,6 +159,9 @@ public final class WiiDriver: PhysicalProtocolDriver {
     )
   }
 
+  /// Whether the camera should run: a profile binds the pointer and the driver has an IR format.
+  var isIRWanted: Bool { wantsPointer && irFormat != nil }
+
   /// The session of the description's Bluetooth variant.
   public var sessionPlan: DriverSessionPlan {
     DriverSessionPlan().withDefaults(of: .nintendoWii, variant: .bluetoothClassic)
@@ -180,7 +186,7 @@ public final class WiiDriver: PhysicalProtocolDriver {
   /// Ends the session (`SessionEndOnDisconnect`).
   ///
   /// Input is neutral, and the reading, extension, calibration, exchanges, IR setup, rumble and
-  /// pointer are dropped. The requested features and the IR format are settings and stay.
+  /// pointer are dropped. The IR format and the pointer demand are settings and stay.
   public func resetProtocolState() {
     state = .neutral
     acceleration = nil
@@ -213,17 +219,22 @@ public final class WiiDriver: PhysicalProtocolDriver {
     ]
   }
 
+  /// Records whether the active profile binds a pointer axis; the next report acts on it.
+  public func setPointerInputWanted(_ wanted: Bool) { wantsPointer = wanted }
+
   /// Returns and clears the writes that parsing queued.
   public func drainPendingWrites() -> [PhysicalOutputWrite] {
     defer { pendingWrites = [] }
     return pendingWrites
   }
 
-  /// The features the report mode carries: the requested ones and, once an extension is read and
-  /// known, the extension bytes.
+  /// The features the report mode carries: the requested ones, the IR format while a profile binds
+  /// the pointer and, once an extension is read and known, the extension bytes.
   var chosenFeatures: Set<ProtocolDescription.WiiRemote.BlockKind> {
-    guard case .known = extensionKind else { return requestedFeatures }
-    return requestedFeatures.union([.extensionData])
+    var features = requestedFeatures
+    if isIRWanted, let irFormat { features.insert(irFormat) }
+    if case .known = extensionKind { features.insert(.extensionData) }
+    return features
   }
 
   /// The `0x12` write for the smallest mode that carries `chosenFeatures`
@@ -272,13 +283,15 @@ public final class WiiDriver: PhysicalProtocolDriver {
     guard let id = bytes.first else { return nil }
     expireExchange(at: receivedAt)
     sendDueStep(at: receivedAt)
+    var modeChanged = false
     switch id {
     case Self.statusReportID: return parseStatus(bytes, at: receivedAt)
     case Self.memoryReplyReportID, Self.acknowledgementReportID:
       handleReply(bytes, at: receivedAt)
       return nil
-    default: break
+    default: modeChanged = reconcileIR(at: receivedAt)
     }
+    if modeChanged { pendingWrites.append(reportModeWrite()) }
     guard let mode = wii.reportModes.first(where: { $0.id == id }),
       let buttons = mode.blocks.first(where: { $0.kind == .buttons }),
       bytes.count >= 1 + (mode.blocks.last.map { $0.offset + $0.length } ?? 0)
@@ -339,12 +352,29 @@ public final class WiiDriver: PhysicalProtocolDriver {
       hasRequestedCalibration = true
       begin(.accelerometerCalibration, at: now)
     }
-    if irFormat != nil, !hasRequestedIR {
-      hasRequestedIR = true
-      begin(.irSetup, at: now)
-    }
+    reconcileIR(at: now)
     if added { begin(motionPlusActive ? .motionPlusIdentify : .extensionHandshake, at: now) }
     return removed ? ControllerEvent(timestamp: now, state: state) : nil
+  }
+
+  /// Starts the IR setup or the IR disable when `isIRWanted` differs from the session's state, once
+  /// the first status report has begun the session. The caller sends the report mode when the
+  /// result is true.
+  @discardableResult
+  func reconcileIR(at now: MonotonicTimestamp) -> Bool {
+    guard hasRequestedCalibration, isIRWanted != hasRequestedIR else { return false }
+    hasRequestedIR = isIRWanted
+    if isIRWanted {
+      begin(.irSetup, at: now)
+    } else {
+      isIRReady = false
+      pointer = Pointer()
+      irPoints = [IRPoint?](repeating: nil, count: 4)
+      state.set(.pointerTracking, pressed: false)
+      state.pointer = StickPosition(x: 0, y: 0)
+      begin(.irStop, at: now)
+    }
+    return true
   }
 
   /// The 10-bit reading of each axis: the high byte, then the low bits from the button bytes.

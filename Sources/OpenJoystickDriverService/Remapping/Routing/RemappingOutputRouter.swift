@@ -5,7 +5,7 @@ import OpenJoystickDriverKit
 
 /// Exclusively selects virtual gamepad output or system-input remapping per exact controller.
 final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener,
-  ControllerInputOwnershipListener, ObservedInputDemand, @unchecked Sendable
+  ControllerInputOwnershipListener, ObservedInputDemand, PointerInputDemand, @unchecked Sendable
 {
   /// Reads the uptime in nanoseconds.
   typealias UptimeReader = @Sendable () -> UInt64
@@ -92,6 +92,11 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
   /// publishes for it.
   func wantsObservedInput(from identifier: LogicalControllerID) -> Bool {
     core.observedInputDemand.contains(identifier)
+  }
+
+  /// Whether the profile that routes `identifier` binds `PointerX` or `PointerY`.
+  func wantsPointerInput(from identifier: LogicalControllerID) -> Bool {
+    core.pointerInputDemand.contains(identifier)
   }
 
   /// Passes the input ownership of `identifier` to the core and reschedules the ticker.

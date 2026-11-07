@@ -61,6 +61,16 @@ public protocol ObservedInputDemand: AnyObject, Sendable {
   func wantsObservedInput(from identifier: LogicalControllerID) -> Bool
 }
 
+/// Tells a pipeline whether the active profile of a controller binds a pointer axis, so the
+/// driver turns on the pointer hardware only while a consumer reads it.
+///
+/// The answer follows route changes, so a profile activated later takes effect without
+/// reconnecting.
+public protocol PointerInputDemand: AnyObject, Sendable {
+  /// Whether the active profile of the controller `identifier` binds `PointerX` or `PointerY`.
+  func wantsPointerInput(from identifier: LogicalControllerID) -> Bool
+}
+
 /// Takes controller state snapshots and sends them to an output target.
 ///
 /// Implement this inward-owned port to decide what happens when controller state changes.

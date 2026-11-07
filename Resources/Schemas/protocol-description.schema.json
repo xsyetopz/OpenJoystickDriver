@@ -1246,6 +1246,7 @@
             "accelerometerCalibration",
             "motionPlus",
             "ir",
+            "irStop",
             "speaker",
             "speakerStop"
           ],
@@ -1254,6 +1255,7 @@
             "accelerometerCalibration": { "$ref": "#/$defs/wiiScript" },
             "motionPlus": { "$ref": "#/$defs/wiiScript" },
             "ir": { "$ref": "#/$defs/wiiScript" },
+            "irStop": { "$ref": "#/$defs/wiiScript" },
             "speaker": { "$ref": "#/$defs/wiiScript" },
             "speakerStop": { "$ref": "#/$defs/wiiScript" }
           }

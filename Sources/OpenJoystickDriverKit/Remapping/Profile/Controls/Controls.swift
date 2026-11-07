@@ -87,6 +87,14 @@ public enum RemappingSource: Codable, Equatable, Hashable, Sendable {
   /// A rectangle of a touch surface.
   case touchArea(RemappingTouchAreaSource)
 
+  /// Whether this source reads a pointer axis.
+  public var isPointer: Bool {
+    switch self {
+    case .axis(let axis), .axisDirection(let axis, _): axis.isPointer
+    default: false
+    }
+  }
+
   /// Value of the `type` field that selects the case in a profile document.
   private enum Kind: String, Codable {
     /// The `Button` case.

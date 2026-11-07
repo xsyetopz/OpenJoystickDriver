@@ -464,6 +464,22 @@ public struct RemappingProfile: Codable, Equatable, Identifiable, Sendable {
   /// Macros that `Macro` destinations run.
   public let macros: [RemappingMacro]
 
+  /// Whether any binding, chord, sequence, layer or gyro source reads `PointerX` or `PointerY`.
+  ///
+  /// Macro steps are destinations, so a macro adds no source.
+  public var bindsPointer: Bool {
+    let layered = layers.contains {
+      $0.activator.isPointer || $0.bindings.contains { $0.source.isPointer }
+        || $0.chords.contains { $0.sources.contains(where: \.isPointer) }
+        || $0.sequences.contains { $0.sources.contains(where: \.isPointer) }
+    }
+    return layered || bindings.contains { $0.source.isPointer }
+      || chords.contains { $0.sources.contains(where: \.isPointer) }
+      || sequences.contains { $0.sources.contains(where: \.isPointer) }
+      || gyroOutput.activationSource?.isPointer == true
+      || gyroOutput.trackball?.source.isPointer == true
+  }
+
   /// Creates a profile.
   ///
   /// The initializer does not validate; call ``validate()``.
