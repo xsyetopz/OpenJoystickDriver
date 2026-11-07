@@ -75,7 +75,8 @@ enum LocalizationCatalogAudit {
       "ui.mapping.start", "ui.profiles.physical.motor", "ui.profiles.sectionSticks",
       "ui.profiles.stick.horizontal", "ui.profiles.stick.source", "ui.profiles.trackball.enabled",
       "ui.profiles.trigger.source", "ui.profiles.turbo", "ui.settings.general.updates",
-      "ui.settings.general.version",
+      "ui.settings.general.version", "ui.profiles.pointerSpeed.driverTrigger",
+      "ui.profiles.speak.text",
       "ui.shortcuts.controller.name", "ui.shortcuts.controller.type",
       "ui.shortcuts.parameter.controller",
       "ui.shortcuts.profile.name",
@@ -161,6 +162,7 @@ enum LocalizationCatalogAudit {
       "ui.profiles.turbo", "ui.settings.general.controllers", "ui.settings.general.updates",
       "ui.shortcuts.controller.model",
       "ui.shortcuts.controller.type", "ui.shortcuts.parameter.controller",
+      "ui.profiles.pointerSpeed.driverTrigger",
     ],
     "pt-BR": [
       "term.macro", "ui.profiles.macros",

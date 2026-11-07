@@ -753,7 +753,7 @@
 /* Label of the switch in the pointer speed sheet that turns on scaling of the pointer movement. */
 "ui.profiles.pointerSpeed.enabled" = "Escalar a velocidade do ponteiro";
 /* Label of the popup in the pointer speed sheet that picks the control whose value sets the scale. */
-"ui.profiles.pointerSpeed.driver" = "Controle";
+"ui.profiles.pointerSpeed.driver" = "Entrada de escala";
 /* Option of the driver popup in the pointer speed sheet: the value of a trigger sets the scale. Also the summary of the pointer speed row when a trigger drives it. */
 "ui.profiles.pointerSpeed.driverTrigger" = "Gatilho";
 /* Option of the driver popup in the pointer speed sheet: how far a stick is pushed from the center sets the scale. Also the summary of the pointer speed row when a stick drives it. */
