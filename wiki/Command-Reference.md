@@ -166,7 +166,7 @@ Every part that names a control, direction, key or modifier is lowercase kebab-c
 `TARGET` is one of these forms:
 
 - `key:KEY`, with modifiers as `key:KEY:mods=alt,control,meta,shift`
-- `mouse:BUTTON`, `move:x`, `move:y`, `scroll:x`, or `scroll:y`
+- `mouse:BUTTON`, `move:x`, `move:y`, `position:x`, `position:y`, `scroll:x`, or `scroll:y`
 - `gamepad:button:NAME`, `gamepad:dpad:DIRECTION`, or `gamepad:axis:NAME`
 - `physical:...` for rumble, lights, and adaptive triggers
 - `midi-note:CHANNEL:NOTE[:VELOCITY]` (velocity 127 when omitted) or `midi-cc:CHANNEL:CONTROLLER`, with a channel from 1 to 16 and numbers from 0 to 127; see [MIDI output](Bindings-and-Actions.md#midi-output)

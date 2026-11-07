@@ -191,6 +191,16 @@ The vocabulary SHALL include `PointerX` and `PointerY` (axes from -1 to 1, Y pos
 - **WHEN** a profile maps `PointerX` and `PointerY` to `MouseMovement`
 - **THEN** the profile loads, and moving the remote moves the cursor
 
+#### Scenario: Pointer to position
+
+- **WHEN** a profile maps `PointerX` to `PointerPosition` on axis X
+- **THEN** the cursor's X coordinate follows the pointer from the left edge (-1) to the right edge (1) of the main display and the Y coordinate keeps its value
+
+#### Scenario: Position needs an axis
+
+- **WHEN** a profile maps a button, chord, sequence or macro step to `PointerPosition`
+- **THEN** the profile is rejected
+
 #### Scenario: Persona
 
 - **WHEN** a remote with the IR camera on is served through `SDLCompatible`

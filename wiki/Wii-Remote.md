@@ -99,6 +99,13 @@ ojd binding set PROFILE axis:pointer-x move:x
 ojd binding set PROFILE axis:pointer-y move:y
 ```
 
+To place the cursor where the remote points, bind the pointer to the absolute destination instead. `position:x` and `position:y` map the pointer from -1 to 1 across the main display, and the other coordinate keeps its value. The destination has no smoothing and no dead zone, and when the camera loses the sensor bar the pointer keeps its last value, so the cursor stays where it was. These commands are verified by tests only, not on hardware:
+
+```shell
+ojd binding set PROFILE axis:pointer-x position:x
+ojd binding set PROFILE axis:pointer-y position:y
+```
+
 Any other axis can drive the mouse the same way. For example, these commands move the mouse with the stick of a Nunchuk:
 
 ```shell

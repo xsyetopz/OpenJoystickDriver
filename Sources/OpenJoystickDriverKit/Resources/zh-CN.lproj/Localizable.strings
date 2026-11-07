@@ -618,6 +618,8 @@
 "ui.mapping.midiControlChange" = "MIDI 控制器 %1$@，通道 %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "指针 %@ 移动";
+/* Name of a pointer position destination. %@ is the axis whose value places the pointer across the main display. */
+"ui.mapping.pointerPosition" = "指针 %@ 位置";
 /* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
 "ui.mapping.profileNext" = "下一个配置文件";
 /* Name of the destination that activates the previous profile of the controller's model and scope in name order, wrapping at the start. */
@@ -3006,7 +3008,7 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "请给出一个或多个来源，或使用 --all。";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "映射会在使用控制器的 SOURCE 时发送 TARGET。\n\nSOURCE：button:NAME、dpad:DIRECTION、axis:NAME[:negative|positive]、trigger:NAME:STAGE、motion:lean:DIRECTION、touch:SURFACE:contact、touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW，或 touch:SURFACE:swipe:DIRECTION:DISTANCE。\n\nTARGET：key:KEY[:mods=meta,control,alt,shift]、mouse:BUTTON、move:x|y、scroll:x|y、gamepad:button:NAME、gamepad:dpad:DIRECTION、gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER，或用于震动、灯光和自适应扳机的 physical:...。\n\n“ojd profile show”会以这些形式输出映射。请用“ojd profile edit”编辑组合键、序列和层。";
+"cli.binding.group.discussion" = "映射会在使用控制器的 SOURCE 时发送 TARGET。\n\nSOURCE：button:NAME、dpad:DIRECTION、axis:NAME[:negative|positive]、trigger:NAME:STAGE、motion:lean:DIRECTION、touch:SURFACE:contact、touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW，或 touch:SURFACE:swipe:DIRECTION:DISTANCE。\n\nTARGET：key:KEY[:mods=meta,control,alt,shift]、mouse:BUTTON、move:x|y、position:x|y、scroll:x|y、gamepad:button:NAME、gamepad:dpad:DIRECTION、gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER，或用于震动、灯光和自适应扳机的 physical:...。\n\n“ojd profile show”会以这些形式输出映射。请用“ojd profile edit”编辑组合键、序列和层。";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "列出配置文件的映射。";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */

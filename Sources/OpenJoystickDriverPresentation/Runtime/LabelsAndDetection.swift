@@ -309,6 +309,11 @@ enum RuntimePresentation {
         "ui.mapping.pointerMovement",
         humanized(axis.rawValue)
       )
+    case .pointerPosition(let axis):
+      return OJDLocalized.formatted(
+        "ui.mapping.pointerPosition",
+        humanized(axis.rawValue)
+      )
     case .scroll(let axis):
       return OJDLocalized.formatted(
         "ui.mapping.scroll",

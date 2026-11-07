@@ -157,8 +157,8 @@ extension RemappingProfile {
       case .openURL(let url): line = "OpenURL: \(url)"
       case .runShortcut(let name): line = "RunShortcut: \(name)"
       case .typeText(let text): line = "TypeText: \(text)"
-      case .keyboard, .mouseButton, .mouseMovement, .scroll, .gamepadButton, .gamepadDpad,
-        .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet, .pause, .systemKey,
+      case .keyboard, .mouseButton, .mouseMovement, .pointerPosition, .scroll, .gamepadButton,
+        .gamepadDpad, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet, .pause, .systemKey,
         .systemAction, .speak, .midiNote, .midiControlChange:
         return false
       }
@@ -249,7 +249,8 @@ extension RemappingDestination {
   /// Identifies destinations that require operating-system input-posting authorization.
   public var isSystemInput: Bool {
     switch self {
-    case .keyboard, .mouseButton, .mouseMovement, .scroll, .systemKey, .typeText: true
+    case .keyboard, .mouseButton, .mouseMovement, .pointerPosition, .scroll, .systemKey, .typeText:
+      true
     case .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet,
       .pause, .systemAction, .openApplication, .openURL, .runShortcut, .speak,
       .midiNote, .midiControlChange:
@@ -261,7 +262,8 @@ extension RemappingDestination {
   var isVirtualGamepad: Bool {
     switch self {
     case .gamepadButton, .gamepadDpad, .gamepadAxis: true
-    case .keyboard, .mouseButton, .mouseMovement, .scroll, .physical, .macro, .profileSwitch,
+    case .keyboard, .mouseButton, .mouseMovement, .pointerPosition, .scroll, .physical, .macro,
+      .profileSwitch,
       .layerSet, .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut,
       .typeText, .speak,
       .midiNote, .midiControlChange:

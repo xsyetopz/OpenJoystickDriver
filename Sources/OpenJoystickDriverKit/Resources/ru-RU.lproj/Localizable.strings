@@ -618,6 +618,8 @@
 "ui.mapping.midiControlChange" = "MIDI-контроллер %1$@, канал %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "Движение указателя %@";
+/* Name of a pointer position destination. %@ is the axis whose value places the pointer across the main display. */
+"ui.mapping.pointerPosition" = "Положение указателя %@";
 /* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
 "ui.mapping.profileNext" = "Следующий профиль";
 /* Name of the destination that activates the previous profile of the controller's model and scope in name order, wrapping at the start. */
@@ -3006,7 +3008,7 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "Укажите один или несколько источников либо --all.";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "Привязка отправляет TARGET, когда используется SOURCE контроллера.\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW или touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER или physical:... для вибрации, подсветки и адаптивных триггеров.\n\n«ojd profile show» выводит привязки в этих формах. Аккорды, последовательности и слои меняются командой «ojd profile edit».";
+"cli.binding.group.discussion" = "Привязка отправляет TARGET, когда используется SOURCE контроллера.\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW или touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, position:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER или physical:... для вибрации, подсветки и адаптивных триггеров.\n\n«ojd profile show» выводит привязки в этих формах. Аккорды, последовательности и слои меняются командой «ojd profile edit».";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "Показывает привязки профиля.";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */

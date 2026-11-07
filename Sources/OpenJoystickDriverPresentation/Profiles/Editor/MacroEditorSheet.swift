@@ -204,7 +204,7 @@
       ).filter {
         switch $0.destination {
         case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad: true
-        case .mouseMovement, .scroll, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet,
+        case .mouseMovement, .pointerPosition, .scroll, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet,
           .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText,
           .speak,
           .midiNote, .midiControlChange:

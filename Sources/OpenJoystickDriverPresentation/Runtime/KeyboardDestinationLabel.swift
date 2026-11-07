@@ -19,8 +19,8 @@
     var body: some View {
       switch destination {
       case .keyboard(let key, let modifiers): keyboardRow(key: key, modifiers: modifiers)
-      case .mouseButton, .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis,
-        .physical, .macro, .profileSwitch, .layerSet, .pause, .systemKey, .systemAction,
+      case .mouseButton, .mouseMovement, .pointerPosition, .scroll, .gamepadButton, .gamepadDpad,
+        .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet, .pause, .systemKey, .systemAction,
         .openApplication, .openURL, .runShortcut, .typeText, .speak,
         .midiNote, .midiControlChange:
         Text(RuntimePresentation.destinationLabel(destination, macros: macros))

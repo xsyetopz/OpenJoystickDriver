@@ -14,6 +14,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
   case mouseButton(RemappingMouseButton)
   /// Pointer movement along one axis.
   case mouseMovement(RemappingPointerAxis)
+  /// The cursor's position along one axis: -1 to 1 maps across the main display.
+  case pointerPosition(RemappingPointerAxis)
   /// Scrolling along one axis.
   case scroll(RemappingPointerAxis)
   /// A channel of the physical controller, such as rumble or light.
@@ -51,8 +53,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
   public var acceptsTurbo: Bool {
     switch self {
     case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad: true
-    case .mouseMovement, .scroll, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet,
-      .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText,
+    case .mouseMovement, .pointerPosition, .scroll, .gamepadAxis, .physical, .macro, .profileSwitch,
+      .layerSet, .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText,
       .speak,
       .midiNote, .midiControlChange:
       false
@@ -68,7 +70,7 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
       .typeText, .speak,
       .midiNote, .midiControlChange:
       false
-    case .mouseMovement, .scroll, .gamepadAxis: true
+    case .mouseMovement, .pointerPosition, .scroll, .gamepadAxis: true
     }
   }
 
@@ -86,6 +88,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     case mouseButton = "MouseButton"
     /// The `MouseMovement` case.
     case mouseMovement = "MouseMovement"
+    /// The `PointerPosition` case.
+    case pointerPosition = "PointerPosition"
     /// The `Scroll` case.
     case scroll = "Scroll"
     /// The `Physical` case.
@@ -123,7 +127,7 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
       case .keyboard: [.type, .key, .modifiers]
       case .gamepadButton, .mouseButton: [.type, .button]
       case .gamepadDpad: [.type, .direction]
-      case .gamepadAxis, .mouseMovement, .scroll: [.type, .axis]
+      case .gamepadAxis, .mouseMovement, .pointerPosition, .scroll: [.type, .axis]
       case .physical: [.type, .physical]
       case .macro: [.type, .macro]
       case .profileSwitch: [.type, .profile]
@@ -215,6 +219,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
       self = .mouseButton(try container.decode(RemappingMouseButton.self, forKey: .button))
     case .mouseMovement:
       self = .mouseMovement(try container.decode(RemappingPointerAxis.self, forKey: .axis))
+    case .pointerPosition:
+      self = .pointerPosition(try container.decode(RemappingPointerAxis.self, forKey: .axis))
     case .scroll: self = .scroll(try container.decode(RemappingPointerAxis.self, forKey: .axis))
     case .physical:
       self = .physical(try container.decode(RemappingPhysicalOutput.self, forKey: .physical))
@@ -288,6 +294,9 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
       try container.encode(button, forKey: .button)
     case .mouseMovement(let axis):
       try container.encode(Kind.mouseMovement, forKey: .type)
+      try container.encode(axis, forKey: .axis)
+    case .pointerPosition(let axis):
+      try container.encode(Kind.pointerPosition, forKey: .type)
       try container.encode(axis, forKey: .axis)
     case .scroll(let axis):
       try container.encode(Kind.scroll, forKey: .type)

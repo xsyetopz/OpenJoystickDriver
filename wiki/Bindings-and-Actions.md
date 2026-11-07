@@ -28,7 +28,8 @@ An assignment connects one controller control to one destination, such as a keyb
 | --- | --- | --- |
 | Keyboard | A key with optional Command, Control, Option, and Shift | Needs Accessibility access |
 | Mouse button | Left, right, middle, back, forward | Needs Accessibility access |
-| Pointer movement | Horizontal or vertical | Continuous |
+| Pointer movement | Horizontal or vertical | Continuous; the axis sets the speed of the cursor |
+| Pointer position | Horizontal or vertical | Continuous; the axis value from -1 to 1 places the cursor across the main display, and the other coordinate keeps its value; needs Accessibility access |
 | Scroll | Horizontal or vertical | Continuous |
 | Gamepad button, D-pad, or axis | A virtual controller control | Needs virtual gamepad output |
 | Physical output | Rumble, player indicator, color, brightness, adaptive trigger | Only on controllers that support it |
@@ -78,7 +79,7 @@ SOURCE: button:NAME | dpad:DIRECTION
         touch:SURFACE:swipe:DIRECTION:MIN-DISTANCE
         motion:lean:left|right
 TARGET: key:KEY[:mods=alt,control,meta,shift]
-        mouse:BUTTON | move:x|y | scroll:x|y
+        mouse:BUTTON | move:x|y | position:x|y | scroll:x|y
         gamepad:button:NAME | gamepad:dpad:DIRECTION
         gamepad:axis:NAME
         physical:rumble:MOTOR:0...1

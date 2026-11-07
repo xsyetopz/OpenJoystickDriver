@@ -222,6 +222,7 @@ extension OutputCharacterizationTests {
     case .mouseButtonDown(let button): "mouse-down \(button.rawValue)"
     case .mouseButtonUp(let button): "mouse-up \(button.rawValue)"
     case .mouseMoved(let axis, let amount): "mouse-moved \(axis.rawValue) \(amount)"
+    case .pointerPlaced(let axis, let position): "pointer-placed \(axis.rawValue) \(position)"
     case .pointerDelta(let x, let y): "pointer \(x),\(y)"
     case .scrolled(let axis, let amount): "scrolled \(axis.rawValue) \(amount)"
     case .scrollDelta(let x, let y): "scroll \(x),\(y)"

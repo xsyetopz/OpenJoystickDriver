@@ -113,6 +113,38 @@ struct CoreGraphicsSinkTests {
   }
 
   @Test
+  func pointerPositionSpansTheMainDisplayAndKeepsTheOtherCoordinate() throws {
+    let poster = RecordingPoster(pointerLocation: CGPoint(x: 100, y: 200))
+    let sink = makeSink(poster: poster)
+
+    try sink.send(.pointerPlaced(axis: .x, position: -1))
+    try sink.send(.pointerPlaced(axis: .x, position: 0))
+    try sink.send(.pointerPlaced(axis: .x, position: 4))
+    try sink.send(.pointerPlaced(axis: .y, position: 1))
+    try sink.send(.pointerPlaced(axis: .y, position: -0.5))
+
+    #expect(
+      poster.events == [
+        .pointer(location: CGPoint(x: 0, y: 200), deltaX: -100, deltaY: 0),
+        .pointer(location: CGPoint(x: 500, y: 200), deltaX: 400, deltaY: 0),
+        .pointer(location: CGPoint(x: 1000, y: 200), deltaX: 900, deltaY: 0),
+        .pointer(location: CGPoint(x: 100, y: 500), deltaX: 0, deltaY: 300),
+        .pointer(location: CGPoint(x: 100, y: 125), deltaX: 0, deltaY: -75),
+      ]
+    )
+  }
+
+  @Test
+  func pointerPositionRejectsANonFiniteValue() {
+    let poster = RecordingPoster()
+    let sink = makeSink(poster: poster)
+    #expect(throws: CoreGraphicsSystemInputSinkError.eventPreparationFailed) {
+      try sink.send(.pointerPlaced(axis: .x, position: .nan))
+    }
+    #expect(poster.events.isEmpty)
+  }
+
+  @Test
   func integratedPointerDeltaPreservesUnitsAndSamplesCurrentOrigin() throws {
     let poster = RecordingPoster(pointerLocation: CGPoint(x: 100, y: 200))
     let sink = makeSink(poster: poster)
@@ -259,6 +291,8 @@ private final class RecordingPoster: CoreGraphicsEventPosting, @unchecked Sendab
     if failure == .posting { throw SyntheticPostingError.failed }
     return pointerLocation
   }
+
+  func mainDisplayBounds() throws -> CGRect { CGRect(x: 0, y: 0, width: 1001, height: 501) }
 
   func post(_ event: CoreGraphicsPreparedEvent) throws {
     if failure == .creation { throw CoreGraphicsEventPosterError.eventCreationFailed }

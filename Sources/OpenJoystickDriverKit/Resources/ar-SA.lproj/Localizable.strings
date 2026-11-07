@@ -618,6 +618,8 @@
 "ui.mapping.midiControlChange" = "وحدة تحكم MIDI ‏%1$@، القناة %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "حركة المؤشر %@";
+/* Name of a pointer position destination. %@ is the axis whose value places the pointer across the main display. */
+"ui.mapping.pointerPosition" = "موضع المؤشر %@";
 /* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
 "ui.mapping.profileNext" = "ملف التعريف التالي";
 /* Name of the destination that activates the previous profile of the controller's model and scope in name order, wrapping at the start. */
@@ -3006,7 +3008,7 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "حدّد مصدرًا واحدًا أو أكثر، أو --all.";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "يرسل التعيين TARGET عند استخدام SOURCE من وحدة التحكم.\n\nSOURCE: button:NAME أو dpad:DIRECTION أو axis:NAME[:negative|positive] أو trigger:NAME:STAGE أو motion:lean:DIRECTION أو touch:SURFACE:contact أو touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW أو touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift] أو mouse:BUTTON أو move:x|y أو scroll:x|y أو gamepad:button:NAME أو gamepad:dpad:DIRECTION أو gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER أو physical:... للاهتزاز والإضاءة والزنادات التكيفية.\n\nيطبع «ojd profile show» التعيينات بهذه الصيغ. عدّل التركيبات والتسلسلات والطبقات باستخدام «ojd profile edit».";
+"cli.binding.group.discussion" = "يرسل التعيين TARGET عند استخدام SOURCE من وحدة التحكم.\n\nSOURCE: button:NAME أو dpad:DIRECTION أو axis:NAME[:negative|positive] أو trigger:NAME:STAGE أو motion:lean:DIRECTION أو touch:SURFACE:contact أو touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW أو touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift] أو mouse:BUTTON أو move:x|y أو position:x|y أو scroll:x|y أو gamepad:button:NAME أو gamepad:dpad:DIRECTION أو gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER أو physical:... للاهتزاز والإضاءة والزنادات التكيفية.\n\nيطبع «ojd profile show» التعيينات بهذه الصيغ. عدّل التركيبات والتسلسلات والطبقات باستخدام «ojd profile edit».";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "اعرض تعيينات ملف تعريف.";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */

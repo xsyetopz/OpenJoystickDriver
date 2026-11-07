@@ -32,6 +32,7 @@ extension CoreGraphicsSystemInputSink {
     case .mouseButtonDown(let button): try postMouseButton(button, isDown: true)
     case .mouseButtonUp(let button): try postMouseButton(button, isDown: false)
     case .mouseMoved(let axis, let amount): try postPointer(axis: axis, amount: amount)
+    case .pointerPlaced(let axis, let position): try postPointerPlaced(axis: axis, position: position)
     case .pointerDelta(let x, let y): try postPointerDelta(x: x, y: y)
     case .scrolled(let axis, let amount): try postScroll(axis: axis, amount: amount)
     case .scrollDelta(let deltaX, let deltaY): try postScrollDelta(x: deltaX, y: deltaY)
@@ -78,6 +79,28 @@ extension CoreGraphicsSystemInputSink {
     let deltaY = axis == .y ? delta : 0
     let destination = CGPoint(x: origin.x + deltaX, y: origin.y + deltaY)
     try poster.post(.pointer(location: destination, deltaX: deltaX, deltaY: deltaY))
+  }
+
+  /// Places the pointer along `axis` at `position`, from -1 to 1, of the main display; the other
+  /// coordinate keeps its current value.
+  private func postPointerPlaced(axis: RemappingPointerAxis, position: Double) throws {
+    guard position.isFinite else { throw CoreGraphicsSystemInputSinkError.eventPreparationFailed }
+    let bounds = try poster.mainDisplayBounds()
+    let fraction = (CoreGraphicsMapping.clampedNormalized(position) + 1) / 2
+    let origin = try poster.currentPointerLocation()
+    var destination = origin
+    if axis == .x {
+      destination.x = bounds.minX + fraction * (bounds.width - 1)
+    } else {
+      destination.y = bounds.minY + fraction * (bounds.height - 1)
+    }
+    try poster.post(
+      .pointer(
+        location: destination,
+        deltaX: destination.x - origin.x,
+        deltaY: destination.y - origin.y
+      )
+    )
   }
 
   /// Moves the pointer by `x` and `y` points.

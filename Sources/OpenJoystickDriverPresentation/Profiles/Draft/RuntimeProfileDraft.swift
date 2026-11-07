@@ -116,7 +116,10 @@ struct DestinationOption: Hashable {
     }
     let pointerAxes: [RemappingPointerAxis] = [.x, .y]
     let pointer = pointerAxes.flatMap { axis in
-      [RemappingDestination.mouseMovement(axis), RemappingDestination.scroll(axis)]
+      [
+        RemappingDestination.mouseMovement(axis), RemappingDestination.pointerPosition(axis),
+        RemappingDestination.scroll(axis),
+      ]
     }.map { destination in
       Self(
         destination: destination,

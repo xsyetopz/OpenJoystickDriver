@@ -51,4 +51,16 @@ struct BindingAxisDefaultsTests {
     #expect(stored.source == .axis(.pointerX))
     #expect(stored.destination == .mouseMovement(.x))
   }
+
+  @Test
+  func theWiiPointerBindsToAnAbsolutePosition() async throws {
+    let library = FakeProfileLibrary([FakeProfileLibrary.profile("Wii")])
+    let service = try FakeService(devices: [], respond: library.respond)
+
+    let result = await service.run(["binding", "set", "Wii", "axis:pointer-y", "position:y"])
+
+    #expect(result.code == 0, "\(result.standardError)")
+    let stored = try #require(library.stored.first?.bindings.first)
+    #expect(stored.destination == .pointerPosition(.y))
+  }
 }

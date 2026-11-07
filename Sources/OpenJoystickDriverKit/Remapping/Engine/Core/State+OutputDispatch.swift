@@ -335,8 +335,8 @@ extension RemappingEngineState {
     case .mouseButton(let button):
       return Self.increment(&mouseButtonReferences, key: button) == 1
         ? [.system(.mouseButtonDown(button))] : []
-    case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro,
-      .profileSwitch, .layerSet, .pause, .speak, .midiNote,
+    case .mouseMovement, .pointerPosition, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis,
+      .physical, .macro, .profileSwitch, .layerSet, .pause, .speak, .midiNote,
       .midiControlChange:
       return []
     case .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText:
@@ -362,8 +362,8 @@ extension RemappingEngineState {
     case .mouseButton(let button):
       return Self.decrement(&mouseButtonReferences, key: button) == 0
         ? [.system(.mouseButtonUp(button))] : []
-    case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical, .macro,
-      .profileSwitch, .layerSet, .pause, .speak, .midiNote,
+    case .mouseMovement, .pointerPosition, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis,
+      .physical, .macro, .profileSwitch, .layerSet, .pause, .speak, .midiNote,
       .midiControlChange:
       return []
     case .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText:

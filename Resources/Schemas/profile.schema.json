@@ -600,6 +600,19 @@
               "enum": ["X", "Y"]
             },
             "type": {
+              "const": "PointerPosition"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["axis", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "axis": {
+              "enum": ["X", "Y"]
+            },
+            "type": {
               "const": "Scroll"
             }
           }

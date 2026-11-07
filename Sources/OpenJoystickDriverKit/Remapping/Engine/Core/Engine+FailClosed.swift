@@ -50,7 +50,7 @@ extension RemappingEventEngine {
     case .keyUp(let key): heldOutputs.remove(.key(key))
     case .mouseButtonDown(let button): heldOutputs.insert(.mouseButton(button))
     case .mouseButtonUp(let button): heldOutputs.remove(.mouseButton(button))
-    case .mouseMoved, .pointerDelta, .scrolled, .scrollDelta: break
+    case .mouseMoved, .pointerPlaced, .pointerDelta, .scrolled, .scrollDelta: break
     }
   }
 
@@ -68,7 +68,7 @@ extension RemappingEventEngine {
     case .keyDown(let key), .keyUp(let key): heldOutputs.insert(.key(key))
     case .mouseButtonDown(let button), .mouseButtonUp(let button):
       heldOutputs.insert(.mouseButton(button))
-    case .mouseMoved, .pointerDelta, .scrolled, .scrollDelta: break
+    case .mouseMoved, .pointerPlaced, .pointerDelta, .scrolled, .scrollDelta: break
     }
   }
 

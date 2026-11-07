@@ -189,6 +189,17 @@ extension RemappingEngineState {
 
       actions += midiControlChange(binding, rawValue: rawValue, device: &device)
 
+      if let tuning = binding.axisTuning, case .pointerPosition(let pointerAxis) = binding.destination {
+        actions.append(
+          .system(
+            .pointerPlaced(
+              axis: pointerAxis,
+              position: Double(RemappingTransform.value(rawValue, tuning: tuning))
+            )
+          )
+        )
+      }
+
       if let tuning = binding.axisTuning,
         let continuousDestination = RemappingContinuousDestination(binding.destination)
       {

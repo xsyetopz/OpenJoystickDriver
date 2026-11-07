@@ -219,6 +219,11 @@ public enum RemappingCommandValueParser {
     {
       return .mouseMovement(axis)
     }
+    if parts.count == 2, parts[0] == "position",
+      let axis = CommandLineName.value(of: parts[1], in: RemappingPointerAxis.self)
+    {
+      return .pointerPosition(axis)
+    }
     if parts.count == 2, parts[0] == "scroll",
       let axis = CommandLineName.value(of: parts[1], in: RemappingPointerAxis.self)
     {

@@ -618,6 +618,8 @@
 "ui.mapping.midiControlChange" = "MIDI कंट्रोलर %1$@, चैनल %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "पॉइंटर %@ मूवमेंट";
+/* Name of a pointer position destination. %@ is the axis whose value places the pointer across the main display. */
+"ui.mapping.pointerPosition" = "पॉइंटर %@ स्थिति";
 /* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
 "ui.mapping.profileNext" = "अगली प्रोफ़ाइल";
 /* Name of the destination that activates the previous profile of the controller's model and scope in name order, wrapping at the start. */
@@ -3006,7 +3008,7 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "एक या अधिक स्रोत दें, या --all दें।";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "असाइनमेंट तब TARGET भेजता है जब कंट्रोलर का कोई SOURCE इस्तेमाल होता है।\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW, या touch:SURFACE:swipe:DIRECTION:DISTANCE।\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER, या रंबल, लाइट और एडैप्टिव ट्रिगर के लिए physical:...।\n\n“ojd profile show” असाइनमेंट को इन्हीं रूपों में प्रिंट करता है। कॉर्ड, सीक्वेंस और लेयर को “ojd profile edit” से बदलें।";
+"cli.binding.group.discussion" = "असाइनमेंट तब TARGET भेजता है जब कंट्रोलर का कोई SOURCE इस्तेमाल होता है।\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW, या touch:SURFACE:swipe:DIRECTION:DISTANCE।\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, position:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER, या रंबल, लाइट और एडैप्टिव ट्रिगर के लिए physical:...।\n\n“ojd profile show” असाइनमेंट को इन्हीं रूपों में प्रिंट करता है। कॉर्ड, सीक्वेंस और लेयर को “ojd profile edit” से बदलें।";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "प्रोफ़ाइल के असाइनमेंट की सूची दिखाएँ।";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */

@@ -618,6 +618,8 @@
 "ui.mapping.midiControlChange" = "ตัวควบคุม MIDI %1$@ ช่อง %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "การเคลื่อนตัวชี้ %@";
+/* Name of a pointer position destination. %@ is the axis whose value places the pointer across the main display. */
+"ui.mapping.pointerPosition" = "ตำแหน่งตัวชี้ %@";
 /* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
 "ui.mapping.profileNext" = "โปรไฟล์ถัดไป";
 /* Name of the destination that activates the previous profile of the controller's model and scope in name order, wrapping at the start. */
@@ -3006,7 +3008,7 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "ระบุต้นทางอย่างน้อยหนึ่งรายการ หรือ --all";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "การกำหนดจะส่ง TARGET เมื่อมีการใช้ SOURCE ของคอนโทรลเลอร์\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW หรือ touch:SURFACE:swipe:DIRECTION:DISTANCE\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER หรือ physical:... สำหรับแรงสั่น ไฟ และทริกเกอร์แบบปรับได้\n\n“ojd profile show” พิมพ์การกำหนดในรูปแบบเหล่านี้ แก้ไขคอร์ด ลำดับ และเลเยอร์ด้วย “ojd profile edit”";
+"cli.binding.group.discussion" = "การกำหนดจะส่ง TARGET เมื่อมีการใช้ SOURCE ของคอนโทรลเลอร์\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW หรือ touch:SURFACE:swipe:DIRECTION:DISTANCE\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, position:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER หรือ physical:... สำหรับแรงสั่น ไฟ และทริกเกอร์แบบปรับได้\n\n“ojd profile show” พิมพ์การกำหนดในรูปแบบเหล่านี้ แก้ไขคอร์ด ลำดับ และเลเยอร์ด้วย “ojd profile edit”";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "แสดงรายการการกำหนดของโปรไฟล์";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */

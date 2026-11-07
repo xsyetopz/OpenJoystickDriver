@@ -300,6 +300,8 @@ public enum RemappingSystemInputAction: Equatable, Sendable {
   case mouseButtonUp(RemappingMouseButton)
   /// Moves the pointer continuously along an axis.
   case mouseMoved(axis: RemappingPointerAxis, amount: Double)
+  /// Places the pointer along an axis: `position` from -1 to 1 spans the main display.
+  case pointerPlaced(axis: RemappingPointerAxis, position: Double)
   /// Relative displacement in logical screen points, already integrated over sample time.
   case pointerDelta(x: Double, y: Double)
   /// Scrolls continuously along an axis.

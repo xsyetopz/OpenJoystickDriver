@@ -44,6 +44,34 @@ struct RemappingPointerBindingTests {
   }
 
   @Test
+  func thePositionBindingValidatesAndPlacesTheCursorOnEachAxisChange() async throws {
+    let current = profile(.pointerX, to: .pointerPosition(.x))
+    try current.validate()
+    let sink = RemappingTestSink()
+    let engine = RemappingEventEngine(sink: sink)
+
+    try await engine.process(inputs: [.pointer(x: 0.5, y: 0)], from: device, using: current, at: 0)
+    try await engine.tick(at: 1)
+    try await engine.tick(at: 2)
+
+    #expect(sink.actions() == [.pointerPlaced(axis: .x, position: quantizedStick(0.5))])
+  }
+
+  @Test
+  func thePositionDestinationNeedsAnAxisSourceAndRoundTrips() throws {
+    let button = RemappingProfile(
+      name: "Pointer",
+      device: RemappingDeviceScope(vendorID: 1, productID: 2),
+      applicationScope: .global,
+      bindings: [RemappingBinding(source: .button(.south), destination: .pointerPosition(.x))]
+    )
+    #expect(throws: (any Error).self) { try button.validate() }
+    let data = try JSONEncoder().encode(RemappingDestination.pointerPosition(.y))
+    #expect(String(decoding: data, as: UTF8.self).contains("\"PointerPosition\""))
+    #expect(try JSONDecoder().decode(RemappingDestination.self, from: data) == .pointerPosition(.y))
+  }
+
+  @Test
   func aPointerStateChangeReachesTheEngineAsAPointerInput() {
     var moved = ControllerState()
     moved.pointer = StickPosition(x: 0.5, y: -0.25)

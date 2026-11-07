@@ -79,6 +79,8 @@ enum CoreGraphicsEventPosterError: Error {
 protocol CoreGraphicsEventPosting: Sendable {
   /// Returns the current pointer position.
   func currentPointerLocation() throws -> CGPoint
+  /// Returns the bounds of the main display in the coordinates of pointer events.
+  func mainDisplayBounds() throws -> CGRect
   /// Posts `event`.
   func post(_ event: CoreGraphicsPreparedEvent) throws
 }
@@ -101,6 +103,9 @@ private struct PlatformCoreGraphicsEventPoster: CoreGraphicsEventPosting {
     }
     return event.location
   }
+
+  /// Returns the bounds of the main display.
+  func mainDisplayBounds() throws -> CGRect { CGDisplayBounds(CGMainDisplayID()) }
 
   /// Creates the CoreGraphics event of `prepared` and posts it to the HID event tap.
   ///

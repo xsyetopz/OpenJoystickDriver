@@ -85,6 +85,10 @@ A binding's `multiTap` list has entries with `count` (2 to 5, unique in the list
 
 `ojd profile set`, `ojd profile import`, and the profile editor reject a driver that the profile's controller does not report, such as a trigger that only sends a button press. The scale multiplies pointer movement, not scrolling. For more information, see [Set pointer speed](Sticks-Triggers-Touchpad-and-Motion.md#set-pointer-speed).
 
+## Pointer Position Destination
+
+`{"type":"PointerPosition","axis":AXIS}` places the cursor along one axis, with `AXIS` as `X` or `Y`. It has no other key. Only an axis source can drive it, with an `axisTuning` like `MouseMovement`. The axis value from -1 to 1 maps linearly across the main display, and the other coordinate keeps its value. `pointerSpeed` does not scale it.
+
 ## Macro Fields
 
 A macro in `macros` has `id` (UUID), `name`, `steps`, `repeat`, `whileRunning`, and `interruptOnRelease`, and no other key. A binding runs it with the destination `{"type":"Macro","macro":"ID"}`.
