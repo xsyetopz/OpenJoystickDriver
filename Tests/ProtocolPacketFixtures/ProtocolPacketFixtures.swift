@@ -197,7 +197,8 @@ public enum ProtocolPacketFixtures {
     }
   }
 
-  /// Steam Controller (2026) reports, in the layouts of SDL `TritonMTUNoQuat_t` at `release-3.4.16`.
+  /// Steam Controller (2026) reports, in the layouts of SDL `TritonMTUNoQuat_t`
+  /// at `release-3.4.16`.
   public enum Triton {
     /// The grip touch bits of the button word of report `0x42`.
     public enum Grip {
