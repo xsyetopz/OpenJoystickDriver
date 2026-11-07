@@ -81,6 +81,12 @@ The evidence classes used for this decision are official documentation, upstream
 - [Issue 33](https://github.com/xsyetopz/OpenJoystickDriver/issues/33) verifies SCUF Envision Pro `2E95:434D` report-6 core input only. It does not establish extra buttons, paddles, output, or wireless behavior; `2E95:0504` stays GIP.
 - SDL HIDAPI and mappings inform consumer identity and button order only.
 
+## Wii Remote Evidence
+
+- [wiiuse `e769bd7`][27] (GPL-3.0-or-later) corroborates Wii Remote register addresses, report ids and sizes; the design cites it by file and line. No code is copied. WiiBrew's Wiimote pages are the primary protocol source, and every Wii fixture is a source fixture, not hardware evidence.
+
+[27]: https://github.com/wiiuse/wiiuse/tree/e769bd73860a4f941bd110ebae5a790f968b71e3
+
 ## Gates
 
 ```bash

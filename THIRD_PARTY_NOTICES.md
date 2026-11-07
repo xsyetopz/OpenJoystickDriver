@@ -133,3 +133,9 @@ SOFTWARE.
 The frame and command facts for Flydigi vendor output come from `PROTOCOL.md` of [openflydigi][5], commit `11653507bbe4dc77f3c479c2a7aaebf25bbda995`. No code is copied. The author dedicated `PROTOCOL.md` to the public domain under CC0 1.0 Universal (<https://creativecommons.org/publicdomain/zero/1.0/legalcode>); the other files of that repository carry other licenses and are not used.
 
 [5]: https://github.com/mkaliaha/openflydigi/tree/11653507bbe4dc77f3c479c2a7aaebf25bbda995
+
+## wiiuse
+
+The Wii Remote driver takes facts from [wiiuse][6], commit `e769bd73860a4f941bd110ebae5a790f968b71e3`: register addresses, report ids and sizes, cited by file and line in `openspec/changes/wii-remote/design.md`. No code is copied. wiiuse is under GPL-3.0-or-later, so OJD records only the facts and keeps none of its text.
+
+[6]: https://github.com/wiiuse/wiiuse/tree/e769bd73860a4f941bd110ebae5a790f968b71e3
