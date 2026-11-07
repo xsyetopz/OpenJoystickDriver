@@ -16,6 +16,8 @@
     case touch
     /// The sheet that adds a stick ring, trigger band or touch area as an assignment.
     case regions
+    /// The pointer speed sheet.
+    case pointerSpeed
     /// The motion tuning sheet of a layer.
     case layerMotion(RemappingLayer)
     /// The sheet that captures a control for a new assignment.
@@ -49,6 +51,7 @@
       case .triggers: return "triggers"
       case .touch: return "touch"
       case .regions: return "regions"
+      case .pointerSpeed: return "pointerSpeed"
       case .layerMotion(let layer): return "layer-motion-\(layer.id.uuidString)"
       case .capture: return "capture"
       case .adjustment(let binding): return "adjustment-\(binding.id.uuidString)"

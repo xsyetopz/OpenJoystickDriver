@@ -87,6 +87,18 @@
               saveError = nil
               reportEditingState()
             }
+          case .pointerSpeed:
+            ProfilePointerSpeedSheet(
+              speed: draft.profile.pointerSpeed,
+              capabilities: capabilities,
+              liveState: {
+                let model = ControllerModelID(
+                  vendorID: draft.profile.device.vendorID,
+                  productID: draft.profile.device.productID
+                )
+                return try? await viewModel.gateway.controllerState(for: .model(model))
+              }
+            ) { speed in applyDraftChange { try draft.settingPointerSpeed(speed) } }
           case .motion:
             ProfileMotionSheet(tuning: draft.profile.motionTuning, output: draft.profile.gyroOutput)
             { tuning, output in

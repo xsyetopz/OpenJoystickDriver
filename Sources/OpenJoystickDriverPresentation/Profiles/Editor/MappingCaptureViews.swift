@@ -72,7 +72,7 @@
           selection: $curve
         ) {
           ForEach(RemappingResponseCurve.allCases, id: \.self) { value in
-            Text(responseCurveLabel(value)).tag(value)
+            Text(value.label).tag(value)
           }
         }
         SliderRow(
@@ -101,10 +101,12 @@
         }
       }.padding(28).frame(width: 430)
     }
+  }
 
-    /// Returns the name of a response curve.
-    private func responseCurveLabel(_ value: RemappingResponseCurve) -> String {
-      switch value {
+  extension RemappingResponseCurve {
+    /// The name of the curve in the response curve popups.
+    var label: String {
+      switch self {
       case .linear: return OJDLocalized.string("ui.capture.linear")
       case .easeIn: return OJDLocalized.string("ui.capture.easeIn")
       case .easeOut: return OJDLocalized.string("ui.capture.easeOut")

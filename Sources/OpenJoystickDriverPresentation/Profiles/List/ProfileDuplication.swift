@@ -48,6 +48,7 @@ func duplicatedProfile(
     motionTuning: source.motionTuning,
     gyroOutput: source.gyroOutput,
     joyConPair: source.joyConPair,
+    pointerSpeed: source.pointerSpeed,
     stickMappings: source.stickMappings,
     triggerMappings: source.triggerMappings,
     touchMappings: source.touchMappings,

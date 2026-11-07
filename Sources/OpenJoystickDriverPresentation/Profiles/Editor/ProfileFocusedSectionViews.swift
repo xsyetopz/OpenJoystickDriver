@@ -259,6 +259,17 @@
             supported: capabilities.supportsStickAxes || capabilities.supportsAnalogTriggers
               || !capabilities.physicalInput.touchSurfaces.isEmpty
           ) { openSheet(.regions) }
+          configurationRow(
+            title: OJDLocalized.string("ui.profiles.pointerSpeed.title"),
+            summary: profile.pointerSpeed.map {
+              OJDLocalized.string(
+                $0.driver.type == .trigger
+                  ? "ui.profiles.pointerSpeed.driverTrigger"
+                  : "ui.profiles.pointerSpeed.driverStickDepth"
+              )
+            } ?? OJDLocalized.string("ui.inputTest.off"),
+            supported: true
+          ) { openSheet(.pointerSpeed) }
         }
         ProfileLightingEditor(color: profile.physicalColor, onChange: updatePhysicalColor).disabled(
           !capabilities.physicalOutput.lightingFeatures.contains(.programmableColor)

@@ -29,6 +29,13 @@ extension RuntimeProfileDraft {
     Self(profile: try Self.validate(profile.replacing(touchMappings: mappings)))
   }
 
+  /// Returns the draft with the pointer speed replaced, or cleared when `speed` is nil.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError/validation(_:)`` when it breaks a profile rule.
+  func settingPointerSpeed(_ speed: RemappingPointerSpeed?) throws -> Self {
+    Self(profile: try Self.validate(profile.replacing(pointerSpeed: .some(speed))))
+  }
+
   /// Returns the draft with the motion tuning, and the gyro output when one is given, replaced.
   ///
   /// - Throws: ``RuntimeProfileDraftError/validation(_:)`` when they break a profile rule.
