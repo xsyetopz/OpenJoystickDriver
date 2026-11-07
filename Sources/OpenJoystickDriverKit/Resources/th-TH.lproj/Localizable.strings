@@ -163,7 +163,7 @@
 /* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */
 "ui.controllers.paused.label" = "การแมปใหม่";
 /* Value of the pause fact in the Controllers detail, and menu bar menu row under a controller that a Pause assignment holds. */
-"ui.controllers.paused.value" = "หยุดชั่วคราว";
+"ui.controllers.paused.value" = "หยุดชั่วคราวอยู่";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "แสดงเลขประจำเครื่อง";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */
@@ -3560,7 +3560,7 @@
 /* Title of the Controller menu in the menu bar. */
 "ui.menu.controller.title" = "คอนโทรลเลอร์";
 /* Button and menu item that stops the remapping of one controller. */
-"ui.menu.controller.suspend" = "หยุดชั่วคราว";
+"ui.menu.controller.suspend" = "ระงับ";
 /* Button and menu item that starts the remapping of one controller again. */
 "ui.menu.controller.resume" = "ทำต่อ";
 /* Item of the Controller menu that opens the input test of the selected controller. */
@@ -3662,7 +3662,7 @@
 /* Heading of the controllers section in the menu bar menu. */
 "ui.extra.controllers" = "คอนโทรลเลอร์";
 /* Menu item in the menu bar menu that stops the service from remapping. */
-"ui.extra.suspend" = "หยุดชั่วคราว";
+"ui.extra.suspend" = "ระงับ";
 /* Menu item in the menu bar menu that lets the service remap again. */
 "ui.extra.resume" = "ทำต่อ";
 /* Menu item in the menu bar menu that opens the input test of a controller. */
