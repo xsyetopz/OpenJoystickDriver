@@ -2322,6 +2322,7 @@
     {
       "name": "validator rejects control transfers that disagree with themselves: empty match",
       "code": "E5007",
+      "schema": true,
       "document": {
         "apiVersion": "openjoystickdriver/v1alpha2",
         "kind": "Controller",
