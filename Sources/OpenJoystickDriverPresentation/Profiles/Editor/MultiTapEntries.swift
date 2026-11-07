@@ -17,9 +17,10 @@ enum MultiTapEntries {
     destination: RemappingDestination
   ) -> [RemappingMultiTap] {
     guard let count = unusedCounts(in: entries).first else { return entries }
-    return (entries + [
-      RemappingMultiTap(count: count, windowMs: defaultWindowMs, destination: destination)
-    ]).sorted { $0.count < $1.count }
+    return
+      (entries + [
+        RemappingMultiTap(count: count, windowMs: defaultWindowMs, destination: destination)
+      ]).sorted { $0.count < $1.count }
   }
 
   /// `entries` with the entry at `count` replaced, keeping the list sorted by count.

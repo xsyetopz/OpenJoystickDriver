@@ -41,7 +41,10 @@
       let count = entry.count
       let update = { (changed: RemappingMultiTap) in
         multiTapEntries = MultiTapEntries.replacing(
-          count: count, with: changed, in: multiTapEntries)
+          count: count,
+          with: changed,
+          in: multiTapEntries
+        )
       }
       return VStack(alignment: .leading, spacing: 8) {
         HStack {
@@ -52,12 +55,17 @@
               set: {
                 update(
                   RemappingMultiTap(
-                    count: $0, windowMs: entry.windowMs, destination: entry.destination))
+                    count: $0,
+                    windowMs: entry.windowMs,
+                    destination: entry.destination
+                  )
+                )
               }
             )
           ) {
             ForEach(
-              (MultiTapEntries.unusedCounts(in: multiTapEntries) + [count]).sorted(), id: \.self
+              (MultiTapEntries.unusedCounts(in: multiTapEntries) + [count]).sorted(),
+              id: \.self
             ) { Text("\($0)").tag($0) }
           }
           Button(OJDLocalized.string("action.remove")) {
@@ -70,7 +78,8 @@
             get: { entry.windowMs },
             set: {
               update(
-                RemappingMultiTap(count: count, windowMs: $0, destination: entry.destination))
+                RemappingMultiTap(count: count, windowMs: $0, destination: entry.destination)
+              )
             }
           ),
           range: RemappingMultiTap.windowRange,

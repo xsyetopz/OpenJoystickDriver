@@ -92,8 +92,11 @@
             valueSlider(
               title: OJDLocalized.string("ui.profiles.turboMax"),
               value: $turboMax,
-              range: Double(RemappingTurbo.maxRepeatsRange.lowerBound)...Double(
-                RemappingTurbo.maxRepeatsRange.upperBound),
+              range: Double(
+                RemappingTurbo.maxRepeatsRange.lowerBound
+              )...Double(
+                RemappingTurbo.maxRepeatsRange.upperBound
+              ),
               format: "%.0f"
             )
           }
