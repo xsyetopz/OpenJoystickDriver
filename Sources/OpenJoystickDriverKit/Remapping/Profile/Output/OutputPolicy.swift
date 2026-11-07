@@ -158,7 +158,8 @@ extension RemappingProfile {
       case .runShortcut(let name): line = "RunShortcut: \(name)"
       case .typeText(let text): line = "TypeText: \(text)"
       case .keyboard, .mouseButton, .mouseMovement, .pointerPosition, .scroll, .gamepadButton,
-        .gamepadDpad, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet, .pause, .systemKey,
+        .gamepadDpad, .gamepadAxis, .physical, .macro, .profileSwitch, .layerSet, .pause,
+        .systemKey,
         .systemAction, .speak, .midiNote, .midiControlChange:
         return false
       }

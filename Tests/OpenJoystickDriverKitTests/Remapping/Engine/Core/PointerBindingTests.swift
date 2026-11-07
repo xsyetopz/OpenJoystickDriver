@@ -118,35 +118,53 @@ struct RemappingPointerBindingTests {
     let destination = RemappingDestination.mouseButton(.left)
     #expect(
       profile(chords: [RemappingChord(sources: [other, right], destination: destination)])
-        .bindsPointer)
+        .bindsPointer
+    )
     #expect(
       profile(sequences: [
         RemappingSequence(sources: [other, right], windowMs: 300, destination: destination)
-      ]).bindsPointer)
+      ]).bindsPointer
+    )
     let layer = { (activator: RemappingSource, bindings: [RemappingBinding]) in
       RemappingLayer(
-        name: "Aim", activationMode: .hold, activator: activator, bindings: bindings)
+        name: "Aim",
+        activationMode: .hold,
+        activator: activator,
+        bindings: bindings
+      )
     }
     #expect(profile(layers: [layer(right, [])]).bindsPointer)
     #expect(
       profile(layers: [layer(other, [RemappingBinding(source: right, destination: destination)])])
-        .bindsPointer)
+        .bindsPointer
+    )
     #expect(
       profile(layers: [
         RemappingLayer(
-          name: "Aim", activationMode: .hold, activator: other,
-          chords: [RemappingChord(sources: [other, right], destination: destination)])
-      ]).bindsPointer)
+          name: "Aim",
+          activationMode: .hold,
+          activator: other,
+          chords: [RemappingChord(sources: [other, right], destination: destination)]
+        )
+      ]).bindsPointer
+    )
     #expect(
       profile(
         gyroOutput: RemappingGyroOutput(
-          mode: .mouse, activationMode: .whileHeld, activationSource: right)
-      ).bindsPointer)
+          mode: .mouse,
+          activationMode: .whileHeld,
+          activationSource: right
+        )
+      ).bindsPointer
+    )
     #expect(
       profile(
         gyroOutput: RemappingGyroOutput(
-          mode: .mouse, trackball: RemappingGyroTrackball(source: right))
-      ).bindsPointer)
+          mode: .mouse,
+          trackball: RemappingGyroTrackball(source: right)
+        )
+      ).bindsPointer
+    )
     #expect(!profile(layers: [layer(other, [])]).bindsPointer)
   }
 }

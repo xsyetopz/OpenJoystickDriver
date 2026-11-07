@@ -32,7 +32,8 @@ extension CoreGraphicsSystemInputSink {
     case .mouseButtonDown(let button): try postMouseButton(button, isDown: true)
     case .mouseButtonUp(let button): try postMouseButton(button, isDown: false)
     case .mouseMoved(let axis, let amount): try postPointer(axis: axis, amount: amount)
-    case .pointerPlaced(let axis, let position): try postPointerPlaced(axis: axis, position: position)
+    case .pointerPlaced(let axis, let position):
+      try postPointerPlaced(axis: axis, position: position)
     case .pointerDelta(let x, let y): try postPointerDelta(x: x, y: y)
     case .scrolled(let axis, let amount): try postScroll(axis: axis, amount: amount)
     case .scrollDelta(let deltaX, let deltaY): try postScrollDelta(x: deltaX, y: deltaY)

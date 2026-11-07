@@ -304,7 +304,11 @@ struct WiiDriverIRTests {
     let writes = await pipeline.feedHIDData(Data(try WiiFixtures.report("20-status-no-extension")))
     await pipeline.stop()
     return writes.compactMap { write -> UInt8? in
-      if case .hidOutput(let report) = write, report.bytes[0] == 0x12 { report.bytes[2] } else { nil }
+      if case .hidOutput(let report) = write, report.bytes[0] == 0x12 {
+        report.bytes[2]
+      } else {
+        nil
+      }
     }.first
   }
 

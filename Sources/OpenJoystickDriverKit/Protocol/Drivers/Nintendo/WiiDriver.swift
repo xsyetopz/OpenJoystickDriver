@@ -357,9 +357,10 @@ public final class WiiDriver: PhysicalProtocolDriver {
     return removed ? ControllerEvent(timestamp: now, state: state) : nil
   }
 
-  /// Starts the IR setup or the IR disable when `isIRWanted` differs from the session's state, once
-  /// the first status report has begun the session. The caller sends the report mode when the
-  /// result is true.
+  /// Starts the IR setup or the IR disable when `isIRWanted` differs from the session's state.
+  ///
+  /// It waits for the first status report to begin the session. The caller sends the report mode
+  /// when the result is true.
   @discardableResult
   func reconcileIR(at now: MonotonicTimestamp) -> Bool {
     guard hasRequestedCalibration, isIRWanted != hasRequestedIR else { return false }

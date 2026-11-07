@@ -54,7 +54,8 @@ public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {
     switch self {
     case .keyboard, .mouseButton, .gamepadButton, .gamepadDpad: true
     case .mouseMovement, .pointerPosition, .scroll, .gamepadAxis, .physical, .macro, .profileSwitch,
-      .layerSet, .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText,
+      .layerSet, .pause, .systemKey, .systemAction, .openApplication, .openURL, .runShortcut,
+      .typeText,
       .speak,
       .midiNote, .midiControlChange:
       false
