@@ -45,7 +45,8 @@ extension RemappingProfile {
   }
 
   /// Encodes a profile with the current API version and kind; it leaves out motion tuning, gyro
-  /// output, the stick, trigger and touch mappings that hold their default, and an empty macro list.
+  /// output, the stick, trigger and touch mappings that hold their default, and an empty macro
+  /// list.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(OpenJoystickDriverAPI.version, forKey: .apiVersion)
