@@ -124,6 +124,30 @@ struct BindingOptions: ParsableArguments {
   )
   var turboDuty: Double?
 
+  /// `--turbo-delay`: the time from the first press to the first repeat, in milliseconds; it needs
+  /// `--turbo-rate` and `--turbo-duty`.
+  @Option(
+    help: ArgumentHelp(
+      CLILocalized.text(
+        "cli.binding.group.optionTurboDelay"
+      ),
+      valueName: "ms"
+    )
+  )
+  var turboDelay: Double?
+
+  /// `--turbo-max`: how many repeats follow the first press; it needs `--turbo-rate` and
+  /// `--turbo-duty`.
+  @Option(
+    help: ArgumentHelp(
+      CLILocalized.text(
+        "cli.binding.group.optionTurboMax"
+      ),
+      valueName: "count"
+    )
+  )
+  var turboMax: Int?
+
   /// `--long-hold`: a `MS:TARGET` to send when the source is held for that long.
   @Option(
     help: ArgumentHelp(
@@ -135,16 +159,17 @@ struct BindingOptions: ParsableArguments {
   )
   var longHold: String?
 
-  /// `--double-tap`: a `MS:TARGET` to send when the source is pressed twice in that time.
+  /// `--multi-tap`: a `COUNT:MS:TARGET` to send when the source is tapped that many times, each
+  /// press within that time of the last release; it can repeat.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
-        "cli.binding.group.optionDoubleTap"
+        "cli.binding.group.optionMultiTap"
       ),
-      valueName: "ms:target"
+      valueName: "count:ms:target"
     )
   )
-  var doubleTap: String?
+  var multiTap: [String] = []
 
   /// `--actions-json`: more actions, as a JSON array in the form that `ojd profile export` writes.
   @Option(
@@ -162,7 +187,7 @@ struct BindingOptions: ParsableArguments {
   ///
   /// - Throws: ``CLIFailure`` with the usage code when axis options are given for a source that is
   ///   not an axis, turbo options are incomplete or not usable with the target, `--long-hold` or
-  ///   `--double-tap` is not `MS:TARGET`, or `--actions-json` is too large or not valid.
+  ///   `--multi-tap` is not `COUNT:MS:TARGET`, or `--actions-json` is too large or not valid.
   func binding(
     source: RemappingSource,
     target: RemappingDestination,
@@ -184,9 +209,7 @@ struct BindingOptions: ParsableArguments {
       longHold: try alternate(longHold, option: "--long-hold").map {
         RemappingLongHold(durationMs: $0, destination: $1)
       },
-      doubleTap: try alternate(doubleTap, option: "--double-tap").map {
-        RemappingDoubleTap(windowMs: $0, destination: $1)
-      },
+      multiTap: try multiTap.map(multiTapEntry),
       additionalActions: try actions() ?? existing?.additionalActions ?? []
     )
   }
@@ -228,7 +251,9 @@ struct BindingOptions: ParsableArguments {
   /// - Throws: ``CLIFailure`` with the usage code when only one turbo option is given or `target`
   ///   cannot repeat.
   private func turbo(for target: RemappingDestination) throws -> RemappingTurbo? {
-    guard turboRate != nil || turboDuty != nil else { return nil }
+    guard turboRate != nil || turboDuty != nil || turboDelay != nil || turboMax != nil else {
+      return nil
+    }
     guard let turboRate, let turboDuty else {
       throw CLIFailure.usage(
         CLILocalized.text(
@@ -243,7 +268,12 @@ struct BindingOptions: ParsableArguments {
         )
       )
     }
-    return RemappingTurbo(repeatRateHz: turboRate, dutyCycle: turboDuty)
+    return RemappingTurbo(
+      repeatRateHz: turboRate,
+      dutyCycle: turboDuty,
+      initialDelayMs: turboDelay ?? 0,
+      maxRepeats: turboMax
+    )
   }
 
   /// Splits `MS:TARGET` once at the first colon.
@@ -267,6 +297,22 @@ struct BindingOptions: ParsableArguments {
       )
     }
     return (milliseconds, try parseTarget(String(parts[1])))
+  }
+
+  /// Parses one `COUNT:MS:TARGET` value of `--multi-tap`.
+  ///
+  /// - Throws: ``CLIFailure`` with a usage error when the value is not a count, a finite number of
+  ///   milliseconds, and a target.
+  private func multiTapEntry(_ text: String) throws -> RemappingMultiTap {
+    let parts = text.split(separator: ":", maxSplits: 2, omittingEmptySubsequences: false)
+    guard parts.count == 3, let count = Int(parts[0]), let milliseconds = Double(parts[1]),
+      milliseconds.isFinite
+    else { throw CLIFailure.usage(CLILocalized.text("cli.binding.group.multiTapFormat")) }
+    return RemappingMultiTap(
+      count: count,
+      windowMs: milliseconds,
+      destination: try parseTarget(String(parts[2]))
+    )
   }
 
   /// The actions that `--actions-json` holds, or nil when it is not given.

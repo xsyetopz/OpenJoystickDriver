@@ -72,12 +72,19 @@ enum ProfileText {
     var line = "\(source(binding.source)) -> \(destination(binding.destination))"
     if binding.behavior != .hold { line += "  behavior:\(word(binding.behavior))" }
     if binding.behavior == .pulse { line += "  pulse:\(binding.pulseDurationMs)ms" }
-    if let turbo = binding.turbo { line += "  turbo:\(turbo.repeatRateHz)Hz/\(turbo.dutyCycle)" }
+    if let turbo = binding.turbo {
+      line += "  turbo:\(turbo.repeatRateHz)Hz/\(turbo.dutyCycle)"
+      if turbo.initialDelayMs != 0 { line += " delay:\(turbo.initialDelayMs)ms" }
+      if let cap = turbo.maxRepeats { line += " max:\(cap)" }
+    }
     if let longHold = binding.longHold {
       line += "  long-hold:\(longHold.durationMs)ms -> \(destination(longHold.destination))"
     }
-    if let doubleTap = binding.doubleTap {
-      line += "  double-tap:\(doubleTap.windowMs)ms -> \(destination(doubleTap.destination))"
+    for tap in binding.multiTap.sorted(by: { $0.count < $1.count }) {
+      line += "  multi-tap:\(tap.count)x\(tap.windowMs)ms -> \(destination(tap.destination))"
+    }
+    if !binding.multiTap.isEmpty {
+      line += "  tap-delay:\(binding.multiTap.longestWindowMs)ms"
     }
     if !binding.additionalActions.isEmpty { line += "  actions:\(binding.additionalActions.count)" }
     return line
