@@ -152,8 +152,11 @@ struct SteelSeriesNimbusTests {
   @Test
   func sdlMappedControlsListOnlyWhatSDLMaps() throws {
     var order = 0
-    func element(_ page: UInt32, _ usage: UInt32, _ range: ClosedRange<Int>) -> HIDElementDescription
-    {
+    func element(
+      _ page: UInt32,
+      _ usage: UInt32,
+      _ range: ClosedRange<Int>
+    ) -> HIDElementDescription {
       order += 1
       return sdlElement(page, usage, order: order, range: range)
     }
