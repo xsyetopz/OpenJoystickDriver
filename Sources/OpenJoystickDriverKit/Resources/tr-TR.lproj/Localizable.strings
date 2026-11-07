@@ -62,6 +62,8 @@
 "status.allowed" = "İzin Verildi";
 /* Value of a permission row in the Access area when the active profiles do not use the permission. */
 "status.notNeeded" = "Gerekli Değil";
+/* Line of the profile activation alert and of 'ojd profile activate' that names the permissions that the actions of the profile need and that are not granted. %@ is the permission names, separated by commas. */
+"status.missingPermissions" = "Eksik izinler: %@";
 /* Placeholder in the profile creation sheet shown instead of a controller model when no controller is connected. */
 "status.connectController" = "Bir Kontrolcü Bağla";
 /* Line in the menu bar menu when no profile is active. */
@@ -842,6 +844,10 @@
 "term.keyboardPointer" = "Klavye ve İşaretçi";
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "Erişilebilirlik";
+/* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
+"platform.macos.term.postEventAccess" = "Post Event erişimi";
+/* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
+"platform.macos.term.automationAccess" = "Otomasyon erişimi";
 /* Button of the combination sheets that adds the chosen entry to the combination. */
 "action.add" = "Ekle";
 /* Button of the input test window that sends the chosen player indicator or lightbar color to the controller. */
@@ -1708,6 +1714,10 @@
 "ui.profiles.emptyActivationMessage" = "Bu profil tüm kontrolcü girişlerini bastırır.";
 /* Title of the alert shown before the app activates a profile that sends no input. */
 "ui.profiles.emptyActivationTitle" = "Profil, kontrolcü girişi olmadan etkinleştirilsin mi?";
+/* Title of the alert shown before the app activates a profile that launches actions or needs a permission that is missing. */
+"ui.profiles.activationTitle" = "Bu profil etkinleştirilsin mi?";
+/* Part of the message of the profile activation alert. %@ is the list of actions that open applications or URLs, run shortcuts or type text, one per line. */
+"ui.profiles.activationActions" = "Bu profil şu eylemleri başlatır:\n%@";
 /* Warning in the profile editor when the profile sends no input. */
 "ui.profiles.emptyInputWarning" = "Bu profil tüm kontrolcü girişlerini bastırır.";
 /* Menu item in the profile editor that sets the inputs of the profile to the default. */
@@ -3099,12 +3109,16 @@
 "cli.profile.activate.abstract" = "Bir profili kontrolcü modeline uygular.";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
 "cli.profile.activate.allowEmpty" = "Profil hiçbir çıktı üretmese bile etkinleştirir.";
+/* Help text of the --confirm-actions flag of 'ojd profile activate'. --confirm-actions stays as written. */
+"cli.profile.activate.confirmActions" = "Profilin eylemlerini başlatabileceğini onaylayın: uygulama ve URL açma, kısayol çalıştırma ve metin yazma.";
 /* Long description in the help of 'ojd profile activate'. It explains the profile that replaces the active one and the profile that produces no output. The words mapped and --allow-empty stay as written. */
 "cli.profile.activate.discussion" = "Profil, aynı kontrolcü modelinin ve uygulama kapsamının etkin profilinin yerini alır. Sanal oyun kontrolcüsü mapped olarak ayarlı olup ona, klavyeye, işaretçiye veya kontrolcüye hiçbir şey göndermeyen ve ışık rengi belirlemeyen bir profil çıktı üretmez; bunu etkinleştirmek için --allow-empty gerekir.";
 /* Message printed after 'ojd profile activate'. %1$@ is the profile name, shown in quotes, and %2$@ is the controller model it applies to. */
 "cli.profile.activate.done" = "“%1$@”, %2$@ için etkinleştirildi.";
 /* Error of 'ojd profile activate' for a profile that produces no output. --allow-empty stays as written. */
 "cli.profile.activate.empty" = "Bu profil çıktı üretmiyor. Etkinleştirmek için --allow-empty ekleyin.";
+/* Error of 'ojd profile activate' for a profile that opens applications or URLs, runs shortcuts or types text. --confirm-actions stays as written. %@ is the list of actions, one per line, with each URL in full. */
+"cli.profile.activate.actionsNeedConfirmation" = "Bu profil eylemler başlatır. Etkinleştirmek için --confirm-actions ekleyin:\n%@";
 /* Marker appended to the line of the active profile in 'ojd profile list'. Keep the parentheses. */
 "cli.profile.group.activeMarker" = "(etkin)";
 /* Help text of the PROFILE argument shared by the 'ojd profile' commands. The command in quotes stays as written. */

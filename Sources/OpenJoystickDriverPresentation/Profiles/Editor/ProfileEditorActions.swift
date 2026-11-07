@@ -107,10 +107,16 @@
       applyDraftChange { RuntimeProfileDraft(profile: draft.profile.clearingAllInput()) }
     }
 
-    /// Activates the profile, after the person confirms when it produces no output.
+    /// Activates the profile, after the person confirms when it produces no output, launches
+    /// actions or needs a permission that is missing.
     func requestActivation() {
-      if profile.producesNoOutput {
-        confirmation = .activateEmpty
+      var postEventAccess: RemappingPostEventAccessState?
+      if case .available(let state) = viewModel.postEventAccessState { postEventAccess = state }
+      if let needed = ProfileEditorConfirmation.activation(
+        of: profile,
+        postEventAccess: postEventAccess
+      ) {
+        confirmation = needed
       } else {
         activateProfile(allowEmpty: false)
       }

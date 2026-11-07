@@ -109,7 +109,7 @@ ojd profile create NAME --controller CONTROLLER [--app BUNDLE-ID] [--virtual-gam
 ojd profile duplicate PROFILE NEW-NAME
 ojd profile rename PROFILE NEW-NAME
 ojd profile delete PROFILE [--force] [--dry-run]
-ojd profile activate PROFILE [--allow-empty]
+ojd profile activate PROFILE [--allow-empty] [--confirm-actions]
 ojd profile deactivate PROFILE
 ojd profile edit PROFILE
 ojd profile recover [--force] [--dry-run]
@@ -128,7 +128,7 @@ ojd profile set PROFILE KEY VALUE
 - `profile duplicate`: Copy a profile under a new name. The copy is inactive.
 - `profile rename`: Give a profile a new name of 1 to 80 characters.
 - `profile delete`: Delete a profile. An active profile stops applying. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing.
-- `profile activate`: Apply a profile. It replaces the active profile of the same controller model and app scope. A profile with the virtual gamepad set to `mapped` that sends nothing to the gamepad, keyboard, pointer, or controller and sets no light color produces no output. To activate such a profile, add `--allow-empty`.
+- `profile activate`: Apply a profile. It replaces the active profile of the same controller model and app scope. A profile with the virtual gamepad set to `mapped` that sends nothing to the gamepad, keyboard, pointer, or controller and sets no light color produces no output. To activate such a profile, add `--allow-empty`. A profile with `OpenApplication`, `OpenURL`, `RunShortcut`, or `TypeText` destinations fails until you add `--confirm-actions`; the error lists each action, with each URL in full. When Post Event access is missing for the profile, the command prints the missing permission on stderr.
 - `profile deactivate`: Stop applying a profile. The controller then sends its own input.
 - `profile edit`: Open the profile file in `$VISUAL`, `$EDITOR`, or `vi`, then check and save it. Use it to change chords, sequences, layers, stick and trigger tuning, and the app scope. It needs a terminal. Without one, export the profile, change the file, and import it. For the file format, see [Profile file reference](Profile-File-Reference.md).
 - `profile recover`: Repair the problems that `profile list` reports. It acts on each issue: it removes a damaged profile file and resets a damaged active profile list. The service first backs up each file beside the original, under a name that contains `.backup-`. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing. With `--plain`, it prints one line for each issue, with its ID and kind.

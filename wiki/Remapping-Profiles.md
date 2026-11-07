@@ -117,7 +117,7 @@ ojd profile activate "My controller"
 ojd profile deactivate "My controller"
 ```
 
-The `activate` command refuses a profile that produces no output. Add `--allow-empty` to override. Paired Joy-Con profiles have no **Set active** button. For more information, see [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md).
+The `activate` command refuses a profile that produces no output. Add `--allow-empty` to override. A profile that opens applications or URLs, runs shortcuts, or types text needs `--confirm-actions`, and **Set active** asks first, listing each action and each missing permission. Paired Joy-Con profiles have no **Set active** button. For more information, see [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md).
 
 ### Save Changes
 

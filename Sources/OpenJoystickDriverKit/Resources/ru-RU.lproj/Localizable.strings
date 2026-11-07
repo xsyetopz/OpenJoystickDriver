@@ -62,6 +62,8 @@
 "status.allowed" = "Разрешено";
 /* Value of a permission row in the Access area when the active profiles do not use the permission. */
 "status.notNeeded" = "Не требуется";
+/* Line of the profile activation alert and of 'ojd profile activate' that names the permissions that the actions of the profile need and that are not granted. %@ is the permission names, separated by commas. */
+"status.missingPermissions" = "Отсутствуют разрешения: %@";
 /* Placeholder in the profile creation sheet shown instead of a controller model when no controller is connected. */
 "status.connectController" = "Подключите контроллер";
 /* Line in the menu bar menu when no profile is active. */
@@ -842,6 +844,10 @@
 "term.keyboardPointer" = "Клавиатура и указатель";
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "Универсальный доступ";
+/* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
+"platform.macos.term.postEventAccess" = "Доступ Post Event";
+/* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
+"platform.macos.term.automationAccess" = "Доступ к автоматизации";
 /* Button of the combination sheets that adds the chosen entry to the combination. */
 "action.add" = "Добавить";
 /* Button of the input test window that sends the chosen player indicator or lightbar color to the controller. */
@@ -1708,6 +1714,10 @@
 "ui.profiles.emptyActivationMessage" = "Этот профиль подавляет весь ввод с контроллера.";
 /* Title of the alert shown before the app activates a profile that sends no input. */
 "ui.profiles.emptyActivationTitle" = "Активировать профиль без ввода с контроллера?";
+/* Title of the alert shown before the app activates a profile that launches actions or needs a permission that is missing. */
+"ui.profiles.activationTitle" = "Включить этот профиль?";
+/* Part of the message of the profile activation alert. %@ is the list of actions that open applications or URLs, run shortcuts or type text, one per line. */
+"ui.profiles.activationActions" = "Этот профиль запускает такие действия:\n%@";
 /* Warning in the profile editor when the profile sends no input. */
 "ui.profiles.emptyInputWarning" = "Этот профиль подавляет весь ввод с контроллера.";
 /* Menu item in the profile editor that sets the inputs of the profile to the default. */
@@ -3099,12 +3109,16 @@
 "cli.profile.activate.abstract" = "Применяет профиль к модели его контроллера.";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
 "cli.profile.activate.allowEmpty" = "Активировать профиль, даже если он ничего не выводит.";
+/* Help text of the --confirm-actions flag of 'ojd profile activate'. --confirm-actions stays as written. */
+"cli.profile.activate.confirmActions" = "Подтвердите, что профиль может запускать свои действия: открывать приложения и URL, выполнять быстрые команды и вводить текст.";
 /* Long description in the help of 'ojd profile activate'. It explains the profile that replaces the active one and the profile that produces no output. The words mapped and --allow-empty stay as written. */
 "cli.profile.activate.discussion" = "Профиль заменяет активный профиль той же модели контроллера и области приложения. Профиль, у которого виртуальный геймпад установлен в mapped и который ничего не отправляет на геймпад, клавиатуру, указатель или контроллер, а также не задаёт цвет подсветки, ничего не выводит; для его активации нужен --allow-empty.";
 /* Message printed after 'ojd profile activate'. %1$@ is the profile name, shown in quotes, and %2$@ is the controller model it applies to. */
 "cli.profile.activate.done" = "Профиль «%1$@» активирован для %2$@.";
 /* Error of 'ojd profile activate' for a profile that produces no output. --allow-empty stays as written. */
 "cli.profile.activate.empty" = "Этот профиль ничего не выводит. Добавьте --allow-empty, чтобы активировать его.";
+/* Error of 'ojd profile activate' for a profile that opens applications or URLs, runs shortcuts or types text. --confirm-actions stays as written. %@ is the list of actions, one per line, with each URL in full. */
+"cli.profile.activate.actionsNeedConfirmation" = "Этот профиль запускает действия. Чтобы включить его, добавьте --confirm-actions:\n%@";
 /* Marker appended to the line of the active profile in 'ojd profile list'. Keep the parentheses. */
 "cli.profile.group.activeMarker" = "(активен)";
 /* Help text of the PROFILE argument shared by the 'ojd profile' commands. The command in quotes stays as written. */

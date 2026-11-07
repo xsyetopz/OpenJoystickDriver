@@ -30,6 +30,11 @@ struct ProfileActivateCommand: AsyncParsableCommand {
   )
   var allowEmpty = false
 
+  /// `--confirm-actions`: allow the profile to open applications and URLs, run shortcuts and type
+  /// text.
+  @Flag(help: ArgumentHelp(CLILocalized.text("cli.profile.activate.confirmActions")))
+  var confirmActions = false
+
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
@@ -37,13 +42,26 @@ struct ProfileActivateCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let (selector, allowEmpty) = (profile, allowEmpty)
+      let (selector, allowEmpty, confirmActions) = (profile, allowEmpty, confirmActions)
       let (target, before, after) = try await ServiceConnection.request { client in
         let (target, before) = try await selector.resolve(with: client)
         guard allowEmpty || !target.producesNoOutput else {
           throw CLIFailure.usage(
             CLILocalized.text(
               "cli.profile.activate.empty"
+            )
+          )
+        }
+        let preflight = RemappingActivationPreflight(
+          profile: target,
+          postEventAccess: before.postEventAccess
+        )
+        if let missing = preflight.missingPermissionsText { CLIOutput.stderr(missing) }
+        guard confirmActions || !preflight.needsConfirmation else {
+          throw CLIFailure.usage(
+            CLILocalized.format(
+              "cli.profile.activate.actionsNeedConfirmation",
+              preflight.launchedActions.joined(separator: "\n")
             )
           )
         }

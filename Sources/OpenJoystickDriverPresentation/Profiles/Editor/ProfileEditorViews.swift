@@ -71,15 +71,32 @@
   enum ProfileEditorConfirmation: Identifiable {
     /// Activating a profile that produces no output.
     case activateEmpty
+    /// Activating a profile that launches actions or needs a permission that is missing, with the
+    /// message of the alert.
+    case activateNotice(String)
     /// Clearing all input of the profile.
     case clearInputs
     /// Removing every assignment of the profile.
     case removeAllAssignments
 
+    /// The confirmation that activating `profile` needs, or nil when it needs none.
+    static func activation(
+      of profile: RemappingProfile,
+      postEventAccess: RemappingPostEventAccessState?
+    ) -> Self? {
+      if profile.producesNoOutput { return .activateEmpty }
+      let preflight = RemappingActivationPreflight(
+        profile: profile,
+        postEventAccess: postEventAccess
+      )
+      return preflight.hasNotice ? .activateNotice(preflight.alertMessage) : nil
+    }
+
     /// A string that tells the confirmations apart.
     var id: String {
       switch self {
       case .activateEmpty: "activate-empty"
+      case .activateNotice: "activate-notice"
       case .clearInputs: "clear-inputs"
       case .removeAllAssignments: "remove-all-assignments"
       }

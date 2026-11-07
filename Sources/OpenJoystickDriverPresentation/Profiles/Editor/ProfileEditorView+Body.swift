@@ -221,6 +221,15 @@
             ) { activateProfile(allowEmpty: true) },
             secondaryButton: .cancel { self.confirmation = nil }
           )
+        case .activateNotice(let message):
+          Alert(
+            title: Text(OJDLocalized.string("ui.profiles.activationTitle")),
+            message: Text(message),
+            primaryButton: .default(
+              Text(OJDLocalized.string("action.setActive"))
+            ) { activateProfile(allowEmpty: false) },
+            secondaryButton: .cancel { self.confirmation = nil }
+          )
         case .clearInputs:
           Alert(
             title: Text(

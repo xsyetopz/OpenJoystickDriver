@@ -144,6 +144,27 @@ extension RemappingProfile {
     return targets
   }
 
+  /// The actions of the profile that launch something, one line each, without repeats.
+  ///
+  /// A line is the destination type and its value, such as `OpenURL: https://example.com`, with
+  /// the URL in full. Counts destinations in layers, macros and alternate activations.
+  public var launchedActions: [String] {
+    var lines: [String] = []
+    _ = containsDestination {
+      let line: String
+      switch $0 {
+      case .openApplication(let identifier): line = "OpenApplication: \(identifier)"
+      case .openURL(let url): line = "OpenURL: \(url)"
+      case .runShortcut(let name): line = "RunShortcut: \(name)"
+      case .typeText(let text): line = "TypeText: \(text)"
+      default: return false
+      }
+      if !lines.contains(line) { lines.append(line) }
+      return false
+    }
+    return lines
+  }
+
   /// The voices that the `Speak` destinations of the profile name.
   var speechVoices: [String] {
     var voices: [String] = []

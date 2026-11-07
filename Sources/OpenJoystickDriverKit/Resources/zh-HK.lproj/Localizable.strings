@@ -62,6 +62,8 @@
 "status.allowed" = "已允許";
 /* Value of a permission row in the Access area when the active profiles do not use the permission. */
 "status.notNeeded" = "不需要";
+/* Line of the profile activation alert and of 'ojd profile activate' that names the permissions that the actions of the profile need and that are not granted. %@ is the permission names, separated by commas. */
+"status.missingPermissions" = "缺少的權限：%@";
 /* Placeholder in the profile creation sheet shown instead of a controller model when no controller is connected. */
 "status.connectController" = "連接控制器";
 /* Line in the menu bar menu when no profile is active. */
@@ -842,6 +844,10 @@
 "term.keyboardPointer" = "鍵盤與指標";
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "輔助使用";
+/* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
+"platform.macos.term.postEventAccess" = "Post Event 取用權限";
+/* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
+"platform.macos.term.automationAccess" = "自動化取用權限";
 /* Button of the combination sheets that adds the chosen entry to the combination. */
 "action.add" = "加入";
 /* Button of the input test window that sends the chosen player indicator or lightbar color to the controller. */
@@ -1708,6 +1714,10 @@
 "ui.profiles.emptyActivationMessage" = "此設定檔會抑制所有控制器輸入。";
 /* Title of the alert shown before the app activates a profile that sends no input. */
 "ui.profiles.emptyActivationTitle" = "要啟用沒有控制器輸入的設定檔嗎？";
+/* Title of the alert shown before the app activates a profile that launches actions or needs a permission that is missing. */
+"ui.profiles.activationTitle" = "要啟用此設定檔嗎？";
+/* Part of the message of the profile activation alert. %@ is the list of actions that open applications or URLs, run shortcuts or type text, one per line. */
+"ui.profiles.activationActions" = "此設定檔會啟動以下動作：\n%@";
 /* Warning in the profile editor when the profile sends no input. */
 "ui.profiles.emptyInputWarning" = "此設定檔會抑制所有控制器輸入。";
 /* Menu item in the profile editor that sets the inputs of the profile to the default. */
@@ -3099,12 +3109,16 @@
 "cli.profile.activate.abstract" = "將設定檔套用到其控制器型號。";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
 "cli.profile.activate.allowEmpty" = "即使設定檔不會產生任何輸出，也將其啟用。";
+/* Help text of the --confirm-actions flag of 'ojd profile activate'. --confirm-actions stays as written. */
+"cli.profile.activate.confirmActions" = "確認該設定檔可以啟動其動作：打開 App 和 URL、執行捷徑、輸入文字。";
 /* Long description in the help of 'ojd profile activate'. It explains the profile that replaces the active one and the profile that produces no output. The words mapped and --allow-empty stay as written. */
 "cli.profile.activate.discussion" = "該設定檔會取代同一控制器型號和 App 範圍內目前使用中的設定檔。虛擬遊戲控制器設為 mapped 且不向遊戲控制器、鍵盤、指標或控制器傳送任何內容，也不設定燈光顏色的設定檔不會產生任何輸出；啟用這樣的設定檔需要 --allow-empty。";
 /* Message printed after 'ojd profile activate'. %1$@ is the profile name, shown in quotes, and %2$@ is the controller model it applies to. */
 "cli.profile.activate.done" = "已啟用「%1$@」，用於 %2$@。";
 /* Error of 'ojd profile activate' for a profile that produces no output. --allow-empty stays as written. */
 "cli.profile.activate.empty" = "此設定檔不會產生任何輸出。請加上 --allow-empty 來啟用它。";
+/* Error of 'ojd profile activate' for a profile that opens applications or URLs, runs shortcuts or types text. --confirm-actions stays as written. %@ is the list of actions, one per line, with each URL in full. */
+"cli.profile.activate.actionsNeedConfirmation" = "此設定檔會啟動動作。請加上 --confirm-actions 來啟用它：\n%@";
 /* Marker appended to the line of the active profile in 'ojd profile list'. Keep the parentheses. */
 "cli.profile.group.activeMarker" = "（使用中）";
 /* Help text of the PROFILE argument shared by the 'ojd profile' commands. The command in quotes stays as written. */

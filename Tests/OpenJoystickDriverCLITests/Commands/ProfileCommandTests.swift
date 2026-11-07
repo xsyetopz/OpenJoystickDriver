@@ -228,6 +228,43 @@ struct ProfileCommandTests {
   }
 
   @Test
+  func activateNeedsConfirmationForALaunchingAction() async throws {
+    let url = "steam://run/440?launch=1"
+    let launching = FakeProfileLibrary.profile(
+      "Launch",
+      bindings: [RemappingBinding(source: .button(.south), destination: .openURL(url))]
+    )
+    let service = try Self.service(FakeProfileLibrary([launching]))
+
+    let refused = await service.run(["profile", "activate", "Launch"])
+    #expect(refused.code == 64)
+    #expect(refused.standardError.contains(url))
+    #expect(refused.standardError.contains("--confirm-actions"))
+    #expect(service.arguments(of: .activateRemappingProfile).isEmpty)
+
+    let confirmed = await service.run(["profile", "activate", "Launch", "--confirm-actions"])
+    #expect(confirmed.code == 0, "\(confirmed.standardError)")
+    #expect(service.arguments(of: .activateRemappingProfile).count == 1)
+  }
+
+  @Test
+  func activateNamesAMissingPostEventAccess() async throws {
+    let typing = FakeProfileLibrary.profile(
+      "Typing",
+      bindings: [
+        RemappingBinding(source: .button(.south), destination: .keyboard(key: .a, modifiers: []))
+      ]
+    )
+    let library = FakeProfileLibrary([typing], postEventAccess: .notAuthorized)
+    let service = try Self.service(library)
+
+    let result = await service.run(["profile", "activate", "Typing"])
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(result.standardError.contains(RemappingPermission.postEvent.localizedName))
+  }
+
+  @Test
   func activatePrintsOnePlainRow() async throws {
     let racing = FakeProfileLibrary.profile("Racing")
     let service = try Self.service(FakeProfileLibrary([racing]))

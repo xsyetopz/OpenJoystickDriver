@@ -62,6 +62,8 @@
 "status.allowed" = "허용됨";
 /* Value of a permission row in the Access area when the active profiles do not use the permission. */
 "status.notNeeded" = "필요하지 않음";
+/* Line of the profile activation alert and of 'ojd profile activate' that names the permissions that the actions of the profile need and that are not granted. %@ is the permission names, separated by commas. */
+"status.missingPermissions" = "누락된 권한: %@";
 /* Placeholder in the profile creation sheet shown instead of a controller model when no controller is connected. */
 "status.connectController" = "컨트롤러 연결";
 /* Line in the menu bar menu when no profile is active. */
@@ -842,6 +844,10 @@
 "term.keyboardPointer" = "키보드 및 포인터";
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "손쉬운 사용";
+/* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
+"platform.macos.term.postEventAccess" = "Post Event 접근";
+/* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
+"platform.macos.term.automationAccess" = "자동화 접근";
 /* Button of the combination sheets that adds the chosen entry to the combination. */
 "action.add" = "추가";
 /* Button of the input test window that sends the chosen player indicator or lightbar color to the controller. */
@@ -1708,6 +1714,10 @@
 "ui.profiles.emptyActivationMessage" = "이 프로파일은 모든 컨트롤러 입력을 억제합니다.";
 /* Title of the alert shown before the app activates a profile that sends no input. */
 "ui.profiles.emptyActivationTitle" = "컨트롤러 입력이 없는 프로파일을 활성화할까요?";
+/* Title of the alert shown before the app activates a profile that launches actions or needs a permission that is missing. */
+"ui.profiles.activationTitle" = "이 프로필을 활성화할까요?";
+/* Part of the message of the profile activation alert. %@ is the list of actions that open applications or URLs, run shortcuts or type text, one per line. */
+"ui.profiles.activationActions" = "이 프로필은 다음 동작을 실행합니다:\n%@";
 /* Warning in the profile editor when the profile sends no input. */
 "ui.profiles.emptyInputWarning" = "이 프로파일은 모든 컨트롤러 입력을 억제합니다.";
 /* Menu item in the profile editor that sets the inputs of the profile to the default. */
@@ -3099,12 +3109,16 @@
 "cli.profile.activate.abstract" = "프로파일을 해당 컨트롤러 모델에 적용합니다.";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
 "cli.profile.activate.allowEmpty" = "출력을 전혀 만들지 않는 프로파일이라도 활성화합니다.";
+/* Help text of the --confirm-actions flag of 'ojd profile activate'. --confirm-actions stays as written. */
+"cli.profile.activate.confirmActions" = "프로필이 App과 URL 열기, 단축어 실행, 텍스트 입력 같은 동작을 실행해도 되는지 확인합니다.";
 /* Long description in the help of 'ojd profile activate'. It explains the profile that replaces the active one and the profile that produces no output. The words mapped and --allow-empty stay as written. */
 "cli.profile.activate.discussion" = "이 프로파일은 같은 컨트롤러 모델과 앱 범위에서 활성 상태인 프로파일을 대체합니다. 가상 게임패드를 mapped로 설정하고 게임패드, 키보드, 포인터, 컨트롤러 어디에도 아무것도 보내지 않고 조명 색상도 설정하지 않는 프로파일은 출력을 만들지 않으며, 이런 프로파일을 활성화하려면 --allow-empty가 필요합니다.";
 /* Message printed after 'ojd profile activate'. %1$@ is the profile name, shown in quotes, and %2$@ is the controller model it applies to. */
 "cli.profile.activate.done" = "‘%1$@’을(를) %2$@에 활성화했습니다.";
 /* Error of 'ojd profile activate' for a profile that produces no output. --allow-empty stays as written. */
 "cli.profile.activate.empty" = "이 프로파일은 출력을 만들지 않습니다. 활성화하려면 --allow-empty를 추가하세요.";
+/* Error of 'ojd profile activate' for a profile that opens applications or URLs, runs shortcuts or types text. --confirm-actions stays as written. %@ is the list of actions, one per line, with each URL in full. */
+"cli.profile.activate.actionsNeedConfirmation" = "이 프로필은 동작을 실행합니다. 활성화하려면 --confirm-actions를 추가하세요:\n%@";
 /* Marker appended to the line of the active profile in 'ojd profile list'. Keep the parentheses. */
 "cli.profile.group.activeMarker" = "(활성)";
 /* Help text of the PROFILE argument shared by the 'ojd profile' commands. The command in quotes stays as written. */

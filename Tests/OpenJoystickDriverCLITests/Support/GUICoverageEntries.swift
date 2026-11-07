@@ -178,6 +178,7 @@ enum GUICoverageEntries {
     leaf("profile delete", "deleteProfile"),
     leaf("profile activate", "activateProfile"),
     option("profile activate", "--allow-empty", "requestActivation"),
+    option("profile activate", "--confirm-actions", "requestActivation"),
     leaf("profile deactivate", "deactivateProfile"),
     leaf("profile import", "chooseProfileToImport"),
     leaf("profile validate", "validateProfileFile"),
