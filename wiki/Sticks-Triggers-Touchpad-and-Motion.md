@@ -8,6 +8,7 @@ Analog settings change how a stick, a trigger, a touch surface, or a motion sens
 - [Set a Stick Mode](#set-a-stick-mode)
 - [Set Trigger Stages](#set-trigger-stages)
 - [Set Touch Mapping](#set-touch-mapping)
+- [Set Regions](#set-regions)
 - [Set Motion Tuning and Gyro Output](#set-motion-tuning-and-gyro-output)
 - [Create a Gyro to Stick Profile](#create-a-gyro-to-stick-profile)
 - [Pair Two Joy-Con Controllers](#pair-two-joy-con-controllers)
@@ -94,6 +95,27 @@ On the command line, the settings are the `triggerMappings` entries of the profi
 You can also use touch contact, touch grid, and touch swipe as assignment sources. A grid has 1 to 16 columns and rows. A swipe has a minimum distance from 0.01 to 1 (default 0.2). For the source syntax, see [Assigning buttons and actions](Bindings-and-Actions.md#assigning-buttons-and-actions).
 
 On the command line, the settings are the `touchMappings` entries of the profile. Change one with `ojd profile set`, for example `ojd profile set Racing touchMappings.0.mode Pointer`, or open the profile with `ojd profile edit`.
+
+## Set Regions
+
+A region is a source that is on while a stick, a trigger, or a touch contact is in a part of its range. Assign it like a button. For example, a stick ring can hold Shift while you push the stick all the way.
+
+1. In the **Controller** section, click **Adjust** in the **Regions** group.
+2. Select a **Region type**: **Stick ring**, **Trigger band**, or **Touch area**.
+3. Select the **Input**: the stick, the trigger, or the touch surface.
+4. Set the numbers.
+5. Select a **Destination**.
+6. Click **Add assignment**, then **Save** in the profile editor.
+
+While a controller is connected, the **Live position** drawing shows the region and a dot at the current position of the stick, trigger, or touch.
+
+- **Stick ring**: **Inner radius** and **Outer radius** are fractions of the deflection after the stick dead zone, from 0 to 1, with the inner radius below the outer one. **Sector start** and **Sector end** are degrees clockwise from up, from 0 to 360. A sector may pass 0, as 315 to 45 does. Leave both empty for the whole ring. The live dot uses the dead zone of the stick mapping.
+- **Trigger band**: **Band start** and **Band end** are pulls from 0 to 1. A trigger with bands cannot also have dual-stage trigger mappings.
+- **Touch area**: the edges, **Width**, and **Height** are fractions of the surface. The area is on while any contact is in it.
+
+Rings and sectors of one stick cannot overlap, and neither can bands of one trigger; OJD rejects the profile when you save it. A ring or band keeps its output while the input stays within the **Release hysteresis** (0 to 0.25, default 0.05) past an edge. When the input moves from one region into the next, OJD releases the first output before it presses the second.
+
+On the command line, the sources are `stick-region:SIDE:INNER-OUTER[:FROM-TO]`, `trigger-band:SIDE:FROM-TO`, and `touch:SURFACE:area:X:Y:W:H`, for example `ojd binding set Racing stick-region:left:0.8-1 key:key-a`. For the other source syntax, see [Assigning buttons and actions](Bindings-and-Actions.md#region-sources).
 
 ## Set Motion Tuning and Gyro Output
 

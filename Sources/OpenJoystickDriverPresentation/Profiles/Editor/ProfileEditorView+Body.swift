@@ -78,6 +78,15 @@
             ProfileTouchSheet(mappings: draft.profile.touchMappings, capabilities: capabilities) {
               mappings in applyDraftChange { try draft.settingTouchMappings(mappings) }
             }
+          case .regions:
+            ProfileRegionSheet(viewModel: viewModel, stickMappings: draft.profile.stickMappings) {
+              source,
+              destination in
+              draft = try draft.addingBinding(source: source, destination: destination)
+              localError = nil
+              saveError = nil
+              reportEditingState()
+            }
           case .motion:
             ProfileMotionSheet(tuning: draft.profile.motionTuning, output: draft.profile.gyroOutput)
             { tuning, output in

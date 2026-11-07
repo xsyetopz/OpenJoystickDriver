@@ -196,16 +196,48 @@ enum RuntimePresentation {
         humanized(swipe.direction.rawValue)
       )
     case .stickRegion(let region):
-      return "\(humanized(region.stick.rawValue)) \(region.innerRadius)-\(region.outerRadius)"
+      let stick = OJDLocalized.string(
+        region.stick == .left ? "ui.profiles.gyro.leftStick" : "ui.profiles.gyro.rightStick"
+      )
+      guard let from = region.fromDegrees, let to = region.toDegrees else {
+        return OJDLocalized.formatted(
+          "ui.mapping.stickRegion",
+          stick,
+          region.innerRadius,
+          region.outerRadius
+        )
+      }
+      return OJDLocalized.formatted(
+        "ui.mapping.stickRegionSector",
+        stick,
+        region.innerRadius,
+        region.outerRadius,
+        from,
+        to
+      )
     case .triggerBand(let band):
-      return "\(humanized(band.trigger.rawValue)) \(band.from)-\(band.to)"
+      return OJDLocalized.formatted(
+        "ui.mapping.triggerBand",
+        OJDLocalized.string(
+          band.trigger == .left ? "ui.profiles.trigger.left" : "ui.profiles.trigger.right"
+        ),
+        band.from,
+        band.to
+      )
     case .touchArea(let area):
-      return "\(touchSurfaceLabel(area.surface)) \(area.x),\(area.y) \(area.width)x\(area.height)"
+      return OJDLocalized.formatted(
+        "ui.mapping.touchArea",
+        touchSurfaceLabel(area.surface),
+        area.x,
+        area.y,
+        area.width,
+        area.height
+      )
     }
   }
 
   /// Returns the label of a touch surface.
-  private static func touchSurfaceLabel(_ surface: RemappingTouchSurface) -> String {
+  static func touchSurfaceLabel(_ surface: RemappingTouchSurface) -> String {
     switch surface {
     case .primary: OJDLocalized.string("ui.mapping.touchSurfacePrimary")
     case .left: OJDLocalized.string("ui.mapping.touchSurfaceLeft")

@@ -145,6 +145,18 @@ When you assign a stick axis or trigger axis, the row has an **Adjust...** butto
 
 The command line options are `--deadzone`, `--gain`, `--invert`, `--response-curve`, and `--digital-threshold`. An axis source needs these settings. A non-axis source cannot have them.
 
+### Region Sources
+
+A region source is on while a stick, trigger, or touch contact is inside a range, so every behavior, macro, layer, and combination works with it.
+
+```text
+SOURCE: stick-region:left|right:INNER-OUTER[:FROM-TO]
+        trigger-band:left|right:FROM-TO
+        touch:SURFACE:area:X:Y:W:H
+```
+
+`INNER-OUTER` are stick deflections from 0 to 1 after the dead zone, `FROM-TO` on a stick are degrees clockwise from up, `FROM-TO` on a trigger are pulls from 0 to 1, and the touch values are fractions of the surface. For example, `ojd binding set "My controller" stick-region:left:0.8-1 key:key-a` presses A while the left stick is pushed past 0.8. Regions of one stick and bands of one trigger must not overlap. To add one in the app, use **Regions** in the **Controller** section. For the fields and the live position view, see [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md#set-regions).
+
 ### Restore Or Clear Assignments
 
 - To remove every assignment, select **Clear all inputs**.

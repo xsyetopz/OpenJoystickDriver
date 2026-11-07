@@ -253,6 +253,12 @@
             enabled: capabilities.physicalInput.touchContactCount > 0
               || !profile.touchMappings.isEmpty
           ) { openSheet(.touch) }
+          configurationRow(
+            title: OJDLocalized.string("ui.profiles.region.title"),
+            summary: OJDLocalized.string("ui.profiles.region.summary"),
+            supported: capabilities.supportsStickAxes || capabilities.supportsAnalogTriggers
+              || !capabilities.physicalInput.touchSurfaces.isEmpty
+          ) { openSheet(.regions) }
         }
         ProfileLightingEditor(color: profile.physicalColor, onChange: updatePhysicalColor).disabled(
           !capabilities.physicalOutput.lightingFeatures.contains(.programmableColor)
