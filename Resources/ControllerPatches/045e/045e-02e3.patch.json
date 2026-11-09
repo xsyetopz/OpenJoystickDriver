@@ -6,6 +6,12 @@
     "productID": 739
   },
   "patch": {
+    "usb": {
+      "endpoints": {
+        "in": 129,
+        "out": 1
+      }
+    },
     "route": "ExtensionOwned"
   }
 }

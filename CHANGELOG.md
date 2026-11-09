@@ -6,6 +6,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ## [Unreleased]
 
+### Fixed
+
+- The Xbox Elite Series 1 (`045E:02E3`) record uses its interface 0 endpoints, interrupt IN `0x81` and OUT `0x01`, as the `045E:02D1` record does. The GIP defaults `0x82` and `0x02` are isochronous endpoints of interface 1 on this controller, so every USB handshake failed with `kIOReturnError`.
+
 ## [0.6.0-alpha.2] - 2026-11-07
 
 ### Added
