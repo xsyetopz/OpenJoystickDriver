@@ -53,7 +53,7 @@
       "$ref": "#/$defs/tuning"
     },
     "idle": {
-      "description": "Marks an identity OJD recognizes and serves nothing, such as a receiver with no controller connected: OJD sends it no data and creates no virtual gamepad. The record has one default mode and no section that serves controls.",
+      "description": "Marks an identity that OJD recognizes and serves nothing, such as a receiver with no controller.",
       "const": true
     }
   },
@@ -84,7 +84,7 @@
   },
   "$defs": {
     "modes": {
-      "description": "The modes of one model. At most one mode has the id default and no match: it runs when no other mode matches or a probe gets no reply. Every other mode has a match. Non-default modes are tried in order and the first whose match keys all hold is selected. A record without a default mode leaves a device that matches no mode unsupported.",
+      "description": "The modes of one model.",
       "type": "array",
       "minItems": 1,
       "items": {
@@ -159,7 +159,7 @@
       ]
     },
     "modeMatch": {
-      "description": "Keys that must all hold for a mode to be selected. Link, interface signature, strings and bcdDevice are read from the enumerated device; probes read a feature report and are tried last.",
+      "description": "The keys that select a mode: link, interface signature, strings, release number, and probes.",
       "type": "object",
       "minProperties": 1,
       "additionalProperties": false,
@@ -196,7 +196,7 @@
       }
     },
     "modeInterfaceSignature": {
-      "description": "An interface the device must expose, by USB class triple and, optionally, the HID primary usage and the whole endpoint set. Only a raw-USB mode may name endpoints: a HID route reports none.",
+      "description": "An interface of the device, by USB class triple, HID primary usage, and endpoint set.",
       "type": "object",
       "required": ["interfaceClass", "interfaceSubclass", "interfaceProtocol"],
       "additionalProperties": false,
@@ -221,7 +221,7 @@
           "maximum": 65535
         },
         "endpoints": {
-          "description": "The interface's whole endpoint set: each entry pairs with one distinct endpoint and none is left over.",
+          "description": "The interface's whole endpoint set.",
           "type": "array",
           "minItems": 1,
           "items": {
@@ -239,7 +239,7 @@
       "maximum": 255
     },
     "bcdDeviceRange": {
-      "description": "An inclusive range of the device release number, bcdDevice. min must not exceed max.",
+      "description": "An inclusive range of the device release number.",
       "type": "object",
       "required": ["min", "max"],
       "additionalProperties": false,
@@ -257,7 +257,7 @@
       }
     },
     "modeInterface": {
-      "description": "The interfaces this mode drives, an inclusive range of interface numbers; the lowest one the device exposes is bound. first must not exceed last.",
+      "description": "The interfaces this mode drives, as an inclusive range of interface numbers.",
       "type": "object",
       "required": ["first", "last"],
       "additionalProperties": false,
@@ -271,7 +271,7 @@
       }
     },
     "modeProbe": {
-      "description": "A read of one feature report. A probe never writes. answers: the read succeeds. stalls: the device refuses the read. bytes: the reply holds the given bytes at offset.",
+      "description": "A read of one feature report: whether it answers, stalls, or holds given bytes.",
       "type": "object",
       "required": ["report", "length", "expect"],
       "additionalProperties": false,
@@ -352,7 +352,7 @@
           "$ref": "protocol-description.schema.json#/$defs/variant"
         },
         "parameters": {
-          "description": "The parameters of the family's driver; the family's description declares their names, types and values, which a schema cannot say and the validators check.",
+          "description": "The parameters of the family's driver.",
           "type": "object",
           "minProperties": 1,
           "propertyNames": {
@@ -508,7 +508,7 @@
           "maximum": 60000
         },
         "irWriteIntervalMs": {
-          "description": "The wait after each Wii Remote IR camera register write; WiiBrew asks for at least 50 ms.",
+          "description": "The wait after each Wii Remote IR camera register write.",
           "type": "integer",
           "minimum": 50,
           "maximum": 1000
@@ -535,7 +535,7 @@
       "enum": ["ExtensionOwned"]
     },
     "rumbleTemplate": {
-      "description": "A rumble report: its target, optional fixed bytes covering the whole report (the report ID leads a numbered HID report), one field per motor with the encoding of its value, an optional rolling-counter byte and an optional resend interval. That the bytes cover the report, start with the report ID and leave the motor and counter bytes distinct and inside the report, which a schema cannot say, the validators check.",
+      "description": "A rumble report: its target, fixed bytes, one field per motor, a counter byte, and a resend interval.",
       "type": "object",
       "additionalProperties": false,
       "required": ["report"],
@@ -722,7 +722,7 @@
               "maximum": 255
             },
             "length": {
-              "description": "atLeast decodes every report of at least that many bytes; exactly decodes only reports of that length. With an id, the length counts the id byte.",
+              "description": "The length of the input report, as a minimum or an exact size.",
               "oneOf": [
                 {
                   "type": "object",
@@ -1370,7 +1370,7 @@
       "enum": ["System", "OJD"]
     },
     "modeEndpoint": {
-      "description": "One endpoint of an endpoint set; every key present must hold.",
+      "description": "One endpoint of an endpoint set.",
       "type": "object",
       "minProperties": 1,
       "additionalProperties": false,
@@ -1418,7 +1418,7 @@
       }
     },
     "controlTransfer": {
-      "description": "A vendor control transfer on the device. An IN transfer reads wLength bytes; an OUT transfer writes data, whose byte count equals wLength. match gates the transfer: it runs only for a device whose strings and bcdDevice hold.",
+      "description": "A vendor control transfer on the device, gated by a match on its strings and release number.",
       "type": "object",
       "required": ["bmRequestType", "bRequest", "wValue", "wIndex", "wLength"],
       "additionalProperties": false,
@@ -1524,7 +1524,7 @@
       ]
     },
     "session": {
-      "description": "The steps one mode runs. startup is one list of HID report writes or of raw-USB packets. keepAlive, settleMilliseconds, shutdown and control apply to raw-USB modes. control runs before startup, in order. rumble is the rumble report template.",
+      "description": "The steps one mode runs: startup, keep-alive, settle time, shutdown, control transfers, and rumble.",
       "type": "object",
       "minProperties": 1,
       "additionalProperties": false,
