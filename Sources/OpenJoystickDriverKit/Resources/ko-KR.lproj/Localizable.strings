@@ -4276,6 +4276,12 @@
 "error.E5007.namedPacketPlan.idForm" = "%1$@, session.namedPackets[].id: 이름 있는 패킷의 id는 패밀리, 슬래시, 하이픈으로 이은 소문자 단어여야 합니다. 해결: id를 xbox/start-input처럼 쓰세요.";
 /* Error E5007, shown when the named packets of a record fail: a named packet has fewer than 3 bytes or its session byte is not 2. %1$@ is the file. */
 "error.E5007.namedPacketPlan.shape" = "%1$@, session.namedPackets[].sessionByte: 이름 있는 패킷은 3바이트 이상이어야 하고 세션 바이트는 2여야 합니다. 해결: bytes를 3바이트 이상으로 하고 sessionByte를 2로 설정하세요.";
+/* Error E5007, shown when a startup write of a record fails: a startup packet reference sits in a record instead of a protocol description. %1$@ is the file. */
+"error.E5007.startupWrite.packetReference" = "%1$@, session.startup[].packet: 시작 패킷 참조는 프로토콜 설명에서만 쓸 수 있습니다. 해결: packet 대신 레코드에 바이트를 쓰세요.";
+/* Error E5007, shown when a startup write of a record fails: a startup phase is not Startup or Activation. %1$@ is the file. */
+"error.E5007.startupWrite.phase" = "%1$@, session.startup[].phase: 시작 단계는 Startup 또는 Activation이어야 합니다. 해결: phase를 둘 중 하나로 설정하거나 생략하세요.";
+/* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
+"error.E5007.startupWrite.crcSeedRange" = "%1$@, session.startup[].crc32Seed: 시작 crc32Seed는 0...255여야 합니다. 해결: crc32Seed를 0...255로 설정하거나 생략하세요.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: 각 항목에는 id가 있어야 하며 id, protocol, match, interface, session, idle만 사용할 수 있습니다. 해결: 각 항목에 id를 지정하고 다른 키는 삭제하세요.";

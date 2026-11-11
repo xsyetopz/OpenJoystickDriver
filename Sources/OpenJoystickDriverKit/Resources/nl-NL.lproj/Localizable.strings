@@ -3738,6 +3738,12 @@
 "error.E5007.namedPacketPlan.idForm" = "%1$@, session.namedPackets[].id: de id van een benoemd pakket moet een familie, een schuine streep en kleine woorden met koppeltekens zijn. Oplossing: schrijf de id zoals xbox/start-input.";
 /* Error E5007, shown when the named packets of a record fail: a named packet has fewer than 3 bytes or its session byte is not 2. %1$@ is the file. */
 "error.E5007.namedPacketPlan.shape" = "%1$@, session.namedPackets[].sessionByte: een benoemd pakket moet minstens 3 bytes hebben en zijn sessiebyte moet 2 zijn. Oplossing: geef bytes minstens 3 bytes en stel sessionByte in op 2.";
+/* Error E5007, shown when a startup write of a record fails: a startup packet reference sits in a record instead of a protocol description. %1$@ is the file. */
+"error.E5007.startupWrite.packetReference" = "%1$@, session.startup[].packet: een verwijzing naar een startpakket is alleen voor protocolbeschrijvingen. Oplossing: schrijf de bytes in het record in plaats van packet.";
+/* Error E5007, shown when a startup write of a record fails: a startup phase is not Startup or Activation. %1$@ is the file. */
+"error.E5007.startupWrite.phase" = "%1$@, session.startup[].phase: een startfase moet Startup of Activation zijn. Oplossing: stel phase in op een van beide, of laat het weg.";
+/* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
+"error.E5007.startupWrite.crcSeedRange" = "%1$@, session.startup[].crc32Seed: een start-crc32Seed moet 0...255 zijn. Oplossing: stel crc32Seed in op 0...255, of laat het weg.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: elk item moet een id bevatten en alleen id, protocol, match, interface, session of idle. Oplossing: geef elk item een id en verwijder elke andere sleutel.";

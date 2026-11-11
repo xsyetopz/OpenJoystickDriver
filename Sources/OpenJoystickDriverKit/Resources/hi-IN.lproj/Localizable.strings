@@ -4276,6 +4276,12 @@
 "error.E5007.namedPacketPlan.idForm" = "%1$@, session.namedPackets[].id: नामित पैकेट id एक परिवार, एक स्लैश और हाइफ़न से जुड़े छोटे अक्षरों के शब्द होने चाहिए। समाधान: id को xbox/start-input जैसा लिखें।";
 /* Error E5007, shown when the named packets of a record fail: a named packet has fewer than 3 bytes or its session byte is not 2. %1$@ is the file. */
 "error.E5007.namedPacketPlan.shape" = "%1$@, session.namedPackets[].sessionByte: नामित पैकेट में कम से कम 3 बाइट होने चाहिए और उसका सेशन बाइट 2 होना चाहिए। समाधान: bytes में कम से कम 3 बाइट रखें और sessionByte को 2 रखें।";
+/* Error E5007, shown when a startup write of a record fails: a startup packet reference sits in a record instead of a protocol description. %1$@ is the file. */
+"error.E5007.startupWrite.packetReference" = "%1$@, session.startup[].packet: स्टार्टअप पैकेट संदर्भ केवल प्रोटोकॉल विवरणों के लिए है। समाधान: packet की जगह बाइट रिकॉर्ड में लिखें।";
+/* Error E5007, shown when a startup write of a record fails: a startup phase is not Startup or Activation. %1$@ is the file. */
+"error.E5007.startupWrite.phase" = "%1$@, session.startup[].phase: स्टार्टअप फ़ेज़ Startup या Activation होना चाहिए। समाधान: phase को इनमें से एक पर सेट करें, या छोड़ दें।";
+/* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
+"error.E5007.startupWrite.crcSeedRange" = "%1$@, session.startup[].crc32Seed: स्टार्टअप crc32Seed 0...255 के भीतर होना चाहिए। समाधान: crc32Seed को 0...255 पर सेट करें, या छोड़ दें।";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: हर प्रविष्टि में id होना चाहिए और केवल id, protocol, match, interface, session या idle हो सकते हैं। समाधान: हर प्रविष्टि को id दें और बाकी कुंजियाँ हटाएँ।";

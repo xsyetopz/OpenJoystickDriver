@@ -29,6 +29,7 @@ extension ControllerRecordDocument {
           guard decoder.userInfo[.startupConditionsAllowed] as? Bool == true else {
             throw ControllerRecordProblem(
               code: .invalidControllerRecord,
+              key: "error.E5007.startupWrite.packetReference",
               "a startup packet reference is for protocol descriptions"
             )
           }
@@ -83,6 +84,7 @@ extension ControllerRecordDocument {
       guard transportName == nil || transport != nil else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.startupWrite.transport",
           "a startup transport is USB, BluetoothClassic or BluetoothLE"
         )
       }
@@ -91,6 +93,7 @@ extension ControllerRecordDocument {
       guard phaseName == nil || phase != nil else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.startupWrite.phase",
           "a startup phase is Startup or Activation"
         )
       }
@@ -98,6 +101,7 @@ extension ControllerRecordDocument {
       guard seed.map({ (0...255).contains($0) }) ?? true else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.startupWrite.crcSeedRange",
           "a startup crc32Seed is 0...255"
         )
       }
@@ -122,6 +126,7 @@ extension ControllerRecordDocument {
       guard endpoint.map(USBStartupWrite.endpointRange.contains) ?? true else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.startupWrite.usbEndpoint",
           "a USB startup endpoint is 1...127"
         )
       }
