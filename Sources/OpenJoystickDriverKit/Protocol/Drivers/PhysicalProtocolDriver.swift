@@ -96,6 +96,9 @@ public struct DriverSessionPlan: Equatable, Sendable {
   public let hidPlayerIndicatorFollowsFirstInput: Bool
   /// USB command interface for `.usb` writes of a controller bound over HID; nil when none.
   public let usbCommandChannel: USBCommandChannel?
+  /// True when the session has an interrupt IN read pending before it sends the USB startup
+  /// writes, for a pad that sends its first report only to a read already waiting.
+  public let armsInputBeforeStartup: Bool
   /// What the user does before the controller sends input, from the family's description for the
   /// bound variant (``withDefaults(of:variant:)``); nil when input starts on its own.
   public internal(set) var inputStartAction: InputStartAction?
@@ -120,7 +123,8 @@ public struct DriverSessionPlan: Equatable, Sendable {
     minimumHIDOutputIntervalNanoseconds: UInt64 = 0,
     assignsStartupPlayerIndicator: Bool = false,
     hidPlayerIndicatorFollowsFirstInput: Bool = false,
-    usbCommandChannel: USBCommandChannel? = nil
+    usbCommandChannel: USBCommandChannel? = nil,
+    armsInputBeforeStartup: Bool = false
   ) {
     self.inputReportLivenessTimeoutNanoseconds = inputReportLivenessTimeoutNanoseconds
     self.requiresInputConnectionBeforeOutput = requiresInputConnectionBeforeOutput
@@ -140,6 +144,7 @@ public struct DriverSessionPlan: Equatable, Sendable {
     self.assignsStartupPlayerIndicator = assignsStartupPlayerIndicator
     self.hidPlayerIndicatorFollowsFirstInput = hidPlayerIndicatorFollowsFirstInput
     self.usbCommandChannel = usbCommandChannel
+    self.armsInputBeforeStartup = armsInputBeforeStartup
   }
 
   /// This plan with the timings and the input start action that the protocol description of

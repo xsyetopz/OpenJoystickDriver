@@ -148,7 +148,8 @@ public final class GIPDriver: PhysicalProtocolDriver {
         repeating: 0,
         count: PhysicalProtocolID.xboxGIP.described(limit: \.handshakeAttempts) - 1
       ),
-      keepAliveChannels: keepAlivePolicy == .enabled ? [.usb] : []
+      keepAliveChannels: keepAlivePolicy == .enabled ? [.usb] : [],
+      armsInputBeforeStartup: true
     ).withDefaults(of: .xboxGIP)
   }
 

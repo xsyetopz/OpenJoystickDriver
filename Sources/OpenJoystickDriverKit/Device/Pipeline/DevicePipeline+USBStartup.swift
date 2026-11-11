@@ -111,9 +111,14 @@ extension DevicePipeline {
       consecutiveUSBIOErrors = 0
       driver.resetProtocolState()
 
+      // Linux reads the IN endpoint before it writes the first startup packet; a pad that sends
+      // its first report once, without an announce, sends it to that read.
+      let armedRead = plan.armsInputBeforeStartup ? armInputRead(handle: handle) : nil
+
       guard
         await performUSBHandshake(handle: handle, device: device, runGeneration: generation)
       else {
+        armedRead?.cancel()
         guard isCurrentUSBRun(generation) else { return }
         usbSessionStartFailed = true
         await resetUSBDeviceIfUnresponsive(device, provider: provider)
@@ -141,7 +146,11 @@ extension DevicePipeline {
       openAttempt = 0
       if !requiresInputConnectionBeforeOutput(), sessionState == .active { await activateOutput() }
 
-      let recovery = await runUSBInputLoop(handle: handle, generation: generation)
+      let recovery = await runUSBInputLoop(
+        handle: handle,
+        generation: generation,
+        armedRead: armedRead
+      )
 
       guard isCurrentUSBRun(generation) else { return }
 
@@ -153,6 +162,14 @@ extension DevicePipeline {
       case .accessDenied: delay = usbRecoveryPolicy.accessContentionDelayNanoseconds
       }
       try? await Task.sleep(nanoseconds: delay)
+    }
+  }
+
+  /// Starts the interrupt IN read that the input loop takes as its first read.
+  func armInputRead(handle: any USBTransportSession) -> Task<[UInt8], any Error> {
+    let endpoint = transportProfile.inputEndpoint
+    return Task {
+      try await handle.read(endpoint: endpoint, length: gipReadPacketLength, timeout: gipReadTimeoutMs)
     }
   }
 
