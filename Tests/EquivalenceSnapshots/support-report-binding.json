@@ -1,6 +1,6 @@
 {
   "data" : {
-    "apiVersion" : "openjoystickdriver/v1alpha2",
+    "apiVersion" : "openjoystickdriver/v1alpha3",
     "applicationService" : {
       "connected" : true,
       "installed" : true
@@ -200,7 +200,7 @@
     ]
   },
   "datacontenttype" : "application/json",
-  "dataschema" : "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/report.schema.json#/$defs/supportDiagnosticData",
+  "dataschema" : "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/report.schema.json#/$defs/supportDiagnosticData",
   "id" : "fixture",
   "source" : "urn:openjoystickdriver:support",
   "specversion" : "1.0",

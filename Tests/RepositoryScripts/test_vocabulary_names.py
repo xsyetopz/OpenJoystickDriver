@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+import plistlib
 import unittest
 from typing import Any, cast
 
@@ -9,7 +10,7 @@ from Scripts.Quality import validate_schemas
 
 VERSION = "openjoystickdriver/v1alpha3"
 ROOT = validate_schemas.ROOT
-SAMPLE_PROFILE = ROOT / "docs" / "sdk" / "sample" / "Profiles" / "sample-pad.json"
+SAMPLE_PROFILE = ROOT / "docs" / "sdk" / "sample" / "Profiles" / "sample-pad.plist"
 UUID = "3B0F9C52-6E1D-4A8B-9C27-5D4E8F1A0B"
 UNKNOWN = "notAName"
 
@@ -30,8 +31,8 @@ PROFILE_KINDS: dict[str, tuple[Any, ...]] = {
 
 
 def profile() -> dict[str, Any]:
-    with SAMPLE_PROFILE.open(encoding="utf-8") as source:
-        document = json.load(source)
+    with SAMPLE_PROFILE.open("rb") as source:
+        document = plistlib.load(source)
     document["bindings"] = [
         {
             "id": f"{UUID}02",

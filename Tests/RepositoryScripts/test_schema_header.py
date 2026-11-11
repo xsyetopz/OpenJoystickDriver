@@ -36,15 +36,15 @@ def instances() -> dict[str, dict[str, Any]]:
             "selector": {"vendorID": 0x1209, "productID": 1},
             "patch": {"tuning": {"stickDeadzone": 0.02}},
         },
-        "virtual-device": load(SAMPLE / "VirtualDevices/1209-0001.json"),
-        "profile": load(SAMPLE / "Profiles/sample-pad.json"),
-        "mod-package": load(SAMPLE / "mod.json"),
+        "virtual-device": load_plist(SAMPLE / "VirtualDevices/1209-0001.plist"),
+        "profile": load_plist(SAMPLE / "Profiles/sample-pad.plist"),
+        "mod-package": load_plist(SAMPLE / "mod.plist"),
         "error-codes": load_plist(ROOT / "Resources/ErrorCodes.plist"),
         "crosswalk": load_plist(ROOT / "Resources/Vocabulary/crosswalk.plist"),
-        "access-grants": load(FIXTURES / "access_grants.json"),
+        "access-grants": load_plist(FIXTURES / "access_grants.plist"),
         "protocol-description": load_plist(ROOT / "Resources/Protocols/xbox-xusb.plist"),
-        "settings": load(FIXTURES / "settings.json"),
-        "service-listener-failure": load(FIXTURES / "service_listener_failure.json"),
+        "settings": load_plist(FIXTURES / "settings.plist"),
+        "service-listener-failure": load_plist(FIXTURES / "service_listener_failure.plist"),
     }
 
 

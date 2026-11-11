@@ -41,13 +41,13 @@ PROTOCOL_DESCRIPTIONS = ROOT / "Resources" / "Protocols"
 VIRTUAL_DEVICES = ROOT / "Resources" / "VirtualDevices"
 SAMPLE_PACKAGE = ROOT / "docs" / "sdk" / "sample"
 ACCESS_GRANT_FIXTURES = (
-    ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "access_grants.json",
+    ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "access_grants.plist",
 )
 SETTINGS_FIXTURES = (
-    ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "settings.json",
+    ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "settings.plist",
 )
 SERVICE_LISTENER_FAILURE_FIXTURES = (
-    ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "service_listener_failure.json",
+    ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "service_listener_failure.plist",
 )
 # The schema of each kind of file in the sample mod package, by its folder. A `Controllers`
 # file is a `ControllerPatch` or a `Controller`, which its `kind` tells apart.
@@ -150,10 +150,10 @@ def validate_schema_identity(documents: dict[str, dict[str, object]]) -> None:
 
 def sample_documents() -> list[tuple[str, Path]]:
     """The files of the sample mod package with the schema each is read as."""
-    found: list[tuple[str, Path]] = [("mod-package", SAMPLE_PACKAGE / "mod.json")]
+    found: list[tuple[str, Path]] = [("mod-package", SAMPLE_PACKAGE / "mod.plist")]
     for folder, stem in SAMPLE_FOLDER_SCHEMAS.items():
-        for path in sorted((SAMPLE_PACKAGE / folder).glob("*.json")):
-            kind = load_json(path)
+        for path in sorted((SAMPLE_PACKAGE / folder).glob("*.plist")):
+            kind = load_plist(path)
             patch = (
                 isinstance(kind, dict) and kind.get("kind") == KINDS["controller-patch"]
             )
@@ -164,7 +164,7 @@ def sample_documents() -> list[tuple[str, Path]]:
                 )
             )
     known = {path for _, path in found}
-    unknown = sorted(set(SAMPLE_PACKAGE.rglob("*.json")) - known)
+    unknown = sorted(set(SAMPLE_PACKAGE.rglob("*.plist")) - known)
     if unknown:
         raise SchemaError(
             f"{unknown[0].relative_to(ROOT)}: no schema is named for this sample file"

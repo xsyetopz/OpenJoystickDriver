@@ -47,7 +47,7 @@ Every line that the endpoint sends, except a watch line, and every line that a p
 The endpoint sends it first on each connection. `nonce` is 32 random bytes in unpadded base64url, new for each connection.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"Challenge","nonce":"ICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj8"}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Challenge","nonce":"ICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj8"}
 ```
 
 ### Hello
@@ -55,13 +55,13 @@ The endpoint sends it first on each connection. `nonce` is 32 random bytes in un
 The program sends it once, after the `Challenge`. `scopes` lists the scopes that the program needs: `Read`, `Control`, or both. Each must be granted.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"Hello","scopes":["Read"]}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Hello","scopes":["Read"]}
 ```
 
 With a token, add `tokenName` and `proof`:
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"Hello","scopes":["Control"],"tokenName":"driver","proof":"2ea98b640f249c35c5644ae64b42d56812ec40516475aa62913b53b80e9551c9"}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Hello","scopes":["Control"],"tokenName":"driver","proof":"2ea98b640f249c35c5644ae64b42d56812ec40516475aa62913b53b80e9551c9"}
 ```
 
 ### Welcome
@@ -69,7 +69,7 @@ With a token, add `tokenName` and `proof`:
 The endpoint answers a valid `Hello` with the OpenJoystickDriver `version` and the granted `scopes`.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"Welcome","version":"0.6.0-alpha.1","scopes":["Read"]}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","version":"0.6.0-alpha.1","scopes":["Read"]}
 ```
 
 ### Subscription
@@ -77,13 +77,13 @@ The endpoint answers a valid `Hello` with the OpenJoystickDriver `version` and t
 The program sends it after the `Welcome` to read the controllers. `Controllers` is the only stream. Add `"output":true` for the values of the virtual gamepad in the watch lines.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"Subscription","stream":"Controllers"}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Subscription","stream":"Controllers"}
 ```
 
 The endpoint answers with the same `ADDED`, `MODIFIED`, and `DELETED` watch lines as `ojd controller watch --all --json`: first the connected controllers, then each change. A watch line has `type` and `object`, and it has no `apiVersion`. The `object` has the `kind` `Controller`.
 
 ```json
-{"type":"ADDED","object":{"apiVersion":"openjoystickdriver/v1alpha2","kind":"Controller","id":"pad-1","name":"Test Pad","vendorID":1118,"productID":654,"connection":"usb","hasSerialNumber":false,"ownedByAnotherClient":false,"alsoListedBySystem":false,"protocol":"XboxXUSB:Wired","session":"Active","waitsForGuidePress":false}}
+{"type":"ADDED","object":{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Controller","id":"pad-1","name":"Test Pad","vendorID":1118,"productID":654,"connection":"usb","hasSerialNumber":false,"ownedByAnotherClient":false,"alsoListedBySystem":false,"protocol":"XboxXUSB:Wired","session":"Active","waitsForGuidePress":false}}
 ```
 
 ### FeedRequest
@@ -91,7 +91,7 @@ The endpoint answers with the same `ADDED`, `MODIFIED`, and `DELETED` watch line
 The program sends it after the `Welcome` to publish a virtual gamepad. It needs the `Control` scope. `as` is a persona id: `Generic` or `SDLCompatible`. Closing the connection removes the virtual gamepad.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"FeedRequest","as":"Generic"}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedRequest","as":"Generic"}
 ```
 
 ### FeedSession
@@ -99,7 +99,7 @@ The program sends it after the `Welcome` to publish a virtual gamepad. It needs 
 The endpoint answers a `FeedRequest` when the virtual gamepad exists.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"FeedSession","as":"Generic"}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedSession","as":"Generic"}
 ```
 
 ### Frame
@@ -107,7 +107,7 @@ The endpoint answers a `FeedRequest` when the virtual gamepad exists.
 After the `FeedSession`, the program sends one `Frame` for each line. A frame has the keys of an `ojd virtual feed` line. A control that the frame omits is neutral. Sticks run from -1 to 1, with positive Y down, and triggers run from 0 to 1. `holdMilliseconds` is how long the frame shows at least; without it, the frame shows until the next one.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"Frame","buttons":["South"],"axes":{"LeftStickY":0.5},"holdMilliseconds":100}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Frame","buttons":["South"],"axes":{"LeftStickY":0.5},"holdMilliseconds":100}
 ```
 
 The service shows the frames in order, each for at least 8 ms or its `holdMilliseconds`. It counts that time from the moment the send of the frame returns, so a slow send does not shorten the frame or the gap before the next one. While 256 frames wait, the endpoint stops reading lines. Closing the connection drops the frames that wait, so a program that sends its last frame sends a `Drain` line and stays connected until the endpoint answers `Drained` (see below). When the program sends no frame line for 2 seconds after its last frame has played, the endpoint closes the connection with `E1008`. A program that has no frame to send keeps the feed open with a `KeepAlive` line (see below). The endpoint runs at most 4 virtual gamepads at the same time and answers another `FeedRequest` with `E1007`.
@@ -117,7 +117,7 @@ The service shows the frames in order, each for at least 8 ms or its `holdMillis
 After the `FeedSession`, a program that has no new frame sends `KeepAlive` to keep the feed open. It resets the 2-second idle timeout and changes nothing else: the endpoint sends no reply, and the virtual gamepad keeps its state. A `KeepAlive` has no member besides `apiVersion` and `kind`; one that has another member is refused with `E1003`. Before the `FeedSession`, and on a `Subscription` connection, the endpoint answers it with `E1010` and closes the connection.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"KeepAlive"}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"KeepAlive"}
 ```
 
 ### Drain
@@ -125,7 +125,7 @@ After the `FeedSession`, a program that has no new frame sends `KeepAlive` to ke
 After its last `Frame`, a program sends `Drain` to learn when every frame has played. The endpoint answers with `Drained` once every `Frame` that the program sent before the `Drain` has played, the last one for its full `holdMilliseconds` (at least 8 ms). A slow send of a frame delays `Drained` and never shortens a frame. The endpoint reads no line while it waits, and the wait does not count as idle time: the 2-second idle timeout counts from the end of the last frame's time, so a program that sends nothing after `Drained` gets `E1008`. A `Drain` that finds no frame waiting is answered at once, and a program may send `Drain` again. When the program closes the connection during the wait, the feed ends and the virtual gamepad is removed. A `Drain` has no member besides `apiVersion` and `kind`; one that has another member is refused with `E1003`. Before the `FeedSession`, and on a `Subscription` connection, the endpoint answers it with `E1010` and closes the connection.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"Drain"}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Drain"}
 ```
 
 ### Drained
@@ -133,7 +133,7 @@ After its last `Frame`, a program sends `Drain` to learn when every frame has pl
 The endpoint sends `Drained` as the answer to a `Drain`. It has no member besides `apiVersion` and `kind`. The program may close the connection after it reads `Drained`.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"Drained"}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Drained"}
 ```
 
 ### RumbleCommand
@@ -141,11 +141,11 @@ The endpoint sends `Drained` as the answer to a `Drain`. It has no member beside
 The endpoint sends each rumble command that a game sends to the virtual gamepad. `type` is `SetRumble` or `StopRumble`. The intensities run from 0 to 65535.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"RumbleCommand","type":"SetRumble","intensities":{"lowFrequency":65535,"highFrequency":0,"leftTrigger":0,"rightTrigger":0,"leftHaptic":0,"rightHaptic":0},"durationMilliseconds":200}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"RumbleCommand","type":"SetRumble","intensities":{"lowFrequency":65535,"highFrequency":0,"leftTrigger":0,"rightTrigger":0,"leftHaptic":0,"rightHaptic":0},"durationMilliseconds":200}
 ```
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"RumbleCommand","type":"StopRumble"}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"RumbleCommand","type":"StopRumble"}
 ```
 
 ### Status
@@ -153,13 +153,13 @@ The endpoint sends each rumble command that a game sends to the virtual gamepad.
 The endpoint sends a `Status` when it refuses a line or ends the connection. `status` is `Failure`, `code` is an [error code](#errors), and `message` is English text for logs. Branch on `code`, not on `message`.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"Status","status":"Failure","code":"E1007","message":"The endpoint runs 4 virtual gamepads already."}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Status","status":"Failure","code":"E1007","message":"The endpoint runs 4 virtual gamepads already."}
 ```
 
 With `E1009`, `E1010`, and `E1011`, `details.supportedAPIVersions` lists the `apiVersion` values that the endpoint accepts.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"Status","status":"Failure","code":"E1009","message":"The apiVersion is not supported.","details":{"supportedAPIVersions":["openjoystickdriver/v1alpha2"]}}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Status","status":"Failure","code":"E1009","message":"The apiVersion is not supported.","details":{"supportedAPIVersions":["openjoystickdriver/v1alpha3"]}}
 ```
 
 ## Errors
@@ -194,12 +194,12 @@ The endpoint serves a program only when `AccessGrants` has a grant for it. Only 
 The file is a secret, because the hashes are the keys of the proofs. The service writes it with mode 0600. Keep it out of shared reports and backups.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha2","kind":"AccessGrants","enabled":true,"grants":[{"publisher":{"kind":"Signed","id":"ABCDE12345"},"identifier":"com.example.overlay","scopes":["Read"],"grantedAt":"2026-01-01T00:00:00Z","path":"/Applications/Overlay.app"}],"tokens":[{"name":"driver","tokenSHA256":"0000000000000000000000000000000000000000000000000000000000000000","origins":[],"scopes":["Control"],"grantedAt":"2026-01-01T00:00:00Z","controlGrantedAt":"2026-01-01T00:00:00Z"}],"web":{"enabled":false,"port":49152}}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"AccessGrants","enabled":true,"grants":[{"publisher":{"kind":"Signed","id":"ABCDE12345"},"identifier":"com.example.overlay","scopes":["Read"],"grantedAt":"2026-01-01T00:00:00Z","path":"/Applications/Overlay.app"}],"tokens":[{"name":"driver","tokenSHA256":"0000000000000000000000000000000000000000000000000000000000000000","origins":[],"scopes":["Control"],"grantedAt":"2026-01-01T00:00:00Z","controlGrantedAt":"2026-01-01T00:00:00Z"}],"web":{"enabled":false,"port":49152}}
 ```
 
 ## Versioning
 
-The `apiVersion` of the endpoint is `openjoystickdriver/v1alpha2`. It is the same value that the schemas and the user files use. The endpoint accepts exactly the versions in `details.supportedAPIVersions`, today only this one.
+The `apiVersion` of the endpoint is `openjoystickdriver/v1alpha3`. It is the same value that the schemas and the user files use. The endpoint accepts exactly the versions in `details.supportedAPIVersions`, today only this one.
 
 - The endpoint does not translate between versions. A line with another `apiVersion` gets `E1009` with the supported list.
 - An alpha version can change without a compatibility promise. The release notes list each change.

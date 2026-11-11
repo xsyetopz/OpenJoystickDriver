@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiVersion</key>
+	<string>openjoystickdriver/v1alpha3</string>
+	<key>applicationScope</key>
+	<dict>
+		<key>type</key>
+		<string>Global</string>
+	</dict>
+	<key>bindings</key>
+	<array>
+		<dict>
+			<key>destination</key>
+			<dict>
+				<key>key</key>
+				<string>Space</string>
+				<key>modifiers</key>
+				<array/>
+				<key>type</key>
+				<string>Keyboard</string>
+			</dict>
+			<key>id</key>
+			<string>3B0F9C52-6E1D-4A8B-9C27-5D4E8F1A0B02</string>
+			<key>source</key>
+			<dict>
+				<key>button</key>
+				<string>Start</string>
+				<key>type</key>
+				<string>Button</string>
+			</dict>
+		</dict>
+	</array>
+	<key>device</key>
+	<dict>
+		<key>productID</key>
+		<integer>1</integer>
+		<key>vendorID</key>
+		<integer>4617</integer>
+	</dict>
+	<key>id</key>
+	<string>3B0F9C52-6E1D-4A8B-9C27-5D4E8F1A0B01</string>
+	<key>kind</key>
+	<string>Profile</string>
+	<key>name</key>
+	<string>Sample Pad: Start on Space</string>
+</dict>
+</plist>

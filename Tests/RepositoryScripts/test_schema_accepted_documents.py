@@ -18,7 +18,7 @@ RECORD = (
     ROOT / "Sources/OpenJoystickDriverKit/Resources/Controllers/045e/045e-028e.plist"
 )
 DESCRIPTION = ROOT / "Resources/Protocols/nintendo-switch-input-only.plist"
-PROFILE = ROOT / "docs/sdk/sample/Profiles/sample-pad.json"
+PROFILE = ROOT / "docs/sdk/sample/Profiles/sample-pad.plist"
 
 
 class SchemaAcceptedDocumentTests(unittest.TestCase):

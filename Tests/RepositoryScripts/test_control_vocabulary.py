@@ -10,7 +10,7 @@ from Scripts.Quality import validate_schemas
 VERSION = "openjoystickdriver/v1alpha3"
 ROOT = validate_schemas.ROOT
 CROSSWALK = ROOT / "Resources" / "Vocabulary" / "crosswalk.plist"
-SAMPLE_PROFILE = ROOT / "docs" / "sdk" / "sample" / "Profiles" / "sample-pad.json"
+SAMPLE_PROFILE = ROOT / "docs" / "sdk" / "sample" / "Profiles" / "sample-pad.plist"
 
 # Names that are not control ids.
 UNKNOWN_NAMES = ["notAName", "NotAControl", ""]
@@ -127,14 +127,14 @@ class ControlVocabularyTests(unittest.TestCase):
                 self.assertNotIn(column, row, f"{control} {column}")
 
     def test_a_profile_with_a_current_name_is_valid(self) -> None:
-        with SAMPLE_PROFILE.open(encoding="utf-8") as source:
-            profile = json.load(source)
+        with SAMPLE_PROFILE.open("rb") as source:
+            profile = plistlib.load(source)
         self.assertTrue(self.validator("profile.schema.json").is_valid(profile))
 
     def test_a_profile_naming_an_unknown_control_is_refused(self) -> None:
         validator = self.validator("profile.schema.json")
-        with SAMPLE_PROFILE.open(encoding="utf-8") as source:
-            profile = json.load(source)
+        with SAMPLE_PROFILE.open("rb") as source:
+            profile = plistlib.load(source)
         for name in UNKNOWN_NAMES:
             profile["bindings"][0]["source"]["button"] = name
             self.assertFalse(validator.is_valid(profile), name)
