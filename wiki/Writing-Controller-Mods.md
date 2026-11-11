@@ -35,7 +35,7 @@ The sample package, `ojd-sample`, is in the [`docs/sdk/sample`](../docs/sdk/samp
 
 Every file of a package is an XML property list. `plutil -lint FILE.plist` checks one, `plutil -convert xml1 -o FILE.plist FILE.json` writes one from JSON, and `plutil -convert json -o - FILE.plist` prints one as JSON.
 
-A package folder holds nothing else. OJD refuses a package with a file or folder that is not in the layout, and a package with a link. It skips hidden files.
+A package folder holds nothing else. OJD refuses a package with a file or folder that is not in the layout, and a package with a link. It skips hidden files and `.js` files: OJD never runs a script in a package, and an install does not copy it. To make documents with a script, run it with [`ojd generate`](Generating-Documents-with-Scripts.md).
 
 ## The Manifest
 

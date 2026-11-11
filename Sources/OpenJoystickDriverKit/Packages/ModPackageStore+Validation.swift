@@ -112,7 +112,7 @@ extension ModPackageStore {
           at: folder.appendingPathComponent(kind),
           includingPropertiesForKeys: nil,
           options: [.skipsHiddenFiles]
-        ))?.map(\.lastPathComponent) ?? []
+        ))?.filter { !isScript($0) }.map(\.lastPathComponent) ?? []
       )
       if let file = Set(listed).subtracting(present).min() {
         throw ModPackageError(.invalidPackageContent, "\(kind)/\(file) is listed and missing")
@@ -188,10 +188,16 @@ extension ModPackageStore {
     )
   }
 
+  /// Whether `url` is a JavaScript file. A package holds documents only, so a script is skipped
+  /// like a hidden file: it is never evaluated, and an install does not copy it.
+  static func isScript(_ url: URL) -> Bool {
+    url.pathExtension == "js" && !isLink(url) && !isDirectory(url)
+  }
+
   /// Refuses a link anywhere in `folder`, and an entry beside `mod.plist` that is not one of the
   /// three kind folders.
   ///
-  /// Hidden entries are skipped here, and an install does not copy them.
+  /// Hidden entries and scripts are skipped here, and an install does not copy them.
   private static func checkLayout(of folder: URL) throws {
     guard !isLink(folder) else {
       throw ModPackageError(.invalidPackageContent, "\(folder.lastPathComponent) is a link")
@@ -202,7 +208,9 @@ extension ModPackageStore {
       includingPropertiesForKeys: nil,
       options: [.skipsHiddenFiles]
     )
-    if let name = (entries ?? []).map(\.lastPathComponent).filter({ !known.contains($0) }).min() {
+    let unknown = (entries ?? []).filter { !isScript($0) }.map(\.lastPathComponent)
+      .filter { !known.contains($0) }
+    if let name = unknown.min() {
       throw ModPackageError(.invalidPackageContent, "\(name) is not part of a package")
     }
     let walk = FileManager.default.enumerator(

@@ -82,7 +82,7 @@ public struct ModPackageStore: Sendable {
   /// Installs the package in `folder`, and returns it as installed.
   ///
   /// The package is copied into a hidden staging folder of the store, without hidden files and
-  /// without following links, and the copy is validated and then swapped in at once. So the
+  /// scripts, and without following links, and the copy is validated and then swapped in at once. So the
   /// installed files are the validated ones even when `folder` changes during the install, and a
   /// failed install leaves the installed package intact and no staging folder behind.
   ///
@@ -178,7 +178,7 @@ public struct ModPackageStore: Sendable {
   static func isLink(_ url: URL) -> Bool { fileType(url) == .typeSymbolicLink }
 
   /// Whether `url` is itself a directory.
-  private static func isDirectory(_ url: URL) -> Bool { fileType(url) == .typeDirectory }
+  static func isDirectory(_ url: URL) -> Bool { fileType(url) == .typeDirectory }
 
   /// The type of the entry itself, which is not the type of what a link points to.
   private static func fileType(_ url: URL) -> FileAttributeType? {
@@ -187,7 +187,7 @@ public struct ModPackageStore: Sendable {
   }
 
   /// Copies the folder `source` into `destination`, which is created when it does not exist,
-  /// without hidden files.
+  /// without hidden files and scripts.
   ///
   /// A link is refused, so that nothing outside the package is read.
   private static func copy(_ source: URL, to destination: URL) throws {
@@ -197,7 +197,7 @@ public struct ModPackageStore: Sendable {
       at: source,
       includingPropertiesForKeys: nil,
       options: [.skipsHiddenFiles]
-    ) {
+    ) where !isScript(entry) {
       let target = destination.appendingPathComponent(entry.lastPathComponent)
       if isLink(entry) {
         throw ModPackageError(.invalidPackageContent, "\(entry.lastPathComponent) is a link")
