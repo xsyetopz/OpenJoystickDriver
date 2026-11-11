@@ -4292,6 +4292,26 @@
 "error.E5007.usageMap.axisButtonControl" = "%1$@, input.hidUsageMap.usages[].control: usage %2$@ là một nút dạng trục, và %3$@ không phải điều khiển nút. Cách sửa: nêu một điều khiển nút hoặc dùng loại mục khác cho trục.";
 /* Error E5007, shown when the HID usage map of a record fails: an AxisDpad or AxisButton threshold is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
 "error.E5007.usageMap.threshold" = "%1$@, input.hidUsageMap.usages[].threshold: threshold của usage %2$@ phải lớn hơn 0 và nhỏ hơn 1. Cách sửa: đặt threshold lớn hơn 0 và nhỏ hơn 1.";
+/* Error E5007, shown when a startup write of a record fails: a startup write names an input report. %1$@ is the file. */
+"error.E5007.startupWrite.reportKind" = "%1$@, session.startup[].report: một lần ghi khởi động không được gửi báo cáo đầu vào. Cách sửa: đặt report thành báo cáo đầu ra hoặc báo cáo tính năng.";
+/* Error E5007, shown when a startup write of a record fails: a startup report is not 2...128 bytes long. %1$@ is the file. */
+"error.E5007.startupWrite.reportLength" = "%1$@, session.startup[].report: một báo cáo khởi động phải dài 2...128 byte. Cách sửa: cho báo cáo độ dài 2...128 byte.";
+/* Error E5007, shown when a startup write of a record fails: a startup write lists the wrong number of bytes. %2$@ is the number of bytes the report takes after its ID. %1$@ is the file. */
+"error.E5007.startupWrite.bytesCount" = "%1$@, session.startup[].bytes: một lần ghi khởi động phải liệt kê %2$@ byte, mọi byte sau ID báo cáo. Cách sửa: cho bytes đúng %2$@ byte.";
+/* Error E5007, shown when a startup write of a record fails: a startup delay is outside 0...1000 ms. %1$@ is the file. */
+"error.E5007.startupWrite.delay" = "%1$@, session.startup[].delayMilliseconds: độ trễ khởi động phải là 0...1000 ms. Cách sửa: đặt delayMilliseconds thành 0...1000, hoặc bỏ qua.";
+/* Error E5007, shown when a startup write of a record fails: a startup transport is not USB, BluetoothClassic or BluetoothLE. %1$@ is the file. */
+"error.E5007.startupWrite.transport" = "%1$@, session.startup[].transport: phương thức truyền khởi động phải là USB, BluetoothClassic hoặc BluetoothLE. Cách sửa: đặt transport thành một trong số đó, hoặc bỏ qua.";
+/* Error E5007, shown when a startup write of a record fails: a startup report with crc32Seed has no room for its 4-byte trailer. %1$@ is the file. */
+"error.E5007.startupWrite.crcRoom" = "%1$@, session.startup[].crc32Seed: báo cáo khởi động có crc32Seed phải còn chỗ cho phần đuôi 4 byte. Cách sửa: làm báo cáo dài hơn 4 byte, hoặc xóa crc32Seed.";
+/* Error E5007, shown when a startup write of a record fails: a USB startup packet is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.startupWrite.usbLength" = "%1$@, session.startup[].bytes: một gói khởi động USB phải dài 1...64 byte. Cách sửa: cho bytes độ dài 1...64.";
+/* Error E5007, shown when a startup write of a record fails: a USB startup endpoint is outside 1...127. %1$@ is the file. */
+"error.E5007.startupWrite.usbEndpoint" = "%1$@, session.startup[].endpoint: điểm cuối khởi động USB phải là 1...127. Cách sửa: đặt endpoint thành 1...127, hoặc bỏ qua.";
+/* Error E5007, shown when a startup write of a record fails: a USB startup timeout is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.startupWrite.usbTimeout" = "%1$@, session.startup[].timeoutMilliseconds: thời gian chờ khởi động USB phải là 1...60000 ms. Cách sửa: đặt timeoutMilliseconds thành 1...60000, hoặc bỏ qua.";
+/* Error E5007, shown when a startup write of a record fails: a USB startup session byte does not index the packet. %1$@ is the file. */
+"error.E5007.startupWrite.sessionByte" = "%1$@, session.startup[].sessionByte: byte phiên khởi động USB phải trỏ tới một byte của gói. Cách sửa: đặt sessionByte thành một vị trí trong bytes.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "Dòng SDL_GameControllerDB của một bộ điều khiển không thể điều khiển nó. Thông báo nêu lý do. Hãy viết bản ghi bộ điều khiển cho nó bằng ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

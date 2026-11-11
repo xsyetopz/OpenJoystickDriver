@@ -53,36 +53,43 @@ public struct RecordStartupWrite: Equatable, Sendable {
     guard report.kind != .input else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.startupWrite.reportKind",
         "a startup write sends an output or feature report"
       )
     }
     guard Self.lengthRange.contains(report.length) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.startupWrite.reportLength",
         "a startup report is 2...128 bytes long"
       )
     }
     guard bytes.count == report.writableBytes.count else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.startupWrite.bytesCount",
+        arguments: ["\(report.writableBytes.count)"],
         "a startup write lists every byte after the report ID: \(report.writableBytes.count)"
       )
     }
     guard delayMilliseconds.map({ (0...1000).contains($0) }) ?? true else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.startupWrite.delay",
         "a startup delay is 0...1000 ms"
       )
     }
     guard transport.map(Self.transports.contains) ?? true else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.startupWrite.transport",
         "a startup transport is USB, BluetoothClassic or BluetoothLE"
       )
     }
     guard crc32Seed == nil || report.length > SonyBluetoothCRC32.trailerLength else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.startupWrite.crcRoom",
         "a CRC startup report has room for its 4-byte trailer"
       )
     }
@@ -156,30 +163,35 @@ public struct USBStartupWrite: Equatable, Sendable {
     guard Self.bytesRange.contains(bytes.count) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.startupWrite.usbLength",
         "a USB startup packet is 1...64 bytes long"
       )
     }
     guard endpoint.map({ Self.endpointRange.contains(Int($0)) }) ?? true else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.startupWrite.usbEndpoint",
         "a USB startup endpoint is 1...127"
       )
     }
     guard timeoutMilliseconds.map(Self.timeoutRange.contains) ?? true else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.startupWrite.usbTimeout",
         "a USB startup timeout is 1...60000 ms"
       )
     }
     guard delayMilliseconds.map({ (0...1000).contains($0) }) ?? true else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.startupWrite.delay",
         "a startup delay is 0...1000 ms"
       )
     }
     guard sessionByte.map({ (0..<bytes.count).contains($0) }) ?? true else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.startupWrite.sessionByte",
         "a USB startup session byte indexes the packet"
       )
     }

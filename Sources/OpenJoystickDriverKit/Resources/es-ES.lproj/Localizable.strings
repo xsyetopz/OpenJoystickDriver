@@ -3738,6 +3738,26 @@
 "error.E5007.usageMap.axisButtonControl" = "%1$@, input.hidUsageMap.usages[].control: el uso %2$@ es un botón de eje, y %3$@ no es un control de botón. Solución: nombra un control de botón o usa otro tipo de entrada para el eje.";
 /* Error E5007, shown when the HID usage map of a record fails: an AxisDpad or AxisButton threshold is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
 "error.E5007.usageMap.threshold" = "%1$@, input.hidUsageMap.usages[].threshold: el threshold del uso %2$@ debe ser mayor que 0 y menor que 1. Solución: asigna threshold mayor que 0 y menor que 1.";
+/* Error E5007, shown when a startup write of a record fails: a startup write names an input report. %1$@ is the file. */
+"error.E5007.startupWrite.reportKind" = "%1$@, session.startup[].report: una escritura de inicio no puede enviar un informe de entrada. Solución: asigna a report un informe de salida o de característica.";
+/* Error E5007, shown when a startup write of a record fails: a startup report is not 2...128 bytes long. %1$@ is the file. */
+"error.E5007.startupWrite.reportLength" = "%1$@, session.startup[].report: un informe de inicio debe medir 2...128 bytes. Solución: da al informe una longitud de 2...128 bytes.";
+/* Error E5007, shown when a startup write of a record fails: a startup write lists the wrong number of bytes. %2$@ is the number of bytes the report takes after its ID. %1$@ is the file. */
+"error.E5007.startupWrite.bytesCount" = "%1$@, session.startup[].bytes: una escritura de inicio debe enumerar %2$@ bytes, todos los que siguen al ID del informe. Solución: da a bytes exactamente %2$@ bytes.";
+/* Error E5007, shown when a startup write of a record fails: a startup delay is outside 0...1000 ms. %1$@ is the file. */
+"error.E5007.startupWrite.delay" = "%1$@, session.startup[].delayMilliseconds: un retardo de inicio debe ser de 0...1000 ms. Solución: asigna delayMilliseconds a 0...1000, o déjalo sin definir.";
+/* Error E5007, shown when a startup write of a record fails: a startup transport is not USB, BluetoothClassic or BluetoothLE. %1$@ is the file. */
+"error.E5007.startupWrite.transport" = "%1$@, session.startup[].transport: un transporte de inicio debe ser USB, BluetoothClassic o BluetoothLE. Solución: asigna a transport uno de ellos, o déjalo sin definir.";
+/* Error E5007, shown when a startup write of a record fails: a startup report with crc32Seed has no room for its 4-byte trailer. %1$@ is the file. */
+"error.E5007.startupWrite.crcRoom" = "%1$@, session.startup[].crc32Seed: un informe de inicio con crc32Seed debe tener espacio para su cola de 4 bytes. Solución: haz el informe más largo que 4 bytes, o quita crc32Seed.";
+/* Error E5007, shown when a startup write of a record fails: a USB startup packet is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.startupWrite.usbLength" = "%1$@, session.startup[].bytes: un paquete de inicio USB debe medir 1...64 bytes. Solución: da a bytes una longitud de 1...64.";
+/* Error E5007, shown when a startup write of a record fails: a USB startup endpoint is outside 1...127. %1$@ is the file. */
+"error.E5007.startupWrite.usbEndpoint" = "%1$@, session.startup[].endpoint: un endpoint de inicio USB debe ser 1...127. Solución: asigna endpoint a 1...127, o déjalo sin definir.";
+/* Error E5007, shown when a startup write of a record fails: a USB startup timeout is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.startupWrite.usbTimeout" = "%1$@, session.startup[].timeoutMilliseconds: un tiempo de espera de inicio USB debe ser de 1...60000 ms. Solución: asigna timeoutMilliseconds a 1...60000, o déjalo sin definir.";
+/* Error E5007, shown when a startup write of a record fails: a USB startup session byte does not index the packet. %1$@ is the file. */
+"error.E5007.startupWrite.sessionByte" = "%1$@, session.startup[].sessionByte: un byte de sesión de inicio USB debe indexar un byte del paquete. Solución: asigna a sessionByte una posición dentro de bytes.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "La línea de SDL_GameControllerDB de un mando no puede controlarlo. El mensaje indica el motivo. Escribe un registro de mando para él con ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

@@ -3738,6 +3738,26 @@
 "error.E5007.usageMap.axisButtonControl" = "%1$@, input.hidUsageMap.usages[].control: Usage %2$@ is an axis button, and %3$@ is not a button control. Fix: Name a button control, or use another kind of entry for the axis.";
 /* Error E5007, shown when the HID usage map of a record fails: an AxisDpad or AxisButton threshold is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
 "error.E5007.usageMap.threshold" = "%1$@, input.hidUsageMap.usages[].threshold: The threshold of usage %2$@ must be above 0 and below 1. Fix: Set threshold above 0 and below 1.";
+/* Error E5007, shown when a startup write of a record fails: a startup write names an input report. %1$@ is the file. */
+"error.E5007.startupWrite.reportKind" = "%1$@, session.startup[].report: A startup write cannot send an input report. Fix: Set report to an output or feature report.";
+/* Error E5007, shown when a startup write of a record fails: a startup report is not 2...128 bytes long. %1$@ is the file. */
+"error.E5007.startupWrite.reportLength" = "%1$@, session.startup[].report: A startup report must be 2...128 bytes long. Fix: Give the report a length of 2...128 bytes.";
+/* Error E5007, shown when a startup write of a record fails: a startup write lists the wrong number of bytes. %2$@ is the number of bytes the report takes after its ID. %1$@ is the file. */
+"error.E5007.startupWrite.bytesCount" = "%1$@, session.startup[].bytes: A startup write must list %2$@ bytes, every byte after the report ID. Fix: Give bytes %2$@ bytes.";
+/* Error E5007, shown when a startup write of a record fails: a startup delay is outside 0...1000 ms. %1$@ is the file. */
+"error.E5007.startupWrite.delay" = "%1$@, session.startup[].delayMilliseconds: A startup delay must be 0...1000 ms. Fix: Set delayMilliseconds to 0...1000, or leave it out.";
+/* Error E5007, shown when a startup write of a record fails: a startup transport is not USB, BluetoothClassic or BluetoothLE. %1$@ is the file. */
+"error.E5007.startupWrite.transport" = "%1$@, session.startup[].transport: A startup transport must be USB, BluetoothClassic or BluetoothLE. Fix: Set transport to one of them, or leave it out.";
+/* Error E5007, shown when a startup write of a record fails: a startup report with crc32Seed has no room for its 4-byte trailer. %1$@ is the file. */
+"error.E5007.startupWrite.crcRoom" = "%1$@, session.startup[].crc32Seed: A startup report with crc32Seed must have room for its 4-byte trailer. Fix: Make the report longer than 4 bytes, or remove crc32Seed.";
+/* Error E5007, shown when a startup write of a record fails: a USB startup packet is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.startupWrite.usbLength" = "%1$@, session.startup[].bytes: A USB startup packet must be 1...64 bytes long. Fix: Give bytes a length of 1...64.";
+/* Error E5007, shown when a startup write of a record fails: a USB startup endpoint is outside 1...127. %1$@ is the file. */
+"error.E5007.startupWrite.usbEndpoint" = "%1$@, session.startup[].endpoint: A USB startup endpoint must be 1...127. Fix: Set endpoint to 1...127, or leave it out.";
+/* Error E5007, shown when a startup write of a record fails: a USB startup timeout is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.startupWrite.usbTimeout" = "%1$@, session.startup[].timeoutMilliseconds: A USB startup timeout must be 1...60000 ms. Fix: Set timeoutMilliseconds to 1...60000, or leave it out.";
+/* Error E5007, shown when a startup write of a record fails: a USB startup session byte does not index the packet. %1$@ is the file. */
+"error.E5007.startupWrite.sessionByte" = "%1$@, session.startup[].sessionByte: A USB startup session byte must index a byte of the packet. Fix: Set sessionByte to a position inside bytes.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "The SDL_GameControllerDB line for a controller cannot drive it. The message names the reason. Write a controller record for the controller with ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

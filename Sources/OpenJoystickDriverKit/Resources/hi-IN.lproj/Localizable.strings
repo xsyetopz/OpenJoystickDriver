@@ -4292,6 +4292,26 @@
 "error.E5007.usageMap.axisButtonControl" = "%1$@, input.hidUsageMap.usages[].control: यूसेज %2$@ अक्ष वाला बटन है, और %3$@ बटन कंट्रोल नहीं है। समाधान: किसी बटन कंट्रोल का नाम दें, या अक्ष के लिए दूसरी तरह की प्रविष्टि इस्तेमाल करें।";
 /* Error E5007, shown when the HID usage map of a record fails: an AxisDpad or AxisButton threshold is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
 "error.E5007.usageMap.threshold" = "%1$@, input.hidUsageMap.usages[].threshold: यूसेज %2$@ की threshold 0 से ऊपर और 1 से नीचे होनी चाहिए। समाधान: threshold को 0 से ऊपर और 1 से नीचे रखें।";
+/* Error E5007, shown when a startup write of a record fails: a startup write names an input report. %1$@ is the file. */
+"error.E5007.startupWrite.reportKind" = "%1$@, session.startup[].report: स्टार्टअप राइट इनपुट रिपोर्ट नहीं भेज सकता। समाधान: report को आउटपुट या फ़ीचर रिपोर्ट पर रखें।";
+/* Error E5007, shown when a startup write of a record fails: a startup report is not 2...128 bytes long. %1$@ is the file. */
+"error.E5007.startupWrite.reportLength" = "%1$@, session.startup[].report: स्टार्टअप रिपोर्ट 2...128 बाइट लंबी होनी चाहिए। समाधान: रिपोर्ट की लंबाई 2...128 बाइट रखें।";
+/* Error E5007, shown when a startup write of a record fails: a startup write lists the wrong number of bytes. %2$@ is the number of bytes the report takes after its ID. %1$@ is the file. */
+"error.E5007.startupWrite.bytesCount" = "%1$@, session.startup[].bytes: स्टार्टअप राइट में %2$@ बाइट सूचीबद्ध होने चाहिए, यानी रिपोर्ट ID के बाद का हर बाइट। समाधान: bytes में ठीक %2$@ बाइट रखें।";
+/* Error E5007, shown when a startup write of a record fails: a startup delay is outside 0...1000 ms. %1$@ is the file. */
+"error.E5007.startupWrite.delay" = "%1$@, session.startup[].delayMilliseconds: स्टार्टअप विलंब 0...1000 ms होना चाहिए। समाधान: delayMilliseconds को 0...1000 रखें, या उसे छोड़ दें।";
+/* Error E5007, shown when a startup write of a record fails: a startup transport is not USB, BluetoothClassic or BluetoothLE. %1$@ is the file. */
+"error.E5007.startupWrite.transport" = "%1$@, session.startup[].transport: स्टार्टअप ट्रांसपोर्ट USB, BluetoothClassic या BluetoothLE होना चाहिए। समाधान: transport को इनमें से एक रखें, या उसे छोड़ दें।";
+/* Error E5007, shown when a startup write of a record fails: a startup report with crc32Seed has no room for its 4-byte trailer. %1$@ is the file. */
+"error.E5007.startupWrite.crcRoom" = "%1$@, session.startup[].crc32Seed: crc32Seed वाली स्टार्टअप रिपोर्ट में 4 बाइट की पूँछ के लिए जगह होनी चाहिए। समाधान: रिपोर्ट को 4 बाइट से लंबा करें, या crc32Seed हटा दें।";
+/* Error E5007, shown when a startup write of a record fails: a USB startup packet is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.startupWrite.usbLength" = "%1$@, session.startup[].bytes: USB स्टार्टअप पैकेट 1...64 बाइट लंबा होना चाहिए। समाधान: bytes की लंबाई 1...64 रखें।";
+/* Error E5007, shown when a startup write of a record fails: a USB startup endpoint is outside 1...127. %1$@ is the file. */
+"error.E5007.startupWrite.usbEndpoint" = "%1$@, session.startup[].endpoint: USB स्टार्टअप एंडपॉइंट 1...127 होना चाहिए। समाधान: endpoint को 1...127 रखें, या उसे छोड़ दें।";
+/* Error E5007, shown when a startup write of a record fails: a USB startup timeout is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.startupWrite.usbTimeout" = "%1$@, session.startup[].timeoutMilliseconds: USB स्टार्टअप टाइमआउट 1...60000 ms होना चाहिए। समाधान: timeoutMilliseconds को 1...60000 रखें, या उसे छोड़ दें।";
+/* Error E5007, shown when a startup write of a record fails: a USB startup session byte does not index the packet. %1$@ is the file. */
+"error.E5007.startupWrite.sessionByte" = "%1$@, session.startup[].sessionByte: USB स्टार्टअप सेशन बाइट को पैकेट के किसी बाइट की ओर इशारा करना चाहिए। समाधान: sessionByte को bytes के भीतर किसी स्थान पर रखें।";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "किसी कंट्रोलर की SDL_GameControllerDB पंक्ति उसे चला नहीं सकती। संदेश कारण बताता है। ojd record draft से उस कंट्रोलर के लिए कंट्रोलर रिकॉर्ड लिखें।";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */
