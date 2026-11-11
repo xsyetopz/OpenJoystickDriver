@@ -45,7 +45,7 @@
         "inputEndpoint" : 129,
         "inputHealth" : {
           "recoveryCount" : 0,
-          "state" : "Healthy"
+          "state" : "AwaitingInput"
         },
         "name" : "Controller 1234:5678",
         "needsSetConfiguration" : true,

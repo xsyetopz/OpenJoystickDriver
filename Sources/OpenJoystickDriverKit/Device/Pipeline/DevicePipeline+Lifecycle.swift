@@ -319,8 +319,9 @@ extension DevicePipeline {
   /// The freshness and recovery state of the controller's input reports.
   ///
   /// A session that has read no input yet is awaiting input, and stale once the liveness timeout
-  /// passes. The failure reason tells the likely cause: reports arrive but their freshness does
-  /// not advance, the guide button was not pressed, or no reports arrive.
+  /// passes. A stale or waiting session has a failure reason that tells the likely cause: reports
+  /// arrive but their freshness does not advance, the guide button was not pressed, or no reports
+  /// arrive.
   func inputHealth() -> ControllerInputHealth {
     let now = uptimeNanoseconds()
     let reference = lastLiveInputReportNanoseconds ?? inputHealthMonitoringStartedNanoseconds
@@ -340,7 +341,7 @@ extension DevicePipeline {
       state = .healthy
     }
     let failureReason: ControllerInputHealthFailureReason?
-    if state == .healthy {
+    if state == .healthy || state == .awaitingInput {
       failureReason = nil
     } else if let timeout = plan.inputReportLivenessTimeoutNanoseconds,
       let observationAge, observationAge < timeout

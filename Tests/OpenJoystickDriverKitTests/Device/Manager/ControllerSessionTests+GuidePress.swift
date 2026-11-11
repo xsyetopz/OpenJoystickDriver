@@ -31,7 +31,8 @@ extension ControllerSessionTests {
     await pipeline.stop()
   }
 
-  /// A session that has read no input is awaiting input until its first input report.
+  /// A session that has read no input is awaiting input, with no failure reason, until its first
+  /// input report.
   @Test
   func aSessionIsAwaitingInputUntilItsFirstInputReport() async throws {
     let pipeline = DevicePipeline(
@@ -42,7 +43,9 @@ extension ControllerSessionTests {
       uptimeNanoseconds: ManualUptime().now
     )
     await pipeline.start()
-    #expect(await pipeline.inputHealth().state == .awaitingInput)
+    let awaiting = await pipeline.inputHealth()
+    #expect(awaiting.state == .awaitingInput)
+    #expect(awaiting.failureReason == nil)
 
     await pipeline.feedHIDData(ProtocolPacketFixtures.DS3.inputReport())
     #expect(await pipeline.inputHealth().state == .healthy)
