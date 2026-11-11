@@ -58,15 +58,15 @@ struct ControllerRecordDraftDeviceTests {
   }
 
   private static let unbundled = ControllerModelID(vendorID: 0x1234, productID: 0x5678)
-  /// The dongle's model, whose bundled record holds one `XboxGIP` mode.
-  private static let gameSir = ControllerModelID(vendorID: 0x3537, productID: 0x1022)
+  /// A GameSir model whose bundled record holds one `VendorGameSir` mode and no HID mode.
+  private static let gameSir = ControllerModelID(vendorID: 0x3537, productID: 0x1053)
 
   private func tree(_ draft: ControllerRecordDraft) throws -> [String: Any] {
     try #require(PropertyListFixture.tree(draft.document) as? [String: Any])
   }
 
   @Test
-  func theDongleOfIssue63GetsAPatchThatAddsAHIDDescriptorMode() throws {
+  func aBundledModelWithoutAHIDModeGetsAPatchThatAddsAHIDDescriptorMode() throws {
     let draft = try #require(
       ControllerRecordDraft(model: Self.gameSir, device: Self.dongle(model: Self.gameSir))
     )
@@ -92,7 +92,7 @@ struct ControllerRecordDraftDeviceTests {
     #expect(mergedModes.compactMap { $0["id"] as? String } == ["default", "hid"])
     #expect(
       mergedModes.compactMap { ($0["protocol"] as? [String: Any])?["family"] as? String }
-        == ["XboxGIP", "HIDDescriptor"]
+        == ["VendorGameSir", "HIDDescriptor"]
     )
   }
 

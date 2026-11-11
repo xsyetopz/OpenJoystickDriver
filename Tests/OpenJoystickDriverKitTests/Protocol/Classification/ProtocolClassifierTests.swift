@@ -211,6 +211,45 @@ struct ProtocolClassifierTests {
     }
   }
 
+  /// #63: the GameSir G7 Pro dongle exposes a HID gamepad interface and a HID interface with a
+  /// vendor usage; the bundled record's `HIDDescriptor` mode binds the gamepad one.
+  @Test
+  func theGameSirDongleBindsItsHIDDescriptorMode() async throws {
+    func hid(_ number: UInt8, _ usage: HIDUsageSignature, _ descriptor: Data?)
+      -> PhysicalInterfaceSignature
+    {
+      PhysicalInterfaceSignature(
+        interfaceNumber: number,
+        interfaceClass: 3,
+        interfaceSubclass: 0,
+        interfaceProtocol: 0,
+        hostTransport: .usb,
+        accessBackend: .hid,
+        hidLayout: HIDLayoutSummary(primaryUsage: usage, reportDescriptor: descriptor)
+      )
+    }
+    let dongle = device(
+      0x3537,
+      0x1022,
+      interfaces: [
+        hid(0, HIDUsageSignature(usagePage: 1, usage: 5), gamepad),
+        hid(1, HIDUsageSignature(usagePage: 0xFF00, usage: 1), vendorOnly),
+      ]
+    )
+    let selection = await ProtocolDriverRegistry().selectMode(
+      of: model(0x3537, 0x1022),
+      backend: .hid,
+      reader: UnreadableModeProbeReader(),
+      device: dongle
+    )
+    #expect(selection == .matched("hid"))
+    let binding = try bound(
+      ProtocolDriverRegistry().classify(dongle, backend: .hid, modeID: "hid")
+    )
+    #expect(binding.protocolID == .hidDescriptor)
+    #expect(binding.rule == .catalogRecord)
+  }
+
   @Test
   func transportMismatchWithTheRecordIsUnsupportedAndNeverGenericHID() {
     // A raw-USB record observed through IOHID, even with a valid gamepad descriptor.

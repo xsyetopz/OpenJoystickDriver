@@ -22,6 +22,31 @@
 				<string>XboxGIP</string>
 			</dict>
 		</dict>
+		<dict>
+			<key>id</key>
+			<string>hid</string>
+			<key>match</key>
+			<dict>
+				<key>interfaceSignature</key>
+				<dict>
+					<key>interfaceClass</key>
+					<integer>3</integer>
+					<key>interfaceProtocol</key>
+					<integer>0</integer>
+					<key>interfaceSubclass</key>
+					<integer>0</integer>
+					<key>usage</key>
+					<integer>5</integer>
+					<key>usagePage</key>
+					<integer>1</integer>
+				</dict>
+			</dict>
+			<key>protocol</key>
+			<dict>
+				<key>family</key>
+				<string>HIDDescriptor</string>
+			</dict>
+		</dict>
 	</array>
 	<key>productID</key>
 	<integer>4130</integer>
