@@ -14,6 +14,7 @@
   - [Wii Remote](Wii-Remote.md)
   - [Controller records](Controller-Records.md)
   - [Writing controller mods](Writing-Controller-Mods.md)
+  - [Generating documents with scripts](Generating-Documents-with-Scripts.md)
 - **Games**
   - [Playing games](Playing-Games.md)
 - **Remapping**

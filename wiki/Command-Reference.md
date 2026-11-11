@@ -23,6 +23,7 @@ This page lists every `ojd` command. Every command also accepts the global optio
 - [update](#update)
 - [explain](#explain)
 - [migrate](#migrate)
+- [generate](#generate)
 - [Further Reading](#further-reading)
 
 ## status
@@ -495,6 +496,17 @@ The command scans the support folder, or `FOLDER` and everything below it, and g
 In the support folder it scans the root files, `ActiveProfiles`, `Profiles/`, `Controllers/`, `VirtualDevices/`, `Personas/` and `Packages/`. It converts `v1alpha1` and `v1alpha2` JSON documents of every kind, including an installed mod's `mod.json`, and writes the result beside the original as a `.plist`. It checks the result with the current reader and keeps the original under `Migrated/` with its relative path, in the scanned folder. A backup is never overwritten: if `Migrated/<path>` exists, or the `.plist` exists already, the file fails and stays unchanged. A file written by 0.5 has no `apiVersion` and fails with "written by 0.5; re-create it". `--dry-run` writes nothing. The other files still convert when one fails, and the command then exits with code 1 and error `E5009`.
 
 With `--json`, it prints a `MigrationReport` whose `metadata` has `dryRun` and whose `items` each have `file`, `verdict` (`Migrated`, `Current`, `Failed` or `Foreign`), `kind` when the file has one and, for a failure or a foreign file, `detail`.
+
+## generate
+
+Run a generator script and write the documents it returns.
+
+```text
+ojd generate SCRIPT [--output FOLDER] [--replace] [--timeout SECONDS]
+```
+
+The command runs the JavaScript file `SCRIPT` in a helper process, calls its `generate` function, and checks each returned document with the reader of its kind. If one document fails, the command writes none of them and names the document, the key path, and the rule. With `--output`, it writes one property list file for each document into `FOLDER`, named as OJD names that kind of file. Without `--output`, it prints the documents and writes no file. A file that already holds the document is reported as unchanged. A file with other content stops the command, and `--replace` overwrites it. The command ends the helper after `--timeout` seconds, 5 by default, and exits with code 1 and error `E2010`. A script error exits with code 1 and error `E2011`, with the message and the line number. See [Generating documents with scripts](Generating-Documents-with-Scripts.md).
+With `--json`, it prints a `GenerationReport` whose `metadata` has `output` and whose `items` each have `file`, `kind`, `status` (`Created`, `Replaced`, `Unchanged` or `NotWritten`) and, for `NotWritten`, `document`.
 
 ## Further Reading
 

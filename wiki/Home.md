@@ -24,6 +24,7 @@ Pick the goal that fits you.
 - [Wii Remote](Wii-Remote.md): Pair a Wii Remote with macOS, and see what OJD reads from it and its extensions.
 - [Controller records](Controller-Records.md): Add a controller that OJD does not know, or change how OJD drives a known one.
 - [Writing controller mods](Writing-Controller-Mods.md): Package controllers, patches, profiles, and virtual devices in a folder, and install it with `ojd mod`.
+- [Generating documents with scripts](Generating-Documents-with-Scripts.md): Write a JavaScript file that returns many records, and write them with `ojd generate`.
 
 ## Games
 
