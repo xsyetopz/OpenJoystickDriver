@@ -221,7 +221,7 @@ Each task stands alone and can leave the release (D24). Each is written for OJD'
 - [ ] 16.7 Add a setting that disconnects a Bluetooth controller after a time with no changed input, off by default. **Hardware (maintainer)**: confirm with the 2C over Bluetooth LE. Caller: the session's input path.
 - [ ] 16.8 Add bindings that open Launchpad, lock the screen, take a screenshot, show the desktop, and type a text. For each, name the public macOS API it uses and the permission it needs before writing it; drop an action that has no public API and report it.
 - [ ] 16.9 Show the changes of the installed version from `CHANGELOG.md` at the first opening of the main window after an update, once.
-- [ ] 16.10 Measure an importer for InputConfig's preset library (commit `958bdd97`): how one preset maps to an OJD profile, how many of the 456 map without loss, and what the MIT notice requires. Save the result as `docs/development/inputconfig-presets.md`. Write no importer.
+- [x] 16.10 Measure an importer for InputConfig's preset library (commit `958bdd97`): how one preset maps to an OJD profile, how many of the 456 map without loss, and what the MIT notice requires. Save the result as `docs/development/inputconfig-presets.md`. Write no importer.
 
 ## 17. Status text and tester builds
 
