@@ -515,7 +515,7 @@ final class TestNotificationRequestStub: TestNotificationRequesting, @unchecked 
 }
 
 final class LaunchAtLoginStub: LaunchAtLoginControlling {
-  let isAvailable = true
+  var isAvailable = true
   var isEnabled: Bool
   private(set) var setValues: [Bool] = []
   private let acceptsChanges: Bool
@@ -551,7 +551,7 @@ final class NotificationAuthorizationStub: NotificationAuthorizationControlling,
   func openSystemSettings() {}
 }
 
-private actor UpdateCheckerStub: ApplicationUpdateChecking {
+actor UpdateCheckerStub: ApplicationUpdateChecking {
   let result: UpdateCheckState
   private(set) var includePrereleaseArguments: [Bool] = []
 

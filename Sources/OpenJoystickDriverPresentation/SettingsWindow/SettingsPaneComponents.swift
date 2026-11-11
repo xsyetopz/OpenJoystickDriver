@@ -20,7 +20,7 @@
     var disabledReason: String?
 
     /// The reason to show: the disabled reason while the switch is disabled, otherwise nil.
-    private var lockReason: String? { isEnabled ? nil : disabledReason }
+    var lockReason: String? { isEnabled ? nil : disabledReason }
 
     /// The toggle with its description and, while it is locked, the reason.
     var body: some View {

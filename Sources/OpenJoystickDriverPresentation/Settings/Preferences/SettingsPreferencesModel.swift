@@ -325,10 +325,18 @@
     /// The two cannot both be off.
     var showInDockIsLocked: Bool { showInDock && !showInMenuBar }
 
-    /// Turns automatic update checks on or off.
+    /// Why Start at login cannot change, or nil while it can.
+    var startAtLoginUnavailableReason: String? {
+      launchAtLoginIsAvailable
+        ? nil : OJDLocalized.string("platform.macos.ui.settings.general.startAtLoginUnavailable")
+    }
+
+    /// Turns automatic update checks on or off; turning them on checks at once, so the choice
+    /// applies without a restart.
     func setCheckUpdatesAutomatically(_ enabled: Bool) {
       guard persist(.updatesCheckAutomatically, enabled) else { return }
       checkUpdatesAutomatically = enabled
+      if enabled { checkForUpdates(announcingAvailableUpdate: true) }
     }
 
     /// Turns the inclusion of prereleases in update checks on or off.

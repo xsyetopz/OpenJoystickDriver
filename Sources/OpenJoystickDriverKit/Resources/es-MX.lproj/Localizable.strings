@@ -84,8 +84,8 @@
 "ui.settings.notifications.controllerDisconnectedNotifications" = "Control desconectado";
 /* Title of the switch for notifications about a controller that disconnects, and value of the connection state of a controller that is not connected. */
 "ui.settings.notifications.controllerDisconnectedShort" = "Desconectado";
-/* VoiceOver label of the switch for notifications about a controller that connects. */
-"ui.settings.notifications.controllerNotifications" = "Control conectado";
+/* VoiceOver label of the switch for notifications about a controller that connects or needs attention. */
+"ui.settings.notifications.controllerNotifications" = "Control conectado o requiere atención";
 /* Heading of the developer tools section in the Advanced pane of the settings window. */
 "ui.settings.advanced.developerTools" = "Herramientas para desarrolladores";
 /* Description of the switch that turns on the developer tools in the Advanced pane of the settings window. */
@@ -4934,3 +4934,7 @@
 "ui.profiles.virtualOutputResetsExclusive" = "Se desactivó el acceso exclusivo a la entrada física, porque un control virtual siempre toma la entrada en exclusiva.";
 /* Note under the Virtual gamepad pop-up in the profile editor, beside the unavailable exclusive physical input switch while a virtual gamepad is chosen. */
 "ui.profiles.exclusiveInputUnavailable" = "Solo disponible mientras no haya un control virtual elegido, porque un control virtual siempre toma la entrada en exclusiva.";
+/* Note below the Start at login switch in Settings > General when this macOS version has no login item. */
+"platform.macos.ui.settings.general.startAtLoginUnavailable" = "Abrir al iniciar sesión requiere macOS 13 o posterior.";
+/* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
+"ui.settings.notifications.controllerConnectedOrAttention" = "Conectado o requiere atención";

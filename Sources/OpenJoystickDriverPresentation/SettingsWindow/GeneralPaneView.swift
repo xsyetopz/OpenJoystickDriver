@@ -22,7 +22,8 @@
               get: { preferences.startAtLogin },
               set: { preferences.setStartAtLogin($0) }
             ),
-            isEnabled: preferences.launchAtLoginIsAvailable
+            isEnabled: preferences.launchAtLoginIsAvailable,
+            disabledReason: preferences.startAtLoginUnavailableReason
           )
           SettingsSwitchRow(
             title: OJDLocalized.string("ui.settings.general.showInMenuBar"),

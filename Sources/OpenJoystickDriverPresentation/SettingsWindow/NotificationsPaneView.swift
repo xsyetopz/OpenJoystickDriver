@@ -16,7 +16,7 @@
         SettingsErrorSection(preferences: preferences)
         Section(OJDLocalized.string("ui.settings.general.controllers")) {
           eventToggle(
-            "ui.settings.notifications.controllerConnectedShort",
+            "ui.settings.notifications.controllerConnectedOrAttention",
             "ui.settings.notifications.controllerNotifications",
             \.controllerNotifications,
             preferences.setControllerNotifications
@@ -58,13 +58,21 @@
     /// The notification delivery status, with Open Notification Settings while macOS hides banners
     /// or sounds and the Send Test Notification button.
     private var deliveryRow: some View {
-      HStack(alignment: .firstTextBaseline, spacing: 8) {
-        Text(deliveryStatus).foregroundColor(
-          deliveryNeedsAttention
+      let system = preferences.notificationSystemSettings
+      let delivery = NotificationDeliveryPresentation(
+        settings: RuntimeNotificationSettings(
+          authorization: preferences.notificationAuthorization,
+          alertStyle: system.alertStyle,
+          soundsEnabled: system.soundsEnabled
+        )
+      )
+      return HStack(alignment: .firstTextBaseline, spacing: 8) {
+        Text(delivery.status).foregroundColor(
+          delivery.needsAttention
             ? Color(NSColor.systemOrange) : Color(NSColor.secondaryLabelColor)
         ).fixedSize(horizontal: false, vertical: true)
         Spacer(minLength: 12)
-        if deliveryNeedsAttention {
+        if delivery.needsAttention {
           Button(OJDLocalized.string("ui.settings.general.openNotificationSettings")) {
             preferences.openNotificationSettings()
           }
@@ -86,41 +94,6 @@
         OJDLocalized.string(titleKey),
         isOn: Binding(get: { preferences[keyPath: value] }, set: set)
       ).ojdAccessibilityLabel(OJDLocalized.string(accessibilityKey))
-    }
-
-    /// Whether notifications are allowed but macOS shows no banner or plays no sound.
-    private var deliveryNeedsAttention: Bool {
-      guard preferences.notificationAuthorization == .allowed else { return false }
-      return preferences.notificationSystemSettings.alertStyle == .none
-        || preferences.notificationSystemSettings.soundsEnabled == false
-    }
-
-    /// The text that says whether notifications reach the user.
-    private var deliveryStatus: String {
-      guard preferences.notificationAuthorization == .allowed else {
-        return OJDLocalized.string("ui.settings.notifications.notificationPermissionRequired")
-      }
-      switch (
-        preferences.notificationSystemSettings.alertStyle,
-        preferences.notificationSystemSettings.soundsEnabled
-      ) {
-      case (.none, false):
-        return OJDLocalized.string(
-          "platform.macos.ui.settings.notifications.notificationBannersAndSoundOff"
-        )
-      case (.none, _):
-        return OJDLocalized.string(
-          "platform.macos.ui.settings.notifications.notificationBannersOffDetail"
-        )
-      case (_, false):
-        return OJDLocalized.string(
-          "platform.macos.ui.settings.notifications.notificationSoundOffDetail"
-        )
-      case (.banner, true), (.alert, true):
-        return OJDLocalized.string("ui.settings.notifications.notificationDeliveryReady")
-      case (.unknown, _), (_, nil):
-        return OJDLocalized.string("ui.settings.notifications.notificationDeliveryAllowed")
-      }
     }
   }
 

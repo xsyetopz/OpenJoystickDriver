@@ -46,6 +46,7 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - The **Virtual HID profile** pop-up lists only the kinds the service accepts for the controller, names the kind in use and the stored override when they differ, and shows as text why a choice sends nothing: already in place, or the override in effect is stored in the other scope. (12.3)
 - The stick dead zone editor writes the last value you set while a write runs, including a reset, after that write ends, instead of dropping it. (12.4)
 - The profile editor and list say why an edit, save, create, import or delete is refused, show "Unsaved changes" beside Save, and say when choosing a virtual gamepad turns off exclusive physical input. (12.5)
+- Settings gives the reason Start at login cannot change, says when macOS has denied notifications and offers the Notifications pane of System Settings, checks for updates at once when Automatic update check is turned on, and names the controller that needs attention in the "Connected" notification switch. (12.6)
 
 ## Fixed
 

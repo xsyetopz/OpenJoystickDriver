@@ -84,8 +84,8 @@
 "ui.settings.notifications.controllerDisconnectedNotifications" = "컨트롤러 연결 해제됨";
 /* Title of the switch for notifications about a controller that disconnects, and value of the connection state of a controller that is not connected. */
 "ui.settings.notifications.controllerDisconnectedShort" = "연결 해제됨";
-/* VoiceOver label of the switch for notifications about a controller that connects. */
-"ui.settings.notifications.controllerNotifications" = "컨트롤러 연결됨";
+/* VoiceOver label of the switch for notifications about a controller that connects or needs attention. */
+"ui.settings.notifications.controllerNotifications" = "컨트롤러 연결됨 또는 확인 필요";
 /* Heading of the developer tools section in the Advanced pane of the settings window. */
 "ui.settings.advanced.developerTools" = "개발자 도구";
 /* Description of the switch that turns on the developer tools in the Advanced pane of the settings window. */
@@ -4933,3 +4933,7 @@
 "ui.profiles.virtualOutputResetsExclusive" = "가상 게임패드는 항상 입력을 독점하므로 물리적 입력에 대한 독점 접근을 껐습니다.";
 /* Note under the Virtual gamepad pop-up in the profile editor, beside the unavailable exclusive physical input switch while a virtual gamepad is chosen. */
 "ui.profiles.exclusiveInputUnavailable" = "가상 게임패드는 항상 입력을 독점하므로 가상 게임패드를 선택하지 않았을 때만 사용할 수 있습니다.";
+/* Note below the Start at login switch in Settings > General when this macOS version has no login item. */
+"platform.macos.ui.settings.general.startAtLoginUnavailable" = "로그인 시 시작하려면 macOS 13 이상이 필요합니다.";
+/* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
+"ui.settings.notifications.controllerConnectedOrAttention" = "연결됨 또는 확인 필요";
