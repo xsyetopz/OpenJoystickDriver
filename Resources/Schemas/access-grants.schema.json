@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/access-grants.schema.json",
   "title": "OpenJoystickDriver endpoint access grants",
-  "description": "The file AccessGrants.json in the OpenJoystickDriver Application Support folder. Only the service writes it, when 'ojd access enable', 'disable', 'grant', 'revoke', 'web enable', or 'web disable' runs.",
+  "description": "The endpoint access grants file.",
   "type": "object",
   "required": ["apiVersion", "kind", "enabled", "grants", "tokens", "web"],
   "additionalProperties": false,
@@ -50,7 +50,7 @@
           "type": "boolean"
         },
         "port": {
-          "description": "Absent until the first enable, which saves the port the system picked unless one was given.",
+          "description": "The TCP port of the web listener.",
           "type": "integer",
           "minimum": 1024,
           "maximum": 65535
@@ -60,11 +60,11 @@
   },
   "$defs": {
     "scope": {
-      "description": "'Read' receives controller events; 'Control' drives a virtual gamepad.",
+      "description": "A permission level: 'Read' receives controller events, 'Control' drives a virtual gamepad.",
       "enum": ["Read", "Control"]
     },
     "token": {
-      "description": "A named token that lets a client use the endpoint without a signature check. The token itself is not stored.",
+      "description": "A named token that lets a client use the endpoint without a signature check.",
       "type": "object",
       "required": ["name", "tokenSHA256", "origins", "scopes", "grantedAt"],
       "$ref": "#/$defs/controlIsMarked",
@@ -75,7 +75,7 @@
           "pattern": "^[A-Za-z0-9._-]{1,64}$"
         },
         "controlGrantedAt": {
-          "description": "When 'Control' was granted; required with that scope.",
+          "description": "When 'Control' was granted.",
           "type": "string",
           "format": "date-time"
         },
@@ -85,7 +85,7 @@
           "pattern": "^[0-9a-f]{64}$"
         },
         "origins": {
-          "description": "The web origins whose pages may use the token on the WebSocket; empty for a token that works only on the Unix socket.",
+          "description": "The web origins whose pages may use the token on the WebSocket.",
           "type": "array",
           "uniqueItems": true,
           "items": {
@@ -102,7 +102,7 @@
           }
         },
         "grantedAt": {
-          "description": "When 'ojd access grant --token' ran.",
+          "description": "When the token was granted.",
           "type": "string",
           "format": "date-time"
         }
@@ -115,7 +115,7 @@
       "additionalProperties": false,
       "properties": {
         "publisher": {
-          "description": "Who published the client. 'Signed' matches the identifier signed by a certificate of the publisher 'id'; 'Platform' matches the identifier signed by the platform vendor.",
+          "description": "Who published the client: a certificate publisher or the platform vendor.",
           "type": "object",
           "required": ["kind"],
           "additionalProperties": false,
@@ -124,7 +124,7 @@
               "enum": ["Signed", "Platform"]
             },
             "id": {
-              "description": "The publisher's ID; required for 'Signed' grants.",
+              "description": "The publisher's identifier.",
               "type": "string",
               "minLength": 1
             }
@@ -154,17 +154,17 @@
           }
         },
         "grantedAt": {
-          "description": "When the latest 'ojd access grant' for this client ran.",
+          "description": "When the grant was last made.",
           "type": "string",
           "format": "date-time"
         },
         "controlGrantedAt": {
-          "description": "When 'Control' was granted; required with that scope.",
+          "description": "When 'Control' was granted.",
           "type": "string",
           "format": "date-time"
         },
         "path": {
-          "description": "Where the client was when it was granted; for display only.",
+          "description": "Where the client was when it was granted.",
           "type": "string"
         }
       },
