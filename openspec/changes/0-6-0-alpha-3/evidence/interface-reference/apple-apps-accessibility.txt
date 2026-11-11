@@ -1,0 +1,118 @@
+Apple apps read through the Accessibility interface
+====================================================
+
+Mac: macOS 27.2, build 26B123. Date: 2026-11-11.
+Method: `osascript` with System Events. Each command reads roles, descriptions,
+names, and sizes. None reads the text of a note or a setting value, and no
+screenshot was taken. Notes and System Settings were already running.
+Sizes are width x height in points.
+
+1. Notes: toolbar
+-----------------
+
+Command:
+
+    osascript -e 'tell application "System Events" to tell process "Notes"
+    set out to ""
+    repeat with e in (UI elements of toolbar 1 of window 1)
+    set s to size of e
+    set out to out & (role of e) & " | " & (description of e) & " | " & (item 1 of s) & "x" & (item 2 of s) & linefeed
+    end repeat
+    set ws to size of window 1
+    return out & "window " & (item 1 of ws) & "x" & (item 2 of ws)
+    end tell'
+
+Output:
+
+    AXGroup | group | 44x52
+    AXMenuButton | View Options | 44x52
+    AXButton | New Note | 40x52
+    AXButton | Format | 40x52
+    AXButton | Checklist | 38x52
+    AXButton | Table | 39x52
+    AXMenuButton | Media | 36x52
+    AXButton | Markup | 36x52
+    AXButton | Writing Tools | 39x52
+    AXGroup | group | 81x52
+    AXGroup | group | 40x52
+    window 831x542
+
+An earlier run in the same session read the children of the three groups:
+the first group holds one 38x38 button; the 81x52 group holds "Share" (38x38)
+and the menu button "More" (39x38); the last group holds "Search" (38x38).
+
+Reading: the Notes toolbar is 52 pt high and holds icon-only buttons with no
+text label, each 36 to 44 pt wide, with a 38x38 button inside each group. The
+window size is the size the user left it at, not a default.
+
+2. Notes: menus
+---------------
+
+Command:
+
+    osascript -e 'tell application "System Events" to tell process "Notes" to get name of menu bar items of menu bar 1'
+
+Output:
+
+    Apple, Notes, File, Edit, Format, View, Window, Help
+
+Command:
+
+    osascript -e 'tell application "System Events" to tell process "Notes" to get name of menu items of menu 1 of menu bar item "View" of menu bar 1'
+
+Output ("missing value" is a separator):
+
+    as List, as Gallery, missing value, Recent Notes, missing value, Sort By,
+    Group By Date, missing value, Show Sidebar, Show Note Count, missing value,
+    Show Attachments Browser, Show in Note, missing value, Attachment View,
+    missing value, Show Highlights, Show Note Activity, Show Folder Activity,
+    missing value, Zoom In, Zoom Out, Actual Size, missing value, missing value,
+    Expand Section, Expand All Sections, Collapse Section, Collapse All Sections,
+    missing value, Hide Toolbar, Customize Toolbar…, Enter Full Screen
+
+An earlier run in the same session read the File menu ("New Note", "Share")
+and the Format menu ("Checklist", "Table").
+
+Reading: each toolbar action checked ("New Note", "Share", "Checklist",
+"Table") is also a menu command, and the user can hide or customize the
+toolbar from the View menu.
+
+3. System Settings (pane "Bluetooth")
+-------------------------------------
+
+Command:
+
+    osascript -e 'tell application "System Events" to tell process "System Settings"
+    set ws to size of window 1
+    set ts to size of toolbar 1 of window 1
+    return "window " & (item 1 of ws) & "x" & (item 2 of ws) & ", toolbar " & (item 1 of ts) & "x" & (item 2 of ts)
+    end tell'
+
+Output:
+
+    window 740x625, toolbar 740x52
+
+An earlier run in the same session tallied the role and size of every element
+in `entire contents of window 1`:
+
+    sidebar outline          232 wide, 31 rows of 232x32
+    search field             212x28
+    push buttons             80x24
+    small buttons            17x17 and 16x16
+    menu buttons             36x36
+    content scroll area      508x573
+
+4. Menu bar extras of macOS: not readable
+-----------------------------------------
+
+Command:
+
+    osascript -e 'tell application "System Events" to tell process "ControlCenter" to get name of menu bar items of menu bar 1'
+
+Output:
+
+    execution error: System Events got an error: Can't get menu bar 1 of process "ControlCenter". Invalid index. (-1719)
+
+`UI elements` of the ControlCenter and SystemUIServer processes is empty. The
+Bluetooth, Wi-Fi, Sound, and Control Center items therefore have no reading
+here. Task 10.3 covers them with screenshots the maintainer takes.

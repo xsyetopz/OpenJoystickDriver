@@ -1,0 +1,51 @@
+23:42:35
+GameController probe
+Listening for 60s
+
+HID GamePad support:
+- 045E:0B13 "Xbox Wireless Controller" transport=Virtual gamecontroller=yes
+- 2DC8:301B "8BitDo Ultimate 2C Wireless" transport=Bluetooth Low Energy gamecontroller=yes
+
+Initial controllers: 0
+connect: vendor="Xbox Wireless Controller" category="Xbox One" extended=true micro=true haptics=true localities=[All,Default,Handles,Left Handle,Left Trigger,Right Handle,Right Trigger,Triggers]
+inputs: buttons=[Button A,Button B,Button Home,Button Menu,Button Options,Button Share,Button X,Button Y,Direction Pad Down,Direction Pad Left,Direction Pad Right,Direction Pad Up,Left Shoulder,Left Thumbstick Button,Left Thumbstick Down,Left Thumbstick Left,Left Thumbstick Right,Left Thumbstick Up,Left Trigger,Right Shoulder,Right Thumbstick Button,Right Thumbstick Down,Right Thumbstick Left,Right Thumbstick Right,Right Thumbstick Up,Right Trigger] xbox=true share=true paddles=0
+button: Button A value=1.0 pressed=true
+button: Button A value=0.0 pressed=false
+button: Button B value=1.0 pressed=true
+button: Button B value=0.0 pressed=false
+button: Button X value=1.0 pressed=true
+button: Button X value=0.0 pressed=false
+button: Button Y value=1.0 pressed=true
+button: Button Y value=0.0 pressed=false
+button: Left Shoulder value=1.0 pressed=true
+button: Left Shoulder value=0.0 pressed=false
+button: Right Shoulder value=1.0 pressed=true
+button: Right Shoulder value=0.0 pressed=false
+button: Left Trigger value=0.109481916 pressed=true
+button: Left Trigger value=0.109481916 pressed=true
+button: Left Trigger value=0.39198437 pressed=true
+button: Left Trigger value=0.39198437 pressed=true
+button: Left Trigger value=0.60703814 pressed=true
+button: Left Trigger value=0.94037145 pressed=true
+button: Left Trigger value=1.0 pressed=true
+button: Left Trigger value=0.76441836 pressed=true
+button: Left Trigger value=0.285435 pressed=true
+button: Left Trigger value=0.0 pressed=false
+button: Left Trigger value=0.0 pressed=false
+button: Right Trigger value=0.031280547 pressed=true
+button: Right Trigger value=0.61485827 pressed=true
+button: Right Trigger value=0.61485827 pressed=true
+button: Right Trigger value=1.0 pressed=true
+button: Right Trigger value=0.8191593 pressed=true
+button: Right Trigger value=0.02346041 pressed=true
+button: Right Trigger value=0.02346041 pressed=true
+button: Right Trigger value=0.0 pressed=false
+button: Button Options value=1.0 pressed=true
+button: Button Options value=0.0 pressed=false
+button: Button Menu value=1.0 pressed=true
+button: Button Menu value=0.0 pressed=false
+button: Left Thumbstick Button value=1.0 pressed=true
+button: Left Thumbstick Button value=0.0 pressed=false
+button: Right Thumbstick Button value=1.0 pressed=true
+button: Right Thumbstick Button value=0.0 pressed=false
+evidence supports_hid=true connect=true extended_profile=true live_input=true disconnect=false reconnect=false haptics=unclaimed

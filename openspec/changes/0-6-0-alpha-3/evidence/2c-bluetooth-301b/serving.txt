@@ -1,0 +1,78 @@
+2026-11-10, 23:10 to 23:20. Pad over Bluetooth LE as 2DC8:301B, OJD 0.6.0-alpha.2.
+
+1. As connected, with no user record (23:10). `ojd controller show 2DC8:301B`:
+
+Connection       Bluetooth Low Energy
+Protocol         hid-descriptor
+Session          active
+Battery          none
+Input            healthy
+Ownership        route hid, physical system-gamepad, HID input unknown
+Served by        System (from default)
+Serving route    native-pass-through
+Persona          none
+Record           bundled
+Input mapping    record
+Rumble           none
+Lighting         none
+Output owner     macOS (native). Rumble and Lighting list only what macOS leaves undone.
+Virtual gamepad  none
+Publication      not-published (system-gamepad)
+
+`ioreg` on the pad's AppleUserHIDEventDriver: "GameControllerSupport" = Yes, "GameControllerCategory" = "mfi",
+"GameControllerType" = 1. On its IOHIDUserDevice: "GameControllerSupportedHIDDevice" = No.
+
+2. `ojd controller claim 2DC8:301B` (23:15), exit 0:
+
+Set 2DC8:301B to ojd in ~/Library/Application Support/OpenJoystickDriver/Controllers/2dc8-301b.patch.json. The running service applies it now.
+
+The file it wrote:
+{ "apiVersion": "openjoystickdriver/v1alpha2", "kind": "ControllerPatch",
+  "selector": { "vendorID": 11720, "productID": 12315 }, "patch": { "server": "OJD" } }
+
+`ojd controller show 2DC8:301B` in the same second still printed the lines of step 1 with
+"Served by OJD (from user)". Run again 8 s later:
+
+ID               E-2RPrnagiOfxus1ZE   (before the claim: E-K1c0p5M4YiDdQ2Y-)
+Ownership        route hid, physical exclusive-hid, HID input exclusive
+Served by        OJD (from user)
+Serving route    virtual-hid
+Persona          sdl-compatible
+Rumble           none
+Lighting         none
+Virtual gamepad  sdl-compatible (automatic)
+Publication      published
+
+`ojd controller list`: "The system also lists this controller as a second controller that gives no input.
+In a game, choose the virtual controller that OpenJoystickDriver publishes."
+`hidutil list` shows a second device: 045E:0B0C, transport Virtual, product "Xbox Adaptive Controller",
+serial "OpenJoystickDriver-UserSpace:ba0f89ecd19acf48", input report 18 bytes, output report 13 bytes.
+`hidcap 2dc8 301b 1 05 64 00 00 00` prints "open failed: -1ffffd3b" (e00002c5, kIOReturnExclusiveAccess).
+`ojd controller rumble 2DC8:301B --left 200 --right 200 --duration 2` exits 1:
+error[E2013]: 8BitDo Ultimate 2C Wireless has no rumble motor.
+
+3. The virtual gamepad's reports while the maintainer pressed each control in a fixed order are in
+virtual-0b0c-claimed-120s.txt. Report 0x20: byte 4 bits 2 to 7 are Start, Back, A, B, X, Y; byte 5 bits
+0 to 7 are D-pad up, down, left, right, LB, RB, left stick click, right stick click; bytes 6-7 left trigger
+and 8-9 right trigger (0 to 1023); bytes 10-17 left stick X, Y and right stick X, Y (signed 16 bits).
+Report 7 byte 4 is Guide.
+
+4. `ojd controller release 2DC8:301B` (23:19), exit 0. The patch file holds "server": "System" and `show`
+prints the serving lines of step 1 with "Served by System (from user)". The virtual device is gone.
+`ojd record remove 2DC8:301B --force` (23:32) deleted the patch file, and `show` prints
+"Served by System (from default)" and "Record bundled", as in step 1.
+
+5. While macOS serves the pad, the GameController framework lists no controller for it, though
+GCController.supportsHIDDevice answers yes. The runs are in gamecontroller-probes.txt.
+
+6. Why OJD leaves the pad to macOS (source of the branch):
+- HIDDeviceStream+DeviceLifecycle.swift:98-104: nativePassThrough = GCController.supportsHIDDevice(device)
+  and the record's server is not OJD (DeviceCatalog.swift:48-50).
+- HIDDeviceStream+DeviceLifecycle.swift:66: a native-pass-through device is not seized.
+- DeviceCatalog.swift:96: a record with no server gets `.system`.
+- DeviceManager+DiscoveryModels.swift:90-94: native pass-through is reported as `.systemGamepad`.
+- ServingPolicy.swift:145-149: served by the system, server `.system`, access route `.system` gives the route
+  `.nativePassThrough`, so OJD publishes no gamepad.
+- HIDDeviceStream+DeviceLifecycle.swift:80: `systemListsGameController` is the same supportsHIDDevice answer.
+  It drives the `ojd controller list` warning of step 2 ("The system also lists this controller as a second
+  controller that gives no input"), which is wrong for this pad: GameController lists none.

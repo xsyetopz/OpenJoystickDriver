@@ -1,0 +1,14 @@
+2026-11-10, between 23:01 and 23:05. Receiver 2DC8:301C (bcdDevice 0x0001), pad in DInput mode.
+Each line is the output of `hidcap 2dc8 301c <seconds> <bytes>`: IOHIDDeviceSetReport, output type, report ID first.
+`result=0` is kIOReturnSuccess. The maintainer felt no rumble for any write.
+
+0.002 tx len=9 01 c8 c8 c8 c8 c8 c8 c8 c8 result=0
+0.002 tx len=9 01 00 00 00 00 00 00 00 00 result=0
+0.002 tx len=9 01 64 64 64 64 64 64 64 64 result=0
+0.001 tx len=9 01 00 00 00 00 00 00 00 00 result=0
+0.002 tx len=9 01 ff ff ff ff ff ff ff ff result=0
+0.002 tx len=9 01 00 00 00 00 00 00 00 00 result=0
+0.002 tx len=5 05 64 64 00 00 result=0
+0.001 tx len=5 05 00 00 00 00 result=0
+
+Not tried: the 63-byte vendor output report 0x81, and a write on the interrupt OUT pipe.

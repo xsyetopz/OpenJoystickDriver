@@ -1,0 +1,234 @@
+# Tasks: 0.6.0-alpha.3
+
+A task marked **hardware** is ticked only with a capture from that hardware (`hardware_tick_without_capture`). "Maintainer" hardware is on the maintainer's desk; "reporter" hardware waits for the named issue. Each code task names the caller outside `Tests/` that reaches it (`unwired_feature`). Posting a comment, closing an issue, and merging a pull request are the maintainer's actions; a task here prepares the text.
+
+A controller fix in groups 2, 3, and 8 lands as a record or a patch (D13). Where a record cannot state the fact, the task adds the general record ability from group 9 and no branch for one model.
+
+## 1. Document format and API version
+
+- [ ] 1.1 List every reader and writer of a stored document in `Sources/`, `Scripts/`, `Tools/`, and `Tests/` (144 Swift sites in `Sources/`, 27 Python files), and mark each as document or message. Save the list as `openspec/changes/0-6-0-alpha-3/inventory.md`.
+- [ ] 1.2 Set `OpenJoystickDriverAPI.version` to `openjoystickdriver/v1alpha3` and each schema `$id` to `schemas/v1alpha3/`. Caller: every document reader.
+- [ ] 1.3 Write failing tests for the document coder: XML is read; a binary property list, JSON text, a `date`, and a `data` value are refused with a named error and key path; a rewrite of a canonical file is byte-identical; 64-bit integers and reals keep their type.
+- [ ] 1.4 Add the document coder to `OpenJoystickDriverKit` and move each document reader and writer from 1.1 onto it. Callers: catalog loading at service start, the profile library, settings, access grants, virtual devices, the mod package store.
+- [ ] 1.5 Add `remove` to `controller-patch.schema.json` and to the patch reader: dotted key paths, applied before `patch`, a path outside the record schema refused. Add the rejection cases under `SchemaRejections/`. Caller: record set loading.
+- [ ] 1.6 Change the crosswalk schema and reader so an absent key means no equivalent, and update `test_crosswalk_table.py`. Caller: persona and vocabulary lookup.
+- [ ] 1.7 Convert the bundled documents in `Resources/Controllers/`, `ControllerPatches/`, `Protocols/`, `CatalogRules/`, `Vocabulary/`, `VirtualDevices/`, and `ErrorCodes.json` to canonical `.plist` files with `apiVersion` `v1alpha3`. Regenerate the copies with `./Scripts/ojd catalog regenerate --write` and `./Scripts/ojd errors regenerate --write`.
+- [ ] 1.8 Move the Python scripts and repository tests from 1.1 that read documents to `plistlib`. `Scripts/Quality/validate_schemas.py` validates the objects read from each property list.
+- [ ] 1.9 Add a repository test that every bundled document equals its canonical form and that no bundled document is a `.json` file.
+- [ ] 1.10 Convert the test fixtures, then run `Tests/EquivalenceSnapshots` and the catalog tests. Explain every snapshot difference before accepting it.
+- [ ] 1.11 Update `.claude/rules/generated_file_edit.md`, `Resources/Schemas/AGENTS.md`, `Resources/Schemas/README.md`, and `CONTRIBUTING.md` for the `.plist` paths and the property-list rules.
+
+## 2. 8BitDo Ultimate 2C Wireless
+
+- [ ] 2.1 **Hardware (maintainer)**: write the receiver results into `docs/testing/8bitdo-ultimate-2c.md` from the captures in `evidence/2c-receiver-310a/` (XInput mode, X + Guide) and `evidence/2c-receiver-301c/` (DInput mode, B + Guide). Cancel the pad's L4 assignment (R4 is cancelled and sets bit 5 as `301C`), capture the unassigned L4 as `301C`, and capture both unassigned rear buttons as `310A`.
+- [ ] 2.2 **Hardware (maintainer)**: write the Bluetooth LE results into `docs/testing/8bitdo-ultimate-2c.md` from the captures in `evidence/2c-bluetooth-301b/` (each control, raw and as OJD decodes it; the battery byte reads 0). Capture the battery byte at a second charge level.
+- [ ] 2.3 **Hardware (maintainer)**: capture both rear buttons by cable. Captured: over Bluetooth LE L4 sets bit 2 and R4 sets bit 5; as `301C` an unassigned R4 sets bit 5; 2.1 holds the rest of the receiver. Record per mode whether each has its own bit.
+- [ ] 2.4 After 9.3, give the `2DC8:301C` record an idle mode that matches the product string `IDLE` and a default mode that serves the linked pad. Write the classifier test for both strings first. No Swift names the receiver. Caller: the bundled record set.
+- [ ] 2.5 Give the receiver identity its input map from the 2.1 capture. Caller: the bundled record set.
+- [ ] 2.6 Let a `HIDDescriptor` mode take `rumbleTemplate`: schema, rejection cases, and driver output for any such record. Over Bluetooth LE, `IOHIDDeviceSetReport` of output report 5 returns `kIOReturnNotFound` while macOS serves the pad (`evidence/2c-bluetooth-301b/rumble-writes.txt`): repeat the write from OJD's session while OJD serves the pad. For the receiver as `2DC8:301C`, try vendor report 0x81 and the interrupt OUT pipe (`evidence/2c-receiver-301c/rumble-writes.txt` lists the four writes that ran no motor); declare rumble only for a write the maintainer feels. Caller: the rumble path from the virtual device to the session.
+- [ ] 2.7 **Hardware (maintainer)**: find which pad modes produce `2DC8:301D` and `2DC8:3109`. Capture each, or mark its row "Unverified" with what is missing.
+- [ ] 2.8 Map the rear buttons per mode from 2.3, and remove the battery level from any mode whose byte is constant in 2.2.
+- [ ] 2.9 The dead right stick from #41 does not reproduce on alpha.2 with the maintainer's pad (`evidence/2c-bluetooth-301b/ojd-watch-120s.txt`). Add a test that decodes `ordered-controls-120s.txt` with the `301B` record: the right stick follows `Z`/`Rz` and both triggers read 0 at rest. Ask the reporter of #41 to retest on alpha.2 in the 2.10 reply. Caller: the bundled record set.
+- [ ] 2.10 Update the table in `docs/testing/8bitdo-ultimate-2c.md` with one capture reference per verified row, and draft the replies for #34 and #41.
+- [ ] 2.11 Set `server` to `OJD` in the bundled `2DC8:301B` record: GameController lists no controller for the pad while OJD leaves it to macOS (`evidence/2c-bluetooth-301b/gamecontroller-probes.txt`). Write the catalog test first: with no user document, the serving decision for `2DC8:301B` is the virtual gamepad. **Hardware (maintainer)**: on the build, connect the pad over Bluetooth LE with an empty `Controllers/` folder, and save `ojd controller show 2DC8:301B` beside the evidence. Then run `ojd virtual set game-controller-compatible 2DC8:301B`, press each control during `just diagnose-gamecontroller`, and save its output: the probe lists one controller and each button changes it. Press Guide with `OpenJoystickDriverGameControllerViewer` in front and record whether it shows Home. Run the same probe with the pad linked to the receiver as `2DC8:301C` and record whether GameController lists it. Caller: the bundled record set.
+
+## 3. 8BitDo wired Xbox pads
+
+- [ ] 3.1 Download the `usbmon` capture from #59 into its own empty folder and list the control and interrupt transfers Linux sends before the first input packet. Compare them with the writes OJD's GIP session start sends.
+- [ ] 3.2 Write a failing GIP session test with a pad that sends input and no announce packet, then fix the session start for the family, with no test on the vendor. A write only these pads need goes into a record as a startup write. Caller: GIP session start in `OpenJoystickDriverKit`.
+- [ ] 3.3 Report input as healthy only after the first input report: the session state, the controller detail view, `ojd controller show`, and the localized strings. Caller: the status RPC.
+- [ ] 3.4 **Hardware (reporter, #59)**: build a tester build, draft the request for a capture from `2DC8:2027` and `2DC8:2019`, and add records only from those captures.
+
+## 4. Driver extension and USB routes
+
+- [ ] 4.1 Write failing route tests: an unowned Microsoft model takes the direct route; the extension route needs an active, matched extension; a model Apple's driver owns gets no session.
+- [ ] 4.2 Change route selection (`USBDriverKitTransport.swift:97`, `IOUSBHostTransport.swift:35`, `TransportFacade.swift:202-203`) to pass 4.1. Caller: USB discovery in the service.
+- [ ] 4.3 Find every call that sends an activation request and remove each one that no user action starts. Caller check: app launch, service start, and controller arrival send none.
+- [ ] 4.4 Show a model Apple's driver holds as "Served by macOS" with Claim, in the controller list and in `ojd controller show`. `ojd controller claim` for such a model sends the activation request. Caller: the claim RPC.
+- [ ] 4.5 Give the setup state machine (`SystemExtensionSetup.swift`, `DefaultSystemExtensionSetupClient.swift`) distinct states for running, needs approval, cancelled, timed out, and failed with the `NSError` domain, code, and text. Remove the silent return at `SystemExtensionSetup.swift:102` and the dropped click at `:104`.
+- [ ] 4.6 Update the banner (`MainWindowProblemBanner.swift`, `MainWindowProblems.swift:92-118`): progress with a disabled button, a button that opens the approval pane, the error text, no button in a state that cannot send a request, and the banner only while a connected controller's route is the extension. Add the strings in every language.
+- [ ] 4.7 Rewrite `docs/development/apple-controller-ownership.md` for the route policy and the purpose of the extension, and change `wiki/Command-Reference.md:315-329` to `transport-extension`.
+- [ ] 4.8 **Hardware (reporter, #18)**: draft the request to confirm `045E:02D1` on a tester build with no extension, and the same request for owners of `045E:02DD`, `02E3`, and `0B0A`.
+- [ ] 4.9 **Hardware (reporter)**: with an owner of `045E:02EA`, `0B00`, or `0B12`, test whether OJD can read the pad through Apple's HID device and hide that device from games. Record the result in `apple-controller-ownership.md`; it decides whether a later release removes the extension.
+
+## 5. Document migration
+
+- [ ] 5.1 Add fixtures from the #59 screenshots and #58: a `v1alpha1` `AccessGrants.json`, a `v1alpha1` profile, a `v1alpha1` user record. Write failing tests that each converts to a `v1alpha3` property list.
+- [ ] 5.2 Add the `AlphaTwoToAlphaThree` step: write the property list, drop `notes` and `rationale`, turn each patch `null` into a `remove` entry, drop each crosswalk `null`. Chain it after `AlphaOneToAlphaTwo`. Caller: `DocumentMigrator`.
+- [ ] 5.3 Scan the root files, `ActiveProfiles`, `Profiles/`, `Controllers/`, `VirtualDevices/`, `Personas/`, and `Packages/`, and accept a folder argument. Give each file one of `migrated`, `current`, `failed`, `foreign`; add the verdicts to `cli-output.schema.json`; exit with a failure status when a file failed. Caller: `ojd migrate`.
+- [ ] 5.4 Keep each original under `Migrated/` with its relative path, never overwrite a backup, and make `--dry-run` write nothing. Test each.
+- [ ] 5.5 Run the migration at service start before any reader opens a store, and log each verdict. Callers: service startup and `SettingsFileStartup.swift:54-85`.
+- [ ] 5.6 Read the 0.5 documents in pull requests #50, #36, and #39 and decide whether a mechanical step to `v1alpha1` exists. Add the step, or report such a file `failed` with the release that wrote it. Record the decision in D4 of `design.md`.
+- [ ] 5.7 Offer Migrate wherever `E5001` shows: carry the error code of a failed access request from the service to the app, so an `E5001` from `AccessGrantStore.swift:222` arrives as `E5001` and not as `E2006` (`LocalRPCBridge.swift:38`, `AccessService.swift:38-45`, `AccessAreaView.swift:61-68`), offer Migrate before Delete in the Profiles area, and name a stale `.json` file in a store. Add the strings in every language. Caller: `AccessViewModel.swift:222-228` and the Profiles view model.
+- [ ] 5.8 Correct `wiki/Controller-Records.md:545` and the `migrate` section of `wiki/Command-Reference.md`.
+
+## 6. Generator scripts and scripting
+
+- [ ] 6.1 Add `ojd generate <script> [--output <folder>] [--replace] [--timeout <seconds>]`, with its name in `Tests/CommandLineNames`. The command starts a helper process and ends it at the limit. Write the timeout test first with an endless script.
+- [ ] 6.2 In the helper, evaluate the file with a bare `JSContext`, call `generate`, and read the result with `JSON.stringify`. Refuse `null`, a missing `generate`, and a result that is neither a document nor a list of documents.
+- [ ] 6.3 Check each document with the document coder and the reader for its kind, and write none when one fails. Report the document, key path, and rule.
+- [ ] 6.4 Write the files with the store's naming rule; report an equal file as unchanged; stop on a differing file unless `--replace`.
+- [ ] 6.5 Report a syntax error or exception with its message and line number.
+- [ ] 6.6 Add a test that package loading reads documents only and never evaluates a `.js` file in a package.
+- [ ] 6.7 Decide whether OJD ships a type declaration file generated from the schemas, so an editor checks a script. Record the decision and its evidence in D2 of `design.md`.
+- [ ] 6.8 Write the generator page in the wiki with one complete script, and run that script through `ojd generate` in a test.
+- [ ] 6.9 Add AppleScript, JavaScript for Automation, and Shortcuts examples to `wiki/Automating-OpenJoystickDriver.md`. Run each example once and keep its output in the page.
+- [ ] 6.10 List what the App Intents, the command line, and the local endpoint each expose, and name what a mod author cannot do through any of them. Save it as `docs/development/scripting-surfaces.md` for the next change.
+
+## 7. Schema style
+
+- [ ] 7.1 Write `Tests/RepositoryScripts/test_schema_style.py`: one fragment, at most 120 characters, ends with a period, no Swift type, path, command, error code, or validator wording, no `$comment`. Run it and keep the failure count as the baseline.
+- [ ] 7.2 Rewrite the 308 descriptions in the 15 schema files to pass 7.1, one schema file per commit.
+- [ ] 7.3 For each limit a description stated, add the keyword, or add the wiki sentence and a rejection case with the correct `schema` flag.
+- [ ] 7.4 Remove the 23 `$comment` entries and the allow-list at `Tests/RepositoryScripts/test_schema_naming.py:220-223`.
+- [ ] 7.5 Search for the producers of `report.notes`, `report.warnings`, and `report.caveat`. Keep a field a command writes a finding into; remove a field with no producer, with its references.
+- [ ] 7.6 Remove `crosswalk.notes`, `protocol-description.rationale`, and the prose-only properties in `Resources/CatalogRules/` and `Resources/Protocols/sony-sixaxis` and `sony-dual-shock4`, after a search of `Sources`, `Tests`, `wiki`, `docs`, and `Resources/Schemas` for each name.
+- [ ] 7.7 Move each removed fact that still holds into `wiki/Controller-Records.md` or the reference page for its kind, in the commit that removes it.
+
+## 8. Controller coverage
+
+- [ ] 8.1 Pass timeout 0 on interrupt pipes in the driver extension, with a failing test first, and regenerate with `./Scripts/ojd driverkit generate`. Caller: the extension's transfer path. (#55)
+- [ ] 8.2 Retry a failed session start with a growing delay and stop after a fixed count; show the last error on the controller. Caller: session start in the service. (#55)
+- [ ] 8.3 Take the Elite Series 1 endpoints (`0x81`, `0x01`) from pull request #56 into the `045E:02E3` record. **Hardware (reporter, #55)**: draft the request to confirm on a tester build.
+- [ ] 8.4 After 9.2, write the `044F:B671` wheel as an `XboxGIP` record with an input layout (steering bytes 6 to 7, brake bytes 10 to 11 as reported), and check it with `ojd record test` on the reporter's packets. List what the layout vocabulary lacks for a wheel (`axes` holds at most 4 entries) and add only that. **Hardware (reporter, #58)**: draft the request for a full capture of every pedal and button.
+- [ ] 8.5 Write a failing test for the Guide button of `20D6:2028` from the reporter's packets and fix the GIP virtual-key handling. Caller: the GIP driver. (#53)
+- [ ] 8.6 Reproduce the Logitech F710 replug failure with a session test that removes and re-adds the device, and fix it. Caller: USB discovery. (#48)
+- [ ] 8.7 Rebase pull request #54 onto the branch, migrate its documents, and verify wireless input decoding and empty-slot hiding for `045E:02A9`. (#9, #54)
+- [ ] 8.8 Migrate the Turtle Beach `10F5:711E` record from pull request #57 and run the record checks. (#57)
+- [ ] 8.9 Re-create the PowerA Spectra `20D6:4002` record from pull request #50 as a `v1alpha3` record, with the author credited. (#62, #50)
+- [ ] 8.10 Re-create the Razer Wolverine V3 TE endpoints from pull request #39 as `Resources/ControllerPatches/1532/1532-0a43.patch.plist`, with the author credited. (#14, #39)
+- [ ] 8.11 Re-create the Flydigi Vader 4 Pro dongle and Bluetooth XInput modes from pull request #36 as record data, and decide the transport question from #35 and #37 in `design.md`. (#35, #36, #37)
+- [ ] 8.12 Add the repository check that one identity has one record, and resolve `3537:1082` between pull request #47 and the bundled record. (#47)
+- [ ] 8.13 Apply the ZD follow-ups from #22 and add the dongle `413D:2204` from the reporter's data.
+- [ ] 8.14 Draft an evidence request with the exact `ojd controller capture` command for #8, #11, #19, #21, #31, and #38.
+- [ ] 8.15 Write `openspec/changes/0-6-0-alpha-3/dispositions.md`: one row per open issue and pull request with its task, its state, and the action left for the maintainer. Include: #22's report of a 15% default dead zone does not hold (the default is 0, `VirtualGamepadReportMapping.swift:16-21`); #56 is covered by 8.1 and 8.3; #18 by 9.17; #19 by 17.1; #63 by 8.16, 9.15, 9.16, and 9.18; #33's stick Y direction is not traced.
+- [ ] 8.16 After 9.15, give the bundled `3537:1022` record a `HIDDescriptor` mode matched on the dongle's HID gamepad interface, keep its `XboxGIP` mode, and state its capabilities so both modes pass the record rules. Write the classifier test first from the interface list in #63: the dongle binds the `HIDDescriptor` mode. **Hardware (reporter, #63)**: draft the request for `ojd controller capture` of every control through the dongle and for the identity `3537:10A8`; the mode's controls stay unverified until that capture. Caller: the bundled record set.
+- [ ] 8.17 Add a repository test that compares each count of bundled records a wiki page states with the generated record set, and correct `wiki/Troubleshooting.md:45` (697 against 706).
+
+## 9. Record-driven support
+
+- [ ] 9.1 Write the tests that fix the behavior for a controller with no record: binding by XUSB and GIP interface signature, by an SDL_GameControllerDB line, and by the standard HID usage map. Run them against the branch and report each that fails.
+- [ ] 9.2 Read `input.layouts` for every protocol family: the schema, `ControllerRecordDocument.swift:36`, and `ProtocolDriverRegistry.swift:196-239`. A layout decodes the controls it names in the reports it selects, and the family decoder handles the rest. Write the failing tests first: an `XboxGIP` record with a layout, an `XboxXUSB` patch that names one button, and a report no layout selects. Add the rejection cases. Caller: driver creation in `ProtocolDriverRegistry.makeDriver`.
+- [ ] 9.3 Move `idle` from the record to the mode with the reasons `NoControllerLinked` and `Bootloader`: schema, reader, `ProtocolClassifier.swift:392-400`, rejection cases, and the localized text per reason. Add the move to the `AlphaTwoToAlphaThree` step (5.2). Caller: `ProtocolClassifier.classify`.
+- [ ] 9.4 Add bundled records for `2DC8:3208` and `2DC8:5750` with an idle default mode for `Bootloader`, and remove `ControllerModelID.isBootloaderIdentity` after a search of `Sources`, `Tests`, `wiki`, `docs`, and `Resources/Schemas`. Make the record set refuse a user or package document for such an identity, with a test. Caller: `ojd record install` and record set loading.
+- [ ] 9.5 Add `Tests/RepositoryScripts/test_no_model_identifiers.py`: it fails on a literal vendor and product pair in Swift under `Sources/` outside an allow-list file whose entries each carry a reason. Decide each line it reports on the branch (`DiagnosticsService.swift:339`, `Switch2BluetoothLEHub.swift:28`, `PassiveUSBDescriptorProbe.swift:9`, `ControllerModelID.swift:34`, `Configuration.swift:13-17`): move the fact into a record, key it by protocol family, or list it with its reason.
+- [ ] 9.6 Change `ControllerRecordWatcher.swift:56` and the record, package, profile, and persona stores to the `.plist` extension, and test that a record saved from an editor applies without a restart and that an invalid file leaves the earlier record in force. Caller: service startup.
+- [ ] 9.7 Make `ojd record draft`, `validate`, `install`, `show`, and `test` read and write property lists, and test the pipe from `record draft` into `record install -`. Caller: the `record` command group.
+- [ ] 9.8 For a connected controller OJD does not serve, show the reason and the next step: the draft action in the controller detail for a HID pad, and the capture command in `ojd controller show` for `NoProtocolMatch`. Add the strings in every language. Caller: the controller detail view and the status RPC.
+- [ ] 9.9 Measure what a protocol description document would need to register a family that the general layout driver runs, as `XboxXID`, `NintendoSwitchInputOnly`, and `VendorFlydigi` already run: list each place the family enumeration is closed in the schemas (`controller.schema.json`, `report.schema.json`) and in Swift (`PhysicalProtocolID` at `ProtocolClassifier.swift:7`, the 15 files that name a family case, and each `switch` on one). Save the result as `docs/development/document-defined-families.md` for a later change.
+- [ ] 9.10 Write the support ladder page in the wiki (nothing, a patch, a record, a generator script, source) with the command for each step and one complete patch and record, and put the same steps in `llms.txt` and `llms-full.txt`.
+- [ ] 9.11 **Hardware (maintainer)**: measure D16 before any code. From the service process, with the 2C over Bluetooth LE and with OJD's `045E:0B13` virtual gamepad as the known-good target: does `GCController.controllers()` list a controller, how long after the HID device arrives, and which public property ties it to the HID device? Save the runs as `evidence/system-serving/` and record the result and the settle time in D16 of `design.md`. If the service cannot tell, record that, and skip 9.12.
+- [ ] 9.12 After 9.11, write the failing tests and change the decision at `HIDDeviceStream+DeviceLifecycle.swift:98-104`: a HID pad that passes `supportsHIDDevice` and gets no listed controller within the settle time is seized and served; a pad with a listed controller stays with macOS; a record's `server` overrides both. Set `systemListsGameController` (`:80`) from the listed controller, so the second-controller warning of `ojd controller list` appears only when macOS lists one. Caller: HID discovery in the service.
+- [ ] 9.13 Research one virtual gamepad profile that both SDL and GameController read. For `SDLCompatible`, `GameControllerCompatible`, and each candidate identity and report descriptor, publish it with `ojd virtual feed` and record what `just diagnose-gamecontroller` lists and what an SDL program reads for every control, with SDL's HIDAPI drivers on and off. Start from the two refusals on the branch: GameController lists nothing for `045E:0B0C`, and SDL reads no input from `045E:0B13` (`wiki/Playing-Games.md:24`). Save the runs and the result as `docs/development/virtual-profile-selection.md` for a later change. Change no profile selection code.
+- [ ] 9.14 Research choosing the profile by the app in front, in the same document: how the service learns the frontmost app, how it tells whether that app reads GameController or SDL, what a running game observes when OJD replaces the published gamepad (disconnect, reconnect, and the time between), and what the user's override then means. Measure each on the maintainer's Mac with the 2C. Change no profile selection code.
+- [ ] 9.15 Let a patch reach every record property except the identity, and merge `patch.modes` by `id` (D17). Write the failing tests first: a patch that changes one endpoint of one mode keeps the other modes; a patch that adds a mode; the `remove` path `modes.<id>`; a patch that sets `capabilities`; a patch that sets `vendorID` is refused; the patch #63 needs for `3537:1022`. Change `ControllerPatch.sections` (`ControllerPatch.swift:62-65, 114-119`), the merge at `ControllerRecordDraft.swift:82`, and `controller-patch.schema.json`, and add the rejection cases under `SchemaRejections/`. Read `capabilitiesAreDeclared(by:)` (`ControllerRecordDocument+Modes.swift:392-393`) and record in D17 which form lets a record hold modes of two drivers. Add to the `AlphaTwoToAlphaThree` step (5.2): a patch with `modes` gains the `remove` path `modes`. Caller: record set loading.
+- [ ] 9.16 Make `ojd record draft` accept every connected controller, served or not (`E2012` only for a device that is not connected). A device with a HID gamepad interface gets a `HIDDescriptor` mode, as a patch when a bundled record holds the identity; a device with only vendor-class interfaces gets the identity and one mode per interface signature, and the command names the input section as missing. Write the tests first with the #63 descriptor and a vendor-class device. Caller: the `record draft` command and the draft action of the controller detail (9.8).
+- [ ] 9.17 Write a failing test that a HID device OJD does not serve is not seized, then move the seize at `HIDDeviceStream+DeviceLifecycle.swift:66-67` and `HIDInputClaim.swift:96` after the serving decision. Trace the raw-USB path for the same order and report it. Caller: HID discovery in the service. (#18)
+- [ ] 9.18 Read why the classifier stops at an interface contract mismatch (`ProtocolDriverRegistry.swift:156`, `ProtocolClassifier.swift:275-286`, `wiki/Supported-Controllers.md:134`) and record the reason in D18. With the maintainer's answer to the open question, write the failing tests (a record whose modes fit no interface and a HID interface that meets the contract; no HID interface; an idle mode that matches) and add the fallback with its sentence in the controller detail and `ojd controller show`. Update `wiki/Supported-Controllers.md:134` in the same commit. Caller: `ProtocolClassifier.classify`.
+
+## 10. Interface audit
+
+No task of groups 11 to 13 changes a view before 10.1 and 10.5 exist (D23).
+
+- [ ] 10.1 Write `docs/development/interface-audit.md`: one row per window, sheet, menu, toolbar item, and control, with its source file, its measured size, the term it shows, the guideline page it answers to, the reference app it was compared with, each difference, and "fix" with a task number or "keep" with a reason. The toolbar buttons of the main window read "keep", with the Notes measurement in `evidence/interface-reference/apple-apps-accessibility.txt`.
+- [ ] 10.2 Read OJD's main window, Settings window, Input Test window, and menu bar menu through Accessibility with the commands of `evidence/interface-reference/apple-apps-accessibility.txt` (roles, names, sizes), and save the output beside the Notes and System Settings readings as `evidence/interface-reference/ojd-accessibility.txt`.
+- [ ] 10.3 **Maintainer**: take screenshots of the macOS menu bar extras (Bluetooth, Wi-Fi, Sound, Control Center, each with its menu open) and of one Apple window with no private content (System Settings > General, Notes with an empty note), and save them under `evidence/interface-reference/`. Accessibility cannot read the extras (error -1719), and a screenshot of Notes holds the maintainer's notes.
+- [ ] 10.4 Read each guideline page that `design.md` quotes through the apple-docs MCP server once it connects, and correct any quote that differs. The quotes in `design.md` come from `developer.apple.com/tutorials/data/design/human-interface-guidelines/`.
+- [ ] 10.5 Reproduce each finding under "Controls that can appear to do nothing" in `design.md` in the running app, and write per control into the audit: the steps, what the app showed, and "reproduced" or "not reproduced". Read the parts the first pass left out (the profile sheets, the Access view model, the Library area, the actions of `MainWindowToolbar`, the update checker) and add what they show. Start at the view the maintainer names for the report that dropdowns do nothing.
+- [ ] 10.6 Assign every control in the audit to Simple or Advanced, or to the developer switch, and give the list to the maintainer to confirm before group 13.
+
+## 11. Menu bar item
+
+- [ ] 11.1 Write failing tests on `StatusItemModel.entries(for:)` (`MenuBar/StatusItemModel.swift:161-236`) for the menu of `specs/menu-bar-item/spec.md`: the order with one controller; two controllers as top-level rows; the row's name, battery, profile, and paused state; "No Controller Connected"; no item of a controller's submenu opens a submenu; no "Activity Log", "Explain Error Code...", "Report Problem...", or "Project Website".
+- [ ] 11.2 Rebuild the entries to pass 11.1, with one checkmarked profile list per controller, "No Profile", and "More Profiles" after ten. Remove the "Controllers" and "Profiles" submenus, the "Activate" and "Deactivate" lists, and the joined status line, with their strings in every language after a search of `Sources`, `Tests`, `wiki`, and `docs`. Caller: `MenuBarCoordinator+StatusMenu.swift:45-84`.
+- [ ] 11.3 Add the problem rows: a missing permission named in the row and opening the Access area at it; an unreachable service with the action that starts it. Remove "Needs attention" where no problem is named. Caller: the status RPC through `MenuBarViewModel`.
+- [ ] 11.4 Change the icon's symbol while a problem row exists (`MenuBar/MenuBarCoordinator.swift:10-21`), and keep it with no controller connected. Give the item an accessibility label that names the state.
+- [ ] 11.5 Check that the Help menu of the main menu holds "Activity Log", "Explain Error Code...", "Report Problem...", and "Project Website", and add each one it lacks. Caller: the main menu.
+- [ ] 11.6 Set the status item's `behavior` to `.removalAllowed`, observe its visibility, and on removal by the user store "Show in menu bar" off, turn "Show in Dock" on when it was off, and open the main window. Trace what the app does when a settings file turns both off, and make opening the app from Finder open the main window (`MenuBarCoordinator+Lifecycle.swift:128-135`). Caller: `MenuBarCoordinator`.
+- [ ] 11.7 Rewrite `docs/development/menu-bar-settings-architecture.md` and `wiki/Using-the-App.md:22-58` for the menu's purpose and its rows (`stale_doc`).
+
+## 12. Window controls and layout
+
+Each of 12.1 to 12.7 starts from its row in the audit (10.5) and from a failing test of the view model.
+
+- [ ] 12.1 Input Test: apply the player indicator when the user chooses it and remove its Apply button (`Controllers/InputTest/InputTestView+Body.swift:218-226`); make the rumble switch state what it governs (`:29`); give each silent guard in `InputTestViewModel+SessionAndOutputState.swift:248-250, 280-281, 293-295, 315` a visible result or an unavailable control. Caller: `InputTestView`.
+- [ ] 12.2 Who serves a controller (`Controllers/Inventory/ControllerServerPicker.swift:33-52`): make the control unavailable with progress while its request runs, show a refusal directly below it, and make a choice the service refuses (`ControllerServerRequests.swift:9-91`) unavailable with its reason. Caller: `ControllerDetailView`.
+- [ ] 12.3 Virtual gamepad kind (`Controllers/Inventory/VirtualHIDProfileOverrideView.swift:34, 48, 108-118`): show the kind in force and the stored kind when they differ, show the results `.unchanged` and `.otherScopeHolds` as text, offer only the kinds the service accepts for the controller, and make "Apply to" choose the scope that is written, or remove it. Caller: `ControllerDetailView`.
+- [ ] 12.4 Dead zone editor (`Controllers/Inventory/StickDeadzoneEditor.swift:32`): write the last value after a running write ends. Caller: the tuning section of the controller detail.
+- [ ] 12.5 Profile editor and list: show unsaved changes with the Save button, say when "Virtual output" resets `physicalInput` (`Profiles/Editor/ProfileOutputPolicyView.swift:16-50`), and give each guard listed in `design.md` for `ProfileEditorActions.swift` and `ProfileListActions.swift` a message or an unavailable control. Caller: the Profiles area.
+- [ ] 12.6 Settings: show the reason beside "Start at login" when it cannot change; show the lock reason of "Show in menu bar" and "Show in Dock" as text in the row (`SettingsWindow/SettingsPaneComponents.swift:28`); when macOS has denied notifications, say so with a button that opens the Notifications pane (`SettingsPreferencesModel.swift:207-227, 402-413`); apply "Automatic update check" in the session (`MenuBar/MenuBarCoordinator+Lifecycle.swift:79`); make the title or row of "Controller connected" name the notification for a controller that needs attention; make the developer controller pop-up unavailable with a reason when it has no option (`Settings/Developer/DeveloperControllerSummaryView.swift:17-27`). Caller: the Settings window.
+- [ ] 12.7 Show the failure of a request beside the control that started it in every view, and keep the banner (`MainWindow/MainWindowProblems.swift`) for problems that concern no single control. List the seven failure stores from `design.md` in the audit with the one each view keeps.
+- [ ] 12.8 Add a menu command for each of the 15 toolbar actions (`MainWindow/MainWindowToolbar.swift:7-47`) with the toolbar item's title and availability, and change no toolbar item. Add a test that every toolbar item has a menu command. Caller: the main menu.
+- [ ] 12.9 Add Find to the Edit menu with Command-F, which focuses the search field of the list in view. Caller: the main menu.
+- [ ] 12.10 Set the minimum width of the main window from the minimum widths of the columns it shows (`MainWindow/MainWindowController.swift:11-19`), with a test for three columns and for a hidden sidebar.
+- [ ] 12.11 Replace the fixed point size at `Components/WorkbenchComponents.swift:62` with a text style, move each label, value, and error that uses `.caption` to the body style, and add the repository check that fails on a font set by point size under `Sources/OpenJoystickDriverPresentation`.
+- [ ] 12.12 Define one spacing scale and three sheet widths in `Components/`, and move the 23 sheets and the 16 literal spacing values onto them. Compare each changed view with its row in the audit.
+- [ ] 12.13 Show each state of a controller, a permission, and the service with a symbol that differs in shape and a sentence, and show each connected controller as "Working", "Needs a step from you", or "Not supported yet" with one sentence and one button. Caller: the controller list and detail.
+- [ ] 12.14 Check every view with keyboard navigation and with VoiceOver: each control is reachable, and each icon-only control has an accessibility label. Write the result per view into the audit and fix each gap.
+- [ ] 12.15 Show the setup steps in the main window on a start with a step open, each with one sentence and one button, and ask for a permission only when the user chooses its step. Find every permission request the app sends at launch and remove each that no user action starts. Caller: main window start.
+- [ ] 12.16 Add to the Help menu a command that opens the wiki page of the area in view and a tour of the main window. Caller: the main menu.
+- [ ] 12.17 Rewrite `wiki/Home.md` around four start pages: play a game, control the Mac, set up OJD on several Macs, add support for a controller. The third states what the license and macOS allow and makes no claim about managed deployment.
+
+## 13. Simple and Advanced
+
+- [ ] 13.1 Add the setting `interfaceLevel` with the values `Simple` and `Advanced` to `settings.schema.json`, the settings reader, and `ojd setting`, with `Simple` as the built-in default. Make the `AlphaTwoToAlphaThree` step (5.2) write `Advanced` into a settings document it converts. Add the rejection case for another value. Caller: the settings store.
+- [ ] 13.2 Add the pop-up button "Interface" to Settings > General and the items "Simple" and "Advanced" with a checkmark to the View menu. Every open window follows a change without a restart. Caller: the Settings window and the main menu.
+- [ ] 13.3 Make each view show its rows by the level, from the list of 10.6. Add one test per view that the rows of Simple are a subset of the rows of Advanced.
+- [ ] 13.4 In Simple, show one row with the count of hidden controls that hold a value other than their default and a button that switches to Advanced. Caller: the controller detail and the profile editor.
+- [ ] 13.5 Show the developer tools only when the level is Advanced and `developerTools` is on.
+- [ ] 13.6 Add a test that the service reads no `interfaceLevel` and that `ojd` output is the same for both values.
+- [ ] 13.7 Describe the setting in `wiki/Using-the-App.md` and mark in each wiki page the controls that need Advanced.
+
+## 14. Terminology
+
+- [ ] 14.1 List every term the English strings, the prose of `ojd --help`, and the wiki use for each concept in the table of D22, with counts, and give the maintainer the table to settle. Write `wiki/Glossary.md` from the settled table: each term, its definition in one sentence, the words it replaces, and the command-line value it stands for.
+- [ ] 14.2 Change the English strings to the glossary's terms, and each language by the rules in `LOCALIZATION.md`, one term per commit. Change no command, flag, schema value, or error code.
+- [ ] 14.3 Add the repository check that fails when an English string holds a word the glossary lists as replaced, and the check that one language translates one term one way.
+- [ ] 14.4 Name each virtual gamepad kind by what reads it in the window, and show the raw identifier beside it only in Advanced (`VirtualHIDProfileOverrideView.swift:34`). Caller: the controller detail.
+- [ ] 14.5 Change the wiki to the glossary's terms and link each term at its first use on a page: `wiki/Playing-Games.md:24,38,85,89`, `wiki/Command-Reference.md:48,232-237`, `wiki/Using-the-App.md`, and the pages a search for each replaced word finds.
+- [ ] 14.6 Add the terms to `LOCALIZATION.md` with the rule that a term has one translation per language.
+
+## 15. Per-app profiles
+
+- [ ] 15.1 Replace `appID` with `appIDs` (a list of one or more bundle identifiers) in `profile.schema.json:38-48`, the profile reader, and the selection at `RemappingProfileLibrary+Operations.swift:275`. Write the failing tests first: a profile with two apps is in force for the second; a document with `appID` is refused. Add the rejection case and the conversion to the `AlphaTwoToAlphaThree` step (5.2). Let `--app` repeat on `ojd profile create` and `import`. Caller: profile selection in the service.
+- [ ] 15.2 Replace the identifier text field (`ProfileCreationSheet.swift:74`) with an app chooser in the creation sheet and the editor: running and installed apps with icon and name, "Other..." with an open panel, and an app that is not installed shown by its identifier. Caller: the Profiles area.
+- [ ] 15.3 Carry the profile in force for each controller and the app that selected it in the status RPC, and show both in the controller detail and the menu bar row (`MenuBarViewModel.swift:55`). Caller: the status RPC.
+- [ ] 15.4 Update `wiki/Remapping-Profiles.md:133` and the profile reference for `appIDs` and the chooser.
+
+## 16. Mapper features
+
+Each task stands alone and can leave the release (D24). Each is written for OJD's records; no code or preset file comes from InputConfig.
+
+- [ ] 16.1 Live view: draw every control a record or a HID descriptor declares, by control kind, with its live value. Add a test that builds the view's model for every bundled record and fails on a control with no drawing. Caller: the controller detail.
+- [ ] 16.2 Calibration view for sticks and triggers: the raw value, the value after tuning, and the dead zone, with the value the user sets stored as tuning for the controller. First read which values the status RPC carries. Caller: the controller detail.
+- [ ] 16.3 Add profile templates that bind controls by their standard names beside `empty` and `gyroStick` (`ProfileCreationFields.swift:185`); a template skips a binding whose control the controller lacks, and the sheet lists each one skipped. Caller: the profile creation sheet and `ojd profile create`.
+- [ ] 16.4 Decide from the profile reader and `profile.schema.json:7-15,76` whether a profile can leave out `device`, and record the result in `design.md`. Then add the conversion of a profile to another controller model, in the app and as an `ojd profile` subcommand named in `Tests/CommandLineNames`: it keeps each binding whose source control the target has, lists each one left out, and leaves the original unchanged.
+- [ ] 16.5 Sort the profile list by name, by controller, or by last use, and add a note to a binding (schema, reader, editor). `profile.note` is a MIDI note number, so the property takes another name.
+- [ ] 16.6 Add one system-wide keyboard shortcut that pauses and resumes every controller, unset on a fresh installation. Caller: Settings and the pause RPC.
+- [ ] 16.7 Add a setting that disconnects a Bluetooth controller after a time with no changed input, off by default. **Hardware (maintainer)**: confirm with the 2C over Bluetooth LE. Caller: the session's input path.
+- [ ] 16.8 Add bindings that open Launchpad, lock the screen, take a screenshot, show the desktop, and type a text. For each, name the public macOS API it uses and the permission it needs before writing it; drop an action that has no public API and report it.
+- [ ] 16.9 Show the changes of the installed version from `CHANGELOG.md` at the first opening of the main window after an update, once.
+- [ ] 16.10 Measure an importer for InputConfig's preset library (commit `958bdd97`): how one preset maps to an OJD profile, how many of the 456 map without loss, and what the MIT notice requires. Save the result as `docs/development/inputconfig-presets.md`. Write no importer.
+
+## 17. Status text and tester builds
+
+- [ ] 17.1 Write a failing test that Input Test shows "Input active" only after a control leaves its rest value, then fix `InputTestViewModel+SessionAndOutputState.swift:341-343`. Caller: `InputTestView`. (#19)
+- [ ] 17.2 Give every reason for not serving a connected controller a sentence and a next step in every language, `interfaceContractMismatch` included (`ProtocolClassifier.swift:275-286`), and add the repository check that fails on a reason with no sentence. Caller: the controller detail and `ojd controller show`. (#63)
+- [ ] 17.3 Give each rule behind `E5007` its own localized message with the file, the key path, the rule, and the fix. Start from the list of the English messages the record reader throws. Caller: `ojd record validate`, `ojd record list`, and the record area of the window. (#63)
+- [ ] 17.4 Make the release workflow (`.github/workflows/release.yml`) publish a tester build as a pre-release with a version that orders between the release before it and the release it leads to, and test that order in the update check. Publishing a build is the maintainer's action.
+- [ ] 17.5 Rewrite `wiki/Updating-and-Uninstalling.md:36-38`: where tester builds are published and that "Include prerelease updates" makes the update check find them.
+
+## 18. Documentation, localization, and changelog
+
+- [ ] 18.1 Write the 0.6.0-alpha.3 section of `CHANGELOG.md`: the format change, the removed properties, the patch `remove` list, patches that reach every section and merge `modes` by `id`, idle modes, layouts for every family, `appIDs`, the driver extension policy, the migrate command, the menu bar menu, the "Interface" setting, and the changed terms.
+- [ ] 18.2 Add every string from groups 3, 4, 5, 9, and 11 to 17 to each language by the rules in `LOCALIZATION.md`.
+- [ ] 18.3 Update `wiki/Controller-Records.md`, `wiki/Writing-Controller-Mods.md`, `README.md`, `llms.txt`, and `llms-full.txt` so every document example is a property list, and show `plutil -convert` in both directions.
+- [ ] 18.4 Update `docs/development/implementation-status.md` and `Scripts/SDK/reference_client.py` for `v1alpha3`.
+
+## 19. Release check
+
+- [ ] 19.1 Run `just check` once and fix what it reports.
+- [ ] 19.2 Install the build over the alpha.2 data on the maintainer's Mac: the first start migrates every file, `Migrated/` holds the originals, no area shows `E5001`, and the interface is in Advanced.
+- [ ] 19.3 **Hardware (maintainer)**: run the procedure in `docs/testing/8bitdo-ultimate-2c.md` for cable, receiver, and Bluetooth LE on the release build, with rumble in each mode.
+- [ ] 19.4 Search the diff of the release for a Swift branch on one controller model, and move each one found into a record.
+- [ ] 19.5 Run the OpenSpec validation for `0-6-0-alpha-3`.

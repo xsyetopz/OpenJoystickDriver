@@ -1,0 +1,70 @@
+23:42:35
+0.025 controller vendorName=Xbox Wireless Controller productCategory=Xbox One extended=true battery=0.0 hapticLocalities=["All", "Default", "Handles", "Left Handle", "Left Trigger", "Right Handle", "Right Trigger", "Triggers"]
+0.053 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+3.055 Xbox Wireless Controller: buttons=["A Button"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+3.252 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+3.504 Xbox Wireless Controller: buttons=["B Button"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+3.705 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+4.004 Xbox Wireless Controller: buttons=["X Button"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+4.204 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+4.656 Xbox Wireless Controller: buttons=["Y Button"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+4.805 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+5.103 Xbox Wireless Controller: buttons=["Left Bumper"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+5.302 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+5.655 Xbox Wireless Controller: buttons=["Right Bumper"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+5.855 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+6.105 Xbox Wireless Controller: buttons=["Left Trigger"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.1 RT=0.0
+6.154 Xbox Wireless Controller: buttons=["Left Trigger"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=1.0 RT=0.0
+6.358 Xbox Wireless Controller: buttons=["Left Trigger"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.3 RT=0.0
+6.405 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+6.655 Xbox Wireless Controller: buttons=["Right Trigger"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=1.0
+6.855 Xbox Wireless Controller: buttons=["Right Trigger"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.8
+6.902 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+7.804 Xbox Wireless Controller: buttons=["View Button"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+8.003 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+8.504 Xbox Wireless Controller: buttons=["Menu Button"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+8.656 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+11.057 Xbox Wireless Controller: buttons=["Left Stick Click"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+11.206 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+11.455 Xbox Wireless Controller: buttons=["Right Stick Click"] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+11.655 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+12.003 Xbox Wireless Controller: buttons=["D-pad (Up)"] dpad=(0,1) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+12.153 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+12.462 Xbox Wireless Controller: buttons=["D-pad (Down)"] dpad=(0,-1) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+12.604 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+12.906 Xbox Wireless Controller: buttons=["D-pad (Left)"] dpad=(-1,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+13.054 Xbox Wireless Controller: buttons=[] dpad=(-0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+13.404 Xbox Wireless Controller: buttons=["D-pad (Right)"] dpad=(1,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+13.568 Xbox Wireless Controller: buttons=[] dpad=(-0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+14.555 Xbox Wireless Controller: buttons=["Left Stick (Left)", "Left Stick (Up)"] dpad=(-0,0) LS=(-0.2,0.5) RS=(0.0,0.0) LT=0.0 RT=0.0
+14.604 Xbox Wireless Controller: buttons=["Left Stick (Left)", "Left Stick (Up)"] dpad=(-0,0) LS=(-0.4,0.9) RS=(0.0,0.0) LT=0.0 RT=0.0
+14.654 Xbox Wireless Controller: buttons=["Left Stick (Right)", "Left Stick (Up)"] dpad=(-0,0) LS=(0.0,0.9) RS=(0.0,0.0) LT=0.0 RT=0.0
+14.703 Xbox Wireless Controller: buttons=["Left Stick (Right)", "Left Stick (Up)"] dpad=(-0,0) LS=(0.6,1.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+14.751 Xbox Wireless Controller: buttons=["Left Stick (Right)", "Left Stick (Up)"] dpad=(-0,0) LS=(0.7,1.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+14.804 Xbox Wireless Controller: buttons=["Left Stick (Right)", "Left Stick (Up)"] dpad=(-0,0) LS=(0.9,0.8) RS=(0.0,0.0) LT=0.0 RT=0.0
+14.854 Xbox Wireless Controller: buttons=["Left Stick (Right)", "Left Stick (Up)"] dpad=(-0,0) LS=(1.0,0.2) RS=(0.0,0.0) LT=0.0 RT=0.0
+14.903 Xbox Wireless Controller: buttons=["Left Stick (Down)", "Left Stick (Right)"] dpad=(-0,0) LS=(1.0,-0.3) RS=(0.0,0.0) LT=0.0 RT=0.0
+14.955 Xbox Wireless Controller: buttons=["Left Stick (Down)", "Left Stick (Right)"] dpad=(-0,0) LS=(0.7,-1.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+15.002 Xbox Wireless Controller: buttons=["Left Stick (Down)", "Left Stick (Right)"] dpad=(-0,0) LS=(0.2,-1.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+15.054 Xbox Wireless Controller: buttons=["Left Stick (Down)", "Left Stick (Left)"] dpad=(-0,0) LS=(-0.8,-0.9) RS=(0.0,0.0) LT=0.0 RT=0.0
+15.106 Xbox Wireless Controller: buttons=["Left Stick (Down)", "Left Stick (Left)"] dpad=(-0,0) LS=(-1.0,-0.5) RS=(0.0,0.0) LT=0.0 RT=0.0
+15.154 Xbox Wireless Controller: buttons=["Left Stick (Left)", "Left Stick (Up)"] dpad=(-0,0) LS=(-1.0,0.3) RS=(0.0,0.0) LT=0.0 RT=0.0
+15.203 Xbox Wireless Controller: buttons=["Left Stick (Left)", "Left Stick (Up)"] dpad=(-0,0) LS=(-0.7,0.9) RS=(0.0,0.0) LT=0.0 RT=0.0
+15.257 Xbox Wireless Controller: buttons=["Left Stick (Left)", "Left Stick (Up)"] dpad=(-0,0) LS=(-0.0,0.3) RS=(0.0,0.0) LT=0.0 RT=0.0
+15.305 Xbox Wireless Controller: buttons=[] dpad=(-0,0) LS=(-0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+15.904 Xbox Wireless Controller: buttons=["Right Stick (Left)", "Right Stick (Up)"] dpad=(-0,0) LS=(-0.0,0.0) RS=(-0.8,0.8) LT=0.0 RT=0.0
+15.954 Xbox Wireless Controller: buttons=["Right Stick (Left)", "Right Stick (Up)"] dpad=(-0,0) LS=(-0.0,0.0) RS=(-0.5,1.0) LT=0.0 RT=0.0
+16.004 Xbox Wireless Controller: buttons=["Right Stick (Right)", "Right Stick (Up)"] dpad=(-0,0) LS=(-0.0,0.0) RS=(0.2,1.0) LT=0.0 RT=0.0
+16.055 Xbox Wireless Controller: buttons=["Right Stick (Right)", "Right Stick (Up)"] dpad=(-0,0) LS=(-0.0,0.0) RS=(0.5,1.0) LT=0.0 RT=0.0
+16.103 Xbox Wireless Controller: buttons=["Right Stick (Right)", "Right Stick (Up)"] dpad=(-0,0) LS=(-0.0,0.0) RS=(1.0,1.0) LT=0.0 RT=0.0
+16.155 Xbox Wireless Controller: buttons=["Right Stick (Down)", "Right Stick (Right)"] dpad=(-0,0) LS=(-0.0,0.0) RS=(1.0,-0.1) LT=0.0 RT=0.0
+16.202 Xbox Wireless Controller: buttons=["Right Stick (Down)", "Right Stick (Right)"] dpad=(-0,0) LS=(-0.0,0.0) RS=(1.0,-0.7) LT=0.0 RT=0.0
+16.254 Xbox Wireless Controller: buttons=["Right Stick (Down)", "Right Stick (Right)"] dpad=(-0,0) LS=(-0.0,0.0) RS=(1.0,-0.9) LT=0.0 RT=0.0
+16.305 Xbox Wireless Controller: buttons=["Right Stick (Down)", "Right Stick (Right)"] dpad=(-0,0) LS=(-0.0,0.0) RS=(0.2,-1.0) LT=0.0 RT=0.0
+16.353 Xbox Wireless Controller: buttons=["Right Stick (Down)", "Right Stick (Left)"] dpad=(-0,0) LS=(-0.0,0.0) RS=(-0.0,-1.0) LT=0.0 RT=0.0
+16.405 Xbox Wireless Controller: buttons=["Right Stick (Down)", "Right Stick (Left)"] dpad=(-0,0) LS=(-0.0,0.0) RS=(-0.8,-0.9) LT=0.0 RT=0.0
+16.456 Xbox Wireless Controller: buttons=["Right Stick (Left)", "Right Stick (Up)"] dpad=(-0,0) LS=(-0.0,0.0) RS=(-0.7,0.3) LT=0.0 RT=0.0
+16.506 Xbox Wireless Controller: buttons=["Right Stick (Left)", "Right Stick (Up)"] dpad=(-0,0) LS=(-0.0,0.0) RS=(-0.7,0.7) LT=0.0 RT=0.0
+16.555 Xbox Wireless Controller: buttons=["Right Stick (Left)", "Right Stick (Up)"] dpad=(-0,0) LS=(-0.0,0.0) RS=(-0.1,0.8) LT=0.0 RT=0.0
+16.603 Xbox Wireless Controller: buttons=[] dpad=(-0,0) LS=(-0.0,0.0) RS=(-0.0,0.0) LT=0.0 RT=0.0
+60.007 end, controllers listed: 1
