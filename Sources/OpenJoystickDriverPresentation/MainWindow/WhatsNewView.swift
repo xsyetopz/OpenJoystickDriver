@@ -48,6 +48,20 @@
     }
   }
 
+  /// One line of a changelog section: a `### ` heading or a `- ` item.
+  enum WhatsNewBlock: Equatable {
+    case heading(String)
+    case item(String)
+
+    static func blocks(from section: String) -> [WhatsNewBlock] {
+      section.split(separator: "\n").compactMap { line in
+        if line.hasPrefix("### ") { return .heading(String(line.dropFirst(4))) }
+        if line.hasPrefix("- ") { return .item(String(line.dropFirst(2))) }
+        return nil
+      }
+    }
+  }
+
   /// The sheet with the changes of the installed version.
   struct WhatsNewView: View {
     @ObservedObject
@@ -57,12 +71,20 @@
       VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Text(OJDLocalized.formatted("ui.whatsNew.title", model.version)).font(.headline)
         ScrollView {
-          Text(
-            (try? AttributedString(
-              markdown: model.text,
-              options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-            )) ?? AttributedString(model.text)
-          ).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading)
+          VStack(alignment: .leading, spacing: OJDSpacing.small) {
+            ForEach(Array(WhatsNewBlock.blocks(from: model.text).enumerated()), id: \.offset) { _, block in
+              switch block {
+              case .heading(let title):
+                Text(title).font(.subheadline.weight(.semibold)).padding(.top, OJDSpacing.small)
+              case .item(let text):
+                HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
+                  Text(verbatim: "•")
+                  Text((try? AttributedString(markdown: text)) ?? AttributedString(text))
+                    .fixedSize(horizontal: false, vertical: true)
+                }
+              }
+            }
+          }.textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading)
         }.frame(minHeight: 200)
         HStack {
           Spacer()

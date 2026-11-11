@@ -27,6 +27,14 @@ struct WhatsNewTests {
   }
 
   @Test
+  func aSectionSplitsIntoHeadingsAndItems() {
+    let blocks = WhatsNewBlock.blocks(from: "### Added\n\n- `ojd migrate` converts files.\n- Second.\n")
+    #expect(
+      blocks == [.heading("Added"), .item("`ojd migrate` converts files."), .item("Second.")]
+    )
+  }
+
+  @Test
   func theFirstOpeningAfterAnUpdateShowsTheInstalledVersionOnce() throws {
     try store.setLastShownChangelogVersion("0.5.0")
     let whatsNew = model(installed: "0.6.0")
