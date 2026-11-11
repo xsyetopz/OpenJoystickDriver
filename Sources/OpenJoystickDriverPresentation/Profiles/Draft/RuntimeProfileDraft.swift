@@ -247,7 +247,35 @@ struct RuntimeProfileDraft: Sendable, Equatable {
         turbo: binding.turbo,
         longHold: binding.longHold,
         multiTap: binding.multiTap,
-        additionalActions: actions
+        additionalActions: actions,
+        remark: binding.remark
+      )
+    }
+    if let layerID {
+      return try replacingLayerBinding(layerID: layerID, bindingID: bindingID, transform: transform)
+    }
+    return try replacingBinding(bindingID, transform)
+  }
+
+  /// Returns the draft with the remark of an assignment set, in the layer when `layerID` is
+  /// given, or cleared when `remark` is nil.
+  ///
+  /// - Throws: ``RuntimeProfileDraftError`` when the layer or assignment is missing or the result
+  ///   breaks a profile rule.
+  func settingRemark(_ remark: String?, for bindingID: UUID, layerID: UUID? = nil) throws -> Self {
+    let transform: (RemappingBinding) -> RemappingBinding = { binding in
+      RemappingBinding(
+        id: binding.id,
+        source: binding.source,
+        destination: binding.destination,
+        behavior: binding.behavior,
+        pulseDurationMs: binding.pulseDurationMs,
+        axisTuning: binding.axisTuning,
+        turbo: binding.turbo,
+        longHold: binding.longHold,
+        multiTap: binding.multiTap,
+        additionalActions: binding.additionalActions,
+        remark: remark
       )
     }
     if let layerID {

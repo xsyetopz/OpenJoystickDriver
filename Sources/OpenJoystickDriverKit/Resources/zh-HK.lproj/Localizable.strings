@@ -410,6 +410,16 @@
 "ui.capture.profileNameValidation" = "請輸入設定檔名稱。";
 /* Toolbar button in the Profiles area that creates a profile. */
 "ui.profiles.new" = "新增設定檔";
+/* Label of the optional note field in the binding sheet of the profile editor. The note is free text that the person writes about one binding. */
+"ui.profiles.remark" = "備註（選填）";
+/* Label of the popup above the profile list that chooses the order of the list. */
+"ui.profiles.sort" = "排序方式";
+/* Option of the sort popup above the profile list: sort the profiles by name. */
+"ui.profiles.sort.name" = "名稱";
+/* Option of the sort popup above the profile list: sort the profiles by controller. */
+"ui.profiles.sort.controller" = "控制器";
+/* Option of the sort popup above the profile list: sort the profiles by when each was last activated, the newest first. */
+"ui.profiles.sort.lastUsed" = "最近使用";
 /* Title of the alert that deletes a profile. */
 "ui.profiles.deleteTitle" = "要刪除設定檔嗎？";
 /* Message of the alert that deletes a profile. OpenJoystickDriver is the product name. */

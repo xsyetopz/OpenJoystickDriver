@@ -410,6 +410,16 @@
 "ui.capture.profileNameValidation" = "प्रोफ़ाइल नाम दर्ज करें।";
 /* Toolbar button in the Profiles area that creates a profile. */
 "ui.profiles.new" = "नई प्रोफ़ाइल";
+/* Label of the optional note field in the binding sheet of the profile editor. The note is free text that the person writes about one binding. */
+"ui.profiles.remark" = "नोट (वैकल्पिक)";
+/* Label of the popup above the profile list that chooses the order of the list. */
+"ui.profiles.sort" = "इसके अनुसार क्रमबद्ध करें";
+/* Option of the sort popup above the profile list: sort the profiles by name. */
+"ui.profiles.sort.name" = "नाम";
+/* Option of the sort popup above the profile list: sort the profiles by controller. */
+"ui.profiles.sort.controller" = "कंट्रोलर";
+/* Option of the sort popup above the profile list: sort the profiles by when each was last activated, the newest first. */
+"ui.profiles.sort.lastUsed" = "आख़िरी बार उपयोग किया गया";
 /* Title of the alert that deletes a profile. */
 "ui.profiles.deleteTitle" = "प्रोफ़ाइल डिलीट करें?";
 /* Message of the alert that deletes a profile. OpenJoystickDriver is the product name. */

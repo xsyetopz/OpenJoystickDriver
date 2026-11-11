@@ -410,6 +410,16 @@
 "ui.capture.profileNameValidation" = "프로파일 이름을 입력하세요.";
 /* Toolbar button in the Profiles area that creates a profile. */
 "ui.profiles.new" = "새로운 프로파일";
+/* Label of the optional note field in the binding sheet of the profile editor. The note is free text that the person writes about one binding. */
+"ui.profiles.remark" = "메모 (선택 사항)";
+/* Label of the popup above the profile list that chooses the order of the list. */
+"ui.profiles.sort" = "정렬 기준";
+/* Option of the sort popup above the profile list: sort the profiles by name. */
+"ui.profiles.sort.name" = "이름";
+/* Option of the sort popup above the profile list: sort the profiles by controller. */
+"ui.profiles.sort.controller" = "컨트롤러";
+/* Option of the sort popup above the profile list: sort the profiles by when each was last activated, the newest first. */
+"ui.profiles.sort.lastUsed" = "마지막 사용";
 /* Title of the alert that deletes a profile. */
 "ui.profiles.deleteTitle" = "프로파일을 삭제할까요?";
 /* Message of the alert that deletes a profile. OpenJoystickDriver is the product name. */

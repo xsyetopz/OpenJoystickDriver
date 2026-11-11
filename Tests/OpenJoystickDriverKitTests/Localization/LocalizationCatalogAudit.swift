@@ -81,7 +81,7 @@ enum LocalizationCatalogAudit {
       "ui.settings.general.version", "ui.profiles.pointerSpeed.driverTrigger",
       "ui.shortcuts.controller.name", "ui.shortcuts.controller.type",
       "ui.shortcuts.parameter.controller",
-      "ui.shortcuts.profile.name",
+      "ui.shortcuts.profile.name", "ui.profiles.sort.name", "ui.profiles.sort.controller",
     ],
     "es-ES": spanishTerms.union(["ui.menu.window.zoom", "ui.shortcuts.action.light.color"]),
     "es-MX": spanishTerms.union(["ui.menu.window.zoom", "ui.shortcuts.action.light.color"]),
@@ -112,7 +112,7 @@ enum LocalizationCatalogAudit {
       "ui.shortcuts.controller.model", "ui.menu.file.title", "ui.menu.edit.title",
     ],
     "it-IT": [
-      "term.macro",
+      "term.macro", "ui.profiles.sort.controller",
       "term.parser", "term.protocolVariant.dongle",
       "ui.access.token.issued.title", "ui.access.token.named",
       "ui.menu.controller.title", "ui.menu.file.title", "ui.menu.window.zoom",
@@ -136,7 +136,7 @@ enum LocalizationCatalogAudit {
       "term.key.alt", "term.key.return", "term.key.shift",
     ],
     "nl-NL": [
-      "term.macro",
+      "term.macro", "ui.profiles.sort.controller",
       "term.parser", "term.protocolVariant.dongle",
       "ui.library.field.transport", "ui.access.details", "ui.library.details", "ui.activity.filter",
       "ui.activity.column.details",

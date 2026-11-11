@@ -299,6 +299,8 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
   public static let pulseDurationRange = 1.0...5000.0
   /// ``pulseDurationMs`` used when none is given.
   public static let defaultPulseDurationMs = 100.0
+  /// Allowed length of a ``remark``, in characters.
+  public static let remarkLengthRange = 1...200
   /// Stable identity of the binding inside its profile.
   public let id: UUID
   /// Controller input that triggers the binding.
@@ -319,6 +321,8 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
   public let multiTap: [RemappingMultiTap]
   /// Further actions that the same source triggers.
   public let additionalActions: [RemappingAction]
+  /// A note the user wrote about the binding, or `nil` for none.
+  public let remark: String?
 
   /// Creates a binding.
   public init(
@@ -331,7 +335,8 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
     turbo: RemappingTurbo? = nil,
     longHold: RemappingLongHold? = nil,
     multiTap: [RemappingMultiTap] = [],
-    additionalActions: [RemappingAction] = []
+    additionalActions: [RemappingAction] = [],
+    remark: String? = nil
   ) {
     self.id = id
     self.source = source
@@ -343,6 +348,7 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
     self.longHold = longHold
     self.multiTap = multiTap
     self.additionalActions = additionalActions
+    self.remark = remark
   }
 
   /// Profile document keys of a binding.
@@ -367,6 +373,8 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
     case multiTap
     /// The JSON key of `additionalActions`.
     case additionalActions
+    /// The JSON key of `remark`.
+    case remark
   }
 
   /// Decodes a binding from a profile document; omitted behavior, pulse duration and additional
@@ -390,6 +398,7 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
       try container.decodeIfPresent([RemappingMultiTap].self, forKey: .multiTap) ?? []
     additionalActions =
       try container.decodeIfPresent([RemappingAction].self, forKey: .additionalActions) ?? []
+    remark = try container.decodeIfPresent(String.self, forKey: .remark)
   }
 
   /// Encodes a binding and leaves out the fields that hold their default.
@@ -409,6 +418,7 @@ public struct RemappingBinding: Codable, Equatable, Hashable, Identifiable, Send
     if !additionalActions.isEmpty {
       try container.encode(additionalActions, forKey: .additionalActions)
     }
+    try container.encodeIfPresent(remark, forKey: .remark)
   }
 }
 

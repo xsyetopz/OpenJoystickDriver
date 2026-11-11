@@ -343,6 +343,13 @@
           "default": 100,
           "description": "How long a pulse lasts, in milliseconds."
         },
+        "remark": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^(?![\\s\\S]*[\\u0000-\\u001f\\u007f-\\u009f])\\S(.*\\S)?$",
+          "description": "A note the user wrote about the binding."
+        },
         "source": {
           "$ref": "#/$defs/source"
         },

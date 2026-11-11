@@ -72,6 +72,9 @@
     /// through the editor's discard and mutation checks.
     @Published
     var chosenImportProfile: RemappingProfile?
+    /// The order of the profile list.
+    @Published
+    var listSort = ProfileListSort.name
     /// The section of the profile editor that is shown.
     @Published
     var selectedEditorSection = ProfilePresentationPolicy.defaultSection

@@ -5,11 +5,11 @@
   import SwiftUI
 
   extension BindingBehaviorSheet {
-    /// Receives the behavior, pulse duration in milliseconds, turbo, long hold, tap counts and
-    /// additional actions when the person chooses Apply.
+    /// Receives the behavior, pulse duration in milliseconds, turbo, long hold, tap counts,
+    /// additional actions and remark (nil when the field is blank) when the person chooses Apply.
     typealias SaveAction = (
       RemappingBindingBehavior, Double, RemappingTurbo?, RemappingLongHold?, [RemappingMultiTap],
-      [RemappingAction]
+      [RemappingAction], String?
     ) -> Void
 
     /// The behavior sheet's fields and its Cancel and Apply buttons.
@@ -56,6 +56,8 @@
           )
         }
         if showsAdditionalActions {
+          TextField(OJDLocalized.string("ui.profiles.remark"), text: $remarkText)
+            .ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.remark"))
           ProfileAdditionalActionsView(
             source: binding.source,
             capabilities: capabilities,
@@ -134,12 +136,19 @@
                 ? RemappingLongHold(durationMs: longHoldDuration, destination: longHoldDestination)
                 : nil,
               multiTapEntries,
-              additionalActions
+              additionalActions,
+              trimmedRemark
             )
             dismiss()
           }
         }
       }.ojdSheet(.regular)
+    }
+
+    /// The remark without surrounding whitespace, or nil when it is blank.
+    var trimmedRemark: String? {
+      let trimmed = remarkText.trimmingCharacters(in: .whitespacesAndNewlines)
+      return trimmed.isEmpty ? nil : trimmed
     }
 
     /// Whether the assignment's source can start a long hold or tap count: any discrete source

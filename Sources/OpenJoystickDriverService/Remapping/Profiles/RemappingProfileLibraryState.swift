@@ -5,6 +5,8 @@ import OpenJoystickDriverKit
 struct RemappingProfileLibrarySnapshot: Sendable {
   /// Every profile, local and from packages.
   let profiles: [RemappingProfile]
+  /// When each profile was last activated, in seconds since 1970; a never-activated one is absent.
+  let lastUsed: [UUID: Double]
   /// The active selection of every model.
   let activeProfiles: [RemappingActiveProfileSelection]
   /// The damaged files that need recovery.

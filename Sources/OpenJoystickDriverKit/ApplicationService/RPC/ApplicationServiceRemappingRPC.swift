@@ -496,6 +496,20 @@ public struct ApplicationServiceRemappingRoutePayload: Codable, Equatable, Senda
   }
 }
 
+/// When a profile was last activated.
+public struct ApplicationServiceRemappingProfileUse: Codable, Equatable, Sendable {
+  /// The ID of the profile.
+  public let profileID: UUID
+  /// The time of the activation, in seconds since 1970.
+  public let usedAt: Double
+
+  /// Creates the entry for the profile `profileID` activated at `usedAt`.
+  public init(profileID: UUID, usedAt: Double) {
+    self.profileID = profileID
+    self.usedAt = usedAt
+  }
+}
+
 /// A profile a mod package serves, and the package that serves it.
 public struct ApplicationServiceRemappingPackageProfile: Codable, Equatable, Sendable {
   /// The ID of the profile.
@@ -525,6 +539,8 @@ public struct ApplicationServiceRemappingSnapshotPayload: Codable, Equatable, Se
   public let profileIssues: [ApplicationServiceRemappingProfileIssue]
   /// The profiles in `profiles` that a package serves, sorted by profile id.
   public let packageProfiles: [ApplicationServiceRemappingPackageProfile]
+  /// When each activated profile in `profiles` was last activated, sorted by profile id.
+  public let lastUsed: [ApplicationServiceRemappingProfileUse]
   /// The state of the macOS permission to post input events.
   public let postEventAccess: RemappingPostEventAccessState
 
@@ -536,6 +552,7 @@ public struct ApplicationServiceRemappingSnapshotPayload: Codable, Equatable, Se
     joyConPairs: [ApplicationServiceJoyConPairPayload] = [],
     profileIssues: [ApplicationServiceRemappingProfileIssue] = [],
     packageProfiles: [ApplicationServiceRemappingPackageProfile] = [],
+    lastUsed: [ApplicationServiceRemappingProfileUse] = [],
     postEventAccess: RemappingPostEventAccessState
   ) {
     self.profiles = profiles
@@ -544,6 +561,7 @@ public struct ApplicationServiceRemappingSnapshotPayload: Codable, Equatable, Se
     self.joyConPairs = joyConPairs
     self.profileIssues = profileIssues
     self.packageProfiles = packageProfiles
+    self.lastUsed = lastUsed
     self.postEventAccess = postEventAccess
   }
 }

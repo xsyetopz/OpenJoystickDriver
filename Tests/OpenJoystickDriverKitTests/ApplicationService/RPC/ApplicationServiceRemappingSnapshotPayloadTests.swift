@@ -24,8 +24,26 @@ struct ApplicationServiceRemappingSnapshotPayloadTests {
     #expect(decoded == payload)
   }
 
+  @Test
+  func lastUsedRoundTrips() throws {
+    let payload = ApplicationServiceRemappingSnapshotPayload(
+      profiles: [],
+      activeProfiles: [],
+      routes: [],
+      lastUsed: [ApplicationServiceRemappingProfileUse(profileID: UUID(), usedAt: 1_700_000_000.5)],
+      postEventAccess: .granted
+    )
+
+    let decoded = try JSONDecoder().decode(
+      ApplicationServiceRemappingSnapshotPayload.self,
+      from: try JSONEncoder().encode(payload)
+    )
+
+    #expect(decoded == payload)
+  }
+
   /// Every list is required, so a payload without one fails to decode instead of listing none.
-  @Test(arguments: ["joyConPairs", "profileIssues", "packageProfiles"])
+  @Test(arguments: ["joyConPairs", "profileIssues", "packageProfiles", "lastUsed"])
   func aMissingListFailsToDecode(key: String) throws {
     let payload = ApplicationServiceRemappingSnapshotPayload(
       profiles: [],

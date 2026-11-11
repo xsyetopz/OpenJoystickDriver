@@ -410,6 +410,16 @@
 "ui.capture.profileNameValidation" = "Voer een profielnaam in.";
 /* Toolbar button in the Profiles area that creates a profile. */
 "ui.profiles.new" = "Nieuw profiel";
+/* Label of the optional note field in the binding sheet of the profile editor. The note is free text that the person writes about one binding. */
+"ui.profiles.remark" = "Notitie (optioneel)";
+/* Label of the popup above the profile list that chooses the order of the list. */
+"ui.profiles.sort" = "Sorteren op";
+/* Option of the sort popup above the profile list: sort the profiles by name. */
+"ui.profiles.sort.name" = "Naam";
+/* Option of the sort popup above the profile list: sort the profiles by controller. */
+"ui.profiles.sort.controller" = "Controller";
+/* Option of the sort popup above the profile list: sort the profiles by when each was last activated, the newest first. */
+"ui.profiles.sort.lastUsed" = "Laatst gebruikt";
 /* Title of the alert that deletes a profile. */
 "ui.profiles.deleteTitle" = "Profiel verwijderen?";
 /* Message of the alert that deletes a profile. OpenJoystickDriver is the product name. */

@@ -173,6 +173,9 @@
           destinationField
         }
 
+        if let remark = binding.remark {
+          Text(remark).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+        }
         HStack(spacing: OJDSpacing.small) {
           if binding.axisTuning != nil {
             Button(OJDLocalized.string("action.adjust")) {

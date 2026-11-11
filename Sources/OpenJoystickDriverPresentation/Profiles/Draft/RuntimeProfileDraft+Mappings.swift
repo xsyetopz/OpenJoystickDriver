@@ -64,7 +64,8 @@ extension RuntimeProfileDraft {
         turbo: binding.turbo,
         longHold: binding.longHold,
         multiTap: binding.multiTap,
-        additionalActions: binding.additionalActions
+        additionalActions: binding.additionalActions,
+        remark: binding.remark
       )
     }
   }
@@ -96,7 +97,8 @@ extension RuntimeProfileDraft {
         turbo: binding.turbo,
         longHold: binding.longHold,
         multiTap: binding.multiTap,
-        additionalActions: binding.additionalActions
+        additionalActions: binding.additionalActions,
+        remark: binding.remark
       )
     }
   }
@@ -130,7 +132,8 @@ extension RuntimeProfileDraft {
         turbo: binding.turbo,
         longHold: binding.longHold,
         multiTap: binding.multiTap,
-        additionalActions: binding.additionalActions
+        additionalActions: binding.additionalActions,
+        remark: binding.remark
       )
     }
   }
@@ -161,7 +164,8 @@ extension RuntimeProfileDraft {
         turbo: turbo,
         longHold: longHold,
         multiTap: multiTap,
-        additionalActions: binding.additionalActions
+        additionalActions: binding.additionalActions,
+        remark: binding.remark
       )
     }
   }

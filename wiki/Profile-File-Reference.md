@@ -96,6 +96,7 @@ The schema checks the shape and range of each field. OJD also refuses a profile 
 - A stick region has `innerRadius` less than `outerRadius` and `fromDegrees` different from `toDegrees`. A region runs clockwise from up, past 0 when `toDegrees` is below `fromDegrees`. Regions of one stick do not overlap.
 - A trigger band has `from` less than `to`. Bands of one trigger do not overlap, and a trigger with a `triggerMappings` entry has no bands.
 - A profile name has no space at either end and no control character, at most 80 characters. A layer name follows the same rule with at most 40. The schema counts the length in Unicode code points, and OJD counts characters, so a name with combining marks can pass OJD and fail the schema.
+- A binding `remark` is a note of 1 to 200 characters with no space at either end and no control character. It has no effect on the output. Omit the key for no note; an empty `remark` is refused. The length is counted as for a name.
 
 A `Keyboard` destination's `modifiers` are a set. OJD reads them in any order, merges repeats, and writes them sorted.
 

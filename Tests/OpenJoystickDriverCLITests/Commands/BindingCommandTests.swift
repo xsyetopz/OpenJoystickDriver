@@ -34,6 +34,22 @@ struct BindingCommandTests {
   }
 
   @Test
+  func replacingABindingKeepsItsRemark() async throws {
+    let noted = RemappingBinding(
+      source: .button(.south),
+      destination: .keyboard(key: .space, modifiers: []),
+      remark: "Jump"
+    )
+    let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad", bindings: [noted])])
+    let service = try FakeService(devices: [], respond: library.respond)
+
+    let replaced = await service.run(["binding", "set", "Pad", "button:south", "mouse:left"])
+
+    #expect(replaced.code == 0, "\(replaced.standardError)")
+    #expect(library.stored.first?.bindings.first?.remark == "Jump")
+  }
+
+  @Test
   func setStoresASpokenPhraseWithItsVoiceAndRejectsAVoiceOnAnotherTarget() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try FakeService(devices: [], respond: library.respond)

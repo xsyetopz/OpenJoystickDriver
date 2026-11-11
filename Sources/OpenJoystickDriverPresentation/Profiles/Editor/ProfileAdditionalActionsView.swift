@@ -78,7 +78,7 @@
           ),
           showsAdditionalActions: false,
           capabilities: capabilities
-        ) { behavior, duration, turbo, hold, tap, _ in
+        ) { behavior, duration, turbo, hold, tap, _, _ in
           replace(
             RemappingAction(
               id: action.id,
