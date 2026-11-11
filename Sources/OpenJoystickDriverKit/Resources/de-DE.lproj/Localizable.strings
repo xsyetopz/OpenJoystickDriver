@@ -52,8 +52,6 @@
 "action.deactivate" = "Deaktivieren";
 /* Button of the profile editor and of the status menu alert that makes the profile the active one. It swaps with Deactivate. */
 "action.setActive" = "Aktiv setzen";
-/* Status text in the menu bar menu while the app starts. Keep the three dots. */
-"status.starting" = "Wird gestartet…";
 /* Value of a permission row in the Access area while macOS is asked for its state. Keep the three dots. */
 "status.checking" = "Wird geprüft…";
 /* Runtime state label: the service is up and can serve controllers. */
@@ -4297,42 +4295,26 @@
 "platform.macos.ui.settings.commandLine.uninstallMessage" = "Dadurch wird der Link unter %1$@ entfernt. Die App bleibt installiert, aber ojd läuft im Terminal nicht mehr, bis du das Werkzeug erneut installierst.";
 /* Confirm button of the alert that removes the command-line tool. */
 "ui.settings.commandLine.uninstallConfirm" = "Deinstallieren";
-/* Status line in the menu bar menu. %1$@ is the runtime state, %2$@ is the controller count text and %3$@ is the active profile text. The dots between them separate the parts and may change. */
-"ui.extra.statusLine" = "%1$@ · %2$@ · %3$@";
-/* Heading of the controllers section in the menu bar menu. */
-"ui.extra.controllers" = "Controller";
-/* Menu item in the menu bar menu that stops the service from remapping. */
-"ui.extra.suspend" = "Pausieren";
 /* Menu item in the menu bar menu that lets the service remap again. */
 "ui.extra.resume" = "Fortsetzen";
+/* Menu item in the controller submenu of the menu bar menu that stops the service from remapping that controller. */
+"ui.extra.pause" = "Pausieren";
+/* Menu item in the controller submenu of the menu bar menu that turns off the profile of that controller. It has a checkmark while no profile is in force. */
+"ui.extra.noProfile" = "Kein Profil";
+/* Menu item in the controller submenu of the menu bar menu that opens the Profiles area of the main window when a controller has more than ten profiles. */
+"ui.extra.moreProfiles" = "Weitere Profile";
+/* Title of a controller row in the menu bar menu. %1$@ is the controller name and %2$@ is a list of its battery level, active profile and paused state. The parentheses may change. */
+"ui.extra.controllerRow" = "%1$@ (%2$@)";
 /* Menu item in the menu bar menu that opens the input test of a controller. */
 "ui.extra.testInput" = "Eingabe testen";
-/* Menu item in the menu bar menu that holds the profile that is active for a controller. */
-"ui.extra.activeProfile" = "Aktives Profil";
 /* Menu item in the menu bar menu that ends the wireless link of a controller. */
 "ui.extra.disconnectWireless" = "Funkverbindung trennen";
 /* Menu item in the menu bar menu that shows the controller in the main window. */
 "ui.extra.showInWindow" = "Im Fenster anzeigen";
-/* Menu item in the menu bar menu that holds the profiles of a controller model. */
-"ui.extra.profiles" = "Profile";
-/* Menu item in the menu bar menu that turns on a profile. */
-"ui.extra.activate" = "Aktivieren";
-/* Menu item in the menu bar menu that turns off the active profile. */
-"ui.extra.deactivate" = "Deaktivieren";
 /* Button of the problem banner that opens the Access area so the user can grant access. */
 "ui.extra.grantAccess" = "Zugriff erteilen";
 /* Menu item in the menu bar menu that opens the main window. */
 "ui.extra.openWindow" = "Fenster öffnen";
-/* Menu item in the menu bar menu that holds the help items. */
-"ui.extra.help" = "Hilfe";
-/* Menu item in the help submenu that opens the Activity log. */
-"ui.extra.activityLog" = "Aktivitätsprotokoll";
-/* Menu item in the help submenu that opens the sheet that explains an error code. Keep the three dots. */
-"ui.extra.explainErrorCode" = "Fehlercode erklären…";
-/* Menu item in the help submenu that opens the page where the user reports a problem. Keep the three dots. */
-"ui.extra.reportProblem" = "Problem melden…";
-/* Menu item in the help submenu that opens the project website. */
-"ui.extra.projectWebsite" = "Projektwebseite";
 /* Title of the alert shown when an action of the menu bar menu fails. */
 "ui.extra.actionFailedTitle" = "Die Aktion wurde nicht abgeschlossen";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */

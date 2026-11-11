@@ -52,8 +52,6 @@
 "action.deactivate" = "Hủy kích hoạt";
 /* Button of the profile editor and of the status menu alert that makes the profile the active one. It swaps with Deactivate. */
 "action.setActive" = "Đặt làm hoạt động";
-/* Status text in the menu bar menu while the app starts. Keep the three dots. */
-"status.starting" = "Đang bắt đầu…";
 /* Value of a permission row in the Access area while macOS is asked for its state. Keep the three dots. */
 "status.checking" = "Đang kiểm tra…";
 /* Runtime state label: the service is up and can serve controllers. */
@@ -3857,42 +3855,26 @@
 "platform.macos.ui.settings.commandLine.uninstallMessage" = "Thao tác này xóa liên kết tại %1$@. Ứng dụng vẫn được cài, và ojd không còn chạy trong Terminal cho đến khi bạn cài lại công cụ.";
 /* Confirm button of the alert that removes the command-line tool. */
 "ui.settings.commandLine.uninstallConfirm" = "Gỡ cài đặt";
-/* Status line in the menu bar menu. %1$@ is the runtime state, %2$@ is the controller count text and %3$@ is the active profile text. The dots between them separate the parts and may change. */
-"ui.extra.statusLine" = "%1$@ · %2$@ · %3$@";
-/* Heading of the controllers section in the menu bar menu. */
-"ui.extra.controllers" = "Bộ điều khiển";
-/* Menu item in the menu bar menu that stops the service from remapping. */
-"ui.extra.suspend" = "Tạm dừng";
 /* Menu item in the menu bar menu that lets the service remap again. */
 "ui.extra.resume" = "Tiếp tục";
+/* Menu item in the controller submenu of the menu bar menu that stops the service from remapping that controller. */
+"ui.extra.pause" = "Tạm dừng";
+/* Menu item in the controller submenu of the menu bar menu that turns off the profile of that controller. It has a checkmark while no profile is in force. */
+"ui.extra.noProfile" = "Không dùng cấu hình";
+/* Menu item in the controller submenu of the menu bar menu that opens the Profiles area of the main window when a controller has more than ten profiles. */
+"ui.extra.moreProfiles" = "Thêm cấu hình";
+/* Title of a controller row in the menu bar menu. %1$@ is the controller name and %2$@ is a list of its battery level, active profile and paused state. The parentheses may change. */
+"ui.extra.controllerRow" = "%1$@ (%2$@)";
 /* Menu item in the menu bar menu that opens the input test of a controller. */
 "ui.extra.testInput" = "Thử đầu vào";
-/* Menu item in the menu bar menu that holds the profile that is active for a controller. */
-"ui.extra.activeProfile" = "Cấu hình đang dùng";
 /* Menu item in the menu bar menu that ends the wireless link of a controller. */
 "ui.extra.disconnectWireless" = "Ngắt liên kết không dây";
 /* Menu item in the menu bar menu that shows the controller in the main window. */
 "ui.extra.showInWindow" = "Hiện trong cửa sổ";
-/* Menu item in the menu bar menu that holds the profiles of a controller model. */
-"ui.extra.profiles" = "Cấu hình";
-/* Menu item in the menu bar menu that turns on a profile. */
-"ui.extra.activate" = "Kích hoạt";
-/* Menu item in the menu bar menu that turns off the active profile. */
-"ui.extra.deactivate" = "Hủy kích hoạt";
 /* Button of the problem banner that opens the Access area so the user can grant access. */
 "ui.extra.grantAccess" = "Cấp quyền truy cập";
 /* Menu item in the menu bar menu that opens the main window. */
 "ui.extra.openWindow" = "Mở cửa sổ";
-/* Menu item in the menu bar menu that holds the help items. */
-"ui.extra.help" = "Trợ giúp";
-/* Menu item in the help submenu that opens the Activity log. */
-"ui.extra.activityLog" = "Nhật ký hoạt động";
-/* Menu item in the help submenu that opens the sheet that explains an error code. Keep the three dots. */
-"ui.extra.explainErrorCode" = "Giải thích mã lỗi…";
-/* Menu item in the help submenu that opens the page where the user reports a problem. Keep the three dots. */
-"ui.extra.reportProblem" = "Báo cáo sự cố…";
-/* Menu item in the help submenu that opens the project website. */
-"ui.extra.projectWebsite" = "Trang web dự án";
 /* Title of the alert shown when an action of the menu bar menu fails. */
 "ui.extra.actionFailedTitle" = "Hành động chưa hoàn tất";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */

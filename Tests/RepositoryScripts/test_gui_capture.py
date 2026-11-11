@@ -791,7 +791,6 @@ class GuiCaptureTests(unittest.TestCase):
                 "menu-window",
                 "menu-help",
                 "menu-status-item",
-                "menu-status-item-profiles-activate",
             ],
         )
         by_name = {target.name: target for target in targets}
@@ -800,12 +799,8 @@ class GuiCaptureTests(unittest.TestCase):
             ("menu.profile", "activateProfile"),
         )
         self.assertEqual(
-            by_name["menu-status-item-profiles-activate"].path,
-            ("profiles", "profiles.activate"),
-        )
-        self.assertEqual(
             [by_name[name].depth for name in by_name],
-            [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 3],
+            [1, 1, 1, 1, 1, 1, 2, 1, 1, 1],
         )
         self.assertTrue(by_name["menu-status-item"].status_item)
         self.assertFalse(by_name["menu-help"].status_item)
@@ -834,8 +829,6 @@ class GuiCaptureTests(unittest.TestCase):
         self.assertIn(f'"{capture.MENU_BAR_ID_PREFIX}\\(sectionID)"', main_menu)
         self.assertIn(f'id: "{section}"', main_menu)
         self.assertIn(f'"{capture.ACTIVATE_PROFILE_ID}"', main_menu)
-        self.assertIn(f'id: "{capture.STATUS_PROFILES_ID}"', status)
-        self.assertIn(f'id: "{capture.STATUS_ACTIVATE_ID}"', status)
         self.assertIn("menuBarItemIdentifier(sectionID: section.id)", renderer)
         self.assertIn("setAccessibilityIdentifier(id)", renderer)
         self.assertIn("identify(item, as: entry.id)", status_menu)
@@ -847,7 +840,7 @@ class GuiCaptureTests(unittest.TestCase):
         )
         status = capture.MenuTarget("menu-status-item", (), status_item=True)
         status_sub = capture.MenuTarget(
-            "x", ("profiles", "profiles.activate"), status_item=True
+            "x", ("controller.a", "controller.a.pause"), status_item=True
         )
         self.assertEqual(capture.open_menu_command(main), ("open-menu", "menu.profile"))
         self.assertEqual(
@@ -857,7 +850,7 @@ class GuiCaptureTests(unittest.TestCase):
         self.assertEqual(capture.open_menu_command(status), ("open-status-menu",))
         self.assertEqual(
             capture.open_menu_command(status_sub),
-            ("open-status-menu", "profiles", "profiles.activate"),
+            ("open-status-menu", "controller.a", "controller.a.pause"),
         )
 
     def test_ax_command_line_carries_every_menu_argument(self) -> None:
@@ -1185,7 +1178,6 @@ class GuiCaptureTests(unittest.TestCase):
                 "menu-profile=menu-profile.png",
                 "menu-profile-activate-profile=menu-profile-activate-profile.png",
                 "menu-status-item=menu-status-item.png",
-                "menu-status-item-profiles-activate=menu-status-item-profiles-activate.png",
             ],
         )
 

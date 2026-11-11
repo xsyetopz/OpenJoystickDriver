@@ -23,14 +23,8 @@ enum StatusItemAction: Equatable {
   case showArea(MainWindowArea)
   /// Opens the main window on the area it last showed.
   case openWindow
-  /// Opens the main window on the area it last showed.
+  /// Opens the Settings window.
   case showSettings
-  /// Shows the Explain Error Code sheet.
-  case explainErrorCode
-  /// Opens the project website.
-  case openProjectWebsite
-  /// Opens the page for a problem report.
-  case openProblemReport
   /// Quits the app.
   case quit
 }
@@ -55,17 +49,12 @@ struct StatusItemEntry: Equatable {
   let isEnabled: Bool
   /// Whether the entry shows a checkmark.
   let isChecked: Bool
-  /// Nil for the status line, for rows that open a submenu and for separators.
+  /// Nil for rows that open a submenu, for unavailable rows and for separators.
   let action: StatusItemAction?
   /// The entries of the submenu, or nil when the entry opens none.
   let submenu: [Self]?
   /// Whether the entry is a separator line.
   let isSeparator: Bool
-  /// SF Symbol shown next to the title, if any.
-  ///
-  /// Only the status line has one: the HIG gives every item of a group an icon or none, and the
-  /// other groups have none.
-  let symbolName: String?
   /// What the entry adds to its title: battery level, profile name, state.
   let details: [StatusItemTitle]
 
@@ -77,7 +66,6 @@ struct StatusItemEntry: Equatable {
     isChecked: Bool = false,
     action: StatusItemAction? = nil,
     submenu: [Self]? = nil,
-    symbolName: String? = nil,
     details: [StatusItemTitle] = []
   ) {
     self.id = id
@@ -87,7 +75,6 @@ struct StatusItemEntry: Equatable {
     self.action = action
     self.submenu = submenu
     self.isSeparator = false
-    self.symbolName = symbolName
     self.details = details
   }
 
@@ -100,7 +87,6 @@ struct StatusItemEntry: Equatable {
     self.action = nil
     self.submenu = nil
     self.isSeparator = true
-    self.symbolName = nil
     self.details = []
   }
 
@@ -116,11 +102,11 @@ struct StatusItemState: Equatable {
     let id: String
     /// The controller's display name.
     let name: String
-    /// Whether the controller is suspended, which turns Suspend into Resume.
+    /// Whether the controller is suspended, which turns Pause into Resume.
     let isSuspended: Bool
     /// Whether the controller is linked over Bluetooth, from the typed transport.
     let isWireless: Bool
-    /// Whether a `Pause` has the controller pass through unmapped.
+    /// Whether a `Pause` assignment has the controller pass through unmapped.
     var isPaused = false
     /// The battery level as the service reports it, or nil when the controller reports none.
     var battery: String?
@@ -139,32 +125,24 @@ struct StatusItemState: Equatable {
     let isActive: Bool
   }
 
-  /// The status line text.
-  var statusLine: String
   /// Whether a required permission or access is missing.
   var needsAccess: Bool
   /// Connected controllers in inventory order.
-  ///
-  /// Each has its own actions; Disconnect Wireless Link is enabled only for a wireless one.
   var controllers: [Controller]
-  /// All profiles of the library.
-  var profiles: [Profile]
   /// Whether the service reported the profile list.
   ///
   /// An empty list claims that no profile exists only when it was reported.
   var profileListRead: Bool
-  /// The state glyph shown beside the status line.
-  var statusSymbolName: String
 }
 
 /// The fixed status-item layout as data.
 enum StatusItemModel {
-  /// The address of the project website.
-  static let projectWebsite = "https://github.com/xsyetopz/OpenJoystickDriver"
   /// The address of the page that starts a problem report.
   static let problemReport = "https://github.com/xsyetopz/OpenJoystickDriver/issues/new"
+  /// The most profiles one controller's list shows before "More Profiles".
+  static let profileListLimit = 10
 
-  /// Returns the entries of the status menu for `state`, from the status line to Quit.
+  /// Returns the entries of the status menu for `state`, from the first controller to Quit.
   static func entries(for state: StatusItemState) -> [StatusItemEntry] {
     let grantAccess =
       state.needsAccess
@@ -175,56 +153,8 @@ enum StatusItemModel {
           action: .showArea(.access)
         )
       ] : []
-    return [
-      StatusItemEntry(
-        id: "status",
-        title: .verbatim(state.statusLine),
-        isEnabled: false,
-        symbolName: state.statusSymbolName
-      ),
-      .separator("separator.status"),
-      StatusItemEntry(
-        id: "controllers",
-        title: .key("ui.extra.controllers"),
-        submenu: controllersSubmenu(
-          controllers: state.controllers,
-          profileListRead: state.profileListRead
-        )
-      ),
-      StatusItemEntry(
-        id: "profiles",
-        title: .key("ui.extra.profiles"),
-        submenu: [
-          StatusItemEntry(
-            id: "profiles.activate",
-            title: .key("ui.extra.activate"),
-            submenu: profileEntries(
-              state.profiles,
-              idPrefix: "profiles.activate",
-              action: { .activateProfile($0) },
-              checkActive: true,
-              emptyTitleKey: MainMenuModel.emptyActivateProfileTitleKey(
-                profileListRead: state.profileListRead
-              )
-            )
-          ),
-          StatusItemEntry(
-            id: "profiles.deactivate",
-            title: .key("ui.extra.deactivate"),
-            submenu: profileEntries(
-              state.profiles.filter(\.isActive),
-              idPrefix: "profiles.deactivate",
-              action: { .deactivateProfile($0) },
-              checkActive: false,
-              emptyTitleKey: MainMenuModel.emptyDeactivateProfileTitleKey(
-                profileListRead: state.profileListRead
-              )
-            )
-          ),
-        ]
-      ),
-      .separator("separator.profiles"),
-    ] + grantAccess + [
+    return grantAccess + controllerRows(state) + [
+      .separator("separator.controllers"),
       StatusItemEntry(
         id: "openWindow",
         title: .key("ui.extra.openWindow"),
@@ -236,180 +166,126 @@ enum StatusItemModel {
         action: .showSettings
       ),
       .separator("separator.window"),
-      StatusItemEntry(id: "help", title: .key("ui.extra.help"), submenu: helpSubmenu()),
-      .separator("separator.help"),
       StatusItemEntry(id: "quit", title: .key("ui.menu.app.quit"), action: .quit),
     ]
   }
 
-  /// One submenu per connected controller, each with that controller's own actions.
-  ///
-  /// With no controller connected the submenu holds one disabled row that says so.
-  private static func controllersSubmenu(
-    controllers: [StatusItemState.Controller],
-    profileListRead: Bool
-  ) -> [StatusItemEntry] {
-    guard !controllers.isEmpty else {
+  /// One row per connected controller, or one unavailable row that says none is connected.
+  private static func controllerRows(_ state: StatusItemState) -> [StatusItemEntry] {
+    guard !state.controllers.isEmpty else {
       return [
         StatusItemEntry(
-          id: "controllers.none",
+          id: "controller.none",
           title: .key(MainMenuModel.noControllerTitleKey),
           isEnabled: false
         )
       ]
     }
-    return controllers.map { controller in
-      StatusItemEntry(
-        id: "controllers.\(controller.id)",
+    return state.controllers.map { controller in
+      let details =
+        (controller.battery.map { [StatusItemTitle.verbatim($0)] } ?? [])
+        + (controller.profiles.first(where: \.isActive).map { [.verbatim($0.name)] } ?? [])
+        + (controller.isPaused || controller.isSuspended
+          ? [.key("ui.controllers.paused.value")] : [])
+      return StatusItemEntry(
+        id: "controller.\(controller.id)",
         title: .verbatim(controller.name),
-        submenu: controllerActions(controller, profileListRead: profileListRead)
+        submenu: controllerActions(controller, profileListRead: state.profileListRead),
+        details: details
       )
     }
   }
 
-  /// Returns the actions of one controller: suspend or resume, test input, active profile,
-  /// disconnect wireless link and show in window.
+  /// Returns the items of one controller's submenu: the profile list, pause or resume, test
+  /// input, show in window and, for a wireless controller, disconnect.
   private static func controllerActions(
     _ controller: StatusItemState.Controller,
     profileListRead: Bool
   ) -> [StatusItemEntry] {
-    let prefix = "controllers.\(controller.id)"
-    let suspend: StatusItemEntry
-    if controller.isSuspended {
-      suspend = StatusItemEntry(
+    let prefix = "controller.\(controller.id)"
+    let pause =
+      controller.isSuspended
+      ? StatusItemEntry(
         id: "\(prefix).resume",
         title: .key("ui.extra.resume"),
         action: .resumeController(sessionToken: controller.id)
       )
-    } else {
-      suspend = StatusItemEntry(
-        id: "\(prefix).suspend",
-        title: .key("ui.extra.suspend"),
+      : StatusItemEntry(
+        id: "\(prefix).pause",
+        title: .key("ui.extra.pause"),
         action: .suspendController(sessionToken: controller.id)
       )
-    }
-    let paused =
-      controller.isPaused
+    let disconnect =
+      controller.isWireless
       ? [
         StatusItemEntry(
-          id: "\(prefix).paused",
-          title: .key("ui.controllers.paused.value"),
-          isEnabled: false
+          id: "\(prefix).disconnectWireless",
+          title: .key("ui.extra.disconnectWireless"),
+          action: .disconnectWireless(sessionToken: controller.id)
         )
       ] : []
-    return paused + [
-      suspend,
+    return profileList(controller, prefix: prefix, profileListRead: profileListRead) + [
+      .separator("\(prefix).separator"),
+      pause,
       StatusItemEntry(
         id: "\(prefix).testInput",
         title: .key("ui.extra.testInput"),
         action: .testInput(sessionToken: controller.id)
       ),
       StatusItemEntry(
-        id: "\(prefix).activeProfile",
-        title: .key("ui.extra.activeProfile"),
-        submenu: profileEntries(
-          controller.profiles,
-          idPrefix: "\(prefix).activeProfile",
-          action: { .activateProfile($0) },
-          checkActive: true,
-          emptyTitleKey: MainMenuModel.emptyActivateProfileTitleKey(
-            profileListRead: profileListRead
-          )
-        )
-      ),
-      StatusItemEntry(
-        id: "\(prefix).disconnectWireless",
-        title: .key("ui.extra.disconnectWireless"),
-        isEnabled: controller.isWireless,
-        action: controller.isWireless ? .disconnectWireless(sessionToken: controller.id) : nil
-      ),
-      StatusItemEntry(
         id: "\(prefix).showInWindow",
         title: .key("ui.extra.showInWindow"),
         action: .showController(sessionToken: controller.id)
       ),
-    ]
+    ] + disconnect
   }
 
-  /// The profile rows of a submenu.
+  /// The one checkmarked profile list of a controller.
   ///
-  /// A submenu stays enabled when it holds no profile: it then holds one disabled row that says why
-  /// (HIG, Menus). With `checkActive`, the active profile shows a checkmark and cannot be chosen
-  /// again.
-  private static func profileEntries(
-    _ profiles: [StatusItemState.Profile],
-    idPrefix: String,
-    action: (UUID) -> StatusItemAction,
-    checkActive: Bool,
-    emptyTitleKey: String
+  /// It shows at most ``profileListLimit`` profiles, the active one among them, then "No Profile",
+  /// which is checked while none is active, and "More Profiles" when profiles were left out.
+  private static func profileList(
+    _ controller: StatusItemState.Controller,
+    prefix: String,
+    profileListRead: Bool
   ) -> [StatusItemEntry] {
-    guard !profiles.isEmpty else {
+    guard profileListRead else {
       return [
         StatusItemEntry(
-          id: "\(idPrefix).none",
-          title: .key(emptyTitleKey),
+          id: "\(prefix).profile.none",
+          title: .key(MainMenuModel.emptyActivateProfileTitleKey(profileListRead: false)),
           isEnabled: false
         )
       ]
     }
-    return profiles.map {
-      let isChosen = checkActive && $0.isActive
-      return StatusItemEntry(
-        id: "\(idPrefix).\($0.id.uuidString)",
+    let active = controller.profiles.first(where: \.isActive)
+    var shown = Array(controller.profiles.prefix(profileListLimit))
+    if let active, !shown.contains(active) { shown[shown.count - 1] = active }
+    let rows = shown.map {
+      StatusItemEntry(
+        id: "\(prefix).profile.\($0.id.uuidString)",
         title: .verbatim($0.name),
-        isEnabled: !isChosen,
-        isChecked: isChosen,
-        action: isChosen ? nil : action($0.id)
+        isEnabled: !$0.isActive,
+        isChecked: $0.isActive,
+        action: $0.isActive ? nil : .activateProfile($0.id)
       )
     }
-  }
-
-  /// Returns the Help submenu: the activity log, the error code explainer, the problem report and
-  /// the project website.
-  private static func helpSubmenu() -> [StatusItemEntry] {
-    [
-      StatusItemEntry(
-        id: "help.activityLog",
-        title: .key("ui.extra.activityLog"),
-        action: .showArea(.activity)
-      ),
-      StatusItemEntry(
-        id: "help.explainErrorCode",
-        title: .key("ui.extra.explainErrorCode"),
-        action: .explainErrorCode
-      ),
-      StatusItemEntry(
-        id: "help.reportProblem",
-        title: .key("ui.extra.reportProblem"),
-        action: .openProblemReport
-      ),
-      StatusItemEntry(
-        id: "help.projectWebsite",
-        title: .key("ui.extra.projectWebsite"),
-        action: .openProjectWebsite
-      ),
-    ]
-  }
-}
-
-/// The status line: one localized format with positional arguments, so each language orders and
-/// punctuates the readiness, controller count and profile as one phrase.
-enum StatusItemStatusLine {
-  /// The localization key of the status line format.
-  static let formatKey = "ui.extra.statusLine"
-
-  /// Returns the status line from the three parts, in the language's order.
-  static func make(
-    readiness: String,
-    controllers: String,
-    profile: String,
-    localization: Localization,
-    locale: Locale
-  ) -> String {
-    localization.formatted(
-      formatKey,
-      locale: locale,
-      arguments: [readiness, controllers, profile]
+    let none = StatusItemEntry(
+      id: "\(prefix).profile.none",
+      title: .key("ui.extra.noProfile"),
+      isEnabled: active != nil,
+      isChecked: active == nil,
+      action: active.map { .deactivateProfile($0.id) }
     )
+    let more =
+      controller.profiles.count > profileListLimit
+      ? [
+        StatusItemEntry(
+          id: "\(prefix).profile.more",
+          title: .key("ui.extra.moreProfiles"),
+          action: .showArea(.profiles)
+        )
+      ] : []
+    return rows + [none] + more
   }
 }

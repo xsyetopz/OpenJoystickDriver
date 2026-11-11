@@ -34,12 +34,9 @@ struct StatusItemMenuTests {
   ) -> [StatusItemEntry] {
     StatusItemModel.entries(
       for: StatusItemState(
-        statusLine: "status",
         needsAccess: needsAccess,
         controllers: controllers,
-        profiles: [],
-        profileListRead: profileListRead,
-        statusSymbolName: "circle"
+        profileListRead: profileListRead
       )
     )
   }
@@ -194,19 +191,15 @@ struct StatusItemMenuTests {
       entries.flatMap { [$0] + all($0.submenu ?? []) }
     }
     let menu = all(Self.entries([Self.controller("a", isWireless: true)], needsAccess: true))
-    let forbidden: [StatusItemTitle] = [
-      .key("ui.extra.activityLog"), .key("ui.extra.explainErrorCode"),
-      .key("ui.extra.reportProblem"), .key("ui.extra.projectWebsite"), .key("ui.extra.help"),
-      .key("ui.extra.controllers"), .key("ui.extra.profiles"), .key("ui.extra.activate"),
-      .key("ui.extra.deactivate"),
+    let allowed: Set<String> = [
+      "ui.extra.grantAccess", "ui.extra.openWindow", "ui.menu.app.settings", "ui.menu.app.quit",
+      "ui.extra.resume", "ui.extra.pause", "ui.extra.disconnectWireless", "ui.extra.testInput",
+      "ui.extra.showInWindow", "ui.extra.noProfile", "ui.extra.moreProfiles",
+      "ui.controllers.paused.value", MainMenuModel.noControllerTitleKey,
     ]
     for entry in menu {
-      #expect(!forbidden.contains(entry.title), "\(entry.id)")
+      if case .key(let key) = entry.title { #expect(allowed.contains(key), "\(entry.id)") }
       #expect(entry.id != "status")
-      #expect(entry.symbolName == nil)
-      #expect(entry.action != .explainErrorCode)
-      #expect(entry.action != .openProjectWebsite)
-      #expect(entry.action != .openProblemReport)
       #expect(entry.action != .showArea(.activity))
     }
   }

@@ -49,7 +49,7 @@
       return menu
     }
 
-    /// Returns the menu item for `entry`: a separator, or an item with its state, symbol, submenu
+    /// Returns the menu item for `entry`: a separator, or an item with its state, submenu
     /// or action.
     ///
     /// Settings gets `Command-,` and Quit gets `Command-Q`.
@@ -61,11 +61,18 @@
         title = MainMenuRenderer.title(key, appName: OJDLocalized.string("term.app.name"))
       case .verbatim(let text): title = text
       }
-      let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+      let label =
+        entry.details.isEmpty
+        ? title
+        : OJDLocalized.formatted(
+          "ui.extra.controllerRow",
+          title,
+          ListFormatter.localizedString(byJoining: entry.details.map(MainMenuRenderer.text(of:)))
+        )
+      let item = NSMenuItem(title: label, action: nil, keyEquivalent: "")
       MainMenuRenderer.identify(item, as: entry.id)
       item.isEnabled = entry.isEnabled
       item.state = entry.isChecked ? .on : .off
-      if let symbolName = entry.symbolName { item.image = menuImage(symbol: symbolName) }
       if let submenu = entry.submenu {
         item.submenu = makeStatusMenu(from: submenu, title: title)
       } else if let action = entry.action {
@@ -103,9 +110,6 @@
       case .showArea(let area): mainWindow?.showMainWindow(area: area)
       case .openWindow: mainWindow?.showMainWindow(area: nil)
       case .showSettings: settingsWindow?.showSettings(pane: nil)
-      case .explainErrorCode: mainWindow?.showErrorCodeExplainer()
-      case .openProjectWebsite: open(urlString: StatusItemModel.projectWebsite)
-      case .openProblemReport: open(urlString: StatusItemModel.problemReport)
       case .quit: NSApplication.shared.terminate(sender)
       }
     }
@@ -216,13 +220,6 @@
       alert.informativeText = message
       alert.addButton(withTitle: OJDLocalized.string("action.ok"))
       alert.runActivatingApp()
-    }
-
-    /// Returns the template SF Symbol `symbol` for a menu item, or nil when it does not exist.
-    func menuImage(symbol: String) -> NSImage? {
-      let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
-      image?.isTemplate = true
-      return image
     }
   }
 

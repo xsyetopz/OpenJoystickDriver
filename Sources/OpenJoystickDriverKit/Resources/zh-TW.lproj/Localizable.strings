@@ -52,8 +52,6 @@
 "action.deactivate" = "停用";
 /* Button of the profile editor and of the status menu alert that makes the profile the active one. It swaps with Deactivate. */
 "action.setActive" = "設為使用中";
-/* Status text in the menu bar menu while the app starts. Keep the three dots. */
-"status.starting" = "正在啟動…";
 /* Value of a permission row in the Access area while macOS is asked for its state. Keep the three dots. */
 "status.checking" = "正在檢查…";
 /* Runtime state label: the service is up and can serve controllers. */
@@ -3857,42 +3855,26 @@
 "platform.macos.ui.settings.commandLine.uninstallMessage" = "這會移除位於 %1$@ 的連結。App 仍保持安裝，但在您重新安裝該工具之前，ojd 將無法在「終端機」中執行。";
 /* Confirm button of the alert that removes the command-line tool. */
 "ui.settings.commandLine.uninstallConfirm" = "解除安裝";
-/* Status line in the menu bar menu. %1$@ is the runtime state, %2$@ is the controller count text and %3$@ is the active profile text. The dots between them separate the parts and may change. */
-"ui.extra.statusLine" = "%1$@ · %2$@ · %3$@";
-/* Heading of the controllers section in the menu bar menu. */
-"ui.extra.controllers" = "控制器";
-/* Menu item in the menu bar menu that stops the service from remapping. */
-"ui.extra.suspend" = "暫停";
 /* Menu item in the menu bar menu that lets the service remap again. */
 "ui.extra.resume" = "繼續";
+/* Menu item in the controller submenu of the menu bar menu that stops the service from remapping that controller. */
+"ui.extra.pause" = "暫停";
+/* Menu item in the controller submenu of the menu bar menu that turns off the profile of that controller. It has a checkmark while no profile is in force. */
+"ui.extra.noProfile" = "不使用設定檔";
+/* Menu item in the controller submenu of the menu bar menu that opens the Profiles area of the main window when a controller has more than ten profiles. */
+"ui.extra.moreProfiles" = "更多設定檔";
+/* Title of a controller row in the menu bar menu. %1$@ is the controller name and %2$@ is a list of its battery level, active profile and paused state. The parentheses may change. */
+"ui.extra.controllerRow" = "%1$@（%2$@）";
 /* Menu item in the menu bar menu that opens the input test of a controller. */
 "ui.extra.testInput" = "測試輸入";
-/* Menu item in the menu bar menu that holds the profile that is active for a controller. */
-"ui.extra.activeProfile" = "使用中的設定檔";
 /* Menu item in the menu bar menu that ends the wireless link of a controller. */
 "ui.extra.disconnectWireless" = "中斷無線連結";
 /* Menu item in the menu bar menu that shows the controller in the main window. */
 "ui.extra.showInWindow" = "在視窗中顯示";
-/* Menu item in the menu bar menu that holds the profiles of a controller model. */
-"ui.extra.profiles" = "設定檔";
-/* Menu item in the menu bar menu that turns on a profile. */
-"ui.extra.activate" = "啟用";
-/* Menu item in the menu bar menu that turns off the active profile. */
-"ui.extra.deactivate" = "停用";
 /* Button of the problem banner that opens the Access area so the user can grant access. */
 "ui.extra.grantAccess" = "授予取用權限";
 /* Menu item in the menu bar menu that opens the main window. */
 "ui.extra.openWindow" = "打開視窗";
-/* Menu item in the menu bar menu that holds the help items. */
-"ui.extra.help" = "輔助說明";
-/* Menu item in the help submenu that opens the Activity log. */
-"ui.extra.activityLog" = "活動記錄檔";
-/* Menu item in the help submenu that opens the sheet that explains an error code. Keep the three dots. */
-"ui.extra.explainErrorCode" = "說明錯誤代碼…";
-/* Menu item in the help submenu that opens the page where the user reports a problem. Keep the three dots. */
-"ui.extra.reportProblem" = "回報問題…";
-/* Menu item in the help submenu that opens the project website. */
-"ui.extra.projectWebsite" = "專案網站";
 /* Title of the alert shown when an action of the menu bar menu fails. */
 "ui.extra.actionFailedTitle" = "操作未完成";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */

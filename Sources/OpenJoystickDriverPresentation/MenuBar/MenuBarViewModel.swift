@@ -8,13 +8,10 @@
   final class MenuBarViewModel {
     /// The runtime state that the menu bar item reads.
     let runtime: RuntimeViewModel
-    /// Formats the status line.
-    private let localization: Localization
 
     /// Creates the view model on `runtime`.
-    init(runtime: RuntimeViewModel, localization: Localization = Localization()) {
+    init(runtime: RuntimeViewModel) {
       self.runtime = runtime
-      self.localization = localization
     }
 
     /// The connected controllers, or none while the service status is not available.
@@ -32,63 +29,16 @@
       )
     }
 
-    /// The status line: readiness, controller count and active profile.
-    ///
-    /// The active profile is the global one when there is one, else the last active profile.
-    var summaryTitle: String {
-      let readiness: String
-      let controllerSummary: String
-      switch runtime.statusState {
-      case .loading:
-        readiness = OJDLocalized.string("status.starting")
-        controllerSummary = RuntimePresentation.deviceCountLabel(0)
-      case .available(let status):
-        readiness = status.readinessLabel
-        controllerSummary = status.deviceCountLabel
-      case .unavailable, .error:
-        readiness = OJDLocalized.string("status.needsAttention")
-        controllerSummary = RuntimePresentation.deviceCountLabel(0)
-      }
-
-      let profileSummary: String
-      if case .available(let snapshot) = runtime.remappingState,
-        let activeProfile = snapshot.activeProfiles.last(where: { $0.applicationScope == .global })
-          ?? snapshot.activeProfiles.last,
-        let profile = snapshot.profiles.first(where: { $0.id == activeProfile.profileID })
-      {
-        profileSummary = profile.name
-      } else {
-        profileSummary = OJDLocalized.string(
-          "status.noActiveProfile"
-        )
-      }
-      return StatusItemStatusLine.make(
-        readiness: readiness,
-        controllers: controllerSummary,
-        profile: profileSummary,
-        localization: localization,
-        locale: .current
-      )
-    }
-
     /// The data that the status menu is built from.
     var statusItemState: StatusItemState {
-      var profiles: [StatusItemState.Profile] = []
       var snapshot: ApplicationServiceRemappingSnapshotPayload?
       if case .available(let available) = runtime.remappingState {
         snapshot = available
       }
-      if let snapshot {
-        let activeIDs = Set(snapshot.activeProfiles.map(\.profileID))
-        profiles = snapshot.profiles.map {
-          StatusItemState.Profile(id: $0.id, name: $0.name, isActive: activeIDs.contains($0.id))
-        }
-      }
       return StatusItemState(
-        statusLine: summaryTitle,
         needsAccess: needsPermissionAttention,
         controllers: devices.map {
-          StatusItemState.Controller(
+          var controller = StatusItemState.Controller(
             id: $0.sessionToken.rawValue,
             name: $0.name,
             isSuspended: $0.sessionState == .suspended,
@@ -96,10 +46,10 @@
             isPaused: $0.paused,
             profiles: Self.profiles(applyingTo: $0, in: snapshot)
           )
+          controller.battery = $0.connectionState?.power.battery.percentageText
+          return controller
         },
-        profiles: profiles,
-        profileListRead: snapshot != nil,
-        statusSymbolName: summarySemanticState.presentation.symbolName
+        profileListRead: snapshot != nil
       )
     }
 

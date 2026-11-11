@@ -57,8 +57,6 @@ ESCAPE_SETTLE_SECONDS = 1.0
 MENU_BAR_ID_PREFIX = "menu."
 PROFILE_MENU_ID = "menu.profile"
 ACTIVATE_PROFILE_ID = "activateProfile"
-STATUS_PROFILES_ID = "profiles"
-STATUS_ACTIVATE_ID = "profiles.activate"
 
 
 class CaptureError(Exception):
@@ -449,13 +447,6 @@ def menu_targets(ids: list[str]) -> list[MenuTarget]:
                 )
             )
     targets.append(MenuTarget("menu-status-item", (), status_item=True))
-    targets.append(
-        MenuTarget(
-            "menu-status-item-profiles-activate",
-            (STATUS_PROFILES_ID, STATUS_ACTIVATE_ID),
-            status_item=True,
-        )
-    )
     names = [target.name for target in targets]
     for name in sorted(set(names)):
         if names.count(name) > 1:

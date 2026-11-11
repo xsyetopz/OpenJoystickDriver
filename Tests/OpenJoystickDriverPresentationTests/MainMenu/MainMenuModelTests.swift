@@ -266,7 +266,6 @@ struct MainMenuModelTests {
       MainMenuModel.noControllerTitleKey, "ui.menu.controller.noneSelected",
       MainMenuModel.noProfilesTitleKey, MainMenuModel.profilesUnavailableTitleKey,
       MainMenuModel.noActiveProfileTitleKey,
-      "ui.extra.reportProblem",
     ] { checkTitleStyle(key) }
     for item in MainMenuModel.allItems where item.action != .controllerTarget {
       for key in [item.titleKey, item.alternateTitleKey].compactMap({ $0 }) {
