@@ -52,6 +52,18 @@
             )
           )
           PauseShortcutRow(preferences: preferences)
+          Picker(
+            OJDLocalized.string("ui.settings.general.interface"),
+            selection: Binding(
+              get: { preferences.interfaceLevel },
+              set: { preferences.setInterfaceLevel($0) }
+            )
+          ) {
+            Text(OJDLocalized.string("ui.settings.general.interfaceSimple"))
+              .tag(InterfaceLevel.simple)
+            Text(OJDLocalized.string("ui.settings.general.interfaceAdvanced"))
+              .tag(InterfaceLevel.advanced)
+          }
         }
         updates
       }.ojdGroupedForm()

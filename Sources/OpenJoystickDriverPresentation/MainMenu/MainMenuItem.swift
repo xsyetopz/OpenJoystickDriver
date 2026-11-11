@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverKit
 
 /// Modifier keys of a menu key equivalent, independent of AppKit.
 struct MainMenuModifiers: OptionSet, Hashable, Sendable {
@@ -76,6 +77,8 @@ enum MainMenuAction: Hashable, Sendable {
   case toggleSidebar
   /// Enter or exit full screen.
   case toggleFullScreen
+  /// Set how much of the interface shows.
+  case setInterfaceLevel(InterfaceLevel)
 
   /// A disabled row that names the controller the menu acts on, or says there is none.
   case controllerTarget
@@ -264,6 +267,8 @@ struct MainMenuState: Equatable, Sendable {
   var isToolbarVisible = false
   /// Whether the sidebar shows.
   var isSidebarVisible = true
+  /// How much of the interface shows; the View menu checks the matching item.
+  var interfaceLevel = InterfaceLevel.default
 
   /// The controller the Controller and Profile menus act on: the one selected in the Controllers
   /// area.

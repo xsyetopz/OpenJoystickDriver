@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverKit
 
 /// The main menu as data: titles, key equivalents, actions, enabled rules and GUI counterparts.
 ///
@@ -31,6 +32,12 @@ enum MainMenuModel {
     case .responderChain: return true
     case .requires(let requirements): return requirements.allSatisfy(state.satisfies)
     }
+  }
+
+  /// Returns whether the item shows a checkmark: the interface level item of the current level.
+  static func isChecked(_ item: MainMenuItem, state: MainMenuState) -> Bool {
+    guard case .setInterfaceLevel(let level) = item.action else { return false }
+    return level == state.interfaceLevel
   }
 
   /// The text of the controller target row: the selected controller's name; the key that says no
@@ -339,6 +346,19 @@ enum MainMenuModel {
         gui: .area(area)
       )
     } + [
+      .separator,
+      entry(
+        "interfaceLevel.simple",
+        "ui.menu.view.interfaceSimple",
+        action: .setInterfaceLevel(.simple),
+        gui: .settingsPane(.general)
+      ),
+      entry(
+        "interfaceLevel.advanced",
+        "ui.menu.view.interfaceAdvanced",
+        action: .setInterfaceLevel(.advanced),
+        gui: .settingsPane(.general)
+      ),
       .separator,
       toolbarEntry(.activityMode),
       toolbarEntry(.activityFilter),

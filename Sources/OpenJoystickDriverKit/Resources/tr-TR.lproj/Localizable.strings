@@ -3825,6 +3825,10 @@
 "ui.menu.view.showSidebar" = "Kenar Çubuğunu Göster";
 /* Item of the View menu that hides the sidebar. It replaces Show Sidebar while the sidebar is visible. */
 "ui.menu.view.hideSidebar" = "Kenar Çubuğunu Gizle";
+/* Item of the View menu that sets the interface level to Simple, the reduced interface. A checkmark shows while it is the level. */
+"ui.menu.view.interfaceSimple" = "Basit";
+/* Item of the View menu that sets the interface level to Advanced, the full interface. A checkmark shows while it is the level. */
+"ui.menu.view.interfaceAdvanced" = "Gelişmiş";
 /* Item of the View menu that shows the toolbar. */
 "ui.menu.view.showToolbar" = "Araç Çubuğunu Göster";
 /* Item of the View menu that hides the toolbar. It replaces Show Toolbar while the toolbar is visible. */
@@ -3919,6 +3923,12 @@
 "ui.settings.general.showInMenuBar" = "Menü çubuğunda göster";
 /* Description under the Show in menu bar switch in the General pane of the settings window. OpenJoystickDriver is the product name. */
 "ui.settings.general.showInMenuBarDescription" = "OpenJoystickDriver öğesini menü çubuğunda gösterir.";
+/* Label of the pop-up button in the General pane of the settings window that sets how much of the interface shows. */
+"ui.settings.general.interface" = "Arayüz";
+/* Choice of the Interface pop-up button in the General pane of the settings window that shows the reduced interface. */
+"ui.settings.general.interfaceSimple" = "Basit";
+/* Choice of the Interface pop-up button in the General pane of the settings window that shows the full interface. */
+"ui.settings.general.interfaceAdvanced" = "Gelişmiş";
 /* Title of the switch in the Updates section of the settings window that checks for an update at startup. */
 "ui.settings.general.checkUpdatesAutomatically" = "Güncellemeleri otomatik denetle";
 /* Description under the automatic update check switch in the Updates section of the settings window. */

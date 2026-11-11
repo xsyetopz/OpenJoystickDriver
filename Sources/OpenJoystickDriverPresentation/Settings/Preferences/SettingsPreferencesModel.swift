@@ -71,6 +71,9 @@
     /// Whether Settings > Advanced shows the developer tools.
     @Published
     private(set) var developerToolsEnabled: Bool
+    /// How much of the interface shows.
+    @Published
+    private(set) var interfaceLevel: InterfaceLevel
     /// The system-wide shortcut that pauses and resumes every controller, or nil while unset.
     @Published
     private(set) var pauseShortcut: PauseShortcut?
@@ -149,6 +152,7 @@
       self.checkUpdatesAutomatically = ApplicationSettingKey.updatesCheckAutomatically.defaultValue
       self.includePrereleaseUpdates = ApplicationSettingKey.updatesIncludePrereleases.defaultValue
       self.developerToolsEnabled = ApplicationSettingKey.developerTools.defaultValue
+      self.interfaceLevel = .default
       reloadSettings()
       // A change from `ojd setting` or another process shows while the window is open.
       watcher = SettingsWatcher(store: settings) { [weak self] in
@@ -182,6 +186,7 @@
       checkUpdatesAutomatically = value(.updatesCheckAutomatically)
       includePrereleaseUpdates = value(.updatesIncludePrereleases)
       developerToolsEnabled = value(.developerTools)
+      interfaceLevel = stored.interfaceLevel ?? .default
       pauseShortcut = stored.pauseShortcut
       if recovered { settingsRecovered?() }
     }
@@ -379,6 +384,14 @@
     func setDeveloperToolsEnabled(_ enabled: Bool) {
       guard persist(.developerTools, enabled) else { return }
       developerToolsEnabled = enabled
+    }
+
+    /// Stores the interface level; a failure shows in ``errorMessage``.
+    func setInterfaceLevel(_ level: InterfaceLevel) {
+      do {
+        try settings.setInterfaceLevel(level)
+        interfaceLevel = level
+      } catch { report(error) }
     }
 
     /// Checks for a newer version and shows the result in `updateState`.
