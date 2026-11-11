@@ -757,7 +757,7 @@ The command removes the `Controller` file and the patch file of that model. A bu
 
 ## Schema Versions
 
-Each file that OJD reads declares `apiVersion: openjoystickdriver/v1alpha2` and its `kind`, such as `Controller`, `ControllerPatch`, `VirtualDevice`, `Profile`, or `ModPackage`. Files do not declare `$schema`. OJD accepts only the `apiVersion` it supports and rejects every other one, a missing one, and a `kind` it does not read there. The error names the file, the version it found, and the supported one. It does not convert files. The schemas are flat files in `Resources/Schemas/`, and each `$id` is `https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/<kind>.schema.json`. Those IDs are not published.
+Each file that OJD reads declares `apiVersion: openjoystickdriver/v1alpha3` and its `kind`, such as `Controller`, `ControllerPatch`, `VirtualDevice`, `Profile`, or `ModPackage`. Files do not declare `$schema`. OJD accepts only the `apiVersion` it supports and rejects every other one, a missing one, and a `kind` it does not read there. The error names the file, the version it found, and the supported one. The readers do not convert files; `ojd migrate` converts the files of an earlier alpha. The schemas are flat files in `Resources/Schemas/`, and each `$id` is `https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/<kind>.schema.json`. Those IDs are not published.
 
 - Before 1.0, a `v1alpha3` schema may change incompatibly. The release notes list each such change.
 - At 1.0 the schemas are promoted to `v1`. A `v1` schema takes only additive changes: a new optional field, or a new value where a reader can ignore it.

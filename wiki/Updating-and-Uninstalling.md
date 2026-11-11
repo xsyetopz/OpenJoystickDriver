@@ -61,11 +61,20 @@ Your profiles stay in place because they are stored outside the app.
 
 ### Update from an Earlier Alpha
 
-OJD 0.6.0-alpha.3 reads only XML property list files (`.plist`) with `apiVersion: openjoystickdriver/v1alpha3`. Files from 0.6.0-alpha.1 are JSON with `openjoystickdriver/v1alpha1`, and files from 0.6.0-alpha.2 are JSON with `openjoystickdriver/v1alpha2`. OJD opens neither. A file with another version fails with error `E5001`, and a file that is not an XML property list fails with `E5010`. The message names the file, the version or form it found, and the supported one.
+OJD 0.6.0-alpha.3 reads only XML property list files (`.plist`) with `apiVersion: openjoystickdriver/v1alpha3`. Files from 0.6.0-alpha.1 are JSON with `openjoystickdriver/v1alpha1`, and files from 0.6.0-alpha.2 are JSON with `openjoystickdriver/v1alpha2`. OJD opens neither. A file with another version fails with error `E5001`, and a file that is not an XML property list fails with `E5010`. Migrate the files first. The message names the file, the version or form it found, and the supported one.
 
-Convert each file by hand: save it as an XML property list with `plutil -convert xml1 -o FILE.plist FILE.json`, set `apiVersion` to `openjoystickdriver/v1alpha3`, then run `ojd profile validate FILE.plist` or `ojd record validate FILE.plist` and fix what it reports. The `CHANGELOG.md` file lists the fields that changed.
+OJD converts these files for you. The service runs the migration each time it starts, before anything reads a file, and logs one verdict per file. You can run it yourself:
 
-`ojd migrate` converts `v1alpha1` JSON files to `v1alpha2` JSON, which this version does not open. Run it on 0.6.0-alpha.1 files before you convert them by hand. It copies each original to `Migrated/` in the OJD support folder before it writes the converted file, and `ojd migrate --dry-run` lists what it would convert without changing a file. A file it cannot convert stays unchanged, and the command exits with error `E5009` and names the file and the reason.
+```sh
+ojd migrate --dry-run
+ojd migrate
+```
+
+`--dry-run` lists what would be converted and writes nothing. `ojd migrate` writes each converted file as a `.plist` beside the original and copies the original to `Migrated/` in the OJD support folder, with its relative path. A backup is never overwritten. Each file gets one verdict: `Migrated`, `Current`, `Failed` or `Foreign`. A file it cannot convert stays unchanged, the other files still convert, and the command exits with error `E5009` and names the file and the reason. `ojd migrate FOLDER` scans a folder you name, such as a copy of your old files or a mod you wrote, and keeps its backups in `FOLDER/Migrated/`.
+
+When OJD shows `E5001` for a file, the app offers **Migrate** next to the error, before it offers to delete the file. A `.json` file left in a store folder is named in the message.
+
+A file from 0.5 has no `apiVersion`. It gets the verdict `failed` with "written by 0.5; re-create it": create the profile again in the app.
 
 `ojd mod validate` refuses a mod package that is not a `v1alpha3` package. Install a version of the mod made for 0.6.0-alpha.3.
 

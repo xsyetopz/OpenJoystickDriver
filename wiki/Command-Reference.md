@@ -480,11 +480,21 @@ With `--json`, the output is an `ErrorExplanation` with `code`, `area`, `explana
 Convert the documents of an older version to the current one.
 
 ```text
-ojd migrate [--dry-run]
+ojd migrate [--dry-run] [FOLDER]
 ```
 
-The command converts each stale `Settings.json`, `AccessGrants.json`, profile, controller record and virtual device file in the support folder, checks the result with the current reader, and copies the original to `Migrated/` before it writes. A file whose backup already exists is not converted. `--dry-run` lists what it would convert and writes nothing. A file it cannot convert stays unchanged, the other files still convert, and the command exits with code 1 and error `E5009`. Installed mods are not converted.
-With `--json`, it prints a `MigrationReport` whose `metadata` has `dryRun` and whose `items` each have `file`, `kind`, `status` (`Converted`, `WouldConvert` or `Failed`) and, for a failure, `detail`.
+The command scans the support folder, or `FOLDER` and everything below it, and gives each `.json` and `.plist` file one verdict:
+
+| Verdict | Meaning |
+| --- | --- |
+| `Migrated` | The file was converted to a `v1alpha3` property list, or a dry run found that it would be. |
+| `Current` | The file is a property list of the current version. |
+| `Failed` | The file stays unchanged, and `detail` says why. |
+| `Foreign` | The file is not an OpenJoystickDriver document and stays unchanged. |
+
+In the support folder it scans the root files, `ActiveProfiles`, `Profiles/`, `Controllers/`, `VirtualDevices/`, `Personas/` and `Packages/`. It converts `v1alpha1` and `v1alpha2` JSON documents of every kind, including an installed mod's `mod.json`, and writes the result beside the original as a `.plist`. It checks the result with the current reader and keeps the original under `Migrated/` with its relative path, in the scanned folder. A backup is never overwritten: if `Migrated/<path>` exists, or the `.plist` exists already, the file fails and stays unchanged. A file written by 0.5 has no `apiVersion` and fails with "written by 0.5; re-create it". `--dry-run` writes nothing. The other files still convert when one fails, and the command then exits with code 1 and error `E5009`.
+
+With `--json`, it prints a `MigrationReport` whose `metadata` has `dryRun` and whose `items` each have `file`, `verdict` (`Migrated`, `Current`, `Failed` or `Foreign`), `kind` when the file has one and, for a failure or a foreign file, `detail`.
 
 ## Further Reading
 
