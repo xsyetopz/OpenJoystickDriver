@@ -42,6 +42,7 @@
       state.hasMainWindow = mainWindow != nil
       state.hasSelectedProfile = mainWindow?.hasSelectedProfile == true
       state.enabledToolbarActions = mainWindow?.enabledToolbarActions ?? []
+      state.disabledToolbarActions = mainWindow?.disabledToolbarActions ?? []
       state.hasSearchFieldInView = mainWindow?.searchFieldInView != nil
       state.hasSettingsWindow = settingsWindow != nil
       if let window = NSApplication.shared.keyWindow {

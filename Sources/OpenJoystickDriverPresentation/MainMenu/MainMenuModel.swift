@@ -196,14 +196,14 @@ enum MainMenuModel {
         "ui.menu.file.importProfile",
         key: "o",
         action: .importProfile,
-        enabled: needsMainWindow,
+        enabled: .requires([.mainWindow, .toolbarActionNotDisabled(.importProfile)]),
         gui: .area(.profiles)
       ),
       entry(
         "installRecordOrMod",
         "ui.menu.file.installRecordOrMod",
         action: .installRecordOrMod,
-        enabled: needsMainWindow,
+        enabled: .requires([.mainWindow, .toolbarActionNotDisabled(.installLibraryItem)]),
         gui: .area(.library)
       ),
       .separator,
@@ -227,7 +227,9 @@ enum MainMenuModel {
         "exportProfile",
         "ui.menu.file.exportProfile",
         action: .exportProfile,
-        enabled: .requires([.mainWindow, .profileSelected]),
+        enabled: .requires([
+          .mainWindow, .profileSelected, .toolbarActionNotDisabled(.exportProfile),
+        ]),
         gui: .area(.profiles)
       ),
       entry(
@@ -240,6 +242,7 @@ enum MainMenuModel {
         "saveActivityLog",
         "ui.menu.file.saveActivityLog",
         action: .saveActivityLog,
+        enabled: .requires([.toolbarActionNotDisabled(.saveActivityLog)]),
         gui: .area(.activity)
       ),
       toolbarEntry(.showActivityLogInFinder),

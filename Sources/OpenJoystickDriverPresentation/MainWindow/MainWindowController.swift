@@ -466,6 +466,16 @@
       )
     }
 
+    /// The toolbar actions that the selected area shows and that are disabled; the commands that
+    /// work from any area wait for them.
+    var disabledToolbarActions: Set<MainWindowToolbarAction> {
+      Set(
+        navigation.selectedArea.toolbarActions(activityMode: screens.activity.mode).filter {
+          !isEnabled($0)
+        }
+      )
+    }
+
     /// The search field of the list in view, or nil when the area has none or the toolbar is
     /// hidden.
     var searchFieldInView: NSSearchField? { searchItemInView?.searchField }

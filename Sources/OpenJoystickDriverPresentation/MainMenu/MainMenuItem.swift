@@ -140,6 +140,9 @@ enum MainMenuRequirement: Hashable, Sendable {
   case profileSelected
   /// The toolbar item of the action is shown and enabled.
   case toolbarAction(MainWindowToolbarAction)
+  /// The toolbar item of the action is not shown disabled: the command works from any area, and
+  /// waits only while the area that shows the item has it disabled.
+  case toolbarActionNotDisabled(MainWindowToolbarAction)
   /// The list in view has a search field that shows.
   case searchFieldInView
   /// Never holds; keeps an informational item disabled.
@@ -249,6 +252,8 @@ struct MainMenuState: Equatable, Sendable {
   var hasMainWindow = false
   /// The toolbar actions that are shown and enabled.
   var enabledToolbarActions: Set<MainWindowToolbarAction> = []
+  /// The toolbar actions that are shown and disabled.
+  var disabledToolbarActions: Set<MainWindowToolbarAction> = []
   /// Whether the list in view has a search field that shows.
   var hasSearchFieldInView = false
   /// Whether the Settings window exists.
@@ -280,6 +285,7 @@ struct MainMenuState: Equatable, Sendable {
     case .controllerHasActiveProfile: return controller?.hasActiveProfile == true
     case .profileSelected: return hasSelectedProfile
     case .toolbarAction(let action): return enabledToolbarActions.contains(action)
+    case .toolbarActionNotDisabled(let action): return !disabledToolbarActions.contains(action)
     case .searchFieldInView: return hasSearchFieldInView
     case .unavailable: return false
     }
