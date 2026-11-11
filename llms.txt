@@ -8,7 +8,19 @@ Do not edit generated controller records or `.build/driverkit/generated/`. `Open
 
 Every stored document (record, patch, profile, virtual device, mod manifest) is an XML property list with `apiVersion` `openjoystickdriver/v1alpha3`. `plutil -convert json -o - FILE.plist` reads one as JSON and `plutil -convert xml1 -o FILE.plist FILE.json` writes one from JSON. Messages (`--json` output, the endpoint, report files) stay JSON.
 
+## Support ladder
+
+Support a controller with the first step that works. A fact about one model is a record field, never a model branch in Swift. Schemas are in `Resources/Schemas/`. The full page is `wiki/Support-Ladder.md`.
+
+1. Nothing: OJD binds the pad by interface signature or HID descriptor. Check with `ojd controller list` and `ojd controller show VVVV:PPPP`.
+2. A patch (`ControllerPatch`, for a model with a bundled record): `ojd record draft VVVV:PPPP > VVVV-PPPP.patch.plist`, `ojd record validate FILE`, `ojd record install FILE`.
+3. A record (`Controller`, for a model with no bundled record): `ojd record draft VVVV:PPPP > VVVV-PPPP.plist` (or `--from-sdl`), `ojd record validate FILE`, `ojd record test VVVV:PPPP --packets CAPTURE --expect STATE`, `ojd record install FILE`.
+4. A generator script: one JavaScript file that writes the records of a product family; `ojd generate` is not in `ojd --help` of this build (not verified).
+5. Source: only for a protocol family OJD lacks (a handshake, an encryption, or a transport no document can state).
+
 ## Docs
+
+- [Support ladder](wiki/Support-Ladder.md): the five steps with a complete patch and record
 
 - [README](README.md): project summary and links to the wiki
 - [Controllers](wiki/Supported-Controllers.md#supported-controllers): supported controllers, evidence classes, VID:PID, DEXT scope
