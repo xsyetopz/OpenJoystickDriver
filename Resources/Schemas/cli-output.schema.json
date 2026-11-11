@@ -1704,8 +1704,8 @@
           "items": {
             "if": {
               "properties": {
-                "status": {
-                  "const": "Failed"
+                "verdict": {
+                  "enum": ["Failed", "Foreign"]
                 }
               }
             },
