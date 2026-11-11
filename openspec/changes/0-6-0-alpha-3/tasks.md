@@ -85,7 +85,7 @@ A controller fix in groups 2, 3, and 8 lands as a record or a patch (D13). Where
 ## 7. Schema style
 
 - [x] 7.1 Write `Tests/RepositoryScripts/test_schema_style.py`: one fragment, at most 120 characters, ends with a period, no Swift type, path, command, error code, or validator wording, no `$comment`. Run it and keep the failure count as the baseline.
-- [ ] 7.2 Rewrite the 308 descriptions in the 15 schema files to pass 7.1, one schema file per commit.
+- [x] 7.2 Rewrite the 308 descriptions in the 15 schema files to pass 7.1, one schema file per commit.
 - [ ] 7.3 For each limit a description stated, add the keyword, or add the wiki sentence and a rejection case with the correct `schema` flag.
 - [ ] 7.4 Remove the 23 `$comment` entries and the allow-list at `Tests/RepositoryScripts/test_schema_naming.py:220-223`.
 - [ ] 7.5 Search for the producers of `report.notes`, `report.warnings`, and `report.caveat`. Keep a field a command writes a finding into; remove a field with no producer, with its references.
