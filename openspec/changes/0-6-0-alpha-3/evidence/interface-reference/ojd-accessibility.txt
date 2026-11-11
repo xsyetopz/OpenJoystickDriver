@@ -1,0 +1,422 @@
+OpenJoystickDriver 0.6.0-alpha.2 read through the Accessibility interface
+=========================================================================
+
+Mac: macOS 27.2, build 26B123. Date: 2026-11-11. App: /Applications/OpenJoystickDriver.app,
+0.6.0-alpha.2 (build 1.21.99), process "OpenJoystickDriver", already running.
+Method: `osascript` with System Events, the command forms of
+`apple-apps-accessibility.txt`. Each command reads roles, descriptions, names,
+and sizes. A screenshot of each window, area, and pane is in `ojd-alpha2/`; each
+captures only OJD's window (`screencapture -x -o -l <windowID>`). Sizes are
+width x height in points. A window size is the frame the window had when read,
+not the default: the main window was 960x588.
+State when read: one 8BitDo Ultimate 2C Wireless connected over Bluetooth Low
+Energy, and the receiver-like device `2dc8:301c` (USB) listed with no controls.
+An earlier baseline (`ojd-alpha2/main-Controllers-baseline-0-connected.png`)
+shows the list header "0 controllers connected" above the same `2dc8:301c` row.
+Every area was selected with the View menu, the way `shoot.sh` does:
+
+    osascript -e 'tell application "System Events" to tell process "OpenJoystickDriver" to click menu item "<Area>" of menu 1 of menu bar item "View" of menu bar 1'
+
+1. Main window: toolbar (one reading per area)
+----------------------------------------------
+
+Command (after selecting the area; groups are read one level down):
+
+    osascript -e 'tell application "System Events" to tell process "OpenJoystickDriver"
+    set out to ""
+    repeat with e in (UI elements of toolbar 1 of window 1)
+    set s to size of e
+    set out to out & (role of e) & " | " & (description of e) & " | " & (item 1 of s) & "x" & (item 2 of s) & linefeed
+    if role of e is "AXGroup" then
+    repeat with c in (UI elements of e)
+    set cs to size of c
+    set out to out & "    " & (role of c) & " | " & (description of c) & " | " & (item 1 of cs) & "x" & (item 2 of cs) & linefeed
+    end repeat
+    end if
+    end repeat
+    set ws to size of window 1
+    return out & "window " & (item 1 of ws) & "x" & (item 2 of ws) & " title " & (title of window 1)
+    end tell'
+
+Output, Controllers (window title "Controllers - 1 controller connected"):
+
+    AXButton | Sidebar | 44x52
+    window 960x588
+
+Output, Profiles:
+
+    AXButton | Sidebar | 44x52
+    AXButton | New profile | 36x52
+    AXButton | Import profile | 36x52
+    AXButton | Validate profile file | 37x52
+    AXButton | Duplicate | 37x52
+    AXButton | Export profile | 36x52
+    AXButton | Delete | 41x52
+    window 960x588
+
+Output, Library:
+
+    AXButton | Sidebar | 44x52
+    AXButton | Install | 39x52
+    AXButton | Validate... | 36x52
+    AXButton | Test Record... | 36x52
+    AXButton | Remove | 41x52
+    AXGroup | group | 228x52
+        AXTextField | search text field | 222x38
+    (the group also holds AXButton | Search | 29x36, read in section 2)
+    window 960x588
+
+Output, Access:
+
+    AXButton | Sidebar | 44x52
+    AXButton | Grant a Program... | 36x52
+    AXButton | Create a Token... | 41x52
+    window 960x588
+
+Output, Activity:
+
+    AXButton | Sidebar | 44x52
+    AXGroup | group | 192x52
+        AXRadioGroup | radio group | 190x38
+    AXMenuButton | Filter | 53x52
+    AXGroup | group | 168x52
+        AXTextField | search text field | 162x38
+    AXButton | Copy All | 41x52
+    AXButton | Save Activity Log... | 36x52
+    AXButton | Show in Finder | 44x52
+    window 960x588
+
+Reading: the toolbar is 52 pt high in every area (Notes: 52) and holds
+icon-only buttons with no text label, 36 to 44 pt wide (Notes: 36 to 44), with
+a 38 pt high control inside each group (Notes: 38x38 inside groups). The form
+is the same as Notes. Controllers has the sidebar button only; its window
+title carries the count ("Controllers - 1 controller connected").
+
+2. Main window: sidebar, list, detail
+-------------------------------------
+
+Command:
+
+    osascript -e 'tell application "System Events" to tell process "OpenJoystickDriver"
+    set out to ""
+    set c to entire contents of window 1
+    repeat with i from 1 to count of c
+    set e to item i of c
+    try
+    set s to size of e
+    set d to ""
+    try
+    set d to description of e
+    end try
+    set n to ""
+    try
+    set n to name of e
+    end try
+    set out to out & (role of e) & " | " & d & " | " & n & " | " & (item 1 of s) & "x" & (item 2 of s) & linefeed
+    end try
+    end repeat
+    return out
+    end tell'
+
+(`entire contents` is read into a list first and walked by index: a
+`repeat with e in (entire contents ...)` returns nothing here.) Text values
+other than labels, and repeated AXStaticText lines, are left out below.
+
+Output, every area (the sidebar; same in all five):
+
+    AXSplitGroup | split group | 960x588
+    AXGroup | group | 170x588
+    AXScrollArea | scroll area | 170x536
+    AXOutline | Areas | 170x536
+    AXRow | outline row | 170x32        (five rows: Controllers, Profiles, Library, Access, Activity)
+    AXCell | cell | 150x32
+    AXStaticText | text | Controllers | 99x16   (the other four labels are 71, 69, 67, 72 wide)
+    AXToolbar | toolbar | 960x52
+
+Output, Controllers: list column (200 wide) and detail (589 wide):
+
+    AXOutline | list | 200x528
+    AXRow | outline row | 200x47      "Generic HID" (the 8BitDo Ultimate 2C Wireless row; the AXStaticText holds the model's protocol, the name is cut to "8BitDo Ultimate 2...")
+    AXRow | outline row | 200x86      "This device serves no controls, such as a receiver with no controller connected. OJD sends it no data." (heading of the row is the raw "2dc8:301c  USB")
+    AXScrollArea | 8BitDo Ultimate 2C Wireless | 589x536
+    AXGroup | group | 549x55          name, "Bluetooth Low Energy"
+    AXGroup | group | 549x221         rows 16 high: Active profile, Publication, Serving route, Protocol, Serial number, Input
+    AXGroup | group | 549x40          "Input Test" row
+    AXButton | button | Input Test | 132x24     ("Open Input Test...")
+    AXGroup | group | 549x77          "Served by" row and "Set by" row
+    AXRadioGroup | radio group | Served by | 388x24
+    AXRadioButton | macOS (native) | 194x24
+    AXRadioButton | OpenJoystickDriver (virtual) | 194x24
+    AXGroup | group | 549x85          "Stick deadzone", "Not set"
+    AXIncrementor | Stick deadzone | 20x24
+    AXDisclosureTriangle | disclosure triangle | 75x16     ("Tuning")
+    AXGroup | group | 549x492 (details open)   disclosure 94x16, then rows Unit ID, Parser, Ownership, Duplicate exposure risk, Record, Output owner, Controls, Input mapping, USB VID/PID, Input endpoint, Output endpoint
+    AXButton | button | missing value | 135x24, 113x24, 173x24   (three buttons with no name)
+    AXScrollBar | scroll bar | 19x530
+
+    Values read in the details: "U-BEAkr199Ua8jvgZG" (Unit ID), "hid-descriptor" (Parser),
+    "2DC8:301B" (USB VID/PID), "0x82" and "0x02" (endpoints). Detail row text is
+    16 pt high.
+
+Output, Profiles (no profile exists):
+
+    AXGroup | group | 589x588
+    AXStaticText | text | No profiles | 80x76
+    AXStaticText | text | Create a profile to start assigning controls. | 291x19
+
+Output, Library (no record or mod installed):
+
+    AXRadioButton | Installed | 75x24
+    AXRadioButton | Built-in | 75x24
+    AXOutline | list | 200x488
+    AXRow | outline row | 200x28 and 200x24     (headings 100x14 and 30x14; "No installed records", "No installed mods")
+    AXStaticText | text | Select a record or mod. | 170x85
+    AXButton | Search | 29x36
+
+Output, Access:
+
+    AXScrollArea | scroll area | 790x536
+    AXHeading | heading | 123x16                 ("Access & readiness")
+    AXGroup | group | 704x110                    Input Monitoring, Accessibility, Notifications, each "Allowed"
+    AXGroup | group | 704x115
+    AXCheckBox | switch | Local endpoint | 36x16
+    AXCheckBox | switch | WebSocket | 36x16
+    AXTextField | Port, WebSocket port; leave empty to keep the saved port. The system picks a port only when none is saved or Automatic is chosen | Port | 120x24
+
+Output, Activity (22 rows of 773x24, columns "Stream" 81 wide and "Message" 642 wide):
+
+    AXOutline | outline | 790x536
+    AXStaticText | text | Output | 42x16
+    AXStaticText | text | [DevicePipeline] HID pipeline ready for LogicalControllerID(VID:0x2DC8 PID:0x301B loc=...) | 635x16
+
+Reading: the sidebar is 170 wide with rows of 170x32 (System Settings: 232 wide,
+rows 232x32). The list column is 200 wide, the detail 589, the content 790 in
+the single-column areas. Rows are 16 pt high text in 24 to 47 pt rows. The Activity
+log shows raw identifiers (VID, PID, loc). Three buttons of the Controllers
+detail have no name or description.
+
+3. Main menu
+------------
+
+Command:
+
+    osascript -e 'tell application "System Events" to tell process "OpenJoystickDriver" to get name of menu bar items of menu bar 1'
+
+Output:
+
+    Apple, OpenJoystickDriver, File, Edit, View, Controller, Profile, Window, Help
+
+Command (per menu; "missing value" is a separator):
+
+    osascript -e 'tell application "System Events" to tell process "OpenJoystickDriver" to get name of menu items of menu 1 of menu bar item "View" of menu bar 1'
+
+Output:
+
+    View:  Controllers, Profiles, Library, Access, Activity, -, Show Toolbar, Hide Sidebar, -, Enter Full Screen
+    OpenJoystickDriver:  About OpenJoystickDriver, -, Settings..., -, Services, -, Hide OpenJoystickDriver, Hide Others, Show All, -, Quit OpenJoystickDriver
+    File:  Import Profile..., Install Record or Mod..., -, Close, Close All, -, Export Profile..., Save Support Report..., Save Activity Log...
+    Edit:  Undo, Redo, -, Cut, Copy, Paste, Delete, Select All, -, Writing Tools, -, AutoFill, Start Dictation..., Emoji & Symbols
+    Controller:  8BitDo Ultimate 2C Wireless, -, Suspend, Test Input, Disconnect Wireless Link, -, Show in Window
+    Profile:  Activate Profile, Deactivate Profile
+    Window:  Minimize, Minimize All, Zoom, Zoom All, Fill, Center, -, Move & Resize, Full Screen Tile, -, Bring All to Front, Arrange in Front, Remove Window from Set, -, Controllers (1 controller connected)
+    Help:  Activity Log, Explain Error Code..., Copy Support Report, -, Report Problem..., Project Website
+
+Reading: the View menu has no "Customize Toolbar..." (Notes has it) and no Find
+in Edit. Of the 15 toolbar actions, the menus hold Import Profile, Export
+Profile, Save Activity Log, Install Record or Mod, and Copy Support Report
+(different from "Copy All"); the toolbar's New profile, Validate profile file,
+Duplicate, Delete, Validate..., Test Record..., Remove, Grant a Program...,
+Create a Token..., Copy All, Show in Finder, and the Activity Filter have no
+menu item by the same name.
+
+4. Settings window (opened with Command-comma)
+----------------------------------------------
+
+Command:
+
+    osascript -e 'tell application "OpenJoystickDriver" to activate' -e 'tell application "System Events" to tell process "OpenJoystickDriver" to keystroke "," using command down'
+
+Output of `swift /tmp/ojd-tools/winids.swift`: `48 0 General 600 510`.
+Panes were selected with:
+
+    osascript -e 'tell application "System Events" to tell process "OpenJoystickDriver" to click button "<Pane>" of toolbar 1 of window 1'
+
+The `entire contents` command of section 2 on the Settings window gave:
+
+    toolbar (all panes):   AXToolbar 600x56; AXButton General 55x56, Notifications 79x56, Advanced 64x56
+    window sizes:          General 600x510, Notifications 600x479, Advanced 600x438
+    scroll area:           General 600x422, Notifications 600x391, Advanced 600x350
+
+General:
+
+    AXGroup | group | 560x171
+    AXCheckBox | switch | Start at login | 36x16
+    AXCheckBox | switch | Show in menu bar | 36x16
+    AXCheckBox | switch | Show in Dock | 36x16
+    AXHeading | heading | 53x16                      ("Updates")
+    AXGroup | group | 560x134
+    AXButton | button | missing value | 93x24         ("Check Now")
+    AXCheckBox | switch | Check for updates automatically | 36x16
+    AXCheckBox | switch | Include prerelease updates | 36x16
+    row text: 16 pt label, 13 pt description (AXStaticText 13 high)
+
+Notifications:
+
+    AXHeading | heading | 70x16 ("Controllers"), 48x16 ("Profiles")
+    AXGroup | group | 560x74 (twice)
+    AXCheckBox | Controller connected | Connected | 36x16
+    AXCheckBox | Controller disconnected | Disconnected | 36x16
+    AXCheckBox | Profile activated or switched | Activated or switched | 36x16
+    AXCheckBox | Profile deactivated | Deactivated | 36x16
+    AXCheckBox | switch | Play a sound | 36x16
+    AXGroup | group | 560x44                  "Banners, Notification Center, and sounds are enabled."
+    AXButton | button | missing value | 158x24   ("Send Test Notification")
+
+Advanced:
+
+    AXHeading | heading | 127x16, 104x16, 101x16    ("Command-Line Tool", "Xbox USB Driver", "Developer Tools")
+    AXGroup | group | 560x72, 560x44, 560x51
+    AXButton | button | missing value | 185x24    ("Install Command-Line Tool")
+    AXButton | button | missing value | 76x24     ("Uninstall")
+    AXCheckBox | switch | Enable Developer Tools | 36x16
+
+Not opened: the Developer pane. It shows only while "Enable Developer Tools" is
+on, and reading it would change the maintainer's setting. The Settings window
+was closed with its close button after the readings.
+
+Reading: Settings is 600 wide for every pane and 56 pt high in the toolbar
+(System Settings: window 740x625, toolbar 52, sidebar). Switches are 36x16, push
+buttons 24 high (System Settings: 80x24). Several buttons have no name or
+description in Accessibility.
+
+5. Input Test window
+--------------------
+
+It opens with a controller connected: "Open Input Test..." in the Controllers
+detail (found by role AXButton and name "Input Test" in `entire contents`; a
+`click` on a `whose` filter fails with -1700). It was not tried with no
+controller: the button exists only in the detail of a listed controller, and the
+baseline list held only `2dc8:301c`, which has no detail with that button.
+
+Command: the `entire contents` command of section 2, with `window 1` the Input
+Test window. Window "Input Test - 8BitDo Ultimate 2C Wireless", 900x859
+(winids: `194 0 Input Test - 8BitDo Ultimate 2C Wireless 900 859`).
+
+Output:
+
+    AXToolbar | toolbar | 900x66
+    AXButton | Refresh | 58x66
+    AXScrollArea | scroll area | 900x793
+    AXGroup | group | 704x36              status: "Input active", "Bluetooth Low Energy · Generic HID · 2DC8:301B"
+    AXGroup | group | 704x350             control diagram: AXImage 213x27, 104x27, 67x27, 68x27, 325x27; AXUnknown 87x87 (stick)
+    AXStaticText | text | Left stick | 51x14
+    AXStaticText | text | Right stick | 58x14
+    AXHeading | heading | 48x16           ("Rumble")
+    AXStaticText | text | Rumble is not supported by this controller. | 257x16
+
+Not seen: the player indicator segmented control, its Apply button, the rumble
+switch, and "Test rumble". This controller reports no rumble and no player
+indicator, so they did not show. The window was closed with its close button.
+
+6. Menu bar item
+----------------
+
+Command:
+
+    osascript -e 'tell application "System Events" to tell process "OpenJoystickDriver" to get {role, description, size} of menu bar items of menu bar 2'
+
+Output (no error; `menu bar 2` exists, unlike ControlCenter in `apple-apps-accessibility.txt`):
+
+    AXMenuBarItem, OpenJoystickDriver status, 24, 24
+
+Command (click the item, then read its menu; submenus are read without opening them):
+
+    osascript -e 'tell application "System Events" to tell process "OpenJoystickDriver"
+    click menu bar item 1 of menu bar 2
+    delay 1
+    set out to ""
+    repeat with m in (menu items of menu 1 of menu bar item 1 of menu bar 2)
+    set s to size of m
+    set out to out & (role of m) & " | " & (name of m) & " | " & (item 1 of s) & "x" & (item 2 of s) & " | enabled " & (enabled of m) & linefeed
+    end repeat
+    return out
+    end tell'
+
+Output:
+
+    AXMenuItem | Ready · 1 controller connected · No active profile | 373x24 | enabled false
+    AXMenuItem | missing value | 373x11 | enabled false     (separator)
+    AXMenuItem | Controllers | 373x24 | enabled true
+    AXMenuItem | Profiles | 373x24 | enabled true
+    AXMenuItem | missing value | 373x11 | enabled false
+    AXMenuItem | Open Window | 373x24 | enabled true
+    AXMenuItem | Settings... | 373x24 | enabled true
+    AXMenuItem | missing value | 373x11 | enabled false
+    AXMenuItem | Help | 373x24 | enabled true
+    AXMenuItem | missing value | 373x11 | enabled false
+    AXMenuItem | Quit OpenJoystickDriver | 373x24 | enabled true
+
+Submenus (item names; their sizes read 0x0 because they were not shown):
+
+    Controllers:                    8BitDo Ultimate 2C Wireless
+    Controllers > controller:       Suspend, Test Input, Active Profile, Disconnect Wireless Link (enabled false), Show in Window
+    Controllers > controller > Active Profile:   No Profiles
+    Profiles:                       Activate, Deactivate
+    Profiles > Activate:            No Profiles
+    Help:                           Activity Log, Explain Error Code..., Report Problem..., Project Website
+
+The menu window, captured while open: `199 101  523 372` from winids (layer 101,
+frame including shadow); the screenshot is `ojd-alpha2/menu-bar-item-menu.png`.
+The menu was closed with Escape (key code 53).
+
+Reading: the menu is 373 pt wide with rows of 24 pt and separators of 11 pt.
+The first row joins three values. The controller row reads its name only. The
+controller's profile choice is three levels deep (Controllers > controller >
+Active Profile) and holds "No Profiles" while no profile exists. "Disconnect
+Wireless Link" is unavailable and its reason is not shown. Compared with
+`apple-apps-accessibility.txt` section 4: the macOS extras are unreadable
+(error -1719); OJD's item is readable.
+
+7. Sheets (two opened)
+----------------------
+
+Two sheets open from a toolbar button with no side effect until confirmed. Each
+was opened with a `click` on the toolbar element whose `description` matches
+(`click button "<name>" of toolbar 1` fails with -1728), read with the
+`entire contents` command of section 2 on `sheet 1 of window 1`, and closed with
+Escape (key code 53). The other 21 sheets were not opened: most need a profile,
+a binding, a record, or a controller state that does not exist on this Mac.
+
+Access > "Create a Token...": sheet 440x307 (winids: `203 0  440 307`).
+
+    AXStaticText | text | Create a token | 94x16
+    AXTextField | Token name | 400x24
+    AXTextArea | Web origins that may use the token, one per line | 400x70
+    AXCheckBox | checkbox | 52x16 and 65x16    (no name or description)
+    AXButton | button | 66x24 and 78x24          (no name or description)
+
+Profiles > "New profile": sheet 420x286 (winids: `209 0  420 286`).
+
+    AXTextField | Profile name | 272x24
+    AXPopUpButton | Controller | 231x24
+    AXPopUpButton | Target | 142x24
+    AXPopUpButton | Template | 124x24
+    AXPopUpButton | Virtual gamepad | 212x24
+    AXCheckBox | checkbox | 213x16                (no name or description)
+    AXButton | button | 66x24 and 64x24            (no name or description)
+
+Reading: both sheets match their source widths (440 and 420). Push buttons are 24
+high and the pop-up buttons 24 high, as in System Settings.
+
+8. Screenshots (ojd-alpha2/)
+----------------------------
+
+    main-Controllers.png, main-Profiles.png, main-Library.png, main-Access.png,
+    main-Activity.png, main-Controllers-baseline-0-connected.png,
+    settings-General.png, settings-Notifications.png, settings-Advanced.png,
+    input-test.png, menu-bar-item-menu.png,
+    sheet-access-create-token.png, sheet-profiles-new-profile.png
+
+Each was taken with `screencapture -x -o -l <windowID>` (window IDs from
+`/tmp/ojd-tools/winids.swift`), never of the full screen. Windows opened for the
+readings (Settings, Input Test) were closed; the main window stays open.
