@@ -4254,6 +4254,18 @@
 "error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: 페르소나 identity에는 비어 있지 않은 %2$@가 필요합니다. 해결: %2$@에 비어 있지 않은 문자열을 지정하세요.";
 /* Error E5007, shown when a virtual device file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
 "error.E5007.virtualDevice.idRange" = "%1$@, %2$@: ID는 %3$@...65535여야 합니다. 해결: %2$@를 %3$@...65535로 설정하세요.";
+/* Error E5007, shown when the subcommands of a record fail: a subcommand counterModulus is outside 2...256. %1$@ is the file. */
+"error.E5007.subcommandPlan.counterModulus" = "%1$@, session.subcommands.counterModulus: 서브커맨드의 counterModulus는 2...256이어야 합니다. 해결: counterModulus를 2...256으로 설정하세요.";
+/* Error E5007, shown when the subcommands of a record fail: subcommands name no request or more than 16. %1$@ is the file. */
+"error.E5007.subcommandPlan.requestsCount" = "%1$@, session.subcommands.requests: 서브커맨드는 요청을 1...16개 지정해야 합니다. 해결: 요청을 1...16개 나열하세요.";
+/* Error E5007, shown when the subcommands of a record fail: two SPI reads share a purpose. %1$@ is the file. */
+"error.E5007.subcommandPlan.spiPurpose" = "%1$@, session.subcommands.requests[].spiRead.purpose: SPI 읽기 purpose는 한 번만 나올 수 있습니다. 해결: 각 SPI 읽기에 고유한 purpose를 지정하세요.";
+/* Error E5007, shown when the subcommands of a record fail: a player indicator lacks a pattern for one of its indicators. %1$@ is the file. */
+"error.E5007.subcommandPlan.playerIndicator" = "%1$@, session.subcommands.playerIndicator.patterns: 플레이어 표시기는 모든 표시기의 패턴을 지정해야 합니다. 해결: patterns에 off, player1, player2, player3, player4를 지정하세요.";
+/* Error E5007, shown when the subcommands of a record fail: a subcommand request holds no data byte or more than 16. %1$@ is the file. */
+"error.E5007.subcommandPlan.dataCount" = "%1$@, session.subcommands.requests[].data: 서브커맨드 요청은 데이터 바이트를 1...16개 지정해야 합니다. 해결: data를 1...16바이트로 설정하세요.";
+/* Error E5007, shown when the subcommands of a record fail: an SPI read length is outside 1...29. %1$@ is the file. */
+"error.E5007.subcommandPlan.spiLength" = "%1$@, session.subcommands.requests[].spiRead.length: SPI 읽기 length는 1...29여야 합니다. 해결: length를 1...29로 설정하세요.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: 각 항목에는 id가 있어야 하며 id, protocol, match, interface, session, idle만 사용할 수 있습니다. 해결: 각 항목에 id를 지정하고 다른 키는 삭제하세요.";

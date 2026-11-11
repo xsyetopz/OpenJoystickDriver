@@ -3716,6 +3716,18 @@
 "error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: una identidad de persona necesita un valor no vacío en %2$@. Solución: da a %2$@ una cadena no vacía.";
 /* Error E5007, shown when a virtual device file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
 "error.E5007.virtualDevice.idRange" = "%1$@, %2$@: un ID debe ser %3$@...65535. Solución: asigna a %2$@ un valor de %3$@...65535.";
+/* Error E5007, shown when the subcommands of a record fail: a subcommand counterModulus is outside 2...256. %1$@ is the file. */
+"error.E5007.subcommandPlan.counterModulus" = "%1$@, session.subcommands.counterModulus: el counterModulus de un subcomando debe ser 2...256. Solución: asigna a counterModulus 2...256.";
+/* Error E5007, shown when the subcommands of a record fail: subcommands name no request or more than 16. %1$@ is the file. */
+"error.E5007.subcommandPlan.requestsCount" = "%1$@, session.subcommands.requests: los subcomandos deben nombrar 1...16 solicitudes. Solución: enumera 1...16 solicitudes.";
+/* Error E5007, shown when the subcommands of a record fail: two SPI reads share a purpose. %1$@ is the file. */
+"error.E5007.subcommandPlan.spiPurpose" = "%1$@, session.subcommands.requests[].spiRead.purpose: cada propósito de lectura SPI debe aparecer como máximo una vez. Solución: da a cada lectura SPI su propio propósito.";
+/* Error E5007, shown when the subcommands of a record fail: a player indicator lacks a pattern for one of its indicators. %1$@ is the file. */
+"error.E5007.subcommandPlan.playerIndicator" = "%1$@, session.subcommands.playerIndicator.patterns: un indicador de jugador debe nombrar un patrón para cada indicador. Solución: da patterns para off, player1, player2, player3 y player4.";
+/* Error E5007, shown when the subcommands of a record fail: a subcommand request holds no data byte or more than 16. %1$@ is the file. */
+"error.E5007.subcommandPlan.dataCount" = "%1$@, session.subcommands.requests[].data: una solicitud de subcomando debe nombrar 1...16 bytes de datos. Solución: da a data 1...16 bytes.";
+/* Error E5007, shown when the subcommands of a record fail: an SPI read length is outside 1...29. %1$@ is the file. */
+"error.E5007.subcommandPlan.spiLength" = "%1$@, session.subcommands.requests[].spiRead.length: la longitud de una lectura SPI debe ser 1...29. Solución: asigna a length 1...29.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: Cada entrada debe contener un id y solo id, protocol, match, interface, session o idle. Solución: da un id a cada entrada y elimina cualquier otra clave.";

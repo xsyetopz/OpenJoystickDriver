@@ -4254,6 +4254,18 @@
 "error.E5007.virtualDevice.identityText" = "%1$@，identity.%2$@：角色的 identity 需要非空的 %2$@。修正：給 %2$@ 一個非空字串。";
 /* Error E5007, shown when a virtual device file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
 "error.E5007.virtualDevice.idRange" = "%1$@，%2$@：ID 必須為 %3$@...65535。修正：將 %2$@ 設為 %3$@...65535。";
+/* Error E5007, shown when the subcommands of a record fail: a subcommand counterModulus is outside 2...256. %1$@ is the file. */
+"error.E5007.subcommandPlan.counterModulus" = "%1$@，session.subcommands.counterModulus：子命令的 counterModulus 必須為 2...256。修正：將 counterModulus 設為 2...256。";
+/* Error E5007, shown when the subcommands of a record fail: subcommands name no request or more than 16. %1$@ is the file. */
+"error.E5007.subcommandPlan.requestsCount" = "%1$@，session.subcommands.requests：子命令必須列出 1...16 個請求。修正：列出 1...16 個請求。";
+/* Error E5007, shown when the subcommands of a record fail: two SPI reads share a purpose. %1$@ is the file. */
+"error.E5007.subcommandPlan.spiPurpose" = "%1$@，session.subcommands.requests[].spiRead.purpose：每個 SPI 讀取的 purpose 最多出現一次。修正：給每個 SPI 讀取各自的 purpose。";
+/* Error E5007, shown when the subcommands of a record fail: a player indicator lacks a pattern for one of its indicators. %1$@ is the file. */
+"error.E5007.subcommandPlan.playerIndicator" = "%1$@，session.subcommands.playerIndicator.patterns：玩家指示燈必須為每個指示燈指定模式。修正：為 off、player1、player2、player3 和 player4 提供 patterns。";
+/* Error E5007, shown when the subcommands of a record fail: a subcommand request holds no data byte or more than 16. %1$@ is the file. */
+"error.E5007.subcommandPlan.dataCount" = "%1$@，session.subcommands.requests[].data：子命令請求必須列出 1...16 個資料位元組。修正：讓 data 有 1...16 個位元組。";
+/* Error E5007, shown when the subcommands of a record fail: an SPI read length is outside 1...29. %1$@ is the file. */
+"error.E5007.subcommandPlan.spiLength" = "%1$@，session.subcommands.requests[].spiRead.length：SPI 讀取的 length 必須為 1...29。修正：將 length 設為 1...29。";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@，patch.modes：每個項目必須包含 id，且只能包含 id、protocol、match、interface、session 或 idle。修正：為每個項目指定 id，並刪除其他鍵。";

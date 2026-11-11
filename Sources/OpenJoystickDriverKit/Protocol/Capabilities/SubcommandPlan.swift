@@ -29,12 +29,14 @@ struct SubcommandPlan: Equatable, Sendable {
     guard Self.counterModulusRange.contains(counterModulus) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.subcommandPlan.counterModulus",
         "a subcommand counterModulus is 2...256"
       )
     }
     guard Self.requestsRange.contains(requests.count) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.subcommandPlan.requestsCount",
         "subcommands name 1...16 requests"
       )
     }
@@ -42,6 +44,7 @@ struct SubcommandPlan: Equatable, Sendable {
     guard Set(purposes).count == purposes.count else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.subcommandPlan.spiPurpose",
         "each SPI read purpose appears at most once"
       )
     }
@@ -77,6 +80,7 @@ struct PlayerIndicatorSubcommand: Equatable, Sendable {
     guard Set(patterns.keys) == Set(PhysicalPlayerIndicator.allCases) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.subcommandPlan.playerIndicator",
         "a player indicator names a pattern for every indicator"
       )
     }
@@ -132,6 +136,7 @@ struct SubcommandRequest: Equatable, Sendable {
     guard Self.dataRange.contains(data.count) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.subcommandPlan.dataCount",
         "a subcommand request names 1...16 data bytes"
       )
     }
@@ -146,7 +151,11 @@ struct SubcommandRequest: Equatable, Sendable {
   /// Throws when the length is outside `SPIRead.lengthRange`.
   init(subcommand: UInt8, spiRead: SPIRead) throws(ControllerRecordProblem) {
     guard SPIRead.lengthRange.contains(Int(spiRead.length)) else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "an SPI read length is 1...29")
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.subcommandPlan.spiLength",
+        "an SPI read length is 1...29"
+      )
     }
     self.subcommand = subcommand
     data =

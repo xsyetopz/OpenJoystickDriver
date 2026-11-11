@@ -4254,6 +4254,18 @@
 "error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: ตัวตนของเพอร์โซนาต้องมี %2$@ ที่ไม่ว่าง วิธีแก้: ใส่สตริงที่ไม่ว่างให้ %2$@";
 /* Error E5007, shown when a virtual device file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
 "error.E5007.virtualDevice.idRange" = "%1$@, %2$@: รหัสต้องเป็น %3$@...65535 วิธีแก้: ตั้ง %2$@ เป็น %3$@...65535";
+/* Error E5007, shown when the subcommands of a record fail: a subcommand counterModulus is outside 2...256. %1$@ is the file. */
+"error.E5007.subcommandPlan.counterModulus" = "%1$@, session.subcommands.counterModulus: counterModulus ของซับคำสั่งต้องเป็น 2...256 วิธีแก้: ตั้ง counterModulus เป็น 2...256";
+/* Error E5007, shown when the subcommands of a record fail: subcommands name no request or more than 16. %1$@ is the file. */
+"error.E5007.subcommandPlan.requestsCount" = "%1$@, session.subcommands.requests: ซับคำสั่งต้องระบุ 1...16 คำขอ วิธีแก้: ระบุคำขอ 1...16 รายการ";
+/* Error E5007, shown when the subcommands of a record fail: two SPI reads share a purpose. %1$@ is the file. */
+"error.E5007.subcommandPlan.spiPurpose" = "%1$@, session.subcommands.requests[].spiRead.purpose: จุดประสงค์การอ่าน SPI แต่ละอย่างต้องปรากฏไม่เกินหนึ่งครั้ง วิธีแก้: ให้การอ่าน SPI แต่ละรายการมีจุดประสงค์ของตัวเอง";
+/* Error E5007, shown when the subcommands of a record fail: a player indicator lacks a pattern for one of its indicators. %1$@ is the file. */
+"error.E5007.subcommandPlan.playerIndicator" = "%1$@, session.subcommands.playerIndicator.patterns: ตัวบ่งชี้ผู้เล่นต้องระบุรูปแบบของทุกตัวบ่งชี้ วิธีแก้: ระบุ patterns สำหรับ off, player1, player2, player3 และ player4";
+/* Error E5007, shown when the subcommands of a record fail: a subcommand request holds no data byte or more than 16. %1$@ is the file. */
+"error.E5007.subcommandPlan.dataCount" = "%1$@, session.subcommands.requests[].data: คำขอซับคำสั่งต้องระบุข้อมูล 1...16 ไบต์ วิธีแก้: กำหนด data ให้มี 1...16 ไบต์";
+/* Error E5007, shown when the subcommands of a record fail: an SPI read length is outside 1...29. %1$@ is the file. */
+"error.E5007.subcommandPlan.spiLength" = "%1$@, session.subcommands.requests[].spiRead.length: ความยาวการอ่าน SPI ต้องเป็น 1...29 วิธีแก้: ตั้ง length เป็น 1...29";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: แต่ละรายการต้องมี id และมีได้เฉพาะ id, protocol, match, interface, session หรือ idle วิธีแก้: ใส่ id ให้ทุกรายการและลบคีย์อื่นออก";
