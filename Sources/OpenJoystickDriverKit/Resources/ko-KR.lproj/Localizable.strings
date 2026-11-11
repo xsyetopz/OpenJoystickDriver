@@ -3276,7 +3276,7 @@
 /* Help text of the PROFILE argument shared by the 'ojd profile' commands. The command in quotes stays as written. */
 "cli.profile.group.argument" = "프로파일: ID 또는 ‘ojd profile list’에 나오는 이름입니다.";
 /* One-line summary of 'ojd profile create' in the command list and at the top of its help. */
-"cli.profile.create.abstract" = "컨트롤러 모델 하나를 위한 빈 프로파일을 만듭니다.";
+"cli.profile.create.abstract" = "컨트롤러 모델 하나를 위한 프로파일을 만듭니다.";
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "자이로 출력을 위해 누르고 있어야 하는 컨트롤 (gyro-stick 템플릿). 지정하지 않으면 자이로 출력은 항상 켜져 있습니다.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */

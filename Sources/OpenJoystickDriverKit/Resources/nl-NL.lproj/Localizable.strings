@@ -3276,7 +3276,7 @@
 /* Help text of the PROFILE argument shared by the 'ojd profile' commands. The command in quotes stays as written. */
 "cli.profile.group.argument" = "Het profiel: de ID of de naam uit ‘ojd profile list’.";
 /* One-line summary of 'ojd profile create' in the command list and at the top of its help. */
-"cli.profile.create.abstract" = "Maak een leeg profiel voor één controllermodel.";
+"cli.profile.create.abstract" = "Maak een profiel voor één controllermodel.";
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "De besturing die ingedrukt moet blijven voor gyro-uitvoer (sjabloon gyro-stick). Zonder is de gyro-uitvoer altijd actief.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
