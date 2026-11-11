@@ -219,7 +219,7 @@ enum ControllerDetailFacts {
         "cli.controller.show.labelControls",
         list(
           Control.allCases.filter(device.capabilities.controls.contains).map {
-            RuntimePresentation.sourceLabel(.button($0))
+            controlText($0)
           }
         )
       ),
@@ -231,8 +231,7 @@ enum ControllerDetailFacts {
       fact(
         .inputMapping,
         "cli.controller.show.labelInputMapping",
-        device.bindingResult.inputMapping.map { .text($0.rowText(localize: OJDLocalized.string)) }
-          ?? .none
+        device.bindingResult.inputMapping.map { .text(inputMappingText($0)) } ?? .none
       ),
       fact(.inputReportFormat, "ui.controllers.inputReportFormat", OJDValue(health.reportFormat)),
       fact(
@@ -253,7 +252,7 @@ enum ControllerDetailFacts {
     ].filter { $0.value != .none }
     return [
       fact(.unitID, "cli.controller.show.labelUnit", .reported(device.portKey?.rawValue)),
-      fact(.parser, "term.parser", .reported(device.protocolBinding.commandLineName)),
+      fact(.parser, "term.parser", parserText(device)),
       fact(.ownership, "cli.controller.show.labelOwnership", .text(ownershipText(device))),
       fact(
         .duplicateExposureRisk,

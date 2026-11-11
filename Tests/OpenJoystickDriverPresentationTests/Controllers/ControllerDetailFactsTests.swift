@@ -140,7 +140,31 @@ struct ControllerDetailFactsTests {
   func theParserFactSpellsTheBindingAsOJDDoes() {
     let binding = ProtocolBindingID(.xboxXUSB, variant: .receiver)
     let facts = ControllerDetailFacts.advanced(for: device(binding: binding), record: nil)
-    #expect(Self.value(.parser, in: facts) == .reported("xbox-xusb:receiver"))
+    #expect(
+      Self.value(.parser, in: facts)
+        == .text(ControllerDetailFacts.withIdentifier(binding.displayName, "xbox-xusb:receiver"))
+    )
+  }
+
+  @Test
+  func advancedRowsSayWordsAndKeepTheRawIdentifierBesideThem() throws {
+    #expect(ControllerDetailFacts.controlText(.dpadUp) == "D-pad up (DpadUp)")
+    #expect(ControllerDetailFacts.controlText(.leftStickX) == "Left stick horizontal (LeftStickX)")
+    #expect(
+      ControllerDetailFacts.controlText(.pointerTracking) == "Pointer tracking (PointerTracking)"
+    )
+    let facts = ControllerDetailFacts.advanced(for: device(), record: nil)
+    let mapping = try #require(device().bindingResult.inputMapping)
+    #expect(
+      Self.value(.inputMapping, in: facts)
+        == .text(
+          ControllerDetailFacts.withIdentifier(
+            mapping.rowText(localize: OJDLocalized.string),
+            mapping.source.rawValue
+          )
+        )
+    )
+    #expect(ControllerDetailFacts.matchTierText(.exactGUID) == "exact GUID")
   }
 
   @Test
@@ -214,7 +238,15 @@ struct ControllerDetailFactsTests {
     #expect(Self.value(.usbIdentifier, in: facts) == .text("1234:5678"))
     #expect(Self.value(.inputEndpoint, in: facts) == OJDValue.none)
     #expect(Self.value(.unitID, in: facts) == OJDValue.none)
-    #expect(Self.value(.parser, in: facts) == .reported("hid-descriptor"))
+    #expect(
+      Self.value(.parser, in: facts)
+        == .text(
+          ControllerDetailFacts.withIdentifier(
+            ProtocolBindingID(.hidDescriptor).displayName,
+            "hid-descriptor"
+          )
+        )
+    )
     #expect(facts.first { $0.kind == .parser }?.label == OJDLocalized.string("term.parser"))
     #expect(
       Self.value(.ownership, in: facts)

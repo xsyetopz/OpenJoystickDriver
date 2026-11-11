@@ -31,6 +31,7 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - A controller patch may set every record property except the identity, including `capabilities` and `idle`. `patch.modes` merges by `id`: an entry with a known `id` changes that mode, a new `id` adds a mode, and the `remove` path `modes.<id>` drops one. A record's `capabilities` may name a control that the driver of any of its modes declares. `ojd migrate` gives a `v1alpha2` patch that sets `modes` the `remove` path `modes`, so it still replaces the record's modes. (9.15)
 - **Breaking:** a profile's `applicationScope` holds `appIDs`, a list of one or more bundle identifiers, and the profile applies while any of those apps is in front. A document with `appID` is refused with a named error, and `ojd migrate` converts it, `ActiveProfiles` entries included. `ojd profile create` and `ojd profile import` take `--app` more than once; on import it replaces the scope in the file. (15.1)
 - The wiki, the README and the `llms` files show every document example as an XML property list and give the `plutil -convert` commands in both directions. `ojd record install --help` names a `.plist` file. (18.3)
+- The controller detail's Advanced section shows the Capture Packets, Draft Record and Draft Record from SDL buttons in one row, in a column when the row does not fit. Its parser, input mapping and control rows say the name in words and keep the raw identifier beside it, such as `Xbox 360 (XUSB), Receiver (xbox-xusb:receiver)` and `D-pad up (DpadUp)`. (12.18)
 
 ## Fixed
 
