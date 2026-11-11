@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/settings.schema.json",
   "title": "OpenJoystickDriver settings",
-  "description": "The file Settings.json in the user's OpenJoystickDriver Application Support folder, which 'ojd setting set' and the app write. Every setting is optional; a setting the file leaves out takes its built-in default. The layers, lowest to highest: built-in defaults, the user file.",
+  "description": "The user's settings.",
   "type": "object",
   "required": ["apiVersion", "kind"],
   "additionalProperties": false,
@@ -14,15 +14,15 @@
       "const": "Settings"
     },
     "launchAtLoginOptOut": {
-      "description": "Internal state, not a setting: true after the user turned launch at login off through the app or 'ojd setting', so the app does not register itself automatically on its next start. Default false. The public key launchAtLogin is read from and written to the macOS login item (SMAppService), which stays the source of truth; a change made in System Settings does not update this field.",
+      "description": "Internal state that records that the user turned launch at login off.",
       "type": "boolean"
     },
     "showInMenuBar": {
-      "description": "Show the OpenJoystickDriver item in the menu bar. Default true.",
+      "description": "Whether to show the OpenJoystickDriver item in the menu bar.",
       "type": "boolean"
     },
     "showInDock": {
-      "description": "Always show the OpenJoystickDriver icon in the Dock; when false it shows only while a window is open. Default false. Show in menu bar and Show in Dock cannot both be false.",
+      "description": "Whether to always show the OpenJoystickDriver icon in the Dock.",
       "type": "boolean"
     },
     "notify": {
@@ -31,23 +31,23 @@
       "additionalProperties": false,
       "properties": {
         "controllerConnected": {
-          "description": "A controller connects or needs attention. Default false.",
+          "description": "Whether a controller that connects or needs attention posts a notification.",
           "type": "boolean"
         },
         "controllerDisconnected": {
-          "description": "A controller disconnects. Default false.",
+          "description": "Whether a controller that disconnects posts a notification.",
           "type": "boolean"
         },
         "profileActivated": {
-          "description": "A profile becomes active. Default false.",
+          "description": "Whether a profile that becomes active posts a notification.",
           "type": "boolean"
         },
         "profileDeactivated": {
-          "description": "The active profile is turned off. Default false.",
+          "description": "Whether a profile that is turned off posts a notification.",
           "type": "boolean"
         },
         "sounds": {
-          "description": "A notification plays a sound. Default true.",
+          "description": "Whether a notification plays a sound.",
           "type": "boolean"
         }
       }
@@ -58,17 +58,17 @@
       "additionalProperties": false,
       "properties": {
         "checkAutomatically": {
-          "description": "Check for updates when the app starts. Default false.",
+          "description": "Whether to check for updates when the app starts.",
           "type": "boolean"
         },
         "includePrereleases": {
-          "description": "Include pre-release versions when checking for updates. Default false.",
+          "description": "Whether to include pre-release versions when checking for updates.",
           "type": "boolean"
         }
       }
     },
     "developerTools": {
-      "description": "Show the developer tools in the Settings window. Default false.",
+      "description": "Whether to show the developer tools in the Settings window.",
       "type": "boolean"
     }
   }
