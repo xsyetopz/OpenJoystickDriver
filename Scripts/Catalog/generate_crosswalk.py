@@ -44,6 +44,7 @@ def load(root: Path) -> dict[str, Any]:
 
 
 def code(value: object) -> str:
+    """A cell: the name in code font, or a dash for an absent key (no equivalent)."""
     return "-" if value is None else f"`{value}`"
 
 
@@ -60,8 +61,8 @@ def w3c_cell(row: dict[str, Any]) -> str:
 
 def hid_cell(row: dict[str, Any]) -> str:
     entries = [
-        f"`{entry['page']}:{'device' if entry['usage'] is None else hex(entry['usage'])}`"
-        for entry in row["hid"]
+        f"`{entry['page']}:{hex(entry['usage']) if 'usage' in entry else 'device'}`"
+        for entry in row.get("hid", [])
     ]
     return ", ".join(entries) if entries else "-"
 
@@ -71,7 +72,7 @@ def cell(row: dict[str, Any], column: str) -> str:
         return w3c_cell(row)
     if column == "hid":
         return hid_cell(row)
-    return code(row[column])
+    return code(row.get(column))
 
 
 def wiki_block(document: dict[str, Any]) -> str:

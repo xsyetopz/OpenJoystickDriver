@@ -56,19 +56,23 @@ class ControlVocabularyTests(unittest.TestCase):
                 if column == "hid":
                     keys: list[Any] = [
                         (entry["page"], entry["usage"])
-                        for entry in row["hid"]
-                        if entry["usage"]
+                        for entry in row.get("hid", [])
+                        if entry.get("usage")
                     ]
                 else:
-                    keys = [] if row[column] is None else [row[column]]
+                    keys = [row[column]] if column in row else []
                 for key in keys:
                     index.setdefault(key, set()).add(control)
         for control, row in self.crosswalk.items():
             for column, index in indexes.items():
                 if column == "hid":
-                    keys = [(e["page"], e["usage"]) for e in row["hid"] if e["usage"]]
+                    keys = [
+                        (e["page"], e["usage"])
+                        for e in row.get("hid", [])
+                        if e.get("usage")
+                    ]
                 else:
-                    keys = [] if row[column] is None else [row[column]]
+                    keys = [row[column]] if column in row else []
                 for key in keys:
                     self.assertIn(control, index[key], f"{control} via {column}")
         self.assertEqual(indexes["sdl"]["MISC1"], {"Capture", "Microphone"})
@@ -86,7 +90,7 @@ class ControlVocabularyTests(unittest.TestCase):
     def test_every_hid_page_is_a_page_of_the_hid_source(self) -> None:
         pages = self.sources["hid"]["pages"]
         for control, row in self.crosswalk.items():
-            for entry in row["hid"]:
+            for entry in row.get("hid", []):
                 self.assertIn(entry["page"], pages, control)
 
     def test_a_note_names_a_column_of_the_table(self) -> None:
@@ -119,9 +123,8 @@ class ControlVocabularyTests(unittest.TestCase):
             "RightGripTouch",
         ):
             row = self.crosswalk[control]
-            self.assertEqual(row["hid"], [], control)
-            for column in ("w3cButton", "w3cAxis", "sdl", "evdev", "apple"):
-                self.assertIsNone(row[column], f"{control} {column}")
+            for column in ("w3cButton", "w3cAxis", "sdl", "evdev", "hid", "apple"):
+                self.assertNotIn(column, row, f"{control} {column}")
 
     def test_a_profile_with_a_current_name_is_valid(self) -> None:
         with SAMPLE_PROFILE.open(encoding="utf-8") as source:

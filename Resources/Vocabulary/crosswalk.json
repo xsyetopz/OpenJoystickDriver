@@ -1,7 +1,7 @@
 {
   "apiVersion": "openjoystickdriver/v1alpha2",
   "kind": "Crosswalk",
-  "$comment": "Documentation, not schema aliases. Each control id mapped to its W3C Gamepad index, SDL3 name, Linux evdev code, HID page and usage, and Apple GameController element. null means the system has no such name; a null HID usage is the one the device's report descriptor assigns. One id per row; two ids may share an SDL, evdev or Apple name. sources records, per column, the document each cell is checked against. notes explains a cell that a name alone does not. Y axes are positive down in the W3C, SDL3 and evdev columns. The wiki table in wiki/Controller-Records.md is generated from this file by ./Scripts/ojd vocabulary regenerate --write.",
+  "$comment": "Documentation, not schema aliases. Each control id mapped to its W3C Gamepad index, SDL3 name, Linux evdev code, HID page and usage, and Apple GameController element. An absent key means the system has no such name; a HID entry with no usage is the one the device's report descriptor assigns. One id per row; two ids may share an SDL, evdev or Apple name. sources records, per column, the document each cell is checked against. notes explains a cell that a name alone does not. Y axes are positive down in the W3C, SDL3 and evdev columns. The wiki table in wiki/Controller-Records.md is generated from this file by ./Scripts/ojd vocabulary regenerate --write.",
   "sources": {
     "w3c": {
       "document": "W3C Gamepad, Standard Gamepad (section 'Standard Gamepad')",
@@ -52,7 +52,6 @@
   "controls": {
     "South": {
       "w3cButton": 0,
-      "w3cAxis": null,
       "sdl": "SOUTH",
       "evdev": "BTN_SOUTH",
       "hid": [
@@ -65,7 +64,6 @@
     },
     "East": {
       "w3cButton": 1,
-      "w3cAxis": null,
       "sdl": "EAST",
       "evdev": "BTN_EAST",
       "hid": [
@@ -78,7 +76,6 @@
     },
     "West": {
       "w3cButton": 2,
-      "w3cAxis": null,
       "sdl": "WEST",
       "evdev": "BTN_WEST",
       "hid": [
@@ -91,7 +88,6 @@
     },
     "North": {
       "w3cButton": 3,
-      "w3cAxis": null,
       "sdl": "NORTH",
       "evdev": "BTN_NORTH",
       "hid": [
@@ -104,13 +100,11 @@
     },
     "LeftShoulder": {
       "w3cButton": 4,
-      "w3cAxis": null,
       "sdl": "LEFT_SHOULDER",
       "evdev": "BTN_TL",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
       ],
       "apple": "LeftShoulder",
@@ -120,20 +114,17 @@
     },
     "RightShoulder": {
       "w3cButton": 5,
-      "w3cAxis": null,
       "sdl": "RIGHT_SHOULDER",
       "evdev": "BTN_TR",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
       ],
       "apple": "RightShoulder"
     },
     "LeftTrigger": {
       "w3cButton": 6,
-      "w3cAxis": null,
       "sdl": "LEFT_TRIGGER",
       "evdev": "ABS_Z",
       "hid": [
@@ -154,7 +145,6 @@
     },
     "RightTrigger": {
       "w3cButton": 7,
-      "w3cAxis": null,
       "sdl": "RIGHT_TRIGGER",
       "evdev": "ABS_RZ",
       "hid": [
@@ -175,7 +165,6 @@
     },
     "Back": {
       "w3cButton": 8,
-      "w3cAxis": null,
       "sdl": "BACK",
       "evdev": "BTN_SELECT",
       "hid": [
@@ -188,8 +177,7 @@
           "usage": 548
         },
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
       ],
       "apple": "ButtonOptions",
@@ -199,7 +187,6 @@
     },
     "Start": {
       "w3cButton": 9,
-      "w3cAxis": null,
       "sdl": "START",
       "evdev": "BTN_START",
       "hid": [
@@ -215,33 +202,28 @@
     },
     "LeftStickClick": {
       "w3cButton": 10,
-      "w3cAxis": null,
       "sdl": "LEFT_STICK",
       "evdev": "BTN_THUMBL",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
       ],
       "apple": "LeftThumbstickButton"
     },
     "RightStickClick": {
       "w3cButton": 11,
-      "w3cAxis": null,
       "sdl": "RIGHT_STICK",
       "evdev": "BTN_THUMBR",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
       ],
       "apple": "RightThumbstickButton"
     },
     "DpadUp": {
       "w3cButton": 12,
-      "w3cAxis": null,
       "sdl": "DPAD_UP",
       "evdev": "BTN_DPAD_UP",
       "hid": [
@@ -263,7 +245,6 @@
     },
     "DpadDown": {
       "w3cButton": 13,
-      "w3cAxis": null,
       "sdl": "DPAD_DOWN",
       "evdev": "BTN_DPAD_DOWN",
       "hid": [
@@ -280,7 +261,6 @@
     },
     "DpadLeft": {
       "w3cButton": 14,
-      "w3cAxis": null,
       "sdl": "DPAD_LEFT",
       "evdev": "BTN_DPAD_LEFT",
       "hid": [
@@ -297,7 +277,6 @@
     },
     "DpadRight": {
       "w3cButton": 15,
-      "w3cAxis": null,
       "sdl": "DPAD_RIGHT",
       "evdev": "BTN_DPAD_RIGHT",
       "hid": [
@@ -314,7 +293,6 @@
     },
     "Guide": {
       "w3cButton": 16,
-      "w3cAxis": null,
       "sdl": "GUIDE",
       "evdev": "BTN_MODE",
       "hid": [
@@ -333,8 +311,6 @@
       }
     },
     "Capture": {
-      "w3cButton": null,
-      "w3cAxis": null,
       "sdl": "MISC1",
       "evdev": "KEY_RECORD",
       "hid": [
@@ -350,10 +326,7 @@
       }
     },
     "Microphone": {
-      "w3cButton": null,
-      "w3cAxis": null,
       "sdl": "MISC1",
-      "evdev": null,
       "hid": [
         {
           "page": "Telephony",
@@ -364,7 +337,6 @@
           "usage": 226
         }
       ],
-      "apple": null,
       "notes": {
         "evdev": "No gamepad code: hid-playstation reports no mute button, and KEY_MICMUTE is a keyboard key.",
         "apple": "The GameController documentation has no microphone button name.",
@@ -372,14 +344,11 @@
       }
     },
     "TouchpadClick": {
-      "w3cButton": null,
-      "w3cAxis": null,
       "sdl": "TOUCHPAD",
       "evdev": "BTN_LEFT",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
       ],
       "apple": "DualShockTouchpadButton",
@@ -390,14 +359,11 @@
       }
     },
     "LeftPaddle1": {
-      "w3cButton": null,
-      "w3cAxis": null,
       "sdl": "LEFT_PADDLE1",
       "evdev": "BTN_GRIPL",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
       ],
       "apple": "XboxPaddleThree",
@@ -406,14 +372,11 @@
       }
     },
     "LeftPaddle2": {
-      "w3cButton": null,
-      "w3cAxis": null,
       "sdl": "LEFT_PADDLE2",
       "evdev": "BTN_GRIPL2",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
       ],
       "apple": "XboxPaddleFour",
@@ -422,14 +385,11 @@
       }
     },
     "RightPaddle1": {
-      "w3cButton": null,
-      "w3cAxis": null,
       "sdl": "RIGHT_PADDLE1",
       "evdev": "BTN_GRIPR",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
       ],
       "apple": "XboxPaddleOne",
@@ -438,14 +398,11 @@
       }
     },
     "RightPaddle2": {
-      "w3cButton": null,
-      "w3cAxis": null,
       "sdl": "RIGHT_PADDLE2",
       "evdev": "BTN_GRIPR2",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
       ],
       "apple": "XboxPaddleTwo",
@@ -454,117 +411,81 @@
       }
     },
     "Auxiliary1": {
-      "w3cButton": null,
-      "w3cAxis": null,
       "sdl": "MISC2",
       "evdev": "BTN_TRIGGER_HAPPY1",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
       ],
-      "apple": null,
       "notes": {
         "evdev": "BTN_TRIGGER_HAPPYn for Auxiliary1 to Auxiliary8 is an OpenJoystickDriver choice: no source gives the Auxiliary buttons a role."
       }
     },
     "Auxiliary2": {
-      "w3cButton": null,
-      "w3cAxis": null,
       "sdl": "MISC3",
       "evdev": "BTN_TRIGGER_HAPPY2",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
-      ],
-      "apple": null
+      ]
     },
     "Auxiliary3": {
-      "w3cButton": null,
-      "w3cAxis": null,
       "sdl": "MISC4",
       "evdev": "BTN_TRIGGER_HAPPY3",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
-      ],
-      "apple": null
+      ]
     },
     "Auxiliary4": {
-      "w3cButton": null,
-      "w3cAxis": null,
       "sdl": "MISC5",
       "evdev": "BTN_TRIGGER_HAPPY4",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
-      ],
-      "apple": null
+      ]
     },
     "Auxiliary5": {
-      "w3cButton": null,
-      "w3cAxis": null,
       "sdl": "MISC6",
       "evdev": "BTN_TRIGGER_HAPPY5",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
-      ],
-      "apple": null
+      ]
     },
     "Auxiliary6": {
-      "w3cButton": null,
-      "w3cAxis": null,
-      "sdl": null,
       "evdev": "BTN_TRIGGER_HAPPY6",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
       ],
-      "apple": null,
       "notes": {
         "sdl": "SDL3 has the buttons MISC1 to MISC6 only, so Auxiliary6 to Auxiliary8 have no SDL3 name."
       }
     },
     "Auxiliary7": {
-      "w3cButton": null,
-      "w3cAxis": null,
-      "sdl": null,
       "evdev": "BTN_TRIGGER_HAPPY7",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
-      ],
-      "apple": null
+      ]
     },
     "Auxiliary8": {
-      "w3cButton": null,
-      "w3cAxis": null,
-      "sdl": null,
       "evdev": "BTN_TRIGGER_HAPPY8",
       "hid": [
         {
-          "page": "Button",
-          "usage": null
+          "page": "Button"
         }
-      ],
-      "apple": null
+      ]
     },
     "LeftStickX": {
-      "w3cButton": null,
       "w3cAxis": 0,
       "sdl": "LEFTX",
       "evdev": "ABS_X",
@@ -580,7 +501,6 @@
       }
     },
     "LeftStickY": {
-      "w3cButton": null,
       "w3cAxis": 1,
       "sdl": "LEFTY",
       "evdev": "ABS_Y",
@@ -596,7 +516,6 @@
       }
     },
     "RightStickX": {
-      "w3cButton": null,
       "w3cAxis": 2,
       "sdl": "RIGHTX",
       "evdev": "ABS_RX",
@@ -609,7 +528,6 @@
       "apple": "RightThumbstick"
     },
     "RightStickY": {
-      "w3cButton": null,
       "w3cAxis": 3,
       "sdl": "RIGHTY",
       "evdev": "ABS_RY",
@@ -624,93 +542,16 @@
         "apple": "Apple's y axis is positive up; every other column is positive down."
       }
     },
-    "LeftStickTouch": {
-      "w3cButton": null,
-      "w3cAxis": null,
-      "sdl": null,
-      "evdev": null,
-      "hid": [],
-      "apple": null
-    },
-    "RightStickTouch": {
-      "w3cButton": null,
-      "w3cAxis": null,
-      "sdl": null,
-      "evdev": null,
-      "hid": [],
-      "apple": null
-    },
-    "LeftTrackpadClick": {
-      "w3cButton": null,
-      "w3cAxis": null,
-      "sdl": null,
-      "evdev": null,
-      "hid": [],
-      "apple": null
-    },
-    "RightTrackpadClick": {
-      "w3cButton": null,
-      "w3cAxis": null,
-      "sdl": null,
-      "evdev": null,
-      "hid": [],
-      "apple": null
-    },
-    "LeftTrackpadTouch": {
-      "w3cButton": null,
-      "w3cAxis": null,
-      "sdl": null,
-      "evdev": null,
-      "hid": [],
-      "apple": null
-    },
-    "RightTrackpadTouch": {
-      "w3cButton": null,
-      "w3cAxis": null,
-      "sdl": null,
-      "evdev": null,
-      "hid": [],
-      "apple": null
-    },
-    "PointerX": {
-      "w3cButton": null,
-      "w3cAxis": null,
-      "sdl": null,
-      "evdev": null,
-      "hid": [],
-      "apple": null
-    },
-    "PointerY": {
-      "w3cButton": null,
-      "w3cAxis": null,
-      "sdl": null,
-      "evdev": null,
-      "hid": [],
-      "apple": null
-    },
-    "PointerTracking": {
-      "w3cButton": null,
-      "w3cAxis": null,
-      "sdl": null,
-      "evdev": null,
-      "hid": [],
-      "apple": null
-    },
-    "LeftGripTouch": {
-      "w3cButton": null,
-      "w3cAxis": null,
-      "sdl": null,
-      "evdev": null,
-      "hid": [],
-      "apple": null
-    },
-    "RightGripTouch": {
-      "w3cButton": null,
-      "w3cAxis": null,
-      "sdl": null,
-      "evdev": null,
-      "hid": [],
-      "apple": null
-    }
+    "LeftStickTouch": {},
+    "RightStickTouch": {},
+    "LeftTrackpadClick": {},
+    "RightTrackpadClick": {},
+    "LeftTrackpadTouch": {},
+    "RightTrackpadTouch": {},
+    "PointerX": {},
+    "PointerY": {},
+    "PointerTracking": {},
+    "LeftGripTouch": {},
+    "RightGripTouch": {}
   }
 }

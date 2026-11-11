@@ -46,6 +46,19 @@ class CrosswalkTableTests(unittest.TestCase):
         for column in document["sources"].values():
             self.assertIn(column["url"], page)
 
+    def test_an_absent_key_is_a_dash_and_an_absent_usage_is_the_device(self) -> None:
+        root = self.copy_repository()
+        path = root / crosswalk.CROSSWALK
+        document = json.loads(path.read_text(encoding="utf-8"))
+        row = document["controls"]["South"]
+        del row["sdl"]
+        row["hid"] = [{"page": "Button"}]
+        path.write_text(json.dumps(document), encoding="utf-8")
+        cells = crosswalk.wiki_block(crosswalk.load(root)).splitlines()
+        south = next(line for line in cells if line.startswith("| `South` |"))
+        self.assertIn("| - |", south)
+        self.assertIn("`Button:device`", south)
+
     def test_a_changed_json_cell_makes_the_wiki_stale(self) -> None:
         root = self.copy_repository()
         self.edit_crosswalk(root, "South", "sdl", "NOT_SOUTH")
@@ -102,6 +115,12 @@ class CrosswalkSchemaTests(unittest.TestCase):
     def test_the_crosswalk_matches_its_schema(self) -> None:
         self.assertEqual(list(self.validator.iter_errors(self.document)), [])
 
+    def test_an_absent_key_is_accepted(self) -> None:
+        planted = copy.deepcopy(self.document)
+        del planted["controls"]["South"]["evdev"]
+        del planted["controls"]["South"]["hid"][0]["usage"]
+        self.assertEqual(list(self.validator.iter_errors(planted)), [])
+
     def test_planted_bad_files_are_rejected(self) -> None:
         def unknown_member(d: dict[str, Any]) -> None:
             d["extra"] = True
@@ -124,8 +143,14 @@ class CrosswalkSchemaTests(unittest.TestCase):
         def unknown_column(d: dict[str, Any]) -> None:
             d["controls"]["South"]["gcc"] = "ButtonA"
 
-        def missing_column(d: dict[str, Any]) -> None:
-            del d["controls"]["South"]["evdev"]
+        def null_column(d: dict[str, Any]) -> None:
+            d["controls"]["South"]["evdev"] = None
+
+        def null_usage(d: dict[str, Any]) -> None:
+            d["controls"]["South"]["hid"][0]["usage"] = None
+
+        def empty_hid(d: dict[str, Any]) -> None:
+            d["controls"]["South"]["hid"] = []
 
         def unknown_note(d: dict[str, Any]) -> None:
             d["controls"]["DpadUp"]["notes"]["gcc"] = "text"
@@ -138,7 +163,9 @@ class CrosswalkSchemaTests(unittest.TestCase):
             missing_pages,
             unknown_control,
             unknown_column,
-            missing_column,
+            null_column,
+            null_usage,
+            empty_hid,
             unknown_note,
         ):
             with self.subTest(edit.__name__):
