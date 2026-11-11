@@ -182,11 +182,12 @@ enum ProfileNaming {
 }
 
 /// What a new profile starts from.
-enum ProfileCreationTemplate: Equatable {
+enum ProfileCreationTemplate: Hashable {
   /// An empty profile.
   case empty
   /// Gyro motion drives a stick of the virtual gamepad.
   case gyroStick
+  case bindings(RemappingBindingTemplate)
 }
 
 /// The edits made in the profile creation sheet.
@@ -216,6 +217,34 @@ struct ProfileCreationFields: Equatable {
     return
       !(ProtocolDriverRegistry().profileCapabilities(for: controller.model)?.physicalInput
       .motion ?? false)
+  }
+
+  func skippedControls(in context: ProfileCreationContext) -> [Control] {
+    guard case .bindings(let bindings) = template, let controller = controller(in: context) else {
+      return []
+    }
+    return made(bindings, for: controller, in: context).skipped
+  }
+
+  private func made(
+    _ bindings: RemappingBindingTemplate,
+    for controller: ProfileControllerChoice,
+    in context: ProfileCreationContext
+  ) -> RemappingBindingTemplate.Made {
+    bindings.profile(
+      name: ProfileNameValidation.trimmedName(name(in: context)),
+      device: RemappingDeviceScope(vendorID: controller.vendorID, productID: controller.productID),
+      applicationScope: applicationScope,
+      outputPolicy: outputPolicy,
+      capabilities: ProtocolDriverRegistry().profileCapabilities(for: controller.model) ?? .unknown
+    )
+  }
+
+  private var applicationScope: RemappingApplicationScope {
+    switch scopeKind {
+    case .global: .global
+    case .application: .application(appIDs: appIDs)
+    }
   }
 
   /// The controller the profile belongs to; nil while none is picked and none is connected, or
@@ -250,11 +279,6 @@ struct ProfileCreationFields: Equatable {
   /// taken.
   func proposedProfile(in context: ProfileCreationContext) -> RemappingProfile? {
     guard let controller = controller(in: context), !isNameTaken(in: context) else { return nil }
-    let applicationScope: RemappingApplicationScope
-    switch scopeKind {
-    case .global: applicationScope = .global
-    case .application: applicationScope = .application(appIDs: appIDs)
-    }
     let device = RemappingDeviceScope(
       vendorID: controller.vendorID,
       productID: controller.productID
@@ -270,6 +294,8 @@ struct ProfileCreationFields: Equatable {
         outputPolicy: outputPolicy,
         bindings: []
       )
+    case .bindings(let bindings):
+      profile = made(bindings, for: controller, in: context).profile
     case .gyroStick:
       guard
         let made = try? RemappingGyroStickTemplate.profile(

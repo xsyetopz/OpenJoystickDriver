@@ -616,8 +616,14 @@
 "ui.profiles.templateEmpty" = "खाली";
 /* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
 "ui.profiles.templateGyroStick" = "जायरो से स्टिक";
+/* Option of the template popup in the profile creation sheet: the profile binds the D-pad, South and East to keyboard navigation keys. */
+"ui.profiles.templateKeyboardNavigation" = "कीबोर्ड नेविगेशन";
+/* Option of the template popup in the profile creation sheet: the profile binds South, East and North to the mouse buttons. */
+"ui.profiles.templateMouseClicks" = "माउस क्लिक";
 /* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
 "ui.profiles.templateNoMotion" = "%@ में मोशन सेंसर नहीं है।";
+/* Message in the profile creation sheet under the template popup. %@ is the comma-separated list of controls that the template could not bind because the controller lacks them. */
+"ui.profiles.templateSkipped" = "बाइंड नहीं किया गया, क्योंकि कंट्रोलर में ये नहीं हैं: %@.";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "टगल";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -3273,12 +3279,14 @@
 "cli.profile.create.done" = "“%1$@” (%2$@) बनाई गई।";
 /* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
 "cli.profile.create.noMotion" = "%@ में मोशन सेंसर नहीं है।";
+/* Line printed after 'ojd profile create' with a template. %@ is the comma-separated list of control ids that the template skipped because the controller lacks them; the ids stay as written. */
+"cli.profile.create.skipped" = "छोड़ दिया गया, क्योंकि कंट्रोलर में ये नहीं हैं: %@.";
 /* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.stick" = "gyro-stick टेम्पलेट जिस स्टिक को चलाता है: left या right। डिफ़ॉल्ट right है।";
-/* Help text of the --template option of 'ojd profile create'. gyro-stick is the only template, the user types it, and it stays as written. */
-"cli.profile.create.template" = "किसी टेम्पलेट से शुरू करें। एकमात्र टेम्पलेट gyro-stick है।";
-/* Error of 'ojd profile create' when --stick or --activation is given without --template. The three option names stay as written. */
-"cli.profile.create.templateRequired" = "--stick और --activation के लिए --template ज़रूरी है।";
+/* Help text of the --template option of 'ojd profile create'. gyro-stick, keyboard-navigation and mouse-clicks are the template names the user types and stay as written. */
+"cli.profile.create.template" = "टेम्पलेट से शुरू करें: gyro-stick, keyboard-navigation या mouse-clicks.";
+/* Error of 'ojd profile create' when --stick or --activation is given without --template gyro-stick. The option names and the template name stay as written. */
+"cli.profile.create.templateRequired" = "--stick और --activation के लिए --template gyro-stick ज़रूरी है।";
 /* Help text of the physical input option of 'ojd profile create'. shared and exclusive are values the user types and stay as written. */
 "platform.macos.cli.profile.create.physicalInput" = "macOS को कंट्रोलर अब भी दिखता है (shared), या OJD उसे ले लेता है (exclusive)।";
 /* Help text of the --virtual-gamepad option of 'ojd profile create'. disabled, mapped and passthrough are values the user types and stay as written. */

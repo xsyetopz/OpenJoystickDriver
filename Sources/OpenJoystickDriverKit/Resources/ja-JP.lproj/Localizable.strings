@@ -616,8 +616,14 @@
 "ui.profiles.templateEmpty" = "空";
 /* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
 "ui.profiles.templateGyroStick" = "ジャイロからスティック";
+/* Option of the template popup in the profile creation sheet: the profile binds the D-pad, South and East to keyboard navigation keys. */
+"ui.profiles.templateKeyboardNavigation" = "キーボードナビゲーション";
+/* Option of the template popup in the profile creation sheet: the profile binds South, East and North to the mouse buttons. */
+"ui.profiles.templateMouseClicks" = "マウスクリック";
 /* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
 "ui.profiles.templateNoMotion" = "%@ にはモーションセンサーがありません。";
+/* Message in the profile creation sheet under the template popup. %@ is the comma-separated list of controls that the template could not bind because the controller lacks them. */
+"ui.profiles.templateSkipped" = "コントローラに次がないため割り当てませんでした: %@。";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "切り替え";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -3273,12 +3279,14 @@
 "cli.profile.create.done" = "「%1$@」(%2$@) を作成しました。";
 /* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
 "cli.profile.create.noMotion" = "%@ にはモーションセンサーがありません。";
+/* Line printed after 'ojd profile create' with a template. %@ is the comma-separated list of control ids that the template skipped because the controller lacks them; the ids stay as written. */
+"cli.profile.create.skipped" = "コントローラに次がないためスキップしました: %@。";
 /* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.stick" = "gyro-stick テンプレートが操作するスティック: left または right。既定値は right です。";
-/* Help text of the --template option of 'ojd profile create'. gyro-stick is the only template, the user types it, and it stays as written. */
-"cli.profile.create.template" = "テンプレートから開始します。テンプレートは gyro-stick のみです。";
-/* Error of 'ojd profile create' when --stick or --activation is given without --template. The three option names stay as written. */
-"cli.profile.create.templateRequired" = "--stick と --activation には --template が必要です。";
+/* Help text of the --template option of 'ojd profile create'. gyro-stick, keyboard-navigation and mouse-clicks are the template names the user types and stay as written. */
+"cli.profile.create.template" = "テンプレートから開始します: gyro-stick、keyboard-navigation、mouse-clicks。";
+/* Error of 'ojd profile create' when --stick or --activation is given without --template gyro-stick. The option names and the template name stay as written. */
+"cli.profile.create.templateRequired" = "--stick と --activation には --template gyro-stick が必要です。";
 /* Help text of the physical input option of 'ojd profile create'. shared and exclusive are values the user types and stay as written. */
 "platform.macos.cli.profile.create.physicalInput" = "macOS がコントローラを引き続き認識するか (shared)、OJD が占有するか (exclusive)。";
 /* Help text of the --virtual-gamepad option of 'ojd profile create'. disabled, mapped and passthrough are values the user types and stay as written. */

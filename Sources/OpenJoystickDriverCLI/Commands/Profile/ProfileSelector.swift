@@ -82,6 +82,8 @@ extension RemappingProfile {
 enum ProfileTemplate: String, CaseIterable, ExpressibleByArgument {
   /// Gyro motion drives a stick of the virtual gamepad.
   case gyroStick = "gyro-stick"
+  case keyboardNavigation = "keyboard-navigation"
+  case mouseClicks = "mouse-clicks"
 }
 
 extension RemappingGyroStickTemplate.Stick: ExpressibleByArgument {}
