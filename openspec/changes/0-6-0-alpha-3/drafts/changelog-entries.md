@@ -33,6 +33,7 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - **Breaking:** a profile's `applicationScope` holds `appIDs`, a list of one or more bundle identifiers, and the profile applies while any of those apps is in front. A document with `appID` is refused with a named error, and `ojd migrate` converts it, `ActiveProfiles` entries included. `ojd profile create` and `ojd profile import` take `--app` more than once; on import it replaces the scope in the file. (15.1)
 - The wiki, the README and the `llms` files show every document example as an XML property list and give the `plutil -convert` commands in both directions. `ojd record install --help` names a `.plist` file. (18.3)
 - The controller detail's Advanced section shows the Capture Packets, Draft Record and Draft Record from SDL buttons in one row, in a column when the row does not fit. Its parser, input mapping and control rows say the name in words and keep the raw identifier beside it, such as `Xbox 360 (XUSB), Receiver (xbox-xusb:receiver)` and `D-pad up (DpadUp)`. (12.18)
+- `ojd record draft VVVV:PPPP` drafts a record for every connected controller, served or not; `E2012` is for a controller that is not connected. A device with a HID gamepad interface gets a `HIDDescriptor` mode, as a patch when a bundled record holds the model (#63). A device with only vendor-class interfaces gets its identity and one mode for each interface signature, and the command names the `input` section as missing (`missingSections` in `--json`). (9.16)
 
 ## Fixed
 
