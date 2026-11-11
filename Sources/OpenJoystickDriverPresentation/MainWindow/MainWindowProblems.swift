@@ -159,7 +159,8 @@ enum MainWindowProblemAction: Equatable, Sendable {
   case openDriverApproval
   /// Repairs the driver extension.
   case repairDriver
-  /// Shows the Access area.
+  /// Shows the Access area and requests the missing permissions, opening the Privacy & Security
+  /// pane of the first one macOS does not grant.
   case showAccess
 
   /// The localization key of the button title.

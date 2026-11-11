@@ -217,7 +217,9 @@
       case .restartListener: Task { @MainActor in await runtime.restartListener() }
       case .openDriverApproval: driverApprovalFailed = !SystemExtensionApproval.openSystemSettings()
       case .repairDriver: Task { @MainActor in await runtime.repairSystemExtension() }
-      case .showAccess: navigation.requestArea(.access)
+      case .showAccess:
+        navigation.requestArea(.access)
+        PermissionAccessActions.requestAccess(viewModel: runtime)
       }
     }
 
