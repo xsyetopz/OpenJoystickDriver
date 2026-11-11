@@ -41,13 +41,13 @@ A controller fix in groups 2, 3, and 8 lands as a record or a patch (D13). Where
 
 ## 4. Driver extension and USB routes
 
-- [ ] 4.1 Write failing route tests: an unowned Microsoft model takes the direct route; the extension route needs an active, matched extension; a model Apple's driver owns gets no session.
-- [ ] 4.2 Change route selection (`USBDriverKitTransport.swift:97`, `IOUSBHostTransport.swift:35`, `TransportFacade.swift:202-203`) to pass 4.1. Caller: USB discovery in the service.
-- [ ] 4.3 Find every call that sends an activation request and remove each one that no user action starts. Caller check: app launch, service start, and controller arrival send none.
-- [ ] 4.4 Show a model Apple's driver holds as "Served by macOS" with Claim, in the controller list and in `ojd controller show`. `ojd controller claim` for such a model sends the activation request. Caller: the claim RPC.
-- [ ] 4.5 Give the setup state machine (`SystemExtensionSetup.swift`, `DefaultSystemExtensionSetupClient.swift`) distinct states for running, needs approval, cancelled, timed out, and failed with the `NSError` domain, code, and text. Remove the silent return at `SystemExtensionSetup.swift:102` and the dropped click at `:104`.
-- [ ] 4.6 Update the banner (`MainWindowProblemBanner.swift`, `MainWindowProblems.swift:92-118`): progress with a disabled button, a button that opens the approval pane, the error text, no button in a state that cannot send a request, and the banner only while a connected controller's route is the extension. Add the strings in every language.
-- [ ] 4.7 Rewrite `docs/development/apple-controller-ownership.md` for the route policy and the purpose of the extension, and change `wiki/Command-Reference.md:315-329` to `transport-extension`.
+- [x] 4.1 Write failing route tests: an unowned Microsoft model takes the direct route; the extension route needs an active, matched extension; a model Apple's driver owns gets no session.
+- [x] 4.2 Change route selection (`USBDriverKitTransport.swift:97`, `IOUSBHostTransport.swift:35`, `TransportFacade.swift:202-203`) to pass 4.1. Caller: USB discovery in the service.
+- [x] 4.3 Find every call that sends an activation request and remove each one that no user action starts. Caller check: app launch, service start, and controller arrival send none.
+- [x] 4.4 Show a model Apple's driver holds as "Served by macOS" with Claim, in the controller list and in `ojd controller show`. `ojd controller claim` for such a model sends the activation request. Caller: the claim RPC.
+- [x] 4.5 Give the setup state machine (`SystemExtensionSetup.swift`, `DefaultSystemExtensionSetupClient.swift`) distinct states for running, needs approval, cancelled, timed out, and failed with the `NSError` domain, code, and text. Remove the silent return at `SystemExtensionSetup.swift:102` and the dropped click at `:104`.
+- [x] 4.6 Update the banner (`MainWindowProblemBanner.swift`, `MainWindowProblems.swift:92-118`): progress with a disabled button, a button that opens the approval pane, the error text, no button in a state that cannot send a request, and the banner only while a connected controller's route is the extension. Add the strings in every language.
+- [x] 4.7 Rewrite `docs/development/apple-controller-ownership.md` for the route policy and the purpose of the extension, and change `wiki/Command-Reference.md:315-329` to `transport-extension`.
 - [ ] 4.8 **Hardware (reporter, #18)**: draft the request to confirm `045E:02D1` on a tester build with no extension, and the same request for owners of `045E:02DD`, `02E3`, and `0B0A`.
 - [ ] 4.9 **Hardware (reporter)**: with an owner of `045E:02EA`, `0B00`, or `0B12`, test whether OJD can read the pad through Apple's HID device and hide that device from games. Record the result in `apple-controller-ownership.md`; it decides whether a later release removes the extension.
 
@@ -87,8 +87,8 @@ A controller fix in groups 2, 3, and 8 lands as a record or a patch (D13). Where
 - [x] 7.1 Write `Tests/RepositoryScripts/test_schema_style.py`: one fragment, at most 120 characters, ends with a period, no Swift type, path, command, error code, or validator wording, no `$comment`. Run it and keep the failure count as the baseline.
 - [x] 7.2 Rewrite the 308 descriptions in the 15 schema files to pass 7.1, one schema file per commit.
 - [ ] 7.3 For each limit a description stated, add the keyword, or add the wiki sentence and a rejection case with the correct `schema` flag.
-- [ ] 7.4 Remove the 23 `$comment` entries and the allow-list at `Tests/RepositoryScripts/test_schema_naming.py:220-223`.
-- [ ] 7.5 Search for the producers of `report.notes`, `report.warnings`, and `report.caveat`. Keep a field a command writes a finding into; remove a field with no producer, with its references.
+- [x] 7.4 Remove the 23 `$comment` entries and the allow-list at `Tests/RepositoryScripts/test_schema_naming.py:220-223`.
+- [x] 7.5 Search for the producers of `report.notes`, `report.warnings`, and `report.caveat`. Keep a field a command writes a finding into; remove a field with no producer, with its references.
 - [ ] 7.6 Remove `crosswalk.notes`, `protocol-description.rationale`, and the prose-only properties in `Resources/CatalogRules/` and `Resources/Protocols/sony-sixaxis` and `sony-dual-shock4`, after a search of `Sources`, `Tests`, `wiki`, `docs`, and `Resources/Schemas` for each name.
 - [ ] 7.7 Move each removed fact that still holds into `wiki/Controller-Records.md` or the reference page for its kind, in the commit that removes it.
 
@@ -114,7 +114,7 @@ A controller fix in groups 2, 3, and 8 lands as a record or a patch (D13). Where
 
 ## 9. Record-driven support
 
-- [ ] 9.1 Write the tests that fix the behavior for a controller with no record: binding by XUSB and GIP interface signature, by an SDL_GameControllerDB line, and by the standard HID usage map. Run them against the branch and report each that fails.
+- [x] 9.1 Write the tests that fix the behavior for a controller with no record: binding by XUSB and GIP interface signature, by an SDL_GameControllerDB line, and by the standard HID usage map. Run them against the branch and report each that fails.
 - [ ] 9.2 Read `input.layouts` for every protocol family: the schema, `ControllerRecordDocument.swift:36`, and `ProtocolDriverRegistry.swift:196-239`. A layout decodes the controls it names in the reports it selects, and the family decoder handles the rest. Write the failing tests first: an `XboxGIP` record with a layout, an `XboxXUSB` patch that names one button, and a report no layout selects. Add the rejection cases. Caller: driver creation in `ProtocolDriverRegistry.makeDriver`.
 - [ ] 9.3 Move `idle` from the record to the mode with the reasons `NoControllerLinked` and `Bootloader`: schema, reader, `ProtocolClassifier.swift:392-400`, rejection cases, and the localized text per reason. Add the move to the `AlphaTwoToAlphaThree` step (5.2). Caller: `ProtocolClassifier.classify`.
 - [ ] 9.4 Add bundled records for `2DC8:3208` and `2DC8:5750` with an idle default mode for `Bootloader`, and remove `ControllerModelID.isBootloaderIdentity` after a search of `Sources`, `Tests`, `wiki`, `docs`, and `Resources/Schemas`. Make the record set refuse a user or package document for such an identity, with a test. Caller: `ojd record install` and record set loading.
