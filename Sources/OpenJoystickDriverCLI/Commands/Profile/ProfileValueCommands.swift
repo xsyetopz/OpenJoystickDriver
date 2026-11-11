@@ -2,141 +2,7 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
-/// One JSON value in a profile file, for `ojd profile get` and `ojd profile set`.
-indirect enum ProfileValue: Codable, Equatable {
-  /// JSON `null`.
-  case null
-  /// A JSON boolean.
-  case bool(Bool)
-  /// A JSON number without a fraction.
-  case integer(Int64)
-  /// A JSON number with a fraction.
-  case number(Double)
-  /// A JSON string.
-  case string(String)
-  /// A JSON array.
-  case array([Self])
-  /// A JSON object.
-  case object([String: Self])
-
-  /// Decodes a JSON value of any type.
-  init(from decoder: any Decoder) throws {
-    let container = try decoder.singleValueContainer()
-    if container.decodeNil() {
-      self = .null
-    } else if let value = try? container.decode(Bool.self) {
-      self = .bool(value)
-    } else if let value = try? container.decode(Int64.self) {
-      self = .integer(value)
-    } else if let value = try? container.decode(Double.self) {
-      self = .number(value)
-    } else if let value = try? container.decode(String.self) {
-      self = .string(value)
-    } else if let value = try? container.decode([Self].self) {
-      self = .array(value)
-    } else {
-      self = .object(try container.decode([String: Self].self))
-    }
-  }
-
-  /// Encodes the value as plain JSON.
-  func encode(to encoder: any Encoder) throws {
-    var container = encoder.singleValueContainer()
-    switch self {
-    case .null: try container.encodeNil()
-    case .bool(let value): try container.encode(value)
-    case .integer(let value): try container.encode(value)
-    case .number(let value): try container.encode(value)
-    case .string(let value): try container.encode(value)
-    case .array(let value): try container.encode(value)
-    case .object(let value): try container.encode(value)
-    }
-  }
-
-  /// The profile as a JSON tree.
-  ///
-  /// - Throws: The error of ``RemappingProfile/validate()``, or what the encoder or decoder throws.
-  init(_ profile: RemappingProfile) throws {
-    try profile.validate()
-    self = try JSONDecoder().decode(Self.self, from: JSONEncoder().encode(profile))
-  }
-
-  /// `text` read as JSON, or as a string when it is not JSON.
-  init(argument text: String) {
-    self = (try? JSONDecoder().decode(Self.self, from: Data(text.utf8))) ?? .string(text)
-  }
-
-  /// A string alone, and any other value as one line of JSON.
-  var text: String {
-    if case .string(let value) = self { return value }
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
-    return (try? encoder.encode(self)).flatMap { String(bytes: $0, encoding: .utf8) } ?? ""
-  }
-
-  /// The value at `key`, a path of member names and array indexes, or nil when there is none.
-  func value(at key: ArraySlice<String>) -> Self? {
-    guard let first = key.first else { return self }
-    switch self {
-    case .object(let members): return members[first]?.value(at: key.dropFirst())
-    case .array(let items):
-      guard let index = Int(first), items.indices.contains(index) else { return nil }
-      return items[index].value(at: key.dropFirst())
-    default: return nil
-    }
-  }
-
-  /// This value with `value` at `key`, or nil when `key` has no parent.
-  ///
-  /// `null` removes an object member or an array item, and the index one past the end of an
-  /// array adds an item.
-  func setting(_ value: Self, at key: ArraySlice<String>) -> Self? {
-    guard let first = key.first else { return value }
-    let last = key.count == 1
-    switch self {
-    case .object(var members):
-      if last {
-        members[first] = value == .null ? nil : value
-      } else {
-        guard let child = members[first]?.setting(value, at: key.dropFirst()) else { return nil }
-        members[first] = child
-      }
-      return .object(members)
-    case .array(var items):
-      guard let index = Int(first), index >= 0 else { return nil }
-      if last, index == items.count, value != .null {
-        items.append(value)
-      } else {
-        guard items.indices.contains(index) else { return nil }
-        if last, value == .null {
-          items.remove(at: index)
-        } else {
-          guard let child = items[index].setting(value, at: key.dropFirst()) else { return nil }
-          items[index] = child
-        }
-      }
-      return .array(items)
-    default: return nil
-    }
-  }
-}
-
-/// The `KEY` argument: member names and array indexes joined by dots.
-struct ProfileKey: ExpressibleByArgument, Equatable, Sendable {
-  /// The argument as typed.
-  let text: String
-  /// The member names and array indexes.
-  let components: [String]
-
-  /// Parses `argument`; fails when a component is empty.
-  init?(argument: String) {
-    let components = argument.split(separator: ".", omittingEmptySubsequences: false)
-      .map(String.init)
-    guard !components.contains(where: \.isEmpty) else { return nil }
-    text = argument
-    self.components = components
-  }
-}
+extension ProfileKey: ExpressibleByArgument {}
 
 /// The shared help of the `KEY` argument.
 private let profileKeyHelp = ArgumentHelp(
@@ -246,7 +112,7 @@ struct ProfileSetCommand: AsyncParsableCommand {
       let (current, snapshot) = try await ServiceConnection.request {
         try await selector.resolve(with: $0)
       }
-      let edited = try Self.change(current, key: key, to: ProfileValue(argument: value))
+      let edited = try ProfileSetting.change(current, key: key, to: ProfileValue(argument: value))
       guard edited != current else {
         try printProfile(
           ProfileResult(profile: ProfileSummary(current, snapshot: snapshot), changed: false),
@@ -266,44 +132,5 @@ struct ProfileSetCommand: AsyncParsableCommand {
         )
       )
     }
-  }
-
-  /// `profile` with `value` at `key`, checked by the strict decoder.
-  ///
-  /// - Throws: ``CLIFailure`` with the usage code when the key has no parent or the result is not a
-  ///   valid profile.
-  static func change(
-    _ profile: RemappingProfile,
-    key: ProfileKey,
-    to value: ProfileValue
-  ) throws -> RemappingProfile {
-    guard let tree = try ProfileValue(profile).setting(value, at: key.components[...]) else {
-      throw CLIFailure.usage(
-        CLILocalized.format(
-          "cli.profile.set.missing",
-          profile.name,
-          key.text
-        )
-      )
-    }
-    let edited: RemappingProfile
-    do { edited = try RemappingProfileFileStore.load(from: try DocumentCoder.encode(tree)) } catch {
-      throw CLIFailure(
-        RemappingProfileFileStore.problemCode(error),
-        CLILocalized.format(
-          "cli.profile.set.invalid",
-          key.text,
-          DocumentProblem.describe(error)
-        )
-      )
-    }
-    guard edited.id == profile.id else {
-      throw CLIFailure.usage(
-        CLILocalized.text(
-          "cli.profile.set.idChanged"
-        )
-      )
-    }
-    return try edited.checkingPointerSpeedDriver()
   }
 }

@@ -3903,6 +3903,16 @@
 "ui.shortcuts.action.getControllers.description" = "返回已连接的控制器。";
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "获取控制器";
+/* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.description" = "更改重新映射配置文件的一个值，例如名称。";
+/* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
+"ui.shortcuts.action.setProfileValue.key" = "键";
+/* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.title" = "设置配置文件的值";
+/* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
+"ui.shortcuts.action.setProfileValue.value" = "值";
+/* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
+"ui.shortcuts.error.profileKey" = "配置文件值的键不能包含空的部分。";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "型号";
 /* Name of the name property of a controller in the Shortcuts app. */

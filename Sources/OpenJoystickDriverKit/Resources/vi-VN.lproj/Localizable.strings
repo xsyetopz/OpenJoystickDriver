@@ -3903,6 +3903,16 @@
 "ui.shortcuts.action.getControllers.description" = "Trả về các bộ điều khiển đã kết nối.";
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "Lấy bộ điều khiển";
+/* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.description" = "Thay đổi một giá trị của cấu hình ánh xạ lại, chẳng hạn tên.";
+/* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
+"ui.shortcuts.action.setProfileValue.key" = "Khóa";
+/* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.title" = "Đặt giá trị cấu hình";
+/* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
+"ui.shortcuts.action.setProfileValue.value" = "Giá trị";
+/* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
+"ui.shortcuts.error.profileKey" = "Khóa của một giá trị hồ sơ không được có phần trống.";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "Kiểu máy";
 /* Name of the name property of a controller in the Shortcuts app. */

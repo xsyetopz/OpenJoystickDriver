@@ -2,6 +2,10 @@
 
 Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 
+## Added
+
+- The endpoint takes a `ProfileRequest` line with the `Control` scope to activate, deactivate or set one value of a remapping profile, and answers a `ProfileResult`. A refusal by the service is a `Status` failure with the code that `ojd` prints and keeps the connection open. Shortcuts lists a Set Profile Value action that does the same as `ojd profile set`. See the [endpoint protocol](docs/sdk/endpoint.md#profilerequest). (6.11)
+
 ## Changed
 
 - The app sends the driver extension activation request only after a user action: the banner button, the **Claim** button, `ojd controller claim` for a model that Apple's driver holds, or `ojd transport-extension activate`. Launch, service start and a controller arrival send none. (4.3, 4.5)

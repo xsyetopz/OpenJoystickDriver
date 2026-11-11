@@ -33,6 +33,19 @@ struct AutomationServiceTests {
       snapshot(active: active.subtracting([id]))
     }
 
+    /// Replaces the stored profile that equals `expectedCurrent`; the fake keeps no state.
+    func updateRemappingProfile(
+      _ profile: RemappingProfile,
+      expectedCurrent: RemappingProfile
+    ) throws -> ApplicationServiceRemappingSnapshotPayload {
+      guard let index = profiles.firstIndex(where: { $0 == expectedCurrent }) else {
+        throw StaleProfile()
+      }
+      var updated = self
+      updated.profiles[index] = profile
+      return updated.snapshot(active: active)
+    }
+
     private func snapshot(active: Set<UUID>) -> ApplicationServiceRemappingSnapshotPayload {
       ApplicationServiceRemappingSnapshotPayload(
         profiles: profiles,
@@ -53,6 +66,7 @@ struct AutomationServiceTests {
 
   private struct SnapshotUnavailable: Error {}
   private struct UnconfirmedEmptyActivation: Error {}
+  private struct StaleProfile: Error {}
 
   /// A service whose profile library cannot be read.
   private struct FailingService: AutomationService {
@@ -70,6 +84,13 @@ struct AutomationServiceTests {
     }
 
     func deactivateRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
+      throw SnapshotUnavailable()
+    }
+
+    func updateRemappingProfile(
+      _ profile: RemappingProfile,
+      expectedCurrent: RemappingProfile
+    ) throws -> ApplicationServiceRemappingSnapshotPayload {
       throw SnapshotUnavailable()
     }
   }
@@ -245,6 +266,44 @@ struct AutomationServiceTests {
     await #expect(throws: SnapshotUnavailable.self) {
       try await FailingService().profiles(ids: [UUID()])
     }
+  }
+
+  @Test
+  func settingAProfileValueReturnsTheProfileAsSaved() async throws {
+    let racing = Self.profile("Racing")
+    let service = FakeService(profiles: [racing, Self.profile("Menus")], active: [racing.id])
+
+    let saved = try await service.setProfileValue(
+      profile: try #require(ProfileSelector(argument: "racing")),
+      key: try #require(ProfileKey(argument: "name")),
+      value: .string("Rally")
+    )
+
+    #expect(saved.id == racing.id)
+    #expect(saved.name == "Rally")
+    #expect(saved.isActive)
+  }
+
+  @Test
+  func settingAProfileValuePassesOnTheRefusalsOfTheSharedCode() async throws {
+    let service = FakeService(profiles: [Self.profile("Racing")])
+
+    let unknown = await #expect(throws: CodedFailure.self) {
+      try await service.setProfileValue(
+        profile: try #require(ProfileSelector(argument: "Rally")),
+        key: try #require(ProfileKey(argument: "name")),
+        value: .string("x")
+      )
+    }
+    #expect(unknown?.id == .notFound)
+    let invalid = await #expect(throws: CodedFailure.self) {
+      try await service.setProfileValue(
+        profile: try #require(ProfileSelector(argument: "Racing")),
+        key: try #require(ProfileKey(argument: "name")),
+        value: .integer(1)
+      )
+    }
+    #expect(invalid?.id == .invalidProfile)
   }
 
   @Test

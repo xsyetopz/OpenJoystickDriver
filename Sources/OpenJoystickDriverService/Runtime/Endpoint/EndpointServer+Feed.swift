@@ -132,7 +132,7 @@ extension EndpointServer {
 
   /// Runs `work` and blocks the calling thread, a connection-queue thread, until it finishes;
   /// cancels `work` once `connection` is closing or its peer hung up.
-  private static func waitFor<T: Sendable>(
+  static func waitFor<T: Sendable>(
     _ connection: EndpointConnection,
     _ work: @escaping @Sendable () async throws -> T
   ) throws -> T {

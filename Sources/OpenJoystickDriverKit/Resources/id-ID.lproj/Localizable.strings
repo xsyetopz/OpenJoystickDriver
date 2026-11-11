@@ -3903,6 +3903,16 @@
 "ui.shortcuts.action.getControllers.description" = "Menampilkan pengontrol yang terhubung.";
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "Dapatkan Pengontrol";
+/* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.description" = "Mengubah satu nilai profil pemetaan ulang, misalnya namanya.";
+/* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
+"ui.shortcuts.action.setProfileValue.key" = "Kunci";
+/* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.title" = "Atur Nilai Profil";
+/* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
+"ui.shortcuts.action.setProfileValue.value" = "Nilai";
+/* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
+"ui.shortcuts.error.profileKey" = "Kunci nilai profil tidak boleh memiliki bagian yang kosong.";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "Model";
 /* Name of the name property of a controller in the Shortcuts app. */

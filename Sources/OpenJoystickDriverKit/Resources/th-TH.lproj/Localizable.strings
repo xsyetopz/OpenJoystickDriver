@@ -3903,6 +3903,16 @@
 "ui.shortcuts.action.getControllers.description" = "ส่งคืนคอนโทรลเลอร์ที่เชื่อมต่ออยู่";
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "รับคอนโทรลเลอร์";
+/* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.description" = "เปลี่ยนค่าหนึ่งค่าของโปรไฟล์การแมปใหม่ เช่น ชื่อ";
+/* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
+"ui.shortcuts.action.setProfileValue.key" = "คีย์";
+/* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.title" = "ตั้งค่าของโปรไฟล์";
+/* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
+"ui.shortcuts.action.setProfileValue.value" = "ค่า";
+/* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
+"ui.shortcuts.error.profileKey" = "คีย์ของค่าในโปรไฟล์ต้องไม่มีส่วนที่ว่างเปล่า";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "รุ่น";
 /* Name of the name property of a controller in the Shortcuts app. */

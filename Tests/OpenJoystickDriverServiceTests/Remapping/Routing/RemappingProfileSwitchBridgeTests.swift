@@ -40,6 +40,11 @@ struct RemappingProfileSwitchBridgeTests {
     func deactivateRemappingProfile(
       id: UUID
     ) throws -> ApplicationServiceRemappingSnapshotPayload { throw Failure() }
+
+    func updateRemappingProfile(
+      _ profile: RemappingProfile,
+      expectedCurrent: RemappingProfile
+    ) throws -> ApplicationServiceRemappingSnapshotPayload { throw Failure() }
   }
 
   /// A bridge over a library of `First` and `Second` of one model and `Foreign` of another.

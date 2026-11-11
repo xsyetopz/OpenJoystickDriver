@@ -220,6 +220,15 @@ Closing the connection removes the virtual gamepad at once and drops the frames 
 
 The [reference client](../Scripts/SDK/reference_client.py) presses the south button for 100 ms, prints the rumble commands that the endpoint sends, sends a `Drain` line after the release, and stays connected until the endpoint answers `Drained`. When the endpoint sends an error or closes the connection earlier, it exits with the error. With `E1009`, `E1010`, or `E1011`, it also reports the supported `apiVersion` values. It uses only the Python standard library. Set `OJD_TOKEN` to the token that `ojd access grant` printed, and run `python3 reference_client.py feed`. To subscribe instead, run `python3 reference_client.py watch`. Games and latency with the endpoint are not verified.
 
+### Change a Profile Through the Endpoint
+
+A program with the `control` scope can activate, deactivate or change one profile, as `ojd profile activate`, `deactivate` and `set` do:
+
+1. Grant the scope and send a `Hello` with `"scopes":["Control"]`, as in the section above.
+2. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ProfileRequest","action":"Set","profile":"Racing","key":"name","value":"Rally"}`. `action` is `Activate`, `Deactivate` or `Set`. `profile` is the UUID or the name of the profile. `Set` takes a `key` and a `value`, read as in `ojd profile set`; a `value` of `null` removes a member.
+3. The endpoint answers a `ProfileResult` with the profile and whether it is active. A request that the service refuses, such as one for a profile that does not exist, gets a `Status` failure with the code that `ojd` prints, such as `E2012`, and the connection stays open for the next request.
+4. A `ProfileRequest` may follow another one. A `Subscription` or a `FeedRequest` ends the exchange.
+
 ## Change Profiles
 
 A profile is an XML property list file. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes it, and the [Profile file reference](Profile-File-Reference.md) explains its fields. To read one in a script, convert it with `plutil -convert json -o - FILE.plist`.
@@ -304,6 +313,7 @@ On macOS 13 or later, the Shortcuts app lists these OpenJoystickDriver actions:
 | Get Battery Level | A controller | The battery charge in percent |
 | Activate Profile | A remapping profile | The profile, now active |
 | Deactivate Profile | A remapping profile | The profile, now inactive |
+| Set Profile Value | A remapping profile, a key, and a value | The profile, with the value changed |
 | Get OpenJoystickDriver Version | Nothing | The version of the installed app |
 
 The actions run in the app, so the app must be installed. They do not use `ojd`.

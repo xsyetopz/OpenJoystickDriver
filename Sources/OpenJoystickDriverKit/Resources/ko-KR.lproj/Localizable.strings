@@ -3903,6 +3903,16 @@
 "ui.shortcuts.action.getControllers.description" = "연결된 컨트롤러를 반환합니다.";
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "컨트롤러 가져오기";
+/* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.description" = "리매핑 프로파일의 값 하나를 변경합니다(예: 이름).";
+/* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
+"ui.shortcuts.action.setProfileValue.key" = "키";
+/* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.title" = "프로파일 값 설정";
+/* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
+"ui.shortcuts.action.setProfileValue.value" = "값";
+/* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
+"ui.shortcuts.error.profileKey" = "프로필 값의 키에는 빈 부분이 있을 수 없습니다.";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "모델";
 /* Name of the name property of a controller in the Shortcuts app. */

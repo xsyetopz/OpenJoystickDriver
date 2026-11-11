@@ -13,6 +13,7 @@ struct IntentCommandTests {
     "AppVersionIntent": ["status"],
     "ActivateProfileIntent": ["profile", "activate"],
     "DeactivateProfileIntent": ["profile", "deactivate"],
+    "SetProfileValueIntent": ["profile", "set"],
   ]
 
   private static func declaredIntents() throws -> Set<String> {

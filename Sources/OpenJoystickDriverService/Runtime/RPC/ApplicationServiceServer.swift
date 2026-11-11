@@ -163,6 +163,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
     let endpoint = EndpointServer(
       source: ApplicationServiceWatchSource(server: self),
       feeds: virtualFeeds,
+      automation: self,
       streamDelivered: streamDelivered
     )
     endpoint.start()

@@ -3903,6 +3903,16 @@
 "ui.shortcuts.action.getControllers.description" = "कनेक्ट किए गए कंट्रोलर लौटाता है।";
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "कंट्रोलर प्राप्त करें";
+/* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.description" = "रीमैपिंग प्रोफ़ाइल का एक मान बदलता है, जैसे उसका नाम।";
+/* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
+"ui.shortcuts.action.setProfileValue.key" = "कुंजी";
+/* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.title" = "प्रोफ़ाइल मान सेट करें";
+/* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
+"ui.shortcuts.action.setProfileValue.value" = "मान";
+/* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
+"ui.shortcuts.error.profileKey" = "प्रोफ़ाइल मान की कुंजी में कोई खाली भाग नहीं हो सकता।";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "मॉडल";
 /* Name of the name property of a controller in the Shortcuts app. */

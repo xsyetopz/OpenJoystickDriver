@@ -65,7 +65,7 @@ extension ApplicationServiceServer {
   }
 
   /// Replaces `profile` if the stored one equals `expectedCurrent`, and returns the snapshot.
-  func updateRemappingProfile(
+  package func updateRemappingProfile(
     _ profile: RemappingProfile,
     expectedCurrent: RemappingProfile
   ) async throws -> ApplicationServiceRemappingSnapshotPayload {

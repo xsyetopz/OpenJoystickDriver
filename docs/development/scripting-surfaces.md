@@ -6,7 +6,7 @@ Method: read the source and `wiki/Automating-OpenJoystickDriver.md` on branch `f
 
 ## App Intents
 
-Five actions, all for macOS 13 or later (`Intents/ProfileEntity.swift:7`). The actions reach the service through the `AutomationService` dependency (`Intents/ProfileEntity.swift:48-49`, `Intents/ControllerEntity.swift:51-52`). The wiki says the actions run in the app and do not use `ojd` (`wiki/Automating-OpenJoystickDriver.md:309`).
+Six actions, all for macOS 13 or later (`Intents/ProfileEntity.swift:7`). The actions reach the service through the `AutomationService` dependency (`Intents/ProfileEntity.swift:48-49`, `Intents/ControllerEntity.swift:51-52`). The wiki says the actions run in the app and do not use `ojd` (`wiki/Automating-OpenJoystickDriver.md:309`).
 
 | Action | `file:line` | Takes | Returns |
 |--------|-------------|-------|---------|
@@ -14,6 +14,7 @@ Five actions, all for macOS 13 or later (`Intents/ProfileEntity.swift:7`). The a
 | Get Battery Level | `Intents/ControllerIntents.swift:35`, `:48`, `:63` | a controller | `Int` |
 | Activate Profile | `Intents/ProfileIntents.swift:8`, `:21`, `:31` | a profile | `ProfileEntity` |
 | Deactivate Profile | `Intents/ProfileIntents.swift:38`, `:51`, `:61` | a profile | `ProfileEntity` |
+| Set Profile Value | `Intents/ProfileIntents.swift:69`, `:85`, `:91`, `:97`, `:104` | a profile, a key, a value | `ProfileEntity` |
 | Get OpenJoystickDriver Version | `Intents/AppVersionIntent.swift:7`, `:20` | nothing | `String` |
 
 Entities the actions pass:
@@ -68,6 +69,7 @@ The endpoint is a local socket, plus a WebSocket on `127.0.0.1` that is turned o
 | `Hello` | `Sources/OpenJoystickDriverService/Runtime/Endpoint/EndpointMessages.swift:25` | names `scopes`, and for a token a `tokenName` and `proof` (`:37-42`) |
 | `Subscription` | `EndpointMessages.swift:27`, `:44` | asks for the `Controllers` stream; `output` adds the virtual gamepad values (`:46`) |
 | `FeedRequest` | `EndpointMessages.swift:29`, `:48` | asks for a virtual gamepad with persona `as` |
+| `ProfileRequest` | `EndpointMessages.swift:31`, `:57`; `EndpointServer+Requests.swift:14` | activates, deactivates, or sets one value of a profile; answered with `ProfileResult` |
 | `Frame` | `Sources/OpenJoystickDriverService/Runtime/Endpoint/EndpointServer+Feed.swift:98` | one frame for the virtual gamepad |
 | `KeepAlive` | `EndpointServer+Feed.swift:98` | counts as activity |
 | `Drain` | `EndpointServer+Feed.swift:98`, `:107` | asks for `Drained` after earlier frames have played |
@@ -79,6 +81,7 @@ The endpoint is a local socket, plus a WebSocket on `127.0.0.1` that is turned o
 | `Challenge` | `EndpointMessages.swift:11`, `:13` | 32-byte nonce |
 | `Welcome` | `EndpointMessages.swift:56-60` | service version, granted scopes |
 | `ADDED`, `MODIFIED`, `DELETED` | `wiki/Automating-OpenJoystickDriver.md:75` | the watch lines of `ojd controller watch --all --json` |
+| `ProfileResult` | `EndpointMessages.swift:120` | the profile after a `ProfileRequest` |
 | `FeedSession` | `EndpointMessages.swift:68-70` | the persona of the virtual gamepad |
 | `Drained` | `EndpointMessages.swift:78`; `EndpointServer+Feed.swift:63` | every earlier frame has played |
 | `RumbleCommand` | `EndpointMessages.swift:82-103` | rumble command a game sent to the virtual gamepad |
@@ -102,8 +105,8 @@ Each item rests on the tables above. A surface that is not listed for an item do
 
 1. Run author code in the service or as part of `ojd`. `ojd` has no `generate` command, and the endpoint and the intents hold no code upload. The author's program runs outside and calls in.
 2. Add a protocol family. No surface takes a family name or a description document into the closed lists of `docs/development/document-defined-families.md`. `ojd record install` takes a controller record, not a family.
-3. Change a profile, binding, or macro through the endpoint. The endpoint takes `Hello`, `Subscription`, `FeedRequest`, `Frame`, `KeepAlive`, and `Drain` only (`EndpointMessages.swift:23-29`, `EndpointServer+Feed.swift:98`).
-4. Change a profile value, binding, or macro through the intents. The intents list controllers, read a battery level, activate or deactivate a profile, and return a version.
+3. Change a binding or macro through the endpoint. The endpoint takes `Hello`, `Subscription`, `FeedRequest`, `ProfileRequest`, `Frame`, `KeepAlive`, and `Drain` only (`EndpointMessages.swift:23-31`, `EndpointServer+Feed.swift:98`); `ProfileRequest` activates, deactivates, or sets one value of a profile.
+4. Change a binding or macro through the intents. The intents list controllers, read a battery level, activate or deactivate a profile, set one value of a profile, and return a version.
 5. Install, list, validate, or remove a mod package through the intents or the endpoint. Only `ojd mod` does it.
 6. Drive rumble, lights, player numbers, or the speaker through the endpoint or the intents. Only `ojd controller rumble`, `player`, `light`, and `speaker` do it (`CLI/Commands/Controller/ControllerOutputCommands.swift:133`, `:339`, `:399`; `ControllerSpeakerCommands.swift:69`).
 7. Receive an event inside the service. The endpoint streams `Controllers` to an outside program, and no surface takes a handler that the service runs.

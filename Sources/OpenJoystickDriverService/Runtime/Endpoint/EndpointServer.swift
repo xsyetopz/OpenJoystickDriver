@@ -48,6 +48,8 @@ final class EndpointServer: @unchecked Sendable {
   ///
   /// Nil refuses every feed.
   let feeds: VirtualFeedRegistry?
+  /// The service that answers the profile requests, as the App Intents use it.
+  let automation: any AutomationService
   /// Identifies the program at the other end of a socket.
   let identify: Identify
   /// Told when a stream line about a controller went to the subscribers, with the uptime in
@@ -100,6 +102,7 @@ final class EndpointServer: @unchecked Sendable {
     source: any ControllerWatchSource,
     version: String = ApplicationVersion.current,
     feeds: VirtualFeedRegistry? = nil,
+    automation: any AutomationService,
     identify: @escaping Identify = EndpointClient.identify,
     streamDelivered: (@Sendable (ControllerSessionToken, UInt64) async -> Void)? = nil,
     beforeAcceptWait: (@Sendable (AccessTransport, Int) -> Void)? = nil,
@@ -116,6 +119,7 @@ final class EndpointServer: @unchecked Sendable {
     self.source = source
     self.version = version
     self.feeds = feeds
+    self.automation = automation
     self.streamDelivered = streamDelivered
     self.identify = identify
   }

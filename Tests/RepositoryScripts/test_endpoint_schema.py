@@ -17,6 +17,13 @@ def failure(code: str, **fields: Any) -> dict[str, Any]:
     return line("Status", status="Failure", code=code, message="text", **fields)
 
 
+PROFILE = {
+    "id": "7B6B3C5E-9A4D-4A6E-8C55-1B2D3E4F5A6B",
+    "name": "Rally",
+    "model": "054C:0CE6",
+    "isActive": True,
+}
+
 DETAILS = {"details": {"supportedAPIVersions": [VERSION]}}
 
 
@@ -44,8 +51,13 @@ class EndpointSchemaTests(unittest.TestCase):
             line("KeepAlive"),
             line("Drain"),
             line("Drained"),
+            line("ProfileRequest", action="Activate", profile="Rally"),
+            line("ProfileRequest", action="Set", profile="Rally", key="name", value="X"),
+            line("ProfileRequest", action="Set", profile="Rally", key="a.b", value=None),
+            line("ProfileResult", profile=PROFILE),
             failure("E1001"),
             failure("E1003"),
+            failure("E2012"),
             failure("E1009", **DETAILS),
             failure("E1010", **DETAILS),
             failure("E1011", **DETAILS),
@@ -73,6 +85,26 @@ class EndpointSchemaTests(unittest.TestCase):
         self.assertFalse(self.valid(failure("E1009", **empty)))
         for code in ("E1001", "E1002", "E1003", "E1008"):
             self.assertFalse(self.valid(failure(code, **DETAILS)), code)
+
+    def test_a_profile_request_is_refused_when_it_is_malformed(self) -> None:
+        refused = [
+            line("ProfileRequest", action="Jump", profile="Rally"),
+            line("ProfileRequest", action="set", profile="Rally"),
+            line("ProfileRequest", action="Set", profile="Rally", key="name"),
+            line("ProfileRequest", action="Set", profile="Rally", value="X"),
+            line("ProfileRequest", action="Activate", profile="Rally", key="name"),
+            line("ProfileRequest", action="Activate", profile=""),
+            line("ProfileRequest", action="Activate"),
+            line("ProfileResult", profile={**PROFILE, "extra": 1}),
+            line("ProfileResult", profile={**PROFILE, "id": "not-a-uuid"}),
+        ]
+        for message in refused:
+            self.assertFalse(self.valid(message), message)
+
+    def test_a_request_failure_carries_a_code_outside_the_endpoint_codes(self) -> None:
+        self.assertFalse(self.valid(failure("E2")))
+        self.assertFalse(self.valid(failure("X2012")))
+        self.assertFalse(self.valid(failure("E2012", **DETAILS)))
 
     def test_the_earlier_spellings_are_refused(self) -> None:
         self.assertFalse(self.valid(line("Hello", scopes=["read"])))

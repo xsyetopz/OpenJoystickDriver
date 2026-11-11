@@ -25,7 +25,7 @@ The program and the endpoint exchange JSON objects, one per line, each at most 6
 1. The endpoint sends a `Challenge` first.
 2. Within 5 seconds, the program sends a `Hello` with the scopes that it needs. A program that a signature grants sends only the scopes. A program that a token grants also sends `tokenName` and `proof`.
 3. The endpoint answers a `Welcome` with the scopes that it granted, or a `Status` failure, and then closes the connection.
-4. The program sends one request: a `Subscription` to read, or a `FeedRequest` to drive a virtual gamepad. A `FeedRequest` needs the `Control` scope.
+4. The program sends any number of `ProfileRequest` lines, each answered at once, and then one request that ends the exchange: a `Subscription` to read, or a `FeedRequest` to drive a virtual gamepad. A `ProfileRequest` and a `FeedRequest` need the `Control` scope.
 5. A subscription gets watch lines. A feed gets a `FeedSession`, and then the program sends `Frame` lines.
 
 A connection that sends a line at the wrong point gets `E1010`. The endpoint serves at most 8 socket connections and 8 WebSocket connections at the same time. When a program reads too slowly, the endpoint keeps only the newest `MODIFIED` line of each controller. When 256 lines wait, it sends `E1006` and closes the connection.
@@ -84,6 +84,20 @@ The endpoint answers with the same `ADDED`, `MODIFIED`, and `DELETED` watch line
 
 ```json
 {"type":"ADDED","object":{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Controller","id":"pad-1","name":"Test Pad","vendorID":1118,"productID":654,"connection":"usb","hasSerialNumber":false,"ownedByAnotherClient":false,"alsoListedBySystem":false,"protocol":"XboxXUSB:Wired","session":"Active","waitsForGuidePress":false}}
+```
+
+### ProfileRequest
+
+The program sends it after the `Welcome` to change a remapping profile, as `ojd profile activate`, `deactivate` and `set` do. It needs the `Control` scope; without it the endpoint answers `E1002` and closes the connection. `action` is `Activate`, `Deactivate` or `Set`. `profile` is a profile UUID or a profile name, which is matched without regard to case. `Set` also takes `key`, a dotted path such as `name`, and `value`, which may be `null` to remove a member. A line with another `action`, a `Set` without `key` or `value`, an empty `profile`, or a `key` with an empty part is refused with `E1003`, and the connection closes.
+
+```json
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ProfileRequest","action":"Set","profile":"Racing","key":"name","value":"Rally"}
+```
+
+The endpoint answers a `ProfileResult` with the profile after the request. When the service refuses the request, the answer is a `Status` failure whose `code` is the code that `ojd` prints for the same failure, such as `E2012` for a profile that does not exist, and the connection stays open for the next line. These codes are not endpoint codes.
+
+```json
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ProfileResult","profile":{"id":"7B6B3C5E-9A4D-4A6E-8C55-1B2D3E4F5A6B","name":"Rally","model":"054C:0CE6","isActive":true}}
 ```
 
 ### FeedRequest
@@ -164,7 +178,7 @@ With `E1009`, `E1010`, and `E1011`, `details.supportedAPIVersions` lists the `ap
 
 ## Errors
 
-An error is a `Status` line, and then the endpoint closes the connection. Each code is stable. Look up the cause and the fix of a code with `ojd explain E1002`, or on [Error codes](../../wiki/Error-Codes.md).
+An error is a `Status` line, and then the endpoint closes the connection, except the refusal of a `ProfileRequest` by the service, which carries another code and keeps the connection open. Each code is stable. Look up the cause and the fix of a code with `ojd explain E1002`, or on [Error codes](../../wiki/Error-Codes.md).
 
 | Code | Name | Meaning |
 | --- | --- | --- |

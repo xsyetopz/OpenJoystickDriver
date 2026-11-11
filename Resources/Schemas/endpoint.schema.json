@@ -24,6 +24,9 @@
           "$ref": "#/$defs/feedRequest"
         },
         {
+          "$ref": "#/$defs/profileRequest"
+        },
+        {
           "$ref": "#/$defs/frame"
         },
         {
@@ -44,6 +47,12 @@
         },
         {
           "$ref": "#/$defs/error"
+        },
+        {
+          "$ref": "#/$defs/requestFailure"
+        },
+        {
+          "$ref": "#/$defs/profileResult"
         },
         {
           "$ref": "cli-output.schema.json#/$defs/sharedControllerWatchEvent"
@@ -178,6 +187,121 @@
         },
         "as": {
           "$ref": "#/$defs/persona"
+        }
+      }
+    },
+    "profileRequest": {
+      "type": "object",
+      "required": ["action", "apiVersion", "kind", "profile"],
+      "additionalProperties": false,
+      "description": "A request, with the control scope, to activate, deactivate, or change one remapping profile. The service answers with ProfileResult, or with a request failure and keeps the connection open.",
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "kind": {
+          "const": "ProfileRequest"
+        },
+        "action": {
+          "enum": ["Activate", "Deactivate", "Set"]
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The UUID or the name of the profile."
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The dotted key to set, as in ojd profile set."
+        },
+        "value": {
+          "description": "The value to set; null removes a member."
+        }
+      },
+      "if": {
+        "properties": {
+          "action": {
+            "const": "Set"
+          }
+        }
+      },
+      "then": {
+        "required": ["key", "value"]
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": ["key"]
+            },
+            {
+              "required": ["value"]
+            }
+          ]
+        }
+      }
+    },
+    "profileResult": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "profile"],
+      "additionalProperties": false,
+      "description": "The answer to ProfileRequest: the profile as the service reports it afterward.",
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "kind": {
+          "const": "ProfileResult"
+        },
+        "profile": {
+          "type": "object",
+          "required": ["id", "isActive", "model", "name"],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string",
+              "description": "VVVV:PPPP of the controller model."
+            },
+            "isActive": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "requestFailure": {
+      "type": "object",
+      "required": ["apiVersion", "code", "kind", "message", "status"],
+      "additionalProperties": false,
+      "description": "A Status line that refuses one request and leaves the connection open; its code is the one ojd prints for the same failure.",
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "kind": {
+          "const": "Status"
+        },
+        "status": {
+          "const": "Failure"
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^E[0-9]{4}$",
+          "not": {
+            "$ref": "#/$defs/error/properties/code"
+          }
+        },
+        "message": {
+          "type": "string",
+          "description": "English text for logs; clients branch on code."
         }
       }
     },
