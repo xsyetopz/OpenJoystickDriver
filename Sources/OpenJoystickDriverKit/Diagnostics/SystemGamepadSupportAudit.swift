@@ -110,8 +110,6 @@ public struct SystemGamepadSupportAudit: Codable, Sendable {
   public let records: [SystemGamepadRecordAudit]
   /// The problems met while reading the catalog.
   public let warnings: [String]
-  /// Why a missing or listed entry proves nothing about GameController support.
-  public let caveat: String
 }
 
 /// Deserializes Apple's private mapping plists, extracting only selected
@@ -227,10 +225,7 @@ public enum SystemGamepadSupportAuditor {
       ojdRecordCount: rows.count,
       catalogListedOJDRecordCount: rows.filter(\.catalogListed).count,
       records: rows,
-      warnings: snapshot.warnings,
-      caveat: "Private current-system catalog observation only. A missing entry does not prove "
-        + "GameController incompatibility, and a listed entry does not replace a live "
-        + "GCController.supportsHIDDevice or hardware test."
+      warnings: snapshot.warnings
     )
   }
 

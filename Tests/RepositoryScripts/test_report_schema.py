@@ -251,7 +251,6 @@ class ReportSchemaTests(unittest.TestCase):
                 }
             ],
             "warnings": [],
-            "caveat": "test",
         }
         return report
 

@@ -30,7 +30,7 @@ ojd diagnose --output /tmp/ojd-support.json
 jq .systemGamepadAudit /tmp/ojd-support.json
 ```
 
-The support report from the app uses the same audit.
+The audit is a private current-system catalog observation only. A missing entry does not prove GameController incompatibility, and a listed entry does not replace a live `GCController.supportsHIDDevice` or a hardware test. The support report from the app uses the same audit.
 
 ## Selection and Overrides
 

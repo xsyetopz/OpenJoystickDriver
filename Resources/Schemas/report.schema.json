@@ -892,8 +892,7 @@
         "ojdRecordCount",
         "catalogListedOJDRecordCount",
         "records",
-        "warnings",
-        "caveat"
+        "warnings"
       ],
       "additionalProperties": false,
       "properties": {
@@ -937,9 +936,6 @@
           "items": {
             "type": "string"
           }
-        },
-        "caveat": {
-          "type": "string"
         }
       }
     },
