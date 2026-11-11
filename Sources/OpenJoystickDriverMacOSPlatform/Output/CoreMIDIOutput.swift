@@ -1,6 +1,6 @@
 import CoreMIDI
 import Foundation
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 
 /// Publishes the virtual CoreMIDI source `OpenJoystickDriver` and sends messages through it.
 package final class CoreMIDIOutput: RemappingMIDIOutput, @unchecked Sendable {
@@ -27,10 +27,15 @@ package final class CoreMIDIOutput: RemappingMIDIOutput, @unchecked Sendable {
     try endpoint.withLock { endpoint in
       guard endpoint == nil else { return }
       var client = MIDIClientRef()
-      var status = MIDIClientCreate(Self.sourceName as CFString, nil, nil, &client)
+      var status = unsafe MIDIClientCreate(Self.sourceName as CFString, nil, nil, &client)
       guard status == noErr else { throw RemappingMIDIError.sourceRefused(status: status) }
       var source = MIDIEndpointRef()
-      status = MIDISourceCreateWithProtocol(client, Self.sourceName as CFString, ._1_0, &source)
+      status = unsafe MIDISourceCreateWithProtocol(
+        client,
+        Self.sourceName as CFString,
+        ._1_0,
+        &source
+      )
       guard status == noErr else {
         MIDIClientDispose(client)
         throw RemappingMIDIError.sourceRefused(status: status)
@@ -50,8 +55,10 @@ package final class CoreMIDIOutput: RemappingMIDIOutput, @unchecked Sendable {
     try endpoint.withLock { endpoint in
       guard let endpoint else { throw RemappingMIDIError.sourceRefused(status: kMIDIInvalidClient) }
       let builder = MIDIEventList.Builder(inProtocol: ._1_0, wordSize: 4)
-      builder.append(timestamp: mach_absolute_time(), words: [word])
-      let status = builder.withUnsafePointer { MIDIReceivedEventList(endpoint.source, $0) }
+      unsafe builder.append(timestamp: mach_absolute_time(), words: [word])
+      let status = unsafe builder.withUnsafePointer {
+        unsafe MIDIReceivedEventList(endpoint.source, $0)
+      }
       guard status == noErr else { throw RemappingMIDIError.sourceRefused(status: status) }
     }
   }

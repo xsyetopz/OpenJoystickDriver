@@ -8,16 +8,16 @@ struct SoakCheckLocalizationTests {
 
   /// Numbers as the catalog prints them: through the current locale.
   private func decimal(_ value: Double) -> String {
-    String(format: "%.1f", locale: .current, value)
+    unsafe String(format: "%.1f", locale: .current, value)
   }
 
   /// A count inside a plural entry: formatted with the locale of the selected language.
   private func pluralInteger(_ value: Int) -> String {
-    String(format: "%d", locale: Locale(identifier: "en_US"), value)
+    unsafe String(format: "%d", locale: Locale(identifier: "en_US"), value)
   }
 
   private func integer(_ value: Int) -> String {
-    String(format: "%d", locale: .current, value)
+    unsafe String(format: "%d", locale: .current, value)
   }
 
   private func stableSummary() throws -> RuntimeHealthSummary {

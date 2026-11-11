@@ -54,7 +54,7 @@ public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
 
 extension ApplicationServiceUnboundDevice {
   /// `VVVV:PPPP`, the identity `ojd` prints and accepts.
-  public var identity: String { String(format: "%04X:%04X", vendorID, productID) }
+  public var identity: String { unsafe String(format: "%04X:%04X", vendorID, productID) }
 
   /// Whether the device is a HID pad: read over HID, with an interface that has a Game Pad or
   /// Joystick usage.

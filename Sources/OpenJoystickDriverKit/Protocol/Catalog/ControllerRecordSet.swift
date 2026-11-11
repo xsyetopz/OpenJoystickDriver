@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Where one part of an effective controller record comes from.
 ///
@@ -236,7 +236,7 @@ public struct ControllerRecordSet: Sendable {
 
   /// `vvvv-pppp.plist`, the file name of a record for `model`.
   public static func fileName(for model: ControllerModelID) -> String {
-    String(format: "%04x-%04x.plist", model.vendorID, model.productID)
+    unsafe String(format: "%04x-%04x.plist", model.vendorID, model.productID)
   }
 
   /// The bundled records, decoded once per process.
@@ -272,9 +272,9 @@ public struct ControllerRecordSet: Sendable {
   static func loadCatalog(
     _ urls: [URL]
   ) -> (records: [ControllerModelID: ControllerRecord], problems: [RepositoryProblem]) {
-    var records: [ControllerModelID: ControllerRecord] = [:]
+    var loaded: [ControllerModelID: ControllerRecord] = [:]
     var files: [ControllerModelID: String] = [:]
-    var problems: [RepositoryProblem] = []
+    var rejected: [RepositoryProblem] = []
     let sortedURLs = urls.sorted {
       ($0.lastPathComponent, $0.path) < ($1.lastPathComponent, $1.path)
     }
@@ -303,12 +303,12 @@ public struct ControllerRecordSet: Sendable {
           )
         }
         files[record.model] = url.path
-        records[record.model] = record
+        loaded[record.model] = record
       } catch {
-        problems.append(RepositoryProblem(file: url.path, error: error, document: "record"))
+        rejected.append(RepositoryProblem(file: url.path, error: error, document: "record"))
       }
     }
-    return (records, problems)
+    return (loaded, rejected)
   }
 
   /// Whether `name` is `vvvv-pppp.plist` with hex digits.
@@ -368,7 +368,7 @@ public struct ControllerRecordSet: Sendable {
     let set = decoded.document.tuning.setKeys
     return ControllerRecord(
       model: decoded.model,
-      text: String(decoding: try record.plistData(), as: UTF8.self),
+      text: String(bytes: try record.plistData(), encoding: .utf8) ?? "",
       fieldLayers: layers,
       tuningLayers: tuningLayers
         ?? Dictionary(

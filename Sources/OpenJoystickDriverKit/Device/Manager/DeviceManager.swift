@@ -1,4 +1,4 @@
-import CryptoKit
+package import CryptoKit
 import Foundation
 
 /// Revocable authority for power notifications delivered by one runtime start.
@@ -37,7 +37,7 @@ func controllerDisplayName(productName: String?, vendorID: UInt16, productID: UI
     let value = productName.trimmingCharacters(in: .whitespacesAndNewlines)
     if !value.isEmpty { return value }
   }
-  return String(format: "Controller %04x:%04x", vendorID, productID)
+  return unsafe String(format: "Controller %04x:%04x", vendorID, productID)
 }
 
 /// The wait between two polls of the USB transport provider by raw-USB detection, 500 ms.

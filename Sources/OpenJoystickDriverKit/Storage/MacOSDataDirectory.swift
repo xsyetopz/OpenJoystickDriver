@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The macOS `DataDirectory`: Application Support, Library/Logs, and the temp locations.
 ///
@@ -35,7 +35,7 @@ public struct MacOSDataDirectory: DataDirectory {
   /// every process of one user reaches the same folder.
   private static func userTemporaryPath() -> String {
     var buffer = [CChar](repeating: 0, count: Int(PATH_MAX))
-    let length = confstr(_CS_DARWIN_USER_TEMP_DIR, &buffer, buffer.count)
+    let length = unsafe confstr(_CS_DARWIN_USER_TEMP_DIR, &buffer, buffer.count)
     guard length > 0,
       let directory = String(
         bytes: buffer.prefix(length - 1).map(UInt8.init(bitPattern:)),

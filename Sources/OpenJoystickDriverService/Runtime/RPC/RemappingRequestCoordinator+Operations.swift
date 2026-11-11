@@ -123,10 +123,10 @@ extension RemappingRequestCoordinator {
         do {
           try await router.refreshModel(vendorID: model.vendorID, productID: model.productID)
         } catch {
-          fputs(
+          unsafe fputs(
             "[Profiles] Cannot refresh \(model.vendorID):\(model.productID): "
               + "\(error.localizedDescription)\n",
-            stderr
+            unsafe stderr
           )
         }
       }

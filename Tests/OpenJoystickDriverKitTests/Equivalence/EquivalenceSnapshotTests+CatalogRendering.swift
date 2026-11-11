@@ -29,7 +29,7 @@ extension EquivalenceSnapshotCatalogTests {
 
   private static func field(_ field: ReportBitField) -> String {
     let mask = ((1 << field.bitSize) - 1) << (field.bitOffset % 8)
-    return "\(field.bitOffset / 8)&\(String(format: "%02X", mask))"
+    return "\(field.bitOffset / 8)&\(unsafe String(format: "%02X", mask))"
   }
 
   private static func layoutLines(_ layout: ControllerInputLayout) -> [String] {

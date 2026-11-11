@@ -122,8 +122,12 @@ struct ListenerFailureStatusTests {
     let client = socket(AF_UNIX, SOCK_STREAM, 0)
     var address = try LocalServiceRPCTransport.socketAddress(path: socketPath)
     _ = withUnsafePointer(to: &address) {
-      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-        Darwin.connect(client, $0, LocalServiceRPCTransport.socketAddressLength(path: socketPath))
+      unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+        unsafe Darwin.connect(
+          client,
+          $0,
+          LocalServiceRPCTransport.socketAddressLength(path: socketPath)
+        )
       }
     }
     defer { Darwin.close(client) }

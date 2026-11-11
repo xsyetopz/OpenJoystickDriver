@@ -4,7 +4,8 @@ import OpenJoystickDriverTestSupport
 @testable import OpenJoystickDriverKit
 
 /// A temporary application-support folder with the user's `Controllers`, `VirtualDevices`,
-/// `Profiles`, and `Protocols` folders, the `Packages` store, and a `Staging` folder where packages are built.
+/// `Profiles`, and `Protocols` folders, the `Packages` store, and a `Staging` folder where
+/// packages are built.
 struct ModPackageFixture {
   let root = MacOSDataDirectory().url(for: .temporary).appendingPathComponent(
     "ojd-packages-\(UUID().uuidString)",
@@ -37,7 +38,7 @@ struct ModPackageFixture {
       "productID": productID, "modes": [["id": "default", "protocol": ["family": "XboxGIP"]]],
     ]
     return (
-      String(format: "%04x-%04x.plist", vendorID, productID),
+      unsafe String(format: "%04x-%04x.plist", vendorID, productID),
       try PropertyListFixture.data(tree: document)
     )
   }
@@ -73,7 +74,7 @@ struct ModPackageFixture {
       "match": ["vendorID": vendorID, "productID": productID], "persona": descriptor,
     ]
     return (
-      String(format: "%04x-%04x.plist", vendorID, productID),
+      unsafe String(format: "%04x-%04x.plist", vendorID, productID),
       PropertyListFixture.bytes(tree: document)
     )
   }

@@ -422,7 +422,7 @@ struct RemappingRPCTests {
         )
       }
     }
-    let suffix = String(format: "%03d", index)
+    let suffix = unsafe String(format: "%03d", index)
     return RemappingProfile(
       name: String(repeating: "P", count: 77) + suffix,
       device: RemappingDeviceScope(vendorID: UInt16(index), productID: UInt16(index)),

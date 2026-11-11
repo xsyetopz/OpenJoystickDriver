@@ -34,7 +34,7 @@ extension ControllerDetailFacts {
       let key =
         mapping.source == .none
         ? "cli.controller.show.inputMappingUnbound" : "cli.controller.show.inputMappingSDL"
-      words = String(
+      words = unsafe String(
         format: OJDLocalized.string(key),
         mapping.match.map(matchTierText) ?? "",
         mapping.guid ?? ""

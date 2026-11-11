@@ -6,8 +6,9 @@ import Foundation
 /// The layers apply in the order catalog record, built-in patch, package patch, user patch. Inside
 /// one layer the selectors apply in the order `all`, `vendorID` with `productID`, `model`, so the
 /// more specific selector wins. A patch applies its `remove` paths first and its `patch` second,
-/// and an array in `patch` replaces the array, except `modes`, whose entries merge by `id`. The patch body and the record it changes are
-/// ``OrderedJSON``, so a merged record keeps its file's member order and the text of its numbers.
+/// and an array in `patch` replaces the array, except `modes`, whose entries merge by `id`. The
+/// patch body and the record it changes are ``OrderedJSON``, so a merged record keeps its file's
+/// member order and the text of its numbers.
 public struct ControllerPatch: Equatable, Sendable {
   /// Which records a patch applies to.
   public enum Selector: Equatable, Sendable, CustomStringConvertible {
@@ -41,7 +42,7 @@ public struct ControllerPatch: Equatable, Sendable {
       switch self {
       case .all: "all.patch.plist"
       case .identity(let model):
-        String(format: "%04x-%04x.patch.plist", model.vendorID, model.productID)
+        unsafe String(format: "%04x-%04x.patch.plist", model.vendorID, model.productID)
       case .model(let id): "model-\(id).patch.plist"
       }
     }
@@ -66,8 +67,8 @@ public struct ControllerPatch: Equatable, Sendable {
 
   /// The records the patch applies to.
   public let selector: Selector
-  /// The merge patch, an object, with the member order and the number text of the patch file. It
-  /// is empty for a patch that only removes keys.
+  // The member order and the number text of the patch file. It is empty for a patch that only
+  // removes keys.
   let body: OrderedJSON
   /// The key paths the patch removes, each a list of keys from the record's top level down.
   let remove: [[String]]
@@ -81,7 +82,7 @@ public struct ControllerPatch: Equatable, Sendable {
 
   /// The model id of `model`: `vvvv-pppp` in lowercase hex.
   public static func modelID(of model: ControllerModelID) -> String {
-    String(format: "%04x-%04x", model.vendorID, model.productID)
+    unsafe String(format: "%04x-%04x", model.vendorID, model.productID)
   }
 
   /// The document of a patch with `selector` and `body`.
@@ -126,7 +127,7 @@ public struct ControllerPatch: Equatable, Sendable {
     guard keys.isSuperset(of: ["apiVersion", "kind", "selector"]),
       keys.isSubset(of: ["apiVersion", "kind", "selector", "patch", "remove"]),
       keys.contains("patch") || keys.contains("remove"),
-      let selector = document["selector"]
+      let selectorValue = document["selector"]
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
@@ -134,8 +135,8 @@ public struct ControllerPatch: Equatable, Sendable {
         "the file must hold apiVersion, kind, selector, and patch or remove"
       )
     }
-    let parsed = try parseSelector(selector)
-    var body: [OrderedJSON.Member] = []
+    let parsed = try parseSelector(selectorValue)
+    var patchMembers: [OrderedJSON.Member] = []
     if let patch = document["patch"] {
       guard case .object(let members) = patch, !members.isEmpty,
         Set(members.map(\.key)).isSubset(of: sections)
@@ -157,17 +158,17 @@ public struct ControllerPatch: Equatable, Sendable {
             + " or idle"
         )
       }
-      body = members
+      patchMembers = members
     }
-    if parsed == .all, !body.isEmpty, Set(body.map(\.key)) != ["tuning"] {
+    if parsed == .all, !patchMembers.isEmpty, Set(patchMembers.map(\.key)) != ["tuning"] {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
         key: "error.E5007.patch.patchAllOnlyTuning",
         "an all patch may set only tuning"
       )
     }
-    let remove = try document["remove"].map { try parseRemove($0, selector: parsed) } ?? []
-    return Self(selector: parsed, body: .object(body), remove: remove)
+    let removed = try document["remove"].map { try parseRemove($0, selector: parsed) } ?? []
+    return Self(selector: parsed, body: .object(patchMembers), remove: removed)
   }
 
   /// Reads `remove`: a nonempty list of distinct dotted key paths that name a property of the
@@ -310,14 +311,12 @@ public struct ControllerPatch: Equatable, Sendable {
 
 /// The RFC 7396 merge that layers controller patches over a record.
 enum ControllerPatchMerge {
-  /// RFC 7396 `MergePatch` over ``OrderedJSON`` without the deleting `null`: an array or scalar
-  /// replaces. A patch deletes keys through `remove`, see ``removing(_:from:)``.
-  ///
-  /// An object patch over a value that is not an object starts from an empty object.
-  ///
-  /// Where both are objects the members stay in the target's order and the members the target
-  /// lacks come after, in the patch's order, at every depth. A value the patch replaces has the
-  /// patch's order. A number keeps its text.
+  // RFC 7396 `MergePatch` over ``OrderedJSON`` without the deleting `null`: an array or scalar
+  // replaces. A patch deletes keys through `remove`, see ``removing(_:from:)``.
+  // An object patch over a value that is not an object starts from an empty object.
+  // Where both are objects the members stay in the target's order and the members the target
+  // lacks come after, in the patch's order, at every depth. A value the patch replaces has the
+  // patch's order. A number keeps its text.
   static func mergePatch(_ target: OrderedJSON?, _ patch: OrderedJSON) -> OrderedJSON {
     guard case .object(let patchMembers) = patch else { return patch }
     var members = target?.members ?? []
@@ -343,9 +342,8 @@ enum ControllerPatchMerge {
     }
   }
 
-  /// The modes of `target` with the entries of `patch` merged by `id`: an entry whose `id` the
-  /// target holds merges key by key into that mode, and an entry with another `id` is added last.
-  /// A patch over a target that is not a list replaces it.
+  // An entry whose `id` the target holds merges key by key into that mode, and an entry with
+  // another `id` is added last. A patch over a target that is not a list replaces it.
   static func mergeModes(_ target: OrderedJSON?, _ patch: OrderedJSON) -> OrderedJSON {
     guard case .array(let entries) = patch, case .array(var modes)? = target else { return patch }
     for entry in entries {

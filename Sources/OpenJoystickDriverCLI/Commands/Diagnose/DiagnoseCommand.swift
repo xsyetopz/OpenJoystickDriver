@@ -182,13 +182,13 @@ struct DiagnoseCommand: AsyncParsableCommand {
     let current = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     var url = URL(fileURLWithPath: path, relativeTo: current).standardizedFileURL
     var isDirectory: ObjCBool = false
-    if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
+    if unsafe FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
       isDirectory.boolValue
     {
       url.appendPathComponent(SupportReportService.defaultFilename())
     }
     let parent = url.deletingLastPathComponent().path
-    guard FileManager.default.fileExists(atPath: parent, isDirectory: &isDirectory),
+    guard unsafe FileManager.default.fileExists(atPath: parent, isDirectory: &isDirectory),
       isDirectory.boolValue
     else {
       throw ValidationError(

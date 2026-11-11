@@ -131,6 +131,6 @@ extension EquivalenceSnapshotCatalogTests {
   }
 
   static func hex(_ bytes: [UInt8]) -> String {
-    bytes.map { String(format: "%02X", $0) }.joined()
+    bytes.map { unsafe String(format: "%02X", $0) }.joined()
   }
 }

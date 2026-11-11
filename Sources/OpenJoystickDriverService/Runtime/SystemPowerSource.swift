@@ -25,6 +25,7 @@ protocol SystemPowerSource: Sendable {
 /// The root power domain through `IORegisterForSystemPower`.
 ///
 /// - Note: `@unchecked Sendable` because `lock` guards every mutable property.
+@safe
 final class IOKitSystemPowerSource: SystemPowerSource, @unchecked Sendable {
   /// `kIOMessageCanSystemSleep`, which Swift does not import from its function-like macro.
   private static let canSystemSleep: UInt32 = 0xE000_0270
@@ -56,23 +57,23 @@ final class IOKitSystemPowerSource: SystemPowerSource, @unchecked Sendable {
     guard rootPort == 0 else { return }
     self.onMessage = onMessage
     var port: IONotificationPortRef?
-    var notifier: io_object_t = 0
-    let refcon = Unmanaged.passUnretained(self).toOpaque()
-    let root = IORegisterForSystemPower(
+    var registered: io_object_t = 0
+    let refcon = unsafe Unmanaged.passUnretained(self).toOpaque()
+    let root = unsafe IORegisterForSystemPower(
       refcon,
       &port,
-      { refcon, _, messageType, argument in
-        guard let refcon else { return }
-        Unmanaged<IOKitSystemPowerSource>.fromOpaque(refcon).takeUnretainedValue()
+      { rawRefcon, _, messageType, argument in
+        guard let instance = unsafe rawRefcon else { return }
+        unsafe Unmanaged<IOKitSystemPowerSource>.fromOpaque(instance).takeUnretainedValue()
           .receive(messageType: messageType, argument: argument)
       },
-      &notifier
+      &registered
     )
-    guard root != 0, let port else { return }
-    IONotificationPortSetDispatchQueue(port, queue)
+    guard root != 0, let created = unsafe port else { return }
+    unsafe IONotificationPortSetDispatchQueue(created, queue)
     rootPort = root
-    notificationPort = port
-    self.notifier = notifier
+    unsafe notificationPort = unsafe created
+    self.notifier = registered
   }
 
   /// Calls `IOAllowPowerChange`.
@@ -88,17 +89,17 @@ final class IOKitSystemPowerSource: SystemPowerSource, @unchecked Sendable {
   func stop() {
     lock.lock()
     let root = rootPort
-    let port = notificationPort
-    var notifier = self.notifier
+    let port = unsafe notificationPort
+    var token = self.notifier
     rootPort = 0
-    notificationPort = nil
+    unsafe notificationPort = nil
     self.notifier = 0
     onMessage = nil
     lock.unlock()
     guard root != 0 else { return }
-    IODeregisterForSystemPower(&notifier)
+    unsafe IODeregisterForSystemPower(&token)
     IOServiceClose(root)
-    if let port { IONotificationPortDestroy(port) }
+    if let live = unsafe port { unsafe IONotificationPortDestroy(live) }
   }
 
   /// Passes a callback to the receiver.
@@ -112,8 +113,8 @@ final class IOKitSystemPowerSource: SystemPowerSource, @unchecked Sendable {
     default: return
     }
     lock.lock()
-    let onMessage = onMessage
+    let callback = onMessage
     lock.unlock()
-    onMessage?(message)
+    callback?(message)
   }
 }

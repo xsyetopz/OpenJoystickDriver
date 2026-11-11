@@ -74,10 +74,10 @@ final class FileChangeWatcher {
   private func openDirectories(logsFailures: Bool) -> Bool {
     var opened = false
     for directory in directories where sources[directory] == nil {
-      let descriptor = open(directory.path, O_EVTONLY)
+      let descriptor = unsafe open(directory.path, O_EVTONLY)
       guard descriptor >= 0 else {
-        if logsFailures && Self.isFailure(openErrno: errno) {
-          fputs("[Watch] Cannot watch \(directory.path): errno \(errno)\n", stderr)
+        if logsFailures, Self.isFailure(openErrno: errno) {
+          unsafe fputs("[Watch] Cannot watch \(directory.path): errno \(errno)\n", unsafe stderr)
         }
         continue
       }
@@ -150,7 +150,7 @@ final class FileChangeWatcher {
       )) ?? []
     }
     fileSources = urls.filter(watchesFile).compactMap { url in
-      let descriptor = open(url.path, O_EVTONLY)
+      let descriptor = unsafe open(url.path, O_EVTONLY)
       guard descriptor >= 0 else { return nil }
       return makeSource(descriptor: descriptor, events: [.write, .extend, .delete, .rename])
     }

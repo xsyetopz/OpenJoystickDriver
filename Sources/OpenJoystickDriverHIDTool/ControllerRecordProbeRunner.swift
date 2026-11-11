@@ -84,7 +84,7 @@ func runControllerRecordProbe(recordPath: String, seconds: Int, validateOnly: Bo
       }
       print("USB_MATCHES count=\(devices.count)")
       guard let device = devices.first else {
-        fputs("ERROR: no raw USB transport matches the record VID/PID\n", stderr)
+        unsafe fputs("ERROR: no raw USB transport matches the record VID/PID\n", stderr)
         exitCode.withLock { $0 = 2 }
         return
       }
@@ -175,7 +175,7 @@ func runControllerRecordProbe(recordPath: String, seconds: Int, validateOnly: Bo
       )
       exitCode.withLock { $0 = summary.packets > 0 ? 0 : 3 }
     } catch {
-      fputs("ERROR: record probe failed: \(error.localizedDescription)\n", stderr)
+      unsafe fputs("ERROR: record probe failed: \(error.localizedDescription)\n", unsafe stderr)
       exitCode.withLock { $0 = 1 }
     }
   }
@@ -187,7 +187,7 @@ func runControllerRecordProbe(recordPath: String, seconds: Int, validateOnly: Bo
 /// Refuses a device before any write, when its claimed interface cannot be validated.
 private func refuseProbeDevice(reason: String, message: String, exitCode: Locked<Int32>) {
   print("RECORD_BINDING result=refused reason=\(reason)")
-  fputs("ERROR: \(message) (\(reason))\n", stderr)
+  unsafe fputs("ERROR: \(message) (\(reason))\n", unsafe stderr)
   exitCode.withLock { $0 = 4 }
 }
 
@@ -310,7 +310,7 @@ private func monitorProbeInput(
         parseErrorCount += 1
         print("PARSE_ERROR detail=\(error.localizedDescription)")
       }
-      fflush(stdout)
+      unsafe fflush(stdout)
     } catch USBTransportError.timeout { continue }
   }
   return (packetCount, eventCount, parseErrorCount)
@@ -334,7 +334,7 @@ private func hex<T: BinaryInteger>(_ value: T) -> String { "0x" + String(value, 
 
 extension [UInt8] {
   /// The bytes as lowercase hex pairs separated by spaces.
-  var hexBytes: String { map { String(format: "%02x", $0) }.joined(separator: " ") }
+  var hexBytes: String { map { unsafe String(format: "%02x", $0) }.joined(separator: " ") }
 }
 
 extension PhysicalOutputWrite {

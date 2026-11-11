@@ -50,7 +50,7 @@
       OJDLabeledValue(OJDLocalized.string("ui.developer.connection"), device.connection)
       OJDLabeledValue(
         OJDLocalized.string("ui.developer.usbEndpoints"),
-        String(
+        unsafe String(
           format: "%@ 0x%02X · %@ 0x%02X",
           OJDLocalized.string("term.inputEndpoint"),
           device.inputEndpoint,
@@ -75,8 +75,8 @@
     /// Returns the raw x and y values of the stick, or the centered position for nil; y points
     /// down.
     private func stickValue(_ stick: StickPosition?) -> String {
-      let stick = stick ?? .center
-      return "\(stick.x.rawValue), \(stick.y.rawValue)"
+      let position = stick ?? .center
+      return "\(position.x.rawValue), \(position.y.rawValue)"
     }
 
     /// Returns the names of the pressed controls, or None when nothing is pressed.

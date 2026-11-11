@@ -4,7 +4,7 @@ import ProtocolPacketFixtures
 
 func require(_ condition: @autoclosure () -> Bool, _ message: String) {
   if !condition() {
-    fputs("FAIL: \(message)\n", stderr)
+    unsafe fputs("FAIL: \(message)\n", unsafe stderr)
     exit(1)
   }
 }
@@ -33,7 +33,7 @@ func hidReports(_ writes: [PhysicalOutputWrite]) -> [PhysicalHIDOutputReport] {
 
 func catalogRecord(_ model: ControllerModelID) -> DeviceRuntimeProfile {
   guard let record = ProtocolDriverRegistry().record(for: model) else {
-    fputs("FAIL: \(model) should have a catalog record\n", stderr)
+    unsafe fputs("FAIL: \(model) should have a catalog record\n", unsafe stderr)
     exit(1)
   }
   return record

@@ -1,4 +1,4 @@
-import Foundation
+package import Foundation
 
 extension RepositoryValidation {
   /// Applies the built-in patches under `patches` to the Controller files under `controllers` with
@@ -93,8 +93,8 @@ extension RepositoryValidation {
     let document: OrderedJSON
   }
 
-  /// Reads each property list file under `directory` as a record and appends a problem to `problems` for
-  /// each file that is not a valid record.
+  /// Reads each property list file under `directory` as a record and appends a problem to
+  /// `problems` for each file that is not a valid record.
   /// - Returns: The records that read.
   private static func readRecords(
     under directory: URL,
@@ -135,9 +135,9 @@ extension RepositoryValidation {
     return files
   }
 
-  /// Reads each property list file under `directory` as a patch and appends a problem to `problems` for each
-  /// file that is not a valid patch or that is not stored at the path of its selector.
-  /// - Returns: The patches that read.
+  /// Reads each property list file under `directory` as a patch and appends a problem to
+  /// `problems` for each file that is not a valid patch or that is not stored at the path of its
+  /// selector. - Returns: The patches that read.
   private static func readPatches(
     under directory: URL,
     problems: inout [RepositoryProblem]
@@ -175,7 +175,7 @@ extension RepositoryValidation {
   /// Where a built-in patch with `selector` is stored under the patch directory.
   private static func patchPath(of selector: ControllerPatch.Selector) -> String {
     guard case .identity(let model) = selector else { return selector.fileName }
-    return String(format: "%04x/", model.vendorID) + selector.fileName
+    return unsafe String(format: "%04x/", model.vendorID) + selector.fileName
   }
 
   /// The path of `url` below `directory`, with `/` between components.

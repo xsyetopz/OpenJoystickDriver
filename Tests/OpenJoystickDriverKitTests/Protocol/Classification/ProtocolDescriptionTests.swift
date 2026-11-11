@@ -227,7 +227,7 @@ struct ProtocolDescriptionTests {
       family: .sonyDualSense,
       """
       "parameters": {"maker": {"type": "Enum", "values": ["ThirdParty"]},
-                     "forcedVibration": {"type": "Flag"}}
+        "forcedVibration": {"type": "Flag"}}
       """
     )
     #expect(
@@ -239,8 +239,8 @@ struct ProtocolDescriptionTests {
       family: .xboxGIP,
       """
       "parameters": {"shareButton": {"type": "Object",
-                                      "fields": {"fromEnd": {"type": "Integer",
-                                                             "minimum": 1, "maximum": 255}}}}
+        "fields": {"fromEnd": {"type": "Integer",
+          "minimum": 1, "maximum": 255}}}}
       """
     )
     #expect(gip.parameters == ["shareButton": .object(["fromEnd": 1...255])])
@@ -933,12 +933,12 @@ struct ProtocolDescriptionTests {
     func problem(_ members: String) -> ProtocolDescriptionProblem? {
       let json = """
         {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ProtocolDescription",
-         "family": "XboxGIP", \(members) "sessionKeys": ["startup", "keepAlive"],
-         "endpoints": {"in": 130, "out": 2}, "rawUSB": true,
-         "defaults": {"session": {"handshakeAttempts": 3, "announceResendLimit": 8,
-         "namedPackets": [
+          "family": "XboxGIP", \(members) "sessionKeys": ["startup", "keepAlive"],
+        "endpoints": {"in": 130, "out": 2}, "rawUSB": true,
+        "defaults": {"session": {"handshakeAttempts": 3, "announceResendLimit": 8,
+        "namedPackets": [
           {"id": "XboxGIP/power-on", "bytes": "05 20 00 01 00", "sessionByte": 2}
-         ]}}}
+        ]}}}
         """
       do {
         _ = try ProtocolDescription.decode(
@@ -1061,8 +1061,8 @@ enum ProtocolDescriptionFixture {
   ) throws(ProtocolDescriptionProblem) -> ProtocolDescription {
     let json = """
       {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ProtocolDescription",
-       "family": "\(family.rawValue)", \(variantMembers(of: family))
-       "endpoints": {"in": 130, "out": 2}, \(body)}
+        "family": "\(family.rawValue)", \(variantMembers(of: family))
+      "endpoints": {"in": 130, "out": 2}, \(body)}
       """
     return try ProtocolDescription.decode(
       PropertyListFixture.bytes(json: json),
@@ -1090,7 +1090,7 @@ enum ProtocolDescriptionFixture {
   }
 
   private static func withSessionLimits(family: PhysicalProtocolID, _ body: String) -> String {
-    guard let limits = sessionLimits[family] else { return body }
+    guard let limits = unsafe sessionLimits[family] else { return body }
     let json = "{\(body)}"
     guard var object = try? JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any]
     else { return body }

@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import OpenJoystickDriverKit
 
@@ -54,9 +55,9 @@ final class ProfileLibraryModel: ObservableObject {
   ) async -> RuntimeMutationResult {
     guard !runtime.mutationInFlight else { return rejectMutation(request) }
     if let failure = locallyValid(profile, request: request) { return failure }
-    let gateway = self.gateway
+    let service = self.gateway
     return await performMutation(request: request, conflictProfileID: nil) {
-      try await gateway.createRemappingProfile(profile)
+      try await service.createRemappingProfile(profile)
     }
   }
 
@@ -77,9 +78,9 @@ final class ProfileLibraryModel: ObservableObject {
   ) async -> RuntimeMutationResult {
     guard !runtime.mutationInFlight else { return rejectMutation(request) }
     if let failure = locallyValid(profile, request: request) { return failure }
-    let gateway = self.gateway
+    let service = self.gateway
     return await performMutation(request: request, conflictProfileID: profile.id) {
-      try await gateway.updateRemappingProfile(profile, expectedCurrent: expectedCurrent)
+      try await service.updateRemappingProfile(profile, expectedCurrent: expectedCurrent)
     }
   }
 
@@ -96,9 +97,9 @@ final class ProfileLibraryModel: ObservableObject {
   ) async -> RuntimeMutationResult {
     guard !runtime.mutationInFlight else { return rejectMutation(request) }
     if let failure = locallyValid(profile, request: request) { return failure }
-    let gateway = self.gateway
+    let service = self.gateway
     return await performMutation(request: request, conflictProfileID: nil) {
-      try await gateway.importRemappingProfile(profile)
+      try await service.importRemappingProfile(profile)
     }
   }
 
@@ -114,9 +115,9 @@ final class ProfileLibraryModel: ObservableObject {
     request: RuntimeMutationRequest
   ) async -> RuntimeMutationResult {
     guard !runtime.mutationInFlight else { return rejectMutation(request) }
-    let gateway = self.gateway
+    let service = self.gateway
     return await performMutation(request: request, conflictProfileID: id) {
-      try await gateway.deleteRemappingProfile(id: id)
+      try await service.deleteRemappingProfile(id: id)
     }
   }
 
@@ -125,9 +126,9 @@ final class ProfileLibraryModel: ObservableObject {
   /// - Parameter issueID: The identifier of the profile issue.
   /// - Returns: The message of the failure, or nil when the file was deleted.
   func deleteDamagedRemappingProfile(issueID: UUID) async -> String? {
-    let gateway = self.gateway
+    let service = self.gateway
     return await performProfileRecovery {
-      try await gateway.deleteDamagedRemappingProfile(issueID: issueID)
+      try await service.deleteDamagedRemappingProfile(issueID: issueID)
     }
   }
 
@@ -136,9 +137,9 @@ final class ProfileLibraryModel: ObservableObject {
   /// - Parameter issueID: The identifier of the profile issue.
   /// - Returns: The message of the failure, or nil when the library was reset.
   func resetRemappingProfileLibrary(issueID: UUID) async -> String? {
-    let gateway = self.gateway
+    let service = self.gateway
     return await performProfileRecovery {
-      try await gateway.resetRemappingProfileLibrary(issueID: issueID)
+      try await service.resetRemappingProfileLibrary(issueID: issueID)
     }
   }
 
@@ -156,9 +157,9 @@ final class ProfileLibraryModel: ObservableObject {
     request: RuntimeMutationRequest
   ) async -> RuntimeMutationResult {
     guard !runtime.mutationInFlight else { return rejectMutation(request) }
-    let gateway = self.gateway
+    let service = self.gateway
     return await performMutation(request: request, conflictProfileID: id) {
-      try await gateway.activateRemappingProfile(id: id, allowEmpty: allowEmpty)
+      try await service.activateRemappingProfile(id: id, allowEmpty: allowEmpty)
     }
   }
 
@@ -176,9 +177,9 @@ final class ProfileLibraryModel: ObservableObject {
     request: RuntimeMutationRequest
   ) async -> RuntimeMutationResult {
     guard !runtime.mutationInFlight else { return rejectMutation(request) }
-    let gateway = self.gateway
+    let service = self.gateway
     return await performMutation(request: request, conflictProfileID: nil) {
-      try await gateway.deactivateRemappingProfile(vendorID: vendorID, productID: productID)
+      try await service.deactivateRemappingProfile(vendorID: vendorID, productID: productID)
     }
   }
 
@@ -194,9 +195,9 @@ final class ProfileLibraryModel: ObservableObject {
     request: RuntimeMutationRequest
   ) async -> RuntimeMutationResult {
     guard !runtime.mutationInFlight else { return rejectMutation(request) }
-    let gateway = self.gateway
+    let service = self.gateway
     return await performMutation(request: request, conflictProfileID: profileID) {
-      try await gateway.deactivateRemappingProfile(profileID: profileID)
+      try await service.deactivateRemappingProfile(profileID: profileID)
     }
   }
 
@@ -214,7 +215,7 @@ final class ProfileLibraryModel: ObservableObject {
   private func performMutation(
     request mutationRequest: RuntimeMutationRequest,
     conflictProfileID: UUID?,
-    request: @escaping @Sendable () async throws -> ApplicationServiceRemappingSnapshotPayload
+    request: @Sendable () async throws -> ApplicationServiceRemappingSnapshotPayload
   ) async -> RuntimeMutationResult {
     guard await runtime.beginMutation() else { return rejectMutation(mutationRequest) }
     let operation = mutationRequest.operation
@@ -264,7 +265,7 @@ final class ProfileLibraryModel: ObservableObject {
   /// - Parameter request: Sends the recovery to the service.
   /// - Returns: The message of the failure or of a change that is in flight, or nil on success.
   private func performProfileRecovery(
-    request: @escaping @Sendable () async throws -> ApplicationServiceRemappingSnapshotPayload
+    request: @Sendable () async throws -> ApplicationServiceRemappingSnapshotPayload
   ) async -> String? {
     guard !profileRecoveryInFlight, !runtime.mutationInFlight else {
       return OJDLocalized.string(

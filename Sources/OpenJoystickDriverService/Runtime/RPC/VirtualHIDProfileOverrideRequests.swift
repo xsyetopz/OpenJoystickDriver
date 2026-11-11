@@ -1,5 +1,5 @@
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 extension ApplicationServiceServer {
   /// A requested change to one controller model's or unit's stored virtual HID profile override.
@@ -49,9 +49,9 @@ extension ApplicationServiceServer {
         unit: unit
       )
     }
-    if let result = result.flatMap({ $0 }) {
-      if result.succeeded { NotificationCenter.postServiceStatusChanged(from: self) }
-      return result
+    if let outcome = result.flatMap({ $0 }) {
+      if outcome.succeeded { NotificationCenter.postServiceStatusChanged(from: self) }
+      return outcome
     }
     var requested: VirtualHIDProfileID?
     if case .set(let raw) = change { requested = VirtualHIDProfileID(rawValue: raw) }
@@ -171,7 +171,7 @@ extension ApplicationServiceServer {
     } onLateSuccess: { [weak self] _ in
       _ = await self?.virtualOutputTransitionCoordinator.enqueue { [weak self] in
         guard let self else { return false }
-        return (try? await self.retargetWithinTimeout(identifier, with: automatic)) != nil
+        return (try? await retargetWithinTimeout(identifier, with: automatic)) != nil
       }
     }
   }
@@ -380,10 +380,10 @@ extension ApplicationServiceServer {
     defer { NotificationCenter.postServiceStatusChanged(from: self) }
     do {
       let kept = try virtualHIDProfileOverrides.resetAll()
-      for path in kept { fputs("[VirtualDevices] Reset kept \(path)\n", stderr) }
+      for path in kept { unsafe fputs("[VirtualDevices] Reset kept \(path)\n", unsafe stderr) }
       return kept.isEmpty
     } catch {
-      fputs("[VirtualDevices] Reset failed: \(error.statusDescription)\n", stderr)
+      unsafe fputs("[VirtualDevices] Reset failed: \(error.statusDescription)\n", unsafe stderr)
       return false
     }
   }
@@ -395,10 +395,10 @@ extension ApplicationServiceServer {
   func reloadPersonas() async {
     let retargeted = await virtualOutputTransitionCoordinator.enqueueResult { [weak self] in
       guard let self else { return true }
-      return await self.retargetConnectedControllers()
+      return await retargetConnectedControllers()
     }
     if retargeted == false {
-      fputs("[VirtualDevices] A controller kept its earlier virtual device\n", stderr)
+      unsafe fputs("[VirtualDevices] A controller kept its earlier virtual device\n", stderr)
     }
     NotificationCenter.postServiceStatusChanged(from: self)
   }

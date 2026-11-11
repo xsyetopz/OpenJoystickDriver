@@ -65,7 +65,7 @@ extension LocalServiceRPCClient {
     defer { Darwin.close(descriptor) }
     var processIdentifier: pid_t = 0
     var size = socklen_t(MemoryLayout<pid_t>.size)
-    guard getsockopt(descriptor, SOL_LOCAL, LOCAL_PEERPID, &processIdentifier, &size) == 0,
+    guard unsafe getsockopt(descriptor, SOL_LOCAL, LOCAL_PEERPID, &processIdentifier, &size) == 0,
       processIdentifier > 0
     else { return nil }
     return processIdentifier

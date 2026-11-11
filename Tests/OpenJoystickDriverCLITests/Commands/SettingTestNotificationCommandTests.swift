@@ -1,3 +1,4 @@
+import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 import OpenJoystickDriverTestSupport
@@ -60,7 +61,7 @@ struct SettingTestNotificationCommandTests {
   }
 
   /// The seconds as the help and the wiki write them.
-  private static func seconds(_ value: Double) -> String { String(format: "%g", value) }
+  private static func seconds(_ value: Double) -> String { unsafe String(format: "%g", value) }
 
   @Test
   func theHelpNamesTheDefaultDeadlineFromServiceTimeouts() {

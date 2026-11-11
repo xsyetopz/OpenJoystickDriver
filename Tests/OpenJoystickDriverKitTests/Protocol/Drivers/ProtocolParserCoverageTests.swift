@@ -55,7 +55,7 @@ struct ProtocolParserCoverageTests {
   /// so a suite listed under the wrong family fails.
   @Test(arguments: parserSuites.map { SuiteBox(suite: $0) })
   func eachSuiteCoversTheDriverTheRegistryBuildsForItsFamily(box: SuiteBox) throws {
-    let suite = box.suite
+    let suite = unsafe box.suite
     let record = try #require(ProtocolDriverRegistry().record(for: suite.model))
     #expect(record.physicalProtocolID == suite.family, "\(suite)")
     let driver = try catalogParser(suite.model)
@@ -67,6 +67,6 @@ struct ProtocolParserCoverageTests {
 
   struct SuiteBox: CustomTestStringConvertible, Sendable {
     nonisolated(unsafe) let suite: any ParserSuite.Type
-    var testDescription: String { String(describing: suite) }
+    var testDescription: String { unsafe String(describing: suite) }
   }
 }

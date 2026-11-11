@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The failures of reading or changing the user settings file.
 public enum SettingsStoreError: Error, Equatable, LocalizedError, Sendable {
@@ -89,7 +89,7 @@ public struct SettingsStore: Sendable {
   public init(
     directory: any DataDirectory = MacOSDataDirectory(),
     trash: @escaping @Sendable (URL) throws -> Void = {
-      try FileManager.default.trashItem(at: $0, resultingItemURL: nil)
+      try unsafe FileManager.default.trashItem(at: $0, resultingItemURL: nil)
     }
   ) {
     self.directory = directory
@@ -164,7 +164,7 @@ public struct SettingsStore: Sendable {
   /// Runs `body` while holding the advisory lock on the sidecar file in the settings folder.
   private func locked<Result>(_ body: () throws -> Result) throws -> Result {
     let url = userFileURL
-    let lock = open(
+    let lock = unsafe open(
       folderURL.appendingPathComponent(Self.lockFileName).path,
       O_CREAT | O_RDWR | O_CLOEXEC,
       0o600

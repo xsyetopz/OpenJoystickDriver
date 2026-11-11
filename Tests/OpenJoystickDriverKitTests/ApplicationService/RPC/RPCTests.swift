@@ -187,14 +187,14 @@ struct LocalServiceRPCTests {
   @Test
   func partialFrameRemainsInvalidInsteadOfLookingLikePeerRejection() throws {
     var descriptors = [Int32](repeating: -1, count: 2)
-    try #require(socketpair(AF_UNIX, SOCK_STREAM, 0, &descriptors) == 0)
+    try unsafe #require(socketpair(AF_UNIX, SOCK_STREAM, 0, &descriptors) == 0)
     defer {
       Darwin.close(descriptors[0])
       Darwin.close(descriptors[1])
     }
 
     var byte: UInt8 = 0
-    try #require(Darwin.write(descriptors[0], &byte, 1) == 1)
+    try unsafe #require(Darwin.write(descriptors[0], &byte, 1) == 1)
     try #require(shutdown(descriptors[0], SHUT_WR) == 0)
 
     #expect(throws: LocalServiceRPCError.invalidFrame) {
@@ -445,7 +445,7 @@ struct LocalServiceRPCTests {
         return LocalServiceRPCResponse(result: Data(), error: nil)
       }
     )
-    server.wakePipe = { _ in
+    unsafe server.wakePipe = { _ in
       errno = EMFILE
       return -1
     }
@@ -476,9 +476,9 @@ struct LocalServiceRPCTests {
         return LocalServiceRPCResponse(result: try? JSONEncoder().encode(true), error: nil)
       }
     )
-    server.wakePipe = { descriptors in
-      let status = Darwin.pipe(descriptors)
-      ends.withLock { $0 = [descriptors[0], descriptors[1]] }
+    unsafe server.wakePipe = { descriptors in
+      let status = unsafe Darwin.pipe(descriptors)
+      ends.withLock { $0 = unsafe [descriptors[0], descriptors[1]] }
       return status
     }
     try server.start()
@@ -514,7 +514,7 @@ struct LocalServiceRPCTests {
       }
     )
     server.report = { message in reports.withLock { $0.append(message) } }
-    server.pollConnection = { _, _, _ in
+    unsafe server.pollConnection = { _, _, _ in
       errno = EINVAL
       return -1
     }
@@ -559,11 +559,11 @@ private final class ClosingSocketListener: @unchecked Sendable {
     var address = sockaddr_un()
     address.sun_family = sa_family_t(AF_UNIX)
     withUnsafeMutableBytes(of: &address.sun_path) { buffer in
-      _ = path.withCString { strncpy(buffer.baseAddress!, $0, buffer.count - 1) }
+      _ = path.withCString { unsafe strncpy(buffer.baseAddress!, $0, buffer.count - 1) }
     }
     let bound = withUnsafePointer(to: &address) {
-      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-        bind(descriptor, $0, socklen_t(MemoryLayout<sockaddr_un>.size))
+      unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+        unsafe bind(descriptor, $0, socklen_t(MemoryLayout<sockaddr_un>.size))
       }
     }
     try #require(bound == 0)
@@ -581,6 +581,6 @@ private final class ClosingSocketListener: @unchecked Sendable {
   func stop() {
     shutdown(descriptor, SHUT_RDWR)
     Darwin.close(descriptor)
-    unlink(path)
+    unsafe unlink(path)
   }
 }

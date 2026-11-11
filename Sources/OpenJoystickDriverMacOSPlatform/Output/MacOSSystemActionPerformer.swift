@@ -1,7 +1,7 @@
 import AppKit
 import Carbon.HIToolbox
-import Foundation
-import OpenJoystickDriverKit
+package import Foundation
+package import OpenJoystickDriverKit
 
 /// Performs system actions through AppKit, Core Graphics and the `shortcuts` tool.
 package struct MacOSSystemActionPerformer: RemappingSystemActionPerforming {
@@ -85,7 +85,7 @@ package struct MacOSSystemActionPerformer: RemappingSystemActionPerforming {
         guard let event = CGEvent(keyboardEventSource: nil, virtualKey: 0, keyDown: isDown) else {
           throw RemappingSystemActionError.failed(action: "TypeText", reason: String(character))
         }
-        event.keyboardSetUnicodeString(stringLength: units.count, unicodeString: units)
+        unsafe event.keyboardSetUnicodeString(stringLength: units.count, unicodeString: units)
         event.post(tap: .cghidEventTap)
       }
     }

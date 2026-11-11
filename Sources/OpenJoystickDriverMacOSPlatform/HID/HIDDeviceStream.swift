@@ -1,13 +1,14 @@
 import Foundation
 import IOKit
 import IOKit.hid
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 
 /// Watches for HID-class game controllers using Apple's IOKit HID framework.
 ///
 /// Creates an `AsyncStream` of device connect, disconnect, and input report
 /// events. IOKit delivers callbacks on the main run loop, and this class
 /// forwards them into the stream for safe async consumption.
+@safe
 package final class HIDDeviceStream: @unchecked Sendable {
 
   // MARK: - Thread safety
@@ -40,7 +41,7 @@ package final class HIDDeviceStream: @unchecked Sendable {
   /// The connections of the tracked devices, by device ID.
   var connectionsByDeviceID: [UInt64: HIDDeviceConnection] = [:]
   /// Admitted devices this stream opened for shared input, with their input report buffers.
-  var sharedOpenByDeviceID: [UInt64: SharedOpenDevice] = [:]
+  var sharedOpenByDeviceID: [UInt64: SharedOpenDevice] = unsafe [:]
   /// The adapter that turns device events into backend events.
   let eventAdapter = SynchronizedPhysicalHIDBackendEventAdapter()
   /// Models whose family declares HID protocol roles; each of their devices disconnects on its own
@@ -89,6 +90,7 @@ package final class HIDDeviceStream: @unchecked Sendable {
   }
 
   /// A device that this stream opened for shared input, with its input report buffer.
+  @unsafe
   struct SharedOpenDevice {
     /// The opened device.
     let device: IOHIDDevice
@@ -99,36 +101,42 @@ package final class HIDDeviceStream: @unchecked Sendable {
   // MARK: - C-convention callbacks
 
   /// The callback for a device that matches.
-  static let matchingCallback: IOHIDDeviceCallback = { context, _, _, device in
-    guard let context else { return }
-    Unmanaged<HIDDeviceStream>.fromOpaque(context).takeUnretainedValue().handleDeviceAdded(device)
+  static let matchingCallback: IOHIDDeviceCallback = { rawContext, _, _, device in
+    guard let context = unsafe rawContext else { return }
+    unsafe Unmanaged<HIDDeviceStream>.fromOpaque(context).takeUnretainedValue().handleDeviceAdded(
+      device
+    )
   }
 
   /// The callback for a device that is removed.
-  static let removalCallback: IOHIDDeviceCallback = { context, _, _, device in
-    guard let context else { return }
-    Unmanaged<HIDDeviceStream>.fromOpaque(context).takeUnretainedValue().handleDeviceRemoved(device)
+  static let removalCallback: IOHIDDeviceCallback = { rawContext, _, _, device in
+    guard let context = unsafe rawContext else { return }
+    unsafe Unmanaged<HIDDeviceStream>.fromOpaque(context).takeUnretainedValue().handleDeviceRemoved(
+      device
+    )
   }
 
   /// The callback for an input element value.
-  static let inputValueCallback: IOHIDValueCallback = { context, _, _, value in
-    guard let context else { return }
-    Unmanaged<HIDDeviceStream>.fromOpaque(context).takeUnretainedValue().handleInputValue(value)
+  static let inputValueCallback: IOHIDValueCallback = { rawContext, _, _, value in
+    guard let context = unsafe rawContext else { return }
+    unsafe Unmanaged<HIDDeviceStream>.fromOpaque(context).takeUnretainedValue().handleInputValue(
+      value
+    )
   }
 
   /// The callback for an input report.
   static let inputReportCallback: IOHIDReportCallback = {
-    context,
+    rawContext,
     _,
-    sender,
+    rawSender,
     _,
     reportID,
     report,
     length in
-    guard let context, let sender else { return }
-    let device = Unmanaged<IOHIDDevice>.fromOpaque(sender).takeUnretainedValue()
-    let stream = Unmanaged<HIDDeviceStream>.fromOpaque(context).takeUnretainedValue()
-    stream.handleInputReport(
+    guard let context = unsafe rawContext, let sender = unsafe rawSender else { return }
+    let device = unsafe Unmanaged<IOHIDDevice>.fromOpaque(sender).takeUnretainedValue()
+    let stream = unsafe Unmanaged<HIDDeviceStream>.fromOpaque(context).takeUnretainedValue()
+    unsafe stream.handleInputReport(
       deviceID: stream.trackingID(for: device),
       reportID: UInt8(truncatingIfNeeded: reportID),
       report: report,

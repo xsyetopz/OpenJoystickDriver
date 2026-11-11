@@ -27,12 +27,14 @@ struct StoredDocumentMigrationTests {
     try write(#"{"$schema": "x", "profiles": []}"#, "RemappingProfiles.json")
     nonisolated(unsafe) var lines: [String] = []
 
-    StoredDocumentMigration.run(directory: directory) { lines.append($0) }
+    StoredDocumentMigration.run(directory: directory) { unsafe lines.append($0) }
 
     #expect(try SettingsStore(directory: directory).load().showInDock == true)
-    #expect(lines.count == 3, "\(lines)")
-    #expect(lines.contains("[Migrate] Migrated Settings.json"))
-    #expect(lines.contains("[Migrate] Foreign Profiles/notes.json: has no apiVersion"))
-    #expect(lines.contains("[Migrate] Failed RemappingProfiles.json: written by 0.5; re-create it"))
+    unsafe #expect(lines.count == 3, "\(lines)")
+    unsafe #expect(lines.contains("[Migrate] Migrated Settings.json"))
+    unsafe #expect(lines.contains("[Migrate] Foreign Profiles/notes.json: has no apiVersion"))
+    unsafe #expect(
+      lines.contains("[Migrate] Failed RemappingProfiles.json: written by 0.5; re-create it")
+    )
   }
 }

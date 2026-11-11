@@ -66,7 +66,7 @@ struct EquivalenceSnapshotOutputMappingTests {
 
   /// Each report as hex pairs, the reports apart by ` | `.
   private static func hex(_ reports: [[UInt8]]) -> String {
-    reports.map { $0.map { String(format: "%02X", $0) }.joined(separator: " ") }
+    reports.map { $0.map { unsafe String(format: "%02X", $0) }.joined(separator: " ") }
       .joined(separator: " | ")
   }
 
@@ -74,10 +74,10 @@ struct EquivalenceSnapshotOutputMappingTests {
   /// for a control none of whose frames change a report, then the combined frame.
   static func sections(
     encoder: Encoder? = nil
-  ) throws -> [(title: String, lines: [String])] {
+  ) -> [(title: String, lines: [String])] {
     let encoder: Encoder = encoder ?? { $0.inputReports(for: $1) }
-    return try VirtualHIDProfileID.allCases.map { id in
-      let profile = try id.makeProfile()
+    return VirtualHIDProfileID.allCases.map { id in
+      let profile = id.makeProfile()
       let neutral = encoder(profile, .neutral)
       var lines = ["neutral: \(hex(neutral))"]
       for control in Control.allCases {
@@ -93,25 +93,25 @@ struct EquivalenceSnapshotOutputMappingTests {
     }
   }
 
-  static func rendered(encoder: Encoder? = nil) throws -> String {
+  static func rendered(encoder: Encoder? = nil) -> String {
     let header = """
       # Virtual input report bytes per persona for canonical frames, as uppercase hex pairs, each
       # input report apart by ` | `. A control whose frames leave every report equal to the
       # neutral ones is `unmapped`.
 
       """
-    return EquivalenceSnapshotStore.render(try sections(encoder: encoder), header: header)
+    return EquivalenceSnapshotStore.render(sections(encoder: encoder), header: header)
   }
 
   @Test
   func outputMappingMatchesSnapshot() throws {
-    let rendered = try Self.rendered()
+    let rendered = Self.rendered()
     #expect(try EquivalenceSnapshotStore.verify(rendered, named: "output-mapping.txt") == nil)
   }
 
   @Test
-  func everyControlAndPersonaAppears() throws {
-    let sections = try Self.sections()
+  func everyControlAndPersonaAppears() {
+    let sections = Self.sections()
     let expected = VirtualHIDProfileID.allCases.map(\.commandLineName).sorted()
     #expect(sections.map(\.title).sorted() == expected)
     for section in sections {
@@ -130,7 +130,7 @@ struct EquivalenceSnapshotOutputMappingTests {
       .appendingPathComponent("ojd-output-mapping-\(UUID().uuidString)", isDirectory: true)
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
-    let baseline = try Self.rendered()
+    let baseline = Self.rendered()
     try Data(baseline.utf8).write(to: directory.appendingPathComponent("output-mapping.txt"))
     let same = try EquivalenceSnapshotStore.verify(
       baseline,
@@ -141,7 +141,7 @@ struct EquivalenceSnapshotOutputMappingTests {
     #expect(same == nil)
 
     // Plant a one-bit change in the last byte of every report that is not neutral.
-    let mutated = try Self.rendered { profile, state in
+    let mutated = Self.rendered { profile, state in
       var reports = profile.inputReports(for: state)
       if state != .neutral, !reports[0].isEmpty { reports[0][reports[0].count - 1] ^= 0x01 }
       return reports

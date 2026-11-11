@@ -183,7 +183,7 @@
         HStack {
           Text(title)
           Spacer()
-          Text(String(format: "%.0f ms", value)).foregroundColor(
+          Text(unsafe String(format: "%.0f ms", value)).foregroundColor(
             Color(NSColor.secondaryLabelColor)
           )
         }

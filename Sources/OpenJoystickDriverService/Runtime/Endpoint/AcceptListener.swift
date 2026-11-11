@@ -52,9 +52,9 @@ final class AcceptListener: @unchecked Sendable {
         throw LocalServiceRPCError.connectionFailed(errno)
       }
       var pipeEnds: [Int32] = [-1, -1]
-      guard pipe(&pipeEnds) == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
+      guard unsafe pipe(&pipeEnds) == 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
       opened = pipeEnds
-      let reserved = open("/dev/null", O_RDONLY)
+      let reserved = unsafe open("/dev/null", O_RDONLY)
       guard reserved >= 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
       opened.append(reserved)
       for end in opened {
@@ -113,7 +113,7 @@ final class AcceptListener: @unchecked Sendable {
       pollfd(fd: descriptor, events: Int16(POLLIN), revents: 0),
     ]
     while true {
-      guard poll(&polled, nfds_t(polled.count), -1) >= 0 else {
+      guard unsafe poll(&polled, nfds_t(polled.count), -1) >= 0 else {
         if errno == EINTR { continue }
         return .failed(errno)
       }

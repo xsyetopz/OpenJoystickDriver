@@ -255,8 +255,9 @@ public enum ControllerModeSelector {
       profile.physicalProtocolVariant.map { [.receiver, .dongle].contains($0) } ?? false
     // Two pads of one model differ in the log only by their location.
     let name =
-      String(format: "%04X:%04X", model.vendorID, model.productID)
-      + (device.physicalLocationIdentifier.map { String(format: " at location 0x%08X", $0) } ?? "")
+      unsafe String(format: "%04X:%04X", model.vendorID, model.productID)
+      + (device.physicalLocationIdentifier.map { unsafe String(format: " at location 0x%08X", $0) }
+        ?? "")
     // One read per report serves every probe of that report.
     var replies: [Int: PhysicalHIDReportResult<Data>] = [:]
     for mode in profile.modes where mode.match.holds(for: device, receiverRecord: receiverRecord) {
@@ -298,7 +299,7 @@ public enum ControllerModeSelector {
       guard let kind = interface.interfaceClass, let subclass = interface.interfaceSubclass,
         let code = interface.interfaceProtocol
       else { return nil }
-      return String(format: "%02X/%02X/%02X", kind, subclass, code)
+      return unsafe String(format: "%02X/%02X/%02X", kind, subclass, code)
     }
     log(
       "[DeviceManager] No mode of \(name) matched; \(fallback)"

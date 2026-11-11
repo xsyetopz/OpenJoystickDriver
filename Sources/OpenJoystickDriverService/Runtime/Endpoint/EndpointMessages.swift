@@ -13,8 +13,8 @@ struct EndpointChallenge: Encodable, Sendable {
   let nonce: String
 }
 
-/// A line that a client sends: `Hello` first, then any `ProfileRequest`, `ModList`, or `OutputRequest`, then
-/// `Subscription` or `FeedRequest`.
+/// A line that a client sends: `Hello` first, then any `ProfileRequest`, `ModList`, or
+/// `OutputRequest`, then `Subscription` or `FeedRequest`.
 ///
 /// A line is checked by ``EndpointHeader`` first: a missing header is answered with `E1011`, an
 /// unsupported `apiVersion` with `E1009`, and an unknown kind, or one that is not accepted at
@@ -90,7 +90,8 @@ struct EndpointProfileRequest: Decodable, Sendable {
   /// Decodes the line; `set` needs a key and a `value`, which may be `null`.
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    guard let profile = ProfileSelector(argument: try container.decode(String.self, forKey: .profile))
+    guard
+      let selector = ProfileSelector(argument: try container.decode(String.self, forKey: .profile))
     else {
       throw DecodingError.dataCorruptedError(
         forKey: .profile,
@@ -98,7 +99,7 @@ struct EndpointProfileRequest: Decodable, Sendable {
         debugDescription: "The profile selector is empty."
       )
     }
-    self.profile = profile
+    self.profile = selector
     switch try container.decode(String.self, forKey: .action) {
     case "Activate": operation = .activate
     case "Deactivate": operation = .deactivate
@@ -399,13 +400,14 @@ struct EndpointClient: Sendable {
   /// requirement of the signature on disk, such as a binary modified after it started.
   static func identify(_ peer: LocalSocketPeer) -> Self? {
     var staticCode: SecStaticCode?
-    guard let code = peer.code(), let identity = CodeSigningIdentity.of(code),
-      SecCodeCopyStaticCode(code, SecCSFlags(), &staticCode) == errSecSuccess, let staticCode
+    guard let code = peer.code(), let signer = CodeSigningIdentity.of(code),
+      unsafe SecCodeCopyStaticCode(code, SecCSFlags(), &staticCode) == errSecSuccess, let staticCode
     else { return nil }
-    if identity.kind != .adHoc, !peer.satisfies(identity.requirement) { return nil }
+    if signer.kind != .adHoc, !peer.satisfies(signer.requirement) { return nil }
     var url: CFURL?
-    let path =
-      SecCodeCopyPath(staticCode, SecCSFlags(), &url) == errSecSuccess ? (url as URL?)?.path : nil
-    return Self(identity: identity, path: path)
+    let copiedPath =
+      unsafe SecCodeCopyPath(staticCode, SecCSFlags(), &url) == errSecSuccess
+      ? (url as URL?)?.path : nil
+    return Self(identity: signer, path: copiedPath)
   }
 }

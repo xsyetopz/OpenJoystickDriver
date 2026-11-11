@@ -174,7 +174,7 @@ final class CLIOutputCapture: @unchecked Sendable {
 /// The cleanup that runs when `ojd` receives SIGINT or SIGTERM, or nil when none is set.
 private let cliShutdownCleanup = Locked<(@Sendable () async -> Void)?>(nil)
 /// The dispatch sources that watch for SIGINT and SIGTERM.
-private let cliShutdownSources = Locked<[DispatchSourceSignal]>([])
+private let cliShutdownSources = Locked<[any DispatchSourceSignal]>([])
 
 /// Makes SIGINT and SIGTERM run the current cleanup, flush the output and exit with 128 plus the
 /// signal number.
@@ -191,8 +191,8 @@ func installCLIShutdownHandlers() {
       Task {
         let cleanup = cliShutdownCleanup.withLock { $0 }
         await cleanup?()
-        fflush(stdout)
-        fflush(stderr)
+        unsafe fflush(stdout)
+        unsafe fflush(stderr)
         exit(128 + signalNumber)
       }
     }

@@ -159,7 +159,7 @@
     ///   - title: The text above the slider.
     ///   - value: The number to edit.
     ///   - range: The values the slider allows.
-    ///   - format: The `String(format:)` pattern of the value shown.
+    ///   - format: The `unsafe String(format:)` pattern of the value shown.
     ///   - multiplier: Scales the value before it is formatted, such as 100 for a percentage.
     /// - Returns: The slider with the title and the formatted value.
     func valueSlider(
@@ -173,7 +173,7 @@
         HStack {
           Text(title)
           Spacer()
-          Text(String(format: format, value.wrappedValue * multiplier)).foregroundColor(
+          Text(unsafe String(format: format, value.wrappedValue * multiplier)).foregroundColor(
             Color(NSColor.secondaryLabelColor)
           )
         }

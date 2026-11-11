@@ -199,10 +199,10 @@ extension HIDDeviceStream {
     let size = max(Int(unsignedProperty(device, kIOHIDMaxInputReportSizeKey) ?? 0), 1)
     sizeReportQueue(device)
     let reportBuffer = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: size)
-    reportBuffer.initialize(repeating: 0)
-    let context = Unmanaged.passUnretained(self).toOpaque()
+    unsafe reportBuffer.initialize(repeating: 0)
+    let context = unsafe Unmanaged.passUnretained(self).toOpaque()
     if let baseAddress = reportBuffer.baseAddress {
-      IOHIDDeviceRegisterInputReportCallback(
+      unsafe IOHIDDeviceRegisterInputReportCallback(
         device,
         baseAddress,
         size,
@@ -211,7 +211,10 @@ extension HIDDeviceStream {
       )
     }
     seizeLock.withLock {
-      sharedOpenByDeviceID[deviceID] = SharedOpenDevice(device: device, reportBuffer: reportBuffer)
+      unsafe sharedOpenByDeviceID[deviceID] = unsafe SharedOpenDevice(
+        device: device,
+        reportBuffer: reportBuffer
+      )
     }
   }
 
@@ -233,11 +236,11 @@ extension HIDDeviceStream {
     let device = seizeLock.withLock { () -> IOHIDDevice? in
       guard let deviceID = connectionsByDeviceID.first(where: { $0.value == connection })?.key
       else { return nil }
-      return sharedOpenByDeviceID[deviceID]?.device
+      return unsafe sharedOpenByDeviceID[deviceID]?.device
     }
     guard let device else { return }
-    let context = Unmanaged.passUnretained(self).toOpaque()
-    IOHIDDeviceRegisterInputValueCallback(device, Self.inputValueCallback, context)
+    let context = unsafe Unmanaged.passUnretained(self).toOpaque()
+    unsafe IOHIDDeviceRegisterInputValueCallback(device, Self.inputValueCallback, context)
   }
 
   /// Never-freed report buffer a closed device is pointed at before its own buffer is freed.
@@ -256,10 +259,10 @@ extension HIDDeviceStream {
   ///
   /// Runs on main, where input callbacks are delivered, so no callback is using the buffer.
   func closeSharedOpen(_ sharedOpen: SharedOpenDevice) {
-    let device = sharedOpen.device
-    let reportBuffer = sharedOpen.reportBuffer
+    let device = unsafe sharedOpen.device
+    let reportBuffer = unsafe sharedOpen.reportBuffer
     // A later delivery on the same device object must not write into the freed buffer.
-    IOHIDDeviceRegisterInputReportCallback(
+    unsafe IOHIDDeviceRegisterInputReportCallback(
       device,
       Self.detachedReportBuffer,
       1,
@@ -268,14 +271,15 @@ extension HIDDeviceStream {
     )
     IOHIDDeviceRegisterInputValueCallback(device, nil, nil)
     IOHIDDeviceClose(device, IOOptionBits(kIOHIDOptionsTypeNone))
-    reportBuffer.deallocate()
+    unsafe reportBuffer.deallocate()
   }
 
   /// Returns the IORegistry entry ID of `device`, or nil when it has no service.
   private func registryEntryID(for device: IOHIDDevice) -> UInt64? {
     let service = IOHIDDeviceGetService(device)
     var entryID: UInt64 = 0
-    guard service != 0, IORegistryEntryGetRegistryEntryID(service, &entryID) == KERN_SUCCESS else {
+    guard service != 0, unsafe IORegistryEntryGetRegistryEntryID(service, &entryID) == KERN_SUCCESS
+    else {
       return nil
     }
     return entryID
@@ -284,9 +288,9 @@ extension HIDDeviceStream {
   /// Yields a `.disconnected` event when IOKit reports a device removal.
   func handleDeviceRemoved(_ device: IOHIDDevice) {
     let deviceID = trackingID(for: device)
-    let (connection, sharedOpen) = seizeLock.withLock {
+    let (connection, sharedOpen) = unsafe seizeLock.withLock {
       let connection = connectionsByDeviceID.removeValue(forKey: deviceID)
-      let sharedOpen = sharedOpenByDeviceID.removeValue(forKey: deviceID)
+      let sharedOpen = unsafe sharedOpenByDeviceID.removeValue(forKey: deviceID)
       for locationID in Array(releasedByLocation.keys) {
         releasedByLocation[locationID]?.removeAll { CFEqual($0, device) }
         if releasedByLocation[locationID]?.isEmpty == true {
@@ -306,9 +310,9 @@ extension HIDDeviceStream {
           seizedByLocation[locationID] = devices
         }
       }
-      return (connection, sharedOpen)
+      return unsafe (connection, sharedOpen)
     }
-    if let sharedOpen { closeSharedOpen(sharedOpen) }
+    if let opened = unsafe sharedOpen { unsafe closeSharedOpen(opened) }
     let removal = eventAdapter.remove(deviceID: deviceID)
     guard removal.wasTracked else { return }
     guard let connection else {
@@ -337,7 +341,7 @@ extension HIDDeviceStream {
     guard eventAdapter.acceptsInput(deviceID: deviceID),
       let connection = seizeLock.withLock({ connectionsByDeviceID[deviceID] })
     else { return }
-    let bytes = Self.framedInputReport(
+    let bytes = unsafe Self.framedInputReport(
       reportID: reportID,
       bytes: [UInt8](UnsafeBufferPointer(start: report, count: reportLength))
     )
@@ -384,7 +388,7 @@ extension HIDDeviceStream {
 
   /// Returns the ID that identifies `device` while the stream tracks it.
   func trackingID(for device: IOHIDDevice) -> UInt64 {
-    UInt64(UInt(bitPattern: Unmanaged.passUnretained(device).toOpaque()))
+    unsafe UInt64(UInt(bitPattern: Unmanaged.passUnretained(device).toOpaque()))
   }
 }
 

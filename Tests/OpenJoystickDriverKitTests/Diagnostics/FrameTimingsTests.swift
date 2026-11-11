@@ -10,7 +10,7 @@ private final class StickParser: PhysicalProtocolDriver {
   let defaultColor: ControllerColor? = nil
   func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
-  func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     ControllerEvent(data.first == 1 ? [.rightStick(x: 1, y: 0)] : [], at: receivedAt.nanoseconds)
   }
 }
@@ -35,7 +35,7 @@ final class PublishingDispatcher: OutputDispatcher, @unchecked Sendable {
   func dispatchPublishing(
     _: ControllerEvent,
     from _: LogicalControllerID,
-    onPublished: @escaping @Sendable () -> Void
+    onPublished: @Sendable () -> Void
   ) throws {
     switch outcome {
     case .publishes: onPublished()

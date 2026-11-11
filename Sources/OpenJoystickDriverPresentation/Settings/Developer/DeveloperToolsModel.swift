@@ -1,5 +1,6 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
+  import Combine
   import AppKit
   import Foundation
   import OpenJoystickDriverKit
@@ -133,7 +134,7 @@
     /// when none is selected.
     var defaultExportFilename: String {
       let identity =
-        selectedDevice.map { String(format: "%04X-%04X", $0.vendorID, $0.productID) }
+        selectedDevice.map { unsafe String(format: "%04X-%04X", $0.vendorID, $0.productID) }
         ?? "controller"
       return "OpenJoystickDriver-packets-\(identity).json"
     }
@@ -263,7 +264,7 @@
       panel.canCreateDirectories = true
       panel.begin { [weak self] response in
         guard response == .OK, let url = panel.url, let self else { return }
-        self.writePacketCapture(to: url)
+        writePacketCapture(to: url)
       }
     }
 
@@ -304,7 +305,7 @@
         withPad: " ",
         startingAt: 0
       )
-      return String(
+      return unsafe String(
         format: "+%7.3fs  %@  %5d  %@",
         packet.timestamp - firstTimestamp,
         direction,
@@ -372,9 +373,9 @@
       predecessor?.cancel()
       let task = Task { [weak self, predecessor] in
         if let predecessor { await predecessor.value }
-        guard let self, self.operationIsCurrent(generation) else { return }
+        guard let self, operationIsCurrent(generation) else { return }
         await operation(self, generation)
-        if self.operationGeneration == generation { self.operationTask = nil }
+        if operationGeneration == generation { operationTask = nil }
       }
       operationTask = task
       return task

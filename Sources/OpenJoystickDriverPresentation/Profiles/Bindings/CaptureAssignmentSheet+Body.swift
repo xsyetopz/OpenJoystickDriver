@@ -310,7 +310,7 @@
 
     /// Announces `message` to VoiceOver.
     private func announce(_ message: String) {
-      NSAccessibility.post(
+      unsafe NSAccessibility.post(
         element: NSApp as Any,
         notification: .announcementRequested,
         userInfo: [.announcement: message, .priority: NSAccessibilityPriorityLevel.high]

@@ -402,7 +402,11 @@ enum LocalizationCatalogAudit {
 
   private static func stringsDictionary(for localization: String) -> [String: Any] {
     guard let data = resourceData(for: localization, extension: "stringsdict"),
-      let value = try? PropertyListSerialization.propertyList(from: data, format: nil),
+      let value = try? unsafe PropertyListSerialization.propertyList(
+        from: data,
+        options: 0,
+        format: nil
+      ),
       let dictionary = value as? [String: Any]
     else { return [:] }
     return dictionary
@@ -414,7 +418,7 @@ enum LocalizationCatalogAudit {
     guard let expression = try? NSRegularExpression(pattern: pattern) else { return [:] }
     let range = NSRange(text.startIndex..<text.endIndex, in: text)
     var result: [String: String] = [:]
-    expression.enumerateMatches(in: text, range: range) { match, _, _ in
+    unsafe expression.enumerateMatches(in: text, range: range) { match, _, _ in
       guard let match, let keyRange = Range(match.range(at: 1), in: text),
         let valueRange = Range(match.range(at: 2), in: text)
       else { return }

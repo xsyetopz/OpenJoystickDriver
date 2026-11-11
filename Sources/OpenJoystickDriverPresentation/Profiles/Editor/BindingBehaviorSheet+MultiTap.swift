@@ -29,7 +29,7 @@
           Text(
             OJDLocalized.formatted(
               "ui.profiles.tapDelay",
-              String(format: "%.0f ms", multiTapEntries.longestWindowMs)
+              unsafe String(format: "%.0f ms", multiTapEntries.longestWindowMs)
             )
           ).foregroundColor(Color(NSColor.secondaryLabelColor))
         }

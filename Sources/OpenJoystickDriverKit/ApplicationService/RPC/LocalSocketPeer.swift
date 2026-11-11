@@ -1,4 +1,4 @@
-import Darwin
+public import Darwin
 import Foundation
 
 /// The process on the other end of a local socket, identified by its audit token.
@@ -15,15 +15,17 @@ public struct LocalSocketPeer: Sendable {
   public static func authenticated(_ descriptor: Int32) -> Self? {
     var userID: uid_t = 0
     var groupID: gid_t = 0
-    guard getpeereid(descriptor, &userID, &groupID) == 0, userID == geteuid() else { return nil }
+    guard unsafe getpeereid(descriptor, &userID, &groupID) == 0, userID == geteuid() else {
+      return nil
+    }
     var token = audit_token_t()
     var size = socklen_t(MemoryLayout<audit_token_t>.size)
-    guard getsockopt(descriptor, SOL_LOCAL, LOCAL_PEERTOKEN, &token, &size) == 0,
+    guard unsafe getsockopt(descriptor, SOL_LOCAL, LOCAL_PEERTOKEN, &token, &size) == 0,
       size == socklen_t(MemoryLayout<audit_token_t>.size)
     else { return nil }
     // `audit_token_to_pid` reads the same field; libbsm is not linked.
-    let processIdentifier = pid_t(bitPattern: token.val.5)
-    guard processIdentifier > 0 else { return nil }
-    return Self(processIdentifier: processIdentifier, auditToken: token)
+    let pid = pid_t(bitPattern: token.val.5)
+    guard pid > 0 else { return nil }
+    return Self(processIdentifier: pid, auditToken: token)
   }
 }

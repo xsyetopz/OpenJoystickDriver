@@ -267,7 +267,7 @@ struct ControllerClaimCommandTests {
     in directory: Directory
   ) async throws -> CLIRun {
     let submission:
-      @Sendable (TransportExtensionSubmission.Action) async throws ->
+      @Sendable (TransportExtensionSubmission.Action) async ->
         SystemExtensionSetupRequestResult = { action in
           actions.withLock { $0.append(action) }
           return outcome

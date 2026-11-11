@@ -122,7 +122,7 @@ func rejection(
 
 /// The `vvvv-pppp` catalog record ID of an identity.
 func recordID(_ vendorID: UInt16, _ productID: UInt16) -> String {
-  String(format: "%04x-%04x", vendorID, productID)
+  unsafe String(format: "%04x-%04x", vendorID, productID)
 }
 
 extension DeviceRuntimeProfile {

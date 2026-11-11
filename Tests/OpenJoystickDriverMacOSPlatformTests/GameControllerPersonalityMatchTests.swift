@@ -17,7 +17,8 @@ struct GameControllerPersonalityMatchTests {
   private static func matchesVirtual(_ profile: VirtualDeviceProfile) throws -> Bool {
     let data = try Data(contentsOf: kext)
     let plist = try #require(
-      try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any]
+      try unsafe PropertyListSerialization.propertyList(from: data, options: 0, format: nil)
+        as? [String: Any]
     )
     let personalities = try #require(plist["IOKitPersonalities"] as? [String: [String: Any]])
     // A personality lists one `ProductID` or several in `ProductIDArray`, as macOS 27 does.

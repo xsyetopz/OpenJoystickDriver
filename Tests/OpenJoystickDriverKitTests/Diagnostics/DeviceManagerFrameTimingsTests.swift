@@ -17,8 +17,8 @@ private final class PublishedFrameDispatcher: OutputDispatcher, @unchecked Senda
   func dispatchPublishing(
     _: ControllerEvent,
     from _: LogicalControllerID,
-    onPublished: @escaping @Sendable () -> Void
-  ) throws {
+    onPublished: @Sendable () -> Void
+  ) {
     onPublished()
   }
 }

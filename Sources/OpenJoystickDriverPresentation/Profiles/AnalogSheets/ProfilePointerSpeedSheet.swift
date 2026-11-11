@@ -85,7 +85,7 @@
     private var liveScale: String? {
       guard let state, let speed = try? draft.validatedSpeed(decimalSeparator: separator)
       else { return nil }
-      return String(format: "%.2f", speed.scale(for: state))
+      return unsafe String(format: "%.2f", speed.scale(for: state))
     }
 
     /// The decimal separator the person types.

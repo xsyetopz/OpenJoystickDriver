@@ -39,7 +39,7 @@ struct MaskImageTests {
     }
     let provider = try #require(CGDataProvider(data: Data(bytes) as CFData))
     let space = try #require(CGColorSpace(name: CGColorSpace.sRGB))
-    let image = try #require(
+    let image = try unsafe #require(
       CGImage(
         width: width,
         height: height,
@@ -70,7 +70,7 @@ struct MaskImageTests {
     var bytes = [UInt8](repeating: 0, count: width * height * 4)
     let space = try #require(CGColorSpace(name: CGColorSpace.sRGB))
     try bytes.withUnsafeMutableBytes { buffer in
-      let context = try #require(
+      let context = try unsafe #require(
         CGContext(
           data: buffer.baseAddress,
           width: width,

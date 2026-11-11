@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// One canonical frame on the streaming boundary.
 ///
@@ -150,8 +150,8 @@ extension OutputSink {
   /// - Throws: ``StreamBoundaryError/unsupported(_:)``.
   @preconcurrency
   public func consume(
-    _ frame: StreamFrame,
-    onDelivered: @escaping @Sendable () -> Void
+    _: StreamFrame,
+    onDelivered _: @Sendable () -> Void
   ) async throws {
     throw StreamBoundaryError.unsupported(destination)
   }
@@ -160,8 +160,8 @@ extension OutputSink {
   ///
   /// - Throws: ``StreamBoundaryError/unsupported(_:)``.
   public func consume(
-    _ command: ControllerOutputCommand,
-    for controller: LogicalControllerID
+    _: ControllerOutputCommand,
+    for _: LogicalControllerID
   )
     async throws
   {
@@ -171,8 +171,7 @@ extension OutputSink {
   /// Refuses the claim, because the sink consumes no mapping claim.
   ///
   /// - Throws: ``StreamBoundaryError/unsupported(_:)``.
-  public func consume(_ claim: MappingOutputClaim, for controller: LogicalControllerID) async throws
-  {
+  public func consume(_: MappingOutputClaim, for _: LogicalControllerID) async throws {
     throw StreamBoundaryError.unsupported(destination)
   }
 
@@ -180,8 +179,8 @@ extension OutputSink {
   ///
   /// - Throws: ``StreamBoundaryError/unsupported(_:)``.
   public func consume(
-    _ release: MappingOutputRelease,
-    for controller: LogicalControllerID
+    _: MappingOutputRelease,
+    for _: LogicalControllerID
   ) async throws {
     throw StreamBoundaryError.unsupported(destination)
   }
@@ -190,8 +189,8 @@ extension OutputSink {
   ///
   /// - Throws: ``StreamBoundaryError/unsupported(_:)``.
   public func consume(
-    _ color: ProfileColorClaim,
-    for controller: LogicalControllerID
+    _: ProfileColorClaim,
+    for _: LogicalControllerID
   ) async throws {
     throw StreamBoundaryError.unsupported(destination)
   }

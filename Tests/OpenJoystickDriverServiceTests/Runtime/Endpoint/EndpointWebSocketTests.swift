@@ -737,17 +737,18 @@ struct EndpointWebSocketTests {
   /// An IPv4 address of this Mac that is not loopback, if it has one.
   private static func nonLoopbackAddress() -> String? {
     var list: UnsafeMutablePointer<ifaddrs>?
-    guard getifaddrs(&list) == 0, let first = list else { return nil }
-    defer { freeifaddrs(list) }
-    for entry in sequence(first: first, next: { $0.pointee.ifa_next }) {
-      guard let address = entry.pointee.ifa_addr, address.pointee.sa_family == sa_family_t(AF_INET),
-        entry.pointee.ifa_flags & UInt32(IFF_LOOPBACK) == 0
+    guard unsafe getifaddrs(&list) == 0, let first = unsafe list else { return nil }
+    defer { unsafe freeifaddrs(list) }
+    for unsafe entry in unsafe sequence(first: first, next: { unsafe $0.pointee.ifa_next }) {
+      guard let address = unsafe entry.pointee.ifa_addr,
+        unsafe address.pointee.sa_family == sa_family_t(AF_INET),
+        unsafe entry.pointee.ifa_flags & UInt32(IFF_LOOPBACK) == 0
       else { continue }
       var text = [CChar](repeating: 0, count: Int(INET_ADDRSTRLEN))
-      var ipv4 = address.withMemoryRebound(to: sockaddr_in.self, capacity: 1) {
-        $0.pointee.sin_addr
+      var ipv4 = unsafe address.withMemoryRebound(to: sockaddr_in.self, capacity: 1) {
+        unsafe $0.pointee.sin_addr
       }
-      inet_ntop(AF_INET, &ipv4, &text, socklen_t(text.count))
+      unsafe inet_ntop(AF_INET, &ipv4, &text, socklen_t(text.count))
       return String(bytes: text.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }, encoding: .utf8)
     }
     return nil

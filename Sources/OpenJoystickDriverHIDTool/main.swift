@@ -14,7 +14,7 @@ do {
   }
   parsedArguments = parsed
 } catch {
-  fputs("ERROR: \(error)\n", stderr)
+  unsafe fputs("ERROR: \(error)\n", unsafe stderr)
   printUsageAndExit(2)
 }
 
@@ -78,7 +78,7 @@ func runRawUSBMonitor() {
           + " pid=0x\(String(productID, radix: 16)) length=\(length) seconds=\(seconds)"
       )
       guard let device = matches.first else {
-        fputs("ERROR: no matching raw USB service found\n", stderr)
+        unsafe fputs("ERROR: no matching raw USB service found\n", stderr)
         exitCode.withLock { $0 = 2 }
         return
       }
@@ -100,7 +100,7 @@ func runRawUSBMonitor() {
               "USB_REPORT endpoint=0x\(String(endpoint, radix: 16))"
                 + " len=\(bytes.count) bytes=\(bytes.hexBytes)"
             )
-            fflush(stdout)
+            unsafe fflush(stdout)
           } catch USBTransportError.timeout { continue } catch {
             if explicitEndpoint == nil { disabledEndpoints.insert(endpoint) }
             print(
@@ -115,7 +115,7 @@ func runRawUSBMonitor() {
       print("USB_SUMMARY packets=\(packets) disabled_endpoints=\(disabledEndpoints.count)")
       exitCode.withLock { $0 = packets > 0 ? 0 : 3 }
     } catch {
-      fputs("ERROR: raw USB monitor failed: \(error)\n", stderr)
+      unsafe fputs("ERROR: raw USB monitor failed: \(error)\n", unsafe stderr)
       exitCode.withLock { $0 = 1 }
     }
   }
@@ -143,7 +143,7 @@ if monitor {
   final class MonitorCounter {
     private let counts = Locked((values: 0, reports: 0))
 
-    func value(_ device: IOHIDDevice, _ value: IOHIDValue) {
+    func value(_: IOHIDDevice, _ value: IOHIDValue) {
       let element = IOHIDValueGetElement(value)
       let page = IOHIDElementGetUsagePage(element)
       let usage = IOHIDElementGetUsage(element)
@@ -153,7 +153,7 @@ if monitor {
         "VALUE page=0x\(String(page, radix: 16))"
           + " usage=0x\(String(usage, radix: 16)) value=\(intValue)"
       )
-      fflush(stdout)
+      unsafe fflush(stdout)
     }
 
     func report(
@@ -164,18 +164,18 @@ if monitor {
     ) {
       counts.withLock { $0.reports += 1 }
       print(
-        "REPORT type=\(type.rawValue) id=\(reportID) len=\(reportLength)"
+        unsafe "REPORT type=\(type.rawValue) id=\(reportID) len=\(reportLength)"
           + " bytes=\(hexString(report, count: reportLength))"
       )
-      fflush(stdout)
+      unsafe fflush(stdout)
     }
 
     func snapshot() -> (Int, Int) { counts.withLock { ($0.values, $0.reports) } }
   }
 
   let counter = MonitorCounter()
-  let counterPtr = Unmanaged.passRetained(counter).toOpaque()
-  defer { Unmanaged<MonitorCounter>.fromOpaque(counterPtr).release() }
+  let counterPtr = unsafe Unmanaged.passRetained(counter).toOpaque()
+  defer { unsafe Unmanaged<MonitorCounter>.fromOpaque(counterPtr).release() }
 
   let mgr = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
   IOHIDManagerSetDeviceMatching(
@@ -185,28 +185,35 @@ if monitor {
     ]) as CFDictionary
   )
 
-  let valueCallback: IOHIDValueCallback = { context, _, sender, value in
-    guard let context, let sender else { return }
-    let counter = Unmanaged<MonitorCounter>.fromOpaque(context).takeUnretainedValue()
-    let device = Unmanaged<IOHIDDevice>.fromOpaque(sender).takeUnretainedValue()
-    counter.value(device, value)
+  let valueCallback: IOHIDValueCallback = { rawContext, _, rawSender, value in
+    guard let context = unsafe rawContext, let sender = unsafe rawSender else { return }
+    let owner = unsafe Unmanaged<MonitorCounter>.fromOpaque(context).takeUnretainedValue()
+    let device = unsafe Unmanaged<IOHIDDevice>.fromOpaque(sender).takeUnretainedValue()
+    owner.value(device, value)
   }
-  IOHIDManagerRegisterInputValueCallback(mgr, valueCallback, counterPtr)
+  unsafe IOHIDManagerRegisterInputValueCallback(mgr, valueCallback, counterPtr)
 
-  let reportCallback: IOHIDReportCallback = { context, _, _, type, reportID, report, reportLength in
-    guard let context else { return }
-    let counter = Unmanaged<MonitorCounter>.fromOpaque(context).takeUnretainedValue()
-    counter.report(type, reportID, report, reportLength)
+  let reportCallback: IOHIDReportCallback = {
+    rawContext,
+    _,
+    _,
+    type,
+    reportID,
+    report,
+    reportLength in
+    guard let context = unsafe rawContext else { return }
+    let owner = unsafe Unmanaged<MonitorCounter>.fromOpaque(context).takeUnretainedValue()
+    unsafe owner.report(type, reportID, report, reportLength)
   }
-  IOHIDManagerRegisterInputReportCallback(mgr, reportCallback, counterPtr)
+  unsafe IOHIDManagerRegisterInputReportCallback(mgr, reportCallback, counterPtr)
   IOHIDManagerScheduleWithRunLoop(mgr, CFRunLoopGetCurrent(), CFRunLoopMode.defaultMode.rawValue)
 
   let openResult = IOHIDManagerOpen(mgr, IOOptionBits(kIOHIDOptionsTypeNone))
   guard openResult == kIOReturnSuccess else {
-    fputs(
+    unsafe fputs(
       "ERROR: IOHIDManagerOpen failed: "
         + "0x\(String(UInt32(bitPattern: openResult), radix: 16))\n",
-      stderr
+      unsafe stderr
     )
     IOHIDManagerClose(mgr, IOOptionBits(kIOHIDOptionsTypeNone))
     exit(1)
@@ -228,17 +235,17 @@ if monitor {
     )
   }
   if devices.isEmpty { printMonitorNoDeviceHint(vid: vid, pid: pid) }
-  fflush(stdout)
+  unsafe fflush(stdout)
 
   let end = Date().addingTimeInterval(TimeInterval(seconds))
   while Date() < end {
     CFRunLoopRunInMode(CFRunLoopMode.defaultMode, 0.05, false)
     for (deviceIndex, dev) in devices.enumerated() {
       for element in elementsByDevice[deviceIndex] {
-        var value = unsafeBitCast(0, to: Unmanaged<IOHIDValue>.self)
-        let result = IOHIDDeviceGetValue(dev, element, &value)
+        var value = unsafe unsafeBitCast(0, to: Unmanaged<IOHIDValue>.self)
+        let result = unsafe IOHIDDeviceGetValue(dev, element, &value)
         guard result == kIOReturnSuccess else { continue }
-        let intValue = IOHIDValueGetIntegerValue(value.takeUnretainedValue())
+        let intValue = unsafe IOHIDValueGetIntegerValue(value.takeUnretainedValue())
         let page = IOHIDElementGetUsagePage(element)
         let usage = IOHIDElementGetUsage(element)
         let cookie = IOHIDElementGetCookie(element)
@@ -249,7 +256,7 @@ if monitor {
             "POLL page=0x\(String(page, radix: 16))"
               + " usage=0x\(String(usage, radix: 16)) value=\(intValue)"
           )
-          fflush(stdout)
+          unsafe fflush(stdout)
         }
       }
     }
@@ -300,12 +307,12 @@ if open {
     if serviceOpen {
       let service = IOHIDDeviceGetService(dev)
       var entryID: UInt64 = 0
-      let idResult = IORegistryEntryGetRegistryEntryID(service, &entryID)
+      let idResult = unsafe IORegistryEntryGetRegistryEntryID(service, &entryID)
       guard idResult == KERN_SUCCESS,
         let recreated = IOHIDDeviceCreate(kCFAllocatorDefault, service)
       else {
         print(
-          "  product=\"\(product)\" transport=\(transport)"
+          unsafe "  product=\"\(product)\" transport=\(transport)"
             + " service-open=create-failed idResult=0x"
             + String(format: "%08x", UInt32(bitPattern: idResult))
         )
@@ -320,7 +327,7 @@ if open {
     let result = IOHIDDeviceOpen(openDevice, IOOptionBits(kIOHIDOptionsTypeNone))
     print(
       "  product=\"\(product)\" transport=\(transport)"
-        + " open=0x\(String(format: "%08x", UInt32(bitPattern: result)))"
+        + " open=0x\(unsafe String(format: "%08x", UInt32(bitPattern: result)))"
     )
     if result != kIOReturnSuccess {
       failures += 1
@@ -330,7 +337,7 @@ if open {
       let report: [UInt8] = [0x00, 0x08, 0x00, 180, 100, 0, 0, 0]
       let setResult = report.withUnsafeBufferPointer { pointer -> IOReturn in
         guard let baseAddress = pointer.baseAddress else { return kIOReturnBadArgument }
-        return IOHIDDeviceSetReport(
+        return unsafe IOHIDDeviceSetReport(
           openDevice,
           kIOHIDReportTypeOutput,
           CFIndex(0),
@@ -338,7 +345,7 @@ if open {
           report.count
         )
       }
-      print("  setReport=0x\(String(format: "%08x", UInt32(bitPattern: setResult)))")
+      print("  setReport=0x\(unsafe String(format: "%08x", UInt32(bitPattern: setResult)))")
       if setResult != kIOReturnSuccess { failures += 1 }
     }
     IOHIDDeviceClose(openDevice, IOOptionBits(kIOHIDOptionsTypeNone))
@@ -348,18 +355,21 @@ if open {
 
 if dump || dumpElements {
   guard let vidS = argValue("--vid"), let pidS = argValue("--pid") else {
-    fputs("ERROR: \(parsedArguments.mode.rawValue) requires --vid and --pid.\n", stderr)
+    unsafe fputs(
+      "ERROR: \(parsedArguments.mode.rawValue) requires --vid and --pid.\n",
+      unsafe stderr
+    )
     printUsageAndExit(2)
   }
   guard let vid = parseInt(vidS), let pid = parseInt(pidS) else {
-    fputs("ERROR: Could not parse --vid/--pid.\n", stderr)
+    unsafe fputs("ERROR: Could not parse --vid/--pid.\n", stderr)
     exit(2)
   }
   let devs = enumerateDevices(matching: [
     kIOHIDVendorIDKey as String: vid, kIOHIDProductIDKey as String: pid,
   ])
   guard let dev = devs.first else {
-    fputs("ERROR: Device not found. Is it connected?\n", stderr)
+    unsafe fputs("ERROR: Device not found. Is it connected?\n", stderr)
     exit(1)
   }
   if dumpElements {
@@ -369,27 +379,27 @@ if dump || dumpElements {
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
     guard let data = try? encoder.encode(listing), let text = String(bytes: data, encoding: .utf8)
     else {
-      fputs("ERROR: Could not encode the elements.\n", stderr)
+      unsafe fputs("ERROR: Could not encode the elements.\n", stderr)
       exit(1)
     }
     print(text)
     exit(0)
   }
   guard let desc = dataProp(dev, kIOHIDReportDescriptorKey as String) else {
-    fputs("ERROR: Device has no report descriptor property.\n", stderr)
+    unsafe fputs("ERROR: Device has no report descriptor property.\n", stderr)
     exit(1)
   }
   let bytes = [UInt8](desc)
   print("Descriptor length: \(bytes.count) bytes")
   print("")
   print("--- Hex ---")
-  print(bytes.map { String(format: "%02X", $0) }.joined(separator: " "))
+  print(bytes.map { unsafe String(format: "%02X", $0) }.joined(separator: " "))
   print("")
   print("--- Swift [UInt8] ---")
   print("let descriptor: [UInt8] = [")
   var line: [String] = []
   for (idx, b) in bytes.enumerated() {
-    line.append(String(format: "0x%02X", b))
+    line.append(unsafe String(format: "0x%02X", b))
     if line.count == 12 || idx == bytes.count - 1 {
       print("  " + line.joined(separator: ", ") + (idx == bytes.count - 1 ? "" : ","))
       line.removeAll(keepingCapacity: true)

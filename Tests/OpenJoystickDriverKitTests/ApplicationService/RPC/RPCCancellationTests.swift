@@ -13,7 +13,7 @@ struct LocalServiceRPCCancellationTests {
     let listener = try silentListener(socketPath: socketPath)
     defer {
       Darwin.close(listener)
-      unlink(socketPath)
+      unsafe unlink(socketPath)
     }
 
     let task = Task {
@@ -32,7 +32,7 @@ struct LocalServiceRPCCancellationTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func cancellingConnectStopsRetryingAndLeavesTheClientDisconnected() async throws {
+  func cancellingConnectStopsRetryingAndLeavesTheClientDisconnected() async {
     let client = ApplicationServiceClient(socketPath: temporarySocketPath())
     // The connect deadline exceeds the test's time limit, so only the cancellation can end it.
     let task = Task { await client.connect(timeoutSeconds: 3600) }
@@ -58,8 +58,8 @@ struct LocalServiceRPCCancellationTests {
     try #require(descriptor >= 0)
     var address = try LocalServiceRPCTransport.socketAddress(path: socketPath)
     let bound = withUnsafePointer(to: &address) {
-      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-        bind(descriptor, $0, LocalServiceRPCTransport.socketAddressLength(path: socketPath))
+      unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+        unsafe bind(descriptor, $0, LocalServiceRPCTransport.socketAddressLength(path: socketPath))
       }
     }
     try #require(bound == 0)

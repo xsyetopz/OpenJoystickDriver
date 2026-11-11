@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Why the persona directory cannot be read.
 public enum VirtualHIDProfileOverrideError: Error, Equatable, Sendable {
@@ -88,7 +88,8 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
     /// The name of the persona file: `vvvv-pppp.plist`, with `-<unit>` before the extension for a
     /// unit.
     var fileName: String {
-      String(format: "%04x-%04x", vendorID, productID) + (unit.map { "-\($0)" } ?? "") + ".plist"
+      unsafe String(format: "%04x-%04x", vendorID, productID) + (unit.map { "-\($0)" } ?? "")
+        + ".plist"
     }
   }
 
@@ -343,7 +344,9 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
         at: directory,
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
-      ).filter { $0.pathExtension == "plist" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+      ).filter { $0.pathExtension == "plist" }.sorted {
+        $0.lastPathComponent < $1.lastPathComponent
+      }
     } catch CocoaError.fileReadNoSuchFile {
       return .success(Loaded())
     } catch { return .failure(.unreadableDirectory(error.localizedDescription)) }

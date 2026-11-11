@@ -1,7 +1,7 @@
 import Foundation
 import IOKit
 import IOUSBHost
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 /// Direct app-side raw USB transport backed by Apple's IOUSBHost framework.
 ///
@@ -43,7 +43,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     defer { IOObjectRelease(service) }
 
     do {
-      let interface = try IOUSBHostInterface(
+      let interface = try unsafe IOUSBHostInterface(
         __ioService: service,
         options: [],
         queue: DispatchQueue(
@@ -87,7 +87,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
 
   /// Returns the `UsbExclusiveOwner` property of `interfaceService`, or nil when it has none.
   static func interfaceExclusiveOwner(of interfaceService: io_service_t) -> String? {
-    IORegistryEntryCreateCFProperty(
+    unsafe IORegistryEntryCreateCFProperty(
       interfaceService,
       exclusiveOwnerKey as CFString,
       kCFAllocatorDefault,
@@ -99,8 +99,10 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
   static let exclusiveOwnerKey = "UsbExclusiveOwner"
 
   /// Maps the open failure `error` of the interface `interfaceService` to a transport error.
-  private static func openError(_ error: Error, interfaceService: io_service_t) -> USBTransportError
-  {
+  private static func openError(
+    _ error: any Error,
+    interfaceService: io_service_t
+  ) -> USBTransportError {
     openError(
       IOReturn(truncatingIfNeeded: (error as NSError).code),
       interfaceOwner: interfaceExclusiveOwner(of: interfaceService),
@@ -137,7 +139,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     guard device.route == .rawUSB else { throw USBTransportError.notSupported }
     let service = try Self.deviceService(for: device)
     defer { IOObjectRelease(service) }
-    return IORegistryEntryCreateCFProperty(
+    return unsafe IORegistryEntryCreateCFProperty(
       service,
       Self.exclusiveOwnerKey as CFString,
       kCFAllocatorDefault,
@@ -155,7 +157,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     let service = try Self.deviceService(for: device)
     defer { IOObjectRelease(service) }
     do {
-      let hostDevice = try IOUSBHostDevice(
+      let hostDevice = try unsafe IOUSBHostDevice(
         __ioService: service,
         options: [],
         queue: nil,
@@ -206,7 +208,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     let service = try deviceService(for: device)
     defer { IOObjectRelease(service) }
     let current =
-      IORegistryEntryCreateCFProperty(
+      unsafe IORegistryEntryCreateCFProperty(
         service,
         "kUSBCurrentConfiguration" as CFString,
         kCFAllocatorDefault,
@@ -214,7 +216,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
       )?.takeRetainedValue() as? UInt64
     guard options.setsConfiguration(current: current.flatMap(UInt8.init(exactly:))) else { return }
     do {
-      let hostDevice = try IOUSBHostDevice(
+      let hostDevice = try unsafe IOUSBHostDevice(
         __ioService: service,
         options: [],
         queue: nil,
@@ -306,7 +308,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     transform: (io_service_t) -> T?
   ) throws -> [T] {
     var iterator: io_iterator_t = 0
-    let result = IOServiceGetMatchingServices(
+    let result = unsafe IOServiceGetMatchingServices(
       kIOMainPortDefault,
       IOServiceMatching(className),
       &iterator
@@ -328,7 +330,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
     matches: (io_service_t) -> Bool
   ) throws -> io_service_t? {
     var iterator: io_iterator_t = 0
-    let result = IOServiceGetMatchingServices(
+    let result = unsafe IOServiceGetMatchingServices(
       kIOMainPortDefault,
       IOServiceMatching(className),
       &iterator
@@ -350,7 +352,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
 
   /// Searches the property `key` on `service` and then on its parents.
   private static func property(_ service: io_service_t, key: String) -> AnyObject? {
-    IORegistryEntrySearchCFProperty(
+    unsafe IORegistryEntrySearchCFProperty(
       service,
       kIOServicePlane,
       key as CFString,
@@ -391,7 +393,8 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
   /// Returns the registry entry ID of `service`, or nil when IOKit refuses it.
   private static func registryEntryID(_ service: io_service_t) -> UInt64? {
     var value: UInt64 = 0
-    return IORegistryEntryGetRegistryEntryID(service, &value) == kIOReturnSuccess ? value : nil
+    return unsafe IORegistryEntryGetRegistryEntryID(service, &value) == kIOReturnSuccess
+      ? value : nil
   }
 
   /// Converts `request` to the IOUSBHost device request.
@@ -415,7 +418,7 @@ public actor IOUSBHostTransportProvider: USBTransportProvider {
   { endpointAttributes & 0x03 == 0x02 ? completionTimeout(milliseconds: milliseconds) : 0 }
 
   /// Maps `error` to a transport error by its IOReturn code.
-  static func transportError(_ error: Error) -> USBTransportError {
+  static func transportError(_ error: any Error) -> USBTransportError {
     let nsError = error as NSError
     return transportError(IOReturn(truncatingIfNeeded: nsError.code))
   }
@@ -533,7 +536,7 @@ private actor IOUSBHostTransportSession: USBTransportSession {
       let buffer = try interface.ioData(withCapacity: length)
       let count = try await transfer(endpoint: endpoint, buffer: buffer, timeout: timeout)
       guard !isClosed else { throw USBTransportError.disconnected }
-      return Array(Data(bytes: buffer.bytes, count: min(count, buffer.length)))
+      return unsafe Array(Data(bytes: buffer.bytes, count: min(count, buffer.length)))
     } catch { throw closeIfDisconnected(error) }
   }
 
@@ -569,7 +572,7 @@ private actor IOUSBHostTransportSession: USBTransportSession {
         throw IOUSBHostTransportProvider.transportError(status)
       }
       guard request.direction == .in, let buffer else { return [] }
-      return Array(Data(bytes: buffer.bytes, count: min(count, buffer.length)))
+      return unsafe Array(Data(bytes: buffer.bytes, count: min(count, buffer.length)))
     } catch { throw closeIfDisconnected(error) }
   }
 
@@ -603,7 +606,7 @@ private actor IOUSBHostTransportSession: USBTransportSession {
   {
     let pipe = try pipe(for: endpoint)
     do {
-      let result = try await pipe.pipe.enqueueIORequest(
+      let result = try await unsafe pipe.pipe.enqueueIORequest(
         with: buffer,
         completionTimeout: IOUSBHostTransportProvider.pipeCompletionTimeout(
           endpointAttributes: pipe.pipe.descriptors.pointee.descriptor.bmAttributes,
@@ -623,12 +626,12 @@ private actor IOUSBHostTransportSession: USBTransportSession {
   private static func copy(_ data: [UInt8], into buffer: NSMutableData) {
     data.withUnsafeBytes { source in
       guard let baseAddress = source.baseAddress else { return }
-      buffer.mutableBytes.copyMemory(from: baseAddress, byteCount: source.count)
+      unsafe buffer.mutableBytes.copyMemory(from: baseAddress, byteCount: source.count)
     }
   }
 
   /// Maps `error` to a transport error and closes the session when it means a disconnect.
-  private func closeIfDisconnected(_ error: Error) -> USBTransportError {
+  private func closeIfDisconnected(_ error: any Error) -> USBTransportError {
     let transportError =
       error as? USBTransportError ?? IOUSBHostTransportProvider.transportError(error)
     if transportError.isDisconnected { close() }

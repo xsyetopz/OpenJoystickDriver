@@ -33,7 +33,7 @@ struct GIPStartupPacketBytesTests {
 
   private func hex(_ write: PhysicalOutputWrite) -> String {
     guard case .usb(let packet, _) = write else { return "other" }
-    return "\(packet.endpoint):" + packet.bytes.map { String(format: "%02x", $0) }.joined()
+    return "\(packet.endpoint):" + packet.bytes.map { unsafe String(format: "%02x", $0) }.joined()
   }
 
   private func startup(_ identifiers: [String]) -> [String] {

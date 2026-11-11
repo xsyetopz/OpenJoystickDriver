@@ -55,7 +55,7 @@ struct StatusItemMenuTests {
     #expect(menu.map(\.id) == ["controller.a", "openWindow", "settings", "quit"])
     #expect(menu[1].title == .key("ui.extra.openWindow"))
     #expect(
-      String(
+      unsafe String(
         format: OJDLocalized.string("ui.extra.openWindow"),
         OJDLocalized.string("term.app.name")
       ) == "Open OpenJoystickDriver"
@@ -82,7 +82,12 @@ struct StatusItemMenuTests {
     let racing = Self.profile("Racing", active: true)
     let menu = Self.rows(
       Self.entries([
-        Self.controller("a", name: "Pad", battery: "80%", profiles: [racing, Self.profile("Menu")]),
+        Self.controller(
+          "a",
+          name: "Pad",
+          battery: "80%",
+          profiles: [racing, Self.profile("Menu")]
+        ),
         Self.controller("b", name: "Stick", isPaused: true),
       ])
     )
@@ -93,7 +98,11 @@ struct StatusItemMenuTests {
 
   @Test
   func controllerRowNamesTheProfileInForceAndTheAppThatSelectedIt() {
-    var selected = Self.controller("a", battery: "80%", profiles: [Self.profile("Menu", active: true)])
+    var selected = Self.controller(
+      "a",
+      battery: "80%",
+      profiles: [Self.profile("Menu", active: true)]
+    )
     selected.profileInForce = "Racing"
     selected.profileSelectedBy = "Racer"
     var everywhere = Self.controller("b")
@@ -213,9 +222,15 @@ struct StatusItemMenuTests {
     func all(_ entries: [StatusItemEntry]) -> [StatusItemEntry] {
       entries.flatMap { [$0] + all($0.submenu ?? []) }
     }
-    let menu = all(Self.entries([Self.controller("a", isWireless: true)], problems: [.missingPermission(.inputRead), .serviceNotRunning]))
+    let menu = all(
+      Self.entries(
+        [Self.controller("a", isWireless: true)],
+        problems: [.missingPermission(.inputRead), .serviceNotRunning]
+      )
+    )
     let allowed: Set<String> = [
-      "ui.extra.problemServiceNotRunning", "ui.extra.openWindow", "ui.menu.app.settings", "ui.menu.app.quit",
+      "ui.extra.problemServiceNotRunning", "ui.extra.openWindow", "ui.menu.app.settings",
+      "ui.menu.app.quit",
       "ui.extra.resume", "ui.extra.pause", "ui.extra.disconnectWireless", "ui.extra.testInput",
       "ui.extra.showInWindow", "ui.extra.noProfile", "ui.extra.moreProfiles",
       "ui.controllers.paused.value", MainMenuModel.noControllerTitleKey,

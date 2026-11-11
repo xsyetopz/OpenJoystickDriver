@@ -1,6 +1,6 @@
 import Darwin
 import Foundation
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 import OpenJoystickDriverMacOSPlatform
 import OpenJoystickDriverUSB
 
@@ -37,7 +37,7 @@ package final class ApplicationServiceRuntime {
   /// Whether ``start()`` ran and ``stop()`` has not.
   private var started = false
   /// The signal sources of SIGTERM and SIGINT.
-  private var shutdownSignalSources: [DispatchSourceSignal] = []
+  private var shutdownSignalSources: [any DispatchSourceSignal] = []
   /// The handler that runs on a shutdown signal instead of stopping and exiting.
   private var shutdownSignalHandler: (@MainActor @Sendable () -> Void)?
 
@@ -47,10 +47,10 @@ package final class ApplicationServiceRuntime {
   package init() throws {
     StoredDocumentMigration.run { print($0) }
     let installationKey = try PortKeyInstallationStore(directory: MacOSDataDirectory()).load()
-    let permissionManager = PermissionManager(system: MacOSAccessControlSystem())
-    let dispatcher = VirtualOutputRouter()
+    self.permissionManager = PermissionManager(system: MacOSAccessControlSystem())
+    self.dispatcher = VirtualOutputRouter()
     let speechOutput = AVSpeechOutput()
-    let remappingProfileLibrary = RemappingProfileLibrary(speechOutput: speechOutput)
+    self.remappingProfileLibrary = RemappingProfileLibrary(speechOutput: speechOutput)
     let postEventAccess = CoreGraphicsPostEventAccess()
     let physicalOutputBridge = RemappingPhysicalOutputBridge()
     let profileSwitchBridge = RemappingProfileSwitchBridge(library: remappingProfileLibrary)
@@ -64,7 +64,7 @@ package final class ApplicationServiceRuntime {
       speechOutput: speechOutput,
       midiOutput: CoreMIDIOutput()
     )
-    let remappingRouter = RemappingOutputRouter(
+    self.remappingRouter = RemappingOutputRouter(
       library: remappingProfileLibrary,
       engine: remappingEngine,
       virtualOutput: dispatcher,
@@ -73,7 +73,7 @@ package final class ApplicationServiceRuntime {
       installationKey: installationKey
     )
     let bluetoothLEHub = Switch2BluetoothLEHub()
-    let manager = DeviceManager(
+    self.manager = DeviceManager(
       dispatcher: remappingRouter,
       installationKey: installationKey,
       usbTransportProvider: OpenJoystickDriverUSBTransportProvider(),
@@ -84,7 +84,7 @@ package final class ApplicationServiceRuntime {
     )
     bluetoothLECentral = Switch2BluetoothLECentral(hub: bluetoothLEHub)
     physicalOutputBridge.attach(manager)
-    let applicationServiceServer = ApplicationServiceServer(
+    self.applicationServiceServer = ApplicationServiceServer(
       deviceManager: manager,
       permissionManager: permissionManager,
       dispatcher: dispatcher,
@@ -96,12 +96,6 @@ package final class ApplicationServiceRuntime {
     )
 
     profileSwitchBridge.attach(applicationServiceServer)
-    self.permissionManager = permissionManager
-    self.dispatcher = dispatcher
-    self.remappingRouter = remappingRouter
-    self.manager = manager
-    self.applicationServiceServer = applicationServiceServer
-    self.remappingProfileLibrary = remappingProfileLibrary
   }
 
   /// Whether the request listener runs, and how to start it again; the app shows its failure.
@@ -119,7 +113,7 @@ package final class ApplicationServiceRuntime {
     guard !started else { return }
     started = true
 
-    setbuf(stdout, nil)
+    unsafe setbuf(stdout, nil)
     serviceLog("[Service] Starting main-app service runtime")
     setupGracefulShutdown()
     do { try applicationServiceServer.start() } catch {
@@ -127,28 +121,28 @@ package final class ApplicationServiceRuntime {
       started = false
       throw error
     }
-    let manager = manager
+    let deviceManager = manager
     // Records apply before detection starts, so the first admission already uses them.
-    let controllerRecordWatcher = ControllerRecordWatcher { changed in
-      Task { await manager.reloadControllerRecords(changing: changed) }
+    let recordWatcher = ControllerRecordWatcher { changed in
+      Task { await deviceManager.reloadControllerRecords(changing: changed) }
     }
-    self.controllerRecordWatcher = controllerRecordWatcher
-    controllerRecordWatcher.start()
+    self.controllerRecordWatcher = recordWatcher
+    recordWatcher.start()
     startProfileWatcher()
     startPersonaWatcher()
-    let systemPowerEventSession = DeviceManagerSystemPowerEventSession()
-    self.systemPowerEventSession = systemPowerEventSession
-    let systemPowerObserver = SystemPowerNotificationObserver { event in
-      await deliverSystemPowerEvent(event, to: manager, session: systemPowerEventSession)
+    let powerSession = DeviceManagerSystemPowerEventSession()
+    self.systemPowerEventSession = powerSession
+    let powerObserver = SystemPowerNotificationObserver { event in
+      await deliverSystemPowerEvent(event, to: deviceManager, session: powerSession)
     }
-    self.systemPowerObserver = systemPowerObserver
-    systemPowerObserver.start()
+    self.systemPowerObserver = powerObserver
+    powerObserver.start()
     Task { await permissionManager.startPolling() }
     remappingRouter.startTicker()
-    let bluetoothLECentral = bluetoothLECentral
+    let central = bluetoothLECentral
     Task {
-      await manager.start()
-      bluetoothLECentral.start()
+      await deviceManager.start()
+      central.start()
       _ = await applicationServiceServer.activateVirtualOutputBackendForCurrentDevices()
     }
   }
@@ -174,14 +168,14 @@ package final class ApplicationServiceRuntime {
     profileWatcher = nil
     personaWatcher?.stop()
     personaWatcher = nil
-    let systemPowerObserver = systemPowerObserver
+    let observer = systemPowerObserver
     self.systemPowerObserver = nil
-    let systemPowerEventSession = systemPowerEventSession
+    let session = systemPowerEventSession
     self.systemPowerEventSession = nil
-    systemPowerEventSession?.invalidate()
+    session?.invalidate()
     bluetoothLECentral.stop()
-    if let systemPowerObserver {
-      async let observerStop: Void = systemPowerObserver.stop()
+    if let observer {
+      async let observerStop: Void = observer.stop()
       await applicationServiceServer.stop()
       await manager.stop()
       await observerStop
@@ -205,13 +199,13 @@ package final class ApplicationServiceRuntime {
         serviceError("[Profiles] Cannot create \(directory.path): \(error.localizedDescription)")
       }
     }
-    let applicationServiceServer = applicationServiceServer
-    let profileWatcher = FileChangeWatcher(
+    let server = applicationServiceServer
+    let watcher = FileChangeWatcher(
       directories: targets.directories,
       watchesFile: targets.watchesFile
-    ) { Task { await applicationServiceServer.reloadRemappingProfiles() } }
-    self.profileWatcher = profileWatcher
-    profileWatcher.start()
+    ) { Task { await server.reloadRemappingProfiles() } }
+    self.profileWatcher = watcher
+    watcher.start()
   }
 
   /// What the profile watcher watches: the library folder for its selections file, `Profiles/`
@@ -239,7 +233,7 @@ package final class ApplicationServiceRuntime {
   /// The service creates the VirtualDevices and package folders, which are absent until first use;
   /// a folder removed later is watched once it exists again.
   private func startPersonaWatcher() {
-    let applicationServiceServer = applicationServiceServer
+    let server = applicationServiceServer
     let packages = ModPackageStore.rootDirectory
     for folder in [VirtualHIDProfileOverrideStore.userDirectory, packages] {
       do {
@@ -248,23 +242,23 @@ package final class ApplicationServiceRuntime {
         serviceError("[VirtualDevices] Cannot create \(folder.path): \(error.localizedDescription)")
       }
     }
-    let personaWatcher = FileChangeWatcher(
+    let watcher = FileChangeWatcher(
       directories: [VirtualHIDProfileOverrideStore.userDirectory, packages],
       watchesFile: {
         $0.pathExtension == "plist"
           || $0.deletingLastPathComponent().standardizedFileURL == packages.standardizedFileURL
       },
-      onChange: { Task { await applicationServiceServer.reloadPersonas() } }
+      onChange: { Task { await server.reloadPersonas() } }
     )
-    self.personaWatcher = personaWatcher
-    personaWatcher.start()
+    self.personaWatcher = watcher
+    watcher.start()
   }
 
   /// Prints `message`.
   private func serviceLog(_ message: String) { print(message) }
 
   /// Prints `message` to standard error.
-  private func serviceError(_ message: String) { fputs("\(message)\n", stderr) }
+  private func serviceError(_ message: String) { unsafe fputs("\(message)\n", unsafe stderr) }
 
   /// Installs the handlers of SIGTERM and SIGINT.
   private func setupGracefulShutdown() {

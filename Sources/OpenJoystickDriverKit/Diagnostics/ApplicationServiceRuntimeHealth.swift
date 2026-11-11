@@ -1,5 +1,5 @@
 import Darwin
-import Foundation
+public import Foundation
 
 /// The nanoseconds in one second.
 private let runtimeHealthNanosecondsPerSecond: Double = 1_000_000_000
@@ -468,7 +468,7 @@ public enum ApplicationServiceRuntimeHealthSampler {
   ) {
     var usage = rusage_info_v2()
     let usageResult = withUnsafeMutableBytes(of: &usage) { bytes in
-      proc_pid_rusage(
+      unsafe proc_pid_rusage(
         processID,
         RUSAGE_INFO_V2,
         bytes.baseAddress?.assumingMemoryBound(to: Optional<UnsafeMutableRawPointer>.self)
@@ -478,7 +478,13 @@ public enum ApplicationServiceRuntimeHealthSampler {
 
     var taskInfo = proc_taskinfo()
     let taskResult = withUnsafeMutablePointer(to: &taskInfo) {
-      proc_pidinfo(processID, PROC_PIDTASKINFO, 0, $0, Int32(MemoryLayout<proc_taskinfo>.size))
+      unsafe proc_pidinfo(
+        processID,
+        PROC_PIDTASKINFO,
+        0,
+        $0,
+        Int32(MemoryLayout<proc_taskinfo>.size)
+      )
     }
     guard taskResult == Int32(MemoryLayout<proc_taskinfo>.size) else {
       throw RuntimeHealthSamplingError.processUnavailable(processID)

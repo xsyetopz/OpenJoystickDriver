@@ -100,10 +100,10 @@
         showsAlways || !openWindows.isEmpty ? .regular : .accessory
       guard desiredPolicy != appliedPolicy else { return }
       guard setActivationPolicy(desiredPolicy) else {
-        fputs(
+        unsafe fputs(
           "macOS refused the Dock icon change to \(desiredPolicy); "
             + "the next window or setting change retries it.\n",
-          stderr
+          unsafe stderr
         )
         return
       }
@@ -123,16 +123,16 @@
       guard activation.isActive() else { return }
       stopHandOff = activation.observeResignActive { [weak self] in
         guard let self else { return }
-        self.endHandOff()
-        self.activation.activateApp()
+        endHandOff()
+        activation.activateApp()
       }
       let outcome = activation.activateDock()
       guard outcome != .requested else { return }
       endHandOff()
-      fputs(
+      unsafe fputs(
         "\(outcome == .notRunning ? "The Dock is not running" : "The Dock refused activation"); "
           + "the menu bar menus open after the app is activated again.\n",
-        stderr
+        unsafe stderr
       )
     }
 

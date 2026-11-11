@@ -307,5 +307,5 @@ struct StatusReport: Encodable, Equatable {
 /// Returns `VVVV:PPPP`, the hex identity that `ojd` prints and accepts for a USB or Bluetooth
 /// device.
 func deviceIdentity(vendorID: Int, productID: Int) -> String {
-  String(format: "%04X:%04X", vendorID, productID)
+  unsafe String(format: "%04X:%04X", vendorID, productID)
 }

@@ -1,5 +1,5 @@
 import Foundation
-import IOKit
+package import IOKit
 import IOKit.hid
 import OpenJoystickDriverKit
 
@@ -24,7 +24,7 @@ extension AppleGameControllerSyntheticHID {
     guard service != 0 else { return false }
     var className = [CChar](repeating: 0, count: 128)
     let resolvedClass: String?
-    if IOObjectGetClass(service, &className) == kIOReturnSuccess {
+    if unsafe IOObjectGetClass(service, &className) == kIOReturnSuccess {
       let bytes = className.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }
       resolvedClass = String(bytes: bytes, encoding: .utf8)
     } else {
@@ -50,7 +50,7 @@ extension AppleGameControllerSyntheticHID {
 
   /// Reads the IORegistry property `key` of `service`.
   private static func cfProperty(_ service: io_service_t, _ key: String) -> Any? {
-    IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?
+    unsafe IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?
       .takeRetainedValue()
   }
 

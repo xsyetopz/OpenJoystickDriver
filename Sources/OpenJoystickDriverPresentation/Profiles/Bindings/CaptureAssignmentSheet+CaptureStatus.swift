@@ -62,7 +62,7 @@
       case .error(_, let detail):
         message = OJDLocalized.formatted("ui.capture.error", detail)
       }
-      NSAccessibility.post(
+      unsafe NSAccessibility.post(
         element: NSApp as Any,
         notification: .announcementRequested,
         userInfo: [.announcement: message, .priority: NSAccessibilityPriorityLevel.high]

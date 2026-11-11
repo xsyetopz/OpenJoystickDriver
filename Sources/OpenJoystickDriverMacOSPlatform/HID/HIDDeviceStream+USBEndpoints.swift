@@ -15,9 +15,9 @@ extension HIDDeviceStream {
   static func retainedUSBInterfaceEntry(for device: IOHIDDevice) -> io_registry_entry_t? {
     var entry = IOHIDDeviceGetService(device)
     guard entry != 0, IOObjectRetain(entry) == KERN_SUCCESS else { return nil }
-    while IOObjectConformsTo(entry, "IOUSBHostInterface") == 0 {
+    while unsafe IOObjectConformsTo(entry, "IOUSBHostInterface") == 0 {
       var parent: io_registry_entry_t = 0
-      let result = IORegistryEntryGetParentEntry(entry, kIOServicePlane, &parent)
+      let result = unsafe IORegistryEntryGetParentEntry(entry, kIOServicePlane, &parent)
       IOObjectRelease(entry)
       guard result == KERN_SUCCESS else { return nil }
       entry = parent

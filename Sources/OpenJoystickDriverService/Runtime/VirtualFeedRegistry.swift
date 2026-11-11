@@ -531,7 +531,7 @@ final class VirtualFeedDeviceSink: OutputSink {
   ///   the failure of the device.
   func consume(
     _ frame: StreamFrame,
-    onDelivered: @escaping @Sendable () -> Void
+    onDelivered: @Sendable () -> Void
   ) async throws {
     guard case .gamepad(let state, let identifier) = frame else {
       throw StreamBoundaryError.unsupported(destination)

@@ -39,7 +39,7 @@ struct EndpointWebRequest {
       guard remaining > 0,
         (try? LocalServiceRPCTransport.setTimeout(descriptor, seconds: remaining)) != nil
       else { return .closed }
-      let count = Darwin.recv(descriptor, &chunk, chunk.count, 0)
+      let count = unsafe Darwin.recv(descriptor, &chunk, chunk.count, 0)
       if count < 0, errno == EINTR { continue }
       guard count > 0 else { return .closed }
       buffer.append(contentsOf: chunk[0..<count])
@@ -67,19 +67,19 @@ struct EndpointWebRequest {
     guard parts.count == 3, parts[2].hasPrefix("HTTP/1."), parts[1].hasPrefix("/") else {
       return nil
     }
-    var headers: [String: String] = [:]
+    var parsed: [String: String] = [:]
     for line in lines.dropFirst() {
       guard let colon = line.firstIndex(of: ":") else { return nil }
       let name = line[..<colon].lowercased()
-      guard !name.isEmpty, !name.contains(where: \.isWhitespace), headers[name] == nil else {
+      guard !name.isEmpty, !name.contains(where: \.isWhitespace), parsed[name] == nil else {
         return nil
       }
-      headers[name] = line[line.index(after: colon)...].trimmingCharacters(in: .whitespaces)
+      parsed[name] = line[line.index(after: colon)...].trimmingCharacters(in: .whitespaces)
     }
     return Self(
       method: String(parts[0]),
       path: String(parts[1].prefix { $0 != "?" && $0 != "#" }),
-      headers: headers
+      headers: parsed
     )
   }
 }
@@ -160,15 +160,15 @@ enum EndpointWebPages {
 
   /// Returns the real path of `path`, or nil when it does not exist.
   private static func resolved(_ path: String) -> String? {
-    guard let pointer = realpath(path, nil) else { return nil }
-    defer { free(pointer) }
-    return String(cString: pointer)
+    guard let pointer = unsafe realpath(path, nil) else { return nil }
+    defer { unsafe free(pointer) }
+    return unsafe String(cString: pointer)
   }
 
   /// Returns the file type bits of `path`, or 0 when it cannot be read.
   private static func kind(of path: String) -> mode_t {
     var information = stat()
-    guard stat(path, &information) == 0 else { return 0 }
+    guard unsafe stat(path, &information) == 0 else { return 0 }
     return information.st_mode & S_IFMT
   }
 }

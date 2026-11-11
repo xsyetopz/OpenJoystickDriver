@@ -346,7 +346,7 @@ public enum DiagnosticsService {
       localization.formatted(
         "cli.diagnose.group.switchSerialPlaceholder",
         arguments: [
-          $0.name, String(format: "%04X:%04X", $0.vendorID, $0.productID), placeholder,
+          $0.name, unsafe String(format: "%04X:%04X", $0.vendorID, $0.productID), placeholder,
         ]
       )
     }
@@ -449,7 +449,7 @@ public enum DiagnosticsService {
         "cli.diagnose.group.hidInputDropsFound",
         arguments: [
           $0.productName.isEmpty
-            ? String(format: "%04X:%04X", $0.vendorID, $0.productID) : $0.productName,
+            ? unsafe String(format: "%04X:%04X", $0.vendorID, $0.productID) : $0.productName,
           $0.droppedReports,
         ]
       )

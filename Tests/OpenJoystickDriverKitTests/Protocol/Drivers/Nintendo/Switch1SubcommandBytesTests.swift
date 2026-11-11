@@ -6,7 +6,7 @@ import Testing
 struct Switch1SubcommandBytesTests {
   private func hex(_ write: PhysicalOutputWrite) -> String {
     guard case .hidOutput(let report) = write else { return "other" }
-    return "\(report.reportID):" + report.bytes.map { String(format: "%02x", $0) }.joined()
+    return "\(report.reportID):" + report.bytes.map { unsafe String(format: "%02x", $0) }.joined()
   }
 
   private func sequence(_ driver: Switch1Driver) throws -> [String] {

@@ -55,8 +55,8 @@ struct EndpointConnectionTests {
     // Small buffers, so the writer blocks after a few rumble lines.
     var size: Int32 = 2_048
     let length = socklen_t(MemoryLayout<Int32>.size)
-    setsockopt(connection.descriptor, SOL_SOCKET, SO_SNDBUF, &size, length)
-    setsockopt(reader, SOL_SOCKET, SO_RCVBUF, &size, length)
+    unsafe setsockopt(connection.descriptor, SOL_SOCKET, SO_SNDBUF, &size, length)
+    unsafe setsockopt(reader, SOL_SOCKET, SO_RCVBUF, &size, length)
     let count = EndpointServer.maximumQueuedLines - 1
     for index in 0..<count {
       let line = ControllerOutputCommand.setRumble(.off, duration: .milliseconds(index))
@@ -79,7 +79,7 @@ struct EndpointConnectionTests {
 
   private static func pair() throws -> (EndpointConnection, Int32) {
     var descriptors: [Int32] = [0, 0]
-    guard socketpair(AF_UNIX, SOCK_STREAM, 0, &descriptors) == 0 else {
+    guard unsafe socketpair(AF_UNIX, SOCK_STREAM, 0, &descriptors) == 0 else {
       throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
     }
     try LocalServiceRPCTransport.setTimeout(descriptors[1], seconds: 5)
@@ -92,7 +92,7 @@ struct EndpointConnectionTests {
     var data = Data()
     var chunk = [UInt8](repeating: 0, count: 65_536)
     while true {
-      let count = recv(descriptor, &chunk, chunk.count, 0)
+      let count = unsafe recv(descriptor, &chunk, chunk.count, 0)
       guard count > 0 else { break }
       data.append(contentsOf: chunk[0..<count])
     }

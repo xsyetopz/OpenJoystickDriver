@@ -78,26 +78,26 @@ final class FakeAutomation: AutomationService, @unchecked Sendable {
   /// The output commands received, in order.
   var sentOutputs: [ControllerOutputCommand] { lock.withLock { outputs } }
 
-  func connectedDevices() async -> [ApplicationServiceDeviceDescription] { devices }
+  func connectedDevices() -> [ApplicationServiceDeviceDescription] { devices }
 
   func sendControllerOutput(
     _ command: ControllerOutputCommand,
-    for controller: ControllerReference
-  ) async -> ControllerOutputResult {
+    for _: ControllerReference
+  ) -> ControllerOutputResult {
     lock.withLock {
       outputs.append(command)
       return ControllerOutputResult(outcome, droppedRumbleChannels: dropped)
     }
   }
 
-  func getRemappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {
+  func getRemappingSnapshot() -> ApplicationServiceRemappingSnapshotPayload {
     lock.withLock { snapshot() }
   }
 
   func activateRemappingProfile(
     id: UUID,
-    allowEmpty: Bool
-  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+    allowEmpty _: Bool
+  ) -> ApplicationServiceRemappingSnapshotPayload {
     lock.withLock {
       active.insert(id)
       return snapshot()
@@ -106,7 +106,7 @@ final class FakeAutomation: AutomationService, @unchecked Sendable {
 
   func deactivateRemappingProfile(
     id: UUID
-  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+  ) -> ApplicationServiceRemappingSnapshotPayload {
     lock.withLock {
       active.remove(id)
       return snapshot()
@@ -116,7 +116,7 @@ final class FakeAutomation: AutomationService, @unchecked Sendable {
   func updateRemappingProfile(
     _ profile: RemappingProfile,
     expectedCurrent: RemappingProfile
-  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+  ) throws -> ApplicationServiceRemappingSnapshotPayload {
     try lock.withLock {
       guard let index = profiles.firstIndex(of: expectedCurrent) else {
         throw RemappingProfileLibraryError.profileNotFound(expectedCurrent.id)
@@ -211,7 +211,7 @@ func offPool<Result: Sendable>(_ work: @escaping @Sendable () -> Result) async -
 func dispatchPoolIsSaturated() -> Bool {
   var info = proc_workqueueinfo()
   let size = Int32(MemoryLayout<proc_workqueueinfo>.size)
-  let result = proc_pidinfo(getpid(), PROC_PIDWORKQUEUEINFO, 0, &info, size)
+  let result = unsafe proc_pidinfo(getpid(), PROC_PIDWORKQUEUEINFO, 0, &info, size)
   if result == 0, errno == ESRCH { return false }
   precondition(result == size, "proc_pidinfo(PROC_PIDWORKQUEUEINFO) failed: errno \(errno)")
   return info.pwq_state & UInt32(WQ_EXCEEDED_CONSTRAINED_THREAD_LIMIT) != 0
@@ -245,7 +245,7 @@ func tokenHello(
   let message = ["OpenJoystickDriver endpoint hello 1", nonce, origin, port]
     .map { $0 + "\n" }.joined()
   let proof = HMAC<SHA256>.authenticationCode(for: Data(message.utf8), using: key)
-    .map { String(format: "%02x", $0) }.joined()
+    .map { unsafe String(format: "%02x", $0) }.joined()
   let scopes = scopes.map { #""\#($0)""# }.joined(separator: ",")
   return #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"Hello","#
     + #""scopes":[\#(scopes)],"tokenName":"\#(name)","proof":"\#(proof)"}"#
@@ -272,14 +272,22 @@ final class EndpointTestClient: @unchecked Sendable {
     // Set before `connect`: macOS answers `setsockopt` with EINVAL once the service has already
     // closed a refused connection, so setting them after would fail for a refused client.
     var noSignal: Int32 = 1
-    setsockopt(descriptor, SOL_SOCKET, SO_NOSIGPIPE, &noSignal, socklen_t(MemoryLayout<Int32>.size))
+    unsafe setsockopt(
+      descriptor,
+      SOL_SOCKET,
+      SO_NOSIGPIPE,
+      &noSignal,
+      socklen_t(MemoryLayout<Int32>.size)
+    )
     try LocalServiceRPCTransport.setTimeout(descriptor, seconds: 5)
     let address = try LocalServiceRPCTransport.socketAddress(path: path)
     let length = LocalServiceRPCTransport.socketAddressLength(path: path)
     let error = await offPool { () -> Int32? in
       var address = address
       let status = withUnsafePointer(to: &address) {
-        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { connect(descriptor, $0, length) }
+        unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+          unsafe connect(descriptor, $0, length)
+        }
       }
       return status == 0 ? nil : errno
     }
@@ -311,7 +319,9 @@ final class EndpointTestClient: @unchecked Sendable {
     let data = Data((line + "\n").utf8)
     let descriptor = descriptor
     await offPool {
-      _ = data.withUnsafeBytes { Darwin.send(descriptor, $0.baseAddress, $0.count, 0) }
+      _ = unsafe data.withUnsafeBytes {
+        unsafe Darwin.send(descriptor, $0.baseAddress, $0.count, 0)
+      }
     }
   }
 
@@ -326,7 +336,7 @@ final class EndpointTestClient: @unchecked Sendable {
       }
       let chunk = await offPool { () -> [UInt8] in
         var chunk = [UInt8](repeating: 0, count: 4_096)
-        let count = recv(descriptor, &chunk, chunk.count, 0)
+        let count = unsafe recv(descriptor, &chunk, chunk.count, 0)
         return count > 0 ? Array(chunk[0..<count]) : []
       }
       guard !chunk.isEmpty else { return nil }
@@ -371,19 +381,25 @@ final class EndpointWebTestClient: @unchecked Sendable {
     // Set before `connect`: macOS answers `setsockopt` with EINVAL once the service has already
     // closed a refused connection, so setting them after would fail for a refused client.
     var noSignal: Int32 = 1
-    setsockopt(descriptor, SOL_SOCKET, SO_NOSIGPIPE, &noSignal, socklen_t(MemoryLayout<Int32>.size))
+    unsafe setsockopt(
+      descriptor,
+      SOL_SOCKET,
+      SO_NOSIGPIPE,
+      &noSignal,
+      socklen_t(MemoryLayout<Int32>.size)
+    )
     try LocalServiceRPCTransport.setTimeout(descriptor, seconds: 5)
     var target = sockaddr_in()
     target.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
     target.sin_family = sa_family_t(AF_INET)
     target.sin_port = in_port_t(UInt16(port).bigEndian)
-    inet_pton(AF_INET, address, &target.sin_addr)
+    unsafe inet_pton(AF_INET, address, &target.sin_addr)
     let socketAddress = target
     let error = await offPool { () -> Int32? in
       var socketAddress = socketAddress
       let status = withUnsafePointer(to: &socketAddress) {
-        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-          connect(descriptor, $0, socklen_t(MemoryLayout<sockaddr_in>.size))
+        unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+          unsafe connect(descriptor, $0, socklen_t(MemoryLayout<sockaddr_in>.size))
         }
       }
       return status == 0 ? nil : errno
@@ -471,10 +487,14 @@ final class EndpointWebTestClient: @unchecked Sendable {
     case 0..<126: frame.append(maskBit | UInt8(payload.count))
     case 126..<65_536:
       frame.append(maskBit | 126)
-      frame.append(contentsOf: withUnsafeBytes(of: UInt16(payload.count).bigEndian, Array.init))
+      unsafe frame.append(
+        contentsOf: withUnsafeBytes(of: UInt16(payload.count).bigEndian, Array.init)
+      )
     default:
       frame.append(maskBit | 127)
-      frame.append(contentsOf: withUnsafeBytes(of: UInt64(payload.count).bigEndian, Array.init))
+      unsafe frame.append(
+        contentsOf: withUnsafeBytes(of: UInt64(payload.count).bigEndian, Array.init)
+      )
     }
     guard masked else {
       await sendBytes(frame + payload)
@@ -549,7 +569,9 @@ final class EndpointWebTestClient: @unchecked Sendable {
   func sendBytes(_ data: Data) async {
     let descriptor = descriptor
     await offPool {
-      _ = data.withUnsafeBytes { Darwin.send(descriptor, $0.baseAddress, $0.count, 0) }
+      _ = unsafe data.withUnsafeBytes {
+        unsafe Darwin.send(descriptor, $0.baseAddress, $0.count, 0)
+      }
     }
   }
 
@@ -558,7 +580,9 @@ final class EndpointWebTestClient: @unchecked Sendable {
     let (chunk, ended, failure) = await offPool { () -> ([UInt8], Bool, Int32?) in
       var chunk = [UInt8](repeating: 0, count: 65_536)
       var count: Int
-      repeat { count = recv(descriptor, &chunk, chunk.count, 0) } while count < 0 && errno == EINTR
+      repeat {
+        count = unsafe recv(descriptor, &chunk, chunk.count, 0)
+      } while count < 0 && errno == EINTR
       if count > 0 { return (Array(chunk[0..<count]), false, nil) }
       // End of stream or a reset is a hang-up. The 5-second read timeout leaves the connection
       // open; any other errno is a failure of the test.
@@ -571,7 +595,7 @@ final class EndpointWebTestClient: @unchecked Sendable {
       }
     }
     if let failure {
-      Issue.record("recv failed: \(String(cString: strerror(failure))) (errno \(failure))")
+      Issue.record(unsafe "recv failed: \(String(cString: strerror(failure))) (errno \(failure))")
     }
     if ended { peerClosed = true }
     guard !chunk.isEmpty else { return false }
@@ -594,7 +618,7 @@ final class AcceptLoopGate: @unchecked Sendable {
   var isHolding: Bool { lock.withLock { holding } }
 
   /// The server's `beforeAcceptWait`.
-  func hook(_ kind: AccessTransport, _ generation: Int) {
+  func hook(_ kind: AccessTransport, _: Int) {
     let shouldHold = lock.withLock { () -> Bool in
       guard kind == transport, !held else { return false }
       held = true

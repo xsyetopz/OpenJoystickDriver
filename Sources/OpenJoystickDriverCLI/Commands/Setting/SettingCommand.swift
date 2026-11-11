@@ -196,9 +196,9 @@ struct SettingGetCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let key = try SettingCatalog.key(key)
-      let value = try await SettingCatalog.read().value(of: key) ?? key.defaultValue
-      try SettingResult.print(key, value: value)
+      let setting = try SettingCatalog.key(key)
+      let value = try await SettingCatalog.read().value(of: setting) ?? setting.defaultValue
+      try SettingResult.print(setting, value: value)
     }
   }
 }
@@ -242,29 +242,29 @@ struct SettingSetCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let key = try SettingCatalog.key(key)
-      let requested = try SettingCatalog.value(value, for: key)
+      let setting = try SettingCatalog.key(key)
+      let requested = try SettingCatalog.value(value, for: setting)
       let applied = try await ServiceConnection.request { client in
-        try await client.setSetting(key, to: requested)
-      }.value(of: key)
+        try await client.setSetting(setting, to: requested)
+      }.value(of: setting)
       guard applied == requested else {
         throw CLIFailure(
           .systemRequestFailed,
           CLILocalized.format(
             "platform.macos.cli.setting.set.notApplied",
-            key.rawValue,
-            key.rawValue
+            setting.rawValue,
+            setting.rawValue
           )
         )
       }
       switch CLIContext.current.format {
-      case .json: try CLIOutput.json(SettingResult(key: key.rawValue, value: requested))
-      case .plain: CLIOutput.plain([[key.rawValue, String(requested)]])
+      case .json: try CLIOutput.json(SettingResult(key: setting.rawValue, value: requested))
+      case .plain: CLIOutput.plain([[setting.rawValue, String(requested)]])
       case .human:
         CLIOutput.success(
           CLILocalized.format(
             "cli.setting.set.success",
-            key.rawValue,
+            setting.rawValue,
             String(requested)
           )
         )
@@ -273,8 +273,8 @@ struct SettingSetCommand: AsyncParsableCommand {
   }
 }
 
-/// The `ojd setting reset` command: moves `Settings.plist` to the Trash, so every setting returns to
-/// its default.
+/// The `ojd setting reset` command: moves `Settings.plist` to the Trash, so every setting returns
+/// to its default.
 ///
 /// It works on the file itself, so it also fixes a file the service rejects and needs no running
 /// service.
@@ -312,12 +312,12 @@ struct SettingResetCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let store = Self.store
-      let file = store.userFileURL.path
+      let settingsStore = Self.store
+      let file = settingsStore.userFileURL.path
       var moved = false
       if FileManager.default.fileExists(atPath: file) {
         try CLITerminal.confirm(CLILocalized.text("cli.setting.reset.confirm"), force: force)
-        moved = try store.moveToTrash()
+        moved = try settingsStore.moveToTrash()
       }
       switch CLIContext.current.format {
       case .json: try CLIOutput.json(CLIStatus(details: Result(file: file, moved: moved)))
@@ -348,7 +348,7 @@ struct SettingTestNotificationCommand: AsyncParsableCommand {
     abstract: CLILocalized.text("cli.setting.testNotification.abstract"),
     discussion: CLILocalized.format(
       "cli.setting.testNotification.discussion",
-      String(format: "%g", ServiceTimeouts.testNotification)
+      unsafe String(format: "%g", ServiceTimeouts.testNotification)
     )
   )
 

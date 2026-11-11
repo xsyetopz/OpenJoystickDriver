@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -54,7 +55,7 @@ struct SDLGUIDTests {
   }
 
   private func crcBytes(_ crc: UInt16) -> String {
-    String(format: "%02x%02x", crc & 0xFF, crc >> 8)
+    unsafe String(format: "%02x%02x", crc & 0xFF, crc >> 8)
   }
 
   @Test

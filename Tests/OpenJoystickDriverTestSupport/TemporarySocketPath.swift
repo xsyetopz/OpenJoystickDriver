@@ -1,5 +1,5 @@
 import Foundation
-import Testing
+package import Testing
 
 /// The socket paths one test created through ``temporarySocketPath()``.
 package final class TemporarySocketPaths: @unchecked Sendable {
@@ -14,8 +14,8 @@ package final class TemporarySocketPaths: @unchecked Sendable {
   /// Removes the file of each registered path; a path that never got a file is skipped.
   func removeFiles() {
     let created = lock.withLock { paths }
-    for path in created where unlink(path) != 0 && errno != ENOENT {
-      Issue.record("Removing \(path) failed: \(String(cString: strerror(errno)))")
+    for path in created where unsafe unlink(path) != 0 && errno != ENOENT {
+      Issue.record(unsafe "Removing \(path) failed: \(String(cString: strerror(errno)))")
     }
   }
 }
@@ -44,10 +44,11 @@ package func unregisteredSocketPath() -> String {
 package struct RemovingTemporarySockets: SuiteTrait, TestTrait, TestScoping {
   package var isRecursive: Bool { true }
 
+  @concurrent
   package func provideScope(
     for test: Test,
-    testCase: Test.Case?,
-    performing function: @Sendable () async throws -> Void
+    testCase _: Test.Case?,
+    performing function: @concurrent @Sendable () async throws -> Void
   ) async throws {
     // A suite only contains tests; each test, and each case of a parameterized one, has its own
     // registry so its files go as soon as it ends.

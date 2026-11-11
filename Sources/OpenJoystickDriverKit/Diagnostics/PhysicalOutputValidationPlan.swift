@@ -56,7 +56,7 @@ public struct PhysicalOutputValidationPlan: Equatable, Sendable {
     self.productID = productID
     self.protocolBinding = protocolBinding
     steps = Self.steps(
-      selector: selector ?? String(format: "%04X:%04X", vendorID, productID),
+      selector: unsafe selector ?? String(format: "%04X:%04X", vendorID, productID),
       capabilities: capabilities
     )
     notes = [

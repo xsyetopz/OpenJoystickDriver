@@ -121,7 +121,7 @@ struct ServiceStopCommand: AsyncParsableCommand {
     try await global.run {
       if let processIdentifier = ServiceConnection.processIdentifier() {
         guard kill(processIdentifier, SIGTERM) == 0 || errno == ESRCH else {
-          throw CLIFailure(
+          throw unsafe CLIFailure(
             .systemRequestFailed,
             CLILocalized.format(
               "cli.service.stop.signalFailed",

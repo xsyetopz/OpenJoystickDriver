@@ -87,7 +87,7 @@ package struct DeviceCatalog: Sendable {
       protocolInfo.keepAliveEnabled.map { $0 ? .enabled : .disabled } ?? .enabled
 
     return DeviceRuntimeProfile(
-      recordID: String(format: "%04x-%04x", record.vendorID, record.productID),
+      recordID: unsafe String(format: "%04x-%04x", record.vendorID, record.productID),
       transportProfile: DeviceTransportProfile(
         inputEndpoint: UInt8(inputEndpoint),
         outputEndpoint: UInt8(outputEndpoint),

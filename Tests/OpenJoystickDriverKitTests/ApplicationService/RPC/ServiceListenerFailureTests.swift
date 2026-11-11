@@ -241,7 +241,7 @@ struct ServiceListenerFailureTests {
 
     let found = problem(reading)
     #expect(found?.path == ServiceListenerFailure.path(forSocket: socket))
-    #expect(found?.detail.contains(String(cString: strerror(EINVAL))) == true)
+    unsafe #expect(found?.detail.contains(String(cString: strerror(EINVAL))) == true)
     #expect(
       found?.detail.contains("errno") == true || found?.detail.contains(String(EINVAL)) == true
     )

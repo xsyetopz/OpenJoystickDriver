@@ -188,9 +188,8 @@
 
       /// Returns the number of packets.
       ///
-      /// - Parameter tableView: The packet table.
       /// - Returns: The number of packets.
-      func numberOfRows(in tableView: NSTableView) -> Int { packets.count }
+      func numberOfRows(in _: NSTableView) -> Int { packets.count }
 
       /// Returns the cell that shows one field of a packet.
       ///
@@ -213,7 +212,7 @@
           ?? NSTableCellView()
         cell.identifier = identifier
         let textField: NSTextField
-        if let existing = cell.textField {
+        if let existing = unsafe cell.textField {
           textField = existing
         } else {
           textField = NSTextField(labelWithString: "")
@@ -224,7 +223,7 @@
           )
           textField.lineBreakMode = .byClipping
           cell.addSubview(textField)
-          cell.textField = textField
+          unsafe cell.textField = textField
           NSLayoutConstraint.activate([
             textField.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: 4),
             textField.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -4),
@@ -235,7 +234,7 @@
         let firstTimestamp = packets.first?.timestamp ?? packet.timestamp
         switch tableColumn?.identifier.rawValue {
         case "time":
-          textField.stringValue = String(format: "+%.3fs", packet.timestamp - firstTimestamp)
+          textField.stringValue = unsafe String(format: "+%.3fs", packet.timestamp - firstTimestamp)
         case "direction": textField.stringValue = packet.direction.rawValue.uppercased()
         case "bytes": textField.stringValue = String(packet.length)
         default: textField.stringValue = packet.hex

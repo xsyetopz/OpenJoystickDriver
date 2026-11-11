@@ -1,6 +1,6 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
-  import AppKit
+  package import AppKit
   import Combine
   import Darwin
   import OpenJoystickDriverKit
@@ -29,14 +29,14 @@
 
     /// Connects the notification center, the settings, the Dock icon, the menu-bar item and the
     /// live updates, then offers settings recovery when the file cannot be read.
-    package func applicationDidFinishLaunching(_ notification: Notification) {
+    package func applicationDidFinishLaunching(_: Notification) {
       bundledNotificationCenter?.delegate = notificationPresenter
       refreshStatus()
-      Task { @MainActor in await viewModel.startSystemExtensionSetup() }
+      Task { @MainActor in viewModel.startSystemExtensionSetup() }
       preferences.settingsRecovered = { [weak self] in
         guard let self else { return }
         SettingsRecoveryFollowUp(
-          updateCheck: self.launchUpdateCheck,
+          updateCheck: launchUpdateCheck,
           registerLogin: Self.registerLoginIfNeeded
         ).run()
       }
@@ -123,14 +123,14 @@
     }
 
     /// Reads the driver extension setup again when the app becomes active.
-    package func applicationDidBecomeActive(_ notification: Notification) {
-      Task { @MainActor in await viewModel.refreshSystemExtensionSetup() }
+    package func applicationDidBecomeActive(_: Notification) {
+      Task { @MainActor in viewModel.refreshSystemExtensionSetup() }
     }
 
     /// Reads the live status, opens the main window and returns true.
     package func applicationShouldHandleReopen(
-      _ sender: NSApplication,
-      hasVisibleWindows flag: Bool
+      _: NSApplication,
+      hasVisibleWindows _: Bool
     ) -> Bool {
       refreshLiveStatus()
       mainWindow?.showMainWindow(area: nil)
@@ -165,7 +165,7 @@
     }
 
     /// Stops the live status and removes the menu-bar item when the app terminates.
-    package func applicationWillTerminate(_ notification: Notification) {
+    package func applicationWillTerminate(_: Notification) {
       stopLiveStatus()
       removeStatusItem()
     }
@@ -186,7 +186,9 @@
       await withCheckedContinuation { continuation in
         NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration)
         { _, error in
-          if let error { fputs("Failed to relaunch OpenJoystickDriver: \(error)\n", stderr) }
+          if let error {
+            unsafe fputs("Failed to relaunch OpenJoystickDriver: \(error)\n", unsafe stderr)
+          }
           continuation.resume()
         }
       }
@@ -260,8 +262,8 @@
       controllerLiveUpdates = nil
     }
 
-    /// Stores the user's removal of the item. The Show in menu bar change then removes the item
-    /// and opens the main window; when the setting cannot be stored the item comes back.
+    // The Show in menu bar change then removes the item and opens the main window; when the
+    // setting cannot be stored the item comes back.
     private func statusItemWasRemoved() {
       guard let item = statusItem, !item.isVisible else { return }
       if !preferences.menuBarItemWasRemoved() { item.isVisible = true }

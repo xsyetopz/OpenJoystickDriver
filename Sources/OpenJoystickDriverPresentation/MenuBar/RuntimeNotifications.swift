@@ -1,5 +1,6 @@
 #if canImport(AppKit)
 
+  import Combine
   import AppKit
   import Foundation
   import OpenJoystickDriverKit
@@ -176,10 +177,10 @@
       reads += 1
       let read = reads
       Task { [weak self, authorization] in
-        let settings = await authorization.settings()
-        guard let self, read == self.reads else { return }
-        self.settings = settings
-        self.state = settings.authorization
+        let latest = await authorization.settings()
+        guard let self, read == reads else { return }
+        settings = latest
+        state = latest.authorization
       }
     }
 
@@ -194,9 +195,9 @@
       }
       reads += 1
       Task { [weak self, authorization] in
-        let (state, errorMessage) = await authorization.request()
-        self?.state = state
-        self?.errorMessage = errorMessage
+        let (granted, message) = await authorization.request()
+        self?.state = granted
+        self?.errorMessage = message
         self?.refresh()
       }
     }
@@ -412,11 +413,13 @@
     }
 
     /// Presents the notification with ``foregroundPresentationOptions``.
+    ///
+    /// With C++ interoperability on, the SDK imports the options as `Int`, not as the option set.
     func userNotificationCenter(
-      _ center: UNUserNotificationCenter,
-      willPresent notification: UNNotification,
-      withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
-    ) { completionHandler(Self.foregroundPresentationOptions) }
+      _: UNUserNotificationCenter,
+      willPresent _: UNNotification,
+      withCompletionHandler completionHandler: @Sendable (Int) -> Void
+    ) { completionHandler(Int(Self.foregroundPresentationOptions.rawValue)) }
   }
 
   /// Compares service snapshots and delivers a notification for each change that the user enabled.

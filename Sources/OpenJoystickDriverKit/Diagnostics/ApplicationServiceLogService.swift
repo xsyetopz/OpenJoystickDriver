@@ -1,5 +1,5 @@
 import Darwin
-import Foundation
+public import Foundation
 
 /// The two log files of the service process.
 public enum ApplicationServiceLogStream: String, CaseIterable, Codable, Sendable {
@@ -88,7 +88,7 @@ public enum ApplicationServiceLogService {
       (ApplicationServiceLogStream.standardError, STDERR_FILENO),
     ] {
       let path = url(for: stream).path
-      let descriptor = open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR)
+      let descriptor = unsafe open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR)
       guard descriptor >= 0 else {
         throw ApplicationServiceLogError("Could not open \(path): errno \(errno).")
       }
@@ -99,8 +99,8 @@ public enum ApplicationServiceLogService {
       }
       Darwin.close(descriptor)
     }
-    setvbuf(stdout, nil, _IOLBF, 0)
-    setvbuf(stderr, nil, _IOLBF, 0)
+    unsafe setvbuf(stdout, nil, _IOLBF, 0)
+    unsafe setvbuf(stderr, nil, _IOLBF, 0)
   }
 
   /// Takes the lock that makes this process the one writer of the session logs in `directory` and
@@ -109,7 +109,7 @@ public enum ApplicationServiceLogService {
   /// Throws while another process holds it.
   static func claimSessionLogs(in directory: URL) throws -> Int32 {
     let path = directory.appendingPathComponent("OpenJoystickDriver.log.lock").path
-    let lock = open(path, O_CREAT | O_RDWR | O_CLOEXEC, S_IRUSR | S_IWUSR)
+    let lock = unsafe open(path, O_CREAT | O_RDWR | O_CLOEXEC, S_IRUSR | S_IWUSR)
     guard lock >= 0 else {
       throw ApplicationServiceLogError("Could not open \(path): errno \(errno).")
     }

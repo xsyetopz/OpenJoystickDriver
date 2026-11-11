@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A JSON value that keeps the order of an object's members, and the text format of the
 /// controller record files: two-space indent, `"key": value`, every object expanded, and an
@@ -413,7 +413,7 @@ public indirect enum OrderedJSON: Equatable, Sendable {
       case "\t": output += "\\t"
       case "\u{08}": output += "\\b"
       case "\u{0C}": output += "\\f"
-      case _ where scalar.value < 0x20: output += String(format: "\\u%04x", scalar.value)
+      case _ where scalar.value < 0x20: output += unsafe String(format: "\\u%04x", scalar.value)
       default: output.unicodeScalars.append(scalar)
       }
     }

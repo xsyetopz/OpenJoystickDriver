@@ -8,6 +8,7 @@ import OpenJoystickDriverKit
 /// `kIOMessageServiceIsTerminated` when the service goes away (`IOMessage.h`; both are
 /// function-like macros that Swift does not import). Any other message ends the wait only once the
 /// interface names no owner.
+@safe
 final class InterfaceReleaseWatch: @unchecked Sendable {
   /// The IOKit message type that says a client closed the service.
   private static let wasClosed: UInt32 = 0xE000_0110
@@ -36,23 +37,23 @@ final class InterfaceReleaseWatch: @unchecked Sendable {
   /// - Throws: ``USBTransportError/platform(code:message:)`` when the port cannot be created, and
   ///   the mapped IOKit error when the registration fails.
   func start(service: io_service_t) throws {
-    guard let port = IONotificationPortCreate(kIOMainPortDefault) else {
+    guard let created = unsafe IONotificationPortCreate(kIOMainPortDefault) else {
       throw USBTransportError.platform(code: 0, message: "IONotificationPortCreate failed")
     }
-    self.port = port
-    IONotificationPortSetDispatchQueue(port, queue)
+    unsafe self.port = created
+    unsafe IONotificationPortSetDispatchQueue(created, queue)
     IOObjectRetain(service)
     self.service = service
-    let result = IOServiceAddInterestNotification(
-      port,
+    let result = unsafe IOServiceAddInterestNotification(
+      created,
       service,
       kIOGeneralInterest,
       { refcon, _, messageType, _ in
-        guard let refcon else { return }
-        Unmanaged<InterfaceReleaseWatch>.fromOpaque(refcon).takeUnretainedValue()
+        guard let owner = unsafe refcon else { return }
+        unsafe Unmanaged<InterfaceReleaseWatch>.fromOpaque(owner).takeUnretainedValue()
           .received(messageType)
       },
-      Unmanaged.passUnretained(self).toOpaque(),
+      unsafe Unmanaged.passUnretained(self).toOpaque(),
       &notification
     )
     guard result == kIOReturnSuccess else {
@@ -81,10 +82,10 @@ final class InterfaceReleaseWatch: @unchecked Sendable {
   func finish() {
     lock.lock()
     finished = true
-    let continuation = self.continuation
+    let waiting = self.continuation
     self.continuation = nil
     lock.unlock()
-    continuation?.resume()
+    waiting?.resume()
   }
 
   /// Runs on the notification queue, so no callback reads `service` while it is released.
@@ -98,9 +99,9 @@ final class InterfaceReleaseWatch: @unchecked Sendable {
       IOObjectRelease(notification)
       notification = 0
     }
-    if let port {
-      IONotificationPortDestroy(port)
-      self.port = nil
+    if let open = unsafe port {
+      unsafe IONotificationPortDestroy(open)
+      unsafe self.port = nil
     }
     if service != 0 {
       IOObjectRelease(service)
@@ -117,7 +118,7 @@ final class InterfaceReleaseWatch: @unchecked Sendable {
 
   /// Tells whether `service` still names an exclusive owner.
   private func hasOwnerKey(_ service: io_service_t) -> Bool {
-    IORegistryEntryCreateCFProperty(
+    unsafe IORegistryEntryCreateCFProperty(
       service,
       IOUSBHostTransportProvider.exclusiveOwnerKey as CFString,
       kCFAllocatorDefault,

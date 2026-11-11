@@ -1,6 +1,6 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
-  import AppKit
+  package import AppKit
   import Combine
   import Darwin
   import OpenJoystickDriverKit
@@ -60,7 +60,7 @@
     /// Activate Profile submenu.
     package func menuNeedsUpdate(_ menu: NSMenu) {
       let state = mainMenuState()
-      if menu.supermenu?.items.first(where: { $0.submenu === menu })?.identifier?.rawValue
+      if unsafe menu.supermenu?.items.first(where: { $0.submenu === menu })?.identifier?.rawValue
         == MainMenuModel.item(for: .activateProfile)?.id
       {
         populateActivateProfileMenu(menu)
@@ -378,14 +378,14 @@
 
     /// Opens the project page in the default browser.
     @objc
-    func openProjectPage(_ sender: Any?) {
+    func openProjectPage(_: Any?) {
       guard let url = URL(string: "https://github.com/xsyetopz/OpenJoystickDriver") else { return }
       NSWorkspace.shared.open(url)
     }
 
     /// Shows the About panel with the app version and a link to the project page.
     @objc
-    func showAbout(_ sender: Any?) {
+    func showAbout(_: Any?) {
       let repositoryTitle = OJDLocalized.string("ui.menu.projectPage")
       let credits = NSMutableAttributedString(string: repositoryTitle)
       if let url = URL(string: "https://github.com/xsyetopz/OpenJoystickDriver") {

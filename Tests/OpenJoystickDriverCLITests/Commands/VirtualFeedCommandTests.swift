@@ -29,8 +29,8 @@ struct VirtualFeedCommandTests {
             from: arguments
           ))?.frames.count ?? 0
         let (isFirst, count) = exchanged.withLock {
-          defer { first = false }
-          return (first, counts.isEmpty ? 0 : counts.removeFirst())
+          defer { unsafe first = false }
+          return unsafe (first, counts.isEmpty ? 0 : counts.removeFirst())
         }
         return encoded(
           VirtualFeedExchangeResult(

@@ -12,7 +12,7 @@ struct PortKeyInstallationStoreTests {
     directory.fileURL(PortKeyInstallationStore.fileName, in: PortKeyInstallationStore.location)
   }
 
-  private func bytes(_ key: SymmetricKey) -> Data { key.withUnsafeBytes { Data($0) } }
+  private func bytes(_ key: SymmetricKey) -> Data { unsafe key.withUnsafeBytes { unsafe Data($0) } }
 
   @Test
   func aMissingKeyIsCreatedOncePrivatelyAndThenReused() throws {

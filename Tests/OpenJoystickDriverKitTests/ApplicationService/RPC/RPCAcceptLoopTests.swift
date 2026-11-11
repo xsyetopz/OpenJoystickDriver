@@ -65,8 +65,8 @@ struct RPCAcceptLoopTests {
     try #require(descriptor >= 0)
     var address = try LocalServiceRPCTransport.socketAddress(path: server.socketPath)
     let status = withUnsafePointer(to: &address) {
-      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-        Darwin.connect(
+      unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+        unsafe Darwin.connect(
           descriptor,
           $0,
           LocalServiceRPCTransport.socketAddressLength(path: server.socketPath)
@@ -126,7 +126,7 @@ struct RPCAcceptLoopTests {
   }
 
   @Test
-  func onlyOneOfTwoConcurrentStartsSucceeds() async throws {
+  func onlyOneOfTwoConcurrentStartsSucceeds() async {
     for _ in 0..<20 {
       let server = makeServer()
       let outcomes = await withTaskGroup(of: Bool.self) { group in
@@ -335,7 +335,7 @@ struct AcceptFailureWaitTests {
   @Test
   func aPollFailureDuringTheWaitIsReportedAsFatalWithItsCode() {
     nonisolated(unsafe) var lines: [String] = []
-    let goesOn = AcceptFailure.continuesAfter(
+    let goesOn = unsafe AcceptFailure.continuesAfter(
       errno: EMFILE,
       server: "Test",
       wake: -1,
@@ -345,23 +345,23 @@ struct AcceptFailureWaitTests {
         errno = EINVAL
         return -1
       },
-      report: { lines.append($0) }
+      report: { unsafe lines.append($0) }
     )
 
     #expect(!goesOn)
-    #expect(lines.count == 2)
-    #expect(lines[0].contains("Cannot accept connections"))
-    #expect(lines[1].contains(ErrorCode.requestListenerStopped.rawValue))
-    #expect(lines[1].contains("errno \(EINVAL)"))
+    unsafe #expect(lines.count == 2)
+    unsafe #expect(lines[0].contains("Cannot accept connections"))
+    unsafe #expect(lines[1].contains(ErrorCode.requestListenerStopped.rawValue))
+    unsafe #expect(lines[1].contains("errno \(EINVAL)"))
   }
 
   @Test
   func aWakeDescriptorThatIsClosedIsAFailureNotAStop() {
     var ends: [Int32] = [-1, -1]
-    #expect(pipe(&ends) == 0)
+    unsafe #expect(pipe(&ends) == 0)
     Darwin.close(ends[0])
     Darwin.close(ends[1])
 
-    #expect(AcceptFailure.wait(milliseconds: 1_000, wake: ends[0]) == .failed(EBADF))
+    unsafe #expect(AcceptFailure.wait(milliseconds: 1_000, wake: ends[0]) == .failed(EBADF))
   }
 }

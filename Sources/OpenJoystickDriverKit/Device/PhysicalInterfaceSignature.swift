@@ -1,5 +1,5 @@
 import CryptoKit
-import Foundation
+public import Foundation
 
 /// The kind of link a device interface uses, toward the host or on the controller side.
 ///
@@ -187,7 +187,7 @@ public struct HIDLayoutSummary: Equatable, Sendable {
 
   /// The lowercase hexadecimal SHA-256 digest of `data`.
   private static func fingerprint(_ data: Data) -> String {
-    SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+    SHA256.hash(data: data).map { unsafe String(format: "%02x", $0) }.joined()
   }
 }
 

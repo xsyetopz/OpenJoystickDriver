@@ -86,7 +86,7 @@
 
     /// Announces `message` to VoiceOver.
     private static func announce(_ message: String) {
-      NSAccessibility.post(
+      unsafe NSAccessibility.post(
         element: NSApp as Any,
         notification: .announcementRequested,
         userInfo: [.announcement: message, .priority: NSAccessibilityPriorityLevel.high]
@@ -103,9 +103,8 @@
 
     /// Creates the view that captures the next key.
     ///
-    /// - Parameter context: The context of the representable.
     /// - Returns: The view.
-    func makeNSView(context: Context) -> KeyboardDestinationCaptureNSView {
+    func makeNSView(context _: Context) -> KeyboardDestinationCaptureNSView {
       KeyboardDestinationCaptureNSView(onCapture: onCapture, onCancel: onCancel)
     }
 
@@ -113,11 +112,11 @@
     ///
     /// - Parameters:
     ///   - nsView: The view that captures the key.
-    ///   - context: The context of the representable.
-    func updateNSView(_ nsView: KeyboardDestinationCaptureNSView, context: Context) {
+    ///   - _: The context of the representable.
+    func updateNSView(_ nsView: KeyboardDestinationCaptureNSView, context _: Context) {
       nsView.onCapture = onCapture
       nsView.onCancel = onCancel
-      nsView.window?.makeFirstResponder(nsView)
+      unsafe nsView.window?.makeFirstResponder(nsView)
     }
   }
 
@@ -141,16 +140,14 @@
     }
 
     /// Unavailable, because the view is created in code only.
-    ///
-    /// - Parameter coder: The decoder, which is not used.
     @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    required init?(coder _: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     override var acceptsFirstResponder: Bool { true }
 
     override func viewDidMoveToWindow() {
       super.viewDidMoveToWindow()
-      window?.makeFirstResponder(self)
+      unsafe window?.makeFirstResponder(self)
     }
 
     override func keyDown(with event: NSEvent) {
@@ -284,9 +281,8 @@
 
     /// Creates the view that monitors the Escape key.
     ///
-    /// - Parameter context: The context of the representable.
     /// - Returns: The view.
-    func makeNSView(context: Context) -> EscapeKeyMonitorNSView {
+    func makeNSView(context _: Context) -> EscapeKeyMonitorNSView {
       EscapeKeyMonitorNSView(isCapturing: isCapturing, onEscape: onEscape)
     }
 
@@ -294,8 +290,8 @@
     ///
     /// - Parameters:
     ///   - nsView: The view that monitors the key.
-    ///   - context: The context of the representable.
-    func updateNSView(_ nsView: EscapeKeyMonitorNSView, context: Context) {
+    ///   - _: The context of the representable.
+    func updateNSView(_ nsView: EscapeKeyMonitorNSView, context _: Context) {
       nsView.isCapturing = isCapturing
       nsView.onEscape = onEscape
     }
@@ -304,8 +300,8 @@
     ///
     /// - Parameters:
     ///   - nsView: The view that monitors the key.
-    ///   - coordinator: The coordinator, which is not used.
-    static func dismantleNSView(_ nsView: EscapeKeyMonitorNSView, coordinator: ()) {
+    ///   - _: The coordinator, which is not used.
+    static func dismantleNSView(_ nsView: EscapeKeyMonitorNSView, coordinator _: ()) {
       nsView.stopMonitoring()
     }
   }
@@ -328,14 +324,12 @@
     }
 
     /// Unavailable, because the view is created in code only.
-    ///
-    /// - Parameter coder: The decoder, which is not used.
     @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    required init?(coder _: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     override func viewDidMoveToWindow() {
       super.viewDidMoveToWindow()
-      if window == nil { stopMonitoring() } else { startMonitoring() }
+      if unsafe window == nil { stopMonitoring() } else { startMonitoring() }
     }
 
     /// Starts the key down monitor; does nothing while it runs.

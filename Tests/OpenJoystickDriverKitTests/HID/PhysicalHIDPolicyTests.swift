@@ -105,7 +105,9 @@ struct PhysicalHIDPolicyTests {
     #expect(UserSpaceVirtualDeviceConstants.isAppleGameControllerSyntheticDevice(true))
     #expect(!UserSpaceVirtualDeviceConstants.isAppleGameControllerSyntheticDevice(false))
     var numericValue: Int32 = 1
-    let numeric = withUnsafePointer(to: &numericValue) { CFNumberCreate(nil, .sInt32Type, $0) }
+    let numeric = withUnsafePointer(to: &numericValue) {
+      unsafe CFNumberCreate(nil, .sInt32Type, $0)
+    }
     #expect(!UserSpaceVirtualDeviceConstants.isAppleGameControllerSyntheticDevice(numeric))
     #expect(!UserSpaceVirtualDeviceConstants.isAppleGameControllerSyntheticDevice(nil))
   }

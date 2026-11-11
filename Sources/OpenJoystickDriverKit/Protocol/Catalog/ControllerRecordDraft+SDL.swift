@@ -68,7 +68,7 @@ extension ControllerRecordDraft {
     reportLength = nil
     capturedReports = 0
     changedBytes = []
-    text = String(decoding: data, as: UTF8.self)
+    text = String(bytes: data, encoding: .utf8) ?? ""
   }
 }
 
@@ -82,13 +82,13 @@ extension ControllerRecordDraft.SDLFailure {
   public func message(identity: String, localize: (String) -> String) -> String {
     switch self {
     case .hasRecord:
-      String(format: localize("cli.record.draft.sdl.hasRecord"), identity)
+      unsafe String(format: localize("cli.record.draft.sdl.hasRecord"), identity)
     case .descriptorContract(let violation):
-      String(format: localize("cli.record.draft.sdl.contract"), identity, violation.rawValue)
+      unsafe String(format: localize("cli.record.draft.sdl.contract"), identity, violation.rawValue)
     case .noLine(let guid):
-      String(format: localize("cli.record.draft.sdl.noLine"), identity, guid ?? "")
+      unsafe String(format: localize("cli.record.draft.sdl.noLine"), identity, guid ?? "")
     case .rejected(let reason):
-      String(format: localize("cli.record.draft.sdl.rejected"), identity, reason)
+      unsafe String(format: localize("cli.record.draft.sdl.rejected"), identity, reason)
     }
   }
 }

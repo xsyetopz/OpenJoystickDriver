@@ -142,8 +142,8 @@
     /// The value with its suffix.
     private var formattedValue: String {
       let percent = suffix == "%"
-      let value = percent ? value * 100 : value
-      return String(format: percent ? "%.0f%@" : "%.1f%@", value, suffix)
+      let shown = percent ? value * 100 : value
+      return unsafe String(format: percent ? "%.0f%@" : "%.1f%@", shown, suffix)
     }
   }
 

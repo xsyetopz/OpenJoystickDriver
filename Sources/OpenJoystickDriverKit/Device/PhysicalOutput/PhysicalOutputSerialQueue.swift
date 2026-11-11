@@ -124,11 +124,11 @@ actor PhysicalHIDOutputSerialQueue {
   /// Cancels every queued operation that has not started; the running one completes.
   ///
   /// Operations queued afterwards, such as neutralization, run normally.
-  nonisolated func cancelAll() { cancellationLock.withLock { cancellationEpoch &+= 1 } }
+  nonisolated func cancelAll() { cancellationLock.withLock { unsafe cancellationEpoch &+= 1 } }
 
   /// The current value of the cancellation epoch.
   nonisolated private func currentCancellationEpoch() -> UInt64 {
-    cancellationLock.withLock { cancellationEpoch }
+    cancellationLock.withLock { unsafe cancellationEpoch }
   }
 
   /// Starts the operation `operation` unless ``cancelAll()`` ran after it was queued under `epoch`.

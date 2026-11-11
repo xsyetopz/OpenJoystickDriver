@@ -63,7 +63,7 @@ public enum UserSpaceVirtualDeviceConstants {
     guard let value else { return false }
     let cfValue = value as CFTypeRef
     guard CFGetTypeID(cfValue) == CFBooleanGetTypeID() else { return false }
-    return CFBooleanGetValue(unsafeDowncast(cfValue, to: CFBoolean.self))
+    return unsafe CFBooleanGetValue(unsafeDowncast(cfValue, to: CFBoolean.self))
   }
 
   /// Whether the backend may process `event`; false for the events of Apple's synthetic device.
@@ -142,7 +142,7 @@ public enum UserSpaceVirtualDeviceConstants {
   }
 
   /// `v` as 16 lower-case hex digits.
-  private static func hex64(_ v: UInt64) -> String { String(format: "%016llx", v) }
+  private static func hex64(_ v: UInt64) -> String { unsafe String(format: "%016llx", v) }
 }
 
 /// The serial number and LocationID that one virtual device publishes.

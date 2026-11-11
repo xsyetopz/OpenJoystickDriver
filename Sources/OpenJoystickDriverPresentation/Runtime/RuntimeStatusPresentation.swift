@@ -124,23 +124,23 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
     postEventAccess: RemappingPostEventAccessState? = nil,
     requiresPostEventAccess: Bool? = nil
   ) {
-    let permissions = RuntimePermissionSummary(status: payload)
-    let outputState: RuntimeOutputState
+    let summary = RuntimePermissionSummary(status: payload)
+    let output: RuntimeOutputState
     if payload.userSpaceVirtualDeviceStatus?.isError == true {
-      outputState = .error
+      output = .error
     } else if payload.userSpaceVirtualDeviceEnabled == nil {
-      outputState = .unknown
+      output = .unknown
     } else if payload.userSpaceVirtualDeviceEnabled == false {
-      outputState = .unavailable
+      output = .unavailable
     } else {
-      outputState = .ready
+      output = .ready
     }
 
-    self.permissions = permissions
+    self.permissions = summary
     self.devices = payload.connectedDevices
     self.unservedDevices = payload.unboundDevices.map(RuntimeUnservedDevice.init)
     self.virtualHIDProfileOverrideError = payload.virtualHIDProfileOverrideError
-    self.outputState = outputState
+    self.outputState = output
     self.outputDetail = RuntimePresentation.outputDetail(
       enabled: payload.userSpaceVirtualDeviceEnabled,
       status: payload.userSpaceVirtualDeviceStatus
@@ -148,8 +148,8 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
     self.postEventAccess = postEventAccess
     self.requiresPostEventAccess = requiresPostEventAccess
     self.readiness = Self.readiness(
-      permissions: permissions,
-      outputState: outputState,
+      permissions: summary,
+      outputState: output,
       postEventAccess: postEventAccess,
       requiresPostEventAccess: requiresPostEventAccess,
       devices: payload.connectedDevices
@@ -202,7 +202,7 @@ struct RuntimeUnservedDevice: Sendable, Equatable, Identifiable {
 
   /// Creates the entry for an unbound device.
   init(_ device: ApplicationServiceUnboundDevice) {
-    identity = String(format: "%04x:%04x", device.vendorID, device.productID)
+    identity = unsafe String(format: "%04x:%04x", device.vendorID, device.productID)
     title =
       device.reason == .noControllerLinked
       ? OJDLocalized.string("ui.controllers.wirelessReceiver") : device.name ?? identity

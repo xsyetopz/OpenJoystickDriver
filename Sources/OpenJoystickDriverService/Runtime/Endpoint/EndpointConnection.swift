@@ -72,7 +72,7 @@ final class EndpointConnection: @unchecked Sendable {
   /// Whether the peer closed or shut down its side, even while unread messages wait.
   var peerHungUp: Bool {
     var entry = pollfd(fd: descriptor, events: Int16(POLLIN), revents: 0)
-    return poll(&entry, 1, 0) > 0 && entry.revents & Int16(POLLHUP | POLLERR) != 0
+    return unsafe poll(&entry, 1, 0) > 0 && entry.revents & Int16(POLLHUP | POLLERR) != 0
   }
 
   /// Reads the next message; blocks until one arrives, the peer closes, or the receive timeout
@@ -82,7 +82,13 @@ final class EndpointConnection: @unchecked Sendable {
   /// Blocks reads for at most `seconds`; zero waits without a limit.
   func setReceiveTimeout(seconds: Int) {
     var timeout = timeval(tv_sec: seconds, tv_usec: 0)
-    setsockopt(descriptor, SOL_SOCKET, SO_RCVTIMEO, &timeout, socklen_t(MemoryLayout<timeval>.size))
+    unsafe setsockopt(
+      descriptor,
+      SOL_SOCKET,
+      SO_RCVTIMEO,
+      &timeout,
+      socklen_t(MemoryLayout<timeval>.size)
+    )
   }
 
   /// Stores `session` and sends the `Welcome` line `line`.

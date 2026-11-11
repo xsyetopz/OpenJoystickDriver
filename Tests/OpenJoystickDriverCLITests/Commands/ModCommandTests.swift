@@ -28,7 +28,7 @@ struct ModCommandTests {
       let folder = root.appendingPathComponent("Staging/\(UUID().uuidString)/\(name)")
       let controllers = folder.appendingPathComponent("Controllers", isDirectory: true)
       try FileManager.default.createDirectory(at: controllers, withIntermediateDirectories: true)
-      let file = String(format: "fff1-%04x.plist", productID)
+      let file = unsafe String(format: "fff1-%04x.plist", productID)
       let record: [String: Any] = [
         "apiVersion": OpenJoystickDriverAPI.version, "kind": "Controller",
         "vendorID": 0xFFF1,

@@ -19,7 +19,7 @@ package struct CLI {
     // Profile validation reads the same bundled and user records as the app.
     ControllerRecordSet.load().activate()
     let code = await Self.execute(arguments: arguments)
-    fflush(stdout)
+    unsafe fflush(stdout)
     exit(code)
   }
 
@@ -38,6 +38,7 @@ package struct CLI {
   ///
   /// A mistyped subcommand prints the nearest command name from ``CommandSuggestion`` and exits
   /// with the usage code.
+  @concurrent
   private static func parseAndRun(arguments: [String]) async -> Int32 {
     var command: any ParsableCommand
     do { command = try OJDCommand.parseAsRoot(arguments) } catch {

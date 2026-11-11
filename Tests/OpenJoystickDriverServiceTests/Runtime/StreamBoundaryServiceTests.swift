@@ -15,10 +15,10 @@ struct StreamBoundaryServiceTests {
   /// A connected pair of sockets that raise no `SIGPIPE` when the other end is gone.
   private static func socketPair() -> [Int32] {
     var descriptors: [Int32] = [0, 0]
-    #expect(socketpair(AF_UNIX, SOCK_STREAM, 0, &descriptors) == 0)
+    unsafe #expect(socketpair(AF_UNIX, SOCK_STREAM, 0, &descriptors) == 0)
     var noSignal: Int32 = 1
     for descriptor in descriptors {
-      setsockopt(
+      unsafe setsockopt(
         descriptor,
         SOL_SOCKET,
         SO_NOSIGPIPE,
@@ -39,7 +39,7 @@ struct StreamBoundaryServiceTests {
     func consume(
       _ command: ControllerOutputCommand,
       for _: LogicalControllerID
-    ) async throws {  // swiftlint:disable:this async_without_await
+    ) async {  // swiftlint:disable:this async_without_await
       lock.withLock { commandsValue.append(command) }
     }
   }
@@ -185,7 +185,7 @@ struct StreamBoundaryServiceTests {
 
     try await sink.consume(.setRumble(.off, duration: .held), for: Self.identifier)
     var buffer = [UInt8](repeating: 0, count: 4_096)
-    let count = recv(descriptors[1], &buffer, buffer.count, 0)
+    let count = unsafe recv(descriptors[1], &buffer, buffer.count, 0)
     let line = String(bytes: buffer.prefix(max(count, 0)), encoding: .utf8) ?? ""
     #expect(line.contains("RumbleCommand"))
 

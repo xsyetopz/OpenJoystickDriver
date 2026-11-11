@@ -1,7 +1,7 @@
 import Foundation
 import IOKit
 import IOKit.hid
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 
 /// The kernel queue between an `IOHIDLibUserClient` and the process that reads its device.
 ///
@@ -81,7 +81,7 @@ package enum HIDInputReportDrops {
   package static func observations(processID: Int32) -> [HIDInputDropObservation] {
     var iterator = io_iterator_t()
     guard
-      IORegistryCreateIterator(
+      unsafe IORegistryCreateIterator(
         kIOMainPortDefault,
         kIOServicePlane,
         IOOptionBits(kIORegistryIterateRecursively),
@@ -92,14 +92,15 @@ package enum HIDInputReportDrops {
     var result: [HIDInputDropObservation] = []
     while case let entry = IOIteratorNext(iterator), entry != 0 {
       defer { IOObjectRelease(entry) }
-      guard IOObjectConformsTo(entry, "IOHIDLibUserClient") != 0,
+      guard unsafe IOObjectConformsTo(entry, "IOHIDLibUserClient") != 0,
         let properties = registryProperties(entry),
         let creator = properties["IOUserClientCreator"] as? String,
         Self.creator(creator, isProcess: processID),
         let dropped = droppedReports(inClientProperties: properties)
       else { continue }
       var parent = io_registry_entry_t()
-      guard IORegistryEntryGetParentEntry(entry, kIOServicePlane, &parent) == KERN_SUCCESS else {
+      guard unsafe IORegistryEntryGetParentEntry(entry, kIOServicePlane, &parent) == KERN_SUCCESS
+      else {
         continue
       }
       defer { IOObjectRelease(parent) }
@@ -120,8 +121,9 @@ package enum HIDInputReportDrops {
   private static func registryProperties(_ entry: io_registry_entry_t) -> [String: Any]? {
     var properties: Unmanaged<CFMutableDictionary>?
     guard
-      IORegistryEntryCreateCFProperties(entry, &properties, kCFAllocatorDefault, 0) == KERN_SUCCESS
+      unsafe IORegistryEntryCreateCFProperties(entry, &properties, kCFAllocatorDefault, 0)
+        == KERN_SUCCESS
     else { return nil }
-    return properties?.takeRetainedValue() as? [String: Any]
+    return unsafe properties?.takeRetainedValue() as? [String: Any]
   }
 }

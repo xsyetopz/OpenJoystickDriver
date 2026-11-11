@@ -112,7 +112,7 @@ extension HIDDeviceStream {
   static func usbInterfaceNumber(for device: IOHIDDevice) -> UInt8? {
     guard let entry = retainedUSBInterfaceEntry(for: device) else { return nil }
     defer { IOObjectRelease(entry) }
-    let value = IORegistryEntryCreateCFProperty(
+    let value = unsafe IORegistryEntryCreateCFProperty(
       entry,
       "bInterfaceNumber" as CFString,
       kCFAllocatorDefault,

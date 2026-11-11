@@ -82,7 +82,7 @@ extension DeviceManager {
     )
     notifyServiceStatusChanged()
     print(
-      "[DeviceManager] HID device left to macOS (native controller):"
+      unsafe "[DeviceManager] HID device left to macOS (native controller):"
         + String(format: " %04x:%04x", vendorID, productID)
     )
   }

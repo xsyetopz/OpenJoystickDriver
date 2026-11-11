@@ -1,4 +1,4 @@
-import Darwin
+package import Darwin
 import Foundation
 
 /// What an accept loop does after `accept` fails; the RPC server and the endpoint server share it.
@@ -34,7 +34,7 @@ package enum AcceptFailure: Equatable, Sendable {
     waitMilliseconds: Int32 = resourceWaitMilliseconds,
     ended: ErrorCode? = nil
   ) -> String {
-    let reason = String(cString: strerror(code))
+    let reason = unsafe String(cString: strerror(code))
     switch action {
     case .waitForResources:
       return "[\(server)] Cannot accept connections (\(reason), errno \(code)); "
@@ -63,10 +63,10 @@ package enum AcceptFailure: Equatable, Sendable {
     wake: Int32,
     waitMilliseconds: Int32 = resourceWaitMilliseconds,
     ended: ErrorCode? = nil,
-    pollCall: PollCall = Darwin.poll,
+    pollCall: PollCall = unsafe Darwin.poll,
     report: (String) -> Void
   ) -> Bool {
-    continuation(
+    unsafe continuation(
       errno: code,
       server: server,
       wake: wake,
@@ -87,7 +87,7 @@ package enum AcceptFailure: Equatable, Sendable {
     wake: Int32,
     waitMilliseconds: Int32 = resourceWaitMilliseconds,
     ended: ErrorCode? = nil,
-    pollCall: PollCall = Darwin.poll,
+    pollCall: PollCall = unsafe Darwin.poll,
     report: (String) -> Void
   ) -> Continuation {
     let action = Self(errno: code)
@@ -97,7 +97,7 @@ package enum AcceptFailure: Equatable, Sendable {
       report(
         message(server: server, errno: code, action: action, waitMilliseconds: waitMilliseconds)
       )
-      switch wait(milliseconds: waitMilliseconds, wake: wake, pollCall: pollCall) {
+      switch unsafe wait(milliseconds: waitMilliseconds, wake: wake, pollCall: pollCall) {
       case .elapsed: return .goOn
       case .woken: return .stopped
       case .failed(let pollCode):
@@ -127,7 +127,7 @@ package enum AcceptFailure: Equatable, Sendable {
   package static func wait(
     milliseconds: Int32,
     wake: Int32,
-    pollCall: PollCall = Darwin.poll
+    pollCall: PollCall = unsafe Darwin.poll
   ) -> Wait {
     let deadline = DispatchTime.now().uptimeNanoseconds + UInt64(milliseconds) * 1_000_000
     while true {
@@ -135,7 +135,7 @@ package enum AcceptFailure: Equatable, Sendable {
       guard now < deadline else { return .elapsed }
       let remaining = Int32(min((deadline - now + 999_999) / 1_000_000, UInt64(Int32.max)))
       var polled = [pollfd(fd: wake, events: Int16(POLLIN), revents: 0)]
-      let ready = pollCall(&polled, 1, remaining)
+      let ready = unsafe pollCall(&polled, 1, remaining)
       if ready < 0 {
         if errno == EINTR { continue }
         return .failed(errno)

@@ -133,7 +133,7 @@ struct DriverParseCharacterizationTests {
 
   /// Rounds before formatting so a tiny negative value cannot render as `-0.0000`.
   private func fixed(_ value: Double) -> String {
-    String(format: "%.4f", (value * 10_000).rounded() / 10_000 + 0.0)
+    unsafe String(format: "%.4f", (value * 10_000).rounded() / 10_000 + 0.0)
   }
 
   /// Contacts render as `slot:active:x,y`, plus `:pressure` when the contact reports one.

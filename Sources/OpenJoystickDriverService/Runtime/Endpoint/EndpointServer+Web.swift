@@ -48,7 +48,13 @@ extension EndpointServer {
     let descriptor = socket(AF_INET, SOCK_STREAM, 0)
     guard descriptor >= 0 else { throw LocalServiceRPCError.connectionFailed(errno) }
     var reuse: Int32 = 1
-    setsockopt(descriptor, SOL_SOCKET, SO_REUSEADDR, &reuse, socklen_t(MemoryLayout<Int32>.size))
+    unsafe setsockopt(
+      descriptor,
+      SOL_SOCKET,
+      SO_REUSEADDR,
+      &reuse,
+      socklen_t(MemoryLayout<Int32>.size)
+    )
     var address = sockaddr_in()
     address.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
     address.sin_family = sa_family_t(AF_INET)
@@ -56,8 +62,8 @@ extension EndpointServer {
     address.sin_addr = in_addr(s_addr: in_addr_t(0x7F00_0001).bigEndian)
     var length = socklen_t(MemoryLayout<sockaddr_in>.size)
     let bound = withUnsafeMutablePointer(to: &address) {
-      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-        Darwin.bind(descriptor, $0, length) == 0 && getsockname(descriptor, $0, &length) == 0
+      unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+        unsafe Darwin.bind(descriptor, $0, length) == 0 && getsockname(descriptor, $0, &length) == 0
       }
     }
     guard bound, Darwin.listen(descriptor, 16) == 0 else {
@@ -87,7 +93,7 @@ extension EndpointServer {
         listener.finish()
         return
       }
-      self.acceptWebConnections(listener, generation: generation)
+      acceptWebConnections(listener, generation: generation)
     }
   }
 
@@ -130,7 +136,7 @@ extension EndpointServer {
         // that follows is the stop, not a fault.
         guard lock.withLock({ webGeneration == generation }) else { return }
         guard
-          AcceptFailure.continuesAfter(
+          unsafe AcceptFailure.continuesAfter(
             errno: code,
             server: "EndpointServer",
             wake: listener.wakeRead,
@@ -145,7 +151,13 @@ extension EndpointServer {
         return
       }
       var noSignal: Int32 = 1
-      setsockopt(accepted, SOL_SOCKET, SO_NOSIGPIPE, &noSignal, socklen_t(MemoryLayout<Int32>.size))
+      unsafe setsockopt(
+        accepted,
+        SOL_SOCKET,
+        SO_NOSIGPIPE,
+        &noSignal,
+        socklen_t(MemoryLayout<Int32>.size)
+      )
       let admitted = lock.withLock { () -> Bool in
         guard pendingWebRequests < Self.maximumPendingWebRequests else { return false }
         pendingWebRequests += 1
@@ -161,7 +173,7 @@ extension EndpointServer {
           Darwin.close(accepted)
           return
         }
-        self.serveWeb(accepted, port: listener.port)
+        serveWeb(accepted, port: listener.port)
       }
     }
   }

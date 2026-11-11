@@ -54,7 +54,7 @@
                 Text(
                   sequence.sources.map(RuntimePresentation.sourceLabel).joined(separator: " -> ")
                 )
-                Text(String(format: "(%.0f ms)", sequence.windowMs)).foregroundColor(
+                Text(unsafe String(format: "(%.0f ms)", sequence.windowMs)).foregroundColor(
                   Color(NSColor.secondaryLabelColor)
                 )
                 OJDSystemSymbol(name: "arrow.right", fallback: "->").accessibilityHidden(true)

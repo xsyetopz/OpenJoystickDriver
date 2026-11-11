@@ -203,7 +203,7 @@
 
     /// The vendor and product ID of the controller.
     private var identity: String {
-      String(format: "%04X:%04X", device.vendorID, device.productID)
+      unsafe String(format: "%04X:%04X", device.vendorID, device.productID)
     }
 
     /// Whether a capture runs.
@@ -266,13 +266,13 @@
     /// the capture ends.
     private func start() {
       guard let seconds else { return }
-      let device = device
+      let controller = device
       actions.startTimed(
         kind,
-        device: device,
+        device: controller,
         gateway: gateway,
         seconds: seconds
-      ) { ControllerRecordDrafting.physicalDescriptor(for: device) }
+      ) { ControllerRecordDrafting.physicalDescriptor(for: controller) }
     }
   }
 

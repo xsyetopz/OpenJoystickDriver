@@ -64,7 +64,7 @@ extension DeviceManager {
     )
     notifyServiceStatusChanged()
     print(
-      "[DeviceManager] \(backend.rawValue) device left unbound:"
+      unsafe "[DeviceManager] \(backend.rawValue) device left unbound:"
         + String(format: " %04x:%04x", vendorID, productID) + " reason=\(reason.rawValue)"
     )
   }

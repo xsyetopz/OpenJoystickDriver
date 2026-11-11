@@ -1,4 +1,4 @@
-import Foundation
+package import Foundation
 
 /// Writes a test document as a canonical XML property list, the form every stored document has.
 ///
@@ -17,14 +17,12 @@ package enum PropertyListFixture {
     return try data(tree: tree)
   }
 
-  /// The XML property list for the tree `literal` states, for a caller that cannot throw. A
-  /// literal that is no JSON stays as its own bytes, so the reader under test refuses it.
+  // A literal that is no JSON stays as its own bytes, so the reader under test refuses it.
   package static func bytes(json literal: String) -> Data {
     (try? data(json: literal)) ?? Data(literal.utf8)
   }
 
-  /// The XML property list for a Foundation tree, for a caller that cannot throw. A tree that no
-  /// property list holds gives empty data.
+  // A tree that no property list holds gives empty data.
   package static func bytes(tree: Any) -> Data { (try? data(tree: tree)) ?? Data() }
 
   /// The XML property list for a Foundation tree.
@@ -34,7 +32,7 @@ package enum PropertyListFixture {
 
   /// The tree that the property list `data` holds.
   package static func tree(_ data: Data) throws -> Any {
-    try PropertyListSerialization.propertyList(from: data, options: [], format: nil)
+    try unsafe PropertyListSerialization.propertyList(from: data, options: 0, format: nil)
   }
 
   /// The tree that the property list file at `url` holds, as a dictionary.

@@ -21,7 +21,7 @@ struct TransportExtensionCommandTests {
     actions: Locked<[TransportExtensionSubmission.Action]> = Locked([])
   ) async -> CLIRun {
     let submission:
-      @Sendable (TransportExtensionSubmission.Action) async throws ->
+      @Sendable (TransportExtensionSubmission.Action) async ->
         SystemExtensionSetupRequestResult = {
           action in
           actions.withLock { $0.append(action) }

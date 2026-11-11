@@ -80,7 +80,7 @@
     /// placeholder.
     static func title(_ key: String, appName: String) -> String {
       let text = OJDLocalized.string(key)
-      return text.contains("%@") ? String(format: text, appName) : text
+      return text.contains("%@") ? unsafe String(format: text, appName) : text
     }
 
     /// Returns the menu item for `item`, attached as ``routing(for:)`` says.

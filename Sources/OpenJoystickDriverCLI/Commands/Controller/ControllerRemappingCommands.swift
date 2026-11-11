@@ -60,7 +60,7 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let (selector, action) = (controller, action)
+      let (selector, motionAction) = (controller, action)
       let (device, status) = try await ServiceConnection.request { client in
         let device = try await selector.resolve(with: client)
         do {
@@ -68,7 +68,7 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
             device,
             try await client.remappingMotionCalibration(
               for: .session(device.sessionToken),
-              command: action
+              command: motionAction
             )
           )
         } catch let error as ApplicationServiceRemappingRPCError {
@@ -103,9 +103,9 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
             "cli.controller.calibrate.status",
             device.name,
             state,
-            String(format: "%.3f", offset.x),
-            String(format: "%.3f", offset.y),
-            String(format: "%.3f", offset.z)
+            unsafe String(format: "%.3f", offset.x),
+            unsafe String(format: "%.3f", offset.y),
+            unsafe String(format: "%.3f", offset.z)
           )
         )
       }
@@ -212,15 +212,15 @@ struct ControllerPairCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let (left, right, selector) = (left, right, profile)
+      let (leftSelector, rightSelector, selector) = (left, right, profile)
       let (leftID, rightID, snapshot) = try await ServiceConnection.request { client in
-        let leftDevice = try await left.resolve(with: client)
-        let rightDevice = try await right.resolve(with: client)
-        let (profile, _) = try await selector.resolve(with: client)
+        let leftDevice = try await leftSelector.resolve(with: client)
+        let rightDevice = try await rightSelector.resolve(with: client)
+        let (pairProfile, _) = try await selector.resolve(with: client)
         let snapshot = try await client.pairRemappingJoyCons(
           left: .session(leftDevice.sessionToken),
           right: .session(rightDevice.sessionToken),
-          profileID: profile.id
+          profileID: pairProfile.id
         )
         return (leftDevice.sessionToken, rightDevice.sessionToken, snapshot)
       }
@@ -289,7 +289,7 @@ struct ControllerUnpairCommand: AsyncParsableCommand {
       let removed = try await ServiceConnection.request { client in
         let snapshot = try await client.getRemappingSnapshot()
         guard
-          let pair = snapshot.joyConPairs.first(where: {
+          let joyConPair = snapshot.joyConPairs.first(where: {
             $0.sessionID.uuidString.caseInsensitiveCompare(text) == .orderedSame
               || $0.left.rawValue == text || $0.right.rawValue == text
           })
@@ -302,8 +302,8 @@ struct ControllerUnpairCommand: AsyncParsableCommand {
             )
           )
         }
-        _ = try await client.unpairRemappingJoyCons(sessionID: pair.sessionID)
-        return pair
+        _ = try await client.unpairRemappingJoyCons(sessionID: joyConPair.sessionID)
+        return joyConPair
       }
       try ControllerPairCommand.print(
         JoyConPairResult(removed),

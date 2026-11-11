@@ -50,7 +50,7 @@ struct GlobalOptions: ParsableArguments {
   /// parse.
   ///
   /// It uses no locale, so the defaults read as `--timeout` parses them ("0.5", not "0,5").
-  private static let timeoutHelp = String(
+  private static let timeoutHelp = unsafe String(
     format: CLILocalized.text("cli.shared.option.timeout"),
     ServiceTimeouts.request,
     ServiceTimeouts.wait
@@ -140,10 +140,10 @@ struct EnvironmentOptions {
       timeout = seconds
     }
     if let value = environment["OJD_COLOR"], !value.isEmpty {
-      guard let color = Color(rawValue: value) else {
+      guard let parsed = Color(rawValue: value) else {
         throw ValidationError(CLILocalized.text("cli.shared.error.envColor"))
       }
-      self.color = color
+      self.color = parsed
     }
   }
 }

@@ -34,7 +34,7 @@ struct ControllerSpeakerCommandTests {
     format: UInt16 = 1
   ) throws -> String {
     func le<T: FixedWidthInteger>(_ value: T) -> [UInt8] {
-      withUnsafeBytes(of: value.littleEndian) { Array($0) }
+      withUnsafeBytes(of: value.littleEndian) { unsafe Array($0) }
     }
     let frames = seconds * rate
     var data: [UInt8] = []

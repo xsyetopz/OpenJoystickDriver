@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Calls a handler when something in the folder of the user settings file changes.
 ///
@@ -25,7 +25,7 @@ public final class SettingsWatcher: @unchecked Sendable {
       withIntermediateDirectories: true,
       attributes: [.posixPermissions: 0o700]
     )
-    let descriptor = open(folder.path, O_EVTONLY | O_CLOEXEC)
+    let descriptor = unsafe open(folder.path, O_EVTONLY | O_CLOEXEC)
     guard descriptor >= 0 else { return nil }
     source = DispatchSource.makeFileSystemObjectSource(
       fileDescriptor: descriptor,

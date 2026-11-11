@@ -133,7 +133,7 @@ func printHIDSupport() -> Bool? {
     observedSupport.append(value)
     let supported = value ? "yes" : "no"
     print(
-      String(
+      unsafe String(
         format: "- %04X:%04X \"%@\" transport=%@ gamecontroller=%@",
         vid,
         pid,
@@ -229,7 +229,7 @@ print("")
 /// The notification center that delivers the connect and disconnect notifications.
 let center = NotificationCenter.default
 /// The observers to remove when the listening ends.
-var observerTokens: [NSObjectProtocol] = []
+var observerTokens: [any NSObjectProtocol] = []
 /// The controllers connected when the probe starts.
 let controllers = GCController.controllers()
 /// What the probe has observed.
@@ -301,8 +301,8 @@ print(
 )
 
 if shouldRumble {
-  let controllers = GCController.controllers()
-  guard let controller = controllers.first else {
+  let connected = GCController.controllers()
+  guard let controller = connected.first else {
     print("rumble: skipped no controller")
     exit(1)
   }

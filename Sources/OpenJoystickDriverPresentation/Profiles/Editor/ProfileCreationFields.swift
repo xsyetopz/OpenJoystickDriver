@@ -40,7 +40,7 @@ struct ProfileControllerChoice: Equatable, Identifiable {
   ///
   /// The catalog has no product names.
   var label: String {
-    if let name = OJDValue.reported(name).textOrNil { return name }
+    if let reported = OJDValue.reported(name).textOrNil { return reported }
     let identifiers = OJDValue.usbIdentifier(vendorID: vendorID, productID: productID).displayText
     if case .family = group { return identifiers }
     return familyName.map { "\($0) · \(identifiers)" } ?? identifiers
@@ -71,7 +71,7 @@ struct ProfileControllerChoice: Equatable, Identifiable {
       entries.sorted { $0.model < $1.model }.compactMap { model, group in
         guard seen.insert(model).inserted else { return nil }
         return Self(
-          id: String(format: "model-%04X-%04X", model.vendorID, model.productID),
+          id: unsafe String(format: "model-%04X-%04X", model.vendorID, model.productID),
           name: nil,
           vendorID: model.vendorID,
           productID: model.productID,

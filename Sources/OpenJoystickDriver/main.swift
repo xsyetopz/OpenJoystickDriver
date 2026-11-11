@@ -17,7 +17,10 @@ if URL(fileURLWithPath: CommandLine.arguments[0]).lastPathComponent == "ojd" {
   await CLI().run(arguments: arguments)
 } else {
   do { try ApplicationServiceLogService.beginCurrentSessionCapture() } catch {
-    fputs("[OpenJoystickDriver] Log capture unavailable: \(error.localizedDescription)\n", stderr)
+    unsafe fputs(
+      "[OpenJoystickDriver] Log capture unavailable: \(error.localizedDescription)\n",
+      stderr
+    )
   }
   PlatformHosts.current.runApplication()
 }

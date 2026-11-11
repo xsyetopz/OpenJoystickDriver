@@ -132,20 +132,20 @@ extension InputMapping {
     switch source {
     case .record: return localize("cli.controller.show.inputMappingRecord")
     case .sdlGameControllerDB:
-      return String(
+      return unsafe String(
         format: localize("cli.controller.show.inputMappingSDL"),
         match?.rawValue ?? "",
         guid ?? ""
       )
     case .none:
-      return String(
+      return unsafe String(
         format: localize("cli.controller.show.inputMappingUnbound"),
         match?.rawValue ?? "",
         guid ?? ""
       )
     case .standardHIDUsageMap:
       guard let rejection else { return localize("cli.controller.show.inputMappingStandard") }
-      return String(format: localize("cli.controller.show.inputMappingRejected"), rejection)
+      return unsafe String(format: localize("cli.controller.show.inputMappingRejected"), rejection)
     }
   }
 }

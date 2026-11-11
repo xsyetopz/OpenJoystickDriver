@@ -19,8 +19,8 @@ struct StandardInputTests {
   private static let patch = Data(
     """
     {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-     "selector": {"vendorID": 13932, "productID": 5},
-     "patch": {"tuning": {"stickDeadzone": 0.08}}}
+      "selector": {"vendorID": 13932, "productID": 5},
+    "patch": {"tuning": {"stickDeadzone": 0.08}}}
     """.utf8
   )
 
@@ -79,7 +79,7 @@ struct StandardInputTests {
     _ body: () async throws -> Void
   ) async throws {
     let saved = dup(STDIN_FILENO)
-    let null = open("/dev/null", O_RDONLY)
+    let null = unsafe open("/dev/null", O_RDONLY)
     try #require(saved >= 0 && null >= 0)
     dup2(null, STDIN_FILENO)
     close(null)

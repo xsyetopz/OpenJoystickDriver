@@ -30,13 +30,13 @@ public struct USBExclusiveOwner: Codable, Equatable, Sendable {
     localize: (String) -> String
   ) -> String {
     guard let owner else { return localize("status.controllerOwner.unnamed") }
-    guard let processID = owner.processID else {
-      return String(format: localize("status.controllerOwner.nameOnly"), owner.name)
+    guard let pid = owner.processID else {
+      return unsafe String(format: localize("status.controllerOwner.nameOnly"), owner.name)
     }
-    return String(
+    return unsafe String(
       format: localize("status.controllerOwner.named"),
       owner.name,
-      String(processID)
+      String(pid)
     )
   }
 
@@ -46,11 +46,11 @@ public struct USBExclusiveOwner: Codable, Equatable, Sendable {
     guard !value.isEmpty else { return nil }
     let prefix = "pid "
     if value.hasPrefix(prefix), let comma = value.firstIndex(of: ","),
-      let processID = Int32(value[value.index(value.startIndex, offsetBy: prefix.count)..<comma]),
+      let parsedID = Int32(value[value.index(value.startIndex, offsetBy: prefix.count)..<comma]),
       case let name = value[value.index(after: comma)...].trimmingCharacters(in: .whitespaces),
       !name.isEmpty
     {
-      self.init(processID: processID, name: name)
+      self.init(processID: parsedID, name: name)
     } else {
       self.init(processID: nil, name: value)
     }

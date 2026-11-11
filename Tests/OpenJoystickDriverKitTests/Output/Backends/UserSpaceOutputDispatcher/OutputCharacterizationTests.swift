@@ -94,12 +94,12 @@ extension OutputCharacterizationTests {
         UInt32(report[0]) | UInt32(report[1]) << 8 | UInt32(report[2]) << 16 | UInt32(report[3])
         << 24
       let flags = report[16...17].map(String.init).joined()
-      return "b=\(String(format: "%04x", buttons)) h=\(report[18])"
+      return "b=\(unsafe String(format: "%04x", buttons)) h=\(report[18])"
         + " ls=\(word(4)),\(word(6)) rs=\(word(8)),\(word(10)) t=\(word(12)),\(word(14)) f=\(flags)"
     }
 
     static func hex(_ bytes: [UInt8]) -> String {
-      bytes.map { String(format: "%02x", $0) }.joined()
+      bytes.map { unsafe String(format: "%02x", $0) }.joined()
     }
   }
 

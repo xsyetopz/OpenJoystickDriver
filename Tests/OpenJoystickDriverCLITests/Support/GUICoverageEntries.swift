@@ -43,7 +43,9 @@ enum GUICoverageEntries {
       CLIOnlyItem(
         command: ["profile", "import"],
         option: "--app",
-        reason: "a script replaces the scope of the file it imports; the window edits the scope after import"
+        reason:
+          "a script replaces the scope of the file it imports; "
+          + "the window edits the scope after import"
       ),
       CLIOnlyItem(
         command: ["virtual", "feed"],
@@ -376,10 +378,10 @@ enum GUISources {
     for directory in directories {
       let url = root.appendingPathComponent(directory)
       var isDirectory: ObjCBool = false
-      guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
+      guard unsafe FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
         isDirectory.boolValue
       else { throw ReadError(description: "missing directory \(url.path)") }
-      var failure: Error?
+      var failure: any Error?
       guard
         let files = FileManager.default.enumerator(
           at: url,

@@ -34,7 +34,7 @@ public struct ControllerModelID: Hashable, Comparable, Sendable {
 
 extension ControllerModelID: CustomStringConvertible {
   /// The vendor and product ID as four uppercase hex digits each, such as `045E:02EA`.
-  public var description: String { String(format: "%04X:%04X", vendorID, productID) }
+  public var description: String { unsafe String(format: "%04X:%04X", vendorID, productID) }
 }
 
 extension PhysicalDevice {

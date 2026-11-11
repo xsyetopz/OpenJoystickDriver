@@ -16,8 +16,8 @@ final class RecordingMIDIOutput: RemappingMIDIOutput, @unchecked Sendable {
     append("open")
   }
 
-  func send(_ message: RemappingMIDIMessage) throws {
-    append(message.bytes.map { String(format: "%02X", $0) }.joined(separator: " "))
+  func send(_ message: RemappingMIDIMessage) {
+    append(message.bytes.map { unsafe String(format: "%02X", $0) }.joined(separator: " "))
   }
 
   func close() { append("close") }

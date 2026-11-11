@@ -29,11 +29,11 @@ enum EndpointReadResult: Equatable {
 
 /// Writes all of `data` to `descriptor`; false when the peer is gone.
 func endpointSendAll(_ descriptor: Int32, _ data: Data) -> Bool {
-  data.withUnsafeBytes { buffer in
+  unsafe data.withUnsafeBytes { buffer in
     guard let base = buffer.baseAddress else { return true }
     var offset = 0
     while offset < buffer.count {
-      let sent = Darwin.send(descriptor, base + offset, buffer.count - offset, 0)
+      let sent = unsafe Darwin.send(descriptor, base + offset, buffer.count - offset, 0)
       if sent < 0, errno == EINTR { continue }
       guard sent > 0 else { return false }
       offset += sent
@@ -64,7 +64,7 @@ final class EndpointLineTransport: EndpointTransport, @unchecked Sendable {
         return line.count > EndpointServer.maximumLineBytes ? .tooLong : .message(Data(line))
       }
       if buffer.count > EndpointServer.maximumLineBytes { return .tooLong }
-      let count = Darwin.recv(descriptor, &chunk, chunk.count, 0)
+      let count = unsafe Darwin.recv(descriptor, &chunk, chunk.count, 0)
       if count < 0, errno == EINTR { continue }
       guard count > 0 else { return .end }
       buffer.append(contentsOf: chunk[0..<count])

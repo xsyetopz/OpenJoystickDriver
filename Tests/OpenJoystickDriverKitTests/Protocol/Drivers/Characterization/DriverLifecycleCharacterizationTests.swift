@@ -342,13 +342,14 @@ struct DriverLifecycleCharacterizationTests {
     "[" + values.map(\.rawValue).joined(separator: ",") + "]"
   }
 
-  func hexByte(_ byte: UInt8) -> String { "0x" + String(format: "%02x", byte) }
+  func hexByte(_ byte: UInt8) -> String { unsafe "0x" + String(format: "%02x", byte) }
 
   /// Bytes as 32-byte hex rows, so each pinned line stays short.
   func hexRows(_ bytes: [UInt8]) -> [String] {
     stride(from: 0, to: bytes.count, by: 32).map { start in
       "    "
-        + bytes[start..<min(start + 32, bytes.count)].map { String(format: "%02x", $0) }.joined()
+        + bytes[start..<min(start + 32, bytes.count)].map { unsafe String(format: "%02x", $0) }
+        .joined()
     }
   }
 

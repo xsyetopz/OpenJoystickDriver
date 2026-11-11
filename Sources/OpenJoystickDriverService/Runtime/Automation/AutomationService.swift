@@ -1,5 +1,5 @@
-import Foundation
-import OpenJoystickDriverKit
+package import Foundation
+package import OpenJoystickDriverKit
 
 /// The service state that the app's Shortcuts actions read, called in the app's own process.
 ///
@@ -92,7 +92,7 @@ package struct AutomationAmbiguousModelError: Error, Equatable, LocalizedError, 
 
 /// Returns the `VVVV:PPPP` text of the vendor and product ID.
 private func automationModel(vendorID: UInt16, productID: UInt16) -> String {
-  String(format: "%04X:%04X", vendorID, productID)
+  unsafe String(format: "%04X:%04X", vendorID, productID)
 }
 
 /// A saved remapping profile as Shortcuts shows it.

@@ -75,7 +75,9 @@ struct EndpointServerTests {
     var address = try LocalServiceRPCTransport.socketAddress(path: path)
     let length = LocalServiceRPCTransport.socketAddressLength(path: path)
     let status = withUnsafePointer(to: &address) {
-      $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { connect(descriptor, $0, length) }
+      unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+        unsafe connect(descriptor, $0, length)
+      }
     }
     try #require(status == 0)
     return descriptor
@@ -621,8 +623,12 @@ struct EndpointServerTests {
       let stale = socket(AF_UNIX, SOCK_STREAM, 0)
       var address = try LocalServiceRPCTransport.socketAddress(path: server.socketPath)
       let bound = withUnsafePointer(to: &address) {
-        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-          bind(stale, $0, LocalServiceRPCTransport.socketAddressLength(path: server.socketPath))
+        unsafe $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+          unsafe bind(
+            stale,
+            $0,
+            LocalServiceRPCTransport.socketAddressLength(path: server.socketPath)
+          )
         }
       }
       #expect(bound == 0)
