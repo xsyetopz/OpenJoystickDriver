@@ -146,22 +146,35 @@
     @ObservedObject
     var actions: ControllerDetailActions
 
+    /// The three buttons.
+    @ViewBuilder
+    private var actionButtons: some View {
+      Button(OJDLocalized.string("ui.controllers.capturePackets")) {
+        actions.clearNotice()
+        actions.timedKind = .capturePackets
+      }
+      Button(OJDLocalized.string("ui.controllers.draftRecord")) {
+        actions.clearNotice()
+        actions.timedKind = .draftRecord
+      }
+      Button(OJDLocalized.string("ui.controllers.draftRecordFromSDL")) {
+        actions.clearNotice()
+        actions.draftFromSDL(device: device)
+      }
+    }
+
     /// The three buttons and the result of the latest of their actions.
     var body: some View {
       Group {
-        HStack {
-          Button(OJDLocalized.string("ui.controllers.capturePackets")) {
-            actions.clearNotice()
-            actions.timedKind = .capturePackets
+        // One row; a column when the three titles do not fit the width. `ViewThatFits` needs
+        // macOS 13, so macOS 12 keeps the row.
+        if #available(macOS 13, *) {
+          ViewThatFits(in: .horizontal) {
+            HStack { actionButtons }
+            VStack(alignment: .leading) { actionButtons }
           }
-          Button(OJDLocalized.string("ui.controllers.draftRecord")) {
-            actions.clearNotice()
-            actions.timedKind = .draftRecord
-          }
-          Button(OJDLocalized.string("ui.controllers.draftRecordFromSDL")) {
-            actions.clearNotice()
-            actions.draftFromSDL(device: device)
-          }
+        } else {
+          HStack { actionButtons }
         }
         if let notice = actions.notice, notice.source == .timedCapture {
           ControllerNoticeText(text: notice.text, isError: notice.isError)
