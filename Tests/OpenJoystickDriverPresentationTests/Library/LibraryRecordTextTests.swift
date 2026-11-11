@@ -10,7 +10,7 @@ import Testing
 struct LibraryRecordTextTests {
   private static let document = """
     {
-      "apiVersion": "openjoystickdriver/v1alpha2",
+      "apiVersion": "openjoystickdriver/v1alpha3",
       "kind": "Controller",
       "vendorID": 13629,
       "productID": 4296,
