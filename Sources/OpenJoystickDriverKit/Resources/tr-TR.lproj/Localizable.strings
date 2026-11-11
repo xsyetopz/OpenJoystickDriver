@@ -4499,13 +4499,41 @@
 /* One-line summary of 'ojd generate' in the command list and at the top of its help. */
 "cli.generate.group.abstract" = "Bir üreteç betiği çalıştırır ve döndürdüğü belgeleri yazar.";
 /* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
-"cli.generate.group.discussion" = "Betiği dosya ve ağ erişimi olmayan bir yardımcı süreçte çalıştırır, generate işlevinin döndürdüğü belgeleri denetler ve bunları bir mod paketi olarak yazar. --timeout zaman sınırını saniye cinsinden belirler (varsayılan 5).";
+"cli.generate.group.discussion" = "Betiği dosya ve ağ erişimi olmayan bir yardımcı süreçte çalıştırır, generate işlevinin döndürdüğü belgeleri denetler ve her birini --output içine özellik listesi dosyası olarak yazar. --output verilmezse belgeleri yazdırır. --timeout zaman sınırını saniye cinsinden belirler (varsayılan 5).";
 /* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
 "cli.generate.group.script" = "Üreteç betiği, bir .js dosyası.";
 /* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
 "cli.generate.group.helperFailed" = "Betiğin yardımcı süreci başlatılamadı: %@";
 /* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
 "cli.generate.group.timedOut" = "%1$@ %2$@ saniye içinde bitmedi ve sonlandırıldı.";
+/* Help text of the --output option of 'ojd generate'. */
+"cli.generate.group.output" = "Dosyaların yazılacağı klasör. Verilmezse komut belgeleri yazdırır ve hiçbir dosya yazmaz.";
+/* Help text of the --replace flag of 'ojd generate'. */
+"cli.generate.group.replace" = "İçeriği belgeden farklı olan dosyayı değiştirir.";
+/* Error of 'ojd generate' when the script file cannot be read. %@ is the script path. */
+"cli.generate.group.unreadable" = "%@ okunamıyor.";
+/* Error of 'ojd generate' when the script defines no function named generate. %@ is the script path; generate stays as written. */
+"cli.generate.group.missingGenerate" = "%@ içinde generate işlevi tanımlı değil.";
+/* Error of 'ojd generate' when the script throws a value that has no line number. %1$@ is the script path and %2$@ is the message. */
+"cli.generate.group.scriptFailed" = "%1$@ betiği başarısız oldu: %2$@";
+/* Error of 'ojd generate' for a syntax error or an exception of the script. %1$@ is the script path, %2$@ is the line number and %3$@ is the message. */
+"cli.generate.group.scriptFailedAtLine" = "%1$@ betiği %2$@. satırda başarısız oldu: %3$@";
+/* Error of 'ojd generate' when generate returns null, no value, or something that is not a document or a list of documents. generate stays as written. */
+"cli.generate.group.notDocuments" = "generate bir belge veya belge listesi döndürmelidir.";
+/* Error of 'ojd generate' for a returned document that fails its checks. %1$@ is the position of the document in the result, counted from 1, and %2$@ is the key path and the rule it breaks. */
+"cli.generate.group.documentInvalid" = "%1$@ numaralı belge geçersiz ve hiçbir dosya yazılmadı: %2$@";
+/* Error of 'ojd generate' when two returned documents have the same file name. %1$@ and %2$@ are their positions in the result, counted from 1, and %3$@ is the file name. */
+"cli.generate.group.duplicate" = "%1$@ ve %2$@ numaralı belgelerin ikisi de %3$@ dosyasına yazılacağından hiçbir dosya yazılmadı.";
+/* Error of 'ojd generate' when a file holds other content than the generated document. %@ is the file path; --replace stays as written. */
+"cli.generate.group.conflict" = "%@ başka içerik barındırdığından hiçbir dosya yazılmadı. Üzerine yazmak için --replace kullanın.";
+/* Error of 'ojd generate' when a file cannot be written. %1$@ is the file path and %2$@ is the reason. */
+"cli.generate.group.writeFailed" = "%1$@ yazılamadı: %2$@";
+/* Line of 'ojd generate' for a file that it wrote anew. %@ is the file path. */
+"cli.generate.group.created" = "%@ oluşturuldu.";
+/* Line of 'ojd generate' for a file whose other content it replaced. %@ is the file path. */
+"cli.generate.group.replaced" = "%@ değiştirildi.";
+/* Line of 'ojd generate' for a file that already held the generated document. %@ is the file path. */
+"cli.generate.group.unchanged" = "%@ değişmedi.";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Eski bir sürümden kaydedilmiş belgeleri geçerli sürüme dönüştürür.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */

@@ -1629,6 +1629,54 @@
         }
       }
     },
+    "generate": {
+      "description": "The documents a generator script returned, with what happened to each file.",
+      "type": "object",
+      "required": ["apiVersion", "kind", "metadata", "items"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "GenerationReport"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "output": {
+              "type": "string",
+              "description": "The folder that received the files; absent when the command wrote none."
+            }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["file", "kind", "status"],
+            "additionalProperties": false,
+            "properties": {
+              "document": {
+                "type": "string",
+                "description": "The document as an XML property list; present when the command wrote no file."
+              },
+              "file": {
+                "type": "string",
+                "description": "The name of the file of the document."
+              },
+              "kind": {
+                "enum": ["Controller", "ControllerPatch", "Profile", "VirtualDevice"]
+              },
+              "status": {
+                "enum": ["Created", "NotWritten", "Replaced", "Unchanged"]
+              }
+            }
+          }
+        }
+      }
+    },
     "migrate": {
       "description": "Each file that migrate scanned, with its verdict.",
       "type": "object",

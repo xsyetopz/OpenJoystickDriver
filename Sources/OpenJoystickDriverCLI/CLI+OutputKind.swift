@@ -45,6 +45,7 @@ extension CLI {
       (DiagnoseCommand.self, "Diagnosis"),
       (ExplainCommand.self, "ErrorExplanation"),
       (MigrateCommand.self, "MigrationReport"),
+      (GenerateCommand.self, "GenerationReport"),
       (TransportExtensionStatusCommand.self, "TransportExtension"),
       (TransportExtensionActivateCommand.self, "TransportExtension"),
       (TransportExtensionDeactivateCommand.self, "TransportExtension"),

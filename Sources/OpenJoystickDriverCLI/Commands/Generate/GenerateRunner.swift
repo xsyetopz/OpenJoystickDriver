@@ -32,7 +32,12 @@ enum GenerateRunner {
     process.standardOutput = pipe
     process.standardError = FileHandle.nullDevice
     process.standardInput = FileHandle.nullDevice
+    // `waitUntilExit` waits on a run loop that a test host may never run.
+    let exited = DispatchSemaphore(value: 0)
+    process.terminationHandler = { _ in exited.signal() }
     try process.run()
+    // The reader sees the end of the output only when no process holds the write end.
+    try? pipe.fileHandleForWriting.close()
     let processID = process.processIdentifier
     let expired = Expired()
     let timer = DispatchSource.makeTimerSource(queue: .global())
@@ -46,7 +51,7 @@ enum GenerateRunner {
       DispatchQueue.global().async {
         // Reading to the end also drains the pipe, so a large result cannot block the helper.
         let output = (try? pipe.fileHandleForReading.readToEnd()) ?? Data()
-        process.waitUntilExit()
+        exited.wait()
         timer.cancel()
         continuation.resume(
           returning: Outcome(

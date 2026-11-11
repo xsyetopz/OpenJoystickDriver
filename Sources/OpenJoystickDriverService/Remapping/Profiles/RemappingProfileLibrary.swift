@@ -118,5 +118,5 @@ actor RemappingProfileLibrary {
   }
 
   /// Returns the file name of the profile `id`.
-  static func profileFileName(_ id: UUID) -> String { "\(id.uuidString).plist" }
+  static func profileFileName(_ id: UUID) -> String { RemappingProfileFileStore.fileName(for: id) }
 }

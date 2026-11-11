@@ -22,6 +22,9 @@ public enum RemappingProfileFileStore {
     return profile
   }
 
+  /// The name of the file that holds the profile `id` in a folder of profiles.
+  public static func fileName(for id: UUID) -> String { "\(id.uuidString).plist" }
+
   /// Returns the error code of a profile that ``load(from:)`` refused.
   ///
   /// It is the code of a document header problem when there is one, otherwise

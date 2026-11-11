@@ -4499,13 +4499,41 @@
 /* One-line summary of 'ojd generate' in the command list and at the top of its help. */
 "cli.generate.group.abstract" = "執行產生器指令碼，並寫入它傳回的文件。";
 /* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
-"cli.generate.group.discussion" = "在無法存取檔案和網路的輔助程序中執行指令碼，檢查其 generate 函式傳回的文件，並寫成模組套件。--timeout 以秒為單位設定時間限制（預設為 5）。";
+"cli.generate.group.discussion" = "在無法存取檔案和網路的輔助程序中執行指令碼，檢查其 generate 函式傳回的文件，並將每份文件寫成 --output 內的屬性列表檔案。沒有 --output 時只會列印文件。--timeout 以秒為單位設定時間限制（預設為 5）。";
 /* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
 "cli.generate.group.script" = "產生器指令碼，一個 .js 檔案。";
 /* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
 "cli.generate.group.helperFailed" = "無法啟動指令碼輔助程序：%@";
 /* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
 "cli.generate.group.timedOut" = "%1$@ 未在 %2$@ 秒內完成，已被終止。";
+/* Help text of the --output option of 'ojd generate'. */
+"cli.generate.group.output" = "接收檔案的資料夾。未指定時，指令只會列印文件，不會寫入檔案。";
+/* Help text of the --replace flag of 'ojd generate'. */
+"cli.generate.group.replace" = "取代內容與文件不同的檔案。";
+/* Error of 'ojd generate' when the script file cannot be read. %@ is the script path. */
+"cli.generate.group.unreadable" = "無法讀取 %@。";
+/* Error of 'ojd generate' when the script defines no function named generate. %@ is the script path; generate stays as written. */
+"cli.generate.group.missingGenerate" = "%@ 沒有定義 generate 函式。";
+/* Error of 'ojd generate' when the script throws a value that has no line number. %1$@ is the script path and %2$@ is the message. */
+"cli.generate.group.scriptFailed" = "指令碼 %1$@ 失敗：%2$@";
+/* Error of 'ojd generate' for a syntax error or an exception of the script. %1$@ is the script path, %2$@ is the line number and %3$@ is the message. */
+"cli.generate.group.scriptFailedAtLine" = "指令碼 %1$@ 在第 %2$@ 行失敗：%3$@";
+/* Error of 'ojd generate' when generate returns null, no value, or something that is not a document or a list of documents. generate stays as written. */
+"cli.generate.group.notDocuments" = "generate 必須傳回一份文件或文件列表。";
+/* Error of 'ojd generate' for a returned document that fails its checks. %1$@ is the position of the document in the result, counted from 1, and %2$@ is the key path and the rule it breaks. */
+"cli.generate.group.documentInvalid" = "文件 %1$@ 無效，未寫入任何檔案：%2$@";
+/* Error of 'ojd generate' when two returned documents have the same file name. %1$@ and %2$@ are their positions in the result, counted from 1, and %3$@ is the file name. */
+"cli.generate.group.duplicate" = "文件 %1$@ 和 %2$@ 都會寫入 %3$@，因此未寫入任何檔案。";
+/* Error of 'ojd generate' when a file holds other content than the generated document. %@ is the file path; --replace stays as written. */
+"cli.generate.group.conflict" = "%@ 含有其他內容，因此未寫入任何檔案。使用 --replace 可覆寫它。";
+/* Error of 'ojd generate' when a file cannot be written. %1$@ is the file path and %2$@ is the reason. */
+"cli.generate.group.writeFailed" = "無法寫入 %1$@：%2$@";
+/* Line of 'ojd generate' for a file that it wrote anew. %@ is the file path. */
+"cli.generate.group.created" = "已建立 %@。";
+/* Line of 'ojd generate' for a file whose other content it replaced. %@ is the file path. */
+"cli.generate.group.replaced" = "已取代 %@。";
+/* Line of 'ojd generate' for a file that already held the generated document. %@ is the file path. */
+"cli.generate.group.unchanged" = "%@ 未變更。";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "將舊版本的已儲存文件轉換為目前版本。";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */

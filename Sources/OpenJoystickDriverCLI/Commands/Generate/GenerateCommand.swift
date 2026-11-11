@@ -24,38 +24,41 @@ struct GenerateCommand: AsyncParsableCommand {
   )
   var script: String
 
+  /// `--output`: the folder that receives the files; without it the command writes no file.
+  @Option(
+    name: .long,
+    help: ArgumentHelp(CLILocalized.text("cli.generate.group.output"), valueName: "FOLDER")
+  )
+  var output: String?
+
+  /// `--replace`: overwrite a file whose content differs.
+  @Flag(name: .long, help: ArgumentHelp(CLILocalized.text("cli.generate.group.replace")))
+  var replace = false
+
   /// The global options, whose `--timeout` is the time limit of the script.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The `--json` metadata.
+  private struct Metadata: Encodable {
+    /// The folder that received the files, or nil when the command wrote none.
+    let output: String?
+  }
+
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      guard let helper = Self.helper else {
-        throw CLIFailure(
-          .launchFailed,
-          CLILocalized.format("cli.generate.group.helperFailed", "no executable")
-        )
-      }
-      let limit = CLIContext.current.timeout ?? Self.defaultTimeout
-      let outcome: GenerateRunner.Outcome
-      do {
-        outcome = try await GenerateRunner.run(
-          executable: helper,
-          script: URL(fileURLWithPath: script),
-          timeout: limit
-        )
-      } catch {
-        throw CLIFailure(
-          .launchFailed,
-          CLILocalized.format("cli.generate.group.helperFailed", error.localizedDescription)
-        )
-      }
-      if outcome.timedOut {
-        throw CLIFailure(
-          .aborted,
-          CLILocalized.format("cli.generate.group.timedOut", script, String(limit))
-        )
+      let documents = try await Self.documents(of: script)
+      let entries =
+        try output.map { try Self.write(documents, to: URL(fileURLWithPath: $0), replace: replace) }
+        ?? documents.map { Entry(document: $0, status: .notWritten) }
+      switch CLIContext.current.format {
+      case .json:
+        try CLIOutput.json(CLIList(metadata: Metadata(output: output), items: entries))
+      case .plain:
+        CLIOutput.plain(entries.map { [$0.status.rawValue, $0.file, $0.kind] })
+      case .human:
+        for entry in entries { CLIOutput.stdout(entry.line) }
       }
     }
   }

@@ -4500,13 +4500,41 @@
 /* One-line summary of 'ojd generate' in the command list and at the top of its help. */
 "cli.generate.group.abstract" = "Esegue uno script generatore e scrive i documenti che restituisce.";
 /* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
-"cli.generate.group.discussion" = "Esegue lo script in un processo ausiliario senza accesso ai file o alla rete, controlla i documenti restituiti dalla sua funzione generate e li scrive come pacchetto mod. --timeout imposta il limite di tempo in secondi (5 per impostazione predefinita).";
+"cli.generate.group.discussion" = "Esegue lo script in un processo ausiliario senza accesso ai file o alla rete, controlla i documenti restituiti dalla sua funzione generate e scrive ciascuno come file di liste di proprietà in --output. Senza --output stampa i documenti. --timeout imposta il limite di tempo in secondi (5 per impostazione predefinita).";
 /* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
 "cli.generate.group.script" = "Lo script generatore, un file .js.";
 /* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
 "cli.generate.group.helperFailed" = "Impossibile avviare il processo ausiliario dello script: %@";
 /* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
 "cli.generate.group.timedOut" = "%1$@ non è terminato entro %2$@ secondi ed è stato interrotto.";
+/* Help text of the --output option of 'ojd generate'. */
+"cli.generate.group.output" = "La cartella che riceve i file. Senza di essa il comando stampa i documenti e non scrive alcun file.";
+/* Help text of the --replace flag of 'ojd generate'. */
+"cli.generate.group.replace" = "Sostituisce un file il cui contenuto differisce dal documento.";
+/* Error of 'ojd generate' when the script file cannot be read. %@ is the script path. */
+"cli.generate.group.unreadable" = "Impossibile leggere %@.";
+/* Error of 'ojd generate' when the script defines no function named generate. %@ is the script path; generate stays as written. */
+"cli.generate.group.missingGenerate" = "%@ non definisce alcuna funzione generate.";
+/* Error of 'ojd generate' when the script throws a value that has no line number. %1$@ is the script path and %2$@ is the message. */
+"cli.generate.group.scriptFailed" = "Lo script %1$@ non è riuscito: %2$@";
+/* Error of 'ojd generate' for a syntax error or an exception of the script. %1$@ is the script path, %2$@ is the line number and %3$@ is the message. */
+"cli.generate.group.scriptFailedAtLine" = "Lo script %1$@ non è riuscito alla riga %2$@: %3$@";
+/* Error of 'ojd generate' when generate returns null, no value, or something that is not a document or a list of documents. generate stays as written. */
+"cli.generate.group.notDocuments" = "generate deve restituire un documento o un elenco di documenti.";
+/* Error of 'ojd generate' for a returned document that fails its checks. %1$@ is the position of the document in the result, counted from 1, and %2$@ is the key path and the rule it breaks. */
+"cli.generate.group.documentInvalid" = "Il documento %1$@ non è valido e non è stato scritto alcun file: %2$@";
+/* Error of 'ojd generate' when two returned documents have the same file name. %1$@ and %2$@ are their positions in the result, counted from 1, and %3$@ is the file name. */
+"cli.generate.group.duplicate" = "I documenti %1$@ e %2$@ verrebbero entrambi scritti in %3$@, quindi non è stato scritto alcun file.";
+/* Error of 'ojd generate' when a file holds other content than the generated document. %@ is the file path; --replace stays as written. */
+"cli.generate.group.conflict" = "%@ contiene altro contenuto, quindi non è stato scritto alcun file. Usa --replace per sovrascriverlo.";
+/* Error of 'ojd generate' when a file cannot be written. %1$@ is the file path and %2$@ is the reason. */
+"cli.generate.group.writeFailed" = "Impossibile scrivere %1$@: %2$@";
+/* Line of 'ojd generate' for a file that it wrote anew. %@ is the file path. */
+"cli.generate.group.created" = "%@ creato.";
+/* Line of 'ojd generate' for a file whose other content it replaced. %@ is the file path. */
+"cli.generate.group.replaced" = "%@ sostituito.";
+/* Line of 'ojd generate' for a file that already held the generated document. %@ is the file path. */
+"cli.generate.group.unchanged" = "%@ invariato.";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Converte i documenti salvati di una versione precedente nella versione attuale.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
