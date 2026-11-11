@@ -498,6 +498,22 @@ struct MainMenuModelTests {
   }
 
   @Test
+  func theHelpMenuHoldsActivityLogExplainErrorCodeReportProblemAndProjectWebsite() throws {
+    let help = try section("help")
+    let titles = help.items.map { OJDLocalized.string($0.titleKey) }
+    for title in [
+      "Activity Log", "Explain Error Code...", "Report Problem...", "Project Website",
+    ] {
+      #expect(titles.contains(title), "\(title)")
+    }
+    for action in [
+      MainMenuAction.showActivityLog, .explainErrorCode, .reportProblem, .openProjectWebsite,
+    ] {
+      #expect(help.items.contains { $0.action == action }, "\(action)")
+    }
+  }
+
+  @Test
   func saveItemsDoNotNeedAWindow() throws {
     let state = MainMenuState()
     for action in [MainMenuAction.saveSupportReport, .saveActivityLog, .copySupportReport] {
