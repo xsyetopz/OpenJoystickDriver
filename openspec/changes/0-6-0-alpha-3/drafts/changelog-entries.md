@@ -14,6 +14,7 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - A description document in `Protocols/` can name a protocol family that OJD lacks, with an UpperCamelCase name and `defaults.input.layouts`; a record that names the family decodes its reports with those layouts. The family loads from the user's `Protocols/` folder and from a mod package, takes its display name from the document, and is refused when its name equals a built-in family, when it has no input layouts, or when its file stem differs from its name. (9.19, 9.20)
 - `ojd protocol validate <file>`, `ojd protocol install <file> [--dry-run]` and `ojd protocol list`, which lists the built-in and documented families with their source (`BuiltIn`, `User` or `Package`). (9.21)
 - The wiki page [Support Ladder](wiki/Support-Ladder.md) lists the five ways to support a controller (nothing, a patch, a record, a generator script, source) with the command for each and a complete patch and record; `llms.txt` and `llms-full.txt` list the same steps. (9.10)
+- The Xbox Elite Series 1 (`045E:02E3`) record uses its interface 0 endpoints, interrupt IN `0x81` and OUT `0x01`, as the `045E:02D1` record does. The GIP defaults `0x82` and `0x02` are isochronous endpoints of interface 1 on this controller. Hardware confirmation is pending. Thanks to Kurtis Simpson (#56). (8.3)
 
 ## Changed
 

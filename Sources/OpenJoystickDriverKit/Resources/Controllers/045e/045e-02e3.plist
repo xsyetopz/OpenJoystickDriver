@@ -22,6 +22,16 @@
 	<integer>739</integer>
 	<key>route</key>
 	<string>ExtensionOwned</string>
+	<key>usb</key>
+	<dict>
+		<key>endpoints</key>
+		<dict>
+			<key>in</key>
+			<integer>129</integer>
+			<key>out</key>
+			<integer>1</integer>
+		</dict>
+	</dict>
 	<key>vendorID</key>
 	<integer>1118</integer>
 </dict>
