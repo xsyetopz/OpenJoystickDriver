@@ -6832,7 +6832,7 @@ gip keepAlive=enabled startup=[0520000100,0A200003000114,062000020100]
 parameters=shareButton.fromEnd=18
 
 ## 2DC8:301B
-protocol=hid-descriptor variant=- ownership=macos
+protocol=hid-descriptor variant=- ownership=ojd
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
 controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]

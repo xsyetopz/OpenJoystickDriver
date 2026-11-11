@@ -247,6 +247,8 @@
 	</array>
 	<key>productID</key>
 	<integer>12315</integer>
+	<key>server</key>
+	<string>OJD</string>
 	<key>vendorID</key>
 	<integer>11720</integer>
 </dict>

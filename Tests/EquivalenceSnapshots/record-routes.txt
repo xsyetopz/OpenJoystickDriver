@@ -1883,7 +1883,7 @@ raw-access
 raw-access
 
 ## 2DC8:301B
-system ownership=macos
+system ownership=ojd
 
 ## 2DC8:301C
 system ownership=macos

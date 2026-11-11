@@ -67,6 +67,24 @@ struct ControllerRecordSetTests {
     #expect(bundled.fieldLayers == ["modes": .bundled])
   }
 
+  /// The Ultimate 2C over Bluetooth LE: GameController lists no controller while macOS serves it
+  /// (`gamecontroller-probes.txt`), so the bundled record gives it to OJD.
+  @Test
+  func theUltimate2CBluetoothPadIsServedByTheVirtualGamepadWithNoUserDocument() throws {
+    let model = ControllerModelID(vendorID: 0x2DC8, productID: 0x301B)
+    let record = try #require(ControllerRecordSet.bundled.records[model])
+    let route = ServingPolicy.route(
+      ServingInput(
+        observation: .systemGamepad,
+        server: record.profile.server,
+        accessRoute: record.profile.accessRoute,
+        controls: Set(Control.allCases)
+      )
+    )
+    #expect(record.profile.server == .ojd)
+    #expect(route.publishesVirtualDevice)
+  }
+
   /// xpad `MAP_SHARE_BUTTON` rows and the GameSir G7 SE, whose Share is payload byte 14 of its
   /// 32-byte input (captured 2026-10-23), read Share 18 bytes from the packet end.
   @Test
