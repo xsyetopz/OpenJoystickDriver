@@ -1,0 +1,18 @@
+[
+  {
+    "path": "Sources/OpenJoystickDriverKit/Device/ControllerModelID.swift",
+    "reason": "The 8BitDo bootloader identities 2DC8:3208 and 2DC8:5750 gate every write, with or without a record, so the rule cannot live in a record that a missing record would drop."
+  },
+  {
+    "path": "Sources/OpenJoystickDriverKit/Diagnostics/DiagnosticsService.swift",
+    "reason": "The placeholder-serial check names the Switch Pro Controller 057E:2009, the one model that reports the placeholder serial, for a diagnosis of a running service rather than for protocol selection."
+  },
+  {
+    "path": "Sources/OpenJoystickDriverUSB/Configuration.swift",
+    "reason": "The Microsoft product IDs are the list in Apple's transport.usb grant for the DriverKit extension; the extension may match no others, so the list is the entitlement and not a catalog fact."
+  },
+  {
+    "path": "Sources/OpenJoystickDriverUSB/PassiveProbe/PassiveUSBDescriptorProbe.swift",
+    "reason": "The authorized tuple 3537:1010 is the deliberate allow-list of the passive descriptor probe, which reads only a device that a maintainer named."
+  }
+]
