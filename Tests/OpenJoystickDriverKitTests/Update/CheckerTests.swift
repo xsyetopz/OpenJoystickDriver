@@ -37,6 +37,55 @@ struct UpdateCheckerTests {
     #expect(info.htmlURL.absoluteString == "https://github.example/project/tree/v0.4.1")
   }
 
+  @Test("a tester build is offered to the prerelease channel and ordered after its release")
+  func testerBuildIsOfferedAfterTheReleaseBeforeIt() async throws {
+    let checker = try Self.checker(path: "/tester-tags")
+
+    let offered = await checker.check(currentVersion: "0.6.0-alpha.2", includePrereleases: true)
+    guard case .available(let info) = offered else {
+      Issue.record("Expected available update, got \(offered)")
+      return
+    }
+    #expect(info.tagName == "0.6.0-alpha.2.tester.2")
+
+    let hidden = await checker.check(currentVersion: "0.6.0-alpha.2")
+    #expect(hidden == .aheadOfLatestRelease(current: "0.6.0-alpha.2", latest: "0.5.0"))
+
+    let newest = await checker.check(
+      currentVersion: "0.6.0-alpha.2.tester.2+build.1.2.3.sha.0123456789ab",
+      includePrereleases: true
+    )
+    #expect(
+      newest
+        == .upToDate(
+          current: "0.6.0-alpha.2.tester.2+build.1.2.3.sha.0123456789ab",
+          latest: "0.6.0-alpha.2.tester.2"
+        )
+    )
+  }
+
+  @Test("a tester build is offered the release it leads to, a stable one included")
+  func testerBuildIsOfferedTheReleaseItLeadsTo() async throws {
+    let checker = try Self.checker(path: "/tester-then-release")
+
+    let prerelease = await checker.check(
+      currentVersion: "0.6.0-alpha.2.tester.2",
+      includePrereleases: true
+    )
+    guard case .available(let info) = prerelease else {
+      Issue.record("Expected available update, got \(prerelease)")
+      return
+    }
+    #expect(info.tagName == "0.6.0-alpha.3")
+
+    let stable = await checker.check(currentVersion: "0.5.1-tester.1")
+    guard case .available(let release) = stable else {
+      Issue.record("Expected available update, got \(stable)")
+      return
+    }
+    #expect(release.tagName == "0.5.1")
+  }
+
   @Test("the running version equal to the latest tag is up to date")
   func equalVersionIsUpToDate() async throws {
     let checker = try Self.checker(path: "/mixed-tags")
@@ -235,6 +284,16 @@ private final class UpdateURLProtocolStub: URLProtocol, @unchecked Sendable {
   private static func stub(for url: URL) -> (status: Int, headers: [String: String], json: String) {
     switch (url.path, queryValue("page", in: url)) {
     case ("/mixed-tags", _): return (200, [:], tags("v0.4.0", "latest", "v0.5.0-alpha.4", "v0.4.1"))
+    case ("/tester-tags", _):
+      return (
+        200, [:],
+        tags("0.5.0", "0.6.0-alpha.2", "0.6.0-alpha.2.tester.1", "0.6.0-alpha.2.tester.2")
+      )
+    case ("/tester-then-release", _):
+      return (
+        200, [:],
+        tags("0.5.0", "0.5.1", "0.6.0-alpha.2", "0.6.0-alpha.2.tester.2", "0.6.0-alpha.3")
+      )
     case ("/invalid-tags", _): return (200, [:], tags("latest", "v01.2.3"))
     case ("/paged-tags", nil):
       return (

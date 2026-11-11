@@ -4,7 +4,7 @@ name: Release
   workflow_dispatch:
     inputs:
       tag:
-        description: SemVer tag to release, for example 0.1.0-rc.1
+        description: Tag to release, for example 0.1.0-rc.1, or a tester tag such as 0.1.0-rc.1.tester.1
         required: true
         type: string
   push:
@@ -28,17 +28,7 @@ jobs:
         env:
           RELEASE_TAG_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
         run: |
-          tag="$RELEASE_TAG_INPUT"
-          if [[ ! "$tag" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-(alpha|beta|rc)\.[1-9][0-9]*)?$ ]]; then
-            echo "ERROR: release tag must be MAJOR.MINOR.PATCH with optional -alpha.N, -beta.N, or -rc.N"
-            exit 1
-          fi
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          if [[ "$tag" == *-* ]]; then
-            echo "prerelease=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "prerelease=false" >> "$GITHUB_OUTPUT"
-          fi
+          echo "tag=$RELEASE_TAG_INPUT" >> "$GITHUB_OUTPUT"
 
       - name: Checkout release commit
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -46,6 +36,26 @@ jobs:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || format('refs/tags/{0}', steps.release.outputs.tag) }}
           fetch-depth: 0
           fetch-tags: true
+
+      # A tester build is a pre-release whose tag orders after the release before it and before the release it leads to.
+      - name: Check release tag
+        id: kind
+        env:
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          kind="$(python3 -m Scripts.Release.bundle_version --tag-kind "$RELEASE_TAG")"
+          if [[ "$kind" == tester ]]; then
+            base="$(python3 -m Scripts.Release.bundle_version --tester-base "$RELEASE_TAG")"
+            if ! git rev-parse --verify --quiet "refs/tags/$base" >/dev/null; then
+              echo "ERROR: tester tag $RELEASE_TAG follows $base, which is not a tag"
+              exit 1
+            fi
+          fi
+          if [[ "$kind" == release ]]; then
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Remove unused untrusted Homebrew taps
         run: |
@@ -171,4 +181,4 @@ jobs:
           files: .build/release-artifacts/*
           fail_on_unmatched_files: true
           generate_release_notes: true
-          prerelease: ${{ steps.release.outputs.prerelease }}
+          prerelease: ${{ steps.kind.outputs.prerelease }}

@@ -23,6 +23,8 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 
 ## Changed
 
+- The release workflow publishes a tester build as a pre-release. Its tag orders after the release before it and before the release it leads to (`0.6.0-alpha.2.tester.1`, or `0.5.1-tester.1` after `0.5.0`), and the workflow refuses a tester tag whose release before it is not a tag. The update check offers a tester build with **Include prerelease updates** on, and offers the release it leads to from a tester build. (17.4)
+- The wiki page [Updating and Uninstalling](wiki/Updating-and-Uninstalling.md#release-builds-and-tester-builds) says that tester builds are pre-releases on GitHub Releases and that **Include prerelease updates** makes the update check find them. (17.5)
 - Every reason OJD does not serve a connected controller, `interface-contract-mismatch` included, has a sentence that says why and a next step in every language. The Controllers list and `ojd status` show both, and a test fails on a reason with no sentence. (17.2)
 - The app sends the driver extension activation request only after a user action: the banner button, the **Claim** button, `ojd controller claim` for a model that Apple's driver holds, or `ojd transport-extension activate`. Launch, service start and a controller arrival send none. (4.3, 4.5)
 - A controller on a model that Apple's driver holds (`045E:02EA`, `045E:0B00`, `045E:0B12`) is listed as served by macOS, with **Claim**, in the Controllers list and in `ojd controller show` (`served-by` and `heldByAppleDriver`). The Microsoft models `045E:02D1`, `045E:02DD`, `045E:02E3` and `045E:0B0A` take the direct route when the extension does not own them. (4.2, 4.4)
