@@ -4286,6 +4286,12 @@
 "error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: يجب ألا يكرر ملف الشخصية قيمة match الموجودة في ملف المستخدم %2$@. الإصلاح: امنح كل طراز ملف شخصية واحدًا أو غيّر match في أحد الملفين.";
 /* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
 "error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: يجب ألا يكرر ملف الشخصية قيمة match الموجودة في ملف الحزمة %2$@. الإصلاح: امنح كل طراز ملف شخصية واحدًا أو غيّر match في أحد الملفين.";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: يجب أن تكون فترة keep-alive بين 1...60000 مللي ثانية. الإصلاح: اضبط intervalMilliseconds ضمن 1...60000.";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
+"error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: يجب ألا يسمّي keep-alive أي عملية كتابة أو يسمّي 1...8 منها. الإصلاح: اسرد 1...8 عمليات كتابة أو احذف writes.";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
+"error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: يجب أن تكون قيمة resendTuning في keep-alive هي lizardResendTicks. الإصلاح: اضبط resendTuning على lizardResendTicks أو احذفه.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: يجب أن يحتوي كل إدخال على id وألا يحتوي إلا على id أو protocol أو match أو interface أو session أو idle. الإصلاح: أعطِ كل إدخال id واحذف أي مفتاح آخر.";

@@ -141,12 +141,13 @@ extension ControllerRecordDocument {
         guard !writes.isEmpty else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.keepAlive.writesCount",
             "keepAlive names no writes or 1...8 of them"
           )
         }
       } catch let problem as ControllerRecordProblem {
         throw DecodingError.dataCorrupted(
-          .init(codingPath: decoder.codingPath, debugDescription: problem.description)
+          problem.context(at: decoder.codingPath)
         )
       }
     }
@@ -168,7 +169,7 @@ extension ControllerRecordDocument {
         write = try StartupWrite.usbWrite(container, condition: .always)
       } catch let problem as ControllerRecordProblem {
         throw DecodingError.dataCorrupted(
-          .init(codingPath: decoder.codingPath, debugDescription: problem.description)
+          problem.context(at: decoder.codingPath)
         )
       }
     }

@@ -4286,6 +4286,12 @@
 "error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@、match: ペルソナファイルはユーザーファイル %2$@ の match と同じにできません。対処: モデルごとにペルソナファイルを 1 つにするか、どちらかの match を変更してください。";
 /* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
 "error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@、match: ペルソナファイルはパッケージファイル %2$@ の match と同じにできません。対処: モデルごとにペルソナファイルを 1 つにするか、どちらかの match を変更してください。";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.keepAlive.interval" = "%1$@、session.keepAlive.intervalMilliseconds: keep-alive の間隔は 1...60000 ms である必要があります。対処: intervalMilliseconds を 1...60000 に設定してください。";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
+"error.E5007.keepAlive.writesCount" = "%1$@、session.keepAlive.writes: keep-alive の書き込みは 0 個または 1...8 個である必要があります。対処: 書き込みを 1...8 個列挙するか、writes を省略してください。";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
+"error.E5007.keepAlive.resendTuning" = "%1$@、session.keepAlive.writes[].resendTuning: keep-alive の resendTuning は lizardResendTicks である必要があります。対処: resendTuning を lizardResendTicks に設定するか、省略してください。";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@、patch.modes: 各エントリには id が必要で、id、protocol、match、interface、session、idle 以外は使えません。対処: 各エントリに id を指定し、その他のキーを削除してください。";

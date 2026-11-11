@@ -4286,6 +4286,12 @@
 "error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: berkas persona tidak boleh mengulang match dari berkas pengguna %2$@. Perbaikan: beri setiap model satu berkas persona, atau ubah match di salah satunya.";
 /* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
 "error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: berkas persona tidak boleh mengulang match dari berkas paket %2$@. Perbaikan: beri setiap model satu berkas persona, atau ubah match di salah satunya.";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: interval keep-alive harus 1...60000 ms. Perbaikan: atur intervalMilliseconds ke 1...60000.";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
+"error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: keep-alive harus menyebut tanpa penulisan atau 1...8 penulisan. Perbaikan: cantumkan 1...8 penulisan, atau hilangkan writes.";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
+"error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: resendTuning keep-alive harus lizardResendTicks. Perbaikan: atur resendTuning ke lizardResendTicks, atau hilangkan.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: setiap entri harus memuat id dan hanya id, protocol, match, interface, session, atau idle. Perbaikan: beri setiap entri id dan hapus kunci lainnya.";

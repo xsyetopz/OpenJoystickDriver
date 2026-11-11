@@ -4286,6 +4286,12 @@
 "error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: tệp persona không được lặp lại match của tệp người dùng %2$@. Cách sửa: cho mỗi mẫu một tệp persona, hoặc đổi match ở một trong hai tệp.";
 /* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
 "error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: tệp persona không được lặp lại match của tệp gói %2$@. Cách sửa: cho mỗi mẫu một tệp persona, hoặc đổi match ở một trong hai tệp.";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: khoảng keep-alive phải là 1...60000 ms. Cách sửa: đặt intervalMilliseconds thành 1...60000.";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
+"error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: keep-alive phải không nêu lệnh ghi nào hoặc nêu 1...8 lệnh. Cách sửa: liệt kê 1...8 lệnh ghi, hoặc bỏ writes.";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
+"error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: resendTuning của keep-alive phải là lizardResendTicks. Cách sửa: đặt resendTuning thành lizardResendTicks, hoặc bỏ đi.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: mỗi mục phải có id và chỉ có id, protocol, match, interface, session hoặc idle. Cách sửa: đặt id cho mỗi mục và xóa các khóa khác.";

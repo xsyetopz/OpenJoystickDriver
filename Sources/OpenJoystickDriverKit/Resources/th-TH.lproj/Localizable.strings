@@ -4286,6 +4286,12 @@
 "error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: ไฟล์เพอร์โซนาต้องไม่ใช้ match ซ้ำกับไฟล์ผู้ใช้ %2$@ วิธีแก้: ให้แต่ละรุ่นมีไฟล์เพอร์โซนาเดียว หรือเปลี่ยน match ในไฟล์ใดไฟล์หนึ่ง";
 /* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
 "error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: ไฟล์เพอร์โซนาต้องไม่ใช้ match ซ้ำกับไฟล์แพ็กเกจ %2$@ วิธีแก้: ให้แต่ละรุ่นมีไฟล์เพอร์โซนาเดียว หรือเปลี่ยน match ในไฟล์ใดไฟล์หนึ่ง";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: ช่วง keep-alive ต้องเป็น 1...60000 ms วิธีแก้: ตั้ง intervalMilliseconds เป็น 1...60000";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
+"error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: keep-alive ต้องไม่ระบุการเขียนเลย หรือระบุ 1...8 รายการ วิธีแก้: ระบุการเขียน 1...8 รายการ หรือไม่ต้องระบุ writes";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
+"error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: resendTuning ของ keep-alive ต้องเป็น lizardResendTicks วิธีแก้: ตั้ง resendTuning เป็น lizardResendTicks หรือไม่ต้องระบุ";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: แต่ละรายการต้องมี id และมีได้เฉพาะ id, protocol, match, interface, session หรือ idle วิธีแก้: ใส่ id ให้ทุกรายการและลบคีย์อื่นออก";

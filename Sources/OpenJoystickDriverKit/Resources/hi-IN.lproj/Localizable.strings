@@ -4286,6 +4286,12 @@
 "error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: पर्सोना फ़ाइल उपयोगकर्ता फ़ाइल %2$@ का match दोहरा नहीं सकती। समाधान: हर मॉडल को एक पर्सोना फ़ाइल दें, या दोनों में से एक में match बदलें।";
 /* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
 "error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: पर्सोना फ़ाइल पैकेज फ़ाइल %2$@ का match दोहरा नहीं सकती। समाधान: हर मॉडल को एक पर्सोना फ़ाइल दें, या दोनों में से एक में match बदलें।";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: keep-alive अंतराल 1...60000 ms होना चाहिए। समाधान: intervalMilliseconds को 1...60000 पर सेट करें।";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
+"error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: keep-alive में कोई राइट नहीं या 1...8 राइट होने चाहिए। समाधान: 1...8 राइट सूचीबद्ध करें, या writes छोड़ दें।";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
+"error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: keep-alive का resendTuning lizardResendTicks होना चाहिए। समाधान: resendTuning को lizardResendTicks पर सेट करें, या छोड़ दें।";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: हर प्रविष्टि में id होना चाहिए और केवल id, protocol, match, interface, session या idle हो सकते हैं। समाधान: हर प्रविष्टि को id दें और बाकी कुंजियाँ हटाएँ।";

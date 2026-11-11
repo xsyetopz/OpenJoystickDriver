@@ -12,12 +12,13 @@ extension KeepAlive: Decodable {
       guard !container.contains(DocumentKey("writes")) || !writes.isEmpty else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.keepAlive.writesCount",
           "keepAlive names no writes or 1...8 of them"
         )
       }
     } catch let problem as ControllerRecordProblem {
       throw DecodingError.dataCorrupted(
-        .init(codingPath: decoder.codingPath, debugDescription: problem.description)
+        problem.context(at: decoder.codingPath)
       )
     }
   }
@@ -43,6 +44,7 @@ extension KeepAliveWrite: Decodable {
       guard name == nil || key.map(Self.resendTuningKeys.contains) == true else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.keepAlive.resendTuning",
           "a keep-alive resendTuning is lizardResendTicks"
         )
       }
@@ -53,7 +55,7 @@ extension KeepAliveWrite: Decodable {
         : .usb(try ControllerRecordDocument.StartupWrite.usbWrite(container, condition: condition))
     } catch let problem as ControllerRecordProblem {
       throw DecodingError.dataCorrupted(
-        .init(codingPath: decoder.codingPath, debugDescription: problem.description)
+        problem.context(at: decoder.codingPath)
       )
     }
   }

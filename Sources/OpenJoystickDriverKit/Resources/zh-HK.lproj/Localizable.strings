@@ -4286,6 +4286,12 @@
 "error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@，match：角色檔案不能重複使用者檔案 %2$@ 的 match。修正：讓每個型號只有一個角色檔案，或修改其中一個的 match。";
 /* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
 "error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@，match：角色檔案不能重複套件檔案 %2$@ 的 match。修正：讓每個型號只有一個角色檔案，或修改其中一個的 match。";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.keepAlive.interval" = "%1$@，session.keepAlive.intervalMilliseconds：keep-alive 的間隔必須為 1...60000 ms。修正：將 intervalMilliseconds 設為 1...60000。";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
+"error.E5007.keepAlive.writesCount" = "%1$@，session.keepAlive.writes：keep-alive 必須不列出寫入，或列出 1...8 個。修正：列出 1...8 個寫入，或省略 writes。";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
+"error.E5007.keepAlive.resendTuning" = "%1$@，session.keepAlive.writes[].resendTuning：keep-alive 的 resendTuning 必須是 lizardResendTicks。修正：將 resendTuning 設為 lizardResendTicks，或省略。";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@，patch.modes：每個項目必須包含 id，且只能包含 id、protocol、match、interface、session 或 idle。修正：為每個項目指定 id，並刪除其他鍵。";

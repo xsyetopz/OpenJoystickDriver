@@ -3748,6 +3748,12 @@
 "error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: un fichier de persona ne doit pas répéter le match du fichier utilisateur %2$@. Correction : donnez un seul fichier de persona à chaque modèle, ou changez match dans l’un des deux.";
 /* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
 "error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: un fichier de persona ne doit pas répéter le match du fichier de paquet %2$@. Correction : donnez un seul fichier de persona à chaque modèle, ou changez match dans l’un des deux.";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: un intervalle de keep-alive doit être de 1...60000 ms. Correction : mettez intervalMilliseconds entre 1...60000.";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
+"error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: un keep-alive doit nommer aucune écriture ou 1...8 écritures. Correction : listez 1...8 écritures, ou omettez writes.";
+/* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
+"error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: le resendTuning d’un keep-alive doit être lizardResendTicks. Correction : mettez resendTuning à lizardResendTicks, ou omettez-le.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes : chaque entrée doit contenir un id et seulement id, protocol, match, interface, session ou idle. Correction : donnez un id à chaque entrée et supprimez toute autre clé.";
