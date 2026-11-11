@@ -160,6 +160,17 @@ public struct ControllerRecordProblem: Error, Equatable, Sendable, CustomStringC
     self.arguments = arguments
   }
 
+  /// The decoding context that reports this problem at `codingPath`, keeping the problem so that
+  /// ``ControllerRecordSet/problemDescription(_:includingCode:document:localization:file:)`` can
+  /// read its localized message.
+  func context(at codingPath: [any CodingKey]) -> DecodingError.Context {
+    DecodingError.Context(
+      codingPath: codingPath,
+      debugDescription: description,
+      underlyingError: self
+    )
+  }
+
   /// The message in `localization`, with `file` as the file it names, or ``description`` when the
   /// rule has no localized message.
   func localizedDescription(_ localization: Localization, file: String?) -> String {
@@ -434,6 +445,11 @@ public struct ControllerRecordSet: Sendable {
     case let problem as DocumentHeaderProblem:
       return includingCode ? problem.description : problem.message
     case DecodingError.dataCorrupted(let context):
+      if let localization, let problem = context.underlyingError as? ControllerRecordProblem,
+        problem.key != nil
+      {
+        return problem.localizedDescription(localization, file: file)
+      }
       return located(context.codingPath, context.debugDescription)
     case DecodingError.keyNotFound(let key, let context):
       return located(context.codingPath, "missing field \(key.stringValue)")

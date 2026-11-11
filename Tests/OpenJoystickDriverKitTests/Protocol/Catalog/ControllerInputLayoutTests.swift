@@ -205,6 +205,30 @@ struct ControllerInputLayoutTests {
   }
 
   @Test
+  func aDecodedLayoutProblemReadsInTheChosenLanguage() {
+    let english = Localization(preferredLanguages: ["en-US"])
+    do {
+      _ = try inputLayout(
+        #"{"report": {"length": {"atLeast": 3}}, "axes": ["#
+          + #"{"control": "LeftStickX", "bitOffset": 8, "bitSize": 8}, "#
+          + #"{"control": "LeftStickX", "bitOffset": 16, "bitSize": 8}]}"#
+      )
+      Issue.record("two axes of one control were accepted")
+    } catch {
+      #expect(
+        ControllerRecordSet.problemDescription(
+          error,
+          document: "record",
+          localization: english,
+          file: "046d-c21d.plist"
+        )
+          == "046d-c21d.plist, input.layouts[].axes: Axes must name distinct stick axes. "
+          + "Fix: Name each stick axis once."
+      )
+    }
+  }
+
+  @Test
   func messagesNameFileKeyPathRuleAndFix() throws {
     let english = Localization(preferredLanguages: ["en-US"])
     func message(reportID: UInt8?, minimumLength: Int) -> String? {

@@ -16,9 +16,7 @@ extension ControllerRecordDocument {
           layouts: try container.decode([InputLayout].self, for: "layouts").map(\.layout)
         )
       } catch let problem as ControllerRecordProblem {
-        throw DecodingError.dataCorrupted(
-          .init(codingPath: decoder.codingPath, debugDescription: problem.description)
-        )
+        throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
       }
     }
   }
@@ -58,9 +56,7 @@ extension ControllerRecordDocument {
             .trigger
         )
       } catch let problem as ControllerRecordProblem {
-        throw DecodingError.dataCorrupted(
-          .init(codingPath: decoder.codingPath, debugDescription: problem.description)
-        )
+        throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
       }
     }
   }
