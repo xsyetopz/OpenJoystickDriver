@@ -102,7 +102,7 @@
           "$ref": "#/$defs/systemGamepadAudit"
         },
         "frameTimings": {
-          "description": "The newest frames of each connected controller, oldest first, as `ojd diagnose --json` lists them in `timings`; empty while the service is stopped or has no frames. Nanoseconds are on the service's monotonic uptime clock. frames lists the newest 8 frames of each controller; summary covers the window of its newest 15000 frames.",
+          "description": "The newest frames of each connected controller, oldest first, with a summary.",
           "type": "array",
           "items": {
             "$ref": "#/$defs/controllerFrameTimings"
@@ -117,13 +117,13 @@
       }
     },
     "frameTimingSummary": {
-      "description": "What the frame window of one controller says about stutter. A gap lists median, 99th percentile (nearest rank) and maximum over the frames that reached both of its stages, and is absent when no frame did. ReadToRead is the time between the Read stamps of consecutive frames. A stall is a read interval longer than 3 times the median ReadToRead; the threshold follows the report rate of the controller. ReadToRead and stalls are measured only on a window of lastSeconds, which the user fills with constant input, because a controller that reports only when an input changes leaves a gap for each pause; the whole ring, without lastSeconds, has neither. stalls is also absent when the window holds fewer than two frames.",
+      "description": "What the frame window of one controller says about stutter.",
       "type": "object",
       "required": ["frames", "spanNanoseconds", "gaps"],
       "additionalProperties": false,
       "properties": {
         "lastSeconds": {
-          "description": "The seconds before the service answered that the window covers (ojd diagnose --frames); absent for the whole ring.",
+          "description": "The number of seconds before the answer that the window covers.",
           "type": "integer",
           "minimum": 1,
           "maximum": 15
@@ -184,12 +184,12 @@
           "additionalProperties": false,
           "properties": {
             "thresholdNanoseconds": {
-              "description": "3 times the median ReadToRead.",
+              "description": "The read interval above which a read counts as a stall.",
               "type": "integer",
               "minimum": 0
             },
             "count": {
-              "description": "The read intervals longer than the threshold.",
+              "description": "The read intervals that are stalls.",
               "type": "integer",
               "minimum": 0
             }
@@ -327,11 +327,11 @@
       "additionalProperties": false,
       "properties": {
         "inputRead": {
-          "description": "Unknown when the service did not reply.",
+          "description": "The input read permission state.",
           "enum": ["Granted", "Denied", "Unknown"]
         },
         "inputInject": {
-          "description": "Unknown when the service did not reply.",
+          "description": "The input injection permission state.",
           "enum": ["Granted", "Denied", "Unknown"]
         }
       }
@@ -547,7 +547,7 @@
           }
         },
         "wiiRemote": {
-          "description": "The Wii Remote session facts. Absent for every other family.",
+          "description": "The Wii Remote session facts.",
           "type": "object",
           "required": ["reportMode", "motionPlusActive", "isGyroRestReady"],
           "additionalProperties": false,
@@ -559,7 +559,7 @@
               "maximum": 63
             },
             "extensionKind": {
-              "description": "The extension the handshake identified. Absent while none is plugged or its ID is unknown.",
+              "description": "The extension that the handshake identified.",
               "enum": [
                 "Nunchuk",
                 "ClassicController",
@@ -625,7 +625,7 @@
           }
         },
         "speaker": {
-          "description": "The audio format of the controller's speaker; absent when it has none.",
+          "description": "The audio format of the controller's speaker.",
           "enum": ["YamahaADPCM4Bit"]
         }
       }
@@ -801,7 +801,7 @@
       }
     },
     "inputMapping": {
-      "description": "Where a HID pad's usage map comes from. A matching SDL_GameControllerDB line is named by GUID and match tier.",
+      "description": "Where a HID pad's usage map comes from.",
       "type": "object",
       "required": ["source", "unmapped"],
       "additionalProperties": false,
