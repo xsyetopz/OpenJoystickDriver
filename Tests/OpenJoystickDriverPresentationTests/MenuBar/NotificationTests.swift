@@ -9,9 +9,11 @@ import Testing
 @Suite
 struct NotificationTests {
   @Test
-  func statusItemImageIsAlwaysTheTemplateSymbol() {
-    let image = MenuBarStatusItemImage.make(accessibilityDescription: "OpenJoystickDriver")
-    #expect(image?.isTemplate == true)
+  func statusItemImageIsAlwaysATemplateSymbol() {
+    for name in ["gamecontroller", "exclamationmark.triangle"] {
+      let image = MenuBarStatusItemImage.make(symbolName: name, accessibilityDescription: "x")
+      #expect(image?.isTemplate == true, "\(name)")
+    }
   }
 
   @Test

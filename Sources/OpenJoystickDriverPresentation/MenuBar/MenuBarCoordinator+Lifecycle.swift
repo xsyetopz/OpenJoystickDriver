@@ -234,10 +234,6 @@
       statusItem = item
       if let button = item.button {
         button.toolTip = OJDLocalized.string("term.app.name")
-        button.image = MenuBarStatusItemImage.make(
-          accessibilityDescription: OJDLocalized.string("a11y.menuBar.statusItem")
-        )
-        button.setAccessibilityLabel(OJDLocalized.string("a11y.menuBar.statusItem"))
       }
       statusMenuTracker.onWillOpen = { [weak self] in self?.refreshLiveStatus() }
       // The menu runs the chosen item's action after it closes; rebuilding first would
@@ -290,13 +286,22 @@
     /// An open menu is left alone and replaced when it closes.
     private func updateStatusMenu() {
       guard !statusMenuTracker.isOpen else { return }
+      let state = menuBarViewModel.statusItemState
       let menu = makeStatusMenu(
-        from: StatusItemModel.entries(for: menuBarViewModel.statusItemState),
+        from: StatusItemModel.entries(for: state),
         title: OJDLocalized.string("term.app.name")
       )
       menu.delegate = statusMenuTracker
       statusMenu = menu
       statusItem?.menu = menu
+      if let button = statusItem?.button {
+        let label = menuTitle(StatusItemModel.accessibilityTitle(for: state))
+        button.image = MenuBarStatusItemImage.make(
+          symbolName: StatusItemModel.symbolName(for: state),
+          accessibilityDescription: label
+        )
+        button.setAccessibilityLabel(label)
+      }
     }
   }
 

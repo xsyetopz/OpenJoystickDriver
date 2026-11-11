@@ -9,10 +9,10 @@
 
   /// Makes the image of the menu-bar item.
   enum MenuBarStatusItemImage {
-    /// Returns the game controller symbol as a template image, or nil when the symbol is missing.
-    static func make(accessibilityDescription: String) -> NSImage? {
+    /// Returns the symbol as a template image, or nil when the symbol is missing.
+    static func make(symbolName: String, accessibilityDescription: String) -> NSImage? {
       let image = NSImage(
-        systemSymbolName: "gamecontroller",
+        systemSymbolName: symbolName,
         accessibilityDescription: accessibilityDescription
       )
       image?.isTemplate = true

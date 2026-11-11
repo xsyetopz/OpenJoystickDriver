@@ -4423,8 +4423,6 @@
 "ui.extra.actionFailedTitle" = "La acción no se completó";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */
 "ui.extra.profileConflict" = "El perfil cambió antes de que se ejecutara esta acción. Vuelve a intentarlo.";
-/* VoiceOver label and accessibility description of the menu bar status item. The product name stays as written. */
-"a11y.menuBar.statusItem" = "Estado de OpenJoystickDriver";
 /* VoiceOver label of the menu bar status item while a controller is connected and nothing needs the user. The product name stays as written. */
 "a11y.menuBar.ready" = "OpenJoystickDriver, listo";
 /* VoiceOver label of the menu bar status item while no controller is connected. The product name stays as written. */

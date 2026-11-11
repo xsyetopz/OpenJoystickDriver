@@ -3909,8 +3909,6 @@
 "ui.extra.actionFailedTitle" = "कार्रवाई पूरी नहीं हुई";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */
 "ui.extra.profileConflict" = "इस कार्रवाई के चलने से पहले प्रोफ़ाइल बदल गई। फिर कोशिश करें।";
-/* VoiceOver label and accessibility description of the menu bar status item. The product name stays as written. */
-"a11y.menuBar.statusItem" = "OpenJoystickDriver की स्थिति";
 /* VoiceOver label of the menu bar status item while a controller is connected and nothing needs the user. The product name stays as written. */
 "a11y.menuBar.ready" = "OpenJoystickDriver, तैयार";
 /* VoiceOver label of the menu bar status item while no controller is connected. The product name stays as written. */

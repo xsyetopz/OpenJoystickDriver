@@ -3909,8 +3909,6 @@
 "ui.extra.actionFailedTitle" = "작업이 완료되지 않았습니다";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */
 "ui.extra.profileConflict" = "이 작업이 실행되기 전에 프로파일이 변경되었습니다. 다시 시도하세요.";
-/* VoiceOver label and accessibility description of the menu bar status item. The product name stays as written. */
-"a11y.menuBar.statusItem" = "OpenJoystickDriver 상태";
 /* VoiceOver label of the menu bar status item while a controller is connected and nothing needs the user. The product name stays as written. */
 "a11y.menuBar.ready" = "OpenJoystickDriver, 준비됨";
 /* VoiceOver label of the menu bar status item while no controller is connected. The product name stays as written. */

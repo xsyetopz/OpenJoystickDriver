@@ -3909,8 +3909,6 @@
 "ui.extra.actionFailedTitle" = "操作を完了できませんでした";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */
 "ui.extra.profileConflict" = "この操作の実行前にプロファイルが変更されました。もう一度お試しください。";
-/* VoiceOver label and accessibility description of the menu bar status item. The product name stays as written. */
-"a11y.menuBar.statusItem" = "OpenJoystickDriver のステータス";
 /* VoiceOver label of the menu bar status item while a controller is connected and nothing needs the user. The product name stays as written. */
 "a11y.menuBar.ready" = "OpenJoystickDriver、準備完了";
 /* VoiceOver label of the menu bar status item while no controller is connected. The product name stays as written. */
