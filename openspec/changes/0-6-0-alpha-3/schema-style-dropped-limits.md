@@ -64,6 +64,13 @@ Limits and rules that task 7.2 removed from schema descriptions, for task 7.3 to
 - `/$defs/virtualShow/properties/controllers/items/properties/sdl/description`, `/$defs/virtualShow/properties/controllers/items/properties/w3c/description`: absent with no virtual gamepad.
 - `/description`: every document has apiVersion and kind; a list command prints its items in items with no apiVersion or kind of their own and an empty metadata; a streaming command prints one document per line.
 
+## controller-patch.schema.json
+
+- `/description`: an array in the patch replaces the array in the record; the patched record is checked against the controller schema.
+- `/properties/selector/description`: inside one layer, a model selector beats a vendorID and productID selector, which beats all.
+- `/properties/selector/oneOf/2/properties/model/description`: vvvv-pppp in lowercase hex until records carry their own model id.
+- `/properties/remove/description`: a path the record lacks changes nothing.
+
 ## controller.schema.json
 
 - `/properties/idle/description`: the record has one default mode and no section that serves controls.
@@ -81,6 +88,13 @@ Limits and rules that task 7.2 removed from schema descriptions, for task 7.3 to
 - `/$defs/modeEndpoint/description`: every key present must hold.
 - `/$defs/controlTransfer/description`: an IN transfer reads wLength bytes; an OUT transfer writes data whose byte count equals wLength.
 - `/$defs/session/description`: control runs before startup, in order; startup is one list of HID report writes or one of raw-USB packets; keepAlive, settleMilliseconds, shutdown and control apply to raw-USB modes.
+
+## crosswalk.schema.json
+
+- `/description`: the table names the W3C Gamepad, SDL3, Linux evdev, HID and Apple GameController columns; it is documentation, and no schema accepts or maps any name in it.
+- `/$defs/source/description`: pages gives the number of each HID usage page the hid column names.
+- `/$defs/row/description`: an absent column means the system has no such name.
+- `/$defs/hidUsage/description`: an absent usage is the one the device's report descriptor assigns.
 
 ## endpoint.schema.json
 
