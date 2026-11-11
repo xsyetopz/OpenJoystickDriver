@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 
 /// Runs the built `ojd-webrtc-bridge` binary and checks its usage output and exit status.

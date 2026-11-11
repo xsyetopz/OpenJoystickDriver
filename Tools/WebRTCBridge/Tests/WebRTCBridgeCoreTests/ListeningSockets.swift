@@ -1,5 +1,12 @@
 import Darwin
 import Foundation
+import Testing
+
+/// The suites that open listening sockets.
+///
+/// The scan sees every socket of the process, so these suites run one test at a time.
+@Suite(.serialized)
+enum ListeningSocketSuites {}
 
 /// Lists the sockets of this process that are in the listening state (`SO_ACCEPTCONN`).
 ///
