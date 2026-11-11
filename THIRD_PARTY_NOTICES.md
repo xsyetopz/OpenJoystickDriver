@@ -136,6 +136,6 @@ The frame and command facts for Flydigi vendor output come from `PROTOCOL.md` of
 
 ## wiiuse
 
-The Wii Remote driver takes facts from [wiiuse][6], commit `e769bd73860a4f941bd110ebae5a790f968b71e3`: register addresses, report ids and sizes, cited by file and line in `openspec/changes/wii-remote/design.md`. No code is copied. wiiuse is under GPL-3.0-or-later, so OJD records only the facts and keeps none of its text.
+The Wii Remote driver takes facts from [wiiuse][6], commit `e769bd73860a4f941bd110ebae5a790f968b71e3`: register addresses, report ids and sizes. No code is copied. wiiuse is under GPL-3.0-or-later, so OJD records only the facts and keeps none of its text.
 
 [6]: https://github.com/wiiuse/wiiuse/tree/e769bd73860a4f941bd110ebae5a790f968b71e3

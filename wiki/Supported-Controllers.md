@@ -92,7 +92,7 @@ These Flydigi records are source-derived and unverified. The files a tester send
 
 ### SteelSeries Nimbus Record
 
-The SteelSeries Nimbus (`1038:1420`, USB) has a source-derived, unverified record. The record maps its eight pressure-sensitive buttons, its pressure D-pad and its Menu button, and it reads the left and right sticks and the L2 and R2 triggers. The record sets no `server`, so macOS serves the Nimbus as its own game controller and OJD only reads its input. The Nimbus has four player LEDs on an output report that records cannot yet describe, so OJD does not drive them. Bluetooth identity `0111:1420` appears only in SDL's database and has no record. The hardware checks are in `openspec/changes/steelseries-nimbus/tasks.md`.
+The SteelSeries Nimbus (`1038:1420`, USB) has a source-derived, unverified record. The record maps its eight pressure-sensitive buttons, its pressure D-pad and its Menu button, and it reads the left and right sticks and the L2 and R2 triggers. The record sets no `server`, so macOS serves the Nimbus as its own game controller and OJD only reads its input. The Nimbus has four player LEDs on an output report that records cannot yet describe, so OJD does not drive them. Bluetooth identity `0111:1420` appears only in SDL's database and has no record. The Menu button, the trigger threshold and the axis directions wait for a capture from the pad.
 
 To find out whether your controller is in the catalog:
 
