@@ -228,8 +228,8 @@ Each task stands alone and can leave the release (D24). Each is written for OJD'
 - [x] 17.1 Write a failing test that Input Test shows "Input active" only after a control leaves its rest value, then fix `InputTestViewModel+SessionAndOutputState.swift:341-343`. Caller: `InputTestView`. (#19)
 - [x] 17.2 Give every reason for not serving a connected controller a sentence and a next step in every language, `interfaceContractMismatch` included (`ProtocolClassifier.swift:275-286`), and add the repository check that fails on a reason with no sentence. Caller: the controller detail and `ojd controller show`. (#63)
 - [x] 17.3 Give each rule behind `E5007` its own localized message with the file, the key path, the rule, and the fix. Start from the list of the English messages the record reader throws. Caller: `ojd record validate`, `ojd record list`, and the record area of the window. (#63)
-- [ ] 17.4 Make the release workflow (`.github/workflows/release.yml`) publish a tester build as a pre-release with a version that orders between the release before it and the release it leads to, and test that order in the update check. Publishing a build is the maintainer's action.
-- [ ] 17.5 Rewrite `wiki/Updating-and-Uninstalling.md:36-38`: where tester builds are published and that "Include prerelease updates" makes the update check find them.
+- [x] 17.4 Make the release workflow (`.github/workflows/release.yml`) publish a tester build as a pre-release with a version that orders between the release before it and the release it leads to, and test that order in the update check. Publishing a build is the maintainer's action.
+- [x] 17.5 Rewrite `wiki/Updating-and-Uninstalling.md:36-38`: where tester builds are published and that "Include prerelease updates" makes the update check find them.
 
 ## 18. Documentation, localization, and changelog
 
