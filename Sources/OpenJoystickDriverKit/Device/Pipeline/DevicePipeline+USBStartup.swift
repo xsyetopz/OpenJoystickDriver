@@ -39,6 +39,8 @@ extension DevicePipeline {
   ///
   /// An interface that another client holds is waited for, not seized. The waits between attempts
   /// grow with the reconnect policy.
+  /// A run whose handshake fails ``USBPipelineRecoveryPolicy/maximumHandshakeFailures`` times in a row
+  /// ends, and leaves the failure in ``startupOutputStatus``.
   func startUSBPipeline(device: USBTransportDevice, generation: UInt64) async {
     guard let provider = usbTransportProvider else {
       print("[DevicePipeline] Missing USB transport provider for \(identifier)")
@@ -47,6 +49,7 @@ extension DevicePipeline {
     }
 
     var openAttempt: Int = 0
+    var failedHandshakes = 0
     while isCurrentUSBRun(generation) {
       let openResult = await openDeviceWithRetry(
         provider: provider,
@@ -122,6 +125,11 @@ extension DevicePipeline {
         armedRead?.cancel()
         guard isCurrentUSBRun(generation) else { return }
         usbSessionStartFailed = true
+        failedHandshakes += 1
+        guard failedHandshakes < usbRecoveryPolicy.maximumHandshakeFailures else {
+          print("[DevicePipeline] Giving up the USB session start: \(identifier)")
+          return
+        }
         await resetUSBDeviceIfUnresponsive(device, provider: provider)
         // Try again while active, but slow down to avoid hot loops that launchd may kill
         // as "inefficient".
@@ -145,6 +153,7 @@ extension DevicePipeline {
       await reportUSBInputOwnership(ownership)
       guard isCurrentUSBRun(generation) else { return }
       openAttempt = 0
+      failedHandshakes = 0
       if !requiresInputConnectionBeforeOutput(), sessionState == .active { await activateOutput() }
 
       let recovery = await runUSBInputLoop(

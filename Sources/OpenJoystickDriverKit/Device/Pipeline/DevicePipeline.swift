@@ -43,6 +43,8 @@ struct USBPipelineRecoveryPolicy: Sendable {
   let reconnectMaximumDelayNanoseconds: UInt64
   /// The wait before the pipeline opens the interface again after an access denial.
   let accessContentionDelayNanoseconds: UInt64
+  /// The failed handshakes in a row after which the pipeline stops starting the session.
+  var maximumHandshakeFailures = 5
 
   /// The reconnect wait after `attempt` failed tries: the base wait doubled per try, up to four
   /// doublings, and capped at the maximum.
@@ -166,7 +168,9 @@ actor DevicePipeline {
   var consecutiveUSBIOErrors: Int = 0
   /// The latest USB open or handshake failed and no session has started since.
   ///
-  /// The pipeline keeps retrying; the device manager reads this to give a yielded HID route back.
+  /// The pipeline keeps retrying until the handshake has failed
+  /// ``USBPipelineRecoveryPolicy/maximumHandshakeFailures`` times in a row; the device manager reads
+  /// this to give a yielded HID route back.
   var usbSessionStartFailed = false
   /// The transport error of the latest failed USB startup write, cleared when a handshake starts.
   var lastUSBStartupError: USBTransportError?
