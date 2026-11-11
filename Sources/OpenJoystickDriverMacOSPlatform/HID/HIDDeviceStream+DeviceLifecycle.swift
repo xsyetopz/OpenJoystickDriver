@@ -8,7 +8,8 @@ extension HIDDeviceStream {
   /// Admits a physical device, opens it, and yields a `.connected` event into the stream.
   ///
   /// A device the running macOS exposes as a native gamepad is opened shared for input but never
-  /// seized.
+  /// seized. A device of a model whose record reaches the controller through raw USB or the
+  /// extension is not seized either.
   ///
   /// Returns the stream-level access failure instead of admitting the device when
   /// `failingOnAccessDenial` is set and the shared open is denied.
@@ -63,7 +64,11 @@ extension HIDDeviceStream {
       )
     else { return nil }
     // macOS keeps every interface of a native controller, so a sibling is never seized either.
-    let wantsSeize = !nativePassThrough && !eventAdapter.hasNativeDevice(locationID: locationID)
+    let wantsSeize = Self.seizesInput(
+      model: model,
+      nativePassThrough: nativePassThrough,
+      siblingIsNative: eventAdapter.hasNativeDevice(locationID: locationID)
+    )
     let claim = HIDInputClaim.admit(port: HIDDeviceOpenPort(device: device), seize: wantsSeize)
     let openKr = claim.inputResult
     if failingOnAccessDenial, let failure = Self.accessFailure(forInitialOpenResult: openKr) {
@@ -91,6 +96,19 @@ extension HIDDeviceStream {
     // Attach input only after `.connected` is queued so no report precedes its connection.
     if openKr == kIOReturnSuccess { attachInput(device, deviceID: deviceID) }
     return nil
+  }
+
+  /// Whether OJD seizes a device: only after the serving decision says OJD serves it over HID.
+  ///
+  /// A native gamepad, a sibling of one, and a model the catalog reaches through raw USB or the
+  /// extension are not seized.
+  static func seizesInput(
+    model: ControllerModelID,
+    nativePassThrough: Bool,
+    siblingIsNative: Bool,
+    catalog: DeviceCatalog = DeviceCatalog.current.withLock { $0 }
+  ) -> Bool {
+    catalog.servesOverHID(model) && !nativePassThrough && !siblingIsNative
   }
 
   /// macOS already serves a native gamepad, so OJD only observes its input and never seizes it,

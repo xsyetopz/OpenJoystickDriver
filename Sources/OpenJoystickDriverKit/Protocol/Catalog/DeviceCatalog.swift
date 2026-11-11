@@ -49,6 +49,15 @@ package struct DeviceCatalog: Sendable {
     record(for: model)?.server == .ojd
   }
 
+  /// Whether a HID device of this model is one OJD serves over HID: its record reaches the
+  /// controller through the system HID stack, or no record exists and the HID descriptor serves it.
+  ///
+  /// A model whose record reaches the controller through raw USB or the extension is served by
+  /// that route, so its HID object belongs to the system.
+  package func servesOverHID(_ model: ControllerModelID) -> Bool {
+    record(for: model).map { $0.accessRoute == .system } ?? true
+  }
+
   /// The runtime profile for one decoded record; the record probe plan builds on it too.
   static func makeRuntimeProfile(_ record: ControllerRecordDocument) throws -> DeviceRuntimeProfile
   {
