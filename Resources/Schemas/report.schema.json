@@ -117,6 +117,47 @@
       }
     },
     "frameTimingSummary": {
+      "allOf": [
+        {
+          "if": {
+            "not": {
+              "required": ["lastSeconds"]
+            }
+          },
+          "then": {
+            "not": {
+              "required": ["stalls"]
+            },
+            "properties": {
+              "gaps": {
+                "items": {
+                  "properties": {
+                    "gap": {
+                      "not": {
+                        "const": "ReadToRead"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frames": {
+                "maximum": 1
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": ["stalls"]
+            }
+          }
+        }
+      ],
       "description": "What the frame window of one controller says about stutter.",
       "type": "object",
       "required": ["frames", "spanNanoseconds", "gaps"],
@@ -129,6 +170,7 @@
           "maximum": 15
         },
         "frames": {
+          "maximum": 15000,
           "type": "integer",
           "minimum": 0
         },
@@ -212,6 +254,7 @@
           "$ref": "#/$defs/frameTimingSummary"
         },
         "frames": {
+          "maxItems": 8,
           "type": "array",
           "items": {
             "type": "object",

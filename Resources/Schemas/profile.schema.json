@@ -124,7 +124,8 @@
     "name": {
       "type": "string",
       "minLength": 1,
-      "pattern": "^\\S(.*\\S)?$",
+      "maxLength": 80,
+      "pattern": "^(?![\\s\\S]*[\\u0000-\\u001f\\u007f-\\u009f])\\S(.*\\S)?$",
       "description": "The display name of the profile."
     },
     "outputPolicy": {
@@ -1032,7 +1033,8 @@
         "name": {
           "type": "string",
           "minLength": 1,
-          "pattern": "^\\S(.*\\S)?$",
+          "maxLength": 40,
+          "pattern": "^(?![\\s\\S]*[\\u0000-\\u001f\\u007f-\\u009f])\\S(.*\\S)?$",
           "description": "The display name of the layer."
         },
         "sequences": {

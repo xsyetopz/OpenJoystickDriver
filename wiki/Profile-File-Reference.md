@@ -84,7 +84,6 @@ OJD rejects unknown keys anywhere in a profile, and a file that holds a `date` o
 
 The schema checks the shape and range of each field. OJD also refuses a profile that breaks one of these rules, with `E3008`:
 
-- A `Keyboard` destination lists its `modifiers` sorted and without repeats.
 - An `OpenURL` destination holds an absolute URL whose scheme is not `file`. A `ProfileSwitch` destination holds a profile of the same model, `Next`, or `Previous`. A `Speak` destination holds a voice that the Mac has.
 - A binding sets `pulseDurationMs` to a value other than 100 only with the `Pulse` behavior.
 - A chord matches its sources in any order. An adaptive trigger effect with kind `Off` has `startPosition` and `strength` 0.
@@ -96,7 +95,9 @@ The schema checks the shape and range of each field. OJD also refuses a profile 
 - A touch grid source has `column` less than `columns` and `row` less than `rows`. A touch region has `x` plus `width` and `y` plus `height` of at most 1.
 - A stick region has `innerRadius` less than `outerRadius` and `fromDegrees` different from `toDegrees`. A region runs clockwise from up, past 0 when `toDegrees` is below `fromDegrees`. Regions of one stick do not overlap.
 - A trigger band has `from` less than `to`. Bands of one trigger do not overlap, and a trigger with a `triggerMappings` entry has no bands.
-- A profile name has no space at either end and no control character, at most 80 characters. A layer name follows the same rule with at most 40.
+- A profile name has no space at either end and no control character, at most 80 characters. A layer name follows the same rule with at most 40. The schema counts the length in Unicode code points, and OJD counts characters, so a name with combining marks can pass OJD and fail the schema.
+
+A `Keyboard` destination's `modifiers` are a set. OJD reads them in any order, merges repeats, and writes them sorted.
 
 ## Turbo and Multi-Tap Fields
 

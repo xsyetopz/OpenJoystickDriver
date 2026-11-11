@@ -345,6 +345,20 @@
       "$ref": "#/$defs/sharedConfigChange"
     },
     "configShow": {
+      "if": {
+        "required": ["controller"]
+      },
+      "then": {
+        "properties": {
+          "values": {
+            "items": {
+              "not": {
+                "required": ["families"]
+              }
+            }
+          }
+        }
+      },
       "type": "object",
       "required": ["apiVersion", "kind", "defaultsFile", "values"],
       "additionalProperties": false,
@@ -375,6 +389,21 @@
         "values": {
           "type": "array",
           "items": {
+            "if": {
+              "properties": {
+                "layer": {
+                  "const": "Driver"
+                }
+              }
+            },
+            "then": {
+              "not": {
+                "required": ["value"]
+              }
+            },
+            "else": {
+              "required": ["value"]
+            },
             "type": "object",
             "required": ["key", "layer"],
             "additionalProperties": false,
@@ -1015,6 +1044,40 @@
           }
         },
         "serving": {
+          "if": {
+            "properties": {
+              "route": {
+                "const": "OutputDisabled"
+              }
+            }
+          },
+          "then": {
+            "required": ["reason"]
+          },
+          "else": {
+            "not": {
+              "required": ["reason"]
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "route": {
+                    "enum": ["NativePassThrough", "OutputDisabled"]
+                  }
+                }
+              },
+              "then": {
+                "not": {
+                  "required": ["persona"]
+                }
+              },
+              "else": {
+                "required": ["persona"]
+              }
+            }
+          ],
           "description": "How OJD serves the controller, as the serving policy decides it.",
           "type": "object",
           "required": ["route"],
@@ -1226,6 +1289,7 @@
                 "$ref": "#/$defs/sharedFrameTimingSummary"
               },
               "frames": {
+                "maxItems": 8,
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -1590,6 +1654,21 @@
         "items": {
           "type": "array",
           "items": {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "Failed"
+                }
+              }
+            },
+            "then": {
+              "required": ["detail"]
+            },
+            "else": {
+              "not": {
+                "required": ["detail"]
+              }
+            },
             "type": "object",
             "required": ["file", "verdict"],
             "additionalProperties": false,
@@ -2541,6 +2620,18 @@
       }
     },
     "sharedAccessRefusedToken": {
+      "if": {
+        "properties": {
+          "transport": {
+            "const": "Socket"
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": ["origin"]
+        }
+      },
       "type": "object",
       "required": ["reason", "refusalTime", "scopes", "transport"],
       "additionalProperties": false,
@@ -2970,6 +3061,47 @@
       }
     },
     "sharedFrameTimingSummary": {
+      "allOf": [
+        {
+          "if": {
+            "not": {
+              "required": ["lastSeconds"]
+            }
+          },
+          "then": {
+            "not": {
+              "required": ["stalls"]
+            },
+            "properties": {
+              "gaps": {
+                "items": {
+                  "properties": {
+                    "gap": {
+                      "not": {
+                        "const": "ReadToRead"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frames": {
+                "maximum": 1
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": ["stalls"]
+            }
+          }
+        }
+      ],
       "description": "What the frame window of one controller says about stutter.",
       "type": "object",
       "required": ["frames", "spanNanoseconds", "gaps"],
@@ -2982,6 +3114,7 @@
           "maximum": 15
         },
         "frames": {
+          "maximum": 15000,
           "type": "integer",
           "minimum": 0
         },
@@ -3669,6 +3802,7 @@
       "additionalProperties": false,
       "properties": {
         "guid": {
+          "pattern": "^0[35]000000[0-9a-f]{24}$",
           "type": "string",
           "pattern": "^[0-9a-f]{32}$"
         },
@@ -3808,6 +3942,21 @@
           "const": "SystemStatus"
         },
         "commandLineTool": {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": ["Missing", "BlockedByFile"]
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": ["target"]
+            }
+          },
+          "else": {
+            "required": ["target"]
+          },
           "description": "The state of the command-line tool link that the app installs.",
           "type": "object",
           "required": ["path", "state"],
@@ -3899,6 +4048,25 @@
           }
         },
         "service": {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "Running"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["listenerFailure"]
+                },
+                {
+                  "required": ["listenerFailureProblem"]
+                }
+              ]
+            }
+          },
           "type": "object",
           "required": ["state"],
           "additionalProperties": false,

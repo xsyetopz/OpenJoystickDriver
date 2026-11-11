@@ -262,6 +262,26 @@ struct ProfileSchemaTests {
       "axis in a chord", #"{"type": "Button", "button": "Back"}"#,
       #"{"type": "Axis", "axis": "LeftTrigger"}"#
     ),
+    (
+      "profile name over 80 characters", #""name": "Everything""#,
+      "\"name\": \"" + String(repeating: "a", count: 81) + "\""
+    ),
+    ("profile name with a control character", #""name": "Everything""#, #""name": "Every\u007fthing""#),
+    ("profile name with a space at the end", #""name": "Everything""#, #""name": "Everything ""#),
+    (
+      "layer name over 40 characters", #""name": "Menus""#,
+      "\"name\": \"" + String(repeating: "a", count: 41) + "\""
+    ),
+    ("layer name with a control character", #""name": "Menus""#, #""name": "Me\u007fnus""#),
+    (
+      "gyro activation source with the Always mode", #""activationMode": "WhileHeld""#,
+      #""activationMode": "Always""#
+    ),
+    (
+      "Off adaptive trigger effect with a strength",
+      #""kind": "Resistance", "startPosition": 0.3, "strength": 0.7"#,
+      #""kind": "Off", "startPosition": 0, "strength": 0.7"#
+    ),
   ])
   func aBrokenProfileIsRejectedByTheDecoderAndTheSchema(
     problem: String,
@@ -294,6 +314,7 @@ struct ProfileSchemaTests {
     ),
     ("soft threshold above full", #""softThreshold": 0.2"#, #""softThreshold": 0.95"#),
     ("grid column outside the grid", #""column": 1, "row": 0"#, #""column": 2, "row": 0"#),
+    ("pulse duration without the Pulse behavior", #""multiTap": [{"#, #""pulseDurationMs": 200, "multiTap": [{"#),
   ])
   func aRuleAcrossFieldsIsRefusedByTheDecoderOnly(
     problem: String,
