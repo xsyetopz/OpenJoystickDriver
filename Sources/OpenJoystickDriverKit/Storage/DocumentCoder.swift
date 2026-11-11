@@ -11,6 +11,8 @@ public struct DocumentCoderError: Error, Equatable, Sendable, CustomStringConver
     case json
     /// Neither an XML property list nor JSON, such as an old-style property list or other text.
     case notXML
+    /// Bytes other than whitespace after the closing `</plist>`, such as a damaged write.
+    case trailingBytes
     /// A `date` or `data` value at `keyPath`.
     case unsupportedValue(keyPath: String, kind: String)
   }
@@ -28,6 +30,7 @@ public struct DocumentCoderError: Error, Equatable, Sendable, CustomStringConver
     case .binary: "\(file) is a binary property list; save it as an XML property list"
     case .json: "\(file) holds JSON text; save it as an XML property list"
     case .notXML: "\(file) is not an XML property list"
+    case .trailingBytes: "\(file) holds bytes after its property list; the file is damaged"
     case .unsupportedValue(let keyPath, let kind):
       "\(file): \(keyPath) holds a \(kind) value; a document holds only strings, numbers, "
         + "booleans, arrays, and dictionaries"
@@ -40,7 +43,8 @@ public struct DocumentCoderError: Error, Equatable, Sendable, CustomStringConver
 public enum DocumentCoder {
   /// The document in `data` as a Foundation tree: integers and reals keep their type.
   ///
-  /// Throws ``DocumentCoderError`` for any other form and for a `date` or `data` value; `file`
+  /// Throws ``DocumentCoderError`` for any other form, for bytes after the property list, and
+  /// for a `date` or `data` value; `file`
   /// names the file in the error.
   public static func read(_ data: Data, file: String) throws -> Any {
     var format = PropertyListSerialization.PropertyListFormat.xml
@@ -53,6 +57,10 @@ public enum DocumentCoder {
     }
     guard format == .xml else {
       throw DocumentCoderError(file: file, reason: format == .binary ? .binary : .notXML)
+    }
+    // PropertyListSerialization stops at `</plist>` and ignores what follows; XMLParser refuses it.
+    guard XMLParser(data: data).parse() else {
+      throw DocumentCoderError(file: file, reason: .trailingBytes)
     }
     try check(tree, keyPath: "", file: file)
     return tree

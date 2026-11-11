@@ -84,6 +84,24 @@ struct DocumentCoderTests {
     #expect(error.reason == .notXML)
   }
 
+  @Test(arguments: [Data([0xFF, 0xFE]), Data("garbage".utf8), Data("<dict/>".utf8)])
+  func bytesAfterThePropertyListAreRefused(tail: Data) throws {
+    let data = plist("<dict><key>kind</key><string>Sample</string></dict>") + tail
+    let error = try #require(refusal(data, file: "Play.plist"))
+    #expect(error.reason == .trailingBytes)
+    #expect(error.code == .invalidDocumentForm)
+    #expect(error.description.contains("Play.plist"))
+    #expect(throws: DocumentCoderError.self) {
+      try DocumentCoder.decode([String: String].self, from: data, file: "Play.plist")
+    }
+  }
+
+  @Test
+  func whitespaceAfterThePropertyListIsRead() throws {
+    let data = plist("<dict><key>kind</key><string>Sample</string></dict>") + Data(" \n\t\n".utf8)
+    #expect(refusal(data) == nil)
+  }
+
   @Test
   func aDateIsRefusedWithItsKeyPath() throws {
     let data = plist(
