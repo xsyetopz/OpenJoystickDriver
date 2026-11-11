@@ -4,6 +4,7 @@ import hashlib
 import io
 import json
 import pathlib
+import plistlib
 import tempfile
 import unittest
 import urllib.error
@@ -602,10 +603,14 @@ class SDLControllerListTests(unittest.TestCase):
 
 def committed_records() -> dict[tuple[int, int], dict[str, Any]]:
     records: dict[tuple[int, int], dict[str, Any]] = {}
-    for path in sorted(catalog.OUTPUT_DIR.glob("*/*.json")):
-        record = json.loads(path.read_text())
+    for path in sorted(catalog.OUTPUT_DIR.glob("*/*.plist")):
+        record = plistlib.loads(path.read_bytes())
         records[catalog.record_key(record)] = record
     return records
+
+
+XID = plistlib.dumps({"family": "XboxXID"})
+XUSB = plistlib.dumps({"family": "XboxXUSB"})
 
 
 class ProtocolCopyTests(unittest.TestCase):
@@ -621,7 +626,7 @@ class ProtocolCopyTests(unittest.TestCase):
         self.authored = root / "Resources" / "Protocols"
         self.bundled = root / "Kit" / "Protocols"
         self.authored.mkdir(parents=True)
-        (self.authored / "xbox-xid.json").write_text('{"family": "XboxXID"}\n')
+        (self.authored / "xbox-xid.plist").write_bytes(XID)
         for name, value in (
             ("ROOT", root),
             ("OUTPUT_DIR", root / "Kit" / "Controllers"),
@@ -642,37 +647,37 @@ class ProtocolCopyTests(unittest.TestCase):
 
     def test_written_copies_pass_the_check(self) -> None:
         self.assertEqual(
-            (self.bundled / "xbox-xid.json").read_text(), '{"family": "XboxXID"}\n'
+            (self.bundled / "xbox-xid.plist").read_bytes(), XID
         )
         catalog.check_catalog({})
 
     def test_a_missing_copy_is_reported(self) -> None:
-        (self.bundled / "xbox-xid.json").unlink()
-        self.assert_check_reports(r"missing Kit/Protocols/xbox-xid\.json")
+        (self.bundled / "xbox-xid.plist").unlink()
+        self.assert_check_reports(r"missing Kit/Protocols/xbox-xid\.plist")
 
     def test_a_stale_copy_is_reported(self) -> None:
-        (self.bundled / "xbox.old.json").write_text("{}\n")
-        self.assert_check_reports(r"stale Kit/Protocols/xbox\.old\.json")
+        (self.bundled / "xbox.old.plist").write_bytes(b"{}\n")
+        self.assert_check_reports(r"stale Kit/Protocols/xbox\.old\.plist")
 
     def test_a_changed_copy_is_reported(self) -> None:
-        (self.bundled / "xbox-xid.json").write_text('{"family": "XboxXUSB"}\n')
-        self.assert_check_reports(r"changed Kit/Protocols/xbox-xid\.json")
+        (self.bundled / "xbox-xid.plist").write_bytes(XUSB)
+        self.assert_check_reports(r"changed Kit/Protocols/xbox-xid\.plist")
 
     def test_write_removes_a_stale_copy(self) -> None:
-        (self.bundled / "xbox.old.json").write_text("{}\n")
+        (self.bundled / "xbox.old.plist").write_bytes(b"{}\n")
         catalog.write_catalog({})
         self.assertEqual(
-            sorted(path.name for path in self.bundled.iterdir()), ["xbox-xid.json"]
+            sorted(path.name for path in self.bundled.iterdir()), ["xbox-xid.plist"]
         )
 
     def test_write_refreshes_the_copies_before_the_records_are_built(self) -> None:
-        (self.authored / "xbox-xid.json").write_text('{"family": "XboxXUSB"}\n')
-        seen: list[str] = []
+        (self.authored / "xbox-xid.plist").write_bytes(XUSB)
+        seen: list[bytes] = []
         builds: list[str] = []
 
-        def build_catalog() -> dict[tuple[int, int], str]:
+        def build_catalog() -> dict[tuple[int, int], bytes]:
             catalog.repository_tool.binary()
-            seen.append((self.bundled / "xbox-xid.json").read_text())
+            seen.append((self.bundled / "xbox-xid.plist").read_bytes())
             return {}
 
         with (
@@ -685,7 +690,7 @@ class ProtocolCopyTests(unittest.TestCase):
             catalog.repository_tool.binary()
             self.assertEqual(catalog.main(), 0)
         catalog.repository_tool.binary.cache_clear()
-        self.assertEqual(seen, ['{"family": "XboxXUSB"}\n'])
+        self.assertEqual(seen, [XUSB])
         # The tool built at import ships the stale copies, so it is built again after them.
         self.assertEqual(builds, ["OJDRepositoryTool", "OJDRepositoryTool"])
 

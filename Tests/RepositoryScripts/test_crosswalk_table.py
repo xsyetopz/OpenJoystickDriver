@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import copy
-import json
+import plistlib
 import shutil
 import tempfile
 import unittest
@@ -31,16 +31,16 @@ class CrosswalkTableTests(unittest.TestCase):
         self, root: Path, control: str, column: str, value: object
     ) -> None:
         path = root / crosswalk.CROSSWALK
-        document = json.loads(path.read_text(encoding="utf-8"))
+        document = plistlib.loads(path.read_bytes())
         document["controls"][control][column] = value
-        path.write_text(json.dumps(document), encoding="utf-8")
+        path.write_bytes(plistlib.dumps(document))
 
-    def test_the_wiki_table_matches_the_json(self) -> None:
+    def test_the_wiki_table_matches_the_plist(self) -> None:
         self.assertEqual(crosswalk.regenerate(ROOT, write=False), [])
 
     def test_the_table_has_a_row_per_control_and_a_source_per_column(self) -> None:
         page = (ROOT / crosswalk.WIKI_PAGE).read_text(encoding="utf-8")
-        document = json.loads((ROOT / crosswalk.CROSSWALK).read_text(encoding="utf-8"))
+        document = plistlib.loads((ROOT / crosswalk.CROSSWALK).read_bytes())
         for control in document["controls"]:
             self.assertIn(f"| `{control}` |", page)
         for column in document["sources"].values():
@@ -49,17 +49,17 @@ class CrosswalkTableTests(unittest.TestCase):
     def test_an_absent_key_is_a_dash_and_an_absent_usage_is_the_device(self) -> None:
         root = self.copy_repository()
         path = root / crosswalk.CROSSWALK
-        document = json.loads(path.read_text(encoding="utf-8"))
+        document = plistlib.loads(path.read_bytes())
         row = document["controls"]["South"]
         del row["sdl"]
         row["hid"] = [{"page": "Button"}]
-        path.write_text(json.dumps(document), encoding="utf-8")
+        path.write_bytes(plistlib.dumps(document))
         cells = crosswalk.wiki_block(crosswalk.load(root)).splitlines()
         south = next(line for line in cells if line.startswith("| `South` |"))
         self.assertIn("| - |", south)
         self.assertIn("`Button:device`", south)
 
-    def test_a_changed_json_cell_makes_the_wiki_stale(self) -> None:
+    def test_a_changed_plist_cell_makes_the_wiki_stale(self) -> None:
         root = self.copy_repository()
         self.edit_crosswalk(root, "South", "sdl", "NOT_SOUTH")
         self.assertEqual(crosswalk.regenerate(root, write=False), [crosswalk.WIKI_PAGE])
@@ -89,9 +89,9 @@ class CrosswalkTableTests(unittest.TestCase):
     def test_a_column_without_a_source_is_refused(self) -> None:
         root = self.copy_repository()
         path = root / crosswalk.CROSSWALK
-        document = json.loads(path.read_text(encoding="utf-8"))
+        document = plistlib.loads(path.read_bytes())
         del document["sources"]["apple"]
-        path.write_text(json.dumps(document), encoding="utf-8")
+        path.write_bytes(plistlib.dumps(document))
         with self.assertRaises(crosswalk.CrosswalkError):
             crosswalk.regenerate(root, write=False)
 
@@ -103,8 +103,8 @@ class CrosswalkSchemaTests(unittest.TestCase):
         self.validator = Draft202012Validator(
             documents["crosswalk.schema.json"], registry=registry
         )
-        self.document: dict[str, Any] = json.loads(
-            (ROOT / crosswalk.CROSSWALK).read_text(encoding="utf-8")
+        self.document: dict[str, Any] = plistlib.loads(
+            (ROOT / crosswalk.CROSSWALK).read_bytes()
         )
 
     def rejects(self, edit: Callable[[dict[str, Any]], None]) -> bool:

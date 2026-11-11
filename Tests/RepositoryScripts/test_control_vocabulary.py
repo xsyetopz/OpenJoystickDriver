@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import plistlib
 import unittest
 from typing import Any
 
@@ -8,7 +9,7 @@ from Scripts.Quality import validate_schemas
 
 VERSION = "openjoystickdriver/v1alpha3"
 ROOT = validate_schemas.ROOT
-CROSSWALK = ROOT / "Resources" / "Vocabulary" / "crosswalk.json"
+CROSSWALK = ROOT / "Resources" / "Vocabulary" / "crosswalk.plist"
 SAMPLE_PROFILE = ROOT / "docs" / "sdk" / "sample" / "Profiles" / "sample-pad.json"
 
 # Names that are not control ids.
@@ -23,8 +24,7 @@ class ControlVocabularyTests(unittest.TestCase):
         defs = cls.documents["vocabulary.schema.json"]["$defs"]
         assert isinstance(defs, dict)
         cls.controls: list[str] = defs["control"]["enum"]
-        with CROSSWALK.open(encoding="utf-8") as source:
-            document = json.load(source)
+        document = plistlib.loads(CROSSWALK.read_bytes())
         cls.crosswalk: dict[str, dict[str, Any]] = document["controls"]
         cls.sources: dict[str, dict[str, Any]] = document["sources"]
 

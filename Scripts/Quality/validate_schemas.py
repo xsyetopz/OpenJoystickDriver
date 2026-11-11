@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import json
 import os
+import plistlib
 import subprocess
 import sys
 import tempfile
+import xml.parsers.expat
 from pathlib import Path
 
 from ..Catalog.schema_header import (
@@ -33,8 +35,8 @@ GENERATED_RECORDS = (
 )
 AUTHORED_CONTROLLERS = ROOT / "Resources" / "Controllers"
 AUTHORED_PATCHES = ROOT / "Resources" / "ControllerPatches"
-ERROR_CODES = ROOT / "Resources" / "ErrorCodes.json"
-CROSSWALK = ROOT / "Resources" / "Vocabulary" / "crosswalk.json"
+ERROR_CODES = ROOT / "Resources" / "ErrorCodes.plist"
+CROSSWALK = ROOT / "Resources" / "Vocabulary" / "crosswalk.plist"
 PROTOCOL_DESCRIPTIONS = ROOT / "Resources" / "Protocols"
 VIRTUAL_DEVICES = ROOT / "Resources" / "VirtualDevices"
 SAMPLE_PACKAGE = ROOT / "docs" / "sdk" / "sample"
@@ -59,6 +61,11 @@ SAMPLE_FOLDER_SCHEMAS = {
 def load_json(path: Path) -> object:
     with path.open(encoding="utf-8") as source:
         return json.load(source)
+
+
+def load_plist(path: Path) -> object:
+    with path.open("rb") as source:
+        return plistlib.load(source)
 
 
 def validate_schema_documents() -> dict[str, dict[str, object]]:
@@ -173,7 +180,7 @@ def validate_documents(
     """Validates documents against a schema; the rules a schema cannot state are Swift's."""
     validator = Draft202012Validator(schema, registry=registry)
     for path in paths:
-        document = load_json(path)
+        document = load_plist(path) if path.suffix == ".plist" else load_json(path)
         try:
             validator.validate(document)
         except ValidationError as error:
@@ -229,13 +236,13 @@ def main() -> int:
         documents = validate_schema_documents()
         validate_schema_identity(documents)
         registry = schema_registry(documents)
-        controller_records = sorted(GENERATED_RECORDS.glob("*/*.json"))
-        authored = sorted(AUTHORED_CONTROLLERS.glob("*/*.json"))
+        controller_records = sorted(GENERATED_RECORDS.glob("*/*.plist"))
+        authored = sorted(AUTHORED_CONTROLLERS.glob("*/*.plist"))
         patches = sorted(
-            [*AUTHORED_PATCHES.glob("*.json"), *AUTHORED_PATCHES.glob("*/*.json")]
+            [*AUTHORED_PATCHES.glob("*.plist"), *AUTHORED_PATCHES.glob("*/*.plist")]
         )
-        protocols = sorted(PROTOCOL_DESCRIPTIONS.glob("*.json"))
-        virtual_devices = sorted(VIRTUAL_DEVICES.glob("*.json"))
+        protocols = sorted(PROTOCOL_DESCRIPTIONS.glob("*.plist"))
+        virtual_devices = sorted(VIRTUAL_DEVICES.glob("*.plist"))
         validate_documents(
             documents["controller.schema.json"], registry, controller_records
         )
@@ -272,6 +279,8 @@ def main() -> int:
     except (
         OSError,
         json.JSONDecodeError,
+        plistlib.InvalidFileException,
+        xml.parsers.expat.ExpatError,
         SchemaError,
         ValidationError,
         repository_tool.ToolError,

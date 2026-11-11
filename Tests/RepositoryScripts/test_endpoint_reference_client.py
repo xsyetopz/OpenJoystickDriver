@@ -3,6 +3,7 @@ from __future__ import annotations
 import io
 import json
 import os
+import plistlib
 import queue
 import socket
 import struct
@@ -49,8 +50,8 @@ class EndpointReferenceClientTests(unittest.TestCase):
         # The sample client is a standalone file for readers of the SDK, so it states these two
         # facts itself; this test is what keeps them equal to Swift and the error catalog.
         self.assertEqual(reference_client.API_VERSION, repository_tool.api_version())
-        catalog = json.loads(
-            (ROOT / "Resources/ErrorCodes.json").read_text(encoding="utf-8")
+        catalog = plistlib.loads(
+            (ROOT / "Resources/ErrorCodes.plist").read_bytes()
         )["codes"]
         header_codes = {"unsupportedEndpointVersion", "unexpectedKind", "missingHeader"}
         self.assertEqual(

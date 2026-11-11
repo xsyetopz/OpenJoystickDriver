@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import plistlib
 import re
 import unittest
 from pathlib import Path
@@ -83,8 +84,8 @@ class SDKDocsTests(unittest.TestCase):
             self.client_lines.validate(bad)
 
     def endpoint_catalog(self) -> list[dict[str, Any]]:
-        catalog = json.loads(
-            (ROOT / "Resources" / "ErrorCodes.json").read_text(encoding="utf-8")
+        catalog = plistlib.loads(
+            (ROOT / "Resources" / "ErrorCodes.plist").read_bytes()
         )
         return [entry for entry in catalog["codes"] if entry["domain"] == "Endpoint"]
 

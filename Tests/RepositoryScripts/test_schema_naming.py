@@ -13,6 +13,7 @@ what the rule does not cover:
 from __future__ import annotations
 
 import json
+import plistlib
 import re
 import unittest
 from collections.abc import Iterator
@@ -248,7 +249,7 @@ SESSION = [("controller", "/$defs/session/properties")]
 PROTOCOL = [("controller", "/$defs/protocol/properties")]
 HID_INPUT = [("controller", "/$defs/hidInput/properties")]
 SETTING_PATHS = "dotted paths through the properties of settings"
-PROTOCOL_PARAMETERS = "the keys of `parameters` in Resources/Protocols/*.json"
+PROTOCOL_PARAMETERS = "the keys of `parameters` in Resources/Protocols/*.plist"
 
 # Settings the command line names that the settings document does not store.
 UNSTORED_SETTINGS = {
@@ -349,9 +350,8 @@ def setting_paths(node: Any, prefix: str = "") -> set[str]:
 
 def protocol_parameters() -> set[str]:
     names: set[str] = set()
-    for path in sorted(PROTOCOLS.glob("*.json")):
-        with path.open(encoding="utf-8") as source:
-            names.update(json.load(source).get("parameters", {}))
+    for path in sorted(PROTOCOLS.glob("*.plist")):
+        names.update(plistlib.loads(path.read_bytes()).get("parameters", {}))
     return names
 
 

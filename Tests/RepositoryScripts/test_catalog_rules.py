@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import json
+import plistlib
 import pathlib
 import tempfile
 import unittest
@@ -13,7 +13,7 @@ from Scripts.Quality import repository_tool
 
 class CatalogRulesLoadingTests(unittest.TestCase):
     def write(self, directory: str, document: dict[str, object]) -> None:
-        (pathlib.Path(directory) / "rules.json").write_text(json.dumps(document))
+        (pathlib.Path(directory) / "rules.plist").write_bytes(plistlib.dumps(document))
 
     def test_parse_identity(self) -> None:
         self.assertEqual(catalog_rules.parse_identity("045E:02D1"), (0x045E, 0x02D1))
@@ -31,7 +31,7 @@ class CatalogRulesLoadingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = pathlib.Path(directory)
             self.write(directory, good)
-            loaded = catalog_rules.load_rules("rules.json", "Example", keys, path)
+            loaded = catalog_rules.load_rules("rules.plist", "Example", keys, path)
             self.assertEqual(loaded["values"], [])
             for change in (
                 {"apiVersion": "unsupported.example/v9"},
@@ -41,12 +41,12 @@ class CatalogRulesLoadingTests(unittest.TestCase):
                 with self.subTest(change=change):
                     self.write(directory, {**good, **change})
                     with self.assertRaises(catalog_rules.RulesError):
-                        catalog_rules.load_rules("rules.json", "Example", keys, path)
+                        catalog_rules.load_rules("rules.plist", "Example", keys, path)
             self.write(directory, {key: good[key] for key in ("apiVersion", "kind")})
             with self.assertRaises(catalog_rules.RulesError):
-                catalog_rules.load_rules("rules.json", "Example", keys, path)
+                catalog_rules.load_rules("rules.plist", "Example", keys, path)
             with self.assertRaises(catalog_rules.RulesError):
-                catalog_rules.load_rules("missing.json", "Example", keys, path)
+                catalog_rules.load_rules("missing.plist", "Example", keys, path)
 
     def test_sdl_rules_are_loaded_from_data(self) -> None:
         self.assertEqual(catalog.SONY_VENDOR_ID, 0x054C)

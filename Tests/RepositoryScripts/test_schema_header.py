@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+import plistlib
 import unittest
 from pathlib import Path
 from typing import Any
@@ -19,13 +20,17 @@ def load(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def load_plist(path: Path) -> dict[str, Any]:
+    return plistlib.loads(path.read_bytes())
+
+
 def instances() -> dict[str, dict[str, Any]]:
     """One valid document for each kind that has a header, by schema stem."""
     controller = next(
-        (ROOT / "Sources/OpenJoystickDriverKit/Resources/Controllers").glob("*/*.json")
+        (ROOT / "Sources/OpenJoystickDriverKit/Resources/Controllers").glob("*/*.plist")
     )
     return {
-        "controller": load(controller),
+        "controller": load_plist(controller),
         "controller-patch": {
             **schema_header.header("ControllerPatch"),
             "selector": {"vendorID": 0x1209, "productID": 1},
@@ -34,10 +39,10 @@ def instances() -> dict[str, dict[str, Any]]:
         "virtual-device": load(SAMPLE / "VirtualDevices/1209-0001.json"),
         "profile": load(SAMPLE / "Profiles/sample-pad.json"),
         "mod-package": load(SAMPLE / "mod.json"),
-        "error-codes": load(ROOT / "Resources/ErrorCodes.json"),
-        "crosswalk": load(ROOT / "Resources/Vocabulary/crosswalk.json"),
+        "error-codes": load_plist(ROOT / "Resources/ErrorCodes.plist"),
+        "crosswalk": load_plist(ROOT / "Resources/Vocabulary/crosswalk.plist"),
         "access-grants": load(FIXTURES / "access_grants.json"),
-        "protocol-description": load(ROOT / "Resources/Protocols/xbox-xusb.json"),
+        "protocol-description": load_plist(ROOT / "Resources/Protocols/xbox-xusb.plist"),
         "settings": load(FIXTURES / "settings.json"),
         "service-listener-failure": load(FIXTURES / "service_listener_failure.json"),
     }

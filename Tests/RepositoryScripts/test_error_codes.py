@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import plistlib
 import shutil
 import tempfile
 import unittest
@@ -35,8 +36,8 @@ class ErrorCodeTests(unittest.TestCase):
         return directory
 
     def write_catalog(self, root: Path, codes: list[dict[str, Any]]) -> None:
-        (root / errors.CATALOG).write_text(
-            json.dumps({**header("ErrorCatalog"), "codes": codes}), encoding="utf-8"
+        (root / errors.CATALOG).write_bytes(
+            plistlib.dumps({**header("ErrorCatalog"), "codes": codes})
         )
 
     def test_the_repository_is_current(self) -> None:

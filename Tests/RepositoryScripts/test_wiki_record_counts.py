@@ -15,7 +15,7 @@ class WikiRecordCountTests(unittest.TestCase):
     def test_every_stated_count_of_bundled_records_matches_the_generated_set(
         self,
     ) -> None:
-        generated = len(list(RECORDS.glob("*/*.json")))
+        generated = len(list(RECORDS.glob("*/*.plist")))
         self.assertGreater(generated, 0)
         stated = [
             (page.name, number, int(number.replace(",", "")))
