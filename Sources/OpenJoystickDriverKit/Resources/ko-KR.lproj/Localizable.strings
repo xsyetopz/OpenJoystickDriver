@@ -4319,7 +4319,6 @@
 "error.E5007.record.hexBytes" = "%1$@, %2$@: %3$@의 바이트는 공백 하나로 구분한 대문자 16진수 쌍이어야 합니다. 해결: %2$@을(를) 42 03 00처럼 대문자로, 쌍 사이에 공백 하나를 두고 작성하세요.";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@, patch: patch에는 modes, usb, bluetoothLE, capabilities, server, route, input 또는 tuning이 있어야 합니다. 해결: 이 섹션만 남기고 하나 이상 지정하세요.";
-"error.E5007.patch.patchSections" = "%1$@, patch: patch에는 modes, usb, bluetoothLE, capabilities, server, route, input, tuning 또는 idle이 있어야 합니다. 해결: 이 섹션만 남기고 하나 이상 지정하세요.";
 /* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@, persona: persona는 %2$@ 중 하나여야 합니다. 해결: persona를 그중 하나로 설정하세요.";
 /* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */
