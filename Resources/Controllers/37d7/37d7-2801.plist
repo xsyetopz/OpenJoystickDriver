@@ -15,11 +15,13 @@
 			<dict>
 				<key>family</key>
 				<string>XboxGIP</string>
-			</dict>
-			<key>session</key>
-			<dict>
-				<key>settleMilliseconds</key>
-				<integer>200</integer>
+				<key>initialization</key>
+				<array>
+					<string>XboxGIP/hori-ack</string>
+					<string>XboxGIP/led-on</string>
+					<string>XboxGIP/auth-done</string>
+					<string>XboxGIP/power-on</string>
+				</array>
 			</dict>
 		</dict>
 		<dict>

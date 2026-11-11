@@ -11,6 +11,22 @@ struct GIPStartupPacketBytesTests {
     "XboxGIP/led-on", "XboxGIP/auth-done", "XboxGIP/rumble-begin", "XboxGIP/rumble-end",
   ]
 
+  /// The Vader 5S (`37D7:2801`) needs the Hori acknowledgement and the LED packet before
+  /// authentication, and it runs no post-handshake settle (#40).
+  @Test
+  func theVaderFiveSRecordRunsTheHoriStartupSequenceWithoutASettle() throws {
+    let model = ControllerModelID(vendorID: 0x37D7, productID: 0x2801)
+    let profile = try #require(ProtocolDriverRegistry().record(for: model))
+    #expect(profile.physicalProtocolID == .xboxGIP)
+    #expect(
+      profile.gipStartupPackets == [
+        "XboxGIP/hori-ack", "XboxGIP/led-on", "XboxGIP/auth-done", "XboxGIP/power-on",
+      ]
+    )
+    #expect(profile.session.settleMilliseconds == nil)
+    #expect(profile.transportProfile.postHandshakeSettleNanoseconds == 0)
+  }
+
   private func driver(_ identifiers: [String]) -> GIPDriver {
     GIPDriver(startupPackets: identifiers)
   }

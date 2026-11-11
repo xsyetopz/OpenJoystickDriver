@@ -67,6 +67,7 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 
 ## Fixed
 
+- The Flydigi Vader 5S (`37D7:2801`) record starts a GIP session with the Hori acknowledgement, the LED packet, the authentication-done packet and the power-on packet, in that order, and no longer waits 200 ms after the handshake, as the fix of #40 did. Not checked on hardware.
 - A GIP pad that announces nothing and sends its first report to an input read that is already pending gets that read before the startup writes. Not checked on hardware. (3.2)
 - A transfer on an interrupt pipe through the driver extension passes timeout 0, which the pipe requires, so the Xbox Elite Series 1 no longer fails with `kIOReturnBadArgument` ([#55](https://github.com/xsyetopz/OpenJoystickDriver/issues/55)). Not checked on hardware. (8.1)
 - A USB session start that keeps failing its handshake stops after 5 failures in a row, and the controller shows the last error ([#55](https://github.com/xsyetopz/OpenJoystickDriver/issues/55)). (8.2)

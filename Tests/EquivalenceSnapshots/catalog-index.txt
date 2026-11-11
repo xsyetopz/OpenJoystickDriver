@@ -7612,16 +7612,17 @@ parameters=
 
 ## 37D7:2801
 protocol=xbox-gip variant=- ownership=macos
-transport in=129 out=1 interface=0 alt=0 interfaceOverride=false endpointOverride=true setConfiguration=true settleNs=200000000
+transport in=129 out=1 interface=0 alt=0 interfaceOverride=false endpointOverride=true setConfiguration=true settleNs=0
 tuning -
 controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[low-frequency,high-frequency,left-trigger,right-trigger] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=50 usbKeepAliveMs=4000 hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
-startup[0] usb ep=1 timeoutMs=2000 tolerated=false 0520010100
+startup[0] usb ep=1 timeoutMs=2000 tolerated=false 012001090004203A0000008000
 startup[1] usb ep=1 timeoutMs=2000 tolerated=false 0A200203000114
 startup[2] usb ep=1 timeoutMs=2000 tolerated=false 062001020100
-keepAlive[0] usb ep=1 timeoutMs=2000 tolerated=false 03200303000000
-gip keepAlive=enabled startup=[0520000100,0A200003000114,062000020100]
+startup[3] usb ep=1 timeoutMs=2000 tolerated=false 0520030100
+keepAlive[0] usb ep=1 timeoutMs=2000 tolerated=false 03200403000000
+gip keepAlive=enabled startup=[012000090004203A0000008000,0A200003000114,062000020100,0520000100]
 parameters=
 
 ## 413D:2104
