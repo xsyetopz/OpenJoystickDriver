@@ -251,7 +251,12 @@ To share a record with others, pack it in a [mod package](Writing-Controller-Mod
 
 ## Step 4: A Generator Script
 
-One JavaScript file that writes the records of a product family, run by `ojd generate SCRIPT.js`. That command is not in `ojd --help` of this build, so this step is not verified. Write the records by hand (step 3) until it is.
+One JavaScript file whose `generate` function returns the records of a product family. Use it when several models share one layout and differ in a few values.
+
+1. Write the script. [Generating documents with scripts](Generating-Documents-with-Scripts.md) shows one that writes three records.
+2. Print the documents: `ojd generate family.js`.
+3. Write them into a folder: `ojd generate family.js --output Controllers`. The command checks every document before it writes any, and writes nothing when one fails.
+4. Validate and install each file as in step 3: `ojd record validate Controllers/VVVV-PPPP.plist`, then `ojd record install Controllers/VVVV-PPPP.plist`.
 
 ## Step 5: Source
 

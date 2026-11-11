@@ -30,7 +30,7 @@ Support a controller with the first step that works. A fact about one model is a
 1. Nothing: OJD binds the pad by interface signature or HID descriptor. Check with `ojd controller list` and `ojd controller show VVVV:PPPP`.
 2. A patch (`ControllerPatch`, for a model with a bundled record): `ojd record draft VVVV:PPPP > VVVV-PPPP.patch.plist`, `ojd record validate FILE`, `ojd record install FILE`.
 3. A record (`Controller`, for a model with no bundled record): `ojd record draft VVVV:PPPP > VVVV-PPPP.plist` (or `--from-sdl`), `ojd record validate FILE`, `ojd record test VVVV:PPPP --packets CAPTURE --expect STATE`, `ojd record install FILE`.
-4. A generator script: one JavaScript file that writes the records of a product family; `ojd generate` is not in `ojd --help` of this build (not verified).
+4. A generator script: one JavaScript file whose `generate` function returns the records of a product family; `ojd generate family.js --output Controllers` writes them after it checks each one.
 5. Source: only for a protocol family OJD lacks (a handshake, an encryption, or a transport no document can state).
 
 ## Docs
