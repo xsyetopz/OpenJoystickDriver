@@ -37,14 +37,14 @@
           OJDLocalized.string(
             "ui.motion.calibration.instructions"
           )
-        ).font(.caption).fixedSize(horizontal: false, vertical: true)
+        ).font(.body).fixedSize(horizontal: false, vertical: true)
         if let status = model.status {
           if !status.hasMotionBaseline {
             Text(
               OJDLocalized.string(
                 "ui.motion.calibration.waiting"
               )
-            ).font(.caption).fixedSize(horizontal: false, vertical: true)
+            ).font(.body).fixedSize(horizontal: false, vertical: true)
           }
           Text(
             status.isCollecting
@@ -60,17 +60,17 @@
               status.offsetDegreesPerSecond.y,
               status.offsetDegreesPerSecond.z
             )
-          ).font(.caption).fixedSize(horizontal: false, vertical: true)
+          ).font(.body).fixedSize(horizontal: false, vertical: true)
           if status.isCollecting {
             Text(
               OJDLocalized.string(
                 "ui.motion.calibration.continues"
               )
-            ).font(.caption).fixedSize(horizontal: false, vertical: true)
+            ).font(.body).fixedSize(horizontal: false, vertical: true)
           }
         }
         if let error = model.errorMessage {
-          Text(error).font(.caption).foregroundColor(.red).fixedSize(
+          Text(error).font(.body).foregroundColor(.red).fixedSize(
             horizontal: false,
             vertical: true
           )

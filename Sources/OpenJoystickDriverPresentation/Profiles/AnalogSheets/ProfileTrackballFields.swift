@@ -15,7 +15,7 @@
         if draft.enabled {
           Text(
             label("hint")
-          ).font(.caption)
+          ).font(.body)
           Picker(label("source"), selection: $draft.source) {
             ForEach(sources, id: \.source) { option in Text(option.title).tag(option.source) }
           }
@@ -26,7 +26,7 @@
           }
           TextField(label("decay"), text: $draft.decay)
           Text(label("decayHint"))
-            .font(.caption)
+            .font(.body)
           Toggle(
             label("consume"),
             isOn: $draft.consumesSource

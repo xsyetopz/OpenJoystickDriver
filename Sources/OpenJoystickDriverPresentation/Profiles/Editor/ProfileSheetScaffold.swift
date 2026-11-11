@@ -51,7 +51,7 @@
         }
         content
         if let error {
-          Text(error).font(.caption).foregroundColor(Color(NSColor.systemRed)).fixedSize(
+          Text(error).font(.body).foregroundColor(Color(NSColor.systemRed)).fixedSize(
             horizontal: false,
             vertical: true
           )

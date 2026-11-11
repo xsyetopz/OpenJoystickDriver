@@ -244,7 +244,7 @@
               Text(OJDLocalized.string("ui.inputTest.brightness"))
               Spacer()
               Text("\(Int(model.brightness.rounded()))").font(
-                .system(.caption, design: .monospaced)
+                .system(.body, design: .monospaced)
               )
             }
             HStack {
@@ -272,7 +272,7 @@
     @ViewBuilder
     private var outputErrorView: some View {
       if let error = model.outputError {
-        Text(error).font(.caption).foregroundColor(Color(NSColor.systemRed)).fixedSize(
+        Text(error).font(.body).foregroundColor(Color(NSColor.systemRed)).fixedSize(
           horizontal: false,
           vertical: true
         ).ojdAccessibilityLabel(

@@ -44,7 +44,7 @@
         } else if let fallbackImage {
           Image(nsImage: fallbackImage).ojdSymbolAccessibility(fallback)
         }
-      case .text: if let fallback { Text(fallback).font(.caption) }
+      case .text: if let fallback { Text(fallback).font(.body) }
       }
     }
   }
@@ -59,7 +59,7 @@
 
     /// The content in a fixed square, hidden from VoiceOver.
     var body: some View {
-      content.font(.system(size: 15, weight: .medium)).frame(
+      content.font(.title3.weight(.medium)).frame(
         width: 28,
         height: 28,
         alignment: .center

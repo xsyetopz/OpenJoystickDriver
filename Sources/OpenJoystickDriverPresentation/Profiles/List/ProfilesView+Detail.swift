@@ -128,7 +128,7 @@
       let sessions = currentSnapshot?.joyConPairs.filter { $0.profileID == profile.id } ?? []
       HStack(spacing: 10) {
         Text(OJDLocalized.string("ui.profiles.joyConPair")).font(
-          .caption.weight(.semibold)
+          .body.weight(.semibold)
         )
         if sessions.isEmpty {
           Button(

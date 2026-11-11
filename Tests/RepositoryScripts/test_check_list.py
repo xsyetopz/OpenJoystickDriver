@@ -154,6 +154,7 @@ class CheckListTests(unittest.TestCase):
             "./Scripts/ojd test parsers-macos14",
             "./Scripts/ojd snapshots check",
             "python3 Scripts/Quality/check_localization_keys.py",
+            "python3 Scripts/Quality/check_text_styles.py",
             "./Scripts/ojd check swift",
         ):
             self.assertIn(required, self.canonical)

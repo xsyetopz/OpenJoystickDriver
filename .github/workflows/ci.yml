@@ -99,6 +99,7 @@ jobs:
           swift-format lint --recursive --strict Package.swift Sources Tests Tools
           swiftlint lint --no-cache --strict
           python3 Scripts/Quality/check_localization_keys.py
+          python3 Scripts/Quality/check_text_styles.py
 
       - name: Build and test package
         run: ./Scripts/ojd check swift

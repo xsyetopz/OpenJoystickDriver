@@ -263,7 +263,7 @@
             OJDLocalized.string(
               "ui.profiles.notSupportedByController"
             )
-          ).font(.caption).foregroundColor(Color(NSColor.systemOrange))
+          ).font(.body).foregroundColor(Color(NSColor.systemOrange))
         }
       }.frame(maxWidth: .infinity, alignment: .leading)
     }

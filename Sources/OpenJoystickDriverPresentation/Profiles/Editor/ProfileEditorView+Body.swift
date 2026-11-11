@@ -316,7 +316,7 @@
             Button(
               OJDLocalized.string("ui.profiles.restoreDefaultInput")
             ) { restoreDefaultInput() }
-          }.font(.caption)
+          }.font(.body)
         }
       }.padding(.horizontal, 28).padding(.vertical, 18)
     }

@@ -113,9 +113,9 @@
         }
         if symbol == nil { Text(fallbackText ?? title) }
         if let displayedText {
-          Text(displayedText).font(.system(.caption, design: .monospaced))
+          Text(displayedText).font(.system(.body, design: .monospaced))
         }
-      }.font(.caption.weight(active ? .semibold : .regular)).lineLimit(1).padding(.horizontal, 7)
+      }.font(.body.weight(active ? .semibold : .regular)).lineLimit(1).padding(.horizontal, 7)
         .frame(maxWidth: .infinity, minHeight: 26).foregroundColor(
           active ? Color.white : Color(NSColor.labelColor)
         ).background(

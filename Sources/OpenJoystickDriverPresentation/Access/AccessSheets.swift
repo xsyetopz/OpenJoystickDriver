@@ -56,7 +56,7 @@
         Text(OJDLocalized.string("ui.access.token.form.title")).font(.headline)
         TextField(OJDLocalized.string("ui.access.token.name"), text: $model.tokenDraft.name)
           .ojdAccessibilityLabel(OJDLocalized.string("a11y.access.tokenName"))
-        Text(OJDLocalized.string("ui.access.token.origins")).font(.caption)
+        Text(OJDLocalized.string("ui.access.token.origins")).font(.body)
         TextEditor(text: $model.tokenDraft.originsText).font(.body).frame(height: 70)
           .ojdAccessibilityLabel(OJDLocalized.string("a11y.access.tokenOrigins"))
         scopeToggles(scopes: $model.tokenDraft.scopes)

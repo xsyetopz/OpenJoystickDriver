@@ -272,7 +272,7 @@
     /// A slider from 0 to 1 that shows the value as a percentage beside `title`.
     private func unitSlider(_ title: String, value: Binding<Double>) -> some View {
       VStack(alignment: .leading, spacing: 4) {
-        Text("\(title): \(Int((value.wrappedValue * 100).rounded()))%").font(.caption)
+        Text("\(title): \(Int((value.wrappedValue * 100).rounded()))%").font(.body)
         Slider(value: value, in: 0...1).ojdAccessibilityLabel(title)
       }
     }
@@ -280,7 +280,7 @@
     /// A slider from 0 to 255 that shows the value beside `title`.
     private func colorSlider(_ title: String, value: Binding<Double>) -> some View {
       VStack(alignment: .leading, spacing: 4) {
-        Text("\(title): \(Int(value.wrappedValue.rounded()))").font(.caption)
+        Text("\(title): \(Int(value.wrappedValue.rounded()))").font(.body)
         Slider(value: value, in: 0...255).ojdAccessibilityLabel(title)
       }
     }

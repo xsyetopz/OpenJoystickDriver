@@ -94,6 +94,7 @@ check-fast: check-schemas lint
     ./Scripts/ojd vocabulary regenerate --check
     ./Scripts/ojd check profiles
     python3 Scripts/Quality/check_localization_keys.py
+    python3 Scripts/Quality/check_text_styles.py
     .build/schema-validator/bin/python -m unittest discover -s Tests/RepositoryScripts
     git diff --check
 

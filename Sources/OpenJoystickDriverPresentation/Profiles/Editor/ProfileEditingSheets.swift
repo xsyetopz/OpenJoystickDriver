@@ -115,7 +115,7 @@
           }
         }
         if let errorMessage {
-          Text(errorMessage).font(.caption).foregroundColor(Color(NSColor.systemRed)).fixedSize(
+          Text(errorMessage).font(.body).foregroundColor(Color(NSColor.systemRed)).fixedSize(
             horizontal: false,
             vertical: true
           )

@@ -130,7 +130,7 @@
 
     /// The line.
     var body: some View {
-      Text(text).font(.caption).foregroundColor(
+      Text(text).font(.body).foregroundColor(
         isError
           ? Color(SemanticState.failure.presentation.tone.color)
           : Color(NSColor.secondaryLabelColor)

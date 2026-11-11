@@ -104,7 +104,7 @@
     var editorFooter: some View {
       VStack(alignment: .leading, spacing: 8) {
         if let localError {
-          Text(localError).font(.caption).foregroundColor(Color(NSColor.systemRed)).fixedSize(
+          Text(localError).font(.body).foregroundColor(Color(NSColor.systemRed)).fixedSize(
             horizontal: false,
             vertical: true
           )

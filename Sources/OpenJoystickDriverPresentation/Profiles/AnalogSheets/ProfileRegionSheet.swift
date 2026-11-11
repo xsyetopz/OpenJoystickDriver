@@ -136,7 +136,7 @@
           let reading = draft.reading(of: state, tuning: tuning)
           ProfileRegionLiveView(draft: draft, reading: reading, decimalSeparator: separator)
             .frame(height: draft.kind == .trigger ? 24 : 160)
-          Text(readingText(reading)).font(.caption)
+          Text(readingText(reading)).font(.body)
         } else {
           Text(label("noController")).font(.caption).foregroundColor(
             Color(NSColor.secondaryLabelColor)
