@@ -169,9 +169,13 @@ struct ControllerShowReport: Encodable, Equatable {
     let persona: String?
     /// Why a route publishes nothing; absent for a route that serves.
     let reason: String?
+    /// True when Apple's driver holds the controller, so a claim activates the extension; absent
+    /// otherwise.
+    let heldByAppleDriver: Bool?
 
     /// Creates the description from the serving decision.
-    init(_ decision: ServingDecision) {
+    init(_ decision: ServingDecision, heldByAppleDriver: Bool) {
+      self.heldByAppleDriver = heldByAppleDriver ? true : nil
       route = decision.route.id
       persona = decision.selection?.profileID.rawValue
       reason = decision.route.disabledReason?.rawValue
@@ -324,7 +328,7 @@ struct ControllerShowReport: Encodable, Equatable {
           ? record?.serverSource ?? ControllerRecord.defaultServerSource
           : ControllerRecord.routeServerSource
       ),
-      serving: Serving(device.servingDecision),
+      serving: Serving(device.servingDecision, heldByAppleDriver: device.isHeldByAppleDriver),
       parameters: device.parameters,
       record: record.map(Record.init),
       inputMapping: device.bindingResult.inputMapping,

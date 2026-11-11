@@ -27,7 +27,9 @@ extension ApplicationServiceServer {
 
   /// Writes `server` to the model's user record in `directory`.
   ///
-  /// A raw-USB family, or a model macOS does not serve natively, is refused; a model whose record
+  /// A model whose record reaches it through raw USB or the extension, or that macOS does not serve
+  /// natively, is refused; the extension claims a model Apple's driver holds only through an
+  /// activation request, never through this record. a model whose record
   /// already gives it to OJD counts as native, because OJD seized a controller macOS would serve.
   static func setControllerServer(
     vendorID: Int,
@@ -57,7 +59,7 @@ extension ApplicationServiceServer {
     let model = ControllerModelID(vendorID: vendor, productID: product)
     let record = records.records[model]
     let previous = record?.server ?? .system
-    if record?.usesRawUSB == true { return refused(.rawUSB, previous) }
+    if let record, record.accessRoute != .system { return refused(.rawUSB, previous) }
     guard systemGamepadConnected || previous == .ojd else { return refused(.notNative, previous) }
     let change: ControllerRecordWriter.Change
     do {

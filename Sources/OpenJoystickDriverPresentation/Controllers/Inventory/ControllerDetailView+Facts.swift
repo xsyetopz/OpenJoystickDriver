@@ -37,6 +37,15 @@
           }
         }
         Section { inputTestAction }
+        if device.isHeldByAppleDriver {
+          Section {
+            OJDLabeledValue(
+              OJDLocalized.string("platform.macos.ui.controllers.servedByMacOS"),
+              OJDLocalized.string("platform.macos.ui.controllers.servedByMacOSDetail")
+            )
+            ControllerClaimButton(viewModel: viewModel)
+          }
+        }
         if ControllerServerPicker.isShown(for: device) {
           Section {
             ControllerServerPicker(viewModel: viewModel, device: device)

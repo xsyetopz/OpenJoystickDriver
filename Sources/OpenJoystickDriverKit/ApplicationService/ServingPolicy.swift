@@ -141,6 +141,7 @@ public enum ServingPolicy {
     if input.observation == .upstreamVirtualDevice {
       return ServingDecision(route: .outputDisabled(.upstreamVirtualDevice))
     }
+    if isHeldByAppleDriver(input) { return ServingDecision(route: .nativePassThrough(input.allowance)) }
     // A record that gives a natively served model to OJD turns passthrough into a virtual gamepad.
     if input.observation.isServedBySystem && input.server == .system
       && input.accessRoute == .system
@@ -177,6 +178,12 @@ public enum ServingPolicy {
     decision(ServingInput(serving: device, override: override)).selection
   }
 
+  /// Whether Apple's driver holds the controller: the system serves it natively although OJD's
+  /// record reaches it through the extension. Claiming it means activating the extension.
+  public static func isHeldByAppleDriver(_ input: ServingInput) -> Bool {
+    input.accessRoute == .extensionOwned && input.observation == .systemGamepad
+  }
+
   /// Whether the user can choose between the system and OJD serving a controller: the system
   /// serves it natively, or its record already gives it to OJD, and its record does not reach it
   /// through raw USB or the extension, which always belong to OJD.
@@ -186,6 +193,9 @@ public enum ServingPolicy {
 }
 
 extension ApplicationServiceDeviceDescription {
+  /// Whether Apple's driver holds this controller; see ``ServingPolicy/isHeldByAppleDriver(_:)``.
+  public var isHeldByAppleDriver: Bool { ServingPolicy.isHeldByAppleDriver(ServingInput(self)) }
+
   /// The serving decision for this controller, with the persona override it reports.
   ///
   /// Every caller that shows or checks a route or persona reads it here instead of deciding on

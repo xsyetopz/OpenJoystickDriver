@@ -509,16 +509,29 @@
       "$ref": "#/$defs/sharedConfigChange"
     },
     "controllerClaim": {
-      "required": ["apiVersion", "kind"],
-      "properties": {
-        "kind": {
-          "const": "ControllerServer"
+      "oneOf": [
+        {
+          "required": ["apiVersion", "kind"],
+          "properties": {
+            "kind": {
+              "const": "ControllerServer"
+            },
+            "server": {
+              "const": "OJD"
+            }
+          },
+          "$ref": "#/$defs/sharedControllerServer"
         },
-        "server": {
-          "const": "OJD"
+        {
+          "required": ["apiVersion", "kind"],
+          "properties": {
+            "kind": {
+              "const": "ControllerServer"
+            }
+          },
+          "$ref": "#/$defs/sharedTransportExtensionState"
         }
-      },
-      "$ref": "#/$defs/sharedControllerServer"
+      ]
     },
     "controllerDisconnect": {
       "required": ["apiVersion", "kind"],
@@ -1007,6 +1020,10 @@
           "required": ["route"],
           "additionalProperties": false,
           "properties": {
+            "heldByAppleDriver": {
+              "description": "True when Apple's driver holds the controller; a claim then activates the extension.",
+              "const": true
+            },
             "persona": {
               "description": "The persona that is published.",
               "enum": ["SDLCompatible", "Generic", "GameControllerCompatible"]

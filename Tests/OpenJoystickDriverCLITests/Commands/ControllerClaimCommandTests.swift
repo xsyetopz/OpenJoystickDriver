@@ -244,4 +244,91 @@ struct ControllerClaimCommandTests {
     )
     #expect(plain.standardOutput.contains("server\tojd\troute\n"))
   }
+
+  /// A connected `045E:02EA` that Apple's driver holds: macOS serves it, and its record reaches it
+  /// through OJD's extension.
+  private static func appleHeldDevice() throws -> ApplicationServiceDeviceDescription {
+    var object = try #require(
+      try JSONSerialization.jsonObject(
+        with: JSONEncoder().encode(Self.device(vendorID: 0x045E, productID: 0x02EA, native: true))
+      ) as? [String: Any]
+    )
+    object["recordAccessRoute"] = ControllerAccessRoute.extensionOwned.rawValue
+    return try JSONDecoder().decode(
+      ApplicationServiceDeviceDescription.self,
+      from: JSONSerialization.data(withJSONObject: object)
+    )
+  }
+
+  private static func runSubmitting(
+    _ arguments: [String],
+    outcome: SystemExtensionSetupRequestResult,
+    actions: Locked<[TransportExtensionSubmission.Action]>,
+    in directory: Directory
+  ) async throws -> CLIRun {
+    let submission:
+      @Sendable (TransportExtensionSubmission.Action) async throws ->
+        SystemExtensionSetupRequestResult = { action in
+          actions.withLock { $0.append(action) }
+          return outcome
+        }
+    return try await TransportExtensionSubmission.$submit.withValue(submission) {
+      try await Self.run(arguments, device: Self.appleHeldDevice(), in: directory)
+    }
+  }
+
+  @Test
+  func claimOfAModelAppleHoldsSendsTheActivationRequestAndWritesNoRecord() async throws {
+    let directory = Directory()
+    let actions = Locked<[TransportExtensionSubmission.Action]>([])
+
+    let result = try await Self.runSubmitting(
+      ["controller", "claim", token("pad-1"), "--json"],
+      outcome: .awaitingApproval,
+      actions: actions,
+      in: directory
+    )
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(try result.json()["state"] as? String == "AwaitingApproval")
+    #expect(actions.withLock { $0 } == [.activate])
+    #expect(!FileManager.default.fileExists(atPath: directory.controllers.path))
+  }
+
+  @Test
+  func releaseOfAModelAppleHoldsSendsNoRequest() async throws {
+    let directory = Directory()
+    let actions = Locked<[TransportExtensionSubmission.Action]>([])
+
+    let result = try await Self.runSubmitting(
+      ["controller", "release", token("pad-1")],
+      outcome: .active,
+      actions: actions,
+      in: directory
+    )
+
+    #expect(result.code == 1)
+    #expect(actions.withLock { $0 }.isEmpty)
+  }
+
+  @Test
+  func showNamesAModelAppleHoldsAsServedByMacOS() async throws {
+    let directory = Directory()
+    let device = try Self.appleHeldDevice()
+    let plain = try await Self.run(
+      ["controller", "show", token("pad-1"), "--plain"],
+      device: device,
+      in: directory
+    )
+    let human = try await Self.run(
+      ["controller", "show", token("pad-1")],
+      device: device,
+      in: directory
+    )
+
+    #expect(plain.standardOutput.contains("served-by\tmacos\n"))
+    #expect(plain.standardOutput.contains("serving-route\tnative-pass-through"))
+    #expect(human.standardOutput.contains("Served by"))
+    #expect(human.standardOutput.contains("macOS. Run `ojd controller claim "))
+  }
 }

@@ -69,6 +69,16 @@ struct ControllerServerRequestsTests {
   }
 
   @Test
+  func modelApplesDriverHoldsIsRefusedAndNothingIsWritten() throws {
+    try Self.withDirectory { directory in
+      let result = Self.set((0x045E, 0x02EA), to: .ojd, native: true, in: directory)
+      #expect(result.failure == .rawUSB)
+      #expect(result.file == nil)
+      #expect(!FileManager.default.fileExists(atPath: directory.path))
+    }
+  }
+
+  @Test
   func modelMacOSDoesNotServeIsRefused() throws {
     try Self.withDirectory { directory in
       let result = Self.set(Self.bundledHID, to: .ojd, native: false, in: directory)

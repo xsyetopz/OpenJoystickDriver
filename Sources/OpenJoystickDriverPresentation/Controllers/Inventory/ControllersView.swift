@@ -120,11 +120,14 @@
             }
             VStack(alignment: .leading, spacing: 2) {
               Text(device.name).lineLimit(1)
-              Text(device.protocolBinding.displayName).font(.caption).foregroundColor(
-                Color(NSColor.secondaryLabelColor)
-              ).lineLimit(1)
+              Text(
+                device.isHeldByAppleDriver
+                  ? OJDLocalized.string("platform.macos.ui.controllers.servedByMacOS")
+                  : device.protocolBinding.displayName
+              ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor)).lineLimit(1)
             }
             Spacer(minLength: 0)
+            if device.isHeldByAppleDriver { ControllerClaimButton(viewModel: viewModel) }
           }.padding(.vertical, 4).tag(device.sessionToken.rawValue).ojdAccessibilityLabel(
             device.name
           )

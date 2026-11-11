@@ -209,6 +209,9 @@ struct ControllerShowCommand: AsyncParsableCommand {
         detail.serving.reason.map(CommandLineName.kebab) ?? "",
       ],
       ["persona", detail.serving.persona.map(CommandLineName.kebab) ?? ""],
+    ]
+    if detail.serving.heldByAppleDriver == true { rows.append(["served-by", "macos"]) }
+    rows += [
       ["controls", detail.capabilities.controls.map(CommandLineName.kebab).joined(separator: ",")],
       [
         "rumble-motors",
@@ -336,6 +339,14 @@ struct ControllerShowCommand: AsyncParsableCommand {
       ),
       (CLILocalized.text("cli.controller.show.labelRecord"), recordText(detail.record)),
     ]
+    if detail.serving.heldByAppleDriver == true {
+      rows.append(
+        (
+          CLILocalized.text("platform.macos.cli.controller.show.labelServedBy"),
+          CLILocalized.format("platform.macos.cli.controller.show.servedByMacOS", detail.id)
+        )
+      )
+    }
     if let mapping = detail.inputMapping {
       rows.append(
         (
