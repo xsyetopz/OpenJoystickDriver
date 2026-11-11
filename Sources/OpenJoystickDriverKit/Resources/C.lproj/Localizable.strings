@@ -3758,6 +3758,22 @@
 "error.E5007.startupWrite.usbTimeout" = "%1$@, session.startup[].timeoutMilliseconds: A USB startup timeout must be 1...60000 ms. Fix: Set timeoutMilliseconds to 1...60000, or leave it out.";
 /* Error E5007, shown when a startup write of a record fails: a USB startup session byte does not index the packet. %1$@ is the file. */
 "error.E5007.startupWrite.sessionByte" = "%1$@, session.startup[].sessionByte: A USB startup session byte must index a byte of the packet. Fix: Set sessionByte to a position inside bytes.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble template names an input report. %1$@ is the file. */
+"error.E5007.rumble.reportKind" = "%1$@, session.rumble.report.kind: A rumble template cannot write an input report. Fix: Set report to an output or feature report.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble HID report is not 2...64 bytes long. %1$@ is the file. */
+"error.E5007.rumble.reportLength" = "%1$@, session.rumble.report.length: A rumble HID report must be 2...64 bytes long. Fix: Give the report a length of 2...64 bytes.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble USB packet is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.rumble.packetLength" = "%1$@, session.rumble.report.length: A rumble USB packet must be 1...64 bytes long. Fix: Give the packet a length of 1...64 bytes.";
+/* Error E5007, shown when the rumble template of a record fails: the bytes of a rumble template do not cover the whole report. %1$@ is the file. */
+"error.E5007.rumble.bytesCover" = "%1$@, session.rumble.bytes: The bytes of a rumble template must cover the whole report. Fix: List every byte of the report, report ID included.";
+/* Error E5007, shown when the rumble template of a record fails: the bytes of a numbered rumble report do not start with its report ID. %1$@ is the file. */
+"error.E5007.rumble.bytesReportId" = "%1$@, session.rumble.bytes: The bytes of a numbered rumble report must start with its report ID. Fix: Start bytes with the report ID.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble template names no motor it can drive. %1$@ is the file. */
+"error.E5007.rumble.motors" = "%1$@, session.rumble: A rumble template must name at least one motor it can drive. Fix: Add lowFrequency, highFrequency, leftTrigger or rightTrigger.";
+/* Error E5007, shown when the rumble template of a record fails: the motor and counter bytes of a rumble template overlap or fall outside the report. %1$@ is the file. */
+"error.E5007.rumble.fields" = "%1$@, session.rumble: The motor and counter bytes of a rumble template must be distinct and follow the report ID inside the report. Fix: Give each motor and the counter its own byte after the report ID.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: A rumble resend interval must be 1...60000 ms. Fix: Set resendIntervalMilliseconds to 1...60000, or leave it out.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "The SDL_GameControllerDB line for a controller cannot drive it. The message names the reason. Write a controller record for the controller with ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

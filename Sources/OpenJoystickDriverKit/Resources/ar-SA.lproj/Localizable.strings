@@ -4312,6 +4312,22 @@
 "error.E5007.startupWrite.usbTimeout" = "%1$@, session.startup[].timeoutMilliseconds: يجب أن تكون مهلة بدء تشغيل USB من 1...60000 مللي ثانية. الإصلاح: اضبط timeoutMilliseconds على 1...60000 أو احذفه.";
 /* Error E5007, shown when a startup write of a record fails: a USB startup session byte does not index the packet. %1$@ is the file. */
 "error.E5007.startupWrite.sessionByte" = "%1$@, session.startup[].sessionByte: يجب أن يشير بايت جلسة بدء تشغيل USB إلى بايت من الحزمة. الإصلاح: اضبط sessionByte على موضع داخل bytes.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble template names an input report. %1$@ is the file. */
+"error.E5007.rumble.reportKind" = "%1$@, session.rumble.report.kind: لا يجوز لقالب الاهتزاز أن يكتب تقرير إدخال. الإصلاح: اضبط report على تقرير إخراج أو تقرير ميزة.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble HID report is not 2...64 bytes long. %1$@ is the file. */
+"error.E5007.rumble.reportLength" = "%1$@, session.rumble.report.length: يجب أن يبلغ طول تقرير HID للاهتزاز 2...64 بايت. الإصلاح: امنح التقرير طولًا من 2...64 بايت.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble USB packet is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.rumble.packetLength" = "%1$@, session.rumble.report.length: يجب أن يبلغ طول حزمة USB للاهتزاز 1...64 بايت. الإصلاح: امنح الحزمة طولًا من 1...64 بايت.";
+/* Error E5007, shown when the rumble template of a record fails: the bytes of a rumble template do not cover the whole report. %1$@ is the file. */
+"error.E5007.rumble.bytesCover" = "%1$@, session.rumble.bytes: يجب أن تغطي بايتات قالب الاهتزاز التقرير كاملًا. الإصلاح: اسرد كل بايت من التقرير بما فيه معرّف التقرير.";
+/* Error E5007, shown when the rumble template of a record fails: the bytes of a numbered rumble report do not start with its report ID. %1$@ is the file. */
+"error.E5007.rumble.bytesReportId" = "%1$@, session.rumble.bytes: يجب أن تبدأ بايتات تقرير الاهتزاز المرقّم بمعرّف تقريره. الإصلاح: ابدأ bytes بمعرّف التقرير.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble template names no motor it can drive. %1$@ is the file. */
+"error.E5007.rumble.motors" = "%1$@, session.rumble: يجب أن يسمّي قالب الاهتزاز محركًا واحدًا على الأقل يستطيع تشغيله. الإصلاح: أضف lowFrequency أو highFrequency أو leftTrigger أو rightTrigger.";
+/* Error E5007, shown when the rumble template of a record fails: the motor and counter bytes of a rumble template overlap or fall outside the report. %1$@ is the file. */
+"error.E5007.rumble.fields" = "%1$@, session.rumble: يجب أن تكون بايتات المحركات والعدّاد في قالب الاهتزاز متمايزة وأن تلي معرّف التقرير داخل التقرير. الإصلاح: امنح كل محرك والعدّاد بايتًا خاصًا بعد معرّف التقرير.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: يجب أن تكون فترة إعادة إرسال الاهتزاز 1...60000 مللي ثانية. الإصلاح: اضبط resendIntervalMilliseconds على 1...60000 أو احذفه.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "لا يمكن لسطر SDL_GameControllerDB الخاص بوحدة تحكم أن يشغّلها. تذكر الرسالة السبب. اكتب سجل وحدة تحكم لها باستخدام ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

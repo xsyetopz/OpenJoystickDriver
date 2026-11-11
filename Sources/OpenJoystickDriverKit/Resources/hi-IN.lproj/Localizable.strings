@@ -4312,6 +4312,22 @@
 "error.E5007.startupWrite.usbTimeout" = "%1$@, session.startup[].timeoutMilliseconds: USB स्टार्टअप टाइमआउट 1...60000 ms होना चाहिए। समाधान: timeoutMilliseconds को 1...60000 रखें, या उसे छोड़ दें।";
 /* Error E5007, shown when a startup write of a record fails: a USB startup session byte does not index the packet. %1$@ is the file. */
 "error.E5007.startupWrite.sessionByte" = "%1$@, session.startup[].sessionByte: USB स्टार्टअप सेशन बाइट को पैकेट के किसी बाइट की ओर इशारा करना चाहिए। समाधान: sessionByte को bytes के भीतर किसी स्थान पर रखें।";
+/* Error E5007, shown when the rumble template of a record fails: a rumble template names an input report. %1$@ is the file. */
+"error.E5007.rumble.reportKind" = "%1$@, session.rumble.report.kind: रंबल टेम्पलेट इनपुट रिपोर्ट नहीं लिख सकता। समाधान: report को आउटपुट या फ़ीचर रिपोर्ट पर रखें।";
+/* Error E5007, shown when the rumble template of a record fails: a rumble HID report is not 2...64 bytes long. %1$@ is the file. */
+"error.E5007.rumble.reportLength" = "%1$@, session.rumble.report.length: रंबल HID रिपोर्ट 2...64 बाइट लंबी होनी चाहिए। समाधान: रिपोर्ट की लंबाई 2...64 बाइट रखें।";
+/* Error E5007, shown when the rumble template of a record fails: a rumble USB packet is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.rumble.packetLength" = "%1$@, session.rumble.report.length: रंबल USB पैकेट 1...64 बाइट लंबा होना चाहिए। समाधान: पैकेट की लंबाई 1...64 बाइट रखें।";
+/* Error E5007, shown when the rumble template of a record fails: the bytes of a rumble template do not cover the whole report. %1$@ is the file. */
+"error.E5007.rumble.bytesCover" = "%1$@, session.rumble.bytes: रंबल टेम्पलेट के बाइट पूरी रिपोर्ट को कवर करने चाहिए। समाधान: रिपोर्ट ID समेत रिपोर्ट का हर बाइट सूचीबद्ध करें।";
+/* Error E5007, shown when the rumble template of a record fails: the bytes of a numbered rumble report do not start with its report ID. %1$@ is the file. */
+"error.E5007.rumble.bytesReportId" = "%1$@, session.rumble.bytes: क्रमांकित रंबल रिपोर्ट के बाइट उसकी रिपोर्ट ID से शुरू होने चाहिए। समाधान: bytes को रिपोर्ट ID से शुरू करें।";
+/* Error E5007, shown when the rumble template of a record fails: a rumble template names no motor it can drive. %1$@ is the file. */
+"error.E5007.rumble.motors" = "%1$@, session.rumble: रंबल टेम्पलेट को कम से कम एक ऐसी मोटर का नाम देना चाहिए जिसे वह चला सके। समाधान: lowFrequency, highFrequency, leftTrigger या rightTrigger जोड़ें।";
+/* Error E5007, shown when the rumble template of a record fails: the motor and counter bytes of a rumble template overlap or fall outside the report. %1$@ is the file. */
+"error.E5007.rumble.fields" = "%1$@, session.rumble: रंबल टेम्पलेट की मोटर और काउंटर के बाइट अलग-अलग होने चाहिए और रिपोर्ट के भीतर रिपोर्ट ID के बाद आने चाहिए। समाधान: हर मोटर और काउंटर को रिपोर्ट ID के बाद अपना अलग बाइट दें।";
+/* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: रंबल पुनः भेजने का अंतराल 1...60000 ms होना चाहिए। समाधान: resendIntervalMilliseconds को 1...60000 रखें, या उसे छोड़ दें।";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "किसी कंट्रोलर की SDL_GameControllerDB पंक्ति उसे चला नहीं सकती। संदेश कारण बताता है। ojd record draft से उस कंट्रोलर के लिए कंट्रोलर रिकॉर्ड लिखें।";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

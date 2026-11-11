@@ -4312,6 +4312,22 @@
 "error.E5007.startupWrite.usbTimeout" = "%1$@, session.startup[].timeoutMilliseconds: USB 시작 제한 시간은 1...60000 ms여야 합니다. 해결: timeoutMilliseconds를 1...60000으로 설정하거나 생략하세요.";
 /* Error E5007, shown when a startup write of a record fails: a USB startup session byte does not index the packet. %1$@ is the file. */
 "error.E5007.startupWrite.sessionByte" = "%1$@, session.startup[].sessionByte: USB 시작 세션 바이트는 패킷의 바이트를 가리켜야 합니다. 해결: sessionByte를 bytes 안의 위치로 설정하세요.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble template names an input report. %1$@ is the file. */
+"error.E5007.rumble.reportKind" = "%1$@, session.rumble.report.kind: 진동 템플릿은 입력 리포트를 쓸 수 없습니다. 해결: report를 출력 리포트 또는 기능 리포트로 설정하세요.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble HID report is not 2...64 bytes long. %1$@ is the file. */
+"error.E5007.rumble.reportLength" = "%1$@, session.rumble.report.length: 진동 HID 리포트는 길이가 2...64바이트여야 합니다. 해결: 리포트 길이를 2...64바이트로 설정하세요.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble USB packet is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.rumble.packetLength" = "%1$@, session.rumble.report.length: 진동 USB 패킷은 길이가 1...64바이트여야 합니다. 해결: 패킷 길이를 1...64바이트로 설정하세요.";
+/* Error E5007, shown when the rumble template of a record fails: the bytes of a rumble template do not cover the whole report. %1$@ is the file. */
+"error.E5007.rumble.bytesCover" = "%1$@, session.rumble.bytes: 진동 템플릿의 바이트는 리포트 전체를 덮어야 합니다. 해결: 리포트 ID를 포함해 리포트의 모든 바이트를 나열하세요.";
+/* Error E5007, shown when the rumble template of a record fails: the bytes of a numbered rumble report do not start with its report ID. %1$@ is the file. */
+"error.E5007.rumble.bytesReportId" = "%1$@, session.rumble.bytes: 번호가 있는 진동 리포트의 바이트는 해당 리포트 ID로 시작해야 합니다. 해결: bytes를 리포트 ID로 시작하세요.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble template names no motor it can drive. %1$@ is the file. */
+"error.E5007.rumble.motors" = "%1$@, session.rumble: 진동 템플릿은 구동할 수 있는 모터를 하나 이상 지정해야 합니다. 해결: lowFrequency, highFrequency, leftTrigger 또는 rightTrigger를 추가하세요.";
+/* Error E5007, shown when the rumble template of a record fails: the motor and counter bytes of a rumble template overlap or fall outside the report. %1$@ is the file. */
+"error.E5007.rumble.fields" = "%1$@, session.rumble: 진동 템플릿의 모터와 카운터 바이트는 서로 달라야 하며 리포트 안에서 리포트 ID 뒤에 있어야 합니다. 해결: 각 모터와 카운터에 리포트 ID 뒤의 고유한 바이트를 지정하세요.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: 진동 재전송 간격은 1...60000 ms여야 합니다. 해결: resendIntervalMilliseconds를 1...60000으로 설정하거나 생략하세요.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "컨트롤러의 SDL_GameControllerDB 줄로는 그 컨트롤러를 구동할 수 없습니다. 이유는 메시지에 나와 있습니다. ojd record draft로 해당 컨트롤러의 레코드를 작성하세요.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

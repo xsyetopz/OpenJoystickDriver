@@ -4312,6 +4312,22 @@
 "error.E5007.startupWrite.usbTimeout" = "%1$@，session.startup[].timeoutMilliseconds：USB 啟動逾時必須為 1...60000 毫秒。修正：將 timeoutMilliseconds 設為 1...60000，或省略。";
 /* Error E5007, shown when a startup write of a record fails: a USB startup session byte does not index the packet. %1$@ is the file. */
 "error.E5007.startupWrite.sessionByte" = "%1$@，session.startup[].sessionByte：USB 啟動工作階段位元組必須指向封包中的一個位元組。修正：將 sessionByte 設為 bytes 內的位置。";
+/* Error E5007, shown when the rumble template of a record fails: a rumble template names an input report. %1$@ is the file. */
+"error.E5007.rumble.reportKind" = "%1$@，session.rumble.report.kind：震動範本不能寫入輸入報告。修正：將 report 設為輸出報告或功能報告。";
+/* Error E5007, shown when the rumble template of a record fails: a rumble HID report is not 2...64 bytes long. %1$@ is the file. */
+"error.E5007.rumble.reportLength" = "%1$@，session.rumble.report.length：震動 HID 報告必須為 2...64 位元組長。修正：將報告長度設為 2...64 位元組。";
+/* Error E5007, shown when the rumble template of a record fails: a rumble USB packet is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.rumble.packetLength" = "%1$@，session.rumble.report.length：震動 USB 封包必須為 1...64 位元組長。修正：將封包長度設為 1...64 位元組。";
+/* Error E5007, shown when the rumble template of a record fails: the bytes of a rumble template do not cover the whole report. %1$@ is the file. */
+"error.E5007.rumble.bytesCover" = "%1$@，session.rumble.bytes：震動範本的位元組必須涵蓋整個報告。修正：列出報告的每個位元組，包括報告 ID。";
+/* Error E5007, shown when the rumble template of a record fails: the bytes of a numbered rumble report do not start with its report ID. %1$@ is the file. */
+"error.E5007.rumble.bytesReportId" = "%1$@，session.rumble.bytes：有編號的震動報告的位元組必須以其報告 ID 開頭。修正：讓 bytes 以報告 ID 開頭。";
+/* Error E5007, shown when the rumble template of a record fails: a rumble template names no motor it can drive. %1$@ is the file. */
+"error.E5007.rumble.motors" = "%1$@，session.rumble：震動範本必須至少指定一個它能驅動的馬達。修正：新增 lowFrequency、highFrequency、leftTrigger 或 rightTrigger。";
+/* Error E5007, shown when the rumble template of a record fails: the motor and counter bytes of a rumble template overlap or fall outside the report. %1$@ is the file. */
+"error.E5007.rumble.fields" = "%1$@，session.rumble：震動範本的馬達和計數器位元組必須互不相同，並且位於報告內的報告 ID 之後。修正：在報告 ID 之後為每個馬達和計數器指定各自的位元組。";
+/* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.rumble.resendInterval" = "%1$@，session.rumble.resendIntervalMilliseconds：震動重送間隔必須為 1...60000 毫秒。修正：將 resendIntervalMilliseconds 設為 1...60000，或省略。";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "控制器的 SDL_GameControllerDB 行無法驅動該控制器。訊息會指出原因。請用 ojd record draft 為它編寫控制器記錄。";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

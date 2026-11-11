@@ -152,12 +152,14 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
       guard report.kind != .input else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.rumble.reportKind",
           "a rumble template writes an output or feature report"
         )
       }
       guard (2...64).contains(report.length) else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.rumble.reportLength",
           "a rumble report is 2...64 bytes long"
         )
       }
@@ -165,6 +167,7 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
       guard (1...64).contains(length) else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.rumble.packetLength",
           "a rumble packet is 1...64 bytes long"
         )
       }
@@ -173,18 +176,21 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
     guard base.count == target.length else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.rumble.bytesCover",
         "rumble template bytes must cover the whole report"
       )
     }
     if let report = target.hidReport, report.reportID != 0, base[0] != report.reportID {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.rumble.bytesReportId",
         "rumble template bytes must start with the report ID"
       )
     }
     guard !motors.isEmpty, motors.keys.allSatisfy(Self.templateMotors.contains) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.rumble.motors",
         "a rumble template names at least one motor"
       )
     }
@@ -199,6 +205,7 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.rumble.fields",
         "rumble motor and counter bytes must be distinct and follow the report ID inside the report"
       )
     }
@@ -207,6 +214,7 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
     {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.rumble.resendInterval",
         "a rumble resend interval is 1...60000 milliseconds"
       )
     }

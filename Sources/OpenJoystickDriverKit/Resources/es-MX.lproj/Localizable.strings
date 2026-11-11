@@ -3758,6 +3758,22 @@
 "error.E5007.startupWrite.usbTimeout" = "%1$@, session.startup[].timeoutMilliseconds: un tiempo de espera de inicio USB debe ser de 1...60000 ms. Solución: asigna timeoutMilliseconds a 1...60000, o déjalo sin definir.";
 /* Error E5007, shown when a startup write of a record fails: a USB startup session byte does not index the packet. %1$@ is the file. */
 "error.E5007.startupWrite.sessionByte" = "%1$@, session.startup[].sessionByte: un byte de sesión de inicio USB debe indexar un byte del paquete. Solución: asigna a sessionByte una posición dentro de bytes.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble template names an input report. %1$@ is the file. */
+"error.E5007.rumble.reportKind" = "%1$@, session.rumble.report.kind: una plantilla de vibración no puede escribir un informe de entrada. Solución: asigna a report un informe de salida o de característica.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble HID report is not 2...64 bytes long. %1$@ is the file. */
+"error.E5007.rumble.reportLength" = "%1$@, session.rumble.report.length: un informe HID de vibración debe medir 2...64 bytes. Solución: da al informe una longitud de 2...64 bytes.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble USB packet is not 1...64 bytes long. %1$@ is the file. */
+"error.E5007.rumble.packetLength" = "%1$@, session.rumble.report.length: un paquete USB de vibración debe medir 1...64 bytes. Solución: da al paquete una longitud de 1...64 bytes.";
+/* Error E5007, shown when the rumble template of a record fails: the bytes of a rumble template do not cover the whole report. %1$@ is the file. */
+"error.E5007.rumble.bytesCover" = "%1$@, session.rumble.bytes: los bytes de una plantilla de vibración deben cubrir todo el informe. Solución: enumera cada byte del informe, incluido el ID del informe.";
+/* Error E5007, shown when the rumble template of a record fails: the bytes of a numbered rumble report do not start with its report ID. %1$@ is the file. */
+"error.E5007.rumble.bytesReportId" = "%1$@, session.rumble.bytes: los bytes de un informe de vibración numerado deben empezar por su ID de informe. Solución: empieza bytes con el ID del informe.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble template names no motor it can drive. %1$@ is the file. */
+"error.E5007.rumble.motors" = "%1$@, session.rumble: una plantilla de vibración debe nombrar al menos un motor que pueda controlar. Solución: agrega lowFrequency, highFrequency, leftTrigger o rightTrigger.";
+/* Error E5007, shown when the rumble template of a record fails: the motor and counter bytes of a rumble template overlap or fall outside the report. %1$@ is the file. */
+"error.E5007.rumble.fields" = "%1$@, session.rumble: los bytes de motor y de contador de una plantilla de vibración deben ser distintos y seguir al ID del informe dentro del informe. Solución: da a cada motor y al contador su propio byte después del ID del informe.";
+/* Error E5007, shown when the rumble template of a record fails: a rumble resend interval is outside 1...60000 ms. %1$@ is the file. */
+"error.E5007.rumble.resendInterval" = "%1$@, session.rumble.resendIntervalMilliseconds: un intervalo de reenvío de vibración debe ser de 1...60000 ms. Solución: asigna resendIntervalMilliseconds a 1...60000, o déjalo sin definir.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "La línea de SDL_GameControllerDB de un control no puede manejarlo. El mensaje indica el motivo. Escribe un registro de control para él con ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */
