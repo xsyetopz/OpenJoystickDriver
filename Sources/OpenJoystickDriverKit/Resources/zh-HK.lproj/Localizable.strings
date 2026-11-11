@@ -4496,6 +4496,16 @@
 "error.E5009.message" = "舊版本的已儲存文件沒有自動轉換方式，因此 ojd migrate 會令它保持不變。訊息會指出檔案和欄位。請手動將檔案改為支援的 apiVersion。";
 /* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
 "error.E5010.message" = "儲存的文件不是 XML 屬性列表，或包含日期或資料值。訊息會列出檔案以及格式或鍵路徑。請用 plutil -convert xml1 將檔案儲存為 XML 屬性列表。";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "執行產生器腳本，並寫入它傳回的文件。";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "在無法存取檔案和網絡的輔助程序中執行腳本，檢查其 generate 函數傳回的文件，並寫成模組套件。--timeout 以秒為單位設定時間限制（預設為 5）。";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "產生器腳本，一個 .js 檔案。";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "無法啟動腳本輔助程序：%@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "%1$@ 未在 %2$@ 秒內完成，已被終止。";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "將舊版本的已儲存文件轉換為目前版本。";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */

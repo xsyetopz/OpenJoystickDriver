@@ -132,6 +132,7 @@ enum CLICommandTree {
       ["-"]
     case ["mod", "validate"], ["mod", "install"]: ["/tmp/pack"]
     case ["mod", "remove"]: ["arcade-pack"]
+    case ["generate"]: ["script.js"]
     case ["controller", "calibrate"]: ["045E:028E", "start"]
     case ["controller", "pair"]: ["057E:2006", "057E:2007", "--profile", "Pair"]
     case ["controller", "unpair"]: ["057E:2006"]

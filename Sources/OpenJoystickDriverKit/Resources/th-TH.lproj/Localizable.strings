@@ -4496,6 +4496,16 @@
 "error.E5009.message" = "เอกสารที่บันทึกไว้จากเวอร์ชันเก่าไม่มีการแปลงอัตโนมัติ ojd migrate จึงปล่อยไว้โดยไม่เปลี่ยนแปลง ข้อความระบุไฟล์และฟิลด์ ให้แก้ไขไฟล์ด้วยตนเองเป็น apiVersion ที่รองรับ";
 /* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
 "error.E5010.message" = "เอกสารที่จัดเก็บไม่ใช่รายการคุณสมบัติ XML หรือมีค่าวันที่หรือข้อมูล ข้อความระบุไฟล์และรูปแบบหรือเส้นทางของคีย์ บันทึกไฟล์เป็นรายการคุณสมบัติ XML ด้วย plutil -convert xml1";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "เรียกใช้สคริปต์ตัวสร้างและเขียนเอกสารที่สคริปต์ส่งกลับ";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "เรียกใช้สคริปต์ในโพรเซสตัวช่วยที่เข้าถึงไฟล์และเครือข่ายไม่ได้ ตรวจสอบเอกสารที่ฟังก์ชัน generate ส่งกลับ แล้วเขียนเป็นแพ็กเกจม็อด --timeout กำหนดเวลาสูงสุดเป็นวินาที (ค่าเริ่มต้น 5)";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "สคริปต์ตัวสร้าง ซึ่งเป็นไฟล์ .js";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "เริ่มโพรเซสตัวช่วยของสคริปต์ไม่ได้: %@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "%1$@ ไม่เสร็จภายใน %2$@ วินาทีและถูกยุติแล้ว";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "แปลงเอกสารที่บันทึกไว้จากเวอร์ชันเก่าเป็นเวอร์ชันปัจจุบัน";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */

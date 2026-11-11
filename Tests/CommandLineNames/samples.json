@@ -17,6 +17,7 @@
     "XboxOneGIP": "xbox-one-gip",
     "W3C": "w3c",
     "read": "read",
+    "generate": "generate",
     "raw-usb": "raw-usb"
   },
   "values": [

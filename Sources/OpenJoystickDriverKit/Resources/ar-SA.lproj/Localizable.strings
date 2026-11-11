@@ -4496,6 +4496,16 @@
 "error.E5009.message" = "لا يوجد تحويل آلي لمستند مخزّن من إصدار أقدم، لذلك يتركه ojd migrate دون تغيير. تذكر الرسالة الملف والحقل. عدّل الملف يدويًا إلى apiVersion المدعوم.";
 /* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
 "error.E5010.message" = "المستند المخزّن ليس قائمة خصائص XML، أو يحتوي على قيمة تاريخ أو بيانات. تذكر الرسالة الملف والصيغة أو مسار المفتاح. احفظ الملف كقائمة خصائص XML باستخدام plutil -convert xml1.";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "تشغيل نص مولِّد وكتابة المستندات التي يعيدها.";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "يشغّل النص في عملية مساعدة بلا وصول إلى الملفات أو الشبكة، ويتحقق من المستندات التي تعيدها الدالة generate، ثم يكتبها كحزمة تعديل. يحدد --timeout الحد الزمني بالثواني (5 افتراضيًا).";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "النص المولِّد، وهو ملف .js.";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "تعذّر بدء العملية المساعدة للنص: %@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "لم ينتهِ %1$@ خلال %2$@ ثانية وتم إنهاؤه.";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "حوّل المستندات المخزّنة من إصدار أقدم إلى الإصدار الحالي.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */

@@ -4496,6 +4496,16 @@
 "error.E5009.message" = "Tài liệu đã lưu của phiên bản cũ không có cách chuyển đổi tự động, nên ojd migrate để nguyên không đổi. Thông báo nêu tệp và trường. Hãy tự sửa tệp sang apiVersion được hỗ trợ.";
 /* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
 "error.E5010.message" = "Một tài liệu đã lưu không phải danh sách thuộc tính XML, hoặc chứa giá trị ngày hay dữ liệu. Thông báo nêu tệp và dạng hoặc đường dẫn khóa. Hãy lưu tệp thành danh sách thuộc tính XML bằng plutil -convert xml1.";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "Chạy tập lệnh tạo và ghi các tài liệu mà nó trả về.";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "Chạy tập lệnh trong một tiến trình phụ không có quyền truy cập tệp hay mạng, kiểm tra các tài liệu mà hàm generate trả về và ghi chúng thành một gói mod. --timeout đặt giới hạn thời gian tính bằng giây (mặc định là 5).";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "Tập lệnh tạo, là một tệp .js.";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "Không thể khởi động tiến trình phụ của tập lệnh: %@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "%1$@ không hoàn tất trong %2$@ giây và đã bị dừng.";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Chuyển đổi các tài liệu đã lưu của phiên bản cũ sang phiên bản hiện tại.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */

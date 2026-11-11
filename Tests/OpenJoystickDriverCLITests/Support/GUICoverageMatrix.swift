@@ -73,6 +73,7 @@ enum GUICoverageMatrix {
       mainMenu: "File > Install Record or Mod",
       statusItem: nil
     )
+    + row([["generate"]], area: "Library", mainMenu: nil, statusItem: nil)
     + row([["access"]], area: "Access", mainMenu: nil, statusItem: "Grant Access")
     + row(
       [["log"], ["diagnose"], ["explain"]],

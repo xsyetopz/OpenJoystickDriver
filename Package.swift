@@ -219,6 +219,8 @@ let package = Package(
       dependencies: [
         "OpenJoystickDriverKit", "OpenJoystickDriverService", "OpenJoystickDriverCLI",
         "OpenJoystickDriverTestSupport",
+        // `ojd generate` starts this executable as its helper process.
+        "OpenJoystickDriver",
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
       ],
       path: "Tests/OpenJoystickDriverCLITests",

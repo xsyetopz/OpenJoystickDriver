@@ -4496,6 +4496,16 @@
 "error.E5009.message" = "Eski bir sürümden kaydedilmiş bir belgenin otomatik dönüşümü yoktur, bu yüzden ojd migrate onu değiştirmeden bırakır. İleti dosyayı ve alanı belirtir. Dosyayı elle desteklenen apiVersion değerine düzenleyin.";
 /* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
 "error.E5010.message" = "Saklanan bir belge XML özellik listesi değil ya da bir tarih veya veri değeri içeriyor. İleti dosyayı ve biçimi ya da anahtar yolunu belirtir. Dosyayı plutil -convert xml1 ile XML özellik listesi olarak kaydedin.";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "Bir üreteç betiği çalıştırır ve döndürdüğü belgeleri yazar.";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "Betiği dosya ve ağ erişimi olmayan bir yardımcı süreçte çalıştırır, generate işlevinin döndürdüğü belgeleri denetler ve bunları bir mod paketi olarak yazar. --timeout zaman sınırını saniye cinsinden belirler (varsayılan 5).";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "Üreteç betiği, bir .js dosyası.";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "Betiğin yardımcı süreci başlatılamadı: %@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "%1$@ %2$@ saniye içinde bitmedi ve sonlandırıldı.";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Eski bir sürümden kaydedilmiş belgeleri geçerli sürüme dönüştürür.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */

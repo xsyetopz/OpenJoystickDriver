@@ -4496,6 +4496,16 @@
 "error.E5009.message" = "Dokumen tersimpan dari versi lama tidak punya konversi otomatis, jadi ojd migrate membiarkannya tidak berubah. Pesan menyebut file dan kolomnya. Ubah file secara manual ke apiVersion yang didukung.";
 /* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
 "error.E5010.message" = "Dokumen tersimpan bukan daftar properti XML, atau berisi nilai tanggal atau data. Pesan menyebut berkas dan bentuk atau jalur kuncinya. Simpan berkas sebagai daftar properti XML dengan plutil -convert xml1.";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "Jalankan skrip generator dan tulis dokumen yang dikembalikannya.";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "Menjalankan skrip dalam proses pembantu tanpa akses file atau jaringan, memeriksa dokumen yang dikembalikan fungsi generate-nya, lalu menulisnya sebagai paket mod. --timeout menetapkan batas waktu dalam detik (bawaan 5).";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "Skrip generator, berupa file .js.";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "Proses pembantu skrip tidak dapat dimulai: %@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "%1$@ tidak selesai dalam %2$@ detik dan dihentikan.";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Mengonversi dokumen tersimpan dari versi lama ke versi saat ini.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */

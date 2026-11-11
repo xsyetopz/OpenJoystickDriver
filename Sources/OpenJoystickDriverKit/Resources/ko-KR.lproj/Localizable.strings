@@ -4496,6 +4496,16 @@
 "error.E5009.message" = "이전 버전의 저장된 문서는 자동 변환 방법이 없어서 ojd migrate가 그대로 둡니다. 메시지에 파일과 필드가 표시됩니다. 파일을 직접 지원되는 apiVersion으로 수정하세요.";
 /* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
 "error.E5010.message" = "저장된 문서가 XML 속성 목록이 아니거나 날짜 또는 데이터 값을 포함합니다. 메시지에 파일과 형식 또는 키 경로가 표시됩니다. plutil -convert xml1로 파일을 XML 속성 목록으로 저장하세요.";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "생성기 스크립트를 실행하고 반환된 문서를 기록합니다.";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "파일과 네트워크에 접근할 수 없는 보조 프로세스에서 스크립트를 실행하고, generate 함수가 반환한 문서를 검사한 뒤 모드 패키지로 기록합니다. --timeout은 제한 시간을 초 단위로 정합니다(기본값 5).";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "생성기 스크립트(.js 파일).";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "스크립트 보조 프로세스를 시작할 수 없습니다: %@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "%1$@이(가) %2$@초 안에 끝나지 않아 중단되었습니다.";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "이전 버전의 저장된 문서를 현재 버전으로 변환합니다.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */

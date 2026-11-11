@@ -3,6 +3,9 @@ import Foundation
 import OpenJoystickDriverCLI
 import OpenJoystickDriverKit
 
+// `ojd generate` starts this executable as the process that runs a generator script.
+GenerateHelper.runAndExitIfRequested()
+
 // The host adapter lives below `platform/`; everything here reaches it through `PlatformHost`.
 installPlatformHost()
 

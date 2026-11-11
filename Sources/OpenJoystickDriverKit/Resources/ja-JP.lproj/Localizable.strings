@@ -4496,6 +4496,16 @@
 "error.E5009.message" = "古いバージョンの保存済みドキュメントには機械的な変換がないため、ojd migrate は変更せずに残します。メッセージにファイルとフィールドが示されます。ファイルを手作業でサポートされている apiVersion に書き換えてください。";
 /* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
 "error.E5010.message" = "保存された書類が XML プロパティリストではないか、日付またはデータの値を含んでいます。メッセージにはファイルと形式またはキーのパスが示されます。plutil -convert xml1 でファイルを XML プロパティリストとして保存してください。";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "ジェネレータースクリプトを実行し、返されたドキュメントを書き出します。";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "ファイルやネットワークにアクセスできない補助プロセスでスクリプトを実行し、generate 関数が返すドキュメントを検査して、MOD パッケージとして書き出します。--timeout で制限時間を秒単位で指定します（既定値は 5）。";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "ジェネレータースクリプト（.js ファイル）。";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "スクリプトの補助プロセスを開始できませんでした: %@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "%1$@ は %2$@ 秒以内に終了しなかったため、中断されました。";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "古いバージョンの保存済みドキュメントを現在のバージョンに変換します。";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */

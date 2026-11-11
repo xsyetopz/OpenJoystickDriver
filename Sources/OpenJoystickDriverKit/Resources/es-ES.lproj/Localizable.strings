@@ -4497,6 +4497,16 @@
 "error.E5009.message" = "Un documento guardado de una versión anterior no tiene conversión automática, así que ojd migrate lo deja sin cambios. El mensaje indica el archivo y el campo. Edita el archivo a mano a la apiVersion compatible.";
 /* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
 "error.E5010.message" = "Un documento guardado no es una lista de propiedades XML o contiene un valor de fecha o de datos. El mensaje indica el archivo y la forma o la ruta de la clave. Guarda el archivo como lista de propiedades XML con plutil -convert xml1.";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "Ejecuta un script generador y escribe los documentos que devuelve.";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "Ejecuta el script en un proceso auxiliar sin acceso a archivos ni a la red, comprueba los documentos que devuelve su función generate y los escribe como un paquete de mod. --timeout fija el límite de tiempo en segundos (5 por defecto).";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "El script generador, un archivo .js.";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "No se pudo iniciar el proceso auxiliar del script: %@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "%1$@ no terminó en %2$@ segundos y se detuvo.";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Convierte los documentos guardados de una versión anterior a la versión actual.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */

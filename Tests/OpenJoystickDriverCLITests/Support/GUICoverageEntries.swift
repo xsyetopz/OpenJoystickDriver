@@ -61,6 +61,11 @@ enum GUICoverageEntries {
         reason: "no window plays a sound file on a controller's speaker"
       ),
       CLIOnlyItem(
+        command: ["generate"],
+        option: nil,
+        reason: "runs a script file in a helper process, which no window does"
+      ),
+      CLIOnlyItem(
         command: ["service", "start"],
         option: nil,
         reason: "the app process hosts the service, so a window cannot start it"
