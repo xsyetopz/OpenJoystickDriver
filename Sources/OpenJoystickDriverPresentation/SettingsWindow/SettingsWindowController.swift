@@ -215,12 +215,12 @@
       }
     }
 
-    /// Reads the controller diagnostics while the window shows Advanced with developer tools on,
-    /// and stops them otherwise.
+    /// Reads the controller diagnostics while the window shows Advanced with the developer tools
+    /// showing, and stops them otherwise.
     ///
     /// This is the only place that starts or stops the reads.
     func syncDeveloperTools() {
-      let wanted = isShown && panes.selected == .advanced && preferences.developerToolsEnabled
+      let wanted = isShown && panes.selected == .advanced && preferences.developerToolsVisible
       guard wanted != developerToolsAreRunning else { return }
       developerToolsAreRunning = wanted
       if wanted { developerTools.requestRefresh() } else { developerTools.close() }

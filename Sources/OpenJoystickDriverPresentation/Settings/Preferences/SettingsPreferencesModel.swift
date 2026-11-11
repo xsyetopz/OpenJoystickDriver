@@ -71,6 +71,11 @@
     /// Whether Settings > Advanced shows the developer tools.
     @Published
     private(set) var developerToolsEnabled: Bool
+    /// How much of the interface shows: Simple or Advanced.
+    @Published
+    private(set) var interfaceLevel: InterfaceLevel = .default
+    /// Whether the developer tools show: the level is Advanced and the developer tools are on.
+    var developerToolsVisible: Bool { interfaceLevel == .advanced && developerToolsEnabled }
     /// The system-wide shortcut that pauses and resumes every controller, or nil while unset.
     @Published
     private(set) var pauseShortcut: PauseShortcut?
@@ -182,6 +187,7 @@
       checkUpdatesAutomatically = value(.updatesCheckAutomatically)
       includePrereleaseUpdates = value(.updatesIncludePrereleases)
       developerToolsEnabled = value(.developerTools)
+      interfaceLevel = stored.interfaceLevel ?? .default
       pauseShortcut = stored.pauseShortcut
       if recovered { settingsRecovered?() }
     }
