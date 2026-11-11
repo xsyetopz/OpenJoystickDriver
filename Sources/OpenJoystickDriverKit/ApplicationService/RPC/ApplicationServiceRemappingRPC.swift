@@ -613,7 +613,7 @@ public struct ApplicationServiceRemappingRPCError: Error, Codable, Equatable, Lo
     /// The profile has a missing or unsupported `apiVersion`.
     case unsupportedAPIVersion = "unsupported_api_version"
 
-    /// The stable error code of this failure, listed in `Resources/ErrorCodes.json`.
+    /// The stable error code of this failure, listed in `Resources/ErrorCodes.plist`.
     public var errorCode: ErrorCode {
       switch self {
       case .controllerUnavailable: .controllerUnavailable

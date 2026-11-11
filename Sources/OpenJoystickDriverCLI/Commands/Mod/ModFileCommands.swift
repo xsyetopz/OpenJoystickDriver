@@ -16,7 +16,7 @@ struct ModValidateCommand: AsyncParsableCommand {
     discussion: CLILocalized.text("cli.mod.validate.discussion")
   )
 
-  /// The package folder that holds `mod.json`.
+  /// The package folder that holds `mod.plist`.
   @Argument(help: modFolderHelp())
   var folder: String
 
@@ -70,7 +70,7 @@ struct ModInstallCommand: AsyncParsableCommand {
     let package: ModPackageValidation
   }
 
-  /// The package folder that holds `mod.json`.
+  /// The package folder that holds `mod.plist`.
   @Argument(help: modFolderHelp())
   var folder: String
 

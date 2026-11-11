@@ -3,7 +3,7 @@ import Foundation
 import OpenJoystickDriverKit
 
 /// `ojd config set`: sets one tuning key in the user's record of a controller model, or in
-/// `all.patch.json` without `--controller`.
+/// `all.patch.plist` without `--controller`.
 struct ConfigSetCommand: AsyncParsableCommand {
   /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
@@ -53,7 +53,7 @@ struct ConfigSetCommand: AsyncParsableCommand {
 }
 
 /// `ojd config unset`: removes one tuning key from the user's record of a controller model, or
-/// from `all.patch.json` without `--controller`.
+/// from `all.patch.plist` without `--controller`.
 struct ConfigUnsetCommand: AsyncParsableCommand {
   /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(

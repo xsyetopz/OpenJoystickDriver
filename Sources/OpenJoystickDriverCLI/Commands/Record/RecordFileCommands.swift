@@ -134,7 +134,7 @@ struct RecordValidateCommand: AsyncParsableCommand {
 }
 
 /// The `ojd record install` command: checks a record and writes it to the user's record folder as
-/// `vvvv-pppp.json`.
+/// `vvvv-pppp.plist`.
 ///
 /// Replacing an installed record needs a confirmation, or `--force` without a terminal.
 struct RecordInstallCommand: AsyncParsableCommand {

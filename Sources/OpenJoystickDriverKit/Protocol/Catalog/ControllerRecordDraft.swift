@@ -32,7 +32,7 @@ public struct ControllerRecordDraft: Sendable {
   public let capturedReports: Int
   /// The report bytes that took more than one value, in byte order.
   public let changedBytes: [ChangedByte]
-  /// The record document in the record file text of ``OrderedJSON/formatted()``, as
+  /// The record document as an XML property list, in the text of ``OrderedJSON/plistData()``, as
   /// `ojd record install` reads it.
   public let text: String
   /// ``text`` as UTF-8.

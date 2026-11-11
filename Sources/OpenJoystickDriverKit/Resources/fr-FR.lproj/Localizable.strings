@@ -2229,8 +2229,8 @@
 "cli.permission.request.unknownId" = "Autorisation inconnue « %1$@ ». Utilisez %2$@.";
 /* One-line summary of 'ojd config' in the command list and at the top of its help. */
 "cli.config.group.abstract" = "Affiche ou modifie la configuration qu’applique OpenJoystickDriver et la couche qui a défini chaque valeur.";
-/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.json is a file name that stays as written. */
-"cli.config.group.discussion" = "Les valeurs se superposent en couches, de la plus basse à la plus haute : valeur par défaut du pilote, fiche fournie, fiche du paquet, all.patch.json, votre fiche, profil actif. Chaque clé de réglage prend la valeur de la couche la plus haute qui la définit.";
+/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.plist is a file name that stays as written. */
+"cli.config.group.discussion" = "Les valeurs se superposent en couches, de la plus basse à la plus haute : valeur par défaut du pilote, fiche fournie, fiche du paquet, all.patch.plist, votre fiche, profil actif. Chaque clé de réglage prend la valeur de la couche la plus haute qui la définit.";
 /* Help text of the --controller option of 'ojd config set' and 'ojd config unset'. VVVV:PPPP stands for the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.config.group.controller" = "Modifie uniquement ce modèle de manette, sous la forme VVVV:PPPP, au lieu de toutes les manettes.";
 /* Error of 'ojd config set' and 'ojd config unset' when a record cannot take the change. %1$@ is the tuning key and %2$@ is the description of the problem. */
@@ -2249,20 +2249,20 @@
 "cli.config.show.controller" = "Affiche le réglage effectif d’une manette, sous la forme VVVV:PPPP, au lieu des valeurs par défaut globales.";
 /* Warning printed by 'ojd config show' when a part of the defaults file is invalid. %1$@ is the file path and %2$@ is the description of the problem. */
 "cli.config.show.defaultsIgnored" = "%1$@ ignoré : %2$@";
-/* Long description in the help of 'ojd config show'. --controller and all.patch.json stay as written. */
-"cli.config.show.discussion" = "Sans --controller, affiche toutes les clés de réglage avec leur valeur dans all.patch.json, ainsi que les familles dont les fiches les lisent. Avec cette option, affiche la fiche de la manette une fois la fiche fournie, les fiches du paquet, all.patch.json et votre fiche superposés. Une clé qu’aucune couche ne définit affiche « valeur par défaut du pilote ».";
+/* Long description in the help of 'ojd config show'. --controller and all.patch.plist stay as written. */
+"cli.config.show.discussion" = "Sans --controller, affiche toutes les clés de réglage avec leur valeur dans all.patch.plist, ainsi que les familles dont les fiches les lisent. Avec cette option, affiche la fiche de la manette une fois la fiche fournie, les fiches du paquet, all.patch.plist et votre fiche superposés. Une clé qu’aucune couche ne définit affiche « valeur par défaut du pilote ».";
 /* Indented line below a tuning key of 'ojd config show' that lists the controller families whose records read the key. %@ is the comma-separated list of family names. */
 "cli.config.show.readBy" = "lu par : %@";
-/* Warning of 'ojd config show' about a key in all.patch.json that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
-"cli.config.show.unread" = "all.patch.json définit %1$@, mais aucune manette connectée ne la lit. Familles qui la lisent : %2$@.";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoController" = "Aucune manette n’est connectée ; la vérification des clés de all.patch.json qu’aucune manette ne lit a donc été ignorée.";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoService" = "Le service n’est pas en cours d’exécution ; la vérification des clés de all.patch.json qu’aucune manette connectée ne lit a donc été ignorée.";
+/* Warning of 'ojd config show' about a key in all.patch.plist that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
+"cli.config.show.unread" = "all.patch.plist définit %1$@, mais aucune manette connectée ne la lit. Familles qui la lisent : %2$@.";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoController" = "Aucune manette n’est connectée ; la vérification des clés de all.patch.plist qu’aucune manette ne lit a donc été ignorée.";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoService" = "Le service n’est pas en cours d’exécution ; la vérification des clés de all.patch.plist qu’aucune manette connectée ne lit a donc été ignorée.";
 /* One-line summary of 'ojd config set' in the command list and at the top of its help. */
 "cli.config.set.abstract" = "Définit une valeur de réglage dans vos fiches de manette.";
-/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.json and stickDeadzone stay as written. */
-"cli.config.set.discussion" = "Écrit KEY dans votre fiche de la manette indiquée par --controller, ou dans all.patch.json pour toutes les manettes. Les règles de la fiche s’appliquent : stickDeadzone doit être supérieur à 0 et inférieur à 1. Une valeur que les règles refusent ne change rien. Le service en cours d’exécution applique la modification.";
+/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.plist and stickDeadzone stay as written. */
+"cli.config.set.discussion" = "Écrit KEY dans votre fiche de la manette indiquée par --controller, ou dans all.patch.plist pour toutes les manettes. Les règles de la fiche s’appliquent : stickDeadzone doit être supérieur à 0 et inférieur à 1. Une valeur que les règles refusent ne change rien. Le service en cours d’exécution applique la modification.";
 /* Message printed by 'ojd config set' after it wrote a value. %1$@ is the tuning key, which stays as written, %2$@ is the value and %3$@ is the path of the record file. */
 "cli.config.set.success" = "%1$@ défini sur %2$@ dans %3$@. Le service en cours d’exécution l’applique maintenant.";
 /* Help text of the VALUE argument of 'ojd config set'. */
@@ -2427,12 +2427,12 @@
 "cli.controller.group.outputUnsupported" = "%1$@ ne prend pas en charge %2$@. Exécutez « ojd controller show %3$@ » pour voir ce qu’elle prend en charge.";
 /* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To serve a model means to read its input and publish it as a virtual gamepad. */
 "cli.controller.claim.abstract" = "Faire prendre en charge un modèle de manette par OpenJoystickDriver.";
-/* Long description in the help of 'ojd controller claim'. server, ojd, VVVV-PPPP.json and the record terms stay as written. */
-"platform.macos.cli.controller.claim.discussion" = "Définit server sur ojd dans votre fiche du modèle, VVVV-PPPP.json dans votre dossier de fiches, et conserve les autres champs de la fiche. S’applique à toutes les manettes du modèle. Le service en cours l’applique sans rebranchement. A besoin du service pour trouver la manette. --dry-run n’écrit rien. Se termine par 1 avec E2023 pour une manette qui utilise l’USB brut, qu’OpenJoystickDriver prend toujours en charge, ou que macOS ne prend pas en charge nativement.";
+/* Long description in the help of 'ojd controller claim'. server, ojd, vvvv-pppp.plist and the record terms stay as written. */
+"platform.macos.cli.controller.claim.discussion" = "Définit server sur ojd dans votre fiche du modèle, vvvv-pppp.plist dans votre dossier de fiches, et conserve les autres champs de la fiche. S’applique à toutes les manettes du modèle. Le service en cours l’applique sans rebranchement. A besoin du service pour trouver la manette. --dry-run n’écrit rien. Se termine par 1 avec E2023 pour une manette qui utilise l’USB brut, qu’OpenJoystickDriver prend toujours en charge, ou que macOS ne prend pas en charge nativement.";
 /* One-line summary of 'ojd controller release' in the command list and at the top of its help. */
 "platform.macos.cli.controller.release.abstract" = "Rendre un modèle de manette à macOS.";
-/* Long description in the help of 'ojd controller release'. server, system and VVVV-PPPP.json stay as written. */
-"platform.macos.cli.controller.release.discussion" = "Définit server sur system dans votre fiche du modèle, VVVV-PPPP.json dans votre dossier de fiches, et conserve les autres champs de la fiche. S’applique à toutes les manettes du modèle. Le service en cours l’applique sans rebranchement. A besoin du service pour trouver la manette. --dry-run n’écrit rien. Se termine par 1 avec E2023 pour une manette qui utilise l’USB brut, qu’OpenJoystickDriver prend toujours en charge, ou que macOS ne prend pas en charge nativement.";
+/* Long description in the help of 'ojd controller release'. server, system and vvvv-pppp.plist stay as written. */
+"platform.macos.cli.controller.release.discussion" = "Définit server sur system dans votre fiche du modèle, vvvv-pppp.plist dans votre dossier de fiches, et conserve les autres champs de la fiche. S’applique à toutes les manettes du modèle. Le service en cours l’applique sans rebranchement. A besoin du service pour trouver la manette. --dry-run n’écrit rien. Se termine par 1 avec E2023 pour une manette qui utilise l’USB brut, qu’OpenJoystickDriver prend toujours en charge, ou que macOS ne prend pas en charge nativement.";
 /* Message printed by 'ojd controller claim' and related commands with --dry-run instead of writing the record. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. */
 "cli.controller.group.serverDryRun" = "Définirait %1$@ sur %2$@ dans %3$@.";
 /* Error when the record file of a controller cannot be changed. %1$@ is the path of the record file and %2$@ is the description of the problem. */
@@ -2659,10 +2659,10 @@
 "cli.macro.remove.done" = "Macro « %1$@ » supprimée de « %2$@ ».";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Valider, installer, lister ou supprimer des paquets de mods.";
-/* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "Un paquet de mods est un dossier contenant un manifeste mod.json et les dossiers Controllers, Profiles et VirtualDevices. Les paquets installés se trouvent dans ~/Library/Application Support/OpenJoystickDriver/Packages. Le service en cours d’exécution applique un changement quand ce dossier change. Ces commandes n’ont pas besoin du service.";
-/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.json stays as written. */
-"cli.mod.group.folder" = "Un dossier de paquet qui contient mod.json.";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
+"cli.mod.group.discussion" = "Un paquet de mods est un dossier contenant un manifeste mod.plist et les dossiers Controllers, Profiles et VirtualDevices. Les paquets installés se trouvent dans ~/Library/Application Support/OpenJoystickDriver/Packages. Le service en cours d’exécution applique un changement quand ce dossier change. Ces commandes n’ont pas besoin du service.";
+/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
+"cli.mod.group.folder" = "Un dossier de paquet qui contient mod.plist.";
 /* Help text of the NAME argument of 'ojd mod remove'. */
 "cli.mod.group.name" = "Le nom du paquet.";
 /* Error of the 'ojd mod' commands when a package is refused. %1$@ is the package folder or name and %2$@ is the reason. */
@@ -2803,8 +2803,8 @@
 "cli.virtual.show.unavailable" = "aucune manette virtuelle adaptée";
 /* Detail of the records check of 'ojd diagnose'. %lld is the number of the user's controller records that the driver applies. */
 "cli.diagnose.group.recordsApplied" = "fiches utilisateur appliquées : %lld";
-/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.json is a file name that stays as written. */
-"cli.diagnose.group.recordsConfigOk" = "all.patch.json et les fichiers de persona sont valides";
+/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.plist is a file name that stays as written. */
+"cli.diagnose.group.recordsConfigOk" = "all.patch.plist et les fichiers de persona sont valides";
 /* Detail of the records check of 'ojd diagnose' when parts of the configuration are ignored or skipped. %@ is the list of those parts. The command in quotes stays as written. */
 "cli.diagnose.group.recordsConfigProblems" = "ignorés ou omis : %@ ; corrigez-les et vérifiez avec « ojd status »";
 /* Detail of the records check of 'ojd diagnose' when records are skipped. %@ is the list of skipped records. The command in quotes stays as written. */
@@ -2865,8 +2865,8 @@
 "cli.record.install.abstract" = "Vérifier une fiche de manette et l’installer pour votre utilisateur.";
 /* Yes or no question that 'ojd record install' asks on a terminal before it replaces an installed record. %@ is the path of the installed file. */
 "cli.record.install.confirm" = "Remplacer %@ ?";
-/* Long description in the help of 'ojd record install'. VVVV-PPPP.json and --force stay as written. */
-"cli.record.install.discussion" = "Écrit la fiche sous le nom VVVV-PPPP.json dans votre dossier de fiches. Le service en cours d’exécution l’applique immédiatement. Remplacer la fiche déjà installée pour ce modèle demande confirmation dans un terminal ; exige --force sinon. --dry-run vérifie la fiche et n’écrit rien. Se termine avec le code 1 et n’écrit rien lorsque la fiche est invalide.";
+/* Long description in the help of 'ojd record install'. vvvv-pppp.plist and --force stay as written. */
+"cli.record.install.discussion" = "Écrit la fiche sous le nom vvvv-pppp.plist dans votre dossier de fiches. Le service en cours d’exécution l’applique immédiatement. Remplacer la fiche déjà installée pour ce modèle demande confirmation dans un terminal ; exige --force sinon. --dry-run vérifie la fiche et n’écrit rien. Se termine avec le code 1 et n’écrit rien lorsque la fiche est invalide.";
 /* Message printed by 'ojd record install --dry-run' instead of installing. %@ is the target file path. */
 "cli.record.install.dryRun" = "Installerait %@.";
 /* Error when the record file cannot be written. %1$@ is the target file path and %2$@ is the reason from the system. */
@@ -3196,7 +3196,7 @@
 /* One-line summary of 'ojd profile export' in the command list and at the top of its help. The command in quotes stays as written. */
 "cli.profile.export.abstract" = "Afficher un profil sous forme de fichier que lit « ojd profile import ».";
 /* Long description in the help of 'ojd profile export'. --json and --plain stay as written. */
-"cli.profile.export.discussion" = "Le profil est au format JSON ; --json et --plain ne changent donc pas la sortie.";
+"cli.profile.export.discussion" = "Le profil est une liste de propriétés ; --json et --plain ne changent donc pas la sortie.";
 /* Message printed after 'ojd profile export --output'. %1$@ is the profile name, shown in quotes, and %2$@ is the file path. */
 "cli.profile.export.done" = "Profil « %1$@ » écrit dans %2$@.";
 /* Help text of the --output option of 'ojd profile export'. stdout is the standard output stream and stays as written. */
@@ -3485,12 +3485,12 @@
 "error.E3033.message" = "L'action a échoué.";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
 "error.E3034.message" = "L’action MIDI n’a pas été exécutée, car le système a refusé de créer la source MIDI OpenJoystickDriver. Réessayez.";
-/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
-"error.E4001.message" = "Le manifeste du paquet mod.json est absent ou invalide. Vérifiez-le avec le schéma mod-package et relancez la commande.";
+/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.plist stays as written. */
+"error.E4001.message" = "Le manifeste du paquet mod.plist est absent ou invalide. Vérifiez-le avec le schéma mod-package et relancez la commande.";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */
 "error.E4002.message" = "Le paquet exige une autre version d’OpenJoystickDriver que celle qui s’exécute. Installez une version du paquet compatible avec cette version ou mettez OpenJoystickDriver à jour.";
-/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.json stays as written. */
-"error.E4003.message" = "Un fichier du paquet est invalide, absent ou non listé dans mod.json. Corrigez le fichier indiqué par la commande et relancez-la.";
+/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.plist stays as written. */
+"error.E4003.message" = "Un fichier du paquet est invalide, absent ou non listé dans mod.plist. Corrigez le fichier indiqué par la commande et relancez-la.";
 /* Text of error E4004, printed when a mod package covers a controller, persona or profile that the user's files or another package hold. */
 "error.E4004.message" = "Le paquet couvre une manette, une persona ou un profil que vos propres fichiers ou un autre paquet installé contiennent déjà. Supprimez le fichier ou le paquet en conflit, ou modifiez le paquet, puis relancez la commande.";
 /* Text of error E4005, printed when a mod package of the same name is installed. --force stays as written. */
@@ -3507,8 +3507,8 @@
 "error.E5003.message" = "Une description de protocole nomme une famille différente du nom de son fichier. Nommez le fichier d’après sa famille.";
 /* Text of error E5004, printed when a protocol description lists a variant that its family lacks. */
 "error.E5004.message" = "Une description de protocole liste une variante que sa famille n’a pas. Utilisez l’une des variantes de la famille.";
-/* Text of error E5005, printed when the access file is damaged. AccessGrants.json is a file name and stays as written. */
-"error.E5005.message" = "Le fichier d’accès AccessGrants.json est endommagé. Corrigez le fichier ou supprimez-le, puis accordez de nouveau l’accès.";
+/* Text of error E5005, printed when the access file is damaged. AccessGrants.plist is a file name and stays as written. */
+"error.E5005.message" = "Le fichier d’accès AccessGrants.plist est endommagé. Corrigez le fichier ou supprimez-le, puis accordez de nouveau l’accès.";
 /* Text of error E5006, printed when the key file of the unit IDs cannot be read or has the wrong size. PortKeyInstallation.key is a file name and stays as written. OpenJoystickDriver is the product name. */
 "error.E5006.message" = "Le fichier de clé des identifiants d’unité, PortKeyInstallation.key, est illisible ou ne fait pas 32 octets. Restaurez le fichier depuis une sauvegarde. Si vous le supprimez, OpenJoystickDriver crée une nouvelle clé et chaque identifiant d’unité change.";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
@@ -4234,8 +4234,8 @@
 "platform.macos.ui.settings.advanced.unreadableShowInFinder" = "Afficher dans le Finder";
 /* One-line summary of 'ojd setting reset' in the command list and at the top of its help. */
 "cli.setting.reset.abstract" = "Place le fichier de réglages dans la Corbeille.";
-/* Long description in the help of 'ojd setting reset'. Settings.json is a file name and stays as written. */
-"cli.setting.reset.discussion" = "Place Settings.json dans la Corbeille pour que chaque réglage revienne à sa valeur par défaut. À utiliser lorsque le fichier est endommagé ou refusé.";
+/* Long description in the help of 'ojd setting reset'. Settings.plist is a file name and stays as written. */
+"cli.setting.reset.discussion" = "Place Settings.plist dans la Corbeille pour que chaque réglage revienne à sa valeur par défaut. À utiliser lorsque le fichier est endommagé ou refusé.";
 /* Yes or no question that 'ojd setting reset' asks on a terminal. */
 "cli.setting.reset.confirm" = "Placer le fichier de réglages dans la Corbeille et rétablir chaque réglage à sa valeur par défaut ?";
 /* Message printed after 'ojd setting reset'. %@ is the path of the settings file. */
@@ -4449,8 +4449,8 @@
 "error.E5010.message" = "Un document enregistré n’est pas une liste de propriétés XML, ou il contient une valeur de date ou de données. Le message indique le fichier et la forme ou le chemin de la clé. Enregistrez le fichier en liste de propriétés XML avec plutil -convert xml1.";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Convertit les documents enregistrés d'une version plus ancienne vers la version actuelle.";
-/* Help text of 'ojd migrate'. Settings.json, AccessGrants.json, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "Convertit Settings.json, AccessGrants.json, les profils, vos fiches et correctifs de manettes et les fichiers d'appareils virtuels qui ont une apiVersion plus ancienne. Chaque original est conservé dans le dossier Migrated du dossier de support. Les mods installés ne sont pas convertis.";
+/* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
+"cli.migrate.group.discussion" = "Convertit Settings.plist, AccessGrants.plist, les profils, vos fiches et correctifs de manettes et les fichiers d'appareils virtuels qui ont une apiVersion plus ancienne. Chaque original est conservé dans le dossier Migrated du dossier de support. Les mods installés ne sont pas convertis.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "Liste les documents qui seraient convertis sans rien modifier.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */

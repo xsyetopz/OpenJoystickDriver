@@ -5,7 +5,7 @@ import Foundation
 /// Only the Wii Remote driver reports it; every other family leaves
 /// ``ControllerConnectionState/wiiRemote`` nil.
 public struct WiiRemoteStatus: Codable, Equatable, Sendable {
-  /// The extension kinds of `nintendo-wii.json`, by the description's kind name.
+  /// The extension kinds of `nintendo-wii.plist`, by the description's kind name.
   public enum ExtensionKind: String, Codable, CaseIterable, Sendable {
     /// The Nunchuk.
     case nunchuk = "Nunchuk"

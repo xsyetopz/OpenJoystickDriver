@@ -18,7 +18,7 @@ struct ProtocolDescriptionProblem: Error, Equatable, Sendable, CustomStringConve
   var description: String { "\(code.rawValue): \(detail)" }
 }
 
-/// One family's protocol description (`Resources/Protocols/<file stem>.json`): the interface
+/// One family's protocol description (`Resources/Protocols/<file stem>.plist`): the interface
 /// signatures that bind its variants, the typed parameters its records may set, the facts its
 /// driver reads (endpoints, raw USB, record sections, tuning keys, what OJD still sends when macOS
 /// serves the controller), and the defaults its records layer over.

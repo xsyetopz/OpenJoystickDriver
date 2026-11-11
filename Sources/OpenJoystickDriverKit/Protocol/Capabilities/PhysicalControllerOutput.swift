@@ -138,7 +138,7 @@ public enum PhysicalSpeakerFormat: String, Codable, CaseIterable, Hashable, Send
   /// 4-bit Yamaha ADPCM at the rate of the remote's speaker, which the Wii Remote has.
   case yamahaADPCM4Bit = "YamahaADPCM4Bit"
 
-  /// The samples per second the speaker plays; `nintendo-wii.json` writes the same rate as the
+  /// The samples per second the speaker plays; `nintendo-wii.plist` writes the same rate as the
   /// divisor of its speaker configuration, and a test keeps the two equal.
   public var sampleRate: Int {
     switch self {

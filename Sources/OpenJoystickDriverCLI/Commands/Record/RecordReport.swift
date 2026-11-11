@@ -113,7 +113,7 @@ struct SkippedRecord: Encodable, Equatable {
     problem = file.problem ?? ""
   }
 
-  /// Describes the `all.patch.json` OJD ignored; nil when it applied the file or the file is
+  /// Describes the `all.patch.plist` OJD ignored; nil when it applied the file or the file is
   /// absent.
   init?(_ defaults: ControllerDefaults?) {
     guard let defaults, let problem = defaults.problem else { return nil }

@@ -99,7 +99,7 @@ public struct ProtocolBindingResult: Codable, Equatable, Sendable {
   public let rule: ProtocolBinding.Rule?
   /// The predicates of the binding rule that held.
   public let matchedPredicates: [ProtocolPredicate]
-  /// The applied catalog record, named like its `vvvv-pppp.json` file; nil when none applied.
+  /// The applied catalog record, named like its `vvvv-pppp.plist` file; nil when none applied.
   public let catalogRecordID: String?
   /// Where the HID usage map comes from; nil unless the `HIDDescriptor` protocol bound.
   public let inputMapping: InputMapping?

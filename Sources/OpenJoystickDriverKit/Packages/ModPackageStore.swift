@@ -4,7 +4,7 @@ import Foundation
 public struct ModPackage: Equatable, Sendable {
   /// The package folder.
   public let directory: URL
-  /// Nil when `mod.json` is missing or invalid.
+  /// Nil when `mod.plist` is missing or invalid.
   public let manifest: ModPackageManifest?
   /// Why the package cannot be used, or nil when it can.
   ///
@@ -18,7 +18,7 @@ public struct ModPackage: Equatable, Sendable {
 
 /// The installed mod packages: `<AppSupport>/OpenJoystickDriver/Packages/<name>/`.
 ///
-/// A package is a folder with a `mod.json` manifest and `Controllers/`, `Profiles/`, and
+/// A package is a folder with a `mod.plist` manifest and `Controllers/`, `Profiles/`, and
 /// `VirtualDevices/` folders. The store checks a package against the running version, its own
 /// files, and the user's files and the other installed packages before it installs the package.
 /// Each refusal is a ``ModPackageError`` with an E4xxx code.
@@ -212,7 +212,7 @@ public struct ModPackageStore: Sendable {
 
   /// The manifest of the package in `folder`.
   ///
-  /// - Throws: ``ModPackageError`` with ``ErrorCode/invalidManifest`` when `mod.json` is missing or
+  /// - Throws: ``ModPackageError`` with ``ErrorCode/invalidManifest`` when `mod.plist` is missing or
   ///   invalid.
   static func manifest(in folder: URL) throws -> ModPackageManifest {
     let file = folder.appendingPathComponent(ModPackageManifest.fileName)

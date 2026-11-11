@@ -1,7 +1,7 @@
 import Foundation
 
 extension ControllerTuning {
-  /// One tuning value, named as in the `tuning` section of a record and of `all.patch.json`.
+  /// One tuning value, named as in the `tuning` section of a record and of `all.patch.plist`.
   ///
   /// The cases are in the order `validateTuning` reports a family-scope violation.
   public enum Key: String, CaseIterable, Codable, Sendable {
@@ -144,7 +144,7 @@ extension ControllerTuning {
 }
 
 extension ControllerRecord {
-  /// Whether this controller's driver reads `key`; `all.patch.json` sets it only where this holds.
+  /// Whether this controller's driver reads `key`; `all.patch.plist` sets it only where this holds.
   public func reads(_ key: ControllerTuning.Key) -> Bool { tuningScope.contains(key) }
 }
 

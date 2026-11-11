@@ -188,7 +188,7 @@ extension ModPackageStore {
     )
   }
 
-  /// Refuses a link anywhere in `folder`, and an entry beside `mod.json` that is not one of the
+  /// Refuses a link anywhere in `folder`, and an entry beside `mod.plist` that is not one of the
   /// three kind folders.
   ///
   /// Hidden entries are skipped here, and an install does not copy them.

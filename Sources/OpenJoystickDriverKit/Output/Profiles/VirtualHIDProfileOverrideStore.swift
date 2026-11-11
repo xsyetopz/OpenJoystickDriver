@@ -42,7 +42,7 @@ public struct VirtualPersonaFile: Equatable, Sendable {
   public let problem: String?
 }
 
-/// Per-controller-model and per-unit personas, stored as `VirtualDevices/<id>.json` files that
+/// Per-controller-model and per-unit personas, stored as `VirtualDevices/<id>.plist` files that
 /// follow `virtual-device.schema.json`.
 ///
 /// A file matches a VID:PID model, or one unit of it (see ``ControllerPortKey``). A unit's persona
@@ -51,7 +51,7 @@ public struct VirtualPersonaFile: Equatable, Sendable {
 /// A folder named ``unreadFolderName`` beside the directory is not read, and ``files`` lists it
 /// with the reason when it holds a visible file, so that the files a user keeps there are not
 /// ignored without a word.
-/// `set` writes `vvvv-pppp.plist` or `vvvv-pppp-<unit>.json`, and keeps the identity of a persona
+/// `set` writes `vvvv-pppp.plist` or `vvvv-pppp-<unit>.plist`, and keeps the identity of a persona
 /// that already matches.
 public struct VirtualHIDProfileOverrideStore: Sendable {
   /// The `kind` of a persona file.
@@ -293,7 +293,7 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
   /// Adds the personas of the installed packages, in package-name order.
   ///
   /// A package that cannot be used, such as one whose `requires` leaves out the running version,
-  /// adds none, and its `mod.json` is listed with the reason. A persona whose match a user file or
+  /// adds none, and its `mod.plist` is listed with the reason. A persona whose match a user file or
   /// an earlier package already holds is skipped and listed with that reason.
   private func addPackageFiles(to loaded: inout Loaded) {
     for package in packages.list() {

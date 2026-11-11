@@ -134,14 +134,14 @@ extension ModPackageManifest: Decodable {
 
   // The patterns of `mod-package.schema.json`, with `\A` and `\z` for the ECMA `^` and `$`, so
   // that a trailing newline fails. `ModPackageManifestSchemaTests` feeds both the same manifests.
-  /// The file name of a `Controller` file: `vvvv-pppp.json`.
+  /// The file name of a `Controller` file: `vvvv-pppp.plist`.
   private static let controllerFilePattern = "\\A[0-9a-f]{4}-[0-9a-f]{4}\\.plist\\z"
-  /// The file name of a `ControllerPatch` file: a model patch or `all.patch.json`.
+  /// The file name of a `ControllerPatch` file: a model patch or `all.patch.plist`.
   private static let patchFilePattern =
     "\\A(?:(?:model-)?[0-9a-f]{4}-[0-9a-f]{4}\\.patch\\.plist|all\\.patch\\.plist)\\z"
   /// The file name of a profile file.
   private static let profileFilePattern = "\\A[A-Za-z0-9][A-Za-z0-9._-]*\\.plist\\z"
-  /// The file name of a `VirtualDevice` file: `vvvv-pppp.json`, with an optional unit.
+  /// The file name of a `VirtualDevice` file: `vvvv-pppp.plist`, with an optional unit.
   private static let virtualDeviceFilePattern =
     "\\A[0-9a-f]{4}-[0-9a-f]{4}(-U-[A-Za-z0-9_-]{16})?\\.plist\\z"
   /// A SemVer 2.0.0 version.

@@ -1,6 +1,6 @@
 import Foundation
 
-/// The stable error codes of OpenJoystickDriver, listed in `Resources/ErrorCodes.json`.
+/// The stable error codes of OpenJoystickDriver, listed in `Resources/ErrorCodes.plist`.
 ///
 /// A code never changes meaning and is never reused. Look codes up on the wiki page `Error-Codes`.
 ///
@@ -179,11 +179,11 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
   case systemActionFailed = "E3033"
   /// CoreMIDI refused to create the virtual MIDI source for a MIDI destination.
   case midiSourceRefused = "E3034"
-  /// The package manifest `mod.json` is missing or invalid.
+  /// The package manifest `mod.plist` is missing or invalid.
   case invalidManifest = "E4001"
   /// The package requires a different version of OJD than the one that runs.
   case requiresExcludesVersion = "E4002"
-  /// A file of the package is invalid, missing or not listed in `mod.json`.
+  /// A file of the package is invalid, missing or not listed in `mod.plist`.
   case invalidPackageContent = "E4003"
   /// The package covers a controller, persona or profile that other files or another installed
   /// package already hold.
@@ -202,7 +202,7 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
   case protocolDescriptionFamilyMismatch = "E5003"
   /// A protocol description lists a variant that its family does not have.
   case unknownProtocolVariant = "E5004"
-  /// The access file `AccessGrants.json` is damaged.
+  /// The access file `AccessGrants.plist` is damaged.
   case damagedAccessGrants = "E5005"
   /// The key file `PortKeyInstallation.key` cannot be read or is not 32 bytes.
   case damagedPortKey = "E5006"

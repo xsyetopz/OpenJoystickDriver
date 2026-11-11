@@ -6,7 +6,7 @@ import OpenJoystickDriverMacOSPlatform
 /// The opt-in socket on which granted local programs read controller events, and the opt-in
 /// WebSocket on `127.0.0.1` for token clients such as browser overlays.
 ///
-/// `AccessGrants.json` says whether each listens and which signed clients and tokens it serves;
+/// `AccessGrants.plist` says whether each listens and which signed clients and tokens it serves;
 /// the socket exists only while the endpoint is enabled.
 ///
 /// - Note: `@unchecked Sendable` because the mutable fields are guarded by `lock`. Grant and

@@ -2229,8 +2229,8 @@
 "cli.permission.request.unknownId" = "未知的權限「%1$@」。請使用 %2$@。";
 /* One-line summary of 'ojd config' in the command list and at the top of its help. */
 "cli.config.group.abstract" = "顯示或變更 OpenJoystickDriver 套用的設定，以及設定每個值的層級。";
-/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.json is a file name that stays as written. */
-"cli.config.group.discussion" = "值按層級疊加，由最低層開始：驅動程式預設值、內建記錄、套件記錄、all.patch.json、您的記錄、使用中的描述檔。每個調校鍵取設定它的最高層級的值。";
+/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.plist is a file name that stays as written. */
+"cli.config.group.discussion" = "值按層級疊加，由最低層開始：驅動程式預設值、內建記錄、套件記錄、all.patch.plist、您的記錄、使用中的描述檔。每個調校鍵取設定它的最高層級的值。";
 /* Help text of the --controller option of 'ojd config set' and 'ojd config unset'. VVVV:PPPP stands for the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.config.group.controller" = "僅變更此控制器型號，格式為 VVVV:PPPP，而非所有控制器。";
 /* Error of 'ojd config set' and 'ojd config unset' when a record cannot take the change. %1$@ is the tuning key and %2$@ is the description of the problem. */
@@ -2249,20 +2249,20 @@
 "cli.config.show.controller" = "以 VVVV:PPPP 的形式顯示單一控制器的有效調校，而非全域預設值。";
 /* Warning printed by 'ojd config show' when a part of the defaults file is invalid. %1$@ is the file path and %2$@ is the description of the problem. */
 "cli.config.show.defaultsIgnored" = "已忽略 %1$@：%2$@";
-/* Long description in the help of 'ojd config show'. --controller and all.patch.json stay as written. */
-"cli.config.show.discussion" = "不帶 --controller 時，列印所有調校鍵及其在 all.patch.json 中的值，以及記錄會讀取這些鍵的系列。帶此選項時，會在內建記錄、套件記錄、all.patch.json 和您的記錄疊加後，列印該控制器的記錄。沒有任何層級設定的鍵會顯示為「驅動程式預設值」。";
+/* Long description in the help of 'ojd config show'. --controller and all.patch.plist stay as written. */
+"cli.config.show.discussion" = "不帶 --controller 時，列印所有調校鍵及其在 all.patch.plist 中的值，以及記錄會讀取這些鍵的系列。帶此選項時，會在內建記錄、套件記錄、all.patch.plist 和您的記錄疊加後，列印該控制器的記錄。沒有任何層級設定的鍵會顯示為「驅動程式預設值」。";
 /* Indented line below a tuning key of 'ojd config show' that lists the controller families whose records read the key. %@ is the comma-separated list of family names. */
 "cli.config.show.readBy" = "讀取它的系列：%@";
-/* Warning of 'ojd config show' about a key in all.patch.json that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
-"cli.config.show.unread" = "all.patch.json 設定了 %1$@，但沒有已連接的控制器讀取它。讀取它的系列：%2$@。";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoController" = "沒有已連接的控制器，因此已略過對沒有控制器讀取的 all.patch.json 鍵的檢查。";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoService" = "服務未執行，因此已略過對沒有已連接控制器讀取的 all.patch.json 鍵的檢查。";
+/* Warning of 'ojd config show' about a key in all.patch.plist that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
+"cli.config.show.unread" = "all.patch.plist 設定了 %1$@，但沒有已連接的控制器讀取它。讀取它的系列：%2$@。";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoController" = "沒有已連接的控制器，因此已略過對沒有控制器讀取的 all.patch.plist 鍵的檢查。";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoService" = "服務未執行，因此已略過對沒有已連接控制器讀取的 all.patch.plist 鍵的檢查。";
 /* One-line summary of 'ojd config set' in the command list and at the top of its help. */
 "cli.config.set.abstract" = "在您的控制器記錄中設定調校值。";
-/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.json and stickDeadzone stay as written. */
-"cli.config.set.discussion" = "把 KEY 寫入您為 --controller 所指控制器保存的記錄；不帶該選項時，寫入適用於所有控制器的 all.patch.json。記錄的規則適用：stickDeadzone 必須大於 0 且小於 1。規則拒絕的值不會變更任何內容。執行中的服務會套用變更。";
+/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.plist and stickDeadzone stay as written. */
+"cli.config.set.discussion" = "把 KEY 寫入您為 --controller 所指控制器保存的記錄；不帶該選項時，寫入適用於所有控制器的 all.patch.plist。記錄的規則適用：stickDeadzone 必須大於 0 且小於 1。規則拒絕的值不會變更任何內容。執行中的服務會套用變更。";
 /* Message printed by 'ojd config set' after it wrote a value. %1$@ is the tuning key, which stays as written, %2$@ is the value and %3$@ is the path of the record file. */
 "cli.config.set.success" = "已把 %1$@ 設為 %2$@（%3$@）。執行中的服務現在會套用它。";
 /* Help text of the VALUE argument of 'ojd config set'. */
@@ -2427,12 +2427,12 @@
 "cli.controller.group.outputUnsupported" = "%1$@ 沒有 %2$@。執行「ojd controller show %3$@」查看它支援什麼。";
 /* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To serve a model means to read its input and publish it as a virtual gamepad. */
 "cli.controller.claim.abstract" = "讓 OpenJoystickDriver 處理某個控制器型號。";
-/* Long description in the help of 'ojd controller claim'. server, ojd, VVVV-PPPP.json and the record terms stay as written. */
-"platform.macos.cli.controller.claim.discussion" = "在你為該型號建立的記錄（記錄目錄中的 VVVV-PPPP.json）中將 server 設為 ojd，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
+/* Long description in the help of 'ojd controller claim'. server, ojd, vvvv-pppp.plist and the record terms stay as written. */
+"platform.macos.cli.controller.claim.discussion" = "在你為該型號建立的記錄（記錄目錄中的 vvvv-pppp.plist）中將 server 設為 ojd，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
 /* One-line summary of 'ojd controller release' in the command list and at the top of its help. */
 "platform.macos.cli.controller.release.abstract" = "把某個控制器型號交還給 macOS。";
-/* Long description in the help of 'ojd controller release'. server, system and VVVV-PPPP.json stay as written. */
-"platform.macos.cli.controller.release.discussion" = "在你為該型號建立的記錄（記錄目錄中的 VVVV-PPPP.json）中將 server 設為 system，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
+/* Long description in the help of 'ojd controller release'. server, system and vvvv-pppp.plist stay as written. */
+"platform.macos.cli.controller.release.discussion" = "在你為該型號建立的記錄（記錄目錄中的 vvvv-pppp.plist）中將 server 設為 system，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
 /* Message printed by 'ojd controller claim' and related commands with --dry-run instead of writing the record. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. */
 "cli.controller.group.serverDryRun" = "如果執行，將會把 %1$@ 設為 %2$@（%3$@）。";
 /* Error when the record file of a controller cannot be changed. %1$@ is the path of the record file and %2$@ is the description of the problem. */
@@ -2659,10 +2659,10 @@
 "cli.macro.remove.done" = "已從「%2$@」中移除巨集「%1$@」。";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "驗證、安裝、列出或移除模組套件。";
-/* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "模組套件是一個資料夾，內含 mod.json 清單以及 Controllers、Profiles 和 VirtualDevices 資料夾。已安裝的套件位於 ~/Library/Application Support/OpenJoystickDriver/Packages。該資料夾變更時，執行中的服務會套用變更。這些指令不需要服務。";
-/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.json stays as written. */
-"cli.mod.group.folder" = "包含 mod.json 的套件資料夾。";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
+"cli.mod.group.discussion" = "模組套件是一個資料夾，內含 mod.plist 清單以及 Controllers、Profiles 和 VirtualDevices 資料夾。已安裝的套件位於 ~/Library/Application Support/OpenJoystickDriver/Packages。該資料夾變更時，執行中的服務會套用變更。這些指令不需要服務。";
+/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
+"cli.mod.group.folder" = "包含 mod.plist 的套件資料夾。";
 /* Help text of the NAME argument of 'ojd mod remove'. */
 "cli.mod.group.name" = "套件名稱。";
 /* Error of the 'ojd mod' commands when a package is refused. %1$@ is the package folder or name and %2$@ is the reason. */
@@ -2803,8 +2803,8 @@
 "cli.virtual.show.unavailable" = "沒有合適的虛擬遊戲控制器";
 /* Detail of the records check of 'ojd diagnose'. %lld is the number of the user's controller records that the driver applies. */
 "cli.diagnose.group.recordsApplied" = "已套用的用戶記錄：%lld";
-/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.json is a file name that stays as written. */
-"cli.diagnose.group.recordsConfigOk" = "all.patch.json 和人設檔案有效";
+/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.plist is a file name that stays as written. */
+"cli.diagnose.group.recordsConfigOk" = "all.patch.plist 和人設檔案有效";
 /* Detail of the records check of 'ojd diagnose' when parts of the configuration are ignored or skipped. %@ is the list of those parts. The command in quotes stays as written. */
 "cli.diagnose.group.recordsConfigProblems" = "已忽略或略過 %@；請修正後用「ojd status」檢查";
 /* Detail of the records check of 'ojd diagnose' when records are skipped. %@ is the list of skipped records. The command in quotes stays as written. */
@@ -2865,8 +2865,8 @@
 "cli.record.install.abstract" = "檢查控制器記錄，並為目前的用戶安裝。";
 /* Yes or no question that 'ojd record install' asks on a terminal before it replaces an installed record. %@ is the path of the installed file. */
 "cli.record.install.confirm" = "要取代 %@ 嗎？";
-/* Long description in the help of 'ojd record install'. VVVV-PPPP.json and --force stay as written. */
-"cli.record.install.discussion" = "將記錄以 VVVV-PPPP.json 寫入您的記錄目錄。執行中的服務會立即套用。取代該型號已安裝的記錄時，在終端機中會要求確認；否則需要 --force。--dry-run 只檢查記錄，不會寫入任何內容。記錄無效時以結束碼 1 結束，且不會寫入任何內容。";
+/* Long description in the help of 'ojd record install'. vvvv-pppp.plist and --force stay as written. */
+"cli.record.install.discussion" = "將記錄以 vvvv-pppp.plist 寫入您的記錄目錄。執行中的服務會立即套用。取代該型號已安裝的記錄時，在終端機中會要求確認；否則需要 --force。--dry-run 只檢查記錄，不會寫入任何內容。記錄無效時以結束碼 1 結束，且不會寫入任何內容。";
 /* Message printed by 'ojd record install --dry-run' instead of installing. %@ is the target file path. */
 "cli.record.install.dryRun" = "將會安裝 %@。";
 /* Error when the record file cannot be written. %1$@ is the target file path and %2$@ is the reason from the system. */
@@ -3196,7 +3196,7 @@
 /* One-line summary of 'ojd profile export' in the command list and at the top of its help. The command in quotes stays as written. */
 "cli.profile.export.abstract" = "將設定檔輸出為「ojd profile import」可讀取的檔案。";
 /* Long description in the help of 'ojd profile export'. --json and --plain stay as written. */
-"cli.profile.export.discussion" = "設定檔為 JSON，因此 --json 和 --plain 不會改變輸出。";
+"cli.profile.export.discussion" = "設定檔為屬性列表，因此 --json 和 --plain 不會改變輸出。";
 /* Message printed after 'ojd profile export --output'. %1$@ is the profile name, shown in quotes, and %2$@ is the file path. */
 "cli.profile.export.done" = "已將「%1$@」寫入 %2$@。";
 /* Help text of the --output option of 'ojd profile export'. stdout is the standard output stream and stays as written. */
@@ -4039,12 +4039,12 @@
 "error.E3033.message" = "動作失敗。";
 /* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
 "error.E3034.message" = "系統拒絕建立 MIDI 來源 OpenJoystickDriver，因此 MIDI 操作未執行。請重試。";
-/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
-"error.E4001.message" = "缺少套件資訊清單 mod.json，或其無效。請對照 mod-package 結構描述檢查，然後重新執行指令。";
+/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.plist stays as written. */
+"error.E4001.message" = "缺少套件資訊清單 mod.plist，或其無效。請對照 mod-package 結構描述檢查，然後重新執行指令。";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */
 "error.E4002.message" = "此套件需要與目前執行版本不同的 OpenJoystickDriver 版本。請安裝支援目前版本的套件版本，或更新 OpenJoystickDriver。";
-/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.json stays as written. */
-"error.E4003.message" = "套件中的某個檔案無效、遺失或未列於 mod.json。請修正指令指出的檔案，然後重新執行。";
+/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.plist stays as written. */
+"error.E4003.message" = "套件中的某個檔案無效、遺失或未列於 mod.plist。請修正指令指出的檔案，然後重新執行。";
 /* Text of error E4004, printed when a mod package covers a controller, persona or profile that the user's files or another package hold. */
 "error.E4004.message" = "此套件涵蓋的控制器、人設或設定檔已存在於您自己的檔案或另一個已安裝的套件中。請移除衝突的檔案或套件，或修改此套件，然後重新執行指令。";
 /* Text of error E4005, printed when a mod package of the same name is installed. --force stays as written. */
@@ -4061,8 +4061,8 @@
 "error.E5003.message" = "協定描述指定的系列與其檔案名稱不同。請以系列名稱命名該檔案。";
 /* Text of error E5004, printed when a protocol description lists a variant that its family lacks. */
 "error.E5004.message" = "協定描述列出了其系列沒有的變體。請使用該系列的其中一個變體。";
-/* Text of error E5005, printed when the access file is damaged. AccessGrants.json is a file name and stays as written. */
-"error.E5005.message" = "存取檔案 AccessGrants.json 已損毀。請修復或刪除該檔案，然後重新授予存取權限。";
+/* Text of error E5005, printed when the access file is damaged. AccessGrants.plist is a file name and stays as written. */
+"error.E5005.message" = "存取檔案 AccessGrants.plist 已損毀。請修復或刪除該檔案，然後重新授予存取權限。";
 /* Text of error E5006, printed when the key file of the unit IDs cannot be read or has the wrong size. PortKeyInstallation.key is a file name and stays as written. OpenJoystickDriver is the product name. */
 "error.E5006.message" = "無法讀取單元 ID 的密鑰檔案 PortKeyInstallation.key，或其大小不是 32 位元組。請從備份還原該檔案。如果改為刪除它，OpenJoystickDriver 會建立新密鑰，所有單元 ID 都會改變。";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
@@ -4233,8 +4233,8 @@
 "platform.macos.ui.settings.advanced.unreadableShowInFinder" = "在 Finder 中顯示";
 /* One-line summary of 'ojd setting reset' in the command list and at the top of its help. */
 "cli.setting.reset.abstract" = "將設定值檔案移到垃圾桶。";
-/* Long description in the help of 'ojd setting reset'. Settings.json is a file name and stays as written. */
-"cli.setting.reset.discussion" = "將 Settings.json 移到垃圾桶，使每項設定恢復預設值。檔案損毀或被拒絕時使用。";
+/* Long description in the help of 'ojd setting reset'. Settings.plist is a file name and stays as written. */
+"cli.setting.reset.discussion" = "將 Settings.plist 移到垃圾桶，使每項設定恢復預設值。檔案損毀或被拒絕時使用。";
 /* Yes or no question that 'ojd setting reset' asks on a terminal. */
 "cli.setting.reset.confirm" = "要將設定值檔案移到垃圾桶並讓每項設定恢復預設值嗎？";
 /* Message printed after 'ojd setting reset'. %@ is the path of the settings file. */
@@ -4448,8 +4448,8 @@
 "error.E5010.message" = "儲存的文件不是 XML 屬性列表，或包含日期或資料值。訊息會列出檔案以及格式或鍵路徑。請用 plutil -convert xml1 將檔案儲存為 XML 屬性列表。";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "將舊版本的已儲存文件轉換為目前版本。";
-/* Help text of 'ojd migrate'. Settings.json, AccessGrants.json, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "轉換帶有舊 apiVersion 的 Settings.json、AccessGrants.json、設定檔、你的控制器記錄與修補檔，以及虛擬裝置檔案。每個原始檔案都保存在支援資料夾的 Migrated 資料夾中。已安裝的模組不會被轉換。";
+/* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
+"cli.migrate.group.discussion" = "轉換帶有舊 apiVersion 的 Settings.plist、AccessGrants.plist、設定檔、你的控制器記錄與修補檔，以及虛擬裝置檔案。每個原始檔案都保存在支援資料夾的 Migrated 資料夾中。已安裝的模組不會被轉換。";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "列出將被轉換的文件，不作任何更改。";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */

@@ -4,7 +4,7 @@ import OpenJoystickDriverKit
 import Security
 
 /// A named secret that lets a client use the endpoint without a signature check, such as a
-/// script or a browser overlay; `AccessGrants.json` keeps only its SHA-256.
+/// script or a browser overlay; `AccessGrants.plist` keeps only its SHA-256.
 struct AccessTokenGrant: Codable, Equatable, Sendable {
   /// The name of the token, which a client sends in its `Hello`.
   let name: String

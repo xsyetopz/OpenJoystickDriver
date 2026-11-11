@@ -381,7 +381,7 @@ public enum DiagnosticsService {
     )
   }
 
-  /// The check for `all.patch.json` and the virtual device files: it warns when OJD ignored the
+  /// The check for `all.patch.plist` and the virtual device files: it warns when OJD ignored the
   /// defaults file, skipped a virtual device file, or did not read a folder, and names each.
   public static func configFilesCheck(
     defaults: ControllerDefaults?,

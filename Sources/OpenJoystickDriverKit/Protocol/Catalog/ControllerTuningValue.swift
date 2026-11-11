@@ -48,7 +48,7 @@ extension ControllerRecord {
   public static let routeServerSource = "Route"
 
   /// The record layer that sets `server`: `Bundled`, `Package` or `User`; `Default` when no layer
-  /// sets it. `all.patch.json` holds only tuning, so `Global` never sets it.
+  /// sets it. `all.patch.plist` holds only tuning, so `Global` never sets it.
   public var serverSource: String {
     fieldLayers["server"]?.rawValue ?? Self.defaultServerSource
   }
@@ -60,7 +60,7 @@ extension ControllerRecord {
 }
 
 extension ControllerRecordSet {
-  /// Every tuning key with the value `all.patch.json` gives it, or the driver default.
+  /// Every tuning key with the value `all.patch.plist` gives it, or the driver default.
   public var defaultTuningValues: [ControllerTuningValue] {
     let tuning = defaults?.tuning ?? .none
     let layers = Dictionary(

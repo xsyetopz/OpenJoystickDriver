@@ -110,9 +110,9 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E3032 | Remapping | The action did not run because Secure Input is on. Close the app that has it on, such as a password field, and try again. Wire value `secure_input_enabled`. |
 | E3033 | Remapping | The action failed. Wire value `system_action_failed`. |
 | E3034 | Remapping | The MIDI action did not run because the system refused to create the MIDI source OpenJoystickDriver. Try again. Wire value `midi_source_refused`. |
-| E4001 | Mod packages | The package manifest mod.json is missing or invalid. Check it against the mod-package schema and run the command again. |
+| E4001 | Mod packages | The package manifest mod.plist is missing or invalid. Check it against the mod-package schema and run the command again. |
 | E4002 | Mod packages | The package requires a different version of OpenJoystickDriver than the one that runs. Install a package version that supports this version, or update OpenJoystickDriver. |
-| E4003 | Mod packages | A file of the package is invalid, missing, or not listed in mod.json. Fix the file that the command names and run it again. |
+| E4003 | Mod packages | A file of the package is invalid, missing, or not listed in mod.plist. Fix the file that the command names and run it again. |
 | E4004 | Mod packages | The package covers a controller, persona, or profile that your own files or another installed package already hold. Remove the clashing file or package, or change the package, and run the command again. |
 | E4005 | Mod packages | A package with this name is already installed. Run the command with --force to replace it. |
 | E4006 | Mod packages | No installed package has this name. Run 'ojd mod list' to see the installed packages. |
@@ -121,7 +121,7 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E5002 | Documents | A protocol description is invalid. Check the file against the protocol-description schema and fix the field that the message names. |
 | E5003 | Documents | A protocol description names a family that differs from its file name. Name the file after its family. |
 | E5004 | Documents | A protocol description lists a variant that its family does not have. Use one of the variants of the family. |
-| E5005 | Documents | The access file AccessGrants.json is damaged. Fix the file or delete it, then grant access again. |
+| E5005 | Documents | The access file AccessGrants.plist is damaged. Fix the file or delete it, then grant access again. |
 | E5006 | Documents | The key file of the unit IDs, PortKeyInstallation.key, cannot be read or is not 32 bytes. Restore the file from a backup. If you delete it instead, OpenJoystickDriver creates a new key and every unit ID changes. |
 | E5007 | Documents | A controller record or patch is invalid. Check the file against its schema and fix the field that the message names. |
 | E5008 | Documents | The SDL_GameControllerDB line for a controller cannot drive it. The message names the reason. Write a controller record for the controller with ojd record draft. |

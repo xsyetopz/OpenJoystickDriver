@@ -219,7 +219,7 @@ struct StatusReport: Encodable, Equatable {
   ///
   /// Read from the files, so present while the service is stopped.
   let skippedRecords: [SkippedRecord]
-  /// The `all.patch.json` OJD ignored whole; absent when it applied the file or there is none.
+  /// The `all.patch.plist` OJD ignored whole; absent when it applied the file or there is none.
   let ignoredDefaults: SkippedRecord?
   /// Virtual device files OJD skipped, and a `Personas` folder it does not read.
   ///
