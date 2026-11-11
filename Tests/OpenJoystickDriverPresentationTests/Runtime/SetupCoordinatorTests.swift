@@ -14,7 +14,7 @@ struct SetupCoordinatorTests {
 
     await coordinator.launch()
 
-    #expect(coordinator.state == SystemExtensionSetupState.active)
+    #expect(coordinator.state == .active)
     #expect(client.requestCount == 0)
   }
 
@@ -31,32 +31,43 @@ struct SetupCoordinatorTests {
   }
 
   @Test
-  func missingRegistrationSubmitsOnceAndWaitsForApproval() async {
-    let client = FakeSetupClient(
-      status: Self.inactiveStatus,
-      result: SystemExtensionSetupRequestResult.awaitingApproval
-    )
+  func launchForegroundAndRefreshSendNoActivationRequest() async {
+    let client = FakeSetupClient(status: Self.inactiveStatus, result: .awaitingApproval)
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
     await coordinator.launch()
     await coordinator.foreground()
     await coordinator.refresh()
 
-    #expect(coordinator.state == SystemExtensionSetupState.awaitingApproval)
+    #expect(coordinator.state == .needsActivation)
+    #expect(client.requestCount == 0)
+  }
+
+  @Test
+  func olderActiveExtensionWaitsForARepairClick() async {
+    let client = FakeSetupClient(status: Self.olderActiveStatus)
+    let coordinator = SystemExtensionSetupCoordinator(client: client)
+
+    await coordinator.launch()
+    #expect(coordinator.state == .replacementNeeded)
+    #expect(client.requestCount == 0)
+
+    await coordinator.repair()
+    #expect(coordinator.state == .active)
     #expect(client.requestCount == 1)
   }
 
   @Test
-  func repairRetriesAfterFailureAndReplacementUsesActivationRequest() async {
-    let client = FakeSetupClient(status: Self.inactiveStatus, results: [.failed, .active])
+  func repairSubmitsOnceAndWaitsForApprovalAcrossReads() async {
+    let client = FakeSetupClient(status: Self.inactiveStatus, result: .awaitingApproval)
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
-    await coordinator.launch()
-    #expect(coordinator.state == SystemExtensionSetupState.failed)
     await coordinator.repair()
+    await coordinator.foreground()
+    await coordinator.refresh()
 
-    #expect(coordinator.state == SystemExtensionSetupState.active)
-    #expect(client.requestCount == 2)
+    #expect(coordinator.state == .needsApproval)
+    #expect(client.requestCount == 1)
   }
 
   @Test
@@ -67,54 +78,14 @@ struct SetupCoordinatorTests {
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
     await coordinator.launch()
+    await coordinator.repair()
 
-    #expect(coordinator.state == SystemExtensionSetupState.invalid)
+    #expect(coordinator.state == .invalid)
     #expect(client.requestCount == 0)
   }
 
   @Test
-  func unknownInstalledVersionFailsClosedWithoutSubmittingAgain() async {
-    let client = FakeSetupClient(
-      status: ExtensionStatus(
-        bundle: .present,
-        registration: .active("unknown"),
-        embedded: Self.currentFacts,
-        installed: nil
-      )
-    )
-    let coordinator = SystemExtensionSetupCoordinator(client: client)
-
-    await coordinator.launch()
-
-    #expect(coordinator.state == SystemExtensionSetupState.failed)
-    #expect(client.requestCount == 0)
-  }
-
-  @Test
-  func timedOutActivationIsTerminalUntilRepair() async {
-    let client = FakeSetupClient(status: Self.inactiveStatus, result: .timedOut)
-    let coordinator = SystemExtensionSetupCoordinator(client: client)
-
-    await coordinator.launch()
-    await coordinator.foreground()
-
-    #expect(coordinator.state == SystemExtensionSetupState.failed)
-    #expect(client.requestCount == 1)
-  }
-
-  @Test
-  func olderActiveExtensionRequestsOneReplacement() async {
-    let client = FakeSetupClient(status: Self.olderActiveStatus)
-    let coordinator = SystemExtensionSetupCoordinator(client: client)
-
-    await coordinator.launch()
-
-    #expect(client.requestCount == 1)
-    #expect(coordinator.state == SystemExtensionSetupState.active)
-  }
-
-  @Test
-  func historicalIntegerBuildDoesNotCreateReplacementLoop() async {
+  func historicalIntegerBuildSendsNoRequestAtLaunch() async {
     let client = FakeSetupClient(
       status: ExtensionStatus(
         bundle: .present,
@@ -133,7 +104,7 @@ struct SetupCoordinatorTests {
     await coordinator.foreground()
     await coordinator.refresh()
 
-    #expect(client.requestCount == 1)
+    #expect(client.requestCount == 0)
   }
 
   @Test
@@ -142,23 +113,97 @@ struct SetupCoordinatorTests {
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
     await coordinator.launch()
+    await coordinator.repair()
 
     #expect(client.requestCount == 0)
-    #expect(coordinator.state == SystemExtensionSetupState.active)
+    #expect(coordinator.state == .active)
   }
 
   @Test
-  func cancelledActivationIsTerminalUntilExplicitRepair() async {
-    let client = FakeSetupClient(status: Self.inactiveStatus, results: [.cancelled, .active])
+  func unknownInstalledVersionNeedsAReplacementClick() async {
+    let client = FakeSetupClient(
+      status: ExtensionStatus(
+        bundle: .present,
+        registration: .active("unknown"),
+        embedded: Self.currentFacts,
+        installed: nil
+      )
+    )
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
     await coordinator.launch()
-    await coordinator.refresh()
-    #expect(coordinator.state == SystemExtensionSetupState.failed)
+
+    #expect(coordinator.state == .replacementNeeded)
+    #expect(client.requestCount == 0)
+  }
+
+  @Test
+  func unreadableRegistrationIsUnavailableAndNeverSubmits() async {
+    let client = FakeSetupClient(
+      status: ExtensionStatus(
+        bundle: .present,
+        registration: .unavailable("probe failed"),
+        embedded: Self.currentFacts
+      )
+    )
+    let coordinator = SystemExtensionSetupCoordinator(client: client)
+
+    await coordinator.launch()
+    await coordinator.repair()
+
+    #expect(coordinator.state == .unavailable("probe failed"))
+    #expect(client.requestCount == 0)
+  }
+
+  @Test
+  func requestOutcomesHaveOneStateEach() async {
+    let failure = SystemExtensionRequestFailure(
+      domain: "OSSystemExtensionErrorDomain",
+      code: 4,
+      text: "Extension not found in App bundle"
+    )
+    let cases: [(SystemExtensionSetupRequestResult, SystemExtensionSetupState)] = [
+      (.timedOut, .timedOut), (.cancelled, .cancelled), (.failed(failure), .failed(failure)),
+      (.awaitingApproval, .needsApproval), (.inactive, .needsActivation),
+    ]
+    for (result, expected) in cases {
+      let client = FakeSetupClient(status: Self.inactiveStatus, result: result)
+      let coordinator = SystemExtensionSetupCoordinator(client: client)
+
+      await coordinator.repair()
+      await coordinator.foreground()
+
+      #expect(coordinator.state == expected)
+      #expect(client.requestCount == 1)
+    }
+  }
+
+  @Test
+  func stateIsRunningWhileTheRequestIsPendingAndASecondClickIsVisible() async {
+    let client = FakeSetupClient(status: Self.inactiveStatus, result: .active)
+    let coordinator = SystemExtensionSetupCoordinator(client: client)
+
+    let first = Task { await coordinator.repair() }
+    await Task.yield()
+    #expect(coordinator.state == .running)
+    await coordinator.repair()
+    #expect(coordinator.state == .running)
+    await first.value
+
+    #expect(coordinator.state == .active)
     #expect(client.requestCount == 1)
+  }
+
+  @Test
+  func repairAfterFailureSubmitsAgain() async {
+    let failure = SystemExtensionRequestFailure(domain: "d", code: 1, text: "t")
+    let client = FakeSetupClient(status: Self.inactiveStatus, results: [.failed(failure), .active])
+    let coordinator = SystemExtensionSetupCoordinator(client: client)
 
     await coordinator.repair()
-    #expect(coordinator.state == SystemExtensionSetupState.active)
+    await coordinator.repair()
+
+    #expect(coordinator.state == .active)
     #expect(client.requestCount == 2)
   }
 
@@ -216,7 +261,7 @@ final class FakeSetupClient: @unchecked Sendable, SystemExtensionSetupClient {
   func requestActivation() async -> SystemExtensionSetupRequestResult {
     await Task.yield()
     requestCount += 1
-    return results.isEmpty ? .failed : results.removeFirst()
+    return results.isEmpty ? .timedOut : results.removeFirst()
   }
 
   func requestDeactivation() async -> SystemExtensionSetupRequestResult {

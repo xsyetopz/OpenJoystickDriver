@@ -166,7 +166,7 @@ package final class SystemExtensionSubmission: NSObject, OSSystemExtensionReques
         )
       )
     )
-    finish(.failed)
+    finish(.failed(SystemExtensionRequestFailure(error)))
   }
 
   /// Records that the request needs the user's approval.

@@ -85,6 +85,29 @@ package struct ExtensionStatus: Sendable, Equatable {
   )
 }
 
+/// The `NSError` that ended a system-extension request.
+package struct SystemExtensionRequestFailure: Sendable, Equatable {
+  /// The error domain.
+  package let domain: String
+  /// The error code.
+  package let code: Int
+  /// The localized description of the error.
+  package let text: String
+
+  /// Creates the failure from its parts.
+  package init(domain: String, code: Int, text: String) {
+    self.domain = domain
+    self.code = code
+    self.text = text
+  }
+
+  /// Creates the failure from `error`.
+  package init(_ error: Error) {
+    let nsError = error as NSError
+    self.init(domain: nsError.domain, code: nsError.code, text: nsError.localizedDescription)
+  }
+}
+
 /// The system's answer to a request to activate or deactivate the extension.
 package enum SystemExtensionSetupRequestResult: Sendable, Equatable {
   /// The extension is active.
@@ -94,7 +117,7 @@ package enum SystemExtensionSetupRequestResult: Sendable, Equatable {
   /// The system waits for the user to approve the extension.
   case awaitingApproval
   /// The request failed.
-  case failed
+  case failed(SystemExtensionRequestFailure)
   /// The request was cancelled.
   case cancelled
   /// The system did not answer in time.

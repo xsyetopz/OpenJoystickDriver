@@ -128,7 +128,7 @@ struct TransportExtensionResult: Encodable, Equatable {
 ///
 /// - Throws: ``CancellationError`` when the request is cancelled, and ``CLIFailure`` with
 ///   `systemRequestFailed` when the request times out or fails.
-private func submit(
+func submitTransportExtension(
   _ action: TransportExtensionSubmission.Action,
   done state: TransportExtensionResult.State,
   message: String
@@ -191,7 +191,7 @@ struct TransportExtensionActivateCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      try await submit(
+      try await submitTransportExtension(
         .activate,
         done: .active,
         message: CLILocalized.text("cli.transportExtension.group.activated")
@@ -220,7 +220,7 @@ struct TransportExtensionDeactivateCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      try await submit(
+      try await submitTransportExtension(
         .deactivate,
         done: .inactive,
         message: CLILocalized.text("cli.transportExtension.group.deactivated")

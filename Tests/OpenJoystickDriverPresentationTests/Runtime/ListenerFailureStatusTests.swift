@@ -49,6 +49,7 @@ struct ListenerFailureStatusTests {
         permissions: viewModel.permissionState,
         status: viewModel.statusState,
         driver: .active,
+        extensionRouteConnected: true,
         liveUpdatesFallbackReason: nil,
         listenerFailure: viewModel.listenerFailure
       )
@@ -147,6 +148,7 @@ struct ListenerFailureStatusTests {
         permissions: viewModel.permissionState,
         status: viewModel.statusState,
         driver: .active,
+        extensionRouteConnected: true,
         liveUpdatesFallbackReason: nil,
         listenerFailure: viewModel.listenerFailure
       )

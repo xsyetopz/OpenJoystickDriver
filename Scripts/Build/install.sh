@@ -136,17 +136,17 @@ install_full() {
 
   echo ""
   echo "=== Step 5: Submit sysext activation ==="
-  # The launched app requests activation itself when its embedded DEXT differs
-  # from the installed one. sysextd rejects a second request for the same
-  # extension while the first is in progress (OSSystemExtensionErrorDomain 4),
-  # so submit one only when the app's request does not appear.
+  # The app sends no activation request on its own. Wait briefly for a request
+  # that a user started in the app (sysextd rejects a second request for the
+  # same extension while the first is in progress, OSSystemExtensionErrorDomain 4),
+  # then submit one.
   local REQUEST_WAIT=0
   until sysext_listed "$NEW_SHORT_VERSION" "$NEW_BUILD_VERSION" || (( REQUEST_WAIT >= 10 )); do
     sleep 1
     REQUEST_WAIT=$(( REQUEST_WAIT + 1 ))
   done
   if sysext_listed "$NEW_SHORT_VERSION" "$NEW_BUILD_VERSION"; then
-    echo "  ✓ The app requested activation of ${NEW_SHORT_VERSION} (${NEW_BUILD_VERSION})"
+    echo "  ✓ An activation request for ${NEW_SHORT_VERSION} (${NEW_BUILD_VERSION})"
   # argv[0] "ojd" selects the command line in the app executable.
   elif (exec -a ojd "$OJD_APP_CLI" transport-extension activate); then
     echo "  ✓ Sysext activation request submitted"
