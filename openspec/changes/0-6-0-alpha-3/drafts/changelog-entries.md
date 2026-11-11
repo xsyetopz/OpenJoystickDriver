@@ -26,6 +26,8 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - The Flydigi Vader 4 Pro in Bluetooth XInput mode (`045E:02E0`) has a `HIDReportLayout` record with two layouts chosen by report ID: report 1 reads the sticks as unsigned 16-bit values centred at 0x7FFF, 10-bit triggers, the hat, face, shoulder and stick-click buttons, and report 2 reads Home, so the sticks no longer stay in one quadrant and Home registers ([#35](https://github.com/xsyetopz/OpenJoystickDriver/issues/35)). `DeviceManager` HID admission binds the bundled record through `ProtocolDriverRegistry.classify`. The layout comes from the reporter's captures and pull request #36; not checked on hardware of ours. (8.11)
 - The Flydigi Vader 4 Pro / Apex 4 dongle record `04B4:2412` declares rumble: output report 5, `05 0F <left> <right>`, resent every 100 ms, stopped by the same frame with zero magnitudes. The source is the reporter's hardware test in issue #35 (motors driven directly); not checked on hardware of ours. (8.11)
 
+- The ZD Ultimate Legend wired pad's `413D:2104` report decoding is tested against the captured bytes ([#22](https://github.com/xsyetopz/OpenJoystickDriver/issues/22)). Data by `lunarephemera` (wired captures, 16 of 16 controls) and `127841352` (OUT `0x02` rumble). The dongle `413D:2204` gets no record yet: `gornobatov`'s data holds its descriptors and kernel log but not its XInput interface protocol, endpoints or an input report. Not checked on hardware. (8.13)
+
 ## Changed
 
 - **BREAKING:** OJD is licensed under MPL-2.0 instead of PolyForm Noncommercial 1.0.0; commercial use needs no separate license.
