@@ -157,6 +157,33 @@ extension VirtualOutputTests {
     await fixture.tearDown()
   }
 
+  @Test
+  func statusNamesTheProfileInForceForEachController() async throws {
+    let id = LogicalControllerID(vendorID: 1, productID: 2)
+    let fixture = try await profileOverrideServer([id])
+    let profile = RemappingProfile(
+      name: "Everywhere",
+      device: RemappingDeviceScope(vendorID: 1, productID: 2),
+      applicationScope: .global,
+      bindings: []
+    )
+    let library = fixture.server.remappingProfileLibrary
+    try await library.create(profile)
+    try await library.activate(profileID: profile.id)
+
+    let other = LogicalControllerID(vendorID: 5, productID: 6)
+    let devices = await fixture.server.describingVirtualHIDProfiles([
+      (id, description(id)), (other, description(other)),
+    ])
+
+    #expect(
+      devices.map(\.profileInForce) == [
+        ApplicationServiceProfileInForce(name: "Everywhere", appID: nil), nil,
+      ]
+    )
+    await fixture.tearDown()
+  }
+
   @Test(arguments: ControllerOwnershipObservation.allCases)
   func statusDropsAStaleSelectionExactlyWhenTheSystemServesTheController(
     ownership: ControllerOwnershipObservation

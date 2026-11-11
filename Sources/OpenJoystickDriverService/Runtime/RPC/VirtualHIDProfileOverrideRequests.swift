@@ -298,6 +298,7 @@ extension ApplicationServiceServer {
     for (identifier, device) in controllers {
       var described = device
       described.paused = await remappingRouter.isPaused(identifier)
+      described.profileInForce = await remappingRouter.profileInForce(for: identifier)
       let unitOverride = device.portKey.flatMap {
         virtualHIDProfileOverrides.storedOverride(
           vendorID: device.vendorID,

@@ -87,6 +87,9 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   /// Whether a `Pause` has the controller pass through unmapped; set by the service when it
   /// reports status.
   public var paused = false
+  /// The profile in force for the controller and the app that selected it; nil when no profile
+  /// is active for it. Set by the service when it reports status.
+  public var profileInForce: ApplicationServiceProfileInForce?
 
   /// Creates a new ApplicationServiceDeviceDescription.
   public init(
@@ -225,6 +228,10 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
       forKey: .publication
     )
     self.paused = try container.decode(Bool.self, forKey: .paused)
+    self.profileInForce = try container.decodeIfPresent(
+      ApplicationServiceProfileInForce.self,
+      forKey: .profileInForce
+    )
   }
 
   /// The keys of the JSON encoding.
@@ -297,6 +304,8 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
     case publication
     /// The `paused` key.
     case paused
+    /// The `profileInForce` key.
+    case profileInForce
   }
 }
 

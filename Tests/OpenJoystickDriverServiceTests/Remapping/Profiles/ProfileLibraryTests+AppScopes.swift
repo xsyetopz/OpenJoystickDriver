@@ -45,4 +45,34 @@ extension ProfileLibraryTests {
       #expect(other == global)
     }
   }
+
+  @Test
+  func theSelectionNamesTheAppThatChoseTheProfile() async throws {
+    try await withLibrary { library, _ in
+      let global = makeProfile(name: "Everywhere")
+      let scoped = makeAppProfile(name: "Second", appIDs: ["com.example.First", "com.example.Second"])
+      for profile in [scoped, global] {
+        try await library.create(profile)
+        try await library.activate(profileID: profile.id)
+      }
+
+      let byApp = try await library.activeProfileSelection(
+        vendorID: 1118,
+        productID: 654,
+        unit: nil,
+        frontmostAppID: "com.example.Second"
+      )
+      #expect(byApp?.profile == scoped)
+      #expect(byApp?.appID == "com.example.Second")
+
+      let general = try await library.activeProfileSelection(
+        vendorID: 1118,
+        productID: 654,
+        unit: nil,
+        frontmostAppID: "com.example.Third"
+      )
+      #expect(general?.profile == global)
+      #expect(general?.appID == nil)
+    }
+  }
 }

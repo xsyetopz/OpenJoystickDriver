@@ -214,6 +214,10 @@
 "ui.controllers.paused.label" = "การแมปใหม่";
 /* Value of the pause fact in the Controllers detail, and menu bar menu row under a controller that a Pause assignment holds. */
 "ui.controllers.paused.value" = "หยุดชั่วคราวอยู่";
+/* Label of the fact in the Controllers detail that names the app in front that selected the profile in force. Its value is the name of the app. */
+"ui.controllers.profileSelectedBy.label" = "เลือกโดยแอป";
+/* Note in the menu bar row of a controller that names the app in front that selected the profile in force. %@ is the name of the app. */
+"ui.extra.profileSelectedByApp" = "เลือกโดย %@";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "แสดงเลขประจำเครื่อง";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */

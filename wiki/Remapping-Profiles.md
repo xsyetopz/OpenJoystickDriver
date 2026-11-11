@@ -50,6 +50,8 @@ If no profile is active, OJD passes the controller through to the virtual contro
 
 A **Profile switch** assignment changes the active profile of a controller from a button. For more information, see [Switch profiles, set layers, and pause](Bindings-and-Actions.md#switch-profiles-set-layers-and-pause).
 
+The service reports the profile in force for each controller, and the app in front that selected it when rule 1 chose the profile. The Controllers detail shows the profile in the **Active Profile** row and the app in a **Selected by app** row, and the menu bar row of the controller shows the profile and **Selected by** the name of the app. A profile that rule 2 or 3 chose shows no app. An app that is not installed shows by its bundle identifier.
+
 OJD reads the front app when a controller connects, and when you activate, deactivate, or edit a profile. Whether OJD re-evaluates the choice at the instant you switch apps is not verified.
 
 > [!WARNING]

@@ -88,6 +88,20 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
     await core.engine.isPaused(identifier)
   }
 
+  /// The profile in force for `identifier` and the frontmost app that selected it; nil when no
+  /// profile is active for it or the library cannot be read.
+  func profileInForce(for identifier: LogicalControllerID) async -> ApplicationServiceProfileInForce? {
+    guard
+      let selection = try? await core.library.activeProfileSelection(
+        vendorID: identifier.model.vendorID,
+        productID: identifier.model.productID,
+        unit: ControllerPortKey.of(identifier, installationKey: core.installationKey)?.rawValue,
+        frontmostAppID: core.foregroundApplication.frontmostAppID()
+      )
+    else { return nil }
+    return ApplicationServiceProfileInForce(name: selection.profile.name, appID: selection.appID)
+  }
+
   /// Only a remapping route consumes a native controller's input; virtual gamepad output never
   /// publishes for it.
   func wantsObservedInput(from identifier: LogicalControllerID) -> Bool {

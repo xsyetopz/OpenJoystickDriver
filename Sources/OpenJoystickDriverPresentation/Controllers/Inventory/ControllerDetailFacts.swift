@@ -5,6 +5,8 @@ import OpenJoystickDriverKit
 struct ControllerFact: Equatable, Identifiable {
   /// What a fact says, which names the row.
   enum Kind: Hashable {
+    /// The app in front that selected the profile in force.
+    case profileSelectedBy
     /// Whether a virtual device publishes the controller.
     case publication
     /// Whether a `Pause` has the controller pass through unmapped.
@@ -97,13 +99,26 @@ enum ControllerDetailFacts {
   /// Returns the facts every user wants: what is published and how, the controller's state, and
   /// what it can do.
   ///
-  /// - Parameter device: The controller.
+  /// - Parameters:
+  ///   - device: The controller.
+  ///   - appName: The name of the app with a bundle identifier.
   /// - Returns: The facts every user wants: what is published and how, the controller's state, and
   ///   what it can do.
   static func general(
-    for device: ApplicationServiceDeviceDescription
+    for device: ApplicationServiceDeviceDescription,
+    appName: (String) -> String = { $0 }
   ) -> [ControllerFact] {
     let output = device.physicalOutputCapabilities
+    let selectedBy =
+      device.profileInForce?.appID.map {
+        [
+          fact(
+            .profileSelectedBy,
+            "ui.controllers.profileSelectedBy.label",
+            .text(appName($0))
+          )
+        ]
+      } ?? []
     let paused =
       device.paused
       ? [
@@ -185,7 +200,7 @@ enum ControllerDetailFacts {
           .text(OJDLocalized.string("status.controllerAlsoListedBySystem"))
         )
       ] : []
-    return paused + always + input + held + listed
+    return selectedBy + paused + always + input + held + listed
       + (power + wiiRemote + capabilities).filter { $0.value != .none }
   }
 

@@ -69,6 +69,26 @@ struct ControllerDetailFactsTests {
   }
 
   @Test
+  func theAppThatSelectedTheProfileIsAFactShownByItsName() {
+    var selected = device()
+    selected.profileInForce = ApplicationServiceProfileInForce(
+      name: "Racing",
+      appID: "com.example.Racer"
+    )
+    var everywhere = device()
+    everywhere.profileInForce = ApplicationServiceProfileInForce(name: "Everywhere", appID: nil)
+
+    let facts = ControllerDetailFacts.general(for: selected, appName: { _ in "Racer" })
+
+    #expect(Self.value(.profileSelectedBy, in: facts) == .text("Racer"))
+    #expect(facts.first?.kind == .profileSelectedBy)
+    #expect(Self.value(.profileSelectedBy, in: ControllerDetailFacts.general(for: device())) == nil)
+    #expect(
+      Self.value(.profileSelectedBy, in: ControllerDetailFacts.general(for: everywhere)) == nil
+    )
+  }
+
+  @Test
   func aWiiRemoteListsItsModeExtensionAndMotionPlus() {
     let status = WiiRemoteStatus(
       reportMode: 0x35,

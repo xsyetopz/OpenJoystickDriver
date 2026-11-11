@@ -92,6 +92,23 @@ struct StatusItemMenuTests {
   }
 
   @Test
+  func controllerRowNamesTheProfileInForceAndTheAppThatSelectedIt() {
+    var selected = Self.controller("a", battery: "80%", profiles: [Self.profile("Menu", active: true)])
+    selected.profileInForce = "Racing"
+    selected.profileSelectedBy = "Racer"
+    var everywhere = Self.controller("b")
+    everywhere.profileInForce = "Everywhere"
+    let menu = Self.rows(Self.entries([selected, everywhere]))
+    #expect(
+      menu[0].details == [
+        .verbatim("80%"), .verbatim("Racing"),
+        .formatted("ui.extra.profileSelectedByApp", .verbatim("Racer")),
+      ]
+    )
+    #expect(menu[1].details == [.verbatim("Everywhere")])
+  }
+
+  @Test
   func suspendedControllerRowSaysPaused() {
     let menu = Self.rows(Self.entries([Self.controller("a", isSuspended: true)]))
     #expect(menu[0].details == [.key("ui.controllers.paused.value")])

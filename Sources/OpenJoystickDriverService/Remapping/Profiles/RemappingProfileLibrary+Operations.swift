@@ -284,6 +284,23 @@ extension RemappingProfileLibrary {
     unit: String?,
     frontmostAppID: String?
   ) throws -> RemappingProfile? {
+    try activeProfileSelection(
+      vendorID: vendorID,
+      productID: productID,
+      unit: unit,
+      frontmostAppID: frontmostAppID
+    )?.profile
+  }
+
+  /// The profile that drives one controller and the frontmost app that selected it.
+  ///
+  /// The app is nil unless the profile won as the app-scoped match for `frontmostAppID`.
+  func activeProfileSelection(
+    vendorID: UInt16,
+    productID: UInt16,
+    unit: String?,
+    frontmostAppID: String?
+  ) throws -> (profile: RemappingProfile, appID: String?)? {
     let loaded = try loadIfNeeded()
     try requireUsableLibrary()
     let model = RemappingProfileModel(vendorID: vendorID, productID: productID)
@@ -309,13 +326,13 @@ extension RemappingProfileLibrary {
         }
       )
     {
-      return profile
+      return (profile, appID)
     }
 
     // Fall back to the last-activated global-scope profile
-    if let profile = preferred(candidates.filter { $0.scope == .global }) { return profile }
+    if let profile = preferred(candidates.filter { $0.scope == .global }) { return (profile, nil) }
 
     // Fall back to the last active profile for this controller
-    return preferred(candidates)
+    return preferred(candidates).map { ($0, nil) }
   }
 }

@@ -136,6 +136,10 @@ struct StatusItemState: Equatable {
     var isPaused = false
     /// The battery level as the service reports it, or nil when the controller reports none.
     var battery: String?
+    /// The name of the profile in force as the service reports it; nil when it reports none.
+    var profileInForce: String?
+    /// The name of the app in front that selected the profile in force; nil when none did.
+    var profileSelectedBy: String?
     /// The profiles that apply to this controller (same model, and its unit when a profile names
     /// one). ``Profile/isActive`` tells whether the profile is the one active for it.
     var profiles: [Profile] = []
@@ -227,7 +231,12 @@ enum StatusItemModel {
     return state.controllers.map { controller in
       let details =
         (controller.battery.map { [StatusItemTitle.verbatim($0)] } ?? [])
-        + (controller.profiles.first(where: \.isActive).map { [.verbatim($0.name)] } ?? [])
+        + ((controller.profileInForce ?? controller.profiles.first(where: \.isActive)?.name).map {
+          [.verbatim($0)]
+        } ?? [])
+        + (controller.profileSelectedBy.map {
+          [.formatted("ui.extra.profileSelectedByApp", .verbatim($0))]
+        } ?? [])
         + (controller.isPaused || controller.isSuspended
           ? [.key("ui.controllers.paused.value")] : [])
       return StatusItemEntry(

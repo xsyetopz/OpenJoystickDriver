@@ -28,7 +28,9 @@
         }
         Section {
           activeProfileRow
-          ForEach(ControllerDetailFacts.general(for: device)) { fact in
+          ForEach(
+            ControllerDetailFacts.general(for: device, appName: ProfileAppChoices.appName)
+          ) { fact in
             if fact.kind == .serialNumber {
               SerialNumberRow(label: fact.label, serial: fact.value, visibility: $serialVisibility)
             } else {
@@ -232,7 +234,10 @@
           OJDLocalized.string("status.none")
         )
       case .profile(let name):
-        OJDLabeledValue(OJDLocalized.string("ui.controllers.activeProfile"), name)
+        OJDLabeledValue(
+          OJDLocalized.string("ui.controllers.activeProfile"),
+          device.profileInForce?.name ?? name
+        )
       case .unavailable(let message):
         profileFailureRow(
           label: OJDLocalized.string(
