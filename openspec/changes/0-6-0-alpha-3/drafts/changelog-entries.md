@@ -16,6 +16,7 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - The wiki page [Support Ladder](wiki/Support-Ladder.md) lists the five ways to support a controller (nothing, a patch, a record, a generator script, source) with the command for each and a complete patch and record; `llms.txt` and `llms-full.txt` list the same steps. (9.10)
 - The Xbox Elite Series 1 (`045E:02E3`) record uses its interface 0 endpoints, interrupt IN `0x81` and OUT `0x01`, as the `045E:02D1` record does. The GIP defaults `0x82` and `0x02` are isochronous endpoints of interface 1 on this controller. Hardware confirmation is pending. Thanks to Kurtis Simpson (#56). (8.3)
 - The Turtle Beach / PDP Xbox Rematch Advanced Wired Controller (`10F5:711E`) has an `XboxGIP` record with interrupt IN `0x81`, OUT `0x02` and `SetConfiguration1BeforeClaim`. The contributor's run on macOS 26.6.2 decoded the face buttons, D-pad, sticks and triggers; rumble and the player indicator are not claimed. Thanks to phil-bbs (#57). (8.8)
+- The PowerA XBX Spectra Enhanced Wired Controller (`20D6:4002`) has an authored `XboxGIP` record, so the model no longer depends on the Linux import. Thanks to Anonim0_Venezian0 (#50). (8.9)
 
 ## Changed
 
