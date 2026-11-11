@@ -3728,6 +3728,8 @@
 "error.E5007.subcommandPlan.dataCount" = "%1$@, session.subcommands.requests[].data: una richiesta di sottocomando deve indicare 1...16 byte di dati. Correzione: dai a data 1...16 byte.";
 /* Error E5007, shown when the subcommands of a record fail: an SPI read length is outside 1...29. %1$@ is the file. */
 "error.E5007.subcommandPlan.spiLength" = "%1$@, session.subcommands.requests[].spiRead.length: la lunghezza di una lettura SPI deve essere 1...29. Correzione: imposta length su 1...29.";
+/* Error E5007, shown when the subcommands of a record fail: a subcommand request names both data and spiRead, or neither. %1$@ is the file. */
+"error.E5007.subcommandPlan.dataOrSpiRead" = "%1$@, session.subcommands.requests[]: una richiesta di sottocomando deve indicare esattamente uno tra data e spiRead. Correzione: mantieni data o spiRead e rimuovi l’altro.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: ogni voce deve contenere un id e solo id, protocol, match, interface, session o idle. Correzione: assegna un id a ogni voce ed elimina ogni altra chiave.";

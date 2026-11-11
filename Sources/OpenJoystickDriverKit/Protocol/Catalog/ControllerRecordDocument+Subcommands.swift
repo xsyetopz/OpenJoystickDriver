@@ -15,7 +15,7 @@ extension SubcommandPlan: Decodable {
       )
     } catch let problem as ControllerRecordProblem {
       throw DecodingError.dataCorrupted(
-        .init(codingPath: decoder.codingPath, debugDescription: problem.description)
+        problem.context(at: decoder.codingPath)
       )
     }
   }
@@ -46,7 +46,7 @@ extension PlayerIndicatorSubcommand: Decodable {
       )
     } catch let problem as ControllerRecordProblem {
       throw DecodingError.dataCorrupted(
-        .init(codingPath: decoder.codingPath, debugDescription: problem.description)
+        problem.context(at: decoder.codingPath)
       )
     }
   }
@@ -64,10 +64,7 @@ extension SubcommandRequest: Decodable {
         data = try HexBytes.decode(container, for: "data", what: "subcommand request data")
       } catch let problem as ControllerRecordProblem {
         throw DecodingError.dataCorrupted(
-          .init(
-            codingPath: decoder.codingPath + [DocumentKey("data")],
-            debugDescription: problem.description
-          )
+          problem.context(at: decoder.codingPath + [DocumentKey("data")])
         )
       }
     }
@@ -79,12 +76,13 @@ extension SubcommandRequest: Decodable {
       default:
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.subcommandPlan.dataOrSpiRead",
           "a subcommand request names exactly one of data and spiRead"
         )
       }
     } catch let problem as ControllerRecordProblem {
       throw DecodingError.dataCorrupted(
-        .init(codingPath: decoder.codingPath, debugDescription: problem.description)
+        problem.context(at: decoder.codingPath)
       )
     }
   }

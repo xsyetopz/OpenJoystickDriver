@@ -4266,6 +4266,8 @@
 "error.E5007.subcommandPlan.dataCount" = "%1$@, session.subcommands.requests[].data: सबकमांड अनुरोध में 1...16 डेटा बाइट होने चाहिए। समाधान: data को 1...16 बाइट दें।";
 /* Error E5007, shown when the subcommands of a record fail: an SPI read length is outside 1...29. %1$@ is the file. */
 "error.E5007.subcommandPlan.spiLength" = "%1$@, session.subcommands.requests[].spiRead.length: SPI रीड की लंबाई 1...29 होनी चाहिए। समाधान: length को 1...29 रखें।";
+/* Error E5007, shown when the subcommands of a record fail: a subcommand request names both data and spiRead, or neither. %1$@ is the file. */
+"error.E5007.subcommandPlan.dataOrSpiRead" = "%1$@, session.subcommands.requests[]: सबकमांड अनुरोध में data और spiRead में से ठीक एक होना चाहिए। समाधान: data या spiRead में से एक रखें और दूसरा हटा दें।";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: हर प्रविष्टि में id होना चाहिए और केवल id, protocol, match, interface, session या idle हो सकते हैं। समाधान: हर प्रविष्टि को id दें और बाकी कुंजियाँ हटाएँ।";

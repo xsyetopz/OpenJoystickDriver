@@ -3728,6 +3728,8 @@
 "error.E5007.subcommandPlan.dataCount" = "%1$@, session.subcommands.requests[].data: une requête de sous-commande doit nommer 1...16 octets de données. Correction : donnez 1...16 octets à data.";
 /* Error E5007, shown when the subcommands of a record fail: an SPI read length is outside 1...29. %1$@ is the file. */
 "error.E5007.subcommandPlan.spiLength" = "%1$@, session.subcommands.requests[].spiRead.length: la longueur d’une lecture SPI doit être de 1...29. Correction : donnez à length une valeur de 1...29.";
+/* Error E5007, shown when the subcommands of a record fail: a subcommand request names both data and spiRead, or neither. %1$@ is the file. */
+"error.E5007.subcommandPlan.dataOrSpiRead" = "%1$@, session.subcommands.requests[]: une requête de sous-commande doit nommer exactement l’un de data et spiRead. Correction : gardez data ou spiRead et retirez l’autre.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes : chaque entrée doit contenir un id et seulement id, protocol, match, interface, session ou idle. Correction : donnez un id à chaque entrée et supprimez toute autre clé.";

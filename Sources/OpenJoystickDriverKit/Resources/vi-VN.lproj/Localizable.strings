@@ -4266,6 +4266,8 @@
 "error.E5007.subcommandPlan.dataCount" = "%1$@, session.subcommands.requests[].data: một yêu cầu lệnh con phải nêu 1...16 byte dữ liệu. Cách sửa: cho data 1...16 byte.";
 /* Error E5007, shown when the subcommands of a record fail: an SPI read length is outside 1...29. %1$@ is the file. */
 "error.E5007.subcommandPlan.spiLength" = "%1$@, session.subcommands.requests[].spiRead.length: độ dài một lần đọc SPI phải là 1...29. Cách sửa: đặt length thành 1...29.";
+/* Error E5007, shown when the subcommands of a record fail: a subcommand request names both data and spiRead, or neither. %1$@ is the file. */
+"error.E5007.subcommandPlan.dataOrSpiRead" = "%1$@, session.subcommands.requests[]: một yêu cầu lệnh con phải nêu đúng một trong data và spiRead. Cách sửa: giữ data hoặc spiRead và xóa cái còn lại.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: mỗi mục phải có id và chỉ có id, protocol, match, interface, session hoặc idle. Cách sửa: đặt id cho mỗi mục và xóa các khóa khác.";
