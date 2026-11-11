@@ -25,6 +25,11 @@
             Text(device.name).tag(device.sessionToken.rawValue)
           }
         }
+        .disabled(model.controllerPickerUnavailableReason != nil)
+        .help(model.controllerPickerUnavailableReason ?? "")
+        if let reason = model.controllerPickerUnavailableReason {
+          Text(reason).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+        }
         if let device = model.selectedDevice { controllerFacts(device) }
         Button(OJDLocalized.string("action.refresh"), action: model.requestRefresh)
           .disabled(model.isCapturing)

@@ -277,6 +277,24 @@ struct DeveloperToolsTests {
 
   @Test
   @MainActor
+  func theControllerPickerIsUnavailableWithAReasonWhileItHasNoOption() async {
+    let empty = DeveloperToolsViewModel(
+      gateway: GatewayStub(statusPayload: statusPayload(devices: []))
+    )
+    await empty.refresh()
+    #expect(
+      empty.controllerPickerUnavailableReason == OJDLocalized.string("ui.developer.noControllers")
+    )
+
+    let one = DeveloperToolsViewModel(
+      gateway: GatewayStub(statusPayload: statusPayload(device: device()))
+    )
+    await one.refresh()
+    #expect(one.controllerPickerUnavailableReason == nil)
+  }
+
+  @Test
+  @MainActor
   func staleSnapshotCannotReplaceTheSelectedController() async throws {
     let firstDevice = device(sessionToken: "controller-1")
     let secondDevice = device(sessionToken: "controller-2")
