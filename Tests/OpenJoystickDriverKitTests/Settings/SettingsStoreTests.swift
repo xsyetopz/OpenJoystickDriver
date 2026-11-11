@@ -54,6 +54,28 @@ struct SettingsStoreTests {
   }
 
   @Test
+  func theInterfaceLevelIsSimpleByDefault() throws {
+    #expect(try store.interfaceLevel() == .simple)
+    try write(header(#", "showInDock": true"#), to: .applicationData)
+    #expect(try store.interfaceLevel() == .simple)
+  }
+
+  @Test(arguments: InterfaceLevel.allCases)
+  func theInterfaceLevelRoundTripsThroughTheUserFile(level: InterfaceLevel) throws {
+    try store.setInterfaceLevel(level)
+
+    #expect(try store.interfaceLevel() == level)
+    #expect(try store.load().interfaceLevel == level)
+  }
+
+  @Test
+  func theInterfaceLevelIsReadFromTheFileByItsName() throws {
+    try write(header(#", "interfaceLevel": "Advanced""#), to: .applicationData)
+
+    #expect(try store.interfaceLevel() == .advanced)
+  }
+
+  @Test
   func theDockIconIsOffByDefault() throws { #expect(try !store.value(of: .showInDock)) }
 
   @Test
@@ -201,6 +223,8 @@ struct SettingsStoreTests {
     #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "mystery": true}"#,
     #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "notify": {"mystery": 1}}"#,
     #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "developerTools": "yes"}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "interfaceLevel": "Pro"}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "interfaceLevel": 1}"#,
   ])
   func aDamagedFileIsAnErrorNotAnEmptyLayer(json: String) throws {
     try write(json, to: .applicationData)

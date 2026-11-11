@@ -69,6 +69,24 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
+  func aSettingsDocumentGainsTheAdvancedInterfaceLevel() throws {
+    let text = MigrationFixtures.document(
+      MigrationFixtures.alphaTwo,
+      "Settings",
+      #""showInDock": true"#
+    )
+    let converted = try convert(text, .settings)
+    #expect(converted["interfaceLevel"] == .string("Advanced"))
+    #expect(converted["showInDock"] == .bool(true))
+  }
+
+  @Test
+  func otherKindsGainNoInterfaceLevel() throws {
+    let converted = try convert(MigrationFixtures.nullPatch, .controllerPatch)
+    #expect(converted["interfaceLevel"] == nil)
+  }
+
+  @Test
   func aNullInAListHasNoMapping() {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,

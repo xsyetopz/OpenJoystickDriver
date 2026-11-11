@@ -98,6 +98,11 @@
       "type": "boolean",
       "default": false
     },
+    "interfaceLevel": {
+      "description": "How much of the interface shows: the reduced Simple interface or the full Advanced one.",
+      "enum": ["Simple", "Advanced"],
+      "default": "Simple"
+    },
     "lastShownChangelogVersion": {
       "description": "The version whose changelog section the app last showed when the main window opened after an update.",
       "type": "string",

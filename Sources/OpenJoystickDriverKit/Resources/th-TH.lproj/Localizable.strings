@@ -5073,5 +5073,7 @@
 "ui.settings.general.pauseShortcutTaken" = "แอปอื่นใช้ทางลัดนี้อยู่แล้ว โปรดบันทึกทางลัดอื่น";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
 "cli.setting.set.badShortcut" = "'%1$@' ไม่ใช่ทางลัด ให้ใช้ปุ่มตัวปรับเปลี่ยนและปุ่มหนึ่งปุ่มที่เชื่อมด้วย + เช่น control+option+P หรือ none";
+/* Error of 'ojd setting set' when the value is not an interface level. %1$@ is the text the user gave. Simple and Advanced stay as written. */
+"cli.setting.set.badInterfaceLevel" = "'%1$@' ไม่ใช่ระดับอินเทอร์เฟซ ให้ใช้ Simple หรือ Advanced";
 /* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
 "ui.whatsNew.title" = "มีอะไรใหม่ใน %@";

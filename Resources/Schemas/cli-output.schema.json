@@ -3831,7 +3831,7 @@
               "$ref": "#/$defs/sharedSettingKey"
             },
             {
-              "const": "pauseShortcut"
+              "enum": ["pauseShortcut", "interfaceLevel"]
             }
           ]
         },

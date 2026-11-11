@@ -5073,5 +5073,7 @@
 "ui.settings.general.pauseShortcutTaken" = "다른 앱이 이미 이 단축키를 사용 중입니다. 다른 단축키를 기록하세요.";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
 "cli.setting.set.badShortcut" = "'%1$@'은(는) 단축키가 아닙니다. control+option+P처럼 +로 연결한 보조 키와 키를 사용하거나 none을 사용하세요.";
+/* Error of 'ojd setting set' when the value is not an interface level. %1$@ is the text the user gave. Simple and Advanced stay as written. */
+"cli.setting.set.badInterfaceLevel" = "'%1$@'은(는) 인터페이스 수준이 아닙니다. Simple 또는 Advanced를 사용하세요.";
 /* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
 "ui.whatsNew.title" = "%@의 새로운 기능";

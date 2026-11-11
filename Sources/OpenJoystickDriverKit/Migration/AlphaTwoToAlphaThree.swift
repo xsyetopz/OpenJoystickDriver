@@ -6,6 +6,8 @@ import Foundation
 /// leaves its key out. A patch that sets `modes` also removes `modes`, so it keeps replacing the
 /// record's modes. `notes` and `rationale` are not keys of `v1alpha3`. The `appID` of a
 /// profile's application scope becomes `appIDs`, a list of one.
+/// A settings document gains `"interfaceLevel": "Advanced"`, so a user of an earlier version keeps
+/// the full interface.
 /// A record's `idle`, and a patch's, becomes `"idle": "NoControllerLinked"` on the `default` mode.
 enum AlphaTwoToAlphaThree {
   /// The version the step reads.
@@ -81,6 +83,9 @@ enum AlphaTwoToAlphaThree {
           .init(key: member.key, value: try stripped(member.value, path: member.key))
         )
       }
+    }
+    if kind == .settings {
+      converted.append(.init(key: "interfaceLevel", value: .string("Advanced")))
     }
     if !removed.isEmpty {
       converted.append(.init(key: "remove", value: .array(removed.map { .string($0) })))

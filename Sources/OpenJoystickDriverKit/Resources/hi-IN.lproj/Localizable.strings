@@ -5073,5 +5073,7 @@
 "ui.settings.general.pauseShortcutTaken" = "यह शॉर्टकट पहले से किसी दूसरे ऐप में इस्तेमाल हो रहा है। कोई दूसरा शॉर्टकट रिकॉर्ड करें।";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
 "cli.setting.set.badShortcut" = "'%1$@' शॉर्टकट नहीं है। + से जुड़े मॉडिफ़ायर और एक कुंजी इस्तेमाल करें, जैसे control+option+P, या none।";
+/* Error of 'ojd setting set' when the value is not an interface level. %1$@ is the text the user gave. Simple and Advanced stay as written. */
+"cli.setting.set.badInterfaceLevel" = "'%1$@' इंटरफ़ेस स्तर नहीं है। Simple या Advanced इस्तेमाल करें।";
 /* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
 "ui.whatsNew.title" = "%@ में नया क्या है";

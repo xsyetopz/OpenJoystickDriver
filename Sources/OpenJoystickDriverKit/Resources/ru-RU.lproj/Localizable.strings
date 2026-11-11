@@ -5073,5 +5073,7 @@
 "ui.settings.general.pauseShortcutTaken" = "Это сочетание уже использует другое приложение. Запишите другое.";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
 "cli.setting.set.badShortcut" = "«%1$@» не является сочетанием клавиш. Укажите модификаторы и клавишу через +, например control+option+P, или none.";
+/* Error of 'ojd setting set' when the value is not an interface level. %1$@ is the text the user gave. Simple and Advanced stay as written. */
+"cli.setting.set.badInterfaceLevel" = "«%1$@» не является уровнем интерфейса. Укажите Simple или Advanced.";
 /* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
 "ui.whatsNew.title" = "Что нового в %@";

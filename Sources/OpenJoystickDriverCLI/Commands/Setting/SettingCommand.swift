@@ -62,6 +62,28 @@ enum SettingCatalog {
   /// The name of the pause shortcut, the one setting that holds text and not true or false.
   static let pauseShortcutName = "pauseShortcut"
 
+  /// The name of the interface level, the other setting that holds text.
+  static let interfaceLevelName = "interfaceLevel"
+
+  /// Parses `text` as an interface level.
+  ///
+  /// - Throws: ``ValidationError`` when `text` is neither `Simple` nor `Advanced`.
+  static func interfaceLevel(_ text: String) throws -> InterfaceLevel {
+    guard let level = InterfaceLevel(rawValue: text) else {
+      throw ValidationError(CLILocalized.format("cli.setting.set.badInterfaceLevel", text))
+    }
+    return level
+  }
+
+  /// Prints `level` as `key` and `value` JSON, or as the text alone.
+  static func printInterfaceLevel(_ level: InterfaceLevel) throws {
+    switch CLIContext.current.format {
+    case .json:
+      try CLIOutput.json(PauseShortcutResult(key: interfaceLevelName, value: level.rawValue))
+    case .plain, .human: CLIOutput.stdout(level.rawValue)
+    }
+  }
+
   /// The text that clears the pause shortcut.
   static let noShortcut = "none"
 
@@ -72,14 +94,15 @@ enum SettingCatalog {
 
   /// The names of every setting, as shown in help and error text.
   static var keyNames: String {
-    (ApplicationSettingKey.allCases.map(\.rawValue) + [pauseShortcutName]).joined(separator: ", ")
+    (ApplicationSettingKey.allCases.map(\.rawValue) + [interfaceLevelName, pauseShortcutName])
+      .joined(separator: ", ")
   }
 
   /// Checks that `name` names a setting.
   ///
   /// - Throws: ``ValidationError`` when no setting has that name.
   static func validate(name: String) throws {
-    if name != pauseShortcutName { _ = try key(name) }
+    if name != pauseShortcutName, name != interfaceLevelName { _ = try key(name) }
   }
 
   /// Parses `text` as the pause shortcut, or `none` for no shortcut.
@@ -245,6 +268,10 @@ struct SettingGetCommand: AsyncParsableCommand {
         try SettingCatalog.printPauseShortcut(SettingCatalog.store.pauseShortcut())
         return
       }
+      if key == SettingCatalog.interfaceLevelName {
+        try SettingCatalog.printInterfaceLevel(SettingCatalog.store.interfaceLevel())
+        return
+      }
       let setting = try SettingCatalog.key(key)
       let value = try await SettingCatalog.read().value(of: setting) ?? setting.defaultValue
       try SettingResult.print(setting, value: value)
@@ -289,6 +316,8 @@ struct SettingSetCommand: AsyncParsableCommand {
   func validate() throws {
     if key == SettingCatalog.pauseShortcutName {
       _ = try SettingCatalog.pauseShortcut(value)
+    } else if key == SettingCatalog.interfaceLevelName {
+      _ = try SettingCatalog.interfaceLevel(value)
     } else {
       _ = try SettingCatalog.value(value, for: SettingCatalog.key(key))
     }
@@ -301,6 +330,12 @@ struct SettingSetCommand: AsyncParsableCommand {
         let shortcut = try SettingCatalog.pauseShortcut(value)
         try SettingCatalog.store.setPauseShortcut(shortcut)
         try SettingCatalog.printPauseShortcut(shortcut)
+        return
+      }
+      if key == SettingCatalog.interfaceLevelName {
+        let level = try SettingCatalog.interfaceLevel(value)
+        try SettingCatalog.store.setInterfaceLevel(level)
+        try SettingCatalog.printInterfaceLevel(level)
         return
       }
       let setting = try SettingCatalog.key(key)

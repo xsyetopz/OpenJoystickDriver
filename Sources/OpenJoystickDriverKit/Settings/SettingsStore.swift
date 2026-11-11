@@ -118,6 +118,16 @@ public struct SettingsStore: Sendable {
   /// Whether the user turned launch at login off, so the app must not register itself again.
   public func launchAtLoginOptOut() throws -> Bool { try load().launchAtLoginOptOut ?? false }
 
+  /// The interface level after the user file and the built-in default apply.
+  public func interfaceLevel() throws -> InterfaceLevel {
+    try load().interfaceLevel ?? .default
+  }
+
+  /// Stores the interface level in the user file.
+  public func setInterfaceLevel(_ level: InterfaceLevel) throws {
+    try update { $0.interfaceLevel = level }
+  }
+
   /// The pause shortcut, or nil while none is set.
   public func pauseShortcut() throws -> PauseShortcut? { try load().pauseShortcut }
 

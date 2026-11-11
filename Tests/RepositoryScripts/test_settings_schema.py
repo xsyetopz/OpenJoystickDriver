@@ -28,6 +28,13 @@ class SettingsSchemaTests(unittest.TestCase):
         self.assertTrue(self.valid(showInMenuBar=False, showInDock=True))
         self.assertTrue(self.valid(showInDock=False))
 
+    def test_the_interface_level_is_simple_or_advanced(self) -> None:
+        self.assertTrue(self.valid(interfaceLevel="Simple"))
+        self.assertTrue(self.valid(interfaceLevel="Advanced"))
+        for other in ("Expert", "simple", "", True, None):
+            with self.subTest(other=other):
+                self.assertFalse(self.valid(interfaceLevel=other))
+
 
 if __name__ == "__main__":
     unittest.main()
