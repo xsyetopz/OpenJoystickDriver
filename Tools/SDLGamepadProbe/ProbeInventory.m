@@ -7,15 +7,17 @@
 #include <stdio.h>
 #include <string.h>
 
-static const char *const OJDGUIDs[] = {
+static const char *const OJD_GUIDS[] = {
     "0300f88c091200004f4a000008040000",
 };
 
 static const char *display_string(const char *value) { return value ? value : "(null)"; }
 
 static bool is_ojd_guid(const char *guid) {
-    for (size_t index = 0; index < sizeof(OJDGUIDs) / sizeof(OJDGUIDs[0]); index++) {
-        if (strcmp(guid, OJDGUIDs[index]) == 0) return true;
+    for (size_t index = 0; index < sizeof(OJD_GUIDS) / sizeof(OJD_GUIDS[0]); index++) {
+        if (strcmp(guid, OJD_GUIDS[index]) == 0) {
+            return true;
+        }
     }
     return false;
 }
@@ -43,22 +45,28 @@ void OJDProbePrewarmGameController(void) {
 
 SDL_JoystickID *OJDProbeWaitForJoysticks(int wait_seconds, int *joy_count) {
     SDL_JoystickID *joy_ids = enumerate_joysticks(joy_count);
-    if (*joy_count > 0 || wait_seconds <= 0) return joy_ids;
+    if (*joy_count > 0 || wait_seconds <= 0) {
+        return joy_ids;
+    }
 
     SDL_free(joy_ids);
     Uint64 start = SDL_GetTicks();
-    while ((SDL_GetTicks() - start) < (Uint64)(wait_seconds * 1000)) {
+    while ((SDL_GetTicks() - start) < (Uint64)wait_seconds * 1000) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_EVENT_JOYSTICK_ADDED || event.type == SDL_EVENT_GAMEPAD_ADDED) {
                 joy_ids = enumerate_joysticks(joy_count);
-                if (*joy_count > 0) return joy_ids;
+                if (*joy_count > 0) {
+                    return joy_ids;
+                }
                 SDL_free(joy_ids);
             }
         }
         SDL_Delay(50);
         joy_ids = enumerate_joysticks(joy_count);
-        if (*joy_count > 0) return joy_ids;
+        if (*joy_count > 0) {
+            return joy_ids;
+        }
         SDL_free(joy_ids);
     }
     return enumerate_joysticks(joy_count);
@@ -74,7 +82,9 @@ void OJDProbePrintJoystick(SDL_JoystickID id) {
     printf("  joystick_name=%s\n", display_string(SDL_GetJoystickNameForID(id)));
     printf("  is_gamepad=%s gamepad_name=%s\n", SDL_IsGamepad(id) ? "yes" : "no",
            display_string(SDL_GetGamepadNameForID(id)));
-    if (!SDL_IsGamepad(id)) return;
+    if (!SDL_IsGamepad(id)) {
+        return;
+    }
 
     char *mapping = SDL_GetGamepadMappingForID(id);
     printf("  mapping=%s\n", mapping ? mapping : "(null)");
@@ -85,11 +95,13 @@ void OJDProbePrintJoystick(SDL_JoystickID id) {
         return;
     }
     printf("  gamepad_axes:");
-    for (int axis = 0; axis < SDL_GAMEPAD_AXIS_COUNT; axis++)
+    for (int axis = 0; axis < SDL_GAMEPAD_AXIS_COUNT; axis++) {
         printf(" a%d=%d", axis, SDL_GetGamepadAxis(gamepad, (SDL_GamepadAxis)axis));
+    }
     printf("\n  gamepad_buttons:");
-    for (int button = 0; button < SDL_GAMEPAD_BUTTON_COUNT; button++)
-        printf(" b%d=%d", button, SDL_GetGamepadButton(gamepad, (SDL_GamepadButton)button));
+    for (int button = 0; button < SDL_GAMEPAD_BUTTON_COUNT; button++) {
+        printf(" b%d=%d", button, SDL_GetGamepadButton(gamepad, (SDL_GamepadButton)button) ? 1 : 0);
+    }
     printf("\n");
     SDL_CloseGamepad(gamepad);
 }
@@ -101,7 +113,9 @@ int OJDProbeCheckSingleNeutralOJD(SDL_JoystickID *joy_ids, int joy_count) {
         SDL_GUID guid = SDL_GetJoystickGUIDForID(joy_ids[index]);
         char guid_string[64];
         SDL_GUIDToString(guid, guid_string, (int)sizeof(guid_string));
-        if (!is_ojd_guid(guid_string)) continue;
+        if (!is_ojd_guid(guid_string)) {
+            continue;
+        }
         ojd_count++;
         if (!SDL_IsGamepad(joy_ids[index])) {
             printf("EXPECT_FAIL: OJD device is not classified as a gamepad\n");
@@ -132,6 +146,8 @@ int OJDProbeCheckSingleNeutralOJD(SDL_JoystickID *joy_ids, int joy_count) {
         printf("EXPECT_FAIL: found %d OJD gamepad(s), expected 1\n", ojd_count);
         failures++;
     }
-    if (failures == 0) printf("EXPECT_PASS: exactly one neutral OJD gamepad\n");
+    if (failures == 0) {
+        printf("EXPECT_PASS: exactly one neutral OJD gamepad\n");
+    }
     return failures == 0 ? 0 : 3;
 }
