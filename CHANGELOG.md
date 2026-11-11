@@ -6,6 +6,13 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ## [Unreleased]
 
+### Changed
+
+- The app sends the driver extension activation request only after a user action: the banner button, the **Claim** button, `ojd controller claim` for a model that Apple's driver holds, or `ojd transport-extension activate`. Launch, service start and a controller arrival send none.
+- A controller on a model that Apple's driver holds (`045E:02EA`, `045E:0B00`, `045E:0B12`) is listed as served by macOS, with **Claim**, in the Controllers list and in `ojd controller show` (`served-by` and `heldByAppleDriver`). The Microsoft models `045E:02D1`, `045E:02DD`, `045E:02E3` and `045E:0B0A` take the direct route when the extension does not own them.
+- The driver banner shows each state of the request: running with a disabled button, needs approval with a button that opens the approval pane, cancelled, timed out, and failed with the error domain, code and text. It shows only while a connected controller uses the extension route.
+- The wiki heading `extension` is `transport-extension`.
+
 ## [0.6.0-alpha.2] - 2026-11-07
 
 ### Added
