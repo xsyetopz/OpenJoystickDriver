@@ -23,6 +23,15 @@ A built-in description sets no `displayName`; its name is the localized `term.pr
 
 A documented description has no `sessionKeys`, no `presentSessionFields` and no parameters, because those belong to the built-in families that read them (`generalSessionFields`, `sessionFields`, `readParameters`). It declares endpoints, interface signatures, `recordSections`, `defaults.input.layouts`, a rumble template and tuning defaults.
 
+## Where a documented family is loaded from
+
+`ControllerRecordSet.load(userDirectory:)` calls `DocumentedProtocolFamilies.load(besides:)` before it applies any record. It reads, through `DocumentedProtocolFamilies.read(_:package:)`:
+
+- the `.plist` files of the user's `Protocols` folder, beside `Controllers`;
+- the `protocols` list of each installed mod package, from its `Protocols/` folder, in package-name order.
+
+The first definition of a name wins, so a later file with that name is refused. A refused file is listed in `ControllerRecordSet.userFiles` with its E5002 or E5003 reason. `ModPackageStore.validate` runs `read` on each listed file and registers the package's families while it validates the package's Controller files.
+
 ## Where a documented family is read
 
 - `ProtocolClassifier.signatures` adds the interface signatures of every documented description.

@@ -12,11 +12,15 @@ extension ControllerRecordSet {
   /// The bundled catalog with the records and patches of the installed packages applied, then those
   /// of the valid `.plist` files in `directory`.
   ///
+  /// The descriptions of the documented families are loaded first, from the user's `Protocols`
+  /// folder and the installed packages; a description that is refused is listed in ``userFiles``.
+  ///
   /// A missing directory holds no records; one that cannot be read is listed in ``userFiles`` with
   /// its reason. `all.patch.plist` in `directory` is the user's global ``ControllerDefaults``; it is
   /// the first patch of the user layer and is reported in ``defaults`` rather than in
   /// ``userFiles``.
   public static func load(userDirectory directory: URL = userDirectory) -> Self {
+    let protocolFiles = DocumentedProtocolFamilies.load(besides: directory)
     var packaged = packageRecords(in: ModPackageStore.directory(besides: directory))
     var defaults = ControllerDefaults.load(from: ControllerDefaults.file(in: directory))
     let urls: [URL]
@@ -37,7 +41,7 @@ extension ControllerRecordSet {
       )
       return Self(
         records: packaged.records,
-        userFiles: [file] + packaged.files,
+        userFiles: protocolFiles + [file] + packaged.files,
         defaults: defaults
       )
     }
@@ -60,7 +64,7 @@ extension ControllerRecordSet {
     }
     return Self(
       records: records,
-      userFiles: applied.files.filter { $0.url != defaults.url } + packaged.files,
+      userFiles: protocolFiles + applied.files.filter { $0.url != defaults.url } + packaged.files,
       defaults: defaults
     )
   }

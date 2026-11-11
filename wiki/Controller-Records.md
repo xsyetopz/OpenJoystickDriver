@@ -419,6 +419,16 @@ A family's default timings and control set are data in `Resources/Protocols/<fil
 
 Change a default by editing the description: every record of the family follows it, and a record's or patch's own `tuning` still wins. Then run `./Scripts/ojd catalog regenerate --write`, which copies the descriptions into the Kit bundle.
 
+### Define a Family With a Description
+
+A description whose `family` is not a built-in name defines a family of its own, which a record names in `protocol.family` and `ReportLayoutDriver` runs. The family name is UpperCamelCase (`^[A-Z][A-Za-z0-9]*$`), and the file is `FamilyName.plist`. Put the file in `~/Library/Application Support/OpenJoystickDriver/Protocols`, or in the `Protocols` folder of a [mod package](Writing-Controller-Mods.md). OpenJoystickDriver refuses the file when:
+
+- the name is a built-in family, or the file name is not the family name (E5002, E5003);
+- it sets no `displayName`, which is the name that OpenJoystickDriver shows for the family (E5002);
+- it sets no `defaults.input.layouts`, the report layouts that the driver decodes (E5002).
+
+A documented description sets no `sessionKeys`, no parameters and no session fields. When two files define one family, the first wins: your file, then the packages in name order. A refused file is listed as a problem in `ojd record list`.
+
 ### Set a Default for Every Controller
 
 `~/Library/Application Support/OpenJoystickDriver/Controllers/all.patch.plist` sets a `tuning` default for every controller. It is a `ControllerPatch` with `"selector": { "all": true }`, and [`controller-patch.schema.json`](../Resources/Schemas/controller-patch.schema.json) describes it. Only `tuning` may appear in its `patch`.

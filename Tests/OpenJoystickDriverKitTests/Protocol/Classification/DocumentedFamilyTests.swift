@@ -24,11 +24,14 @@ struct DocumentedFamilyTests {
   @Test
   func aDescriptionDocumentBindsAControllerAndDecodesItsReports() throws {
     let name = "VendorAcmeBinding"
-    let description = try ProtocolDescription.decode(
-      Self.description(named: name),
-      fileName: "\(name).plist"
-    )
-    DocumentedProtocolFamilies.register([description], owner: URL(fileURLWithPath: "/\(name)"))
+    let directory = FileManager.default.temporaryDirectory
+      .appendingPathComponent("ojd-documented-\(UUID().uuidString)", isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    let file = directory.appendingPathComponent("\(name).plist")
+    try Self.description(named: name).write(to: file)
+    let documented = try DocumentedProtocolFamilies.read(file)
+    DocumentedProtocolFamilies.register([documented], owner: URL(fileURLWithPath: "/\(name)"))
     let family = try #require(PhysicalProtocolID(rawValue: name))
     #expect(family.displayName == "Acme Pad")
     #expect(!PhysicalProtocolID.allCases.contains(family))
@@ -39,12 +42,10 @@ struct DocumentedFamilyTests {
       "vendorID": Int(model.vendorID), "productID": Int(model.productID),
       "modes": [["id": "default", "protocol": ["family": name]]],
     ])
-    let directory = FileManager.default.temporaryDirectory
-      .appendingPathComponent("ojd-documented-\(UUID().uuidString)", isDirectory: true)
-    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-    defer { try? FileManager.default.removeItem(at: directory) }
-    try record.write(to: directory.appendingPathComponent("1234-ac01.plist"))
-    let set = ControllerRecordSet.load(userDirectory: directory)
+    let records = directory.appendingPathComponent("Controllers", isDirectory: true)
+    try FileManager.default.createDirectory(at: records, withIntermediateDirectories: true)
+    try record.write(to: records.appendingPathComponent("1234-ac01.plist"))
+    let set = ControllerRecordSet.load(userDirectory: records)
     #expect(set.problems.isEmpty)
 
     let device = PhysicalDevice(

@@ -3,8 +3,8 @@ import OpenJoystickDriverTestSupport
 
 @testable import OpenJoystickDriverKit
 
-/// A temporary application-support folder with the user's `Controllers`, `VirtualDevices`, and
-/// `Profiles` folders, the `Packages` store, and a `Staging` folder where packages are built.
+/// A temporary application-support folder with the user's `Controllers`, `VirtualDevices`,
+/// `Profiles`, and `Protocols` folders, the `Packages` store, and a `Staging` folder where packages are built.
 struct ModPackageFixture {
   let root = MacOSDataDirectory().url(for: .temporary).appendingPathComponent(
     "ojd-packages-\(UUID().uuidString)",
@@ -112,6 +112,7 @@ struct ModPackageFixture {
     patches: [(name: String, data: Data)] = [],
     virtualDevices: [(name: String, data: Data)] = [],
     profiles: [(name: String, data: Data)] = [],
+    protocols: [(name: String, data: Data)] = [],
     manifest overrides: [String: Any] = [:]
   ) throws -> URL {
     let folder = root.appendingPathComponent("Staging/\(UUID().uuidString)/\(name)")
@@ -119,6 +120,7 @@ struct ModPackageFixture {
     try write(controllers + patches, kind: "Controllers", in: folder)
     try write(virtualDevices, kind: "VirtualDevices", in: folder)
     try write(profiles, kind: "Profiles", in: folder)
+    try write(protocols, kind: "Protocols", in: folder)
     var manifest: [String: Any] = [
       "apiVersion": OpenJoystickDriverAPI.version, "kind": ModPackageManifest.kind, "name": name,
       "version": version, "author": "Tester", "requires": requires,
@@ -127,6 +129,7 @@ struct ModPackageFixture {
     if !patches.isEmpty { manifest["patches"] = patches.map(\.name) }
     if !virtualDevices.isEmpty { manifest["virtualDevices"] = virtualDevices.map(\.name) }
     if !profiles.isEmpty { manifest["profiles"] = profiles.map(\.name) }
+    if !protocols.isEmpty { manifest["protocols"] = protocols.map(\.name) }
     for (key, value) in overrides { manifest[key] = value }
     try PropertyListFixture.data(tree: manifest).write(
       to: folder.appendingPathComponent("mod.plist")

@@ -29,6 +29,7 @@ struct ModPackageManifestSchemaTests {
       manifest(["controllers": nil, "profiles": ["My-profile.plist"]]),
       manifest(["controllers": nil, "virtualDevices": ["1234-abcd.plist", unit]]),
       manifest(["profiles": ["a.plist"], "virtualDevices": ["ffff-0000.plist"]]),
+      manifest(["controllers": nil, "protocols": ["VendorAcme.plist"]]),
       manifest([
         "controllers": nil,
         "patches": ["1234-abcd.patch.plist", "model-1234-abcd.patch.plist", "all.patch.plist"],
@@ -54,6 +55,9 @@ struct ModPackageManifestSchemaTests {
       manifest(["controllers": nil, "virtualDevices": ["1234-abcd-U-short.plist"]]),
       manifest(["controllers": nil, "virtualDevices": ["x.plist"]]),
       manifest(["controllers": nil, "profiles": [".hidden.plist"]]),
+      manifest(["controllers": nil, "protocols": [String]()]),
+      manifest(["controllers": nil, "protocols": ["vendorAcme.plist"]]),
+      manifest(["controllers": nil, "protocols": ["Vendor-Acme.plist"]]),
       manifest(["controllers": ["1234-abcd.plist", "1234-abcd.plist"]]),
       manifest(["name": "Bad"]),
       manifest(["name": "a--b"]),

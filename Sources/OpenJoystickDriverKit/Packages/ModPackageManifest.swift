@@ -48,11 +48,14 @@ public struct ModPackageManifest: Equatable, Sendable {
   public let profiles: [String]
   /// `VirtualDevice` files of the package's `VirtualDevices/` folder.
   public let virtualDevices: [String]
+  /// Protocol description files of the package's `Protocols/` folder.
+  public let protocols: [String]
 
   /// The listed files as paths inside the package folder.
   public var listedFiles: [String] {
     controllers.map { "Controllers/\($0)" } + patches.map { "Controllers/\($0)" }
       + profiles.map { "Profiles/\($0)" } + virtualDevices.map { "VirtualDevices/\($0)" }
+      + protocols.map { "Protocols/\($0)" }
   }
 
   /// Decodes and checks one `mod.plist`.
@@ -88,7 +91,8 @@ extension ModPackageManifest: Decodable {
     /// The keys of the document header.
     case apiVersion, kind
     /// The package metadata and the lists of files.
-    case name, version, author, requires, controllers, patches, profiles, virtualDevices
+    case name, version, author, requires, controllers, patches, profiles
+    case virtualDevices, protocols
   }
 
   /// Decodes the value from `decoder`.
@@ -124,10 +128,11 @@ extension ModPackageManifest: Decodable {
       .virtualDevices,
       pattern: Self.virtualDeviceFilePattern
     )
-    guard !(controllers + patches + profiles + virtualDevices).isEmpty else {
+    protocols = try Self.files(container, .protocols, pattern: Self.protocolFilePattern)
+    guard !(controllers + patches + profiles + virtualDevices + protocols).isEmpty else {
       throw ModPackageError(
         .invalidManifest,
-        "controllers, patches, profiles, or virtualDevices must list a file"
+        "controllers, patches, profiles, virtualDevices, or protocols must list a file"
       )
     }
   }
@@ -144,6 +149,8 @@ extension ModPackageManifest: Decodable {
   /// The file name of a `VirtualDevice` file: `vvvv-pppp.plist`, with an optional unit.
   private static let virtualDeviceFilePattern =
     "\\A[0-9a-f]{4}-[0-9a-f]{4}(-U-[A-Za-z0-9_-]{16})?\\.plist\\z"
+  /// The file name of a protocol description: the UpperCamelCase family name.
+  private static let protocolFilePattern = "\\A[A-Z][A-Za-z0-9]*\\.plist\\z"
   /// A SemVer 2.0.0 version.
   private static let semanticVersionPattern =
     "\\A(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"

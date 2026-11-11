@@ -67,6 +67,13 @@
       "items": {
         "pattern": "^[0-9a-f]{4}-[0-9a-f]{4}(-U-[A-Za-z0-9_-]{16})?\\.plist$"
       }
+    },
+    "protocols": {
+      "description": "The protocol description files of the package, one per documented family.",
+      "$ref": "#/$defs/files",
+      "items": {
+        "pattern": "^[A-Z][A-Za-z0-9]*\\.plist$"
+      }
     }
   },
   "anyOf": [
@@ -81,6 +88,9 @@
     },
     {
       "required": ["virtualDevices"]
+    },
+    {
+      "required": ["protocols"]
     }
   ],
   "$defs": {

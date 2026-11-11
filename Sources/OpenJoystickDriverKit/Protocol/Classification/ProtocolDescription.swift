@@ -2,11 +2,11 @@ import Foundation
 
 /// Why a protocol description is invalid, in words for the person who wrote it, with the
 /// catalog code that names the failure.
-struct ProtocolDescriptionProblem: Error, Equatable, Sendable, CustomStringConvertible {
+public struct ProtocolDescriptionProblem: Error, Equatable, Sendable, CustomStringConvertible {
   /// The error code of the rejection.
-  let code: ErrorCode
+  public let code: ErrorCode
   /// What the description got wrong.
-  let detail: String
+  public let detail: String
 
   /// Creates a problem from an error code and the detail.
   init(_ code: ErrorCode, _ detail: String) {
@@ -15,7 +15,7 @@ struct ProtocolDescriptionProblem: Error, Equatable, Sendable, CustomStringConve
   }
 
   /// The raw value of the code and the detail, joined by a colon.
-  var description: String { "\(code.rawValue): \(detail)" }
+  public var description: String { "\(code.rawValue): \(detail)" }
 }
 
 /// One family's protocol description (`Resources/Protocols/<file stem>.plist`): the interface
