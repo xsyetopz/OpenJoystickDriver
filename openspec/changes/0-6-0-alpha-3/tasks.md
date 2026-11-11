@@ -94,8 +94,8 @@ A controller fix in groups 2, 3, and 8 lands as a record or a patch (D13). Where
 
 ## 8. Controller coverage
 
-- [ ] 8.1 Pass timeout 0 on interrupt pipes in the driver extension, with a failing test first, and regenerate with `./Scripts/ojd driverkit generate`. Caller: the extension's transfer path. (#55)
-- [ ] 8.2 Retry a failed session start with a growing delay and stop after a fixed count; show the last error on the controller. Caller: session start in the service. (#55)
+- [x] 8.1 Pass timeout 0 on interrupt pipes in the driver extension, with a failing test first, and regenerate with `./Scripts/ojd driverkit generate`. Caller: the extension's transfer path. (#55)
+- [x] 8.2 Retry a failed session start with a growing delay and stop after a fixed count; show the last error on the controller. Caller: session start in the service. (#55)
 - [ ] 8.3 Take the Elite Series 1 endpoints (`0x81`, `0x01`) from pull request #56 into the `045E:02E3` record. **Hardware (reporter, #55)**: draft the request to confirm on a tester build.
 - [ ] 8.4 After 9.2, write the `044F:B671` wheel as an `XboxGIP` record with an input layout (steering bytes 6 to 7, brake bytes 10 to 11 as reported), and check it with `ojd record test` on the reporter's packets. List what the layout vocabulary lacks for a wheel (`axes` holds at most 4 entries) and add only that. **Hardware (reporter, #58)**: draft the request for a full capture of every pedal and button.
 - [ ] 8.5 Write a failing test for the Guide button of `20D6:2028` from the reporter's packets and fix the GIP virtual-key handling. Caller: the GIP driver. (#53)
