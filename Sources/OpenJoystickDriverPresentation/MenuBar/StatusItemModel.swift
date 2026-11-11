@@ -66,6 +66,8 @@ struct StatusItemEntry: Equatable {
   /// Only the status line has one: the HIG gives every item of a group an icon or none, and the
   /// other groups have none.
   let symbolName: String?
+  /// What the entry adds to its title: battery level, profile name, state.
+  let details: [StatusItemTitle]
 
   /// Creates an entry that is enabled and unchecked unless given otherwise.
   init(
@@ -75,7 +77,8 @@ struct StatusItemEntry: Equatable {
     isChecked: Bool = false,
     action: StatusItemAction? = nil,
     submenu: [Self]? = nil,
-    symbolName: String? = nil
+    symbolName: String? = nil,
+    details: [StatusItemTitle] = []
   ) {
     self.id = id
     self.title = title
@@ -85,6 +88,7 @@ struct StatusItemEntry: Equatable {
     self.submenu = submenu
     self.isSeparator = false
     self.symbolName = symbolName
+    self.details = details
   }
 
   /// Creates a separator with the identifier.
@@ -97,6 +101,7 @@ struct StatusItemEntry: Equatable {
     self.submenu = nil
     self.isSeparator = true
     self.symbolName = nil
+    self.details = []
   }
 
   /// Returns a separator with the identifier.
@@ -117,6 +122,8 @@ struct StatusItemState: Equatable {
     let isWireless: Bool
     /// Whether a `Pause` has the controller pass through unmapped.
     var isPaused = false
+    /// The battery level as the service reports it, or nil when the controller reports none.
+    var battery: String?
     /// The profiles that apply to this controller (same model, and its unit when a profile names
     /// one). ``Profile/isActive`` tells whether the profile is the one active for it.
     var profiles: [Profile] = []
