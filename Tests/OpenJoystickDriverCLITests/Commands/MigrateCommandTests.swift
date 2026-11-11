@@ -18,6 +18,8 @@ struct MigrateCommandTests {
     try Data(text.utf8).write(to: url)
   }
 
+  private var support: URL { directory.url(for: .applicationData) }
+
   private func run(_ arguments: [String]) async -> CLIRun {
     let directory = directory
     return await MigrateCommand.$directory.withValue(directory) {
@@ -38,9 +40,10 @@ struct MigrateCommandTests {
     #expect(human.code == 0, "\(human.standardError)")
     #expect(human.standardOutput.contains("Settings.json"))
     #expect(json.code == 0, "\(json.standardError)")
-    #expect(json.standardOutput.contains(#""status": "WouldConvert""#))
-    let settings = SettingsStore(directory: directory)
-    #expect(throws: (any Error).self) { try settings.load() }
+    #expect(json.standardOutput.contains(#""verdict": "Migrated""#))
+    #expect(json.standardOutput.contains(#""dryRun": true"#))
+    #expect(!FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.plist").path))
+    #expect(FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.json").path))
   }
 
   @Test
@@ -51,7 +54,7 @@ struct MigrateCommandTests {
 
     #expect(result.code == 0, "\(result.standardError)")
     #expect(try SettingsStore(directory: directory).load().showInDock == true)
-    #expect(await run([]).standardOutput.contains("No document needs migration."))
+    #expect(await run([]).standardOutput.contains("Settings.plist is already current."))
   }
 
   @Test
@@ -67,5 +70,42 @@ struct MigrateCommandTests {
     #expect(result.code == 1)
     #expect(result.standardError.contains("error[E5009]"))
     #expect(result.standardOutput.contains("Controllers/bad.patch.json"))
+  }
+
+  @Test
+  func everyScannedFileGetsAVerdictAndAForeignFileDoesNotFail() async throws {
+    try write(Self.settings, "Settings.json")
+    try write(#"{"name": "mine"}"#, "Profiles/notes.json")
+    try write(#"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "AccessGrants"}"#, "AccessGrants.plist")
+
+    let result = await run(["--plain"])
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(result.standardOutput.contains("Migrated\tSettings.json"))
+    #expect(result.standardOutput.contains("Foreign\tProfiles/notes.json"))
+  }
+
+  @Test
+  func aFolderArgumentIsScannedInsteadOfTheSupportFolder() async throws {
+    try write(Self.settings, "Settings.json")
+    try write(Self.settings, "Other/Settings.json")
+    let folder = support.appendingPathComponent("Other").path
+
+    let result = await run([folder])
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(FileManager.default.fileExists(atPath: support.appendingPathComponent("Other/Settings.plist").path))
+    #expect(FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.json").path))
+  }
+
+  @Test
+  func aZeroFiveFileFailsWithE5009() async throws {
+    try write(#"{"$schema": "x", "profiles": []}"#, "RemappingProfiles.json")
+
+    let result = await run([])
+
+    #expect(result.code == 1)
+    #expect(result.standardError.contains("error[E5009]"))
+    #expect(result.standardOutput.contains("written by 0.5; re-create it"))
   }
 }

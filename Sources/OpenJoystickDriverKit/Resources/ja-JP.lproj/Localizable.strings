@@ -4485,7 +4485,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "古いバージョンの保存済みドキュメントを現在のバージョンに変換します。";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "古い apiVersion を持つ Settings.plist、AccessGrants.plist、プロファイル、自分のコントローラーレコードとパッチ、仮想デバイスファイルを変換します。元のファイルはサポートフォルダ内の Migrated フォルダに残ります。インストール済みのモッドは変換されません。";
+"cli.migrate.group.discussion" = "古い apiVersion を持つ Settings.plist、AccessGrants.plist、プロファイル、自分のコントローラーレコードとパッチ、仮想デバイスファイルを変換します。元のファイルはサポートフォルダ内の Migrated フォルダに残ります。モッドパッケージも変換されます。サポートフォルダの代わりにスキャンするフォルダを指定できます。各ファイルには Migrated、Current、Failed、Foreign のいずれかの判定が付きます。";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "変換されるドキュメントを一覧表示し、何も変更しません。";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
@@ -4498,6 +4498,12 @@
 "cli.migrate.group.failed" = "%1$@ は変更されません: %2$@";
 /* Error text of 'ojd migrate' when at least one document could not be converted. */
 "cli.migrate.group.failedSummary" = "変換できなかったドキュメントがあり、変更されていません。出力にそれぞれが示されます。";
+/* Help text of the folder argument of 'ojd migrate'. */
+"cli.migrate.group.folder" = "サポートフォルダの代わりにスキャンするフォルダ。";
+/* Line printed by 'ojd migrate' for a file that is in the current format. %@ is the path of the file. */
+"cli.migrate.group.current" = "%@ はすでに最新です。";
+/* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
+"cli.migrate.group.foreign" = "%@ は OpenJoystickDriver のドキュメントではなく、変更されません。";
 /* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
 "ui.migrate.action" = "移行";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */

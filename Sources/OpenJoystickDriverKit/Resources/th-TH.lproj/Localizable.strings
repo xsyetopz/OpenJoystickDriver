@@ -4485,7 +4485,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "แปลงเอกสารที่บันทึกไว้จากเวอร์ชันเก่าเป็นเวอร์ชันปัจจุบัน";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "แปลง Settings.plist, AccessGrants.plist, โปรไฟล์, ระเบียนและแพตช์คอนโทรลเลอร์ของคุณ และไฟล์อุปกรณ์เสมือนที่มี apiVersion เก่า ไฟล์ต้นฉบับแต่ละไฟล์จะเก็บไว้ในโฟลเดอร์ Migrated ของโฟลเดอร์สนับสนุน ม็อดที่ติดตั้งแล้วจะไม่ถูกแปลง";
+"cli.migrate.group.discussion" = "แปลง Settings.plist, AccessGrants.plist, โปรไฟล์, ระเบียนและแพตช์คอนโทรลเลอร์ของคุณ และไฟล์อุปกรณ์เสมือนที่มี apiVersion เก่า ไฟล์ต้นฉบับแต่ละไฟล์จะเก็บไว้ในโฟลเดอร์ Migrated ของโฟลเดอร์สนับสนุน แพ็กเกจม็อดจะถูกแปลงด้วย ระบุโฟลเดอร์เพื่อสแกนแทนโฟลเดอร์สนับสนุน แต่ละไฟล์จะได้รับผลตัดสินหนึ่งอย่าง: Migrated, Current, Failed หรือ Foreign";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "แสดงรายการเอกสารที่จะถูกแปลงโดยไม่เปลี่ยนแปลงสิ่งใด";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
@@ -4498,6 +4498,12 @@
 "cli.migrate.group.failed" = "%1$@ ไม่เปลี่ยนแปลง: %2$@";
 /* Error text of 'ojd migrate' when at least one document could not be converted. */
 "cli.migrate.group.failedSummary" = "แปลงเอกสารบางรายการไม่ได้และยังไม่เปลี่ยนแปลง ผลลัพธ์ระบุแต่ละรายการ";
+/* Help text of the folder argument of 'ojd migrate'. */
+"cli.migrate.group.folder" = "โฟลเดอร์ที่จะสแกนแทนโฟลเดอร์สนับสนุน";
+/* Line printed by 'ojd migrate' for a file that is in the current format. %@ is the path of the file. */
+"cli.migrate.group.current" = "%@ เป็นเวอร์ชันปัจจุบันอยู่แล้ว";
+/* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
+"cli.migrate.group.foreign" = "%@ ไม่ใช่เอกสารของ OpenJoystickDriver และไม่เปลี่ยนแปลง";
 /* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
 "ui.migrate.action" = "ย้ายข้อมูล";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */

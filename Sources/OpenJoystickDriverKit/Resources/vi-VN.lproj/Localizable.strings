@@ -4485,7 +4485,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Chuyển đổi các tài liệu đã lưu của phiên bản cũ sang phiên bản hiện tại.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "Chuyển đổi Settings.plist, AccessGrants.plist, hồ sơ, bản ghi và bản vá tay cầm của bạn, và tệp thiết bị ảo có apiVersion cũ. Mỗi bản gốc được giữ trong thư mục Migrated của thư mục hỗ trợ. Mod đã cài đặt không được chuyển đổi.";
+"cli.migrate.group.discussion" = "Chuyển đổi Settings.plist, AccessGrants.plist, hồ sơ, bản ghi và bản vá tay cầm của bạn, và tệp thiết bị ảo có apiVersion cũ. Mỗi bản gốc được giữ trong thư mục Migrated của thư mục hỗ trợ. Gói mod cũng được chuyển đổi. Nêu một thư mục để quét thay cho thư mục hỗ trợ. Mỗi tệp nhận một phán quyết: Migrated, Current, Failed hoặc Foreign.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "Liệt kê các tài liệu sẽ được chuyển đổi và không thay đổi gì.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
@@ -4498,6 +4498,12 @@
 "cli.migrate.group.failed" = "%1$@ giữ nguyên: %2$@";
 /* Error text of 'ojd migrate' when at least one document could not be converted. */
 "cli.migrate.group.failedSummary" = "Một số tài liệu không thể chuyển đổi và giữ nguyên. Kết quả đầu ra nêu từng tài liệu.";
+/* Help text of the folder argument of 'ojd migrate'. */
+"cli.migrate.group.folder" = "Thư mục để quét thay cho thư mục hỗ trợ.";
+/* Line printed by 'ojd migrate' for a file that is in the current format. %@ is the path of the file. */
+"cli.migrate.group.current" = "%@ đã là bản hiện hành.";
+/* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
+"cli.migrate.group.foreign" = "%@ không phải tài liệu của OpenJoystickDriver và giữ nguyên.";
 /* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
 "ui.migrate.action" = "Di chuyển";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */

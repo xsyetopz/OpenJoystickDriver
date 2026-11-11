@@ -4486,7 +4486,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Convierte los documentos guardados de una versión anterior a la versión actual.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "Convierte Settings.plist, AccessGrants.plist, los perfiles, tus registros y parches de controles y los archivos de dispositivos virtuales que tienen una apiVersion anterior. Cada original se conserva en la carpeta Migrated de la carpeta de soporte. Los mods instalados no se convierten.";
+"cli.migrate.group.discussion" = "Convierte Settings.plist, AccessGrants.plist, los perfiles, tus registros y parches de controles y los archivos de dispositivos virtuales que tienen una apiVersion anterior. Cada original se conserva en la carpeta Migrated de la carpeta de soporte. Los paquetes de mods también se convierten. Indica una carpeta para revisarla en lugar de la carpeta de soporte. Cada archivo recibe un veredicto: Migrated, Current, Failed o Foreign.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "Muestra los documentos que se convertirían y no cambia nada.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
@@ -4499,6 +4499,12 @@
 "cli.migrate.group.failed" = "%1$@ queda sin cambios: %2$@";
 /* Error text of 'ojd migrate' when at least one document could not be converted. */
 "cli.migrate.group.failedSummary" = "No se pudieron convertir algunos documentos y quedan sin cambios. La salida indica cada uno de ellos.";
+/* Help text of the folder argument of 'ojd migrate'. */
+"cli.migrate.group.folder" = "Una carpeta que revisar en lugar de la carpeta de soporte.";
+/* Line printed by 'ojd migrate' for a file that is in the current format. %@ is the path of the file. */
+"cli.migrate.group.current" = "%@ ya está al día.";
+/* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
+"cli.migrate.group.foreign" = "%@ no es un documento de OpenJoystickDriver y se queda sin cambios.";
 /* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
 "ui.migrate.action" = "Migrar";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */

@@ -4485,7 +4485,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Mengonversi dokumen tersimpan dari versi lama ke versi saat ini.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "Mengonversi Settings.plist, AccessGrants.plist, profil, rekaman dan patch pengontrol Anda, serta file perangkat virtual yang memiliki apiVersion lama. Setiap file asli disimpan di folder Migrated pada folder dukungan. Mod yang terpasang tidak dikonversi.";
+"cli.migrate.group.discussion" = "Mengonversi Settings.plist, AccessGrants.plist, profil, rekaman dan patch pengontrol Anda, serta file perangkat virtual yang memiliki apiVersion lama. Setiap file asli disimpan di folder Migrated pada folder dukungan. Paket mod juga dikonversi. Sebutkan sebuah folder untuk dipindai sebagai ganti folder dukungan. Setiap file mendapat satu putusan: Migrated, Current, Failed, atau Foreign.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "Menampilkan daftar dokumen yang akan dikonversi tanpa mengubah apa pun.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
@@ -4498,6 +4498,12 @@
 "cli.migrate.group.failed" = "%1$@ tetap tidak berubah: %2$@";
 /* Error text of 'ojd migrate' when at least one document could not be converted. */
 "cli.migrate.group.failedSummary" = "Beberapa dokumen tidak dapat dikonversi dan tetap tidak berubah. Keluaran menyebut masing-masing.";
+/* Help text of the folder argument of 'ojd migrate'. */
+"cli.migrate.group.folder" = "Folder yang dipindai sebagai ganti folder dukungan.";
+/* Line printed by 'ojd migrate' for a file that is in the current format. %@ is the path of the file. */
+"cli.migrate.group.current" = "%@ sudah mutakhir.";
+/* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
+"cli.migrate.group.foreign" = "%@ bukan dokumen OpenJoystickDriver dan tetap tidak berubah.";
 /* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
 "ui.migrate.action" = "Migrasikan";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */

@@ -4485,7 +4485,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "將舊版本的已儲存文件轉換為目前版本。";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "轉換帶有舊 apiVersion 的 Settings.plist、AccessGrants.plist、設定檔、你的控制器記錄與修補檔，以及虛擬裝置檔案。每個原始檔案都保留在支援資料夾的 Migrated 資料夾中。已安裝的模組不會被轉換。";
+"cli.migrate.group.discussion" = "轉換帶有舊 apiVersion 的 Settings.plist、AccessGrants.plist、設定檔、你的控制器記錄與修補檔，以及虛擬裝置檔案。每個原始檔案都保留在支援資料夾的 Migrated 資料夾中。模組套件也會被轉換。可指定一個資料夾來取代支援資料夾進行掃描。每個檔案會得到一個結論：Migrated、Current、Failed 或 Foreign。";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "列出將被轉換的文件，不做任何變更。";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
@@ -4498,6 +4498,12 @@
 "cli.migrate.group.failed" = "%1$@ 維持不變：%2$@";
 /* Error text of 'ojd migrate' when at least one document could not be converted. */
 "cli.migrate.group.failedSummary" = "部分文件無法轉換，維持不變。輸出會指出每一個。";
+/* Help text of the folder argument of 'ojd migrate'. */
+"cli.migrate.group.folder" = "取代支援資料夾進行掃描的資料夾。";
+/* Line printed by 'ojd migrate' for a file that is in the current format. %@ is the path of the file. */
+"cli.migrate.group.current" = "%@ 已是目前版本。";
+/* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
+"cli.migrate.group.foreign" = "%@ 不是 OpenJoystickDriver 的文件，保持不變。";
 /* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
 "ui.migrate.action" = "遷移";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */

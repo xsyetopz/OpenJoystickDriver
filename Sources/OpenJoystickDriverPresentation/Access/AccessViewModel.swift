@@ -220,7 +220,7 @@ final class AccessViewModel: ObservableObject {
   /// Converts the stale documents, then loads the status again; a document that cannot be
   /// converted shows its failure.
   func migrate(using migrator: DocumentMigrator = DocumentMigrator()) async {
-    let failed = migrator.run(dryRun: false).contains { $0.status == .failed }
+    let failed = migrator.run(dryRun: false).contains { $0.verdict == .failed }
     await refresh()
     if failed {
       failure = AccessFailure(

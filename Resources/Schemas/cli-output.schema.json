@@ -1566,7 +1566,7 @@
       }
     },
     "migrate": {
-      "description": "The stored documents of an older apiVersion, with what happened to each.",
+      "description": "Each file that migrate scanned, with its verdict.",
       "type": "object",
       "required": ["apiVersion", "kind", "metadata", "items"],
       "additionalProperties": false,
@@ -1591,29 +1591,32 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["file", "kind", "status"],
+            "required": ["file", "verdict"],
             "additionalProperties": false,
             "properties": {
               "detail": {
                 "type": "string",
-                "description": "Why the document was not converted."
+                "description": "Why the file failed or is foreign."
               },
               "file": {
                 "type": "string",
-                "description": "The document's location in the support folder."
+                "description": "The file's location below the scanned folder."
               },
               "kind": {
                 "enum": [
                   "AccessGrants",
+                  "ActiveProfiles",
                   "Controller",
                   "ControllerPatch",
+                  "ModPackage",
                   "Profile",
                   "Settings",
                   "VirtualDevice"
                 ]
               },
-              "status": {
-                "enum": ["Converted", "Failed", "WouldConvert"]
+              "verdict": {
+                "description": "What became of the file; Migrated also means a dry run would convert it.",
+                "enum": ["Current", "Failed", "Foreign", "Migrated"]
               }
             }
           }

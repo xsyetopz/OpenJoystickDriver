@@ -3,33 +3,37 @@ import Foundation
 /// Converts the stored documents of an older `apiVersion` to the current one.
 ///
 /// This is the one place that applies ``DocumentMigrationStep``; the readers stay single-version
-/// and refuse a stale document. A document is converted only when the user runs it. Installed mods
-/// are not touched.
+/// and refuse a stale document. Every file it scans gets one ``Verdict``.
 public struct DocumentMigrator: Sendable {
-  /// What happened to one document.
-  public enum Status: String, Codable, Equatable, Sendable {
-    /// The document was converted and its original kept.
-    case converted = "Converted"
-    /// A dry run found a document it would convert.
-    case wouldConvert = "WouldConvert"
-    /// The document was not converted and is unchanged.
+  /// What became of one file.
+  public enum Verdict: String, Codable, Equatable, Sendable {
+    /// The file was converted and its original kept, or a dry run found it would be.
+    case migrated = "Migrated"
+    /// The file is already in the current format.
+    case current = "Current"
+    /// The file could not be converted and is unchanged.
     case failed = "Failed"
+    /// The file is not a document of OpenJoystickDriver and is unchanged.
+    case foreign = "Foreign"
   }
 
-  /// One stale document.
+  /// One scanned file.
   public struct Entry: Codable, Equatable, Sendable {
-    /// The path of the document in the support folder, such as `Profiles/<id>.json`.
+    /// The path of the file below the scanned folder, such as `Profiles/<id>.json`.
     public let file: String
-    /// The `kind` of the document.
-    public let kind: String
-    /// What happened to it.
-    public let status: Status
-    /// Why the document failed, for ``Status/failed``.
+    /// The `kind` of the document, when the file has one.
+    public let kind: String?
+    /// What became of it.
+    public let verdict: Verdict
+    /// Why the file failed or is foreign.
     public let detail: String?
   }
 
-  /// The name of the folder of the support folder that holds the kept originals.
+  /// The name of the folder that holds the kept originals, in the scanned folder.
   public static let backupFolderName = "Migrated"
+
+  /// The kind that names `ActiveProfiles`, a root array without a header.
+  static let activeProfilesKind = "ActiveProfiles"
 
   /// The data directory that locates the support folder.
   private let directory: any DataDirectory
@@ -37,61 +41,136 @@ public struct DocumentMigrator: Sendable {
   /// Creates a migrator for the support folder of `directory`.
   public init(directory: any DataDirectory = MacOSDataDirectory()) { self.directory = directory }
 
-  /// The folder of the kept originals.
+  /// The folder of the kept originals of the support folder.
   public var backupDirectory: URL {
     directory.url(for: .applicationData)
       .appendingPathComponent(Self.backupFolderName, isDirectory: true)
   }
 
-  /// Converts every stale document, or only lists them when `dryRun` is set.
+  /// Scans the support folder, or `folder` and everything below it, and converts every stale
+  /// document, or only reports them when `dryRun` is set.
   ///
-  /// A document that cannot be converted, or whose converted form its current reader refuses, is
-  /// a ``Status/failed`` entry and stays unchanged; the others are still converted. The result is
+  /// A file that cannot be converted, or whose converted form its current reader refuses, is a
+  /// ``Verdict/failed`` entry and stays unchanged; the others are still converted. The result is
   /// sorted by path.
-  public func run(dryRun: Bool) -> [Entry] {
-    let root = directory.url(for: .applicationData)
-    var entries: [Entry] = []
-    for (folder, kinds) in Self.places {
-      for url in files(in: folder.isEmpty ? root : root.appendingPathComponent(folder)) {
-        let file = folder.isEmpty ? url.lastPathComponent : "\(folder)/\(url.lastPathComponent)"
-        guard let data = try? Data(contentsOf: url),
-          let document = try? OrderedJSON.parse(data),
-          let version = document["apiVersion"]?.string, version != OpenJoystickDriverAPI.version,
-          let kind = document["kind"]?.string.flatMap(DocumentKind.init(rawValue:)),
-          kinds.contains(kind)
-        else { continue }
-        do {
-          let target = url.deletingPathExtension().appendingPathExtension("plist")
-          let converted = try convert(document, kind: kind, file: target)
-          if !dryRun { try write(converted, from: url, to: target, as: file) }
-          let status: Status = dryRun ? .wouldConvert : .converted
-          entries.append(Entry(file: file, kind: kind.rawValue, status: status, detail: nil))
-        } catch {
-          entries.append(
-            Entry(file: file, kind: kind.rawValue, status: .failed, detail: "\(error)")
-          )
-        }
+  public func run(dryRun: Bool, folder: URL? = nil) -> [Entry] {
+    let root = (folder ?? directory.url(for: .applicationData)).resolvingSymlinksInPath()
+    let backups = root.appendingPathComponent(Self.backupFolderName, isDirectory: true)
+    let urls = folder == nil ? Self.storeFiles(in: root) : Self.allFiles(in: root)
+    return
+      urls
+      .map { url in
+        let file = String(url.resolvingSymlinksInPath().path.dropFirst(root.path.count + 1))
+        return entry(url, file: file, backups: backups, dryRun: dryRun)
       }
-    }
-    return entries.sorted { $0.file < $1.file }
+      .sorted { $0.file < $1.file }
   }
 
-  /// The folders of the support folder that hold stored documents, with the kinds each holds.
-  private static let places: [(String, Set<DocumentKind>)] = [
-    ("", [.settings, .accessGrants]),
-    ("Profiles", [.profile]),
-    ("Controllers", [.controller, .controllerPatch]),
-    (VirtualHIDProfileOverrideStore.directoryName, [.virtualDevice]),
+  /// The folders of the support folder that hold stored documents; the last is read recursively.
+  private static let storeFolders = [
+    "Profiles", "Controllers", VirtualHIDProfileOverrideStore.directoryName,
+    VirtualHIDProfileOverrideStore.unreadFolderName,
   ]
 
-  /// The `.json` files directly in `folder`, without the lock and backup files.
-  private func files(in folder: URL) -> [URL] {
-    let urls = try? FileManager.default.contentsOfDirectory(
-      at: folder,
-      includingPropertiesForKeys: nil,
-      options: [.skipsHiddenFiles]
-    )
-    return (urls ?? []).filter { $0.pathExtension == "json" }
+  /// The files of the support folder that can be documents.
+  private static func storeFiles(in root: URL) -> [URL] {
+    let own = storeFolders.flatMap { files(in: root.appendingPathComponent($0), deep: false) }
+    return files(in: root, deep: false) + own
+      + files(in: root.appendingPathComponent("Packages"), deep: true)
+  }
+
+  /// Every file below `root` that can be a document, without the backup folder.
+  private static func allFiles(in root: URL) -> [URL] {
+    files(in: root, deep: true).filter {
+      !$0.resolvingSymlinksInPath().path.hasPrefix(
+        root.appendingPathComponent(backupFolderName).path + "/"
+      )
+    }
+  }
+
+  /// The `.json` and `.plist` files of `folder`, and below it when `deep`.
+  private static func files(in folder: URL, deep: Bool) -> [URL] {
+    let manager = FileManager.default
+    let urls: [URL]
+    if deep {
+      let walk = manager.enumerator(at: folder, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+      urls = walk?.compactMap { $0 as? URL } ?? []
+    } else {
+      urls =
+        (try? manager.contentsOfDirectory(
+          at: folder,
+          includingPropertiesForKeys: nil,
+          options: [.skipsHiddenFiles]
+        )) ?? []
+    }
+    return urls.filter { ["json", "plist"].contains($0.pathExtension) }
+  }
+
+  /// The verdict for one file.
+  private func entry(_ url: URL, file: String, backups: URL, dryRun: Bool) -> Entry {
+    func entry(_ kind: String?, _ verdict: Verdict, _ detail: String? = nil) -> Entry {
+      Entry(file: file, kind: kind, verdict: verdict, detail: detail)
+    }
+    guard let data = try? Data(contentsOf: url) else { return entry(nil, .failed, "cannot be read") }
+    let isActiveProfiles = url.deletingPathExtension().lastPathComponent == "ActiveProfiles"
+    let isPlist = url.pathExtension == "plist"
+    guard
+      let document = isPlist
+        ? try? OrderedJSON(document: data, file: file) : try? OrderedJSON.parse(data)
+    else { return entry(nil, .foreign, "is not a readable document") }
+    if isActiveProfiles, case .array = document {
+      guard !isPlist else { return entry(Self.activeProfilesKind, .current) }
+      return migrate(url, file: file, kind: Self.activeProfilesKind, backups: backups, dryRun: dryRun) {
+        try document.plistData()
+      }
+    }
+    guard let version = document["apiVersion"]?.string else {
+      return Self.isZeroFive(document, name: url.lastPathComponent)
+        ? entry(nil, .failed, "written by 0.5; re-create it")
+        : entry(nil, .foreign, "has no apiVersion")
+    }
+    guard version.hasPrefix("openjoystickdriver/") else {
+      return entry(nil, .foreign, "has another apiVersion")
+    }
+    guard let kind = document["kind"]?.string.flatMap(DocumentKind.init(rawValue:)) else {
+      return entry(nil, .failed, "has an unknown kind")
+    }
+    if isPlist {
+      return version == OpenJoystickDriverAPI.version
+        ? entry(kind.rawValue, .current)
+        : entry(kind.rawValue, .failed, "no conversion from \(version)")
+    }
+    let target = url.deletingPathExtension().appendingPathExtension("plist")
+    return migrate(url, file: file, kind: kind.rawValue, backups: backups, dryRun: dryRun) {
+      try convert(document, kind: kind, file: target)
+    }
+  }
+
+  /// Whether `document`, a file without an `apiVersion`, is what OJD 0.5 wrote.
+  private static func isZeroFive(_ document: OrderedJSON, name: String) -> Bool {
+    name == "RemappingProfiles.json" || document["$schema"] != nil || document["operation"] != nil
+  }
+
+  /// Converts with `make`, and writes the result unless `dryRun`.
+  private func migrate(
+    _ url: URL,
+    file: String,
+    kind: String,
+    backups: URL,
+    dryRun: Bool,
+    make: () throws -> Data
+  ) -> Entry {
+    let target = url.deletingPathExtension().appendingPathExtension("plist")
+    do {
+      guard !FileManager.default.fileExists(atPath: target.path) else {
+        throw DocumentMigrationProblem("\(target.lastPathComponent) exists already")
+      }
+      let data = try make()
+      if !dryRun { try write(data, from: url, to: target, backup: backups.appendingPathComponent(file)) }
+      return Entry(file: file, kind: kind, verdict: .migrated, detail: nil)
+    } catch {
+      return Entry(file: file, kind: kind, verdict: .failed, detail: "\(error)")
+    }
   }
 
   /// The document converted by the chain of steps, checked with its current reader.
@@ -139,14 +218,12 @@ public struct DocumentMigrator: Sendable {
     }
   }
 
-  /// Keeps the original of `file` in the backup folder, writes `data` to `target`, and removes the
-  /// original when `target` is another file.
+  /// Keeps the original at `backup`, writes `data` to `target`, and removes the original.
   ///
   /// A backup that exists already is not overwritten, so a second run cannot lose an original.
-  private func write(_ data: Data, from url: URL, to target: URL, as file: String) throws {
-    let backup = backupDirectory.appendingPathComponent(file)
+  private func write(_ data: Data, from url: URL, to target: URL, backup: URL) throws {
     guard !FileManager.default.fileExists(atPath: backup.path) else {
-      throw DocumentMigrationProblem("\(Self.backupFolderName)/\(file) exists already")
+      throw DocumentMigrationProblem("\(Self.backupFolderName)/\(backup.lastPathComponent) exists already")
     }
     let permissions = try FileManager.default.attributesOfItem(atPath: url.path)[.posixPermissions]
     try FileManager.default.createDirectory(
@@ -161,6 +238,6 @@ public struct DocumentMigrator: Sendable {
         ofItemAtPath: target.path
       )
     }
-    if target != url { try FileManager.default.removeItem(at: url) }
+    try FileManager.default.removeItem(at: url)
   }
 }

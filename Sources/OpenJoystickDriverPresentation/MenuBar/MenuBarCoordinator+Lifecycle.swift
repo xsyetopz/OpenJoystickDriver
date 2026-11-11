@@ -106,7 +106,7 @@
       )
       {
       case .migrate:
-        let failed = DocumentMigrator().run(dryRun: false).contains { $0.status == .failed }
+        let failed = DocumentMigrator().run(dryRun: false).contains { $0.verdict == .failed }
         preferences.reloadSettings()
         offerSettingsRecovery(
           note: failed ? OJDLocalized.string("platform.macos.ui.migrate.failed") : nil

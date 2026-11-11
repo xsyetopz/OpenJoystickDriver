@@ -4485,7 +4485,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "حوّل المستندات المخزّنة من إصدار أقدم إلى الإصدار الحالي.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "يحوّل Settings.plist وAccessGrants.plist والملفات الشخصية وسجلات وحدات التحكم الخاصة بك وتصحيحاتها وملفات الأجهزة الافتراضية التي لها apiVersion أقدم. يُحفظ كل أصل في مجلد Migrated داخل مجلد الدعم. لا تُحوَّل الإضافات المثبّتة.";
+"cli.migrate.group.discussion" = "يحوّل Settings.plist وAccessGrants.plist والملفات الشخصية وسجلات وحدات التحكم الخاصة بك وتصحيحاتها وملفات الأجهزة الافتراضية التي لها apiVersion أقدم. يُحفظ كل أصل في مجلد Migrated داخل مجلد الدعم. تُحوَّل حزم الإضافات أيضًا. سمِّ مجلدًا لفحصه بدل مجلد الدعم. يحصل كل ملف على حكم واحد: Migrated أو Current أو Failed أو Foreign.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "اعرض المستندات التي ستُحوَّل دون تغيير أي شيء.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
@@ -4498,6 +4498,12 @@
 "cli.migrate.group.failed" = "يبقى %1$@ دون تغيير: %2$@";
 /* Error text of 'ojd migrate' when at least one document could not be converted. */
 "cli.migrate.group.failedSummary" = "تعذّر تحويل بعض المستندات وبقيت دون تغيير. يذكر الإخراج كلًا منها.";
+/* Help text of the folder argument of 'ojd migrate'. */
+"cli.migrate.group.folder" = "مجلد يُفحص بدل مجلد الدعم.";
+/* Line printed by 'ojd migrate' for a file that is in the current format. %@ is the path of the file. */
+"cli.migrate.group.current" = "%@ حديث بالفعل.";
+/* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
+"cli.migrate.group.foreign" = "%@ ليس مستندًا من OpenJoystickDriver ويبقى دون تغيير.";
 /* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
 "ui.migrate.action" = "ترحيل";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */

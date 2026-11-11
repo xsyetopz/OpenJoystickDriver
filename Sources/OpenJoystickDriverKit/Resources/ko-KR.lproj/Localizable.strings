@@ -4485,7 +4485,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "이전 버전의 저장된 문서를 현재 버전으로 변환합니다.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "이전 apiVersion을 가진 Settings.plist, AccessGrants.plist, 프로필, 사용자 컨트롤러 레코드와 패치, 가상 장치 파일을 변환합니다. 각 원본은 지원 폴더의 Migrated 폴더에 보관됩니다. 설치된 모드는 변환되지 않습니다.";
+"cli.migrate.group.discussion" = "이전 apiVersion을 가진 Settings.plist, AccessGrants.plist, 프로필, 사용자 컨트롤러 레코드와 패치, 가상 장치 파일을 변환합니다. 각 원본은 지원 폴더의 Migrated 폴더에 보관됩니다. 모드 패키지도 변환됩니다. 지원 폴더 대신 검사할 폴더를 지정할 수 있습니다. 각 파일은 Migrated, Current, Failed, Foreign 중 하나의 판정을 받습니다.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "변환될 문서를 나열하고 아무것도 변경하지 않습니다.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
@@ -4498,6 +4498,12 @@
 "cli.migrate.group.failed" = "%1$@은(는) 변경되지 않습니다: %2$@";
 /* Error text of 'ojd migrate' when at least one document could not be converted. */
 "cli.migrate.group.failedSummary" = "일부 문서를 변환하지 못해 그대로 남아 있습니다. 출력에 각 문서가 표시됩니다.";
+/* Help text of the folder argument of 'ojd migrate'. */
+"cli.migrate.group.folder" = "지원 폴더 대신 검사할 폴더.";
+/* Line printed by 'ojd migrate' for a file that is in the current format. %@ is the path of the file. */
+"cli.migrate.group.current" = "%@은(는) 이미 최신입니다.";
+/* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
+"cli.migrate.group.foreign" = "%@은(는) OpenJoystickDriver 문서가 아니며 변경되지 않습니다.";
 /* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
 "ui.migrate.action" = "마이그레이션";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
