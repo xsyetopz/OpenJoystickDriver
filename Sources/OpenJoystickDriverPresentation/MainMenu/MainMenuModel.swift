@@ -448,6 +448,7 @@ enum MainMenuModel {
       .separator,
       toolbarEntry(.newProfile),
       toolbarEntry(.duplicateProfile),
+      toolbarEntry(.convertProfile),
       toolbarEntry(.deleteProfile),
       toolbarEntry(.validateProfileFile),
     ]

@@ -30,7 +30,7 @@ struct MainMenuToolbarCommandTests {
       #expect(item.titleKey == action.labelKey, "\(action) changes the toolbar item's title")
       #expect(item.keyEquivalent.isEmpty)
     }
-    #expect(added == 14)
+    #expect(added == 15)
     #expect(MainWindowToolbarAction.importProfile.menuAction == .importProfile)
     #expect(MainWindowToolbarAction.exportProfile.menuAction == .exportProfile)
     #expect(MainWindowToolbarAction.installLibraryItem.menuAction == .installRecordOrMod)
@@ -95,7 +95,7 @@ struct MainMenuToolbarCommandTests {
     #expect(
       try section("profile").items.map(\.action) == [
         .activateProfile, .deactivateProfile, .toolbar(.newProfile), .toolbar(.duplicateProfile),
-        .toolbar(.deleteProfile), .toolbar(.validateProfileFile),
+        .toolbar(.convertProfile), .toolbar(.deleteProfile), .toolbar(.validateProfileFile),
       ]
     )
     let view = try section("view").items.map(\.action)

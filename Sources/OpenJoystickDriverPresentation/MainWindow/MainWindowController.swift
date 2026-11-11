@@ -508,6 +508,8 @@
       case .importProfile: screens.profiles.chooseProfileToImport()
       case .validateProfileFile: screens.profiles.validateProfileFile()
       case .duplicateProfile: screens.profiles.duplicatingProfile = selectedProfile
+      case .convertProfile:
+        if let selectedProfile { screens.profiles.beginConverting(selectedProfile) }
       case .exportProfile:
         if let selectedProfile { screens.profiles.exportProfile(selectedProfile) }
       case .deleteProfile:
@@ -548,8 +550,8 @@
     /// Whether the toolbar item for `action` is enabled in the current state.
     func isEnabled(_ action: MainWindowToolbarAction) -> Bool {
       switch action {
-      case .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .exportProfile,
-        .deleteProfile:
+      case .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .convertProfile,
+        .exportProfile, .deleteProfile:
         return action.isEnabled(profile: profileToolbarState)
       case .installLibraryItem, .validateLibraryItem, .searchLibrary, .saveActivityLog,
         .showActivityLogInFinder, .activityMode, .activityFilter, .activitySearch:
