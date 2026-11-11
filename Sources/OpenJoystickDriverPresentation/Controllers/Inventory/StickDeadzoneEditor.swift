@@ -5,8 +5,8 @@ import OpenJoystickDriverKit
 /// Writes the stick dead zone changes of the detail's setting row, one at a time.
 ///
 /// A change is computed from the record the row shows, so the editor stays busy until the service
-/// wrote the record and the row read it again; a change made meanwhile is dropped, not computed
-/// from the value the write replaces.
+/// wrote the record and the row read it again; the last change made meanwhile is written after
+/// that, so it is not computed from the value the write replaces.
 @MainActor
 final class StickDeadzoneEditor: ObservableObject {
   /// Whether a change is waiting for the service or for the record to be read again.
@@ -16,7 +16,7 @@ final class StickDeadzoneEditor: ObservableObject {
   /// Sets the stick dead zone of the model of `device` to `value`, or removes it when `value` is
   /// nil, then calls `reload` if the service wrote the record.
   ///
-  /// Does nothing while a change is in flight.
+  /// While a change is in flight, keeps `value` to write after it; a later one replaces it.
   ///
   /// - Parameters:
   ///   - value: The dead zone, or nil to remove the user's value.
@@ -29,9 +29,20 @@ final class StickDeadzoneEditor: ObservableObject {
     viewModel: RuntimeViewModel,
     reload: () async -> Void
   ) async {
-    guard !isWriting else { return }
+    guard !isWriting else {
+      latestWhileWriting = .some(value)
+      return
+    }
     isWriting = true
     defer { isWriting = false }
-    if await viewModel.setStickDeadzone(value, for: device) { await reload() }
+    var next: Double?? = .some(value)
+    while let value = next {
+      latestWhileWriting = nil
+      if await viewModel.setStickDeadzone(value, for: device) { await reload() }
+      next = latestWhileWriting
+    }
   }
+
+  /// The last change requested while a write ran; `.some(nil)` is a request to remove the value.
+  private var latestWhileWriting: Double??
 }

@@ -44,6 +44,7 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - Input Test applies the player indicator when you choose it and has no Apply button for it. A note under the rumble motors says their levels are sent when you click Test Rumble. A rumble, player indicator, color or brightness test that cannot be sent, because the controller is disconnected or lacks the output, shows a failure with the reason. (12.1)
 - The **Served by** picker is unavailable while its request runs and shows progress below it, shows the service's refusal directly below it, and is unavailable with the reason when no controller record describes the controller's model. (12.2)
 - The **Virtual HID profile** pop-up lists only the kinds the service accepts for the controller, names the kind in use and the stored override when they differ, and shows as text why a choice sends nothing: already in place, or the override in effect is stored in the other scope. (12.3)
+- The stick dead zone editor writes the last value you set while a write runs, including a reset, after that write ends, instead of dropping it. (12.4)
 
 ## Fixed
 
