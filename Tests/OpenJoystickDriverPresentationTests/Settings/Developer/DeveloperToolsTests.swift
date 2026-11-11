@@ -96,6 +96,23 @@ struct DeveloperToolsTests {
 
   @Test
   @MainActor
+  func aFailedExportOfThePacketCaptureShowsItsReason() throws {
+    let model = DeveloperToolsViewModel(gateway: GatewayStub())
+    let missing = FileManager.default.temporaryDirectory
+      .appendingPathComponent(UUID().uuidString).appendingPathComponent("capture.json")
+
+    model.writePacketCapture(to: missing)
+    #expect(model.exportError != nil)
+
+    let writable = FileManager.default.temporaryDirectory
+      .appendingPathComponent("\(UUID().uuidString).json")
+    defer { try? FileManager.default.removeItem(at: writable) }
+    model.writePacketCapture(to: writable)
+    #expect(model.exportError == nil)
+  }
+
+  @Test
+  @MainActor
   func reportsTheNoControllerStateExplicitly() async {
     let model = DeveloperToolsViewModel(gateway: GatewayStub())
 

@@ -40,6 +40,12 @@
           Button(OJDLocalized.string("action.export"), action: model.exportPacketCapture)
             .disabled(model.packets.isEmpty)
         }
+        if let exportError = model.exportError {
+          Text(exportError).foregroundColor(Color(NSColor.systemOrange)).fixedSize(
+            horizontal: false,
+            vertical: true
+          )
+        }
         packetList(displayedPackets)
         if model.hiddenIdlePacketCount > 0 {
           Text(

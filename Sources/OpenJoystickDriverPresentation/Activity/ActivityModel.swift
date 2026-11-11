@@ -30,17 +30,22 @@ enum ActivityLogFollowing {
   }
 }
 
-/// An action of the Activity area that did not happen: the alert's title and, when there is more
-/// to say, its message.
+/// An action of the Activity area that did not happen: the title and, when there is more to say,
+/// the message.
 struct ActivityActionFailure: Equatable {
-  /// The alert's title.
+  /// What did not happen.
   let title: String
-  /// The alert's message, or nil when the title says it all.
+  /// Why, or nil when the title says it all.
   let message: String?
+
+  /// The title, followed by the message when there is one.
+  var text: String { [title, message].compactMap { $0 }.joined(separator: " ") }
 }
 
 #if canImport(AppKit) && canImport(SwiftUI)
 
+  import AppKit
+  import OpenJoystickDriverKit
   import SwiftUI
 
   /// The state of the Activity area: which view it shows, the log and the diagnostic checks.
@@ -55,7 +60,7 @@ struct ActivityActionFailure: Equatable {
     let diagnostics: ActivityDiagnosticsModel
     /// The last action that failed.
     ///
-    /// The alert shows in both views.
+    /// The failure row shows in both views.
     @Published
     var failure: ActivityActionFailure?
     /// Does the action of a fix button and returns why it could not.
@@ -72,7 +77,7 @@ struct ActivityActionFailure: Equatable {
       self.performFix = performFix
     }
 
-    /// Does the action of a fix button and shows an alert when it fails.
+    /// Does the action of a fix button and shows a failure row when it fails.
     func perform(_ fix: ActivityCheckFix) {
       if let title = performFix(fix) { failure = ActivityActionFailure(title: title, message: nil) }
     }
@@ -84,19 +89,21 @@ struct ActivityActionFailure: Equatable {
     @ObservedObject
     var model: ActivityModel
 
-    /// The Activity content with the alert for the model's failure.
+    /// The Activity content under the row of the model's failure, which Dismiss clears.
     var body: some View {
-      content.alert(
-        isPresented: Binding(
-          get: { model.failure != nil },
-          set: { if !$0 { model.failure = nil } }
-        )
-      ) {
-        Alert(
-          title: Text(model.failure?.title ?? ""),
-          message: model.failure?.message.map { Text($0) },
-          dismissButton: .default(Text(OJDLocalized.string("action.ok")))
-        )
+      VStack(spacing: 0) {
+        if let failure = model.failure {
+          HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text(failure.text).foregroundColor(Color(NSColor.systemOrange)).fixedSize(
+              horizontal: false,
+              vertical: true
+            )
+            Spacer(minLength: 12)
+            Button(OJDLocalized.string("action.dismiss")) { model.failure = nil }
+          }.padding(.horizontal, 12).padding(.vertical, 8)
+          Divider()
+        }
+        content
       }
     }
 

@@ -192,3 +192,19 @@ Every item is read in A1 and shown in `ojd-alpha2/main-<Area>.png`. All keep the
 | I05 | Rumble switch and Test Rumble | `Controllers/InputTest/InputTestView+Body.swift` | not measured (this controller reports no rumble) | "Test Rumble", "Stop" | `buttons` | none | the switch takes effect only on "Test Rumble" | fix 12.1 |
 | I06 | Player indicator and Apply | `Controllers/InputTest/InputTestView+Body.swift` | not measured (this controller shows no player indicator) | "Player indicator", "Apply" | `pop-up-buttons` | none | the choice changes nothing until a separate Apply; nothing says so | fix 12.1 |
 | I07 | Color and brightness Apply | `Controllers/InputTest/InputTestView+Body.swift` | not measured (not shown for this controller) | "Apply" | `pop-up-buttons` | none | the same two-click pattern | fix 12.1 |
+
+## Failure stores
+
+Task 12.7. A failed request shows beside the control that started it; the banner holds only problems that concern no single control. Each row names a store, what it holds, and the one place each view keeps it.
+
+| Store | Holds | Shown by |
+| --- | --- | --- |
+| Shared banner (`MainWindow/MainWindowProblems.swift`) | the service does not answer, the listener stopped, the driver extension is inactive, a permission is missing, change notifications fall back to polling | every main window area; no single control started these |
+| `controllerActionFailures` (`Runtime/RuntimeViewModel.swift`) | the failure of the last suspend, resume or disconnect of one controller, by session token | the Suspended row of the controller detail (`Controllers/Inventory/ControllerDetailView+Facts.swift`); an alert for a command of the status menu, which closes when it runs |
+| `problems` of the override view (`Controllers/Inventory/VirtualHIDProfileOverrideView.swift`) | the failure of the Virtual HID profile change and the override store messages | the row of the Virtual HID profile pop-up |
+| `SettingsErrorSection` (`SettingsWindow/SettingsPaneComponents.swift`) | the error of a settings change, the settings file error, the outcome of Send Test Notification | the top of General, Notifications and Advanced |
+| `ProfileLibraryModel.lastError` (`Profiles/List/ProfileLibraryModel.swift`) | the failure of the last profile request | the Profiles area: `profileActionError` above the profile detail, and `localError` in the profile editor footer |
+| `outputError` of Input Test (`Controllers/InputTest/InputTestState.swift`) | the failure or refusal of rumble, player indicator, color and brightness | under the section of the control that started it |
+| `ActivityActionFailure` (`Activity/ActivityModel.swift`) | a failed fix button, log save or Show in Finder | a row at the top of the Activity area with Dismiss, in both views |
+
+Failures with no store of their own, each shown by the view that owns the control: `DeveloperToolsViewModel.exportError` under the packet capture buttons, `CommandLineToolModel.errorMessage` in the `ojd` link section. Alerts that stay, because the control that started them is a menu item or a toolbar command that has closed or has no room for text: the failed command of the status menu (W09) and the confirmation or notice of the application menu (W11), the refused navigation while a profile change runs, and the failed System Settings open of the driver banner row.

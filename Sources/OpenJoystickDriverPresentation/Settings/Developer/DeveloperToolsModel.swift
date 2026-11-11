@@ -62,6 +62,9 @@
     @Published
     private(set) var selectedDevice: ApplicationServiceDeviceDescription?
 
+    /// Why the last export of the packet capture failed, or nil.
+    @Published
+    private(set) var exportError: String?
     /// The latest input of the selected controller.
     @Published
     private(set) var latestInput: ControllerState?
@@ -249,7 +252,8 @@
       return try encoder.encode(packets)
     }
 
-    /// Asks for a destination and writes the captured packets there; a failed write shows an alert.
+    /// Asks for a destination and writes the captured packets there; a failed write shows in
+    /// ``exportError``, beside the Export button.
     func exportPacketCapture() {
       let panel = NSSavePanel()
       panel.title = OJDLocalized.string(
@@ -259,10 +263,17 @@
       panel.canCreateDirectories = true
       panel.begin { [weak self] response in
         guard response == .OK, let url = panel.url, let self else { return }
-        do { try self.encodedPacketLog().write(to: url, options: .atomic) } catch {
-          NSAlert(error: error).runModal()
-        }
+        self.writePacketCapture(to: url)
       }
+    }
+
+    /// Writes the captured packets to `url` and sets ``exportError`` to the reason a write fails,
+    /// or to nil when it succeeds.
+    func writePacketCapture(to url: URL) {
+      do {
+        try encodedPacketLog().write(to: url, options: .atomic)
+        exportError = nil
+      } catch { exportError = RuntimePresentation.userFacingError(error) }
     }
 
     /// Copies the captured packets to the general pasteboard as aligned text rows.

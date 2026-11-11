@@ -47,6 +47,7 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - The stick dead zone editor writes the last value you set while a write runs, including a reset, after that write ends, instead of dropping it. (12.4)
 - The profile editor and list say why an edit, save, create, import or delete is refused, show "Unsaved changes" beside Save, and say when choosing a virtual gamepad turns off exclusive physical input. (12.5)
 - Settings gives the reason Start at login cannot change, says when macOS has denied notifications and offers the Notifications pane of System Settings, checks for updates at once when Automatic update check is turned on, and names the controller that needs attention in the "Connected" notification switch. (12.6)
+- A failed packet capture export shows its reason under the Export button, and a failed Activity action shows a row with Dismiss at the top of the Activity area, instead of an alert. (12.7)
 
 ## Fixed
 
