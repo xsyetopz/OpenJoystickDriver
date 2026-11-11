@@ -30,8 +30,9 @@ Evidence class: source (read at `1178ab9d` and SwifterKit `0.3.0`, `0e0b4b8`).
    (`Sources/OpenJoystickDriverUSB/Transport/USBDriverKitTransport.swift:71-74`) returns `nil`
    when the service has no scalar `idProduct`. The DEXT route then lists no device.
 5. `OpenJoystickDriverUSBTransportProvider.selectDevices` (`TransportFacade.swift:271-289`)
-   drops a direct IOUSBHost device whose model is in `requiredDriverKitModels`, which holds all
-   seven products. With no DEXT device, `02D1` reaches no route.
+   drops a direct IOUSBHost device whose model is in `requiredDriverKitModels`, which holds the
+   products that Apple's driver holds (`02EA`, `0B00`, `0B12`). `02D1` has no owner, so it takes
+   the direct route when no DEXT device exists.
 6. `DeviceManager+USBDetection.swift` claims a DEXT-route `02D1` service on interface 0 when one
    is given to it. Detection is not the defect.
 

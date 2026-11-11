@@ -3,8 +3,8 @@ import OpenJoystickDriverKit
 /// Generic raw USB facade that selects an Apple transport from ownership evidence.
 ///
 /// Accessible vendor-specific interfaces use app-side IOUSBHost. Devices covered
-/// by OJD's restricted entitlement, or currently observed behind the DEXT, use
-/// USBDriverKit. An open failure never falls through to a
+/// by OJD's restricted entitlement use IOUSBHost too, unless Apple's driver holds the model or
+/// the DEXT owns the device; those use USBDriverKit. An open failure never falls through to a
 /// different backend.
 public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
   USBPhysicalDeviceObservationProvider
@@ -17,7 +17,8 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
   private let rawUSBModels: @Sendable () -> Set<ControllerModelID>
   /// The catalog's raw-USB models, read afresh on each use.
   private var supportedRawUSBModels: Set<ControllerModelID> { rawUSBModels() }
-  /// The models that only the extension route may serve.
+  /// The models that Apple's driver holds: the direct route never serves them, and only an active
+  /// extension that matched the device does.
   private let requiredDriverKitModels: Set<ControllerModelID>
   /// Reads the passive USB observation of a raw USB device.
   private let ioUSBHostObservation: @Sendable (USBTransportDevice) throws -> PhysicalDevice?
@@ -27,9 +28,9 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
   private let ioUSBHostConfigurationObservation:
     @Sendable (USBTransportDevice, UInt8) throws -> PhysicalDevice?
 
-  /// The models OJD's restricted entitlement covers, which only the DEXT route may serve.
+  /// The models Apple's own driver holds, which only the DEXT route may serve.
   static let driverKitRequiredModels = Set(
-    USBDriverKitExtensionConfiguration.microsoftProductIDs.map {
+    USBDriverKitExtensionConfiguration.appleHeldProductIDs.map {
       ControllerModelID(
         vendorID: USBDriverKitExtensionConfiguration.microsoftVendorID,
         productID: $0
@@ -333,7 +334,10 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
   ///
   /// A raw USB device is selected when its model is in the catalog or its service ID is in
   /// `signatureServiceIDs`, its model is not extension-only, and the extension does not list its
-  /// location. An extension device is selected when its model is in the catalog.
+  /// location. An extension device is selected when its model is in the catalog; it exists only
+  /// while the extension is active and matched the device. A model that no owner holds therefore
+  /// takes the direct route, and a model Apple's driver holds gets no session until the extension
+  /// owns it.
   static func selectDevices(
     direct: [USBTransportDevice],
     driverKit: [USBTransportDevice],
