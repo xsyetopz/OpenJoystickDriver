@@ -38,12 +38,16 @@
           Text(ControllerDetailFacts.automaticProfileLabel(device)).tag(
             VirtualHIDProfileID?.none
           )
-          ForEach(VirtualHIDProfileID.allCases, id: \.self) { profile in
+          ForEach(VirtualHIDProfileKinds.offered(for: device), id: \.self) { profile in
             Text("\(profile.identity.productName) (\(profile.rawValue))").tag(
               VirtualHIDProfileID?.some(profile)
             )
           }
         }.disabled(overrideState.inFlight)
+        if let text = VirtualHIDProfileKinds.inForceText(for: device) {
+          Text(text).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+            .fixedSize(horizontal: false, vertical: true)
+        }
         if VirtualHIDProfileScopeChoice.offered(for: device).count > 1 {
           Picker(OJDLocalized.string("ui.controllers.virtual.scope"), selection: $scope) {
             ForEach(VirtualHIDProfileScopeChoice.offered(for: device), id: \.self) { choice in
@@ -73,6 +77,10 @@
             Text(updatingLabel).foregroundColor(Color(NSColor.secondaryLabelColor))
           }.ojdAccessibilityLabel(updatingLabel)
         }
+        if let notice = overrideState.notice {
+          Text(notice).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+            .fixedSize(horizontal: false, vertical: true)
+        }
         ForEach(problems, id: \.self) { message in
           HStack(alignment: .top, spacing: 8) {
             OJDSystemSymbol(
@@ -97,7 +105,7 @@
     }
 
     /// The binding to the override that is shown, which is the pending choice until the status
-    /// reports it; choosing one sends the change when it would change anything.
+    /// reports it; choosing one sends the change, or shows why nothing is sent.
     private var overrideBinding: Binding<VirtualHIDProfileID?> {
       Binding(
         get: {
@@ -106,14 +114,10 @@
           return device.virtualHIDProfile?.override
         },
         set: { profile in
-          guard
-            VirtualHIDProfileOverrideDecision.decide(profile: profile, scope: scope, for: device)
-              == .send
-          else { return }
           let device = device
-          let scope = scope.scope
+          let scope = scope
           Task { @MainActor in
-            await viewModel.setVirtualHIDProfileOverride(profile, for: device, scope: scope)
+            await viewModel.chooseVirtualHIDProfile(profile, scope: scope, for: device)
           }
         }
       )

@@ -308,6 +308,8 @@ struct RuntimeVirtualHIDProfileOverrideState: Sendable, Equatable {
   var request: Request?
   /// The message of the last failed request, or nil.
   var failure: String?
+  /// Why the last choice sent nothing, or nil.
+  var notice: String?
 
   /// Whether a request is being applied.
   var inFlight: Bool { request != nil }
