@@ -204,9 +204,9 @@ Each of 12.1 to 12.7 starts from its row in the audit (10.5) and from a failing 
 ## 15. Per-app profiles
 
 - [x] 15.1 Replace `appID` with `appIDs` (a list of one or more bundle identifiers) in `profile.schema.json:38-48`, the profile reader, and the selection at `RemappingProfileLibrary+Operations.swift:275`. Write the failing tests first: a profile with two apps is in force for the second; a document with `appID` is refused. Add the rejection case and the conversion to the `AlphaTwoToAlphaThree` step (5.2). Let `--app` repeat on `ojd profile create` and `import`. Caller: profile selection in the service.
-- [ ] 15.2 Replace the identifier text field (`ProfileCreationSheet.swift:74`) with an app chooser in the creation sheet and the editor: running and installed apps with icon and name, "Other..." with an open panel, and an app that is not installed shown by its identifier. Caller: the Profiles area.
-- [ ] 15.3 Carry the profile in force for each controller and the app that selected it in the status RPC, and show both in the controller detail and the menu bar row (`MenuBarViewModel.swift:55`). Caller: the status RPC.
-- [ ] 15.4 Update `wiki/Remapping-Profiles.md:133` and the profile reference for `appIDs` and the chooser.
+- [x] 15.2 Replace the identifier text field (`ProfileCreationSheet.swift:74`) with an app chooser in the creation sheet and the editor: running and installed apps with icon and name, "Other..." with an open panel, and an app that is not installed shown by its identifier. Caller: the Profiles area.
+- [x] 15.3 Carry the profile in force for each controller and the app that selected it in the status RPC, and show both in the controller detail and the menu bar row (`MenuBarViewModel.swift:55`). Caller: the status RPC.
+- [x] 15.4 Update `wiki/Remapping-Profiles.md:133` and the profile reference for `appIDs` and the chooser.
 
 ## 16. Mapper features
 
