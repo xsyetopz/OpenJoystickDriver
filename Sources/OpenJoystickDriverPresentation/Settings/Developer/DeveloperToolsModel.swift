@@ -123,6 +123,11 @@
       self.sleep = sleep
     }
 
+    /// Why the controller pop-up cannot be used, or nil while it has an option.
+    var controllerPickerUnavailableReason: String? {
+      devices.isEmpty ? OJDLocalized.string("ui.developer.noControllers") : nil
+    }
+
     /// Whether a capture is starting or running.
     var isCapturing: Bool {
       if case .capturing = captureState { return true }
