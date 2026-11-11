@@ -63,7 +63,7 @@ enum LocalizationCatalogAudit {
       "term.key.return", "term.key.shift", "term.key.tab",
     ],
     "de-DE": [
-      "term.parser", "term.protocolVariant.dongle",
+      "ui.shortcuts.action.removeMod.name", "term.parser", "term.protocolVariant.dongle",
       "ui.library.field.version", "ui.menu.controller.title", "ui.activity.filter",
       "ui.activity.column.details",
       "ui.access.details", "ui.library.details",
@@ -95,7 +95,7 @@ enum LocalizationCatalogAudit {
     ]),
     "hi-IN": ["term.key.escape", "term.key.return"],
     "id-ID": [
-      "term.parser", "term.protocolVariant.dongle",
+      "ui.shortcuts.action.installMod.folder", "term.parser", "term.protocolVariant.dongle",
       "ui.library.layer.driver", "ui.access.token.issued.title", "ui.access.token.named",
       "ui.activity.filter", "ui.activity.mode.log",
       "ui.access.web.port", "ui.access.web.enable.port", "ui.menu.window.zoom",

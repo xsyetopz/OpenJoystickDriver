@@ -229,6 +229,14 @@ A program with the `control` scope can activate, deactivate or change one profil
 3. The endpoint answers a `ProfileResult` with the profile and whether it is active. A request that the service refuses, such as one for a profile that does not exist, gets a `Status` failure with the code that `ojd` prints, such as `E2012`, and the connection stays open for the next request.
 4. A `ProfileRequest` may follow another one. A `Subscription` or a `FeedRequest` ends the exchange.
 
+### List Mod Packages Through the Endpoint
+
+A program with the `Read` scope can list the installed mod packages, as `ojd mod list --json` does:
+
+1. Send a `Hello` with `"scopes":["Read"]`, as in the section above.
+2. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"ModList"}`.
+3. The endpoint answers `Mods` with one entry for each package: `name`, `files`, and `version` and `author` when the package states them. An entry with a `problem` holds a package that the service does not use. The connection stays open, so a `ModList` may follow a `ModList` or a `ProfileRequest`.
+
 ## Change Profiles
 
 A profile is an XML property list file. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes it, and the [Profile file reference](Profile-File-Reference.md) explains its fields. To read one in a script, convert it with `plutil -convert json -o - FILE.plist`.
@@ -315,6 +323,9 @@ On macOS 13 or later, the Shortcuts app lists these OpenJoystickDriver actions:
 | Deactivate Profile | A remapping profile | The profile, now inactive |
 | Set Profile Value | A remapping profile, a key, and a value | The profile, with the value changed |
 | Get OpenJoystickDriver Version | Nothing | The version of the installed app |
+| List Mod Packages | Nothing | The names of the installed mod packages |
+| Install Mod Package | A folder, and whether to replace an installed package of the same name | The name of the installed package |
+| Remove Mod Package | A package name | The name of the removed package |
 
 The actions run in the app, so the app must be installed. They do not use `ojd`.
 

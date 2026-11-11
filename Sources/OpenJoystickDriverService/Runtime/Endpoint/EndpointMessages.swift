@@ -13,8 +13,8 @@ struct EndpointChallenge: Encodable, Sendable {
   let nonce: String
 }
 
-/// A line that a client sends: `Hello` first, then any `ProfileRequest`, then `Subscription` or
-/// `FeedRequest`.
+/// A line that a client sends: `Hello` first, then any `ProfileRequest` or `ModList`, then
+/// `Subscription` or `FeedRequest`.
 ///
 /// A line is checked by ``EndpointHeader`` first: a missing header is answered with `E1011`, an
 /// unsupported `apiVersion` with `E1009`, and an unknown kind, or one that is not accepted at
@@ -30,9 +30,11 @@ struct EndpointRequest: Decodable, Sendable {
     case feedRequest = "FeedRequest"
     /// A request to activate, deactivate, or change one remapping profile.
     case profileRequest = "ProfileRequest"
+    /// A request for the installed mod packages.
+    case modList = "ModList"
 
     /// Whether the client sends the kind to get an answer, after which it may send another line.
-    var isCommand: Bool { self == .profileRequest }
+    var isCommand: Bool { self == .profileRequest || self == .modList }
   }
 
   /// The version of the endpoint API that the client speaks.
@@ -125,6 +127,16 @@ struct EndpointProfileResult: Encodable, Sendable {
   let kind = "ProfileResult"
   /// The profile after the request.
   let profile: AutomationProfile
+}
+
+/// The answer to a `ModList`: the installed mod packages, as `ojd mod list` prints them.
+struct EndpointMods: Encodable, Sendable {
+  /// The version of the endpoint API.
+  let apiVersion = OpenJoystickDriverAPI.version
+  /// The kind of the line, `Mods`.
+  let kind = "Mods"
+  /// The packages of the store in name order, with the ones that cannot be used included.
+  let mods: [ModPackageEntry]
 }
 
 /// The answer to a `Hello` that is accepted.

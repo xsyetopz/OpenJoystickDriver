@@ -3943,6 +3943,24 @@
 "ui.shortcuts.action.setProfileValue.value" = "값";
 /* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
 "ui.shortcuts.error.profileKey" = "프로필 값의 키에는 빈 부분이 있을 수 없습니다.";
+/* Name in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.title" = "모드 패키지 목록 보기";
+/* Description in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.description" = "설치된 모드 패키지의 이름을 반환합니다.";
+/* Name in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.title" = "모드 패키지 설치";
+/* Description in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.description" = "폴더에서 모드 패키지를 설치하고 그 이름을 반환합니다.";
+/* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
+"ui.shortcuts.action.installMod.folder" = "폴더";
+/* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
+"ui.shortcuts.action.installMod.replace" = "설치된 패키지 교체";
+/* Name in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.title" = "모드 패키지 제거";
+/* Description in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.description" = "설치된 모드 패키지를 이름으로 제거합니다.";
+/* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
+"ui.shortcuts.action.removeMod.name" = "이름";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "모델";
 /* Name of the name property of a controller in the Shortcuts app. */

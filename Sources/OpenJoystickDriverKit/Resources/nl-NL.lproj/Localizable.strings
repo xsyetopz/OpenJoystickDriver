@@ -3389,6 +3389,24 @@
 "ui.shortcuts.action.setProfileValue.value" = "Waarde";
 /* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
 "ui.shortcuts.error.profileKey" = "De sleutel van een profielwaarde mag geen leeg deel hebben.";
+/* Name in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.title" = "Modpakketten tonen";
+/* Description in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.description" = "Geeft de namen van de geïnstalleerde modpakketten terug.";
+/* Name in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.title" = "Modpakket installeren";
+/* Description in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.description" = "Installeert een modpakket uit een map en geeft de naam ervan terug.";
+/* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
+"ui.shortcuts.action.installMod.folder" = "Map";
+/* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
+"ui.shortcuts.action.installMod.replace" = "Geïnstalleerd pakket vervangen";
+/* Name in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.title" = "Modpakket verwijderen";
+/* Description in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.description" = "Verwijdert een geïnstalleerd modpakket op naam.";
+/* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
+"ui.shortcuts.action.removeMod.name" = "Naam";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "Model";
 /* Name of the name property of a controller in the Shortcuts app. */

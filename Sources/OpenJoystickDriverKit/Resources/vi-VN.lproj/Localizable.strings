@@ -3943,6 +3943,24 @@
 "ui.shortcuts.action.setProfileValue.value" = "Giá trị";
 /* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
 "ui.shortcuts.error.profileKey" = "Khóa của một giá trị hồ sơ không được có phần trống.";
+/* Name in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.title" = "Liệt kê gói mod";
+/* Description in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.description" = "Trả về tên các gói mod đã cài đặt.";
+/* Name in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.title" = "Cài đặt gói mod";
+/* Description in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.description" = "Cài đặt một gói mod từ thư mục và trả về tên của gói.";
+/* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
+"ui.shortcuts.action.installMod.folder" = "Thư mục";
+/* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
+"ui.shortcuts.action.installMod.replace" = "Thay thế gói đã cài đặt";
+/* Name in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.title" = "Gỡ gói mod";
+/* Description in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.description" = "Gỡ một gói mod đã cài đặt theo tên.";
+/* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
+"ui.shortcuts.action.removeMod.name" = "Tên";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "Kiểu máy";
 /* Name of the name property of a controller in the Shortcuts app. */

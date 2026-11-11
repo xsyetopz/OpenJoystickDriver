@@ -3943,6 +3943,24 @@
 "ui.shortcuts.action.setProfileValue.value" = "ค่า";
 /* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
 "ui.shortcuts.error.profileKey" = "คีย์ของค่าในโปรไฟล์ต้องไม่มีส่วนที่ว่างเปล่า";
+/* Name in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.title" = "แสดงรายการแพ็กเกจม็อด";
+/* Description in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.description" = "ส่งคืนชื่อของแพ็กเกจม็อดที่ติดตั้งแล้ว";
+/* Name in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.title" = "ติดตั้งแพ็กเกจม็อด";
+/* Description in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.description" = "ติดตั้งแพ็กเกจม็อดจากโฟลเดอร์และส่งคืนชื่อของแพ็กเกจ";
+/* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
+"ui.shortcuts.action.installMod.folder" = "โฟลเดอร์";
+/* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
+"ui.shortcuts.action.installMod.replace" = "แทนที่แพ็กเกจที่ติดตั้งแล้ว";
+/* Name in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.title" = "ลบแพ็กเกจม็อด";
+/* Description in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.description" = "ลบแพ็กเกจม็อดที่ติดตั้งแล้วตามชื่อ";
+/* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
+"ui.shortcuts.action.removeMod.name" = "ชื่อ";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "รุ่น";
 /* Name of the name property of a controller in the Shortcuts app. */

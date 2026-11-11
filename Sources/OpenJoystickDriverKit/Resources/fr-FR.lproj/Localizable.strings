@@ -3389,6 +3389,24 @@
 "ui.shortcuts.action.setProfileValue.value" = "Valeur";
 /* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
 "ui.shortcuts.error.profileKey" = "La clé d’une valeur de profil ne peut pas avoir de partie vide.";
+/* Name in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.title" = "Lister les paquets de mods";
+/* Description in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.description" = "Renvoie les noms des paquets de mods installés.";
+/* Name in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.title" = "Installer un paquet de mods";
+/* Description in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.description" = "Installe un paquet de mods depuis un dossier et renvoie son nom.";
+/* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
+"ui.shortcuts.action.installMod.folder" = "Dossier";
+/* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
+"ui.shortcuts.action.installMod.replace" = "Remplacer le paquet installé";
+/* Name in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.title" = "Supprimer un paquet de mods";
+/* Description in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.description" = "Supprime un paquet de mods installé d'après son nom.";
+/* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
+"ui.shortcuts.action.removeMod.name" = "Nom";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "Modèle";
 /* Name of the name property of a controller in the Shortcuts app. */

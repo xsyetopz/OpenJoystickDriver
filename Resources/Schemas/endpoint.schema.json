@@ -27,6 +27,9 @@
           "$ref": "#/$defs/profileRequest"
         },
         {
+          "$ref": "#/$defs/modListRequest"
+        },
+        {
           "$ref": "#/$defs/frame"
         },
         {
@@ -53,6 +56,9 @@
         },
         {
           "$ref": "#/$defs/profileResult"
+        },
+        {
+          "$ref": "#/$defs/mods"
         },
         {
           "$ref": "cli-output.schema.json#/$defs/sharedControllerWatchEvent"
@@ -187,6 +193,64 @@
         },
         "as": {
           "$ref": "#/$defs/persona"
+        }
+      }
+    },
+    "modListRequest": {
+      "type": "object",
+      "required": ["apiVersion", "kind"],
+      "additionalProperties": false,
+      "description": "A request, with the read scope, for the installed mod packages.",
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "kind": {
+          "const": "ModList"
+        }
+      }
+    },
+    "mods": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "mods"],
+      "additionalProperties": false,
+      "description": "The answer to a mod list request: every installed package in name order.",
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "kind": {
+          "const": "Mods"
+        },
+        "mods": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["files", "name"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": "string"
+              },
+              "author": {
+                "type": "string"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "problem": {
+                "type": "string",
+                "description": "Why the package is not used; absent when it is used."
+              }
+            }
+          }
         }
       }
     },

@@ -4,7 +4,7 @@ import OpenJoystickDriverKit
 extension EndpointServer {
   /// The kinds that a welcomed client may send first: a request to answer, a subscription, or a
   /// feed.
-  static let requestKinds = ["Subscription", "FeedRequest", "ProfileRequest"]
+  static let requestKinds = ["Subscription", "FeedRequest", "ProfileRequest", "ModList"]
 
   /// Answers one request of `kind` from its `line` and tells whether the connection goes on.
   ///
@@ -16,11 +16,19 @@ extension EndpointServer {
     line: Data,
     on connection: EndpointConnection
   ) -> Bool {
-    guard connection.session?.scopes.contains(.control) == true else {
+    let scope: EndpointScope = kind == .modList ? .read : .control
+    guard connection.session?.scopes.contains(scope) == true else {
       connection.close(
-        EndpointError(code: .notGranted, message: "\(kind.rawValue) needs the control scope.")
+        EndpointError(
+          code: .notGranted,
+          message: "\(kind.rawValue) needs the \(scope.rawValue.lowercased()) scope."
+        )
       )
       return false
+    }
+    if kind == .modList {
+      connection.send(EndpointMods(mods: modStore.entries()))
+      return !connection.isClosing
     }
     guard let request = try? JSONDecoder().decode(EndpointProfileRequest.self, from: line) else {
       connection.close(Self.invalid("The message is not a valid request of its kind."))

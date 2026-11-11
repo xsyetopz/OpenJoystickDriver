@@ -112,11 +112,12 @@ final class FakeAutomation: AutomationService, @unchecked Sendable {
 
 /// Runs `body` with an endpoint on a private socket whose clients have `identity`; nil makes
 /// every signature unreadable. `feeds` serves `feed` requests, and `automation` answers the
-/// profile requests.
+/// profile requests. `modStore` answers `ModList`; the default is empty.
 func withEndpointServer(
   identity: CodeSigningIdentity? = EndpointFixture.tool,
   feeds: VirtualFeedRegistry? = nil,
   automation: FakeAutomation = FakeAutomation(),
+  modStore: ModPackageStore? = nil,
   streamDelivered: (@Sendable (ControllerSessionToken, UInt64) async -> Void)? = nil,
   beforeAcceptWait: (@Sendable (AccessTransport, Int) -> Void)? = nil,
   acceptCall: @escaping @Sendable (Int32) -> Int32 = { Darwin.accept($0, nil, nil) },
@@ -143,6 +144,7 @@ func withEndpointServer(
     version: "1.2.3",
     feeds: feeds,
     automation: automation,
+    modStore: modStore ?? ModPackageStore(directory: directory.appendingPathComponent("Packages")),
     identify: { _ in client },
     streamDelivered: streamDelivered,
     beforeAcceptWait: beforeAcceptWait,

@@ -24,6 +24,13 @@ PROFILE = {
     "isActive": True,
 }
 
+MOD = {
+    "name": "arcade-pack",
+    "version": "1.2.3",
+    "author": "Tester",
+    "files": ["Controllers/fff1-0001.plist"],
+}
+
 DETAILS = {"details": {"supportedAPIVersions": [VERSION]}}
 
 
@@ -55,6 +62,9 @@ class EndpointSchemaTests(unittest.TestCase):
             line("ProfileRequest", action="Set", profile="Rally", key="name", value="X"),
             line("ProfileRequest", action="Set", profile="Rally", key="a.b", value=None),
             line("ProfileResult", profile=PROFILE),
+            line("ModList"),
+            line("Mods", mods=[]),
+            line("Mods", mods=[MOD, {"name": "broken", "files": [], "problem": "text"}]),
             failure("E1001"),
             failure("E1003"),
             failure("E2012"),
@@ -97,6 +107,20 @@ class EndpointSchemaTests(unittest.TestCase):
             line("ProfileRequest", action="Activate"),
             line("ProfileResult", profile={**PROFILE, "extra": 1}),
             line("ProfileResult", profile={**PROFILE, "id": "not-a-uuid"}),
+        ]
+        for message in refused:
+            self.assertFalse(self.valid(message), message)
+
+    def test_a_mod_list_and_its_answer_are_refused_when_malformed(self) -> None:
+        refused = [
+            line("ModList", scope="Read"),
+            line("Mods"),
+            line("Mods", mods=[{"name": "x"}]),
+            line("Mods", mods=[{"files": []}]),
+            line("Mods", mods=[{"name": "", "files": []}]),
+            line("Mods", mods=[{**MOD, "extra": 1}]),
+            line("Mods", mods=[{**MOD, "files": [1]}]),
+            line("Mods", mods={"name": "x"}),
         ]
         for message in refused:
             self.assertFalse(self.valid(message), message)

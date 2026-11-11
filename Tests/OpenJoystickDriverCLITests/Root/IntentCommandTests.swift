@@ -14,6 +14,9 @@ struct IntentCommandTests {
     "ActivateProfileIntent": ["profile", "activate"],
     "DeactivateProfileIntent": ["profile", "deactivate"],
     "SetProfileValueIntent": ["profile", "set"],
+    "ListModsIntent": ["mod", "list"],
+    "InstallModIntent": ["mod", "install"],
+    "RemoveModIntent": ["mod", "remove"],
   ]
 
   private static func declaredIntents() throws -> Set<String> {

@@ -3943,6 +3943,24 @@
 "ui.shortcuts.action.setProfileValue.value" = "मान";
 /* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
 "ui.shortcuts.error.profileKey" = "प्रोफ़ाइल मान की कुंजी में कोई खाली भाग नहीं हो सकता।";
+/* Name in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.title" = "मॉड पैकेज सूचीबद्ध करें";
+/* Description in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.description" = "इंस्टॉल किए गए मॉड पैकेजों के नाम लौटाता है।";
+/* Name in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.title" = "मॉड पैकेज इंस्टॉल करें";
+/* Description in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.description" = "किसी फ़ोल्डर से मॉड पैकेज इंस्टॉल करता है और उसका नाम लौटाता है।";
+/* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
+"ui.shortcuts.action.installMod.folder" = "फ़ोल्डर";
+/* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
+"ui.shortcuts.action.installMod.replace" = "इंस्टॉल किया पैकेज बदलें";
+/* Name in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.title" = "मॉड पैकेज हटाएँ";
+/* Description in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.description" = "नाम के आधार पर इंस्टॉल किया गया मॉड पैकेज हटाता है।";
+/* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
+"ui.shortcuts.action.removeMod.name" = "नाम";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "मॉडल";
 /* Name of the name property of a controller in the Shortcuts app. */

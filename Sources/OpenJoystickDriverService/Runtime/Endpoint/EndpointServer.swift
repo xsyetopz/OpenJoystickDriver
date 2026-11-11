@@ -50,6 +50,8 @@ final class EndpointServer: @unchecked Sendable {
   let feeds: VirtualFeedRegistry?
   /// The service that answers the profile requests, as the App Intents use it.
   let automation: any AutomationService
+  /// The store that `ModList` reads, the one `ojd mod` and the App Intents use.
+  let modStore: ModPackageStore
   /// Identifies the program at the other end of a socket.
   let identify: Identify
   /// Told when a stream line about a controller went to the subscribers, with the uptime in
@@ -103,6 +105,7 @@ final class EndpointServer: @unchecked Sendable {
     version: String = ApplicationVersion.current,
     feeds: VirtualFeedRegistry? = nil,
     automation: any AutomationService,
+    modStore: ModPackageStore = ModPackageStore(),
     identify: @escaping Identify = EndpointClient.identify,
     streamDelivered: (@Sendable (ControllerSessionToken, UInt64) async -> Void)? = nil,
     beforeAcceptWait: (@Sendable (AccessTransport, Int) -> Void)? = nil,
@@ -120,6 +123,7 @@ final class EndpointServer: @unchecked Sendable {
     self.version = version
     self.feeds = feeds
     self.automation = automation
+    self.modStore = modStore
     self.streamDelivered = streamDelivered
     self.identify = identify
   }

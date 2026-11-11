@@ -95,26 +95,15 @@ struct ModInstallCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      // Validation never depends on `--force`, so `requires` and clashes always refuse.
-      let manifest = try ModPackageValidation.check(folder)
-      let destination = ModStore.directory.appendingPathComponent(
-        manifest.name,
-        isDirectory: true
+      _ = try ModPackageValidation.check(folder)
+      let installation = try ModStore.store.installPackage(
+        from: ModStore.folder(folder),
+        replace: force,
+        dryRun: dryRun
       )
-      let replaced = (try? FileManager.default.attributesOfItem(atPath: destination.path)) != nil
-      if replaced && !force {
-        throw CLIFailure(
-          .packageAlreadyInstalled,
-          CLILocalized.format("cli.mod.group.alreadyInstalled", manifest.name)
-        )
-      }
-      if !dryRun {
-        do { try ModStore.store.install(ModStore.folder(folder), replace: force) } catch let error
-          as ModPackageError
-        {
-          throw ModStore.failure(error, subject: folder)
-        }
-      }
+      let manifest = installation.manifest
+      let destination = installation.destination
+      let replaced = installation.replaced
       switch CLIContext.current.format {
       case .json:
         try CLIOutput.json(
@@ -153,7 +142,7 @@ struct ModListCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let entries = ModStore.store.list().map(ModPackageEntry.init)
+      let entries = ModStore.store.entries()
       switch CLIContext.current.format {
       case .json: try CLIOutput.json(CLIList(items: entries))
       case .plain:
@@ -222,24 +211,13 @@ struct ModRemoveCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let target = ModStore.directory.appendingPathComponent(name, isDirectory: true)
-      // The name rules of `ModPackageStore.remove`: a name with a separator or a leading dot
-      // names no entry. The check comes first, so a missing package is E4006 in every mode.
-      let named = !name.isEmpty && !name.hasPrefix(".") && !name.contains("/")
-      guard named, (try? FileManager.default.attributesOfItem(atPath: target.path)) != nil else {
-        throw CLIFailure(
-          .packageNotInstalled,
-          CLILocalized.format("cli.mod.group.notInstalled", name)
-        )
-      }
+      let target = try ModStore.store.removePackage(named: name, dryRun: true)
       if !dryRun {
         try CLITerminal.confirm(
           CLILocalized.format("cli.mod.remove.confirm", target.path),
           force: force
         )
-        do { try ModStore.store.remove(name) } catch let error as ModPackageError {
-          throw ModStore.failure(error, subject: name)
-        }
+        try ModStore.store.removePackage(named: name)
       }
       switch CLIContext.current.format {
       case .json:
