@@ -309,6 +309,18 @@
       showInMenuBar = enabled
     }
 
+    /// Stores that the user removed the menu bar item: Show in menu bar off and Show in Dock on,
+    /// in one write so that the two are never both off.
+    ///
+    /// Returns whether the write succeeded; a failure shows in ``errorMessage`` and leaves both
+    /// switches as they were.
+    func menuBarItemWasRemoved() -> Bool {
+      guard persist([.showInMenuBar: false, .showInDock: true]) else { return false }
+      showInMenuBar = false
+      showInDock = true
+      return true
+    }
+
     /// Shows or hides the Dock icon.
     func setShowInDock(_ enabled: Bool) {
       guard persist(.showInDock, enabled) else { return }

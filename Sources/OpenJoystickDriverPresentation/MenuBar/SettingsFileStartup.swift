@@ -23,6 +23,13 @@
     static func statusItemIsShown(showInMenuBar: Bool, settingsError: SettingsStoreError?) -> Bool {
       showInMenuBar || settingsError != nil
     }
+
+    /// A file that turns both the menu bar item and the Dock icon off leaves the user no way in
+    /// but the item that the error keeps, so the main window opens at launch.
+    static func opensMainWindowAtLaunch(settingsError: SettingsStoreError?) -> Bool {
+      if case .storedNoVisibleEntryPoint = settingsError { return true }
+      return false
+    }
   }
 
   /// The work that waits for a usable settings file, run again when a reset or a repair makes the

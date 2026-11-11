@@ -55,6 +55,9 @@
         preferences.$settingsFileError
       ).map { SettingsFileStartup.statusItemIsShown(showInMenuBar: $0, settingsError: $1) }
         .removeDuplicates().sink { [weak self] shown in self?.applyShowInMenuBar(shown) }
+      if SettingsFileStartup.opensMainWindowAtLaunch(settingsError: preferences.settingsFileError) {
+        mainWindow?.showMainWindow(area: nil)
+      }
       Task { @MainActor in self.offerSettingsRecovery() }
       let updates = ControllerLiveUpdates(
         source: gatewayChangeSource,
@@ -232,6 +235,13 @@
     private func installStatusItem() {
       let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
       statusItem = item
+      item.behavior = .removalAllowed
+      // macOS keeps the visibility of an item that the user dragged out, and the setting decides.
+      item.isVisible = true
+      statusItemVisibilityObservation = item.observe(\.isVisible) { [weak self] item, _ in
+        guard !item.isVisible else { return }
+        Task { @MainActor in self?.statusItemWasRemoved() }
+      }
       if let button = item.button {
         button.toolTip = OJDLocalized.string("term.app.name")
       }
@@ -250,9 +260,17 @@
       controllerLiveUpdates = nil
     }
 
+    /// Stores the user's removal of the item. The Show in menu bar change then removes the item
+    /// and opens the main window; when the setting cannot be stored the item comes back.
+    private func statusItemWasRemoved() {
+      guard let item = statusItem, !item.isVisible else { return }
+      if !preferences.menuBarItemWasRemoved() { item.isVisible = true }
+    }
+
     /// Removes the menu-bar item and its menu.
     private func removeStatusItem() {
       guard let item = statusItem else { return }
+      statusItemVisibilityObservation = nil
       NSStatusBar.system.removeStatusItem(item)
       statusItem = nil
       statusMenu = nil

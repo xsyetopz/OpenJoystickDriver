@@ -38,6 +38,8 @@
 
     /// The menu-bar item, or nil while it is hidden.
     var statusItem: NSStatusItem?
+    /// Tells when the user takes the menu-bar item out of the menu bar.
+    var statusItemVisibilityObservation: NSKeyValueObservation?
     /// The menu of the menu-bar item.
     var statusMenu: NSMenu?
     /// Tells when the status menu opens and closes.
