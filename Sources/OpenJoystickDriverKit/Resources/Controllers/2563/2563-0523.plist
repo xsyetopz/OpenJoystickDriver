@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiVersion</key>
+	<string>openjoystickdriver/v1alpha3</string>
+	<key>kind</key>
+	<string>Controller</string>
+	<key>modes</key>
+	<array>
+		<dict>
+			<key>id</key>
+			<string>default</string>
+			<key>protocol</key>
+			<dict>
+				<key>family</key>
+				<string>SonySixaxis</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>id</key>
+			<string>bluetooth</string>
+			<key>match</key>
+			<dict>
+				<key>link</key>
+				<string>BluetoothClassic</string>
+			</dict>
+			<key>protocol</key>
+			<dict>
+				<key>family</key>
+				<string>SonySixaxis</string>
+			</dict>
+			<key>session</key>
+			<dict>
+				<key>startup</key>
+				<array>
+					<dict>
+						<key>bytes</key>
+						<string>42 03 00 00</string>
+						<key>report</key>
+						<dict>
+							<key>id</key>
+							<integer>244</integer>
+							<key>kind</key>
+							<string>Feature</string>
+							<key>length</key>
+							<integer>5</integer>
+						</dict>
+					</dict>
+				</array>
+			</dict>
+		</dict>
+	</array>
+	<key>productID</key>
+	<integer>1315</integer>
+	<key>vendorID</key>
+	<integer>9571</integer>
+</dict>
+</plist>

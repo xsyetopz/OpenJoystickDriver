@@ -7,6 +7,7 @@ import hashlib
 import importlib.util
 import json
 import pathlib
+import plistlib
 import re
 import shutil
 import sys
@@ -22,7 +23,7 @@ from Scripts.Catalog.schema_header import KINDS, header
 from Scripts.Catalog.xpad_io import json_text
 from Scripts.Command.execution import main_checkout_dir
 from Scripts.Quality import repository_tool
-from Scripts.Quality.json_format import format_json
+from Scripts.Quality.plist_format import convert_json_files
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 LOCK_PATH = ROOT / "ControllerSources.lock.json"
@@ -46,9 +47,9 @@ VIRTUAL_DEVICE_OUTPUT_DIR = (
     ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "VirtualDevices"
 )
 
-# Linux HID records from `Resources/CatalogRules/linux-hid.json`: (source, vendor macro,
+# Linux HID records from `Resources/CatalogRules/linux-hid.plist`: (source, vendor macro,
 # product macro, family, stored variant, parameters, capabilities).
-_HID_RULES = load_rules("linux-hid.json", "LinuxHidRules", frozenset({"records"}))
+_HID_RULES = load_rules("linux-hid.plist", "LinuxHidRules", frozenset({"records"}))
 HID_RECORDS: tuple[
     tuple[str, str, str, str, str | None, dict[str, Any], dict[str, Any] | None], ...
 ] = tuple(
@@ -175,10 +176,10 @@ def build_hid_records(sources: dict[str, str]) -> list[dict[str, Any]]:
 
 INTERFACE_SIGNATURE_BUCKET = "interface-signature"
 
-# SDL rule tables from `Resources/CatalogRules/sdl.json`. Every identity-keyed table is
+# SDL rule tables from `Resources/CatalogRules/sdl.plist`. Every identity-keyed table is
 # keyed by (vendor ID, product ID).
 _SDL_RULES = load_rules(
-    "sdl.json",
+    "sdl.plist",
     "SdlRules",
     frozenset(
         {
@@ -460,7 +461,7 @@ def record_key(record: dict[str, Any]) -> tuple[int, int]:
 
 def record_path(root: pathlib.Path, key: tuple[int, int]) -> pathlib.Path:
     vendor_id, product_id = key
-    return root / f"{vendor_id:04x}" / f"{vendor_id:04x}-{product_id:04x}.json"
+    return root / f"{vendor_id:04x}" / f"{vendor_id:04x}-{product_id:04x}.plist"
 
 
 def load_lock() -> dict[str, Any]:
@@ -498,8 +499,8 @@ def load_authored_records(
 ) -> dict[tuple[int, int], dict[str, Any]]:
     """The authored `Controller` records."""
     adds: dict[tuple[int, int], dict[str, Any]] = {}
-    for path in sorted(controller_dir.glob("*/*.json")):
-        record = json.loads(path.read_text())
+    for path in sorted(controller_dir.glob("*/*.plist")):
+        record = plistlib.loads(path.read_bytes())
         key = record_key(record)
         expected = record_path(controller_dir, key)
         if path != expected:
@@ -513,8 +514,8 @@ def apply_built_in_patches(
     adds: dict[tuple[int, int], dict[str, Any]],
     controller_dir: pathlib.Path = CONTROLLER_DIR,
     patch_dir: pathlib.Path = PATCH_DIR,
-) -> dict[tuple[int, int], str]:
-    """The text of every record with the built-in patches applied.
+) -> dict[tuple[int, int], bytes]:
+    """The bytes of every record with the built-in patches applied.
 
     `OJDRepositoryTool apply-patches` merges the patches, so the merge rules, the patch layout
     and the text of the numbers are Swift's. An authored record enters unchanged, and the
@@ -526,10 +527,15 @@ def apply_built_in_patches(
     with tempfile.TemporaryDirectory() as directory:
         root = pathlib.Path(directory)
         unpatched, patched = root / "unpatched", root / "patched"
+        generated = []
         for key, record in records.items():
-            path = record_path(unpatched, key)
+            path = record_path(unpatched, key).with_suffix(".json")
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(json_text(record), encoding="utf-8")
+            generated.append(path)
+        convert_json_files(generated)
+        for path in generated:
+            path.unlink()
         for key in adds:
             path = record_path(unpatched, key)
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -552,7 +558,7 @@ def apply_built_in_patches(
                 f"the built-in patches do not give valid records:\n{error}"
             ) from error
         return {
-            key: record_path(patched, key).read_text(encoding="utf-8")
+            key: record_path(patched, key).read_bytes()
             for key in sorted({*records, *adds})
         }
 
@@ -585,8 +591,8 @@ def merge_sdl_records(
     return counts
 
 
-def build_catalog() -> dict[tuple[int, int], str]:
-    """The text of every canonical controller record, before the JSON formatter."""
+def build_catalog() -> dict[tuple[int, int], bytes]:
+    """The bytes of every canonical controller record, as the Swift tool writes them."""
     generator = load_module(
         "ojd_generate_xpad_records",
         ROOT / "Scripts" / "Catalog" / "generate_xpad_records.py",
@@ -631,7 +637,7 @@ def build_catalog() -> dict[tuple[int, int], str]:
     return texts
 
 
-def build_database(records: dict[tuple[int, int], str]) -> str:
+def build_database(records: dict[tuple[int, int], bytes]) -> str:
     """The shipped SDL_GameControllerDB text, reduced against the SDL list and `records`."""
     lock = load_lock()
     pin = lock["sdlGameControllerDB"]
@@ -680,40 +686,40 @@ def sdl_summary(rows: list[tuple[int, int, str]], counts: dict[str, int]) -> str
 
 
 def expected_files(
-    records: dict[tuple[int, int], str],
-) -> dict[pathlib.Path, str]:
-    files = format_json(
-        {record_path(OUTPUT_DIR, key): text for key, text in sorted(records.items())}
-    )
+    records: dict[tuple[int, int], bytes],
+) -> dict[pathlib.Path, bytes]:
+    files = {
+        record_path(OUTPUT_DIR, key): data for key, data in sorted(records.items())
+    }
     return {**files, **bundled_copies()}
 
 
-def bundled_copies() -> dict[pathlib.Path, str]:
+def bundled_copies() -> dict[pathlib.Path, bytes]:
     """The authored protocol descriptions and virtual device records, which the bundle ships
     unchanged."""
     return {
-        output / path.name: path.read_text()
+        output / path.name: path.read_bytes()
         for source, output in (
             (PROTOCOL_DIR, PROTOCOL_OUTPUT_DIR),
             (VIRTUAL_DEVICE_DIR, VIRTUAL_DEVICE_OUTPUT_DIR),
         )
-        for path in sorted(source.glob("*.json"))
+        for path in sorted(source.glob("*.plist"))
     }
 
 
-def check_catalog(records: dict[tuple[int, int], str]) -> None:
+def check_catalog(records: dict[tuple[int, int], bytes]) -> None:
     expected = expected_files(records)
     actual = {
-        *OUTPUT_DIR.glob("*/*.json"),
-        *PROTOCOL_OUTPUT_DIR.glob("*.json"),
-        *VIRTUAL_DEVICE_OUTPUT_DIR.glob("*.json"),
+        *OUTPUT_DIR.glob("*/*.plist"),
+        *PROTOCOL_OUTPUT_DIR.glob("*.plist"),
+        *VIRTUAL_DEVICE_OUTPUT_DIR.glob("*.plist"),
     }
     missing = sorted(set(expected) - actual)
     stale = sorted(actual - set(expected))
     changed = sorted(
         path
         for path, text in expected.items()
-        if path.exists() and path.read_text() != text
+        if path.exists() and path.read_bytes() != text
     )
     if missing or stale or changed:
         details = [
@@ -726,7 +732,7 @@ def check_catalog(records: dict[tuple[int, int], str]) -> None:
         )
 
 
-def write_catalog(records: dict[tuple[int, int], str]) -> None:
+def write_catalog(records: dict[tuple[int, int], bytes]) -> None:
     write_files(
         (OUTPUT_DIR, PROTOCOL_OUTPUT_DIR, VIRTUAL_DEVICE_OUTPUT_DIR),
         expected_files(records),
@@ -746,14 +752,14 @@ def write_database(text: str) -> None:
 
 
 def write_files(
-    directories: tuple[pathlib.Path, ...], files: dict[pathlib.Path, str]
+    directories: tuple[pathlib.Path, ...], files: dict[pathlib.Path, bytes]
 ) -> None:
     for directory in directories:
         if directory.exists():
             shutil.rmtree(directory)
     for path, text in files.items():
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(text)
+        path.write_bytes(text)
 
 
 def main() -> int:

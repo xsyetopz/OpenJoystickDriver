@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiVersion</key>
+	<string>openjoystickdriver/v1alpha3</string>
+	<key>identity</key>
+	<dict>
+		<key>manufacturer</key>
+		<string>OpenJoystickDriver</string>
+		<key>productID</key>
+		<integer>19023</integer>
+		<key>productName</key>
+		<string>OpenJoystickDriver Generic HID Gamepad</string>
+		<key>vendorID</key>
+		<integer>4617</integer>
+		<key>version</key>
+		<integer>1032</integer>
+	</dict>
+	<key>kind</key>
+	<string>VirtualDevice</string>
+	<key>labels</key>
+	<string>Generic</string>
+	<key>layout</key>
+	<string>OJDGenericGamepad</string>
+	<key>persona</key>
+	<string>Generic</string>
+	<key>transport</key>
+	<string>USB</string>
+	<key>worksWithDefaultSDLHints</key>
+	<true/>
+</dict>
+</plist>

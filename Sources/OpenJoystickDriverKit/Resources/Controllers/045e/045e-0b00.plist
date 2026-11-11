@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiVersion</key>
+	<string>openjoystickdriver/v1alpha3</string>
+	<key>kind</key>
+	<string>Controller</string>
+	<key>modes</key>
+	<array>
+		<dict>
+			<key>id</key>
+			<string>default</string>
+			<key>protocol</key>
+			<dict>
+				<key>family</key>
+				<string>XboxGIP</string>
+				<key>initialization</key>
+				<array>
+					<string>XboxGIP/power-on</string>
+					<string>XboxGIP/s-init</string>
+					<string>XboxGIP/enable-extra-input</string>
+					<string>XboxGIP/led-on</string>
+					<string>XboxGIP/auth-done</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+	<key>productID</key>
+	<integer>2816</integer>
+	<key>route</key>
+	<string>ExtensionOwned</string>
+	<key>vendorID</key>
+	<integer>1118</integer>
+</dict>
+</plist>

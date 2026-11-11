@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiVersion</key>
+	<string>openjoystickdriver/v1alpha3</string>
+	<key>kind</key>
+	<string>ControllerPatch</string>
+	<key>patch</key>
+	<dict>
+		<key>bluetoothLE</key>
+		<dict>
+			<key>vibrationCharacteristic</key>
+			<string>289326CB-A471-485D-A8F4-240C14F18241</string>
+		</dict>
+	</dict>
+	<key>selector</key>
+	<dict>
+		<key>productID</key>
+		<integer>8295</integer>
+		<key>vendorID</key>
+		<integer>1406</integer>
+	</dict>
+</dict>
+</plist>

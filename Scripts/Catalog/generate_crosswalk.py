@@ -1,19 +1,19 @@
 """Check or rebuild the control crosswalk table of the wiki.
 
-`Resources/Vocabulary/crosswalk.json` is the only authored crosswalk.
+`Resources/Vocabulary/crosswalk.plist` is the only authored crosswalk.
 This script rewrites the generated block of `wiki/Controller-Records.md` from it.
 """
 
 from __future__ import annotations
 
 import argparse
-import json
+import plistlib
 import sys
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
-CROSSWALK = Path("Resources/Vocabulary/crosswalk.json")
+CROSSWALK = Path("Resources/Vocabulary/crosswalk.plist")
 WIKI_PAGE = Path("wiki/Controller-Records.md")
 BEGIN = "<!-- BEGIN GENERATED: control-crosswalk -->"
 END = "<!-- END GENERATED: control-crosswalk -->"
@@ -31,7 +31,7 @@ class CrosswalkError(Exception):
 
 
 def load(root: Path) -> dict[str, Any]:
-    document = json.loads((root / CROSSWALK).read_text(encoding="utf-8"))
+    document = plistlib.loads((root / CROSSWALK).read_bytes())
     for key in ("sources", "controls"):
         if not isinstance(document.get(key), dict):
             raise CrosswalkError(f"{CROSSWALK} needs the object {key}")
@@ -154,7 +154,7 @@ def main() -> int:
     args = parser.parse_args()
     try:
         stale = regenerate(ROOT, write=args.write)
-    except (CrosswalkError, OSError, json.JSONDecodeError) as error:
+    except (CrosswalkError, OSError, plistlib.InvalidFileException, ValueError) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1
     if args.check and stale:

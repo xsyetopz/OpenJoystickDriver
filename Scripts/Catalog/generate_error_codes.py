@@ -1,6 +1,6 @@
 """Check or rebuild everything that derives from the error code catalog.
 
-`Resources/ErrorCodes.json` is the only authored list of E#### codes.
+`Resources/ErrorCodes.plist` is the only authored list of E#### codes.
 This script validates it,
 and rewrites the two files that copy it:
 the `code` enum of `Resources/Schemas/endpoint.schema.json`
@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import plistlib
 import re
 import sys
 from pathlib import Path
@@ -33,7 +34,7 @@ except ImportError:
     raise SystemExit(2)
 
 ROOT = Path(__file__).resolve().parents[2]
-CATALOG = Path("Resources/ErrorCodes.json")
+CATALOG = Path("Resources/ErrorCodes.plist")
 CATALOG_SCHEMA = Path("Resources/Schemas/error-codes.schema.json")
 ENDPOINT_SCHEMA = Path("Resources/Schemas/endpoint.schema.json")
 WIKI_PAGE = Path("wiki/Error-Codes.md")
@@ -57,8 +58,7 @@ class ErrorCodeError(Exception):
 
 
 def load_catalog(root: Path) -> list[Entry]:
-    with (root / CATALOG).open(encoding="utf-8") as source:
-        document = json.load(source)
+    document = plistlib.loads((root / CATALOG).read_bytes())
     with (root / CATALOG_SCHEMA).open(encoding="utf-8") as source:
         schema = json.load(source)
     problems = [
@@ -212,7 +212,7 @@ def main() -> int:
     args = parser.parse_args()
     try:
         stale = regenerate(ROOT, write=args.write)
-    except (ErrorCodeError, OSError, json.JSONDecodeError) as error:
+    except (ErrorCodeError, OSError, plistlib.InvalidFileException, ValueError) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1
     if args.check and stale:
