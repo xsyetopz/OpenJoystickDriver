@@ -19,9 +19,15 @@ extension ControllerRecordSet {
   /// its reason. `all.patch.plist` in `directory` is the user's global ``ControllerDefaults``; it is
   /// the first patch of the user layer and is reported in ``defaults`` rather than in
   /// ``userFiles``.
-  public static func load(userDirectory directory: URL = userDirectory) -> Self {
+  public static func load(
+    userDirectory directory: URL = userDirectory,
+    localization: Localization = Localization()
+  ) -> Self {
     let protocolFiles = DocumentedProtocolFamilies.load(besides: directory).refused
-    var packaged = packageRecords(in: ModPackageStore.directory(besides: directory))
+    var packaged = packageRecords(
+      in: ModPackageStore.directory(besides: directory),
+      localization: localization
+    )
     var defaults = ControllerDefaults.load(from: ControllerDefaults.file(in: directory))
     let urls: [URL]
     do {
@@ -49,6 +55,7 @@ extension ControllerRecordSet {
     let applied = applyLayer(
       urls.map { ControllerLayerEntry(url: $0, owner: nil) },
       layer: .user,
+      localization: localization,
       to: &records
     )
     for (model, url) in applied.replaced { packaged.overridden(model, by: url) }
@@ -78,6 +85,7 @@ extension ControllerRecordSet {
   static func applyLayer(
     _ entries: [ControllerLayerEntry],
     layer: ControllerRecordLayer,
+    localization: Localization = Localization(),
     to records: inout [ControllerModelID: ControllerRecord]
   ) -> (files: [ControllerRecordFile], replaced: [(ControllerModelID, URL)]) {
     var results: [URL: ControllerRecordFile] = [:]
@@ -92,6 +100,8 @@ extension ControllerRecordSet {
           guard name == fileName(for: record.model) else {
             throw ControllerRecordProblem(
               code: .invalidControllerRecord,
+              key: "error.E5007.userFile.fileNameRecord",
+              arguments: [fileName(for: record.model)],
               "the file name must be \(fileName(for: record.model))"
             )
           }
@@ -99,6 +109,8 @@ extension ControllerRecordSet {
             if let other = owners[record.model] {
               throw ControllerRecordProblem(
                 code: .invalidControllerRecord,
+                key: "error.E5007.userFile.packageSameController",
+                arguments: [other],
                 "same controller as package \(other)"
               )
             }
@@ -116,6 +128,8 @@ extension ControllerRecordSet {
           guard name == patch.selector.fileName else {
             throw ControllerRecordProblem(
               code: .invalidControllerRecord,
+              key: "error.E5007.userFile.fileNamePatch",
+              arguments: [patch.selector.fileName],
               "the file name must be \(patch.selector.fileName)"
             )
           }
@@ -126,7 +140,12 @@ extension ControllerRecordSet {
           url: entry.url,
           model: nil,
           operation: nil,
-          problem: problemDescription(error, document: "record")
+          problem: problemDescription(
+            error,
+            document: "record",
+            localization: localization,
+            file: entry.url.lastPathComponent
+          )
         )
       }
     }
@@ -135,7 +154,12 @@ extension ControllerRecordSet {
       let targets = records.keys.filter { patch.selector.selects($0) }.sorted()
       var failure: String?
       if targets.isEmpty, patch.selector != .all {
-        failure = "\(patch.selector.description) is not a known controller; use a Controller file"
+        failure = ControllerRecordProblem(
+          code: .invalidControllerRecord,
+          key: "error.E5007.userFile.unknownController",
+          arguments: [patch.selector.description],
+          "\(patch.selector.description) is not a known controller; use a Controller file"
+        ).localizedDescription(localization, file: entry.url.lastPathComponent)
       }
       for target in targets {
         guard let record = records[target] else {
@@ -143,7 +167,16 @@ extension ControllerRecordSet {
         }
         do {
           records[target] = try apply(patch, to: record, layer: layer, file: entry.url)
-        } catch { failure = failure ?? problemDescription(error, document: "record") }
+        } catch {
+          failure =
+            failure
+            ?? problemDescription(
+              error,
+              document: "record",
+              localization: localization,
+              file: entry.url.lastPathComponent
+            )
+        }
       }
       let model: ControllerModelID? =
         switch patch.selector {
@@ -176,7 +209,11 @@ extension ControllerRecordSet {
   static func parse(_ data: Data, file: URL?, layer: ControllerRecordLayer) throws -> ParsedFile {
     let document = try ordered(data, file: file?.lastPathComponent ?? "record")
     guard document.members != nil else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "the file is not a dictionary")
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.userFile.notDictionary",
+        "the file is not a dictionary"
+      )
     }
     if document["kind"]?.string == ControllerRecordDocument.kind {
       try OpenJoystickDriverAPI.requireHeader(
@@ -189,6 +226,8 @@ extension ControllerRecordSet {
       guard bundled.records[decoded.model] == nil else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.userFile.bundledController",
+          arguments: ["\(decoded.model)"],
           "\(decoded.model) is a bundled controller; use a patch to change it"
         )
       }
@@ -236,6 +275,8 @@ extension ControllerRecordSet {
       guard let upstream else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.userFile.unknownController",
+          arguments: [patch.selector.description],
           "\(patch.selector.description) is not a known controller; use a Controller file"
         )
       }
@@ -262,6 +303,7 @@ extension ControllerRecordSet {
     guard base.members != nil else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.userFile.upstreamNotDictionary",
         "the record is not a dictionary"
       )
     }
@@ -273,6 +315,7 @@ extension ControllerRecordSet {
     if !isAll, merged.hasSameValue(as: base) {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.userFile.patchNoChange",
         "the patch changes nothing in the record"
       )
     }

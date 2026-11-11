@@ -3664,6 +3664,22 @@
 "error.E5007.patch.selectorModel" = "%1$@, selector.model: selector.model deve ser vvvv-pppp em hexadecimal minúsculo. Correção: escreva cada ID com quatro dígitos hexadecimais minúsculos.";
 /* Error E5007, shown when a patch file fails: the selector has members of no form. %1$@ is the file. */
 "error.E5007.patch.selectorShape" = "%1$@, selector: selector deve ser all, model ou vendorID com productID. Correção: mantenha exatamente os membros de uma dessas formas.";
+/* Error E5007, shown when a user or package record file is skipped: a Controller file is not named after its IDs. %2$@ is the name it must have. %1$@ is the file. */
+"error.E5007.userFile.fileNameRecord" = "%1$@, file name: o nome do arquivo deve ser %2$@. Correção: renomeie o arquivo para %2$@ ou corrija os IDs nele.";
+/* Error E5007, shown when a user or package record file is skipped: two packages give one controller. %2$@ is the other package. %1$@ is the file. */
+"error.E5007.userFile.packageSameController" = "%1$@, vendorID, productID: o pacote %2$@ já fornece este controle. Correção: remova um dos dois pacotes ou mude os IDs deste registro.";
+/* Error E5007, shown when a user or package record file is skipped: a patch file is not named after its selector. %2$@ is the name it must have. %1$@ is the file. */
+"error.E5007.userFile.fileNamePatch" = "%1$@, file name: o nome do arquivo deve ser %2$@. Correção: renomeie o arquivo para %2$@ ou corrija o seletor nele.";
+/* Error E5007, shown when a user or package record file is skipped: the file is not a dictionary. %1$@ is the file. */
+"error.E5007.userFile.notDictionary" = "%1$@, document: o arquivo não é um dicionário. Correção: faça da raiz da lista de propriedades um dicionário.";
+/* Error E5007, shown when a user or package record file is skipped: a Controller file names a bundled controller. %2$@ is the model. %1$@ is the file. */
+"error.E5007.userFile.bundledController" = "%1$@, vendorID, productID: %2$@ é um controle incluído, então um arquivo Controller não pode adicioná-lo. Correção: escreva um arquivo de patch no lugar.";
+/* Error E5007, shown when a user or package record file is skipped: a patch selects no known controller. %2$@ is the selector. %1$@ is the file. */
+"error.E5007.userFile.unknownController" = "%1$@, selector: o seletor %2$@ não corresponde a nenhum controle conhecido. Correção: use um arquivo Controller para adicionar um controle novo ou corrija o seletor.";
+/* Error E5007, shown when a user or package record file is skipped: the record that a patch applies to is not a dictionary. %1$@ is the file. */
+"error.E5007.userFile.upstreamNotDictionary" = "%1$@, document: o registro ao qual o patch se aplica não é um dicionário. Correção: repare o arquivo de registro ao qual o patch se aplica.";
+/* Error E5007, shown when a user or package record file is skipped: a patch changes nothing in the record. %1$@ is the file. */
+"error.E5007.userFile.patchNoChange" = "%1$@, patch: o patch não muda nada no registro. Correção: apague o patch ou defina um valor diferente do registro.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "A linha do SDL_GameControllerDB de um controle não consegue acioná-lo. A mensagem indica o motivo. Escreva um registro de controle para ele com ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

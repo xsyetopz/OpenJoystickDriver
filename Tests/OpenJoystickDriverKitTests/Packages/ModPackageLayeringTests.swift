@@ -70,12 +70,20 @@ struct ModPackageLayeringTests {
         let target = fixture.packages.appendingPathComponent(name)
         try FileManager.default.copyItem(at: folder, to: target)
       }
-      let set = ControllerRecordSet.load(userDirectory: fixture.controllers)
+      let set = ControllerRecordSet.load(
+        userDirectory: fixture.controllers,
+        localization: Localization(preferredLanguages: ["en-US"])
+      )
       #expect(set.records[Self.identity]?.file?.path.contains("alpha-pack") == true)
       let skipped = try #require(set.problems.first)
       #expect(set.problems.count == 1)
       #expect(skipped.url.path.contains("beta-pack"))
-      #expect(skipped.problem == "same controller as package alpha-pack")
+      #expect(
+        skipped.problem?.hasSuffix(
+          "vendorID, productID: The package alpha-pack already gives this controller. "
+            + "Fix: Remove one of the two packages, or change the IDs of this record."
+        ) == true
+      )
     }
   }
 

@@ -32,7 +32,8 @@ extension ControllerRecordSet {
   /// package patches in the order of ``ControllerPatchMerge/ordered(_:)``.
   static func packageRecords(
     in directory: URL,
-    runningVersion: String? = nil
+    runningVersion: String? = nil,
+    localization: Localization = Localization()
   ) -> ControllerPackageRecords {
     var packaged = ControllerPackageRecords(records: bundled.records)
     var entries: [ControllerLayerEntry] = []
@@ -59,7 +60,12 @@ extension ControllerRecordSet {
         )
       }
     }
-    let applied = applyLayer(entries, layer: .package, to: &packaged.records).files
+    let applied = applyLayer(
+      entries,
+      layer: .package,
+      localization: localization,
+      to: &packaged.records
+    ).files
     for position in 0...applied.count {
       packaged.files += manifestProblems.filter { $0.position == position }.map(\.file)
       if position < applied.count { packaged.files.append(applied[position]) }

@@ -4218,6 +4218,22 @@
 "error.E5007.patch.selectorModel" = "%1$@, selector.model: selector.model phải là vvvv-pppp ở dạng thập lục phân chữ thường. Cách sửa: viết mỗi ID bằng bốn chữ số thập lục phân chữ thường.";
 /* Error E5007, shown when a patch file fails: the selector has members of no form. %1$@ is the file. */
 "error.E5007.patch.selectorShape" = "%1$@, selector: selector phải là all, model hoặc vendorID cùng productID. Cách sửa: giữ đúng các thành phần của một trong các dạng đó.";
+/* Error E5007, shown when a user or package record file is skipped: a Controller file is not named after its IDs. %2$@ is the name it must have. %1$@ is the file. */
+"error.E5007.userFile.fileNameRecord" = "%1$@, file name: tên tệp phải là %2$@. Cách sửa: đổi tên tệp thành %2$@ hoặc sửa các ID trong tệp.";
+/* Error E5007, shown when a user or package record file is skipped: two packages give one controller. %2$@ is the other package. %1$@ is the file. */
+"error.E5007.userFile.packageSameController" = "%1$@, vendorID, productID: gói %2$@ đã cung cấp tay cầm này. Cách sửa: gỡ một trong hai gói hoặc đổi ID của bản ghi này.";
+/* Error E5007, shown when a user or package record file is skipped: a patch file is not named after its selector. %2$@ is the name it must have. %1$@ is the file. */
+"error.E5007.userFile.fileNamePatch" = "%1$@, file name: tên tệp phải là %2$@. Cách sửa: đổi tên tệp thành %2$@ hoặc sửa bộ chọn trong tệp.";
+/* Error E5007, shown when a user or package record file is skipped: the file is not a dictionary. %1$@ is the file. */
+"error.E5007.userFile.notDictionary" = "%1$@, document: tệp không phải từ điển. Cách sửa: đặt gốc của danh sách thuộc tính là một từ điển.";
+/* Error E5007, shown when a user or package record file is skipped: a Controller file names a bundled controller. %2$@ is the model. %1$@ is the file. */
+"error.E5007.userFile.bundledController" = "%1$@, vendorID, productID: %2$@ là tay cầm đi kèm nên tệp Controller không thể thêm nó. Cách sửa: hãy viết một tệp bản vá cho nó.";
+/* Error E5007, shown when a user or package record file is skipped: a patch selects no known controller. %2$@ is the selector. %1$@ is the file. */
+"error.E5007.userFile.unknownController" = "%1$@, selector: bộ chọn %2$@ không khớp với tay cầm nào đã biết. Cách sửa: dùng tệp Controller để thêm tay cầm mới hoặc sửa bộ chọn.";
+/* Error E5007, shown when a user or package record file is skipped: the record that a patch applies to is not a dictionary. %1$@ is the file. */
+"error.E5007.userFile.upstreamNotDictionary" = "%1$@, document: bản ghi mà bản vá áp dụng không phải từ điển. Cách sửa: sửa tệp bản ghi mà bản vá áp dụng.";
+/* Error E5007, shown when a user or package record file is skipped: a patch changes nothing in the record. %1$@ is the file. */
+"error.E5007.userFile.patchNoChange" = "%1$@, patch: bản vá không thay đổi gì trong bản ghi. Cách sửa: xóa bản vá hoặc đặt giá trị khác với bản ghi.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "Dòng SDL_GameControllerDB của một bộ điều khiển không thể điều khiển nó. Thông báo nêu lý do. Hãy viết bản ghi bộ điều khiển cho nó bằng ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

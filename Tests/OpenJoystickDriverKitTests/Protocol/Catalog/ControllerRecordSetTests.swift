@@ -296,7 +296,10 @@ struct ControllerRecordSetTests {
       )
     try Data("{".utf8).write(to: directory.appendingPathComponent("broken.plist"))
 
-    let set = ControllerRecordSet.load(userDirectory: directory)
+    let set = ControllerRecordSet.load(
+      userDirectory: directory,
+      localization: Localization(preferredLanguages: ["en-US"])
+    )
     #expect(
       set.userFiles.map(\.url.lastPathComponent) == [
         "1234-abcd.plist", "broken.plist", "wrong-name.plist",
@@ -305,7 +308,11 @@ struct ControllerRecordSetTests {
     #expect(set.records[Self.unbundled]?.layer == .user)
     #expect(set.records[Self.bundledGIP]?.layer == .bundled)
     #expect(set.problems.map(\.url.lastPathComponent) == ["broken.plist", "wrong-name.plist"])
-    #expect(set.problems.last?.problem == "the file name must be 366c-0005.patch.plist")
+    #expect(
+      set.problems.last?.problem
+        == "wrong-name.plist, file name: The file name must be 366c-0005.patch.plist. "
+        + "Fix: Rename the file to 366c-0005.patch.plist, or correct the selector in it."
+    )
     #expect(set.records.count == ControllerRecordSet.bundled.records.count + 1)
 
     let catalog = DeviceCatalog(records: set)
@@ -550,6 +557,28 @@ struct ControllerRecordSetTests {
       )
         == "wrong.plist, vendorID and productID: the file name must be 1234-abcd.plist, the two "
         + "IDs in hex. Fix: rename the file to 1234-abcd.plist, or correct the IDs in it."
+    )
+  }
+
+  @Test
+  func skippedUserFileProblemNamesFileKeyPathRuleAndFix() throws {
+    let directory = FileManager.default.temporaryDirectory
+      .appendingPathComponent("ojd-userfile-\(UUID().uuidString)", isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    let url = directory.appendingPathComponent("wrong.plist")
+    try Self.add(Self.unbundled, family: "XboxGIP").write(to: url)
+    var records: [ControllerModelID: ControllerRecord] = [:]
+    let applied = ControllerRecordSet.applyLayer(
+      [ControllerLayerEntry(url: url, owner: nil)],
+      layer: .user,
+      localization: Localization(preferredLanguages: ["en-US"]),
+      to: &records
+    )
+    #expect(
+      applied.files.first?.problem
+        == "wrong.plist, file name: The file name must be 1234-abcd.plist. Fix: Rename the file to "
+        + "1234-abcd.plist, or correct the IDs in it."
     )
   }
 }
