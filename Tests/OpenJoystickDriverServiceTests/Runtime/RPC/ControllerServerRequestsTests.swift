@@ -46,7 +46,7 @@ struct ControllerServerRequestsTests {
       #expect(toOJD.failure == nil)
       #expect(toOJD.previous == .system)
       #expect(toOJD.created)
-      #expect(toOJD.file?.hasSuffix("Controllers/2c22-2000.patch.json") == true)
+      #expect(toOJD.file?.hasSuffix("Controllers/2c22-2000.patch.plist") == true)
       #expect(Self.loadedOwnership(in: directory) == .ojd)
 
       // A model OJD already serves counts as native, as its seized controller is no gamepad.
@@ -100,7 +100,7 @@ struct ControllerServerRequestsTests {
   func invalidUserRecordIsRefusedAndKept() throws {
     try Self.withDirectory { directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-      let file = directory.appendingPathComponent("2c22-2000.patch.json")
+      let file = directory.appendingPathComponent("2c22-2000.patch.plist")
       let bytes = Data("{\"operation\": \"patch\"}".utf8)
       try bytes.write(to: file)
       let result = Self.set(Self.bundledHID, to: .ojd, native: true, in: directory)
@@ -115,7 +115,7 @@ struct ControllerServerRequestsTests {
     let result = ControllerServerResult(
       server: .ojd,
       previous: .system,
-      file: "/tmp/2c22-2000.patch.json",
+      file: "/tmp/2c22-2000.patch.plist",
       created: true,
       failure: nil
     )

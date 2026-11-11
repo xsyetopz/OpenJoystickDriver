@@ -50,7 +50,12 @@ extension RemappingProfileLibrary {
     }
     try requireCurrentData(data, at: selectionsURL, issueID: issueID)
     try backUp(data, of: selectionsURL)
-    do { try Self.writePrivate(Data("[]".utf8), to: selectionsURL) } catch {
+    do {
+      try Self.writePrivate(
+        DocumentCoder.encode([RemappingPersistedActiveProfile]()),
+        to: selectionsURL
+      )
+    } catch {
       throw RemappingProfileLibraryError.unwritableLibrary
     }
     profileIssues[issueID] = nil

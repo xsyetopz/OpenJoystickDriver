@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverService
@@ -81,10 +82,10 @@ extension ProfileLibraryTests {
       try writePackage(
         "arcade-pack",
         files: [
-          ("a.json", try profileData(first)), ("b.json", Data("not json".utf8)),
-          ("c.json", try profileData(last)),
+          ("a.plist", try profileData(first)), ("b.plist", Data("not json".utf8)),
+          ("c.plist", try profileData(last)),
         ],
-        listing: ["a.json", "b.json", "missing.json", "c.json"],
+        listing: ["a.plist", "b.plist", "missing.plist", "c.plist"],
         in: directory
       )
 
@@ -138,7 +139,7 @@ extension ProfileLibraryTests {
     in directory: URL
   ) throws {
     let files = try profiles.enumerated().map {
-      ("profile-\($0.offset).json", try profileData($0.element))
+      ("profile-\($0.offset).plist", try profileData($0.element))
     }
     try writePackage(name, files: files, listing: files.map(\.0), requires: requires, in: directory)
   }
@@ -162,8 +163,8 @@ extension ProfileLibraryTests {
       "apiVersion": OpenJoystickDriverAPI.version, "kind": ModPackageManifest.kind, "name": name,
       "version": "1.0.0", "author": "Tester", "requires": requires, "profiles": listing,
     ]
-    try JSONSerialization.data(withJSONObject: manifest).write(
-      to: folder.appendingPathComponent("mod.json")
+    try PropertyListFixture.data(tree: manifest).write(
+      to: folder.appendingPathComponent("mod.plist")
     )
   }
 

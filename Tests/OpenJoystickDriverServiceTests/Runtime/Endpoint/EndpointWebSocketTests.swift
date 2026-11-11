@@ -636,9 +636,9 @@ struct EndpointWebSocketTests {
     arguments: [
       ("/missing.html", "GET", nil, 404),
       ("/style/", "GET", nil, 404),
-      ("/../AccessGrants.json", "GET", nil, 404),
-      ("/%2e%2e/AccessGrants.json", "GET", nil, 404),
-      ("/style%2f..%2f..%2fAccessGrants.json", "GET", nil, 404),
+      ("/../AccessGrants.plist", "GET", nil, 404),
+      ("/%2e%2e/AccessGrants.plist", "GET", nil, 404),
+      ("/style%2f..%2f..%2fAccessGrants.plist", "GET", nil, 404),
       ("/escape", "GET", nil, 404),
       ("/", "POST", nil, 405),
       ("/", "GET", "cross-site", 403),
