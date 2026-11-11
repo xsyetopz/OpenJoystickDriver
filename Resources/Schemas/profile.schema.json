@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/profile.schema.json",
   "title": "OpenJoystickDriver profile",
-  "description": "A remapping profile, as 'ojd profile export' writes it and 'ojd profile import' reads it. The schema checks the shape and the range of each field. 'ojd profile validate' also checks the rules that span fields, such as duplicate sources and IDs.",
+  "description": "A remapping profile.",
   "type": "object",
   "required": [
     "apiVersion",
@@ -89,7 +89,7 @@
         "unit": {
           "type": "string",
           "pattern": "^U-[A-Za-z0-9_-]{16}$",
-          "description": "A unit ID from `ojd controller list`. The profile applies only to that unit; other units of the model ignore it."
+          "description": "The unit identifier of one controller of the model."
         }
       }
     },
@@ -125,7 +125,7 @@
       "type": "string",
       "minLength": 1,
       "pattern": "^\\S(.*\\S)?$",
-      "description": "At most 80 characters, with no space at either end and no control characters."
+      "description": "The display name of the profile."
     },
     "outputPolicy": {
       "type": "object",
@@ -207,7 +207,7 @@
           "minimum": 1,
           "maximum": 5000,
           "default": 100,
-          "description": "Only a pulse binding sets a value other than 100."
+          "description": "How long a pulse lasts, in milliseconds."
         },
         "turbo": {
           "$ref": "#/$defs/turbo"
@@ -216,7 +216,7 @@
     },
     "adaptiveTriggerEffect": {
       "type": "object",
-      "description": "An off effect has startPosition and strength 0.",
+      "description": "An adaptive trigger effect, with its start position and strength.",
       "required": ["kind", "startPosition", "strength"],
       "additionalProperties": false,
       "properties": {
@@ -334,7 +334,7 @@
           "minimum": 1,
           "maximum": 5000,
           "default": 100,
-          "description": "Only a pulse binding sets a value other than 100."
+          "description": "How long a pulse lasts, in milliseconds."
         },
         "source": {
           "$ref": "#/$defs/source"
@@ -354,7 +354,7 @@
     },
     "chord": {
       "type": "object",
-      "description": "Sources pressed together. Their order does not matter.",
+      "description": "Sources pressed together.",
       "required": ["destination", "id", "sources"],
       "additionalProperties": false,
       "properties": {
@@ -524,7 +524,7 @@
               "const": "Keyboard"
             }
           },
-          "description": "OJD writes modifiers sorted and without repeats."
+          "description": "A key press with its modifiers."
         },
         {
           "type": "object",
@@ -706,7 +706,7 @@
               "const": "OpenURL"
             },
             "url": {
-              "description": "An absolute URL with a scheme other than file.",
+              "description": "The URL to open.",
               "type": "string",
               "minLength": 1
             }
@@ -748,7 +748,7 @@
           "additionalProperties": false,
           "properties": {
             "profile": {
-              "description": "A profile identifier of the same model, Next or Previous.",
+              "description": "The profile to switch to: a profile identifier, the next, or the previous.",
               "anyOf": [
                 {
                   "type": "string",
@@ -805,7 +805,7 @@
               "maxLength": 128
             },
             "voice": {
-              "description": "An AVSpeechSynthesisVoice identifier that the Mac has.",
+              "description": "The identifier of the speech voice.",
               "type": "string",
               "minLength": 1
             },
@@ -862,7 +862,7 @@
       ]
     },
     "discreteSource": {
-      "description": "A source that is pressed or released, so any source but a whole axis.",
+      "description": "A source that is pressed or released.",
       "allOf": [
         {
           "$ref": "#/$defs/source"
@@ -882,7 +882,7 @@
     },
     "pointerSpeed": {
       "type": "object",
-      "description": "Multiplies all pointer movement, not scroll, by a scale that a trigger or a stick sets: minScale at 0 and maxScale at 1, shaped by curve.",
+      "description": "A scale on pointer movement that a trigger or a stick sets, shaped by a curve.",
       "required": ["curve", "driver", "maxScale", "minScale"],
       "additionalProperties": false,
       "properties": {
@@ -916,7 +916,7 @@
     },
     "gyroOutput": {
       "type": "object",
-      "description": "activationSource is set exactly when activationMode is not always.",
+      "description": "A gyro output: its mode, activation, and scale.",
       "additionalProperties": false,
       "properties": {
         "activationMode": {
@@ -1032,7 +1032,7 @@
           "type": "string",
           "minLength": 1,
           "pattern": "^\\S(.*\\S)?$",
-          "description": "At most 40 characters, with no space at either end and no control characters."
+          "description": "The display name of the layer."
         },
         "sequences": {
           "type": "array",
@@ -1044,7 +1044,7 @@
     },
     "lean": {
       "type": "object",
-      "description": "hysteresisDegrees is less than thresholdDegrees.",
+      "description": "A lean gesture, with its threshold and hysteresis in degrees.",
       "required": ["hysteresisDegrees", "thresholdDegrees"],
       "additionalProperties": false,
       "properties": {
@@ -1509,7 +1509,7 @@
               "const": "TouchGrid"
             }
           },
-          "description": "column is less than columns, and row is less than rows."
+          "description": "A cell of a grid on a touch surface."
         },
         {
           "type": "object",
@@ -1586,7 +1586,7 @@
               }
             }
           ],
-          "description": "innerRadius is less than outerRadius, fromDegrees differs from toDegrees and a sector runs clockwise from up, past 0 when toDegrees is below fromDegrees. Regions of one stick do not overlap."
+          "description": "A sector of a stick, between two angles and two radii."
         },
         {
           "type": "object",
@@ -1615,7 +1615,7 @@
               "const": "TriggerBand"
             }
           },
-          "description": "from is less than to. Bands of one trigger do not overlap, and a trigger with a triggerMappings entry has no bands."
+          "description": "A band of a trigger, between two positions."
         },
         {
           "type": "object",
@@ -1649,13 +1649,13 @@
               "exclusiveMaximum": 1
             }
           },
-          "description": "x plus width and y plus height are at most 1."
+          "description": "A rectangle on a touch surface."
         }
       ]
     },
     "steering": {
       "type": "object",
-      "description": "deadzoneDegrees is less than fullScaleDegrees.",
+      "description": "A steering mapping from controller tilt, with its dead zone and full scale in degrees.",
       "required": [
         "deadzoneDegrees",
         "fullScaleDegrees",
@@ -1690,7 +1690,7 @@
     },
     "stickMapping": {
       "type": "object",
-      "description": "flickHysteresis is less than flickThreshold.",
+      "description": "A mapping of one stick, with its mode and flick settings.",
       "required": ["source"],
       "additionalProperties": false,
       "properties": {
@@ -1790,7 +1790,7 @@
     },
     "stickTuning": {
       "type": "object",
-      "description": "innerDeadzone plus outerDeadzone is less than 1.",
+      "description": "The dead zones, inversion, and response of a stick.",
       "additionalProperties": false,
       "properties": {
         "innerDeadzone": {
@@ -1864,7 +1864,7 @@
     },
     "triggerMapping": {
       "type": "object",
-      "description": "softThreshold is less than fullThreshold, and hysteresis is less than softThreshold.",
+      "description": "A mapping of one trigger, with its soft and full thresholds and hysteresis.",
       "required": ["source"],
       "additionalProperties": false,
       "properties": {
