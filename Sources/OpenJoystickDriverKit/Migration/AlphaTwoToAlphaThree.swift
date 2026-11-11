@@ -6,6 +6,7 @@ import Foundation
 /// leaves its key out. A patch that sets `modes` also removes `modes`, so it keeps replacing the
 /// record's modes. `notes` and `rationale` are not keys of `v1alpha3`. The `appID` of a
 /// profile's application scope becomes `appIDs`, a list of one.
+/// A record's `idle`, and a patch's, becomes `"idle": "NoControllerLinked"` on the `default` mode.
 enum AlphaTwoToAlphaThree {
   /// The version the step reads.
   static let from = "openjoystickdriver/v1alpha2"
@@ -60,12 +61,19 @@ enum AlphaTwoToAlphaThree {
       case "apiVersion": converted.append(.init(key: member.key, value: .string(to)))
       case "applicationScope" where kind == .profile:
         converted.append(.init(key: member.key, value: try listedApps(member.value)))
+      case "idle" where kind == .controller: continue
+      case "modes" where kind == .controller && document["idle"] == .bool(true):
+        converted.append(.init(key: member.key, value: idledDefault(member.value)))
       case "patch" where kind == .controllerPatch:
+        guard member.value["idle"] != .null else {
+          throw DocumentMigrationProblem("patch.idle is null, which no mode can state")
+        }
         try collectNulls(member.value, path: [], into: &removed)
-        let body = try stripped(member.value, path: "patch")
-        if case .object(let sections) = body, sections.isEmpty { continue }
+        var body = try stripped(member.value, path: "patch")
         // `v1alpha2` replaced the whole `modes` list; `v1alpha3` merges it by `id`.
         if body["modes"] != nil { removed.append("modes") }
+        body = movedIdle(body)
+        if case .object(let sections) = body, sections.isEmpty { continue }
         converted.append(.init(key: member.key, value: body))
       default:
         guard !droppedKeys.contains(member.key), member.value != .null else { continue }
@@ -76,6 +84,41 @@ enum AlphaTwoToAlphaThree {
       converted.append(.init(key: "remove", value: .array(removed.map { .string($0) })))
     }
     return .object(converted)
+  }
+
+  /// `modes` with the reason `NoControllerLinked` on its `default` mode, which is where a record's
+  /// `idle` goes.
+  private static func idledDefault(_ modes: OrderedJSON) -> OrderedJSON {
+    guard case .array(let items) = modes else { return modes }
+    return .array(
+      items.map { item in
+        guard case .object(let members) = item, item["id"]?.string == "default" else { return item }
+        return .object(members + [.init(key: "idle", value: .string("NoControllerLinked"))])
+      }
+    )
+  }
+
+  /// `patch` with its `idle` moved to the `default` entry of its `modes`, which a patch merges by
+  /// `id`; an `idle` of `false` says nothing and is dropped.
+  private static func movedIdle(_ patch: OrderedJSON) -> OrderedJSON {
+    guard case .object(let members) = patch, let idle = patch["idle"] else { return patch }
+    var kept = members.filter { $0.key != "idle" }
+    guard idle == .bool(true) else { return .object(kept) }
+    let entry = OrderedJSON.object([
+      .init(key: "id", value: .string("default")),
+      .init(key: "idle", value: .string("NoControllerLinked")),
+    ])
+    guard let index = kept.firstIndex(where: { $0.key == "modes" }) else {
+      kept.append(.init(key: "modes", value: .array([entry])))
+      return .object(kept)
+    }
+    let modes = kept[index].value
+    let hasDefault = modes.array?.contains { $0["id"]?.string == "default" } == true
+    kept[index] = .init(
+      key: "modes",
+      value: hasDefault ? idledDefault(modes) : .array((modes.array ?? []) + [entry])
+    )
+    return .object(kept)
   }
 
   /// The dotted key path of each `null` in `value`, in document order.

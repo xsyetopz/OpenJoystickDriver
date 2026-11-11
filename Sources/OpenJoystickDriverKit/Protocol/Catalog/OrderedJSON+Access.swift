@@ -13,6 +13,12 @@ extension OrderedJSON {
     members?.first { $0.key == key }?.value
   }
 
+  /// The items of an array, or nil for any other value.
+  var array: [Self]? {
+    guard case .array(let items) = self else { return nil }
+    return items
+  }
+
   /// The text of a string value.
   var string: String? {
     guard case .string(let text) = self else { return nil }

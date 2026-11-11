@@ -112,6 +112,67 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
+  func aRecordIdleMovesToTheDefaultMode() throws {
+    let text = MigrationFixtures.document(
+      MigrationFixtures.alphaTwo,
+      "Controller",
+      #""vendorID": 1, "productID": 2, "idle": true, "modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]"#
+    )
+    let converted = try convert(text, .controller)
+    #expect(converted["idle"] == nil)
+    #expect(converted["modes"]?.array?.first?["idle"]?.string == "NoControllerLinked")
+  }
+
+  @Test
+  func aRecordWithoutIdleKeepsItsModes() throws {
+    let text = MigrationFixtures.document(
+      MigrationFixtures.alphaTwo,
+      "Controller",
+      #""vendorID": 1, "productID": 2, "modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]"#
+    )
+    #expect(try convert(text, .controller)["modes"]?.array?.first?["idle"] == nil)
+  }
+
+  @Test
+  func aPatchIdleBecomesAMergedDefaultMode() throws {
+    let text = MigrationFixtures.document(
+      MigrationFixtures.alphaTwo,
+      "ControllerPatch",
+      #""selector": {"vendorID": 1, "productID": 2}, "patch": {"idle": true}"#
+    )
+    let patch = try #require(try convert(text, .controllerPatch)["patch"])
+    #expect(patch["idle"] == nil)
+    let modes = try #require(patch["modes"]?.array)
+    #expect(modes.count == 1)
+    #expect(modes[0]["id"]?.string == "default")
+    #expect(modes[0]["idle"]?.string == "NoControllerLinked")
+  }
+
+  @Test
+  func aPatchIdleJoinsTheDefaultModeThePatchSets() throws {
+    let text = MigrationFixtures.document(
+      MigrationFixtures.alphaTwo,
+      "ControllerPatch",
+      #""selector": {"vendorID": 1, "productID": 2}, "patch": {"idle": true, "modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]}"#
+    )
+    let patch = try #require(try convert(text, .controllerPatch)["patch"])
+    let modes = try #require(patch["modes"]?.array)
+    #expect(modes.count == 1)
+    #expect(modes[0]["protocol"] != nil)
+    #expect(modes[0]["idle"]?.string == "NoControllerLinked")
+  }
+
+  @Test
+  func aPatchThatRemovesIdleHasNoMapping() {
+    let text = MigrationFixtures.document(
+      MigrationFixtures.alphaTwo,
+      "ControllerPatch",
+      #""selector": {"vendorID": 1, "productID": 2}, "patch": {"idle": null}"#
+    )
+    #expect(throws: DocumentMigrationProblem.self) { try convert(text, .controllerPatch) }
+  }
+
+  @Test
   func theChainStartsAtVersionOneAndEndsAtVersionThree() throws {
     let steps = DocumentMigrationStep.all.filter { $0.kind == DocumentKind.profile.rawValue }
     #expect(steps.map(\.from) == [MigrationFixtures.alphaOne, MigrationFixtures.alphaTwo])
