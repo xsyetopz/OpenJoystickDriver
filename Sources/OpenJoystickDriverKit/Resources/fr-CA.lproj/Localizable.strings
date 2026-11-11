@@ -1762,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "Une sauvegarde sera créée avant que les données endommagées ne soient supprimées.";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "Ce profil enregistré n’a pas pu être lu. Supprimez-le pour continuer à utiliser les profils valides.";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "%@ a été enregistré par une version antérieure et ne peut pas être utilisé. Migrez-le pour le réutiliser, ou supprimez-le.";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "La liste des profils actifs n’a pas pu être lue. Réinitialisez-la pour continuer. Vos profils sont conservés.";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -4505,7 +4507,7 @@
 "cli.migrate.group.current" = "%@ est déjà à jour.";
 /* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
 "cli.migrate.group.foreign" = "%@ n'est pas un document d'OpenJoystickDriver et reste inchangé.";
-/* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
 "ui.migrate.action" = "Migrer";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
 "platform.macos.ui.migrate.failed" = "Certains documents n'ont pas pu être convertis et restent inchangés. Exécutez ojd migrate dans Terminal pour voir lesquels.";

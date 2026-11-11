@@ -1762,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "Se creará una copia de seguridad antes de eliminar los datos dañados.";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "No se ha podido leer este perfil guardado. Elimínalo para seguir usando los perfiles válidos.";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "%@ lo guardó una versión anterior y no se puede usar. Migra el archivo para volver a usarlo, o bórralo.";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "No se pudo leer la lista de perfiles activos. Restablécela para continuar. Tus perfiles se conservan.";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -4505,7 +4507,7 @@
 "cli.migrate.group.current" = "%@ ya está al día.";
 /* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
 "cli.migrate.group.foreign" = "%@ no es un documento de OpenJoystickDriver y se queda sin cambios.";
-/* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
 "ui.migrate.action" = "Migrar";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
 "platform.macos.ui.migrate.failed" = "No se pudieron convertir algunos documentos y quedan sin cambios. Ejecuta ojd migrate en Terminal para ver cuáles.";

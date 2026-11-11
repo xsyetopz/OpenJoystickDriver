@@ -101,6 +101,10 @@
             .fixedSize(horizontal: false, vertical: true)
             .ojdAccessibilityLabel(presentation.title)
             .ojdAccessibilityValue(presentation.accessibilityValue)
+          if presentation.offersMigration {
+            Button(OJDLocalized.string("ui.migrate.action")) { migrateStoredDocuments() }
+              .disabled(library.profileRecoveryInFlight)
+          }
           Button(
             OJDLocalized.string(
               issue.kind == .damagedProfile

@@ -1762,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "Перед удалением повреждённых данных будет создана резервная копия.";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "Не удалось прочитать этот сохранённый профиль. Удалите его, чтобы продолжить использование допустимых профилей.";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "Файл %@ сохранён более ранней версией и не может использоваться. Перенесите его, чтобы снова им пользоваться, или удалите.";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "Не удалось прочитать список активных профилей. Сбросьте его, чтобы продолжить. Ваши профили сохранятся.";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -4504,7 +4506,7 @@
 "cli.migrate.group.current" = "Файл %@ уже актуален.";
 /* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
 "cli.migrate.group.foreign" = "Файл %@ не является документом OpenJoystickDriver и остаётся без изменений.";
-/* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
 "ui.migrate.action" = "Мигрировать";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
 "platform.macos.ui.migrate.failed" = "Некоторые документы не удалось преобразовать, они остаются без изменений. Чтобы узнать, какие именно, выполните ojd migrate в Терминале.";

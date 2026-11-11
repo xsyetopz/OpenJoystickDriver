@@ -1762,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "Bevor beschädigte Daten entfernt werden, wird ein Backup erstellt.";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "Dieses gespeicherte Profil konnte nicht gelesen werden. Lösche es, um mit den gültigen Profilen fortzufahren.";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "%@ wurde von einer früheren Version gespeichert und kann nicht verwendet werden. Migriere die Datei, um sie wieder zu nutzen, oder lösche sie.";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "Die Liste der aktiven Profile konnte nicht gelesen werden. Setze sie zurück, um fortzufahren. Deine Profile bleiben erhalten.";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -4505,7 +4507,7 @@
 "cli.migrate.group.current" = "%@ ist bereits aktuell.";
 /* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
 "cli.migrate.group.foreign" = "%@ ist kein Dokument von OpenJoystickDriver und bleibt unverändert.";
-/* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
 "ui.migrate.action" = "Migrieren";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
 "platform.macos.ui.migrate.failed" = "Einige Dokumente konnten nicht umgewandelt werden und bleiben unverändert. Führe ojd migrate im Terminal aus, um zu sehen, welche.";

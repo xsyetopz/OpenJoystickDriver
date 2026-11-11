@@ -1762,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "سيتم إنشاء نسخة احتياطية قبل إزالة البيانات التالفة.";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "تعذرت قراءة ملف التعريف المحفوظ هذا. احذفه لمتابعة استخدام ملفات التعريف الصالحة.";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "حُفظ %@ بإصدار أقدم ولا يمكن استخدامه. رحِّله لاستخدامه مجددًا، أو احذفه.";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "تعذّرت قراءة قائمة ملفات التعريف النشطة. أعد ضبطها للمتابعة. سيتم الاحتفاظ بملفات التعريف.";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -4504,7 +4506,7 @@
 "cli.migrate.group.current" = "%@ حديث بالفعل.";
 /* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
 "cli.migrate.group.foreign" = "%@ ليس مستندًا من OpenJoystickDriver ويبقى دون تغيير.";
-/* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
 "ui.migrate.action" = "ترحيل";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
 "platform.macos.ui.migrate.failed" = "تعذّر تحويل بعض المستندات وبقيت دون تغيير. شغّل ojd migrate في Terminal لمعرفة أيها.";

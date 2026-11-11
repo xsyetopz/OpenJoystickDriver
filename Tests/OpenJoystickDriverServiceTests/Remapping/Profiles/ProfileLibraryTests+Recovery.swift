@@ -7,6 +7,26 @@ import Testing
 
 extension ProfileLibraryTests {
   @Test
+  func aJSONProfileOfAnEarlierAlphaIsNamedWithE5001() async throws {
+    try await withLibrary { library, _ in
+      let valid = makeProfile(name: "Valid")
+      try await library.create(valid)
+      let stale = library.profilesDirectory.appendingPathComponent("OLD.json")
+      try Data(#"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Profile"}"#.utf8)
+        .write(to: stale)
+      _ = try await library.reload()
+
+      let snapshot = try await library.snapshot()
+
+      #expect(snapshot.profiles == [valid])
+      #expect(snapshot.issues.map(\.code) == [.unsupportedAPIVersion])
+      #expect(snapshot.issues.first?.fileName == "OLD.json")
+      #expect(snapshot.issues.first?.message.contains("OLD.json") == true)
+      #expect(FileManager.default.fileExists(atPath: stale.path))
+    }
+  }
+
+  @Test
   func profileWithUnknownFieldIsRecoveredAsDamaged() async throws {
     try await withLibrary { library, _ in
       let valid = makeProfile(name: "Valid")

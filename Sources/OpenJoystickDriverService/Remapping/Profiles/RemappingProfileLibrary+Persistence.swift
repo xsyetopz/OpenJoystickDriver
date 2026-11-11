@@ -14,6 +14,12 @@ extension RemappingProfileLibrary {
     var profiles: [RemappingProfile] = []
     for url in try profileFileURLs() {
       let data = try Self.read(url)
+      if url.pathExtension == "json" {
+        issues.append(
+          .damagedProfile(fileName: url.lastPathComponent, data: data, code: .unsupportedAPIVersion)
+        )
+        continue
+      }
       do {
         let profile = try RemappingProfileFileStore.load(from: data, file: url.path)
         guard url.lastPathComponent == Self.profileFileName(profile.id) else {
@@ -101,7 +107,8 @@ extension RemappingProfileLibrary {
     library = proposed
   }
 
-  /// The `*.plist` files in `Profiles/`, sorted by name.
+  /// The `*.plist` files in `Profiles/`, and the `.json` files an earlier alpha left, sorted by
+  /// name.
   func profileFileURLs() throws -> [URL] {
     guard FileManager.default.fileExists(atPath: profilesDirectory.path) else { return [] }
     do {
@@ -110,7 +117,7 @@ extension RemappingProfileLibrary {
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
       )
-      .filter { $0.pathExtension == "plist" }
+      .filter { ["plist", "json"].contains($0.pathExtension) }
       .sorted { $0.lastPathComponent < $1.lastPathComponent }
     } catch { throw RemappingProfileLibraryError.unreadableLibrary }
   }

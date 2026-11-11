@@ -1762,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "Er wordt een back-up gemaakt voordat beschadigde gegevens worden verwijderd.";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "Dit opgeslagen profiel kon niet worden gelezen. Verwijder het om de geldige profielen te blijven gebruiken.";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "%@ is door een eerdere versie opgeslagen en kan niet worden gebruikt. Migreer het bestand om het weer te gebruiken, of verwijder het.";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "De lijst met actieve profielen kon niet worden gelezen. Reset deze om door te gaan. Je profielen blijven behouden.";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -4505,7 +4507,7 @@
 "cli.migrate.group.current" = "%@ is al actueel.";
 /* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
 "cli.migrate.group.foreign" = "%@ is geen document van OpenJoystickDriver en blijft ongewijzigd.";
-/* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
 "ui.migrate.action" = "Migreren";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
 "platform.macos.ui.migrate.failed" = "Sommige documenten konden niet worden omgezet en blijven ongewijzigd. Voer ojd migrate uit in Terminal om te zien welke.";

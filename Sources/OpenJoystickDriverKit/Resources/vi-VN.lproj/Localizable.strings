@@ -1762,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "Một bản sao lưu sẽ được tạo trước khi dữ liệu bị hỏng bị xóa.";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "Không thể đọc cấu hình đã lưu này. Hãy xóa nó để tiếp tục dùng các cấu hình hợp lệ.";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "%@ được lưu bởi phiên bản cũ hơn và không dùng được. Hãy chuyển đổi để dùng lại, hoặc xóa nó.";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "Không thể đọc danh sách cấu hình đang hoạt động. Hãy đặt lại để tiếp tục. Các cấu hình của bạn vẫn được giữ.";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -4504,7 +4506,7 @@
 "cli.migrate.group.current" = "%@ đã là bản hiện hành.";
 /* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
 "cli.migrate.group.foreign" = "%@ không phải tài liệu của OpenJoystickDriver và giữ nguyên.";
-/* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
 "ui.migrate.action" = "Di chuyển";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
 "platform.macos.ui.migrate.failed" = "Một số tài liệu không thể chuyển đổi và giữ nguyên. Chạy ojd migrate trong Terminal để xem là tài liệu nào.";

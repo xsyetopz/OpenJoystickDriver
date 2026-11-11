@@ -44,6 +44,17 @@
       }
     }
 
+    /// Converts the stored documents of an earlier alpha, then refreshes the profiles; a document
+    /// that cannot be converted shows in the error banner.
+    func migrateStoredDocuments() {
+      Task { @MainActor in
+        let failed = DocumentMigrator().run(dryRun: false).contains { $0.verdict == .failed }
+        await viewModel.refresh()
+        profileActionError =
+          failed ? OJDLocalized.string("platform.macos.ui.migrate.failed") : nil
+      }
+    }
+
     /// Records whether the editor holds unsaved edits in the screen and the main window.
     ///
     /// A clean editor also drops the profile preserved from a deleted selection.

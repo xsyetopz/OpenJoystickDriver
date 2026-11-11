@@ -3348,6 +3348,10 @@
         },
         "message": {
           "type": "string"
+        },
+        "fileName": {
+          "type": "string",
+          "description": "The stale .json file of an earlier alpha."
         }
       }
     },

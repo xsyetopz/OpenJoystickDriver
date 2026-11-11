@@ -1762,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "क्षतिग्रस्त डेटा को हटाने से पहले एक बैकअप बनाया जाएगा।";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "यह सहेजी गई प्रोफ़ाइल पढ़ी नहीं जा सकी। मान्य प्रोफ़ाइल का इस्तेमाल जारी रखने के लिए इसे हटाएँ।";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "%@ पुराने संस्करण ने सहेजा था और इसका उपयोग नहीं हो सकता। दोबारा उपयोग के लिए इसे माइग्रेट करें, या हटा दें।";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "सक्रिय प्रोफ़ाइल की सूची पढ़ी नहीं जा सकी। जारी रखने के लिए इसे रीसेट करें। आपकी प्रोफ़ाइल सुरक्षित रहती हैं।";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -4504,7 +4506,7 @@
 "cli.migrate.group.current" = "%@ पहले से मौजूदा संस्करण का है।";
 /* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
 "cli.migrate.group.foreign" = "%@ OpenJoystickDriver का दस्तावेज़ नहीं है और अपरिवर्तित रहता है।";
-/* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
 "ui.migrate.action" = "माइग्रेट करें";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
 "platform.macos.ui.migrate.failed" = "कुछ दस्तावेज़ बदले नहीं जा सके और अपरिवर्तित रहते हैं। कौन से हैं, यह देखने के लिए Terminal में ojd migrate चलाएँ।";

@@ -26,10 +26,12 @@ extension RemappingProfileLibrary {
       issues: profileIssues.keys.sorted { $0.uuidString < $1.uuidString }.map { issueID in
         let kind: ApplicationServiceRemappingProfileIssue.Kind
         let code: ErrorCode
+        var staleFile: String?
         switch profileIssues[issueID] {
-        case .damagedProfile(_, _, let damageCode):
+        case .damagedProfile(let fileName, _, let damageCode):
           kind = .damagedProfile
           code = damageCode
+          if fileName.hasSuffix(".json") { staleFile = fileName }
         case .unusableLibrary, nil:
           kind = .unusableLibrary
           code = .corruptLibrary
@@ -38,9 +40,13 @@ extension RemappingProfileLibrary {
           id: issueID,
           kind: kind,
           code: code,
-          message: kind == .damagedProfile
-            ? "This saved profile could not be read and can be removed."
-            : "The list of active profiles could not be read and must be reset."
+          message: staleFile.map {
+            "\($0) was saved by an earlier version. Migrate it, or remove it."
+          }
+            ?? (kind == .damagedProfile
+              ? "This saved profile could not be read and can be removed."
+              : "The list of active profiles could not be read and must be reset."),
+          fileName: staleFile
         )
       }
     )

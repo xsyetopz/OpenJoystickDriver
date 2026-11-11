@@ -90,6 +90,16 @@ struct AccessViewModelTests {
   }
 
   @Test
+  func aServiceErrorThatStartsWithACodeKeepsThatCode() {
+    let stale = AccessFailure(LocalServiceRPCError.remote("E5001: AccessGrants.plist is v1alpha2."))
+    let unlabeled = AccessFailure(LocalServiceRPCError.remote("something broke"))
+
+    #expect(stale.code == .unsupportedAPIVersion)
+    #expect(stale.message == "E5001: AccessGrants.plist is v1alpha2.")
+    #expect(unlabeled.code == .serviceRequestFailed)
+  }
+
+  @Test
   func aServiceThatIsNotRunningIsAnE2004Failure() async {
     let service = FakeAccessService()
     service.error = ApplicationServiceClientError.notConnected

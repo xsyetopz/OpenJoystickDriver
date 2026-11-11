@@ -86,13 +86,22 @@ public struct ApplicationServiceRemappingProfileIssue: Codable, Equatable, Senda
   public let code: ErrorCode
   /// A human-readable description of the problem.
   public let message: String
+  /// The name of the stale `.json` file of an earlier alpha, or nil for any other issue.
+  public let fileName: String?
 
   /// Creates a profile issue from its values.
-  public init(id: UUID, kind: Kind = .damagedProfile, code: ErrorCode, message: String) {
+  public init(
+    id: UUID,
+    kind: Kind = .damagedProfile,
+    code: ErrorCode,
+    message: String,
+    fileName: String? = nil
+  ) {
     self.id = id
     self.kind = kind
     self.code = code
     self.message = message
+    self.fileName = fileName
   }
 
   /// The keys of the JSON encoding.
@@ -105,6 +114,8 @@ public struct ApplicationServiceRemappingProfileIssue: Codable, Equatable, Senda
     case code
     /// The `message` key.
     case message
+    /// The `fileName` key.
+    case fileName
   }
 
   /// Decodes the value from `decoder`.
@@ -114,6 +125,7 @@ public struct ApplicationServiceRemappingProfileIssue: Codable, Equatable, Senda
     kind = try container.decode(Kind.self, forKey: .kind)
     code = try container.decode(ErrorCode.self, forKey: .code)
     message = try container.decode(String.self, forKey: .message)
+    fileName = try container.decodeIfPresent(String.self, forKey: .fileName)
   }
 }
 

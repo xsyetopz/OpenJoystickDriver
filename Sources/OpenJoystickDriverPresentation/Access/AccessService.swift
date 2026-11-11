@@ -35,6 +35,9 @@ struct AccessFailure: Error, Equatable {
       )
     case let rejection as ApplicationServiceRemappingRPCError:
       self.init(message: rejection.localizedDescription, code: rejection.code.errorCode)
+    case LocalServiceRPCError.remote(let message)
+    where ErrorCode(rawValue: String(message.prefix(5))) == .unsupportedAPIVersion:
+      self.init(message: message, code: .unsupportedAPIVersion)
     default:
       self.init(
         message: OJDLocalized.formatted(

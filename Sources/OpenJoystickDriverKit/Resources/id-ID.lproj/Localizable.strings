@@ -1762,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "Cadangan akan dibuat sebelum data yang rusak dihapus.";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "Profil tersimpan ini tidak dapat dibaca. Hapus untuk terus menggunakan profil yang valid.";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "%@ disimpan oleh versi sebelumnya dan tidak dapat dipakai. Migrasikan agar dapat dipakai lagi, atau hapus.";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "Daftar profil aktif tidak dapat dibaca. Atur ulang untuk melanjutkan. Profil Anda tetap disimpan.";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -4504,7 +4506,7 @@
 "cli.migrate.group.current" = "%@ sudah mutakhir.";
 /* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
 "cli.migrate.group.foreign" = "%@ bukan dokumen OpenJoystickDriver dan tetap tidak berubah.";
-/* Title of the button that converts the stored documents of an older version, in the access error card and in the alert about refused settings. */
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
 "ui.migrate.action" = "Migrasikan";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
 "platform.macos.ui.migrate.failed" = "Beberapa dokumen tidak dapat dikonversi dan tetap tidak berubah. Jalankan ojd migrate di Terminal untuk melihat yang mana.";
