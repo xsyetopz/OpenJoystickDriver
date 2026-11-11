@@ -3744,6 +3744,10 @@
 "error.E5007.startupWrite.phase" = "%1$@, session.startup[].phase: uma fase de inicialização deve ser Startup ou Activation. Correção: defina phase como uma delas, ou omita-a.";
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
 "error.E5007.startupWrite.crcSeedRange" = "%1$@, session.startup[].crc32Seed: um crc32Seed de inicialização deve ser 0...255. Correção: defina crc32Seed como 0...255, ou omita-o.";
+/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: um arquivo de persona não deve repetir o match do arquivo de usuário %2$@. Correção: dê a cada modelo um arquivo de persona, ou mude match em um dos dois.";
+/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: um arquivo de persona não deve repetir o match do arquivo de pacote %2$@. Correção: dê a cada modelo um arquivo de persona, ou mude match em um dos dois.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: cada entrada deve conter um id e somente id, protocol, match, interface, session ou idle. Correção: dê um id a cada entrada e remova qualquer outra chave.";

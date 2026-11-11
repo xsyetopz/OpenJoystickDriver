@@ -4282,6 +4282,10 @@
 "error.E5007.startupWrite.phase" = "%1$@, session.startup[].phase: стартовая фаза должна быть Startup или Activation. Исправление: задайте phase одно из них или опустите.";
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
 "error.E5007.startupWrite.crcSeedRange" = "%1$@, session.startup[].crc32Seed: стартовый crc32Seed должен быть в диапазоне 0...255. Исправление: задайте crc32Seed в диапазоне 0...255 или опустите.";
+/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: файл персоны не должен повторять match пользовательского файла %2$@. Исправление: оставьте для каждой модели один файл персоны или измените match в одном из двух.";
+/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: файл персоны не должен повторять match файла пакета %2$@. Исправление: оставьте для каждой модели один файл персоны или измените match в одном из двух.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: каждая запись должна содержать id и только id, protocol, match, interface, session или idle. Исправление: задайте каждой записи id и удалите остальные ключи.";

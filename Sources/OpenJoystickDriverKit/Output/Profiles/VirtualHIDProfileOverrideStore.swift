@@ -314,6 +314,10 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
             let owner = first.fromPackage ? "package file " : "user file "
             throw ControllerRecordProblem(
               code: .invalidControllerRecord,
+              key: first.fromPackage
+                ? "error.E5007.virtualDevice.matchTakenByPackageFile"
+                : "error.E5007.virtualDevice.matchTakenByUserFile",
+              arguments: [first.url.lastPathComponent],
               "same match as \(owner)\(first.url.lastPathComponent)"
             )
           }
@@ -350,6 +354,8 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
         if let first = loaded.personas[model] {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.virtualDevice.matchTakenByUserFile",
+            arguments: [first.url.lastPathComponent],
             "same match as \(first.url.lastPathComponent)"
           )
         }
@@ -374,7 +380,11 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
   static func parse(_ data: Data) throws -> (Model, VirtualPersona) {
     let device = try VirtualDevice.decode(data, source: .unnamed, requiresMatch: true)
     guard let model = device.match else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "the file must hold match")
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.virtualDevice.matchRequired",
+        "the file must hold match"
+      )
     }
     let identity = device.identity.map { identity in
       VirtualPersona.Identity(

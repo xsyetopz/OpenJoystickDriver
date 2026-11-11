@@ -4282,6 +4282,10 @@
 "error.E5007.startupWrite.phase" = "%1$@, session.startup[].phase: başlangıç aşaması Startup veya Activation olmalıdır. Düzeltme: phase’i bunlardan birine ayarlayın veya çıkarın.";
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
 "error.E5007.startupWrite.crcSeedRange" = "%1$@, session.startup[].crc32Seed: başlangıç crc32Seed değeri 0...255 olmalıdır. Düzeltme: crc32Seed’i 0...255 yapın veya çıkarın.";
+/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: bir persona dosyası %2$@ kullanıcı dosyasının match değerini tekrarlamamalıdır. Düzeltme: her modele bir persona dosyası verin veya ikisinden birinde match’i değiştirin.";
+/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: bir persona dosyası %2$@ paket dosyasının match değerini tekrarlamamalıdır. Düzeltme: her modele bir persona dosyası verin veya ikisinden birinde match’i değiştirin.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: her girdi bir id ve yalnızca id, protocol, match, interface, session veya idle içermelidir. Düzeltme: her girdiye bir id verin ve diğer anahtarları silin.";

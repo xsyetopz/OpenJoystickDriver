@@ -4282,6 +4282,10 @@
 "error.E5007.startupWrite.phase" = "%1$@, session.startup[].phase: 시작 단계는 Startup 또는 Activation이어야 합니다. 해결: phase를 둘 중 하나로 설정하거나 생략하세요.";
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
 "error.E5007.startupWrite.crcSeedRange" = "%1$@, session.startup[].crc32Seed: 시작 crc32Seed는 0...255여야 합니다. 해결: crc32Seed를 0...255로 설정하거나 생략하세요.";
+/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: 페르소나 파일은 사용자 파일 %2$@의 match를 반복할 수 없습니다. 해결: 모델마다 페르소나 파일을 하나만 두거나 둘 중 하나의 match를 바꾸세요.";
+/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: 페르소나 파일은 패키지 파일 %2$@의 match를 반복할 수 없습니다. 해결: 모델마다 페르소나 파일을 하나만 두거나 둘 중 하나의 match를 바꾸세요.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: 각 항목에는 id가 있어야 하며 id, protocol, match, interface, session, idle만 사용할 수 있습니다. 해결: 각 항목에 id를 지정하고 다른 키는 삭제하세요.";
