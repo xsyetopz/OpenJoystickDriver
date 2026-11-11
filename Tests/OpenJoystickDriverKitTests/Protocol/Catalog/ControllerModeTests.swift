@@ -594,15 +594,15 @@ struct ControllerModeTests {
           + "whose description declares no keepAlive"
       ),
       Case(
-        name: "present controls under a mode whose driver does not declare them",
+        name: "present controls that no mode driver declares",
         modes: [mode("a", family: "SonySixaxis")],
-        family: "SonyDualSense",
+        family: "SonySixaxis",
         extras: [
           "capabilities": [
             "present": ["LeftPaddle1", "RightPaddle1", "Auxiliary1", "Auxiliary2"]
           ]
         ],
-        expected: "capabilities must be deltas the driver of every mode declares"
+        expected: "capabilities must be deltas the driver of some mode declares"
       ),
     ]
     for rejection in rejected {

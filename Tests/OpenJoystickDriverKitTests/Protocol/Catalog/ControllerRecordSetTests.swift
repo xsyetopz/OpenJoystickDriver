@@ -80,10 +80,10 @@ struct ControllerRecordSetTests {
     }
   }
 
-  /// A patch overrides `modes` as an array, so a restated default mode keeps only the parameters it
-  /// names.
+  /// A patch merges `modes` by `id`, so a restated default mode keeps the bundled parameters it does
+  /// not name.
   @Test
-  func modesPatchOverridesTheDefaultModeWholesale() throws {
+  func modesPatchMergesIntoTheDefaultMode() throws {
     let shareOffsetGIP = ControllerModelID(vendorID: 0x045E, productID: 0x0B12)
     let bundledShare = try #require(ControllerRecordSet.bundled.records[shareOffsetGIP])
     #expect(bundledShare.profile.parameters == ProtocolParameters(shareButton: .init(fromEnd: 26)))
@@ -95,7 +95,7 @@ struct ControllerRecordSetTests {
         ]
       )
     )
-    #expect(replaced.profile.parameters == ProtocolParameters())
+    #expect(replaced.profile.parameters == bundledShare.profile.parameters)
     #expect(replaced.profile.gipKeepAlivePolicy == .disabled)
     let refamilied = try Self.record(
       Self.patch(
@@ -125,7 +125,10 @@ struct ControllerRecordSetTests {
         ]
       )
     )
-    #expect(patched.profile.parameters == ProtocolParameters(motionScale: .strikePad))
+    #expect(
+      patched.profile.parameters
+        == ProtocolParameters(motionCalibration: .factory, motionScale: .strikePad)
+    )
   }
 
   @Test
@@ -191,9 +194,9 @@ struct ControllerRecordSetTests {
         == "record.usb: USB overrides require a raw-USB protocol family"
     )
     #expect(
-      Self.problem(try Self.patch(Self.bundledGIP, set: ["capabilities": ["rumble": "Absent"]]))
-        == "patch must hold modes, usb, bluetoothLE, server, "
-        + "route, input, or tuning"
+      Self.problem(try Self.patch(Self.bundledGIP, set: ["name": "Other"]))
+        == "patch must hold modes, usb, bluetoothLE, capabilities, server, "
+        + "route, input, tuning, or idle; the selector names the identity"
     )
     #expect(
       Self.problem(try Self.patch(Self.bundledGIP, set: ["tuning": ["hidStartupIntervalMs": 5]]))
@@ -462,7 +465,8 @@ struct ControllerRecordSetTests {
   /// The merged record keeps the member order of the bundled record where the patch merges into an
   /// object and appends the members the patch adds in the patch's order.
   ///
-  /// An array the patch replaces has the patch's order.
+  /// A mode the patch names merges into the bundled mode of the same `id` in the bundled member
+  /// order.
   @Test
   func aPatchMergeWritesTheMergedRecordAsAPropertyList() throws {
     let record = try Self.record(
@@ -480,7 +484,8 @@ struct ControllerRecordSetTests {
       json: """
         {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
          "vendorID": 13932, "productID": 5,
-         "modes": [{"protocol": {"keepAlive": false, "family": "XboxGIP"}, "id": "default"}],
+         "modes": [{"id": "default", "protocol": {"family": "XboxGIP",
+           "parameters": {"shareButton": {"fromEnd": 18}}, "keepAlive": false}}],
          "tuning": {"stickDeadzone": 0.08}}
         """
     )

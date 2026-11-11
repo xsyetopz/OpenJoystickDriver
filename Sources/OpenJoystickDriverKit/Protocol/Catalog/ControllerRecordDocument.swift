@@ -142,9 +142,16 @@ struct ControllerRecordDocument: Decodable {
     try validateModes(codingPath: decoder.codingPath)
   }
 
-  /// Only the deltas the family's description declares have a driver that acts on them.
-  func capabilitiesAreDeclared(by protocolID: PhysicalProtocolID) -> Bool {
-    protocolID.protocolDescription.recordCapabilities.permits(capabilities)
+  /// Only the deltas a family's description declares have a driver that acts on them.
+  ///
+  /// The rule holds per capability: each one must be declared by the family of at least one mode, so
+  /// a record may hold modes of two drivers when each capability belongs to one of them. A mode
+  /// whose driver does not declare a capability does not act on it.
+  func capabilitiesAreDeclared(byAnyOf protocolIDs: [PhysicalProtocolID]) -> Bool {
+    let rules = protocolIDs.map { $0.protocolDescription.recordCapabilities }
+    return (capabilities.presentControls.isEmpty
+      || rules.contains { $0.presentControls == capabilities.presentControls })
+      && (!capabilities.rumbleAbsent || rules.contains(where: \.rumbleAbsent))
   }
 
   /// The rumble template of a record, as a `report` target with its motor fields.

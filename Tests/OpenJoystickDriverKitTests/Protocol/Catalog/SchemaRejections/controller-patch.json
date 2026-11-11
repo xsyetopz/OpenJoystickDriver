@@ -213,6 +213,149 @@
           "tuning"
         ]
       }
+    },
+    {
+      "name": "patch that sets the vendor ID",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "patch": {
+          "vendorID": 4660
+        }
+      }
+    },
+    {
+      "name": "patch that sets the product ID",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "patch": {
+          "productID": 1
+        }
+      }
+    },
+    {
+      "name": "patch mode with no id",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "patch": {
+          "modes": [
+            {
+              "protocol": {
+                "family": "HIDDescriptor"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "patch mode with an unknown key",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "patch": {
+          "modes": [
+            {
+              "id": "hid",
+              "family": "HIDDescriptor"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "patch mode with an id that is not lowercase words",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "patch": {
+          "modes": [
+            {
+              "id": "Hid_Mode"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "remove path of a mode with an id that is not lowercase words",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "remove": [
+          "modes.Hid_Mode"
+        ]
+      }
+    },
+    {
+      "name": "remove path below a mode",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "remove": [
+          "modes.hid.match"
+        ]
+      }
+    },
+    {
+      "name": "remove path of a mode id that starts with a digit",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "remove": [
+          "modes.1hid"
+        ]
+      }
     }
   ]
 }

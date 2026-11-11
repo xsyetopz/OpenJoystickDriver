@@ -244,7 +244,7 @@
       }
     },
     {
-      "name": "an array replaces the array",
+      "name": "a mode merges by id and keeps the other modes",
       "record": {
         "apiVersion": "openjoystickdriver/v1alpha3",
         "kind": "Controller",
@@ -339,6 +339,15 @@
                   3
                 ]
               }
+            }
+          },
+          {
+            "id": "bluetooth",
+            "protocol": {
+              "family": "XboxGIP"
+            },
+            "match": {
+              "link": "BluetoothClassic"
             }
           }
         ],
@@ -2097,7 +2106,7 @@
         },
         "patch": {}
       },
-      "message": "patch must hold modes, usb, bluetoothLE, server, route, input, or tuning",
+      "message": "patch must hold modes, usb, bluetoothLE, capabilities, server, route, input, tuning, or idle; the selector names the identity",
       "code": "E5007"
     },
     {
@@ -2113,7 +2122,7 @@
           "name": "x"
         }
       },
-      "message": "patch must hold modes, usb, bluetoothLE, server, route, input, or tuning",
+      "message": "patch must hold modes, usb, bluetoothLE, capabilities, server, route, input, tuning, or idle; the selector names the identity",
       "code": "E5007"
     },
     {
@@ -2371,7 +2380,7 @@
           1
         ]
       },
-      "message": "patch must hold modes, usb, bluetoothLE, server, route, input, or tuning",
+      "message": "patch must hold modes, usb, bluetoothLE, capabilities, server, route, input, tuning, or idle; the selector names the identity",
       "code": "E5007"
     }
   ]

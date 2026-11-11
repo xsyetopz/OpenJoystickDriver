@@ -58,13 +58,13 @@
       ]
     },
     "remove": {
-      "description": "Dotted key paths removed from the record before the patch applies.",
+      "description": "Dotted key paths removed from the record before the patch applies; modes.<id> removes one mode.",
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
       "items": {
         "type": "string",
-        "pattern": "^(modes|usb|bluetoothLE|server|route|input|tuning)(\\.[A-Za-z0-9]+)*$"
+        "pattern": "^(modes(\\.[a-z][a-z0-9]*(-[a-z0-9]+)*)?|(usb|bluetoothLE|capabilities|server|route|input|tuning|idle)(\\.[A-Za-z0-9]+)*)$"
       }
     },
     "patch": {
@@ -73,7 +73,37 @@
       "additionalProperties": false,
       "properties": {
         "modes": {
-          "$ref": "controller.schema.json#/$defs/modes"
+          "description": "Entries merge into the record's modes by id: a known id merges key by key, a new id adds a mode.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id"],
+            "properties": {
+              "id": {
+                "$ref": "controller.schema.json#/$defs/mode/properties/id"
+              },
+              "protocol": {
+                "type": "object"
+              },
+              "match": {
+                "type": "object"
+              },
+              "interface": {
+                "type": "object"
+              },
+              "session": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "capabilities": {
+          "$ref": "controller.schema.json#/$defs/capabilities"
+        },
+        "idle": {
+          "$ref": "controller.schema.json#/properties/idle"
         },
         "usb": {
           "type": "object"
@@ -83,9 +113,6 @@
         },
         "route": {
           "$ref": "controller.schema.json#/$defs/route"
-        },
-        "output": {
-          "type": "object"
         },
         "input": {
           "type": "object"

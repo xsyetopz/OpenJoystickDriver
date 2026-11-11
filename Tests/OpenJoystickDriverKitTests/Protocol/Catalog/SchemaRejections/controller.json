@@ -1368,7 +1368,7 @@
       }
     },
     {
-      "name": "validator rejects modes that break record level rules: present controls on a mode whose driver does not declare them",
+      "name": "validator rejects modes that break record level rules: present controls that no mode driver declares",
       "code": "E5007",
       "document": {
         "apiVersion": "openjoystickdriver/v1alpha3",
@@ -1379,7 +1379,7 @@
           {
             "id": "default",
             "protocol": {
-              "family": "SonyDualSense"
+              "family": "SonySixaxis"
             }
           },
           {

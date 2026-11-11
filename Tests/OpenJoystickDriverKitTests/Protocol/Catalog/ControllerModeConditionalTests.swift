@@ -171,18 +171,29 @@ struct ControllerModeConditionalTests {
   }
 
   @Test
-  func presentControlsAreDeclaredByTheDriverOfEveryMode() {
+  func presentControlsAreDeclaredByTheDriverOfSomeMode() {
     let present =
       (ProtocolDescription.bundled[.sonyDualSense]?.recordCapabilities.presentControls ?? [])
       .map(\.rawValue).sorted()
+    let fields: [String: Any] = ["capabilities": ["present": present]]
+    #expect(
+      Self.problem(
+        Self.record(
+          default: ["family": "SonyDualSense"],
+          second: Self.hid,
+          match: Self.hidMatch,
+          fields: fields
+        )
+      ) == nil
+    )
     Self.expectRejected(
       Self.record(
-        default: ["family": "SonyDualSense"],
+        default: Self.gip,
         second: Self.hid,
         match: Self.hidMatch,
-        fields: ["capabilities": ["present": present]]
+        fields: fields
       ),
-      "capabilities must be deltas the driver of every mode declares"
+      "capabilities must be deltas the driver of some mode declares"
     )
   }
 }

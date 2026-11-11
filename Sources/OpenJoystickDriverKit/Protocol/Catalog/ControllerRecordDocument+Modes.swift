@@ -390,9 +390,9 @@ extension ControllerRecordDocument {
       {
         throw fail("a HID usage map applies only to a driver that reads one, in every mode")
       }
-      guard capabilitiesAreDeclared(by: info.protocolID) else {
-        throw fail("capabilities must be deltas the driver of every mode declares")
-      }
+    }
+    guard capabilitiesAreDeclared(byAnyOf: modes.map(\.protocolInfo.protocolID)) else {
+      throw fail("capabilities must be deltas the driver of some mode declares")
     }
   }
 }

@@ -6,7 +6,7 @@ import Foundation
 /// The layers apply in the order catalog record, built-in patch, package patch, user patch. Inside
 /// one layer the selectors apply in the order `all`, `vendorID` with `productID`, `model`, so the
 /// more specific selector wins. A patch applies its `remove` paths first and its `patch` second,
-/// and an array in `patch` replaces the array. The patch body and the record it changes are
+/// and an array in `patch` replaces the array, except `modes`, whose entries merge by `id`. The patch body and the record it changes are
 /// ``OrderedJSON``, so a merged record keeps its file's member order and the text of its numbers.
 public struct ControllerPatch: Equatable, Sendable {
   /// Which records a patch applies to.
@@ -58,10 +58,10 @@ public struct ControllerPatch: Equatable, Sendable {
 
   /// The `kind` of a patch document.
   public static let kind = "ControllerPatch"
-  /// The top-level record sections a patch may set.
+  /// The top-level record properties a patch may set: every property but the identity
+  /// (`apiVersion`, `kind`, `vendorID`, `productID`), which the selector names.
   static let sections: Set<String> = [
-    "modes", "usb", "bluetoothLE", "server", "route", "input",
-    "tuning",
+    "modes", "usb", "bluetoothLE", "capabilities", "server", "route", "input", "tuning", "idle",
   ]
 
   /// The records the patch applies to.
@@ -137,8 +137,16 @@ public struct ControllerPatch: Equatable, Sendable {
       else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
-          "patch must hold modes, usb, bluetoothLE, server, "
-            + "route, input, or tuning"
+          "patch must hold modes, usb, bluetoothLE, capabilities, server, "
+            + "route, input, tuning, or idle; the selector names the identity"
+        )
+      }
+      if case .array(let modes)? = patch["modes"],
+        !modes.allSatisfy({ isPatchMode($0) })
+      {
+        throw ControllerRecordProblem(
+          code: .invalidControllerRecord,
+          "patch.modes entries must hold an id and only id, protocol, match, interface, or session"
         )
       }
       body = members
@@ -156,8 +164,8 @@ public struct ControllerPatch: Equatable, Sendable {
   /// Reads `remove`: a nonempty list of distinct dotted key paths that name a property of the
   /// record schema.
   ///
-  /// A path names a top-level section and, below `tuning`, a tuning key. An `all` patch removes
-  /// only `tuning.<key>`. A path the record does not hold removes nothing.
+  /// A path names a top-level property, below `tuning` a tuning key, and `modes.<id>` one mode. An
+  /// `all` patch removes only `tuning.<key>`. A path the record does not hold removes nothing.
   private static func parseRemove(
     _ value: OrderedJSON,
     selector: Selector
@@ -178,7 +186,8 @@ public struct ControllerPatch: Equatable, Sendable {
       }
       let path = text.split(separator: ".", omittingEmptySubsequences: false).map(String.init)
       guard !path.contains(where: \.isEmpty), sections.contains(path[0]),
-        path[0] != "tuning" || path.count == 1 || ControllerTuning.Key(rawValue: path[1]) != nil
+        path[0] != "tuning" || path.count == 1 || ControllerTuning.Key(rawValue: path[1]) != nil,
+        path[0] != "modes" || path.count == 1 || (path.count == 2 && isModeID(path[1]))
       else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
@@ -244,6 +253,24 @@ public struct ControllerPatch: Equatable, Sendable {
     }
   }
 
+  /// Whether `mode` is an entry of `patch.modes`: an object with a valid `id`, and only the keys a
+  /// mode holds.
+  private static func isPatchMode(_ mode: OrderedJSON) -> Bool {
+    guard let members = mode.members, let id = mode["id"]?.string else { return false }
+    return isModeID(id)
+      && Set(members.map(\.key)).isSubset(of: ["id", "protocol", "match", "interface", "session"])
+  }
+
+  /// Whether `text` is a mode id: lowercase words of letters and digits joined by `-`, the first
+  /// word starting with a letter.
+  private static func isModeID(_ text: String) -> Bool {
+    let words = text.split(separator: "-", omittingEmptySubsequences: false)
+    return words.first?.first?.isLetter == true && !text.hasSuffix("-")
+      && words.allSatisfy { word in
+        !word.isEmpty && word.allSatisfy { $0.isASCII && ($0.isLowercase || $0.isNumber) }
+      }
+  }
+
   /// Whether `text` is `vvvv-pppp` in lowercase hex.
   private static func isModelID(_ text: String) -> Bool {
     let characters = Array(text)
@@ -278,16 +305,47 @@ enum ControllerPatchMerge {
     return .object(members)
   }
 
+  /// RFC 7396 `MergePatch` of a patch body over a record: the `modes` entries merge by `id`, see
+  /// ``mergeModes(_:_:)``, and every other member merges as ``mergePatch(_:_:)`` does.
+  static func mergeRecordPatch(_ record: OrderedJSON, _ body: OrderedJSON) -> OrderedJSON {
+    guard case .object(let members) = body else { return body }
+    return members.reduce(record) { record, member in
+      let value =
+        member.key == "modes" ? mergeModes(record["modes"], member.value) : member.value
+      return mergePatch(record, .object([.init(key: member.key, value: value)]))
+    }
+  }
+
+  /// The modes of `target` with the entries of `patch` merged by `id`: an entry whose `id` the
+  /// target holds merges key by key into that mode, and an entry with another `id` is added last.
+  /// A patch over a target that is not a list replaces it.
+  static func mergeModes(_ target: OrderedJSON?, _ patch: OrderedJSON) -> OrderedJSON {
+    guard case .array(let entries) = patch, case .array(var modes)? = target else { return patch }
+    for entry in entries {
+      if let index = modes.firstIndex(where: { $0["id"] == entry["id"] }) {
+        modes[index] = mergePatch(modes[index], entry)
+      } else {
+        modes.append(entry)
+      }
+    }
+    return .array(modes)
+  }
+
   /// `value` without the key that `path` names; `value` itself when it does not hold the path.
   ///
   /// The path is a list of keys from the top of `value`. A key that leads through a value that is
-  /// not an object holds nothing.
+  /// not an object holds nothing. The path `modes.<id>` names the mode of that `id`.
   static func removing(_ path: [String], from value: OrderedJSON) -> OrderedJSON {
     guard let key = path.first, var members = value.members,
       let index = members.firstIndex(where: { $0.key == key })
     else { return value }
     if path.count == 1 {
       members.remove(at: index)
+    } else if key == "modes", path.count == 2, case .array(let modes) = members[index].value {
+      members[index] = .init(
+        key: key,
+        value: .array(modes.filter { $0["id"]?.string != path[1] })
+      )
     } else {
       members[index] = .init(
         key: key,
@@ -353,7 +411,7 @@ enum ControllerPatchMerge {
     var result = document
     for path in appliedRemove(of: patch, to: document) { result = removing(path, from: result) }
     guard let body = appliedBody(of: patch, to: document) else { return result }
-    return mergePatch(result, body)
+    return mergeRecordPatch(result, body)
   }
 
   /// `record` with the built-in, package, and user patches applied in that order.
