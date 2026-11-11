@@ -32,6 +32,9 @@ public struct ControllerRecordDraft: Sendable {
   public let capturedReports: Int
   /// The report bytes that took more than one value, in byte order.
   public let changedBytes: [ChangedByte]
+  /// The record sections the draft cannot fill and a valid record needs, such as `input`; empty
+  /// when the draft lacks none.
+  public let missingSections: [String]
   /// The record document as an XML property list, in the text of ``OrderedJSON/plistData()``, as
   /// `ojd record install` reads it.
   public let text: String
@@ -54,6 +57,7 @@ public struct ControllerRecordDraft: Sendable {
     let layout = parsed.flatMap(Self.bestLayout(in:))
     guard layout != nil || !bundled else { return nil }
     operation = bundled ? .patch : .add
+    missingSections = []
     family = layout == nil ? .hidDescriptor : .hidReportLayout
 
     let chosen: (id: UInt8?, length: Int)?

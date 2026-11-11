@@ -62,6 +62,7 @@ extension ControllerRecordDraft {
       throw .rejected("the record cannot be written")
     }
     operation = .add
+    missingSections = []
     family = .hidDescriptor
     reportID = nil
     reportLength = nil
