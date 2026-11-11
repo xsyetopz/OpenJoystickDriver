@@ -31,6 +31,18 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
+  func aPatchWithModesRemovesTheRecordModesFirst() throws {
+    let text = MigrationFixtures.document(
+      MigrationFixtures.alphaTwo,
+      "ControllerPatch",
+      #""selector": {"all": true}, "patch": {"modes": [{"id": "default"}], "tuning": {"replyTimeoutMs": null}}"#
+    )
+    let converted = try convert(text, .controllerPatch)
+    #expect(converted["remove"] == .array([.string("tuning.replyTimeoutMs"), .string("modes")]))
+    #expect(converted["patch"]?["modes"] != nil)
+  }
+
+  @Test
   func notesAndRationaleAreDropped() throws {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,

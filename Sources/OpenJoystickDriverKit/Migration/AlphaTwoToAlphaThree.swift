@@ -3,7 +3,8 @@ import Foundation
 /// `openjoystickdriver/v1alpha2` to `openjoystickdriver/v1alpha3`.
 ///
 /// A property list has no `null`, so a patch `null` becomes a `remove` entry and any other `null`
-/// leaves its key out. `notes` and `rationale` are not keys of `v1alpha3`.
+/// leaves its key out. A patch that sets `modes` also removes `modes`, so it keeps replacing the
+/// record's modes. `notes` and `rationale` are not keys of `v1alpha3`.
 enum AlphaTwoToAlphaThree {
   /// The version the step reads.
   static let from = "openjoystickdriver/v1alpha2"
@@ -29,6 +30,8 @@ enum AlphaTwoToAlphaThree {
         try collectNulls(member.value, path: [], into: &removed)
         let body = try stripped(member.value, path: "patch")
         if case .object(let sections) = body, sections.isEmpty { continue }
+        // `v1alpha2` replaced the whole `modes` list; `v1alpha3` merges it by `id`.
+        if body["modes"] != nil { removed.append("modes") }
         converted.append(.init(key: member.key, value: body))
       default:
         guard !droppedKeys.contains(member.key), member.value != .null else { continue }
