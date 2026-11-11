@@ -4242,6 +4242,8 @@
 "ui.controllers.publication.notPublished" = "Non publié";
 /* Value of the publication fact: the publication failed. */
 "ui.controllers.publication.failed" = "Échec";
+/* Value of the input health fact: the session has read no input report yet. */
+"ui.controllers.inputHealth.awaitingInput" = "En attente de la première entrée…";
 /* Value of the input health fact: input arrives as expected. */
 "ui.controllers.inputHealth.healthy" = "Normal";
 /* Value of the input health fact: input stopped arriving. */

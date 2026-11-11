@@ -384,6 +384,7 @@ enum ControllerDetailFacts {
   /// - Returns: The localization key of the input health state.
   private static func inputHealthKey(_ state: ControllerInputHealthState) -> String {
     switch state {
+    case .awaitingInput: return "ui.controllers.inputHealth.awaitingInput"
     case .healthy: return "ui.controllers.inputHealth.healthy"
     case .stale: return "ui.controllers.inputHealth.stale"
     case .waitingForNeutral: return "ui.controllers.inputHealth.waitingForNeutral"

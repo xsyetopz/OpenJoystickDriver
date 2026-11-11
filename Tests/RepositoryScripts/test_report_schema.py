@@ -159,6 +159,7 @@ class ReportSchemaTests(unittest.TestCase):
             ),
             (controller + ["connectionState", "power", "charging"], "unknown"),
             (controller + ["inputHealth", "state"], "healthy"),
+            (controller + ["inputHealth", "state"], "awaitingInput"),
             (controller + ["sessionState"], "active"),
             (unbound + ["outcome"], "unsupported"),
             (unbound + ["reason"], "ambiguousProtocolMatch"),
@@ -186,7 +187,10 @@ class ReportSchemaTests(unittest.TestCase):
     def test_the_enums_hold_only_the_current_names(self) -> None:
         schema = self.documents["report.schema.json"]
         enums: dict[str, list[str]] = {
-            "/$defs/controllerInputHealth/properties/state/enum": ["waitingForNeutral"],
+            "/$defs/controllerInputHealth/properties/state/enum": [
+                "awaitingInput",
+                "waitingForNeutral",
+            ],
             "/$defs/controllerInputHealth/properties/failureReason/enum": [
                 "missingReports",
                 "freshnessNotAdvancing",

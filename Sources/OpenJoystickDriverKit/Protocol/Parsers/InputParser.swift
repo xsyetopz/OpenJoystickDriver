@@ -13,6 +13,8 @@ public enum ControllerInputConnectionState: Sendable, Equatable {
 
 /// How current a controller's input reports are.
 public enum ControllerInputHealthState: String, Codable, Sendable {
+  /// The session has read no input report yet.
+  case awaitingInput = "AwaitingInput"
   /// Reports arrive and advance.
   case healthy = "Healthy"
   /// Reports have stopped arriving or advancing.

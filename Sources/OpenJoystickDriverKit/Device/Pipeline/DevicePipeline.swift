@@ -218,7 +218,8 @@ actor DevicePipeline {
   /// The uptime in nanoseconds at which liveness monitoring of the session began, which stands in
   /// for the latest fresh report until one arrives.
   var inputHealthMonitoringStartedNanoseconds: UInt64?
-  /// The uptime in nanoseconds of the latest report that carried input, fresh or not.
+  /// The uptime in nanoseconds of the latest report that carried input, fresh or not;
+  /// nil until the USB session read one.
   var lastObservedInputReportNanoseconds: UInt64?
   /// Whether the output stays released after input was lost, until a fresh neutral report arrives;
   /// a change posts a service status change.

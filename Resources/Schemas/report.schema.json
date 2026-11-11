@@ -467,7 +467,7 @@
       "additionalProperties": false,
       "properties": {
         "state": {
-          "enum": ["Healthy", "Stale", "WaitingForNeutral"]
+          "enum": ["AwaitingInput", "Healthy", "Stale", "WaitingForNeutral"]
         },
         "failureReason": {
           "enum": ["MissingReports", "FreshnessNotAdvancing", "GuideNotPressed"]

@@ -110,6 +110,7 @@ extension DevicePipeline {
       usbExclusiveOwner = nil
       consecutiveUSBIOErrors = 0
       driver.resetProtocolState()
+      lastObservedInputReportNanoseconds = nil
 
       // Linux reads the IN endpoint before it writes the first startup packet; a pad that sends
       // its first report once, without an announce, sends it to that read.

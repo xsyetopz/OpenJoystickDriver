@@ -18,7 +18,12 @@ extension DevicePipeline {
     let held = coalescedInput
     coalescedInput = nil
     let event = parsed.map(normalized)
-    if event != nil { lastObservedInputReportNanoseconds = now }
+    if event != nil {
+      if lastObservedInputReportNanoseconds == nil {
+        NotificationCenter.postServiceStatusChanged(from: self)
+      }
+      lastObservedInputReportNanoseconds = now
+    }
     if let timeout = plan.inputReportLivenessTimeoutNanoseconds {
       if let last = lastLiveInputReportNanoseconds ?? inputHealthMonitoringStartedNanoseconds,
         now - last >= timeout

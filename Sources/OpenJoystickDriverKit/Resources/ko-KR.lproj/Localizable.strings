@@ -4241,6 +4241,8 @@
 "ui.controllers.publication.notPublished" = "게시되지 않음";
 /* Value of the publication fact: the publication failed. */
 "ui.controllers.publication.failed" = "실패";
+/* Value of the input health fact: the session has read no input report yet. */
+"ui.controllers.inputHealth.awaitingInput" = "첫 입력을 기다리는 중…";
 /* Value of the input health fact: input arrives as expected. */
 "ui.controllers.inputHealth.healthy" = "정상";
 /* Value of the input health fact: input stopped arriving. */

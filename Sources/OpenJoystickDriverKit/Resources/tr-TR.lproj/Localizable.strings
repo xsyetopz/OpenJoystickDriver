@@ -4241,6 +4241,8 @@
 "ui.controllers.publication.notPublished" = "Yayımlanmadı";
 /* Value of the publication fact: the publication failed. */
 "ui.controllers.publication.failed" = "Başarısız";
+/* Value of the input health fact: the session has read no input report yet. */
+"ui.controllers.inputHealth.awaitingInput" = "İlk girdi bekleniyor…";
 /* Value of the input health fact: input arrives as expected. */
 "ui.controllers.inputHealth.healthy" = "Normal";
 /* Value of the input health fact: input stopped arriving. */
