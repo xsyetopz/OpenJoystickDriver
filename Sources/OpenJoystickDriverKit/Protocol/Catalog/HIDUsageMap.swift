@@ -151,11 +151,16 @@ struct HIDUsageMap: Equatable, Sendable {
   /// from 0 to 1, or a half axis, axis dpad or button trigger on the wrong control.
   init(reportID: UInt32? = nil, entries: [Entry]) throws {
     guard !entries.isEmpty else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "a usage map must not be empty")
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.usageMap.mapEmpty",
+        "a usage map must not be empty"
+      )
     }
     var bindings: [HIDUsage: [Binding]] = [:]
     for entry in entries {
-      let name = "usage \(entry.usage.usagePage)/\(entry.usage.usage)"
+      let usage = "\(entry.usage.usagePage)/\(entry.usage.usage)"
+      let name = "usage \(usage)"
       let others = bindings[entry.usage, default: []]
       if let half = entry.binding.half, !others.isEmpty,
         others.allSatisfy({ $0.half != nil })
@@ -163,11 +168,18 @@ struct HIDUsageMap: Equatable, Sendable {
         guard !others.contains(where: { $0.half == half }) else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.usageMap.halfTwice",
+            arguments: [usage, half.rawValue],
             "\(name) names the \(half.rawValue) half twice"
           )
         }
       } else if !others.isEmpty {
-        throw ControllerRecordProblem(code: .invalidControllerRecord, "\(name) is named twice")
+        throw ControllerRecordProblem(
+          code: .invalidControllerRecord,
+          key: "error.E5007.usageMap.usageTwice",
+          arguments: [usage],
+          "\(name) is named twice"
+        )
       }
       bindings[entry.usage, default: []].append(entry.binding)
       switch entry.binding {
@@ -175,6 +187,8 @@ struct HIDUsageMap: Equatable, Sendable {
         guard !Control.stickAxes.contains(control), !Control.dpad.contains(control) else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.usageMap.buttonControl",
+            arguments: [usage, control.rawValue],
             "\(name) is a button; \(control.rawValue) is not"
           )
         }
@@ -182,18 +196,24 @@ struct HIDUsageMap: Equatable, Sendable {
         guard Control.stickAxes.contains(axis.control) || axis.isTrigger else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.usageMap.axisControl",
+            arguments: [usage, axis.control.rawValue],
             "\(name) is an axis; \(axis.control.rawValue) is not"
           )
         }
         if let range = axis.range, range.isEmpty || range.lowerBound == range.upperBound {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.usageMap.rangeOrder",
+            arguments: [usage],
             "\(name) range must have min below max"
           )
         }
         if let deadZone = axis.deadZone, !(deadZone > 0 && deadZone < 1) {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.usageMap.deadZone",
+            arguments: [usage],
             "\(name) deadZone must be above 0 and below 1"
           )
         }
@@ -201,6 +221,8 @@ struct HIDUsageMap: Equatable, Sendable {
         if let range = hat.range, range != 0...7, range != 1...8 {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.usageMap.hatRange",
+            arguments: [usage],
             "\(name) hat range must be 0...7 or 1...8"
           )
         }
@@ -208,6 +230,8 @@ struct HIDUsageMap: Equatable, Sendable {
         guard Self.triggers.contains(halfAxis.control) else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.usageMap.halfAxisControl",
+            arguments: [usage, halfAxis.control.rawValue],
             "\(name) is a half axis; \(halfAxis.control.rawValue) is not a trigger"
           )
         }
@@ -215,6 +239,8 @@ struct HIDUsageMap: Equatable, Sendable {
         guard Self.triggers.contains(control) else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.usageMap.buttonTriggerControl",
+            arguments: [usage, control.rawValue],
             "\(name) is a button trigger; \(control.rawValue) is not a trigger"
           )
         }
@@ -222,19 +248,23 @@ struct HIDUsageMap: Equatable, Sendable {
         guard Control.dpad.contains(binding.control) else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.usageMap.axisDpadControl",
+            arguments: [usage, binding.control.rawValue],
             "\(name) is an axis dpad; \(binding.control.rawValue) is not a D-pad direction"
           )
         }
-        try Self.requireThreshold(binding, name: name)
+        try Self.requireThreshold(binding, usage: usage)
       case .axisButton(let binding):
         guard !Control.stickAxes.contains(binding.control), !Control.dpad.contains(binding.control)
         else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.usageMap.axisButtonControl",
+            arguments: [usage, binding.control.rawValue],
             "\(name) is an axis button; \(binding.control.rawValue) is not a button"
           )
         }
-        try Self.requireThreshold(binding, name: name)
+        try Self.requireThreshold(binding, usage: usage)
       }
     }
     self.reportID = reportID
@@ -242,15 +272,18 @@ struct HIDUsageMap: Equatable, Sendable {
     self.bindings = bindings
   }
 
-  /// Throws unless the threshold of `binding` is above 0 and below 1.
+  /// Throws unless the threshold of `binding`, the entry of `usage` as `page/usage`, is above 0
+  /// and below 1.
   private static func requireThreshold(
     _ binding: HalfThreshold,
-    name: String
+    usage: String
   ) throws(ControllerRecordProblem) {
     guard binding.threshold > 0, binding.threshold < 1 else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
-        "\(name) threshold must be above 0 and below 1"
+        key: "error.E5007.usageMap.threshold",
+        arguments: [usage],
+        "usage \(usage) threshold must be above 0 and below 1"
       )
     }
   }

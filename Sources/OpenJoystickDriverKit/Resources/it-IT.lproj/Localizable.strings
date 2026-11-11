@@ -3712,6 +3712,32 @@
 "error.E5007.inputLayout.triggerSources" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: un grilletto indica un valore analogico, un pulsante o entrambi. Correzione: dai al grilletto un valore analogico o un pulsante.";
 /* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
 "error.E5007.inputLayout.noControls" = "%1$@, input.layouts[]: un layout deve decodificare almeno un controllo. Correzione: aggiungi un pulsante, un asse, un hat o un grilletto.";
+/* Error E5007, shown when the HID usage map of a record fails: a usage map lists no usage. %1$@ is the file. */
+"error.E5007.usageMap.mapEmpty" = "%1$@, input.hidUsageMap.usages: una mappa di usi deve elencare almeno un uso. Correzione: aggiungi un uso o elimina hidUsageMap.";
+/* Error E5007, shown when the HID usage map of a record fails: two entries of one usage name the same half. %2$@ is the usage as page/usage, %3$@ the half. %1$@ is the file. */
+"error.E5007.usageMap.halfTwice" = "%1$@, input.hidUsageMap.usages[].half: l’uso %2$@ nomina due volte la metà %3$@. Correzione: dai una sola voce a ogni metà di un uso.";
+/* Error E5007, shown when the HID usage map of a record fails: a usage is named twice. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.usageTwice" = "%1$@, input.hidUsageMap.usages[]: l’uso %2$@ è nominato due volte, e solo le voci delle sue due metà possono condividere un uso. Correzione: nomina ogni uso una volta o dai alle voci le metà Positive e Negative.";
+/* Error E5007, shown when the HID usage map of a record fails: a Button entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonControl" = "%1$@, input.hidUsageMap.usages[].control: l’uso %2$@ è un pulsante, e %3$@ non è un controllo pulsante. Correzione: indica un controllo pulsante o usa un altro tipo di voce.";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis entry names a control that is not a stick axis or trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisControl" = "%1$@, input.hidUsageMap.usages[].control: l’uso %2$@ è un asse, e %3$@ non è un asse della levetta né un grilletto. Correzione: indica un asse della levetta o un grilletto, oppure usa un altro tipo di voce.";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis range has min at or above max. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.rangeOrder" = "%1$@, input.hidUsageMap.usages[].range: l’intervallo dell’uso %2$@ deve avere min sotto max. Correzione: imposta min sotto max.";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis deadZone is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.deadZone" = "%1$@, input.hidUsageMap.usages[].deadZone: deadZone dell’uso %2$@ deve essere sopra 0 e sotto 1. Correzione: imposta deadZone sopra 0 e sotto 1.";
+/* Error E5007, shown when the HID usage map of a record fails: a Hat range is not 0...7 or 1...8. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.hatRange" = "%1$@, input.hidUsageMap.usages[].range: l’intervallo hat dell’uso %2$@ deve essere 0...7 o 1...8. Correzione: imposta range su 0...7 o 1...8, oppure omettilo.";
+/* Error E5007, shown when the HID usage map of a record fails: a HalfAxis entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.halfAxisControl" = "%1$@, input.hidUsageMap.usages[].control: l’uso %2$@ è un semiasse, e %3$@ non è un grilletto. Correzione: indica LeftTrigger o RightTrigger.";
+/* Error E5007, shown when the HID usage map of a record fails: a ButtonTrigger entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonTriggerControl" = "%1$@, input.hidUsageMap.usages[].control: l’uso %2$@ è un grilletto a pulsante, e %3$@ non è un grilletto. Correzione: indica LeftTrigger o RightTrigger, oppure usa un altro tipo di voce.";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad entry names a control that is not a D-pad direction. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisDpadControl" = "%1$@, input.hidUsageMap.usages[].control: l’uso %2$@ è una croce ad asse, e %3$@ non è una direzione della croce. Correzione: indica DpadUp, DpadDown, DpadLeft o DpadRight.";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisButton entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisButtonControl" = "%1$@, input.hidUsageMap.usages[].control: l’uso %2$@ è un pulsante ad asse, e %3$@ non è un controllo pulsante. Correzione: indica un controllo pulsante o usa un altro tipo di voce per l’asse.";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad or AxisButton threshold is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.threshold" = "%1$@, input.hidUsageMap.usages[].threshold: threshold dell’uso %2$@ deve essere sopra 0 e sotto 1. Correzione: imposta threshold sopra 0 e sotto 1.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "La riga di SDL_GameControllerDB di un controller non può pilotarlo. Il messaggio indica il motivo. Scrivi un record del controller per esso con ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

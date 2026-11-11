@@ -4266,6 +4266,32 @@
 "error.E5007.inputLayout.triggerSources" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: триггер называет аналоговое значение, кнопку или оба. Исправление: задайте триггеру аналоговое значение или кнопку.";
 /* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
 "error.E5007.inputLayout.noControls" = "%1$@, input.layouts[]: раскладка должна декодировать хотя бы один элемент. Исправление: добавьте кнопку, ось, hat или триггер.";
+/* Error E5007, shown when the HID usage map of a record fails: a usage map lists no usage. %1$@ is the file. */
+"error.E5007.usageMap.mapEmpty" = "%1$@, input.hidUsageMap.usages: карта usage должна перечислять хотя бы один usage. Исправление: добавьте usage или удалите hidUsageMap.";
+/* Error E5007, shown when the HID usage map of a record fails: two entries of one usage name the same half. %2$@ is the usage as page/usage, %3$@ the half. %1$@ is the file. */
+"error.E5007.usageMap.halfTwice" = "%1$@, input.hidUsageMap.usages[].half: usage %2$@ дважды называет половину %3$@. Исправление: дайте каждой половине usage одну запись.";
+/* Error E5007, shown when the HID usage map of a record fails: a usage is named twice. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.usageTwice" = "%1$@, input.hidUsageMap.usages[]: usage %2$@ назван дважды, а делить usage могут только записи двух его половин. Исправление: назовите каждый usage один раз или дайте записям половины Positive и Negative.";
+/* Error E5007, shown when the HID usage map of a record fails: a Button entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonControl" = "%1$@, input.hidUsageMap.usages[].control: usage %2$@ — кнопка, а %3$@ не является элементом-кнопкой. Исправление: назовите элемент-кнопку или используйте другой вид записи.";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis entry names a control that is not a stick axis or trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisControl" = "%1$@, input.hidUsageMap.usages[].control: usage %2$@ — ось, а %3$@ не является осью стика или триггером. Исправление: назовите ось стика или триггер либо используйте другой вид записи.";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis range has min at or above max. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.rangeOrder" = "%1$@, input.hidUsageMap.usages[].range: диапазон usage %2$@ должен иметь min меньше max. Исправление: задайте min меньше max.";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis deadZone is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.deadZone" = "%1$@, input.hidUsageMap.usages[].deadZone: deadZone у usage %2$@ должен быть больше 0 и меньше 1. Исправление: задайте deadZone больше 0 и меньше 1.";
+/* Error E5007, shown when the HID usage map of a record fails: a Hat range is not 0...7 or 1...8. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.hatRange" = "%1$@, input.hidUsageMap.usages[].range: диапазон hat у usage %2$@ должен быть 0...7 или 1...8. Исправление: задайте range 0...7 или 1...8 либо опустите его.";
+/* Error E5007, shown when the HID usage map of a record fails: a HalfAxis entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.halfAxisControl" = "%1$@, input.hidUsageMap.usages[].control: usage %2$@ — полуось, а %3$@ не является триггером. Исправление: назовите LeftTrigger или RightTrigger.";
+/* Error E5007, shown when the HID usage map of a record fails: a ButtonTrigger entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonTriggerControl" = "%1$@, input.hidUsageMap.usages[].control: usage %2$@ — кнопочный триггер, а %3$@ не является триггером. Исправление: назовите LeftTrigger или RightTrigger либо используйте другой вид записи.";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad entry names a control that is not a D-pad direction. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisDpadControl" = "%1$@, input.hidUsageMap.usages[].control: usage %2$@ — крестовина по оси, а %3$@ не является направлением крестовины. Исправление: назовите DpadUp, DpadDown, DpadLeft или DpadRight.";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisButton entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisButtonControl" = "%1$@, input.hidUsageMap.usages[].control: usage %2$@ — кнопка по оси, а %3$@ не является элементом-кнопкой. Исправление: назовите элемент-кнопку или используйте другой вид записи для оси.";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad or AxisButton threshold is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.threshold" = "%1$@, input.hidUsageMap.usages[].threshold: threshold у usage %2$@ должен быть больше 0 и меньше 1. Исправление: задайте threshold больше 0 и меньше 1.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "Строка SDL_GameControllerDB для контроллера не может им управлять. Причина указана в сообщении. Создайте запись контроллера для него с помощью ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

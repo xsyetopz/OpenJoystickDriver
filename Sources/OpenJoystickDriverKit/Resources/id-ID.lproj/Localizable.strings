@@ -4266,6 +4266,32 @@
 "error.E5007.inputLayout.triggerSources" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: pemicu menyebut nilai analog, tombol, atau keduanya. Perbaikan: beri pemicu nilai analog atau tombol.";
 /* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
 "error.E5007.inputLayout.noControls" = "%1$@, input.layouts[]: tata letak harus mendekode minimal satu kontrol. Perbaikan: tambahkan tombol, sumbu, hat, atau pemicu.";
+/* Error E5007, shown when the HID usage map of a record fails: a usage map lists no usage. %1$@ is the file. */
+"error.E5007.usageMap.mapEmpty" = "%1$@, input.hidUsageMap.usages: peta penggunaan harus mencantumkan minimal satu penggunaan. Perbaikan: tambahkan penggunaan, atau hapus hidUsageMap.";
+/* Error E5007, shown when the HID usage map of a record fails: two entries of one usage name the same half. %2$@ is the usage as page/usage, %3$@ the half. %1$@ is the file. */
+"error.E5007.usageMap.halfTwice" = "%1$@, input.hidUsageMap.usages[].half: penggunaan %2$@ menyebut separuh %3$@ dua kali. Perbaikan: beri satu entri untuk setiap separuh penggunaan.";
+/* Error E5007, shown when the HID usage map of a record fails: a usage is named twice. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.usageTwice" = "%1$@, input.hidUsageMap.usages[]: penggunaan %2$@ disebut dua kali, dan hanya entri untuk kedua separuhnya yang boleh berbagi penggunaan. Perbaikan: sebut setiap penggunaan sekali, atau beri entri separuh Positive dan Negative.";
+/* Error E5007, shown when the HID usage map of a record fails: a Button entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonControl" = "%1$@, input.hidUsageMap.usages[].control: penggunaan %2$@ adalah tombol, dan %3$@ bukan kontrol tombol. Perbaikan: sebut kontrol tombol, atau pakai jenis entri lain.";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis entry names a control that is not a stick axis or trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisControl" = "%1$@, input.hidUsageMap.usages[].control: penggunaan %2$@ adalah sumbu, dan %3$@ bukan sumbu stik atau pemicu. Perbaikan: sebut sumbu stik atau pemicu, atau pakai jenis entri lain.";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis range has min at or above max. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.rangeOrder" = "%1$@, input.hidUsageMap.usages[].range: rentang penggunaan %2$@ harus memiliki min di bawah max. Perbaikan: atur min di bawah max.";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis deadZone is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.deadZone" = "%1$@, input.hidUsageMap.usages[].deadZone: deadZone penggunaan %2$@ harus di atas 0 dan di bawah 1. Perbaikan: atur deadZone di atas 0 dan di bawah 1.";
+/* Error E5007, shown when the HID usage map of a record fails: a Hat range is not 0...7 or 1...8. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.hatRange" = "%1$@, input.hidUsageMap.usages[].range: rentang hat penggunaan %2$@ harus 0...7 atau 1...8. Perbaikan: atur range ke 0...7 atau 1...8, atau hilangkan.";
+/* Error E5007, shown when the HID usage map of a record fails: a HalfAxis entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.halfAxisControl" = "%1$@, input.hidUsageMap.usages[].control: penggunaan %2$@ adalah setengah sumbu, dan %3$@ bukan pemicu. Perbaikan: sebut LeftTrigger atau RightTrigger.";
+/* Error E5007, shown when the HID usage map of a record fails: a ButtonTrigger entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonTriggerControl" = "%1$@, input.hidUsageMap.usages[].control: penggunaan %2$@ adalah pemicu tombol, dan %3$@ bukan pemicu. Perbaikan: sebut LeftTrigger atau RightTrigger, atau pakai jenis entri lain.";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad entry names a control that is not a D-pad direction. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisDpadControl" = "%1$@, input.hidUsageMap.usages[].control: penggunaan %2$@ adalah D-pad sumbu, dan %3$@ bukan arah D-pad. Perbaikan: sebut DpadUp, DpadDown, DpadLeft, atau DpadRight.";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisButton entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisButtonControl" = "%1$@, input.hidUsageMap.usages[].control: penggunaan %2$@ adalah tombol sumbu, dan %3$@ bukan kontrol tombol. Perbaikan: sebut kontrol tombol, atau pakai jenis entri lain untuk sumbu.";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad or AxisButton threshold is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.threshold" = "%1$@, input.hidUsageMap.usages[].threshold: threshold penggunaan %2$@ harus di atas 0 dan di bawah 1. Perbaikan: atur threshold di atas 0 dan di bawah 1.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "Baris SDL_GameControllerDB untuk sebuah pengontrol tidak dapat menjalankannya. Pesan menyebut alasannya. Tulis catatan pengontrol untuknya dengan ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

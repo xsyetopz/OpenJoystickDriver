@@ -4266,6 +4266,32 @@
 "error.E5007.inputLayout.triggerSources" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: ट्रिगर एनालॉग मान, बटन या दोनों का नाम देता है। समाधान: ट्रिगर को एनालॉग मान या बटन दें।";
 /* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
 "error.E5007.inputLayout.noControls" = "%1$@, input.layouts[]: लेआउट को कम से कम एक कंट्रोल डिकोड करना चाहिए। समाधान: कोई बटन, अक्ष, hat या ट्रिगर जोड़ें।";
+/* Error E5007, shown when the HID usage map of a record fails: a usage map lists no usage. %1$@ is the file. */
+"error.E5007.usageMap.mapEmpty" = "%1$@, input.hidUsageMap.usages: यूसेज मैप में कम से कम एक यूसेज सूचीबद्ध होना चाहिए। समाधान: एक यूसेज जोड़ें या hidUsageMap हटा दें।";
+/* Error E5007, shown when the HID usage map of a record fails: two entries of one usage name the same half. %2$@ is the usage as page/usage, %3$@ the half. %1$@ is the file. */
+"error.E5007.usageMap.halfTwice" = "%1$@, input.hidUsageMap.usages[].half: यूसेज %2$@ आधे हिस्से %3$@ का नाम दो बार देता है। समाधान: यूसेज के हर आधे हिस्से को एक प्रविष्टि दें।";
+/* Error E5007, shown when the HID usage map of a record fails: a usage is named twice. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.usageTwice" = "%1$@, input.hidUsageMap.usages[]: यूसेज %2$@ का नाम दो बार आया है, और यूसेज केवल उसके दो आधे हिस्सों की प्रविष्टियाँ साझा कर सकती हैं। समाधान: हर यूसेज का नाम एक बार दें या प्रविष्टियों को Positive और Negative हिस्से दें।";
+/* Error E5007, shown when the HID usage map of a record fails: a Button entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonControl" = "%1$@, input.hidUsageMap.usages[].control: यूसेज %2$@ एक बटन है, और %3$@ बटन कंट्रोल नहीं है। समाधान: किसी बटन कंट्रोल का नाम दें या दूसरी तरह की प्रविष्टि इस्तेमाल करें।";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis entry names a control that is not a stick axis or trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisControl" = "%1$@, input.hidUsageMap.usages[].control: यूसेज %2$@ एक अक्ष है, और %3$@ स्टिक अक्ष या ट्रिगर नहीं है। समाधान: किसी स्टिक अक्ष या ट्रिगर का नाम दें या दूसरी तरह की प्रविष्टि इस्तेमाल करें।";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis range has min at or above max. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.rangeOrder" = "%1$@, input.hidUsageMap.usages[].range: यूसेज %2$@ की सीमा में min, max से कम होना चाहिए। समाधान: min को max से कम रखें।";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis deadZone is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.deadZone" = "%1$@, input.hidUsageMap.usages[].deadZone: यूसेज %2$@ की deadZone 0 से ऊपर और 1 से नीचे होनी चाहिए। समाधान: deadZone को 0 से ऊपर और 1 से नीचे रखें।";
+/* Error E5007, shown when the HID usage map of a record fails: a Hat range is not 0...7 or 1...8. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.hatRange" = "%1$@, input.hidUsageMap.usages[].range: यूसेज %2$@ की hat सीमा 0...7 या 1...8 होनी चाहिए। समाधान: range को 0...7 या 1...8 रखें, या उसे छोड़ दें।";
+/* Error E5007, shown when the HID usage map of a record fails: a HalfAxis entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.halfAxisControl" = "%1$@, input.hidUsageMap.usages[].control: यूसेज %2$@ आधा अक्ष है, और %3$@ ट्रिगर नहीं है। समाधान: LeftTrigger या RightTrigger का नाम दें।";
+/* Error E5007, shown when the HID usage map of a record fails: a ButtonTrigger entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonTriggerControl" = "%1$@, input.hidUsageMap.usages[].control: यूसेज %2$@ बटन ट्रिगर है, और %3$@ ट्रिगर नहीं है। समाधान: LeftTrigger या RightTrigger का नाम दें, या दूसरी तरह की प्रविष्टि इस्तेमाल करें।";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad entry names a control that is not a D-pad direction. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisDpadControl" = "%1$@, input.hidUsageMap.usages[].control: यूसेज %2$@ अक्ष वाला D-pad है, और %3$@ D-pad की दिशा नहीं है। समाधान: DpadUp, DpadDown, DpadLeft या DpadRight का नाम दें।";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisButton entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisButtonControl" = "%1$@, input.hidUsageMap.usages[].control: यूसेज %2$@ अक्ष वाला बटन है, और %3$@ बटन कंट्रोल नहीं है। समाधान: किसी बटन कंट्रोल का नाम दें, या अक्ष के लिए दूसरी तरह की प्रविष्टि इस्तेमाल करें।";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad or AxisButton threshold is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.threshold" = "%1$@, input.hidUsageMap.usages[].threshold: यूसेज %2$@ की threshold 0 से ऊपर और 1 से नीचे होनी चाहिए। समाधान: threshold को 0 से ऊपर और 1 से नीचे रखें।";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "किसी कंट्रोलर की SDL_GameControllerDB पंक्ति उसे चला नहीं सकती। संदेश कारण बताता है। ojd record draft से उस कंट्रोलर के लिए कंट्रोलर रिकॉर्ड लिखें।";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

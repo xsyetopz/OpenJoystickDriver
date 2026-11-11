@@ -4266,6 +4266,32 @@
 "error.E5007.inputLayout.triggerSources" = "%1$@，input.layouts[].leftTrigger, input.layouts[].rightTrigger：扳機必須指定類比值、按鈕或兩者。修正：為扳機指定類比值或按鈕。";
 /* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
 "error.E5007.inputLayout.noControls" = "%1$@，input.layouts[]：版面必須至少解碼一個控制項。修正：新增按鈕、軸、hat 或扳機。";
+/* Error E5007, shown when the HID usage map of a record fails: a usage map lists no usage. %1$@ is the file. */
+"error.E5007.usageMap.mapEmpty" = "%1$@，input.hidUsageMap.usages：用法對應必須列出至少一個用法。修正：新增一個用法，或刪除 hidUsageMap。";
+/* Error E5007, shown when the HID usage map of a record fails: two entries of one usage name the same half. %2$@ is the usage as page/usage, %3$@ the half. %1$@ is the file. */
+"error.E5007.usageMap.halfTwice" = "%1$@，input.hidUsageMap.usages[].half：用法 %2$@ 兩次指定了 %3$@ 一半。修正：為用法的每一半各設一個項目。";
+/* Error E5007, shown when the HID usage map of a record fails: a usage is named twice. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.usageTwice" = "%1$@，input.hidUsageMap.usages[]：用法 %2$@ 被指定了兩次，只有其兩半的項目才能共用一個用法。修正：每個用法只指定一次，或為項目指定 Positive 和 Negative 兩半。";
+/* Error E5007, shown when the HID usage map of a record fails: a Button entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonControl" = "%1$@，input.hidUsageMap.usages[].control：用法 %2$@ 是按鈕，而 %3$@ 不是按鈕控制項。修正：指定按鈕控制項，或使用其他類型的項目。";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis entry names a control that is not a stick axis or trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisControl" = "%1$@，input.hidUsageMap.usages[].control：用法 %2$@ 是軸，而 %3$@ 不是搖桿軸或扳機。修正：指定搖桿軸或扳機，或使用其他類型的項目。";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis range has min at or above max. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.rangeOrder" = "%1$@，input.hidUsageMap.usages[].range：用法 %2$@ 的範圍必須 min 小於 max。修正：將 min 設為小於 max。";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis deadZone is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.deadZone" = "%1$@，input.hidUsageMap.usages[].deadZone：用法 %2$@ 的 deadZone 必須大於 0 且小於 1。修正：將 deadZone 設為大於 0 且小於 1。";
+/* Error E5007, shown when the HID usage map of a record fails: a Hat range is not 0...7 or 1...8. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.hatRange" = "%1$@，input.hidUsageMap.usages[].range：用法 %2$@ 的 hat 範圍必須是 0...7 或 1...8。修正：將 range 設為 0...7 或 1...8，或省略。";
+/* Error E5007, shown when the HID usage map of a record fails: a HalfAxis entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.halfAxisControl" = "%1$@，input.hidUsageMap.usages[].control：用法 %2$@ 是半軸，而 %3$@ 不是扳機。修正：指定 LeftTrigger 或 RightTrigger。";
+/* Error E5007, shown when the HID usage map of a record fails: a ButtonTrigger entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonTriggerControl" = "%1$@，input.hidUsageMap.usages[].control：用法 %2$@ 是按鈕扳機，而 %3$@ 不是扳機。修正：指定 LeftTrigger 或 RightTrigger，或使用其他類型的項目。";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad entry names a control that is not a D-pad direction. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisDpadControl" = "%1$@，input.hidUsageMap.usages[].control：用法 %2$@ 是軸方向鍵，而 %3$@ 不是方向鍵的方向。修正：指定 DpadUp、DpadDown、DpadLeft 或 DpadRight。";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisButton entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisButtonControl" = "%1$@，input.hidUsageMap.usages[].control：用法 %2$@ 是軸按鈕，而 %3$@ 不是按鈕控制項。修正：指定按鈕控制項，或為軸使用其他類型的項目。";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad or AxisButton threshold is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.threshold" = "%1$@，input.hidUsageMap.usages[].threshold：用法 %2$@ 的 threshold 必須大於 0 且小於 1。修正：將 threshold 設為大於 0 且小於 1。";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "控制器的 SDL_GameControllerDB 行無法驅動該控制器。訊息會指出原因。請用 ojd record draft 為它編寫控制器記錄。";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

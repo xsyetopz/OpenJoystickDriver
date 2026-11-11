@@ -4266,6 +4266,32 @@
 "error.E5007.inputLayout.triggerSources" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: một cò nêu giá trị analog, một nút hoặc cả hai. Cách sửa: cho cò một giá trị analog hoặc một nút.";
 /* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
 "error.E5007.inputLayout.noControls" = "%1$@, input.layouts[]: một bố cục phải giải mã ít nhất một điều khiển. Cách sửa: thêm một nút, trục, hat hoặc cò.";
+/* Error E5007, shown when the HID usage map of a record fails: a usage map lists no usage. %1$@ is the file. */
+"error.E5007.usageMap.mapEmpty" = "%1$@, input.hidUsageMap.usages: bản đồ usage phải liệt kê ít nhất một usage. Cách sửa: thêm một usage hoặc xóa hidUsageMap.";
+/* Error E5007, shown when the HID usage map of a record fails: two entries of one usage name the same half. %2$@ is the usage as page/usage, %3$@ the half. %1$@ is the file. */
+"error.E5007.usageMap.halfTwice" = "%1$@, input.hidUsageMap.usages[].half: usage %2$@ nêu nửa %3$@ hai lần. Cách sửa: cho mỗi nửa của một usage một mục.";
+/* Error E5007, shown when the HID usage map of a record fails: a usage is named twice. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.usageTwice" = "%1$@, input.hidUsageMap.usages[]: usage %2$@ được nêu hai lần, và chỉ các mục của hai nửa của nó mới được dùng chung một usage. Cách sửa: nêu mỗi usage một lần hoặc cho các mục hai nửa Positive và Negative.";
+/* Error E5007, shown when the HID usage map of a record fails: a Button entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonControl" = "%1$@, input.hidUsageMap.usages[].control: usage %2$@ là một nút, và %3$@ không phải điều khiển nút. Cách sửa: nêu một điều khiển nút hoặc dùng loại mục khác.";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis entry names a control that is not a stick axis or trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisControl" = "%1$@, input.hidUsageMap.usages[].control: usage %2$@ là một trục, và %3$@ không phải trục cần analog hay cò. Cách sửa: nêu một trục cần analog hoặc cò, hoặc dùng loại mục khác.";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis range has min at or above max. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.rangeOrder" = "%1$@, input.hidUsageMap.usages[].range: phạm vi của usage %2$@ phải có min nhỏ hơn max. Cách sửa: đặt min nhỏ hơn max.";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis deadZone is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.deadZone" = "%1$@, input.hidUsageMap.usages[].deadZone: deadZone của usage %2$@ phải lớn hơn 0 và nhỏ hơn 1. Cách sửa: đặt deadZone lớn hơn 0 và nhỏ hơn 1.";
+/* Error E5007, shown when the HID usage map of a record fails: a Hat range is not 0...7 or 1...8. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.hatRange" = "%1$@, input.hidUsageMap.usages[].range: phạm vi hat của usage %2$@ phải là 0...7 hoặc 1...8. Cách sửa: đặt range thành 0...7 hoặc 1...8, hoặc bỏ qua.";
+/* Error E5007, shown when the HID usage map of a record fails: a HalfAxis entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.halfAxisControl" = "%1$@, input.hidUsageMap.usages[].control: usage %2$@ là một nửa trục, và %3$@ không phải cò. Cách sửa: nêu LeftTrigger hoặc RightTrigger.";
+/* Error E5007, shown when the HID usage map of a record fails: a ButtonTrigger entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonTriggerControl" = "%1$@, input.hidUsageMap.usages[].control: usage %2$@ là một cò dạng nút, và %3$@ không phải cò. Cách sửa: nêu LeftTrigger hoặc RightTrigger, hoặc dùng loại mục khác.";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad entry names a control that is not a D-pad direction. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisDpadControl" = "%1$@, input.hidUsageMap.usages[].control: usage %2$@ là D-pad dạng trục, và %3$@ không phải hướng D-pad. Cách sửa: nêu DpadUp, DpadDown, DpadLeft hoặc DpadRight.";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisButton entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisButtonControl" = "%1$@, input.hidUsageMap.usages[].control: usage %2$@ là một nút dạng trục, và %3$@ không phải điều khiển nút. Cách sửa: nêu một điều khiển nút hoặc dùng loại mục khác cho trục.";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad or AxisButton threshold is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.threshold" = "%1$@, input.hidUsageMap.usages[].threshold: threshold của usage %2$@ phải lớn hơn 0 và nhỏ hơn 1. Cách sửa: đặt threshold lớn hơn 0 và nhỏ hơn 1.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "Dòng SDL_GameControllerDB của một bộ điều khiển không thể điều khiển nó. Thông báo nêu lý do. Hãy viết bản ghi bộ điều khiển cho nó bằng ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

@@ -4266,6 +4266,32 @@
 "error.E5007.inputLayout.triggerSources" = "%1$@、input.layouts[].leftTrigger, input.layouts[].rightTrigger: トリガーにはアナログ値、ボタン、またはその両方が必要です。対処: トリガーにアナログ値またはボタンを指定してください。";
 /* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
 "error.E5007.inputLayout.noControls" = "%1$@、input.layouts[]: レイアウトは少なくとも 1 つのコントロールをデコードする必要があります。対処: ボタン、軸、hat、またはトリガーを追加してください。";
+/* Error E5007, shown when the HID usage map of a record fails: a usage map lists no usage. %1$@ is the file. */
+"error.E5007.usageMap.mapEmpty" = "%1$@、input.hidUsageMap.usages: 使用状況マップには少なくとも 1 つの使用状況が必要です。対処: 使用状況を追加するか、hidUsageMap を削除してください。";
+/* Error E5007, shown when the HID usage map of a record fails: two entries of one usage name the same half. %2$@ is the usage as page/usage, %3$@ the half. %1$@ is the file. */
+"error.E5007.usageMap.halfTwice" = "%1$@、input.hidUsageMap.usages[].half: 使用状況 %2$@ が半分 %3$@ を 2 回指定しています。対処: 使用状況の各半分に項目を 1 つずつ指定してください。";
+/* Error E5007, shown when the HID usage map of a record fails: a usage is named twice. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.usageTwice" = "%1$@、input.hidUsageMap.usages[]: 使用状況 %2$@ が 2 回指定されています。使用状況を共有できるのは両半分の項目だけです。対処: 各使用状況を 1 回だけ指定するか、項目に Positive と Negative の半分を指定してください。";
+/* Error E5007, shown when the HID usage map of a record fails: a Button entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonControl" = "%1$@、input.hidUsageMap.usages[].control: 使用状況 %2$@ はボタンですが、%3$@ はボタンのコントロールではありません。対処: ボタンのコントロールを指定するか、別の種類の項目を使ってください。";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis entry names a control that is not a stick axis or trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisControl" = "%1$@、input.hidUsageMap.usages[].control: 使用状況 %2$@ は軸ですが、%3$@ はスティック軸でもトリガーでもありません。対処: スティック軸またはトリガーを指定するか、別の種類の項目を使ってください。";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis range has min at or above max. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.rangeOrder" = "%1$@、input.hidUsageMap.usages[].range: 使用状況 %2$@ の範囲は min が max より小さい必要があります。対処: min を max より小さくしてください。";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis deadZone is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.deadZone" = "%1$@、input.hidUsageMap.usages[].deadZone: 使用状況 %2$@ の deadZone は 0 より大きく 1 より小さい必要があります。対処: deadZone を 0 より大きく 1 より小さくしてください。";
+/* Error E5007, shown when the HID usage map of a record fails: a Hat range is not 0...7 or 1...8. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.hatRange" = "%1$@、input.hidUsageMap.usages[].range: 使用状況 %2$@ の hat の範囲は 0...7 または 1...8 である必要があります。対処: range を 0...7 または 1...8 にするか、省略してください。";
+/* Error E5007, shown when the HID usage map of a record fails: a HalfAxis entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.halfAxisControl" = "%1$@、input.hidUsageMap.usages[].control: 使用状況 %2$@ は半軸ですが、%3$@ はトリガーではありません。対処: LeftTrigger または RightTrigger を指定してください。";
+/* Error E5007, shown when the HID usage map of a record fails: a ButtonTrigger entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonTriggerControl" = "%1$@、input.hidUsageMap.usages[].control: 使用状況 %2$@ はボタントリガーですが、%3$@ はトリガーではありません。対処: LeftTrigger または RightTrigger を指定するか、別の種類の項目を使ってください。";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad entry names a control that is not a D-pad direction. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisDpadControl" = "%1$@、input.hidUsageMap.usages[].control: 使用状況 %2$@ は軸の方向パッドですが、%3$@ は方向パッドの方向ではありません。対処: DpadUp、DpadDown、DpadLeft、または DpadRight を指定してください。";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisButton entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisButtonControl" = "%1$@、input.hidUsageMap.usages[].control: 使用状況 %2$@ は軸のボタンですが、%3$@ はボタンのコントロールではありません。対処: ボタンのコントロールを指定するか、軸に別の種類の項目を使ってください。";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad or AxisButton threshold is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.threshold" = "%1$@、input.hidUsageMap.usages[].threshold: 使用状況 %2$@ の threshold は 0 より大きく 1 より小さい必要があります。対処: threshold を 0 より大きく 1 より小さくしてください。";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "コントローラの SDL_GameControllerDB の行では、そのコントローラを動かせません。理由はメッセージに示されます。ojd record draft でそのコントローラのレコードを作成してください。";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

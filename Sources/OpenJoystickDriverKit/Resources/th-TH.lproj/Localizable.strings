@@ -4266,6 +4266,32 @@
 "error.E5007.inputLayout.triggerSources" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: ทริกเกอร์ระบุค่าแอนะล็อก ปุ่ม หรือทั้งสองอย่าง วิธีแก้: กำหนดค่าแอนะล็อกหรือปุ่มให้ทริกเกอร์";
 /* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
 "error.E5007.inputLayout.noControls" = "%1$@, input.layouts[]: เลย์เอาต์ต้องถอดรหัสตัวควบคุมอย่างน้อยหนึ่งตัว วิธีแก้: เพิ่มปุ่ม แกน hat หรือทริกเกอร์";
+/* Error E5007, shown when the HID usage map of a record fails: a usage map lists no usage. %1$@ is the file. */
+"error.E5007.usageMap.mapEmpty" = "%1$@, input.hidUsageMap.usages: แผนที่การใช้งานต้องมีการใช้งานอย่างน้อยหนึ่งรายการ วิธีแก้: เพิ่มการใช้งาน หรือลบ hidUsageMap";
+/* Error E5007, shown when the HID usage map of a record fails: two entries of one usage name the same half. %2$@ is the usage as page/usage, %3$@ the half. %1$@ is the file. */
+"error.E5007.usageMap.halfTwice" = "%1$@, input.hidUsageMap.usages[].half: การใช้งาน %2$@ ระบุครึ่ง %3$@ สองครั้ง วิธีแก้: กำหนดหนึ่งรายการให้แต่ละครึ่งของการใช้งาน";
+/* Error E5007, shown when the HID usage map of a record fails: a usage is named twice. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.usageTwice" = "%1$@, input.hidUsageMap.usages[]: การใช้งาน %2$@ ถูกระบุสองครั้ง และมีเพียงรายการของสองครึ่งเท่านั้นที่ใช้การใช้งานร่วมกันได้ วิธีแก้: ระบุแต่ละการใช้งานเพียงครั้งเดียว หรือกำหนดครึ่ง Positive และ Negative ให้รายการ";
+/* Error E5007, shown when the HID usage map of a record fails: a Button entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonControl" = "%1$@, input.hidUsageMap.usages[].control: การใช้งาน %2$@ เป็นปุ่ม แต่ %3$@ ไม่ใช่ตัวควบคุมแบบปุ่ม วิธีแก้: ระบุตัวควบคุมแบบปุ่ม หรือใช้รายการชนิดอื่น";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis entry names a control that is not a stick axis or trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisControl" = "%1$@, input.hidUsageMap.usages[].control: การใช้งาน %2$@ เป็นแกน แต่ %3$@ ไม่ใช่แกนจอยสติ๊กหรือทริกเกอร์ วิธีแก้: ระบุแกนจอยสติ๊กหรือทริกเกอร์ หรือใช้รายการชนิดอื่น";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis range has min at or above max. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.rangeOrder" = "%1$@, input.hidUsageMap.usages[].range: ช่วงของการใช้งาน %2$@ ต้องมี min ต่ำกว่า max วิธีแก้: ตั้ง min ให้ต่ำกว่า max";
+/* Error E5007, shown when the HID usage map of a record fails: an Axis deadZone is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.deadZone" = "%1$@, input.hidUsageMap.usages[].deadZone: deadZone ของการใช้งาน %2$@ ต้องมากกว่า 0 และน้อยกว่า 1 วิธีแก้: ตั้ง deadZone ให้มากกว่า 0 และน้อยกว่า 1";
+/* Error E5007, shown when the HID usage map of a record fails: a Hat range is not 0...7 or 1...8. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.hatRange" = "%1$@, input.hidUsageMap.usages[].range: ช่วง hat ของการใช้งาน %2$@ ต้องเป็น 0...7 หรือ 1...8 วิธีแก้: ตั้ง range เป็น 0...7 หรือ 1...8 หรือเว้นไว้";
+/* Error E5007, shown when the HID usage map of a record fails: a HalfAxis entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.halfAxisControl" = "%1$@, input.hidUsageMap.usages[].control: การใช้งาน %2$@ เป็นครึ่งแกน แต่ %3$@ ไม่ใช่ทริกเกอร์ วิธีแก้: ระบุ LeftTrigger หรือ RightTrigger";
+/* Error E5007, shown when the HID usage map of a record fails: a ButtonTrigger entry names a control that is not a trigger. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.buttonTriggerControl" = "%1$@, input.hidUsageMap.usages[].control: การใช้งาน %2$@ เป็นทริกเกอร์แบบปุ่ม แต่ %3$@ ไม่ใช่ทริกเกอร์ วิธีแก้: ระบุ LeftTrigger หรือ RightTrigger หรือใช้รายการชนิดอื่น";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad entry names a control that is not a D-pad direction. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisDpadControl" = "%1$@, input.hidUsageMap.usages[].control: การใช้งาน %2$@ เป็นปุ่มทิศทางแบบแกน แต่ %3$@ ไม่ใช่ทิศทางของปุ่มทิศทาง วิธีแก้: ระบุ DpadUp, DpadDown, DpadLeft หรือ DpadRight";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisButton entry names a control that is not a button. %2$@ is the usage as page/usage, %3$@ the control. %1$@ is the file. */
+"error.E5007.usageMap.axisButtonControl" = "%1$@, input.hidUsageMap.usages[].control: การใช้งาน %2$@ เป็นปุ่มแบบแกน แต่ %3$@ ไม่ใช่ตัวควบคุมแบบปุ่ม วิธีแก้: ระบุตัวควบคุมแบบปุ่ม หรือใช้รายการชนิดอื่นสำหรับแกน";
+/* Error E5007, shown when the HID usage map of a record fails: an AxisDpad or AxisButton threshold is outside 0 to 1. %2$@ is the usage as page/usage. %1$@ is the file. */
+"error.E5007.usageMap.threshold" = "%1$@, input.hidUsageMap.usages[].threshold: threshold ของการใช้งาน %2$@ ต้องมากกว่า 0 และน้อยกว่า 1 วิธีแก้: ตั้ง threshold ให้มากกว่า 0 และน้อยกว่า 1";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "บรรทัด SDL_GameControllerDB ของคอนโทรลเลอร์ใช้ควบคุมคอนโทรลเลอร์นั้นไม่ได้ ข้อความระบุสาเหตุไว้ เขียนระเบียนคอนโทรลเลอร์ให้ด้วย ojd record draft";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

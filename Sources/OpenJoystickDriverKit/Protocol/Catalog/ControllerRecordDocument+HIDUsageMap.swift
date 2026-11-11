@@ -70,9 +70,7 @@ extension ControllerRecordDocument {
       do {
         map = try HIDUsageMap(reportID: reportID.map(UInt32.init), entries: usages.map(\.entry))
       } catch let problem as ControllerRecordProblem {
-        throw DecodingError.dataCorrupted(
-          .init(codingPath: decoder.codingPath, debugDescription: problem.description)
-        )
+        throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
       }
     }
   }
