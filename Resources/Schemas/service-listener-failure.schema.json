@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/service-listener-failure.schema.json",
   "title": "OpenJoystickDriver service listener failure",
-  "description": "The file beside the service's RPC socket (the socket path plus '.failure.json') that the service writes when its request listener stops on a fatal error. A successful listener start and an orderly stop delete it. 'ojd status' and 'ojd diagnose' read it when the service cannot be reached.",
+  "description": "The record of a fatal stop of the service's request listener.",
   "type": "object",
   "required": [
     "apiVersion",
@@ -38,12 +38,12 @@
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
     },
     "pid": {
-      "description": "The process that wrote the file. Readers report the failure only while this process runs: a process with this identifier and the start time below.",
+      "description": "The identifier of the process that wrote the record.",
       "type": "integer",
       "minimum": 1
     },
     "pidStartSeconds": {
-      "description": "Whole seconds of the start time of the process pid, as the system reports it (since the Unix epoch).",
+      "description": "Whole seconds of the start time of the process, since the Unix epoch.",
       "type": "integer",
       "minimum": 0
     },
