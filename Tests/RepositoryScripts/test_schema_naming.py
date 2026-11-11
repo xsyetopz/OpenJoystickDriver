@@ -315,6 +315,7 @@ FIELD_NAME_ENUMS: list[tuple[str, str, Any]] = [
         TUNING,
     ),
     ("cli-output", "/$defs/sharedSettingKey/enum", SETTING_PATHS),
+    ("cli-output", "/$defs/recordDraft/properties/missingSections/items/enum", RECORD),
 ]
 
 
