@@ -143,6 +143,7 @@ public final class ProtocolDriverRegistry: Sendable {
   ) -> Result<any PhysicalProtocolDriver, ProtocolBindingReason> {
     guard let record = runtimeProfile(for: binding) else {
       guard binding.protocolID == .hidDescriptor else { return .failure(.noProtocolMatch) }
+      print("[HIDDescriptorDriver] Unrecognized controller \(model), using HID descriptors")
       return .success(
         HIDDescriptorDriver(
           model: model,

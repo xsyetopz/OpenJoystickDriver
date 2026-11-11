@@ -83,7 +83,6 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
       declaredControls = resolved.controls(declaring: usages)
       declaredDigitalTriggers = resolved.digitalTriggers(declaring: usages)
     }
-    print("[HIDDescriptorDriver] Unrecognized controller \(model), using HID descriptors")
   }
 
   /// Clears the state of the session: neutral input.
