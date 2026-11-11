@@ -10,7 +10,7 @@ Method: read the source on branch `feat/0.6.0-alpha.3` and searched `Sources/`, 
 - That initializer stops with a precondition failure when the description sets no input layouts (`Protocol/Drivers/Generic/ReportLayoutDriver.swift:197-199`).
 - A description sets layouts under `defaults.input.layouts` (`Protocol/Classification/ProtocolDescription+Document.swift:63`, `Protocol/Classification/ProtocolDescription.swift:567`).
 - A description that sets layouts must list `input` in `recordSections` (`Protocol/Classification/ProtocolDescription+Validation.swift:57`).
-- The three existing descriptions do both: `Resources/Protocols/xbox-xid.json:12` and `:46`, `Resources/Protocols/vendor-flydigi.json:9` and `:25`, `Resources/Protocols/nintendo-switch-input-only.json:10` and `:18`.
+- The three existing descriptions do both: `Resources/Protocols/xbox-xid.plist`, `Resources/Protocols/vendor-flydigi.plist`, `Resources/Protocols/nintendo-switch-input-only.plist`.
 - The loader looks for one file per case of the enumeration and reports a missing file as a problem (`Protocol/Classification/ProtocolDescription.swift:306`, `:359-370`).
 - A file whose stem names no case is refused with E5003 (`Protocol/Classification/ProtocolDescription.swift:380-382`, `:373-374`, `:391`).
 
@@ -128,7 +128,7 @@ The design text says 15 files (`openspec/changes/0-6-0-alpha-3/design.md:128`). 
 
 | # | Place | `file:line` |
 |---|-------|-------------|
-| 1 | Description file, two copies. `Resources/Protocols/` and `Sources/OpenJoystickDriverKit/Resources/Protocols/` each hold the same 19 files (`cmp` finds no difference). | `<stem>.json` in both; stem from `Protocol/Classification/ProtocolClassifier.swift:105` |
+| 1 | Description file, two copies. `Resources/Protocols/` and `Sources/OpenJoystickDriverKit/Resources/Protocols/` each hold the same 19 files (`cmp` finds no difference). | `<stem>.plist` in both; stem from `Protocol/Classification/ProtocolClassifier.swift:105` |
 | 2 | Display-name key `term.protocolFamily.<segment>`, one per family, in each of 22 `*.lproj/Localizable.strings` (19 lines each, counted). | `Protocol/Classification/ProtocolClassifier.swift:114`; `Tests/OpenJoystickDriverKitTests/Localization/LocalizationTests.swift:401-408` requires the key set to equal the family set |
 | 3 | Brand-name allowlist of keys equal in every locale. | `Tests/OpenJoystickDriverKitTests/Localization/LocalizationCatalogAudit.swift:9-17` |
 | 4 | Table of variants per family, compared with `allCases`. | `Tests/OpenJoystickDriverKitTests/Protocol/Classification/ProtocolDescriptionTests.swift:1020`; loops over `allCases` at `:55`, `:61`, `:334`, `:957` |

@@ -6,7 +6,7 @@ USB identity `37D7:2401`, the 2.4 GHz dongle of the Flydigi Vader 5 Pro. The rec
 
 | Mode | Protocol | Record |
 | --- | --- | --- |
-| Default | `HIDReportLayout` on the dongle's HID interface | `Resources/Controllers/37d7/37d7-2401.json`, the only mode |
+| Default | `HIDReportLayout` on the dongle's HID interface | `Resources/Controllers/37d7/37d7-2401.plist`, the only mode |
 
 The record has no second mode. A refused startup write shows as a startup failure of the controller, and no XUSB mode starts in its place.
 

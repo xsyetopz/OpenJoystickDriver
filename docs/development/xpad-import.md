@@ -33,7 +33,7 @@ Supported Linux input mappings:
 - `MAP_DPAD_TO_BUTTONS` is dropped: it changes only how Linux reports the D-pad, not the wire bits OJD parsers decode.
 - Supported PlayStation, Sony, Nintendo, and Steam HID registrations become IOHID records from their driver tables and hid-ids.h (`SonySixaxis`, `SonyDualShock4`, `SonyDualSense`, `NintendoSwitch1`, `ValveSteamController:Wired`, and `ValveSteamController:Dongle` for the Steam wireless receiver).
 - `FLAG_DELAY_INIT` on an `XTYPE_XBOXONE` row is not a skip reason: `DRIVER_HANDLED_DEVICE_FLAGS` in `generate_xpad_records.py` lists it, because `GIPDriver` already resends its startup sequence on the announce packets before the first input. Any other device flag still skips the row as `unsupported_device_flags`.
-- Non-default `xboxone_init_packets` become ordered `protocol.initialization` action IDs (`XboxGIP/power-on`, `XboxGIP/s-init`, `XboxGIP/enable-extra-input`, `XboxGIP/hori-ack`, `XboxGIP/led-on`, `XboxGIP/auth-done`, `XboxGIP/rumble-begin`, `XboxGIP/rumble-end`); the bytes of each are in `defaults.session.namedPackets` of `Resources/Protocols/xbox-gip.json`.
+- Non-default `xboxone_init_packets` become ordered `protocol.initialization` action IDs (`XboxGIP/power-on`, `XboxGIP/s-init`, `XboxGIP/enable-extra-input`, `XboxGIP/hori-ack`, `XboxGIP/led-on`, `XboxGIP/auth-done`, `XboxGIP/rumble-begin`, `XboxGIP/rumble-end`); the bytes of each are in `defaults.session.namedPackets` of `Resources/Protocols/xbox-gip.plist`.
 
 Protocol-default endpoints and the default initialization sequence are omitted. The pinned source revision and hashes remain in `ControllerSources.lock.json`; generated runtime records contain only operational controller facts. Unknown types, quirks, mappings, or startup macros are skipped with an explicit count. Linux xpad's `0xFFFF:0xFFFF` catch-all row is skipped; it is not a USB identity. Partial source-table parsing fails generation.
 
@@ -93,17 +93,17 @@ Admitted third-party DualShock 4 rows keep the nominal motion scale: like SDL, O
 
 ## Generator Rule Tables
 
-The generators read their family lists, flag sets, name maps and exclusions from `Resources/CatalogRules/` (`linux-xpad.json`, `linux-hid.json`, `sdl.json`). Each file carries `apiVersion` and `kind`, and the loader rejects missing or unexpected keys. Change these files, not generator code, to adjust a table; then run `./Scripts/ojd catalog regenerate --write`.
+The generators read their family lists, flag sets, name maps and exclusions from `Resources/CatalogRules/` (`linux-xpad.plist`, `linux-hid.plist`, `sdl.plist`). Each file carries `apiVersion` and `kind`, and the loader rejects missing or unexpected keys. Change these files, not generator code, to adjust a table; then run `./Scripts/ojd catalog regenerate --write`.
 
 ## Local Source Overrides
 
 Override inputs live at:
 
 ```text
-Resources/Controllers/<vid>/<vid>-<pid>.json
+Resources/Controllers/<vid>/<vid>-<pid>.plist
 ```
 
-A `Controller` file supplies a complete canonical record missing from the pinned source. A `ControllerPatch` file in `Resources/ControllerPatches/<vid>/<vid>-<pid>.patch.json` merges a patch into an existing imported record. `OJDRepositoryTool apply-patches` applies the patches, so the merge rules are Swift's, a number keeps the text of the file that writes it, and a patch file below the vendor directory is refused; `OJDRepositoryTool validate records` then checks every record, including its stored variant. The generator rejects:
+A `Controller` file supplies a complete canonical record missing from the pinned source. A `ControllerPatch` file in `Resources/ControllerPatches/<vid>/<vid>-<pid>.patch.plist` merges a patch into an existing imported record. `OJDRepositoryTool apply-patches` applies the patches, so the merge rules are Swift's, a number keeps the text of the file that writes it, and a patch file below the vendor directory is refused; `OJDRepositoryTool validate records` then checks every record, including its stored variant. The generator rejects:
 
 - `Controller` files that collide with upstream;
 - patches without an upstream record;

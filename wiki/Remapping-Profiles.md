@@ -163,7 +163,7 @@ The command line has no equivalent that also clears input processing. `ojd bindi
 
 ## Importing and Exporting Profiles
 
-This section explains how to save a profile to a JSON file and how to load a profile from a file.
+This section explains how to save a profile to a property list file and how to load a profile from a file.
 
 Use export and import to keep a copy of a profile, to share it, or to move it to a different Mac.
 
@@ -172,26 +172,26 @@ Use export and import to keep a copy of a profile, to share it, or to move it to
 1. Open the **Profiles** area.
 2. Select the profile.
 3. Click **Profile actions**, then select **Export**.
-4. Select a folder and a file name. The default name is `PROFILE-NAME.json`.
+4. Select a folder and a file name. The default name is `PROFILE-NAME.plist`.
 5. Click **Save**.
 
-The command line equivalent prints the profile JSON, or writes it to a file. The examples use the `ojd` alias. For more information, see [Using the command line](Command-Line.md).
+The command line equivalent prints the profile, or writes it to a file. The examples use the `ojd` alias. For more information, see [Using the command line](Command-Line.md).
 
 ```shell
-ojd profile export PROFILE --output FILE.json
+ojd profile export PROFILE --output FILE.plist
 ```
 
 ### Import a Profile
 
 1. Open the **Profiles** area.
 2. Click **Import profile**.
-3. Select a JSON file.
+3. Select a profile file.
 4. Click **Open**.
 
 The command line equivalent is:
 
 ```shell
-ojd profile import FILE.json
+ojd profile import FILE.plist
 ```
 
 OJD checks the file before it adds the profile. OJD rejects a file with unknown keys, values out of range, or a size above 4 MiB.

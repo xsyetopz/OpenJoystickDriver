@@ -37,13 +37,13 @@ For what OJD asks for and when, see [Permissions and security](Permissions-and-S
 On the first Mac, export each profile:
 
 ```shell
-ojd profile export PROFILE --output FILE.json
+ojd profile export PROFILE --output FILE.plist
 ```
 
 On another Mac, import it:
 
 ```shell
-ojd profile import FILE.json
+ojd profile import FILE.plist
 ```
 
 In the app, use **Export Profile...** and **Import Profile...** in the **File** menu. To copy a controller record or a mod, run `ojd record install FILE` or `ojd mod install FOLDER` on each Mac. See [Importing and exporting profiles](Remapping-Profiles.md#importing-and-exporting-profiles).

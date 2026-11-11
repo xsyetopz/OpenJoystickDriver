@@ -10,10 +10,10 @@ Install OJD, grant access, and connect the controller. See [Start: play a game w
 
 1. Start the service: run `ojd service start`.
 2. Find the controller: run `ojd controller list`. The controller shows with its VID:PID. See [Finding your controller ID](Connecting-Controllers.md#finding-your-controller-id).
-3. Capture a draft. Run `ojd record draft CONTROLLER > record.json`, and for 10 seconds press every button and move each stick, trigger, and the D-pad. If the controller is in the SDL database, run `ojd record draft CONTROLLER --from-sdl > record.json` instead.
-4. Open `record.json`. Check each control against the bytes that the command printed, and correct the file. See [Draft a record from a connected controller](Controller-Records.md#draft-a-record-from-a-connected-controller).
-5. Check the file: run `ojd record validate record.json`.
-6. Install it: run `ojd record install record.json`. The running service applies it. You do not need to unplug the controller.
+3. Capture a draft. Run `ojd record draft CONTROLLER > record.plist`, and for 10 seconds press every button and move each stick, trigger, and the D-pad. If the controller is in the SDL database, run `ojd record draft CONTROLLER --from-sdl > record.plist` instead.
+4. Open `record.plist`. Check each control against the bytes that the command printed, and correct the file. See [Draft a record from a connected controller](Controller-Records.md#draft-a-record-from-a-connected-controller).
+5. Check the file: run `ojd record validate record.plist`.
+6. Install it: run `ojd record install record.plist`. The running service applies it. You do not need to unplug the controller.
 7. In the **Controllers** area, select the controller and click **Open Input Test...** to see each control.
 8. Check which records apply: run `ojd record list`.
 

@@ -72,7 +72,7 @@ Sources/OpenJoystickDriverKit/
   Remapping/           reusable profile and mapping engine
   Resources/           generated controller records (Controllers/), protocol descriptions
                        (Protocols/), virtual devices (VirtualDevices/), and localization tables
-  Settings/            the `Settings.json` store, document, and watcher (defaults, then the user file)
+  Settings/            the `Settings.plist` store, document, and watcher (defaults, then the user file)
   Storage/             DataDirectory port and its macOS implementation; the only path builder
   Streaming/           `InputSource` and `OutputSink`, the frame boundary every path attaches to
   Update/              release version parsing and update checking

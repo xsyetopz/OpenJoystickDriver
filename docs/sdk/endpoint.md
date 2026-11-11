@@ -184,7 +184,7 @@ A program must not guess a version. On `E1009`, `E1010`, or `E1011`, it reads `d
 
 ## AccessGrants
 
-The endpoint serves a program only when `AccessGrants` has a grant for it. Only the service writes the file `AccessGrants.json` in the OpenJoystickDriver Application Support folder, when `ojd access` runs, so a revoke takes effect at once. [`access-grants.schema.json`](../../Resources/Schemas/access-grants.schema.json) describes the file. A program without a grant gets `E1002`.
+The endpoint serves a program only when `AccessGrants` has a grant for it. Only the service writes the file `AccessGrants.plist` in the OpenJoystickDriver Application Support folder, when `ojd access` runs, so a revoke takes effect at once. [`access-grants.schema.json`](../../Resources/Schemas/access-grants.schema.json) describes the file. A program without a grant gets `E1002`.
 
 - A grant by signature (`grants`) names the signing identifier and the publisher of the program. Ad-hoc signed and unsigned programs are refused. Create it with `ojd access grant PATH`.
 - A grant by token (`tokens`) names the token and stores only its SHA-256, so the token cannot be shown again. It can limit the web `origins`. A token with `origins` cannot have `control`. Create it with `ojd access grant --token NAME`.

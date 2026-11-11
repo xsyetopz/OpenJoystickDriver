@@ -152,7 +152,7 @@ OJD clears its log files at each start. Copy the logs before you start OJD again
 If OJD crashes at every start, two global profiles may be active for one controller model. This is a known issue.
 
 1. Quit OJD.
-2. Move `~/Library/Application Support/OpenJoystickDriver/ActiveProfiles.json` to another folder.
+2. Move `~/Library/Application Support/OpenJoystickDriver/ActiveProfiles.plist` to another folder.
 3. Open OJD.
 
 ### Crash When You Unplug a Controller
@@ -161,7 +161,7 @@ Unplugging a USB controller or dongle may crash OJD. Open OJD again. Restart OJD
 
 ### Damaged Profile Files
 
-OJD reads each profile file in `Profiles/` and the list of active profiles in `ActiveProfiles.json`. It does not change a file when it finds damage. While damage exists, OJD blocks every change to your profiles until you repair it.
+OJD reads each profile file in `Profiles/` and the list of active profiles in `ActiveProfiles.plist`. It does not change a file when it finds damage. While damage exists, OJD blocks every change to your profiles until you repair it.
 
 OJD shows two kinds of damage in the **Profiles** area. To repair both from the command line, run `ojd profile recover`.
 
@@ -177,7 +177,7 @@ OJD saves a backup before it changes the file.
 
 #### Damaged Active Profile List
 
-If OJD cannot read `ActiveProfiles.json`, the area shows **Damaged active profile list**, and no profile is active.
+If OJD cannot read `ActiveProfiles.plist`, the area shows **Damaged active profile list**, and no profile is active.
 
 1. Click **Back Up & Reset Active Profiles...**.
 2. In the alert, click **Back Up & Reset**.
@@ -186,7 +186,7 @@ OJD saves a backup and then writes an empty list. Your profiles are kept, and no
 
 #### Find the Backup
 
-Each backup is beside the file it copies: in `~/Library/Application Support/OpenJoystickDriver/Profiles/` for a profile, and in `~/Library/Application Support/OpenJoystickDriver/` for `ActiveProfiles.json`. The name has the form `FILE.backup-DATE-TIME-ID`. The time is local time.
+Each backup is beside the file it copies: in `~/Library/Application Support/OpenJoystickDriver/Profiles/` for a profile, and in `~/Library/Application Support/OpenJoystickDriver/` for `ActiveProfiles.plist`. The name has the form `FILE.backup-DATE-TIME-ID`. The time is local time.
 
 A backup is a copy of the file as it was before repair. To recover data, open the copy in a text editor. For more information, see [Profile file reference](Profile-File-Reference.md).
 

@@ -51,7 +51,7 @@ The wiki states that no action is verified live in the Shortcuts app (`wiki/Auto
 | `explain` | none | `CLI/Commands/Explain/ExplainCommand.swift:12` |
 | `migrate` | none | `CLI/Commands/Migrate/MigrateCommand.swift:9` |
 
-The `mod` group handles a package folder with a `mod.json` manifest and `Controllers`, `Profiles`, and `VirtualDevices` folders. The service applies a change when the installed folder changes. The group needs no running service (`Sources/OpenJoystickDriverKit/Resources/en-US.lproj/Localizable.strings` key `cli.mod.group.discussion` at line 2663; the schema is `Resources/Schemas/mod-package.schema.json`).
+The `mod` group handles a package folder with a `mod.plist` manifest and `Controllers`, `Profiles`, and `VirtualDevices` folders. The service applies a change when the installed folder changes. The group needs no running service (`Sources/OpenJoystickDriverKit/Resources/en-US.lproj/Localizable.strings` key `cli.mod.group.discussion` at line 2663; the schema is `Resources/Schemas/mod-package.schema.json`).
 
 The wiki names the output and prompt options as `--json` and `--no-input`, and scripts read JSON with them (`wiki/Automating-OpenJoystickDriver.md:25-35`).
 

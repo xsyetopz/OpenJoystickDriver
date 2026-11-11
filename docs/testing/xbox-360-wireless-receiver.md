@@ -20,7 +20,7 @@ For the common `045e:0719` receiver:
 
 ```bash
 ./Scripts/ojd diagnose record \
-  Sources/OpenJoystickDriverKit/Resources/Controllers/045e/045e-0719.json --validate-only
+  Sources/OpenJoystickDriverKit/Resources/Controllers/045e/045e-0719.plist --validate-only
 ```
 
 ## Capture Connection and Input
@@ -29,7 +29,7 @@ Quit Steam, games, and other controller tools. Connect the receiver, pair one co
 
 ```bash
 ./Scripts/ojd diagnose record \
-  Sources/OpenJoystickDriverKit/Resources/Controllers/045e/045e-0719.json --seconds 45
+  Sources/OpenJoystickDriverKit/Resources/Controllers/045e/045e-0719.plist --seconds 45
 ```
 
 Record:
