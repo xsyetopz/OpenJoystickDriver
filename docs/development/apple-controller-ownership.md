@@ -50,10 +50,10 @@ The generated personality additionally restricts matching to configuration 1, in
 
 ## Installed-System Observations
 
-Local macOS 26.6.1 observations, not a public compatibility contract:
+Local macOS 27.2 (Darwin 27.2.0) observations, not a public compatibility contract:
 
-- `/System/Library/DriverExtensions/XboxGamepad.dext/Contents/Info.plist` has bundle identifier `com.apple.gamecontroller.driver.XboxGamepad` and specific Microsoft matches including `045E:028E`, `045E:02EA`, `045E:0B00`, and `045E:0B12` through IOUSBHost device/interface personalities.
-- the installed `AppleGameControllerPersonality.kext` contains selected Sony, Nintendo, Amazon, and generic HID recognition personalities.
+- `/System/Library/DriverExtensions/XboxGamepad.dext/Info.plist` has bundle identifier `com.apple.gamecontroller.driver.XboxGamepad` and specific Microsoft matches including `045E:028E`, `045E:02EA`, `045E:0B00`, and `045E:0B12` through IOUSBHost device/interface personalities.
+- `/System/Library/Extensions/AppleGameControllerPersonality.kext/Contents/Info.plist` contains selected Sony, Nintendo, Amazon, and generic HID recognition personalities.
 
 Those plists explain why macOS can report an exclusive owner for some controllers. Apple can change this implementation snapshot; absence does not prove a controller is unsupported. The signed entitlement scope, the catalog, and hardware evidence decide what OJD serves.
 
