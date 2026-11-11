@@ -1,0 +1,39 @@
+root = true
+
+# >>> bedrock
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = tab
+indent_size = 2
+
+[*.{yml,yaml,md,mdx}]
+indent_style = space
+
+[{justfile,*.just}]
+indent_style = space
+indent_size = 4
+
+# Markdown marks a hard line break with two trailing spaces.
+[*.{md,mdx}]
+trim_trailing_whitespace = false
+
+[*.{bat,cmd,ps1}]
+end_of_line = crlf
+# <<< bedrock
+
+# >>> swift-bedrock
+[*.swift]
+indent_style = space
+indent_size = 2
+max_line_length = 100
+# <<< swift-bedrock
+
+# >>> swift-bedrock-cxx
+[*.{c,cc,cpp,cxx,h,hh,hpp,hxx,m,mm}]
+indent_style = space
+indent_size = 4
+max_line_length = 100
+# <<< swift-bedrock-cxx

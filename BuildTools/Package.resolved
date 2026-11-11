@@ -1,0 +1,15 @@
+{
+  "originHash" : "2b2efec7b2dbcf6fb91c290ebfc9ec222d3ce1ba44e0c85b8b29295af9be7c7a",
+  "pins" : [
+    {
+      "identity" : "bedrock",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/xsyetopz/bedrock",
+      "state" : {
+        "branch" : "swift-bedrock-v0.1.2",
+        "revision" : "425d5fca614008486d865f2f401fa8d65c98c40f"
+      }
+    }
+  ],
+  "version" : 3
+}

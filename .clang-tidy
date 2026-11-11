@@ -1,0 +1,137 @@
+---
+# Managed by swift-bedrock, for clang-tidy 23.1 and C++20. Each alias is off, so
+# a finding reports once, under its primary check. clang-tidy lists every
+# clang-analyzer-* check as an alias too, so the Static Analyzer is off.
+Checks:
+  - -*
+  - bugprone-*
+  - cert-*
+  - concurrency-*
+  - cppcoreguidelines-*
+  - misc-*
+  - modernize-*
+  - performance-*
+  - portability-*
+  - readability-*
+  # Aliases of checks the groups above already run.
+  - -cert-arr39-c
+  - -cert-con36-c
+  - -cert-con54-cpp
+  - -cert-ctr56-cpp
+  - -cert-dcl03-c
+  - -cert-dcl16-c
+  - -cert-dcl37-c
+  - -cert-dcl50-cpp
+  - -cert-dcl51-cpp
+  - -cert-dcl54-cpp
+  - -cert-dcl58-cpp
+  - -cert-dcl59-cpp
+  - -cert-env33-c
+  - -cert-err09-cpp
+  - -cert-err33-c
+  - -cert-err34-c
+  - -cert-err52-cpp
+  - -cert-err58-cpp
+  - -cert-err60-cpp
+  - -cert-err61-cpp
+  - -cert-exp42-c
+  - -cert-exp45-c
+  - -cert-fio38-c
+  - -cert-flp30-c
+  - -cert-flp37-c
+  - -cert-int09-c
+  - -cert-mem57-cpp
+  - -cert-msc24-c
+  - -cert-msc30-c
+  - -cert-msc32-c
+  - -cert-msc33-c
+  - -cert-msc50-cpp
+  - -cert-msc51-cpp
+  - -cert-msc54-cpp
+  - -cert-oop11-cpp
+  - -cert-oop54-cpp
+  - -cert-oop57-cpp
+  - -cert-oop58-cpp
+  - -cert-pos44-c
+  - -cert-pos47-c
+  - -cert-sig30-c
+  - -cert-str34-c
+  - -performance-faster-string-find
+  - -cppcoreguidelines-avoid-c-arrays
+  - -cppcoreguidelines-avoid-magic-numbers
+  - -cppcoreguidelines-c-copy-assignment-signature
+  - -cppcoreguidelines-explicit-constructor
+  - -cppcoreguidelines-explicit-virtual-functions
+  - -cppcoreguidelines-macro-to-enum
+  - -cppcoreguidelines-narrowing-conversions
+  - -cppcoreguidelines-noexcept-destructor
+  - -cppcoreguidelines-noexcept-move-operations
+  - -cppcoreguidelines-noexcept-swap
+  - -cppcoreguidelines-non-private-member-variables-in-classes
+  - -cppcoreguidelines-use-default-member-init
+  # Opt-outs: style choices that C++20 code reasonably makes, and checks that flag
+  # Swift-interop headers.
+  - -modernize-use-trailing-return-type
+  - -bugprone-easily-swappable-parameters
+  - -misc-include-cleaner
+  - -misc-no-recursion
+  - -readability-identifier-length
+  - -readability-magic-numbers
+  - -readability-named-parameter
+  - -cppcoreguidelines-avoid-do-while
+  - -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access
+  - -cppcoreguidelines-pro-bounds-constant-array-index
+  - -cppcoreguidelines-pro-bounds-pointer-arithmetic
+  - -readability-redundant-access-specifiers
+  - -portability-avoid-pragma-once
+WarningsAsErrors: "*"
+HeaderFilterRegex: "(^|.*/)(include|src|Sources)/.*"
+ExcludeHeaderFilterRegex: ""
+SystemHeaders: false
+FormatStyle: file
+CheckOptions:
+  cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: true
+  cppcoreguidelines-special-member-functions.AllowMissingMoveFunctionsWhenCopyIsDeleted: true
+  cppcoreguidelines-macro-usage.CheckCapsOnly: true
+  cppcoreguidelines-avoid-non-const-global-variables.AllowInternalLinkage: true
+  misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: true
+  misc-const-correctness.AnalyzeValues: true
+  misc-const-correctness.AnalyzeReferences: true
+  misc-const-correctness.WarnPointersAsValues: false
+  misc-const-correctness.TransformPointersAsValues: false
+  misc-use-internal-linkage.FixMode: UseStatic
+  readability-function-cognitive-complexity.Threshold: 25
+  readability-function-cognitive-complexity.IgnoreMacros: true
+  readability-implicit-bool-conversion.AllowIntegerConditions: false
+  readability-implicit-bool-conversion.AllowPointerConditions: false
+  readability-braces-around-statements.ShortStatementLines: 0
+  bugprone-exception-escape.FunctionsThatShouldNotThrow: ""
+  bugprone-narrowing-conversions.PedanticMode: false
+  performance-unnecessary-value-param.AllowedTypes: "std::string_view;std::span"
+  modernize-use-nodiscard.ReplacementString: "[[nodiscard]]"
+  readability-identifier-naming.IgnoreMainLikeFunctions: true
+  readability-identifier-naming.NamespaceCase: lower_case
+  readability-identifier-naming.ClassCase: CamelCase
+  readability-identifier-naming.StructCase: CamelCase
+  readability-identifier-naming.UnionCase: CamelCase
+  readability-identifier-naming.EnumCase: CamelCase
+  readability-identifier-naming.EnumConstantCase: CamelCase
+  readability-identifier-naming.TypeAliasCase: CamelCase
+  readability-identifier-naming.TypedefCase: CamelCase
+  readability-identifier-naming.ConceptCase: CamelCase
+  readability-identifier-naming.TemplateParameterCase: CamelCase
+  readability-identifier-naming.FunctionCase: lower_case
+  readability-identifier-naming.MethodCase: lower_case
+  readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.ConstantCase: lower_case
+  readability-identifier-naming.GlobalConstantCase: UPPER_CASE
+  readability-identifier-naming.GlobalConstexprVariableCase: UPPER_CASE
+  readability-identifier-naming.StaticConstantCase: UPPER_CASE
+  readability-identifier-naming.ClassConstantCase: UPPER_CASE
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.PrivateMemberCase: lower_case
+  readability-identifier-naming.PrivateMemberPrefix: m_
+  readability-identifier-naming.ProtectedMemberCase: lower_case
+  readability-identifier-naming.ProtectedMemberPrefix: m_
+  readability-identifier-naming.MacroDefinitionCase: UPPER_CASE

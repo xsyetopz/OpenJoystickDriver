@@ -1,5 +1,14 @@
+# Managed by swift-bedrock, for SwiftLint 0.65.1. swift-format owns layout, so
+# SwiftLint checks meaning only. These rules fight swift-format output and stay off:
+# trailing_comma, contrasted_opening_brace, conditional_returns_on_newline, opening_brace,
+# vertical_parameter_alignment, closure_end_indentation, multiline_parameters.
+# discouraged_default_parameter stays off too: the Swift API Design Guidelines
+# prefer default arguments.
+# No analyzer_rules: with Swift 6.4, `swiftlint analyze` can't load test modules, so it
+# reports each @Test function as unused and each @testable import as unneeded.
+
 disabled_rules:
-  # Non-Google metrics/restrictions or rules that reject Google-permitted code.
+  # Metrics and restrictions that Google Swift style does not impose or that reject permitted code.
   - closure_parameter_position
   - cyclomatic_complexity
   - force_cast
@@ -15,14 +24,12 @@ disabled_rules:
   - type_body_length
   - type_name
   - vertical_parameter_alignment
-
-  # swift-format owns multiline collection trailing commas.
+  # swift-format owns trailing commas in multiline collections.
   - trailing_comma
 
 opt_in_rules:
   - array_init
   - async_without_await
-  - closure_end_indentation
   - closure_spacing
   - contains_over_filter_count
   - contains_over_filter_is_empty
@@ -50,7 +57,6 @@ opt_in_rules:
   - missing_docs
   - modifier_order
   - multiline_arguments
-  - multiline_parameters
   - operator_usage_whitespace
   - overridden_super_call
   - override_in_extension
@@ -77,20 +83,29 @@ opt_in_rules:
   - unowned_variable_capture
   - weak_delegate
   - yoda_condition
+  - indentation_width
+  - prefer_condition_list
+  - redundant_final
+  - redundant_self
+  - unneeded_escaping
+  - unneeded_throws_rethrows
+  - unused_parameter
+  - variable_shadowing
+  # XCTest hygiene, for the UI tests that still use it.
+  - balanced_xctest_lifecycle
+  - final_test_case
+  - test_case_accessibility
+  - xct_specific_matcher
 
-analyzer_rules:
-  - capture_variable
-  - unused_declaration
-  - unused_import
+# 2-space indentation, as swift-format.
+indentation_width:
+  indentation_width: 2
 
-# Code lines per file; Tests/.swiftlint.yml raises the limit.
 file_length:
   warning: 500
   error: 500
   ignore_comment_only_lines: true
 
-# Google: rigid 100-column limit, except indivisible text such as URLs,
-# imports, and generated code.
 line_length:
   warning: 100
   error: 100
@@ -98,23 +113,21 @@ line_length:
   excluded_lines_patterns:
     - '^\s*(?:@testable\s+)?import\b'
 
-unused_import:
-  severity: error
-
-# Google: document every open and public declaration; OJD documents every declaration.
-# Members of conforming types count too, so excludes_inherited_types stays false.
+# Docs are required on the API other modules see: an open or public declaration
+# whose enclosing types are public too. swift-format's
+# AllPublicDeclarationsHaveDocumentation is off, since it also flags a public
+# member of an internal type.
 missing_docs:
-  error: [open, public, package, internal, fileprivate, private]
+  error: [open, public]
   excludes_extensions: true
   excludes_inherited_types: false
+  evaluate_effective_access_control_level: true
 
 trailing_whitespace:
   severity: error
 
-# Google permits multiple consecutive blank lines. Keep this as a
-# repository-hygiene warning, allowing up to two.
 vertical_whitespace:
-  max_empty_lines: 2
+  max_empty_lines: 1
 
 comma:
   severity: error
@@ -134,9 +147,23 @@ private_outlet:
 implicit_getter:
   severity: error
 
+custom_rules:
+  # Swift Testing is the test framework. XCTest is allowed only in UI test targets
+  # (any path component ending in UITests), which still need XCUIApplication.
+  forbid_xctest_import:
+    name: "XCTest outside UI tests"
+    message: "Use Swift Testing (import Testing). XCTest is allowed only in *UITests targets."
+    regex: '^\s*(?:@testable\s+|@preconcurrency\s+)?import\s+XCTest\b|canImport\(\s*XCTest\s*\)'
+    excluded: "(^|/)[^/]*UITests?/"
+    match_kinds:
+      - keyword
+      - identifier
+    severity: error
+
 excluded:
   - .build
   - .swiftpm
-  - .claude/worktrees
   - "**/.build"
   - "**/Generated"
+  - node_modules
+  - "**/*.xcodeproj"

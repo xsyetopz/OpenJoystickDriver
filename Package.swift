@@ -1,4 +1,4 @@
-// swift-tools-version:6.4.0
+// swift-tools-version: 6.4
 import Foundation
 import PackageDescription
 
@@ -230,7 +230,9 @@ let package = Package(
     ),
     .testTarget(
       name: "OJDRepositoryToolTests",
-      dependencies: ["OpenJoystickDriverKit", "OJDRepositoryTool", "OpenJoystickDriverTestSupport"],
+      dependencies: [
+        "OpenJoystickDriverKit", "OJDRepositoryTool", "OpenJoystickDriverTestSupport",
+      ],
       path: "Tests/OJDRepositoryToolTests",
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
       linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
@@ -263,3 +265,31 @@ let package = Package(
 for target in package.targets {
   target.swiftSettings = (target.swiftSettings ?? []) + [.treatAllWarnings(as: .error)]
 }
+
+// >>> swift-bedrock
+// Managed by swift-bedrock: Swift 6, the upcoming features, strict memory safety,
+// and warnings as errors, for every target.
+package.swiftLanguageModes = [.v6]
+for target in package.targets where ![.system, .binary, .plugin].contains(target.type) {
+  target.swiftSettings =
+    (target.swiftSettings ?? []) + [
+      .enableUpcomingFeature("ExistentialAny"),
+      .enableUpcomingFeature("InternalImportsByDefault"),
+      .enableUpcomingFeature("MemberImportVisibility"),
+      .enableUpcomingFeature("InferIsolatedConformances"),
+      .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+      .enableUpcomingFeature("ImmutableWeakCaptures"),
+      .strictMemorySafety(),
+      .treatAllWarnings(as: .error),
+    ]
+}
+// <<< swift-bedrock
+
+// >>> swift-bedrock-cxx
+// Managed by swift-bedrock: C++20, and C++ interop for every Swift target, since a
+// target that imports a C++ module, even through another target, needs it.
+package.cxxLanguageStandard = .cxx20
+for target in package.targets where [.regular, .executable, .test].contains(target.type) {
+  target.swiftSettings = (target.swiftSettings ?? []) + [.interoperabilityMode(.Cxx)]
+}
+// <<< swift-bedrock-cxx

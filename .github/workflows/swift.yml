@@ -1,0 +1,36 @@
+# Managed by swift-bedrock.
+name: Swift
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  swift:
+    # A macOS runner with Xcode 27, which ships Swift 6.4.
+    runs-on: xcode-27
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: brew install just swiftlint
+      - id: versions
+        run: echo "swift=$(swift --version 2>&1 | shasum | cut -c1-16)" >> "$GITHUB_OUTPUT"
+      # The swift-bedrock build BuildTools pins, reused until the pin or the compiler changes.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: BuildTools/.build
+          key: build-tools-${{ runner.arch }}-${{ steps.versions.outputs.swift }}-${{ hashFiles('BuildTools/Package.swift', 'BuildTools/Package.resolved') }}
+      - run: if [[ -f .just/cpp.just ]]; then brew install llvm; fi
+      - run: just swift::setup
+      - run: if [[ -f .just/cpp.just ]]; then just cpp::verify; fi
+      - run: just swift::verify
