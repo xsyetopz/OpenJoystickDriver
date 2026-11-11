@@ -24,6 +24,8 @@ private let usage = """
     OJDRepositoryTool kebab <value>...
     OJDRepositoryTool mask-image <png> <frame> <keep>...
     OJDRepositoryTool format-json <file>...
+    OJDRepositoryTool to-plist <file.json>...
+    OJDRepositoryTool format-plist <file.plist>...
   A path is a file, or a directory whose .plist files are checked.
   validate controllers and descriptions read a directory at any depth. apply-patches reads
   Controller files at any depth and writes each to its relative path, and refuses a patch file
@@ -42,6 +44,13 @@ private let usage = """
   format-json rewrites each file in the record file text of OrderedJSON.formatted(), keeping the
   order of keys and the text of numbers. It prints nothing and exits 0, or 64 for a file that is
   not JSON or cannot be read or written.
+  to-plist reads each JSON file and writes the canonical XML property list beside it, with the
+  extension .plist, in the form DocumentCoder writes: sorted keys, an integer for a number written
+  as an integer and a real for any other number. It leaves the JSON file, prints nothing and exits
+  0, or 64 for a file that is not JSON, holds null (a property list has no null), or cannot be
+  read or written.
+  format-plist rewrites each property list file in that canonical form, and exits 0 or 64 as
+  to-plist does.
   Each problem is one JSON line {"code", "file", "message"} on standard output. The exit status is
   0 without a problem, 1 with one, and 64 for a call that the tool refuses.
   """
@@ -146,6 +155,38 @@ private func formatJSON(_ paths: [String]) throws {
   }
 }
 
+/// Writes each of `paths`, a JSON file, as a canonical property list beside it.
+///
+/// - Throws: ``UsageError`` when no path is given or a file cannot be read, parsed or written.
+private func toPlist(_ paths: [String]) throws {
+  guard !paths.isEmpty else { throw UsageError(message: "to-plist needs a file") }
+  for path in paths {
+    let url = URL(fileURLWithPath: path)
+    do {
+      let data = try OrderedJSON.parse(Data(contentsOf: url)).plistData()
+      try data.write(to: url.deletingPathExtension().appendingPathExtension("plist"))
+    } catch {
+      throw UsageError(message: "\(path): \(error)")
+    }
+  }
+}
+
+/// Rewrites each of `paths`, an XML property list, in the canonical form.
+///
+/// - Throws: ``UsageError`` when no path is given or a file cannot be read, parsed or written.
+private func formatPlist(_ paths: [String]) throws {
+  guard !paths.isEmpty else { throw UsageError(message: "format-plist needs a file") }
+  for path in paths {
+    let url = URL(fileURLWithPath: path)
+    do {
+      let tree = try DocumentCoder.read(Data(contentsOf: url), file: url.lastPathComponent)
+      try DocumentCoder.write(tree).write(to: url)
+    } catch {
+      throw UsageError(message: "\(path): \(error)")
+    }
+  }
+}
+
 /// The JSON line, ending in a newline, that reports `problem` on standard output.
 private func line(_ problem: RepositoryProblem) throws -> Data {
   let object: [String: Any] = [
@@ -195,6 +236,14 @@ do {
   }
   if arguments.first == "format-json" {
     try formatJSON(Array(arguments.dropFirst()))
+    exit(0)
+  }
+  if arguments.first == "to-plist" {
+    try toPlist(Array(arguments.dropFirst()))
+    exit(0)
+  }
+  if arguments.first == "format-plist" {
+    try formatPlist(Array(arguments.dropFirst()))
     exit(0)
   }
   if let object = try document(arguments) {

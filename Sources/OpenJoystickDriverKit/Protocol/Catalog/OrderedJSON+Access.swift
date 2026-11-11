@@ -47,7 +47,7 @@ extension OrderedJSON {
   ///
   /// A number written as an integer is an `integer` and any other number a `real`. `null` has no
   /// property list form and is refused.
-  func plistData() throws -> Data { try DocumentCoder.write(plistValue()) }
+  public func plistData() throws -> Data { try DocumentCoder.write(plistValue()) }
 
   private func plistValue() throws -> Any {
     switch self {

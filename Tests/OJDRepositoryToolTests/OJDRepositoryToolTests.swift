@@ -653,4 +653,51 @@ struct OJDRepositoryToolTests {
       #expect(result.standardOutput.isEmpty, "\(arguments)")
     }
   }
+
+  // MARK: property lists
+
+  @Test
+  func toPlistWritesTheCanonicalFormBesideTheJSONFileAndKeepsNumberTypes() throws {
+    try Self.scratch { directory in
+      let json = directory.appendingPathComponent("a.json")
+      try Data(#"{"b": 2, "a": [1.5, 9007199254740993, true, "x"], "c": {}}"#.utf8).write(to: json)
+      let result = try Self.run(["to-plist", json.path])
+      #expect(result.status == 0)
+      let data = try Data(contentsOf: directory.appendingPathComponent("a.plist"))
+      let tree = try #require(try DocumentCoder.read(data, file: "a.plist") as? [String: Any])
+      #expect(tree["b"] as? Int64 == 2)
+      let list = try #require(tree["a"] as? [Any])
+      #expect(list[0] as? Double == 1.5)
+      #expect(list[1] as? Int64 == 9_007_199_254_740_993)
+      #expect(try DocumentCoder.write(tree) == data)
+      #expect(FileManager.default.fileExists(atPath: json.path))
+    }
+  }
+
+  @Test
+  func toPlistRefusesNullAndWritesNothing() throws {
+    try Self.scratch { directory in
+      let json = directory.appendingPathComponent("a.json")
+      try Data(#"{"a": null}"#.utf8).write(to: json)
+      let result = try Self.run(["to-plist", json.path])
+      #expect(result.status == 64)
+      #expect(!FileManager.default.fileExists(atPath: directory.appendingPathComponent("a.plist").path))
+    }
+  }
+
+  @Test
+  func formatPlistRewritesAFileInTheCanonicalForm() throws {
+    try Self.scratch { directory in
+      let file = directory.appendingPathComponent("a.plist")
+      let loose = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <plist version="1.0"><dict><key>b</key><integer>1</integer><key>a</key><string>x</string></dict></plist>
+        """
+      try Data(loose.utf8).write(to: file)
+      #expect(try Self.run(["format-plist", file.path]).status == 0)
+      let data = try Data(contentsOf: file)
+      #expect(try DocumentCoder.write(DocumentCoder.read(data, file: "a.plist")) == data)
+      #expect(String(decoding: data, as: UTF8.self).contains("<key>a</key>"))
+    }
+  }
 }
