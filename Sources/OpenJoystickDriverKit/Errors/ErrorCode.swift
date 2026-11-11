@@ -212,6 +212,8 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
   case sdlLineRejected = "E5008"
   /// `ojd migrate` could not convert a document, which stays unchanged.
   case documentNotMigrated = "E5009"
+  /// A stored document is not an XML property list, or holds a `date` or `data` value.
+  case invalidDocumentForm = "E5010"
 
   /// The part of the product that raises a code; the first digit of the number.
   public enum Domain: String, CaseIterable, Sendable {
@@ -282,7 +284,7 @@ public enum ErrorCode: String, Codable, Sendable, CaseIterable {
       .mod
     case .unsupportedAPIVersion, .invalidProtocolDescription, .protocolDescriptionFamilyMismatch,
       .unknownProtocolVariant, .damagedAccessGrants, .damagedPortKey, .invalidControllerRecord,
-      .sdlLineRejected, .documentNotMigrated:
+      .sdlLineRejected, .documentNotMigrated, .invalidDocumentForm:
       .document
     }
   }

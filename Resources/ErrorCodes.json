@@ -581,6 +581,11 @@
       "code": "E5009",
       "domain": "Document",
       "name": "documentNotMigrated"
+    },
+    {
+      "code": "E5010",
+      "domain": "Document",
+      "name": "invalidDocumentForm"
     }
   ]
 }

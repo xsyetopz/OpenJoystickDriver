@@ -149,17 +149,19 @@
     /// The three buttons and the result of the latest of their actions.
     var body: some View {
       Group {
-        Button(OJDLocalized.string("ui.controllers.capturePackets")) {
-          actions.clearNotice()
-          actions.timedKind = .capturePackets
-        }
-        Button(OJDLocalized.string("ui.controllers.draftRecord")) {
-          actions.clearNotice()
-          actions.timedKind = .draftRecord
-        }
-        Button(OJDLocalized.string("ui.controllers.draftRecordFromSDL")) {
-          actions.clearNotice()
-          actions.draftFromSDL(device: device)
+        HStack {
+          Button(OJDLocalized.string("ui.controllers.capturePackets")) {
+            actions.clearNotice()
+            actions.timedKind = .capturePackets
+          }
+          Button(OJDLocalized.string("ui.controllers.draftRecord")) {
+            actions.clearNotice()
+            actions.timedKind = .draftRecord
+          }
+          Button(OJDLocalized.string("ui.controllers.draftRecordFromSDL")) {
+            actions.clearNotice()
+            actions.draftFromSDL(device: device)
+          }
         }
         if let notice = actions.notice, notice.source == .timedCapture {
           ControllerNoticeText(text: notice.text, isError: notice.isError)

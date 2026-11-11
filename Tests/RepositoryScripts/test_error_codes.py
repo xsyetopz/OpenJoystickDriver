@@ -85,6 +85,7 @@ class ErrorCodeTests(unittest.TestCase):
                 ("E5007", "invalidControllerRecord"),
                 ("E5008", "sdlLineRejected"),
                 ("E5009", "documentNotMigrated"),
+                ("E5010", "invalidDocumentForm"),
             ],
         )
         with self.assertRaisesRegex(errors.ErrorCodeError, "E4001 is in the Document"):

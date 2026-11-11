@@ -4445,6 +4445,8 @@
 "status.gyroReady" = "Pronto";
 /* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
 "error.E5009.message" = "Un documento salvato di una versione precedente non ha una conversione automatica, quindi ojd migrate lo lascia invariato. Il messaggio indica il file e il campo. Modifica il file a mano con l'apiVersion supportata.";
+/* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
+"error.E5010.message" = "Un documento salvato non è una lista di proprietà XML oppure contiene un valore di data o di dati. Il messaggio indica il file e la forma o il percorso della chiave. Salva il file come lista di proprietà XML con plutil -convert xml1.";
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Converte i documenti salvati di una versione precedente nella versione attuale.";
 /* Help text of 'ojd migrate'. Settings.json, AccessGrants.json, apiVersion and Migrated are file, field and folder names and stay as written. */

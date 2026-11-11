@@ -126,6 +126,7 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E5007 | Documents | A controller record or patch is invalid. Check the file against its schema and fix the field that the message names. |
 | E5008 | Documents | The SDL_GameControllerDB line for a controller cannot drive it. The message names the reason. Write a controller record for the controller with ojd record draft. |
 | E5009 | Documents | A stored document of an older version has no mechanical conversion, so ojd migrate leaves it unchanged. The message names the file and the field. Edit the file by hand to the supported apiVersion. |
+| E5010 | Documents | A stored document is not an XML property list, or it holds a date or data value. The message names the file and the form or the key path. Save the file as an XML property list with plutil -convert xml1. |
 <!-- END GENERATED: error-codes -->
 
 ## Further reading
