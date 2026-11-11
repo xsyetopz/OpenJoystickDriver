@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -19,21 +20,21 @@ struct ModPackageListKindTests {
     var document: [String: Any] = [
       "apiVersion": OpenJoystickDriverAPI.version, "kind": ModPackageManifest.kind,
       "name": "arcade-pack", "version": "1.0.0", "author": "Tester",
-      "requires": ["minimum": "0.6.0"], "controllers": ["1234-abcd.json"],
+      "requires": ["minimum": "0.6.0"], "controllers": ["1234-abcd.plist"],
     ]
     for (key, value) in changes { document[key] = value }
-    return try JSONSerialization.data(withJSONObject: document)
+    return try PropertyListFixture.data(tree: document)
   }
 
   @Test(arguments: ["records", "personas"])
   func recordsAndPersonasAreUnknownKeys(key: String) throws {
     let alone = refusal {
-      _ = try ModPackageManifest.parse(manifest(["controllers": nil, key: ["1234-abcd.json"]]))
+      _ = try ModPackageManifest.parse(manifest(["controllers": nil, key: ["1234-abcd.plist"]]))
     }
     #expect(alone?.code == .invalidManifest)
     #expect(alone?.code.rawValue == "E4001")
     #expect(alone?.detail.contains(key) == true, "\(alone?.detail ?? "")")
-    let beside = refusal { _ = try ModPackageManifest.parse(manifest([key: ["1234-abcd.json"]])) }
+    let beside = refusal { _ = try ModPackageManifest.parse(manifest([key: ["1234-abcd.plist"]])) }
     #expect(beside?.code == .invalidManifest)
   }
 
@@ -88,7 +89,7 @@ struct ModPackageListKindTests {
       #expect(refusal { try store.validate(byName) }?.code == .invalidManifest)
 
       // The name fits a patch, but the file holds a Controller.
-      let renamed = ("1234-abcd.patch.json", record.data)
+      let renamed = ("1234-abcd.patch.plist", record.data)
       let byKind = try fixture.makePackage(patches: [renamed])
       let error = refusal { try store.validate(byKind) }
       #expect(error?.code == .invalidPackageContent, "\(String(describing: error))")
@@ -105,7 +106,7 @@ struct ModPackageListKindTests {
       #expect(refusal { try store.validate(byName) }?.code == .invalidManifest)
 
       // The name fits a Controller, but the file holds a ControllerPatch.
-      let renamed = ("1234-abcd.json", patch.data)
+      let renamed = ("1234-abcd.plist", patch.data)
       let byKind = try fixture.makePackage(controllers: [renamed])
       let error = refusal { try store.validate(byKind) }
       #expect(error?.code == .invalidPackageContent, "\(String(describing: error))")

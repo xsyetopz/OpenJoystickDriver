@@ -96,7 +96,7 @@ struct ModPackageLayeringTests {
   }
 
   @Test
-  func aUserPatchBeatsAPackagePatchAndANullDeletesTheKey() throws {
+  func aUserPatchBeatsAPackagePatchAndARemoveDeletesTheKey() throws {
     try Fixture.with { fixture in
       let record = try Fixture.record(0x1234, 0xABCD)
       let packaged = try Fixture.patch(0x1234, 0xABCD, ["tuning": ["stickDeadzone": 0.1]])
@@ -111,7 +111,7 @@ struct ModPackageLayeringTests {
       #expect(beaten.records[Self.identity]?.tuning.stickDeadzone == 0.3)
       #expect(beaten.records[Self.identity]?.tuningLayers["stickDeadzone"] == .user)
 
-      let deleting = try Fixture.patch(0x1234, 0xABCD, ["tuning": NSNull()])
+      let deleting = try Fixture.patch(0x1234, 0xABCD, [:], remove: ["tuning"])
       try fixture.write([deleting], kind: "Controllers", in: fixture.root)
       let set = ControllerRecordSet.load(userDirectory: fixture.controllers)
       let loaded = try #require(set.records[Self.identity])
@@ -126,10 +126,12 @@ struct ModPackageLayeringTests {
     try Fixture.with { fixture in
       let broken = fixture.packages.appendingPathComponent("broken-pack", isDirectory: true)
       try FileManager.default.createDirectory(at: broken, withIntermediateDirectories: true)
-      try Data("{}".utf8).write(to: broken.appendingPathComponent("mod.json"))
+      try PropertyListFixture.data(json: "{}").write(
+        to: broken.appendingPathComponent("mod.plist")
+      )
       let set = ControllerRecordSet.load(userDirectory: fixture.controllers)
       #expect(set.records.count == ControllerRecordSet.bundled.records.count)
-      #expect(set.problems.map(\.url.lastPathComponent) == ["mod.json"])
+      #expect(set.problems.map(\.url.lastPathComponent) == ["mod.plist"])
       #expect(set.problems.first?.problem?.hasPrefix("E5001") == true)
     }
   }
@@ -174,7 +176,7 @@ struct ModPackageLayeringTests {
       let skipped = try #require(store.problems.first)
       #expect(store.problems.count == 1)
       #expect(skipped.url.path.contains("beta-pack"))
-      #expect(skipped.problem == "same match as package file 1234-abcd.json")
+      #expect(skipped.problem == "same match as package file 1234-abcd.plist")
     }
   }
 

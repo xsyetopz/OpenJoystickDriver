@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -50,7 +51,7 @@ struct ModPackageStoreHardeningTests {
       try Fixture.record(0x1234, 0xabcd).data.write(to: outside)
 
       let inside = try plainPackage(fixture)
-      let link = inside.appendingPathComponent("Controllers/1234-abcd.json")
+      let link = inside.appendingPathComponent("Controllers/1234-abcd.plist")
       try FileManager.default.removeItem(at: link)
       try FileManager.default.createSymbolicLink(at: link, withDestinationURL: outside)
       #expect(code { try store.install(inside) } == .invalidPackageContent)
@@ -78,7 +79,7 @@ struct ModPackageStoreHardeningTests {
       let store = fixture.store()
       try store.install(plainPackage(fixture))
       let broken = try plainPackage(fixture)
-      try Data("{".utf8).write(to: broken.appendingPathComponent("Controllers/1234-abcd.json"))
+      try Data("{".utf8).write(to: broken.appendingPathComponent("Controllers/1234-abcd.plist"))
       #expect(code { try store.install(broken, replace: true) } == .invalidPackageContent)
       #expect(entries(fixture) == ["arcade-pack"])
       #expect(store.list().first?.problem == nil)
@@ -96,7 +97,7 @@ struct ModPackageStoreHardeningTests {
       let names = FileManager.default.enumerator(atPath: installed.directory.path)?
         .compactMap { $0 as? String }
         .sorted()
-      #expect(names == ["Controllers", "Controllers/1234-abcd.json", "mod.json"])
+      #expect(names == ["Controllers", "Controllers/1234-abcd.plist", "mod.plist"])
 
       let extra = try plainPackage(fixture, "other-pack")
       try Data("hello".utf8).write(to: extra.appendingPathComponent("README.md"))
@@ -135,7 +136,7 @@ struct ModPackageStoreHardeningTests {
     try Fixture.with { fixture in
       let store = fixture.store()
       let folder = try plainPackage(fixture)
-      let file = folder.appendingPathComponent("Controllers/1234-abcd.json")
+      let file = folder.appendingPathComponent("Controllers/1234-abcd.plist")
       try FileManager.default.setAttributes([.posixPermissions: 0], ofItemAtPath: file.path)
       defer {
         try? FileManager.default.setAttributes([.posixPermissions: 0o644], ofItemAtPath: file.path)
@@ -150,10 +151,10 @@ struct ModPackageStoreHardeningTests {
     try Fixture.with { fixture in
       let store = fixture.store()
       let record = try Fixture.record(0x1234, 0xabcd)
-      let misnamed = try fixture.makePackage(controllers: [("5678-abcd.json", record.data)])
+      let misnamed = try fixture.makePackage(controllers: [("5678-abcd.plist", record.data)])
       #expect(code { try store.validate(misnamed) } == .invalidPackageContent)
       let persona = Fixture.persona(0x1234, 0xabcd)
-      let wrong = try fixture.makePackage(virtualDevices: [("5678-abcd.json", persona.data)])
+      let wrong = try fixture.makePackage(virtualDevices: [("5678-abcd.plist", persona.data)])
       #expect(code { try store.validate(wrong) } == .invalidPackageContent)
       let outside = try fixture.makePackage(controllers: [("other.json", record.data)])
       #expect(code { try store.validate(outside) } == .invalidManifest)
@@ -201,12 +202,12 @@ struct ModPackageStoreHardeningTests {
         "version": version, "author": "Tester", "requires": ["minimum": "1.0.0"],
         "controllers": [file],
       ]
-      return (try? JSONSerialization.data(withJSONObject: document)) ?? Data()
+      return (try? PropertyListFixture.data(tree: document)) ?? Data()
     }
-    #expect((try? ModPackageManifest.parse(manifest("a", "1.0.0", "1234-abcd.json"))) != nil)
+    #expect((try? ModPackageManifest.parse(manifest("a", "1.0.0", "1234-abcd.plist"))) != nil)
     for data in [
-      manifest("a\n", "1.0.0", "1234-abcd.json"), manifest("a", "1.0.0\n", "1234-abcd.json"),
-      manifest("a", "1.0.0", "1234-abcd.json\n"),
+      manifest("a\n", "1.0.0", "1234-abcd.plist"), manifest("a", "1.0.0\n", "1234-abcd.plist"),
+      manifest("a", "1.0.0", "1234-abcd.plist\n"),
     ] {
       #expect((try? ModPackageManifest.parse(data)) == nil)
     }
