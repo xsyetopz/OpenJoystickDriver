@@ -9,7 +9,7 @@ This agreement is between you and Krystian J. (the maintainer) and covers each c
 
 ## 2. Copyright License
 
-You grant the maintainer, and recipients of software the maintainer distributes, a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense under any terms, and distribute your contributions and such derivative works. This includes the PolyForm Noncommercial License 1.0.0 and commercial licenses that the maintainer grants.
+You grant the maintainer, and recipients of software the maintainer distributes, a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense under any terms, and distribute your contributions and such derivative works. This includes the Mozilla Public License 2.0 and any other license that the maintainer grants.
 
 ## 3. Patent License
 

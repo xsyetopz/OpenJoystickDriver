@@ -6,14 +6,12 @@ This page covers what the license allows, what Apple documents for macOS, and ho
 
 ## What the license allows
 
-OJD is under the PolyForm Noncommercial License 1.0.0, in the file `LICENSE` at the repository root. The license says:
+OJD is under the Mozilla Public License 2.0, in the file `LICENSE` at the repository root. The license says:
 
-- "Any noncommercial purpose is a permitted purpose."
-- "Personal use for research, experiment, and testing for the benefit of public knowledge, personal study, private entertainment, hobby projects, amateur pursuits, or religious observance, without any anticipated commercial application, is use for a permitted purpose."
-- "Use by any charitable organization, educational institution, public research organization, public safety or health organization, environmental protection organization, or government institution is use for a permitted purpose regardless of the source of funding or obligations resulting from the funding."
-- It grants "a copyright license to distribute copies of the software", and requires that anyone who gets a copy from you also gets "a copy of these terms or the URL for them" and the `Required Notice:` lines.
+- Section 2.1: "Each Contributor hereby grants You a world-wide, royalty-free, non-exclusive license: (a) under intellectual property rights (other than patent or trademark) Licensable by such Contributor to use, reproduce, make available, modify, display, perform, distribute, and otherwise exploit its Contributions, either on an unmodified basis, with Modifications, or as part of a Larger Work".
+- Section 3.4: "You may not remove or alter the substance of any license notices (including copyright notices, patent notices, disclaimers of warranty, or limitations of liability) contained within the Source Code Form of the Covered Software, except that You may alter any license notices to the extent required to remedy known factual inaccuracies."
 
-The license text names no number of copies or computers. It does not grant commercial use. [COMMERCIAL.md](../COMMERCIAL.md) says that use in a product or for a business needs a separate written license from the maintainer. Read the license yourself to decide whether your use is permitted.
+The license text names no number of copies or computers, and it permits commercial use. Covered Software that you distribute stays under MPL-2.0 in source form. Read the license yourself to decide whether your use is permitted.
 
 ## What macOS documents
 

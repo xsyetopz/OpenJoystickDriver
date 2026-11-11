@@ -209,7 +209,7 @@ Common to the five utilities: the item per device or profile sits at the top lev
 - **Issue survey (an agent's tallies of distinct users, not recounted).** The five most frequent asks: a signed tester build on GitHub Releases (about 16), fixes to the generic HID parser (about 9), correct endpoints and `SET_CONFIGURATION` (about 8), games and Steam seeing the virtual gamepad (about 7), and stable reconnect and mapping (about 6).
 - **Checked claims (observed).** #22 reports a 15% default dead zone: the default is 0 (`VirtualGamepadReportMapping.swift:16-21`), so the claim does not hold. #18 reports that OJD takes devices it does not serve: the HID path seizes before any record lookup (`HIDDeviceStream+DeviceLifecycle.swift:66-67`, `HIDInputClaim.swift:96`), which supports it for HID. #19 reports "Input active" with no input: Input Test sets it on any snapshot, with no check for a control that left rest (`InputTestViewModel+SessionAndOutputState.swift:341-343`), which supports it. `wiki/Troubleshooting.md:45` says 697 records; the generated set holds 706. Not traced: the stick Y direction per family (#33).
 - **Tester builds (observed).** `gh release view 0.6.0-alpha.2` shows a pre-release with one notarized disk image. `wiki/Updating-and-Uninstalling.md:36-38` says "A tester build is a private, notarized DMG that the maintainer sends to testers." and "An update check does not find tester builds." Settings already holds "Include prerelease updates" (`ui.settings.general.prereleaseUpdates`).
-- **License (observed).** OJD is under PolyForm Noncommercial 1.0.0 from 0.6.0-alpha.2 (`README.md:116`).
+- **License (observed).** OJD is under MPL-2.0 (`README.md:118`).
 
 ## Goals / Non-Goals
 
@@ -521,7 +521,7 @@ Reason: "as if it was designed by Apple's graphics designers" cannot be checked,
 
 ### D24. Mapper features are written for OJD's data, and no InputConfig code is copied
 
-InputConfig is under the MIT license and OJD under PolyForm Noncommercial 1.0.0. MIT allows reuse with its notice kept; this change copies no code and no preset file, so it adds no notice. Each feature is specified by its behavior in `specs/mapper-features/spec.md` and built on OJD's records, which is what lets it cover the 706 bundled records:
+InputConfig is under the MIT license and OJD under MPL-2.0. MIT allows reuse with its notice kept; this change copies no code and no preset file, so it adds no notice. Each feature is specified by its behavior in `specs/mapper-features/spec.md` and built on OJD's records, which is what lets it cover the 706 bundled records:
 
 | Feature | What makes it work for every record |
 | --- | --- |
@@ -610,7 +610,7 @@ Groups 10 to 12, 14, and 17 fix what users and the maintainer report. Groups 13,
 - Does the menu keep one "Help" item for a user with no open window? (D19)
 - The deployment target is macOS 12 (`Package.swift:33`). `NavigationSplitView` and `MenuBarExtra` need macOS 13. Does the target stay?
 - Should the toolbar be customizable, as Notes offers through "Customize Toolbar…"? No spec asks for it.
-- "Businesses": PolyForm Noncommercial 1.0.0 does not permit commercial use. What does the maintainer want for a company that deploys OJD, and is a managed installation (a configuration profile that approves the driver extension and the permissions) in scope for a later change? The wiki start page "set up OJD on several Macs" states only what the license and macOS allow today.
+- "Businesses" (resolved): MPL-2.0 permits commercial use, so a company may deploy OJD without a separate license. Open: is a managed installation (a configuration profile that approves the driver extension and the permissions) in scope for a later change? The wiki start page "set up OJD on several Macs" states what the license and macOS allow.
 - Can a profile leave out `device` and apply to every controller that has its source controls, which would make conversion unnecessary? (task 16.4)
 - Is an importer for InputConfig's preset library wanted, with its MIT notice? (task 16.10)
 - Which users reported that dropdowns do nothing, and on which view? No issue names it; a pointer from the maintainer lets task 10.5 start at that view.

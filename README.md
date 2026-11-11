@@ -11,7 +11,7 @@
   <a href="https://github.com/xsyetopz/OpenJoystickDriver/releases"><img src="https://img.shields.io/github/v/release/xsyetopz/OpenJoystickDriver?include_prereleases&style=flat-square" alt="Latest release"></a>
   <a href="https://github.com/xsyetopz/OpenJoystickDriver/releases"><img src="https://img.shields.io/github/downloads/xsyetopz/OpenJoystickDriver/total?style=flat-square" alt="Downloads"></a>
   <a href="https://github.com/sponsors/xsyetopz"><img src="https://img.shields.io/badge/sponsor-30363D?logo=githubsponsors&logoColor=EA4AAA&style=flat-square" alt="GitHub Sponsors"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-PolyForm%20Noncommercial-blue?style=flat-square" alt="License: PolyForm Noncommercial"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MPL--2.0-blue?style=flat-square" alt="License: MPL-2.0"></a>
 </p>
 
 <p>
@@ -115,7 +115,7 @@ Run `./Scripts/ojd setup` and `just check` before opening a pull request; see [C
 
 ## License
 
-[PolyForm Noncommercial 1.0.0](LICENSE) © 2026 Krystian J., from 0.6.0-alpha.2 on. Use, fork and share it freely for noncommercial purposes. For commercial use, talk to the maintainer: see [COMMERCIAL.md](COMMERCIAL.md). Releases up to and including 0.6.0-alpha.1 are MIT. Xbox and PlayStation are trademarks of Microsoft and Sony; OJD is not affiliated with either.
+[MPL-2.0](LICENSE) © 2026 Krystian J. The copyleft is file-level: changes to OJD's files are shared under MPL-2.0, and OJD's files may be combined with other code in a larger work. Releases up to and including 0.6.0-alpha.1 are MIT. Xbox and PlayStation are trademarks of Microsoft and Sony; OJD is not affiliated with either.
 
 [releases]: https://github.com/xsyetopz/OpenJoystickDriver/releases
 [sponsor]: https://github.com/sponsors/xsyetopz

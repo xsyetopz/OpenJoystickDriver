@@ -26,6 +26,7 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 
 ## Changed
 
+- **BREAKING:** OJD is licensed under MPL-2.0 instead of PolyForm Noncommercial 1.0.0; commercial use needs no separate license.
 - The release workflow publishes a tester build as a pre-release. Its tag orders after the release before it and before the release it leads to (`0.6.0-alpha.2.tester.1`, or `0.5.1-tester.1` after `0.5.0`), and the workflow refuses a tester tag whose release before it is not a tag. The update check offers a tester build with **Include prerelease updates** on, and offers the release it leads to from a tester build. (17.4)
 - The wiki page [Updating and Uninstalling](wiki/Updating-and-Uninstalling.md#release-builds-and-tester-builds) says that tester builds are pre-releases on GitHub Releases and that **Include prerelease updates** makes the update check find them. (17.5)
 - Every reason OJD does not serve a connected controller, `interface-contract-mismatch` included, has a sentence that says why and a next step in every language. The Controllers list and `ojd status` show both, and a test fails on a reason with no sentence. (17.2)
