@@ -371,14 +371,20 @@ struct StatusTests {
     let held = presentation(.deviceInUse).unservedDevices
     #expect(held.map(\.identity) == ["3537:1010"])
     #expect(held.map(\.explanation) == [OJDLocalized.string("ui.controllers.deviceInUse")])
+    #expect(held.map(\.nextStep) == [OJDLocalized.string("ui.controllers.deviceInUse.nextStep")])
     #expect(held.first?.explanation.isEmpty == false)
     #expect(
       presentation(.configurationUnreadable).unservedDevices.map(\.explanation) == [
         OJDLocalized.string("ui.controllers.configurationUnreadable")
       ]
     )
-    // A reason the person cannot act on is not listed.
-    #expect(presentation(.noProtocolMatch).unservedDevices.isEmpty)
+    // Every reason is listed with its sentence and next step.
+    for reason in ProtocolBindingReason.allCases {
+      let listed = presentation(reason).unservedDevices
+      #expect(listed.map(\.explanation) == [OJDLocalized.string(reason.explanationKey)])
+      #expect(listed.map(\.nextStep) == [OJDLocalized.string(reason.nextStepKey)])
+      #expect(listed.first?.explanation != reason.explanationKey)
+    }
     // The listing survives the updates that rebuild the presentation.
     #expect(
       presentation(.deviceInUse).applyingPermissions(

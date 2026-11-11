@@ -31,6 +31,17 @@ struct LocalizationTests {
   }
 
   @Test
+  func everyReasonForNotServingAControllerHasASentenceAndANextStepInEveryLocale() {
+    for locale in Localization.availableLocalizations() {
+      let keys = LocalizationCatalogAudit.keys(for: locale)
+      for reason in ProtocolBindingReason.allCases {
+        #expect(keys.contains(reason.explanationKey), "\(locale) has no \(reason.explanationKey)")
+        #expect(keys.contains(reason.nextStepKey), "\(locale) has no \(reason.nextStepKey)")
+      }
+    }
+  }
+
+  @Test
   func everyNonEnglishLocaleTranslatesSourceEnglishProse() {
     let sourceKeys = LocalizationCatalogAudit.keys(for: Localization.sourceLocalization)
     #expect(LocalizationCatalogAudit.nonLinguisticSourceIdenticalKeys.isSubset(of: sourceKeys))

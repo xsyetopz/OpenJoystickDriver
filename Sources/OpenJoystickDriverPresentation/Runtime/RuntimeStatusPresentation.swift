@@ -138,7 +138,7 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
 
     self.permissions = permissions
     self.devices = payload.connectedDevices
-    self.unservedDevices = payload.unboundDevices.compactMap(RuntimeUnservedDevice.init)
+    self.unservedDevices = payload.unboundDevices.map(RuntimeUnservedDevice.init)
     self.virtualHIDProfileOverrideError = payload.virtualHIDProfileOverrideError
     self.outputState = outputState
     self.outputDetail = RuntimePresentation.outputDetail(
@@ -178,25 +178,27 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
   }
 }
 
-/// A connected device that OJD does not serve, with the sentence that says why and how to free it.
+/// A connected device that OJD does not serve, with the sentence that says why and the one that
+/// says what to do.
 struct RuntimeUnservedDevice: Sendable, Equatable, Identifiable {
   /// `VVVV:PPPP`, the identity `ojd` prints.
   let identity: String
   /// How the device connects.
   let connection: String
-  /// The sentence that says why OJD does not serve the device and how to free it.
+  /// The sentence that says why OJD does not serve the device.
   let explanation: String
+  /// The sentence that says what to do about it.
+  let nextStep: String
 
   /// The identity and the connection, which together identify the entry.
   var id: String { "\(identity) \(connection)" }
 
-  /// Creates the entry for an unbound device; nil when its reason has no sentence a person can act
-  /// on.
-  init?(_ device: ApplicationServiceUnboundDevice) {
-    guard let key = device.reason.explanationKey else { return nil }
+  /// Creates the entry for an unbound device.
+  init(_ device: ApplicationServiceUnboundDevice) {
     identity = String(format: "%04x:%04x", device.vendorID, device.productID)
     connection = device.connection
-    explanation = OJDLocalized.string(key)
+    explanation = OJDLocalized.string(device.reason.explanationKey)
+    nextStep = OJDLocalized.string(device.reason.nextStepKey)
   }
 }
 

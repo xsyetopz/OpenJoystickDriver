@@ -140,8 +140,11 @@
             Text(unserved.explanation).font(.caption).foregroundColor(
               Color(NSColor.secondaryLabelColor)
             )
+            Text(unserved.nextStep).font(.caption).foregroundColor(
+              Color(NSColor.secondaryLabelColor)
+            )
           }.padding(.vertical, 4).ojdAccessibilityLabel(unserved.identity)
-            .ojdAccessibilityValue(unserved.explanation)
+            .ojdAccessibilityValue("\(unserved.explanation) \(unserved.nextStep)")
         }
       }.listStyle(InsetListStyle()).alert(item: $wirelessDisconnectRequest) { request in
         wirelessDisconnectAlert(for: request)

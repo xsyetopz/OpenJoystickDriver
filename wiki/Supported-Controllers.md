@@ -152,7 +152,7 @@ OJD accepts a controller as generic HID only if its descriptor passes strict che
 - That collection has a stick or hat input and a button input.
 - The descriptor has no unsupported or inconsistent items.
 
-If a controller fails a check, OJD does not use it. The `status` command lists the controller as unbound and gives a reason. Run it with this command:
+If a controller fails a check, OJD does not use it. The `status` command lists the controller as unbound, gives the reason, and prints a sentence that says why and a sentence that says what to do, in your language. The Controllers page shows the same two sentences. Run it with this command:
 
 ```shell
 ojd status

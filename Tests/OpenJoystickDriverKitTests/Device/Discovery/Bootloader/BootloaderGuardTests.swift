@@ -124,7 +124,7 @@ struct BootloaderGuardTests {
 
   @Test
   func theControllerDetailSaysTheDeviceIsABootloader() {
-    let key = ProtocolBindingReason.bootloaderIdentity.explanationKey ?? ""
+    let key = ProtocolBindingReason.bootloaderIdentity.explanationKey
     #expect(key == "ui.controllers.bootloaderIdentity")
     #expect(Localization().string(key) != key)
   }

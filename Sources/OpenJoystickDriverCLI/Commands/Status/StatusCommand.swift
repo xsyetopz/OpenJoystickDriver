@@ -287,8 +287,9 @@ struct StatusCommand: AsyncParsableCommand {
         CLIOutput.stdout(
           "  \(identity)  \(device.connection)  \(device.reason.map(CommandLineName.kebab) ?? "")"
         )
-        if let key = device.reason.flatMap(ProtocolBindingReason.init(rawValue:))?.explanationKey {
-          CLIOutput.stdout("    \(CLILocalized.text(key))")
+        if let reason = device.reason.flatMap(ProtocolBindingReason.init(rawValue:)) {
+          CLIOutput.stdout("    \(CLILocalized.text(reason.explanationKey))")
+          CLIOutput.stdout("    \(CLILocalized.text(reason.nextStepKey))")
         }
         printMapping(device.inputMapping)
       }

@@ -313,23 +313,16 @@ public enum ProtocolBindingReason: String, CaseIterable, Codable, Error, Sendabl
 }
 
 extension ProtocolBindingReason {
-  /// The catalog key of the sentence that tells a person why the device is unserved and how to free
-  /// it.
+  /// The catalog key of the sentence that tells a person why the device is not served.
   ///
-  /// Nil for a reason that the person cannot act on, which the app and `ojd` show by its ID alone.
-  public var explanationKey: String? {
-    switch self {
-    case .deviceInUse: return "ui.controllers.deviceInUse"
-    case .configurationUnreadable: return "ui.controllers.configurationUnreadable"
-    case .bootloaderIdentity: return "ui.controllers.bootloaderIdentity"
-    case .noModeMatched: return "ui.controllers.noModeMatched"
-    case .idleIdentity: return "ui.controllers.idleIdentity"
-    case .noProtocolMatch, .ambiguousProtocolMatch, .interfaceContractMismatch,
-      .descriptorContractMismatch, .unsupportedProtocolVariant, .unsupportedTransportVariant,
-      .virtualProfileUnavailable:
-      return nil
-    }
-  }
+  /// Every reason has one in every language; the app and `ojd` show it with ``nextStepKey``.
+  public var explanationKey: String { "ui.controllers.\(keySegment)" }
+
+  /// The catalog key of the sentence that tells a person what to do about the reason.
+  public var nextStepKey: String { "ui.controllers.\(keySegment).nextStep" }
+
+  /// The reason's ID in lowerCamelCase, the segment of its catalog keys.
+  private var keySegment: String { CommandLineName.keySegment(rawValue) }
 }
 
 /// Observed facts that supported a binding.

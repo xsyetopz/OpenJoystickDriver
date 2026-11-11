@@ -76,6 +76,29 @@ struct KebabStateOutputTests {
   }
 
   @Test
+  func anInterfaceContractMismatchIsExplainedWithANextStepInHumanOutputOnly() async throws {
+    let unbound = ApplicationServiceUnboundDevice(
+      vendorID: 0x3537,
+      productID: 0x1022,
+      connection: "USB",
+      accessBackend: .hid,
+      reason: .interfaceContractMismatch,
+      rejectedCandidates: [],
+      interfaces: []
+    )
+    let service = try FakeService(devices: [], unboundDevices: [unbound])
+    let human = await runStatus(service, [])
+    let plain = await runStatus(service, ["--plain"])
+    let sentence = CLILocalized.text("ui.controllers.interfaceContractMismatch")
+    let nextStep = CLILocalized.text("ui.controllers.interfaceContractMismatch.nextStep")
+
+    #expect(sentence != "ui.controllers.interfaceContractMismatch")
+    #expect(human.standardOutput.contains(sentence))
+    #expect(human.standardOutput.contains(nextStep))
+    #expect(!plain.standardOutput.contains(sentence))
+  }
+
+  @Test
   func theInputHealthIsKebabCaseInPlainAndHumanOutput() async throws {
     let service = try FakeService(devices: [
       .fixture(id: "pad-1"),

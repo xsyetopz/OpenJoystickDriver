@@ -118,21 +118,6 @@ struct USBHeldDeviceTests {
   }
 
   @Test
-  func onlyTheReasonsAPersonCanActOnHaveAnExplanationInTheCatalog() {
-    let explained = ProtocolBindingReason.allCases.filter { $0.explanationKey != nil }
-    #expect(
-      explained == [
-        .deviceInUse, .configurationUnreadable, .bootloaderIdentity, .noModeMatched, .idleIdentity,
-      ]
-    )
-    let localization = Localization()
-    for reason in explained {
-      let key = reason.explanationKey ?? ""
-      #expect(localization.string(key) != key)
-    }
-  }
-
-  @Test
   func heldServiceIsAdmittedAgainOnlyWhenItsHolderGoesAway() async {
     let provider = makeProvider(owner: "pid 11070, steam_osx")
     let manager = makeManager(provider)
