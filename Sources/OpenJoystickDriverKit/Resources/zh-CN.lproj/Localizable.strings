@@ -4233,6 +4233,27 @@
 "error.E5007.patch.patchFields" = "%1$@，document：文件必须包含 apiVersion、kind、selector 以及 patch 或 remove。修复：补上缺少的成员。";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@，patch：patch 必须包含 modes、usb、bluetoothLE、capabilities、server、route、input 或 tuning。修复：只保留这些部分，并至少给出一个。";
+"error.E5007.patch.patchSections" = "%1$@，patch：patch 必须包含 modes、usb、bluetoothLE、capabilities、server、route、input、tuning 或 idle。修复：只保留这些部分，并至少给出一个。";
+/* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
+"error.E5007.virtualDevice.persona" = "%1$@，persona：persona 必须是 %2$@ 之一。修复：将 persona 设为其中之一。";
+/* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */
+"error.E5007.virtualDevice.matchRequired" = "%1$@，match：用户文件夹中的文件必须包含 match。修复：添加含有该型号 vendorID 和 productID 的 match。";
+/* Error E5007, shown when a virtual device file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
+"error.E5007.virtualDevice.layout" = "%1$@，layout：layout 必须是 %2$@ 之一。修复：将 layout 设为其中之一。";
+/* Error E5007, shown when a virtual device file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
+"error.E5007.virtualDevice.transport" = "%1$@，transport：transport 必须是 USB 或 Bluetooth。修复：将 transport 设为 USB 或 Bluetooth。";
+/* Error E5007, shown when a virtual device file fails: labels are not Xbox or Generic. %1$@ is the file. */
+"error.E5007.virtualDevice.labels" = "%1$@，labels：labels 必须是 Xbox 或 Generic。修复：将 labels 设为 Xbox 或 Generic。";
+/* Error E5007, shown when a virtual device file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
+"error.E5007.virtualDevice.matchExtras" = "%1$@，match：含有 match 的文件用于选择角色，因此不能包含 layout、transport 或 worksWithDefaultSDLHints。修复：移除 layout、transport 和 worksWithDefaultSDLHints，或移除 match。";
+/* Error E5007, shown when a virtual device file fails: a persona definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
+"error.E5007.virtualDevice.definition" = "%1$@，persona：角色定义必须包含 layout、transport、labels、worksWithDefaultSDLHints，以及带 version 的 identity。修复：补上缺少的键，或添加 match 来改为选择角色。";
+/* Error E5007, shown when a virtual device file fails: a match unit is not a unit ID. %1$@ is the file. */
+"error.E5007.virtualDevice.matchUnit" = "%1$@，match.unit：match.unit 必须是单元 ID。修复：将 unit 设为某个手柄的单元 ID，或省略。";
+/* Error E5007, shown when a virtual device file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
+"error.E5007.virtualDevice.identityText" = "%1$@，identity.%2$@：角色的 identity 需要非空的 %2$@。修复：给 %2$@ 一个非空字符串。";
+/* Error E5007, shown when a virtual device file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
+"error.E5007.virtualDevice.idRange" = "%1$@，%2$@：ID 必须为 %3$@...65535。修复：将 %2$@ 设为 %3$@...65535。";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@，patch.modes：每个条目必须包含 id，且只能包含 id、protocol、match、interface、session 或 idle。修复：为每个条目指定 id，并删除其他键。";

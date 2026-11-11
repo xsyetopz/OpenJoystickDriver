@@ -3695,6 +3695,27 @@
 "error.E5007.patch.patchFields" = "%1$@, document: el archivo debe contener apiVersion, kind, selector y patch o remove. Solución: agrega el miembro que falta.";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@, patch: patch debe contener modes, usb, bluetoothLE, capabilities, server, route, input o tuning. Solución: conserva solo esas secciones y da al menos una.";
+"error.E5007.patch.patchSections" = "%1$@, patch: patch debe contener modes, usb, bluetoothLE, capabilities, server, route, input, tuning o idle. Solución: conserva solo esas secciones y da al menos una.";
+/* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
+"error.E5007.virtualDevice.persona" = "%1$@, persona: persona debe ser una de %2$@. Solución: asigna a persona una de ellas.";
+/* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */
+"error.E5007.virtualDevice.matchRequired" = "%1$@, match: un archivo de la carpeta del usuario debe contener match. Solución: añade match con el vendorID y el productID del modelo.";
+/* Error E5007, shown when a virtual device file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
+"error.E5007.virtualDevice.layout" = "%1$@, layout: layout debe ser una de %2$@. Solución: asigna a layout una de ellas.";
+/* Error E5007, shown when a virtual device file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
+"error.E5007.virtualDevice.transport" = "%1$@, transport: transport debe ser USB o Bluetooth. Solución: asigna a transport USB o Bluetooth.";
+/* Error E5007, shown when a virtual device file fails: labels are not Xbox or Generic. %1$@ is the file. */
+"error.E5007.virtualDevice.labels" = "%1$@, labels: labels debe ser Xbox o Generic. Solución: asigna a labels Xbox o Generic.";
+/* Error E5007, shown when a virtual device file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
+"error.E5007.virtualDevice.matchExtras" = "%1$@, match: un archivo con match elige una persona, así que no puede contener layout, transport ni worksWithDefaultSDLHints. Solución: quita layout, transport y worksWithDefaultSDLHints, o quita match.";
+/* Error E5007, shown when a virtual device file fails: a persona definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
+"error.E5007.virtualDevice.definition" = "%1$@, persona: una definición de persona debe contener layout, transport, labels, worksWithDefaultSDLHints e identity con version. Solución: añade las claves que faltan, o añade match para elegir una persona.";
+/* Error E5007, shown when a virtual device file fails: a match unit is not a unit ID. %1$@ is the file. */
+"error.E5007.virtualDevice.matchUnit" = "%1$@, match.unit: match.unit debe ser un ID de unidad. Solución: asigna a unit el ID de unidad de un mando, o déjalo sin definir.";
+/* Error E5007, shown when a virtual device file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
+"error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: una identidad de persona necesita un valor no vacío en %2$@. Solución: da a %2$@ una cadena no vacía.";
+/* Error E5007, shown when a virtual device file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
+"error.E5007.virtualDevice.idRange" = "%1$@, %2$@: un ID debe ser %3$@...65535. Solución: asigna a %2$@ un valor de %3$@...65535.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: Cada entrada debe contener un id y solo id, protocol, match, interface, session o idle. Solución: da un id a cada entrada y elimina cualquier otra clave.";
