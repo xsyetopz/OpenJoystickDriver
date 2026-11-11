@@ -45,11 +45,11 @@ Two testers tested the 8BitDo Ultimate 2C Wireless on tester build `1.5.71`. One
 
 One tester tested the Xbox Nano Controller on macOS 26.5.2. For the details, see [the test record](../docs/testing/xbox-nano.md).
 
-The 8BitDo Ultimate 2C Wireless has a different VID:PID in each mode. The Bluetooth mode `2DC8:301B` and the wired DInput mode `2DC8:301D` have no verification. They may work; the rear buttons repeat L3 and R3 and map no paddle. The HID receiver `2DC8:301C` is an idle identity: OJD sends it no data and creates no gamepad, and the pad is assumed to re-enumerate as `2DC8:310A` once it connects. The USB adapter `2DC8:3109` stays an `XboxXUSB` wired record, also unverified.
+The 8BitDo Ultimate 2C Wireless has a different VID:PID in each mode. The Bluetooth mode `2DC8:301B` and the wired DInput mode `2DC8:301D` have no verification. They may work; the rear buttons repeat L3 and R3 and map no paddle. The HID receiver `2DC8:301C` is idle while its product string is `IDLE`, with no pad linked: OJD sends it no data and creates no gamepad. With a pad linked it serves the HID descriptor, which maps no named control yet. The USB adapter `2DC8:3109` stays an `XboxXUSB` wired record, also unverified.
 
 The 8BitDo Ultimate 2 in DInput mode (`2DC8:6012`, cable and 2.4 GHz dongle) has an unverified record that uses the Ultimate 2C layout and maps no rear button. Its receiver `2DC8:6013` and dongle `2DC8:3107` are idle identities: OJD sends them no data and creates no gamepad. For the details, see [the Ultimate 2 test record](../docs/testing/8bitdo-ultimate-2.md).
 
-The 8BitDo bootloader identities `2DC8:3208` and `2DC8:5750` are never served. OJD sends them no data, because a write to a pad in bootloader state risks a bad firmware image. The Controllers page lists such a pad as unserved with the reason `BootloaderIdentity`. For the rule, see [the test record](../docs/testing/8bitdo-ultimate-2c.md#bootloader-identities).
+The 8BitDo bootloader identities `2DC8:3208` and `2DC8:5750` are never served. Their bundled records idle with the reason `Bootloader`, and no user or package file adds or patches them. OJD sends them no data, because a write to a pad in bootloader state risks a bad firmware image. The Controllers page lists such a pad as unserved with the reason `BootloaderIdentity`. For the rule, see [the test record](../docs/testing/8bitdo-ultimate-2c.md#bootloader-identities).
 
 Every 8BitDo `2DC8` identity that has a record. Only `2DC8:310A` is Community-Verified; every other row is Unverified.
 
@@ -63,7 +63,7 @@ Every 8BitDo `2DC8` identity that has a record. Only `2DC8:310A` is Community-Ve
 | `2DC8:310A` | Ultimate 2C, 2.4 GHz dongle, XInput | `XboxXUSB`, wired |
 | `2DC8:310B` | Ultimate 2 and Pro 3 may share this identity; no capture confirms it or shows how the host tells them apart | `XboxXUSB`, wired |
 | `2DC8:301B` | Ultimate 2C, Bluetooth LE | `HIDDescriptor` |
-| `2DC8:301C` | Ultimate 2C HID receiver | Idle |
+| `2DC8:301C` | Ultimate 2C HID receiver | Idle while the product string is `IDLE`, else `HIDDescriptor` |
 | `2DC8:301D` | Ultimate 2C, wired, DInput | `HIDDescriptor` |
 | `2DC8:6012` | Ultimate 2, DInput, cable and 2.4 GHz dongle | `HIDDescriptor` |
 | `2DC8:6013` | Ultimate 2 receiver | Idle |

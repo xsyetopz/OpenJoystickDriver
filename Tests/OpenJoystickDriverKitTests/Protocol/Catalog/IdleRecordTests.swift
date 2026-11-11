@@ -144,15 +144,57 @@ struct IdleRecordTests {
     #expect(try Self.problem(["modes": [Self.defaultMode(), Self.idleMode], "server": "OJD"]) == nil)
   }
 
-  @Test
-  func theBundledReceiverIdentityServesNothing() throws {
-    let catalog = DeviceCatalog()
-    let record = try #require(catalog.record(for: Self.receiver))
-    #expect(record.idleReason == .noControllerLinked)
-    #expect(record.hidUsageMap == nil)
-    #expect(
-      ProtocolClassifier.classify(Self.hidDevice(Self.receiver), backend: .hid, catalog: catalog)
-        == .unsupported(.noControllerLinked)
+  private static func receiverDevice(product: String) -> PhysicalDevice {
+    PhysicalDevice(
+      vendorID: receiver.vendorID,
+      productID: receiver.productID,
+      productName: product,
+      interfaces: [gamepadHIDInterface(host: .usb)]
     )
+  }
+
+  private static func selection(product: String) async -> ControllerModeSelection {
+    await ProtocolDriverRegistry().selectMode(
+      of: receiver,
+      backend: .hid,
+      reader: UnreadableModeProbeReader(),
+      device: receiverDevice(product: product)
+    )
+  }
+
+  @Test
+  func theBundledReceiverIdlesWhileItsProductStringIsIDLE() async throws {
+    let catalog = DeviceCatalog()
+    let modeID = try #require(await Self.selection(product: "IDLE").modeID)
+    #expect(catalog.record(for: Self.receiver, modeID: modeID)?.idleReason == .noControllerLinked)
+    #expect(
+      ProtocolClassifier.classify(
+        Self.receiverDevice(product: "IDLE"),
+        backend: .hid,
+        catalog: catalog,
+        modeID: modeID
+      ) == .unsupported(.noControllerLinked)
+    )
+  }
+
+  @Test
+  func theBundledReceiverServesWhileAPadIsLinked() async throws {
+    let catalog = DeviceCatalog()
+    let product = "8BitDo Ultimate 2C Wireless Controller"
+    let selection = await Self.selection(product: product)
+    #expect(selection.modeID == nil)
+    #expect(catalog.record(for: Self.receiver)?.idleReason == nil)
+    guard
+      case .bound(let binding) = ProtocolClassifier.classify(
+        Self.receiverDevice(product: product),
+        backend: .hid,
+        catalog: catalog,
+        modeID: selection.modeID
+      )
+    else {
+      Issue.record("the linked receiver is not bound")
+      return
+    }
+    #expect(binding.protocolID == .hidDescriptor)
   }
 }

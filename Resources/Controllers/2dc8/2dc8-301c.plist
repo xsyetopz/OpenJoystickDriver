@@ -11,8 +11,22 @@
 		<dict>
 			<key>id</key>
 			<string>default</string>
+			<key>protocol</key>
+			<dict>
+				<key>family</key>
+				<string>HIDDescriptor</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>id</key>
+			<string>unlinked</string>
 			<key>idle</key>
 			<string>NoControllerLinked</string>
+			<key>match</key>
+			<dict>
+				<key>product</key>
+				<string>IDLE</string>
+			</dict>
 			<key>protocol</key>
 			<dict>
 				<key>family</key>
