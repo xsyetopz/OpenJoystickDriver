@@ -1006,42 +1006,6 @@
       }
     },
     {
-      "name": "single mode records get the same per mode checks: layout under another family",
-      "code": "E5007",
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
-        "kind": "Controller",
-        "vendorID": 1356,
-        "productID": 616,
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "SonySixaxis"
-            }
-          }
-        ],
-        "input": {
-          "layouts": [
-            {
-              "report": {
-                "length": {
-                  "atLeast": 8
-                }
-              },
-              "buttons": [
-                {
-                  "control": "South",
-                  "bitOffset": 0,
-                  "bitSize": 1
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    {
       "name": "single mode records get the same per mode checks: template under a family that does not encode it",
       "code": "E5007",
       "document": {
@@ -1246,7 +1210,7 @@
       }
     },
     {
-      "name": "validator rejects modes that break record level rules: input layout on a mode that is not HIDReportLayout",
+      "name": "validator rejects modes that break record level rules: input layout beside a HIDDescriptor mode",
       "code": "E5007",
       "document": {
         "apiVersion": "openjoystickdriver/v1alpha3",
@@ -1263,7 +1227,7 @@
           {
             "id": "x",
             "protocol": {
-              "family": "SonySixaxis"
+              "family": "HIDDescriptor"
             },
             "match": {
               "probes": [
@@ -3658,42 +3622,6 @@
             }
           }
         ]
-      }
-    },
-    {
-      "name": "rejects invalid report layouts: input on another family",
-      "code": "E5007",
-      "document": {
-        "apiVersion": "openjoystickdriver/v1alpha3",
-        "kind": "Controller",
-        "vendorID": 1118,
-        "productID": 746,
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "VendorPS3ThirdParty"
-            }
-          }
-        ],
-        "input": {
-          "layouts": [
-            {
-              "report": {
-                "length": {
-                  "atLeast": 2
-                }
-              },
-              "buttons": [
-                {
-                  "control": "South",
-                  "bitOffset": 8,
-                  "bitSize": 1
-                }
-              ]
-            }
-          ]
-        }
       }
     },
     {

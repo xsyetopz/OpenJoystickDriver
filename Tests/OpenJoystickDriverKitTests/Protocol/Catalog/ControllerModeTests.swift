@@ -467,7 +467,7 @@ struct ControllerModeTests {
       ]
     ]
     let needsLayout =
-      "every mode needs the record's input layout exactly when it is HIDReportLayout"
+      "a HIDReportLayout mode needs the record's input layout"
     let rejected: [Case] = [
       Case(
         name: "duplicate ID",
@@ -535,11 +535,11 @@ struct ControllerModeTests {
         expected: "a probe reads report 0...255 with a length of 1...65535"
       ),
       Case(
-        name: "input layout under a mode that is not HIDReportLayout",
-        modes: [mode("a", family: "SonySixaxis")],
+        name: "input layout beside a HIDDescriptor mode",
+        modes: [mode("a", family: "HIDDescriptor")],
         family: "HIDReportLayout",
         extras: ["input": layout],
-        expected: needsLayout
+        expected: "a HIDDescriptor mode reads a usage map, not input layouts"
       ),
       Case(
         name: "HIDReportLayout mode without the input layout",
