@@ -17,6 +17,8 @@ final class ControllerRecordWatcher {
   private let activate: @MainActor (ControllerRecordSet) -> Set<ControllerModelID>
   /// The watcher of the record and package directories; nil while stopped.
   private var watcher: FileChangeWatcher?
+  /// The set last activated: a file that applied in it and fails now leaves it in force.
+  private var current: ControllerRecordSet?
 
   /// `onChange` runs with the models whose effective record a change to the directory
   /// changed, when there are any. `activate` makes a loaded set current and returns those
@@ -82,6 +84,11 @@ final class ControllerRecordWatcher {
     if let problem = records.defaults?.problem, let url = records.defaults?.url {
       fputs("[Records] Ignored \(url.path): \(problem)\n", stderr)
     }
+    let failing = Set(records.problems.map(\.url))
+    if let current, current.userFiles.contains(where: { $0.problem == nil && failing.contains($0.url) }) {
+      return []
+    }
+    current = records
     let applied = records.userFiles.count - records.problems.count
     print("[Records] Applied \(applied) user controller record(s)")
     return activate(records)

@@ -150,4 +150,38 @@ struct ControllerRecordWatcherTests {
     #expect(applied.last == 1)
     #expect(changes >= 1)
   }
+
+  @Test
+  func anInvalidRewriteLeavesTheEarlierRecordInForce() async throws {
+    let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "ojd-watch-\(UUID().uuidString)/Controllers",
+      isDirectory: true
+    )
+    defer { try? FileManager.default.removeItem(at: directory.deletingLastPathComponent()) }
+    let file = directory.appendingPathComponent("1234-abcd.plist")
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    try Self.addRecord.write(to: file)
+    var applied: [Int] = []
+    var changes = 0
+    let watcher = ControllerRecordWatcher(
+      directory: directory,
+      activate: { records in
+        applied.append(records.userFiles.count - records.problems.count)
+        return [ControllerModelID(vendorID: 0x1234, productID: 0xabcd)]
+      },
+      onChange: { _ in changes += 1 }
+    )
+    watcher.start()
+    defer { watcher.stop() }
+    #expect(applied == [1])
+
+    try Data("not a property list".utf8).write(to: file, options: .atomic)
+    try await Task.sleep(for: .seconds(1))
+    #expect(applied == [1])
+    #expect(changes == 0)
+
+    try Self.addRecord.write(to: file, options: .atomic)
+    await waitUntil("the repaired file is applied") { changes >= 1 }
+    #expect(applied.last == 1)
+  }
 }
