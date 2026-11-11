@@ -31,12 +31,12 @@ enum MigrationFixtures {
     """#
   )
 
-  /// The user record of the reporter in #58: the Ferrari 458 Spider wheel, `044F:B671`.
-  static let wheelRecord = document(
+  /// A user record of a controller the catalog does not bundle.
+  static let userRecord = document(
     alphaOne,
     "Controller",
     #"""
-    "vendorID": 1103, "productID": 46705,
+    "vendorID": 4660, "productID": 43981,
     "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]
     """#
   )

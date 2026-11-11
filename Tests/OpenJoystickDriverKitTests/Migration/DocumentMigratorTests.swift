@@ -55,12 +55,12 @@ struct DocumentMigratorTests {
 
   @Test
   func aUserRecordBecomesAVersionThreePropertyList() throws {
-    try write(MigrationFixtures.wheelRecord, "Controllers/044f-b671.json")
+    try write(MigrationFixtures.userRecord, "Controllers/1234-abcd.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.verdict) == [.migrated])
-    let converted = try document("Controllers/044f-b671.plist")
+    let converted = try document("Controllers/1234-abcd.plist")
     #expect(converted["apiVersion"]?.string == OpenJoystickDriverAPI.version)
-    #expect(converted["productID"] == .number("46705"))
+    #expect(converted["productID"] == .number("43981"))
   }
 
   @Test
