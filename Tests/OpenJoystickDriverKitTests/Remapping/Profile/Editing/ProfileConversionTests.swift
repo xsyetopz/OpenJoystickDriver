@@ -210,7 +210,7 @@ struct ProfileConversionTests {
       device: Self.source,
       applicationScope: .global,
       physicalColor: ControllerColor(red: 1, green: 0, blue: 0),
-      gyroOutput: RemappingGyroOutput(mode: .pointer),
+      gyroOutput: RemappingGyroOutput(mode: .mouse),
       stickMappings: [stick],
       bindings: []
     )

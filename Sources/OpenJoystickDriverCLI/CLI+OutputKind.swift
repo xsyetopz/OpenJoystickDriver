@@ -59,6 +59,7 @@ extension CLI {
       (ProfileSetCommand.self, "Profile"),
       (ProfileRenameCommand.self, "Profile"),
       (ProfileDuplicateCommand.self, "Profile"),
+      (ProfileConvertCommand.self, "Profile"),
       (ProfileActivateCommand.self, "Profile"),
       (ProfileDeactivateCommand.self, "Profile"),
       (ProfileImportCommand.self, "Profile"),
