@@ -45,11 +45,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          for dependency in pkg-config ruff sdl3 shellcheck swift-format swiftlint xmake; do
+          for dependency in just pkg-config ruff sdl3 shellcheck swift-format swiftlint xmake; do
             brew list --versions "$dependency" >/dev/null 2>&1 || brew install "$dependency"
           done
-          python3 -m venv .build/schema-validator
-          .build/schema-validator/bin/python -m pip install -r Scripts/Quality/requirements.txt
+          just schema-env
           echo "$PWD/.build/schema-validator/bin" >> "$GITHUB_PATH"
 
       # Each source is stored under its locked sha256 and checked on read, so a run downloads only changed sources.
@@ -59,47 +58,7 @@ jobs:
           path: .build/catalog-sources
           key: catalog-sources-${{ hashFiles('ControllerSources.lock.json') }}
 
-      - name: Verify generated controller catalog
-        run: |
-          ./Scripts/ojd catalog regenerate --check
-          ./Scripts/ojd errors regenerate --check
-          ./Scripts/ojd vocabulary regenerate --check
-
-      - name: Check controller records
-        run: |
-          ./Scripts/ojd check profiles
-
-      - name: Check Python
-        run: |
-          ruff format --check Scripts Tests/RepositoryScripts
-          ruff check Scripts Tests/RepositoryScripts
-          .build/schema-validator/bin/python -m unittest discover -s Tests/RepositoryScripts
-
-      - name: Check shell
-        run: find Scripts -type f \( -name '*.sh' -o -name ojd \) -print0 | xargs -0 shellcheck --external-sources --source-path=SCRIPTDIR
-
-      - name: Check native tools and the WebRTC bridge package
-        run: ./Scripts/ojd check tools
-
-      - name: Check schemas
-        run: ./Scripts/ojd check schemas
-
-      - name: Test macOS 14 parser compatibility
-        run: |
-          ./Scripts/ojd test parsers-macos14
-          ./Scripts/ojd snapshots check
-
-      - name: Check generated DriverKit project
+      - name: Verify
         run: |
           test "$OJD_USE_LOCAL_SWIFTERKIT" = "0"
-          ./Scripts/ojd check driverkit
-
-      - name: Check Swift formatting and lint
-        run: |
-          swift-format lint --recursive --strict Package.swift Sources Tests Tools
-          swiftlint lint --no-cache --strict
-          python3 Scripts/Quality/check_localization_keys.py
-          python3 Scripts/Quality/check_text_styles.py
-
-      - name: Build and test package
-        run: ./Scripts/ojd check swift
+          just project-verify

@@ -65,11 +65,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          for dependency in pkg-config ruff sdl3 shellcheck swift-format swiftlint xmake; do
+          for dependency in just pkg-config ruff sdl3 shellcheck swift-format swiftlint xmake; do
             brew list --versions "$dependency" >/dev/null 2>&1 || brew install "$dependency"
           done
-          python3 -m venv .build/schema-validator
-          .build/schema-validator/bin/python -m pip install -r Scripts/Quality/requirements.txt
+          just schema-env
           echo "$PWD/.build/schema-validator/bin" >> "$GITHUB_PATH"
 
       # Each source is stored under its locked sha256 and checked on read, so a run downloads only changed sources.
@@ -79,50 +78,10 @@ jobs:
           path: .build/catalog-sources
           key: catalog-sources-${{ hashFiles('ControllerSources.lock.json') }}
 
-      - name: Verify generated controller catalog
-        run: |
-          ./Scripts/ojd catalog regenerate --check
-          ./Scripts/ojd errors regenerate --check
-          ./Scripts/ojd vocabulary regenerate --check
-
-      - name: Check controller records
-        run: |
-          ./Scripts/ojd check profiles
-
-      - name: Check Python
-        run: |
-          ruff format --check Scripts Tests/RepositoryScripts
-          ruff check Scripts Tests/RepositoryScripts
-          .build/schema-validator/bin/python -m unittest discover -s Tests/RepositoryScripts
-
-      - name: Check shell
-        run: find Scripts -type f \( -name '*.sh' -o -name ojd \) -print0 | xargs -0 shellcheck --external-sources --source-path=SCRIPTDIR
-
-      - name: Check native tools and the WebRTC bridge package
-        run: ./Scripts/ojd check tools
-
-      - name: Check schemas
-        run: ./Scripts/ojd check schemas
-
-      - name: Test macOS 14 parser compatibility
-        run: |
-          ./Scripts/ojd test parsers-macos14
-          ./Scripts/ojd snapshots check
-
-      - name: Check generated DriverKit project
+      - name: Verify
         run: |
           test "$OJD_USE_LOCAL_SWIFTERKIT" = "0"
-          ./Scripts/ojd check driverkit
-
-      - name: Check Swift formatting and lint
-        run: |
-          swift-format lint --recursive --strict Package.swift Sources Tests Tools
-          swiftlint lint --no-cache --strict
-          python3 Scripts/Quality/check_localization_keys.py
-          python3 Scripts/Quality/check_text_styles.py
-
-      - name: Build and test package
-        run: ./Scripts/ojd check swift
+          just verify
 
       - name: Create release tag
         env:
@@ -156,7 +115,7 @@ jobs:
           KEYCHAIN_SECRET: ${{ secrets.KEYCHAIN_SECRET }}
           OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64: ${{ secrets.OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64 }}
           OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64: ${{ secrets.OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64 }}
-        run: ./Scripts/ojd signing ci-release-setup
+        run: just signing-ci-release-setup
 
       - name: Package release build
         env:
@@ -164,7 +123,7 @@ jobs:
           NOTARIZE_APPLE_ID: ${{ secrets.NOTARIZE_APPLE_ID }}
           NOTARIZE_PASSWORD: ${{ secrets.NOTARIZE_PASSWORD }}
           RELEASE_TAG: ${{ steps.release.outputs.tag }}
-        run: ./Scripts/ojd release package "$RELEASE_TAG"
+        run: just release-package "$RELEASE_TAG"
 
       - name: Upload release artifact
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
