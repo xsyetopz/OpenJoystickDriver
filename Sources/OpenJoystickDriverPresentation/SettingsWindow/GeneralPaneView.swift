@@ -51,6 +51,7 @@
               "platform.macos.ui.settings.general.entryPointRequired"
             )
           )
+          PauseShortcutRow(preferences: preferences)
         }
         updates
       }.ojdGroupedForm()

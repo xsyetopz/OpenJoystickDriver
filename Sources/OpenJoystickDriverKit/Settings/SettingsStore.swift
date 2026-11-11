@@ -118,6 +118,24 @@ public struct SettingsStore: Sendable {
   /// Whether the user turned launch at login off, so the app must not register itself again.
   public func launchAtLoginOptOut() throws -> Bool { try load().launchAtLoginOptOut ?? false }
 
+  /// The pause shortcut, or nil while none is set.
+  public func pauseShortcut() throws -> PauseShortcut? { try load().pauseShortcut }
+
+  /// Stores the pause shortcut in the user file, or removes it when `shortcut` is nil.
+  public func setPauseShortcut(_ shortcut: PauseShortcut?) throws {
+    try update { $0.pauseShortcut = shortcut }
+  }
+
+  /// The version whose changelog section the app showed last, or nil while none was shown.
+  public func lastShownChangelogVersion() throws -> String? {
+    try load().lastShownChangelogVersion
+  }
+
+  /// Stores the version whose changelog section the app showed.
+  public func setLastShownChangelogVersion(_ version: String) throws {
+    try update { $0.lastShownChangelogVersion = version }
+  }
+
   /// Stores `value` for `key` in the user file.
   public func set(_ key: ApplicationSettingKey, to value: Bool) throws {
     try update([key: value])
@@ -125,6 +143,11 @@ public struct SettingsStore: Sendable {
 
   /// Stores every value in `values` in the user file in one write.
   public func update(_ values: [ApplicationSettingKey: Bool]) throws {
+    try update { document in for (key, value) in values { document[key] = value } }
+  }
+
+  /// Changes the user file's document with `change` in one locked write.
+  private func update(_ change: (inout SettingsDocument) -> Void) throws {
     let url = userFileURL
     do {
       try FileManager.default.createDirectory(
@@ -135,10 +158,11 @@ public struct SettingsStore: Sendable {
     } catch { throw SettingsStoreError.unwritable(file: url.path) }
     try locked {
       var document = try read(url)
-      for (key, value) in values { document[key] = value }
-      if values[.showInMenuBar] != nil || values[.showInDock] != nil,
-        document.hasNoVisibleEntryPoint
-      {
+      let before = document
+      change(&document)
+      let entryPointChanged =
+        before.showInMenuBar != document.showInMenuBar || before.showInDock != document.showInDock
+      if entryPointChanged, document.hasNoVisibleEntryPoint {
         throw SettingsStoreError.noVisibleEntryPoint
       }
       do { try DocumentCoder.encode(document).write(to: url, options: .atomic) } catch {

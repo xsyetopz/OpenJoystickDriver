@@ -116,6 +116,30 @@ class SchemaHeaderTests(unittest.TestCase):
                 with self.assertRaises(validate_schemas.ValidationError):
                     self.validator(stem).validate(changed)
 
+    def test_rejects_an_invalid_pause_shortcut(self) -> None:
+        document = instances()["settings"]
+        shortcuts = {
+            "no modifier": {"key": "P", "modifiers": []},
+            "shift only": {"key": "P", "modifiers": ["shift"]},
+            "repeated modifier": {"key": "P", "modifiers": ["command", "command"]},
+            "unknown key": {"key": "Home", "modifiers": ["command"]},
+            "unknown member": {"key": "P", "modifiers": ["command"], "extra": True},
+            "no key": {"modifiers": ["command"]},
+        }
+        for name, shortcut in shortcuts.items():
+            with self.subTest(name):
+                with self.assertRaises(validate_schemas.ValidationError):
+                    self.validator("settings").validate({**document, "pauseShortcut": shortcut})
+
+    def test_rejects_an_invalid_last_shown_changelog_version(self) -> None:
+        document = instances()["settings"]
+        for name, version in {"empty": "", "number": 3, "boolean": True}.items():
+            with self.subTest(name):
+                with self.assertRaises(validate_schemas.ValidationError):
+                    self.validator("settings").validate(
+                        {**document, "lastShownChangelogVersion": version}
+                    )
+
     def test_no_schema_directory_is_versioned(self) -> None:
         directories = [p for p in (ROOT / "Resources/Schemas").iterdir() if p.is_dir()]
         self.assertEqual(directories, [])

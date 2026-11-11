@@ -3721,6 +3721,13 @@
         },
         "profile": {
           "$ref": "#/$defs/sharedProfileSummary"
+        },
+        "skippedControls": {
+          "description": "The controls of the template that the controller lacks, so the template left them unbound.",
+          "type": "array",
+          "items": {
+            "$ref": "vocabulary.schema.json#/$defs/control"
+          }
         }
       }
     },
@@ -3819,10 +3826,17 @@
           "type": "string"
         },
         "key": {
-          "$ref": "#/$defs/sharedSettingKey"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sharedSettingKey"
+            },
+            {
+              "const": "pauseShortcut"
+            }
+          ]
         },
         "value": {
-          "type": "boolean"
+          "type": ["boolean", "string"]
         }
       }
     },

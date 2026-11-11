@@ -1,0 +1,47 @@
+2026-11-11, 21:40 to 21:47. Pad over Bluetooth LE as 2DC8:301B, macOS 27.2, OJD built from feat.
+Question: can any process on macOS reach the pad's motors over Bluetooth LE?
+Answer: no. macOS finds no GATT characteristic for the output report the descriptor declares.
+
+1. HID report descriptor (ioreg, IOHIDDevice of 2DC8:301B, MaxOutputReportSize = 5):
+
+05010905a1018501050115002507463b0195017504651409398142750195048101150026ff0009300931093209359504750881020502150026ff0009c409c5950275088102050919012910150025017501951081020506092015002564750895018102050f0970850515002564750895049102c0
+
+The tail declares output report 5: Usage Page 0x0F (PID), Usage 0x70 (Magnitude), four bytes, 0 to 100.
+Its layout matches SDL's 8BitDo rumble packet `05 LL HH TL TR` (steam-8bitdo.c:388-393 at ab5541ec5),
+which that driver does not send to the 2C ("no sensor or rumble support", steam-8bitdo.c:202).
+
+2. IOHIDDeviceSetReport with the OJD service stopped (`ojd service stop`, app quit), probe hidset.swift
+(IOHIDManager, kIOHIDOptionsTypeNone):
+
+Bluetooth Low Energy output id=5 [05 64 64 00 00] result=e00002f0
+Bluetooth Low Energy output id=5 [64 64 00 00] result=e00002f0
+Bluetooth Low Energy output id=0 [05 64 64 00 00] result=e00002f0
+Bluetooth Low Energy output id=0 [64 64 00 00] result=e00002f0
+Bluetooth Low Energy feature id=5 [64 64 00 00] result=e00002f0
+Bluetooth Low Energy output id=5 [00 00 00 00] result=e00002f0
+
+e00002f0 is kIOReturnNotFound. So the failure in rumble-writes.txt was not OJD holding the device.
+
+3. BTLEServer at the same writes (`log show --predicate 'process == "BTLEServer"'`):
+
+E  BTLEServer [com.apple.bluetooth:BTLEServer] Could not find output report characteristic for ID #5
+E  BTLEServer [com.apple.bluetooth:BTLEServer] Could not find output report characteristic for ID #0
+E  BTLEServer [com.apple.bluetooth:BTLEServer] Could not find feature report characteristic for ID #5
+
+The pad's HID-over-GATT service has no Report characteristic whose Report Reference is (5, Output).
+The report map declares the report; the GATT table does not carry it.
+
+4. CoreBluetooth (gattlist.swift, retrieveConnectedPeripherals for 1812, 180A, 180F, then full discovery):
+
+8BitDo Ultimate 2C Wireless service Device Information   char PnP ID props=0x2
+8BitDo Ultimate 2C Wireless service Battery              char Battery Level props=0x12
+8BitDo Ultimate 2C Wireless service 00010203-0405-0607-0809-0A0B0C0D1912
+                                    char 00010203-0405-0607-0809-0A0B0C0D2B12 props=0x16
+
+macOS hides the HID service (1812) from CoreBluetooth. The one vendor service is the Telink OTA
+(firmware update) service UUID; its characteristic takes firmware blocks. Nothing was written to it,
+since a write there can corrupt the firmware.
+
+Result: no HID or GATT route on macOS carries rumble to this pad over Bluetooth LE. Rumble works over
+the 2.4 GHz receiver (301C) and the cable (310A), as the maintainer reported. Not tested: another
+firmware version of the pad.

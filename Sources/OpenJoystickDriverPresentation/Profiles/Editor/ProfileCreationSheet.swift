@@ -78,6 +78,10 @@
                 .tag(ProfileCreationTemplate.empty)
               Text(OJDLocalized.string("ui.profiles.templateGyroStick"))
                 .tag(ProfileCreationTemplate.gyroStick)
+              Text(OJDLocalized.string("ui.profiles.templateKeyboardNavigation"))
+                .tag(ProfileCreationTemplate.bindings(.keyboardNavigation))
+              Text(OJDLocalized.string("ui.profiles.templateMouseClicks"))
+                .tag(ProfileCreationTemplate.bindings(.mouseClicks))
             }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.template"))
             if fields.template == .gyroStick {
               Picker(OJDLocalized.string("ui.profiles.gyro.output"), selection: $fields.gyroStick) {
@@ -94,7 +98,16 @@
                 ).foregroundColor(Color(NSColor.systemRed))
               }
             }
-            if fields.template == .empty {
+            let skipped = fields.skippedControls(in: context)
+            if !skipped.isEmpty {
+              Text(
+                OJDLocalized.formatted(
+                  "ui.profiles.templateSkipped",
+                  skipped.map(ControllerDetailFacts.controlName).joined(separator: ", ")
+                )
+              ).foregroundColor(Color(NSColor.secondaryLabelColor))
+            }
+            if fields.template != .gyroStick {
               ProfileOutputPolicyView(policy: fields.outputPolicy) { fields.outputPolicy = $0 }
             }
             if fields.showsValidation(isValid: proposedProfile != nil), nameProblem == nil {

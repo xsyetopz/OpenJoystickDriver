@@ -52,6 +52,10 @@ public struct SettingsDocument: Equatable, Sendable {
   public var updates = Updates()
   /// Whether the Settings window shows the developer tools.
   public var developerTools: Bool?
+  /// The shortcut that pauses and resumes every controller; nil leaves it unset.
+  public var pauseShortcut: PauseShortcut?
+  /// The version whose changelog section the app showed last.
+  public var lastShownChangelogVersion: String?
 
   /// Creates a layer that leaves every setting out.
   public init() {}
@@ -106,6 +110,10 @@ public struct SettingsDocument: Equatable, Sendable {
     var merged = self
     for key in ApplicationSettingKey.allCases {
       if let value = upper[key] { merged[key] = value }
+    }
+    if let shortcut = upper.pauseShortcut { merged.pauseShortcut = shortcut }
+    if let version = upper.lastShownChangelogVersion {
+      merged.lastShownChangelogVersion = version
     }
     return merged
   }
@@ -177,7 +185,7 @@ extension SettingsDocument: Codable {
   private enum CodingKeys: String, CodingKey, CaseIterable {
     /// The header, the settings and their groups.
     case apiVersion, kind, launchAtLoginOptOut, showInMenuBar, showInDock, notify, updates,
-      developerTools
+      developerTools, pauseShortcut, lastShownChangelogVersion
   }
 
   /// Decodes a settings layer; a key that the schema does not name is refused.
@@ -199,6 +207,18 @@ extension SettingsDocument: Codable {
     notify = try container.decodeIfPresent(Notify.self, forKey: .notify) ?? Notify()
     updates = try container.decodeIfPresent(Updates.self, forKey: .updates) ?? Updates()
     developerTools = try container.decodeIfPresent(Bool.self, forKey: .developerTools)
+    pauseShortcut = try container.decodeIfPresent(PauseShortcut.self, forKey: .pauseShortcut)
+    lastShownChangelogVersion = try container.decodeIfPresent(
+      String.self,
+      forKey: .lastShownChangelogVersion
+    )
+    if lastShownChangelogVersion?.isEmpty == true {
+      throw DecodingError.dataCorruptedError(
+        forKey: .lastShownChangelogVersion,
+        in: container,
+        debugDescription: "empty version"
+      )
+    }
   }
 
   /// Encodes the header and the settings that are set.
@@ -212,5 +232,7 @@ extension SettingsDocument: Codable {
     if notify != Notify() { try container.encode(notify, forKey: .notify) }
     if updates != Updates() { try container.encode(updates, forKey: .updates) }
     try container.encodeIfPresent(developerTools, forKey: .developerTools)
+    try container.encodeIfPresent(pauseShortcut, forKey: .pauseShortcut)
+    try container.encodeIfPresent(lastShownChangelogVersion, forKey: .lastShownChangelogVersion)
   }
 }

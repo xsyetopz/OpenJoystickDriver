@@ -97,6 +97,35 @@
       "description": "Whether to show the developer tools in the Settings window.",
       "type": "boolean",
       "default": false
+    },
+    "lastShownChangelogVersion": {
+      "description": "The version whose changelog section the app showed at the first opening of the main window after an update. Unset until the first one.",
+      "type": "string",
+      "minLength": 1
+    },
+    "pauseShortcut": {
+      "description": "The system-wide keyboard shortcut that pauses and resumes every controller. Unset on a fresh installation. At least one modifier other than shift is required.",
+      "type": "object",
+      "required": ["key", "modifiers"],
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "description": "The key, named by what it types.",
+          "enum": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "Space"]
+        },
+        "modifiers": {
+          "description": "The modifier keys held with the key, in alphabetical order.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "contains": {
+            "enum": ["command", "control", "option"]
+          },
+          "items": {
+            "enum": ["command", "control", "option", "shift"]
+          }
+        }
+      }
     }
   }
 }

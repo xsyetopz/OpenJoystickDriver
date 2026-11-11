@@ -176,7 +176,7 @@
   }
 
   /// The sheet that edits how an assignment acts: its behavior, turbo, long hold, tap counts and
-  /// additional actions.
+  /// additional actions, and for a top-level assignment its remark.
   struct BindingBehaviorSheet: View {
     /// The assignment being edited.
     let binding: RemappingBinding
@@ -192,6 +192,9 @@
     /// The additional actions.
     @State
     var additionalActions: [RemappingAction]
+    /// The remark text as typed.
+    @State
+    var remarkText: String
     /// The behavior.
     @State
     var behavior: RemappingBindingBehavior
@@ -250,6 +253,7 @@
       self.showsAdditionalActions = showsAdditionalActions
       self.capabilities = capabilities
       _additionalActions = State(initialValue: binding.additionalActions)
+      _remarkText = State(initialValue: binding.remark ?? "")
       _behavior = State(initialValue: binding.behavior)
       _pulseDurationMs = State(initialValue: binding.pulseDurationMs)
       _turboEnabled = State(initialValue: binding.turbo != nil)

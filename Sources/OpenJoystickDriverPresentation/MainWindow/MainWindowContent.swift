@@ -59,6 +59,8 @@
     let activity: ActivityModel
     /// The Explain Error Code sheet's model.
     let errorCodeExplainer: ErrorCodeExplainerModel
+    /// The What's New sheet's model.
+    let whatsNew: WhatsNewModel
     /// The Library area's model.
     let libraryArea: LibraryViewModel
     /// The Access area's model.
@@ -165,7 +167,9 @@
             dismissButton: .default(Text(OJDLocalized.string("action.ok")))
           )
         }
-      ).background(ErrorCodeExplainerSheetHost(model: screens.errorCodeExplainer)).alert(
+      ).background(ErrorCodeExplainerSheetHost(model: screens.errorCodeExplainer)).background(
+        WhatsNewSheetHost(model: screens.whatsNew)
+      ).alert(
         isPresented: $navigation.isDiscardConfirmationPresented
       ) {
         Alert(

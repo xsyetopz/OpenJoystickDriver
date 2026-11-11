@@ -93,6 +93,8 @@ This section explains how to create, activate, rename, duplicate, and delete a p
 
 The new profile has no assignments. It appears in the list with the label **Not active**.
 
+The **Sort by** menu above the list orders the profiles by **Name**, **Controller** (by vendor and product ID, then name), or **Last used** (the newest activation first; a profile that was never activated comes last, by name). The service records the time each time a profile is activated, in `LastUsed.plist` in the application data directory. The order is not kept when you close the app.
+
 To import a profile instead, click **Import profile**. For more information, see [Importing and exporting profiles](#importing-and-exporting-profiles).
 
 ### Create a Profile With the Command Line

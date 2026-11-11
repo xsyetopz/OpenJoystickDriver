@@ -122,6 +122,8 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
   case sequenceWindowOutOfRange(index: Int)
   /// A sequence has the same source order as an earlier sequence.
   case duplicateSequenceSources(index: Int)
+  /// A binding remark is empty, too long, padded with whitespace or holds control characters.
+  case bindingRemarkInvalid(index: Int)
   /// A layer name is empty, too long, padded with whitespace or holds control characters.
   case layerNameInvalid(index: Int)
   /// A layer activator is an axis.
@@ -254,6 +256,7 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
     case .sequenceWindowOutOfRange(let index): "Sequence \(index) has an out-of-range window."
     case .duplicateSequenceSources(let index):
       "Sequence \(index) duplicates another sequence's source ordering."
+    case .bindingRemarkInvalid(let index): "Binding \(index) has an invalid remark."
     case .layerNameInvalid(let index): "Layer \(index) has an invalid name."
     case .layerActivatorNotDiscrete(let index):
       "Layer \(index) has a non-discrete (axis) activator."

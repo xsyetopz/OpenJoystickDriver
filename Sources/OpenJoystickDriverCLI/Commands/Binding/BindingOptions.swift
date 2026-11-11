@@ -207,7 +207,7 @@ struct BindingOptions: ParsableArguments {
   )
   var actionsJSON: String?
 
-  /// The binding for `source` and `target`, keeping the ID, behavior, and actions of `existing`.
+  /// The binding for `source` and `target`, keeping the ID, behavior, actions, and remark of `existing`.
   ///
   /// - Throws: ``CLIFailure`` with the usage code when axis options are given for a source that is
   ///   not an axis, turbo options are incomplete or not usable with the target, `--long-hold` or
@@ -234,7 +234,8 @@ struct BindingOptions: ParsableArguments {
         RemappingLongHold(durationMs: $0, destination: $1)
       },
       multiTap: try multiTap.map(multiTapEntry),
-      additionalActions: try actions() ?? existing?.additionalActions ?? []
+      additionalActions: try actions() ?? existing?.additionalActions ?? [],
+      remark: existing?.remark
     )
   }
 

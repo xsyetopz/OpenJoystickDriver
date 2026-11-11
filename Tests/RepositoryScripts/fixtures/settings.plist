@@ -8,6 +8,8 @@
 	<true/>
 	<key>kind</key>
 	<string>Settings</string>
+	<key>lastShownChangelogVersion</key>
+	<string>0.6.0-alpha.3</string>
 	<key>launchAtLoginOptOut</key>
 	<true/>
 	<key>notify</key>
@@ -22,6 +24,16 @@
 		<false/>
 		<key>sounds</key>
 		<false/>
+	</dict>
+	<key>pauseShortcut</key>
+	<dict>
+		<key>key</key>
+		<string>P</string>
+		<key>modifiers</key>
+		<array>
+			<string>control</string>
+			<string>option</string>
+		</array>
 	</dict>
 	<key>showInDock</key>
 	<true/>

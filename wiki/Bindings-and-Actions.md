@@ -128,6 +128,10 @@ The command line options are `--turbo-rate`, `--turbo-duty`, `--turbo-delay MS`,
 
 You can also add more actions to one assignment. In the behavior sheet, use **Add action**, **Move up**, **Move down**, and **Remove**. The command line option is `--actions-json`.
 
+### Add a Note to an Assignment
+
+The **Assignment behavior** sheet has a note field, labelled **Note (optional)**, of 1 to 200 characters. The note appears under the assignment in the list and does not change what the assignment does. Clear the field to remove the note. A profile file stores it as the binding's `remark`; for more information, see [Profile file reference](Profile-File-Reference.md).
+
 ### Macros
 
 A macro is a named list of steps that runs when its source becomes active. A profile holds up to 16 macros of up to 32 steps. Hardware status: Not checked.

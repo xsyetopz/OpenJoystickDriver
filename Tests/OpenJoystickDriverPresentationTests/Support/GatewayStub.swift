@@ -72,6 +72,8 @@ actor GatewayStub: ApplicationServiceGateway {
     )] =
       []
   var resetAllRequestCount = 0
+  /// The session requests received, each as `suspend` or `resume` and the reference.
+  private(set) var sessionRequests: [String] = []
   var resetAllResult = true
   var serverRequests: [(model: ControllerModelID, server: ControllerServer)] = []
   var serverFailure: (failure: ControllerServerFailure, detail: String?)?
@@ -454,12 +456,14 @@ extension GatewayStub {
 
 /// Every controller session request is refused as `notFound`.
 extension GatewayStub {
-  func suspendController(_: ControllerReference) -> ControllerSuspendResult {
-    ControllerSuspendResult(state: .active, failure: .notFound)
+  func suspendController(_ selector: ControllerReference) -> ControllerSuspendResult {
+    sessionRequests.append("suspend \(selector)")
+    return ControllerSuspendResult(state: .active, failure: .notFound)
   }
 
-  func resumeController(_: ControllerReference) -> ControllerResumeResult {
-    ControllerResumeResult(state: .suspended, failure: .notFound)
+  func resumeController(_ selector: ControllerReference) -> ControllerResumeResult {
+    sessionRequests.append("resume \(selector)")
+    return ControllerResumeResult(state: .suspended, failure: .notFound)
   }
 
   func disconnectWirelessController(

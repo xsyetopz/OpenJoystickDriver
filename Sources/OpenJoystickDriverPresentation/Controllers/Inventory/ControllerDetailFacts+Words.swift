@@ -61,12 +61,13 @@ extension ControllerDetailFacts {
   }
 
   /// Returns a control as words, with the name the files and the service use beside it, such as
-  /// `D-pad Up (DpadUp)`.
+  /// `D-pad Up (DpadUp)`. A name that is already the raw name, such as `Start`, shows once.
   ///
   /// - Parameter control: The control.
   /// - Returns: A control as words, with its raw name beside it.
   static func controlText(_ control: Control) -> String {
-    withIdentifier(controlName(control), control.rawValue)
+    let words = controlName(control)
+    return words == control.rawValue ? words : withIdentifier(words, control.rawValue)
   }
 
   /// Returns the words that name a control.

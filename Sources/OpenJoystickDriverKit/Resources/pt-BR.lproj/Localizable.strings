@@ -410,6 +410,16 @@
 "ui.capture.profileNameValidation" = "Digite um nome de perfil.";
 /* Toolbar button in the Profiles area that creates a profile. */
 "ui.profiles.new" = "Novo Perfil";
+/* Label of the optional note field in the binding sheet of the profile editor. The note is free text that the person writes about one binding. */
+"ui.profiles.remark" = "Nota (opcional)";
+/* Label of the popup above the profile list that chooses the order of the list. */
+"ui.profiles.sort" = "Ordenar por";
+/* Option of the sort popup above the profile list: sort the profiles by name. */
+"ui.profiles.sort.name" = "Nome";
+/* Option of the sort popup above the profile list: sort the profiles by controller. */
+"ui.profiles.sort.controller" = "Controle";
+/* Option of the sort popup above the profile list: sort the profiles by when each was last activated, the newest first. */
+"ui.profiles.sort.lastUsed" = "Último uso";
 /* Title of the alert that deletes a profile. */
 "ui.profiles.deleteTitle" = "Apagar perfil?";
 /* Message of the alert that deletes a profile. OpenJoystickDriver is the product name. */
@@ -616,8 +626,14 @@
 "ui.profiles.templateEmpty" = "Vazio";
 /* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
 "ui.profiles.templateGyroStick" = "Giroscópio para analógico";
+/* Option of the template popup in the profile creation sheet: the profile binds the D-pad, South and East to keyboard navigation keys. */
+"ui.profiles.templateKeyboardNavigation" = "Navegação pelo Teclado";
+/* Option of the template popup in the profile creation sheet: the profile binds South, East and North to the mouse buttons. */
+"ui.profiles.templateMouseClicks" = "Cliques do Mouse";
 /* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
 "ui.profiles.templateNoMotion" = "%@ não tem sensor de movimento.";
+/* Message in the profile creation sheet under the template popup. %@ is the comma-separated list of controls that the template could not bind because the controller lacks them. */
+"ui.profiles.templateSkipped" = "Não atribuído porque o controle não tem: %@.";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "Alternar";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -3260,7 +3276,7 @@
 /* Help text of the PROFILE argument shared by the 'ojd profile' commands. The command in quotes stays as written. */
 "cli.profile.group.argument" = "O perfil: o ID dele ou o nome dele em “ojd profile list”.";
 /* One-line summary of 'ojd profile create' in the command list and at the top of its help. */
-"cli.profile.create.abstract" = "Cria um perfil vazio para um modelo de controle.";
+"cli.profile.create.abstract" = "Cria um perfil para um modelo de controle.";
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "O controle a manter pressionado para a saída do giroscópio (modelo gyro-stick). Sem ele, a saída do giroscópio fica sempre ativa.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
@@ -3273,12 +3289,14 @@
 "cli.profile.create.done" = "“%1$@” criado (%2$@).";
 /* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
 "cli.profile.create.noMotion" = "%@ não tem sensor de movimento.";
+/* Line printed after 'ojd profile create' with a template. %@ is the comma-separated list of control ids that the template skipped because the controller lacks them; the ids stay as written. */
+"cli.profile.create.skipped" = "Ignorado porque o controle não tem: %@.";
 /* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.stick" = "O analógico que o modelo gyro-stick controla: left ou right. O padrão é right.";
-/* Help text of the --template option of 'ojd profile create'. gyro-stick is the only template, the user types it, and it stays as written. */
-"cli.profile.create.template" = "Começar de um modelo. O único modelo é gyro-stick.";
-/* Error of 'ojd profile create' when --stick or --activation is given without --template. The three option names stay as written. */
-"cli.profile.create.templateRequired" = "--stick e --activation precisam de --template.";
+/* Help text of the --template option of 'ojd profile create'. gyro-stick, keyboard-navigation and mouse-clicks are the template names the user types and stay as written. */
+"cli.profile.create.template" = "Começar de um modelo: gyro-stick, keyboard-navigation ou mouse-clicks.";
+/* Error of 'ojd profile create' when --stick or --activation is given without --template gyro-stick. The option names and the template name stay as written. */
+"cli.profile.create.templateRequired" = "--stick e --activation precisam de --template gyro-stick.";
 /* Help text of the physical input option of 'ojd profile create'. shared and exclusive are values the user types and stay as written. */
 "platform.macos.cli.profile.create.physicalInput" = "Se o macOS ainda enxerga o controle (shared) ou se o OJD o assume (exclusive).";
 /* Help text of the --virtual-gamepad option of 'ojd profile create'. disabled, mapped and passthrough are values the user types and stay as written. */
@@ -5044,3 +5062,17 @@
 "platform.macos.ui.settings.general.startAtLoginUnavailable" = "Abrir ao iniciar a sessão requer macOS 13 ou posterior.";
 /* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
 "ui.settings.notifications.controllerConnectedOrAttention" = "Conectado ou precisa de atenção";
+/* Title of the row in the General pane of the settings window where the user records the system-wide keyboard shortcut that pauses and resumes every controller. */
+"ui.settings.general.pauseShortcut" = "Atalho de pausa";
+/* Explanation under the pause shortcut title in the General pane of the settings window. */
+"ui.settings.general.pauseShortcutDescription" = "Pausa e retoma todos os controles de qualquer app. Segure Control, Option ou Command junto com uma tecla.";
+/* Button in the General pane of the settings window that starts recording the pause shortcut. */
+"ui.settings.general.pauseShortcutRecord" = "Gravar atalho";
+/* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
+"ui.settings.general.pauseShortcutRecording" = "Pressione o atalho…";
+/* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
+"ui.settings.general.pauseShortcutTaken" = "Outro app já usa este atalho. Grave um atalho diferente.";
+/* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
+"cli.setting.set.badShortcut" = "“%1$@” não é um atalho. Use modificadores e uma tecla unidos por +, como control+option+P, ou none.";
+/* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
+"ui.whatsNew.title" = "Novidades da versão %@";

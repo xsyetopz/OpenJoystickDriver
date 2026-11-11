@@ -1,3 +1,4 @@
+import Foundation
 import OpenJoystickDriverKit
 import OpenJoystickDriverTestSupport
 import Testing
@@ -185,6 +186,66 @@ struct ControllerDetailFactsTests {
         )
     )
     #expect(ControllerDetailFacts.matchTierText(.exactGUID) == "exact GUID")
+  }
+
+  @Test
+  func everyControlHasWordsAndItsRawNameOnlyBesideThem() {
+    for control in Control.allCases {
+      let words = ControllerDetailFacts.controlName(control)
+      #expect(!words.isEmpty && !words.contains("ui."), "\(control.rawValue)")
+      // A word that is the raw name itself (`Start`) shows once; otherwise the raw name follows.
+      #expect(
+        ControllerDetailFacts.controlText(control)
+          == (words == control.rawValue ? words : "\(words) (\(control.rawValue))"),
+        "\(control.rawValue)"
+      )
+    }
+  }
+
+  @Test
+  func everyParserHasWordsAndItsOJDSpellingOnlyBesideThem() {
+    for family in PhysicalProtocolID.allCases {
+      let bindings =
+        family.variants.isEmpty
+        ? [ProtocolBindingID(family)]
+        : family.variants.map { ProtocolBindingID(family, variant: $0) }
+      for binding in bindings {
+        let facts = ControllerDetailFacts.advanced(for: device(binding: binding), record: nil)
+        let name = binding.commandLineName
+        #expect(!binding.displayName.isEmpty && binding.displayName != name, "\(name)")
+        #expect(
+          Self.value(.parser, in: facts)
+            == .text(ControllerDetailFacts.withIdentifier(binding.displayName, name)),
+          "\(name)"
+        )
+      }
+    }
+  }
+
+  @Test
+  func everyInputMappingSourceHasWordsAndItsRawNameOnlyBesideThem() throws {
+    let sources: [InputMapping.Source] = [
+      .record, .sdlGameControllerDB, .standardHIDUsageMap, .none,
+    ]
+    for source in sources {
+      let json = """
+        {"source":"\(source.rawValue)","unmapped":[]\
+        \(source == .sdlGameControllerDB ? ",\"match\":\"ExactGUID\"" : "")}
+        """
+      let mapping = try JSONDecoder().decode(InputMapping.self, from: Data(json.utf8))
+      let text = ControllerDetailFacts.inputMappingText(mapping)
+      #expect(text.hasSuffix(" (\(source.rawValue))"), "\(source.rawValue)")
+      #expect(text != " (\(source.rawValue))", "\(source.rawValue)")
+    }
+    for tier in SDLMatchTier.allCases {
+      let words = ControllerDetailFacts.matchTierText(tier)
+      #expect(!words.isEmpty && words != tier.rawValue && !words.contains("ui."))
+    }
+  }
+
+  @Test
+  func theRecordSourceIsWordsNotAnIdentifier() {
+    #expect(ControllerDetailFacts.recordText(nil) == "none (no record matches)")
   }
 
   @Test

@@ -270,6 +270,11 @@ For more information, see [Command reference](Command-Reference.md).
 **Show in menu bar** and **Show in Dock** choose where the icon shows.
 When **Show in Dock** is off, the Dock icon shows only while a window is open.
 
+**Pause shortcut** is a keyboard shortcut that pauses every controller, or resumes them when all are paused, from any app.
+It is unset until you click **Record Shortcut** and press a key with Control, Option, or Command; Escape cancels, and **Clear** removes it.
+Another app that uses the same combination makes the shortcut fail with an error here; record a different one.
+`ojd setting set pauseShortcut` sets it too.
+
 Under **Updates**, **Check for updates automatically** looks for a newer version when the app starts.
 Click **Check Now** to look at once.
 OJD contacts GitHub only for these checks.
@@ -277,6 +282,9 @@ The result is **Up to date**, **Update available**, or **Newer than the latest r
 Click **View Update** to open the release page.
 OJD does not download or install anything.
 Select **Include prerelease updates** to include beta versions.
+
+The first time you open the app window after an update, a **What's New** sheet shows the changes of the installed version from the changelog, once.
+Click **Done** to close it.
 
 ### Notifications
 

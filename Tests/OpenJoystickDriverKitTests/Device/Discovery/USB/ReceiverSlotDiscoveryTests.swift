@@ -250,6 +250,12 @@ struct ReceiverSlotDiscoveryTests {
     for identifier in slotIdentifiers {
       #expect(await manager.controllerSessionState(for: identifier) == nil)
     }
+    // Output, speaker and session control cannot reach an empty slot by model.
+    let reference = ControllerReference.model(ReceiverSlotProvider.identifier(interface: 0).model)
+    let notFound = ControllerOutputResult(.notFound)
+    #expect(await manager.sendControllerOutput(.stopRumble, for: reference) == notFound)
+    #expect(await manager.stopSpeaker(for: reference) == notFound)
+    #expect(await manager.suspendController(reference).failure == .notFound)
     await manager.stop()
   }
 

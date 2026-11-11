@@ -59,9 +59,46 @@ enum SettingCatalog {
     }
   }
 
+  /// The name of the pause shortcut, the one setting that holds text and not true or false.
+  static let pauseShortcutName = "pauseShortcut"
+
+  /// The text that clears the pause shortcut.
+  static let noShortcut = "none"
+
+  /// The settings file the pause shortcut is read from and written to; tests point it at a
+  /// temporary folder.
+  @TaskLocal
+  static var store = SettingsStore()
+
   /// The names of every setting, as shown in help and error text.
   static var keyNames: String {
-    ApplicationSettingKey.allCases.map(\.rawValue).joined(separator: ", ")
+    (ApplicationSettingKey.allCases.map(\.rawValue) + [pauseShortcutName]).joined(separator: ", ")
+  }
+
+  /// Checks that `name` names a setting.
+  ///
+  /// - Throws: ``ValidationError`` when no setting has that name.
+  static func validate(name: String) throws {
+    if name != pauseShortcutName { _ = try key(name) }
+  }
+
+  /// Parses `text` as the pause shortcut, or `none` for no shortcut.
+  ///
+  /// - Throws: ``ValidationError`` when `text` is neither.
+  static func pauseShortcut(_ text: String) throws -> PauseShortcut? {
+    guard text != noShortcut else { return nil }
+    do { return try PauseShortcut(parsing: text) } catch {
+      throw ValidationError(CLILocalized.format("cli.setting.set.badShortcut", text))
+    }
+  }
+
+  /// Prints the pause shortcut `value` as `key` and `value` JSON, or as the text alone.
+  static func printPauseShortcut(_ shortcut: PauseShortcut?) throws {
+    let text = shortcut?.text ?? noShortcut
+    switch CLIContext.current.format {
+    case .json: try CLIOutput.json(PauseShortcutResult(key: pauseShortcutName, value: text))
+    case .plain, .human: CLIOutput.stdout(text)
+    }
   }
 
   /// Returns the setting that `name` names.
@@ -118,6 +155,14 @@ struct SettingResult: Encodable, Equatable {
     case .plain, .human: CLIOutput.stdout(String(value))
     }
   }
+}
+
+/// The `--json` result of `setting get` and `setting set` for the pause shortcut.
+struct PauseShortcutResult: Encodable, Equatable {
+  /// The setting name.
+  let key: String
+  /// The shortcut as `control+option+P`, or `none`.
+  let value: String
 }
 
 /// The `ojd setting list` command: prints every setting with its value and description.
@@ -191,11 +236,15 @@ struct SettingGetCommand: AsyncParsableCommand {
   var global: GlobalOptions
 
   /// Checks that `key` names a setting.
-  func validate() throws { _ = try SettingCatalog.key(key) }
+  func validate() throws { try SettingCatalog.validate(name: key) }
 
   /// Runs the command.
   func run() async throws {
     try await global.run {
+      if key == SettingCatalog.pauseShortcutName {
+        try SettingCatalog.printPauseShortcut(SettingCatalog.store.pauseShortcut())
+        return
+      }
       let setting = try SettingCatalog.key(key)
       let value = try await SettingCatalog.read().value(of: setting) ?? setting.defaultValue
       try SettingResult.print(setting, value: value)
@@ -237,11 +286,23 @@ struct SettingSetCommand: AsyncParsableCommand {
   var global: GlobalOptions
 
   /// Checks that `key` names a setting and that `value` is a value for it.
-  func validate() throws { _ = try SettingCatalog.value(value, for: SettingCatalog.key(key)) }
+  func validate() throws {
+    if key == SettingCatalog.pauseShortcutName {
+      _ = try SettingCatalog.pauseShortcut(value)
+    } else {
+      _ = try SettingCatalog.value(value, for: SettingCatalog.key(key))
+    }
+  }
 
   /// Runs the command.
   func run() async throws {
     try await global.run {
+      if key == SettingCatalog.pauseShortcutName {
+        let shortcut = try SettingCatalog.pauseShortcut(value)
+        try SettingCatalog.store.setPauseShortcut(shortcut)
+        try SettingCatalog.printPauseShortcut(shortcut)
+        return
+      }
       let setting = try SettingCatalog.key(key)
       let requested = try SettingCatalog.value(value, for: setting)
       let applied = try await ServiceConnection.request { client in

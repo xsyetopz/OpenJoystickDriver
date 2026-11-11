@@ -137,7 +137,8 @@
               turbo,
               longHold,
               multiTap,
-              actions in
+              actions,
+              remark in
               applyDraftChange {
                 try draft.settingBindingBehaviors(
                   behavior: behavior,
@@ -147,6 +148,7 @@
                   multiTap: multiTap,
                   for: binding.id
                 ).settingAdditionalActions(actions, for: binding.id)
+                  .settingRemark(remark, for: binding.id)
               }
             }
           case .chord:
@@ -188,7 +190,8 @@
               turbo,
               longHold,
               multiTap,
-              actions in
+              actions,
+              remark in
               applyDraftChange {
                 try draft.settingLayerBindingBehaviors(
                   behavior: behavior,
@@ -199,6 +202,7 @@
                   longHold: longHold,
                   multiTap: multiTap
                 ).settingAdditionalActions(actions, for: binding.id, layerID: layerID)
+                  .settingRemark(remark, for: binding.id, layerID: layerID)
               }
             }
           }

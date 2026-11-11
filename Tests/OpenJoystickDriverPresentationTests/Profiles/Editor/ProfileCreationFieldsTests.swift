@@ -319,4 +319,34 @@ struct ProfileCreationFieldsTests {
     #expect(fields.lacksMotion(in: context))
     #expect(fields.proposedProfile(in: context) == nil)
   }
+
+  @Test
+  func aBindingTemplateProposesItsBindingsAndListsTheControlsTheModelLacks() {
+    let dualSense = Self.device("DualSense", token: "d", vendorID: 0x054C, productID: 0x0CE6)
+    let context = Self.context(devices: [dualSense])
+    var fields = ProfileCreationFields()
+    fields.template = .bindings(.keyboardNavigation)
+
+    let capabilities = ProtocolDriverRegistry().profileCapabilities(
+      for: ControllerModelID(vendorID: 0x054C, productID: 0x0CE6)
+    )
+    let lacked = RemappingBindingTemplate.keyboardNavigation.controls.filter {
+      capabilities?.physicalInput.controls.contains($0) != true
+    }
+    #expect(fields.skippedControls(in: context) == lacked)
+    #expect(
+      fields.proposedProfile(in: context)?.bindings.count
+        == RemappingBindingTemplate.keyboardNavigation.controls.count - lacked.count
+    )
+  }
+
+  @Test
+  func aBindingTemplateForAnUnknownModelSkipsNothing() {
+    let context = Self.context(devices: [Self.padA])
+    var fields = ProfileCreationFields()
+    fields.template = .bindings(.mouseClicks)
+
+    #expect(fields.skippedControls(in: context).isEmpty)
+    #expect(fields.proposedProfile(in: context)?.bindings.count == 3)
+  }
 }

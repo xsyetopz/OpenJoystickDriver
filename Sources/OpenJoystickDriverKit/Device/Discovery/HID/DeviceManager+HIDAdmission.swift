@@ -34,11 +34,17 @@ extension DeviceManager {
     if physicalDevice.nativePassThrough {
       await yieldRawUSBPipelines(toNative: identifier)
       await prepareNativeHIDLocation(connection)
-    } else if hasNativeHIDDevice(at: routingAddress) {
-      guard isCurrentHIDInitialization(connection) else { return }
-      recordPassThroughDevice(connection, vendorID: vendorID, productID: productID)
-      _ = await hidManager.releaseInputClaim(address: routingAddress)
-      return
+    } else {
+      // A native holder that this connection re-enumerated is gone, not a sibling to leave alone.
+      if hasNativeHIDDevice(at: routingAddress) {
+        await retireSupersededHIDConnections(by: connection)
+      }
+      if hasNativeHIDDevice(at: routingAddress) {
+        guard isCurrentHIDInitialization(connection) else { return }
+        recordPassThroughDevice(connection, vendorID: vendorID, productID: productID)
+        _ = await hidManager.releaseInputClaim(address: routingAddress)
+        return
+      }
     }
     // A family's non-role interface carries no controller; its claim is held while a sibling
     // role is bound, through the unbound-claim reconciliation.

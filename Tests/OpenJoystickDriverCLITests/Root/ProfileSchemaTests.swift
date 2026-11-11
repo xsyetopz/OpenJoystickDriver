@@ -49,6 +49,7 @@ struct ProfileSchemaTests {
       "bindings": [
         {
           "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D61",
+          "remark": "Jump when pressed",
           "source": {"type": "Button", "button": "South"},
           "destination": {"type": "Keyboard", "key": "Space", "modifiers": ["Shift", "Meta"]},
           "longHold": {
@@ -292,8 +293,30 @@ struct ProfileSchemaTests {
     original: String,
     replacement: String
   ) throws {
-    #expect(Self.richDocument.contains(original), "\(problem)")
-    let broken = Self.richDocument.replacingOccurrences(of: original, with: replacement)
+    try Self.expectRejection(problem, original, replacement)
+  }
+
+  @Test(arguments: [
+    ("empty binding remark", #""remark": """#),
+    ("binding remark over 200 characters", "\"remark\": \"" + String(repeating: "a", count: 201) + "\""),
+    ("binding remark with a control character", #""remark": "Jump\u007f""#),
+    ("binding remark with a space at the end", #""remark": "Jump ""#),
+    ("binding remark that is not text", #""remark": 5"#),
+  ])
+  func aBrokenBindingRemarkIsRejectedByTheDecoderAndTheSchema(
+    problem: String,
+    replacement: String
+  ) throws {
+    try Self.expectRejection(problem, #""remark": "Jump when pressed""#, replacement)
+  }
+
+  private static func expectRejection(
+    _ problem: String,
+    _ original: String,
+    _ replacement: String
+  ) throws {
+    #expect(richDocument.contains(original), "\(problem)")
+    let broken = richDocument.replacingOccurrences(of: original, with: replacement)
     do {
       _ = try RemappingProfileFileStore.load(from: PropertyListFixture.data(json: broken))
       Issue.record("\(problem): the profile loads")

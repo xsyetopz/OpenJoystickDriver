@@ -410,6 +410,16 @@
 "ui.capture.profileNameValidation" = "プロファイル名を入力してください。";
 /* Toolbar button in the Profiles area that creates a profile. */
 "ui.profiles.new" = "新規プロファイル";
+/* Label of the optional note field in the binding sheet of the profile editor. The note is free text that the person writes about one binding. */
+"ui.profiles.remark" = "メモ (任意)";
+/* Label of the popup above the profile list that chooses the order of the list. */
+"ui.profiles.sort" = "並べ替え";
+/* Option of the sort popup above the profile list: sort the profiles by name. */
+"ui.profiles.sort.name" = "名前";
+/* Option of the sort popup above the profile list: sort the profiles by controller. */
+"ui.profiles.sort.controller" = "コントローラ";
+/* Option of the sort popup above the profile list: sort the profiles by when each was last activated, the newest first. */
+"ui.profiles.sort.lastUsed" = "最終使用";
 /* Title of the alert that deletes a profile. */
 "ui.profiles.deleteTitle" = "プロファイルを削除しますか？";
 /* Message of the alert that deletes a profile. OpenJoystickDriver is the product name. */
@@ -616,8 +626,14 @@
 "ui.profiles.templateEmpty" = "空";
 /* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
 "ui.profiles.templateGyroStick" = "ジャイロからスティック";
+/* Option of the template popup in the profile creation sheet: the profile binds the D-pad, South and East to keyboard navigation keys. */
+"ui.profiles.templateKeyboardNavigation" = "キーボードナビゲーション";
+/* Option of the template popup in the profile creation sheet: the profile binds South, East and North to the mouse buttons. */
+"ui.profiles.templateMouseClicks" = "マウスクリック";
 /* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
 "ui.profiles.templateNoMotion" = "%@ にはモーションセンサーがありません。";
+/* Message in the profile creation sheet under the template popup. %@ is the comma-separated list of controls that the template could not bind because the controller lacks them. */
+"ui.profiles.templateSkipped" = "コントローラに次がないため割り当てませんでした: %@。";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "切り替え";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -3260,7 +3276,7 @@
 /* Help text of the PROFILE argument shared by the 'ojd profile' commands. The command in quotes stays as written. */
 "cli.profile.group.argument" = "プロファイル: その ID、または「ojd profile list」に表示される名前。";
 /* One-line summary of 'ojd profile create' in the command list and at the top of its help. */
-"cli.profile.create.abstract" = "1 つのコントローラモデル用の空のプロファイルを作成します。";
+"cli.profile.create.abstract" = "1 つのコントローラモデル用のプロファイルを作成します。";
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "ジャイロ出力のために押し続けるコントロール (gyro-stick テンプレート)。指定しない場合、ジャイロ出力は常にオンです。";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
@@ -3273,12 +3289,14 @@
 "cli.profile.create.done" = "「%1$@」(%2$@) を作成しました。";
 /* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
 "cli.profile.create.noMotion" = "%@ にはモーションセンサーがありません。";
+/* Line printed after 'ojd profile create' with a template. %@ is the comma-separated list of control ids that the template skipped because the controller lacks them; the ids stay as written. */
+"cli.profile.create.skipped" = "コントローラに次がないためスキップしました: %@。";
 /* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.stick" = "gyro-stick テンプレートが操作するスティック: left または right。既定値は right です。";
-/* Help text of the --template option of 'ojd profile create'. gyro-stick is the only template, the user types it, and it stays as written. */
-"cli.profile.create.template" = "テンプレートから開始します。テンプレートは gyro-stick のみです。";
-/* Error of 'ojd profile create' when --stick or --activation is given without --template. The three option names stay as written. */
-"cli.profile.create.templateRequired" = "--stick と --activation には --template が必要です。";
+/* Help text of the --template option of 'ojd profile create'. gyro-stick, keyboard-navigation and mouse-clicks are the template names the user types and stay as written. */
+"cli.profile.create.template" = "テンプレートから開始します: gyro-stick、keyboard-navigation、mouse-clicks。";
+/* Error of 'ojd profile create' when --stick or --activation is given without --template gyro-stick. The option names and the template name stay as written. */
+"cli.profile.create.templateRequired" = "--stick と --activation には --template gyro-stick が必要です。";
 /* Help text of the physical input option of 'ojd profile create'. shared and exclusive are values the user types and stay as written. */
 "platform.macos.cli.profile.create.physicalInput" = "macOS がコントローラを引き続き認識するか (shared)、OJD が占有するか (exclusive)。";
 /* Help text of the --virtual-gamepad option of 'ojd profile create'. disabled, mapped and passthrough are values the user types and stay as written. */
@@ -5043,3 +5061,17 @@
 "platform.macos.ui.settings.general.startAtLoginUnavailable" = "ログイン時に開くには macOS 13 以降が必要です。";
 /* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
 "ui.settings.notifications.controllerConnectedOrAttention" = "接続時または要確認時";
+/* Title of the row in the General pane of the settings window where the user records the system-wide keyboard shortcut that pauses and resumes every controller. */
+"ui.settings.general.pauseShortcut" = "一時停止のショートカット";
+/* Explanation under the pause shortcut title in the General pane of the settings window. */
+"ui.settings.general.pauseShortcutDescription" = "どのアプリからでも、すべてのコントローラを一時停止または再開します。キーと一緒にControl、Option、Commandのいずれかを押し続けます。";
+/* Button in the General pane of the settings window that starts recording the pause shortcut. */
+"ui.settings.general.pauseShortcutRecord" = "ショートカットを記録";
+/* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
+"ui.settings.general.pauseShortcutRecording" = "ショートカットを押してください…";
+/* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
+"ui.settings.general.pauseShortcutTaken" = "このショートカットはすでに別のアプリが使用しています。別のショートカットを記録してください。";
+/* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
+"cli.setting.set.badShortcut" = "「%1$@」はショートカットではありません。+でつないだ修飾キーとキーを指定してください(例: control+option+P)。解除するにはnoneを指定します。";
+/* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
+"ui.whatsNew.title" = "%@の新機能";

@@ -255,6 +255,14 @@
       }
     }
 
+    /// The profiles in the order that the list shows.
+    var sortedProfiles: [RemappingProfile] {
+      screen.listSort.sorted(
+        profiles,
+        lastUsed: ProfileListSort.lastUsed(in: currentSnapshot ?? lastKnownSnapshot)
+      )
+    }
+
     /// The selected profile; the first profile when the selection is not in the library, unless the
     /// editor preserves the selected profile after its deletion.
     var selectedProfile: RemappingProfile? {
@@ -295,6 +303,11 @@
           }.padding(.horizontal, 14)
         case .available:
           if !profiles.isEmpty || !(currentSnapshot?.profileIssues.isEmpty ?? true) {
+            Picker(OJDLocalized.string("ui.profiles.sort"), selection: $screen.listSort) {
+              ForEach(ProfileListSort.allCases) { sort in
+                Text(OJDLocalized.string(sort.titleKey)).tag(sort)
+              }
+            }.padding(.horizontal, 14)
             profileListRows
           }
         }
@@ -305,7 +318,7 @@
     /// The rows of the profiles, then those of the damaged entries.
     var profileListRows: some View {
       List(selection: profileListSelection) {
-        ForEach(profiles) { profile in
+        ForEach(sortedProfiles) { profile in
           HStack(spacing: OJDSpacing.small) {
             OJDListGlyphSlot {
               let semanticState: SemanticState = isActive(profile) ? .active : .inactive

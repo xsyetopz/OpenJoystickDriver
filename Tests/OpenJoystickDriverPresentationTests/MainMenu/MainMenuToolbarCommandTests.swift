@@ -39,6 +39,46 @@ struct MainMenuToolbarCommandTests {
     #expect(MainWindowToolbarAction.activitySearch.menuAction == .find)
   }
 
+  /// A title without its trailing ellipsis and letter case: the menu rule adds the ellipsis to a
+  /// command that asks for more input, and menus capitalize each word.
+  private func bareTitle(_ key: String) -> String {
+    var text = OJDLocalized.string(key)
+    while text.hasSuffix(".") || text.hasSuffix("\u{2026}") { text.removeLast() }
+    return text.lowercased()
+  }
+
+  @Test
+  func everyCommandHasTheToolbarItemsTitle() throws {
+    for action in MainWindowToolbarAction.allCases where action.menuAction != .find {
+      let item = try #require(MainMenuModel.item(forToolbar: action))
+      // A File command may name what it acts on ("Install Record or Mod") where the toolbar
+      // item says "Install"; it always starts with the toolbar item's words.
+      #expect(
+        bareTitle(item.titleKey).hasPrefix(bareTitle(action.labelKey)),
+        "\(action): the menu says \(item.titleKey), the toolbar \(action.labelKey)"
+      )
+    }
+  }
+
+  @Test
+  func everyCommandIsAvailableWhenAndOnlyWhenTheToolbarItemIs() throws {
+    for action in MainWindowToolbarAction.allCases where action.menuAction != .find {
+      let item = try #require(MainMenuModel.item(forToolbar: action))
+      var state = MainMenuState(hasSelectedProfile: true, hasMainWindow: true)
+      state.enabledToolbarActions = [action]
+      #expect(MainMenuModel.isEnabled(item, state: state), "\(action) is off while its item is on")
+      state.enabledToolbarActions = []
+      state.disabledToolbarActions = [action]
+      #expect(!MainMenuModel.isEnabled(item, state: state), "\(action) is on while its item is off")
+    }
+  }
+
+  @Test
+  func commandsOfAnotherAreaStayAvailableForTheirFileMenuItems() throws {
+    let item = try #require(MainMenuModel.item(for: .importProfile))
+    #expect(MainMenuModel.isEnabled(item, state: MainMenuState(hasMainWindow: true)))
+  }
+
   @Test
   func commandsAreEnabledWhenTheToolbarItemIs() throws {
     let item = try #require(MainMenuModel.item(forToolbar: .duplicateProfile))

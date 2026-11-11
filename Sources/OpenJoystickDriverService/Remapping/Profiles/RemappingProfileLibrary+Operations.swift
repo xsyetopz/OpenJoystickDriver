@@ -16,6 +16,7 @@ extension RemappingProfileLibrary {
     let loaded = try loadIfNeeded()
     return RemappingProfileLibrarySnapshot(
       profiles: allProfiles(loaded).sorted(by: Self.profileOrder),
+      lastUsed: lastUsed(among: allProfiles(loaded)),
       activeProfiles: loaded.activeProfiles.map {
         RemappingActiveProfileSelection(
           model: $0.model,
@@ -224,6 +225,7 @@ extension RemappingProfileLibrary {
       )
     )
     try replace(with: proposed)
+    recordUse(of: profile.id, among: known)
     return RemappingProfileMutationImpact(modelsNeedingRefresh: [model])
   }
 
