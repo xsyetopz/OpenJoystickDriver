@@ -20,16 +20,6 @@
 	</array>
 	<key>productID</key>
 	<integer>2627</integer>
-	<key>usb</key>
-	<dict>
-		<key>endpoints</key>
-		<dict>
-			<key>in</key>
-			<integer>129</integer>
-			<key>out</key>
-			<integer>1</integer>
-		</dict>
-	</dict>
 	<key>vendorID</key>
 	<integer>5426</integer>
 </dict>
