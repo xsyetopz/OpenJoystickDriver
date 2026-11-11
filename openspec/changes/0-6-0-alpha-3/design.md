@@ -279,7 +279,11 @@ Alternative considered: binary property lists in the app bundle (0.8 times the J
 - The context has no file, network, or timer API, and the command adds none.
 - The command does not overwrite a file whose content differs unless the user passes `--replace`.
 - The service, the app, and package loading never evaluate a script. A package holds documents only.
-- The language is JavaScript as JavaScriptCore runs it: one file, no `import`, no TypeScript syntax. Task 6.7 decides whether OJD ships a type declaration file for editors.
+- The language is JavaScript as JavaScriptCore runs it: one file, no `import`, no TypeScript syntax.
+- OJD ships no type declaration file (task 6.7). `ojd generate` already checks each document with the reader and names the key path and rule (6.3), which a declaration file cannot replace:
+  - TypeScript types cannot state most rules of the 15 schemas, which hold 75 `pattern`, 33 `uniqueItems`, 32 `if`, 7 `propertyNames`, and 4 `dependentRequired` keywords. A declaration file would accept a document that the command then refuses.
+  - The repository has no Node or TypeScript tooling (no `package.json` or `tsconfig.json`). A generator from JSON Schema to TypeScript would add that tooling, or a converter for `$ref`, `oneOf`, and `if` that the project maintains.
+  - An editor checks plain JavaScript against a declaration file only with `// @ts-check` and JSDoc type comments, so each script would carry setup that the command does not need.
 
 Alternative considered: scripts the service loads at run time. Rejected: no record needs run-time logic, and a script in the service can stall input.
 
@@ -385,7 +389,7 @@ Alternative considered: a wheel driver in Swift. Rejected by D13: the next wheel
 
 This release already breaks the contract (D1, D3). It also takes the changes that a later release would otherwise break it for: the `remove` list (D12), idle as a mode state (D8), output for `HIDDescriptor` (D9), layouts for every family (D14), the removal of prose properties (D7), patches that reach every section and merge `modes` by `id` (D17), and `appIDs` in a profile's `applicationScope` (D25). After `v1alpha3`, a change to a document shape needs a defect that data cannot fix; a preference is not a reason. Additions (a property, an enumeration value, a kind) stay open.
 
-The parts this release leaves unsettled are named, each with its task: whether the driver extension stays (4.9), whether scripts get type declarations (6.7), and how a served pad reaches a GameController game with no profile command (9.13, 9.14), and whether a profile can leave out `device` (16.4).
+The parts this release leaves unsettled are named, each with its task: whether the driver extension stays (4.9), and how a served pad reaches a GameController game with no profile command (9.13, 9.14), and whether a profile can leave out `device` (16.4).
 
 ### D16. macOS serves a pad only when GameController lists a controller for it
 
@@ -591,7 +595,6 @@ Groups 10 to 12, 14, and 17 fix what users and the maintainer report. Groups 13,
 - Why does `gamecontrollerd` not take the 2C's HID service over Bluetooth LE while `supportsHIDDevice` answers yes, and which other HID pads behave so? (tasks 2.11, 9.11)
 - A pad OJD serves reaches a GameController game only after the user sets the `GameControllerCompatible` profile, because automatic selection never picks it and SDL reads no input from it (`wiki/Playing-Games.md:24,34`). Can one profile serve both, or can OJD pick the profile by the app in front? The maintainer chose research on both for this release (tasks 9.13, 9.14); no task in this change alters profile selection.
 - Can OJD serve `045E:02EA`, `0B00`, and `0B12` through Apple's HID device, which would allow removing the extension? (task 4.9)
-- Should OJD ship a type declaration file for generator scripts? (task 6.7)
 - Which terms does the maintainer choose from the table in D22? In particular "Handled by" against the "Served by" the command line prints, and the three names of the virtual gamepad kinds. (task 14.1)
 - Which of the feature groups 13 (Simple and Advanced), 15 (per-app profiles), and 16 (mapper features) stay in 0.6.0-alpha.3?
 - Does the maintainer accept the HID fallback of D18, which reverses `wiki/Supported-Controllers.md:134`? (task 9.18)

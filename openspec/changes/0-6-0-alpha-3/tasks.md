@@ -70,7 +70,7 @@ A controller fix in groups 2, 3, and 8 lands as a record or a patch (D13). Where
 - [ ] 6.4 Write the files with the store's naming rule; report an equal file as unchanged; stop on a differing file unless `--replace`.
 - [ ] 6.5 Report a syntax error or exception with its message and line number.
 - [ ] 6.6 Add a test that package loading reads documents only and never evaluates a `.js` file in a package.
-- [ ] 6.7 Decide whether OJD ships a type declaration file generated from the schemas, so an editor checks a script. Record the decision and its evidence in D2 of `design.md`.
+- [x] 6.7 Decide whether OJD ships a type declaration file generated from the schemas, so an editor checks a script. Record the decision and its evidence in D2 of `design.md`.
 - [ ] 6.8 Write the generator page in the wiki with one complete script, and run that script through `ojd generate` in a test.
 - [ ] 6.9 Add AppleScript, JavaScript for Automation, and Shortcuts examples to `wiki/Automating-OpenJoystickDriver.md`. Run each example once and keep its output in the page.
 - [x] 6.10 List what the App Intents, the command line, and the local endpoint each expose, and name what a mod author cannot do through any of them. Save it as `docs/development/scripting-surfaces.md`; tasks 6.11 to 6.17 resolve each gap it names.
