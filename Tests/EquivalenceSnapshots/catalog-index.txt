@@ -517,12 +517,32 @@ gip keepAlive=enabled startup=[0520000100,0A200003000114,062000020100]
 parameters=
 
 ## 045E:02E0
-protocol=hid-descriptor variant=- ownership=macos
+protocol=hid-report-layout variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
 controls [Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
 output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
 session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+inputLayout reportID=1 minimumLength=16
+inputLayout button South 14&01
+inputLayout button East 14&02
+inputLayout button West 14&04
+inputLayout button North 14&08
+inputLayout button LeftShoulder 14&10
+inputLayout button RightShoulder 14&20
+inputLayout button Back 14&40
+inputLayout button Start 14&80
+inputLayout button LeftStickClick 15&01
+inputLayout button RightStickClick 15&02
+inputLayout axis LeftStickX byte=1 bits=16 signed=false range=0...65535 inverted=false
+inputLayout axis LeftStickY byte=3 bits=16 signed=false range=0...65535 inverted=false
+inputLayout axis RightStickX byte=5 bits=16 signed=false range=0...65535 inverted=false
+inputLayout axis RightStickY byte=7 bits=16 signed=false range=0...65535 inverted=false
+inputLayout hat table 13&FF 1=North,2=NorthEast,3=East,4=SouthEast,5=South,6=SouthWest,7=West,8=NorthWest
+inputLayout trigger left byte=9 button=-
+inputLayout trigger right byte=11 button=-
+inputLayout reportID=2 minimumLength=2
+inputLayout button Guide 1&01
 parameters=
 
 ## 045E:02E3
@@ -891,8 +911,9 @@ protocol=hid-report-layout variant=- ownership=macos
 transport in=130 out=2 interface=0 alt=0 interfaceOverride=false endpointOverride=false setConfiguration=false settleNs=0
 tuning -
 controls [Auxiliary1,Auxiliary2,Back,DpadDown,DpadLeft,DpadRight,DpadUp,East,Guide,LeftPaddle1,LeftPaddle2,LeftShoulder,LeftStickClick,LeftStickX,LeftStickY,LeftTrigger,North,RightPaddle1,RightPaddle2,RightShoulder,RightStickClick,RightStickX,RightStickY,RightTrigger,South,Start,West]
-output rumble=[] binary=[] lighting=[] adaptiveTriggers=[]
-session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=- minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+output rumble=[low-frequency,high-frequency] binary=[] lighting=[] adaptiveTriggers=[]
+session usbStartupMs=0 usbKeepAliveMs=- hidStartupMs=0 hidKeepAliveMs=100 minimumHIDOutputMs=0 recoveryMs=0 recoveryRounds=0 livenessMs=-
+rumbleTemplate output id=5 length=4 motors=high-frequency@3,low-frequency@2 bytes=050F0000 resendMs=100
 inputLayout reportID=4 minimumLength=32
 inputLayout button Auxiliary1 7&01
 inputLayout button Auxiliary2 7&02

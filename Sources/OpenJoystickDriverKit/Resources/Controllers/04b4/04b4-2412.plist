@@ -271,6 +271,35 @@
 				<key>family</key>
 				<string>HIDReportLayout</string>
 			</dict>
+			<key>session</key>
+			<dict>
+				<key>rumble</key>
+				<dict>
+					<key>bytes</key>
+					<string>05 0F 00 00</string>
+					<key>highFrequency</key>
+					<dict>
+						<key>byte</key>
+						<integer>3</integer>
+					</dict>
+					<key>lowFrequency</key>
+					<dict>
+						<key>byte</key>
+						<integer>2</integer>
+					</dict>
+					<key>report</key>
+					<dict>
+						<key>id</key>
+						<integer>5</integer>
+						<key>kind</key>
+						<string>Output</string>
+						<key>length</key>
+						<integer>4</integer>
+					</dict>
+					<key>resendIntervalMilliseconds</key>
+					<integer>100</integer>
+				</dict>
+			</dict>
 		</dict>
 	</array>
 	<key>productID</key>
