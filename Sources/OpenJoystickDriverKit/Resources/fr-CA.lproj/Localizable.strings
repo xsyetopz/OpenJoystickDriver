@@ -3695,7 +3695,6 @@
 "error.E5007.patch.patchFields" = "%1$@, document : le fichier doit contenir apiVersion, kind, selector et patch ou remove. Correction : ajoutez le membre manquant.";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@, patch : patch doit contenir modes, usb, bluetoothLE, capabilities, server, route, input ou tuning. Correction : ne gardez que ces sections et donnez-en au moins une.";
-"error.E5007.patch.patchSections" = "%1$@, patch : patch doit contenir modes, usb, bluetoothLE, capabilities, server, route, input, tuning ou idle. Correction : ne gardez que ces sections et donnez-en au moins une.";
 /* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@, persona: persona doit être l’une de %2$@. Correction : donnez à persona l’une de ces valeurs.";
 /* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */

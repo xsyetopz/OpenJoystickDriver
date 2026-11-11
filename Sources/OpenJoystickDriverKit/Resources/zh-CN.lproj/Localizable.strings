@@ -4233,7 +4233,6 @@
 "error.E5007.patch.patchFields" = "%1$@，document：文件必须包含 apiVersion、kind、selector 以及 patch 或 remove。修复：补上缺少的成员。";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@，patch：patch 必须包含 modes、usb、bluetoothLE、capabilities、server、route、input 或 tuning。修复：只保留这些部分，并至少给出一个。";
-"error.E5007.patch.patchSections" = "%1$@，patch：patch 必须包含 modes、usb、bluetoothLE、capabilities、server、route、input、tuning 或 idle。修复：只保留这些部分，并至少给出一个。";
 /* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@，persona：persona 必须是 %2$@ 之一。修复：将 persona 设为其中之一。";
 /* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */

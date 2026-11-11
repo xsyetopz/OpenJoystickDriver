@@ -4233,7 +4233,6 @@
 "error.E5007.patch.patchFields" = "%1$@, document: फ़ाइल में apiVersion, kind, selector और patch या remove होना चाहिए। समाधान: छूटा हुआ सदस्य जोड़ें।";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@, patch: patch में modes, usb, bluetoothLE, capabilities, server, route, input या tuning होना चाहिए। समाधान: केवल ये अनुभाग रखें और कम से कम एक दें।";
-"error.E5007.patch.patchSections" = "%1$@, patch: patch में modes, usb, bluetoothLE, capabilities, server, route, input, tuning या idle होना चाहिए। समाधान: केवल ये अनुभाग रखें और कम से कम एक दें।";
 /* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@, persona: persona %2$@ में से एक होना चाहिए। समाधान: persona को उनमें से एक रखें।";
 /* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */
