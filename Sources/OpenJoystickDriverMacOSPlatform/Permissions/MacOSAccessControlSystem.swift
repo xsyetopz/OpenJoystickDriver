@@ -1,3 +1,4 @@
+import ApplicationServices
 import CoreGraphics
 import Foundation
 import IOKit
@@ -29,8 +30,13 @@ package struct MacOSAccessControlSystem: AccessControlSystem {
   package func requestInputReadAccess() { _ = IOHIDRequestAccess(kIOHIDRequestTypeListenEvent) }
 
   /// Asks macOS for the permission to post events.
+  // `IOHIDRequestAccess(kIOHIDRequestTypePostEvent)` neither prompts nor adds the app to the
+  // Accessibility list in System Settings; the Accessibility prompt does both.
   @MainActor
-  package func requestInputInjectAccess() { _ = IOHIDRequestAccess(kIOHIDRequestTypePostEvent) }
+  package func requestInputInjectAccess() {
+    // The value of `kAXTrustedCheckOptionPrompt`, a mutable global that Swift 6 rejects.
+    _ = AXIsProcessTrustedWithOptions(["AXTrustedCheckOptionPrompt": true] as CFDictionary)
+  }
 
   /// Maps the IOHID access answer for `requestType` to a permission state.
   private static func accessState(
