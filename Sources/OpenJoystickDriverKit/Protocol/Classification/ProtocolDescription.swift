@@ -614,7 +614,7 @@ struct ProtocolDescription: Sendable {
     }
     if let problem = description.ruleProblem(fileName: fileName) { throw problem }
     if let violation = description.scopeViolation {
-      throw ProtocolDescriptionProblem(.invalidProtocolDescription, "\(fileName): \(violation)")
+      throw ProtocolDescriptionProblem(.invalidProtocolDescription, "\(fileName): \(violation.description)")
     }
     return description
   }

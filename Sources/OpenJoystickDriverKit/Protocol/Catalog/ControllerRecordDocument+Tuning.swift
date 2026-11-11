@@ -92,7 +92,7 @@ extension ControllerRecordDocument {
     let violation = ControllerTuning.Key.allCases.filter(tuning.setKeys.contains).lazy
       .compactMap(tuningScopeViolation).first
     if let violation {
-      throw DecodingError.dataCorrupted(.init(codingPath: path, debugDescription: violation))
+      throw DecodingError.dataCorrupted(violation.context(at: path))
     }
   }
 }

@@ -68,12 +68,22 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
 
   /// Why a resend interval cannot be honored beside a mode's own keep-alive: the keep-alive's
   /// interval governs the USB timer.
-  static let resendWithKeepAliveProblem =
+  static let resendWithKeepAliveProblem = ControllerRecordProblem.rule(
+    "error.E5007.rumble.resendWithKeepAlive",
     "a rumble resendIntervalMilliseconds cannot be combined with a session keepAlive"
+  )
   /// Why a resend interval cannot be honored in a family that runs its own keep-alive: the
   /// description's interval governs the ticks.
-  static let resendWithFamilyKeepAliveProblem =
+  static let resendWithFamilyKeepAliveProblem = ControllerRecordProblem.rule(
+    "error.E5007.rumble.resendWithFamilyKeepAlive",
     "a rumble resendIntervalMilliseconds needs a family whose description declares no keepAlive"
+  )
+
+  /// Why a template needs a driver that encodes it.
+  static let driverProblem = ControllerRecordProblem.rule(
+    "error.E5007.rumble.templateDriver",
+    "rumble templates require a driver that encodes them"
+  )
 
   /// Where the template's bytes go.
   public enum Target: Hashable, Sendable {

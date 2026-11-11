@@ -158,9 +158,14 @@ extension ControllerTuning {
     _ key: Key,
     protocolID: PhysicalProtocolID?,
     variant: PhysicalProtocolVariantID?
-  ) -> String? {
+  ) -> ControllerRecordProblem? {
     guard !scope(protocolID: protocolID, variant: variant).contains(key) else { return nil }
-    return "\(key.rawValue) is not read by the \(protocolID?.rawValue ?? "unknown") driver"
+    let driver = protocolID?.rawValue ?? "unknown"
+    return .rule(
+      "error.E5007.tuning.keyNotRead",
+      [key.rawValue, driver],
+      "\(key.rawValue) is not read by the \(driver) driver"
+    )
   }
 
   /// The keys that a controller of this family and stored variant reads.
@@ -192,7 +197,7 @@ extension ControllerTuning {
 extension ControllerRecordDocument {
   /// Why `key` does not apply to a mode of this record, or nil when the driver of every mode
   /// reads it.
-  func tuningScopeViolation(_ key: ControllerTuning.Key) -> String? {
+  func tuningScopeViolation(_ key: ControllerTuning.Key) -> ControllerRecordProblem? {
     modes.lazy.compactMap { mode in
       ControllerTuning.scopeViolation(
         key,

@@ -373,45 +373,55 @@ extension ControllerRecordDocument {
   /// so only a raw-USB mode's interface signature may carry `endpoints`.
   func validateModes(codingPath: [any CodingKey]) throws {
     let path = codingPath + [DocumentKey("modes")]
-    func fail(_ message: String) -> DecodingError {
-      .dataCorrupted(.init(codingPath: path, debugDescription: message))
+    func fail(_ rule: String, _ message: String) -> DecodingError {
+      fail(.rule(rule, message))
     }
-    guard !modes.isEmpty else { throw fail("modes must not be empty") }
+    func fail(_ problem: ControllerRecordProblem) -> DecodingError {
+      .dataCorrupted(problem.context(at: path))
+    }
+    guard !modes.isEmpty else { throw fail("error.E5007.modes.empty", "modes must not be empty") }
     guard modes.filter(\.isDefault).count <= 1 else {
-      throw fail("modes need at most one mode with the id default")
+      throw fail("error.E5007.modes.defaultCount", "modes need at most one mode with the id default")
     }
-    guard Set(modes.map(\.id)).count == modes.count else { throw fail("mode IDs must be unique") }
+    guard Set(modes.map(\.id)).count == modes.count else {
+      throw fail("error.E5007.modes.uniqueIDs", "mode IDs must be unique")
+    }
     for mode in modes {
       let info = mode.protocolInfo
       let rawUSB = info.protocolID.usesRawUSB(storedVariant: info.protocolVariant)
-      if let message = mode.sessionViolation() { throw fail(message) }
+      if let problem = mode.sessionViolation() { throw fail(problem) }
       if rawUSB {
         if mode.interfaceRange != nil {
           throw fail(
+            "error.E5007.modes.interfaceRawUSB",
             "interface selects among HID interfaces; a raw-USB mode claims the interface its"
               + " usb transport resolves"
           )
         }
       } else if mode.match?.interfaceSignature?.endpoints != nil {
         throw fail(
+          "error.E5007.modes.endpointsHID",
           "a HID mode's interfaceSignature has no endpoints; only the raw USB scanner reads"
             + " an interface's endpoint set"
         )
       }
       if inputLayouts == nil, info.protocolID.requiresRecordInputLayout {
-        throw fail("a HIDReportLayout mode needs the record's input layout")
+        throw fail("error.E5007.modes.inputLayoutNeeded", "a HIDReportLayout mode needs the record's input layout")
       }
       if inputLayouts != nil, info.protocolID == .hidDescriptor {
-        throw fail("a HIDDescriptor mode reads a usage map, not input layouts")
+        throw fail("error.E5007.modes.usageMapNotLayouts", "a HIDDescriptor mode reads a usage map, not input layouts")
       }
       if hidUsageMap != nil,
         !info.protocolID.protocolDescription.recordSections.contains(.hidUsageMap)
       {
-        throw fail("a HID usage map applies only to a driver that reads one, in every mode")
+        throw fail(
+          "error.E5007.modes.usageMapDriver",
+          "a HID usage map applies only to a driver that reads one, in every mode"
+        )
       }
     }
     guard capabilitiesAreDeclared(byAnyOf: modes.map(\.protocolInfo.protocolID)) else {
-      throw fail("capabilities must be deltas the driver of some mode declares")
+      throw fail("error.E5007.modes.capabilities", "capabilities must be deltas the driver of some mode declares")
     }
   }
 }

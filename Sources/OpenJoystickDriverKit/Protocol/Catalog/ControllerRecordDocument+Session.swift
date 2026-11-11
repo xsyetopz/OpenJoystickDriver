@@ -23,7 +23,11 @@ enum HexBytes {
     what: String
   ) throws -> [UInt8] {
     guard let bytes = parse(try container.decode(String.self, for: key)) else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "\(what) \(message)")
+      throw ControllerRecordProblem.rule(
+        "error.E5007.record.hexBytes",
+        [key, what],
+        "\(what) \(message)"
+      )
     }
     return bytes
   }
@@ -207,7 +211,9 @@ extension ControllerRecordDocument {
         do {
           data = try HexBytes.decode(container, for: "data", what: "control transfer data")
         } catch let problem as ControllerRecordProblem {
-          throw invalid("data", problem.description)
+          throw DecodingError.dataCorrupted(
+            problem.context(at: decoder.codingPath + [DocumentKey("data")])
+          )
         }
       }
       let isInput = requestType & 0x80 != 0
