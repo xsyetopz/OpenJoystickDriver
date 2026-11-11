@@ -181,12 +181,12 @@ struct ControllerPatchRemoveTests {
     #expect(
       try message(["vendorID": 1])
         == "a.patch.plist, patch: Patch must hold modes, usb, bluetoothLE, capabilities, server, "
-        + "route, input, tuning, or idle. Fix: Keep only those sections and give at least one of them."
+        + "route, input, or tuning. Fix: Keep only those sections and give at least one of them."
     )
     #expect(
       try message(["modes": [["protocol": ["family": "XInput"]]]])
         == "a.patch.plist, patch.modes: Each entry must hold an id and only id, protocol, match, "
-        + "interface, or session. Fix: Give each entry an id and delete any other key."
+        + "interface, session, or idle. Fix: Give each entry an id and delete any other key."
     )
   }
 }

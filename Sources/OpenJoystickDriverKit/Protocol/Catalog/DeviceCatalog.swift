@@ -112,7 +112,7 @@ package struct DeviceCatalog: Sendable {
       interfaceRange: record.baseMode.interfaceRange,
       modes: record.modes.filter { !$0.isDefault }.map(\.mode),
       hasDefaultMode: record.defaultMode != nil,
-      isIdle: record.isIdle
+      idleReason: record.baseMode.idle
     )
   }
 

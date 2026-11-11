@@ -132,6 +132,14 @@ extension ControllerModeMatch.InterfaceSignature.Endpoint {
   }
 }
 
+/// The reason a mode serves nothing: OJD sends the device no data and publishes no gamepad.
+public enum ControllerIdleReason: String, Equatable, Sendable {
+  /// A receiver that has no controller linked to it.
+  case noControllerLinked = "NoControllerLinked"
+  /// A controller in bootloader state, where a write risks a bad firmware image.
+  case bootloader = "Bootloader"
+}
+
 /// One alternative mode of a controller model: the protocol it runs and the keys that must all hold
 /// for it to be selected.
 ///
@@ -157,6 +165,8 @@ public struct ControllerMode: Equatable, Sendable {
   public let interfaceRange: ClosedRange<UInt8>?
   /// The steps this mode runs; the profile's session is replaced by it as a whole.
   public let session: ControllerSession
+  /// Why the mode serves nothing while it matches; nil for a mode that serves the device.
+  public let idle: ControllerIdleReason?
 
   /// The probes of this mode's match.
   public var probes: [ControllerModeProbe] { match.probes }
@@ -177,6 +187,7 @@ extension DeviceRuntimeProfile {
     profile.assemblyPolicy = mode.assemblyPolicy
     profile.interfaceRange = mode.interfaceRange ?? interfaceRange
     profile.session = mode.session
+    profile.idleReason = mode.idle
     profile.transportProfile = transportProfile.settling(
       milliseconds: mode.session.settleMilliseconds
     )

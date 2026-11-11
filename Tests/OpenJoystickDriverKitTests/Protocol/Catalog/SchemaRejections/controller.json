@@ -9101,7 +9101,7 @@
       }
     },
     {
-      "name": "rejects idle false",
+      "name": "rejects a record-level idle",
       "code": "E5007",
       "schema": true,
       "document": {
@@ -9109,7 +9109,7 @@
         "kind": "Controller",
         "vendorID": 11720,
         "productID": 12316,
-        "idle": false,
+        "idle": "NoControllerLinked",
         "modes": [
           {
             "id": "default",
@@ -9121,7 +9121,7 @@
       }
     },
     {
-      "name": "rejects idle with a usage map",
+      "name": "rejects a mode idle of true",
       "code": "E5007",
       "schema": true,
       "document": {
@@ -9129,13 +9129,100 @@
         "kind": "Controller",
         "vendorID": 11720,
         "productID": 12316,
-        "idle": true,
         "modes": [
           {
             "id": "default",
             "protocol": {
               "family": "HIDDescriptor"
+            },
+            "idle": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a mode idle with an unknown reason",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "idle": "Sleeping"
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a mode idle with a session",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "idle": "NoControllerLinked",
+            "session": {
+              "settleMilliseconds": 100
             }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a mode idle with an interface range",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "idle": "Bootloader",
+            "interface": {
+              "first": 0,
+              "last": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects an all-idle record with a usage map",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12316,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "idle": "NoControllerLinked"
           }
         ],
         "input": {
@@ -9152,7 +9239,7 @@
       }
     },
     {
-      "name": "rejects idle with a second mode",
+      "name": "rejects an all-idle record with a server",
       "code": "E5007",
       "schema": true,
       "document": {
@@ -9160,24 +9247,16 @@
         "kind": "Controller",
         "vendorID": 11720,
         "productID": 12316,
-        "idle": true,
         "modes": [
           {
             "id": "default",
             "protocol": {
               "family": "HIDDescriptor"
-            }
-          },
-          {
-            "id": "other",
-            "protocol": {
-              "family": "HIDDescriptor"
             },
-            "match": {
-              "product": "Receiver"
-            }
+            "idle": "NoControllerLinked"
           }
-        ]
+        ],
+        "server": "OJD"
       }
     }
   ]

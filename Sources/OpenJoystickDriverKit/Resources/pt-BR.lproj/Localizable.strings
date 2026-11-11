@@ -3680,10 +3680,10 @@
 /* Error E5007, shown when a patch file fails: the file lacks apiVersion, kind, selector, or patch and remove. %1$@ is the file. */
 "error.E5007.patch.patchFields" = "%1$@, document: o arquivo deve conter apiVersion, kind, selector e patch ou remove. Correção: adicione o membro que falta.";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
-"error.E5007.patch.patchSections" = "%1$@, patch: patch deve conter modes, usb, bluetoothLE, capabilities, server, route, input, tuning ou idle. Correção: mantenha só essas seções e informe ao menos uma.";
+"error.E5007.patch.patchSections" = "%1$@, patch: patch deve conter modes, usb, bluetoothLE, capabilities, server, route, input ou tuning. Correção: mantenha só essas seções e informe ao menos uma.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
-"error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: cada entrada deve conter um id e somente id, protocol, match, interface ou session. Correção: dê um id a cada entrada e remova qualquer outra chave.";
+"error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: cada entrada deve conter um id e somente id, protocol, match, interface, session ou idle. Correção: dê um id a cada entrada e remova qualquer outra chave.";
 /* Error E5007, shown when a patch file fails: an all patch sets a section other than tuning. %1$@ is the file. */
 "error.E5007.patch.patchAllOnlyTuning" = "%1$@, patch: um patch all só pode definir tuning. Correção: mova as outras seções para um patch de um controle.";
 /* Error E5007, shown when a patch file fails: remove is not a nonempty list. %1$@ is the file. */

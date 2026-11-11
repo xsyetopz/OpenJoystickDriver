@@ -4,8 +4,6 @@
 <dict>
 	<key>apiVersion</key>
 	<string>openjoystickdriver/v1alpha3</string>
-	<key>idle</key>
-	<true/>
 	<key>kind</key>
 	<string>Controller</string>
 	<key>modes</key>
@@ -13,6 +11,8 @@
 		<dict>
 			<key>id</key>
 			<string>default</string>
+			<key>idle</key>
+			<string>NoControllerLinked</string>
 			<key>protocol</key>
 			<dict>
 				<key>family</key>

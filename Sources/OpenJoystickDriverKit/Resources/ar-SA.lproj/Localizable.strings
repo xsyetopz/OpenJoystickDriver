@@ -4234,10 +4234,10 @@
 /* Error E5007, shown when a patch file fails: the file lacks apiVersion, kind, selector, or patch and remove. %1$@ is the file. */
 "error.E5007.patch.patchFields" = "%1$@, document: يجب أن يحتوي الملف على apiVersion وkind وselector وpatch أو remove. الإصلاح: أضف العنصر الناقص.";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
-"error.E5007.patch.patchSections" = "%1$@, patch: يجب أن يحتوي patch على modes أو usb أو bluetoothLE أو capabilities أو server أو route أو input أو tuning أو idle. الإصلاح: أبقِ هذه الأقسام فقط وأضف واحدًا منها على الأقل.";
+"error.E5007.patch.patchSections" = "%1$@, patch: يجب أن يحتوي patch على modes أو usb أو bluetoothLE أو capabilities أو server أو route أو input أو tuning. الإصلاح: أبقِ هذه الأقسام فقط وأضف واحدًا منها على الأقل.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
-"error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: يجب أن يحتوي كل إدخال على id وألا يحتوي إلا على id أو protocol أو match أو interface أو session. الإصلاح: أعطِ كل إدخال id واحذف أي مفتاح آخر.";
+"error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: يجب أن يحتوي كل إدخال على id وألا يحتوي إلا على id أو protocol أو match أو interface أو session أو idle. الإصلاح: أعطِ كل إدخال id واحذف أي مفتاح آخر.";
 /* Error E5007, shown when a patch file fails: an all patch sets a section other than tuning. %1$@ is the file. */
 "error.E5007.patch.patchAllOnlyTuning" = "%1$@, patch: لا يجوز لتصحيح all ضبط غير tuning. الإصلاح: انقل الأقسام الأخرى إلى تصحيح لوحدة تحكم واحدة.";
 /* Error E5007, shown when a patch file fails: remove is not a nonempty list. %1$@ is the file. */

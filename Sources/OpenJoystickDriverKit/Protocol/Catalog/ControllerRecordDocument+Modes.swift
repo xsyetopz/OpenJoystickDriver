@@ -17,15 +17,20 @@ extension ControllerRecordDocument {
     let interfaceRange: ClosedRange<UInt8>?
     /// The steps this mode runs; a mode without a `session` runs none.
     let session: ControllerSession
+    /// Why the mode serves nothing while it matches; nil for a mode that serves the device.
+    let idle: ControllerIdleReason?
 
     /// Whether this is the `default` mode.
     var isDefault: Bool { id == Self.defaultID }
 
-    /// Decodes `id`, `protocol` and the optional `match`, `interface` and `session`; an unknown
-    /// key, a malformed ID, a `default` mode with a match, or another mode without one is rejected.
+    /// Decodes `id`, `protocol` and the optional `match`, `interface`, `session` and `idle`; an
+    /// unknown key, a malformed ID, a `default` mode with a match, another mode without one, an
+    /// unknown `idle` reason, or an idle mode with an `interface` or a `session` is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
-      try container.rejectUnknown(allowed: ["id", "protocol", "match", "interface", "session"])
+      try container.rejectUnknown(
+        allowed: ["id", "protocol", "match", "interface", "session", "idle"]
+      )
       let id = try container.decode(String.self, for: "id")
       guard Self.isValidID(id) else {
         throw Self.invalid("id", "a mode id is lowercase words joined by hyphens", decoder)
@@ -41,6 +46,19 @@ extension ControllerRecordDocument {
       }
       if !isDefault, match == nil {
         throw Self.invalid("match", "every mode but default needs a match", decoder)
+      }
+      if let name = try container.decodeOptional(String.self, for: "idle") {
+        guard let reason = ControllerIdleReason(rawValue: name) else {
+          throw Self.invalid("idle", "idle is NoControllerLinked or Bootloader", decoder)
+        }
+        guard !container.contains(DocumentKey("interface")),
+          !container.contains(DocumentKey("session"))
+        else {
+          throw Self.invalid("idle", "an idle mode has no interface and no session", decoder)
+        }
+        idle = reason
+      } else {
+        idle = nil
       }
       self.id = id
       self.match = match
@@ -87,7 +105,8 @@ extension ControllerRecordDocument {
         assemblyPolicy: protocolInfo.assembly,
         match: match ?? ControllerModeMatch(),
         interfaceRange: interfaceRange,
-        session: session
+        session: session,
+        idle: idle
       )
     }
   }

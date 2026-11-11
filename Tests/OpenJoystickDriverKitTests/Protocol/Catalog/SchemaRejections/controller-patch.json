@@ -356,6 +356,38 @@
           "modes.1hid"
         ]
       }
+    },
+    {
+      "name": "patch of a record-level idle",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 11720,
+          "productID": 12316
+        },
+        "patch": {
+          "idle": "NoControllerLinked"
+        }
+      }
+    },
+    {
+      "name": "remove path of a record-level idle",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 11720,
+          "productID": 12316
+        },
+        "remove": [
+          "idle"
+        ]
+      }
     }
   ]
 }

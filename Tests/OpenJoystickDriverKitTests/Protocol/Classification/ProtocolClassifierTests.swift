@@ -15,7 +15,7 @@ struct ProtocolClassifierTests {
         "NoProtocolMatch", "AmbiguousProtocolMatch", "InterfaceContractMismatch",
         "DescriptorContractMismatch", "UnsupportedProtocolVariant", "UnsupportedTransportVariant",
         "VirtualProfileUnavailable", "DeviceInUse", "ConfigurationUnreadable", "BootloaderIdentity",
-        "NoModeMatched", "IdleIdentity",
+        "NoModeMatched", "NoControllerLinked",
       ]
     )
   }

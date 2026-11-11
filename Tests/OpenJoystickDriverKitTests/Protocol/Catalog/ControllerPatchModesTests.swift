@@ -110,11 +110,21 @@ struct ControllerPatchModesTests {
   }
 
   @Test
-  func aPatchSetsCapabilitiesAndIdle() throws {
-    let patch = try Self.patch(patch: #"{"capabilities": {"rumble": "Absent"}, "idle": true}"#)
+  func aPatchSetsCapabilitiesAndTheIdleOfAMode() throws {
+    let patch = try Self.patch(
+      patch: #"{"capabilities": {"rumble": "Absent"}, "modes": [{"id": "usb-b", "idle": "Bootloader"}]}"#
+    )
     let result = ControllerPatchMerge.apply(patch, to: try Self.json(Self.twoModes))
     #expect(result["capabilities"] == (try Self.json(#"{"rumble": "Absent"}"#)))
-    #expect(result["idle"] == .bool(true))
+    #expect(Self.modes(result).last?["idle"] == .string("Bootloader"))
+  }
+
+  @Test
+  func aPatchOfARecordLevelIdleIsRefused() {
+    #expect(throws: ControllerRecordProblem.self) {
+      _ = try Self.patch(patch: #"{"idle": "NoControllerLinked"}"#)
+    }
+    #expect(throws: ControllerRecordProblem.self) { _ = try Self.patch(remove: ["idle"]) }
   }
 
   @Test

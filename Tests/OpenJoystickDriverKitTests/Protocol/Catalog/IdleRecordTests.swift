@@ -4,20 +4,28 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// A record with `idle: true` names an identity OJD recognizes and serves nothing: no traffic and
-/// no virtual gamepad, with the reason `IdleIdentity`.
+/// A mode with `idle` names an identity OJD recognizes and serves nothing while the mode matches:
+/// no traffic and no virtual gamepad. Its value names the reason.
 struct IdleRecordTests {
   private static let model = ControllerModelID(vendorID: 0x1234, productID: 0xABCD)
   private static let receiver = ControllerModelID(vendorID: 0x2DC8, productID: 0x301C)
-  private static var defaultMode: [String: Any] {
-    ["id": "default", "protocol": ["family": "HIDDescriptor"]]
+  private static func defaultMode(idle: String? = nil) -> [String: Any] {
+    var mode: [String: Any] = ["id": "default", "protocol": ["family": "HIDDescriptor"]]
+    mode["idle"] = idle
+    return mode
+  }
+  private static var idleMode: [String: Any] {
+    [
+      "id": "unlinked", "protocol": ["family": "HIDDescriptor"], "idle": "NoControllerLinked",
+      "match": ["product": "IDLE"],
+    ]
   }
 
   private static func data(_ fields: [String: Any]) throws -> Data {
     let record: [String: Any] = [
       "apiVersion": OpenJoystickDriverAPI.version, "kind": ControllerRecordDocument.kind,
       "vendorID": Int(model.vendorID), "productID": Int(model.productID),
-      "modes": [defaultMode],
+      "modes": [defaultMode()],
     ].merging(fields) { $1 }
     return try PropertyListFixture.data(tree: record)
   }
@@ -37,73 +45,114 @@ struct IdleRecordTests {
     )
   }
 
+  private static func catalog(_ fields: [String: Any]) throws -> DeviceCatalog {
+    let validated = try #require(try ControllerRecordSet.validate(data(fields)).record)
+    return DeviceCatalog(
+      records: ControllerRecordSet(records: [model: validated], userFiles: [])
+    )
+  }
+
   @Test
-  func anIdleRecordClassifiesAsIdleIdentityWithoutABinding() throws {
-    let validated = try #require(
-      try ControllerRecordSet.validate(Self.data(["idle": true])).record
+  func anIdleDefaultModeClassifiesAsItsReasonWithoutABinding() throws {
+    let catalog = try Self.catalog(["modes": [Self.defaultMode(idle: "NoControllerLinked")]])
+    #expect(catalog.record(for: Self.model)?.idleReason == .noControllerLinked)
+    #expect(
+      ProtocolClassifier.classify(Self.hidDevice(Self.model), backend: .hid, catalog: catalog)
+        == .unsupported(.noControllerLinked)
     )
-    #expect(validated.profile.isIdle)
-    let catalog = DeviceCatalog(
-      records: ControllerRecordSet(records: [Self.model: validated], userFiles: [])
+  }
+
+  @Test
+  func theBootloaderReasonClassifiesAsBootloader() throws {
+    let catalog = try Self.catalog(["modes": [Self.defaultMode(idle: "Bootloader")]])
+    #expect(
+      ProtocolClassifier.classify(Self.hidDevice(Self.model), backend: .hid, catalog: catalog)
+        == .unsupported(.bootloaderIdentity)
     )
-    let result = ProtocolClassifier.classify(
-      Self.hidDevice(Self.model),
-      backend: .hid,
-      catalog: catalog
+  }
+
+  @Test
+  func aSelectedIdleModeIdlesAndTheDefaultModeServes() throws {
+    let catalog = try Self.catalog(["modes": [Self.defaultMode(), Self.idleMode]])
+    let device = Self.hidDevice(Self.model)
+    #expect(catalog.record(for: Self.model)?.idleReason == nil)
+    #expect(
+      ProtocolClassifier.classify(device, backend: .hid, catalog: catalog, modeID: "unlinked")
+        == .unsupported(.noControllerLinked)
     )
-    #expect(result == .unsupported(.idleIdentity))
+    #expect(
+      ProtocolClassifier.classify(device, backend: .hid, catalog: catalog)
+        != .unsupported(.noControllerLinked)
+    )
   }
 
   @Test
   func aRecordWithoutIdleIsNotIdle() throws {
-    let validated = try #require(try ControllerRecordSet.validate(Self.data([:])).record)
-    #expect(!validated.profile.isIdle)
+    #expect(try Self.catalog([:]).record(for: Self.model)?.idleReason == nil)
   }
 
   @Test
-  func theReasonHasItsOwnExplanation() {
-    #expect(ProtocolBindingReason.idleIdentity.rawValue == "IdleIdentity")
-    #expect(ProtocolBindingReason.idleIdentity.explanationKey == "ui.controllers.idleIdentity")
+  func eachReasonHasItsOwnExplanation() {
+    #expect(ProtocolBindingReason.noControllerLinked.rawValue == "NoControllerLinked")
+    #expect(
+      ProtocolBindingReason.noControllerLinked.explanationKey
+        == "ui.controllers.noControllerLinked"
+    )
+    #expect(
+      ProtocolBindingReason.bootloaderIdentity.explanationKey == "ui.controllers.bootloaderIdentity"
+    )
   }
 
   @Test
-  func idleOnlyHasTheValueTrue() throws {
-    #expect(try Self.problem(["idle": false]) != nil)
-    #expect(try Self.problem(["idle": "yes"]) != nil)
+  func idleIsAReasonOfTheRecordsModeNotARecordKey() throws {
+    #expect(try Self.problem(["idle": "NoControllerLinked"]) != nil)
+    #expect(try Self.problem(["modes": [Self.defaultMode(idle: "Sleeping")]]) != nil)
+    var mode = Self.defaultMode()
+    mode["idle"] = true
+    #expect(try Self.problem(["modes": [mode]]) != nil)
   }
 
   @Test
-  func anIdleRecordRefusesASectionThatServesControls() throws {
-    let sections: [String: Any] = [
-      "input": ["hidUsageMap": ["usages": [["kind": "Hat", "page": 1, "usage": 57]]]],
-      "tuning": ["stickDeadzone": 0.1],
-      "server": "OJD",
-      "capabilities": ["rumble": false],
-    ]
-    for (section, value) in sections {
-      #expect(try Self.problem(["idle": true, section: value]) != nil, "\(section)")
+  func anIdleModeRefusesASessionAndAnInterface() throws {
+    for extra: (String, Any) in [
+      ("session", ["settleMilliseconds": 100]), ("interface", ["first": 0, "last": 0]),
+    ] {
+      var mode = Self.defaultMode(idle: "NoControllerLinked")
+      mode[extra.0] = extra.1
+      #expect(try Self.problem(["modes": [mode]]) != nil, "\(extra.0)")
     }
   }
 
   @Test
-  func anIdleRecordRefusesAModeThatIsNotTheOnlyDefault() throws {
-    let other: [String: Any] = [
-      "id": "other", "protocol": ["family": "HIDDescriptor"],
-      "match": ["product": "Receiver"],
+  func aRecordOfOnlyIdleModesRefusesASectionThatServesControls() throws {
+    let sections: [String: Any] = [
+      "input": ["hidUsageMap": ["usages": [["kind": "Hat", "page": 1, "usage": 57]]]],
+      "tuning": ["stickDeadzone": 0.1],
+      "server": "OJD",
+      "capabilities": ["rumble": "Absent"],
     ]
-    #expect(try Self.problem(["idle": true, "modes": [Self.defaultMode, other]]) != nil)
-    #expect(try Self.problem(["idle": true, "modes": [other]]) != nil)
+    for (section, value) in sections {
+      let fields: [String: Any] = [
+        "modes": [Self.defaultMode(idle: "NoControllerLinked")], section: value,
+      ]
+      #expect(try Self.problem(fields) != nil, "\(section)")
+    }
+  }
+
+  @Test
+  func aRecordWithAnIdleModeAndAServingModeKeepsItsSections() throws {
+    #expect(try Self.problem(["modes": [Self.defaultMode(), Self.idleMode], "server": "OJD"]) == nil)
   }
 
   @Test
   func theBundledReceiverIdentityServesNothing() throws {
     let catalog = DeviceCatalog()
     let record = try #require(catalog.record(for: Self.receiver))
-    #expect(record.isIdle)
+    #expect(record.idleReason == .noControllerLinked)
     #expect(record.hidUsageMap == nil)
     #expect(
       ProtocolClassifier.classify(Self.hidDevice(Self.receiver), backend: .hid, catalog: catalog)
-        == .unsupported(.idleIdentity)
+        == .unsupported(.noControllerLinked)
     )
   }
 }

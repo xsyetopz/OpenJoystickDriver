@@ -51,28 +51,20 @@
     },
     "tuning": {
       "$ref": "#/$defs/tuning"
-    },
-    "idle": {
-      "description": "Marks an identity that OJD recognizes and serves nothing, such as a receiver with no controller.",
-      "const": true
     }
   },
   "if": {
-    "required": ["idle"]
+    "required": ["modes"],
+    "properties": {
+      "modes": {
+        "items": {
+          "required": ["idle"]
+        }
+      }
+    }
   },
   "then": {
     "properties": {
-      "modes": {
-        "maxItems": 1,
-        "contains": {
-          "properties": {
-            "id": {
-              "const": "default"
-            }
-          },
-          "required": ["id"]
-        }
-      },
       "usb": false,
       "bluetoothLE": false,
       "capabilities": false,
@@ -121,6 +113,10 @@
         },
         "session": {
           "$ref": "#/$defs/session"
+        },
+        "idle": {
+          "description": "The reason OJD serves nothing in this mode: no data is sent, no gamepad is published.",
+          "enum": ["NoControllerLinked", "Bootloader"]
         }
       },
       "if": {
@@ -140,6 +136,17 @@
         "required": ["match"]
       },
       "allOf": [
+        {
+          "if": {
+            "required": ["idle"]
+          },
+          "then": {
+            "properties": {
+              "interface": false,
+              "session": false
+            }
+          }
+        },
         {
           "not": {
             "properties": {

@@ -64,7 +64,7 @@
       "uniqueItems": true,
       "items": {
         "type": "string",
-        "pattern": "^(modes(\\.[a-z][a-z0-9]*(-[a-z0-9]+)*)?|(usb|bluetoothLE|capabilities|server|route|input|tuning|idle)(\\.[A-Za-z0-9]+)*)$"
+        "pattern": "^(modes(\\.[a-z][a-z0-9]*(-[a-z0-9]+)*)?|(usb|bluetoothLE|capabilities|server|route|input|tuning)(\\.[A-Za-z0-9]+)*)$"
       }
     },
     "patch": {
@@ -95,15 +95,15 @@
               },
               "session": {
                 "type": "object"
+              },
+              "idle": {
+                "$ref": "controller.schema.json#/$defs/mode/properties/idle"
               }
             }
           }
         },
         "capabilities": {
           "$ref": "controller.schema.json#/$defs/capabilities"
-        },
-        "idle": {
-          "$ref": "controller.schema.json#/properties/idle"
         },
         "usb": {
           "type": "object"

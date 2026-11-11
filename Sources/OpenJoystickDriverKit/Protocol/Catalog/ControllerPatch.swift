@@ -61,7 +61,7 @@ public struct ControllerPatch: Equatable, Sendable {
   /// The top-level record properties a patch may set: every property but the identity
   /// (`apiVersion`, `kind`, `vendorID`, `productID`), which the selector names.
   static let sections: Set<String> = [
-    "modes", "usb", "bluetoothLE", "capabilities", "server", "route", "input", "tuning", "idle",
+    "modes", "usb", "bluetoothLE", "capabilities", "server", "route", "input", "tuning",
   ]
 
   /// The records the patch applies to.
@@ -144,7 +144,7 @@ public struct ControllerPatch: Equatable, Sendable {
           code: .invalidControllerRecord,
           key: "error.E5007.patch.patchSections",
           "patch must hold modes, usb, bluetoothLE, capabilities, server, "
-            + "route, input, tuning, or idle; the selector names the identity"
+            + "route, input, or tuning; the selector names the identity"
         )
       }
       if case .array(let modes)? = patch["modes"],
@@ -153,7 +153,8 @@ public struct ControllerPatch: Equatable, Sendable {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
           key: "error.E5007.patch.patchModeEntries",
-          "patch.modes entries must hold an id and only id, protocol, match, interface, or session"
+          "patch.modes entries must hold an id and only id, protocol, match, interface, session,"
+            + " or idle"
         )
       }
       body = members
@@ -282,7 +283,9 @@ public struct ControllerPatch: Equatable, Sendable {
   private static func isPatchMode(_ mode: OrderedJSON) -> Bool {
     guard let members = mode.members, let id = mode["id"]?.string else { return false }
     return isModeID(id)
-      && Set(members.map(\.key)).isSubset(of: ["id", "protocol", "match", "interface", "session"])
+      && Set(members.map(\.key)).isSubset(of: [
+        "id", "protocol", "match", "interface", "session", "idle",
+      ])
   }
 
   /// Whether `text` is a mode id: lowercase words of letters and digits joined by `-`, the first

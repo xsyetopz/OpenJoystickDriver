@@ -304,12 +304,14 @@ public enum ProtocolBindingReason: String, CaseIterable, Codable, Error, Sendabl
   /// The device's USB configuration could not be read, and nothing OJD observes clears the cause
   /// before the device reconnects.
   case configurationUnreadable = "ConfigurationUnreadable"
-  /// The device is an 8BitDo bootloader identity, which receives no traffic.
+  /// The device is an 8BitDo bootloader identity, or its matching mode is idle with the reason
+  /// `Bootloader`; it receives no traffic.
   case bootloaderIdentity = "BootloaderIdentity"
   /// The device's record has no `default` mode and no mode of it matched the device.
   case noModeMatched = "NoModeMatched"
-  /// The device's record names an identity that serves nothing, such as an idle receiver.
-  case idleIdentity = "IdleIdentity"
+  /// The device's matching mode is idle with the reason `NoControllerLinked`, such as a receiver
+  /// with no controller linked.
+  case noControllerLinked = "NoControllerLinked"
 }
 
 extension ProtocolBindingReason {
@@ -433,7 +435,11 @@ enum ProtocolClassifier {
         modeID: modeID
       )
     {
-      if record.isIdle { return .unsupported(.idleIdentity) }
+      switch record.idleReason {
+      case .noControllerLinked?: return .unsupported(.noControllerLinked)
+      case .bootloader?: return .unsupported(.bootloaderIdentity)
+      case nil: break
+      }
       if !record.hasDefaultMode, modeID == nil { return .unsupported(.noModeMatched) }
       return otherXboxFamilyBinding(for: record, interfaces: interfaces, backend: backend)
         ?? bind(record, interfaces: interfaces, backend: backend)

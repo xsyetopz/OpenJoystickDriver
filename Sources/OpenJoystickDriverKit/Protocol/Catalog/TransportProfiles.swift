@@ -340,9 +340,11 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   /// Without one, a device that matches no mode is unsupported, and the protocol fields above are
   /// those of the first mode.
   public internal(set) var hasDefaultMode = true
-  /// Whether the record names an identity that serves nothing: OJD sends it no traffic and
-  /// creates no virtual gamepad.
-  public internal(set) var isIdle = false
+  /// Why the running mode serves nothing: OJD sends it no traffic and creates no virtual gamepad.
+  /// Nil while the mode serves the device.
+  public internal(set) var idleReason: ControllerIdleReason?
+  /// Whether the running mode serves nothing.
+  public var isIdle: Bool { idleReason != nil }
   /// The selected mode's ID; nil while the default mode runs.
   public internal(set) var modeID: String?
 

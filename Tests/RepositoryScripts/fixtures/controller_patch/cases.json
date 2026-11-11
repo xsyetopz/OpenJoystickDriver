@@ -2106,7 +2106,7 @@
         },
         "patch": {}
       },
-      "message": "patch must hold modes, usb, bluetoothLE, capabilities, server, route, input, tuning, or idle; the selector names the identity",
+      "message": "patch must hold modes, usb, bluetoothLE, capabilities, server, route, input, or tuning; the selector names the identity",
       "code": "E5007"
     },
     {
@@ -2122,7 +2122,7 @@
           "name": "x"
         }
       },
-      "message": "patch must hold modes, usb, bluetoothLE, capabilities, server, route, input, tuning, or idle; the selector names the identity",
+      "message": "patch must hold modes, usb, bluetoothLE, capabilities, server, route, input, or tuning; the selector names the identity",
       "code": "E5007"
     },
     {
@@ -2380,7 +2380,7 @@
           1
         ]
       },
-      "message": "patch must hold modes, usb, bluetoothLE, capabilities, server, route, input, tuning, or idle; the selector names the identity",
+      "message": "patch must hold modes, usb, bluetoothLE, capabilities, server, route, input, or tuning; the selector names the identity",
       "code": "E5007"
     }
   ]
