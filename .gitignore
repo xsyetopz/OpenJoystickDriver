@@ -9,6 +9,7 @@ glossaries/
 
 # Internal planning and evidence (local only)
 /.claude/worktrees/
+/.claude/claudetto/
 /.claudetto/
 
 # Session exports of `/export` (YYYY-MM-DD-HHMMSS-<slug>.txt)
