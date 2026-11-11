@@ -307,8 +307,7 @@
       window.minSize = MainWindowSizingPolicy.minimumFrameSize(for: window)
       WindowFramePolicy.clamp(window, minimumSize: window.minSize)
       visibilityChanged(true)
-      window.makeKeyAndOrderFront(nil)
-      NSApplication.shared.activate(ignoringOtherApps: true)
+      AppForeground.show(window)
       updateLogFollowing(area: navigation.selectedArea)
     }
 

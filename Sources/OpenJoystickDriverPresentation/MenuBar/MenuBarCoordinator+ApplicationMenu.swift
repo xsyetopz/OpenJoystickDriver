@@ -393,7 +393,7 @@
       ]
       if let icon = NSImage(named: NSImage.applicationIconName) { options[.applicationIcon] = icon }
       NSApplication.shared.orderFrontStandardAboutPanel(options: options)
-      NSApplication.shared.activate(ignoringOtherApps: true)
+      AppForeground.activate()
     }
   }
 

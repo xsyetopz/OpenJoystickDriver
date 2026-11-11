@@ -18,7 +18,7 @@
       requirement: PermissionManager.Requirement
     ) {
       Task { @MainActor in
-        NSApplication.shared.activate(ignoringOtherApps: true)
+        AppForeground.activate()
         guard let permissions = await viewModel.requestPermission(requirement) else { return }
         let isGranted: Bool
         switch requirement {
@@ -37,7 +37,7 @@
     /// granted.
     static func requestPostEventAccess(viewModel: RuntimeViewModel) {
       Task { @MainActor in
-        NSApplication.shared.activate(ignoringOtherApps: true)
+        AppForeground.activate()
         guard let access = await viewModel.requestPostEventAccess() else { return }
         if access != .granted { openPrivacySettings(pane: "Privacy_Accessibility") }
       }
@@ -49,7 +49,7 @@
     /// Opens the pane of the first access that is not granted.
     static func requestAccess(viewModel: RuntimeViewModel) {
       Task { @MainActor in
-        NSApplication.shared.activate(ignoringOtherApps: true)
+        AppForeground.activate()
         guard let permissions = await viewModel.requestPermissions() else { return }
         guard permissions.isReady else {
           openPrivacySettings(for: permissions)

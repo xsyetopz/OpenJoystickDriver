@@ -158,7 +158,7 @@
         },
         // `activate()` of macOS 14 is a request that another app has to yield for, and the Dock
         // does not yield; this call activates the app regardless of the active app.
-        activateApp: { NSApplication.shared.activate(ignoringOtherApps: true) },
+        activateApp: { AppForeground.activate() },
         observeResignActive: { handler in
           let observer = NotificationCenter.default.addObserver(
             forName: NSApplication.didResignActiveNotification,

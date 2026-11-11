@@ -60,6 +60,7 @@ Each row names who sets a variable, who reads it, whether it stays and why. A ro
 | `OJD_SOURCE_COMMIT`, `OJD_SOURCE_STATE` | repository scripts: `package.py`, `package_tester.py` | `bundles.sh` | kept | Source facts stamped into the bundle, passed from the Python release route to the bash build. |
 | `OJD_USE_LOCAL_SWIFTERKIT` | contributor, CI (`0`) | `Package.swift`, `driverkit.sh` | kept | Builds the sibling `../SwifterKit` checkout; CI and release builds reject `1`. |
 | `OJD_RUN_REPOSITORY_CLI` | contributor, `validate_schemas.py` | `InstalledCLIForwarder.swift` | kept | Runs a repository build of `ojd`; named in error E2020. |
+| `OJD_HIDDEN` | contributor, screenshot scripts (`open -g --env OJD_HIDDEN=1 -a OpenJoystickDriver`) | `AppForeground.swift` | kept | `1`, `true` or `yes` keeps the app inactive and orders each window it shows behind other apps' windows, so `screencapture -l` can capture it without taking focus. |
 | `OJD_COLOR`, `OJD_NO_INPUT`, `OJD_TIMEOUT` | user | `GlobalOptions.swift` | kept | User options documented in the wiki page Command-Line. |
 | `OJD_TOKEN` | user, WebRTC bridge launcher | `reference_client.py`, `WebRTCBridge` | kept | Endpoint token, documented in `docs/sdk/endpoint.md` and the wiki page WebRTC-Bridge. |
 | `OJD_SNAPSHOT_WRITE`, `OJD_SNAPSHOT_ACTUAL_DIR` | `equivalence_snapshots.py` | `EquivalenceSnapshotStore.swift` | kept | `swift test` takes no arguments, so `./Scripts/ojd snapshots check` and `snapshots write` tell the test process through the environment. |

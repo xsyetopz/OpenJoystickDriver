@@ -191,8 +191,7 @@
       refreshPaneState()
       refreshOnActivation = false
       visibilityChanged(true)
-      window?.makeKeyAndOrderFront(nil)
-      NSApplication.shared.activate(ignoringOtherApps: true)
+      if let window { AppForeground.show(window) }
     }
 
     /// Fits the window to the screen it moved to, whose visible area may be smaller.

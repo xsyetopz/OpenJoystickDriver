@@ -104,8 +104,7 @@
       model.open()
       visibilityChanged(true)
       if let window { WindowFramePolicy.clamp(window) }
-      window?.makeKeyAndOrderFront(nil)
-      NSApplication.shared.activate(ignoringOtherApps: true)
+      if let window { AppForeground.show(window) }
     }
 
     /// Ends the input session.
