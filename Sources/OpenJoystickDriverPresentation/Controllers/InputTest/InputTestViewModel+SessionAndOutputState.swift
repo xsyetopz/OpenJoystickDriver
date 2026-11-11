@@ -11,7 +11,9 @@
       case idle
       /// The first sample is awaited.
       case starting
-      /// Samples arrive.
+      /// Samples arrive and every control is at rest.
+      case receiving
+      /// Samples arrive and a control has left its rest value.
       case live
       /// Samples stopped arriving after some had come.
       case stale
@@ -325,7 +327,9 @@
 
     /// Reads the controller's input every sample interval until sampling is canceled or replaced.
     ///
-    /// A read without input counts as a failure, and three failures in a row end sampling.
+    /// A read without input counts as a failure, and three failures in a row end sampling. The state
+    /// is `live` from the first sample in which a control is off its rest value, and stays `live`
+    /// while samples arrive.
     ///
     /// - Parameters:
     ///   - selector: The controller.
@@ -340,7 +344,9 @@
           guard generation == samplingGeneration else { return }
           if let snapshot {
             liveState.update(snapshot)
-            if sessionState != .live { sessionState = .live }
+            let next: SessionState =
+              sessionState == .live || snapshot.hasControlOffRest ? .live : .receiving
+            if sessionState != next { sessionState = next }
             receivedSnapshot = true
             consecutiveFailures = 0
           } else {

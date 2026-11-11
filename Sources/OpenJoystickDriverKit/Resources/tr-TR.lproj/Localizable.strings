@@ -1118,6 +1118,8 @@
 "ui.inputTest.playerIndicator" = "Oyuncu Göstergesi";
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "Basılı";
+/* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
+"ui.inputTest.receiving" = "Bir kontrolün hareket etmesi bekleniyor…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "Bırakıldı";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */

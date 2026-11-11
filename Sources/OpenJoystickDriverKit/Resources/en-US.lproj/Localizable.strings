@@ -1118,6 +1118,8 @@
 "ui.inputTest.playerIndicator" = "Player indicator";
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "Pressed";
+/* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
+"ui.inputTest.receiving" = "Waiting for a control to move...";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "Released";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */

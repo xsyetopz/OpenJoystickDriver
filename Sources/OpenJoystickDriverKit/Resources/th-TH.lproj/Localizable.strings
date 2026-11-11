@@ -1118,6 +1118,8 @@
 "ui.inputTest.playerIndicator" = "ไฟแสดงผู้เล่น";
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "กดอยู่";
+/* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
+"ui.inputTest.receiving" = "กำลังรอให้ตัวควบคุมเคลื่อนไหว…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "ปล่อยแล้ว";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */

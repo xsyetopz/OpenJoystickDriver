@@ -86,6 +86,44 @@ extension InputTestTests {
 
   @Test
   @MainActor
+  func statusReadsInputActiveOnlyAfterAControlLeavesRest() async {
+    var pressed = ControllerState.neutral
+    pressed.pressed = [.south]
+    let gateway = InputTestGatewayStub(inputSequence: [.neutral, pressed, .neutral])
+    let recorder = SessionStateRecorder()
+    let model = InputTestViewModel(
+      gateway: gateway,
+      sampleIntervalNanoseconds: 1_000_000,
+      sleep: { _ in await recorder.record() }
+    )
+    recorder.model = model
+    model.selectDevice(makeInputTestDevice())
+
+    model.open()
+    await waitUntil("three samples are read") { recorder.states.count >= 3 }
+    model.close()
+
+    #expect(recorder.states.prefix(3) == [.receiving, .live, .live])
+  }
+
+  @Test
+  @MainActor
+  func aStickLeavingCenterOrATriggerPressedCountsAsInput() {
+    var stick = ControllerState.neutral
+    stick.leftStick.x = BipolarValue(normalized: 0.5)
+    var trigger = ControllerState.neutral
+    trigger.leftTrigger = UnipolarValue(normalized: 0.5)
+    var hat = ControllerState.neutral
+    hat.hat = .north
+
+    #expect(!ControllerState.neutral.hasControlOffRest)
+    #expect(stick.hasControlOffRest)
+    #expect(trigger.hasControlOffRest)
+    #expect(hat.hasControlOffRest)
+  }
+
+  @Test
+  @MainActor
   func unchangedSnapshotsDoNotRepublishInputState() async {
     let snapshot = ControllerState.neutral
     let gateway = InputTestGatewayStub(
@@ -357,4 +395,15 @@ extension InputTestTests {
     #expect(!model.canStopRumble)
   }
 
+}
+
+/// Records the session state of an Input Test model at each wait between samples.
+@MainActor
+private final class SessionStateRecorder {
+  var model: InputTestViewModel?
+  var states: [InputTestViewModel.SessionState] = []
+
+  func record() {
+    if let model { states.append(model.sessionState) }
+  }
 }

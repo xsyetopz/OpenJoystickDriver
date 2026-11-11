@@ -1118,6 +1118,8 @@
 "ui.inputTest.playerIndicator" = "Chỉ báo người chơi";
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "Đã nhấn";
+/* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
+"ui.inputTest.receiving" = "Đang chờ một điều khiển di chuyển…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "Đã nhả";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */

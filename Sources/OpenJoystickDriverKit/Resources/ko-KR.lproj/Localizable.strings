@@ -1118,6 +1118,8 @@
 "ui.inputTest.playerIndicator" = "플레이어 표시등";
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "누름";
+/* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
+"ui.inputTest.receiving" = "컨트롤이 움직이기를 기다리는 중…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "뗌";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */

@@ -11,6 +11,7 @@
       switch model.sessionState {
       case .idle: return OJDLocalized.string("ui.inputTest.idle")
       case .starting: return OJDLocalized.string("ui.inputTest.starting")
+      case .receiving: return OJDLocalized.string("ui.inputTest.receiving")
       case .live: return OJDLocalized.string("ui.inputTest.live")
       case .stale: return OJDLocalized.string("ui.inputTest.stale")
       case .disconnected:
@@ -29,6 +30,7 @@
     var statusSemanticState: SemanticState {
       switch model.sessionState {
       case .live: return .active
+      case .receiving: return .inactive
       case .starting: return .loading
       case .stale, .permissionRequired: return .attention
       case .idle: return .inactive
