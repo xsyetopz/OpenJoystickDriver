@@ -43,7 +43,7 @@
     /// - Throws: ``RegistrationError`` when the system refuses the combination; the previous
     ///   shortcut is released in that case too.
     func register(_ shortcut: PauseShortcut?) throws {
-      if let reference = unsafe reference { unsafe UnregisterEventHotKey(reference) }
+      if let current = unsafe reference { unsafe UnregisterEventHotKey(current) }
       unsafe reference = nil
       guard let shortcut else { return }
       try installHandler()
@@ -70,8 +70,8 @@
       let status = unsafe InstallEventHandler(
         GetApplicationEventTarget(),
         { _, _, context in
-          guard let context = unsafe context else { return OSStatus(eventNotHandledErr) }
-          let hotKey = unsafe Unmanaged<PauseHotKey>.fromOpaque(context).takeUnretainedValue()
+          guard let pointer = unsafe context else { return OSStatus(eventNotHandledErr) }
+          let hotKey = unsafe Unmanaged<PauseHotKey>.fromOpaque(pointer).takeUnretainedValue()
           MainActor.assumeIsolated { hotKey.pressed() }
           return noErr
         },

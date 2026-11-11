@@ -60,8 +60,10 @@ extension ControllerDetailFacts {
     }
   }
 
-  /// Returns a control as words, with the name the files and the service use beside it, such as
-  /// `D-pad Up (DpadUp)`. A name that is already the raw name, such as `Start`, shows once.
+  /// Returns a control as words, with the name the files and the service use beside it.
+  ///
+  /// An example is `D-pad Up (DpadUp)`. A name that is already the raw name, such as `Start`,
+  /// shows once.
   ///
   /// - Parameter control: The control.
   /// - Returns: A control as words, with its raw name beside it.

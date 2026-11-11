@@ -4,7 +4,7 @@ import Foundation
 setvbuf(stdout, nil, _IOLBF, 0)
 
 final class Lister: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
-  var central: CBCentralManager!
+  var central: CBCentralManager?
   var peripherals: [CBPeripheral] = []
 
   override init() {
@@ -25,11 +25,11 @@ final class Lister: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     if peripherals.isEmpty { print("no connected peripherals") }
   }
 
-  func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+  func centralManager(_: CBCentralManager, didConnect peripheral: CBPeripheral) {
     peripheral.discoverServices(nil)
   }
 
-  func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+  func peripheral(_ peripheral: CBPeripheral, didDiscoverServices _: Error?) {
     for service in peripheral.services ?? [] {
       print("\(peripheral.name ?? "?") service \(service.uuid)")
       peripheral.discoverCharacteristics(nil, for: service)
@@ -37,16 +37,20 @@ final class Lister: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
   }
 
   func peripheral(
-    _ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?
+    _ peripheral: CBPeripheral,
+    didDiscoverCharacteristicsFor service: CBService,
+    error _: Error?
   ) {
     for characteristic in service.characteristics ?? [] {
-      print(
-        "\(peripheral.name ?? "?") \(service.uuid) char \(characteristic.uuid) props=0x\(String(characteristic.properties.rawValue, radix: 16))"
-      )
+      let name = peripheral.name ?? "?"
+      let properties = String(characteristic.properties.rawValue, radix: 16)
+      print("\(name) \(service.uuid) char \(characteristic.uuid) props=0x\(properties)")
     }
   }
 }
 
 let lister = Lister()
-RunLoop.main.run(until: Date().addingTimeInterval(Double(CommandLine.arguments.dropFirst().first ?? "8") ?? 8))
+RunLoop.main.run(
+  until: Date().addingTimeInterval(Double(CommandLine.arguments.dropFirst().first ?? "8") ?? 8)
+)
 print("end")

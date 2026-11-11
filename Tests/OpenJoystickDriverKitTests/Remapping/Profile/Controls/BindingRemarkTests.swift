@@ -16,12 +16,14 @@ struct BindingRemarkTests {
       applicationScope: .global,
       bindings: inLayer ? [] : [binding],
       layers: inLayer
-        ? [RemappingLayer(
+        ? [
+          RemappingLayer(
             name: "Menus",
             activationMode: .hold,
             activator: .button(.north),
             bindings: [binding]
-          )] : []
+          )
+        ] : []
     )
   }
 
@@ -42,7 +44,7 @@ struct BindingRemarkTests {
   @Test
   func aBindingWithoutARemarkEncodesNoRemarkKey() throws {
     let binding = RemappingBinding(source: .button(.south), destination: .mouseButton(.left))
-    let json = try String(decoding: JSONEncoder().encode(binding), as: UTF8.self)
+    let json = try #require(String(bytes: JSONEncoder().encode(binding), encoding: .utf8))
     #expect(!json.contains("remark"))
   }
 

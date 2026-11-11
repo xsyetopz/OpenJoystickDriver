@@ -11,15 +11,23 @@ let payload = args.dropFirst(5).compactMap { UInt8($0, radix: 16) }
 
 let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
 IOHIDManagerSetDeviceMatching(
-  manager, [kIOHIDVendorIDKey: vendor, kIOHIDProductIDKey: product] as CFDictionary)
+  manager,
+  [kIOHIDVendorIDKey: vendor, kIOHIDProductIDKey: product] as CFDictionary
+)
 guard IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone)) == kIOReturnSuccess,
   let devices = IOHIDManagerCopyDevices(manager) as? Set<IOHIDDevice>
-else { print("open failed"); exit(1) }
+else {
+  print("open failed")
+  exit(1)
+}
 for device in devices {
   let transport = IOHIDDeviceGetProperty(device, kIOHIDTransportKey as CFString) as? String ?? "?"
   let result = IOHIDDeviceSetReport(device, type, CFIndex(reportID), payload, payload.count)
   let hex = payload.map { String(format: "%02x", $0) }.joined(separator: " ")
-  print("\(transport) \(args[3]) id=\(reportID) [\(hex)] result=\(String(UInt32(bitPattern: result), radix: 16))")
+  let status = String(UInt32(bitPattern: result), radix: 16)
+  print(
+    "\(transport) \(args[3]) id=\(reportID) [\(hex)] result=\(status)"
+  )
 }
 if let seconds = Double(ProcessInfo.processInfo.environment["HOLD"] ?? "") {
   Thread.sleep(forTimeInterval: seconds)

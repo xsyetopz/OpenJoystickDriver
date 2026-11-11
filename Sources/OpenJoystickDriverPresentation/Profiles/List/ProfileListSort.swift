@@ -48,7 +48,8 @@ enum ProfileListSort: String, CaseIterable, Identifiable {
         }
       }
       let order = lhs.name.localizedStandardCompare(rhs.name)
-      return order == .orderedSame ? lhs.id.uuidString < rhs.id.uuidString : order == .orderedAscending
+      return order == .orderedSame
+        ? lhs.id.uuidString < rhs.id.uuidString : order == .orderedAscending
     }
   }
 }

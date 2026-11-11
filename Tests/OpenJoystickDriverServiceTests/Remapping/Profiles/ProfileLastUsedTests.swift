@@ -36,7 +36,7 @@ struct ProfileLastUsedTests {
     )
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
-    try await body(RemappingProfileLibrary(directory: directory, clock: { clock.now }), directory)
+    try await body(RemappingProfileLibrary(directory: directory) { clock.now }, directory)
   }
 
   @Test
@@ -75,7 +75,7 @@ struct ProfileLastUsedTests {
       try await library.create(profile)
       try await library.activate(profileID: profile.id)
 
-      let restored = RemappingProfileLibrary(directory: directory, clock: { clock.now })
+      let restored = RemappingProfileLibrary(directory: directory) { clock.now }
       #expect(try await restored.snapshot().lastUsed[profile.id] == 1_000)
     }
   }
@@ -143,10 +143,11 @@ struct ProfileLastUsedTests {
 
       let data = try Data(contentsOf: directory.appendingPathComponent("LastUsed.plist"))
       let tree = try #require(
-        try unsafe PropertyListSerialization.propertyList(from: data, options: 0, format: nil) as? [String: Any]
+        try unsafe PropertyListSerialization.propertyList(from: data, options: 0, format: nil)
+          as? [String: Any]
       )
       #expect(tree[profile.id.uuidString] as? Double == 1_000)
-      let text = String(decoding: data, as: UTF8.self)
+      let text = try #require(String(bytes: data, encoding: .utf8))
       #expect(!text.contains("<date>") && !text.contains("<data>"))
     }
   }

@@ -298,7 +298,10 @@ struct ProfileSchemaTests {
 
   @Test(arguments: [
     ("empty binding remark", #""remark": """#),
-    ("binding remark over 200 characters", "\"remark\": \"" + String(repeating: "a", count: 201) + "\""),
+    (
+      "binding remark over 200 characters",
+      "\"remark\": \"" + String(repeating: "a", count: 201) + "\""
+    ),
     ("binding remark with a control character", #""remark": "Jump\u007f""#),
     ("binding remark with a space at the end", #""remark": "Jump ""#),
     ("binding remark that is not text", #""remark": 5"#),

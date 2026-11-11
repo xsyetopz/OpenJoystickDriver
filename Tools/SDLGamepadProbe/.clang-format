@@ -1,0 +1,19 @@
+# The shared root file has only a C++ section, and clang-format refuses Objective-C files without one.
+---
+Language: ObjC
+BasedOnStyle: Google
+ColumnLimit: 100
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ContinuationIndentWidth: 4
+InsertNewlineAtEOF: true
+---
+Language: Cpp
+BasedOnStyle: Google
+ColumnLimit: 100
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ContinuationIndentWidth: 4
+InsertNewlineAtEOF: true

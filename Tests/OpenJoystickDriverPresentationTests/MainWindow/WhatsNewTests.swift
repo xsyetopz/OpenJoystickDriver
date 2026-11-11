@@ -23,12 +23,14 @@ struct WhatsNewTests {
     """
 
   private func model(installed: String, changelog: String? = changelog) -> WhatsNewModel {
-    WhatsNewModel(settings: store, installed: installed, changelog: { changelog })
+    WhatsNewModel(settings: store, installed: installed) { changelog }
   }
 
   @Test
   func aSectionSplitsIntoHeadingsAndItems() {
-    let blocks = WhatsNewBlock.blocks(from: "### Added\n\n- `ojd migrate` converts files.\n- Second.\n")
+    let blocks = WhatsNewBlock.blocks(
+      from: "### Added\n\n- `ojd migrate` converts files.\n- Second.\n"
+    )
     #expect(
       blocks == [.heading("Added"), .item("`ojd migrate` converts files."), .item("Second.")]
     )
@@ -55,7 +57,7 @@ struct WhatsNewTests {
   }
 
   @Test
-  func aFreshInstallationShowsTheInstalledVersion() throws {
+  func aFreshInstallationShowsTheInstalledVersion() {
     let whatsNew = model(installed: "0.5.0")
 
     whatsNew.presentIfNeeded()

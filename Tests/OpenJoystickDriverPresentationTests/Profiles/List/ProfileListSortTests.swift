@@ -5,7 +5,11 @@ import Testing
 @testable import OpenJoystickDriverPresentation
 
 struct ProfileListSortTests {
-  private static func profile(_ name: String, vendorID: UInt16 = 1, productID: UInt16 = 1)
+  private static func profile(
+    _ name: String,
+    vendorID: UInt16 = 1,
+    productID: UInt16 = 1
+  )
     -> RemappingProfile
   {
     RemappingProfile(
@@ -20,7 +24,10 @@ struct ProfileListSortTests {
 
   @Test
   func byNameIgnoresCaseAndKeepsNumbersInOrder() {
-    let profiles = [Self.profile("beta"), Self.profile("Profile 10"), Self.profile("Alpha"), Self.profile("Profile 2")]
+    let profiles = [
+      Self.profile("beta"), Self.profile("Profile 10"), Self.profile("Alpha"),
+      Self.profile("Profile 2"),
+    ]
     let sorted = ProfileListSort.name.sorted(profiles, lastUsed: [:])
     #expect(Self.names(sorted) == ["Alpha", "beta", "Profile 2", "Profile 10"])
   }

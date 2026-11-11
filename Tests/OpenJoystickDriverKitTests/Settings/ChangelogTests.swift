@@ -80,7 +80,11 @@ struct ChangelogTests {
   @Test
   func anInstalledVersionShowsItsSectionUntilItIsRecorded() {
     let first = Changelog.toShow(installed: "0.6.0", lastShown: nil, in: Self.text)
-    let afterUpdate = Changelog.toShow(installed: "0.6.0", lastShown: "0.6.0-alpha.2", in: Self.text)
+    let afterUpdate = Changelog.toShow(
+      installed: "0.6.0",
+      lastShown: "0.6.0-alpha.2",
+      in: Self.text
+    )
     let again = Changelog.toShow(installed: "0.6.0", lastShown: "0.6.0", in: Self.text)
 
     #expect(first == "### Fixed\n\n- Release item.")

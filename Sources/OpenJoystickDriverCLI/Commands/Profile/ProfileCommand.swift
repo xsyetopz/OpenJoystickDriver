@@ -360,10 +360,12 @@ struct ProfileCreateCommand: AsyncParsableCommand {
         created.id.uuidString
       )
       if let skippedControls, !skippedControls.isEmpty {
-        message += "\n" + CLILocalized.format(
-          "cli.profile.create.skipped",
-          skippedControls.map(\.rawValue).joined(separator: ", ")
-        )
+        message +=
+          "\n"
+          + CLILocalized.format(
+            "cli.profile.create.skipped",
+            skippedControls.map(\.rawValue).joined(separator: ", ")
+          )
       }
       try printProfile(
         ProfileResult(

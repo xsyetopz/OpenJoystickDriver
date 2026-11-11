@@ -38,9 +38,13 @@
     /// A settings file that cannot be read or written shows nothing, because the section would
     /// show at every opening otherwise.
     func presentIfNeeded() {
-      guard let changelog = changelog(),
+      guard let document = changelog(),
         let stored = try? settings.load(),
-        let section = Changelog.toShow(installed: installed, lastShown: stored.lastShownChangelogVersion, in: changelog),
+        let section = Changelog.toShow(
+          installed: installed,
+          lastShown: stored.lastShownChangelogVersion,
+          in: document
+        ),
         (try? settings.setLastShownChangelogVersion(installed)) != nil
       else { return }
       version = installed
@@ -54,7 +58,7 @@
     case heading(String)
     case item(String)
 
-    static func blocks(from section: String) -> [WhatsNewBlock] {
+    static func blocks(from section: String) -> [Self] {
       section.split(separator: "\n").compactMap { line in
         if line.hasPrefix("### ") { return .heading(String(line.dropFirst(4))) }
         if line.hasPrefix("- ") { return .item(String(line.dropFirst(2))) }
@@ -73,7 +77,9 @@
         Text(OJDLocalized.formatted("ui.whatsNew.title", model.version)).font(.headline)
         ScrollView {
           VStack(alignment: .leading, spacing: OJDSpacing.small) {
-            ForEach(Array(WhatsNewBlock.blocks(from: model.text).enumerated()), id: \.offset) { _, block in
+            ForEach(Array(WhatsNewBlock.blocks(from: model.text).enumerated()), id: \.offset) {
+              _,
+              block in
               switch block {
               case .heading(let title):
                 Text(title).font(.subheadline.weight(.semibold)).padding(.top, OJDSpacing.small)

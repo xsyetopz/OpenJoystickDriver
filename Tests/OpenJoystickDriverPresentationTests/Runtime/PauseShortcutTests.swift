@@ -8,7 +8,10 @@ import Testing
 
 @Suite(.serialized)
 struct PauseShortcutPresentationTests {
-  private func pad(_ token: String, _ state: ControllerSessionState) -> ApplicationServiceDeviceDescription {
+  private func pad(
+    _ token: String,
+    _ state: ControllerSessionState
+  ) -> ApplicationServiceDeviceDescription {
     ApplicationServiceDeviceDescription(
       name: "Test Pad",
       vendorID: 0x1234,
@@ -64,7 +67,7 @@ struct PauseShortcutPresentationTests {
   }
 
   @Test
-  func modifiersMapToTheCarbonMasks() throws {
+  func modifiersMapToTheCarbonMasks() {
     #expect(
       PauseHotKey.carbonModifiers([.command, .control, .option, .shift])
         == UInt32(cmdKey | controlKey | optionKey | shiftKey)
@@ -74,14 +77,17 @@ struct PauseShortcutPresentationTests {
 
   @Test
   func theDisplayUsesTheMenuGlyphsInTheMacOSOrder() throws {
-    #expect(try PauseShortcutDisplay.text(PauseShortcut(parsing: "command+control+option+shift+P")) == "⌃⌥⇧⌘P")
+    #expect(
+      try PauseShortcutDisplay.text(PauseShortcut(parsing: "command+control+option+shift+P"))
+        == "⌃⌥⇧⌘P"
+    )
     #expect(try PauseShortcutDisplay.text(PauseShortcut(parsing: "control+Space")) == "⌃Space")
   }
 
   @Test
   @MainActor
   func theHotKeyRegistersAndReleasesAShortcut() throws {
-    let hotKey = PauseHotKey { }
+    let hotKey = PauseHotKey {}
     try hotKey.register(PauseShortcut(parsing: "control+option+command+shift+F12"))
     #expect(hotKey.isRegistered)
     try hotKey.register(nil)
