@@ -5,8 +5,8 @@ Every record on this page is unverified: no tester capture of an Ultimate 2 exis
 | Identity | VID:PID | Record | Status |
 | --- | --- | --- | --- |
 | Ultimate 2, DInput, cable or 2.4 GHz dongle | `2DC8:6012` | `HIDDescriptor`, one `default` mode | Unverified |
-| Ultimate 2 receiver | `2DC8:6013` | `idle` | Unverified |
-| Ultimate 2 dongle | `2DC8:3107` | `idle` | Unverified |
+| Ultimate 2 receiver | `2DC8:6013` | `idle` mode | Unverified |
+| Ultimate 2 dongle | `2DC8:3107` | `idle` mode | Unverified |
 | Ultimate 3-mode, Bluetooth, Xbox mode | `2DC8:901B` | `HIDDescriptor`, one `default` mode | Unverified |
 | Ultimate 2 or Pro 3 | `2DC8:310B` | `XboxXUSB`, wired | Unverified; not named in the record |
 
@@ -26,7 +26,7 @@ The record declares no motion. The gyro in DInput and Switch mode gets a path on
 
 ## 6013 and 3107
 
-Both identities are `idle`: OJD recognizes them, sends no data, creates no virtual gamepad and reports `IdleIdentity`. Nothing in the tree states a protocol for either, so the records map no controls instead of inventing a layout. A capture that shows gamepad input replaces `idle` with the descriptor's mode and usage map.
+Both identities have a default mode with `idle: NoControllerLinked`: OJD recognizes them, sends no data, creates no virtual gamepad and reports `NoControllerLinked`. Nothing in the tree states a protocol for either, so the records map no controls instead of inventing a layout. A capture that shows gamepad input replaces the `idle` reason with the descriptor's mode and usage map.
 
 ## 901B
 

@@ -10,7 +10,7 @@ Capture paths in this page are relative to `openspec/changes/0-6-0-alpha-3/evide
 | Bluetooth LE | `2DC8:301B` | `HIDDescriptor` | Captured: every control raw and decoded (`2c-bluetooth-301b/ordered-controls-120s.txt`, `2c-bluetooth-301b/ojd-watch-120s.txt`); battery byte reads 0; rumble write fails |
 | Wired, DInput | `2DC8:301D` | `HIDDescriptor` | Unverified: no capture of this identity exists, and no capture shows which pad mode produces it |
 | USB adapter | `2DC8:3109` | `XboxXUSB` | Unverified: no capture of this identity exists, and no capture shows which pad mode produces it |
-| 2.4 GHz receiver, DInput | `2DC8:301C` | `HIDDescriptor` | Captured: every control reports (`2c-receiver-301c/ordered-controls-150s.txt`); the record is `idle`, maps no controls and reports `IdleIdentity`; unassigned L4 Unverified |
+| 2.4 GHz receiver, DInput | `2DC8:301C` | `HIDDescriptor` | Captured: every control reports (`2c-receiver-301c/ordered-controls-150s.txt`); the default mode is `idle: NoControllerLinked`, maps no controls and reports `NoControllerLinked`; unassigned L4 Unverified |
 
 ## Results
 
