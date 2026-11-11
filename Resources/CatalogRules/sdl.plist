@@ -190,8 +190,6 @@
 			<string>SonySixaxis</string>
 			<key>identity</key>
 			<string>2563:0523</string>
-			<key>note</key>
-			<string>SDL `HIDAPI_DriverPS3_IsSupportedDevice` claims `USB_VENDOR_SHANWAN` / `USB_PRODUCT_SHANWAN_DS3` for the DualShock 3 driver; its `is_shanwan` flag only skips the one-byte `0xF5` echo write, which OJD does not send</string>
 			<key>sdlType</key>
 			<string>PS3Controller</string>
 		</dict>
@@ -200,8 +198,6 @@
 			<string>XboxXUSB</string>
 			<key>identity</key>
 			<string>0F0D:0086</string>
-			<key>note</key>
-			<string>SDL `controller_list.h`: "Uses the Xbox 360 protocol, but has PS3 buttons"</string>
 			<key>sdlType</key>
 			<string>PS3Controller</string>
 			<key>variant</key>
@@ -212,8 +208,6 @@
 			<string>HIDDescriptor</string>
 			<key>identity</key>
 			<string>358A:0304</string>
-			<key>note</key>
-			<string>SDL `HIDAPI_DriverPS5_IsSupportedDevice` rejects `USB_PRODUCT_BACKBONE_ONE_PS5_V2`: "This product doesn't appear to use the DualSense protocol"</string>
 			<key>sdlType</key>
 			<string>PS5Controller</string>
 		</dict>
@@ -222,8 +216,6 @@
 			<string>HIDDescriptor</string>
 			<key>identity</key>
 			<string>045E:02E0</string>
-			<key>note</key>
-			<string>Xbox One S, Elite 2 and Series pads over Bluetooth (SDL `SDL_IsJoystickBluetoothXboxOne`) send standard HID reports, not GIP; the descriptor driver maps both firmware layouts (xpadneo `docs/descriptors/xb1s_linux.md`, `xb1s_windows.md`, `xbxs .md`)</string>
 			<key>sdlType</key>
 			<string>XBoxOneController</string>
 		</dict>
@@ -232,8 +224,6 @@
 			<string>HIDDescriptor</string>
 			<key>identity</key>
 			<string>045E:02FD</string>
-			<key>note</key>
-			<string>Xbox One S, Elite 2 and Series pads over Bluetooth (SDL `SDL_IsJoystickBluetoothXboxOne`) send standard HID reports, not GIP; the descriptor driver maps both firmware layouts (xpadneo `docs/descriptors/xb1s_linux.md`, `xb1s_windows.md`, `xbxs.md`)</string>
 			<key>sdlType</key>
 			<string>XBoxOneController</string>
 		</dict>
@@ -242,8 +232,6 @@
 			<string>HIDDescriptor</string>
 			<key>identity</key>
 			<string>045E:0B05</string>
-			<key>note</key>
-			<string>Xbox One S, Elite 2 and Series pads over Bluetooth (SDL `SDL_IsJoystickBluetoothXboxOne`) send standard HID reports, not GIP; the descriptor driver maps both firmware layouts (xpadneo `docs/descriptors/xb1s_linux.md`, `xb1s_windows.md`, `xbxs.md`)</string>
 			<key>sdlType</key>
 			<string>XBoxOneController</string>
 		</dict>
@@ -252,8 +240,6 @@
 			<string>HIDDescriptor</string>
 			<key>identity</key>
 			<string>045E:0B0C</string>
-			<key>note</key>
-			<string>Xbox One S, Elite 2 and Series pads over Bluetooth (SDL `SDL_IsJoystickBluetoothXboxOne`) send standard HID reports, not GIP; the descriptor driver maps both firmware layouts (xpadneo `docs/descriptors/xb1s_linux.md`, `xb1s_windows.md`, `xbxs.md`)</string>
 			<key>sdlType</key>
 			<string>XBoxOneController</string>
 		</dict>
@@ -262,8 +248,6 @@
 			<string>HIDDescriptor</string>
 			<key>identity</key>
 			<string>045E:0B13</string>
-			<key>note</key>
-			<string>Xbox One S, Elite 2 and Series pads over Bluetooth (SDL `SDL_IsJoystickBluetoothXboxOne`) send standard HID reports, not GIP; the descriptor driver maps both firmware layouts (xpadneo `docs/descriptors/xb1s_linux.md`, `xb1s_windows.md`, `xbxs.md`)</string>
 			<key>sdlType</key>
 			<string>XBoxOneController</string>
 		</dict>
@@ -272,8 +256,6 @@
 			<string>HIDDescriptor</string>
 			<key>identity</key>
 			<string>045E:0B20</string>
-			<key>note</key>
-			<string>Xbox One S, Elite 2 and Series pads over Bluetooth (SDL `SDL_IsJoystickBluetoothXboxOne`) send standard HID reports, not GIP; the descriptor driver maps both firmware layouts (xpadneo `docs/descriptors/xb1s_linux.md`, `xb1s_windows.md`, `xbxs.md`)</string>
 			<key>sdlType</key>
 			<string>XBoxOneController</string>
 		</dict>
@@ -282,8 +264,6 @@
 			<string>HIDDescriptor</string>
 			<key>identity</key>
 			<string>045E:0B21</string>
-			<key>note</key>
-			<string>Xbox One S, Elite 2 and Series pads over Bluetooth (SDL `SDL_IsJoystickBluetoothXboxOne`) send standard HID reports, not GIP; the descriptor driver maps both firmware layouts (xpadneo `docs/descriptors/xb1s_linux.md`, `xb1s_windows.md`, `xbxs.md`)</string>
 			<key>sdlType</key>
 			<string>XBoxOneController</string>
 		</dict>
@@ -292,8 +272,6 @@
 			<string>HIDDescriptor</string>
 			<key>identity</key>
 			<string>045E:0B22</string>
-			<key>note</key>
-			<string>Xbox One S, Elite 2 and Series pads over Bluetooth (SDL `SDL_IsJoystickBluetoothXboxOne`) send standard HID reports, not GIP; the descriptor driver maps both firmware layouts (xpadneo `docs/descriptors/xb1s_linux.md`, `xb1s_windows.md`, `xbxs.md`)</string>
 			<key>sdlType</key>
 			<string>XBoxOneController</string>
 		</dict>
@@ -302,8 +280,6 @@
 			<string>HIDDescriptor</string>
 			<key>identity</key>
 			<string>0079:0006</string>
-			<key>note</key>
-			<string>SDL `controller_list.h`: "DragonRise Generic USB PCB"; a standard HID gamepad whose layout `HIDDescriptorDriver` recognizes</string>
 			<key>sdlType</key>
 			<string>UnknownNonSteamController</string>
 		</dict>
@@ -312,8 +288,6 @@
 			<string>VendorNVIDIAShield</string>
 			<key>identity</key>
 			<string>0955:7210</string>
-			<key>note</key>
-			<string>SDL `HIDAPI_DriverXbox360_IsSupportedDevice`: "the NVIDIA Shield controller which doesn't talk Xbox controller protocol"; `SDL_hidapi_shield.c` drives it</string>
 			<key>sdlType</key>
 			<string>XBox360Controller</string>
 		</dict>
@@ -339,88 +313,66 @@
 		<dict>
 			<key>identity</key>
 			<string>28DE:1101</string>
-			<key>note</key>
-			<string>Legacy Steam Controller (CHELL)</string>
 			<key>variant</key>
 			<string>Wired</string>
 		</dict>
 		<dict>
 			<key>identity</key>
 			<string>28DE:1102</string>
-			<key>note</key>
-			<string>wired Steam Controller (D0G)</string>
 			<key>variant</key>
 			<string>Wired</string>
 		</dict>
 		<dict>
 			<key>identity</key>
 			<string>28DE:1105</string>
-			<key>note</key>
-			<string>Bluetooth Steam Controller (D0G)</string>
 			<key>variant</key>
 			<string>BluetoothLE</string>
 		</dict>
 		<dict>
 			<key>identity</key>
 			<string>28DE:1106</string>
-			<key>note</key>
-			<string>Bluetooth Steam Controller (D0G)</string>
 			<key>variant</key>
 			<string>BluetoothLE</string>
 		</dict>
 		<dict>
 			<key>identity</key>
 			<string>28DE:1142</string>
-			<key>note</key>
-			<string>wireless Steam Controller</string>
 			<key>variant</key>
 			<string>Dongle</string>
 		</dict>
 		<dict>
 			<key>identity</key>
 			<string>28DE:1201</string>
-			<key>note</key>
-			<string>wired Steam Controller (HEADCRAB)</string>
 			<key>variant</key>
 			<string>Wired</string>
 		</dict>
 		<dict>
 			<key>identity</key>
 			<string>28DE:1202</string>
-			<key>note</key>
-			<string>Bluetooth Steam Controller (HEADCRAB)</string>
 			<key>variant</key>
 			<string>BluetoothLE</string>
 		</dict>
 		<dict>
 			<key>identity</key>
 			<string>28DE:1302</string>
-			<key>note</key>
-			<string>Steam Triton Controller</string>
 			<key>variant</key>
 			<string>Wired</string>
 		</dict>
 		<dict>
 			<key>identity</key>
 			<string>28DE:1303</string>
-			<key>note</key>
-			<string>Steam Triton Controller (BLE)</string>
 			<key>variant</key>
 			<string>BluetoothLE</string>
 		</dict>
 		<dict>
 			<key>identity</key>
 			<string>28DE:1304</string>
-			<key>note</key>
-			<string>Steam Proteus Dongle</string>
 			<key>variant</key>
 			<string>Dongle</string>
 		</dict>
 		<dict>
 			<key>identity</key>
 			<string>28DE:1305</string>
-			<key>note</key>
-			<string>Steam Nereid Dongle</string>
 			<key>variant</key>
 			<string>Dongle</string>
 		</dict>

@@ -602,11 +602,6 @@
         },
         "readsStartupFeatures": {
           "type": "boolean"
-        },
-        "rationale": {
-          "description": "Why macOS leaves this output undone, for the reader of the description.",
-          "type": "string",
-          "minLength": 1
         }
       }
     },

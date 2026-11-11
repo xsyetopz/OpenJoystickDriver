@@ -9677,8 +9677,7 @@
           "adapterDisconnectDelayMs"
         ],
         "macOSOwnedOutput": {
-          "readsStartupFeatures": true,
-          "rationale": "A DualShock 4 on Bluetooth sends only the 10-byte input report until the host reads the calibration feature report, which macOS does not do."
+          "readsStartupFeatures": true
         },
         "parameters": {
           "motionCalibration": {
@@ -9753,8 +9752,7 @@
           "adapterDisconnectDelayMs"
         ],
         "macOSOwnedOutput": {
-          "readsStartupFeatures": true,
-          "rationale": "A DualShock 4 on Bluetooth sends only the 10-byte input report until the host reads the calibration feature report, which macOS does not do."
+          "readsStartupFeatures": true
         },
         "parameters": {
           "motionCalibration": {
@@ -9829,8 +9827,7 @@
           "adapterDisconnectDelayMs"
         ],
         "macOSOwnedOutput": {
-          "readsStartupFeatures": true,
-          "rationale": "A DualShock 4 on Bluetooth sends only the 10-byte input report until the host reads the calibration feature report, which macOS does not do."
+          "readsStartupFeatures": true
         },
         "parameters": {
           "motionCalibration": {
@@ -9905,8 +9902,7 @@
           "adapterDisconnectDelayMs"
         ],
         "macOSOwnedOutput": {
-          "readsStartupFeatures": true,
-          "rationale": "A DualShock 4 on Bluetooth sends only the 10-byte input report until the host reads the calibration feature report, which macOS does not do."
+          "readsStartupFeatures": true
         },
         "parameters": {
           "motionCalibration": {
@@ -9985,8 +9981,7 @@
             }
           ],
           "setsStartupPlayerIndicator": true,
-          "readsStartupFeatures": true,
-          "rationale": "macOS never writes output report 0x01 to a Sixaxis, and a USB Sixaxis ignores it until the host reads feature report 0xF2."
+          "readsStartupFeatures": true
         },
         "controls": {
           "base": "Xbox",
@@ -10026,8 +10021,7 @@
             }
           ],
           "setsStartupPlayerIndicator": true,
-          "readsStartupFeatures": true,
-          "rationale": "macOS never writes output report 0x01 to a Sixaxis, and a USB Sixaxis ignores it until the host reads feature report 0xF2."
+          "readsStartupFeatures": true
         },
         "controls": {
           "base": "Xbox",
@@ -10067,8 +10061,7 @@
             }
           ],
           "setsStartupPlayerIndicator": true,
-          "readsStartupFeatures": true,
-          "rationale": "macOS never writes output report 0x01 to a Sixaxis, and a USB Sixaxis ignores it until the host reads feature report 0xF2."
+          "readsStartupFeatures": true
         },
         "controls": {
           "base": "Xbox",
@@ -10108,8 +10101,7 @@
             }
           ],
           "setsStartupPlayerIndicator": true,
-          "readsStartupFeatures": true,
-          "rationale": "macOS never writes output report 0x01 to a Sixaxis, and a USB Sixaxis ignores it until the host reads feature report 0xF2."
+          "readsStartupFeatures": true
         },
         "controls": {
           "base": "Xbox",
@@ -15711,7 +15703,7 @@
       }
     },
     {
-      "name": "rejects a rationale of the wrong type: rationale=5",
+      "name": "rejects the rationale key, which macOSOwnedOutput does not have",
       "code": "E5002",
       "fileName": "sony-dual-sense.json",
       "schema": true,
@@ -15725,66 +15717,7 @@
           "out": 2
         },
         "macOSOwnedOutput": {
-          "rationale": 5
-        }
-      }
-    },
-    {
-      "name": "rejects a rationale of the wrong type: rationale=None",
-      "code": "E5002",
-      "fileName": "sony-dual-sense.json",
-      "schema": true,
-      "document": {
-        "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
-        "kind": "ProtocolDescription",
-        "family": "SonyDualSense",
-        "endpoints": {
-          "in": 130,
-          "out": 2
-        },
-        "macOSOwnedOutput": {
-          "rationale": null
-        }
-      }
-    },
-    {
-      "name": "rejects a rationale of the wrong type: rationale=['rationale']",
-      "code": "E5002",
-      "fileName": "sony-dual-sense.json",
-      "schema": true,
-      "document": {
-        "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
-        "kind": "ProtocolDescription",
-        "family": "SonyDualSense",
-        "endpoints": {
-          "in": 130,
-          "out": 2
-        },
-        "macOSOwnedOutput": {
-          "rationale": ["rationale"]
-        }
-      }
-    },
-    {
-      "name": "rejects a rationale of the wrong type: rationale={'text': 'x'}",
-      "code": "E5002",
-      "fileName": "sony-dual-sense.json",
-      "schema": true,
-      "document": {
-        "variants": ["USB", "BluetoothClassic"],
-        "apiVersion": "openjoystickdriver/v1alpha3",
-        "kind": "ProtocolDescription",
-        "family": "SonyDualSense",
-        "endpoints": {
-          "in": 130,
-          "out": 2
-        },
-        "macOSOwnedOutput": {
-          "rationale": {
-            "text": "x"
-          }
+          "rationale": "macOS does not write it."
         }
       }
     },

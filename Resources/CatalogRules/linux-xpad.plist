@@ -44,8 +44,6 @@
 		<dict>
 			<key>flag</key>
 			<string>FLAG_DELAY_INIT</string>
-			<key>note</key>
-			<string>FLAG_DELAY_INIT holds the GIP init sequence until the pad's announce packet; GIPDriver resends its startup sequence on the announces before the first input</string>
 			<key>xtype</key>
 			<string>XTYPE_XBOXONE</string>
 		</dict>

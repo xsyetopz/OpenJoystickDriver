@@ -73,8 +73,6 @@
 	<string>ProtocolDescription</string>
 	<key>macOSOwnedOutput</key>
 	<dict>
-		<key>rationale</key>
-		<string>A DualShock 4 on Bluetooth sends only the 10-byte input report until the host reads the calibration feature report, which macOS does not do.</string>
 		<key>readsStartupFeatures</key>
 		<true/>
 	</dict>

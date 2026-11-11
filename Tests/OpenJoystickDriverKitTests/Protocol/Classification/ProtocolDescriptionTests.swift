@@ -281,7 +281,7 @@ struct ProtocolDescriptionTests {
       (.xboxGIP, #""rawUSB": true, "tuningKeys": ["keepAliveIntervalMs"]"#),
       (.sonyDualSense, #""rawUSBTuningKeys": ["keepAliveIntervalMs"]"#),
       (.sonyDualSense, #""defaults": {"variants": {"USB": {"tuning": {"stickDeadzone": 5}}}}"#),
-      (.sonyDualSense, #""macOSOwnedOutput": {"rationale": 5}"#),
+      (.sonyDualSense, #""macOSOwnedOutput": {"rationale": "macOS does not write it."}"#),
       (.xboxGIP, #""defaults": {"session": {"rumble": \#(Self.rumbleTemplate)}}"#),
       (.sonyDualSense, #""tuningKeys": ["stickDeadzone"]"#),
       (.xboxGIP, #""rawUSB": true, "rawUSBTuningKeys": ["stickDeadzone"]"#),

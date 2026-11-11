@@ -16,8 +16,6 @@ struct MacOSOwnedOutput: Equatable, Sendable {
   let setsStartupPlayerIndicator: Bool
   /// Whether OJD makes the driver's startup feature reads, which macOS does not.
   let readsStartupFeatures: Bool
-  /// Why macOS leaves this output undone, in the description's words; nil when it states none.
-  let rationale: String?
 
   /// The allowance that permits no output.
   static let none = Self(
@@ -25,8 +23,7 @@ struct MacOSOwnedOutput: Equatable, Sendable {
     drivesRumble: false,
     reports: [],
     setsStartupPlayerIndicator: false,
-    readsStartupFeatures: false,
-    rationale: nil
+    readsStartupFeatures: false
   )
 
   /// The family default with the record's rumble template added.
@@ -38,8 +35,7 @@ struct MacOSOwnedOutput: Equatable, Sendable {
       drivesRumble: true,
       reports: family.reports.union([report]),
       setsStartupPlayerIndicator: family.setsStartupPlayerIndicator,
-      readsStartupFeatures: family.readsStartupFeatures,
-      rationale: family.rationale
+      readsStartupFeatures: family.readsStartupFeatures
     )
   }
 

@@ -95,6 +95,18 @@ Admitted third-party DualShock 4 rows keep the nominal motion scale: like SDL, O
 
 The generators read their family lists, flag sets, name maps and exclusions from `Resources/CatalogRules/` (`linux-xpad.plist`, `linux-hid.plist`, `sdl.plist`). Each file carries `apiVersion` and `kind`, and the loader rejects missing or unexpected keys. Change these files, not generator code, to adjust a table; then run `./Scripts/ojd catalog regenerate --write`.
 
+Facts behind single entries:
+
+- `sdl.plist` `identityFamilies`:
+  - `0F0D:0086` uses the Xbox 360 protocol but has PS3 buttons (SDL `controller_list.h`).
+  - `2563:0523` is the DualShock 3 of Shanwan; it comes from SDL's `HIDAPI_DriverPS3_IsSupportedDevice`, which claims `USB_VENDOR_SHANWAN` / `USB_PRODUCT_SHANWAN_DS3`; its `is_shanwan` flag only skips the one-byte `0xF5` echo write, which OJD does not send.
+  - `358A:0304` is the Backbone One PS5 V2: `HIDAPI_DriverPS5_IsSupportedDevice` rejects `USB_PRODUCT_BACKBONE_ONE_PS5_V2`: "This product doesn't appear to use the DualSense protocol".
+  - Xbox One S, Elite 2 and Series pads over Bluetooth (`SDL_IsJoystickBluetoothXboxOne`) send standard HID reports, not GIP; the descriptor driver maps both firmware layouts (xpadneo `docs/descriptors/xb1s_linux.md`, `xb1s_windows.md`, `xbxs.md`). The `045E` entries `02E0`, `02FD`, `0B05`, `0B0C`, `0B13`, `0B20`, `0B21` and `0B22` are of this kind.
+  - `0079:0006` is "DragonRise Generic USB PCB" in `controller_list.h`, a standard HID gamepad whose layout `HIDDescriptorDriver` recognizes.
+  - `0955:7210` is the NVIDIA Shield controller, which `HIDAPI_DriverXbox360_IsSupportedDevice` says "doesn't talk Xbox controller protocol"; `SDL_hidapi_shield.c` drives it.
+- `sdl.plist` `steamVariants`: `28DE:1101` is the legacy Steam Controller (CHELL); `1102` is the wired (D0G), `1105` and `1106` the Bluetooth (D0G); `1142` is the wireless Steam Controller dongle; `1201` is the wired (HEADCRAB) and `1202` the Bluetooth (HEADCRAB); `1302` is the Steam Triton Controller and `1303` its BLE form; `1304` is the Steam Proteus Dongle and `1305` the Steam Nereid Dongle.
+- `linux-xpad.plist` `driverHandledDeviceFlags`: `FLAG_DELAY_INIT` holds the GIP init sequence until the pad's announce packet; `GIPDriver` resends its startup sequence on the announces before the first input.
+
 ## Local Source Overrides
 
 Override inputs live at:
