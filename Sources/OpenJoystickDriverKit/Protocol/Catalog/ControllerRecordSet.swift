@@ -232,8 +232,12 @@ public struct ControllerRecordSet: Sendable {
     _ urls: [URL]
   ) -> (records: [ControllerModelID: ControllerRecord], problems: [RepositoryProblem]) {
     var records: [ControllerModelID: ControllerRecord] = [:]
+    var files: [ControllerModelID: String] = [:]
     var problems: [RepositoryProblem] = []
-    for url in urls.sorted(by: { $0.lastPathComponent < $1.lastPathComponent }) {
+    let sortedURLs = urls.sorted {
+      ($0.lastPathComponent, $0.path) < ($1.lastPathComponent, $1.path)
+    }
+    for url in sortedURLs {
       do {
         let data = try RepositoryProblem.read(url)
         let document = try ordered(data, file: url.lastPathComponent)
@@ -247,12 +251,13 @@ public struct ControllerRecordSet: Sendable {
             "filename must be \(fileName(for: record.model))"
           )
         }
-        guard records[record.model] == nil else {
+        if let first = files[record.model] {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
-            "duplicate controller identity"
+            "duplicate controller identity \(record.model): \(first) already holds it"
           )
         }
+        files[record.model] = url.path
         records[record.model] = record
       } catch {
         problems.append(RepositoryProblem(file: url.path, error: error, document: "record"))

@@ -98,6 +98,30 @@ struct RepositoryValidationTests {
     }
   }
 
+  // MARK: one identity has one record
+
+  @Test
+  func aSecondRecordOfOneIdentityIsReportedWithBothFiles() throws {
+    try Self.scratch { directory in
+      let text = #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Controller","#
+        + #" "vendorID": 13623, "productID": 4226, "modes": [{"id": "default","#
+        + #" "protocol": {"family": "XboxGIP"}}]}"#
+      let first = directory.appendingPathComponent("3537/3537-1082.plist")
+      let second = directory.appendingPathComponent("contributed/3537-1082.plist")
+      try Self.write(text, to: first)
+      try Self.write(text, to: second)
+      let problems = RepositoryValidation.controllers(in: directory)
+      let problem = try #require(
+        problems.first { $0.message.contains("duplicate") },
+        "\(problems.map(\.message))"
+      )
+      #expect(problems.count == 1)
+      #expect(problem.file.hasSuffix("/contributed/3537-1082.plist"))
+      #expect(problem.message.contains("3537:1082"))
+      #expect(problem.message.contains(first.path))
+    }
+  }
+
   // MARK: descriptions come in family order
 
   @Test
