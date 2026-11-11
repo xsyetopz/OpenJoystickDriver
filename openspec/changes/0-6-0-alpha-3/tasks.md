@@ -180,7 +180,7 @@ Each of 12.1 to 12.7 starts from its row in the audit (10.5) and from a failing 
 - [ ] 12.16 Add to the Help menu a command that opens the wiki page of the area in view and a tour of the main window. Caller: the main menu.
 - [x] 12.17 Rewrite `wiki/Home.md` around four start pages: play a game, control the Mac, set up OJD on several Macs, add support for a controller. The third states what the license and macOS allow and makes no claim about managed deployment.
 - [ ] 12.18 Controller detail, Advanced: show the three action buttons in one row, and replace each raw value in its rows with words (`Controllers/Inventory/ControllerDetailFacts.swift:202-269`): the parser, record source, and input mapping identifiers, and the control names such as `DpadUp`. Keep the raw identifier only beside the words, per 14.4. Caller: `ControllerDetailView`.
-- [ ] 12.19 Add `OJD_HIDDEN`: when it is `1`, `true`, or `yes`, the app never activates and orders each window it shows behind other apps' windows (`MenuBar/AppForeground.swift`), so a script captures a window with `screencapture -l` while the user works. Document it in `docs/development/environment.md`. Caller: every window controller and activation call.
+- [x] 12.19 Add `OJD_HIDDEN`: when it is `1`, `true`, or `yes`, the app never activates and orders each window it shows behind other apps' windows (`MenuBar/AppForeground.swift`), so a script captures a window with `screencapture -l` while the user works. Document it in `docs/development/environment.md`. Caller: every window controller and activation call.
 
 ## 13. Simple and Advanced
 
