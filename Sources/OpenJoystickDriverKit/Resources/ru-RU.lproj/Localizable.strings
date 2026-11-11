@@ -4915,3 +4915,21 @@
 "ui.controllers.sdlMatch.guidWithoutVersion" = "GUID без версии";
 /* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the version and name checksum bytes are ignored. GUID stays as written. */
 "ui.controllers.sdlMatch.guidWithoutVersionAndNameCRC" = "GUID без версии и контрольной суммы имени";
+/* Note under the profile editor in the Profiles area while a save runs and edits are ignored. */
+"ui.profiles.editBlockedSaving" = "Редактирование недоступно, пока не завершится сохранение.";
+/* Note under the profile editor in the Profiles area while another profile change runs and edits are ignored. */
+"ui.profiles.editBlockedChange" = "Редактирование недоступно, пока не завершится текущее изменение.";
+/* Note under the profile editor in the Profiles area while the profile list holds the editor because a change runs or damaged profiles need attention. */
+"ui.profiles.editBlockedHold" = "Редактирование недоступно, пока не завершится текущее изменение или не будут устранены повреждённые профили.";
+/* Note above the profile editor in the Profiles area while a profile change runs and profile actions such as New, Import and Delete wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedChange" = "Действия с профилями недоступны, пока не завершится текущее изменение.";
+/* Note above the profile editor in the Profiles area while a repair of the profile library runs and profile actions wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedRecovery" = "Действия с профилями недоступны, пока не завершится восстановление библиотеки.";
+/* Note above the profile editor in the Profiles area while the profile library lists damaged profiles and profile actions wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedDamaged" = "Действия с профилями недоступны, пока повреждённые профили не удалены или библиотека не сброшена.";
+/* Note beside the Pair Joy-Cons button of a Joy-Con pair profile in the Profiles area when the button is unavailable because a left or a right Joy-Con is not connected. */
+"ui.profiles.joyConPairNeedsBoth" = "Подключите левый и правый Joy-Con, чтобы создать из них пару.";
+/* Note under the Virtual gamepad pop-up in the profile editor, shown after a virtual gamepad was chosen while exclusive physical input was on. */
+"ui.profiles.virtualOutputResetsExclusive" = "Исключительный доступ к физическому вводу отключён, так как виртуальный геймпад всегда забирает ввод исключительно себе.";
+/* Note under the Virtual gamepad pop-up in the profile editor, beside the unavailable exclusive physical input switch while a virtual gamepad is chosen. */
+"ui.profiles.exclusiveInputUnavailable" = "Доступно, только пока не выбран виртуальный геймпад, так как виртуальный геймпад всегда забирает ввод исключительно себе.";

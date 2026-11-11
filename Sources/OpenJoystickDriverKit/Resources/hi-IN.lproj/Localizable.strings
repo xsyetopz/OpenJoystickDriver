@@ -4915,3 +4915,21 @@
 "ui.controllers.sdlMatch.guidWithoutVersion" = "संस्करण के बिना GUID";
 /* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the version and name checksum bytes are ignored. GUID stays as written. */
 "ui.controllers.sdlMatch.guidWithoutVersionAndNameCRC" = "संस्करण और नाम चेकसम के बिना GUID";
+/* Note under the profile editor in the Profiles area while a save runs and edits are ignored. */
+"ui.profiles.editBlockedSaving" = "सहेजना पूरा होने तक संपादन उपलब्ध नहीं है।";
+/* Note under the profile editor in the Profiles area while another profile change runs and edits are ignored. */
+"ui.profiles.editBlockedChange" = "चल रहा बदलाव पूरा होने तक संपादन उपलब्ध नहीं है।";
+/* Note under the profile editor in the Profiles area while the profile list holds the editor because a change runs or damaged profiles need attention. */
+"ui.profiles.editBlockedHold" = "चल रहा बदलाव पूरा होने या क्षतिग्रस्त प्रोफ़ाइल ठीक होने तक संपादन उपलब्ध नहीं है।";
+/* Note above the profile editor in the Profiles area while a profile change runs and profile actions such as New, Import and Delete wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedChange" = "चल रहा बदलाव पूरा होने तक प्रोफ़ाइल क्रियाएँ उपलब्ध नहीं हैं।";
+/* Note above the profile editor in the Profiles area while a repair of the profile library runs and profile actions wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedRecovery" = "लाइब्रेरी की मरम्मत पूरी होने तक प्रोफ़ाइल क्रियाएँ उपलब्ध नहीं हैं।";
+/* Note above the profile editor in the Profiles area while the profile library lists damaged profiles and profile actions wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedDamaged" = "क्षतिग्रस्त प्रोफ़ाइल हटाए जाने या लाइब्रेरी रीसेट होने तक प्रोफ़ाइल क्रियाएँ उपलब्ध नहीं हैं।";
+/* Note beside the Pair Joy-Cons button of a Joy-Con pair profile in the Profiles area when the button is unavailable because a left or a right Joy-Con is not connected. */
+"ui.profiles.joyConPairNeedsBoth" = "जोड़ने के लिए एक बायाँ और एक दायाँ Joy-Con कनेक्ट करें।";
+/* Note under the Virtual gamepad pop-up in the profile editor, shown after a virtual gamepad was chosen while exclusive physical input was on. */
+"ui.profiles.virtualOutputResetsExclusive" = "भौतिक इनपुट तक विशेष पहुँच बंद कर दी गई, क्योंकि वर्चुअल गेमपैड हमेशा इनपुट को विशेष रूप से लेता है।";
+/* Note under the Virtual gamepad pop-up in the profile editor, beside the unavailable exclusive physical input switch while a virtual gamepad is chosen. */
+"ui.profiles.exclusiveInputUnavailable" = "केवल तब उपलब्ध जब कोई वर्चुअल गेमपैड चुना न हो, क्योंकि वर्चुअल गेमपैड हमेशा इनपुट को विशेष रूप से लेता है।";

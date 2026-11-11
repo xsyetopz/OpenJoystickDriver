@@ -4915,3 +4915,21 @@
 "ui.controllers.sdlMatch.guidWithoutVersion" = "sürümü olmayan GUID";
 /* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the version and name checksum bytes are ignored. GUID stays as written. */
 "ui.controllers.sdlMatch.guidWithoutVersionAndNameCRC" = "sürümü ve ad sağlama toplamı olmayan GUID";
+/* Note under the profile editor in the Profiles area while a save runs and edits are ignored. */
+"ui.profiles.editBlockedSaving" = "Kaydetme bitene kadar düzenleme kullanılamaz.";
+/* Note under the profile editor in the Profiles area while another profile change runs and edits are ignored. */
+"ui.profiles.editBlockedChange" = "Süren değişiklik bitene kadar düzenleme kullanılamaz.";
+/* Note under the profile editor in the Profiles area while the profile list holds the editor because a change runs or damaged profiles need attention. */
+"ui.profiles.editBlockedHold" = "Süren değişiklik bitene veya hasarlı profiller çözülene kadar düzenleme kullanılamaz.";
+/* Note above the profile editor in the Profiles area while a profile change runs and profile actions such as New, Import and Delete wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedChange" = "Süren değişiklik bitene kadar profil eylemleri kullanılamaz.";
+/* Note above the profile editor in the Profiles area while a repair of the profile library runs and profile actions wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedRecovery" = "Kitaplık onarımı bitene kadar profil eylemleri kullanılamaz.";
+/* Note above the profile editor in the Profiles area while the profile library lists damaged profiles and profile actions wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedDamaged" = "Hasarlı profiller silinene veya kitaplık sıfırlanana kadar profil eylemleri kullanılamaz.";
+/* Note beside the Pair Joy-Cons button of a Joy-Con pair profile in the Profiles area when the button is unavailable because a left or a right Joy-Con is not connected. */
+"ui.profiles.joyConPairNeedsBoth" = "Eşleştirmek için bir sol ve bir sağ Joy-Con bağlayın.";
+/* Note under the Virtual gamepad pop-up in the profile editor, shown after a virtual gamepad was chosen while exclusive physical input was on. */
+"ui.profiles.virtualOutputResetsExclusive" = "Fiziksel girdiye özel erişim kapatıldı, çünkü sanal oyun kontrolcüsü girdiyi her zaman özel olarak alır.";
+/* Note under the Virtual gamepad pop-up in the profile editor, beside the unavailable exclusive physical input switch while a virtual gamepad is chosen. */
+"ui.profiles.exclusiveInputUnavailable" = "Yalnızca sanal oyun kontrolcüsü seçili değilken kullanılabilir, çünkü sanal oyun kontrolcüsü girdiyi her zaman özel olarak alır.";

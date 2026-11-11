@@ -4915,3 +4915,21 @@
 "ui.controllers.sdlMatch.guidWithoutVersion" = "バージョンを除いたGUID";
 /* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the version and name checksum bytes are ignored. GUID stays as written. */
 "ui.controllers.sdlMatch.guidWithoutVersionAndNameCRC" = "バージョンと名前のチェックサムを除いたGUID";
+/* Note under the profile editor in the Profiles area while a save runs and edits are ignored. */
+"ui.profiles.editBlockedSaving" = "保存が終わるまで編集できません。";
+/* Note under the profile editor in the Profiles area while another profile change runs and edits are ignored. */
+"ui.profiles.editBlockedChange" = "実行中の変更が終わるまで編集できません。";
+/* Note under the profile editor in the Profiles area while the profile list holds the editor because a change runs or damaged profiles need attention. */
+"ui.profiles.editBlockedHold" = "実行中の変更が終わるか、破損したプロファイルが解決されるまで編集できません。";
+/* Note above the profile editor in the Profiles area while a profile change runs and profile actions such as New, Import and Delete wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedChange" = "実行中の変更が終わるまで、プロファイルの操作はできません。";
+/* Note above the profile editor in the Profiles area while a repair of the profile library runs and profile actions wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedRecovery" = "ライブラリの修復が終わるまで、プロファイルの操作はできません。";
+/* Note above the profile editor in the Profiles area while the profile library lists damaged profiles and profile actions wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedDamaged" = "破損したプロファイルを削除するかライブラリをリセットするまで、プロファイルの操作はできません。";
+/* Note beside the Pair Joy-Cons button of a Joy-Con pair profile in the Profiles area when the button is unavailable because a left or a right Joy-Con is not connected. */
+"ui.profiles.joyConPairNeedsBoth" = "ペアリングするには、左右の Joy-Con を接続してください。";
+/* Note under the Virtual gamepad pop-up in the profile editor, shown after a virtual gamepad was chosen while exclusive physical input was on. */
+"ui.profiles.virtualOutputResetsExclusive" = "仮想ゲームパッドは常に入力を排他的に使用するため、物理入力への排他的アクセスをオフにしました。";
+/* Note under the Virtual gamepad pop-up in the profile editor, beside the unavailable exclusive physical input switch while a virtual gamepad is chosen. */
+"ui.profiles.exclusiveInputUnavailable" = "仮想ゲームパッドは常に入力を排他的に使用するため、仮想ゲームパッドを選んでいない間だけ使えます。";

@@ -1,4 +1,5 @@
 #if canImport(AppKit) && canImport(SwiftUI)
+  import AppKit
   import OpenJoystickDriverKit
   import SwiftUI
 
@@ -9,6 +10,9 @@
     let policy: RemappingOutputPolicy
     /// Receives the policy when the person changes it.
     let onChange: (RemappingOutputPolicy) -> Void
+    /// Whether the last choice of a virtual gamepad turned exclusive physical input off.
+    @State
+    private var didResetExclusiveInput = false
 
     /// The virtual output picker and the exclusive input toggle.
     var body: some View {
@@ -17,7 +21,10 @@
           OJDLocalized.string("ui.profiles.virtualOutput"),
           selection: Binding(
             get: { policy.virtualGamepad },
-            set: { value in onChange(Self.policy(selecting: value, from: policy)) }
+            set: { value in
+              didResetExclusiveInput = Self.resetsPhysicalInput(selecting: value, from: policy)
+              onChange(Self.policy(selecting: value, from: policy))
+            }
           )
         ) {
           Text(OJDLocalized.string("ui.profiles.virtualDisabled")).tag(
@@ -48,7 +55,29 @@
             }
           )
         ).disabled(policy.virtualGamepad != .disabled)
+        if policy.virtualGamepad != .disabled {
+          Text(
+            OJDLocalized.string(
+              didResetExclusiveInput
+                ? "ui.profiles.virtualOutputResetsExclusive" : "ui.profiles.exclusiveInputUnavailable"
+            )
+          ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+            .fixedSize(horizontal: false, vertical: true)
+        }
       }
+    }
+
+    /// Returns whether choosing `virtualGamepad` turns exclusive physical input off.
+    ///
+    /// - Parameters:
+    ///   - virtualGamepad: The virtual output the person chose.
+    ///   - policy: The policy before the change.
+    /// - Returns: Whether the physical input was exclusive and the choice sets it back to shared.
+    static func resetsPhysicalInput(
+      selecting virtualGamepad: RemappingVirtualGamepadPolicy,
+      from policy: RemappingOutputPolicy
+    ) -> Bool {
+      policy.physicalInput != Self.policy(selecting: virtualGamepad, from: policy).physicalInput
     }
 
     /// Returns the policy after the virtual output changes.

@@ -86,6 +86,11 @@
         if let profileActionError {
           ProfileActionErrorBanner(message: profileActionError) { self.profileActionError = nil }
         }
+        if let profileActionBlock {
+          Text(profileActionBlock.message).font(.caption)
+            .foregroundColor(Color(NSColor.secondaryLabelColor))
+            .padding(.horizontal, 28).padding(.vertical, 6)
+        }
         profileDetail.frame(maxWidth: .infinity, maxHeight: .infinity)
       }
       // Older macOS presents only the last of several sheets attached to one view (unverified on

@@ -4915,3 +4915,21 @@
 "ui.controllers.sdlMatch.guidWithoutVersion" = "GUID ที่ไม่รวมเวอร์ชัน";
 /* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the version and name checksum bytes are ignored. GUID stays as written. */
 "ui.controllers.sdlMatch.guidWithoutVersionAndNameCRC" = "GUID ที่ไม่รวมเวอร์ชันและค่าตรวจสอบของชื่อ";
+/* Note under the profile editor in the Profiles area while a save runs and edits are ignored. */
+"ui.profiles.editBlockedSaving" = "ไม่สามารถแก้ไขได้จนกว่าการบันทึกจะเสร็จ";
+/* Note under the profile editor in the Profiles area while another profile change runs and edits are ignored. */
+"ui.profiles.editBlockedChange" = "ไม่สามารถแก้ไขได้จนกว่าการเปลี่ยนแปลงที่กำลังทำงานจะเสร็จ";
+/* Note under the profile editor in the Profiles area while the profile list holds the editor because a change runs or damaged profiles need attention. */
+"ui.profiles.editBlockedHold" = "ไม่สามารถแก้ไขได้จนกว่าการเปลี่ยนแปลงที่กำลังทำงานจะเสร็จหรือแก้โปรไฟล์ที่เสียหายแล้ว";
+/* Note above the profile editor in the Profiles area while a profile change runs and profile actions such as New, Import and Delete wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedChange" = "การดำเนินการกับโปรไฟล์ไม่พร้อมใช้งานจนกว่าการเปลี่ยนแปลงที่กำลังทำงานจะเสร็จ";
+/* Note above the profile editor in the Profiles area while a repair of the profile library runs and profile actions wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedRecovery" = "การดำเนินการกับโปรไฟล์ไม่พร้อมใช้งานจนกว่าการซ่อมแซมคลังจะเสร็จ";
+/* Note above the profile editor in the Profiles area while the profile library lists damaged profiles and profile actions wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedDamaged" = "การดำเนินการกับโปรไฟล์ไม่พร้อมใช้งานจนกว่าจะลบโปรไฟล์ที่เสียหายหรือรีเซ็ตคลัง";
+/* Note beside the Pair Joy-Cons button of a Joy-Con pair profile in the Profiles area when the button is unavailable because a left or a right Joy-Con is not connected. */
+"ui.profiles.joyConPairNeedsBoth" = "เชื่อมต่อ Joy-Con ซ้ายและขวาเพื่อจับคู่";
+/* Note under the Virtual gamepad pop-up in the profile editor, shown after a virtual gamepad was chosen while exclusive physical input was on. */
+"ui.profiles.virtualOutputResetsExclusive" = "ปิดอินพุตทางกายภาพแบบเฉพาะแล้ว เพราะเกมแพดเสมือนจะใช้อินพุตแบบเฉพาะเสมอ";
+/* Note under the Virtual gamepad pop-up in the profile editor, beside the unavailable exclusive physical input switch while a virtual gamepad is chosen. */
+"ui.profiles.exclusiveInputUnavailable" = "ใช้ได้เฉพาะเมื่อไม่ได้เลือกเกมแพดเสมือน เพราะเกมแพดเสมือนจะใช้อินพุตแบบเฉพาะเสมอ";

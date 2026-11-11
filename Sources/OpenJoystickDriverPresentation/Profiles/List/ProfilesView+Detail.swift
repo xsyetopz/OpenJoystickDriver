@@ -148,6 +148,10 @@
             }.disabled(isProfileActionBlocked)
           }
         }
+        if sessions.isEmpty, !hasAvailableJoyConPair {
+          Text(OJDLocalized.string("ui.profiles.joyConPairNeedsBoth")).font(.caption)
+            .foregroundColor(Color(NSColor.secondaryLabelColor))
+        }
         Spacer()
       }.padding(.horizontal, 28).padding(.top, 10)
     }

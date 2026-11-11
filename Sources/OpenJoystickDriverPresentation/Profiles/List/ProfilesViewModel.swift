@@ -108,14 +108,30 @@
     /// - Returns: Whether profile creation, import, delete and the like must wait: a request or
     ///   recovery runs, the editor is blocked, or the library has damaged entries.
     func isActionBlocked(library: ProfileLibraryModel, runtime: RuntimeViewModel) -> Bool {
+      actionBlock(library: library, runtime: runtime) != nil
+    }
+
+    /// Returns why profile creation, import, delete and the like must wait, or nil.
+    ///
+    /// - Parameters:
+    ///   - library: The profile library, whose requests and recovery the check reads.
+    ///   - runtime: The model of the app's view of the service, whose snapshot the check reads.
+    /// - Returns: The reason, or nil when the actions may run.
+    func actionBlock(
+      library: ProfileLibraryModel,
+      runtime: RuntimeViewModel
+    ) -> ProfileActionBlock? {
       let snapshot: ApplicationServiceRemappingSnapshotPayload?
       if case .available(let current) = runtime.remappingState {
         snapshot = current
       } else {
         snapshot = lastKnownSnapshot
       }
-      return library.activeMutationOperation != nil || editorTransition.isEditingBlocked
-        || library.profileRecoveryInFlight || !(snapshot?.profileIssues.isEmpty ?? true)
+      if library.profileRecoveryInFlight { return .recoveryRunning }
+      if library.activeMutationOperation != nil || editorTransition.isEditingBlocked {
+        return .changeRunning
+      }
+      return (snapshot?.profileIssues.isEmpty ?? true) ? nil : .needsRecovery
     }
 
     /// Asks for a profile file and reads it into ``chosenImportProfile``.

@@ -4916,3 +4916,21 @@
 "ui.controllers.sdlMatch.guidWithoutVersion" = "GUID zonder versie";
 /* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the version and name checksum bytes are ignored. GUID stays as written. */
 "ui.controllers.sdlMatch.guidWithoutVersionAndNameCRC" = "GUID zonder versie en checksum van de naam";
+/* Note under the profile editor in the Profiles area while a save runs and edits are ignored. */
+"ui.profiles.editBlockedSaving" = "Bewerken is niet beschikbaar totdat het bewaren klaar is.";
+/* Note under the profile editor in the Profiles area while another profile change runs and edits are ignored. */
+"ui.profiles.editBlockedChange" = "Bewerken is niet beschikbaar totdat de lopende wijziging klaar is.";
+/* Note under the profile editor in the Profiles area while the profile list holds the editor because a change runs or damaged profiles need attention. */
+"ui.profiles.editBlockedHold" = "Bewerken is niet beschikbaar totdat de lopende wijziging klaar is of de beschadigde profielen zijn opgelost.";
+/* Note above the profile editor in the Profiles area while a profile change runs and profile actions such as New, Import and Delete wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedChange" = "Profielacties zijn niet beschikbaar totdat de lopende wijziging klaar is.";
+/* Note above the profile editor in the Profiles area while a repair of the profile library runs and profile actions wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedRecovery" = "Profielacties zijn niet beschikbaar totdat het herstel van de bibliotheek klaar is.";
+/* Note above the profile editor in the Profiles area while the profile library lists damaged profiles and profile actions wait. It is also the message when such an action is refused. */
+"ui.profiles.actionBlockedDamaged" = "Profielacties zijn niet beschikbaar totdat de beschadigde profielen zijn verwijderd of de bibliotheek is gereset.";
+/* Note beside the Pair Joy-Cons button of a Joy-Con pair profile in the Profiles area when the button is unavailable because a left or a right Joy-Con is not connected. */
+"ui.profiles.joyConPairNeedsBoth" = "Verbind een linker en een rechter Joy-Con om ze te koppelen.";
+/* Note under the Virtual gamepad pop-up in the profile editor, shown after a virtual gamepad was chosen while exclusive physical input was on. */
+"ui.profiles.virtualOutputResetsExclusive" = "Exclusieve fysieke invoer is uitgezet, omdat een virtuele gamepad de invoer altijd exclusief overneemt.";
+/* Note under the Virtual gamepad pop-up in the profile editor, beside the unavailable exclusive physical input switch while a virtual gamepad is chosen. */
+"ui.profiles.exclusiveInputUnavailable" = "Alleen beschikbaar zolang er geen virtuele gamepad is gekozen, omdat een virtuele gamepad de invoer altijd exclusief overneemt.";

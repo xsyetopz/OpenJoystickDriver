@@ -76,11 +76,11 @@
     ///
     /// - Parameter action: The action to request.
     func requestProfileAction(_ action: ProfileEditorAction) {
-      guard !isProfileActionBlocked else { return }
+      guard !refuseProfileAction() else { return }
       switch profileEditorTransition.request(action) {
       case .perform(let action): performProfileAction(action)
       case .confirmDiscard: activeAlert = .discard(action.profileID)
-      case .blocked: break
+      case .blocked: profileActionError = ProfileActionBlock.changeRunning.message
       }
     }
 
@@ -90,14 +90,14 @@
     ///
     /// - Parameter action: The action to run.
     func performProfileAction(_ action: ProfileEditorAction) {
-      guard !isProfileActionBlocked else { return }
+      guard !refuseProfileAction() else { return }
       switch action {
       case .select(let profileID):
         preservedEditorProfile = nil
         selectedProfileID = profileID
       case .importProfile(let profile):
         let request = RuntimeMutationRequest(operation: .importProfile(profileID: profile.id))
-        guard beginProfileMutation(request) else { return }
+        guard beginProfileMutationOrExplain(request) else { return }
         Task { @MainActor in
           let result = await library.importRemappingProfile(profile, request: request)
           handleProfileMutationResult(result)
@@ -141,9 +141,9 @@
     ///
     /// - Parameter profile: The profile to add.
     func createProfile(_ profile: RemappingProfile) {
-      guard !isProfileActionBlocked else { return }
+      guard !refuseProfileAction() else { return }
       let request = RuntimeMutationRequest(operation: .create(profileID: profile.id))
-      guard beginProfileMutation(request) else { return }
+      guard beginProfileMutationOrExplain(request) else { return }
       Task { @MainActor in
         let result = await library.createRemappingProfile(profile, request: request)
         handleProfileMutationResult(result)
@@ -157,13 +157,13 @@
     ///
     /// - Parameter profileID: The profile to delete.
     func deleteProfile(_ profileID: UUID) {
-      guard !isProfileActionBlocked else { return }
+      guard !refuseProfileAction() else { return }
       activeAlert = nil
       let restoreDirtyStateOnFailure = selectedProfileID == profileID && editorHasUnsavedChanges
       let request = RuntimeMutationRequest(operation: .delete(profileID: profileID))
-      guard beginProfileMutation(request, restoresDirtyOnFailure: restoreDirtyStateOnFailure) else {
-        return
-      }
+      guard
+        beginProfileMutationOrExplain(request, restoresDirtyOnFailure: restoreDirtyStateOnFailure)
+      else { return }
       if selectedProfileID == profileID {
         setEditorDirty(false)
         preservedEditorProfile = nil
@@ -347,9 +347,31 @@
       library.activeMutationOperation != nil || profileEditorTransition.isEditingBlocked
     }
 
+    /// Why profile creation, import, delete and the like must wait, or nil.
+    var profileActionBlock: ProfileActionBlock? {
+      screen.actionBlock(library: library, runtime: viewModel)
+    }
+
     /// Whether profile creation, import, delete and the like must wait.
-    var isProfileActionBlocked: Bool {
-      screen.isActionBlocked(library: library, runtime: viewModel)
+    var isProfileActionBlocked: Bool { profileActionBlock != nil }
+
+    /// Shows the reason profile actions must wait in the error banner and returns whether they do.
+    func refuseProfileAction() -> Bool {
+      guard let profileActionBlock else { return false }
+      profileActionError = profileActionBlock.message
+      return true
+    }
+
+    /// Takes the ownership of a request, or says that another change holds it.
+    func beginProfileMutationOrExplain(
+      _ request: RuntimeMutationRequest,
+      restoresDirtyOnFailure: Bool = false
+    ) -> Bool {
+      guard beginProfileMutation(request, restoresDirtyOnFailure: restoresDirtyOnFailure) else {
+        profileActionError = ProfileActionBlock.changeRunning.message
+        return false
+      }
+      return true
     }
 
     /// Whether the snapshot lists damaged profiles or an unusable library.

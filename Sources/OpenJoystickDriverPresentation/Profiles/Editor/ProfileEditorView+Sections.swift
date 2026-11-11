@@ -109,12 +109,20 @@
             vertical: true
           )
         }
+        if let footerNotice {
+          Text(footerNotice).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+            .fixedSize(horizontal: false, vertical: true)
+        }
         HStack(spacing: 10) {
           Spacer(minLength: 8)
           saveStatusView
-          Button(OJDLocalized.string("action.save")) { save() }.disabled(
-            draft.profile == expectedCurrent || saveInFlight || isMutationActive
-          )
+          if showsUnsavedAfterFailure {
+            Text(ProfileSaveStatus.unsaved.label).foregroundColor(
+              ProfileSaveStatus.unsaved.color
+            )
+          }
+          Button(OJDLocalized.string("action.save")) { save() }.disabled(!canSave)
+            .ojdAccessibilityValue(saveButtonAccessibilityValue)
         }
       }.padding(.horizontal, 28).padding(.vertical, 14)
     }
@@ -139,7 +147,35 @@
     }
 
     /// Whether edits are ignored: the editor is blocked or a change runs.
-    var isEditingDisabled: Bool { isEditingBlocked || isMutationActive }
+    var isEditingDisabled: Bool { editingBlock != nil }
+
+    /// Why edits are ignored, or nil.
+    var editingBlock: ProfileEditingBlock? {
+      if saveInFlight { return .saving }
+      if isMutationActive { return .changeRunning }
+      return isEditingBlocked ? .onHold : nil
+    }
+
+    /// Shows the reason edits are ignored in the footer and returns whether they are.
+    func refuseEdit() -> Bool {
+      guard let editingBlock else { return false }
+      localError = editingBlock.message
+      return true
+    }
+
+    /// Whether the draft holds edits that Save can write.
+    var canSave: Bool { draft.profile != expectedCurrent && !saveInFlight && !isMutationActive }
+
+    /// What VoiceOver reads after the Save button: the unsaved edits.
+    var saveButtonAccessibilityValue: String {
+      draft.profile == expectedCurrent ? "" : ProfileSaveStatus.unsaved.label
+    }
+
+    /// Whether the unsaved edits show beside a failed save.
+    var showsUnsavedAfterFailure: Bool { saveStatus == .error && draft.profile != expectedCurrent }
+
+    /// The reason edits are ignored, when no refused edit shows its own message.
+    var footerNotice: String? { localError == nil ? editingBlock?.message : nil }
 
     /// The save status of the draft: saving, failed, unsaved or saved.
     var saveStatus: ProfileSaveStatus {
@@ -154,7 +190,7 @@
       Binding(
         get: { draft.profile.name },
         set: { newValue in
-          guard !isEditingDisabled else { return }
+          guard !refuseEdit() else { return }
           draft = draft.settingName(newValue)
           saveError = nil
           reportEditingState()
