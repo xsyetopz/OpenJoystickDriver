@@ -245,10 +245,14 @@ struct ControllerRecordDocumentTests {
       #expect(identifier.range(of: pattern, options: .regularExpression) != nil, "\(identifier)")
     }
 
-    // Every implemented family has catalog rows, so the schema lists all of them.
+    // A description document may name a family, so the schema holds the name's shape.
     let protocolSchema = try #require(definitions["protocol"] as? [String: Any])
     let properties = try #require(protocolSchema["properties"] as? [String: Any])
-    #expect(Self.enumValues(properties["family"]) == PhysicalProtocolID.allCases.map(\.rawValue))
+    let family = try #require(properties["family"] as? [String: Any])
+    let familyPattern = try #require(family["pattern"] as? String)
+    for builtIn in PhysicalProtocolID.allCases {
+      #expect(builtIn.rawValue.range(of: familyPattern, options: .regularExpression) != nil)
+    }
     #expect(
       Self.enumValues(properties["assembly"]) == ControllerAssemblyPolicy.allCases.map(\.name)
     )
