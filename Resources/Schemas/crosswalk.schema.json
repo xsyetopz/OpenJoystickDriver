@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/crosswalk.schema.json",
   "title": "OpenJoystickDriver control crosswalk",
-  "description": "The authored table Resources/Vocabulary/crosswalk.json. It maps each control id to the name the W3C Gamepad, SDL3, Linux evdev, HID and Apple GameController documents give the same control, and records the source of each column. It is documentation: no schema accepts or maps any name in it.",
+  "description": "The name each other system gives each control id, with the source of each column.",
   "type": "object",
   "required": ["apiVersion", "kind", "sources", "controls"],
   "additionalProperties": false,
@@ -42,7 +42,7 @@
   },
   "$defs": {
     "source": {
-      "description": "The document one column is checked against. pages gives the number of each HID usage page the hid column names.",
+      "description": "The document one column is checked against.",
       "type": "object",
       "required": ["document", "version", "url", "checkedOn"],
       "additionalProperties": false,
@@ -80,7 +80,7 @@
       }
     },
     "row": {
-      "description": "One control. An absent column means the system has no such name.",
+      "description": "One control and its name in each system.",
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -109,7 +109,7 @@
       }
     },
     "hidUsage": {
-      "description": "A usage on a page. An absent usage is the one the device's report descriptor assigns.",
+      "description": "A usage on a HID usage page.",
       "type": "object",
       "required": ["page"],
       "additionalProperties": false,
