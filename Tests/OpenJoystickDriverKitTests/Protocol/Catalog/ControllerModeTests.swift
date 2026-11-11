@@ -550,9 +550,9 @@ struct ControllerModeTests {
       Case(
         name: "rumble template under a mode whose driver does not encode it",
         modes: [
-          mode("a", family: "HIDDescriptor").merging(["session": rumble]) { first, _ in first }
+          mode("a", family: "SonySixaxis").merging(["session": rumble]) { first, _ in first }
         ],
-        family: "VendorPS3ThirdParty",
+        family: "SonySixaxis",
         expected: "rumble templates require a driver that encodes them"
       ),
       Case(
