@@ -3701,8 +3701,77 @@
 "error.E5007.patch.patchNotObject" = "%1$@, document: Die Datei ist kein JSON-Objekt. Lösung: Mache die Datei zu einem Dictionary mit apiVersion, kind, selector und patch oder remove.";
 /* Error E5007, shown when a patch file fails: the file lacks apiVersion, kind, selector, or patch and remove. %1$@ is the file. */
 "error.E5007.patch.patchFields" = "%1$@, document: Die Datei muss apiVersion, kind, selector und patch oder remove enthalten. Lösung: Ergänze das fehlende Mitglied.";
+/* Error E5007, shown when a record or protocol description breaks a rule: HID startup writes are in a raw-USB mode or family. %1$@ is the file. */
+"error.E5007.session.hidStartup" = "%1$@, session.startup: HID-Startschreibvorgänge gelten nur für HID-Controller, also nicht für einen Raw-USB-Modus oder eine Raw-USB-Familie. Lösung: Entferne die HID-Startschreibvorgänge oder verwende Raw-USB-Pakete.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a mode names a session keepAlive for a family that declares its own. %2$@ is the family. %1$@ is the file. */
+"error.E5007.session.keepAliveFamily" = "%1$@, session.keepAlive: Ein session keepAlive braucht eine Raw-USB-Familie, deren Beschreibung keinen deklariert, und %2$@ deklariert einen. Lösung: Entferne das session keepAlive, denn %2$@ führt bereits ein eigenes aus.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HID mode names a session key that only raw-USB modes take. %2$@ is the key. %1$@ is the file. */
+"error.E5007.session.rawUSBOnly" = "%1$@, session.%2$@: Session %2$@ gilt nur für Raw-USB-Modi. Lösung: Entferne %2$@ aus der Session oder verwende ein Raw-USB-Protokoll.";
+/* Error E5007, shown when a record or protocol description breaks a rule: raw-USB startup writes are in a mode whose family does not read them or that lists initialization. %1$@ is the file. */
+"error.E5007.session.usbStartup" = "%1$@, session.startup: Raw-USB-Startschreibvorgänge brauchen eine Familie, die sie liest, und einen Modus ohne Initialisierungsliste. Lösung: Entferne die Raw-USB-Startschreibvorgänge oder verwende eine Familie, die sie liest, und lass die Initialisierungsliste weg.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble template is not the kind of packet its protocol uses. %1$@ is the file. */
+"error.E5007.rumble.templateKind" = "%1$@, session.rumble: Eine Rumble-Vorlage ist für ein Raw-USB-Protokoll ein usb-Paket und für ein HID-Protokoll ein HID-Report. Lösung: Schreibe die Vorlage als die Paketart, die das Protokoll verwendet.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.rumble.templateDriver" = "%1$@, session.rumble: Rumble-Vorlagen brauchen einen Treiber, der sie kodiert. Lösung: Entferne die Rumble-Vorlage oder verwende eine Familie, deren Treiber sie kodiert.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble resend interval is beside a session keepAlive. %1$@ is the file. */
+"error.E5007.rumble.resendWithKeepAlive" = "%1$@, session.rumble.resendIntervalMilliseconds: Ein Rumble-resendIntervalMilliseconds lässt sich nicht mit einem session keepAlive kombinieren. Lösung: Entferne resendIntervalMilliseconds oder das session keepAlive.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble resend interval is in a family that declares its own keepAlive. %1$@ is the file. */
+"error.E5007.rumble.resendWithFamilyKeepAlive" = "%1$@, session.rumble.resendIntervalMilliseconds: Ein Rumble-resendIntervalMilliseconds braucht eine Familie, deren Beschreibung kein keepAlive deklariert. Lösung: Entferne resendIntervalMilliseconds, denn das Keep-alive der Familie bestimmt das Timing.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a record has no mode. %1$@ is the file. */
+"error.E5007.modes.empty" = "%1$@, modes: Modes muss mindestens einen Modus enthalten. Lösung: Füge einen Modus hinzu.";
+/* Error E5007, shown when a record or protocol description breaks a rule: more than one mode has the id default. %1$@ is the file. */
+"error.E5007.modes.defaultCount" = "%1$@, modes: Höchstens ein Modus hat die ID default. Lösung: Gib die ID default nur einem Modus.";
+/* Error E5007, shown when a record or protocol description breaks a rule: two modes share an id. %1$@ is the file. */
+"error.E5007.modes.uniqueIDs" = "%1$@, modes: Jede Modus-ID muss eindeutig sein. Lösung: Benenne die Modi um, die eine ID wiederholen.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a raw-USB mode names an interface. %1$@ is the file. */
+"error.E5007.modes.interfaceRawUSB" = "%1$@, modes[].interface: Ein Raw-USB-Modus hat kein interface, weil er die Schnittstelle belegt, die sein usb-Transport auflöst. Lösung: Entferne interface aus dem Modus.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HID mode names endpoints in its interfaceSignature. %1$@ is the file. */
+"error.E5007.modes.endpointsHID" = "%1$@, modes[].match.interfaceSignature.endpoints: Die interfaceSignature eines HID-Modus hat keine endpoints, weil nur der Raw-USB-Scanner einen Endpunktsatz liest. Lösung: Entferne endpoints aus der interfaceSignature.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a mode that needs input layouts finds none in the record. %1$@ is the file. */
+"error.E5007.modes.inputLayoutNeeded" = "%1$@, input: Ein HIDReportLayout-Modus braucht die Eingabelayouts des Eintrags. Lösung: Füge input mit den Layouts hinzu oder verwende ein anderes Protokoll.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HIDDescriptor mode finds input layouts in the record. %1$@ is the file. */
+"error.E5007.modes.usageMapNotLayouts" = "%1$@, input: Ein HIDDescriptor-Modus liest eine Usage-Map, keine Eingabelayouts. Lösung: Ersetze die Eingabelayouts durch eine Usage-Map.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a usage map is in a record whose modes include a driver that does not read one. %1$@ is the file. */
+"error.E5007.modes.usageMapDriver" = "%1$@, input.usageMap: Eine HID-Usage-Map gilt nur, wenn der Treiber jedes Modus eine liest. Lösung: Entferne die Usage-Map oder verwende nur Treiber, die eine lesen.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a capability is not declared by the driver of any mode. %1$@ is the file. */
+"error.E5007.modes.capabilities" = "%1$@, capabilities: Capabilities müssen Deltas sein, die der Treiber eines Modus deklariert. Lösung: Behalte nur capabilities, die der Treiber eines Modus deklariert.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a tuning key is not read by the driver. %2$@ is the key and %3$@ is the driver. %1$@ is the file. */
+"error.E5007.tuning.keyNotRead" = "%1$@, tuning.%2$@: %2$@ wird vom Treiber %3$@ nicht gelesen. Lösung: Entferne %2$@ aus tuning oder verwende einen Treiber, der es liest.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults of a protocol description hold input layouts for a family that reads none. %1$@ is the file. */
+"error.E5007.protocolDescription.inputLayout" = "%1$@, defaults.input: Ein Eingabelayout gilt nur für eine Familie, die eines liest. Lösung: Entferne das Eingabelayout aus den Standardwerten.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults of a protocol description hold a usage map for a family that reads none. %1$@ is the file. */
+"error.E5007.protocolDescription.usageMap" = "%1$@, defaults.input.usageMap: Eine HID-Usage-Map gilt nur für eine Familie, die eine liest. Lösung: Entferne die Usage-Map aus den Standardwerten.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a protocol description sets receiverPowerOff for a family other than XboxXUSB. %1$@ is the file. */
+"error.E5007.protocolDescription.receiverPowerOff" = "%1$@, defaults.receiverPowerOff: Der Standardwert receiverPowerOff gilt nur für XboxXUSB. Lösung: Entferne receiverPowerOff aus den Standardwerten.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a protocol description lists session keys for a family that reads none. %2$@ is the family. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeysNone" = "%1$@, sessionKeys: %2$@ liest keine Session-Schlüssel. Lösung: Lass sessionKeys leer.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the session keys of a protocol description differ from those its family reads. %2$@ is the family and %3$@ are the keys it reads. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeysRead" = "%1$@, sessionKeys: %2$@ liest die Session-Schlüssel %3$@. Lösung: Setze sessionKeys auf %3$@.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults set a session key that sessionKeys does not list. %2$@ is the key. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeyUnlisted" = "%1$@, defaults.session: Die Standardwerte setzen den Session-Schlüssel %2$@, den sessionKeys nicht auflistet. Lösung: Füge %2$@ zu sessionKeys hinzu oder entferne ihn aus den Standardwerten.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family that is always raw USB has a HID keep-alive write. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveHID" = "%1$@, defaults.session.keepAlive.writes: Ein HID-Keep-alive-Schreibvorgang gilt nur für HID-Controller. Lösung: Entferne den HID-Schreibvorgang oder verwende einen Raw-USB-Schreibvorgang.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant has a raw-USB keep-alive write. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveUSB" = "%1$@, defaults.session.keepAlive.writes: Ein Raw-USB-Keep-alive-Schreibvorgang gilt nur für eine Familie mit Raw-USB-Variante. Lösung: Entferne den Raw-USB-Schreibvorgang oder verwende einen HID-Schreibvorgang.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a keep-alive write names a resendTuning that the family does not read or default. %2$@ is the key. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveResendTuning" = "%1$@, defaults.session.keepAlive.writes[].resendTuning: Das resendTuning eines Keep-alive-Schreibvorgangs nennt %2$@, den die Familie lesen und mit einem Standardwert versehen muss. Lösung: Nenne einen Tuning-Schlüssel, den die Familie liest und vorbelegt, oder entferne resendTuning.";
+/* Error E5007, shown when a record or protocol description breaks a rule: activation or deactivation names a transport that writeTransports does not list. %1$@ is the file. */
+"error.E5007.protocolDescription.activationTransport" = "%1$@, activation: Activation und deactivation nennen nur einen Transport, den writeTransports auflistet. Lösung: Nenne einen Transport aus writeTransports oder füge ihn dort hinzu.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults leave out session fields that the family reads. %2$@ is the family and %3$@ are the fields. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionMissing" = "%1$@, defaults.session: %2$@ muss die Session-Felder %3$@ setzen. Lösung: Setze %3$@ in den Standardwerten.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults set session fields that the family does not read. %2$@ is the family and %3$@ are the fields. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionUnread" = "%1$@, defaults.session: %2$@ liest die Session-Felder %3$@ nicht. Lösung: Entferne %3$@ aus den Standardwerten.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a named packet id does not start with its family. %2$@ is the family. %1$@ is the file. */
+"error.E5007.protocolDescription.namedPacketPrefix" = "%1$@, namedPackets: Jede ID eines benannten Pakets beginnt mit %2$@/. Lösung: Benenne die Pakete so um, dass jede ID mit %2$@/ beginnt.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family that is always raw USB lists tuningKeys. %1$@ is the file. */
+"error.E5007.protocolDescription.tuningRawUSB" = "%1$@, tuningKeys: Eine Familie, die immer Raw USB nutzt, liest ihr Tuning über rawUSBTuningKeys. Lösung: Verschiebe die Schlüssel von tuningKeys nach rawUSBTuningKeys.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant lists rawUSBTuningKeys. %1$@ is the file. */
+"error.E5007.protocolDescription.rawUSBTuningKeys" = "%1$@, rawUSBTuningKeys: RawUSBTuningKeys gelten nur für eine Familie mit Raw-USB-Variante. Lösung: Entferne rawUSBTuningKeys oder füge eine Raw-USB-Variante hinzu.";
+/* Error E5007, shown when a record or protocol description breaks a rule: bytes are not uppercase hex pairs. %2$@ is the field and %3$@ is what the bytes belong to. %1$@ is the file. */
+"error.E5007.record.hexBytes" = "%1$@, %2$@: Die Bytes von %3$@ müssen Hex-Paare in Großbuchstaben sein, getrennt durch einzelne Leerzeichen. Lösung: Schreibe %2$@ als Paare wie 42 03 00, mit Großbuchstaben und einem Leerzeichen zwischen den Paaren.";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@, patch: Patch muss modes, usb, bluetoothLE, capabilities, server, route, input oder tuning enthalten. Lösung: Behalte nur diese Abschnitte und gib mindestens einen davon an.";
+"error.E5007.patch.patchSections" = "%1$@, patch: Patch muss modes, usb, bluetoothLE, capabilities, server, route, input, tuning oder idle enthalten. Lösung: Behalte nur diese Abschnitte und gib mindestens einen davon an.";
 /* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@, persona: Der Wert von persona muss einer von %2$@ sein. Lösung: Setze persona auf einen davon.";
 /* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */

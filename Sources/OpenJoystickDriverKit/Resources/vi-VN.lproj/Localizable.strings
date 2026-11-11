@@ -4249,8 +4249,77 @@
 "error.E5007.patch.patchNotObject" = "%1$@, document: tệp không phải đối tượng JSON. Cách sửa: biến tệp thành từ điển có apiVersion, kind, selector và patch hoặc remove.";
 /* Error E5007, shown when a patch file fails: the file lacks apiVersion, kind, selector, or patch and remove. %1$@ is the file. */
 "error.E5007.patch.patchFields" = "%1$@, document: tệp phải có apiVersion, kind, selector và patch hoặc remove. Cách sửa: thêm thành phần còn thiếu.";
+/* Error E5007, shown when a record or protocol description breaks a rule: HID startup writes are in a raw-USB mode or family. %1$@ is the file. */
+"error.E5007.session.hidStartup" = "%1$@, session.startup: lệnh ghi khởi động HID chỉ áp dụng cho tay cầm HID, nên không áp dụng cho chế độ hay họ raw-USB. Cách sửa: bỏ các lệnh ghi khởi động HID, hoặc dùng gói raw-USB.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a mode names a session keepAlive for a family that declares its own. %2$@ is the family. %1$@ is the file. */
+"error.E5007.session.keepAliveFamily" = "%1$@, session.keepAlive: keepAlive của phiên cần một họ raw-USB mà mô tả không khai báo keepAlive, còn %2$@ lại khai báo một cái. Cách sửa: bỏ keepAlive của phiên, vì %2$@ đã chạy keepAlive riêng.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HID mode names a session key that only raw-USB modes take. %2$@ is the key. %1$@ is the file. */
+"error.E5007.session.rawUSBOnly" = "%1$@, session.%2$@: session %2$@ chỉ áp dụng cho chế độ raw-USB. Cách sửa: bỏ %2$@ khỏi phiên, hoặc dùng giao thức raw-USB.";
+/* Error E5007, shown when a record or protocol description breaks a rule: raw-USB startup writes are in a mode whose family does not read them or that lists initialization. %1$@ is the file. */
+"error.E5007.session.usbStartup" = "%1$@, session.startup: lệnh ghi khởi động raw-USB cần một họ đọc chúng và một chế độ không có danh sách khởi tạo. Cách sửa: bỏ các lệnh ghi khởi động raw-USB, hoặc dùng họ đọc chúng và bỏ danh sách khởi tạo.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble template is not the kind of packet its protocol uses. %1$@ is the file. */
+"error.E5007.rumble.templateKind" = "%1$@, session.rumble: mẫu rung là gói usb với giao thức raw-USB và báo cáo HID với giao thức HID. Cách sửa: viết mẫu theo loại gói mà giao thức dùng.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.rumble.templateDriver" = "%1$@, session.rumble: mẫu rung cần một trình điều khiển mã hóa chúng. Cách sửa: bỏ mẫu rung, hoặc dùng họ có trình điều khiển mã hóa nó.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble resend interval is beside a session keepAlive. %1$@ is the file. */
+"error.E5007.rumble.resendWithKeepAlive" = "%1$@, session.rumble.resendIntervalMilliseconds: resendIntervalMilliseconds của rung không thể kết hợp với keepAlive của phiên. Cách sửa: bỏ resendIntervalMilliseconds, hoặc bỏ keepAlive của phiên.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble resend interval is in a family that declares its own keepAlive. %1$@ is the file. */
+"error.E5007.rumble.resendWithFamilyKeepAlive" = "%1$@, session.rumble.resendIntervalMilliseconds: resendIntervalMilliseconds của rung cần một họ có mô tả không khai báo keepAlive. Cách sửa: bỏ resendIntervalMilliseconds, vì keep-alive của họ quyết định thời gian.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a record has no mode. %1$@ is the file. */
+"error.E5007.modes.empty" = "%1$@, modes: modes phải có ít nhất một chế độ. Cách sửa: thêm một chế độ.";
+/* Error E5007, shown when a record or protocol description breaks a rule: more than one mode has the id default. %1$@ is the file. */
+"error.E5007.modes.defaultCount" = "%1$@, modes: tối đa một chế độ có id default. Cách sửa: chỉ gán id default cho một chế độ.";
+/* Error E5007, shown when a record or protocol description breaks a rule: two modes share an id. %1$@ is the file. */
+"error.E5007.modes.uniqueIDs" = "%1$@, modes: mỗi id chế độ phải duy nhất. Cách sửa: đổi tên các chế độ lặp id.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a raw-USB mode names an interface. %1$@ is the file. */
+"error.E5007.modes.interfaceRawUSB" = "%1$@, modes[].interface: chế độ raw-USB không có interface, vì nó nhận giao diện mà truyền tải usb của nó xác định. Cách sửa: bỏ interface khỏi chế độ.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HID mode names endpoints in its interfaceSignature. %1$@ is the file. */
+"error.E5007.modes.endpointsHID" = "%1$@, modes[].match.interfaceSignature.endpoints: interfaceSignature của chế độ HID không có endpoints, vì chỉ trình quét raw-USB đọc tập điểm cuối. Cách sửa: bỏ endpoints khỏi interfaceSignature.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a mode that needs input layouts finds none in the record. %1$@ is the file. */
+"error.E5007.modes.inputLayoutNeeded" = "%1$@, input: chế độ HIDReportLayout cần bố cục đầu vào của bản ghi. Cách sửa: thêm input cùng các bố cục, hoặc dùng giao thức khác.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HIDDescriptor mode finds input layouts in the record. %1$@ is the file. */
+"error.E5007.modes.usageMapNotLayouts" = "%1$@, input: chế độ HIDDescriptor đọc bản đồ sử dụng, không đọc bố cục đầu vào. Cách sửa: thay các bố cục đầu vào bằng bản đồ sử dụng.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a usage map is in a record whose modes include a driver that does not read one. %1$@ is the file. */
+"error.E5007.modes.usageMapDriver" = "%1$@, input.usageMap: bản đồ sử dụng HID chỉ áp dụng nếu trình điều khiển của mọi chế độ đọc nó. Cách sửa: bỏ bản đồ sử dụng, hoặc chỉ dùng trình điều khiển đọc nó.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a capability is not declared by the driver of any mode. %1$@ is the file. */
+"error.E5007.modes.capabilities" = "%1$@, capabilities: capabilities phải là các delta mà trình điều khiển của một chế độ khai báo. Cách sửa: chỉ giữ các capabilities mà trình điều khiển của một chế độ khai báo.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a tuning key is not read by the driver. %2$@ is the key and %3$@ is the driver. %1$@ is the file. */
+"error.E5007.tuning.keyNotRead" = "%1$@, tuning.%2$@: %2$@ không được trình điều khiển %3$@ đọc. Cách sửa: bỏ %2$@ khỏi tuning, hoặc dùng trình điều khiển đọc nó.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults of a protocol description hold input layouts for a family that reads none. %1$@ is the file. */
+"error.E5007.protocolDescription.inputLayout" = "%1$@, defaults.input: bố cục đầu vào chỉ áp dụng cho họ đọc nó. Cách sửa: bỏ bố cục đầu vào khỏi giá trị mặc định.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults of a protocol description hold a usage map for a family that reads none. %1$@ is the file. */
+"error.E5007.protocolDescription.usageMap" = "%1$@, defaults.input.usageMap: bản đồ sử dụng HID chỉ áp dụng cho họ đọc nó. Cách sửa: bỏ bản đồ sử dụng khỏi giá trị mặc định.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a protocol description sets receiverPowerOff for a family other than XboxXUSB. %1$@ is the file. */
+"error.E5007.protocolDescription.receiverPowerOff" = "%1$@, defaults.receiverPowerOff: giá trị mặc định receiverPowerOff chỉ áp dụng cho XboxXUSB. Cách sửa: bỏ receiverPowerOff khỏi giá trị mặc định.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a protocol description lists session keys for a family that reads none. %2$@ is the family. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeysNone" = "%1$@, sessionKeys: %2$@ không đọc khóa phiên nào. Cách sửa: để sessionKeys trống.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the session keys of a protocol description differ from those its family reads. %2$@ is the family and %3$@ are the keys it reads. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeysRead" = "%1$@, sessionKeys: %2$@ đọc các khóa phiên %3$@. Cách sửa: đặt sessionKeys thành %3$@.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults set a session key that sessionKeys does not list. %2$@ is the key. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeyUnlisted" = "%1$@, defaults.session: giá trị mặc định đặt khóa phiên %2$@ mà sessionKeys không liệt kê. Cách sửa: thêm %2$@ vào sessionKeys, hoặc bỏ khỏi giá trị mặc định.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family that is always raw USB has a HID keep-alive write. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveHID" = "%1$@, defaults.session.keepAlive.writes: lệnh ghi keep-alive HID chỉ áp dụng cho tay cầm HID. Cách sửa: bỏ lệnh ghi HID, hoặc dùng lệnh ghi raw-USB.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant has a raw-USB keep-alive write. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveUSB" = "%1$@, defaults.session.keepAlive.writes: lệnh ghi keep-alive raw-USB chỉ áp dụng cho họ có biến thể raw-USB. Cách sửa: bỏ lệnh ghi raw-USB, hoặc dùng lệnh ghi HID.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a keep-alive write names a resendTuning that the family does not read or default. %2$@ is the key. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveResendTuning" = "%1$@, defaults.session.keepAlive.writes[].resendTuning: resendTuning của lệnh ghi keep-alive nêu %2$@, khóa mà họ phải đọc và có mặc định. Cách sửa: nêu một khóa tuning mà họ đọc và có mặc định, hoặc bỏ resendTuning.";
+/* Error E5007, shown when a record or protocol description breaks a rule: activation or deactivation names a transport that writeTransports does not list. %1$@ is the file. */
+"error.E5007.protocolDescription.activationTransport" = "%1$@, activation: activation và deactivation chỉ nêu truyền tải mà writeTransports liệt kê. Cách sửa: nêu một truyền tải trong writeTransports, hoặc thêm nó vào đó.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults leave out session fields that the family reads. %2$@ is the family and %3$@ are the fields. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionMissing" = "%1$@, defaults.session: %2$@ phải đặt các trường phiên %3$@. Cách sửa: đặt %3$@ trong giá trị mặc định.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults set session fields that the family does not read. %2$@ is the family and %3$@ are the fields. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionUnread" = "%1$@, defaults.session: %2$@ không đọc các trường phiên %3$@. Cách sửa: bỏ %3$@ khỏi giá trị mặc định.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a named packet id does not start with its family. %2$@ is the family. %1$@ is the file. */
+"error.E5007.protocolDescription.namedPacketPrefix" = "%1$@, namedPackets: id của mỗi gói có tên bắt đầu bằng %2$@/. Cách sửa: đổi tên các gói để mỗi id bắt đầu bằng %2$@/.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family that is always raw USB lists tuningKeys. %1$@ is the file. */
+"error.E5007.protocolDescription.tuningRawUSB" = "%1$@, tuningKeys: họ luôn dùng raw USB đọc tinh chỉnh qua rawUSBTuningKeys. Cách sửa: chuyển các khóa từ tuningKeys sang rawUSBTuningKeys.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant lists rawUSBTuningKeys. %1$@ is the file. */
+"error.E5007.protocolDescription.rawUSBTuningKeys" = "%1$@, rawUSBTuningKeys: rawUSBTuningKeys chỉ áp dụng cho họ có biến thể raw-USB. Cách sửa: bỏ rawUSBTuningKeys, hoặc thêm biến thể raw-USB.";
+/* Error E5007, shown when a record or protocol description breaks a rule: bytes are not uppercase hex pairs. %2$@ is the field and %3$@ is what the bytes belong to. %1$@ is the file. */
+"error.E5007.record.hexBytes" = "%1$@, %2$@: các byte của %3$@ phải là cặp hex viết hoa, cách nhau một dấu cách. Cách sửa: viết %2$@ thành các cặp như 42 03 00, chữ hoa và một dấu cách giữa các cặp.";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@, patch: patch phải có modes, usb, bluetoothLE, capabilities, server, route, input hoặc tuning. Cách sửa: chỉ giữ các phần đó và cung cấp ít nhất một phần.";
+"error.E5007.patch.patchSections" = "%1$@, patch: patch phải có modes, usb, bluetoothLE, capabilities, server, route, input, tuning hoặc idle. Cách sửa: chỉ giữ các phần đó và cung cấp ít nhất một phần.";
 /* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@, persona: persona phải là một trong %2$@. Cách sửa: đặt persona thành một trong số đó.";
 /* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */

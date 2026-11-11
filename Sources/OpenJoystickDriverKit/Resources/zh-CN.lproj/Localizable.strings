@@ -4249,8 +4249,77 @@
 "error.E5007.patch.patchNotObject" = "%1$@，document：文件不是 JSON 对象。修复：将文件改为含有 apiVersion、kind、selector 以及 patch 或 remove 的字典。";
 /* Error E5007, shown when a patch file fails: the file lacks apiVersion, kind, selector, or patch and remove. %1$@ is the file. */
 "error.E5007.patch.patchFields" = "%1$@，document：文件必须包含 apiVersion、kind、selector 以及 patch 或 remove。修复：补上缺少的成员。";
+/* Error E5007, shown when a record or protocol description breaks a rule: HID startup writes are in a raw-USB mode or family. %1$@ is the file. */
+"error.E5007.session.hidStartup" = "%1$@，session.startup：HID 启动写入只适用于 HID 控制器，不适用于 raw-USB 模式或系列。修复：删除 HID 启动写入，或改用 raw-USB 数据包。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a mode names a session keepAlive for a family that declares its own. %2$@ is the family. %1$@ is the file. */
+"error.E5007.session.keepAliveFamily" = "%1$@，session.keepAlive：会话 keepAlive 需要描述中未声明 keepAlive 的 raw-USB 系列，而 %2$@ 已声明。修复：删除会话 keepAlive，因为 %2$@ 已运行自己的 keepAlive。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HID mode names a session key that only raw-USB modes take. %2$@ is the key. %1$@ is the file. */
+"error.E5007.session.rawUSBOnly" = "%1$@，session.%2$@：session %2$@ 只适用于 raw-USB 模式。修复：从会话中删除 %2$@，或改用 raw-USB 协议。";
+/* Error E5007, shown when a record or protocol description breaks a rule: raw-USB startup writes are in a mode whose family does not read them or that lists initialization. %1$@ is the file. */
+"error.E5007.session.usbStartup" = "%1$@，session.startup：raw-USB 启动写入需要能读取它们的系列，以及没有初始化列表的模式。修复：删除 raw-USB 启动写入，或改用能读取它们的系列并去掉初始化列表。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble template is not the kind of packet its protocol uses. %1$@ is the file. */
+"error.E5007.rumble.templateKind" = "%1$@，session.rumble：震动模板对 raw-USB 协议是 usb 数据包，对 HID 协议是 HID 报告。修复：按协议所用的数据包类型编写模板。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.rumble.templateDriver" = "%1$@，session.rumble：震动模板需要对其编码的驱动程序。修复：删除震动模板，或改用驱动程序能对其编码的系列。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble resend interval is beside a session keepAlive. %1$@ is the file. */
+"error.E5007.rumble.resendWithKeepAlive" = "%1$@，session.rumble.resendIntervalMilliseconds：震动的 resendIntervalMilliseconds 不能与会话 keepAlive 同时使用。修复：删除 resendIntervalMilliseconds 或会话 keepAlive。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble resend interval is in a family that declares its own keepAlive. %1$@ is the file. */
+"error.E5007.rumble.resendWithFamilyKeepAlive" = "%1$@，session.rumble.resendIntervalMilliseconds：震动的 resendIntervalMilliseconds 需要描述中未声明 keepAlive 的系列。修复：删除 resendIntervalMilliseconds，因为系列的 keep-alive 决定时序。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a record has no mode. %1$@ is the file. */
+"error.E5007.modes.empty" = "%1$@，modes：modes 必须至少包含一个模式。修复：添加一个模式。";
+/* Error E5007, shown when a record or protocol description breaks a rule: more than one mode has the id default. %1$@ is the file. */
+"error.E5007.modes.defaultCount" = "%1$@，modes：id 为 default 的模式最多一个。修复：只给一个模式设置 id default。";
+/* Error E5007, shown when a record or protocol description breaks a rule: two modes share an id. %1$@ is the file. */
+"error.E5007.modes.uniqueIDs" = "%1$@，modes：每个模式的 id 必须唯一。修复：重命名 id 重复的模式。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a raw-USB mode names an interface. %1$@ is the file. */
+"error.E5007.modes.interfaceRawUSB" = "%1$@，modes[].interface：raw-USB 模式没有 interface，因为它占用其 usb 传输所确定的接口。修复：从模式中删除 interface。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HID mode names endpoints in its interfaceSignature. %1$@ is the file. */
+"error.E5007.modes.endpointsHID" = "%1$@，modes[].match.interfaceSignature.endpoints：HID 模式的 interfaceSignature 没有 endpoints，因为只有 raw-USB 扫描器会读取端点集。修复：从 interfaceSignature 中删除 endpoints。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a mode that needs input layouts finds none in the record. %1$@ is the file. */
+"error.E5007.modes.inputLayoutNeeded" = "%1$@，input：HIDReportLayout 模式需要记录的输入布局。修复：添加带布局的 input，或改用其他协议。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HIDDescriptor mode finds input layouts in the record. %1$@ is the file. */
+"error.E5007.modes.usageMapNotLayouts" = "%1$@，input：HIDDescriptor 模式读取用法映射，而不是输入布局。修复：用用法映射替换输入布局。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a usage map is in a record whose modes include a driver that does not read one. %1$@ is the file. */
+"error.E5007.modes.usageMapDriver" = "%1$@，input.usageMap：只有每个模式的驱动程序都读取 HID 用法映射时，它才适用。修复：删除用法映射，或只使用能读取它的驱动程序。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a capability is not declared by the driver of any mode. %1$@ is the file. */
+"error.E5007.modes.capabilities" = "%1$@，capabilities：capabilities 必须是某个模式的驱动程序所声明的增量。修复：只保留某个模式的驱动程序所声明的 capabilities。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a tuning key is not read by the driver. %2$@ is the key and %3$@ is the driver. %1$@ is the file. */
+"error.E5007.tuning.keyNotRead" = "%1$@，tuning.%2$@：%3$@ 驱动程序不读取 %2$@。修复：从 tuning 中删除 %2$@，或改用能读取它的驱动程序。";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults of a protocol description hold input layouts for a family that reads none. %1$@ is the file. */
+"error.E5007.protocolDescription.inputLayout" = "%1$@，defaults.input：输入布局只适用于读取它的系列。修复：从默认值中删除输入布局。";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults of a protocol description hold a usage map for a family that reads none. %1$@ is the file. */
+"error.E5007.protocolDescription.usageMap" = "%1$@，defaults.input.usageMap：HID 用法映射只适用于读取它的系列。修复：从默认值中删除用法映射。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a protocol description sets receiverPowerOff for a family other than XboxXUSB. %1$@ is the file. */
+"error.E5007.protocolDescription.receiverPowerOff" = "%1$@，defaults.receiverPowerOff：receiverPowerOff 默认值只适用于 XboxXUSB。修复：从默认值中删除 receiverPowerOff。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a protocol description lists session keys for a family that reads none. %2$@ is the family. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeysNone" = "%1$@，sessionKeys：%2$@ 不读取任何会话键。修复：让 sessionKeys 保持为空。";
+/* Error E5007, shown when a record or protocol description breaks a rule: the session keys of a protocol description differ from those its family reads. %2$@ is the family and %3$@ are the keys it reads. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeysRead" = "%1$@，sessionKeys：%2$@ 读取会话键 %3$@。修复：将 sessionKeys 设为 %3$@。";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults set a session key that sessionKeys does not list. %2$@ is the key. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeyUnlisted" = "%1$@，defaults.session：默认值设置了会话键 %2$@，但 sessionKeys 未列出它。修复：将 %2$@ 添加到 sessionKeys，或从默认值中删除它。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family that is always raw USB has a HID keep-alive write. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveHID" = "%1$@，defaults.session.keepAlive.writes：HID keep-alive 写入只适用于 HID 控制器。修复：删除 HID 写入，或改用 raw-USB 写入。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant has a raw-USB keep-alive write. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveUSB" = "%1$@，defaults.session.keepAlive.writes：raw-USB keep-alive 写入只适用于有 raw-USB 变体的系列。修复：删除 raw-USB 写入，或改用 HID 写入。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a keep-alive write names a resendTuning that the family does not read or default. %2$@ is the key. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveResendTuning" = "%1$@，defaults.session.keepAlive.writes[].resendTuning：keep-alive 写入的 resendTuning 指定了 %2$@，而系列必须读取它并给出默认值。修复：指定系列会读取并有默认值的 tuning 键，或删除 resendTuning。";
+/* Error E5007, shown when a record or protocol description breaks a rule: activation or deactivation names a transport that writeTransports does not list. %1$@ is the file. */
+"error.E5007.protocolDescription.activationTransport" = "%1$@，activation：activation 和 deactivation 只能指定 writeTransports 所列的传输。修复：指定 writeTransports 中的传输，或将其添加到那里。";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults leave out session fields that the family reads. %2$@ is the family and %3$@ are the fields. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionMissing" = "%1$@，defaults.session：%2$@ 必须设置会话字段 %3$@。修复：在默认值中设置 %3$@。";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults set session fields that the family does not read. %2$@ is the family and %3$@ are the fields. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionUnread" = "%1$@，defaults.session：%2$@ 不读取会话字段 %3$@。修复：从默认值中删除 %3$@。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a named packet id does not start with its family. %2$@ is the family. %1$@ is the file. */
+"error.E5007.protocolDescription.namedPacketPrefix" = "%1$@，namedPackets：每个命名数据包的 id 都以 %2$@/ 开头。修复：重命名数据包，使每个 id 都以 %2$@/ 开头。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family that is always raw USB lists tuningKeys. %1$@ is the file. */
+"error.E5007.protocolDescription.tuningRawUSB" = "%1$@，tuningKeys：始终为 raw USB 的系列通过 rawUSBTuningKeys 读取其调校。修复：将键从 tuningKeys 移到 rawUSBTuningKeys。";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant lists rawUSBTuningKeys. %1$@ is the file. */
+"error.E5007.protocolDescription.rawUSBTuningKeys" = "%1$@，rawUSBTuningKeys：rawUSBTuningKeys 只适用于有 raw-USB 变体的系列。修复：删除 rawUSBTuningKeys，或添加 raw-USB 变体。";
+/* Error E5007, shown when a record or protocol description breaks a rule: bytes are not uppercase hex pairs. %2$@ is the field and %3$@ is what the bytes belong to. %1$@ is the file. */
+"error.E5007.record.hexBytes" = "%1$@，%2$@：%3$@ 的字节必须是以单个空格分隔的大写十六进制字节对。修复：将 %2$@ 写成 42 03 00 这样的字节对，使用大写数字，字节对之间留一个空格。";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@，patch：patch 必须包含 modes、usb、bluetoothLE、capabilities、server、route、input 或 tuning。修复：只保留这些部分，并至少给出一个。";
+"error.E5007.patch.patchSections" = "%1$@，patch：patch 必须包含 modes、usb、bluetoothLE、capabilities、server、route、input、tuning 或 idle。修复：只保留这些部分，并至少给出一个。";
 /* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@，persona：persona 必须是 %2$@ 之一。修复：将 persona 设为其中之一。";
 /* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */

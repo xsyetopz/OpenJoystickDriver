@@ -4249,8 +4249,77 @@
 "error.E5007.patch.patchNotObject" = "%1$@, document: dosya bir JSON nesnesi değil. Düzeltme: dosyayı apiVersion, kind, selector ve patch veya remove içeren bir sözlük yapın.";
 /* Error E5007, shown when a patch file fails: the file lacks apiVersion, kind, selector, or patch and remove. %1$@ is the file. */
 "error.E5007.patch.patchFields" = "%1$@, document: dosya apiVersion, kind, selector ve patch veya remove içermelidir. Düzeltme: eksik üyeyi ekleyin.";
+/* Error E5007, shown when a record or protocol description breaks a rule: HID startup writes are in a raw-USB mode or family. %1$@ is the file. */
+"error.E5007.session.hidStartup" = "%1$@, session.startup: HID başlangıç yazmaları yalnızca HID denetleyicileri için geçerlidir, raw-USB modu veya ailesi için değil. Düzeltme: HID başlangıç yazmalarını kaldırın veya raw-USB paketleri kullanın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a mode names a session keepAlive for a family that declares its own. %2$@ is the family. %1$@ is the file. */
+"error.E5007.session.keepAliveFamily" = "%1$@, session.keepAlive: oturum keepAlive için açıklamasında keepAlive bildirmeyen bir raw-USB ailesi gerekir, %2$@ ise bildiriyor. Düzeltme: oturum keepAlive’ını kaldırın, çünkü %2$@ kendi keepAlive’ını zaten çalıştırıyor.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HID mode names a session key that only raw-USB modes take. %2$@ is the key. %1$@ is the file. */
+"error.E5007.session.rawUSBOnly" = "%1$@, session.%2$@: session %2$@ yalnızca raw-USB modları için geçerlidir. Düzeltme: %2$@ öğesini oturumdan kaldırın veya raw-USB protokolü kullanın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: raw-USB startup writes are in a mode whose family does not read them or that lists initialization. %1$@ is the file. */
+"error.E5007.session.usbStartup" = "%1$@, session.startup: raw-USB başlangıç yazmaları, bunları okuyan bir aile ve başlatma listesi olmayan bir mod gerektirir. Düzeltme: raw-USB başlangıç yazmalarını kaldırın veya bunları okuyan bir aile kullanıp başlatma listesini çıkarın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble template is not the kind of packet its protocol uses. %1$@ is the file. */
+"error.E5007.rumble.templateKind" = "%1$@, session.rumble: titreşim şablonu raw-USB protokolü için usb paketi, HID protokolü için HID raporudur. Düzeltme: şablonu protokolün kullandığı paket türünde yazın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.rumble.templateDriver" = "%1$@, session.rumble: titreşim şablonları, onları kodlayan bir sürücü gerektirir. Düzeltme: titreşim şablonunu kaldırın veya sürücüsü onu kodlayan bir aile kullanın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble resend interval is beside a session keepAlive. %1$@ is the file. */
+"error.E5007.rumble.resendWithKeepAlive" = "%1$@, session.rumble.resendIntervalMilliseconds: titreşim resendIntervalMilliseconds değeri oturum keepAlive ile birlikte kullanılamaz. Düzeltme: resendIntervalMilliseconds’ı veya oturum keepAlive’ını kaldırın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble resend interval is in a family that declares its own keepAlive. %1$@ is the file. */
+"error.E5007.rumble.resendWithFamilyKeepAlive" = "%1$@, session.rumble.resendIntervalMilliseconds: titreşim resendIntervalMilliseconds değeri, açıklaması keepAlive bildirmeyen bir aile gerektirir. Düzeltme: resendIntervalMilliseconds’ı kaldırın, çünkü zamanlamayı ailenin keep-alive’ı belirler.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a record has no mode. %1$@ is the file. */
+"error.E5007.modes.empty" = "%1$@, modes: modes en az bir mod içermelidir. Düzeltme: bir mod ekleyin.";
+/* Error E5007, shown when a record or protocol description breaks a rule: more than one mode has the id default. %1$@ is the file. */
+"error.E5007.modes.defaultCount" = "%1$@, modes: en fazla bir modun kimliği default olabilir. Düzeltme: default kimliğini yalnızca bir moda verin.";
+/* Error E5007, shown when a record or protocol description breaks a rule: two modes share an id. %1$@ is the file. */
+"error.E5007.modes.uniqueIDs" = "%1$@, modes: her mod kimliği benzersiz olmalıdır. Düzeltme: kimliği yineleyen modları yeniden adlandırın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a raw-USB mode names an interface. %1$@ is the file. */
+"error.E5007.modes.interfaceRawUSB" = "%1$@, modes[].interface: raw-USB modunun interface alanı yoktur, çünkü usb aktarımının çözdüğü arayüzü sahiplenir. Düzeltme: interface alanını moddan kaldırın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HID mode names endpoints in its interfaceSignature. %1$@ is the file. */
+"error.E5007.modes.endpointsHID" = "%1$@, modes[].match.interfaceSignature.endpoints: HID modunun interfaceSignature değerinde endpoints olmaz, çünkü uç nokta kümesini yalnızca raw-USB tarayıcısı okur. Düzeltme: endpoints alanını interfaceSignature’dan kaldırın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a mode that needs input layouts finds none in the record. %1$@ is the file. */
+"error.E5007.modes.inputLayoutNeeded" = "%1$@, input: HIDReportLayout modu, kaydın giriş düzenlerini gerektirir. Düzeltme: düzenlerle input ekleyin veya başka bir protokol kullanın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HIDDescriptor mode finds input layouts in the record. %1$@ is the file. */
+"error.E5007.modes.usageMapNotLayouts" = "%1$@, input: HIDDescriptor modu giriş düzenlerini değil, bir kullanım haritasını okur. Düzeltme: giriş düzenlerini bir kullanım haritasıyla değiştirin.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a usage map is in a record whose modes include a driver that does not read one. %1$@ is the file. */
+"error.E5007.modes.usageMapDriver" = "%1$@, input.usageMap: HID kullanım haritası yalnızca her modun sürücüsü onu okuyorsa geçerlidir. Düzeltme: kullanım haritasını kaldırın veya yalnızca onu okuyan sürücüler kullanın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a capability is not declared by the driver of any mode. %1$@ is the file. */
+"error.E5007.modes.capabilities" = "%1$@, capabilities: capabilities, bir modun sürücüsünün bildirdiği farklar olmalıdır. Düzeltme: yalnızca bir modun sürücüsünün bildirdiği capabilities öğelerini tutun.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a tuning key is not read by the driver. %2$@ is the key and %3$@ is the driver. %1$@ is the file. */
+"error.E5007.tuning.keyNotRead" = "%1$@, tuning.%2$@: %2$@, %3$@ sürücüsü tarafından okunmaz. Düzeltme: %2$@ öğesini tuning’den kaldırın veya onu okuyan bir sürücü kullanın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults of a protocol description hold input layouts for a family that reads none. %1$@ is the file. */
+"error.E5007.protocolDescription.inputLayout" = "%1$@, defaults.input: giriş düzeni yalnızca onu okuyan bir aile için geçerlidir. Düzeltme: giriş düzenini varsayılanlardan kaldırın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults of a protocol description hold a usage map for a family that reads none. %1$@ is the file. */
+"error.E5007.protocolDescription.usageMap" = "%1$@, defaults.input.usageMap: HID kullanım haritası yalnızca onu okuyan bir aile için geçerlidir. Düzeltme: kullanım haritasını varsayılanlardan kaldırın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a protocol description sets receiverPowerOff for a family other than XboxXUSB. %1$@ is the file. */
+"error.E5007.protocolDescription.receiverPowerOff" = "%1$@, defaults.receiverPowerOff: receiverPowerOff varsayılanı yalnızca XboxXUSB için geçerlidir. Düzeltme: receiverPowerOff’u varsayılanlardan kaldırın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a protocol description lists session keys for a family that reads none. %2$@ is the family. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeysNone" = "%1$@, sessionKeys: %2$@ hiçbir oturum anahtarı okumaz. Düzeltme: sessionKeys’i boş bırakın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the session keys of a protocol description differ from those its family reads. %2$@ is the family and %3$@ are the keys it reads. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeysRead" = "%1$@, sessionKeys: %2$@ şu oturum anahtarlarını okur: %3$@. Düzeltme: sessionKeys’i %3$@ yapın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults set a session key that sessionKeys does not list. %2$@ is the key. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeyUnlisted" = "%1$@, defaults.session: varsayılanlar, sessionKeys’in listelemediği %2$@ oturum anahtarını ayarlıyor. Düzeltme: %2$@ anahtarını sessionKeys’e ekleyin veya varsayılanlardan kaldırın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family that is always raw USB has a HID keep-alive write. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveHID" = "%1$@, defaults.session.keepAlive.writes: HID keep-alive yazması yalnızca HID denetleyicileri için geçerlidir. Düzeltme: HID yazmasını kaldırın veya raw-USB yazması kullanın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant has a raw-USB keep-alive write. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveUSB" = "%1$@, defaults.session.keepAlive.writes: raw-USB keep-alive yazması yalnızca raw-USB varyantı olan bir aile için geçerlidir. Düzeltme: raw-USB yazmasını kaldırın veya HID yazması kullanın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a keep-alive write names a resendTuning that the family does not read or default. %2$@ is the key. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveResendTuning" = "%1$@, defaults.session.keepAlive.writes[].resendTuning: keep-alive yazmasının resendTuning değeri, ailenin okuması ve varsayılan vermesi gereken %2$@ anahtarını adlandırıyor. Düzeltme: ailenin okuyup varsayılan verdiği bir tuning anahtarı adlandırın veya resendTuning’i kaldırın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: activation or deactivation names a transport that writeTransports does not list. %1$@ is the file. */
+"error.E5007.protocolDescription.activationTransport" = "%1$@, activation: activation ve deactivation yalnızca writeTransports’un listelediği bir aktarımı adlandırır. Düzeltme: writeTransports’taki bir aktarımı adlandırın veya oraya ekleyin.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults leave out session fields that the family reads. %2$@ is the family and %3$@ are the fields. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionMissing" = "%1$@, defaults.session: %2$@ şu oturum alanlarını ayarlamalıdır: %3$@. Düzeltme: %3$@ alanlarını varsayılanlarda ayarlayın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults set session fields that the family does not read. %2$@ is the family and %3$@ are the fields. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionUnread" = "%1$@, defaults.session: %2$@ şu oturum alanlarını okumaz: %3$@. Düzeltme: %3$@ alanlarını varsayılanlardan kaldırın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a named packet id does not start with its family. %2$@ is the family. %1$@ is the file. */
+"error.E5007.protocolDescription.namedPacketPrefix" = "%1$@, namedPackets: adlandırılmış her paketin kimliği %2$@/ ile başlar. Düzeltme: paketleri her kimlik %2$@/ ile başlayacak şekilde yeniden adlandırın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family that is always raw USB lists tuningKeys. %1$@ is the file. */
+"error.E5007.protocolDescription.tuningRawUSB" = "%1$@, tuningKeys: her zaman raw USB olan bir aile ayarlarını rawUSBTuningKeys üzerinden okur. Düzeltme: anahtarları tuningKeys’ten rawUSBTuningKeys’e taşıyın.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant lists rawUSBTuningKeys. %1$@ is the file. */
+"error.E5007.protocolDescription.rawUSBTuningKeys" = "%1$@, rawUSBTuningKeys: rawUSBTuningKeys yalnızca raw-USB varyantı olan bir aile için geçerlidir. Düzeltme: rawUSBTuningKeys’i kaldırın veya raw-USB varyantı ekleyin.";
+/* Error E5007, shown when a record or protocol description breaks a rule: bytes are not uppercase hex pairs. %2$@ is the field and %3$@ is what the bytes belong to. %1$@ is the file. */
+"error.E5007.record.hexBytes" = "%1$@, %2$@: %3$@ baytları, tek boşlukla ayrılmış büyük harfli onaltılık çiftler olmalıdır. Düzeltme: %2$@ alanını 42 03 00 gibi çiftlerle, büyük harf ve çiftler arasında tek boşlukla yazın.";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@, patch: patch modes, usb, bluetoothLE, capabilities, server, route, input veya tuning içermelidir. Düzeltme: yalnızca bu bölümleri tutun ve en az birini verin.";
+"error.E5007.patch.patchSections" = "%1$@, patch: patch modes, usb, bluetoothLE, capabilities, server, route, input, tuning veya idle içermelidir. Düzeltme: yalnızca bu bölümleri tutun ve en az birini verin.";
 /* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@, persona: persona %2$@ değerlerinden biri olmalıdır. Düzeltme: persona’yı bunlardan biri yapın.";
 /* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */

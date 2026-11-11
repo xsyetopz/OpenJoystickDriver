@@ -4249,8 +4249,77 @@
 "error.E5007.patch.patchNotObject" = "%1$@, document: 파일이 JSON 객체가 아닙니다. 해결: 파일을 apiVersion, kind, selector, patch 또는 remove가 있는 딕셔너리로 만드세요.";
 /* Error E5007, shown when a patch file fails: the file lacks apiVersion, kind, selector, or patch and remove. %1$@ is the file. */
 "error.E5007.patch.patchFields" = "%1$@, document: 파일에는 apiVersion, kind, selector, patch 또는 remove가 있어야 합니다. 해결: 빠진 멤버를 추가하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: HID startup writes are in a raw-USB mode or family. %1$@ is the file. */
+"error.E5007.session.hidStartup" = "%1$@, session.startup: HID 시작 쓰기는 HID 컨트롤러에만 적용되며 raw-USB 모드나 패밀리에는 적용되지 않습니다. 해결: HID 시작 쓰기를 삭제하거나 raw-USB 패킷을 사용하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a mode names a session keepAlive for a family that declares its own. %2$@ is the family. %1$@ is the file. */
+"error.E5007.session.keepAliveFamily" = "%1$@, session.keepAlive: 세션 keepAlive에는 설명에 keepAlive가 없는 raw-USB 패밀리가 필요한데, %2$@은(는) keepAlive를 선언합니다. 해결: %2$@이(가) 이미 자체 keepAlive를 실행하므로 세션 keepAlive를 삭제하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HID mode names a session key that only raw-USB modes take. %2$@ is the key. %1$@ is the file. */
+"error.E5007.session.rawUSBOnly" = "%1$@, session.%2$@: session %2$@은(는) raw-USB 모드에만 적용됩니다. 해결: 세션에서 %2$@을(를) 삭제하거나 raw-USB 프로토콜을 사용하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: raw-USB startup writes are in a mode whose family does not read them or that lists initialization. %1$@ is the file. */
+"error.E5007.session.usbStartup" = "%1$@, session.startup: raw-USB 시작 쓰기에는 이를 읽는 패밀리와 초기화 목록이 없는 모드가 필요합니다. 해결: raw-USB 시작 쓰기를 삭제하거나, 이를 읽는 패밀리를 사용하고 초기화 목록을 제거하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble template is not the kind of packet its protocol uses. %1$@ is the file. */
+"error.E5007.rumble.templateKind" = "%1$@, session.rumble: 진동 템플릿은 raw-USB 프로토콜에서는 usb 패킷, HID 프로토콜에서는 HID 리포트입니다. 해결: 프로토콜이 사용하는 패킷 종류로 템플릿을 작성하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble template is in a family whose driver does not encode it. %1$@ is the file. */
+"error.E5007.rumble.templateDriver" = "%1$@, session.rumble: 진동 템플릿에는 이를 인코딩하는 드라이버가 필요합니다. 해결: 진동 템플릿을 삭제하거나 드라이버가 이를 인코딩하는 패밀리를 사용하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble resend interval is beside a session keepAlive. %1$@ is the file. */
+"error.E5007.rumble.resendWithKeepAlive" = "%1$@, session.rumble.resendIntervalMilliseconds: 진동 resendIntervalMilliseconds는 세션 keepAlive와 함께 쓸 수 없습니다. 해결: resendIntervalMilliseconds 또는 세션 keepAlive를 삭제하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a rumble resend interval is in a family that declares its own keepAlive. %1$@ is the file. */
+"error.E5007.rumble.resendWithFamilyKeepAlive" = "%1$@, session.rumble.resendIntervalMilliseconds: 진동 resendIntervalMilliseconds에는 설명에 keepAlive가 없는 패밀리가 필요합니다. 해결: 패밀리의 keep-alive가 타이밍을 정하므로 resendIntervalMilliseconds를 삭제하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a record has no mode. %1$@ is the file. */
+"error.E5007.modes.empty" = "%1$@, modes: modes에는 모드가 하나 이상 있어야 합니다. 해결: 모드를 하나 추가하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: more than one mode has the id default. %1$@ is the file. */
+"error.E5007.modes.defaultCount" = "%1$@, modes: id가 default인 모드는 최대 하나입니다. 해결: id default는 한 모드에만 지정하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: two modes share an id. %1$@ is the file. */
+"error.E5007.modes.uniqueIDs" = "%1$@, modes: 모드 id는 각각 고유해야 합니다. 해결: id가 중복되는 모드의 이름을 바꾸세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a raw-USB mode names an interface. %1$@ is the file. */
+"error.E5007.modes.interfaceRawUSB" = "%1$@, modes[].interface: raw-USB 모드에는 interface가 없습니다. usb 전송이 확정하는 인터페이스를 사용하기 때문입니다. 해결: 모드에서 interface를 삭제하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HID mode names endpoints in its interfaceSignature. %1$@ is the file. */
+"error.E5007.modes.endpointsHID" = "%1$@, modes[].match.interfaceSignature.endpoints: HID 모드의 interfaceSignature에는 endpoints가 없습니다. 엔드포인트 집합은 raw-USB 스캐너만 읽기 때문입니다. 해결: interfaceSignature에서 endpoints를 삭제하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a mode that needs input layouts finds none in the record. %1$@ is the file. */
+"error.E5007.modes.inputLayoutNeeded" = "%1$@, input: HIDReportLayout 모드에는 레코드의 입력 레이아웃이 필요합니다. 해결: 레이아웃이 있는 input을 추가하거나 다른 프로토콜을 사용하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a HIDDescriptor mode finds input layouts in the record. %1$@ is the file. */
+"error.E5007.modes.usageMapNotLayouts" = "%1$@, input: HIDDescriptor 모드는 입력 레이아웃이 아니라 사용 맵을 읽습니다. 해결: 입력 레이아웃을 사용 맵으로 바꾸세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a usage map is in a record whose modes include a driver that does not read one. %1$@ is the file. */
+"error.E5007.modes.usageMapDriver" = "%1$@, input.usageMap: HID 사용 맵은 모든 모드의 드라이버가 이를 읽을 때만 적용됩니다. 해결: 사용 맵을 삭제하거나 이를 읽는 드라이버만 사용하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a capability is not declared by the driver of any mode. %1$@ is the file. */
+"error.E5007.modes.capabilities" = "%1$@, capabilities: capabilities는 어떤 모드의 드라이버가 선언하는 델타여야 합니다. 해결: 모드의 드라이버가 선언하는 capabilities만 남기세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a tuning key is not read by the driver. %2$@ is the key and %3$@ is the driver. %1$@ is the file. */
+"error.E5007.tuning.keyNotRead" = "%1$@, tuning.%2$@: %2$@은(는) %3$@ 드라이버가 읽지 않습니다. 해결: tuning에서 %2$@을(를) 삭제하거나 이를 읽는 드라이버를 사용하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults of a protocol description hold input layouts for a family that reads none. %1$@ is the file. */
+"error.E5007.protocolDescription.inputLayout" = "%1$@, defaults.input: 입력 레이아웃은 이를 읽는 패밀리에만 적용됩니다. 해결: 기본값에서 입력 레이아웃을 삭제하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults of a protocol description hold a usage map for a family that reads none. %1$@ is the file. */
+"error.E5007.protocolDescription.usageMap" = "%1$@, defaults.input.usageMap: HID 사용 맵은 이를 읽는 패밀리에만 적용됩니다. 해결: 기본값에서 사용 맵을 삭제하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a protocol description sets receiverPowerOff for a family other than XboxXUSB. %1$@ is the file. */
+"error.E5007.protocolDescription.receiverPowerOff" = "%1$@, defaults.receiverPowerOff: receiverPowerOff 기본값은 XboxXUSB에만 적용됩니다. 해결: 기본값에서 receiverPowerOff를 삭제하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a protocol description lists session keys for a family that reads none. %2$@ is the family. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeysNone" = "%1$@, sessionKeys: %2$@은(는) 세션 키를 읽지 않습니다. 해결: sessionKeys를 비워 두세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the session keys of a protocol description differ from those its family reads. %2$@ is the family and %3$@ are the keys it reads. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeysRead" = "%1$@, sessionKeys: %2$@은(는) 세션 키 %3$@을(를) 읽습니다. 해결: sessionKeys를 %3$@(으)로 설정하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults set a session key that sessionKeys does not list. %2$@ is the key. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionKeyUnlisted" = "%1$@, defaults.session: 기본값이 sessionKeys에 없는 세션 키 %2$@을(를) 설정합니다. 해결: %2$@을(를) sessionKeys에 추가하거나 기본값에서 삭제하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family that is always raw USB has a HID keep-alive write. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveHID" = "%1$@, defaults.session.keepAlive.writes: HID keep-alive 쓰기는 HID 컨트롤러에만 적용됩니다. 해결: HID 쓰기를 삭제하거나 raw-USB 쓰기를 사용하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant has a raw-USB keep-alive write. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveUSB" = "%1$@, defaults.session.keepAlive.writes: raw-USB keep-alive 쓰기는 raw-USB 변형이 있는 패밀리에만 적용됩니다. 해결: raw-USB 쓰기를 삭제하거나 HID 쓰기를 사용하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a keep-alive write names a resendTuning that the family does not read or default. %2$@ is the key. %1$@ is the file. */
+"error.E5007.protocolDescription.keepAliveResendTuning" = "%1$@, defaults.session.keepAlive.writes[].resendTuning: keep-alive 쓰기의 resendTuning이 %2$@을(를) 지정하는데, 패밀리가 이를 읽고 기본값을 가져야 합니다. 해결: 패밀리가 읽고 기본값을 가진 tuning 키를 지정하거나 resendTuning을 삭제하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: activation or deactivation names a transport that writeTransports does not list. %1$@ is the file. */
+"error.E5007.protocolDescription.activationTransport" = "%1$@, activation: activation과 deactivation은 writeTransports에 있는 전송만 지정할 수 있습니다. 해결: writeTransports에 있는 전송을 지정하거나 그곳에 추가하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults leave out session fields that the family reads. %2$@ is the family and %3$@ are the fields. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionMissing" = "%1$@, defaults.session: %2$@은(는) 세션 필드 %3$@을(를) 설정해야 합니다. 해결: 기본값에 %3$@을(를) 설정하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: the defaults set session fields that the family does not read. %2$@ is the family and %3$@ are the fields. %1$@ is the file. */
+"error.E5007.protocolDescription.sessionUnread" = "%1$@, defaults.session: %2$@은(는) 세션 필드 %3$@을(를) 읽지 않습니다. 해결: 기본값에서 %3$@을(를) 삭제하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a named packet id does not start with its family. %2$@ is the family. %1$@ is the file. */
+"error.E5007.protocolDescription.namedPacketPrefix" = "%1$@, namedPackets: 이름 있는 각 패킷의 id는 %2$@/로 시작합니다. 해결: 각 id가 %2$@/로 시작하도록 패킷 이름을 바꾸세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family that is always raw USB lists tuningKeys. %1$@ is the file. */
+"error.E5007.protocolDescription.tuningRawUSB" = "%1$@, tuningKeys: 항상 raw USB인 패밀리는 튜닝을 rawUSBTuningKeys로 읽습니다. 해결: 키를 tuningKeys에서 rawUSBTuningKeys로 옮기세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant lists rawUSBTuningKeys. %1$@ is the file. */
+"error.E5007.protocolDescription.rawUSBTuningKeys" = "%1$@, rawUSBTuningKeys: rawUSBTuningKeys는 raw-USB 변형이 있는 패밀리에만 적용됩니다. 해결: rawUSBTuningKeys를 삭제하거나 raw-USB 변형을 추가하세요.";
+/* Error E5007, shown when a record or protocol description breaks a rule: bytes are not uppercase hex pairs. %2$@ is the field and %3$@ is what the bytes belong to. %1$@ is the file. */
+"error.E5007.record.hexBytes" = "%1$@, %2$@: %3$@의 바이트는 공백 하나로 구분한 대문자 16진수 쌍이어야 합니다. 해결: %2$@을(를) 42 03 00처럼 대문자로, 쌍 사이에 공백 하나를 두고 작성하세요.";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@, patch: patch에는 modes, usb, bluetoothLE, capabilities, server, route, input 또는 tuning이 있어야 합니다. 해결: 이 섹션만 남기고 하나 이상 지정하세요.";
+"error.E5007.patch.patchSections" = "%1$@, patch: patch에는 modes, usb, bluetoothLE, capabilities, server, route, input, tuning 또는 idle이 있어야 합니다. 해결: 이 섹션만 남기고 하나 이상 지정하세요.";
 /* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@, persona: persona는 %2$@ 중 하나여야 합니다. 해결: persona를 그중 하나로 설정하세요.";
 /* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */
