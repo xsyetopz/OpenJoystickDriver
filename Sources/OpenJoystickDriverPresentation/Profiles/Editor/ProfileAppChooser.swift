@@ -23,6 +23,7 @@
           let entry = ProfileAppChoices.entry(for: appID, lookup: lookup)
           HStack {
             Image(nsImage: icon(of: entry)).resizable().frame(width: 20, height: 20)
+              .accessibilityHidden(true)
             VStack(alignment: .leading) {
               Text(entry.title)
               if !entry.isInstalled {
