@@ -6,6 +6,7 @@ struct PassThroughHIDDevice: Equatable {
   let routingAddress: ControllerConnectionAddress
   /// True for a native gamepad no driver bound; false for another interface of a native one.
   let nativePassThrough: Bool
+  let physicalDevice: PhysicalDevice
   /// The device as the service status reports it.
   let description: PassThroughDeviceSnapshot
 }
@@ -30,6 +31,32 @@ extension DeviceManager {
       || deviceInfos.contains { identifier, info in
         identifier.hidRoutingAddress == address && info.physicalDevice?.nativePassThrough == true
       }
+  }
+
+  // A device that reports another product name or serial number than the one recorded at its
+  // location is that location's re-enumeration; interfaces of one device report alike.
+  // IOKit location 0 identifies no controller.
+  func retireSupersededHIDConnections(by connection: HIDDeviceConnection) async {
+    let address = connection.routingAddress
+    guard address.locationID != 0 else { return }
+    func supersedes(_ earlier: PhysicalDevice?) -> Bool {
+      guard let earlier else { return false }
+      return earlier.productName != connection.physicalDevice.productName
+        || earlier.serialNumber != connection.physicalDevice.serialNumber
+    }
+    for (id, device) in passThroughDevices
+    where device.routingAddress == address && id != connection.connectionID
+      && supersedes(device.physicalDevice)
+    {
+      clearPassThroughDevice(id)
+    }
+    let stale = deviceInfos.filter { identifier, info in
+      guard identifier.hidRoutingAddress == address, case .hid = info.discoverySource else {
+        return false
+      }
+      return info.hidConnectionID != connection.connectionID && supersedes(info.physicalDevice)
+    }
+    for identifier in stale.keys { await tearDownHIDDevice(identifier: identifier) }
   }
 
   /// Gives a native connection its routing address before it binds: cancels a sibling interface's
@@ -74,6 +101,7 @@ extension DeviceManager {
     passThroughDevices[connection.connectionID] = PassThroughHIDDevice(
       routingAddress: connection.routingAddress,
       nativePassThrough: connection.physicalDevice.nativePassThrough,
+      physicalDevice: connection.physicalDevice,
       description: PassThroughDeviceSnapshot(
         vendorID: vendorID,
         productID: productID,
