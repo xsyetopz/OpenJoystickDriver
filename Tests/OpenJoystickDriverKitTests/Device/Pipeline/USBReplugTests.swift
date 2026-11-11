@@ -57,7 +57,12 @@ struct USBReplugTests {
     let deliveredBeforeReplug = dispatcher.dispatchedStates.count
 
     await provider.setDevices([])
-    await waitUntil("the removed controller is dropped") { await manager.pipelines.isEmpty }
+    // The manager drops the pipeline before its stop closes the session.
+    await waitUntil("the removed controller is dropped and its session closed") {
+      let dropped = await manager.pipelines.isEmpty
+      let closed = await first.closeCount > 0
+      return dropped && closed
+    }
     #expect(await first.closeCount == 1)
 
     await provider.setDevices([service(2)])
