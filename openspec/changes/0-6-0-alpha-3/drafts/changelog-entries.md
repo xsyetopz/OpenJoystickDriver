@@ -18,6 +18,7 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - The Turtle Beach / PDP Xbox Rematch Advanced Wired Controller (`10F5:711E`) has an `XboxGIP` record with interrupt IN `0x81`, OUT `0x02` and `SetConfiguration1BeforeClaim`. The contributor's run on macOS 26.6.2 decoded the face buttons, D-pad, sticks and triggers; rumble and the player indicator are not claimed. Thanks to phil-bbs (#57). (8.8)
 - The PowerA XBX Spectra Enhanced Wired Controller (`20D6:4002`) has an authored `XboxGIP` record, so the model no longer depends on the Linux import. Thanks to Anonim0_Venezian0 (#50). (8.9)
 - The Razer Wolverine V3 Tournament Edition (`1532:0A43`) uses interrupt IN `0x81` and OUT `0x01` through a bundled patch. The contributor reports a successful handshake, the LED on, and working buttons, sticks, triggers and D-pad. Thanks to Mason (#39). (8.10)
+- A record for the Thrustmaster Ferrari 458 Spider wheel (`044F:B671`) uses the `XboxGIP` driver with an input layout: steering is Left Stick X (16 bits at report bytes 6 to 7) and the brake is Left Trigger (10 bits at bytes 10 to 11), checked with `ojd record test` on the packets of [#58](https://github.com/xsyetopz/OpenJoystickDriver/issues/58). Only the reporter's rest, left-turn and accelerator packets are checked: the brake, the clutch, every other button and the turn to the right are not captured. (8.4)
 
 ## Changed
 
