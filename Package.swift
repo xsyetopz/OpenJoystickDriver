@@ -228,7 +228,7 @@ let package = Package(
     ),
     .testTarget(
       name: "OJDRepositoryToolTests",
-      dependencies: ["OpenJoystickDriverKit", "OJDRepositoryTool"],
+      dependencies: ["OpenJoystickDriverKit", "OJDRepositoryTool", "OpenJoystickDriverTestSupport"],
       path: "Tests/OJDRepositoryToolTests",
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
       linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]

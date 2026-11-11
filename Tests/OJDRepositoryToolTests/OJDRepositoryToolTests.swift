@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -100,7 +101,7 @@ struct OJDRepositoryToolTests {
     try Data(contentsOf: kitResources.appendingPathComponent(path))
   }
 
-  private static let recordPath = "Controllers/045e/045e-028e.json"
+  private static let recordPath = "Controllers/045e/045e-028e.plist"
 
   // MARK: records
 
@@ -108,7 +109,7 @@ struct OJDRepositoryToolTests {
   func aValidRecordDirectoryHasNoProblem() throws {
     try Self.scratch { directory in
       try Self.resource(Self.recordPath).write(
-        to: directory.appendingPathComponent("045e-028e.json")
+        to: directory.appendingPathComponent("045e-028e.plist")
       )
       let result = try Self.run(["validate", "controllers", directory.path])
       #expect(result.status == 0)
@@ -129,11 +130,11 @@ struct OJDRepositoryToolTests {
   func aRecordRuleFailureHasTheCodeThatTheRecordSetReports() throws {
     try Self.scratch { directory in
       var object = try #require(
-        JSONSerialization.jsonObject(with: Self.resource(Self.recordPath)) as? [String: Any]
+        PropertyListFixture.tree(Self.resource(Self.recordPath)) as? [String: Any]
       )
       object["apiVersion"] = "ojd/v0"
-      let data = try JSONSerialization.data(withJSONObject: object)
-      try data.write(to: directory.appendingPathComponent("045e-028e.json"))
+      let data = try PropertyListFixture.data(tree: object)
+      try data.write(to: directory.appendingPathComponent("045e-028e.plist"))
       let expected = try #require(throws: (any Error).self) {
         try ControllerRecordSet.validate(data)
       }
@@ -151,35 +152,38 @@ struct OJDRepositoryToolTests {
             document: "record"
           )
       )
-      #expect((problem["file"] as? String)?.hasSuffix("045e-028e.json") == true)
+      #expect((problem["file"] as? String)?.hasSuffix("045e-028e.plist") == true)
     }
   }
 
   @Test
-  func aRecordWithAByteLevelFaultGetsTheReasonOfOrderedJSON() throws {
-    let text = try #require(String(data: Self.resource(Self.recordPath), encoding: .utf8))
-    let duplicate = text.replacingOccurrences(
-      of: "\"kind\": \"Controller\",",
-      with: "\"kind\": \"Controller\",\n  \"kind\": \"Controller\","
-    )
-    #expect(duplicate != text)
-    let faulty: [(name: String, data: Data)] = [
-      ("duplicate member", Data(duplicate.utf8)),
-      ("byte order mark", Data([0xEF, 0xBB, 0xBF]) + Data(text.utf8)),
-      ("UTF-16", try #require(text.data(using: .utf16))),
-      ("not UTF-8", Data(text.utf8) + Data([0xFF])),
+  func aRecordThatIsNoXMLPropertyListGetsTheReasonOfTheRecordSet() throws {
+    let tree = try PropertyListFixture.tree(Self.resource(Self.recordPath))
+    let faulty: [(reason: String, data: Data)] = [
+      ("holds JSON text", try JSONSerialization.data(withJSONObject: tree)),
+      (
+        "is a binary property list",
+        try PropertyListSerialization.data(fromPropertyList: tree, format: .binary, options: 0)
+      ),
     ]
-    for (name, data) in faulty {
+    for (reason, data) in faulty {
       try Self.scratch { directory in
-        try data.write(to: directory.appendingPathComponent("045e-028e.json"))
-        let reason = try #require(throws: OrderedJSON.Problem.self) {
-          try OrderedJSON.parse(data)
+        try data.write(to: directory.appendingPathComponent("045e-028e.plist"))
+        let expected = try #require(throws: (any Error).self) {
+          try ControllerRecordSet.validate(data)
         }
         let result = try Self.run(["validate", "controllers", directory.path])
-        let problem = try #require(try result.problems().first, "\(name)")
-        #expect(result.status == 1, "\(name)")
-        #expect(problem["code"] as? String == ErrorCode.invalidControllerRecord.rawValue, "\(name)")
-        #expect(problem["message"] as? String == reason.description, "\(name)")
+        let problem = try #require(try result.problems().first, "\(reason)")
+        #expect(result.status == 1, "\(reason)")
+        #expect(
+          problem["code"] as? String == ControllerRecordSet.problemCode(expected)?.rawValue,
+          "\(reason)"
+        )
+        #expect(
+          problem["message"] as? String
+            == "045e-028e.plist \(reason); save it as an XML property list",
+          "\(reason)"
+        )
       }
     }
   }
@@ -188,13 +192,13 @@ struct OJDRepositoryToolTests {
   func aRecordWhoseFileNameIsNotItsOwnIsAProblem() throws {
     try Self.scratch { directory in
       try Self.resource(Self.recordPath).write(
-        to: directory.appendingPathComponent("045e-0000.json")
+        to: directory.appendingPathComponent("045e-0000.plist")
       )
       let result = try Self.run(["validate", "controllers", directory.path])
       let problem = try #require(try result.problems().first)
       #expect(result.status == 1)
       #expect(problem["code"] as? String == ErrorCode.invalidControllerRecord.rawValue)
-      #expect(problem["message"] as? String == "filename must be 045e-028e.json")
+      #expect(problem["message"] as? String == "filename must be 045e-028e.plist")
     }
   }
 
@@ -219,13 +223,10 @@ struct OJDRepositoryToolTests {
           to: directory.appendingPathComponent(name)
         )
       }
-      let name = "xbox-xusb.json"
-      var object = try #require(
-        JSONSerialization.jsonObject(with: Data(contentsOf: directory.appendingPathComponent(name)))
-          as? [String: Any]
-      )
+      let name = "xbox-xusb.plist"
+      var object = try PropertyListFixture.dictionary(at: directory.appendingPathComponent(name))
       object["unknownField"] = 1
-      let data = try JSONSerialization.data(withJSONObject: object)
+      let data = try PropertyListFixture.data(tree: object)
       try data.write(to: directory.appendingPathComponent(name))
       let expected = try #require(throws: ProtocolDescriptionProblem.self) {
         try ProtocolDescription.decode(data, fileName: name)
@@ -265,7 +266,7 @@ struct OJDRepositoryToolTests {
       }
       let nested = directory.appendingPathComponent("zz", isDirectory: true)
       try FileManager.default.createDirectory(at: nested, withIntermediateDirectories: true)
-      let name = "xbox-xusb.json"
+      let name = "xbox-xusb.plist"
       try FileManager.default.copyItem(
         at: directory.appendingPathComponent(name),
         to: nested.appendingPathComponent(name)
@@ -283,7 +284,7 @@ struct OJDRepositoryToolTests {
   // MARK: profiles and virtual devices
 
   private static let profile = #"""
-    {"apiVersion": "openjoystickdriver/v1alpha2", "kind": "Profile", "name": "Pad"}
+    {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Profile", "name": "Pad"}
     """#
 
   @Test
@@ -300,10 +301,12 @@ struct OJDRepositoryToolTests {
           )
         ]
       )
-      let good = directory.appendingPathComponent("good.json")
-      let bad = directory.appendingPathComponent("bad.json")
+      let good = directory.appendingPathComponent("good.plist")
+      let bad = directory.appendingPathComponent("bad.plist")
       try RemappingProfileFileStore.write(valid, to: good)
-      let invalid = Data(#"{"apiVersion": "ojd/v0", "kind": "Profile", "name": "Pad"}"#.utf8)
+      let invalid = PropertyListFixture.bytes(
+        json: #"{"apiVersion": "ojd/v0", "kind": "Profile", "name": "Pad"}"#
+      )
       try invalid.write(to: bad)
       #expect(try Self.run(["validate", "profiles", good.path]).status == 0)
 
@@ -326,15 +329,15 @@ struct OJDRepositoryToolTests {
   func aValidAndAnInvalidPersona() throws {
     try Self.scratch { directory in
       let document = { (persona: String) in
-        Data(
-          """
-          {"apiVersion": "openjoystickdriver/v1alpha2", "kind": "VirtualDevice",
-           "match": {"vendorID": 1118, "productID": 654}, "persona": "\(persona)"}
-          """.utf8
+        PropertyListFixture.bytes(
+          json: """
+            {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "VirtualDevice",
+             "match": {"vendorID": 1118, "productID": 654}, "persona": "\(persona)"}
+            """
         )
       }
-      let good = directory.appendingPathComponent("good.json")
-      let bad = directory.appendingPathComponent("bad.json")
+      let good = directory.appendingPathComponent("good.plist")
+      let bad = directory.appendingPathComponent("bad.plist")
       try document("Generic").write(to: good)
       try document("Nothing").write(to: bad)
       #expect(try Self.run(["validate", "virtual-devices", good.path]).status == 0)
@@ -346,7 +349,7 @@ struct OJDRepositoryToolTests {
       let problem = try #require(try result.problems().first)
       #expect(result.status == 1)
       #expect(try result.problems().count == 1)
-      #expect((problem["file"] as? String)?.hasSuffix("/bad.json") == true)
+      #expect((problem["file"] as? String)?.hasSuffix("/bad.plist") == true)
       #expect(problem["code"] as? String == ErrorCode.invalidControllerRecord.rawValue)
       #expect(ControllerRecordSet.problemCode(expected) == .invalidControllerRecord)
       #expect(
@@ -370,16 +373,14 @@ struct OJDRepositoryToolTests {
       let output = directory.appendingPathComponent("out")
       try FileManager.default.createDirectory(at: records, withIntermediateDirectories: true)
       try FileManager.default.createDirectory(at: patches, withIntermediateDirectories: true)
-      let effective = try Self.resource("Controllers/057e/057e-2066.json")
-      var unpatched = try #require(
-        JSONSerialization.jsonObject(with: effective) as? [String: Any]
-      )
+      let effective = try Self.resource("Controllers/057e/057e-2066.plist")
+      var unpatched = try #require(PropertyListFixture.tree(effective) as? [String: Any])
       unpatched["bluetoothLE"] = nil
-      try JSONSerialization.data(withJSONObject: unpatched)
-        .write(to: records.appendingPathComponent("057e-2066.json"))
+      try PropertyListFixture.data(tree: unpatched)
+        .write(to: records.appendingPathComponent("057e-2066.plist"))
       try Data(
-        contentsOf: Self.patchResources.appendingPathComponent("057e/057e-2066.patch.json")
-      ).write(to: patches.appendingPathComponent("057e-2066.patch.json"))
+        contentsOf: Self.patchResources.appendingPathComponent("057e/057e-2066.patch.plist")
+      ).write(to: patches.appendingPathComponent("057e-2066.patch.plist"))
 
       let result = try Self.run([
         "apply-patches", "--controllers", directory.appendingPathComponent("records").path,
@@ -387,14 +388,11 @@ struct OJDRepositoryToolTests {
       ])
       #expect(result.status == 0)
       #expect(result.standardOutput.isEmpty)
-      let written = try Data(contentsOf: output.appendingPathComponent("057e/057e-2066.json"))
-      func canonical(_ data: Data) throws -> Data {
-        try JSONSerialization.data(
-          withJSONObject: try JSONSerialization.jsonObject(with: data),
-          options: .sortedKeys
-        )
-      }
-      #expect(try canonical(written) == canonical(effective))
+      let written = try Data(contentsOf: output.appendingPathComponent("057e/057e-2066.plist"))
+      #expect(
+        try PropertyListFixture.tree(written) as? NSDictionary
+          == PropertyListFixture.tree(effective) as? NSDictionary
+      )
 
       // Over the written record, the same patch changes nothing and writes no output.
       let again = try Self.run([
@@ -424,14 +422,16 @@ struct OJDRepositoryToolTests {
     try scratch { directory in
       let records = directory.appendingPathComponent("records/057e")
       try FileManager.default.createDirectory(at: records, withIntermediateDirectories: true)
-      try Data(record.utf8).write(to: records.appendingPathComponent("057e-2066.json"))
+      try PropertyListFixture.data(json: record).write(
+        to: records.appendingPathComponent("057e-2066.plist")
+      )
       for (path, text) in patches {
         let file = directory.appendingPathComponent("patches").appendingPathComponent(path)
         try FileManager.default.createDirectory(
           at: file.deletingLastPathComponent(),
           withIntermediateDirectories: true
         )
-        try Data(text.utf8).write(to: file)
+        try PropertyListFixture.data(json: text).write(to: file)
       }
       let result = try run([
         "apply-patches", "--controllers", directory.appendingPathComponent("records").path,
@@ -458,69 +458,23 @@ struct OJDRepositoryToolTests {
   private static let identity = #"{"vendorID": 1406, "productID": 8294}"#
 
   @Test
-  func applyPatchesKeepsTheNumberTextOfTheRecordAndThePatch() throws {
+  func applyPatchesKeepsTheValuesOfARecordNoPatchChanges() throws {
     try Self.applyPatches(
       record: Self.upstream,
       patches: [
-        "057e/057e-2066.patch.json": Self.patchDocument(
-          selector: Self.identity,
-          body: #"{"tuning": {"stickDeadzone": 8E-2, "usbTransferTimeoutMs": 1e3}}"#
-        )
-      ]
-    ) { result, output in
-      #expect(result.status == 0, "\(result.standardOutput)")
-      let text = try String(
-        contentsOf: output.appendingPathComponent("057e/057e-2066.json"),
-        encoding: .utf8
-      )
-      #expect(text.contains(#""stickDeadzone": 8E-2,"#), "\(text)")
-      #expect(text.contains(#""usbTransferTimeoutMs": 1e3"#), "\(text)")
-      #expect(text.contains(#""frameQueueCapacity": 4"#), "\(text)")
-      #expect(!text.contains("0.08"), "\(text)")
-    }
-  }
-
-  /// An integer beyond 64 bits is written with its digits. `apply-patches` merges and does not
-  /// check ranges, so a tuning value out of range shows the number text and `validate controllers`
-  /// is what refuses it.
-  @Test
-  func applyPatchesWritesAnIntegerOfTwentyFiveDigitsAsItsPatchFileWritesIt() throws {
-    let digits = "1234567890123456789012345"
-    try Self.applyPatches(
-      record: Self.upstream,
-      patches: [
-        "057e/057e-2066.patch.json": Self.patchDocument(
-          selector: Self.identity,
-          body: #"{"tuning": {"usbTransferTimeoutMs": "# + digits + "}}"
-        )
-      ]
-    ) { result, output in
-      #expect(result.status == 0, "\(result.standardOutput)")
-      let text = try String(
-        contentsOf: output.appendingPathComponent("057e/057e-2066.json"),
-        encoding: .utf8
-      )
-      #expect(text.contains(#""usbTransferTimeoutMs": "# + digits), "\(text)")
-    }
-  }
-
-  @Test
-  func applyPatchesKeepsTheNumbersOfARecordNoPatchChanges() throws {
-    try Self.applyPatches(
-      record: Self.upstream,
-      patches: [
-        "057e/057e-2066.patch.json": Self.patchDocument(
+        "057e/057e-2066.patch.plist": Self.patchDocument(
           selector: Self.identity,
           body: #"{"tuning": {"frameQueueCapacity": 8}}"#
         )
       ]
     ) { result, output in
       #expect(result.status == 0, "\(result.standardOutput)")
-      let text = try String(
-        contentsOf: output.appendingPathComponent("057e/057e-2066.json"),
-        encoding: .utf8
+      let tree = try PropertyListFixture.dictionary(
+        at: output.appendingPathComponent("057e/057e-2066.plist")
       )
-      #expect(text.contains(#""stickDeadzone": 0.10,"#), "\(text)")
+      let tuning = try #require(tree["tuning"] as? [String: Any])
+      #expect(tuning["stickDeadzone"] as? Double == 0.10)
+      #expect(tuning["frameQueueCapacity"] as? Int == 8)
     }
   }
 
@@ -533,13 +487,13 @@ struct OJDRepositoryToolTests {
     try Self.applyPatches(
       record: Self.upstream,
       patches: [
-        "057e/more/057e-2066.patch.json": patch,
-        "057e-2066.patch.json": patch,
+        "057e/more/057e-2066.patch.plist": patch,
+        "057e-2066.patch.plist": patch,
       ]
     ) { result, output in
       #expect(result.status == 1)
       let messages = try result.problems().compactMap { $0["message"] as? String }
-      #expect(messages.contains("the patch path must be 057e/057e-2066.patch.json"), "\(messages)")
+      #expect(messages.contains("the patch path must be 057e/057e-2066.patch.plist"), "\(messages)")
       #expect(messages.count == 2, "\(messages)")
       #expect(!FileManager.default.fileExists(atPath: output.path))
     }
@@ -550,11 +504,11 @@ struct OJDRepositoryToolTests {
     try Self.applyPatches(
       record: Self.upstream,
       patches: [
-        "057e/057e-2066.patch.json": Self.patchDocument(
+        "057e/057e-2066.patch.plist": Self.patchDocument(
           selector: Self.identity,
           body: #"{"notAField": "hid"}"#
         ),
-        "057e/057e-2067.patch.json": Self.patchDocument(
+        "057e/057e-2067.patch.plist": Self.patchDocument(
           selector: #"{"vendorID": 1406, "productID": 8295}"#,
           body: #"{"tuning": {"frameQueueCapacity": 8}}"#
         ),
@@ -681,7 +635,9 @@ struct OJDRepositoryToolTests {
       try Data(#"{"a": null}"#.utf8).write(to: json)
       let result = try Self.run(["to-plist", json.path])
       #expect(result.status == 64)
-      #expect(!FileManager.default.fileExists(atPath: directory.appendingPathComponent("a.plist").path))
+      #expect(
+        !FileManager.default.fileExists(atPath: directory.appendingPathComponent("a.plist").path)
+      )
     }
   }
 
