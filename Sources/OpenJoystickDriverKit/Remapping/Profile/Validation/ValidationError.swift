@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Why a profile failed ``RemappingProfile/validate()``.
 ///

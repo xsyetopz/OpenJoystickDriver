@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Driver for every family whose input is a fixed report layout: it decodes raw input reports by
 /// the bit fields the ``ControllerInputLayouts`` name (a `HIDReportLayout` record's, or the family
@@ -123,7 +123,7 @@ public final class ReportLayoutDriver: PhysicalProtocolDriver {
   ///
   /// A report no layout selects is ignored. A layout changes only the controls it names; every
   /// other control keeps its last value.
-  public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     let bytes = [UInt8](data)
     guard let layoutIndex = layouts.indexOfLayout(selecting: bytes) else { return nil }
     let layout = layouts.layouts[layoutIndex]

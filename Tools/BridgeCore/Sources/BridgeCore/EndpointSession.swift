@@ -72,13 +72,13 @@ public final class EndpointSession: @unchecked Sendable {
     tokenName: String,
     scopes: [String]
   ) throws -> EndpointSession {
-    let descriptor = socket(AF_UNIX, SOCK_STREAM, 0)
-    guard descriptor >= 0 else { throw BridgeError.socket("socket() failed: errno \(errno)") }
+    let socketFD = socket(AF_UNIX, SOCK_STREAM, 0)
+    guard socketFD >= 0 else { throw BridgeError.socket("socket() failed: errno \(errno)") }
     var address = sockaddr_un()
     address.sun_family = sa_family_t(AF_UNIX)
     let capacity = MemoryLayout.size(ofValue: address.sun_path)
     guard socketPath.utf8.count < capacity else {
-      Darwin.close(descriptor)
+      Darwin.close(socketFD)
       throw BridgeError.socket("The socket path is too long.")
     }
     withUnsafeMutableBytes(of: &address.sun_path) { target in
@@ -86,22 +86,22 @@ public final class EndpointSession: @unchecked Sendable {
     }
     let status = withUnsafePointer(to: &address) { pointer in
       pointer.withMemoryRebound(to: sockaddr.self, capacity: 1) {
-        Darwin.connect(descriptor, $0, socklen_t(MemoryLayout<sockaddr_un>.size))
+        Darwin.connect(socketFD, $0, socklen_t(MemoryLayout<sockaddr_un>.size))
       }
     }
     guard status == 0 else {
-      Darwin.close(descriptor)
+      Darwin.close(socketFD)
       throw BridgeError.socket("Cannot connect to \(socketPath): errno \(errno)")
     }
     var noSigPipe: Int32 = 1
     setsockopt(
-      descriptor,
+      socketFD,
       SOL_SOCKET,
       SO_NOSIGPIPE,
       &noSigPipe,
       socklen_t(MemoryLayout<Int32>.size)
     )
-    let session = EndpointSession(descriptor: descriptor)
+    let session = EndpointSession(descriptor: socketFD)
     try session.handshake(token: token, tokenName: tokenName, scopes: scopes)
     return session
   }
@@ -168,7 +168,7 @@ public final class EndpointSession: @unchecked Sendable {
       }
       var chunk = [UInt8](repeating: 0, count: 16 * 1024)
       let count = Darwin.read(descriptor, &chunk, chunk.count)
-      if count < 0 && errno == EINTR { continue }
+      if count < 0, errno == EINTR { continue }
       guard count > 0 else { return nil }
       buffer.append(contentsOf: chunk[0..<count])
     }

@@ -1,4 +1,4 @@
-import ArgumentParser
+public import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 

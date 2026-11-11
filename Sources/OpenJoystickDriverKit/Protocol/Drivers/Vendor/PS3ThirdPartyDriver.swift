@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The raw stick value at the center.
 private let ps3ThirdPartyAxisCenter: Float = 128
@@ -212,7 +212,7 @@ public final class PS3ThirdPartyDriver: PhysicalProtocolDriver {
   }
 
   /// Decodes one third-party PS3 input report into the full controller state.
-  public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     guard decodesRawReports else { return nil }
     let bytes = [UInt8](data)
     let layout: Layout

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A document that a generator script returned, checked and encoded.
 public struct GeneratedDocument: Equatable, Sendable {
@@ -18,6 +18,8 @@ public struct GeneratedDocumentProblem: Error, Equatable, Sendable, CustomString
 
 /// Checks the documents of a generator script with the readers that load a hand-written file.
 public enum GeneratedDocumentChecker {
+  private static let kinds = "Controller, ControllerPatch, VirtualDevice, or Profile"
+
   /// Checks `tree`, a dictionary that JSON text gave, and encodes it as an XML property list.
   ///
   /// An integer stays an integer and a fractional number becomes a real.
@@ -50,8 +52,8 @@ public enum GeneratedDocumentChecker {
       default:
         throw GeneratedDocumentProblem(
           description: kind.isEmpty
-            ? "kind is missing; a generated document is a Controller, ControllerPatch, VirtualDevice, or Profile"
-            : "kind \(kind) is not generated; use Controller, ControllerPatch, VirtualDevice, or Profile"
+            ? "kind is missing; a generated document is a \(Self.kinds)"
+            : "kind \(kind) is not generated; use \(Self.kinds)"
         )
       }
     } catch let problem as GeneratedDocumentProblem {
@@ -61,7 +63,8 @@ public enum GeneratedDocumentChecker {
         description: ControllerRecordSet.problemDescription(
           error,
           includingCode: false,
-          document: kind == RemappingProfile.kind ? "profile" : kind == VirtualDevice.kind ? "virtualDevice" : "record"
+          document: kind == RemappingProfile.kind
+            ? "profile" : kind == VirtualDevice.kind ? "virtualDevice" : "record"
         )
       )
     }
@@ -74,7 +77,8 @@ public enum GeneratedDocumentChecker {
       return keyPath
     case let dictionary as [String: Any]:
       for (key, child) in dictionary.sorted(by: { $0.key < $1.key }) {
-        if let found = nullKeyPath(in: child, keyPath: keyPath.isEmpty ? key : "\(keyPath).\(key)") {
+        if let found = nullKeyPath(in: child, keyPath: keyPath.isEmpty ? key : "\(keyPath).\(key)")
+        {
           return found
         }
       }

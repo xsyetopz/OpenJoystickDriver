@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension GameSirDriver {
 
@@ -34,7 +34,7 @@ extension GameSirDriver {
   }
 
   /// Decodes a wired G7 Pro or an enhanced HID report; nil for a report that carries no input.
-  public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     let bytes = [UInt8](data)
 
     switch gameSirProtocol {

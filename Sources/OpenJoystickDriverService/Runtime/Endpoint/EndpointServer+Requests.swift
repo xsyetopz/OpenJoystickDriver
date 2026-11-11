@@ -4,7 +4,9 @@ import OpenJoystickDriverKit
 extension EndpointServer {
   /// The kinds that a welcomed client may send first: a request to answer, a subscription, or a
   /// feed.
-  static let requestKinds = ["Subscription", "FeedRequest", "ProfileRequest", "ModList", "OutputRequest"]
+  static let requestKinds = [
+    "Subscription", "FeedRequest", "ProfileRequest", "ModList", "OutputRequest",
+  ]
 
   /// Answers one request of `kind` from its `line` and tells whether the connection goes on.
   ///
@@ -55,7 +57,8 @@ extension EndpointServer {
 
   /// The `Status` failure that reports `error` with the code `ojd` prints for it.
   static func refusal(_ error: any Error) -> EndpointError {
-    let failure = error as? CodedFailure ?? CodedFailure(.serviceRequestFailed, error.localizedDescription)
+    let failure =
+      error as? CodedFailure ?? CodedFailure(.serviceRequestFailed, error.localizedDescription)
     return EndpointError(code: failure.id, message: failure.message)
   }
 }

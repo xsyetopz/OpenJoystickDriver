@@ -128,7 +128,7 @@ extension RemappingEngineState {
       if let released = tracker.releaseUptime, tracker.pendingDefault {
         let windowMs = binding.multiTap.continuationWindowMs(after: tracker.tapCount)
         let window = UInt64(windowMs * 1_000_000)
-        if uptime >= released && uptime - released < window {
+        if uptime >= released, uptime - released < window {
           count = tracker.tapCount + 1
         } else {
           actions += resolveTaps(binding, tapCount: tracker.tapCount, device: &device)

@@ -90,7 +90,9 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
 
   /// The profile in force for `identifier` and the frontmost app that selected it; nil when no
   /// profile is active for it or the library cannot be read.
-  func profileInForce(for identifier: LogicalControllerID) async -> ApplicationServiceProfileInForce? {
+  func profileInForce(
+    for identifier: LogicalControllerID
+  ) async -> ApplicationServiceProfileInForce? {
     guard
       let selection = try? await core.library.activeProfileSelection(
         vendorID: identifier.model.vendorID,
@@ -425,9 +427,9 @@ final class RemappingOutputRouter: OutputDispatcher, ControllerLifecycleListener
 
   /// Returns the routes and the Joy-Con pairs after it applies the controls.
   func statusSnapshot() async -> RemappingRouterStatusSnapshot {
-    let controls = lock.withLock { self.controls }
+    let current = lock.withLock { self.controls }
     let snapshot = await core.statusSnapshot(
-      applying: controls,
+      applying: current,
       requiring: emissionBarrier.currentPermit()
     )
     await reconcileTickerWithEngine()

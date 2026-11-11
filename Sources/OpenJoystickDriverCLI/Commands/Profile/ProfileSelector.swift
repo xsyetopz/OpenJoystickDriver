@@ -1,6 +1,6 @@
-import ArgumentParser
+public import ArgumentParser
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 extension ProfileSelector: ExpressibleByArgument {
   /// Reads the profiles from the service and resolves this selector.

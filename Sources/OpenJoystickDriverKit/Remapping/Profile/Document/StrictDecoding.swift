@@ -10,7 +10,7 @@ private struct RemappingJSONKey: CodingKey {
   /// Creates a key from a field name.
   init?(stringValue: String) { self.stringValue = stringValue }
   /// Fails for every integer, because the key names only object fields.
-  init?(intValue: Int) { return nil }
+  init?(intValue _: Int) { return nil }
 }
 
 extension Decoder {
@@ -27,7 +27,7 @@ extension Decoder {
   }
 
   /// Throws when the current JSON object has a key that `Keys` does not declare.
-  public func rejectUnknownKeys<Keys: CodingKey & CaseIterable>(_ keys: Keys.Type) throws {
+  public func rejectUnknownKeys<Keys: CodingKey & CaseIterable>(_: Keys.Type) throws {
     let container = try self.container(keyedBy: RemappingJSONKey.self)
     let allowed = Set(Keys.allCases.map(\.stringValue))
     let unknown = Set(container.allKeys.map(\.stringValue)).subtracting(allowed).sorted()

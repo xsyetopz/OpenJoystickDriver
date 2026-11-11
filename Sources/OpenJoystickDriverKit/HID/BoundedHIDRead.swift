@@ -1,4 +1,4 @@
-import Foundation
+package import Foundation
 
 /// Runs a synchronous HID read off the caller's actor and gives up after a deadline, so a device
 /// that never answers cannot hold up the caller.

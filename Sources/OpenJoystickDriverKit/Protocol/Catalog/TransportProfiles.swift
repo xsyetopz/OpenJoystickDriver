@@ -111,12 +111,12 @@ public struct ProtocolBindingID: Hashable, Sendable, RawRepresentable, Codable,
   /// Nil unless the text names a family and, optionally, one of its implemented variants.
   public init?(rawValue: String) {
     let parts = rawValue.split(separator: ":", omittingEmptySubsequences: false)
-    guard parts.count <= 2, let protocolID = PhysicalProtocolID(rawValue: String(parts[0])) else {
+    guard parts.count <= 2, let family = PhysicalProtocolID(rawValue: String(parts[0])) else {
       return nil
     }
-    let variant = parts.count == 2 ? PhysicalProtocolVariantID(rawValue: String(parts[1])) : nil
-    guard parts.count == 1 || variant != nil, Self.isValid(protocolID, variant) else { return nil }
-    self.init(protocolID, variant: variant)
+    let named = parts.count == 2 ? PhysicalProtocolVariantID(rawValue: String(parts[1])) : nil
+    guard parts.count == 1 || named != nil, Self.isValid(family, named) else { return nil }
+    self.init(family, variant: named)
   }
 
   /// The binding as `family` or `family:variant`.
@@ -340,8 +340,9 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   /// Without one, a device that matches no mode is unsupported, and the protocol fields above are
   /// those of the first mode.
   public internal(set) var hasDefaultMode = true
-  /// Why the running mode serves nothing: OJD sends it no traffic and creates no virtual gamepad.
-  /// Nil while the mode serves the device.
+  /// Why the running mode serves nothing.
+  ///
+  /// OJD sends it no traffic and creates no virtual gamepad. Nil while the mode serves the device.
   public internal(set) var idleReason: ControllerIdleReason?
   /// Whether the running mode serves nothing.
   public var isIdle: Bool { idleReason != nil }

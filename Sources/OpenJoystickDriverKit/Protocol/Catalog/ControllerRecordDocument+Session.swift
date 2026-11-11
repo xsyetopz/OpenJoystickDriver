@@ -266,11 +266,11 @@ extension ControllerRecordDocument {
         )
       }
       func text(_ key: String) throws -> String? {
-        guard let text = try container.decodeOptional(String.self, for: key) else { return nil }
-        guard !text.isEmpty else {
+        guard let decoded = try container.decodeOptional(String.self, for: key) else { return nil }
+        guard !decoded.isEmpty else {
           throw ModeDocument.invalid(key, "\(key) must not be empty", decoder)
         }
-        return text
+        return decoded
       }
       gate = VendorControlTransfer.Gate(
         manufacturer: try text("manufacturer"),

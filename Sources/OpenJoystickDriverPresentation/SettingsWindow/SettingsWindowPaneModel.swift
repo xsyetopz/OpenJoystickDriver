@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 
 /// A content size in points, kept free of AppKit so the pane rules can be tested.

@@ -25,8 +25,8 @@ extension VirtualDevice {
       /// Reads the member as text, whatever its scalar type.
       init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-        if let text = try? container.decode(String.self) {
-          self.text = text
+        if let string = try? container.decode(String.self) {
+          self.text = string
         } else if let number = try? container.decode(Double.self) {
           self.text = "\(number)"
         } else if let flag = try? container.decode(Bool.self) {

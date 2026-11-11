@@ -328,14 +328,14 @@ extension DeviceManager {
         guard let interval = await pipeline.hidKeepAliveInterval(), interval > 0 else {
           return
         }
-        guard await self.isCurrentHIDStartupPipeline(pipeline, connection: connection) else {
+        guard await isCurrentHIDStartupPipeline(pipeline, connection: connection) else {
           return
         }
         do { try await Task.sleep(nanoseconds: interval) } catch { return }
         guard !Task.isCancelled,
-          await self.isCurrentHIDStartupPipeline(pipeline, connection: connection)
+          await isCurrentHIDStartupPipeline(pipeline, connection: connection)
         else { return }
-        if !(await self.sendHIDKeepAlive(
+        if !(await sendHIDKeepAlive(
           address: address,
           identifier: identifier,
           pipeline: pipeline

@@ -1,5 +1,5 @@
-import Foundation
-import OpenJoystickDriverKit
+package import Foundation
+package import OpenJoystickDriverKit
 import OpenJoystickDriverMacOSPlatform
 import OpenJoystickDriverService
 import OpenJoystickDriverUSB

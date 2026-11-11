@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension DualSenseDriver {
   /// The lightbar color a DualSense shows before the host sets one: blue.

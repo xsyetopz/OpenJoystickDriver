@@ -92,7 +92,7 @@ public protocol VirtualGamepadReportFormat: Sendable {
 
 extension VirtualGamepadReportFormat {
   /// The default builds no auxiliary report.
-  public func buildAuxiliaryInputReports(from state: VirtualGamepadState) -> [[UInt8]] { [] }
+  public func buildAuxiliaryInputReports(from _: VirtualGamepadState) -> [[UInt8]] { [] }
   /// The default declares no output report.
   public var outputReportPayloadSize: Int? { nil }
   /// The default declares no output report ID.

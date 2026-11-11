@@ -1,5 +1,5 @@
 import CoreGraphics
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 /// Probes and requests the CoreGraphics post-event permission.
 protocol CoreGraphicsPostEventAccessProbing: Sendable {

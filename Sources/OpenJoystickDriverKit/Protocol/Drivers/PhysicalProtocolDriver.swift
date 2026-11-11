@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A vendor-class USB interface that carries the controller's commands beside its HID interface.
 ///

@@ -56,16 +56,16 @@ public struct HIDDescriptorReportFormat: VirtualGamepadReportFormat, Sendable {
       throw Error.cannotParseDescriptor
     }
     guard
-      let packer = HIDReportPacker.bestEffortGamepadPacker(
+      let bestPacker = HIDReportPacker.bestEffortGamepadPacker(
         from: parsed,
         buttonUsageMap: buttonUsageMap,
         digitalUsageMap: digitalUsageMap,
         axisUsageMap: axisUsageMap
       )
     else { throw Error.noSuitableInputReport }
-    self.packer = packer
-    self.inputReportID = packer.reportID == 0 ? nil : packer.reportID
-    self.inputReportPayloadSize = packer.payloadSizeBytes
+    self.packer = bestPacker
+    self.inputReportID = bestPacker.reportID == 0 ? nil : bestPacker.reportID
+    self.inputReportPayloadSize = bestPacker.payloadSizeBytes
     self.outputReportID = outputReportID
     self.outputReportPayloadSize = outputReportPayloadSize
   }

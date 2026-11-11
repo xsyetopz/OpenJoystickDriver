@@ -45,10 +45,10 @@ struct ControllerRecordDocument: Decodable {
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: DocumentKey.self)
     let apiVersion = try container.decodeOptional(String.self, for: "apiVersion")
-    let kind = try container.decodeOptional(String.self, for: "kind")
+    let documentKind = try container.decodeOptional(String.self, for: "kind")
     if let problem = OpenJoystickDriverAPI.headerProblem(
       apiVersion: apiVersion,
-      kind: kind,
+      kind: documentKind,
       expected: Self.kind
     ) {
       if problem.code != nil { throw problem }
@@ -82,7 +82,8 @@ struct ControllerRecordDocument: Decodable {
         throw DecodingError.dataCorrupted(
           .init(
             codingPath: decoder.codingPath + [DocumentKey("modes")],
-            debugDescription: "a record whose modes are all idle has no section that serves controls"
+            debugDescription:
+              "a record whose modes are all idle has no section that serves controls"
           )
         )
       }
@@ -92,24 +93,24 @@ struct ControllerRecordDocument: Decodable {
     capabilities =
       try container.decodeOptional(CapabilityDelta.self, for: "capabilities")?.delta ?? .none
     server = try container.decodeOptional(String.self, for: "server").map { name in
-      guard let server = ControllerServer(rawValue: name) else {
+      guard let parsed = ControllerServer(rawValue: name) else {
         throw DecodingError.dataCorruptedError(
           forKey: DocumentKey("server"),
           in: container,
           debugDescription: "server must be System or OJD"
         )
       }
-      return server
+      return parsed
     }
     route = try container.decodeOptional(String.self, for: "route").map { name in
-      guard let route = ControllerRecordRoute(rawValue: name) else {
+      guard let parsed = ControllerRecordRoute(rawValue: name) else {
         throw DecodingError.dataCorruptedError(
           forKey: DocumentKey("route"),
           in: container,
           debugDescription: "route must be ExtensionOwned"
         )
       }
-      return route
+      return parsed
     }
     let input = try container.decodeOptional(Input.self, for: "input")
     inputLayouts = input?.layouts
@@ -130,12 +131,13 @@ struct ControllerRecordDocument: Decodable {
 
   /// Only the deltas a family's description declares have a driver that acts on them.
   ///
-  /// The rule holds per capability: each one must be declared by the family of at least one mode, so
-  /// a record may hold modes of two drivers when each capability belongs to one of them. A mode
+  /// The rule holds per capability: each one must be declared by the family of at least one mode,
+  /// so a record may hold modes of two drivers when each capability belongs to one of them. A mode
   /// whose driver does not declare a capability does not act on it.
   func capabilitiesAreDeclared(byAnyOf protocolIDs: [PhysicalProtocolID]) -> Bool {
     let rules = protocolIDs.map { $0.protocolDescription.recordCapabilities }
-    return (capabilities.presentControls.isEmpty
+    return
+      (capabilities.presentControls.isEmpty
       || rules.contains { $0.presentControls == capabilities.presentControls })
       && (!capabilities.rumbleAbsent || rules.contains(where: \.rumbleAbsent))
   }
@@ -235,10 +237,12 @@ struct ControllerRecordDocument: Decodable {
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["kind", "id", "length"])
-      let kind = try container.decode(String.self, for: "kind")
+      let reportKind = try container.decode(String.self, for: "kind")
       let reportID = try container.decode(Int.self, for: "id")
       let length = try container.decode(Int.self, for: "length")
-      guard kind == "Output" || kind == "Feature", let id = UInt8(exactly: reportID) else {
+      guard reportKind == "Output" || reportKind == "Feature",
+        let id = UInt8(exactly: reportID)
+      else {
         throw DecodingError.dataCorrupted(
           .init(
             codingPath: decoder.codingPath,
@@ -247,7 +251,7 @@ struct ControllerRecordDocument: Decodable {
         )
       }
       report = ControllerTemplateReport(
-        kind: kind == "Output" ? .output : .feature,
+        kind: reportKind == "Output" ? .output : .feature,
         reportID: id,
         length: length
       )
@@ -289,29 +293,29 @@ struct ControllerRecordDocument: Decodable {
       try container.rejectUnknown(allowed: [
         "family", "variant", "parameters", "initialization", "keepAlive", "assembly",
       ])
-      let family = try container.decode(String.self, for: "family")
+      let familyName = try container.decode(String.self, for: "family")
       let variantName = try container.decodeOptional(String.self, for: "variant")
-      guard let protocolID = PhysicalProtocolID(rawValue: family) else {
+      guard let family = PhysicalProtocolID(rawValue: familyName) else {
         throw DecodingError.dataCorrupted(
-          .init(codingPath: decoder.codingPath, debugDescription: "unknown family \(family)")
+          .init(codingPath: decoder.codingPath, debugDescription: "unknown family \(familyName)")
         )
       }
       let variant = variantName.flatMap(PhysicalProtocolVariantID.init(rawValue:))
       // Only families whose variant transport cannot decide store it, and it must be theirs.
-      guard protocolID.storesVariant == (variantName != nil),
-        variantName == nil || variant.map(protocolID.variants.contains) == true
+      guard family.storesVariant == (variantName != nil),
+        variantName == nil || variant.map(family.variants.contains) == true
       else {
         throw DecodingError.dataCorrupted(
           .init(
             codingPath: decoder.codingPath,
-            debugDescription: "variant must be a stored variant of family \(family)"
+            debugDescription: "variant must be a stored variant of family \(familyName)"
           )
         )
       }
-      self.protocolID = protocolID
+      self.protocolID = family
       protocolVariant = variant
       parameters = try container.decodeOptional(ProtocolParameters.self, for: "parameters") ?? .none
-      initialization = try container.decodeNamedPacketList(of: protocolID, for: "initialization")
+      initialization = try container.decodeNamedPacketList(of: family, for: "initialization")
       keepAliveEnabled = try container.decodeOptional(Bool.self, for: "keepAlive")
       if let name = try container.decodeOptional(String.self, for: "assembly") {
         guard let policy = ControllerAssemblyPolicy(name: name) else {
@@ -332,10 +336,10 @@ struct ControllerRecordDocument: Decodable {
       let violation: String? =
         if let problem = parameters.violation(family: protocolID, variant: protocolVariant) {
           problem
-        } else if initialization != nil && protocolID.protocolDescription.namedPackets == nil {
+        } else if initialization != nil, protocolID.protocolDescription.namedPackets == nil {
           "initialization actions must be declared by the selected driver"
-        } else if keepAliveEnabled != nil
-          && !protocolID.protocolDescription.recordSections.contains(.keepAlive)
+        } else if keepAliveEnabled != nil,
+          !protocolID.protocolDescription.recordSections.contains(.keepAlive)
         {
           "keep-alive policy requires a driver that reads it"
         } else { nil }
@@ -463,7 +467,7 @@ extension KeyedDecodingContainer where Key == DocumentKey {
 
   /// Decodes a nonempty list of unique current identifiers; unknown values fail.
   func decodeUniqueList<Value: RawRepresentable & Hashable>(
-    _ type: Value.Type,
+    _: Value.Type,
     for key: String
   ) throws -> [Value]? where Value.RawValue == String {
     guard let names = try decodeOptional([String].self, for: key) else { return nil }

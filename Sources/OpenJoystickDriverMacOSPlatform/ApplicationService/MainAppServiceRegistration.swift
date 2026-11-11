@@ -1,5 +1,5 @@
 import Foundation
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 import ServiceManagement
 
 /// The main application's login-item registration through `SMAppService`.

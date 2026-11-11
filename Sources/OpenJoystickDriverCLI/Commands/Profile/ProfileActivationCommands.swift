@@ -42,10 +42,10 @@ struct ProfileActivateCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let (selector, allowEmpty, confirmActions) = (profile, allowEmpty, confirmActions)
+      let (selector, emptyAllowed, confirmed) = (profile, allowEmpty, confirmActions)
       let (target, before, after) = try await ServiceConnection.request { client in
         let (target, before) = try await selector.resolve(with: client)
-        guard allowEmpty || !target.producesNoOutput else {
+        guard emptyAllowed || !target.producesNoOutput else {
           throw CLIFailure.usage(
             CLILocalized.text(
               "cli.profile.activate.empty"
@@ -57,7 +57,7 @@ struct ProfileActivateCommand: AsyncParsableCommand {
           postEventAccess: before.postEventAccess
         )
         if let missing = preflight.missingPermissionsText { CLIOutput.stderr(missing) }
-        guard confirmActions || !preflight.needsConfirmation else {
+        guard confirmed || !preflight.needsConfirmation else {
           throw CLIFailure.usage(
             CLILocalized.format(
               "cli.profile.activate.actionsNeedConfirmation",
@@ -65,7 +65,10 @@ struct ProfileActivateCommand: AsyncParsableCommand {
             )
           )
         }
-        let after = try await client.activateRemappingProfile(id: target.id, allowEmpty: allowEmpty)
+        let after = try await client.activateRemappingProfile(
+          id: target.id,
+          allowEmpty: emptyAllowed
+        )
         return (target, before, after)
       }
       let wasActive = ProfileSummary(target, snapshot: before).active

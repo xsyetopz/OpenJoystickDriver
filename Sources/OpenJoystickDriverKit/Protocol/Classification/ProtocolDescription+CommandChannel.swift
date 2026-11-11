@@ -25,13 +25,13 @@ extension ProtocolDescription {
         "interface", "inEndpoint", "replyLength", "usbReplyTimeoutMilliseconds",
         "bluetoothLEReplyTimeoutMilliseconds",
       ])
-      func value(
+      func decodedInt(
         _ container: KeyedDecodingContainer<DocumentKey>,
         _ key: String,
         _ range: ClosedRange<Int>
       ) throws -> Int {
-        let value = try container.decode(Int.self, for: key)
-        guard range.contains(value) else {
+        let number = try container.decode(Int.self, for: key)
+        guard range.contains(number) else {
           throw DecodingError.dataCorrupted(
             .init(
               codingPath: container.codingPath + [DocumentKey(key)],
@@ -39,16 +39,16 @@ extension ProtocolDescription {
             )
           )
         }
-        return value
+        return number
       }
-      interface = UInt8(try value(container, "interface", 0...255))
-      inEndpoint = UInt8(try value(container, "inEndpoint", 128...255))
-      replyLength = try value(container, "replyLength", 1...4096)
+      interface = UInt8(try decodedInt(container, "interface", 0...255))
+      inEndpoint = UInt8(try decodedInt(container, "inEndpoint", 128...255))
+      replyLength = try decodedInt(container, "replyLength", 1...4096)
       usbReplyTimeoutMilliseconds = UInt32(
-        try value(container, "usbReplyTimeoutMilliseconds", 1...60_000)
+        try decodedInt(container, "usbReplyTimeoutMilliseconds", 1...60_000)
       )
       bluetoothLEReplyTimeoutMilliseconds = UInt32(
-        try value(container, "bluetoothLEReplyTimeoutMilliseconds", 1...60_000)
+        try decodedInt(container, "bluetoothLEReplyTimeoutMilliseconds", 1...60_000)
       )
     }
   }

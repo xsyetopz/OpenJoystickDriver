@@ -154,7 +154,8 @@ struct ControllerShowCommand: AsyncParsableCommand {
       let selector = controller
       let status = try await ServiceConnection.request { try await $0.getStatus() }
       let devices = status.connectedDevices
-      if case .model(let model) = selector.reference, selector.reference.matches(in: devices).isEmpty,
+      if case .model(let model) = selector.reference,
+        selector.reference.matches(in: devices).isEmpty,
         let unserved = status.unboundDevices.first(where: {
           $0.vendorID == model.vendorID && $0.productID == model.productID
         })

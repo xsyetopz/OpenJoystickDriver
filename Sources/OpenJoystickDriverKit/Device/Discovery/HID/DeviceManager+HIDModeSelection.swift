@@ -41,7 +41,7 @@ extension DeviceManager {
 struct UnreadableModeProbeReader: ControllerModeProbeReader {
   /// Reports every feature read as unavailable.
   func readFeatureReport(
-    _ request: PhysicalHIDFeatureReadRequest
+    _: PhysicalHIDFeatureReadRequest
   ) async -> PhysicalHIDReportResult<Data> {  // swiftlint:disable:this async_without_await
     .unavailable
   }

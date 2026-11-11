@@ -1,6 +1,6 @@
-import IOKit
+public import IOKit
 import IOKit.hid
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 extension HIDElementDescription {
   /// The input elements of `elements`, in the order IOKit listed them.

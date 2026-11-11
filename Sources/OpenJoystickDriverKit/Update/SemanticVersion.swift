@@ -37,23 +37,24 @@ public struct SemanticVersion: Comparable, Equatable, Sendable {
     let numbers = core.split(separator: ".", omittingEmptySubsequences: false)
     guard numbers.count == 3, Self.isValidNumericIdentifier(String(numbers[0])),
       Self.isValidNumericIdentifier(String(numbers[1])),
-      Self.isValidNumericIdentifier(String(numbers[2])), let major = Int(numbers[0]),
-      let minor = Int(numbers[1]), let patch = Int(numbers[2]), major >= 0, minor >= 0, patch >= 0
+      Self.isValidNumericIdentifier(String(numbers[2])), let majorNumber = Int(numbers[0]),
+      let minorNumber = Int(numbers[1]), let patchNumber = Int(numbers[2]),
+      majorNumber >= 0, minorNumber >= 0, patchNumber >= 0
     else { return nil }
 
-    let prerelease: [String]
+    let identifiers: [String]
     if versionAndPrerelease.count == 2 {
-      prerelease = versionAndPrerelease[1].split(separator: ".", omittingEmptySubsequences: false)
+      identifiers = versionAndPrerelease[1].split(separator: ".", omittingEmptySubsequences: false)
         .map(String.init)
-      guard !prerelease.isEmpty, prerelease.allSatisfy(Self.isValidIdentifier) else { return nil }
+      guard !identifiers.isEmpty, identifiers.allSatisfy(Self.isValidIdentifier) else { return nil }
     } else {
-      prerelease = []
+      identifiers = []
     }
 
-    self.major = major
-    self.minor = minor
-    self.patch = patch
-    self.prerelease = prerelease
+    self.major = majorNumber
+    self.minor = minorNumber
+    self.patch = patchNumber
+    self.prerelease = identifiers
   }
 
   /// Whether `lhs` has lower precedence than `rhs`.
@@ -67,7 +68,7 @@ public struct SemanticVersion: Comparable, Equatable, Sendable {
   /// Compares two lists of prerelease identifiers; an empty list is a release and ranks above any
   /// prerelease.
   private static func comparePrerelease(_ lhs: [String], _ rhs: [String]) -> ComparisonResult {
-    if lhs.isEmpty && rhs.isEmpty { return .orderedSame }
+    if lhs.isEmpty, rhs.isEmpty { return .orderedSame }
     if lhs.isEmpty { return .orderedDescending }
     if rhs.isEmpty { return .orderedAscending }
 

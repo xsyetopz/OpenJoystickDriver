@@ -15,9 +15,9 @@ struct ControllerSelector: ExpressibleByArgument, Equatable, Sendable {
 
   /// Parses `argument` as a controller reference; fails when it is not one.
   init?(argument: String) {
-    guard let reference = ControllerReference(argument) else { return nil }
+    guard let parsed = ControllerReference(argument) else { return nil }
     text = argument
-    self.reference = reference
+    reference = parsed
   }
 
   /// Uses the shell's default completion.

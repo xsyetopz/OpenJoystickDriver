@@ -2222,7 +2222,7 @@
 /* Message of 'ojd transport-extension activate' when the user must approve the extension. The menu path in System Settings is written as macOS shows it. */
 "platform.macos.cli.transportExtension.group.approval" = "此要求需要您的核准。請在「系統設定」>「一般」>「登入項目與延伸功能」>「驅動程式延伸功能」中允許。";
 /* Error of 'ojd transport-extension activate' when the app has no driver extension inside. %@ is the extension name, which stays as written with .dext. The build command stays as written. */
-"cli.transportExtension.group.bundleMissing" = "App 中不包含 %@.dext。請執行「./Scripts/ojd build install dev」，然後從 /Applications 重試。";
+"cli.transportExtension.group.bundleMissing" = "App 中不包含 %@.dext。請執行「just install-dev」，然後從 /Applications 重試。";
 /* Error of 'ojd transport-extension' commands when the codesign tool cannot run. %@ is the reason from the system. codesign and its path stay as written. */
 "platform.macos.cli.transportExtension.group.codesignFailedToRun" = "無法執行 codesign 來驗證 App：%@。請檢查 /usr/bin/codesign 是否存在。";
 /* One-line summary of 'ojd transport-extension deactivate' in the command list and at the top of its help. */
@@ -2234,7 +2234,7 @@
 /* Error of 'ojd transport-extension' commands when ojd runs from a folder other than Applications. %@ is the path of this ojd. The path of the installed app stays as written. */
 "cli.transportExtension.group.notInstalled" = "此 ojd 是從 %@ 執行，而不是從 /Applications 執行。請執行 /Applications/OpenJoystickDriver.app 內的 ojd。";
 /* Error of 'ojd transport-extension' commands when the app code signature is not valid. %@ is the description of the signature problem. The build command stays as written. */
-"cli.transportExtension.group.signatureInvalid" = "App 的簽章無效（%@）。請使用「./Scripts/ojd build install-fast dev」重新建置，然後重試。";
+"cli.transportExtension.group.signatureInvalid" = "App 的簽章無效（%@）。請使用「just install-fast-dev」重新建置，然後重試。";
 /* One-line summary of 'ojd transport-extension status' in the command list and at the top of its help. */
 "platform.macos.cli.transportExtension.status.abstract" = "顯示延伸功能是否在 App 中並已在 macOS 中註冊。";
 /* Row of 'ojd transport-extension status'. %@ is the state of the extension inside the app: present, missing or invalid. Keep the two spaces after the colon. */
@@ -4108,7 +4108,7 @@
 /* Line of the output of 'ojd explain' with the wire value of the code, which other programs read. %@ is that value and stays as written. */
 "cli.explain.group.wire" = "傳輸值：%@";
 /* Error when the installed app is older than the repository sources that built this ojd. The build command, the environment variable OJD_RUN_REPOSITORY_CLI=1 and OpenJoystickDriver.app stay as written. */
-"cli.shared.error.staleInstallation" = "已安裝的 OpenJoystickDriver.app 比這些儲存庫原始碼更舊。請執行「./Scripts/ojd build install-fast dev」，或設定 OJD_RUN_REPOSITORY_CLI=1 來執行此建置。";
+"cli.shared.error.staleInstallation" = "已安裝的 OpenJoystickDriver.app 比這些儲存庫原始碼更舊。請執行「just install-fast-dev」，或設定 OJD_RUN_REPOSITORY_CLI=1 來執行此建置。";
 /* Error when ojd cannot hand the command line to the installed ojd. ojd stays as written. */
 "cli.shared.error.forwarderAllocation" = "無法為已安裝的 ojd 配置引數。請重新執行該指令。";
 /* Error when ojd cannot start the installed ojd. %@ is the reason from the system. OpenJoystickDriver.app stays as written. */
@@ -4152,7 +4152,7 @@
 /* Text of error E2019, printed when the check for updates did not finish. */
 "error.E2019.message" = "更新檢查未完成。請檢查網絡連線後重試。";
 /* Text of error E2020, printed when the installed app is older than the ojd that runs. OpenJoystickDriver is the product name. The build command and OJD_RUN_REPOSITORY_CLI=1 stay as written. */
-"error.E2020.message" = "已安裝的 OpenJoystickDriver App 比此 ojd 更舊。請執行「./Scripts/ojd build install-fast dev」，或設定 OJD_RUN_REPOSITORY_CLI=1 來執行此建置。";
+"error.E2020.message" = "已安裝的 OpenJoystickDriver App 比此 ojd 更舊。請執行「just install-fast-dev」，或設定 OJD_RUN_REPOSITORY_CLI=1 來執行此建置。";
 /* Text of error E2021, printed when an ojd built from the repository cannot hand a command to the installed app. OpenJoystickDriver.app stays as written. */
 "error.E2021.message" = "來自儲存庫的 ojd 建置版本無法將指令轉交給已安裝的 App。請重新安裝 OpenJoystickDriver.app 並再次執行該指令。";
 /* Text of error E3001, returned when a remapping request names a controller that is not connected or not ready. */

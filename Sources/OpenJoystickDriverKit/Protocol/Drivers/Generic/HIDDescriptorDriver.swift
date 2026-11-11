@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Descriptor-driven driver for the `HIDDescriptor` protocol: HID controllers whose
 /// report descriptor satisfies ``HIDDescriptorContract``.
@@ -138,7 +138,7 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   }
 
   /// Raw reports are handled through IOKit's descriptor-decoded element callback.
-  public func parse(report _: Data, receivedAt _: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report _: Data, receivedAt _: MonotonicTimestamp) -> ControllerEvent? {
     nil
   }
 

@@ -142,7 +142,9 @@ struct ProtocolListCommand: AsyncParsableCommand {
       case .json: try CLIOutput.json(CLIList(items: entries))
       case .plain:
         CLIOutput.plain(
-          entries.map { [$0.name, $0.displayName, $0.source.rawValue, $0.package ?? "", $0.file ?? ""] }
+          entries.map {
+            [$0.name, $0.displayName, $0.source.rawValue, $0.package ?? "", $0.file ?? ""]
+          }
         )
       case .human:
         for entry in entries {

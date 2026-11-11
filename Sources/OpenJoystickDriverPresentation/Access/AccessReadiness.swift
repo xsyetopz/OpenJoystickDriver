@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverKit
 
 /// How one permission reads in the Access area: its text, its tone and whether it can be acted on.
 struct AccessReadinessStatus: Equatable {
@@ -133,21 +134,21 @@ struct AccessReadiness {
   ///
   /// A permission the app does not need is left out.
   var rows: [AccessPermissionRow] {
-    var rows = [
+    var listed = [
       AccessPermissionRow(kind: .inputRead, status: inputRead),
       AccessPermissionRow(kind: .inputInject, status: inputInject),
     ]
     if !postEventIsNotNeeded {
-      rows.append(AccessPermissionRow(kind: .postEvent, status: postEvent))
+      listed.append(AccessPermissionRow(kind: .postEvent, status: postEvent))
     }
-    rows.append(
+    listed.append(
       AccessPermissionRow(
         kind: .notification,
         status: notification,
         needsRequest: notificationState == .notDetermined
       )
     )
-    return rows
+    return listed
   }
 
   /// Whether the service reports that the active profile needs no Post Event access.

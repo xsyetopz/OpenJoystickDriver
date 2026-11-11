@@ -19,26 +19,28 @@ private struct Arguments {
   /// - Throws: ``ArgumentError`` when an option has no value, an option is unknown, or one of
   ///   the three options is missing.
   init(_ values: [String]) throws {
-    var output: String?
-    var shortVersion: String?
-    var buildVersion: String?
+    var outputPath: String?
+    var shortVersionText: String?
+    var buildVersionText: String?
     var index = 0
     while index < values.count {
       let option = values[index]
       guard index + 1 < values.count else { throw ArgumentError.missingValue(option) }
       let value = values[index + 1]
       switch option {
-      case "--output": output = value
-      case "--short-version": shortVersion = value
-      case "--build-version": buildVersion = value
+      case "--output": outputPath = value
+      case "--short-version": shortVersionText = value
+      case "--build-version": buildVersionText = value
       default: throw ArgumentError.unknownOption(option)
       }
       index += 2
     }
-    guard let output, let shortVersion, let buildVersion else { throw ArgumentError.usage }
-    self.output = URL(fileURLWithPath: output, isDirectory: true)
-    self.shortVersion = shortVersion
-    self.buildVersion = buildVersion
+    guard let outputPath, let shortVersionText, let buildVersionText else {
+      throw ArgumentError.usage
+    }
+    output = URL(fileURLWithPath: outputPath, isDirectory: true)
+    shortVersion = shortVersionText
+    buildVersion = buildVersionText
   }
 }
 

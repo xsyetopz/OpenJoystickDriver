@@ -56,11 +56,11 @@ extension DeviceManager {
     // write's operation. It takes the same route as the controller's writes.
     let outcome = await physicalOutputQueue(for: pipeline.identifier).perform {
       [weak self] _ -> PhysicalHIDReportResult<Data>? in
-      guard let self, await self.isCurrentHIDStartupConnection(pipeline, connection: connection)
+      guard let self, await isCurrentHIDStartupConnection(pipeline, connection: connection)
       else { return nil }
-      return await self.writesExactHIDConnection(pipeline.identifier, pipeline: pipeline)
-        ? await self.hidManager.getFeatureReport(connection: connection, request: request)
-        : await self.hidManager.getFeatureReport(address: address, request: request)
+      return await writesExactHIDConnection(pipeline.identifier, pipeline: pipeline)
+        ? await hidManager.getFeatureReport(connection: connection, request: request)
+        : await hidManager.getFeatureReport(address: address, request: request)
     }
     guard case .completed(let result?) = outcome,
       await isCurrentHIDStartupPipeline(pipeline, connection: connection)

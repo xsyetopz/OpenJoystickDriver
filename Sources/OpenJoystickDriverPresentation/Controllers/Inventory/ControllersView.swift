@@ -95,7 +95,7 @@
               retry: refresh
             ).padding(.horizontal, 14)
           }
-          if devices.isEmpty && screen.unservedDevices.isEmpty {
+          if devices.isEmpty, screen.unservedDevices.isEmpty {
             EmptyView()
           } else {
             controllerListRows
@@ -149,7 +149,7 @@
           }.padding(.vertical, 4).tag(Self.unservedTag(unserved)).ojdAccessibilityLabel(
             unserved.title
           )
-            .ojdAccessibilityValue("\(unserved.explanation) \(unserved.nextStep)")
+          .ojdAccessibilityValue("\(unserved.explanation) \(unserved.nextStep)")
         }
       }.listStyle(InsetListStyle()).alert(item: $wirelessDisconnectRequest) { request in
         wirelessDisconnectAlert(for: request)

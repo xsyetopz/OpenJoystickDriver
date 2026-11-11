@@ -28,7 +28,7 @@ func withVirtualOutputTimeout<Value: Sendable>(
 ) async throws -> Value {
   guard timeout > 0 else { throw error }
 
-  let stream = AsyncThrowingStream<Value, Error> { continuation in
+  let stream = AsyncThrowingStream<Value, any Error> { continuation in
     // Detached: on timeout the caller returns while the operation runs on to `onLateSuccess`.
     let operationTask = Task.detached {
       do {
@@ -93,10 +93,10 @@ actor VirtualOutputTransitionCoordinator {
     guard !cancellation.isStopped else { return nil }
     queuedOperationCount += 1
     let previous = tail
-    let cancellation = self.cancellation
+    let gate = self.cancellation
     let next = Task<Value?, Never> {
       await previous?.value
-      guard !Task.isCancelled, !cancellation.isStopped else { return nil }
+      guard !Task.isCancelled, !gate.isStopped else { return nil }
       return await operation()
     }
     tail = Task {
@@ -162,8 +162,8 @@ final class VirtualOutputFeedbackGate: Sendable {
   /// `deviceManager`.
   init(deviceManager: DeviceManager) {
     sendFeedback = { identifier, command in
-      guard let command = Self.physicalFeedback(for: command) else { return }
-      _ = await deviceManager.sendControllerOutput(command, toConnected: identifier)
+      guard let physical = Self.physicalFeedback(for: command) else { return }
+      _ = await deviceManager.sendControllerOutput(physical, toConnected: identifier)
     }
   }
 
@@ -198,12 +198,12 @@ final class VirtualOutputFeedbackGate: Sendable {
     }
     guard let currentGeneration else { return }
     let task = Task { [weak self] in
-      guard let self, self.isCurrent(identifier, generation: currentGeneration) else {
+      guard let self, isCurrent(identifier, generation: currentGeneration) else {
         self?.finish(token)
         return
       }
-      await self.sendFeedback(identifier, command)
-      self.finish(token)
+      await sendFeedback(identifier, command)
+      finish(token)
     }
     let shouldCancel = admission.withLock { admission -> Bool in
       admission.cancellationHandlers[token] = (identifier, { task.cancel() })
@@ -307,11 +307,11 @@ final class VirtualOutputBackendCloseSlot: Sendable {
 
   /// Closes the backend and returns true, or returns false when `timeout` nanoseconds pass first.
   func close(timeout: UInt64, clock: VirtualOutputTransitionClock) async -> Bool {
-    let backend = self.backend
+    let closing = self.backend
     let task = closeTask.withLock { closeTask -> Task<Void, Never> in
       if let closeTask { return closeTask }
       // Detached: the close outlives a timed-out caller, and later callers await the same task.
-      let task = Task.detached { await backend.close() }
+      let task = Task.detached { await closing.close() }
       closeTask = task
       return task
     }

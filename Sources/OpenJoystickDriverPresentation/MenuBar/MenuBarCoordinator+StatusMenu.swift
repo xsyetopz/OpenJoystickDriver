@@ -28,13 +28,13 @@
     var onDidClose: () -> Void = {}
 
     /// Marks the menu open and calls ``onWillOpen``.
-    func menuWillOpen(_ menu: NSMenu) {
+    func menuWillOpen(_: NSMenu) {
       isOpen = true
       onWillOpen()
     }
 
     /// Marks the menu closed and calls ``onDidClose``.
-    func menuDidClose(_ menu: NSMenu) {
+    func menuDidClose(_: NSMenu) {
       isOpen = false
       onDidClose()
     }

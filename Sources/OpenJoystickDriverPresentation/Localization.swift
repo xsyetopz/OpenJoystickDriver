@@ -11,7 +11,7 @@ enum OJDLocalized {
   static func string(_ key: String) -> String { resolver.string(key) }
 
   /// Returns the catalog text for `key` with `arguments` filled into its placeholders.
-  static func formatted(_ key: String, _ arguments: CVarArg...) -> String {
+  static func formatted(_ key: String, _ arguments: any CVarArg...) -> String {
     resolver.formatted(key, arguments: arguments)
   }
 
@@ -21,7 +21,7 @@ enum OJDLocalized {
   /// Returns the plural form of `key` from a `Localizable.stringsdict` entry.
   ///
   /// The entry's count is one of `arguments`, in the entry's order.
-  static func plural(_ key: String, _ arguments: CVarArg...) -> String {
+  static func plural(_ key: String, _ arguments: any CVarArg...) -> String {
     resolver.plural(key, arguments: arguments)
   }
 }

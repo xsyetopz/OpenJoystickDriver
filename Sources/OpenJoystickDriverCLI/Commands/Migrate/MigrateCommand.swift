@@ -25,7 +25,10 @@ struct MigrateCommand: AsyncParsableCommand {
   var dryRun = false
 
   /// The folder to scan instead of the support folder.
-  @Argument(help: ArgumentHelp(CLILocalized.text("cli.migrate.group.folder")), completion: .directory)
+  @Argument(
+    help: ArgumentHelp(CLILocalized.text("cli.migrate.group.folder")),
+    completion: .directory
+  )
   var folder: String?
 
   /// The global options.
@@ -41,7 +44,9 @@ struct MigrateCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let url = folder.map { URL(fileURLWithPath: ($0 as NSString).expandingTildeInPath) }
+      let url = folder.map {
+        URL(fileURLWithPath: $0.hasPrefix("~") ? NSHomeDirectory() + $0.dropFirst() : $0)
+      }
       let entries = DocumentMigrator(directory: Self.directory).run(dryRun: dryRun, folder: url)
       switch CLIContext.current.format {
       case .json:

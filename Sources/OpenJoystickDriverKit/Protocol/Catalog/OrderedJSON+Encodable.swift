@@ -102,7 +102,7 @@ public struct OrderedJSONEncoder {
 
     /// Returns a keyed container over the node; a node with nothing encoded becomes an empty
     /// object.
-    func container<Key: CodingKey>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> {
+    func container<Key: CodingKey>(keyedBy _: Key.Type) -> KeyedEncodingContainer<Key> {
       if case .unset = node.value { node.value = .object([:]) }
       guard case .object = node.value else {
         preconditionFailure("a keyed container over a value that is not an object")
@@ -210,11 +210,11 @@ public struct OrderedJSONEncoder {
     private func set(_ key: Key, _ json: OrderedJSON) { set(key, OrderedJSONEncoder.leaf(json)) }
 
     /// Encodes `null` under `key`.
-    func encodeNil(forKey key: Key) throws { set(key, .null) }
+    func encodeNil(forKey key: Key) { set(key, .null) }
     /// Encodes a `Bool` under `key`.
-    func encode(_ value: Bool, forKey key: Key) throws { set(key, .bool(value)) }
+    func encode(_ value: Bool, forKey key: Key) { set(key, .bool(value)) }
     /// Encodes a `String` under `key`.
-    func encode(_ value: String, forKey key: Key) throws { set(key, .string(value)) }
+    func encode(_ value: String, forKey key: Key) { set(key, .string(value)) }
     /// Encodes a `Double` under `key`.
     ///
     /// Throws when it is not finite, because JSON cannot hold it.
@@ -228,41 +228,41 @@ public struct OrderedJSONEncoder {
       set(key, try OrderedJSONEncoder.number(value, at: codingPath + [key]))
     }
     /// Encodes a `Int` under `key`.
-    func encode(_ value: Int, forKey key: Key) throws { set(key, OrderedJSONEncoder.number(value)) }
+    func encode(_ value: Int, forKey key: Key) { set(key, OrderedJSONEncoder.number(value)) }
     /// Encodes a `Int8` under `key`.
-    func encode(_ value: Int8, forKey key: Key) throws {
+    func encode(_ value: Int8, forKey key: Key) {
       set(key, OrderedJSONEncoder.number(value))
     }
     /// Encodes a `Int16` under `key`.
-    func encode(_ value: Int16, forKey key: Key) throws {
+    func encode(_ value: Int16, forKey key: Key) {
       set(key, OrderedJSONEncoder.number(value))
     }
     /// Encodes a `Int32` under `key`.
-    func encode(_ value: Int32, forKey key: Key) throws {
+    func encode(_ value: Int32, forKey key: Key) {
       set(key, OrderedJSONEncoder.number(value))
     }
     /// Encodes a `Int64` under `key`.
-    func encode(_ value: Int64, forKey key: Key) throws {
+    func encode(_ value: Int64, forKey key: Key) {
       set(key, OrderedJSONEncoder.number(value))
     }
     /// Encodes a `UInt` under `key`.
-    func encode(_ value: UInt, forKey key: Key) throws {
+    func encode(_ value: UInt, forKey key: Key) {
       set(key, OrderedJSONEncoder.number(value))
     }
     /// Encodes a `UInt8` under `key`.
-    func encode(_ value: UInt8, forKey key: Key) throws {
+    func encode(_ value: UInt8, forKey key: Key) {
       set(key, OrderedJSONEncoder.number(value))
     }
     /// Encodes a `UInt16` under `key`.
-    func encode(_ value: UInt16, forKey key: Key) throws {
+    func encode(_ value: UInt16, forKey key: Key) {
       set(key, OrderedJSONEncoder.number(value))
     }
     /// Encodes a `UInt32` under `key`.
-    func encode(_ value: UInt32, forKey key: Key) throws {
+    func encode(_ value: UInt32, forKey key: Key) {
       set(key, OrderedJSONEncoder.number(value))
     }
     /// Encodes a `UInt64` under `key`.
-    func encode(_ value: UInt64, forKey key: Key) throws {
+    func encode(_ value: UInt64, forKey key: Key) {
       set(key, OrderedJSONEncoder.number(value))
     }
     /// Encodes any `Encodable` value under `key`, as a nested node.
@@ -332,11 +332,11 @@ public struct OrderedJSONEncoder {
     private func append(_ json: OrderedJSON) { append(OrderedJSONEncoder.leaf(json)) }
 
     /// Appends `null`.
-    mutating func encodeNil() throws { append(.null) }
+    mutating func encodeNil() { append(.null) }
     /// Appends a `Bool`.
-    mutating func encode(_ value: Bool) throws { append(.bool(value)) }
+    mutating func encode(_ value: Bool) { append(.bool(value)) }
     /// Appends a `String`.
-    mutating func encode(_ value: String) throws { append(.string(value)) }
+    mutating func encode(_ value: String) { append(.string(value)) }
     /// Appends a `Double`.
     ///
     /// Throws when it is not finite, because JSON cannot hold it.
@@ -350,25 +350,25 @@ public struct OrderedJSONEncoder {
       append(try OrderedJSONEncoder.number(value, at: nextPath))
     }
     /// Appends a `Int`.
-    mutating func encode(_ value: Int) throws { append(OrderedJSONEncoder.number(value)) }
+    mutating func encode(_ value: Int) { append(OrderedJSONEncoder.number(value)) }
     /// Appends a `Int8`.
-    mutating func encode(_ value: Int8) throws { append(OrderedJSONEncoder.number(value)) }
+    mutating func encode(_ value: Int8) { append(OrderedJSONEncoder.number(value)) }
     /// Appends a `Int16`.
-    mutating func encode(_ value: Int16) throws { append(OrderedJSONEncoder.number(value)) }
+    mutating func encode(_ value: Int16) { append(OrderedJSONEncoder.number(value)) }
     /// Appends a `Int32`.
-    mutating func encode(_ value: Int32) throws { append(OrderedJSONEncoder.number(value)) }
+    mutating func encode(_ value: Int32) { append(OrderedJSONEncoder.number(value)) }
     /// Appends a `Int64`.
-    mutating func encode(_ value: Int64) throws { append(OrderedJSONEncoder.number(value)) }
+    mutating func encode(_ value: Int64) { append(OrderedJSONEncoder.number(value)) }
     /// Appends a `UInt`.
-    mutating func encode(_ value: UInt) throws { append(OrderedJSONEncoder.number(value)) }
+    mutating func encode(_ value: UInt) { append(OrderedJSONEncoder.number(value)) }
     /// Appends a `UInt8`.
-    mutating func encode(_ value: UInt8) throws { append(OrderedJSONEncoder.number(value)) }
+    mutating func encode(_ value: UInt8) { append(OrderedJSONEncoder.number(value)) }
     /// Appends a `UInt16`.
-    mutating func encode(_ value: UInt16) throws { append(OrderedJSONEncoder.number(value)) }
+    mutating func encode(_ value: UInt16) { append(OrderedJSONEncoder.number(value)) }
     /// Appends a `UInt32`.
-    mutating func encode(_ value: UInt32) throws { append(OrderedJSONEncoder.number(value)) }
+    mutating func encode(_ value: UInt32) { append(OrderedJSONEncoder.number(value)) }
     /// Appends a `UInt64`.
-    mutating func encode(_ value: UInt64) throws { append(OrderedJSONEncoder.number(value)) }
+    mutating func encode(_ value: UInt64) { append(OrderedJSONEncoder.number(value)) }
     /// Appends any `Encodable` value as a nested node.
     mutating func encode<Value: Encodable>(_ value: Value) throws {
       append(try OrderedJSONEncoder.node(value, at: nextPath))
@@ -412,11 +412,11 @@ public struct OrderedJSONEncoder {
     private func set(_ json: OrderedJSON) { node.value = .leaf(json) }
 
     /// Sets the node to `null`.
-    func encodeNil() throws { set(.null) }
+    func encodeNil() { set(.null) }
     /// Sets the node to a `Bool`.
-    func encode(_ value: Bool) throws { set(.bool(value)) }
+    func encode(_ value: Bool) { set(.bool(value)) }
     /// Sets the node to a `String`.
-    func encode(_ value: String) throws { set(.string(value)) }
+    func encode(_ value: String) { set(.string(value)) }
     /// Sets the node to a `Double`.
     ///
     /// Throws when it is not finite, because JSON cannot hold it.
@@ -430,25 +430,25 @@ public struct OrderedJSONEncoder {
       set(try OrderedJSONEncoder.number(value, at: codingPath))
     }
     /// Sets the node to a `Int`.
-    func encode(_ value: Int) throws { set(OrderedJSONEncoder.number(value)) }
+    func encode(_ value: Int) { set(OrderedJSONEncoder.number(value)) }
     /// Sets the node to a `Int8`.
-    func encode(_ value: Int8) throws { set(OrderedJSONEncoder.number(value)) }
+    func encode(_ value: Int8) { set(OrderedJSONEncoder.number(value)) }
     /// Sets the node to a `Int16`.
-    func encode(_ value: Int16) throws { set(OrderedJSONEncoder.number(value)) }
+    func encode(_ value: Int16) { set(OrderedJSONEncoder.number(value)) }
     /// Sets the node to a `Int32`.
-    func encode(_ value: Int32) throws { set(OrderedJSONEncoder.number(value)) }
+    func encode(_ value: Int32) { set(OrderedJSONEncoder.number(value)) }
     /// Sets the node to a `Int64`.
-    func encode(_ value: Int64) throws { set(OrderedJSONEncoder.number(value)) }
+    func encode(_ value: Int64) { set(OrderedJSONEncoder.number(value)) }
     /// Sets the node to a `UInt`.
-    func encode(_ value: UInt) throws { set(OrderedJSONEncoder.number(value)) }
+    func encode(_ value: UInt) { set(OrderedJSONEncoder.number(value)) }
     /// Sets the node to a `UInt8`.
-    func encode(_ value: UInt8) throws { set(OrderedJSONEncoder.number(value)) }
+    func encode(_ value: UInt8) { set(OrderedJSONEncoder.number(value)) }
     /// Sets the node to a `UInt16`.
-    func encode(_ value: UInt16) throws { set(OrderedJSONEncoder.number(value)) }
+    func encode(_ value: UInt16) { set(OrderedJSONEncoder.number(value)) }
     /// Sets the node to a `UInt32`.
-    func encode(_ value: UInt32) throws { set(OrderedJSONEncoder.number(value)) }
+    func encode(_ value: UInt32) { set(OrderedJSONEncoder.number(value)) }
     /// Sets the node to a `UInt64`.
-    func encode(_ value: UInt64) throws { set(OrderedJSONEncoder.number(value)) }
+    func encode(_ value: UInt64) { set(OrderedJSONEncoder.number(value)) }
     /// Sets the node to the node of any `Encodable` value.
     func encode<Value: Encodable>(_ value: Value) throws {
       node.value = try OrderedJSONEncoder.node(value, at: codingPath).value

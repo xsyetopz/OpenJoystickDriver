@@ -39,8 +39,8 @@ extension DevicePipeline {
   ///
   /// An interface that another client holds is waited for, not seized. The waits between attempts
   /// grow with the reconnect policy.
-  /// A run whose handshake fails ``USBPipelineRecoveryPolicy/maximumHandshakeFailures`` times in a row
-  /// ends, and leaves the failure in ``startupOutputStatus``.
+  /// A run whose handshake fails ``USBPipelineRecoveryPolicy/maximumHandshakeFailures`` times in a
+  /// row ends, and leaves the failure in ``startupOutputStatus``.
   func startUSBPipeline(device: USBTransportDevice, generation: UInt64) async {
     guard let provider = usbTransportProvider else {
       print("[DevicePipeline] Missing USB transport provider for \(identifier)")
@@ -179,7 +179,11 @@ extension DevicePipeline {
   func armInputRead(handle: any USBTransportSession) -> Task<[UInt8], any Error> {
     let endpoint = transportProfile.inputEndpoint
     return Task {
-      try await handle.read(endpoint: endpoint, length: gipReadPacketLength, timeout: gipReadTimeoutMs)
+      try await handle.read(
+        endpoint: endpoint,
+        length: gipReadPacketLength,
+        timeout: gipReadTimeoutMs
+      )
     }
   }
 
@@ -403,7 +407,7 @@ extension DevicePipeline {
   }
 
   /// Logs the failed open attempt `attempt`, counted from zero.
-  func handleOpenDeviceError(_ error: Error, attempt: Int) {
+  func handleOpenDeviceError(_ error: any Error, attempt: Int) {
     print("[DevicePipeline] Open attempt \(attempt + 1) failed" + " for \(identifier): \(error)")
   }
 }

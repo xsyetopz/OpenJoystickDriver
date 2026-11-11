@@ -9,7 +9,7 @@ struct ApplicationServiceWatchSource: ControllerWatchSource {
   weak var server: ApplicationServiceServer?
 
   /// Returns the connected controllers, with their virtual HID profiles described.
-  func devices() async throws -> [ApplicationServiceDeviceDescription] {
+  func devices() async -> [ApplicationServiceDeviceDescription] {
     guard let server else { return [] }
     return await server.describingVirtualHIDProfiles(
       await server.deviceManager.connectedDeviceDescriptions().map {
@@ -19,14 +19,14 @@ struct ApplicationServiceWatchSource: ControllerWatchSource {
   }
 
   /// Returns the current state of `device`, or nil when it is not connected.
-  func state(of device: ApplicationServiceDeviceDescription) async throws -> ControllerState? {
+  func state(of device: ApplicationServiceDeviceDescription) async -> ControllerState? {
     await server?.deviceManager.controllerState(for: .session(device.sessionToken))
   }
 
   /// Returns the virtual output state of `device`, or nil when no virtual output covers it.
   func output(
     of device: ApplicationServiceDeviceDescription
-  ) async throws
+  ) async
     -> ApplicationServiceVirtualOutputState?
   {
     guard let server,

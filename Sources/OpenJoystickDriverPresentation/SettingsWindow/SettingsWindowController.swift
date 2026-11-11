@@ -102,17 +102,17 @@
       self.commandLineTool = commandLineTool
       panes = SettingsWindowPaneModel()
       developerTools = DeveloperToolsViewModel(gateway: gateway)
-      let developerTools = developerTools
-      let makeContent = { (pane: SettingsWindowPane) in
+      let tools = developerTools
+      let content = { (pane: SettingsWindowPane) in
         SettingsPaneContent(
           pane: pane,
           preferences: preferences,
           commandLineTool: commandLineTool,
-          developerTools: developerTools,
+          developerTools: tools,
           runtime: runtime
         )
       }
-      self.makeContent = makeContent
+      self.makeContent = content
       let window = SettingsWindow(
         contentRect: NSRect(
           x: 0,
@@ -175,10 +175,8 @@
     }
 
     /// Unavailable, because the window controller is created in code only.
-    ///
-    /// - Parameter coder: The decoder, which is not used.
     @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    required init?(coder _: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     /// Shows the Settings window in front, on `pane` when given and otherwise on the selected pane.
     func showSettings(pane: SettingsWindowPane?) {
@@ -195,14 +193,10 @@
     }
 
     /// Fits the window to the screen it moved to, whose visible area may be smaller.
-    ///
-    /// - Parameter notification: The notification of the screen change.
-    func windowDidChangeScreen(_ notification: Notification) { paneChanged(animated: false) }
+    func windowDidChangeScreen(_: Notification) { paneChanged(animated: false) }
 
     /// Marks the window as hidden, syncs the developer tools and reports that it is not visible.
-    ///
-    /// - Parameter notification: The notification of the closing window.
-    func windowWillClose(_ notification: Notification) {
+    func windowWillClose(_: Notification) {
       isShown = false
       syncDeveloperTools()
       visibilityChanged(false)
@@ -234,14 +228,14 @@
 
     /// Adds the toolbar whose buttons choose the pane.
     private func configureToolbar(on window: NSWindow) {
-      let toolbar = NSToolbar(identifier: Self.toolbarIdentifier)
-      toolbar.delegate = self
-      toolbar.allowsUserCustomization = false
-      toolbar.autosavesConfiguration = false
-      toolbar.displayMode = .iconAndLabel
-      window.toolbar = toolbar
+      let bar = NSToolbar(identifier: Self.toolbarIdentifier)
+      bar.delegate = self
+      bar.allowsUserCustomization = false
+      bar.autosavesConfiguration = false
+      bar.displayMode = .iconAndLabel
+      window.toolbar = bar
       window.toolbarStyle = .preference
-      self.toolbar = toolbar
+      self.toolbar = bar
     }
 
     /// Sets the title of the selected pane and resizes the window's height to the pane's height,
@@ -252,12 +246,12 @@
       toolbar?.selectedItemIdentifier = NSToolbarItem.Identifier(
         panes.selected.toolbarItemIdentifier
       )
-      let fitting = fittingHeight(of: panes.selected)
+      let paneFit = fittingHeight(of: panes.selected)
       let chrome = window.frame.height - window.contentRect(forFrameRect: window.frame).height
       let visibleHeight =
         (window.screen ?? NSScreen.main)?.visibleFrame.height ?? .greatestFiniteMagnitude
       let size = SettingsWindowPane.contentSize(
-        fittingHeight: fitting,
+        fittingHeight: paneFit,
         availableHeight: SettingsWindowPane.availableContentHeight(
           visibleHeight: visibleHeight,
           chromeHeight: chrome
@@ -309,40 +303,37 @@
 
     /// Returns the identifiers of the panes.
     ///
-    /// - Parameter toolbar: The toolbar of the window.
     /// - Returns: The identifiers, in the order of the panes.
-    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+    func toolbarAllowedItemIdentifiers(_: NSToolbar) -> [NSToolbarItem.Identifier] {
       paneIdentifiers
     }
 
     /// Returns the identifiers of the panes.
     ///
-    /// - Parameter toolbar: The toolbar of the window.
     /// - Returns: The identifiers, in the order of the panes.
-    func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+    func toolbarDefaultItemIdentifiers(_: NSToolbar) -> [NSToolbarItem.Identifier] {
       paneIdentifiers
     }
 
     /// Returns the identifiers of the panes.
     ///
-    /// - Parameter toolbar: The toolbar of the window.
     /// - Returns: The identifiers, in the order of the panes.
-    func toolbarSelectableItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+    func toolbarSelectableItemIdentifiers(_: NSToolbar) -> [NSToolbarItem.Identifier] {
       paneIdentifiers
     }
 
     /// Creates the toolbar button of a pane.
     ///
     /// - Parameters:
-    ///   - toolbar: The toolbar of the window.
+    ///   - _: The toolbar of the window.
     ///   - itemIdentifier: The identifier of the pane.
-    ///   - flag: Whether the toolbar inserts the item.
+    ///   - _: Whether the toolbar inserts the item.
     /// - Returns: The item with the pane's title, symbol and description, or nil for an identifier
     ///   that names no pane.
     func toolbar(
-      _ toolbar: NSToolbar,
+      _: NSToolbar,
       itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
-      willBeInsertedIntoToolbar flag: Bool
+      willBeInsertedIntoToolbar _: Bool
     ) -> NSToolbarItem? {
       guard let pane = SettingsWindowPane(toolbarItemIdentifier: itemIdentifier.rawValue)
       else { return nil }

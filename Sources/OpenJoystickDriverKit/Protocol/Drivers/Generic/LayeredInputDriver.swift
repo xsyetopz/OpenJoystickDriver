@@ -26,7 +26,7 @@ final class LayeredInputDriver: PhysicalProtocolDriver {
     let event = try family.parse(report: data, receivedAt: receivedAt)
     if let event { lastState = event.state }
     guard let index = layers.layouts.indexOfLayout(selecting: [UInt8](data)),
-      let layered = try layers.parse(report: data, receivedAt: receivedAt)
+      let layered = layers.parse(report: data, receivedAt: receivedAt)
     else { return event }
     let layout = layers.layouts.layouts[index]
     var state = lastState

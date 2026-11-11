@@ -221,7 +221,8 @@ public final class ProtocolDriverRegistry: Sendable {
       }
     }
     let tuning = protocolID.driverTuning(variant: variant, record: record.tuning)
-    // The families whose description sets the input layout: three built in, and every documented one.
+    // The families whose description sets the input layout: three built in, and every documented
+    // one.
     func describedLayoutDriver() -> Result<any PhysicalProtocolDriver, ProtocolBindingReason> {
       .success(
         ReportLayoutDriver(

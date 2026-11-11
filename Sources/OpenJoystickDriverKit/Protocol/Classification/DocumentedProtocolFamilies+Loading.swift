@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension DocumentedProtocolFamilies {
   /// `~/Library/Application Support/OpenJoystickDriver/Protocols`.
@@ -42,8 +42,9 @@ extension DocumentedProtocolFamilies {
     )
   }
 
-  /// Registers the families of the user's `Protocols` folder beside `controllers`, then those of the
-  /// installed packages in name order, and returns the families and the files that were refused.
+  /// Registers the families of the user's `Protocols` folder beside `controllers`, then those of
+  /// the installed packages in name order, and returns the families and the files that were
+  /// refused.
   ///
   /// The first definition of a name wins, so a later file with the same name is refused. A package
   /// that cannot be used holds nothing.

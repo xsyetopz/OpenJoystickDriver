@@ -106,7 +106,7 @@ extension Switch2BluetoothLECentral: CBCentralManagerDelegate {
     didDiscover peripheral: CBPeripheral,
     advertisementData: [String: Any],
     // swiftlint:disable:next legacy_objc_type
-    rssi: NSNumber
+    rssi _: NSNumber
   ) {
     guard links[peripheral.identifier] == nil,
       let data = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data,
@@ -118,29 +118,29 @@ extension Switch2BluetoothLECentral: CBCentralManagerDelegate {
   }
 
   /// Discovers the GATT service of the connected peripheral.
-  func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+  func centralManager(_: CBCentralManager, didConnect peripheral: CBPeripheral) {
     peripheral.delegate = self
     peripheral.discoverServices([serviceUUID])
   }
 
   /// Drops the peripheral that failed to connect.
   func centralManager(
-    _ central: CBCentralManager,
+    _: CBCentralManager,
     didFailToConnect peripheral: CBPeripheral,
-    error: (any Error)?
+    error _: (any Error)?
   ) { drop(peripheral) }
 
   /// Drops the peripheral that disconnected.
   func centralManager(
-    _ central: CBCentralManager,
+    _: CBCentralManager,
     didDisconnectPeripheral peripheral: CBPeripheral,
-    error: (any Error)?
+    error _: (any Error)?
   ) { drop(peripheral) }
 }
 
 extension Switch2BluetoothLECentral: CBPeripheralDelegate {
   /// Discovers the characteristics of the service, or drops a peripheral that lacks it.
-  func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: (any Error)?) {
+  func peripheral(_ peripheral: CBPeripheral, didDiscoverServices _: (any Error)?) {
     guard let link = links[peripheral.identifier],
       let service = peripheral.services?.first(where: { $0.uuid == serviceUUID }),
       let vibration = Switch2BluetoothLEProfile.vibrationUUID(productID: link.productID)
@@ -159,7 +159,7 @@ extension Switch2BluetoothLECentral: CBPeripheralDelegate {
   func peripheral(
     _ peripheral: CBPeripheral,
     didDiscoverCharacteristicsFor service: CBService,
-    error: (any Error)?
+    error _: (any Error)?
   ) {
     guard var link = links[peripheral.identifier],
       let vibrationUUID = Switch2BluetoothLEProfile.vibrationUUID(productID: link.productID)
@@ -186,7 +186,7 @@ extension Switch2BluetoothLECentral: CBPeripheralDelegate {
   /// Admits the GATT link to the hub once the input and reply notifications are on.
   func peripheral(
     _ peripheral: CBPeripheral,
-    didUpdateNotificationStateFor characteristic: CBCharacteristic,
+    didUpdateNotificationStateFor _: CBCharacteristic,
     error: (any Error)?
   ) {
     guard error == nil, var link = links[peripheral.identifier] else {

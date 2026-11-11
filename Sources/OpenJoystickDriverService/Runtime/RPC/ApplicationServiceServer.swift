@@ -1,6 +1,6 @@
 import CryptoKit
 import Foundation
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 import OpenJoystickDriverMacOSPlatform
 import Security
 
@@ -151,7 +151,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
       guard let self else {
         return LocalServiceRPCResponse(result: nil, error: "Service stopped.")
       }
-      return await self.handleLocalRPC(request)
+      return await handleLocalRPC(request)
     }
     let state = listenerState
     server.listenerFailureChanged = { state.set($0) }
@@ -175,7 +175,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
     // so it never starts a listener on a service that is stopping.
     state.setRestart { [weak self, weak server] in
       guard let self, let server else { throw LocalServiceRPCError.stopping }
-      try self.restartListener(of: server)
+      try restartListener(of: server)
     }
     print("[ApplicationServiceServer] Listening on authenticated local RPC socket")
   }

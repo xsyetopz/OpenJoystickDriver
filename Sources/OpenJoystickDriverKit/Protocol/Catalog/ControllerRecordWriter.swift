@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Sets or removes one value in the user's controller-record directory: the `server` of a model,
 /// or a `tuning` key of a model or of every controller.
@@ -87,7 +87,7 @@ public enum ControllerRecordWriter {
         tuningKey: nil,
         records: records,
         directory: directory
-      ) { (fields: inout [String: Any]) throws(Never) in fields["server"] = server.rawValue }
+      ) { (fields: inout [String: Any]) in fields["server"] = server.rawValue }
     } catch {
       switch error {
       case .record(let failure): throw failure
@@ -184,9 +184,9 @@ public enum ControllerRecordWriter {
     let data: Data?
     do {
       data = try document.map { document in
-        let data = try DocumentCoder.write(document)
-        _ = try ControllerRecordSet.validate(data, file: file, packages: packages)
-        return data
+        let encoded = try DocumentCoder.write(document)
+        _ = try ControllerRecordSet.validate(encoded, file: file, packages: packages)
+        return encoded
       }
     } catch {
       throw .record(
@@ -228,8 +228,9 @@ public enum ControllerRecordWriter {
         .invalidFile(ControllerRecordSet.problemDescription(error, document: "record"))
       )
     }
-    guard var document = (try? DocumentCoder.read(data, file: file.lastPathComponent))
-      as? [String: Any]
+    guard
+      var document = (try? DocumentCoder.read(data, file: file.lastPathComponent))
+        as? [String: Any]
     else {
       throw .record(.invalidFile("the file is not a dictionary"))
     }

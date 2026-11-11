@@ -298,7 +298,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
         virtualGamepad: virtualGamepad,
         physicalInput: physicalInput
       )
-      let name = name
+      let profileName = name
       let (created, snapshot) = try await ServiceConnection.request { client in
         let device: RemappingDeviceScope
         switch selector.reference {
@@ -314,7 +314,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
           let model = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
           do {
             profile = try RemappingGyroStickTemplate.profile(
-              name: name,
+              name: profileName,
               device: device,
               applicationScope: scope,
               stick: stick ?? .right,
@@ -329,7 +329,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
           }
         case nil:
           profile = try RemappingProfile(
-            name: name,
+            name: profileName,
             device: device,
             applicationScope: scope,
             outputPolicy: policy,
@@ -382,10 +382,10 @@ struct ProfileDuplicateCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let (selector, name) = (profile, name)
+      let (selector, newName) = (profile, name)
       let (copy, snapshot) = try await ServiceConnection.request { client in
         let (original, _) = try await selector.resolve(with: client)
-        let copy = try original.copy(id: UUID(), name: name).validatedForCLI()
+        let copy = try original.copy(id: UUID(), name: newName).validatedForCLI()
         return (copy, try await client.createRemappingProfile(copy))
       }
       try printProfile(
@@ -428,10 +428,10 @@ struct ProfileRenameCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      let (selector, name) = (profile, name)
+      let (selector, newName) = (profile, name)
       let (renamed, snapshot) = try await ServiceConnection.request { client in
         let (current, _) = try await selector.resolve(with: client)
-        let renamed = try current.replacing(name: name).validatedForCLI()
+        let renamed = try current.replacing(name: newName).validatedForCLI()
         return (renamed, try await client.updateRemappingProfile(renamed, expectedCurrent: current))
       }
       try printProfile(

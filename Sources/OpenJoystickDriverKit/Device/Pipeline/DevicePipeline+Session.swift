@@ -169,7 +169,7 @@ extension DevicePipeline {
   ) async throws -> Int {
     try await usbOutputWriteQueue.perform { [weak self] in
       guard let self else { throw CancellationError() }
-      return try await self.writeUSBPacketInQueue(
+      return try await writeUSBPacketInQueue(
         handle: handle,
         endpoint: endpoint,
         data: data,

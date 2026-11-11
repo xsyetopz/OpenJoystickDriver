@@ -280,7 +280,7 @@ final class Switch2BluetoothLECommandSession: USBTransportSession {
   ///
   /// - Throws: ``USBTransportError/notSupported`` unless `endpoint` is an OUT endpoint, or the
   ///   error of the write.
-  func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) throws -> Int {
+  func write(endpoint: UInt8, data: [UInt8], timeout _: UInt32) throws -> Int {
     guard USBEndpointDirection(endpointAddress: endpoint) == .out else {
       throw USBTransportError.notSupported
     }
@@ -306,7 +306,7 @@ final class Switch2BluetoothLECommandSession: USBTransportSession {
   /// Control transfers do not exist over GATT.
   ///
   /// - Throws: ``USBTransportError/notSupported``.
-  func controlTransfer(_ request: USBControlTransferRequest, timeout: UInt32) throws -> [UInt8] {
+  func controlTransfer(_: USBControlTransferRequest, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.notSupported
   }
 }

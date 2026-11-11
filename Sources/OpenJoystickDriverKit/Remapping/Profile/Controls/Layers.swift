@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// How a layer is activated by its activator source.
 public enum RemappingLayerActivation: String, Codable, Equatable, Hashable, Sendable {

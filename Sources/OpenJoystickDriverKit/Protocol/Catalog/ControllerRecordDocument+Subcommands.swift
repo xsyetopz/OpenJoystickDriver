@@ -59,7 +59,9 @@ extension SubcommandRequest: Decodable {
       do {
         data = try HexBytes.decode(container, for: "data", what: "subcommand request data")
       } catch let problem as ControllerRecordProblem {
-        throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath + [DocumentKey("data")]))
+        throw DecodingError.dataCorrupted(
+          problem.context(at: decoder.codingPath + [DocumentKey("data")])
+        )
       }
     }
     let read = try container.decodeOptional(SPIRead.self, for: "spiRead")

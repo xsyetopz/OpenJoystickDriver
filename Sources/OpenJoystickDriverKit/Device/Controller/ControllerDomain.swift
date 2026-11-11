@@ -260,17 +260,17 @@ public struct BatteryLevel: Codable, Hashable, Sendable {
   /// Decodes a battery level from its `percentage` key.
   ///
   /// - Throws: `DecodingError` when `percentage` is a bad value or its upper bound exceeds 100.
-  public init(from decoder: Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let percentage = try container.decodeIfPresent(ClosedRange<UInt8>.self, forKey: .percentage)
-    guard percentage.map({ $0.upperBound <= 100 }) ?? true else {
+    let level = try container.decodeIfPresent(ClosedRange<UInt8>.self, forKey: .percentage)
+    guard level.map({ $0.upperBound <= 100 }) ?? true else {
       throw DecodingError.dataCorruptedError(
         forKey: .percentage,
         in: container,
         debugDescription: "Battery charge exceeds 100%"
       )
     }
-    self.percentage = percentage
+    self.percentage = level
   }
 
   /// The locale-independent ASCII charge, `73%` or `0-9%`; `nil` when unknown.

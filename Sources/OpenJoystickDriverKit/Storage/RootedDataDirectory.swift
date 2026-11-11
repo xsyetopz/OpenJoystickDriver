@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A `DataDirectory` that places every location under one caller-chosen root.
 ///

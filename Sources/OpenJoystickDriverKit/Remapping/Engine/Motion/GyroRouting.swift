@@ -22,32 +22,33 @@ extension RemappingEngineState {
         at: device.lastUptime
       )
     }
-    guard var device = devices[identifier] else { return actions }
-    guard device.isGyroActive else {
-      actions += device.clearGyroStick()
-      devices[identifier] = device
+    guard var current = devices[identifier] else { return actions }
+    guard current.isGyroActive else {
+      actions += current.clearGyroStick()
+      devices[identifier] = current
       return actions
     }
-    if device.motion.gyroAwaitingBaseline, processed != nil {
-      device.motion.gyroAwaitingBaseline = false
-      actions += device.clearGyroStick()
-      devices[identifier] = device
+    if current.motion.gyroAwaitingBaseline, processed != nil {
+      current.motion.gyroAwaitingBaseline = false
+      actions += current.clearGyroStick()
+      devices[identifier] = current
       return actions
     }
-    let trackball = device.processTrackball(processed)
-    if device.profile.gyroOutput.mode == .leftStick || device.profile.gyroOutput.mode == .rightStick
+    let trackball = current.processTrackball(processed)
+    if current.profile.gyroOutput.mode == .leftStick
+      || current.profile.gyroOutput.mode == .rightStick
     {
-      actions += device.updateGyroStick(processed, velocity: trackball?.velocity)
-      devices[identifier] = device
+      actions += current.updateGyroStick(processed, velocity: trackball?.velocity)
+      devices[identifier] = current
       return actions
     }
-    devices[identifier] = device
-    guard let processed, processed.deltaTime > 0, device.profile.gyroOutput.mode == .mouse else {
+    devices[identifier] = current
+    guard let processed, processed.deltaTime > 0, current.profile.gyroOutput.mode == .mouse else {
       return actions
     }
-    let scale = device.profile.gyroOutput.pointerPointsPerDegree
+    let scale = current.profile.gyroOutput.pointerPointsPerDegree
     // Player/world projections already reverse yaw relative to local controller Y.
-    let yawSign = device.effectiveMotionTuning.space == .local ? -1.0 : 1.0
+    let yawSign = current.effectiveMotionTuning.space == .local ? -1.0 : 1.0
     let yaw = trackball?.yawDegrees ?? processed.tunedGyro.yawDegreesPerSecond * processed.deltaTime
     let pitch =
       trackball?.pitchDegrees ?? processed.tunedGyro.pitchDegreesPerSecond * processed.deltaTime
@@ -106,9 +107,9 @@ extension RemappingDeviceState {
     guard processed.deltaTime > 0 else { return clearGyroStick() }
     let output = profile.gyroOutput
     let yawSign = effectiveMotionTuning.space == .local ? -1.0 : 1.0
-    let velocity = velocity ?? processed.tunedGyro
-    let x = velocity.yawDegreesPerSecond * yawSign / output.fullStickDegreesPerSecond
-    let y = -velocity.pitchDegreesPerSecond / output.fullStickDegreesPerSecond
+    let stickVelocity = velocity ?? processed.tunedGyro
+    let x = stickVelocity.yawDegreesPerSecond * yawSign / output.fullStickDegreesPerSecond
+    let y = -stickVelocity.pitchDegreesPerSecond / output.fullStickDegreesPerSecond
     guard x.isFinite, y.isFinite else { return clearGyroStick() }
     let horizontal: RemappingAxis = output.mode == .leftStick ? .leftStickX : .rightStickX
     let vertical: RemappingAxis = output.mode == .leftStick ? .leftStickY : .rightStickY

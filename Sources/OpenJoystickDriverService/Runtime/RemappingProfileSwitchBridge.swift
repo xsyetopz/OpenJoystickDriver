@@ -37,7 +37,7 @@ final class RemappingProfileSwitchBridge: RemappingProfileSwitching, Sendable {
   func switchProfile(
     _ target: RemappingProfileTarget,
     from current: UUID,
-    for identifier: LogicalControllerID
+    for _: LogicalControllerID
   ) async {
     do {
       try await activate(target, from: current)

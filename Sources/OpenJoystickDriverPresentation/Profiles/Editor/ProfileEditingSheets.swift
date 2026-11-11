@@ -132,8 +132,8 @@
     ///
     /// A failure shows in ``errorMessage`` and keeps the sheet open.
     private func save() {
-      guard let vendorID = ProfileIdentifierInput.parse(vendorID),
-        let productID = ProfileIdentifierInput.parse(productID)
+      guard let parsedVendor = ProfileIdentifierInput.parse(vendorID),
+        let parsedProduct = ProfileIdentifierInput.parse(productID)
       else {
         errorMessage = OJDLocalized.string(
           "ui.profiles.invalidIdentifiers"
@@ -148,7 +148,7 @@
       let candidate = RemappingProfile(
         id: profile.id,
         name: name.trimmingCharacters(in: .whitespacesAndNewlines),
-        device: RemappingDeviceScope(vendorID: vendorID, productID: productID),
+        device: RemappingDeviceScope(vendorID: parsedVendor, productID: parsedProduct),
         applicationScope: scope,
         outputPolicy: profile.outputPolicy,
         motionTuning: profile.motionTuning,

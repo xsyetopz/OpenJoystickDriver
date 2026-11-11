@@ -414,11 +414,11 @@ public struct ControllerInputLayout: Equatable, Sendable {
 
   /// Every control the layout decodes.
   var controls: Set<Control> {
-    var controls = Set(buttons.map(\.control)).union(axes.map(\.control))
-    if !hat.isEmpty { controls.formUnion(Control.dpad) }
-    if leftTrigger != nil { controls.insert(.leftTrigger) }
-    if rightTrigger != nil { controls.insert(.rightTrigger) }
-    return controls
+    var decoded = Set(buttons.map(\.control)).union(axes.map(\.control))
+    if !hat.isEmpty { decoded.formUnion(Control.dpad) }
+    if leftTrigger != nil { decoded.insert(.leftTrigger) }
+    if rightTrigger != nil { decoded.insert(.rightTrigger) }
+    return decoded
   }
 
   /// Whether the layout selects `bytes`: the report is long enough (or exactly as long, when the

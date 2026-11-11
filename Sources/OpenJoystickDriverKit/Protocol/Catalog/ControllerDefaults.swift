@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The user's global tuning defaults, from the `all` patch `all.patch.plist` in the `Controllers`
 /// directory.
@@ -58,25 +58,24 @@ public struct ControllerDefaults: Equatable, Sendable {
     _ data: Data,
     file: String? = nil
   ) throws -> (patch: ControllerPatch, tuning: ControllerTuning) {
-    let patch = try ControllerPatch.parse(
+    let parsedPatch = try ControllerPatch.parse(
       try ControllerRecordSet.ordered(data, file: file ?? fileName),
       file: file
     )
-    guard patch.selector == .all else {
+    guard parsedPatch.selector == .all else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
         key: "error.E5007.tuningDefaults.selector",
         "the selector must be all in \(fileName)"
       )
     }
-    let values = patch.body["tuning"]?.members ?? []
+    let values = parsedPatch.body["tuning"]?.members ?? []
     do {
       let section = try JSONSerialization.data(
         withJSONObject: OrderedJSON.object(values).foundationValue()
       )
-      return (
-        patch, try JSONDecoder().decode(ControllerRecordDocument.Tuning.self, from: section).tuning
-      )
+      let decoded = try JSONDecoder().decode(ControllerRecordDocument.Tuning.self, from: section)
+      return (parsedPatch, decoded.tuning)
     } catch let error as DecodingError {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,

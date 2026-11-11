@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// An independently owned output action within a control assignment.
 public struct RemappingAction: Codable, Equatable, Hashable, Identifiable, Sendable {

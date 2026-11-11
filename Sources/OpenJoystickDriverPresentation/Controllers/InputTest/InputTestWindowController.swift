@@ -93,7 +93,7 @@
 
     /// Not supported; the window is created in code.
     @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    required init?(coder _: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     /// Selects the controller, starts the input session and shows the window.
     ///
@@ -135,10 +135,8 @@
     }
 
     /// Refreshes the controller inventory.
-    ///
-    /// - Parameter sender: The toolbar item.
     @objc
-    private func refreshController(_ sender: Any?) {
+    private func refreshController(_: Any?) {
       Task { @MainActor [weak self] in await self?.runtimeViewModel.refreshControllerInventory() }
     }
   }
@@ -146,37 +144,34 @@
   extension InputTestWindowController: NSToolbarDelegate {
     /// Returns the toolbar items a person may add: Refresh and the flexible space.
     ///
-    /// - Parameter toolbar: The toolbar.
     /// - Returns: The toolbar items a person may add: Refresh and the flexible space.
-    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+    func toolbarAllowedItemIdentifiers(_: NSToolbar) -> [NSToolbarItem.Identifier] {
       [Self.refreshIdentifier, .flexibleSpace]
     }
 
     /// Returns the items the toolbar starts with: the flexible space and Refresh.
     ///
-    /// - Parameter toolbar: The toolbar.
     /// - Returns: The items the toolbar starts with: the flexible space and Refresh.
-    func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+    func toolbarDefaultItemIdentifiers(_: NSToolbar) -> [NSToolbarItem.Identifier] {
       [.flexibleSpace, Self.refreshIdentifier]
     }
 
     /// Returns no selectable items.
     ///
-    /// - Parameter toolbar: The toolbar.
     /// - Returns: No selectable items.
-    func toolbarSelectableItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] { [] }
+    func toolbarSelectableItemIdentifiers(_: NSToolbar) -> [NSToolbarItem.Identifier] { [] }
 
     /// Returns the Refresh item, or nil for any other identifier.
     ///
     /// - Parameters:
-    ///   - toolbar: The toolbar.
+    ///   - _: The toolbar.
     ///   - itemIdentifier: The identifier of the item.
-    ///   - flag: Whether the toolbar inserts the item now.
+    ///   - _: Whether the toolbar inserts the item now.
     /// - Returns: The Refresh item, or nil for any other identifier.
     func toolbar(
-      _ toolbar: NSToolbar,
+      _: NSToolbar,
       itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
-      willBeInsertedIntoToolbar flag: Bool
+      willBeInsertedIntoToolbar _: Bool
     ) -> NSToolbarItem? {
       switch itemIdentifier {
       case Self.refreshIdentifier:

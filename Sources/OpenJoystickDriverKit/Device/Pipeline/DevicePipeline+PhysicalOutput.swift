@@ -61,7 +61,7 @@ extension DevicePipeline {
       }
       return true
     } catch {
-      if let error = error as? USBTransportError, error.isDisconnected {
+      if let transport = error as? USBTransportError, transport.isDisconnected {
         await invalidateUSBHandle(handle)
       }
       print("[DevicePipeline] Output send failed for \(identifier): \(error)")

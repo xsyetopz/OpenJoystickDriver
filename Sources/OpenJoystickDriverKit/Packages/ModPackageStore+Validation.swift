@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// What a set of package or user files covers: controller identities, virtual devices, profiles,
 /// and protocol descriptions.
@@ -204,7 +204,8 @@ extension ModPackageStore {
     of data: Data,
     listedAs operation: ControllerRecordOperation
   ) throws {
-    let found = ((try? DocumentCoder.read(data, file: "package file")) as? [String: Any])?["kind"] as? String
+    let found =
+      ((try? DocumentCoder.read(data, file: "package file")) as? [String: Any])?["kind"] as? String
     let kinds = [ControllerRecordDocument.kind, ControllerPatch.kind]
     let expected = operation == .add ? ControllerRecordDocument.kind : ControllerPatch.kind
     guard let found, found != expected, kinds.contains(found) else { return }
@@ -217,8 +218,8 @@ extension ModPackageStore {
     )
   }
 
-  /// Whether `url` is a JavaScript file. A package holds documents only, so a script is skipped
-  /// like a hidden file: it is never evaluated, and an install does not copy it.
+  // A package holds documents only, so a script is skipped like a hidden file: it is never
+  // evaluated, and an install does not copy it.
   static func isScript(_ url: URL) -> Bool {
     url.pathExtension == "js" && !isLink(url) && !isDirectory(url)
   }

@@ -46,8 +46,8 @@ struct UpdateStatusPresentation: Equatable {
   ///   - state: the result of the update check.
   ///   - runningVersion: the version of the running app.
   init(state: UpdateCheckState, runningVersion: String) {
-    var version = runningVersion
-    var latestRelease: String?
+    var shownVersion = runningVersion
+    var latestLine: String?
     switch state {
     case .idle:
       indicator = .none
@@ -58,16 +58,16 @@ struct UpdateStatusPresentation: Equatable {
     case .upToDate(let current, _):
       indicator = .symbol(name: "checkmark.circle.fill", tone: .positive)
       title = OJDLocalized.string("ui.settings.general.upToDate")
-      version = current
+      shownVersion = current
     case .available(let info):
       indicator = .symbol(name: "arrow.down.circle.fill", tone: .attention)
       title = OJDLocalized.string("ui.settings.general.updateAvailable")
-      version = Self.versionText(ofTag: info.tagName)
+      shownVersion = Self.versionText(ofTag: info.tagName)
     case .aheadOfLatestRelease(let current, let latest):
       indicator = .symbol(name: "arrow.up.circle.fill", tone: .informational)
       title = OJDLocalized.string("ui.settings.general.updateAhead")
-      version = current
-      latestRelease = OJDLocalized.formatted(
+      shownVersion = current
+      latestLine = OJDLocalized.formatted(
         "ui.settings.general.latestRelease",
         Self.versionText(ofTag: latest)
       )
@@ -75,8 +75,8 @@ struct UpdateStatusPresentation: Equatable {
       indicator = .symbol(name: "xmark.circle.fill", tone: .failure)
       title = failure.message
     }
-    self.version = version
-    self.latestRelease = latestRelease
+    self.version = shownVersion
+    self.latestRelease = latestLine
   }
 
   /// A release tag as a version number: `v1.2.3` shows as `1.2.3`.

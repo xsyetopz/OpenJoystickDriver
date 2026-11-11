@@ -87,8 +87,9 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   /// Whether a `Pause` has the controller pass through unmapped; set by the service when it
   /// reports status.
   public var paused = false
-  /// The profile in force for the controller and the app that selected it; nil when no profile
-  /// is active for it. Set by the service when it reports status.
+  /// The profile in force for the controller and the app that selected it.
+  ///
+  /// It is nil when no profile is active for it. The service sets it when it reports status.
   public var profileInForce: ApplicationServiceProfileInForce?
 
   /// Creates a new ApplicationServiceDeviceDescription.
@@ -159,7 +160,7 @@ public struct ApplicationServiceDeviceDescription: Codable, Sendable {
   }
 
   /// Decodes the value from `decoder`.
-  public init(from decoder: Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.sessionToken = try container.decode(ControllerSessionToken.self, forKey: .sessionToken)
     self.portKey = try container.decodeIfPresent(ControllerPortKey.self, forKey: .portKey)

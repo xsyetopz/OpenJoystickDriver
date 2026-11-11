@@ -46,9 +46,9 @@ struct LibraryRecordItem: Equatable, Identifiable {
   ///
   /// An empty query matches.
   static func contains(_ query: String, in fields: [String]) -> Bool {
-    let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-    return query.isEmpty
-      || fields.contains { $0.range(of: query, options: .caseInsensitive) != nil }
+    let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+    return trimmed.isEmpty
+      || fields.contains { $0.range(of: trimmed, options: .caseInsensitive) != nil }
   }
 }
 

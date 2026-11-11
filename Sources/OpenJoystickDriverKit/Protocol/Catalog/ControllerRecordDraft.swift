@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A starting controller record for one connected controller, from its HID report descriptor
 /// and the input reports it sent while you pressed its controls.
@@ -103,7 +103,7 @@ public struct ControllerRecordDraft: Sendable {
     guard let json = try? OrderedJSON(foundation: body),
       let data = try? json.plistData()
     else { return nil }
-    text = String(decoding: data, as: UTF8.self)
+    text = String(bytes: data, encoding: .utf8) ?? ""
   }
 
   /// The most common length among `reports`, the longest on a tie, or nil when none is 1 to 64

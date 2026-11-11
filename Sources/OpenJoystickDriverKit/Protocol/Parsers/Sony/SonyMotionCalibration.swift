@@ -112,8 +112,8 @@ struct SonyMotionCalibration {
       Double(Int16(bitPattern: UInt16(bytes[offset]) | (UInt16(bytes[offset + 1]) << 8)))
     }
     let speed = value(19) + value(21)
-    var gyro: [Axis] = []
-    var accel: [Axis] = []
+    var gyroAxes: [Axis] = []
+    var accelAxes: [Axis] = []
     for index in 0..<3 {
       let gyroBias = value(1 + index * 2)
       let gyroPlus = value(7 + index * (groupedGyroEndpoints ? 2 : 4))
@@ -132,10 +132,10 @@ struct SonyMotionCalibration {
         plausibleScaleRange.contains(gyroGain * nominalGyroCountsPerDegreePerSecond),
         plausibleScaleRange.contains(accelGain * nominalAccelerometerCountsPerG)
       else { return nil }
-      gyro.append(Axis(bias: gyroBias, unitsPerCount: gyroGain))
-      accel.append(Axis(bias: accelBias, unitsPerCount: accelGain))
+      gyroAxes.append(Axis(bias: gyroBias, unitsPerCount: gyroGain))
+      accelAxes.append(Axis(bias: accelBias, unitsPerCount: accelGain))
     }
-    return Self(gyro: gyro, accel: accel, source: .deviceFactory)
+    return Self(gyro: gyroAxes, accel: accelAxes, source: .deviceFactory)
   }
 
   /// This calibration with a revision one above `previous` when its coefficients or source differ,

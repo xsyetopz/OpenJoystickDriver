@@ -23,16 +23,16 @@
     /// The problems that need the user's action: the service not reachable, then each permission
     /// the Access area shows as missing.
     var problems: [StatusItemProblem] {
-      var problems: [StatusItemProblem] = []
+      var found: [StatusItemProblem] = []
       switch runtime.statusState {
-      case .unavailable, .error: problems.append(.serviceNotRunning)
+      case .unavailable, .error: found.append(.serviceNotRunning)
       case .loading, .available: break
       }
-      problems += AccessReadiness.missingPermissions(
+      found += AccessReadiness.missingPermissions(
         permissionState: runtime.permissionState,
         statusState: runtime.statusState
       ).map(StatusItemProblem.missingPermission)
-      return problems
+      return found
     }
 
     /// The data that the status menu is built from.
@@ -82,7 +82,7 @@
 
     /// Reads the driver extension setup and the service status again.
     func refresh() async {
-      await runtime.refreshSystemExtensionSetup()
+      runtime.refreshSystemExtensionSetup()
       await runtime.refresh()
     }
 

@@ -1,5 +1,6 @@
 import Darwin
 import Foundation
+import OpenJoystickDriverKit
 
 /// Terminal facts that decide whether `ojd` may use color or prompt.
 enum CLITerminal {

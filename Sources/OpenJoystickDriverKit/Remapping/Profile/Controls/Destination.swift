@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The output a binding drives: virtual gamepad, keyboard, pointer, or physical controller.
 public enum RemappingDestination: Codable, Equatable, Hashable, Sendable {

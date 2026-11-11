@@ -36,15 +36,15 @@ struct RemappingFlickStick {
       reset()
       return nil
     }
-    let x = max(-1, min(1, x))
-    let y = max(-1, min(1, y))
-    let magnitude = hypot(x, y)
+    let clampedX = max(-1, min(1, x))
+    let clampedY = max(-1, min(1, y))
+    let magnitude = hypot(clampedX, clampedY)
     let required = previousAngle == nil ? threshold : threshold - hysteresis
     guard magnitude >= required else {
       reset()
       return nil
     }
-    let angle = atan2(x, -y) * 180 / .pi
+    let angle = atan2(clampedX, -clampedY) * 180 / .pi
     defer { previousAngle = angle }
     guard let previousAngle else { return .flick(degrees: angle) }
     var delta = (angle - previousAngle).truncatingRemainder(dividingBy: 360)

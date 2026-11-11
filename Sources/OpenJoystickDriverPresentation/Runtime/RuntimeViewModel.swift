@@ -160,7 +160,7 @@ final class RuntimeViewModel: ObservableObject {
   ///
   /// A service that stopped its request listener explains why, with the code and the error number,
   /// whatever the request failed with: the stopped listener removed the socket.
-  func statusFailureMessage(_ error: Error) -> String {
+  func statusFailureMessage(_ error: any Error) -> String {
     listenerFailure?.localizedSummary ?? RuntimePresentation.userFacingError(error)
   }
 
@@ -183,14 +183,14 @@ final class RuntimeViewModel: ObservableObject {
   }
 
   /// Reads the state of the driver extension at launch; it sends no request.
-  func startSystemExtensionSetup() async {
-    await systemExtensionSetup.launch()
+  func startSystemExtensionSetup() {
+    systemExtensionSetup.launch()
     systemExtensionSetupState = systemExtensionSetup.state
   }
 
   /// Reads the state of the driver extension again.
-  func refreshSystemExtensionSetup() async {
-    await systemExtensionSetup.refresh()
+  func refreshSystemExtensionSetup() {
+    systemExtensionSetup.refresh()
     systemExtensionSetupState = systemExtensionSetup.state
   }
 
@@ -224,7 +224,7 @@ final class RuntimeViewModel: ObservableObject {
         schedulePendingScopedRefresh()
       }
     }
-    await refreshSystemExtensionSetup()
+    refreshSystemExtensionSetup()
     liveStatusGeneration += 1
     let statusGeneration = liveStatusGeneration
     loadState = .loading

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension DeviceManager {
   /// Schedules the end of a timed rumble after `durationMs` and cancels the earlier stop of the

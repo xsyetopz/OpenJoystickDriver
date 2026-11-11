@@ -31,20 +31,20 @@ extension ControllerRecordDocument {
       try container.rejectUnknown(
         allowed: ["id", "protocol", "match", "interface", "session", "idle"]
       )
-      let id = try container.decode(String.self, for: "id")
-      guard Self.isValidID(id) else {
+      let identifier = try container.decode(String.self, for: "id")
+      guard Self.isValidID(identifier) else {
         throw Self.invalid("id", "a mode id is lowercase words joined by hyphens", decoder)
       }
-      let match = try container.decodeOptional(ModeMatchDocument.self, for: "match")?.match
-      let isDefault = id == Self.defaultID
-      if isDefault, match != nil {
+      let modeMatch = try container.decodeOptional(ModeMatchDocument.self, for: "match")?.match
+      let isDefaultMode = identifier == Self.defaultID
+      if isDefaultMode, modeMatch != nil {
         throw Self.invalid(
           "match",
           "the default mode has no match; it runs when no other mode does",
           decoder
         )
       }
-      if !isDefault, match == nil {
+      if !isDefaultMode, modeMatch == nil {
         throw Self.invalid("match", "every mode but default needs a match", decoder)
       }
       if let name = try container.decodeOptional(String.self, for: "idle") {
@@ -60,8 +60,8 @@ extension ControllerRecordDocument {
       } else {
         idle = nil
       }
-      self.id = id
-      self.match = match
+      self.id = identifier
+      self.match = modeMatch
       protocolInfo = try container.decode(ProtocolInfo.self, for: "protocol")
       interfaceRange = try container.decodeOptional(ModeInterfaceDocument.self, for: "interface")?
         .range
@@ -151,7 +151,7 @@ extension ControllerRecordDocument {
           .init(codingPath: decoder.codingPath, debugDescription: "a match needs at least one key")
         )
       }
-      var match = ControllerModeMatch()
+      var found = ControllerModeMatch()
       if let name = try container.decodeOptional(String.self, for: "link") {
         guard let link = PhysicalTransport(rawValue: name) else {
           throw ModeDocument.invalid(
@@ -160,24 +160,24 @@ extension ControllerRecordDocument {
             decoder
           )
         }
-        match.link = link
+        found.link = link
       }
-      match.interfaceSignature =
+      found.interfaceSignature =
         try container.decodeOptional(
           ModeInterfaceSignatureDocument.self,
           for: "interfaceSignature"
         )?
         .signature
-      match.manufacturer = try Self.text("manufacturer", container, decoder)
-      match.product = try Self.text("product", container, decoder)
-      match.bcdDevice = try container.decodeOptional(BCDRangeDocument.self, for: "bcdDevice")?.range
+      found.manufacturer = try Self.text("manufacturer", container, decoder)
+      found.product = try Self.text("product", container, decoder)
+      found.bcdDevice = try container.decodeOptional(BCDRangeDocument.self, for: "bcdDevice")?.range
       if let entries = try container.decodeOptional([ModeProbeDocument].self, for: "probes") {
         guard !entries.isEmpty else {
           throw ModeDocument.invalid("probes", "a mode needs at least one probe", decoder)
         }
-        match.probes = entries.map(\.probe)
+        found.probes = entries.map(\.probe)
       }
-      self.match = match
+      self.match = found
     }
 
     /// Reads an optional string for `key`; an empty string is rejected.
@@ -210,10 +210,10 @@ extension ControllerRecordDocument {
         ]
       )
       func byte(_ key: String) throws -> UInt8 {
-        guard let byte = UInt8(exactly: try container.decode(Int.self, for: key)) else {
+        guard let value = UInt8(exactly: try container.decode(Int.self, for: key)) else {
           throw ModeDocument.invalid(key, "\(key) is 0...255", decoder)
         }
-        return byte
+        return value
       }
       func word(_ key: String) throws -> UInt32? {
         guard let value = try container.decodeOptional(Int.self, for: key) else { return nil }
@@ -262,18 +262,18 @@ extension ControllerRecordDocument {
           )
         )
       }
-      var endpoint = ControllerModeMatch.InterfaceSignature.Endpoint()
+      var parsed = ControllerModeMatch.InterfaceSignature.Endpoint()
       if let address = try container.decodeOptional(Int.self, for: "address") {
         guard let byte = UInt8(exactly: address) else {
           throw ModeDocument.invalid("address", "address is 0...255", decoder)
         }
-        endpoint.address = byte
+        parsed.address = byte
       }
       if let name = try container.decodeOptional(String.self, for: "direction") {
         guard let direction = USBEndpointDirection(rawValue: name) else {
           throw ModeDocument.invalid("direction", "direction is In or Out", decoder)
         }
-        endpoint.direction = direction
+        parsed.direction = direction
       }
       if let name = try container.decodeOptional(String.self, for: "transferType") {
         guard let type = USBEndpointTransferType(rawValue: name), type != .unknown else {
@@ -283,15 +283,15 @@ extension ControllerRecordDocument {
             decoder
           )
         }
-        endpoint.transferType = type
+        parsed.transferType = type
       }
       if let size = try container.decodeOptional(Int.self, for: "maxPacketSize") {
         guard let word = UInt16(exactly: size) else {
           throw ModeDocument.invalid("maxPacketSize", "maxPacketSize is 0...65535", decoder)
         }
-        endpoint.maxPacketSize = word
+        parsed.maxPacketSize = word
       }
-      self.endpoint = endpoint
+      self.endpoint = parsed
     }
   }
 
@@ -381,7 +381,10 @@ extension ControllerRecordDocument {
     }
     guard !modes.isEmpty else { throw fail("error.E5007.modes.empty", "modes must not be empty") }
     guard modes.filter(\.isDefault).count <= 1 else {
-      throw fail("error.E5007.modes.defaultCount", "modes need at most one mode with the id default")
+      throw fail(
+        "error.E5007.modes.defaultCount",
+        "modes need at most one mode with the id default"
+      )
     }
     guard Set(modes.map(\.id)).count == modes.count else {
       throw fail("error.E5007.modes.uniqueIDs", "mode IDs must be unique")
@@ -406,10 +409,16 @@ extension ControllerRecordDocument {
         )
       }
       if inputLayouts == nil, info.protocolID.requiresRecordInputLayout {
-        throw fail("error.E5007.modes.inputLayoutNeeded", "a HIDReportLayout mode needs the record's input layout")
+        throw fail(
+          "error.E5007.modes.inputLayoutNeeded",
+          "a HIDReportLayout mode needs the record's input layout"
+        )
       }
       if inputLayouts != nil, info.protocolID == .hidDescriptor {
-        throw fail("error.E5007.modes.usageMapNotLayouts", "a HIDDescriptor mode reads a usage map, not input layouts")
+        throw fail(
+          "error.E5007.modes.usageMapNotLayouts",
+          "a HIDDescriptor mode reads a usage map, not input layouts"
+        )
       }
       if hidUsageMap != nil,
         !info.protocolID.protocolDescription.recordSections.contains(.hidUsageMap)
@@ -421,7 +430,10 @@ extension ControllerRecordDocument {
       }
     }
     guard capabilitiesAreDeclared(byAnyOf: modes.map(\.protocolInfo.protocolID)) else {
-      throw fail("error.E5007.modes.capabilities", "capabilities must be deltas the driver of some mode declares")
+      throw fail(
+        "error.E5007.modes.capabilities",
+        "capabilities must be deltas the driver of some mode declares"
+      )
     }
   }
 }

@@ -40,7 +40,7 @@ extension DeviceManager: OutputSink {
   ///
   /// - Throws: `StreamBoundaryError.rejected` when the outputs are not released.
   public func consume(
-    _ release: MappingOutputRelease,
+    _: MappingOutputRelease,
     for controller: LogicalControllerID
   ) async throws {
     guard await releaseMappingPhysicalOutputs(for: controller) else {

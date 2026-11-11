@@ -14,7 +14,12 @@ public struct PhysicalProtocolID: Hashable, Sendable, RawRepresentable, CaseIter
   init(documented name: String) { rawValue = name }
 
   /// The families with an implemented OJD parser, in declaration order.
-  public static let allCases: [Self] = [.hidDescriptor, .hidReportLayout, .xboxXID, .xboxXUSB, .xboxGIP, .sonySixaxis, .sonyDualShock4, .sonyDualSense, .nintendoSwitch1, .nintendoSwitch2, .nintendoSwitchInputOnly, .valveSteamController, .valveSteamTriton, .valveSteamDeck, .vendorFlydigi, .vendorPS3ThirdParty, .vendorGameSir, .vendorNVIDIAShield, .nintendoWii]
+  public static let allCases: [Self] = [
+    .hidDescriptor, .hidReportLayout, .xboxXID, .xboxXUSB, .xboxGIP, .sonySixaxis, .sonyDualShock4,
+    .sonyDualSense, .nintendoSwitch1, .nintendoSwitch2, .nintendoSwitchInputOnly,
+    .valveSteamController, .valveSteamTriton, .valveSteamDeck, .vendorFlydigi, .vendorPS3ThirdParty,
+    .vendorGameSir, .vendorNVIDIAShield, .nintendoWii,
+  ]
 
   /// The family named `rawValue`: a built-in one, or one a loaded description document names.
   public init?(rawValue: String) {

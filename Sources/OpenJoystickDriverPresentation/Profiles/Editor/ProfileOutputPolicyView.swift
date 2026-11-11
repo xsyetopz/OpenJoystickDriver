@@ -59,7 +59,8 @@
           Text(
             OJDLocalized.string(
               didResetExclusiveInput
-                ? "ui.profiles.virtualOutputResetsExclusive" : "ui.profiles.exclusiveInputUnavailable"
+                ? "ui.profiles.virtualOutputResetsExclusive"
+                : "ui.profiles.exclusiveInputUnavailable"
             )
           ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
             .fixedSize(horizontal: false, vertical: true)

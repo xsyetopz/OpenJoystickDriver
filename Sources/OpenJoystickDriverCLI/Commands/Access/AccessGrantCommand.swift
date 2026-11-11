@@ -1,6 +1,6 @@
-import ArgumentParser
+public import ArgumentParser
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 /// A client that `ojd access grant` or `revoke` names: a program path, or an ID from
 /// `ojd access list`.
@@ -19,7 +19,7 @@ struct AccessClient {
   {
     if text.contains("/") || FileManager.default.fileExists(atPath: text) {
       let url = URL(fileURLWithPath: text).standardizedFileURL
-      guard let identity = PlatformHosts.current.codeSigningIdentity(ofPath: url) else {
+      guard let signed = PlatformHosts.current.codeSigningIdentity(ofPath: url) else {
         throw CLIFailure(
           .unsignedClient,
           CLILocalized.format(
@@ -28,10 +28,10 @@ struct AccessClient {
           )
         )
       }
-      return Self(identity: identity, path: url.path)
+      return Self(identity: signed, path: url.path)
     }
-    let status = try await status()
-    if let grant = status.grants.first(where: { $0.id == text }) {
+    let payload = try await status()
+    if let grant = payload.grants.first(where: { $0.id == text }) {
       return Self(
         identity: CodeSigningIdentity(
           kind: grant.publisher.kind,
@@ -41,7 +41,7 @@ struct AccessClient {
         path: grant.path
       )
     }
-    if let client = status.refused.first(where: { $0.id == text }) {
+    if let client = payload.refused.first(where: { $0.id == text }) {
       return Self(identity: client.identity, path: client.path ?? "")
     }
     throw CLIFailure(
@@ -156,10 +156,10 @@ struct AccessGrantCommand: AsyncParsableCommand {
         try await grantToken(named: token)
         return
       }
-      let client = try await AccessClient.resolve(client ?? "") {
+      let resolved = try await AccessClient.resolve(client ?? "") {
         try await ServiceConnection.request { try await $0.accessStatus() }
       }
-      let identity = client.identity
+      let identity = resolved.identity
       guard identity.kind != .adHoc else {
         throw CLIFailure(
           .unsignedClient,
@@ -176,7 +176,7 @@ struct AccessGrantCommand: AsyncParsableCommand {
       )
       let scopes = scope
       let grant = try await ServiceConnection.request {
-        try await $0.grantAccess(identity, path: client.path, scopes: scopes)
+        try await $0.grantAccess(identity, path: resolved.path, scopes: scopes)
       }
       switch CLIContext.current.format {
       case .json: try CLIOutput.json(grant)

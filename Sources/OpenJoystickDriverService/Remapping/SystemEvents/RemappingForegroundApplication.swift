@@ -21,7 +21,7 @@ final class WorkspaceRemappingForegroundApplication: RemappingForegroundApplicat
   /// The bundle identifier of the foreground application.
   private let appID = Locked<String?>(nil)
   /// The token of the activation observer.
-  private var observerToken: NSObjectProtocol?
+  private var observerToken: any NSObjectProtocol?
 
   /// Creates the tracker, which observes the activation of applications.
   init(notificationCenter: NotificationCenter = NSWorkspace.shared.notificationCenter) {

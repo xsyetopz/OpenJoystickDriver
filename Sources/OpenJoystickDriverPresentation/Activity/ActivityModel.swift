@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 
 /// The two views of the Activity area; the toolbar's segmented control switches them.

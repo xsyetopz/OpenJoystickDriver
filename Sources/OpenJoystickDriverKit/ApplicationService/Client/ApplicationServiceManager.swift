@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The state of the main app's login-item registration in macOS.
 package enum ApplicationServiceRegistrationStatus: Sendable, Equatable {

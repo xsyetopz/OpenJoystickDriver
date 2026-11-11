@@ -113,12 +113,12 @@ extension ControllerRecordDocument {
         reportID = nil
         return
       }
-      guard let reportID = UInt8(exactly: id), reportID != 0 else {
+      guard let validID = UInt8(exactly: id), validID != 0 else {
         throw DecodingError.dataCorrupted(
           .init(codingPath: decoder.codingPath, debugDescription: "id must be 1...255")
         )
       }
-      self.reportID = reportID
+      self.reportID = validID
     }
   }
 

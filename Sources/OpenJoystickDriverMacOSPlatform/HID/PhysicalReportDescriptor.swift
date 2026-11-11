@@ -1,7 +1,7 @@
 import Foundation
 import IOKit
 import IOKit.hid
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 
 /// Reads HID report descriptors from the controllers macOS currently sees.
 package enum PhysicalReportDescriptor {

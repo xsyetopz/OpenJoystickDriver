@@ -1,5 +1,5 @@
 import Foundation
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 
 /// What the service did for the output requests sent to one controller.
 package struct AutomationOutputResult: Equatable, Sendable {

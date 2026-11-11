@@ -1,6 +1,6 @@
 import Combine
 import Foundation
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 
 /// The service status, permission and controller input requests of the runtime.
 protocol RuntimeStatusGateway: Sendable {

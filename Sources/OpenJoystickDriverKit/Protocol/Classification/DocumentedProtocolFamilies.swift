@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A family that a description document names and OJD does not build in.
 public struct DocumentedProtocolFamily: Sendable {

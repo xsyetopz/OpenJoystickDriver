@@ -8,13 +8,19 @@ extension GenerateCommand {
   ///   returns no document or a document that a reader refuses, or two documents name one file.
   static func documents(of script: String) async throws -> [GeneratedDocument] {
     guard FileManager.default.isReadableFile(atPath: script) else {
-      throw CLIFailure(.fileAccessFailed, CLILocalized.format("cli.generate.group.unreadable", script))
+      throw CLIFailure(
+        .fileAccessFailed,
+        CLILocalized.format("cli.generate.group.unreadable", script)
+      )
     }
     let report = try await report(of: script)
     let text: String?
     switch report {
     case .missingGenerate:
-      throw CLIFailure(.invalidInputFile, CLILocalized.format("cli.generate.group.missingGenerate", script))
+      throw CLIFailure(
+        .invalidInputFile,
+        CLILocalized.format("cli.generate.group.missingGenerate", script)
+      )
     case .failure(let message, let line):
       throw CLIFailure(
         .invalidInputFile,
@@ -99,7 +105,10 @@ extension GenerateCommand {
   /// - Throws: ``CLIFailure`` for `null`, no value, a value that is not a dictionary, an empty
   ///   list, and a list with an item that is not a dictionary.
   private static func trees(of text: String?) throws -> [[String: Any]] {
-    let refusal = CLIFailure(.invalidInputFile, CLILocalized.text("cli.generate.group.notDocuments"))
+    let refusal = CLIFailure(
+      .invalidInputFile,
+      CLILocalized.text("cli.generate.group.notDocuments")
+    )
     guard let text,
       let value = try? JSONSerialization.jsonObject(
         with: Data(text.utf8),

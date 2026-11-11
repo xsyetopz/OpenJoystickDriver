@@ -11,12 +11,12 @@ enum CLILocalized {
   static func text(_ key: String) -> String { resolver.string(key) }
 
   /// The text for `key` with `arguments` filled in.
-  static func format(_ key: String, _ arguments: CVarArg...) -> String {
+  static func format(_ key: String, _ arguments: any CVarArg...) -> String {
     resolver.formatted(key, arguments: arguments)
   }
 
   /// A `Localizable.stringsdict` plural whose count is one of `arguments`, in the entry's order.
-  static func plural(_ key: String, _ arguments: CVarArg...) -> String {
+  static func plural(_ key: String, _ arguments: any CVarArg...) -> String {
     resolver.plural(key, arguments: arguments)
   }
 }

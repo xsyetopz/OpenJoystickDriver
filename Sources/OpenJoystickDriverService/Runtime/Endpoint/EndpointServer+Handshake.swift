@@ -69,17 +69,18 @@ extension EndpointServer {
         return
       }
       guard let persona = request.as.flatMap(VirtualHIDProfileID.init(rawValue:)) else {
-        let accepted = VirtualHIDProfileID.allCases.map(\.rawValue).joined(separator: ", ")
+        let allowed = VirtualHIDProfileID.allCases.map(\.rawValue).joined(separator: ", ")
         let refused = request.as.map { "\($0) is not a persona the service publishes. " } ?? ""
         connection.close(
-          Self.invalid("\(refused)Send FeedRequest with a persona: \(accepted).")
+          Self.invalid("\(refused)Send FeedRequest with a persona: \(allowed).")
         )
         return
       }
       feed(connection, persona: persona)
       return
     }
-    guard request.kind == .subscription, let stream = request.stream.flatMap(Self.SubscriptionStream.init),
+    guard request.kind == .subscription,
+      let stream = request.stream.flatMap(Self.SubscriptionStream.init),
       stream == .controllers || request.output == nil
     else {
       connection.close(
@@ -103,7 +104,9 @@ extension EndpointServer {
       listing = nil
     case .profiles:
       let automation = automation
-      listing = watchList(connection) { EndpointProfiles(profiles: try await automation.profiles()) }
+      listing = watchList(connection) {
+        EndpointProfiles(profiles: try await automation.profiles())
+      }
     case .mods:
       let modStore = modStore
       listing = watchList(connection) { EndpointMods(mods: modStore.entries()) }

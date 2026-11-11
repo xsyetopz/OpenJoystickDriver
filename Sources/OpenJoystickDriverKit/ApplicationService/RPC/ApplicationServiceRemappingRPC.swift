@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Byte limits on the messages of the remapping RPC methods.
 ///

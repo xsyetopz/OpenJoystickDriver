@@ -133,29 +133,29 @@ public struct ApplicationServicePublicationStatus: Codable, Equatable, Sendable 
 
   /// Refuses a payload whose `reason` or `failure` does not match its `state`, and an empty
   /// `failure`.
-  public init(from decoder: Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let state = try container.decode(State.self, forKey: .state)
-    let reason = try container.decodeIfPresent(NotPublishedReason.self, forKey: .reason)
-    let failure = try container.decodeIfPresent(String.self, forKey: .failure)
-    switch state {
+    let decodedState = try container.decode(State.self, forKey: .state)
+    let decodedReason = try container.decodeIfPresent(NotPublishedReason.self, forKey: .reason)
+    let decodedFailure = try container.decodeIfPresent(String.self, forKey: .failure)
+    switch decodedState {
     case .published:
-      guard reason == nil, failure == nil else {
+      guard decodedReason == nil, decodedFailure == nil else {
         throw Self.mismatch(container, "A Published publication has no reason or failure.")
       }
     case .notPublished:
-      guard reason != nil, failure == nil else {
+      guard decodedReason != nil, decodedFailure == nil else {
         throw Self.mismatch(container, "A NotPublished publication has a reason and no failure.")
       }
     case .failed:
-      guard reason == nil, let failure, !failure.isEmpty else {
+      guard decodedReason == nil, let decodedFailure, !decodedFailure.isEmpty else {
         throw Self.mismatch(container, "A Failed publication has a failure text and no reason.")
       }
     }
     self.init(
-      state: state,
-      reason: reason,
-      failure: failure,
+      state: decodedState,
+      reason: decodedReason,
+      failure: decodedFailure,
       target: try container.decodeIfPresent(VirtualHIDProfileID.self, forKey: .target),
       lastAttemptedNanoseconds: try container.decodeIfPresent(
         UInt64.self,

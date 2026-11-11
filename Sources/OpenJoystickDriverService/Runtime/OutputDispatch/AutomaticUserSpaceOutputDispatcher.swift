@@ -194,7 +194,7 @@ final class AutomaticUserSpaceOutputDispatcher: VirtualOutputDispatching,
       },
       profileProvider: { [weak self] identifier, description in
         guard let self, let generation = generations[identifier] else { return nil }
-        return self.profile(for: identifier, description: description, generation: generation)
+        return profile(for: identifier, description: description, generation: generation)
       },
       factory: { [self] in factory(for: $0) }
     )

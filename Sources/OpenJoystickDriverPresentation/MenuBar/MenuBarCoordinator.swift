@@ -1,9 +1,9 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
-  import AppKit
+  package import AppKit
   import Combine
   import Darwin
-  import OpenJoystickDriverKit
+  package import OpenJoystickDriverKit
   import SwiftUI
   import UserNotifications
 

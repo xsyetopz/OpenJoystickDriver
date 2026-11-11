@@ -77,7 +77,9 @@ enum AlphaTwoToAlphaThree {
         converted.append(.init(key: member.key, value: body))
       default:
         guard !droppedKeys.contains(member.key), member.value != .null else { continue }
-        converted.append(.init(key: member.key, value: try stripped(member.value, path: member.key)))
+        converted.append(
+          .init(key: member.key, value: try stripped(member.value, path: member.key))
+        )
       }
     }
     if !removed.isEmpty {
@@ -131,7 +133,8 @@ enum AlphaTwoToAlphaThree {
     for member in members {
       let next = path + [member.key]
       if member.value == .null {
-        guard next.allSatisfy({ $0.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber) } }) else {
+        guard next.allSatisfy({ $0.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber) } })
+        else {
           throw DocumentMigrationProblem("\(next.joined(separator: ".")) has no remove path")
         }
         removed.append(next.joined(separator: "."))
@@ -147,10 +150,10 @@ enum AlphaTwoToAlphaThree {
     case .object(let members):
       var kept: [OrderedJSON.Member] = []
       for member in members where !droppedKeys.contains(member.key) && member.value != .null {
-        let value = try stripped(member.value, path: "\(path).\(member.key)")
+        let cleaned = try stripped(member.value, path: "\(path).\(member.key)")
         // A section whose members were all `null` has nothing left to say.
-        if value == .object([]), member.value != .object([]) { continue }
-        kept.append(.init(key: member.key, value: value))
+        if cleaned == .object([]), member.value != .object([]) { continue }
+        kept.append(.init(key: member.key, value: cleaned))
       }
       return .object(kept)
     case .array(let items):

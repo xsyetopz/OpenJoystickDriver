@@ -1,5 +1,5 @@
 import Foundation
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 
 /// Where the Xbox USB driver extension is.
 enum SystemExtensionSetupState: Sendable, Equatable {
@@ -39,8 +39,7 @@ package protocol SystemExtensionSetupClient: Sendable {
   func requestDeactivation() async -> SystemExtensionSetupRequestResult
 }
 
-/// Keeps the state of the driver extension current. Only ``repair()`` and ``uninstall()`` send a
-/// request to macOS; a read never does.
+// Only ``repair()`` and ``uninstall()`` send a request to macOS; a read never does.
 @MainActor
 package final class SystemExtensionSetupCoordinator {
   /// Inspects, activates and deactivates the extension.
@@ -55,11 +54,11 @@ package final class SystemExtensionSetupCoordinator {
   package init(client: any SystemExtensionSetupClient) { self.client = client }
 
   /// Reads the state at launch.
-  func launch() async { inspect() }
+  func launch() { inspect() }
   /// Reads the state when the app comes to the front.
-  func foreground() async { inspect() }
+  func foreground() { inspect() }
   /// Reads the state again.
-  func refresh() async { inspect() }
+  func refresh() { inspect() }
 
   /// Asks macOS to activate or replace the extension, for the user's click.
   ///
@@ -95,8 +94,8 @@ package final class SystemExtensionSetupCoordinator {
     }
   }
 
-  /// Reads the status of the extension. A request outcome that is still true holds over a computed
-  /// state that asks for a request, so the banner keeps saying what happened.
+  // A request outcome that is still true holds over a computed state that asks for a request, so
+  // the banner keeps saying what happened.
   private func inspect() {
     status = client.inspect()
     guard state != .running else { return }

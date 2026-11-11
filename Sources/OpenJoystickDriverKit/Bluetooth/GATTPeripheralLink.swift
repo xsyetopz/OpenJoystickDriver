@@ -30,14 +30,14 @@ public final class GATTPeripheralLink: Switch2BluetoothLEWriter, Sendable {
     productName: String?,
     hub: Switch2BluetoothLEHub
   ) {
-    guard let vibrationUUID = Switch2BluetoothLEProfile.vibrationUUID(productID: productID)
+    guard let characteristic = Switch2BluetoothLEProfile.vibrationUUID(productID: productID)
     else { return nil }
     self.peripheral = peripheral
     self.productID = productID
     self.productName = productName
     self.hubReference = WeakHub(hub: hub)
     self.commandUUID = Switch2BluetoothLEProfile.commandUUID
-    self.vibrationUUID = vibrationUUID
+    self.vibrationUUID = characteristic
   }
 
   /// Presents the peripheral to the hub as a connected controller.

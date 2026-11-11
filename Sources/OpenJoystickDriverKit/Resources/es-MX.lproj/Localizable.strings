@@ -2222,7 +2222,7 @@
 /* Message of 'ojd transport-extension activate' when the user must approve the extension. The menu path in System Settings is written as macOS shows it. */
 "platform.macos.cli.transportExtension.group.approval" = "La solicitud necesita tu aprobación. Permítela en Configuración del Sistema > General > Ítems de inicio y extensiones > Extensiones de controlador.";
 /* Error of 'ojd transport-extension activate' when the app has no driver extension inside. %@ is the extension name, which stays as written with .dext. The build command stays as written. */
-"cli.transportExtension.group.bundleMissing" = "La app no contiene %@.dext. Ejecuta “./Scripts/ojd build install dev” y vuelve a intentarlo desde /Applications.";
+"cli.transportExtension.group.bundleMissing" = "La app no contiene %@.dext. Ejecuta “just install-dev” y vuelve a intentarlo desde /Applications.";
 /* Error of 'ojd transport-extension' commands when the codesign tool cannot run. %@ is the reason from the system. codesign and its path stay as written. */
 "platform.macos.cli.transportExtension.group.codesignFailedToRun" = "No se pudo ejecutar codesign para verificar la app: %@. Comprueba que existe /usr/bin/codesign.";
 /* One-line summary of 'ojd transport-extension deactivate' in the command list and at the top of its help. */
@@ -2234,7 +2234,7 @@
 /* Error of 'ojd transport-extension' commands when ojd runs from a folder other than Applications. %@ is the path of this ojd. The path of the installed app stays as written. */
 "cli.transportExtension.group.notInstalled" = "Este ojd se ejecuta desde %@, no desde /Applications. Ejecuta el ojd que está dentro de /Applications/OpenJoystickDriver.app.";
 /* Error of 'ojd transport-extension' commands when the app code signature is not valid. %@ is the description of the signature problem. The build command stays as written. */
-"cli.transportExtension.group.signatureInvalid" = "La firma de la app no es válida (%@). Recompílala con “./Scripts/ojd build install-fast dev” y vuelve a intentarlo.";
+"cli.transportExtension.group.signatureInvalid" = "La firma de la app no es válida (%@). Recompílala con “just install-fast-dev” y vuelve a intentarlo.";
 /* One-line summary of 'ojd transport-extension status' in the command list and at the top of its help. */
 "platform.macos.cli.transportExtension.status.abstract" = "Muestra si la extensión está en la app y registrada en macOS.";
 /* Row of 'ojd transport-extension status'. %@ is the state of the extension inside the app: present, missing or invalid. Keep the two spaces after the colon. */
@@ -3560,7 +3560,7 @@
 /* Line of the output of 'ojd explain' with the wire value of the code, which other programs read. %@ is that value and stays as written. */
 "cli.explain.group.wire" = "Valor de transmisión: %@";
 /* Error when the installed app is older than the repository sources that built this ojd. The build command, the environment variable OJD_RUN_REPOSITORY_CLI=1 and OpenJoystickDriver.app stay as written. */
-"cli.shared.error.staleInstallation" = "La OpenJoystickDriver.app instalada es más antigua que estas fuentes del repositorio. Ejecuta “./Scripts/ojd build install-fast dev” o define OJD_RUN_REPOSITORY_CLI=1 para ejecutar esta compilación.";
+"cli.shared.error.staleInstallation" = "La OpenJoystickDriver.app instalada es más antigua que estas fuentes del repositorio. Ejecuta “just install-fast-dev” o define OJD_RUN_REPOSITORY_CLI=1 para ejecutar esta compilación.";
 /* Error when ojd cannot hand the command line to the installed ojd. ojd stays as written. */
 "cli.shared.error.forwarderAllocation" = "No se pudieron reservar los argumentos para el ojd instalado. Vuelve a ejecutar el comando.";
 /* Error when ojd cannot start the installed ojd. %@ is the reason from the system. OpenJoystickDriver.app stays as written. */
@@ -3604,7 +3604,7 @@
 /* Text of error E2019, printed when the check for updates did not finish. */
 "error.E2019.message" = "La búsqueda de actualizaciones no terminó. Revisa tu conexión de red y vuelve a intentarlo.";
 /* Text of error E2020, printed when the installed app is older than the ojd that runs. OpenJoystickDriver is the product name. The build command and OJD_RUN_REPOSITORY_CLI=1 stay as written. */
-"error.E2020.message" = "La aplicación OpenJoystickDriver instalada es más antigua que este ojd. Ejecuta “./Scripts/ojd build install-fast dev” o define OJD_RUN_REPOSITORY_CLI=1 para ejecutar esta compilación.";
+"error.E2020.message" = "La aplicación OpenJoystickDriver instalada es más antigua que este ojd. Ejecuta “just install-fast-dev” o define OJD_RUN_REPOSITORY_CLI=1 para ejecutar esta compilación.";
 /* Text of error E2021, printed when an ojd built from the repository cannot hand a command to the installed app. OpenJoystickDriver.app stays as written. */
 "error.E2021.message" = "Una compilación de ojd del repositorio no pudo pasar el cocontrol a la aplicación instalada. Vuelve a instalar OpenJoystickDriver.app y ejecuta el cocontrol de nuevo.";
 /* Text of error E3001, returned when a remapping request names a controller that is not connected or not ready. */

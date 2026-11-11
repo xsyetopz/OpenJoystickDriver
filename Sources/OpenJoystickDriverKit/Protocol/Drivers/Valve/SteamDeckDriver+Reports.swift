@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension SteamDeckDriver {
 
@@ -66,7 +66,7 @@ extension SteamDeckDriver {
   private static let rightPadTouch: UInt32 = 0x0010_0000
 
   /// Decodes a Deck state report; SDL ignores every other report.
-  public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     let bytes = Array(data)
     guard bytes.count == steamControllerReportLength, bytes[0] == steamControllerReportPrefix0,
       bytes[1] == steamControllerReportPrefix1, bytes[2] == steamDeckStateMessageID,

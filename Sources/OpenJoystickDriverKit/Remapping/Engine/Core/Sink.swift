@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Authorization for one routing operation to reach the system-input sink at one point in time.
 ///
@@ -376,9 +376,9 @@ public protocol RemappingPhysicalOutputSink: AnyObject, Sendable {
 extension RemappingPhysicalOutputSink {
   /// Default that only yields, for sinks that do not show a profile color.
   public func setProfileColor(
-    _ color: ControllerColor?,
-    for identifier: LogicalControllerID
-  ) async throws { await Task.yield() }
+    _: ControllerColor?,
+    for _: LogicalControllerID
+  ) async { await Task.yield() }
 }
 
 /// Preserves the order of transient presses, releases, and mixed destination actions.

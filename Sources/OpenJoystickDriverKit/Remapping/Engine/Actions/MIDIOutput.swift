@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// One MIDI channel message that a `MidiNote` or `MidiControlChange` destination sends.
 ///

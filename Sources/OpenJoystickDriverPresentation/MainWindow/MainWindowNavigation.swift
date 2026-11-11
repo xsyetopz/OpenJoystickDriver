@@ -1,5 +1,6 @@
 #if canImport(SwiftUI)
 
+  import Combine
   import Foundation
   import OpenJoystickDriverKit
 

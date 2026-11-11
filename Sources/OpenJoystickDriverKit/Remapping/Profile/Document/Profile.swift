@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The controller model, and optionally the one unit of it, that a profile is for.
 public struct RemappingDeviceScope: Codable, Equatable, Hashable, Sendable {

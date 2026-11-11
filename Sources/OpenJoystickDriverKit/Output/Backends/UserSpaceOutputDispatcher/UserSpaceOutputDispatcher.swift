@@ -26,7 +26,7 @@ public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
   /// The created devices by controller.
   internal var entries: [LogicalControllerID: Entry] = [:]
   /// The device creations in progress by controller.
-  internal var creationTasks: [LogicalControllerID: Task<Entry, Error>] = [:]
+  internal var creationTasks: [LogicalControllerID: Task<Entry, any Error>] = [:]
   /// The serial numbers and LocationIDs of the controllers that have a device or a creation.
   internal var identityRegistry = VirtualIdentityRegistry()
   /// The pause between failed creation attempts by controller.
@@ -93,7 +93,7 @@ public final class UserSpaceOutputDispatcher: VirtualOutputDispatching,
 extension UserSpaceOutputDispatcher: ControllerLifecycleListener {
   /// Closes the device of `identifier` and cancels its creation, then calls the stop handler.
   public func controllerDidStop(_ identifier: LogicalControllerID) async {
-    let resources = withRegistry { () -> (Entry?, Task<Entry, Error>?) in
+    let resources = withRegistry { () -> (Entry?, Task<Entry, any Error>?) in
       lifecycleGenerations[identifier, default: 0] &+= 1
       let creationTask = creationTasks.removeValue(forKey: identifier)
       creationRetryPolicies.removeValue(forKey: identifier)

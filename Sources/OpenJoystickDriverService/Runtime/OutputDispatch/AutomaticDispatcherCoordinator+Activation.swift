@@ -29,7 +29,7 @@ extension AutomaticDispatcherCoordinator {
     /// The request that the task serves.
     let request: Request
     /// The task that builds, activates and installs the backend.
-    let task: Task<Void, Error>
+    let task: Task<Void, any Error>
   }
 
   /// The publication state of one controller.
@@ -87,7 +87,7 @@ extension AutomaticDispatcherCoordinator {
     identifier: LogicalControllerID,
     descriptions: [LogicalControllerID: ApplicationServiceDeviceDescription],
     isEligible: @escaping Eligibility,
-    profileProvider: @escaping ProfileProvider,
+    profileProvider: ProfileProvider,
     factory: @escaping Factory
   ) async throws {
     guard !closed else { throw CancellationError() }
@@ -129,7 +129,7 @@ extension AutomaticDispatcherCoordinator {
     descriptions: [LogicalControllerID: ApplicationServiceDeviceDescription],
     isEligible: @escaping Eligibility,
     profileProvider: @escaping ProfileProvider,
-    factory: @escaping (LogicalControllerID) -> Factory
+    factory: (LogicalControllerID) -> Factory
   ) async throws {
     guard !closed, entries.isEmpty else {
       throw UserSpaceOutputDispatcher.CreationError.createFailed
@@ -433,7 +433,7 @@ extension AutomaticDispatcherCoordinator {
   private func restore(
     target: VirtualHIDProfileID,
     request: Request,
-    factory: @escaping Factory
+    factory: Factory
   ) async {
     guard (try? validate(request)) != nil, let backend = try? factory(target) else { return }
     let rollback = AutomaticBackendSlot(backend)

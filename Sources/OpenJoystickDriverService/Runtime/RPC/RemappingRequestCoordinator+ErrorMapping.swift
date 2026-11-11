@@ -5,19 +5,19 @@ extension RemappingRequestCoordinator {
 
   /// Maps `error` to the RPC error that carries its code and message to the client.
   static func rpcError(_ error: any Error) -> ApplicationServiceRemappingRPCError {
-    if let error = error as? ApplicationServiceRemappingRPCError { return error }
-    if let error = error as? RemappingProfileLibraryError { return libraryError(error) }
-    if let error = error as? RemappingOutputRoutingError { return routingError(error) }
-    if let error = error as? RemappingMotionCalibrationError {
+    if let existing = error as? ApplicationServiceRemappingRPCError { return existing }
+    if let failure = error as? RemappingProfileLibraryError { return libraryError(failure) }
+    if let failure = error as? RemappingOutputRoutingError { return routingError(failure) }
+    if let calibration = error as? RemappingMotionCalibrationError {
       return ApplicationServiceRemappingRPCError(
-        code: error == .controllerUnavailable ? .controllerUnavailable : .motionUnavailable,
-        message: error == .controllerUnavailable
+        code: calibration == .controllerUnavailable ? .controllerUnavailable : .motionUnavailable,
+        message: calibration == .controllerUnavailable
           ? "The selected controller is unavailable."
           : "Motion calibration requires an eligible controller with motion samples."
       )
     }
-    if let error = error as? RemappingMotionCalibrationRefusal {
-      switch error {
+    if let refusal = error as? RemappingMotionCalibrationRefusal {
+      switch refusal {
       case .gyroNotSelected:
         return ApplicationServiceRemappingRPCError(
           code: .motionGyroNotSelected,
@@ -35,16 +35,16 @@ extension RemappingRequestCoordinator {
         )
       }
     }
-    if let error = error as? RemappingJoyConPairError {
+    if let pair = error as? RemappingJoyConPairError {
       return ApplicationServiceRemappingRPCError(
         code: .joyConPairUnavailable,
-        message: error.localizedDescription
+        message: pair.localizedDescription
       )
     }
-    if let error = error as? RemappingEventEngineError {
+    if let engine = error as? RemappingEventEngineError {
       return ApplicationServiceRemappingRPCError(
         code: .routerEngineUnavailable,
-        message: error.localizedDescription
+        message: engine.localizedDescription
       )
     }
     return ApplicationServiceRemappingRPCError(

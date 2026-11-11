@@ -141,11 +141,11 @@ public enum ServingPolicy {
     if input.observation == .upstreamVirtualDevice {
       return ServingDecision(route: .outputDisabled(.upstreamVirtualDevice))
     }
-    if isHeldByAppleDriver(input) { return ServingDecision(route: .nativePassThrough(input.allowance)) }
+    if isHeldByAppleDriver(input) {
+      return ServingDecision(route: .nativePassThrough(input.allowance))
+    }
     // A record that gives a natively served model to OJD turns passthrough into a virtual gamepad.
-    if input.observation.isServedBySystem && input.server == .system
-      && input.accessRoute == .system
-    {
+    if input.observation.isServedBySystem, input.server == .system, input.accessRoute == .system {
       return ServingDecision(route: .nativePassThrough(input.allowance))
     }
     guard
@@ -178,8 +178,10 @@ public enum ServingPolicy {
     decision(ServingInput(serving: device, override: override)).selection
   }
 
-  /// Whether Apple's driver holds the controller: the system serves it natively although OJD's
-  /// record reaches it through the extension. Claiming it means activating the extension.
+  /// Whether Apple's driver holds the controller.
+  ///
+  /// The system serves it natively although OJD's record reaches it through the extension.
+  /// Claiming it means activating the extension.
   public static func isHeldByAppleDriver(_ input: ServingInput) -> Bool {
     input.accessRoute == .extensionOwned && input.observation == .systemGamepad
   }

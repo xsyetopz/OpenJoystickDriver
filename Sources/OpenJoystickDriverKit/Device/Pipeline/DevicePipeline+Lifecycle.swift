@@ -294,10 +294,10 @@ extension DevicePipeline {
     }
     staleWatchTask = Task { [weak self] in
       while !Task.isCancelled, let self {
-        guard let due = await self.staleDeadline(timeout: timeout) else { break }
-        let now = self.uptimeNanoseconds()
+        guard let due = await staleDeadline(timeout: timeout) else { break }
+        let now = uptimeNanoseconds()
         if now >= due {
-          await self.announceStale()
+          await announceStale()
           break
         }
         try? await Task.sleep(nanoseconds: due &- now)

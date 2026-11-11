@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Where the host reaches one controller connection.
 ///

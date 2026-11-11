@@ -1,4 +1,4 @@
-import Foundation
+package import Foundation
 
 /// The operating-system services the neutral command grammar reaches for.
 ///

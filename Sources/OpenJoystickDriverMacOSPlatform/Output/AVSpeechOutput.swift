@@ -1,5 +1,5 @@
 import AVFoundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 /// Speaks `Speak` destinations through `AVSpeechSynthesizer`, one synthesizer per controller.
 public final class AVSpeechOutput: RemappingSpeechOutput, @unchecked Sendable {

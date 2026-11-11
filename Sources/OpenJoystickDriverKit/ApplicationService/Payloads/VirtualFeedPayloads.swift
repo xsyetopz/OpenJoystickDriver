@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// One input frame for a virtual feed: the pressed buttons and d-pad directions, the axis values,
 /// and how long the frame lasts at least.
@@ -70,11 +70,13 @@ public struct VirtualFeedFrame: Codable, Equatable, Sendable {
         debugDescription: "Unsupported apiVersion: \(apiVersion)"
       )
     }
-    if let kind = try container.decodeIfPresent(String.self, forKey: .kind), kind != Self.kind {
+    if let documentKind = try container.decodeIfPresent(String.self, forKey: .kind),
+      documentKind != Self.kind
+    {
       throw DecodingError.dataCorruptedError(
         forKey: .kind,
         in: container,
-        debugDescription: "Unexpected kind: \(kind)"
+        debugDescription: "Unexpected kind: \(documentKind)"
       )
     }
     buttons = try Self.decodeUnique(Control.self, forKey: .buttons, in: container)
@@ -104,7 +106,7 @@ public struct VirtualFeedFrame: Codable, Equatable, Sendable {
   ///
   /// - Throws: `DecodingError.dataCorrupted` when the list names a value twice.
   private static func decodeUnique<Value: Decodable & Hashable>(
-    _ type: Value.Type,
+    _: Value.Type,
     forKey key: CodingKeys,
     in container: KeyedDecodingContainer<CodingKeys>
   ) throws -> Set<Value> {

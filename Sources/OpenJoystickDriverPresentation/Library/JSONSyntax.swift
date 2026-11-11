@@ -244,11 +244,11 @@ enum JSONSyntax {
     /// - Throws: ``JSONSyntaxError`` when none of the three words starts at ``position``.
     mutating func literal() throws(JSONSyntaxError) {
       for word in ["true", "false", "null"] {
-        let expected = Array(word.unicodeScalars)
-        if position + expected.count <= scalars.count,
-          Array(scalars[position..<position + expected.count]) == expected
+        let wanted = Array(word.unicodeScalars)
+        if position + wanted.count <= scalars.count,
+          Array(scalars[position..<position + wanted.count]) == wanted
         {
-          position += expected.count
+          position += wanted.count
           return
         }
       }

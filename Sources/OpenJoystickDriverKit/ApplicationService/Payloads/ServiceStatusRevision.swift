@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Which service process answered `waitForServiceStatusChange` and how many status changes it has
 /// recorded.

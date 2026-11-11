@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// How many passes of its steps a macro runs.
 public enum RemappingMacroRepeat: Codable, Equatable, Hashable, Sendable {

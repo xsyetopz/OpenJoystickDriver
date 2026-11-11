@@ -12,7 +12,7 @@
       return super.validateMenuItem(menuItem)
     }
 
-    override func toggleToolbarShown(_ sender: Any?) {}
+    override func toggleToolbarShown(_: Any?) {}
   }
 
 #endif

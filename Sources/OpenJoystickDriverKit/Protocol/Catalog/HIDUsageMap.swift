@@ -157,11 +157,11 @@ struct HIDUsageMap: Equatable, Sendable {
         "a usage map must not be empty"
       )
     }
-    var bindings: [HIDUsage: [Binding]] = [:]
+    var seen: [HIDUsage: [Binding]] = [:]
     for entry in entries {
       let usage = "\(entry.usage.usagePage)/\(entry.usage.usage)"
       let name = "usage \(usage)"
-      let others = bindings[entry.usage, default: []]
+      let others = seen[entry.usage, default: []]
       if let half = entry.binding.half, !others.isEmpty,
         others.allSatisfy({ $0.half != nil })
       {
@@ -181,7 +181,7 @@ struct HIDUsageMap: Equatable, Sendable {
           "\(name) is named twice"
         )
       }
-      bindings[entry.usage, default: []].append(entry.binding)
+      seen[entry.usage, default: []].append(entry.binding)
       switch entry.binding {
       case .button(let control):
         guard !Control.stickAxes.contains(control), !Control.dpad.contains(control) else {
@@ -269,7 +269,7 @@ struct HIDUsageMap: Equatable, Sendable {
     }
     self.reportID = reportID
     self.entries = entries
-    self.bindings = bindings
+    self.bindings = seen
   }
 
   /// Throws unless the threshold of `binding`, the entry of `usage` as `page/usage`, is above 0
@@ -322,18 +322,18 @@ struct HIDUsageMap: Equatable, Sendable {
   /// A map that is broader than a pad, such as the standard map, names usages the pad's report
   /// descriptor lacks; those controls are not the pad's.
   func controls(declaring usages: Set<HIDUsage>?) -> Set<Control> {
-    var controls: Set<Control> = []
+    var driven: Set<Control> = []
     for entry in entries(declaring: usages) {
       switch entry.binding {
-      case .button(let control): controls.insert(control)
-      case .axis(let axis): controls.insert(axis.control)
-      case .hat: controls.formUnion(Control.dpad)
-      case .halfAxis(let binding): controls.insert(binding.control)
-      case .axisDpad(let binding), .axisButton(let binding): controls.insert(binding.control)
-      case .buttonTrigger(let control): controls.insert(control)
+      case .button(let control): driven.insert(control)
+      case .axis(let axis): driven.insert(axis.control)
+      case .hat: driven.formUnion(Control.dpad)
+      case .halfAxis(let binding): driven.insert(binding.control)
+      case .axisDpad(let binding), .axisButton(let binding): driven.insert(binding.control)
+      case .buttonTrigger(let control): driven.insert(control)
       }
     }
-    return controls
+    return driven
   }
 
   /// The entries whose usage is in `usages`; every entry when nil.

@@ -1,7 +1,7 @@
 import Carbon.HIToolbox
 import CoreGraphics
-import Foundation
-import OpenJoystickDriverKit
+public import Foundation
+public import OpenJoystickDriverKit
 
 /// The failure to post a keyboard or pointer event through CoreGraphics.
 public enum CoreGraphicsSystemInputSinkError: Error, Equatable, LocalizedError, Sendable {
@@ -105,7 +105,7 @@ private struct PlatformCoreGraphicsEventPoster: CoreGraphicsEventPosting {
   }
 
   /// Returns the bounds of the main display.
-  func mainDisplayBounds() throws -> CGRect { CGDisplayBounds(CGMainDisplayID()) }
+  func mainDisplayBounds() -> CGRect { CGDisplayBounds(CGMainDisplayID()) }
 
   /// Creates the CoreGraphics event of `prepared` and posts it to the HID event tap.
   ///

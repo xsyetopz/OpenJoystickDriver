@@ -1,7 +1,7 @@
 import Carbon.HIToolbox
 import CoreGraphics
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 extension CoreGraphicsSystemInputSink {
 

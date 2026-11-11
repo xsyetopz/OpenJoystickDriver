@@ -169,8 +169,8 @@ actor DevicePipeline {
   /// The latest USB open or handshake failed and no session has started since.
   ///
   /// The pipeline keeps retrying until the handshake has failed
-  /// ``USBPipelineRecoveryPolicy/maximumHandshakeFailures`` times in a row; the device manager reads
-  /// this to give a yielded HID route back.
+  /// ``USBPipelineRecoveryPolicy/maximumHandshakeFailures`` times in a row; the device manager
+  /// reads this to give a yielded HID route back.
   var usbSessionStartFailed = false
   /// The transport error of the latest failed USB startup write, cleared when a handshake starts.
   var lastUSBStartupError: USBTransportError?
@@ -294,12 +294,12 @@ actor DevicePipeline {
     self.uptimeNanoseconds = uptimeNanoseconds
     self.externalOutputAllowed = externalOutputAllowed
     self.sessionState = sessionState
-    let plan = self.driver.sessionPlan.tuned(binding?.record?.tuning ?? .none)
-    self.plan = plan
+    let tunedPlan = self.driver.sessionPlan.tuned(binding?.record?.tuning ?? .none)
+    self.plan = tunedPlan
     self.startupPlayerIndicatorPending =
       macOSOwnedOutput?.setsStartupPlayerIndicator == true
-      || (startupPlayerIndicator != nil && plan.hidPlayerIndicatorFollowsFirstInput)
-    self.inputConnectionActive = !plan.requiresInputConnectionBeforeOutput
+      || (startupPlayerIndicator != nil && tunedPlan.hidPlayerIndicatorFollowsFirstInput)
+    self.inputConnectionActive = !tunedPlan.requiresInputConnectionBeforeOutput
     self.packetLog = PacketLogBuffer(maxEntries: maxPacketLogEntries)
   }
 }

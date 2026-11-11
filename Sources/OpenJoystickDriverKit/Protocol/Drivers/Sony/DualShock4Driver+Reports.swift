@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension DualShock4Driver {
   /// The lightbar color a DualShock 4 shows before the host sets one: dark blue.

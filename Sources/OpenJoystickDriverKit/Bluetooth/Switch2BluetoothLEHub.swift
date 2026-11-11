@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// GATT writes to one connected Switch 2 controller.
 ///

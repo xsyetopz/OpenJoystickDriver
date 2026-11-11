@@ -49,13 +49,13 @@
           .padding(.vertical, 12)
         List(selection: selection) {
           Section(header: recordsHeader) {
-            if model.visibleRecords.isEmpty && (isSearching || model.records.skipped.isEmpty) {
+            if model.visibleRecords.isEmpty, isSearching || model.records.skipped.isEmpty {
               emptyLine(
                 isSearching ? "ui.library.search.noMatches" : "ui.library.records.empty.title"
               )
             }
             ForEach(model.visibleRecords) { item in recordRow(item) }
-            if model.scope == .installed && !isSearching {
+            if model.scope == .installed, !isSearching {
               ForEach(model.records.skipped) { skipped in skippedRow(skipped) }
             }
           }

@@ -63,23 +63,23 @@ public final class PeerLink: NSObject, @unchecked Sendable {
     configuration.iceServers = iceServers.isEmpty ? [] : [LKRTCIceServer(urlStrings: iceServers)]
     let constraints = LKRTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
     guard
-      let connection = Self.factory.peerConnection(
+      let created = Self.factory.peerConnection(
         with: configuration,
         constraints: constraints,
         delegate: self
       )
     else { throw BridgeError.signaling("WebRTC could not create a peer connection.") }
-    self.connection = connection
+    self.connection = created
     if role == .offer {
       let settings = LKRTCDataChannelConfiguration()
       settings.isOrdered = true
       guard
-        let channel = connection.dataChannel(
+        let opened = created.dataChannel(
           forLabel: Self.channelLabel,
           configuration: settings
         )
       else { throw BridgeError.signaling("WebRTC could not create the data channel.") }
-      attach(channel)
+      attach(opened)
     }
   }
 
@@ -149,9 +149,9 @@ public final class PeerLink: NSObject, @unchecked Sendable {
   @discardableResult
   public func send(_ data: Data) -> Bool {
     lock.lock()
-    let channel = channel
+    let current = channel
     lock.unlock()
-    return channel?.sendData(LKRTCDataBuffer(data: data, isBinary: false)) ?? false
+    return current?.sendData(LKRTCDataBuffer(data: data, isBinary: false)) ?? false
   }
 
   /// Closes the data channel and the peer connection.
@@ -218,40 +218,40 @@ public final class PeerLink: NSObject, @unchecked Sendable {
 extension PeerLink: LKRTCPeerConnectionDelegate {
   /// Ignores signaling state changes.
   public func peerConnection(
-    _ peerConnection: LKRTCPeerConnection,
-    didChange stateChanged: LKRTCSignalingState
+    _: LKRTCPeerConnection,
+    didChange _: LKRTCSignalingState
   ) {}
   /// Ignores added media streams; the link carries only a data channel.
   public func peerConnection(
-    _ peerConnection: LKRTCPeerConnection,
-    didAdd stream: LKRTCMediaStream
+    _: LKRTCPeerConnection,
+    didAdd _: LKRTCMediaStream
   ) {}
   /// Ignores removed media streams.
   public func peerConnection(
-    _ peerConnection: LKRTCPeerConnection,
-    didRemove stream: LKRTCMediaStream
+    _: LKRTCPeerConnection,
+    didRemove _: LKRTCMediaStream
   ) {}
   /// Ignores negotiation requests; the offer is made once, by ``localBlob()``.
-  public func peerConnectionShouldNegotiate(_ peerConnection: LKRTCPeerConnection) {}
+  public func peerConnectionShouldNegotiate(_: LKRTCPeerConnection) {}
   /// Ignores ICE connection state changes.
   public func peerConnection(
-    _ peerConnection: LKRTCPeerConnection,
-    didChange newState: LKRTCIceConnectionState
+    _: LKRTCPeerConnection,
+    didChange _: LKRTCIceConnectionState
   ) {}
   /// Ignores single candidates; the blob carries them after gathering completes.
   public func peerConnection(
-    _ peerConnection: LKRTCPeerConnection,
-    didGenerate candidate: LKRTCIceCandidate
+    _: LKRTCPeerConnection,
+    didGenerate _: LKRTCIceCandidate
   ) {}
   /// Ignores removed candidates.
   public func peerConnection(
-    _ peerConnection: LKRTCPeerConnection,
-    didRemove candidates: [LKRTCIceCandidate]
+    _: LKRTCPeerConnection,
+    didRemove _: [LKRTCIceCandidate]
   ) {}
 
   /// Resumes the tasks that wait for gathering when ICE gathering completes.
   public func peerConnection(
-    _ peerConnection: LKRTCPeerConnection,
+    _: LKRTCPeerConnection,
     didChange newState: LKRTCIceGatheringState
   ) {
     guard newState == .complete else { return }
@@ -264,7 +264,7 @@ extension PeerLink: LKRTCPeerConnectionDelegate {
 
   /// Attaches the data channel that the offerer opened, and reports it when it is open.
   public func peerConnection(
-    _ peerConnection: LKRTCPeerConnection,
+    _: LKRTCPeerConnection,
     didOpen dataChannel: LKRTCDataChannel
   ) {
     attach(dataChannel)
@@ -280,7 +280,7 @@ extension PeerLink: LKRTCDataChannelDelegate {
 
   /// Passes the message to ``onMessage``.
   public func dataChannel(
-    _ dataChannel: LKRTCDataChannel,
+    _: LKRTCDataChannel,
     didReceiveMessageWith buffer: LKRTCDataBuffer
   ) {
     onMessage?(buffer.data)

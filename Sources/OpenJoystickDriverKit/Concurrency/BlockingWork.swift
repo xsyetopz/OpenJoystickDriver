@@ -1,4 +1,4 @@
-import Foundation
+package import Foundation
 
 /// Runs synchronous work that may block (socket I/O, native device creation) off the Swift
 /// concurrency cooperative pool.

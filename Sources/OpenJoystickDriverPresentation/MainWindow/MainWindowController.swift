@@ -36,7 +36,11 @@
     /// Returns the smallest frame size of `window` whose content area is
     /// ``minimumContentSize(showsSidebar:showsList:)``.
     @MainActor
-    static func minimumFrameSize(for window: NSWindow, showsSidebar: Bool, showsList: Bool)
+    static func minimumFrameSize(
+      for window: NSWindow,
+      showsSidebar: Bool,
+      showsList: Bool
+    )
       -> NSSize
     {
       let content = minimumContentSize(showsSidebar: showsSidebar, showsList: showsList)
@@ -97,8 +101,8 @@
       persistence: any MainWindowAreaPersistence = UserDefaultsMainWindowAreaPersistence()
     ) {
       self.visibilityChanged = visibilityChanged
-      let navigation = MainWindowNavigationModel(persistence: persistence)
-      self.navigation = navigation
+      let navigationModel = MainWindowNavigationModel(persistence: persistence)
+      self.navigation = navigationModel
       screens = MainWindowScreens(
         runtime: runtime,
         supportReport: supportReport,
@@ -126,7 +130,7 @@
             if !SystemExtensionApproval.openSystemSettings() {
               return OJDLocalized.string("platform.macos.ui.setup.openSystemSettingsFailed")
             }
-          case .showLibrary: _ = navigation.requestArea(.library)
+          case .showLibrary: _ = navigationModel.requestArea(.library)
           }
           return nil
         },
@@ -137,33 +141,33 @@
         openInputTest: openInputTest
       )
 
-      let sidebarItem = NSSplitViewItem(
+      let sidebar = NSSplitViewItem(
         sidebarWithViewController: NSHostingController(
-          rootView: MainWindowSidebar(navigation: navigation)
+          rootView: MainWindowSidebar(navigation: navigationModel)
         )
       )
-      self.sidebarItem = sidebarItem
-      sidebarItem.canCollapse = true
-      sidebarItem.minimumThickness = MainWindowSizingPolicy.sidebarWidth.minimum
-      sidebarItem.maximumThickness = MainWindowSizingPolicy.sidebarWidth.maximum
-      let listItem = NSSplitViewItem(
+      self.sidebarItem = sidebar
+      sidebar.canCollapse = true
+      sidebar.minimumThickness = MainWindowSizingPolicy.sidebarWidth.minimum
+      sidebar.maximumThickness = MainWindowSizingPolicy.sidebarWidth.maximum
+      let list = NSSplitViewItem(
         contentListWithViewController: NSHostingController(
           rootView: MainWindowListRoot(
-            navigation: navigation,
+            navigation: navigationModel,
             runtime: runtime,
             profiles: screens.profiles,
             screens: screens
           )
         )
       )
-      listItem.minimumThickness = MainWindowSizingPolicy.listWidth.minimum
-      listItem.maximumThickness = MainWindowSizingPolicy.listWidth.maximum
-      listItem.isCollapsed = !navigation.selectedArea.hasListColumn
-      self.listItem = listItem
+      list.minimumThickness = MainWindowSizingPolicy.listWidth.minimum
+      list.maximumThickness = MainWindowSizingPolicy.listWidth.maximum
+      list.isCollapsed = !navigationModel.selectedArea.hasListColumn
+      self.listItem = list
       let detailItem = NSSplitViewItem(
         viewController: NSHostingController(
           rootView: MainWindowRoot(
-            navigation: navigation,
+            navigation: navigationModel,
             runtime: runtime,
             profiles: screens.profiles,
             screens: screens
@@ -171,8 +175,8 @@
         )
       )
       detailItem.minimumThickness = MainWindowSizingPolicy.minimumDetailWidth
-      splitViewController.addSplitViewItem(sidebarItem)
-      splitViewController.addSplitViewItem(listItem)
+      splitViewController.addSplitViewItem(sidebar)
+      splitViewController.addSplitViewItem(list)
       splitViewController.addSplitViewItem(detailItem)
 
       let window = NSWindow(
@@ -189,12 +193,12 @@
       configureToolbar(for: window)
       installSizingPolicy(on: window)
 
-      sidebarObservation = sidebarItem.publisher(for: \.isCollapsed).dropFirst().sink {
+      sidebarObservation = sidebar.publisher(for: \.isCollapsed).dropFirst().sink {
         [weak self, weak window] _ in
         guard let self, let window else { return }
         applyMinimumSize(to: window)
       }
-      areaObservation = navigation.$selectedArea.sink { [weak self] area in
+      areaObservation = navigationModel.$selectedArea.sink { [weak self] area in
         self?.reflect(area: area)
       }
       toolbarEnablementObservation = Publishers.MergeMany(
@@ -206,26 +210,24 @@
         screens.access.objectWillChange.map { _ in () }.eraseToAnyPublisher(),
         screens.activity.log.objectWillChange.map { _ in () }.eraseToAnyPublisher(),
         screens.activity.diagnostics.objectWillChange.map { _ in () }.eraseToAnyPublisher(),
-        navigation.objectWillChange.map { _ in () }.eraseToAnyPublisher()
+        navigationModel.objectWillChange.map { _ in () }.eraseToAnyPublisher()
       ).receive(on: DispatchQueue.main).sink { [weak self] in
         self?.window?.toolbar?.validateVisibleItems()
       }
       activityModeObservation = screens.activity.$mode.receive(on: DispatchQueue.main).sink {
         [weak self] _ in
         guard let self else { return }
-        showToolbarActions(of: navigation.selectedArea)
-        updateLogFollowing(area: navigation.selectedArea)
+        showToolbarActions(of: navigationModel.selectedArea)
+        updateLogFollowing(area: navigationModel.selectedArea)
       }
       summaryObservation = runtime.$statusState.sink { [weak window] status in
-        window?.subtitle = MainWindowSummary.text(for: navigation.selectedArea, status: status)
+        window?.subtitle = MainWindowSummary.text(for: navigationModel.selectedArea, status: status)
       }
     }
 
     /// Unavailable, because the window controller is created in code only.
-    ///
-    /// - Parameter coder: The decoder, which is not used.
     @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    required init?(coder _: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     // MARK: MainWindowPresenting
 
@@ -384,12 +386,12 @@
     }
 
     /// Stops following the logs while the window is miniaturized.
-    func windowDidMiniaturize(_ notification: Notification) {
+    func windowDidMiniaturize(_: Notification) {
       updateLogFollowing(area: navigation.selectedArea)
     }
 
     /// Resumes following the logs when the window returns from the Dock.
-    func windowDidDeminiaturize(_ notification: Notification) {
+    func windowDidDeminiaturize(_: Notification) {
       updateLogFollowing(area: navigation.selectedArea)
     }
 
@@ -400,7 +402,7 @@
     }
 
     /// Moves the window inside the visible frame of its new screen.
-    func windowDidChangeScreen(_ notification: Notification) {
+    func windowDidChangeScreen(_: Notification) {
       guard let window else { return }
       WindowFramePolicy.clamp(window, minimumSize: minimumFrameSize(for: window))
     }
@@ -462,7 +464,9 @@
     /// its commands for them.
     var enabledToolbarActions: Set<MainWindowToolbarAction> {
       Set(
-        navigation.selectedArea.toolbarActions(activityMode: screens.activity.mode).filter(isEnabled)
+        navigation.selectedArea.toolbarActions(activityMode: screens.activity.mode).filter(
+          isEnabled
+        )
       )
     }
 
@@ -578,12 +582,12 @@
 
   extension MainWindowController: NSToolbarDelegate {
     /// Returns the fixed items and every area action.
-    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+    func toolbarAllowedItemIdentifiers(_: NSToolbar) -> [NSToolbarItem.Identifier] {
       MainWindowToolbarLayout.allowedItems
     }
 
     /// Returns the fixed items and the actions of the selected area.
-    func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+    func toolbarDefaultItemIdentifiers(_: NSToolbar) -> [NSToolbarItem.Identifier] {
       MainWindowToolbarLayout.items(
         for: navigation.selectedArea,
         activityMode: screens.activity.mode
@@ -591,15 +595,15 @@
     }
 
     /// Returns no identifiers, because no toolbar item stays selected.
-    func toolbarSelectableItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+    func toolbarSelectableItemIdentifiers(_: NSToolbar) -> [NSToolbarItem.Identifier] {
       []
     }
 
     /// Returns the toolbar item for `itemIdentifier`: the sidebar separator or an area action.
     func toolbar(
-      _ toolbar: NSToolbar,
+      _: NSToolbar,
       itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
-      willBeInsertedIntoToolbar flag: Bool
+      willBeInsertedIntoToolbar _: Bool
     ) -> NSToolbarItem? {
       if itemIdentifier == .sidebarTrackingSeparator {
         return NSTrackingSeparatorToolbarItem(

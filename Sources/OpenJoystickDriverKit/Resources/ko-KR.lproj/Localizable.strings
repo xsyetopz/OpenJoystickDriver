@@ -2222,7 +2222,7 @@
 /* Message of 'ojd transport-extension activate' when the user must approve the extension. The menu path in System Settings is written as macOS shows it. */
 "platform.macos.cli.transportExtension.group.approval" = "요청에 승인이 필요합니다. 시스템 설정 > 일반 > 로그인 항목 및 확장 프로그램 > 드라이버 확장 프로그램에서 허용하세요.";
 /* Error of 'ojd transport-extension activate' when the app has no driver extension inside. %@ is the extension name, which stays as written with .dext. The build command stays as written. */
-"cli.transportExtension.group.bundleMissing" = "앱에 %@.dext가 없습니다. ‘./Scripts/ojd build install dev’를 실행한 다음 /Applications에서 다시 시도하세요.";
+"cli.transportExtension.group.bundleMissing" = "앱에 %@.dext가 없습니다. ‘just install-dev’를 실행한 다음 /Applications에서 다시 시도하세요.";
 /* Error of 'ojd transport-extension' commands when the codesign tool cannot run. %@ is the reason from the system. codesign and its path stay as written. */
 "platform.macos.cli.transportExtension.group.codesignFailedToRun" = "앱을 확인하기 위한 codesign을 실행하지 못했습니다: %@. /usr/bin/codesign이 있는지 확인하세요.";
 /* One-line summary of 'ojd transport-extension deactivate' in the command list and at the top of its help. */
@@ -2234,7 +2234,7 @@
 /* Error of 'ojd transport-extension' commands when ojd runs from a folder other than Applications. %@ is the path of this ojd. The path of the installed app stays as written. */
 "cli.transportExtension.group.notInstalled" = "이 ojd는 /Applications가 아니라 %@에서 실행되고 있습니다. /Applications/OpenJoystickDriver.app 안의 ojd를 실행하세요.";
 /* Error of 'ojd transport-extension' commands when the app code signature is not valid. %@ is the description of the signature problem. The build command stays as written. */
-"cli.transportExtension.group.signatureInvalid" = "앱의 서명이 올바르지 않습니다 (%@). ‘./Scripts/ojd build install-fast dev’로 다시 빌드한 다음 다시 시도하세요.";
+"cli.transportExtension.group.signatureInvalid" = "앱의 서명이 올바르지 않습니다 (%@). ‘just install-fast-dev’로 다시 빌드한 다음 다시 시도하세요.";
 /* One-line summary of 'ojd transport-extension status' in the command list and at the top of its help. */
 "platform.macos.cli.transportExtension.status.abstract" = "확장 프로그램이 앱에 있고 macOS에 등록되어 있는지 표시합니다.";
 /* Row of 'ojd transport-extension status'. %@ is the state of the extension inside the app: present, missing or invalid. Keep the two spaces after the colon. */
@@ -4108,7 +4108,7 @@
 /* Line of the output of 'ojd explain' with the wire value of the code, which other programs read. %@ is that value and stays as written. */
 "cli.explain.group.wire" = "와이어 값: %@";
 /* Error when the installed app is older than the repository sources that built this ojd. The build command, the environment variable OJD_RUN_REPOSITORY_CLI=1 and OpenJoystickDriver.app stay as written. */
-"cli.shared.error.staleInstallation" = "설치된 OpenJoystickDriver.app이 이 저장소 소스보다 오래되었습니다. 이 빌드를 실행하려면 ‘./Scripts/ojd build install-fast dev’를 실행하거나 OJD_RUN_REPOSITORY_CLI=1을 설정하세요.";
+"cli.shared.error.staleInstallation" = "설치된 OpenJoystickDriver.app이 이 저장소 소스보다 오래되었습니다. 이 빌드를 실행하려면 ‘just install-fast-dev’를 실행하거나 OJD_RUN_REPOSITORY_CLI=1을 설정하세요.";
 /* Error when ojd cannot hand the command line to the installed ojd. ojd stays as written. */
 "cli.shared.error.forwarderAllocation" = "설치된 ojd의 인수를 확보하지 못했습니다. 명령을 다시 실행하세요.";
 /* Error when ojd cannot start the installed ojd. %@ is the reason from the system. OpenJoystickDriver.app stays as written. */
@@ -4152,7 +4152,7 @@
 /* Text of error E2019, printed when the check for updates did not finish. */
 "error.E2019.message" = "업데이트 확인이 끝나지 않았습니다. 네트워크 연결을 확인하고 다시 시도하세요.";
 /* Text of error E2020, printed when the installed app is older than the ojd that runs. OpenJoystickDriver is the product name. The build command and OJD_RUN_REPOSITORY_CLI=1 stay as written. */
-"error.E2020.message" = "설치된 OpenJoystickDriver 앱이 이 ojd보다 오래되었습니다. 이 빌드를 실행하려면 ‘./Scripts/ojd build install-fast dev’를 실행하거나 OJD_RUN_REPOSITORY_CLI=1을 설정하세요.";
+"error.E2020.message" = "설치된 OpenJoystickDriver 앱이 이 ojd보다 오래되었습니다. 이 빌드를 실행하려면 ‘just install-fast-dev’를 실행하거나 OJD_RUN_REPOSITORY_CLI=1을 설정하세요.";
 /* Text of error E2021, printed when an ojd built from the repository cannot hand a command to the installed app. OpenJoystickDriver.app stays as written. */
 "error.E2021.message" = "저장소에서 빌드한 ojd가 설치된 앱에 명령을 넘기지 못했습니다. OpenJoystickDriver.app을 다시 설치하고 명령을 다시 실행하세요.";
 /* Text of error E3001, returned when a remapping request names a controller that is not connected or not ready. */

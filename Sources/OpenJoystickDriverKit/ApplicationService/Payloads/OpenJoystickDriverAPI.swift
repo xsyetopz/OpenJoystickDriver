@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The `apiVersion` of every JSON document and line that `ojd --json` prints, that the endpoint
 /// speaks, and that OJD reads or writes as a file.

@@ -1,5 +1,5 @@
 import Foundation
-import OpenJoystickDriverKit
+package import OpenJoystickDriverKit
 
 /// The HID access backend that delegates to a ``HIDDeviceStream``.
 private final class IOHIDAccessBackend: HIDAccessBackend, Sendable {

@@ -77,14 +77,14 @@ struct HIDReportPacker: Sendable {
     // Score each report ID by how many "gamepad-ish" fields it contains.
     let grouped = Dictionary(grouping: parsed.fields) { $0.reportID }
     var best: (UInt8, Int)?
-    for (rid, fields) in grouped {
-      let hasButtons = fields.contains {
+    for (rid, reportFields) in grouped {
+      let hasButtons = reportFields.contains {
         $0.usagePage == Self.buttonUsagePage && Self.buttonUsageRange.contains($0.usage)
       }
-      let axisCount = fields.filter {
+      let axisCount = reportFields.filter {
         $0.usagePage == Self.genericDesktopUsagePage && Self.axisUsageRange.contains($0.usage)
       }.count
-      let hasHat = fields.contains {
+      let hasHat = reportFields.contains {
         $0.usagePage == Self.genericDesktopUsagePage && $0.usage == Self.hatSwitchUsage
       }
       var score = 0
@@ -99,12 +99,12 @@ struct HIDReportPacker: Sendable {
       }
     }
     guard let (rid, _) = best else { return nil }
-    let fields = grouped[rid] ?? []
+    let chosenFields = grouped[rid] ?? []
     var fieldsByUsage: [HIDInputUsage: HIDField] = [:]
     var hat: HIDField?
-    for f in fields {
+    for f in chosenFields {
       fieldsByUsage[HIDInputUsage(page: f.usagePage, usage: f.usage)] = f
-      if f.usagePage == Self.genericDesktopUsagePage && f.usage == Self.hatSwitchUsage {
+      if f.usagePage == Self.genericDesktopUsagePage, f.usage == Self.hatSwitchUsage {
         hat = f
       }
     }
@@ -142,7 +142,7 @@ struct HIDReportPacker: Sendable {
     func encodeAxis(_ v: Int16, field: HIDField, signed: Bool) -> UInt32 {
       let minV = field.logicalMin
       let maxV = field.logicalMax
-      if signed && minV < 0 {
+      if signed, minV < 0 {
         let maxAbs = max(abs(minV), abs(maxV))
         let scaled = Int(Double(v) / 32767.0 * Double(maxAbs))
         let clamped = max(minV, min(maxV, scaled))
@@ -172,16 +172,16 @@ struct HIDReportPacker: Sendable {
       if hat == .neutral {
         if hasNull {
           // Many hats use "8" as neutral for 0..7.
-          if minV == 0 && maxV == 7 { return UInt32(maxV + 1) }
+          if minV == 0, maxV == 7 { return UInt32(maxV + 1) }
           // Or "0" as neutral for 1..8 (below min).
-          if minV == 1 && maxV == 8 { return 0 }
+          if minV == 1, maxV == 8 { return 0 }
         }
         return UInt32(minV)
       }
       // Map our 1..8 to either 0..7 or 1..8 depending on logical min.
       let idx = Int(hat.rawValue) - 1
-      if minV == 0 && maxV == 7 { return UInt32(idx) }
-      if minV == 1 && maxV == 8 { return UInt32(idx + 1) }
+      if minV == 0, maxV == 7 { return UInt32(idx) }
+      if minV == 1, maxV == 8 { return UInt32(idx + 1) }
       // Fallback: clamp into range.
       return UInt32(max(minV, min(maxV, idx + minV)))
     }

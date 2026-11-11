@@ -92,7 +92,7 @@ extension RumbleIntensities: Codable {
     /// Creates a key from any string; `init(from:)` rejects names that are no motor.
     init?(stringValue: String) { self.stringValue = stringValue }
     /// Always fails, because the keys are strings.
-    init?(intValue: Int) { nil }
+    init?(intValue _: Int) { nil }
   }
 }
 

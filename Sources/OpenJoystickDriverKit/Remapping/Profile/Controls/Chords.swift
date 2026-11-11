@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// How a chord decides that its sources are pressed together.
 public enum RemappingChordMode: String, Codable, Hashable, Sendable, CaseIterable {

@@ -83,7 +83,7 @@ final class ServiceStatusChanges: @unchecked Sendable {
   /// The center that posts workspace activations.
   private let workspaceCenter: NotificationCenter
   /// The observers on both centers.
-  private var observers: [NSObjectProtocol] = []
+  private var observers: [any NSObjectProtocol] = []
 
   // The hooks below belong to tests; set them before the first wait.
   /// Runs after a wait is registered as held.

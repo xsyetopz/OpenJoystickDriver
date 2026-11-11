@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// One connected Bluetooth LE peripheral, as the GATT link sees it.
 ///

@@ -40,7 +40,7 @@ indirect enum StatusItemTitle: Equatable {
   /// Text that is shown as is.
   case verbatim(String)
   /// A localization key whose one `%@` takes the text of the title.
-  case formatted(String, StatusItemTitle)
+  case formatted(String, Self)
 }
 
 /// Something that needs the user's action; the menu shows one row for each.
@@ -203,13 +203,13 @@ enum StatusItemModel {
     ]
   }
 
-  /// The menu bar symbol: the controller while nothing needs the user, a warning triangle while a
-  /// problem row exists. A state with no controller connected is not a problem.
+  // A state with no controller connected is not a problem, so it keeps the controller symbol.
   static func symbolName(for state: StatusItemState) -> String {
     state.problems.isEmpty ? "gamecontroller" : "exclamationmark.triangle"
   }
 
-  /// The accessibility label of the item: the first problem, else whether a controller is connected.
+  /// The accessibility label of the item: the first problem, else whether a controller is
+  /// connected.
   static func accessibilityTitle(for state: StatusItemState) -> StatusItemTitle {
     if let problem = state.problems.first {
       return .formatted("a11y.menuBar.problem", problem.title)

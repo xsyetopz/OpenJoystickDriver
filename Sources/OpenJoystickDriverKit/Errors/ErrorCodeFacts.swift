@@ -19,8 +19,8 @@ public struct ErrorCodeFacts: Equatable, Sendable {
 }
 
 extension ErrorCode {
-  /// The exit status of `ojd` when it fails with this code; `Resources/ErrorCodes.plist` lists it as
-  /// `exitCode`.
+  /// The exit status of `ojd` when it fails with this code; `Resources/ErrorCodes.plist` lists it
+  /// as `exitCode`.
   ///
   /// A code of another area, such as a remapping code, is a plain failure (1).
   public var commandLineExitStatus: Int32 {

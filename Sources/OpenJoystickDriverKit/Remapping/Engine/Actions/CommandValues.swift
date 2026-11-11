@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Error for a source or target operand of `ojd binding` that does not parse.
 public enum RemappingCommandValueError: Error, Equatable, LocalizedError, Sendable {

@@ -217,16 +217,16 @@ struct BindingOptions: ParsableArguments {
     target: RemappingDestination,
     existing: RemappingBinding?
   ) throws -> RemappingBinding {
-    let behavior = behavior ?? existing?.behavior ?? .hold
+    let resolvedBehavior = behavior ?? existing?.behavior ?? .hold
     let pulseFallback =
-      behavior == .pulse && existing?.behavior == .pulse
+      resolvedBehavior == .pulse && existing?.behavior == .pulse
       ? existing?.pulseDurationMs ?? RemappingBinding.defaultPulseDurationMs
       : RemappingBinding.defaultPulseDurationMs
     return RemappingBinding(
       id: existing?.id ?? UUID(),
       source: source,
       destination: target,
-      behavior: behavior,
+      behavior: resolvedBehavior,
       pulseDurationMs: pulseMs ?? pulseFallback,
       axisTuning: try axisTuning(for: source),
       turbo: try turbo(for: target),

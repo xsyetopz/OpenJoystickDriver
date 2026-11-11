@@ -1,4 +1,4 @@
-import Foundation
+package import Foundation
 
 /// A profile edit referenced an item that the profile does not contain.
 ///

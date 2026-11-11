@@ -3,6 +3,7 @@ import GameController
 import IOKit
 import IOKit.hid
 import OpenJoystickDriverKit
+import OpenJoystickDriverMacOSPlatform
 
 /// Lists the HID gamepads on the system for the virtual device diagnostics.
 enum VirtualDeviceDiagnostics {

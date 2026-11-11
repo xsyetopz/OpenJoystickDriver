@@ -69,7 +69,7 @@
     }
 
     /// Every controller that the service lists, offered as suggestions.
-    func suggestedEntities() async throws -> [ControllerEntity] {
+    func suggestedEntities() async -> [ControllerEntity] {
       await service.controllers().map(ControllerEntity.init)
     }
   }

@@ -184,7 +184,7 @@ extension DeviceManager {
     else { return .notFound }
     let outcome = await physicalOutputQueue(for: identifier).perform { [weak self] operation in
       guard let self else { return ControllerOutputResult.Outcome.cancelled }
-      return await self.performPhysicalOutput(
+      return await performPhysicalOutput(
         request,
         for: identifier,
         pipeline: pipeline,

@@ -49,17 +49,17 @@
     /// Returns nil, without running it, when the editor holds a mutation.
     @MainActor
     func perform(on window: any MenuProfileMutating) async -> MenuProfileMutationOutcome? {
-      let request = self.request
-      return await window.performMenuProfileMutation(request) { library in
+      let pending = self.request
+      return await window.performMenuProfileMutation(pending) { library in
         switch self {
         case .activate(let profileID, let allowEmpty):
           return await library.activateRemappingProfile(
             id: profileID,
             allowEmpty: allowEmpty,
-            request: request
+            request: pending
           )
         case .deactivate(let profileID):
-          return await library.deactivateRemappingProfile(profileID: profileID, request: request)
+          return await library.deactivateRemappingProfile(profileID: profileID, request: pending)
         }
       }
     }

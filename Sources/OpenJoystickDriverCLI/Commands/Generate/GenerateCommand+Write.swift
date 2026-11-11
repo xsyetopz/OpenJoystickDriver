@@ -30,7 +30,7 @@ extension GenerateCommand {
       file = document.fileName
       kind = document.kind
       self.status = status
-      self.document = status == .notWritten ? String(decoding: document.data, as: UTF8.self) : nil
+      self.document = status == .notWritten ? String(bytes: document.data, encoding: .utf8) : nil
     }
 
     /// The line of the entry in the human output.
@@ -48,7 +48,11 @@ extension GenerateCommand {
   /// `replace` is not set.
   ///
   /// - Throws: ``CLIFailure`` naming the file that differs or that cannot be written.
-  static func write(_ documents: [GeneratedDocument], to folder: URL, replace: Bool) throws
+  static func write(
+    _ documents: [GeneratedDocument],
+    to folder: URL,
+    replace: Bool
+  ) throws
     -> [Entry]
   {
     var entries: [Entry] = []
@@ -58,7 +62,7 @@ extension GenerateCommand {
       if let existing = FileManager.default.contents(atPath: url.path) {
         status = existing == document.data ? .unchanged : .replaced
       }
-      if status == .replaced && !replace {
+      if status == .replaced, !replace {
         throw CLIFailure(
           .fileAccessFailed,
           CLILocalized.format("cli.generate.group.conflict", url.path)
@@ -74,7 +78,11 @@ extension GenerateCommand {
       } catch {
         throw CLIFailure(
           .fileAccessFailed,
-          CLILocalized.format("cli.generate.group.writeFailed", url.path, error.localizedDescription)
+          CLILocalized.format(
+            "cli.generate.group.writeFailed",
+            url.path,
+            error.localizedDescription
+          )
         )
       }
     }

@@ -107,10 +107,10 @@ struct DestinationOption: Hashable {
       )
     }
     let mouse = RemappingMouseButton.allCases.map { button in
-      let destination = RemappingDestination.mouseButton(button)
+      let target = RemappingDestination.mouseButton(button)
       return Self(
-        destination: destination,
-        title: RuntimePresentation.destinationLabel(destination),
+        destination: target,
+        title: RuntimePresentation.destinationLabel(target),
         isSupported: true
       )
     }

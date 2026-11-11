@@ -97,7 +97,7 @@
             if fields.template == .empty {
               ProfileOutputPolicyView(policy: fields.outputPolicy) { fields.outputPolicy = $0 }
             }
-            if fields.showsValidation(isValid: proposedProfile != nil) && nameProblem == nil {
+            if fields.showsValidation(isValid: proposedProfile != nil), nameProblem == nil {
               Text(OJDLocalized.string("ui.profiles.creationValidation"))
                 .foregroundColor(Color(NSColor.systemRed)).fixedSize(
                   horizontal: false,
@@ -128,7 +128,7 @@
     private var nameProblem: String? {
       let name = fields.name(in: context)
       if fields.isNameTaken(in: context) { return OJDLocalized.string("ui.error.duplicateProfile") }
-      if !name.isEmpty && ProfileNameValidation.trimmedName(name).isEmpty {
+      if !name.isEmpty, ProfileNameValidation.trimmedName(name).isEmpty {
         return OJDLocalized.string("ui.capture.profileNameValidation")
       }
       return nil
@@ -177,7 +177,7 @@
           if ProfileNaming.isTaken(shownName, in: profiles) {
             Text(OJDLocalized.string("ui.error.duplicateProfile"))
               .foregroundColor(Color(NSColor.systemRed))
-          } else if !shownName.isEmpty && ProfileNameValidation.trimmedName(shownName).isEmpty {
+          } else if !shownName.isEmpty, ProfileNameValidation.trimmedName(shownName).isEmpty {
             Text(OJDLocalized.string("ui.capture.profileNameValidation"))
               .foregroundColor(Color(NSColor.systemRed))
           }

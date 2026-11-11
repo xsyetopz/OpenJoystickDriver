@@ -22,7 +22,9 @@ package enum GenerateHelper {
 
   /// Evaluates `source`, calls its `generate` function, and reports the result.
   private static func report(of source: String) -> GenerateReport {
-    guard let context = JSContext() else { return .failure(message: "no JavaScript context", line: nil) }
+    guard let context = JSContext() else {
+      return .failure(message: "no JavaScript context", line: nil)
+    }
     context.evaluateScript(source)
     if let failure = failure(of: context) { return failure }
     guard context.evaluateScript("typeof generate")?.toString() == "function" else {

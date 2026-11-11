@@ -278,15 +278,15 @@ final class AccessViewModel: ObservableObject {
 
   /// Asks to grant the program at `url`.
   func requestGrant(programAt url: URL) {
-    let url = url.standardizedFileURL
-    guard let identity = identityAtPath(url) else {
+    let standardized = url.standardizedFileURL
+    guard let identity = identityAtPath(standardized) else {
       failure = AccessFailure(
-        message: OJDLocalized.formatted("ui.access.grant.unsigned", url.path),
+        message: OJDLocalized.formatted("ui.access.grant.unsigned", standardized.path),
         code: .unsignedClient
       )
       return
     }
-    requestGrant(AccessClientCandidate(identity: identity, path: url.path))
+    requestGrant(AccessClientCandidate(identity: identity, path: standardized.path))
   }
 
   /// Asks to grant a refused client.

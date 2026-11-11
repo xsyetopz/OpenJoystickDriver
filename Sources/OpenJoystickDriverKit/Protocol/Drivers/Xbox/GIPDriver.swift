@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The D-pad bits of the second button byte.
 private let gipDpadMask: UInt8 = 0x0F
@@ -305,14 +305,14 @@ public final class GIPDriver: PhysicalProtocolDriver {
   /// A fragment that runs past its message's total length, or counts that do not fit the 16-bit
   /// fields, get no acknowledgement, as in SDL, which fails the transfer.
   private func sendAcknowledgement(for frame: GIPFrame, received: Int, remaining: Int) {
-    guard let received = UInt16(exactly: received), let remaining = UInt16(exactly: remaining)
+    guard let ackReceived = UInt16(exactly: received), let ackRemaining = UInt16(exactly: remaining)
     else { return }
     let packet = Self.acknowledgementPacket(
       command: frame.command,
       options: frame.options,
       sequence: frame.sequence,
-      received: received,
-      remaining: remaining
+      received: ackReceived,
+      remaining: ackRemaining
     )
     pendingWrites.append(usbWrite(packet))
   }

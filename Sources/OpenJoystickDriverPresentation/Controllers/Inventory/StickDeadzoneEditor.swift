@@ -36,9 +36,9 @@ final class StickDeadzoneEditor: ObservableObject {
     isWriting = true
     defer { isWriting = false }
     var next: Double?? = .some(value)
-    while let value = next {
+    while let pending = next {
       latestWhileWriting = nil
-      if await viewModel.setStickDeadzone(value, for: device) { await reload() }
+      if await viewModel.setStickDeadzone(pending, for: device) { await reload() }
       next = latestWhileWriting
     }
   }

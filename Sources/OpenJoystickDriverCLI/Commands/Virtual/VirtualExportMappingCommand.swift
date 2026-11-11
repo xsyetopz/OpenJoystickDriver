@@ -1,6 +1,6 @@
-import ArgumentParser
+public import ArgumentParser
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 extension VirtualMappingFormat: ExpressibleByArgument {
   /// A format on the command line is its lowercase name: `sdl` or `w3c`.

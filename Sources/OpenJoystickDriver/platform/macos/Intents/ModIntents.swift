@@ -15,7 +15,7 @@
     )
 
     /// Returns the name of each installed package.
-    func perform() async throws -> some IntentResult & ReturnsValue<[String]> {
+    func perform() -> some IntentResult & ReturnsValue<[String]> {
       .result(value: ModPackageStore().entries().map(\.name))
     }
   }
@@ -44,7 +44,7 @@
     /// Installs the package and returns its name.
     ///
     /// - Throws: ``CodedFailure`` with the E4xxx code that `ojd mod install` prints.
-    func perform() async throws -> some IntentResult & ReturnsValue<String> {
+    func perform() throws -> some IntentResult & ReturnsValue<String> {
       let installed = try ModPackageStore().installPackage(from: folder, replace: replace)
       return .result(value: installed.manifest.name)
     }
@@ -68,7 +68,7 @@
     /// Removes the package and returns its name.
     ///
     /// - Throws: ``CodedFailure`` with the E4xxx code that `ojd mod remove` prints.
-    func perform() async throws -> some IntentResult & ReturnsValue<String> {
+    func perform() throws -> some IntentResult & ReturnsValue<String> {
       try ModPackageStore().removePackage(named: name)
       return .result(value: name)
     }

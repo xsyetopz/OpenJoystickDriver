@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension SteamControllerDriver {
 
@@ -161,7 +161,7 @@ extension SteamControllerDriver {
   }
 
   /// Decodes one Steam Controller state report; wireless status messages carry no input.
-  public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  public func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     var bytes = Array(data)
     if isBluetooth {
       guard let packet = bluetoothAssembler.append(bytes),

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Why a physical HID request or access stream failed, as the platform backend reports it.
 public enum PhysicalHIDFailure: Sendable, Equatable, CustomStringConvertible {

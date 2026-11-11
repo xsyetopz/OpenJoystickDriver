@@ -1,5 +1,5 @@
-import OpenJoystickDriverKit
-import SwifterKit
+public import OpenJoystickDriverKit
+public import SwifterKit
 
 /// Canonical configuration for OJD's restricted USBDriverKit extension.
 ///
@@ -16,7 +16,8 @@ public enum USBDriverKitExtensionConfiguration {
     0x02D1, 0x02DD, 0x02E3, 0x02EA, 0x0B00, 0x0B0A, 0x0B12,
   ]
 
-  /// The Microsoft product IDs in the grant that Apple's own `XboxGamepad` driver extension matches.
+  /// The Microsoft product IDs in the grant that Apple's own `XboxGamepad` driver extension
+  /// matches.
   ///
   /// Apple's driver holds the USB interface of these models, so the direct route cannot open them
   /// and only OJD's extension can take them over. The other products of the grant have no owner

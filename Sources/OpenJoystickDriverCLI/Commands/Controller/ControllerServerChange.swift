@@ -24,8 +24,8 @@ enum ControllerServerChange {
 
   /// Sets `server` for the model of the controller that `selector` names, and prints the result.
   ///
-  /// A claim of a model that Apple's driver holds sends the extension activation request instead and
-  /// prints its state, because only the extension can take the controller from Apple's driver.
+  /// A claim of a model that Apple's driver holds sends the extension activation request instead
+  /// and prints its state, because only the extension can take the controller from Apple's driver.
   ///
   /// - Throws: ``CLIFailure`` when the controller is not found, its model cannot change hands, the
   ///   record is not valid, or the file cannot be written.
@@ -37,7 +37,7 @@ enum ControllerServerChange {
   ) async throws {
     try await global.run {
       let device = try await ServiceConnection.request { try await selector.resolve(with: $0) }
-      if server == .ojd && device.isHeldByAppleDriver {
+      if server == .ojd, device.isHeldByAppleDriver {
         try await submitTransportExtension(
           .activate,
           done: .active,

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Transfer direction of a logged packet; raw values are the packet-log wire strings.
 public enum PacketLogDirection: String, Codable, Sendable {

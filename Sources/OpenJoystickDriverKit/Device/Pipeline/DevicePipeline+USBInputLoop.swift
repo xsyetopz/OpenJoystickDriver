@@ -1,16 +1,9 @@
 import Foundation
 
 extension DevicePipeline {
-  /// Reads the interrupt IN endpoint of `handle` and dispatches the parsed input until the run
-  /// ends.
-  ///
-  /// An idle pass lasts at least the loop cadence, so a transport that completes timeouts at once
-  /// cannot spin. Repeated I/O errors back off and then end the session.
-  ///
-  /// - Parameter armedRead: The read started before the startup writes; the first pass takes its
-  ///   result in place of a new read.
-  /// - Returns: How the caller goes on: reconnect, or wait before opening again after an access
-  ///   denial.
+  // An idle pass lasts at least the loop cadence, so a transport that completes timeouts at once
+  // cannot spin. Repeated I/O errors back off and then end the session. The armed read is the one
+  // started before the startup writes; the first pass takes its result in place of a new read.
   func runUSBInputLoop(
     handle: any USBTransportSession,
     generation: UInt64,
@@ -106,7 +99,7 @@ extension DevicePipeline {
 
       // Throttle idle timeouts only. Successful packets should dispatch at device cadence.
       let loopElapsedNs = uptimeNanoseconds() &- loopStartNs
-      if shouldThrottleIdle && loopElapsedNs < usbIdleLoopCadenceNs {
+      if shouldThrottleIdle, loopElapsedNs < usbIdleLoopCadenceNs {
         try? await Task.sleep(nanoseconds: usbIdleLoopCadenceNs &- loopElapsedNs)
       } else {
         await Task.yield()

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Seconds an RPC call waits for the service's reply unless the call sets its own deadline.
 let applicationServiceDefaultReplyTimeoutSeconds: TimeInterval = 5

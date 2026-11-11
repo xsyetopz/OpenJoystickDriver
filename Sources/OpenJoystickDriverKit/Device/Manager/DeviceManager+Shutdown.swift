@@ -1,7 +1,7 @@
 import Foundation
 
 /// Keeps the signal sources alive for the life of the process.
-private let shutdownSignalSources = Locked<[DispatchSourceSignal]>([])
+private let shutdownSignalSources = Locked<[any DispatchSourceSignal]>([])
 
 extension DeviceManager {
   /// Installs SIGTERM and SIGINT handlers that stop device manager and exit cleanly.

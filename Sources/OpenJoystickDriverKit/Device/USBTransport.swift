@@ -364,7 +364,7 @@ extension USBTransportProvider {
 
   /// Keeps the configured transport profile unchanged.
   public func resolveTransport(
-    for device: USBTransportDevice,
+    for _: USBTransportDevice,
     configured: DeviceTransportProfile
   ) async -> USBTransportResolution {
     await Task.yield()
@@ -372,14 +372,14 @@ extension USBTransportProvider {
   }
 
   /// Observes no physical device; returns nil.
-  public func physicalDeviceObservation(for device: USBTransportDevice) -> PhysicalDevice? { nil }
+  public func physicalDeviceObservation(for _: USBTransportDevice) -> PhysicalDevice? { nil }
 
   /// Reads no configuration descriptor.
   ///
   /// - Throws: ``USBTransportError/notSupported`` always.
   public func configurationObservation(
-    for device: USBTransportDevice,
-    configurationValue: UInt8
+    for _: USBTransportDevice,
+    configurationValue _: UInt8
   ) throws -> PhysicalDevice? { throw USBTransportError.notSupported }
 
   /// Resets no device.
@@ -390,7 +390,7 @@ extension USBTransportProvider {
   /// Names no exclusive owner.
   ///
   /// - Throws: ``USBTransportError/notSupported`` always.
-  public func exclusiveOwner(of device: USBTransportDevice) throws -> String? {
+  public func exclusiveOwner(of _: USBTransportDevice) throws -> String? {
     throw USBTransportError.notSupported
   }
 
@@ -477,7 +477,7 @@ public enum USBDescriptorTransportResolver {
         interface.interfaceClass == 0xFF || interface.interfaceClass == 0x58,
         let endpoints = interface.endpoints
       else { continue }
-      if requirePreferredInterface && interfaceNumber != preferredInterface { continue }
+      if requirePreferredInterface, interfaceNumber != preferredInterface { continue }
       guard
         let input = endpoints.first(where: {
           $0.address != nil && $0.transferType == .interrupt && $0.direction == .in

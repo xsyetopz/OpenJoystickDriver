@@ -3,8 +3,8 @@ public enum BridgeCommandLine {
   /// The text that `--help` prints, and that a bad command line prints to standard error.
   public static let usage = """
     usage: ojd-webrtc-bridge --role host|player [--signal offer|answer] [--socket PATH]
-           [--token-name NAME] [--controller ID] [--persona Generic|SDLCompatible]
-           [--ice-server URL]...
+      [--token-name NAME] [--controller ID] [--persona Generic|SDLCompatible]
+      [--ice-server URL]...
     Set OJD_TOKEN to the token that `ojd access grant --token NAME` printed.
     The offer and the answer are one line each: the bridge prints its own on stdout and reads the
     peer's from stdin. The player offers by default and the host answers.

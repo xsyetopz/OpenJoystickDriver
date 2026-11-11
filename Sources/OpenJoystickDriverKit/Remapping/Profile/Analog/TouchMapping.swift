@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A stable touch-surface identity used by profile sources and mappings.
 public enum RemappingTouchSurface: String, Codable, CaseIterable, Hashable, Sendable {

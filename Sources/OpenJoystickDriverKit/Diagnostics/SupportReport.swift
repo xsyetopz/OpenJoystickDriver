@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// The time limits of the GameController probe tool.
 public enum GameControllerProbeConfiguration {

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Angular tuning shared by native motion profile authoring and runtime processing.
 public struct RemappingMotionTuning: Codable, Equatable, Hashable, Sendable {

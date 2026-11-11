@@ -264,8 +264,8 @@
     /// Saves the draft through the profile library.
     ///
     /// The result is reconciled when the request returns and when the library reports the change.
-    /// Does nothing while the draft equals the stored profile, where the Save button is unavailable;
-    /// while a save runs or editing is disabled, it shows the reason.
+    /// Does nothing while the draft equals the stored profile, where the Save button is
+    /// unavailable; while a save runs or editing is disabled, it shows the reason.
     func save() {
       guard canSave, !refuseEdit() else { return }
       let operation = RuntimeMutationOperation.update(profileID: profile.id)

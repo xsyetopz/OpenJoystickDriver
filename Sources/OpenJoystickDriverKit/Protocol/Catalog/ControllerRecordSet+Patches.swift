@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// One file of a layer, and the package that holds it, or nil for the user's file.
 struct ControllerLayerEntry {
@@ -16,8 +16,8 @@ extension ControllerRecordSet {
   /// folder and the installed packages; a description that is refused is listed in ``userFiles``.
   ///
   /// A missing directory holds no records; one that cannot be read is listed in ``userFiles`` with
-  /// its reason. `all.patch.plist` in `directory` is the user's global ``ControllerDefaults``; it is
-  /// the first patch of the user layer and is reported in ``defaults`` rather than in
+  /// its reason. `all.patch.plist` in `directory` is the user's global ``ControllerDefaults``; it
+  /// is the first patch of the user layer and is reported in ``defaults`` rather than in
   /// ``userFiles``.
   public static func load(
     userDirectory directory: URL = userDirectory,
@@ -35,7 +35,9 @@ extension ControllerRecordSet {
         at: directory,
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
-      ).filter { $0.pathExtension == "plist" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+      ).filter { $0.pathExtension == "plist" }.sorted {
+        $0.lastPathComponent < $1.lastPathComponent
+      }
     } catch CocoaError.fileReadNoSuchFile {
       urls = []
     } catch {

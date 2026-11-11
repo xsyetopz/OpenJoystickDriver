@@ -114,10 +114,10 @@
           return device.virtualHIDProfile?.override
         },
         set: { profile in
-          let device = device
-          let scope = scope
+          let target = device
+          let selectedScope = scope
           Task { @MainActor in
-            await viewModel.chooseVirtualHIDProfile(profile, scope: scope, for: device)
+            await viewModel.chooseVirtualHIDProfile(profile, scope: selectedScope, for: target)
           }
         }
       )

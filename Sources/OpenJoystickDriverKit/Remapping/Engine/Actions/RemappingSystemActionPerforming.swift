@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// An operating-system permission that an action needs before it acts.
 public enum RemappingPermission: String, Codable, CaseIterable, Sendable {

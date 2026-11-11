@@ -1,4 +1,4 @@
-import Foundation
+package import Foundation
 
 /// One file that fails a check of a repository tool, and why.
 package struct RepositoryProblem: Error, Equatable, Sendable {
@@ -30,12 +30,12 @@ package struct RepositoryProblem: Error, Equatable, Sendable {
       self = problem
       return
     }
-    guard let code = ControllerRecordSet.problemCode(error) else {
+    guard let problemCode = ControllerRecordSet.problemCode(error) else {
       preconditionFailure("a record check threw an error with no code: \(type(of: error))")
     }
     self.init(
       file: file,
-      code: code,
+      code: problemCode,
       message: ControllerRecordSet.problemDescription(
         error,
         includingCode: false,

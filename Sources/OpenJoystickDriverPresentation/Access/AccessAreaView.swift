@@ -48,11 +48,13 @@
     /// The Access form: the failure, if any, the permissions, then the load state or the endpoints
     /// and lists.
     var body: some View {
-      ScrollViewReader { proxy in form.onReceive(model.$focusedPermission) { permission in
-        guard let permission else { return }
-        withAnimation { proxy.scrollTo(permission.rawValue, anchor: .top) }
-        model.focusedPermission = nil
-      } }
+      ScrollViewReader { proxy in
+        form.onReceive(model.$focusedPermission) { permission in
+          guard let permission else { return }
+          withAnimation { proxy.scrollTo(permission.rawValue, anchor: .top) }
+          model.focusedPermission = nil
+        }
+      }
     }
 
     /// The form of the area.
@@ -123,11 +125,11 @@
     /// The section of macOS permission rows, with a restart button while an input permission is
     /// missing.
     private var permissionsSection: some View {
-      let readiness = readiness
+      let current = readiness
       return Section(header: Text(OJDLocalized.string("ui.settings.notifications.accessReadiness")))
       {
-        ForEach(readiness.rows) { row in permissionRow(row).id(row.id) }
-        if readiness.needsRestart {
+        ForEach(current.rows) { row in permissionRow(row).id(row.id) }
+        if current.needsRestart {
           Button(
             OJDLocalized.string("ui.permissions.restartApplication"),
             action: restartApplication

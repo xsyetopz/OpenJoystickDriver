@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A release that is newer than the running version.
 public struct UpdateInfo: Equatable, Sendable {

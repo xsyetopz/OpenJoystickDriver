@@ -1,5 +1,5 @@
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 extension ApplicationServiceServer {
   /// Sets who serves the controller model in the user's record for it.

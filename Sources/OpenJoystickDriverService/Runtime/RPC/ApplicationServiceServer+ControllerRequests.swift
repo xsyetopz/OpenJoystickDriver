@@ -1,5 +1,5 @@
-import Foundation
-import OpenJoystickDriverKit
+public import Foundation
+public import OpenJoystickDriverKit
 
 extension ApplicationServiceServer {
   /// Returns the current application service status including input monitoring state and
@@ -142,7 +142,7 @@ extension ApplicationServiceServer {
   public func resetSettings() async -> Bool {
     await virtualOutputTransitionCoordinator.enqueue { [weak self] in
       guard let self else { return false }
-      return await self.performResetSettingsAsync()
+      return await performResetSettingsAsync()
     }
   }
 

@@ -248,8 +248,14 @@
     /// The service stops the rumble when the length ends. Without a connected controller that has
     /// rumble, nothing is sent and ``outputError`` says why.
     func testRumble() {
-      guard let device, canSendOutput else { return refuseOutput(.rumble, .notConnected) }
-      guard capabilities.supportsRumble else { return refuseOutput(.rumble, .unsupported) }
+      guard let device, canSendOutput else {
+        refuseOutput(.rumble, .notConnected)
+        return
+      }
+      guard capabilities.supportsRumble else {
+        refuseOutput(.rumble, .unsupported)
+        return
+      }
       let command = rumbleCommand()
       let selector = ControllerReference.session(device.sessionToken)
       let duration = Self.clampedRumbleDuration(rumbleDurationMilliseconds)
@@ -292,9 +298,13 @@
     ///
     /// Without a connected controller that has one, nothing is sent and ``outputError`` says why.
     func applyPlayerIndicator() {
-      guard let device, canSendOutput else { return refuseOutput(.playerIndicator, .notConnected) }
+      guard let device, canSendOutput else {
+        refuseOutput(.playerIndicator, .notConnected)
+        return
+      }
       guard capabilities.supportsPlayerIndicator else {
-        return refuseOutput(.playerIndicator, .unsupported)
+        refuseOutput(.playerIndicator, .unsupported)
+        return
       }
       let selector = ControllerReference.session(device.sessionToken)
       let indicator = playerIndicator
@@ -309,9 +319,13 @@
     /// Without a connected controller that has a programmable color, nothing is sent and
     /// ``outputError`` says why.
     func applyColor() {
-      guard let device, canSendOutput else { return refuseOutput(.color, .notConnected) }
+      guard let device, canSendOutput else {
+        refuseOutput(.color, .notConnected)
+        return
+      }
       guard capabilities.lightingFeatures.contains(.programmableColor) else {
-        return refuseOutput(.color, .unsupported)
+        refuseOutput(.color, .unsupported)
+        return
       }
       let selector = ControllerReference.session(device.sessionToken)
       let components = (Self.byte(red), Self.byte(green), Self.byte(blue))
@@ -333,9 +347,13 @@
     /// Without a connected controller that has programmable brightness, nothing is sent and
     /// ``outputError`` says why.
     func applyBrightness() {
-      guard let device, canSendOutput else { return refuseOutput(.brightness, .notConnected) }
+      guard let device, canSendOutput else {
+        refuseOutput(.brightness, .notConnected)
+        return
+      }
       guard capabilities.supportsProgrammableBrightness else {
-        return refuseOutput(.brightness, .unsupported)
+        refuseOutput(.brightness, .unsupported)
+        return
       }
       let selector = ControllerReference.session(device.sessionToken)
       let value = Self.byte(brightness)
@@ -349,9 +367,9 @@
 
     /// Reads the controller's input every sample interval until sampling is canceled or replaced.
     ///
-    /// A read without input counts as a failure, and three failures in a row end sampling. The state
-    /// is `live` from the first sample in which a control is off its rest value, and stays `live`
-    /// while samples arrive.
+    /// A read without input counts as a failure, and three failures in a row end sampling. The
+    /// state is `live` from the first sample in which a control is off its rest value, and stays
+    /// `live` while samples arrive.
     ///
     /// - Parameters:
     ///   - selector: The controller.
@@ -432,24 +450,24 @@
           try Task.checkCancellation()
           let succeeded = try await body()
           try Task.checkCancellation()
-          guard let self, generation == self.outputGeneration else { return }
-          self.clearOutputOperation()
-          self.outputState = succeeded ? .succeeded(operation) : .failed(operation)
+          guard let self, generation == outputGeneration else { return }
+          clearOutputOperation()
+          outputState = succeeded ? .succeeded(operation) : .failed(operation)
           if !succeeded {
-            self.outputError = OJDLocalized.string(
+            outputError = OJDLocalized.string(
               "ui.inputTest.outputRejected"
             )
           }
         } catch is CancellationError {
-          guard let self, generation == self.outputGeneration else { return }
-          self.clearOutputOperation()
-          self.outputState = .idle
-          self.outputError = nil
+          guard let self, generation == outputGeneration else { return }
+          clearOutputOperation()
+          outputState = .idle
+          outputError = nil
         } catch {
-          guard let self, generation == self.outputGeneration else { return }
-          self.clearOutputOperation()
-          self.outputState = .failed(operation)
-          self.outputError = RuntimePresentation.userFacingError(error)
+          guard let self, generation == outputGeneration else { return }
+          clearOutputOperation()
+          outputState = .failed(operation)
+          outputError = RuntimePresentation.userFacingError(error)
         }
       }
     }
@@ -470,7 +488,8 @@
       }
     }
 
-    /// Shows that `operation` was not sent, with the reason, in the state of the latest output test.
+    /// Shows that `operation` was not sent, with the reason, in the state of the latest output
+    /// test.
     ///
     /// - Parameters:
     ///   - operation: The output test.

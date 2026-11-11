@@ -40,9 +40,9 @@ struct NintendoMotionCalibration {
     func value(_ offset: Int, from data: [UInt8]) -> Double {
       Double(Int16(bitPattern: UInt16(data[offset]) | (UInt16(data[offset + 1]) << 8)))
     }
-    var gyroOffsets: [Double] = []
-    var gyroScales: [Double] = []
-    var accelScales: [Double] = []
+    var offsets: [Double] = []
+    var gScales: [Double] = []
+    var aScales: [Double] = []
     for axis in 0..<3 {
       let offset = axis * 2
       let gyroOffset =
@@ -53,14 +53,14 @@ struct NintendoMotionCalibration {
       let accelRange = value(6 + offset, from: bytes) - accelOffset
       // Reject erased flash, degenerate ranges, and reversed coefficients atomically.
       guard gyroRange > 0, accelRange > 0 else { return nil }
-      gyroOffsets.append(gyroOffset)
-      gyroScales.append(936 / gyroRange)
-      accelScales.append(4 / accelRange)
+      offsets.append(gyroOffset)
+      gScales.append(936 / gyroRange)
+      aScales.append(4 / accelRange)
     }
     return Self(
-      gyroOffsets: gyroOffsets,
-      gyroScales: gyroScales,
-      accelScales: accelScales,
+      gyroOffsets: offsets,
+      gyroScales: gScales,
+      accelScales: aScales,
       source: userOffsets == nil ? .deviceFactory : .factoryWithUserOffsets
     )
   }

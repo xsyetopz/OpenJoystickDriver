@@ -66,14 +66,15 @@ struct VirtualDevice: Equatable, Sendable {
   ///   define its persona.
   private static func loadBundled() throws -> [VirtualHIDProfileID: Self] {
     var devices: [VirtualHIDProfileID: Self] = [:]
-    for persona in VirtualHIDProfileID.allCases {
-      guard let url = Bundle.module.url(forResource: persona.bundledFileName, withExtension: "plist")
+    for profileID in VirtualHIDProfileID.allCases {
+      guard
+        let url = Bundle.module.url(forResource: profileID.bundledFileName, withExtension: "plist")
       else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
           key: "error.E5007.virtualDevice.bundledMissing",
-          arguments: [persona.rawValue],
-          "no record for \(persona.rawValue)"
+          arguments: [profileID.rawValue],
+          "no record for \(profileID.rawValue)"
         )
       }
       let device = try decode(
@@ -81,15 +82,15 @@ struct VirtualDevice: Equatable, Sendable {
         source: .file(url.lastPathComponent),
         requiresMatch: false
       )
-      guard device.match == nil, device.persona == persona else {
+      guard device.match == nil, device.persona == profileID else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
           key: "error.E5007.virtualDevice.bundledPersona",
-          arguments: [persona.rawValue],
-          "\(url.lastPathComponent) must define \(persona.rawValue)"
+          arguments: [profileID.rawValue],
+          "\(url.lastPathComponent) must define \(profileID.rawValue)"
         )
       }
-      devices[persona] = device
+      devices[profileID] = device
     }
     return devices
   }

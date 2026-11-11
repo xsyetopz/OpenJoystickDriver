@@ -1,5 +1,6 @@
 #if canImport(AppKit) && canImport(SwiftUI)
 
+  import Combine
   import AppKit
   import OpenJoystickDriverKit
   import SwiftUI
@@ -122,15 +123,15 @@
       updateChecker: any ApplicationUpdateChecking = UpdateChecker(),
       notificationDelivery: any RuntimeNotificationDelivering = SystemRuntimeNotificationDelivery()
     ) {
-      let launchAtLogin = launchAtLogin ?? SystemLaunchAtLoginController(settings: settings)
+      let controller = launchAtLogin ?? SystemLaunchAtLoginController(settings: settings)
       self.testNotifications = testNotifications
       self.settings = settings
-      self.launchAtLogin = launchAtLogin
+      self.launchAtLogin = controller
       self.notificationAuthorizationController = notificationAuthorization
       self.updateChecker = updateChecker
       self.notificationDelivery = notificationDelivery
-      self.launchAtLoginIsAvailable = launchAtLogin.isAvailable
-      self.startAtLogin = launchAtLogin.isEnabled
+      self.launchAtLoginIsAvailable = controller.isAvailable
+      self.startAtLogin = controller.isEnabled
       self.notificationAuthorization = .checking
       self.notificationSystemSettings = .authorizationOnly(.checking)
       self.controllerNotifications = ApplicationSettingKey.notifyControllerConnected.defaultValue
@@ -189,7 +190,7 @@
       do {
         try launchAtLogin.setEnabled(enabled)
         startAtLogin = launchAtLogin.isEnabled
-        if enabled && !startAtLogin {
+        if enabled, !startAtLogin {
           errorMessage = OJDLocalized.string(
             "platform.macos.ui.settings.general.startAtLoginApprovalRequired"
           )
@@ -263,16 +264,16 @@
     func answerTestNotification(_ announcement: UUID) {
       Task { @MainActor [weak self, testNotifications] in
         guard let self else { return }
-        let outcome = await self.showTestNotification()
+        let outcome = await showTestNotification()
         do {
           let accepted = try await testNotifications.reportTestNotification(
             announcement,
             outcome: outcome
           )
           if !accepted {
-            self.errorMessage = OJDLocalized.string("ui.settings.notifications.testReportLost")
+            errorMessage = OJDLocalized.string("ui.settings.notifications.testReportLost")
           }
-        } catch { self.report(error) }
+        } catch { report(error) }
       }
     }
 
@@ -377,12 +378,12 @@
           includePrereleases: includePrereleases
         )
         guard let self else { return }
-        self.updateState = state
+        updateState = state
         if announcingAvailableUpdate, case .available(let info) = state {
-          self.notificationDelivery.deliver(
+          notificationDelivery.deliver(
             title: OJDLocalized.string("ui.settings.general.updateAvailable"),
             body: OJDLocalized.formatted("ui.settings.general.updateAvailableBody", info.tagName),
-            sound: self.notificationSounds
+            sound: notificationSounds
           )
         }
       }
@@ -414,22 +415,22 @@
       notificationAuthorizationReads += 1
       let read = notificationAuthorizationReads
       Task { [weak self, notificationAuthorizationController] in
-        let settings = await notificationAuthorizationController.settings()
-        guard let self, read == self.notificationAuthorizationReads else { return }
-        let state = settings.authorization
-        self.notificationAuthorization = state
-        self.notificationSystemSettings = settings
+        let systemSettings = await notificationAuthorizationController.settings()
+        guard let self, read == notificationAuthorizationReads else { return }
+        let state = systemSettings.authorization
+        notificationAuthorization = state
+        notificationSystemSettings = systemSettings
         if state == .denied {
           let notifications: [ApplicationSettingKey] = [
             .notifyControllerConnected, .notifyControllerDisconnected, .notifyProfileActivated,
             .notifyProfileDeactivated,
           ]
-          guard self.persist(Dictionary(uniqueKeysWithValues: notifications.map { ($0, false) }))
+          guard persist(Dictionary(uniqueKeysWithValues: notifications.map { ($0, false) }))
           else { return }
-          self.controllerNotifications = false
-          self.controllerDisconnectedNotifications = false
-          self.profileNotifications = false
-          self.profileDeactivatedNotifications = false
+          controllerNotifications = false
+          controllerDisconnectedNotifications = false
+          profileNotifications = false
+          profileDeactivatedNotifications = false
         }
       }
     }
@@ -455,8 +456,8 @@
     /// Shows `error`; a settings file error that makes the file unusable is also kept typed.
     private func report(_ error: any Error) {
       errorMessage = error.localizedDescription
-      if let error = error as? SettingsStoreError, error.fileIsUnusable {
-        settingsFileError = error
+      if let storeError = error as? SettingsStoreError, storeError.fileIsUnusable {
+        settingsFileError = storeError
       }
     }
 
@@ -493,13 +494,13 @@
       Task { [weak self, notificationAuthorizationController] in
         let state = await notificationAuthorizationController.state()
         guard let self else { return }
-        self.notificationAuthorization = state
+        notificationAuthorization = state
         switch state {
         case .allowed:
-          self.acceptNotificationPreference(preference)
-          self.refreshNotificationAuthorization()
-        case .notDetermined, .checking: self.requestNotificationAuthorization(preference)
-        case .denied: self.rejectNotificationPreference(preference, errorDescription: nil)
+          acceptNotificationPreference(preference)
+          refreshNotificationAuthorization()
+        case .notDetermined, .checking: requestNotificationAuthorization(preference)
+        case .denied: rejectNotificationPreference(preference, errorDescription: nil)
         }
       }
     }
@@ -510,11 +511,11 @@
       Task { [weak self, notificationAuthorizationController] in
         let (state, errorDescription) = await notificationAuthorizationController.request()
         guard let self else { return }
-        self.notificationAuthorization = state
-        if state == .allowed && errorDescription == nil {
-          self.acceptNotificationPreference(preference)
+        notificationAuthorization = state
+        if state == .allowed, errorDescription == nil {
+          acceptNotificationPreference(preference)
         } else {
-          self.rejectNotificationPreference(preference, errorDescription: errorDescription)
+          rejectNotificationPreference(preference, errorDescription: errorDescription)
         }
       }
     }

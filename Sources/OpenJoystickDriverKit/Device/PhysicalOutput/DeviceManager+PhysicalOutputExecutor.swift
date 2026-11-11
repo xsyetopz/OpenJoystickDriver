@@ -55,7 +55,7 @@ extension DeviceManager {
     else { return false }
     let outcome = await physicalOutputQueue(for: identifier).perform { [weak self] operation in
       guard let self else { return false }
-      return await self.performHIDWrites(
+      return await performHIDWrites(
         writes,
         intervalNanoseconds: intervalNanoseconds,
         address: address,
@@ -86,7 +86,7 @@ extension DeviceManager {
     let outcome = await physicalOutputQueue(for: identifier).perform { [weak self] operation in
       guard let self else { return false }
       guard let writes = await pipeline.hidKeepAliveWrites(), !writes.isEmpty else { return true }
-      return await self.performHIDWrites(
+      return await performHIDWrites(
         writes,
         intervalNanoseconds: 0,
         address: address,

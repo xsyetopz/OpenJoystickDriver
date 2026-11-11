@@ -69,9 +69,9 @@ struct LibraryRecordText: Equatable {
   init(document: String) throws(JSONSyntaxError) {
     copyText = document
     tokens = try JSONSyntax.tokens(in: document)
-    var lines = document.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
-    if lines.last?.isEmpty == true { lines.removeLast() }
-    self.lines = lines
+    var split = document.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+    if split.last?.isEmpty == true { split.removeLast() }
+    self.lines = split
 
     var readings: [Int: Reading] = [:]
     var line = 0

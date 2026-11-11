@@ -1,5 +1,5 @@
-import Foundation
-import OpenJoystickDriverKit
+public import Foundation
+public import OpenJoystickDriverKit
 
 extension ApplicationServiceServer {
   /// Shows the color on the light of `controller` under `token`; false when a component is outside
@@ -11,15 +11,15 @@ extension ApplicationServiceServer {
     green: Int,
     blue: Int
   ) async -> Bool {
-    guard let red = UInt8(exactly: red), let green = UInt8(exactly: green),
-      let blue = UInt8(exactly: blue)
+    guard let redByte = UInt8(exactly: red), let greenByte = UInt8(exactly: green),
+      let blueByte = UInt8(exactly: blue)
     else { return false }
     return await deviceManager.previewPhysicalColor(
       for: controller,
       token: token,
-      red: red,
-      green: green,
-      blue: blue
+      red: redByte,
+      green: greenByte,
+      blue: blueByte
     )
   }
 
