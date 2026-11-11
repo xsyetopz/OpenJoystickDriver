@@ -37,9 +37,8 @@ struct ControllerTuningLayersTests {
       for identity: ControllerModelID
     ) throws {
       try FileManager.default.createDirectory(at: controllers, withIntermediateDirectories: true)
-      let removed =
-        remove.isEmpty
-        ? "" : #""remove":[\#(remove.map { #""\#($0)""# }.joined(separator: ","))],"#
+      let paths = remove.map { "\"" + $0 + "\"" }.joined(separator: ",")
+      let removed = remove.isEmpty ? "" : #""remove":[\#(paths)],"#
       let json =
         #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"ControllerPatch","#
         + #""selector":{"vendorID":\#(identity.vendorID),"productID":\#(identity.productID)},"#
