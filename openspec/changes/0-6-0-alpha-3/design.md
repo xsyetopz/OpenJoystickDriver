@@ -185,14 +185,14 @@ Reported by the maintainer: the "header-style buttons" of the main window are in
 
 Common to the five utilities: the item per device or profile sits at the top level, the list of profiles carries a checkmark, the menu ends with Settings and Quit, and none holds a Help submenu. Two of them let the user drag the item out of the menu bar.
 
-**Human Interface Guidelines** (cited). The apple-docs MCP server did not connect in the sessions that wrote this change (`CONNECTION_CLOSED`), so each page was read from `developer.apple.com/tutorials/data/design/human-interface-guidelines/<page>.json`. Task 10.4 reads them again through the server.
+**Human Interface Guidelines** (cited). Each quote below was checked word for word against `/design/human-interface-guidelines/<page>`, read through the apple-docs MCP server.
 
 - `the-menu-bar`: "Display a menu — not a popover — when people click your menu bar extra." "Let people — not your app — decide whether to put your menu bar extra in the menu bar." "Avoid relying on the presence of menu bar extras."
 - `menus`: "Use submenus sparingly." "Limit the depth and length of submenus." "Show people when a menu item is unavailable." "Consider using a checkmark to show that an attribute is currently in effect." "Append an ellipsis to a menu item's label when the action requires more information before it can complete."
 - `toolbars`: "Make every toolbar item available as a command in the menu bar."
 - `pop-up-buttons`: "Use a pop-up button to present a flat list of mutually exclusive options or states." "Provide a useful default selection."
 - `disclosure-controls`: "Use a disclosure control to hide details until they're relevant."
-- `layout`: "Use progressive disclosure to make layouts cleaner and easier to interact with." "Use consistent spacing." "In general, support resizing."
+- `layout`: "Use progressive disclosure to make layouts cleaner and easier to interact with." "Use consistent spacing." (from the tvOS grid guidance) "In general, support resizing." (from the visionOS guidance, which names macOS as having the same behavior)
 - `typography`: "Use font sizes that most people can read easily." "Consider using the built-in text styles." The macOS default size is 13 pt and the minimum 10 pt.
 - `accessibility`: a control on macOS is 28 × 28 pt by default and 20 × 20 pt at minimum. "Convey information with more than color alone."
 - `inclusion`: "Avoid using specialized or technical terms without defining them." "Replace colloquial expressions with plain language." "Present a clear, straightforward interface." "Build in ways to learn how to use your app or game."
