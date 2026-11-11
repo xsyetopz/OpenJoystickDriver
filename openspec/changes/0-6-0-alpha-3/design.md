@@ -285,6 +285,15 @@ Alternative considered: binary property lists in the app bundle (0.8 times the J
   - The repository has no Node or TypeScript tooling (no `package.json` or `tsconfig.json`). A generator from JSON Schema to TypeScript would add that tooling, or a converter for `$ref`, `oneOf`, and `if` that the project maintains.
   - An editor checks plain JavaScript against a declaration file only with `// @ts-check` and JSDoc type comments, so each script would carry setup that the command does not need.
 
+Four gaps of `docs/development/scripting-surfaces.md` stay closed, each for a reason:
+
+- Gap 1, author code runs in the service or in `ojd`: it would let a package stall input or reach files and the network, which this decision forbids; the author's program runs outside and calls in through the endpoint or `ojd`.
+- Gap 7, a handler the service runs on an event: it is the same code upload as gap 1. An outside program receives events through the `Controllers`, `Profiles`, and `Mods` subscriptions and acts through the endpoint.
+- Gap 9, the endpoint without a grant: the grant is the user's consent for a program to read or drive controllers, so no surface skips it, and a token with origins cannot hold `Control` because a web page cannot hold a secret.
+- Gap 11, an intent called from a program without Shortcuts: an intent runs only inside the Shortcuts runtime, and `shortcuts run` and `shortcuts://` links are Apple's way in. A program that needs more uses `ojd` or the endpoint, which hold the same actions.
+
+A test (`IntentCommandTests`) requires that every App Intent names the `ojd` command whose code it runs.
+
 Alternative considered: scripts the service loads at run time. Rejected: no record needs run-time logic, and a script in the service can stall input.
 
 Alternative considered: Apple's Pkl language. Rejected: it needs a separate binary.
