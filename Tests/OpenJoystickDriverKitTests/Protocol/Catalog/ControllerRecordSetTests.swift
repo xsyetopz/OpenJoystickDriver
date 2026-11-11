@@ -486,4 +486,65 @@ struct ControllerRecordSetTests {
     )
     #expect(record.text == String(decoding: expected, as: UTF8.self))
   }
+
+  @Test
+  func idRangeMessageNamesFileKeyPathRuleAndFix() throws {
+    let document: [String: Any] = [
+      "apiVersion": OpenJoystickDriverAPI.version, "kind": ControllerRecordDocument.kind,
+      "vendorID": 70_000, "productID": 1,
+      "modes": [["id": "default", "protocol": ["family": "XboxGIP"]]],
+    ]
+    let data = try Self.json(document)
+    let english = Localization(preferredLanguages: ["en-US"])
+    let error = try #require(throws: ControllerRecordProblem.self) {
+      try ControllerRecordSet.validate(data)
+    }
+    #expect(error.key == "error.E5007.record.idRange")
+    #expect(
+      ControllerRecordSet.problemDescription(
+        error,
+        includingCode: false,
+        document: "record",
+        localization: english,
+        file: "1234-abcd.plist"
+      )
+        == "1234-abcd.plist, vendorID and productID: vendorID must be 1...65535 and productID "
+        + "0...65535. Fix: set each to a whole number in its range."
+    )
+    #expect(
+      ControllerRecordSet.problemDescription(error, document: "record")
+        == "vendorID must be 1...65535 and productID 0...65535"
+    )
+    for locale in english.availableLocalizations where locale != "en-US" && locale != "C" {
+      let text = ControllerRecordSet.problemDescription(
+        error,
+        document: "record",
+        localization: Localization(preferredLanguages: [locale]),
+        file: "1234-abcd.plist"
+      )
+      #expect(text.contains("1234-abcd.plist"), "\(locale)")
+      #expect(text.contains("vendorID"), "\(locale)")
+      #expect(text != error.description, "\(locale)")
+    }
+  }
+
+  @Test
+  func fileNameMessageNamesTheExpectedName() {
+    let error = ControllerRecordProblem(
+      code: .invalidControllerRecord,
+      key: "error.E5007.record.fileName",
+      arguments: ["1234-abcd.plist"],
+      "filename must be 1234-abcd.plist"
+    )
+    #expect(
+      ControllerRecordSet.problemDescription(
+        error,
+        document: "record",
+        localization: Localization(preferredLanguages: ["en-US"]),
+        file: "wrong.plist"
+      )
+        == "wrong.plist, vendorID and productID: the file name must be 1234-abcd.plist, the two "
+        + "IDs in hex. Fix: rename the file to 1234-abcd.plist, or correct the IDs in it."
+    )
+  }
 }

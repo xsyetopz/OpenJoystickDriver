@@ -4103,6 +4103,18 @@
 "error.E5006.message" = "यूनिट ID की कुंजी फ़ाइल PortKeyInstallation.key पढ़ी नहीं जा सकती, या वह 32 बाइट की नहीं है। फ़ाइल को बैकअप से वापस लाएँ। अगर आप इसे हटा देते हैं, तो OpenJoystickDriver एक नई कुंजी बनाता है और हर यूनिट ID बदल जाती है।";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "कंट्रोलर रिकॉर्ड या patch अमान्य है। फ़ाइल को उसके स्कीमा से जाँचें और संदेश में बताए गए फ़ील्ड को ठीक करें।";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "यह रिकॉर्ड फ़ाइल";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "बंडल कैटलॉग का Controllers फ़ोल्डर: कैटलॉग में कोई रिकॉर्ड फ़ाइल नहीं है। नियम: कैटलॉग में कम से कम एक कंट्रोलर रिकॉर्ड होता है। समाधान: OpenJoystickDriver को फिर से इंस्टॉल करें।";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@, vendorID और productID: फ़ाइल का नाम %2$@ होना चाहिए, यानी दोनों ID हेक्स में। समाधान: फ़ाइल का नाम बदलकर %2$@ करें, या उसके भीतर की ID सही करें।";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@, vendorID और productID: %2$@ पहले से %3$@ के रिकॉर्ड की पहचान है। समाधान: दोनों में से एक फ़ाइल हटाएँ, या इस फ़ाइल की ID बदलें।";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@, document: कोई मान JSON के रूप में नहीं लिखा जा सकता (%2$@)। समाधान: कारण में बताए गए मान को स्ट्रिंग, संख्या, बूलियन, सूची या डिक्शनरी से बदलें।";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@, vendorID और productID: vendorID 1...65535 और productID 0...65535 होना चाहिए। समाधान: दोनों को उनकी सीमा के भीतर का पूर्ण संख्या मान दें।";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "किसी कंट्रोलर की SDL_GameControllerDB पंक्ति उसे चला नहीं सकती। संदेश कारण बताता है। ojd record draft से उस कंट्रोलर के लिए कंट्रोलर रिकॉर्ड लिखें।";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

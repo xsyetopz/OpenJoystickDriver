@@ -4103,6 +4103,18 @@
 "error.E5006.message" = "無法讀取單元 ID 的密鑰檔案 PortKeyInstallation.key，或其大小不是 32 位元組。請從備份還原該檔案。如果改為刪除它，OpenJoystickDriver 會建立新密鑰，所有單元 ID 都會改變。";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "控制器記錄或 patch 無效。請對照其結構描述檢查該檔案，並修正訊息指出的欄位。";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "此記錄檔案";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "內置目錄的 Controllers 檔案夾：目錄中沒有記錄檔案。規則：目錄至少包含一筆控制器記錄。修正：重新安裝 OpenJoystickDriver。";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@，vendorID 和 productID：檔案名稱必須是 %2$@，即兩個 ID 的十六進制形式。修正：將檔案重新命名為 %2$@，或更正檔案中的 ID。";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@，vendorID 和 productID：%2$@ 已是 %3$@ 中記錄的識別。修正：刪除兩個檔案之一，或更改此檔案的 ID。";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@，document：某個值無法寫成 JSON（%2$@）。修正：將原因中指出的值替換為字串、數字、布林值、列表或字典。";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@，vendorID 和 productID：vendorID 必須為 1...65535，productID 必須為 0...65535。修正：將兩者分別設為其範圍內的整數。";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "控制器的 SDL_GameControllerDB 行無法驅動該控制器。訊息會指出原因。請用 ojd record draft 為它編寫控制器記錄。";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

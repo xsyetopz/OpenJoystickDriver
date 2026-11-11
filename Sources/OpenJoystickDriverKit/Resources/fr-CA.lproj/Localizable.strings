@@ -3549,6 +3549,18 @@
 "error.E5006.message" = "Le fichier de clé des identifiants d’unité, PortKeyInstallation.key, est illisible ou ne fait pas 32 octets. Restaurez le fichier depuis une sauvegarde. Si vous le supprimez, OpenJoystickDriver crée une nouvelle clé et chaque identifiant d’unité change.";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "Une fiche de manette ou un patch n’est pas valide. Vérifiez le fichier avec son schéma et corrigez le champ que le message nomme.";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "ce fichier d’enregistrement";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "Dossier Controllers du catalogue intégré : le catalogue ne contient aucun fichier d’enregistrement. Règle : le catalogue contient au moins un enregistrement de manette. Correction : réinstallez OpenJoystickDriver.";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@, vendorID et productID : le nom du fichier doit être %2$@, soit les deux ID en hexadécimal. Correction : renommez le fichier en %2$@ ou corrigez les ID qu’il contient.";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@, vendorID et productID : %2$@ est déjà l’identité de l’enregistrement de %3$@. Correction : supprimez l’un des deux fichiers ou changez les ID de celui-ci.";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@, document : une valeur ne peut pas être écrite en JSON (%2$@). Correction : remplacez la valeur que la raison indique par une chaîne, un nombre, un booléen, une liste ou un dictionnaire.";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@, vendorID et productID : vendorID doit valoir 1...65535 et productID 0...65535. Correction : donnez à chacun un nombre entier de sa plage.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "La ligne SDL_GameControllerDB d’une manette ne peut pas la piloter. Le message nomme la raison. Écrivez une fiche de manette pour elle avec ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

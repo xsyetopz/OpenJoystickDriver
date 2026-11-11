@@ -57,7 +57,9 @@ struct RecordValidation: Encodable, Equatable {
       let problem = ControllerRecordSet.problemDescription(
         error,
         includingCode: false,
-        document: "record"
+        document: "record",
+        localization: Localization(),
+        file: path == "-" ? nil : path
       )
       if CLIContext.current.format == .json { try CLIOutput.json(Self(problem: problem)) }
       throw CLIFailure(

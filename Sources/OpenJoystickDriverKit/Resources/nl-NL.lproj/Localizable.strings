@@ -3549,6 +3549,18 @@
 "error.E5006.message" = "Het sleutelbestand van de apparaat-ID’s, PortKeyInstallation.key, kan niet worden gelezen of is niet 32 bytes. Zet het bestand terug vanuit een reservekopie. Als je het in plaats daarvan verwijdert, maakt OpenJoystickDriver een nieuwe sleutel en verandert elke apparaat-ID.";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "Een controllerrecord of patch is ongeldig. Controleer het bestand met zijn schema en herstel het veld dat het bericht noemt.";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "dit recordbestand";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "Map Controllers van de meegeleverde catalogus: de catalogus heeft geen recordbestand. Regel: de catalogus bevat minstens één controllerrecord. Oplossing: installeer OpenJoystickDriver opnieuw.";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@, vendorID en productID: de bestandsnaam moet %2$@ zijn, de twee ID’s in hexadecimaal. Oplossing: hernoem het bestand naar %2$@ of corrigeer de ID’s erin.";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@, vendorID en productID: %2$@ is al de identiteit van het record in %3$@. Oplossing: verwijder een van de twee bestanden of wijzig de ID’s van dit bestand.";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@, document: een waarde kan niet als JSON worden geschreven (%2$@). Oplossing: vervang de waarde die de reden noemt door een tekenreeks, getal, boolean, lijst of dictionary.";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@, vendorID en productID: vendorID moet 1...65535 zijn en productID 0...65535. Oplossing: stel elk in op een geheel getal binnen het bereik.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "De SDL_GameControllerDB-regel van een controller kan hem niet aansturen. Het bericht noemt de reden. Schrijf met ojd record draft een controllerrecord voor de controller.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

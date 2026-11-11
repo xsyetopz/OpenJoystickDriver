@@ -4103,6 +4103,18 @@
 "error.E5006.message" = "تعذرت قراءة ملف مفتاح معرّفات الأجهزة PortKeyInstallation.key، أو أن حجمه ليس 32 بايت. استعد الملف من نسخة احتياطية. إذا حذفته بدلاً من ذلك، فسينشئ OpenJoystickDriver مفتاحاً جديداً وسيتغير كل معرّف جهاز.";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "سجل وحدة التحكم أو patch غير صالح. تحقق من الملف مقابل مخططه وأصلح الحقل الذي تذكره الرسالة.";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "ملف السجل هذا";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "مجلد Controllers في الفهرس المضمّن: لا يحتوي الفهرس على أي ملف سجل. القاعدة: يضم الفهرس سجل وحدة تحكم واحدًا على الأقل. الإصلاح: أعد تثبيت OpenJoystickDriver.";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@، vendorID وproductID: يجب أن يكون اسم الملف %2$@، أي المعرّفان بالنظام السداسي عشري. الإصلاح: أعد تسمية الملف إلى %2$@ أو صحّح المعرّفين فيه.";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@، vendorID وproductID: %2$@ هو بالفعل هوية السجل في %3$@. الإصلاح: احذف أحد الملفين أو غيّر المعرّفين في هذا الملف.";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@، document: تعذّرت كتابة قيمة بصيغة JSON (%2$@). الإصلاح: استبدل القيمة التي يذكرها السبب بنص أو رقم أو قيمة منطقية أو قائمة أو قاموس.";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@، vendorID وproductID: يجب أن يكون vendorID بين 1...65535 وproductID بين 0...65535. الإصلاح: اضبط كلًّا منهما على عدد صحيح ضمن نطاقه.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "لا يمكن لسطر SDL_GameControllerDB الخاص بوحدة تحكم أن يشغّلها. تذكر الرسالة السبب. اكتب سجل وحدة تحكم لها باستخدام ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

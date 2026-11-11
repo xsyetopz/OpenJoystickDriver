@@ -4103,6 +4103,18 @@
 "error.E5006.message" = "ユニット ID の鍵ファイル PortKeyInstallation.key を読み取れないか、サイズが 32 バイトではありません。バックアップからファイルを復元してください。削除すると、OpenJoystickDriver が新しい鍵を作成し、すべてのユニット ID が変わります。";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "コントローラレコードまたは patch が無効です。ファイルをそのスキーマで確認し、メッセージが示すフィールドを修正してください。";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "このレコードファイル";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "同梱カタログの Controllers フォルダ: カタログにレコードファイルがありません。ルール: カタログにはコントローラレコードが 1 つ以上あります。対処: OpenJoystickDriver を再インストールしてください。";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@、vendorID と productID: ファイル名は 2 つの ID を 16 進数にした %2$@ にする必要があります。対処: ファイル名を %2$@ に変更するか、ファイル内の ID を修正してください。";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@、vendorID と productID: %2$@ はすでに %3$@ のレコードの識別子です。対処: どちらかのファイルを削除するか、このファイルの ID を変更してください。";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@、document: ある値を JSON として書き出せません (%2$@)。対処: 理由が示す値を、文字列、数値、ブール値、リスト、または辞書に置き換えてください。";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@、vendorID と productID: vendorID は 1...65535、productID は 0...65535 にする必要があります。対処: それぞれを範囲内の整数に設定してください。";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "コントローラの SDL_GameControllerDB の行では、そのコントローラを動かせません。理由はメッセージに示されます。ojd record draft でそのコントローラのレコードを作成してください。";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

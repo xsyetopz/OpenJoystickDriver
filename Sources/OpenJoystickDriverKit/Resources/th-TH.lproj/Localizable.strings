@@ -4103,6 +4103,18 @@
 "error.E5006.message" = "อ่านไฟล์คีย์ของ ID ยูนิต PortKeyInstallation.key ไม่ได้ หรือไฟล์ไม่ได้มีขนาด 32 ไบต์ กู้คืนไฟล์จากข้อมูลสำรอง หากคุณลบไฟล์แทน OpenJoystickDriver จะสร้างคีย์ใหม่ และ ID ยูนิตทุกรายการจะเปลี่ยน";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "ระเบียนคอนโทรลเลอร์หรือ patch ไม่ถูกต้อง ตรวจสอบไฟล์กับสคีมาของไฟล์นั้นแล้วแก้ฟิลด์ที่ข้อความระบุ";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "ไฟล์เรกคอร์ดนี้";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "โฟลเดอร์ Controllers ของแค็ตตาล็อกที่มาพร้อมแอป: แค็ตตาล็อกไม่มีไฟล์เรกคอร์ด กฎ: แค็ตตาล็อกมีเรกคอร์ดคอนโทรลเลอร์อย่างน้อยหนึ่งรายการ วิธีแก้: ติดตั้ง OpenJoystickDriver ใหม่";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@, vendorID และ productID: ชื่อไฟล์ต้องเป็น %2$@ ซึ่งเป็น ID ทั้งสองในรูปเลขฐานสิบหก วิธีแก้: เปลี่ยนชื่อไฟล์เป็น %2$@ หรือแก้ ID ในไฟล์";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@, vendorID และ productID: %2$@ เป็นตัวตนของเรกคอร์ดใน %3$@ อยู่แล้ว วิธีแก้: ลบไฟล์ใดไฟล์หนึ่งจากสองไฟล์ หรือเปลี่ยน ID ของไฟล์นี้";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@, document: ไม่สามารถเขียนค่าเป็น JSON ได้ (%2$@) วิธีแก้: แทนที่ค่าที่เหตุผลระบุด้วยสตริง ตัวเลข ค่าบูลีน รายการ หรือดิกชันนารี";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@, vendorID และ productID: vendorID ต้องอยู่ที่ 1...65535 และ productID ที่ 0...65535 วิธีแก้: ตั้งค่าแต่ละตัวเป็นจำนวนเต็มในช่วงของมัน";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "บรรทัด SDL_GameControllerDB ของคอนโทรลเลอร์ใช้ควบคุมคอนโทรลเลอร์นั้นไม่ได้ ข้อความระบุสาเหตุไว้ เขียนระเบียนคอนโทรลเลอร์ให้ด้วย ojd record draft";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

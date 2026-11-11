@@ -4103,6 +4103,18 @@
 "error.E5006.message" = "Не удаётся прочитать файл ключа ID устройств PortKeyInstallation.key, или его размер не 32 байта. Восстановите файл из резервной копии. Если удалить его, OpenJoystickDriver создаст новый ключ и все ID устройств изменятся.";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "Запись контроллера или patch недопустимы. Проверьте файл по его схеме и исправьте поле, указанное в сообщении.";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "этот файл записи";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "Папка Controllers встроенного каталога: в каталоге нет файла записи. Правило: в каталоге есть хотя бы одна запись контроллера. Исправление: переустановите OpenJoystickDriver.";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@, vendorID и productID: имя файла должно быть %2$@ — оба идентификатора в шестнадцатеричном виде. Исправление: переименуйте файл в %2$@ или исправьте идентификаторы в нём.";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@, vendorID и productID: %2$@ уже является идентификатором записи в %3$@. Исправление: удалите один из двух файлов или измените идентификаторы в этом файле.";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@, document: значение нельзя записать как JSON (%2$@). Исправление: замените значение, названное в причине, строкой, числом, логическим значением, списком или словарём.";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@, vendorID и productID: vendorID должен быть 1...65535, а productID — 0...65535. Исправление: задайте каждому целое число из его диапазона.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "Строка SDL_GameControllerDB для контроллера не может им управлять. Причина указана в сообщении. Создайте запись контроллера для него с помощью ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

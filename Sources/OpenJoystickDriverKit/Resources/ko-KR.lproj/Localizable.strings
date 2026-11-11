@@ -4103,6 +4103,18 @@
 "error.E5006.message" = "유닛 ID의 키 파일 PortKeyInstallation.key를 읽을 수 없거나 크기가 32바이트가 아닙니다. 백업에서 파일을 복원하세요. 대신 삭제하면 OpenJoystickDriver가 새 키를 만들고 모든 유닛 ID가 바뀝니다.";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "컨트롤러 레코드 또는 patch가 올바르지 않습니다. 해당 스키마로 파일을 확인하고 메시지가 알려 주는 필드를 고치세요.";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "이 레코드 파일";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "내장 카탈로그의 Controllers 폴더: 카탈로그에 레코드 파일이 없습니다. 규칙: 카탈로그에는 컨트롤러 레코드가 하나 이상 있어야 합니다. 해결: OpenJoystickDriver를 다시 설치하세요.";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@, vendorID 및 productID: 파일 이름은 두 ID를 16진수로 쓴 %2$@이어야 합니다. 해결: 파일 이름을 %2$@(으)로 바꾸거나 파일 안의 ID를 고치세요.";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@, vendorID 및 productID: %2$@은(는) 이미 %3$@의 레코드 식별자입니다. 해결: 두 파일 중 하나를 삭제하거나 이 파일의 ID를 바꾸세요.";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@, document: 값을 JSON으로 쓸 수 없습니다(%2$@). 해결: 이유에 나온 값을 문자열, 숫자, 불리언, 목록 또는 딕셔너리로 바꾸세요.";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@, vendorID 및 productID: vendorID는 1...65535, productID는 0...65535여야 합니다. 해결: 각각 범위 안의 정수로 설정하세요.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "컨트롤러의 SDL_GameControllerDB 줄로는 그 컨트롤러를 구동할 수 없습니다. 이유는 메시지에 나와 있습니다. ojd record draft로 해당 컨트롤러의 레코드를 작성하세요.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

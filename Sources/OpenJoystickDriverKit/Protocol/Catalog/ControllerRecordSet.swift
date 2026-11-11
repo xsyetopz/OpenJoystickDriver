@@ -135,11 +135,37 @@ public struct ControllerRecordProblem: Error, Equatable, Sendable, CustomStringC
   public let description: String
   /// The error code of the rejection.
   public let code: ErrorCode
+  /// The catalog key of the localized message for this rule, or nil when the rule has none yet.
+  ///
+  /// The message takes the file as `%1$@`, then ``arguments`` from `%2$@`.
+  public let key: String?
+  /// The values that the localized message names after the file, such as a file name.
+  public let arguments: [String]
 
   /// Creates a problem from an error code and a description.
   init(code: ErrorCode, _ description: String) {
     self.code = code
     self.description = description
+    self.key = nil
+    self.arguments = []
+  }
+
+  /// Creates a problem that has its own localized message under `key`.
+  ///
+  /// `description` is the English reason that stays stable for the repository tool.
+  init(code: ErrorCode, key: String, arguments: [String] = [], _ description: String) {
+    self.code = code
+    self.description = description
+    self.key = key
+    self.arguments = arguments
+  }
+
+  /// The message in `localization`, with `file` as the file it names, or ``description`` when the
+  /// rule has no localized message.
+  func localizedDescription(_ localization: Localization, file: String?) -> String {
+    guard let key else { return description }
+    let named = file ?? localization.string("error.E5007.thisFile")
+    return localization.formatted(key, arguments: [named] + arguments)
   }
 }
 
@@ -207,7 +233,11 @@ public struct ControllerRecordSet: Sendable {
     let urls = (Bundle.module.urls(forResourcesWithExtension: "plist", subdirectory: nil) ?? [])
       .filter { isRecordFileName($0.lastPathComponent) }
     guard !urls.isEmpty else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "controller catalog is empty")
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.record.catalogEmpty",
+        "controller catalog is empty"
+      )
     }
     let catalog = loadCatalog(urls)
     if let problem = catalog.problems.first { throw bundledFailure(problem) }
@@ -248,12 +278,16 @@ public struct ControllerRecordSet: Sendable {
         guard url.lastPathComponent == fileName(for: record.model) else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.record.fileName",
+            arguments: [fileName(for: record.model)],
             "filename must be \(fileName(for: record.model))"
           )
         }
         if let first = files[record.model] {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.record.duplicateIdentity",
+            arguments: ["\(record.model)", first],
             "duplicate controller identity \(record.model): \(first) already holds it"
           )
         }
@@ -283,7 +317,12 @@ public struct ControllerRecordSet: Sendable {
   ) throws -> (model: ControllerModelID, document: ControllerRecordDocument) {
     let data: Data
     do { data = try JSONSerialization.data(withJSONObject: record.foundationValue()) } catch {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, error.localizedDescription)
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.record.unwritableValue",
+        arguments: [error.localizedDescription],
+        error.localizedDescription
+      )
     }
     let document = try JSONDecoder().decode(ControllerRecordDocument.self, from: data)
     guard let vendorID = UInt16(exactly: document.vendorID),
@@ -291,6 +330,7 @@ public struct ControllerRecordSet: Sendable {
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.record.idRange",
         "vendorID must be 1...65535 and productID 0...65535"
       )
     }
@@ -369,10 +409,16 @@ public struct ControllerRecordSet: Sendable {
   /// A reason that has an error code leads with it, such as `E5001: `, because a reason is a plain
   /// string where it is listed. A caller that reports the code itself passes `includingCode:
   /// false`. A field path leads with `document`, the noun for the kind of file that was decoded.
+  ///
+  /// With `localization`, a rule that has its own message reads in that language and names `file`,
+  /// the file that failed, or "this record file" when `file` is nil. Without it the reason is the
+  /// English ``ControllerRecordProblem/description``.
   public static func problemDescription(
     _ error: any Error,
     includingCode: Bool = true,
-    document: String
+    document: String,
+    localization: Localization? = nil,
+    file: String? = nil
   ) -> String {
     func path(_ codingPath: [any CodingKey]) -> String {
       codingPath.map { $0.intValue.map { "[\($0)]" } ?? $0.stringValue }.joined(separator: ".")
@@ -381,7 +427,9 @@ public struct ControllerRecordSet: Sendable {
       codingPath.isEmpty ? text : "\(document).\(path(codingPath)): \(text)"
     }
     switch error {
-    case let problem as ControllerRecordProblem: return problem.description
+    case let problem as ControllerRecordProblem:
+      guard let localization else { return problem.description }
+      return problem.localizedDescription(localization, file: file)
     case let problem as DocumentCoderError: return problem.description
     case let problem as DocumentHeaderProblem:
       return includingCode ? problem.description : problem.message
