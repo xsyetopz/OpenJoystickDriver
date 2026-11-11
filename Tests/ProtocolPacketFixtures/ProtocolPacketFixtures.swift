@@ -336,14 +336,34 @@ public enum ProtocolPacketFixtures {
     public static let presenceDisconnected = Data([0x08, 0x00])
     /// The connected envelope with the headset bit (`0x40`) set in byte 1.
     public static let presenceConnectedWithHeadset = Data([0x08, 0xC0])
-    /// A pad data envelope one byte shorter than a pad report needs.
-    public static let padDataTooShort = padData().dropLast()
+    /// A real `045E:0719` state report (issue #9, lzpfmh): envelope `00 01 00 F0`, inner header
+    /// `00 13`, no buttons, both triggers released.
+    public static let capture0719 = Data([
+      0x00, 0x01, 0x00, 0xF0, 0x00, 0x13, 0x00, 0x00, 0x00, 0x00,
+      0x2C, 0xE2, 0xEC, 0xFC, 0xB4, 0xEB, 0xCA, 0x05,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    ])
+    /// A real `045E:02A9` state report (PR #54, bdidier): the same envelope and inner header
+    /// `00 13`, sticks off centre.
+    public static let capture02A9 = Data([
+      0x00, 0x01, 0x00, 0xF0, 0x00, 0x13, 0x00, 0x00, 0x00, 0x00,
+      0x04, 0x01, 0x6E, 0x00, 0xE1, 0x09, 0x0A, 0x04,
+      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    ])
+    /// A real non-input report an empty or idle slot sends (issue #9).
+    ///
+    /// Header `00 00 00 F0 00 00`. The issue records only the six header bytes; the 29-byte length is the state report's.
+    public static let idleReport = Data(
+      [0x00, 0x00, 0x00, 0xF0, 0x00, 0x00] + [UInt8](repeating: 0, count: 23)
+    )
+    /// A state report cut one byte short of the 18 bytes that hold the controller state.
+    public static let padDataTooShort = Data(capture02A9.prefix(17))
 
-    /// Pad data: the four-byte envelope with `data[1] == 0x01`, then one wired-format report.
+    /// Pad data: a real capture's header (`00 01 00 F0 00 13`), then zeroed controls with
+    /// `buttons` in bytes 6 and 7 (the masks the issue #9 hardware run recorded).
     public static func padData(buttons: UInt16 = 0) -> Data {
-      var report = [UInt8](repeating: 0, count: 24)
-      report[1] = 0x01
-      report[5] = 0x14
+      var report = [UInt8](capture0719)
+      for index in 6..<report.count { report[index] = 0 }
       report[6] = UInt8(truncatingIfNeeded: buttons)
       report[7] = UInt8(truncatingIfNeeded: buttons >> 8)
       return Data(report)

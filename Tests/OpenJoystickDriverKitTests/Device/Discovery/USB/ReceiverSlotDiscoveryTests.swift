@@ -194,13 +194,18 @@ struct ReceiverSlotDiscoveryTests {
   @Test
   func eachSlotIsSelectedByItsOwnPortKey() async throws {
     // Synthetic interface layout (ReceiverSlotProvider); receiver slot numbers are uncaptured.
-    let provider = ReceiverSlotProvider(sessions: slotSessions { _ in [] })
+    let provider = ReceiverSlotProvider(
+      sessions: slotSessions { _ in [.success([UInt8](Receiver.presenceConnected))] }
+    )
     let manager = makeManager(provider)
     #expect(
       await manager.handleUSBDeviceAdded(ReceiverSlotProvider.device, provider: provider)
         == .claimed(slotIdentifiers)
     )
 
+    await waitUntil("all four controllers report presence") {
+      await manager.connectedDeviceDescriptions().count == 4
+    }
     let descriptions = await manager.connectedDeviceDescriptions()
     #expect(Set(descriptions.map(\.sessionToken)).count == 4)
     #expect(Set(descriptions.map(\.inputEndpoint)) == [0x81, 0x83, 0x85, 0x87])
@@ -218,6 +223,78 @@ struct ReceiverSlotDiscoveryTests {
         await pipeline.controllerSessionState() == (identifier == slot ? .suspended : .active)
       )
     }
+    await manager.stop()
+  }
+
+  @Test
+  func emptySlotsAreNotListedOrEligibleForPublication() async {
+    let sessions = slotSessions { _ in [] }
+    let provider = ReceiverSlotProvider(sessions: sessions)
+    let dispatcher = ReceiverSlotDispatcher()
+    let manager = DeviceManager(
+      dispatcher: dispatcher,
+      installationKey: testPortKeyInstallationKey,
+      usbTransportProvider: provider
+    )
+    #expect(
+      await manager.handleUSBDeviceAdded(ReceiverSlotProvider.device, provider: provider)
+        == .claimed(slotIdentifiers)
+    )
+    // All four slots stay open for pairing, but none is a connected controller.
+    #expect(await manager.pipelines.count == 4)
+    #expect(await manager.connectedDeviceDescriptions().isEmpty)
+    #expect(await manager.connectedLogicalControllerIDs().isEmpty)
+    #expect(await manager.activeLogicalControllerIDs().isEmpty)
+    #expect(await manager.connectedControllers().isEmpty)
+    #expect(dispatcher.activations.isEmpty)
+    for identifier in slotIdentifiers {
+      #expect(await manager.controllerSessionState(for: identifier) == nil)
+    }
+    await manager.stop()
+  }
+
+  @Test
+  func onlyTheSlotReceivingARealReportIsListedAndSelectableByModel() async throws {
+    let sessions = slotSessions { interface in
+      interface == 0 ? [.success([UInt8](Receiver.capture02A9))] : []
+    }
+    let provider = ReceiverSlotProvider(sessions: sessions)
+    let dispatcher = ReceiverSlotDispatcher()
+    let manager = DeviceManager(
+      dispatcher: dispatcher,
+      installationKey: testPortKeyInstallationKey,
+      usbTransportProvider: provider
+    )
+    #expect(
+      await manager.handleUSBDeviceAdded(ReceiverSlotProvider.device, provider: provider)
+        == .claimed(slotIdentifiers)
+    )
+    await waitUntil("one controller reports presence") {
+      await manager.connectedDeviceDescriptions().count == 1
+    }
+    let slot = ReceiverSlotProvider.identifier(interface: 0)
+    await waitUntil("only the paired controller activates output") {
+      dispatcher.activations == [slot]
+    }
+    #expect(await manager.connectedLogicalControllerIDs() == [slot])
+    #expect(await manager.activeLogicalControllerIDs() == [slot])
+    #expect(await manager.controllerSessionState(for: slot) == .active)
+    let controllers = await manager.connectedControllers()
+    #expect(controllers.map(\.logicalControllerID) == [slot])
+    let selected = try ControllerReference.model(slot.model).resolve(in: controllers)
+    #expect(selected.logicalControllerID == slot)
+    for empty in slotIdentifiers where empty != slot {
+      #expect(await manager.deviceDescription(for: empty) == nil)
+    }
+    let selectedSession = try #require(sessions[0])
+    await selectedSession.enqueueReads([.success([UInt8](Receiver.presenceDisconnected))])
+    await waitUntil("the disconnected controller is removed") {
+      await manager.connectedDeviceDescriptions().isEmpty
+    }
+    #expect(await manager.pipelines.count == 4)
+    #expect(await manager.activeLogicalControllerIDs().isEmpty)
+    #expect(await manager.controllerSessionState(for: slot) == nil)
+    #expect(dispatcher.stops == [slot])
     await manager.stop()
   }
 

@@ -6,7 +6,9 @@ This request covers [OpenJoystickDriver issue #9][1]. Linux `xpad.c` identifies 
 - `045e:02a9` — unofficial receiver identity
 - `045e:0719` — Xbox 360 Wireless Receiver
 
-The parser handles Linux's four-byte receiver envelope, controller presence transitions, wrapped 20-byte state reports, two-motor rumble, and ring-light commands. These paths are source-backed but not hardware-verified.
+The parser handles Linux's four-byte receiver envelope, controller presence transitions, state reports, two-motor rumble, and ring-light commands. A receiver state report needs 18 bytes including the envelope, and its inner type byte is zero. Its inner length byte is `13` in the captures of [issue #9][1] (`045e:0719`) and [pull request #54](https://github.com/xsyetopz/OpenJoystickDriver/pull/54) (`045e:02a9`), so only a wired pad is held to `14`. The decoder tests replay those captured 29-byte packets. Decoding is verified against the captures; virtual output, rumble, and LEDs through OJD are not hardware-verified.
+
+Only connected controllers appear in controller lists and qualify for virtual output. OJD keeps all four receiver slots open to detect pairing. A presence notification or a valid state report connects a slot, so a missed notification does not hide a controller; a disconnect notification removes it.
 
 Record validation is signing-free. These receiver pairs are not in the current production Apple USB entitlement, so physical capture tries direct IOUSBHost. Use an exact development DEXT experiment only if live ownership evidence proves direct access is unavailable.
 
@@ -47,7 +49,7 @@ Attach the complete command output to issue #9 with macOS version, Mac model, re
 
 ## Capture Receiver Slots
 
-OJD runs one pipeline per receiver slot: each interface with triple FF/5D/81 and one interrupt IN and OUT endpoint, in interface order, at most four. Slot n (from 0) sends the presence inquiry at startup, ignores pad data until the slot reports a controller present, then lights player n+1. None of this has been verified on a real receiver yet; real slot interface numbers are unknown.
+OJD runs one pipeline per receiver slot: each interface with triple FF/5D/81 and one interrupt IN and OUT endpoint, in interface order, at most four. Slot n (from 0) sends the presence inquiry at startup, connects when the slot reports a controller present or sends a valid state report, then lights player n+1. The observed `045e:02a9` and `045e:0719` slot 0 is interface 0 with endpoints `81`/`01`; the interface numbers of the other slots are not captured.
 
 1. Record the configuration descriptor and interface numbers with the receiver plugged in:
 
@@ -63,7 +65,7 @@ OJD runs one pipeline per receiver slot: each interface with triple FF/5D/81 and
    ojd controller list --json
    ```
 
-   Expect four entries with `protocol` `XboxXUSB:Receiver`, one per slot. `ojd controller show <ID> --json` gives each entry's `interfaceNumber` (`N`) for a FF/5D/81 interface. Paste the output.
+   Expect one entry with `protocol` `XboxXUSB:Receiver` per paired controller, none for an empty slot. `ojd controller show <ID> --json` gives each entry's `interfaceNumber` (`N`) for a FF/5D/81 interface. Paste the output.
 3. Pair one controller at a time. For each, record which interface's entry receives input and which ring-light quadrant lights. Slot order is interface order: the lowest interface is player 1.
 4. With controllers paired on slot 0 and a later slot, restart OJD without unplugging the receiver. The device is already configured, so no slot, including slot 0, should send SET_CONFIGURATION. Confirm every paired slot resumes input. If slot 0 alone reconnects during a run (for example after a transfer error), confirm the later slots keep their input.
 5. Power off one controller. Confirm only its slot reports disconnected.

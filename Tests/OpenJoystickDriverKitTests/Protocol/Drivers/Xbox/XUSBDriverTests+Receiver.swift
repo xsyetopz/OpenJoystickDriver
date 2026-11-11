@@ -39,6 +39,62 @@ extension XUSBDriverTests {
   }
 
   @Test
+  func testWirelessReceiverRealCapturesWithInnerLengthByte13DecodeControls() throws {
+    let parser = XUSBDriver(isWirelessReceiver: true)
+
+    // 045E:02A9 (PR #54): lsx 260, lsy 110 (up-positive, so down), rsx 2529, rsy 1034.
+    let state02A9 = try #require(parser.parseReport(Receiver.capture02A9)?.state)
+    #expect(state02A9.leftStick.x == BipolarValue(260))
+    #expect(state02A9.leftStick.y == BipolarValue(-110))
+    #expect(state02A9.rightStick.x == BipolarValue(2_529))
+    #expect(state02A9.rightStick.y == BipolarValue(-1_034))
+    #expect(parser.consumeInputConnectionStateChange() == .connected)
+
+    // 045E:0719 (issue #9): lsx 0xE22C, lsy 0xFCEC, rsx 0xEBB4, rsy 0x05CA.
+    let state0719 = try #require(parser.parseReport(Receiver.capture0719)?.state)
+    #expect(state0719.leftStick.x == BipolarValue(Int16(bitPattern: 0xE22C)))
+    #expect(state0719.rightStick.y == BipolarValue(-0x05CA))
+    #expect(state0719.leftTrigger == UnipolarValue(normalized: 0))
+    #expect(state0719.pressed.isEmpty)
+  }
+
+  @Test
+  func testWirelessReceiverRealHeaderDecodesButtonsAndTriggers() throws {
+    let parser = XUSBDriver(isWirelessReceiver: true)
+    // Masks from the issue #9 hardware table: D-pad up 0001 and Start 0010, A 1000 as 0x1000.
+    var report = [UInt8](Receiver.capture02A9)
+    report[6] = 0x11  // D-pad up and Start.
+    report[7] = 0x11  // A and left shoulder.
+    report[8] = 0xFF  // Left trigger full.
+    report[9] = 0x80  // Right trigger half.
+    let input = try #require(try parser.parseReport(Data(report)))
+    #expect(input.holds(.press(.south)))
+    #expect(input.holds(.press(.start)))
+    #expect(input.holds(.press(.leftShoulder)))
+    #expect(input.state.hat == .north)
+    #expect(input.state.leftTrigger == .max)
+    #expect(input.state.rightTrigger == UnipolarValue(normalized: Float(128) / 255))
+  }
+
+  @Test
+  func testWirelessReceiverIdleReportDoesNotConnectOrDecode() throws {
+    let parser = XUSBDriver(isWirelessReceiver: true)
+
+    #expect(try parser.parseReport(Receiver.idleReport) == nil)
+    #expect(parser.consumeInputConnectionStateChange() == nil)
+  }
+
+  @Test
+  func testWiredPadStillRequiresTheWiredLengthByte() throws {
+    let wired = XUSBDriver()
+    var report = Array(Receiver.capture02A9.dropFirst(4).prefix(20))
+    #expect(report[1] == 0x13)
+    #expect(try wired.parseReport(Data(report)) == nil)
+    report[1] = 0x14
+    #expect(try wired.parseReport(Data(report)) != nil)
+  }
+
+  @Test
   func testWirelessReceiverShortOrWrongTypePadDataDoesNotConnect() throws {
     let parser = XUSBDriver(isWirelessReceiver: true)
     var wrongType = Receiver.padData()

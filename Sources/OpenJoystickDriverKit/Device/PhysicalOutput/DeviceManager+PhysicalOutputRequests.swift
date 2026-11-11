@@ -61,7 +61,7 @@ extension DeviceManager {
     green: UInt8,
     blue: UInt8
   ) async -> Bool {
-    guard let key = connectedIdentifier(for: controller),
+    guard let key = await connectedIdentifier(for: controller),
       let pipeline = pipelines[key],
       await pipeline.physicalOutputCapabilities().lightingFeatures.contains(.programmableColor)
     else { return false }
@@ -84,7 +84,7 @@ extension DeviceManager {
     for controller: ControllerReference,
     token: UUID
   ) async -> Bool {
-    guard let key = connectedIdentifier(for: controller)
+    guard let key = await connectedIdentifier(for: controller)
     else { return true }
     physicalOutputOwnership.releaseTemporaryColor(token: token, for: key)
     guard let pipeline = pipelines[key] else { return true }

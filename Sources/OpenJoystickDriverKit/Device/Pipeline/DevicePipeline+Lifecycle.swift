@@ -273,6 +273,9 @@ extension DevicePipeline {
   /// The result of the latest startup output; nil before any.
   func startupCommandStatus() -> String? { startupOutputStatus }
 
+  /// Whether a controller is attached: a receiver slot with none stays open for pairing only.
+  func hasConnectedController() -> Bool { inputConnectionActive }
+
   /// Records `status` as the result of the startup output.
   func recordStartupOutputStatus(_ status: String) { startupOutputStatus = status }
   /// Returns captured packets and renews the capture lease; reading is what enables capture.

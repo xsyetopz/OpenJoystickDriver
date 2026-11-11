@@ -6,6 +6,8 @@ private let xbox360InputReportType: UInt8 = 0x00
 private let xbox360InputReportLengthByte: UInt8 = 0x14
 /// The minimum size of a wired Xbox 360 input report in bytes.
 private let xbox360InputReportLength = 20
+/// The smallest receiver report: the four-byte envelope and the 14 bytes that hold the controls.
+private let xbox360ReceiverReportMinimum = 18
 /// Maximum value for a trigger axis (UInt8).
 private let xbox360TriggerMax: Float = 255
 /// Maximum positive value for a signed stick axis.
@@ -279,10 +281,13 @@ public final class XUSBDriver: PhysicalProtocolDriver {
       updateReceiverConnection(isConnected: data[1] & 0x80 != 0)
       return nil
     }
-    guard data[1] == 0x01, data.count >= xbox360InputReportLength + 4 else { return nil }
-    guard let state = decodeWired(Data(data.dropFirst(4))) else { return nil }
+    // Captured receiver reports carry inner length byte 0x13, not the wired 0x14, so only the
+    // report type and the 14 bytes that hold the controls are checked.
+    guard data[1] == 0x01, data.count >= xbox360ReceiverReportMinimum,
+      data[4] == xbox360InputReportType
+    else { return nil }
     updateReceiverConnection(isConnected: true)
-    return state
+    return decodeState(Array(data.dropFirst(4)))
   }
 
   /// The presence inquiry: the description's startup write for a receiver slot (xpad.c:1449–1469).
@@ -302,8 +307,11 @@ public final class XUSBDriver: PhysicalProtocolDriver {
     guard data.count >= xbox360InputReportLength, data[1] == xbox360InputReportLengthByte else {
       return nil
     }
-    let bytes = Array(data)
+    return decodeState(Array(data))
+  }
 
+  /// Applies the controls of one state report, which starts at its type byte.
+  private func decodeState(_ bytes: [UInt8]) -> ControllerState {
     let buttons = UInt16(bytes[2]) | (UInt16(bytes[3]) << 8)
     let lsx = Int16(bitPattern: UInt16(bytes[6]) | (UInt16(bytes[7]) << 8))
     let lsy = Int16(bitPattern: UInt16(bytes[8]) | (UInt16(bytes[9]) << 8))

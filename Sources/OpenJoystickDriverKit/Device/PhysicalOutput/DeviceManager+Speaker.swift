@@ -9,7 +9,8 @@ extension DeviceManager {
     _ audio: Data,
     for controller: ControllerReference
   ) async -> ControllerOutputResult {
-    guard let key = connectedIdentifier(for: controller), !isStopping, let pipeline = pipelines[key]
+    guard let key = await connectedIdentifier(for: controller), !isStopping,
+      let pipeline = pipelines[key]
     else { return ControllerOutputResult(.notFound) }
     guard let format = await pipeline.physicalOutputCapabilities().speaker else {
       return ControllerOutputResult(.unsupportedCapability)
@@ -27,7 +28,8 @@ extension DeviceManager {
 
   /// Cuts the clip playing on the controller `controller` names and mutes its speaker.
   public func stopSpeaker(for controller: ControllerReference) async -> ControllerOutputResult {
-    guard let key = connectedIdentifier(for: controller), !isStopping, let pipeline = pipelines[key]
+    guard let key = await connectedIdentifier(for: controller), !isStopping,
+      let pipeline = pipelines[key]
     else { return ControllerOutputResult(.notFound) }
     guard await pipeline.physicalOutputCapabilities().supportsSpeaker else {
       return ControllerOutputResult(.unsupportedCapability)
