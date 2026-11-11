@@ -3,7 +3,7 @@ import Darwin
 import Foundation
 
 /// The `apiVersion` that every line of the endpoint protocol carries.
-public let endpointAPIVersion = "openjoystickdriver/v1alpha2"
+public let endpointAPIVersion = "openjoystickdriver/v1alpha3"
 
 /// A failure of the endpoint connection or of the signaling.
 public enum BridgeError: Error, CustomStringConvertible, Equatable {

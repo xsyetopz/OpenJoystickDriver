@@ -384,7 +384,7 @@ class EndpointReferenceClientTests(unittest.TestCase):
                 status="Failure",
                 code=code,
                 message="Refused.",
-                details={"supportedAPIVersions": ["openjoystickdriver/v1alpha2"]},
+                details={"supportedAPIVersions": ["openjoystickdriver/v1alpha3"]},
             )
             with self.subTest(code=code):
                 exit_info = self.run_until_feeding(
@@ -392,7 +392,7 @@ class EndpointReferenceClientTests(unittest.TestCase):
                 )
 
                 self.assertIn(code, str(exit_info.code))
-                self.assertIn("openjoystickdriver/v1alpha2", str(exit_info.code))
+                self.assertIn("openjoystickdriver/v1alpha3", str(exit_info.code))
                 self.assertIn("Supported apiVersion values", str(exit_info.code))
 
     def test_client_refuses_a_line_with_another_api_version(self) -> None:

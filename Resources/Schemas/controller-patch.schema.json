@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/controller-patch.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/controller-patch.schema.json",
   "description": "A RFC 7396 merge patch for controller records. A null deletes a key, an array replaces the array. The patched record is validated against controller.schema.json.",
   "type": "object",
   "additionalProperties": false,
   "required": ["apiVersion", "kind", "selector", "patch"],
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha2"
+      "const": "openjoystickdriver/v1alpha3"
     },
     "kind": {
       "const": "ControllerPatch"

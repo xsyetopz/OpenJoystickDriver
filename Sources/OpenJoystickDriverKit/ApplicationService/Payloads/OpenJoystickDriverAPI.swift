@@ -4,10 +4,10 @@ import Foundation
 /// speaks, and that OJD reads or writes as a file.
 public enum OpenJoystickDriverAPI {
   /// The supported `apiVersion`.
-  public static let version = "openjoystickdriver/v1alpha2"
+  public static let version = "openjoystickdriver/v1alpha3"
 
   /// The start of the `$id` of every JSON Schema under `Resources/Schemas`; the file name follows.
-  public static let schemaBase = "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/"
+  public static let schemaBase = "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/"
 
   /// Why a document with this `apiVersion` and `kind` is not a supported `expected`, or nil when
   /// it is.

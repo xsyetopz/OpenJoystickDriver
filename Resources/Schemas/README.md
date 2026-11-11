@@ -32,7 +32,7 @@
 - `crosswalk.schema.json`: the authored table `Resources/Vocabulary/crosswalk.json`, which maps each control id to its W3C, SDL, evdev, HID and Apple names and records the source of each column. It describes the shape of that file only; no schema accepts or maps a name in it.
 - `vocabulary.schema.json`: only `$defs`, no `kind`. The one definition of the control ids (`$defs/control`) and the subsets other schemas `$ref`: D-pad ids, stick axes, axes, horizontal stick axes and triggers. The Swift enum `Control` mirrors it, and `Resources/Vocabulary/crosswalk.json` documents the SDL, evdev, HID and Apple names of each id.
 
-Each artifact class has one current contract, a flat `<kind>.schema.json` here. Its `$id` is `https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/<kind>.schema.json`; the ID is a name for the schema and nothing publishes or fetches it yet. A document declares `apiVersion: openjoystickdriver/v1alpha2` and its `kind`, and does not declare `$schema`. OJD rejects a missing or unknown `apiVersion`, and a `kind` that is not the one it reads. The error names the file, the version found, and the supported version.
+Each artifact class has one current contract, a flat `<kind>.schema.json` here. Its `$id` is `https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/<kind>.schema.json`; the ID is a name for the schema and nothing publishes or fetches it yet. A document declares `apiVersion: openjoystickdriver/v1alpha3` and its `kind`, and does not declare `$schema`. OJD rejects a missing or unknown `apiVersion`, and a `kind` that is not the one it reads. The error names the file, the version found, and the supported version.
 
 | Schema | `kind` |
 | --- | --- |

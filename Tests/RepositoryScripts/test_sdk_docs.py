@@ -75,7 +75,7 @@ class SDKDocsTests(unittest.TestCase):
     def test_the_examples_name_the_endpoint_api_version(self) -> None:
         for example in examples():
             version = example.get("apiVersion") or example["object"]["apiVersion"]
-            self.assertEqual(version, "openjoystickdriver/v1alpha2")
+            self.assertEqual(version, "openjoystickdriver/v1alpha3")
 
     def test_a_bad_example_would_fail(self) -> None:
         bad = {"apiVersion": "unsupported.example/v9", "kind": "Hello"}

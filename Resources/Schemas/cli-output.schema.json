@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/cli-output.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/cli-output.schema.json",
   "title": "ojd --json output",
   "description": "The --json output of each ojd command. Each command's entry in $defs is its command path in lowerCamelCase, such as controllerShow for 'ojd controller show'. Every document has apiVersion, and kind: the kind of the object it prints, such as Controller for 'ojd controller show', or Status for an action that leaves no object to print, whose details hold the command's own result. A list command prints its listed items in items, with no apiVersion or kind of their own, and an empty metadata. Entries that start with 'shared' are shapes that several commands use. A command that streams prints one document per line, and each line matches the entry.",
   "$defs": {
@@ -2417,7 +2417,7 @@
     },
     "sharedAPIVersion": {
       "description": "The version of the ojd --json output format.",
-      "const": "openjoystickdriver/v1alpha2"
+      "const": "openjoystickdriver/v1alpha3"
     },
     "sharedAccessGrant": {
       "type": "object",

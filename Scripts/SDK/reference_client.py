@@ -23,7 +23,7 @@ import threading
 from collections.abc import Callable
 from typing import Any, TextIO
 
-API_VERSION = "openjoystickdriver/v1alpha2"
+API_VERSION = "openjoystickdriver/v1alpha3"
 HEADER_ERRORS = ("E1009", "E1010", "E1011")
 FRAMES: list[dict[str, Any]] = [{"buttons": ["South"], "holdMilliseconds": 100}, {}]
 

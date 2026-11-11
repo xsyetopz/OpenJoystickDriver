@@ -5,7 +5,7 @@ from typing import Any
 
 from Scripts.Quality import validate_schemas
 
-VERSION = "openjoystickdriver/v1alpha2"
+VERSION = "openjoystickdriver/v1alpha3"
 NONCE = "A" * 43
 
 

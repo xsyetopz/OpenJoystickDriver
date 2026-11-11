@@ -175,7 +175,7 @@ API_VERSION = "the apiVersion value `group/version` (Kubernetes grammar)"
 CLOUD_EVENTS = "CloudEvents 1.0 envelope attribute"
 HID_PAGE = "HID Usage Table page name used as a property name"
 REPORT_DATA_SCHEMA = (
-    "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/"
+    "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/"
     "report.schema.json#/$defs/supportDiagnosticData"
 )
 MODE_ID = "a mode id is a name with an RFC 1123 label pattern, not an enum value"
@@ -183,7 +183,7 @@ MODE_ID = "a mode id is a name with an RFC 1123 label pattern, not an enum value
 # (schema, pointer) -> (values excused at that pointer, reason).
 EXCEPTIONS: dict[tuple[str, str], tuple[tuple[str, ...], str]] = {
     **{
-        (schema, pointer): (("openjoystickdriver/v1alpha2",), API_VERSION)
+        (schema, pointer): (("openjoystickdriver/v1alpha3",), API_VERSION)
         for schema, pointer in (
             ("access-grants", "/properties/apiVersion/const"),
             ("cli-output", "/$defs/sharedAPIVersion/const"),

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/service-listener-failure.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/service-listener-failure.schema.json",
   "title": "OpenJoystickDriver service listener failure",
   "description": "The file beside the service's RPC socket (the socket path plus '.failure.json') that the service writes when its request listener stops on a fatal error. A successful listener start and an orderly stop delete it. 'ojd status' and 'ojd diagnose' read it when the service cannot be reached.",
   "type": "object",
@@ -17,7 +17,7 @@
   "additionalProperties": false,
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha2"
+      "const": "openjoystickdriver/v1alpha3"
     },
     "kind": {
       "const": "ServiceListenerFailure"

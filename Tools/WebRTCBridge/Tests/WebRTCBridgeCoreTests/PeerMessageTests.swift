@@ -6,7 +6,7 @@ import XCTest
 /// Checks ``PeerMessage`` and ``FrameMailbox`` against the schemas and invalid input.
 final class PeerMessageTests: XCTestCase {
   /// The `apiVersion` member of every message, as JSON text.
-  private static let header = #""apiVersion":"openjoystickdriver/v1alpha2""#
+  private static let header = #""apiVersion":"openjoystickdriver/v1alpha3""#
 
   /// A `Frame` message with the given extra members, as data.
   private func frame(_ members: String = "") -> Data {

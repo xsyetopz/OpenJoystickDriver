@@ -12,7 +12,7 @@ from Scripts.Quality import validate_schemas
 
 ROOT = Path(__file__).resolve().parents[2]
 BUNDLED = ROOT / "Resources" / "VirtualDevices"
-HEADER = {"apiVersion": "openjoystickdriver/v1alpha2", "kind": "VirtualDevice"}
+HEADER = {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "VirtualDevice"}
 
 
 def load(name: str) -> dict[str, Any]:

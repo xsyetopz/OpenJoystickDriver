@@ -34,7 +34,7 @@ private final class FakeChannel: PeerChannel, @unchecked Sendable {
 /// Checks that ``HostBridge`` passes valid peer frames to the endpoint and rumble to the peer.
 final class HostBridgeTests: XCTestCase {
   /// The `apiVersion` member that every message carries, as JSON text.
-  private static let header = #""apiVersion":"openjoystickdriver/v1alpha2""#
+  private static let header = #""apiVersion":"openjoystickdriver/v1alpha3""#
 
   /// Serves one connection on the endpoint and starts a bridge on a fake channel.
   private func started(

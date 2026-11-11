@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha2/controller.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/controller.schema.json",
   "type": "object",
   "required": ["apiVersion", "kind", "vendorID", "productID", "modes"],
   "additionalProperties": false,
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha2"
+      "const": "openjoystickdriver/v1alpha3"
     },
     "kind": {
       "const": "Controller"
