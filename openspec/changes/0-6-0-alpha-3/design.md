@@ -295,7 +295,13 @@ Users did not find `ojd migrate`: both screenshots show people stuck. A backup i
 
 A `.json` file left in a store is reported as stale; no reader opens it.
 
-A 0.5 document (no `apiVersion`) gets `failed` with reason "written by 0.5; re-create it", unless task 5.6 finds a mechanical mapping.
+A 0.5 document (no `apiVersion`) gets `failed` with reason "written by 0.5; re-create it". Task 5.6 found no mechanical step worth adding:
+
+- 0.5 kept one user file, `RemappingProfiles.json` (`Sources/OpenJoystickDriver/Remapping/Profiles/Library.swift:60-66` at tag `0.5.0-beta.4`). Its controller records lived only in the repository, so only pull requests hold 0.5 records.
+- Pull requests #50 and #39 map field by field: `protocol.driver` `GIP` with variant `xboxOne` becomes one `default` mode with family `XboxGIP` (the `1532-0a43` record at `0.5.0-beta.4` and at `0.6.0-alpha.1`), and `usb.endpoints` keeps its shape.
+- Pull request #36 names the drivers `XboxBluetoothHID` and `FlydigiVendor`, which the 0.5 schema lacks (its `protocol.driver` enum at `0.5.0-beta.4`); its parsers came with the pull request and never merged. The 0.5 `quirks`, `startupPackets`, and `keepAlive` have no `v1alpha1` field either.
+
+A step would therefore serve only two single-mode records, which tasks 8.9 and 8.10 re-create by hand with their authors credited.
 
 Alternative considered: readers that accept old versions or JSON. Rejected by `single_format`.
 
