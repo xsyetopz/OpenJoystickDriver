@@ -1844,7 +1844,7 @@
 /* Examples block at the end of the help of 'ojd binding set'. The command lines, option names and sources stay as written; translate only the lines that start with #. */
 "cli.binding.set.examples" = "範例：\n  # 按住南鍵時按住空白鍵\n  ojd binding set Racing button:south key:space\n  # 每按一次切換 J 的開關\n  ojd binding set Racing button:west key:key-j --behavior toggle\n  # 按住時每秒重複 J 10 次\n  ojd binding set Racing button:west key:key-j --turbo-rate 10 --turbo-duty 0.5";
 /* Examples block at the end of the help of 'ojd record install'. The command lines and file names stay as written; translate only the lines that start with #. */
-"cli.record.install.examples" = "範例：\n  # 安裝記錄檔\n  ojd record install 045E-028E.json\n  # 從標準輸入讀取記錄\n  ojd record install - < 045E-028E.json";
+"cli.record.install.examples" = "範例：\n  # 安裝記錄檔\n  ojd record install 045e-028e.plist\n  # 從標準輸入讀取記錄\n  ojd record install - < 045e-028e.plist";
 /* Examples block at the end of the help of 'ojd access grant'. The command lines and option names stay as written; translate only the lines that start with #. */
 "cli.access.grant.examples" = "範例：\n  # 允許某個程式使用服務\n  ojd access grant /Applications/Example.app\n  # 為來自某個來源的頁面建立權杖\n  ojd access grant --token overlay --origin http://127.0.0.1:8080";
 /* One-line summary of 'ojd service' in the command list and at the top of its help. OpenJoystickDriver is the product name. */

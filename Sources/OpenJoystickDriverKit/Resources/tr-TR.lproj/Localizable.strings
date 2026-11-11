@@ -1844,7 +1844,7 @@
 /* Examples block at the end of the help of 'ojd binding set'. The command lines, option names and sources stay as written; translate only the lines that start with #. */
 "cli.binding.set.examples" = "Örnekler:\n  # Güney düğmesi basılıyken Boşluk tuşunu basılı tut\n  ojd binding set Racing button:south key:space\n  # Her basışta J tuşunu aç/kapat\n  ojd binding set Racing button:west key:key-j --behavior toggle\n  # Basılı tutulduğu sürece J tuşunu saniyede 10 kez tekrarla\n  ojd binding set Racing button:west key:key-j --turbo-rate 10 --turbo-duty 0.5";
 /* Examples block at the end of the help of 'ojd record install'. The command lines and file names stay as written; translate only the lines that start with #. */
-"cli.record.install.examples" = "Örnekler:\n  # Bir kayıt dosyası kur\n  ojd record install 045E-028E.json\n  # Kaydı stdin’den oku\n  ojd record install - < 045E-028E.json";
+"cli.record.install.examples" = "Örnekler:\n  # Bir kayıt dosyası kur\n  ojd record install 045e-028e.plist\n  # Kaydı stdin’den oku\n  ojd record install - < 045e-028e.plist";
 /* Examples block at the end of the help of 'ojd access grant'. The command lines and option names stay as written; translate only the lines that start with #. */
 "cli.access.grant.examples" = "Örnekler:\n  # Bir programın servisi kullanmasına izin ver\n  ojd access grant /Applications/Example.app\n  # Tek bir kaynaktan sunulan sayfalar için jeton oluştur\n  ojd access grant --token overlay --origin http://127.0.0.1:8080";
 /* One-line summary of 'ojd service' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
