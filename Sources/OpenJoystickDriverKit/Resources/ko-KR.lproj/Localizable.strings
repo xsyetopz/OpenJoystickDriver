@@ -206,12 +206,10 @@
 "ui.controllers.noModeMatched" = "이 컨트롤러는 다른 모델과 ID를 공유하며 지원되는 모델 중 어느 것과도 일치하지 않습니다. OJD는 데이터를 보내지 않습니다.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noModeMatched.nextStep" = "컨트롤러 모델과 함께 지원 리포트를 보내 주세요. 모델을 식별할 수 있습니다.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is recognized and serves nothing, such as a receiver with no controller connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.idleIdentity" = "이 장치는 컨트롤을 제공하지 않습니다. 컨트롤러가 연결되지 않은 수신기 등이 해당합니다. OJD는 데이터를 보내지 않습니다.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is recognized and serves nothing, such as a receiver with no controller connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.idleIdentity.nextStep" = "컨트롤러를 연결하거나 컨트롤러의 전원을 켜세요.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. OJD sends such a receiver no data, and the text says so. OJD stays as written. */
 "ui.controllers.noControllerLinked" = "이 수신기에 연결된 컨트롤러가 없습니다. OJD는 데이터를 보내지 않습니다.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. It tells the person what to do. OJD stays as written. */
+"ui.controllers.noControllerLinked.nextStep" = "컨트롤러를 연결하거나 컨트롤러의 전원을 켜세요.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "배터리";
 /* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */

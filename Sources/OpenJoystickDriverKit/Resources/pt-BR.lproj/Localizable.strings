@@ -206,12 +206,10 @@
 "ui.controllers.noModeMatched" = "Este controle compartilha o ID com outros modelos e não corresponde a nenhum dos compatíveis. O OJD não envia dados a ele.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noModeMatched.nextStep" = "Envie um relatório de suporte com o modelo do controle para que ele possa ser identificado.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is recognized and serves nothing, such as a receiver with no controller connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.idleIdentity" = "Este dispositivo não oferece controles, como um receptor sem nenhum controle conectado. O OJD não envia dados a ele.";
-/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is recognized and serves nothing, such as a receiver with no controller connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.idleIdentity.nextStep" = "Conecte um controle a ele ou ligue o controle.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. OJD sends such a receiver no data, and the text says so. OJD stays as written. */
 "ui.controllers.noControllerLinked" = "Nenhum controle está vinculado a este receptor. O OJD não envia dados a ele.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. It tells the person what to do. OJD stays as written. */
+"ui.controllers.noControllerLinked.nextStep" = "Conecte um controle a ele ou ligue o controle.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "Bateria";
 /* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */
