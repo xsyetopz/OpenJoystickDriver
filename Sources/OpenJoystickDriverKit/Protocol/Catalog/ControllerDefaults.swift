@@ -68,7 +68,7 @@ public struct ControllerDefaults: Equatable, Sendable {
         "the selector must be all in \(fileName)"
       )
     }
-    let values = (patch.body["tuning"]?.members ?? []).filter { $0.value != .null }
+    let values = patch.body["tuning"]?.members ?? []
     do {
       let section = try JSONSerialization.data(
         withJSONObject: OrderedJSON.object(values).foundationValue()

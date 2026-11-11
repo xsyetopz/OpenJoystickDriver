@@ -213,7 +213,7 @@ public enum ControllerRecordWriter {
   }
 
   /// The existing user file with `edit` applied in the Controller file or in the `patch` of the
-  /// ControllerPatch file; nil when a removal leaves a patch with no key.
+  /// ControllerPatch file; nil when a removal leaves a patch with no key and no `remove`.
   private static func updated<EditFailure: Error>(
     _ data: Data,
     file: URL,
@@ -239,8 +239,12 @@ public enum ControllerRecordWriter {
     }
     var fields = document["patch"] as? [String: Any] ?? [:]
     do { try edit(&fields) } catch { throw .edit(error) }
-    if fields.isEmpty { return nil }
-    document["patch"] = fields
+    if fields.isEmpty {
+      guard document["remove"] != nil else { return nil }
+      document["patch"] = nil
+    } else {
+      document["patch"] = fields
+    }
     return document
   }
 }

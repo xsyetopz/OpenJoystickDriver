@@ -1,10 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/controller-patch.schema.json",
-  "description": "A RFC 7396 merge patch for controller records. A null deletes a key, an array replaces the array. The patched record is validated against controller.schema.json.",
+  "description": "A merge patch for controller records, with the key paths to remove first. An array replaces the array. The patched record is validated against controller.schema.json.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["apiVersion", "kind", "selector", "patch"],
+  "required": ["apiVersion", "kind", "selector"],
+  "anyOf": [{"required": ["patch"]}, {"required": ["remove"]}],
   "properties": {
     "apiVersion": {
       "const": "openjoystickdriver/v1alpha3"
@@ -56,6 +57,16 @@
         }
       ]
     },
+    "remove": {
+      "description": "Dotted key paths removed from the record before patch applies; a path the record lacks changes nothing.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(modes|usb|bluetoothLE|server|route|input|tuning)(\\.[A-Za-z0-9]+)*$"
+      }
+    },
     "patch": {
       "type": "object",
       "minProperties": 1,
@@ -65,212 +76,79 @@
           "$ref": "controller.schema.json#/$defs/modes"
         },
         "usb": {
-          "type": ["object", "null"]
+          "type": "object"
         },
         "bluetoothLE": {
-          "type": ["object", "null"]
+          "type": "object"
         },
         "route": {
-          "anyOf": [
-            {
-              "$ref": "controller.schema.json#/$defs/route"
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "$ref": "controller.schema.json#/$defs/route"
         },
         "output": {
-          "type": ["object", "null"]
+          "type": "object"
         },
         "input": {
-          "type": ["object", "null"]
+          "type": "object"
         },
         "tuning": {
-          "type": ["object", "null"],
+          "type": "object",
           "additionalProperties": false,
           "properties": {
             "stickDeadzone": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/stickDeadzone"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/stickDeadzone"
             },
             "inputLivenessTimeoutMs": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/inputLivenessTimeoutMs"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/inputLivenessTimeoutMs"
             },
             "hidStartupIntervalMs": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/hidStartupIntervalMs"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/hidStartupIntervalMs"
             },
             "minimumHIDOutputIntervalMs": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/minimumHIDOutputIntervalMs"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/minimumHIDOutputIntervalMs"
             },
             "hidStartupRecoveryIntervalMs": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/hidStartupRecoveryIntervalMs"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/hidStartupRecoveryIntervalMs"
             },
             "hidStartupRecoveryRounds": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/hidStartupRecoveryRounds"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/hidStartupRecoveryRounds"
             },
             "lizardResendTicks": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/lizardResendTicks"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/lizardResendTicks"
             },
             "usbCommandTimeoutMs": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/usbCommandTimeoutMs"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/usbCommandTimeoutMs"
             },
             "presenceResendReports": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/presenceResendReports"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/presenceResendReports"
             },
             "adapterDisconnectDelayMs": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/adapterDisconnectDelayMs"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/adapterDisconnectDelayMs"
             },
             "usbStartupIntervalMs": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/usbStartupIntervalMs"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/usbStartupIntervalMs"
             },
             "usbStartupRetryDelayMs": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/usbStartupRetryDelayMs"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/usbStartupRetryDelayMs"
             },
             "usbTransferTimeoutMs": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/usbTransferTimeoutMs"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/usbTransferTimeoutMs"
             },
             "irWriteIntervalMs": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/irWriteIntervalMs"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/irWriteIntervalMs"
             },
             "speakerMaxSeconds": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/speakerMaxSeconds"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/speakerMaxSeconds"
             },
             "replyTimeoutMs": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/replyTimeoutMs"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/replyTimeoutMs"
             },
             "frameQueueCapacity": {
-              "anyOf": [
-                {
-                  "$ref": "controller.schema.json#/$defs/tuning/properties/frameQueueCapacity"
-                },
-                {
-                  "type": "null"
-                }
-              ]
+              "$ref": "controller.schema.json#/$defs/tuning/properties/frameQueueCapacity"
             }
           }
         },
         "server": {
-          "anyOf": [
-            {
-              "$ref": "controller.schema.json#/$defs/server"
-            },
-            {
-              "type": "null"
-            }
-          ]
+          "$ref": "controller.schema.json#/$defs/server"
         }
       }
     }
@@ -288,6 +166,11 @@
         "required": ["tuning"],
         "propertyNames": {
           "const": "tuning"
+        }
+      },
+      "remove": {
+        "items": {
+          "pattern": "^tuning\\.[A-Za-z0-9]+$"
         }
       }
     }

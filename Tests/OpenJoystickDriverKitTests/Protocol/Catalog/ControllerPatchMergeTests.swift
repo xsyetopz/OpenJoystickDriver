@@ -81,7 +81,7 @@ struct ControllerPatchMergeTests {
   func theCasesCoverTheRequiredBehaviour() throws {
     let cases = try #require(try Self.fixture()["cases"] as? [[String: Any]])
     let names = Set(cases.compactMap { $0["name"] as? String })
-    #expect(names.contains("null deletes a parameter"))
+    #expect(names.contains("remove deletes a parameter"))
     #expect(names.contains("a user patch beats a package patch"))
   }
 
@@ -105,22 +105,25 @@ struct ControllerPatchMergeTests {
   @Test
   func mergingAPatchOrdersTheRecordFirstThenThePatchsNewMembers() throws {
     let record = try Self.json(#"{"b": {"y": 1, "x": 2}, "a": [1, 2], "c": 3}"#)
-    let patch = try Self.json(
-      #"{"d": {"q": 1, "p": null}, "b": {"z": 1, "x": 5}, "a": [{"k": 1, "j": 2}], "c": null}"#
+    let patch = try Self.json(#"{"d": {"q": 1, "p": 0}, "b": {"z": 1, "x": 5}, "a": [{"k": 1, "j": 2}]}"#)
+    let removed = ControllerPatchMerge.removing(["c"], from: record)
+    let merged = ControllerPatchMerge.mergePatch(
+      ControllerPatchMerge.removing(["d", "p"], from: removed),
+      patch
     )
-    let merged = ControllerPatchMerge.mergePatch(record, patch)
     #expect(
-      try Self.json(#"{"b": {"y": 1, "x": 5, "z": 1}, "a": [{"k": 1, "j": 2}], "d": {"q": 1}}"#)
+      try Self.json(#"{"b": {"y": 1, "x": 5, "z": 1}, "a": [{"k": 1, "j": 2}], "d": {"q": 1, "p": 0}}"#)
         == merged
     )
-    // A member deleted and added again, and an object over a scalar, take the patch's order.
+    // A member removed and added again, and an object over a scalar, take the patch's order.
     let again = ControllerPatchMerge.mergePatch(
-      ControllerPatchMerge.mergePatch(merged, try Self.json(#"{"b": null}"#)),
+      ControllerPatchMerge.removing(["b"], from: merged),
       try Self.json(#"{"b": {"w": 1, "v": 2}, "d": {"s": 0}}"#)
     )
     #expect(
-      try Self.json(#"{"a": [{"k": 1, "j": 2}], "d": {"q": 1, "s": 0}, "b": {"w": 1, "v": 2}}"#)
-        == again
+      try Self.json(
+        #"{"a": [{"k": 1, "j": 2}], "d": {"q": 1, "p": 0, "s": 0}, "b": {"w": 1, "v": 2}}"#
+      ) == again
     )
   }
 

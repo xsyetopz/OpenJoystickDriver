@@ -4,8 +4,8 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// The documents the Swift decoders refuse, read from `SchemaRejections/controller.json` and
-/// `protocol-description.json`.
+/// The documents the Swift decoders refuse, read from `SchemaRejections/controller.json`,
+/// `protocol-description.json`, and `controller-patch.json`.
 ///
 /// Each case has a unique name and input and names the `ErrorCode` its decoder gives. A case with
 /// `schema: true` is also rejected by the JSON Schema alone, which
@@ -35,6 +35,13 @@ struct SchemaRejectionTests {
     }
   }
 
+  private static func patchRefusal(_ document: [String: Any]) -> String?? {
+    do {
+      _ = try ControllerPatch.parse(OrderedJSON(foundation: document))
+      return .none
+    } catch { return .some(ControllerRecordSet.problemCode(error)?.rawValue) }
+  }
+
   private static func descriptionRefusal(
     _ document: [String: Any],
     fileName: String
@@ -49,9 +56,9 @@ struct SchemaRejectionTests {
   @Test
   func everyListedDocumentIsRefusedWithItsCode() throws {
     var failures: [String] = []
-    for kind in ["controller", "protocol-description"] {
+    for kind in ["controller", "protocol-description", "controller-patch"] {
       let cases = try Self.cases(kind)
-      #expect(cases.count > 100)
+      #expect(cases.count > (kind == "controller-patch" ? 10 : 100))
       var names: Set<String> = []
       var documents: Set<Data> = []
       for fixture in cases {
@@ -68,13 +75,16 @@ struct SchemaRejectionTests {
         if ErrorCode(rawValue: code) == nil {
           failures.append("\(kind) \(name): \(code) is not an error code")
         }
-        let refusal =
-          kind == "controller"
-          ? Self.controllerRefusal(document)
-          : try Self.descriptionRefusal(
+        let refusal: String??
+        switch kind {
+        case "controller": refusal = Self.controllerRefusal(document)
+        case "controller-patch": refusal = Self.patchRefusal(document)
+        default:
+          refusal = try Self.descriptionRefusal(
             document,
             fileName: try #require(fixture["fileName"] as? String)
           )
+        }
         guard let refusal else {
           failures.append("\(kind) \(name): accepted, expected \(code)")
           continue

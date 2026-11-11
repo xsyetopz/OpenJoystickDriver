@@ -1,7 +1,7 @@
 {
   "cases": [
     {
-      "name": "null deletes a parameter",
+      "name": "remove deletes a parameter",
       "record": {
         "apiVersion": "openjoystickdriver/v1alpha2",
         "kind": "Controller",
@@ -18,7 +18,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -39,11 +43,9 @@
             "vendorID": 1118,
             "productID": 746
           },
-          "patch": {
-            "usb": {
-              "configuration": null
-            }
-          }
+          "remove": [
+            "usb.configuration"
+          ]
         }
       ],
       "expected": {
@@ -62,7 +64,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -74,7 +80,7 @@
       }
     },
     {
-      "name": "null deletes a whole section",
+      "name": "remove deletes a whole section",
       "record": {
         "apiVersion": "openjoystickdriver/v1alpha2",
         "kind": "Controller",
@@ -91,7 +97,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -111,9 +121,9 @@
             "vendorID": 1118,
             "productID": 746
           },
-          "patch": {
-            "usb": null
-          }
+          "remove": [
+            "usb"
+          ]
         }
       ],
       "expected": {
@@ -132,7 +142,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -158,7 +172,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -206,7 +224,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -239,7 +261,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           },
@@ -278,7 +304,11 @@
                       "fromEnd": 26
                     },
                     "keepAlive": true,
-                    "modes": [1, 2, 3]
+                    "modes": [
+                      1,
+                      2,
+                      3
+                    ]
                   }
                 }
               }
@@ -303,7 +333,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -312,83 +346,6 @@
           "interface": 0
         },
         "server": "System"
-      }
-    },
-    {
-      "name": "a nested null inside a patch object that replaces a scalar is dropped",
-      "record": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "Controller",
-        "vendorID": 1118,
-        "productID": 746,
-        "name": "Fixture",
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "XboxGIP",
-              "parameters": {
-                "shareButton": {
-                  "fromEnd": 26
-                },
-                "keepAlive": true,
-                "modes": [1, 2, 3]
-              }
-            }
-          }
-        ],
-        "usb": {
-          "interface": 0
-        },
-        "server": "System",
-        "input": 5
-      },
-      "builtin": [],
-      "package": [],
-      "user": [
-        {
-          "apiVersion": "openjoystickdriver/v1alpha2",
-          "kind": "ControllerPatch",
-          "selector": {
-            "vendorID": 1118,
-            "productID": 746
-          },
-          "patch": {
-            "input": {
-              "rumble": true,
-              "light": null
-            }
-          }
-        }
-      ],
-      "expected": {
-        "apiVersion": "openjoystickdriver/v1alpha2",
-        "kind": "Controller",
-        "vendorID": 1118,
-        "productID": 746,
-        "name": "Fixture",
-        "modes": [
-          {
-            "id": "default",
-            "protocol": {
-              "family": "XboxGIP",
-              "parameters": {
-                "shareButton": {
-                  "fromEnd": 26
-                },
-                "keepAlive": true,
-                "modes": [1, 2, 3]
-              }
-            }
-          }
-        ],
-        "usb": {
-          "interface": 0
-        },
-        "server": "System",
-        "input": {
-          "rumble": true
-        }
       }
     },
     {
@@ -409,7 +366,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -466,7 +427,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -498,7 +463,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -556,7 +525,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -589,7 +562,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -623,11 +600,9 @@
             "vendorID": 1118,
             "productID": 746
           },
-          "patch": {
-            "tuning": {
-              "stickDeadzone": null
-            }
-          }
+          "remove": [
+            "tuning.stickDeadzone"
+          ]
         }
       ],
       "expected": {
@@ -646,7 +621,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -676,7 +655,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -746,7 +729,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -779,7 +766,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -834,7 +825,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -866,7 +861,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -917,7 +916,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -946,7 +949,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -975,7 +982,11 @@
                   "fromEnd": 26
                 },
                 "keepAlive": true,
-                "modes": [1, 2, 3]
+                "modes": [
+                  1,
+                  2,
+                  3
+                ]
               }
             }
           }
@@ -1451,7 +1462,7 @@
       }
     },
     {
-      "name": "an all patch null deletes an in-scope key and ignores an out-of-scope null",
+      "name": "an all patch remove deletes an in-scope key and ignores an out-of-scope remove",
       "record": {
         "apiVersion": "openjoystickdriver/v1alpha2",
         "kind": "Controller",
@@ -1484,12 +1495,10 @@
           "selector": {
             "all": true
           },
-          "patch": {
-            "tuning": {
-              "inputLivenessTimeoutMs": null,
-              "hidStartupRecoveryRounds": null
-            }
-          }
+          "remove": [
+            "tuning.inputLivenessTimeoutMs",
+            "tuning.hidStartupRecoveryRounds"
+          ]
         }
       ],
       "expected": {
@@ -1646,7 +1655,11 @@
               "fromEnd": 26
             },
             "keepAlive": true,
-            "modes": [1, 2, 3]
+            "modes": [
+              1,
+              2,
+              3
+            ]
           }
         },
         "usb": {
@@ -1694,11 +1707,9 @@
             "vendorID": 1118,
             "productID": 746
           },
-          "patch": {
-            "tuning": {
-              "usbStartupIntervalMs": null
-            }
-          }
+          "remove": [
+            "tuning.usbStartupIntervalMs"
+          ]
         }
       ],
       "expected": {
@@ -1714,7 +1725,11 @@
               "fromEnd": 26
             },
             "keepAlive": true,
-            "modes": [1, 2, 3]
+            "modes": [
+              1,
+              2,
+              3
+            ]
           }
         },
         "usb": {
@@ -1912,7 +1927,7 @@
       }
     },
     {
-      "name": "an all patch null deletes the USB transfer timeout of an XUSB record",
+      "name": "an all patch remove deletes the USB transfer timeout of an XUSB record",
       "record": {
         "apiVersion": "openjoystickdriver/v1alpha2",
         "kind": "Controller",
@@ -1945,11 +1960,9 @@
           "selector": {
             "all": true
           },
-          "patch": {
-            "tuning": {
-              "usbTransferTimeoutMs": null
-            }
-          }
+          "remove": [
+            "tuning.usbTransferTimeoutMs"
+          ]
         }
       ],
       "expected": {
@@ -2354,7 +2367,9 @@
         "selector": {
           "all": true
         },
-        "patch": [1]
+        "patch": [
+          1
+        ]
       },
       "message": "the file must hold exactly apiVersion, kind, selector, and patch",
       "code": "E5007"

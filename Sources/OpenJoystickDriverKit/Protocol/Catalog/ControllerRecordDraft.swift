@@ -85,7 +85,15 @@ public struct ControllerRecordDraft: Sendable {
       {
         restatedModes = .array(modes.map { $0["id"]?.string == "default" ? defaultJSON : $0 })
       }
-      body = ControllerPatch.document(selector: .identity(model), body: fields)
+      var removed: [String] = []
+      if ControllerRecordSet.bundled.records[model]?.family != family.rawValue,
+        ControllerRecordSet.bundled.records[model]?.profile.hidUsageMap != nil,
+        fields["input"] != nil
+      {
+        // The byte layout replaces the old record's usage map instead of merging into it.
+        removed.append("input.hidUsageMap")
+      }
+      body = ControllerPatch.document(selector: .identity(model), body: fields, remove: removed)
     } else {
       fields["apiVersion"] = OpenJoystickDriverAPI.version
       fields["kind"] = ControllerRecordDocument.kind

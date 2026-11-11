@@ -21,6 +21,7 @@ CASES = ROOT / "Tests/OpenJoystickDriverKitTests/Protocol/Catalog/SchemaRejectio
 SCHEMAS = {
     "controller": "controller.schema.json",
     "protocol-description": "protocol-description.schema.json",
+    "controller-patch": "controller-patch.schema.json",
 }
 
 

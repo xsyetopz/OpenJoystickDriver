@@ -262,8 +262,10 @@ extension ControllerRecordSet {
       )
     }
     let isAll = patch.selector == .all
-    guard let body = ControllerPatchMerge.appliedBody(of: patch, to: base) else { return upstream }
-    let merged = ControllerPatchMerge.mergePatch(base, body)
+    let body = ControllerPatchMerge.appliedBody(of: patch, to: base)
+    let removed = ControllerPatchMerge.appliedRemove(of: patch, to: base)
+    guard body != nil || !removed.isEmpty else { return upstream }
+    let merged = ControllerPatchMerge.apply(patch, to: base)
     if !isAll, merged.hasSameValue(as: base) {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
@@ -272,17 +274,23 @@ extension ControllerRecordSet {
     }
     var layers = upstream.fieldLayers
     var tuningLayers = upstream.tuningLayers
-    for member in body.members ?? [] {
+    for path in removed {
+      let section = path[0]
+      if path.count == 1 {
+        layers[section] = nil
+        if section == "tuning" { tuningLayers = [:] }
+      } else if section == "tuning" {
+        tuningLayers[path[1]] = nil
+        if !isAll { layers[section] = layer }
+      } else {
+        layers[section] = layer
+      }
+    }
+    for member in body?.members ?? [] {
       let (key, value) = (member.key, member.value)
-      if !isAll { layers[key] = value == .null ? nil : layer }
+      if !isAll { layers[key] = layer }
       if key == "tuning" {
-        if value == .null {
-          tuningLayers = [:]
-        } else {
-          for setting in value.members ?? [] {
-            tuningLayers[setting.key] = setting.value == .null ? nil : (isAll ? .global : layer)
-          }
-        }
+        for setting in value.members ?? [] { tuningLayers[setting.key] = isAll ? .global : layer }
       }
     }
     return try makeRecord(
