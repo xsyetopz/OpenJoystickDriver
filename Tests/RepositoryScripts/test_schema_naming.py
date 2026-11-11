@@ -218,10 +218,6 @@ EXCEPTIONS: dict[tuple[str, str], tuple[tuple[str, ...], str]] = {
         (REPORT_DATA_SCHEMA,),
         CLOUD_EVENTS,
     ),
-    ("crosswalk", "/properties"): (
-        ("$comment",),
-        "a JSON Schema keyword used as a property name",
-    ),
     ("crosswalk", "/$defs/source/properties/pages/properties"): (
         ("GenericDesktop", "Simulation", "Button", "Telephony", "Consumer"),
         HID_PAGE,

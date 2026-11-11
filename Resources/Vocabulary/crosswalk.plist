@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>$comment</key>
-	<string>Documentation, not schema aliases. Each control id mapped to its W3C Gamepad index, SDL3 name, Linux evdev code, HID page and usage, and Apple GameController element. An absent key means the system has no such name; a HID entry with no usage is the one the device's report descriptor assigns. One id per row; two ids may share an SDL, evdev or Apple name. sources records, per column, the document each cell is checked against. notes explains a cell that a name alone does not. Y axes are positive down in the W3C, SDL3 and evdev columns. The wiki table in wiki/Controller-Records.md is generated from this file by ./Scripts/ojd vocabulary regenerate --write.</string>
 	<key>apiVersion</key>
 	<string>openjoystickdriver/v1alpha3</string>
 	<key>controls</key>

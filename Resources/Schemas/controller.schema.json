@@ -141,7 +141,6 @@
       },
       "allOf": [
         {
-          "$comment": "a rumble resendIntervalMilliseconds cannot be combined with a session keepAlive",
           "not": {
             "properties": {
               "session": {
@@ -690,7 +689,6 @@
       }
     },
     "input": {
-      "$comment": "Each report is decoded by the one layout that selects it; two layouts must not select the same report, which JSON Schema cannot compare, so the Swift decoder checks it. A report no layout selects is ignored.",
       "type": "object",
       "additionalProperties": false,
       "required": ["layouts"],
@@ -708,7 +706,6 @@
       "type": "object",
       "additionalProperties": false,
       "required": ["report"],
-      "$comment": "Selects the reports it decodes by report id and length. A layout changes only the controls it names.",
       "minProperties": 2,
       "properties": {
         "report": {
@@ -793,7 +790,6 @@
       }
     },
     "hidUsageMap": {
-      "$comment": "Maps HID usages to canonical controls for HIDDescriptor. A record's map replaces the family's map whole. Each (page, usage) appears once unless every entry of it is a HalfAxis, AxisDpad or AxisButton of its own half, an axis range has min below max, and a hat range is 0...7 or 1...8: the schema checks the hat range, and the Swift decoder, the only validator, enforces all three. reportID, when present, limits the map to element values of that report.",
       "type": "object",
       "additionalProperties": false,
       "required": ["usages"],
@@ -883,7 +879,6 @@
       }
     },
     "hidAxisUsage": {
-      "$comment": "A stick axis reads -1...1 and a trigger 0...1 from the element's logical range, or from range when set. deadZone is the fraction of travel around zero (the start of a trigger) that reads as zero; the rest rescales to full travel. inverted flips the sign of a stick or the travel of a trigger.",
       "type": "object",
       "additionalProperties": false,
       "required": ["kind", "page", "usage", "control"],
@@ -914,11 +909,9 @@
       }
     },
     "hidHalf": {
-      "$comment": "The half of an element's range from its center to one end: Positive toward the logical maximum, Negative toward the logical minimum. Its travel reads 0 at the center and 1 at the end.",
       "enum": ["Positive", "Negative"]
     },
     "hidHalfAxisUsage": {
-      "$comment": "One half of an element's range, rescaled to a trigger's 0...1; inverted reads one minus the travel. A usage appears in several entries only when each is a HalfAxis, AxisDpad or AxisButton of its own half; the Swift decoder checks it.",
       "type": "object",
       "additionalProperties": false,
       "required": ["kind", "page", "usage", "half", "control"],
@@ -944,7 +937,6 @@
       }
     },
     "hidAxisDpadUsage": {
-      "$comment": "Presses a D-pad direction while the travel of the half is at or past threshold.",
       "type": "object",
       "additionalProperties": false,
       "required": ["kind", "page", "usage", "half", "control", "threshold"],
@@ -972,7 +964,6 @@
       }
     },
     "hidAxisButtonUsage": {
-      "$comment": "Presses a button while the travel of the half is at or past threshold.",
       "type": "object",
       "additionalProperties": false,
       "required": ["kind", "page", "usage", "half", "control", "threshold"],
@@ -1000,7 +991,6 @@
       }
     },
     "hidButtonTriggerUsage": {
-      "$comment": "Reads a trigger as 1 while the element value is nonzero, else 0.",
       "type": "object",
       "additionalProperties": false,
       "required": ["kind", "page", "usage", "control"],
@@ -1037,7 +1027,6 @@
       }
     },
     "hidHatUsage": {
-      "$comment": "A hat reads eight positions, north first and clockwise, from the first value of its range; any value outside the range is neutral. Without a range, the element's logical minimum is the first value.",
       "type": "object",
       "additionalProperties": false,
       "required": ["kind", "page", "usage"],
@@ -1070,7 +1059,6 @@
       }
     },
     "reportBitOffset": {
-      "$comment": "Counted from bit 0, the least significant bit of report byte 0, which holds the report id when the layout has one. A field lies inside the report length, which the Swift decoder checks.",
       "type": "integer",
       "minimum": 0,
       "maximum": 511
@@ -1081,7 +1069,6 @@
       "maximum": 32
     },
     "reportByteOrder": {
-      "$comment": "BigEndian needs a bitOffset divisible by 8 and a bitSize of 16, 24 or 32; the Swift decoder checks it. LittleEndian is the default.",
       "enum": ["LittleEndian", "BigEndian"]
     },
     "reportRawValue": {
@@ -1135,7 +1122,6 @@
       }
     },
     "inputAxis": {
-      "$comment": "min and max default to the full range of bitSize and signed, and lie inside it with max - min at least 2; the Swift decoder checks both.",
       "type": "object",
       "additionalProperties": false,
       "required": ["control", "bitOffset", "bitSize"],
@@ -1251,7 +1237,6 @@
               "$ref": "#/$defs/reportBitSize"
             },
             "values": {
-              "$comment": "Every key must be a value bitSize bits can hold: 0 up to 2^bitSize - 1. JSON Schema cannot compare a key with bitSize, so the Swift decoder checks it.",
               "type": "object",
               "minProperties": 1,
               "propertyNames": {
@@ -1275,7 +1260,6 @@
       ]
     },
     "inputTrigger": {
-      "$comment": "A trigger names an analog value (bitOffset and bitSize, with the optional byteOrder, signed, min and max, which default as for an axis), a button field, or both. A button that is set reads as fully pulled.",
       "type": "object",
       "additionalProperties": false,
       "minProperties": 1,
@@ -1332,7 +1316,6 @@
       }
     },
     "usbStartupWrite": {
-      "$comment": "A raw-USB startup packet: it has no report, so it never reads as a HID write.",
       "type": "object",
       "additionalProperties": false,
       "required": ["bytes"],
@@ -1590,7 +1573,6 @@
       }
     },
     "keepAliveWrite": {
-      "$comment": "A raw-USB keep-alive packet: a startup packet without the members only a startup sequence uses.",
       "type": "object",
       "additionalProperties": false,
       "required": ["bytes"],
@@ -1617,7 +1599,6 @@
       }
     },
     "namedPacketAction": {
-      "$comment": "A family name, a slash and the packet's name. The ids a family offers are in defaults.session.namedPackets of its description; a record naming one the description lacks is rejected by the validators.",
       "type": "string",
       "pattern": "^[A-Z][A-Za-z0-9]*/[a-z0-9]+(-[a-z0-9]+)*$"
     }

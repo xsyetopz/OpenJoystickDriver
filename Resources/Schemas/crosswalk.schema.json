@@ -7,9 +7,6 @@
   "required": ["apiVersion", "kind", "sources", "controls"],
   "additionalProperties": false,
   "properties": {
-    "$comment": {
-      "type": "string"
-    },
     "apiVersion": {
       "const": "openjoystickdriver/v1alpha3"
     },
