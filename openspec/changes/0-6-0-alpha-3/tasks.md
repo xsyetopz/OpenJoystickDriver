@@ -105,7 +105,7 @@ A controller fix in groups 2, 3, and 8 lands as a record or a patch (D13). Where
 - [ ] 8.9 Re-create the PowerA Spectra `20D6:4002` record from pull request #50 as a `v1alpha3` record, with the author credited. (#62, #50)
 - [ ] 8.10 Re-create the Razer Wolverine V3 TE endpoints from pull request #39 as `Resources/ControllerPatches/1532/1532-0a43.patch.plist`, with the author credited. (#14, #39)
 - [ ] 8.11 Re-create the Flydigi Vader 4 Pro dongle and Bluetooth XInput modes from pull request #36 as record data, and decide the transport question from #35 and #37 in `design.md`. (#35, #36, #37)
-- [ ] 8.12 Add the repository check that one identity has one record, and resolve `3537:1082` between pull request #47 and the bundled record. (#47)
+- [x] 8.12 Add the repository check that one identity has one record, and resolve `3537:1082` between pull request #47 and the bundled record. (#47)
 - [ ] 8.13 Apply the ZD follow-ups from #22 and add the dongle `413D:2204` from the reporter's data.
 - [x] 8.14 Draft an evidence request with the exact `ojd controller capture` command for #8, #11, #19, #21, #31, and #38.
 - [x] 8.15 Write `openspec/changes/0-6-0-alpha-3/dispositions.md`: one row per open issue and pull request with its task, its state, and the action left for the maintainer. Include: #22's report of a 15% default dead zone does not hold (the default is 0, `VirtualGamepadReportMapping.swift:16-21`); #56 is covered by 8.1 and 8.3; #18 by 9.17; #19 by 17.1; #63 by 8.16, 9.15, 9.16, and 9.18; #33's stick Y direction is not traced.
@@ -225,7 +225,7 @@ Each task stands alone and can leave the release (D24). Each is written for OJD'
 
 ## 17. Status text and tester builds
 
-- [ ] 17.1 Write a failing test that Input Test shows "Input active" only after a control leaves its rest value, then fix `InputTestViewModel+SessionAndOutputState.swift:341-343`. Caller: `InputTestView`. (#19)
+- [x] 17.1 Write a failing test that Input Test shows "Input active" only after a control leaves its rest value, then fix `InputTestViewModel+SessionAndOutputState.swift:341-343`. Caller: `InputTestView`. (#19)
 - [ ] 17.2 Give every reason for not serving a connected controller a sentence and a next step in every language, `interfaceContractMismatch` included (`ProtocolClassifier.swift:275-286`), and add the repository check that fails on a reason with no sentence. Caller: the controller detail and `ojd controller show`. (#63)
 - [ ] 17.3 Give each rule behind `E5007` its own localized message with the file, the key path, the rule, and the fix. Start from the list of the English messages the record reader throws. Caller: `ojd record validate`, `ojd record list`, and the record area of the window. (#63)
 - [ ] 17.4 Make the release workflow (`.github/workflows/release.yml`) publish a tester build as a pre-release with a version that orders between the release before it and the release it leads to, and test that order in the update check. Publishing a build is the maintainer's action.
