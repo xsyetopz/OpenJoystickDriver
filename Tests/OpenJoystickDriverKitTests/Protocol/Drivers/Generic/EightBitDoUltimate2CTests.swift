@@ -70,9 +70,9 @@ struct EightBitDoUltimate2CTests {
   }
 
   @Test
-  func receiverMapsNoControls() throws {
+  func receiverServesTheLinkedPadThroughItsDescriptor() throws {
     let record = try #require(ProtocolDriverRegistry().record(for: Self.receiver))
-    #expect(record.isIdle)
+    #expect(!record.isIdle)
     #expect(record.hidUsageMap == nil)
   }
 
