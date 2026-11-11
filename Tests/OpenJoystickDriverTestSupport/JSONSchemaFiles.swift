@@ -127,7 +127,8 @@ package enum JSONSchemaFiles {
           ? [] : ["\(path): \(value) is not in \(options)"]
       case "const":
         return Self.equal(argument, value) ? [] : ["\(path): expected \(argument), got \(value)"]
-      case "properties", "additionalProperties", "required", "propertyNames", "minProperties":
+      case "properties", "additionalProperties", "required", "dependentRequired", "propertyNames",
+        "minProperties":
         guard let object = value as? [String: Any] else { return [] }
         return try checkObject(keyword, argument, schema: schema, object, in: file, at: path)
       case "prefixItems", "items", "minItems", "maxItems", "uniqueItems", "contains":
@@ -193,6 +194,13 @@ package enum JSONSchemaFiles {
       case "required":
         return (argument as? [String] ?? []).filter { object[$0] == nil }.map {
           "\(path): missing \($0)"
+        }
+      case "dependentRequired":
+        let dependencies = argument as? [String: [String]] ?? [:]
+        return dependencies.keys.sorted().filter { object[$0] != nil }.flatMap { key in
+          dependencies[key, default: []].filter { object[$0] == nil }.map {
+            "\(path): \(key) needs \($0)"
+          }
         }
       case "minProperties":
         return object.count >= (argument as? Int ?? 0) ? [] : ["\(path): too few properties"]
