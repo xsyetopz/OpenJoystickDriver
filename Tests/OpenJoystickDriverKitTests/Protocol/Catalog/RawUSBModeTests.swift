@@ -204,8 +204,8 @@ struct RawUSBModeTests {
     }
     let rejected: [(String, [String: Any])] = [
       ("report-layout without a layout", single("HIDReportLayout")),
-      ("layout under another family", single("SonySixaxis", ["input": layout])),
-      ("template under HIDDescriptor", single("HIDDescriptor", session: rumble)),
+      ("layout under HIDDescriptor", single("HIDDescriptor", ["input": layout])),
+      ("template under a family that does not encode it", single("SonySixaxis", session: rumble)),
       ("template under a raw-USB family", single("XboxGIP", session: rumble)),
     ]
     for (name, document) in rejected {
