@@ -2601,6 +2601,14 @@
 "cli.controller.show.labelProtocol" = "प्रोटोकॉल";
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "रिकॉर्ड";
+/* Row label in the output of 'ojd controller show'. The sentence that says why OpenJoystickDriver does not serve the connected device follows. */
+"cli.controller.show.labelNotServed" = "सेवा में नहीं";
+/* Row label in the output of 'ojd controller show'. The sentence that says what to do about a device that is not served follows. */
+"cli.controller.show.labelNextStep" = "अगला चरण";
+/* Row label in the output of 'ojd controller show'. The command that drafts a controller record for a HID gamepad that is not served follows. */
+"cli.controller.show.labelDraftCommand" = "रिकॉर्ड का मसौदा बनाएँ";
+/* Row label in the output of 'ojd controller show'. The command that captures the packets of a device that no protocol matches follows. */
+"cli.controller.show.labelCaptureCommand" = "पैकेट कैप्चर करें";
 /* Row label in the output of 'ojd controller show' and in the controller detail. Where the HID usage map of the controller comes from follows. */
 "cli.controller.show.labelInputMapping" = "इनपुट मैपिंग";
 /* Row label in the output of 'ojd controller show' and in the controller detail. The controls that the SDL_GameControllerDB line names but the driver cannot map follow. */
@@ -4564,6 +4572,8 @@
 "ui.controllers.draftRecordFromSDL" = "SDL से रिकॉर्ड का मसौदा बनाएँ…";
 /* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.controllers.draftRecordFromSDL.noPad" = "%@ ऐसे HID डिवाइस के रूप में कनेक्ट नहीं है जिसे OpenJoystickDriver पढ़ सके।";
+/* Label above the sentence in the Controllers detail of a connected device that OpenJoystickDriver does not serve. The sentence says what to do about it. */
+"ui.controllers.unserved.nextStepLabel" = "अगला चरण";
 /* Button in the Controllers detail that starts a packet capture of the controller. Keep the three dots. */
 "ui.controllers.capturePackets" = "पैकेट कैप्चर करें…";
 /* Title of the sheet that captures packets of the controller. */

@@ -152,8 +152,15 @@ struct ControllerShowCommand: AsyncParsableCommand {
   func run() async throws {
     try await global.run {
       let selector = controller
-      let devices = try await ServiceConnection.request {
-        try await $0.getStatus().connectedDevices
+      let status = try await ServiceConnection.request { try await $0.getStatus() }
+      let devices = status.connectedDevices
+      if case .model(let model) = selector.reference, selector.reference.matches(in: devices).isEmpty,
+        let unserved = status.unboundDevices.first(where: {
+          $0.vendorID == model.vendorID && $0.productID == model.productID
+        })
+      {
+        try UnservedControllerReport(unserved).print()
+        return
       }
       let device = try selector.resolve(in: devices)
       let record = RecordStore.load().records[

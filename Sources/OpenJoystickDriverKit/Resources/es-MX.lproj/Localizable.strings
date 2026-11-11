@@ -2601,6 +2601,14 @@
 "cli.controller.show.labelProtocol" = "Protocolo";
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "Registro";
+/* Row label in the output of 'ojd controller show'. The sentence that says why OpenJoystickDriver does not serve the connected device follows. */
+"cli.controller.show.labelNotServed" = "Sin servicio";
+/* Row label in the output of 'ojd controller show'. The sentence that says what to do about a device that is not served follows. */
+"cli.controller.show.labelNextStep" = "Siguiente paso";
+/* Row label in the output of 'ojd controller show'. The command that drafts a controller record for a HID gamepad that is not served follows. */
+"cli.controller.show.labelDraftCommand" = "Borrador de registro";
+/* Row label in the output of 'ojd controller show'. The command that captures the packets of a device that no protocol matches follows. */
+"cli.controller.show.labelCaptureCommand" = "Capturar paquetes";
 /* Row label in the output of 'ojd controller show' and in the controller detail. Where the HID usage map of the controller comes from follows. */
 "cli.controller.show.labelInputMapping" = "Asignación de entrada";
 /* Row label in the output of 'ojd controller show' and in the controller detail. The controls that the SDL_GameControllerDB line names but the driver cannot map follow. */
@@ -4565,6 +4573,8 @@
 "ui.controllers.draftRecordFromSDL" = "Borrador de registro desde SDL…";
 /* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.controllers.draftRecordFromSDL.noPad" = "%@ no está conectado como un dispositivo HID que OpenJoystickDriver pueda leer.";
+/* Label above the sentence in the Controllers detail of a connected device that OpenJoystickDriver does not serve. The sentence says what to do about it. */
+"ui.controllers.unserved.nextStepLabel" = "Siguiente paso";
 /* Button in the Controllers detail that starts a packet capture of the controller. Keep the three dots. */
 "ui.controllers.capturePackets" = "Capturar paquetes…";
 /* Title of the sheet that captures packets of the controller. */

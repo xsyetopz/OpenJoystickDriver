@@ -728,31 +728,78 @@
     },
     "controllerShow": {
       "type": "object",
-      "required": [
-        "apiVersion",
-        "kind",
-        "capabilities",
-        "connection",
-        "hasSerialNumber",
-        "id",
-        "inputHealth",
-        "name",
-        "outputChecks",
-        "ownership",
-        "productID",
-        "protocol",
-        "parameters",
-        "serving",
-        "session",
-        "vendorID"
-      ],
+      "description": "A connected controller, or with kind UnservedController a connected device that OJD does not serve.",
+      "required": ["apiVersion", "kind"],
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "Controller"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "capabilities",
+          "connection",
+          "hasSerialNumber",
+          "id",
+          "inputHealth",
+          "name",
+          "outputChecks",
+          "ownership",
+          "productID",
+          "protocol",
+          "parameters",
+          "serving",
+          "session",
+          "vendorID"
+        ],
+        "properties": {
+          "reason": false,
+          "accessBackend": false,
+          "draftCommand": false,
+          "captureCommand": false
+        }
+      },
+      "else": {
+        "required": ["accessBackend", "connection", "productID", "reason", "vendorID"],
+        "properties": {
+          "capabilities": false,
+          "hasSerialNumber": false,
+          "id": false,
+          "inputHealth": false,
+          "name": false,
+          "outputChecks": false,
+          "ownership": false,
+          "protocol": false,
+          "parameters": false,
+          "serving": false,
+          "session": false
+        }
+      },
       "additionalProperties": false,
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/sharedAPIVersion"
         },
         "kind": {
-          "const": "Controller"
+          "enum": ["Controller", "UnservedController"]
+        },
+        "reason": {
+          "description": "Why OJD does not serve the device.",
+          "$ref": "report.schema.json#/$defs/bindingReason"
+        },
+        "accessBackend": {
+          "description": "How OJD reaches the device.",
+          "enum": ["HID", "RawUSB", "USBExtension", "GATT"]
+        },
+        "draftCommand": {
+          "description": "The command that drafts a record; present for a HID pad.",
+          "type": "string"
+        },
+        "captureCommand": {
+          "description": "The command that captures the packets; present when the reason is NoProtocolMatch.",
+          "type": "string"
         },
         "capabilities": {
           "type": "object",

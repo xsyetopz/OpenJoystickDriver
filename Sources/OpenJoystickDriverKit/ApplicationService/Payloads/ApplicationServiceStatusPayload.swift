@@ -49,6 +49,30 @@ public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
 }
 
 extension ApplicationServiceUnboundDevice {
+  /// `VVVV:PPPP`, the identity `ojd` prints and accepts.
+  public var identity: String { String(format: "%04X:%04X", vendorID, productID) }
+
+  /// Whether the device is a HID pad: read over HID, with an interface that has a Game Pad or
+  /// Joystick usage.
+  public var isHIDGamepad: Bool {
+    accessBackend == .hid
+      && interfaces.contains {
+        $0.hasGamePadOrJoystickCollection == true
+          || ($0.primaryUsage?.usagePage == 1
+            && [4, 5].contains($0.primaryUsage?.usage))
+      }
+  }
+
+  /// The command that drafts a record for a HID pad; nil for any other device.
+  public var draftCommand: String? { isHIDGamepad ? "ojd record draft \(identity)" : nil }
+
+  /// The command that captures the packets of a device no protocol matches, to attach to a support
+  /// request; nil for any other reason.
+  public var captureCommand: String? {
+    reason == .noProtocolMatch
+      ? "ojd controller capture \(identity) --duration 10 --json > capture.jsonl" : nil
+  }
+
   /// Creates the description from the service's unbound-device snapshot.
   package init(snapshot: UnboundDeviceSnapshot) {
     self.init(
