@@ -4187,6 +4187,37 @@
 "error.E5007.record.unwritableValue" = "%1$@, document: 값을 JSON으로 쓸 수 없습니다(%2$@). 해결: 이유에 나온 값을 문자열, 숫자, 불리언, 목록 또는 딕셔너리로 바꾸세요.";
 /* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
 "error.E5007.record.idRange" = "%1$@, vendorID 및 productID: vendorID는 1...65535, productID는 0...65535여야 합니다. 해결: 각각 범위 안의 정수로 설정하세요.";
+/* Error E5007, shown when a patch file fails: the file is not a dictionary. %1$@ is the file. */
+"error.E5007.patch.patchNotObject" = "%1$@, document: 파일이 JSON 객체가 아닙니다. 해결: 파일을 apiVersion, kind, selector, patch 또는 remove가 있는 딕셔너리로 만드세요.";
+/* Error E5007, shown when a patch file fails: the file lacks apiVersion, kind, selector, or patch and remove. %1$@ is the file. */
+"error.E5007.patch.patchFields" = "%1$@, document: 파일에는 apiVersion, kind, selector, patch 또는 remove가 있어야 합니다. 해결: 빠진 멤버를 추가하세요.";
+/* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
+"error.E5007.patch.patchSections" = "%1$@, patch: patch에는 modes, usb, bluetoothLE, capabilities, server, route, input, tuning 또는 idle이 있어야 합니다. 해결: 이 섹션만 남기고 하나 이상 지정하세요.";
+
+/* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
+"error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: 각 항목에는 id가 있어야 하며 id, protocol, match, interface, session만 사용할 수 있습니다. 해결: 각 항목에 id를 지정하고 다른 키는 삭제하세요.";
+/* Error E5007, shown when a patch file fails: an all patch sets a section other than tuning. %1$@ is the file. */
+"error.E5007.patch.patchAllOnlyTuning" = "%1$@, patch: all 패치는 tuning만 설정할 수 있습니다. 해결: 나머지 섹션은 컨트롤러 하나용 패치로 옮기세요.";
+/* Error E5007, shown when a patch file fails: remove is not a nonempty list. %1$@ is the file. */
+"error.E5007.patch.removeNotList" = "%1$@, remove: remove는 점으로 구분한 키 경로의 비어 있지 않은 목록이어야 합니다. 해결: 제거할 키 경로를 나열하거나 remove를 삭제하세요.";
+/* Error E5007, shown when a patch file fails: a remove entry is not text. %1$@ is the file. */
+"error.E5007.patch.removeNotText" = "%1$@, remove: remove에는 점으로 구분한 키 경로가 텍스트로 있어야 합니다. 해결: 각 항목을 문자열로 쓰세요.";
+/* Error E5007, shown when a patch file fails: a remove path is not in the record schema. %2$@ is the path. %1$@ is the file. */
+"error.E5007.patch.removePathUnknown" = "%1$@, remove: 경로 %2$@은(는) 레코드 스키마에 없습니다. 해결: 레코드 스키마에 있는 키 경로를 쓰거나 항목을 삭제하세요.";
+/* Error E5007, shown when a patch file fails: a remove path is listed twice. %2$@ is the path. %1$@ is the file. */
+"error.E5007.patch.removeDuplicate" = "%1$@, remove: 경로 %2$@이(가) 두 번 나열되어 있습니다. 해결: 두 항목 중 하나를 삭제하세요.";
+/* Error E5007, shown when a patch file fails: an all patch removes a key outside tuning. %2$@ is the path. %1$@ is the file. */
+"error.E5007.patch.removeAllNotTuning" = "%1$@, remove: all 패치는 tuning 키만 제거할 수 있으며 %2$@은(는) 제거할 수 없습니다. 해결: 여기서는 tuning 키만 제거하거나 컨트롤러 하나용 패치를 쓰세요.";
+/* Error E5007, shown when a patch file fails: the selector is not a dictionary. %1$@ is the file. */
+"error.E5007.patch.selectorNotObject" = "%1$@, selector: selector는 all, model 또는 productID와 vendorID여야 합니다. 해결: selector를 이 형식 중 하나의 딕셔너리로 쓰세요.";
+/* Error E5007, shown when a patch file fails: selector.all is not true. %1$@ is the file. */
+"error.E5007.patch.selectorAllTrue" = "%1$@, selector.all: selector.all은 true여야 합니다. 해결: all을 true로 설정하거나 model 또는 productID와 vendorID를 쓰세요.";
+/* Error E5007, shown when a patch file fails: a selector ID is out of range. %1$@ is the file. */
+"error.E5007.patch.selectorIdRange" = "%1$@, selector.vendorID, selector.productID: vendorID는 1...65535, productID는 0...65535여야 합니다. 해결: 각각 범위 안의 정수로 설정하세요.";
+/* Error E5007, shown when a patch file fails: selector.model is not vvvv-pppp in lowercase hex. %1$@ is the file. */
+"error.E5007.patch.selectorModel" = "%1$@, selector.model: selector.model은 소문자 16진수 vvvv-pppp여야 합니다. 해결: 각 ID를 소문자 16진수 네 자리로 쓰세요.";
+/* Error E5007, shown when a patch file fails: the selector has members of no form. %1$@ is the file. */
+"error.E5007.patch.selectorShape" = "%1$@, selector: selector는 all, model 또는 productID와 vendorID여야 합니다. 해결: 이 형식 중 하나의 멤버만 정확히 남기세요.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "컨트롤러의 SDL_GameControllerDB 줄로는 그 컨트롤러를 구동할 수 없습니다. 이유는 메시지에 나와 있습니다. ojd record draft로 해당 컨트롤러의 레코드를 작성하세요.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

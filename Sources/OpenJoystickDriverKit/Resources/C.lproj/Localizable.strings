@@ -3633,6 +3633,37 @@
 "error.E5007.record.unwritableValue" = "%1$@, document: a value cannot be written as JSON (%2$@). Fix: replace the value that the reason names with a string, number, boolean, list or dictionary.";
 /* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
 "error.E5007.record.idRange" = "%1$@, vendorID and productID: vendorID must be 1...65535 and productID 0...65535. Fix: set each to a whole number in its range.";
+/* Error E5007, shown when a patch file fails: the file is not a dictionary. %1$@ is the file. */
+"error.E5007.patch.patchNotObject" = "%1$@, document: The file is not a JSON object. Fix: Make the file a dictionary with apiVersion, kind, selector, and patch or remove.";
+/* Error E5007, shown when a patch file fails: the file lacks apiVersion, kind, selector, or patch and remove. %1$@ is the file. */
+"error.E5007.patch.patchFields" = "%1$@, document: The file must hold apiVersion, kind, selector, and patch or remove. Fix: Add the missing member.";
+/* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
+"error.E5007.patch.patchSections" = "%1$@, patch: Patch must hold modes, usb, bluetoothLE, capabilities, server, route, input, tuning, or idle. Fix: Keep only those sections and give at least one of them.";
+
+/* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
+"error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: Each entry must hold an id and only id, protocol, match, interface, or session. Fix: Give each entry an id and delete any other key.";
+/* Error E5007, shown when a patch file fails: an all patch sets a section other than tuning. %1$@ is the file. */
+"error.E5007.patch.patchAllOnlyTuning" = "%1$@, patch: An all patch may set only tuning. Fix: Move the other sections into a patch for one controller.";
+/* Error E5007, shown when a patch file fails: remove is not a nonempty list. %1$@ is the file. */
+"error.E5007.patch.removeNotList" = "%1$@, remove: Remove must be a nonempty list of dotted key paths. Fix: List the key paths to remove, or delete remove.";
+/* Error E5007, shown when a patch file fails: a remove entry is not text. %1$@ is the file. */
+"error.E5007.patch.removeNotText" = "%1$@, remove: Remove must hold dotted key paths as text. Fix: Write each entry as a string.";
+/* Error E5007, shown when a patch file fails: a remove path is not in the record schema. %2$@ is the path. %1$@ is the file. */
+"error.E5007.patch.removePathUnknown" = "%1$@, remove: The path %2$@ is not in the record schema. Fix: Use a key path that the record schema has, or delete the entry.";
+/* Error E5007, shown when a patch file fails: a remove path is listed twice. %2$@ is the path. %1$@ is the file. */
+"error.E5007.patch.removeDuplicate" = "%1$@, remove: The path %2$@ is listed twice. Fix: Delete one of the two entries.";
+/* Error E5007, shown when a patch file fails: an all patch removes a key outside tuning. %2$@ is the path. %1$@ is the file. */
+"error.E5007.patch.removeAllNotTuning" = "%1$@, remove: An all patch may remove only tuning keys, not %2$@. Fix: Remove only tuning keys here, or use a patch for one controller.";
+/* Error E5007, shown when a patch file fails: the selector is not a dictionary. %1$@ is the file. */
+"error.E5007.patch.selectorNotObject" = "%1$@, selector: Selector must be all, model, or vendorID with productID. Fix: Write selector as a dictionary of one of those forms.";
+/* Error E5007, shown when a patch file fails: selector.all is not true. %1$@ is the file. */
+"error.E5007.patch.selectorAllTrue" = "%1$@, selector.all: Selector.all must be true. Fix: Set all to true, or use model or vendorID with productID.";
+/* Error E5007, shown when a patch file fails: a selector ID is out of range. %1$@ is the file. */
+"error.E5007.patch.selectorIdRange" = "%1$@, selector.vendorID, selector.productID: VendorID must be 1...65535 and productID 0...65535. Fix: Set each to a whole number in its range.";
+/* Error E5007, shown when a patch file fails: selector.model is not vvvv-pppp in lowercase hex. %1$@ is the file. */
+"error.E5007.patch.selectorModel" = "%1$@, selector.model: Selector.model must be vvvv-pppp in lowercase hex. Fix: Write each ID as four lowercase hex digits.";
+/* Error E5007, shown when a patch file fails: the selector has members of no form. %1$@ is the file. */
+"error.E5007.patch.selectorShape" = "%1$@, selector: Selector must be all, model, or vendorID with productID. Fix: Keep exactly the members of one of those forms.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "The SDL_GameControllerDB line for a controller cannot drive it. The message names the reason. Write a controller record for the controller with ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

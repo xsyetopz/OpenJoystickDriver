@@ -110,7 +110,11 @@ public struct ControllerPatch: Equatable, Sendable {
   /// A document of another kind fails the header check.
   static func parse(_ document: OrderedJSON, file: String? = nil) throws -> Self {
     guard let members = document.members else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "the file is not a JSON object")
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.patch.patchNotObject",
+        "the file is not a JSON object"
+      )
     }
     try OpenJoystickDriverAPI.requireHeader(
       apiVersion: document["apiVersion"],
@@ -126,6 +130,7 @@ public struct ControllerPatch: Equatable, Sendable {
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.patch.patchFields",
         "the file must hold apiVersion, kind, selector, and patch or remove"
       )
     }
@@ -137,6 +142,7 @@ public struct ControllerPatch: Equatable, Sendable {
       else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.patch.patchSections",
           "patch must hold modes, usb, bluetoothLE, capabilities, server, "
             + "route, input, tuning, or idle; the selector names the identity"
         )
@@ -146,6 +152,7 @@ public struct ControllerPatch: Equatable, Sendable {
       {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.patch.patchModeEntries",
           "patch.modes entries must hold an id and only id, protocol, match, interface, or session"
         )
       }
@@ -154,6 +161,7 @@ public struct ControllerPatch: Equatable, Sendable {
     if parsed == .all, !body.isEmpty, Set(body.map(\.key)) != ["tuning"] {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.patch.patchAllOnlyTuning",
         "an all patch may set only tuning"
       )
     }
@@ -173,6 +181,7 @@ public struct ControllerPatch: Equatable, Sendable {
     guard case .array(let items) = value, !items.isEmpty else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.patch.removeNotList",
         "remove must be a nonempty list of dotted key paths"
       )
     }
@@ -181,6 +190,7 @@ public struct ControllerPatch: Equatable, Sendable {
       guard let text = item.string else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.patch.removeNotText",
           "remove must hold dotted key paths as text"
         )
       }
@@ -191,18 +201,24 @@ public struct ControllerPatch: Equatable, Sendable {
       else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.patch.removePathUnknown",
+          arguments: [text],
           "remove path \(text) is not in the record schema"
         )
       }
       guard !paths.contains(path) else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.patch.removeDuplicate",
+          arguments: [text],
           "remove path \(text) is listed twice"
         )
       }
       if selector == .all, path.count != 2 || path[0] != "tuning" {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.patch.removeAllNotTuning",
+          arguments: [text],
           "an all patch may remove only tuning keys, not \(text)"
         )
       }
@@ -217,13 +233,18 @@ public struct ControllerPatch: Equatable, Sendable {
     guard let members = selector.members else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.patch.selectorNotObject",
         "selector must be all, model, or vendorID with productID"
       )
     }
     switch Set(members.map(\.key)) {
     case ["all"]:
       guard selector["all"] == .bool(true) else {
-        throw ControllerRecordProblem(code: .invalidControllerRecord, "selector.all must be true")
+        throw ControllerRecordProblem(
+          code: .invalidControllerRecord,
+          key: "error.E5007.patch.selectorAllTrue",
+          "selector.all must be true"
+        )
       }
       return .all
     case ["vendorID", "productID"]:
@@ -233,6 +254,7 @@ public struct ControllerPatch: Equatable, Sendable {
       else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.patch.selectorIdRange",
           "vendorID must be 1...65535 and productID 0...65535"
         )
       }
@@ -241,6 +263,7 @@ public struct ControllerPatch: Equatable, Sendable {
       guard let id = selector["model"]?.string, isModelID(id) else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.patch.selectorModel",
           "selector.model must be vvvv-pppp in lowercase hex"
         )
       }
@@ -248,6 +271,7 @@ public struct ControllerPatch: Equatable, Sendable {
     default:
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.patch.selectorShape",
         "selector must be all, model, or vendorID with productID"
       )
     }

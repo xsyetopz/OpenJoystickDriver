@@ -4187,6 +4187,37 @@
 "error.E5007.record.unwritableValue" = "%1$@, document: không thể ghi một giá trị thành JSON (%2$@). Cách sửa: thay giá trị mà lý do nêu bằng chuỗi, số, boolean, danh sách hoặc từ điển.";
 /* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
 "error.E5007.record.idRange" = "%1$@, vendorID và productID: vendorID phải là 1...65535 và productID là 0...65535. Cách sửa: đặt mỗi giá trị thành một số nguyên trong khoảng của nó.";
+/* Error E5007, shown when a patch file fails: the file is not a dictionary. %1$@ is the file. */
+"error.E5007.patch.patchNotObject" = "%1$@, document: tệp không phải đối tượng JSON. Cách sửa: biến tệp thành từ điển có apiVersion, kind, selector và patch hoặc remove.";
+/* Error E5007, shown when a patch file fails: the file lacks apiVersion, kind, selector, or patch and remove. %1$@ is the file. */
+"error.E5007.patch.patchFields" = "%1$@, document: tệp phải có apiVersion, kind, selector và patch hoặc remove. Cách sửa: thêm thành phần còn thiếu.";
+/* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
+"error.E5007.patch.patchSections" = "%1$@, patch: patch phải có modes, usb, bluetoothLE, capabilities, server, route, input, tuning hoặc idle. Cách sửa: chỉ giữ các phần đó và cung cấp ít nhất một phần.";
+
+/* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
+"error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: mỗi mục phải có id và chỉ có id, protocol, match, interface hoặc session. Cách sửa: đặt id cho mỗi mục và xóa các khóa khác.";
+/* Error E5007, shown when a patch file fails: an all patch sets a section other than tuning. %1$@ is the file. */
+"error.E5007.patch.patchAllOnlyTuning" = "%1$@, patch: bản vá all chỉ được đặt tuning. Cách sửa: chuyển các phần khác sang bản vá cho một tay cầm.";
+/* Error E5007, shown when a patch file fails: remove is not a nonempty list. %1$@ is the file. */
+"error.E5007.patch.removeNotList" = "%1$@, remove: remove phải là danh sách không rỗng các đường dẫn khóa có dấu chấm. Cách sửa: liệt kê các đường dẫn khóa cần xóa hoặc xóa remove.";
+/* Error E5007, shown when a patch file fails: a remove entry is not text. %1$@ is the file. */
+"error.E5007.patch.removeNotText" = "%1$@, remove: remove phải chứa các đường dẫn khóa có dấu chấm dưới dạng văn bản. Cách sửa: viết mỗi mục thành chuỗi.";
+/* Error E5007, shown when a patch file fails: a remove path is not in the record schema. %2$@ is the path. %1$@ is the file. */
+"error.E5007.patch.removePathUnknown" = "%1$@, remove: đường dẫn %2$@ không có trong lược đồ bản ghi. Cách sửa: dùng đường dẫn khóa có trong lược đồ bản ghi hoặc xóa mục.";
+/* Error E5007, shown when a patch file fails: a remove path is listed twice. %2$@ is the path. %1$@ is the file. */
+"error.E5007.patch.removeDuplicate" = "%1$@, remove: đường dẫn %2$@ được liệt kê hai lần. Cách sửa: xóa một trong hai mục.";
+/* Error E5007, shown when a patch file fails: an all patch removes a key outside tuning. %2$@ is the path. %1$@ is the file. */
+"error.E5007.patch.removeAllNotTuning" = "%1$@, remove: bản vá all chỉ được xóa khóa tuning, không phải %2$@. Cách sửa: ở đây chỉ xóa khóa tuning hoặc dùng bản vá cho một tay cầm.";
+/* Error E5007, shown when a patch file fails: the selector is not a dictionary. %1$@ is the file. */
+"error.E5007.patch.selectorNotObject" = "%1$@, selector: selector phải là all, model hoặc vendorID cùng productID. Cách sửa: viết selector thành từ điển của một trong các dạng đó.";
+/* Error E5007, shown when a patch file fails: selector.all is not true. %1$@ is the file. */
+"error.E5007.patch.selectorAllTrue" = "%1$@, selector.all: selector.all phải là true. Cách sửa: đặt all thành true hoặc dùng model hoặc vendorID cùng productID.";
+/* Error E5007, shown when a patch file fails: a selector ID is out of range. %1$@ is the file. */
+"error.E5007.patch.selectorIdRange" = "%1$@, selector.vendorID, selector.productID: vendorID phải là 1...65535 và productID là 0...65535. Cách sửa: đặt mỗi giá trị thành một số nguyên trong khoảng của nó.";
+/* Error E5007, shown when a patch file fails: selector.model is not vvvv-pppp in lowercase hex. %1$@ is the file. */
+"error.E5007.patch.selectorModel" = "%1$@, selector.model: selector.model phải là vvvv-pppp ở dạng thập lục phân chữ thường. Cách sửa: viết mỗi ID bằng bốn chữ số thập lục phân chữ thường.";
+/* Error E5007, shown when a patch file fails: the selector has members of no form. %1$@ is the file. */
+"error.E5007.patch.selectorShape" = "%1$@, selector: selector phải là all, model hoặc vendorID cùng productID. Cách sửa: giữ đúng các thành phần của một trong các dạng đó.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "Dòng SDL_GameControllerDB của một bộ điều khiển không thể điều khiển nó. Thông báo nêu lý do. Hãy viết bản ghi bộ điều khiển cho nó bằng ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

@@ -133,4 +133,60 @@ struct ControllerPatchRemoveTests {
       #expect(problem.code == .invalidControllerRecord, "\(path)")
     }
   }
+
+  @Test
+  func removeMessagesNameFileKeyPathRuleAndFix() throws {
+    let english = Localization(preferredLanguages: ["en-US"])
+    let identity = Self.identity
+    func message(_ remove: [String], selector: ControllerPatch.Selector? = nil) throws -> String {
+      let selector = selector ?? .identity(identity)
+      let problem = try #require(Self.refusal(Self.document(remove: remove, selector: selector)))
+      return ControllerRecordSet.problemDescription(
+        problem,
+        includingCode: false,
+        document: "record",
+        localization: english,
+        file: "a.patch.plist"
+      )
+    }
+    #expect(
+      try message(["usb", "usb"])
+        == "a.patch.plist, remove: The path usb is listed twice. Fix: Delete one of the two entries."
+    )
+    #expect(
+      try message(["bogus"])
+        == "a.patch.plist, remove: The path bogus is not in the record schema. Fix: Use a key path "
+        + "that the record schema has, or delete the entry."
+    )
+    #expect(
+      try message(["usb"], selector: .all)
+        == "a.patch.plist, remove: An all patch may remove only tuning keys, not usb. Fix: Remove "
+        + "only tuning keys here, or use a patch for one controller."
+    )
+  }
+
+  @Test
+  func patchBodyMessagesNameFileKeyPathRuleAndFix() throws {
+    let english = Localization(preferredLanguages: ["en-US"])
+    func message(_ patch: [String: Any]) throws -> String {
+      let problem = try #require(Self.refusal(Self.document(patch: patch)))
+      return ControllerRecordSet.problemDescription(
+        problem,
+        includingCode: false,
+        document: "record",
+        localization: english,
+        file: "a.patch.plist"
+      )
+    }
+    #expect(
+      try message(["vendorID": 1])
+        == "a.patch.plist, patch: Patch must hold modes, usb, bluetoothLE, capabilities, server, "
+        + "route, input, tuning, or idle. Fix: Keep only those sections and give at least one of them."
+    )
+    #expect(
+      try message(["modes": [["protocol": ["family": "XInput"]]]])
+        == "a.patch.plist, patch.modes: Each entry must hold an id and only id, protocol, match, "
+        + "interface, or session. Fix: Give each entry an id and delete any other key."
+    )
+  }
 }

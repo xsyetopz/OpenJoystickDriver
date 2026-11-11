@@ -3633,6 +3633,37 @@
 "error.E5007.record.unwritableValue" = "%1$@, document: een waarde kan niet als JSON worden geschreven (%2$@). Oplossing: vervang de waarde die de reden noemt door een tekenreeks, getal, boolean, lijst of dictionary.";
 /* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
 "error.E5007.record.idRange" = "%1$@, vendorID en productID: vendorID moet 1...65535 zijn en productID 0...65535. Oplossing: stel elk in op een geheel getal binnen het bereik.";
+/* Error E5007, shown when a patch file fails: the file is not a dictionary. %1$@ is the file. */
+"error.E5007.patch.patchNotObject" = "%1$@, document: het bestand is geen JSON-object. Oplossing: maak van het bestand een dictionary met apiVersion, kind, selector en patch of remove.";
+/* Error E5007, shown when a patch file fails: the file lacks apiVersion, kind, selector, or patch and remove. %1$@ is the file. */
+"error.E5007.patch.patchFields" = "%1$@, document: het bestand moet apiVersion, kind, selector en patch of remove bevatten. Oplossing: voeg het ontbrekende onderdeel toe.";
+/* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
+"error.E5007.patch.patchSections" = "%1$@, patch: patch moet modes, usb, bluetoothLE, capabilities, server, route, input, tuning of idle bevatten. Oplossing: houd alleen die secties en geef er minstens één.";
+
+/* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
+"error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: elk item moet een id bevatten en alleen id, protocol, match, interface of session. Oplossing: geef elk item een id en verwijder elke andere sleutel.";
+/* Error E5007, shown when a patch file fails: an all patch sets a section other than tuning. %1$@ is the file. */
+"error.E5007.patch.patchAllOnlyTuning" = "%1$@, patch: een all-patch mag alleen tuning instellen. Oplossing: verplaats de andere secties naar een patch voor één controller.";
+/* Error E5007, shown when a patch file fails: remove is not a nonempty list. %1$@ is the file. */
+"error.E5007.patch.removeNotList" = "%1$@, remove: remove moet een niet-lege lijst van sleutelpaden met punten zijn. Oplossing: geef de te verwijderen sleutelpaden op of verwijder remove.";
+/* Error E5007, shown when a patch file fails: a remove entry is not text. %1$@ is the file. */
+"error.E5007.patch.removeNotText" = "%1$@, remove: remove moet sleutelpaden met punten als tekst bevatten. Oplossing: schrijf elk item als tekenreeks.";
+/* Error E5007, shown when a patch file fails: a remove path is not in the record schema. %2$@ is the path. %1$@ is the file. */
+"error.E5007.patch.removePathUnknown" = "%1$@, remove: het pad %2$@ staat niet in het recordschema. Oplossing: gebruik een sleutelpad uit het recordschema of verwijder het item.";
+/* Error E5007, shown when a patch file fails: a remove path is listed twice. %2$@ is the path. %1$@ is the file. */
+"error.E5007.patch.removeDuplicate" = "%1$@, remove: het pad %2$@ staat twee keer in de lijst. Oplossing: verwijder een van de twee items.";
+/* Error E5007, shown when a patch file fails: an all patch removes a key outside tuning. %2$@ is the path. %1$@ is the file. */
+"error.E5007.patch.removeAllNotTuning" = "%1$@, remove: een all-patch mag alleen tuning-sleutels verwijderen, niet %2$@. Oplossing: verwijder hier alleen tuning-sleutels of gebruik een patch voor één controller.";
+/* Error E5007, shown when a patch file fails: the selector is not a dictionary. %1$@ is the file. */
+"error.E5007.patch.selectorNotObject" = "%1$@, selector: selector moet all, model of vendorID met productID zijn. Oplossing: schrijf selector als dictionary in een van die vormen.";
+/* Error E5007, shown when a patch file fails: selector.all is not true. %1$@ is the file. */
+"error.E5007.patch.selectorAllTrue" = "%1$@, selector.all: selector.all moet true zijn. Oplossing: zet all op true of gebruik model of vendorID met productID.";
+/* Error E5007, shown when a patch file fails: a selector ID is out of range. %1$@ is the file. */
+"error.E5007.patch.selectorIdRange" = "%1$@, selector.vendorID, selector.productID: vendorID moet 1...65535 zijn en productID 0...65535. Oplossing: stel elk in op een geheel getal binnen het bereik.";
+/* Error E5007, shown when a patch file fails: selector.model is not vvvv-pppp in lowercase hex. %1$@ is the file. */
+"error.E5007.patch.selectorModel" = "%1$@, selector.model: selector.model moet vvvv-pppp in hexadecimaal met kleine letters zijn. Oplossing: schrijf elk ID met vier hexadecimale cijfers in kleine letters.";
+/* Error E5007, shown when a patch file fails: the selector has members of no form. %1$@ is the file. */
+"error.E5007.patch.selectorShape" = "%1$@, selector: selector moet all, model of vendorID met productID zijn. Oplossing: houd precies de onderdelen van een van die vormen.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "De SDL_GameControllerDB-regel van een controller kan hem niet aansturen. Het bericht noemt de reden. Schrijf met ojd record draft een controllerrecord voor de controller.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */
