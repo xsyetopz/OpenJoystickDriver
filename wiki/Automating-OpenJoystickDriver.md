@@ -211,7 +211,7 @@ A program with the `control` scope can drive a virtual gamepad through the endpo
 
 1. Grant the scope: `ojd access grant --token driver --scope control`. Add `--scope read` to grant both. A token that has `--origin` cannot have `control`, because a web page cannot use it.
 2. Send a `Hello` with `"scopes":["Control"]`.
-3. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedRequest","as":"Generic"}`. The persona ids are `Generic` and `SDLCompatible`.
+3. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedRequest","as":"Generic"}`. The persona ids are `Generic`, `SDLCompatible` and `GameControllerCompatible`; every persona the service publishes is open to a client with the `control` scope. An unknown id is refused with `E1003`, and the message names the id and lists the accepted personas.
 4. The endpoint answers `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedSession","as":"Generic"}` when the virtual gamepad exists.
 5. Send one frame per line, each with `apiVersion` and `"kind":"Frame"`. A frame has the keys of an `ojd virtual feed` line, and the service plays frames with the same rules.
 6. The endpoint sends each rumble command that a game sends to the virtual gamepad as one `RumbleCommand` line, the same as `ojd virtual feed` prints. Its `type` is `SetRumble` or `StopRumble`. The `virtualFeed` entry of the output schema describes it.

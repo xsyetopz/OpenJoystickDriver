@@ -66,11 +66,10 @@ extension EndpointServer {
         return
       }
       guard let persona = request.as.flatMap(VirtualHIDProfileID.init(rawValue:)) else {
+        let accepted = VirtualHIDProfileID.allCases.map(\.rawValue).joined(separator: ", ")
+        let refused = request.as.map { "\($0) is not a persona the service publishes. " } ?? ""
         connection.close(
-          Self.invalid(
-            "Send FeedRequest with a persona: "
-              + VirtualHIDProfileID.allCases.map(\.rawValue).joined(separator: ", ") + "."
-          )
+          Self.invalid("\(refused)Send FeedRequest with a persona: \(accepted).")
         )
         return
       }

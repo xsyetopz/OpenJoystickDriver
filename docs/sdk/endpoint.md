@@ -88,7 +88,7 @@ The endpoint answers with the same `ADDED`, `MODIFIED`, and `DELETED` watch line
 
 ### FeedRequest
 
-The program sends it after the `Welcome` to publish a virtual gamepad. It needs the `Control` scope. `as` is a persona id: `Generic` or `SDLCompatible`. Closing the connection removes the virtual gamepad.
+The program sends it after the `Welcome` to publish a virtual gamepad. It needs the `Control` scope. `as` is a persona id: `Generic`, `SDLCompatible` or `GameControllerCompatible`. A client with the `Control` scope may choose any of them; an unknown id is refused with `E1003` and a message that names the id and lists the accepted personas. Closing the connection removes the virtual gamepad.
 
 ```json
 {"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedRequest","as":"Generic"}

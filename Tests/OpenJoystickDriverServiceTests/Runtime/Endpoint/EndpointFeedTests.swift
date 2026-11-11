@@ -316,6 +316,39 @@ struct EndpointFeedTests {
     }
   }
 
+  @Test(arguments: VirtualHIDProfileID.allCases)
+  func everyPersonaOpensAFeedSession(persona: VirtualHIDProfileID) async throws {
+    let factory = FakeFeedFactory()
+    try await withEndpointServer(feeds: factory.registry()) { server, _ in
+      let client = try await welcomed(server)
+      await client.send(clientLine("FeedRequest", #","as":"\#(persona.rawValue)""#))
+
+      let line = try #require(await client.readLine())
+      #expect(try JSONSchemaFiles.issues(in: line, against: "endpoint.schema.json").isEmpty)
+      let object = try client.object(line)
+      #expect(object["kind"] as? String == "FeedSession")
+      #expect(object["as"] as? String == persona.rawValue)
+      #expect(factory.devices.first?.profile == persona)
+    }
+  }
+
+  @Test
+  func aRefusedPersonaNamesItAndListsTheAcceptedOnes() async throws {
+    let factory = FakeFeedFactory()
+    try await withEndpointServer(feeds: factory.registry()) { server, _ in
+      let client = try await welcomed(server)
+      await client.send(clientLine("FeedRequest", #","as":"quokka""#))
+
+      let object = try await client.readObject()
+      let message = try #require(object["message"] as? String)
+      #expect(object["code"] as? String == "E1003")
+      #expect(message.contains("quokka"))
+      for persona in VirtualHIDProfileID.allCases {
+        #expect(message.contains(persona.rawValue))
+      }
+    }
+  }
+
   @Test(arguments: ["NotAPersona", "quokka"])
   func anUnknownProfileIsInvalid(profile: String) async throws {
     let factory = FakeFeedFactory()
