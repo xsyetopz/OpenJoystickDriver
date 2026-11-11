@@ -15,7 +15,7 @@ A controller fix in groups 2, 3, and 8 lands as a record or a patch (D13). Where
 - [x] 1.7 Convert the bundled documents in `Resources/Controllers/`, `ControllerPatches/`, `Protocols/`, `CatalogRules/`, `Vocabulary/`, `VirtualDevices/`, and `ErrorCodes.json` to canonical `.plist` files with `apiVersion` `v1alpha3`. Regenerate the copies with `./Scripts/ojd catalog regenerate --write` and `./Scripts/ojd errors regenerate --write`.
 - [x] 1.8 Move the Python scripts and repository tests from 1.1 that read documents to `plistlib`. `Scripts/Quality/validate_schemas.py` validates the objects read from each property list.
 - [x] 1.9 Add a repository test that every bundled document equals its canonical form and that no bundled document is a `.json` file.
-- [ ] 1.10 Convert the test fixtures, then run `Tests/EquivalenceSnapshots` and the catalog tests. Explain every snapshot difference before accepting it.
+- [x] 1.10 Convert the test fixtures, then run `Tests/EquivalenceSnapshots` and the catalog tests. Explain every snapshot difference before accepting it.
 - [x] 1.11 Update `.claude/rules/generated_file_edit.md`, `Resources/Schemas/AGENTS.md`, `Resources/Schemas/README.md`, and `CONTRIBUTING.md` for the `.plist` paths and the property-list rules.
 
 ## 2. 8BitDo Ultimate 2C Wireless
