@@ -35,14 +35,20 @@
         },
         {
           "type": "object",
-          "required": ["appID", "type"],
+          "required": ["appIDs", "type"],
           "additionalProperties": false,
           "properties": {
-            "appID": {
-              "type": "string",
-              "minLength": 3,
-              "maxLength": 255,
-              "pattern": "^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?)+$"
+            "appIDs": {
+              "description": "The bundle identifiers of the apps that the profile applies to, any one of which may be in front.",
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 255,
+                "pattern": "^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?)+$"
+              }
             },
             "type": {
               "const": "Application"

@@ -268,7 +268,7 @@ struct ProfileCreationFieldsTests {
     fields.appID = "com.apple.Safari"
     #expect(
       fields.proposedProfile(in: context)?.applicationScope
-        == .application(appID: "com.apple.Safari")
+        == .application(appIDs: ["com.apple.Safari"])
     )
   }
 

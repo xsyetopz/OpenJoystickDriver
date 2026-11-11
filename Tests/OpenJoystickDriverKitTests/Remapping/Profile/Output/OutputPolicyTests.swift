@@ -263,7 +263,7 @@ struct RemappingOutputPolicyTests {
       id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
       name: "Configured",
       device: RemappingDeviceScope(vendorID: 1, productID: 2),
-      applicationScope: .application(appID: "com.example.Game"),
+      applicationScope: .application(appIDs: ["com.example.Game"]),
       outputPolicy: RemappingOutputPolicy(virtualGamepad: .mapped, physicalInput: .exclusive),
       physicalColor: ControllerColor(red: 1, green: 2, blue: 3),
       gyroOutput: RemappingGyroOutput(mode: .mouse),

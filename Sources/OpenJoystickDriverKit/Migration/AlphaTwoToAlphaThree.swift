@@ -4,7 +4,8 @@ import Foundation
 ///
 /// A property list has no `null`, so a patch `null` becomes a `remove` entry and any other `null`
 /// leaves its key out. A patch that sets `modes` also removes `modes`, so it keeps replacing the
-/// record's modes. `notes` and `rationale` are not keys of `v1alpha3`.
+/// record's modes. `notes` and `rationale` are not keys of `v1alpha3`. The `appID` of a
+/// profile's application scope becomes `appIDs`, a list of one.
 enum AlphaTwoToAlphaThree {
   /// The version the step reads.
   static let from = "openjoystickdriver/v1alpha2"
@@ -13,6 +14,37 @@ enum AlphaTwoToAlphaThree {
 
   /// The keys that `v1alpha3` does not have.
   private static let droppedKeys: Set<String> = ["notes", "rationale"]
+
+  /// `scope`, an `applicationScope`, with its `appID` as an `appIDs` list of one.
+  ///
+  /// - Throws: ``DocumentMigrationProblem`` for an `appID` that is not a string.
+  static func listedApps(_ scope: OrderedJSON) throws -> OrderedJSON {
+    guard case .object(let members) = scope else { return scope }
+    return .object(
+      try members.map { member in
+        guard member.key == "appID" else { return member }
+        guard case .string = member.value else {
+          throw DocumentMigrationProblem("applicationScope.appID is not a string")
+        }
+        return .init(key: "appIDs", value: .array([member.value]))
+      }
+    )
+  }
+
+  /// `entries`, the root array of `ActiveProfiles`, with each `applicationScope` converted.
+  static func activeProfiles(_ entries: OrderedJSON) throws -> OrderedJSON {
+    guard case .array(let items) = entries else { return entries }
+    return .array(
+      try items.map { item in
+        guard case .object(let members) = item else { return item }
+        return .object(
+          try members.map {
+            $0.key == "applicationScope" ? .init(key: $0.key, value: try listedApps($0.value)) : $0
+          }
+        )
+      }
+    )
+  }
 
   /// Converts `document` of `kind`.
   ///
@@ -26,6 +58,8 @@ enum AlphaTwoToAlphaThree {
     for member in members {
       switch member.key {
       case "apiVersion": converted.append(.init(key: member.key, value: .string(to)))
+      case "applicationScope" where kind == .profile:
+        converted.append(.init(key: member.key, value: try listedApps(member.value)))
       case "patch" where kind == .controllerPatch:
         try collectNulls(member.value, path: [], into: &removed)
         let body = try stripped(member.value, path: "patch")

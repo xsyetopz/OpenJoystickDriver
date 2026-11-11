@@ -108,7 +108,7 @@ Create, change, activate, and move remapping profiles. Every `profile` command n
 ```text
 ojd profile list
 ojd profile show PROFILE
-ojd profile create NAME --controller CONTROLLER [--app BUNDLE-ID] [--virtual-gamepad disabled|mapped|passthrough] [--physical-input shared|exclusive] [--template gyro-stick [--stick left|right] [--activation SOURCE]]
+ojd profile create NAME --controller CONTROLLER [--app BUNDLE-ID]... [--virtual-gamepad disabled|mapped|passthrough] [--physical-input shared|exclusive] [--template gyro-stick [--stick left|right] [--activation SOURCE]]
 ojd profile duplicate PROFILE NEW-NAME
 ojd profile rename PROFILE NEW-NAME
 ojd profile delete PROFILE [--force] [--dry-run]
@@ -116,7 +116,7 @@ ojd profile activate PROFILE [--allow-empty] [--confirm-actions]
 ojd profile deactivate PROFILE
 ojd profile edit PROFILE
 ojd profile recover [--force] [--dry-run]
-ojd profile import FILE|-
+ojd profile import FILE|- [--app BUNDLE-ID]...
 ojd profile validate FILE|-
 ojd profile export PROFILE [--output FILE]
 ojd profile get PROFILE KEY
@@ -127,7 +127,7 @@ ojd profile set PROFILE KEY VALUE
 
 - `profile list`: List each profile with its ID, name, controller model, app scope, and number of bindings, and show which profiles are active. When a saved profile cannot be loaded, it also reports each issue on stderr, followed by "Repair them with 'ojd profile recover'."
 - `profile show`: Show a profile's settings and bindings. Bindings use the `SOURCE` and `TARGET` forms of `ojd binding set`.
-- `profile create`: Create an empty, inactive profile for one controller model. `--controller` is `VVVV:PPPP` or the ID of a connected controller. The profile applies in every app unless `--app` gives an app ID. `--virtual-gamepad` sets what the virtual gamepad sends: nothing (`disabled`), bound controls only (`mapped`), or also every control that no binding uses (`passthrough`, the default). `--physical-input` sets whether macOS still sees the controller (`shared`, the default) or OpenJoystickDriver takes it (`exclusive`). `--template gyro-stick` starts from a gyro to stick profile instead: `--stick` picks `left` or `right` (the default), and `--activation SOURCE`, such as `button:left-shoulder`, makes gyro output active only while that control is held; without it gyro output is always on. `--stick` and `--activation` need `--template`. The command fails for a model with no motion sensor and names the model. See [Create a Gyro to Stick Profile](Sticks-Triggers-Touchpad-and-Motion.md#create-a-gyro-to-stick-profile).
+- `profile create`: Create an empty, inactive profile for one controller model. `--controller` is `VVVV:PPPP` or the ID of a connected controller. The profile applies in every app unless `--app` gives an app ID; repeat `--app` for more apps, and the profile is in force while any of them is in front. `--virtual-gamepad` sets what the virtual gamepad sends: nothing (`disabled`), bound controls only (`mapped`), or also every control that no binding uses (`passthrough`, the default). `--physical-input` sets whether macOS still sees the controller (`shared`, the default) or OpenJoystickDriver takes it (`exclusive`). `--template gyro-stick` starts from a gyro to stick profile instead: `--stick` picks `left` or `right` (the default), and `--activation SOURCE`, such as `button:left-shoulder`, makes gyro output active only while that control is held; without it gyro output is always on. `--stick` and `--activation` need `--template`. The command fails for a model with no motion sensor and names the model. See [Create a Gyro to Stick Profile](Sticks-Triggers-Touchpad-and-Motion.md#create-a-gyro-to-stick-profile).
 - `profile duplicate`: Copy a profile under a new name. The copy is inactive.
 - `profile rename`: Give a profile a new name of 1 to 80 characters.
 - `profile delete`: Delete a profile. An active profile stops applying. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing.
@@ -135,7 +135,7 @@ ojd profile set PROFILE KEY VALUE
 - `profile deactivate`: Stop applying a profile. The controller then sends its own input.
 - `profile edit`: Open the profile file in `$VISUAL`, `$EDITOR`, or `vi`, then check and save it. Use it to change chords, sequences, layers, stick and trigger tuning, and the app scope. It needs a terminal. Without one, export the profile, change the file, and import it. For the file format, see [Profile file reference](Profile-File-Reference.md).
 - `profile recover`: Repair the problems that `profile list` reports. It acts on each issue: it removes a damaged profile file and resets a damaged active profile list. The service first backs up each file beside the original, under a name that contains `.backup-`. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) prints what would change and changes nothing. With `--plain`, it prints one line for each issue, with its ID and kind.
-- `profile import`: Add a profile from a file that `profile export` wrote. Use `-` to read the file from stdin. A profile with the same ID as an existing profile replaces it. A file that is not a valid profile exits with code 1 and error `E3008`, and one with a missing or unsupported `apiVersion` exits with code 1 and error `E5001`. `profile edit` and `profile set` give the same codes.
+- `profile import`: Add a profile from a file that `profile export` wrote. Use `-` to read the file from stdin. A profile with the same ID as an existing profile replaces it. `--app` (repeatable) replaces the apps of the file's scope. A file that is not a valid profile exits with code 1 and error `E3008`, and one with a missing or unsupported `apiVersion` exits with code 1 and error `E5001`. `profile edit` and `profile set` give the same codes.
 - `profile validate`: Check a profile file without importing it. Use `-` to read the file from stdin. It needs no running service. It exits with code 1 and error `E3008` when the profile is not valid, and with `E5001` when its `apiVersion` is missing or unsupported.
 - `profile export`: Print a profile file to stdout, or write it to `--output`. The file is an XML property list, so `--json` and `--plain` do not change the output.
 - `profile get`: Print one value from the profile file. `KEY` is a path of member names and array indexes joined by dots, such as `stickMappings.0.tuning.innerDeadzone`. A string prints alone, and any other value prints as JSON. A key with no value exits 1.

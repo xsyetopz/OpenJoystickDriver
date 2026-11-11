@@ -11,7 +11,7 @@ enum ProfileText {
   static func scope(_ scope: RemappingApplicationScope) -> String {
     switch scope {
     case .global: "global"
-    case .application(let appID): "app:\(appID)"
+    case .application(let appIDs): "app:\(appIDs.joined(separator: ","))"
     }
   }
 

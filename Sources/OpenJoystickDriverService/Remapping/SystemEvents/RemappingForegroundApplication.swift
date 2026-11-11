@@ -79,8 +79,8 @@ enum RemappingForegroundPolicy {
     }
     switch scope {
     case .global: return .eligible
-    case .application(let requiredAppID):
-      return frontmostAppID == requiredAppID
+    case .application(let requiredAppIDs):
+      return frontmostAppID.map(requiredAppIDs.contains) == true
         ? .eligible : .targetApplicationNotFrontmost
     }
   }

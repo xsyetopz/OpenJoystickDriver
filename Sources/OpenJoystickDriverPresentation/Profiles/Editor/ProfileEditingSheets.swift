@@ -52,8 +52,8 @@
       _productID = State(initialValue: ProfileIdentifierInput.formatted(profile.device.productID))
       _scopeKind = State(initialValue: ProfileScopeKind(profile.applicationScope))
       let appID: String
-      if case .application(let value) = profile.applicationScope {
-        appID = value
+      if case .application(let values) = profile.applicationScope {
+        appID = ProfileAppIDInput.text(values)
       } else {
         appID = ""
       }
@@ -148,7 +148,7 @@
       let scope: RemappingApplicationScope
       switch scopeKind {
       case .global: scope = .global
-      case .application: scope = .application(appID: appID)
+      case .application: scope = .application(appIDs: ProfileAppIDInput.parse(appID))
       }
       let candidate = RemappingProfile(
         id: profile.id,

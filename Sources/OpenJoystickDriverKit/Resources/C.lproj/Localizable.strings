@@ -3144,7 +3144,7 @@
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "The control to hold for gyro output (gyro-stick template). Without it, gyro output is always on.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "Apply the profile only while this app, by app ID, is in front.";
+"cli.profile.create.app" = "Apply the profile only while this app, by app ID, is in front. Repeat the option for more apps.";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "The controller model: VVVV:PPPP, or the ID of a connected controller.";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
@@ -3229,6 +3229,8 @@
 "cli.profile.import.abstract" = "Add a profile from a file that 'ojd profile export' wrote.";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "Imported '%1$@' (%2$@).";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "Apply the imported profile only while this app, by app ID, is in front, in place of the scope in the file. Repeat the option for more apps.";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "Use - to read the profile from stdin. A profile with the same ID as an existing one replaces it.";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */

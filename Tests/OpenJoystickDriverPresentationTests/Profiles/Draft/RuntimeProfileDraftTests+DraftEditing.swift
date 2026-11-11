@@ -238,7 +238,7 @@ extension RuntimeProfileDraftTests {
     draft = try draft.settingMetadata(
       name: "Application Profile",
       device: RemappingDeviceScope(vendorID: 0x045E, productID: 0x02EA),
-      applicationScope: .application(appID: "com.example.Game")
+      applicationScope: .application(appIDs: ["com.example.Game"])
     )
     draft = try draft.settingBindingBehaviors(
       turbo: nil,
@@ -251,7 +251,7 @@ extension RuntimeProfileDraftTests {
 
     #expect(draft.profile.name == "Application Profile")
     #expect(draft.profile.device == RemappingDeviceScope(vendorID: 0x045E, productID: 0x02EA))
-    #expect(draft.profile.applicationScope == .application(appID: "com.example.Game"))
+    #expect(draft.profile.applicationScope == .application(appIDs: ["com.example.Game"]))
     #expect(draft.profile.bindings[0].longHold?.durationMs == 500)
     #expect(draft.profile.bindings[0].multiTap.first?.windowMs == 250)
   }

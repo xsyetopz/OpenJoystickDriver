@@ -3182,7 +3182,7 @@
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "Kontrol yang ditahan untuk keluaran giroskop (templat gyro-stick). Tanpa ini, keluaran giroskop selalu aktif.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "Terapkan profil hanya saat app ini, berdasarkan ID app, berada di depan.";
+"cli.profile.create.app" = "Terapkan profil hanya saat app ini, menurut ID app, berada di depan. Ulangi opsi untuk app lain.";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "Model pengontrol: VVVV:PPPP, atau ID pengontrol yang terhubung.";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
@@ -3267,6 +3267,8 @@
 "cli.profile.import.abstract" = "Tambahkan profil dari file yang ditulis “ojd profile export”.";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "“%1$@” (%2$@) diimpor.";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "Terapkan profil yang diimpor hanya saat app ini, menurut ID app, berada di depan, menggantikan cakupan di dalam file. Ulangi opsi untuk app lain.";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "Gunakan - untuk membaca profil dari stdin. Profil dengan ID yang sama dengan yang sudah ada menggantikannya.";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */

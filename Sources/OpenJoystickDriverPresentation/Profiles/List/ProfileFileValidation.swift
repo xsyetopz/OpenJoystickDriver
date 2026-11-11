@@ -24,7 +24,7 @@ enum ProfileFileValidation: Equatable, Identifiable {
       let scope: String
       switch profile.applicationScope {
       case .global: scope = RuntimePresentation.profileScopeLabel(.global)
-      case .application(let appID): scope = appID
+      case .application(let appIDs): scope = ProfileAppIDInput.text(appIDs)
       }
       return .valid(
         name: profile.name,
@@ -89,10 +89,10 @@ enum ProfileScopeCaption {
   ) -> String {
     switch scope {
     case .global: return assignments
-    case .application(let appID):
+    case .application(let appIDs):
       return OJDLocalized.formatted(
         "ui.profiles.scopedCaption",
-        resolveName(appID) ?? appID,
+        ProfileAppIDInput.text(appIDs.map { resolveName($0) ?? $0 }),
         assignments
       )
     }

@@ -15,7 +15,7 @@ struct ProfileSchemaTests {
       "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E",
       "name": "Everything",
       "device": {"vendorID": 1356, "productID": 3302, "unit": "U-AbCd_123-xyzW09q"},
-      "applicationScope": {"type": "Application", "appID": "com.example.game"},
+      "applicationScope": {"type": "Application", "appIDs": ["com.example.game", "com.example.other"]},
       "outputPolicy": {"virtualGamepad": "Mapped", "physicalInput": "Exclusive"},
       "physicalColor": {"red": 255, "green": 32, "blue": 0},
       "motionTuning": {

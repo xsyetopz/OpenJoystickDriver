@@ -303,7 +303,10 @@ extension RemappingProfileLibrary {
     // Prefer an app-scoped profile matching the frontmost app (last activated wins)
     if let appID = frontmostAppID,
       let profile = preferred(
-        candidates.filter { $0.scope == .application(appID: appID) }
+        candidates.filter {
+          if case .application(let appIDs)? = $0.scope { return appIDs.contains(appID) }
+          return false
+        }
       )
     {
       return profile

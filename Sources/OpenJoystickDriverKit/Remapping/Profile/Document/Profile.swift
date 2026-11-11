@@ -56,8 +56,8 @@ public enum RemappingPayloadLimits {
 
 /// Declares which foreground application receives synthesized input.
 public enum RemappingApplicationScope: Codable, Equatable, Hashable, Sendable {
-  /// Only the application with this bundle identifier.
-  case application(appID: String)
+  /// Only the applications with these bundle identifiers.
+  case application(appIDs: [String])
   /// Whatever application is in front.
   case global
 
@@ -73,36 +73,44 @@ public enum RemappingApplicationScope: Codable, Equatable, Hashable, Sendable {
   enum CodingKeys: String, CodingKey, CaseIterable {
     /// The JSON key of `type`.
     case type
-    /// The JSON key of `appID`.
-    case appID
+    /// The JSON key of `appIDs`.
+    case appIDs
   }
 
   /// Decodes an application scope from a profile document.
   ///
-  /// The `type` field selects the case, and `appID` is allowed only for `Application`.
+  /// The `type` field selects the case, and `appIDs` is allowed only for `Application`. A
+  /// document with the key `appID` is refused by name.
   /// - Throws: `DecodingError` for an unknown or misplaced key, a missing key or a bad value.
   public init(from decoder: any Decoder) throws {
+    try decoder.rejectStaleKey("appID", use: "appIDs")
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let kind = try container.decode(Kind.self, forKey: .type)
-    let allowed: [CodingKeys] = kind == .application ? [.type, .appID] : [.type]
+    let allowed: [CodingKeys] = kind == .application ? [.type, .appIDs] : [.type]
     try container.rejectKeys(otherThan: allowed)
     switch kind {
     case .application:
-      self = .application(
-        appID: try container.decode(String.self, forKey: .appID)
-      )
+      let appIDs = try container.decode([String].self, forKey: .appIDs)
+      guard !appIDs.isEmpty else {
+        throw DecodingError.dataCorruptedError(
+          forKey: .appIDs,
+          in: container,
+          debugDescription: "appIDs holds at least one bundle identifier"
+        )
+      }
+      self = .application(appIDs: appIDs)
     case .global: self = .global
     }
   }
 
-  /// Encodes the case under its `type` value, with `appID` only for an application.
+  /// Encodes the case under its `type` value, with `appIDs` only for an application.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     switch self {
-    case .application(let appID):
+    case .application(let appIDs):
       try container.encode(Kind.application, forKey: .type)
-      try container.encode(appID, forKey: .appID)
+      try container.encode(appIDs, forKey: .appIDs)
     case .global: try container.encode(Kind.global, forKey: .type)
     }
   }
@@ -521,6 +529,30 @@ public struct RemappingProfile: Codable, Equatable, Identifiable, Sendable {
     self.sequences = sequences
     self.layers = layers
     self.macros = macros
+  }
+
+  /// The profile with `scope` as its application scope.
+  public func withApplicationScope(_ scope: RemappingApplicationScope) -> Self {
+    Self(
+      id: id,
+      name: name,
+      device: device,
+      applicationScope: scope,
+      outputPolicy: outputPolicy,
+      physicalColor: physicalColor,
+      motionTuning: motionTuning,
+      gyroOutput: gyroOutput,
+      joyConPair: joyConPair,
+      pointerSpeed: pointerSpeed,
+      stickMappings: stickMappings,
+      triggerMappings: triggerMappings,
+      touchMappings: touchMappings,
+      bindings: bindings,
+      chords: chords,
+      sequences: sequences,
+      layers: layers,
+      macros: macros
+    )
   }
 
   /// Decodes a profile from a profile document.

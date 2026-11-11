@@ -3182,7 +3182,7 @@
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "Điều khiển cần giữ để có đầu ra con quay (mẫu gyro-stick). Nếu không có, đầu ra con quay luôn bật.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "Chỉ áp dụng cấu hình khi ứng dụng này, theo mã định danh ứng dụng, đang ở phía trước.";
+"cli.profile.create.app" = "Chỉ áp dụng hồ sơ khi ứng dụng này, theo ID ứng dụng, đang ở phía trước. Lặp lại tùy chọn để thêm ứng dụng.";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "Kiểu máy bộ điều khiển: VVVV:PPPP, hoặc ID của một bộ điều khiển đã kết nối.";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
@@ -3267,6 +3267,8 @@
 "cli.profile.import.abstract" = "Thêm một cấu hình từ tệp mà “ojd profile export” đã ghi.";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "Đã nhập “%1$@” (%2$@).";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "Chỉ áp dụng hồ sơ đã nhập khi ứng dụng này, theo ID ứng dụng, đang ở phía trước, thay cho phạm vi trong tệp. Lặp lại tùy chọn để thêm ứng dụng.";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "Dùng - để đọc cấu hình từ stdin. Cấu hình có cùng ID với một cấu hình hiện có sẽ thay thế nó.";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */

@@ -121,7 +121,7 @@ public struct DocumentMigrator: Sendable {
     if isActiveProfiles, case .array = document {
       guard !isPlist else { return entry(Self.activeProfilesKind, .current) }
       return migrate(url, file: file, kind: Self.activeProfilesKind, backups: backups, dryRun: dryRun) {
-        try document.plistData()
+        try AlphaTwoToAlphaThree.activeProfiles(document).plistData()
       }
     }
     guard let version = document["apiVersion"]?.string else {

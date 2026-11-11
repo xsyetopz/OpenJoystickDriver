@@ -3182,7 +3182,7 @@
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "자이로 출력을 위해 누르고 있어야 하는 컨트롤 (gyro-stick 템플릿). 지정하지 않으면 자이로 출력은 항상 켜져 있습니다.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "이 앱(앱 ID로 지정)이 맨 앞에 있을 때만 프로파일을 적용합니다.";
+"cli.profile.create.app" = "이 앱(앱 ID 기준)이 맨 앞에 있을 때만 프로필을 적용합니다. 앱을 더 지정하려면 옵션을 반복하세요.";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "컨트롤러 모델: VVVV:PPPP 또는 연결된 컨트롤러의 ID입니다.";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
@@ -3267,6 +3267,8 @@
 "cli.profile.import.abstract" = "‘ojd profile export’가 쓴 파일에서 프로파일을 추가합니다.";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "‘%1$@’(%2$@)을(를) 가져왔습니다.";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "파일에 있는 범위 대신, 이 앱(앱 ID 기준)이 맨 앞에 있을 때만 가져온 프로필을 적용합니다. 앱을 더 지정하려면 옵션을 반복하세요.";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "stdin에서 프로파일을 읽으려면 - 를 사용합니다. 기존 프로파일과 ID가 같은 프로파일은 기존 프로파일을 대체합니다.";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */

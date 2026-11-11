@@ -3182,7 +3182,7 @@
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "ジャイロ出力のために押し続けるコントロール (gyro-stick テンプレート)。指定しない場合、ジャイロ出力は常にオンです。";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "この App (App ID で指定) が最前面にある間だけプロファイルを適用します。";
+"cli.profile.create.app" = "このアプリ（App ID で指定）が最前面にあるときだけプロファイルを適用します。複数のアプリにはオプションを繰り返します。";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "コントローラモデル: VVVV:PPPP、または接続中のコントローラの ID。";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
@@ -3267,6 +3267,8 @@
 "cli.profile.import.abstract" = "「ojd profile export」が書き出したファイルからプロファイルを追加します。";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "「%1$@」(%2$@) を読み込みました。";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "ファイル内の適用範囲の代わりに、このアプリ（App ID で指定）が最前面にあるときだけ読み込んだプロファイルを適用します。複数のアプリにはオプションを繰り返します。";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "- を指定すると stdin からプロファイルを読み込みます。既存のプロファイルと同じ ID のプロファイルは、それを置き換えます。";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */

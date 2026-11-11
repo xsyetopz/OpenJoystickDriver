@@ -125,11 +125,30 @@ struct RemappingValidationTests {
     let profile = RemappingProfile(
       name: "Invalid scope",
       device: RemappingDeviceScope(vendorID: 1, productID: 2),
-      applicationScope: .application(appID: identifier),
+      applicationScope: .application(appIDs: [identifier]),
       bindings: []
     )
     #expect(throws: RemappingValidationError.invalidAppID(identifier)) {
       try profile.validate()
+    }
+  }
+
+  @Test
+  func applicationScopeRequiresOneOrMoreDistinctAppIDs() {
+    func profile(_ identifiers: [String]) -> RemappingProfile {
+      RemappingProfile(
+        name: "Scope",
+        device: RemappingDeviceScope(vendorID: 1, productID: 2),
+        applicationScope: .application(appIDs: identifiers),
+        bindings: []
+      )
+    }
+    #expect(throws: RemappingValidationError.noAppIDs) { try profile([]).validate() }
+    #expect(throws: RemappingValidationError.duplicateAppID("com.example.Game")) {
+      try profile(["com.example.Game", "com.example.Game"]).validate()
+    }
+    #expect(throws: Never.self) {
+      try profile(["com.example.Game", "com.example.Other"]).validate()
     }
   }
 
@@ -213,7 +232,7 @@ struct RemappingValidationTests {
     RemappingProfile(
       name: "Test",
       device: RemappingDeviceScope(vendorID: 0x045E, productID: 0x02EA),
-      applicationScope: .application(appID: "com.example.Game"),
+      applicationScope: .application(appIDs: ["com.example.Game"]),
       bindings: bindings
     )
   }

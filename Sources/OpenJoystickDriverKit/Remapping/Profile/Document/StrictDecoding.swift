@@ -14,6 +14,18 @@ private struct RemappingJSONKey: CodingKey {
 }
 
 extension Decoder {
+  /// Throws a named error when the current JSON object has the key `stale`, which `current`
+  /// replaces.
+  func rejectStaleKey(_ stale: String, use current: String) throws {
+    let container = try self.container(keyedBy: RemappingJSONKey.self)
+    guard let key = RemappingJSONKey(stringValue: stale), container.contains(key) else { return }
+    throw DecodingError.dataCorruptedError(
+      forKey: key,
+      in: container,
+      debugDescription: "\(stale) is not a key; use \(current), a list of bundle identifiers"
+    )
+  }
+
   /// Throws when the current JSON object has a key that `Keys` does not declare.
   public func rejectUnknownKeys<Keys: CodingKey & CaseIterable>(_ keys: Keys.Type) throws {
     let container = try self.container(keyedBy: RemappingJSONKey.self)

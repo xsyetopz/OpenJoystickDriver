@@ -99,7 +99,7 @@ To import a profile instead, click **Import profile**. For more information, see
 ojd profile create "My controller" --controller 045E:02FD
 ```
 
-Add `--app BUNDLE-ID` to limit the profile to one app. The new profile is inactive and passes through every control until you add bindings. The command needs the running app. For more information, see [Command reference](Command-Reference.md).
+Add `--app BUNDLE-ID` to limit the profile to one app, and repeat it to name more apps. The new profile is inactive and passes through every control until you add bindings. The command needs the running app. For more information, see [Command reference](Command-Reference.md).
 
 ### Activate a Profile
 

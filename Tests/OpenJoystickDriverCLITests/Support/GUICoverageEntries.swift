@@ -41,6 +41,11 @@ enum GUICoverageEntries {
   static let cliOnly: [CLIOnlyItem] =
     [
       CLIOnlyItem(
+        command: ["profile", "import"],
+        option: "--app",
+        reason: "a script replaces the scope of the file it imports; the window edits the scope after import"
+      ),
+      CLIOnlyItem(
         command: ["virtual", "feed"],
         option: nil,
         reason: "reads controller frames from standard input"

@@ -6,7 +6,7 @@ import Testing
 struct RemappingForegroundPolicyTests {
   @Test
   func applicationScopeRequiresExactFrontmostAppID() {
-    let scope = RemappingApplicationScope.application(appID: "com.example.Game")
+    let scope = RemappingApplicationScope.application(appIDs: ["com.example.Game"])
     #expect(
       RemappingForegroundPolicy.eligibility(
         for: scope,
@@ -34,6 +34,25 @@ struct RemappingForegroundPolicyTests {
   }
 
   @Test
+  func applicationScopeWithTwoAppsIsEligibleForEitherOne() {
+    let scope = RemappingApplicationScope.application(appIDs: ["com.example.One", "com.example.Two"])
+    for (front, expected) in [
+      ("com.example.One", RemappingRouteEligibility.eligible),
+      ("com.example.Two", .eligible),
+      ("com.example.Three", .targetApplicationNotFrontmost),
+    ] {
+      #expect(
+        RemappingForegroundPolicy.eligibility(
+          for: scope,
+          frontmostAppID: front,
+          accessState: .granted,
+          outputSuppressed: false
+        ) == expected
+      )
+    }
+  }
+
+  @Test
   func globalScopeStillRequiresPostEventAuthorization() {
     #expect(
       RemappingForegroundPolicy.eligibility(
@@ -57,7 +76,7 @@ struct RemappingForegroundPolicyTests {
   func explicitSuppressionPrecedesOtherEligibilityStates() {
     #expect(
       RemappingForegroundPolicy.eligibility(
-        for: .application(appID: "com.example.Game"),
+        for: .application(appIDs: ["com.example.Game"]),
         frontmostAppID: nil,
         accessState: .notAuthorized,
         outputSuppressed: true

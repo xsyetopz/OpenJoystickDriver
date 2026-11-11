@@ -253,7 +253,7 @@ struct ProfileCreationFields: Equatable {
     let applicationScope: RemappingApplicationScope
     switch scopeKind {
     case .global: applicationScope = .global
-    case .application: applicationScope = .application(appID: appID)
+    case .application: applicationScope = .application(appIDs: ProfileAppIDInput.parse(appID))
     }
     let device = RemappingDeviceScope(
       vendorID: controller.vendorID,

@@ -68,7 +68,7 @@ struct ProfileCommandTests {
     let created = try #require(library.stored.first)
     #expect(created.name == "Racing")
     #expect(created.device == RemappingDeviceScope(vendorID: 0x054C, productID: 0x0CE6))
-    #expect(created.applicationScope == .application(appID: "com.example.game"))
+    #expect(created.applicationScope == .application(appIDs: ["com.example.game"]))
     #expect(created.outputPolicy.virtualGamepad == .passthrough)
     let profile = try #require(try result.json()["profile"] as? [String: Any])
     #expect(profile["id"] as? String == created.id.uuidString)
@@ -303,6 +303,48 @@ struct ProfileCommandTests {
     #expect(invalid.code == 1)
     #expect(invalid.standardError.hasPrefix("error[E5001]: "))
     #expect(service.arguments(of: .importRemappingProfile).count == 1)
+  }
+
+  @Test
+  func createTakesTheAppOptionMoreThanOnce() async throws {
+    let library = FakeProfileLibrary([])
+    let service = try Self.service(library)
+
+    let result = await service.run([
+      "profile", "create", "Racing", "--controller", "054c:0ce6", "--app", "com.example.one",
+      "--app", "com.example.two", "--json",
+    ])
+
+    #expect(result.code == 0, "\(result.standardError)")
+    #expect(
+      library.stored.first?.applicationScope
+        == .application(appIDs: ["com.example.one", "com.example.two"])
+    )
+    let profile = try #require(try result.json()["profile"] as? [String: Any])
+    #expect(profile["scope"] as? String == "app:com.example.one,com.example.two")
+  }
+
+  @Test
+  func importWithAppReplacesTheScopeOfTheImportedProfile() async throws {
+    let original = FakeProfileLibrary.profile("Pad")
+    let library = FakeProfileLibrary([])
+    let service = try Self.service(library)
+    let document = Data(try RemappingProfileFileStore.encodedPlist(original).utf8)
+
+    let result = await RecordStore.$standardInput.withValue(
+      { document },
+      operation: {
+        await service.run([
+          "profile", "import", "-", "--app", "com.example.one", "--app", "com.example.two",
+          "--json",
+        ])
+      }
+    )
+
+    #expect(result.code == 0, "\(result.standardError)")
+    let stored = try #require(library.stored.first)
+    #expect(stored.id == original.id)
+    #expect(stored.applicationScope == .application(appIDs: ["com.example.one", "com.example.two"]))
   }
 
   @Test

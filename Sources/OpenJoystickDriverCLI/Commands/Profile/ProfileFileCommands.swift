@@ -55,6 +55,16 @@ struct ProfileImportCommand: AsyncParsableCommand {
   )
   var file: String
 
+  /// `--app`: the bundle ID of an app that the imported profile applies to, repeated for more
+  /// apps; without it the profile keeps the scope of the file.
+  @Option(
+    help: ArgumentHelp(
+      CLILocalized.text("cli.profile.import.app"),
+      valueName: "app-id"
+    )
+  )
+  var app: [String] = []
+
   /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
@@ -63,7 +73,8 @@ struct ProfileImportCommand: AsyncParsableCommand {
   func run() async throws {
     try await global.run {
       let source = file == "-" ? "stdin" : file
-      let imported = try decodeProfile(try RecordStore.read(file), source: source)
+      let decoded = try decodeProfile(try RecordStore.read(file), source: source)
+      let imported = try (app.isEmpty ? decoded : decoded.withApplicationScope(.application(appIDs: app)))
         .checkingPointerSpeedDriver()
       let (before, after) = try await ServiceConnection.request { client in
         let before = try await client.getRemappingSnapshot()

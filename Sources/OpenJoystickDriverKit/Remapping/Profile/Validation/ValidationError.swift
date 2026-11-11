@@ -67,6 +67,10 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
   case duplicateSource(RemappingSource)
   /// The application bundle identifier is not valid; the value is the identifier.
   case invalidAppID(String)
+  /// An application scope lists no bundle identifier.
+  case noAppIDs
+  /// An application scope lists this bundle identifier more than once.
+  case duplicateAppID(String)
   /// An axis source has no axis tuning.
   case axisTuningRequired(index: Int)
   /// A source that is not an axis has axis tuning.
@@ -211,6 +215,9 @@ public enum RemappingValidationError: Error, Equatable, LocalizedError, Sendable
     case .duplicateSource: "Each controller source can appear in only one binding."
     case .invalidAppID(let identifier):
       "The target application bundle identifier is invalid: \(identifier)."
+    case .noAppIDs: "An application target needs at least one bundle identifier."
+    case .duplicateAppID(let identifier):
+      "The target application bundle identifier is listed twice: \(identifier)."
     case .axisTuningRequired(let index): "Binding \(index) requires axis tuning."
     case .axisTuningNotApplicable(let index): "Binding \(index) cannot have axis tuning."
     case .incompatibleSourceAndDestination(let index):

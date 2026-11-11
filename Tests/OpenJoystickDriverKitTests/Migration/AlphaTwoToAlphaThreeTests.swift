@@ -77,6 +77,41 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
+  func aProfileAppIDBecomesAListOfOne() throws {
+    let text = MigrationFixtures.document(
+      MigrationFixtures.alphaTwo,
+      "Profile",
+      #""applicationScope": {"type": "Application", "appID": "com.example.game"}"#
+    )
+    let converted = try convert(text, .profile)
+    let scope = try #require(converted["applicationScope"])
+    #expect(scope["appID"] == nil)
+    #expect(scope["appIDs"] == .array([.string("com.example.game")]))
+    #expect(scope["type"]?.string == "Application")
+  }
+
+  @Test
+  func aGlobalProfileScopeIsUnchanged() throws {
+    let text = MigrationFixtures.document(
+      MigrationFixtures.alphaTwo,
+      "Profile",
+      #""applicationScope": {"type": "Global"}"#
+    )
+    let converted = try convert(text, .profile)
+    #expect(converted["applicationScope"] == .object([.init(key: "type", value: .string("Global"))]))
+  }
+
+  @Test
+  func anAppIDThatIsNotAStringHasNoMapping() {
+    let text = MigrationFixtures.document(
+      MigrationFixtures.alphaTwo,
+      "Profile",
+      #""applicationScope": {"type": "Application", "appID": 3}"#
+    )
+    #expect(throws: DocumentMigrationProblem.self) { try convert(text, .profile) }
+  }
+
+  @Test
   func theChainStartsAtVersionOneAndEndsAtVersionThree() throws {
     let steps = DocumentMigrationStep.all.filter { $0.kind == DocumentKind.profile.rawValue }
     #expect(steps.map(\.from) == [MigrationFixtures.alphaOne, MigrationFixtures.alphaTwo])

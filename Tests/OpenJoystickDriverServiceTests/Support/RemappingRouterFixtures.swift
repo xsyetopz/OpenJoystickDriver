@@ -362,7 +362,7 @@ func remappingRouterConnectedControllers() -> [ConnectedController] {
 func remappingRouterProfile(
   id: UUID = UUID(),
   name: String = "Game",
-  applicationScope: RemappingApplicationScope = .application(appID: "com.example.Game"),
+  applicationScope: RemappingApplicationScope = .application(appIDs: ["com.example.Game"]),
   destination: RemappingDestination = .keyboard(key: .space, modifiers: []),
   turbo: RemappingTurbo? = nil
 ) -> RemappingProfile {

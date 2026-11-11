@@ -3182,7 +3182,7 @@
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "El control que se mantiene presionado para la salida del giroscopio (plantilla gyro-stick). Sin él, la salida del giroscopio siempre está activa.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "Aplica el perfil solo mientras esta app, indicada por su ID de app, esté en primer plano.";
+"cli.profile.create.app" = "Aplica el perfil solo mientras esta app, por su ID, esté al frente. Repite la opción para más apps.";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "El modelo de control: VVVV:PPPP, o el ID de un control conectado.";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
@@ -3267,6 +3267,8 @@
 "cli.profile.import.abstract" = "Añade un perfil desde un archivo que escribió “ojd profile export”.";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "Se ha importado “%1$@” (%2$@).";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "Aplica el perfil importado solo mientras esta app, por su ID, esté al frente, en lugar del ámbito del archivo. Repite la opción para más apps.";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "Usa - para leer el perfil desde stdin. Un perfil con el mismo ID que uno existente lo sustituye.";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */

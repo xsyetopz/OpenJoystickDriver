@@ -3182,7 +3182,7 @@
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "ตัวควบคุมที่ต้องกดค้างไว้สำหรับเอาต์พุตไจโร (เทมเพลต gyro-stick) หากไม่ระบุ เอาต์พุตไจโรจะเปิดอยู่เสมอ";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "ใช้โปรไฟล์เฉพาะขณะที่แอปนี้ ตามรหัสแอป อยู่ด้านหน้า";
+"cli.profile.create.app" = "ใช้โปรไฟล์เฉพาะเมื่อแอปนี้ ตามรหัสแอป อยู่ด้านหน้า ระบุตัวเลือกซ้ำเพื่อเพิ่มแอปอื่น";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "รุ่นคอนโทรลเลอร์: VVVV:PPPP หรือ ID ของคอนโทรลเลอร์ที่เชื่อมต่ออยู่";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
@@ -3267,6 +3267,8 @@
 "cli.profile.import.abstract" = "เพิ่มโปรไฟล์จากไฟล์ที่ “ojd profile export” เขียน";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "นำเข้า “%1$@” (%2$@) แล้ว";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "ใช้โปรไฟล์ที่นำเข้าเฉพาะเมื่อแอปนี้ ตามรหัสแอป อยู่ด้านหน้า แทนขอบเขตในไฟล์ ระบุตัวเลือกซ้ำเพื่อเพิ่มแอปอื่น";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "ใช้ - เพื่ออ่านโปรไฟล์จาก stdin โปรไฟล์ที่มี ID เดียวกับโปรไฟล์ที่มีอยู่จะแทนที่โปรไฟล์นั้น";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */

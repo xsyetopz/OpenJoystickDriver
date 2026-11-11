@@ -177,6 +177,26 @@ struct DocumentMigratorTests {
   }
 
   @Test
+  func anActiveProfilesScopeKeepsItsAppsAsAList() throws {
+    try write(
+      #"""
+      [{"profileID": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E", "vendorID": 1, "productID": 2,
+        "applicationScope": {"type": "Application", "appID": "com.example.game"}}]
+      """#,
+      "ActiveProfiles.json"
+    )
+    let entries = DocumentMigrator(directory: directory).run(dryRun: false)
+    #expect(entries.map(\.verdict) == [.migrated], "\(entries)")
+    guard case .array(let items) = try document("ActiveProfiles.plist") else {
+      Issue.record("not an array")
+      return
+    }
+    let scope = try #require(items.first?["applicationScope"])
+    #expect(scope["appIDs"] == .array([.string("com.example.game")]))
+    #expect(scope["appID"] == nil)
+  }
+
+  @Test
   func aFolderArgumentIsScannedRecursivelyWithItsOwnBackups() throws {
     try write(MigrationFixtures.accessGrants, "Elsewhere/Sub/AccessGrants.json")
     let folder = support.appendingPathComponent("Elsewhere")

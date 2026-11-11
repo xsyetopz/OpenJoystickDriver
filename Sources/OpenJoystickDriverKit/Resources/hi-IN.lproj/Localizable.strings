@@ -3182,7 +3182,7 @@
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "जायरो आउटपुट के लिए दबाए रखने वाला नियंत्रण (gyro-stick टेम्पलेट)। इसके बिना जायरो आउटपुट हमेशा चालू रहता है।";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "प्रोफ़ाइल तभी लागू करें जब यह ऐप, ऐप ID के अनुसार, सबसे आगे हो।";
+"cli.profile.create.app" = "प्रोफ़ाइल केवल तब लागू करें जब यह ऐप, ऐप ID से, सबसे आगे हो। और ऐप के लिए विकल्प दोहराएँ।";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "कंट्रोलर मॉडल: VVVV:PPPP, या कनेक्ट किए गए कंट्रोलर की ID।";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
@@ -3267,6 +3267,8 @@
 "cli.profile.import.abstract" = "“ojd profile export” से लिखी गई फ़ाइल से प्रोफ़ाइल जोड़ें।";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "“%1$@” (%2$@) इंपोर्ट की गई।";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "फ़ाइल के दायरे की जगह, आयात की गई प्रोफ़ाइल केवल तब लागू करें जब यह ऐप, ऐप ID से, सबसे आगे हो। और ऐप के लिए विकल्प दोहराएँ।";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "प्रोफ़ाइल को stdin से पढ़ने के लिए - का उपयोग करें। किसी मौजूदा प्रोफ़ाइल जैसी ही ID वाली प्रोफ़ाइल उसकी जगह ले लेती है।";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */

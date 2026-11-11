@@ -3182,7 +3182,7 @@
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "为陀螺仪输出而按住的控件 (gyro-stick 模板)。不指定时，陀螺仪输出始终开启。";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "仅当此 App（以 App ID 指定）位于最前时应用该配置文件。";
+"cli.profile.create.app" = "仅当此 App（按 App ID）位于前台时应用该描述文件。重复该选项可指定更多 App。";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "控制器型号：VVVV:PPPP，或已连接控制器的 ID。";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
@@ -3267,6 +3267,8 @@
 "cli.profile.import.abstract" = "从“ojd profile export”写出的文件中添加配置文件。";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "已导入“%1$@”（%2$@）。";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "仅当此 App（按 App ID）位于前台时才应用导入的描述文件，取代文件中的范围。重复该选项可指定更多 App。";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "使用 - 从 stdin 读取配置文件。ID 与现有配置文件相同的配置文件会替换它。";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */

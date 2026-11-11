@@ -219,8 +219,8 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   )
   var controller: ControllerSelector
 
-  /// `--app`: the bundle ID of the app that the profile applies to; without it the profile applies
-  /// in every app.
+  /// `--app`: the bundle ID of an app that the profile applies to, repeated for more apps;
+  /// without it the profile applies in every app.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -229,7 +229,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
       valueName: "app-id"
     )
   )
-  var app: String?
+  var app: [String] = []
 
   /// `--virtual-gamepad`: `disabled` publishes no virtual gamepad, `mapped` sends only the bound
   /// controls, and `passthrough` also sends the unbound controls.
@@ -293,7 +293,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
       }
       let activationSource = try activation.map(parseSource)
       let selector = controller
-      let scope = app.map { RemappingApplicationScope.application(appID: $0) } ?? .global
+      let scope = app.isEmpty ? RemappingApplicationScope.global : .application(appIDs: app)
       let policy = RemappingOutputPolicy(
         virtualGamepad: virtualGamepad,
         physicalInput: physicalInput
