@@ -210,6 +210,8 @@
 "ui.controllers.idleIdentity" = "Questo dispositivo non offre comandi, come un ricevitore senza controller collegato. OJD non gli invia dati.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is recognized and serves nothing, such as a receiver with no controller connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.idleIdentity.nextStep" = "Collega un controller al dispositivo oppure accendi il controller.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. OJD sends such a receiver no data, and the text says so. OJD stays as written. */
+"ui.controllers.noControllerLinked" = "Nessun controller è associato a questo ricevitore. OJD non gli invia dati.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "Batteria";
 /* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */

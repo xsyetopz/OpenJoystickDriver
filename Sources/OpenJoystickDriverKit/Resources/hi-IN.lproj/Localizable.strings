@@ -210,6 +210,8 @@
 "ui.controllers.idleIdentity" = "यह डिवाइस कोई कंट्रोल उपलब्ध नहीं कराता, जैसे कोई रिसीवर जिससे कोई कंट्रोलर जुड़ा नहीं है। OJD इसे कोई डेटा नहीं भेजता।";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is recognized and serves nothing, such as a receiver with no controller connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.idleIdentity.nextStep" = "इससे कोई कंट्रोलर कनेक्ट करें या कंट्रोलर चालू करें।";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. OJD sends such a receiver no data, and the text says so. OJD stays as written. */
+"ui.controllers.noControllerLinked" = "इस रिसीवर से कोई कंट्रोलर लिंक नहीं है। OJD इसे कोई डेटा नहीं भेजता।";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "बैटरी";
 /* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */
