@@ -4234,6 +4234,38 @@
 "error.E5007.userFile.upstreamNotDictionary" = "%1$@，document：补丁所应用的记录不是字典。修复：修复补丁所应用的记录文件。";
 /* Error E5007, shown when a user or package record file is skipped: a patch changes nothing in the record. %1$@ is the file. */
 "error.E5007.userFile.patchNoChange" = "%1$@，patch：补丁没有改变记录中的任何内容。修复：删除补丁，或设置与记录不同的值。";
+/* Error E5007, shown when an input layout of a record fails: input lists no layout. %1$@ is the file. */
+"error.E5007.inputLayout.layoutsEmpty" = "%1$@，input.layouts：input 必须列出至少一个布局。修复：添加一个布局，或删除 input。";
+/* Error E5007, shown when an input layout of a record fails: two layouts select one report. %2$@ and %3$@ are the layouts. %1$@ is the file. */
+"error.E5007.inputLayout.layoutsSameReport" = "%1$@，input.layouts：两个布局选择了同一份报告：%2$@ 和 %3$@。修复：为它们设置不同的报告 ID 或长度，或删除其一。";
+/* Error E5007, shown when an input layout of a record fails: a report ID is out of range. %1$@ is the file. */
+"error.E5007.inputLayout.reportIdRange" = "%1$@，input.layouts[].report.id：报告 ID 为 1...255。修复：将 ID 设为 1 到 255 的整数，或省略。";
+/* Error E5007, shown when an input layout of a record fails: a report length is out of range. %2$@ is the longest length. %1$@ is the file. */
+"error.E5007.inputLayout.reportLength" = "%1$@，input.layouts[].report.length：报告含 ID 字节在内为 1...%2$@ 字节。修复：将长度设在该范围内。";
+/* Error E5007, shown when an input layout of a record fails: an 8-way hat has a bad bit size. %1$@ is the file. */
+"error.E5007.inputLayout.hatBits" = "%1$@，input.layouts[].hat：8 向 hat 为 3 到 8 位。修复：将 bitSize 设为 3 到 8。";
+/* Error E5007, shown when an input layout of a record fails: a table hat names bad directions. %1$@ is the file. */
+"error.E5007.inputLayout.hatTable" = "%1$@，input.layouts[].hat：表格 hat 只为其位能容纳的值指定方向，且没有 neutral 条目。修复：只列出位能容纳的值，并去掉 neutral。";
+/* Error E5007, shown when an input layout of a record fails: a field has a bad bit size. %2$@ is the largest bit size. %1$@ is the file. */
+"error.E5007.inputLayout.fieldBits" = "%1$@，input.layouts[]：字段为 1 到 %2$@ 位。修复：将每个 bitSize 设在该范围内。";
+/* Error E5007, shown when an input layout of a record fails: a field lies outside the report. %1$@ is the file. */
+"error.E5007.inputLayout.fieldOutside" = "%1$@，input.layouts[]：字段必须位于报告 ID 字节之后、报告长度之内。修复：移动字段，或增加报告长度。";
+/* Error E5007, shown when an input layout of a record fails: a BigEndian field is misplaced or has a bad size. %1$@ is the file. */
+"error.E5007.inputLayout.bigEndian" = "%1$@，input.layouts[]：BigEndian 字段从字节边界开始，为 16、24 或 32 位。修复：从 8 的倍数开始，bitSize 设为 16、24 或 32，或改用 LittleEndian。";
+/* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
+"error.E5007.inputLayout.buttonControl" = "%1$@，input.layouts[].buttons：按钮指向数字控件，不能是方向键或摇杆轴。修复：指定按钮控件，或将条目移到 axes 或 hat。";
+/* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.axesDistinct" = "%1$@，input.layouts[].axes：axes 必须指定互不相同的摇杆轴。修复：每个摇杆轴只指定一次。";
+/* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */
+"error.E5007.inputLayout.axisRange" = "%1$@，input.layouts[].axes：轴的 min 在其大小的范围内小于 max。修复：将 min 设为小于 max，且都在 bitSize 的范围内。";
+/* Error E5007, shown when an input layout of a record fails: a trigger value has min and max out of order or out of range. %1$@ is the file. */
+"error.E5007.inputLayout.triggerRange" = "%1$@，input.layouts[].leftTrigger, input.layouts[].rightTrigger：扳机值的 min 在其大小的范围内小于 max。修复：将 min 设为小于 max，且都在 bitSize 的范围内。";
+/* Error E5007, shown when an input layout of a record fails: a symmetric axis is not signed around zero. %1$@ is the file. */
+"error.E5007.inputLayout.axisSymmetric" = "%1$@，input.layouts[].axes：对称轴有符号，min 小于 0 且 max 大于 0。修复：将 signed 设为 true，min 小于 0 且 max 大于 0，或关闭 symmetric。";
+/* Error E5007, shown when an input layout of a record fails: a trigger has neither an analog value nor a button. %1$@ is the file. */
+"error.E5007.inputLayout.triggerSources" = "%1$@，input.layouts[].leftTrigger, input.layouts[].rightTrigger：扳机必须指定模拟值、按钮或两者。修复：为扳机指定模拟值或按钮。";
+/* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
+"error.E5007.inputLayout.noControls" = "%1$@，input.layouts[]：布局必须至少解码一个控件。修复：添加按钮、轴、hat 或扳机。";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "控制器的 SDL_GameControllerDB 行无法驱动该控制器。消息会指出原因。请用 ojd record draft 为它编写控制器记录。";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

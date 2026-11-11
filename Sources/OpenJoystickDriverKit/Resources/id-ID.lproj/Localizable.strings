@@ -4234,6 +4234,38 @@
 "error.E5007.userFile.upstreamNotDictionary" = "%1$@, document: rekaman yang dikenai patch bukan kamus. Perbaikan: perbaiki file rekaman yang dikenai patch.";
 /* Error E5007, shown when a user or package record file is skipped: a patch changes nothing in the record. %1$@ is the file. */
 "error.E5007.userFile.patchNoChange" = "%1$@, patch: patch tidak mengubah apa pun pada rekaman. Perbaikan: hapus patch, atau atur nilai yang berbeda dari rekaman.";
+/* Error E5007, shown when an input layout of a record fails: input lists no layout. %1$@ is the file. */
+"error.E5007.inputLayout.layoutsEmpty" = "%1$@, input.layouts: input harus mencantumkan minimal satu tata letak. Perbaikan: tambahkan tata letak, atau hapus input.";
+/* Error E5007, shown when an input layout of a record fails: two layouts select one report. %2$@ and %3$@ are the layouts. %1$@ is the file. */
+"error.E5007.inputLayout.layoutsSameReport" = "%1$@, input.layouts: dua tata letak memilih laporan yang sama: %2$@ dan %3$@. Perbaikan: beri ID atau panjang laporan yang berbeda, atau hapus salah satunya.";
+/* Error E5007, shown when an input layout of a record fails: a report ID is out of range. %1$@ is the file. */
+"error.E5007.inputLayout.reportIdRange" = "%1$@, input.layouts[].report.id: ID laporan bernilai 1...255. Perbaikan: atur bilangan bulat 1 sampai 255, atau hilangkan.";
+/* Error E5007, shown when an input layout of a record fails: a report length is out of range. %2$@ is the longest length. %1$@ is the file. */
+"error.E5007.inputLayout.reportLength" = "%1$@, input.layouts[].report.length: laporan panjangnya 1...%2$@ byte, termasuk byte ID. Perbaikan: atur panjang dalam rentang itu.";
+/* Error E5007, shown when an input layout of a record fails: an 8-way hat has a bad bit size. %1$@ is the file. */
+"error.E5007.inputLayout.hatBits" = "%1$@, input.layouts[].hat: hat 8 arah berukuran 3 sampai 8 bit. Perbaikan: atur bitSize 3 sampai 8.";
+/* Error E5007, shown when an input layout of a record fails: a table hat names bad directions. %1$@ is the file. */
+"error.E5007.inputLayout.hatTable" = "%1$@, input.layouts[].hat: hat tabel menyebut arah hanya untuk nilai yang termuat bitnya, dan tanpa entri neutral. Perbaikan: cantumkan hanya nilai yang termuat bit dan hilangkan neutral.";
+/* Error E5007, shown when an input layout of a record fails: a field has a bad bit size. %2$@ is the largest bit size. %1$@ is the file. */
+"error.E5007.inputLayout.fieldBits" = "%1$@, input.layouts[]: sebuah bidang berukuran 1 sampai %2$@ bit. Perbaikan: atur setiap bitSize dalam rentang itu.";
+/* Error E5007, shown when an input layout of a record fails: a field lies outside the report. %1$@ is the file. */
+"error.E5007.inputLayout.fieldOutside" = "%1$@, input.layouts[]: bidang harus berada setelah byte ID laporan dan di dalam panjang laporan. Perbaikan: pindahkan bidang, atau perpanjang laporan.";
+/* Error E5007, shown when an input layout of a record fails: a BigEndian field is misplaced or has a bad size. %1$@ is the file. */
+"error.E5007.inputLayout.bigEndian" = "%1$@, input.layouts[]: bidang BigEndian dimulai pada batas byte dan berukuran 16, 24, atau 32 bit. Perbaikan: mulai pada kelipatan 8 dengan bitSize 16, 24, atau 32, atau gunakan LittleEndian.";
+/* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
+"error.E5007.inputLayout.buttonControl" = "%1$@, input.layouts[].buttons: tombol menyebut kontrol digital, bukan D-pad atau sumbu stik. Perbaikan: sebut kontrol tombol, atau pindahkan entri ke axes atau hat.";
+/* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.axesDistinct" = "%1$@, input.layouts[].axes: axes harus menyebut sumbu stik yang berbeda. Perbaikan: sebut setiap sumbu stik sekali.";
+/* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */
+"error.E5007.inputLayout.axisRange" = "%1$@, input.layouts[].axes: sebuah sumbu memiliki min di bawah max, dalam rentang ukurannya. Perbaikan: atur min di bawah max, keduanya dalam rentang bitSize.";
+/* Error E5007, shown when an input layout of a record fails: a trigger value has min and max out of order or out of range. %1$@ is the file. */
+"error.E5007.inputLayout.triggerRange" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: nilai pemicu memiliki min di bawah max, dalam rentang ukurannya. Perbaikan: atur min di bawah max, keduanya dalam rentang bitSize.";
+/* Error E5007, shown when an input layout of a record fails: a symmetric axis is not signed around zero. %1$@ is the file. */
+"error.E5007.inputLayout.axisSymmetric" = "%1$@, input.layouts[].axes: sumbu simetris bertanda, dengan min di bawah 0 dan max di atas 0. Perbaikan: atur signed ke true dengan min di bawah 0 dan max di atas 0, atau matikan symmetric.";
+/* Error E5007, shown when an input layout of a record fails: a trigger has neither an analog value nor a button. %1$@ is the file. */
+"error.E5007.inputLayout.triggerSources" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: pemicu menyebut nilai analog, tombol, atau keduanya. Perbaikan: beri pemicu nilai analog atau tombol.";
+/* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
+"error.E5007.inputLayout.noControls" = "%1$@, input.layouts[]: tata letak harus mendekode minimal satu kontrol. Perbaikan: tambahkan tombol, sumbu, hat, atau pemicu.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "Baris SDL_GameControllerDB untuk sebuah pengontrol tidak dapat menjalankannya. Pesan menyebut alasannya. Tulis catatan pengontrol untuknya dengan ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

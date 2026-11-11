@@ -4234,6 +4234,38 @@
 "error.E5007.userFile.upstreamNotDictionary" = "%1$@, document: السجل الذي يُطبَّق عليه التصحيح ليس قاموسًا. الإصلاح: أصلح ملف السجل الذي يُطبَّق عليه التصحيح.";
 /* Error E5007, shown when a user or package record file is skipped: a patch changes nothing in the record. %1$@ is the file. */
 "error.E5007.userFile.patchNoChange" = "%1$@, patch: التصحيح لا يغيّر شيئًا في السجل. الإصلاح: احذف التصحيح أو اضبط قيمة تختلف عن قيمة السجل.";
+/* Error E5007, shown when an input layout of a record fails: input lists no layout. %1$@ is the file. */
+"error.E5007.inputLayout.layoutsEmpty" = "%1$@, input.layouts: يجب أن يسرد input تخطيطًا واحدًا على الأقل. الإصلاح: أضف تخطيطًا أو احذف input.";
+/* Error E5007, shown when an input layout of a record fails: two layouts select one report. %2$@ and %3$@ are the layouts. %1$@ is the file. */
+"error.E5007.inputLayout.layoutsSameReport" = "%1$@, input.layouts: تخطيطان يختاران التقرير نفسه: %2$@ و%3$@. الإصلاح: امنحهما معرّفات أو أطوال تقارير مختلفة أو احذف أحدهما.";
+/* Error E5007, shown when an input layout of a record fails: a report ID is out of range. %1$@ is the file. */
+"error.E5007.inputLayout.reportIdRange" = "%1$@, input.layouts[].report.id: معرّف التقرير يقع بين 1...255. الإصلاح: اضبط عددًا صحيحًا من 1 إلى 255 أو احذفه.";
+/* Error E5007, shown when an input layout of a record fails: a report length is out of range. %2$@ is the longest length. %1$@ is the file. */
+"error.E5007.inputLayout.reportLength" = "%1$@, input.layouts[].report.length: طول التقرير 1...%2$@ بايت شاملًا بايت المعرّف. الإصلاح: اضبط طولًا ضمن هذا النطاق.";
+/* Error E5007, shown when an input layout of a record fails: an 8-way hat has a bad bit size. %1$@ is the file. */
+"error.E5007.inputLayout.hatBits" = "%1$@, input.layouts[].hat: حجم hat ثماني الاتجاهات من 3 إلى 8 بتات. الإصلاح: اضبط bitSize من 3 إلى 8.";
+/* Error E5007, shown when an input layout of a record fails: a table hat names bad directions. %1$@ is the file. */
+"error.E5007.inputLayout.hatTable" = "%1$@, input.layouts[].hat: يسمّي hat الجدولي اتجاهات للقيم التي تتسع لها بتاته فقط وليس فيه إدخال neutral. الإصلاح: اسرد القيم التي تتسع لها البتات فقط واحذف neutral.";
+/* Error E5007, shown when an input layout of a record fails: a field has a bad bit size. %2$@ is the largest bit size. %1$@ is the file. */
+"error.E5007.inputLayout.fieldBits" = "%1$@, input.layouts[]: حجم الحقل من 1 إلى %2$@ بتات. الإصلاح: اضبط كل bitSize ضمن هذا النطاق.";
+/* Error E5007, shown when an input layout of a record fails: a field lies outside the report. %1$@ is the file. */
+"error.E5007.inputLayout.fieldOutside" = "%1$@, input.layouts[]: يجب أن تقع الحقول بعد بايت معرّف التقرير وضمن طول التقرير. الإصلاح: انقل الحقل أو زد طول التقرير.";
+/* Error E5007, shown when an input layout of a record fails: a BigEndian field is misplaced or has a bad size. %1$@ is the file. */
+"error.E5007.inputLayout.bigEndian" = "%1$@, input.layouts[]: يبدأ حقل BigEndian عند حد بايت وحجمه 16 أو 24 أو 32 بتًا. الإصلاح: ابدأ عند مضاعف للعدد 8 بحجم bitSize يساوي 16 أو 24 أو 32 أو استخدم LittleEndian.";
+/* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
+"error.E5007.inputLayout.buttonControl" = "%1$@, input.layouts[].buttons: الزر يسمّي عنصر تحكم رقميًا لا لوحة الاتجاهات ولا محور عصا. الإصلاح: سمِّ عنصر زر أو انقل الإدخال إلى axes أو hat.";
+/* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.axesDistinct" = "%1$@, input.layouts[].axes: يجب أن يسمّي axes محاور عصا مختلفة. الإصلاح: سمِّ كل محور عصا مرة واحدة.";
+/* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */
+"error.E5007.inputLayout.axisRange" = "%1$@, input.layouts[].axes: للمحور min أقل من max ضمن نطاق حجمه. الإصلاح: اضبط min أقل من max وكلاهما ضمن نطاق bitSize.";
+/* Error E5007, shown when an input layout of a record fails: a trigger value has min and max out of order or out of range. %1$@ is the file. */
+"error.E5007.inputLayout.triggerRange" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: لقيمة الزناد min أقل من max ضمن نطاق حجمها. الإصلاح: اضبط min أقل من max وكلاهما ضمن نطاق bitSize.";
+/* Error E5007, shown when an input layout of a record fails: a symmetric axis is not signed around zero. %1$@ is the file. */
+"error.E5007.inputLayout.axisSymmetric" = "%1$@, input.layouts[].axes: المحور المتناظر له إشارة، مع min أقل من 0 وmax أكبر من 0. الإصلاح: اضبط signed على true مع min أقل من 0 وmax أكبر من 0 أو عطّل symmetric.";
+/* Error E5007, shown when an input layout of a record fails: a trigger has neither an analog value nor a button. %1$@ is the file. */
+"error.E5007.inputLayout.triggerSources" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: يسمّي الزناد قيمة تناظرية أو زرًا أو كليهما. الإصلاح: امنح الزناد قيمة تناظرية أو زرًا.";
+/* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
+"error.E5007.inputLayout.noControls" = "%1$@, input.layouts[]: يجب أن يفكّ التخطيط عنصر تحكم واحدًا على الأقل. الإصلاح: أضف زرًا أو محورًا أو hat أو زنادًا.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "لا يمكن لسطر SDL_GameControllerDB الخاص بوحدة تحكم أن يشغّلها. تذكر الرسالة السبب. اكتب سجل وحدة تحكم لها باستخدام ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

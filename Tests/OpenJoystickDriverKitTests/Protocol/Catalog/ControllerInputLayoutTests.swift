@@ -203,4 +203,46 @@ struct ControllerInputLayoutTests {
   func rejectsInvalidLayouts(json: String) {
     #expect(throws: DecodingError.self) { try inputLayout(json) }
   }
+
+  @Test
+  func messagesNameFileKeyPathRuleAndFix() throws {
+    let english = Localization(preferredLanguages: ["en-US"])
+    func message(reportID: UInt8?, minimumLength: Int) -> String? {
+      do {
+        _ = try ControllerInputLayout(
+          reportID: reportID,
+          minimumLength: minimumLength,
+          requiresExactLength: false,
+          buttons: [(.south, ReportBitField(bitOffset: 8, bitSize: 1))],
+          axes: [],
+          hat: [],
+          leftTrigger: nil,
+          rightTrigger: nil
+        )
+        return nil
+      } catch {
+        return error.localizedDescription(english, file: "046d-c21d.plist")
+      }
+    }
+    #expect(
+      message(reportID: 0, minimumLength: 2)
+        == "046d-c21d.plist, input.layouts[].report.id: A report ID is 1...255. "
+        + "Fix: Set the ID to a whole number from 1 to 255, or leave it out."
+    )
+    #expect(
+      message(reportID: nil, minimumLength: 65)
+        == "046d-c21d.plist, input.layouts[].report.length: "
+        + "A report is 1...64 bytes long, with its ID byte. Fix: Set the length inside that range."
+    )
+    do {
+      _ = try ControllerInputLayouts(layouts: [])
+      Issue.record("an empty layout list was accepted")
+    } catch {
+      #expect(
+        error.localizedDescription(english, file: "046d-c21d.plist")
+          == "046d-c21d.plist, input.layouts: Input must list at least one layout. "
+          + "Fix: Add a layout, or delete input."
+      )
+    }
+  }
 }

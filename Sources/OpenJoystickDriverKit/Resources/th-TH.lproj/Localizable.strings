@@ -4234,6 +4234,38 @@
 "error.E5007.userFile.upstreamNotDictionary" = "%1$@, document: เรกคอร์ดที่แพตช์ใช้กับไม่ใช่ดิกชันนารี วิธีแก้: ซ่อมไฟล์เรกคอร์ดที่แพตช์ใช้กับ";
 /* Error E5007, shown when a user or package record file is skipped: a patch changes nothing in the record. %1$@ is the file. */
 "error.E5007.userFile.patchNoChange" = "%1$@, patch: แพตช์ไม่เปลี่ยนอะไรในเรกคอร์ด วิธีแก้: ลบแพตช์ หรือตั้งค่าที่ต่างจากเรกคอร์ด";
+/* Error E5007, shown when an input layout of a record fails: input lists no layout. %1$@ is the file. */
+"error.E5007.inputLayout.layoutsEmpty" = "%1$@, input.layouts: input ต้องมีเลย์เอาต์อย่างน้อยหนึ่งรายการ วิธีแก้: เพิ่มเลย์เอาต์ หรือลบ input";
+/* Error E5007, shown when an input layout of a record fails: two layouts select one report. %2$@ and %3$@ are the layouts. %1$@ is the file. */
+"error.E5007.inputLayout.layoutsSameReport" = "%1$@, input.layouts: เลย์เอาต์สองรายการเลือกรายงานเดียวกัน: %2$@ และ %3$@ วิธีแก้: กำหนด ID หรือความยาวรายงานให้ต่างกัน หรือลบหนึ่งรายการ";
+/* Error E5007, shown when an input layout of a record fails: a report ID is out of range. %1$@ is the file. */
+"error.E5007.inputLayout.reportIdRange" = "%1$@, input.layouts[].report.id: ID รายงานอยู่ที่ 1...255 วิธีแก้: ตั้ง ID เป็นจำนวนเต็มตั้งแต่ 1 ถึง 255 หรือเว้นไว้";
+/* Error E5007, shown when an input layout of a record fails: a report length is out of range. %2$@ is the longest length. %1$@ is the file. */
+"error.E5007.inputLayout.reportLength" = "%1$@, input.layouts[].report.length: รายงานยาว 1...%2$@ ไบต์ รวมไบต์ ID วิธีแก้: ตั้งความยาวให้อยู่ในช่วงนี้";
+/* Error E5007, shown when an input layout of a record fails: an 8-way hat has a bad bit size. %1$@ is the file. */
+"error.E5007.inputLayout.hatBits" = "%1$@, input.layouts[].hat: hat แบบ 8 ทิศมี 3 ถึง 8 บิต วิธีแก้: ตั้ง bitSize เป็น 3 ถึง 8";
+/* Error E5007, shown when an input layout of a record fails: a table hat names bad directions. %1$@ is the file. */
+"error.E5007.inputLayout.hatTable" = "%1$@, input.layouts[].hat: hat แบบตารางระบุทิศเฉพาะค่าที่บิตของมันรองรับ และไม่มีรายการ neutral วิธีแก้: ระบุเฉพาะค่าที่บิตรองรับ และเอา neutral ออก";
+/* Error E5007, shown when an input layout of a record fails: a field has a bad bit size. %2$@ is the largest bit size. %1$@ is the file. */
+"error.E5007.inputLayout.fieldBits" = "%1$@, input.layouts[]: ฟิลด์มี 1 ถึง %2$@ บิต วิธีแก้: ตั้ง bitSize แต่ละตัวให้อยู่ในช่วงนี้";
+/* Error E5007, shown when an input layout of a record fails: a field lies outside the report. %1$@ is the file. */
+"error.E5007.inputLayout.fieldOutside" = "%1$@, input.layouts[]: ฟิลด์ต้องอยู่หลังไบต์ ID ของรายงานและอยู่ภายในความยาวรายงาน วิธีแก้: ย้ายฟิลด์ หรือเพิ่มความยาวรายงาน";
+/* Error E5007, shown when an input layout of a record fails: a BigEndian field is misplaced or has a bad size. %1$@ is the file. */
+"error.E5007.inputLayout.bigEndian" = "%1$@, input.layouts[]: ฟิลด์ BigEndian เริ่มที่ขอบไบต์และมี 16, 24 หรือ 32 บิต วิธีแก้: เริ่มที่จำนวนที่หาร 8 ลงตัวโดยให้ bitSize เป็น 16, 24 หรือ 32 หรือใช้ LittleEndian";
+/* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
+"error.E5007.inputLayout.buttonControl" = "%1$@, input.layouts[].buttons: ปุ่มต้องระบุตัวควบคุมดิจิทัล ไม่ใช่ปุ่มทิศทางหรือแกนจอยสติ๊ก วิธีแก้: ระบุตัวควบคุมแบบปุ่ม หรือย้ายรายการไปไว้ที่ axes หรือ hat";
+/* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.axesDistinct" = "%1$@, input.layouts[].axes: axes ต้องระบุแกนจอยสติ๊กที่ไม่ซ้ำกัน วิธีแก้: ระบุแต่ละแกนจอยสติ๊กเพียงครั้งเดียว";
+/* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */
+"error.E5007.inputLayout.axisRange" = "%1$@, input.layouts[].axes: แกนมี min ต่ำกว่า max ภายในช่วงของขนาดของมัน วิธีแก้: ตั้ง min ให้ต่ำกว่า max โดยทั้งสองอยู่ในช่วงของ bitSize";
+/* Error E5007, shown when an input layout of a record fails: a trigger value has min and max out of order or out of range. %1$@ is the file. */
+"error.E5007.inputLayout.triggerRange" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: ค่าทริกเกอร์มี min ต่ำกว่า max ภายในช่วงของขนาดของมัน วิธีแก้: ตั้ง min ให้ต่ำกว่า max โดยทั้งสองอยู่ในช่วงของ bitSize";
+/* Error E5007, shown when an input layout of a record fails: a symmetric axis is not signed around zero. %1$@ is the file. */
+"error.E5007.inputLayout.axisSymmetric" = "%1$@, input.layouts[].axes: แกนสมมาตรมีเครื่องหมาย โดย min ต่ำกว่า 0 และ max สูงกว่า 0 วิธีแก้: ตั้ง signed เป็น true โดย min ต่ำกว่า 0 และ max สูงกว่า 0 หรือปิด symmetric";
+/* Error E5007, shown when an input layout of a record fails: a trigger has neither an analog value nor a button. %1$@ is the file. */
+"error.E5007.inputLayout.triggerSources" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: ทริกเกอร์ระบุค่าแอนะล็อก ปุ่ม หรือทั้งสองอย่าง วิธีแก้: กำหนดค่าแอนะล็อกหรือปุ่มให้ทริกเกอร์";
+/* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
+"error.E5007.inputLayout.noControls" = "%1$@, input.layouts[]: เลย์เอาต์ต้องถอดรหัสตัวควบคุมอย่างน้อยหนึ่งตัว วิธีแก้: เพิ่มปุ่ม แกน hat หรือทริกเกอร์";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "บรรทัด SDL_GameControllerDB ของคอนโทรลเลอร์ใช้ควบคุมคอนโทรลเลอร์นั้นไม่ได้ ข้อความระบุสาเหตุไว้ เขียนระเบียนคอนโทรลเลอร์ให้ด้วย ojd record draft";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

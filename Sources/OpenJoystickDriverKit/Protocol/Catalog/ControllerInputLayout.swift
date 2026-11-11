@@ -101,6 +101,7 @@ public struct ControllerInputLayouts: Equatable, Sendable {
     guard !layouts.isEmpty else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.inputLayout.layoutsEmpty",
         "input lists at least one layout"
       )
     }
@@ -108,6 +109,8 @@ public struct ControllerInputLayouts: Equatable, Sendable {
       for other in layouts[(index + 1)...] where layout.selectsSameReport(as: other) {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.inputLayout.layoutsSameReport",
+          arguments: [layout.selectorDescription, other.selectorDescription],
           "two input layouts select the same report: \(layout.selectorDescription) and "
             + other.selectorDescription
         )
@@ -244,13 +247,19 @@ public struct ControllerInputLayout: Equatable, Sendable {
     rightTrigger: Trigger?
   ) throws(ControllerRecordProblem) {
     guard reportID != 0 else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "an input report ID is 1...255")
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.inputLayout.reportIdRange",
+        "an input report ID is 1...255"
+      )
     }
     guard (1...Self.maximumReportLength).contains(minimumLength),
       reportID == nil || minimumLength >= 2
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.inputLayout.reportLength",
+        arguments: ["\(Self.maximumReportLength)"],
         "an input report is 1...\(Self.maximumReportLength) bytes long, with its ID byte: "
           + "the \(Self.maximumReportLength)-byte ceiling for a layout report"
       )
@@ -262,6 +271,7 @@ public struct ControllerInputLayout: Equatable, Sendable {
         guard (3...8).contains(field.bitSize) else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.inputLayout.hatBits",
             "an 8-way hat is 3 to 8 bits"
           )
         }
@@ -274,6 +284,7 @@ public struct ControllerInputLayout: Equatable, Sendable {
         else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.inputLayout.hatTable",
             "a table hat names directions for values its bits hold, and no neutral entry"
           )
         }
@@ -287,6 +298,8 @@ public struct ControllerInputLayout: Equatable, Sendable {
     guard spans.allSatisfy({ (1...ReportBitField.maximumBitSize).contains($0.1) }) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.inputLayout.fieldBits",
+        arguments: ["\(ReportBitField.maximumBitSize)"],
         "an input field is 1 to \(ReportBitField.maximumBitSize) bits"
       )
     }
@@ -297,25 +310,32 @@ public struct ControllerInputLayout: Equatable, Sendable {
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.inputLayout.fieldOutside",
         "input fields must lie after the report ID byte and inside the report length"
       )
     }
     guard valueFields.allSatisfy(\.hasValidByteOrder) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.inputLayout.bigEndian",
         "a BigEndian field starts on a byte boundary and is 16, 24 or 32 bits"
       )
     }
     guard buttons.allSatisfy({ !Self.nonButtonControls.contains($0.0) }) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.inputLayout.buttonControl",
         "a button names a digital control, not the D-pad or a stick axis"
       )
     }
     guard axes.allSatisfy({ Control.stickAxes.contains($0.control) }),
       Set(axes.map(\.control)).count == axes.count
     else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "axes name distinct stick axes")
+      throw ControllerRecordProblem(
+        code: .invalidControllerRecord,
+        key: "error.E5007.inputLayout.axesDistinct",
+        "axes name distinct stick axes"
+      )
     }
     guard
       axes.map(\.field).allSatisfy({
@@ -325,6 +345,7 @@ public struct ControllerInputLayout: Equatable, Sendable {
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.inputLayout.axisRange",
         "an axis has min below max inside the range of its size"
       )
     }
@@ -336,6 +357,7 @@ public struct ControllerInputLayout: Equatable, Sendable {
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.inputLayout.triggerRange",
         "a trigger value has min below max inside the range of its size"
       )
     }
@@ -346,6 +368,7 @@ public struct ControllerInputLayout: Equatable, Sendable {
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.inputLayout.axisSymmetric",
         "a symmetric axis is signed with min below 0 below max"
       )
     }
@@ -356,6 +379,7 @@ public struct ControllerInputLayout: Equatable, Sendable {
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.inputLayout.triggerSources",
         "a trigger names an analog value, a button, or both"
       )
     }
@@ -365,6 +389,7 @@ public struct ControllerInputLayout: Equatable, Sendable {
     else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.inputLayout.noControls",
         "an input layout decodes at least one control"
       )
     }

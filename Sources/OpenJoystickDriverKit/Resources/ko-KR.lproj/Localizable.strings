@@ -4234,6 +4234,38 @@
 "error.E5007.userFile.upstreamNotDictionary" = "%1$@, document: 패치가 적용되는 레코드가 딕셔너리가 아닙니다. 해결: 패치가 적용되는 레코드 파일을 고치세요.";
 /* Error E5007, shown when a user or package record file is skipped: a patch changes nothing in the record. %1$@ is the file. */
 "error.E5007.userFile.patchNoChange" = "%1$@, patch: 패치가 레코드에서 아무것도 바꾸지 않습니다. 해결: 패치를 삭제하거나 레코드와 다른 값을 설정하세요.";
+/* Error E5007, shown when an input layout of a record fails: input lists no layout. %1$@ is the file. */
+"error.E5007.inputLayout.layoutsEmpty" = "%1$@, input.layouts: input에는 레이아웃이 하나 이상 있어야 합니다. 해결: 레이아웃을 추가하거나 input을 삭제하세요.";
+/* Error E5007, shown when an input layout of a record fails: two layouts select one report. %2$@ and %3$@ are the layouts. %1$@ is the file. */
+"error.E5007.inputLayout.layoutsSameReport" = "%1$@, input.layouts: 두 레이아웃이 같은 리포트를 선택합니다: %2$@ 및 %3$@. 해결: 서로 다른 리포트 ID나 길이를 주거나 하나를 삭제하세요.";
+/* Error E5007, shown when an input layout of a record fails: a report ID is out of range. %1$@ is the file. */
+"error.E5007.inputLayout.reportIdRange" = "%1$@, input.layouts[].report.id: 리포트 ID는 1...255입니다. 해결: ID를 1에서 255 사이의 정수로 설정하거나 생략하세요.";
+/* Error E5007, shown when an input layout of a record fails: a report length is out of range. %2$@ is the longest length. %1$@ is the file. */
+"error.E5007.inputLayout.reportLength" = "%1$@, input.layouts[].report.length: 리포트는 ID 바이트를 포함해 1...%2$@바이트입니다. 해결: 길이를 그 범위 안으로 설정하세요.";
+/* Error E5007, shown when an input layout of a record fails: an 8-way hat has a bad bit size. %1$@ is the file. */
+"error.E5007.inputLayout.hatBits" = "%1$@, input.layouts[].hat: 8방향 hat은 3~8비트입니다. 해결: bitSize를 3에서 8 사이로 설정하세요.";
+/* Error E5007, shown when an input layout of a record fails: a table hat names bad directions. %1$@ is the file. */
+"error.E5007.inputLayout.hatTable" = "%1$@, input.layouts[].hat: 테이블 hat은 비트에 들어가는 값의 방향만 지정하며 neutral 항목이 없습니다. 해결: 비트에 들어가는 값만 나열하고 neutral은 빼세요.";
+/* Error E5007, shown when an input layout of a record fails: a field has a bad bit size. %2$@ is the largest bit size. %1$@ is the file. */
+"error.E5007.inputLayout.fieldBits" = "%1$@, input.layouts[]: 필드는 1~%2$@비트입니다. 해결: 각 bitSize를 그 범위 안으로 설정하세요.";
+/* Error E5007, shown when an input layout of a record fails: a field lies outside the report. %1$@ is the file. */
+"error.E5007.inputLayout.fieldOutside" = "%1$@, input.layouts[]: 필드는 리포트 ID 바이트 뒤, 리포트 길이 안에 있어야 합니다. 해결: 필드를 옮기거나 리포트 길이를 늘리세요.";
+/* Error E5007, shown when an input layout of a record fails: a BigEndian field is misplaced or has a bad size. %1$@ is the file. */
+"error.E5007.inputLayout.bigEndian" = "%1$@, input.layouts[]: BigEndian 필드는 바이트 경계에서 시작하며 16, 24 또는 32비트입니다. 해결: 8의 배수에서 bitSize 16, 24 또는 32로 시작하거나 LittleEndian을 쓰세요.";
+/* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
+"error.E5007.inputLayout.buttonControl" = "%1$@, input.layouts[].buttons: 버튼은 디지털 컨트롤을 가리켜야 하며 방향 패드나 스틱 축은 안 됩니다. 해결: 버튼 컨트롤을 지정하거나 항목을 axes 또는 hat으로 옮기세요.";
+/* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.axesDistinct" = "%1$@, input.layouts[].axes: axes는 서로 다른 스틱 축을 가리켜야 합니다. 해결: 각 스틱 축을 한 번만 지정하세요.";
+/* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */
+"error.E5007.inputLayout.axisRange" = "%1$@, input.layouts[].axes: 축의 min은 크기 범위 안에서 max보다 작아야 합니다. 해결: min을 max보다 작게 하고 둘 다 bitSize 범위 안에 두세요.";
+/* Error E5007, shown when an input layout of a record fails: a trigger value has min and max out of order or out of range. %1$@ is the file. */
+"error.E5007.inputLayout.triggerRange" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: 트리거 값의 min은 크기 범위 안에서 max보다 작아야 합니다. 해결: min을 max보다 작게 하고 둘 다 bitSize 범위 안에 두세요.";
+/* Error E5007, shown when an input layout of a record fails: a symmetric axis is not signed around zero. %1$@ is the file. */
+"error.E5007.inputLayout.axisSymmetric" = "%1$@, input.layouts[].axes: 대칭 축은 부호가 있으며 min은 0 미만, max는 0 초과여야 합니다. 해결: signed를 true로 하고 min을 0 미만, max를 0 초과로 하거나 symmetric을 끄세요.";
+/* Error E5007, shown when an input layout of a record fails: a trigger has neither an analog value nor a button. %1$@ is the file. */
+"error.E5007.inputLayout.triggerSources" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: 트리거는 아날로그 값, 버튼 또는 둘 다를 가리켜야 합니다. 해결: 트리거에 아날로그 값이나 버튼을 지정하세요.";
+/* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
+"error.E5007.inputLayout.noControls" = "%1$@, input.layouts[]: 레이아웃은 컨트롤을 하나 이상 디코딩해야 합니다. 해결: 버튼, 축, hat 또는 트리거를 추가하세요.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "컨트롤러의 SDL_GameControllerDB 줄로는 그 컨트롤러를 구동할 수 없습니다. 이유는 메시지에 나와 있습니다. ojd record draft로 해당 컨트롤러의 레코드를 작성하세요.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */

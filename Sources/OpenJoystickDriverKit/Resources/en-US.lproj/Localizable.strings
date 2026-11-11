@@ -3680,6 +3680,38 @@
 "error.E5007.userFile.upstreamNotDictionary" = "%1$@, document: The record that the patch applies to is not a dictionary. Fix: Repair the record file that the patch applies to.";
 /* Error E5007, shown when a user or package record file is skipped: a patch changes nothing in the record. %1$@ is the file. */
 "error.E5007.userFile.patchNoChange" = "%1$@, patch: The patch changes nothing in the record. Fix: Delete the patch, or set a value that differs from the record.";
+/* Error E5007, shown when an input layout of a record fails: input lists no layout. %1$@ is the file. */
+"error.E5007.inputLayout.layoutsEmpty" = "%1$@, input.layouts: Input must list at least one layout. Fix: Add a layout, or delete input.";
+/* Error E5007, shown when an input layout of a record fails: two layouts select one report. %2$@ and %3$@ are the layouts. %1$@ is the file. */
+"error.E5007.inputLayout.layoutsSameReport" = "%1$@, input.layouts: Two layouts select the same report: %2$@ and %3$@. Fix: Give them different report IDs or lengths, or delete one.";
+/* Error E5007, shown when an input layout of a record fails: a report ID is out of range. %1$@ is the file. */
+"error.E5007.inputLayout.reportIdRange" = "%1$@, input.layouts[].report.id: A report ID is 1...255. Fix: Set the ID to a whole number from 1 to 255, or leave it out.";
+/* Error E5007, shown when an input layout of a record fails: a report length is out of range. %2$@ is the longest length. %1$@ is the file. */
+"error.E5007.inputLayout.reportLength" = "%1$@, input.layouts[].report.length: A report is 1...%2$@ bytes long, with its ID byte. Fix: Set the length inside that range.";
+/* Error E5007, shown when an input layout of a record fails: an 8-way hat has a bad bit size. %1$@ is the file. */
+"error.E5007.inputLayout.hatBits" = "%1$@, input.layouts[].hat: An 8-way hat is 3 to 8 bits. Fix: Set bitSize from 3 to 8.";
+/* Error E5007, shown when an input layout of a record fails: a table hat names bad directions. %1$@ is the file. */
+"error.E5007.inputLayout.hatTable" = "%1$@, input.layouts[].hat: A table hat names directions only for values its bits hold, and has no neutral entry. Fix: List only values the bits can hold and leave out neutral.";
+/* Error E5007, shown when an input layout of a record fails: a field has a bad bit size. %2$@ is the largest bit size. %1$@ is the file. */
+"error.E5007.inputLayout.fieldBits" = "%1$@, input.layouts[]: A field is 1 to %2$@ bits. Fix: Set each bitSize inside that range.";
+/* Error E5007, shown when an input layout of a record fails: a field lies outside the report. %1$@ is the file. */
+"error.E5007.inputLayout.fieldOutside" = "%1$@, input.layouts[]: Fields must lie after the report ID byte and inside the report length. Fix: Move the field, or raise the report length.";
+/* Error E5007, shown when an input layout of a record fails: a BigEndian field is misplaced or has a bad size. %1$@ is the file. */
+"error.E5007.inputLayout.bigEndian" = "%1$@, input.layouts[]: A BigEndian field starts on a byte boundary and is 16, 24 or 32 bits. Fix: Start it at a multiple of 8 with a bitSize of 16, 24 or 32, or use LittleEndian.";
+/* Error E5007, shown when an input layout of a record fails: a button names a control that is not a button. %1$@ is the file. */
+"error.E5007.inputLayout.buttonControl" = "%1$@, input.layouts[].buttons: A button names a digital control, not the D-pad or a stick axis. Fix: Name a button control, or move the entry to axes or hat.";
+/* Error E5007, shown when an input layout of a record fails: axes repeat a control or name a control that is not a stick axis. %1$@ is the file. */
+"error.E5007.inputLayout.axesDistinct" = "%1$@, input.layouts[].axes: Axes must name distinct stick axes. Fix: Name each stick axis once.";
+/* Error E5007, shown when an input layout of a record fails: an axis has min and max out of order or out of range. %1$@ is the file. */
+"error.E5007.inputLayout.axisRange" = "%1$@, input.layouts[].axes: An axis has min below max, inside the range of its size. Fix: Set min below max, both inside the range of bitSize.";
+/* Error E5007, shown when an input layout of a record fails: a trigger value has min and max out of order or out of range. %1$@ is the file. */
+"error.E5007.inputLayout.triggerRange" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: A trigger value has min below max, inside the range of its size. Fix: Set min below max, both inside the range of bitSize.";
+/* Error E5007, shown when an input layout of a record fails: a symmetric axis is not signed around zero. %1$@ is the file. */
+"error.E5007.inputLayout.axisSymmetric" = "%1$@, input.layouts[].axes: A symmetric axis is signed, with min below 0 and max above 0. Fix: Set signed to true with min below 0 and max above 0, or turn symmetric off.";
+/* Error E5007, shown when an input layout of a record fails: a trigger has neither an analog value nor a button. %1$@ is the file. */
+"error.E5007.inputLayout.triggerSources" = "%1$@, input.layouts[].leftTrigger, input.layouts[].rightTrigger: A trigger names an analog value, a button, or both. Fix: Give the trigger an analog value or a button.";
+/* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
+"error.E5007.inputLayout.noControls" = "%1$@, input.layouts[]: A layout must decode at least one control. Fix: Add a button, axis, hat or trigger.";
 /* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
 "error.E5008.message" = "The SDL_GameControllerDB line for a controller cannot drive it. The message names the reason. Write a controller record for the controller with ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */
