@@ -107,6 +107,26 @@ extension XUSBDriverTests {
   }
 
   @Test
+  func testWirelessReceiverRejectsEveryTruncatedInputReport() throws {
+    let report = Array(Receiver.capture02A9)
+    for length in 0..<18 {
+      let parser = XUSBDriver(isWirelessReceiver: true)
+      #expect(try parser.parseReport(Data(report.prefix(length))) == nil)
+      #expect(parser.consumeInputConnectionStateChange() == nil)
+    }
+  }
+
+  @Test
+  func testWirelessReceiverAcceptsExactlyTheStateBytes() throws {
+    let report = Data(Receiver.capture02A9.prefix(18))
+    let parser = XUSBDriver(isWirelessReceiver: true)
+    let state = try #require(parser.parseReport(report)?.state)
+    #expect(state.leftStick.x == BipolarValue(260))
+    #expect(state.rightStick.y == BipolarValue(-1_034))
+    #expect(parser.consumeInputConnectionStateChange() == .connected)
+  }
+
+  @Test
   func testWirelessReceiverHeadsetPresenceConnects() throws {
     let parser = XUSBDriver(isWirelessReceiver: true)
 

@@ -162,7 +162,7 @@ A catalog row may name a driver-owned `ControllerAssemblyPolicy` in `protocol.as
 
 ### Receiver Presence
 
-`XUSBDriver(slotOrdinal:)` builds one receiver slot (0–3; other values fail). Its startup write is the presence inquiry `08 00 0F C0 00…` (12 bytes, from `xpad.c`), which tolerates rejection. Pad data is dropped until a presence report connects the slot. Pad data on a disconnected slot re-sends the inquiry on the first such report and every 16th after it, at most 8 times. On connect the slot lights ring LED player n+1 (steady, by slot order). A new transport session resets presence, so the next presence reply reconnects the slot.
+`XUSBDriver(slotOrdinal:)` builds one receiver slot (0–3; other values fail). Its startup write is the presence inquiry `08 00 0F C0 00…` (12 bytes, from `xpad.c`), which tolerates rejection. A presence notification or valid pad report connects the slot; empty slots are not listed as controllers and do not publish output. On connect the manager assigns a player indicator from its pool. A new transport session resets presence until the next notification or pad report.
 
 ## Platform Split
 

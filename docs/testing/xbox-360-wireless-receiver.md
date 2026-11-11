@@ -14,6 +14,12 @@ Record validation is signing-free. These receiver pairs are not in the current p
 
 [1]: https://github.com/xsyetopz/OpenJoystickDriver/issues/9
 
+## Direct USB Input Evidence
+
+On an Intel Mac with receiver `045e:02a9`, a source probe built from PR #54's merge commit `9bade60d2` in an isolated Swift 6.3 compatibility copy received 3,371 packets and decoded 3,363 snapshots with zero parse errors in 60 seconds. Face buttons, shoulders, both stick clicks, all D-pad directions, and the full ranges of both sticks and triggers were observed. A subsequent capture observed Start, Back, Guide and disconnect/reconnect; it required manual termination and has no final summary.
+
+The user also reported that the paired controller appeared and controls responded in the isolated patched app's Input Test. The ad-hoc-signed build lacked the virtual HID entitlement; virtual output, games, rumble, LEDs and empty-slot virtual publication were not verified. The installed app was not replaced.
+
 ## Find and Validate the Receiver Record
 
 Use System Information or the OJD HID tool to identify the receiver PID, then select the matching JSON file under `Sources/OpenJoystickDriverKit/Resources/Controllers/`.
@@ -49,7 +55,7 @@ Attach the complete command output to issue #9 with macOS version, Mac model, re
 
 ## Capture Receiver Slots
 
-OJD runs one pipeline per receiver slot: each interface with triple FF/5D/81 and one interrupt IN and OUT endpoint, in interface order, at most four. Slot n (from 0) sends the presence inquiry at startup, connects when the slot reports a controller present or sends a valid state report, then lights player n+1. The observed `045e:02a9` and `045e:0719` slot 0 is interface 0 with endpoints `81`/`01`; the interface numbers of the other slots are not captured.
+OJD runs one pipeline per receiver slot: each interface with triple FF/5D/81 and one interrupt IN and OUT endpoint, in interface order, at most four. Each slot sends the presence inquiry at startup and connects when it reports a controller present or sends a valid state report. The manager assigns a player indicator from its pool. The observed `045e:02a9` interfaces are 0, 2, 4 and 6, with input endpoints `81`, `83`, `85` and `87`; only interface 0 delivered controller input. The observed `045e:0719` slot 0 is interface 0 with endpoints `81`/`01`; the interface numbers of its other slots are not captured.
 
 1. Record the configuration descriptor and interface numbers with the receiver plugged in:
 
@@ -66,7 +72,7 @@ OJD runs one pipeline per receiver slot: each interface with triple FF/5D/81 and
    ```
 
    Expect one entry with `protocol` `XboxXUSB:Receiver` per paired controller, none for an empty slot. `ojd controller show <ID> --json` gives each entry's `interfaceNumber` (`N`) for a FF/5D/81 interface. Paste the output.
-3. Pair one controller at a time. For each, record which interface's entry receives input and which ring-light quadrant lights. Slot order is interface order: the lowest interface is player 1.
+3. Pair one controller at a time. For each, record which interface's entry receives input and which ring-light quadrant lights.
 4. With controllers paired on slot 0 and a later slot, restart OJD without unplugging the receiver. The device is already configured, so no slot, including slot 0, should send SET_CONFIGURATION. Confirm every paired slot resumes input. If slot 0 alone reconnects during a run (for example after a transfer error), confirm the later slots keep their input.
 5. Power off one controller. Confirm only its slot reports disconnected.
 
