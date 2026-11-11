@@ -49,8 +49,8 @@ OpenJoystickDriver asks for macOS permissions only when you request them, and ea
 
 OJD requests nothing at start. A request starts only when you do one of these actions:
 
-- Click **Request...** on a permission row in the **Access** area.
-- Click **Grant Access** in the menu-bar menu.
+- Click **Request...** or **Open System Settings** on a permission row in the **Access** area.
+- Click **Grant Access** in the **Permission needed** banner of the main window.
 - Run the `permissions request` command.
 
 OJD reads the permission state every second. A request result is not treated as a grant. OJD reads the real state again.
@@ -87,13 +87,24 @@ OJD does not use camera, microphone, or Full Disk Access permissions. It reads B
 
 ### Grant Input Monitoring and Accessibility
 
-1. Open the **Access** area, or click the menu-bar icon.
-2. Click **Request...** on the **Input Monitoring** row, or click **Grant Access** in the menu.
-3. Allow **OpenJoystickDriver** in **System Settings** > **Privacy & Security** > **Input Monitoring**.
-4. Repeat for **System Settings** > **Privacy & Security** > **Accessibility**.
-5. Click **Restart OpenJoystickDriver** in the **Access** area if it appears.
+1. Click **Grant Access** in the **Permission needed** banner. A **Permission Missing** row in the menu-bar menu opens the **Access** area at that permission.
+2. Allow **OpenJoystickDriver** in **System Settings** > **Privacy & Security** > **Input Monitoring**.
+3. Repeat for **System Settings** > **Privacy & Security** > **Accessibility**.
+4. Click **Restart OpenJoystickDriver** in the **Access** area if it appears.
 
 Without **Input Monitoring**, Input Test shows **Input Monitoring permission required**. Without **Accessibility**, the virtual controller does not work.
+
+### OpenJoystickDriver Is Not in the List
+
+macOS adds OpenJoystickDriver to the **Input Monitoring** and **Accessibility** lists only when it has no answer stored for the app. An answer stored for an earlier build of the app can make macOS refuse the request without a prompt and without a list entry. Remove the stored answers, then click **Grant Access** again:
+
+```sh
+tccutil reset ListenEvent com.openjoystickdriver
+tccutil reset PostEvent com.openjoystickdriver
+tccutil reset Accessibility com.openjoystickdriver
+```
+
+You can also click **+** under the list and choose `/Applications/OpenJoystickDriver.app`.
 
 ### Grant Notifications
 
