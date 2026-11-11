@@ -102,6 +102,11 @@
         let profiles = NSMenu(title: menuItem.title)
         profiles.delegate = target
         menuItem.submenu = profiles
+      case .activityChoices:
+        menuItem.submenu =
+          item.action == .toolbar(.activityMode)
+          ? MainWindowController.makeActivityModeMenu(title: menuItem.title)
+          : MainWindowController.makeActivityFilterMenu(title: menuItem.title)
       case .responder(let selector):
         menuItem.action = selector
       case .informational:
@@ -120,6 +125,8 @@
       case services
       /// The item opens a submenu that the coordinator fills with profiles.
       case profileSubmenu
+      /// The item opens a submenu of the Activity choices, which the main window performs.
+      case activityChoices
       /// The item sends the selector down the responder chain.
       case responder(Selector)
       /// The coordinator performs the action by item id.
@@ -133,6 +140,9 @@
       if action == .services { return .services }
       if action == .activateProfile { return .profileSubmenu }
       if action == .controllerTarget { return .informational }
+      if action == .toolbar(.activityMode) || action == .toolbar(.activityFilter) {
+        return .activityChoices
+      }
       if let selector = responderSelector(for: action) { return .responder(selector) }
       return .coordinator
     }
@@ -172,7 +182,8 @@
         .installRecordOrMod, .saveSupportReport, .saveActivityLog, .showArea,
         .controllerTarget, .suspendOrResumeController, .testInput, .disconnectWirelessLink,
         .showControllerInWindow, .activateProfile, .deactivateProfile, .showActivityLog,
-        .explainErrorCode, .copySupportReport, .reportProblem, .openProjectWebsite:
+        .explainErrorCode, .copySupportReport, .reportProblem, .openProjectWebsite, .find,
+        .toolbar:
         return nil
       }
     }

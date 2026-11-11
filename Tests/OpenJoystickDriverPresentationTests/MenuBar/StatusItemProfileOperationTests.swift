@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import OpenJoystickDriverKit
 import Testing
@@ -11,6 +12,10 @@ struct StatusItemProfileOperationTests {
     private(set) var requests: [RuntimeMutationRequest] = []
     var hasSelectedProfile: Bool { false }
     var selectedControllerID: String? { nil }
+    var enabledToolbarActions: Set<MainWindowToolbarAction> { [] }
+    var searchFieldInView: NSSearchField? { nil }
+    func perform(_ action: MainWindowToolbarAction) {}
+    func focusSearchField() {}
 
     func showMainWindow(area: MainWindowArea?) {}
     func showErrorCodeExplainer() {}

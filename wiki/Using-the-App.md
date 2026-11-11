@@ -93,11 +93,15 @@ A banner below the toolbar shows a problem that stops OJD from working:
 
 The main menu follows the macOS layout:
 
-- **File** has **Import Profile...**, **Install Record or Mod...**, **Close**, **Export Profile...**, **Save Support Report...**, and **Save Activity Log...**.
-- **View** selects the five areas and shows or hides the sidebar and the toolbar.
+- **File** has **Import Profile...**, **Install Record or Mod...**, **Validate...**, **Test Record...**, **Remove**, **Grant a Program...**, **Create a Token...**, **Close**, **Export Profile...**, **Save Support Report...**, **Save Activity Log...**, and **Show in Finder**.
+- **Edit** has **Undo**, **Redo**, **Cut**, **Copy**, **Copy All**, **Paste**, **Delete**, **Select All**, and **Find**.
+  **Find** (Command-F) moves the keyboard focus to the search field of the list in view: the Library list, or the Activity log.
+  It is unavailable in the other areas, in Activity's diagnostics view, and while the toolbar is hidden.
+- **View** selects the five areas, switches the Activity view (**Activity**), sets the log filter and line count (**Filter**), runs the diagnostic checks (**Run Checks**), and shows or hides the sidebar and the toolbar.
 - **Controller** has **Suspend**, **Resume**, **Test Input**, **Disconnect Wireless Link**, and **Show in Window** for the selected controller.
-- **Profile** has **Activate Profile** and **Deactivate Profile**.
+- **Profile** has **Activate Profile**, **Deactivate Profile**, **New profile**, **Duplicate**, **Delete**, and **Validate profile file**.
   While no profile exists, the **Activate Profile** submenu shows **No Profiles**; while the profile list is loading or cannot be read, it shows **Profiles Unavailable**.
+- The commands from **Validate...** to **Create a Token...**, **Show in Finder**, **Copy All**, **Activity**, **Filter**, **Run Checks**, **New profile**, **Duplicate**, **Delete**, and **Validate profile file** do what the toolbar button of the same name does, and are available while that button is shown and enabled.
 - **Help** has **Activity Log**, **Explain Error Code...**, **Copy Support Report**, **Report Problem...**, and **Project Website**.
   For more information, see [Reporting a bug](Reporting-a-Bug.md).
 

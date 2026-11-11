@@ -62,6 +62,11 @@ enum MainMenuAction: Hashable, Sendable {
   case delete
   /// Select everything.
   case selectAll
+  /// Focus the search field of the list in view.
+  case find
+
+  /// Do what the toolbar item of the action does.
+  case toolbar(MainWindowToolbarAction)
 
   /// Show an area of the main window.
   case showArea(MainWindowArea)
@@ -133,6 +138,10 @@ enum MainMenuRequirement: Hashable, Sendable {
   case controllerHasActiveProfile
   /// A profile is selected in the Profiles screen.
   case profileSelected
+  /// The toolbar item of the action is shown and enabled.
+  case toolbarAction(MainWindowToolbarAction)
+  /// The list in view has a search field that shows.
+  case searchFieldInView
   /// Never holds; keeps an informational item disabled.
   case unavailable
 }
@@ -238,6 +247,10 @@ struct MainMenuState: Equatable, Sendable {
   var hasSelectedProfile = false
   /// Whether the main window exists.
   var hasMainWindow = false
+  /// The toolbar actions that are shown and enabled.
+  var enabledToolbarActions: Set<MainWindowToolbarAction> = []
+  /// Whether the list in view has a search field that shows.
+  var hasSearchFieldInView = false
   /// Whether the Settings window exists.
   var hasSettingsWindow = false
   /// Whether the main window is full screen.
@@ -266,6 +279,8 @@ struct MainMenuState: Equatable, Sendable {
     case .wirelessController: return controller?.isWireless == true
     case .controllerHasActiveProfile: return controller?.hasActiveProfile == true
     case .profileSelected: return hasSelectedProfile
+    case .toolbarAction(let action): return enabledToolbarActions.contains(action)
+    case .searchFieldInView: return hasSearchFieldInView
     case .unavailable: return false
     }
   }

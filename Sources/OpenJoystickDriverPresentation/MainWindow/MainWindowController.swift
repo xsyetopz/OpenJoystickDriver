@@ -448,9 +448,37 @@
     /// Runs the action of the clicked toolbar item when it is enabled.
     @objc
     func performToolbarAction(_ sender: NSToolbarItem) {
-      guard let action = MainWindowToolbarAction(identifier: sender.itemIdentifier),
-        isEnabled(action)
-      else { return }
+      guard let action = MainWindowToolbarAction(identifier: sender.itemIdentifier) else { return }
+      perform(action)
+    }
+
+    /// The toolbar actions that the selected area shows and that are enabled; the main menu enables
+    /// its commands for them.
+    var enabledToolbarActions: Set<MainWindowToolbarAction> {
+      Set(
+        navigation.selectedArea.toolbarActions(activityMode: screens.activity.mode).filter(isEnabled)
+      )
+    }
+
+    /// The search field of the list in view, or nil when the area has none or the toolbar is
+    /// hidden.
+    var searchFieldInView: NSSearchField? {
+      guard let action = navigation.selectedArea.searchAction(activityMode: screens.activity.mode),
+        let toolbar = window?.toolbar, toolbar.isVisible
+      else { return nil }
+      let item = toolbar.items.first { $0.itemIdentifier == action.identifier }
+      return (item as? NSSearchToolbarItem)?.searchField
+    }
+
+    /// Moves the keyboard focus to the search field of the list in view.
+    func focusSearchField() {
+      guard let field = searchFieldInView else { return }
+      window?.makeFirstResponder(field)
+    }
+
+    /// Runs `action` when its toolbar item is enabled.
+    func perform(_ action: MainWindowToolbarAction) {
+      guard isEnabled(action) else { return }
       switch action {
       case .newProfile: screens.profiles.beginCreatingProfile()
       case .importProfile: screens.profiles.chooseProfileToImport()

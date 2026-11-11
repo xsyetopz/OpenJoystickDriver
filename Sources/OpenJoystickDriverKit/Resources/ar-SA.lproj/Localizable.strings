@@ -3765,6 +3765,8 @@
 "ui.menu.edit.paste" = "لصق";
 /* Item of the Edit menu that selects everything. */
 "ui.menu.edit.selectAll" = "تحديد الكل";
+/* Item of the Edit menu that moves the keyboard focus to the search field of the list in view. */
+"ui.menu.edit.find" = "إيجاد";
 /* Title of the View menu in the menu bar. */
 "ui.menu.view.title" = "عرض";
 /* Item of the View menu that makes the window full screen. */

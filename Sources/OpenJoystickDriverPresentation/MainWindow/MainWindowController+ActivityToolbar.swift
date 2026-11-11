@@ -65,14 +65,23 @@
         accessibilityDescription: item.toolTip
       )
       item.showsIndicator = true
-      let menu = NSMenu()
+      item.menu = Self.makeActivityFilterMenu(title: "", target: self)
+      return item
+    }
+
+    /// Returns the menu of the stream filter choices and the line count choices.
+    ///
+    /// The toolbar item targets the window controller; the View menu leaves the target nil, so the
+    /// choices reach the key window's controller through the responder chain.
+    static func makeActivityFilterMenu(title: String, target: AnyObject? = nil) -> NSMenu {
+      let menu = NSMenu(title: title)
       for filter in ActivityLogFilter.allCases {
         let entry = NSMenuItem(
           title: OJDLocalized.string(filter.titleKey),
           action: #selector(selectActivityFilter(_:)),
           keyEquivalent: ""
         )
-        entry.target = self
+        entry.target = target
         entry.tag = filter.rawValue
         menu.addItem(entry)
       }
@@ -90,12 +99,38 @@
           action: #selector(selectActivityLineCount(_:)),
           keyEquivalent: ""
         )
-        entry.target = self
+        entry.target = target
         entry.tag = count
         menu.addItem(entry)
       }
-      item.menu = menu
-      return item
+      return menu
+    }
+
+    /// Returns the menu that chooses the view of Activity, which the View menu shows.
+    static func makeActivityModeMenu(title: String) -> NSMenu {
+      let menu = NSMenu(title: title)
+      for mode in ActivityMode.allCases {
+        let entry = NSMenuItem(
+          title: OJDLocalized.string(mode.titleKey),
+          action: #selector(selectActivityModeFromMenu(_:)),
+          keyEquivalent: ""
+        )
+        entry.tag = mode.rawValue
+        menu.addItem(entry)
+      }
+      return menu
+    }
+
+    /// Switches the Activity area to the view of the chosen menu item and moves the toolbar's view
+    /// switch with it.
+    @objc
+    func selectActivityModeFromMenu(_ sender: NSMenuItem) {
+      guard let mode = ActivityMode(rawValue: sender.tag) else { return }
+      screens.activity.mode = mode
+      let switcher = window?.toolbar?.items.first {
+        $0.itemIdentifier == MainWindowToolbarAction.activityMode.identifier
+      }
+      (switcher as? NSToolbarItemGroup)?.selectedIndex = mode.rawValue
     }
 
     /// Returns the search field item of the Activity toolbar, filled with the current search text.
@@ -203,6 +238,8 @@
         menuItem.state = menuItem.tag == screens.activity.log.lineCount ? .on : .off
       } else if menuItem.action == #selector(selectActivityFilter(_:)) {
         menuItem.state = menuItem.tag == screens.activity.log.filter.rawValue ? .on : .off
+      } else if menuItem.action == #selector(selectActivityModeFromMenu(_:)) {
+        menuItem.state = menuItem.tag == screens.activity.mode.rawValue ? .on : .off
       }
       return true
     }

@@ -139,15 +139,19 @@ struct MainMenuModelTests {
     let file = try section("file")
     #expect(
       file.items.map(\.action) == [
-        .importProfile, .installRecordOrMod, .close, .exportProfile, .saveSupportReport,
-        .saveActivityLog,
+        .importProfile, .installRecordOrMod, .toolbar(.validateLibraryItem),
+        .toolbar(.testLibraryRecord), .toolbar(.removeLibraryItem), .toolbar(.grantProgram),
+        .toolbar(.createToken), .close, .exportProfile, .saveSupportReport, .saveActivityLog,
+        .toolbar(.showActivityLogInFinder),
       ]
     )
     let groups = file.entries.split(separator: .separator).map { $0.compactMap(\.item?.action) }
     #expect(
       groups == [
-        [.importProfile, .installRecordOrMod], [.close],
-        [.exportProfile, .saveSupportReport, .saveActivityLog],
+        [.importProfile, .installRecordOrMod],
+        [.toolbar(.validateLibraryItem), .toolbar(.testLibraryRecord), .toolbar(.removeLibraryItem)],
+        [.toolbar(.grantProgram), .toolbar(.createToken)], [.close],
+        [.exportProfile, .saveSupportReport, .saveActivityLog, .toolbar(.showActivityLogInFinder)],
       ]
     )
     let close = try #require(MainMenuModel.item(for: .close))
@@ -160,7 +164,8 @@ struct MainMenuModelTests {
   func editMenuHoldsTheStandardItemsInOrder() throws {
     #expect(
       try section("edit").items.map(\.action) == [
-        .undo, .redo, .cut, .copy, .paste, .delete, .selectAll,
+        .undo, .redo, .cut, .copy, .toolbar(.copyActivityLog), .paste, .delete, .selectAll,
+        .find,
       ]
     )
     #expect(try #require(MainMenuModel.item(for: .delete)).keyEquivalent.isEmpty)
@@ -190,7 +195,6 @@ struct MainMenuModelTests {
       Shortcut(key: "p", modifiers: [.command, .shift]),
       Shortcut(key: "s", modifiers: [.command]), Shortcut(key: "s", modifiers: [.command, .shift]),
       Shortcut(key: "e", modifiers: [.command]), Shortcut(key: "e", modifiers: [.command, .shift]),
-      Shortcut(key: "f", modifiers: [.command]),
       Shortcut(key: "f", modifiers: [.command, .option]),
       Shortcut(key: "g", modifiers: [.command]), Shortcut(key: "i", modifiers: [.command]),
       Shortcut(key: "t", modifiers: [.command]),
@@ -226,6 +230,7 @@ struct MainMenuModelTests {
       .copy: Shortcut(key: "c", modifiers: [.command]),
       .paste: Shortcut(key: "v", modifiers: [.command]),
       .selectAll: Shortcut(key: "a", modifiers: [.command]),
+      .find: Shortcut(key: "f", modifiers: [.command]),
       .toggleToolbar: Shortcut(key: "t", modifiers: [.command, .option]),
       .toggleSidebar: Shortcut(key: "s", modifiers: [.command, .control]),
       .toggleFullScreen: Shortcut(key: "f", modifiers: [.command, .control]),
@@ -248,7 +253,8 @@ struct MainMenuModelTests {
     let articles: Set<String> = ["a", "an", "the"]
     let moreInput: Set<MainMenuAction> = [
       .settings, .importProfile, .exportProfile, .installRecordOrMod, .saveSupportReport,
-      .saveActivityLog, .explainErrorCode, .reportProblem,
+      .saveActivityLog, .explainErrorCode, .reportProblem, .toolbar(.validateLibraryItem),
+      .toolbar(.testLibraryRecord), .toolbar(.grantProgram), .toolbar(.createToken),
     ]
     func checkTitleStyle(_ key: String) {
       let title = OJDLocalized.string(key)
@@ -268,7 +274,11 @@ struct MainMenuModelTests {
       MainMenuModel.noActiveProfileTitleKey,
     ] { checkTitleStyle(key) }
     for item in MainMenuModel.allItems where item.action != .controllerTarget {
-      for key in [item.titleKey, item.alternateTitleKey].compactMap({ $0 }) {
+      // A command of a toolbar action keeps the toolbar item's title, which is in sentence style.
+      let isToolbarTitle = MainWindowToolbarAction.allCases.contains {
+        $0.labelKey == item.titleKey
+      }
+      for key in [item.titleKey, item.alternateTitleKey].compactMap({ $0 }) where !isToolbarTitle {
         checkTitleStyle(key)
       }
       let title = OJDLocalized.string(item.titleKey)
@@ -331,6 +341,8 @@ struct MainMenuModelTests {
       for item in try section(id).items {
         // Activate Profile opens a submenu that lists profiles; it stays available.
         if item.action == .showControllerInWindow || item.action == .activateProfile { continue }
+        // The profile commands of the toolbar act on the Profiles area, not on a controller.
+        if case .toolbar = item.action { continue }
         #expect(!MainMenuModel.isEnabled(item, state: state), "\(item.id) enabled without target")
       }
     }
@@ -504,6 +516,8 @@ struct MainMenuRoutingTests {
       switch MainMenuRenderer.routing(for: item.action) {
       case .services, .profileSubmenu:
         #expect(item.action == .services || item.action == .activateProfile)
+      case .activityChoices:
+        #expect(item.action == .toolbar(.activityMode) || item.action == .toolbar(.activityFilter))
       case .responder, .coordinator:
         #expect(item.action != .services && item.action != .activateProfile)
       case .informational:

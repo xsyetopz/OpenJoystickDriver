@@ -41,6 +41,8 @@
       state.selectedControllerID = mainWindow?.selectedControllerID
       state.hasMainWindow = mainWindow != nil
       state.hasSelectedProfile = mainWindow?.hasSelectedProfile == true
+      state.enabledToolbarActions = mainWindow?.enabledToolbarActions ?? []
+      state.hasSearchFieldInView = mainWindow?.searchFieldInView != nil
       state.hasSettingsWindow = settingsWindow != nil
       if let window = NSApplication.shared.keyWindow {
         state.isFullScreen = window.styleMask.contains(.fullScreen)
@@ -117,6 +119,8 @@
       case .saveSupportReport: beginSaveSupportReport()
       case .saveActivityLog: beginSaveActivityLog()
       case .showArea(let area): mainWindow?.showMainWindow(area: area)
+      case .find: mainWindow?.focusSearchField()
+      case .toolbar(let toolbarAction): mainWindow?.perform(toolbarAction)
       case .controllerTarget:
         // Informational row; it carries no action.
         preconditionFailure("\(action) has no action")

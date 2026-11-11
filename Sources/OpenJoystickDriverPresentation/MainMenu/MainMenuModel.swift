@@ -19,6 +19,11 @@ enum MainMenuModel {
     allItems.first { $0.action == action }
   }
 
+  /// Returns the item that does what the toolbar item of `action` does.
+  static func item(forToolbar action: MainWindowToolbarAction) -> MainMenuItem? {
+    item(for: action.menuAction)
+  }
+
   /// Returns whether the item is enabled in the state; an item on the responder chain counts as
   /// enabled, because AppKit validates it.
   static func isEnabled(_ item: MainMenuItem, state: MainMenuState) -> Bool {
@@ -111,6 +116,18 @@ enum MainMenuModel {
     )
   }
 
+  /// Returns the entry of the command that carries a toolbar action: the toolbar item's title,
+  /// enabled while the toolbar item is shown and enabled.
+  private static func toolbarEntry(_ action: MainWindowToolbarAction) -> MainMenuEntry {
+    entry(
+      "toolbar.\(action.rawValue)",
+      action.labelKey,
+      action: .toolbar(action),
+      enabled: .requires([.mainWindow, .toolbarAction(action)]),
+      gui: .area(action.area)
+    )
+  }
+
   /// The rule of the items that need the main window.
   private static let needsMainWindow = MainMenuEnabledRule.requires([.mainWindow])
 
@@ -167,8 +184,9 @@ enum MainMenuModel {
     ]
   )
 
-  /// The File menu: importing and exporting profiles, installing a record or mod, closing the
-  /// window, and saving the support report and the activity log.
+  /// The File menu: importing and exporting profiles, installing a record or mod, the Library and
+  /// Access commands of the toolbar, closing the window, and saving the support report and the
+  /// activity log.
   private static let fileSection = MainMenuSection(
     id: "file",
     titleKey: "ui.menu.file.title",
@@ -188,6 +206,13 @@ enum MainMenuModel {
         enabled: needsMainWindow,
         gui: .area(.library)
       ),
+      .separator,
+      toolbarEntry(.validateLibraryItem),
+      toolbarEntry(.testLibraryRecord),
+      toolbarEntry(.removeLibraryItem),
+      .separator,
+      toolbarEntry(.grantProgram),
+      toolbarEntry(.createToken),
       .separator,
       entry(
         "close",
@@ -217,10 +242,11 @@ enum MainMenuModel {
         action: .saveActivityLog,
         gui: .area(.activity)
       ),
+      toolbarEntry(.showActivityLogInFinder),
     ]
   )
 
-  /// The Edit menu: Undo, Redo, Cut, Copy, Paste, Delete and Select All.
+  /// The Edit menu: Undo, Redo, Cut, Copy, Copy Activity Log, Paste, Delete, Select All and Find.
   private static let editSection = MainMenuSection(
     id: "edit",
     titleKey: "ui.menu.edit.title",
@@ -259,6 +285,7 @@ enum MainMenuModel {
         enabled: .responderChain,
         gui: .standardCommand
       ),
+      toolbarEntry(.copyActivityLog),
       entry(
         "paste",
         "ui.menu.edit.paste",
@@ -282,11 +309,20 @@ enum MainMenuModel {
         enabled: .responderChain,
         gui: .standardCommand
       ),
+      .separator,
+      entry(
+        "find",
+        "ui.menu.edit.find",
+        key: "f",
+        action: .find,
+        enabled: .requires([.mainWindow, .searchFieldInView]),
+        gui: .standardCommand
+      ),
     ]
   )
 
-  /// The View menu: one item for each area of the main window, then the toolbar, sidebar and full
-  /// screen items.
+  /// The View menu: one item for each area of the main window, then the Activity commands of the
+  /// toolbar, then the toolbar, sidebar and full screen items.
   private static let viewSection = MainMenuSection(
     id: "view",
     titleKey: "ui.menu.view.title",
@@ -300,6 +336,10 @@ enum MainMenuModel {
         gui: .area(area)
       )
     } + [
+      .separator,
+      toolbarEntry(.activityMode),
+      toolbarEntry(.activityFilter),
+      toolbarEntry(.runDiagnostics),
       .separator,
       entry(
         "toggleToolbar",
@@ -382,7 +422,8 @@ enum MainMenuModel {
     ]
   )
 
-  /// The Profile menu: Activate Profile and Deactivate Profile.
+  /// The Profile menu: Activate Profile, Deactivate Profile and the Profiles commands of the
+  /// toolbar.
   private static let profileSection = MainMenuSection(
     id: "profile",
     titleKey: "ui.menu.profile.title",
@@ -401,6 +442,11 @@ enum MainMenuModel {
         enabled: .requires([.controller, .controllerHasActiveProfile]),
         gui: .area(.profiles)
       ),
+      .separator,
+      toolbarEntry(.newProfile),
+      toolbarEntry(.duplicateProfile),
+      toolbarEntry(.deleteProfile),
+      toolbarEntry(.validateProfileFile),
     ]
   )
 
