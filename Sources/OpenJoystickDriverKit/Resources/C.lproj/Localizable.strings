@@ -162,16 +162,54 @@
 "ui.controllers.emptyTitle" = "No controller connected";
 /* Message of the empty state in the Controllers area. It asks the user to connect a controller. */
 "ui.controllers.emptyMessage" = "Connect a controller.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that another program holds, so OJD cannot read it. The text tells the person how to free it. */
-"ui.controllers.deviceInUse" = "Another program is using this controller. Close it or reconnect the controller.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose USB configuration OJD could not read. OJD tries again only when the controller reconnects, so the text asks for that. USB stays as written. */
-"ui.controllers.configurationUnreadable" = "This controller's USB configuration could not be read. Reconnect the controller.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.noProtocolMatch" = "OJD found no supported protocol for this controller.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.noProtocolMatch.nextStep" = "Send a support report with the controller's ID so support for it can be added.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.ambiguousProtocolMatch" = "More than one supported protocol fits this controller, so OJD cannot choose one.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.ambiguousProtocolMatch.nextStep" = "Send a support report so OJD can be told which protocol it uses.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.interfaceContractMismatch" = "This controller's USB interfaces do not meet what its protocol requires, so OJD does not serve it.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.interfaceContractMismatch.nextStep" = "Send a support report with the controller's ID so its support can be corrected.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.descriptorContractMismatch" = "This controller's HID descriptor does not meet what its protocol requires, so OJD does not serve it.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.descriptorContractMismatch.nextStep" = "Send a support report with the controller's ID so its support can be corrected.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.unsupportedProtocolVariant" = "The protocol for this controller does not implement the variant OJD selected for it.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.unsupportedProtocolVariant.nextStep" = "Send a support report so a supported variant can be set for it.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.unsupportedTransportVariant" = "The protocol for this controller does not support the way it is connected.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.unsupportedTransportVariant.nextStep" = "Connect the controller another way, such as with a cable, or send a support report.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.virtualProfileUnavailable" = "OJD has no virtual gamepad profile for this controller.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.virtualProfileUnavailable.nextStep" = "Send a support report so a profile can be added for it.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.deviceInUse" = "Another program is using this controller.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.deviceInUse.nextStep" = "Close that program or reconnect the controller.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.configurationUnreadable" = "This controller's USB configuration could not be read.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.configurationUnreadable.nextStep" = "Reconnect the controller.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.bootloaderIdentity" = "This controller is in bootloader mode. OJD sends it no data.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.bootloaderIdentity.nextStep" = "Take the controller out of bootloader mode, then reconnect it.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noModeMatched" = "This controller shares its ID with other models and matches none of the supported ones. OJD sends it no data.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected device whose ID OJD recognizes and serves nothing, such as a receiver with no controller connected. OJD sends such a device no data, and the text says so. OJD stays as written. */
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.noModeMatched.nextStep" = "Send a support report with the controller's model so it can be matched.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is recognized and serves nothing, such as a receiver with no controller connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.idleIdentity" = "This device serves no controls, such as a receiver with no controller connected. OJD sends it no data.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is recognized and serves nothing, such as a receiver with no controller connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.idleIdentity.nextStep" = "Connect a controller to it or turn the controller on.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "Battery";
 /* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */
@@ -1089,7 +1127,7 @@
 /* Name of the left haptic actuator in the output test of the input test window. */
 "ui.inputTest.leftHaptic" = "Left haptic";
 /* Name of the large rumble motor on the left side of the controller, which makes low-frequency vibration. */
-"ui.inputTest.lowFrequency" = "Low frequency";
+"ui.inputTest.lowFrequency" = "Left main";
 /* Name of the left stick in the input test. */
 "ui.inputTest.leftStick" = "Left stick";
 /* Name of the button that the user presses by pushing down the left stick, shown in the input test. */
@@ -1129,7 +1167,7 @@
 /* Name of the right haptic actuator in the output test of the input test window. */
 "ui.inputTest.rightHaptic" = "Right haptic";
 /* Name of the small rumble motor on the right side of the controller, which makes high-frequency vibration. */
-"ui.inputTest.highFrequency" = "High frequency";
+"ui.inputTest.highFrequency" = "Right main";
 /* Name of the right stick in the input test. */
 "ui.inputTest.rightStick" = "Right stick";
 /* Name of the button that the user presses by pushing down the right stick, shown in the input test. */

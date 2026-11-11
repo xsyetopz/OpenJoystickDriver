@@ -162,16 +162,54 @@
 "ui.controllers.emptyTitle" = "لا توجد وحدة تحكم متصلة";
 /* Message of the empty state in the Controllers area. It asks the user to connect a controller. */
 "ui.controllers.emptyMessage" = "وصّل وحدة تحكم.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that another program holds, so OJD cannot read it. The text tells the person how to free it. */
-"ui.controllers.deviceInUse" = "برنامج آخر يستخدم وحدة التحكم هذه. أغلقه أو أعد توصيل وحدة التحكم.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose USB configuration OJD could not read. OJD tries again only when the controller reconnects, so the text asks for that. USB stays as written. */
-"ui.controllers.configurationUnreadable" = "تعذّرت قراءة تكوين USB لوحدة التحكم هذه. أعد توصيل وحدة التحكم.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.noProtocolMatch" = "لم يعثر OJD على بروتوكول مدعوم لوحدة التحكم هذه.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.noProtocolMatch.nextStep" = "أرسل تقرير الدعم مع معرّف وحدة التحكم ليُضاف الدعم لها.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.ambiguousProtocolMatch" = "أكثر من بروتوكول مدعوم يناسب وحدة التحكم هذه، لذا لا يستطيع OJD اختيار واحد.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.ambiguousProtocolMatch.nextStep" = "أرسل تقرير الدعم ليُحدَّد البروتوكول الذي تستخدمه.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.interfaceContractMismatch" = "واجهات USB في وحدة التحكم هذه لا تستوفي ما يتطلبه بروتوكولها، لذا لا يخدمها OJD.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.interfaceContractMismatch.nextStep" = "أرسل تقرير الدعم مع معرّف وحدة التحكم ليُصحَّح دعمها.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.descriptorContractMismatch" = "واصف HID في وحدة التحكم هذه لا يستوفي ما يتطلبه بروتوكولها، لذا لا يخدمها OJD.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.descriptorContractMismatch.nextStep" = "أرسل تقرير الدعم مع معرّف وحدة التحكم ليُصحَّح دعمها.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.unsupportedProtocolVariant" = "بروتوكول وحدة التحكم هذه لا ينفّذ المتغيّر الذي اختاره OJD لها.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.unsupportedProtocolVariant.nextStep" = "أرسل تقرير الدعم ليُعيَّن لها متغيّر مدعوم.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.unsupportedTransportVariant" = "بروتوكول وحدة التحكم هذه لا يدعم طريقة اتصالها.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.unsupportedTransportVariant.nextStep" = "وصّل وحدة التحكم بطريقة أخرى، مثل كابل، أو أرسل تقرير الدعم.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.virtualProfileUnavailable" = "لا يملك OJD ملف تعريف لوحة ألعاب افتراضية لوحدة التحكم هذه.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.virtualProfileUnavailable.nextStep" = "أرسل تقرير الدعم ليُضاف ملف تعريف لها.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.deviceInUse" = "برنامج آخر يستخدم وحدة التحكم هذه.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.deviceInUse.nextStep" = "أغلقه أو أعد توصيل وحدة التحكم.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.configurationUnreadable" = "تعذّرت قراءة تكوين USB لوحدة التحكم هذه.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.configurationUnreadable.nextStep" = "أعد توصيل وحدة التحكم.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.bootloaderIdentity" = "وحدة التحكم هذه في وضع المحمّل. لا يرسل OJD إليها أي بيانات.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.bootloaderIdentity.nextStep" = "أخرج وحدة التحكم من وضع المحمّل، ثم أعد توصيلها.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noModeMatched" = "تشترك وحدة التحكم هذه في معرّفها مع طرازات أخرى ولا تطابق أيًا من الطرازات المدعومة. لا يرسل OJD إليها أي بيانات.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected device whose ID OJD recognizes and serves nothing, such as a receiver with no controller connected. OJD sends such a device no data, and the text says so. OJD stays as written. */
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.noModeMatched.nextStep" = "أرسل تقرير الدعم مع طراز وحدة التحكم ليتم مطابقتها.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is recognized and serves nothing, such as a receiver with no controller connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.idleIdentity" = "لا يقدّم هذا الجهاز أي عناصر تحكم، مثل جهاز استقبال لم تتصل به وحدة تحكم. لا يرسل OJD إليه أي بيانات.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is recognized and serves nothing, such as a receiver with no controller connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.idleIdentity.nextStep" = "وصّل وحدة تحكم بها أو شغّل وحدة التحكم.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "البطارية";
 /* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */

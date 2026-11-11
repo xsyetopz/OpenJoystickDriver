@@ -162,16 +162,54 @@
 "ui.controllers.emptyTitle" = "Chưa kết nối bộ điều khiển";
 /* Message of the empty state in the Controllers area. It asks the user to connect a controller. */
 "ui.controllers.emptyMessage" = "Kết nối bộ điều khiển.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that another program holds, so OJD cannot read it. The text tells the person how to free it. */
-"ui.controllers.deviceInUse" = "Một chương trình khác đang dùng bộ điều khiển này. Hãy đóng chương trình đó hoặc kết nối lại bộ điều khiển.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose USB configuration OJD could not read. OJD tries again only when the controller reconnects, so the text asks for that. USB stays as written. */
-"ui.controllers.configurationUnreadable" = "Không thể đọc cấu hình USB của bộ điều khiển này. Hãy kết nối lại bộ điều khiển.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.noProtocolMatch" = "OJD không tìm thấy giao thức được hỗ trợ nào cho bộ điều khiển này.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.noProtocolMatch.nextStep" = "Hãy gửi báo cáo hỗ trợ kèm ID của bộ điều khiển để có thể bổ sung hỗ trợ cho nó.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.ambiguousProtocolMatch" = "Có nhiều hơn một giao thức được hỗ trợ phù hợp với bộ điều khiển này, nên OJD không thể chọn một.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.ambiguousProtocolMatch.nextStep" = "Hãy gửi báo cáo hỗ trợ để có thể chỉ định giao thức mà nó dùng.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.interfaceContractMismatch" = "Các giao diện USB của bộ điều khiển này không đáp ứng yêu cầu của giao thức, nên OJD không phục vụ nó.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.interfaceContractMismatch.nextStep" = "Hãy gửi báo cáo hỗ trợ kèm ID của bộ điều khiển để có thể sửa phần hỗ trợ cho nó.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.descriptorContractMismatch" = "Bộ mô tả HID của bộ điều khiển này không đáp ứng yêu cầu của giao thức, nên OJD không phục vụ nó.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.descriptorContractMismatch.nextStep" = "Hãy gửi báo cáo hỗ trợ kèm ID của bộ điều khiển để có thể sửa phần hỗ trợ cho nó.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.unsupportedProtocolVariant" = "Giao thức của bộ điều khiển này không triển khai biến thể mà OJD đã chọn cho nó.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.unsupportedProtocolVariant.nextStep" = "Hãy gửi báo cáo hỗ trợ để có thể gán cho nó một biến thể được hỗ trợ.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.unsupportedTransportVariant" = "Giao thức của bộ điều khiển này không hỗ trợ cách nó được kết nối.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.unsupportedTransportVariant.nextStep" = "Hãy kết nối bộ điều khiển theo cách khác, chẳng hạn bằng cáp, hoặc gửi báo cáo hỗ trợ.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.virtualProfileUnavailable" = "OJD không có hồ sơ gamepad ảo nào cho bộ điều khiển này.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.virtualProfileUnavailable.nextStep" = "Hãy gửi báo cáo hỗ trợ để có thể thêm hồ sơ cho nó.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.deviceInUse" = "Một chương trình khác đang dùng bộ điều khiển này.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.deviceInUse.nextStep" = "Hãy đóng chương trình đó hoặc kết nối lại bộ điều khiển.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. The next step has its own text. OJD, USB, HID and ID stay as written. */
+"ui.controllers.configurationUnreadable" = "Không thể đọc cấu hình USB của bộ điều khiển này.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.configurationUnreadable.nextStep" = "Hãy kết nối lại bộ điều khiển.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.bootloaderIdentity" = "Bộ điều khiển này đang ở chế độ bootloader. OJD không gửi dữ liệu nào đến bộ điều khiển này.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.bootloaderIdentity.nextStep" = "Hãy đưa bộ điều khiển ra khỏi chế độ bootloader rồi kết nối lại.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noModeMatched" = "Bộ điều khiển này dùng chung ID với các mẫu khác và không khớp với mẫu nào được hỗ trợ. OJD không gửi dữ liệu nào đến bộ điều khiển này.";
-/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected device whose ID OJD recognizes and serves nothing, such as a receiver with no controller connected. OJD sends such a device no data, and the text says so. OJD stays as written. */
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.noModeMatched.nextStep" = "Hãy gửi báo cáo hỗ trợ kèm mẫu của bộ điều khiển để có thể nhận diện nó.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is recognized and serves nothing, such as a receiver with no controller connected. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.idleIdentity" = "Thiết bị này không cung cấp điều khiển nào, chẳng hạn bộ thu chưa kết nối bộ điều khiển. OJD không gửi dữ liệu nào đến thiết bị này.";
+/* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is recognized and serves nothing, such as a receiver with no controller connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
+"ui.controllers.idleIdentity.nextStep" = "Hãy kết nối một bộ điều khiển với nó hoặc bật bộ điều khiển.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "Pin";
 /* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */
