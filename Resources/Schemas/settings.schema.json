@@ -6,6 +6,22 @@
   "type": "object",
   "required": ["apiVersion", "kind"],
   "additionalProperties": false,
+  "if": {
+    "properties": {
+      "showInMenuBar": {
+        "const": false
+      }
+    },
+    "required": ["showInMenuBar"]
+  },
+  "then": {
+    "required": ["showInDock"],
+    "properties": {
+      "showInDock": {
+        "const": true
+      }
+    }
+  },
   "properties": {
     "apiVersion": {
       "const": "openjoystickdriver/v1alpha3"
@@ -15,15 +31,18 @@
     },
     "launchAtLoginOptOut": {
       "description": "Internal state that records that the user turned launch at login off.",
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
     },
     "showInMenuBar": {
       "description": "Whether to show the OpenJoystickDriver item in the menu bar.",
-      "type": "boolean"
+      "type": "boolean",
+      "default": true
     },
     "showInDock": {
       "description": "Whether to always show the OpenJoystickDriver icon in the Dock.",
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
     },
     "notify": {
       "description": "Which events post a notification.",
@@ -32,23 +51,28 @@
       "properties": {
         "controllerConnected": {
           "description": "Whether a controller that connects or needs attention posts a notification.",
-          "type": "boolean"
+          "type": "boolean",
+          "default": false
         },
         "controllerDisconnected": {
           "description": "Whether a controller that disconnects posts a notification.",
-          "type": "boolean"
+          "type": "boolean",
+          "default": false
         },
         "profileActivated": {
           "description": "Whether a profile that becomes active posts a notification.",
-          "type": "boolean"
+          "type": "boolean",
+          "default": false
         },
         "profileDeactivated": {
           "description": "Whether a profile that is turned off posts a notification.",
-          "type": "boolean"
+          "type": "boolean",
+          "default": false
         },
         "sounds": {
           "description": "Whether a notification plays a sound.",
-          "type": "boolean"
+          "type": "boolean",
+          "default": true
         }
       }
     },
@@ -59,17 +83,20 @@
       "properties": {
         "checkAutomatically": {
           "description": "Whether to check for updates when the app starts.",
-          "type": "boolean"
+          "type": "boolean",
+          "default": false
         },
         "includePrereleases": {
           "description": "Whether to include pre-release versions when checking for updates.",
-          "type": "boolean"
+          "type": "boolean",
+          "default": false
         }
       }
     },
     "developerTools": {
       "description": "Whether to show the developer tools in the Settings window.",
-      "type": "boolean"
+      "type": "boolean",
+      "default": false
     }
   }
 }

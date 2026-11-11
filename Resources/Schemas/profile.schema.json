@@ -708,7 +708,8 @@
             "url": {
               "description": "The URL to open.",
               "type": "string",
-              "minLength": 1
+              "minLength": 1,
+              "pattern": "^(?![Ff][Ii][Ll][Ee]:)[A-Za-z][A-Za-z0-9+.-]*:"
             }
           }
         },

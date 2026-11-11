@@ -80,6 +80,24 @@ A profile with `device.unit` applies only to the controller with that unit ID, a
 
 OJD rejects unknown keys anywhere in a profile, and a file that holds a `date` or `data` value. The file declares `apiVersion: openjoystickdriver/v1alpha3` and `kind: Profile`, and OJD rejects a file without them. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes the file. Rules that span fields, such as a source used twice, are not in the schema. Check a file against both with `ojd profile validate FILE`.
 
+## Rules Across Fields
+
+The schema checks the shape and range of each field. OJD also refuses a profile that breaks one of these rules, with `E3008`:
+
+- A `Keyboard` destination lists its `modifiers` sorted and without repeats.
+- An `OpenURL` destination holds an absolute URL whose scheme is not `file`. A `ProfileSwitch` destination holds a profile of the same model, `Next`, or `Previous`. A `Speak` destination holds a voice that the Mac has.
+- A binding sets `pulseDurationMs` to a value other than 100 only with the `Pulse` behavior.
+- A chord matches its sources in any order. An adaptive trigger effect with kind `Off` has `startPosition` and `strength` 0.
+- A chord, a sequence, a gyro activation source, a gyro trackball source, and a layer activator take any source except a whole axis.
+- `gyroOutput` sets `activationSource` exactly when `activationMode` is not `Always`.
+- `lean.hysteresisDegrees` is less than `thresholdDegrees`. `steering.deadzoneDegrees` is less than `fullScaleDegrees`.
+- `stickMapping.flickHysteresis` is less than `flickThreshold`. `stickTuning.innerDeadzone` plus `outerDeadzone` is less than 1.
+- `triggerMapping.softThreshold` is less than `fullThreshold`, and `hysteresis` is less than `softThreshold`.
+- A touch grid source has `column` less than `columns` and `row` less than `rows`. A touch region has `x` plus `width` and `y` plus `height` of at most 1.
+- A stick region has `innerRadius` less than `outerRadius` and `fromDegrees` different from `toDegrees`. A region runs clockwise from up, past 0 when `toDegrees` is below `fromDegrees`. Regions of one stick do not overlap.
+- A trigger band has `from` less than `to`. Bands of one trigger do not overlap, and a trigger with a `triggerMappings` entry has no bands.
+- A profile name has no space at either end and no control character, at most 80 characters. A layer name follows the same rule with at most 40.
+
 ## Turbo and Multi-Tap Fields
 
 A binding's `turbo` object has `repeatRateHz` and `dutyCycle`, and optionally `initialDelayMs` (0 to 2500, the time from the first press to the first repeat; 0 when omitted) and `maxRepeats` (1 to 500; omitted repeats while held).

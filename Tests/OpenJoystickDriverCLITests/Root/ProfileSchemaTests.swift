@@ -279,6 +279,38 @@ struct ProfileSchemaTests {
     #expect(try !CLIOutputSchema.profileIssues(inJSON: broken).isEmpty, "\(problem)")
   }
 
+  /// Rules between fields, which the schema cannot state: the decoder refuses the profile and the
+  /// schema accepts it. `wiki/Profile-File-Reference.md` lists them.
+  @Test(arguments: [
+    ("lean hysteresis above threshold", #""hysteresisDegrees": 5"#, #""hysteresisDegrees": 25"#),
+    ("steering deadzone above full scale", #""deadzoneDegrees": 2"#, #""deadzoneDegrees": 50"#),
+    (
+      "flick hysteresis above threshold", #""flickThreshold": 0.8, "flickHysteresis": 0.2"#,
+      #""flickThreshold": 0.3, "flickHysteresis": 0.4"#
+    ),
+    (
+      "stick deadzones fill the travel", #""innerDeadzone": 0.1, "outerDeadzone": 0.05"#,
+      #""innerDeadzone": 0.9, "outerDeadzone": 0.5"#
+    ),
+    ("soft threshold above full", #""softThreshold": 0.2"#, #""softThreshold": 0.95"#),
+    ("grid column outside the grid", #""column": 1, "row": 0"#, #""column": 2, "row": 0"#),
+  ])
+  func aRuleAcrossFieldsIsRefusedByTheDecoderOnly(
+    problem: String,
+    original: String,
+    replacement: String
+  ) throws {
+    #expect(Self.richDocument.contains(original), "\(problem)")
+    let broken = Self.richDocument.replacingOccurrences(of: original, with: replacement)
+    do {
+      _ = try RemappingProfileFileStore.load(from: PropertyListFixture.data(json: broken))
+      Issue.record("\(problem): the profile loads")
+    } catch {
+      #expect(RemappingProfileFileStore.problemCode(error) == .invalidProfile, "\(problem)")
+    }
+    #expect(try CLIOutputSchema.profileIssues(inJSON: broken).isEmpty, "\(problem)")
+  }
+
   @Test
   func schemaEnumsMatchTheSwiftCases() throws {
     let pairs: [(String, [String])] = [
