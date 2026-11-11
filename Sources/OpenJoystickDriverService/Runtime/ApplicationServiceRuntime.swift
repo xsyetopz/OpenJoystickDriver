@@ -45,6 +45,7 @@ package final class ApplicationServiceRuntime {
   ///
   /// - Throws: The failure to load the installation key.
   package init() throws {
+    StoredDocumentMigration.run { print($0) }
     let installationKey = try PortKeyInstallationStore(directory: MacOSDataDirectory()).load()
     let permissionManager = PermissionManager(system: MacOSAccessControlSystem())
     let dispatcher = VirtualOutputRouter()
