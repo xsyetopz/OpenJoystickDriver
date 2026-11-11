@@ -150,6 +150,23 @@
       }
     }
 
+    /// Adds the converted profile to the library and, once it is saved, shows what the conversion
+    /// left out.
+    ///
+    /// - Parameter conversion: The conversion that the Convert sheet made.
+    func convertProfile(_ conversion: RemappingProfileConversion) {
+      guard !refuseProfileAction() else { return }
+      let request = RuntimeMutationRequest(operation: .create(profileID: conversion.profile.id))
+      guard beginProfileMutationOrExplain(request) else { return }
+      Task { @MainActor in
+        let result = await library.createRemappingProfile(conversion.profile, request: request)
+        handleProfileMutationResult(result)
+        if case .succeeded = result {
+          screen.conversionReport = ProfileConversionReport(conversion)
+        }
+      }
+    }
+
     /// Deletes the profile through the profile library after the person confirmed the alert.
     ///
     /// If the deleted profile is the selected one, its unsaved edits are dropped, and they come

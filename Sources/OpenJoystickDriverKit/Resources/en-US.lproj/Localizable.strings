@@ -48,6 +48,8 @@
 "action.adjust" = "Adjust...";
 /* Toolbar button that creates a copy of the selected profile. */
 "action.duplicate" = "Duplicate";
+/* Toolbar button and Profile menu item that converts the selected profile to another controller model, and the confirm button of the Convert sheet. */
+"action.convert" = "Convert";
 /* Button of the profile editor that turns off the active profile. It swaps with Set active. */
 "action.deactivate" = "Deactivate";
 /* Button of the profile editor and of the status menu alert that makes the profile the active one. It swaps with Deactivate. */
@@ -496,6 +498,36 @@
 "ui.profiles.sectionSticks" = "Sticks";
 /* Name of a duplicated profile. %@ is the name of the profile that the copy comes from. */
 "ui.profiles.copyName" = "%@ Copy";
+/* Title of the sheet shown after a profile was converted. %1$@ is the name of the new profile, shown in quotes. %2$@ is the target controller as VVVV:PPPP and stays as written. */
+"ui.profiles.convert.done" = "Created '%1$@' for %2$@. The original is unchanged.";
+/* Line in the sheet shown after a profile was converted when the target controller took every part of the profile. */
+"ui.profiles.convert.nothingLeftOut" = "Nothing was left out.";
+/* Heading above the list of parts that a profile conversion left out, in the sheet shown after a profile was converted. */
+"ui.profiles.convert.leftOutHeading" = "Left out";
+/* Line in the sheet shown after a profile was converted, for a part left out. %1$@ is the kind of part, such as binding. %2$@ is the comma-separated list of controls the target controller lacks; they stay as written. */
+"ui.profiles.convert.leftOut" = "%1$@: the controller lacks %2$@";
+/* Line in the sheet shown after a profile was converted, for a part left out for a reason that names no control. %@ is the kind of part, such as gyro output. */
+"ui.profiles.convert.leftOutPart" = "%@: the controller lacks a part it needs";
+/* Kind of profile part in the list of parts that a profile conversion left out: a binding of one control to an action. */
+"ui.profiles.convert.section.binding" = "Binding";
+/* Kind of profile part in the list of parts that a profile conversion left out: a chord, buttons pressed together. */
+"ui.profiles.convert.section.chord" = "Chord";
+/* Kind of profile part in the list of parts that a profile conversion left out: a sequence of presses. */
+"ui.profiles.convert.section.sequence" = "Sequence";
+/* Kind of profile part in the list of parts that a profile conversion left out: a layer of bindings. */
+"ui.profiles.convert.section.layer" = "Layer";
+/* Kind of profile part in the list of parts that a profile conversion left out: an advanced mapping of a stick. */
+"ui.profiles.convert.section.stickMapping" = "Stick mapping";
+/* Kind of profile part in the list of parts that a profile conversion left out: a mapping of a trigger with two stages. */
+"ui.profiles.convert.section.triggerMapping" = "Trigger mapping";
+/* Kind of profile part in the list of parts that a profile conversion left out: a mapping of a touch surface. */
+"ui.profiles.convert.section.touchMapping" = "Touch mapping";
+/* Kind of profile part in the list of parts that a profile conversion left out: the output of the gyro motion sensor. */
+"ui.profiles.convert.section.gyroOutput" = "Gyro output";
+/* Kind of profile part in the list of parts that a profile conversion left out: the speed of the pointer. */
+"ui.profiles.convert.section.pointerSpeed" = "Pointer speed";
+/* Kind of profile part in the list of parts that a profile conversion left out: the settings of a Joy-Con pair. Joy-Con is a Nintendo product name. */
+"ui.profiles.convert.section.joyConPair" = "Joy-Con pair";
 /* Error in the profile editor when the profile changed elsewhere while the user edited it. */
 "ui.profiles.changedElsewhere" = "The profile changed elsewhere.";
 /* Error in the profile editor when the service saved the profile but the app cannot read the state afterwards. */

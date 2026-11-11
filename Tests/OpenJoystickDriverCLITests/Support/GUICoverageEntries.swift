@@ -48,11 +48,6 @@ enum GUICoverageEntries {
           + "the window edits the scope after import"
       ),
       CLIOnlyItem(
-        command: ["profile", "convert"],
-        option: nil,
-        reason: "the window offers no conversion yet; it will call RemappingProfileConversion"
-      ),
-      CLIOnlyItem(
         command: ["virtual", "feed"],
         option: nil,
         reason: "reads controller frames from standard input"
@@ -206,6 +201,7 @@ enum GUICoverageEntries {
     // The sheet leaves the gyro always on; the gyro section of the editor sets the control.
     option("profile create", "--activation", "ProfileGyroDraft"),
     leaf("profile duplicate", "ProfileDuplicateSheet"),
+    leaf("profile convert", "ProfileConversionSheet"),
     leaf("profile rename", "updateMetadata"),
     leaf("profile delete", "deleteProfile"),
     leaf("profile activate", "activateProfile"),

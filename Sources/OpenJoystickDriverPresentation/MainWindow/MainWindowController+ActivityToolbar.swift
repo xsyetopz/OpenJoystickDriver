@@ -19,8 +19,8 @@
       case .activityFilter: return makeFilterItem(for: action)
       case .activitySearch: return makeSearchItem(for: action)
       case .newProfile, .importProfile, .validateProfileFile,
-        .duplicateProfile, .exportProfile, .deleteProfile, .installLibraryItem, .grantProgram,
-        .createToken, .validateLibraryItem, .testLibraryRecord, .removeLibraryItem,
+        .duplicateProfile, .convertProfile, .exportProfile, .deleteProfile, .installLibraryItem,
+        .grantProgram, .createToken, .validateLibraryItem, .testLibraryRecord, .removeLibraryItem,
         .searchLibrary, .copyActivityLog, .saveActivityLog, .showActivityLogInFinder,
         .runDiagnostics:
         return nil

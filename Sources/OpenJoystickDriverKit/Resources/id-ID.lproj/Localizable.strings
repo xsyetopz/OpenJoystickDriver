@@ -48,6 +48,8 @@
 "action.adjust" = "Sesuaikan…";
 /* Toolbar button that creates a copy of the selected profile. */
 "action.duplicate" = "Duplikatkan";
+/* Toolbar button and Profile menu item that converts the selected profile to another controller model, and the confirm button of the Convert sheet. */
+"action.convert" = "Konversi";
 /* Button of the profile editor that turns off the active profile. It swaps with Set active. */
 "action.deactivate" = "Nonaktifkan";
 /* Button of the profile editor and of the status menu alert that makes the profile the active one. It swaps with Deactivate. */
@@ -496,6 +498,36 @@
 "ui.profiles.sectionSticks" = "Stik";
 /* Name of a duplicated profile. %@ is the name of the profile that the copy comes from. */
 "ui.profiles.copyName" = "Salinan %@";
+/* Title of the sheet shown after a profile was converted. %1$@ is the name of the new profile, shown in quotes. %2$@ is the target controller as VVVV:PPPP and stays as written. */
+"ui.profiles.convert.done" = "“%1$@” dibuat untuk %2$@. Aslinya tidak berubah.";
+/* Line in the sheet shown after a profile was converted when the target controller took every part of the profile. */
+"ui.profiles.convert.nothingLeftOut" = "Tidak ada yang dilewati.";
+/* Heading above the list of parts that a profile conversion left out, in the sheet shown after a profile was converted. */
+"ui.profiles.convert.leftOutHeading" = "Dilewati";
+/* Line in the sheet shown after a profile was converted, for a part left out. %1$@ is the kind of part, such as binding. %2$@ is the comma-separated list of controls the target controller lacks; they stay as written. */
+"ui.profiles.convert.leftOut" = "%1$@: pengontrol tidak memiliki %2$@";
+/* Line in the sheet shown after a profile was converted, for a part left out for a reason that names no control. %@ is the kind of part, such as gyro output. */
+"ui.profiles.convert.leftOutPart" = "%@: pengontrol tidak memiliki bagian yang dibutuhkan";
+/* Kind of profile part in the list of parts that a profile conversion left out: a binding of one control to an action. */
+"ui.profiles.convert.section.binding" = "Pengikatan";
+/* Kind of profile part in the list of parts that a profile conversion left out: a chord, buttons pressed together. */
+"ui.profiles.convert.section.chord" = "Kombinasi tombol";
+/* Kind of profile part in the list of parts that a profile conversion left out: a sequence of presses. */
+"ui.profiles.convert.section.sequence" = "Urutan";
+/* Kind of profile part in the list of parts that a profile conversion left out: a layer of bindings. */
+"ui.profiles.convert.section.layer" = "Lapisan";
+/* Kind of profile part in the list of parts that a profile conversion left out: an advanced mapping of a stick. */
+"ui.profiles.convert.section.stickMapping" = "Pemetaan stik";
+/* Kind of profile part in the list of parts that a profile conversion left out: a mapping of a trigger with two stages. */
+"ui.profiles.convert.section.triggerMapping" = "Pemetaan pemicu";
+/* Kind of profile part in the list of parts that a profile conversion left out: a mapping of a touch surface. */
+"ui.profiles.convert.section.touchMapping" = "Pemetaan sentuh";
+/* Kind of profile part in the list of parts that a profile conversion left out: the output of the gyro motion sensor. */
+"ui.profiles.convert.section.gyroOutput" = "Keluaran giroskop";
+/* Kind of profile part in the list of parts that a profile conversion left out: the speed of the pointer. */
+"ui.profiles.convert.section.pointerSpeed" = "Kecepatan penunjuk";
+/* Kind of profile part in the list of parts that a profile conversion left out: the settings of a Joy-Con pair. Joy-Con is a Nintendo product name. */
+"ui.profiles.convert.section.joyConPair" = "Pasangan Joy-Con";
 /* Error in the profile editor when the profile changed elsewhere while the user edited it. */
 "ui.profiles.changedElsewhere" = "Profil berubah di tempat lain.";
 /* Error in the profile editor when the service saved the profile but the app cannot read the state afterwards. */

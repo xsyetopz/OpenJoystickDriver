@@ -66,6 +66,12 @@
     /// The profile whose copy the Duplicate sheet is naming.
     @Published
     var duplicatingProfile: RemappingProfile?
+    /// The profile whose conversion the Convert sheet is setting up.
+    @Published
+    var convertingProfile: RemappingProfile?
+    /// What the last conversion left out, shown until dismissed.
+    @Published
+    var conversionReport: ProfileConversionReport?
     /// The result of the last Validate Profile File check, shown until dismissed.
     @Published
     var fileValidation: ProfileFileValidation?
@@ -170,10 +176,21 @@
 
     /// Opens the profile creation sheet and reads the catalog off the main actor.
     func beginCreatingProfile() {
+      isCreatingProfile = true
+      loadCatalog()
+    }
+
+    /// Opens the Convert sheet for `profile` and reads the catalog off the main actor.
+    func beginConverting(_ profile: RemappingProfile) {
+      convertingProfile = profile
+      loadCatalog()
+    }
+
+    /// Reads the catalog models that the creation and Convert sheets offer.
+    private func loadCatalog() {
       catalogModels = [:]
       unreadableRecordFiles = 0
       isLoadingCatalog = true
-      isCreatingProfile = true
       Task { @MainActor in
         let (families, unreadable) = await Task.detached {
           let set = ControllerRecordSet.load(userDirectory: ControllerRecordSet.userDirectory)

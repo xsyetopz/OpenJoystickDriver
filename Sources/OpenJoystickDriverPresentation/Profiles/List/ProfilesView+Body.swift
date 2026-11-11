@@ -117,6 +117,23 @@
           ProfileDuplicateSheet(source: source, profiles: profiles) { createProfile($0) }
         }
       ).background(
+        EmptyView().sheet(item: $screen.convertingProfile) { source in
+          ProfileConversionSheet(
+            source: source,
+            choices: ProfileControllerChoice.choices(
+              devices: connectedDevices,
+              profiles: profiles,
+              catalog: screen.catalogModels
+            ),
+            profiles: profiles,
+            isLoadingCatalog: screen.isLoadingCatalog
+          ) { convertProfile($0) }
+        }
+      ).background(
+        EmptyView().sheet(item: $screen.conversionReport) { report in
+          ProfileConversionReportSheet(report: report)
+        }
+      ).background(
         EmptyView().sheet(item: $screen.pairingProfile) { profile in
           ProfileJoyConPairSheet(profile: profile, devices: connectedDevices) { left, right in
             Task { @MainActor in

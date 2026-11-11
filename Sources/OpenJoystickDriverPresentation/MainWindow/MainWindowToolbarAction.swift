@@ -10,6 +10,8 @@ enum MainWindowToolbarAction: String, CaseIterable {
   case validateProfileFile
   /// Duplicates the selected profile.
   case duplicateProfile
+  /// Converts the selected profile to another controller model.
+  case convertProfile
   /// Saves the selected profile to a file.
   case exportProfile
   /// Asks to delete the selected profile.
@@ -50,6 +52,7 @@ enum MainWindowToolbarAction: String, CaseIterable {
     case .importProfile: return "square.and.arrow.down"
     case .validateProfileFile: return "checkmark.seal"
     case .duplicateProfile: return "plus.square.on.square"
+    case .convertProfile: return "arrow.left.arrow.right"
     case .exportProfile: return "square.and.arrow.up"
     case .deleteProfile: return "trash"
     case .installLibraryItem: return "square.and.arrow.down.on.square"
@@ -76,6 +79,7 @@ enum MainWindowToolbarAction: String, CaseIterable {
     case .importProfile: return "ui.profiles.import"
     case .validateProfileFile: return "ui.profiles.validateFile"
     case .duplicateProfile: return "action.duplicate"
+    case .convertProfile: return "action.convert"
     case .exportProfile: return "ui.profiles.export"
     case .deleteProfile: return "action.delete"
     case .installLibraryItem: return "ui.library.install"
@@ -102,6 +106,7 @@ enum MainWindowToolbarAction: String, CaseIterable {
     case .importProfile: return "ui.profiles.import"
     case .validateProfileFile: return "ui.profiles.validateFile"
     case .duplicateProfile: return "action.duplicate"
+    case .convertProfile: return "action.convert"
     case .exportProfile: return "ui.profiles.export"
     case .deleteProfile: return "action.delete"
     case .installLibraryItem: return "ui.menu.file.installRecordOrMod"
@@ -124,8 +129,8 @@ enum MainWindowToolbarAction: String, CaseIterable {
   /// The area whose toolbar shows the action.
   var area: MainWindowArea {
     switch self {
-    case .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .exportProfile,
-      .deleteProfile:
+    case .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .convertProfile,
+      .exportProfile, .deleteProfile:
       return .profiles
     case .installLibraryItem, .validateLibraryItem, .testLibraryRecord, .removeLibraryItem,
       .searchLibrary:
@@ -164,8 +169,10 @@ struct ProfileToolbarState: Equatable {
 extension MainWindowToolbarAction {
   /// Whether the action acts on the saved profile.
   ///
-  /// Duplicate and Export wait for the editor's changes to be saved.
-  var needsSavedProfile: Bool { self == .duplicateProfile || self == .exportProfile }
+  /// Duplicate, Convert and Export wait for the editor's changes to be saved.
+  var needsSavedProfile: Bool {
+    self == .duplicateProfile || self == .convertProfile || self == .exportProfile
+  }
 
   /// Whether a Profiles action is enabled in `state`; other actions are always enabled here.
   func isEnabled(profile state: ProfileToolbarState) -> Bool {
@@ -173,7 +180,7 @@ extension MainWindowToolbarAction {
     case .newProfile, .importProfile: return !state.isBlocked
     case .validateProfileFile: return true
     case .exportProfile: return state.hasSelection && !state.hasUnsavedChanges
-    case .duplicateProfile:
+    case .duplicateProfile, .convertProfile:
       return state.hasSelection && !state.isBlocked && !state.hasUnsavedChanges
     case .deleteProfile: return state.hasSelection && !state.isBlocked
     case .installLibraryItem, .grantProgram, .createToken,
@@ -195,8 +202,8 @@ extension MainWindowArea {
     case .controllers: return []
     case .profiles:
       return [
-        .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .exportProfile,
-        .deleteProfile,
+        .newProfile, .importProfile, .validateProfileFile, .duplicateProfile, .convertProfile,
+        .exportProfile, .deleteProfile,
       ]
     case .library:
       return [
