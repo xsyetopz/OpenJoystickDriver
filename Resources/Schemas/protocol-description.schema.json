@@ -16,7 +16,7 @@
       "$ref": "controller.schema.json#/$defs/protocol/properties/family"
     },
     "variants": {
-      "description": "The implemented variants of the family; absent when it has one contract. Interface signatures, rawUSB and defaults.variants name only these.",
+      "description": "The implemented variants of the family.",
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
@@ -53,7 +53,7 @@
       "items": {
         "enum": ["input", "rumble", "hidUsageMap", "bluetoothLE", "keepAlive"]
       },
-      "description": "The record sections the driver reads: input (report layouts), rumble (a rumble template), hidUsageMap (an input hidUsageMap), bluetoothLE (the record's bluetoothLE section) and keepAlive (protocol.keepAlive)."
+      "description": "The record sections the driver reads."
     },
     "sessionKeys": {
       "type": "array",
@@ -62,7 +62,7 @@
       "items": {
         "enum": ["startup", "keepAlive"]
       },
-      "description": "The general defaults.session keys, besides the rumble template that recordSections governs, that the driver reads; absent means none. A schema cannot say that defaults.session sets only these, which the validators check."
+      "description": "The general session keys that the driver reads, besides the rumble template."
     },
     "tuningKeys": {
       "type": "array",
@@ -115,7 +115,7 @@
       "$ref": "#/$defs/macOSOwnedOutput"
     },
     "inputStart": {
-      "description": "What the user does before a controller of the family sends its first input report: PressGuide presses the home button. variants limits it to those variants, each one the family lists, which a schema cannot say and the validators check; absent means every variant.",
+      "description": "What the user does before a controller of the family sends its first input report.",
       "type": "object",
       "additionalProperties": false,
       "required": ["action"],
@@ -165,13 +165,13 @@
           "forcedVibration"
         ]
       },
-      "description": "The parameters records of this family may set, by name; each name is one a driver reads in ProtocolParameters."
+      "description": "The parameters that records of this family may set, by name."
     },
     "defaults": {
       "$ref": "#/$defs/defaults"
     },
     "parameterRules": {
-      "description": "Rules a record's parameters obey beyond each parameter's own type. Each rule applies to the listed variants, or to every variant when it lists none: None allows no parameters, AtMostOne and ExactlyOne limit how many of the listed parameters are set, and Requires needs every listed parameter whenever any parameter is set. The listed parameters are ones the description declares and the variants are ones the family has, which a schema cannot say and the validators check.",
+      "description": "Rules that a record's parameters obey, beyond each parameter's own type.",
       "type": "array",
       "minItems": 1,
       "items": {
@@ -179,7 +179,7 @@
       }
     },
     "writeTransports": {
-      "description": "The transports an activation or deactivation write may name; absent when the family's writes name no transport.",
+      "description": "The transports that an activation or deactivation write may name.",
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
@@ -542,7 +542,7 @@
           "$ref": "#/$defs/descriptionReceiverPowerOff"
         },
         "variants": {
-          "description": "Tuning and the rumble template that differ by variant, over the flat tuning and the flat session rumble template.",
+          "description": "Tuning and the rumble template that differ by variant.",
           "type": "object",
           "minProperties": 1,
           "propertyNames": {
@@ -613,7 +613,7 @@
       }
     },
     "controls": {
-      "description": "The controls every controller of the family has: the Xbox layout (without guide) when base is Xbox, less remove, plus add, with the touch contacts and motion the family reports. A driver adds only what its record or layout makes true.",
+      "description": "The controls every controller of the family has: a base layout, removals, additions, touch contacts, and motion.",
       "type": "object",
       "additionalProperties": false,
       "minProperties": 1,
@@ -628,7 +628,7 @@
           "$ref": "controller.schema.json#/$defs/controlList"
         },
         "digitalTriggers": {
-          "description": "The triggers whose press the protocol reports as its own digital signal; they are controls of the family.",
+          "description": "The triggers whose press the protocol reports as its own digital signal.",
           "type": "array",
           "uniqueItems": true,
           "items": {
@@ -646,7 +646,7 @@
       }
     },
     "recordCapabilities": {
-      "description": "The capability deltas a record of the family may declare, because its driver acts on them: the exact controls a record may add with present, and whether it may drop rumble.",
+      "description": "The capability deltas a record of the family may declare: added controls and dropped rumble.",
       "type": "object",
       "additionalProperties": false,
       "minProperties": 1,
@@ -715,7 +715,7 @@
       }
     },
     "startupVariants": {
-      "description": "The stored variants a startup or keep-alive write is sent on; absent sends it on every variant.",
+      "description": "The stored variants that a startup or keep-alive write is sent on.",
       "type": "array",
       "minItems": 1,
       "maxItems": 8,
@@ -725,7 +725,7 @@
       }
     },
     "startupWhen": {
-      "description": "Limits a startup write to controllers whose record sets an enumeration parameter to a listed value (is), or not to one (isNot, which also matches an unset parameter).",
+      "description": "The enumeration parameter value that selects a startup write, or that excludes it.",
       "type": "object",
       "additionalProperties": false,
       "required": ["parameter"],
@@ -850,7 +850,7 @@
       }
     },
     "descriptionReceiverPowerOff": {
-      "description": "The one raw-USB packet a receiver slot gets when OJD closes it on purpose; variants limits it to those the family lists, which a schema cannot say and the validators check. Only XboxXUSB sets it.",
+      "description": "The one raw-USB packet that a receiver slot gets when OJD closes it on purpose.",
       "type": "object",
       "additionalProperties": false,
       "required": ["bytes"],
@@ -887,7 +887,7 @@
       }
     },
     "descriptionSessionWrite": {
-      "description": "One HID report of a controller's activation or deactivation, sent as written. A write limited by transport is sent only over that transport.",
+      "description": "One HID report of a controller's activation or deactivation, sent as written.",
       "type": "object",
       "additionalProperties": false,
       "required": ["report", "bytes"],
@@ -912,7 +912,7 @@
       }
     },
     "generalSessionKeys": {
-      "description": "The defaults.session keys every family may set. Any other session key belongs to the families whose drivers read it.",
+      "description": "The session keys that every family may set.",
       "properties": {
         "startup": true,
         "rumble": true,
@@ -940,14 +940,14 @@
       }
     },
     "wiiExtensionField": {
-      "description": "One value assembled from 1 to 3 parts, the most significant part first.",
+      "description": "One value assembled from extension parts, the most significant part first.",
       "type": "array",
       "minItems": 1,
       "maxItems": 3,
       "items": { "$ref": "#/$defs/wiiExtensionPart" }
     },
     "wiiExtensionLayout": {
-      "description": "The decode of the six data bytes of an extension. Every field lies in bits no other field uses, a mask is contiguous, a stick or trigger is 1 to 8 bits wide and an accelerometer axis 1 to 10, controls appear once, and a stick halfRange is at most 2^bits, which a schema cannot say and the validators check. stickCenter is the rule for the center of every stick: FirstSample takes the first sample after the handshake as the center, because the extension has no calibration block that WiiBrew documents.",
+      "description": "The decode of the six data bytes of an extension, with the rule for the center of every stick.",
       "type": "object",
       "additionalProperties": false,
       "minProperties": 1,
@@ -1025,12 +1025,12 @@
       ]
     },
     "wiiAddress": {
-      "description": "A register address of the remote: six uppercase hex digits. The driver adds the register space flag.",
+      "description": "A register address of the remote, as six uppercase hex digits.",
       "type": "string",
       "pattern": "^[0-9A-F]{6}$"
     },
     "wiiStep": {
-      "description": "One script step. Report sets report and data, Write sets address and bytes, Read sets address and length, Sensitivity sets address and block, IRMode and MotionPlusMode set address; a step sets no other field, which a schema cannot say and the validators check.",
+      "description": "One step of a register script: a report, a write, a read, or a mode setting.",
       "type": "object",
       "additionalProperties": false,
       "required": ["kind"],
@@ -1066,7 +1066,7 @@
       "items": { "$ref": "#/$defs/wiiStep" }
     },
     "descriptionWiiRemote": {
-      "description": "The wire facts of the Wii Remote: the motor and LED bits, the core buttons and accelerometer low bits, the input report modes with their blocks (ids 0x30 to 0x3F, no overlap), the report-mode choice table, the extension ids (six bytes) with the data layout of each extension that has one, the IR sensitivity levels and mode bytes, the Motion Plus mode bytes and the register scripts; the IR write interval (at least 50 ms), the speaker clip limit and the reply timeout are tuning keys. Cross-checks a schema cannot say (unique ids, blocks in offset order, a choice whose mode carries its features, levels counting up from 1, a step that sets only its kind's fields) are checked by the validators.",
+      "description": "The wire facts of the Wii Remote: bits, report modes, extensions, IR levels, Motion Plus modes, and scripts.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -1263,7 +1263,7 @@
       }
     },
     "descriptionSession": {
-      "description": "What runs while the device is open: startup writes, the rumble template, the keep-alive, for NintendoSwitch1 its subcommands, for XboxGIP its named packets, handshake attempts and announce resend limit, and for NintendoSwitch2 its command channel and trailing stop packets, and for NintendoWii its Wii Remote wire facts. Startup writes are all HID reports, all raw-USB packets, or all references to the family's named packets; a reference names an id that namedPackets lists, which a schema cannot say and the validators check.",
+      "description": "What runs while the device is open: startup writes, rumble, keep-alive, and family-specific steps.",
       "type": "object",
       "additionalProperties": false,
       "minProperties": 1,
@@ -1298,7 +1298,7 @@
           "maximum": 100
         },
         "commandChannel": {
-          "description": "The USB interface that carries commands and their replies: its number, the IN endpoint, the largest reply read after each command, and the reply read timeout over USB and over Bluetooth LE.",
+          "description": "The USB interface that carries commands and replies, with its endpoint, reply size, and timeouts.",
           "type": "object",
           "additionalProperties": false,
           "required": [
@@ -1415,7 +1415,7 @@
       ]
     },
     "descriptionNamedPackets": {
-      "description": "The GIP packets a record can select by name in protocol.initialization. A named packet is a raw-USB packet whose byte 2 is the sequence number the driver stamps; its id is the family name, a slash and a lowercase hyphenated name, and appears at most once, which a schema cannot say and the validators check.",
+      "description": "The GIP packets that a record can select by name at initialization.",
       "type": "array",
       "minItems": 1,
       "maxItems": 16,
@@ -1437,13 +1437,13 @@
           "maxLength": 191
         },
         "sessionByte": {
-          "description": "The GIP sequence number sits at byte 2.",
+          "description": "The byte offset of the GIP sequence number.",
           "const": 2
         }
       }
     },
     "descriptionSubcommands": {
-      "description": "The Switch 1 subcommand report: its id, the modulus of the rolling packet counter that every output report of the family shares (the counter starts at 0 and wraps to 0 after modulus - 1), the requests sent in order at startup and the player-indicator subcommand. A startup recovery round re-sends the SPI reads whose reply has not arrived.",
+      "description": "The Switch 1 subcommand report: its id, the packet counter modulus, the startup requests, and the player indicator.",
       "type": "object",
       "additionalProperties": false,
       "required": ["reportID", "counterModulus", "requests", "playerIndicator"],
@@ -1503,7 +1503,7 @@
       }
     },
     "descriptionSubcommandRequest": {
-      "description": "One subcommand: its id and either fixed data bytes or an SPI flash read. An SPI read sends the address as four little-endian bytes and then the length; its purpose names the calibration the reply feeds, and each purpose appears at most once, which a schema cannot say and the validators check.",
+      "description": "One subcommand: its id and either fixed data bytes or an SPI flash read.",
       "type": "object",
       "additionalProperties": false,
       "required": ["subcommand"],
@@ -1546,7 +1546,7 @@
       ]
     },
     "descriptionKeepAlive": {
-      "description": "The family's keep-alive: its period, and the fixed writes of each run. The driver adds the writes that follow its state. A list may mix HID reports and raw-USB packets, each limited to the variants it is for.",
+      "description": "The family's keep-alive: its period and the fixed writes of each run.",
       "type": "object",
       "additionalProperties": false,
       "required": ["intervalMilliseconds"],
@@ -1588,7 +1588,7 @@
           "$ref": "#/$defs/startupVariants"
         },
         "resendTuning": {
-          "description": "The tuning key that gives the number of runs between sends of this write; absent sends it on every run.",
+          "description": "The tuning key that gives the number of runs between sends of this write.",
           "enum": ["lizardResendTicks"]
         }
       }
@@ -1614,13 +1614,13 @@
           "$ref": "#/$defs/startupVariants"
         },
         "resendTuning": {
-          "description": "The tuning key that gives the number of runs between sends of this write; absent sends it on every run.",
+          "description": "The tuning key that gives the number of runs between sends of this write.",
           "enum": ["lizardResendTicks"]
         }
       }
     },
     "variant": {
-      "description": "A protocol variant name; a family that has the variant lists it in its variants.",
+      "description": "A protocol variant name.",
       "enum": [
         "USB",
         "BluetoothClassic",
