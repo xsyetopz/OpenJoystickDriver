@@ -15,14 +15,32 @@
     static let minimumDetailWidth: CGFloat = 420
     /// The content size of a new main window.
     static let defaultContentSize = NSSize(width: 1_040, height: 700)
-    /// The smallest content size that the window allows.
-    static let minimumContentSize = NSSize(width: 960, height: 560)
+    /// The smallest content height that the window allows.
+    static let minimumContentHeight: CGFloat = 560
+
+    /// Returns the smallest content width that fits the columns that show: the sum of their
+    /// minimum widths.
+    static func minimumContentWidth(showsSidebar: Bool, showsList: Bool) -> CGFloat {
+      (showsSidebar ? sidebarWidth.minimum : 0) + (showsList ? listWidth.minimum : 0)
+        + minimumDetailWidth
+    }
+
+    /// Returns the smallest content size that fits the columns that show.
+    static func minimumContentSize(showsSidebar: Bool, showsList: Bool) -> NSSize {
+      NSSize(
+        width: minimumContentWidth(showsSidebar: showsSidebar, showsList: showsList),
+        height: minimumContentHeight
+      )
+    }
 
     /// Returns the smallest frame size of `window` whose content area is
-    /// ``MainWindowSizingPolicy/minimumContentSize``.
+    /// ``minimumContentSize(showsSidebar:showsList:)``.
     @MainActor
-    static func minimumFrameSize(for window: NSWindow) -> NSSize {
-      window.frameRect(forContentRect: NSRect(origin: .zero, size: minimumContentSize)).size
+    static func minimumFrameSize(for window: NSWindow, showsSidebar: Bool, showsList: Bool)
+      -> NSSize
+    {
+      let content = minimumContentSize(showsSidebar: showsSidebar, showsList: showsList)
+      return window.frameRect(forContentRect: NSRect(origin: .zero, size: content)).size
     }
   }
 
@@ -44,6 +62,10 @@
     private let splitViewController = NSSplitViewController()
     /// The content list column, collapsed for an area without a list.
     private let listItem: NSSplitViewItem
+    /// The sidebar column, collapsed by the sidebar toggle.
+    private let sidebarItem: NSSplitViewItem
+    /// Re-applies the window minimum when the sidebar collapses or returns.
+    private var sidebarObservation: AnyCancellable?
     /// Keeps the window title and the toolbar in step with the selected area.
     private var areaObservation: AnyCancellable?
     /// Re-validates the toolbar items when any state that enables them changes.
@@ -120,6 +142,7 @@
           rootView: MainWindowSidebar(navigation: navigation)
         )
       )
+      self.sidebarItem = sidebarItem
       sidebarItem.canCollapse = true
       sidebarItem.minimumThickness = MainWindowSizingPolicy.sidebarWidth.minimum
       sidebarItem.maximumThickness = MainWindowSizingPolicy.sidebarWidth.maximum
@@ -166,6 +189,11 @@
       configureToolbar(for: window)
       installSizingPolicy(on: window)
 
+      sidebarObservation = sidebarItem.publisher(for: \.isCollapsed).dropFirst().sink {
+        [weak self, weak window] _ in
+        guard let self, let window else { return }
+        applyMinimumSize(to: window)
+      }
       areaObservation = navigation.$selectedArea.sink { [weak self] area in
         self?.reflect(area: area)
       }
@@ -304,7 +332,7 @@
     /// Sizes the window, shows it in front and activates the app.
     private func present() {
       guard let window else { return }
-      window.minSize = MainWindowSizingPolicy.minimumFrameSize(for: window)
+      applyMinimumSize(to: window)
       WindowFramePolicy.clamp(window, minimumSize: window.minSize)
       visibilityChanged(true)
       AppForeground.show(window)
@@ -322,10 +350,31 @@
 
     /// Keeps the window from being resized below its minimum frame size.
     func windowWillResize(_ sender: NSWindow, toFrameSize frameSize: NSSize) -> NSSize {
-      WindowFramePolicy.fittingSize(
-        frameSize,
-        minimumSize: MainWindowSizingPolicy.minimumFrameSize(for: sender)
+      WindowFramePolicy.fittingSize(frameSize, minimumSize: minimumFrameSize(for: sender))
+    }
+
+    /// The smallest frame of `window` that fits the sidebar and list column while they show.
+    private func minimumFrameSize(for window: NSWindow) -> NSSize {
+      MainWindowSizingPolicy.minimumFrameSize(
+        for: window,
+        showsSidebar: !sidebarItem.isCollapsed,
+        showsList: !listItem.isCollapsed
       )
+    }
+
+    /// Sets the window's minimum sizes from the columns that show, and grows the window when it is
+    /// smaller than that.
+    private func applyMinimumSize(to window: NSWindow) {
+      window.contentMinSize = MainWindowSizingPolicy.minimumContentSize(
+        showsSidebar: !sidebarItem.isCollapsed,
+        showsList: !listItem.isCollapsed
+      )
+      window.minSize = minimumFrameSize(for: window)
+      let fittedFrame = WindowFramePolicy.fittingFrame(window.frame, minimumSize: window.minSize)
+      guard fittedFrame.size != window.frame.size else { return }
+      isEnforcingMinimumSize = true
+      window.setFrame(fittedFrame, display: true)
+      isEnforcingMinimumSize = false
     }
 
     /// Stops following the logs while the window is miniaturized.
@@ -341,27 +390,18 @@
     /// Grows the window back to its minimum frame size after a resize that made it smaller.
     func windowDidResize(_ notification: Notification) {
       guard !isEnforcingMinimumSize, let window = notification.object as? NSWindow else { return }
-      let minimumFrameSize = MainWindowSizingPolicy.minimumFrameSize(for: window)
-      let fittedFrame = WindowFramePolicy.fittingFrame(window.frame, minimumSize: minimumFrameSize)
-      guard fittedFrame.size != window.frame.size else { return }
-      isEnforcingMinimumSize = true
-      window.setFrame(fittedFrame, display: true)
-      isEnforcingMinimumSize = false
+      applyMinimumSize(to: window)
     }
 
     /// Moves the window inside the visible frame of its new screen.
     func windowDidChangeScreen(_ notification: Notification) {
       guard let window else { return }
-      WindowFramePolicy.clamp(
-        window,
-        minimumSize: MainWindowSizingPolicy.minimumFrameSize(for: window)
-      )
+      WindowFramePolicy.clamp(window, minimumSize: minimumFrameSize(for: window))
     }
 
     /// Applies the minimum sizes, restores the saved frame and keeps the window on screen.
     private func installSizingPolicy(on window: NSWindow) {
-      window.contentMinSize = MainWindowSizingPolicy.minimumContentSize
-      window.minSize = MainWindowSizingPolicy.minimumFrameSize(for: window)
+      applyMinimumSize(to: window)
       window.setContentSize(MainWindowSizingPolicy.defaultContentSize)
       let autosaveName = "MainWindowGeometry"
       let restoredFrame = window.setFrameUsingName(autosaveName)
@@ -385,6 +425,7 @@
     /// subtitle for `area`.
     private func reflect(area: MainWindowArea) {
       listItem.isCollapsed = !area.hasListColumn
+      if let window { applyMinimumSize(to: window) }
       showToolbarActions(of: area)
       updateLogFollowing(area: area)
       window?.title = area.title

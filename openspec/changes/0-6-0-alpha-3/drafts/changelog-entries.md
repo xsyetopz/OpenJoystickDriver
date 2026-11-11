@@ -50,6 +50,8 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - Settings gives the reason Start at login cannot change, says when macOS has denied notifications and offers the Notifications pane of System Settings, checks for updates at once when Automatic update check is turned on, and names the controller that needs attention in the "Connected" notification switch. (12.6)
 - A failed packet capture export shows its reason under the Export button, and a failed Activity action shows a row with Dismiss at the top of the Activity area, instead of an alert. (12.7)
 
+- The main window's minimum width is the sum of the minimum widths of the columns it shows: 790 points with the sidebar, list and detail (it was 960), 620 with the sidebar hidden, and 590 in Access and Activity, which have no list column. The window grows when a column returns and the window is too narrow for it. (12.10)
+
 ## Fixed
 
 - A GIP pad that announces nothing and sends its first report to an input read that is already pending gets that read before the startup writes. Not checked on hardware. (3.2)

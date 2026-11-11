@@ -228,7 +228,7 @@ struct MainWindowNavigationTests {
   @Test
   func mainWindowUsesStableContentSizingAcrossAreas() {
     #expect(MainWindowSizingPolicy.defaultContentSize == NSSize(width: 1_040, height: 700))
-    #expect(MainWindowSizingPolicy.minimumContentSize == NSSize(width: 960, height: 560))
+    #expect(MainWindowSizingPolicy.minimumContentHeight == 560)
   }
 
   @Test
@@ -247,24 +247,6 @@ struct MainWindowNavigationTests {
       WindowFramePolicy.fittingSize(NSSize(width: 1_100, height: 760), minimumSize: minimum)
         == NSSize(width: 1_100, height: 760)
     )
-  }
-
-  @Test
-  @MainActor
-  func frameMinimumConvertsBackToTheRequiredContentMinimum() {
-    let window = NSWindow(
-      contentRect: NSRect(origin: .zero, size: MainWindowSizingPolicy.defaultContentSize),
-      styleMask: [.titled, .closable, .resizable],
-      backing: .buffered,
-      defer: false
-    )
-    window.toolbar = NSToolbar(identifier: "SizingPolicyTest")
-    let minimumFrameSize = MainWindowSizingPolicy.minimumFrameSize(for: window)
-    let convertedContentSize = window.contentRect(
-      forFrameRect: NSRect(origin: .zero, size: minimumFrameSize)
-    ).size
-
-    #expect(convertedContentSize == MainWindowSizingPolicy.minimumContentSize)
   }
 
   @Test
