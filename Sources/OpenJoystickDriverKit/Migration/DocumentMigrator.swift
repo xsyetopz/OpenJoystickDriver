@@ -61,8 +61,9 @@ public struct DocumentMigrator: Sendable {
           kinds.contains(kind)
         else { continue }
         do {
-          let converted = try convert(document, kind: kind, file: url)
-          if !dryRun { try write(converted, to: url, as: file) }
+          let target = url.deletingPathExtension().appendingPathExtension("plist")
+          let converted = try convert(document, kind: kind, file: target)
+          if !dryRun { try write(converted, from: url, to: target, as: file) }
           let status: Status = dryRun ? .wouldConvert : .converted
           entries.append(Entry(file: file, kind: kind.rawValue, status: status, detail: nil))
         } catch {
@@ -104,7 +105,7 @@ public struct DocumentMigrator: Sendable {
       else { throw DocumentMigrationProblem("no conversion from \(version)") }
       converted = try step.convert(converted)
     }
-    let data = converted.formattedData()
+    let data = try converted.plistData()
     try Self.check(data, kind: kind, file: file)
     return data
   }
@@ -115,17 +116,19 @@ public struct DocumentMigrator: Sendable {
   /// shape are checked here.
   private static func check(_ data: Data, kind: DocumentKind, file: URL) throws {
     switch kind {
-    case .settings: _ = try JSONDecoder().decode(SettingsDocument.self, from: data)
-    case .profile: _ = try JSONDecoder().decode(RemappingProfile.self, from: data)
+    case .settings:
+      _ = try DocumentCoder.decode(SettingsDocument.self, from: data, file: file.lastPathComponent)
+    case .profile: _ = try RemappingProfileFileStore.load(from: data, file: file.lastPathComponent)
+    case .modPackage: _ = try ModPackageManifest.parse(data)
     case .controller, .controllerPatch:
-      let isAll = file.lastPathComponent == "all.patch.json"
+      let isAll = file.lastPathComponent == "all.patch.plist"
       let layer: ControllerRecordLayer = isAll ? .global : .user
       _ = try ControllerRecordSet.parse(data, file: file, layer: layer)
     case .virtualDevice:
       let source = VirtualDevice.Source.file(file.lastPathComponent)
       _ = try VirtualDevice.decode(data, source: source, requiresMatch: true)
     case .accessGrants:
-      let document = try OrderedJSON.parse(data)
+      let document = try OrderedJSON(document: data, file: file.lastPathComponent)
       if let problem = OpenJoystickDriverAPI.headerProblem(
         apiVersion: document["apiVersion"]?.string,
         kind: document["kind"]?.string,
@@ -136,10 +139,11 @@ public struct DocumentMigrator: Sendable {
     }
   }
 
-  /// Keeps the original of `file` in the backup folder, then replaces it with `data`.
+  /// Keeps the original of `file` in the backup folder, writes `data` to `target`, and removes the
+  /// original when `target` is another file.
   ///
   /// A backup that exists already is not overwritten, so a second run cannot lose an original.
-  private func write(_ data: Data, to url: URL, as file: String) throws {
+  private func write(_ data: Data, from url: URL, to target: URL, as file: String) throws {
     let backup = backupDirectory.appendingPathComponent(file)
     guard !FileManager.default.fileExists(atPath: backup.path) else {
       throw DocumentMigrationProblem("\(Self.backupFolderName)/\(file) exists already")
@@ -150,12 +154,13 @@ public struct DocumentMigrator: Sendable {
       withIntermediateDirectories: true
     )
     try FileManager.default.copyItem(at: url, to: backup)
-    try data.write(to: url, options: .atomic)
+    try data.write(to: target, options: .atomic)
     if let permissions {
       try FileManager.default.setAttributes(
         [.posixPermissions: permissions],
-        ofItemAtPath: url.path
+        ofItemAtPath: target.path
       )
     }
+    if target != url { try FileManager.default.removeItem(at: url) }
   }
 }

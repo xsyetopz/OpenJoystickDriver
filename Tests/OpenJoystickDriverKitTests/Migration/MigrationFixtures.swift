@@ -21,6 +21,7 @@ enum MigrationFixtures {
     "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E", "name": "Tap",
     "device": {"vendorID": 1356, "productID": 3302},
     "applicationScope": {"type": "Global"},
+    "outputPolicy": {"physicalInput": "Shared", "virtualGamepad": "Mapped"},
     "bindings": [{
       "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D6A",
       "source": {"type": "Button", "button": "East"},

@@ -24,12 +24,19 @@ struct DocumentMigrationStep: Sendable {
   let convert: @Sendable (OrderedJSON) throws -> OrderedJSON
 
   /// The steps for every kind, in the order a chain applies them.
-  static let all: [Self] = DocumentKind.allCases.map { kind in
-    Self(
-      kind: kind.rawValue,
-      from: AlphaOneToAlphaTwo.from,
-      to: AlphaOneToAlphaTwo.to
-    ) { try AlphaOneToAlphaTwo.convert($0, kind: kind) }
+  static let all: [Self] = DocumentKind.allCases.flatMap { kind in
+    [
+      Self(
+        kind: kind.rawValue,
+        from: AlphaOneToAlphaTwo.from,
+        to: AlphaOneToAlphaTwo.to
+      ) { try AlphaOneToAlphaTwo.convert($0, kind: kind) },
+      Self(
+        kind: kind.rawValue,
+        from: AlphaTwoToAlphaThree.from,
+        to: AlphaTwoToAlphaThree.to
+      ) { try AlphaTwoToAlphaThree.convert($0, kind: kind) },
+    ]
   }
 }
 
@@ -45,6 +52,8 @@ enum DocumentKind: String, CaseIterable, Sendable {
   case controller = "Controller"
   /// A user controller patch in `Controllers/`.
   case controllerPatch = "ControllerPatch"
+  /// The `mod` file of a package.
+  case modPackage = "ModPackage"
   /// A virtual device file in `VirtualDevices/`.
   case virtualDevice = "VirtualDevice"
 }
@@ -67,7 +76,7 @@ enum AlphaOneToAlphaTwo {
       $0.key == "apiVersion" ? .init(key: $0.key, value: .string(to)) : $0
     }
     switch kind {
-    case .settings, .accessGrants, .virtualDevice: break
+    case .settings, .accessGrants, .virtualDevice, .modPackage: break
     case .profile: members = try members.map { try multiTap($0) }
     case .controller:
       members = try members.map { $0.key == "input" ? try inputMember($0) : $0 }

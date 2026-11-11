@@ -46,7 +46,7 @@ struct DocumentMigratorTests {
   func aProfileBecomesAVersionThreePropertyList() throws {
     try write(MigrationFixtures.profile, "Profiles/6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E.json")
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
-    #expect(entries.map(\.status) == [.converted])
+    #expect(entries.map(\.status) == [.converted], "\(entries)")
     let profile = try RemappingProfileFileStore.load(
       from: support.appendingPathComponent("Profiles/6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E.plist")
     )
