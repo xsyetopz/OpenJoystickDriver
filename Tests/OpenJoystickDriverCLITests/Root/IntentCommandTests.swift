@@ -17,6 +17,9 @@ struct IntentCommandTests {
     "ListModsIntent": ["mod", "list"],
     "InstallModIntent": ["mod", "install"],
     "RemoveModIntent": ["mod", "remove"],
+    "RumbleControllerIntent": ["controller", "rumble"],
+    "SetPlayerIndicatorIntent": ["controller", "player"],
+    "SetControllerLightIntent": ["controller", "light"],
   ]
 
   private static func declaredIntents() throws -> Set<String> {

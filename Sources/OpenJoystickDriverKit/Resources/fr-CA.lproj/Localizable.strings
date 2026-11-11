@@ -3389,6 +3389,30 @@
 "ui.shortcuts.action.setProfileValue.value" = "Valeur";
 /* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
 "ui.shortcuts.error.profileKey" = "La clé d’une valeur de profil ne peut pas avoir de partie vide.";
+/* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.title" = "Faire vibrer la manette";
+/* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.description" = "Fait tourner brièvement les moteurs de vibration d’une manette.";
+/* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
+"ui.shortcuts.action.rumble.intensity" = "Intensité (0-255)";
+/* Label in the Shortcuts app of the rumble action's duration in seconds. */
+"ui.shortcuts.action.rumble.duration" = "Durée en secondes";
+/* Name in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.title" = "Définir l’indicateur de joueur";
+/* Description in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.description" = "Définit les voyants de joueur d’une manette.";
+/* Label in the Shortcuts app of the player number from 1 to 4, or 0 for none. */
+"ui.shortcuts.action.player.number" = "Numéro de joueur (0 pour aucun)";
+/* Name in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.title" = "Définir l’éclairage de la manette";
+/* Description in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.description" = "Définit la couleur de la barre lumineuse, la luminosité des LED ou les deux sur une manette.";
+/* Label in the Shortcuts app of the lightbar color given as six hexadecimal digits, RRGGBB. */
+"ui.shortcuts.action.light.color" = "Couleur (RRGGBB)";
+/* Label in the Shortcuts app of the LED brightness from 0 to 255. */
+"ui.shortcuts.action.light.brightness" = "Luminosité des LED (0-255)";
+/* Error in the Shortcuts app when the light action has no color or brightness, or the color is not RRGGBB. */
+"ui.shortcuts.error.lightRequest" = "Indiquez une couleur en six chiffres hexadécimaux, une luminosité, ou les deux.";
 /* Name in the Shortcuts app of the action that returns the installed mod packages. */
 "ui.shortcuts.action.listMods.title" = "Lister les paquets de mods";
 /* Description in the Shortcuts app of the action that returns the installed mod packages. */

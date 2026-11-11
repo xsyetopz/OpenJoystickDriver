@@ -17,7 +17,7 @@ struct ControllerSpeakerCommand: AsyncParsableCommand {
 }
 
 /// The request that names the speaker in a failure message.
-private let speakerRequest = OutputRequest(
+private let speakerRequest = ControllerOutputRequest(
   name: "speaker",
   command: .speaker(.stop),
   feature: CLILocalized.text("cli.controller.group.featureSpeaker")
@@ -47,13 +47,7 @@ private func printSpeakerResult(
       CLIStatus(
         details: ControllerOutputReport(
           controller: device.sessionToken.rawValue,
-          results: [
-            ControllerOutputReport.Entry(
-              command: speakerRequest.name,
-              outcome: outcome.rawValue,
-              droppedRumbleChannels: []
-            )
-          ]
+          results: [ControllerOutputEntry(speakerRequest, ControllerOutputResult(outcome))]
         )
       )
     )
@@ -141,7 +135,7 @@ struct ControllerSpeakerPlayCommand: AsyncParsableCommand {
       ) { client in
         try await client.playControllerSpeaker(encoded, for: .session(device.sessionToken))
       }
-      if result.outcome != .cancelled { try check(result, speakerRequest, device) }
+      if result.outcome != .cancelled { try ControllerOutput.check(result, speakerRequest, device) }
       try printSpeakerResult(
         result.outcome,
         of: device,
@@ -182,7 +176,7 @@ struct ControllerSpeakerStopCommand: AsyncParsableCommand {
         _ = try speakerFormat(of: device)
         return (device, try await client.stopControllerSpeaker(for: .session(device.sessionToken)))
       }
-      try check(result, speakerRequest, device)
+      try ControllerOutput.check(result, speakerRequest, device)
       try printSpeakerResult(
         result.outcome,
         of: device,

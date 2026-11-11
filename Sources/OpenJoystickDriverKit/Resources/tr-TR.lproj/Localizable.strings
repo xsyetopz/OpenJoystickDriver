@@ -3943,6 +3943,30 @@
 "ui.shortcuts.action.setProfileValue.value" = "Değer";
 /* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
 "ui.shortcuts.error.profileKey" = "Bir profil değerinin anahtarında boş bölüm olamaz.";
+/* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.title" = "Kumandayı Titret";
+/* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.description" = "Bir kumandanın titreşim motorlarını kısa süre çalıştırır.";
+/* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
+"ui.shortcuts.action.rumble.intensity" = "Şiddet (0-255)";
+/* Label in the Shortcuts app of the rumble action's duration in seconds. */
+"ui.shortcuts.action.rumble.duration" = "Süre (Saniye)";
+/* Name in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.title" = "Oyuncu Göstergesini Ayarla";
+/* Description in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.description" = "Bir kumandanın oyuncu gösterge ışıklarını ayarlar.";
+/* Label in the Shortcuts app of the player number from 1 to 4, or 0 for none. */
+"ui.shortcuts.action.player.number" = "Oyuncu Numarası (0: yok)";
+/* Name in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.title" = "Kumanda Işığını Ayarla";
+/* Description in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.description" = "Bir kumandada ışık çubuğu rengini, LED parlaklığını veya ikisini birden ayarlar.";
+/* Label in the Shortcuts app of the lightbar color given as six hexadecimal digits, RRGGBB. */
+"ui.shortcuts.action.light.color" = "Renk (RRGGBB)";
+/* Label in the Shortcuts app of the LED brightness from 0 to 255. */
+"ui.shortcuts.action.light.brightness" = "LED Parlaklığı (0-255)";
+/* Error in the Shortcuts app when the light action has no color or brightness, or the color is not RRGGBB. */
+"ui.shortcuts.error.lightRequest" = "Altı onaltılık basamakla bir renk, bir parlaklık veya ikisini birden girin.";
 /* Name in the Shortcuts app of the action that returns the installed mod packages. */
 "ui.shortcuts.action.listMods.title" = "Mod Paketlerini Listele";
 /* Description in the Shortcuts app of the action that returns the installed mod packages. */

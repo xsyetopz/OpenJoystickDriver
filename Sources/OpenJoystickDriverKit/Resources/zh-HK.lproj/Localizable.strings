@@ -3943,6 +3943,30 @@
 "ui.shortcuts.action.setProfileValue.value" = "值";
 /* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
 "ui.shortcuts.error.profileKey" = "設定檔值的鍵不可包含空白的部分。";
+/* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.title" = "讓控制器震動";
+/* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.description" = "讓控制器的震動馬達運轉片刻。";
+/* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
+"ui.shortcuts.action.rumble.intensity" = "強度 (0-255)";
+/* Label in the Shortcuts app of the rumble action's duration in seconds. */
+"ui.shortcuts.action.rumble.duration" = "持續時間（秒）";
+/* Name in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.title" = "設定玩家指示燈";
+/* Description in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.description" = "設定控制器的玩家指示燈。";
+/* Label in the Shortcuts app of the player number from 1 to 4, or 0 for none. */
+"ui.shortcuts.action.player.number" = "玩家編號（0 為無）";
+/* Name in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.title" = "設定控制器燈光";
+/* Description in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.description" = "設定控制器的燈條顏色、LED 亮度或兩者。";
+/* Label in the Shortcuts app of the lightbar color given as six hexadecimal digits, RRGGBB. */
+"ui.shortcuts.action.light.color" = "顏色 (RRGGBB)";
+/* Label in the Shortcuts app of the LED brightness from 0 to 255. */
+"ui.shortcuts.action.light.brightness" = "LED 亮度 (0-255)";
+/* Error in the Shortcuts app when the light action has no color or brightness, or the color is not RRGGBB. */
+"ui.shortcuts.error.lightRequest" = "請提供六位十六進位顏色、亮度，或兩者都提供。";
 /* Name in the Shortcuts app of the action that returns the installed mod packages. */
 "ui.shortcuts.action.listMods.title" = "列出模組套件";
 /* Description in the Shortcuts app of the action that returns the installed mod packages. */

@@ -13,7 +13,7 @@ struct EndpointChallenge: Encodable, Sendable {
   let nonce: String
 }
 
-/// A line that a client sends: `Hello` first, then any `ProfileRequest` or `ModList`, then
+/// A line that a client sends: `Hello` first, then any `ProfileRequest`, `ModList`, or `OutputRequest`, then
 /// `Subscription` or `FeedRequest`.
 ///
 /// A line is checked by ``EndpointHeader`` first: a missing header is answered with `E1011`, an
@@ -32,9 +32,11 @@ struct EndpointRequest: Decodable, Sendable {
     case profileRequest = "ProfileRequest"
     /// A request for the installed mod packages.
     case modList = "ModList"
+    /// A request to rumble, set the player indicator, or set the light of one controller.
+    case outputRequest = "OutputRequest"
 
     /// Whether the client sends the kind to get an answer, after which it may send another line.
-    var isCommand: Bool { self == .profileRequest || self == .modList }
+    var isCommand: Bool { [.profileRequest, .modList, .outputRequest].contains(self) }
   }
 
   /// The version of the endpoint API that the client speaks.
@@ -129,7 +131,127 @@ struct EndpointProfileResult: Encodable, Sendable {
   let profile: AutomationProfile
 }
 
-/// The answer to a `ModList`: the installed mod packages, as `ojd mod list` prints them.
+/// An `OutputRequest` line: `ojd controller rumble`, `player`, or `light` for one controller.
+struct EndpointOutputRequest: Decodable, Sendable {
+  /// The output that the request drives.
+  enum Output: Sendable {
+    /// Runs the rumble motors; the intensities are those of `ojd controller rumble`.
+    case rumble(RumbleIntensities, seconds: Double)
+    /// Sets the player indicator.
+    case player(PhysicalPlayerIndicator)
+    /// Sets the lightbar color, the LED brightness, or both.
+    case light(color: ControllerColor?, brightness: UInt8?)
+  }
+
+  /// The members of the line.
+  private enum CodingKeys: String, CodingKey {
+    /// The key of the controller reference.
+    case controller
+    /// The key of the output name.
+    case action
+    /// The key of the left main motor.
+    case left
+    /// The key of the right main motor.
+    case right
+    /// The key of the left trigger motor.
+    case leftTrigger
+    /// The key of the right trigger motor.
+    case rightTrigger
+    /// The key of the rumble duration.
+    case duration
+    /// The key of the player number.
+    case player
+    /// The key of the light color.
+    case color
+    /// The key of the light brightness.
+    case brightness
+  }
+
+  /// The port key, session token, or `VVVV:PPPP` model of the controller.
+  let controller: String
+  /// What to send to it.
+  let output: Output
+
+  /// Decodes the line; a duration, a player number, or a color out of range, and a `Light` that
+  /// names neither a color nor a brightness, fail.
+  init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    controller = try container.decode(String.self, forKey: .controller)
+    switch try container.decode(String.self, forKey: .action) {
+    case "Rumble":
+      let seconds =
+        try container.decodeIfPresent(Double.self, forKey: .duration)
+        ?? RumbleDuration.manualTestSeconds
+      guard ControllerOutput.isValidRumbleDuration(seconds) else {
+        throw DecodingError.dataCorruptedError(
+          forKey: .duration,
+          in: container,
+          debugDescription: "The duration is above 0 and within the maximum."
+        )
+      }
+      output = .rumble(
+        .manualTest(
+          lowFrequency: try container.decodeIfPresent(UInt8.self, forKey: .left),
+          highFrequency: try container.decodeIfPresent(UInt8.self, forKey: .right),
+          leftTrigger: try container.decodeIfPresent(UInt8.self, forKey: .leftTrigger),
+          rightTrigger: try container.decodeIfPresent(UInt8.self, forKey: .rightTrigger)
+        ),
+        seconds: seconds
+      )
+    case "Player":
+      guard
+        let indicator = PhysicalPlayerIndicator(
+          rawValue: try container.decode(Int.self, forKey: .player)
+        )
+      else {
+        throw DecodingError.dataCorruptedError(
+          forKey: .player,
+          in: container,
+          debugDescription: "The player is a number from 0 to 4."
+        )
+      }
+      output = .player(indicator)
+    case "Light":
+      let hex = try container.decodeIfPresent(String.self, forKey: .color)
+      let color = hex.flatMap(ControllerColor.init(hex:))
+      let brightness = try container.decodeIfPresent(UInt8.self, forKey: .brightness)
+      guard (hex == nil) == (color == nil), hex != nil || brightness != nil else {
+        throw DecodingError.dataCorruptedError(
+          forKey: .color,
+          in: container,
+          debugDescription: "The light needs a color as RRGGBB or a brightness."
+        )
+      }
+      output = .light(color: color, brightness: brightness)
+    default:
+      throw DecodingError.dataCorruptedError(
+        forKey: .action,
+        in: container,
+        debugDescription: "The output is Rumble, Player, or Light."
+      )
+    }
+  }
+}
+
+/// The answer to an `OutputRequest`: what the controller did with each command.
+struct EndpointOutputResult: Encodable, Sendable {
+  /// The version of the endpoint API.
+  let apiVersion = OpenJoystickDriverAPI.version
+  /// The kind of the line, `OutputResult`.
+  let kind = "OutputResult"
+  /// The session ID of the controller.
+  let controller: String
+  /// One entry for each command sent.
+  let results: [ControllerOutputEntry]
+
+  /// Reports `result`.
+  init(_ result: AutomationOutputResult) {
+    controller = result.controller
+    results = result.results
+  }
+}
+
+/// The answer to a `ModList`:the installed mod packages, as `ojd mod list` prints them.
 struct EndpointMods: Encodable, Sendable {
   /// The version of the endpoint API.
   let apiVersion = OpenJoystickDriverAPI.version

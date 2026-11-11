@@ -83,8 +83,8 @@ enum LocalizationCatalogAudit {
       "ui.shortcuts.parameter.controller",
       "ui.shortcuts.profile.name",
     ],
-    "es-ES": spanishTerms.union(["ui.menu.window.zoom"]),
-    "es-MX": spanishTerms.union(["ui.menu.window.zoom"]),
+    "es-ES": spanishTerms.union(["ui.menu.window.zoom", "ui.shortcuts.action.light.color"]),
+    "es-MX": spanishTerms.union(["ui.menu.window.zoom", "ui.shortcuts.action.light.color"]),
     "fr-CA": frenchTerms.union(["ui.developer.packetColumnDirection"]).union([
       "ui.activity.column.message",
       "ui.menu.app.services", "ui.menu.window.zoom", "ui.settings.notifications.title",

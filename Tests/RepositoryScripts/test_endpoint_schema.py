@@ -31,6 +31,8 @@ MOD = {
     "files": ["Controllers/fff1-0001.plist"],
 }
 
+RESULT = {"command": "rumble", "outcome": "Delivered", "droppedRumbleChannels": []}
+
 DETAILS = {"details": {"supportedAPIVersions": [VERSION]}}
 
 
@@ -65,6 +67,20 @@ class EndpointSchemaTests(unittest.TestCase):
             line("ModList"),
             line("Mods", mods=[]),
             line("Mods", mods=[MOD, {"name": "broken", "files": [], "problem": "text"}]),
+            line("OutputRequest", controller="U-1", action="Rumble"),
+            line(
+                "OutputRequest",
+                controller="054C:0CE6",
+                action="Rumble",
+                left=255,
+                rightTrigger=0,
+                duration=0.45,
+            ),
+            line("OutputRequest", controller="E-1", action="Player", player=0),
+            line("OutputRequest", controller="E-1", action="Light", color="FF8000"),
+            line("OutputRequest", controller="E-1", action="Light", brightness=7),
+            line("OutputResult", controller="E-1", results=[RESULT]),
+            line("OutputResult", controller="E-1", results=[]),
             failure("E1001"),
             failure("E1003"),
             failure("E2012"),
@@ -121,6 +137,35 @@ class EndpointSchemaTests(unittest.TestCase):
             line("Mods", mods=[{**MOD, "extra": 1}]),
             line("Mods", mods=[{**MOD, "files": [1]}]),
             line("Mods", mods={"name": "x"}),
+        ]
+        for message in refused:
+            self.assertFalse(self.valid(message), message)
+
+    def test_an_output_request_and_its_answer_are_refused_when_malformed(self) -> None:
+        refused = [
+            line("OutputRequest", action="Rumble"),
+            line("OutputRequest", controller="E-1"),
+            line("OutputRequest", controller="", action="Rumble"),
+            line("OutputRequest", controller="E-1", action="rumble"),
+            line("OutputRequest", controller="E-1", action="Speaker"),
+            line("OutputRequest", controller="E-1", action="Rumble", left=256),
+            line("OutputRequest", controller="E-1", action="Rumble", left=-1),
+            line("OutputRequest", controller="E-1", action="Rumble", duration=0),
+            line("OutputRequest", controller="E-1", action="Rumble", duration=5.5),
+            line("OutputRequest", controller="E-1", action="Rumble", color="FF8000"),
+            line("OutputRequest", controller="E-1", action="Player"),
+            line("OutputRequest", controller="E-1", action="Player", player=5),
+            line("OutputRequest", controller="E-1", action="Player", player=1, left=1),
+            line("OutputRequest", controller="E-1", action="Light"),
+            line("OutputRequest", controller="E-1", action="Light", color="FF80"),
+            line("OutputRequest", controller="E-1", action="Light", brightness=256),
+            line("OutputRequest", controller="E-1", action="Light", color="FF8000", player=1),
+            line("OutputRequest", controller="E-1", action="Light", color="FF8000", left=1),
+            line("OutputRequest", controller="E-1", action="Rumble", extra=1),
+            line("OutputResult", results=[RESULT]),
+            line("OutputResult", controller="E-1"),
+            line("OutputResult", controller="E-1", results=[{**RESULT, "outcome": "Nope"}]),
+            line("OutputResult", controller="E-1", results=[{"command": "rumble"}]),
         ]
         for message in refused:
             self.assertFalse(self.valid(message), message)

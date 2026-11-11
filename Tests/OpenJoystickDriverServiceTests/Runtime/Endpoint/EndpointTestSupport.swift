@@ -27,6 +27,10 @@ final class FakeAutomation: AutomationService, @unchecked Sendable {
   private let lock = NSLock()
   private var profiles: [RemappingProfile]
   private var active: Set<UUID>
+  private var connected: [ApplicationServiceDeviceDescription] = []
+  private var outcome = ControllerOutputResult.Outcome.delivered
+  private var outputs: [ControllerOutputCommand] = []
+  private var dropped: [PhysicalRumbleMotor] = []
 
   init(profiles: [RemappingProfile] = [], active: Set<UUID> = []) {
     self.profiles = profiles
@@ -53,7 +57,38 @@ final class FakeAutomation: AutomationService, @unchecked Sendable {
     }
   }
 
-  func connectedDevices() async -> [ApplicationServiceDeviceDescription] { [] }
+  /// The controllers that `connectedDevices()` returns.
+  var devices: [ApplicationServiceDeviceDescription] {
+    get { lock.withLock { connected } }
+    set { lock.withLock { connected = newValue } }
+  }
+
+  /// The outcome that `sendControllerOutput` reports.
+  var outputOutcome: ControllerOutputResult.Outcome {
+    get { lock.withLock { outcome } }
+    set { lock.withLock { outcome = newValue } }
+  }
+
+  /// The rumble channels that `sendControllerOutput` reports as dropped.
+  var droppedChannels: [PhysicalRumbleMotor] {
+    get { lock.withLock { dropped } }
+    set { lock.withLock { dropped = newValue } }
+  }
+
+  /// The output commands received, in order.
+  var sentOutputs: [ControllerOutputCommand] { lock.withLock { outputs } }
+
+  func connectedDevices() async -> [ApplicationServiceDeviceDescription] { devices }
+
+  func sendControllerOutput(
+    _ command: ControllerOutputCommand,
+    for controller: ControllerReference
+  ) async -> ControllerOutputResult {
+    lock.withLock {
+      outputs.append(command)
+      return ControllerOutputResult(outcome, droppedRumbleChannels: dropped)
+    }
+  }
 
   func getRemappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {
     lock.withLock { snapshot() }

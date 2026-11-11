@@ -14,6 +14,13 @@ struct AutomationServiceTests {
 
     func connectedDevices() -> [ApplicationServiceDeviceDescription] { devices }
 
+    func sendControllerOutput(
+      _ command: ControllerOutputCommand,
+      for controller: ControllerReference
+    ) -> ControllerOutputResult {
+      ControllerOutputResult(.delivered)
+    }
+
     func getRemappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload {
       snapshot(active: active)
     }
@@ -71,6 +78,13 @@ struct AutomationServiceTests {
   /// A service whose profile library cannot be read.
   private struct FailingService: AutomationService {
     func connectedDevices() -> [ApplicationServiceDeviceDescription] { [] }
+
+    func sendControllerOutput(
+      _ command: ControllerOutputCommand,
+      for controller: ControllerReference
+    ) -> ControllerOutputResult {
+      ControllerOutputResult(.notFound)
+    }
 
     func getRemappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload {
       throw SnapshotUnavailable()

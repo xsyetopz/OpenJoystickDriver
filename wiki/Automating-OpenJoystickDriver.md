@@ -229,6 +229,17 @@ A program with the `control` scope can activate, deactivate or change one profil
 3. The endpoint answers a `ProfileResult` with the profile and whether it is active. A request that the service refuses, such as one for a profile that does not exist, gets a `Status` failure with the code that `ojd` prints, such as `E2012`, and the connection stays open for the next request.
 4. A `ProfileRequest` may follow another one. A `Subscription` or a `FeedRequest` ends the exchange.
 
+### Rumble, Player Number and Light Through the Endpoint
+
+A program with the `control` scope can drive one controller, as `ojd controller rumble`, `player` and `light` do:
+
+1. Send a `Hello` with `"scopes":["Control"]`, as in the section above.
+2. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"OutputRequest","controller":"054C:0CE6","action":"Rumble","left":200,"duration":1.5}`. `controller` is a controller id or a `VID:PID` model. `action` is `Rumble`, `Player` or `Light`.
+3. `Rumble` takes `left`, `right`, `leftTrigger` and `rightTrigger` (0 to 255) and `duration` in seconds (above 0, at most 5, default 0.45). With no motor named, both main motors run at 180. `Player` takes `player` (0 to 4). `Light` takes a `color` of six hex digits and a `brightness` (0 to 255), at least one of them.
+4. The endpoint answers an `OutputResult` with one entry for each command that ran. A controller that lacks the output, or an unknown or ambiguous controller, gets a `Status` failure with the code that `ojd` prints, and the connection stays open. A malformed request gets `E1003` and the connection closes.
+
+The Shortcuts actions Rumble Controller, Set Player Indicator and Set Controller Light run the same code.
+
 ### List Mod Packages Through the Endpoint
 
 A program with the `Read` scope can list the installed mod packages, as `ojd mod list --json` does:
@@ -326,6 +337,9 @@ On macOS 13 or later, the Shortcuts app lists these OpenJoystickDriver actions:
 | List Mod Packages | Nothing | The names of the installed mod packages |
 | Install Mod Package | A folder, and whether to replace an installed package of the same name | The name of the installed package |
 | Remove Mod Package | A package name | The name of the removed package |
+| Rumble Controller | A controller, an intensity (0 to 255), and a duration in seconds | Nothing |
+| Set Player Indicator | A controller and a player number (0 to 4) | Nothing |
+| Set Controller Light | A controller, a color, and a brightness | Nothing |
 
 The actions run in the app, so the app must be installed. They do not use `ojd`.
 

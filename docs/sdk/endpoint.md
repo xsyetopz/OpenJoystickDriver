@@ -25,7 +25,7 @@ The program and the endpoint exchange JSON objects, one per line, each at most 6
 1. The endpoint sends a `Challenge` first.
 2. Within 5 seconds, the program sends a `Hello` with the scopes that it needs. A program that a signature grants sends only the scopes. A program that a token grants also sends `tokenName` and `proof`.
 3. The endpoint answers a `Welcome` with the scopes that it granted, or a `Status` failure, and then closes the connection.
-4. The program sends any number of `ProfileRequest` and `ModList` lines, each answered at once, and then one request that ends the exchange: a `Subscription` to read, or a `FeedRequest` to drive a virtual gamepad. A `ProfileRequest` and a `FeedRequest` need the `Control` scope. A `ModList` needs the `Read` scope.
+4. The program sends any number of `ProfileRequest`, `OutputRequest` and `ModList` lines, each answered at once, and then one request that ends the exchange: a `Subscription` to read, or a `FeedRequest` to drive a virtual gamepad. A `ProfileRequest`, an `OutputRequest` and a `FeedRequest` need the `Control` scope. A `ModList` needs the `Read` scope.
 5. A subscription gets watch lines. A feed gets a `FeedSession`, and then the program sends `Frame` lines.
 
 A connection that sends a line at the wrong point gets `E1010`. The endpoint serves at most 8 socket connections and 8 WebSocket connections at the same time. When a program reads too slowly, the endpoint keeps only the newest `MODIFIED` line of each controller. When 256 lines wait, it sends `E1006` and closes the connection.
@@ -112,6 +112,26 @@ The endpoint answers `Mods` with one entry for each package in name order, and t
 
 ```json
 {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Mods","mods":[{"name":"arcade-pack","version":"1.2.3","author":"Tester","files":["Controllers/1234-abcd.plist"]}]}
+```
+
+### OutputRequest
+
+The program sends it after the `Welcome` to drive the rumble, the player number or the light of one controller, as `ojd controller rumble`, `player` and `light` do. It needs the `Control` scope; without it the endpoint answers `E1002` and closes the connection. `controller` is a controller id or a `VID:PID` model, as `ojd` takes it. `action` is `Rumble`, `Player` or `Light`.
+
+- `Rumble` takes `left`, `right`, `leftTrigger` and `rightTrigger`, each 0 to 255, and `duration` in seconds, more than 0 and at most 5, 0.45 when absent. When no motor is named, both main motors run at 180. A rumble of intensity 0 on every named motor stops the rumble.
+- `Player` takes `player`, 0 to 4. 0 clears the indicator.
+- `Light` takes `color`, six hex digits with an optional `#`, and `brightness`, 0 to 255. It needs at least one of them.
+
+A line with another `action`, a member that the action does not take, a value out of range, or a `controller` that is missing is refused with `E1003`, and the connection closes.
+
+```json
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"OutputRequest","controller":"054C:0CE6","action":"Rumble","left":200,"duration":1.5}
+```
+
+The endpoint answers an `OutputResult` with the `controller` id and one entry in `results` for each command that ran. When the controller cannot do the output, does not answer, or is unknown or ambiguous, the answer is a `Status` failure with the code that `ojd` prints for the same failure, and the connection stays open for the next line.
+
+```json
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"OutputResult","controller":"pad-1","results":[{"command":"rumble","outcome":"Delivered","droppedRumbleChannels":[]}]}
 ```
 
 ### FeedRequest

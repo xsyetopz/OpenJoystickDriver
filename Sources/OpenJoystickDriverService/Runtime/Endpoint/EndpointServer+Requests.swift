@@ -4,7 +4,7 @@ import OpenJoystickDriverKit
 extension EndpointServer {
   /// The kinds that a welcomed client may send first: a request to answer, a subscription, or a
   /// feed.
-  static let requestKinds = ["Subscription", "FeedRequest", "ProfileRequest", "ModList"]
+  static let requestKinds = ["Subscription", "FeedRequest", "ProfileRequest", "ModList", "OutputRequest"]
 
   /// Answers one request of `kind` from its `line` and tells whether the connection goes on.
   ///
@@ -30,12 +30,21 @@ extension EndpointServer {
       connection.send(EndpointMods(mods: modStore.entries()))
       return !connection.isClosing
     }
-    guard let request = try? JSONDecoder().decode(EndpointProfileRequest.self, from: line) else {
-      connection.close(Self.invalid("The message is not a valid request of its kind."))
-      return false
-    }
     let automation = automation
     do {
+      if kind == .outputRequest {
+        guard let request = try? JSONDecoder().decode(EndpointOutputRequest.self, from: line) else {
+          connection.close(Self.invalid("The message is not a valid request of its kind."))
+          return false
+        }
+        let result = try Self.waitFor(connection) { try await request.run(on: automation) }
+        connection.send(EndpointOutputResult(result))
+        return !connection.isClosing
+      }
+      guard let request = try? JSONDecoder().decode(EndpointProfileRequest.self, from: line) else {
+        connection.close(Self.invalid("The message is not a valid request of its kind."))
+        return false
+      }
       let profile = try Self.waitFor(connection) { try await request.run(on: automation) }
       connection.send(EndpointProfileResult(profile: profile))
     } catch {
@@ -48,6 +57,27 @@ extension EndpointServer {
   static func refusal(_ error: any Error) -> EndpointError {
     let failure = error as? CodedFailure ?? CodedFailure(.serviceRequestFailed, error.localizedDescription)
     return EndpointError(code: failure.id, message: failure.message)
+  }
+}
+
+extension EndpointOutputRequest {
+  /// Sends the output as `ojd controller` does, with its code for an output the controller lacks.
+  func run(on automation: any AutomationService) async throws -> AutomationOutputResult {
+    switch output {
+    case .rumble(let intensities, let seconds):
+      try await automation.sendOutput(
+        [ControllerOutput.rumble(intensities, seconds: seconds)],
+        to: controller,
+        requestedMotors: intensities.activeMotors
+      )
+    case .player(let indicator):
+      try await automation.sendOutput([ControllerOutput.player(indicator)], to: controller)
+    case .light(let color, let brightness):
+      try await automation.sendOutput(
+        ControllerOutput.light(color: color, brightness: brightness),
+        to: controller
+      )
+    }
   }
 }
 

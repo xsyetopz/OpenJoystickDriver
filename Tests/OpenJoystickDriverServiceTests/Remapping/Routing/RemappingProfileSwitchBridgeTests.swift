@@ -19,6 +19,13 @@ struct RemappingProfileSwitchBridgeTests {
 
     func connectedDevices() -> [ApplicationServiceDeviceDescription] { [] }
 
+    func sendControllerOutput(
+      _ command: ControllerOutputCommand,
+      for controller: ControllerReference
+    ) -> ControllerOutputResult {
+      ControllerOutputResult(.notFound)
+    }
+
     func getRemappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload {
       throw Failure()
     }

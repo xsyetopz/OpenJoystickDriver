@@ -7,6 +7,11 @@ import OpenJoystickDriverKit
 package protocol AutomationService: Sendable {
   /// The controllers that the service drives.
   func connectedDevices() async -> [ApplicationServiceDeviceDescription]
+  /// Sends one output command to the selected controller; the result reports what became of it.
+  func sendControllerOutput(
+    _ command: ControllerOutputCommand,
+    for controller: ControllerReference
+  ) async -> ControllerOutputResult
   /// Returns the snapshot of the remapping profiles, routes and issues.
   ///
   /// - Throws: ``ApplicationServiceRemappingRPCError`` when the snapshot fails.

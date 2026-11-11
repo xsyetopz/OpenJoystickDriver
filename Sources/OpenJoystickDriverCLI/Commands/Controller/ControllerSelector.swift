@@ -30,35 +30,7 @@ struct ControllerSelector: ExpressibleByArgument, Equatable, Sendable {
   func resolve(
     in devices: [ApplicationServiceDeviceDescription]
   ) throws -> ApplicationServiceDeviceDescription {
-    let matches = reference.matches(in: devices)
-    if matches.count == 1, let device = matches.first { return device }
-    let message: String
-    let listed: [ApplicationServiceDeviceDescription]
-    if matches.isEmpty {
-      listed = devices
-      message =
-        devices.isEmpty
-        ? CLILocalized.format(
-          "cli.controller.group.selectorNoneConnected",
-          text
-        )
-        : CLILocalized.format(
-          "cli.controller.group.selectorNotFound",
-          text
-        )
-    } else {
-      listed = matches
-      message = CLILocalized.plural(
-        "cli.controller.group.selectorAmbiguous",
-        text,
-        matches.count
-      )
-    }
-    let lines = listed.map { device in
-      let ids = [device.sessionToken.rawValue] + [device.portKey?.rawValue].compactMap { $0 }
-      return "  \(ids.joined(separator: "  "))  \(device.identity)  \(device.name)"
-    }
-    throw CLIFailure(.notFound, ([message] + lines).joined(separator: "\n"))
+    try ControllerReference.device(named: text, in: devices)
   }
 
   /// Reads the connected controllers from the service and resolves this selector.

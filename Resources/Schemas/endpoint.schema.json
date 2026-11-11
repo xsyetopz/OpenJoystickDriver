@@ -30,6 +30,9 @@
           "$ref": "#/$defs/modListRequest"
         },
         {
+          "$ref": "#/$defs/outputRequest"
+        },
+        {
           "$ref": "#/$defs/frame"
         },
         {
@@ -59,6 +62,9 @@
         },
         {
           "$ref": "#/$defs/mods"
+        },
+        {
+          "$ref": "#/$defs/outputResult"
         },
         {
           "$ref": "cli-output.schema.json#/$defs/sharedControllerWatchEvent"
@@ -209,6 +215,195 @@
           "const": "ModList"
         }
       }
+    },
+    "outputRequest": {
+      "type": "object",
+      "required": ["action", "apiVersion", "controller", "kind"],
+      "additionalProperties": false,
+      "description": "A request, with the control scope, to rumble, set the player indicator, or set the light of a controller.",
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "kind": {
+          "const": "OutputRequest"
+        },
+        "controller": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The port key, the session token, or the vendor and product ID of one connected controller."
+        },
+        "action": {
+          "enum": ["Rumble", "Player", "Light"]
+        },
+        "left": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "The intensity of the left main motor."
+        },
+        "right": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "The intensity of the right main motor."
+        },
+        "leftTrigger": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "The intensity of the left trigger motor."
+        },
+        "rightTrigger": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "The intensity of the right trigger motor."
+        },
+        "duration": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 5,
+          "description": "The seconds that the motors run; 0.45 when absent."
+        },
+        "player": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "The player number from 1 to 4, or 0 for none."
+        },
+        "color": {
+          "type": "string",
+          "pattern": "^#?[0-9A-Fa-f]{6}$",
+          "description": "The lightbar color as six hexadecimal digits."
+        },
+        "brightness": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "The LED brightness."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "Rumble"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["player"]
+                },
+                {
+                  "required": ["color"]
+                },
+                {
+                  "required": ["brightness"]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "Player"
+              }
+            }
+          },
+          "then": {
+            "required": ["player"],
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["left"]
+                },
+                {
+                  "required": ["right"]
+                },
+                {
+                  "required": ["leftTrigger"]
+                },
+                {
+                  "required": ["rightTrigger"]
+                },
+                {
+                  "required": ["duration"]
+                },
+                {
+                  "required": ["color"]
+                },
+                {
+                  "required": ["brightness"]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "Light"
+              }
+            }
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": ["color"]
+              },
+              {
+                "required": ["brightness"]
+              }
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["left"]
+                },
+                {
+                  "required": ["right"]
+                },
+                {
+                  "required": ["leftTrigger"]
+                },
+                {
+                  "required": ["rightTrigger"]
+                },
+                {
+                  "required": ["duration"]
+                },
+                {
+                  "required": ["player"]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "outputResult": {
+      "description": "The answer to an output request: what the controller did with each command.",
+      "allOf": [
+        {
+          "$ref": "cli-output.schema.json#/$defs/sharedControllerOutput"
+        },
+        {
+          "required": ["apiVersion", "kind"],
+          "properties": {
+            "kind": {
+              "const": "OutputResult"
+            }
+          }
+        }
+      ]
     },
     "mods": {
       "type": "object",
