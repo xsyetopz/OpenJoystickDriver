@@ -231,6 +231,10 @@ EXCEPTIONS: dict[tuple[str, str], tuple[tuple[str, ...], str]] = {
         MODE_ID,
     ),
     ("controller", "/$defs/mode/if/properties/id/const"): (("default",), MODE_ID),
+    ("settings", "/properties/pauseShortcut/properties/key/enum"): (
+        tuple("0123456789"),
+        "a key is named by the character it types, and a digit key types a digit",
+    ),
 }
 
 # Property-name maps a field-name enum is checked against. A source is a list of
@@ -315,6 +319,7 @@ FIELD_NAME_ENUMS: list[tuple[str, str, Any]] = [
         TUNING,
     ),
     ("cli-output", "/$defs/sharedSettingKey/enum", SETTING_PATHS),
+    ("cli-output", "/$defs/sharedSetting/properties/key/anyOf/1/const", SETTING_PATHS),
     ("cli-output", "/$defs/recordDraft/properties/missingSections/items/enum", RECORD),
 ]
 

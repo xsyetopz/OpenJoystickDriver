@@ -21,9 +21,9 @@ struct PauseShortcutTests {
     let shortcut = try PauseShortcut(parsing: "Control+Option+P")
     #expect(shortcut.key == "P")
     #expect(shortcut.modifiers == [.control, .option])
-    #expect(shortcut.text == "control+option+P")
+    #expect(shortcut.text == "Control+Option+P")
     #expect(try PauseShortcut(parsing: shortcut.text) == shortcut)
-    #expect(try PauseShortcut(parsing: "shift+command+f12").text == "command+shift+F12")
+    #expect(try PauseShortcut(parsing: "shift+command+f12").text == "Command+Shift+F12")
   }
 
   @Test
@@ -32,8 +32,11 @@ struct PauseShortcutTests {
     #expect(try PauseShortcut(parsing: "command+P").keyCode == 0x23)
     #expect(try PauseShortcut(parsing: "command+Space").keyCode == 0x31)
     #expect(try PauseShortcut(parsing: "command+F12").keyCode == 0x6F)
-    #expect(Set(PauseShortcut.keyNames.map { PauseShortcut.keyCode(of: $0) }).count
-      == PauseShortcut.keyNames.count)
+    for name in PauseShortcut.keyNames {
+      let code = try PauseShortcut(key: name, modifiers: [.command]).keyCode
+      #expect(PauseShortcut.keyName(code: code) == name)
+    }
+    #expect(PauseShortcut.keyName(code: 0xFF) == nil)
   }
 
   @Test(arguments: ["", "P", "shift+P", "command+", "command+Home", "command+control", "hyper+P"])
@@ -50,7 +53,7 @@ struct PauseShortcutTests {
     let object = try PropertyListFixture.dictionary(at: store.userFileURL)
     let stored = try #require(object["pauseShortcut"] as? [String: Any])
     #expect(stored["key"] as? String == "P")
-    #expect(stored["modifiers"] as? [String] == ["control", "option"])
+    #expect(stored["modifiers"] as? [String] == ["Control", "Option"])
 
     try store.setPauseShortcut(nil)
     #expect(try store.pauseShortcut() == nil)
@@ -66,16 +69,17 @@ struct PauseShortcutTests {
 
     #expect(try store.value(of: .developerTools))
     #expect(try store.value(of: .notifySounds) == false)
-    #expect(try store.pauseShortcut()?.text == "command+shift+P")
+    #expect(try store.pauseShortcut()?.text == "Command+Shift+P")
   }
 
   @Test(arguments: [
     #""pauseShortcut": {"key": "P", "modifiers": []}"#,
-    #""pauseShortcut": {"key": "P", "modifiers": ["shift"]}"#,
-    #""pauseShortcut": {"key": "P", "modifiers": ["command", "command"]}"#,
-    #""pauseShortcut": {"key": "Home", "modifiers": ["command"]}"#,
+    #""pauseShortcut": {"key": "P", "modifiers": ["Shift"]}"#,
+    #""pauseShortcut": {"key": "P", "modifiers": ["Command", "Command"]}"#,
+    #""pauseShortcut": {"key": "P", "modifiers": ["command"]}"#,
+    #""pauseShortcut": {"key": "Home", "modifiers": ["Command"]}"#,
     #""pauseShortcut": {"key": "P"}"#,
-    #""pauseShortcut": {"key": "P", "modifiers": ["command"], "extra": true}"#,
+    #""pauseShortcut": {"key": "P", "modifiers": ["Command"], "extra": true}"#,
     #""pauseShortcut": "command+P""#,
   ])
   func aFileWithAnInvalidShortcutIsDamaged(body: String) throws {

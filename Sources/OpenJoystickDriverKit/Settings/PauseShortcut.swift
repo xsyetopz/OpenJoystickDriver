@@ -14,13 +14,13 @@ public struct PauseShortcut: Equatable, Sendable {
   /// A modifier key, named as in the schema.
   public enum Modifier: String, CaseIterable, Codable, Sendable {
     /// The Command key.
-    case command
+    case command = "Command"
     /// The Control key.
-    case control
+    case control = "Control"
     /// The Option key.
-    case option
+    case option = "Option"
     /// The Shift key.
-    case shift
+    case shift = "Shift"
   }
 
   /// The key names with their ANSI virtual key codes, in schema order.
@@ -39,13 +39,13 @@ public struct PauseShortcut: Equatable, Sendable {
   /// Every key name a shortcut accepts.
   public static let keyNames = keys.map(\.name)
 
-  /// The virtual key code of `name`, one of ``keyNames``.
-  public static func keyCode(of name: String) -> UInt32 {
-    keys.first { $0.name == name }!.code
-  }
+  /// The key name whose virtual key code is `code`, or nil when no shortcut key has it.
+  public static func keyName(code: UInt32) -> String? { keys.first { $0.code == code }?.name }
 
   /// The key name, one of ``keyNames``.
   public let key: String
+  /// The virtual key code of the key.
+  public let keyCode: UInt32
   /// The modifier keys held with the key; at least one is not Shift.
   public let modifiers: Set<Modifier>
 
@@ -54,38 +54,41 @@ public struct PauseShortcut: Equatable, Sendable {
   /// - Throws: ``PauseShortcutError`` for an unknown key, or when no modifier other than Shift
   ///   is held, because a shortcut without one would capture ordinary typing.
   public init(key: String, modifiers: Set<Modifier>) throws {
-    guard Self.keyNames.contains(key), !modifiers.subtracting([.shift]).isEmpty else {
-      throw PauseShortcutError(text: key)
-    }
+    guard let code = Self.keys.first(where: { $0.name == key })?.code,
+      !modifiers.subtracting([.shift]).isEmpty
+    else { throw PauseShortcutError(text: key) }
     self.key = key
+    self.keyCode = code
     self.modifiers = modifiers
   }
 
-  /// Parses modifiers and a key joined by `+`, such as `control+option+P`; case does not matter.
+  /// Parses modifiers and a key joined by `+`, such as `Control+Option+P`; case does not matter.
   public init(parsing text: String) throws {
     let parts = text.split(separator: "+", omittingEmptySubsequences: false).map(String.init)
     guard let last = parts.last,
-      let key = Self.keyNames.first(where: { $0.caseInsensitiveCompare(last) == .orderedSame })
+      let name = Self.keyNames.first(where: { $0.caseInsensitiveCompare(last) == .orderedSame })
     else { throw PauseShortcutError(text: text) }
-    let modifiers = try parts.dropLast().map {
-      guard let modifier = Modifier(rawValue: $0.lowercased()) else {
+    let held = try parts.dropLast().map {
+      part in
+      guard
+        let modifier = Modifier.allCases.first(where: {
+          $0.rawValue.caseInsensitiveCompare(part) == .orderedSame
+        })
+      else {
         throw PauseShortcutError(text: text)
       }
       return modifier
     }
-    guard Set(modifiers).count == modifiers.count else { throw PauseShortcutError(text: text) }
-    do { try self.init(key: key, modifiers: Set(modifiers)) } catch {
+    guard Set(held).count == held.count else { throw PauseShortcutError(text: text) }
+    do { try self.init(key: name, modifiers: Set(held)) } catch {
       throw PauseShortcutError(text: text)
     }
   }
 
-  /// The virtual key code of the key.
-  public var keyCode: UInt32 { Self.keyCode(of: key) }
-
   /// The modifiers in schema order.
   private var sortedModifiers: [Modifier] { Modifier.allCases.filter(modifiers.contains) }
 
-  /// The shortcut as `control+option+P`, which ``init(parsing:)`` reads back.
+  /// The shortcut as `Control+Option+P`, which ``init(parsing:)`` reads back.
   public var text: String { (sortedModifiers.map(\.rawValue) + [key]).joined(separator: "+") }
 }
 

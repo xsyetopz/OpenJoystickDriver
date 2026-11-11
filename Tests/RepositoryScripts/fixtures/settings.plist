@@ -31,8 +31,8 @@
 		<string>P</string>
 		<key>modifiers</key>
 		<array>
-			<string>control</string>
-			<string>option</string>
+			<string>Control</string>
+			<string>Option</string>
 		</array>
 	</dict>
 	<key>showInDock</key>

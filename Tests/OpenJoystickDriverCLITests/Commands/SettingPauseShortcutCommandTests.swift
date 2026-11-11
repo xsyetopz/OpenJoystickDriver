@@ -34,9 +34,9 @@ struct SettingPauseShortcutCommandTests {
     let get = await run(["get", "pauseShortcut"])
 
     #expect(set.code == 0, "\(set.standardError)")
-    #expect(try set.json()["value"] as? String == "control+option+P")
-    #expect(get.standardOutput == "control+option+P\n")
-    #expect(try store.pauseShortcut()?.text == "control+option+P")
+    #expect(try set.json()["value"] as? String == "Control+Option+P")
+    #expect(get.standardOutput == "Control+Option+P\n")
+    #expect(try store.pauseShortcut()?.text == "Control+Option+P")
   }
 
   @Test

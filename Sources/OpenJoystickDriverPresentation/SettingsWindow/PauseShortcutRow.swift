@@ -24,8 +24,11 @@
             .foregroundColor(Color(NSColor.secondaryLabelColor))
         }
         Spacer(minLength: 8)
-        Text(preferences.pauseShortcut.map(PauseShortcutDisplay.text) ?? OJDLocalized.string("status.notSet"))
-          .foregroundColor(Color(NSColor.secondaryLabelColor))
+        Text(
+          preferences.pauseShortcut.map(PauseShortcutDisplay.text)
+            ?? OJDLocalized.string("status.notSet")
+        )
+        .foregroundColor(Color(NSColor.secondaryLabelColor))
         Button(
           isRecording
             ? OJDLocalized.string("ui.settings.general.pauseShortcutRecording")
@@ -67,9 +70,7 @@
           (.control, .control), (.option, .option), (.shift, .shift),
         ].filter { flags.contains($0.0) }.map(\.1)
       )
-      guard let key = PauseShortcut.keyNames.first(where: {
-        PauseShortcut.keyCode(of: $0) == UInt32(event.keyCode)
-      }) else { return nil }
+      guard let key = PauseShortcut.keyName(code: UInt32(event.keyCode)) else { return nil }
       return try? PauseShortcut(key: key, modifiers: modifiers)
     }
   }

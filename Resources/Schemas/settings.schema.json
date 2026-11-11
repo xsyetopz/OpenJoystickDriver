@@ -99,12 +99,12 @@
       "default": false
     },
     "lastShownChangelogVersion": {
-      "description": "The version whose changelog section the app showed at the first opening of the main window after an update. Unset until the first one.",
+      "description": "The version whose changelog section the app last showed when the main window opened after an update.",
       "type": "string",
       "minLength": 1
     },
     "pauseShortcut": {
-      "description": "The system-wide keyboard shortcut that pauses and resumes every controller. Unset on a fresh installation. At least one modifier other than shift is required.",
+      "description": "The system-wide shortcut that pauses and resumes every controller, with a modifier other than shift.",
       "type": "object",
       "required": ["key", "modifiers"],
       "additionalProperties": false,
@@ -119,10 +119,10 @@
           "minItems": 1,
           "uniqueItems": true,
           "contains": {
-            "enum": ["command", "control", "option"]
+            "enum": ["Command", "Control", "Option"]
           },
           "items": {
-            "enum": ["command", "control", "option", "shift"]
+            "enum": ["Command", "Control", "Option", "Shift"]
           }
         }
       }
