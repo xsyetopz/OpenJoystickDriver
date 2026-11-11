@@ -5043,3 +5043,15 @@
 "platform.macos.ui.settings.general.startAtLoginUnavailable" = "登录时启动需要 macOS 13 或更高版本。";
 /* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
 "ui.settings.notifications.controllerConnectedOrAttention" = "已连接或需要关注";
+/* Title of the row in the General pane of the settings window where the user records the system-wide keyboard shortcut that pauses and resumes every controller. */
+"ui.settings.general.pauseShortcut" = "暂停快捷键";
+/* Explanation under the pause shortcut title in the General pane of the settings window. */
+"ui.settings.general.pauseShortcutDescription" = "在任何 App 中暂停和恢复所有控制器。按住 Control、Option 或 Command 并配合一个键。";
+/* Button in the General pane of the settings window that starts recording the pause shortcut. */
+"ui.settings.general.pauseShortcutRecord" = "录制快捷键";
+/* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
+"ui.settings.general.pauseShortcutRecording" = "请按下快捷键…";
+/* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
+"ui.settings.general.pauseShortcutTaken" = "另一个 App 已在使用此快捷键。请录制其他快捷键。";
+/* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
+"cli.setting.set.badShortcut" = "“%1$@”不是快捷键。请使用以 + 连接的修饰键和一个键，例如 control+option+P，或 none。";

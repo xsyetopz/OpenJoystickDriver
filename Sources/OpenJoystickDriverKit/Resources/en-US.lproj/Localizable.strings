@@ -5044,3 +5044,15 @@
 "platform.macos.ui.settings.general.startAtLoginUnavailable" = "Start at login needs macOS 13 or later.";
 /* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
 "ui.settings.notifications.controllerConnectedOrAttention" = "Connected or needs attention";
+/* Title of the row in the General pane of the settings window where the user records the system-wide keyboard shortcut that pauses and resumes every controller. */
+"ui.settings.general.pauseShortcut" = "Pause shortcut";
+/* Explanation under the pause shortcut title in the General pane of the settings window. */
+"ui.settings.general.pauseShortcutDescription" = "Pauses and resumes every controller from any app. Hold Control, Option or Command with a key.";
+/* Button in the General pane of the settings window that starts recording the pause shortcut. */
+"ui.settings.general.pauseShortcutRecord" = "Record Shortcut";
+/* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
+"ui.settings.general.pauseShortcutRecording" = "Press the shortcut...";
+/* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
+"ui.settings.general.pauseShortcutTaken" = "Another app already uses this shortcut. Record a different one.";
+/* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
+"cli.setting.set.badShortcut" = "'%1$@' is not a shortcut. Use modifiers and a key joined by +, such as control+option+P, or none.";

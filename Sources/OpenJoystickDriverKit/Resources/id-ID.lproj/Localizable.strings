@@ -5043,3 +5043,15 @@
 "platform.macos.ui.settings.general.startAtLoginUnavailable" = "Mulai saat masuk memerlukan macOS 13 atau lebih baru.";
 /* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
 "ui.settings.notifications.controllerConnectedOrAttention" = "Terhubung atau perlu perhatian";
+/* Title of the row in the General pane of the settings window where the user records the system-wide keyboard shortcut that pauses and resumes every controller. */
+"ui.settings.general.pauseShortcut" = "Pintasan jeda";
+/* Explanation under the pause shortcut title in the General pane of the settings window. */
+"ui.settings.general.pauseShortcutDescription" = "Menjeda dan melanjutkan semua pengontrol dari aplikasi mana pun. Tahan Control, Option, atau Command bersama sebuah tombol.";
+/* Button in the General pane of the settings window that starts recording the pause shortcut. */
+"ui.settings.general.pauseShortcutRecord" = "Rekam Pintasan";
+/* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
+"ui.settings.general.pauseShortcutRecording" = "Tekan pintasan…";
+/* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
+"ui.settings.general.pauseShortcutTaken" = "Aplikasi lain sudah memakai pintasan ini. Rekam pintasan yang berbeda.";
+/* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
+"cli.setting.set.badShortcut" = "'%1$@' bukan pintasan. Gunakan pengubah dan sebuah tombol yang digabung dengan +, seperti control+option+P, atau none.";

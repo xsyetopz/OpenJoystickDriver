@@ -5043,3 +5043,15 @@
 "platform.macos.ui.settings.general.startAtLoginUnavailable" = "로그인 시 시작하려면 macOS 13 이상이 필요합니다.";
 /* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
 "ui.settings.notifications.controllerConnectedOrAttention" = "연결됨 또는 확인 필요";
+/* Title of the row in the General pane of the settings window where the user records the system-wide keyboard shortcut that pauses and resumes every controller. */
+"ui.settings.general.pauseShortcut" = "일시 정지 단축키";
+/* Explanation under the pause shortcut title in the General pane of the settings window. */
+"ui.settings.general.pauseShortcutDescription" = "어느 앱에서든 모든 컨트롤러를 일시 정지하고 재개합니다. 키와 함께 Control, Option 또는 Command를 누르세요.";
+/* Button in the General pane of the settings window that starts recording the pause shortcut. */
+"ui.settings.general.pauseShortcutRecord" = "단축키 기록";
+/* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
+"ui.settings.general.pauseShortcutRecording" = "단축키를 누르세요…";
+/* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
+"ui.settings.general.pauseShortcutTaken" = "다른 앱이 이미 이 단축키를 사용 중입니다. 다른 단축키를 기록하세요.";
+/* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
+"cli.setting.set.badShortcut" = "'%1$@'은(는) 단축키가 아닙니다. control+option+P처럼 +로 연결한 보조 키와 키를 사용하거나 none을 사용하세요.";

@@ -57,6 +57,10 @@
     var showInMenuBarObservation: AnyCancellable?
     /// Applies Show in Dock when its setting changes.
     var showInDockObservation: AnyCancellable?
+    /// Pauses and resumes every controller from the pause shortcut.
+    var pauseHotKey: PauseHotKey?
+    /// Registers the pause shortcut when its setting changes.
+    var pauseShortcutObservation: AnyCancellable?
     /// The Input Test window, created when the first one opens.
     var inputTestWindowController: InputTestWindowController?
     /// Keeps the app in step with the service's changes while it runs.

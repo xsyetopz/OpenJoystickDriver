@@ -70,6 +70,9 @@
     /// Whether Settings > Advanced shows the developer tools.
     @Published
     private(set) var developerToolsEnabled: Bool
+    /// The system-wide shortcut that pauses and resumes every controller, or nil while unset.
+    @Published
+    private(set) var pauseShortcut: PauseShortcut?
     /// The result of the last update check, or idle before a check runs.
     @Published
     private(set) var updateState: UpdateCheckState = .idle
@@ -178,6 +181,7 @@
       checkUpdatesAutomatically = value(.updatesCheckAutomatically)
       includePrereleaseUpdates = value(.updatesIncludePrereleases)
       developerToolsEnabled = value(.developerTools)
+      pauseShortcut = stored.pauseShortcut
       if recovered { settingsRecovered?() }
     }
 
@@ -301,6 +305,19 @@
       } catch { return .failed(error.localizedDescription) }
       refreshNotificationAuthorization()
       return .shown
+    }
+
+    /// Stores the pause shortcut, or clears it for nil; a failure shows in ``errorMessage``.
+    func setPauseShortcut(_ shortcut: PauseShortcut?) {
+      do {
+        try settings.setPauseShortcut(shortcut)
+        pauseShortcut = shortcut
+      } catch { report(error) }
+    }
+
+    /// Shows in ``errorMessage`` that the system refused the pause shortcut.
+    func pauseShortcutWasRefused() {
+      errorMessage = OJDLocalized.string("ui.settings.general.pauseShortcutTaken")
     }
 
     /// Shows or hides the menu bar item.

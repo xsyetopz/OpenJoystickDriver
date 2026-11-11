@@ -5043,3 +5043,15 @@
 "platform.macos.ui.settings.general.startAtLoginUnavailable" = "लॉगिन पर शुरू करने के लिए macOS 13 या उसके बाद का संस्करण चाहिए।";
 /* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
 "ui.settings.notifications.controllerConnectedOrAttention" = "कनेक्ट हुआ या ध्यान चाहिए";
+/* Title of the row in the General pane of the settings window where the user records the system-wide keyboard shortcut that pauses and resumes every controller. */
+"ui.settings.general.pauseShortcut" = "रोकने का शॉर्टकट";
+/* Explanation under the pause shortcut title in the General pane of the settings window. */
+"ui.settings.general.pauseShortcutDescription" = "किसी भी ऐप से सभी कंट्रोलर रोकता और फिर शुरू करता है। किसी कुंजी के साथ Control, Option या Command दबाए रखें।";
+/* Button in the General pane of the settings window that starts recording the pause shortcut. */
+"ui.settings.general.pauseShortcutRecord" = "शॉर्टकट रिकॉर्ड करें";
+/* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
+"ui.settings.general.pauseShortcutRecording" = "शॉर्टकट दबाएँ…";
+/* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
+"ui.settings.general.pauseShortcutTaken" = "यह शॉर्टकट पहले से किसी दूसरे ऐप में इस्तेमाल हो रहा है। कोई दूसरा शॉर्टकट रिकॉर्ड करें।";
+/* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
+"cli.setting.set.badShortcut" = "'%1$@' शॉर्टकट नहीं है। + से जुड़े मॉडिफ़ायर और एक कुंजी इस्तेमाल करें, जैसे control+option+P, या none।";

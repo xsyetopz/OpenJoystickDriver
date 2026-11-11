@@ -55,6 +55,15 @@
         preferences.$settingsFileError
       ).map { SettingsFileStartup.statusItemIsShown(showInMenuBar: $0, settingsError: $1) }
         .removeDuplicates().sink { [weak self] shown in self?.applyShowInMenuBar(shown) }
+      let hotKey = PauseHotKey { [weak self] in
+        guard let self else { return }
+        Task { @MainActor in await self.viewModel.togglePauseAll() }
+      }
+      pauseHotKey = hotKey
+      pauseShortcutObservation = preferences.$pauseShortcut.removeDuplicates().sink {
+        [preferences] shortcut in
+        do { try hotKey.register(shortcut) } catch { preferences.pauseShortcutWasRefused() }
+      }
       if SettingsFileStartup.opensMainWindowAtLaunch(settingsError: preferences.settingsFileError) {
         mainWindow?.showMainWindow(area: nil)
       }

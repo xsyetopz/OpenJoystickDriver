@@ -5043,3 +5043,15 @@
 "platform.macos.ui.settings.general.startAtLoginUnavailable" = "ログイン時に開くには macOS 13 以降が必要です。";
 /* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
 "ui.settings.notifications.controllerConnectedOrAttention" = "接続時または要確認時";
+/* Title of the row in the General pane of the settings window where the user records the system-wide keyboard shortcut that pauses and resumes every controller. */
+"ui.settings.general.pauseShortcut" = "一時停止のショートカット";
+/* Explanation under the pause shortcut title in the General pane of the settings window. */
+"ui.settings.general.pauseShortcutDescription" = "どのアプリからでも、すべてのコントローラを一時停止または再開します。キーと一緒にControl、Option、Commandのいずれかを押し続けます。";
+/* Button in the General pane of the settings window that starts recording the pause shortcut. */
+"ui.settings.general.pauseShortcutRecord" = "ショートカットを記録";
+/* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
+"ui.settings.general.pauseShortcutRecording" = "ショートカットを押してください…";
+/* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
+"ui.settings.general.pauseShortcutTaken" = "このショートカットはすでに別のアプリが使用しています。別のショートカットを記録してください。";
+/* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
+"cli.setting.set.badShortcut" = "「%1$@」はショートカットではありません。+でつないだ修飾キーとキーを指定してください(例: control+option+P)。解除するにはnoneを指定します。";

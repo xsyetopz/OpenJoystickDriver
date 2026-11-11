@@ -3819,10 +3819,17 @@
           "type": "string"
         },
         "key": {
-          "$ref": "#/$defs/sharedSettingKey"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sharedSettingKey"
+            },
+            {
+              "const": "pauseShortcut"
+            }
+          ]
         },
         "value": {
-          "type": "boolean"
+          "type": ["boolean", "string"]
         }
       }
     },

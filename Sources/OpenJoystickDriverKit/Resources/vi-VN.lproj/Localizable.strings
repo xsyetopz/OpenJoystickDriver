@@ -5043,3 +5043,15 @@
 "platform.macos.ui.settings.general.startAtLoginUnavailable" = "Khởi động khi đăng nhập cần macOS 13 trở lên.";
 /* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
 "ui.settings.notifications.controllerConnectedOrAttention" = "Đã kết nối hoặc cần chú ý";
+/* Title of the row in the General pane of the settings window where the user records the system-wide keyboard shortcut that pauses and resumes every controller. */
+"ui.settings.general.pauseShortcut" = "Phím tắt tạm dừng";
+/* Explanation under the pause shortcut title in the General pane of the settings window. */
+"ui.settings.general.pauseShortcutDescription" = "Tạm dừng và tiếp tục mọi bộ điều khiển từ bất kỳ ứng dụng nào. Giữ Control, Option hoặc Command cùng với một phím.";
+/* Button in the General pane of the settings window that starts recording the pause shortcut. */
+"ui.settings.general.pauseShortcutRecord" = "Ghi phím tắt";
+/* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
+"ui.settings.general.pauseShortcutRecording" = "Nhấn phím tắt…";
+/* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
+"ui.settings.general.pauseShortcutTaken" = "Một ứng dụng khác đã dùng phím tắt này. Hãy ghi phím tắt khác.";
+/* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
+"cli.setting.set.badShortcut" = "'%1$@' không phải là phím tắt. Dùng các phím bổ trợ và một phím nối bằng +, ví dụ control+option+P, hoặc none.";

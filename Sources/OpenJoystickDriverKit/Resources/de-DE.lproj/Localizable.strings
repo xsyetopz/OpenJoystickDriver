@@ -5044,3 +5044,15 @@
 "platform.macos.ui.settings.general.startAtLoginUnavailable" = "Das Starten bei der Anmeldung erfordert macOS 13 oder neuer.";
 /* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
 "ui.settings.notifications.controllerConnectedOrAttention" = "Verbunden oder braucht Aufmerksamkeit";
+/* Title of the row in the General pane of the settings window where the user records the system-wide keyboard shortcut that pauses and resumes every controller. */
+"ui.settings.general.pauseShortcut" = "Pause-Kurzbefehl";
+/* Explanation under the pause shortcut title in the General pane of the settings window. */
+"ui.settings.general.pauseShortcutDescription" = "Hält alle Controller aus jeder App an und setzt sie fort. Halte Control, Option oder Befehl zusammen mit einer Taste gedrückt.";
+/* Button in the General pane of the settings window that starts recording the pause shortcut. */
+"ui.settings.general.pauseShortcutRecord" = "Kurzbefehl aufnehmen";
+/* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
+"ui.settings.general.pauseShortcutRecording" = "Kurzbefehl drücken…";
+/* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
+"ui.settings.general.pauseShortcutTaken" = "Eine andere App verwendet diesen Kurzbefehl bereits. Nimm einen anderen auf.";
+/* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
+"cli.setting.set.badShortcut" = "„%1$@“ ist kein Kurzbefehl. Verwende Sondertasten und eine Taste, mit + verbunden, etwa control+option+P, oder none.";
