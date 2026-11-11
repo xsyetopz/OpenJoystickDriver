@@ -53,7 +53,7 @@ enum GUICoverageMatrix {
       [["status"], ["transport-extension"], ["permission"], ["service"]],
       area: "problem banner, Controllers, Access",
       mainMenu: nil,
-      statusItem: "status line, Open Window"
+      statusItem: "controller rows, Open OpenJoystickDriver"
     )
     + row(
       [["controller"], ["virtual"], ["config", "show"], ["config", "set"], ["config", "unset"]],

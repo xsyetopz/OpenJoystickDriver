@@ -3899,8 +3899,8 @@
 "ui.extra.showInWindow" = "Показать в окне";
 /* Button of the problem banner that opens the Access area so the user can grant access. */
 "ui.extra.grantAccess" = "Предоставить доступ";
-/* Menu item in the menu bar menu that opens the main window. */
-"ui.extra.openWindow" = "Открыть окно";
+/* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
+"ui.extra.openWindow" = "Открыть %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */
 "ui.extra.actionFailedTitle" = "Действие не выполнено";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */

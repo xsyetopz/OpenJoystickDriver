@@ -54,6 +54,12 @@ struct StatusItemMenuTests {
     let menu = Self.rows(Self.entries([Self.controller("a")]))
     #expect(menu.map(\.id) == ["controller.a", "openWindow", "settings", "quit"])
     #expect(menu[1].title == .key("ui.extra.openWindow"))
+    #expect(
+      String(
+        format: OJDLocalized.string("ui.extra.openWindow"),
+        OJDLocalized.string("term.app.name")
+      ) == "Open OpenJoystickDriver"
+    )
     #expect(menu[2].title == .key("ui.menu.app.settings"))
     #expect(menu[3].title == .key("ui.menu.app.quit"))
   }

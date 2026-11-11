@@ -4413,8 +4413,8 @@
 "ui.extra.showInWindow" = "Toon in venster";
 /* Button of the problem banner that opens the Access area so the user can grant access. */
 "ui.extra.grantAccess" = "Verleen toegang";
-/* Menu item in the menu bar menu that opens the main window. */
-"ui.extra.openWindow" = "Open venster";
+/* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
+"ui.extra.openWindow" = "Open %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */
 "ui.extra.actionFailedTitle" = "De actie is niet voltooid";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */

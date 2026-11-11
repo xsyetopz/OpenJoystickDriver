@@ -3899,8 +3899,8 @@
 "ui.extra.showInWindow" = "แสดงในหน้าต่าง";
 /* Button of the problem banner that opens the Access area so the user can grant access. */
 "ui.extra.grantAccess" = "ให้สิทธิ์การเข้าถึง";
-/* Menu item in the menu bar menu that opens the main window. */
-"ui.extra.openWindow" = "เปิดหน้าต่าง";
+/* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
+"ui.extra.openWindow" = "เปิด %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */
 "ui.extra.actionFailedTitle" = "การดำเนินการไม่เสร็จสมบูรณ์";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */
