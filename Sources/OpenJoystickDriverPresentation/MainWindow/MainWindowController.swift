@@ -468,18 +468,20 @@
 
     /// The search field of the list in view, or nil when the area has none or the toolbar is
     /// hidden.
-    var searchFieldInView: NSSearchField? {
+    var searchFieldInView: NSSearchField? { searchItemInView?.searchField }
+
+    private var searchItemInView: NSSearchToolbarItem? {
       guard let action = navigation.selectedArea.searchAction(activityMode: screens.activity.mode),
         let toolbar = window?.toolbar, toolbar.isVisible
       else { return nil }
-      let item = toolbar.items.first { $0.itemIdentifier == action.identifier }
-      return (item as? NSSearchToolbarItem)?.searchField
+      return toolbar.items.first { $0.itemIdentifier == action.identifier } as? NSSearchToolbarItem
     }
 
     /// Moves the keyboard focus to the search field of the list in view.
     func focusSearchField() {
-      guard let field = searchFieldInView else { return }
-      window?.makeFirstResponder(field)
+      // A collapsed search item is a button whose field is not in the window, so
+      // `makeFirstResponder` on the field does nothing; the item must expand it.
+      searchItemInView?.beginSearchInteraction()
     }
 
     /// Runs `action` when its toolbar item is enabled.
