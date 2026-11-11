@@ -555,6 +555,21 @@ A build that fixes a reported issue is published as a pre-release on GitHub Rele
 
 Publishing is the maintainer's action each time.
 
+### D27. One identity on two access paths splits by a `backend` match key
+
+#37: the Flydigi Vader 4 Pro dongle in XInput mode reports `045E:028E` ("Flydigi VADER3"), which macOS surfaces through HID, while a genuine Xbox 360 pad on the same identity is claimed over raw USB. Neither `link`, `interfaceSignature`, `manufacturer`, `product`, `bcdDevice`, nor `probes` in `modeMatch` (`controller.schema.json`) names the access path, so a mode cannot be chosen by it, and the dongle falls to the descriptor fallback.
+
+Options:
+
+1. A `backend` key in `modeMatch`, with the values `hid` and `usb`, held against the access backend the device is observed on (`PhysicalInterfaceSignature.accessBackend`).
+2. A mode whose `match.product` is "Flydigi VADER3" on the HID path, which splits the identity by string after a probe shows the product string is readable there.
+
+Choice: option 1. The path is a fact of the observation, not of the pad: option 2 breaks for a dongle that reports another string (the Apex 4 reports "Flydigi APEX 4" on the same identity) and for a user who renames nothing but meets a firmware that changes the string, and it needs a hardware probe before it can be written. Option 1 keeps the catalog partition rule (HID and raw-USB rows stay disjoint) and adds one key to one schema def. A third transport value on the record, which the reporter prototyped, is refused: it breaks `RawUSBAdmissionPolicyTests.specializedParsersRequireTheirCatalogedTransport` and `HIDProfileDiscoveryTests.hidAndRawUSBCatalogPartitionsAreDisjoint`, because the transport describes the claim, not the mode.
+
+Not implemented in 8.11. The key touches `modeMatch` in the schema, `ControllerRecordDocument+Modes.swift` decode, `ControllerModeMatch.holds`, `wiki/Controller-Records.md`, a `SchemaRejections` case, and an `045e:028e` base record with both modes (today only `ControllerPatches/045e/045e-028e.patch.plist` exists, XUSB only). That is more than one slice and it needs the dongle's HID descriptor, which only #37's reporter can capture. #37 stays open.
+
+What 8.11 did for #35: records `045e-02e0` (Bluetooth XInput, two layouts by report ID, unsigned 16-bit axes through the default centre, 10-bit triggers) and the `05 0F L R` rumble of `04b4-2412` (the reporter drove the motors on the dongle and states the frame, the latch, and the 10 Hz resend; records carry no comment field, so the source is named here and in the changelog). The `04b4-2412` record selects its report by report ID 4 and length 32, not by interface index; whether the bundled record reaches the `0xFFA0` vendor interface when the composite enumerates in another order (#35) is not tested, and no hardware of ours has confirmed either record.
+
 ### Release order
 
 Groups 10 to 12, 14, and 17 fix what users and the maintainer report. Groups 13, 15, and 16 add features, and each can leave this release without changing another group. Within group 16 each task stands alone. The maintainer decides which stay (Open Questions).
