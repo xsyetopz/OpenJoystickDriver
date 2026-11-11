@@ -22,7 +22,7 @@ If you cannot run a command, fill in "Commands you could not run".
 
 | Behavior | Command that you ran | Output or file | Result |
 | --- | --- | --- | --- |
-|  |  |  |  |
+| | | | |
 
 ```text
 Output 1:
@@ -34,11 +34,7 @@ Output 1:
 <!-- Run each check. Tick a box only when the check passed, and paste its output in "Evidence". -->
 <!-- If a tool is missing, run `just setup`. "Not installed" is not a check result. -->
 
-- [ ] `just check` passed. Paste the last lines of its output.
-- [ ] `just lint` passed.
-- [ ] `just catalog-regenerate --check` passed. Run it when this change touches controller records.
-- [ ] `just driverkit-check` passed. Run it when this change touches DriverKit files.
-- [ ] `just verify` passed. Run it when this change touches Swift files.
+- [ ] `just verify` passed. Paste the last lines of its output.
 
 ## Commands You Could Not Run
 

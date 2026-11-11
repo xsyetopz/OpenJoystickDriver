@@ -1,0 +1,7 @@
+// OpenSpec delta specs open with `## ADDED Requirements`, issue-comment drafts open with body
+// text, and the drafts quote captures and command output that have no single fence language.
+{
+	"extends": "../.markdownlint.jsonc",
+	"first-line-heading": false,
+	"fenced-code-language": false,
+}

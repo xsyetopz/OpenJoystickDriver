@@ -1,6 +1,7 @@
 ## What's Changed
 
 ### 8BitDo Ultimate 2C Wireless
+
 * Rumble works over the 2.4 GHz receiver and the USB cable when the pad is in XInput mode. <!-- maintainer's own pad, reported 2026-11-11; Reddit r/GeForceNOW 1xr62z7 (dongle); evidence/2c-receiver-310a/rumble-6s.txt records the writes only -->
 * Over Bluetooth LE, every control decodes correctly except the two rear buttons. <!-- 51282caa5, evidence/2c-bluetooth-301b/ojd-watch-120s.txt -->
 * The receiver in DInput mode lists no controller while no pad is linked, and serves the pad once it is linked. <!-- fb958572f, 8a4003d71 -->
@@ -8,6 +9,7 @@
 * The 8BitDo bootloader identities `2DC8:3208` and `2DC8:5750` are sent no data. <!-- 983f4562f -->
 
 ### Other controllers
+
 * Flydigi Vader 4 Pro over Bluetooth in XInput mode: the sticks use their full range and Home registers. <!-- bcb3739a2 -->
 * Flydigi Vader 4 Pro dongle: rumble is on. <!-- bcb3739a2 -->
 * Flydigi Vader 5S: the USB startup steps run in the order the controller needs. <!-- 27a294eed -->
@@ -21,6 +23,7 @@
 Several of these come from reporters' captures and were not checked on the maintainer's hardware: the Vader 4 Pro records, the Vader 5S startup, the Xbox 360 receiver in the app, the Elite Series 1 and the G7 Pro dongle. <!-- openspec/changes/0-6-0-alpha-3/drafts/changelog-entries.md -->
 
 ### USB driver extension
+
 * OJD asks for the Xbox USB driver extension only after you act. <!-- 99678eb32 -->
 * Xbox controllers that no driver owns are served over direct USB. <!-- 6ab27c1d1 -->
 * The banner shows only while a connected controller needs the extension. It shows progress and the result of each request. <!-- 5bda6a419 -->
@@ -29,6 +32,7 @@ Several of these come from reporters' captures and were not checked on the maint
 * A USB start that keeps failing stops after five tries. <!-- 85dbb6bdb -->
 
 ### Old files and profiles
+
 * `ojd migrate` converts files from earlier alphas to the current format and keeps each original in `Migrated/`. <!-- 1834b2255, 456d21064 -->
 * The service migrates your files when it starts. <!-- bc4daafb0 -->
 * Every screen that reports `E5001` offers a Migrate button. <!-- 356aa9bca -->
@@ -36,6 +40,7 @@ Several of these come from reporters' captures and were not checked on the maint
 * Status shows the profile in force and the app that selected it. <!-- a1b6015b7 -->
 
 ### Menu bar and window
+
 * The menu bar menu has one row per controller, with its battery and profile. <!-- 30111b349 -->
 * Each problem has its own row at the top, and the row opens the fix. <!-- 542541b52 -->
 * The menu bar icon changes while a problem exists. <!-- 83878a347 -->
@@ -46,6 +51,7 @@ Several of these come from reporters' captures and were not checked on the maint
 * Input Test applies the player indicator when you choose it. <!-- a4b9bb20c -->
 
 ### Add support for your own controller
+
 * A patch, a record or a generator script adds a controller without a source change. <!-- c92100832 -->
 * `ojd generate` runs a JavaScript file and writes the documents it returns. <!-- 0fe33ba52 -->
 * `ojd record draft` drafts a record for a connected controller that OJD does not serve. <!-- 7f730c5f7 -->
@@ -53,6 +59,7 @@ Several of these come from reporters' captures and were not checked on the maint
 * Shortcuts and the local endpoint can set a profile value, rumble a controller and read the mod list. <!-- 8dc51099c, ca9f447e5, 5b44dbcc3 -->
 
 ### Changes that need your attention
+
 * Stored documents are XML property lists (`.plist`) with the version `openjoystickdriver/v1alpha3`. Run `ojd migrate` if the app reports `E5001`. <!-- ce2b9f8ce, af9cc004f -->
 * A profile uses `appIDs`, a list, in place of `appID`. <!-- a5834ea91 -->
 * `idle` is a key of a mode and names its reason. <!-- 5b8c99b50 -->
@@ -60,6 +67,7 @@ Several of these come from reporters' captures and were not checked on the maint
 * OJD is licensed under MPL-2.0. <!-- c1fef0594 -->
 
 ## Known limitations
+
 * Bluetooth LE rumble cannot work on macOS because the 8BitDo Ultimate 2C has no GATT characteristic for its output report. <!-- evidence/2c-bluetooth-301b/rumble-gatt.txt -->
 * Over Bluetooth LE, OJD leaves the 8BitDo Ultimate 2C to macOS, and macOS lists no controller for it, so games see none until you run `ojd controller claim 2DC8:301B`. <!-- evidence/2c-bluetooth-301b/serving.txt, evidence/2c-bluetooth-301b/gamecontroller-probes.txt -->
 * On the receiver in DInput mode, the 8BitDo Ultimate 2C has no rumble and its controls have no names. <!-- docs/testing/8bitdo-ultimate-2c.md, evidence/2c-receiver-301c/rumble-writes.txt -->
@@ -67,6 +75,7 @@ Several of these come from reporters' captures and were not checked on the maint
 * The 8BitDo Ultimate 2C battery level reads zero over Bluetooth LE. <!-- evidence/2c-bluetooth-301b/serving.txt -->
 
 ## Solved Issues
+
 Fixes #34 <!-- fb958572f, 8a4003d71, 551ecb82b -->
 Fixes #41 <!-- 51282caa5, 551ecb82b -->
 Fixes #55 <!-- 5f7633ba5, 2637e929d, 85dbb6bdb -->
@@ -79,6 +88,7 @@ Closes #56 <!-- 5f7633ba5 -->
 Closes #57 <!-- 1601e35b4 -->
 
 ## Partly addressed
+
 * #9, Xbox 360 wireless receiver: decoding and empty-slot hiding are tested with the captured packets. Input through the app on a receiver is not checked. <!-- 406c9042b -->
 * #18, Xbox One controller (`045E:02D1`): OJD seizes its HID device only after the serving decision. Not confirmed on a controller. <!-- b7b343664 -->
 * #35, Flydigi Vader 4 Pro: Bluetooth XInput mode and dongle rumble are done. The dongle in DInput mode still reaches only the generic fallback. <!-- bcb3739a2 -->
@@ -88,6 +98,7 @@ Closes #57 <!-- 1601e35b4 -->
 * #63, GameSir G7 Pro dongle: the HID gamepad interface is read. Its controls have no names until a capture through the dongle. <!-- f5cbcab80 -->
 
 ## Contributors
+
 * @xsyetopz
 * @bdidier: Xbox 360 wireless receiver work (#54, #64)
 * @konnsim: Xbox Elite Series 1 endpoints (#56, #55)
@@ -106,10 +117,11 @@ Closes #57 <!-- 1601e35b4 -->
 * @ElAscendido: PowerA Spectra report (#62)
 
 ## New Contributors
-* @bdidier made their first contribution in https://github.com/xsyetopz/OpenJoystickDriver/pull/54
-* @konnsim made their first contribution in https://github.com/xsyetopz/OpenJoystickDriver/pull/56
-* @multision made their first contribution in https://github.com/xsyetopz/OpenJoystickDriver/pull/39
-* @phil-bbs made their first contribution in https://github.com/xsyetopz/OpenJoystickDriver/pull/57
-* @Anonim0Venezian0 made their first contribution in https://github.com/xsyetopz/OpenJoystickDriver/pull/50
 
-**Full Changelog**: https://github.com/xsyetopz/OpenJoystickDriver/compare/0.6.0-alpha.2...0.6.0-alpha.3
+* @bdidier made their first contribution in <https://github.com/xsyetopz/OpenJoystickDriver/pull/54>
+* @konnsim made their first contribution in <https://github.com/xsyetopz/OpenJoystickDriver/pull/56>
+* @multision made their first contribution in <https://github.com/xsyetopz/OpenJoystickDriver/pull/39>
+* @phil-bbs made their first contribution in <https://github.com/xsyetopz/OpenJoystickDriver/pull/57>
+* @Anonim0Venezian0 made their first contribution in <https://github.com/xsyetopz/OpenJoystickDriver/pull/50>
+
+**Full Changelog**: <https://github.com/xsyetopz/OpenJoystickDriver/compare/0.6.0-alpha.2...0.6.0-alpha.3>

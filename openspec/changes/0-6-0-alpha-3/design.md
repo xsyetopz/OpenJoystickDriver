@@ -133,7 +133,7 @@ Reported by the maintainer: "what is the point of menbar app and its options are
 
 Reported by the maintainer: the "header-style buttons" of the main window are intended, "as many apple apps, like Apple Notes and such, use the very same idea".
 
-**Menu bar item**
+#### Menu Bar Item
 
 - The menu is built by `StatusItemModel.entries(for:)` (`MenuBar/StatusItemModel.swift:161-236`). In order: an unavailable status line of the form `"%1$@ · %2$@ · %3$@"` (readiness, controller count, profile name); a "Controllers" submenu with one submenu per controller; a "Profiles" submenu with the submenus "Activate" and "Deactivate"; "Grant Access" while a permission is missing; "Open Window"; "Settings..."; a "Help" submenu ("Activity Log", "Explain Error Code...", "Report Problem...", "Project Website"); "Quit OpenJoystickDriver".
 - A controller's submenu (`:265-325`) holds "Suspend" or "Resume", "Test Input", an "Active Profile" submenu, "Disconnect Wireless Link", and "Show in Window". "Controllers > controller > Active Profile" is three levels deep. The controller's row shows its name only: no battery, no profile, no state.
@@ -143,7 +143,7 @@ Reported by the maintainer: the "header-style buttons" of the main window are in
 - Every action of the menu also exists in the main window or the main menu, except the status line and "Open Window". The main menu shows only while a window of the app is active, because the app starts as an accessory (`MenuBar/MenuBarCoordinator+Lifecycle.swift:16`).
 - "Show in menu bar" and "Show in Dock" lock each other so one stays on (`SettingsPreferencesModel.swift:318-326`). Not traced: what the app does when a hand-edited settings file turns both off, beyond `applicationShouldHandleReopen` (`MenuBarCoordinator+Lifecycle.swift:128-135`).
 
-**Controls that can appear to do nothing**
+#### Controls That Can Appear to Do Nothing
 
 - Player indicator in Input Test (`Controllers/InputTest/InputTestView+Body.swift:218-226`): the segmented control changes nothing until the user clicks a separate Apply button, and nothing says so. The rumble switch (`:29`) takes effect only on "Test rumble".
 - "Served by" (`Controllers/Inventory/ControllerServerPicker.swift:33-52`): both segments stay enabled while the request runs (up to 10 polls of 200 ms), so a second click starts a second request. On failure the segment snaps back and the text appears in another section of the form (`ControllerDetailView+Facts.swift:24-26`). The service refuses a choice the control offers (`OpenJoystickDriverService/Runtime/RPC/ControllerServerRequests.swift:9-91`, `E2023`).
@@ -154,7 +154,7 @@ Reported by the maintainer: the "header-style buttons" of the main window are in
 - Failures have seven places: the shared banner (`MainWindow/MainWindowProblems.swift`), `controllerActionFailures`, the override view's `problems`, `SettingsErrorSection`, `ProfileLibraryModel.lastError`, Input Test's `outputError`, `ActivityActionFailure`, and several alerts.
 - Not read: the profile sheets, the Access view model, the Library area, `MainWindowToolbar`'s actions, and the update checker. Not verified: whether the Apply buttons of Input Test are ever unavailable.
 
-**Sizes**
+#### Sizes
 
 - Main window: content 1040 × 700 by default, 960 × 560 at minimum (`MainWindow/MainWindowController.swift:17,19`). The column minimums are 170, 200, and 420 (`:11-15`), which is 790, so the window stops shrinking 170 pt before its columns need it to.
 - Settings window: 600 wide for every pane, height fitted, not resizable (`SettingsWindowPaneModel.swift:35-54`).
@@ -213,7 +213,7 @@ Common to the five utilities: the item per device or profile sits at the top lev
 
 ## Goals / Non-Goals
 
-**Goals**
+### Goals
 
 - A controller that speaks a family OJD has works when it is plugged in, with no record. A controller that differs is fixed by a patch or a record. Source changes only for a protocol family OJD lacks.
 - Every controller fix in this release lands as data. Where a record cannot state the fact, the change adds the general record ability, never a branch for one model.
@@ -234,7 +234,7 @@ Common to the five utilities: the item per device or profile sits at the top lev
 - One term names one concept in the app, the command line's prose, and the wiki.
 - Each change to the interface rests on a measurement of OJD and a named reference: a guideline page, an Apple app, or an open-source app at a commit.
 
-**Non-Goals**
+### Non-Goals
 
 - Running scripts inside the service or the app.
 - A TypeScript compiler inside OJD.
@@ -364,7 +364,7 @@ Apple's `IOUSBHostPipe::IO` documentation requires 0 for interrupt endpoints, an
 
 ### D11. A pull request in an old format is redone on the release branch with the author credited
 
-#50, #36, #39, and #47 target code and formats that do not exist on the branch. The maintainer re-creates the data as `v1alpha3` records and patches, credits the author in the commit, and then decides on the pull request. #56, #57, and #54 convert with `ojd migrate <folder>` after a rebase.
+Pull requests #50, #36, #39, and #47 target code and formats that do not exist on the branch. The maintainer re-creates the data as `v1alpha3` records and patches, credits the author in the commit, and then decides on the pull request. #56, #57, and #54 convert with `ojd migrate <folder>` after a rebase.
 
 ### D12. A patch removes keys through `remove`
 
@@ -415,7 +415,7 @@ Alternative considered: OJD serves every HID pad it has a record for. Rejected: 
 
 ### D17. A patch reaches every section of a record, and a draft starts from any device
 
-#63 shows a controller that no user document can fix (Context, What users ask for). Three rules close that gap, so step 2 of the ladder (D13) holds for every bundled record:
+Issue #63 shows a controller that no user document can fix (Context, What users ask for). Three rules close that gap, so step 2 of the ladder (D13) holds for every bundled record:
 
 - A patch sets every property of a record except its identity (`vendorID`, `productID`), `capabilities` included. `ControllerPatch.sections` (`ControllerPatch.swift:62-65`) lists seven sections today; the list becomes the record schema's properties minus the identity.
 - Entries of `patch.modes` merge with the record's modes by `id`: an entry whose `id` the record holds merges key by key into that mode, an entry with another `id` adds a mode, and the `remove` path `modes.<id>` removes one. Every other array replaces the whole array (D12). So a patch that adds a `HIDDescriptor` mode to a record does not restate the record's other modes.
@@ -557,7 +557,7 @@ Publishing is the maintainer's action each time.
 
 ### D27. One identity on two access paths splits by a `backend` match key
 
-#37: the Flydigi Vader 4 Pro dongle in XInput mode reports `045E:028E` ("Flydigi VADER3"), which macOS surfaces through HID, while a genuine Xbox 360 pad on the same identity is claimed over raw USB. Neither `link`, `interfaceSignature`, `manufacturer`, `product`, `bcdDevice`, nor `probes` in `modeMatch` (`controller.schema.json`) names the access path, so a mode cannot be chosen by it, and the dongle falls to the descriptor fallback.
+Issue #37: the Flydigi Vader 4 Pro dongle in XInput mode reports `045E:028E` ("Flydigi VADER3"), which macOS surfaces through HID, while a genuine Xbox 360 pad on the same identity is claimed over raw USB. Neither `link`, `interfaceSignature`, `manufacturer`, `product`, `bcdDevice`, nor `probes` in `modeMatch` (`controller.schema.json`) names the access path, so a mode cannot be chosen by it, and the dongle falls to the descriptor fallback.
 
 Options:
 

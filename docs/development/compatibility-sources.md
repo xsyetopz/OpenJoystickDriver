@@ -85,7 +85,6 @@ The evidence classes used for this decision are official documentation, upstream
 
 - [wiiuse `e769bd7`][27] (GPL-3.0-or-later) corroborates Wii Remote register addresses, report ids and sizes. No code is copied. WiiBrew's Wiimote pages are the primary protocol source, and every Wii fixture is a source fixture, not hardware evidence.
 
-
 ## Gates
 
 ```bash

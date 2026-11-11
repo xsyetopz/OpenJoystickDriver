@@ -172,7 +172,7 @@ body:
         - Connection: `ojd controller list`, then `ojd controller show <controller>`.
         - Virtual gamepad or a game: `ojd virtual show <controller>`. Add a screenshot or the log of the game.
         - App, service, or crash: `ojd log show --lines 200`.
-        - Build or tests: `swift --version`, then the failing output of the check that you ran, for example `just check`.
+        - Build or tests: `swift --version`, then the failing output of the check that you ran, for example `just verify`.
 
         [How to get each file](https://github.com/xsyetopz/OpenJoystickDriver/wiki/Reporting-a-Bug).
       render: text

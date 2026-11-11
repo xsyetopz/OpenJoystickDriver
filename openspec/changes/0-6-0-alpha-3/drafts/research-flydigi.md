@@ -7,21 +7,21 @@ Mark key: AGREES / EXTENDS / CONTRADICTS = relation to our records. "read" = fro
 ## 1. Sources and licenses
 
 | Source | License | Pinned commit | Read? |
-|---|---|---|---|
-| https://github.com/zsuzuki/Apex5Connect | MIT | 21d1ce70c8cc | read: a Bluetooth re-pair menu-bar app (calls `blueutil`); no HID protocol content |
-| https://github.com/deuxdoom/APEXGIFMAKER | custom LICENSE (SPDX NOASSERTION) | cf52cb4abca2 | listed only; README/screen tool not read in depth |
-| https://github.com/dracinn/ControlLab | unknown | n/a | NOT READABLE: `gh api` returned 404 |
-| https://github.com/kitty-panics/Flydigi-Vader-5S | none stated | a5944d7dd72e | read: udev rule + README only |
-| https://github.com/LH-03/flydigi-vader5-dualsense-haptics | MIT | cb84e14bcdb5 | not read in depth (on-board profile code skipped) |
-| https://github.com/mkaliaha/openflydigi | mixed (REUSE: CC0 / GPL-3.0-or-later / MIT); `PROTOCOL.md` CC0 per `docs/development/compatibility-sources.md:68-75` | 9ab15b4b8a75 (our doc pins 11653507bbe4) | `PROTOCOL.md` read; `docs/findings-*.md` and `flydigi/*.py` not read |
-| https://github.com/LeeeSe/controller | none stated | 6cd112cbbb1b | read `src/hid.rs` |
-| https://github.com/LARo-developer/vader5-pro-android | GPL-2.0 | e182c35c56d4 | `docs/PROTOCOL.md` read (behaviour only) |
-| https://github.com/uiltonlopes/flydigi-space-station-mac | MIT | 649b9f36cbba | `docs/protocol.md` read; Swift sources listed, not read |
-| https://github.com/Jackwmtr/flydigi-apex4-linux | MIT | afd2e431485e | `docs/PROTOCOL.md` read |
-| https://github.com/kristoferssolo/flydigi-tools | Apache-2.0 / MIT | c99726e7f3 | `core/src/lib.rs` read: generic hidapi wrapper only, no protocol |
-| https://github.com/RezenDeveloper/xpad_flydigi | none stated; xpad fork, GPL-2.0 by derivation | a715da71c69f | not read (C file and `reference/bytes-*.txt` skipped) |
-| https://github.com/BANANASJIM/flydigi-vader5 | GPL-2.0 | 5d8671db056f | `include/vader5/protocol.hpp` read |
-| https://github.com/ahungry/vader3 | GPL-3.0 | 360cc0942337 | `hid-vader3.c` and udev rule read |
+| --- | --- | --- | --- |
+| <https://github.com/zsuzuki/Apex5Connect> | MIT | 21d1ce70c8cc | read: a Bluetooth re-pair menu-bar app (calls `blueutil`); no HID protocol content |
+| <https://github.com/deuxdoom/APEXGIFMAKER> | custom LICENSE (SPDX NOASSERTION) | cf52cb4abca2 | listed only; README/screen tool not read in depth |
+| <https://github.com/dracinn/ControlLab> | unknown | n/a | NOT READABLE: `gh api` returned 404 |
+| <https://github.com/kitty-panics/Flydigi-Vader-5S> | none stated | a5944d7dd72e | read: udev rule + README only |
+| <https://github.com/LH-03/flydigi-vader5-dualsense-haptics> | MIT | cb84e14bcdb5 | not read in depth (on-board profile code skipped) |
+| <https://github.com/mkaliaha/openflydigi> | mixed (REUSE: CC0 / GPL-3.0-or-later / MIT); `PROTOCOL.md` CC0 per `docs/development/compatibility-sources.md:68-75` | 9ab15b4b8a75 (our doc pins 11653507bbe4) | `PROTOCOL.md` read; `docs/findings-*.md` and `flydigi/*.py` not read |
+| <https://github.com/LeeeSe/controller> | none stated | 6cd112cbbb1b | read `src/hid.rs` |
+| <https://github.com/LARo-developer/vader5-pro-android> | GPL-2.0 | e182c35c56d4 | `docs/PROTOCOL.md` read (behaviour only) |
+| <https://github.com/uiltonlopes/flydigi-space-station-mac> | MIT | 649b9f36cbba | `docs/protocol.md` read; Swift sources listed, not read |
+| <https://github.com/Jackwmtr/flydigi-apex4-linux> | MIT | afd2e431485e | `docs/PROTOCOL.md` read |
+| <https://github.com/kristoferssolo/flydigi-tools> | Apache-2.0 / MIT | c99726e7f3 | `core/src/lib.rs` read: generic hidapi wrapper only, no protocol |
+| <https://github.com/RezenDeveloper/xpad_flydigi> | none stated; xpad fork, GPL-2.0 by derivation | a715da71c69f | not read (C file and `reference/bytes-*.txt` skipped) |
+| <https://github.com/BANANASJIM/flydigi-vader5> | GPL-2.0 | 5d8671db056f | `include/vader5/protocol.hpp` read |
+| <https://github.com/ahungry/vader3> | GPL-3.0 | 360cc0942337 | `hid-vader3.c` and udev rule read |
 
 Line numbers for external files were not captured; cite by file path plus the pinned commit.
 
@@ -34,7 +34,7 @@ Line numbers for external files were not captured; cite by file path plus the pi
 ## 3. Identity table (VID:PID per mode)
 
 | Model / mode | VID:PID | Source | License | Relation to our records |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | Vader 4 Pro, Bluetooth DInput | D7D7:0041 | issue #35; ahungry (Vader 3 BT, same id) | repo / GPL-3.0 | AGREES `Resources/Controllers/d7d7/d7d7-0041.plist` |
 | Vader 4 Pro, Switch mode | 057E:2009 | issue #35 | repo | no record (patches only exist for 2066/2067/2069 under `Resources/ControllerPatches`); works via generic path per reporter |
 | Vader 4 Pro / Apex 4, dongle or wired DInput | 04B4:2412 | #35; space-station-mac; Jackwmtr | repo / MIT / MIT | AGREES `Resources/Controllers/04b4/04b4-2412.plist` identity; CONTRADICTS its docs claim of Apex-4-only and "no rumble" (`docs/testing/flydigi-apex-4.md`) |
@@ -152,6 +152,7 @@ Question: can every Flydigi model and mode we support be described by a layout d
 Answer: YES for input and rumble, with limits.
 
 Evidence:
+
 1. `VendorFlydigi` already runs through the generic layout path: `ProtocolDriverRegistry.swift:249` returns `describedLayoutDriver()`; it has no session, startup or output (`docs/development/wire-protocols.md:47`, `Resources/Protocols/vendor-flydigi.plist`). Moving it into a document is therefore sound.
 2. The handshake and checksum modes are already data: `37d7-2401.plist` bakes the `5A A5` frames with sum8 as literal bytes (`docs/development/wire-protocols.md:48`); schema startup writes accept raw bytes, `crc32Seed` and transport (`controller.schema.json:603`). Commands 18, 81, 82 need no checksum.
 3. `04b4-2412` is stateless (streaming vendor report 4, no enable command; Jackwmtr).
@@ -159,6 +160,7 @@ Evidence:
 5. The 5S GIP init (#40) is `protocol.initialization` data.
 
 Limits, so the yes is not over-claimed:
+
 - Not describable by a layout: Space Station config/LED/screen/OTA transfers (parcel acknowledgement loops, read-modify-write, "config then ~500 ms then LED" ordering, serial OTA with its own CRC). These are a config protocol, outside 9.22.
 - Latching rumble (`05 0F`) needs a resend cadence and a stop frame: expressible with `minimumHIDOutputIntervalMs` plus a second template, but not shown to work on hardware.
 - Issue #37 needs a new match key (backend) or a product-string split; this is a schema issue, not a layout limit.
@@ -168,7 +170,7 @@ Limits, so the yes is not over-claimed:
 ## 11. Facts mapped to open tasks and proposals
 
 | Task | Facts | Proposal |
-|---|---|---|
+| --- | --- | --- |
 | 9.22 (`tasks.md:138`) | section 10 | Install `VendorFlydigi` as a user layout document; compare layout offsets with `Resources/Protocols/vendor-flydigi.plist`; evidence under `evidence/document-family/`. |
 | 8.11 (`tasks.md:107`) | sections 3, 4.1, 4.3, 6, 9 | Add `045e-02e0.plist`; add rumble to `04b4-2412.plist`; decide #37 with a `backend` match key in `design.md`; fixtures from the #35/#36 captures. |
 | 8.11 follow-up | PR #40 | Port the four GIP startup packets to `37d7-2801.plist`; hardware check. |

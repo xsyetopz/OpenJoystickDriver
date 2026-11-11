@@ -1,3 +1,4 @@
+<!-- markdownlint-disable-file first-line-heading no-inline-html -- GitHub centers the banner, badges and details only through HTML. -->
 <div align="center">
 
 <img src="docs/images/app-icon.png" alt="" width="128">
