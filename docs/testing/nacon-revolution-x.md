@@ -9,7 +9,7 @@ The bundled record selects `XboxGIP` on interface 0 with interrupt IN `0x87` and
 Run from the repository root:
 
 ```bash
-./Scripts/ojd diagnose record \
+just diagnose-record \
   Sources/OpenJoystickDriverKit/Resources/Controllers/3285/3285-0634.plist \
   --validate-only
 ```
@@ -25,7 +25,7 @@ RECORD_VALIDATION result=valid
 This VID/PID is not in the current production Apple USB entitlement, so the facade tries direct IOUSBHost. Quit games, Steam, and other controller utilities, connect the controller directly by USB, then run:
 
 ```bash
-./Scripts/ojd diagnose record \
+just diagnose-record \
   Sources/OpenJoystickDriverKit/Resources/Controllers/3285/3285-0634.plist \
   --seconds 45
 ```

@@ -7,7 +7,7 @@ The wired SCUF Envision Pro record is exact HID identity `2E95:434D`. Issue 33 p
 Run from the repository root:
 
 ```bash
-./Scripts/ojd diagnose record \
+just diagnose-record \
   Sources/OpenJoystickDriverKit/Resources/Controllers/2e95/2e95-434d.plist \
   --validate-only
 swift test --filter SCUFEnvisionParserTests

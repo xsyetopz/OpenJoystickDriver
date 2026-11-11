@@ -1,5 +1,3 @@
-"""Rebuild the runtime controller catalog from pinned sources and local overrides."""
-
 from __future__ import annotations
 
 import argparse
@@ -10,6 +8,7 @@ import pathlib
 import plistlib
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import urllib.error
@@ -21,7 +20,6 @@ from Scripts.Catalog import protocol_descriptions
 from Scripts.Catalog.catalog_rules import load_rules, parse_id, parse_identity
 from Scripts.Catalog.schema_header import KINDS, header
 from Scripts.Catalog.xpad_io import json_text
-from Scripts.Command.execution import main_checkout_dir
 from Scripts.Quality import repository_tool
 from Scripts.Quality.plist_format import convert_json_files
 
@@ -47,8 +45,6 @@ VIRTUAL_DEVICE_OUTPUT_DIR = (
     ROOT / "Sources" / "OpenJoystickDriverKit" / "Resources" / "VirtualDevices"
 )
 
-# Linux HID records from `Resources/CatalogRules/linux-hid.plist`: (source, vendor macro,
-# product macro, family, stored variant, parameters, capabilities).
 _HID_RULES = load_rules("linux-hid.plist", "LinuxHidRules", frozenset({"records"}))
 HID_RECORDS: tuple[
     tuple[str, str, str, str, str | None, dict[str, Any], dict[str, Any] | None], ...
@@ -66,8 +62,18 @@ HID_RECORDS: tuple[
 )
 
 
+def main_checkout_dir(directory: pathlib.Path = ROOT) -> pathlib.Path:
+    result = subprocess.run(
+        ["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+        cwd=directory,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return pathlib.Path(result.stdout.strip()).parent
+
+
 def source_cache(directory: pathlib.Path = ROOT) -> pathlib.Path:
-    """Pinned sources by their locked sha256, so every worktree reads each one from the network once."""
     return main_checkout_dir(directory) / ".build" / "catalog-sources"
 
 
@@ -124,7 +130,6 @@ def parse_defines(source: str) -> dict[str, int]:
 
 
 def stores_variant(family: str) -> bool:
-    """Whether the description of `family` says records store its variant."""
     return protocol_descriptions.stores_variant(protocol_descriptions.bundled()[family])
 
 
@@ -176,8 +181,6 @@ def build_hid_records(sources: dict[str, str]) -> list[dict[str, Any]]:
 
 INTERFACE_SIGNATURE_BUCKET = "interface-signature"
 
-# SDL rule tables from `Resources/CatalogRules/sdl.plist`. Every identity-keyed table is
-# keyed by (vendor ID, product ID).
 _SDL_RULES = load_rules(
     "sdl.plist",
     "SdlRules",
@@ -202,31 +205,21 @@ _SDL_RULES = load_rules(
 SONY_VENDOR_ID = parse_id(_SDL_RULES["vendorIDs"]["sony"])
 MICROSOFT_VENDOR_ID = parse_id(_SDL_RULES["vendorIDs"]["microsoft"])
 NVIDIA_VENDOR_ID = parse_id(_SDL_RULES["vendorIDs"]["nvidia"])
-# Microsoft Xbox 360 product IDs; third-party XBoxOneController rows reuse them.
 MICROSOFT_XBOX_360_PRODUCT_IDS = frozenset(
     parse_id(text) for text in _SDL_RULES["microsoftXbox360ProductIDs"]
 )
 
-# SDL controller type -> (family, stored variant). Types absent here have no implemented
-# family and are skipped.
 SDL_FAMILIES: dict[str, tuple[str, str | None]] = {
     controller_type: (entry["family"], entry.get("variant"))
     for controller_type, entry in _SDL_RULES["controllerTypeFamilies"].items()
 }
-# Family of non-Sony PS3Controller rows.
 THIRD_PARTY_PS3_FAMILY: str = _SDL_RULES["thirdPartyPS3Family"]
 
-# SDL types whose rows get no record because `ProtocolClassifier` binds them by USB interface
-# signature. SDL_XBOX_USB_TYPES adds the types an identity may also be listed under while the
-# interface signature still resolves it.
 SDL_INTERFACE_SIGNATURE_TYPES = frozenset(_SDL_RULES["interfaceSignatureTypes"])
 SDL_XBOX_USB_TYPES = SDL_INTERFACE_SIGNATURE_TYPES | frozenset(
     _SDL_RULES["xboxUsbTypes"]
 )
 
-# Identities whose SDL driver differs from the one their SDL type implies:
-# (identity) -> (expected SDL type, family, stored variant). Each entry must still be
-# listed with that type at the pinned commit.
 SDL_IDENTITY_FAMILIES: dict[tuple[int, int], tuple[str, str, str | None]] = {
     parse_identity(entry["identity"]): (
         entry["sdlType"],
@@ -236,34 +229,26 @@ SDL_IDENTITY_FAMILIES: dict[tuple[int, int], tuple[str, str, str | None]] = {
     for entry in _SDL_RULES["identityFamilies"]
 }
 
-# Stored variant of each Steam Controller and Steam Triton identity. A row of either family
-# missing here fails generation instead of guessing.
 STEAM_VARIANTS: dict[tuple[int, int], str] = {
     parse_identity(entry["identity"]): entry["variant"]
     for entry in _SDL_RULES["steamVariants"]
 }
 
-# SDL controller type -> protocol parameters its rows carry.
 SDL_PARAMETERS: dict[str, dict[str, Any]] = {
     controller_type: dict(parameters)
     for controller_type, parameters in _SDL_RULES["controllerTypeParameters"].items()
 }
 
-# Nintendo Switch 2 identities; their rows select the Switch 2 protocol whatever their SDL type.
 SWITCH_2_IDENTITIES = frozenset(
     parse_identity(text) for text in _SDL_RULES["switch2Identities"]
 )
 SWITCH_2_FAMILY = "NintendoSwitch2"
 
-# Identities that get no record: (identity) -> (expected SDL type, skip reason). Each entry
-# must still be listed with that type at the pinned commit and must not already be catalogued.
-# A reason of `interface-signature` means the XUSB or GIP interface signature binds the pad.
 SDL_EXCLUSIONS: dict[tuple[int, int], tuple[str, str]] = {
     parse_identity(entry["identity"]): (entry["sdlType"], entry["reason"])
     for entry in _SDL_RULES["exclusions"]
 }
 
-# Switch pads whose USB link only charges them.
 BLUETOOTH_ONLY_IDENTITIES = frozenset(
     parse_identity(text) for text in _SDL_RULES["bluetoothOnlyIdentities"]
 )
@@ -285,7 +270,6 @@ SDL_ENTRY_PATTERN = re.compile(
 
 
 def parse_sdl_controllers(source: str) -> list[tuple[int, int, str]]:
-    """Returns (vendor ID, product ID, SDL type) for every active arrControllers row."""
     match = SDL_ARRAY_PATTERN.search(source)
     if match is None:
         raise CatalogError("SDL controller_list.h has no arrControllers table")
@@ -311,7 +295,6 @@ def sdl_rule_reason(key: tuple[int, int], controller_type: str) -> str | None:
         controller_type == "XBoxOneController"
         and product_id in MICROSOFT_XBOX_360_PRODUCT_IDS
     ):
-        # The ID says XUSB, the SDL type says GIP; the interface signature decides.
         return INTERFACE_SIGNATURE_BUCKET
     return None
 
@@ -319,7 +302,6 @@ def sdl_rule_reason(key: tuple[int, int], controller_type: str) -> str | None:
 def sdl_family(
     key: tuple[int, int], controller_type: str
 ) -> tuple[str, str | None] | None:
-    """Returns (family, stored variant) for an SDL row, or None for an unmapped type."""
     override = SDL_IDENTITY_FAMILIES.get(key)
     if override is not None:
         return override[1], override[2]
@@ -343,12 +325,8 @@ def sdl_skip_reason(key: tuple[int, int], controller_type: str) -> str | None:
         and key[0] == MICROSOFT_VENDOR_ID
         and (controller_type == "XBoxOneController")
     ):
-        # Microsoft ships Bluetooth and Windows-driver identities under this type;
-        # a new one must be reviewed before it can bind the USB-only GIP driver.
         raise CatalogError(f"unreviewed Microsoft SDL XBoxOneController row {key}")
     if rule is None and key not in SDL_IDENTITY_FAMILIES and key[0] == NVIDIA_VENDOR_ID:
-        # SDL drives NVIDIA pads with `SDL_hidapi_shield.c`, not the protocol their SDL type
-        # names; a new one must be reviewed before it can bind another driver.
         raise CatalogError(f"unreviewed NVIDIA SDL row {key}")
     return rule
 
@@ -357,10 +335,6 @@ def build_sdl_records(
     rows: list[tuple[int, int, str]],
     existing: dict[tuple[int, int], str],
 ) -> tuple[dict[tuple[int, int], dict[str, Any]], dict[str, int]]:
-    """Admits SDL identities absent from `existing` (identity -> family).
-
-    Every distinct identity lands in exactly one count bucket, independent of row order.
-    """
     types: dict[tuple[int, int], set[str]] = {}
     for vendor_id, product_id, controller_type in rows:
         types.setdefault((vendor_id, product_id), set()).add(controller_type)
@@ -425,7 +399,6 @@ def build_sdl_records(
         if key in BLUETOOTH_ONLY_IDENTITIES:
             parameters["usbProtocol"] = "ChargingOnly"
         parameters.update(SDL_PARAMETERS.get(controller_type, {}))
-        # SDL runs a non-Sony PS5Controller through its third-party DualSense path.
         if family == "SonyDualSense" and key[0] != SONY_VENDOR_ID:
             parameters["maker"] = "ThirdParty"
         if parameters:
@@ -497,7 +470,6 @@ def load_lock() -> dict[str, Any]:
 def load_authored_records(
     controller_dir: pathlib.Path = CONTROLLER_DIR,
 ) -> dict[tuple[int, int], dict[str, Any]]:
-    """The authored `Controller` records."""
     adds: dict[tuple[int, int], dict[str, Any]] = {}
     for path in sorted(controller_dir.glob("*/*.plist")):
         record = plistlib.loads(path.read_bytes())
@@ -515,12 +487,6 @@ def apply_built_in_patches(
     controller_dir: pathlib.Path = CONTROLLER_DIR,
     patch_dir: pathlib.Path = PATCH_DIR,
 ) -> dict[tuple[int, int], bytes]:
-    """The bytes of every record with the built-in patches applied.
-
-    `OJDRepositoryTool apply-patches` merges the patches, so the merge rules, the patch layout
-    and the text of the numbers are Swift's. An authored record enters unchanged, and the
-    result is checked by `OJDRepositoryTool validate controllers` before it is returned.
-    """
     for key in adds:
         if key in records:
             raise CatalogError(f"controller conflicts with upstream identity {key}")
@@ -564,10 +530,6 @@ def apply_built_in_patches(
 
 
 def default_family(record: dict[str, Any]) -> str:
-    """The protocol family of `record`'s `default` mode.
-
-    A record without a `default` mode reports its first mode's family.
-    """
     modes = record["modes"]
     if not modes:
         raise CatalogError(f"{record_key(record)} has no modes")
@@ -582,7 +544,6 @@ def merge_sdl_records(
     adds: dict[tuple[int, int], dict[str, Any]],
     rows: list[tuple[int, int, str]],
 ) -> dict[str, int]:
-    """Adds SDL identities to Linux `records`; Linux rows and authored controllers win."""
     existing = {key: default_family(record) for key, record in records.items()}
     for key, record in adds.items():
         existing[key] = default_family(record)
@@ -592,7 +553,6 @@ def merge_sdl_records(
 
 
 def build_catalog() -> dict[tuple[int, int], bytes]:
-    """The bytes of every canonical controller record, as the Swift tool writes them."""
     generator = load_module(
         "ojd_generate_xpad_records",
         ROOT / "Scripts" / "Catalog" / "generate_xpad_records.py",
@@ -638,7 +598,6 @@ def build_catalog() -> dict[tuple[int, int], bytes]:
 
 
 def build_database(records: dict[tuple[int, int], bytes]) -> str:
-    """The shipped SDL_GameControllerDB text, reduced against the SDL list and `records`."""
     lock = load_lock()
     pin = lock["sdlGameControllerDB"]
     files = load_locked_files(pin)
@@ -695,8 +654,6 @@ def expected_files(
 
 
 def bundled_copies() -> dict[pathlib.Path, bytes]:
-    """The authored protocol descriptions and virtual device records, which the bundle ships
-    unchanged."""
     return {
         output / path.name: path.read_bytes()
         for source, output in (
@@ -770,8 +727,6 @@ def main() -> int:
     args = parser.parse_args()
     try:
         if args.write:
-            # Record validation runs Swift, which loads the bundled copies; the tool that loading
-            # the rules built at import ships the earlier ones, so it is built again.
             write_files(
                 (PROTOCOL_OUTPUT_DIR, VIRTUAL_DEVICE_OUTPUT_DIR), bundled_copies()
             )

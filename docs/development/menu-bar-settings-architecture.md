@@ -152,11 +152,11 @@ The adapter connects the existing client, returns typed payloads, and maps trans
 Run the repository gates relevant to the change:
 
 ```bash
-./Scripts/ojd catalog regenerate --check
-./Scripts/ojd check profiles
+just catalog-regenerate --check
+just check-profiles
 just lint
 python3 -m unittest discover -s Tests/RepositoryScripts
-./Scripts/ojd check driverkit
+just driverkit-check
 swift test
 ```
 

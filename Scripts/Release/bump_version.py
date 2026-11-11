@@ -1,5 +1,3 @@
-"""Update the repository's release version references."""
-
 from __future__ import annotations
 
 import re
@@ -17,21 +15,7 @@ def die(message: str) -> NoReturn:
     raise SystemExit(2)
 
 
-def usage() -> None:
-    print("""Usage:
-  ./Scripts/ojd release bump-version <version>
-
-Examples:
-  ./Scripts/ojd release bump-version 0.1.0-rc.2
-  ./Scripts/ojd release bump-version 0.1.0
-
-Updates:
-  - Sources/OpenJoystickDriver/App/Info.plist canonical app/package version
-    (SemVer 2.0.0 without build metadata; tags use the same string, no v)""")
-
-
-class MissingReference(Exception):
-    """A required version-owned reference was not found."""
+class MissingReference(Exception): ...
 
 
 def replace_once(
@@ -46,9 +30,8 @@ def replace_once(
 
 def main(argv: list[str]) -> int:
     version = argv[0] if argv else ""
-    if version in {"", "-h", "--help", "help"}:
-        usage()
-        return 0
+    if not version:
+        die("usage: just release-bump-version <version>")
     if len(argv) != 1:
         die("Version must be SemVer, for example 0.1.0-rc.2")
     release_version(version)

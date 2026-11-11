@@ -36,7 +36,7 @@ Use decimal numbers in the property list. Before probing, review `protocol.initi
 ## 2. Validate Without Opening Hardware
 
 ```bash
-./Scripts/ojd diagnose record /tmp/controller-candidate.plist --validate-only
+just diagnose-record /tmp/controller-candidate.plist --validate-only
 ```
 
 Expected output ends with:
@@ -52,7 +52,7 @@ Validation rejects unsupported protocol drivers, HID transports, invalid endpoin
 Quit games, Steam, and other controller tools first. Install and approve a signed development build, connect the controller directly by USB, then run:
 
 ```bash
-./Scripts/ojd diagnose record /tmp/controller-candidate.plist --seconds 30
+just diagnose-record /tmp/controller-candidate.plist --seconds 30
 ```
 
 During the capture, press one control at a time and return it to neutral. The probe prints:
@@ -66,7 +66,7 @@ During the capture, press one control at a time and return it to neutral. The pr
 - `EVENT`: OJD parser output for changed controls.
 - `RECORD_SUMMARY`: packet, parsed-event, and parse-error counts.
 
-If the interface is unavailable, preserve the selected route and live registry owner. Use `./Scripts/ojd diagnose dext` when the selected model requires the restricted extension. There is no detach or cross-transport fallback.
+If the interface is unavailable, preserve the selected route and live registry owner. Use `just diagnose-dext` when the selected model requires the restricted extension. There is no detach or cross-transport fallback.
 
 ## 4. Report Results
 
@@ -79,7 +79,7 @@ Identify the distribution path that produced the behavior. An installed app and 
   ```
 
   This exercises the packaged Developer ID-signed app and its embedded DEXT; it does not use the Swift sources in a checkout. The notarized, stapled community tester package can replace the DriverKit extension with SIP enabled. The report's `controllers[].binding` and `unboundDevices[]` show how each connection was classified: outcome, reason, rule, matched predicates, catalog record ID, access backend, interface summaries, and rejected candidates. It records only whether a serial number is present, never its value, and no packet payloads.
-- **Source-built record probe:** report the checkout commit and working-tree state, the record path, and the complete `./Scripts/ojd diagnose record ...` command and output. This route builds/runs the probe from the current source checkout and is not evidence about the installed app or a shared DMG.
+- **Source-built record probe:** report the checkout commit and working-tree state, the record path, and the complete `just diagnose-record ...` command and output. This route builds/runs the probe from the current source checkout and is not evidence about the installed app or a shared DMG.
 
 Do not mix these reports: a source probe can validate a record while an older installed app or DEXT is still the behavior being observed, and an installed DMG cannot prove that an uncommitted source change was included.
 

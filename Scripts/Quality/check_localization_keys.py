@@ -1,44 +1,3 @@
-"""Fail when a localization key and the en-US catalog disagree.
-
-A key read by `OJDLocalized.*`, `CLILocalized.*`, `LocalizedStringResource(` or
-`Localization().*` or passed to `.key(` must exist in `Sources/OpenJoystickDriverKit/Resources/en-US.lproj`; a key built
-from a literal prefix needs at least one catalog key with that prefix. A catalog key that no Swift
-source under `Sources` reads also fails, unless `KEPT_WITHOUT_READER` names it and says why.
-
-Two further checks reach the keys a call site does not pass directly:
-
-- a string literal anywhere in Swift that has the shape of a key (a namespace and dotted segments)
-  must name a catalog key or start one, unless `NOT_A_KEY` names it and says why. Keys held in
-  enums, tables and `...Key` properties are literals, so a misspelled one fails here;
-- a helper such as `label(_ key: String)` that returns `OJDLocalized.string("ui.x." + key)` has its
-  literal arguments joined to the prefix and checked, as do the functions of the same file that
-  pass their first parameter on to it.
-
-The catalog itself follows these rules:
-
-- namespace: a key starts with one of the namespaces in `NAMESPACE_PATTERNS` and its segments are
-  lowerCamelCase, except error codes;
-- operating system words: a value in the English sources (`en-US`, `C`) names an operating system
-  (`OS_WORDS`) only under `platform.`;
-- specifiers: a value with more than one format specifier numbers every one (`%1$@`);
-- comments: every en-US key has a translator comment directly above it;
-- plurals: an en-US value with an integer count specifier (`%d`, `%lld`, `%1$lld`) has a
-  `.stringsdict` entry unless `NOT_A_COUNT` names its key and says why the number is not a count.
-  `LocalizationTests` checks the rest of the plural rules: every `%#@name@` value has an entry in
-  its bundle, and each entry has the plural categories its language needs.
-
-- comment layout: no key has two comments stacked above it;
-- comment specifiers: the comment of an en-US value with format specifiers names each one by its
-  position (`%1$@`), or contains `%` when the value has a single unnumbered specifier, so a
-  translator learns what each argument is;
-- comment copies: every other bundle has the en-US translator comment of each key, character for
-  character, and the same keys;
-- counts: every `NOT_A_COUNT` entry names a key that has an integer count specifier and no
-  `.stringsdict` entry, so an entry cannot outlive its key or its reason.
-
-Every rule fails on every key it finds.
-"""
-
 from __future__ import annotations
 
 import itertools
@@ -57,13 +16,9 @@ CALL = re.compile(
     r"|LocalizedStringResource|(?:Localization\(\)|localization)\.(?:string|formatted|plural))"
     r"|\.key)\("
 )
-# An interpolated literal is a key lookup only where Swift passes it as a key: the first argument of
-# a localization call or the value of a property named `...Key`. Other interpolated literals build
-# identifiers, paths and messages.
 KEY_POSITION = re.compile(
     CALL.pattern + r"\s*$|Key\s*:\s*String\s*\{\s*$",
 )
-# Interpolations whose values are a closed set, so the pattern names that set instead of any text.
 EXACT_INTERPOLATIONS = {"error.\\(rawValue).message": r"error\.E\d{4}\.message"}
 STRINGS_KEY = re.compile(r'^"((?:[^"\\]|\\.)*)"\s*=', re.MULTILINE)
 LITERAL = re.compile(r'"((?:[^"\\]|\\.)*)"')
@@ -85,18 +40,15 @@ NAMESPACE_PATTERNS: dict[str, re.Pattern[str]] = {
         rf"platform\.(?:{'|'.join(OPERATING_SYSTEMS)})(?:\.{SEGMENT})+"
     ),
 }
-# `Accessibility` is the permission or pane name: the whole value, or after the `>` of a pane path.
 OS_WORDS = re.compile(
     r"\b(?:DriverKit|macOS|Mac|Apple|System Settings|Login Items|Finder|IOKit|systemextensionsctl"
     r"|launchd|Xcode|Input Monitoring|Privacy & Security|Dock|Terminal|TCC|codesign)\b"
     r"|^Accessibility$|>\s*Accessibility\b|\bAccessibility (?:permission|access)\b"
 )
-# A format specifier: optional position, flags, width, precision, length and conversion.
 SPECIFIER = re.compile(
     r"%(?P<position>\d+\$)?[-+ 0#]*\d*(?:\.\d+)?(?:hh|h|ll|l|q|L|z|t|j)?[@dDiuUxXoOfeEgGcCsSpaAF]"
 )
 COUNT_SPECIFIER = re.compile(r"%(?:\d+\$)?[-+ 0#]*\d*(?:hh|h|ll|l|q|z|t|j)?[dDiuU]")
-# En-US keys whose integer specifier is not a count, each with the reason.
 NOT_A_COUNT: dict[str, str] = {
     "cli.binding.clear.done": (
         "the number follows its label (after a colon or in parentheses), so no noun agrees with it"
@@ -226,10 +178,8 @@ class StringsEntry:
     comment: str | None
 
 
-# Catalog keys no Swift source reads but that stay, each with its reason.
 KEPT_WITHOUT_READER: dict[str, str] = {}
 
-# Key-shaped Swift literals that are not catalog keys, each with the reason.
 NOT_A_KEY: dict[str, str] = {
     "notify.sounds": "the name of a setting that `ojd setting` reads and writes",
 }
@@ -253,7 +203,6 @@ class KeyUse:
 
 
 def skip_string(source: str, index: int) -> int:
-    """Return the index after the string literal that starts at `index`."""
     index += 1
     while True:
         character = source[index]
@@ -269,7 +218,6 @@ def skip_string(source: str, index: int) -> int:
 
 
 def skip_group(source: str, index: int) -> int:
-    """Return the index after the bracket group that starts at `index`."""
     depth = 0
     while True:
         character = source[index]
@@ -289,7 +237,6 @@ def skip_group(source: str, index: int) -> int:
 
 
 def first_argument(source: str, open_index: int) -> str:
-    """Return the text of the first argument of the call whose `(` is at `open_index`."""
     depth = 0
     index = open_index + 1
     while True:
@@ -313,12 +260,10 @@ def first_argument(source: str, open_index: int) -> str:
 
 
 def string_literals(source: str) -> list[str]:
-    """Return the text of each string literal in `source`, interpolations included."""
     return [text for _, text in string_literal_spans(source)]
 
 
 def string_literal_spans(source: str) -> list[tuple[int, str]]:
-    """Return (offset, text) for each string literal in `source`, interpolations included."""
     literals: list[tuple[int, str]] = []
     index = 0
     while index < len(source):
@@ -344,7 +289,6 @@ def string_literal_spans(source: str) -> list[tuple[int, str]]:
 
 
 def interpolation_pattern(literal: str) -> re.Pattern[str] | None:
-    """Return the pattern a key-building literal reads, or None without a literal prefix."""
     if "\\(" not in literal or "." not in literal.split("\\(")[0]:
         return None
     if literal in EXACT_INTERPOLATIONS:
@@ -362,7 +306,6 @@ def interpolation_pattern(literal: str) -> re.Pattern[str] | None:
 
 
 def key_arguments(source: str) -> list[tuple[int, str]]:
-    """Return (line, first-argument text) for each localization call in `source`."""
     return [
         (
             source.count("\n", 0, match.start()) + 1,
@@ -373,7 +316,6 @@ def key_arguments(source: str) -> list[tuple[int, str]]:
 
 
 def catalog_keys(root: Path = ROOT) -> set[str]:
-    """Return the keys of the en-US `.strings` and `.stringsdict` catalogs."""
     directory = root / CATALOG_DIRECTORY
     strings = (directory / "Localizable.strings").read_text(encoding="utf-8")
     keys = set(STRINGS_KEY.findall(strings))
@@ -382,7 +324,6 @@ def catalog_keys(root: Path = ROOT) -> set[str]:
 
 
 def problems(expression: str, keys: set[str]) -> str | None:
-    """Return why `expression` names a missing key, or None when it is fine or unscannable."""
     literals = LITERAL.findall(expression)
     if re.fullmatch(r'"[^"\\]*"', expression):
         return None if literals[0] in keys else f"missing key {literals[0]!r}"
@@ -399,7 +340,6 @@ def problems(expression: str, keys: set[str]) -> str | None:
 
 
 def key_literal_problems(source: str, keys: set[str]) -> list[tuple[int, str]]:
-    """Return (line, literal) for each key-shaped literal that names no catalog key."""
     found: list[tuple[int, str]] = []
     for offset, literal in string_literal_spans(source):
         if (
@@ -413,7 +353,6 @@ def key_literal_problems(source: str, keys: set[str]) -> list[tuple[int, str]]:
 
 
 def helper_key_problems(source: str, keys: set[str]) -> list[tuple[int, str]]:
-    """Return (line, key) for each literal argument of a prefix helper that names no catalog key."""
     found: list[tuple[int, str]] = []
     functions = list(FUNCTION_WITH_STRING_PARAMETER.finditer(source))
     for helper in PREFIX_HELPER.finditer(source):
@@ -457,7 +396,6 @@ def tracked_swift_files(root: Path = ROOT) -> list[Path]:
 
 
 def reader_files(root: Path = ROOT) -> list[Path]:
-    """Return the Swift files whose string literals count as readers: all of `Sources`."""
     return [
         path
         for path in tracked_swift_files(root)
@@ -466,11 +404,6 @@ def reader_files(root: Path = ROOT) -> list[Path]:
 
 
 def key_readers(root: Path = ROOT) -> tuple[set[str], dict[str, re.Pattern[str]]]:
-    """Return (literals Swift passes as keys, patterns of keys Swift builds from a prefix).
-
-    A pattern is named by the source text that builds the key: `error.\\(rawValue)` or
-    `profiles.gyro. + <text>`.
-    """
     literals: set[str] = set()
     patterns: dict[str, re.Pattern[str]] = {}
     for path in reader_files(root):
@@ -490,7 +423,6 @@ def key_readers(root: Path = ROOT) -> tuple[set[str], dict[str, re.Pattern[str]]
 
 
 def unread_keys(root: Path = ROOT) -> tuple[list[str], dict[str, int]]:
-    """Return (catalog keys no Swift source reads, keys read per pattern)."""
     keys = catalog_keys(root)
     literals, patterns = key_readers(root)
     unread: list[str] = []
@@ -509,7 +441,6 @@ def unread_keys(root: Path = ROOT) -> tuple[list[str], dict[str, int]]:
 
 
 def stale_kept(unread: list[str], keys: set[str]) -> list[str]:
-    """Return why a `KEPT_WITHOUT_READER` entry no longer holds."""
     return [
         f"kept key {key!r} "
         + ("is not in the catalog" if key not in keys else "has a reader")
@@ -519,7 +450,6 @@ def stale_kept(unread: list[str], keys: set[str]) -> list[str]:
 
 
 def strings_entries(text: str) -> list[StringsEntry]:
-    """Return each `"key" = "value";` of a `.strings` text with the comment directly above it."""
     return [
         StringsEntry(
             match["key"],
@@ -539,7 +469,6 @@ def language(directory: Path) -> str:
 
 
 def key_shape_problem(key: str) -> str | None:
-    """Return why `key` is outside the namespaces, or None."""
     for namespace in ("ui.settings", "ui"):
         if key.startswith(namespace + "."):
             pattern = NAMESPACE_PATTERNS[namespace]
@@ -559,7 +488,6 @@ def key_shape_problem(key: str) -> str | None:
 
 
 def os_word_problem(key: str, value: str) -> str | None:
-    """Return why `value` names an operating system outside `platform.`, or None."""
     word = OS_WORDS.search(value)
     if word is None or key.startswith("platform."):
         return None
@@ -567,7 +495,6 @@ def os_word_problem(key: str, value: str) -> str | None:
 
 
 def specifier_problem(key: str, value: str) -> str | None:
-    """Return why a value with several format specifiers leaves one without a position."""
     specifiers = [m for m in SPECIFIER.finditer(value.replace("%%", ""))]
     if len(specifiers) > 1 and any(m["position"] is None for m in specifiers):
         return f"{key!r}: several format specifiers need positions (%1$@)"
@@ -579,7 +506,6 @@ def comment_problem(entry: StringsEntry) -> str | None:
 
 
 def comment_specifier_problem(entry: StringsEntry) -> str | None:
-    """Return why the comment of a value with specifiers does not name them, or None."""
     specifiers = list(SPECIFIER.finditer(entry.value.replace("%%", "")))
     if not specifiers or entry.comment is None:
         return None
@@ -593,7 +519,6 @@ def comment_specifier_problem(entry: StringsEntry) -> str | None:
 def comment_copy_problems(
     entries: list[StringsEntry], english: list[StringsEntry]
 ) -> list[tuple[str, str]]:
-    """Return (key, message) for each key whose comment differs from the en-US comment."""
     expected = {entry.key: entry.comment for entry in english}
     found = {entry.key: entry.comment for entry in entries}
     problems = [
@@ -614,7 +539,6 @@ def comment_copy_problems(
 def stacked_comment_keys(
     text: str, comment: re.Pattern[str], key: re.Pattern[str]
 ) -> list[str]:
-    """Return the keys under a run of two or more comments with only whitespace between them."""
     spans = [match.span() for match in comment.finditer(text)]
     found: list[str] = []
     for (_, end), (start, _) in itertools.pairwise(spans):
@@ -628,7 +552,6 @@ def stacked_comment_keys(
 
 
 def stacked_comment_problems(directory: Path) -> list[RuleProblem]:
-    """Return a problem for each key that has more than one comment above it in a bundle."""
     problems: list[RuleProblem] = []
     for name, comment, key in (
         ("Localizable.strings", STRINGS_COMMENT, STRINGS_KEY_LINE),
@@ -646,7 +569,6 @@ def stacked_comment_problems(directory: Path) -> list[RuleProblem]:
 
 
 def stringsdict_uncommented_keys(root: Path = ROOT) -> set[str]:
-    """Return the en-US stringsdict keys without a translator comment above them."""
     text = (root / CATALOG_DIRECTORY / "Localizable.stringsdict").read_text(
         encoding="utf-8"
     )
@@ -661,7 +583,6 @@ def stringsdict_uncommented_keys(root: Path = ROOT) -> set[str]:
 
 
 def stringsdict_values(root: Path = ROOT) -> dict[str, list[str]]:
-    """Return the en-US stringsdict strings by key: the format key and each plural form."""
     plurals = plistlib.loads(
         (root / CATALOG_DIRECTORY / "Localizable.stringsdict").read_bytes()
     )
@@ -685,7 +606,6 @@ class RuleProblem:
 def count_specifier_problem(
     entry: StringsEntry, plurals: set[str], not_a_count: dict[str, str] | None = None
 ) -> str | None:
-    """Return why an integer specifier has no plural entry, or None."""
     if (
         entry.key in plurals
         or entry.key in (NOT_A_COUNT if not_a_count is None else not_a_count)
@@ -701,7 +621,6 @@ def count_specifier_problem(
 def not_a_count_problem(
     key: str, entries: list[StringsEntry], plurals: set[str]
 ) -> str | None:
-    """Return why a `NOT_A_COUNT` entry no longer holds, or None."""
     entry = next((e for e in entries if e.key == key), None)
     if entry is None:
         return f"{key!r}: NOT_A_COUNT names a key that is not in the en-US strings"
@@ -715,7 +634,6 @@ def not_a_count_problem(
 def rule_problems(
     root: Path = ROOT, not_a_count: dict[str, str] | None = None
 ) -> dict[str, list[RuleProblem]]:
-    """Return the violations of the catalog rules by rule name."""
     not_a_count = NOT_A_COUNT if not_a_count is None else not_a_count
     found: dict[str, list[RuleProblem]] = {
         "namespace": [],
@@ -786,12 +704,10 @@ def rule_problems(
 
 
 def rule_report(found: dict[str, list[RuleProblem]]) -> list[str]:
-    """Return the message of every violation of every rule."""
     return [p.message for problems in found.values() for p in problems]
 
 
 def check(root: Path = ROOT) -> tuple[list[tuple[KeyUse, str]], list[KeyUse]]:
-    """Return (missing keys with reasons, call sites whose key cannot be scanned)."""
     keys = catalog_keys(root)
     missing: list[tuple[KeyUse, str]] = []
     unscannable: list[KeyUse] = []

@@ -7,7 +7,6 @@ import sys
 
 import profile_certs
 
-# `signing install-profiles` installs every profile under these file names.
 profiles_dir = pathlib.Path.home() / "Library/MobileDevice/Provisioning Profiles"
 gui_dev_profile = str(profiles_dir / "OpenJoystickDriver.provisionprofile")
 gui_devid_profile = str(profiles_dir / "OpenJoystickDriver_DevID.provisionprofile")
@@ -27,8 +26,6 @@ def must_exist(path: str, label: str):
 
 
 def decode_profile(path: str) -> dict:
-    # Prefer Apple tooling when it works, but keep an OpenSSL fallback because
-    # `security cms -D` can fail on some machines for `.provisionprofile`.
     p = subprocess.run(
         ["security", "cms", "-D", "-i", path],
         stdout=subprocess.PIPE,
@@ -50,8 +47,8 @@ def decode_profile(path: str) -> dict:
         raise SystemExit(
             "ERROR: Could not decode provisioning profile.\n"
             f"  profile: {path}\n"
-            "Fix: reinstall/regenerate the profile and re-run `./Scripts/ojd signing install-profiles`.\n"
-            'Debug (safe): `./Scripts/ojd signing audit "$HOME/Library/MobileDevice/Provisioning Profiles"/*.provisionprofile`'
+            "Fix: reinstall/regenerate the profile and re-run `just signing-install-profiles`.\n"
+            'Debug (safe): `just signing-audit "$HOME/Library/MobileDevice/Provisioning Profiles"/*.provisionprofile`'
         )
     if b"<?xml" in raw:
         raw = raw[raw.index(b"<?xml") :]
@@ -89,13 +86,9 @@ def team_id_from_profile(path: str) -> str:
 dext_bundle_id = "com.openjoystickdriver.XboxUSBDevice"
 
 
-# A profile embeds every certificate it was generated for. The identity must be embedded in
-# all given profiles and have a private key in the Keychain.
 def pick_identity_matching_profiles(
     prefix: str, profile_paths: list[str], chosen: str | None = None
 ) -> str:
-    """`chosen` (the `--development-identity` or `--release-identity` option) when given;
-    otherwise the lowest SHA1 of the Keychain identities embedded in every profile."""
     if chosen:
         return chosen
     embedded = {path: embedded_cert_sha1s_from_profile(path) for path in profile_paths}
@@ -106,8 +99,6 @@ def pick_identity_matching_profiles(
     shared = profile_certs.shared_identity_sha1s(list(embedded.values()), keychain)
     if shared:
         chosen = shared[0]
-        # The SHA1 names the identity unambiguously; the Keychain display name can carry a
-        # suffix that differs from the certificate's Team ID.
         print(
             f"Selected {prefix} identity {chosen} ({keychain[chosen]}): the lowest SHA1 "
             f"of {len(shared)} Keychain identit{'y' if len(shared) == 1 else 'ies'} "
@@ -134,13 +125,13 @@ def pick_identity_matching_profiles(
         "\n"
         "Check the profiles and Keychain:\n"
         "  1) List the certificates embedded in a profile:\n"
-        f'       ./Scripts/ojd signing profile-info --full "$HOME/Library/MobileDevice/Provisioning Profiles/{first}"\n'
+        f'       just signing-profile-info --full "$HOME/Library/MobileDevice/Provisioning Profiles/{first}"\n'
         "  2) List identities that have private keys:\n"
         "       security find-identity -v -p codesigning\n"
         "     If this reports 0 valid identities, unlock the login keychain and import the Apple\n"
         "     intermediates (WWDR, DeveloperIDG2CA) if certificates show as untrusted.\n"
         "  3) Otherwise, regenerate the profiles in the Apple Developer portal and select an installed certificate.\n"
-        '  4) Reinstall profiles: ./Scripts/ojd signing install-profiles "$HOME/Documents/Profiles"\n'
+        '  4) Reinstall profiles: just signing-install-profiles "$HOME/Documents/Profiles"\n'
     )
     raise SystemExit(message)
 
@@ -195,8 +186,6 @@ production_usb = [
 
 
 def userclient_ungranted(value: object) -> bool:
-    """True when the profile has no user-client grant for this DEXT, such as a grant that
-    names only another bundle ID."""
     if value is None:
         return True
     return (
@@ -207,8 +196,6 @@ def userclient_ungranted(value: object) -> bool:
 
 
 def includes_dext_grant(value: object) -> bool:
-    """True when the value is a list of bundle IDs that includes this DEXT. The list may
-    name other bundle IDs."""
     return (
         isinstance(value, list)
         and all(isinstance(item, str) for item in value)
@@ -219,11 +206,6 @@ def includes_dext_grant(value: object) -> bool:
 def require_host_profile(
     path: str, label: str, *, allow_ungranted_userclient: bool = False
 ) -> None:
-    """Checks the host profile.
-
-    A development profile may lack user-client access for the DEXT until Apple grants it; the
-    build then omits the DEXT.
-    """
     entitlements = decode_profile(path).get("Entitlements") or {}
     expected: dict[str, object] = {
         "com.apple.developer.system-extension.install": True,
@@ -290,7 +272,7 @@ def configure_development(dev_env: pathlib.Path, chosen_identity: str | None) ->
     )
     update_env_file(
         dev_env,
-        "# Development signing (managed by ./Scripts/ojd signing configure)",
+        "# Development signing (managed by just signing-configure)",
         {
             "CODESIGN_IDENTITY": apple_dev_identity,
             "DEVELOPMENT_TEAM": dev_team,
@@ -329,7 +311,7 @@ def configure_release(
     )
     update_env_file(
         rel_env,
-        "# Release signing (managed by ./Scripts/ojd signing configure)",
+        "# Release signing (managed by just signing-configure)",
         {
             "CODESIGN_IDENTITY": devid_identity,
             "DEVELOPMENT_TEAM": rel_team,
@@ -341,7 +323,7 @@ def configure_release(
 
 
 def main(argv: list[str]) -> None:
-    parser = argparse.ArgumentParser(prog="./Scripts/ojd signing configure")
+    parser = argparse.ArgumentParser(prog="just signing-configure")
     parser.add_argument("--project-dir", type=pathlib.Path, required=True)
     parser.add_argument(
         "--mode", choices=("all", "development", "release"), default="all"

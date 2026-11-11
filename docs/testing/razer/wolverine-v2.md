@@ -15,7 +15,7 @@ Validation is signing-free. This pair is not in the current production Apple USB
 From the repository root:
 
 ```bash
-./Scripts/ojd diagnose record \
+just diagnose-record \
   Sources/OpenJoystickDriverKit/Resources/Controllers/1532/1532-0a29.plist \
   --validate-only
 ```
@@ -31,7 +31,7 @@ RECORD_VALIDATION result=valid
 Quit Steam, games, and controller utilities. Connect the controller directly by USB. Then run:
 
 ```bash
-./Scripts/ojd diagnose record \
+just diagnose-record \
   Sources/OpenJoystickDriverKit/Resources/Controllers/1532/1532-0a29.plist \
   --seconds 45
 ```

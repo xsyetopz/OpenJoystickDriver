@@ -55,7 +55,7 @@ The table is generated from the code catalog and the English text of OJD. The ta
 | E2017 | Command line | That client is unsigned or ad-hoc signed, so it cannot be granted access. Sign it with a Developer ID and try again. Exit code 1. |
 | E2018 | Command line | 'ojd diagnose' found a failed check. Read its output and fix the failed items. Exit code 1. |
 | E2019 | Command line | The update check did not finish. Check your network connection and try again. Exit code 1. |
-| E2020 | Command line | The installed OpenJoystickDriver app is older than this ojd. Run './Scripts/ojd build install-fast dev', or set OJD_RUN_REPOSITORY_CLI=1 to run this build. Exit code 1. |
+| E2020 | Command line | The installed OpenJoystickDriver app is older than this ojd. Run 'just install-fast-dev', or set OJD_RUN_REPOSITORY_CLI=1 to run this build. Exit code 1. |
 | E2021 | Command line | A repository build of ojd could not hand the command to the installed app. Reinstall OpenJoystickDriver.app and run the command again. Exit code 127. |
 | E2022 | Command line | The state that the record's parser produced from the captured reports differs from the expected state. Read the fields that the command lists. Exit code 1. |
 | E2023 | Command line | This controller cannot be claimed or released: its protocol family uses raw USB, or the system does not serve it natively. The message names the reason. Exit code 1. |

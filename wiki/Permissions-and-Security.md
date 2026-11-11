@@ -69,6 +69,7 @@ Open application, open URL, Mission Control, and Run Shortcut need no permission
 ### Which Process Holds Each Permission
 
 macOS ties a permission to the process that calls the API. The OpenJoystickDriver service runs inside the app, so the app holds every permission in this table. The `ojd` command sends requests to the service and posts no events of its own.
+
 | Action | Permission it needs | Process that calls the API |
 | --- | --- | --- |
 | Keyboard, mouse, and scroll events | Post Event access | The app, through `CGEvent.post` |

@@ -1,12 +1,3 @@
-"""Reads and updates `.env.dev` and `.env.release`, the local files of signing and notarization.
-
-`environment.sh` runs `read` to export a file's values; `capabilities.py` and `notarize.sh` read
-and update the same files through this module, so one parser decides what a file holds. A line
-is `KEY=value`, where the value is one shell word (quoted or not) in which `$NAME` and `${NAME}`
-expand from the environment. A key that no script reads stops the read, so a misspelled or
-unused key is reported instead of being ignored.
-"""
-
 from __future__ import annotations
 
 import os
@@ -28,7 +19,6 @@ SIGNING_KEYS = frozenset(
 NOTARIZATION_KEYS = frozenset(
     {"NOTARIZE_APPLE_ID", "NOTARIZE_PASSWORD", "NOTARIZE_KEYCHAIN_PROFILE"}
 )
-# Notarization keys belong only in `.env.release`.
 KEYS = {".env.dev": SIGNING_KEYS, ".env.release": SIGNING_KEYS | NOTARIZATION_KEYS}
 
 _REFERENCE = re.compile(r"\$(?:\{(\w+)\}|(\w+))")
@@ -56,7 +46,6 @@ def allowed_keys(path: Path) -> frozenset[str]:
 
 
 def read(path: Path, environ: Mapping[str, str] | None = None) -> dict[str, str]:
-    """The values of `path`; an empty mapping when the file does not exist."""
     keys = allowed_keys(path)
     if not path.is_file():
         return {}
@@ -86,7 +75,6 @@ def read(path: Path, environ: Mapping[str, str] | None = None) -> dict[str, str]
 
 
 def update(path: Path, key: str, value: str) -> None:
-    """Write `KEY="value"` in place of the key's line, or append it, and keep every other line."""
     if key not in allowed_keys(path):
         raise EnvFileError(f"{key} is not a key of {path.name}")
     lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []

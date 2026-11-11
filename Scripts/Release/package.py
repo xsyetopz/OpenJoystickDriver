@@ -1,5 +1,3 @@
-"""Build, notarize, and package the signed release application."""
-
 from __future__ import annotations
 
 import os
@@ -27,23 +25,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = SCRIPT_DIR.parents[1]
 
 
-def usage() -> None:
-    print("""Usage:
-  OJD_ENV=release ./Scripts/ojd release package [version]
-
-Builds a release-signed app, embeds the DriverKit extension, submits it for
-notarization, staples the accepted ticket, and writes:
-
-  .build/release-artifacts/OpenJoystickDriver-<version>-macOS.dmg
-
-This does not install the app, register a login item, or submit a sysext
-activation request on the build machine.""")
-
-
 def main(argv: list[str]) -> int:
-    if argv and argv[0] in {"-h", "--help", "help"}:
-        usage()
-        return 0
     if not argv or argv[0] != "release":
         die(
             f"Unknown package command: {argv[0] if argv else '<empty>'} (expected: release)"

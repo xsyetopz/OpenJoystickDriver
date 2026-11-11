@@ -21,7 +21,7 @@ Use System Information or the OJD HID tool to identify the receiver PID, then se
 For the common `045e:0719` receiver:
 
 ```bash
-./Scripts/ojd diagnose record \
+just diagnose-record \
   Sources/OpenJoystickDriverKit/Resources/Controllers/045e/045e-0719.plist --validate-only
 ```
 
@@ -30,7 +30,7 @@ For the common `045e:0719` receiver:
 Quit Steam, games, and other controller tools. Connect the receiver, pair one controller, then run:
 
 ```bash
-./Scripts/ojd diagnose record \
+just diagnose-record \
   Sources/OpenJoystickDriverKit/Resources/Controllers/045e/045e-0719.plist --seconds 45
 ```
 

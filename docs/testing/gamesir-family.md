@@ -60,8 +60,8 @@ Still untested: the raw handshake from Linux, and GameSir Nexus with the pad in 
 Run from the repository root:
 
 ```bash
-./Scripts/ojd catalog regenerate --check
-./Scripts/ojd test parsers-macos14
+just catalog-regenerate --check
+just test-parsers-macos14
 swift test --filter 'GameSirDriverTests|GameSirCatalogTests'
 ```
 

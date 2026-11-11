@@ -1,5 +1,3 @@
-"""Check the canonical controller records with `OJDRepositoryTool`."""
-
 from __future__ import annotations
 
 import sys

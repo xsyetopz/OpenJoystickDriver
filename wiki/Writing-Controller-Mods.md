@@ -47,35 +47,35 @@ The `mod.plist` file names the package and lists every file it holds. Each file 
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>apiVersion</key>
-	<string>openjoystickdriver/v1alpha3</string>
-	<key>author</key>
-	<string>OpenJoystickDriver</string>
-	<key>controllers</key>
-	<array>
-		<string>1209-0001.plist</string>
-	</array>
-	<key>kind</key>
-	<string>ModPackage</string>
-	<key>name</key>
-	<string>ojd-sample</string>
-	<key>profiles</key>
-	<array>
-		<string>sample-pad.plist</string>
-	</array>
-	<key>requires</key>
-	<dict>
-		<key>below</key>
-		<string>0.7.0</string>
-		<key>minimum</key>
-		<string>0.6.0-alpha.1</string>
-	</dict>
-	<key>version</key>
-	<string>1.0.0</string>
-	<key>virtualDevices</key>
-	<array>
-		<string>1209-0001.plist</string>
-	</array>
+ <key>apiVersion</key>
+ <string>openjoystickdriver/v1alpha3</string>
+ <key>author</key>
+ <string>OpenJoystickDriver</string>
+ <key>controllers</key>
+ <array>
+  <string>1209-0001.plist</string>
+ </array>
+ <key>kind</key>
+ <string>ModPackage</string>
+ <key>name</key>
+ <string>ojd-sample</string>
+ <key>profiles</key>
+ <array>
+  <string>sample-pad.plist</string>
+ </array>
+ <key>requires</key>
+ <dict>
+  <key>below</key>
+  <string>0.7.0</string>
+  <key>minimum</key>
+  <string>0.6.0-alpha.1</string>
+ </dict>
+ <key>version</key>
+ <string>1.0.0</string>
+ <key>virtualDevices</key>
+ <array>
+  <string>1209-0001.plist</string>
+ </array>
 </dict>
 </plist>
 ```

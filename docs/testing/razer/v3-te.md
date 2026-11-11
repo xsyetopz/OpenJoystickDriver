@@ -13,7 +13,7 @@ The input mapping and output details have no capture. Validation is signing-free
 Run from the repository root:
 
 ```bash
-./Scripts/ojd diagnose record \
+just diagnose-record \
   Sources/OpenJoystickDriverKit/Resources/Controllers/1532/1532-0a43.plist \
   --validate-only
 ```
@@ -29,7 +29,7 @@ PROFILE_VALIDATION result=valid
 Quit Steam, games, and controller utilities. Connect the controller directly by USB. Then run:
 
 ```bash
-./Scripts/ojd diagnose record \
+just diagnose-record \
   Sources/OpenJoystickDriverKit/Resources/Controllers/1532/1532-0a43.plist \
   --seconds 30
 ```

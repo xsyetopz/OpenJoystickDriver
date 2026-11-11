@@ -61,8 +61,12 @@ class EndpointSchemaTests(unittest.TestCase):
             line("Drain"),
             line("Drained"),
             line("ProfileRequest", action="Activate", profile="Rally"),
-            line("ProfileRequest", action="Set", profile="Rally", key="name", value="X"),
-            line("ProfileRequest", action="Set", profile="Rally", key="a.b", value=None),
+            line(
+                "ProfileRequest", action="Set", profile="Rally", key="name", value="X"
+            ),
+            line(
+                "ProfileRequest", action="Set", profile="Rally", key="a.b", value=None
+            ),
             line("ProfileResult", profile=PROFILE),
             line("ModList"),
             line("Mods", mods=[]),
@@ -70,7 +74,9 @@ class EndpointSchemaTests(unittest.TestCase):
             line("Subscription", stream="Mods"),
             line("Profiles", profiles=[]),
             line("Profiles", profiles=[PROFILE]),
-            line("Mods", mods=[MOD, {"name": "broken", "files": [], "problem": "text"}]),
+            line(
+                "Mods", mods=[MOD, {"name": "broken", "files": [], "problem": "text"}]
+            ),
             line("OutputRequest", controller="U-1", action="Rumble"),
             line(
                 "OutputRequest",
@@ -163,12 +169,28 @@ class EndpointSchemaTests(unittest.TestCase):
             line("OutputRequest", controller="E-1", action="Light"),
             line("OutputRequest", controller="E-1", action="Light", color="FF80"),
             line("OutputRequest", controller="E-1", action="Light", brightness=256),
-            line("OutputRequest", controller="E-1", action="Light", color="FF8000", player=1),
-            line("OutputRequest", controller="E-1", action="Light", color="FF8000", left=1),
+            line(
+                "OutputRequest",
+                controller="E-1",
+                action="Light",
+                color="FF8000",
+                player=1,
+            ),
+            line(
+                "OutputRequest",
+                controller="E-1",
+                action="Light",
+                color="FF8000",
+                left=1,
+            ),
             line("OutputRequest", controller="E-1", action="Rumble", extra=1),
             line("OutputResult", results=[RESULT]),
             line("OutputResult", controller="E-1"),
-            line("OutputResult", controller="E-1", results=[{**RESULT, "outcome": "Nope"}]),
+            line(
+                "OutputResult",
+                controller="E-1",
+                results=[{**RESULT, "outcome": "Nope"}],
+            ),
             line("OutputResult", controller="E-1", results=[{"command": "rumble"}]),
         ]
         for message in refused:

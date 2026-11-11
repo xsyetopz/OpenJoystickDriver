@@ -31,7 +31,7 @@ A stored document is a file that carries `apiVersion` and `kind`. Each is an XML
   - `controls`: the set of controls the family's driver reports, and `recordCapabilities`: the control deltas a record may declare (`present`, `rumbleAbsent`).
   - `defaults`: the family's `session.keepAlive` (the keep-alive `intervalMilliseconds` and its fixed `writes`), the Switch 1 `session.subcommands` (the report id, the counter modulus and the startup `requests`), the GIP `session.namedPackets` (the `id`, `bytes` and `sessionByte` of each packet a record can name in `protocol.initialization`), the startup writes of `session.startup`, which may refer to a named packet with `{"packet": "<id>"}` (all HID reports, all raw-USB packets or all references, never a mix), the default `tuning` (for example the Switch 1 recovery values, and the command timeouts, resend intervals and handshake pacing of the other drivers), and `defaults.variants.<variant>.tuning`, which layers over it for a transport that needs another value, such as the Switch 1 `hidStartupIntervalMs` of Bluetooth and USB. A default key must be one the variant reads, and a variant must be the family's (E5004).
 
-  `./Scripts/ojd catalog regenerate` copies them into the Kit bundle.
+  `just catalog-regenerate` copies them into the Kit bundle.
 - `report.schema.json`: the CloudEvents 1.0 support-report envelope and payload.
 - `cli-output.schema.json`: the `--json` output of each `ojd` command. The CLI tests check every `--json` document they print against it.
 - `profile.schema.json`: the remapping profile file that `ojd profile export` writes and `ojd profile import` reads. Cross-field rules stay in the strict decoder, and a test keeps the schema enums equal to the Swift cases.
@@ -39,7 +39,7 @@ A stored document is a file that carries `apiVersion` and `kind`. Each is an XML
 - `settings.schema.json`: the `Settings.plist` file, the user file that `ojd setting set` and the app write. Every setting is optional in the file; a setting it leaves out takes its built-in default.
 - `service-listener-failure.schema.json`: the file beside the service's RPC socket (the socket path plus `.failure.plist`) that the service writes when its request listener stops on a fatal error (code `E2034`, the error number and the time). A successful listener start and an orderly stop delete it, and its `pid` and start time let readers report the failure only while that exact process runs. `ojd status` and `ojd diagnose` read it while the service cannot be reached.
 - `endpoint.schema.json`: the JSON lines that a granted client and the service exchange on the endpoint socket. The stream lines are the `ojd controller watch --all` events from `cli-output.schema.json`.
-- `error-codes.schema.json`: the authored catalog `Resources/ErrorCodes.plist`, which gives every E#### error code its domain and name. `./Scripts/ojd errors regenerate` copies the endpoint codes into `endpoint.schema.json` and the table into `wiki/Error-Codes.md`.
+- `error-codes.schema.json`: the authored catalog `Resources/ErrorCodes.plist`, which gives every E#### error code its domain and name. `just errors-regenerate` copies the endpoint codes into `endpoint.schema.json` and the table into `wiki/Error-Codes.md`.
 - `crosswalk.schema.json`: the authored table `Resources/Vocabulary/crosswalk.plist`, which maps each control id to its W3C, SDL, evdev, HID and Apple names and records the source of each column. It describes the shape of that file only; no schema accepts or maps a name in it.
 - `vocabulary.schema.json`: only `$defs`, no `kind`. The one definition of the control ids (`$defs/control`) and the subsets other schemas `$ref`: D-pad ids, stick axes, axes, horizontal stick axes and triggers. The Swift enum `Control` mirrors it, and `Resources/Vocabulary/crosswalk.plist` documents the SDL, evdev, HID and Apple names of each id.
 
@@ -86,9 +86,9 @@ CloudEvents owns `specversion`, `id`, `source`, `type`, `time`, `datacontenttype
 ## Validation
 
 ```bash
-./Scripts/ojd catalog regenerate --check
-./Scripts/ojd check profiles
-./Scripts/ojd check schemas
+just catalog-regenerate --check
+just check-profiles
+just check-schemas
 git diff --check
 ```
 
@@ -96,5 +96,5 @@ git diff --check
 It also compares `cli-output.schema.json` with its copy at the last release tag, and fails when a change would break a program that reads that release's `--json` output; see [Using the command line](../../wiki/Command-Line.md). Generate an intentional catalog change only through:
 
 ```bash
-./Scripts/ojd catalog regenerate --write
+just catalog-regenerate --write
 ```

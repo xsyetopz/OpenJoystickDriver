@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import plistlib
 import pathlib
+import plistlib
 import tempfile
 import unittest
 

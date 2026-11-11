@@ -1,14 +1,3 @@
-"""Release versions, build numbers, and build metadata for the app and DEXT.
-
-The release version is SemVer 2.0.0 without build metadata; it lives in the
-app Info.plist and in tags, without a `v`. Build provenance goes in SemVer
-build metadata (`+build.<number>.sha.<commit>[.dirty]`), which never orders
-anything. Apple's `CFBundleVersion` orders builds: the app and the DEXT share
-one number derived from the commit count, in the kext grammar that DriverKit
-requires. Local DEXT installs may append a development stage (`d<level>`) so
-a rebuilt tree replaces the active extension.
-"""
-
 from __future__ import annotations
 
 import re
@@ -17,19 +6,15 @@ import sys
 from pathlib import Path
 from typing import NoReturn
 
-# Official SemVer 2.0.0 regex (https://semver.org), anchored.
 SEMVER = re.compile(
     r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
     r"(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)"
     r"(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?"
     r"(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
 )
-# Apple kext version grammar: up to three numbers, optional stage and level.
 BUNDLE_VERSION = re.compile(
     r"((?:0|[1-9][0-9]*)(?:\.(?:0|[1-9][0-9]*)){0,2})(?:(d|a|b|fc)([0-9]+))?"
 )
-# A tester build orders after the release it follows and before the release it leads to:
-# `<prerelease>.tester.N` extends a prerelease tag, and `X.Y.Z-tester.N` (Z >= 1) follows `X.Y.(Z-1)`.
 RELEASE_TAG = re.compile(
     r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-(?:alpha|beta|rc)\.[1-9][0-9]*)?"
 )
@@ -48,7 +33,6 @@ def die(message: str) -> NoReturn:
 
 
 def release_version(version: str) -> str:
-    """Return `version` if it is SemVer without build metadata."""
     match = SEMVER.fullmatch(version)
     if match is None:
         die(f"Release version is not SemVer 2.0.0: {version}")
@@ -58,7 +42,6 @@ def release_version(version: str) -> str:
 
 
 def release_tag_kind(tag: str) -> str:
-    """Return `release`, `prerelease`, or `tester` for a release tag; refuse any other."""
     if RELEASE_TAG.fullmatch(tag) is not None:
         return "prerelease" if "-" in tag else "release"
     if TESTER_AFTER_PRERELEASE.fullmatch(tag) or TESTER_AFTER_RELEASE.fullmatch(tag):
@@ -70,7 +53,6 @@ def release_tag_kind(tag: str) -> str:
 
 
 def tester_base_tag(tag: str) -> str:
-    """Return the release tag that a tester tag follows."""
     if release_tag_kind(tag) != "tester":
         die(f"Not a tester tag: {tag}")
     if (match := TESTER_AFTER_PRERELEASE.fullmatch(tag)) is not None:
@@ -139,7 +121,6 @@ def validate_bundle_version(version: str) -> str:
 
 
 def next_development_bundle_version(base: str, installed: list[str]) -> str:
-    """Development stage of `base` above any installed development build of it."""
     base_match = BUNDLE_VERSION.fullmatch(validate_bundle_version(base))
     if base_match is None or base_match.group(2):
         die(f"Base CFBundleVersion already has a stage: {base}")

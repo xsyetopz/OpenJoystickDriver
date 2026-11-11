@@ -7,27 +7,27 @@ These rules apply to humans and AI agents alike.
 ```bash
 git clone https://github.com/xsyetopz/OpenJoystickDriver.git
 cd OpenJoystickDriver
-./Scripts/ojd setup
-just check
+just setup
+just verify
 ```
 
-In an interactive terminal, each `./Scripts/ojd` route offers to install the Homebrew formulas it is missing; `setup` installs `just`, `ruff`, `shellcheck`, `swiftlint` and the Git hooks. Xcode, Apple assets, credentials, permissions, publication, destructive writes and hardware actions keep their own authorization flows. CI never prompts or installs host software.
+`just setup` installs the pinned tools and the Git hooks. Xcode, Apple assets, credentials, permissions, publication, destructive writes and hardware actions keep their own authorization flows. CI never prompts or installs host software.
 
 - Prerequisites, Git hooks, commit messages and screenshots: `docs/development/building-from-source.md`.
 - Toolchain and environment variables: `docs/development/environment.md`.
 - Signing: `docs/development/signing.md`. Releases: `docs/development/releases.md`. Tester DMG: `docs/development/tester-builds.md`.
-- Layout and targets: `docs/development/source-topology.md`. Script routes: `./Scripts/ojd --help`.
+- Layout and targets: `docs/development/source-topology.md`. Recipes: `just`.
 
-Run `just check` before opening a pull request; CI repeats it.
+Run `just verify` before opening a pull request; CI repeats it.
 
 ## Adding a Controller
 
 1. Run `system_profiler SPUSBDataType`. `bDeviceClass` `0xff` is vendor-specific (often GIP); `0x03` is HID.
-2. Do not hand-edit generated records. Update the pinned importer (`docs/development/xpad-import.md`), or add `Resources/Controllers/<vid>/<vid>-<pid>.plist` (a `Controller` for a model no pinned source knows) or `Resources/ControllerPatches/<vid>/<vid>-<pid>.patch.plist` (a `ControllerPatch`). Each is a canonical XML property list: decimal integers, no `null`, `date`, or `data`, no display names, no protocol defaults. Run `swift run OJDRepositoryTool format-plist <file.plist>` on a hand-edited file, then `./Scripts/ojd catalog regenerate --write`. `Resources/Schemas/README.md` has the property-list rules.
+2. Do not hand-edit generated records. Update the pinned importer (`docs/development/xpad-import.md`), or add `Resources/Controllers/<vid>/<vid>-<pid>.plist` (a `Controller` for a model no pinned source knows) or `Resources/ControllerPatches/<vid>/<vid>-<pid>.patch.plist` (a `ControllerPatch`). Each is a canonical XML property list: decimal integers, no `null`, `date`, or `data`, no display names, no protocol defaults. Run `swift run OJDRepositoryTool format-plist <file.plist>` on a hand-edited file, then `just catalog-regenerate --write`. `Resources/Schemas/README.md` has the property-list rules.
 3. A new protocol only: a `PhysicalProtocolDriver` in `Sources/OpenJoystickDriverKit/Protocol/Drivers/`, with tests under `Tests/OpenJoystickDriverKitTests/`.
-4. Run `just check`.
+4. Run `just verify`.
 
-Capture a candidate with `./Scripts/ojd diagnose record /tmp/controller-candidate.json --validate-only` (no Apple Developer membership needed) and see `docs/testing/controller-record.md`. A live USB probe may need the signed app and DEXT. `ojd diagnose --output support-report.json` writes a support report; review product names before you attach it.
+Capture a candidate with `just diagnose-record /tmp/controller-candidate.json --validate-only` (no Apple Developer membership needed) and see `docs/testing/controller-record.md`. A live USB probe may need the signed app and DEXT. `ojd diagnose --output support-report.json` writes a support report; review product names before you attach it.
 
 ## Code Rules
 
@@ -37,7 +37,7 @@ Capture a candidate with `./Scripts/ojd diagnose record /tmp/controller-candidat
 - Decimal integers in stored documents (`.plist`) and in JSON messages. The one exception is raw bytes in a `session` (`bytes`, `data`, a probe's expected bytes): uppercase hex pairs separated by single spaces, such as `42 03 00 00`.
 - Keep the existing `print` diagnostics; add no logging stack. Parser errors stay local: log and skip.
 - Deployment floor: macOS 12; future iOS and iPadOS companion apps: 15.
-- Kit has no SwifterKit. USB adapter: `Sources/OpenJoystickDriverUSB/`. DriverKit generator: `Sources/DriverKitGenerator/` and `Scripts/Build/driverkit.sh`; no manual DriverKit build or post-generation patch (`./Scripts/ojd check driverkit`).
+- Kit has no SwifterKit. USB adapter: `Sources/OpenJoystickDriverUSB/`. DriverKit generator: `Sources/DriverKitGenerator/` and `Scripts/Build/driverkit.sh`; no manual DriverKit build or post-generation patch (`just driverkit-check`).
 - `com.openjoystickdriver.XboxUSBDevice` is the only DEXT, with one personality, `XboxUSB` (Microsoft GIP USB interfaces), and only the `com.apple.developer.driverkit` and `com.apple.developer.driverkit.transport.usb` entitlements. The host profile's `com.apple.developer.driverkit.userclient-access` list must include it, and `Host.entitlements` claims exactly it. Virtual gamepads use `IOHIDUserDevice`, which needs `com.apple.developer.hid.virtual.device` on the app profile, never in the DEXT.
 
 ## Target Branch
@@ -84,7 +84,7 @@ A human operator stands behind every issue, comment and pull request an agent wr
 - Keep the attribution your harness adds to commits and pull requests. If it adds none, end each commit message with a trailer that names the model, such as `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. The operator stays the commit author.
 - Write plainly and briefly, in the words a user would use. No preamble, recap, extra headings, or emoji: fill the fields and stop.
 - State only what a command, the source, or the operator showed. Write `Not checked` instead of guessing.
-- Install each missing tool before you run a check: `./Scripts/ojd setup` offers the Homebrew formulas, such as `just`, and an Xcode whose Swift is `.swift-version` or newer comes from Apple. "Not installed" or "unavailable" is not a check result. Report a check as blocked only when the operator's Mac cannot run the tool, and name the tool version and the macOS version that it needs.
+- Install each missing tool before you run a check: `just setup` offers the Homebrew formulas, such as `just`, and an Xcode whose Swift is `.swift-version` or newer comes from Apple. "Not installed" or "unavailable" is not a check result. Report a check as blocked only when the operator's Mac cannot run the tool, and name the tool version and the macOS version that it needs.
 - Get the version yourself on the operator's Mac, as [Finding the Version](#finding-the-version) shows, while the build that was tested runs. A commit or "not recorded" does not replace it. When the command fails, ask the operator to copy the line from the About window.
 
 A fix that the operator tested on their hardware comes with a prompt for the maintainer's agent, in a code block, with numbered steps another agent can follow without guessing:

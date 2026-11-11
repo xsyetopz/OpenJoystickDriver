@@ -10,7 +10,6 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
 
-from Scripts.Command import dispatcher
 from Scripts.GUI import capture
 
 
@@ -33,28 +32,6 @@ APP_WINDOW: dict[str, object] = {
 
 
 class GuiCaptureTests(unittest.TestCase):
-    def test_dispatcher_routes_shots_capture(self) -> None:
-        with (
-            patch.object(
-                dispatcher, "exec_target", side_effect=TargetInvoked
-            ) as execute,
-            self.assertRaises(TargetInvoked),
-        ):
-            dispatcher.dispatch(["shots", "capture", "--all"])
-        execute.assert_called_once_with("GUI/capture.py", ["--all"], python=True)
-
-    def test_dispatcher_rejects_unknown_shots_command(self) -> None:
-        with self.assertRaises(SystemExit):
-            dispatcher.dispatch(["shots", "list"])
-
-    def test_dispatcher_names_missing_shots_command(self) -> None:
-        with (
-            patch.object(dispatcher, "die", side_effect=TargetInvoked) as die,
-            self.assertRaises(TargetInvoked),
-        ):
-            dispatcher.dispatch(["shots"])
-        die.assert_called_once_with("Unknown: shots (expected: capture)")
-
     def test_area_and_pane_are_exclusive_choices(self) -> None:
         self.assertEqual(capture.parse_args(["--area", "Library"]).area, "Library")
         self.assertEqual(
@@ -821,7 +798,7 @@ class GuiCaptureTests(unittest.TestCase):
         sources = capture.PROJECT_DIR / "Sources" / "OpenJoystickDriverPresentation"
         main_menu = (sources / "MainMenu" / "MainMenuModel.swift").read_text()
         renderer = (sources / "MainMenu" / "MainMenuRenderer.swift").read_text()
-        status = (sources / "MenuBar" / "StatusItemModel.swift").read_text()
+        (sources / "MenuBar" / "StatusItemModel.swift").read_text()
         status_menu = (
             sources / "MenuBar" / "MenuBarCoordinator+StatusMenu.swift"
         ).read_text()

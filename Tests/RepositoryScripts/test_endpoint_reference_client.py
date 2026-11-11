@@ -50,9 +50,9 @@ class EndpointReferenceClientTests(unittest.TestCase):
         # The sample client is a standalone file for readers of the SDK, so it states these two
         # facts itself; this test is what keeps them equal to Swift and the error catalog.
         self.assertEqual(reference_client.API_VERSION, repository_tool.api_version())
-        catalog = plistlib.loads(
-            (ROOT / "Resources/ErrorCodes.plist").read_bytes()
-        )["codes"]
+        catalog = plistlib.loads((ROOT / "Resources/ErrorCodes.plist").read_bytes())[
+            "codes"
+        ]
         header_codes = {"unsupportedEndpointVersion", "unexpectedKind", "missingHeader"}
         self.assertEqual(
             set(reference_client.HEADER_ERRORS),

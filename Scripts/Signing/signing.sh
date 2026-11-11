@@ -1,15 +1,4 @@
 #!/usr/bin/env bash
-# Signing helper for OpenJoystickDriver.
-#
-# Human-facing entrypoint:
-#   ./Scripts/ojd signing <subcommand>
-#
-# Default behavior (no args): generates `.env.dev` and `.env.release` in the project root.
-#
-# Goals:
-# - No manual copy/paste of identities or Team IDs
-# - Avoid heredoc pitfalls when pasting into wrapped terminals
-# - Keep output non-sensitive (does not print identity strings)
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -20,24 +9,6 @@ die() { echo "ERROR: $*" >&2; exit 2; }
 cmd="${1:-configure}"
 shift || true
 
-if [[ "$cmd" == "-h" || "$cmd" == "--help" || "$cmd" == "help" ]]; then
-  cat <<'TXT'
-Usage:
-  ./Scripts/ojd signing install-profiles [--mode all|development|release] [~/Documents/Profiles]
-  ./Scripts/ojd signing ci-release-setup
-  ./Scripts/ojd signing configure [--mode all|development|release]
-      [--development-identity <sha1>] [--release-identity <sha1>]
-  ./Scripts/ojd signing audit [paths...]
-  ./Scripts/ojd signing cert-info [--full] <cert.cer>
-  ./Scripts/ojd signing profile-info [--full] <profile1.provisionprofile> [profile2...]
-  ./Scripts/ojd signing import-embedded <profile.provisionprofile>
-TXT
-  exit 0
-fi
-
-# `--mode` names the profiles a run requires: `development` the two development profiles,
-# `release` the two Developer ID profiles, `all` (the default) the development profiles and any
-# Developer ID profile that is present.
 signing_mode() {
   case "$1" in
     all|development|release) printf '%s\n' "$1" ;;
@@ -120,18 +91,6 @@ cmd_install_profiles() {
 }
 
 cmd_ci_release_setup() {
-  # Import release signing material from GitHub Actions secrets.
-  #
-  # CI entrypoint:
-  #   ./Scripts/ojd signing ci-release-setup
-  #
-  # Required environment variables:
-  #   DEVELOPER_ID_APPLICATION_CERT_BASE64
-  #   CERTIFICATE_SECRET
-  #   KEYCHAIN_SECRET
-  #   RUNNER_TEMP
-  #   OPENJOYSTICKDRIVER_GUI_DEVID_PROFILE_BASE64
-  #   OPENJOYSTICKDRIVER_DEXT_DEVID_PROFILE_BASE64
 
   require_var() {
     local name="$1"
@@ -177,7 +136,7 @@ cmd_ci_release_setup() {
   echo "Generating release signing environment..."
   (
     cd "$PROJECT_DIR"
-    ./Scripts/ojd signing configure --mode release
+    just signing-configure --mode release
   )
 
   local release_env_file="$PROJECT_DIR/.env.release"
@@ -278,7 +237,7 @@ cmd_cert_info() {
     full=1
     shift
   fi
-  [[ $# -eq 1 ]] || die "Usage: ./Scripts/ojd signing cert-info [--full] <cert.cer>"
+  [[ $# -eq 1 ]] || die "Usage: just signing-cert-info [--full] <cert.cer>"
   local cert="$1"
   [[ -f "$cert" ]] || die "Missing file: $cert"
   python3 - "$full" "$cert" <<'PY'
@@ -315,7 +274,7 @@ cmd_profile_info() {
     full=1
     shift
   fi
-  [[ $# -ge 1 ]] || die "Usage: ./Scripts/ojd signing profile-info [--full] <profile1> [profile2...]"
+  [[ $# -ge 1 ]] || die "Usage: just signing-profile-info [--full] <profile1> [profile2...]"
   python3 - "$full" "$@" <<'PY'
 import os, sys, plistlib, subprocess, tempfile
 full = int(sys.argv[1])
@@ -396,12 +355,11 @@ PY
 # Runs in a subshell so the EXIT trap still sees the local $tmpdir.
 cmd_import_embedded() (
   local profile="${1:-}"
-  [[ -n "$profile" ]] || die "Usage: ./Scripts/ojd signing import-embedded <profile.provisionprofile>"
+  [[ -n "$profile" ]] || die "Usage: just signing-import-embedded <profile.provisionprofile>"
   [[ -f "$profile" ]] || die "Missing profile file: $profile"
   local tmpdir
   tmpdir="$(mktemp -d)"
   trap 'rm -rf "$tmpdir"' EXIT
-  # Writes every embedded certificate to $tmpdir/cert-<index>.der.
   python3 - "$profile" "$tmpdir" <<'PY'
 import os, sys, plistlib, subprocess
 profile = os.path.expanduser(sys.argv[1]); out_dir = sys.argv[2]
@@ -446,33 +404,5 @@ case "$cmd" in
   configure) ;; # handled below
   *) die "Unknown signing command: $cmd" ;;
 esac
-
-usage() {
-  cat <<'TXT'
-Usage:
-  ./Scripts/ojd signing configure [--mode all|development|release]
-      [--development-identity <sha1>] [--release-identity <sha1>]
-
-Reads:
-  - Apple Development identity and the two development provisioning profiles
-  - Optional publisher-only Developer ID Application identity and two profiles
-  - Provisioning profiles from ~/Library/MobileDevice/Provisioning Profiles/, under the file
-    names that `signing install-profiles` writes
-
-Writes:
-  - .env.dev
-  - .env.release when publisher release assets are installed
-
-Options:
-  --mode                   all (default), development or release
-  --development-identity   Apple Development identity SHA-1 to use when several qualify
-  --release-identity       Developer ID Application identity SHA-1 to use when several qualify
-TXT
-}
-
-if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
-  usage
-  exit 0
-fi
 
 python3 "$SCRIPT_DIR/configure.py" --project-dir "$PROJECT_DIR" "$@"

@@ -1,5 +1,3 @@
-"""Replace the installed app only after retiring stale instances, then verify RPC readiness."""
-
 from __future__ import annotations
 
 import argparse
@@ -70,13 +68,11 @@ def application_job_is_running(label: str) -> bool:
     pid_match = re.search(r"^\s*pid = ([0-9]+)\s*$", result.stdout, re.MULTILINE)
     if pid_match:
         process_identifier = int(pid_match.group(1))
-        # launchd can keep state=running on a zombie until bootout reaps it.
         return process_identifier > 0 and process_is_alive(process_identifier)
     return bool(re.search(r"^\s*state = running\s*$", result.stdout, re.MULTILINE))
 
 
 def leftover_application_job_labels(labels: list[str] | None = None) -> list[str]:
-    """Launch Services jobs whose pid is gone, STAT E/Z, or rss 0."""
     return [
         label
         for label in (labels if labels is not None else application_job_labels())
@@ -96,7 +92,6 @@ def reap_leftover_application_jobs(labels: list[str] | None = None) -> None:
 
 
 def process_is_alive(process_identifier: int) -> bool:
-    """True when the PID is a live process (zombies / exiting leftovers are not)."""
     result = run(
         ["/bin/ps", "-p", str(process_identifier), "-o", "state=,rss="],
         capture=True,
@@ -106,7 +101,6 @@ def process_is_alive(process_identifier: int) -> bool:
     if result.returncode or len(parts) < 2:
         return False
     state = parts[0].upper()
-    # macOS reports exiting leftovers as Z, E, or ?E with rss 0.
     if "Z" in state or "E" in state:
         return False
     try:
@@ -251,13 +245,6 @@ def verify_signature(application: Path) -> None:
 
 
 def launch_application(application: Path) -> None:
-    """Start the installed GUI via Launch Services ``open`` of the ``.app``.
-
-    Spawning the Mach-O creates a launchd job Spotlight does not own. A later
-    Spotlight or Finder ``open`` then talks to a leftover/dead job (error -600).
-    Reap leftover jobs first, then open the bundle so the extra and Spotlight
-    share one Launch Services job.
-    """
     if not (application / "Contents/MacOS/OpenJoystickDriver").is_file():
         raise InstallFailure(f"application executable is missing: {application}")
     reap_leftover_application_jobs()
@@ -276,12 +263,10 @@ def launch_and_wait(application: Path, timeout_seconds: float) -> None:
     last_error = ""
     while time.monotonic() < deadline:
         if not application_process_identifiers():
-            # First spawn can exit immediately on a broken bundle; surface that.
             time.sleep(0.2)
             if not application_process_identifiers():
                 launch_application(application)
         result = run(
-            # argv[0] "ojd" selects the command line in the app executable.
             ["ojd", "service", "wait", "--timeout", "1"],
             capture=True,
             check=False,
@@ -392,7 +377,7 @@ def install(
 
 
 def parse_arguments(argv: list[str]) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser()
     parser.add_argument("source", type=Path)
     parser.add_argument("--destination", type=Path, default=DEFAULT_DESTINATION)
     parser.add_argument("--timeout-seconds", type=float, default=10)

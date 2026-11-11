@@ -1,5 +1,3 @@
-"""Package a release and install it through the shared application lifecycle."""
-
 from __future__ import annotations
 
 import plistlib

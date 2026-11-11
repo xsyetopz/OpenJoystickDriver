@@ -13,7 +13,7 @@ Delete these comments before you submit.
 
 ## Checks
 
-<!-- Each command you ran and its result. `just check` runs them all. Install a missing tool with `./Scripts/ojd setup` instead of writing "not installed" (CONTRIBUTING.md#ai-agents). -->
+<!-- Each command you ran and its result. `just check` runs them all. Install a missing tool with `just setup` instead of writing "not installed" (CONTRIBUTING.md#ai-agents). -->
 
 ## Hardware Testing
 

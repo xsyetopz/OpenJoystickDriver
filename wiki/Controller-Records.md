@@ -43,25 +43,25 @@ A patch has two parts. `remove` is a list of dotted key paths, such as `input.hi
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>apiVersion</key>
-	<string>openjoystickdriver/v1alpha3</string>
-	<key>kind</key>
-	<string>ControllerPatch</string>
-	<key>patch</key>
-	<dict>
-		<key>tuning</key>
-		<dict>
-			<key>stickDeadzone</key>
-			<real>0.08</real>
-		</dict>
-	</dict>
-	<key>selector</key>
-	<dict>
-		<key>productID</key>
-		<integer>746</integer>
-		<key>vendorID</key>
-		<integer>1118</integer>
-	</dict>
+ <key>apiVersion</key>
+ <string>openjoystickdriver/v1alpha3</string>
+ <key>kind</key>
+ <string>ControllerPatch</string>
+ <key>patch</key>
+ <dict>
+  <key>tuning</key>
+  <dict>
+   <key>stickDeadzone</key>
+   <real>0.08</real>
+  </dict>
+ </dict>
+ <key>selector</key>
+ <dict>
+  <key>productID</key>
+  <integer>746</integer>
+  <key>vendorID</key>
+  <integer>1118</integer>
+ </dict>
 </dict>
 </plist>
 ```
@@ -88,118 +88,118 @@ Some controllers send fixed input reports that their HID descriptor describes wr
 ```xml
 <key>input</key>
 <dict>
-	<key>layouts</key>
-	<array>
-		<dict>
-			<key>axes</key>
-			<array>
-				<dict>
-					<key>bitOffset</key>
-					<integer>24</integer>
-					<key>bitSize</key>
-					<integer>8</integer>
-					<key>control</key>
-					<string>LeftStickX</string>
-				</dict>
-				<dict>
-					<key>bitOffset</key>
-					<integer>32</integer>
-					<key>bitSize</key>
-					<integer>8</integer>
-					<key>control</key>
-					<string>LeftStickY</string>
-				</dict>
-			</array>
-			<key>buttons</key>
-			<array>
-				<dict>
-					<key>bitOffset</key>
-					<integer>111</integer>
-					<key>bitSize</key>
-					<integer>1</integer>
-					<key>control</key>
-					<string>South</string>
-				</dict>
-				<dict>
-					<key>bitOffset</key>
-					<integer>8</integer>
-					<key>bitSize</key>
-					<integer>1</integer>
-					<key>control</key>
-					<string>Back</string>
-				</dict>
-			</array>
-			<key>hat</key>
-			<array>
-				<dict>
-					<key>down</key>
-					<dict>
-						<key>bitOffset</key>
-						<integer>87</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-					</dict>
-					<key>encoding</key>
-					<string>Directions</string>
-					<key>left</key>
-					<dict>
-						<key>bitOffset</key>
-						<integer>71</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-					</dict>
-					<key>right</key>
-					<dict>
-						<key>bitOffset</key>
-						<integer>63</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-					</dict>
-					<key>up</key>
-					<dict>
-						<key>bitOffset</key>
-						<integer>79</integer>
-						<key>bitSize</key>
-						<integer>1</integer>
-					</dict>
-				</dict>
-			</array>
-			<key>leftTrigger</key>
-			<dict>
-				<key>bitOffset</key>
-				<integer>136</integer>
-				<key>bitSize</key>
-				<integer>8</integer>
-			</dict>
-			<key>report</key>
-			<dict>
-				<key>length</key>
-				<dict>
-					<key>atLeast</key>
-					<integer>19</integer>
-				</dict>
-			</dict>
-			<key>rightTrigger</key>
-			<dict>
-				<key>bitOffset</key>
-				<integer>144</integer>
-				<key>bitSize</key>
-				<integer>8</integer>
-			</dict>
-		</dict>
-	</array>
+ <key>layouts</key>
+ <array>
+  <dict>
+   <key>axes</key>
+   <array>
+    <dict>
+     <key>bitOffset</key>
+     <integer>24</integer>
+     <key>bitSize</key>
+     <integer>8</integer>
+     <key>control</key>
+     <string>LeftStickX</string>
+    </dict>
+    <dict>
+     <key>bitOffset</key>
+     <integer>32</integer>
+     <key>bitSize</key>
+     <integer>8</integer>
+     <key>control</key>
+     <string>LeftStickY</string>
+    </dict>
+   </array>
+   <key>buttons</key>
+   <array>
+    <dict>
+     <key>bitOffset</key>
+     <integer>111</integer>
+     <key>bitSize</key>
+     <integer>1</integer>
+     <key>control</key>
+     <string>South</string>
+    </dict>
+    <dict>
+     <key>bitOffset</key>
+     <integer>8</integer>
+     <key>bitSize</key>
+     <integer>1</integer>
+     <key>control</key>
+     <string>Back</string>
+    </dict>
+   </array>
+   <key>hat</key>
+   <array>
+    <dict>
+     <key>down</key>
+     <dict>
+      <key>bitOffset</key>
+      <integer>87</integer>
+      <key>bitSize</key>
+      <integer>1</integer>
+     </dict>
+     <key>encoding</key>
+     <string>Directions</string>
+     <key>left</key>
+     <dict>
+      <key>bitOffset</key>
+      <integer>71</integer>
+      <key>bitSize</key>
+      <integer>1</integer>
+     </dict>
+     <key>right</key>
+     <dict>
+      <key>bitOffset</key>
+      <integer>63</integer>
+      <key>bitSize</key>
+      <integer>1</integer>
+     </dict>
+     <key>up</key>
+     <dict>
+      <key>bitOffset</key>
+      <integer>79</integer>
+      <key>bitSize</key>
+      <integer>1</integer>
+     </dict>
+    </dict>
+   </array>
+   <key>leftTrigger</key>
+   <dict>
+    <key>bitOffset</key>
+    <integer>136</integer>
+    <key>bitSize</key>
+    <integer>8</integer>
+   </dict>
+   <key>report</key>
+   <dict>
+    <key>length</key>
+    <dict>
+     <key>atLeast</key>
+     <integer>19</integer>
+    </dict>
+   </dict>
+   <key>rightTrigger</key>
+   <dict>
+    <key>bitOffset</key>
+    <integer>144</integer>
+    <key>bitSize</key>
+    <integer>8</integer>
+   </dict>
+  </dict>
+ </array>
 </dict>
 <key>modes</key>
 <array>
-	<dict>
-		<key>id</key>
-		<string>default</string>
-		<key>protocol</key>
-		<dict>
-			<key>family</key>
-			<string>HIDReportLayout</string>
-		</dict>
-	</dict>
+ <dict>
+  <key>id</key>
+  <string>default</string>
+  <key>protocol</key>
+  <dict>
+   <key>family</key>
+   <string>HIDReportLayout</string>
+  </dict>
+ </dict>
 </array>
 ```
 
@@ -221,28 +221,28 @@ A `HIDReportLayout` or `VendorPS3ThirdParty` controller is input-only unless its
 ```xml
 <key>session</key>
 <dict>
-	<key>rumble</key>
-	<dict>
-		<key>highFrequency</key>
-		<dict>
-			<key>byte</key>
-			<integer>2</integer>
-		</dict>
-		<key>lowFrequency</key>
-		<dict>
-			<key>byte</key>
-			<integer>3</integer>
-		</dict>
-		<key>report</key>
-		<dict>
-			<key>id</key>
-			<integer>2</integer>
-			<key>kind</key>
-			<string>Output</string>
-			<key>length</key>
-			<integer>8</integer>
-		</dict>
-	</dict>
+ <key>rumble</key>
+ <dict>
+  <key>highFrequency</key>
+  <dict>
+   <key>byte</key>
+   <integer>2</integer>
+  </dict>
+  <key>lowFrequency</key>
+  <dict>
+   <key>byte</key>
+   <integer>3</integer>
+  </dict>
+  <key>report</key>
+  <dict>
+   <key>id</key>
+   <integer>2</integer>
+   <key>kind</key>
+   <string>Output</string>
+   <key>length</key>
+   <integer>8</integer>
+  </dict>
+ </dict>
 </dict>
 ```
 
@@ -272,26 +272,26 @@ Raw bytes are uppercase hex pairs separated by single spaces, such as `42 03 00 
 ```xml
 <key>session</key>
 <dict>
-	<key>control</key>
-	<array>
-		<dict>
-			<key>bRequest</key>
-			<integer>1</integer>
-			<key>bmRequestType</key>
-			<integer>192</integer>
-			<key>match</key>
-			<dict>
-				<key>manufacturer</key>
-				<string>SHANWAN</string>
-			</dict>
-			<key>wIndex</key>
-			<integer>0</integer>
-			<key>wLength</key>
-			<integer>8</integer>
-			<key>wValue</key>
-			<integer>0</integer>
-		</dict>
-	</array>
+ <key>control</key>
+ <array>
+  <dict>
+   <key>bRequest</key>
+   <integer>1</integer>
+   <key>bmRequestType</key>
+   <integer>192</integer>
+   <key>match</key>
+   <dict>
+    <key>manufacturer</key>
+    <string>SHANWAN</string>
+   </dict>
+   <key>wIndex</key>
+   <integer>0</integer>
+   <key>wLength</key>
+   <integer>8</integer>
+   <key>wValue</key>
+   <integer>0</integer>
+  </dict>
+ </array>
 </dict>
 ```
 
@@ -308,24 +308,24 @@ A HID controller that needs a fixed report before it sends input names it in the
 ```xml
 <key>session</key>
 <dict>
-	<key>startup</key>
-	<array>
-		<dict>
-			<key>bytes</key>
-			<string>42 03 00 00</string>
-			<key>report</key>
-			<dict>
-				<key>id</key>
-				<integer>244</integer>
-				<key>kind</key>
-				<string>Feature</string>
-				<key>length</key>
-				<integer>5</integer>
-			</dict>
-			<key>transport</key>
-			<string>BluetoothClassic</string>
-		</dict>
-	</array>
+ <key>startup</key>
+ <array>
+  <dict>
+   <key>bytes</key>
+   <string>42 03 00 00</string>
+   <key>report</key>
+   <dict>
+    <key>id</key>
+    <integer>244</integer>
+    <key>kind</key>
+    <string>Feature</string>
+    <key>length</key>
+    <integer>5</integer>
+   </dict>
+   <key>transport</key>
+   <string>BluetoothClassic</string>
+  </dict>
+ </array>
 </dict>
 ```
 
@@ -349,10 +349,10 @@ A record's `tuning` field changes a value that the protocol driver otherwise set
 ```xml
 <key>tuning</key>
 <dict>
-	<key>hidStartupRecoveryRounds</key>
-	<integer>3</integer>
-	<key>stickDeadzone</key>
-	<real>0.02</real>
+ <key>hidStartupRecoveryRounds</key>
+ <integer>3</integer>
+ <key>stickDeadzone</key>
+ <real>0.02</real>
 </dict>
 ```
 
@@ -417,7 +417,7 @@ A family's default timings and control set are data in `Resources/Protocols/<fil
 - `defaults.session.handshakeAttempts` (1 to 10) and `defaults.session.announceResendLimit` (1 to 100) (read by the `XboxGIP` driver): the number of startup handshake attempts, and the most resends of the request that makes a controller announce itself. They are protocol limits, so a record's `tuning` cannot change them, and a description that lacks a session field its driver reads, or sets one its driver does not read, is rejected when it loads (E5002).
 - `defaults.session.namedPackets` (a family that has them accepts `protocol.initialization`): the GIP packets a record can select by name in `protocol.initialization` (1 to 16). Each has an `id` (the family name, a slash and a lowercase hyphenated name, such as `XboxGIP/power-on`, each at most once), `bytes` (3 to 64) and `sessionByte`, which is 2: the driver stamps byte 2 with the next sequence number of the packet's command. A record that names an id the description lacks is rejected. The description's own default startup (`defaults.session.startup`) lists its packets as bytes.
 
-Change a default by editing the description: every record of the family follows it, and a record's or patch's own `tuning` still wins. Then run `./Scripts/ojd catalog regenerate --write`, which copies the descriptions into the Kit bundle.
+Change a default by editing the description: every record of the family follows it, and a record's or patch's own `tuning` still wins. Then run `just catalog-regenerate --write`, which copies the descriptions into the Kit bundle.
 
 ### Define a Family With a Description
 
@@ -438,23 +438,23 @@ A documented description sets no `sessionKeys`, no parameters and no session fie
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>apiVersion</key>
-	<string>openjoystickdriver/v1alpha3</string>
-	<key>kind</key>
-	<string>ControllerPatch</string>
-	<key>patch</key>
-	<dict>
-		<key>tuning</key>
-		<dict>
-			<key>stickDeadzone</key>
-			<real>0.05</real>
-		</dict>
-	</dict>
-	<key>selector</key>
-	<dict>
-		<key>all</key>
-		<true/>
-	</dict>
+ <key>apiVersion</key>
+ <string>openjoystickdriver/v1alpha3</string>
+ <key>kind</key>
+ <string>ControllerPatch</string>
+ <key>patch</key>
+ <dict>
+  <key>tuning</key>
+  <dict>
+   <key>stickDeadzone</key>
+   <real>0.05</real>
+  </dict>
+ </dict>
+ <key>selector</key>
+ <dict>
+  <key>all</key>
+  <true/>
+ </dict>
 </dict>
 </plist>
 ```
@@ -472,19 +472,19 @@ A `VirtualDevice` file in `~/Library/Application Support/OpenJoystickDriver/Virt
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>apiVersion</key>
-	<string>openjoystickdriver/v1alpha3</string>
-	<key>kind</key>
-	<string>VirtualDevice</string>
-	<key>match</key>
-	<dict>
-		<key>productID</key>
-		<integer>3302</integer>
-		<key>vendorID</key>
-		<integer>1356</integer>
-	</dict>
-	<key>persona</key>
-	<string>SDLCompatible</string>
+ <key>apiVersion</key>
+ <string>openjoystickdriver/v1alpha3</string>
+ <key>kind</key>
+ <string>VirtualDevice</string>
+ <key>match</key>
+ <dict>
+  <key>productID</key>
+  <integer>3302</integer>
+  <key>vendorID</key>
+  <integer>1356</integer>
+ </dict>
+ <key>persona</key>
+ <string>SDLCompatible</string>
 </dict>
 </plist>
 ```
@@ -522,11 +522,11 @@ A `HIDDescriptor` record maps the usages of its report descriptor to controls in
 - `AxisButton`: with `half`, a button `control` and a `threshold` above 0 and below 1, the button is pressed while that half's travel is at or past `threshold`.
 - `ButtonTrigger`: with a `control` of `LeftTrigger` or `RightTrigger`, the trigger reads 1 while the value is nonzero and 0 otherwise.
 
-`reportID` limits the map to one report. A usage the map does not name is ignored, and both the app and `./Scripts/ojd check profiles` reject a usage named twice, except that a usage may appear in several `HalfAxis`, `AxisDpad` and `AxisButton` entries when no two name the same `half`, and reject an axis `range` whose `min` is not below its `max`. The description may also list `descriptorShapes` that choose a map from the usages a controller's report descriptor declares: the shape in `hid-descriptor.plist` gives a controller with Z, Rz, a Brake or Accelerator and no Rx or Ry the Z/Rz layout, with Brake as LT and Accelerator as RT. The records for the WR007 (`11C1:5600`), SCUF Envision (`2E95:434D`), 8BitDo Ultimate 2C (`2DC8:301B`) and DragonRise (`0079:0006`, by patch) show complete maps.
+`reportID` limits the map to one report. A usage the map does not name is ignored, and both the app and `just check-profiles` reject a usage named twice, except that a usage may appear in several `HalfAxis`, `AxisDpad` and `AxisButton` entries when no two name the same `half`, and reject an axis `range` whose `min` is not below its `max`. The description may also list `descriptorShapes` that choose a map from the usages a controller's report descriptor declares: the shape in `hid-descriptor.plist` gives a controller with Z, Rz, a Brake or Accelerator and no Rx or Ry the Z/Rz layout, with Brake as LT and Accelerator as RT. The records for the WR007 (`11C1:5600`), SCUF Envision (`2E95:434D`), 8BitDo Ultimate 2C (`2DC8:301B`) and DragonRise (`0079:0006`, by patch) show complete maps.
 
 ## Control Names and Other Vocabularies
 
-Every document, profile, endpoint message and record names a control with one UpperCamelCase id. `Resources/Schemas/vocabulary.schema.json` defines the ids, and `Resources/Vocabulary/crosswalk.plist` holds the names the same control has elsewhere. The crosswalk is documentation: it is not a schema alias, and a document that uses another spelling is refused. A `-` means the other vocabulary has no name for the control, and the crosswalk guesses none. Each control has one row, and two controls may share an SDL, evdev, or Apple name. The `sources` member of the crosswalk records, for each column, the document its cells are checked against. The W3C column is the `buttons` or `axes` index of the standard gamepad mapping. In the HID column a usage is hexadecimal, and `device` means the report descriptor assigns the usage number. `Capture` and `Microphone` share the SDL3 name `MISC1`. A stick's Y axis is positive down in the W3C, SDL3 and evdev columns; Apple's `y` axis is positive up. The table below is generated from `crosswalk.plist`, so edit that file and run `./Scripts/ojd vocabulary regenerate --write`.
+Every document, profile, endpoint message and record names a control with one UpperCamelCase id. `Resources/Schemas/vocabulary.schema.json` defines the ids, and `Resources/Vocabulary/crosswalk.plist` holds the names the same control has elsewhere. The crosswalk is documentation: it is not a schema alias, and a document that uses another spelling is refused. A `-` means the other vocabulary has no name for the control, and the crosswalk guesses none. Each control has one row, and two controls may share an SDL, evdev, or Apple name. The `sources` member of the crosswalk records, for each column, the document its cells are checked against. The W3C column is the `buttons` or `axes` index of the standard gamepad mapping. In the HID column a usage is hexadecimal, and `device` means the report descriptor assigns the usage number. `Capture` and `Microphone` share the SDL3 name `MISC1`. A stick's Y axis is positive down in the W3C, SDL3 and evdev columns; Apple's `y` axis is positive up. The table below is generated from `crosswalk.plist`, so edit that file and run `just vocabulary-regenerate --write`.
 
 <!-- BEGIN GENERATED: control-crosswalk -->
 
@@ -613,71 +613,71 @@ Every record has a `modes` list, and the protocol a controller runs is the `prot
 ```xml
 <key>modes</key>
 <array>
-	<dict>
-		<key>id</key>
-		<string>default</string>
-		<key>protocol</key>
-		<dict>
-			<key>family</key>
-			<string>SonySixaxis</string>
-		</dict>
-	</dict>
-	<dict>
-		<key>id</key>
-		<string>bluetooth</string>
-		<key>match</key>
-		<dict>
-			<key>link</key>
-			<string>BluetoothClassic</string>
-		</dict>
-		<key>protocol</key>
-		<dict>
-			<key>family</key>
-			<string>SonySixaxis</string>
-		</dict>
-		<key>session</key>
-		<dict>
-			<key>startup</key>
-			<array>
-				<dict>
-					<key>bytes</key>
-					<string>42 03 00 00</string>
-					<key>report</key>
-					<dict>
-						<key>id</key>
-						<integer>244</integer>
-						<key>kind</key>
-						<string>Feature</string>
-						<key>length</key>
-						<integer>5</integer>
-					</dict>
-				</dict>
-			</array>
-		</dict>
-	</dict>
-	<dict>
-		<key>id</key>
-		<string>feature-ef-answers</string>
-		<key>match</key>
-		<dict>
-			<key>probes</key>
-			<array>
-				<dict>
-					<key>expect</key>
-					<string>Answers</string>
-					<key>length</key>
-					<integer>49</integer>
-					<key>report</key>
-					<integer>239</integer>
-				</dict>
-			</array>
-		</dict>
-		<key>protocol</key>
-		<dict>
-			<key>family</key>
-			<string>SonySixaxis</string>
-		</dict>
-	</dict>
+ <dict>
+  <key>id</key>
+  <string>default</string>
+  <key>protocol</key>
+  <dict>
+   <key>family</key>
+   <string>SonySixaxis</string>
+  </dict>
+ </dict>
+ <dict>
+  <key>id</key>
+  <string>bluetooth</string>
+  <key>match</key>
+  <dict>
+   <key>link</key>
+   <string>BluetoothClassic</string>
+  </dict>
+  <key>protocol</key>
+  <dict>
+   <key>family</key>
+   <string>SonySixaxis</string>
+  </dict>
+  <key>session</key>
+  <dict>
+   <key>startup</key>
+   <array>
+    <dict>
+     <key>bytes</key>
+     <string>42 03 00 00</string>
+     <key>report</key>
+     <dict>
+      <key>id</key>
+      <integer>244</integer>
+      <key>kind</key>
+      <string>Feature</string>
+      <key>length</key>
+      <integer>5</integer>
+     </dict>
+    </dict>
+   </array>
+  </dict>
+ </dict>
+ <dict>
+  <key>id</key>
+  <string>feature-ef-answers</string>
+  <key>match</key>
+  <dict>
+   <key>probes</key>
+   <array>
+    <dict>
+     <key>expect</key>
+     <string>Answers</string>
+     <key>length</key>
+     <integer>49</integer>
+     <key>report</key>
+     <integer>239</integer>
+    </dict>
+   </array>
+  </dict>
+  <key>protocol</key>
+  <dict>
+   <key>family</key>
+   <string>SonySixaxis</string>
+  </dict>
+ </dict>
 </array>
 ```
 
@@ -718,8 +718,8 @@ OpenJoystickDriver connects a Nintendo Switch 2 controller over Bluetooth LE onl
 ```xml
 <key>bluetoothLE</key>
 <dict>
-	<key>vibrationCharacteristic</key>
-	<string>FA19B0FB-CD1F-46A7-84A1-BBB09E00C149</string>
+ <key>vibrationCharacteristic</key>
+ <string>FA19B0FB-CD1F-46A7-84A1-BBB09E00C149</string>
 </dict>
 ```
 

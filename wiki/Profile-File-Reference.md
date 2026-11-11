@@ -42,17 +42,17 @@ A profile file contains one profile dictionary. An exported profile file has the
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <array>
-	<dict>
-		<key>model</key>
-		<dict>
-			<key>productID</key>
-			<integer>654</integer>
-			<key>vendorID</key>
-			<integer>1118</integer>
-		</dict>
-		<key>profileID</key>
-		<string>0F8C2A4E-6B1D-4E7A-9C3F-2D5B8A1E7C40</string>
-	</dict>
+ <dict>
+  <key>model</key>
+  <dict>
+   <key>productID</key>
+   <integer>654</integer>
+   <key>vendorID</key>
+   <integer>1118</integer>
+  </dict>
+  <key>profileID</key>
+  <string>0F8C2A4E-6B1D-4E7A-9C3F-2D5B8A1E7C40</string>
+ </dict>
 </array>
 </plist>
 ```

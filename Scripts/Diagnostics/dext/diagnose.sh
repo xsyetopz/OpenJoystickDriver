@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# DriverKit system-extension diagnostics exposed through ./Scripts/ojd commands.
 set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -8,7 +7,6 @@ source "$SCRIPT_DIR/../../Platform/environment.sh"
 # zsh has a 'log' builtin that shadows /usr/bin/log. Always use the full path.
 LOG=/usr/bin/log
 
-# Color output when stdout is a terminal
 if [[ -t 1 ]]; then
   GREEN='\033[0;32m'
   RED='\033[0;31m'
@@ -55,7 +53,6 @@ fi
 echo -e "${BOLD}=== OpenJoystickDriver Dext Diagnostics ===${RESET}"
 echo ""
 
-# --- 1. Sysext status ---
 sysext_output=$(systemextensionsctl list 2>&1 | grep -F "$BUNDLE_ID" || true)
 if [[ -n "$sysext_output" ]]; then
   if echo "$sysext_output" | grep -q "activated enabled"; then
@@ -69,7 +66,6 @@ else
   fail "Sysext not found. Extension is not installed."
 fi
 
-# --- 2. Installed binary exists ---
 INSTALLED_BINARY=""
 STALE_BINARIES=()
 EXECUTABLE_BINARIES=()
@@ -108,12 +104,10 @@ if [[ ${#EXECUTABLE_BINARIES[@]} -gt 1 ]]; then
   warn "${#EXECUTABLE_BINARIES[@]} executable sysext copies found"
 fi
 
-# --- 3. Installed binary executable ---
 if [[ -n "$INSTALLED_BINARY" ]]; then
   pass "Installed binary is executable"
 fi
 
-# --- 4. App bundle dext exists ---
 if [[ -d "$APP_DEXT_DIR" ]]; then
   pass "App bundle dext present"
   info "$APP_DEXT_DIR"
@@ -121,7 +115,6 @@ else
   fail "App bundle dext missing. Rebuild the app."
 fi
 
-# --- 5. Codesigning valid ---
 if [[ -n "$INSTALLED_BINARY" ]]; then
   installed_dext_dir="$(dirname "$INSTALLED_BINARY")"
   if codesign -v "$installed_dext_dir" 2>/dev/null; then
@@ -139,7 +132,6 @@ if [[ -d "$APP_DEXT_DIR" ]]; then
   fi
 fi
 
-# --- 6. Entitlements (DriverKit) ---
 check_entitlements() {
   local label="$1" path="$2"
   local ent_output
@@ -158,7 +150,6 @@ if [[ -d "$APP_DEXT_DIR" ]]; then
   check_entitlements "App bundle dext" "$APP_DEXT_DIR"
 fi
 
-# --- 7. Dext process state ---
 if pgrep -x "$DEXT_PROCESS" >/dev/null 2>&1; then
   pid=$(pgrep -x "$DEXT_PROCESS")
   pass "Dext process running (PID $pid)"
@@ -179,7 +170,6 @@ else
   fi
 fi
 
-# --- 8. IOUserService presence ---
 ioreg_service=$(ioreg -l -c IOUserService 2>/dev/null | grep -i openjoystick || true)
 if [[ -n "$ioreg_service" ]]; then
   pass "IORegistry IOUserService proxy node present"
@@ -189,7 +179,6 @@ else
   fail "IORegistry IOUserService proxy node not found for an entitled Microsoft USB interface"
 fi
 
-# --- 9. Dext os_log (last 2 minutes) ---
 echo ""
 echo -e "${BOLD}--- Recent dext logs (last 2m) ---${RESET}"
 dext_logs=$($LOG show --last 2m --predicate "process == \"$DEXT_PROCESS\"" --style compact 2>/dev/null | tail -10 || true)
@@ -199,7 +188,6 @@ else
   echo "  (no dext log entries in the last 2 minutes)"
 fi
 
-# --- 10. Kernel DK logs (last 2 minutes) ---
 echo ""
 echo -e "${BOLD}--- Recent DK kernel logs (last 2m) ---${RESET}"
 dk_logs=$($LOG show --last 2m --predicate 'eventMessage contains "DK:"' --style compact 2>/dev/null | tail -10 || true)
@@ -209,7 +197,6 @@ else
   echo "  (no DK: log entries in the last 2 minutes)"
 fi
 
-# --- Summary ---
 echo ""
 echo -e "${BOLD}=== Summary ===${RESET}"
 echo -e "  ${GREEN}$PASS_COUNT passed${RESET}, ${RED}$FAIL_COUNT failed${RESET}, ${YELLOW}$WARN_COUNT warnings${RESET}"
@@ -221,7 +208,6 @@ if [[ $FAIL_COUNT -gt 0 ]]; then
     echo "  - $issue"
   done
 
-  # Suggest most likely root cause
   echo ""
   if printf '%s\n' "${ISSUES[@]}" | grep -q "stale activation"; then
     echo "Most likely: stale sysext. Re-activate it from the app (Install Extension) or rerun rebuild.sh."

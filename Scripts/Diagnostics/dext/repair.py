@@ -1,5 +1,3 @@
-"""Repair stale OpenJoystickDriver DriverKit process state."""
-
 from __future__ import annotations
 
 import os

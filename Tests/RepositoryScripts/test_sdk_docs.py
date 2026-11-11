@@ -101,9 +101,7 @@ class SDKDocsTests(unittest.TestCase):
             self.client_lines.validate(bad)
 
     def endpoint_catalog(self) -> list[dict[str, Any]]:
-        catalog = plistlib.loads(
-            (ROOT / "Resources" / "ErrorCodes.plist").read_bytes()
-        )
+        catalog = plistlib.loads((ROOT / "Resources" / "ErrorCodes.plist").read_bytes())
         return [entry for entry in catalog["codes"] if entry["domain"] == "Endpoint"]
 
     def error_rows(self) -> list[tuple[str, str, str]]:

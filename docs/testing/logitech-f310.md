@@ -19,10 +19,10 @@ Record validation is signing-free. Raw-input verification requires a development
 Set the F310 switch to X. Quit Steam and any controller utilities, then run:
 
 ```bash
-./Scripts/ojd diagnose record \
+just diagnose-record \
   Sources/OpenJoystickDriverKit/Resources/Controllers/046d/046d-c21d.plist --validate-only
 
-./Scripts/ojd diagnose record \
+just diagnose-record \
   Sources/OpenJoystickDriverKit/Resources/Controllers/046d/046d-c21d.plist --seconds 45
 ```
 
@@ -36,7 +36,7 @@ Press and release one control at a time in this order:
 6. Both triggers from rest to fully pressed
 7. Both sticks through their full range
 
-Verify that each `USB_RX` packet produces only the matching `EVENT` output. If the interface is unavailable, capture `./Scripts/ojd diagnose dext`; there is no detach fallback.
+Verify that each `USB_RX` packet produces only the matching `EVENT` output. If the interface is unavailable, capture `just diagnose-dext`; there is no detach fallback.
 
 ## Verify the App and Consumers
 

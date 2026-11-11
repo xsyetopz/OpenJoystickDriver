@@ -5,7 +5,7 @@ Use these probes only for intentional hardware tests.
 Build the maintained `SDLGamepadProbe` without opening hardware, and run the tests of the WebRTC bridge package:
 
 ```bash
-./Scripts/ojd check tools
+just check-tools
 ```
 
 The build uses Apple Clang, the system `SDL3` package found through `pkg-config`, and the Foundation and GameController frameworks.
@@ -13,7 +13,7 @@ The build uses Apple Clang, the system `SDL3` package found through `pkg-config`
 To test a connected controller for 10 seconds:
 
 ```bash
-./Scripts/ojd diagnose sdl3 --seconds 10
+just diagnose-sdl3 --seconds 10
 ```
 
 `--seconds` takes a whole number from 1 to 3600 and defaults to 10; other values exit with code 2.
@@ -22,7 +22,7 @@ Expected result: the probe lists SDL gamepad events and exits after 10 seconds. 
 
 ## WebRTC Bridge
 
-`Tools/WebRTCBridge/` is a separate Swift package with its own `Package.swift`. It depends on LiveKitWebRTC, and the root package and `swift test` at the repository root do not fetch or build it. `./Scripts/ojd check tools` builds the SDL probe and then runs `swift test` in the bridge package. To test it on its own:
+`Tools/WebRTCBridge/` is a separate Swift package with its own `Package.swift`. It depends on LiveKitWebRTC, and the root package and `swift test` at the repository root do not fetch or build it. `just check-tools` builds the SDL probe and then runs `swift test` in the bridge package. To test it on its own:
 
 ```bash
 cd Tools/WebRTCBridge

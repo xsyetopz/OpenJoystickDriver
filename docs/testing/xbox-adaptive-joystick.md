@@ -66,7 +66,7 @@ Run the controller-neutral USB facade first. It uses direct IOUSBHost when the i
 swift run OpenJoystickDriverHIDTool --usb-monitor --vid 0x045e --pid 0x0000 --length 64 --seconds 20
 ```
 
-The tool reports the selected route. If a required DEXT service does not appear, capture `./Scripts/ojd diagnose dext`; there is no interface-detach fallback.
+The tool reports the selected route. If a required DEXT service does not appear, capture `just diagnose-dext`; there is no interface-detach fallback.
 
 If the sweep finds an endpoint, repeat with that endpoint while pressing one control at a time:
 

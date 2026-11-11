@@ -1,8 +1,3 @@
-"""Reduce the pinned SDL_GameControllerDB to the lines the app converts at connect.
-
-Python only filters the text. Swift parses and converts every kept line.
-"""
-
 from __future__ import annotations
 
 import re
@@ -32,14 +27,12 @@ class DatabaseCounts:
 
 
 def guid_identity(guid: str) -> tuple[int, int]:
-    """The vendor and product a database GUID carries, both little-endian 16-bit fields."""
     vendor = int(guid[10:12] + guid[8:10], 16)
     product = int(guid[18:20] + guid[16:18], 16)
     return vendor, product
 
 
 def line_key(line: str) -> tuple[str, str]:
-    """The GUID and the `crc:` field of a database line; the pair SDL treats as one mapping."""
     fields = line.split(",")
     crc = next((item for item in fields if item.startswith("crc:")), "")
     return fields[0], crc
@@ -58,11 +51,6 @@ def reduce_database(
     controller_list: set[tuple[int, int]],
     catalog: set[tuple[int, int]],
 ) -> tuple[str, DatabaseCounts]:
-    """The shipped text and what was dropped.
-
-    A line is kept when it names the Mac platform, parses, and its vendor and product are in
-    neither the SDL controller list nor the catalog.
-    """
     counts = DatabaseCounts()
     kept: list[str] = []
     seen: set[tuple[str, str]] = set()

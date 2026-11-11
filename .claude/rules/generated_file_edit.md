@@ -9,9 +9,9 @@ Generated files change only through their generator. Edit the source, regenerate
 
 | Source | Generator |
 | --- | --- |
-| `Resources/Protocols/*.plist` | `./Scripts/ojd catalog regenerate --write` |
-| DriverKit sources | `./Scripts/ojd driverkit generate` |
-| `Resources/ErrorCodes.plist` | `./Scripts/ojd errors regenerate --write` |
+| `Resources/Protocols/*.plist` | `just catalog-regenerate --write` |
+| DriverKit sources | `just driverkit-generate` |
+| `Resources/ErrorCodes.plist` | `just errors-regenerate --write` |
 
 ```text
 Sources/OpenJoystickDriverKit/Resources/Protocols/nintendo-wii.plist:88:5: error: generated file edited [generated_file_edit]

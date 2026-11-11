@@ -9,7 +9,6 @@ pid="$2"
 intensity="${3:-160}"
 duration_ms="${4:-500}"
 require_ojd_app_cli
-# vid and pid may be decimal or 0x-prefixed hex; the CLI selects a controller by VVVV:PPPP.
 controller="$(printf '%04X:%04X' "$((vid))" "$((pid))")"
 duration="$((duration_ms / 1000)).$(printf '%03d' $((duration_ms % 1000)))"
 

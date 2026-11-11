@@ -6,7 +6,7 @@ This directory holds the development notes and hardware-evidence records for Ope
 
 - [Apple Controller Ownership and Transport Evidence](development/apple-controller-ownership.md): How macOS ownership determines which Apple USB transport can reach a physical interface.
 - [Architecture](development/architecture.md): The application bundle, persistent host process, and generated DriverKit system extension.
-- [Building From Source](development/building-from-source.md): Building, checking, and installing through `./Scripts/ojd`.
+- [Building From Source](development/building-from-source.md): Building, checking, and installing through `just`.
 - [CLI and Application Runtime](development/cli-and-runtime.md): The menu-bar app runtime and the headless expert CLI.
 - [Compatibility Source Notes](development/compatibility-sources.md): External projects that provide design or protocol evidence.
 - [Environment Files](development/environment.md): The optional local environment file that repository scripts load.

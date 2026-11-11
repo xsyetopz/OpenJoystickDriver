@@ -646,9 +646,7 @@ class ProtocolCopyTests(unittest.TestCase):
             catalog.check_catalog({})
 
     def test_written_copies_pass_the_check(self) -> None:
-        self.assertEqual(
-            (self.bundled / "xbox-xid.plist").read_bytes(), XID
-        )
+        self.assertEqual((self.bundled / "xbox-xid.plist").read_bytes(), XID)
         catalog.check_catalog({})
 
     def test_a_missing_copy_is_reported(self) -> None:

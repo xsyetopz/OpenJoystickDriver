@@ -210,7 +210,7 @@ The DEXT does not parse controller protocols. Its only personality, `XboxUSB`, o
 
 See [Apple controller ownership evidence](apple-controller-ownership.md) for the installed-system observations, entitlement scope, and why an Apple personality list is not OJD's support catalog.
 
-Every DriverKit build generates a fresh native project under `.build/driverkit/generated/` and builds under `.build/driverkit/derived-data/`. Generated output is ephemeral; never edit or commit it. `./Scripts/ojd check driverkit` checks the entitlement, personality, determinism, dependency direction, and an unsigned universal build.
+Every DriverKit build generates a fresh native project under `.build/driverkit/generated/` and builds under `.build/driverkit/derived-data/`. Generated output is ephemeral; never edit or commit it. `just driverkit-check` checks the entitlement, personality, determinism, dependency direction, and an unsigned universal build.
 
 [1]: https://developer.apple.com/documentation/iousbhost/iousbhostmatchingpropertykey/devicereleasenumber
 

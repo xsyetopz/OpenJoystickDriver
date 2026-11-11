@@ -1,5 +1,3 @@
-"""Publish `wiki/` to the GitHub wiki repository."""
-
 from __future__ import annotations
 
 import argparse
@@ -33,7 +31,6 @@ def git(
 
 
 def origin_wiki(root: pathlib.Path) -> tuple[str, str]:
-    """Return (wiki remote URL, owner/name) derived from the origin remote."""
     result = git("remote", "get-url", "origin", cwd=root, check=False)
     match = ORIGIN_PATTERN.match(result.stdout.strip())
     if result.returncode != 0 or match is None:
@@ -44,7 +41,6 @@ def origin_wiki(root: pathlib.Path) -> tuple[str, str]:
 
 
 def source_label(root: pathlib.Path) -> str:
-    """Name the source commit, marked -dirty when wiki/ has uncommitted changes."""
     commit = git("rev-parse", "HEAD", cwd=root).stdout.strip()
     status = git("status", "--porcelain", "--", "wiki", cwd=root).stdout.strip()
     return f"{commit}-dirty" if status else commit
@@ -58,7 +54,6 @@ def publish(
     ref: str,
     dry_run: bool,
 ) -> str:
-    """Return a status line; raise PublishError when the wiki cannot be updated."""
     with tempfile.TemporaryDirectory(prefix="ojd-wiki-") as scratch:
         pages = pathlib.Path(scratch) / "pages"
         checkout = pathlib.Path(scratch) / "checkout"
@@ -91,12 +86,11 @@ def publish(
 
 
 def redact(text: str) -> str:
-    """Hide credentials embedded in a URL."""
     return re.sub(r"://[^/@\s]+@", "://***@", text)
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="ojd docs publish-wiki", description=__doc__)
+    parser = argparse.ArgumentParser(prog="just wiki")
     parser.add_argument(
         "--dry-run", action="store_true", help="show the diff stat without pushing"
     )

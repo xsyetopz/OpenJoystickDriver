@@ -62,7 +62,7 @@ With the extension active and the controller attached:
 ioreg -l -w0 -r -k IOUserClass | grep -A40 'XboxUSBDevice'
 ioreg -l -w0 -r -c IOUSBHostDevice | grep -E 'idVendor|idProduct|locationID'
 codesign -d --entitlements - /Applications/OpenJoystickDriver.app
-./Scripts/ojd record show 045e:02d1
+ojd record show 045e:02d1
 ```
 
 The first command confirms finding 3 when the DEXT service shows `idProductArray` and no

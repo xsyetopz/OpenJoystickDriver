@@ -27,7 +27,9 @@ SETTING_KEYS = [
 def status_document(state: str = "Installed") -> dict[str, Any]:
     tool = {"path": "/usr/local/bin/ojd", "state": state}
     if state not in ("Missing", "BlockedByFile"):
-        tool["target"] = "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
+        tool["target"] = (
+            "/Applications/OpenJoystickDriver.app/Contents/MacOS/OpenJoystickDriver"
+        )
     return {
         **schema_header.header("SystemStatus"),
         "commandLineTool": tool,

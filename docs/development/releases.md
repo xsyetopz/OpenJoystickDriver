@@ -4,14 +4,14 @@ Use this procedure after the release commit and changelog are complete. The GitH
 
 ## Versions
 
-- The release version is SemVer 2.0.0 without build metadata. It lives in `CFBundleShortVersionString` of `Sources/OpenJoystickDriver/App/Info.plist` and in the tag, without a `v`. Set it with `./Scripts/ojd release bump-version <version>` (`just release-bump-version`) at the start of each cycle, before its first tester build. It needs no CHANGELOG heading.
+- The release version is SemVer 2.0.0 without build metadata. It lives in `CFBundleShortVersionString` of `Sources/OpenJoystickDriver/App/Info.plist` and in the tag, without a `v`. Set it with `just release-bump-version <version>` (`just release-bump-version`) at the start of each cycle, before its first tester build. It needs no CHANGELOG heading.
 - The app and the DriverKit extension share one `CFBundleVersion`, derived from the commit count (`1.14.89` for 1489 commits). It orders builds and follows the kext version grammar that DriverKit requires. Local DEXT installs append a development stage (`1.14.89d2`) so a rebuild of the same commit replaces the active extension.
 - A tester build is published by this workflow as a pre-release. Its tag follows the release before it and precedes the release it leads to: `<prerelease tag>.tester.N` (`0.6.0-alpha.2.tester.1`) after a prerelease, or `X.Y.Z-tester.N` with `Z` of 1 or more after `X.Y.(Z-1)`. The workflow refuses a tester tag whose release before it is not a tag. `python3 -m Scripts.Release.bundle_version --tag-kind <tag>` and `--tester-base <tag>` print the kind and that release.
 - Provenance is SemVer build metadata, `+build.<number>.sha.<commit>`, with `.dirty` for an uncommitted tree. `--version`, the About panel, and tester build-info files show it. Build metadata never orders versions.
 
 ## Before Publication
 
-1. Check out the exact release commit and run `just check`.
+1. Check out the exact release commit and run `just verify`.
 2. Confirm `git status --short` is empty and run `git diff --check`.
 3. Generate or preview GitHub's release notes for the intended tag and previous tag.
 4. Reconcile closed or unmerged contributions that are integrated in the release but omitted by GitHub. Confirm each contribution in source, tests, the changelog, or recorded hardware evidence.

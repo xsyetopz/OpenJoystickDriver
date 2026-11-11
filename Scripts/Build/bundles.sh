@@ -1,18 +1,17 @@
 # shellcheck shell=bash
-# Application bundle builder for Scripts/Build/build.sh.
 
 build_app_bundle() {
   _require_codesign_identity
 
   if [[ ! -f "$GUI_PROFILE" ]]; then
     echo "ERROR: Provisioning profile not found: $GUI_PROFILE"
-    echo "Fix: run: ./Scripts/ojd signing install-profiles"
+    echo "Fix: run: just signing-install-profiles"
     exit 1
   fi
 
   if [[ -z "${DEVELOPMENT_TEAM:-}" ]]; then
     echo "ERROR: DEVELOPMENT_TEAM not set."
-    echo "Fix: run: ./Scripts/ojd signing configure"
+    echo "Fix: run: just signing-configure"
     exit 1
   fi
 
@@ -21,26 +20,26 @@ build_app_bundle() {
     "com.apple.application-identifier" \
     "${DEVELOPMENT_TEAM}.com.openjoystickdriver" \
     "GUI app signing identity / provisioning profile" \
-    "Fix: regenerate the GUI provisioning profile for Identifier com.openjoystickdriver, then reinstall profiles (./Scripts/ojd signing install-profiles)."
+    "Fix: regenerate the GUI provisioning profile for Identifier com.openjoystickdriver, then reinstall profiles (just signing-install-profiles)."
 
   _require_profile_entitlement_value \
     "$GUI_PROFILE" \
     "com.apple.developer.team-identifier" \
     "$DEVELOPMENT_TEAM" \
     "GUI app signing identity / provisioning profile" \
-    "Fix: run ./Scripts/ojd signing configure, then reinstall matching GUI profiles."
+    "Fix: run just signing-configure, then reinstall matching GUI profiles."
 
   _require_profile_entitlement \
     "$GUI_PROFILE" \
     "com.apple.developer.system-extension.install" \
     "GUI app (system extension install)" \
-    "Fix: regenerate the GUI provisioning profile for Identifier com.openjoystickdriver with the System Extension install capability, then reinstall profiles (./Scripts/ojd signing install-profiles)."
+    "Fix: regenerate the GUI provisioning profile for Identifier com.openjoystickdriver with the System Extension install capability, then reinstall profiles (just signing-install-profiles)."
 
   _require_profile_entitlement \
     "$GUI_PROFILE" \
     "com.apple.developer.hid.virtual.device" \
     "GUI app (virtual HID backend)" \
-    "Fix: regenerate the GUI provisioning profile for Identifier com.openjoystickdriver with entitlement com.apple.developer.hid.virtual.device, then reinstall profiles (./Scripts/ojd signing install-profiles)."
+    "Fix: regenerate the GUI provisioning profile for Identifier com.openjoystickdriver with entitlement com.apple.developer.hid.virtual.device, then reinstall profiles (just signing-install-profiles)."
 
   local configuration=Debug
   local actions=(build)

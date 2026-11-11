@@ -1,9 +1,4 @@
 #!/usr/bin/env bash
-# Build workflows for OpenJoystickDriver.
-#
-# Human-facing entrypoint is: ./Scripts/ojd
-#
-# Implements the build routes exposed by Scripts/ojd.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -13,27 +8,16 @@ source "$SCRIPT_DIR/../Platform/environment.sh"
 LOG=/usr/bin/log
 export LOG
 
-usage() {
-  cat <<'TXT'
-Usage:
-  ./Scripts/ojd build dev
-  ./Scripts/ojd build release
-  ./Scripts/ojd build dext
-  ./Scripts/ojd build install dev|release
-  ./Scripts/ojd build install-fast dev
-TXT
-}
-
 _require_codesign_identity() {
   if [[ "${IDENTITY:-"-"}" == "-" ]]; then
     echo "ERROR: CODESIGN_IDENTITY not set."
-    echo "Fix: run: ./Scripts/ojd signing configure"
+    echo "Fix: run: just signing-configure"
     exit 1
   fi
   if ! _codesign_identity_available "$IDENTITY"; then
     echo "ERROR: GUI signing identity is not available/trusted in Keychain: $IDENTITY"
     echo "Fix: install the matching signing certificate/private key, then run:"
-    echo "  ./Scripts/ojd signing configure"
+    echo "  just signing-configure"
     exit 1
   fi
 }
@@ -127,9 +111,6 @@ _retire_ojd_application_jobs() {
   die "macOS left an unkillable OJD application job. Reboot once; OJD will recreate its app service automatically at login."
 }
 
-# ---------------------------------------------------------------------------
-# Rebuild cleanup
-# ---------------------------------------------------------------------------
 clean_build_artifacts() {
   echo "=== CLEAN: clearing build artifacts ==="
   rm -rf "$PROJECT_DIR/.build/driverkit" 2>/dev/null || true
@@ -138,9 +119,6 @@ clean_build_artifacts() {
   echo "  cleared generated DriverKit and application products"
 }
 
-# ---------------------------------------------------------------------------
-# Build app (from Scripts/build-dev.sh)
-# ---------------------------------------------------------------------------
 _profile_has_entitlement() {
   local profile="$1" key="$2"
   python3 - "$profile" "$key" <<'PY'
@@ -234,8 +212,8 @@ _require_profile_entitlement() {
     echo "  profile: $profile"
     echo ""
     echo "Fix:"
-    echo "  1) Install profiles: ./Scripts/ojd signing install-profiles"
-    echo "  2) Audit profiles:   ./Scripts/ojd signing audit"
+    echo "  1) Install profiles: just signing-install-profiles"
+    echo "  2) Audit profiles:   just signing-audit"
     exit 1
   fi
   if [[ "$ok" != "true" ]]; then
@@ -259,8 +237,8 @@ _require_profile_entitlement_value() {
     echo "  profile: $profile"
     echo ""
     echo "Fix:"
-    echo "  1) Install profiles: ./Scripts/ojd signing install-profiles"
-    echo "  2) Audit profiles:   ./Scripts/ojd signing audit"
+    echo "  1) Install profiles: just signing-install-profiles"
+    echo "  2) Audit profiles:   just signing-audit"
     exit 1
   fi
   if [[ "$actual" != "$expected" ]]; then
@@ -344,9 +322,6 @@ fi
 cmd="${1:-}"
 sub="${2:-}"
 case "$cmd" in
-  ""|-h|--help|help)
-    usage
-    ;;
   build)
     case "$sub" in
       dev|release) build_app_bundle ;;

@@ -42,9 +42,13 @@ def instances() -> dict[str, dict[str, Any]]:
         "error-codes": load_plist(ROOT / "Resources/ErrorCodes.plist"),
         "crosswalk": load_plist(ROOT / "Resources/Vocabulary/crosswalk.plist"),
         "access-grants": load_plist(FIXTURES / "access_grants.plist"),
-        "protocol-description": load_plist(ROOT / "Resources/Protocols/xbox-xusb.plist"),
+        "protocol-description": load_plist(
+            ROOT / "Resources/Protocols/xbox-xusb.plist"
+        ),
         "settings": load_plist(FIXTURES / "settings.plist"),
-        "service-listener-failure": load_plist(FIXTURES / "service_listener_failure.plist"),
+        "service-listener-failure": load_plist(
+            FIXTURES / "service_listener_failure.plist"
+        ),
     }
 
 

@@ -36,7 +36,7 @@ Support a controller with the first step that works. A fact about one model is a
 - [Architecture](docs/development/architecture.md): runtime, HID/USB split, DriverKit boundary
 - [Source topology](docs/development/source-topology.md): package targets and capability owners
 - [Signing](docs/development/signing.md): Apple identities, profiles, entitlements
-- [Scripts](Scripts/ojd): `./Scripts/ojd --help` lists build, install, DriverKit, and release routes
+- [Scripts](just): `just --help` lists build, install, DriverKit, and release routes
 - [xpad import](docs/development/xpad-import.md): catalog generation from locked Linux sources
 - [Schema instructions](Resources/Schemas/AGENTS.md): JSON contract ownership
 - [Package graph](Package.swift): SwiftPM targets and deployment floor
