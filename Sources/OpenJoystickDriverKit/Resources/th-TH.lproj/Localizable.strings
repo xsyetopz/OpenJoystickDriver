@@ -4773,3 +4773,31 @@
 "ui.migrate.action" = "ย้ายข้อมูล";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
 "platform.macos.ui.migrate.failed" = "แปลงเอกสารบางรายการไม่ได้และยังไม่เปลี่ยนแปลง เรียกใช้ ojd migrate ใน Terminal เพื่อดูว่ารายการใด";
+/* Text of a technical value in the Advanced section of the controller detail: %1$@ is the value in words and %2$@ is the raw identifier that the files, the command line and the service use. The identifier stays as written. */
+"ui.controllers.withIdentifier" = "%1$@ (%2$@)";
+/* Name of the seventh extra button of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.auxiliary7" = "ปุ่มเพิ่มเติม 7";
+/* Name of the eighth extra button of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.auxiliary8" = "ปุ่มเพิ่มเติม 8";
+/* Name of the touch sensor of the left stick of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.leftStickTouch" = "การสัมผัสสติ๊กซ้าย";
+/* Name of the touch sensor of the right stick of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.rightStickTouch" = "การสัมผัสสติ๊กขวา";
+/* Name of the touch sensor of the left trackpad of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.leftTrackpadTouch" = "การสัมผัสแผ่นสัมผัสซ้าย";
+/* Name of the touch sensor of the right trackpad of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.rightTrackpadTouch" = "การสัมผัสแผ่นสัมผัสขวา";
+/* Name of the horizontal position of the pointer of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.pointerX" = "ตำแหน่งแนวนอนของตัวชี้";
+/* Name of the vertical position of the pointer of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.pointerY" = "ตำแหน่งแนวตั้งของตัวชี้";
+/* Name of the control that says whether the pointer of a controller is tracked, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.pointerTracking" = "การติดตามตัวชี้";
+/* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID is the controller's. It fills %1$@ of the Input mapping text. GUID stays as written. */
+"ui.controllers.sdlMatch.exactGUID" = "GUID ที่ตรงกันทุกประการ";
+/* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the name checksum bytes are ignored. GUID stays as written. */
+"ui.controllers.sdlMatch.guidWithoutNameCRC" = "GUID ที่ไม่รวมค่าตรวจสอบของชื่อ";
+/* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the version bytes are ignored. GUID stays as written. */
+"ui.controllers.sdlMatch.guidWithoutVersion" = "GUID ที่ไม่รวมเวอร์ชัน";
+/* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the version and name checksum bytes are ignored. GUID stays as written. */
+"ui.controllers.sdlMatch.guidWithoutVersionAndNameCRC" = "GUID ที่ไม่รวมเวอร์ชันและค่าตรวจสอบของชื่อ";

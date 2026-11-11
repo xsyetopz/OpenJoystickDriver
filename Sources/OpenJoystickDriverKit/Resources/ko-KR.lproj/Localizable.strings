@@ -4773,3 +4773,31 @@
 "ui.migrate.action" = "마이그레이션";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
 "platform.macos.ui.migrate.failed" = "일부 문서를 변환하지 못해 그대로 남아 있습니다. 어떤 문서인지는 터미널에서 ojd migrate를 실행해 확인하세요.";
+/* Text of a technical value in the Advanced section of the controller detail: %1$@ is the value in words and %2$@ is the raw identifier that the files, the command line and the service use. The identifier stays as written. */
+"ui.controllers.withIdentifier" = "%1$@ (%2$@)";
+/* Name of the seventh extra button of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.auxiliary7" = "추가 버튼 7";
+/* Name of the eighth extra button of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.auxiliary8" = "추가 버튼 8";
+/* Name of the touch sensor of the left stick of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.leftStickTouch" = "왼쪽 스틱 터치";
+/* Name of the touch sensor of the right stick of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.rightStickTouch" = "오른쪽 스틱 터치";
+/* Name of the touch sensor of the left trackpad of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.leftTrackpadTouch" = "왼쪽 패드 터치";
+/* Name of the touch sensor of the right trackpad of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.rightTrackpadTouch" = "오른쪽 패드 터치";
+/* Name of the horizontal position of the pointer of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.pointerX" = "포인터 가로 위치";
+/* Name of the vertical position of the pointer of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.pointerY" = "포인터 세로 위치";
+/* Name of the control that says whether the pointer of a controller is tracked, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.pointerTracking" = "포인터 추적";
+/* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID is the controller's. It fills %1$@ of the Input mapping text. GUID stays as written. */
+"ui.controllers.sdlMatch.exactGUID" = "정확히 일치하는 GUID";
+/* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the name checksum bytes are ignored. GUID stays as written. */
+"ui.controllers.sdlMatch.guidWithoutNameCRC" = "이름 체크섬을 제외한 GUID";
+/* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the version bytes are ignored. GUID stays as written. */
+"ui.controllers.sdlMatch.guidWithoutVersion" = "버전을 제외한 GUID";
+/* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the version and name checksum bytes are ignored. GUID stays as written. */
+"ui.controllers.sdlMatch.guidWithoutVersionAndNameCRC" = "버전과 이름 체크섬을 제외한 GUID";

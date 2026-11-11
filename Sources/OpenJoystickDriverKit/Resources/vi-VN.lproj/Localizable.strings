@@ -4773,3 +4773,31 @@
 "ui.migrate.action" = "Di chuyển";
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
 "platform.macos.ui.migrate.failed" = "Một số tài liệu không thể chuyển đổi và giữ nguyên. Chạy ojd migrate trong Terminal để xem là tài liệu nào.";
+/* Text of a technical value in the Advanced section of the controller detail: %1$@ is the value in words and %2$@ is the raw identifier that the files, the command line and the service use. The identifier stays as written. */
+"ui.controllers.withIdentifier" = "%1$@ (%2$@)";
+/* Name of the seventh extra button of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.auxiliary7" = "Nút phụ 7";
+/* Name of the eighth extra button of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.auxiliary8" = "Nút phụ 8";
+/* Name of the touch sensor of the left stick of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.leftStickTouch" = "Chạm cần analog trái";
+/* Name of the touch sensor of the right stick of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.rightStickTouch" = "Chạm cần analog phải";
+/* Name of the touch sensor of the left trackpad of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.leftTrackpadTouch" = "Chạm bàn rê trái";
+/* Name of the touch sensor of the right trackpad of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.rightTrackpadTouch" = "Chạm bàn rê phải";
+/* Name of the horizontal position of the pointer of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.pointerX" = "Vị trí ngang của con trỏ";
+/* Name of the vertical position of the pointer of a controller, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.pointerY" = "Vị trí dọc của con trỏ";
+/* Name of the control that says whether the pointer of a controller is tracked, in the list of controls in the Advanced section of the controller detail. */
+"ui.controllers.control.pointerTracking" = "Theo dõi con trỏ";
+/* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID is the controller's. It fills %1$@ of the Input mapping text. GUID stays as written. */
+"ui.controllers.sdlMatch.exactGUID" = "GUID chính xác";
+/* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the name checksum bytes are ignored. GUID stays as written. */
+"ui.controllers.sdlMatch.guidWithoutNameCRC" = "GUID không có mã kiểm tra của tên";
+/* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the version bytes are ignored. GUID stays as written. */
+"ui.controllers.sdlMatch.guidWithoutVersion" = "GUID không có phiên bản";
+/* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the version and name checksum bytes are ignored. GUID stays as written. */
+"ui.controllers.sdlMatch.guidWithoutVersionAndNameCRC" = "GUID không có phiên bản và mã kiểm tra của tên";
