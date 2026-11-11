@@ -194,7 +194,7 @@
       "type": "object",
       "required": ["action", "apiVersion", "kind", "profile"],
       "additionalProperties": false,
-      "description": "A request, with the control scope, to activate, deactivate, or change one remapping profile. The service answers with ProfileResult, or with a request failure and keeps the connection open.",
+      "description": "A request, with the control scope, to activate, deactivate, or change one value of a remapping profile.",
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/apiVersion"
@@ -213,7 +213,7 @@
         "key": {
           "type": "string",
           "minLength": 1,
-          "description": "The dotted key to set, as in ojd profile set."
+          "description": "The dotted key of the profile value to set."
         },
         "value": {
           "description": "The value to set; null removes a member."
@@ -281,7 +281,7 @@
       "type": "object",
       "required": ["apiVersion", "code", "kind", "message", "status"],
       "additionalProperties": false,
-      "description": "A Status line that refuses one request and leaves the connection open; its code is the one ojd prints for the same failure.",
+      "description": "A Status line that refuses one request and leaves the connection open.",
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/apiVersion"
