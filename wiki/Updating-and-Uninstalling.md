@@ -33,9 +33,11 @@ When a newer version exists, **View Update** opens the tag page in your browser.
 
 A release build is a public DMG named `OpenJoystickDriver-VERSION-macOS.dmg`. The maintainer notarizes it.
 
-A tester build is a private, notarized DMG that the maintainer sends to testers. It contains a fix that is not in a release yet. It also contains `OpenJoystickDriver-TESTER-BUILD.txt`, which names the commit and the build version. A tester build version has the form `VERSION+build.NUMBER.sha.COMMIT`.
+A tester build is a notarized DMG with a fix that is not in a release yet. The maintainer publishes it as a pre-release on the [GitHub Releases page](https://github.com/xsyetopz/OpenJoystickDriver/releases) and links it from the issue it answers. Its version names the release before it: `0.6.0-alpha.2.tester.1` comes after `0.6.0-alpha.2` and before `0.6.0-alpha.3`. A tester build of the first release after a stable `0.5.0` is `0.5.1-tester.1`.
 
-An update check does not find tester builds. The maintainer sends them directly.
+An update check finds a tester build only when **Include prerelease updates** is on in **Settings** (`--prerelease` in `ojd update check`). With it on, a check from a release offers the newest tester build, and a check from a tester build offers the release it leads to. With it off, a check offers stable releases only.
+
+A DMG that the maintainer builds locally and sends directly contains `OpenJoystickDriver-TESTER-BUILD.txt`, which names the commit and the build version, in the form `VERSION+build.NUMBER.sha.COMMIT`.
 
 ### Check for Updates
 

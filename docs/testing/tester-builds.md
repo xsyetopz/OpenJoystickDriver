@@ -4,7 +4,7 @@ A tester build is a notarized DMG of an unpublished build, made by the maintaine
 
 ## Get and Install One
 
-The maintainer sends you the DMG. Do not change its contents.
+Download the DMG from the pre-release the maintainer links in your issue, or from the [pre-release list](https://github.com/xsyetopz/OpenJoystickDriver/releases). With **Include prerelease updates** on in **Settings**, **Check Now** finds it; see [Updating](../../wiki/Updating-and-Uninstalling.md#release-builds-and-tester-builds). The maintainer may also send a DMG directly. Do not change its contents.
 
 1. Open the DMG and drag `OpenJoystickDriver.app` to `/Applications`.
 2. Open the app and approve the macOS permissions it asks for, in the order in [Install](../../wiki/Getting-Started.md#installing-openjoystickdriver). Approve the driver extension only if your controller is one of the [seven Microsoft models](../../wiki/Supported-Controllers.md#supported-controllers).
