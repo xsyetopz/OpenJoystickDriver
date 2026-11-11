@@ -18,7 +18,7 @@ Steps 1 to 3 need no build and no pull request. Every document is an XML propert
 OJD binds a controller without a record by its interface signature (Xbox USB and GIP) or by its HID report descriptor.
 
 1. Run `ojd controller list` and find the VID:PID of the controller.
-2. Run `ojd controller show VVVV:PPPP`. It shows the identity, who serves the controller, its capabilities, and its virtual gamepad.
+2. Run `ojd controller show VVVV:PPPP`. It shows the identity, who serves the controller, its capabilities, and its virtual gamepad. For a connected device that OJD does not serve it shows the reason and the next step instead.
 3. Open **Open Input Test...** in the **Controllers** area, and press every control.
 
 Stop here when every control reads correctly. When macOS serves the controller itself and you want OJD to serve it, run `ojd controller claim VVVV:PPPP`.
