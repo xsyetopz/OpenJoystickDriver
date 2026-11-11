@@ -14,6 +14,10 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - The wiki heading `extension` is `transport-extension`. (4.7)
 - A controller session reports its input as `AwaitingInput` (`awaiting-input` in `ojd controller show`, "Waiting for the first input..." in the controller detail) until its first input report, and `Healthy` after it. (3.3)
 
+- `ojd migrate [FOLDER]` converts the documents an earlier alpha wrote (`v1alpha1` and `v1alpha2` JSON) to `v1alpha3` property lists, gives each file one verdict (`Migrated`, `Current`, `Failed`, `Foreign`), keeps each original under `Migrated/`, never overwrites a backup, and exits `E5009` when a file failed. `--dry-run` writes nothing. A file that OJD 0.5 wrote fails with "re-create it". (5.2, 5.3, 5.4, 5.6)
+- The service migrates the stored documents when it starts, before any store opens, and logs each verdict. (5.5)
+- The app offers Migrate wherever it reports `E5001`, and the Profiles area names an earlier alpha's `.json` profile. (5.7)
+
 ## Fixed
 
 - A GIP pad that announces nothing and sends its first report to an input read that is already pending gets that read before the startup writes. Not checked on hardware. (3.2)
