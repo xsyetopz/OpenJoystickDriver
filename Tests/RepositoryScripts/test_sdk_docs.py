@@ -13,7 +13,15 @@ from Scripts.SDK import reference_client
 ROOT = Path(__file__).resolve().parents[2]
 VECTOR = ROOT / "Tests" / "RepositoryScripts" / "fixtures" / "endpoint_hello_proof.json"
 PAGE = ROOT / "docs" / "sdk" / "endpoint.md"
-CLIENT_KINDS = {"Hello", "Subscription", "FeedRequest", "Frame", "KeepAlive", "Drain"}
+CLIENT_KINDS = {
+    "Hello",
+    "Subscription",
+    "FeedRequest",
+    "ProfileRequest",
+    "Frame",
+    "KeepAlive",
+    "Drain",
+}
 DOCUMENTED_KINDS = {
     "Challenge",
     "Hello",
@@ -21,6 +29,8 @@ DOCUMENTED_KINDS = {
     "Subscription",
     "FeedRequest",
     "FeedSession",
+    "ProfileRequest",
+    "ProfileResult",
     "Frame",
     "KeepAlive",
     "Drain",
