@@ -92,6 +92,10 @@ A command that needs the service exits with code 69 when the service is not runn
 
 `ojd mod` validates, installs, lists, and removes mod packages. It reads and writes files directly, so it works without the service. A running service applies a change to the installed packages without a restart. See [Writing controller mods](Writing-Controller-Mods.md).
 
+## Protocol Descriptions
+
+`ojd protocol` validates, installs, and lists the descriptions of documented protocol families. It reads and writes files directly, so it works without the service. See [Controller records](Controller-Records.md#define-a-family-with-a-description).
+
 ## Output
 
 - Data goes to standard output. Progress messages, warnings, and errors go to standard error.

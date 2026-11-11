@@ -81,6 +81,21 @@ enum GUICoverageEntries {
         reason: "a window exists only once the service listens, so nothing waits"
       ),
       CLIOnlyItem(
+        command: ["protocol", "validate"],
+        option: nil,
+        reason: "no window edits protocol descriptions"
+      ),
+      CLIOnlyItem(
+        command: ["protocol", "install"],
+        option: nil,
+        reason: "no window edits protocol descriptions"
+      ),
+      CLIOnlyItem(
+        command: ["protocol", "list"],
+        option: nil,
+        reason: "no window edits protocol descriptions"
+      ),
+      CLIOnlyItem(
         command: ["help"],
         option: nil,
         reason: "terminal help"

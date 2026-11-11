@@ -2719,6 +2719,34 @@
 "cli.mod.list.discussion" = "各パッケージを、バージョン、作者、ファイルとともに表示します。requires がこのバージョンを除外しているなど、OJD が使わないパッケージは、E4xxx または E5001 のコードとともに理由を表示します。";
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  使用されていません: %@";
+/* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
+"cli.protocol.group.abstract" = "プロトコル記述を検証、インストール、一覧表示します。";
+/* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
+"cli.protocol.group.discussion" = "プロトコル記述は、OJD が内蔵していないコントローラーファミリーを定義する .plist ファイルです。インストール済みの記述は ~/Library/Application Support/OpenJoystickDriver/Protocols にあり、MOD パッケージにも含められます。これらのコマンドにサービスは不要です。";
+/* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
+"cli.protocol.group.file" = "ファミリー名を付けた記述ファイル。例: VendorAcmePad.plist。";
+/* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
+"cli.protocol.validate.abstract" = "プロトコル記述ファイルをインストールせずに確認します。";
+/* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
+"cli.protocol.validate.discussion" = "ファイルが有効な記述であること、ファミリー名が UpperCamelCase でファイル名と一致すること、内蔵ファミリーでないこと、表示名と入力レイアウトを設定していることを確認します。ファイルが拒否されると E5xxx コードとともに 1 で終了します。";
+/* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
+"cli.protocol.validate.valid" = "%1$@ はファミリー %2$@ (%3$@) の有効な記述です。'ojd protocol install' でインストールできます。";
+/* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
+"cli.protocol.install.abstract" = "プロトコル記述を確認し、ユーザー用にインストールします。";
+/* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
+"cli.protocol.install.discussion" = "ファイルを Protocols/FAMILY.plist にコピーします。同じファミリーのインストール済みの記述は置き換えられます。--dry-run はファイルを確認するだけで何も書き込みません。";
+/* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
+"cli.protocol.install.success" = "%@ をインストールしました。";
+/* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
+"cli.protocol.list.abstract" = "内蔵および文書化されたプロトコルファミリーと、それぞれの提供元を一覧表示します。";
+/* Long description in the help of 'ojd protocol list'. */
+"cli.protocol.list.discussion" = "各ファミリーを表示名と提供元(内蔵、Protocols フォルダー、MOD パッケージ)とともに一覧表示します。拒否された記述は表示されません。";
+/* Source shown by 'ojd protocol list' for a family that OJD builds in. */
+"cli.protocol.list.builtIn" = "内蔵";
+/* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
+"cli.protocol.list.user" = "Protocols フォルダー";
+/* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
+"cli.protocol.list.package" = "パッケージ %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
 "cli.mod.remove.abstract" = "インストール済みの MOD パッケージを 1 つ削除します。";
 /* Long description in the help of 'ojd mod remove'. Packages/NAME, --force, --dry-run and E4006 stay as written. */

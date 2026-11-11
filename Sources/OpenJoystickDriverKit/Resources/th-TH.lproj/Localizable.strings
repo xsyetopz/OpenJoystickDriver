@@ -2719,6 +2719,34 @@
 "cli.mod.list.discussion" = "แสดงแต่ละแพ็กเกจพร้อมเวอร์ชัน ผู้เขียน และไฟล์ แพ็กเกจที่ OJD ไม่ใช้ เช่นแพ็กเกจที่ requires ไม่รวมเวอร์ชันนี้ จะแสดงเหตุผลพร้อมรหัส E4xxx หรือ E5001";
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  ไม่ได้ใช้: %@";
+/* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
+"cli.protocol.group.abstract" = "ตรวจสอบ ติดตั้ง หรือแสดงรายการคำอธิบายโปรโตคอล";
+/* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
+"cli.protocol.group.discussion" = "คำอธิบายโปรโตคอลคือไฟล์ .plist ที่กำหนดตระกูลคอนโทรลเลอร์ซึ่ง OJD ไม่ได้มีในตัว คำอธิบายที่ติดตั้งอยู่ใน ~/Library/Application Support/OpenJoystickDriver/Protocols และแพ็กเกจม็อดก็ใส่ไว้ได้ คำสั่งเหล่านี้ไม่ต้องใช้บริการ";
+/* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
+"cli.protocol.group.file" = "ไฟล์คำอธิบายที่ตั้งชื่อตามตระกูล เช่น VendorAcmePad.plist";
+/* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
+"cli.protocol.validate.abstract" = "ตรวจสอบไฟล์คำอธิบายโปรโตคอลโดยไม่ติดตั้ง";
+/* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
+"cli.protocol.validate.discussion" = "ตรวจว่าไฟล์เป็นคำอธิบายที่ถูกต้อง ชื่อตระกูลเป็น UpperCamelCase และตรงกับชื่อไฟล์ ไม่ใช่ตระกูลในตัว และกำหนดชื่อที่แสดงกับเลย์เอาต์อินพุต จะจบด้วยรหัส 1 พร้อมรหัส E5xxx เมื่อไฟล์ถูกปฏิเสธ";
+/* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
+"cli.protocol.validate.valid" = "%1$@ เป็นคำอธิบายที่ถูกต้องของตระกูล %2$@ (%3$@) ติดตั้งด้วย 'ojd protocol install'";
+/* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
+"cli.protocol.install.abstract" = "ตรวจสอบคำอธิบายโปรโตคอลและติดตั้งสำหรับผู้ใช้ของคุณ";
+/* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
+"cli.protocol.install.discussion" = "คัดลอกไฟล์ไปที่ Protocols/FAMILY.plist คำอธิบายของตระกูลเดียวกันที่ติดตั้งอยู่จะถูกแทนที่ --dry-run ตรวจไฟล์และไม่เขียนอะไร";
+/* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
+"cli.protocol.install.success" = "ติดตั้ง %@ แล้ว";
+/* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
+"cli.protocol.list.abstract" = "แสดงรายการตระกูลโปรโตคอลในตัวและที่มีเอกสาร พร้อมแหล่งที่มาของแต่ละตระกูล";
+/* Long description in the help of 'ojd protocol list'. */
+"cli.protocol.list.discussion" = "แสดงแต่ละตระกูลพร้อมชื่อที่แสดงและแหล่งที่มา: ในตัว โฟลเดอร์ Protocols ของคุณ หรือแพ็กเกจม็อด คำอธิบายที่ถูกปฏิเสธจะไม่แสดง";
+/* Source shown by 'ojd protocol list' for a family that OJD builds in. */
+"cli.protocol.list.builtIn" = "ในตัว";
+/* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
+"cli.protocol.list.user" = "โฟลเดอร์ Protocols ของคุณ";
+/* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
+"cli.protocol.list.package" = "แพ็กเกจ %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
 "cli.mod.remove.abstract" = "ลบแพ็กเกจม็อดที่ติดตั้งหนึ่งรายการ";
 /* Long description in the help of 'ojd mod remove'. Packages/NAME, --force, --dry-run and E4006 stay as written. */

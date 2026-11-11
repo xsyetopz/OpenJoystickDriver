@@ -2719,6 +2719,34 @@
 "cli.mod.list.discussion" = "Показывает каждый пакет с версией, автором и файлами. Пакет, который OJD не использует, например из-за того, что requires исключает эту версию, показывается с причиной и кодом E4xxx или E5001.";
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  Не используется: %@";
+/* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
+"cli.protocol.group.abstract" = "Проверка, установка и список описаний протоколов.";
+/* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
+"cli.protocol.group.discussion" = "Описание протокола — это файл .plist, который задаёт семейство контроллеров, не встроенное в OJD. Установленные описания хранятся в ~/Library/Application Support/OpenJoystickDriver/Protocols, их может содержать и пакет модов. Этим командам служба не нужна.";
+/* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
+"cli.protocol.group.file" = "Файл описания, названный по его семейству, например VendorAcmePad.plist.";
+/* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
+"cli.protocol.validate.abstract" = "Проверить файл описания протокола без установки.";
+/* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
+"cli.protocol.validate.discussion" = "Проверяет, что файл — допустимое описание, что имя семейства записано в UpperCamelCase и совпадает с именем файла, что это не встроенное семейство и что заданы отображаемое имя и раскладки ввода. Если файл отклонён, завершается с кодом 1 и кодом E5xxx.";
+/* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
+"cli.protocol.validate.valid" = "%1$@ — допустимое описание семейства %2$@ (%3$@). Установите его командой 'ojd protocol install'.";
+/* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
+"cli.protocol.install.abstract" = "Проверить описание протокола и установить его для вашего пользователя.";
+/* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
+"cli.protocol.install.discussion" = "Копирует файл в Protocols/FAMILY.plist. Установленное описание того же семейства заменяется. --dry-run проверяет файл и ничего не записывает.";
+/* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
+"cli.protocol.install.success" = "Установлено: %@.";
+/* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
+"cli.protocol.list.abstract" = "Показать встроенные и описанные семейства протоколов и источник каждого.";
+/* Long description in the help of 'ojd protocol list'. */
+"cli.protocol.list.discussion" = "Показывает каждое семейство с отображаемым именем и источником: встроенное, ваша папка Protocols или пакет модов. Отклонённое описание не показывается.";
+/* Source shown by 'ojd protocol list' for a family that OJD builds in. */
+"cli.protocol.list.builtIn" = "встроенное";
+/* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
+"cli.protocol.list.user" = "ваша папка Protocols";
+/* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
+"cli.protocol.list.package" = "пакет %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
 "cli.mod.remove.abstract" = "Удалить установленный пакет мода.";
 /* Long description in the help of 'ojd mod remove'. Packages/NAME, --force, --dry-run and E4006 stay as written. */

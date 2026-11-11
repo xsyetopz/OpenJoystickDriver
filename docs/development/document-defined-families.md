@@ -32,6 +32,10 @@ A documented description has no `sessionKeys`, no `presentSessionFields` and no 
 
 The first definition of a name wins, so a later file with that name is refused. A refused file is listed in `ControllerRecordSet.userFiles` with its E5002 or E5003 reason. `ModPackageStore.validate` runs `read` on each listed file and registers the package's families while it validates the package's Controller files.
 
+## Command line
+
+`ojd protocol validate FILE` runs `DocumentedProtocolFamilies.read` and prints the E5002 or E5003 refusal. `ojd protocol install FILE` runs it, then writes the file bytes to `Protocols/FAMILY.plist` beside the user's `Controllers` folder and replaces a file of that name. `ojd protocol list` prints `PhysicalProtocolID.allCases` and `DocumentedProtocolFamilies.load(besides:).families` with their source. `ProtocolStore.controllers` is the folder that tests replace.
+
 ## Where a documented family is read
 
 - `ProtocolClassifier.signatures` adds the interface signatures of every documented description.

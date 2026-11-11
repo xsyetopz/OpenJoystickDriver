@@ -12,6 +12,7 @@ This page lists every `ojd` command. Every command also accepts the global optio
 - [virtual](#virtual)
 - [record](#record)
 - [mod](#mod)
+- [protocol](#protocol)
 - [service](#service)
 - [permission](#permission)
 - [extension](#extension)
@@ -282,6 +283,22 @@ ojd mod remove NAME [--force] [--dry-run]
 - `mod install`: Check the package and install it to `Packages/NAME` in the OpenJoystickDriver folder. The running service applies it. A package of the same name that is installed is refused with E4005 unless you pass `--force`. `--force` never overrides `requires`, a clash, or an invalid file. `--dry-run` (`-n`) checks the package and writes nothing.
 - `mod list`: List each installed package with its version, author, and files. A package that OpenJoystickDriver does not use, such as one whose `requires` leaves out this version, shows the reason and its code.
 - `mod remove`: Delete one installed package. It asks first on a terminal and needs `--force` otherwise. `--dry-run` (`-n`) changes nothing. It exits with code 1 and E4006 when the package is not installed.
+
+## protocol
+
+Validate, install, or list protocol descriptions. A description is a `.plist` file named after the family it defines, such as `VendorAcmePad.plist`. None of these commands needs the service. For more information, see [Controller records](Controller-Records.md#define-a-family-with-a-description).
+
+```text
+ojd protocol validate FILE
+ojd protocol install FILE [--dry-run]
+ojd protocol list
+```
+
+- `protocol validate`: Check a description file without installing it: that it is valid, that the family name is UpperCamelCase and equals the file name, that it is not a built-in family, and that it sets `displayName` and `defaults.input.layouts`. It exits with code 1 and the `E5002` or `E5003` code when the file is refused.
+- `protocol install`: Check the file and copy it to `Protocols/FAMILY.plist` in the OpenJoystickDriver folder. A description of the same family that is installed is replaced. `--dry-run` (`-n`) checks the file and writes nothing.
+- `protocol list`: List the built-in families and the documented families with their source: built in, your `Protocols` folder, or a mod package. A description that is refused is not listed.
+
+With `--json`, `protocol validate` prints a `ProtocolValidation` with `valid`, and `name` and `displayName`, or `code` and `problem` when the file is refused. `protocol install` prints a `ProtocolInstall` with `installed`, `replaced`, `dryRun`, `name`, and `displayName`. `protocol list` prints a `ProtocolList` whose items have `name`, `displayName`, `source` (`BuiltIn`, `User`, or `Package`), and `package` and `file` for a documented family. With `--plain`, `protocol list` prints `name`, `displayName`, `source`, `package`, and `file`.
 
 ## service
 

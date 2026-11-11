@@ -20,7 +20,7 @@ extension ControllerRecordSet {
   /// the first patch of the user layer and is reported in ``defaults`` rather than in
   /// ``userFiles``.
   public static func load(userDirectory directory: URL = userDirectory) -> Self {
-    let protocolFiles = DocumentedProtocolFamilies.load(besides: directory)
+    let protocolFiles = DocumentedProtocolFamilies.load(besides: directory).refused
     var packaged = packageRecords(in: ModPackageStore.directory(besides: directory))
     var defaults = ControllerDefaults.load(from: ControllerDefaults.file(in: directory))
     let urls: [URL]

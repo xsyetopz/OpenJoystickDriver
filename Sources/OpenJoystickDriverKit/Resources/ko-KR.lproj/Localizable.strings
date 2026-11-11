@@ -2719,6 +2719,34 @@
 "cli.mod.list.discussion" = "각 패키지를 버전, 작성자, 파일과 함께 나열합니다. requires가 이 버전을 제외하는 등 OJD가 사용하지 않는 패키지는 E4xxx 또는 E5001 코드와 함께 이유를 보여 줍니다.";
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  사용 안 함: %@";
+/* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
+"cli.protocol.group.abstract" = "프로토콜 설명을 검증, 설치, 나열합니다.";
+/* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
+"cli.protocol.group.discussion" = "프로토콜 설명은 OJD에 내장되지 않은 컨트롤러 계열을 정의하는 .plist 파일입니다. 설치된 설명은 ~/Library/Application Support/OpenJoystickDriver/Protocols에 있으며, 모드 패키지에도 담을 수 있습니다. 이 명령은 서비스가 필요하지 않습니다.";
+/* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
+"cli.protocol.group.file" = "계열 이름을 딴 설명 파일입니다. 예: VendorAcmePad.plist.";
+/* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
+"cli.protocol.validate.abstract" = "프로토콜 설명 파일을 설치하지 않고 확인합니다.";
+/* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
+"cli.protocol.validate.discussion" = "파일이 올바른 설명인지, 계열 이름이 UpperCamelCase이고 파일 이름과 같은지, 내장 계열이 아닌지, 표시 이름과 입력 레이아웃을 지정했는지 확인합니다. 파일이 거부되면 E5xxx 코드와 함께 1로 종료합니다.";
+/* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
+"cli.protocol.validate.valid" = "%1$@은(는) %2$@(%3$@) 계열의 올바른 설명입니다. 'ojd protocol install'로 설치하세요.";
+/* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
+"cli.protocol.install.abstract" = "프로토콜 설명을 확인하고 사용자용으로 설치합니다.";
+/* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
+"cli.protocol.install.discussion" = "파일을 Protocols/FAMILY.plist로 복사합니다. 같은 계열로 설치된 설명은 교체됩니다. --dry-run은 파일을 확인만 하고 아무것도 쓰지 않습니다.";
+/* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
+"cli.protocol.install.success" = "%@을(를) 설치했습니다.";
+/* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
+"cli.protocol.list.abstract" = "내장 및 문서화된 프로토콜 계열과 각 출처를 나열합니다.";
+/* Long description in the help of 'ojd protocol list'. */
+"cli.protocol.list.discussion" = "각 계열을 표시 이름과 출처(내장, Protocols 폴더, 모드 패키지)와 함께 나열합니다. 거부된 설명은 나열되지 않습니다.";
+/* Source shown by 'ojd protocol list' for a family that OJD builds in. */
+"cli.protocol.list.builtIn" = "내장";
+/* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
+"cli.protocol.list.user" = "Protocols 폴더";
+/* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
+"cli.protocol.list.package" = "패키지 %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
 "cli.mod.remove.abstract" = "설치된 모드 패키지 하나를 제거합니다.";
 /* Long description in the help of 'ojd mod remove'. Packages/NAME, --force, --dry-run and E4006 stay as written. */

@@ -2719,6 +2719,34 @@
 "cli.mod.list.discussion" = "Elenca ogni pacchetto con versione, autore e file. Un pacchetto che OJD non usa, per esempio perché il suo requires esclude questa versione, mostra il motivo con il suo codice E4xxx o E5001.";
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  Non usato: %@";
+/* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
+"cli.protocol.group.abstract" = "Convalida, installa o elenca le descrizioni di protocollo.";
+/* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
+"cli.protocol.group.discussion" = "Una descrizione di protocollo è un file .plist che definisce una famiglia di controller che OJD non include. Le descrizioni installate sono in ~/Library/Application Support/OpenJoystickDriver/Protocols e può contenerle anche un pacchetto mod. Questi comandi non richiedono il servizio.";
+/* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
+"cli.protocol.group.file" = "Un file di descrizione con il nome della sua famiglia, come VendorAcmePad.plist.";
+/* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
+"cli.protocol.validate.abstract" = "Controlla un file di descrizione di protocollo senza installarlo.";
+/* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
+"cli.protocol.validate.discussion" = "Controlla che il file sia una descrizione valida, che il nome della famiglia sia in UpperCamelCase e coincida con il nome del file, che non sia una famiglia integrata e che imposti un nome visualizzato e i layout di input. Termina con 1 e il codice E5xxx se il file è rifiutato.";
+/* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
+"cli.protocol.validate.valid" = "%1$@ è una descrizione valida della famiglia %2$@ (%3$@). Installala con 'ojd protocol install'.";
+/* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
+"cli.protocol.install.abstract" = "Controlla una descrizione di protocollo e la installa per il tuo utente.";
+/* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
+"cli.protocol.install.discussion" = "Copia il file in Protocols/FAMILY.plist. Una descrizione installata della stessa famiglia viene sostituita. --dry-run controlla il file e non scrive nulla.";
+/* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
+"cli.protocol.install.success" = "%@ installato.";
+/* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
+"cli.protocol.list.abstract" = "Elenca le famiglie di protocollo integrate e documentate e la loro origine.";
+/* Long description in the help of 'ojd protocol list'. */
+"cli.protocol.list.discussion" = "Elenca ogni famiglia con il nome visualizzato e l'origine: integrata, la tua cartella Protocols o un pacchetto mod. Una descrizione rifiutata non compare.";
+/* Source shown by 'ojd protocol list' for a family that OJD builds in. */
+"cli.protocol.list.builtIn" = "integrata";
+/* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
+"cli.protocol.list.user" = "la tua cartella Protocols";
+/* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
+"cli.protocol.list.package" = "pacchetto %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
 "cli.mod.remove.abstract" = "Rimuovere un pacchetto mod installato.";
 /* Long description in the help of 'ojd mod remove'. Packages/NAME, --force, --dry-run and E4006 stay as written. */

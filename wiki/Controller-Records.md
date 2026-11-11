@@ -427,7 +427,7 @@ A description whose `family` is not a built-in name defines a family of its own,
 - it sets no `displayName`, which is the name that OpenJoystickDriver shows for the family (E5002);
 - it sets no `defaults.input.layouts`, the report layouts that the driver decodes (E5002).
 
-A documented description sets no `sessionKeys`, no parameters and no session fields. When two files define one family, the first wins: your file, then the packages in name order. A refused file is listed as a problem in `ojd record list`.
+A documented description sets no `sessionKeys`, no parameters and no session fields. When two files define one family, the first wins: your file, then the packages in name order. `ojd protocol validate FILE` checks a description, `ojd protocol install FILE` copies it to `Protocols/FAMILY.plist`, and `ojd protocol list` shows each family with its source. A refused file is listed as a problem in `ojd record list`.
 
 ### Set a Default for Every Controller
 

@@ -2719,6 +2719,34 @@
 "cli.mod.list.discussion" = "Liệt kê từng gói cùng phiên bản, tác giả và tệp. Gói mà OJD không dùng, chẳng hạn gói có requires loại trừ phiên bản này, hiển thị lý do kèm mã E4xxx hoặc E5001.";
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  Không dùng: %@";
+/* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
+"cli.protocol.group.abstract" = "Kiểm tra, cài đặt hoặc liệt kê mô tả giao thức.";
+/* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
+"cli.protocol.group.discussion" = "Mô tả giao thức là tệp .plist định nghĩa một họ tay cầm mà OJD không tích hợp sẵn. Mô tả đã cài nằm trong ~/Library/Application Support/OpenJoystickDriver/Protocols, và gói mod cũng có thể chứa chúng. Các lệnh này không cần dịch vụ.";
+/* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
+"cli.protocol.group.file" = "Tệp mô tả đặt tên theo họ của nó, ví dụ VendorAcmePad.plist.";
+/* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
+"cli.protocol.validate.abstract" = "Kiểm tra tệp mô tả giao thức mà không cài đặt.";
+/* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
+"cli.protocol.validate.discussion" = "Kiểm tra tệp là mô tả hợp lệ, tên họ viết theo UpperCamelCase và khớp với tên tệp, không phải họ tích hợp sẵn, và có đặt tên hiển thị cùng bố cục đầu vào. Thoát với mã 1 kèm mã E5xxx khi tệp bị từ chối.";
+/* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
+"cli.protocol.validate.valid" = "%1$@ là mô tả hợp lệ của họ %2$@ (%3$@). Cài đặt bằng 'ojd protocol install'.";
+/* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
+"cli.protocol.install.abstract" = "Kiểm tra mô tả giao thức và cài đặt cho người dùng của bạn.";
+/* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
+"cli.protocol.install.discussion" = "Sao chép tệp vào Protocols/FAMILY.plist. Mô tả đã cài của cùng họ sẽ bị thay thế. --dry-run kiểm tra tệp và không ghi gì.";
+/* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
+"cli.protocol.install.success" = "Đã cài đặt %@.";
+/* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
+"cli.protocol.list.abstract" = "Liệt kê các họ giao thức tích hợp sẵn và có tài liệu cùng nguồn của từng họ.";
+/* Long description in the help of 'ojd protocol list'. */
+"cli.protocol.list.discussion" = "Liệt kê từng họ cùng tên hiển thị và nguồn: tích hợp sẵn, thư mục Protocols của bạn hoặc gói mod. Mô tả bị từ chối không được liệt kê.";
+/* Source shown by 'ojd protocol list' for a family that OJD builds in. */
+"cli.protocol.list.builtIn" = "tích hợp sẵn";
+/* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
+"cli.protocol.list.user" = "thư mục Protocols của bạn";
+/* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
+"cli.protocol.list.package" = "gói %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
 "cli.mod.remove.abstract" = "Gỡ một gói mod đã cài.";
 /* Long description in the help of 'ojd mod remove'. Packages/NAME, --force, --dry-run and E4006 stay as written. */

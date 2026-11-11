@@ -131,6 +131,7 @@ enum CLICommandTree {
       ["profile", "validate"]:
       ["-"]
     case ["mod", "validate"], ["mod", "install"]: ["/tmp/pack"]
+    case ["protocol", "validate"], ["protocol", "install"]: ["/tmp/Family.plist"]
     case ["mod", "remove"]: ["arcade-pack"]
     case ["generate"]: ["script.js"]
     case ["controller", "calibrate"]: ["045E:028E", "start"]

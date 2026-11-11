@@ -2719,6 +2719,34 @@
 "cli.mod.list.discussion" = "Menampilkan daftar setiap paket dengan versi, penulis, dan filenya. Paket yang tidak dipakai OJD, misalnya karena requires-nya tidak mencakup versi ini, menampilkan alasannya dengan kode E4xxx atau E5001.";
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  Tidak dipakai: %@";
+/* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
+"cli.protocol.group.abstract" = "Validasi, instal, atau daftarkan deskripsi protokol.";
+/* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
+"cli.protocol.group.discussion" = "Deskripsi protokol adalah berkas .plist yang mendefinisikan keluarga pengontrol yang tidak dibangun dalam OJD. Deskripsi yang terpasang ada di ~/Library/Application Support/OpenJoystickDriver/Protocols, dan paket mod juga dapat membawanya. Perintah ini tidak memerlukan layanan.";
+/* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
+"cli.protocol.group.file" = "Berkas deskripsi yang dinamai sesuai keluarganya, misalnya VendorAcmePad.plist.";
+/* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
+"cli.protocol.validate.abstract" = "Periksa berkas deskripsi protokol tanpa memasangnya.";
+/* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
+"cli.protocol.validate.discussion" = "Memeriksa bahwa berkas adalah deskripsi yang valid, nama keluarga berformat UpperCamelCase dan sama dengan nama berkas, bukan keluarga bawaan, serta menetapkan nama tampilan dan tata letak input. Keluar dengan kode 1 dan kode E5xxx jika berkas ditolak.";
+/* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
+"cli.protocol.validate.valid" = "%1$@ adalah deskripsi valid untuk keluarga %2$@ (%3$@). Pasang dengan 'ojd protocol install'.";
+/* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
+"cli.protocol.install.abstract" = "Periksa deskripsi protokol dan pasang untuk pengguna Anda.";
+/* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
+"cli.protocol.install.discussion" = "Menyalin berkas ke Protocols/FAMILY.plist. Deskripsi terpasang dari keluarga yang sama akan diganti. --dry-run memeriksa berkas dan tidak menulis apa pun.";
+/* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
+"cli.protocol.install.success" = "%@ terpasang.";
+/* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
+"cli.protocol.list.abstract" = "Daftarkan keluarga protokol bawaan dan terdokumentasi beserta asalnya.";
+/* Long description in the help of 'ojd protocol list'. */
+"cli.protocol.list.discussion" = "Mendaftarkan setiap keluarga dengan nama tampilan dan asalnya: bawaan, folder Protocols Anda, atau paket mod. Deskripsi yang ditolak tidak didaftarkan.";
+/* Source shown by 'ojd protocol list' for a family that OJD builds in. */
+"cli.protocol.list.builtIn" = "bawaan";
+/* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
+"cli.protocol.list.user" = "folder Protocols Anda";
+/* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
+"cli.protocol.list.package" = "paket %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
 "cli.mod.remove.abstract" = "Hapus satu paket mod terinstal.";
 /* Long description in the help of 'ojd mod remove'. Packages/NAME, --force, --dry-run and E4006 stay as written. */

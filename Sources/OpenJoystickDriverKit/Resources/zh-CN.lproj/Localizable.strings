@@ -2719,6 +2719,34 @@
 "cli.mod.list.discussion" = "列出每个包的版本、作者和文件。OJD 不使用的包，例如其 requires 不包含此版本的包，会连同 E4xxx 或 E5001 代码显示原因。";
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  未使用：%@";
+/* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
+"cli.protocol.group.abstract" = "验证、安装或列出协议描述。";
+/* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
+"cli.protocol.group.discussion" = "协议描述是定义 OJD 未内置的手柄家族的 .plist 文件。已安装的描述位于 ~/Library/Application Support/OpenJoystickDriver/Protocols，模组包也可以携带它们。这些命令不需要服务。";
+/* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
+"cli.protocol.group.file" = "以家族命名的描述文件，例如 VendorAcmePad.plist。";
+/* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
+"cli.protocol.validate.abstract" = "检查协议描述文件，不安装。";
+/* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
+"cli.protocol.validate.discussion" = "检查文件是有效的描述、家族名为 UpperCamelCase 且与文件名一致、不是内置家族，并设置了显示名称和输入布局。文件被拒绝时以 1 退出并给出 E5xxx 代码。";
+/* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
+"cli.protocol.validate.valid" = "%1$@ 是家族 %2$@（%3$@）的有效描述。可用 'ojd protocol install' 安装。";
+/* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
+"cli.protocol.install.abstract" = "检查协议描述并为当前用户安装。";
+/* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
+"cli.protocol.install.discussion" = "将文件复制到 Protocols/FAMILY.plist。同一家族已安装的描述会被替换。--dry-run 只检查文件，不写入任何内容。";
+/* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
+"cli.protocol.install.success" = "已安装 %@。";
+/* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
+"cli.protocol.list.abstract" = "列出内置和有文档的协议家族及各自的来源。";
+/* Long description in the help of 'ojd protocol list'. */
+"cli.protocol.list.discussion" = "列出每个家族及其显示名称和来源：内置、你的 Protocols 文件夹或模组包。被拒绝的描述不会列出。";
+/* Source shown by 'ojd protocol list' for a family that OJD builds in. */
+"cli.protocol.list.builtIn" = "内置家族";
+/* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
+"cli.protocol.list.user" = "你的 Protocols 文件夹";
+/* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
+"cli.protocol.list.package" = "包 %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
 "cli.mod.remove.abstract" = "移除一个已安装的模组包。";
 /* Long description in the help of 'ojd mod remove'. Packages/NAME, --force, --dry-run and E4006 stay as written. */

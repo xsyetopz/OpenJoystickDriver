@@ -74,6 +74,12 @@ enum GUICoverageMatrix {
       statusItem: nil
     )
     + row([["generate"]], area: "Library", mainMenu: nil, statusItem: nil)
+    + row(
+      [["protocol"]],
+      area: "Library",
+      mainMenu: nil,
+      statusItem: nil
+    )
     + row([["access"]], area: "Access", mainMenu: nil, statusItem: "Grant Access")
     + row(
       [["log"], ["diagnose"], ["explain"]],

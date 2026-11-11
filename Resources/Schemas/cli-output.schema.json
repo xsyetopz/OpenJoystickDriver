@@ -2135,6 +2135,120 @@
         }
       ]
     },
+    "protocolInstall": {
+      "type": "object",
+      "required": [
+        "apiVersion",
+        "kind",
+        "displayName",
+        "dryRun",
+        "installed",
+        "name",
+        "replaced"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "ProtocolInstall"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dryRun": {
+          "type": "boolean"
+        },
+        "installed": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z0-9]*$"
+        },
+        "replaced": {
+          "type": "boolean"
+        }
+      }
+    },
+    "protocolList": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "metadata", "items"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "ProtocolList"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["displayName", "name", "source"],
+            "additionalProperties": false,
+            "properties": {
+              "displayName": {
+                "type": "string",
+                "minLength": 1
+              },
+              "file": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string",
+                "pattern": "^[A-Z][A-Za-z0-9]*$"
+              },
+              "package": {
+                "type": "string"
+              },
+              "source": {
+                "enum": ["BuiltIn", "User", "Package"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "protocolValidate": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "valid"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "ProtocolValidation"
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^E50[0-9]{2}$"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z0-9]*$"
+        },
+        "problem": {
+          "type": "string",
+          "minLength": 1
+        },
+        "valid": {
+          "type": "boolean"
+        }
+      }
+    },
     "recordTest": {
       "type": "object",
       "required": [

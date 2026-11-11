@@ -43,11 +43,13 @@ extension DocumentedProtocolFamilies {
   }
 
   /// Registers the families of the user's `Protocols` folder beside `controllers`, then those of the
-  /// installed packages in name order, and returns the files that were refused.
+  /// installed packages in name order, and returns the families and the files that were refused.
   ///
   /// The first definition of a name wins, so a later file with the same name is refused. A package
   /// that cannot be used holds nothing.
-  static func load(besides controllers: URL) -> [ControllerRecordFile] {
+  public static func load(
+    besides controllers: URL
+  ) -> (families: [DocumentedProtocolFamily], refused: [ControllerRecordFile]) {
     let folder = directory(besides: controllers)
     var sources: [(file: URL, package: String?)] = fileURLs(in: folder).map { ($0, nil) }
     let store = ModPackageStore(directory: ModPackageStore.directory(besides: controllers))
@@ -76,7 +78,7 @@ extension DocumentedProtocolFamilies {
       }
     }
     register(families, owner: controllers.deletingLastPathComponent())
-    return refused
+    return (families, refused)
   }
 
   /// The `.plist` files of `folder` in file-name order.
