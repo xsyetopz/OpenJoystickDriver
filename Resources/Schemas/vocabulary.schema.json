@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/vocabulary.schema.json",
-  "description": "The control vocabulary: the one definition of the control ids every document, endpoint message, profile and controller record uses. A Swift enum (Control) mirrors $defs/control, and a test keeps them equal. The other definitions are subsets for places that accept only some controls.",
+  "description": "The control vocabulary: the control ids that documents and messages use.",
   "$defs": {
     "control": {
-      "description": "A control on a gamepad, UpperCamelCase. South, East, West and North are the face buttons by position. A stick or trigger axis is also a control.",
+      "description": "A control on a gamepad, in UpperCamelCase.",
       "enum": [
         "South",
         "East",
