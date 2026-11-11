@@ -146,9 +146,7 @@ extension ControllerRecordDocument {
           )
         }
       } catch let problem as ControllerRecordProblem {
-        throw DecodingError.dataCorrupted(
-          problem.context(at: decoder.codingPath)
-        )
+        throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
       }
     }
   }
@@ -168,9 +166,7 @@ extension ControllerRecordDocument {
       do {
         write = try StartupWrite.usbWrite(container, condition: .always)
       } catch let problem as ControllerRecordProblem {
-        throw DecodingError.dataCorrupted(
-          problem.context(at: decoder.codingPath)
-        )
+        throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
       }
     }
   }

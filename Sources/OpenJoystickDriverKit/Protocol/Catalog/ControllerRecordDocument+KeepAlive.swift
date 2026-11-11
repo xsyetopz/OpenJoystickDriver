@@ -17,9 +17,7 @@ extension KeepAlive: Decodable {
         )
       }
     } catch let problem as ControllerRecordProblem {
-      throw DecodingError.dataCorrupted(
-        problem.context(at: decoder.codingPath)
-      )
+      throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
     }
   }
 }
@@ -54,9 +52,7 @@ extension KeepAliveWrite: Decodable {
         ? .hid(try ControllerRecordDocument.StartupWrite.hidWrite(container, condition: condition))
         : .usb(try ControllerRecordDocument.StartupWrite.usbWrite(container, condition: condition))
     } catch let problem as ControllerRecordProblem {
-      throw DecodingError.dataCorrupted(
-        problem.context(at: decoder.codingPath)
-      )
+      throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
     }
   }
 }

@@ -58,9 +58,7 @@ extension ControllerRecordDocument {
           packet = nil
         }
       } catch let problem as ControllerRecordProblem {
-        throw DecodingError.dataCorrupted(
-          problem.context(at: decoder.codingPath)
-        )
+        throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
       }
     }
 

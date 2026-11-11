@@ -100,9 +100,7 @@ extension ProtocolDescription {
             condition: condition
           )
         } catch let problem as ControllerRecordProblem {
-          throw DecodingError.dataCorrupted(
-            .init(codingPath: decoder.codingPath, debugDescription: problem.description)
-          )
+          throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
         }
       }
     }
@@ -218,9 +216,7 @@ extension ProtocolDescription {
               try ControllerRecordDocument.StartupWrite.hidWrite(container, condition: .always)
             )
           } catch let problem as ControllerRecordProblem {
-            throw DecodingError.dataCorrupted(
-              .init(codingPath: decoder.codingPath, debugDescription: problem.description)
-            )
+            throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
           }
         }
         guard (1...16).contains(writes.count) else {

@@ -14,9 +14,7 @@ extension SubcommandPlan: Decodable {
         playerIndicator: container.decode(PlayerIndicatorSubcommand.self, for: "playerIndicator")
       )
     } catch let problem as ControllerRecordProblem {
-      throw DecodingError.dataCorrupted(
-        problem.context(at: decoder.codingPath)
-      )
+      throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
     }
   }
 }
@@ -45,9 +43,7 @@ extension PlayerIndicatorSubcommand: Decodable {
         patterns: patterns
       )
     } catch let problem as ControllerRecordProblem {
-      throw DecodingError.dataCorrupted(
-        problem.context(at: decoder.codingPath)
-      )
+      throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
     }
   }
 }
@@ -63,9 +59,7 @@ extension SubcommandRequest: Decodable {
       do {
         data = try HexBytes.decode(container, for: "data", what: "subcommand request data")
       } catch let problem as ControllerRecordProblem {
-        throw DecodingError.dataCorrupted(
-          problem.context(at: decoder.codingPath + [DocumentKey("data")])
-        )
+        throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath + [DocumentKey("data")]))
       }
     }
     let read = try container.decodeOptional(SPIRead.self, for: "spiRead")
@@ -81,9 +75,7 @@ extension SubcommandRequest: Decodable {
         )
       }
     } catch let problem as ControllerRecordProblem {
-      throw DecodingError.dataCorrupted(
-        problem.context(at: decoder.codingPath)
-      )
+      throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
     }
   }
 }
