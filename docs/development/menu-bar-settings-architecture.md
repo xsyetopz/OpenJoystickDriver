@@ -67,15 +67,19 @@ Add files only for focused, independently testable capabilities. Group related h
 
 ### Menu Bar
 
-Menu items:
+The menu has a stated purpose: show the state of each connected controller, choose a controller's profile, pause or resume a controller, open the window or Settings, and quit. `StatusItemModel` holds the menu as data; `MenuBarCoordinator+StatusMenu.swift` renders it.
 
-- one readiness, controller-count, and active-profile summary;
-- a Controllers submenu with Suspend or Resume, Test Input, Active Profile, Disconnect Wireless Link and Show in Window per controller;
-- a Profiles submenu with Activate and Deactivate;
-- `Grant Access` only when a permission is missing;
-- Open Window, Settings, Help, and Quit.
+Rows, from top to bottom:
 
-Do not put refresh, profile editing, logs, reports, packet streams, raw identifiers, catalog audits, support tests, contributor diagnostics, or metrics dashboards in the menu.
+- a problem row for each problem that needs the user: `Permission Missing: <name>` opens the Access area at that permission, and `Service Not Running: Start It` starts the service. `MenuBarViewModel` reads the problems from the status RPC through `StatusItemState.problems`;
+- one row per connected controller, with its battery level, active profile and paused state, or one disabled `No Controller Connected` row, which is not a problem. A controller row has one submenu: a checkmarked profile list ending in `No Profile` (`More Profiles` after ten, which opens the Profiles area), Pause or Resume, Test Input, Show in Window and, for a wireless controller, Disconnect Wireless Link;
+- Open OpenJoystickDriver, Settings, and Quit.
+
+The menu has two levels. Activity Log, Explain Error Code, Report Problem and Project Website are in the Help menu of the main menu. Do not put refresh, profile editing, logs, reports, packet streams, raw identifiers, catalog audits, support tests, contributor diagnostics, or metrics dashboards in the menu.
+
+The icon is the controller symbol, or a warning triangle while a problem row exists, so a problem shows by shape and not by color alone. A state with no controller connected keeps the controller symbol. The accessibility label names the first problem, `no controller connected`, or `ready`.
+
+The item sets `behavior = .removalAllowed`. Dragging it out with Command makes `isVisible` false; `MenuBarCoordinator` then stores Show in menu bar off and Show in Dock on in one settings write (`SettingsPreferencesModel.menuBarItemWasRemoved()`), which removes the item and opens the main window. When the write fails the item is made visible again. The two settings are never both off: the store refuses a write that would turn both off. A settings file that has both off is read as `storedNoVisibleEntryPoint`; the item then shows whatever Show in menu bar says, the main window opens at launch, and an alert offers Reset Settings, Show in Finder, and Quit. Opening the app again while it runs opens the main window through `applicationShouldHandleReopen`.
 
 ### Main Window
 

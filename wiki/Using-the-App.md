@@ -17,51 +17,59 @@ Learn the menu-bar item, the main menu, the five areas of the app window, and th
 
 ## Menu-Bar Item
 
-![The menu-bar item menu with the status row, Controllers, Profiles, Open Window, Settings, Help, and Quit](../docs/screenshots/menu-bar-item.png)
+![The menu-bar item menu with one controller row, Open OpenJoystickDriver, Settings, and Quit](../docs/screenshots/menu-bar-item.png)
 
-The menu-bar item shows OpenJoystickDriver status and opens the app window.
+The menu-bar item does five things: it shows the state of each connected controller, chooses a controller's profile, pauses or resumes a controller, opens the app window or **Settings**, and quits OJD.
+It holds nothing else.
+The logs, the error explanations, the support report and the project links are in the **Help** menu of the main menu.
+
 **Show in menu bar** and **Show in Dock** in **Settings** > **General** choose where the app shows its icon.
 At least one of them stays on.
+To remove the item, hold Command and drag it out of the menu bar.
+OJD then stores **Show in menu bar** as off, turns **Show in Dock** on, and opens the app window.
+Turn **Show in menu bar** on again in **Settings** > **General**.
 
 ### Menu Items
 
 The menu contains these items, from top to bottom:
 
-- A status row that you cannot click.
-  It shows readiness, the number of controllers, and the active profile.
-- **Controllers** lists each connected controller as a submenu.
-  **No Controller Connected** appears when the list is empty.
-- **Profiles** has **Activate** and **Deactivate** submenus.
-  **Activate** lists every profile and checks the active one.
-  **Deactivate** lists the active profiles.
-  A submenu with nothing to list still opens and shows one dimmed row: **No Profiles** in **Activate**, **No Active Profile** in **Deactivate**, or **Profiles Unavailable** in either while the profile list is loading or cannot be read.
-- **Grant Access** appears only when a permission is missing.
-  It opens the **Access** area.
-- **Open Window** opens the app window on the area you used last.
+- A row for each problem that needs you, before everything else.
+  **Permission Missing: ...** names a permission OJD lacks and opens the **Access** area at it.
+  **Service Not Running: Start It** appears when the app cannot reach its service, and starts the service.
+  With no problem, the menu has no such row.
+- A row for each connected controller.
+  It shows the name with the battery level, the active profile and **Paused** when they apply, and opens the controller's submenu.
+  **No Controller Connected** is one dimmed row that appears when the list is empty; it is not a problem.
+- **Open OpenJoystickDriver** opens the app window on the area you used last.
 - **Settings...** opens the **Settings** window.
-- **Help** contains **Activity Log**, **Explain Error Code...**, **Report Problem...**, and **Project Website**.
 - **Quit OpenJoystickDriver** stops OJD.
+
+While a problem row is in the menu, the icon is a warning triangle instead of the controller symbol.
+The icon with no controller connected is the controller symbol.
+VoiceOver reads the first problem, **no controller connected**, or **ready**.
 
 ### Controller Entries
 
-Each controller in the **Controllers** submenu has its own submenu:
+Each controller row has its own submenu:
 
-- **Suspend** pauses input, physical effects, and virtual output for this controller.
-  While the controller is suspended, the item reads **Resume**.
+- A list of the controller's profiles with a checkmark on the active one, ending in **No Profile**.
+  Choosing a profile activates it, and choosing **No Profile** deactivates the active one.
+  After ten profiles the list ends with **More Profiles**, which opens the **Profiles** area.
+- **Pause** pauses input, physical effects, and virtual output for this controller.
+  While the controller is paused, the item reads **Resume**.
 - **Test Input** opens the Input Test window.
-- **Active Profile** lists the profiles that apply to this controller and checks the active one.
-  With none, it shows a dimmed **No Profiles** row, or **Profiles Unavailable** while the profile list is loading or cannot be read.
+- **Show in Window** opens the controller in the **Controllers** area.
 - **Disconnect Wireless Link** is on only for a controller that connects by Bluetooth.
   OJD shows a **Disconnect Wireless Controller?** alert to confirm.
   The controller stays disconnected until you connect it again by hand.
   OJD cannot disconnect a Bluetooth Low Energy controller: turn it off or disconnect it in **System Settings** > **Bluetooth**.
-- **Show in Window** opens the controller in the **Controllers** area.
 
 ### Quit and Reopen
 
 Quit stops the runtime.
 OJD does not start again by itself unless **Start at login** is on.
-Start it from the Applications folder.
+Start it from the Applications folder or Spotlight; opening it again while it runs shows the app window.
+If a settings file turns **Show in menu bar** and **Show in Dock** both off, OJD keeps the menu bar item, opens the app window at launch, and offers to reset the settings.
 Closing the window with the red button only hides it.
 
 ## Main Window

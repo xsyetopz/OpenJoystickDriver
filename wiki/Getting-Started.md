@@ -84,7 +84,7 @@ Install the app first. For more information, see [Installing OpenJoystickDriver]
 1. Install and open OpenJoystickDriver from the Applications folder.
 2. Grant access.
    1. Click the controller icon in the menu bar.
-   2. If the menu shows **Grant Access**, click it. Allow OpenJoystickDriver in the **Input Monitoring** and **Accessibility** lists.
+   2. If the menu shows **Permission Missing: ...**, click it. Allow OpenJoystickDriver in the **Input Monitoring** and **Accessibility** lists.
    3. Open the app window. In the **Access** area, click **Restart OpenJoystickDriver** if it appears.
 3. Connect your controller with USB, Bluetooth, or a 2.4 GHz dongle.
 4. Check the controller.

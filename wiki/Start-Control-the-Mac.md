@@ -4,7 +4,7 @@ Make controller buttons press keys, click the mouse, move the pointer, or scroll
 
 ## Before you begin
 
-Install OJD and connect the controller. See [Start: play a game with a controller](Start-Play-a-Game.md). Keyboard and pointer output needs **Accessibility** access: click **Grant Access** in the menu-bar menu, or run `ojd permission request input-inject`.
+Install OJD and connect the controller. See [Start: play a game with a controller](Start-Play-a-Game.md). Keyboard and pointer output needs **Accessibility** access: click **Permission Missing: Accessibility** in the menu-bar menu, or run `ojd permission request input-inject`.
 
 ## Steps in the app
 
