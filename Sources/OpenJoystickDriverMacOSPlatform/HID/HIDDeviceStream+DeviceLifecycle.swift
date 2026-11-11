@@ -60,7 +60,8 @@ extension HIDDeviceStream {
         syntheticProperty: syntheticProperty,
         serviceID: registryEntryID(for: device),
         nativePassThrough: nativePassThrough,
-        disconnectsIndividually: roleModels.contains(model)
+        disconnectsIndividually: roleModels.contains(model),
+        enumerationKey: "\(serial ?? "")|\(productName ?? "")"
       )
     else { return nil }
     // macOS keeps every interface of a native controller, so a sibling is never seized either.

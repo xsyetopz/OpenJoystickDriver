@@ -237,7 +237,8 @@ public struct PhysicalHIDTrackingStateMachine {
     /// Whether macOS keeps serving the device, so OJD never seizes it.
     let nativePassThrough: Bool
     /// Whether removing the device disconnects it even when other devices stay at its location.
-    let disconnectsIndividually: Bool
+    var disconnectsIndividually: Bool
+    let enumerationKey: String?
     /// The observed ownership of the device.
     var ownership: HIDInputOwnership
   }
@@ -261,6 +262,11 @@ public struct PhysicalHIDTrackingStateMachine {
   /// A native pass-through device is never seized, so it stays out of its location's ownership
   /// and disconnect state. A device that `disconnectsIndividually` (an interface of a family with
   /// HID protocol roles) shares its location's ownership but disconnects on its own removal.
+  ///
+  /// A device whose `enumerationKey` differs from the key of a device already at its location is
+  /// that device's successor after a re-enumeration; the earlier device then disconnects on its
+  /// own removal too, whichever of the two events comes first. Devices with the same key, or
+  /// without one, are interfaces of one device.
   @discardableResult
   public mutating func register(
     deviceID: UInt64,
@@ -269,7 +275,8 @@ public struct PhysicalHIDTrackingStateMachine {
     ownership: HIDInputOwnership = .unknown,
     serviceID: UInt64? = nil,
     nativePassThrough: Bool = false,
-    disconnectsIndividually: Bool = false
+    disconnectsIndividually: Bool = false,
+    enumerationKey: String? = nil
   ) -> Bool {
     guard PhysicalHIDBackendEventPolicy.accepts(.deviceAdded, syntheticProperty: syntheticProperty),
       devices[deviceID] == nil
@@ -283,9 +290,17 @@ public struct PhysicalHIDTrackingStateMachine {
       serviceID: serviceID,
       nativePassThrough: nativePassThrough,
       disconnectsIndividually: disconnectsIndividually,
+      enumerationKey: enumerationKey,
       ownership: ownership
     )
     if !nativePassThrough {
+      if let enumerationKey {
+        for earlierID in deviceIDsByLocation[locationID] ?? [] {
+          guard let earlierKey = devices[earlierID]?.enumerationKey, earlierKey != enumerationKey
+          else { continue }
+          devices[earlierID]?.disconnectsIndividually = true
+        }
+      }
       deviceIDsByLocation[locationID, default: []].insert(deviceID)
     } else if locationID != 0 {
       nativeDeviceIDsByLocation[locationID, default: []].insert(deviceID)
@@ -427,7 +442,8 @@ public struct PhysicalHIDBackendEventAdapter {
     ownership: HIDInputOwnership = .unknown,
     serviceID: UInt64? = nil,
     nativePassThrough: Bool = false,
-    disconnectsIndividually: Bool = false
+    disconnectsIndividually: Bool = false,
+    enumerationKey: String? = nil
   ) -> Bool {
     tracking.register(
       deviceID: deviceID,
@@ -436,7 +452,8 @@ public struct PhysicalHIDBackendEventAdapter {
       ownership: ownership,
       serviceID: serviceID,
       nativePassThrough: nativePassThrough,
-      disconnectsIndividually: disconnectsIndividually
+      disconnectsIndividually: disconnectsIndividually,
+      enumerationKey: enumerationKey
     )
   }
 
@@ -525,7 +542,8 @@ public final class SynchronizedPhysicalHIDBackendEventAdapter: @unchecked Sendab
     ownership: HIDInputOwnership = .unknown,
     serviceID: UInt64? = nil,
     nativePassThrough: Bool = false,
-    disconnectsIndividually: Bool = false
+    disconnectsIndividually: Bool = false,
+    enumerationKey: String? = nil
   ) -> Bool {
     lock.withLock {
       adapter.add(
@@ -535,7 +553,8 @@ public final class SynchronizedPhysicalHIDBackendEventAdapter: @unchecked Sendab
         ownership: ownership,
         serviceID: serviceID,
         nativePassThrough: nativePassThrough,
-        disconnectsIndividually: disconnectsIndividually
+        disconnectsIndividually: disconnectsIndividually,
+        enumerationKey: enumerationKey
       )
     }
   }
