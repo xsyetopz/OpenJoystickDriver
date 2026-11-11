@@ -29,7 +29,7 @@
 
     /// The stick.
     var body: some View {
-      VStack(spacing: 7) {
+      VStack(spacing: OJDSpacing.small) {
         Text(title).font(.subheadline.weight(.semibold))
         ZStack {
           Circle().fill(Color(NSColor.controlBackgroundColor)).frame(width: 86, height: 86)
@@ -44,7 +44,7 @@
         }.ojdAccessibilityLabel(title).ojdAccessibilityValue(
           OJDLocalized.formatted("ui.inputTest.axisPair", x, y)
         )
-        HStack(spacing: 10) {
+        HStack(spacing: OJDSpacing.medium) {
           Text(OJDLocalized.formatted("ui.inputTest.axisX", x))
           Text(OJDLocalized.formatted("ui.inputTest.axisY", y))
         }.font(.system(.caption, design: .monospaced)).foregroundColor(
@@ -103,7 +103,7 @@
 
     /// The symbol or text, and the value beside it.
     var body: some View {
-      HStack(spacing: 5) {
+      HStack(spacing: OJDSpacing.xSmall) {
         if let symbol {
           OJDSystemSymbol(
             name: symbol,

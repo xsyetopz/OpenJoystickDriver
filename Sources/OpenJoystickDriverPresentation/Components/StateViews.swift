@@ -33,7 +33,7 @@
           if let message { Text(message) }
         }
       } else {
-        VStack(spacing: 4) {
+        VStack(spacing: OJDSpacing.xSmall) {
           OJDSystemSymbol(name: symbol, fallback: OJDLocalized.string("term.status")).font(
             .largeTitle
           ).foregroundColor(Color(NSColor.tertiaryLabelColor)).accessibilityHidden(true)
@@ -54,7 +54,7 @@
 
     /// The progress indicator with the message.
     var body: some View {
-      HStack(spacing: 8) {
+      HStack(spacing: OJDSpacing.small) {
         ProgressView()
         Text(message).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
           horizontal: false,
@@ -76,13 +76,13 @@
     /// The failure symbol, the title, the message and Try Again.
     var body: some View {
       GroupBox {
-        HStack(alignment: .top, spacing: 10) {
+        HStack(alignment: .top, spacing: OJDSpacing.medium) {
           OJDSystemSymbol(
             name: SemanticState.failure.presentation.symbolName,
             fallback: OJDLocalized.string("status.needsAttention")
           ).foregroundColor(Color(SemanticState.failure.presentation.tone.color))
             .accessibilityHidden(true)
-          VStack(alignment: .leading, spacing: 6) {
+          VStack(alignment: .leading, spacing: OJDSpacing.small) {
             Text(title).font(.headline)
             Text(message).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
               horizontal: false,

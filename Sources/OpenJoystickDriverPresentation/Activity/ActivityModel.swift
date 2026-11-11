@@ -91,9 +91,9 @@ struct ActivityActionFailure: Equatable {
 
     /// The Activity content under the row of the model's failure, which Dismiss clears.
     var body: some View {
-      VStack(spacing: 0) {
+      VStack(spacing: OJDSpacing.none) {
         if let failure = model.failure {
-          HStack(alignment: .firstTextBaseline, spacing: 8) {
+          HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
             Text(failure.text).foregroundColor(Color(NSColor.systemOrange)).fixedSize(
               horizontal: false,
               vertical: true

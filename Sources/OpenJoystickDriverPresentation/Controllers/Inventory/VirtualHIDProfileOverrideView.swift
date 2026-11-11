@@ -30,7 +30,7 @@
 
     /// The profile picker, the scope picker or the model-scope note, the progress and the problems.
     var body: some View {
-      VStack(alignment: .leading, spacing: 10) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Picker(
           OJDLocalized.string("ui.virtualProfile.title"),
           selection: overrideBinding
@@ -72,7 +72,7 @@
             )
         }
         if overrideState.inFlight {
-          HStack(spacing: 8) {
+          HStack(spacing: OJDSpacing.small) {
             ProgressView()
             Text(updatingLabel).foregroundColor(Color(NSColor.secondaryLabelColor))
           }.ojdAccessibilityLabel(updatingLabel)
@@ -82,7 +82,7 @@
             .fixedSize(horizontal: false, vertical: true)
         }
         ForEach(problems, id: \.self) { message in
-          HStack(alignment: .top, spacing: 8) {
+          HStack(alignment: .top, spacing: OJDSpacing.small) {
             OJDSystemSymbol(
               name: SemanticState.failure.presentation.symbolName,
               fallback: OJDLocalized.string("status.needsAttention")

@@ -24,7 +24,7 @@
 
     /// The captured key or No Key, with the Capture Key and Clear buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 7) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         HStack {
           Group {
             if isCleared {

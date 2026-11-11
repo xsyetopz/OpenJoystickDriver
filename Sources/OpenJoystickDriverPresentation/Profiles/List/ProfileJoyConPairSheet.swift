@@ -42,7 +42,7 @@
     /// The sheet's title, the two pickers, the hint about sessions, and the Cancel and Pair
     /// buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(OJDLocalized.string("ui.profiles.pairJoyCons"))
           .font(.headline.weight(.semibold))
         Text(profile.name).font(.caption).foregroundColor(.secondary)
@@ -79,7 +79,7 @@
             dismiss()
           }.disabled(leftSessionToken == nil || rightSessionToken == nil)
         }
-      }.padding(28).frame(width: 480)
+      }.ojdSheet(.regular)
     }
 
     /// Dismisses the sheet.

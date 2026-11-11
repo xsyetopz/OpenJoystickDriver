@@ -44,7 +44,7 @@
 
     /// The title, the fields, the current scale and the buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(label("title")).font(.headline)
         Toggle(label("enabled"), isOn: $draft.enabled)
         if draft.enabled {
@@ -73,7 +73,7 @@
           }
           Button(OJDLocalized.string("action.save")) { save() }
         }
-      }.padding(28).frame(width: 440).task {
+      }.ojdSheet(.compact).task {
         while !Task.isCancelled {
           state = await liveState()
           try? await Task.sleep(nanoseconds: 200_000_000)
@@ -107,7 +107,7 @@
 
     /// A labeled text field for the scale called `key`.
     private func field(_ key: String, _ value: Binding<String>) -> some View {
-      VStack(alignment: .leading, spacing: 4) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text(label(key))
         TextField(label(key), text: value).textFieldStyle(RoundedBorderTextFieldStyle())
       }

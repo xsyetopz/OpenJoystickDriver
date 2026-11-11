@@ -18,13 +18,13 @@
 
     /// The additional actions and the Add Action button.
     var body: some View {
-      VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         Text(OJDLocalized.string("ui.profiles.additionalActions"))
           .font(.headline)
         ScrollView {
-          VStack(alignment: .leading, spacing: 10) {
+          VStack(alignment: .leading, spacing: OJDSpacing.medium) {
             ForEach(actions) { action in
-              VStack(alignment: .leading, spacing: 5) {
+              VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
                 Picker(
                   OJDLocalized.string("term.destination"),
                   selection: destinationBinding(action)

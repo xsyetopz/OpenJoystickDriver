@@ -16,7 +16,7 @@
     /// The title and lines of the confirmation, with scope toggles for a client grant.
     var body: some View {
       let confirmation = model.confirmation(for: pending)
-      VStack(alignment: .leading, spacing: 14) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Text(confirmation.title).font(.headline).fixedSize(horizontal: false, vertical: true)
         if case .grantClient = pending { scopeToggles(scopes: $model.grantScopes) }
         ForEach(confirmation.lines, id: \.self) { line in
@@ -34,7 +34,7 @@
             .keyboardShortcut(.defaultAction).disabled(grantsNothing)
             .ojdAccessibilityLabel(confirmation.confirmTitle)
         }
-      }.padding(20).frame(width: 440)
+      }.ojdSheet(.compact)
     }
 
     /// Whether a program grant has no scope chosen, which disables the confirm button.
@@ -52,7 +52,7 @@
 
     /// The token name, origins and scopes, a failure if any, and the Cancel and Continue buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 14) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Text(OJDLocalized.string("ui.access.token.form.title")).font(.headline)
         TextField(OJDLocalized.string("ui.access.token.name"), text: $model.tokenDraft.name)
           .ojdAccessibilityLabel(OJDLocalized.string("a11y.access.tokenName"))
@@ -74,7 +74,7 @@
               OJDLocalized.string("a11y.access.tokenContinue")
             )
         }
-      }.padding(20).frame(width: 440)
+      }.ojdSheet(.compact)
     }
   }
 
@@ -87,7 +87,7 @@
 
     /// The issued token with its message, a Copy button and a Done button.
     var body: some View {
-      VStack(alignment: .leading, spacing: 14) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Text(OJDLocalized.formatted("ui.access.token.issued.title", issued.name)).font(.headline)
         Text(OJDLocalized.string("ui.access.token.issued.message")).foregroundColor(
           Color(NSColor.secondaryLabelColor)
@@ -104,7 +104,7 @@
             .defaultAction
           ).ojdAccessibilityLabel(OJDLocalized.string("a11y.access.done"))
         }
-      }.padding(20).frame(width: 440)
+      }.ojdSheet(.compact)
     }
   }
 
@@ -112,7 +112,7 @@
   @MainActor
   @ViewBuilder
   private func scopeToggles(scopes: Binding<Set<EndpointScope>>) -> some View {
-    VStack(alignment: .leading, spacing: 4) {
+    VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
       ForEach(EndpointScope.allCases, id: \.self) { scope in
         Toggle(
           AccessPresentation.scope(scope),

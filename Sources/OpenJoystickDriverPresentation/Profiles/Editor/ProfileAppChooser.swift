@@ -17,7 +17,7 @@
 
     /// The list of apps and the add menu.
     var body: some View {
-      VStack(alignment: .leading, spacing: 6) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         Text(OJDLocalized.string("ui.profiles.apps"))
         ForEach(appIDs, id: \.self) { appID in
           let entry = ProfileAppChoices.entry(for: appID, lookup: lookup)

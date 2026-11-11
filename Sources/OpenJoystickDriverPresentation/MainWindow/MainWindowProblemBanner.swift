@@ -15,7 +15,7 @@
     /// The rows of the problems, or nothing while there is no problem.
     var body: some View {
       if !problems.isEmpty {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: OJDSpacing.none) {
           ForEach(problems) { problem in
             row(problem)
             if problem != problems.last { Divider().padding(.leading, 44) }
@@ -33,11 +33,11 @@
       let state: SemanticState = problem.isFailure ? .failure : .attention
       let title = OJDLocalized.string(problem.titleKey)
       let detail = detailText(problem)
-      return HStack(alignment: .center, spacing: 10) {
+      return HStack(alignment: .center, spacing: OJDSpacing.medium) {
         OJDSystemSymbol(name: state.presentation.symbolName + ".fill", fallback: nil)
           .foregroundColor(Color(state.presentation.tone.color)).font(.body)
           .frame(width: 22).accessibilityHidden(true)
-        VStack(alignment: .leading, spacing: 1) {
+        VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
           Text(title).font(.body.weight(.semibold))
           Text(detail).font(.callout).foregroundColor(Color(NSColor.secondaryLabelColor))
             .fixedSize(horizontal: false, vertical: true)

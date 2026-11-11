@@ -24,7 +24,7 @@
 
     /// The toggle with its description and, while it is locked, the reason.
     var body: some View {
-      VStack(alignment: .leading, spacing: 2) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
         Toggle(title, isOn: isOn).disabled(!isEnabled).help(lockReason ?? "")
         footnote(description)
         if let lockReason { footnote(lockReason) }
@@ -53,7 +53,7 @@
         ?? preferences.settingsFileError?.localizedDescription
       {
         Section {
-          HStack(alignment: .firstTextBaseline, spacing: 8) {
+          HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
             OJDSystemSymbol(
               name: SemanticState.attention.presentation.symbolName,
               fallback: OJDLocalized.string("status.needsAttention")

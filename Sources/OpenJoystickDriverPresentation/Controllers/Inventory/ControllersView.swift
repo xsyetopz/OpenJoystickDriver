@@ -61,7 +61,7 @@
 
     /// The list column: the loading state, the failure with Try Again, or the rows.
     private var controllerList: some View {
-      VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         switch viewModel.statusState {
         case .loading:
           LoadingStateView(
@@ -110,7 +110,7 @@
       List(selection: selectedDeviceIdentifier) {
         ForEach(devices, id: \.sessionToken) { device in
           let presentation = device.publishedIdentityPresentation
-          HStack(spacing: 8) {
+          HStack(spacing: OJDSpacing.small) {
             OJDListGlyphSlot {
               OJDSystemSymbol(
                 name: presentation.controllerSymbolName,
@@ -118,7 +118,7 @@
                 fallbackSymbolName: presentation.controllerSymbolFallback
               ).foregroundColor(presentation.glyphFamily.controllerSymbolColor)
             }
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
               Text(device.name).lineLimit(1)
               Text(
                 device.isHeldByAppleDriver
@@ -135,7 +135,7 @@
           .contextMenu { sessionCommands(for: device) }
         }
         ForEach(screen.unservedDevices) { unserved in
-          VStack(alignment: .leading, spacing: 2) {
+          VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
             Text("\(unserved.identity)  \(unserved.connection)").lineLimit(1)
             Text(unserved.explanation).font(.caption).foregroundColor(
               Color(NSColor.secondaryLabelColor)

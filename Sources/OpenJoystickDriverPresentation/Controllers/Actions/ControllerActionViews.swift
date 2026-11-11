@@ -212,7 +212,7 @@
     /// The title, the instruction, the duration field, the failures, and the Cancel and Start
     /// Capture buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 12) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Text(
           OJDLocalized.string(
             kind == .draftRecord
@@ -250,7 +250,7 @@
           Button(OJDLocalized.string("ui.developer.startCapture")) { start() }
             .keyboardShortcut(.defaultAction).disabled(seconds == nil || isCapturing)
         }
-      }.padding(20).frame(width: 420)
+      }.ojdSheet(.compact)
     }
 
     /// The instruction for the kind of capture, with the controller's name and ID.

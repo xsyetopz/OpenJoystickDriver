@@ -25,7 +25,7 @@
             DeveloperToolsViewModel.PacketFilter.all
           )
         }.pickerStyle(.segmented).labelsHidden()
-        HStack(spacing: 8) {
+        HStack(spacing: OJDSpacing.small) {
           if model.isCapturing {
             Button(OJDLocalized.string("action.stop"), action: model.stopCapture)
           } else {
@@ -114,7 +114,7 @@
 
     /// Returns a label with the SF Symbol `symbol` and `text`, read by VoiceOver as one element.
     private func statusLabel(_ text: String, symbol: String) -> some View {
-      HStack(spacing: 6) {
+      HStack(spacing: OJDSpacing.small) {
         OJDSystemSymbol(
           name: symbol,
           fallback: OJDLocalized.string("term.status")

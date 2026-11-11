@@ -62,7 +62,7 @@
 
     /// The control pickers, the timing, the destination and the Cancel and Add buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 15) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(title).font(.headline.weight(.semibold))
         Text(
           kind == .chord
@@ -151,7 +151,7 @@
               || !ProfileCapabilityPolicy.supports(destination, capabilities: capabilities)
           )
         }
-      }.padding(28).frame(width: 480)
+      }.ojdSheet(.regular)
     }
 
     /// The title of the sheet.
@@ -179,7 +179,7 @@
       value: Binding<Double>,
       range: ClosedRange<Double>
     ) -> some View {
-      VStack(alignment: .leading, spacing: 5) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         HStack {
           Text(title)
           Spacer()

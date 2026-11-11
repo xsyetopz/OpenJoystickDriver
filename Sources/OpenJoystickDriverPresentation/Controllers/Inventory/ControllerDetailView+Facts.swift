@@ -177,7 +177,7 @@
     /// - Parameter message: The message of the failure.
     /// - Returns: The failed command with the failure symbol and its message.
     private func controllerActionFailure(_ message: String) -> some View {
-      HStack(alignment: .top, spacing: 8) {
+      HStack(alignment: .top, spacing: OJDSpacing.small) {
         OJDSystemSymbol(
           name: SemanticState.failure.presentation.symbolName,
           fallback: OJDLocalized.string("status.needsAttention")
@@ -202,7 +202,7 @@
 
     /// The header: the controller's glyph, its name and its connection.
     private var controllerHeader: some View {
-      HStack(alignment: .center, spacing: 10) {
+      HStack(alignment: .center, spacing: OJDSpacing.medium) {
         let presentation = device.publishedIdentityPresentation
         OJDSystemSymbol(
           name: presentation.controllerSymbolName,
@@ -210,7 +210,7 @@
           fallbackSymbolName: presentation.controllerSymbolFallback
         ).font(.title).foregroundColor(presentation.glyphFamily.controllerSymbolColor)
           .accessibilityHidden(true)
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
           Text(device.name).font(.headline.weight(.semibold)).lineLimit(1)
           Text(connectionValue.displayText)
             .foregroundColor(Color(NSColor.secondaryLabelColor))
@@ -262,7 +262,7 @@
     ///   - message: The message of the failure.
     /// - Returns: The Active Profile row for a profile that cannot be read, with Try Again.
     private func profileFailureRow(label: String, message: String) -> some View {
-      VStack(alignment: .leading, spacing: 4) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         HStack {
           Text(OJDLocalized.string("ui.controllers.activeProfile"))
             .foregroundColor(Color(NSColor.secondaryLabelColor))

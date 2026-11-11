@@ -110,9 +110,9 @@
     /// Each row lays out a hidden copy of its line in the same font, so the row is as tall as the
     /// line and a reading starts where its line ends.
     private var readings: some View {
-      VStack(alignment: .leading, spacing: 0) {
+      VStack(alignment: .leading, spacing: OJDSpacing.none) {
         ForEach(Array(text.lines.enumerated()), id: \.offset) { index, line in
-          HStack(spacing: 0) {
+          HStack(spacing: OJDSpacing.none) {
             Text(line.isEmpty ? " " : line + Self.gap).font(Self.font).hidden()
               .accessibilityHidden(true)
             if let reading = text.identifierReadings[index] {

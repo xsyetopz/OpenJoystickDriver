@@ -19,7 +19,7 @@
       Form {
         Section {
           Text(device.explanation).fixedSize(horizontal: false, vertical: true)
-          VStack(alignment: .leading, spacing: 2) {
+          VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
             Text(OJDLocalized.string("ui.controllers.unserved.nextStepLabel")).font(.caption)
               .foregroundColor(Color(NSColor.secondaryLabelColor))
             Text(device.nextStep).fixedSize(horizontal: false, vertical: true)

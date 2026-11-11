@@ -52,10 +52,10 @@
     /// The title, the gyro output fields, the motion tuning and the Inherit, Cancel and Save
     /// buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(label("title")).font(.headline)
         ScrollView {
-          VStack(alignment: .leading, spacing: 12) {
+          VStack(alignment: .leading, spacing: OJDSpacing.medium) {
             if showsGyroOutput {
               ProfileGyroFields(draft: $gyro)
               Divider()
@@ -180,7 +180,7 @@
             } catch { errorMessage = RuntimePresentation.userFacingError(error) }
           }
         }
-      }.padding(28).frame(width: 500, height: 600)
+      }.ojdSheet(.regular).frame(height: 600)
     }
 
     /// Returns the text of the motion field called `key`.
@@ -202,7 +202,7 @@
       value: Binding<Double>,
       maximum: Double
     ) -> some View {
-      VStack(alignment: .leading, spacing: 4) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         HStack {
           Text(label(key))
           Spacer()

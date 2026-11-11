@@ -131,7 +131,7 @@
       @ViewBuilder trailing: () -> Trailing
     ) -> some View {
       HStack(alignment: .firstTextBaseline) {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
           Text(title)
           Text(detail).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
         }.textSelection(.enabled).accessibilityElement(children: .combine)

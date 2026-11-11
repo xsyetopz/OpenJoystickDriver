@@ -32,7 +32,7 @@
 
     /// The instructions, the status, the error with Try Again, and the buttons.
     private var content: some View {
-      VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         Text(
           OJDLocalized.string(
             "ui.motion.calibration.instructions"

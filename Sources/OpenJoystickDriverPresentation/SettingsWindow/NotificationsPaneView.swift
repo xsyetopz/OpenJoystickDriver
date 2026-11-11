@@ -66,7 +66,7 @@
           soundsEnabled: system.soundsEnabled
         )
       )
-      return HStack(alignment: .firstTextBaseline, spacing: 8) {
+      return HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
         Text(delivery.status).foregroundColor(
           delivery.needsAttention
             ? Color(NSColor.systemOrange) : Color(NSColor.secondaryLabelColor)

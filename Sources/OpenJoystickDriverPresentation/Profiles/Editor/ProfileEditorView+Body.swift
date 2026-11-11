@@ -47,7 +47,7 @@
     /// with the sheets and confirmations it opens.
     var body: some View {
       GeometryReader { proxy in
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: OJDSpacing.none) {
           editorHeader(width: proxy.size.width)
           Divider()
           sectionNavigation(width: proxy.size.width)
@@ -267,8 +267,8 @@
     /// - Parameter width: The width of the editor, which decides how the facts are laid out.
     /// - Returns: The header.
     func editorHeader(width: CGFloat) -> some View {
-      VStack(alignment: .leading, spacing: 10) {
-        HStack(alignment: .center, spacing: 10) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
+        HStack(alignment: .center, spacing: OJDSpacing.medium) {
           Text(draft.profile.name).font(.headline.weight(.semibold)).frame(
             maxWidth: .infinity,
             alignment: .leading
@@ -283,9 +283,9 @@
           profileActionMenu
         }
         if width < ProfilePresentationPolicy.compactNavigationWidth {
-          VStack(alignment: .leading, spacing: 4) { profileFacts }
+          VStack(alignment: .leading, spacing: OJDSpacing.xSmall) { profileFacts }
         } else {
-          HStack(spacing: 10) { profileFacts }
+          HStack(spacing: OJDSpacing.medium) { profileFacts }
         }
         if showingConflict {
           ConflictBanner(
@@ -307,7 +307,7 @@
           )
         }
         if draft.profile.suppressesAllControllerInput {
-          HStack(spacing: 8) {
+          HStack(spacing: OJDSpacing.small) {
             Text(
               OJDLocalized.string(
                 "ui.profiles.emptyInputWarning"

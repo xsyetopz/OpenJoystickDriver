@@ -40,7 +40,7 @@
 
     /// The scope picker above the record list.
     var body: some View {
-      VStack(spacing: 0) {
+      VStack(spacing: OJDSpacing.none) {
         Picker(OJDLocalized.string("ui.library.records"), selection: $model.scope) {
           ForEach(LibraryScope.allCases) { scope in
             Text(OJDLocalized.string(scope.titleKey)).tag(scope)
@@ -110,7 +110,7 @@
         item.family.displayName,
         item.layer.libraryTitle
       )
-      return VStack(alignment: .leading, spacing: 2) {
+      return VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
         Text(item.identity)
         Text(summary).font(.caption).foregroundColor(.secondary)
         if let patch = item.patchedBy {
@@ -123,7 +123,7 @@
 
     /// The row of a file that OJD skipped, with its path and the problem.
     private func skippedRow(_ skipped: LibrarySkippedFile) -> some View {
-      VStack(alignment: .leading, spacing: 2) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
         Text(skipped.displayPath)
         Text(OJDLocalized.formatted("ui.library.record.skipped", skipped.problem)).font(.caption)
           .foregroundColor(.secondary)
@@ -132,7 +132,7 @@
 
     /// The row of a mod: its name, then its version and author.
     private func modRow(_ mod: LibraryModItem) -> some View {
-      VStack(alignment: .leading, spacing: 2) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
         Text(mod.name)
         if let summary = mod.summary {
           Text(summary).font(.caption).foregroundColor(.secondary)
@@ -165,7 +165,7 @@
 
     /// The title, the message and the Cancel and confirm buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 14) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Text(confirmation.title).font(.headline).fixedSize(horizontal: false, vertical: true)
         Text(confirmation.message).foregroundColor(Color(NSColor.secondaryLabelColor))
           .fixedSize(horizontal: false, vertical: true)
@@ -177,7 +177,7 @@
           Button(confirmation.confirmTitle, action: confirm).keyboardShortcut(.defaultAction)
             .ojdAccessibilityLabel(confirmation.confirmTitle)
         }
-      }.padding(20).frame(width: 420)
+      }.ojdSheet(.compact)
     }
   }
 

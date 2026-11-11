@@ -48,7 +48,7 @@
 
     /// The title, the left or right stick picker, its fields, an error if any, and the buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(OJDLocalized.string("ui.profiles.stick.title")).font(.headline)
         Picker(
           OJDLocalized.string("ui.profiles.stick.source"),
@@ -89,8 +89,7 @@
             } catch { errorMessage = RuntimePresentation.userFacingError(error) }
           }
         }
-      }.padding(28).frame(
-        width: 500,
+      }.ojdSheet(.regular).frame(
         height: ProfilePresentationPolicy.optionalEditorHeight(
           enabled: selected == .left ? left.enabled : right.enabled,
           compact: 260,

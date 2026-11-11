@@ -34,7 +34,7 @@
       if let selectedRecoveryIssue {
         profileRecoveryDetail(selectedRecoveryIssue)
       } else if let selectedProfile {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: OJDSpacing.none) {
           refreshStatus
           if selectedProfile.joyConPair != nil { joyConPairControls(selectedProfile) }
           ProfileEditorView(
@@ -126,7 +126,7 @@
     @ViewBuilder
     func joyConPairControls(_ profile: RemappingProfile) -> some View {
       let sessions = currentSnapshot?.joyConPairs.filter { $0.profileID == profile.id } ?? []
-      HStack(spacing: 10) {
+      HStack(spacing: OJDSpacing.medium) {
         Text(OJDLocalized.string("ui.profiles.joyConPair")).font(
           .body.weight(.semibold)
         )
@@ -207,7 +207,7 @@
     var refreshStatus: some View {
       switch viewModel.remappingState {
       case .loading:
-        HStack(spacing: 8) {
+        HStack(spacing: OJDSpacing.small) {
           ProgressView()
           Text(OJDLocalized.string("ui.profiles.refreshing"))
             .foregroundColor(Color(NSColor.secondaryLabelColor))

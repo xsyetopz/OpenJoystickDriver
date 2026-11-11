@@ -30,7 +30,7 @@
 
     /// The fields, the steps and the Cancel and Apply buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 12) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         TextField(OJDLocalized.string("ui.macros.name"), text: $draft.name)
           .ojdAccessibilityLabel(OJDLocalized.string("ui.macros.name"))
         HStack {
@@ -43,7 +43,7 @@
           }.fixedSize()
         }
         ScrollView {
-          VStack(alignment: .leading, spacing: 10) {
+          VStack(alignment: .leading, spacing: OJDSpacing.medium) {
             ForEach(draft.steps.indices, id: \.self) { index in stepRow(index) }
           }.frame(maxWidth: .infinity, alignment: .leading)
         }.frame(minHeight: 140, maxHeight: 280)
@@ -79,7 +79,7 @@
             dismiss()
           }.disabled(draft.macro.name.isEmpty)
         }
-      }.padding(28).frame(width: 520)
+      }.ojdSheet(.wide)
     }
 
     /// Whether the macro repeats until the source is released.
@@ -93,7 +93,7 @@
     /// The row of the step at `index`: its fields and the move and remove buttons.
     private func stepRow(_ index: Int) -> some View {
       HStack(alignment: .top) {
-        VStack(alignment: .leading, spacing: 6) { stepFields(index) }
+        VStack(alignment: .leading, spacing: OJDSpacing.small) { stepFields(index) }
         Spacer(minLength: 8)
         OJDCompactSymbolButton(
           symbolName: "arrow.up",
@@ -179,7 +179,7 @@
       _ value: Double,
       set: @escaping (Double) -> Void
     ) -> some View {
-      VStack(alignment: .leading, spacing: 2) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
         HStack {
           Text(title)
           Spacer()

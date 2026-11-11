@@ -48,7 +48,7 @@
             title: OJDLocalized.string("ui.library.detail.empty")
           )
           if model.failure != nil || model.notice != nil {
-            VStack(spacing: 0) {
+            VStack(spacing: OJDSpacing.none) {
               Form { feedback }.ojdGroupedForm().fixedSize(horizontal: false, vertical: true)
               Spacer(minLength: 0)
             }

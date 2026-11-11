@@ -13,11 +13,11 @@
 
     /// The banner.
     var body: some View {
-      HStack(alignment: .top, spacing: 10) {
+      HStack(alignment: .top, spacing: OJDSpacing.medium) {
         OJDSystemSymbol(name: "exclamationmark.triangle", fallback: "!").foregroundColor(
           Color(NSColor.systemRed)
         ).accessibilityHidden(true)
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
           Text(
             OJDLocalized.string(
               "ui.profiles.actionNeedsAttention"

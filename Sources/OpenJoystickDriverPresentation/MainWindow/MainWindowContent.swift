@@ -134,7 +134,7 @@
 
     /// The problem banner above the selected area, with the alerts of the main window.
     var body: some View {
-      VStack(spacing: 0) {
+      VStack(spacing: OJDSpacing.none) {
         MainWindowProblemBanner(
           problems: MainWindowProblem.current(
             permissions: runtime.permissionState,

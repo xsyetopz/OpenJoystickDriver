@@ -52,7 +52,7 @@
 
     /// The title, the surface picker, its fields and the buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(OJDLocalized.string("ui.profiles.touch.title")).font(
           .headline
         )
@@ -83,8 +83,7 @@
           }
           Button(OJDLocalized.string("action.save")) { save() }
         }
-      }.padding(28).frame(
-        width: 500,
+      }.ojdSheet(.regular).frame(
         height: ProfilePresentationPolicy.optionalEditorHeight(
           enabled: selectedDraft.wrappedValue.enabled,
           compact: 260,

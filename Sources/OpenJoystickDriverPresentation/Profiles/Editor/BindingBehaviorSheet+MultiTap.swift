@@ -8,7 +8,7 @@
     /// The tap-count entries, the button that adds one, and the delay they add to the base
     /// destination.
     var multiTapSection: some View {
-      VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         HStack {
           Text(OJDLocalized.string("ui.profiles.multiTap")).font(.subheadline.weight(.semibold))
           Spacer()
@@ -46,7 +46,7 @@
           in: multiTapEntries
         )
       }
-      return VStack(alignment: .leading, spacing: 8) {
+      return VStack(alignment: .leading, spacing: OJDSpacing.small) {
         HStack {
           Picker(
             OJDLocalized.string("ui.profiles.tapCount"),

@@ -33,8 +33,8 @@
     /// The failure symbol and message in a group box, with the action button.
     var body: some View {
       GroupBox {
-        VStack(alignment: .leading, spacing: 8) {
-          HStack(alignment: .firstTextBaseline, spacing: 10) {
+        VStack(alignment: .leading, spacing: OJDSpacing.small) {
+          HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.medium) {
             OJDSystemSymbol(
               name: SemanticState.failure.presentation.symbolName,
               fallback: OJDLocalized.string("status.needsAttention")
@@ -52,7 +52,7 @@
             Button(actionTitle, action: action).ojdAccessibilityLabel(actionAccessibilityLabel)
           }
           if showsDetails, let code {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
               Text(code.rawValue).font(.caption.weight(.semibold))
               Text(code.localizedExplanation).font(.caption).foregroundColor(
                 Color(NSColor.secondaryLabelColor)

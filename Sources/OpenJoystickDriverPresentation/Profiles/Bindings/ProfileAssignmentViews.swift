@@ -159,9 +159,9 @@
 
     /// The source, the destination and their fields of one assignment.
     var body: some View {
-      VStack(alignment: .leading, spacing: 7) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         if layout == .inline {
-          HStack(alignment: .top, spacing: 12) {
+          HStack(alignment: .top, spacing: OJDSpacing.medium) {
             sourceField
             OJDSystemSymbol(name: "arrow.right", fallback: "->").foregroundColor(
               Color(NSColor.secondaryLabelColor)
@@ -173,7 +173,7 @@
           destinationField
         }
 
-        HStack(spacing: 8) {
+        HStack(spacing: OJDSpacing.small) {
           if binding.axisTuning != nil {
             Button(OJDLocalized.string("action.adjust")) {
               onAdjust(binding)
@@ -208,7 +208,7 @@
 
     /// The picker of the controller control.
     private var sourceField: some View {
-      VStack(alignment: .leading, spacing: 4) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text(OJDLocalized.string("ui.capture.controllerControl")).font(
           .caption
         ).foregroundColor(Color(NSColor.secondaryLabelColor))
@@ -226,7 +226,7 @@
     /// The picker of the destination, with the fields of a physical output and a note when the
     /// controller lacks the source or the destination.
     private var destinationField: some View {
-      VStack(alignment: .leading, spacing: 4) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text(OJDLocalized.string("term.destination")).font(.caption)
           .foregroundColor(Color(NSColor.secondaryLabelColor))
         Picker("", selection: destinationBinding) {

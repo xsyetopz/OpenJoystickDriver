@@ -60,9 +60,9 @@
     /// Updates and the automatic and prerelease switches.
     private var updates: some View {
       Section(OJDLocalized.string("ui.settings.general.updates")) {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
-          VStack(alignment: .leading, spacing: 2) {
-            HStack(spacing: 6) {
+        HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
+          VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
+            HStack(spacing: OJDSpacing.small) {
               indicator(status.indicator)
               Text(status.title)
             }

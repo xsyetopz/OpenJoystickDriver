@@ -47,7 +47,7 @@
 
     /// The axis tuning form and its Cancel and Save buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(
           OJDLocalized.formatted(
             "ui.capture.adjust",
@@ -99,7 +99,7 @@
             presentationMode.wrappedValue.dismiss()
           }
         }
-      }.padding(28).frame(width: 430)
+      }.ojdSheet(.compact)
     }
   }
 
@@ -129,7 +129,7 @@
 
     /// The slider and its value.
     var body: some View {
-      VStack(alignment: .leading, spacing: 5) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         HStack {
           Text(title)
           Spacer()
@@ -156,13 +156,13 @@
 
     /// The banner with its Reload and Keep Editing buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 7) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         Text(
           OJDLocalized.string(
             "ui.error.profileChanged"
           )
         ).font(.subheadline.weight(.semibold))
-        HStack(spacing: 10) {
+        HStack(spacing: OJDSpacing.medium) {
           Button(OJDLocalized.string("action.reload")) { reload() }
           Button(OJDLocalized.string("action.keepEditing")) {
             keepEditing()

@@ -34,7 +34,7 @@
     /// The segmented picker of the two servers; below it the progress of the request, the reason it
     /// is unavailable, or the service's refusal.
     var body: some View {
-      VStack(alignment: .leading, spacing: 6) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         Picker(OJDLocalized.string("ui.controllers.server.label"), selection: serverBinding) {
           Text(OJDLocalized.string("platform.macos.ui.controllers.server.system")).tag(
             ControllerServer.system
@@ -42,7 +42,7 @@
           Text(OJDLocalized.string("ui.controllers.server.ojd")).tag(ControllerServer.ojd)
         }.pickerStyle(.segmented).disabled(isRunning || unavailableReason != nil)
         if isRunning {
-          HStack(spacing: 8) {
+          HStack(spacing: OJDSpacing.small) {
             ProgressView().controlSize(.small)
             Text(OJDLocalized.string("ui.controllers.server.updating")).font(.caption)
               .foregroundColor(Color(NSColor.secondaryLabelColor))

@@ -14,7 +14,7 @@
 
     /// The behavior sheet's fields and its Cancel and Apply buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(OJDLocalized.string("ui.profiles.bindingBehavior")).font(
           .headline.weight(.semibold)
         )
@@ -139,7 +139,7 @@
             dismiss()
           }
         }
-      }.padding(28).frame(width: 470)
+      }.ojdSheet(.regular)
     }
 
     /// Whether the assignment's source can start a long hold or tap count: any discrete source
@@ -169,7 +169,7 @@
       format: String,
       multiplier: Double = 1
     ) -> some View {
-      VStack(alignment: .leading, spacing: 5) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         HStack {
           Text(title)
           Spacer()
@@ -183,7 +183,7 @@
 
     /// A picker of the discrete destinations, with the fields of a physical output.
     func destinationPicker(selection: Binding<RemappingDestination>) -> some View {
-      VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         Picker(
           OJDLocalized.string("term.destination"),
           selection: selection

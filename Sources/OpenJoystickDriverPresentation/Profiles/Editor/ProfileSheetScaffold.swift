@@ -41,7 +41,7 @@
 
     /// The scaffold.
     var body: some View {
-      VStack(alignment: .leading, spacing: 15) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(title).font(.headline.weight(.semibold))
         if let help {
           Text(help).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(
@@ -56,8 +56,8 @@
             vertical: true
           )
         }
-        HStack(spacing: 10) { footer }
-      }.padding(28).frame(minWidth: 390, idealWidth: 440, maxWidth: 520)
+        HStack(spacing: OJDSpacing.medium) { footer }
+      }.ojdSheet(.compact)
     }
   }
 

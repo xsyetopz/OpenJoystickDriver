@@ -9,7 +9,7 @@
 
     /// The control picker, the destination and the Cancel and Add Assignment buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 15) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(OJDLocalized.string("ui.capture.pressControl"))
           .font(.headline.weight(.semibold))
         Text(
@@ -86,7 +86,7 @@
             viewModel.cancelInputCapture()
           }.disabled(!canAddAssignment)
         }
-      }.padding(28).frame(width: 470).accessibilityElement(children: .contain)
+      }.ojdSheet(.regular).accessibilityElement(children: .contain)
         .ojdAccessibilityLabel(OJDLocalized.string("ui.capture.title")).background(
           EscapeKeyMonitor(isCapturing: { keyboardCaptureActive }, onEscape: { cancelCapture() })
         ).onAppear { selectInitialDevice() }.onDisappear { stopListening() }.onReceive(
@@ -102,7 +102,7 @@
     private var touchSourceControls: some View {
       switch source {
       case .touchGrid(let grid):
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: OJDSpacing.small) {
           Stepper(
             OJDLocalized.formatted(
               "ui.capture.touchColumns",
@@ -131,7 +131,7 @@
           )
         }.padding(.leading, 8)
       case .touchSwipe(let swipe):
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
           Text(
             OJDLocalized.formatted(
               "ui.capture.touchSwipeDistance",

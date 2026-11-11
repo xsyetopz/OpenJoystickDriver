@@ -17,7 +17,7 @@
     /// The command-line tool status and the button for its state.
     var body: some View {
       Section(OJDLocalized.string("ui.settings.commandLine.tool")) {
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
+        HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.medium) {
           Text(Self.statusText(commandLineTool.status, linkPath: commandLineTool.link.linkURL.path))
             .fixedSize(horizontal: false, vertical: true)
           Spacer(minLength: 12)

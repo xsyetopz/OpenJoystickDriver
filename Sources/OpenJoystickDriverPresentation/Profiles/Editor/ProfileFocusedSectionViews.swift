@@ -140,7 +140,7 @@
     private func layerGroup(_ layer: RemappingLayer) -> some View {
       Section(
         header: HStack {
-          VStack(alignment: .leading, spacing: 2) {
+          VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
             Text(layer.name)
             Text(layerDescription(layer)).font(.caption).foregroundColor(
               Color(NSColor.secondaryLabelColor)
@@ -295,8 +295,8 @@
       enabled: Bool? = nil,
       action: @escaping () -> Void
     ) -> some View {
-      HStack(alignment: .firstTextBaseline, spacing: 12) {
-        VStack(alignment: .leading, spacing: 3) {
+      HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.medium) {
+        VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
           Text(title)
           Text(supported ? summary : OJDLocalized.string("ui.profiles.notSupportedByController"))
             .font(.caption).foregroundColor(

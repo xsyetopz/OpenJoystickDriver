@@ -78,7 +78,7 @@
     /// The row.
     var body: some View {
       OJDLabeledRow(title) {
-        HStack(spacing: 8) {
+        HStack(spacing: OJDSpacing.small) {
           control.labelsHidden().ojdAccessibilityLabel(accessibilityLabel)
             .ojdAccessibilityValue(valueText)
           Text(valueText)
@@ -129,7 +129,7 @@
     /// The header: the session state with its symbol, and the connection, protocol and ID of the
     /// controller.
     private var controllerHeader: some View {
-      HStack(spacing: 10) {
+      HStack(spacing: OJDSpacing.medium) {
         OJDSystemSymbol(name: statusSemanticState.presentation.symbolName, fallback: statusLabel)
           .foregroundColor(Color(statusSemanticState.presentation.tone.color))
           .accessibilityHidden(true)
@@ -196,7 +196,7 @@
             )
           }
         }.disabled(!model.canSendOutput || model.isOutputBusy)
-        HStack(spacing: 8) {
+        HStack(spacing: OJDSpacing.small) {
           Button(OJDLocalized.string("ui.inputTest.testRumble")) {
             model.testRumble()
           }.disabled(!model.canSendOutput || model.isOutputBusy)
@@ -215,7 +215,7 @@
     private var lightingContent: some View {
       Group {
         if model.capabilities.supportsPlayerIndicator {
-          VStack(alignment: .leading, spacing: 6) {
+          VStack(alignment: .leading, spacing: OJDSpacing.small) {
             Text(OJDLocalized.string("ui.inputTest.playerIndicator"))
             HStack {
               Picker("", selection: playerIndicatorBinding) {
@@ -239,7 +239,7 @@
           }
         }
         if model.capabilities.supportsProgrammableBrightness {
-          VStack(alignment: .leading, spacing: 3) {
+          VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
             HStack {
               Text(OJDLocalized.string("ui.inputTest.brightness"))
               Spacer()

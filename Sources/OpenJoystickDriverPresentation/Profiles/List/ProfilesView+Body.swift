@@ -82,7 +82,7 @@
     /// The detail column: the error banner, the profile detail, and the sheets and alerts of the
     /// screen.
     private var detailColumn: some View {
-      VStack(alignment: .leading, spacing: 0) {
+      VStack(alignment: .leading, spacing: OJDSpacing.none) {
         if let profileActionError {
           ProfileActionErrorBanner(message: profileActionError) { self.profileActionError = nil }
         }
@@ -274,14 +274,14 @@
 
     /// The profile list column: the loading state, the load error with Try Again, or the rows.
     var profileList: some View {
-      VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         switch viewModel.remappingState {
         case .loading:
           LoadingStateView(
             message: OJDLocalized.string("ui.profiles.loading")
           ).padding(.horizontal, 14)
         case .unavailable(let message), .error(let message):
-          VStack(alignment: .leading, spacing: 6) {
+          VStack(alignment: .leading, spacing: OJDSpacing.small) {
             Text(
               OJDLocalized.string("ui.profiles.loadError")
             ).font(.caption.weight(.semibold))
@@ -305,7 +305,7 @@
     var profileListRows: some View {
       List(selection: profileListSelection) {
         ForEach(profiles) { profile in
-          HStack(spacing: 8) {
+          HStack(spacing: OJDSpacing.small) {
             OJDListGlyphSlot {
               let semanticState: SemanticState = isActive(profile) ? .active : .inactive
               OJDSystemSymbol(
@@ -315,7 +315,7 @@
                   : OJDLocalized.string("ui.profiles.notActive")
               ).foregroundColor(Color(semanticState.presentation.tone.color))
             }
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
               Text(profile.name).lineLimit(1)
               Text(
                 ProfileScopeCaption.text(
@@ -333,7 +333,7 @@
         }
         ForEach(currentSnapshot?.profileIssues ?? []) { issue in
           let presentation = ProfileIssuePresentation(issue)
-          HStack(spacing: 8) {
+          HStack(spacing: OJDSpacing.small) {
             OJDListGlyphSlot {
               OJDSystemSymbol(
                 name: issue.kind == .damagedProfile
@@ -346,7 +346,7 @@
                 )
               )
             }
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
               Text(presentation.title).lineLimit(1)
               Text(presentation.code).font(.caption).foregroundColor(
                 Color(NSColor.secondaryLabelColor)

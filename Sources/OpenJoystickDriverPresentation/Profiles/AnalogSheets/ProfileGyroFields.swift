@@ -11,7 +11,7 @@
 
     /// The gyro output picker and the fields of the chosen output.
     var body: some View {
-      VStack(alignment: .leading, spacing: 12) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Picker(label("output"), selection: $draft.mode) {
           Text(label("disabled")).tag(RemappingGyroOutputMode.disabled)
           Text(label("mouse")).tag(RemappingGyroOutputMode.mouse)

@@ -18,7 +18,7 @@
     /// The driver extension status and its uninstall button, with the confirmation.
     var body: some View {
       Section(OJDLocalized.string("ui.setup.driverTitle")) {
-        HStack(alignment: .firstTextBaseline, spacing: 12) {
+        HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.medium) {
           Text(OJDLocalized.string(detailKey)).fixedSize(horizontal: false, vertical: true)
           Spacer(minLength: 12)
           if runtime.systemExtensionSetupState == .active {

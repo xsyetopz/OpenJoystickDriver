@@ -102,7 +102,7 @@
 
     /// The footer: the latest refused edit, the save status and the Save button.
     var editorFooter: some View {
-      VStack(alignment: .leading, spacing: 8) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         if let localError {
           Text(localError).font(.body).foregroundColor(Color(NSColor.systemRed)).fixedSize(
             horizontal: false,
@@ -113,7 +113,7 @@
           Text(footerNotice).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
             .fixedSize(horizontal: false, vertical: true)
         }
-        HStack(spacing: 10) {
+        HStack(spacing: OJDSpacing.medium) {
           Spacer(minLength: 8)
           saveStatusView
           if showsUnsavedAfterFailure {
@@ -130,7 +130,7 @@
     /// The save status: the progress while a save runs, then its label.
     @ViewBuilder
     var saveStatusView: some View {
-      HStack(spacing: 6) {
+      HStack(spacing: OJDSpacing.small) {
         if saveStatus == .saving { ProgressView() }
         Text(saveStatus.label).foregroundColor(saveStatus.color)
       }.frame(minHeight: 28).ojdAccessibilityLabel(

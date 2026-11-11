@@ -79,7 +79,7 @@
         case .listening:
           Text(OJDLocalized.string("ui.capture.listening"))
         case .received(_, let state):
-          VStack(alignment: .leading, spacing: 3) {
+          VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
             if let detected = RuntimePresentation.detectedSource(from: state) {
               Text(
                 OJDLocalized.formatted(
@@ -97,7 +97,7 @@
             Text(heldControlsText(state))
           }
         case .detected(_, let state, let detected):
-          VStack(alignment: .leading, spacing: 3) {
+          VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
             Text(
               OJDLocalized.formatted(
                 "ui.capture.detectedNoPeriod",

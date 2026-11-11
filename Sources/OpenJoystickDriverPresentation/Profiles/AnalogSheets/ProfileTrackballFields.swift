@@ -10,7 +10,7 @@
 
     /// The enabled toggle and, while it is on, the source and the settings of the trackball.
     var body: some View {
-      VStack(alignment: .leading, spacing: 12) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Toggle(label("enabled"), isOn: $draft.enabled)
         if draft.enabled {
           Text(

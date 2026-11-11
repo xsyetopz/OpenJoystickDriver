@@ -20,7 +20,7 @@
 
     /// The title with the subtitle, when there is one.
     var body: some View {
-      VStack(alignment: .leading, spacing: 5) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text(title).font(.largeTitle.weight(.semibold))
         if let subtitle {
           Text(subtitle).foregroundColor(Color(NSColor.secondaryLabelColor)).fixedSize(

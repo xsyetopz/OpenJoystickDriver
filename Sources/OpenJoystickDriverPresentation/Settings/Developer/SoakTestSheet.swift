@@ -40,14 +40,14 @@
 
     /// The title, the content of the test and the buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(OJDLocalized.string("ui.developer.soakTest")).font(.headline)
         content
         HStack {
           Spacer()
           buttons
         }
-      }.padding(20).frame(width: 440)
+      }.ojdSheet(.compact)
     }
 
     /// Closes the sheet after a result; Done and Escape both end here.
@@ -89,13 +89,13 @@
           }
         }
       case .running:
-        HStack(spacing: 8) {
+        HStack(spacing: OJDSpacing.small) {
           ProgressView().controlSize(.small)
           Text(OJDLocalized.string("ui.developer.soakRunning"))
             .foregroundColor(Color(NSColor.secondaryLabelColor))
         }
       case .finished(let row):
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: OJDSpacing.small) {
           Label {
             Text(OJDLocalized.string(row.statusKey)).font(.headline)
           } icon: {

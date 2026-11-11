@@ -74,7 +74,7 @@ struct SerialNumberVisibility: Equatable {
     var body: some View {
       let presentation = visibility.presentation(of: serial)
       OJDLabeledRow(label) {
-        HStack(spacing: 6) {
+        HStack(spacing: OJDSpacing.small) {
           if presentation.isObscured {
             Text(presentation.displayText).foregroundColor(Color(NSColor.secondaryLabelColor))
               .blur(radius: 4).accessibilityHidden(true)

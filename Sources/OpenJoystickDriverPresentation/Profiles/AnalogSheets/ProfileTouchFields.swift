@@ -10,7 +10,7 @@
 
     /// The enabled toggle and, while it is on, the mode and the settings of the touch input.
     var body: some View {
-      VStack(alignment: .leading, spacing: 12) {
+      VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         Toggle(label("enabled"), isOn: $draft.enabled)
         if draft.enabled {
           Picker(label("mode"), selection: $draft.mode) {
@@ -30,7 +30,7 @@
 
     /// A labeled text field for the touch setting called `key`.
     private func field(_ key: String, _ value: Binding<String>) -> some View {
-      VStack(alignment: .leading, spacing: 4) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text(label(key))
         TextField(label(key), text: value).textFieldStyle(RoundedBorderTextFieldStyle())
       }

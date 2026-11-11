@@ -22,7 +22,7 @@
 
     /// The name, controller, target app and output policy fields and the Cancel and Create buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(title).font(.headline)
         Form {
           if context.choices.isEmpty {
@@ -117,7 +117,7 @@
             presentationMode.wrappedValue.dismiss()
           }.disabled(proposedProfile == nil)
         }
-      }.padding(20).frame(width: 420)
+      }.ojdSheet(.compact)
     }
 
     /// The profile the fields describe, or nil.
@@ -169,7 +169,7 @@
 
     /// The name field and the Cancel and Duplicate buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(OJDLocalized.string("action.duplicate")).font(.headline)
         Form {
           TextField(OJDLocalized.string("term.profileName"), text: nameBinding)
@@ -193,7 +193,7 @@
             presentationMode.wrappedValue.dismiss()
           }.disabled(duplicate == nil)
         }
-      }.padding(20).frame(width: 420)
+      }.ojdSheet(.compact)
     }
 
     /// The name in the field.

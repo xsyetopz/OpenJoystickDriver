@@ -12,7 +12,7 @@
     /// The fields of a physical output or `Speak` destination; nothing for any other destination.
     var body: some View {
       if case .physical(let output) = destination {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: OJDSpacing.small) {
           switch output {
           case .rumble(let motor, let intensity):
             Picker(
@@ -92,7 +92,7 @@
       } else if let field = valueField {
         TextField(field.title, text: field.text).padding(.leading, 8)
       } else if case .speak(let text, let voice) = destination {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: OJDSpacing.small) {
           TextField(
             OJDLocalized.string("ui.profiles.speak.text"),
             text: Binding(
@@ -271,7 +271,7 @@
 
     /// A slider from 0 to 1 that shows the value as a percentage beside `title`.
     private func unitSlider(_ title: String, value: Binding<Double>) -> some View {
-      VStack(alignment: .leading, spacing: 4) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text("\(title): \(Int((value.wrappedValue * 100).rounded()))%").font(.body)
         Slider(value: value, in: 0...1).ojdAccessibilityLabel(title)
       }
@@ -279,7 +279,7 @@
 
     /// A slider from 0 to 255 that shows the value beside `title`.
     private func colorSlider(_ title: String, value: Binding<Double>) -> some View {
-      VStack(alignment: .leading, spacing: 4) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text("\(title): \(Int(value.wrappedValue.rounded()))").font(.body)
         Slider(value: value, in: 0...255).ojdAccessibilityLabel(title)
       }

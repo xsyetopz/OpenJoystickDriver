@@ -36,7 +36,7 @@
 
     /// The title, the kind and input pickers, the fields, the live view and the buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(label("title")).font(.headline)
         Picker(label("kind"), selection: $draft.kind) {
           ForEach(ProfileRegionDraft.Kind.allCases, id: \.self) { kind in
@@ -44,7 +44,7 @@
           }
         }.pickerStyle(SegmentedPickerStyle())
         ScrollView {
-          VStack(alignment: .leading, spacing: 12) {
+          VStack(alignment: .leading, spacing: OJDSpacing.medium) {
             inputPicker
             fields
             liveView
@@ -70,7 +70,7 @@
           Button(OJDLocalized.string("action.addAssignment")) { add() }
             .disabled(keyboardDestinationCleared)
         }
-      }.padding(28).frame(width: 500, height: 640).task { await poll() }
+      }.ojdSheet(.regular).frame(height: 640).task { await poll() }
     }
 
     /// The source of the draft, or the first stick ring while a number cannot be read.
@@ -130,7 +130,7 @@
     /// The live position of the input, or a note that no controller is connected.
     @ViewBuilder
     private var liveView: some View {
-      VStack(alignment: .leading, spacing: 6) {
+      VStack(alignment: .leading, spacing: OJDSpacing.small) {
         Text(label("live")).font(.subheadline)
         if let state {
           let reading = draft.reading(of: state, tuning: tuning)
@@ -164,7 +164,7 @@
 
     /// A text field titled `title`.
     private func field(_ title: String, _ value: Binding<String>) -> some View {
-      VStack(alignment: .leading, spacing: 4) {
+      VStack(alignment: .leading, spacing: OJDSpacing.xSmall) {
         Text(title)
         TextField(title, text: value).textFieldStyle(RoundedBorderTextFieldStyle())
       }

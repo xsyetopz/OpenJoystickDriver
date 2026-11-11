@@ -62,13 +62,13 @@
 
     /// The details form and its Cancel and Apply buttons.
     var body: some View {
-      VStack(alignment: .leading, spacing: 15) {
+      VStack(alignment: .leading, spacing: OJDSpacing.large) {
         Text(OJDLocalized.string("ui.profiles.details")).font(
           .headline.weight(.semibold)
         )
         TextField(OJDLocalized.string("term.profileName"), text: $name)
           .ojdAccessibilityLabel(OJDLocalized.string("term.profileName"))
-        HStack(spacing: 12) {
+        HStack(spacing: OJDSpacing.medium) {
           TextField(
             OJDLocalized.string("ui.profiles.vendorID"),
             text: $vendorID
@@ -125,7 +125,7 @@
           Button(OJDLocalized.string("action.cancel")) { dismiss() }
           Button(OJDLocalized.string("action.apply")) { save() }
         }
-      }.padding(28).frame(width: 440)
+      }.ojdSheet(.compact)
     }
 
     /// Validates the fields and passes the edited profile to ``onSave``.
