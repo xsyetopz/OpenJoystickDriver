@@ -48,7 +48,11 @@
         }
         if ControllerServerPicker.isShown(for: device) {
           Section {
-            ControllerServerPicker(viewModel: viewModel, device: device)
+            ControllerServerPicker(
+              viewModel: viewModel,
+              device: device,
+              hasRecord: record != nil || !hasLoadedRecord
+            )
             if let record {
               OJDLabeledValue(
                 OJDLocalized.string("ui.controllers.server.source"),
@@ -107,6 +111,7 @@
     private func loadRecord() async {
       let model = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
       record = await Task.detached { ControllerRecordSet.load().records[model] }.value
+      hasLoadedRecord = true
     }
 
     /// Every connected controller; nil while the service status is not available.

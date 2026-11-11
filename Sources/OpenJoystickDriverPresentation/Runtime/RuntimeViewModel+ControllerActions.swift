@@ -153,17 +153,20 @@ extension RuntimeViewModel {
   /// Sets who serves the model of `device` to `server`: macOS natively, or OpenJoystickDriver as a
   /// virtual controller.
   ///
-  /// A refusal shows in the controller's detail, with the service's detail text for a record that
-  /// is invalid or cannot be written.
+  /// A refusal is kept in ``controllerServerFailures`` for the picker to show below itself, with
+  /// the service's detail text for a record that is invalid or cannot be written. A choice made
+  /// while the model's previous one runs is ignored.
   func setControllerServer(
     _ server: ControllerServer,
     for device: ApplicationServiceDeviceDescription
   ) async {
     let model = RuntimeControllerModel(device)
+    guard pendingControllerServers[model] == nil else { return }
     pendingControllerServers[model] = server
+    controllerServerFailures[model] = nil
     defer { pendingControllerServers[model] = nil }
     var accepted = false
-    await performControllerAction(device) {
+    controllerServerFailures[model] = await runControllerAction {
       let result = try await gateway.setControllerServer(
         model: ControllerModelID(vendorID: device.vendorID, productID: device.productID),
         server: server
@@ -202,6 +205,21 @@ extension RuntimeViewModel {
       return RuntimePresentation.controllerTuningFailure(failure, detail: result.detail)
     }
     return accepted
+  }
+
+  /// Whether the service is applying a server choice for the model of `device`.
+  func isControllerServerRequestRunning(for device: ApplicationServiceDeviceDescription) -> Bool {
+    pendingControllerServers[RuntimeControllerModel(device)] != nil
+  }
+
+  /// Why the picker cannot offer a server choice for `device`, or nil when it can.
+  ///
+  /// The service refuses every choice for a model that no controller record describes
+  /// (`noRecord`); its other refusals never reach a controller that shows the picker.
+  ///
+  /// - Parameter hasRecord: Whether a record describes the controller's model.
+  func controllerServerUnavailableReason(hasRecord: Bool) -> String? {
+    hasRecord ? nil : OJDLocalized.string("ui.controllers.server.noRecord")
   }
 
   /// The server the picker shows for `device`: the pending choice, or the record's server.
@@ -287,11 +305,16 @@ extension RuntimeViewModel {
     _ action: () async throws -> String?
   ) async {
     controllerActionFailures[device.sessionToken.rawValue] = nil
+    controllerActionFailures[device.sessionToken.rawValue] = await runControllerAction(action)
+  }
+
+  /// Runs `action`, refreshes the inventory, and returns the failure `action` returned or threw.
+  private func runControllerAction(_ action: () async throws -> String?) async -> String? {
     var failure: String?
     do { failure = try await action() } catch {
       failure = RuntimePresentation.userFacingError(error)
     }
     await refreshControllerInventory()
-    controllerActionFailures[device.sessionToken.rawValue] = failure
+    return failure
   }
 }

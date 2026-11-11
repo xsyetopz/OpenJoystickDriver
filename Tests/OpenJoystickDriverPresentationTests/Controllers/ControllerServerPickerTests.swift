@@ -69,7 +69,7 @@ struct ControllerServerPickerTests {
     #expect(requests.count == 1)
     #expect(requests.first?.model == ControllerModelID(vendorID: 0x3537, productID: 0x100B))
     #expect(requests.first?.server == server)
-    #expect(viewModel.controllerActionFailures[device.sessionToken.rawValue] == nil)
+    #expect(viewModel.controllerServerFailures[RuntimeControllerModel(device)] == nil)
   }
 
   @Test
@@ -81,7 +81,8 @@ struct ControllerServerPickerTests {
 
     await viewModel.setControllerServer(.ojd, for: device)
 
-    let message = viewModel.controllerActionFailures[device.sessionToken.rawValue]
+    let message = viewModel.controllerServerFailures[RuntimeControllerModel(device)]
+    #expect(viewModel.controllerActionFailures[device.sessionToken.rawValue] == nil)
     #expect(message == OJDLocalized.string("ui.controllers.server.invalidRecord") + " bad record")
   }
 }

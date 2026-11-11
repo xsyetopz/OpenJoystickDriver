@@ -262,6 +262,8 @@
 "platform.macos.ui.controllers.server.system" = "macOS（原生）";
 /* Option of the server popup: OpenJoystickDriver serves the controller as a virtual gamepad. OpenJoystickDriver is the product name. */
 "ui.controllers.server.ojd" = "OpenJoystickDriver（虛擬）";
+/* Progress text under the Served by picker in the Controllers detail while the service applies the user's choice of who serves the controller. */
+"ui.controllers.server.updating" = "正在變更由誰來服務此控制器…";
 /* Label of the serving route fact in the Controllers detail. The route is the way the input reaches games. */
 "ui.controllers.serving.label" = "處理路徑";
 /* Value of the serving route in the Controllers area: macOS serves the controller and the driver passes the input through. */

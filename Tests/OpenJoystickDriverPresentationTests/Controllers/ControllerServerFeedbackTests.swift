@@ -143,8 +143,53 @@ struct ControllerServerFeedbackTests {
 
     await viewModel.setControllerServer(.ojd, for: device)
 
-    let message = viewModel.controllerActionFailures[device.sessionToken.rawValue]
+    let message = viewModel.controllerServerFailures[RuntimeControllerModel(device)]
     #expect(message == expected)
+  }
+
+  @Test
+  func theControlIsRunningUntilTheServiceConfirmsAndAnotherChoiceIsIgnored() async {
+    let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
+    let viewModel = RuntimeViewModel(gateway: gateway)
+    let device = Self.device()
+    #expect(!viewModel.isControllerServerRequestRunning(for: device))
+
+    let first = Task { await viewModel.setControllerServer(.ojd, for: device) }
+    await gateway.waitForStatusCall(count: 2)
+    #expect(viewModel.isControllerServerRequestRunning(for: device))
+    await viewModel.setControllerServer(.system, for: device)
+    await gateway.setStatusPayload(Self.status([Self.device(recordServer: .ojd)]))
+    await first.value
+
+    #expect(await gateway.serverRequests.map(\.server) == [.ojd])
+    #expect(!viewModel.isControllerServerRequestRunning(for: device))
+  }
+
+  @Test
+  func aRefusalStaysBelowThePickerUntilTheNextChoiceStarts() async {
+    let gateway = GatewayStub(statusPayload: Self.status([Self.device()]))
+    await gateway.setServerFailure(.noRecord)
+    let viewModel = RuntimeViewModel(gateway: gateway)
+    let device = Self.device()
+    let model = RuntimeControllerModel(device)
+
+    await viewModel.setControllerServer(.ojd, for: device)
+    #expect(viewModel.controllerServerFailures[model] == OJDLocalized.string("ui.controllers.server.noRecord"))
+    #expect(viewModel.controllerActionFailures[device.sessionToken.rawValue] == nil)
+
+    await gateway.setServerFailure(nil)
+    await viewModel.setControllerServer(.ojd, for: device)
+    #expect(viewModel.controllerServerFailures[model] == nil)
+  }
+
+  @Test
+  func aModelWithoutARecordOffersNoChoiceAndSaysWhy() {
+    let viewModel = RuntimeViewModel(gateway: GatewayStub())
+    #expect(
+      viewModel.controllerServerUnavailableReason(hasRecord: false)
+        == OJDLocalized.string("ui.controllers.server.noRecord")
+    )
+    #expect(viewModel.controllerServerUnavailableReason(hasRecord: true) == nil)
   }
 
   @Test(

@@ -29,6 +29,9 @@
     /// The effective record of the controller's model, read from the record files.
     @State
     var record: ControllerRecord?
+    /// Whether the record has been read once, so a missing record is not reported while it loads.
+    @State
+    var hasLoadedRecord = false
     /// The state and results of the longer actions.
     @StateObject
     var actions = ControllerDetailActions()

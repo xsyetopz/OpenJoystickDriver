@@ -2,6 +2,7 @@
 
   import Foundation
   import OpenJoystickDriverKit
+  import AppKit
   import SwiftUI
 
   /// Who serves one controller model, macOS natively or OpenJoystickDriver as a virtual controller,
@@ -15,6 +16,8 @@
     var viewModel: RuntimeViewModel
     /// The controller.
     let device: ApplicationServiceDeviceDescription
+    /// Whether a record describes the controller's model; without one the service refuses a choice.
+    let hasRecord: Bool
 
     /// Returns whether the picker applies to `device`: macOS serves it natively, or its record
     /// already gives it to OpenJoystickDriver, and its family does not use raw USB, which always
@@ -28,14 +31,40 @@
       ServingPolicy.offersServerChoice(ServingInput(device))
     }
 
-    /// The segmented picker of the two servers.
+    /// The segmented picker of the two servers; below it the progress of the request, the reason it
+    /// is unavailable, or the service's refusal.
     var body: some View {
-      Picker(OJDLocalized.string("ui.controllers.server.label"), selection: serverBinding) {
-        Text(OJDLocalized.string("platform.macos.ui.controllers.server.system")).tag(
-          ControllerServer.system
-        )
-        Text(OJDLocalized.string("ui.controllers.server.ojd")).tag(ControllerServer.ojd)
-      }.pickerStyle(.segmented)
+      VStack(alignment: .leading, spacing: 6) {
+        Picker(OJDLocalized.string("ui.controllers.server.label"), selection: serverBinding) {
+          Text(OJDLocalized.string("platform.macos.ui.controllers.server.system")).tag(
+            ControllerServer.system
+          )
+          Text(OJDLocalized.string("ui.controllers.server.ojd")).tag(ControllerServer.ojd)
+        }.pickerStyle(.segmented).disabled(isRunning || unavailableReason != nil)
+        if isRunning {
+          HStack(spacing: 8) {
+            ProgressView().controlSize(.small)
+            Text(OJDLocalized.string("ui.controllers.server.updating")).font(.caption)
+              .foregroundColor(Color(NSColor.secondaryLabelColor))
+          }
+        } else if let message = unavailableReason ?? refusal {
+          Text(message).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+            .fixedSize(horizontal: false, vertical: true)
+        }
+      }
+    }
+
+    /// Whether the service is applying a choice.
+    private var isRunning: Bool { viewModel.isControllerServerRequestRunning(for: device) }
+
+    /// Why no choice is offered, or nil.
+    private var unavailableReason: String? {
+      viewModel.controllerServerUnavailableReason(hasRecord: hasRecord)
+    }
+
+    /// Why the service refused the latest choice, or nil.
+    private var refusal: String? {
+      viewModel.controllerServerFailures[RuntimeControllerModel(device)]
     }
 
     /// The binding to the server that is shown; choosing the other one sends the change to the

@@ -54,6 +54,10 @@ final class RuntimeViewModel: ObservableObject {
   /// keeps the choice instead of showing the record's value until the record changes.
   @Published
   var pendingControllerServers: [RuntimeControllerModel: ControllerServer] = [:]
+  /// Why the service refused the latest server choice of each controller model; cleared when the
+  /// model's next choice starts.
+  @Published
+  var controllerServerFailures: [RuntimeControllerModel: String] = [:]
   /// Why the latest background status read failed while the last controller list stays visible.
   @Published
   var liveStatusError: String?
