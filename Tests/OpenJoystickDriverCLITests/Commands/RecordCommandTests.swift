@@ -7,12 +7,12 @@ import Testing
 
 struct RecordCommandTests {
   /// A patch of the bundled `XboxGIP` record `366C:0005`.
-  private static let patch = Data(
-    """
-    {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-     "selector": {"vendorID": 13932, "productID": 5},
-     "patch": {"tuning": {"stickDeadzone": 0.08}}}
-    """.utf8
+  private static let patch = PropertyListFixture.bytes(
+    json: """
+      {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
+       "selector": {"vendorID": 13932, "productID": 5},
+       "patch": {"tuning": {"stickDeadzone": 0.08}}}
+      """
   )
 
   /// A user directory that exists for one test.
@@ -59,7 +59,7 @@ struct RecordCommandTests {
     #expect(result["valid"] as? Bool == true)
     #expect(result["operation"] as? String == "Patch")
     #expect(result["identity"] as? String == "366C:0005")
-    #expect(result["fileName"] as? String == "366c-0005.patch.json")
+    #expect(result["fileName"] as? String == "366c-0005.patch.plist")
     #expect(result["transport"] as? String == "USB")
     #expect(result["transportClaim"] as? String == "Unclaimed")
     #expect(human.standardOutput.contains("366C:0005"))
@@ -69,7 +69,7 @@ struct RecordCommandTests {
   @Test
   func anInvalidRecordExitsOneAndNamesTheProblem() async throws {
     let directory = Directory()
-    let invalid = Data(#"{"operation": "patch"}"#.utf8)
+    let invalid = PropertyListFixture.bytes(json: #"{"operation": "patch"}"#)
 
     let json = await run(["validate", "-", "--json"], in: directory, stdin: invalid)
     let install = await run(["install", "-"], in: directory, stdin: invalid)
@@ -88,11 +88,11 @@ struct RecordCommandTests {
   @Test
   func aRecordThatBreaksARuleReportsE5007() async throws {
     let directory = Directory()
-    let invalid = Data(
-      """
-      {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-       "selector": {"all": false}, "patch": {"tuning": {"stickDeadzone": 0.08}}}
-      """.utf8
+    let invalid = PropertyListFixture.bytes(
+      json: """
+        {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
+         "selector": {"all": false}, "patch": {"tuning": {"stickDeadzone": 0.08}}}
+        """
     )
 
     let result = await run(["validate", "-"], in: directory, stdin: invalid)
@@ -115,9 +115,9 @@ struct RecordCommandTests {
     #expect(install.code == 0, "\(install.standardError)")
     #expect(try install.json()["replaced"] as? Bool == false)
     #expect(try again.json()["replaced"] as? Bool == true)
-    #expect(directory.fileNames == ["366c-0005.patch.json"])
+    #expect(directory.fileNames == ["366c-0005.patch.plist"])
     #expect(
-      try Data(contentsOf: directory.url.appendingPathComponent("366c-0005.patch.json"))
+      try Data(contentsOf: directory.url.appendingPathComponent("366c-0005.patch.plist"))
         == Self.patch
     )
     let row = try #require(
@@ -143,7 +143,7 @@ struct RecordCommandTests {
   @Test
   func listNamesSkippedFilesAndBundledListsTheCatalogAlone() async throws {
     let directory = Directory()
-    try directory.write(Self.patch, as: "wrong.json")
+    try directory.write(Self.patch, as: "wrong.plist")
 
     let list = await run(["list", "--json"], in: directory)
     let bundled = await run(["list", "--bundled", "--json"], in: directory)
@@ -151,8 +151,8 @@ struct RecordCommandTests {
     #expect(list.code == 0)
     let metadata = try #require(try list.json()["metadata"] as? [String: Any])
     #expect(metadata.isEmpty)
-    #expect(list.standardError.contains("wrong.json"))
-    #expect(list.standardError.contains("366c-0005.patch.json"))
+    #expect(list.standardError.contains("wrong.plist"))
+    #expect(list.standardError.contains("366c-0005.patch.plist"))
     let records = try #require(try bundled.json()["items"] as? [[String: Any]])
     #expect(records.count == ControllerRecordSet.bundled.records.count)
     #expect(records.allSatisfy { $0["layer"] as? String == "Bundled" })
@@ -170,14 +170,14 @@ struct RecordCommandTests {
   @Test
   func validateAndShowNoteThatASwitch2RecordWithoutBluetoothLEIsUSBOnly() async throws {
     let directory = Directory()
-    let switch2 = Data(
-      """
-      {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-       "vendorID": 1406, "productID": 8447,
-       "modes": [{"id": "default", "protocol": {"family": "NintendoSwitch2"}}]}
-      """.utf8
+    let switch2 = PropertyListFixture.bytes(
+      json: """
+        {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
+         "vendorID": 1406, "productID": 8447,
+         "modes": [{"id": "default", "protocol": {"family": "NintendoSwitch2"}}]}
+        """
     )
-    try directory.write(switch2, as: "057e-20ff.json")
+    try directory.write(switch2, as: "057e-20ff.plist")
     let note = CLILocalized.text("cli.record.group.usbOnlySwitch2")
 
     let validate = await run(["validate", "-"], in: directory, stdin: switch2)
@@ -195,7 +195,7 @@ struct RecordCommandTests {
   @Test
   func installNeedsForceToReplaceWithoutATerminalAndHonorsDryRun() async throws {
     let directory = Directory()
-    let installed = Data("{}".utf8)
+    let installed = PropertyListFixture.bytes(json: "{}")
     let dryRun = await run(
       ["install", "-", "--dry-run", "--json"],
       in: directory,
@@ -206,10 +206,10 @@ struct RecordCommandTests {
     #expect(try dryRun.json()["replaced"] as? Bool == false)
     #expect(directory.fileNames.isEmpty)
 
-    try directory.write(installed, as: "366c-0005.patch.json")
+    try directory.write(installed, as: "366c-0005.patch.plist")
     let unforced = await run(["install", "-", "--no-input"], in: directory, stdin: Self.patch)
     let replacing = await run(["install", "-", "-n", "--json"], in: directory, stdin: Self.patch)
-    let file = directory.url.appendingPathComponent("366c-0005.patch.json")
+    let file = directory.url.appendingPathComponent("366c-0005.patch.plist")
     #expect(unforced.code == 64)
     #expect(try replacing.json()["replaced"] as? Bool == true)
     #expect(try Data(contentsOf: file) == installed)
@@ -222,14 +222,14 @@ struct RecordCommandTests {
   @Test
   func removeNeedsForceWithoutATerminalAndHonorsDryRun() async throws {
     let directory = Directory()
-    try directory.write(Self.patch, as: "366c-0005.patch.json")
+    try directory.write(Self.patch, as: "366c-0005.patch.plist")
 
     let dryRun = await run(["remove", "366C:0005", "--dry-run", "--json"], in: directory)
     let unforced = await run(["remove", "366C:0005", "--no-input"], in: directory)
     #expect(dryRun.code == 0)
     #expect(try dryRun.details()["dryRun"] as? Bool == true)
     #expect(unforced.code == 64)
-    #expect(directory.fileNames == ["366c-0005.patch.json"])
+    #expect(directory.fileNames == ["366c-0005.patch.plist"])
 
     let removed = await run(["remove", "366C:0005", "--force"], in: directory)
     let absent = await run(["remove", "366C:0005", "--force"], in: directory)
@@ -371,66 +371,28 @@ struct RecordCommandTests {
     #expect(result.standardError.hasPrefix("error[E2013]: "))
   }
 
-  /// A user record keeps the member order and the number text of its file in `record show
-  /// --json`, while the members of the envelope stay sorted by name.
+  /// `record show --json` ends in one newline and keeps the members of the envelope sorted by name.
   @Test
-  func showJSONKeepsTheMemberOrderAndNumberTextOfAUserRecord() async throws {
+  func showJSONSortsTheEnvelopeAndEndsInOneNewline() async throws {
     let directory = Directory()
-    let record = Data(
-      """
-      {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-       "vendorID": 4617, "productID": 2,
-       "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}],
-       "tuning": {"stickDeadzone": 8E-2, "usbTransferTimeoutMs": 1e3}}
-      """.utf8
+    let record = PropertyListFixture.bytes(
+      json: """
+        {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
+         "vendorID": 4617, "productID": 2,
+         "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
+        """
     )
-    try directory.write(record, as: "1209-0002.json")
-    let validate = await run(["validate", "-"], in: directory, stdin: record)
+    try directory.write(record, as: "1209-0002.plist")
     let json = await run(["show", "1209:0002", "--json"], in: directory)
 
-    #expect(validate.code == 0, "\(validate.standardError)")
     #expect(json.code == 0, "\(json.standardError)")
     let output = json.standardOutput
     #expect(output.hasPrefix("{\n  \"apiVersion\": "))
     #expect(output.hasSuffix("}\n"))
     #expect(!output.hasSuffix("\n\n"))
-    #expect(output.contains("\"stickDeadzone\": 8E-2,"))
-    #expect(output.contains("\"usbTransferTimeoutMs\": 1e3"))
-    // The record keeps its file's member order: `vendorID` precedes `modes`, sorting reverses it.
-    let vendor = try #require(output.range(of: "\n    \"vendorID\""))
-    let modes = try #require(output.range(of: "\n    \"modes\": ["))
-    #expect(vendor.lowerBound < modes.lowerBound)
-    // The envelope and the other members stay sorted by name.
     let names = ["apiVersion", "family", "identity", "kind", "layer", "record", "transport"]
     let positions = try names.map { try #require(output.range(of: "\n  \"\($0)\"")).lowerBound }
     #expect(positions == positions.sorted())
-  }
-
-  /// A user patch over a bundled record keeps the number text of the patch file in every output
-  /// that prints the record text (`--plain` lists layers only): `8E-2` and `1e3` stay as written,
-  /// not `0.08` and `1000`.
-  @Test
-  func aPatchedRecordPrintsItsNumbersAsThePatchFileWritesThem() async throws {
-    let directory = Directory()
-    let patch = Data(
-      """
-      {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-       "selector": {"vendorID": 13932, "productID": 5},
-       "patch": {"tuning": {"stickDeadzone": 8E-2, "usbTransferTimeoutMs": 1e3}}}
-      """.utf8
-    )
-    try directory.write(patch, as: "366c-0005.patch.json")
-
-    let json = await run(["show", "366C:0005", "--json"], in: directory)
-    let human = await run(["show", "366C:0005"], in: directory)
-
-    for result in [json, human] {
-      #expect(result.code == 0, "\(result.standardError)")
-      #expect(result.standardOutput.contains("8E-2"), "\(result.standardOutput)")
-      #expect(result.standardOutput.contains("1e3"), "\(result.standardOutput)")
-      #expect(!result.standardOutput.contains("0.08"))
-    }
-    #expect(json.standardOutput.contains("\"stickDeadzone\": 8E-2,"))
   }
 
   /// No record field takes an integer of 25 digits, so the command refuses it and does not
@@ -438,12 +400,12 @@ struct RecordCommandTests {
   @Test
   func anIntegerBeyond64BitsInATuningValueIsRefused() async throws {
     let directory = Directory()
-    let patch = Data(
-      """
-      {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-       "selector": {"vendorID": 13932, "productID": 5},
-       "patch": {"tuning": {"usbTransferTimeoutMs": 1234567890123456789012345}}}
-      """.utf8
+    let patch = PropertyListFixture.bytes(
+      json: """
+        {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
+         "selector": {"vendorID": 13932, "productID": 5},
+         "patch": {"tuning": {"usbTransferTimeoutMs": 1234567890123456789012345}}}
+        """
     )
 
     let result = await run(["validate", "-", "--json"], in: directory, stdin: patch)

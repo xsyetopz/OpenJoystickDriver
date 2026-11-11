@@ -15,8 +15,8 @@ struct ConfigChangeCommandTests {
     )
 
     var controllers: URL { root.appendingPathComponent("Controllers", isDirectory: true) }
-    var modelFile: URL { controllers.appendingPathComponent("2c22-2000.patch.json") }
-    var allFile: URL { controllers.appendingPathComponent("all.patch.json") }
+    var modelFile: URL { controllers.appendingPathComponent("2c22-2000.patch.plist") }
+    var allFile: URL { controllers.appendingPathComponent("all.patch.plist") }
 
     deinit { try? FileManager.default.removeItem(at: root) }
   }
@@ -31,8 +31,7 @@ struct ConfigChangeCommandTests {
   }
 
   private func patch(_ file: URL) throws -> [String: Any] {
-    let object = try JSONSerialization.jsonObject(with: Data(contentsOf: file))
-    return try #require(object as? [String: Any])
+    try PropertyListFixture.dictionary(at: file)
   }
 
   /// The `stickDeadzone` row of `config show --json` as a value and a layer.

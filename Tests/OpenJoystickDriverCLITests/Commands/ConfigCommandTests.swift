@@ -7,7 +7,7 @@ import Testing
 
 @Suite(.removingTemporarySockets)
 struct ConfigCommandTests {
-  /// A directory that holds `Controllers/` and its `all.patch.json` for one test.
+  /// A directory that holds `Controllers/` and its `all.patch.plist` for one test.
   private final class Root {
     let url = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-config-\(UUID().uuidString)",
@@ -20,7 +20,7 @@ struct ConfigCommandTests {
       let json =
         #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"ControllerPatch","#
         + #""selector":{"all":true},"patch":{"tuning":\#(tuning)}}"#
-      try Data(json.utf8).write(to: ControllerDefaults.file(in: controllers))
+      try PropertyListFixture.data(json: json).write(to: ControllerDefaults.file(in: controllers))
     }
 
     deinit { try? FileManager.default.removeItem(at: url) }

@@ -14,7 +14,7 @@ struct ControllerClaimCommandTests {
     )
 
     var controllers: URL { root.appendingPathComponent("Controllers", isDirectory: true) }
-    var file: URL { controllers.appendingPathComponent("2c22-2000.patch.json") }
+    var file: URL { controllers.appendingPathComponent("2c22-2000.patch.plist") }
 
     deinit { try? FileManager.default.removeItem(at: root) }
   }

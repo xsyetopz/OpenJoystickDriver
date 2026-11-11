@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverCLI
@@ -293,7 +294,7 @@ struct ProfileCommandTests {
       operation: { await service.run(["profile", "import", "-", "--json"]) }
     )
     let invalid = await RecordStore.$standardInput.withValue(
-      { Data("{}".utf8) },
+      { PropertyListFixture.bytes(json: "{}") },
       operation: { await service.run(["profile", "import", "-"]) }
     )
 
@@ -318,8 +319,8 @@ struct ProfileCommandTests {
     let json = await run(document, ["--json"])
     let plain = await run(document, ["--plain"])
     let human = await run(document, [])
-    let invalidJSON = await run(Data(#"{"name":"Pad"}"#.utf8), ["--json"])
-    let invalid = await run(Data("{}".utf8), [])
+    let invalidJSON = await run(PropertyListFixture.bytes(json: #"{"name":"Pad"}"#), ["--json"])
+    let invalid = await run(PropertyListFixture.bytes(json: "{}"), [])
 
     #expect(json.code == 0, "\(json.standardError)")
     #expect(try json.json()["valid"] as? Bool == true)
@@ -334,8 +335,8 @@ struct ProfileCommandTests {
     #expect(invalid.code == 1)
     #expect(invalid.standardError.hasPrefix("error[E5001]: "))
     let unsupportedVersion = await run(
-      Data(
-        #"{"apiVersion":"unsupported.example/v9","kind":"Profile","name":"Pad"}"#.utf8
+      PropertyListFixture.bytes(
+        json: #"{"apiVersion":"unsupported.example/v9","kind":"Profile","name":"Pad"}"#
       ),
       ["--json"]
     )
@@ -344,7 +345,9 @@ struct ProfileCommandTests {
     #expect(unsupportedVersion.standardError.contains("unsupported.example/v9"))
     #expect(unsupportedVersion.standardError.contains(OpenJoystickDriverAPI.version))
     let alpha1 = await run(
-      Data(#"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"Profile","name":"Pad"}"#.utf8),
+      PropertyListFixture.bytes(
+        json: #"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"Profile","name":"Pad"}"#
+      ),
       []
     )
     #expect(alpha1.code == 1)
@@ -441,11 +444,12 @@ struct ProfileCommandTests {
     let renamed = ProfileEditor.$open.withValue(
       { url in
         let text = try String(contentsOf: url, encoding: .utf8)
-        try text.replacingOccurrences(of: "\"Pad\"", with: "\"Main\"").write(
-          to: url,
-          atomically: true,
-          encoding: .utf8
-        )
+        try text.replacingOccurrences(of: "<string>Pad</string>", with: "<string>Main</string>")
+          .write(
+            to: url,
+            atomically: true,
+            encoding: .utf8
+          )
       },
       operation: { Result { try ProfileEditCommand.edit(original) } }
     )
@@ -470,8 +474,8 @@ struct ProfileCommandTests {
   /// The same refused profile gets the same code from import, validate, and edit.
   @Test
   func everyCommandGivesAnInvalidProfileTheInvalidProfileCode() async throws {
-    let invalid = Data(
-      #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"Profile","name":"Pad"}"#.utf8
+    let invalid = PropertyListFixture.bytes(
+      json: #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"Profile","name":"Pad"}"#
     )
     let service = try Self.service(FakeProfileLibrary([]))
     let imported = await RecordStore.$standardInput.withValue(

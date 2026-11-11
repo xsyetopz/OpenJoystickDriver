@@ -597,7 +597,7 @@ struct ControllerCommandTests {
       isDirectory: true
     )
     defer { try? FileManager.default.removeItem(at: directory) }
-    let file = directory.appendingPathComponent("366c-0005.patch.json")
+    let file = directory.appendingPathComponent("366c-0005.patch.plist")
     if let userRecord {
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       try userRecord.write(to: file)
@@ -612,15 +612,15 @@ struct ControllerCommandTests {
     let result = await RecordStore.$directory.withValue(directory) {
       await service.run(["controller", "show", token("pad-1")] + flags)
     }
-    return (result, "\(directory.lastPathComponent)/366c-0005.patch.json")
+    return (result, "\(directory.lastPathComponent)/366c-0005.patch.plist")
   }
 
-  private static let userPatch = Data(
-    """
-    {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-     "selector": {"vendorID": 13932, "productID": 5},
-     "patch": {"tuning": {"stickDeadzone": 0.08}}}
-    """.utf8
+  private static let userPatch = PropertyListFixture.bytes(
+    json: """
+      {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
+       "selector": {"vendorID": 13932, "productID": 5},
+       "patch": {"tuning": {"stickDeadzone": 0.08}}}
+      """
   )
 
   @Test
@@ -738,7 +738,7 @@ struct ControllerCommandTests {
     #expect(result.code == 0, "\(result.standardError)")
     #expect(
       result.standardOutput
-        == #"{"apiVersion":"openjoystickdriver/v1alpha2","captureTime":"1970-01-01T00:00:01.500Z","#
+        == #"{"apiVersion":"openjoystickdriver/v1alpha3","captureTime":"1970-01-01T00:00:01.500Z","#
         + #""direction":"Rx","hex":"01 02","kind":"RawReport","length":2}"# + "\n"
     )
   }
@@ -793,7 +793,7 @@ struct ControllerCommandTests {
     #expect(lines.allSatisfy { $0["apiVersion"] == nil && $0["kind"] == nil })
     #expect(
       objects.allSatisfy {
-        $0["apiVersion"] as? String == "openjoystickdriver/v1alpha2"
+        $0["apiVersion"] as? String == "openjoystickdriver/v1alpha3"
           && $0["kind"] as? String == "Controller"
       }
     )

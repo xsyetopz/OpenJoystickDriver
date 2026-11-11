@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverCLI
@@ -17,7 +18,7 @@ struct SpeechOutputSchemaTests {
       #"{"type": "Speak", "text": "Reloading"}"#,
       #"{"type": "Speak", "text": "Hi", "voice": "com.apple.voice.compact.en-US.Samantha"}"#,
     ] {
-      #expect(try CLIOutputSchema.profileIssues(in: Self.document(destination)).isEmpty)
+      #expect(try CLIOutputSchema.profileIssues(inJSON: Self.document(destination)).isEmpty)
     }
   }
 
@@ -30,7 +31,7 @@ struct SpeechOutputSchemaTests {
       #"{"type": "Speak", "text": "Hi", "voice": ""}"#,
       #"{"type": "Speak"}"#,
     ] {
-      #expect(try !CLIOutputSchema.profileIssues(in: Self.document(destination)).isEmpty)
+      #expect(try !CLIOutputSchema.profileIssues(inJSON: Self.document(destination)).isEmpty)
     }
   }
 }

@@ -61,14 +61,20 @@ enum CLIOutputSchema {
     return issues
   }
 
-  /// The issues in `text`, one profile file, against `profile.schema.json`.
+  /// The issues in `text`, one profile file, an XML property list, against `profile.schema.json`.
   static func profileIssues(in text: String) throws -> [String] {
-    let value = try JSONSerialization.jsonObject(with: Data(text.utf8))
+    let value = try PropertyListFixture.tree(Data(text.utf8))
     return try JSONSchemaFiles.Validator().validate(
       value,
       against: ["$ref": profileFileName],
       in: profileFileName,
       at: "$"
     )
+  }
+
+  /// The issues in `json`, a profile that a test states as a JSON literal, against
+  /// `profile.schema.json`, after it is written as a property list.
+  static func profileIssues(inJSON json: String) throws -> [String] {
+    try profileIssues(in: String(decoding: PropertyListFixture.data(json: json), as: UTF8.self))
   }
 }

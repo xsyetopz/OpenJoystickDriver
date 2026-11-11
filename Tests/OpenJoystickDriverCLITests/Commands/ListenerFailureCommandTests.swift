@@ -94,7 +94,7 @@ struct ListenerFailureCommandTests {
   func statusReportsAMalformedFileAsItsOwnProblem() async throws {
     let socketPath = temporarySocketPath()
     let path = ServiceListenerFailure.path(forSocket: socketPath)
-    try Data("{\"apiVersion\":\"openjoystickdriver/v1alpha2\"}".utf8)
+    try Data("{\"apiVersion\":\"openjoystickdriver/v1alpha3\"}".utf8)
       .write(to: URL(fileURLWithPath: path))
     defer { try? FileManager.default.removeItem(atPath: path) }
 

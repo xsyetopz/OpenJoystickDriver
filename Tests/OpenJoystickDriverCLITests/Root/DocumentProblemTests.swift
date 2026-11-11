@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverCLI
@@ -15,7 +16,7 @@ struct DocumentProblemTests {
 
   private func problem(_ text: String) -> String? {
     do {
-      _ = try decodeProfile(Data(text.utf8), source: "pad.json")
+      _ = try decodeProfile(PropertyListFixture.bytes(json: text), source: "pad.plist")
       return nil
     } catch { return (error as? CLIFailure)?.message }
   }
@@ -37,7 +38,7 @@ struct DocumentProblemTests {
   func aProblemNamesTheFileAndTheField() {
     for item in Self.problems {
       let message = problem(Self.profile.replacingOccurrences(of: item.replacing, with: item.with))
-      #expect(message?.contains("pad.json") == true, "\(item.replacing)")
+      #expect(message?.contains("pad.plist") == true, "\(item.replacing)")
       if let field = item.field { #expect(message?.contains(field) == true, "\(field)") }
     }
   }

@@ -287,7 +287,7 @@ struct ProfileSetCommand: AsyncParsableCommand {
       )
     }
     let edited: RemappingProfile
-    do { edited = try RemappingProfileFileStore.load(from: try JSONEncoder().encode(tree)) } catch {
+    do { edited = try RemappingProfileFileStore.load(from: try DocumentCoder.encode(tree)) } catch {
       throw CLIFailure(
         RemappingProfileFileStore.problemCode(error),
         CLILocalized.format(

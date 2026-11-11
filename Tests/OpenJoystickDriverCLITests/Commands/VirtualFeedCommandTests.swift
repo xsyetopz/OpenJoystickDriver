@@ -142,13 +142,13 @@ struct VirtualFeedCommandTests {
     #expect(lines.count == 2)
     #expect(
       lines.last
-        == #"{"apiVersion":"openjoystickdriver/v1alpha2","kind":"RumbleCommand","#
+        == #"{"apiVersion":"openjoystickdriver/v1alpha3","kind":"RumbleCommand","#
         + #""type":"StopRumble"}"#
     )
     let first = try #require(
       try JSONSerialization.jsonObject(with: Data((lines.first ?? "").utf8)) as? [String: Any]
     )
-    #expect(first["apiVersion"] as? String == "openjoystickdriver/v1alpha2")
+    #expect(first["apiVersion"] as? String == "openjoystickdriver/v1alpha3")
     #expect(first["kind"] as? String == "RumbleCommand")
     #expect(first["type"] as? String == "SetRumble")
     #expect(first["durationMilliseconds"] as? Int == 200)

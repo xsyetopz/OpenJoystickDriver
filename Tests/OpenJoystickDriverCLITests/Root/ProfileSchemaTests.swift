@@ -10,7 +10,7 @@ struct ProfileSchemaTests {
   /// Uses every kind of source, destination, physical output, and mapping.
   static let richDocument = #"""
     {
-      "apiVersion": "openjoystickdriver/v1alpha2",
+      "apiVersion": "openjoystickdriver/v1alpha3",
       "kind": "Profile",
       "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E",
       "name": "Everything",
@@ -215,8 +215,10 @@ struct ProfileSchemaTests {
 
   @Test
   func aRichProfileIsAcceptedByTheDecoderAndTheSchema() throws {
-    let profile = try RemappingProfileFileStore.load(from: Data(Self.richDocument.utf8))
-    #expect(try CLIOutputSchema.profileIssues(in: Self.richDocument).isEmpty)
+    let profile = try RemappingProfileFileStore.load(
+      from: PropertyListFixture.data(json: Self.richDocument)
+    )
+    #expect(try CLIOutputSchema.profileIssues(inJSON: Self.richDocument).isEmpty)
     let encoded = try RemappingProfileFileStore.encodedPlist(profile)
     #expect(try CLIOutputSchema.profileIssues(in: encoded).isEmpty)
   }
@@ -269,12 +271,12 @@ struct ProfileSchemaTests {
     #expect(Self.richDocument.contains(original), "\(problem)")
     let broken = Self.richDocument.replacingOccurrences(of: original, with: replacement)
     do {
-      _ = try RemappingProfileFileStore.load(from: Data(broken.utf8))
+      _ = try RemappingProfileFileStore.load(from: PropertyListFixture.data(json: broken))
       Issue.record("\(problem): the profile loads")
     } catch {
       #expect(RemappingProfileFileStore.problemCode(error) == .invalidProfile, "\(problem)")
     }
-    #expect(try !CLIOutputSchema.profileIssues(in: broken).isEmpty, "\(problem)")
+    #expect(try !CLIOutputSchema.profileIssues(inJSON: broken).isEmpty, "\(problem)")
   }
 
   @Test

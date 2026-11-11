@@ -557,7 +557,7 @@ struct DiagnoseCommandTests {
     )
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
-    try Data("{".utf8).write(to: directory.appendingPathComponent("broken.json"))
+    try Data("{".utf8).write(to: directory.appendingPathComponent("broken.plist"))
 
     let result = await run(["--json"], socketPath: temporarySocketPath(), records: directory)
 
@@ -566,7 +566,8 @@ struct DiagnoseCommandTests {
     let records = try #require(checks.first { $0["id"] == "controller-records" })
     #expect(records["status"] == "Warn")
     #expect(
-      records["detail"]?.contains("broken.json (JSON text, byte 1: expected a member name)") == true
+      records["detail"]?.contains("broken.plist (broken.plist is not an XML property list)")
+        == true
     )
   }
 
@@ -583,8 +584,8 @@ struct DiagnoseCommandTests {
     )
     try FileManager.default.createDirectory(at: devices, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: support) }
-    try Data("{".utf8).write(to: support.appendingPathComponent("Controllers/all.patch.json"))
-    try Data("{".utf8).write(to: devices.appendingPathComponent("broken.json"))
+    try Data("{".utf8).write(to: support.appendingPathComponent("Controllers/all.patch.plist"))
+    try Data("{".utf8).write(to: devices.appendingPathComponent("broken.plist"))
 
     let result = await run(
       ["--json"],
@@ -597,10 +598,13 @@ struct DiagnoseCommandTests {
     let config = try #require(checks.first { $0["id"] == "config-files" })
     #expect(config["status"] == "Warn")
     #expect(
-      config["detail"]?.contains("all.patch.json (JSON text, byte 1: expected a member name)")
+      config["detail"]?.contains("all.patch.plist (all.patch.plist is not an XML property list)")
         == true
     )
-    #expect(config["detail"]?.contains("broken.json (The given data was not valid JSON.)") == true)
+    #expect(
+      config["detail"]?.contains("broken.plist (virtual device is not an XML property list)")
+        == true
+    )
     let clean = await run(["--json"], socketPath: temporarySocketPath())
     let cleanChecks = try #require(try clean.json()["checks"] as? [[String: String]])
     #expect(cleanChecks.first { $0["id"] == "config-files" }?["status"] == "Pass")
@@ -615,7 +619,9 @@ struct DiagnoseCommandTests {
     let unread = support.appendingPathComponent("Personas", isDirectory: true)
     try FileManager.default.createDirectory(at: unread, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: support) }
-    try Data("{}".utf8).write(to: unread.appendingPathComponent("1209-0001.json"))
+    try PropertyListFixture.data(json: "{}").write(
+      to: unread.appendingPathComponent("1209-0001.plist")
+    )
 
     let result = await run(
       ["--json"],
