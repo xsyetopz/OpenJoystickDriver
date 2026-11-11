@@ -14,6 +14,11 @@
     "family": {
       "$ref": "controller.schema.json#/$defs/protocol/properties/family"
     },
+    "displayName": {
+      "description": "The display name of a family that OpenJoystickDriver does not build in.",
+      "type": "string",
+      "minLength": 1
+    },
     "variants": {
       "description": "The implemented variants of the family.",
       "type": "array",

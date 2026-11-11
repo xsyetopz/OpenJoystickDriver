@@ -438,6 +438,7 @@ struct ProtocolDriverRegistryTests {
     case .vendorGameSir: driver is GameSirDriver
     case .vendorNVIDIAShield: driver is NVIDIAShieldDriver
     case .nintendoWii: driver is WiiDriver
+    default: decodesTheDescribedLayout(driver, of: id)
     }
   }
 

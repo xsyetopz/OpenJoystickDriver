@@ -306,6 +306,8 @@ extension ProtocolDescription {
     let kind: String?
     /// The name of the protocol family.
     let family: String
+    /// The name of a documented family as a person reads it; nil for a built-in family.
+    let displayName: String?
     /// The family's implemented variants.
     let variants: [PhysicalProtocolVariantID]
     /// Whether catalog records store the family's variant.
@@ -397,7 +399,7 @@ extension ProtocolDescription {
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
-        "apiVersion", "kind", "family", "variants", "storesVariant", "endpoints", "rawUSB",
+        "apiVersion", "kind", "family", "displayName", "variants", "storesVariant", "endpoints", "rawUSB",
         "recordSections", "sessionKeys", "tuningKeys", "rawUSBTuningKeys", "controls",
         "recordCapabilities",
         "macOSOwnedOutput", "inputStart",
@@ -406,6 +408,15 @@ extension ProtocolDescription {
       apiVersion = try container.decodeOptional(String.self, for: "apiVersion")
       kind = try container.decodeOptional(String.self, for: "kind")
       family = try container.decode(String.self, for: "family")
+      displayName = try container.decodeOptional(String.self, for: "displayName")
+      guard displayName?.isEmpty != true else {
+        throw DecodingError.dataCorrupted(
+          .init(
+            codingPath: decoder.codingPath + [DocumentKey("displayName")],
+            debugDescription: "displayName must not be empty"
+          )
+        )
+      }
       let variantNames = try container.decodeOptional([String].self, for: "variants")
       let familyVariants = (variantNames ?? [])
         .compactMap(PhysicalProtocolVariantID.init(rawValue:))

@@ -39,7 +39,8 @@ extension ProtocolClassifier {
   /// commit: the `'X','B',0` table entry, `XPAD_XBOX360_VENDOR` (subclass 93, protocols 1 and 129),
   /// `XPAD_XBOXONE_VENDOR` (subclass 71, protocol 208), the GIP data interface number, and the
   /// interrupt IN+OUT endpoint requirement in `xpad_probe`.
-  static let signatures: [ProtocolInterfaceSignature] = PhysicalProtocolID.allCases.flatMap {
-    ProtocolDescription.bundled[$0]?.interfaceSignatures ?? []
+  static var signatures: [ProtocolInterfaceSignature] {
+    PhysicalProtocolID.allCases.flatMap { ProtocolDescription.bundled[$0]?.interfaceSignatures ?? [] }
+      + DocumentedProtocolFamilies.all.flatMap(\.interfaceSignatures)
   }
 }

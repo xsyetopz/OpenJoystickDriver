@@ -154,11 +154,7 @@ extension ProtocolDriverRegistry {
       }
     case .xboxXID: return true
     case .vendorGameSir: return interface.interfaceClass == 0xFF
-    case .hidDescriptor, .hidReportLayout, .sonySixaxis, .sonyDualShock4, .sonyDualSense,
-      .nintendoSwitch1, .nintendoSwitch2, .nintendoSwitchInputOnly, .valveSteamController,
-      .valveSteamTriton, .valveSteamDeck, .vendorFlydigi, .vendorPS3ThirdParty, .vendorNVIDIAShield,
-      .nintendoWii:
-      return false
+    default: return false
     }
   }
 

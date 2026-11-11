@@ -325,27 +325,8 @@
       "additionalProperties": false,
       "properties": {
         "family": {
-          "enum": [
-            "HIDDescriptor",
-            "HIDReportLayout",
-            "XboxXID",
-            "XboxXUSB",
-            "XboxGIP",
-            "SonySixaxis",
-            "SonyDualShock4",
-            "SonyDualSense",
-            "NintendoSwitch1",
-            "NintendoSwitch2",
-            "NintendoSwitchInputOnly",
-            "ValveSteamController",
-            "ValveSteamTriton",
-            "ValveSteamDeck",
-            "VendorFlydigi",
-            "VendorPS3ThirdParty",
-            "VendorGameSir",
-            "VendorNVIDIAShield",
-            "NintendoWii"
-          ]
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z0-9]*$"
         },
         "variant": {
           "$ref": "protocol-description.schema.json#/$defs/variant"

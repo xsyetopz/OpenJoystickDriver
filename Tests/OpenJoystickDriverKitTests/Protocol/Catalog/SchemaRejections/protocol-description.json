@@ -38508,6 +38508,78 @@
           }
         }
       }
+    },
+    {
+      "name": "a documented family must not take the name of a built-in family",
+      "code": "E5002",
+      "fileName": "XboxGIP.plist",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ProtocolDescription",
+        "family": "XboxGIP",
+        "displayName": "Acme Pad",
+        "endpoints": { "in": 130, "out": 2 }
+      }
+    },
+    {
+      "name": "a documented family must set input layouts",
+      "code": "E5002",
+      "fileName": "AcmePad.plist",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ProtocolDescription",
+        "family": "AcmePad",
+        "displayName": "Acme Pad",
+        "endpoints": { "in": 130, "out": 2 }
+      }
+    },
+    {
+      "name": "a documented family must set a display name",
+      "code": "E5002",
+      "fileName": "AcmePad.plist",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ProtocolDescription",
+        "family": "AcmePad",
+        "endpoints": { "in": 130, "out": 2 }
+      }
+    },
+    {
+      "name": "a documented family file stem must equal its name",
+      "code": "E5003",
+      "fileName": "acme-pad.plist",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ProtocolDescription",
+        "family": "AcmePad",
+        "displayName": "Acme Pad",
+        "endpoints": { "in": 130, "out": 2 }
+      }
+    },
+    {
+      "name": "a built-in family sets no display name",
+      "code": "E5002",
+      "fileName": "xbox-gip.plist",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ProtocolDescription",
+        "family": "XboxGIP",
+        "displayName": "Acme Pad",
+        "endpoints": { "in": 130, "out": 2 }
+      }
+    },
+    {
+      "name": "a family name is UpperCamelCase",
+      "code": "E5002",
+      "schema": true,
+      "fileName": "acme-pad.plist",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ProtocolDescription",
+        "family": "acme-pad",
+        "displayName": "Acme Pad",
+        "endpoints": { "in": 130, "out": 2 }
+      }
     }
   ]
 }

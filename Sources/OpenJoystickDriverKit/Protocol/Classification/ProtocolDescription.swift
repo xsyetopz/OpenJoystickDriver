@@ -134,6 +134,8 @@ struct ProtocolDescription: Sendable {
 
   /// The protocol family the description is for.
   let family: PhysicalProtocolID
+  /// The family's name as a person reads it; set by a documented family only.
+  var displayName: String?
   /// The family's implemented variants; empty when it has one contract.
   let variants: [PhysicalProtocolVariantID]
   /// Whether catalog records store the family's variant; otherwise classification derives it from
@@ -385,19 +387,13 @@ struct ProtocolDescription: Sendable {
     _ data: Data,
     fileName: String
   ) throws(ProtocolDescriptionProblem) -> Self {
-    let stem = URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
-    return try decode(
-      data,
-      expectedFamily: PhysicalProtocolID.allCases.first { $0.descriptionFileStem == stem },
-      fileName: fileName
-    )
+    try decodeDocument(data, fileName: fileName)
   }
 
   /// Decodes one description from `data`; throws a problem when the document is invalid or its
-  /// family differs from `protocolID`.
-  private static func decode(
+  /// family does not match the stem of `fileName`.
+  private static func decodeDocument(
     _ data: Data,
-    expectedFamily protocolID: PhysicalProtocolID?,
     fileName: String
   ) throws(ProtocolDescriptionProblem) -> Self {
     let document: Document
@@ -429,12 +425,17 @@ struct ProtocolDescription: Sendable {
         "\(fileName): \(problem.message)"
       )
     }
-    guard let family = PhysicalProtocolID(rawValue: document.family) else {
+    guard
+      document.family.range(of: "\\A[A-Z][A-Za-z0-9]*\\z", options: .regularExpression) != nil
+    else {
       throw ProtocolDescriptionProblem(
         .invalidProtocolDescription,
-        "\(fileName): \(document.family) is not a family"
+        "\(fileName): \(document.family) is not an UpperCamelCase family name"
       )
     }
+    let family =
+      PhysicalProtocolID.allCases.first { $0.rawValue == document.family }
+      ?? PhysicalProtocolID(documented: document.family)
     var seenSignatures: Set<String> = []
     for signature in document.interfaceSignatures {
       let identity = [
@@ -457,12 +458,39 @@ struct ProtocolDescription: Sendable {
       )
     }
     // The file name is checked after the document's own rules.
-    guard let protocolID, family == protocolID else {
+    let stem = URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
+    if !family.isDocumented, stem == family.rawValue {
+      throw ProtocolDescriptionProblem(
+        .invalidProtocolDescription,
+        "\(fileName): \(family.rawValue) is a built-in family; a documented family needs a name of its own"
+      )
+    }
+    guard stem == family.descriptionFileStem else {
       throw ProtocolDescriptionProblem(
         .protocolDescriptionFamilyMismatch,
         "\(fileName): file name must be \(family.descriptionFileStem).plist"
       )
     }
+    if family.isDocumented {
+      guard document.displayName != nil else {
+        throw ProtocolDescriptionProblem(
+          .invalidProtocolDescription,
+          "\(fileName): a documented family sets displayName"
+        )
+      }
+      guard document.defaults?.input?.layouts != nil else {
+        throw ProtocolDescriptionProblem(
+          .invalidProtocolDescription,
+          "\(fileName): a documented family sets defaults.input.layouts"
+        )
+      }
+    } else if document.displayName != nil {
+      throw ProtocolDescriptionProblem(
+        .invalidProtocolDescription,
+        "\(fileName): displayName applies only to a documented family"
+      )
+    }
+    let protocolID = family
     var signatures: [ProtocolInterfaceSignature] = []
     for signature in document.interfaceSignatures {
       guard let variant = PhysicalProtocolVariantID(rawValue: signature.variant),
@@ -536,6 +564,7 @@ struct ProtocolDescription: Sendable {
     )
     let description = Self(
       family: protocolID,
+      displayName: document.displayName,
       variants: document.variants,
       storesVariant: document.storesVariant,
       endpoints: document.endpoints,
