@@ -11,6 +11,9 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 
 - `ojd generate <script> [--output <folder>] [--replace] [--timeout <seconds>]` runs a JavaScript file's `generate` function in a helper process with no file or network access, checks every document it returns with the reader for its kind, and writes the files with the store's names. It writes nothing when one document fails, reports the document, key path and rule, reports a script error with its line, leaves an equal file unchanged, and stops at a differing file unless `--replace`. See [Generating Documents with Scripts](wiki/Generating-Documents-with-Scripts.md). (6.1–6.5, 6.8)
 - A mod package skips its `.js` files and never runs them. (6.6)
+- A description document in `Protocols/` can name a protocol family that OJD lacks, with an UpperCamelCase name and `defaults.input.layouts`; a record that names the family decodes its reports with those layouts. The family loads from the user's `Protocols/` folder and from a mod package, takes its display name from the document, and is refused when its name equals a built-in family, when it has no input layouts, or when its file stem differs from its name. (9.19, 9.20)
+- `ojd protocol validate <file>`, `ojd protocol install <file> [--dry-run]` and `ojd protocol list`, which lists the built-in and documented families with their source (`BuiltIn`, `User` or `Package`). (9.21)
+- The wiki page [Support Ladder](wiki/Support-Ladder.md) lists the five ways to support a controller (nothing, a patch, a record, a generator script, source) with the command for each and a complete patch and record; `llms.txt` and `llms-full.txt` list the same steps. (9.10)
 
 ## Changed
 
@@ -26,6 +29,8 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - The implementation status and `Scripts/SDK/reference_client.py` name `openjoystickdriver/v1alpha3`. (18.4)
 - A controller record's `input.layouts` applies under every protocol family: a layout decodes the controls it names in the reports it selects, and the family's decoder reads the rest. A `HIDDescriptor` mode refuses a layout. (9.2)
 - A controller patch may set every record property except the identity, including `capabilities` and `idle`. `patch.modes` merges by `id`: an entry with a known `id` changes that mode, a new `id` adds a mode, and the `remove` path `modes.<id>` drops one. A record's `capabilities` may name a control that the driver of any of its modes declares. `ojd migrate` gives a `v1alpha2` patch that sets `modes` the `remove` path `modes`, so it still replaces the record's modes. (9.15)
+- **Breaking:** a profile's `applicationScope` holds `appIDs`, a list of one or more bundle identifiers, and the profile applies while any of those apps is in front. A document with `appID` is refused with a named error, and `ojd migrate` converts it, `ActiveProfiles` entries included. `ojd profile create` and `ojd profile import` take `--app` more than once; on import it replaces the scope in the file. (15.1)
+- The wiki, the README and the `llms` files show every document example as an XML property list and give the `plutil -convert` commands in both directions. `ojd record install --help` names a `.plist` file. (18.3)
 
 ## Fixed
 
