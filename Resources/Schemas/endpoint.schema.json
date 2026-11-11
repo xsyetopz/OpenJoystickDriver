@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/endpoint.schema.json",
   "title": "OpenJoystickDriver endpoint protocol",
-  "description": "One JSON object per line on the endpoint socket, or per text message on the WebSocket. Every line except a watch line carries apiVersion and kind. A client sends Hello, waits for Welcome, then sends Subscription or FeedRequest. After Subscription the service sends watch lines, {type, object}, identical to 'ojd controller watch --all --json'; after FeedRequest and FeedSession the client sends Frame lines, and KeepAlive lines while it has no frame to send, and a Drain line to learn when its frames have played, which the service answers with Drained; the service also sends the host's RumbleCommand lines. A Status line with status Failure is the last line before the service closes the connection. A line that is not a JSON object is answered with Status E1003. For any other line the service reads the header first: a line without apiVersion or kind is answered with E1011, another apiVersion with E1009, and an unknown kind, or one that is not accepted at that point, with E1010; each of these carries details.supportedAPIVersions.",
+  "description": "One line of the endpoint protocol.",
   "oneOf": [
     {
       "$ref": "#/$defs/clientLine"
@@ -80,17 +80,17 @@
           "items": {
             "$ref": "access-grants.schema.json#/$defs/scope"
           },
-          "description": "The scopes the client needs; each must be granted."
+          "description": "The scopes the client needs."
         },
         "tokenName": {
           "type": "string",
           "pattern": "^[A-Za-z0-9._-]{1,64}$",
-          "description": "The name of a token from 'ojd access grant --token'; required on the WebSocket. A client with a token is not checked by its signature."
+          "description": "The name of the token that the client presents."
         },
         "proof": {
           "type": "string",
           "pattern": "^[0-9a-f]{64}$",
-          "description": "The lowercase hex HMAC-SHA256, keyed with the SHA-256 of the token, of four lines that each end with a newline: 'OpenJoystickDriver endpoint hello 1', the challenge's nonce, the page's origin, and the WebSocket's port. On the socket, the origin and port lines are empty."
+          "description": "The lowercase hex HMAC-SHA256 proof of the token, keyed with the SHA-256 of the token."
         }
       },
       "if": {
@@ -115,7 +115,7 @@
         "nonce": {
           "type": "string",
           "pattern": "^[A-Za-z0-9_-]{43}$",
-          "description": "32 random bytes in unpadded base64url, new for each connection."
+          "description": "Random bytes in unpadded base64url, new for each connection."
         }
       }
     },
@@ -160,7 +160,7 @@
         },
         "output": {
           "type": "boolean",
-          "description": "Adds the virtual gamepad's values to the objects of the watch lines. Defaults to false."
+          "description": "Whether the watch lines add the virtual gamepad's values."
         }
       }
     },
@@ -168,7 +168,7 @@
       "type": "object",
       "required": ["apiVersion", "as", "kind"],
       "additionalProperties": false,
-      "description": "Publishes a virtual gamepad that the connection drives; needs the control scope. Closing the connection removes the gamepad.",
+      "description": "A request to publish a virtual gamepad that the connection drives.",
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/apiVersion"
@@ -206,7 +206,7 @@
       "type": "object",
       "required": ["apiVersion", "kind"],
       "additionalProperties": false,
-      "description": "One input frame after FeedSession, as in 'ojd virtual feed', which takes the same line without apiVersion and kind. Missing controls are neutral. The service shows frames in order, each for at least 8 ms; it stops reading while 256 frames wait. Closing the connection removes the virtual gamepad at once and drops the frames that have not played, unlike 'ojd virtual feed', so a client stays connected until its last frame has played.",
+      "description": "One input frame for the virtual gamepad.",
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/apiVersion"
@@ -236,7 +236,7 @@
           "additionalProperties": {
             "type": "number"
           },
-          "description": "Sticks run from -1 to 1 with positive Y down; triggers run from 0 to 1. Values out of range are clamped."
+          "description": "The axis values: sticks from -1 to 1 and triggers from 0 to 1."
         },
         "holdMilliseconds": {
           "type": "integer",
@@ -250,7 +250,7 @@
       "type": "object",
       "required": ["apiVersion", "kind"],
       "additionalProperties": false,
-      "description": "Accepted after FeedSession. It resets the 2-second idle timeout of the feed and changes nothing else: the service sends no reply and the virtual gamepad keeps its state. Before FeedSession it is answered with E1010.",
+      "description": "A line that keeps a feed from going idle.",
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/apiVersion"
@@ -264,7 +264,7 @@
       "type": "object",
       "required": ["apiVersion", "kind"],
       "additionalProperties": false,
-      "description": "Accepted after FeedSession. It asks the service to answer Drained once every Frame sent before it has played, the last one for its full time. It counts as activity for the 2-second idle timeout, and the frames that wait keep the feed from going idle. The service reads no line while it waits. Before FeedSession it is answered with E1010.",
+      "description": "A request for an answer once every frame sent before it has played.",
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/apiVersion"
@@ -278,7 +278,7 @@
       "type": "object",
       "required": ["apiVersion", "kind"],
       "additionalProperties": false,
-      "description": "The answer to Drain: every Frame sent before it has played, the last one for its full time. Closing the connection after it drops no frame.",
+      "description": "The answer to a drain: every frame sent before it has played.",
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/apiVersion"
@@ -304,7 +304,7 @@
           "const": "Failure"
         },
         "code": {
-          "description": "A stable E#### code from Resources/ErrorCodes.json; ./Scripts/ojd errors regenerate keeps the enum equal to the active endpoint codes.",
+          "description": "A stable endpoint error code.",
           "enum": [
             "E1001",
             "E1002",
@@ -334,7 +334,7 @@
               "items": {
                 "$ref": "#/$defs/apiVersion"
               },
-              "description": "The apiVersion values the service speaks; only with E1009, E1010 and E1011."
+              "description": "The API versions the service speaks."
             }
           }
         }
