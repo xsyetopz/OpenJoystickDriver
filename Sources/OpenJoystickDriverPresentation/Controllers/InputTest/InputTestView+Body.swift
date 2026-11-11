@@ -175,6 +175,8 @@
       if model.capabilities.supportsRumble {
         Group {
           ForEach(model.capabilities.rumbleMotors, id: \.self) { rumbleControl(for: $0) }
+          Text(OJDLocalized.string("ui.inputTest.rumbleAppliesOnTest")).font(.caption)
+            .foregroundColor(Color(NSColor.secondaryLabelColor))
           InputTestSliderRow(
             title: OJDLocalized.string("ui.inputTest.duration"),
             valueText: OJDLocalized.formatted(
@@ -215,15 +217,17 @@
         if model.capabilities.supportsPlayerIndicator {
           VStack(alignment: .leading, spacing: 6) {
             Text(OJDLocalized.string("ui.inputTest.playerIndicator"))
-            Picker("", selection: playerIndicatorBinding) {
-              Text(OJDLocalized.string("ui.inputTest.off")).tag(PhysicalPlayerIndicator.off)
-              Text("1").tag(PhysicalPlayerIndicator.player1)
-              Text("2").tag(PhysicalPlayerIndicator.player2)
-              Text("3").tag(PhysicalPlayerIndicator.player3)
-              Text("4").tag(PhysicalPlayerIndicator.player4)
-            }.pickerStyle(.segmented).labelsHidden()
-              .ojdAccessibilityLabel(OJDLocalized.string("ui.inputTest.playerIndicator"))
-            Button(OJDLocalized.string("action.apply")) { model.applyPlayerIndicator() }
+            HStack {
+              Picker("", selection: playerIndicatorBinding) {
+                Text(OJDLocalized.string("ui.inputTest.off")).tag(PhysicalPlayerIndicator.off)
+                Text("1").tag(PhysicalPlayerIndicator.player1)
+                Text("2").tag(PhysicalPlayerIndicator.player2)
+                Text("3").tag(PhysicalPlayerIndicator.player3)
+                Text("4").tag(PhysicalPlayerIndicator.player4)
+              }.pickerStyle(.segmented).labelsHidden()
+                .ojdAccessibilityLabel(OJDLocalized.string("ui.inputTest.playerIndicator"))
+              outputStatus(for: .playerIndicator)
+            }
           }
         }
         if model.capabilities.lightingFeatures.contains(.programmableColor) {
@@ -346,9 +350,9 @@
       )
     }
 
-    /// The binding to the player indicator.
+    /// The binding to the player indicator; choosing one applies it.
     private var playerIndicatorBinding: Binding<PhysicalPlayerIndicator> {
-      Binding(get: { model.playerIndicator }, set: { model.playerIndicator = $0 })
+      Binding(get: { model.playerIndicator }, set: { model.choosePlayerIndicator($0) })
     }
 
     /// The binding to the brightness.

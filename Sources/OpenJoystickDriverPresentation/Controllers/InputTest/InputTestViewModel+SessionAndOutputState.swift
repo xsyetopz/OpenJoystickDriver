@@ -245,10 +245,11 @@
 
     /// Rumbles the controller for the chosen length.
     ///
-    /// The service stops the rumble when the length ends. Does nothing without a connected
-    /// controller that has rumble.
+    /// The service stops the rumble when the length ends. Without a connected controller that has
+    /// rumble, nothing is sent and ``outputError`` says why.
     func testRumble() {
-      guard let device, canSendOutput, capabilities.supportsRumble else { return }
+      guard let device, canSendOutput else { return refuseOutput(.rumble, .notConnected) }
+      guard capabilities.supportsRumble else { return refuseOutput(.rumble, .unsupported) }
       let command = rumbleCommand()
       let selector = ControllerReference.session(device.sessionToken)
       let duration = Self.clampedRumbleDuration(rumbleDurationMilliseconds)
@@ -271,16 +272,30 @@
     }
 
     /// Stops the running rumble.
+    ///
+    /// The Stop button is disabled unless a rumble runs (``canStopRumble``), so the guard only
+    /// covers a call that comes after the rumble ended.
     func stopRumble() {
       guard outputMayRequireRumbleStop, let device else { return }
       cancelOutput(stopSelector: ControllerReference.session(device.sessionToken))
     }
 
+    /// Chooses the player indicator and applies it at once; the picker has no Apply button.
+    ///
+    /// - Parameter indicator: The indicator the user chose.
+    func choosePlayerIndicator(_ indicator: PhysicalPlayerIndicator) {
+      playerIndicator = indicator
+      applyPlayerIndicator()
+    }
+
     /// Applies the player indicator.
     ///
-    /// Does nothing without a controller that has one.
+    /// Without a connected controller that has one, nothing is sent and ``outputError`` says why.
     func applyPlayerIndicator() {
-      guard let device, canSendOutput, capabilities.supportsPlayerIndicator else { return }
+      guard let device, canSendOutput else { return refuseOutput(.playerIndicator, .notConnected) }
+      guard capabilities.supportsPlayerIndicator else {
+        return refuseOutput(.playerIndicator, .unsupported)
+      }
       let selector = ControllerReference.session(device.sessionToken)
       let indicator = playerIndicator
       beginOutputOperation(.playerIndicator, selector: selector) { [gateway] in
@@ -291,10 +306,13 @@
 
     /// Previews the color on the controller.
     ///
-    /// Does nothing without a controller that has a programmable color.
+    /// Without a connected controller that has a programmable color, nothing is sent and
+    /// ``outputError`` says why.
     func applyColor() {
-      guard let device, canSendOutput, capabilities.lightingFeatures.contains(.programmableColor)
-      else { return }
+      guard let device, canSendOutput else { return refuseOutput(.color, .notConnected) }
+      guard capabilities.lightingFeatures.contains(.programmableColor) else {
+        return refuseOutput(.color, .unsupported)
+      }
       let selector = ControllerReference.session(device.sessionToken)
       let components = (Self.byte(red), Self.byte(green), Self.byte(blue))
       let token = colorPreviewToken
@@ -312,9 +330,13 @@
 
     /// Applies the brightness.
     ///
-    /// Does nothing without a controller that has programmable brightness.
+    /// Without a connected controller that has programmable brightness, nothing is sent and
+    /// ``outputError`` says why.
     func applyBrightness() {
-      guard let device, canSendOutput, capabilities.supportsProgrammableBrightness else { return }
+      guard let device, canSendOutput else { return refuseOutput(.brightness, .notConnected) }
+      guard capabilities.supportsProgrammableBrightness else {
+        return refuseOutput(.brightness, .unsupported)
+      }
       let selector = ControllerReference.session(device.sessionToken)
       let value = Self.byte(brightness)
       beginOutputOperation(.brightness, selector: selector) { [gateway] in
@@ -430,6 +452,32 @@
           self.outputError = RuntimePresentation.userFacingError(error)
         }
       }
+    }
+
+    /// Why an output test is not sent.
+    enum OutputRefusal {
+      /// No controller is connected.
+      case notConnected
+      /// The controller has no such output.
+      case unsupported
+
+      /// The localization key of the message.
+      var messageKey: String {
+        switch self {
+        case .notConnected: "ui.inputTest.outputNotConnected"
+        case .unsupported: "ui.inputTest.outputUnsupported"
+        }
+      }
+    }
+
+    /// Shows that `operation` was not sent, with the reason, in the state of the latest output test.
+    ///
+    /// - Parameters:
+    ///   - operation: The output test.
+    ///   - refusal: Why it was not sent.
+    private func refuseOutput(_ operation: OutputOperation, _ refusal: OutputRefusal) {
+      outputState = .failed(operation)
+      outputError = OJDLocalized.string(refusal.messageKey)
     }
 
     /// Forgets the finished output test.

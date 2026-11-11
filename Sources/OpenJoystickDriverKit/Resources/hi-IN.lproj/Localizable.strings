@@ -1148,6 +1148,10 @@
 "ui.inputTest.outputError" = "भौतिक आउटपुट त्रुटि";
 /* Error in the input test window when the controller refuses a rumble or light test. */
 "ui.inputTest.outputRejected" = "कंट्रोलर ने इस आउटपुट परीक्षण को अस्वीकार कर दिया।";
+/* Error under the output tests in the input test window when the user starts a rumble, player indicator, color or brightness test while the controller is not connected. Nothing was sent. */
+"ui.inputTest.outputNotConnected" = "कंट्रोलर कनेक्ट नहीं है। कुछ भी नहीं भेजा गया।";
+/* Error under the output tests in the input test window when the user starts a test of an output that the controller does not have. Nothing was sent. */
+"ui.inputTest.outputUnsupported" = "यह कंट्रोलर इस आउटपुट का समर्थन नहीं करता। कुछ भी नहीं भेजा गया।";
 /* Status shown in the input test window when the Input Monitoring permission is missing. Input Monitoring is written as macOS names it. */
 "platform.macos.ui.inputTest.permissionRequired" = "इनपुट मॉनिटरिंग की अनुमति आवश्यक है";
 /* Label of the popup in the input test that sets the player indicator, the lights that show which player a controller is. */
@@ -1178,6 +1182,8 @@
 "ui.inputTest.rumble" = "रम्बल";
 /* Message in the rumble section of the input test when the controller has no rumble. */
 "ui.inputTest.rumbleUnavailable" = "इस कंट्रोलर द्वारा रम्बल समर्थित नहीं है।";
+/* Note under the rumble motor controls in the input test window: the motor levels are sent only when the user clicks the Test Rumble button, not when a control changes. */
+"ui.inputTest.rumbleAppliesOnTest" = "मोटर स्तर तब भेजे जाते हैं जब आप रम्बल परीक्षण पर क्लिक करते हैं।";
 /* Status of the input test when input stopped arriving. */
 "ui.inputTest.stale" = "इनपुट बाधित";
 /* Status of the input test while it starts. Keep the three dots. */

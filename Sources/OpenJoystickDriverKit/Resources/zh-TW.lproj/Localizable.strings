@@ -1148,6 +1148,10 @@
 "ui.inputTest.outputError" = "實體輸出錯誤";
 /* Error in the input test window when the controller refuses a rumble or light test. */
 "ui.inputTest.outputRejected" = "控制器拒絕了此次輸出測試。";
+/* Error under the output tests in the input test window when the user starts a rumble, player indicator, color or brightness test while the controller is not connected. Nothing was sent. */
+"ui.inputTest.outputNotConnected" = "控制器未連線。未傳送任何內容。";
+/* Error under the output tests in the input test window when the user starts a test of an output that the controller does not have. Nothing was sent. */
+"ui.inputTest.outputUnsupported" = "此控制器不支援該輸出。未傳送任何內容。";
 /* Status shown in the input test window when the Input Monitoring permission is missing. Input Monitoring is written as macOS names it. */
 "platform.macos.ui.inputTest.permissionRequired" = "需要「輸入監控」權限";
 /* Label of the popup in the input test that sets the player indicator, the lights that show which player a controller is. */
@@ -1178,6 +1182,8 @@
 "ui.inputTest.rumble" = "震動";
 /* Message in the rumble section of the input test when the controller has no rumble. */
 "ui.inputTest.rumbleUnavailable" = "此控制器不支援震動。";
+/* Note under the rumble motor controls in the input test window: the motor levels are sent only when the user clicks the Test Rumble button, not when a control changes. */
+"ui.inputTest.rumbleAppliesOnTest" = "按一下「測試震動」時才會傳送馬達強度。";
 /* Status of the input test when input stopped arriving. */
 "ui.inputTest.stale" = "輸入已中斷";
 /* Status of the input test while it starts. Keep the three dots. */

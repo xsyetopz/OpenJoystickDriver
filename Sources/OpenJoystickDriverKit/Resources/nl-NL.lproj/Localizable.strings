@@ -1148,6 +1148,10 @@
 "ui.inputTest.outputError" = "Fysieke uitvoerfout";
 /* Error in the input test window when the controller refuses a rumble or light test. */
 "ui.inputTest.outputRejected" = "De controller heeft deze test afgewezen.";
+/* Error under the output tests in the input test window when the user starts a rumble, player indicator, color or brightness test while the controller is not connected. Nothing was sent. */
+"ui.inputTest.outputNotConnected" = "De controller is niet verbonden. Er is niets verzonden.";
+/* Error under the output tests in the input test window when the user starts a test of an output that the controller does not have. Nothing was sent. */
+"ui.inputTest.outputUnsupported" = "Deze controller ondersteunt deze uitvoer niet. Er is niets verzonden.";
 /* Status shown in the input test window when the Input Monitoring permission is missing. Input Monitoring is written as macOS names it. */
 "platform.macos.ui.inputTest.permissionRequired" = "Toestemming voor invoermonitoring vereist";
 /* Label of the popup in the input test that sets the player indicator, the lights that show which player a controller is. */
@@ -1178,6 +1182,8 @@
 "ui.inputTest.rumble" = "Rumble";
 /* Message in the rumble section of the input test when the controller has no rumble. */
 "ui.inputTest.rumbleUnavailable" = "Rumble wordt niet ondersteund door deze controller.";
+/* Note under the rumble motor controls in the input test window: the motor levels are sent only when the user clicks the Test Rumble button, not when a control changes. */
+"ui.inputTest.rumbleAppliesOnTest" = "De motorniveaus worden verzonden wanneer je op Test rumble klikt.";
 /* Status of the input test when input stopped arriving. */
 "ui.inputTest.stale" = "Invoer onderbroken";
 /* Status of the input test while it starts. Keep the three dots. */

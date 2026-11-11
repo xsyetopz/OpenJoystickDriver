@@ -1148,6 +1148,10 @@
 "ui.inputTest.outputError" = "Fehler bei physischer Ausgabe";
 /* Error in the input test window when the controller refuses a rumble or light test. */
 "ui.inputTest.outputRejected" = "Der Controller hat diesen Ausgabetest abgelehnt.";
+/* Error under the output tests in the input test window when the user starts a rumble, player indicator, color or brightness test while the controller is not connected. Nothing was sent. */
+"ui.inputTest.outputNotConnected" = "Der Controller ist nicht verbunden. Es wurde nichts gesendet.";
+/* Error under the output tests in the input test window when the user starts a test of an output that the controller does not have. Nothing was sent. */
+"ui.inputTest.outputUnsupported" = "Dieser Controller unterstützt diese Ausgabe nicht. Es wurde nichts gesendet.";
 /* Status shown in the input test window when the Input Monitoring permission is missing. Input Monitoring is written as macOS names it. */
 "platform.macos.ui.inputTest.permissionRequired" = "Berechtigung zur Eingabeüberwachung erforderlich";
 /* Label of the popup in the input test that sets the player indicator, the lights that show which player a controller is. */
@@ -1178,6 +1182,8 @@
 "ui.inputTest.rumble" = "Vibration";
 /* Message in the rumble section of the input test when the controller has no rumble. */
 "ui.inputTest.rumbleUnavailable" = "Vibration wird von diesem Controller nicht unterstützt.";
+/* Note under the rumble motor controls in the input test window: the motor levels are sent only when the user clicks the Test Rumble button, not when a control changes. */
+"ui.inputTest.rumbleAppliesOnTest" = "Die Motorstärken werden gesendet, wenn du auf „Vibration testen“ klickst.";
 /* Status of the input test when input stopped arriving. */
 "ui.inputTest.stale" = "Eingabe unterbrochen";
 /* Status of the input test while it starts. Keep the three dots. */
