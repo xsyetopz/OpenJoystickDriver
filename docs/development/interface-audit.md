@@ -208,3 +208,34 @@ Task 12.7. A failed request shows beside the control that started it; the banner
 | `ActivityActionFailure` (`Activity/ActivityModel.swift`) | a failed fix button, log save or Show in Finder | a row at the top of the Activity area with Dismiss, in both views |
 
 Failures with no store of their own, each shown by the view that owns the control: `DeveloperToolsViewModel.exportError` under the packet capture buttons, `CommandLineToolModel.errorMessage` in the `ojd` link section. Alerts that stay, because the control that started them is a menu item or a toolbar command that has closed or has no room for text: the failed command of the status menu (W09) and the confirmation or notice of the application menu (W11), the refused navigation while a profile change runs, and the failed System Settings open of the driver banner row.
+
+## 12.12 comparison
+
+Each sheet was opened in the installed app and the app window was captured with the sheet attached: `openspec/changes/0-6-0-alpha-3/evidence/sheet-layout/<row>.png`. Width is the `OJDSheetWidth` of the sheet (compact 420, regular 480, wide 520), with the 24 pt padding of `OJDSpacing.sheetPadding`. Hardware: 8BitDo Ultimate 2C (2DC8:301C), which has no motion or touch support.
+
+| Row | Sheet | Width | Result |
+| --- | --- | --- | --- |
+| S01 | Create a token | compact | no clipped text, no cut-off control, even padding |
+| S02 | Access confirmation | compact | same |
+| S03 | Issued token | compact | not captured: it opens only after a real token is issued; read at `Access/AccessSheets.swift:82-107` (the monospaced token is not fixed to one line) |
+| S04 | Library confirmation | compact | not captured: it opens only to confirm a library install or removal; read at `Library/LibraryAreaView.swift:165-180`, the same layout as S02 |
+| S05 | Explain Error Code | compact | no defect |
+| S06 | Soak Test | compact | no defect |
+| S07 | Controller timed action | compact | no defect (Capture Packets) |
+| S08 | New profile | regular, was compact | defect: the Controller pop-up and the explanation text were wider than the 372 pt inside the 420 pt sheet, so the padding was uneven; fixed with `.ojdSheet(.regular)` in `ProfileNameSheet`, recaptured, padding even |
+| S09 | Duplicate profile | compact | no defect |
+| S10 | Profile details | compact | no defect |
+| S11 | Binding behavior | regular | no defect |
+| S12 | Macro editor | wide | no defect |
+| S13 | Axis adjustment | compact | no defect; the label "Dead zone" and "Stick deadzone" still differ (task 14.2) |
+| S14 | Capture an assignment | regular | no defect |
+| S15 | Chord and sequence | regular | no defect |
+| S16 | Layer | compact | no defect |
+| S17 | Layer binding | compact | no defect |
+| S18 | Stick modes | regular | no defect |
+| S19 | Trigger modes | regular | no defect |
+| S20 | Touch modes | regular | not captured: the controller has no touch support, so the section is disabled |
+| S21 | Pointer speed | compact | no defect |
+| S22 | Motion | regular, height 600 | not captured: the controller has no motion support, so the section is disabled; the fixed height is larger than the default 588 pt window, as in S23 |
+| S23 | Regions | regular, height 640 | width has no defect; the fixed height of 640 pt is taller than the default 588 pt window, so the sheet hangs below it (kept: the content scrolls and the audit lists the fixed height) |
+| S24 | Pair Joy-Cons | regular | not captured: the button is disabled without two connected Joy-Con halves; no such hardware here |
