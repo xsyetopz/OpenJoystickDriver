@@ -2,13 +2,101 @@
 
 The Ultimate 2C Wireless enumerates as a different identity in each mode. Test and report each mode separately.
 
+Capture paths in this page are relative to `openspec/changes/0-6-0-alpha-3/evidence/`.
+
 | Mode | VID:PID | Route | Status |
 | --- | --- | --- | --- |
-| 2.4 GHz dongle, XInput | `2DC8:310A` | `XboxXUSB` | Hardware-verified by two testers on `0.5.0-beta.4` tester build `1.5.71`: buttons, sticks, triggers at rest, D-pad, stick clicks, rumble |
-| Bluetooth LE | `2DC8:301B` | `HIDDescriptor` | Unverified: the mapping was confirmed on hardware from a patch ([#34](https://github.com/xsyetopz/OpenJoystickDriver/issues/34)), and this record has no capture |
-| Wired, DInput | `2DC8:301D` | `HIDDescriptor` | Unverified: the record reuses the Bluetooth usage map, and no source or capture of this mode exists |
-| USB adapter | `2DC8:3109` | `XboxXUSB` | Unverified: the record stays `XboxXUSB` over a wired link, and what the standby identity means is not known |
-| HID receiver | `2DC8:301C` | `HIDDescriptor` | Idle receiver: the record is `idle`, maps no controls and reports `IdleIdentity`; the pad is assumed to re-enumerate as `310A` once it connects; not verified |
+| 2.4 GHz receiver, XInput | `2DC8:310A` | `XboxXUSB` | Captured: every control reports (`2c-receiver-310a/ordered-controls-100s.txt`); rumble packets sent, felt result not in the capture; rear buttons Unverified |
+| Bluetooth LE | `2DC8:301B` | `HIDDescriptor` | Captured: every control raw and decoded (`2c-bluetooth-301b/ordered-controls-120s.txt`, `2c-bluetooth-301b/ojd-watch-120s.txt`); battery byte reads 0; rumble write fails |
+| Wired, DInput | `2DC8:301D` | `HIDDescriptor` | Unverified: no capture of this identity exists, and no capture shows which pad mode produces it |
+| USB adapter | `2DC8:3109` | `XboxXUSB` | Unverified: no capture of this identity exists, and no capture shows which pad mode produces it |
+| 2.4 GHz receiver, DInput | `2DC8:301C` | `HIDDescriptor` | Captured: every control reports (`2c-receiver-301c/ordered-controls-150s.txt`); the record is `idle`, maps no controls and reports `IdleIdentity`; unassigned L4 Unverified |
+
+## Results
+
+Each Results table is read from the capture named in its heading. The press order of the three `ordered-controls` captures is the same: A, B, X, Y, LB, RB, left trigger, right trigger, Back, Start, Guide, left stick click, right stick click, D-pad up, down, left, right, left stick, right stick. Control names in the 310A and 301C tables follow that order; the captures hold no OJD decode for those two identities, so the "OJD decode" column is "not in capture" there.
+
+### Receiver as `2DC8:310A`
+
+Source: `2c-receiver-310a/ordered-controls-100s.txt`. One report is 20 bytes: `00 14`, buttons (bytes 2 and 3), left trigger (byte 4), right trigger (byte 5), four signed 16-bit stick values (bytes 6 to 13), then `10 1C 30 64 00 10`. Those last six bytes are the same in every report of every 310A capture.
+
+| Control | Raw (bytes that change) | OJD decode |
+| --- | --- | --- |
+| A, B, X, Y | byte 3 = `10`, `20`, `40`, `80` | not in capture |
+| LB, RB | byte 3 = `01`, `02` | not in capture |
+| Left, right trigger | byte 4, byte 5: 0 to 255 | not in capture |
+| Back, Start | byte 2 = `20`, `10` | not in capture |
+| Guide | byte 3 = `04` | not in capture |
+| Left, right stick click | byte 2 = `40`, `80` | not in capture |
+| D-pad up, down, left, right | byte 2 = `01`, `02`, `04`, `08` | not in capture |
+| Left stick X, Y | bytes 6 to 9: -32768 to 32767 | not in capture |
+| Right stick X, Y | bytes 10 to 13: -32768 to 32767 | not in capture |
+
+At rest (`2c-receiver-310a/idle-12s.txt`) buttons, triggers and sticks read 0 in the first 200 reports; three later reports carry small stick values, and 100 more read 0.
+
+The rear buttons: `2c-receiver-310a/rear-square-star-45s.txt` holds seven presses. They report byte 2 = `20`, byte 3 = `10`, byte 2 = `10`, byte 2 = `10`, byte 3 = `10`, byte 3 = `10`, byte 3 = `10`: only bits that other controls own, and no report holds a separate rear bit. The tail of `ordered-controls-100s.txt` shows the same: bytes 2 = `20`, `10` and byte 3 = `10` only.
+
+Rumble: `2c-receiver-310a/rumble-6s.txt` shows two writes, `00 08 00 00 C8 00 00 00` and 1.5 s later `00 08 00 00 00 00 00 00`. The capture does not record whether a motor ran. Two testers reported rumble working on `0.5.0-beta.4` tester build `1.5.71`; no capture file backs that report.
+
+### Receiver as `2DC8:301C`
+
+Source: `2c-receiver-301c/ordered-controls-150s.txt`, pad in DInput mode. One report is 10 bytes: `01`, buttons (bytes 1 and 2), hat (byte 3), four unsigned 8-bit stick values (bytes 4 to 7), then two trigger bytes (8 and 9). At rest the report is `01 00 00 0F 7F 7F 7F 7F 00 00`.
+
+| Control | Raw (bytes that change) | OJD decode |
+| --- | --- | --- |
+| A, B, X, Y | byte 1 = `01`, `02`, `08`, `10` | not in capture |
+| LB, RB | byte 1 = `40`, `80` | not in capture |
+| Left, right trigger | byte 9 rises 0 to `FF` with byte 2 = `01`; byte 8 rises 0 to `FF` with byte 2 = `02` | not in capture |
+| Back, Start, Guide | byte 2 = `04`, `08`, `10` | not in capture |
+| Left, right stick click | byte 2 = `20`, `40` | not in capture |
+| D-pad | byte 3 = `0`, `4`, `6`, `2` in press order up, down, left, right; `F` at rest | not in capture |
+| Left stick X, Y | bytes 4 and 5: 0 to 255, rest `7F` | not in capture |
+| Right stick X, Y | bytes 6 and 7: 0 to 255, rest `7F` | not in capture |
+
+Rear buttons:
+
+- `2c-receiver-301c/rear-r4-cleared-45s.txt`: with the R4 assignment cleared, R4 reports byte 1 = `20` (bit 5), twice at 11.07 s and 11.32 s; the other presses report byte 2 = `04` and byte 1 = `01`.
+- `2c-receiver-301c/rear-l4-assigned-60s.txt`: with L4 assigned, no report sets byte 1 bit 2 (`04`) or bit 5 (`20`); the presses report byte 2 = `04` and byte 1 = `01`.
+- `2c-receiver-301c/ordered-controls-150s.txt`: the presses after the sticks (28 s to 39 s) report byte 2 = `04`, byte 1 = `01` and byte 2 = `08` only; no report sets byte 1 bit 2 or bit 5.
+
+Rumble: `2c-receiver-301c/rumble-writes.txt` lists eight `IOHIDDeviceSetReport` writes (report 1 with `C8`, `64` and `FF` payloads, each followed by zeros, and report 5 `64 64 00 00` then zeros). All return `result=0`, and the maintainer felt no rumble. The 63-byte vendor output report `0x81` and a write on the interrupt OUT pipe were not tried.
+
+### Bluetooth LE as `2DC8:301B`
+
+Raw source: `2c-bluetooth-301b/ordered-controls-120s.txt`. OJD decode source: `2c-bluetooth-301b/ojd-watch-120s.txt`, from `ojd controller watch` on `0.6.0-alpha.2`. One report is 11 bytes: `01`, hat (byte 1), four unsigned 8-bit stick values (bytes 2 to 5), two trigger bytes (6 and 7), then three button bytes (8, 9 and 10). At rest the report is `01 0F 7F 7F 7F 7F 00 00 00 00 00`.
+
+| Control | Raw (bytes that change) | OJD decode |
+| --- | --- | --- |
+| A, B, X, Y | byte 8 = `01`, `02`, `08`, `10` | South, East, West, North |
+| LB, RB | byte 8 = `40`, `80` | LeftShoulder, RightShoulder |
+| Left trigger | byte 7 rises 0 to 255 with byte 9 = `01` | LeftTrigger, LT up to 65535 |
+| Right trigger | byte 6 rises 0 to 255 with byte 9 = `02` | RightTrigger, RT up to 65535 |
+| Back, Start, Guide | byte 9 = `04`, `08`, `10` | Back, Start, Guide |
+| Left, right stick click | byte 9 = `20`, `40` | LeftStickClick, RightStickClick |
+| D-pad up, down, left, right | byte 1 = `0`, `4`, `6`, `2`; `F` at rest | north, south, west, east; neutral at rest |
+| Left stick X, Y | bytes 2 and 3: 0 to 255 | LS from -32767 to 32767; rest reads (-128,-128) |
+| Right stick X, Y | bytes 4 and 5: 0 to 255 | RS from -32767 to 32767; rest reads (-128,-128) |
+
+The trigger rows follow the press order: the OJD capture lists LeftTrigger before RightTrigger, and the raw capture raises byte 7 before byte 6.
+
+Battery: byte 10 reads `00` in every report of the capture. `ojd controller show 2DC8:301B` prints `Battery none` (`2c-bluetooth-301b/serving.txt`). The capture holds one charge level.
+
+Rear buttons: at the end of the capture one press sets byte 8 = `04` (bit 2) and two set byte 8 = `20` (bit 5); `tasks.md` 2.3 names them L4 and R4. The decode in `ojd-watch-120s.txt` lists neither bit, because the record maps neither.
+
+Rumble: `2c-bluetooth-301b/rumble-writes.txt` shows `IOHIDDeviceSetReport` of output report 5, with and without the report ID byte, returning `e00002f0` (`kIOReturnNotFound`) for all eight writes while macOS serves the pad. The maintainer reports one rumble when the pad connected. When OJD serves the pad, `ojd controller rumble` exits 1 with `error[E2013]: 8BitDo Ultimate 2C Wireless has no rumble motor.` (`2c-bluetooth-301b/serving.txt`).
+
+### Unverified
+
+| Row | Missing |
+| --- | --- |
+| `2DC8:301C`, L4 unassigned | A capture of L4 with no assignment. `rear-l4-assigned-60s.txt` holds L4 assigned. |
+| `2DC8:310A`, both rear buttons unassigned | A capture of L4 and R4 with no assignment. `rear-square-star-45s.txt` holds assigned rear buttons. |
+| `2DC8:301B`, battery at a second charge level | A capture of byte 10 at a different charge level. The one captured level reads 0. |
+| Rear buttons by cable | A capture with a cable connected, for each rear button. |
+| Pad mode that produces `2DC8:301D` | A capture of that identity, and the mode that enumerates as it. |
+| Pad mode that produces `2DC8:3109` | A capture of that identity, and the mode that enumerates as it. |
+| `2DC8:301C` rumble | A write of vendor report `0x81` or on the interrupt OUT pipe that the maintainer feels. |
+| `2DC8:301B` rumble from OJD's session | The report 5 write repeated while OJD serves the pad. |
 
 ## Why Bluetooth Needs a Record
 
