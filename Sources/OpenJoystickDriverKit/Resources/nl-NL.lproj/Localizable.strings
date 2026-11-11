@@ -4418,7 +4418,7 @@
 /* Menu item at the top of the menu bar menu while the app cannot reach its service; choosing it starts the service. */
 "ui.extra.problemServiceNotRunning" = "Service draait niet: start deze";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
-"ui.extra.openWindow" = "Open %@";
+"ui.extra.openWindow" = "%@ openen";
 /* Title of the alert shown when an action of the menu bar menu fails. */
 "ui.extra.actionFailedTitle" = "De actie is niet voltooid";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */
