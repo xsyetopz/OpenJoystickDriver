@@ -654,6 +654,7 @@
 	<key>recordSections</key>
 	<array>
 		<string>hidUsageMap</string>
+		<string>rumble</string>
 	</array>
 	<key>tuningKeys</key>
 	<array>

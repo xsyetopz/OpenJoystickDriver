@@ -1042,7 +1042,7 @@
       }
     },
     {
-      "name": "single mode records get the same per mode checks: template under HIDDescriptor",
+      "name": "single mode records get the same per mode checks: template under a family that does not encode it",
       "code": "E5007",
       "document": {
         "apiVersion": "openjoystickdriver/v1alpha3",
@@ -1053,7 +1053,7 @@
           {
             "id": "default",
             "protocol": {
-              "family": "HIDDescriptor"
+              "family": "SonySixaxis"
             },
             "session": {
               "rumble": {
@@ -1347,7 +1347,7 @@
           {
             "id": "x",
             "protocol": {
-              "family": "HIDDescriptor"
+              "family": "SonySixaxis"
             },
             "match": {
               "probes": [
@@ -1367,6 +1367,35 @@
                 },
                 "lowFrequency": {
                   "byte": 3
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a rumble template on a HIDDescriptor mode: a USB packet target",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12315,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "rumble": {
+                "report": {
+                  "kind": "USB",
+                  "length": 6
+                },
+                "lowFrequency": {
+                  "byte": 2
                 }
               }
             }

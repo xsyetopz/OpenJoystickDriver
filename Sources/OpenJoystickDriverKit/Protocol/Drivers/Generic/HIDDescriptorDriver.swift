@@ -35,6 +35,11 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   private let declaredControls: Set<Control>
   /// The triggers the map reads as buttons.
   private let declaredDigitalTriggers: Set<Control>
+  /// The rumble template the record declares; nil for a record with no rumble write shown on
+  /// hardware.
+  private let rumbleTemplate: RumbleOutputTemplate?
+  /// The rumble of the latest rumble command, which a resend repeats.
+  private var lastRumble = RumbleIntensities.off
 
   /// Creates a driver whose usage map the `HIDDescriptor` description selects.
   public convenience init(model: ControllerModelID, reportDescriptor: Data? = nil) {
@@ -48,13 +53,15 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   /// shape that the descriptor's usages match selects the map, so a descriptor with Z and Rz, a
   /// Brake or Accelerator, and no Rx or Ry gets the Z/Rz layout (xpadneo
   /// `docs/descriptors/xb1s_linux.md`, `xbxs.md`, and `incompat/gamesir_g7_se.md`). Otherwise the
-  /// description's standard map applies.
+  /// description's standard map applies. `rumbleTemplate` is the record's rumble report.
   init(
     model: ControllerModelID,
     reportDescriptor: Data? = nil,
-    usageMap: HIDUsageMap?
+    usageMap: HIDUsageMap?,
+    rumbleTemplate: RumbleOutputTemplate? = nil
   ) {
     self.model = model
+    self.rumbleTemplate = rumbleTemplate
     let fields =
       reportDescriptor.flatMap { HIDReportDescriptorParser.parse(descriptor: Array($0))?.fields }
       ?? []
@@ -82,16 +89,40 @@ public final class HIDDescriptorDriver: PhysicalProtocolDriver {
   /// Clears the state of the session: neutral input.
   public func resetProtocolState() {
     state = .neutral
+    lastRumble = .off
     (leftX, leftY, rightX, rightY) = (0, 0, 0, 0)
     hatDirection = .neutral
     axisDpadPressed = []
   }
 
-  /// The session plan: the driver parses IOKit-decoded element values and has no other session
-  /// needs.
-  public var sessionPlan: DriverSessionPlan { DriverSessionPlan(parsesHIDElementValues: true) }
-  /// No output: the driver has no rumble, lighting or adaptive triggers.
-  public var outputCapabilities: PhysicalControllerOutputCapabilities { .none }
+  /// The session plan: the driver parses IOKit-decoded element values, and repeats the rumble when
+  /// the template names a resend interval.
+  public var sessionPlan: DriverSessionPlan {
+    DriverSessionPlan(parsesHIDElementValues: true).withRumbleResend(of: rumbleTemplate)
+  }
+  /// The rumble motors of the template, or none without one: the driver has no lighting or
+  /// adaptive triggers.
+  public var outputCapabilities: PhysicalControllerOutputCapabilities {
+    rumbleTemplate?.outputCapabilities ?? .none
+  }
+
+  /// The last rumble again while a motor runs, when the template names a resend interval.
+  public func keepAliveWrites() -> [PhysicalOutputWrite] {
+    guard let rumbleTemplate, let intensities = rumbleTemplate.resendIntensities(after: lastRumble)
+    else { return [] }
+    return [rumbleTemplate.write(intensities)]
+  }
+
+  /// Encodes a rumble command through the rumble template; any other command, or any command
+  /// without a template, is unsupported.
+  public func encode(
+    _ command: ControllerOutputCommand
+  ) throws(ControllerOutputError) -> PhysicalOutputPlan {
+    guard let rumbleTemplate else { throw .unsupportedCapability(command.capability) }
+    let plan = try rumbleTemplate.encode(command) { rumbleTemplate.write($0) }
+    lastRumble = command.rumbleIntensities
+    return plan
+  }
   /// No default colour: the controller has no light.
   public var defaultColor: ControllerColor? { nil }
 

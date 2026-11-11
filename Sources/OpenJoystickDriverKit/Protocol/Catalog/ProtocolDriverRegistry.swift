@@ -199,7 +199,8 @@ public final class ProtocolDriverRegistry: Sendable {
         HIDDescriptorDriver(
           model: model,
           reportDescriptor: reportDescriptor,
-          usageMap: record.hidUsageMap
+          usageMap: record.hidUsageMap,
+          rumbleTemplate: record.rumbleTemplate
         )
       )
     case .hidReportLayout:
