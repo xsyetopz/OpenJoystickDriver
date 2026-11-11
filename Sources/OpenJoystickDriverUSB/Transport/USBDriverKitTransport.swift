@@ -321,6 +321,36 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
   }
 }
 
+/// Chooses the completion timeout of a transfer on an endpoint.
+///
+/// `IOUSBHostPipe::IO` answers `kIOReturnBadArgument` to any timeout but 0 on an interrupt pipe
+/// (#55), so an interrupt endpoint gets 0 whatever the caller asks for.
+actor USBPipeTimeoutPolicy {
+  /// The `bmAttributes` transfer-type mask and the value of an interrupt endpoint.
+  private static let transferTypeMask: UInt8 = 0x03
+  private static let interruptTransfer: UInt8 = 0x03
+
+  /// Returns the `bmAttributes` of an endpoint.
+  private let attributes: @Sendable (UInt8) async throws -> UInt8
+  /// Whether each endpoint read so far is an interrupt endpoint.
+  private var isInterrupt: [UInt8: Bool] = [:]
+
+  /// Creates the policy over `attributes`, which reads an endpoint's `bmAttributes`.
+  init(attributes: @escaping @Sendable (UInt8) async throws -> UInt8) {
+    self.attributes = attributes
+  }
+
+  /// Returns 0 on an interrupt endpoint and `requestedMilliseconds` on any other, and also when the
+  /// endpoint's type cannot be read, which is asked again on the next transfer.
+  func timeout(endpoint: UInt8, requestedMilliseconds: UInt32) async -> UInt32 {
+    if let known = isInterrupt[endpoint] { return known ? 0 : requestedMilliseconds }
+    guard let value = try? await attributes(endpoint) else { return requestedMilliseconds }
+    let interrupt = value & Self.transferTypeMask == Self.interruptTransfer
+    isInterrupt[endpoint] = interrupt
+    return interrupt ? 0 : requestedMilliseconds
+  }
+}
+
 /// The raw USB session of one opened extension service.
 actor USBDriverKitTransportSession: USBTransportSession {
   /// The driver context that carries the transfers.
@@ -329,6 +359,8 @@ actor USBDriverKitTransportSession: USBTransportSession {
   private let closeRuntime: @Sendable () async -> Void
   /// Whether the session is closed.
   private var isClosed = false
+  /// Picks the timeout each transfer passes to the pipe.
+  private let timeoutPolicy: USBPipeTimeoutPolicy
 
   /// Exclusive while the session is open, and unknown after it closes.
   var inputOwnership: HIDInputOwnership { isClosed ? .unknown : .exclusive }
@@ -337,6 +369,9 @@ actor USBDriverKitTransportSession: USBTransportSession {
   init(context: DriverContext, closeRuntime: @escaping @Sendable () async -> Void) {
     self.context = context
     self.closeRuntime = closeRuntime
+    timeoutPolicy = USBPipeTimeoutPolicy { endpoint in
+      try await context.usbPipeDescriptors(endpoint: endpoint).endpoint.attributes
+    }
   }
 
   /// Writes `data` to the endpoint `endpoint` and returns the number of bytes written.
@@ -346,8 +381,12 @@ actor USBDriverKitTransportSession: USBTransportSession {
   func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) async throws -> Int {
     guard !isClosed else { throw USBTransportError.disconnected }
     do {
+      let pipeTimeout = await timeoutPolicy.timeout(
+        endpoint: endpoint,
+        requestedMilliseconds: timeout
+      )
       return Int(
-        try await context.usbWrite(endpoint: endpoint, data: data, timeout: timeout)
+        try await context.usbWrite(endpoint: endpoint, data: data, timeout: pipeTimeout)
           .bytesTransferred
       )
     } catch { throw USBDriverKitTransportProvider.transportError(error) }
@@ -360,7 +399,12 @@ actor USBDriverKitTransportSession: USBTransportSession {
   func read(endpoint: UInt8, length: Int, timeout: UInt32) async throws -> [UInt8] {
     guard !isClosed else { throw USBTransportError.disconnected }
     do {
-      return try await context.usbRead(endpoint: endpoint, length: length, timeout: timeout).data
+      let pipeTimeout = await timeoutPolicy.timeout(
+        endpoint: endpoint,
+        requestedMilliseconds: timeout
+      )
+      return try await context.usbRead(endpoint: endpoint, length: length, timeout: pipeTimeout)
+        .data
     } catch { throw USBDriverKitTransportProvider.transportError(error) }
   }
 
