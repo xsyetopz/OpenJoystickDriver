@@ -1,7 +1,7 @@
 ## What's Changed
 
 ### 8BitDo Ultimate 2C Wireless
-* Rumble works over the 2.4 GHz receiver and the USB cable when the pad is in XInput mode. <!-- docs/testing/8bitdo-ultimate-2c.md, evidence/2c-receiver-310a/rumble-6s.txt -->
+* Rumble works over the 2.4 GHz receiver and the USB cable when the pad is in XInput mode. <!-- maintainer's own pad, reported 2026-11-11; Reddit r/GeForceNOW 1xr62z7 (dongle); evidence/2c-receiver-310a/rumble-6s.txt records the writes only -->
 * Over Bluetooth LE, every control decodes correctly except the two rear buttons. <!-- 51282caa5, evidence/2c-bluetooth-301b/ojd-watch-120s.txt -->
 * The receiver in DInput mode lists no controller while no pad is linked, and serves the pad once it is linked. <!-- fb958572f, 8a4003d71 -->
 * The Controllers list titles a device OJD does not serve with its product name, such as `8BitDo Ultimate 2C Wireless Controller`. A receiver with no pad linked reads `Wireless receiver`. <!-- cf39f591f -->
@@ -11,7 +11,7 @@
 * Flydigi Vader 4 Pro over Bluetooth in XInput mode: the sticks use their full range and Home registers. <!-- bcb3739a2 -->
 * Flydigi Vader 4 Pro dongle: rumble is on. <!-- bcb3739a2 -->
 * Flydigi Vader 5S: the USB startup steps run in the order the controller needs. <!-- 27a294eed -->
-* Xbox 360 wireless receivers (`045E:02A9`, `045E:0719`): input is decoded, and empty receiver slots do not show as controllers. <!-- 406c9042b, 7b5cdd4b9 -->
+* Xbox 360 wireless receivers (`045E:02A9`, `045E:0719`): input is decoded, and empty receiver slots do not show as controllers. <!-- 406c9042b, 7b5cdd4b9; add PR #64 once merged -->
 * Xbox Elite Series 1 (`045E:02E3`): OJD uses the right USB endpoints. <!-- 5f7633ba5 -->
 * Razer Wolverine V3 Tournament Edition (`1532:0A43`): OJD uses the right USB endpoints. <!-- 448e213c6 -->
 * PowerA XBX Spectra Enhanced Wired (`20D6:4002`) and Turtle Beach Rematch Advanced Wired (`10F5:711E`) have records. <!-- 41b363383, 1601e35b4 -->
@@ -86,7 +86,6 @@ Closes #57 <!-- 1601e35b4 -->
 * #58, Thrustmaster Ferrari 458 Spider: steering and brake are read. The clutch, the other buttons and the turn to the right need captures. <!-- ed18df398 -->
 * #59, 8BitDo Ultimate C Wired for Xbox (`2DC8:2027`): the startup sequence is compared with the Linux capture, and a pad that sends nothing says so. The pad has no record, and the Ultimate Mini is not covered. <!-- 469109ddc, c02722262, 589dc6b4a -->
 * #63, GameSir G7 Pro dongle: the HID gamepad interface is read. Its controls have no names until a capture through the dongle. <!-- f5cbcab80 -->
-* #64, tests for the Xbox 360 receiver: one test for empty receiver slots is in. The rest of the pull request is not. <!-- 7b5cdd4b9 -->
 
 ## Contributors
 * @xsyetopz
