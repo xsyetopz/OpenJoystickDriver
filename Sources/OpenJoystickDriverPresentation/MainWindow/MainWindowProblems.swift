@@ -47,8 +47,13 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
       switch state {
       case .missingEmbedded: return "ui.setup.missingDetail"
       case .invalid: return "ui.setup.invalidDetail"
-      case .awaitingApproval: return "platform.macos.ui.setup.approvalDetail"
-      case .needsActivation, .replacementNeeded, .failed: return "ui.setup.repairDetail"
+      case .unavailable: return "ui.setup.unavailableDetail"
+      case .running: return "ui.setup.runningDetail"
+      case .needsApproval: return "platform.macos.ui.setup.approvalDetail"
+      case .cancelled: return "ui.setup.cancelledDetail"
+      case .timedOut: return "ui.setup.timedOutDetail"
+      case .failed: return "ui.setup.failedDetail"
+      case .needsActivation, .replacementNeeded: return "ui.setup.repairDetail"
       case .checking, .active:
         preconditionFailure("A driver problem is never made for \(state)")
       }
@@ -63,9 +68,10 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     case .listenerStopped: return .restartListener
     case .driver(let state):
       switch state {
-      case .awaitingApproval: return .openDriverApproval
-      case .needsActivation, .replacementNeeded, .failed, .invalid: return .repairDriver
-      case .missingEmbedded: return nil
+      case .needsApproval: return .openDriverApproval
+      case .needsActivation, .replacementNeeded, .running, .cancelled, .timedOut, .failed:
+        return .repairDriver
+      case .missingEmbedded, .invalid, .unavailable: return nil
       case .checking, .active:
         preconditionFailure("A driver problem is never made for \(state)")
       }
@@ -73,6 +79,19 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     case .liveUpdatesPolling: return nil
     }
   }
+
+  /// The localization key of the button title, or nil when the row has no button.
+  var actionTitleKey: String? {
+    guard let action else { return nil }
+    switch self {
+    case .driver(.running): return "ui.setup.repairRunning"
+    case .driver(.failed), .driver(.cancelled), .driver(.timedOut): return "action.tryAgain"
+    default: return action.titleKey
+    }
+  }
+
+  /// Whether the button of the row can be pressed; a request that runs disables it.
+  var isActionEnabled: Bool { self != .driver(.running) }
 
   /// Whether the problem stops every controller.
   ///
@@ -87,12 +106,13 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
 
   /// Returns the problems of the current state, most blocking first.
   ///
-  /// Without the service nothing else can be read, and without the driver Xbox USB controllers
-  /// cannot connect.
+  /// Without the service nothing else can be read. The driver problem shows only while
+  /// `extensionRouteConnected` says a connected controller's route is the extension.
   static func current(
     permissions: RuntimePermissionLoadState,
     status: RuntimeStatusState,
     driver: SystemExtensionSetupState,
+    extensionRouteConnected: Bool,
     liveUpdatesFallbackReason: ControllerLiveUpdateFailure?,
     listenerFailure: ServiceListenerFailure?
   ) -> [Self] {
@@ -106,15 +126,26 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     }
     switch driver {
     case .checking, .active: break
-    case .missingEmbedded, .needsActivation, .replacementNeeded, .awaitingApproval, .failed,
-      .invalid:
-      problems.append(.driver(driver))
+    case .missingEmbedded, .invalid, .unavailable, .needsActivation, .replacementNeeded, .running,
+      .needsApproval, .cancelled, .timedOut, .failed:
+      if extensionRouteConnected { problems.append(.driver(driver)) }
     }
     if AccessReadiness.hasMissingPermission(permissionState: permissions, statusState: status) {
       problems.append(.accessMissing)
     }
     if let failure = liveUpdatesFallbackReason { problems.append(.liveUpdatesPolling(failure)) }
     return problems
+  }
+}
+
+extension RuntimeStatusState {
+  /// Whether a connected controller's route is the extension: Apple's driver holds it and a claim
+  /// activates the extension, or the extension already owns its USB interface.
+  var hasExtensionRouteController: Bool {
+    guard case .available(let presentation) = self else { return false }
+    return presentation.devices.contains {
+      $0.isHeldByAppleDriver || $0.physicalOwnership == .extensionOwnedUSB
+    }
   }
 }
 

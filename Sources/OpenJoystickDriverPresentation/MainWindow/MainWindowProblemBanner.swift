@@ -43,8 +43,10 @@
             .fixedSize(horizontal: false, vertical: true)
         }
         Spacer(minLength: 12)
-        if let action = problem.action {
-          Button(OJDLocalized.string(action.titleKey)) { perform(action) }
+        if let action = problem.action, let titleKey = problem.actionTitleKey {
+          Button(OJDLocalized.string(titleKey)) { perform(action) }.disabled(
+            !problem.isActionEnabled
+          )
         }
       }.padding(.horizontal, 12).padding(.vertical, 8).accessibilityElement(children: .combine)
         .ojdAccessibilityLabel(title).ojdAccessibilityValue(detail)
@@ -55,6 +57,9 @@
       if case .serviceUnavailable(let message) = problem { return message }
       if case .listenerStopped(let message) = problem { return message }
       guard let key = problem.detailKey else { return "" }
+      if case .driver(.failed(let failure)) = problem {
+        return OJDLocalized.formatted(key, failure.domain, failure.code, failure.text)
+      }
       return OJDLocalized.string(key)
     }
   }

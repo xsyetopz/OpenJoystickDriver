@@ -47,8 +47,13 @@
       case .active: return "ui.setup.activeDetail"
       case .missingEmbedded: return "ui.setup.missingDetail"
       case .invalid: return "ui.setup.invalidDetail"
-      case .awaitingApproval: return "platform.macos.ui.setup.approvalDetail"
-      case .needsActivation, .replacementNeeded, .failed: return "ui.setup.repairDetail"
+      case .unavailable: return "ui.setup.unavailableDetail"
+      case .running: return "ui.setup.runningDetail"
+      case .needsApproval: return "platform.macos.ui.setup.approvalDetail"
+      case .cancelled: return "ui.setup.cancelledDetail"
+      case .timedOut: return "ui.setup.timedOutDetail"
+      case .failed: return "ui.setup.failedDetail"
+      case .needsActivation, .replacementNeeded: return "ui.setup.repairDetail"
       }
     }
   }

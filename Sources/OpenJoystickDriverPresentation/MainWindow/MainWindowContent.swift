@@ -140,6 +140,7 @@
             permissions: runtime.permissionState,
             status: runtime.statusState,
             driver: runtime.systemExtensionSetupState,
+            extensionRouteConnected: runtime.statusState.hasExtensionRouteController,
             liveUpdatesFallbackReason: runtime.liveUpdatesFallbackReason,
             listenerFailure: runtime.listenerFailure
           ),
