@@ -324,6 +324,75 @@ struct RecordCommandTests {
     #expect(result.standardError.contains("ojd record show 045E:028E"))
   }
 
+  /// Runs `record draft` for the model `identity` while the service serves no controller and the
+  /// system lists `pad`.
+  private func draftUnserved(_ identity: String, pad: PhysicalDevice?, _ flags: [String] = [])
+    async throws -> CLIRun
+  {
+    let service = try FakeService(devices: [])
+    let read: @Sendable (Int, Int) -> PhysicalDevice? = { _, _ in pad }
+    return await RecordDraftCommand.$physicalDevice.withValue(read) {
+      await service.run(["record", "draft", identity] + flags)
+    }
+  }
+
+  /// A device that the service does not serve: a HID gamepad interface gets a patch that adds a
+  /// `HIDDescriptor` mode to the bundled record of the model (#63).
+  @Test
+  func draftOfAnUnservedHIDGamepadPatchesTheBundledRecord() async throws {
+    let gamepad = PhysicalInterfaceSignature(
+      interfaceClass: 3,
+      interfaceSubclass: 0,
+      interfaceProtocol: 0,
+      hostTransport: .usb,
+      accessBackend: .hid,
+      hidLayout: HIDLayoutSummary(
+        primaryUsage: HIDUsageSignature(usagePage: 1, usage: 5),
+        reportDescriptor: Data(GamepadHIDDescriptor.descriptor)
+      )
+    )
+    let pad = PhysicalDevice(vendorID: 0x3537, productID: 0x1022, interfaces: [gamepad])
+    let result = try await draftUnserved("3537:1022", pad: pad, ["--json"])
+    #expect(result.code == 0, "\(result.standardError)")
+    let json = try result.json()
+    #expect(json["operation"] as? String == "Patch")
+    #expect(json["family"] as? String == "HIDDescriptor")
+    #expect(json["identity"] as? String == "3537:1022")
+    #expect(json["missingSections"] as? [String] == [])
+  }
+
+  /// A device with only vendor-class interfaces gets one mode for each signature, and the command
+  /// names the input section as missing.
+  @Test
+  func draftOfAnUnservedVendorClassDeviceNamesTheMissingInput() async throws {
+    let pad = PhysicalDevice(
+      vendorID: 0x1234,
+      productID: 0x5678,
+      interfaces: [
+        PhysicalInterfaceSignature(
+          interfaceClass: 255,
+          interfaceSubclass: 93,
+          interfaceProtocol: 1,
+          hostTransport: .usb
+        )
+      ]
+    )
+    let json = try await draftUnserved("1234:5678", pad: pad, ["--json"]).json()
+    #expect(json["operation"] as? String == "Add")
+    #expect(json["missingSections"] as? [String] == ["input"])
+    let human = try await draftUnserved("1234:5678", pad: pad)
+    #expect(human.code == 0, "\(human.standardError)")
+    #expect(human.standardError.contains("input section"))
+  }
+
+  /// `E2012` is for a device that is not connected.
+  @Test
+  func draftOfADeviceThatIsNotConnectedExitsOneWithE2012() async throws {
+    let result = try await draftUnserved("1234:5678", pad: nil)
+    #expect(result.code == 1)
+    #expect(result.standardError.hasPrefix("error[E2012]: "))
+  }
+
   /// Runs `record draft --from-sdl` for a controller of the model, whose pad is `pad`.
   private func draftFromSDL(
     vendorID: UInt16,

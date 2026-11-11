@@ -2311,6 +2311,7 @@
         "changedBytes",
         "family",
         "identity",
+        "missingSections",
         "name",
         "operation",
         "record"
@@ -2358,6 +2359,13 @@
         "identity": {
           "type": "string",
           "pattern": "^[0-9A-F]{4}:[0-9A-F]{4}$"
+        },
+        "missingSections": {
+          "description": "The record sections the draft cannot fill; empty when none is missing.",
+          "type": "array",
+          "items": {
+            "enum": ["input"]
+          }
         },
         "name": {
           "type": "string"

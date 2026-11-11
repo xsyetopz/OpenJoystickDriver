@@ -41,6 +41,8 @@ struct RecordDraftCommand: AsyncParsableCommand {
     let capturedReports: Int
     /// The bytes that changed during the capture, with their smallest and largest values.
     let changedBytes: [ControllerRecordDraft.ChangedByte]
+    /// The record sections the draft cannot fill, such as `input`; empty when none is missing.
+    let missingSections: [String]
     /// The drafted record.
     let record: OrderedJSON
   }
@@ -89,42 +91,70 @@ struct RecordDraftCommand: AsyncParsableCommand {
   /// Runs the command.
   func run() async throws {
     try await global.run {
-      try await withController(controller) { client, device in
-        if fromSDL {
-          try print(try sdlDraft(for: device), device)
-          return
-        }
-        if CLIContext.current.format == .human {
-          CLIOutput.success(
-            CLILocalized.format(
-              "cli.record.draft.started",
-              device.name,
-              device.identity
-            )
-          )
-        }
-        let reports = try await capture(client, device)
-        let model = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
-        guard
-          let draft = ControllerRecordDraft(
-            model: model,
-            bundled: ControllerRecordSet.bundled.records[model] != nil,
-            descriptor: Self.descriptor(Int(device.vendorID), Int(device.productID)),
-            reports: reports
-          )
-        else {
-          throw CLIFailure(
-            .controllerRequestFailed,
-            CLILocalized.format(
-              "cli.record.draft.noLayout",
-              device.identity,
-              device.identity
-            )
-          )
-        }
-        try print(draft, device)
+      let client = try await ServiceConnection.open()
+      defer { client.disconnect() }
+      let devices = try await ServiceConnection.withDeadline(
+        seconds: CLIContext.current.requestTimeout
+      ) { try await client.getStatus().connectedDevices }
+      if case .model(let model) = controller.reference,
+        controller.reference.matches(in: devices).isEmpty,
+        let pad = Self.physicalDevice(Int(model.vendorID), Int(model.productID))
+      {
+        try printUnserved(model: model, device: pad)
+        return
       }
+      let device = try controller.resolve(in: devices)
+      if fromSDL {
+        try print(try sdlDraft(for: device), device)
+        return
+      }
+      if CLIContext.current.format == .human {
+        CLIOutput.success(
+          CLILocalized.format(
+            "cli.record.draft.started",
+            device.name,
+            device.identity
+          )
+        )
+      }
+      let reports = try await capture(client, device)
+      let model = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
+      guard
+        let draft = ControllerRecordDraft(
+          model: model,
+          bundled: ControllerRecordSet.bundled.records[model] != nil,
+          descriptor: Self.descriptor(Int(device.vendorID), Int(device.productID)),
+          reports: reports
+        )
+      else {
+        throw CLIFailure(
+          .controllerRequestFailed,
+          CLILocalized.format(
+            "cli.record.draft.noLayout",
+            device.identity,
+            device.identity
+          )
+        )
+      }
+      try print(draft, device)
     }
+  }
+
+  /// Prints the draft of a connected controller that the service does not serve: nothing is
+  /// captured, because no session exists to capture from.
+  private func printUnserved(model: ControllerModelID, device pad: PhysicalDevice) throws {
+    let identity = deviceIdentity(vendorID: Int(model.vendorID), productID: Int(model.productID))
+    guard let draft = ControllerRecordDraft(model: model, device: pad) else {
+      throw CLIFailure(
+        .controllerRequestFailed,
+        CLILocalized.format("cli.record.draft.sdl.noPad", identity)
+      )
+    }
+    let name = pad.productName ?? identity
+    if CLIContext.current.format == .human {
+      CLIOutput.success(CLILocalized.format("cli.record.draft.unserved", name, identity))
+    }
+    try print(draft, identity: identity, name: name)
   }
 
   /// The record drafted from the SDL_GameControllerDB line of the connected controller.
@@ -180,13 +210,18 @@ struct RecordDraftCommand: AsyncParsableCommand {
     _ draft: ControllerRecordDraft,
     _ device: ApplicationServiceDeviceDescription
   ) throws {
+    try print(draft, identity: device.identity, name: device.name)
+  }
+
+  /// Prints the draft of the controller `identity` named `name`.
+  private func print(_ draft: ControllerRecordDraft, identity: String, name: String) throws {
     let changed = draft.changedBytes
     switch CLIContext.current.format {
     case .json:
       try CLIOutput.json(
         Result(
-          identity: device.identity,
-          name: device.name,
+          identity: identity,
+          name: name,
           operation: draft.operation.rawValue,
           family: draft.family.rawValue,
           report: draft.reportLength.map {
@@ -194,6 +229,7 @@ struct RecordDraftCommand: AsyncParsableCommand {
           },
           capturedReports: draft.capturedReports,
           changedBytes: changed,
+          missingSections: draft.missingSections,
           record: try OrderedJSON(document: draft.document, file: "record")
         )
       )
@@ -216,6 +252,9 @@ struct RecordDraftCommand: AsyncParsableCommand {
             byte.maximum
           )
         )
+      }
+      if draft.missingSections.contains("input") {
+        CLIOutput.success(CLILocalized.text("cli.record.draft.missingInput"))
       }
       CLIOutput.success(
         CLILocalized.text(
