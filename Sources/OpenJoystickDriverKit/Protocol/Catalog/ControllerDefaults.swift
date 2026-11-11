@@ -65,6 +65,7 @@ public struct ControllerDefaults: Equatable, Sendable {
     guard patch.selector == .all else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.tuningDefaults.selector",
         "the selector must be all in \(fileName)"
       )
     }

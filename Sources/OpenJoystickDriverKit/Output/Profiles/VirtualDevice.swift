@@ -71,6 +71,8 @@ struct VirtualDevice: Equatable, Sendable {
       else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.virtualDevice.bundledMissing",
+          arguments: [persona.rawValue],
           "no record for \(persona.rawValue)"
         )
       }
@@ -82,6 +84,8 @@ struct VirtualDevice: Equatable, Sendable {
       guard device.match == nil, device.persona == persona else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
+          key: "error.E5007.virtualDevice.bundledPersona",
+          arguments: [persona.rawValue],
           "\(url.lastPathComponent) must define \(persona.rawValue)"
         )
       }

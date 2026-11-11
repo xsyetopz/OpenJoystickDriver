@@ -64,6 +64,7 @@ package struct DeviceCatalog: Sendable {
     guard (1...65_535).contains(record.vendorID), (0...65_535).contains(record.productID) else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.record.identityRange",
         "invalid controller identity \(record.vendorID):\(record.productID)"
       )
     }
@@ -76,6 +77,8 @@ package struct DeviceCatalog: Sendable {
     {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
+        key: "error.E5007.deviceCatalog.usbConfiguration",
+        arguments: [configuration],
         "unsupported USB configuration \(configuration)"
       )
     }

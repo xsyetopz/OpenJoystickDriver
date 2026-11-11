@@ -4292,6 +4292,20 @@
 "error.E5007.keepAlive.writesCount" = "%1$@，session.keepAlive.writes：keep-alive 必須不列出寫入，或列出 1...8 個。修正：列出 1...8 個寫入，或省略 writes。";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@，session.keepAlive.writes[].resendTuning：keep-alive 的 resendTuning 必須是 lizardResendTicks。修正：將 resendTuning 設為 lizardResendTicks，或省略。";
+/* Error E5007, shown when a record file fails: the bundled virtual devices hold no record for a persona. %2$@ is the persona. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledMissing" = "%1$@，persona：內建記錄必須包含角色 %2$@ 的記錄。修正：重新安裝 OpenJoystickDriver。";
+/* Error E5007, shown when a record file fails: a bundled virtual device record does not define its persona or holds a match. %2$@ is the persona. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledPersona" = "%1$@，persona：內建記錄必須定義角色 %2$@，且不能包含 match。修正：重新安裝 OpenJoystickDriver。";
+/* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
+"error.E5007.modPackage.kindMismatch" = "%1$@，%2$@：%3$@ 檔案不能列在 mod.plist 的 %2$@ 下，該清單只列出 %4$@ 檔案。修正：將檔案列在與其類型相符的清單下。";
+/* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
+"error.E5007.record.identityRange" = "%1$@，vendorID：控制器需要 1...65535 的 vendorID 和 0...65535 的 productID。修正：將 vendorID 和 productID 設在這些範圍內。";
+/* Error E5007, shown when a record file fails: a controller names an unsupported USB configuration. %2$@ is the configuration. %1$@ is the file. */
+"error.E5007.deviceCatalog.usbConfiguration" = "%1$@，usb.configuration：USB 設定必須是 SetConfiguration1BeforeClaim，而不是 %2$@。修正：將 configuration 設為 SetConfiguration1BeforeClaim，或省略。";
+/* Error E5007, shown when a record file fails: a patch file sits at a path its selector does not give. %2$@ is the expected path. %1$@ is the file. */
+"error.E5007.patch.path" = "%1$@，selector：修補檔必須位於 %2$@。修正：將檔案移到那裡，或修改它的 selector。";
+/* Error E5007, shown when a record file fails: the tuning defaults patch has a selector other than all. %1$@ is the file. */
+"error.E5007.tuningDefaults.selector" = "%1$@，selector：調校預設值的 selector 必須為 all。修正：將 selector 設為 all。";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@，patch.modes：每個項目必須包含 id，且只能包含 id、protocol、match、interface、session 或 idle。修正：為每個項目指定 id，並刪除其他鍵。";

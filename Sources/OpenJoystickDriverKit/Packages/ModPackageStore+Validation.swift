@@ -211,6 +211,8 @@ extension ModPackageStore {
     let list = operation == .add ? "controllers" : "patches"
     throw ControllerRecordProblem(
       code: .invalidControllerRecord,
+      key: "error.E5007.modPackage.kindMismatch",
+      arguments: [list, found, expected],
       "a \(found) file is listed under \(list) in mod.plist; \(list) lists \(expected) files"
     )
   }

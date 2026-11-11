@@ -4292,6 +4292,20 @@
 "error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: keep-alive में कोई राइट नहीं या 1...8 राइट होने चाहिए। समाधान: 1...8 राइट सूचीबद्ध करें, या writes छोड़ दें।";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: keep-alive का resendTuning lizardResendTicks होना चाहिए। समाधान: resendTuning को lizardResendTicks पर सेट करें, या छोड़ दें।";
+/* Error E5007, shown when a record file fails: the bundled virtual devices hold no record for a persona. %2$@ is the persona. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: बंडल किए गए रिकॉर्ड में पर्सोना %2$@ का रिकॉर्ड होना चाहिए। समाधान: OpenJoystickDriver को फिर से इंस्टॉल करें।";
+/* Error E5007, shown when a record file fails: a bundled virtual device record does not define its persona or holds a match. %2$@ is the persona. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: बंडल किया गया रिकॉर्ड पर्सोना %2$@ को परिभाषित करे और उसमें match न हो। समाधान: OpenJoystickDriver को फिर से इंस्टॉल करें।";
+/* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
+"error.E5007.modPackage.kindMismatch" = "%1$@, %2$@: %3$@ फ़ाइल को mod.plist में %2$@ के अंतर्गत सूचीबद्ध नहीं किया जा सकता, जो %4$@ फ़ाइलें सूचीबद्ध करता है। समाधान: फ़ाइल को उसके प्रकार से मेल खाती सूची में रखें।";
+/* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
+"error.E5007.record.identityRange" = "%1$@, vendorID: कंट्रोलर को 1...65535 का vendorID और 0...65535 का productID चाहिए। समाधान: vendorID और productID को इन सीमाओं में रखें।";
+/* Error E5007, shown when a record file fails: a controller names an unsupported USB configuration. %2$@ is the configuration. %1$@ is the file. */
+"error.E5007.deviceCatalog.usbConfiguration" = "%1$@, usb.configuration: USB कॉन्फ़िगरेशन SetConfiguration1BeforeClaim होना चाहिए, %2$@ नहीं। समाधान: configuration को SetConfiguration1BeforeClaim पर सेट करें, या छोड़ दें।";
+/* Error E5007, shown when a record file fails: a patch file sits at a path its selector does not give. %2$@ is the expected path. %1$@ is the file. */
+"error.E5007.patch.path" = "%1$@, selector: पैच फ़ाइल %2$@ पर होनी चाहिए। समाधान: फ़ाइल को वहाँ ले जाएँ, या उसका selector बदलें।";
+/* Error E5007, shown when a record file fails: the tuning defaults patch has a selector other than all. %1$@ is the file. */
+"error.E5007.tuningDefaults.selector" = "%1$@, selector: ट्यूनिंग डिफ़ॉल्ट का selector all होना चाहिए। समाधान: selector को all पर सेट करें।";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: हर प्रविष्टि में id होना चाहिए और केवल id, protocol, match, interface, session या idle हो सकते हैं। समाधान: हर प्रविष्टि को id दें और बाकी कुंजियाँ हटाएँ।";

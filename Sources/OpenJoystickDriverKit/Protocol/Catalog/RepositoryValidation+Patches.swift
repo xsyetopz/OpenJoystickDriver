@@ -117,6 +117,7 @@ extension RepositoryValidation {
         else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.record.identityRange",
             "vendorID must be 1...65535 and productID 0...65535"
           )
         }
@@ -158,6 +159,8 @@ extension RepositoryValidation {
         guard relativePath(of: url, under: directory) == expected else {
           throw ControllerRecordProblem(
             code: .invalidControllerRecord,
+            key: "error.E5007.patch.path",
+            arguments: [expected],
             "the patch path must be \(expected)"
           )
         }

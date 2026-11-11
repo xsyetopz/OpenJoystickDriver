@@ -3754,6 +3754,20 @@
 "error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: Ein Keep-alive muss keine oder 1...8 Schreibvorgänge nennen. Lösung: Liste 1...8 Schreibvorgänge auf oder lass writes weg.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: ResendTuning eines Keep-alive muss lizardResendTicks sein. Lösung: Setze resendTuning auf lizardResendTicks oder lass es weg.";
+/* Error E5007, shown when a record file fails: the bundled virtual devices hold no record for a persona. %2$@ is the persona. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: Die gebündelten Datensätze müssen einen Datensatz für die Persona %2$@ enthalten. Lösung: Installiere OpenJoystickDriver neu.";
+/* Error E5007, shown when a record file fails: a bundled virtual device record does not define its persona or holds a match. %2$@ is the persona. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: Ein gebündelter Datensatz muss die Persona %2$@ definieren und kein match enthalten. Lösung: Installiere OpenJoystickDriver neu.";
+/* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
+"error.E5007.modPackage.kindMismatch" = "%1$@, %2$@: Eine %3$@-Datei darf in mod.plist nicht unter %2$@ stehen, das %4$@-Dateien auflistet. Lösung: Führe die Datei unter der Liste auf, die zu ihrer Art passt.";
+/* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
+"error.E5007.record.identityRange" = "%1$@, vendorID: Ein Controller braucht eine vendorID von 1...65535 und eine productID von 0...65535. Lösung: Setze vendorID und productID in diese Bereiche.";
+/* Error E5007, shown when a record file fails: a controller names an unsupported USB configuration. %2$@ is the configuration. %1$@ is the file. */
+"error.E5007.deviceCatalog.usbConfiguration" = "%1$@, usb.configuration: Eine USB-Konfiguration muss SetConfiguration1BeforeClaim sein, nicht %2$@. Lösung: Setze configuration auf SetConfiguration1BeforeClaim oder lass es weg.";
+/* Error E5007, shown when a record file fails: a patch file sits at a path its selector does not give. %2$@ is the expected path. %1$@ is the file. */
+"error.E5007.patch.path" = "%1$@, selector: Eine Patch-Datei muss unter %2$@ liegen. Lösung: Verschiebe die Datei dorthin oder ändere ihren selector.";
+/* Error E5007, shown when a record file fails: the tuning defaults patch has a selector other than all. %1$@ is the file. */
+"error.E5007.tuningDefaults.selector" = "%1$@, selector: Der selector der Tuning-Standardwerte muss all sein. Lösung: Setze selector auf all.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: Jeder Eintrag muss eine id und nur id, protocol, match, interface, session oder idle enthalten. Lösung: Gib jedem Eintrag eine id und lösche jeden anderen Schlüssel.";

@@ -4292,6 +4292,20 @@
 "error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: keep-alive hiç yazma belirtmemeli ya da 1...8 yazma belirtmelidir. Düzeltme: 1...8 yazma listeleyin veya writes’ı çıkarın.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: keep-alive resendTuning değeri lizardResendTicks olmalıdır. Düzeltme: resendTuning’i lizardResendTicks yapın veya çıkarın.";
+/* Error E5007, shown when a record file fails: the bundled virtual devices hold no record for a persona. %2$@ is the persona. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: paketlenmiş kayıtlar %2$@ personası için bir kayıt içermelidir. Düzeltme: OpenJoystickDriver’ı yeniden yükleyin.";
+/* Error E5007, shown when a record file fails: a bundled virtual device record does not define its persona or holds a match. %2$@ is the persona. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: paketlenmiş bir kayıt %2$@ personasını tanımlamalı ve match içermemelidir. Düzeltme: OpenJoystickDriver’ı yeniden yükleyin.";
+/* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
+"error.E5007.modPackage.kindMismatch" = "%1$@, %2$@: bir %3$@ dosyası, %4$@ dosyalarını listeleyen mod.plist içindeki %2$@ altında listelenemez. Düzeltme: dosyayı türüne uyan listeye yazın.";
+/* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
+"error.E5007.record.identityRange" = "%1$@, vendorID: bir kontrolcü 1...65535 aralığında vendorID ve 0...65535 aralığında productID gerektirir. Düzeltme: vendorID ve productID’yi bu aralıklara ayarlayın.";
+/* Error E5007, shown when a record file fails: a controller names an unsupported USB configuration. %2$@ is the configuration. %1$@ is the file. */
+"error.E5007.deviceCatalog.usbConfiguration" = "%1$@, usb.configuration: bir USB yapılandırması %2$@ değil, SetConfiguration1BeforeClaim olmalıdır. Düzeltme: configuration’ı SetConfiguration1BeforeClaim yapın veya çıkarın.";
+/* Error E5007, shown when a record file fails: a patch file sits at a path its selector does not give. %2$@ is the expected path. %1$@ is the file. */
+"error.E5007.patch.path" = "%1$@, selector: bir yama dosyası %2$@ konumunda olmalıdır. Düzeltme: dosyayı oraya taşıyın veya selector’ını değiştirin.";
+/* Error E5007, shown when a record file fails: the tuning defaults patch has a selector other than all. %1$@ is the file. */
+"error.E5007.tuningDefaults.selector" = "%1$@, selector: ayar varsayılanlarının selector değeri all olmalıdır. Düzeltme: selector’ı all yapın.";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: her girdi bir id ve yalnızca id, protocol, match, interface, session veya idle içermelidir. Düzeltme: her girdiye bir id verin ve diğer anahtarları silin.";
