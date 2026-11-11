@@ -22,6 +22,7 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - `ojd controller show VVVV:PPPP` resolves a connected device that OJD does not serve and prints the reason and the next step, a Draft a record row with `ojd record draft` for a HID gamepad, and for `no-protocol-match` the capture command; `--json` has `kind` `UnservedController`. Selecting such a device in the Controllers list opens the same reason and next step, with Draft Record for a HID gamepad. (9.8)
 - The profile creation sheet and the profile details sheet choose apps from a list instead of a typed identifier: running and installed apps with icon and name, **Other...** with an open panel that starts in the Applications folder, and an app that is not installed shown by its identifier with **Not installed**. (15.2)
 - The status RPC carries `profileInForce` for each controller: the name of the profile in force and the bundle identifier of the app in front that selected it. The Controllers detail shows the profile and a **Selected by app** row, and the menu bar row of the controller shows the profile and **Selected by** the app. (15.3)
+- The wiki pages Remapping Profiles and Profile File Reference describe `appIDs` and the app chooser. (15.4)
 
 ## Changed
 

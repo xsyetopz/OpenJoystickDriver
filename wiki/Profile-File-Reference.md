@@ -66,7 +66,7 @@ A profile file contains one profile dictionary. An exported profile file has the
 | `id` | Yes | UUID of the profile |
 | `name` | Yes | 1 to 80 printable characters |
 | `device` | Yes | `vendorID` and `productID` of the controller model, and an optional `unit`: a unit ID from `ojd controller list` that limits the profile to that one controller |
-| `applicationScope` | Yes | a dictionary with `type` `Global`, or with `type` `Application` and `appIDs` set to a list of one or more distinct application IDs; the profile is in force while any one of them is in front. A file with `appID` is refused; `ojd migrate` converts it |
+| `applicationScope` | Yes | a dictionary with `type` `Global`, or with `type` `Application` and `appIDs` set to a list of one or more distinct application IDs; the profile is in force while any one of them is in front. The profile editor writes `appIDs` from its app chooser, which lists running and installed apps and **Other...**, and shows an ID that no installed app has as the ID with **Not installed**. A file with `appID` is refused; `ojd migrate` converts it |
 | `bindings` | Yes | The assignments |
 | `outputPolicy` | No | `virtualGamepad` and `physicalInput` |
 | `physicalColor` | No | Lighting color |
