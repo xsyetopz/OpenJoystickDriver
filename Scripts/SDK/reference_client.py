@@ -5,7 +5,7 @@ virtual gamepad: it presses the South button for 100 ms, prints the rumble comma
 endpoint sends, and asks the endpoint to report when both frames have played before it closes. The
 client uses only the Python standard library. Set OJD_TOKEN to the token that `ojd access grant --token NAME` printed.
 
-The client does not guess a version. A line with another `apiVersion`, and an E1009, E1010 or
+The client speaks `openjoystickdriver/v1alpha3` and does not guess a version. A line with another `apiVersion`, and an E1009, E1010 or
 E1011 error, end the run with the versions that the endpoint supports.
 """
 
