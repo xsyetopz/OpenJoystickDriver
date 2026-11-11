@@ -117,7 +117,7 @@
             presentationMode.wrappedValue.dismiss()
           }.disabled(proposedProfile == nil)
         }
-      }.ojdSheet(.compact)
+      }.ojdSheet(.regular)
     }
 
     /// The profile the fields describe, or nil.
