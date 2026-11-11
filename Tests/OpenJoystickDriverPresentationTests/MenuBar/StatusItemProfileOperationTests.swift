@@ -18,6 +18,7 @@ struct StatusItemProfileOperationTests {
     func focusSearchField() {}
 
     func showMainWindow(area: MainWindowArea?) {}
+    func showAccess(permission: AccessPermissionRow.Kind) {}
     func showErrorCodeExplainer() {}
     func showController(id: String) {}
     func showInputTest(controllerID: String) {}

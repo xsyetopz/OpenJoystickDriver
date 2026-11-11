@@ -8,17 +8,6 @@ import Testing
 @Suite
 struct StatusItemModelTests {
   @Test
-  func grantAccessIsShownOnlyWhenAccessIsMissing() {
-    func entries(needsAccess: Bool) -> [StatusItemEntry] {
-      StatusItemModel.entries(
-        for: StatusItemState(needsAccess: needsAccess, controllers: [], profileListRead: true)
-      )
-    }
-    #expect(entries(needsAccess: true).first { $0.id == "grantAccess" }?.action == .showArea(.access))
-    #expect(!entries(needsAccess: false).contains { $0.id == "grantAccess" })
-  }
-
-  @Test
   func entryIDsAreUniqueBecauseTheyAreTheAccessibilityIdentifiers() {
     func controller(_ id: String) -> StatusItemState.Controller {
       var controller = StatusItemState.Controller(
@@ -32,7 +21,7 @@ struct StatusItemModelTests {
     }
     let entries = StatusItemModel.entries(
       for: StatusItemState(
-        needsAccess: true,
+        problems: [.missingPermission(.inputRead), .serviceNotRunning],
         controllers: [controller("pad-a"), controller("pad-b")],
         profileListRead: true
       )

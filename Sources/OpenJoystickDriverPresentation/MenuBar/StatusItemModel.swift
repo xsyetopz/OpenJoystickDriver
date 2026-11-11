@@ -21,6 +21,10 @@ enum StatusItemAction: Equatable {
   case deactivateProfile(UUID)
   /// Opens the main window on the area.
   case showArea(MainWindowArea)
+  /// Opens the Access area at the row of the missing permission.
+  case showPermission(AccessPermissionRow.Kind)
+  /// Starts the service's request listener again and reads the status.
+  case startService
   /// Opens the main window on the area it last showed.
   case openWindow
   /// Opens the Settings window.
@@ -30,11 +34,33 @@ enum StatusItemAction: Equatable {
 }
 
 /// An entry title: a localization key, or text that comes from data such as a profile name.
-enum StatusItemTitle: Equatable {
+indirect enum StatusItemTitle: Equatable {
   /// A localization key.
   case key(String)
   /// Text that is shown as is.
   case verbatim(String)
+  /// A localization key whose one `%@` takes the text of the title.
+  case formatted(String, StatusItemTitle)
+}
+
+/// Something that needs the user's action; the menu shows one row for each.
+enum StatusItemProblem: Equatable {
+  /// The app cannot reach the service.
+  case serviceNotRunning
+  /// A permission the service needs is missing.
+  case missingPermission(AccessPermissionRow.Kind)
+
+  /// The row's title: it names the problem.
+  var title: StatusItemTitle {
+    switch self {
+    case .serviceNotRunning: return .key("ui.extra.problemServiceNotRunning")
+    case .missingPermission(let kind):
+      return .formatted(
+        "ui.extra.problemPermission",
+        .key(kind.titleKey)
+      )
+    }
+  }
 }
 
 /// One row of the status menu.
@@ -125,8 +151,8 @@ struct StatusItemState: Equatable {
     let isActive: Bool
   }
 
-  /// Whether a required permission or access is missing.
-  var needsAccess: Bool
+  /// The problems that need the user's action, most blocking first.
+  var problems: [StatusItemProblem]
   /// Connected controllers in inventory order.
   var controllers: [Controller]
   /// Whether the service reported the profile list.
@@ -144,16 +170,19 @@ enum StatusItemModel {
 
   /// Returns the entries of the status menu for `state`, from the first controller to Quit.
   static func entries(for state: StatusItemState) -> [StatusItemEntry] {
-    let grantAccess =
-      state.needsAccess
-      ? [
-        StatusItemEntry(
-          id: "grantAccess",
-          title: .key("ui.extra.grantAccess"),
-          action: .showArea(.access)
+    let problemRows = state.problems.map { problem -> StatusItemEntry in
+      switch problem {
+      case .serviceNotRunning:
+        return StatusItemEntry(id: "problem.service", title: problem.title, action: .startService)
+      case .missingPermission(let kind):
+        return StatusItemEntry(
+          id: "problem.\(kind.rawValue)",
+          title: problem.title,
+          action: .showPermission(kind)
         )
-      ] : []
-    return grantAccess + controllerRows(state) + [
+      }
+    }
+    return problemRows + controllerRows(state) + [
       .separator("separator.controllers"),
       StatusItemEntry(
         id: "openWindow",
@@ -168,6 +197,20 @@ enum StatusItemModel {
       .separator("separator.window"),
       StatusItemEntry(id: "quit", title: .key("ui.menu.app.quit"), action: .quit),
     ]
+  }
+
+  /// The menu bar symbol: the controller while nothing needs the user, a warning triangle while a
+  /// problem row exists. A state with no controller connected is not a problem.
+  static func symbolName(for state: StatusItemState) -> String {
+    state.problems.isEmpty ? "gamecontroller" : "exclamationmark.triangle"
+  }
+
+  /// The accessibility label of the item: the first problem, else whether a controller is connected.
+  static func accessibilityTitle(for state: StatusItemState) -> StatusItemTitle {
+    if let problem = state.problems.first {
+      return .formatted("a11y.menuBar.problem", problem.title)
+    }
+    return .key(state.controllers.isEmpty ? "a11y.menuBar.noController" : "a11y.menuBar.ready")
   }
 
   /// One row per connected controller, or one unavailable row that says none is connected.

@@ -125,6 +125,9 @@ final class AccessViewModel: ObservableObject {
   /// Why the latest operation failed.
   @Published
   private(set) var failure: AccessFailure?
+  /// The permission that the Access area scrolls to, which the area clears once it has.
+  @Published
+  var focusedPermission: AccessPermissionRow.Kind?
   /// The open sheet, or nil when none is open.
   @Published
   var sheet: AccessSheet?

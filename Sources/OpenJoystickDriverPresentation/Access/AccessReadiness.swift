@@ -29,6 +29,16 @@ struct AccessPermissionRow: Equatable, Identifiable {
     case postEvent
     /// Posting notifications.
     case notification
+
+    /// The localization key of the permission's name.
+    var titleKey: String {
+      switch self {
+      case .inputRead: return "platform.macos.term.inputRead"
+      case .inputInject: return "platform.macos.term.inputInject"
+      case .postEvent: return "term.keyboardPointer"
+      case .notification: return "ui.settings.notifications.notifications"
+      }
+    }
   }
 
   /// The permission.
@@ -42,14 +52,7 @@ struct AccessPermissionRow: Equatable, Identifiable {
   var id: String { kind.rawValue }
 
   /// The localization key of the row's title.
-  var titleKey: String {
-    switch kind {
-    case .inputRead: return "platform.macos.term.inputRead"
-    case .inputInject: return "platform.macos.term.inputInject"
-    case .postEvent: return "term.keyboardPointer"
-    case .notification: return "ui.settings.notifications.notifications"
-    }
-  }
+  var titleKey: String { kind.titleKey }
 
   /// The button of a missing permission; nil while nothing is missing.
   var actionTitleKey: String? {
@@ -159,28 +162,38 @@ struct AccessReadiness {
     status.requiresPostEventAccess == true && status.postEventAccess != .granted
   }
 
-  /// Whether a permission the service needs is missing: one of the Input Read, Input Inject and
-  /// Post Event cards reads Needs attention. The rule is the cards' own, so the status item, the
-  /// problem banner and the Access area agree:
+  /// The permissions the service needs that are missing: those of the Input Read, Input Inject and
+  /// Post Event cards that read Needs attention. The rule is the cards' own, so the status item,
+  /// the problem banner and the Access area agree:
   /// - Permissions being read or requested, or not read yet, show Checking and are not missing.
   /// - A permission denied or never requested is missing.
   /// - Post Event access counts only when the active profile requires it and it is not
   ///   authorized.
   /// - A failed permission read shows Needs attention, so the user can retry by granting.
   /// A notification setting never counts.
-  static func hasMissingPermission(
+  static func missingPermissions(
     permissionState: RuntimePermissionLoadState,
     statusState: RuntimeStatusState
-  ) -> Bool {
+  ) -> [AccessPermissionRow.Kind] {
     let readiness = Self(
       permissionState: permissionState,
       statusState: statusState,
       notificationState: .checking,
       notificationSettings: .authorizationOnly(.checking)
     )
-    return [readiness.inputRead, readiness.inputInject, readiness.postEvent].contains {
-      $0.tone == .caution
-    }
+    let cards: [(AccessPermissionRow.Kind, AccessReadinessStatus)] = [
+      (.inputRead, readiness.inputRead), (.inputInject, readiness.inputInject),
+      (.postEvent, readiness.postEvent),
+    ]
+    return cards.filter { $0.1.tone == .caution }.map(\.0)
+  }
+
+  /// Whether a permission the service needs is missing.
+  static func hasMissingPermission(
+    permissionState: RuntimePermissionLoadState,
+    statusState: RuntimeStatusState
+  ) -> Bool {
+    !missingPermissions(permissionState: permissionState, statusState: statusState).isEmpty
   }
 
   /// The four values in row order, for the accessibility value of the group.

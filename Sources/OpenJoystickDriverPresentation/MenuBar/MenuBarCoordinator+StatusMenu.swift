@@ -55,12 +55,7 @@
     /// Settings gets `Command-,` and Quit gets `Command-Q`.
     private func makeMenuItem(for entry: StatusItemEntry) -> NSMenuItem {
       if entry.isSeparator { return .separator() }
-      let title: String
-      switch entry.title {
-      case .key(let key):
-        title = MainMenuRenderer.title(key, appName: OJDLocalized.string("term.app.name"))
-      case .verbatim(let text): title = text
-      }
+      let title = menuTitle(entry.title)
       let label =
         entry.details.isEmpty
         ? title
@@ -90,6 +85,17 @@
       return item
     }
 
+    /// The text of a title, with the app name filled in for a key that takes it.
+    func menuTitle(_ title: StatusItemTitle) -> String {
+      switch title {
+      case .key(let key):
+        return MainMenuRenderer.title(key, appName: OJDLocalized.string("term.app.name"))
+      case .verbatim(let text): return text
+      case .formatted(let key, let argument):
+        return OJDLocalized.formatted(key, menuTitle(argument))
+      }
+    }
+
     /// Runs the action of the chosen status menu item.
     @objc
     func performStatusItemAction(_ sender: Any?) {
@@ -108,6 +114,12 @@
         if let operation = confirmedActivation(of: id) { changeProfile(operation) }
       case .deactivateProfile(let id): changeProfile(.deactivate(profileID: id))
       case .showArea(let area): mainWindow?.showMainWindow(area: area)
+      case .showPermission(let kind): mainWindow?.showAccess(permission: kind)
+      case .startService:
+        Task { @MainActor in
+          await viewModel.restartListener()
+          await viewModel.refresh()
+        }
       case .openWindow: mainWindow?.showMainWindow(area: nil)
       case .showSettings: settingsWindow?.showSettings(pane: nil)
       case .quit: NSApplication.shared.terminate(sender)

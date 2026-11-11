@@ -63,6 +63,8 @@
       switch title {
       case .key(let key): return OJDLocalized.string(key)
       case .verbatim(let text): return text
+      case .formatted(let key, let argument):
+        return OJDLocalized.formatted(key, text(of: argument))
       }
     }
 

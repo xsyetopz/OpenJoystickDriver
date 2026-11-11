@@ -20,13 +20,19 @@
       return status.devices
     }
 
-    /// Whether the Access area has a permission to grant; see
-    /// ``AccessReadiness/hasMissingPermission(permissionState:statusState:)``.
-    var needsPermissionAttention: Bool {
-      AccessReadiness.hasMissingPermission(
+    /// The problems that need the user's action: the service not reachable, then each permission
+    /// the Access area shows as missing.
+    var problems: [StatusItemProblem] {
+      var problems: [StatusItemProblem] = []
+      switch runtime.statusState {
+      case .unavailable, .error: problems.append(.serviceNotRunning)
+      case .loading, .available: break
+      }
+      problems += AccessReadiness.missingPermissions(
         permissionState: runtime.permissionState,
         statusState: runtime.statusState
-      )
+      ).map(StatusItemProblem.missingPermission)
+      return problems
     }
 
     /// The data that the status menu is built from.
@@ -36,7 +42,7 @@
         snapshot = available
       }
       return StatusItemState(
-        needsAccess: needsPermissionAttention,
+        problems: problems,
         controllers: devices.map {
           var controller = StatusItemState.Controller(
             id: $0.sessionToken.rawValue,
@@ -70,15 +76,6 @@
         $0.device.vendorID == device.vendorID && $0.device.productID == device.productID
           && ($0.device.unit == nil || $0.device.unit == device.portKey?.rawValue)
       }.map { StatusItemState.Profile(id: $0.id, name: $0.name, isActive: $0.id == activeID) }
-    }
-
-    /// The state whose symbol sits beside the status line.
-    var summarySemanticState: SemanticState {
-      switch runtime.statusState {
-      case .loading: return .loading
-      case .available(let status): return status.readiness == .ready ? .healthy : .attention
-      case .unavailable, .error: return .failure
-      }
     }
 
     /// Reads the driver extension setup and the service status again.

@@ -22,6 +22,8 @@
     func perform(_ action: MainWindowToolbarAction)
     /// Moves the keyboard focus to the search field of the list in view.
     func focusSearchField()
+    /// Opens the Access area scrolled to the row of the permission.
+    func showAccess(permission: AccessPermissionRow.Kind)
 
     /// Runs `mutation` for `request` and returns its outcome.
     ///

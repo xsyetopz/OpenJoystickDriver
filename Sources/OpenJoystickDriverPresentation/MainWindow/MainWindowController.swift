@@ -235,6 +235,12 @@
       present()
     }
 
+    /// Shows Access and has its permission rows scroll to the permission.
+    func showAccess(permission: AccessPermissionRow.Kind) {
+      screens.access.focusedPermission = permission
+      showMainWindow(area: .access)
+    }
+
     /// Shows Controllers with the controller selected.
     func showController(id: String) {
       guard navigation.requestArea(.controllers) else {

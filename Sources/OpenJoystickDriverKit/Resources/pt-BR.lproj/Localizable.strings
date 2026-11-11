@@ -4413,6 +4413,10 @@
 "ui.extra.showInWindow" = "Mostrar na Janela";
 /* Button of the problem banner that opens the Access area so the user can grant access. */
 "ui.extra.grantAccess" = "Conceder Acesso";
+/* Menu item at the top of the menu bar menu while a permission is missing; choosing it opens the Access area at that permission. %@ is the name of the permission. */
+"ui.extra.problemPermission" = "Permissão ausente: %@";
+/* Menu item at the top of the menu bar menu while the app cannot reach its service; choosing it starts the service. */
+"ui.extra.problemServiceNotRunning" = "Serviço não está em execução: iniciar";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "Abrir %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */
@@ -4421,6 +4425,12 @@
 "ui.extra.profileConflict" = "O perfil mudou antes de esta ação ser executada. Tente novamente.";
 /* VoiceOver label and accessibility description of the menu bar status item. The product name stays as written. */
 "a11y.menuBar.statusItem" = "Status do OpenJoystickDriver";
+/* VoiceOver label of the menu bar status item while a controller is connected and nothing needs the user. The product name stays as written. */
+"a11y.menuBar.ready" = "OpenJoystickDriver, pronto";
+/* VoiceOver label of the menu bar status item while no controller is connected. The product name stays as written. */
+"a11y.menuBar.noController" = "OpenJoystickDriver, nenhum controle conectado";
+/* VoiceOver label of the menu bar status item while a problem exists. The product name stays as written. %@ is the first problem, such as a missing permission. */
+"a11y.menuBar.problem" = "OpenJoystickDriver, precisa de atenção: %@";
 /* VoiceOver label of the sidebar list of the main window, which switches between the areas of the app. */
 "a11y.mainWindow.sidebar" = "Áreas";
 /* VoiceOver label of the control in the capture assignment sheet that sets the minimum swipe distance of a touch gesture. */

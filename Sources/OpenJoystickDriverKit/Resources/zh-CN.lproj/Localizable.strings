@@ -3899,6 +3899,10 @@
 "ui.extra.showInWindow" = "在窗口中显示";
 /* Button of the problem banner that opens the Access area so the user can grant access. */
 "ui.extra.grantAccess" = "授予访问权限";
+/* Menu item at the top of the menu bar menu while a permission is missing; choosing it opens the Access area at that permission. %@ is the name of the permission. */
+"ui.extra.problemPermission" = "缺少权限：%@";
+/* Menu item at the top of the menu bar menu while the app cannot reach its service; choosing it starts the service. */
+"ui.extra.problemServiceNotRunning" = "服务未运行：启动";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "打开 %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */
@@ -3907,6 +3911,12 @@
 "ui.extra.profileConflict" = "此操作执行前，配置文件发生了变化。请重试。";
 /* VoiceOver label and accessibility description of the menu bar status item. The product name stays as written. */
 "a11y.menuBar.statusItem" = "OpenJoystickDriver 状态";
+/* VoiceOver label of the menu bar status item while a controller is connected and nothing needs the user. The product name stays as written. */
+"a11y.menuBar.ready" = "OpenJoystickDriver，就绪";
+/* VoiceOver label of the menu bar status item while no controller is connected. The product name stays as written. */
+"a11y.menuBar.noController" = "OpenJoystickDriver，未连接控制器";
+/* VoiceOver label of the menu bar status item while a problem exists. The product name stays as written. %@ is the first problem, such as a missing permission. */
+"a11y.menuBar.problem" = "OpenJoystickDriver，需要注意：%@";
 /* VoiceOver label of the sidebar list of the main window, which switches between the areas of the app. */
 "a11y.mainWindow.sidebar" = "区域";
 /* VoiceOver label of the control in the capture assignment sheet that sets the minimum swipe distance of a touch gesture. */

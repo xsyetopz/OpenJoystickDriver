@@ -29,12 +29,12 @@ struct StatusItemMenuTests {
 
   private static func entries(
     _ controllers: [StatusItemState.Controller],
-    needsAccess: Bool = false,
+    problems: [StatusItemProblem] = [],
     profileListRead: Bool = true
   ) -> [StatusItemEntry] {
     StatusItemModel.entries(
       for: StatusItemState(
-        needsAccess: needsAccess,
+        problems: problems,
         controllers: controllers,
         profileListRead: profileListRead
       )
@@ -196,9 +196,9 @@ struct StatusItemMenuTests {
     func all(_ entries: [StatusItemEntry]) -> [StatusItemEntry] {
       entries.flatMap { [$0] + all($0.submenu ?? []) }
     }
-    let menu = all(Self.entries([Self.controller("a", isWireless: true)], needsAccess: true))
+    let menu = all(Self.entries([Self.controller("a", isWireless: true)], problems: [.missingPermission(.inputRead), .serviceNotRunning]))
     let allowed: Set<String> = [
-      "ui.extra.grantAccess", "ui.extra.openWindow", "ui.menu.app.settings", "ui.menu.app.quit",
+      "ui.extra.problemServiceNotRunning", "ui.extra.openWindow", "ui.menu.app.settings", "ui.menu.app.quit",
       "ui.extra.resume", "ui.extra.pause", "ui.extra.disconnectWireless", "ui.extra.testInput",
       "ui.extra.showInWindow", "ui.extra.noProfile", "ui.extra.moreProfiles",
       "ui.controllers.paused.value", MainMenuModel.noControllerTitleKey,

@@ -3899,6 +3899,10 @@
 "ui.extra.showInWindow" = "विंडो में दिखाएँ";
 /* Button of the problem banner that opens the Access area so the user can grant access. */
 "ui.extra.grantAccess" = "ऐक्सेस दें";
+/* Menu item at the top of the menu bar menu while a permission is missing; choosing it opens the Access area at that permission. %@ is the name of the permission. */
+"ui.extra.problemPermission" = "अनुमति गायब है: %@";
+/* Menu item at the top of the menu bar menu while the app cannot reach its service; choosing it starts the service. */
+"ui.extra.problemServiceNotRunning" = "सेवा नहीं चल रही: इसे शुरू करें";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "%@ खोलें";
 /* Title of the alert shown when an action of the menu bar menu fails. */
@@ -3907,6 +3911,12 @@
 "ui.extra.profileConflict" = "इस कार्रवाई के चलने से पहले प्रोफ़ाइल बदल गई। फिर कोशिश करें।";
 /* VoiceOver label and accessibility description of the menu bar status item. The product name stays as written. */
 "a11y.menuBar.statusItem" = "OpenJoystickDriver की स्थिति";
+/* VoiceOver label of the menu bar status item while a controller is connected and nothing needs the user. The product name stays as written. */
+"a11y.menuBar.ready" = "OpenJoystickDriver, तैयार";
+/* VoiceOver label of the menu bar status item while no controller is connected. The product name stays as written. */
+"a11y.menuBar.noController" = "OpenJoystickDriver, कोई कंट्रोलर कनेक्ट नहीं है";
+/* VoiceOver label of the menu bar status item while a problem exists. The product name stays as written. %@ is the first problem, such as a missing permission. */
+"a11y.menuBar.problem" = "OpenJoystickDriver, ध्यान देने की ज़रूरत है: %@";
 /* VoiceOver label of the sidebar list of the main window, which switches between the areas of the app. */
 "a11y.mainWindow.sidebar" = "क्षेत्र";
 /* VoiceOver label of the control in the capture assignment sheet that sets the minimum swipe distance of a touch gesture. */
