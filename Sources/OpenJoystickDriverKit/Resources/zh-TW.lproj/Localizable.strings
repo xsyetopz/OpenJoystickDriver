@@ -4268,6 +4268,14 @@
 "error.E5007.subcommandPlan.spiLength" = "%1$@，session.subcommands.requests[].spiRead.length：SPI 讀取的 length 必須為 1...29。修正：將 length 設為 1...29。";
 /* Error E5007, shown when the subcommands of a record fail: a subcommand request names both data and spiRead, or neither. %1$@ is the file. */
 "error.E5007.subcommandPlan.dataOrSpiRead" = "%1$@，session.subcommands.requests[]：子命令請求必須恰好包含 data 和 spiRead 之一。修正：保留 data 或 spiRead，並移除另一個。";
+/* Error E5007, shown when the named packets of a record fail: the named packets are none or more than 16. %1$@ is the file. */
+"error.E5007.namedPacketPlan.count" = "%1$@，session.namedPackets：命名封包必須列出 1...16 個封包。修正：列出 1...16 個封包。";
+/* Error E5007, shown when the named packets of a record fail: two named packets share an id. %1$@ is the file. */
+"error.E5007.namedPacketPlan.uniqueId" = "%1$@，session.namedPackets[].id：每個命名封包的 id 最多出現一次。修正：給每個封包各自的 id。";
+/* Error E5007, shown when the named packets of a record fail: a named packet id is not a family, a slash and lowercase words joined by hyphens. %1$@ is the file. */
+"error.E5007.namedPacketPlan.idForm" = "%1$@，session.namedPackets[].id：命名封包的 id 必須是系列、斜線和以連字號連接的小寫單字。修正：將 id 寫成 xbox/start-input 的形式。";
+/* Error E5007, shown when the named packets of a record fail: a named packet has fewer than 3 bytes or its session byte is not 2. %1$@ is the file. */
+"error.E5007.namedPacketPlan.shape" = "%1$@，session.namedPackets[].sessionByte：命名封包必須至少有 3 個位元組，且工作階段位元組必須為 2。修正：讓 bytes 至少有 3 個位元組，並將 sessionByte 設為 2。";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@，patch.modes：每個項目必須包含 id，且只能包含 id、protocol、match、interface、session 或 idle。修正：為每個項目指定 id，並刪除其他鍵。";

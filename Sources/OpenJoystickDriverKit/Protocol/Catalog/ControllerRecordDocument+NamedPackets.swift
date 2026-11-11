@@ -5,9 +5,7 @@ extension NamedPacketPlan: Decodable {
     do {
       try self.init(packets: packets)
     } catch {
-      throw DecodingError.dataCorrupted(
-        .init(codingPath: decoder.codingPath, debugDescription: error.description)
-      )
+      throw DecodingError.dataCorrupted(error.context(at: decoder.codingPath))
     }
   }
 }
@@ -25,9 +23,7 @@ extension NamedPacket: Decodable {
         sessionByte: container.decode(Int.self, for: "sessionByte")
       )
     } catch let problem as ControllerRecordProblem {
-      throw DecodingError.dataCorrupted(
-        .init(codingPath: decoder.codingPath, debugDescription: problem.description)
-      )
+      throw DecodingError.dataCorrupted(problem.context(at: decoder.codingPath))
     }
   }
 }
