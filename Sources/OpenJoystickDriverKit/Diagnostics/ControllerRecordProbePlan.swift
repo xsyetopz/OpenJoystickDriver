@@ -37,7 +37,9 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
   ///   identity.
   public init(data: Data) throws {
     let (decoded, profile) = try Self.validatedRecord(data)
-    guard !decoded.model.isBootloaderIdentity else {
+    guard profile.idleReason != .bootloader,
+      ControllerRecordSet.bundled.records[decoded.model]?.profile.idleReason != .bootloader
+    else {
       throw ControllerRecordProbeError.bootloaderIdentity
     }
     // The signing-free probe drives only the raw-USB Xbox families it can start safely.

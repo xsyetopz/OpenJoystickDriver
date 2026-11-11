@@ -3803,6 +3803,8 @@
 "error.E5007.userFile.notDictionary" = "%1$@, document: The file is not a dictionary. Fix: Make the root of the property list a dictionary.";
 /* Error E5007, shown when a user or package record file is skipped: a Controller file names a bundled controller. %2$@ is the model. %1$@ is the file. */
 "error.E5007.userFile.bundledController" = "%1$@, vendorID, productID: %2$@ is a bundled controller, so a Controller file cannot add it. Fix: Write a patch file for it instead.";
+/* Error E5007, shown when a user or package record file is skipped: the file adds or patches a bootloader identity. %2$@ is the model. %1$@ is the file. */
+"error.E5007.userFile.bootloaderController" = "%1$@, vendorID, productID: %2$@ is a bootloader identity, so no user or package file can add or patch it. Fix: Remove the file; OJD sends a controller in bootloader state no data.";
 /* Error E5007, shown when a user or package record file is skipped: a patch selects no known controller. %2$@ is the selector. %1$@ is the file. */
 "error.E5007.userFile.unknownController" = "%1$@, selector: The selector %2$@ matches no known controller. Fix: Use a Controller file to add a new controller, or correct the selector.";
 /* Error E5007, shown when a user or package record file is skipped: the record that a patch applies to is not a dictionary. %1$@ is the file. */

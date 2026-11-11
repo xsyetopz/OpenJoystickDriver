@@ -1,9 +1,5 @@
 [
   {
-    "path": "Sources/OpenJoystickDriverKit/Device/ControllerModelID.swift",
-    "reason": "The 8BitDo bootloader identities 2DC8:3208 and 2DC8:5750 gate every write, with or without a record, so the rule cannot live in a record that a missing record would drop."
-  },
-  {
     "path": "Sources/OpenJoystickDriverKit/Diagnostics/DiagnosticsService.swift",
     "reason": "The placeholder-serial check names the Switch Pro Controller 057E:2009, the one model that reports the placeholder serial, for a diagnosis of a running service rather than for protocol selection."
   },

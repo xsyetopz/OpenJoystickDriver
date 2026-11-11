@@ -129,12 +129,6 @@ struct BootloaderGuardTests {
     #expect(Localization().string(key) != key)
   }
 
-  @Test
-  func onlyTheTwoBootloaderIdentitiesAreRefused() {
-    #expect(ControllerModelID(vendorID: 0x2DC8, productID: 0x310A).isBootloaderIdentity == false)
-    #expect(ControllerModelID(vendorID: 0x1234, productID: 0x3208).isBootloaderIdentity == false)
-  }
-
   @Test(arguments: identities)
   func modeSelectionReadsNothing(productID: UInt16) async {
     let reader = CountingProbeReader()

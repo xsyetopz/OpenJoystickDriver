@@ -4341,6 +4341,8 @@
 "error.E5007.userFile.notDictionary" = "%1$@, document: 파일이 딕셔너리가 아닙니다. 해결: 속성 목록의 루트를 딕셔너리로 만드세요.";
 /* Error E5007, shown when a user or package record file is skipped: a Controller file names a bundled controller. %2$@ is the model. %1$@ is the file. */
 "error.E5007.userFile.bundledController" = "%1$@, vendorID, productID: %2$@은(는) 내장 컨트롤러이므로 Controller 파일로 추가할 수 없습니다. 해결: 대신 그에 대한 패치 파일을 쓰세요.";
+/* Error E5007, shown when a user or package record file is skipped: the file adds or patches a bootloader identity. %2$@ is the model. %1$@ is the file. */
+"error.E5007.userFile.bootloaderController" = "%1$@, vendorID, productID: %2$@은(는) 부트로더 식별자이므로 사용자 파일이나 패키지 파일로 추가하거나 패치할 수 없습니다. 해결: 파일을 삭제하세요. OJD는 부트로더 상태의 컨트롤러에 데이터를 보내지 않습니다.";
 /* Error E5007, shown when a user or package record file is skipped: a patch selects no known controller. %2$@ is the selector. %1$@ is the file. */
 "error.E5007.userFile.unknownController" = "%1$@, selector: selector %2$@은(는) 알려진 컨트롤러와 일치하지 않습니다. 해결: 새 컨트롤러를 추가하려면 Controller 파일을 쓰거나 selector를 고치세요.";
 /* Error E5007, shown when a user or package record file is skipped: the record that a patch applies to is not a dictionary. %1$@ is the file. */

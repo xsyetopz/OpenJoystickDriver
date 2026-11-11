@@ -428,7 +428,6 @@ enum ProtocolClassifier {
         $1.interfaceNumber ?? .max, $1.alternateSetting ?? .max
       )
     }
-    if device.model?.isBootloaderIdentity == true { return .unsupported(.bootloaderIdentity) }
     if let vendorID = device.vendorID, let productID = device.productID,
       let record = catalog.record(
         for: ControllerModelID(vendorID: vendorID, productID: productID),

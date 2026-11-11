@@ -26,14 +26,6 @@ public struct ControllerModelID: Hashable, Comparable, Sendable {
     self.init(vendorID: representableVendorID, productID: representableProductID)
   }
 
-  /// Whether this is an 8BitDo bootloader identity (`2DC8:3208`, `2DC8:5750`).
-  ///
-  /// A write to a pad in bootloader state risks a bad firmware image, so OJD sends such a device
-  /// nothing, with or without a record.
-  public var isBootloaderIdentity: Bool {
-    vendorID == 0x2DC8 && (productID == 0x3208 || productID == 0x5750)
-  }
-
   /// Orders by vendor ID, then product ID.
   public static func < (lhs: Self, rhs: Self) -> Bool {
     (lhs.vendorID, lhs.productID) < (rhs.vendorID, rhs.productID)

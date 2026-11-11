@@ -223,6 +223,7 @@ extension ControllerRecordSet {
         file: file?.lastPathComponent
       )
       let decoded = try decode(document)
+      try refuseBootloader(bundled.records[decoded.model])
       guard bundled.records[decoded.model] == nil else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,
@@ -288,6 +289,18 @@ extension ControllerRecordSet {
     }
   }
 
+  /// Throws when `record` is a bootloader identity: its idle default mode is the bundled catalog's
+  /// to keep, so no user or package file adds, replaces or patches it.
+  private static func refuseBootloader(_ record: ControllerRecord?) throws {
+    guard let record, record.profile.idleReason == .bootloader else { return }
+    throw ControllerRecordProblem(
+      code: .invalidControllerRecord,
+      key: "error.E5007.userFile.bootloaderController",
+      arguments: ["\(record.model)"],
+      "\(record.model) is a bootloader identity; no user or package file changes it"
+    )
+  }
+
   /// `upstream` with `patch` merged in by ``ControllerPatchMerge/apply(_:to:)`` and validated as a
   /// record.
   ///
@@ -308,6 +321,7 @@ extension ControllerRecordSet {
       )
     }
     let isAll = patch.selector == .all
+    if !isAll { try refuseBootloader(upstream) }
     let body = ControllerPatchMerge.appliedBody(of: patch, to: base)
     let removed = ControllerPatchMerge.appliedRemove(of: patch, to: base)
     guard body != nil || !removed.isEmpty else { return upstream }

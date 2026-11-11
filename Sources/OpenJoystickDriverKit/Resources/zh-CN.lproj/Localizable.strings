@@ -4341,6 +4341,8 @@
 "error.E5007.userFile.notDictionary" = "%1$@，document：文件不是字典。修复：将属性列表的根设为字典。";
 /* Error E5007, shown when a user or package record file is skipped: a Controller file names a bundled controller. %2$@ is the model. %1$@ is the file. */
 "error.E5007.userFile.bundledController" = "%1$@，vendorID, productID：%2$@ 是内置控制器，Controller 文件无法添加它。修复：改为为它编写补丁文件。";
+/* Error E5007, shown when a user or package record file is skipped: the file adds or patches a bootloader identity. %2$@ is the model. %1$@ is the file. */
+"error.E5007.userFile.bootloaderController" = "%1$@，vendorID, productID：%2$@ 是引导加载程序标识，因此任何用户文件或软件包文件都无法添加或修补它。修复：删除该文件；OJD 不会向处于引导加载程序状态的控制器发送数据。";
 /* Error E5007, shown when a user or package record file is skipped: a patch selects no known controller. %2$@ is the selector. %1$@ is the file. */
 "error.E5007.userFile.unknownController" = "%1$@，selector：选择器 %2$@ 不匹配任何已知控制器。修复：使用 Controller 文件添加新控制器，或更正选择器。";
 /* Error E5007, shown when a user or package record file is skipped: the record that a patch applies to is not a dictionary. %1$@ is the file. */

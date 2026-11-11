@@ -4341,6 +4341,8 @@
 "error.E5007.userFile.notDictionary" = "%1$@, document: tệp không phải từ điển. Cách sửa: đặt gốc của danh sách thuộc tính là một từ điển.";
 /* Error E5007, shown when a user or package record file is skipped: a Controller file names a bundled controller. %2$@ is the model. %1$@ is the file. */
 "error.E5007.userFile.bundledController" = "%1$@, vendorID, productID: %2$@ là tay cầm đi kèm nên tệp Controller không thể thêm nó. Cách sửa: hãy viết một tệp bản vá cho nó.";
+/* Error E5007, shown when a user or package record file is skipped: the file adds or patches a bootloader identity. %2$@ is the model. %1$@ is the file. */
+"error.E5007.userFile.bootloaderController" = "%1$@, vendorID, productID: %2$@ là một danh tính bootloader, nên không tệp người dùng hay tệp gói nào có thể thêm hoặc vá nó. Cách sửa: hãy xóa tệp; OJD không gửi dữ liệu cho tay cầm đang ở trạng thái bootloader.";
 /* Error E5007, shown when a user or package record file is skipped: a patch selects no known controller. %2$@ is the selector. %1$@ is the file. */
 "error.E5007.userFile.unknownController" = "%1$@, selector: bộ chọn %2$@ không khớp với tay cầm nào đã biết. Cách sửa: dùng tệp Controller để thêm tay cầm mới hoặc sửa bộ chọn.";
 /* Error E5007, shown when a user or package record file is skipped: the record that a patch applies to is not a dictionary. %1$@ is the file. */
