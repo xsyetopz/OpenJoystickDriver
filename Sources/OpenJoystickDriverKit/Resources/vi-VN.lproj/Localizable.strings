@@ -2931,6 +2931,8 @@
 "cli.record.draft.duration" = "Ghi các báo cáo đầu vào trong số giây này.";
 /* Help text of the --from-sdl flag of 'ojd record draft'. SDL_GameControllerDB is a project name and stays as written. */
 "cli.record.draft.fromSDL" = "Tạo bản nháp từ dòng SDL_GameControllerDB của bộ điều khiển thay vì ghi lại các báo cáo đầu vào.";
+/* Note printed by 'ojd record draft' when the draft lacks the input section. The command in quotes stays as written, including FILE. */
+"cli.record.draft.missingInput" = "Bản nháp không có phần input vì chưa biết các thành phần điều khiển của thiết bị này. Hãy thêm phần đó, rồi chạy “ojd record validate FILE”.";
 /* Hint printed after 'ojd record draft'. The command in quotes stays as written, including FILE. */
 "cli.record.draft.next" = "Lưu bản ghi vào một tệp, kiểm tra từng thành phần, rồi chạy “ojd record validate FILE”.";
 /* Message of 'ojd record draft' when the descriptor of the controller yields no controls and the bundled record names the family. %1$@ is the controller identity, VVVV:PPPP, and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
@@ -2947,6 +2949,8 @@
 "cli.record.draft.sdl.rejected" = "Dòng SDL_GameControllerDB của %1$@ bị từ chối: %2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.record.draft.started" = "Hãy nhấn mọi thành phần trên %1$@ (%2$@), và di chuyển từng cần và cò.";
+/* Note printed by 'ojd record draft' before a draft of a controller the service does not serve. %1$@ is the controller name, %2$@ is its vendor and product ID. */
+"cli.record.draft.unserved" = "OpenJoystickDriver không phục vụ %1$@ (%2$@), nên không có gì được ghi lại. Bản nháp được lập từ các giao diện USB của thiết bị.";
 /* Error of the 'ojd record' commands when a record file cannot be read. %1$@ is the file path and %2$@ is the reason from the system. */
 "cli.record.group.errorUnreadable" = "Không thể đọc %1$@: %2$@";
 /* Help text of the file argument of the 'ojd record' commands. The single hyphen means stdin and stays as written. */

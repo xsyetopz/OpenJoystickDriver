@@ -2931,6 +2931,8 @@
 "cli.record.draft.duration" = "擷取輸入報告的秒數。";
 /* Help text of the --from-sdl flag of 'ojd record draft'. SDL_GameControllerDB is a project name and stays as written. */
 "cli.record.draft.fromSDL" = "根據控制器的 SDL_GameControllerDB 行產生草稿，而不是擷取輸入報告。";
+/* Note printed by 'ojd record draft' when the draft lacks the input section. The command in quotes stays as written, including FILE. */
+"cli.record.draft.missingInput" = "此裝置的控制項未知，因此草稿沒有 input 部分。請補上該部分，然後執行「ojd record validate FILE」。";
 /* Hint printed after 'ojd record draft'. The command in quotes stays as written, including FILE. */
 "cli.record.draft.next" = "將記錄儲存到檔案，檢查每個控制項，然後執行「ojd record validate FILE」。";
 /* Message of 'ojd record draft' when the descriptor of the controller yields no controls and the bundled record names the family. %1$@ is the controller identity, VVVV:PPPP, and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
@@ -2947,6 +2949,8 @@
 "cli.record.draft.sdl.rejected" = "%1$@ 的 SDL_GameControllerDB 行被拒絕：%2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.record.draft.started" = "按下 %1$@（%2$@）上的每個控制項，並移動每個搖桿和扳機。";
+/* Note printed by 'ojd record draft' before a draft of a controller the service does not serve. %1$@ is the controller name, %2$@ is its vendor and product ID. */
+"cli.record.draft.unserved" = "OpenJoystickDriver 未接管 %1$@（%2$@），因此沒有擷取任何內容。草稿來自其 USB 介面。";
 /* Error of the 'ojd record' commands when a record file cannot be read. %1$@ is the file path and %2$@ is the reason from the system. */
 "cli.record.group.errorUnreadable" = "無法讀取 %1$@：%2$@";
 /* Help text of the file argument of the 'ojd record' commands. The single hyphen means stdin and stays as written. */
