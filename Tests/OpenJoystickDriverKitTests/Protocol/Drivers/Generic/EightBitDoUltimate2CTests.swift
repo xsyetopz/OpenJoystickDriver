@@ -1,12 +1,13 @@
+import Foundation
 import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// The 8BitDo Ultimate 2C records, from sources only.
+/// The 8BitDo Ultimate 2C records.
 ///
-/// The sources are the HID usage tables and the Z/Rz layout of
-/// `docs/testing/8bitdo-ultimate-2c.md`. No capture of `2DC8:301B`, `2DC8:301D` or `2DC8:3109`
-/// backs them; a tester's capture replaces these usages.
+/// The `2DC8:301B` record is checked against `ordered-controls-120s.txt`. The sources of
+/// `2DC8:301D` and `2DC8:3109` are the HID usage tables and the Z/Rz layout of
+/// `docs/testing/8bitdo-ultimate-2c.md`; no capture of those two identities backs them.
 struct EightBitDoUltimate2CTests {
   private static let bluetooth = ControllerModelID(vendorID: 0x2DC8, productID: 0x301B)
   private static let adapter = ControllerModelID(vendorID: 0x2DC8, productID: 0x3109)
@@ -87,5 +88,56 @@ struct EightBitDoUltimate2CTests {
     }
     #expect(Self.parse(parser, usage: 0x32, 255).contains(.rightStick(x: 1, y: 0)))
     #expect(Self.parse(parser, usage: 0x33, 255) == nil)
+  }
+
+  /// The reports of `ordered-controls-120s.txt`, each as the bytes after the report ID.
+  private static func capturedReports() throws -> [[UInt8]] {
+    var root = URL(fileURLWithPath: #filePath)
+    for _ in 0..<6 { root.deleteLastPathComponent() }
+    let capture = root.appendingPathComponent(
+      "openspec/changes/0-6-0-alpha-3/evidence/2c-bluetooth-301b/ordered-controls-120s.txt"
+    )
+    return try String(contentsOf: capture, encoding: .utf8).split(separator: "\n").map {
+      $0.split(separator: " ").suffix(11).dropFirst().compactMap { UInt8($0, radix: 16) }
+    }
+  }
+
+  /// The sign of a stick byte: 0 to 255 spans the axis, so the rest byte `7F` reads just below
+  /// zero, the `(-128, -128)` of `ojd-watch-120s.txt`.
+  private static func direction(of byte: UInt8) -> Int16 {
+    byte < 0x80 ? -1 : 1
+  }
+
+  @Test
+  func theCapturedReportsMoveTheRightStickWithZAndRzAndLeaveTriggersAtRest() throws {
+    let parser = HIDDescriptorDriver(
+      model: Self.bluetooth,
+      usageMap: try catalogUsageMap(0x2DC8, 0x301B)
+    )
+    let reports = try Self.capturedReports()
+    var rightStickMoved = false
+    var leftTriggerPressed = false
+    var rightTriggerPressed = false
+    for bytes in reports {
+      var event: ControllerEvent?
+      for (usage, page, byte) in [
+        (0x30, 1, bytes[1]), (0x31, 1, bytes[2]), (0x32, 1, bytes[3]), (0x35, 1, bytes[4]),
+        (196, 2, bytes[5]), (197, 2, bytes[6]),
+      ] {
+        event = Self.parse(parser, page: UInt32(page), usage: UInt32(usage), Int(byte)) ?? event
+      }
+      let state = try #require(event).state
+      #expect(state.rightStick.x.rawValue.signum() == Self.direction(of: bytes[3]))
+      #expect(state.rightStick.y.rawValue.signum() == Self.direction(of: bytes[4]))
+      #expect(state.leftStick.x.rawValue.signum() == Self.direction(of: bytes[1]))
+      #expect((state.rightTrigger == UnipolarValue(normalized: 0)) == (bytes[5] == 0))
+      #expect((state.leftTrigger == UnipolarValue(normalized: 0)) == (bytes[6] == 0))
+      rightStickMoved = rightStickMoved || bytes[3] != 0x7F || bytes[4] != 0x7F
+      rightTriggerPressed = rightTriggerPressed || bytes[5] > 0
+      leftTriggerPressed = leftTriggerPressed || bytes[6] > 0
+    }
+    #expect(rightStickMoved && rightTriggerPressed && leftTriggerPressed)
+    let rest = try #require(reports.first)
+    #expect(rest[5] == 0 && rest[6] == 0)
   }
 }
