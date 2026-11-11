@@ -71,8 +71,7 @@
               )
             }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.target"))
             if fields.scopeKind == .application {
-              TextField(OJDLocalized.string("ui.profiles.appID"), text: $fields.appID)
-                .ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.appID"))
+              ProfileAppChooser(appIDs: $fields.appIDs)
             }
             Picker(OJDLocalized.string("ui.profiles.template"), selection: $fields.template) {
               Text(OJDLocalized.string("ui.profiles.templateEmpty"))

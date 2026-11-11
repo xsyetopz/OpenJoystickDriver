@@ -83,7 +83,6 @@ The reasons:
 - **Names and identifiers:**
   - Product and protocol names: `term.protocolFamily.*`, `term.protocolVariant.usb`, and `term.app.name`.
   - Identifiers: HID, USB ID, and Y/Triangle.
-  - `ui.profiles.appID` "App ID" in ja-JP, zh-CN, zh-TW, and zh-HK, which matches Apple's term in those locales.
 - **Menu titles that match English:** `ui.menu.window.zoom`, `ui.menu.app.services`, `ui.settings.notifications.title`, `ui.menu.controller.title`, `ui.menu.file.title`, `ui.menu.edit.title`, and `ui.menu.help.title`.
   The system menu title in that locale is the same word as English, for example fr "Services", "Zoom", and "Notifications"; nl "Help" and "Controller"; id "File" and "Edit".
 - **Dutch `Controllers` keys:** Dutch uses the loanword "controller", and so do Apple's Dutch game-controller settings.

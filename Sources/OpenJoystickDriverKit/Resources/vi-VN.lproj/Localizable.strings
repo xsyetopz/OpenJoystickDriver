@@ -510,8 +510,20 @@
 "ui.profiles.behavior" = "Hành vi…";
 /* Title of the behavior sheet of an assignment. The sheet sets turbo, hold and double tap. */
 "ui.profiles.bindingBehavior" = "Hành vi của phép gán";
-/* Placeholder of the field in the profile creation sheet for the identifier of the app that the profile applies to, for example com.apple.Safari. */
-"ui.profiles.appID" = "Mã định danh ứng dụng";
+/* Label above the list of apps that a profile applies to, in the profile creation sheet and the profile details sheet. */
+"ui.profiles.apps" = "Ứng dụng";
+/* Title of the menu that adds an app to the list of apps of a profile. It lists running and installed apps and Other... */
+"ui.profiles.addApp" = "Thêm ứng dụng";
+/* Header of the section of the Add App menu that lists the apps that run now. */
+"ui.profiles.appsRunning" = "Đang chạy";
+/* Item of the Add App menu that opens a panel to choose an app that the menu does not list. */
+"ui.profiles.appOther" = "Khác…";
+/* Note under an app of a profile whose bundle identifier matches no installed app. The row shows the identifier as its name. */
+"ui.profiles.appNotInstalled" = "Chưa cài đặt";
+/* Accessibility label of the button that removes an app from the list of apps of a profile. %@ is the name of the app. */
+"ui.profiles.removeAppNamed" = "Xóa %@";
+/* Message of the open panel that Other... opens in the Add App menu of a profile. */
+"ui.profiles.appPanelMessage" = "Chọn một ứng dụng cho hồ sơ này.";
 /* Help text of the chord sheet. The destination fires while all chosen controls are held down. */
 "ui.profiles.chordHelp" = "Đích được kích hoạt khi tất cả thành phần đã chọn đang được nhấn.";
 /* Label of the popup in the chord sheet that picks how the chord works. */

@@ -263,9 +263,9 @@ struct ProfileCreationFieldsTests {
     let context = Self.context(devices: [Self.padA])
     var fields = ProfileCreationFields()
     fields.scopeKind = .application
-    fields.appID = ""
+    fields.appIDs = []
     #expect(fields.proposedProfile(in: context) == nil)
-    fields.appID = "com.apple.Safari"
+    fields.appIDs = ["com.apple.Safari"]
     #expect(
       fields.proposedProfile(in: context)?.applicationScope
         == .application(appIDs: ["com.apple.Safari"])

@@ -26,9 +26,9 @@
     /// Whether the profile applies to every app or to one app.
     @State
     private var scopeKind: ProfileScopeKind
-    /// The identifier of the app when the profile applies to one app.
+    /// The bundle identifiers of the apps the profile applies to.
     @State
-    private var appID: String
+    private var appIDs: [String]
     /// Whether the profile pairs two Joy-Con controllers.
     @State
     private var joyConPairEnabled: Bool
@@ -51,13 +51,11 @@
       _vendorID = State(initialValue: ProfileIdentifierInput.formatted(profile.device.vendorID))
       _productID = State(initialValue: ProfileIdentifierInput.formatted(profile.device.productID))
       _scopeKind = State(initialValue: ProfileScopeKind(profile.applicationScope))
-      let appID: String
       if case .application(let values) = profile.applicationScope {
-        appID = ProfileAppIDInput.text(values)
+        _appIDs = State(initialValue: values)
       } else {
-        appID = ""
+        _appIDs = State(initialValue: [])
       }
-      _appID = State(initialValue: appID)
       _joyConPairEnabled = State(initialValue: profile.joyConPair != nil)
       _joyConGyroSelection = State(initialValue: profile.joyConPair?.gyroSelection ?? .right)
     }
@@ -94,10 +92,7 @@
           )
         }
         if scopeKind == .application {
-          TextField(
-            OJDLocalized.string("ui.profiles.appID"),
-            text: $appID
-          )
+          ProfileAppChooser(appIDs: $appIDs)
         }
         Toggle(
           OJDLocalized.string("ui.profiles.joyConPair"),
@@ -148,7 +143,7 @@
       let scope: RemappingApplicationScope
       switch scopeKind {
       case .global: scope = .global
-      case .application: scope = .application(appIDs: ProfileAppIDInput.parse(appID))
+      case .application: scope = .application(appIDs: appIDs)
       }
       let candidate = RemappingProfile(
         id: profile.id,

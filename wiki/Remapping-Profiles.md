@@ -34,7 +34,7 @@ A profile applies to every connected controller of its model.
 The scope decides when a profile is eligible to work.
 
 - **All applications** (global): The profile works in every app.
-- **One application**: The profile works only while one app is in front. You identify the app with its bundle identifier, for example `com.apple.Safari`.
+- **One application**: The profile works only while one of the apps you list is in front. You choose each app from a list of running and installed apps, with its icon and name; the profile stores its bundle identifier, for example `com.apple.Safari`.
 
 ### The Active Profile
 
@@ -130,7 +130,7 @@ If another process changes the profile, the app shows **This profile changed els
 1. Select the profile.
 2. Click the pencil button, **Profile details**.
 3. Change **Profile name**, **Vendor ID**, **Product ID**, or **Target**.
-4. If you select **One application**, enter the **App ID**. The app has no running-app picker.
+4. If you select **One application**, open **Add App** under **Apps** and choose a running or installed app. Choose **Other...** for an app the menu does not list; the open panel starts in the Applications folder. Add more apps the same way, and click **Remove** beside an app to drop it. An app that is not installed shows its bundle identifier and **Not installed**.
 5. Click **Apply**, then click **Save**.
 
 To rename a profile on the command line, run `ojd profile rename PROFILE NEW-NAME`. To change the controller model or the app, run `ojd profile edit PROFILE` and change `device` or `applicationScope` in the profile file, or run `ojd profile set PROFILE applicationScope '{"type":"Global"}'`.

@@ -129,7 +129,7 @@ enum LocalizationCatalogAudit {
     ],
     "ja-JP": [
       "term.key.capsLock", "term.key.escape", "term.key.alt", "term.key.return",
-      "term.key.shift", "ui.profiles.appID",
+      "term.key.shift",
     ],
     "ko-KR": [
       "term.key.capsLock", "term.key.meta", "term.key.control", "term.key.escape",
@@ -205,9 +205,8 @@ enum LocalizationCatalogAudit {
       "term.key.shift", "term.key.tab", "ui.mapping.guide", "ui.profiles.trackball.enabled",
       "ui.profiles.turbo", "ui.access.token.issued.title", "ui.access.token.named",
     ],
-    "zh-CN": ["term.key.alt", "term.key.shift", "ui.profiles.appID"],
-    "zh-HK": ["ui.profiles.appID"],
-    "zh-TW": ["term.key.escape", "term.key.alt", "ui.profiles.appID"],
+    "zh-CN": ["term.key.alt", "term.key.shift"],
+    "zh-TW": ["term.key.escape", "term.key.alt"],
   ]
 
   static func allowedSourceIdenticalEnglishProseKeys(for localization: String) -> Set<String> {

@@ -201,8 +201,8 @@ struct ProfileCreationFields: Equatable {
   var picked: ProfileControllerChoice?
   /// Whether the profile applies to every app or to one app.
   var scopeKind = ProfileScopeKind.global
-  /// The identifier of the app when the profile applies to one app.
-  var appID = ""
+  /// The bundle identifiers of the apps the profile applies to.
+  var appIDs: [String] = []
   /// The output policy `ojd profile create` starts with.
   var outputPolicy = RemappingOutputPolicy(virtualGamepad: .passthrough, physicalInput: .shared)
   /// What the profile starts from.
@@ -253,7 +253,7 @@ struct ProfileCreationFields: Equatable {
     let applicationScope: RemappingApplicationScope
     switch scopeKind {
     case .global: applicationScope = .global
-    case .application: applicationScope = .application(appIDs: ProfileAppIDInput.parse(appID))
+    case .application: applicationScope = .application(appIDs: appIDs)
     }
     let device = RemappingDeviceScope(
       vendorID: controller.vendorID,

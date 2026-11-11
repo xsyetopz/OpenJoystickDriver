@@ -510,8 +510,20 @@
 "ui.profiles.behavior" = "व्यवहार…";
 /* Title of the behavior sheet of an assignment. The sheet sets turbo, hold and double tap. */
 "ui.profiles.bindingBehavior" = "असाइनमेंट का व्यवहार";
-/* Placeholder of the field in the profile creation sheet for the identifier of the app that the profile applies to, for example com.apple.Safari. */
-"ui.profiles.appID" = "ऐप ID";
+/* Label above the list of apps that a profile applies to, in the profile creation sheet and the profile details sheet. */
+"ui.profiles.apps" = "ऐप्स";
+/* Title of the menu that adds an app to the list of apps of a profile. It lists running and installed apps and Other... */
+"ui.profiles.addApp" = "ऐप जोड़ें";
+/* Header of the section of the Add App menu that lists the apps that run now. */
+"ui.profiles.appsRunning" = "चल रहे";
+/* Item of the Add App menu that opens a panel to choose an app that the menu does not list. */
+"ui.profiles.appOther" = "अन्य…";
+/* Note under an app of a profile whose bundle identifier matches no installed app. The row shows the identifier as its name. */
+"ui.profiles.appNotInstalled" = "इंस्टॉल नहीं है";
+/* Accessibility label of the button that removes an app from the list of apps of a profile. %@ is the name of the app. */
+"ui.profiles.removeAppNamed" = "%@ हटाएँ";
+/* Message of the open panel that Other... opens in the Add App menu of a profile. */
+"ui.profiles.appPanelMessage" = "इस प्रोफ़ाइल के लिए कोई ऐप चुनें।";
 /* Help text of the chord sheet. The destination fires while all chosen controls are held down. */
 "ui.profiles.chordHelp" = "जब तक सभी चयनित नियंत्रण दबे रहते हैं, गंतव्य सक्रिय रहता है।";
 /* Label of the popup in the chord sheet that picks how the chord works. */
