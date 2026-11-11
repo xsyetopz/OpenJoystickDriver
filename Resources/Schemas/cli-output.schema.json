@@ -4360,6 +4360,9 @@
               "inputMapping": {
                 "$ref": "report.schema.json#/$defs/inputMapping"
               },
+              "name": {
+                "type": "string"
+              },
               "reason": {
                 "$ref": "report.schema.json#/$defs/bindingReason"
               },

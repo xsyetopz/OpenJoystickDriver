@@ -208,6 +208,8 @@
 "ui.controllers.noControllerLinked" = "لا توجد وحدة تحكم مرتبطة بجهاز الاستقبال هذا. لا يرسل OJD إليه أي بيانات.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. It tells the person what to do. OJD stays as written. */
 "ui.controllers.noControllerLinked.nextStep" = "وصّل وحدة تحكم بها أو شغّل وحدة التحكم.";
+/* Title of a row and of the detail in the Controllers list for a connected 2.4 GHz wireless receiver that has no controller linked to it. Its own product string is not shown. It is a noun phrase. */
+"ui.controllers.wirelessReceiver" = "مستقبِل لاسلكي";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "البطارية";
 /* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */

@@ -190,6 +190,9 @@ struct StatusReport: Encodable, Equatable {
     let vendorID: Int
     /// The USB product ID.
     let productID: Int
+    /// The product name the device reported; absent when it reported none or for a device that
+    /// passes through.
+    let name: String?
     /// How the device connects.
     let connection: String
     /// Why the device has no binding; absent for a device that passes through.
@@ -282,6 +285,7 @@ struct StatusReport: Encodable, Equatable {
       Device(
         vendorID: Int($0.vendorID),
         productID: Int($0.productID),
+        name: $0.name,
         connection: $0.connection,
         reason: $0.reason.rawValue,
         inputMapping: $0.rejectedCandidates.lazy.compactMap(\.inputMapping).first
@@ -291,6 +295,7 @@ struct StatusReport: Encodable, Equatable {
       Device(
         vendorID: Int($0.vendorID),
         productID: Int($0.productID),
+        name: nil,
         connection: $0.connection,
         reason: nil,
         inputMapping: nil

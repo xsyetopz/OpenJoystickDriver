@@ -6,6 +6,8 @@ public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
   public let vendorID: UInt16
   /// The USB product ID.
   public let productID: UInt16
+  /// The product name the device reported, trimmed; nil when it reported none or a blank one.
+  public let name: String?
   /// Connection label (e.g. "USB", "Bluetooth").
   public let connection: String
   /// How OJD reaches the device.
@@ -22,6 +24,7 @@ public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
   public init(
     vendorID: UInt16,
     productID: UInt16,
+    name: String? = nil,
     connection: String,
     accessBackend: DeviceAccessBackend,
     reason: ProtocolBindingReason,
@@ -30,6 +33,7 @@ public struct ApplicationServiceUnboundDevice: Codable, Equatable, Sendable {
   ) {
     self.vendorID = vendorID
     self.productID = productID
+    self.name = name
     self.connection = connection
     self.accessBackend = accessBackend
     self.reason = reason
@@ -78,6 +82,7 @@ extension ApplicationServiceUnboundDevice {
     self.init(
       vendorID: snapshot.vendorID,
       productID: snapshot.productID,
+      name: snapshot.name,
       connection: snapshot.connection,
       accessBackend: snapshot.accessBackend,
       reason: snapshot.reason,

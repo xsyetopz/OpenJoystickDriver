@@ -49,7 +49,7 @@ With `--json`, the output is one `SystemStatus` object with these keys:
 - `permissions`: `inputRead` and `inputInject`.
 - `virtualDevice`: `enabled`, `status` (the backend's diagnostic text, with each controller's generations and send times, which `--plain` and `ojd diagnose` also print), `overrideError`, and `published` (the `id` of each connected controller that a virtual gamepad stands for). The `Virtual gamepad` row of the human output says `Off`, the error, or `On` with the names of those controllers.
 - `controllers`: each with `id`, `name`, `vendorID`, `productID`, `connection`, and `paused` (`true` while a Pause assignment holds the controller). The human output shows a Paused line under a paused controller, and `--plain` prints a `paused` row with its `id`.
-- `unboundDevices`: devices that OpenJoystickDriver does not support, each with `vendorID`, `productID`, `connection`, and `reason`. The human output adds the reason's sentence and next step under each device; `--json` and `--plain` carry the reason ID only.
+- `unboundDevices`: devices that OpenJoystickDriver does not support, each with `vendorID`, `productID`, `name` (the product name the device reported; absent when it reported none or a blank one), `connection`, and `reason`. The human output adds the reason's sentence and next step under each device; `--json` and `--plain` carry the reason ID only.
 - `passThroughDevices`: devices that OpenJoystickDriver leaves to macOS.
 - `skippedRecords`: your controller record files that OpenJoystickDriver skipped, each with `file` and `problem`.
 - `ignoredDefaults`: your `Controllers/all.patch.plist` when OpenJoystickDriver ignored it whole, with `file` and `problem`. The key is absent when the file is valid or does not exist.

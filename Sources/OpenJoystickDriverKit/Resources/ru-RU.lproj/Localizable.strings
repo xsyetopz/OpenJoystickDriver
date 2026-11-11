@@ -208,6 +208,8 @@
 "ui.controllers.noControllerLinked" = "К этому приёмнику не привязан ни один контроллер. OJD не отправляет ему данные.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. It tells the person what to do. OJD stays as written. */
 "ui.controllers.noControllerLinked.nextStep" = "Подключите к нему контроллер или включите контроллер.";
+/* Title of a row and of the detail in the Controllers list for a connected 2.4 GHz wireless receiver that has no controller linked to it. Its own product string is not shown. It is a noun phrase. */
+"ui.controllers.wirelessReceiver" = "Беспроводной приёмник";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "Аккумулятор";
 /* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */

@@ -4,6 +4,8 @@ public struct UnboundDeviceSnapshot: Equatable, Sendable {
   public let vendorID: UInt16
   /// The USB product ID.
   public let productID: UInt16
+  /// The product name the device reported, trimmed; nil when it reported none or a blank one.
+  public let name: String?
   /// The connection label, such as "USB" or the HID transport property.
   public let connection: String
   /// The access backend that observed the device.
@@ -19,6 +21,7 @@ public struct UnboundDeviceSnapshot: Equatable, Sendable {
   public init(
     vendorID: UInt16,
     productID: UInt16,
+    name: String?,
     connection: String,
     accessBackend: DeviceAccessBackend,
     reason: ProtocolBindingReason,
@@ -27,6 +30,7 @@ public struct UnboundDeviceSnapshot: Equatable, Sendable {
   ) {
     self.vendorID = vendorID
     self.productID = productID
+    self.name = name
     self.connection = connection
     self.accessBackend = accessBackend
     self.reason = reason

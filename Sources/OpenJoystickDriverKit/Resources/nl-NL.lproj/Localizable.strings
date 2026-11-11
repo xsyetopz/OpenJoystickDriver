@@ -208,6 +208,8 @@
 "ui.controllers.noControllerLinked" = "Aan deze ontvanger is geen controller gekoppeld. OJD stuurt er geen gegevens naar.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. It tells the person what to do. OJD stays as written. */
 "ui.controllers.noControllerLinked.nextStep" = "Sluit er een controller op aan of zet de controller aan.";
+/* Title of a row and of the detail in the Controllers list for a connected 2.4 GHz wireless receiver that has no controller linked to it. Its own product string is not shown. It is a noun phrase. */
+"ui.controllers.wirelessReceiver" = "Draadloze ontvanger";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "Batterij";
 /* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */

@@ -44,15 +44,18 @@ extension DeviceManager {
     _ key: UnboundDeviceKey,
     vendorID: UInt16,
     productID: UInt16,
+    productName: String?,
     connection: String,
     backend: DeviceAccessBackend,
     reason: ProtocolBindingReason,
     rejectedCandidates: [ProtocolBindingResult.RejectedCandidate],
     interfaces: [PhysicalInterfaceSignature]
   ) {
+    let name = productName?.trimmingCharacters(in: .whitespacesAndNewlines)
     unboundDevices[key] = UnboundDeviceSnapshot(
       vendorID: vendorID,
       productID: productID,
+      name: name?.isEmpty == false ? name : nil,
       connection: connection,
       accessBackend: backend,
       reason: reason,
@@ -72,6 +75,7 @@ extension DeviceManager {
     unboundDevices[key] = UnboundDeviceSnapshot(
       vendorID: recorded.vendorID,
       productID: recorded.productID,
+      name: recorded.name,
       connection: recorded.connection,
       accessBackend: recorded.accessBackend,
       reason: reason,
@@ -123,6 +127,7 @@ extension DeviceManager {
       .hid(connection.connectionID),
       vendorID: identifier.model.vendorID,
       productID: identifier.model.productID,
+      productName: connection.physicalDevice.productName,
       connection: connection.physicalDevice.transportProperty ?? "HID",
       backend: connection.accessBackend,
       reason: reason,

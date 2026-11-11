@@ -25,7 +25,11 @@
             Text(device.nextStep).fixedSize(horizontal: false, vertical: true)
           }
         } header: {
-          Text("\(device.identity)  \(device.connection)")
+          VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
+            Text(device.title)
+            Text("\(device.identity)  \(device.connection)").font(.caption)
+              .foregroundColor(Color(NSColor.secondaryLabelColor))
+          }
         }
         if device.offersDraft {
           Section {
@@ -42,7 +46,7 @@
         guard let request else { return }
         ControllerFilePanels.save(request) { actions.finishSave(to: $0) }
       }.ojdGroupedForm().accessibilityElement(children: .contain)
-        .ojdAccessibilityLabel(device.identity).ojdAccessibilityValue(
+        .ojdAccessibilityLabel(device.title).ojdAccessibilityValue(
           "\(device.explanation) \(device.nextStep)"
         )
     }

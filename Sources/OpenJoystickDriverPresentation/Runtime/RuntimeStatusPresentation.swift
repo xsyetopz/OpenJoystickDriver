@@ -181,6 +181,9 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
 /// A connected device that OJD does not serve, with the sentence that says why and the one that
 /// says what to do.
 struct RuntimeUnservedDevice: Sendable, Equatable, Identifiable {
+  /// The title: the product name the device reported, `Wireless receiver` for a receiver with no
+  /// controller linked, and the identity when the device reported no name.
+  let title: String
   /// `VVVV:PPPP`, the identity `ojd` prints.
   let identity: String
   /// How the device connects.
@@ -200,6 +203,9 @@ struct RuntimeUnservedDevice: Sendable, Equatable, Identifiable {
   /// Creates the entry for an unbound device.
   init(_ device: ApplicationServiceUnboundDevice) {
     identity = String(format: "%04x:%04x", device.vendorID, device.productID)
+    title =
+      device.reason == .noControllerLinked
+      ? OJDLocalized.string("ui.controllers.wirelessReceiver") : device.name ?? identity
     connection = device.connection
     explanation = OJDLocalized.string(device.reason.explanationKey)
     nextStep = OJDLocalized.string(device.reason.nextStepKey)

@@ -208,6 +208,8 @@
 "ui.controllers.noControllerLinked" = "इस रिसीवर से कोई कंट्रोलर लिंक नहीं है। OJD इसे कोई डेटा नहीं भेजता।";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. It tells the person what to do. OJD stays as written. */
 "ui.controllers.noControllerLinked.nextStep" = "इससे कोई कंट्रोलर कनेक्ट करें या कंट्रोलर चालू करें।";
+/* Title of a row and of the detail in the Controllers list for a connected 2.4 GHz wireless receiver that has no controller linked to it. Its own product string is not shown. It is a noun phrase. */
+"ui.controllers.wirelessReceiver" = "वायरलेस रिसीवर";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "बैटरी";
 /* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */

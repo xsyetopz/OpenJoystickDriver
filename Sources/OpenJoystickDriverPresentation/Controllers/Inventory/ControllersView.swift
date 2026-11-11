@@ -136,7 +136,10 @@
         }
         ForEach(screen.unservedDevices) { unserved in
           VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
-            Text("\(unserved.identity)  \(unserved.connection)").lineLimit(1)
+            Text(unserved.title).lineLimit(1)
+            Text("\(unserved.identity)  \(unserved.connection)").font(.caption).foregroundColor(
+              Color(NSColor.secondaryLabelColor)
+            ).lineLimit(1)
             Text(unserved.explanation).font(.caption).foregroundColor(
               Color(NSColor.secondaryLabelColor)
             )
@@ -144,7 +147,7 @@
               Color(NSColor.secondaryLabelColor)
             )
           }.padding(.vertical, 4).tag(Self.unservedTag(unserved)).ojdAccessibilityLabel(
-            unserved.identity
+            unserved.title
           )
             .ojdAccessibilityValue("\(unserved.explanation) \(unserved.nextStep)")
         }

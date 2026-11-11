@@ -17,9 +17,11 @@ struct USBHeldDeviceTests {
 
   private func makeProvider(
     owner: String?,
-    readError: USBTransportError? = .accessDenied
+    readError: USBTransportError? = .accessDenied,
+    device: USBTransportDevice? = nil
   ) -> HeldDeviceProvider {
-    HeldDeviceProvider(
+    let device = device ?? self.device
+    return HeldDeviceProvider(
       device: device,
       passive: PhysicalDevice(
         serviceAddress: device.serviceAddress,
@@ -55,8 +57,10 @@ struct USBHeldDeviceTests {
     _ polls: Int,
     _ manager: DeviceManager,
     _ provider: HeldDeviceProvider,
-    _ enumeration: inout USBEnumerationTracker
+    _ enumeration: inout USBEnumerationTracker,
+    device: USBTransportDevice? = nil
   ) async -> [USBDeviceHandlingOutcome] {
+    let device = device ?? self.device
     var outcomes: [USBDeviceHandlingOutcome] = []
     for _ in 0..<polls {
       for event in enumeration.events(for: .available([device])) {
@@ -79,6 +83,30 @@ struct USBHeldDeviceTests {
     #expect(await provider.descriptorReads == [1])
     #expect(await manager.unboundDeviceDescriptions().map(\.reason) == [.deviceInUse])
     #expect(await manager.heldUSBServices == [device.serviceAddress: "pid 11070, steam_osx"])
+    await manager.stop()
+  }
+
+  /// The unbound device carries the product string the transport observed, and none when the
+  /// string is missing or blank.
+  @Test(arguments: [
+    ("8BitDo Ultimate 2C Wireless Controller", "8BitDo Ultimate 2C Wireless Controller"),
+    ("  IDLE \n", "IDLE"), ("   ", nil), ("", nil), (nil, nil),
+  ] as [(String?, String?)])
+  func theUnboundDeviceCarriesTheObservedProductName(observed: String?, name: String?) async {
+    let named = USBTransportDevice(
+      route: .rawUSB,
+      serviceID: device.serviceID,
+      vendorID: device.vendorID,
+      productID: device.productID,
+      locationID: device.locationID,
+      productName: observed
+    )
+    let provider = makeProvider(owner: "pid 11070, steam_osx", device: named)
+    let manager = makeManager(provider)
+    var enumeration = USBEnumerationTracker()
+
+    _ = await poll(1, manager, provider, &enumeration, device: named)
+    #expect(await manager.unboundDeviceDescriptions().map(\.name) == [name])
     await manager.stop()
   }
 

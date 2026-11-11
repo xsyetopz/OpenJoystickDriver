@@ -55,6 +55,32 @@ struct KebabStateOutputTests {
   }
 
   @Test
+  func theUnboundDeviceNameIsInJSONOnlyWhenObserved() async throws {
+    func device(_ productID: UInt16, name: String?) -> ApplicationServiceUnboundDevice {
+      ApplicationServiceUnboundDevice(
+        vendorID: 0x2DC8,
+        productID: productID,
+        name: name,
+        connection: "USB",
+        accessBackend: .rawUSB,
+        reason: .deviceInUse,
+        rejectedCandidates: [],
+        interfaces: []
+      )
+    }
+    let service = try FakeService(
+      devices: [],
+      unboundDevices: [
+        device(0x310A, name: "8BitDo Ultimate 2C Wireless Controller"), device(0x301C, name: nil),
+      ]
+    )
+    let json = await runStatus(service, ["--json"])
+    let devices = try #require(try json.json()["unboundDevices"] as? [[String: Any]])
+    #expect(devices.first?["name"] as? String == "8BitDo Ultimate 2C Wireless Controller")
+    #expect(devices.last?["name"] == nil)
+  }
+
+  @Test
   func aDeviceHeldByAnotherProgramIsExplainedInHumanOutputOnly() async throws {
     let held = ApplicationServiceUnboundDevice(
       vendorID: 0x3537,

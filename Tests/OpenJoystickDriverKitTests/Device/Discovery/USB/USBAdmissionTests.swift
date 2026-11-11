@@ -77,6 +77,7 @@ struct USBDetectionAdmissionTests {
         UnboundDeviceSnapshot(
           vendorID: 0x0001,
           productID: 0x0001,
+          name: nil,
           connection: "USB",
           accessBackend: .rawUSB,
           reason: .noProtocolMatch,

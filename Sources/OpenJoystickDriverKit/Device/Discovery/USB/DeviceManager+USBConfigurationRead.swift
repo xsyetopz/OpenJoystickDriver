@@ -137,6 +137,7 @@ extension DeviceManager {
       .usb(device.serviceAddress),
       vendorID: device.vendorID,
       productID: device.productID,
+      productName: device.productName,
       connection: "USB",
       backend: DeviceAccessBackend(route: device.route),
       reason: reason,

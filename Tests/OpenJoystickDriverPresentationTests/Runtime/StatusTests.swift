@@ -393,6 +393,34 @@ struct StatusTests {
     )
   }
 
+  @Test
+  func controllersPageTitlesAnUnservedDeviceWithItsNameNotItsIDs() {
+    func title(_ name: String?, _ reason: ProtocolBindingReason) -> String {
+      RuntimeUnservedDevice(
+        ApplicationServiceUnboundDevice(
+          vendorID: 0x2DC8,
+          productID: 0x310A,
+          name: name,
+          connection: "USB",
+          accessBackend: .rawUSB,
+          reason: reason,
+          rejectedCandidates: [],
+          interfaces: []
+        )
+      ).title
+    }
+    #expect(
+      title("8BitDo Ultimate 2C Wireless Controller", .deviceInUse)
+        == "8BitDo Ultimate 2C Wireless Controller"
+    )
+    // The product string of an idle dongle is "IDLE"; the receiver has its own title.
+    #expect(
+      title("IDLE", .noControllerLinked) == OJDLocalized.string("ui.controllers.wirelessReceiver")
+    )
+    #expect(title(nil, .noControllerLinked) == OJDLocalized.string("ui.controllers.wirelessReceiver"))
+    #expect(title(nil, .deviceInUse) == "2dc8:310a")
+  }
+
   private func testPad(sessionToken: String) -> ApplicationServiceDeviceDescription {
     ApplicationServiceDeviceDescription(
       name: "Test Pad",

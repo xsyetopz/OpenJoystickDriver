@@ -23,6 +23,7 @@ struct UnboundHIDDeviceTests {
         UnboundDeviceSnapshot(
           vendorID: 0x1234,
           productID: 0x5678,
+          name: "Test pad",
           connection: "USB",
           accessBackend: .hid,
           reason: .descriptorContractMismatch,
@@ -139,6 +140,7 @@ struct UnboundHIDDeviceTests {
     let device = ApplicationServiceUnboundDevice(
       vendorID: 0x045E,
       productID: 0x02EA,
+      name: "Xbox Wireless Controller",
       connection: "USB",
       accessBackend: .hid,
       reason: .ambiguousProtocolMatch,
