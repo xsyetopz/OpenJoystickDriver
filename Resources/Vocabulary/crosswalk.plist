@@ -17,11 +17,6 @@
 					<string>Button</string>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>evdev</key>
-				<string>BTN_TRIGGER_HAPPYn for Auxiliary1 to Auxiliary8 is an OpenJoystickDriver choice: no source gives the Auxiliary buttons a role.</string>
-			</dict>
 			<key>sdl</key>
 			<string>MISC2</string>
 		</dict>
@@ -92,11 +87,6 @@
 					<string>Button</string>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>sdl</key>
-				<string>SDL3 has the buttons MISC1 to MISC6 only, so Auxiliary6 to Auxiliary8 have no SDL3 name.</string>
-			</dict>
 		</dict>
 		<key>Auxiliary7</key>
 		<dict>
@@ -147,11 +137,6 @@
 					<string>Button</string>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>hid</key>
-				<string>Select is the HID Usage Tables name; the Xbox Bluetooth descriptor reports AC Back (Consumer 0x224).</string>
-			</dict>
 			<key>sdl</key>
 			<string>BACK</string>
 			<key>w3cButton</key>
@@ -172,13 +157,6 @@
 					<integer>178</integer>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>evdev</key>
-				<string>KEY_RECORD is the Xbox Share button (Linux xpad driver); a Nintendo Switch controller reports its Capture button as BTN_Z (Linux hid-nintendo driver).</string>
-				<key>hid</key>
-				<string>Record (Consumer 0xB2) is how the standard HID usage map maps Share and Capture.</string>
-			</dict>
 			<key>sdl</key>
 			<string>MISC1</string>
 		</dict>
@@ -281,15 +259,6 @@
 					<integer>57</integer>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>apple</key>
-				<string>DpadUp, DpadDown, DpadLeft and DpadRight are one GCControllerDirectionPad element.</string>
-				<key>evdev</key>
-				<string>For all four D-pad ids, a driver may report ABS_HAT0X and ABS_HAT0Y instead (Linux gamepad documentation).</string>
-				<key>hid</key>
-				<string>For all four D-pad ids, the D-pad usage comes first; a Hat Switch (0x39) carries all four directions as one value.</string>
-			</dict>
 			<key>sdl</key>
 			<string>DPAD_UP</string>
 			<key>w3cButton</key>
@@ -336,11 +305,6 @@
 					<integer>547</integer>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>hid</key>
-				<string>System Main Menu is the HID Usage Tables name; the Xbox Bluetooth descriptor reports AC Home (Consumer 0x223).</string>
-			</dict>
 			<key>sdl</key>
 			<string>GUIDE</string>
 			<key>w3cButton</key>
@@ -361,11 +325,6 @@
 					<string>Button</string>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>apple</key>
-				<string>Apple names the Xbox Elite paddle P3; SDL3 and the Linux xpad driver number the paddles the same way.</string>
-			</dict>
 			<key>sdl</key>
 			<string>LEFT_PADDLE1</string>
 		</dict>
@@ -382,11 +341,6 @@
 					<string>Button</string>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>apple</key>
-				<string>Apple names the Xbox Elite paddle P4; SDL3 and the Linux xpad driver number the paddles the same way.</string>
-			</dict>
 			<key>sdl</key>
 			<string>LEFT_PADDLE2</string>
 		</dict>
@@ -403,11 +357,6 @@
 					<string>Button</string>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>hid</key>
-				<string>A Button page usage number is assigned by the device descriptor.</string>
-			</dict>
 			<key>sdl</key>
 			<string>LEFT_SHOULDER</string>
 			<key>w3cButton</key>
@@ -448,11 +397,6 @@
 					<integer>48</integer>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>w3c</key>
-				<string>Axes 0 to 3 of the standard mapping; negative is left or up and positive is right or down.</string>
-			</dict>
 			<key>sdl</key>
 			<string>LEFTX</string>
 			<key>w3cAxis</key>
@@ -473,11 +417,6 @@
 					<integer>49</integer>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>apple</key>
-				<string>Apple's y axis is positive up; every other column is positive down.</string>
-			</dict>
 			<key>sdl</key>
 			<string>LEFTY</string>
 			<key>w3cAxis</key>
@@ -508,13 +447,6 @@
 					<integer>197</integer>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>evdev</key>
-				<string>ABS_Z is what the xpad and hid-playstation drivers report; the Linux gamepad documentation names BTN_TL2 or ABS_HAT2Y.</string>
-				<key>hid</key>
-				<string>Brake is the left trigger and Accelerator the right, as the standard HID usage map maps them.</string>
-			</dict>
 			<key>sdl</key>
 			<string>LEFT_TRIGGER</string>
 			<key>w3cButton</key>
@@ -537,15 +469,6 @@
 					<integer>226</integer>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>apple</key>
-				<string>The GameController documentation has no microphone button name.</string>
-				<key>evdev</key>
-				<string>No gamepad code: hid-playstation reports no mute button, and KEY_MICMUTE is a keyboard key.</string>
-				<key>hid</key>
-				<string>Phone Mute (Telephony 0x2F) and Mute (Consumer 0xE2) are the HID Usage Tables mute usages.</string>
-			</dict>
 			<key>sdl</key>
 			<string>MISC1</string>
 		</dict>
@@ -590,11 +513,6 @@
 					<string>Button</string>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>apple</key>
-				<string>Apple names the Xbox Elite paddle P1; SDL3 and the Linux xpad driver number the paddles the same way.</string>
-			</dict>
 			<key>sdl</key>
 			<string>RIGHT_PADDLE1</string>
 		</dict>
@@ -611,11 +529,6 @@
 					<string>Button</string>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>apple</key>
-				<string>Apple names the Xbox Elite paddle P2; SDL3 and the Linux xpad driver number the paddles the same way.</string>
-			</dict>
 			<key>sdl</key>
 			<string>RIGHT_PADDLE2</string>
 		</dict>
@@ -692,11 +605,6 @@
 					<integer>52</integer>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>apple</key>
-				<string>Apple's y axis is positive up; every other column is positive down.</string>
-			</dict>
 			<key>sdl</key>
 			<string>RIGHTY</string>
 			<key>w3cAxis</key>
@@ -727,13 +635,6 @@
 					<integer>196</integer>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>evdev</key>
-				<string>ABS_RZ is what the xpad and hid-playstation drivers report; the Linux gamepad documentation names BTN_TR2 or ABS_HAT2X.</string>
-				<key>hid</key>
-				<string>Accelerator is the right trigger and Brake the left, as the standard HID usage map maps them.</string>
-			</dict>
 			<key>sdl</key>
 			<string>RIGHT_TRIGGER</string>
 			<key>w3cButton</key>
@@ -774,11 +675,6 @@
 					<integer>61</integer>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>hid</key>
-				<string>Start is the HID Usage Tables name; Gamepad usages use Start and Select (section 8.4).</string>
-			</dict>
 			<key>sdl</key>
 			<string>START</string>
 			<key>w3cButton</key>
@@ -797,15 +693,6 @@
 					<string>Button</string>
 				</dict>
 			</array>
-			<key>notes</key>
-			<dict>
-				<key>apple</key>
-				<string>GCInputDualShockTouchpadButton also names the DualSense touchpad button.</string>
-				<key>evdev</key>
-				<string>The click is BTN_LEFT on the touchpad input device, not on the gamepad device (Linux hid-playstation driver).</string>
-				<key>hid</key>
-				<string>A Button page usage number is assigned by the device descriptor.</string>
-			</dict>
 			<key>sdl</key>
 			<string>TOUCHPAD</string>
 		</dict>

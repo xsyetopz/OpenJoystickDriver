@@ -152,9 +152,6 @@ class CrosswalkSchemaTests(unittest.TestCase):
         def empty_hid(d: dict[str, Any]) -> None:
             d["controls"]["South"]["hid"] = []
 
-        def unknown_note(d: dict[str, Any]) -> None:
-            d["controls"]["DpadUp"]["notes"]["gcc"] = "text"
-
         for edit in (
             unknown_member,
             wrong_kind,
@@ -166,7 +163,6 @@ class CrosswalkSchemaTests(unittest.TestCase):
             null_column,
             null_usage,
             empty_hid,
-            unknown_note,
         ):
             with self.subTest(edit.__name__):
                 self.assertTrue(self.rejects(edit))

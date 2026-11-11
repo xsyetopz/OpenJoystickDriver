@@ -90,18 +90,6 @@
           "type": "array",
           "minItems": 1,
           "items": { "$ref": "#/$defs/hidUsage" }
-        },
-        "notes": {
-          "type": "object",
-          "minProperties": 1,
-          "additionalProperties": false,
-          "properties": {
-            "w3c": { "type": "string", "minLength": 1 },
-            "sdl": { "type": "string", "minLength": 1 },
-            "evdev": { "type": "string", "minLength": 1 },
-            "hid": { "type": "string", "minLength": 1 },
-            "apple": { "type": "string", "minLength": 1 }
-          }
         }
       }
     },

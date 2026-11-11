@@ -580,40 +580,19 @@ Each column is checked against this source:
 | HID page:usage | [USB-IF HID Usage Tables for Universal Serial Bus (USB)](https://usb.org/document-library/hid-usage-tables-17) | 1.7 | - | 2026-10-16 |
 | Apple GameController | [Apple GameController framework, GCInput element name constants (names shown without the GCInput prefix)](https://developer.apple.com/documentation/gamecontroller) | developer.apple.com documentation, macOS 11 and later | - | 2026-10-16 |
 
-Notes on single cells:
-
-| Control | Column | Note |
-| --- | --- | --- |
-| `Auxiliary1` | evdev | BTN_TRIGGER_HAPPYn for Auxiliary1 to Auxiliary8 is an OpenJoystickDriver choice: no source gives the Auxiliary buttons a role. |
-| `Auxiliary6` | SDL3 | SDL3 has the buttons MISC1 to MISC6 only, so Auxiliary6 to Auxiliary8 have no SDL3 name. |
-| `Back` | HID page:usage | Select is the HID Usage Tables name; the Xbox Bluetooth descriptor reports AC Back (Consumer 0x224). |
-| `Capture` | evdev | KEY_RECORD is the Xbox Share button (Linux xpad driver); a Nintendo Switch controller reports its Capture button as BTN_Z (Linux hid-nintendo driver). |
-| `Capture` | HID page:usage | Record (Consumer 0xB2) is how the standard HID usage map maps Share and Capture. |
-| `DpadUp` | Apple GameController | DpadUp, DpadDown, DpadLeft and DpadRight are one GCControllerDirectionPad element. |
-| `DpadUp` | evdev | For all four D-pad ids, a driver may report ABS_HAT0X and ABS_HAT0Y instead (Linux gamepad documentation). |
-| `DpadUp` | HID page:usage | For all four D-pad ids, the D-pad usage comes first; a Hat Switch (0x39) carries all four directions as one value. |
-| `Guide` | HID page:usage | System Main Menu is the HID Usage Tables name; the Xbox Bluetooth descriptor reports AC Home (Consumer 0x223). |
-| `LeftPaddle1` | Apple GameController | Apple names the Xbox Elite paddle P3; SDL3 and the Linux xpad driver number the paddles the same way. |
-| `LeftPaddle2` | Apple GameController | Apple names the Xbox Elite paddle P4; SDL3 and the Linux xpad driver number the paddles the same way. |
-| `LeftShoulder` | HID page:usage | A Button page usage number is assigned by the device descriptor. |
-| `LeftStickX` | W3C | Axes 0 to 3 of the standard mapping; negative is left or up and positive is right or down. |
-| `LeftStickY` | Apple GameController | Apple's y axis is positive up; every other column is positive down. |
-| `LeftTrigger` | evdev | ABS_Z is what the xpad and hid-playstation drivers report; the Linux gamepad documentation names BTN_TL2 or ABS_HAT2Y. |
-| `LeftTrigger` | HID page:usage | Brake is the left trigger and Accelerator the right, as the standard HID usage map maps them. |
-| `Microphone` | Apple GameController | The GameController documentation has no microphone button name. |
-| `Microphone` | evdev | No gamepad code: hid-playstation reports no mute button, and KEY_MICMUTE is a keyboard key. |
-| `Microphone` | HID page:usage | Phone Mute (Telephony 0x2F) and Mute (Consumer 0xE2) are the HID Usage Tables mute usages. |
-| `RightPaddle1` | Apple GameController | Apple names the Xbox Elite paddle P1; SDL3 and the Linux xpad driver number the paddles the same way. |
-| `RightPaddle2` | Apple GameController | Apple names the Xbox Elite paddle P2; SDL3 and the Linux xpad driver number the paddles the same way. |
-| `RightStickY` | Apple GameController | Apple's y axis is positive up; every other column is positive down. |
-| `RightTrigger` | evdev | ABS_RZ is what the xpad and hid-playstation drivers report; the Linux gamepad documentation names BTN_TR2 or ABS_HAT2X. |
-| `RightTrigger` | HID page:usage | Accelerator is the right trigger and Brake the left, as the standard HID usage map maps them. |
-| `Start` | HID page:usage | Start is the HID Usage Tables name; Gamepad usages use Start and Select (section 8.4). |
-| `TouchpadClick` | Apple GameController | GCInputDualShockTouchpadButton also names the DualSense touchpad button. |
-| `TouchpadClick` | evdev | The click is BTN_LEFT on the touchpad input device, not on the gamepad device (Linux hid-playstation driver). |
-| `TouchpadClick` | HID page:usage | A Button page usage number is assigned by the device descriptor. |
-
 <!-- END GENERATED: control-crosswalk -->
+
+Cells that need a word of explanation:
+
+- The `Auxiliary1` to `Auxiliary8` evdev names `BTN_TRIGGER_HAPPYn` are an OpenJoystickDriver choice, because no source gives the Auxiliary buttons a role. SDL3 has the buttons `MISC1` to `MISC6` only, so `Auxiliary6` to `Auxiliary8` have no SDL3 name.
+- `Back`, `Guide`: the HID column holds the HID Usage Tables names `Select` and `System Main Menu`; the Xbox Bluetooth descriptor reports `AC Back` (Consumer `0x224`) and `AC Home` (Consumer `0x223`). `Start` is the HID Usage Tables name, and Gamepad usages use Start and Select (section 8.4).
+- `Capture`: `KEY_RECORD` is the Xbox Share button (Linux xpad driver), and a Nintendo Switch controller reports Capture as `BTN_Z` (Linux hid-nintendo driver). The standard HID usage map maps Share and Capture to `Record` (Consumer `0xB2`).
+- `Microphone`: the GameController documentation has no microphone button name. Linux has no gamepad code, because hid-playstation reports no mute button and `KEY_MICMUTE` is a keyboard key. `Phone Mute` (Telephony `0x2F`) and `Mute` (Consumer `0xE2`) are the HID Usage Tables mute usages.
+- The four D-pad ids are one `GCControllerDirectionPad` element in Apple's names. A Linux driver may report `ABS_HAT0X` and `ABS_HAT0Y` instead of the buttons. In HID the D-pad usage comes first, and a Hat Switch (`0x39`) carries all four directions as one value.
+- The paddles: Apple names the Xbox Elite paddles `P1` and `P2` for `RightPaddle1` and `RightPaddle2`, and `P3` and `P4` for `LeftPaddle1` and `LeftPaddle2`; SDL3 and the Linux xpad driver number them the same way.
+- The W3C axes 0 to 3 are the sticks of the standard mapping; negative is left or up and positive is right or down.
+- The triggers: xpad and hid-playstation report `ABS_Z` and `ABS_RZ`, and the Linux gamepad documentation names `BTN_TL2` or `ABS_HAT2Y` and `BTN_TR2` or `ABS_HAT2X`. The standard HID usage map maps `Brake` to the left trigger and `Accelerator` to the right.
+- `TouchpadClick`: `GCInputDualShockTouchpadButton` also names the DualSense touchpad button. On Linux the click is `BTN_LEFT` on the touchpad input device, not on the gamepad device (hid-playstation driver).
 
 PlayStation Share (Create) and Xbox View are `Back`. PlayStation Options, Xbox Menu and Switch Plus are `Start`. Xbox Share and Switch Capture are `Capture`. The names `Share` and `Options` are not controls.
 

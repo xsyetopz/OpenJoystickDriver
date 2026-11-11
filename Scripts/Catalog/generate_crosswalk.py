@@ -98,26 +98,6 @@ def wiki_block(document: dict[str, Any]) -> str:
         lines.append(
             f"| {title} | {name} | {source['version']} | {revision} | {source['checkedOn']} |"
         )
-    titles = dict(COLUMNS)
-    notes = [
-        (control, column, text)
-        for control, row in controls.items()
-        for column, text in row.get("notes", {}).items()
-    ]
-    if notes:
-        lines += [
-            "",
-            "Notes on single cells:",
-            "",
-            "| Control | Column | Note |",
-            "| --- | --- | --- |",
-        ]
-        for control, column, text in notes:
-            if column not in titles:
-                raise CrosswalkError(
-                    f"{control} has a note for the unknown column {column}"
-                )
-            lines.append(f"| `{control}` | {titles[column]} | {text} |")
     lines += ["", END]
     return "\n".join(lines)
 

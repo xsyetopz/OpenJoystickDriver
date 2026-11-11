@@ -93,11 +93,6 @@ class ControlVocabularyTests(unittest.TestCase):
             for entry in row.get("hid", []):
                 self.assertIn(entry["page"], pages, control)
 
-    def test_a_note_names_a_column_of_the_table(self) -> None:
-        for control, row in self.crosswalk.items():
-            for column in row.get("notes", {}):
-                self.assertIn(column, self.sources, control)
-
     def test_the_sourced_cells_hold(self) -> None:
         rows = self.crosswalk
         simulation = {"page": "Simulation"}

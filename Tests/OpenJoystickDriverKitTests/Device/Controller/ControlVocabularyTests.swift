@@ -57,7 +57,6 @@ struct ControlVocabularyTests {
       let evdev: String?
       let hid: [HID]
       let apple: String?
-      let notes: [String: String]?
 
       init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -67,11 +66,10 @@ struct ControlVocabularyTests {
         evdev = try values.decodeIfPresent(String.self, forKey: .evdev)
         hid = try values.decodeIfPresent([HID].self, forKey: .hid) ?? []
         apple = try values.decodeIfPresent(String.self, forKey: .apple)
-        notes = try values.decodeIfPresent([String: String].self, forKey: .notes)
       }
 
       private enum CodingKeys: String, CodingKey {
-        case w3cButton, w3cAxis, sdl, evdev, hid, apple, notes
+        case w3cButton, w3cAxis, sdl, evdev, hid, apple
       }
     }
     struct Source: Decodable {
@@ -170,7 +168,6 @@ struct ControlVocabularyTests {
     let pages = Set(crosswalk.sources["hid"]?.pages?.keys.sorted() ?? [])
     for (id, row) in crosswalk.controls {
       #expect(row.hid.allSatisfy { pages.contains($0.page) }, "\(id) hid page")
-      #expect((row.notes ?? [:]).keys.allSatisfy { crosswalk.sources[$0] != nil }, "\(id) note")
     }
   }
 
