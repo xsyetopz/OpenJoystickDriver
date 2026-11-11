@@ -201,11 +201,11 @@ enum ControllerRecordDrafting {
     }
   }
 
-  /// Returns the suggested file name of the record, `VVVV-PPPP.json`.
+  /// Returns the suggested file name of the record, `vvvv-pppp.plist`.
   ///
   /// - Parameter device: The controller.
-  /// - Returns: The suggested file name of the record, `VVVV-PPPP.json`.
+  /// - Returns: The suggested file name of the record, `vvvv-pppp.plist`.
   static func fileName(for device: ApplicationServiceDeviceDescription) -> String {
-    String(format: "%04X-%04X.json", device.vendorID, device.productID)
+    String(format: "%04x-%04x.plist", device.vendorID, device.productID)
   }
 }

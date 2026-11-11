@@ -157,7 +157,7 @@ struct RecordShowCommand: AsyncParsableCommand {
             transport: RecordTransport(record),
             transportClaim: RecordTransportClaim(record),
             fields: fields,
-            record: try OrderedJSON.parse(record.document)
+            record: try OrderedJSON(document: record.document, file: "record")
           )
         )
       case .plain:

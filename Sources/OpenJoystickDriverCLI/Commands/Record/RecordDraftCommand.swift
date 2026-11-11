@@ -194,7 +194,7 @@ struct RecordDraftCommand: AsyncParsableCommand {
           },
           capturedReports: draft.capturedReports,
           changedBytes: changed,
-          record: try OrderedJSON.parse(draft.document)
+          record: try OrderedJSON(document: draft.document, file: "record")
         )
       )
     case .plain:

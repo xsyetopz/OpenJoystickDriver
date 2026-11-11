@@ -39,7 +39,7 @@ extension OrderedJSON {
   }
 
   /// The value of the document `data`, an XML property list; `file` names it in a refusal.
-  init(document data: Data, file: String) throws {
+  public init(document data: Data, file: String) throws {
     self = try Self(foundation: DocumentCoder.read(data, file: file))
   }
 

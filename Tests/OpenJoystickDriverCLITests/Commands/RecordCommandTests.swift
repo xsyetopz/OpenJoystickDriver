@@ -137,7 +137,7 @@ struct RecordCommandTests {
       ]?.text
     )
     #expect(humanShow.standardOutput.hasSuffix("\n\n" + document))
-    #expect(humanShow.standardOutput.hasSuffix("  }\n}\n"))
+    #expect(humanShow.standardOutput.hasSuffix("</dict>\n</plist>\n"))
   }
 
   @Test
@@ -273,6 +273,40 @@ struct RecordCommandTests {
     #expect(json["changedBytes"] as? [[String: Int]] == [["byte": 2, "minimum": 2, "maximum": 5]])
     let record = try #require(json["record"] as? [String: Any])
     #expect(record["kind"] as? String == "Controller")
+  }
+
+  /// The text of `record draft` is what `record install -` reads.
+  @Test
+  func theDraftTextPipesIntoInstall() async throws {
+    let reads = Counter()
+    let packets = """
+      [{"direction":"Rx","hex":"00 01 02","length":3,"timestamp":1},
+       {"direction":"Rx","hex":"00 01 05","length":3,"timestamp":3}]
+      """
+    let service = try FakeService(
+      devices: [
+        ApplicationServiceDeviceDescription.fixture(
+          id: "pad-1",
+          vendorID: 0x1234,
+          productID: 0x5678
+        )
+      ]
+    ) { method, _ in
+      guard method == .getPacketLog else { return nil }
+      return encoded(Data((reads.next() == 0 ? "[]" : packets).utf8))
+    }
+    let draft = await RecordDraftCommand.$descriptor.withValue(Self.noDescriptor) {
+      await service.run(["record", "draft", token("pad-1"), "--duration", "0.3"])
+    }
+    #expect(draft.code == 0, "\(draft.standardError)")
+    let directory = Directory()
+    let install = await run(
+      ["install", "-", "--json"],
+      in: directory,
+      stdin: Data(draft.standardOutput.utf8)
+    )
+    #expect(install.code == 0, "\(install.standardError)")
+    #expect(directory.fileNames == ["1234-5678.plist"])
   }
 
   /// A bundled model whose descriptor maps nothing keeps its bundled family.
