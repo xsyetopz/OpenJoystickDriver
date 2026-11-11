@@ -107,43 +107,6 @@ struct GUICoverageTests {
   }
 
   @Test
-  func theD10TextNamesEveryCLIOnlyItem() throws {
-    let design = try String(
-      contentsOf: GUISources.root.appendingPathComponent(
-        "openspec/changes/platform-neutral-redesign/design.md"
-      ),
-      encoding: .utf8
-    )
-    let start = try #require(design.range(of: "### D10"))
-    let end = try #require(design.range(of: "### D11"))
-    let section = String(design[start.lowerBound..<end.lowerBound])
-    let listStart = try #require(section.range(of: "are listed as CLI-only:"))
-    let listEnd = try #require(section.range(of: "`GUICoverageEntries` lists exactly these"))
-    let list = String(section[listStart.upperBound..<listEnd.lowerBound])
-    let named = Set(
-      try #require(try? NSRegularExpression(pattern: "`([^`]+)`")).matches(
-        in: list,
-        range: NSRange(list.startIndex..., in: list)
-      ).compactMap { Range($0.range(at: 1), in: list).map { String(list[$0]) } }
-    )
-    // An option of one command is named together with that command.
-    let expected = Set(
-      GUICoverageEntries.cliOnly.flatMap { item -> [String] in
-        let command = (item.command ?? []).joined(separator: " ")
-        guard let option = item.option else { return [command] }
-        return item.command == nil ? [option] : [option, command]
-      }
-    )
-    #expect(
-      named == expected,
-      """
-      D10 lacks \(expected.subtracting(named).sorted()); \
-      D10 names more: \(named.subtracting(expected).sorted())
-      """
-    )
-  }
-
-  @Test
   func aFakeCommandWithNoGUIPlaceIsReported() {
     let paths = CLICommandTree.paths(of: FakeRoot.self)
     #expect(paths == [["status"], ["frobnicate"], ["frobnicate", "run"]])

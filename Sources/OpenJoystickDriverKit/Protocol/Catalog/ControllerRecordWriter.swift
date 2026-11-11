@@ -12,7 +12,7 @@ public enum ControllerRecordWriter {
   public enum Target: Equatable, Sendable {
     /// One controller model: its user Controller file, or else its ControllerPatch file.
     case model(ControllerModelID)
-    /// Every controller: `all.patch.json`.
+    /// Every controller: `all.patch.plist`.
     case allControllers
   }
 
@@ -48,7 +48,9 @@ public enum ControllerRecordWriter {
     public let data: Data?
   }
 
-  /// Why the change was refused. The file is unchanged.
+  /// Why the change was refused.
+  ///
+  /// The file is unchanged.
   public enum Failure: Error, Equatable, Sendable {
     /// The user directory has no file for the model and neither the bundled catalog nor an
     /// installed package has a record of it, so there is nothing to patch. `ojd record draft`
@@ -61,8 +63,11 @@ public enum ControllerRecordWriter {
     case invalidResult(String)
   }
 
-  /// Why a tuning change was refused. The file is unchanged.
+  /// Why a tuning change was refused.
+  ///
+  /// The file is unchanged.
   public enum TuningFailure: Error, Equatable, Sendable {
+    /// The record write was refused.
     case refused(Failure)
     /// The user file does not set the tuning key, so there is nothing to remove.
     case notSet(ControllerTuning.Key)
@@ -130,12 +135,15 @@ public enum ControllerRecordWriter {
 
   /// A tuning removal found no value to remove.
   private struct NotSet: Error {
+    /// The tuning key that is not set.
     let key: ControllerTuning.Key
   }
 
   /// Why ``plan(for:tuningKey:records:directory:edit:)`` refused: the record, or the edit.
   private enum Refusal<EditFailure: Error>: Error {
+    /// The record could not be changed.
     case record(Failure)
+    /// The edit could not be applied.
     case edit(EditFailure)
   }
 
@@ -176,10 +184,7 @@ public enum ControllerRecordWriter {
     let data: Data?
     do {
       data = try document.map { document in
-        let data = try OrderedJSON(
-          foundation: document,
-          order: try existing.map { try ControllerRecordSet.ordered($0) } ?? .recordKeys
-        ).formattedData()
+        let data = try DocumentCoder.write(document)
         _ = try ControllerRecordSet.validate(data, file: file, packages: packages)
         return data
       }
@@ -208,7 +213,7 @@ public enum ControllerRecordWriter {
   }
 
   /// The existing user file with `edit` applied in the Controller file or in the `patch` of the
-  /// ControllerPatch file; nil when a removal leaves a patch with no key.
+  /// ControllerPatch file; nil when a removal leaves a patch with no key and no `remove`.
   private static func updated<EditFailure: Error>(
     _ data: Data,
     file: URL,
@@ -223,8 +228,10 @@ public enum ControllerRecordWriter {
         .invalidFile(ControllerRecordSet.problemDescription(error, document: "record"))
       )
     }
-    guard var document = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
-      throw .record(.invalidFile("the file is not a JSON object"))
+    guard var document = (try? DocumentCoder.read(data, file: file.lastPathComponent))
+      as? [String: Any]
+    else {
+      throw .record(.invalidFile("the file is not a dictionary"))
     }
     if operation == .add {
       do { try edit(&document) } catch { throw .edit(error) }
@@ -232,24 +239,28 @@ public enum ControllerRecordWriter {
     }
     var fields = document["patch"] as? [String: Any] ?? [:]
     do { try edit(&fields) } catch { throw .edit(error) }
-    if fields.isEmpty { return nil }
-    document["patch"] = fields
+    if fields.isEmpty {
+      guard document["remove"] != nil else { return nil }
+      document["patch"] = nil
+    } else {
+      document["patch"] = fields
+    }
     return document
   }
 }
 
 extension ControllerRecordWriter {
   /// `fields`, the members of a Controller file or the `patch` of a ControllerPatch file, with
-  /// `edit` applied. A whole number is written without a fraction, so an integer key reads it.
+  /// `edit` applied.
+  ///
+  /// A whole number is written without a fraction, so an integer key reads it.
   private static func apply(_ edit: TuningEdit, to fields: inout [String: Any]) throws(NotSet) {
     var tuning = fields["tuning"] as? [String: Any] ?? [:]
     switch edit {
     case .set(let key, let value):
       tuning[key.rawValue] = Int(exactly: value).map { $0 as Any } ?? value
     case .remove(let key):
-      guard let value = tuning.removeValue(forKey: key.rawValue), !(value is NSNull) else {
-        throw NotSet(key: key)
-      }
+      guard tuning.removeValue(forKey: key.rawValue) != nil else { throw NotSet(key: key) }
     }
     fields["tuning"] = tuning.isEmpty ? nil : tuning
   }

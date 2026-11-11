@@ -4,26 +4,32 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// One valid button, for cases that vary only another part of the layout.
-private let button = #"{"control": "South", "byte": 1, "mask": 1}"#
+private let button = #"{"control": "South", "bitOffset": 8, "bitSize": 1}"#
 
 /// Layouts the symmetric axis and table hat rules reject.
 private let invalidSymmetricAxesAndTableHats: [String] = [
   #"{"report": {"length": {"atLeast": 2}}, "#
-    + #""axes": [{"control": "LeftStickX", "byte": 1, "symmetric": true}]}"#,
+    + #""axes": [{"control": "LeftStickX", "bitOffset": 8, "bitSize": 8, "symmetric": true}]}"#,
   #"{"report": {"length": {"atLeast": 2}}, "#
-    + #""axes": [{"control": "LeftStickX", "byte": 1, "signed": true, "#
+    + #""axes": [{"control": "LeftStickX", "bitOffset": 8, "bitSize": 8, "signed": true, "#
     + #""min": 0, "max": 127, "symmetric": true}]}"#,
-  #"{"report": {"length": {"atLeast": 2}}, "hat": [{"encoding": "Table", "byte": 1, "mask": 15, "#
+  #"{"report": {"length": {"atLeast": 2}}, "#
+    + #""hat": [{"encoding": "Table", "bitOffset": 8, "bitSize": 4, "#
     + #""values": {}}]}"#,
-  #"{"report": {"length": {"atLeast": 2}}, "hat": [{"encoding": "Table", "byte": 1, "mask": 15, "#
+  #"{"report": {"length": {"atLeast": 2}}, "#
+    + #""hat": [{"encoding": "Table", "bitOffset": 8, "bitSize": 4, "#
     + #""values": {"16": "North"}}]}"#,
-  #"{"report": {"length": {"atLeast": 2}}, "hat": [{"encoding": "Table", "byte": 1, "mask": 15, "#
+  #"{"report": {"length": {"atLeast": 2}}, "#
+    + #""hat": [{"encoding": "Table", "bitOffset": 8, "bitSize": 4, "#
     + #""values": {"01": "North"}}]}"#,
-  #"{"report": {"length": {"atLeast": 2}}, "hat": [{"encoding": "Table", "byte": 1, "mask": 15, "#
+  #"{"report": {"length": {"atLeast": 2}}, "#
+    + #""hat": [{"encoding": "Table", "bitOffset": 8, "bitSize": 4, "#
     + #""values": {"1": "Neutral"}}]}"#,
-  #"{"report": {"length": {"atLeast": 2}}, "hat": [{"encoding": "Table", "byte": 1, "mask": 15, "#
+  #"{"report": {"length": {"atLeast": 2}}, "#
+    + #""hat": [{"encoding": "Table", "bitOffset": 8, "bitSize": 4, "#
     + #""values": {"1": "up"}}]}"#,
-  #"{"report": {"length": {"atLeast": 2}}, "hat": [{"encoding": "Table", "byte": 1, "mask": 15}]}"#,
+  #"{"report": {"length": {"atLeast": 2}}, "#
+    + #""hat": [{"encoding": "Table", "bitOffset": 8, "bitSize": 4}]}"#,
 ]
 
 /// Layouts the decoder rejects.
@@ -45,36 +51,34 @@ private let invalidLayouts: [String] = [
   #"{"report": {"length": {"atLeast": 2}, "exactLength": true}, "buttons": [\#(button)]}"#,
   // Fields.
   #"{"report": {"length": {"atLeast": 2}}, "#
-    + #""buttons": [{"control": "South", "byte": 1, "mask": 0}]}"#,
+    + #""buttons": [{"control": "South", "bitOffset": 8, "bitSize": 0}]}"#,
   #"{"report": {"length": {"atLeast": 2}}, "#
-    + #""buttons": [{"control": "South", "byte": 1, "mask": 256}]}"#,
+    + #""buttons": [{"control": "South", "bitOffset": 16, "bitSize": 1}]}"#,
   #"{"report": {"length": {"atLeast": 2}}, "#
-    + #""buttons": [{"control": "South", "byte": 2, "mask": 1}]}"#,
+    + #""buttons": [{"control": "South", "bitOffset": 16, "bitSize": 1}]}"#,
   #"{"report": {"id": 1, "length": {"atLeast": 2}}, "#
-    + #""buttons": [{"control": "South", "byte": 0, "mask": 1}]}"#,
+    + #""buttons": [{"control": "South", "bitOffset": 0, "bitSize": 1}]}"#,
   #"{"report": {"length": {"atLeast": 2}}, "#
-    + #""buttons": [{"control": "DpadUp", "byte": 1, "mask": 1}]}"#,
+    + #""buttons": [{"control": "DpadUp", "bitOffset": 8, "bitSize": 1}]}"#,
   #"{"report": {"length": {"atLeast": 2}}, "#
-    + #""buttons": [{"control": "LeftStickX", "byte": 1, "mask": 1}]}"#,
+    + #""buttons": [{"control": "LeftStickX", "bitOffset": 8, "bitSize": 1}]}"#,
   // Hat.
   #"{"report": {"length": {"atLeast": 2}}, "#
-    + #""hat": [{"encoding": "EightWay", "byte": 1, "mask": 3}]}"#,
+    + #""hat": [{"encoding": "EightWay", "bitOffset": 8, "bitSize": 2}]}"#,
   #"{"report": {"length": {"atLeast": 2}}, "#
-    + #""hat": [{"encoding": "EightWay", "byte": 1, "mask": 11}]}"#,
-  #"{"report": {"length": {"atLeast": 2}}, "#
-    + #""hat": [{"encoding": "4-way", "byte": 1, "mask": 15}]}"#,
+    + #""hat": [{"encoding": "4-way", "bitOffset": 8, "bitSize": 4}]}"#,
   // Axes.
-  #"{"report": {"length": {"atLeast": 2}}, "axes": [{"control": "South", "byte": 1}]}"#,
-  #"{"report": {"length": {"atLeast": 3}}, "axes": [{"control": "LeftStickX", "byte": 1}, "#
-    + #"{"control": "LeftStickX", "byte": 2}]}"#,
+  #"{"report": {"length": {"atLeast": 2}}, "#
+    + #""axes": [{"control": "South", "bitOffset": 8, "bitSize": 8}]}"#,
   #"{"report": {"length": {"atLeast": 3}}, "#
-    + #""axes": [{"control": "LeftStickX", "byte": 1, "bits": 12}]}"#,
+    + #""axes": [{"control": "LeftStickX", "bitOffset": 8, "bitSize": 8}, "#
+    + #"{"control": "LeftStickX", "bitOffset": 16, "bitSize": 8}]}"#,
   #"{"report": {"length": {"atLeast": 2}}, "#
-    + #""axes": [{"control": "LeftStickX", "byte": 1, "bits": 16}]}"#,
+    + #""axes": [{"control": "LeftStickX", "bitOffset": 8, "bitSize": 16}]}"#,
   #"{"report": {"length": {"atLeast": 2}}, "#
-    + #""axes": [{"control": "LeftStickX", "byte": 1, "min": 10, "max": 11}]}"#,
+    + #""axes": [{"control": "LeftStickX", "bitOffset": 8, "bitSize": 8, "min": 10, "max": 11}]}"#,
   #"{"report": {"length": {"atLeast": 2}}, "#
-    + #""axes": [{"control": "LeftStickX", "byte": 1, "max": 256}]}"#,
+    + #""axes": [{"control": "LeftStickX", "bitOffset": 8, "bitSize": 8, "max": 256}]}"#,
   // Triggers and shape.
   #"{"report": {"length": {"atLeast": 2}}, "leftTrigger": {}}"#,
   #"{"report": {"length": {"atLeast": 2}}}"#,
@@ -90,15 +94,15 @@ struct ControllerInputLayoutTests {
     let layout = try inputLayout(
       """
       {"report": {"length": {"atLeast": 2}}, "buttons": [
-        {"control": "North", "byte": 0, "mask": 8},
-        {"control": "North", "byte": 1, "mask": 128}
+        {"control": "North", "bitOffset": 3, "bitSize": 1},
+        {"control": "North", "bitOffset": 15, "bitSize": 1}
       ]}
       """
     )
     #expect(layout.buttons.count == 1)
     #expect(
       layout.buttons.first?.fields == [
-        ReportBitField(byte: 0, mask: 8), ReportBitField(byte: 1, mask: 128),
+        ReportBitField(bitOffset: 3, bitSize: 1), ReportBitField(bitOffset: 15, bitSize: 1),
       ]
     )
     #expect(layout.controls == [.north])
@@ -106,22 +110,22 @@ struct ControllerInputLayoutTests {
 
   @Test
   func exactlyIgnoresLongerReportsAndAtLeastAcceptsThem() throws {
-    let exact = ReportLayoutDriver(
-      layout: try inputLayout(
+    let exact = try layoutDriver(
+      try inputLayout(
         """
         {"report": {"length": {"exactly": 2}},
-         "buttons": [{"control": "South", "byte": 1, "mask": 1}]}
+         "buttons": [{"control": "South", "bitOffset": 8, "bitSize": 1}]}
         """
       )
     )
     #expect(try exact.parseReport(Data([0, 1]))?.state.pressed == [.south])
     #expect(try exact.parseReport(Data([0, 1, 0])) == nil)
     #expect(try exact.parseReport(Data([0])) == nil)
-    let atLeast = ReportLayoutDriver(
-      layout: try inputLayout(
+    let atLeast = try layoutDriver(
+      try inputLayout(
         """
         {"report": {"length": {"atLeast": 2}},
-          "buttons": [{"control": "South", "byte": 1, "mask": 1}]}
+          "buttons": [{"control": "South", "bitOffset": 8, "bitSize": 1}]}
         """
       )
     )
@@ -133,11 +137,11 @@ struct ControllerInputLayoutTests {
     let layout = try inputLayout(
       """
       {"report": {"length": {"atLeast": 1}}, "hat": [{"encoding": "Directions",
-        "up": {"byte": 0, "mask": 1}, "right": {"byte": 0, "mask": 2},
-        "down": {"byte": 0, "mask": 4}, "left": {"byte": 0, "mask": 8}}]}
+        "up": {"bitOffset": 0, "bitSize": 1}, "right": {"bitOffset": 1, "bitSize": 1},
+        "down": {"bitOffset": 2, "bitSize": 1}, "left": {"bitOffset": 3, "bitSize": 1}}]}
       """
     )
-    let driver = ReportLayoutDriver(layout: layout)
+    let driver = try layoutDriver(layout)
     #expect(try driver.parseReport(Data([0x05]))?.state == .neutral)
     #expect(try driver.parseReport(Data([0x07])).contains(.hat(.east)))
     #expect(layout.controls == Control.dpad)
@@ -147,11 +151,12 @@ struct ControllerInputLayoutTests {
   func aTableHatNamesDirectionsForMaskedValues() throws {
     let layout = try inputLayout(
       """
-      {"report": {"length": {"atLeast": 1}}, "hat": [{"encoding": "Table", "byte": 0, "mask": 240,
+      {"report": {"length": {"atLeast": 1}},
+        "hat": [{"encoding": "Table", "bitOffset": 4, "bitSize": 4,
         "values": {"1": "North", "9": "NorthEast"}}]}
       """
     )
-    let driver = ReportLayoutDriver(layout: layout)
+    let driver = try layoutDriver(layout)
     #expect(try driver.parseReport(Data([0x10]))?.state.hat == .north)
     #expect(try driver.parseReport(Data([0x9F]))?.state.hat == .northEast)
     #expect(try driver.parseReport(Data([0x20]))?.state.hat == .neutral)
@@ -163,11 +168,11 @@ struct ControllerInputLayoutTests {
     let layout = try inputLayout(
       """
       {"report": {"length": {"atLeast": 2}},
-        "axes": [{"control": "LeftStickX", "byte": 0, "bits": 16,
+        "axes": [{"control": "LeftStickX", "bitOffset": 0, "bitSize": 16,
           "signed": true, "min": -32768, "max": 32767, "symmetric": true}]}
       """
     )
-    let driver = ReportLayoutDriver(layout: layout)
+    let driver = try layoutDriver(layout)
     #expect(try driver.parseReport(Data([0x00, 0x80]))?.state.leftStick.x.normalized == -1)
     #expect(try driver.parseReport(Data([0x01, 0x80]))?.state.leftStick.x.normalized == -1)
     #expect(try driver.parseReport(Data([0xFF, 0x7F]))?.state.leftStick.x.normalized == 1)
@@ -179,11 +184,11 @@ struct ControllerInputLayoutTests {
     let layout = try inputLayout(
       """
       {"report": {"length": {"atLeast": 2}},
-        "axes": [{"control": "LeftStickX", "byte": 0, "bits": 16,
+        "axes": [{"control": "LeftStickX", "bitOffset": 0, "bitSize": 16,
           "signed": true, "symmetric": true}]}
       """
     )
-    let driver = ReportLayoutDriver(layout: layout)
+    let driver = try layoutDriver(layout)
     #expect(try driver.parseReport(Data([0x00, 0x80]))?.state.leftStick.x.normalized == -1)
     #expect(try driver.parseReport(Data([0xFF, 0x7F]))?.state.leftStick.x.normalized == 1)
     #expect(try driver.parseReport(Data([0x00, 0x00]))?.state.leftStick.x.normalized == 0)

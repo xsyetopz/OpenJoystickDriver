@@ -8,7 +8,7 @@ Run from the repository root:
 
 ```bash
 ./Scripts/ojd diagnose record \
-  Sources/OpenJoystickDriverKit/Resources/Controllers/2e95/2e95-434d.json \
+  Sources/OpenJoystickDriverKit/Resources/Controllers/2e95/2e95-434d.plist \
   --validate-only
 swift test --filter SCUFEnvisionParserTests
 ```

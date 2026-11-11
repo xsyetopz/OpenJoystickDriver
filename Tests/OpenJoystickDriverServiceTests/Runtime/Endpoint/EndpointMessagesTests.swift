@@ -5,7 +5,7 @@ import Testing
 
 @testable import OpenJoystickDriverService
 
-/// Round trips of the endpoint messages on `openjoystickdriver/v1alpha1` against
+/// Round trips of the endpoint messages on `openjoystickdriver/v1alpha3` against
 /// `endpoint.schema.json`: what Swift encodes the schema accepts, and what the schema accepts from
 /// a client Swift decodes.
 struct EndpointMessagesTests {
@@ -50,7 +50,7 @@ struct EndpointMessagesTests {
         try JSONSerialization.jsonObject(with: Data(Self.encoded(message).utf8))
           as? [String: Any]
       )
-      #expect(object["apiVersion"] as? String == "openjoystickdriver/v1alpha1")
+      #expect(object["apiVersion"] as? String == "openjoystickdriver/v1alpha3")
       #expect(object["kind"] as? String == kind)
     }
   }
@@ -88,9 +88,9 @@ struct EndpointMessagesTests {
 
   @Test(arguments: [
     (#"{"apiVersion":null,"kind":"Hello"}"#, ErrorCode.missingHeader),
-    (#"{"apiVersion":"openjoystickdriver/v1alpha1","kind":null}"#, .missingHeader),
+    (#"{"apiVersion":"openjoystickdriver/v1alpha3","kind":null}"#, .missingHeader),
     (#"{"apiVersion":7,"kind":"Hello"}"#, .missingHeader),
-    (#"{"apiVersion":"openjoystickdriver/v1alpha1","kind":{}}"#, .missingHeader),
+    (#"{"apiVersion":"openjoystickdriver/v1alpha3","kind":{}}"#, .missingHeader),
     (#"{"kind":"Hello"}"#, .missingHeader),
     (#"{"apiVersion":"openjoystickdriver/v2","kind":null}"#, .missingHeader),
     (#"["Hello"]"#, .invalidMessage),
@@ -135,10 +135,19 @@ struct EndpointMessagesTests {
     clientLine(
       "Status",
       #","status":"Failure","code":"E1003","message":"m","details":"#
-        + #"{"supportedAPIVersions":["openjoystickdriver/v1alpha1"]}"#
+        + #"{"supportedAPIVersions":["openjoystickdriver/v1alpha3"]}"#
     ),
   ])
   func aLineOutsideTheSchemaIsRefused(line: String) throws {
     #expect(!(try Self.issues(line).isEmpty), "\(line)")
+  }
+
+  @Test(arguments: ["PointerX", "PointerY"])
+  func aFrameWithAPointerAxisIsRefusedByTheSchemaAndSwift(axis: String) throws {
+    let line = clientLine("Frame", #","axes":{"\#(axis)":0.5}"#)
+    #expect(!(try Self.issues(line).isEmpty))
+    #expect(throws: DecodingError.self) {
+      try JSONDecoder().decode(VirtualFeedFrame.self, from: Data(line.utf8))
+    }
   }
 }

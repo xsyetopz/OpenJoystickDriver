@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiVersion</key>
+	<string>openjoystickdriver/v1alpha3</string>
+	<key>code</key>
+	<string>E2034</string>
+	<key>errno</key>
+	<integer>9</integer>
+	<key>kind</key>
+	<string>ServiceListenerFailure</string>
+	<key>pid</key>
+	<integer>4242</integer>
+	<key>pidStartMicroseconds</key>
+	<integer>250000</integer>
+	<key>pidStartSeconds</key>
+	<integer>1792570000</integer>
+	<key>time</key>
+	<string>2026-10-21T08:30:00Z</string>
+</dict>
+</plist>

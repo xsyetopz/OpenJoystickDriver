@@ -1,5 +1,17 @@
 /* Product name in the title of the application menu of the menu bar. It stays OpenJoystickDriver in every language. */
 "term.app.name" = "OpenJoystickDriver";
+/* Name of a destination that opens an application. %@ is the bundle identifier of the application. */
+"ui.mapping.openApplication" = "Abrir %@";
+/* Name of a destination that opens a URL. %@ is the URL. */
+"ui.mapping.openURL" = "Abrir URL %@";
+/* Name of a destination that runs a Shortcut. Shortcuts is the Apple app. %@ is the name of the shortcut. */
+"ui.mapping.runShortcut" = "Ejecutar atajo %@";
+/* Name of a system action destination. %@ is the name of the action, such as Mission Control. */
+"ui.mapping.systemAction" = "Acción del sistema %@";
+/* Name of a system key destination, such as volume up. %@ is the name of the key. */
+"ui.mapping.systemKey" = "Tecla del sistema %@";
+/* Name of a destination that types text. %@ is the text. */
+"ui.mapping.typeText" = "Escribir %@";
 /* Button of the problem banner in the Access area that quits and opens the app again so that a granted permission takes effect. OpenJoystickDriver is the product name. */
 "ui.permissions.restartApplication" = "Reiniciar OpenJoystickDriver";
 /* Menu item in the application menu that opens the project page on GitHub. GitHub is a product name and stays as written. */
@@ -50,6 +62,8 @@
 "status.allowed" = "Permitido";
 /* Value of a permission row in the Access area when the active profiles do not use the permission. */
 "status.notNeeded" = "No necesario";
+/* Line of the profile activation alert and of 'ojd profile activate' that names the permissions that the actions of the profile need and that are not granted. %@ is the permission names, separated by commas. */
+"status.missingPermissions" = "Permisos que faltan: %@";
 /* Placeholder in the profile creation sheet shown instead of a controller model when no controller is connected. */
 "status.connectController" = "Conecta un mando";
 /* Line in the menu bar menu when no profile is active. */
@@ -152,8 +166,18 @@
 "ui.controllers.deviceInUse" = "Otro programa está usando este mando. Ciérralo o vuelve a conectar el mando.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose USB configuration OJD could not read. OJD tries again only when the controller reconnects, so the text asks for that. USB stays as written. */
 "ui.controllers.configurationUnreadable" = "No se pudo leer la configuración USB de este mando. Vuelve a conectar el mando.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
+"ui.controllers.bootloaderIdentity" = "Este mando está en modo bootloader. OJD no le envía datos.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+"ui.controllers.noModeMatched" = "Este mando comparte su ID con otros modelos y no coincide con ninguno de los compatibles. OJD no le envía datos.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected device whose ID OJD recognizes and serves nothing, such as a receiver with no controller connected. OJD sends such a device no data, and the text says so. OJD stays as written. */
+"ui.controllers.idleIdentity" = "Este dispositivo no ofrece controles, como un receptor sin ningún mando conectado. OJD no le envía datos.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "Batería";
+/* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */
+"ui.controllers.paused.label" = "Reasignación";
+/* Value of the pause fact in the Controllers detail, and menu bar menu row under a controller that a Pause assignment holds. */
+"ui.controllers.paused.value" = "En pausa";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "Mostrar número de serie";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */
@@ -183,7 +207,7 @@
 /* Label of the fact in the Controllers detail that shows the USB vendor ID and product ID. VID and PID are the usual short names. */
 "ui.controllers.usbIdentifier" = "USB VID/PID";
 /* VoiceOver sentence while the app checks which profile is active for the controller. */
-"ui.controllers.profileCheckingSentence" = "Se está comprobando el perfil activo.";
+"ui.controllers.profileCheckingSentence" = "Se está comprobando el perfil activo…";
 /* VoiceOver sentence when the controller has no active profile. */
 "ui.controllers.noActiveProfileSentence" = "Ningún perfil activo.";
 /* VoiceOver sentence that names the active profile. %@ is the profile name. The sentence ends with a period. */
@@ -311,11 +335,9 @@
 /* Status in the capture assignment sheet before the capture starts. */
 "ui.capture.ready" = "Listo para escuchar.";
 /* Status in the capture assignment sheet while the app waits for a controller control. */
-"ui.capture.listening" = "Escuchando un control del mando.";
+"ui.capture.listening" = "Escuchando un control del mando…";
 /* VoiceOver announcement while the app waits for a controller control. Escape is the name of the Escape key. */
-"ui.capture.listeningCancel" = "Escuchando un control del mando. Pulsa Esc para cancelar.";
-/* Status text in the capture assignment sheet while the app waits for a controller control. Keep the three dots. */
-"ui.capture.listeningEllipsis" = "Escuchando un control del mando…";
+"ui.capture.listeningCancel" = "Escuchando un control del mando… Pulsa Esc para cancelar.";
 /* Status in the capture assignment sheet after a control is detected. %@ is the name of the control. The sentence ends with a period. */
 "ui.capture.detected" = "Detectado: %@.";
 /* Label with the detected control in the capture assignment sheet. %@ is the name of the control. It has no final period because other text follows or the label stands alone. */
@@ -384,8 +406,12 @@
 "ui.profiles.addLayer" = "Añadir capa";
 /* Title of the sheet that adds an assignment to a layer. %@ is the name of the layer. */
 "ui.profiles.addLayerAssignment" = "Añadir asignación a %@";
+/* Button in the behavior sheet that adds an entry for a tap count, such as a triple tap, to the control. */
+"ui.profiles.addMultiTap" = "Añadir número de toques";
 /* Button of the combination sheet that adds a sequence. A sequence is a set of controls pressed one after the other. */
 "ui.profiles.addSequence" = "Añadir secuencia";
+/* Heading in the behavior sheet of the entries that send another destination when the control is tapped two to five times. */
+"ui.profiles.multiTap" = "Toques múltiples";
 /* Title of the empty state in the profile editor when the profile has no assignment. */
 "ui.profiles.noAssignments" = "Aún no hay asignaciones";
 /* Instruction in the empty state of the profile editor. The destination is a key, a mouse button or a pointer movement. */
@@ -412,6 +438,16 @@
 "ui.profiles.changedElsewhere" = "El perfil se ha modificado en otro sitio.";
 /* Error in the profile editor when the service saved the profile but the app cannot read the state afterwards. */
 "ui.profiles.savedButUnavailable" = "El perfil se ha guardado, pero su estado más reciente no está disponible.";
+/* Label of the picker in the behavior sheet that sets how many taps of a control fire an entry. The choices are the numbers 2 to 5. */
+"ui.profiles.tapCount" = "Número de toques";
+/* Note in the behavior sheet under the tap-count entries. %@ is the longest tap window with its unit, such as 300 ms; the assignment's own destination fires only after that wait. */
+"ui.profiles.tapDelay" = "El destino base puede esperar %@";
+/* Label of the field in the behavior sheet that sets the time from the press to the first repeat of turbo. The value is in milliseconds. */
+"ui.profiles.turboDelay" = "Retraso antes de la primera repetición";
+/* Switch in the behavior sheet that makes turbo stop after a number of repeats. */
+"ui.profiles.turboLimit" = "Limitar repeticiones";
+/* Label of the field in the behavior sheet that sets how many repeats turbo makes after the press before it stops. The value is a number. */
+"ui.profiles.turboMax" = "Máximo de repeticiones";
 /* Save status of the profile editor: there are changes that are not saved. */
 "ui.profiles.unsaved" = "Cambios no guardados";
 /* Save status of the profile editor while the profile is being saved. Keep the three dots. */
@@ -462,8 +498,6 @@
 "ui.profiles.details" = "Detalles del perfil";
 /* Note on an assignment row when the controller or its protocol cannot do what the assignment needs. */
 "ui.profiles.notSupportedByController" = "No es compatible con este mando o protocolo.";
-/* Label of the field in the behavior sheet for the destination of a double tap of a control. */
-"ui.profiles.doubleTap" = "Doble toque";
 /* Toolbar button in the Profiles area that exports the profile to a file. */
 "ui.profiles.export" = "Exportar perfil";
 /* Option of the activation popup in the layer sheet: the layer is on while the control is held. */
@@ -504,7 +538,7 @@
 "ui.profiles.sequenceWindow" = "Ventana de finalización";
 /* Heading of the sequences section in the profile editor. */
 "ui.profiles.sequences" = "Secuencias";
-/* Label of the field in the behavior sheet that sets the time within which a second tap counts as a double tap. The value is in milliseconds. */
+/* Label of the field in the behavior sheet that sets the time from one tap's release to the next press within which the taps of a tap-count entry count together. The value is in milliseconds. */
 "ui.profiles.tapWindow" = "Ventana de toque";
 /* Label of the popup in the profile creation sheet that picks which apps the profile applies to. */
 "ui.profiles.target" = "Objetivo";
@@ -512,6 +546,14 @@
 "ui.profiles.targetApplication" = "Una aplicación";
 /* Option of the target popup: the profile applies to all apps. */
 "ui.profiles.targetGlobal" = "Todas las aplicaciones";
+/* Label of the popup in the profile creation sheet that picks what the new profile starts from. */
+"ui.profiles.template" = "Plantilla";
+/* Option of the template popup in the profile creation sheet: the profile starts empty. */
+"ui.profiles.templateEmpty" = "Vacía";
+/* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
+"ui.profiles.templateGyroStick" = "Giroscopio a palanca";
+/* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
+"ui.profiles.templateNoMotion" = "%@ no tiene sensor de movimiento.";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "Alternar";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -570,8 +612,32 @@
 "ui.mapping.axisDirection" = "%1$@ %2$@";
 /* Name of a mouse button destination. %@ is the button, for example left or right. */
 "ui.mapping.mouseButton" = "Botón del ratón %@";
+/* Name of a MIDI note destination. %1$@ is the note number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiNote" = "Nota MIDI %1$@, canal %2$@";
+/* Name of a MIDI control change destination. %1$@ is the controller number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiControlChange" = "Controlador MIDI %1$@, canal %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "Movimiento del puntero %@";
+/* Name of a pointer position destination. %@ is the axis whose value places the pointer across the main display. */
+"ui.mapping.pointerPosition" = "Posición del puntero %@";
+/* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
+"ui.mapping.profileNext" = "Perfil siguiente";
+/* Name of the destination that activates the previous profile of the controller's model and scope in name order, wrapping at the start. */
+"ui.mapping.profilePrevious" = "Perfil anterior";
+/* Name of the destination that activates a specific profile of the same controller model. */
+"ui.mapping.profileSwitch" = "Cambiar de perfil";
+/* Name of the destination that turns a layer on. %@ is the layer name. */
+"ui.mapping.layerOn" = "Activar la capa %@";
+/* Name of the destination that turns a layer off. %@ is the layer name. */
+"ui.mapping.layerOff" = "Desactivar la capa %@";
+/* Name of the destination that flips a layer between on and off. %@ is the layer name. */
+"ui.mapping.layerToggle" = "Alternar la capa %@";
+/* Name of the destination that pauses the controller so its input passes through unmapped. */
+"ui.mapping.pauseOn" = "Pausar el mando";
+/* Name of the destination that resumes a paused controller so its mappings apply again. */
+"ui.mapping.pauseOff" = "Reanudar el mando";
+/* Name of the destination that flips the controller between paused and resumed. */
+"ui.mapping.pauseToggle" = "Alternar la pausa";
 /* Name of a scroll destination. %@ is the direction of the scroll. */
 "ui.mapping.scroll" = "Desplazamiento %@";
 /* Name of the bottom face button: A on Xbox, Cross on PlayStation. The slash stays. */
@@ -606,6 +672,14 @@
 "ui.mapping.touchGridCell" = "%1$@ cuadrícula %2$d×%3$d celda %4$d,%5$d";
 /* Name of a touch swipe as a control. %1$@ is the touch surface and %2$@ is the swipe direction. */
 "ui.mapping.touchSwipe" = "%1$@ deslizamiento %2$@";
+/* Name of a stick ring as a control. %1$@ is the stick, %2$.2f is the inner radius and %3$.2f is the outer radius, both from 0 to 1. */
+"ui.mapping.stickRegion" = "%1$@ anillo %2$.2f a %3$.2f";
+/* Name of a stick ring with a sector as a control. %1$@ is the stick, %2$.2f is the inner radius, %3$.2f is the outer radius, %4$.0f is the sector start and %5$.0f is the sector end, both in degrees clockwise from up. */
+"ui.mapping.stickRegionSector" = "%1$@ anillo %2$.2f a %3$.2f, %4$.0f° a %5$.0f°";
+/* Name of a trigger pressure band as a control. %1$@ is the trigger, %2$.2f is the start and %3$.2f is the end of the band, both from 0 to 1. */
+"ui.mapping.triggerBand" = "%1$@ banda %2$.2f a %3$.2f";
+/* Name of a touch area as a control. %1$@ is the touch surface, %2$.2f is the left edge, %3$.2f is the top edge, %4$.2f is the width and %5$.2f is the height, all as fractions of the surface. The multiplication sign stays between the width and the height. */
+"ui.mapping.touchArea" = "%1$@ área en %2$.2f, %3$.2f, %4$.2f×%5$.2f";
 /* Option of the touch surface popup: the main touch surface of the controller. */
 "ui.mapping.touchSurfacePrimary" = "Superficie primaria";
 /* Option of the touch surface popup: the left touch surface of the controller. */
@@ -634,6 +708,74 @@
 "ui.profiles.touch.stickRadius" = "Radio completo de la palanca (fracción de la superficie)";
 /* Label of the field in the touch sheet that sets the stick deadzone. The deadzone is the part of the travel near the center that is ignored. */
 "ui.profiles.touch.deadzone" = "Zona muerta de la palanca";
+/* Title of the row of the Controller section and of the sheet that adds a stick ring, trigger band or touch area as an assignment. */
+"ui.profiles.region.title" = "Regiones";
+/* Summary under the regions row of the Controller section: what a region is. */
+"ui.profiles.region.summary" = "Anillos de stick, bandas de gatillo y áreas táctiles";
+/* Label of the segmented control in the regions sheet that picks between a stick ring, a trigger band and a touch area. */
+"ui.profiles.region.kind" = "Tipo de región";
+/* Segment of the region type control in the regions sheet: a ring around the center of a stick. */
+"ui.profiles.region.stick" = "Anillo de stick";
+/* Segment of the region type control in the regions sheet: a band of the pull of a trigger. */
+"ui.profiles.region.trigger" = "Banda de gatillo";
+/* Segment of the region type control in the regions sheet: a rectangle of a touch surface. */
+"ui.profiles.region.touch" = "Área táctil";
+/* Label of the popup in the regions sheet that picks the stick, trigger or touch surface that the region reads. */
+"ui.profiles.region.input" = "Entrada";
+/* Label of the field in the regions sheet that sets where a stick ring starts, from 0 at the center to 1 at the edge. */
+"ui.profiles.region.innerRadius" = "Radio interior (0...1)";
+/* Label of the field in the regions sheet that sets where a stick ring ends, from 0 at the center to 1 at the edge. */
+"ui.profiles.region.outerRadius" = "Radio exterior (0...1)";
+/* Label of the field in the regions sheet that sets the start of the sector of a stick ring, in degrees clockwise from up. Leaving it and the end empty makes a full ring. */
+"ui.profiles.region.fromDegrees" = "Inicio del sector (grados desde arriba; vacío para un anillo completo)";
+/* Label of the field in the regions sheet that sets the end of the sector of a stick ring, in degrees clockwise from up. */
+"ui.profiles.region.toDegrees" = "Fin del sector (grados desde arriba)";
+/* Label of the field in the regions sheet that sets where a trigger band starts, from 0 for released to 1 for fully pulled. */
+"ui.profiles.region.from" = "Inicio de la banda (0...1)";
+/* Label of the field in the regions sheet that sets where a trigger band ends, from 0 for released to 1 for fully pulled. */
+"ui.profiles.region.to" = "Fin de la banda (0...1)";
+/* Label of the field in the regions sheet that sets the left edge of a touch area as a fraction of the surface width. */
+"ui.profiles.region.x" = "Borde izquierdo (fracción de la superficie)";
+/* Label of the field in the regions sheet that sets the top edge of a touch area as a fraction of the surface height. */
+"ui.profiles.region.y" = "Borde superior (fracción de la superficie)";
+/* Label of the field in the regions sheet that sets the width of a touch area as a fraction of the surface width. */
+"ui.profiles.region.width" = "Ancho (fracción de la superficie)";
+/* Label of the field in the regions sheet that sets the height of a touch area as a fraction of the surface height. */
+"ui.profiles.region.height" = "Alto (fracción de la superficie)";
+/* Heading of the drawing in the regions sheet that shows where the stick, trigger or touch is now. */
+"ui.profiles.region.live" = "Posición en vivo";
+/* Note in the regions sheet shown while no controller is connected, so there is no live position. */
+"ui.profiles.region.noController" = "Conecta un mando para ver la posición en vivo.";
+/* Line under the live position of the touch area in the regions sheet while nothing touches the surface. */
+"ui.profiles.region.noContact" = "Sin toque";
+/* Line under the live stick position in the regions sheet. %1$.2f is the deflection from 0 to 1 and %2$.0f is the angle in degrees clockwise from up. */
+"ui.profiles.region.liveStick" = "Inclinación %1$.2f, ángulo %2$.0f°";
+/* Line under the live trigger position in the regions sheet. %.2f is the pull from 0 to 1. */
+"ui.profiles.region.liveTrigger" = "Pulsación %.2f";
+/* Line under the live touch position in the regions sheet. %1$.2f is the horizontal and %2$.2f is the vertical position, both as fractions of the surface. */
+"ui.profiles.region.liveTouch" = "Toque en %1$.2f, %2$.2f";
+/* Title of the sheet that sets the pointer speed of a profile, and label of its row in the controller section. The pointer speed scales all pointer movement. */
+"ui.profiles.pointerSpeed.title" = "Velocidad del puntero";
+/* Label of the switch in the pointer speed sheet that turns on scaling of the pointer movement. */
+"ui.profiles.pointerSpeed.enabled" = "Escalar la velocidad del puntero";
+/* Label of the popup in the pointer speed sheet that picks the control whose value sets the scale. */
+"ui.profiles.pointerSpeed.driver" = "Control";
+/* Option of the driver popup in the pointer speed sheet: the value of a trigger sets the scale. Also the summary of the pointer speed row when a trigger drives it. */
+"ui.profiles.pointerSpeed.driverTrigger" = "Gatillo";
+/* Option of the driver popup in the pointer speed sheet: how far a stick is pushed from the center sets the scale. Also the summary of the pointer speed row when a stick drives it. */
+"ui.profiles.pointerSpeed.driverStickDepth" = "Profundidad del stick";
+/* Label of the popup in the pointer speed sheet that picks the left or the right trigger or stick as the driver. */
+"ui.profiles.pointerSpeed.side" = "Lado";
+/* Option of the side popup in the pointer speed sheet: the left trigger or stick. */
+"ui.profiles.pointerSpeed.sideLeft" = "Izquierda";
+/* Option of the side popup in the pointer speed sheet: the right trigger or stick. */
+"ui.profiles.pointerSpeed.sideRight" = "Derecha";
+/* Label of the field in the pointer speed sheet that sets the pointer scale while the driver is at rest. The scale multiplies the pointer movement. */
+"ui.profiles.pointerSpeed.minScale" = "Escala en 0";
+/* Label of the field in the pointer speed sheet that sets the pointer scale while the trigger is fully pulled or the stick is at its rim. The scale multiplies the pointer movement. */
+"ui.profiles.pointerSpeed.maxScale" = "Escala en 1";
+/* Line in the pointer speed sheet that shows the scale the pointer has now. %@ is the scale, a number. */
+"ui.profiles.pointerSpeed.live" = "Escala actual: %@";
 /* Label of the stepper that sets the number of columns of a touch grid in the capture assignment sheet. %d is the number of columns. */
 "ui.capture.touchColumns" = "Columnas de la cuadrícula: %d";
 /* Label of the stepper that sets the number of rows of a touch grid in the capture assignment sheet. %d is the number of rows. */
@@ -702,6 +844,10 @@
 "term.keyboardPointer" = "Teclado y puntero";
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "Accesibilidad";
+/* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
+"platform.macos.term.postEventAccess" = "Acceso a Post Event";
+/* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
+"platform.macos.term.automationAccess" = "Acceso a Automatización";
 /* Button of the combination sheets that adds the chosen entry to the combination. */
 "action.add" = "Añadir";
 /* Button of the input test window that sends the chosen player indicator or lightbar color to the controller. */
@@ -745,7 +891,7 @@
 /* Message about a request to the system extension manager that failed. %1$@ is the error domain, %2$d is the error code and %3$@ is the description from the system. Keep code= as written. */
 "cli.transportExtension.group.failed" = "La solicitud de extensión del sistema ha fallado: %1$@ code=%2$d %3$@";
 /* Message when the system extension manager replaces an installed driver extension. %1$@ is the extension bundle identifier, %2$@ is the installed version and %3$@ is the version that replaces it. Keep the v before the numbers. */
-"cli.transportExtension.group.replacing" = "Sustituyendo %1$@ v%2$@ por v%3$@.";
+"cli.transportExtension.group.replacing" = "Sustituyendo %1$@ v%2$@ por v%3$@…";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller, which OJD reads by the layout its HID report descriptor declares. Keep HID as written. */
 "term.protocolFamily.hidDescriptor" = "HID genérico";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller whose input report layout comes from its controller record, the file OJD keeps for each controller model. Keep HID as written. */
@@ -756,6 +902,8 @@
 "term.protocolFamily.nintendoSwitch2" = "Nintendo Switch 2";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a wired Switch controller that sends input reports and takes no commands. Keep Nintendo Switch as written. */
 "term.protocolFamily.nintendoSwitchInputOnly" = "Nintendo Switch (solo entrada)";
+/* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the Wii Remote protocol, used by the Wii Remote and the Wii U Pro Controller over Bluetooth. Nintendo Wii Remote is a brand and product name: keep it as written. */
+"term.protocolFamily.nintendoWii" = "Nintendo Wii Remote";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controller of the PlayStation 5, which Sony names DualSense. Sony DualSense is a brand and product name: keep it as written. */
 "term.protocolFamily.sonyDualSense" = "Sony DualSense";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controller of the PlayStation 4, which Sony names DualShock 4. Sony DualShock 4 is a brand and product name: keep it as written. */
@@ -801,7 +949,7 @@
 /* Label in the controller summary of the developer tools. The value is a list of the pressed buttons. */
 "ui.developer.buttons" = "Botones";
 /* Status next to the Start Capture button while the packet capture runs. */
-"ui.developer.capturing" = "Capturando";
+"ui.developer.capturing" = "Capturando…";
 /* Label of the connection kind in the controller summary of the developer tools, for example USB or Bluetooth. */
 "ui.developer.connection" = "Conexión";
 /* Label of the controller name in the controller summary of the developer tools. */
@@ -869,7 +1017,7 @@
 /* Label of the USB vendor and product ID in the controller summary of the developer tools. */
 "ui.developer.usbID" = "USB ID";
 /* Message in the packet list of the developer tools while a capture waits for packets. */
-"ui.developer.waitingForPackets" = "Esperando paquetes USB. Pulse un botón del mando.";
+"ui.developer.waitingForPackets" = "Esperando paquetes USB… Pulse un botón del mando.";
 /* Heading of the soak test section in the developer tools. A soak test measures the service over a long time. */
 "ui.developer.soakTest" = "Prueba de resistencia";
 /* Description of the soak test section in the developer tools. The test samples memory, file descriptors and CPU of the service. */
@@ -970,6 +1118,8 @@
 "ui.inputTest.playerIndicator" = "Indicador de jugador";
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "Pulsado";
+/* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
+"ui.inputTest.receiving" = "Esperando a que se mueva un control…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "Soltado";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */
@@ -1061,7 +1211,7 @@
 /* Detail line of the problem banner when the driver extension waits for approval. System Settings is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. */
 "platform.macos.ui.setup.approvalDetail" = "Aprueba el controlador en Ajustes del Sistema para usar los mandos USB de Microsoft compatibles.";
 /* Detail line in the Driver section of the settings window while the app checks the driver extension for Xbox USB controllers. */
-"ui.setup.checkingDetail" = "Comprobando el controlador USB de Xbox instalado.";
+"ui.setup.checkingDetail" = "Comprobando el controlador USB de Xbox instalado…";
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "Controlador USB de Xbox";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
@@ -1078,6 +1228,28 @@
 "ui.setup.uninstallDetail" = "Los mandos USB de Xbox dejan de funcionar hasta que se vuelva a instalar el controlador.";
 /* Button of the problem banner that repairs the driver extension for Xbox USB controllers. */
 "ui.setup.repairDriver" = "Reparar controlador USB de Xbox";
+/* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
+"platform.macos.cli.controller.show.labelServedBy" = "Controlador nativo";
+/* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
+"platform.macos.cli.controller.show.servedByMacOS" = "Lo sirve macOS. Ejecuta `ojd controller claim %@` para activar la extensión y tomar el mando.";
+/* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
+"platform.macos.ui.controllers.servedByMacOS" = "Servido por macOS";
+/* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
+"platform.macos.ui.controllers.servedByMacOSDetail" = "El controlador de Apple retiene este mando. Reclámalo para activar la extensión de OpenJoystickDriver.";
+/* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
+"ui.controllers.claim" = "Reclamar";
+/* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.runningDetail" = "Instalando el controlador USB de Xbox…";
+/* Disabled button of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.repairRunning" = "Reparando…";
+/* Detail line of the problem banner when the state of the driver extension for Xbox USB controllers cannot be read. The banner has no button then. */
+"ui.setup.unavailableDetail" = "No se puede leer el estado del controlador USB de Xbox, así que no se puede enviar ninguna solicitud.";
+/* Detail line of the problem banner when the request for the driver extension failed. %1$@ is the error domain, %2$lld is the error code and %3$@ is the error text. */
+"ui.setup.failedDetail" = "La solicitud del controlador USB de Xbox ha fallado: %3$@ (%1$@, código %2$lld).";
+/* Detail line of the problem banner when the request for the driver extension was cancelled. The Try Again button follows. */
+"ui.setup.cancelledDetail" = "Se ha cancelado la solicitud del controlador USB de Xbox. Inténtalo de nuevo para instalar el controlador.";
+/* Detail line of the problem banner when the system did not answer the request for the driver extension in time. The Try Again button follows. */
+"ui.setup.timedOutDetail" = "El sistema no respondió a tiempo a la solicitud del controlador USB de Xbox. Inténtalo de nuevo.";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver no puede conectar con su servicio";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
@@ -1221,6 +1393,12 @@
 /* Name of the click of the right trackpad of a controller. */
 "ui.mapping.rightPadClick" = "Clic en el panel derecho";
 
+/* Name of the touch sensor on the grip on the back of a controller on the left side. */
+"ui.mapping.leftGripTouch" = "Toque de la empuñadura izquierda";
+
+/* Name of the touch sensor on the grip on the back of a controller on the right side. */
+"ui.mapping.rightGripTouch" = "Toque de la empuñadura derecha";
+
 /* Title of the sheet that tunes the motion sensor of a controller in a profile. */
 "ui.profiles.motion.title" = "Ajuste del movimiento";
 /* Label of the popup in the motion sheet that picks the coordinate space of the motion. */
@@ -1255,7 +1433,7 @@
 /* Hint under the motion calibration controls of the input test window: keep the controller still on a surface while the gyro bias, the small constant rotation the sensor reports at rest, is collected. */
 "ui.motion.calibration.instructions" = "Mantén el mando quieto mientras se mide el sesgo del giroscopio.";
 /* Status line in the motion calibration controls while the service collects gyro bias samples. Bias is the constant rotation offset of the gyro sensor at rest. */
-"ui.motion.calibration.collecting" = "Midiendo el sesgo";
+"ui.motion.calibration.collecting" = "Midiendo el sesgo…";
 /* Status line in the motion calibration controls when the user paused collecting gyro bias samples by hand. */
 "ui.motion.calibration.paused" = "Medición manual en pausa";
 /* Line in the motion calibration controls that shows the gyro bias found so far, in degrees per second. %1$.3f, %2$.3f and %3$.3f are the X, Y and Z components. Keep the axis letters and the unit. */
@@ -1272,7 +1450,7 @@
 /* Guidance in the motion calibration controls when the controller has no usable motion data: turn on a profile for this controller and check that motion data is available. */
 "ui.motion.calibration.motionUnavailable" = "Activa un perfil de reasignación para este mando y comprueba que haya datos de movimiento disponibles.";
 /* Status line in the motion calibration controls while the service has no motion samples yet; Refresh checks again. */
-"ui.motion.calibration.waiting" = "Esperando datos de movimiento. Actualiza para volver a comprobarlo.";
+"ui.motion.calibration.waiting" = "Esperando datos de movimiento… Actualiza para volver a comprobarlo.";
 /* Note in the motion calibration controls: collecting gyro bias keeps running in the service after the window closes, and the Pause button stops it. */
 "ui.motion.calibration.continues" = "La medición continúa al cerrar esta ventana. Usa Pausar para detenerla.";
 
@@ -1523,6 +1701,22 @@
 "ui.profiles.physical.startPosition" = "Inicio de resistencia";
 /* Label of the slider in the output destination editor that sets how strong the resistance of the adaptive trigger is. */
 "ui.profiles.physical.strength" = "Fuerza de resistencia";
+/* Label of the text field in the output destination editor for the phrase that a Speak destination says. */
+"ui.profiles.speak.text" = "Texto";
+/* Label of the text field in the output destination editor for the identifier of the voice that a Speak destination uses. */
+"ui.profiles.speak.voice" = "Identificador de voz";
+/* Placeholder of the voice field in the output destination editor when a Speak destination uses the system voice. */
+"ui.profiles.speak.voicePlaceholder" = "Voz del sistema";
+/* Phrase that a new Speak destination says until the user changes it. */
+"ui.profiles.speak.defaultText" = "Hola";
+/* Label of the text field in the output destination editor for the bundle identifier of the application that an Open application destination opens. */
+"ui.profiles.system.application" = "Identificador de la app";
+/* Label of the text field in the output destination editor for the address that an Open URL destination opens. */
+"ui.profiles.system.url" = "URL";
+/* Label of the text field in the output destination editor for the name of the Shortcut that a Run Shortcut destination runs. */
+"ui.profiles.system.shortcut" = "Nombre del atajo";
+/* Name that a new Run Shortcut destination holds until the user changes it. */
+"ui.profiles.system.defaultShortcut" = "Atajo";
 
 /* Menu item in the profile editor that removes all inputs of the profile. Keep the three dots. */
 "ui.profiles.clearInputs" = "Eliminar todas las entradas…";
@@ -1544,6 +1738,10 @@
 "ui.profiles.emptyActivationMessage" = "Este perfil suprime toda la entrada del mando.";
 /* Title of the alert shown before the app activates a profile that sends no input. */
 "ui.profiles.emptyActivationTitle" = "¿Activar el perfil sin entrada del mando?";
+/* Title of the alert shown before the app activates a profile that launches actions or needs a permission that is missing. */
+"ui.profiles.activationTitle" = "¿Activar este perfil?";
+/* Part of the message of the profile activation alert. %@ is the list of actions that open applications or URLs, run shortcuts or type text, one per line. */
+"ui.profiles.activationActions" = "Este perfil lanza estas acciones:\n%@";
 /* Warning in the profile editor when the profile sends no input. */
 "ui.profiles.emptyInputWarning" = "Este perfil suprime toda la entrada del mando.";
 /* Menu item in the profile editor that sets the inputs of the profile to the default. */
@@ -1564,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "Se creará una copia de seguridad antes de eliminar los datos dañados.";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "No se ha podido leer este perfil guardado. Elimínalo para seguir usando los perfiles válidos.";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "%@ lo guardó una versión anterior y no se puede usar. Migra el archivo para volver a usarlo, o elimínalo.";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "No se pudo leer la lista de perfiles activos. Restablécela para continuar. Tus perfiles se conservan.";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -1644,7 +1844,7 @@
 /* Examples block at the end of the help of 'ojd binding set'. The command lines, option names and sources stay as written; translate only the lines that start with #. */
 "cli.binding.set.examples" = "Ejemplos:\n  # Mantiene Espacio mientras se mantiene el botón sur\n  ojd binding set Racing button:south key:space\n  # Alterna J en cada pulsación\n  ojd binding set Racing button:west key:key-j --behavior toggle\n  # Repite J 10 veces por segundo mientras se mantiene\n  ojd binding set Racing button:west key:key-j --turbo-rate 10 --turbo-duty 0.5";
 /* Examples block at the end of the help of 'ojd record install'. The command lines and file names stay as written; translate only the lines that start with #. */
-"cli.record.install.examples" = "Ejemplos:\n  # Instala un archivo de registro\n  ojd record install 045E-028E.json\n  # Lee el registro desde stdin\n  ojd record install - < 045E-028E.json";
+"cli.record.install.examples" = "Ejemplos:\n  # Instala un archivo de registro\n  ojd record install 045e-028e.plist\n  # Lee el registro desde stdin\n  ojd record install - < 045e-028e.plist";
 /* Examples block at the end of the help of 'ojd access grant'. The command lines and option names stay as written; translate only the lines that start with #. */
 "cli.access.grant.examples" = "Ejemplos:\n  # Permite que un programa use el servicio\n  ojd access grant /Applications/Example.app\n  # Crea un token para páginas servidas desde un origen\n  ojd access grant --token overlay --origin http://127.0.0.1:8080";
 /* One-line summary of 'ojd service' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
@@ -1829,6 +2029,16 @@
 "cli.access.web.portRange" = "--port debe estar entre 1024 y 65535.";
 /* One-line summary of 'ojd diagnose' in the command list and at the top of its help. */
 "cli.diagnose.group.abstract" = "Ejecuta todas las comprobaciones e informa de lo que falla.";
+/* Detail of the input mapping check of 'ojd diagnose' when no connected controller has a rejected database line. SDL_GameControllerDB is a project name and stays as written. */
+"cli.diagnose.group.inputMappingApplied" = "ninguna línea de SDL_GameControllerDB rechazada";
+/* Detail of the input mapping check of 'ojd diagnose' for one controller whose database line was rejected. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller name, %2$@ is the reason in English and %3$@ is the error code, which stays as written. */
+"cli.diagnose.group.inputMappingRejected" = "Línea de SDL_GameControllerDB rechazada para %1$@: %2$@ (%3$@)";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no 057E:2009 controller is connected. 057E:2009 stays as written. */
+"cli.diagnose.group.switchSerialNone" = "ningún mando 057E:2009 conectado";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no connected 057E:2009 controller reports the serial 000000000001. 057E:2009 and the serial stay as written. */
+"cli.diagnose.group.switchSerialOther" = "ningún mando 057E:2009 informa del número de serie 000000000001";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' for one controller. Nintendo Switch Pro Controller is a product name and stays as written. %1$@ is the controller name, %2$@ is the VID:PID and %3$@ is the serial number, both of which stay as written. */
+"cli.diagnose.group.switchSerialPlaceholder" = "%1$@ informa de %2$@ con el número de serie %3$@, la identidad y el número de serie de un Nintendo Switch Pro Controller; otros mandos pueden informar del mismo número de serie. OpenJoystickDriver lo trata como un Pro Controller.";
 /* Help text of the --output option of 'ojd diagnose'. A support bundle is a file with the diagnostic report for a bug report. */
 "cli.diagnose.group.output" = "Escribe también un paquete de soporte en este archivo.";
 /* Error of 'ojd diagnose --output' when the support bundle could not be written. %@ is the reason from the system. --output stays as written. */
@@ -2045,8 +2255,8 @@
 "cli.permission.request.unknownId" = "Permiso desconocido «%1$@». Usa %2$@.";
 /* One-line summary of 'ojd config' in the command list and at the top of its help. */
 "cli.config.group.abstract" = "Muestra o cambia la configuración que aplica OpenJoystickDriver y qué capa estableció cada valor.";
-/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.json is a file name that stays as written. */
-"cli.config.group.discussion" = "Los valores se apilan en capas, de la más baja a la más alta: valor predeterminado del controlador, registro incluido, registro del paquete, all.patch.json, tu registro, perfil activo. Cada clave de ajuste toma el valor de la capa más alta que la establece.";
+/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.plist is a file name that stays as written. */
+"cli.config.group.discussion" = "Los valores se apilan en capas, de la más baja a la más alta: valor predeterminado del controlador, registro incluido, registro del paquete, all.patch.plist, tu registro, perfil activo. Cada clave de ajuste toma el valor de la capa más alta que la establece.";
 /* Help text of the --controller option of 'ojd config set' and 'ojd config unset'. VVVV:PPPP stands for the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.config.group.controller" = "Cambia solo este modelo de mando, como VVVV:PPPP, en lugar de todos los mandos.";
 /* Error of 'ojd config set' and 'ojd config unset' when a record cannot take the change. %1$@ is the tuning key and %2$@ is the description of the problem. */
@@ -2065,20 +2275,20 @@
 "cli.config.show.controller" = "Muestra el ajuste efectivo de un mando, como VVVV:PPPP, en lugar de los valores predeterminados globales.";
 /* Warning printed by 'ojd config show' when a part of the defaults file is invalid. %1$@ is the file path and %2$@ is the description of the problem. */
 "cli.config.show.defaultsIgnored" = "%1$@ ignorado: %2$@";
-/* Long description in the help of 'ojd config show'. --controller and all.patch.json stay as written. */
-"cli.config.show.discussion" = "Sin --controller, imprime todas las claves de ajuste con su valor de all.patch.json y las familias cuyos registros las leen. Con él, imprime el registro del mando una vez apilados el registro incluido, los registros del paquete, all.patch.json y tu registro. Una clave que ninguna capa establece muestra «valor predeterminado del controlador».";
+/* Long description in the help of 'ojd config show'. --controller and all.patch.plist stay as written. */
+"cli.config.show.discussion" = "Sin --controller, imprime todas las claves de ajuste con su valor de all.patch.plist y las familias cuyos registros las leen. Con él, imprime el registro del mando una vez apilados el registro incluido, los registros del paquete, all.patch.plist y tu registro. Una clave que ninguna capa establece muestra «valor predeterminado del controlador».";
 /* Indented line below a tuning key of 'ojd config show' that lists the controller families whose records read the key. %@ is the comma-separated list of family names. */
 "cli.config.show.readBy" = "lo leen: %@";
-/* Warning of 'ojd config show' about a key in all.patch.json that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
-"cli.config.show.unread" = "all.patch.json define %1$@, pero ningún mando conectado la lee. Familias que la leen: %2$@.";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoController" = "No hay ningún mando conectado, así que se omitió la comprobación de las claves de all.patch.json que ningún mando lee.";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoService" = "El servicio no se está ejecutando, así que se omitió la comprobación de las claves de all.patch.json que ningún mando conectado lee.";
+/* Warning of 'ojd config show' about a key in all.patch.plist that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
+"cli.config.show.unread" = "all.patch.plist define %1$@, pero ningún mando conectado la lee. Familias que la leen: %2$@.";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoController" = "No hay ningún mando conectado, así que se omitió la comprobación de las claves de all.patch.plist que ningún mando lee.";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoService" = "El servicio no se está ejecutando, así que se omitió la comprobación de las claves de all.patch.plist que ningún mando conectado lee.";
 /* One-line summary of 'ojd config set' in the command list and at the top of its help. */
 "cli.config.set.abstract" = "Establece un valor de ajuste en tus registros de mando.";
-/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.json and stickDeadzone stay as written. */
-"cli.config.set.discussion" = "Escribe KEY en tu registro del mando indicado con --controller, o en all.patch.json para todos los mandos. Se aplican las reglas del registro: stickDeadzone debe ser mayor que 0 y menor que 1. Un valor que las reglas rechazan no cambia nada. El servicio en ejecución aplica el cambio.";
+/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.plist and stickDeadzone stay as written. */
+"cli.config.set.discussion" = "Escribe KEY en tu registro del mando indicado con --controller, o en all.patch.plist para todos los mandos. Se aplican las reglas del registro: stickDeadzone debe ser mayor que 0 y menor que 1. Un valor que las reglas rechazan no cambia nada. El servicio en ejecución aplica el cambio.";
 /* Message printed by 'ojd config set' after it wrote a value. %1$@ is the tuning key, which stays as written, %2$@ is the value and %3$@ is the path of the record file. */
 "cli.config.set.success" = "%1$@ se ha establecido en %2$@ en %3$@. El servicio en ejecución lo aplica ahora.";
 /* Help text of the VALUE argument of 'ojd config set'. */
@@ -2182,7 +2392,7 @@
 /* Message printed by 'ojd controller capture' when the capture ends without a packet. */
 "cli.controller.capture.noPackets" = "No se han recibido paquetes.";
 /* First line of 'ojd controller capture'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
-"cli.controller.capture.started" = "Capturando paquetes de %1$@ (%2$@). Pulsa botones del mando.";
+"cli.controller.capture.started" = "Capturando paquetes de %1$@ (%2$@)… Pulsa botones del mando.";
 /* Warning printed by 'ojd controller capture' before the packets. Packets can hold data of the user's controller. */
 "cli.controller.capture.warning" = "El contenido de los paquetes varía según el mando. Revísalo antes de compartirlo.";
 /* One-line summary of 'ojd controller disconnect' in the command list and at the top of its help. */
@@ -2211,6 +2421,8 @@
 "cli.controller.group.featurePlayer" = "luces indicadoras de jugador";
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureRumble" = "motor de vibración";
+/* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
+"cli.controller.group.featureSpeaker" = "altavoz";
 /* One-line summary of 'ojd controller light' in the command list and at the top of its help. */
 "cli.controller.light.abstract" = "Establecer el color o el brillo de la luz de un mando.";
 /* Help text of the --brightness option of 'ojd controller light'. LED means light-emitting diode. */
@@ -2241,12 +2453,12 @@
 "cli.controller.group.outputUnsupported" = "%1$@ no tiene %2$@. Ejecuta «ojd controller show %3$@» para ver qué admite.";
 /* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To serve a model means to read its input and publish it as a virtual gamepad. */
 "cli.controller.claim.abstract" = "Haz que OpenJoystickDriver gestione un modelo de mando.";
-/* Long description in the help of 'ojd controller claim'. server, ojd, VVVV-PPPP.json and the record terms stay as written. */
-"platform.macos.cli.controller.claim.discussion" = "Establece server en ojd en tu registro del modelo, VVVV-PPPP.json en tu directorio de registros, y conserva los demás campos del registro. Se aplica a todos los mandos del modelo. El servicio en ejecución lo aplica sin volver a conectar. Necesita el servicio para encontrar el mando. --dry-run no escribe nada. Termina con 1 y E2023 para un mando que usa USB sin procesar, que OpenJoystickDriver gestiona siempre, o que macOS no gestiona de forma nativa.";
+/* Long description in the help of 'ojd controller claim'. server, ojd, vvvv-pppp.plist and the record terms stay as written. */
+"platform.macos.cli.controller.claim.discussion" = "Establece server en ojd en tu registro del modelo, vvvv-pppp.plist en tu directorio de registros, y conserva los demás campos del registro. Se aplica a todos los mandos del modelo. El servicio en ejecución lo aplica sin volver a conectar. Necesita el servicio para encontrar el mando. --dry-run no escribe nada. Termina con 1 y E2023 para un mando que usa USB sin procesar, que OpenJoystickDriver gestiona siempre, o que macOS no gestiona de forma nativa.";
 /* One-line summary of 'ojd controller release' in the command list and at the top of its help. */
 "platform.macos.cli.controller.release.abstract" = "Devuelve un modelo de mando a macOS.";
-/* Long description in the help of 'ojd controller release'. server, system and VVVV-PPPP.json stay as written. */
-"platform.macos.cli.controller.release.discussion" = "Establece server en system en tu registro del modelo, VVVV-PPPP.json en tu directorio de registros, y conserva los demás campos del registro. Se aplica a todos los mandos del modelo. El servicio en ejecución lo aplica sin volver a conectar. Necesita el servicio para encontrar el mando. --dry-run no escribe nada. Termina con 1 y E2023 para un mando que usa USB sin procesar, que OpenJoystickDriver gestiona siempre, o que macOS no gestiona de forma nativa.";
+/* Long description in the help of 'ojd controller release'. server, system and vvvv-pppp.plist stay as written. */
+"platform.macos.cli.controller.release.discussion" = "Establece server en system en tu registro del modelo, vvvv-pppp.plist en tu directorio de registros, y conserva los demás campos del registro. Se aplica a todos los mandos del modelo. El servicio en ejecución lo aplica sin volver a conectar. Necesita el servicio para encontrar el mando. --dry-run no escribe nada. Termina con 1 y E2023 para un mando que usa USB sin procesar, que OpenJoystickDriver gestiona siempre, o que macOS no gestiona de forma nativa.";
 /* Message printed by 'ojd controller claim' and related commands with --dry-run instead of writing the record. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. */
 "cli.controller.group.serverDryRun" = "Establecería %1$@ en %2$@ en %3$@.";
 /* Error when the record file of a controller cannot be changed. %1$@ is the path of the record file and %2$@ is the description of the problem. */
@@ -2337,6 +2549,10 @@
 "cli.controller.show.labelProtocol" = "Protocolo";
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "Registro";
+/* Row label in the output of 'ojd controller show' and in the controller detail. Where the HID usage map of the controller comes from follows. */
+"cli.controller.show.labelInputMapping" = "Asignación de entrada";
+/* Row label in the output of 'ojd controller show' and in the controller detail. The controls that the SDL_GameControllerDB line names but the driver cannot map follow. */
+"cli.controller.show.labelUnmapped" = "Controles sin asignar";
 /* Row label in the output of 'ojd controller show'. The list of rumble motors the controller has follows. */
 "cli.controller.show.labelRumble" = "Vibración";
 /* Row label in the output of 'ojd controller show'. The state of the session follows, such as active or suspended. */
@@ -2361,6 +2577,38 @@
 "cli.controller.show.recordNone" = "ninguno (ningún registro coincide)";
 /* Value of the Record row of 'ojd controller show' when the record is the user's own file. %@ is the file name. */
 "cli.controller.show.recordUser" = "tu registro, %@";
+/* Value of the Input mapping row of 'ojd controller show' and of the controller detail when a controller record sets the map. */
+"cli.controller.show.inputMappingRecord" = "registro";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line sets the map. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingSDL" = "asignada desde SDL_GameControllerDB (coincidencia %1$@, GUID %2$@)";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when the standard HID usage map applies. */
+"cli.controller.show.inputMappingStandard" = "mapa de usos HID estándar";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line matched but cannot drive the controller. SDL_GameControllerDB is a project name and stays as written. %@ is the reason. */
+"cli.controller.show.inputMappingRejected" = "mapa de usos HID estándar (línea de SDL_GameControllerDB rechazada: %@)";
+/* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingUnbound" = "no aplicada, el contrato del descriptor no se cumple (línea de SDL_GameControllerDB encontrada, coincidencia %1$@, GUID %2$@)";
+/* One-line summary of 'ojd controller speaker' in the command list and at the top of its help. */
+"cli.controller.speaker.abstract" = "Reproducir sonido en el altavoz de un mando.";
+/* One-line summary of 'ojd controller speaker play' in the command list and at the top of its help. */
+"cli.controller.speaker.play.abstract" = "Reproducir un archivo WAV en el altavoz de un mando.";
+/* Help text of the FILE argument of 'ojd controller speaker play'. PCM and WAV are audio format names and stay as written. */
+"cli.controller.speaker.play.file" = "El archivo WAV PCM sin comprimir que se reproducirá.";
+/* Help text of the --volume option of 'ojd controller speaker play'. The limits 0 and 1 are fixed. */
+"cli.controller.speaker.play.volume" = "Volumen de reproducción de 0 a 1.";
+/* Error of 'ojd controller speaker play' when --volume is outside the allowed range. --volume stays as written. */
+"cli.controller.speaker.play.errorVolume" = "--volume necesita un número de 0 a 1.";
+/* Error of 'ojd controller speaker play' when the audio file cannot be read. %1$@ is the file path and %2$@ is the reason the system gives. */
+"cli.controller.speaker.play.errorUnreadable" = "No se puede leer %1$@: %2$@";
+/* Warning of 'ojd controller speaker play' when the clip is longer than the speaker plays and is cut. %@ is the longest clip length in seconds. */
+"cli.controller.speaker.play.trimmed" = "warning: solo se reproducen los primeros %@ segundos del clip.";
+/* Message printed after 'ojd controller speaker play' finished the clip. %1$@ is the file name and %2$@ is the controller name. */
+"cli.controller.speaker.play.played" = "Se ha reproducido %1$@ en %2$@.";
+/* Message printed when the playback of 'ojd controller speaker play' was cut by 'ojd controller speaker stop' or by a newer clip. %@ is the controller name. */
+"cli.controller.speaker.play.stopped" = "Reproducción detenida en %@.";
+/* One-line summary of 'ojd controller speaker stop' in the command list and at the top of its help. */
+"cli.controller.speaker.stop.abstract" = "Detener el sonido del altavoz de un mando.";
+/* Message printed after 'ojd controller speaker stop' stopped the speaker. %@ is the controller name. */
+"cli.controller.speaker.stop.stopped" = "Altavoz detenido en %@.";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
 "cli.controller.suspend.abstract" = "Dejar de controlar un mando con OpenJoystickDriver hasta que lo reanudes.";
 /* Message of 'ojd controller suspend' when the controller is suspended. %@ is the controller name. */
@@ -2372,7 +2620,7 @@
 /* Help text of the --all flag of 'ojd controller watch'. */
 "cli.controller.watch.all" = "Observar todos los mandos e informar de cada uno que se conecte o desconecte.";
 /* First line of 'ojd controller watch --all'. */
-"cli.controller.watch.allStarted" = "Observando todos los mandos. Pulsa botones del mando.";
+"cli.controller.watch.allStarted" = "Observando todos los mandos… Pulsa botones del mando.";
 /* Line of 'ojd controller watch --all' when a controller connects. %1$@ is the controller ID, %2$@ is the controller name and %3$@ is its vendor and product ID. */
 "cli.controller.watch.connected" = "%1$@ conectado: %2$@ (%3$@)";
 /* Line of 'ojd controller watch --all' when a controller disconnects. %@ is the controller ID. */
@@ -2396,17 +2644,51 @@
 /* Prompt of 'ojd controller watch --first-press'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.controller.watch.pressPrompt" = "Pulsa un control en %1$@ (%2$@).";
 /* First line of 'ojd controller watch'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
-"cli.controller.watch.started" = "Observando %1$@ (%2$@). Pulsa botones del mando.";
+"cli.controller.watch.started" = "Observando %1$@ (%2$@)… Pulsa botones del mando.";
 /* Message printed when the user answers no to a confirmation question. */
 "cli.shared.error.confirmDeclined" = "No se ha cambiado nada.";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "Este cambio no se puede deshacer. Añade --force para confirmarlo sin preguntar.";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "Enumera, muestra, define y elimina las macros de un perfil.";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "«%1$@» no tiene ninguna macro llamada «%2$@». No se ha cambiado nada.";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "El nombre de la macro.";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "«%@» no es un paso. Usa tap:TARGET, press:TARGET, release:TARGET, wait:MS o chord:MS:TARGET+TARGET.";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "Enumera las macros de un perfil.";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "«%@» no tiene macros.";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "Muestra una macro y sus pasos.";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "Crea una macro o sustituye la macro del mismo nombre.";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "Un paso de la macro, en orden: tap:TARGET, press:TARGET, release:TARGET, wait:MS o chord:MS:TARGET+TARGET. Repite la opción para añadir más pasos.";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "Cuántas veces se ejecutan los pasos, o while-held para repetirlos hasta soltar el origen.";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "Qué hace una pulsación del origen mientras la macro se ejecuta: ignore o restart.";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "Si soltar el origen detiene la macro.";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "«%@» no es un número ni while-held.";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "Macro «%2$@» guardada en «%1$@».";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "Elimina una macro de un perfil.";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "¿Eliminar la macro «%1$@» de «%2$@»?";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "Macro «%1$@» eliminada de «%2$@».";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Validar, instalar, listar o quitar paquetes de mods.";
-/* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "Un paquete de mods es una carpeta con un manifiesto mod.json y las carpetas Controllers, Profiles y VirtualDevices. Los paquetes instalados están en ~/Library/Application Support/OpenJoystickDriver/Packages. El servicio en ejecución aplica un cambio cuando esa carpeta cambia. Estos comandos no necesitan el servicio.";
-/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.json stays as written. */
-"cli.mod.group.folder" = "Una carpeta de paquete que contiene mod.json.";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
+"cli.mod.group.discussion" = "Un paquete de mods es una carpeta con un manifiesto mod.plist y las carpetas Controllers, Profiles y VirtualDevices. Los paquetes instalados están en ~/Library/Application Support/OpenJoystickDriver/Packages. El servicio en ejecución aplica un cambio cuando esa carpeta cambia. Estos comandos no necesitan el servicio.";
+/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
+"cli.mod.group.folder" = "Una carpeta de paquete que contiene mod.plist.";
 /* Help text of the NAME argument of 'ojd mod remove'. */
 "cli.mod.group.name" = "El nombre del paquete.";
 /* Error of the 'ojd mod' commands when a package is refused. %1$@ is the package folder or name and %2$@ is the reason. */
@@ -2437,6 +2719,34 @@
 "cli.mod.list.discussion" = "Lista cada paquete con su versión, autor y archivos. Un paquete que OJD no usa, por ejemplo uno cuyo requires excluye esta versión, muestra el motivo con su código E4xxx o E5001.";
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  No se usa: %@";
+/* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
+"cli.protocol.group.abstract" = "Valida, instala o lista descripciones de protocolo.";
+/* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
+"cli.protocol.group.discussion" = "Una descripción de protocolo es un archivo .plist que define una familia de mandos que OJD no incluye. Las descripciones instaladas están en ~/Library/Application Support/OpenJoystickDriver/Protocols, y un paquete de mod también puede incluirlas. Estos comandos no necesitan el servicio.";
+/* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
+"cli.protocol.group.file" = "Un archivo de descripción con el nombre de su familia, como VendorAcmePad.plist.";
+/* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
+"cli.protocol.validate.abstract" = "Comprueba un archivo de descripción de protocolo sin instalarlo.";
+/* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
+"cli.protocol.validate.discussion" = "Comprueba que el archivo es una descripción válida, que el nombre de la familia está en UpperCamelCase y coincide con el nombre del archivo, que no es una familia integrada y que define un nombre visible y diseños de entrada. Sale con 1 y el código E5xxx si se rechaza el archivo.";
+/* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
+"cli.protocol.validate.valid" = "%1$@ es una descripción válida de la familia %2$@ (%3$@). Instálala con 'ojd protocol install'.";
+/* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
+"cli.protocol.install.abstract" = "Comprueba una descripción de protocolo y la instala para tu usuario.";
+/* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
+"cli.protocol.install.discussion" = "Copia el archivo en Protocols/FAMILY.plist. Se sustituye la descripción instalada de la misma familia. --dry-run comprueba el archivo y no escribe nada.";
+/* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
+"cli.protocol.install.success" = "Se instaló %@.";
+/* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
+"cli.protocol.list.abstract" = "Lista las familias de protocolo integradas y documentadas y su origen.";
+/* Long description in the help of 'ojd protocol list'. */
+"cli.protocol.list.discussion" = "Lista cada familia con su nombre visible y su origen: integrada, tu carpeta Protocols o un paquete de mod. No se lista una descripción rechazada.";
+/* Source shown by 'ojd protocol list' for a family that OJD builds in. */
+"cli.protocol.list.builtIn" = "integrada";
+/* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
+"cli.protocol.list.user" = "tu carpeta Protocols";
+/* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
+"cli.protocol.list.package" = "paquete %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
 "cli.mod.remove.abstract" = "Quitar un paquete de mods instalado.";
 /* Long description in the help of 'ojd mod remove'. Packages/NAME, --force, --dry-run and E4006 stay as written. */
@@ -2488,7 +2798,7 @@
 /* Help text of the profile argument of 'ojd virtual feed'. */
 "cli.virtual.feed.profile" = "El perfil del mando virtual que se va a publicar.";
 /* First line of 'ojd virtual feed'. %@ is the profile name. Control-C is the key combination that stops a program in a terminal. */
-"cli.virtual.feed.started" = "Publicando un mando virtual %@. Escribe fotogramas en stdin; termina la entrada o pulsa Control-C para detener.";
+"cli.virtual.feed.started" = "Publicando un mando virtual %@… Escribe fotogramas en stdin; termina la entrada o pulsa Control-C para detener.";
 /* One-line summary of 'ojd virtual launch' in the command list and at the top of its help. SDL is a game controller library and stays as written. */
 "cli.virtual.launch.abstract" = "Ejecuta un programa con la asignación SDL de los mandos virtuales conectados.";
 /* Help text of the program argument of 'ojd virtual launch'. PATH is the environment variable, .app is the app bundle extension, and -- stays as written. */
@@ -2547,8 +2857,8 @@
 "cli.virtual.show.unavailable" = "ningún mando virtual encaja";
 /* Detail of the records check of 'ojd diagnose'. %lld is the number of the user's controller records that the driver applies. */
 "cli.diagnose.group.recordsApplied" = "registros de usuario aplicados: %lld";
-/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.json is a file name that stays as written. */
-"cli.diagnose.group.recordsConfigOk" = "all.patch.json y los archivos de persona son válidos";
+/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.plist is a file name that stays as written. */
+"cli.diagnose.group.recordsConfigOk" = "all.patch.plist y los archivos de persona son válidos";
 /* Detail of the records check of 'ojd diagnose' when parts of the configuration are ignored or skipped. %@ is the list of those parts. The command in quotes stays as written. */
 "cli.diagnose.group.recordsConfigProblems" = "ignorados u omitidos: %@; corrígelos y compruébalo con «ojd status»";
 /* Detail of the records check of 'ojd diagnose' when records are skipped. %@ is the list of skipped records. The command in quotes stays as written. */
@@ -2581,10 +2891,22 @@
 "cli.record.draft.discussion" = "Lee el descriptor de informes HID del mando y captura sus informes de entrada mientras pulsas cada control, y después imprime un registro desde el que empezar. El registro asigna los botones, los sticks, los gatillos y la cruceta que el descriptor indica con claridad. Los bytes que cambiaron durante la captura muestran dónde están los demás controles. Necesita el servicio.";
 /* Help text of the duration option of 'ojd record draft'. */
 "cli.record.draft.duration" = "Captura informes de entrada durante esta cantidad de segundos.";
+/* Help text of the --from-sdl flag of 'ojd record draft'. SDL_GameControllerDB is a project name and stays as written. */
+"cli.record.draft.fromSDL" = "Crea el borrador a partir de la línea de SDL_GameControllerDB del mando en lugar de capturar informes de entrada.";
 /* Hint printed after 'ojd record draft'. The command in quotes stays as written, including FILE. */
 "cli.record.draft.next" = "Guarda el registro en un archivo, comprueba cada control y luego ejecuta «ojd record validate FILE».";
 /* Message of 'ojd record draft' when the descriptor of the controller yields no controls and the bundled record names the family. %1$@ is the controller identity, VVVV:PPPP, and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
 "cli.record.draft.noLayout" = "No se pudo leer ningún control de %1$@ a partir de su descriptor de informes HID, y su registro incluido ya indica su familia. «ojd record show %2$@» muestra ese registro.";
+/* Message of 'ojd record draft --from-sdl' when the HID report descriptor of the controller fails the HIDDescriptor contract. SDL_GameControllerDB is a project name and HIDDescriptor is a protocol family name; both stay as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the name of the violated rule, which stays as written. */
+"cli.record.draft.sdl.contract" = "El descriptor de informes HID de %1$@ incumple el contrato de HIDDescriptor (%2$@), así que ninguna línea de SDL_GameControllerDB puede vincularlo.";
+/* Message of 'ojd record draft --from-sdl' when the controller model already has a bundled record. SDL_GameControllerDB is a project name and stays as written. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.hasRecord" = "%@ tiene un registro incluido, que ninguna línea de SDL_GameControllerDB sustituye.";
+/* Message of 'ojd record draft --from-sdl' when the database has no line for the controller. SDL_GameControllerDB is a project name and stays as written. GUID is the SDL controller identifier. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is its GUID, which stays as written. */
+"cli.record.draft.sdl.noLine" = "SDL_GameControllerDB no tiene ninguna línea para %1$@ (GUID %2$@).";
+/* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.noPad" = "%@ no está conectado como un dispositivo HID que este comando pueda leer.";
+/* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
+"cli.record.draft.sdl.rejected" = "Línea de SDL_GameControllerDB rechazada para %1$@: %2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.record.draft.started" = "Pulsa cada control de %1$@ (%2$@) y mueve cada palanca y cada gatillo.";
 /* Error of the 'ojd record' commands when a record file cannot be read. %1$@ is the file path and %2$@ is the reason from the system. */
@@ -2597,8 +2919,8 @@
 "cli.record.install.abstract" = "Comprueba un registro de mando y lo instala para tu usuario.";
 /* Yes or no question that 'ojd record install' asks on a terminal before it replaces an installed record. %@ is the path of the installed file. */
 "cli.record.install.confirm" = "¿Reemplazar %@?";
-/* Long description in the help of 'ojd record install'. VVVV-PPPP.json and --force stay as written. */
-"cli.record.install.discussion" = "Escribe el registro como VVVV-PPPP.json en tu directorio de registros. El servicio en ejecución lo aplica al instante. Reemplazar el registro ya instalado para ese modelo pide confirmación en una terminal; en otro caso necesita --force. --dry-run comprueba el registro y no escribe nada. Termina con 1 y no escribe nada cuando el registro no es válido.";
+/* Long description in the help of 'ojd record install'. vvvv-pppp.plist and --force stay as written. */
+"cli.record.install.discussion" = "Escribe el registro como vvvv-pppp.plist en tu directorio de registros. El servicio en ejecución lo aplica al instante. Reemplazar el registro ya instalado para ese modelo pide confirmación en una terminal; en otro caso necesita --force. --dry-run comprueba el registro y no escribe nada. Termina con 1 y no escribe nada cuando el registro no es válido.";
 /* Message printed by 'ojd record install --dry-run' instead of installing. %@ is the target file path. */
 "cli.record.install.dryRun" = "Instalaría %@.";
 /* Error when the record file cannot be written. %1$@ is the target file path and %2$@ is the reason from the system. */
@@ -2685,6 +3007,12 @@
 "error.E2036.message" = "Ninguna app de OpenJoystickDriver respondió a tiempo a la notificación de prueba. Comprueba que la app esté en ejecución y vuelve a intentarlo.";
 /* Error E2037, shown by ojd and the app when notifications are not allowed for the app, so the test notification could not be shown. */
 "error.E2037.message" = "Las notificaciones no están permitidas para OpenJoystickDriver. Permítelas en los ajustes de notificaciones del sistema y vuelve a intentarlo.";
+/* Error E2038, shown by ojd and the app when the selected controller has no speaker to play sound on. */
+"error.E2038.message" = "El mando no tiene altavoz. Elige un mando que pueda reproducir sonido e inténtalo de nuevo.";
+/* Error E2039, shown by ojd when the audio file given to the speaker command is not an uncompressed PCM WAV file. */
+"error.E2039.message" = "El archivo de audio no es compatible. Usa un archivo WAV PCM sin comprimir e inténtalo de nuevo.";
+/* Error E2040, shown by ojd and the app when the extension plugged into the controller did not answer its setup. */
+"error.E2040.message" = "La extensión del mando no respondió a su configuración. Vuelve a conectar la extensión e inténtalo de nuevo.";
 /* Note about a controller record whose raw USB family the USB extension cannot claim because Apple signs its product list. OJD is the short product name. */
 "platform.macos.cli.record.group.usbNotClaimed" = "La familia usa USB sin procesar, y la extensión USB no puede reclamar este mando, porque su lista de productos está firmada por Apple. OJD solo llega a él mediante acceso USB directo, cuando macOS lo permite.";
 /* Note about a Switch 2 controller record that connects over USB only. bluetoothLE.vibrationCharacteristic is a field of the record and stays as written. */
@@ -2709,7 +3037,7 @@
 "cli.binding.group.actionsInvalid" = "--actions-json no es una lista de acciones válida: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
 "cli.binding.group.actionsTooLarge" = "--actions-json es demasiado grande.";
-/* Error of 'ojd binding set' when the value of --double-tap or --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
+/* Error of 'ojd binding set' when the value of --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
 "cli.binding.group.alternateFormat" = "%@ acepta MS:TARGET, como 500:key:key-b.";
 /* Error of 'ojd binding set' when an axis option is used with a source that is not an axis. The option names stay as written. */
 "cli.binding.group.axisOptionsSource" = "--deadzone, --gain, --invert, --response-curve y --digital-threshold necesitan un origen de eje.";
@@ -2734,11 +3062,13 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "Indica uno o más orígenes, o --all.";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "Una asignación envía un TARGET cuando se usa un SOURCE del mando.\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW o touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME o physical:... para vibración, luces y gatillos adaptativos.\n\n«ojd profile show» imprime las asignaciones con estas formas. Edita combinaciones, secuencias y capas con «ojd profile edit».";
+"cli.binding.group.discussion" = "Una asignación envía un TARGET cuando se usa un SOURCE del mando.\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW o touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, position:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER o physical:... para vibración, luces y gatillos adaptativos.\n\n«ojd profile show» imprime las asignaciones con estas formas. Edita combinaciones, secuencias y capas con «ojd profile edit».";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "Lista las asignaciones de un perfil.";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
 "cli.binding.list.empty" = "«%@» no tiene asignaciones. Añade una con «ojd binding set».";
+/* Error of 'ojd binding set' when a value of --multi-tap does not have the form COUNT:MS:TARGET. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.multiTapFormat" = "--multi-tap acepta COUNT:MS:TARGET, como 2:300:key:key-c.";
 /* Help text of the --actions-json option of 'ojd binding set'. 'ojd profile export' stays as written. */
 "cli.binding.group.optionActionsJson" = "Acciones adicionales como matriz JSON, con la forma que escribe «ojd profile export».";
 /* Help text of the --behavior option of 'ojd binding set'. The behavior hold is a value the user types. */
@@ -2747,20 +3077,28 @@
 "cli.binding.group.optionDeadzone" = "Orígenes de eje: la parte del recorrido que se ignora, de 0 a 0.95. Predeterminado: 0.1.";
 /* Help text of the --digital-threshold option of 'ojd binding set'. It sets the axis travel that counts as a press. */
 "cli.binding.group.optionDigitalThreshold" = "Orígenes de eje: el recorrido que cuenta como pulsación para destinos de botón. Predeterminado: 0.5.";
-/* Help text of the --double-tap option of 'ojd binding set'. The example 300:key:key-c stays as written. */
-"cli.binding.group.optionDoubleTap" = "Envía otro destino cuando el origen se pulsa dos veces dentro de este tiempo, como 300:key:key-c.";
 /* Help text of the --gain option of 'ojd binding set'. Gain scales the axis output. */
 "cli.binding.group.optionGain" = "Orígenes de eje: la escala de salida, de 0.1 a 10. Predeterminado: 1.";
 /* Help text of the --invert flag of 'ojd binding set'. */
 "cli.binding.group.optionInvert" = "Orígenes de eje: invierte la dirección.";
 /* Help text of the --long-hold option of 'ojd binding set'. The example 500:key:key-b stays as written. */
 "cli.binding.group.optionLongHold" = "Envía otro destino cuando el origen se mantiene pulsado este tiempo, como 500:key:key-b.";
+/* Help text of the --multi-tap option of 'ojd binding set'. COUNT is the number of taps, MS the milliseconds allowed after the last release. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.optionMultiTap" = "Envía otro destino cuando el origen se pulsa COUNT veces, cada pulsación dentro de MS desde la última vez que se suelta, como 2:300:key:key-c. Repite la opción para más recuentos.";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "Cuánto tiempo mantiene el destino un pulso, de 1 a 5000 ms. Predeterminado: 100.";
+/* Help text of the --voice option of 'ojd binding set'. The option name and speak:TEXT stay as written. */
+"cli.binding.group.optionVoice" = "Identificador de voz para un destino speak:TEXT. Predeterminado: la voz del sistema.";
+/* Error of 'ojd binding set' when --voice is given with a target that is not speak:TEXT. The option name and speak:TEXT stay as written. */
+"cli.binding.group.voiceNeedsSpeak" = "--voice necesita un destino speak:TEXT.";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "Orígenes de eje: cómo crece la salida con el recorrido. Predeterminado: linear.";
+/* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
+"cli.binding.group.optionTurboDelay" = "Espera este tiempo antes de la primera repetición, de 0 a 2500 ms. Necesita --turbo-rate y --turbo-duty.";
 /* Help text of the --turbo-duty option of 'ojd binding set'. The duty is the share of each turbo cycle in which the target is held. */
 "cli.binding.group.optionTurboDuty" = "La parte de cada ciclo turbo en que se mantiene el destino, mayor que 0 y menor que 1.";
+/* Help text of the --turbo-max option of 'ojd binding set'. The option names stay as written. */
+"cli.binding.group.optionTurboMax" = "Se detiene tras este número de repeticiones, de 1 a 500. Necesita --turbo-rate y --turbo-duty.";
 /* Help text of the --turbo-rate option of 'ojd binding set'. --turbo-duty stays as written. */
 "cli.binding.group.optionTurboRate" = "Repite el destino estas veces por segundo mientras se mantiene pulsado. Necesita --turbo-duty.";
 /* One-line summary of 'ojd binding set' in the command list and at the top of its help. */
@@ -2775,8 +3113,10 @@
 "cli.binding.group.sourceInvalid" = "«%@» no es un origen. «ojd binding set --help» lista las formas de origen.";
 /* Error of 'ojd binding set' when the target cannot be parsed. %@ is the text the user gave. The command in quotes stays as written. */
 "cli.binding.group.targetInvalid" = "«%@» no es un destino. «ojd binding set --help» lista las formas de destino.";
-/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given. Both option names stay as written. */
-"cli.binding.group.turboPair" = "--turbo-rate y --turbo-duty deben indicarse juntos.";
+/* Error of 'ojd binding set' when the profile has no layer with the name in a layer:NAME:MODE target. %1$@ is the profile name and %2$@ is the layer name. */
+"cli.binding.group.layerMissing" = "«%1$@» no tiene ninguna capa llamada «%2$@». No se ha cambiado nada.";
+/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given, or --turbo-delay or --turbo-max is given without both. All four option names stay as written. */
+"cli.binding.group.turboPair" = "--turbo-rate y --turbo-duty deben indicarse juntos, y --turbo-delay y --turbo-max necesitan ambos.";
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "El turbo no funciona con destinos de movimiento del puntero ni de desplazamiento.";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
@@ -2823,26 +3163,40 @@
 "cli.profile.activate.abstract" = "Aplica un perfil a su modelo de mando.";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
 "cli.profile.activate.allowEmpty" = "Activa el perfil aunque no genere ninguna salida.";
+/* Help text of the --confirm-actions flag of 'ojd profile activate'. --confirm-actions stays as written. */
+"cli.profile.activate.confirmActions" = "Confirma que el perfil puede lanzar sus acciones: abrir aplicaciones y URL, ejecutar atajos y escribir texto.";
 /* Long description in the help of 'ojd profile activate'. It explains the profile that replaces the active one and the profile that produces no output. The words mapped and --allow-empty stay as written. */
 "cli.profile.activate.discussion" = "El perfil sustituye al perfil activo del mismo modelo de mando y ámbito de app. Un perfil con el gamepad virtual en mapped que no envía nada al gamepad, al teclado, al puntero ni al mando, y no establece ningún color de luz, no genera ninguna salida; para activarlo hace falta --allow-empty.";
 /* Message printed after 'ojd profile activate'. %1$@ is the profile name, shown in quotes, and %2$@ is the controller model it applies to. */
 "cli.profile.activate.done" = "Se ha activado «%1$@» para %2$@.";
 /* Error of 'ojd profile activate' for a profile that produces no output. --allow-empty stays as written. */
 "cli.profile.activate.empty" = "Este perfil no genera ninguna salida. Añade --allow-empty para activarlo.";
+/* Error of 'ojd profile activate' for a profile that opens applications or URLs, runs shortcuts or types text. --confirm-actions stays as written. %@ is the list of actions, one per line, with each URL in full. */
+"cli.profile.activate.actionsNeedConfirmation" = "Este perfil lanza acciones. Añade --confirm-actions para activarlo:\n%@";
 /* Marker appended to the line of the active profile in 'ojd profile list'. Keep the parentheses. */
 "cli.profile.group.activeMarker" = "(activo)";
 /* Help text of the PROFILE argument shared by the 'ojd profile' commands. The command in quotes stays as written. */
 "cli.profile.group.argument" = "El perfil: su ID o su nombre de «ojd profile list».";
 /* One-line summary of 'ojd profile create' in the command list and at the top of its help. */
 "cli.profile.create.abstract" = "Crea un perfil vacío para un modelo de mando.";
+/* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.activation" = "El control que se mantiene pulsado para la salida del giroscopio (plantilla gyro-stick). Sin él, la salida del giroscopio está siempre activa.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "Aplica el perfil solo mientras esta app, indicada por su ID de app, esté en primer plano.";
+"cli.profile.create.app" = "Aplica el perfil solo mientras esta app, por su ID, esté en primer plano. Repite la opción para más apps.";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "El modelo de mando: VVVV:PPPP, o el ID de un mando conectado.";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
 "cli.profile.create.discussion" = "El perfil se aplica en todas las apps salvo que --app indique una. De forma predeterminada, el gamepad virtual transmite todos los controles que ninguna asignación usa. El perfil empieza inactivo; actívalo con «ojd profile activate».";
 /* Message printed after 'ojd profile create'. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.create.done" = "Se ha creado «%1$@» (%2$@).";
+/* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
+"cli.profile.create.noMotion" = "%@ no tiene sensor de movimiento.";
+/* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.stick" = "La palanca que controla la plantilla gyro-stick: left o right. El valor por defecto es right.";
+/* Help text of the --template option of 'ojd profile create'. gyro-stick is the only template, the user types it, and it stays as written. */
+"cli.profile.create.template" = "Empezar desde una plantilla. La única plantilla es gyro-stick.";
+/* Error of 'ojd profile create' when --stick or --activation is given without --template. The three option names stay as written. */
+"cli.profile.create.templateRequired" = "--stick y --activation necesitan --template.";
 /* Help text of the physical input option of 'ojd profile create'. shared and exclusive are values the user types and stay as written. */
 "platform.macos.cli.profile.create.physicalInput" = "Si macOS sigue viendo el mando (shared) o lo toma OJD (exclusive).";
 /* Help text of the --virtual-gamepad option of 'ojd profile create'. disabled, mapped and passthrough are values the user types and stay as written. */
@@ -2896,7 +3250,7 @@
 /* One-line summary of 'ojd profile export' in the command list and at the top of its help. The command in quotes stays as written. */
 "cli.profile.export.abstract" = "Imprime un perfil como un archivo que lee «ojd profile import».";
 /* Long description in the help of 'ojd profile export'. --json and --plain stay as written. */
-"cli.profile.export.discussion" = "El perfil es JSON, así que --json y --plain no cambian la salida.";
+"cli.profile.export.discussion" = "El perfil es una lista de propiedades, así que --json y --plain no cambian la salida.";
 /* Message printed after 'ojd profile export --output'. %1$@ is the profile name, shown in quotes, and %2$@ is the file path. */
 "cli.profile.export.done" = "Se ha escrito «%1$@» en %2$@.";
 /* Help text of the --output option of 'ojd profile export'. stdout is the standard output stream and stays as written. */
@@ -2913,6 +3267,8 @@
 "cli.profile.import.abstract" = "Añade un perfil desde un archivo que escribió «ojd profile export».";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "Se ha importado «%1$@» (%2$@).";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "Aplica el perfil importado solo mientras esta app, por su ID, esté en primer plano, en lugar del ámbito del archivo. Repite la opción para más apps.";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "Usa - para leer el perfil desde stdin. Un perfil con el mismo ID que uno existente lo sustituye.";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */
@@ -3025,6 +3381,58 @@
 "ui.shortcuts.action.getControllers.description" = "Devuelve los mandos conectados.";
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "Obtener mandos";
+/* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.description" = "Cambia un valor de un perfil de reasignación, como su nombre.";
+/* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
+"ui.shortcuts.action.setProfileValue.key" = "Clave";
+/* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.title" = "Establecer valor del perfil";
+/* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
+"ui.shortcuts.action.setProfileValue.value" = "Valor";
+/* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
+"ui.shortcuts.error.profileKey" = "La clave de un valor del perfil no puede tener una parte vacía.";
+/* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.title" = "Hacer vibrar el mando";
+/* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.description" = "Activa los motores de vibración de un mando durante un momento.";
+/* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
+"ui.shortcuts.action.rumble.intensity" = "Intensidad (0-255)";
+/* Label in the Shortcuts app of the rumble action's duration in seconds. */
+"ui.shortcuts.action.rumble.duration" = "Duración en segundos";
+/* Name in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.title" = "Establecer el indicador de jugador";
+/* Description in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.description" = "Establece las luces del indicador de jugador de un mando.";
+/* Label in the Shortcuts app of the player number from 1 to 4, or 0 for none. */
+"ui.shortcuts.action.player.number" = "Número de jugador (0 para ninguno)";
+/* Name in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.title" = "Establecer la luz del mando";
+/* Description in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.description" = "Establece el color de la barra de luz, el brillo del LED o ambos en un mando.";
+/* Label in the Shortcuts app of the lightbar color given as six hexadecimal digits, RRGGBB. */
+"ui.shortcuts.action.light.color" = "Color (RRGGBB)";
+/* Label in the Shortcuts app of the LED brightness from 0 to 255. */
+"ui.shortcuts.action.light.brightness" = "Brillo del LED (0-255)";
+/* Error in the Shortcuts app when the light action has no color or brightness, or the color is not RRGGBB. */
+"ui.shortcuts.error.lightRequest" = "Indica un color como seis dígitos hexadecimales, un brillo o ambos.";
+/* Name in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.title" = "Listar paquetes de mods";
+/* Description in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.description" = "Devuelve los nombres de los paquetes de mods instalados.";
+/* Name in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.title" = "Instalar paquete de mods";
+/* Description in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.description" = "Instala un paquete de mods desde una carpeta y devuelve su nombre.";
+/* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
+"ui.shortcuts.action.installMod.folder" = "Carpeta";
+/* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
+"ui.shortcuts.action.installMod.replace" = "Reemplazar el paquete instalado";
+/* Name in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.title" = "Quitar paquete de mods";
+/* Description in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.description" = "Quita un paquete de mods instalado según su nombre.";
+/* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
+"ui.shortcuts.action.removeMod.name" = "Nombre";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "Modelo";
 /* Name of the name property of a controller in the Shortcuts app. */
@@ -3175,12 +3583,22 @@
 "error.E3028.message" = "La sesión de reasignación del mando cambió mientras se ejecutaba la solicitud. Inténtalo de nuevo.";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
 "error.E3029.message" = "Un perfil de un paquete instalado no se puede modificar. Duplica el perfil y modifica la copia.";
-/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
-"error.E4001.message" = "Falta el manifiesto del paquete mod.json o no es válido. Compruébalo con el esquema mod-package y vuelve a ejecutar el comando.";
+/* Text of error E3030, returned when an action needs Post Event access and it is not granted. */
+"error.E3030.message" = "La acción no se ejecutó porque no se ha concedido el acceso Post Event. Concédelo a OpenJoystickDriver e inténtalo de nuevo.";
+/* Text of error E3031, returned when an action needs Automation access and it is not granted. */
+"error.E3031.message" = "La acción no se ejecutó porque no se ha concedido el acceso de Automatización. Concédelo a OpenJoystickDriver e inténtalo de nuevo.";
+/* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
+"error.E3032.message" = "La acción no se ejecutó porque Secure Input está activado. Cierra la app que lo activa, por ejemplo un campo de contraseña, y vuelve a intentarlo.";
+/* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
+"error.E3033.message" = "La acción ha fallado.";
+/* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
+"error.E3034.message" = "La acción MIDI no se ejecutó porque el sistema rechazó crear la fuente MIDI OpenJoystickDriver. Inténtalo de nuevo.";
+/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.plist stays as written. */
+"error.E4001.message" = "Falta el manifiesto del paquete mod.plist o no es válido. Compruébalo con el esquema mod-package y vuelve a ejecutar el comando.";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */
 "error.E4002.message" = "El paquete requiere una versión de OpenJoystickDriver distinta de la que se está ejecutando. Instala una versión del paquete compatible con esta versión o actualiza OpenJoystickDriver.";
-/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.json stays as written. */
-"error.E4003.message" = "Un archivo del paquete no es válido, falta o no figura en mod.json. Corrige el archivo que indica el comando y vuelve a ejecutarlo.";
+/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.plist stays as written. */
+"error.E4003.message" = "Un archivo del paquete no es válido, falta o no figura en mod.plist. Corrige el archivo que indica el comando y vuelve a ejecutarlo.";
 /* Text of error E4004, printed when a mod package covers a controller, persona or profile that the user's files or another package hold. */
 "error.E4004.message" = "El paquete abarca un mando, una persona o un perfil que ya existen en tus propios archivos o en otro paquete instalado. Elimina el archivo o paquete en conflicto, o modifica el paquete, y vuelve a ejecutar el comando.";
 /* Text of error E4005, printed when a mod package of the same name is installed. --force stays as written. */
@@ -3197,12 +3615,26 @@
 "error.E5003.message" = "Una descripción de protocolo nombra una familia distinta del nombre de su archivo. Da al archivo el nombre de su familia.";
 /* Text of error E5004, printed when a protocol description lists a variant that its family lacks. */
 "error.E5004.message" = "Una descripción de protocolo enumera una variante que su familia no tiene. Usa una de las variantes de la familia.";
-/* Text of error E5005, printed when the access file is damaged. AccessGrants.json is a file name and stays as written. */
-"error.E5005.message" = "El archivo de acceso AccessGrants.json está dañado. Corrige el archivo o elimínalo y concede el acceso de nuevo.";
+/* Text of error E5005, printed when the access file is damaged. AccessGrants.plist is a file name and stays as written. */
+"error.E5005.message" = "El archivo de acceso AccessGrants.plist está dañado. Corrige el archivo o elimínalo y concede el acceso de nuevo.";
 /* Text of error E5006, printed when the key file of the unit IDs cannot be read or has the wrong size. PortKeyInstallation.key is a file name and stays as written. OpenJoystickDriver is the product name. */
 "error.E5006.message" = "No se puede leer el archivo de clave de los ID de unidad, PortKeyInstallation.key, o no tiene 32 bytes. Restaura el archivo desde una copia de seguridad. Si lo eliminas, OpenJoystickDriver crea una clave nueva y cambian todos los ID de unidad.";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "Un registro de mando o un patch no es válido. Comprueba el archivo con su esquema y corrige el campo que nombra el mensaje.";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "este archivo de registro";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "Carpeta Controllers del catálogo incluido: el catálogo no tiene ningún archivo de registro. Regla: el catálogo contiene al menos un registro de mando. Solución: reinstala OpenJoystickDriver.";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@, vendorID y productID: el nombre del archivo debe ser %2$@, los dos ID en hexadecimal. Solución: cambia el nombre del archivo a %2$@ o corrige los ID que contiene.";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@, vendorID y productID: %2$@ ya es la identidad del registro de %3$@. Solución: elimina uno de los dos archivos o cambia los ID de este.";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@, document: un valor no se puede escribir como JSON (%2$@). Solución: sustituye el valor que indica el motivo por una cadena, un número, un booleano, una lista o un diccionario.";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@, vendorID y productID: vendorID debe estar entre 1...65535 y productID entre 0...65535. Solución: asigna a cada uno un número entero de su rango.";
+/* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
+"error.E5008.message" = "La línea de SDL_GameControllerDB de un mando no puede controlarlo. El mensaje indica el motivo. Escribe un registro de mando para él con ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */
 "ui.error.withCode" = "%1$@ (%2$@)";
 
@@ -3812,6 +4244,8 @@
 "ui.activity.check.transportExtensionRegistration" = "Registro de la extensión de controlador";
 /* Name of the check in the diagnostics table that validates the configuration files. */
 "ui.activity.check.configFiles" = "Archivos de configuración";
+/* Name of the check in the diagnostics table that reports a controller with the Nintendo Switch Pro Controller identity and serial 000000000001. Nintendo Switch Pro Controller is a product name and stays as written. */
+"ui.activity.check.switchSerial" = "Número de serie de Switch Pro Controller";
 /* Name of the check in the diagnostics table that tests whether the app can read USB controllers. */
 "ui.activity.check.usbAccess" = "Acceso USB";
 /* Button of a failed check in the diagnostics table that opens the Library area. */
@@ -3872,6 +4306,10 @@
 "ui.controllers.draftRecord.title" = "Crear el borrador de un registro de mando";
 /* Message when a record cannot be drafted. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.controllers.draftRecord.noLayout" = "No se pudo leer ningún control de %@ a partir de su descriptor de informes HID, y su registro incluido ya indica su familia.";
+/* Button in the Controllers detail that drafts a controller record from the SDL_GameControllerDB line of the controller. SDL stays as written. Keep the three dots. */
+"ui.controllers.draftRecordFromSDL" = "Borrador de registro desde SDL…";
+/* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
+"ui.controllers.draftRecordFromSDL.noPad" = "%@ no está conectado como un dispositivo HID que OpenJoystickDriver pueda leer.";
 /* Button in the Controllers detail that starts a packet capture of the controller. Keep the three dots. */
 "ui.controllers.capturePackets" = "Capturar paquetes…";
 /* Title of the sheet that captures packets of the controller. */
@@ -3890,12 +4328,14 @@
 "ui.controllers.publication.notPublished" = "No publicado";
 /* Value of the publication fact: the publication failed. */
 "ui.controllers.publication.failed" = "Fallido";
+/* Value of the input health fact: the session has read no input report yet. */
+"ui.controllers.inputHealth.awaitingInput" = "Esperando la primera entrada…";
 /* Value of the input health fact: input arrives as expected. */
 "ui.controllers.inputHealth.healthy" = "Correcto";
 /* Value of the input health fact: input stopped arriving. */
 "ui.controllers.inputHealth.stale" = "Sin actualizar";
 /* Value of the input health fact: the app waits until all controls are at rest before it sends input again. */
-"ui.controllers.inputHealth.waitingForNeutral" = "Esperando posición neutra";
+"ui.controllers.inputHealth.waitingForNeutral" = "Esperando posición neutra…";
 /* Error shown when the settings file is damaged. %@ is the path of the file. The command in backticks stays as written, and Trash is the macOS name. */
 "ui.settings.advanced.errorDamaged" = "El archivo de ajustes %@ está dañado. Corrígelo o muévelo a la Papelera con `ojd setting reset`.";
 /* Error shown when the settings file has an unsupported version. %@ is the path of the file. apiVersion and the command in backticks stay as written, and Trash is the macOS name. */
@@ -3916,8 +4356,8 @@
 "platform.macos.ui.settings.advanced.unreadableShowInFinder" = "Mostrar en el Finder";
 /* One-line summary of 'ojd setting reset' in the command list and at the top of its help. */
 "cli.setting.reset.abstract" = "Mueve el archivo de ajustes a la Papelera.";
-/* Long description in the help of 'ojd setting reset'. Settings.json is a file name and stays as written. */
-"cli.setting.reset.discussion" = "Mueve Settings.json a la Papelera para que cada ajuste vuelva a su valor predeterminado. Úsalo cuando el archivo esté dañado o se rechace.";
+/* Long description in the help of 'ojd setting reset'. Settings.plist is a file name and stays as written. */
+"cli.setting.reset.discussion" = "Mueve Settings.plist a la Papelera para que cada ajuste vuelva a su valor predeterminado. Úsalo cuando el archivo esté dañado o se rechace.";
 /* Yes or no question that 'ojd setting reset' asks on a terminal. */
 "cli.setting.reset.confirm" = "¿Mover el archivo de ajustes a la Papelera y devolver cada ajuste a su valor predeterminado?";
 /* Message printed after 'ojd setting reset'. %@ is the path of the settings file. */
@@ -3939,7 +4379,7 @@
 /* Reason the controller has no virtual gamepad: the output is paused. */
 "ui.controllers.publication.reason.suppressed" = "Salida en pausa";
 /* Reason the controller has no virtual gamepad: the first input has not arrived. */
-"ui.controllers.publication.reason.noInputYet" = "Esperando la primera entrada";
+"ui.controllers.publication.reason.noInputYet" = "Esperando la primera entrada…";
 /* Reason the controller has no virtual gamepad: another app holds its input. */
 "ui.controllers.publication.reason.heldByAnotherClient" = "Otra app lo está usando";
 /* Publication state with its reason or failure, for example "Not published (Waiting for the first input)". %1$@ is the state and %2$@ the reason. */
@@ -4041,3 +4481,155 @@
 "ui.controllers.exclusiveOwner" = "Acceso exclusivo";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
 "ui.controllers.alsoListedBySystem" = "Mostrado también por el sistema";
+/* Label of a macro as the destination of an assignment when the profile has no macro of that identifier, and name of the macro destination kind. */
+"term.macro" = "Macro";
+/* Label of a layer as the destination of an assignment when the profile has no layer of that identifier, and name of the layer destination kind. */
+"term.layer" = "Capa";
+/* Name of the Speak destination kind in the destination popup; the destination says a short text aloud. */
+"term.speak" = "Hablar";
+/* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
+"ui.profiles.macros" = "Macros";
+/* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */
+"ui.profiles.addMacro" = "Añadir macro";
+/* Tooltip and VoiceOver label of the button on a macro row in the profile editor that opens the sheet to edit the macro. */
+"ui.profiles.editMacro" = "Editar macro";
+/* Message in the macros section of the profile editor when none exists. */
+"ui.profiles.noMacros" = "No hay macros configuradas.";
+/* Label of the name field in the macro editor sheet. */
+"ui.macros.name" = "Nombre de la macro";
+/* Heading of the list of steps in the macro editor sheet. */
+"ui.macros.steps" = "Pasos";
+/* Title of the menu in the macro editor sheet that adds a step to the macro. */
+"ui.macros.addStep" = "Añadir paso";
+/* Name of the macro step that presses and releases a key or button at once. Also the label of its destination picker. */
+"ui.macros.stepTap" = "Pulsar y soltar";
+/* Name of the macro step that presses a key or button and keeps it down. Also the label of its destination picker. */
+"ui.macros.stepPress" = "Pulsar";
+/* Name of the macro step that releases a key or button that a press step holds. Also the label of its destination picker. */
+"ui.macros.stepRelease" = "Soltar";
+/* Name of the macro step that presses several keys or buttons together, holds them, and releases them. Also the label of each destination picker of the step. */
+"ui.macros.stepChord" = "Acorde";
+/* Name of the macro step that waits before the next step, and the label of its time slider. */
+"ui.macros.stepWait" = "Esperar";
+/* Label of the slider in a chord step of the macro editor for how long the chord is held. */
+"ui.macros.holdTime" = "Tiempo de pulsación";
+/* Button in a chord step of the macro editor that adds one more key or button to the chord. */
+"ui.macros.addChordKey" = "Añadir tecla al acorde";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place earlier. */
+"ui.macros.moveUp" = "Subir paso";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place later. */
+"ui.macros.moveDown" = "Bajar paso";
+/* Tooltip and VoiceOver label of the button in the macro editor that removes a step. */
+"ui.macros.removeStep" = "Quitar paso";
+/* Label of the popup in the macro editor that chooses how often the macro runs its steps. */
+"ui.macros.repeat" = "Repetir";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps a set number of times. */
+"ui.macros.repeatCounted" = "Número fijo de veces";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps again and again until the control is released. */
+"ui.macros.repeatWhileHeld" = "Mientras se mantiene pulsado";
+/* Label of the stepper in the macro editor for how many times the macro runs its steps. The number follows the label. */
+"ui.macros.repeatTimes" = "Veces";
+/* Label of the popup in the macro editor for what happens when the control is pressed again while the macro runs. */
+"ui.macros.whileRunning" = "Al pulsar de nuevo durante la ejecución";
+/* Choice of the popup in the macro editor: the macro keeps running and the new press does nothing. */
+"ui.macros.whileRunningIgnore" = "Ignorar";
+/* Choice of the popup in the macro editor: the macro stops, releases everything it holds, and starts again. */
+"ui.macros.whileRunningRestart" = "Reiniciar";
+/* Label of the switch in the macro editor: releasing the control stops the macro and releases everything it holds. */
+"ui.macros.interruptOnRelease" = "Detener al soltar";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. The report mode the driver chose follows, a hex byte such as 0x31. */
+"cli.controller.show.labelReportMode" = "Modo de informe";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. The extension plugged into the remote follows, such as a Nunchuk. This is the accessory on the controller, not a system extension. */
+"cli.controller.show.labelExtension" = "Accesorio";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. Motion Plus is a Nintendo product name: keep it as written. The value that follows is off, calibrating or ready. */
+"cli.controller.show.labelMotionPlus" = "Motion Plus";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Nunchuk is a Nintendo product name: keep it as written. */
+"term.wiiExtension.nunchuk" = "Nunchuk";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Classic Controller is a Nintendo product name: keep it as written. */
+"term.wiiExtension.classicController" = "Classic Controller";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Classic Controller Pro is a Nintendo product name: keep it as written. */
+"term.wiiExtension.classicControllerPro" = "Classic Controller Pro";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: a Motion Plus that is plugged in but not switched on yet. Motion Plus is a Nintendo product name: keep it as written. */
+"term.wiiExtension.motionPlusInactive" = "Motion Plus (inactivo)";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with nothing plugged into it. Motion Plus is a Nintendo product name: keep it as written. */
+"term.wiiExtension.motionPlus" = "Motion Plus";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with a Nunchuk plugged into it. Motion Plus and Nunchuk are Nintendo product names: keep them as written. */
+"term.wiiExtension.motionPlusNunchuk" = "Motion Plus con Nunchuk";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with a Classic Controller plugged into it. Motion Plus and Classic Controller are Nintendo product names: keep them as written. */
+"term.wiiExtension.motionPlusClassic" = "Motion Plus con Classic Controller";
+/* Value of the extension row for a Wii Remote extension the driver does not know. %@ is the six ID bytes as twelve hex digits and stays as written. */
+"status.wiiExtensionUnknown" = "Desconocido (ID %@)";
+/* Value of the Motion Plus row for a Wii Remote whose Motion Plus is not switched on. */
+"status.motionPlusOff" = "Apagado";
+/* Value of the Motion Plus row for a Wii Remote while the driver measures the resting value of the gyro. The remote must lie still. */
+"status.gyroCalibrating" = "Calibrando";
+/* Value of the Motion Plus row for a Wii Remote once the driver has measured the resting value of the gyro. */
+"status.gyroReady" = "Listo";
+/* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
+"error.E5009.message" = "Un documento guardado de una versión anterior no tiene conversión automática, así que ojd migrate lo deja sin cambios. El mensaje indica el archivo y el campo. Edita el archivo a mano a la apiVersion compatible.";
+/* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
+"error.E5010.message" = "Un documento guardado no es una lista de propiedades XML o contiene un valor de fecha o de datos. El mensaje indica el archivo y la forma o la ruta de la clave. Guarda el archivo como lista de propiedades XML con plutil -convert xml1.";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "Ejecuta un script generador y escribe los documentos que devuelve.";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "Ejecuta el script en un proceso auxiliar sin acceso a archivos ni a la red, comprueba los documentos que devuelve su función generate y escribe cada uno como archivo de lista de propiedades en --output. Sin --output muestra los documentos. --timeout fija el límite de tiempo en segundos (5 por defecto).";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "El script generador, un archivo .js.";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "No se pudo iniciar el proceso auxiliar del script: %@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "%1$@ no terminó en %2$@ segundos y se detuvo.";
+/* Help text of the --output option of 'ojd generate'. */
+"cli.generate.group.output" = "La carpeta que recibe los archivos. Sin ella, el comando muestra los documentos y no escribe ningún archivo.";
+/* Help text of the --replace flag of 'ojd generate'. */
+"cli.generate.group.replace" = "Reemplaza un archivo cuyo contenido difiere del documento.";
+/* Error of 'ojd generate' when the script file cannot be read. %@ is the script path. */
+"cli.generate.group.unreadable" = "No se puede leer %@.";
+/* Error of 'ojd generate' when the script defines no function named generate. %@ is the script path; generate stays as written. */
+"cli.generate.group.missingGenerate" = "%@ no define ninguna función generate.";
+/* Error of 'ojd generate' when the script throws a value that has no line number. %1$@ is the script path and %2$@ is the message. */
+"cli.generate.group.scriptFailed" = "El script %1$@ falló: %2$@";
+/* Error of 'ojd generate' for a syntax error or an exception of the script. %1$@ is the script path, %2$@ is the line number and %3$@ is the message. */
+"cli.generate.group.scriptFailedAtLine" = "El script %1$@ falló en la línea %2$@: %3$@";
+/* Error of 'ojd generate' when generate returns null, no value, or something that is not a document or a list of documents. generate stays as written. */
+"cli.generate.group.notDocuments" = "generate debe devolver un documento o una lista de documentos.";
+/* Error of 'ojd generate' for a returned document that fails its checks. %1$@ is the position of the document in the result, counted from 1, and %2$@ is the key path and the rule it breaks. */
+"cli.generate.group.documentInvalid" = "El documento %1$@ no es válido y no se escribió ningún archivo: %2$@";
+/* Error of 'ojd generate' when two returned documents have the same file name. %1$@ and %2$@ are their positions in the result, counted from 1, and %3$@ is the file name. */
+"cli.generate.group.duplicate" = "Los documentos %1$@ y %2$@ se escribirían ambos en %3$@, así que no se escribió ningún archivo.";
+/* Error of 'ojd generate' when a file holds other content than the generated document. %@ is the file path; --replace stays as written. */
+"cli.generate.group.conflict" = "%@ contiene otro contenido, así que no se escribió ningún archivo. Usa --replace para sobrescribirlo.";
+/* Error of 'ojd generate' when a file cannot be written. %1$@ is the file path and %2$@ is the reason. */
+"cli.generate.group.writeFailed" = "No se pudo escribir %1$@: %2$@";
+/* Line of 'ojd generate' for a file that it wrote anew. %@ is the file path. */
+"cli.generate.group.created" = "Se creó %@.";
+/* Line of 'ojd generate' for a file whose other content it replaced. %@ is the file path. */
+"cli.generate.group.replaced" = "Se reemplazó %@.";
+/* Line of 'ojd generate' for a file that already held the generated document. %@ is the file path. */
+"cli.generate.group.unchanged" = "Sin cambios en %@.";
+/* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
+"cli.migrate.group.abstract" = "Convierte los documentos guardados de una versión anterior a la versión actual.";
+/* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
+"cli.migrate.group.discussion" = "Convierte Settings.plist, AccessGrants.plist, los perfiles, tus registros y parches de mandos y los archivos de dispositivos virtuales que tienen una apiVersion anterior. Cada original se conserva en la carpeta Migrated de la carpeta de soporte. Los paquetes de mods también se convierten. Indica una carpeta para examinarla en lugar de la carpeta de soporte. Cada archivo recibe un veredicto: Migrated, Current, Failed o Foreign.";
+/* Help text of the --dry-run option of 'ojd migrate'. */
+"cli.migrate.group.dryRun" = "Muestra los documentos que se convertirían y no cambia nada.";
+/* Message printed by 'ojd migrate' when no stored document has an older version. */
+"cli.migrate.group.none" = "Ningún documento necesita migración.";
+/* Line printed by 'ojd migrate' for a converted document. %@ is the path of the document in the support folder. Migrated is a folder name and stays as written. */
+"cli.migrate.group.converted" = "Se ha convertido %@. El original está en la carpeta Migrated.";
+/* Line printed by 'ojd migrate --dry-run' for a document it would convert. %@ is the path of the document in the support folder. */
+"cli.migrate.group.wouldConvert" = "Se convertiría %@.";
+/* Line printed by 'ojd migrate' for a document it cannot convert. %1$@ is the path of the document, %2$@ is the reason. */
+"cli.migrate.group.failed" = "%1$@ queda sin cambios: %2$@";
+/* Error text of 'ojd migrate' when at least one document could not be converted. */
+"cli.migrate.group.failedSummary" = "No se pudieron convertir algunos documentos y quedan sin cambios. La salida indica cada uno.";
+/* Help text of the folder argument of 'ojd migrate'. */
+"cli.migrate.group.folder" = "Una carpeta que examinar en lugar de la carpeta de soporte.";
+/* Line printed by 'ojd migrate' for a file that is in the current format. %@ is the path of the file. */
+"cli.migrate.group.current" = "%@ ya está actualizado.";
+/* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
+"cli.migrate.group.foreign" = "%@ no es un documento de OpenJoystickDriver y queda sin cambios.";
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
+"ui.migrate.action" = "Migrar";
+/* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
+"platform.macos.ui.migrate.failed" = "No se pudieron convertir algunos documentos y quedan sin cambios. Ejecuta ojd migrate en Terminal para ver cuáles.";

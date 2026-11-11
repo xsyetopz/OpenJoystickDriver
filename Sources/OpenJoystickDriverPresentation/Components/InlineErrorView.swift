@@ -8,16 +8,29 @@
   /// The error pattern of the main window: a symbol, the message, and a Details control that
   /// shows the `ojd explain` text of the error code.
   struct InlineErrorView: View {
+    /// The error message.
     let message: String
+    /// The error code that Details explains, or nil for no Details control.
     let code: ErrorCode?
+    /// The title of the Details control.
     let detailsTitle: String
+    /// The VoiceOver label of the Details control.
     let detailsAccessibilityLabel: String
+    /// The title of the action button.
     let actionTitle: String
+    /// The VoiceOver label of the action button.
     let actionAccessibilityLabel: String
+    /// Runs when the user presses the action button.
     let action: () -> Void
+    /// The title of a second action button, or nil for none.
+    var secondaryActionTitle: String?
+    /// Runs when the user presses the second action button.
+    var secondaryAction: (() -> Void)?
+    /// Whether the explanation of the code is open.
     @State
     private var showsDetails = false
 
+    /// The failure symbol and message in a group box, with the action button.
     var body: some View {
       GroupBox {
         VStack(alignment: .leading, spacing: 8) {
@@ -33,6 +46,9 @@
               Button(detailsTitle) { showsDetails.toggle() }
                 .ojdAccessibilityLabel(detailsAccessibilityLabel)
             }
+            if let secondaryActionTitle, let secondaryAction {
+              Button(secondaryActionTitle, action: secondaryAction)
+            }
             Button(actionTitle, action: action).ojdAccessibilityLabel(actionAccessibilityLabel)
           }
           if showsDetails, let code {
@@ -44,7 +60,7 @@
             }.textSelection(.enabled)
           }
         }.padding(4)
-      }.ojdAccessibilityLabel(message)
+      }.accessibilityElement(children: .contain).ojdAccessibilityLabel(message)
     }
   }
 

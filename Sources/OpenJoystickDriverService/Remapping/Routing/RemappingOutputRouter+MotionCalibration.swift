@@ -1,6 +1,10 @@
 import OpenJoystickDriverKit
 
 extension RemappingOutputRouter {
+  /// Reads or changes the motion calibration of `identifier`.
+  ///
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when output is closed, and the
+  ///   failures of ``RemappingRoutingCore/motionCalibration(for:command:requiring:)``.
   func motionCalibration(
     for identifier: LogicalControllerID,
     command: RemappingMotionCalibrationCommand? = nil
@@ -26,6 +30,14 @@ extension RemappingOutputRouter {
 }
 
 extension RemappingRoutingCore {
+  /// Reads the motion calibration status of `identifier`, or applies `command` to it.
+  ///
+  /// The controller needs a remapping route that is eligible. A paired Joy-Con needs to be the one
+  /// that supplies the gyro.
+  ///
+  /// - Throws: ``RemappingMotionCalibrationError`` when the controller or its motion is
+  ///   unavailable, and ``RemappingMotionCalibrationRefusal`` when the gyro is not selected, the
+  ///   profile is inactive or the motion session changed.
   func motionCalibration(
     for identifier: LogicalControllerID,
     command: RemappingMotionCalibrationCommand?,

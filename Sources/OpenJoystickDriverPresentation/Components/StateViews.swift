@@ -9,16 +9,21 @@
   /// Selected". `ContentUnavailableView` on macOS 14 and later, the same layout built from text
   /// on macOS 12 and 13.
   struct EmptyStateView: View {
+    /// The SF Symbol above the title.
     let symbol: String
+    /// The headline of the empty state.
     let title: String
+    /// The secondary text under the title, or nil for none.
     let message: String?
 
+    /// Creates the empty state with a symbol, a title and an optional message.
     init(symbol: String, title: String, message: String? = nil) {
       self.symbol = symbol
       self.title = title
       self.message = message
     }
 
+    /// The title, the symbol and the message in a placeholder.
     @ViewBuilder
     var body: some View {
       if #available(macOS 14, *) {
@@ -42,9 +47,12 @@
     }
   }
 
+  /// A progress indicator beside a message, for an area that is loading.
   struct LoadingStateView: View {
+    /// The message beside the indicator.
     let message: String
 
+    /// The progress indicator with the message.
     var body: some View {
       HStack(spacing: 8) {
         ProgressView()
@@ -56,11 +64,16 @@
     }
   }
 
+  /// A failure with its title, its message and a Try Again button.
   struct ServiceFailureStateView: View {
+    /// The failure's title.
     let title: String
+    /// The failure's message.
     let message: String
+    /// Runs when the user presses Try Again.
     let retry: () -> Void
 
+    /// The failure symbol, the title, the message and Try Again.
     var body: some View {
       GroupBox {
         HStack(alignment: .top, spacing: 10) {
@@ -79,7 +92,8 @@
           }
           Spacer(minLength: 0)
         }.padding(4)
-      }.ojdAccessibilityLabel(title).ojdAccessibilityValue(message)
+      }.accessibilityElement(children: .contain).ojdAccessibilityLabel(title)
+        .ojdAccessibilityValue(message)
     }
   }
 

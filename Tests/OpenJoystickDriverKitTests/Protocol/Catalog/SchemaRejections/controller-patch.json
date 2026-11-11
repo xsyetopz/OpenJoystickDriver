@@ -1,0 +1,361 @@
+{
+  "cases": [
+    {
+      "name": "remove path outside the record schema",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 616
+        },
+        "remove": [
+          "bogus.key"
+        ]
+      }
+    },
+    {
+      "name": "remove path of a header key",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 616
+        },
+        "remove": [
+          "apiVersion"
+        ]
+      }
+    },
+    {
+      "name": "remove path with an empty key",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 616
+        },
+        "remove": [
+          "usb..interface"
+        ]
+      }
+    },
+    {
+      "name": "remove path with a trailing dot",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 616
+        },
+        "remove": [
+          "usb."
+        ]
+      }
+    },
+    {
+      "name": "remove path that is empty",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 616
+        },
+        "remove": [
+          ""
+        ]
+      }
+    },
+    {
+      "name": "remove path of an unknown tuning key",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 616
+        },
+        "remove": [
+          "tuning.bogus"
+        ]
+      }
+    },
+    {
+      "name": "remove path listed twice",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 616
+        },
+        "remove": [
+          "usb",
+          "usb"
+        ]
+      }
+    },
+    {
+      "name": "remove list that is empty",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 616
+        },
+        "remove": []
+      }
+    },
+    {
+      "name": "remove entry that is not text",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 616
+        },
+        "remove": [
+          1
+        ]
+      }
+    },
+    {
+      "name": "remove list that is not a list",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 616
+        },
+        "remove": "usb"
+      }
+    },
+    {
+      "name": "no patch and no remove",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 1356,
+          "productID": 616
+        }
+      }
+    },
+    {
+      "name": "all patch that removes a section",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "all": true
+        },
+        "remove": [
+          "usb"
+        ]
+      }
+    },
+    {
+      "name": "all patch that removes a nested path outside tuning",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "all": true
+        },
+        "remove": [
+          "usb.interface"
+        ]
+      }
+    },
+    {
+      "name": "all patch that removes the whole tuning",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "all": true
+        },
+        "remove": [
+          "tuning"
+        ]
+      }
+    },
+    {
+      "name": "patch that sets the vendor ID",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "patch": {
+          "vendorID": 4660
+        }
+      }
+    },
+    {
+      "name": "patch that sets the product ID",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "patch": {
+          "productID": 1
+        }
+      }
+    },
+    {
+      "name": "patch mode with no id",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "patch": {
+          "modes": [
+            {
+              "protocol": {
+                "family": "HIDDescriptor"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "patch mode with an unknown key",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "patch": {
+          "modes": [
+            {
+              "id": "hid",
+              "family": "HIDDescriptor"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "patch mode with an id that is not lowercase words",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "patch": {
+          "modes": [
+            {
+              "id": "Hid_Mode"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "remove path of a mode with an id that is not lowercase words",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "remove": [
+          "modes.Hid_Mode"
+        ]
+      }
+    },
+    {
+      "name": "remove path below a mode",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "remove": [
+          "modes.hid.match"
+        ]
+      }
+    },
+    {
+      "name": "remove path of a mode id that starts with a digit",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "ControllerPatch",
+        "selector": {
+          "vendorID": 13623,
+          "productID": 4130
+        },
+        "remove": [
+          "modes.1hid"
+        ]
+      }
+    }
+  ]
+}

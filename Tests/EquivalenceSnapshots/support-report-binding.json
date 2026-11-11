@@ -1,6 +1,6 @@
 {
   "data" : {
-    "apiVersion" : "openjoystickdriver/v1alpha1",
+    "apiVersion" : "openjoystickdriver/v1alpha3",
     "applicationService" : {
       "connected" : true,
       "installed" : true
@@ -45,7 +45,7 @@
         "inputEndpoint" : 129,
         "inputHealth" : {
           "recoveryCount" : 0,
-          "state" : "Healthy"
+          "state" : "AwaitingInput"
         },
         "name" : "Controller 1234:5678",
         "needsSetConfiguration" : true,
@@ -200,7 +200,7 @@
     ]
   },
   "datacontenttype" : "application/json",
-  "dataschema" : "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/report.schema.json#/$defs/supportDiagnosticData",
+  "dataschema" : "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/report.schema.json#/$defs/supportDiagnosticData",
   "id" : "fixture",
   "source" : "urn:openjoystickdriver:support",
   "specversion" : "1.0",

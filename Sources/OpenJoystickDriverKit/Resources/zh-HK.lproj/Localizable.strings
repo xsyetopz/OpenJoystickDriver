@@ -1,5 +1,17 @@
 /* Product name in the title of the application menu of the menu bar. It stays OpenJoystickDriver in every language. */
 "term.app.name" = "OpenJoystickDriver";
+/* Name of a destination that opens an application. %@ is the bundle identifier of the application. */
+"ui.mapping.openApplication" = "打開 %@";
+/* Name of a destination that opens a URL. %@ is the URL. */
+"ui.mapping.openURL" = "打開 URL %@";
+/* Name of a destination that runs a Shortcut. Shortcuts is the Apple app. %@ is the name of the shortcut. */
+"ui.mapping.runShortcut" = "執行捷徑 %@";
+/* Name of a system action destination. %@ is the name of the action, such as Mission Control. */
+"ui.mapping.systemAction" = "系統動作 %@";
+/* Name of a system key destination, such as volume up. %@ is the name of the key. */
+"ui.mapping.systemKey" = "系統按鍵 %@";
+/* Name of a destination that types text. %@ is the text. */
+"ui.mapping.typeText" = "輸入 %@";
 /* Button of the problem banner in the Access area that quits and opens the app again so that a granted permission takes effect. OpenJoystickDriver is the product name. */
 "ui.permissions.restartApplication" = "重新啟動 OpenJoystickDriver";
 /* Menu item in the application menu that opens the project page on GitHub. GitHub is a product name and stays as written. */
@@ -50,6 +62,8 @@
 "status.allowed" = "已允許";
 /* Value of a permission row in the Access area when the active profiles do not use the permission. */
 "status.notNeeded" = "不需要";
+/* Line of the profile activation alert and of 'ojd profile activate' that names the permissions that the actions of the profile need and that are not granted. %@ is the permission names, separated by commas. */
+"status.missingPermissions" = "缺少的權限：%@";
 /* Placeholder in the profile creation sheet shown instead of a controller model when no controller is connected. */
 "status.connectController" = "連接控制器";
 /* Line in the menu bar menu when no profile is active. */
@@ -152,8 +166,18 @@
 "ui.controllers.deviceInUse" = "其他程式正在使用此控制器。請關閉該程式，或重新連接控制器。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose USB configuration OJD could not read. OJD tries again only when the controller reconnects, so the text asks for that. USB stays as written. */
 "ui.controllers.configurationUnreadable" = "無法讀取此控制器的 USB 組態。請重新連接控制器。";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
+"ui.controllers.bootloaderIdentity" = "此控制器處於開機載入程式模式。OJD 不會向其傳送任何資料。";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+"ui.controllers.noModeMatched" = "此控制器與其他型號共用 ID，且不符合任何支援的型號。OJD 不會向其傳送任何資料。";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected device whose ID OJD recognizes and serves nothing, such as a receiver with no controller connected. OJD sends such a device no data, and the text says so. OJD stays as written. */
+"ui.controllers.idleIdentity" = "此裝置不提供任何控制項目，例如未連接控制器的接收器。OJD 不會向其傳送任何資料。";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "電池";
+/* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */
+"ui.controllers.paused.label" = "重新對應";
+/* Value of the pause fact in the Controllers detail, and menu bar menu row under a controller that a Pause assignment holds. */
+"ui.controllers.paused.value" = "已暫停";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "顯示序號";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */
@@ -183,7 +207,7 @@
 /* Label of the fact in the Controllers detail that shows the USB vendor ID and product ID. VID and PID are the usual short names. */
 "ui.controllers.usbIdentifier" = "USB VID/PID";
 /* VoiceOver sentence while the app checks which profile is active for the controller. */
-"ui.controllers.profileCheckingSentence" = "正在檢查使用中的設定檔。";
+"ui.controllers.profileCheckingSentence" = "正在檢查使用中的設定檔…";
 /* VoiceOver sentence when the controller has no active profile. */
 "ui.controllers.noActiveProfileSentence" = "沒有使用中的設定檔。";
 /* VoiceOver sentence that names the active profile. %@ is the profile name. The sentence ends with a period. */
@@ -311,11 +335,9 @@
 /* Status in the capture assignment sheet before the capture starts. */
 "ui.capture.ready" = "已準備好聆聽。";
 /* Status in the capture assignment sheet while the app waits for a controller control. */
-"ui.capture.listening" = "正在聆聽控制器控制項。";
+"ui.capture.listening" = "正在聆聽控制器控制項…";
 /* VoiceOver announcement while the app waits for a controller control. Escape is the name of the Escape key. */
-"ui.capture.listeningCancel" = "正在聆聽控制器控制項。按 Esc 鍵可取消。";
-/* Status text in the capture assignment sheet while the app waits for a controller control. Keep the three dots. */
-"ui.capture.listeningEllipsis" = "正在聆聽控制器控制項…";
+"ui.capture.listeningCancel" = "正在聆聽控制器控制項…按 Esc 鍵可取消。";
 /* Status in the capture assignment sheet after a control is detected. %@ is the name of the control. The sentence ends with a period. */
 "ui.capture.detected" = "已偵測到：%@。";
 /* Label with the detected control in the capture assignment sheet. %@ is the name of the control. It has no final period because other text follows or the label stands alone. */
@@ -384,8 +406,12 @@
 "ui.profiles.addLayer" = "加入層";
 /* Title of the sheet that adds an assignment to a layer. %@ is the name of the layer. */
 "ui.profiles.addLayerAssignment" = "將對應加入 %@";
+/* Button in the behavior sheet that adds an entry for a tap count, such as a triple tap, to the control. */
+"ui.profiles.addMultiTap" = "加入輕點次數";
 /* Button of the combination sheet that adds a sequence. A sequence is a set of controls pressed one after the other. */
 "ui.profiles.addSequence" = "加入序列";
+/* Heading in the behavior sheet of the entries that send another destination when the control is tapped two to five times. */
+"ui.profiles.multiTap" = "多次輕點";
 /* Title of the empty state in the profile editor when the profile has no assignment. */
 "ui.profiles.noAssignments" = "尚無對應";
 /* Instruction in the empty state of the profile editor. The destination is a key, a mouse button or a pointer movement. */
@@ -412,6 +438,16 @@
 "ui.profiles.changedElsewhere" = "設定檔已在其他位置更改。";
 /* Error in the profile editor when the service saved the profile but the app cannot read the state afterwards. */
 "ui.profiles.savedButUnavailable" = "設定檔已儲存，但其最新狀態無法使用。";
+/* Label of the picker in the behavior sheet that sets how many taps of a control fire an entry. The choices are the numbers 2 to 5. */
+"ui.profiles.tapCount" = "輕點次數";
+/* Note in the behavior sheet under the tap-count entries. %@ is the longest tap window with its unit, such as 300 ms; the assignment's own destination fires only after that wait. */
+"ui.profiles.tapDelay" = "基本目標最多可能等待 %@";
+/* Label of the field in the behavior sheet that sets the time from the press to the first repeat of turbo. The value is in milliseconds. */
+"ui.profiles.turboDelay" = "首次重複前的延遲";
+/* Switch in the behavior sheet that makes turbo stop after a number of repeats. */
+"ui.profiles.turboLimit" = "限制重複次數";
+/* Label of the field in the behavior sheet that sets how many repeats turbo makes after the press before it stops. The value is a number. */
+"ui.profiles.turboMax" = "最大重複次數";
 /* Save status of the profile editor: there are changes that are not saved. */
 "ui.profiles.unsaved" = "未儲存的更改";
 /* Save status of the profile editor while the profile is being saved. Keep the three dots. */
@@ -462,8 +498,6 @@
 "ui.profiles.details" = "設定檔詳細資料";
 /* Note on an assignment row when the controller or its protocol cannot do what the assignment needs. */
 "ui.profiles.notSupportedByController" = "此控制器或協定不支援。";
-/* Label of the field in the behavior sheet for the destination of a double tap of a control. */
-"ui.profiles.doubleTap" = "點兩下";
 /* Toolbar button in the Profiles area that exports the profile to a file. */
 "ui.profiles.export" = "匯出設定檔";
 /* Option of the activation popup in the layer sheet: the layer is on while the control is held. */
@@ -504,7 +538,7 @@
 "ui.profiles.sequenceWindow" = "完成時間窗口";
 /* Heading of the sequences section in the profile editor. */
 "ui.profiles.sequences" = "序列";
-/* Label of the field in the behavior sheet that sets the time within which a second tap counts as a double tap. The value is in milliseconds. */
+/* Label of the field in the behavior sheet that sets the time from one tap's release to the next press within which the taps of a tap-count entry count together. The value is in milliseconds. */
 "ui.profiles.tapWindow" = "輕點時間窗口";
 /* Label of the popup in the profile creation sheet that picks which apps the profile applies to. */
 "ui.profiles.target" = "目標";
@@ -512,6 +546,14 @@
 "ui.profiles.targetApplication" = "單一 App";
 /* Option of the target popup: the profile applies to all apps. */
 "ui.profiles.targetGlobal" = "所有 App";
+/* Label of the popup in the profile creation sheet that picks what the new profile starts from. */
+"ui.profiles.template" = "範本";
+/* Option of the template popup in the profile creation sheet: the profile starts empty. */
+"ui.profiles.templateEmpty" = "空白";
+/* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
+"ui.profiles.templateGyroStick" = "陀螺儀轉搖桿";
+/* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
+"ui.profiles.templateNoMotion" = "%@ 沒有動作感應器。";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "切換";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -570,8 +612,32 @@
 "ui.mapping.axisDirection" = "%1$@ %2$@";
 /* Name of a mouse button destination. %@ is the button, for example left or right. */
 "ui.mapping.mouseButton" = "滑鼠「%@」按鈕";
+/* Name of a MIDI note destination. %1$@ is the note number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiNote" = "MIDI 音符 %1$@，頻道 %2$@";
+/* Name of a MIDI control change destination. %1$@ is the controller number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiControlChange" = "MIDI 控制器 %1$@，頻道 %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "指標 %@ 移動";
+/* Name of a pointer position destination. %@ is the axis whose value places the pointer across the main display. */
+"ui.mapping.pointerPosition" = "指標 %@ 位置";
+/* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
+"ui.mapping.profileNext" = "下一個設定檔";
+/* Name of the destination that activates the previous profile of the controller's model and scope in name order, wrapping at the start. */
+"ui.mapping.profilePrevious" = "上一個設定檔";
+/* Name of the destination that activates a specific profile of the same controller model. */
+"ui.mapping.profileSwitch" = "切換設定檔";
+/* Name of the destination that turns a layer on. %@ is the layer name. */
+"ui.mapping.layerOn" = "開啟層 %@";
+/* Name of the destination that turns a layer off. %@ is the layer name. */
+"ui.mapping.layerOff" = "關閉層 %@";
+/* Name of the destination that flips a layer between on and off. %@ is the layer name. */
+"ui.mapping.layerToggle" = "切換層 %@";
+/* Name of the destination that pauses the controller so its input passes through unmapped. */
+"ui.mapping.pauseOn" = "暫停控制器";
+/* Name of the destination that resumes a paused controller so its mappings apply again. */
+"ui.mapping.pauseOff" = "恢復控制器";
+/* Name of the destination that flips the controller between paused and resumed. */
+"ui.mapping.pauseToggle" = "切換暫停";
 /* Name of a scroll destination. %@ is the direction of the scroll. */
 "ui.mapping.scroll" = "捲動 %@";
 /* Name of the bottom face button: A on Xbox, Cross on PlayStation. The slash stays. */
@@ -606,6 +672,14 @@
 "ui.mapping.touchGridCell" = "%1$@ 網格 %2$d×%3$d 儲存格 %4$d,%5$d";
 /* Name of a touch swipe as a control. %1$@ is the touch surface and %2$@ is the swipe direction. */
 "ui.mapping.touchSwipe" = "%1$@ 滑動 %2$@";
+/* Name of a stick ring as a control. %1$@ is the stick, %2$.2f is the inner radius and %3$.2f is the outer radius, both from 0 to 1. */
+"ui.mapping.stickRegion" = "%1$@環形區 %2$.2f 至 %3$.2f";
+/* Name of a stick ring with a sector as a control. %1$@ is the stick, %2$.2f is the inner radius, %3$.2f is the outer radius, %4$.0f is the sector start and %5$.0f is the sector end, both in degrees clockwise from up. */
+"ui.mapping.stickRegionSector" = "%1$@環形區 %2$.2f 至 %3$.2f，%4$.0f° 至 %5$.0f°";
+/* Name of a trigger pressure band as a control. %1$@ is the trigger, %2$.2f is the start and %3$.2f is the end of the band, both from 0 to 1. */
+"ui.mapping.triggerBand" = "%1$@區間 %2$.2f 至 %3$.2f";
+/* Name of a touch area as a control. %1$@ is the touch surface, %2$.2f is the left edge, %3$.2f is the top edge, %4$.2f is the width and %5$.2f is the height, all as fractions of the surface. The multiplication sign stays between the width and the height. */
+"ui.mapping.touchArea" = "%1$@區域 %2$.2f、%3$.2f、%4$.2f×%5$.2f";
 /* Option of the touch surface popup: the main touch surface of the controller. */
 "ui.mapping.touchSurfacePrimary" = "主要表面";
 /* Option of the touch surface popup: the left touch surface of the controller. */
@@ -634,6 +708,74 @@
 "ui.profiles.touch.stickRadius" = "搖桿全幅半徑（表面比例）";
 /* Label of the field in the touch sheet that sets the stick deadzone. The deadzone is the part of the travel near the center that is ignored. */
 "ui.profiles.touch.deadzone" = "搖桿死區";
+/* Title of the row of the Controller section and of the sheet that adds a stick ring, trigger band or touch area as an assignment. */
+"ui.profiles.region.title" = "區域";
+/* Summary under the regions row of the Controller section: what a region is. */
+"ui.profiles.region.summary" = "搖桿環形區、扳機區間與觸控區域";
+/* Label of the segmented control in the regions sheet that picks between a stick ring, a trigger band and a touch area. */
+"ui.profiles.region.kind" = "區域類型";
+/* Segment of the region type control in the regions sheet: a ring around the center of a stick. */
+"ui.profiles.region.stick" = "搖桿環形區";
+/* Segment of the region type control in the regions sheet: a band of the pull of a trigger. */
+"ui.profiles.region.trigger" = "扳機區間";
+/* Segment of the region type control in the regions sheet: a rectangle of a touch surface. */
+"ui.profiles.region.touch" = "觸控區域";
+/* Label of the popup in the regions sheet that picks the stick, trigger or touch surface that the region reads. */
+"ui.profiles.region.input" = "輸入";
+/* Label of the field in the regions sheet that sets where a stick ring starts, from 0 at the center to 1 at the edge. */
+"ui.profiles.region.innerRadius" = "內半徑 (0...1)";
+/* Label of the field in the regions sheet that sets where a stick ring ends, from 0 at the center to 1 at the edge. */
+"ui.profiles.region.outerRadius" = "外半徑 (0...1)";
+/* Label of the field in the regions sheet that sets the start of the sector of a stick ring, in degrees clockwise from up. Leaving it and the end empty makes a full ring. */
+"ui.profiles.region.fromDegrees" = "扇區起點（從上方起算的角度；留空為整環）";
+/* Label of the field in the regions sheet that sets the end of the sector of a stick ring, in degrees clockwise from up. */
+"ui.profiles.region.toDegrees" = "扇區終點（從上方起算的角度）";
+/* Label of the field in the regions sheet that sets where a trigger band starts, from 0 for released to 1 for fully pulled. */
+"ui.profiles.region.from" = "區間起點 (0...1)";
+/* Label of the field in the regions sheet that sets where a trigger band ends, from 0 for released to 1 for fully pulled. */
+"ui.profiles.region.to" = "區間終點 (0...1)";
+/* Label of the field in the regions sheet that sets the left edge of a touch area as a fraction of the surface width. */
+"ui.profiles.region.x" = "左邊緣（佔表面的比例）";
+/* Label of the field in the regions sheet that sets the top edge of a touch area as a fraction of the surface height. */
+"ui.profiles.region.y" = "上邊緣（佔表面的比例）";
+/* Label of the field in the regions sheet that sets the width of a touch area as a fraction of the surface width. */
+"ui.profiles.region.width" = "寬度（佔表面的比例）";
+/* Label of the field in the regions sheet that sets the height of a touch area as a fraction of the surface height. */
+"ui.profiles.region.height" = "高度（佔表面的比例）";
+/* Heading of the drawing in the regions sheet that shows where the stick, trigger or touch is now. */
+"ui.profiles.region.live" = "即時位置";
+/* Note in the regions sheet shown while no controller is connected, so there is no live position. */
+"ui.profiles.region.noController" = "連接控制器後即可查看即時位置。";
+/* Line under the live position of the touch area in the regions sheet while nothing touches the surface. */
+"ui.profiles.region.noContact" = "無觸控";
+/* Line under the live stick position in the regions sheet. %1$.2f is the deflection from 0 to 1 and %2$.0f is the angle in degrees clockwise from up. */
+"ui.profiles.region.liveStick" = "偏轉 %1$.2f，角度 %2$.0f°";
+/* Line under the live trigger position in the regions sheet. %.2f is the pull from 0 to 1. */
+"ui.profiles.region.liveTrigger" = "按下 %.2f";
+/* Line under the live touch position in the regions sheet. %1$.2f is the horizontal and %2$.2f is the vertical position, both as fractions of the surface. */
+"ui.profiles.region.liveTouch" = "觸控位置 %1$.2f、%2$.2f";
+/* Title of the sheet that sets the pointer speed of a profile, and label of its row in the controller section. The pointer speed scales all pointer movement. */
+"ui.profiles.pointerSpeed.title" = "指標速度";
+/* Label of the switch in the pointer speed sheet that turns on scaling of the pointer movement. */
+"ui.profiles.pointerSpeed.enabled" = "縮放指標速度";
+/* Label of the popup in the pointer speed sheet that picks the control whose value sets the scale. */
+"ui.profiles.pointerSpeed.driver" = "驅動";
+/* Option of the driver popup in the pointer speed sheet: the value of a trigger sets the scale. Also the summary of the pointer speed row when a trigger drives it. */
+"ui.profiles.pointerSpeed.driverTrigger" = "扳機";
+/* Option of the driver popup in the pointer speed sheet: how far a stick is pushed from the center sets the scale. Also the summary of the pointer speed row when a stick drives it. */
+"ui.profiles.pointerSpeed.driverStickDepth" = "搖桿幅度";
+/* Label of the popup in the pointer speed sheet that picks the left or the right trigger or stick as the driver. */
+"ui.profiles.pointerSpeed.side" = "側";
+/* Option of the side popup in the pointer speed sheet: the left trigger or stick. */
+"ui.profiles.pointerSpeed.sideLeft" = "左";
+/* Option of the side popup in the pointer speed sheet: the right trigger or stick. */
+"ui.profiles.pointerSpeed.sideRight" = "右";
+/* Label of the field in the pointer speed sheet that sets the pointer scale while the driver is at rest. The scale multiplies the pointer movement. */
+"ui.profiles.pointerSpeed.minScale" = "0 時的縮放";
+/* Label of the field in the pointer speed sheet that sets the pointer scale while the trigger is fully pulled or the stick is at its rim. The scale multiplies the pointer movement. */
+"ui.profiles.pointerSpeed.maxScale" = "1 時的縮放";
+/* Line in the pointer speed sheet that shows the scale the pointer has now. %@ is the scale, a number. */
+"ui.profiles.pointerSpeed.live" = "目前縮放：%@";
 /* Label of the stepper that sets the number of columns of a touch grid in the capture assignment sheet. %d is the number of columns. */
 "ui.capture.touchColumns" = "網格欄數：%d";
 /* Label of the stepper that sets the number of rows of a touch grid in the capture assignment sheet. %d is the number of rows. */
@@ -702,6 +844,10 @@
 "term.keyboardPointer" = "鍵盤與指標";
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "輔助使用";
+/* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
+"platform.macos.term.postEventAccess" = "Post Event 取用權限";
+/* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
+"platform.macos.term.automationAccess" = "自動化取用權限";
 /* Button of the combination sheets that adds the chosen entry to the combination. */
 "action.add" = "加入";
 /* Button of the input test window that sends the chosen player indicator or lightbar color to the controller. */
@@ -745,7 +891,7 @@
 /* Message about a request to the system extension manager that failed. %1$@ is the error domain, %2$d is the error code and %3$@ is the description from the system. Keep code= as written. */
 "cli.transportExtension.group.failed" = "系統延伸功能要求失敗：%1$@ code=%2$d %3$@";
 /* Message when the system extension manager replaces an installed driver extension. %1$@ is the extension bundle identifier, %2$@ is the installed version and %3$@ is the version that replaces it. Keep the v before the numbers. */
-"cli.transportExtension.group.replacing" = "正在將 %1$@ v%2$@ 取代為 v%3$@。";
+"cli.transportExtension.group.replacing" = "正在將 %1$@ v%2$@ 取代為 v%3$@…";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller, which OJD reads by the layout its HID report descriptor declares. Keep HID as written. */
 "term.protocolFamily.hidDescriptor" = "通用 HID";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller whose input report layout comes from its controller record, the file OJD keeps for each controller model. Keep HID as written. */
@@ -756,6 +902,8 @@
 "term.protocolFamily.nintendoSwitch2" = "Nintendo Switch 2";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a wired Switch controller that sends input reports and takes no commands. Keep Nintendo Switch as written. */
 "term.protocolFamily.nintendoSwitchInputOnly" = "Nintendo Switch（僅輸入）";
+/* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the Wii Remote protocol, used by the Wii Remote and the Wii U Pro Controller over Bluetooth. Nintendo Wii Remote is a brand and product name: keep it as written. */
+"term.protocolFamily.nintendoWii" = "Nintendo Wii Remote";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controller of the PlayStation 5, which Sony names DualSense. Sony DualSense is a brand and product name: keep it as written. */
 "term.protocolFamily.sonyDualSense" = "Sony DualSense";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controller of the PlayStation 4, which Sony names DualShock 4. Sony DualShock 4 is a brand and product name: keep it as written. */
@@ -801,7 +949,7 @@
 /* Label in the controller summary of the developer tools. The value is a list of the pressed buttons. */
 "ui.developer.buttons" = "按鈕";
 /* Status next to the Start Capture button while the packet capture runs. */
-"ui.developer.capturing" = "正在擷取";
+"ui.developer.capturing" = "正在擷取…";
 /* Label of the connection kind in the controller summary of the developer tools, for example USB or Bluetooth. */
 "ui.developer.connection" = "連線";
 /* Label of the controller name in the controller summary of the developer tools. */
@@ -869,7 +1017,7 @@
 /* Label of the USB vendor and product ID in the controller summary of the developer tools. */
 "ui.developer.usbID" = "USB ID";
 /* Message in the packet list of the developer tools while a capture waits for packets. */
-"ui.developer.waitingForPackets" = "正在等候 USB 封包。請按控制器上的按鈕。";
+"ui.developer.waitingForPackets" = "正在等候 USB 封包…請按控制器上的按鈕。";
 /* Heading of the soak test section in the developer tools. A soak test measures the service over a long time. */
 "ui.developer.soakTest" = "耐久測試";
 /* Description of the soak test section in the developer tools. The test samples memory, file descriptors and CPU of the service. */
@@ -970,6 +1118,8 @@
 "ui.inputTest.playerIndicator" = "玩家指示燈";
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "已按下";
+/* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
+"ui.inputTest.receiving" = "正在等待操作…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "已放開";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */
@@ -1061,7 +1211,7 @@
 /* Detail line of the problem banner when the driver extension waits for approval. System Settings is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. */
 "platform.macos.ui.setup.approvalDetail" = "請在系統設定中核准驅動程式，以使用支援的 Microsoft USB 控制器。";
 /* Detail line in the Driver section of the settings window while the app checks the driver extension for Xbox USB controllers. */
-"ui.setup.checkingDetail" = "正在檢查已安裝的 Xbox USB 驅動程式。";
+"ui.setup.checkingDetail" = "正在檢查已安裝的 Xbox USB 驅動程式…";
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "Xbox USB 驅動程式";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
@@ -1078,6 +1228,28 @@
 "ui.setup.uninstallDetail" = "在重新安裝驅動程式之前，Xbox USB 控制器將無法運作。";
 /* Button of the problem banner that repairs the driver extension for Xbox USB controllers. */
 "ui.setup.repairDriver" = "修復 Xbox USB 驅動程式";
+/* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
+"platform.macos.cli.controller.show.labelServedBy" = "原生驅動程式";
+/* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
+"platform.macos.cli.controller.show.servedByMacOS" = "由 macOS 提供服務。執行 `ojd controller claim %@` 以啟用延伸功能並接管此控制器。";
+/* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
+"platform.macos.ui.controllers.servedByMacOS" = "由 macOS 提供服務";
+/* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
+"platform.macos.ui.controllers.servedByMacOSDetail" = "Apple 的驅動程式正在佔用此控制器。接管後即可啟用 OpenJoystickDriver 延伸功能。";
+/* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
+"ui.controllers.claim" = "接管";
+/* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.runningDetail" = "正在安裝 Xbox USB 驅動程式…";
+/* Disabled button of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.repairRunning" = "正在修復…";
+/* Detail line of the problem banner when the state of the driver extension for Xbox USB controllers cannot be read. The banner has no button then. */
+"ui.setup.unavailableDetail" = "無法讀取 Xbox USB 驅動程式的狀態，因此無法傳送要求。";
+/* Detail line of the problem banner when the request for the driver extension failed. %1$@ is the error domain, %2$lld is the error code and %3$@ is the error text. */
+"ui.setup.failedDetail" = "Xbox USB 驅動程式要求失敗：%3$@（%1$@，代碼 %2$lld）。";
+/* Detail line of the problem banner when the request for the driver extension was cancelled. The Try Again button follows. */
+"ui.setup.cancelledDetail" = "Xbox USB 驅動程式要求已取消。請重試以安裝驅動程式。";
+/* Detail line of the problem banner when the system did not answer the request for the driver extension in time. The Try Again button follows. */
+"ui.setup.timedOutDetail" = "系統未及時回應 Xbox USB 驅動程式要求。請重試。";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver 無法連線至其服務";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
@@ -1221,6 +1393,12 @@
 /* Name of the click of the right trackpad of a controller. */
 "ui.mapping.rightPadClick" = "右觸控板點按";
 
+/* Name of the touch sensor on the grip on the back of a controller on the left side. */
+"ui.mapping.leftGripTouch" = "左握把觸控";
+
+/* Name of the touch sensor on the grip on the back of a controller on the right side. */
+"ui.mapping.rightGripTouch" = "右握把觸控";
+
 /* Title of the sheet that tunes the motion sensor of a controller in a profile. */
 "ui.profiles.motion.title" = "體感調校";
 /* Label of the popup in the motion sheet that picks the coordinate space of the motion. */
@@ -1255,7 +1433,7 @@
 /* Hint under the motion calibration controls of the input test window: keep the controller still on a surface while the gyro bias, the small constant rotation the sensor reports at rest, is collected. */
 "ui.motion.calibration.instructions" = "收集陀螺儀偏差時，請保持控制器靜止。";
 /* Status line in the motion calibration controls while the service collects gyro bias samples. Bias is the constant rotation offset of the gyro sensor at rest. */
-"ui.motion.calibration.collecting" = "正在收集偏差";
+"ui.motion.calibration.collecting" = "正在收集偏差…";
 /* Status line in the motion calibration controls when the user paused collecting gyro bias samples by hand. */
 "ui.motion.calibration.paused" = "手動收集已暫停";
 /* Line in the motion calibration controls that shows the gyro bias found so far, in degrees per second. %1$.3f, %2$.3f and %3$.3f are the X, Y and Z components. Keep the axis letters and the unit. */
@@ -1272,7 +1450,7 @@
 /* Guidance in the motion calibration controls when the controller has no usable motion data: turn on a profile for this controller and check that motion data is available. */
 "ui.motion.calibration.motionUnavailable" = "請為這個控制器啟用重新對應設定檔，並確認體感可用。";
 /* Status line in the motion calibration controls while the service has no motion samples yet; Refresh checks again. */
-"ui.motion.calibration.waiting" = "正在等待體感樣本。重新整理以再次檢查。";
+"ui.motion.calibration.waiting" = "正在等待體感樣本…重新整理以再次檢查。";
 /* Note in the motion calibration controls: collecting gyro bias keeps running in the service after the window closes, and the Pause button stops it. */
 "ui.motion.calibration.continues" = "關閉此視窗後仍會繼續收集。使用「暫停」停止收集。";
 
@@ -1523,6 +1701,22 @@
 "ui.profiles.physical.startPosition" = "阻力開始";
 /* Label of the slider in the output destination editor that sets how strong the resistance of the adaptive trigger is. */
 "ui.profiles.physical.strength" = "抗力強度";
+/* Label of the text field in the output destination editor for the phrase that a Speak destination says. */
+"ui.profiles.speak.text" = "文字";
+/* Label of the text field in the output destination editor for the identifier of the voice that a Speak destination uses. */
+"ui.profiles.speak.voice" = "語音識別碼";
+/* Placeholder of the voice field in the output destination editor when a Speak destination uses the system voice. */
+"ui.profiles.speak.voicePlaceholder" = "系統語音";
+/* Phrase that a new Speak destination says until the user changes it. */
+"ui.profiles.speak.defaultText" = "你好";
+/* Label of the text field in the output destination editor for the bundle identifier of the application that an Open application destination opens. */
+"ui.profiles.system.application" = "App 識別碼";
+/* Label of the text field in the output destination editor for the address that an Open URL destination opens. */
+"ui.profiles.system.url" = "URL";
+/* Label of the text field in the output destination editor for the name of the Shortcut that a Run Shortcut destination runs. */
+"ui.profiles.system.shortcut" = "捷徑名稱";
+/* Name that a new Run Shortcut destination holds until the user changes it. */
+"ui.profiles.system.defaultShortcut" = "捷徑";
 
 /* Menu item in the profile editor that removes all inputs of the profile. Keep the three dots. */
 "ui.profiles.clearInputs" = "清除所有輸入…";
@@ -1544,6 +1738,10 @@
 "ui.profiles.emptyActivationMessage" = "此設定檔會抑制所有控制器輸入。";
 /* Title of the alert shown before the app activates a profile that sends no input. */
 "ui.profiles.emptyActivationTitle" = "要啟用沒有控制器輸入的設定檔嗎？";
+/* Title of the alert shown before the app activates a profile that launches actions or needs a permission that is missing. */
+"ui.profiles.activationTitle" = "要啟用此設定檔嗎？";
+/* Part of the message of the profile activation alert. %@ is the list of actions that open applications or URLs, run shortcuts or type text, one per line. */
+"ui.profiles.activationActions" = "此設定檔會啟動以下動作：\n%@";
 /* Warning in the profile editor when the profile sends no input. */
 "ui.profiles.emptyInputWarning" = "此設定檔會抑制所有控制器輸入。";
 /* Menu item in the profile editor that sets the inputs of the profile to the default. */
@@ -1564,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "系統會在移除損壞的資料前建立備份。";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "無法讀取此已儲存的設定檔。請將其刪除，以繼續使用有效的設定檔。";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "%@ 由較早版本儲存，無法使用。請遷移它以便再次使用，或將其刪除。";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "無法讀取使用中的設定檔清單。請重設以繼續。您的設定檔會保留。";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -1644,7 +1844,7 @@
 /* Examples block at the end of the help of 'ojd binding set'. The command lines, option names and sources stay as written; translate only the lines that start with #. */
 "cli.binding.set.examples" = "範例：\n  # 按住南鍵時按住空白鍵\n  ojd binding set Racing button:south key:space\n  # 每按一次切換 J 的開關\n  ojd binding set Racing button:west key:key-j --behavior toggle\n  # 按住時每秒重複 J 10 次\n  ojd binding set Racing button:west key:key-j --turbo-rate 10 --turbo-duty 0.5";
 /* Examples block at the end of the help of 'ojd record install'. The command lines and file names stay as written; translate only the lines that start with #. */
-"cli.record.install.examples" = "範例：\n  # 安裝記錄檔\n  ojd record install 045E-028E.json\n  # 從標準輸入讀取記錄\n  ojd record install - < 045E-028E.json";
+"cli.record.install.examples" = "範例：\n  # 安裝記錄檔\n  ojd record install 045e-028e.plist\n  # 從標準輸入讀取記錄\n  ojd record install - < 045e-028e.plist";
 /* Examples block at the end of the help of 'ojd access grant'. The command lines and option names stay as written; translate only the lines that start with #. */
 "cli.access.grant.examples" = "範例：\n  # 允許某個程式使用服務\n  ojd access grant /Applications/Example.app\n  # 為來自某個來源的頁面建立權杖\n  ojd access grant --token overlay --origin http://127.0.0.1:8080";
 /* One-line summary of 'ojd service' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
@@ -1829,6 +2029,16 @@
 "cli.access.web.portRange" = "--port 必須介於 1024 和 65535 之間。";
 /* One-line summary of 'ojd diagnose' in the command list and at the top of its help. */
 "cli.diagnose.group.abstract" = "執行所有檢查並回報問題。";
+/* Detail of the input mapping check of 'ojd diagnose' when no connected controller has a rejected database line. SDL_GameControllerDB is a project name and stays as written. */
+"cli.diagnose.group.inputMappingApplied" = "沒有被拒絕的 SDL_GameControllerDB 行";
+/* Detail of the input mapping check of 'ojd diagnose' for one controller whose database line was rejected. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller name, %2$@ is the reason in English and %3$@ is the error code, which stays as written. */
+"cli.diagnose.group.inputMappingRejected" = "%1$@ 的 SDL_GameControllerDB 行被拒絕：%2$@（%3$@）";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no 057E:2009 controller is connected. 057E:2009 stays as written. */
+"cli.diagnose.group.switchSerialNone" = "未連接 057E:2009 控制器";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no connected 057E:2009 controller reports the serial 000000000001. 057E:2009 and the serial stay as written. */
+"cli.diagnose.group.switchSerialOther" = "沒有 057E:2009 控制器回報序號 000000000001";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' for one controller. Nintendo Switch Pro Controller is a product name and stays as written. %1$@ is the controller name, %2$@ is the VID:PID and %3$@ is the serial number, both of which stay as written. */
+"cli.diagnose.group.switchSerialPlaceholder" = "%1$@ 回報了 %2$@ 和序號 %3$@，這是 Nintendo Switch Pro Controller 的識別資訊和序號；其他控制器也可能回報相同的序號。OpenJoystickDriver 會將其視為 Pro Controller。";
 /* Help text of the --output option of 'ojd diagnose'. A support bundle is a file with the diagnostic report for a bug report. */
 "cli.diagnose.group.output" = "同時將支援套件寫入此檔案。";
 /* Error of 'ojd diagnose --output' when the support bundle could not be written. %@ is the reason from the system. --output stays as written. */
@@ -2045,8 +2255,8 @@
 "cli.permission.request.unknownId" = "未知的權限「%1$@」。請使用 %2$@。";
 /* One-line summary of 'ojd config' in the command list and at the top of its help. */
 "cli.config.group.abstract" = "顯示或變更 OpenJoystickDriver 套用的設定，以及設定每個值的層級。";
-/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.json is a file name that stays as written. */
-"cli.config.group.discussion" = "值按層級疊加，由最低層開始：驅動程式預設值、內建記錄、套件記錄、all.patch.json、您的記錄、使用中的描述檔。每個調校鍵取設定它的最高層級的值。";
+/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.plist is a file name that stays as written. */
+"cli.config.group.discussion" = "值按層級疊加，由最低層開始：驅動程式預設值、內建記錄、套件記錄、all.patch.plist、您的記錄、使用中的描述檔。每個調校鍵取設定它的最高層級的值。";
 /* Help text of the --controller option of 'ojd config set' and 'ojd config unset'. VVVV:PPPP stands for the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.config.group.controller" = "僅變更此控制器型號，格式為 VVVV:PPPP，而非所有控制器。";
 /* Error of 'ojd config set' and 'ojd config unset' when a record cannot take the change. %1$@ is the tuning key and %2$@ is the description of the problem. */
@@ -2065,20 +2275,20 @@
 "cli.config.show.controller" = "以 VVVV:PPPP 的形式顯示單一控制器的有效調校，而非全域預設值。";
 /* Warning printed by 'ojd config show' when a part of the defaults file is invalid. %1$@ is the file path and %2$@ is the description of the problem. */
 "cli.config.show.defaultsIgnored" = "已忽略 %1$@：%2$@";
-/* Long description in the help of 'ojd config show'. --controller and all.patch.json stay as written. */
-"cli.config.show.discussion" = "不帶 --controller 時，列印所有調校鍵及其在 all.patch.json 中的值，以及記錄會讀取這些鍵的系列。帶此選項時，會在內建記錄、套件記錄、all.patch.json 和您的記錄疊加後，列印該控制器的記錄。沒有任何層級設定的鍵會顯示為「驅動程式預設值」。";
+/* Long description in the help of 'ojd config show'. --controller and all.patch.plist stay as written. */
+"cli.config.show.discussion" = "不帶 --controller 時，列印所有調校鍵及其在 all.patch.plist 中的值，以及記錄會讀取這些鍵的系列。帶此選項時，會在內建記錄、套件記錄、all.patch.plist 和您的記錄疊加後，列印該控制器的記錄。沒有任何層級設定的鍵會顯示為「驅動程式預設值」。";
 /* Indented line below a tuning key of 'ojd config show' that lists the controller families whose records read the key. %@ is the comma-separated list of family names. */
 "cli.config.show.readBy" = "讀取它的系列：%@";
-/* Warning of 'ojd config show' about a key in all.patch.json that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
-"cli.config.show.unread" = "all.patch.json 設定了 %1$@，但沒有已連接的控制器讀取它。讀取它的系列：%2$@。";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoController" = "沒有已連接的控制器，因此已略過對沒有控制器讀取的 all.patch.json 鍵的檢查。";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoService" = "服務未執行，因此已略過對沒有已連接控制器讀取的 all.patch.json 鍵的檢查。";
+/* Warning of 'ojd config show' about a key in all.patch.plist that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
+"cli.config.show.unread" = "all.patch.plist 設定了 %1$@，但沒有已連接的控制器讀取它。讀取它的系列：%2$@。";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoController" = "沒有已連接的控制器，因此已略過對沒有控制器讀取的 all.patch.plist 鍵的檢查。";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoService" = "服務未執行，因此已略過對沒有已連接控制器讀取的 all.patch.plist 鍵的檢查。";
 /* One-line summary of 'ojd config set' in the command list and at the top of its help. */
 "cli.config.set.abstract" = "在您的控制器記錄中設定調校值。";
-/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.json and stickDeadzone stay as written. */
-"cli.config.set.discussion" = "把 KEY 寫入您為 --controller 所指控制器保存的記錄；不帶該選項時，寫入適用於所有控制器的 all.patch.json。記錄的規則適用：stickDeadzone 必須大於 0 且小於 1。規則拒絕的值不會變更任何內容。執行中的服務會套用變更。";
+/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.plist and stickDeadzone stay as written. */
+"cli.config.set.discussion" = "把 KEY 寫入您為 --controller 所指控制器保存的記錄；不帶該選項時，寫入適用於所有控制器的 all.patch.plist。記錄的規則適用：stickDeadzone 必須大於 0 且小於 1。規則拒絕的值不會變更任何內容。執行中的服務會套用變更。";
 /* Message printed by 'ojd config set' after it wrote a value. %1$@ is the tuning key, which stays as written, %2$@ is the value and %3$@ is the path of the record file. */
 "cli.config.set.success" = "已把 %1$@ 設為 %2$@（%3$@）。執行中的服務現在會套用它。";
 /* Help text of the VALUE argument of 'ojd config set'. */
@@ -2182,7 +2392,7 @@
 /* Message printed by 'ojd controller capture' when the capture ends without a packet. */
 "cli.controller.capture.noPackets" = "沒有收到封包。";
 /* First line of 'ojd controller capture'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
-"cli.controller.capture.started" = "正在擷取 %1$@ (%2$@) 的封包。請按控制器上的按鈕。";
+"cli.controller.capture.started" = "正在擷取 %1$@ (%2$@) 的封包…請按控制器上的按鈕。";
 /* Warning printed by 'ojd controller capture' before the packets. Packets can hold data of the user's controller. */
 "cli.controller.capture.warning" = "封包內容因控制器而異。分享前請先檢查。";
 /* One-line summary of 'ojd controller disconnect' in the command list and at the top of its help. */
@@ -2211,6 +2421,8 @@
 "cli.controller.group.featurePlayer" = "玩家指示燈";
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureRumble" = "震動馬達";
+/* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
+"cli.controller.group.featureSpeaker" = "揚聲器";
 /* One-line summary of 'ojd controller light' in the command list and at the top of its help. */
 "cli.controller.light.abstract" = "設定控制器的燈光顏色或亮度。";
 /* Help text of the --brightness option of 'ojd controller light'. LED means light-emitting diode. */
@@ -2241,12 +2453,12 @@
 "cli.controller.group.outputUnsupported" = "%1$@ 沒有 %2$@。執行「ojd controller show %3$@」查看它支援什麼。";
 /* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To serve a model means to read its input and publish it as a virtual gamepad. */
 "cli.controller.claim.abstract" = "讓 OpenJoystickDriver 處理某個控制器型號。";
-/* Long description in the help of 'ojd controller claim'. server, ojd, VVVV-PPPP.json and the record terms stay as written. */
-"platform.macos.cli.controller.claim.discussion" = "在你為該型號建立的記錄（記錄目錄中的 VVVV-PPPP.json）中將 server 設為 ojd，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
+/* Long description in the help of 'ojd controller claim'. server, ojd, vvvv-pppp.plist and the record terms stay as written. */
+"platform.macos.cli.controller.claim.discussion" = "在你為該型號建立的記錄（記錄目錄中的 vvvv-pppp.plist）中將 server 設為 ojd，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
 /* One-line summary of 'ojd controller release' in the command list and at the top of its help. */
 "platform.macos.cli.controller.release.abstract" = "把某個控制器型號交還給 macOS。";
-/* Long description in the help of 'ojd controller release'. server, system and VVVV-PPPP.json stay as written. */
-"platform.macos.cli.controller.release.discussion" = "在你為該型號建立的記錄（記錄目錄中的 VVVV-PPPP.json）中將 server 設為 system，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
+/* Long description in the help of 'ojd controller release'. server, system and vvvv-pppp.plist stay as written. */
+"platform.macos.cli.controller.release.discussion" = "在你為該型號建立的記錄（記錄目錄中的 vvvv-pppp.plist）中將 server 設為 system，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
 /* Message printed by 'ojd controller claim' and related commands with --dry-run instead of writing the record. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. */
 "cli.controller.group.serverDryRun" = "如果執行，將會把 %1$@ 設為 %2$@（%3$@）。";
 /* Error when the record file of a controller cannot be changed. %1$@ is the path of the record file and %2$@ is the description of the problem. */
@@ -2337,6 +2549,10 @@
 "cli.controller.show.labelProtocol" = "通訊協定";
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "記錄";
+/* Row label in the output of 'ojd controller show' and in the controller detail. Where the HID usage map of the controller comes from follows. */
+"cli.controller.show.labelInputMapping" = "輸入對應";
+/* Row label in the output of 'ojd controller show' and in the controller detail. The controls that the SDL_GameControllerDB line names but the driver cannot map follow. */
+"cli.controller.show.labelUnmapped" = "未對應的控制項";
 /* Row label in the output of 'ojd controller show'. The list of rumble motors the controller has follows. */
 "cli.controller.show.labelRumble" = "震動";
 /* Row label in the output of 'ojd controller show'. The state of the session follows, such as active or suspended. */
@@ -2361,6 +2577,38 @@
 "cli.controller.show.recordNone" = "無（沒有相符的記錄）";
 /* Value of the Record row of 'ojd controller show' when the record is the user's own file. %@ is the file name. */
 "cli.controller.show.recordUser" = "您的記錄，%@";
+/* Value of the Input mapping row of 'ojd controller show' and of the controller detail when a controller record sets the map. */
+"cli.controller.show.inputMappingRecord" = "記錄";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line sets the map. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingSDL" = "已從 SDL_GameControllerDB 對應（相符 %1$@，GUID %2$@）";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when the standard HID usage map applies. */
+"cli.controller.show.inputMappingStandard" = "標準 HID 用法對應";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line matched but cannot drive the controller. SDL_GameControllerDB is a project name and stays as written. %@ is the reason. */
+"cli.controller.show.inputMappingRejected" = "標準 HID 用法對應（SDL_GameControllerDB 行被拒絕：%@）";
+/* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingUnbound" = "未套用，描述元合約不符（找到 SDL_GameControllerDB 行，相符 %1$@，GUID %2$@）";
+/* One-line summary of 'ojd controller speaker' in the command list and at the top of its help. */
+"cli.controller.speaker.abstract" = "在控制器的揚聲器上播放聲音。";
+/* One-line summary of 'ojd controller speaker play' in the command list and at the top of its help. */
+"cli.controller.speaker.play.abstract" = "在控制器的揚聲器上播放 WAV 檔案。";
+/* Help text of the FILE argument of 'ojd controller speaker play'. PCM and WAV are audio format names and stay as written. */
+"cli.controller.speaker.play.file" = "要播放的未壓縮 PCM WAV 檔案。";
+/* Help text of the --volume option of 'ojd controller speaker play'. The limits 0 and 1 are fixed. */
+"cli.controller.speaker.play.volume" = "播放音量，0 至 1。";
+/* Error of 'ojd controller speaker play' when --volume is outside the allowed range. --volume stays as written. */
+"cli.controller.speaker.play.errorVolume" = "--volume 需要 0 至 1 之間的數字。";
+/* Error of 'ojd controller speaker play' when the audio file cannot be read. %1$@ is the file path and %2$@ is the reason the system gives. */
+"cli.controller.speaker.play.errorUnreadable" = "無法讀取 %1$@：%2$@";
+/* Warning of 'ojd controller speaker play' when the clip is longer than the speaker plays and is cut. %@ is the longest clip length in seconds. */
+"cli.controller.speaker.play.trimmed" = "warning: 只播放片段的前 %@ 秒。";
+/* Message printed after 'ojd controller speaker play' finished the clip. %1$@ is the file name and %2$@ is the controller name. */
+"cli.controller.speaker.play.played" = "已在 %2$@ 上播放 %1$@。";
+/* Message printed when the playback of 'ojd controller speaker play' was cut by 'ojd controller speaker stop' or by a newer clip. %@ is the controller name. */
+"cli.controller.speaker.play.stopped" = "已停止 %@ 上的播放。";
+/* One-line summary of 'ojd controller speaker stop' in the command list and at the top of its help. */
+"cli.controller.speaker.stop.abstract" = "停止控制器揚聲器上的聲音。";
+/* Message printed after 'ojd controller speaker stop' stopped the speaker. %@ is the controller name. */
+"cli.controller.speaker.stop.stopped" = "已停止 %@ 的揚聲器。";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
 "cli.controller.suspend.abstract" = "在您恢復之前，停止 OpenJoystickDriver 驅動控制器。";
 /* Message of 'ojd controller suspend' when the controller is suspended. %@ is the controller name. */
@@ -2372,7 +2620,7 @@
 /* Help text of the --all flag of 'ojd controller watch'. */
 "cli.controller.watch.all" = "監察每個控制器，並報告每個已連接或已中斷連接的控制器。";
 /* First line of 'ojd controller watch --all'. */
-"cli.controller.watch.allStarted" = "正在監察所有控制器。請按控制器上的按鈕。";
+"cli.controller.watch.allStarted" = "正在監察所有控制器…請按控制器上的按鈕。";
 /* Line of 'ojd controller watch --all' when a controller connects. %1$@ is the controller ID, %2$@ is the controller name and %3$@ is its vendor and product ID. */
 "cli.controller.watch.connected" = "%1$@ 已連接：%2$@ (%3$@)";
 /* Line of 'ojd controller watch --all' when a controller disconnects. %@ is the controller ID. */
@@ -2396,17 +2644,51 @@
 /* Prompt of 'ojd controller watch --first-press'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.controller.watch.pressPrompt" = "請按 %1$@ (%2$@) 上的一個控制項。";
 /* First line of 'ojd controller watch'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
-"cli.controller.watch.started" = "正在監察 %1$@ (%2$@)。請按控制器上的按鈕。";
+"cli.controller.watch.started" = "正在監察 %1$@ (%2$@)…請按控制器上的按鈕。";
 /* Message printed when the user answers no to a confirmation question. */
 "cli.shared.error.confirmDeclined" = "沒有任何改動。";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "此更改無法復原。加上 --force 即可免提示確認。";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "列出、顯示、設定和移除設定檔中的巨集。";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "「%1$@」沒有名為「%2$@」的巨集。未變更任何內容。";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "巨集的名稱。";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "「%@」不是步驟。請使用 tap:TARGET、press:TARGET、release:TARGET、wait:MS 或 chord:MS:TARGET+TARGET。";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "列出設定檔中的巨集。";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "「%@」沒有巨集。";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "顯示巨集及其步驟。";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "建立巨集，或取代同名的巨集。";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "巨集的一個步驟，依序：tap:TARGET、press:TARGET、release:TARGET、wait:MS 或 chord:MS:TARGET+TARGET。重複此選項以加入更多步驟。";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "步驟執行的次數，或使用 while-held 重複執行直到放開來源。";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "巨集執行期間按下來源時的行為：ignore 或 restart。";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "放開來源時是否停止巨集。";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "「%@」不是次數，也不是 while-held。";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "已將巨集「%2$@」儲存到「%1$@」。";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "從設定檔中移除巨集。";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "要從「%2$@」中移除巨集「%1$@」嗎？";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "已從「%2$@」中移除巨集「%1$@」。";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "驗證、安裝、列出或移除模組套件。";
-/* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "模組套件是一個資料夾，內含 mod.json 清單以及 Controllers、Profiles 和 VirtualDevices 資料夾。已安裝的套件位於 ~/Library/Application Support/OpenJoystickDriver/Packages。該資料夾變更時，執行中的服務會套用變更。這些指令不需要服務。";
-/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.json stays as written. */
-"cli.mod.group.folder" = "包含 mod.json 的套件資料夾。";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
+"cli.mod.group.discussion" = "模組套件是一個資料夾，內含 mod.plist 清單以及 Controllers、Profiles 和 VirtualDevices 資料夾。已安裝的套件位於 ~/Library/Application Support/OpenJoystickDriver/Packages。該資料夾變更時，執行中的服務會套用變更。這些指令不需要服務。";
+/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
+"cli.mod.group.folder" = "包含 mod.plist 的套件資料夾。";
 /* Help text of the NAME argument of 'ojd mod remove'. */
 "cli.mod.group.name" = "套件名稱。";
 /* Error of the 'ojd mod' commands when a package is refused. %1$@ is the package folder or name and %2$@ is the reason. */
@@ -2437,6 +2719,34 @@
 "cli.mod.list.discussion" = "列出每個套件的版本、作者和檔案。OJD 不使用的套件，例如其 requires 不包含此版本的套件，會連同 E4xxx 或 E5001 代碼顯示原因。";
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  未使用：%@";
+/* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
+"cli.protocol.group.abstract" = "驗證、安裝或列出協定描述。";
+/* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
+"cli.protocol.group.discussion" = "協定描述是定義 OJD 未內置之手掣系列的 .plist 檔案。已安裝的描述位於 ~/Library/Application Support/OpenJoystickDriver/Protocols，模組套件亦可攜帶它們。這些指令不需要服務。";
+/* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
+"cli.protocol.group.file" = "以系列命名的描述檔案，例如 VendorAcmePad.plist。";
+/* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
+"cli.protocol.validate.abstract" = "檢查協定描述檔案，不安裝。";
+/* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
+"cli.protocol.validate.discussion" = "檢查檔案是有效的描述、系列名稱為 UpperCamelCase 且與檔名相符、不是內置系列，並設定了顯示名稱和輸入配置。檔案被拒絕時會以 1 結束並給出 E5xxx 代碼。";
+/* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
+"cli.protocol.validate.valid" = "%1$@ 是系列 %2$@（%3$@）的有效描述。可用 'ojd protocol install' 安裝。";
+/* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
+"cli.protocol.install.abstract" = "檢查協定描述並為目前使用者安裝。";
+/* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
+"cli.protocol.install.discussion" = "將檔案複製到 Protocols/FAMILY.plist。同一系列已安裝的描述會被取代。--dry-run 只檢查檔案，不寫入任何內容。";
+/* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
+"cli.protocol.install.success" = "已安裝 %@。";
+/* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
+"cli.protocol.list.abstract" = "列出內置和有文件的協定系列及各自的來源。";
+/* Long description in the help of 'ojd protocol list'. */
+"cli.protocol.list.discussion" = "列出每個系列及其顯示名稱和來源：內置、你的 Protocols 資料夾或模組套件。被拒絕的描述不會列出。";
+/* Source shown by 'ojd protocol list' for a family that OJD builds in. */
+"cli.protocol.list.builtIn" = "內置";
+/* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
+"cli.protocol.list.user" = "你的 Protocols 資料夾";
+/* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
+"cli.protocol.list.package" = "套件 %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
 "cli.mod.remove.abstract" = "移除一個已安裝的模組套件。";
 /* Long description in the help of 'ojd mod remove'. Packages/NAME, --force, --dry-run and E4006 stay as written. */
@@ -2488,7 +2798,7 @@
 /* Help text of the profile argument of 'ojd virtual feed'. */
 "cli.virtual.feed.profile" = "要發布的虛擬遊戲控制器設定檔。";
 /* First line of 'ojd virtual feed'. %@ is the profile name. Control-C is the key combination that stops a program in a terminal. */
-"cli.virtual.feed.started" = "正在發布 %@ 虛擬遊戲控制器。請將影格寫入 stdin；結束輸入或按 Control-C 即可停止。";
+"cli.virtual.feed.started" = "正在發布 %@ 虛擬遊戲控制器…請將影格寫入 stdin；結束輸入或按 Control-C 即可停止。";
 /* One-line summary of 'ojd virtual launch' in the command list and at the top of its help. SDL is a game controller library and stays as written. */
 "cli.virtual.launch.abstract" = "使用已連接虛擬遊戲手把的 SDL 對應來執行程式。";
 /* Help text of the program argument of 'ojd virtual launch'. PATH is the environment variable, .app is the app bundle extension, and -- stays as written. */
@@ -2547,8 +2857,8 @@
 "cli.virtual.show.unavailable" = "沒有合適的虛擬遊戲控制器";
 /* Detail of the records check of 'ojd diagnose'. %lld is the number of the user's controller records that the driver applies. */
 "cli.diagnose.group.recordsApplied" = "已套用的用戶記錄：%lld";
-/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.json is a file name that stays as written. */
-"cli.diagnose.group.recordsConfigOk" = "all.patch.json 和人設檔案有效";
+/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.plist is a file name that stays as written. */
+"cli.diagnose.group.recordsConfigOk" = "all.patch.plist 和人設檔案有效";
 /* Detail of the records check of 'ojd diagnose' when parts of the configuration are ignored or skipped. %@ is the list of those parts. The command in quotes stays as written. */
 "cli.diagnose.group.recordsConfigProblems" = "已忽略或略過 %@；請修正後用「ojd status」檢查";
 /* Detail of the records check of 'ojd diagnose' when records are skipped. %@ is the list of skipped records. The command in quotes stays as written. */
@@ -2581,10 +2891,22 @@
 "cli.record.draft.discussion" = "讀取控制器的 HID 報告描述元，並在您按下每個控制項時擷取其輸入報告，然後輸出一筆可作為起點的記錄。該記錄對應描述元明確說明的按鈕、搖桿、扳機和方向鍵。擷取期間變化的位元組顯示其他控制項所在的位置。需要服務。";
 /* Help text of the duration option of 'ojd record draft'. */
 "cli.record.draft.duration" = "擷取輸入報告的秒數。";
+/* Help text of the --from-sdl flag of 'ojd record draft'. SDL_GameControllerDB is a project name and stays as written. */
+"cli.record.draft.fromSDL" = "根據控制器的 SDL_GameControllerDB 行產生草稿，而不是擷取輸入報告。";
 /* Hint printed after 'ojd record draft'. The command in quotes stays as written, including FILE. */
 "cli.record.draft.next" = "將記錄儲存到檔案，檢查每個控制項，然後執行「ojd record validate FILE」。";
 /* Message of 'ojd record draft' when the descriptor of the controller yields no controls and the bundled record names the family. %1$@ is the controller identity, VVVV:PPPP, and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
 "cli.record.draft.noLayout" = "無法從 %1$@ 的 HID 報告描述元讀取任何控制項，而且其內建記錄已指定協定系列。「ojd record show %2$@」會顯示該記錄。";
+/* Message of 'ojd record draft --from-sdl' when the HID report descriptor of the controller fails the HIDDescriptor contract. SDL_GameControllerDB is a project name and HIDDescriptor is a protocol family name; both stay as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the name of the violated rule, which stays as written. */
+"cli.record.draft.sdl.contract" = "%1$@ 的 HID 報告描述符違反 HIDDescriptor 約定（%2$@），因此任何 SDL_GameControllerDB 行都無法綁定它。";
+/* Message of 'ojd record draft --from-sdl' when the controller model already has a bundled record. SDL_GameControllerDB is a project name and stays as written. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.hasRecord" = "%@ 有內建記錄，任何 SDL_GameControllerDB 行都不會取代它。";
+/* Message of 'ojd record draft --from-sdl' when the database has no line for the controller. SDL_GameControllerDB is a project name and stays as written. GUID is the SDL controller identifier. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is its GUID, which stays as written. */
+"cli.record.draft.sdl.noLine" = "SDL_GameControllerDB 中沒有 %1$@（GUID %2$@）的行。";
+/* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.noPad" = "%@ 未以此指令可讀取的 HID 裝置連接。";
+/* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
+"cli.record.draft.sdl.rejected" = "%1$@ 的 SDL_GameControllerDB 行被拒絕：%2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.record.draft.started" = "按下 %1$@（%2$@）上的每個控制項，並移動每個搖桿和扳機。";
 /* Error of the 'ojd record' commands when a record file cannot be read. %1$@ is the file path and %2$@ is the reason from the system. */
@@ -2597,8 +2919,8 @@
 "cli.record.install.abstract" = "檢查控制器記錄，並為目前的用戶安裝。";
 /* Yes or no question that 'ojd record install' asks on a terminal before it replaces an installed record. %@ is the path of the installed file. */
 "cli.record.install.confirm" = "要取代 %@ 嗎？";
-/* Long description in the help of 'ojd record install'. VVVV-PPPP.json and --force stay as written. */
-"cli.record.install.discussion" = "將記錄以 VVVV-PPPP.json 寫入您的記錄目錄。執行中的服務會立即套用。取代該型號已安裝的記錄時，在終端機中會要求確認；否則需要 --force。--dry-run 只檢查記錄，不會寫入任何內容。記錄無效時以結束碼 1 結束，且不會寫入任何內容。";
+/* Long description in the help of 'ojd record install'. vvvv-pppp.plist and --force stay as written. */
+"cli.record.install.discussion" = "將記錄以 vvvv-pppp.plist 寫入您的記錄目錄。執行中的服務會立即套用。取代該型號已安裝的記錄時，在終端機中會要求確認；否則需要 --force。--dry-run 只檢查記錄，不會寫入任何內容。記錄無效時以結束碼 1 結束，且不會寫入任何內容。";
 /* Message printed by 'ojd record install --dry-run' instead of installing. %@ is the target file path. */
 "cli.record.install.dryRun" = "將會安裝 %@。";
 /* Error when the record file cannot be written. %1$@ is the target file path and %2$@ is the reason from the system. */
@@ -2685,6 +3007,12 @@
 "error.E2036.message" = "沒有 OpenJoystickDriver App 及時回應測試通知。請確認 App 正在執行，然後重試。";
 /* Error E2037, shown by ojd and the app when notifications are not allowed for the app, so the test notification could not be shown. */
 "error.E2037.message" = "未允許 OpenJoystickDriver 傳送通知。請在系統的通知設定中允許，然後重試。";
+/* Error E2038, shown by ojd and the app when the selected controller has no speaker to play sound on. */
+"error.E2038.message" = "此手掣沒有喇叭。請選擇能播放聲音的手掣，然後重試。";
+/* Error E2039, shown by ojd when the audio file given to the speaker command is not an uncompressed PCM WAV file. */
+"error.E2039.message" = "不支援此音訊檔案。請使用未壓縮的 PCM WAV 檔案，然後重試。";
+/* Error E2040, shown by ojd and the app when the extension plugged into the controller did not answer its setup. */
+"error.E2040.message" = "手掣上的擴充裝置沒有回應其設定。請重新連接擴充裝置，然後重試。";
 /* Note about a controller record whose raw USB family the USB extension cannot claim because Apple signs its product list. OJD is the short product name. */
 "platform.macos.cli.record.group.usbNotClaimed" = "此系列使用原始 USB，USB 延伸功能無法接管此控制器，因為其產品清單由 Apple 簽署。只有在 macOS 允許時，OJD 才能透過直接 USB 存取使用它。";
 /* Note about a Switch 2 controller record that connects over USB only. bluetoothLE.vibrationCharacteristic is a field of the record and stays as written. */
@@ -2709,7 +3037,7 @@
 "cli.binding.group.actionsInvalid" = "--actions-json 不是有效的動作清單：%@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
 "cli.binding.group.actionsTooLarge" = "--actions-json 太大。";
-/* Error of 'ojd binding set' when the value of --double-tap or --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
+/* Error of 'ojd binding set' when the value of --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
 "cli.binding.group.alternateFormat" = "%@ 需要 MS:TARGET，例如 500:key:key-b。";
 /* Error of 'ojd binding set' when an axis option is used with a source that is not an axis. The option names stay as written. */
 "cli.binding.group.axisOptionsSource" = "--deadzone、--gain、--invert、--response-curve 和 --digital-threshold 需要軸來源。";
@@ -2734,11 +3062,13 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "請提供一個或多個來源，或使用 --all。";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "對應會在使用控制器的 SOURCE 時傳送 TARGET。\n\nSOURCE：button:NAME、dpad:DIRECTION、axis:NAME[:negative|positive]、trigger:NAME:STAGE、motion:lean:DIRECTION、touch:SURFACE:contact、touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW，或 touch:SURFACE:swipe:DIRECTION:DISTANCE。\n\nTARGET：key:KEY[:mods=meta,control,alt,shift]、mouse:BUTTON、move:x|y、scroll:x|y、gamepad:button:NAME、gamepad:dpad:DIRECTION、gamepad:axis:NAME，或用於震動、燈光和自適應扳機的 physical:...。\n\n「ojd profile show」會以這些形式輸出對應。請用「ojd profile edit」編輯組合鍵、序列和層。";
+"cli.binding.group.discussion" = "對應會在使用控制器的 SOURCE 時傳送 TARGET。\n\nSOURCE：button:NAME、dpad:DIRECTION、axis:NAME[:negative|positive]、trigger:NAME:STAGE、motion:lean:DIRECTION、touch:SURFACE:contact、touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW，或 touch:SURFACE:swipe:DIRECTION:DISTANCE。\n\nTARGET：key:KEY[:mods=meta,control,alt,shift]、mouse:BUTTON、move:x|y、position:x|y、scroll:x|y、gamepad:button:NAME、gamepad:dpad:DIRECTION、gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER，或用於震動、燈光和自適應扳機的 physical:...。\n\n「ojd profile show」會以這些形式輸出對應。請用「ojd profile edit」編輯組合鍵、序列和層。";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "列出設定檔的對應。";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
 "cli.binding.list.empty" = "「%@」沒有對應。請用「ojd binding set」加入。";
+/* Error of 'ojd binding set' when a value of --multi-tap does not have the form COUNT:MS:TARGET. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.multiTapFormat" = "--multi-tap 需要 COUNT:MS:TARGET，例如 2:300:key:key-c。";
 /* Help text of the --actions-json option of 'ojd binding set'. 'ojd profile export' stays as written. */
 "cli.binding.group.optionActionsJson" = "額外動作，以 JSON 陣列表示，格式與「ojd profile export」寫出的相同。";
 /* Help text of the --behavior option of 'ojd binding set'. The behavior hold is a value the user types. */
@@ -2747,20 +3077,28 @@
 "cli.binding.group.optionDeadzone" = "軸來源：忽略的行程部分，0 到 0.95。預設：0.1。";
 /* Help text of the --digital-threshold option of 'ojd binding set'. It sets the axis travel that counts as a press. */
 "cli.binding.group.optionDigitalThreshold" = "軸來源：對按鈕目標而言算作按下的行程。預設：0.5。";
-/* Help text of the --double-tap option of 'ojd binding set'. The example 300:key:key-c stays as written. */
-"cli.binding.group.optionDoubleTap" = "在此時間內按下來源兩次時，傳送另一個目標，例如 300:key:key-c。";
 /* Help text of the --gain option of 'ojd binding set'. Gain scales the axis output. */
 "cli.binding.group.optionGain" = "軸來源：輸出縮放，0.1 到 10。預設：1。";
 /* Help text of the --invert flag of 'ojd binding set'. */
 "cli.binding.group.optionInvert" = "軸來源：反轉方向。";
 /* Help text of the --long-hold option of 'ojd binding set'. The example 500:key:key-b stays as written. */
 "cli.binding.group.optionLongHold" = "按住來源達到此時間時，傳送另一個目標，例如 500:key:key-b。";
+/* Help text of the --multi-tap option of 'ojd binding set'. COUNT is the number of taps, MS the milliseconds allowed after the last release. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.optionMultiTap" = "輕點來源 COUNT 次時，傳送另一個目標，每次按下都在上次放開後的 MS 內，例如 2:300:key:key-c。其他次數可重複此選項。";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "脈衝讓目標維持多久，1 到 5000 毫秒。預設：100。";
+/* Help text of the --voice option of 'ojd binding set'. The option name and speak:TEXT stay as written. */
+"cli.binding.group.optionVoice" = "speak:TEXT 目標使用的語音識別碼。預設：系統語音。";
+/* Error of 'ojd binding set' when --voice is given with a target that is not speak:TEXT. The option name and speak:TEXT stay as written. */
+"cli.binding.group.voiceNeedsSpeak" = "--voice 需要 speak:TEXT 目標。";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "軸來源：輸出如何隨行程增長。預設：linear。";
+/* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
+"cli.binding.group.optionTurboDelay" = "第一次重複前等待此時間，0 到 2500 ms。需要 --turbo-rate 和 --turbo-duty。";
 /* Help text of the --turbo-duty option of 'ojd binding set'. The duty is the share of each turbo cycle in which the target is held. */
 "cli.binding.group.optionTurboDuty" = "每個連發週期中目標維持按下的比例，大於 0 且小於 1。";
+/* Help text of the --turbo-max option of 'ojd binding set'. The option names stay as written. */
+"cli.binding.group.optionTurboMax" = "重複此次數後停止，1 到 500。需要 --turbo-rate 和 --turbo-duty。";
 /* Help text of the --turbo-rate option of 'ojd binding set'. --turbo-duty stays as written. */
 "cli.binding.group.optionTurboRate" = "按住期間每秒重複目標的次數。需要 --turbo-duty。";
 /* One-line summary of 'ojd binding set' in the command list and at the top of its help. */
@@ -2775,8 +3113,10 @@
 "cli.binding.group.sourceInvalid" = "「%@」不是來源。「ojd binding set --help」會列出來源的寫法。";
 /* Error of 'ojd binding set' when the target cannot be parsed. %@ is the text the user gave. The command in quotes stays as written. */
 "cli.binding.group.targetInvalid" = "「%@」不是目標。「ojd binding set --help」會列出目標的寫法。";
-/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given. Both option names stay as written. */
-"cli.binding.group.turboPair" = "--turbo-rate 和 --turbo-duty 必須一起提供。";
+/* Error of 'ojd binding set' when the profile has no layer with the name in a layer:NAME:MODE target. %1$@ is the profile name and %2$@ is the layer name. */
+"cli.binding.group.layerMissing" = "「%1$@」沒有名為「%2$@」的層。未變更任何內容。";
+/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given, or --turbo-delay or --turbo-max is given without both. All four option names stay as written. */
+"cli.binding.group.turboPair" = "--turbo-rate 和 --turbo-duty 必須一起提供，--turbo-delay 和 --turbo-max 需要兩者。";
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "連發不適用於指標移動或捲動目標。";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
@@ -2823,26 +3163,40 @@
 "cli.profile.activate.abstract" = "將設定檔套用到其控制器型號。";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
 "cli.profile.activate.allowEmpty" = "即使設定檔不會產生任何輸出，也將其啟用。";
+/* Help text of the --confirm-actions flag of 'ojd profile activate'. --confirm-actions stays as written. */
+"cli.profile.activate.confirmActions" = "確認該設定檔可以啟動其動作：打開 App 和 URL、執行捷徑、輸入文字。";
 /* Long description in the help of 'ojd profile activate'. It explains the profile that replaces the active one and the profile that produces no output. The words mapped and --allow-empty stay as written. */
 "cli.profile.activate.discussion" = "該設定檔會取代同一控制器型號和 App 範圍內目前使用中的設定檔。虛擬遊戲控制器設為 mapped 且不向遊戲控制器、鍵盤、指標或控制器傳送任何內容，也不設定燈光顏色的設定檔不會產生任何輸出；啟用這樣的設定檔需要 --allow-empty。";
 /* Message printed after 'ojd profile activate'. %1$@ is the profile name, shown in quotes, and %2$@ is the controller model it applies to. */
 "cli.profile.activate.done" = "已啟用「%1$@」，用於 %2$@。";
 /* Error of 'ojd profile activate' for a profile that produces no output. --allow-empty stays as written. */
 "cli.profile.activate.empty" = "此設定檔不會產生任何輸出。請加上 --allow-empty 來啟用它。";
+/* Error of 'ojd profile activate' for a profile that opens applications or URLs, runs shortcuts or types text. --confirm-actions stays as written. %@ is the list of actions, one per line, with each URL in full. */
+"cli.profile.activate.actionsNeedConfirmation" = "此設定檔會啟動動作。請加上 --confirm-actions 來啟用它：\n%@";
 /* Marker appended to the line of the active profile in 'ojd profile list'. Keep the parentheses. */
 "cli.profile.group.activeMarker" = "（使用中）";
 /* Help text of the PROFILE argument shared by the 'ojd profile' commands. The command in quotes stays as written. */
 "cli.profile.group.argument" = "設定檔：其 ID，或來自「ojd profile list」的名稱。";
 /* One-line summary of 'ojd profile create' in the command list and at the top of its help. */
 "cli.profile.create.abstract" = "為某一控制器型號建立空設定檔。";
+/* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.activation" = "為陀螺儀輸出而按住的控制項 (gyro-stick 範本)。未指定時，陀螺儀輸出一律開啟。";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "僅在此 App（以 App ID 指定）位於最前方時套用該設定檔。";
+"cli.profile.create.app" = "只在此 App（按 App ID）位於最前時套用該描述檔。重複該選項可指定更多 App。";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "控制器型號：VVVV:PPPP，或已連接控制器的 ID。";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
 "cli.profile.create.discussion" = "除非用 --app 指定某個 App，否則該設定檔會在所有 App 中生效。依預設，虛擬遊戲控制器會直通所有未被對應使用的控制項。設定檔建立後處於未啟用狀態；請用「ojd profile activate」啟用。";
 /* Message printed after 'ojd profile create'. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.create.done" = "已建立「%1$@」（%2$@）。";
+/* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
+"cli.profile.create.noMotion" = "%@ 沒有動作感應器。";
+/* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.stick" = "gyro-stick 範本驅動的搖桿: left 或 right。預設為 right。";
+/* Help text of the --template option of 'ojd profile create'. gyro-stick is the only template, the user types it, and it stays as written. */
+"cli.profile.create.template" = "從範本開始。唯一的範本是 gyro-stick。";
+/* Error of 'ojd profile create' when --stick or --activation is given without --template. The three option names stay as written. */
+"cli.profile.create.templateRequired" = "--stick 和 --activation 需要 --template。";
 /* Help text of the physical input option of 'ojd profile create'. shared and exclusive are values the user types and stay as written. */
 "platform.macos.cli.profile.create.physicalInput" = "macOS 是否仍能看到該控制器（shared），或由 OJD 獨占（exclusive）。";
 /* Help text of the --virtual-gamepad option of 'ojd profile create'. disabled, mapped and passthrough are values the user types and stay as written. */
@@ -2896,7 +3250,7 @@
 /* One-line summary of 'ojd profile export' in the command list and at the top of its help. The command in quotes stays as written. */
 "cli.profile.export.abstract" = "將設定檔輸出為「ojd profile import」可讀取的檔案。";
 /* Long description in the help of 'ojd profile export'. --json and --plain stay as written. */
-"cli.profile.export.discussion" = "設定檔為 JSON，因此 --json 和 --plain 不會改變輸出。";
+"cli.profile.export.discussion" = "設定檔為屬性列表，因此 --json 和 --plain 不會改變輸出。";
 /* Message printed after 'ojd profile export --output'. %1$@ is the profile name, shown in quotes, and %2$@ is the file path. */
 "cli.profile.export.done" = "已將「%1$@」寫入 %2$@。";
 /* Help text of the --output option of 'ojd profile export'. stdout is the standard output stream and stays as written. */
@@ -2913,6 +3267,8 @@
 "cli.profile.import.abstract" = "從「ojd profile export」寫出的檔案加入設定檔。";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "已匯入「%1$@」（%2$@）。";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "只在此 App（按 App ID）位於最前時才套用匯入的描述檔，取代檔案中的範圍。重複該選項可指定更多 App。";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "使用 - 從 stdin 讀取設定檔。ID 與現有設定檔相同的設定檔會取代它。";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */
@@ -3579,6 +3935,58 @@
 "ui.shortcuts.action.getControllers.description" = "傳回已連接的控制器。";
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "取得控制器";
+/* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.description" = "更改重新對應設定檔的其中一個值，例如名稱。";
+/* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
+"ui.shortcuts.action.setProfileValue.key" = "鍵";
+/* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.title" = "設定設定檔的值";
+/* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
+"ui.shortcuts.action.setProfileValue.value" = "值";
+/* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
+"ui.shortcuts.error.profileKey" = "設定檔值的鍵不可包含空白的部分。";
+/* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.title" = "讓控制器震動";
+/* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.description" = "讓控制器的震動馬達運轉片刻。";
+/* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
+"ui.shortcuts.action.rumble.intensity" = "強度 (0-255)";
+/* Label in the Shortcuts app of the rumble action's duration in seconds. */
+"ui.shortcuts.action.rumble.duration" = "持續時間（秒）";
+/* Name in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.title" = "設定玩家指示燈";
+/* Description in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.description" = "設定控制器的玩家指示燈。";
+/* Label in the Shortcuts app of the player number from 1 to 4, or 0 for none. */
+"ui.shortcuts.action.player.number" = "玩家編號（0 為無）";
+/* Name in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.title" = "設定控制器燈光";
+/* Description in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.description" = "設定控制器的燈條顏色、LED 亮度或兩者。";
+/* Label in the Shortcuts app of the lightbar color given as six hexadecimal digits, RRGGBB. */
+"ui.shortcuts.action.light.color" = "顏色 (RRGGBB)";
+/* Label in the Shortcuts app of the LED brightness from 0 to 255. */
+"ui.shortcuts.action.light.brightness" = "LED 亮度 (0-255)";
+/* Error in the Shortcuts app when the light action has no color or brightness, or the color is not RRGGBB. */
+"ui.shortcuts.error.lightRequest" = "請提供六位十六進位顏色、亮度，或兩者都提供。";
+/* Name in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.title" = "列出模組套件";
+/* Description in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.description" = "傳回已安裝模組套件的名稱。";
+/* Name in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.title" = "安裝模組套件";
+/* Description in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.description" = "從檔案夾安裝模組套件並傳回其名稱。";
+/* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
+"ui.shortcuts.action.installMod.folder" = "檔案夾";
+/* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
+"ui.shortcuts.action.installMod.replace" = "取代已安裝的套件";
+/* Name in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.title" = "移除模組套件";
+/* Description in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.description" = "按名稱移除已安裝的模組套件。";
+/* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
+"ui.shortcuts.action.removeMod.name" = "名稱";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "型號";
 /* Name of the name property of a controller in the Shortcuts app. */
@@ -3729,12 +4137,22 @@
 "error.E3028.message" = "要求執行期間，該控制器的重新對應工作階段已變更。請重試。";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
 "error.E3029.message" = "來自已安裝套件的設定檔無法變更。請複製設定檔並變更副本。";
-/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
-"error.E4001.message" = "缺少套件資訊清單 mod.json，或其無效。請對照 mod-package 結構描述檢查，然後重新執行指令。";
+/* Text of error E3030, returned when an action needs Post Event access and it is not granted. */
+"error.E3030.message" = "操作未執行，因為未授予 Post Event 存取權限。請向 OpenJoystickDriver 授予該權限，然後重試。";
+/* Text of error E3031, returned when an action needs Automation access and it is not granted. */
+"error.E3031.message" = "操作未執行，因為未授予自動化存取權限。請向 OpenJoystickDriver 授予該權限，然後重試。";
+/* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
+"error.E3032.message" = "由於 Secure Input 已開啟,動作未執行。請關閉開啟它的 App(例如密碼欄位),然後再試一次。";
+/* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
+"error.E3033.message" = "動作失敗。";
+/* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
+"error.E3034.message" = "系統拒絕建立 MIDI 來源 OpenJoystickDriver，因此 MIDI 操作未執行。請重試。";
+/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.plist stays as written. */
+"error.E4001.message" = "缺少套件資訊清單 mod.plist，或其無效。請對照 mod-package 結構描述檢查，然後重新執行指令。";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */
 "error.E4002.message" = "此套件需要與目前執行版本不同的 OpenJoystickDriver 版本。請安裝支援目前版本的套件版本，或更新 OpenJoystickDriver。";
-/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.json stays as written. */
-"error.E4003.message" = "套件中的某個檔案無效、遺失或未列於 mod.json。請修正指令指出的檔案，然後重新執行。";
+/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.plist stays as written. */
+"error.E4003.message" = "套件中的某個檔案無效、遺失或未列於 mod.plist。請修正指令指出的檔案，然後重新執行。";
 /* Text of error E4004, printed when a mod package covers a controller, persona or profile that the user's files or another package hold. */
 "error.E4004.message" = "此套件涵蓋的控制器、人設或設定檔已存在於您自己的檔案或另一個已安裝的套件中。請移除衝突的檔案或套件，或修改此套件，然後重新執行指令。";
 /* Text of error E4005, printed when a mod package of the same name is installed. --force stays as written. */
@@ -3751,12 +4169,26 @@
 "error.E5003.message" = "協定描述指定的系列與其檔案名稱不同。請以系列名稱命名該檔案。";
 /* Text of error E5004, printed when a protocol description lists a variant that its family lacks. */
 "error.E5004.message" = "協定描述列出了其系列沒有的變體。請使用該系列的其中一個變體。";
-/* Text of error E5005, printed when the access file is damaged. AccessGrants.json is a file name and stays as written. */
-"error.E5005.message" = "存取檔案 AccessGrants.json 已損毀。請修復或刪除該檔案，然後重新授予存取權限。";
+/* Text of error E5005, printed when the access file is damaged. AccessGrants.plist is a file name and stays as written. */
+"error.E5005.message" = "存取檔案 AccessGrants.plist 已損毀。請修復或刪除該檔案，然後重新授予存取權限。";
 /* Text of error E5006, printed when the key file of the unit IDs cannot be read or has the wrong size. PortKeyInstallation.key is a file name and stays as written. OpenJoystickDriver is the product name. */
 "error.E5006.message" = "無法讀取單元 ID 的密鑰檔案 PortKeyInstallation.key，或其大小不是 32 位元組。請從備份還原該檔案。如果改為刪除它，OpenJoystickDriver 會建立新密鑰，所有單元 ID 都會改變。";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "控制器記錄或 patch 無效。請對照其結構描述檢查該檔案，並修正訊息指出的欄位。";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "此記錄檔案";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "內置目錄的 Controllers 檔案夾：目錄中沒有記錄檔案。規則：目錄至少包含一筆控制器記錄。修正：重新安裝 OpenJoystickDriver。";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@，vendorID 和 productID：檔案名稱必須是 %2$@，即兩個 ID 的十六進制形式。修正：將檔案重新命名為 %2$@，或更正檔案中的 ID。";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@，vendorID 和 productID：%2$@ 已是 %3$@ 中記錄的識別。修正：刪除兩個檔案之一，或更改此檔案的 ID。";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@，document：某個值無法寫成 JSON（%2$@）。修正：將原因中指出的值替換為字串、數字、布林值、列表或字典。";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@，vendorID 和 productID：vendorID 必須為 1...65535，productID 必須為 0...65535。修正：將兩者分別設為其範圍內的整數。";
+/* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
+"error.E5008.message" = "控制器的 SDL_GameControllerDB 行無法驅動該控制器。訊息會指出原因。請用 ojd record draft 為它編寫控制器記錄。";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */
 "ui.error.withCode" = "%1$@ (%2$@)";
 /* Message printed by 'ojd update check' when the installed version is newer than the latest release. %1$@ is the installed version and %2$@ is the latest release. */
@@ -3811,6 +4243,8 @@
 "ui.activity.check.transportExtensionRegistration" = "驅動程式擴充功能註冊";
 /* Name of the check in the diagnostics table that validates the configuration files. */
 "ui.activity.check.configFiles" = "組態檔案";
+/* Name of the check in the diagnostics table that reports a controller with the Nintendo Switch Pro Controller identity and serial 000000000001. Nintendo Switch Pro Controller is a product name and stays as written. */
+"ui.activity.check.switchSerial" = "Switch Pro Controller 序號";
 /* Name of the check in the diagnostics table that tests whether the app can read USB controllers. */
 "ui.activity.check.usbAccess" = "USB 取用";
 /* Button of a failed check in the diagnostics table that opens the Library area. */
@@ -3871,6 +4305,10 @@
 "ui.controllers.draftRecord.title" = "草擬控制器記錄";
 /* Message when a record cannot be drafted. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.controllers.draftRecord.noLayout" = "無法從 %@ 的 HID 報告描述元讀取任何控制項，且其內建記錄已指明其系列。";
+/* Button in the Controllers detail that drafts a controller record from the SDL_GameControllerDB line of the controller. SDL stays as written. Keep the three dots. */
+"ui.controllers.draftRecordFromSDL" = "從 SDL 草擬記錄…";
+/* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
+"ui.controllers.draftRecordFromSDL.noPad" = "%@ 未以 OpenJoystickDriver 可讀取的 HID 裝置連接。";
 /* Button in the Controllers detail that starts a packet capture of the controller. Keep the three dots. */
 "ui.controllers.capturePackets" = "擷取封包…";
 /* Title of the sheet that captures packets of the controller. */
@@ -3889,12 +4327,14 @@
 "ui.controllers.publication.notPublished" = "未發佈";
 /* Value of the publication fact: the publication failed. */
 "ui.controllers.publication.failed" = "失敗";
+/* Value of the input health fact: the session has read no input report yet. */
+"ui.controllers.inputHealth.awaitingInput" = "正在等待第一次輸入…";
 /* Value of the input health fact: input arrives as expected. */
 "ui.controllers.inputHealth.healthy" = "正常";
 /* Value of the input health fact: input stopped arriving. */
 "ui.controllers.inputHealth.stale" = "無更新";
 /* Value of the input health fact: the app waits until all controls are at rest before it sends input again. */
-"ui.controllers.inputHealth.waitingForNeutral" = "等待回中";
+"ui.controllers.inputHealth.waitingForNeutral" = "等待回中…";
 /* Error shown when the settings file is damaged. %@ is the path of the file. The command in backticks stays as written, and Trash is the macOS name. */
 "ui.settings.advanced.errorDamaged" = "設定值檔案 %@ 已損毀。請修復它，或用 `ojd setting reset` 將其移到垃圾桶。";
 /* Error shown when the settings file has an unsupported version. %@ is the path of the file. apiVersion and the command in backticks stay as written, and Trash is the macOS name. */
@@ -3915,8 +4355,8 @@
 "platform.macos.ui.settings.advanced.unreadableShowInFinder" = "在 Finder 中顯示";
 /* One-line summary of 'ojd setting reset' in the command list and at the top of its help. */
 "cli.setting.reset.abstract" = "將設定值檔案移到垃圾桶。";
-/* Long description in the help of 'ojd setting reset'. Settings.json is a file name and stays as written. */
-"cli.setting.reset.discussion" = "將 Settings.json 移到垃圾桶，使每項設定恢復預設值。檔案損毀或被拒絕時使用。";
+/* Long description in the help of 'ojd setting reset'. Settings.plist is a file name and stays as written. */
+"cli.setting.reset.discussion" = "將 Settings.plist 移到垃圾桶，使每項設定恢復預設值。檔案損毀或被拒絕時使用。";
 /* Yes or no question that 'ojd setting reset' asks on a terminal. */
 "cli.setting.reset.confirm" = "要將設定值檔案移到垃圾桶並讓每項設定恢復預設值嗎？";
 /* Message printed after 'ojd setting reset'. %@ is the path of the settings file. */
@@ -3938,7 +4378,7 @@
 /* Reason the controller has no virtual gamepad: the output is paused. */
 "ui.controllers.publication.reason.suppressed" = "輸出已暫停";
 /* Reason the controller has no virtual gamepad: the first input has not arrived. */
-"ui.controllers.publication.reason.noInputYet" = "正在等待第一次輸入";
+"ui.controllers.publication.reason.noInputYet" = "正在等待第一次輸入…";
 /* Reason the controller has no virtual gamepad: another app holds its input. */
 "ui.controllers.publication.reason.heldByAnotherClient" = "其他 App 正在使用它";
 /* Publication state with its reason or failure, for example "Not published (Waiting for the first input)". %1$@ is the state and %2$@ the reason. */
@@ -4040,3 +4480,155 @@
 "ui.controllers.exclusiveOwner" = "獨佔存取";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
 "ui.controllers.alsoListedBySystem" = "也由系統列出";
+/* Label of a macro as the destination of an assignment when the profile has no macro of that identifier, and name of the macro destination kind. */
+"term.macro" = "巨集";
+/* Label of a layer as the destination of an assignment when the profile has no layer of that identifier, and name of the layer destination kind. */
+"term.layer" = "層";
+/* Name of the Speak destination kind in the destination popup; the destination says a short text aloud. */
+"term.speak" = "朗讀";
+/* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
+"ui.profiles.macros" = "巨集";
+/* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */
+"ui.profiles.addMacro" = "加入巨集";
+/* Tooltip and VoiceOver label of the button on a macro row in the profile editor that opens the sheet to edit the macro. */
+"ui.profiles.editMacro" = "編輯巨集";
+/* Message in the macros section of the profile editor when none exists. */
+"ui.profiles.noMacros" = "尚未設定巨集。";
+/* Label of the name field in the macro editor sheet. */
+"ui.macros.name" = "巨集名稱";
+/* Heading of the list of steps in the macro editor sheet. */
+"ui.macros.steps" = "步驟";
+/* Title of the menu in the macro editor sheet that adds a step to the macro. */
+"ui.macros.addStep" = "加入步驟";
+/* Name of the macro step that presses and releases a key or button at once. Also the label of its destination picker. */
+"ui.macros.stepTap" = "輕點";
+/* Name of the macro step that presses a key or button and keeps it down. Also the label of its destination picker. */
+"ui.macros.stepPress" = "按下";
+/* Name of the macro step that releases a key or button that a press step holds. Also the label of its destination picker. */
+"ui.macros.stepRelease" = "放開";
+/* Name of the macro step that presses several keys or buttons together, holds them, and releases them. Also the label of each destination picker of the step. */
+"ui.macros.stepChord" = "組合鍵";
+/* Name of the macro step that waits before the next step, and the label of its time slider. */
+"ui.macros.stepWait" = "等待";
+/* Label of the slider in a chord step of the macro editor for how long the chord is held. */
+"ui.macros.holdTime" = "按住時間";
+/* Button in a chord step of the macro editor that adds one more key or button to the chord. */
+"ui.macros.addChordKey" = "將按鍵加入組合鍵";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place earlier. */
+"ui.macros.moveUp" = "上移步驟";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place later. */
+"ui.macros.moveDown" = "下移步驟";
+/* Tooltip and VoiceOver label of the button in the macro editor that removes a step. */
+"ui.macros.removeStep" = "移除步驟";
+/* Label of the popup in the macro editor that chooses how often the macro runs its steps. */
+"ui.macros.repeat" = "重複";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps a set number of times. */
+"ui.macros.repeatCounted" = "固定次數";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps again and again until the control is released. */
+"ui.macros.repeatWhileHeld" = "按住期間";
+/* Label of the stepper in the macro editor for how many times the macro runs its steps. The number follows the label. */
+"ui.macros.repeatTimes" = "次";
+/* Label of the popup in the macro editor for what happens when the control is pressed again while the macro runs. */
+"ui.macros.whileRunning" = "執行中再次按下時";
+/* Choice of the popup in the macro editor: the macro keeps running and the new press does nothing. */
+"ui.macros.whileRunningIgnore" = "忽略";
+/* Choice of the popup in the macro editor: the macro stops, releases everything it holds, and starts again. */
+"ui.macros.whileRunningRestart" = "重新開始";
+/* Label of the switch in the macro editor: releasing the control stops the macro and releases everything it holds. */
+"ui.macros.interruptOnRelease" = "放開時停止";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. The report mode the driver chose follows, a hex byte such as 0x31. */
+"cli.controller.show.labelReportMode" = "報告模式";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. The extension plugged into the remote follows, such as a Nunchuk. This is the accessory on the controller, not a system extension. */
+"cli.controller.show.labelExtension" = "擴充裝置";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. Motion Plus is a Nintendo product name: keep it as written. The value that follows is off, calibrating or ready. */
+"cli.controller.show.labelMotionPlus" = "Motion Plus";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Nunchuk is a Nintendo product name: keep it as written. */
+"term.wiiExtension.nunchuk" = "Nunchuk";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Classic Controller is a Nintendo product name: keep it as written. */
+"term.wiiExtension.classicController" = "Classic Controller";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Classic Controller Pro is a Nintendo product name: keep it as written. */
+"term.wiiExtension.classicControllerPro" = "Classic Controller Pro";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: a Motion Plus that is plugged in but not switched on yet. Motion Plus is a Nintendo product name: keep it as written. */
+"term.wiiExtension.motionPlusInactive" = "Motion Plus (未啟用)";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with nothing plugged into it. Motion Plus is a Nintendo product name: keep it as written. */
+"term.wiiExtension.motionPlus" = "Motion Plus";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with a Nunchuk plugged into it. Motion Plus and Nunchuk are Nintendo product names: keep them as written. */
+"term.wiiExtension.motionPlusNunchuk" = "Motion Plus (連接 Nunchuk)";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with a Classic Controller plugged into it. Motion Plus and Classic Controller are Nintendo product names: keep them as written. */
+"term.wiiExtension.motionPlusClassic" = "Motion Plus (連接 Classic Controller)";
+/* Value of the extension row for a Wii Remote extension the driver does not know. %@ is the six ID bytes as twelve hex digits and stays as written. */
+"status.wiiExtensionUnknown" = "未知 (ID %@)";
+/* Value of the Motion Plus row for a Wii Remote whose Motion Plus is not switched on. */
+"status.motionPlusOff" = "關";
+/* Value of the Motion Plus row for a Wii Remote while the driver measures the resting value of the gyro. The remote must lie still. */
+"status.gyroCalibrating" = "校準中";
+/* Value of the Motion Plus row for a Wii Remote once the driver has measured the resting value of the gyro. */
+"status.gyroReady" = "準備就緒";
+/* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
+"error.E5009.message" = "舊版本的已儲存文件沒有自動轉換方式，因此 ojd migrate 會令它保持不變。訊息會指出檔案和欄位。請手動將檔案改為支援的 apiVersion。";
+/* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
+"error.E5010.message" = "儲存的文件不是 XML 屬性列表，或包含日期或資料值。訊息會列出檔案以及格式或鍵路徑。請用 plutil -convert xml1 將檔案儲存為 XML 屬性列表。";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "執行產生器腳本，並寫入它傳回的文件。";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "在無法存取檔案和網絡的輔助程序中執行腳本，檢查其 generate 函數傳回的文件，並將每份文件寫成 --output 內的屬性列表檔案。沒有 --output 時只會列印文件。--timeout 以秒為單位設定時間限制（預設為 5）。";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "產生器腳本，一個 .js 檔案。";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "無法啟動腳本輔助程序：%@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "%1$@ 未在 %2$@ 秒內完成，已被終止。";
+/* Help text of the --output option of 'ojd generate'. */
+"cli.generate.group.output" = "接收檔案的資料夾。未指定時，指令只會列印文件，不會寫入檔案。";
+/* Help text of the --replace flag of 'ojd generate'. */
+"cli.generate.group.replace" = "取代內容與文件不同的檔案。";
+/* Error of 'ojd generate' when the script file cannot be read. %@ is the script path. */
+"cli.generate.group.unreadable" = "無法讀取 %@。";
+/* Error of 'ojd generate' when the script defines no function named generate. %@ is the script path; generate stays as written. */
+"cli.generate.group.missingGenerate" = "%@ 沒有定義 generate 函數。";
+/* Error of 'ojd generate' when the script throws a value that has no line number. %1$@ is the script path and %2$@ is the message. */
+"cli.generate.group.scriptFailed" = "腳本 %1$@ 失敗：%2$@";
+/* Error of 'ojd generate' for a syntax error or an exception of the script. %1$@ is the script path, %2$@ is the line number and %3$@ is the message. */
+"cli.generate.group.scriptFailedAtLine" = "腳本 %1$@ 在第 %2$@ 行失敗：%3$@";
+/* Error of 'ojd generate' when generate returns null, no value, or something that is not a document or a list of documents. generate stays as written. */
+"cli.generate.group.notDocuments" = "generate 必須傳回一份文件或文件列表。";
+/* Error of 'ojd generate' for a returned document that fails its checks. %1$@ is the position of the document in the result, counted from 1, and %2$@ is the key path and the rule it breaks. */
+"cli.generate.group.documentInvalid" = "文件 %1$@ 無效，未寫入任何檔案：%2$@";
+/* Error of 'ojd generate' when two returned documents have the same file name. %1$@ and %2$@ are their positions in the result, counted from 1, and %3$@ is the file name. */
+"cli.generate.group.duplicate" = "文件 %1$@ 和 %2$@ 都會寫入 %3$@，因此未寫入任何檔案。";
+/* Error of 'ojd generate' when a file holds other content than the generated document. %@ is the file path; --replace stays as written. */
+"cli.generate.group.conflict" = "%@ 含有其他內容，因此未寫入任何檔案。使用 --replace 可覆寫它。";
+/* Error of 'ojd generate' when a file cannot be written. %1$@ is the file path and %2$@ is the reason. */
+"cli.generate.group.writeFailed" = "無法寫入 %1$@：%2$@";
+/* Line of 'ojd generate' for a file that it wrote anew. %@ is the file path. */
+"cli.generate.group.created" = "已建立 %@。";
+/* Line of 'ojd generate' for a file whose other content it replaced. %@ is the file path. */
+"cli.generate.group.replaced" = "已取代 %@。";
+/* Line of 'ojd generate' for a file that already held the generated document. %@ is the file path. */
+"cli.generate.group.unchanged" = "%@ 未變更。";
+/* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
+"cli.migrate.group.abstract" = "將舊版本的已儲存文件轉換為目前版本。";
+/* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
+"cli.migrate.group.discussion" = "轉換帶有舊 apiVersion 的 Settings.plist、AccessGrants.plist、設定檔、你的控制器記錄與修補檔，以及虛擬裝置檔案。每個原始檔案都保存在支援資料夾的 Migrated 資料夾中。模組套件也會被轉換。可指定一個資料夾來取代支援資料夾進行掃描。每個檔案會得到一個結論：Migrated、Current、Failed 或 Foreign。";
+/* Help text of the --dry-run option of 'ojd migrate'. */
+"cli.migrate.group.dryRun" = "列出將被轉換的文件，不作任何更改。";
+/* Message printed by 'ojd migrate' when no stored document has an older version. */
+"cli.migrate.group.none" = "沒有文件需要遷移。";
+/* Line printed by 'ojd migrate' for a converted document. %@ is the path of the document in the support folder. Migrated is a folder name and stays as written. */
+"cli.migrate.group.converted" = "已轉換 %@。原始檔案位於 Migrated 資料夾。";
+/* Line printed by 'ojd migrate --dry-run' for a document it would convert. %@ is the path of the document in the support folder. */
+"cli.migrate.group.wouldConvert" = "將轉換 %@。";
+/* Line printed by 'ojd migrate' for a document it cannot convert. %1$@ is the path of the document, %2$@ is the reason. */
+"cli.migrate.group.failed" = "%1$@ 保持不變：%2$@";
+/* Error text of 'ojd migrate' when at least one document could not be converted. */
+"cli.migrate.group.failedSummary" = "部分文件無法轉換，保持不變。輸出會指出每一個。";
+/* Help text of the folder argument of 'ojd migrate'. */
+"cli.migrate.group.folder" = "取代支援資料夾進行掃描的資料夾。";
+/* Line printed by 'ojd migrate' for a file that is in the current format. %@ is the path of the file. */
+"cli.migrate.group.current" = "%@ 已是目前版本。";
+/* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
+"cli.migrate.group.foreign" = "%@ 不是 OpenJoystickDriver 的文件，保持不變。";
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
+"ui.migrate.action" = "遷移";
+/* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
+"platform.macos.ui.migrate.failed" = "部分文件無法轉換，保持不變。請在「終端機」中執行 ojd migrate 查看是哪些。";

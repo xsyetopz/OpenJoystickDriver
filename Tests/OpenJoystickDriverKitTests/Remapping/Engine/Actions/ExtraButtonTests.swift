@@ -56,8 +56,10 @@ struct RemappingExtraButtonTests {
     #expect(RemappingGamepadState(buttons: [button]) == .neutral)
   }
 
-  /// The classic Steam Controller's right pad is its right stick, so its pad click is R3. The Steam
-  /// Deck and the Steam Triton have a real R3, so their pad click is a control no persona carries.
+  /// The classic Steam Controller's right pad is its right stick, so its pad click is R3.
+  ///
+  /// The Steam Deck and the Steam Triton have a real R3, so their pad click is a control no persona
+  /// carries.
   @Test(arguments: [
     (0x1102, true), (0x1205, false), (0x1303, false),
   ])

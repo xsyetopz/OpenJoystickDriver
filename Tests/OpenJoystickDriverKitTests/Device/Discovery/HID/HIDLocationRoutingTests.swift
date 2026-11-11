@@ -1,12 +1,14 @@
-import OpenJoystickDriverTestSupport
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
 
 /// A family without a HID role predicate keeps one controller per routing location, whatever
-/// interfaces the location exposes. The two GameSir connections here are synthetic: no GameSir
-/// enhanced-HID interface capture exists.
+/// interfaces the location exposes.
+///
+/// The two GameSir connections here are synthetic: no GameSir enhanced-HID interface capture
+/// exists.
 struct HIDLocationRoutingTests {
   @Test
   func twoGameSirConnectionsAtOneLocationKeepOneLocationController() async throws {

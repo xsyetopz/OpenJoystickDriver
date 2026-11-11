@@ -8,18 +8,34 @@ import Foundation
 /// missing, deleted, or moved away is opened again once it exists, which also counts as a change.
 @MainActor
 final class FileChangeWatcher {
+  /// The wait for a burst of changes to settle.
   private static let debounce: DispatchTimeInterval = .milliseconds(300)
+  /// The wait before an unopened directory is opened again.
   private static let retryInterval: DispatchTimeInterval = .seconds(1)
 
+  /// The directories to watch.
   private let directories: [URL]
+  /// Accepts the files whose rewrite in place counts as a change.
   private let watchesFile: (URL) -> Bool
+  /// Runs once after a change.
   private let onChange: @MainActor () -> Void
+  /// Whether ``start()`` ran and ``stop()`` has not.
   private var isRunning = false
+  /// The sources of the directories that are open.
   private var sources: [URL: any DispatchSourceFileSystemObject] = [:]
+  /// The sources of the accepted files.
   private var fileSources: [any DispatchSourceFileSystemObject] = []
+  /// The scheduled call of `onChange`.
   private var pendingChange: DispatchWorkItem?
+  /// The scheduled attempt to open the directories that are not open.
   private var pendingRetry: DispatchWorkItem?
 
+  /// Creates a watcher over `directories`.
+  ///
+  /// - Parameters:
+  ///   - directories: The directories to watch.
+  ///   - watchesFile: Accepts the files that are watched for rewrites in place.
+  ///   - onChange: Runs after a change settles.
   init(
     directories: [URL],
     watchesFile: @escaping (URL) -> Bool = { _ in true },
@@ -39,6 +55,7 @@ final class FileChangeWatcher {
     watchFiles()
   }
 
+  /// Cancels every watch and every scheduled call.
   func stop() {
     isRunning = false
     pendingChange?.cancel()
@@ -51,6 +68,7 @@ final class FileChangeWatcher {
   }
 
   /// Opens each directory not watched yet and schedules a retry for those that do not open.
+  ///
   /// Returns whether any directory opened.
   @discardableResult
   private func openDirectories(logsFailures: Bool) -> Bool {
@@ -78,10 +96,12 @@ final class FileChangeWatcher {
   /// other error from opening it is a failure.
   static func isFailure(openErrno code: Int32) -> Bool { code != ENOENT }
 
+  /// Stops watching `directory`, which went away.
   private func closeDirectory(_ directory: URL) {
     sources.removeValue(forKey: directory)?.cancel()
   }
 
+  /// Schedules one attempt to open the directories that are not open.
   private func scheduleRetry() {
     guard pendingRetry == nil else { return }
     let retry = DispatchWorkItem { [weak self] in
@@ -95,6 +115,8 @@ final class FileChangeWatcher {
     DispatchQueue.main.asyncAfter(deadline: .now() + Self.retryInterval, execute: retry)
   }
 
+  /// Creates and starts a dispatch source on `descriptor`; `onEvent` receives the events, and every
+  /// event schedules a change.
   private func makeSource(
     descriptor: Int32,
     events: DispatchSource.FileSystemEvent,
@@ -116,8 +138,8 @@ final class FileChangeWatcher {
     return source
   }
 
-  /// Watches the content of every accepted file now in the directories, replacing earlier file
-  /// watches so a file replaced by rename is watched by its new inode.
+  /// Watches the content of every accepted file in the directories, replacing earlier file
+  /// watches so a file replaced by rename is watched by its replacement inode.
   private func watchFiles() {
     for fileSource in fileSources { fileSource.cancel() }
     let urls = directories.flatMap { directory in

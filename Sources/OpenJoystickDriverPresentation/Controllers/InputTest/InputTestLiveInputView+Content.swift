@@ -5,8 +5,11 @@
   import SwiftUI
 
   extension InputTestLiveInputView {
+    /// The live input.
     var body: some View { content }
 
+    /// The shoulders, the D-pad, the system and face buttons, the sticks, and any other pressed
+    /// button.
     var content: some View {
       let snapshot = liveState.snapshot
       let pressed = snapshot.pressed
@@ -57,6 +60,12 @@
       }.padding(6)
     }
 
+    /// The shoulder buttons and the triggers with their values.
+    ///
+    /// - Parameters:
+    ///   - snapshot: The latest input.
+    ///   - symbols: The titles and symbols of the buttons.
+    /// - Returns: The row.
     private func shoulderRow(
       snapshot: ControllerState,
       symbols: InputTestControllerSymbolSet
@@ -79,6 +88,10 @@
       }
     }
 
+    /// The four directions of the D-pad.
+    ///
+    /// - Parameter hat: The direction of the hat switch.
+    /// - Returns: The cluster.
     private func dpadCluster(hat: HatDirection) -> some View {
       let directions = RuntimePresentation.dpadDirections(hat)
       return VStack(spacing: 6) {
@@ -95,6 +108,13 @@
       }
     }
 
+    /// One direction of the D-pad.
+    ///
+    /// - Parameters:
+    ///   - direction: The direction.
+    ///   - title: The localization key of the direction's name.
+    ///   - active: Whether the direction is pressed.
+    /// - Returns: The indicator.
     private func dpadIndicator(
       _ direction: RemappingDpadDirection,
       title: String,
@@ -107,6 +127,12 @@
       )
     }
 
+    /// The View, guide and Menu buttons.
+    ///
+    /// - Parameters:
+    ///   - pressed: The pressed controls.
+    ///   - symbols: The titles and symbols of the buttons.
+    /// - Returns: The cluster.
     @ViewBuilder
     private func systemCluster(
       pressed: Set<Control>,
@@ -122,6 +148,12 @@
       }
     }
 
+    /// The four face buttons.
+    ///
+    /// - Parameters:
+    ///   - pressed: The pressed controls.
+    ///   - symbols: The titles and symbols of the buttons.
+    /// - Returns: The cluster.
     private func faceButtonCluster(
       pressed: Set<Control>,
       symbols: InputTestControllerSymbolSet
@@ -136,10 +168,24 @@
       }
     }
 
+    /// Returns an indicator of the symbol.
+    ///
+    /// - Parameters:
+    ///   - title: The name of the button.
+    ///   - symbol: The name of the SF Symbol.
+    ///   - active: Whether the button is pressed.
+    /// - Returns: An indicator of the symbol.
     func indicator(_ title: String, symbol: String, active: Bool) -> some View {
       InputTestIndicator(title: title, symbol: symbol, active: active)
     }
 
+    /// Returns an indicator of the button's title and symbols, with the value when it has one.
+    ///
+    /// - Parameters:
+    ///   - presentation: The title and symbols of the button.
+    ///   - value: The analog value, or nil.
+    ///   - active: Whether the button is pressed.
+    /// - Returns: An indicator of the button's title and symbols, with the value when it has one.
     func indicator(
       _ presentation: InputTestControllerSymbolSet.Control,
       value: Float? = nil,

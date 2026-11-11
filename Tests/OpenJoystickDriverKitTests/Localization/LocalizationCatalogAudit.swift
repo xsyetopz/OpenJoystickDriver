@@ -7,6 +7,7 @@ enum LocalizationCatalogAudit {
   /// requires each to equal `en-US` in every locale.
   static let sameInEveryLocaleKeys: Set<String> = [
     "term.protocolFamily.nintendoSwitch1", "term.protocolFamily.nintendoSwitch2",
+    "term.protocolFamily.nintendoWii",
     "term.protocolFamily.sonyDualSense", "term.protocolFamily.sonyDualShock4",
     "term.protocolFamily.sonySixaxis", "term.protocolFamily.valveSteamController",
     "term.protocolFamily.valveSteamDeck", "term.protocolFamily.valveSteamTriton",
@@ -14,6 +15,9 @@ enum LocalizationCatalogAudit {
     "term.protocolFamily.vendorNvidiaShield", "term.protocolFamily.xboxGip",
     "term.protocolFamily.xboxXid", "term.protocolFamily.xboxXusb",
     "term.protocolVariant.usb",
+    "cli.controller.show.labelMotionPlus", "term.wiiExtension.nunchuk",
+    "term.wiiExtension.classicController", "term.wiiExtension.classicControllerPro",
+    "term.wiiExtension.motionPlus",
   ]
 
   static let nonLinguisticSourceIdenticalKeys: Set<String> = sameInEveryLocaleKeys.union([
@@ -25,7 +29,7 @@ enum LocalizationCatalogAudit {
     "ui.inputTest.yTriangle",
     "ui.mapping.buttonNorth", "ui.mapping.dpadDirection", "ui.menu.projectPage",
     "ui.profiles.sectionDpad",
-    "ui.access.transport.web", "ui.access.web",
+    "ui.access.transport.web", "ui.access.web", "ui.profiles.system.url",
   ])
 
   private static let spanishTerms: Set<String> = [
@@ -36,12 +40,12 @@ enum LocalizationCatalogAudit {
     "ui.profiles.trackball.enabled", "ui.profiles.turbo",
     "ui.library.mods", "ui.access.scope.control", "ui.access.socket", "ui.access.transport.socket",
     "ui.access.tokens", "ui.access.token.issued.title", "ui.access.token.named",
-    "ui.settings.general.title", "ui.controllers.server.ojd",
+    "ui.settings.general.title", "ui.controllers.server.ojd", "term.macro", "ui.profiles.macros",
   ]
   private static let frenchTerms: Set<String> = [
     "ui.library.field.source", "ui.library.field.transport", "ui.library.field.version",
     "ui.capture.gain",
-    "cli.controller.show.labelSession",
+    "cli.controller.show.labelSession", "cli.controller.show.labelExtension",
     "cli.status.group.labelTransportExtension", "cli.status.group.labelService", "term.destination",
     "ui.inputTest.menu", "term.key.alt", "ui.mapping.guide",
     "ui.mapping.start", "ui.motion.calibration.pause",
@@ -50,7 +54,7 @@ enum LocalizationCatalogAudit {
     "ui.profiles.touch.surface", "ui.profiles.trackball.enabled", "ui.profiles.turbo",
     "ui.settings.notifications.notifications", "ui.settings.general.version",
     "ui.access.transport.socket", "ui.access.web.port",
-    "ui.library.mods",
+    "ui.library.mods", "term.macro", "ui.profiles.macros",
   ]
 
   private static let sourceIdenticalTermsByLocale: [String: Set<String>] = [
@@ -59,7 +63,7 @@ enum LocalizationCatalogAudit {
       "term.key.return", "term.key.shift", "term.key.tab",
     ],
     "de-DE": [
-      "term.parser", "term.protocolVariant.dongle",
+      "ui.shortcuts.action.removeMod.name", "term.parser", "term.protocolVariant.dongle",
       "ui.library.field.version", "ui.menu.controller.title", "ui.activity.filter",
       "ui.activity.column.details",
       "ui.access.details", "ui.library.details",
@@ -68,19 +72,19 @@ enum LocalizationCatalogAudit {
       "ui.access.tokens", "ui.library.mods",
       "ui.capture.linear", "cli.access.status.socket",
       "cli.controller.show.labelName", "term.controller", "term.status", "ui.console.stream",
-      "ui.developer.controller", "ui.developer.controllerDetails",
+      "ui.developer.controller", "ui.developer.controllerDetails", "ui.profiles.speak.text",
       "ui.developer.route", "ui.inputTest.home", "term.key.control", "term.key.escape",
       "ui.mapping.guide",
       "ui.mapping.start", "ui.profiles.physical.motor", "ui.profiles.sectionSticks",
       "ui.profiles.stick.horizontal", "ui.profiles.stick.source", "ui.profiles.trackball.enabled",
       "ui.profiles.trigger.source", "ui.profiles.turbo", "ui.settings.general.updates",
-      "ui.settings.general.version",
+      "ui.settings.general.version", "ui.profiles.pointerSpeed.driverTrigger",
       "ui.shortcuts.controller.name", "ui.shortcuts.controller.type",
       "ui.shortcuts.parameter.controller",
       "ui.shortcuts.profile.name",
     ],
-    "es-ES": spanishTerms.union(["ui.menu.window.zoom"]),
-    "es-MX": spanishTerms.union(["ui.menu.window.zoom"]),
+    "es-ES": spanishTerms.union(["ui.menu.window.zoom", "ui.shortcuts.action.light.color"]),
+    "es-MX": spanishTerms.union(["ui.menu.window.zoom", "ui.shortcuts.action.light.color"]),
     "fr-CA": frenchTerms.union(["ui.developer.packetColumnDirection"]).union([
       "ui.activity.column.message",
       "ui.menu.app.services", "ui.menu.window.zoom", "ui.settings.notifications.title",
@@ -91,7 +95,7 @@ enum LocalizationCatalogAudit {
     ]),
     "hi-IN": ["term.key.escape", "term.key.return"],
     "id-ID": [
-      "term.parser", "term.protocolVariant.dongle",
+      "ui.shortcuts.action.installMod.folder", "term.parser", "term.protocolVariant.dongle",
       "ui.library.layer.driver", "ui.access.token.issued.title", "ui.access.token.named",
       "ui.activity.filter", "ui.activity.mode.log",
       "ui.access.web.port", "ui.access.web.enable.port", "ui.menu.window.zoom",
@@ -108,12 +112,15 @@ enum LocalizationCatalogAudit {
       "ui.shortcuts.controller.model", "ui.menu.file.title", "ui.menu.edit.title",
     ],
     "it-IT": [
+      "term.macro",
       "term.parser", "term.protocolVariant.dongle",
       "ui.access.token.issued.title", "ui.access.token.named",
       "ui.menu.controller.title", "ui.menu.file.title", "ui.menu.window.zoom",
       "ui.access.socket", "ui.access.transport.socket",
       "cli.access.status.socket", "cli.controller.show.labelInput",
-      "cli.controller.show.labelRecord", "term.controller", "ui.console.output",
+      "cli.controller.show.labelRecord", "cli.controller.show.inputMappingRecord",
+      "term.controller",
+      "ui.console.output",
       "ui.developer.controller", "ui.developer.controllerDetails",
       "ui.inputTest.home", "ui.inputTest.menu", "ui.mapping.start", "ui.motion.calibration.offset",
       "ui.profiles.sectionTouch",
@@ -129,6 +136,7 @@ enum LocalizationCatalogAudit {
       "term.key.alt", "term.key.return", "term.key.shift",
     ],
     "nl-NL": [
+      "term.macro",
       "term.parser", "term.protocolVariant.dongle",
       "ui.library.field.transport", "ui.access.details", "ui.library.details", "ui.activity.filter",
       "ui.activity.column.details",
@@ -139,7 +147,8 @@ enum LocalizationCatalogAudit {
       "ui.menu.controller.title", "ui.menu.help.title", "ui.extra.help",
       "ui.access.socket", "ui.access.transport.socket",
       "cli.access.status.socket", "cli.controller.show.labelProtocol",
-      "cli.controller.show.labelRecord", "cli.controller.show.labelRumble",
+      "cli.controller.show.labelRecord", "cli.controller.show.inputMappingRecord",
+      "cli.controller.show.labelRumble",
       "cli.status.group.labelControllers", "cli.status.group.labelService", "term.controller",
       "term.protocol", "term.status",
       "action.stop", "ui.console.stream", "ui.developer.controller",
@@ -155,8 +164,10 @@ enum LocalizationCatalogAudit {
       "ui.profiles.turbo", "ui.settings.general.controllers", "ui.settings.general.updates",
       "ui.shortcuts.controller.model",
       "ui.shortcuts.controller.type", "ui.shortcuts.parameter.controller",
+      "ui.profiles.pointerSpeed.driverTrigger",
     ],
     "pt-BR": [
+      "term.macro", "ui.profiles.macros",
       "term.parser",
       "ui.activity.mode.log",
       "ui.access.token.issued.title", "ui.access.token.named",
@@ -186,6 +197,7 @@ enum LocalizationCatalogAudit {
       "ui.shortcuts.controller.model",
     ],
     "vi-VN": [
+      "term.macro",
       "ui.access.socket", "ui.access.transport.socket",
       "cli.access.status.socket", "ui.inputTest.home", "ui.inputTest.menu", "term.key.capsLock",
       "term.key.meta", "term.key.control", "term.key.delete", "term.key.escape",
@@ -218,8 +230,10 @@ enum LocalizationCatalogAudit {
   }
 
   /// The format specifiers of each key, in sorted order: a translation may reorder its numbered
-  /// specifiers. A `.stringsdict` entry lists each distinct specifier once, because a language
-  /// carries only the plural categories it needs and every category repeats the same specifiers.
+  /// specifiers.
+  ///
+  /// A `.stringsdict` entry lists each distinct specifier once, because a language carries only the
+  /// plural categories it needs and every category repeats the same specifiers.
   static func placeholderSignatures(for localization: String) -> [String: [String]] {
     var result =
       stringsData(for: localization).map {
@@ -245,7 +259,9 @@ enum LocalizationCatalogAudit {
   }
 
   /// The problems of `entries`: an entry with no plural variable, and a plural variable that lacks
-  /// a category of `required`. Each variable needs every category on its own.
+  /// a category of `required`.
+  ///
+  /// Each variable needs every category on its own.
   static func pluralCategoryProblems(in entries: [String: Any], required: Set<String>) -> [String] {
     var problems: [String] = []
     for (key, entry) in entries.sorted(by: { $0.key < $1.key }) {
@@ -305,6 +321,32 @@ enum LocalizationCatalogAudit {
       }
     }
     return result
+  }
+
+  /// Keys whose source value reports work in progress: its last sentence, or the sentence before an
+  /// instruction that starts with a capital letter, ends in `...`.
+  static func inProgressSourceKeys() -> [String] {
+    values(for: Localization.sourceLocalization).filter { _, value in
+      value.range(of: #"\.\.\.(?= [A-Z]|$)"#, options: .regularExpression) != nil
+    }.keys.sorted()
+  }
+
+  /// Keys whose in-progress source text loses its ellipsis in `localization`.
+  ///
+  /// `C` keeps `...`, a translation writes `…`, and neither keeps an ASCII `...`. A source that
+  /// ends in the ellipsis ends in it in the translation; a source with an instruction after it
+  /// keeps text after it.
+  static func lostEllipsisKeys(for localization: String) -> [String] {
+    let source = values(for: Localization.sourceLocalization)
+    let localized = values(for: localization)
+    let isC = localization.caseInsensitiveCompare("C") == .orderedSame
+    let mark = isC ? "..." : "…"
+    return inProgressSourceKeys().filter { key in
+      guard let sourceValue = source[key], let value = localized[key] else { return true }
+      if isC { return value != sourceValue }
+      guard !value.contains("..."), let range = value.range(of: mark) else { return true }
+      return sourceValue.hasSuffix("...") != (range.upperBound == value.endIndex)
+    }
   }
 
   /// Source texts that one word may translate in any language.

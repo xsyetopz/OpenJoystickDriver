@@ -4,10 +4,14 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The Lighting section: a toggle for the controller's default color and a color well.
   struct ProfileLightingEditor: View {
+    /// The profile's color, or nil for the controller's default.
     let color: ControllerColor?
+    /// Sets the color; nil restores the default.
     let onChange: (ControllerColor?) -> Void
 
+    /// The lighting section.
     var body: some View {
       Section(header: Text(OJDLocalized.string("ui.inputTest.lighting"))) {
         Toggle(
@@ -27,6 +31,7 @@
       }
     }
 
+    /// The color well's binding; choosing a color sets the profile's color.
     private var colorBinding: Binding<NSColor> {
       Binding(
         get: {

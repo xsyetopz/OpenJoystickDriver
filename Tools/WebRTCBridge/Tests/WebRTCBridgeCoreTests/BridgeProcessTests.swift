@@ -1,12 +1,18 @@
 import XCTest
 
+/// Runs the built `ojd-webrtc-bridge` binary and checks its usage output and exit status.
 final class BridgeProcessTests: XCTestCase {
+  /// The exit status and the captured output of one run.
   private struct Result {
+    /// The exit status.
     let status: Int32
+    /// Standard output as text.
     let output: String
+    /// Standard error as text.
     let error: String
   }
 
+  /// Runs the binary next to the test bundle with the arguments and waits for it to exit.
   private func run(_ arguments: [String]) throws -> Result {
     let products = Bundle(for: Self.self).bundleURL.deletingLastPathComponent()
     let binary = products.appendingPathComponent("ojd-webrtc-bridge")
@@ -32,6 +38,7 @@ final class BridgeProcessTests: XCTestCase {
     )
   }
 
+  /// `--help` prints the usage to standard output and exits with status 0.
   func testHelpPrintsUsageToStandardOutputAndExitsZero() throws {
     let result = try run(["--help"])
     XCTAssertEqual(result.status, 0)
@@ -39,6 +46,7 @@ final class BridgeProcessTests: XCTestCase {
     XCTAssertEqual(result.error, "")
   }
 
+  /// A bad argument prints the usage to standard error and exits with status 1.
   func testABadArgumentPrintsUsageToStandardErrorAndExitsNonZero() throws {
     let result = try run(["--bad"])
     XCTAssertEqual(result.status, 1)

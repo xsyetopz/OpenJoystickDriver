@@ -86,7 +86,7 @@ extension RuntimeProfileDraftTests {
     let options = DestinationOption.options(for: .button(.south))
 
     #expect(options.first?.destination == .keyboard(key: .space, modifiers: []))
-    #expect(options.count < 400)
+    #expect(options.count < 420)
     #expect(
       options.contains {
         $0.destination == .keyboard(key: .arrowUp, modifiers: [.meta, .shift])
@@ -102,6 +102,35 @@ extension RuntimeProfileDraftTests {
         $0.destination == .mouseMovement(.x)
       }
     )
+  }
+
+  @Test
+  func systemDestinationsAreListedForDiscreteSourcesAndLabeledInWords() {
+    let discrete = DestinationOption.options(for: .button(.south))
+    let axis = DestinationOption.options(for: .axis(.leftStickX))
+
+    #expect(discrete.contains { $0.destination == .systemKey(.volumeUp) })
+    #expect(discrete.contains { $0.destination == .systemAction(.missionControl) })
+    #expect(!axis.contains { $0.destination == .systemKey(.volumeUp) })
+    #expect(discrete.contains { if case .openApplication = $0.destination { true } else { false } })
+    #expect(discrete.contains { if case .openURL = $0.destination { true } else { false } })
+    #expect(discrete.contains { if case .runShortcut = $0.destination { true } else { false } })
+    #expect(discrete.contains { if case .typeText = $0.destination { true } else { false } })
+    #expect(RuntimePresentation.destinationLabel(.systemKey(.volumeUp)) == "System key Volume Up")
+    #expect(
+      RuntimePresentation.destinationLabel(.systemAction(.missionControl))
+        == "System action Mission Control"
+    )
+    #expect(
+      RuntimePresentation.destinationLabel(.openApplication(bundleIdentifier: "com.apple.Safari"))
+        == "Open com.apple.Safari"
+    )
+    #expect(
+      RuntimePresentation.destinationLabel(.openURL("https://example.com"))
+        == "Open URL https://example.com"
+    )
+    #expect(RuntimePresentation.destinationLabel(.runShortcut("Dim")) == "Run Shortcut Dim")
+    #expect(RuntimePresentation.destinationLabel(.typeText("hi")) == "Type hi")
   }
 
   @Test
@@ -209,20 +238,22 @@ extension RuntimeProfileDraftTests {
     draft = try draft.settingMetadata(
       name: "Application Profile",
       device: RemappingDeviceScope(vendorID: 0x045E, productID: 0x02EA),
-      applicationScope: .application(appID: "com.example.Game")
+      applicationScope: .application(appIDs: ["com.example.Game"])
     )
     draft = try draft.settingBindingBehaviors(
       turbo: nil,
       longHold: RemappingLongHold(durationMs: 500, destination: .keyboard(key: .b, modifiers: [])),
-      doubleTap: RemappingDoubleTap(windowMs: 250, destination: .keyboard(key: .c, modifiers: [])),
+      multiTap: [
+        RemappingMultiTap(count: 2, windowMs: 250, destination: .keyboard(key: .c, modifiers: []))
+      ],
       for: binding.id
     )
 
     #expect(draft.profile.name == "Application Profile")
     #expect(draft.profile.device == RemappingDeviceScope(vendorID: 0x045E, productID: 0x02EA))
-    #expect(draft.profile.applicationScope == .application(appID: "com.example.Game"))
+    #expect(draft.profile.applicationScope == .application(appIDs: ["com.example.Game"]))
     #expect(draft.profile.bindings[0].longHold?.durationMs == 500)
-    #expect(draft.profile.bindings[0].doubleTap?.windowMs == 250)
+    #expect(draft.profile.bindings[0].multiTap.first?.windowMs == 250)
   }
 
   @Test

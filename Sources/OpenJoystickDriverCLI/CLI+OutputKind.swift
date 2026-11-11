@@ -3,7 +3,7 @@ import ArgumentParser
 extension CLI {
   /// The `kind` of each command's `--json` output: one table, not derived from the command path.
   ///
-  /// A command whose output has another kind in some mode passes it to `CLIOutput.json(_:kind:)`:
+  /// A command whose output has another kind in some mode passes it to ``CLIOutput/json(_:kind:)``:
   /// `ojd access grant --token`, `ojd controller watch --first-press`, `ojd log show -f`.
   /// Commands that print no `--json` document of their own, such as `profile export`, are absent.
   static let outputKinds: [ObjectIdentifier: String] = {
@@ -35,11 +35,17 @@ extension CLI {
       (BindingListCommand.self, "BindingList"),
       (BindingSetCommand.self, "Binding"),
       (BindingClearCommand.self, "Status"),
+      (MacroListCommand.self, "MacroList"),
+      (MacroShowCommand.self, "Macro"),
+      (MacroSetCommand.self, "Macro"),
+      (MacroRemoveCommand.self, "Status"),
       (ConfigShowCommand.self, "Configuration"),
       (ConfigSetCommand.self, "ConfigChange"),
       (ConfigUnsetCommand.self, "ConfigChange"),
       (DiagnoseCommand.self, "Diagnosis"),
       (ExplainCommand.self, "ErrorExplanation"),
+      (MigrateCommand.self, "MigrationReport"),
+      (GenerateCommand.self, "GenerationReport"),
       (TransportExtensionStatusCommand.self, "TransportExtension"),
       (TransportExtensionActivateCommand.self, "TransportExtension"),
       (TransportExtensionDeactivateCommand.self, "TransportExtension"),
@@ -74,6 +80,9 @@ extension CLI {
       (ModInstallCommand.self, "ModPackage"),
       (ModListCommand.self, "ModPackageList"),
       (ModRemoveCommand.self, "Status"),
+      (ProtocolValidateCommand.self, "ProtocolValidation"),
+      (ProtocolInstallCommand.self, "ProtocolInstall"),
+      (ProtocolListCommand.self, "ProtocolList"),
       (ServiceStartCommand.self, "Service"),
       (ServiceStopCommand.self, "Service"),
       (ServiceWaitCommand.self, "Service"),
@@ -90,7 +99,7 @@ extension CLI {
     return Dictionary(uniqueKeysWithValues: table.map { (ObjectIdentifier($0.0), $0.1) })
   }()
 
-  /// The `kind` of `command`'s `--json` output, or nil for a command that is not in the table.
+  /// The JSON output kind of a command, or nil for a command that is not in the table.
   static func outputKind(of command: any ParsableCommand.Type) -> String? {
     outputKinds[ObjectIdentifier(command)]
   }

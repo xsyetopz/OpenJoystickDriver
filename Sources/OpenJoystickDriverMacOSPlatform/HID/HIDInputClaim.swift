@@ -2,12 +2,16 @@ import IOKit
 import IOKit.hid
 import OpenJoystickDriverKit
 
-/// The two device calls that open and close one IOHID device object. A fake records the calls in
-/// tests.
+/// The two device calls that open and close one IOHID device object.
+///
+/// A fake records the calls in tests.
 struct HIDDeviceOpenPort {
+  /// Opens the device object with the given options.
   let open: (IOOptionBits) -> IOReturn
+  /// Closes the device object with the given options.
   let close: (IOOptionBits) -> IOReturn
 
+  /// Creates a port from an open call and a close call.
   init(
     open: @escaping (IOOptionBits) -> IOReturn,
     close: @escaping (IOOptionBits) -> IOReturn
@@ -16,6 +20,7 @@ struct HIDDeviceOpenPort {
     self.close = close
   }
 
+  /// Creates a port that opens and closes `device`.
   init(device: IOHIDDevice) {
     self.init(
       open: { IOHIDDeviceOpen(device, $0) },
@@ -39,13 +44,16 @@ struct HIDInputClaim: Equatable {
   var seized: Bool { seizeResult == kIOReturnSuccess }
   /// The ownership the seize result names; nil when no seize was requested.
   var ownership: HIDInputOwnership? { seizeResult.map(Self.ownership(forSeizeResult:)) }
-  /// The result of the open that carries input: the seize when it was granted, else the shared
-  /// open that follows it. Success means input reports can be read.
+  /// The result of the open that carries input: the seize when it was granted, else the shared open
+  /// that follows it.
+  ///
+  /// Success means input reports can be read.
   let inputResult: IOReturn
 
-  /// Opens the device object, with the seize when `seize` is set. A refused seize is closed first;
-  /// the object then opens shared, so the refusal is named by `ownership` and input flows where
-  /// macOS allows it.
+  /// Opens the device object, with the seize when `seize` is set.
+  ///
+  /// A refused seize is closed first; the object then opens shared, so the refusal is named by
+  /// `ownership` and input flows where macOS allows it.
   static func admit(port: HIDDeviceOpenPort, seize: Bool) -> Self {
     guard seize else {
       return Self(seizeResult: nil, inputResult: port.open(IOOptionBits(kIOHIDOptionsTypeNone)))
@@ -53,8 +61,9 @@ struct HIDInputClaim: Equatable {
     return seizeAfterClosing(port: port, closing: nil)
   }
 
-  /// Replaces the shared open with a seize. A refused seize is closed and the shared open is
-  /// restored.
+  /// Replaces the shared open with a seize.
+  ///
+  /// A refused seize is closed and the shared open is restored.
   static func reclaim(port: HIDDeviceOpenPort) -> Self {
     seizeAfterClosing(port: port, closing: IOOptionBits(kIOHIDOptionsTypeNone))
   }
@@ -76,6 +85,9 @@ struct HIDInputClaim: Equatable {
     }
   }
 
+  /// Closes a shared open when `sharedOptions` is set, then seizes the device.
+  ///
+  /// A refused seize is closed, and the device is opened for input without it.
   private static func seizeAfterClosing(
     port: HIDDeviceOpenPort,
     closing sharedOptions: IOOptionBits?

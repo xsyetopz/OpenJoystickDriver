@@ -3,6 +3,7 @@ import OpenJoystickDriverKit
 
 extension RemappingRequestCoordinator {
 
+  /// Maps `error` to the RPC error that carries its code and message to the client.
   static func rpcError(_ error: any Error) -> ApplicationServiceRemappingRPCError {
     if let error = error as? ApplicationServiceRemappingRPCError { return error }
     if let error = error as? RemappingProfileLibraryError { return libraryError(error) }
@@ -52,6 +53,8 @@ extension RemappingRequestCoordinator {
     )
   }
 
+  /// Returns the error for a mutation that failed and could not be reconciled, naming the original
+  /// failure and `detail`.
   static func unreconciledError(
     original: ApplicationServiceRemappingRPCError,
     detail: String
@@ -63,6 +66,7 @@ extension RemappingRequestCoordinator {
     )
   }
 
+  /// Maps a profile library error to its RPC error code.
   private static func libraryError(
     _ error: RemappingProfileLibraryError
   ) -> ApplicationServiceRemappingRPCError {
@@ -85,6 +89,7 @@ extension RemappingRequestCoordinator {
     return ApplicationServiceRemappingRPCError(code: code, message: error.localizedDescription)
   }
 
+  /// Maps a routing error to its RPC error code.
   private static func routingError(
     _ error: RemappingOutputRoutingError
   ) -> ApplicationServiceRemappingRPCError {

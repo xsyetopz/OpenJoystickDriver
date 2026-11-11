@@ -1,14 +1,31 @@
 import Foundation
 
+/// A key for a JSON object whose field names are not known in advance.
 private struct RemappingJSONKey: CodingKey {
+  /// The field name.
   let stringValue: String
+  /// Always `nil`, because the key names only object fields and never an array index.
   let intValue: Int? = nil
 
+  /// Creates a key from a field name.
   init?(stringValue: String) { self.stringValue = stringValue }
+  /// Fails for every integer, because the key names only object fields.
   init?(intValue: Int) { return nil }
 }
 
 extension Decoder {
+  /// Throws a named error when the current JSON object has the key `stale`, which `current`
+  /// replaces.
+  func rejectStaleKey(_ stale: String, use current: String) throws {
+    let container = try self.container(keyedBy: RemappingJSONKey.self)
+    guard let key = RemappingJSONKey(stringValue: stale), container.contains(key) else { return }
+    throw DecodingError.dataCorruptedError(
+      forKey: key,
+      in: container,
+      debugDescription: "\(stale) is not a key; use \(current), a list of bundle identifiers"
+    )
+  }
+
   /// Throws when the current JSON object has a key that `Keys` does not declare.
   public func rejectUnknownKeys<Keys: CodingKey & CaseIterable>(_ keys: Keys.Type) throws {
     let container = try self.container(keyedBy: RemappingJSONKey.self)

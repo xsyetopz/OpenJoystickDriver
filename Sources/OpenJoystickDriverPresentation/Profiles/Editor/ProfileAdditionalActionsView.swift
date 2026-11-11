@@ -2,14 +2,21 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The list of additional actions of an assignment: a destination, Behavior, Move Up, Move Down
+  /// and Remove for each, and Add Action.
   struct ProfileAdditionalActionsView: View {
+    /// The source of the assignment, which decides the destinations that fit.
     let source: RemappingSource
+    /// What the controller has, or nil when it is not known.
     let capabilities: ControllerProfileCapabilities?
+    /// The additional actions being edited.
     @Binding
     var actions: [RemappingAction]
+    /// The action whose behavior the sheet edits, or nil.
     @State
     private var editing: RemappingAction?
 
+    /// The additional actions and the Add Action button.
     var body: some View {
       VStack(alignment: .leading, spacing: 8) {
         Text(OJDLocalized.string("ui.profiles.additionalActions"))
@@ -67,7 +74,7 @@
             pulseDurationMs: action.pulseDurationMs,
             turbo: action.turbo,
             longHold: action.longHold,
-            doubleTap: action.doubleTap
+            multiTap: action.multiTap
           ),
           showsAdditionalActions: false,
           capabilities: capabilities
@@ -81,13 +88,14 @@
                 ? duration : RemappingBinding.defaultPulseDurationMs,
               turbo: turbo,
               longHold: hold,
-              doubleTap: tap
+              multiTap: tap
             )
           )
         }
       }
     }
 
+    /// Returns a binding that sets the destination of `action`.
     private func destinationBinding(_ action: RemappingAction) -> Binding<RemappingDestination> {
       Binding(
         get: { action.destination },
@@ -100,18 +108,20 @@
               pulseDurationMs: action.pulseDurationMs,
               turbo: action.turbo,
               longHold: action.longHold,
-              doubleTap: action.doubleTap
+              multiTap: action.multiTap
             )
           )
         }
       )
     }
 
+    /// Replaces the action that has the identifier of `action`.
     private func replace(_ action: RemappingAction) {
       guard let index = actions.firstIndex(where: { $0.id == action.id }) else { return }
       actions[index] = action
     }
 
+    /// Moves `action` by `offset` places; a move off either end changes nothing.
     private func move(_ action: RemappingAction, by offset: Int) {
       guard let index = actions.firstIndex(where: { $0.id == action.id }),
         actions.indices.contains(index + offset)

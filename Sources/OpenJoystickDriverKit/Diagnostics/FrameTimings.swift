@@ -1,7 +1,9 @@
 import Foundation
 
-/// One stage a controller frame passes through, in pipeline order. The raw values are the stable
-/// identifiers that `ojd diagnose` prints and `cli-output.schema.json` lists.
+/// One stage a controller frame passes through, in pipeline order.
+///
+/// The raw values are the stable identifiers that `ojd diagnose` prints and
+/// `cli-output.schema.json` lists.
 public enum FrameStage: String, Codable, CaseIterable, Sendable {
   /// The report arrived from the controller.
   case read = "Read"
@@ -18,9 +20,12 @@ public enum FrameStage: String, Codable, CaseIterable, Sendable {
 
 /// The time a frame reached `stage`, in nanoseconds of the monotonic uptime clock.
 public struct FrameStageTime: Codable, Equatable, Sendable {
+  /// The stage the frame reached.
   public let stage: FrameStage
+  /// The uptime when it reached the stage.
   public let nanoseconds: UInt64
 
+  /// Creates a stage time from its values.
   public init(stage: FrameStage, nanoseconds: UInt64) {
     self.stage = stage
     self.nanoseconds = nanoseconds
@@ -31,8 +36,10 @@ public struct FrameStageTime: Codable, Equatable, Sendable {
 public struct FrameTiming: Codable, Equatable, Sendable {
   /// Counts the frames that reached dispatch for this controller since its pipeline started.
   public let sequence: UInt64
+  /// The stamps of the stages the frame reached.
   public let stages: [FrameStageTime]
 
+  /// Creates a frame timing from its values.
   public init(sequence: UInt64, stages: [FrameStageTime]) {
     self.sequence = sequence
     self.stages = stages
@@ -43,12 +50,14 @@ public struct FrameTiming: Codable, Equatable, Sendable {
 public struct ControllerFrameTimings: Codable, Equatable, Sendable {
   /// The ID from `ojd controller list`.
   public let controller: String
+  /// The controller's name.
   public let name: String
   /// The newest ``FrameTimingRecorder/listedFrames`` frames of the window.
   public let frames: [FrameTiming]
   /// The summary of the whole window, not only of ``frames``.
   public let summary: FrameTimingSummary
 
+  /// Creates the timings of a controller from their values.
   public init(
     controller: String,
     name: String,
@@ -76,15 +85,19 @@ public struct ControllerFrameTimings: Codable, Equatable, Sendable {
 /// Arguments of `getFrameTimings`: the seconds of the uptime clock the payload covers, counted
 /// back from the moment the service answers; nil covers the whole ring.
 public struct LocalServiceRPCFrameTimingsArguments: Codable, Equatable, Sendable {
+  /// The seconds to cover; nil covers the whole ring.
   public let lastSeconds: Int?
 
+  /// Creates arguments for the last `lastSeconds` seconds, or for the whole ring when nil.
   public init(lastSeconds: Int?) { self.lastSeconds = lastSeconds }
 }
 
 /// The result of `ApplicationServiceClient.getFrameTimings(lastSeconds:)`.
 public struct ApplicationServiceFrameTimingsPayload: Codable, Equatable, Sendable {
+  /// The timings of each connected controller.
   public let controllers: [ControllerFrameTimings]
 
+  /// Creates a payload from the timings of the controllers.
   public init(controllers: [ControllerFrameTimings]) { self.controllers = controllers }
 }
 
@@ -107,20 +120,28 @@ public final class FrameTimingRecorder: Sendable {
   /// The frames kept per controller: ``windowSeconds`` at 1000 Hz.
   public static let windowCapacity = windowSeconds * 1_000
 
+  /// A report that is parsed and waits for dispatch.
   private struct Pending {
+    /// The `Read` stamp.
     let read: UInt64
+    /// The `Parse` stamp.
     let parse: UInt64
   }
 
+  /// The frame ring of one controller.
   private struct Track {
+    /// The newest parsed report, which the next dispatch turns into a frame; nil when none waits.
     var pending: Pending?
+    /// The sequence the next frame takes.
     var nextSequence: UInt64 = 0
     /// The frame of sequence `n` sits in slot `n % windowCapacity` until the frame
     /// `windowCapacity` sequences later takes the slot.
     var slots = [FrameTiming?](repeating: nil, count: FrameTimingRecorder.windowCapacity)
 
+    /// The sequence of the newest frame; nil before the first frame.
     var newestSequence: UInt64? { nextSequence > 0 ? nextSequence - 1 : nil }
 
+    /// The slot that holds the frame of `sequence`.
     private func slot(of sequence: UInt64) -> Int { Int(sequence % UInt64(slots.count)) }
 
     /// Starts a frame from the pending report at the dispatch stage and returns its sequence, or
@@ -158,8 +179,10 @@ public final class FrameTimingRecorder: Sendable {
     }
   }
 
+  /// The frame ring of each controller.
   private let tracks = Locked<[LogicalControllerID: Track]>([:])
 
+  /// Creates a recorder with no frames.
   public init() {}
 
   /// Notes the newest parsed report of `identifier`; a later report replaces it.

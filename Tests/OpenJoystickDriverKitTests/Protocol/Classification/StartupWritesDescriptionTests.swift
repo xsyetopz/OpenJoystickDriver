@@ -3,9 +3,10 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// A driver sends no startup write that its family's description does not carry. A
-/// family with raw-USB startup packets returns exactly the description's packets; a family with HID
-/// startup writes returns none of them itself, only the reports that depend on session state.
+/// A driver sends no startup write that its family's description does not carry.
+///
+/// A family with raw-USB startup packets returns exactly the description's packets; a family with
+/// HID startup writes returns none of them itself, only the reports that depend on session state.
 struct StartupWritesDescriptionTests {
   private static let switch2Layouts: [Switch2ControllerLayout] = [
     .pro, .leftJoyCon, .rightJoyCon, .gameCube,

@@ -80,6 +80,7 @@ extension EndpointServer {
 
   /// A line that a feed accepts after `FeedSession`.
   private enum FeedLine {
+    /// A `Frame` line with its decoded frame.
     case frame(VirtualFeedFrame)
     /// `KeepAlive`: it resets the idle timeout and changes nothing else.
     case keepAlive
@@ -111,6 +112,7 @@ extension EndpointServer {
     return .success(.frame(frame))
   }
 
+  /// Maps a failure of the feed to the error that the endpoint reports for `persona`.
   private static func feedError(_ error: any Error, persona: VirtualHIDProfileID) -> EndpointError {
     switch error as? VirtualFeedError {
     case .unknownProfile:
@@ -130,7 +132,7 @@ extension EndpointServer {
 
   /// Runs `work` and blocks the calling thread, a connection-queue thread, until it finishes;
   /// cancels `work` once `connection` is closing or its peer hung up.
-  private static func waitFor<T: Sendable>(
+  static func waitFor<T: Sendable>(
     _ connection: EndpointConnection,
     _ work: @escaping @Sendable () async throws -> T
   ) throws -> T {
@@ -144,12 +146,16 @@ extension EndpointServer {
     while done.wait(timeout: .now() + poll) == .timedOut {
       if connection.isClosing || connection.peerHungUp { task.cancel() }
     }
-    return try box.result!.get()
+    guard let result = box.result else {
+      preconditionFailure("the semaphore signals only after the task stores its result")
+    }
+    return try result.get()
   }
 }
 
 /// Written by one task before the semaphore signals, read after it.
 /// - Note: `@unchecked Sendable` because the semaphore orders the write before the read.
 private final class ResultBox<T>: @unchecked Sendable {
+  /// The outcome of the work, set by the task that ran it.
   var result: Result<T, any Error>?
 }

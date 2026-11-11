@@ -36,7 +36,7 @@ struct PassiveUSBDescriptorBoundaryTests {
   }
 
   @Test
-  func SSPCompanionAfterNonIsochronousEndpointIsRejected() {
+  func sspCompanionAfterNonIsochronousEndpointIsRejected() {
     let bytes: [UInt8] = [
       9, 2, 39, 0, 1, 1, 0, 0x80, 0x32, 9, 4, 0, 0, 1, 0xFF, 0, 0, 0, 7, 5, 1, 2, 0, 4, 0, 6, 0x30,
       0, 0, 0, 0, 8, 0x31, 0, 0, 0x51, 0xC3, 0, 0,

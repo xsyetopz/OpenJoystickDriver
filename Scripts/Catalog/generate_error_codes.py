@@ -1,6 +1,6 @@
 """Check or rebuild everything that derives from the error code catalog.
 
-`Resources/ErrorCodes.json` is the only authored list of E#### codes.
+`Resources/ErrorCodes.plist` is the only authored list of E#### codes.
 This script validates it,
 and rewrites the two files that copy it:
 the `code` enum of `Resources/Schemas/endpoint.schema.json`
@@ -11,12 +11,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import plistlib
 import re
 import sys
 from pathlib import Path
 from typing import Any
 
-from Scripts.Quality.biome_format import format_json
 from Scripts.Quality.repository_tool import (
     command_line_exit_statuses,
     domain_areas,
@@ -34,7 +34,7 @@ except ImportError:
     raise SystemExit(2)
 
 ROOT = Path(__file__).resolve().parents[2]
-CATALOG = Path("Resources/ErrorCodes.json")
+CATALOG = Path("Resources/ErrorCodes.plist")
 CATALOG_SCHEMA = Path("Resources/Schemas/error-codes.schema.json")
 ENDPOINT_SCHEMA = Path("Resources/Schemas/endpoint.schema.json")
 WIKI_PAGE = Path("wiki/Error-Codes.md")
@@ -58,8 +58,7 @@ class ErrorCodeError(Exception):
 
 
 def load_catalog(root: Path) -> list[Entry]:
-    with (root / CATALOG).open(encoding="utf-8") as source:
-        document = json.load(source)
+    document = plistlib.loads((root / CATALOG).read_bytes())
     with (root / CATALOG_SCHEMA).open(encoding="utf-8") as source:
         schema = json.load(source)
     problems = [
@@ -159,7 +158,6 @@ def render_wiki(page: str, block: str) -> str:
 
 def render_endpoint_schema(text: str, entries: list[Entry]) -> str:
     codes = [entry["code"] for entry in entries if entry["domain"] == "Endpoint"]
-    enum = ", ".join(json.dumps(code) for code in codes)
     expected = json.loads(text)
     try:
         expected["$defs"]["error"]["properties"]["code"]["enum"] = codes
@@ -167,11 +165,18 @@ def render_endpoint_schema(text: str, entries: list[Entry]) -> str:
         raise ErrorCodeError(f"{ENDPOINT_SCHEMA} has no error code enum") from error
     # Another object can also hold an "error" key; take the match that changes only this enum.
     for match in ENDPOINT_ENUM.finditer(text):
+        key_line = match[1].rsplit("\n", 1)[-1]
+        indent = key_line[: len(key_line) - len(key_line.lstrip())]
+        items = ",\n".join(f"{indent}  {json.dumps(code)}" for code in codes)
         rendered = (
-            text[: match.start()] + match[1] + enum + match[2] + text[match.end() :]
+            text[: match.start()]
+            + match[1]
+            + f"\n{items}\n{indent}"
+            + match[2]
+            + text[match.end() :]
         )
         if json.loads(rendered) == expected:
-            return format_json({ENDPOINT_SCHEMA: rendered})[ENDPOINT_SCHEMA]
+            return rendered
     raise ErrorCodeError(f"{ENDPOINT_SCHEMA} has no error code enum")
 
 
@@ -207,7 +212,7 @@ def main() -> int:
     args = parser.parse_args()
     try:
         stale = regenerate(ROOT, write=args.write)
-    except (ErrorCodeError, OSError, json.JSONDecodeError) as error:
+    except (ErrorCodeError, OSError, plistlib.InvalidFileException, ValueError) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1
     if args.check and stale:

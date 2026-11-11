@@ -3,11 +3,16 @@ import OpenJoystickDriverKit
 
 /// What the app offers beside a check that is not a pass.
 enum ActivityCheckFix: Equatable {
+  /// Request the Input Read permission.
   case requestInputRead
+  /// Request the Input Inject permission.
   case requestInputInject
+  /// Open System Settings to approve the driver extension.
   case approveDriver
+  /// Show the Library area.
   case showLibrary
 
+  /// The localization key of the fix button's title.
   var titleKey: String {
     switch self {
     case .requestInputRead, .requestInputInject: return "action.request"
@@ -17,16 +22,23 @@ enum ActivityCheckFix: Equatable {
   }
 }
 
-/// A check's place in the app: its name and the GUI action that fixes it. A check without an
-/// action says so; its details text still names the fix.
+/// A check's place in the app: its name and the GUI action that fixes it.
+///
+/// A check without an action says so; its details text still names the fix.
 struct ActivityCheckKind: Equatable {
+  /// What the app does for a check.
   enum Action: Equatable {
+    /// A button that does the fix.
     case fix(ActivityCheckFix)
+    /// The app has no action; the details text names the fix.
     case noGUIAction
   }
 
+  /// The check's identifier, as `ojd diagnose` prints it.
   let id: String
+  /// The localization key of the check's name.
   let nameKey: String
+  /// The GUI action for the check.
   let action: Action
 
   /// Every check of `ojd diagnose` that the app runs. `runtime-health` is a command-line option
@@ -59,24 +71,39 @@ struct ActivityCheckKind: Equatable {
       action: .noGUIAction
     ),
     Self(id: "controller-records", nameKey: "ui.library.records", action: .fix(.showLibrary)),
+    Self(
+      id: "input-mapping",
+      nameKey: "cli.controller.show.labelInputMapping",
+      action: .noGUIAction
+    ),
+    Self(
+      id: "switch-placeholder-serial",
+      nameKey: "ui.activity.check.switchSerial",
+      action: .noGUIAction
+    ),
     Self(id: "config-files", nameKey: "ui.activity.check.configFiles", action: .noGUIAction),
     Self(id: "usb-access", nameKey: "ui.activity.check.usbAccess", action: .fix(.requestInputRead)),
   ]
 
+  /// Returns the kind of the check with the identifier, or nil when the app does not list it.
   static func kind(of id: String) -> Self? { all.first { $0.id == id } }
 }
 
 /// One `ojd diagnose` check as a table row. `detail` is the text the command prints; for a
 /// check that is not a pass it names the fix.
 struct ActivityCheckRow: Identifiable, Equatable {
+  /// The check's identifier.
   let id: String
+  /// The check's result.
   let status: DiagnoseStatus
+  /// The text that `ojd diagnose` prints for the check.
   let detail: String
   /// The localized name; nil for a check the app does not list, which shows its id.
   let nameKey: String?
   /// The button beside a warning or failure whose fix the app can do.
   let fix: ActivityCheckFix?
 
+  /// Creates the row from a check; a fix shows only for a warning or failure that has one.
   init(_ check: DiagnoseCheck) {
     id = check.id
     status = check.status
@@ -90,6 +117,7 @@ struct ActivityCheckRow: Identifiable, Equatable {
     }
   }
 
+  /// The localization key of the result's name.
   var statusKey: String {
     switch status {
     case .pass: return "ui.activity.status.pass"
@@ -99,6 +127,7 @@ struct ActivityCheckRow: Identifiable, Equatable {
     }
   }
 
+  /// The SF Symbol of the result.
   var symbolName: String {
     switch status {
     case .pass: return "checkmark.circle.fill"
@@ -111,21 +140,28 @@ struct ActivityCheckRow: Identifiable, Equatable {
 
 /// The result of running the checks of `ojd diagnose`.
 enum ActivityDiagnosticsState: Equatable {
+  /// The checks have not run.
   case idle
+  /// The checks are running.
   case running
+  /// The checks have run; the value holds the rows in order.
   case finished([ActivityCheckRow])
 }
 
 /// Runs the checks of `ojd diagnose` for the Activity Diagnostics view.
 @MainActor
 final class ActivityDiagnosticsModel: ObservableObject {
+  /// The state of the run.
   @Published
   private(set) var state = ActivityDiagnosticsState.idle
 
+  /// Runs the checks.
   private let runChecks: @MainActor () async -> [DiagnoseCheck]
 
+  /// Creates the model on `runChecks`.
   init(runChecks: @escaping @MainActor () async -> [DiagnoseCheck]) { self.runChecks = runChecks }
 
+  /// Whether a run is in progress.
   var isRunning: Bool { state == .running }
 
   /// Runs every check once; a run in progress is not started again.

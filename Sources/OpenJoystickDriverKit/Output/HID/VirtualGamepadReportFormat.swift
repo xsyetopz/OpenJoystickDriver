@@ -2,25 +2,39 @@ import Foundation
 
 /// Normalized virtual gamepad state used by all output backends.
 public struct VirtualGamepadState: Sendable {
+  /// The pressed buttons, one bit each by ``GamepadHIDDescriptor/ButtonBit``.
   public var buttons: UInt32
+  /// The left stick's horizontal position, as a signed 16-bit value.
   public var leftStickX: Int16
+  /// The left stick's vertical position, as a signed 16-bit value.
   public var leftStickY: Int16
+  /// The right stick's horizontal position, as a signed 16-bit value.
   public var rightStickX: Int16
+  /// The right stick's vertical position, as a signed 16-bit value.
   public var rightStickY: Int16
+  /// The left trigger pressure, `0...Int16.max`.
   public var leftTrigger: Int16
+  /// The right trigger pressure, `0...Int16.max`.
   public var rightTrigger: Int16
+  /// Whether the left trigger counts as pressed.
   public var leftTriggerPressed: Bool
+  /// Whether the right trigger counts as pressed.
   public var rightTriggerPressed: Bool
+  /// The D-pad direction.
   public var hat: GamepadHIDDescriptor.Hat
 
-  /// Digital-only sources expose a full axis press without replacing analog pressure.
+  /// The left trigger value: the analog pressure, or full when the trigger counts as pressed and
+  /// has no analog pressure.
   public var effectiveLeftTrigger: Int16 {
     leftTrigger > 0 ? leftTrigger : (leftTriggerPressed ? Int16.max : 0)
   }
+  /// The right trigger value: the analog pressure, or full when the trigger counts as pressed and
+  /// has no analog pressure.
   public var effectiveRightTrigger: Int16 {
     rightTrigger > 0 ? rightTrigger : (rightTriggerPressed ? Int16.max : 0)
   }
 
+  /// Creates a state; every part is neutral unless given.
   public init(
     buttons: UInt32 = 0,
     leftStickX: Int16 = 0,
@@ -46,6 +60,8 @@ public struct VirtualGamepadState: Sendable {
   }
 }
 
+/// The HID descriptor of a virtual gamepad and the builder of its report bytes.
+///
 /// Report format for a virtual HID gamepad: descriptor + report bytes builder.
 public protocol VirtualGamepadReportFormat: Sendable {
   /// HID report descriptor bytes.
@@ -75,20 +91,29 @@ public protocol VirtualGamepadReportFormat: Sendable {
 }
 
 extension VirtualGamepadReportFormat {
+  /// The default builds no auxiliary report.
   public func buildAuxiliaryInputReports(from state: VirtualGamepadState) -> [[UInt8]] { [] }
+  /// The default declares no output report.
   public var outputReportPayloadSize: Int? { nil }
+  /// The default declares no output report ID.
   public var outputReportID: UInt8? { nil }
 }
 
-/// Generic OJD HID GamePad format (matches ``GamepadHIDDescriptor``). Input-only: it declares no
-/// output report.
+/// Generic OJD HID GamePad format (matches ``GamepadHIDDescriptor``).
+///
+/// Input-only: it declares no output report.
 public struct OJDGenericGamepadFormat: VirtualGamepadReportFormat {
+  /// The generic descriptor.
   public let descriptor: [UInt8] = GamepadHIDDescriptor.descriptor
+  /// The size of the generic input report.
   public let inputReportPayloadSize: Int = GamepadHIDDescriptor.reportSize
+  /// The generic format has no report ID.
   public let inputReportID: UInt8? = nil
 
+  /// Creates the format.
   public init() {}
 
+  /// The 14-byte generic input report of `state`.
   public func buildInputReport(from state: VirtualGamepadState) -> [UInt8] {
     var r = [UInt8](repeating: 0, count: GamepadHIDDescriptor.reportSize)
     var buttons: UInt32 = 0

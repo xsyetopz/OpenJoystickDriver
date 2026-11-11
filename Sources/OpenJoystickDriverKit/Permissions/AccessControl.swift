@@ -1,27 +1,38 @@
 import Foundation
 
+/// The interval between permission checks while polling, in nanoseconds.
 private let permissionPollNanoseconds: UInt64 = 1_000_000_000
 // TCC needs a short run-loop turn to register the application after the
 // Input Monitoring request.  Asking for Accessibility immediately afterwards
 // can make macOS skip adding the app to the Input Monitoring list altogether.
+/// The pause after the Input Monitoring request, in nanoseconds.
 private let inputReadRegistrationDelayNanoseconds: UInt64 = 600_000_000
 
 /// Manages the macOS HID permissions used by OpenJoystickDriver.
 public actor PermissionManager {
+  /// A permission that OJD requests.
   public enum Requirement: String, Codable, Sendable, Equatable {
+    /// Input Monitoring, which reads the physical controllers.
     case inputRead
+    /// Accessibility, which publishes the virtual controller output.
     case inputInject
   }
 
+  /// The state of one permission.
   public enum AccessState: String, Codable, CaseIterable, Sendable, Equatable,
     CustomStringConvertible
   {
+    /// The permission is granted.
     case granted = "Granted"
+    /// The permission is denied.
     case denied = "Denied"
+    /// The state of the permission is not known.
     case unknown = "Unknown"
 
+    /// The raw value.
     public var description: String { rawValue }
 
+    /// A short bracketed text for the state.
     public var label: String {
       switch self {
       case .granted: return "[OK]"
@@ -33,21 +44,30 @@ public actor PermissionManager {
 
   /// Current permission states for physical input and virtual HID publication.
   public struct Snapshot: Codable, Sendable, Equatable {
+    /// The state of Input Monitoring.
     public let inputRead: AccessState
+    /// The state of Accessibility.
     public let inputInject: AccessState
 
+    /// Creates a snapshot from the two states.
     public init(inputRead: AccessState, inputInject: AccessState) {
       self.inputRead = inputRead
       self.inputInject = inputInject
     }
 
+    /// Whether both permissions are granted.
     public var isReady: Bool { inputRead == .granted && inputInject == .granted }
   }
 
+  /// The last observed state of Input Monitoring.
   public private(set) var inputReadState: AccessState = .unknown
+  /// The last observed state of Accessibility.
   public private(set) var inputInjectState: AccessState = .unknown
+  /// The last observed state of the post-event permission.
   private(set) var postEventState: RemappingPostEventAccessState
+  /// The task that polls while polling runs.
   private(set) var pollingTask: Task<Void, Never>?
+  /// The system that reads and requests access.
   private let system: any AccessControlSystem
 
   /// Reads and requests access through `system`.
@@ -56,6 +76,7 @@ public actor PermissionManager {
     postEventState = system.postEventAccessState()
   }
 
+  /// Reads the current state of both permissions.
   public func checkAccess() -> Snapshot {
     Snapshot(
       inputRead: system.inputReadAccessState(),
@@ -63,6 +84,7 @@ public actor PermissionManager {
     )
   }
 
+  /// Reads both permissions, records them and announces a change.
   @discardableResult
   public func refreshAccessState() -> Snapshot {
     let snapshot = checkAccess()
@@ -130,19 +152,22 @@ public actor PermissionManager {
     return refreshAccessState()
   }
 
-  /// TCC request calls are initiated on the app's main actor.  Besides matching
-  /// AppKit's user-initiated permission flow, this gives macOS a live run loop
+  /// TCC request calls are initiated on the app's main actor.
+  ///
+  ///  Besides matching AppKit's user-initiated permission flow, this gives macOS a live run loop
   /// for registering the bundle before the settings deep link is opened.
   private func requestInputReadOnMainActor() async {
     let system = system
     await MainActor.run { system.requestInputReadAccess() }
   }
 
+  /// Requests Accessibility on the main actor.
   private func requestInputInjectOnMainActor() async {
     let system = system
     await MainActor.run { system.requestInputInjectAccess() }
   }
 
+  /// Starts to read the permissions every second; a running poll is replaced.
   public func startPolling() {
     pollingTask?.cancel()
     pollingTask = Task { [weak self] in
@@ -154,6 +179,7 @@ public actor PermissionManager {
     }
   }
 
+  /// Stops polling.
   public func stopPolling() {
     pollingTask?.cancel()
     pollingTask = nil
@@ -167,12 +193,18 @@ public actor PermissionManager {
   }
 }
 
+/// One permission that OJD lists for the user.
 public struct OJDPermissionRequirement: Sendable, Equatable {
+  /// The name of the permission.
   public let name: String
+  /// The component that holds the permission.
   public let owner: String
+  /// What the permission is for.
   public let purpose: String
+  /// Whether OJD requests the permission.
   public let requested: Bool
 
+  /// Creates a requirement from its parts.
   public init(name: String, owner: String, purpose: String, requested: Bool) {
     self.name = name
     self.owner = owner
@@ -180,18 +212,21 @@ public struct OJDPermissionRequirement: Sendable, Equatable {
     self.requested = requested
   }
 
+  /// Input Monitoring, held by the app.
   public static let inputRead = Self(
     name: "Input read",
     owner: "OpenJoystickDriver app",
     purpose: "Read input from physical controllers",
     requested: true
   )
+  /// Accessibility, held by the app.
   public static let inputInject = Self(
     name: "Input inject",
     owner: "OpenJoystickDriver app",
     purpose: "Publish virtual controller output",
     requested: true
   )
+  /// Raw USB access through an entitlement, held by the app; not a privacy permission.
   public static let usbTransport = Self(
     name: "USB transport",
     owner: "OpenJoystickDriver app",
@@ -199,6 +234,7 @@ public struct OJDPermissionRequirement: Sendable, Equatable {
     requested: true
   )
 
+  /// Posting keyboard, pointer and scroll events, held by the service.
   public static let postEvent = Self(
     name: "Post event",
     owner: "OpenJoystickDriver service",
@@ -206,5 +242,6 @@ public struct OJDPermissionRequirement: Sendable, Equatable {
     requested: true
   )
 
+  /// Every requirement, in the order OJD lists them.
   public static let inventory = [inputRead, inputInject, usbTransport, postEvent]
 }

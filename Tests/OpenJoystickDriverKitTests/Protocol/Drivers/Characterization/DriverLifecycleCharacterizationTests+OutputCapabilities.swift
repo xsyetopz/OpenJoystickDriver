@@ -5,9 +5,11 @@ import Testing
 
 // Advertised output capabilities agree with the driver's encoders for every catalog row.
 extension DriverLifecycleCharacterizationTests {
-  /// Every registry-built driver, readied with its family and variant subject's input, has a
-  /// plan with writes for each capability it advertises; an encoder returns nil only where the
-  /// capability is absent. A row whose family and variant has no subject fails.
+  /// Every registry-built driver, readied with its family and variant subject's input, has a plan
+  /// with writes for each capability it advertises; an encoder returns nil only where the
+  /// capability is absent.
+  ///
+  /// A row whose family and variant has no subject fails.
   @Test
   func advertisedOutputCapabilitiesHaveEncoders() throws {
     let models = Self.registry.rawUSBModels + Self.registry.hidModels

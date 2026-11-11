@@ -4,12 +4,18 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The Combinations section: the chords and sequences of the profile, each with an add button.
   struct ProfileCombinationsSection: View {
+    /// The profile.
     let profile: RemappingProfile
+    /// Opens a sheet.
     let openSheet: (ProfileEditorSheet) -> Void
+    /// Removes the chord with the identifier.
     let removeChord: (UUID) -> Void
+    /// Removes the sequence with the identifier.
     let removeSequence: (UUID) -> Void
 
+    /// The chords and sequences.
     var body: some View {
       Group {
         combinationGroup(
@@ -62,6 +68,16 @@
       }
     }
 
+    /// A section with a title, an add button, and either `content` or the empty message.
+    ///
+    /// - Parameters:
+    ///   - title: The section title.
+    ///   - addTitle: The label of the add button.
+    ///   - isEmpty: Whether there is nothing to list.
+    ///   - emptyMessage: The text shown when empty.
+    ///   - add: Called when the person chooses the add button.
+    ///   - content: The rows.
+    /// - Returns: The section.
     private func combinationGroup<Content: View>(
       title: String,
       addTitle: String,
@@ -86,13 +102,20 @@
     }
   }
 
+  /// The Layers section: the layers of the profile and their assignments.
   struct ProfileLayersSection: View {
+    /// The profile.
     let profile: RemappingProfile
+    /// What the profile's controller has.
     let capabilities: ControllerProfileCapabilities
+    /// Opens a sheet.
     let openSheet: (ProfileEditorSheet) -> Void
+    /// Removes the layer with the identifier.
     let removeLayer: (UUID) -> Void
+    /// Removes the assignment from the layer, by layer and assignment identifier.
     let removeBinding: (UUID, UUID) -> Void
 
+    /// The layers section and the group of each layer.
     var body: some View {
       Section(
         header: HStack {
@@ -112,6 +135,8 @@
       ForEach(profile.layers) { layer in layerGroup(layer) }
     }
 
+    /// The section of one layer: its name and activator, buttons to add an assignment, edit motion
+    /// and remove, and its assignments.
     private func layerGroup(_ layer: RemappingLayer) -> some View {
       Section(
         header: HStack {
@@ -159,6 +184,7 @@
       }
     }
 
+    /// Returns the layer's activation mode and activator in words.
     private func layerDescription(_ layer: RemappingLayer) -> String {
       let mode =
         layer.activationMode == .hold
@@ -168,13 +194,21 @@
     }
   }
 
+  /// The Controller section of the editor: the details, the output policy, the motion, stick,
+  /// trigger and touch settings, and the lighting.
   struct ProfileControllerSection: View {
+    /// The profile.
     let profile: RemappingProfile
+    /// What the profile's controller has.
     let capabilities: ControllerProfileCapabilities
+    /// Opens a sheet.
     let openSheet: (ProfileEditorSheet) -> Void
+    /// Sets the output policy.
     let updateOutputPolicy: (RemappingOutputPolicy) -> Void
+    /// Sets the physical color.
     let updatePhysicalColor: (ControllerColor?) -> Void
 
+    /// The sections of the Controller tab.
     var body: some View {
       Group {
         Section(header: Text(OJDLocalized.string("ui.profiles.details"))) {
@@ -219,6 +253,23 @@
             enabled: capabilities.physicalInput.touchContactCount > 0
               || !profile.touchMappings.isEmpty
           ) { openSheet(.touch) }
+          configurationRow(
+            title: OJDLocalized.string("ui.profiles.region.title"),
+            summary: OJDLocalized.string("ui.profiles.region.summary"),
+            supported: capabilities.supportsStickAxes || capabilities.supportsAnalogTriggers
+              || !capabilities.physicalInput.touchSurfaces.isEmpty
+          ) { openSheet(.regions) }
+          configurationRow(
+            title: OJDLocalized.string("ui.profiles.pointerSpeed.title"),
+            summary: profile.pointerSpeed.map {
+              OJDLocalized.string(
+                $0.driver.type == .trigger
+                  ? "ui.profiles.pointerSpeed.driverTrigger"
+                  : "ui.profiles.pointerSpeed.driverStickDepth"
+              )
+            } ?? OJDLocalized.string("ui.inputTest.off"),
+            supported: true
+          ) { openSheet(.pointerSpeed) }
         }
         ProfileLightingEditor(color: profile.physicalColor, onChange: updatePhysicalColor).disabled(
           !capabilities.physicalOutput.lightingFeatures.contains(.programmableColor)
@@ -227,6 +278,16 @@
       }
     }
 
+    /// A row with `title` and a `summary`, or a note that the controller does not support it, and
+    /// an Adjust button.
+    ///
+    /// - Parameters:
+    ///   - title: The name of the setting.
+    ///   - summary: The text shown when the controller supports the setting.
+    ///   - supported: Whether the controller supports the setting.
+    ///   - enabled: Whether the button works; nil follows `supported`.
+    ///   - action: Opens the sheet of the setting.
+    /// - Returns: The row.
     private func configurationRow(
       title: String,
       summary: String,
@@ -250,11 +311,13 @@
       }
     }
 
+    /// Returns the text for the number of assignments.
     private func assignmentCountLabel(_ count: Int) -> String {
       OJDLocalized.plural("ui.profiles.assignments", count: count)
     }
   }
 
+  /// A button that removes a row.
   @MainActor
   private func removeButton(action: @escaping () -> Void) -> some View {
     Button(action: action) {

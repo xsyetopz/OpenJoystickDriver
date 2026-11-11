@@ -1,22 +1,35 @@
 import Foundation
 
+/// The D-pad bits of the second button byte.
 private let gipDpadMask: UInt8 = 0x0F
+/// The bits of a virtual key frame's first byte that show the Xbox button pressed.
 private let gipGuideButtonMask: UInt8 = 0x03
+/// The maximum positive value of a signed stick axis.
 private let gipStickMax: Float = 32767
+/// The maximum value of a trigger axis.
 private let gipTriggerMax: Float = 1023
+/// The most bytes that a length field of a frame header may take.
 private let gipMaximumVarintBytes = 5
+/// The motor mask of a rumble frame that enables all four motors.
 private let gipRumbleAllMotors: UInt8 = 0x0F
+/// The length of a rumble frame's sub-command.
 private let gipRumbleSubCommandLength: UInt8 = 0x09
+/// The on-time byte of a rumble frame.
 private let gipRumbleDefaultDuration: UInt8 = 0xFF
 /// Motor levels are percentages ([MS-GIPUSB] Table 56).
 private let gipRumbleLevelMax: Double = 100
 /// The Xbox button's key code in a virtual key frame: `VK_LWIN` ([MS-GIPUSB] Table 2).
 private let gipXboxButtonKeyCode: UInt8 = 0x5B
 
+/// One GIP frame taken from the transfer buffer.
 private struct GIPFrame {
+  /// The command byte.
   let command: UInt8
+  /// The option flags.
   let options: UInt8
+  /// The sequence number.
   let sequence: UInt8
+  /// The payload after the header.
   let payload: Data
   /// A fragment's extra header field: the message's total length in the first fragment, the
   /// fragment's offset in a later one ([MS-GIPUSB] 3.1.5.2).
@@ -27,7 +40,7 @@ private struct GIPFrame {
 public enum GIPError: Error, Sendable {
   /// The controller did not complete the handshake within the allowed number of attempts.
   case handshakeTimeout
-  /// The handshake failed for a specific reason (e.g. no USB handle was provided).
+  /// The handshake failed for a specific reason (for example, no USB handle is provided).
   case handshakeFailed(String)
   /// A received packet is too short or its declared length does not match the actual data.
   case malformedPacket(String)
@@ -37,27 +50,37 @@ public enum GIPError: Error, Sendable {
 
 /// Driver for Xbox One (GIP) controllers connected over USB.
 ///
-/// Sends the three-packet GIP init sequence on connection, then parses
-/// incoming interrupt-transfer packets into controller state snapshots.
-/// Sends a keep-alive ping every ~4 seconds when the device profile permits it.
+/// Sends the startup packets of the record or the description on connection, then parses buffered
+/// GIP frames into controller state. Sends the description's keep-alive when ``keepAlivePolicy``
+/// is enabled.
 public final class GIPDriver: PhysicalProtocolDriver {
 
+  /// The address of the interrupt OUT endpoint.
   private let outEndpoint: UInt8
+  /// The startup packets of the record, or of the description when the record has none.
   private let startup: [USBStartupWrite]
+  /// The timeout of one output packet that names none (`usbTransferTimeoutMilliseconds`).
   private let usbTimeoutMilliseconds: Int
+  /// Whether the driver sends the keep-alive.
   public let keepAlivePolicy: GIPKeepAlivePolicy
   /// Where the Share button sits, counted back from the packet end; nil keeps the default byte.
   let shareButtonFromEnd: Int?
+  /// Whether the row allows rumble output.
   let allowsPhysicalOutput: Bool
 
+  /// The sequence numbers of the packets sent.
   private var sequencer = GIPSequencer()
+  /// Answers the authentication sub-protocol.
   private let authHandler: GIPAuthHandler
+  /// Bytes of incomplete frames received so far.
   private var pendingInput = Data()
+  /// Writes produced while parsing, returned by ``drainPendingWrites()``.
   private var pendingWrites: [PhysicalOutputWrite] = []
   /// Announces received before the controller's first input, for the startup resend.
   private var announcesBeforeInput = 0
   /// Announces between startup resends (`presenceResendReports`).
   let announceResendInterval: Int
+  /// Whether input has arrived since the session started.
   private var hasReceivedInput = false
   /// Total length of the fragmented message in transfer, from its first fragment.
   private var fragmentTotalLength = 0
@@ -65,9 +88,20 @@ public final class GIPDriver: PhysicalProtocolDriver {
   /// Current device state, driven by auth progress.
   public var deviceState: GIPDeviceState { authHandler.deviceState }
 
+  /// The state after the latest frame that carried input.
   private var state = ControllerState.neutral
 
-  /// Creates a new GIPDriver with the given endpoint configuration.
+  /// Creates the driver for a GIP controller on `transportProfile`.
+  /// - Parameters:
+  ///   - transportProfile: The USB endpoints and interface the controller uses.
+  ///   - startupPackets: Ids of the description's named packets that start the session; used when
+  ///     `usbStartupWrites` is empty.
+  ///   - usbStartupWrites: The record's startup packets; they replace `startupPackets`.
+  ///   - keepAlivePolicy: Whether to send the keep-alive.
+  ///   - shareButtonFromEnd: Where the Share button sits, counted back from the payload end; nil
+  ///     when the model has none.
+  ///   - allowsPhysicalOutput: Whether rumble output is allowed.
+  ///   - tuning: The effective tuning of the record; the description's defaults when nil.
   public init(
     transportProfile: DeviceTransportProfile = .gipDefault,
     startupPackets: [String] = [],
@@ -105,6 +139,8 @@ public final class GIPDriver: PhysicalProtocolDriver {
 
   // MARK: - PhysicalProtocolDriver
 
+  /// The session plan: the description's defaults, the handshake retries, and the USB keep-alive
+  /// when the policy enables it.
   public var sessionPlan: DriverSessionPlan {
     // The description sets the attempt count, the delays and the keep-alive interval.
     DriverSessionPlan(
@@ -112,7 +148,8 @@ public final class GIPDriver: PhysicalProtocolDriver {
         repeating: 0,
         count: PhysicalProtocolID.xboxGIP.described(limit: \.handshakeAttempts) - 1
       ),
-      keepAliveChannels: keepAlivePolicy == .enabled ? [.usb] : []
+      keepAliveChannels: keepAlivePolicy == .enabled ? [.usb] : [],
+      armsInputBeforeStartup: true
     ).withDefaults(of: .xboxGIP)
   }
 
@@ -131,7 +168,8 @@ public final class GIPDriver: PhysicalProtocolDriver {
     }
   }
 
-  /// Builds the periodic host-side GIP status packet (CMD=0x03).
+  /// The description's keep-alive writes, each stamped with the next sequence number of its
+  /// command; none unless ``keepAlivePolicy`` is enabled.
   public func keepAliveWrites() -> [PhysicalOutputWrite] {
     guard keepAlivePolicy == .enabled else { return [] }
     return PhysicalProtocolID.xboxGIP.keepAliveWrites(variant: .usb).map { write in
@@ -142,6 +180,7 @@ public final class GIPDriver: PhysicalProtocolDriver {
     }
   }
 
+  /// The USB write of `bytes` to the OUT endpoint.
   private func usbWrite(_ bytes: [UInt8]) -> PhysicalOutputWrite {
     .usb(
       PhysicalUSBOutputPacket(
@@ -172,6 +211,9 @@ public final class GIPDriver: PhysicalProtocolDriver {
     return ControllerEvent(timestamp: receivedAt, state: next)
   }
 
+  /// Takes the next complete frame out of the buffer; nil while the buffer holds less than one.
+  /// - Throws: ``GIPError/malformedPacket(_:)`` when a header length field exceeds the largest
+  ///   size.
   private func nextFrame() throws -> GIPFrame? {
     guard pendingInput.count >= 4 else { return nil }
     let bytes = Array(pendingInput)
@@ -202,6 +244,10 @@ public final class GIPDriver: PhysicalProtocolDriver {
     )
   }
 
+  /// Reads a GIP length field at `start`: its value and the offset after it.
+  ///
+  /// Nil while the buffer ends inside the field.
+  /// - Throws: ``GIPError/malformedPacket(_:)`` when the field runs past the largest size.
   private func decodeVarint(_ bytes: [UInt8], start: Int) throws -> (Int, Int)? {
     var value = 0
     var shift = 0
@@ -253,9 +299,11 @@ public final class GIPDriver: PhysicalProtocolDriver {
     }
   }
 
-  /// Acknowledges the bytes of the frame's message received so far and the bytes still to come
-  /// (SDL `GIP_Acknowledge`). A fragment that runs past its message's total length, or counts that
-  /// do not fit the 16-bit fields, get no acknowledgement, as in SDL, which fails the transfer.
+  /// Acknowledges the bytes of the frame's message received so far and the bytes still to come (SDL
+  /// `GIP_Acknowledge`).
+  ///
+  /// A fragment that runs past its message's total length, or counts that do not fit the 16-bit
+  /// fields, get no acknowledgement, as in SDL, which fails the transfer.
   private func sendAcknowledgement(for frame: GIPFrame, received: Int, remaining: Int) {
     guard let received = UInt16(exactly: received), let remaining = UInt16(exactly: remaining)
     else { return }
@@ -270,9 +318,10 @@ public final class GIPDriver: PhysicalProtocolDriver {
   }
 
   /// A controller still booting when the startup sequence arrives ignores it and keeps announcing
-  /// (about every 500 ms). Until its first input, the sequence is resent on the first announce and
-  /// every fourth one after it, a bounded number of times; SDL's GIP driver likewise initializes
-  /// after the announce.
+  /// (about every 500 ms).
+  ///
+  /// Until its first input, the sequence is resent on the first announce and every fourth one after
+  /// it, a bounded number of times; SDL's GIP driver likewise initializes after the announce.
   private func resendStartupAfterAnnounce() {
     guard !hasReceivedInput else { return }
     defer { announcesBeforeInput += 1 }
@@ -283,8 +332,8 @@ public final class GIPDriver: PhysicalProtocolDriver {
     pendingWrites += startupWrites()
   }
 
-  /// A new transport session is a new GIP session: sequences restart at 1, as on first
-  /// attach, and no partial frame, pending write or announce count carries over.
+  /// Clears the state of the session: sequences restart at 1, as on first attach, and no partial
+  /// frame, pending write or announce count carries over.
   public func resetProtocolState() {
     sequencer = GIPSequencer()
     pendingInput.removeAll()
@@ -295,6 +344,7 @@ public final class GIPDriver: PhysicalProtocolDriver {
     state = .neutral
   }
 
+  /// Returns the queued writes and clears the queue.
   public func drainPendingWrites() -> [PhysicalOutputWrite] {
     defer { pendingWrites.removeAll(keepingCapacity: true) }
     return pendingWrites
@@ -325,10 +375,12 @@ public final class GIPDriver: PhysicalProtocolDriver {
 
   // MARK: - Private
 
+  /// The motor level of `intensity` as a percentage.
   private func motorLevel(_ intensity: UnipolarValue) -> UInt8 {
     UInt8((Double(intensity.rawValue) * gipRumbleLevelMax / Double(UInt16.max)).rounded())
   }
 
+  /// The rumble frame that sets the main and trigger motor levels.
   private func rumbleFrame(
     sequence: UInt8,
     mainMotors: (left: UInt8, right: UInt8),
@@ -345,6 +397,7 @@ public final class GIPDriver: PhysicalProtocolDriver {
     ]
   }
 
+  /// Folds a main input payload into `next`; false when the payload is too short.
   private func decodeMainInput(payload: Data, into next: inout ControllerState) -> Bool {
     guard payload.count >= 14 else {
       print("[GIPDriver] Main input payload too short: " + "\(payload.count)")
@@ -372,8 +425,10 @@ public final class GIPDriver: PhysicalProtocolDriver {
   ]
 
   /// The byte holding Share, `shareButtonFromEnd` bytes back from the end; nil for a pad whose
-  /// record names no Share. Linux xpad reads `data[len - 18]` of the packet, or `data[len - 26]`
-  /// with `MAP_SHARE_OFFSET`; the 4-byte GIP header leaves the same offset from the payload end.
+  /// record names no Share.
+  ///
+  /// Linux xpad reads `data[len - 18]` of the packet, or `data[len - 26]` with `MAP_SHARE_OFFSET`;
+  /// the 4-byte GIP header leaves the same offset from the payload end.
   private func shareByte(in bytes: [UInt8]) -> UInt8? {
     guard let shareButtonFromEnd else { return nil }
     let index = bytes.count - shareButtonFromEnd
@@ -381,6 +436,7 @@ public final class GIPDriver: PhysicalProtocolDriver {
     return bytes[index]
   }
 
+  /// The stick axis `raw` as -1...1.
   private func normalizeStick(_ raw: Int16) -> Float { Float(raw) / gipStickMax }
 
 }

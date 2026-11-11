@@ -4,14 +4,22 @@
   import Foundation
   import OpenJoystickDriverKit
 
+  /// The state of the Controllers list: the selected controller, and the lists derived from the
+  /// runtime's status.
   @MainActor
   final class ControllersViewModel: ObservableObject {
+    /// The session token of the selected controller, or nil before a selection.
     @Published
     private(set) var selectedSessionToken: String?
 
+    /// The model of the app's view of the service.
     let runtime: RuntimeViewModel
+    /// Redraws the screen when the runtime's status changes.
     private var runtimeObservation: AnyCancellable?
 
+    /// Creates the model on `runtime`.
+    ///
+    /// - Parameter runtime: The model of the app's view of the service.
     init(runtime: RuntimeViewModel) {
       self.runtime = runtime
       // The list is derived from the runtime's status, so its changes must redraw this screen.
@@ -20,8 +28,10 @@
       ).sink { [weak self] in self?.objectWillChange.send() }
     }
 
+    /// The message of the failed live status, or nil.
     var liveStatusError: String? { runtime.liveStatusError }
 
+    /// The connected controllers, or none while the status is not loaded.
     var devices: [ApplicationServiceDeviceDescription] {
       guard case .available(let status) = runtime.statusState else { return [] }
       return status.devices
@@ -33,13 +43,16 @@
       return status.unservedDevices
     }
 
+    /// Whether the controller inventory is refreshing.
     var isRefreshing: Bool { runtime.isScopedRefreshInFlight }
 
+    /// The selected controller, or the first one when none is selected or the selection left.
     var selectedDevice: ApplicationServiceDeviceDescription? {
       guard let selectedSessionToken else { return devices.first }
       return devices.first { $0.sessionToken.rawValue == selectedSessionToken } ?? devices.first
     }
 
+    /// Selects the first controller when the selection is not connected.
     func synchronizeSelection() {
       guard let selectedSessionToken,
         devices.contains(where: { $0.sessionToken.rawValue == selectedSessionToken })
@@ -49,12 +62,17 @@
       }
     }
 
+    /// Selects the controller.
+    ///
+    /// - Parameter device: The controller to select.
     func select(_ device: ApplicationServiceDeviceDescription) {
       selectedSessionToken = device.sessionToken.rawValue
     }
 
     /// Selects the controller with this session token, for "Show in Window".
-    /// Returns false when no connected controller has it; the selection stays as it is.
+    ///
+    /// - Parameter sessionToken: The session token.
+    /// - Returns: False when no connected controller has it; the selection stays as it is.
     @discardableResult
     func select(sessionToken: String) -> Bool {
       guard devices.contains(where: { $0.sessionToken.rawValue == sessionToken }) else {
@@ -64,8 +82,13 @@
       return true
     }
 
+    /// Refreshes the controller inventory.
     func refresh() { Task { await runtime.refreshControllerInventory() } }
 
+    /// Returns the profile that is active for the controller, or why none shows.
+    ///
+    /// - Parameter device: The controller.
+    /// - Returns: The profile that is active for the controller, or why none shows.
     func activeProfileState(
       for device: ApplicationServiceDeviceDescription
     ) -> RuntimeActiveProfileState {

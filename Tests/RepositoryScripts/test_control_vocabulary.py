@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 import json
+import plistlib
 import unittest
 from typing import Any
 
 from Scripts.Quality import validate_schemas
 
-VERSION = "openjoystickdriver/v1alpha1"
+VERSION = "openjoystickdriver/v1alpha3"
 ROOT = validate_schemas.ROOT
-CROSSWALK = ROOT / "Resources" / "Vocabulary" / "crosswalk.json"
-SAMPLE_PROFILE = ROOT / "docs" / "sdk" / "sample" / "Profiles" / "sample-pad.json"
+CROSSWALK = ROOT / "Resources" / "Vocabulary" / "crosswalk.plist"
+SAMPLE_PROFILE = ROOT / "docs" / "sdk" / "sample" / "Profiles" / "sample-pad.plist"
 
 # Names that are not control ids.
 UNKNOWN_NAMES = ["notAName", "NotAControl", ""]
@@ -23,8 +24,7 @@ class ControlVocabularyTests(unittest.TestCase):
         defs = cls.documents["vocabulary.schema.json"]["$defs"]
         assert isinstance(defs, dict)
         cls.controls: list[str] = defs["control"]["enum"]
-        with CROSSWALK.open(encoding="utf-8") as source:
-            document = json.load(source)
+        document = plistlib.loads(CROSSWALK.read_bytes())
         cls.crosswalk: dict[str, dict[str, Any]] = document["controls"]
         cls.sources: dict[str, dict[str, Any]] = document["sources"]
 
@@ -56,19 +56,23 @@ class ControlVocabularyTests(unittest.TestCase):
                 if column == "hid":
                     keys: list[Any] = [
                         (entry["page"], entry["usage"])
-                        for entry in row["hid"]
-                        if entry["usage"]
+                        for entry in row.get("hid", [])
+                        if entry.get("usage")
                     ]
                 else:
-                    keys = [] if row[column] is None else [row[column]]
+                    keys = [row[column]] if column in row else []
                 for key in keys:
                     index.setdefault(key, set()).add(control)
         for control, row in self.crosswalk.items():
             for column, index in indexes.items():
                 if column == "hid":
-                    keys = [(e["page"], e["usage"]) for e in row["hid"] if e["usage"]]
+                    keys = [
+                        (e["page"], e["usage"])
+                        for e in row.get("hid", [])
+                        if e.get("usage")
+                    ]
                 else:
-                    keys = [] if row[column] is None else [row[column]]
+                    keys = [row[column]] if column in row else []
                 for key in keys:
                     self.assertIn(control, index[key], f"{control} via {column}")
         self.assertEqual(indexes["sdl"]["MISC1"], {"Capture", "Microphone"})
@@ -86,13 +90,8 @@ class ControlVocabularyTests(unittest.TestCase):
     def test_every_hid_page_is_a_page_of_the_hid_source(self) -> None:
         pages = self.sources["hid"]["pages"]
         for control, row in self.crosswalk.items():
-            for entry in row["hid"]:
+            for entry in row.get("hid", []):
                 self.assertIn(entry["page"], pages, control)
-
-    def test_a_note_names_a_column_of_the_table(self) -> None:
-        for control, row in self.crosswalk.items():
-            for column in row.get("notes", {}):
-                self.assertIn(column, self.sources, control)
 
     def test_the_sourced_cells_hold(self) -> None:
         rows = self.crosswalk
@@ -111,21 +110,26 @@ class ControlVocabularyTests(unittest.TestCase):
         self.assertEqual(rows["Capture"]["hid"], [{"page": "Consumer", "usage": 178}])
 
     def test_no_control_without_a_name_has_a_guess(self) -> None:
-        for control in ("LeftStickTouch", "LeftTrackpadClick", "RightTrackpadTouch"):
+        for control in (
+            "LeftStickTouch",
+            "LeftTrackpadClick",
+            "RightTrackpadTouch",
+            "LeftGripTouch",
+            "RightGripTouch",
+        ):
             row = self.crosswalk[control]
-            self.assertEqual(row["hid"], [], control)
-            for column in ("w3cButton", "w3cAxis", "sdl", "evdev", "apple"):
-                self.assertIsNone(row[column], f"{control} {column}")
+            for column in ("w3cButton", "w3cAxis", "sdl", "evdev", "hid", "apple"):
+                self.assertNotIn(column, row, f"{control} {column}")
 
     def test_a_profile_with_a_current_name_is_valid(self) -> None:
-        with SAMPLE_PROFILE.open(encoding="utf-8") as source:
-            profile = json.load(source)
+        with SAMPLE_PROFILE.open("rb") as source:
+            profile = plistlib.load(source)
         self.assertTrue(self.validator("profile.schema.json").is_valid(profile))
 
     def test_a_profile_naming_an_unknown_control_is_refused(self) -> None:
         validator = self.validator("profile.schema.json")
-        with SAMPLE_PROFILE.open(encoding="utf-8") as source:
-            profile = json.load(source)
+        with SAMPLE_PROFILE.open("rb") as source:
+            profile = plistlib.load(source)
         for name in UNKNOWN_NAMES:
             profile["bindings"][0]["source"]["button"] = name
             self.assertFalse(validator.is_valid(profile), name)

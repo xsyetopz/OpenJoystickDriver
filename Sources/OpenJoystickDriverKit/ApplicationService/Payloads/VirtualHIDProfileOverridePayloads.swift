@@ -4,10 +4,14 @@ import Foundation
 /// profile's raw identifier, such as `Generic`, and whether the override is for the selected
 /// unit only (see ``ControllerPortKey``) instead of its model.
 public struct LocalServiceRPCVirtualHIDProfileOverrideArguments: Codable, Sendable {
+  /// The controller whose override changes.
   public let controller: ControllerReference
+  /// The raw identifier of the profile to apply.
   public let profile: String
+  /// Whether the override is for the controller's unit only instead of its model.
   public let unit: Bool
 
+  /// Creates the arguments from their values.
   public init(
     controller: ControllerReference,
     profile: String,
@@ -18,6 +22,7 @@ public struct LocalServiceRPCVirtualHIDProfileOverrideArguments: Codable, Sendab
     self.unit = unit
   }
 
+  /// Decodes the value from `decoder`.
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     controller = try container.decode(ControllerReference.self, forKey: .controller)
@@ -29,14 +34,18 @@ public struct LocalServiceRPCVirtualHIDProfileOverrideArguments: Codable, Sendab
 /// Arguments of `resetVirtualHIDProfileOverride`: the controller reference and whether to reset
 /// the selected unit's override instead of its model's.
 public struct LocalServiceRPCVirtualHIDProfileOverrideResetArguments: Codable, Sendable {
+  /// The controller whose override resets.
   public let controller: ControllerReference
+  /// Whether to reset the unit's override instead of the model's.
   public let unit: Bool
 
+  /// Creates the arguments from their values.
   public init(controller: ControllerReference, unit: Bool = false) {
     self.controller = controller
     self.unit = unit
   }
 
+  /// Decodes the value from `decoder`.
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     controller = try container.decode(ControllerReference.self, forKey: .controller)
@@ -86,11 +95,15 @@ public enum VirtualHIDProfileOverrideFailure: Codable, Equatable, Sendable {
     }
   }
 
+  /// The keys of the JSON encoding.
   private enum CodingKeys: String, CodingKey {
+    /// The `code` key.
     case code
+    /// The `detail` key.
     case detail
   }
 
+  /// Decodes the value from `decoder`.
   public init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let code = try container.decode(String.self, forKey: .code)
@@ -114,6 +127,7 @@ public enum VirtualHIDProfileOverrideFailure: Codable, Equatable, Sendable {
     }
   }
 
+  /// Encodes the value into `encoder`.
   public func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(code, forKey: .code)
@@ -132,11 +146,14 @@ public struct VirtualHIDProfileOverrideResult: Codable, Equatable, Sendable {
   /// The profile the controller publishes after the request; nil when none is live.
   public let live: VirtualHIDProfileID?
   /// How the live profile was selected: `automatic`, `override`, or `automaticAfterRejecting`.
+  ///
   /// With no live profile, `override` when virtual output is disabled and the model has a stored
   /// override, else `automatic`.
   public let source: VirtualHIDProfileSource
+  /// Why the request failed; nil when it succeeded.
   public let failure: VirtualHIDProfileOverrideFailure?
 
+  /// Creates a result from its values.
   public init(
     requested: VirtualHIDProfileID?,
     live: VirtualHIDProfileID?,
@@ -149,6 +166,7 @@ public struct VirtualHIDProfileOverrideResult: Codable, Equatable, Sendable {
     self.failure = failure
   }
 
+  /// Whether the request succeeded.
   public var succeeded: Bool { failure == nil }
 }
 
@@ -167,6 +185,7 @@ public struct ApplicationServiceVirtualHIDProfileStatus: Codable, Equatable, Sen
   /// Whether no virtual profile can represent the controller's declared controls.
   public let unavailable: Bool
 
+  /// Creates a status from its values.
   public init(
     profile: VirtualHIDProfileID?,
     source: VirtualHIDProfileSource?,
@@ -194,7 +213,9 @@ extension VirtualHIDProfileOverrideError {
 
 /// How a controller's virtual HID profile was selected, as status and override results report it.
 public enum VirtualHIDProfileSource: String, Codable, Equatable, Sendable {
+  /// OJD chose the profile from the controller's controls.
   case automatic
+  /// The user's stored override chose the profile.
   case override
   /// The controller could not satisfy its override, so automatic selection ran instead.
   case automaticAfterRejecting
@@ -202,7 +223,9 @@ public enum VirtualHIDProfileSource: String, Codable, Equatable, Sendable {
 
 /// Whose stored override is in effect for a controller: its unit's or its model's.
 public enum VirtualHIDProfileOverrideScope: String, Codable, Equatable, Sendable {
+  /// The override belongs to one controller unit.
   case unit = "Unit"
+  /// The override belongs to the controller model.
   case model = "Model"
 }
 

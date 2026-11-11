@@ -26,7 +26,7 @@ struct ControllerRecordOutputTests {
       "\(Self.thirdPartyModes(session: "{\(Self.gp100Rumble)}")), \"server\": \"OJD\""
     )
     #expect(document.server == .ojd)
-    let template = try #require(document.defaultMode.session.rumbleTemplate)
+    let template = try #require(document.baseMode.session.rumbleTemplate)
     #expect(template.report == ControllerTemplateReport(kind: .output, reportID: 2, length: 8))
     #expect(template.motors == [.lowFrequency: .init(byte: 3), .highFrequency: .init(byte: 2)])
     #expect(template.bytes == [2, 0, 0, 0, 0, 0, 0, 0])
@@ -183,7 +183,7 @@ struct ControllerRecordOutputTests {
         "resendIntervalMilliseconds": 250}
       """#
     let document = try decode(Self.thirdPartyModes(session: "{\(rumble)}"))
-    let template = try #require(document.defaultMode.session.rumbleTemplate)
+    let template = try #require(document.baseMode.session.rumbleTemplate)
     #expect(template.counterByte == 1 && template.resendIntervalMilliseconds == 250)
     let intensities = RumbleIntensities(
       lowFrequency: UnipolarValue(0x1234),
@@ -263,7 +263,7 @@ struct ControllerRecordOutputTests {
     ]
     for (protocolInfo, template) in accepted {
       let document = try record(protocolInfo: protocolInfo, template: template)
-      #expect(document.defaultMode.session.rumbleTemplate != nil, "\(protocolInfo)")
+      #expect(document.baseMode.session.rumbleTemplate != nil, "\(protocolInfo)")
     }
   }
 

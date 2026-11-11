@@ -3,9 +3,12 @@ import Foundation
 /// A controller as a watch line carries it: the `Controller` object with the fields of a
 /// ``ControllerSummary``, and the last input and output once the controller has any.
 public struct WatchedController: Encodable, Equatable, Sendable {
+  /// The `kind` of a watched controller object.
   public static let kind = "Controller"
 
+  /// The fields of the controller list entry.
   public var summary: ControllerSummary
+  /// The controller's last input; nil until the controller has sent input.
   public var input: ControllerState?
   /// Present while a virtual gamepad publishes the controller and the watch asked for output.
   public var output: ApplicationServiceVirtualOutputState?
@@ -13,6 +16,7 @@ public struct WatchedController: Encodable, Equatable, Sendable {
   /// The ID from `ojd controller list`.
   public var id: String { summary.id }
 
+  /// Creates a watched controller from a summary, its input and its output.
   public init(
     summary: ControllerSummary,
     input: ControllerState? = nil,
@@ -23,13 +27,19 @@ public struct WatchedController: Encodable, Equatable, Sendable {
     self.output = output
   }
 
+  /// The keys of the JSON encoding.
   private enum CodingKeys: String, CodingKey {
+    /// The `apiVersion` key.
     case apiVersion
+    /// The `kind` key.
     case kind
+    /// The `input` key.
     case input
+    /// The `output` key.
     case output
   }
 
+  /// Encodes the value into `encoder`.
   public func encode(to encoder: any Encoder) throws {
     try summary.encode(to: encoder)
     var container = encoder.container(keyedBy: CodingKeys.self)
@@ -45,6 +55,7 @@ public struct WatchedController: Encodable, Equatable, Sendable {
 ///
 /// The line has no `apiVersion` and `kind` of its own; its `object` does.
 public struct ControllerWatchEvent: Encodable, Equatable, Sendable {
+  /// The type of watch event.
   public enum Kind: String, Encodable, Sendable {
     /// A controller connected, or was connected when the watch started.
     case added = "ADDED"
@@ -54,12 +65,15 @@ public struct ControllerWatchEvent: Encodable, Equatable, Sendable {
     case deleted = "DELETED"
   }
 
+  /// What happened to the controller.
   public let type: Kind
+  /// The controller the event is about.
   public var object: WatchedController
 
   /// The ID from `ojd controller list`.
   public var id: String { object.id }
 
+  /// Creates an event from its type and controller.
   public init(type: Kind, object: WatchedController) {
     self.type = type
     self.object = object
@@ -68,6 +82,7 @@ public struct ControllerWatchEvent: Encodable, Equatable, Sendable {
 
 /// Where a ``ControllerWatchPoller`` reads controllers: the service socket or the service itself.
 public protocol ControllerWatchSource: Sendable {
+  /// The connected controllers.
   func devices() async throws -> [ApplicationServiceDeviceDescription]
   /// Nil when the controller has no input state yet.
   func state(of device: ApplicationServiceDeviceDescription) async throws -> ControllerState?
@@ -82,7 +97,9 @@ public protocol ControllerWatchSource: Sendable {
 public struct ControllerWatchPoller {
   /// One event and the controller it is about.
   public struct Update {
+    /// The event to report.
     public let event: ControllerWatchEvent
+    /// The controller the event is about.
     public let device: ApplicationServiceDeviceDescription
   }
 
@@ -91,18 +108,26 @@ public struct ControllerWatchPoller {
   /// How long callers wait between polls.
   public static let pollInterval: UInt64 = 16_000_000
 
+  /// The input and output of a controller at one poll.
   private struct Sample: Equatable {
+    /// The controller's input.
     let input: ControllerState
+    /// The virtual gamepad's output; nil when the poll did not read it.
     let output: ApplicationServiceVirtualOutputState?
   }
 
+  /// Where the poller reads controllers.
   private let source: any ControllerWatchSource
+  /// The controllers connected at the last list read.
   private var connected: [ApplicationServiceDeviceDescription] = []
+  /// The last sample of each connected controller.
   private var previous: [ControllerSessionToken: Sample] = [:]
   /// The latest object of each connected controller, which a `DELETED` line carries.
   private var objects: [ControllerSessionToken: WatchedController] = [:]
+  /// The uptime of the last list read, in nanoseconds.
   private var listedAt: UInt64?
 
+  /// Creates a poller that reads from `source`.
   public init(source: any ControllerWatchSource) { self.source = source }
 
   /// Reads the controllers once and returns what changed since the last poll.

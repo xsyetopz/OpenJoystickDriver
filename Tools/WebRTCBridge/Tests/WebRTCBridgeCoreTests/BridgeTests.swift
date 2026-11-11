@@ -3,7 +3,9 @@ import XCTest
 @testable import BridgeCore
 @testable import WebRTCBridgeCore
 
+/// Checks the proof, the frame translation, the handshake and a loopback of both bridges.
 final class BridgeTests: XCTestCase {
+  /// The proof equals the values that the reference client computes.
   func testProofMatchesTheReferenceClientVectors() {
     // Computed with `proof()` of Scripts/SDK/reference_client.py, not with this package.
     XCTAssertEqual(
@@ -19,6 +21,7 @@ final class BridgeTests: XCTestCase {
     )
   }
 
+  /// A `MODIFIED` watch line becomes a `Frame` with only known buttons and scaled axes.
   func testAWatchLineBecomesAFrame() throws {
     let line = Self.modified(pressed: ["South", "unknown-control"], hat: "NorthEast")
     let (id, frame) = try XCTUnwrap(FrameTranslation.frame(fromWatchLine: line))
@@ -32,6 +35,7 @@ final class BridgeTests: XCTestCase {
     XCTAssertNil(FrameTranslation.frame(fromWatchLine: ["type": "ADDED", "object": [:]]))
   }
 
+  /// The endpoint refuses a wrong token, and the error carries the endpoint's code.
   func testAWrongTokenIsRefused() throws {
     let endpoint = try FakeEndpoint()
     endpoint.serve(connections: 1)
@@ -128,12 +132,14 @@ final class BridgeTests: XCTestCase {
     player.close()
   }
 
+  /// The scan finds the listening socket of a fake endpoint that has not served.
   func testTheScanSeesAListeningSocket() throws {
     let endpoint = try FakeEndpoint()
     XCTAssertEqual(ListeningSockets.ofThisProcess().count, 1)
     endpoint.serve(connections: 0)
   }
 
+  /// A `MODIFIED` watch line of the controller `pad-1` with the given buttons and hat.
   private static func modified(pressed: [String], hat: String) -> [String: Any] {
     [
       "type": "MODIFIED",

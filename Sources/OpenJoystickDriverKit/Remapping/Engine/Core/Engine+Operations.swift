@@ -2,11 +2,15 @@ import Foundation
 
 extension RemappingEventEngine {
 
-  /// Processes one source's snapshot using the supplied validated profile.
+  /// Processes one source's snapshot with a validated profile.
   ///
-  /// The snapshot is diffed against the last one `source` delivered; the changes drive `target`,
-  /// which defaults to the source itself. A changed profile first neutralizes the target's
-  /// previous mapping.
+  /// The snapshot is diffed against the last one `source` delivered, and the changes drive
+  /// `target`, which defaults to `source`. A changed profile first neutralizes the earlier mapping
+  /// of the target.
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when routing admission is closed,
+  ///   ``RemappingEventEngineError/faulted`` while faulted,
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails, and
+  ///   ``RemappingValidationError`` for a profile that does not validate.
   public func process(
     _ event: ControllerEvent,
     from source: LogicalControllerID,
@@ -27,6 +31,13 @@ extension RemappingEventEngine {
     )
   }
 
+  /// Processes one source's snapshot under an emission permit.
+  ///
+  /// Behaves like the variant without a permit, but the permit decides admission.
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when the permit is not admitted,
+  ///   ``RemappingEventEngineError/faulted`` while faulted,
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails, and
+  ///   ``RemappingValidationError`` for a profile that does not validate.
   public func process(
     _ event: ControllerEvent,
     from source: LogicalControllerID,
@@ -56,6 +67,10 @@ extension RemappingEventEngine {
   }
 
   /// Replaces or deactivates the profile for one exact controller.
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when routing admission is closed,
+  ///   ``RemappingEventEngineError/faulted`` while faulted,
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails, and
+  ///   ``RemappingValidationError`` for a profile that does not validate.
   public func setProfile(
     _ profile: RemappingProfile?,
     for identifier: LogicalControllerID
@@ -66,6 +81,11 @@ extension RemappingEventEngine {
     try await setProfile(profile, for: identifier, requiring: permit)
   }
 
+  /// Replaces or deactivates the profile for one exact controller under an emission permit.
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when the permit is not admitted,
+  ///   ``RemappingEventEngineError/faulted`` while faulted,
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails, and
+  ///   ``RemappingValidationError`` for a profile that does not validate.
   public func setProfile(
     _ profile: RemappingProfile?,
     for identifier: LogicalControllerID,
@@ -76,7 +96,13 @@ extension RemappingEventEngine {
     try await commit(requiring: permit) { state in state.setProfile(profile, for: identifier) }
   }
 
-  /// Advances deterministic turbo phases and continuous pointer/scroll output.
+  /// Advances time-driven output to an uptime.
+  ///
+  /// That covers turbo phases, pulses, sticks, triggers, chord and sequence timers, long-hold and
+  /// multi-tap timers, and continuous pointer and scroll output.
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when routing admission is closed,
+  ///   ``RemappingEventEngineError/faulted`` while faulted, and
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails.
   public func tick(at uptimeNanoseconds: UInt64) async throws {
     guard let permit = emissionBarrier.currentPermit() else {
       throw RemappingEventEngineError.outputSuspended
@@ -84,6 +110,10 @@ extension RemappingEventEngine {
     try await tick(at: uptimeNanoseconds, requiring: permit)
   }
 
+  /// Advances time-driven output to an uptime under an emission permit.
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when the permit is not admitted,
+  ///   ``RemappingEventEngineError/faulted`` while faulted, and
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails.
   public func tick(
     at uptimeNanoseconds: UInt64,
     requiring permit: RemappingEmissionPermit
@@ -92,22 +122,35 @@ extension RemappingEventEngine {
     try await commit(requiring: permit) { state in state.tick(at: uptimeNanoseconds) }
   }
 
-  /// Whether turbo or nonzero continuous output requires future tick work.
+  /// Whether any output needs a future tick.
   ///
-  /// Ordinary held keys and mouse buttons do not require scheduling and are not
-  /// included. A faulted engine reports `false` because fail-closed handling
-  /// clears all active mapping state.
+  /// Held keys and pointer buttons alone need none. A faulted engine reports `false`, because
+  /// fail-closed handling clears all mapping state.
   public func hasScheduledOutput() -> Bool { state.hasScheduledOutput }
 
+  /// Returns whether a `Pause` has the controller pass through unmapped.
+  public func isPaused(_ identifier: LogicalControllerID) -> Bool {
+    state.devices[identifier]?.isPaused == true
+  }
+
+  /// Returns the motion calibration status of a controller, or `nil` when it has no mapping
+  /// session.
   public func motionCalibrationStatus(
     for identifier: LogicalControllerID
   ) -> RemappingMotionCalibrationStatus? { state.motionCalibrationStatus(for: identifier) }
 
-  /// Identifies the current mapping lifetime, including profile replacement and reconnect.
+  /// Returns the identifier of the current mapping session of a controller, or `nil` without one.
+  ///
+  /// A profile replacement or a release ends a session and its identifier.
   public func motionSessionIdentifier(for identifier: LogicalControllerID) -> UUID? {
     state.devices[identifier]?.sessionID
   }
 
+  /// Applies a motion calibration command to a controller and returns the resulting status.
+  /// - Throws: ``RemappingMotionCalibrationError`` when the controller is unknown or a start
+  ///   request has no baseline, ``RemappingEventEngineError/outputSuspended`` when routing
+  ///   admission is closed, ``RemappingEventEngineError/faulted`` while faulted, and
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails.
   public func calibrateMotion(
     _ command: RemappingMotionCalibrationCommand,
     for identifier: LogicalControllerID
@@ -118,6 +161,21 @@ extension RemappingEventEngine {
     return try await calibrateMotion(command, for: identifier, requiring: permit)
   }
 
+  /// Applies a motion calibration command to a controller under an emission permit.
+  ///
+  /// A reset also clears the gyro stick and motion stick outputs. The command and its outputs apply
+  /// together or not at all.
+  /// - Parameters:
+  ///   - command: The calibration command to apply.
+  ///   - identifier: The controller to calibrate.
+  ///   - permit: The emission permit that admits the resulting output.
+  ///   - expectedSessionID: When set, the controller's mapping session must match it.
+  /// - Returns: The motion calibration status of the controller after the command.
+  /// - Throws: ``RemappingMotionCalibrationError`` when the controller or its expected session is
+  ///   unknown or a start request has no baseline,
+  ///   ``RemappingEventEngineError/outputSuspended`` when the permit is not admitted,
+  ///   ``RemappingEventEngineError/faulted`` while faulted, and
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails.
   public func calibrateMotion(
     _ command: RemappingMotionCalibrationCommand,
     for identifier: LogicalControllerID,
@@ -155,11 +213,16 @@ extension RemappingEventEngine {
     return status
   }
 
-  /// Returns the earliest monotonic deadline required by scheduled output.
+  /// Returns the earliest monotonic deadline required by scheduled output, or `nil` when none is.
   ///
-  /// Turbo deadlines are exact phase boundaries. Continuous destinations use
-  /// the caller-owned cadence because their platform scaling and delivery rate
-  /// are adapter policy. Arithmetic saturates at `UInt64.max`.
+  /// Turbo deadlines are exact phase boundaries. Continuous destinations use the caller-owned
+  /// cadence because their platform scaling and delivery rate are adapter policy. Arithmetic
+  /// saturates at `UInt64.max`.
+  /// - Parameters:
+  ///   - uptimeNanoseconds: The current monotonic uptime in nanoseconds.
+  ///   - continuousIntervalNanoseconds: Interval between ticks of continuous output.
+  /// - Returns: The earliest deadline in monotonic nanoseconds, or `nil` when no output is
+  ///   scheduled.
   public func nextScheduledTick(
     after uptimeNanoseconds: UInt64,
     continuousIntervalNanoseconds: UInt64
@@ -171,6 +234,9 @@ extension RemappingEventEngine {
   }
 
   /// Releases every output owned by one exact controller and forgets its profile.
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when routing admission is closed,
+  ///   ``RemappingEventEngineError/faulted`` while faulted, and
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails.
   public func releaseAll(for identifier: LogicalControllerID) async throws {
     guard let permit = emissionBarrier.currentPermit() else {
       throw RemappingEventEngineError.outputSuspended
@@ -178,6 +244,10 @@ extension RemappingEventEngine {
     try await releaseAll(for: identifier, requiring: permit)
   }
 
+  /// Releases every output owned by one exact controller under an emission permit.
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when the permit is not admitted,
+  ///   ``RemappingEventEngineError/faulted`` while faulted, and
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails.
   public func releaseAll(
     for identifier: LogicalControllerID,
     requiring permit: RemappingEmissionPermit
@@ -186,6 +256,13 @@ extension RemappingEventEngine {
     try await commit(requiring: permit) { state in state.releaseController(identifier) }
   }
 
+  /// Sets the profile color of a controller through the physical output sink.
+  ///
+  /// Does nothing when there is no physical output sink. A `nil` color is passed to the sink as
+  /// given.
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when the permit is not admitted,
+  ///   ``RemappingEventEngineError/faulted`` while faulted, and any error of the physical output
+  ///   sink.
   public func setProfileColor(
     _ color: ControllerColor?,
     for identifier: LogicalControllerID,
@@ -202,7 +279,10 @@ extension RemappingEventEngine {
     try await physicalOutputSink.setProfileColor(color, for: identifier)
   }
 
-  /// Releases all keyboard and pointer state. Repeated drains are no-ops.
+  /// Releases every output of every controller and forgets all source baselines.
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when routing admission is closed,
+  ///   ``RemappingEventEngineError/faulted`` while faulted, and
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails.
   public func drain() async throws {
     guard let permit = emissionBarrier.currentPermit() else {
       throw RemappingEventEngineError.outputSuspended
@@ -210,12 +290,20 @@ extension RemappingEventEngine {
     try await drain(requiring: permit)
   }
 
+  /// Releases every output of every controller under an emission permit.
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when the permit is not admitted,
+  ///   ``RemappingEventEngineError/faulted`` while faulted, and
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails.
   public func drain(requiring permit: RemappingEmissionPermit) async throws {
     try ensureAvailable()
     try await commit(requiring: permit) { state in state.drain() }
   }
 
   /// Performs the one terminal neutralization after routing admission has closed permanently.
+  ///
+  /// A faulted engine recovers first.
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when routing has not terminated, and
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails.
   public func drainAfterTermination() async throws {
     await acquireOperation()
     defer { finishOperation() }
@@ -229,8 +317,10 @@ extension RemappingEventEngine {
 
   /// Retries uncertain releases after a sink or permission failure.
   ///
-  /// The engine remains faulted if any release fails and cannot emit new presses
-  /// until recovery completes.
+  /// The engine remains faulted if any release fails and cannot emit new presses until recovery
+  /// completes.
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when routing admission is closed, and
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a release fails.
   public func recover() async throws {
     guard let permit = emissionBarrier.currentPermit() else {
       throw RemappingEventEngineError.outputSuspended
@@ -238,6 +328,9 @@ extension RemappingEventEngine {
     try await recover(requiring: permit)
   }
 
+  /// Retries uncertain releases under an emission permit.
+  /// - Throws: ``RemappingEventEngineError/outputSuspended`` when the permit is not admitted, and
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a release fails.
   public func recover(requiring permit: RemappingEmissionPermit) async throws {
     await acquireOperation()
     defer { finishOperation() }
@@ -249,11 +342,18 @@ extension RemappingEventEngine {
     try await recoverUncertainOutputs()
   }
 
+  /// Releases the uncertain outputs and clears the fault once every release succeeded.
   private func recoverUncertainOutputs() async throws {
     try await releaseUncertainOutputs()
     faulted = false
   }
 
+  /// Releases every output that may still be held after a failure.
+  ///
+  /// Keyboard and pointer outputs go first, in release order, and stop at the first failure.
+  /// Virtual gamepad devices and physical devices follow.
+  /// - Throws: ``RemappingEventEngineError/sinkUnavailable`` when a release fails or a sink is
+  ///   missing.
   func releaseUncertainOutputs() async throws {
     var failed = false
     for output in Self.releaseOrder(uncertainHeldOutputs) {
@@ -282,10 +382,15 @@ extension RemappingEventEngine {
     if failed { throw RemappingEventEngineError.sinkUnavailable }
   }
 
+  /// Checks that the engine is not faulted.
+  /// - Throws: ``RemappingEventEngineError/faulted``.
   private func ensureAvailable() throws {
     guard !faulted else { throw RemappingEventEngineError.faulted }
   }
 
+  /// Waits until no other operation runs, then marks the engine busy.
+  ///
+  /// Operations run one at a time, in arrival order, also across suspension points.
   private func acquireOperation() async {
     if !operationInProgress {
       operationInProgress = true
@@ -294,6 +399,7 @@ extension RemappingEventEngine {
     await withCheckedContinuation { operationWaiters.append($0) }
   }
 
+  /// Ends the running operation and resumes the next waiting one.
   private func finishOperation() {
     guard !operationWaiters.isEmpty else {
       operationInProgress = false
@@ -302,6 +408,10 @@ extension RemappingEventEngine {
     operationWaiters.removeFirst().resume()
   }
 
+  /// Runs a state transition under a lease for a permit and delivers its actions.
+  /// - Throws: ``RemappingEventEngineError/faulted`` while faulted,
+  ///   ``RemappingEventEngineError/outputSuspended`` when the permit is not admitted, and
+  ///   ``RemappingEventEngineError/sinkUnavailable`` when a sink fails.
   private func commit(
     requiring permit: RemappingEmissionPermit,
     _ transition: (inout RemappingEngineState) -> [RemappingEngineAction]
@@ -316,6 +426,11 @@ extension RemappingEventEngine {
     try await commitUnchecked(transition)
   }
 
+  /// Delivers the actions of a state transition to the sinks in order.
+  ///
+  /// The transition runs on a copy of the state, which replaces the state once every action is
+  /// delivered. A sink failure fails closed.
+  /// - Throws: ``RemappingEventEngineError/sinkUnavailable``.
   private func commitUnchecked(
     _ transition: (inout RemappingEngineState) -> [RemappingEngineAction]
   ) async throws {
@@ -323,17 +438,38 @@ extension RemappingEventEngine {
     var candidate = previous
     let actions = transition(&candidate)
     var potentiallyHeld = previous.heldOutputs
+    let pointerScale = candidate.pointerScale
+    if candidate.usesMIDIOutput, !midiIsOpen {
+      guard let midiOutput else { throw RemappingEventEngineError.sinkUnavailable }
+      try midiOutput.open()
+      midiIsOpen = true
+    }
     for action in actions {
       do {
         switch action {
         case .system(let systemAction):
-          try sink.send(systemAction)
-          Self.accountForDelivered(systemAction, in: &potentiallyHeld)
+          let scaled = systemAction.scalingPointer(by: pointerScale)
+          try sink.send(scaled)
+          Self.accountForDelivered(scaled, in: &potentiallyHeld)
         case .gamepad(let gamepadState, let identifier):
           guard let gamepadSink else { throw RemappingEventEngineError.sinkUnavailable }
           heldGamepadDevices.insert(identifier)
           try await gamepadSink.send(gamepadState, for: identifier)
           if gamepadState == .neutral { heldGamepadDevices.remove(identifier) }
+        case .profileSwitch(let target, let current, let identifier):
+          // The switch re-enters the engine, so it runs after this operation releases the lock.
+          if let profileSwitcher {
+            Task { await profileSwitcher.switchProfile(target, from: current, for: identifier) }
+          }
+        case .systemAction(let request): await perform(request)
+        case .speak(let text, let voice, let identifier):
+          await speechOutput?.speak(text, voice: voice, for: identifier)
+        case .stopSpeech(let identifier):
+          await speechOutput?.stopSpeech(for: identifier)
+        case .midi(let message):
+          guard let midiOutput else { throw RemappingEventEngineError.sinkUnavailable }
+          try midiOutput.send(message)
+          accountForDelivered(message)
         case .physical(let output, let active, let owner, let identifier):
           guard let physicalOutputSink else { throw RemappingEventEngineError.sinkUnavailable }
           try await physicalOutputSink.set(output, active: active, owner: owner, for: identifier)
@@ -358,5 +494,24 @@ extension RemappingEventEngine {
       }
     }
     state = candidate
+    if midiIsOpen, !candidate.usesMIDIOutput { closeMIDI() }
+  }
+
+  /// Performs a system action; a failure is reported and leaves the engine running.
+  ///
+  /// A Shortcut runs in its own task, because one that asks for input would hold the engine.
+  private func perform(_ request: RemappingSystemActionRequest) async {
+    guard let performer = systemActionPerformer else {
+      reportSystemActionFailure(RemappingEventEngineError.sinkUnavailable)
+      return
+    }
+    let report = reportSystemActionFailure
+    if case .runShortcut = request {
+      Task {
+        do { try await performer.perform(request) } catch { report(error) }
+      }
+      return
+    }
+    do { try await performer.perform(request) } catch { report(error) }
   }
 }

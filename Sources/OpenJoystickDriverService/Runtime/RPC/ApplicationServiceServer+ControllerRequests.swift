@@ -6,7 +6,7 @@ extension ApplicationServiceServer {
   /// connected devices.
   public func getStatus() async -> Data {
     let permissions = await permissionManager.refreshAccessState()
-    let devices = describingVirtualHIDProfiles(
+    let devices = await describingVirtualHIDProfiles(
       await deviceManager.connectedDeviceDescriptions().map {
         ($0.logicalControllerID, ApplicationServiceDeviceDescription(snapshot: $0))
       }
@@ -34,10 +34,12 @@ extension ApplicationServiceServer {
     }
   }
 
+  /// Asks for every access that the service requires and returns the resulting state.
   public func requestRequiredAccess() async -> PermissionManager.Snapshot {
     await permissionManager.requestRequiredAccess()
   }
 
+  /// Asks for the access `requirement` names and returns the resulting state.
   public func requestAccess(
     _ requirement: PermissionManager.Requirement
   ) async -> PermissionManager.Snapshot { await permissionManager.requestAccess(requirement) }
@@ -75,21 +77,39 @@ extension ApplicationServiceServer {
     await deviceManager.sendControllerOutput(command, for: controller)
   }
 
+  /// Plays `audio` on the speaker of the selected controller.
+  public func playControllerSpeaker(
+    _ audio: Data,
+    for controller: ControllerReference
+  ) async -> ControllerOutputResult {
+    await deviceManager.playSpeaker(audio, for: controller)
+  }
+
+  /// Stops the speaker of the selected controller.
+  public func stopControllerSpeaker(
+    for controller: ControllerReference
+  ) async -> ControllerOutputResult { await deviceManager.stopSpeaker(for: controller) }
+
+  /// Suspends the controller and returns the encoded result.
   public func suspendController(_ controller: ControllerReference) async -> Data {
     let result = await deviceManager.suspendController(controller)
     return (try? JSONEncoder().encode(result)) ?? Data()
   }
 
+  /// Resumes the suspended controller and returns the encoded result.
   public func resumeController(_ controller: ControllerReference) async -> Data {
     let result = await deviceManager.resumeController(controller)
     return (try? JSONEncoder().encode(result)) ?? Data()
   }
 
+  /// Disconnects the wireless controller and returns the encoded result.
   public func disconnectWirelessController(_ controller: ControllerReference) async -> Data {
     let result = await deviceManager.disconnectWirelessController(controller)
     return (try? JSONEncoder().encode(result)) ?? Data()
   }
 
+  /// Returns the user-space virtual device status and the HID gamepads on the system as encoded
+  /// JSON.
   public func getVirtualDeviceDiagnostics() -> Data {
     let userSnapshot = userSpaceStatusSnapshot()
     let payload = ApplicationServiceVirtualDeviceDiagnosticsPayload(
@@ -117,6 +137,8 @@ extension ApplicationServiceServer {
     }
   }
 
+  /// Clears the virtual HID profile overrides, publishes again and retargets every controller; true
+  /// when all of it succeeded.
   public func resetSettings() async -> Bool {
     await virtualOutputTransitionCoordinator.enqueue { [weak self] in
       guard let self else { return false }
@@ -124,6 +146,7 @@ extension ApplicationServiceServer {
     }
   }
 
+  /// Clears the overrides, activates the backend if it is not live, and retargets the controllers.
   private func performResetSettingsAsync() async -> Bool {
     let cleared = resetVirtualHIDProfileSettings()
     let live = await performVirtualOutputBackendActivation()

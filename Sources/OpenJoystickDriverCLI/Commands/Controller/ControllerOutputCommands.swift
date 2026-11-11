@@ -3,45 +3,33 @@ import Foundation
 import OpenJoystickDriverKit
 
 /// The `--json` result of `ojd controller rumble`, `light`, and `player`: the `details` of a
-/// `Success` status. A result the controller does not deliver fails the command instead.
+/// `Success` status.
+///
+/// A result the controller does not deliver fails the command instead.
 struct ControllerOutputReport: Encodable, Equatable {
-  struct Entry: Encodable, Equatable {
-    let command: String
-    let outcome: String
-    let droppedRumbleChannels: [String]
-  }
-
+  /// The session ID of the controller.
   let controller: String
-  let results: [Entry]
+  /// One entry for each output command sent.
+  let results: [ControllerOutputEntry]
 }
 
-/// One output command and the words that name it in a failure.
-private struct OutputRequest: Sendable {
-  let name: String
-  let command: ControllerOutputCommand
-  let feature: String
-}
-
-/// Sends each request to `selector`'s controller in order and prints the report.
+/// Sends each request to the selected controller in order and prints the report.
 ///
 /// Fails at the first request the controller does not deliver.
-private func sendOutput(_ requests: [OutputRequest], to selector: ControllerSelector) async throws {
+private func sendOutput(
+  _ requests: [ControllerOutputRequest],
+  to selector: ControllerSelector
+) async throws {
   let entries = try await ServiceConnection.request { client in
     let device = try await selector.resolve(with: client)
-    var entries: [ControllerOutputReport.Entry] = []
+    var entries: [ControllerOutputEntry] = []
     for request in requests {
       let result = try await client.sendControllerOutput(
         request.command,
         for: .session(device.sessionToken)
       )
-      try check(result, request, device)
-      entries.append(
-        ControllerOutputReport.Entry(
-          command: request.name,
-          outcome: result.outcome.rawValue,
-          droppedRumbleChannels: result.droppedRumbleChannels.map(\.rawValue)
-        )
-      )
+      try ControllerOutput.check(result, request, device)
+      entries.append(ControllerOutputEntry(request, result))
     }
     return (device, entries)
   }
@@ -68,53 +56,9 @@ private func sendOutput(_ requests: [OutputRequest], to selector: ControllerSele
   }
 }
 
-private func check(
-  _ result: ControllerOutputResult,
-  _ request: OutputRequest,
-  _ device: ApplicationServiceDeviceDescription
-) throws {
-  switch result.outcome {
-  case .delivered: return
-  case .unsupportedCapability:
-    throw CLIFailure(
-      .controllerRequestFailed,
-      CLILocalized.format(
-        "cli.controller.group.outputUnsupported",
-        device.name,
-        request.feature,
-        device.sessionToken.rawValue
-      )
-    )
-  case .notReady:
-    throw CLIFailure(
-      .controllerRequestFailed,
-      CLILocalized.format(
-        "cli.controller.group.outputNotReady",
-        device.name
-      )
-    )
-  case .notFound, .cancelled:
-    throw CLIFailure(
-      .controllerRequestFailed,
-      CLILocalized.format(
-        "cli.controller.group.outputGone",
-        device.name
-      )
-    )
-  case .invalidValue, .writeFailed:
-    throw CLIFailure(
-      .controllerRequestFailed,
-      CLILocalized.format(
-        "cli.controller.group.outputFailed",
-        device.name,
-        request.name,
-        CommandLineName.kebab(result.outcome.rawValue)
-      )
-    )
-  }
-}
-
+/// The `ojd controller rumble` command: runs the rumble motors of a controller for a short time.
 struct ControllerRumbleCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "rumble",
     abstract: CLILocalized.text(
@@ -125,28 +69,35 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
     ) + "\n\n" + CLILocalized.text("cli.controller.rumble.examples")
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The controller to rumble.
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
+  /// `--left`: the intensity of the left main motor, from 0 to 255.
   @Option(help: intensityHelp(CLILocalized.text("cli.controller.rumble.left")))
   var left: UInt8?
 
+  /// `--right`: the intensity of the right main motor, from 0 to 255.
   @Option(help: intensityHelp(CLILocalized.text("cli.controller.rumble.right")))
   var right: UInt8?
 
+  /// `--left-trigger`: the intensity of the left trigger motor, from 0 to 255.
   @Option(
     help: intensityHelp(CLILocalized.text("cli.controller.rumble.leftTrigger"))
   )
   var leftTrigger: UInt8?
 
+  /// `--right-trigger`: the intensity of the right trigger motor, from 0 to 255.
   @Option(
     help: intensityHelp(CLILocalized.text("cli.controller.rumble.rightTrigger"))
   )
   var rightTrigger: UInt8?
 
+  /// `--duration`: how long the motors run, in seconds above 0 and up to the maximum.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -157,12 +108,16 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
   )
   var duration = RumbleDuration.manualTestSeconds
 
+  /// The help of an intensity option, which takes a value from 0 to 255.
   private static func intensityHelp(_ text: String) -> ArgumentHelp {
     ArgumentHelp(text, valueName: "0-255")
   }
 
+  /// Checks the rumble options, including that the duration is above zero and within the maximum.
+  ///
+  /// - Throws: ``ValidationError`` for an invalid duration.
   func validate() throws {
-    guard duration.isFinite, duration > 0, duration <= RumbleDuration.maximumSeconds else {
+    guard ControllerOutput.isValidRumbleDuration(duration) else {
       throw ValidationError(
         CLILocalized.text(
           "cli.controller.rumble.errorDuration"
@@ -181,22 +136,14 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
     )
   }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let intensities = intensities
-      let command: ControllerOutputCommand =
-        intensities.activeMotors.isEmpty
-        ? .stopRumble
-        : .setRumble(
-          intensities.mirroringMainOntoHaptics(),
-          duration: .milliseconds(max(1, Int((duration * 1000).rounded())))
-        )
-      let selector = controller
-      let feature = CLILocalized.text("cli.controller.group.featureRumble")
       try await sendRumble(
-        OutputRequest(name: "rumble", command: command, feature: feature),
+        ControllerOutput.rumble(intensities, seconds: duration),
         requested: intensities.activeMotors,
-        to: selector
+        to: controller
       )
     }
   }
@@ -206,7 +153,7 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
   /// Main-motor requests are mirrored onto trackpad haptics, so a controller with only one of
   /// the two drops the other silently. Fails when no requested motor ran.
   private func sendRumble(
-    _ request: OutputRequest,
+    _ request: ControllerOutputRequest,
     requested: [PhysicalRumbleMotor],
     to selector: ControllerSelector
   ) async throws {
@@ -218,18 +165,14 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
       )
       return (device, result)
     }
-    try check(result, request, device)
-    let dropped = Set(result.droppedRumbleChannels)
-    let droppedTriggers = requested.filter {
-      ($0 == .leftTrigger || $0 == .rightTrigger) && dropped.contains($0)
-    }
-    let ran = requested.filter { motor in
-      switch motor {
-      case .lowFrequency: !dropped.contains(.lowFrequency) || !dropped.contains(.leftHaptic)
-      case .highFrequency: !dropped.contains(.highFrequency) || !dropped.contains(.rightHaptic)
-      default: !dropped.contains(motor)
-      }
-    }
+    try ControllerOutput.check(result, request, device)
+    let outcome = try ControllerOutput.rumbleOutcome(
+      requested: requested,
+      result: result,
+      device: device
+    )
+    let droppedTriggers = outcome.droppedTriggers
+    let ran = outcome.ran
     for motor in droppedTriggers {
       CLIOutput.stderr(
         CLILocalized.format(
@@ -239,25 +182,9 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
         )
       )
     }
-    if !requested.isEmpty, ran.isEmpty {
-      throw CLIFailure(
-        .controllerRequestFailed,
-        CLILocalized.format(
-          "cli.controller.rumble.noneRan",
-          device.name,
-          device.sessionToken.rawValue
-        )
-      )
-    }
     let report = ControllerOutputReport(
       controller: device.sessionToken.rawValue,
-      results: [
-        ControllerOutputReport.Entry(
-          command: request.name,
-          outcome: result.outcome.rawValue,
-          droppedRumbleChannels: result.droppedRumbleChannels.map(\.rawValue)
-        )
-      ]
+      results: [ControllerOutputEntry(request, result)]
     )
     switch CLIContext.current.format {
     case .json: try CLIOutput.json(CLIStatus(details: report))
@@ -287,8 +214,10 @@ struct ControllerRumbleCommand: AsyncParsableCommand {
 
 /// A player number from 1 to 4, or `off` (also `0`).
 struct PlayerIndicatorArgument: ExpressibleByArgument, Equatable, Sendable {
+  /// The player indicator that the argument names.
   let indicator: PhysicalPlayerIndicator
 
+  /// Parses `argument`; fails when it is not a number from 0 to 4 or `off`.
   init?(argument: String) {
     if argument.lowercased() == "off" {
       indicator = .off
@@ -300,10 +229,13 @@ struct PlayerIndicatorArgument: ExpressibleByArgument, Equatable, Sendable {
     }
   }
 
+  /// The player indicator spellings that the command line accepts.
   static var allValueStrings: [String] { ["off", "1", "2", "3", "4"] }
 }
 
+/// The `ojd controller player` command: sets the player indicator lights of a controller.
 struct ControllerPlayerCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "player",
     abstract: CLILocalized.text(
@@ -311,12 +243,15 @@ struct ControllerPlayerCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The controller to change.
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
+  /// The player number from 1 to 4, or `off`.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.controller.player.number"),
@@ -325,16 +260,11 @@ struct ControllerPlayerCommand: AsyncParsableCommand {
   )
   var number: PlayerIndicatorArgument
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       try await sendOutput(
-        [
-          OutputRequest(
-            name: "player",
-            command: .setPlayerIndicator(number.indicator),
-            feature: CLILocalized.text("cli.controller.group.featurePlayer")
-          )
-        ],
+        [ControllerOutput.player(number.indicator)],
         to: controller
       )
     }
@@ -343,17 +273,23 @@ struct ControllerPlayerCommand: AsyncParsableCommand {
 
 /// A color as `RRGGBB` hex, with an optional leading `#`.
 struct ColorArgument: ExpressibleByArgument, Equatable, Sendable {
+  /// The parsed color.
   let color: ControllerColor
 
+  /// Parses `argument`; fails when it is not a hex color.
   init?(argument: String) {
     guard let color = ControllerColor(hex: argument) else { return nil }
     self.color = color
   }
 
+  /// Compares two arguments by their parsed color.
   static func == (lhs: Self, rhs: Self) -> Bool { lhs.color == rhs.color }
 }
 
+/// The `ojd controller light` command: sets the lightbar color or the LED brightness of a
+/// controller.
 struct ControllerLightCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "light",
     abstract: CLILocalized.text(
@@ -362,12 +298,15 @@ struct ControllerLightCommand: AsyncParsableCommand {
     discussion: CLILocalized.text("cli.controller.light.examples")
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The controller to change.
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
+  /// `--color`: the lightbar color as `RRGGBB` hex.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text("cli.controller.light.color"),
@@ -376,6 +315,7 @@ struct ControllerLightCommand: AsyncParsableCommand {
   )
   var color: ColorArgument?
 
+  /// `--brightness`: the LED brightness, from 0 to 255.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text("cli.controller.light.brightness"),
@@ -384,6 +324,9 @@ struct ControllerLightCommand: AsyncParsableCommand {
   )
   var brightness: UInt8?
 
+  /// Requires a color or a brightness.
+  ///
+  /// - Throws: ``ValidationError`` when the command names neither.
   func validate() throws {
     guard color != nil || brightness != nil else {
       throw ValidationError(
@@ -394,29 +337,10 @@ struct ControllerLightCommand: AsyncParsableCommand {
     }
   }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
-      var requests: [OutputRequest] = []
-      if let color {
-        requests.append(
-          OutputRequest(
-            name: "color",
-            command: .setRGB(color.color),
-            feature: CLILocalized.text("cli.controller.group.featureColor")
-          )
-        )
-      }
-      if let brightness {
-        requests.append(
-          OutputRequest(
-            name: "brightness",
-            command: .setLightBrightness(UnipolarValue(byte: brightness)),
-            feature: CLILocalized.text(
-              "cli.controller.group.featureBrightness"
-            )
-          )
-        )
-      }
+      let requests = ControllerOutput.light(color: color?.color, brightness: brightness)
       try await sendOutput(requests, to: controller)
     }
   }

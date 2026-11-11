@@ -19,20 +19,56 @@ extension OrderedJSON {
     return text
   }
 
-  /// A JSON integer: digits with an optional minus sign. A number written with a fraction or an
-  /// exponent, such as `1.0` or `1e3`, a boolean, and a string are not.
+  /// A JSON integer: digits with an optional minus sign.
+  ///
+  /// A number written with a fraction or an exponent, such as `1.0` or `1e3`, a boolean, and a
+  /// string are not.
   var integer: Int? {
     guard case .number(let text) = self else { return nil }
     return Int(text)
   }
 
-  /// The value as `JSONSerialization` reads it, for code that reads typed fields. A number
-  /// becomes an `NSNumber` there, so the result is never written back as record text.
+  /// The value as `JSONSerialization` reads it, for code that reads typed fields.
+  ///
+  /// A number becomes an `NSNumber` there, so the result is never written back as record text.
   func foundationValue() throws -> Any {
     try JSONSerialization.jsonObject(
       with: Data(compact().utf8),
       options: .fragmentsAllowed
     )
+  }
+
+  /// The value of the document `data`, an XML property list; `file` names it in a refusal.
+  public init(document data: Data, file: String) throws {
+    self = try Self(foundation: DocumentCoder.read(data, file: file))
+  }
+
+  /// The value as a canonical document.
+  ///
+  /// A number written as an integer is an `integer` and any other number a `real`. `null` has no
+  /// property list form and is refused.
+  public func plistData() throws -> Data { try DocumentCoder.write(plistValue()) }
+
+  private func plistValue() throws -> Any {
+    switch self {
+    case .object(let members):
+      return try Dictionary(uniqueKeysWithValues: members.map { ($0.key, try $0.value.plistValue()) })
+    case .array(let items): return try items.map { try $0.plistValue() }
+    case .string(let text): return text
+    case .bool(let flag): return flag
+    case .number(let text):
+      if let integer = Int64(text) { return integer }
+      if let wide = UInt64(text) { return wide }
+      guard let real = Double(text), real.isFinite else {
+        throw OrderedJSON.Problem(reason: .notAJSONValue("\(text) is not a number"), offset: nil)
+      }
+      return real
+    case .null:
+      throw OrderedJSON.Problem(
+        reason: .notAJSONValue("a property list cannot hold null; remove the key"),
+        offset: nil
+      )
+    }
   }
 
   /// Whether the two values are the same JSON value: object members in any order, and numbers by
@@ -58,11 +94,13 @@ extension OrderedJSON {
     }
   }
 
+  /// The sign, significant digits and power of ten of a JSON number.
   private typealias CanonicalNumber = (negative: Bool, digits: String, exponent: Int)
 
   /// The sign, significant digits and power of ten of the JSON number `text`, with no leading or
-  /// trailing zero in the digits, so numbers of the same value give the same result. Zero has no
-  /// sign and no digits. Nil when the exponent does not fit an `Int`.
+  /// trailing zero in the digits, so numbers of the same value give the same result.
+  ///
+  /// Zero has no sign and no digits. Nil when the exponent does not fit an `Int`.
   private static func canonicalNumber(_ text: String) -> CanonicalNumber? {
     var rest = Substring(text)
     let negative = rest.hasPrefix("-")

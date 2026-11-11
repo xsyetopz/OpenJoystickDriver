@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -33,7 +34,7 @@ struct ControllerModeConditionalTests {
 
   private static func problem(_ record: [String: Any]) -> String? {
     do {
-      _ = try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record))
+      _ = try ControllerRecordSet.validate(PropertyListFixture.data(tree: record))
       return nil
     } catch { return ControllerRecordSet.problemDescription(error, document: "record") }
   }
@@ -133,15 +134,25 @@ struct ControllerModeConditionalTests {
   }
 
   @Test
-  func usbEndpointsDifferFromEveryModeDefault() {
+  func usbEndpointsDifferFromTheDefaultOfSomeMode() {
     Self.expectRejected(
       Self.record(
-        default: Self.gip,
+        default: ["family": "XboxXUSB", "variant": "Receiver"],
         second: ["family": "XboxXUSB", "variant": "Wired"],
         match: Self.usbMatch,
         fields: ["usb": ["endpoints": ["in": 129, "out": 1]]]
       ),
       "protocol-default endpoints must be omitted"
+    )
+    #expect(
+      Self.problem(
+        Self.record(
+          default: Self.gip,
+          second: ["family": "XboxXUSB", "variant": "Wired"],
+          match: Self.usbMatch,
+          fields: ["usb": ["endpoints": ["in": 129, "out": 1]]]
+        )
+      ) == nil
     )
   }
 
@@ -160,18 +171,29 @@ struct ControllerModeConditionalTests {
   }
 
   @Test
-  func presentControlsAreDeclaredByTheDriverOfEveryMode() {
+  func presentControlsAreDeclaredByTheDriverOfSomeMode() {
     let present =
       (ProtocolDescription.bundled[.sonyDualSense]?.recordCapabilities.presentControls ?? [])
       .map(\.rawValue).sorted()
+    let fields: [String: Any] = ["capabilities": ["present": present]]
+    #expect(
+      Self.problem(
+        Self.record(
+          default: ["family": "SonyDualSense"],
+          second: Self.hid,
+          match: Self.hidMatch,
+          fields: fields
+        )
+      ) == nil
+    )
     Self.expectRejected(
       Self.record(
-        default: ["family": "SonyDualSense"],
+        default: Self.gip,
         second: Self.hid,
         match: Self.hidMatch,
-        fields: ["capabilities": ["present": present]]
+        fields: fields
       ),
-      "capabilities must be deltas the driver of every mode declares"
+      "capabilities must be deltas the driver of some mode declares"
     )
   }
 }

@@ -10,7 +10,7 @@ Run from the repository root:
 
 ```bash
 ./Scripts/ojd diagnose record \
-  Sources/OpenJoystickDriverKit/Resources/Controllers/3285/3285-0634.json \
+  Sources/OpenJoystickDriverKit/Resources/Controllers/3285/3285-0634.plist \
   --validate-only
 ```
 
@@ -26,7 +26,7 @@ This VID/PID is not in the current production Apple USB entitlement, so the faca
 
 ```bash
 ./Scripts/ojd diagnose record \
-  Sources/OpenJoystickDriverKit/Resources/Controllers/3285/3285-0634.json \
+  Sources/OpenJoystickDriverKit/Resources/Controllers/3285/3285-0634.plist \
   --seconds 45
 ```
 

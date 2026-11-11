@@ -1,0 +1,12 @@
+4.574 rx id=1 len=10 01 00 04 0f 7f 7f 7f 7f 00 00
+7.442 rx id=1 len=10 01 00 00 0f 7f 7f 7f 7f 00 00
+8.486 rx id=1 len=10 01 00 04 0f 7f 7f 7f 7f 00 00
+10.722 rx id=1 len=10 01 00 00 0f 7f 7f 7f 7f 00 00
+12.710 rx id=1 len=10 01 01 00 0f 7f 7f 7f 7f 00 00
+12.902 rx id=1 len=10 01 00 00 0f 7f 7f 7f 7f 00 00
+14.290 rx id=1 len=10 01 00 04 0f 7f 7f 7f 7f 00 00
+14.494 rx id=1 len=10 01 00 00 0f 7f 7f 7f 7f 00 00
+15.446 rx id=1 len=10 01 01 00 0f 7f 7f 7f 7f 00 00
+15.630 rx id=1 len=10 01 00 00 0f 7f 7f 7f 7f 00 00
+17.526 rx id=1 len=10 01 00 04 0f 7f 7f 7f 7f 00 00
+18.150 rx id=1 len=10 01 00 00 0f 7f 7f 7f 7f 00 00

@@ -2,9 +2,11 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// One raw axis at a time through each driver's transform, so every canonical component and sign
-/// is pinned: +X right, +Y away from the player, +Z up through the face; rotation by the
-/// right-hand rule. Expected mappings are documented on each producer's `sample` function.
+/// One raw axis at a time through each driver's transform, so every canonical component and sign is
+/// pinned: +X right, +Y away from the player, +Z up through the face; rotation by the right-hand
+/// rule.
+///
+/// Expected mappings are documented on each producer's `sample` function.
 struct MotionFrameTests {
   private typealias Raw = ControllerRawSensorVector
   private static let timestamp = ControllerSampleTimestamp(
@@ -95,9 +97,11 @@ struct MotionFrameTests {
   }
 
   /// Pins SDL's Steam mapping, not a verified physical frame: gyro raw (x, y, z) → (x, -y, z) and
-  /// accel raw (x, y, z) → (x, y, z), both at nominal full scale. The two differ by a reflection,
-  /// so at most one is right-handed; handedness is hardware-unverified until a capture (right edge
-  /// rolled down at rest, `docs/testing/steam-controller.md`) settles it.
+  /// accel raw (x, y, z) → (x, y, z), both at nominal full scale.
+  ///
+  /// The two differ by a reflection, so at most one is right-handed; handedness is
+  /// hardware-unverified until a capture (right edge rolled down at rest,
+  /// `docs/testing/steam-controller.md`) settles it.
   @Test
   func steamPinsSDLMappingWithUnverifiedHandedness() throws {
     let gyroSigns: [(Double, Double, Double)] = [(1, 0, 0), (0, -1, 0), (0, 0, 1)]

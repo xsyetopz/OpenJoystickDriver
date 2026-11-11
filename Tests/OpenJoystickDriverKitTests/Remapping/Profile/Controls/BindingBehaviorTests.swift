@@ -30,8 +30,14 @@ struct RemappingBindingBehaviorTests {
       turbo: configuration == 1 ? RemappingTurbo(repeatRateHz: 10, dutyCycle: 0.5) : nil,
       longHold: configuration == 2
         ? RemappingLongHold(durationMs: 500, destination: .keyboard(key: .b, modifiers: [])) : nil,
-      doubleTap: configuration == 3
-        ? RemappingDoubleTap(windowMs: 200, destination: .keyboard(key: .b, modifiers: [])) : nil
+      multiTap: configuration == 3
+        ? [
+          RemappingMultiTap(
+            count: 2,
+            windowMs: 200,
+            destination: .keyboard(key: .b, modifiers: [])
+          )
+        ] : []
     )
     #expect(throws: RemappingValidationError.bindingBehaviorConflict(index: 0)) {
       try profile(binding).validate()

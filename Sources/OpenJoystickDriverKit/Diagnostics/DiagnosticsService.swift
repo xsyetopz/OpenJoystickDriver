@@ -1,19 +1,29 @@
 import Foundation
 
-/// The outcome of one `ojd diagnose` check. The raw values are stable identifiers.
+/// The outcome of one `ojd diagnose` check.
+///
+/// The raw values are stable identifiers.
 public enum DiagnoseStatus: String, Encodable, Equatable, Sendable {
+  /// The check passed.
   case pass = "Pass"
+  /// The check found something to review.
   case warn = "Warn"
+  /// The check found a failure.
   case fail = "Fail"
+  /// The check did not run; `detail` says why.
   case skip = "Skip"
 }
 
 /// One `ojd diagnose` check: a stable kebab-case `id`, its `status`, and a one-line `detail`.
 public struct DiagnoseCheck: Encodable, Equatable, Sendable {
+  /// The stable kebab-case ID of the check.
   public let id: String
+  /// The outcome of the check.
   public let status: DiagnoseStatus
+  /// The one-line explanation of the outcome.
   public let detail: String
 
+  /// Creates a check from its `id`, `status` and `detail`.
   public init(_ id: String, _ status: DiagnoseStatus, _ detail: String) {
     self.id = id
     self.status = status
@@ -23,20 +33,29 @@ public struct DiagnoseCheck: Encodable, Equatable, Sendable {
 
 /// What the service reported, or why it could not.
 public struct DiagnoseServiceSnapshot: Sendable {
+  /// Whether the service answered.
   public enum Availability: Sendable, Equatable {
+    /// The service answered.
     case running
+    /// The service is not running.
     case stopped
+    /// The service failed to answer the status request; the value is the message to show.
     case failed(String)
   }
 
+  /// Whether the service answered.
   public let availability: Availability
+  /// The service status; nil unless the service is running.
   public let status: ApplicationServiceStatusPayload?
+  /// The diagnostics of the virtual devices; nil when the service did not answer that request.
   public let virtualDiagnostics: ApplicationServiceVirtualDeviceDiagnosticsPayload?
+  /// The frame timings; nil when the service did not answer that request.
   public let frameTimings: ApplicationServiceFrameTimingsPayload?
   /// The record of why the service's request listener stopped; only read while the service is
   /// stopped.
   public let listenerFailure: ServiceListenerFailure.Reading
 
+  /// Creates a snapshot from its values.
   public init(
     availability: Availability,
     status: ApplicationServiceStatusPayload?,
@@ -53,7 +72,9 @@ public struct DiagnoseServiceSnapshot: Sendable {
 }
 
 extension DiagnoseServiceSnapshot {
-  /// Asks the service once; a stopped or failing service never throws. `classify` turns the error
+  /// Asks the service once; a stopped or failing service never throws.
+  ///
+  /// `classify` turns the error
   /// of a failed status request into the availability; ``availability(after:)`` is the rule for
   /// the Kit client errors. A stopped service gets `listenerFailure`, the record of why its
   /// request listener stopped.
@@ -103,6 +124,7 @@ extension DiagnoseServiceSnapshot {
 
 /// The checks of `ojd diagnose`, built from facts that the caller gathered.
 public enum DiagnosticsService {
+  /// The catalog that words the checks.
   private static let localization = Localization()
 
   /// Every check of `ojd diagnose` except runtime health, in report order, from facts that the
@@ -119,6 +141,8 @@ public enum DiagnosticsService {
     checks.append(contentsOf: permissionChecks(snapshot))
     checks.append(virtualDeviceCheck(snapshot))
     checks.append(recordCheck(records))
+    checks.append(inputMappingCheck(snapshot))
+    checks.append(switchSerialCheck(snapshot))
     checks.append(configFilesCheck(defaults: records.defaults, virtualDevices: virtualDevices))
     checks.append(usbCheck(usb))
     return checks
@@ -133,6 +157,8 @@ public enum DiagnosticsService {
     return DiagnoseCheck(id, .skip, reason)
   }
 
+  /// The two checks of the DriverKit extension: `transport-extension-bundle` and
+  /// `transport-extension-registration`.
   package static func extensionChecks(_ status: ExtensionStatus) -> [DiagnoseCheck] {
     let bundle: DiagnoseCheck
     switch status.bundle {
@@ -191,6 +217,11 @@ public enum DiagnosticsService {
     return [bundle, registration]
   }
 
+  /// The `service` check.
+  ///
+  /// It passes for a running service, warns for a stopped one that left no failure record or an
+  /// earlier one, and fails for a failed one, for a listener failure and for an unreadable failure
+  /// record.
   public static func serviceCheck(_ snapshot: DiagnoseServiceSnapshot) -> DiagnoseCheck {
     switch snapshot.availability {
     case .running:
@@ -219,6 +250,7 @@ public enum DiagnosticsService {
     }
   }
 
+  /// The `input-read` and `input-inject` checks; both are skipped when the service gave no status.
   public static func permissionChecks(_ snapshot: DiagnoseServiceSnapshot) -> [DiagnoseCheck] {
     guard let status = snapshot.status else {
       return [skipped("input-read", snapshot), skipped("input-inject", snapshot)]
@@ -229,6 +261,7 @@ public enum DiagnosticsService {
     ]
   }
 
+  /// The check `id` for the permission `value`: granted passes, unknown warns and denied fails.
   private static func permissionCheck(
     _ id: String,
     _ value: PermissionManager.AccessState
@@ -244,6 +277,10 @@ public enum DiagnosticsService {
     }
   }
 
+  /// The `virtual-device` check.
+  ///
+  /// It is skipped without a status, fails when the backend reports an error, warns for a profile
+  /// override error or a disabled virtual device, and otherwise passes.
   public static func virtualDeviceCheck(_ snapshot: DiagnoseServiceSnapshot) -> DiagnoseCheck {
     guard let status = snapshot.status else { return skipped("virtual-device", snapshot) }
     let id = "virtual-device"
@@ -268,6 +305,59 @@ public enum DiagnosticsService {
     return DiagnoseCheck(id, .pass, backend)
   }
 
+  /// The `input-mapping` check.
+  ///
+  /// It is skipped without a status and warns for each connected controller whose
+  /// SDL_GameControllerDB line was rejected, with the reason and ``ErrorCode/sdlLineRejected``;
+  /// that controller keeps the standard HID usage map.
+  public static func inputMappingCheck(_ snapshot: DiagnoseServiceSnapshot) -> DiagnoseCheck {
+    let id = "input-mapping"
+    guard let status = snapshot.status else { return skipped(id, snapshot) }
+    let rejected = status.connectedDevices.compactMap { device in
+      device.bindingResult.inputMapping?.rejection.map {
+        localization.formatted(
+          "cli.diagnose.group.inputMappingRejected",
+          arguments: [device.name, $0, ErrorCode.sdlLineRejected.rawValue]
+        )
+      }
+    }
+    guard rejected.isEmpty else {
+      return DiagnoseCheck(id, .warn, rejected.joined(separator: "; "))
+    }
+    return DiagnoseCheck(id, .pass, localization.string("cli.diagnose.group.inputMappingApplied"))
+  }
+
+  /// The `switch-placeholder-serial` check.
+  ///
+  /// It is skipped without a status or without a connected `057E:2009` controller, warns for each
+  /// such controller whose serial is `000000000001`, and otherwise passes. It does not change
+  /// which driver binds the controller.
+  public static func switchSerialCheck(_ snapshot: DiagnoseServiceSnapshot) -> DiagnoseCheck {
+    let id = "switch-placeholder-serial"
+    guard let status = snapshot.status else { return skipped(id, snapshot) }
+    let switchPads = status.connectedDevices.filter {
+      $0.vendorID == 0x057E && $0.productID == 0x2009
+    }
+    guard !switchPads.isEmpty else {
+      return DiagnoseCheck(id, .skip, localization.string("cli.diagnose.group.switchSerialNone"))
+    }
+    let placeholder = "000000000001"
+    let flagged = switchPads.filter { $0.serialNumber == placeholder }.map {
+      localization.formatted(
+        "cli.diagnose.group.switchSerialPlaceholder",
+        arguments: [
+          $0.name, String(format: "%04X:%04X", $0.vendorID, $0.productID), placeholder,
+        ]
+      )
+    }
+    guard flagged.isEmpty else {
+      return DiagnoseCheck(id, .warn, flagged.joined(separator: " "))
+    }
+    return DiagnoseCheck(id, .pass, localization.string("cli.diagnose.group.switchSerialOther"))
+  }
+
+  /// The `controller-records` check; it warns and names each controller record file that OJD
+  /// skipped.
   public static func recordCheck(_ records: ControllerRecordSet) -> DiagnoseCheck {
     let problems = records.problems
     guard problems.isEmpty else {
@@ -291,7 +381,7 @@ public enum DiagnosticsService {
     )
   }
 
-  /// The check for `all.patch.json` and the virtual device files: it warns when OJD ignored the
+  /// The check for `all.patch.plist` and the virtual device files: it warns when OJD ignored the
   /// defaults file, skipped a virtual device file, or did not read a folder, and names each.
   public static func configFilesCheck(
     defaults: ControllerDefaults?,
@@ -367,6 +457,10 @@ public enum DiagnosticsService {
     return DiagnoseCheck("hid-input-drops", .warn, detail)
   }
 
+  /// The `runtime-health` check from the measurements of a soak run.
+  ///
+  /// A stable run passes, a run with too little data or with growth warns, and a run over the
+  /// resident or physical footprint limit fails.
   public static func soakCheck(_ summary: RuntimeHealthSummary) -> DiagnoseCheck {
     let mebibyte = 1_048_576.0
     let detail = localization.formatted(

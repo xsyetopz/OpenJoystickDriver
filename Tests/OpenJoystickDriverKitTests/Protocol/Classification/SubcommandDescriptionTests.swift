@@ -1,11 +1,13 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// The Switch 1 subcommand report, its rolling counter rule and its startup requests
-/// come from `defaults.session.subcommands` in the family's description. The decoder is the only
-/// validator of these documents (the protocol description tests); the bytes
+/// The Switch 1 subcommand report, its rolling counter rule and its startup requests come from
+/// `defaults.session.subcommands` in the family's description.
+///
+/// The decoder is the only validator of these documents (the protocol description tests); the bytes
 /// the driver sends are pinned in `Switch1SubcommandBytesTests`.
 struct SubcommandDescriptionTests {
   private static let plain = #"{"subcommand": 3, "data": "30"}"#
@@ -28,8 +30,8 @@ struct SubcommandDescriptionTests {
        "endpoints": {"in": 130, "out": 2}, \(body)}
       """
     return try ProtocolDescription.decode(
-      Data(json.utf8),
-      fileName: "\(family.descriptionFileStem).json"
+      PropertyListFixture.bytes(json: json),
+      fileName: "\(family.descriptionFileStem).plist"
     )
   }
 

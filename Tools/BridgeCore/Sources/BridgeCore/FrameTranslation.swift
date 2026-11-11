@@ -3,6 +3,7 @@ import Foundation
 /// Turns the `input` of a `MODIFIED` watch line into the `Frame` line that the endpoint's
 /// `FeedRequest` flow accepts.
 public enum FrameTranslation {
+  /// The `dpad` names of a watch line's `hat` value.
   private static let dpad: [String: [String]] = [
     "North": ["DpadUp"], "NorthEast": ["DpadUp", "DpadRight"], "East": ["DpadRight"],
     "SouthEast": ["DpadDown", "DpadRight"], "South": ["DpadDown"],
@@ -35,6 +36,9 @@ public enum FrameTranslation {
     return (id, frame)
   }
 
+  /// The raw value as a fraction of `scale`, from `low` up to 1.
+  ///
+  /// A value that is neither a `Double` nor an `Int` counts as 0.
   private static func unit(_ value: Any?, scale: Double, low: Double) -> Double {
     let raw = (value as? Double) ?? Double(value as? Int ?? 0)
     return min(max(raw, low * scale) / scale, 1)

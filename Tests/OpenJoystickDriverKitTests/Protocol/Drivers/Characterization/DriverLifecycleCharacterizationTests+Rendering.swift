@@ -19,8 +19,9 @@ extension DriverLifecycleCharacterizationTests {
     strength: 0.75
   )
 
-  /// Encoder results for a fixed representative request; nil results render no line. Each
-  /// encoder runs once per stage, since encoders may advance protocol state.
+  /// Encoder results for a fixed representative request; nil results render no line.
+  ///
+  /// Each encoder runs once per stage, since encoders may advance protocol state.
   func outputs(_ driver: any PhysicalProtocolDriver, stage: String) -> [String] {
     let prefix = "out[\(stage)]"
     var lines = rumbleOutputs(driver, prefix: prefix)

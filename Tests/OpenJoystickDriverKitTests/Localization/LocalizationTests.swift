@@ -82,6 +82,16 @@ struct LocalizationTests {
   }
 
   @Test
+  func inProgressTextsKeepTheirEllipsisInEveryLocale() {
+    #expect(!LocalizationCatalogAudit.inProgressSourceKeys().isEmpty)
+    for locale in Localization.availableLocalizations()
+    where !locale.lowercased().hasPrefix("en-") {
+      let keys = LocalizationCatalogAudit.lostEllipsisKeys(for: locale)
+      #expect(keys.isEmpty, "\(locale) drops the ellipsis of \(keys)")
+    }
+  }
+
+  @Test
   func packagedCatalogIncludesCLIAndInputTestProductKeys() {
     let keys = LocalizationCatalogAudit.keys(for: Localization.sourceLocalization)
     for required in [

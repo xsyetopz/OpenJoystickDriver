@@ -12,7 +12,8 @@ private final class Counter: @unchecked Sendable {
   /// The count before this call.
   func next() -> Int {
     lock.withLock {
-      defer { value += 1 }; return value
+      defer { value += 1 }
+      return value
     }
   }
   var count: Int { lock.withLock { value } }

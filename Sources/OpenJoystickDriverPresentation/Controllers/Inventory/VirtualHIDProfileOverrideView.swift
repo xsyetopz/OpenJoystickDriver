@@ -8,18 +8,27 @@
   /// The override of one controller model's virtual HID profile, matching
   /// `ojd virtual set|reset`: Automatic clears the override.
   struct VirtualHIDProfileOverrideView: View {
+    /// The model of the app's view of the service, which sends the override.
     @ObservedObject
     var viewModel: RuntimeViewModel
+    /// The controller.
     let device: ApplicationServiceDeviceDescription
+    /// The scope of the override: the model or only this controller.
     @State
     private var scope: VirtualHIDProfileScopeChoice
 
+    /// Creates the view with the scope of the stored override.
+    ///
+    /// - Parameters:
+    ///   - viewModel: The model of the app's view of the service.
+    ///   - device: The controller.
     init(viewModel: RuntimeViewModel, device: ApplicationServiceDeviceDescription) {
       self.viewModel = viewModel
       self.device = device
       _scope = State(initialValue: VirtualHIDProfileScopeChoice.initial(for: device))
     }
 
+    /// The profile picker, the scope picker or the model-scope note, the progress and the problems.
     var body: some View {
       VStack(alignment: .leading, spacing: 10) {
         Picker(
@@ -87,6 +96,8 @@
         ?? RuntimeVirtualHIDProfileOverrideState()
     }
 
+    /// The binding to the override that is shown, which is the pending choice until the status
+    /// reports it; choosing one sends the change when it would change anything.
     private var overrideBinding: Binding<VirtualHIDProfileID?> {
       Binding(
         get: {
@@ -108,10 +119,12 @@
       )
     }
 
+    /// The text of the progress.
     private var updatingLabel: String {
       OJDLocalized.string("ui.virtualProfile.updating")
     }
 
+    /// The messages of the failed override and of the override store.
     private var problems: [String] {
       var messages = overrideState.failure.map { [$0] } ?? []
       if case .available(let status) = viewModel.statusState {

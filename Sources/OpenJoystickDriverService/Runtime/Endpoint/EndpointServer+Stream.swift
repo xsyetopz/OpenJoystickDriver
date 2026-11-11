@@ -5,25 +5,27 @@ import OpenJoystickDriverKit
 struct EndpointStream {
   /// Bumped on each start, so a cancelled task that is still finishing a poll delivers nothing.
   var generation = 0
+  /// The poll task; nil while no connection is subscribed.
   var task: Task<Void, Never>?
   /// The connected controllers in connection order, each as of its last event, for late
   /// subscribers.
   private var controllers: [WatchedController] = []
 
-  /// The events that bring a new subscriber up to date: an `ADDED` with the full current object
+  /// The events that bring a late subscriber up to date: an `ADDED` with the full current object
   /// of each controller.
   var snapshot: [ControllerWatchEvent] {
     controllers.map { ControllerWatchEvent(type: .added, object: $0) }
   }
 
-  /// Cancels the task and forgets the controllers; the generation stays, so the old task's last
-  /// poll is dropped.
+  /// Cancels the task and forgets the controllers; the generation stays, so the cancelled task's
+  /// last poll is dropped.
   mutating func stop() {
     task?.cancel()
     task = nil
     controllers = []
   }
 
+  /// Applies `event` to the remembered controllers.
   mutating func record(_ event: ControllerWatchEvent) {
     switch event.type {
     case .added: controllers.append(event.object)
@@ -37,7 +39,9 @@ struct EndpointStream {
 
 extension EndpointServer {
   /// Sends `connection` the connected controllers, then the stream; starts the poll task for the
-  /// first subscriber. Call with `lock` held.
+  /// first subscriber.
+  ///
+  /// Call with `lock` held.
   func subscribe(_ connection: EndpointConnection, output: Bool) {
     connection.subscribe(output: output, snapshot: stream.snapshot)
     guard stream.task == nil else { return }
@@ -46,12 +50,18 @@ extension EndpointServer {
     stream.task = Task { [weak self] in await self?.runStream(generation: generation) }
   }
 
-  /// Stops the poll task once no connection is subscribed. Call with `lock` held.
+  /// Stops the poll task once no connection is subscribed.
+  ///
+  /// Call with `lock` held.
   func stopStreamIfIdle() {
     guard stream.task != nil, !connections.values.contains(where: \.isSubscribed) else { return }
     stream.stop()
   }
 
+  /// Polls the controllers until the task is cancelled and delivers each change to the subscribers.
+  ///
+  /// A stale `generation` delivers nothing. A failed read is printed once until a read
+  /// succeeds.
   private func runStream(generation: Int) async {
     var poller = ControllerWatchPoller(source: source)
     let subscribers = EndpointSubscribers(server: self, generation: generation)
@@ -88,26 +98,39 @@ extension EndpointServer {
 
 /// The poll of controller state that `Subscription` streams, as the source of its frames.
 final class EndpointStreamSource: InputSource {
+  /// Marks every frame as coming from the endpoint stream.
   let origin = InputOrigin.endpointStream
+  /// The sink that receives the frames.
   let sink: any OutputSink
 
+  /// Creates a source that writes its frames to `sink`.
   init(sink: any OutputSink) { self.sink = sink }
 }
 
-/// Every subscribed connection as one sink: a frame is recorded for late subscribers and queued
-/// for each connection under the server's lock, so a subscriber's snapshot and its stream never
-/// overlap or leave a gap. A sink of an older generation, one a restart replaced, delivers nothing.
+/// Every subscribed connection as one sink: a frame is recorded for late subscribers and queued for
+/// each connection under the server's lock, so a subscriber's snapshot and its stream never overlap
+/// or leave a gap.
+///
+/// A sink of an older generation, one a restart replaced, delivers nothing.
 /// - Note: `@unchecked Sendable` because `server` is weak and only read.
 final class EndpointSubscribers: OutputSink, @unchecked Sendable {
+  /// Marks the frames as delivered to endpoint subscriptions.
   let destination = OutputDestination.endpointSubscription
+  /// The server whose connections receive the frames; weak so the sink does not keep it alive.
   private weak var server: EndpointServer?
+  /// The stream generation this sink belongs to.
   private let generation: Int
 
+  /// Creates a sink of `server` for the stream of `generation`.
   init(server: EndpointServer, generation: Int) {
     self.server = server
     self.generation = generation
   }
 
+  /// Records an observed `frame` and queues it for every connection.
+  ///
+  /// - Throws: ``StreamBoundaryError/unsupported(_:)`` for a frame that is not an observed
+  ///   event.
   func consume(
     _ frame: StreamFrame,
     onDelivered: @escaping @Sendable () -> Void

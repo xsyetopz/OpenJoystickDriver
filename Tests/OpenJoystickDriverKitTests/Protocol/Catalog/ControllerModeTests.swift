@@ -4,8 +4,9 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// A reader that answers each report from a table and counts its reads. It implements only the
-/// read, like every ``ControllerModeProbeReader``.
+/// A reader that answers each report from a table and counts its reads.
+///
+/// It implements only the read, like every ``ControllerModeProbeReader``.
 private final class ScriptedProbeReader: ControllerModeProbeReader {
   private let replies: [UInt8: PhysicalHIDReportResult<Data>]
   private let reads = Locked<[UInt8]>([])
@@ -62,7 +63,7 @@ struct ControllerModeTests {
       "vendorID": Int(model.vendorID), "productID": Int(model.productID),
     ]
     record["modes"] = [["id": "default", "protocol": ["family": family]]] + (modes ?? [])
-    return try JSONSerialization.data(withJSONObject: record.merging(extras) { $1 })
+    return try PropertyListFixture.data(tree: record.merging(extras) { $1 })
   }
 
   private static func profile(
@@ -422,8 +423,8 @@ struct ControllerModeTests {
 
   @Test
   func aUserPatchMayReplaceTheModes() throws {
-    let patch = try JSONSerialization.data(
-      withJSONObject: ControllerPatch.document(
+    let patch = try PropertyListFixture.data(
+      tree: ControllerPatch.document(
         selector: .identity(ControllerModelID(vendorID: 0x2C22, productID: 0x2000)),
         body: [
           "modes": [["id": "default", "protocol": ["family": "HIDDescriptor"]]] + Self.twoModes
@@ -452,8 +453,12 @@ struct ControllerModeTests {
       let expected: String
     }
     let layout: [String: Any] = [
-      "report": ["length": ["atLeast": 8]],
-      "buttons": [["control": "South", "byte": 0, "mask": 1]],
+      "layouts": [
+        [
+          "report": ["length": ["atLeast": 8]],
+          "buttons": [["control": "South", "bitOffset": 0, "bitSize": 1]],
+        ]
+      ]
     ]
     let rumble: [String: Any] = [
       "rumble": [
@@ -462,7 +467,7 @@ struct ControllerModeTests {
       ]
     ]
     let needsLayout =
-      "every mode needs the record's input layout exactly when it is HIDReportLayout"
+      "a HIDReportLayout mode needs the record's input layout"
     let rejected: [Case] = [
       Case(
         name: "duplicate ID",
@@ -530,11 +535,11 @@ struct ControllerModeTests {
         expected: "a probe reads report 0...255 with a length of 1...65535"
       ),
       Case(
-        name: "input layout under a mode that is not HIDReportLayout",
-        modes: [mode("a", family: "SonySixaxis")],
+        name: "input layout beside a HIDDescriptor mode",
+        modes: [mode("a", family: "HIDDescriptor")],
         family: "HIDReportLayout",
         extras: ["input": layout],
-        expected: needsLayout
+        expected: "a HIDDescriptor mode reads a usage map, not input layouts"
       ),
       Case(
         name: "HIDReportLayout mode without the input layout",
@@ -545,9 +550,9 @@ struct ControllerModeTests {
       Case(
         name: "rumble template under a mode whose driver does not encode it",
         modes: [
-          mode("a", family: "HIDDescriptor").merging(["session": rumble]) { first, _ in first }
+          mode("a", family: "SonySixaxis").merging(["session": rumble]) { first, _ in first }
         ],
-        family: "VendorPS3ThirdParty",
+        family: "SonySixaxis",
         expected: "rumble templates require a driver that encodes them"
       ),
       Case(
@@ -589,15 +594,15 @@ struct ControllerModeTests {
           + "whose description declares no keepAlive"
       ),
       Case(
-        name: "present controls under a mode whose driver does not declare them",
+        name: "present controls that no mode driver declares",
         modes: [mode("a", family: "SonySixaxis")],
-        family: "SonyDualSense",
+        family: "SonySixaxis",
         extras: [
           "capabilities": [
             "present": ["LeftPaddle1", "RightPaddle1", "Auxiliary1", "Auxiliary2"]
           ]
         ],
-        expected: "capabilities must be deltas the driver of every mode declares"
+        expected: "capabilities must be deltas the driver of some mode declares"
       ),
     ]
     for rejection in rejected {

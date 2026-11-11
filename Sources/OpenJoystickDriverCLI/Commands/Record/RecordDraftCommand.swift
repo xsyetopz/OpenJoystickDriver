@@ -2,7 +2,10 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd record draft` command: reads a connected controller's HID report descriptor, captures
+/// its input reports while the user presses each control, and prints a record to start from.
 struct RecordDraftCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "draft",
     abstract: CLILocalized.text(
@@ -15,18 +18,30 @@ struct RecordDraftCommand: AsyncParsableCommand {
 
   /// The `--json` result. `report` is absent when nothing chose an input report.
   struct Result: Encodable, Equatable {
+    /// The input report that the draft maps.
     struct Report: Encodable, Equatable {
+      /// The report ID, or nil when the controller uses no report IDs.
       let id: Int?
+      /// The report length in bytes.
       let length: Int
     }
 
+    /// The controller model as `VVVV:PPPP`.
     let identity: String
+    /// The controller name.
     let name: String
+    /// Whether the draft is a `Controller` for a model without a bundled record, or a
+    /// `ControllerPatch`.
     let operation: String
+    /// The protocol family of the draft.
     let family: String
+    /// The input report that the draft maps.
     let report: Report?
+    /// The number of input reports captured.
     let capturedReports: Int
+    /// The bytes that changed during the capture, with their smallest and largest values.
     let changedBytes: [ControllerRecordDraft.ChangedByte]
+    /// The drafted record.
     let record: OrderedJSON
   }
 
@@ -36,12 +51,21 @@ struct RecordDraftCommand: AsyncParsableCommand {
     PlatformHosts.current.physicalReportDescriptor(vendorID: $0, productID: $1)
   }
 
+  /// Reads the identity and HID elements of a connected controller model; tests replace it.
+  @TaskLocal
+  static var physicalDevice: @Sendable (_ vendorID: Int, _ productID: Int) -> PhysicalDevice? = {
+    PlatformHosts.current.physicalDevice(vendorID: $0, productID: $1)
+  }
+
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The controller to draft a record for.
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
+  /// `--duration`: how many seconds to capture input reports.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -52,11 +76,24 @@ struct RecordDraftCommand: AsyncParsableCommand {
   )
   var duration: Double = 10
 
+  /// `--from-sdl`: draft from the SDL_GameControllerDB line instead of a capture.
+  @Flag(
+    name: .customLong("from-sdl"),
+    help: ArgumentHelp(CLILocalized.text("cli.record.draft.fromSDL"))
+  )
+  var fromSDL = false
+
+  /// Checks the duration.
   func validate() throws { try validateDuration(duration) }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       try await withController(controller) { client, device in
+        if fromSDL {
+          try print(try sdlDraft(for: device), device)
+          return
+        }
         if CLIContext.current.format == .human {
           CLIOutput.success(
             CLILocalized.format(
@@ -90,6 +127,32 @@ struct RecordDraftCommand: AsyncParsableCommand {
     }
   }
 
+  /// The record drafted from the SDL_GameControllerDB line of the connected controller.
+  private func sdlDraft(
+    for device: ApplicationServiceDeviceDescription
+  ) throws -> ControllerRecordDraft {
+    guard let pad = Self.physicalDevice(Int(device.vendorID), Int(device.productID)) else {
+      throw CLIFailure(
+        .controllerRequestFailed,
+        CLILocalized.format("cli.record.draft.sdl.noPad", device.identity)
+      )
+    }
+    do {
+      return try ControllerRecordDraft(
+        model: ControllerModelID(vendorID: device.vendorID, productID: device.productID),
+        sdlDevice: pad
+      )
+    } catch {
+      let code: ErrorCode =
+        switch error {
+        case .noLine: .notFound
+        case .rejected: .sdlLineRejected
+        case .hasRecord, .descriptorContract: .controllerRequestFailed
+        }
+      throw CLIFailure(code, error.message(identity: device.identity, localize: CLILocalized.text))
+    }
+  }
+
   /// The input reports the controller sends during `duration`, in order.
   private func capture(
     _ client: ApplicationServiceClient,
@@ -112,6 +175,7 @@ struct RecordDraftCommand: AsyncParsableCommand {
     return reports
   }
 
+  /// Prints the draft as JSON, as the changed bytes in `--plain` rows, or as text with the record.
   private func print(
     _ draft: ControllerRecordDraft,
     _ device: ApplicationServiceDeviceDescription
@@ -130,7 +194,7 @@ struct RecordDraftCommand: AsyncParsableCommand {
           },
           capturedReports: draft.capturedReports,
           changedBytes: changed,
-          record: try OrderedJSON.parse(draft.document)
+          record: try OrderedJSON(document: draft.document, file: "record")
         )
       )
     case .plain:

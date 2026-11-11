@@ -3,12 +3,18 @@ import CoreGraphics
 import Foundation
 import OpenJoystickDriverKit
 
+/// The failure to post a keyboard or pointer event through CoreGraphics.
 public enum CoreGraphicsSystemInputSinkError: Error, Equatable, LocalizedError, Sendable {
+  /// Post-event access is not granted.
   case postEventAccessNotGranted
+  /// The profile key has no macOS virtual key.
   case unsupportedKeyboardKey(RemappingKeyboardKey)
+  /// CoreGraphics could not create the event.
   case eventPreparationFailed
+  /// CoreGraphics could not post the event.
   case eventPostingFailed
 
+  /// The text that explains the failure to a user.
   public var errorDescription: String? {
     switch self {
     case .postEventAccessNotGranted: "Keyboard and pointer posting access is not granted."
@@ -20,43 +26,77 @@ public enum CoreGraphicsSystemInputSinkError: Error, Equatable, LocalizedError, 
   }
 }
 
+/// The modifier keys that are held down.
 struct CoreGraphicsModifierFlags: OptionSet, Equatable, Sendable {
+  /// The bits of the held modifiers.
   let rawValue: UInt64
 
+  /// The Command key.
   static let command = Self(rawValue: 1 << 0)
+  /// The Control key.
   static let control = Self(rawValue: 1 << 1)
+  /// The Option key.
   static let option = Self(rawValue: 1 << 2)
+  /// The Shift key.
   static let shift = Self(rawValue: 1 << 3)
 }
 
+/// A mouse button, with its CoreGraphics button number.
 enum CoreGraphicsMouseButton: UInt32, Equatable, Sendable {
+  /// The left button.
   case left = 0
+  /// The right button.
   case right = 1
+  /// The middle button.
   case middle = 2
+  /// The back button.
   case back = 3
+  /// The forward button.
   case forward = 4
 }
 
+/// An event that is ready to post.
 enum CoreGraphicsPreparedEvent: Equatable, Sendable {
+  /// A key press or release with the held modifiers.
   case keyboard(virtualKey: CGKeyCode, isDown: Bool, flags: CoreGraphicsModifierFlags)
+  /// A change of the held modifiers by the modifier key `virtualKey`.
   case modifier(virtualKey: CGKeyCode, flags: CoreGraphicsModifierFlags)
+  /// A mouse button press or release at `location`.
   case mouseButton(button: CoreGraphicsMouseButton, isDown: Bool, location: CGPoint)
+  /// A pointer move to `location` by the given deltas.
   case pointer(location: CGPoint, deltaX: Double, deltaY: Double)
+  /// A scroll by the given line counts.
   case scroll(deltaX: Int32, deltaY: Int32)
 }
 
-enum CoreGraphicsEventPosterError: Error { case eventCreationFailed }
+/// The failure to create a CoreGraphics event.
+enum CoreGraphicsEventPosterError: Error {
+  /// The system refused to create the event.
+  case eventCreationFailed
+}
 
+/// Posts prepared events and reads the pointer position.
 protocol CoreGraphicsEventPosting: Sendable {
+  /// Returns the current pointer position.
   func currentPointerLocation() throws -> CGPoint
+  /// Returns the bounds of the main display in the coordinates of pointer events.
+  func mainDisplayBounds() throws -> CGRect
+  /// Posts `event`.
   func post(_ event: CoreGraphicsPreparedEvent) throws
 }
 
+/// Maps a profile key to a macOS virtual key.
 protocol CoreGraphicsKeyboardTranslating: Sendable {
+  /// Returns the virtual key of `key`, or nil when macOS has none.
   func virtualKey(for key: RemappingKeyboardKey) -> CGKeyCode?
 }
 
+/// The poster that creates CoreGraphics events and posts them to the HID event tap.
 private struct PlatformCoreGraphicsEventPoster: CoreGraphicsEventPosting {
+  /// Returns the pointer position that a CoreGraphics event reports.
+  ///
+  /// - Throws: ``CoreGraphicsEventPosterError/eventCreationFailed`` when the event cannot be
+  ///   created.
   func currentPointerLocation() throws -> CGPoint {
     guard let event = CGEvent(source: nil) else {
       throw CoreGraphicsEventPosterError.eventCreationFailed
@@ -64,6 +104,13 @@ private struct PlatformCoreGraphicsEventPoster: CoreGraphicsEventPosting {
     return event.location
   }
 
+  /// Returns the bounds of the main display.
+  func mainDisplayBounds() throws -> CGRect { CGDisplayBounds(CGMainDisplayID()) }
+
+  /// Creates the CoreGraphics event of `prepared` and posts it to the HID event tap.
+  ///
+  /// - Throws: ``CoreGraphicsEventPosterError/eventCreationFailed`` when the source or event cannot
+  ///   be created.
   func post(_ prepared: CoreGraphicsPreparedEvent) throws {
     guard let source = CGEventSource(stateID: .hidSystemState) else {
       throw CoreGraphicsEventPosterError.eventCreationFailed
@@ -112,9 +159,11 @@ private struct PlatformCoreGraphicsEventPoster: CoreGraphicsEventPosting {
   }
 }
 
+/// The translator from profile keys to macOS virtual keys.
 struct MacVirtualKeyTranslator: CoreGraphicsKeyboardTranslating {
   // macOS exposes Help but no distinct Insert virtual key. Both symbolic
   // profile keys intentionally address the platform Help/Insert key at 0x72.
+  /// Returns the virtual key of `key`; the Help and Insert keys both map to the Help key.
   func virtualKey(for key: RemappingKeyboardKey) -> CGKeyCode? {
     let value: Int
     switch key {
@@ -227,25 +276,37 @@ struct MacVirtualKeyTranslator: CoreGraphicsKeyboardTranslating {
 
 /// CoreGraphics implementation of the remapping engine's system-input port.
 public final class CoreGraphicsSystemInputSink: RemappingSystemInputSink, @unchecked Sendable {
+  /// The points that a full pointer action moves the pointer.
   static let pointerPointsPerAction = 32.0
+  /// The lines that a full scroll action scrolls.
   static let scrollLinesPerAction = 8.0
 
+  /// The lock that serializes `send(_:)`.
   let lock = NSLock()
+  /// The post-event access that `send(_:)` checks.
   let access: CoreGraphicsPostEventAccess
+  /// The poster of the events.
   let poster: any CoreGraphicsEventPosting
+  /// The translator from profile keys to virtual keys.
   let translator: any CoreGraphicsKeyboardTranslating
+  /// The modifiers that are held down.
   var modifierFlags: CoreGraphicsModifierFlags = []
+  /// The fraction of a line not yet scrolled horizontally.
   var scrollResidualX = 0.0
+  /// The fraction of a line not yet scrolled vertically.
   var scrollResidualY = 0.0
 
+  /// Creates the sink with the system post-event access.
   public convenience init() { self.init(access: CoreGraphicsPostEventAccess()) }
 
+  /// Creates the sink with `access`.
   public init(access: CoreGraphicsPostEventAccess) {
     self.access = access
     poster = PlatformCoreGraphicsEventPoster()
     translator = MacVirtualKeyTranslator()
   }
 
+  /// Creates the sink with the given access, poster and translator.
   init(
     access: CoreGraphicsPostEventAccess,
     poster: any CoreGraphicsEventPosting,
@@ -257,7 +318,9 @@ public final class CoreGraphicsSystemInputSink: RemappingSystemInputSink, @unche
   }
 }
 
+/// The mapping from the engine's key, button and modifier values to CoreGraphics values.
 enum CoreGraphicsMapping {
+  /// Returns the CoreGraphics event flags of `flags`.
   static func cgEventFlags(for flags: CoreGraphicsModifierFlags) -> CGEventFlags {
     var result: CGEventFlags = []
     if flags.contains(.command) { result.insert(.maskCommand) }
@@ -267,6 +330,7 @@ enum CoreGraphicsMapping {
     return result
   }
 
+  /// Returns the modifier flag of `modifier`.
   static func coreGraphicsFlag(for modifier: RemappingKeyModifier) -> CoreGraphicsModifierFlags {
     switch modifier {
     case .meta: .command
@@ -276,6 +340,7 @@ enum CoreGraphicsMapping {
     }
   }
 
+  /// Returns the virtual key of the modifier key `modifier`.
   static func virtualKey(for modifier: RemappingKeyModifier) -> CGKeyCode {
     switch modifier {
     case .meta: CGKeyCode(kVK_Command)
@@ -285,6 +350,7 @@ enum CoreGraphicsMapping {
     }
   }
 
+  /// Returns the CoreGraphics button of `button`.
   static func coreGraphicsButton(for button: RemappingMouseButton) -> CoreGraphicsMouseButton {
     switch button {
     case .left: .left
@@ -295,6 +361,7 @@ enum CoreGraphicsMapping {
     }
   }
 
+  /// Returns the event type of pressing or releasing `button`.
   static func eventType(for button: CoreGraphicsMouseButton, isDown: Bool) -> CGEventType {
     switch button {
     case .left: isDown ? .leftMouseDown : .leftMouseUp
@@ -303,5 +370,6 @@ enum CoreGraphicsMapping {
     }
   }
 
+  /// Returns `value` limited to the range from -1 to 1.
   static func clampedNormalized(_ value: Double) -> Double { min(1, max(-1, value)) }
 }

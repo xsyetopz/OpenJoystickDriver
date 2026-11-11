@@ -4,28 +4,41 @@ import SwifterKit
 
 /// The identity of the `IOUSBHostDevice` a DEXT service sits on, read from the IORegistry.
 struct USBDriverKitParentDevice: Sendable, Hashable {
+  /// The USB vendor ID.
   var vendorID: UInt16
+  /// The USB product ID.
   var productID: UInt16
+  /// The USB location ID, when the registry has one.
   var locationID: UInt32?
+  /// The product name, when the registry has one.
   var productName: String?
+  /// The serial number, when the registry has one.
   var serialNumber: String?
+  /// The manufacturer name, when the registry has one.
   var manufacturer: String?
+  /// The `bcdDevice` release number, when the registry has one.
   var deviceRelease: UInt16?
 }
 
 /// Host adapter for services owned by OJD's restricted USBDriverKit extension.
 public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider {
+  /// The client that lists and opens the extension's services.
   private let client: DriverClient
+  /// Reads the parent device of the extension service with the given registry entry ID.
   private let parentDevice: @Sendable (UInt64) -> USBDriverKitParentDevice?
+  /// The extension services of the latest listing, by registry entry ID.
   private var servicesByID: [UInt64: DriverService] = [:]
+  /// The parent devices of the latest listing, by service ID.
   private var parentsByID: [UInt64: USBDriverKitParentDevice] = [:]
   /// DEXT services the latest `devices()` could not identify, so each is logged once.
   private var unlistedServiceIDs: Set<UInt64> = []
 
+  /// Creates the provider over `client`.
   public init(client: DriverClient = DriverClient()) {
     self.init(client: client, parentDevice: Self.registryParentDevice(serviceID:))
   }
 
+  /// Creates the provider over `client` with the given parent device reader.
   init(
     client: DriverClient,
     parentDevice: @escaping @Sendable (UInt64) -> USBDriverKitParentDevice?
@@ -34,6 +47,11 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
     self.parentDevice = parentDevice
   }
 
+  /// Lists the USB devices that the extension's services drive.
+  ///
+  /// A service that no vendor and product ID identifies is left out and logged once.
+  ///
+  /// - Throws: The error of the driver client when it cannot list the services.
   public func devices() async throws -> [USBTransportDevice] {
     let services = try await client.services(
       matching: USBDriverKitExtensionConfiguration.driver.serviceMatch
@@ -56,12 +74,22 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
     return devices.compactMap(\.1)
   }
 
+  /// Returns the observations of the services of the latest listing, in service ID order.
   public func physicalDeviceObservations() throws -> [PhysicalDevice] {
     servicesByID.values.sorted { $0.id < $1.id }.compactMap {
       Self.physicalDeviceObservation(from: $0, parent: parentsByID[$0.id])
     }
   }
 
+  /// Opens the extension service of `device` and applies the configuration and alternate setting of
+  /// `options`.
+  ///
+  /// The listing is refreshed when the service is not known yet. An exclusive-access failure names
+  /// the owner that the IOUSBHost interface shows.
+  ///
+  /// - Throws: ``USBTransportError/notSupported`` for a device that is not on the extension route,
+  ///   ``USBTransportError/notFound`` when the service is not listed, and the mapped driver error
+  ///   otherwise.
   public func open(
     _ device: USBTransportDevice,
     options: USBTransportOpenOptions
@@ -119,9 +147,11 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
   }
 
   /// The device a DEXT service drives, identified by the parent `IOUSBHostDevice` first and the
-  /// service's own properties second. The service carries its personality, which lists the
-  /// products as `idProductArray` when the extension matches more than one, so without a parent
-  /// it has no scalar `idProduct` and yields nil.
+  /// service's own properties second.
+  ///
+  /// The service carries its personality, which lists the products as `idProductArray` when the
+  /// extension matches more than one, so without a parent it has no scalar `idProduct` and yields
+  /// nil.
   static func device(
     _ service: DriverService,
     parent: USBDriverKitParentDevice? = nil
@@ -178,8 +208,9 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
   }
 
   /// The identity of the nearest `IOUSBHostDevice` among the service-plane parents of the
-  /// IORegistry entry `serviceID`, at most 8 levels up. Nil when there is no such parent or it
-  /// has no `idVendor` and `idProduct`.
+  /// IORegistry entry `serviceID`, at most 8 levels up.
+  ///
+  /// Nil when there is no such parent or it has no `idVendor` and `idProduct`.
   static func registryParentDevice(serviceID: UInt64) -> USBDriverKitParentDevice? {
     var entry = IOServiceGetMatchingService(
       kIOMainPortDefault,
@@ -219,16 +250,19 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
     )
   }
 
+  /// Reads `property` as a 16-bit unsigned integer, or nil when it is missing or out of range.
   private static func uint16Property(_ property: DriverProperty?) -> UInt16? {
     guard let value = unsignedProperty(property) else { return nil }
     return UInt16(exactly: value)
   }
 
+  /// Reads `property` as a 32-bit unsigned integer, or nil when it is missing or out of range.
   private static func uint32Property(_ property: DriverProperty?) -> UInt32? {
     guard let value = unsignedProperty(property) else { return nil }
     return UInt32(exactly: value)
   }
 
+  /// Reads `property` as an unsigned integer, or nil when it is missing, negative or not a number.
   private static func unsignedProperty(_ property: DriverProperty?) -> UInt64? {
     switch property {
     case .unsignedInteger(let value): value
@@ -237,11 +271,13 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
     }
   }
 
+  /// Reads `property` as a string, or nil when it is not one.
   private static func stringProperty(_ property: DriverProperty?) -> String? {
     guard case .string(let value) = property else { return nil }
     return value
   }
 
+  /// Converts `request` to the extension's control request.
   static func controlRequest(for request: USBControlTransferRequest) -> USBControlRequest {
     USBControlRequest(
       requestType: request.requestType,
@@ -252,6 +288,7 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
     )
   }
 
+  /// Maps a driver, runtime or context `error` to a transport error.
   static func transportError(_ error: Error) -> USBTransportError {
     if let transportError = error as? USBTransportError { return transportError }
     switch error as? USBRuntimeError {
@@ -284,35 +321,97 @@ public actor USBDriverKitTransportProvider: USBPhysicalDeviceObservationProvider
   }
 }
 
-actor USBDriverKitTransportSession: USBTransportSession {
-  private let context: DriverContext
-  private let closeRuntime: @Sendable () async -> Void
-  private var isClosed = false
+/// Chooses the completion timeout of a transfer on an endpoint.
+///
+/// `IOUSBHostPipe::IO` answers `kIOReturnBadArgument` to any timeout but 0 on an interrupt pipe
+/// (#55), so an interrupt endpoint gets 0 whatever the caller asks for.
+actor USBPipeTimeoutPolicy {
+  /// The `bmAttributes` transfer-type mask and the value of an interrupt endpoint.
+  private static let transferTypeMask: UInt8 = 0x03
+  private static let interruptTransfer: UInt8 = 0x03
 
+  /// Returns the `bmAttributes` of an endpoint.
+  private let attributes: @Sendable (UInt8) async throws -> UInt8
+  /// Whether each endpoint read so far is an interrupt endpoint.
+  private var isInterrupt: [UInt8: Bool] = [:]
+
+  /// Creates the policy over `attributes`, which reads an endpoint's `bmAttributes`.
+  init(attributes: @escaping @Sendable (UInt8) async throws -> UInt8) {
+    self.attributes = attributes
+  }
+
+  /// Returns 0 on an interrupt endpoint and `requestedMilliseconds` on any other, and also when the
+  /// endpoint's type cannot be read, which is asked again on the next transfer.
+  func timeout(endpoint: UInt8, requestedMilliseconds: UInt32) async -> UInt32 {
+    if let known = isInterrupt[endpoint] { return known ? 0 : requestedMilliseconds }
+    guard let value = try? await attributes(endpoint) else { return requestedMilliseconds }
+    let interrupt = value & Self.transferTypeMask == Self.interruptTransfer
+    isInterrupt[endpoint] = interrupt
+    return interrupt ? 0 : requestedMilliseconds
+  }
+}
+
+/// The raw USB session of one opened extension service.
+actor USBDriverKitTransportSession: USBTransportSession {
+  /// The driver context that carries the transfers.
+  private let context: DriverContext
+  /// Closes the connection to the driver runtime.
+  private let closeRuntime: @Sendable () async -> Void
+  /// Whether the session is closed.
+  private var isClosed = false
+  /// Picks the timeout each transfer passes to the pipe.
+  private let timeoutPolicy: USBPipeTimeoutPolicy
+
+  /// Exclusive while the session is open, and unknown after it closes.
   var inputOwnership: HIDInputOwnership { isClosed ? .unknown : .exclusive }
 
+  /// Creates the session over `context`, which `closeRuntime` shuts down.
   init(context: DriverContext, closeRuntime: @escaping @Sendable () async -> Void) {
     self.context = context
     self.closeRuntime = closeRuntime
+    timeoutPolicy = USBPipeTimeoutPolicy { endpoint in
+      try await context.usbPipeDescriptors(endpoint: endpoint).endpoint.attributes
+    }
   }
 
+  /// Writes `data` to the endpoint `endpoint` and returns the number of bytes written.
+  ///
+  /// - Throws: ``USBTransportError/disconnected`` when the session is closed, and the mapped driver
+  ///   error otherwise.
   func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) async throws -> Int {
     guard !isClosed else { throw USBTransportError.disconnected }
     do {
+      let pipeTimeout = await timeoutPolicy.timeout(
+        endpoint: endpoint,
+        requestedMilliseconds: timeout
+      )
       return Int(
-        try await context.usbWrite(endpoint: endpoint, data: data, timeout: timeout)
+        try await context.usbWrite(endpoint: endpoint, data: data, timeout: pipeTimeout)
           .bytesTransferred
       )
     } catch { throw USBDriverKitTransportProvider.transportError(error) }
   }
 
+  /// Reads up to `length` bytes from the endpoint `endpoint`.
+  ///
+  /// - Throws: ``USBTransportError/disconnected`` when the session is closed, and the mapped driver
+  ///   error otherwise.
   func read(endpoint: UInt8, length: Int, timeout: UInt32) async throws -> [UInt8] {
     guard !isClosed else { throw USBTransportError.disconnected }
     do {
-      return try await context.usbRead(endpoint: endpoint, length: length, timeout: timeout).data
+      let pipeTimeout = await timeoutPolicy.timeout(
+        endpoint: endpoint,
+        requestedMilliseconds: timeout
+      )
+      return try await context.usbRead(endpoint: endpoint, length: length, timeout: pipeTimeout)
+        .data
     } catch { throw USBDriverKitTransportProvider.transportError(error) }
   }
 
+  /// Sends the control transfer `request` and returns the bytes it received.
+  ///
+  /// - Throws: ``USBTransportError/disconnected`` when the session is closed, and the mapped driver
+  ///   error otherwise.
   @discardableResult
   func controlTransfer(
     _ request: USBControlTransferRequest,
@@ -328,6 +427,7 @@ actor USBDriverKitTransportSession: USBTransportSession {
     } catch { throw USBDriverKitTransportProvider.transportError(error) }
   }
 
+  /// Closes the session and the driver runtime connection.
   func close() async {
     guard !isClosed else { return }
     isClosed = true

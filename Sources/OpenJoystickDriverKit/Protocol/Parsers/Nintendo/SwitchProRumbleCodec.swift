@@ -12,6 +12,8 @@ enum SwitchProRumbleCodec {
     960, 981, 1003,
   ]
 
+  /// The four HD-rumble bytes that drive both motors at `intensity` (0...255), with the default
+  /// frequencies.
   static func encode(intensity: UInt8) -> [UInt8] {
     let amplitude = UInt16(UInt32(intensity) * 1003 / 255)
     let index = amplitudeThresholds.firstIndex { amplitude <= $0 } ?? 100
@@ -24,7 +26,10 @@ enum SwitchProRumbleCodec {
   }
 
   /// Maps both HD-rumble amplitudes to the strongest physical motor intensity.
+  ///
   /// Frequency bits are independent of the amplitude table.
+  /// - Returns: The intensity (0...255), or nil when `bytes` is not four bytes or an amplitude
+  ///   index is outside the table.
   static func decodeIntensity(_ bytes: ArraySlice<UInt8>) -> UInt8? {
     guard bytes.count == 4 else { return nil }
     let values = Array(bytes)

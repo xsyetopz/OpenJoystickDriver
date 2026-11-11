@@ -5,7 +5,7 @@ from typing import Any
 
 from Scripts.Quality import validate_schemas
 
-VERSION = "openjoystickdriver/v1alpha1"
+VERSION = "openjoystickdriver/v1alpha3"
 NONCE = "A" * 43
 
 
@@ -16,6 +16,22 @@ def line(kind: str, **fields: Any) -> dict[str, Any]:
 def failure(code: str, **fields: Any) -> dict[str, Any]:
     return line("Status", status="Failure", code=code, message="text", **fields)
 
+
+PROFILE = {
+    "id": "7B6B3C5E-9A4D-4A6E-8C55-1B2D3E4F5A6B",
+    "name": "Rally",
+    "model": "054C:0CE6",
+    "isActive": True,
+}
+
+MOD = {
+    "name": "arcade-pack",
+    "version": "1.2.3",
+    "author": "Tester",
+    "files": ["Controllers/fff1-0001.plist"],
+}
+
+RESULT = {"command": "rumble", "outcome": "Delivered", "droppedRumbleChannels": []}
 
 DETAILS = {"details": {"supportedAPIVersions": [VERSION]}}
 
@@ -44,8 +60,34 @@ class EndpointSchemaTests(unittest.TestCase):
             line("KeepAlive"),
             line("Drain"),
             line("Drained"),
+            line("ProfileRequest", action="Activate", profile="Rally"),
+            line("ProfileRequest", action="Set", profile="Rally", key="name", value="X"),
+            line("ProfileRequest", action="Set", profile="Rally", key="a.b", value=None),
+            line("ProfileResult", profile=PROFILE),
+            line("ModList"),
+            line("Mods", mods=[]),
+            line("Subscription", stream="Profiles"),
+            line("Subscription", stream="Mods"),
+            line("Profiles", profiles=[]),
+            line("Profiles", profiles=[PROFILE]),
+            line("Mods", mods=[MOD, {"name": "broken", "files": [], "problem": "text"}]),
+            line("OutputRequest", controller="U-1", action="Rumble"),
+            line(
+                "OutputRequest",
+                controller="054C:0CE6",
+                action="Rumble",
+                left=255,
+                rightTrigger=0,
+                duration=0.45,
+            ),
+            line("OutputRequest", controller="E-1", action="Player", player=0),
+            line("OutputRequest", controller="E-1", action="Light", color="FF8000"),
+            line("OutputRequest", controller="E-1", action="Light", brightness=7),
+            line("OutputResult", controller="E-1", results=[RESULT]),
+            line("OutputResult", controller="E-1", results=[]),
             failure("E1001"),
             failure("E1003"),
+            failure("E2012"),
             failure("E1009", **DETAILS),
             failure("E1010", **DETAILS),
             failure("E1011", **DETAILS),
@@ -73,6 +115,82 @@ class EndpointSchemaTests(unittest.TestCase):
         self.assertFalse(self.valid(failure("E1009", **empty)))
         for code in ("E1001", "E1002", "E1003", "E1008"):
             self.assertFalse(self.valid(failure(code, **DETAILS)), code)
+
+    def test_a_profile_request_is_refused_when_it_is_malformed(self) -> None:
+        refused = [
+            line("ProfileRequest", action="Jump", profile="Rally"),
+            line("ProfileRequest", action="set", profile="Rally"),
+            line("ProfileRequest", action="Set", profile="Rally", key="name"),
+            line("ProfileRequest", action="Set", profile="Rally", value="X"),
+            line("ProfileRequest", action="Activate", profile="Rally", key="name"),
+            line("ProfileRequest", action="Activate", profile=""),
+            line("ProfileRequest", action="Activate"),
+            line("ProfileResult", profile={**PROFILE, "extra": 1}),
+            line("ProfileResult", profile={**PROFILE, "id": "not-a-uuid"}),
+        ]
+        for message in refused:
+            self.assertFalse(self.valid(message), message)
+
+    def test_a_mod_list_and_its_answer_are_refused_when_malformed(self) -> None:
+        refused = [
+            line("ModList", scope="Read"),
+            line("Mods"),
+            line("Mods", mods=[{"name": "x"}]),
+            line("Mods", mods=[{"files": []}]),
+            line("Mods", mods=[{"name": "", "files": []}]),
+            line("Mods", mods=[{**MOD, "extra": 1}]),
+            line("Mods", mods=[{**MOD, "files": [1]}]),
+            line("Mods", mods={"name": "x"}),
+        ]
+        for message in refused:
+            self.assertFalse(self.valid(message), message)
+
+    def test_an_output_request_and_its_answer_are_refused_when_malformed(self) -> None:
+        refused = [
+            line("OutputRequest", action="Rumble"),
+            line("OutputRequest", controller="E-1"),
+            line("OutputRequest", controller="", action="Rumble"),
+            line("OutputRequest", controller="E-1", action="rumble"),
+            line("OutputRequest", controller="E-1", action="Speaker"),
+            line("OutputRequest", controller="E-1", action="Rumble", left=256),
+            line("OutputRequest", controller="E-1", action="Rumble", left=-1),
+            line("OutputRequest", controller="E-1", action="Rumble", duration=0),
+            line("OutputRequest", controller="E-1", action="Rumble", duration=5.5),
+            line("OutputRequest", controller="E-1", action="Rumble", color="FF8000"),
+            line("OutputRequest", controller="E-1", action="Player"),
+            line("OutputRequest", controller="E-1", action="Player", player=5),
+            line("OutputRequest", controller="E-1", action="Player", player=1, left=1),
+            line("OutputRequest", controller="E-1", action="Light"),
+            line("OutputRequest", controller="E-1", action="Light", color="FF80"),
+            line("OutputRequest", controller="E-1", action="Light", brightness=256),
+            line("OutputRequest", controller="E-1", action="Light", color="FF8000", player=1),
+            line("OutputRequest", controller="E-1", action="Light", color="FF8000", left=1),
+            line("OutputRequest", controller="E-1", action="Rumble", extra=1),
+            line("OutputResult", results=[RESULT]),
+            line("OutputResult", controller="E-1"),
+            line("OutputResult", controller="E-1", results=[{**RESULT, "outcome": "Nope"}]),
+            line("OutputResult", controller="E-1", results=[{"command": "rumble"}]),
+        ]
+        for message in refused:
+            self.assertFalse(self.valid(message), message)
+
+    def test_a_list_subscription_and_its_lines_are_refused_when_malformed(self) -> None:
+        refused = [
+            line("Subscription", stream="Profiles", output=True),
+            line("Subscription", stream="Mods", output=False),
+            line("Subscription", stream="profiles"),
+            line("Subscription", stream="Logs"),
+            line("Profiles"),
+            line("Profiles", profiles={"name": "x"}),
+            line("Profiles", profiles=[{**PROFILE, "extra": 1}]),
+        ]
+        for message in refused:
+            self.assertFalse(self.valid(message), message)
+
+    def test_a_request_failure_carries_a_code_outside_the_endpoint_codes(self) -> None:
+        self.assertFalse(self.valid(failure("E2")))
+        self.assertFalse(self.valid(failure("X2012")))
+        self.assertFalse(self.valid(failure("E2012", **DETAILS)))
 
     def test_the_earlier_spellings_are_refused(self) -> None:
         self.assertFalse(self.valid(line("Hello", scopes=["read"])))

@@ -1,5 +1,17 @@
 /* Product name in the title of the application menu of the menu bar. It stays OpenJoystickDriver in every language. */
 "term.app.name" = "OpenJoystickDriver";
+/* Name of a destination that opens an application. %@ is the bundle identifier of the application. */
+"ui.mapping.openApplication" = "%@ 열기";
+/* Name of a destination that opens a URL. %@ is the URL. */
+"ui.mapping.openURL" = "URL %@ 열기";
+/* Name of a destination that runs a Shortcut. Shortcuts is the Apple app. %@ is the name of the shortcut. */
+"ui.mapping.runShortcut" = "단축어 %@ 실행";
+/* Name of a system action destination. %@ is the name of the action, such as Mission Control. */
+"ui.mapping.systemAction" = "시스템 동작 %@";
+/* Name of a system key destination, such as volume up. %@ is the name of the key. */
+"ui.mapping.systemKey" = "시스템 키 %@";
+/* Name of a destination that types text. %@ is the text. */
+"ui.mapping.typeText" = "%@ 입력";
 /* Button of the problem banner in the Access area that quits and opens the app again so that a granted permission takes effect. OpenJoystickDriver is the product name. */
 "ui.permissions.restartApplication" = "OpenJoystickDriver 다시 시작";
 /* Menu item in the application menu that opens the project page on GitHub. GitHub is a product name and stays as written. */
@@ -50,6 +62,8 @@
 "status.allowed" = "허용됨";
 /* Value of a permission row in the Access area when the active profiles do not use the permission. */
 "status.notNeeded" = "필요하지 않음";
+/* Line of the profile activation alert and of 'ojd profile activate' that names the permissions that the actions of the profile need and that are not granted. %@ is the permission names, separated by commas. */
+"status.missingPermissions" = "누락된 권한: %@";
 /* Placeholder in the profile creation sheet shown instead of a controller model when no controller is connected. */
 "status.connectController" = "컨트롤러 연결";
 /* Line in the menu bar menu when no profile is active. */
@@ -152,8 +166,18 @@
 "ui.controllers.deviceInUse" = "다른 프로그램이 이 컨트롤러를 사용 중입니다. 해당 프로그램을 닫거나 컨트롤러를 다시 연결하세요.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose USB configuration OJD could not read. OJD tries again only when the controller reconnects, so the text asks for that. USB stays as written. */
 "ui.controllers.configurationUnreadable" = "이 컨트롤러의 USB 구성을 읽을 수 없습니다. 컨트롤러를 다시 연결하세요.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
+"ui.controllers.bootloaderIdentity" = "이 컨트롤러는 부트로더 모드입니다. OJD는 데이터를 보내지 않습니다.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+"ui.controllers.noModeMatched" = "이 컨트롤러는 다른 모델과 ID를 공유하며 지원되는 모델 중 어느 것과도 일치하지 않습니다. OJD는 데이터를 보내지 않습니다.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected device whose ID OJD recognizes and serves nothing, such as a receiver with no controller connected. OJD sends such a device no data, and the text says so. OJD stays as written. */
+"ui.controllers.idleIdentity" = "이 장치는 컨트롤을 제공하지 않습니다. 컨트롤러가 연결되지 않은 수신기 등이 해당합니다. OJD는 데이터를 보내지 않습니다.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "배터리";
+/* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */
+"ui.controllers.paused.label" = "리매핑";
+/* Value of the pause fact in the Controllers detail, and menu bar menu row under a controller that a Pause assignment holds. */
+"ui.controllers.paused.value" = "일시 정지됨";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "일련 번호 보기";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */
@@ -183,7 +207,7 @@
 /* Label of the fact in the Controllers detail that shows the USB vendor ID and product ID. VID and PID are the usual short names. */
 "ui.controllers.usbIdentifier" = "USB VID/PID";
 /* VoiceOver sentence while the app checks which profile is active for the controller. */
-"ui.controllers.profileCheckingSentence" = "활성 프로파일을 확인하는 중입니다.";
+"ui.controllers.profileCheckingSentence" = "활성 프로파일을 확인하는 중입니다…";
 /* VoiceOver sentence when the controller has no active profile. */
 "ui.controllers.noActiveProfileSentence" = "활성 프로파일이 없습니다.";
 /* VoiceOver sentence that names the active profile. %@ is the profile name. The sentence ends with a period. */
@@ -311,11 +335,9 @@
 /* Status in the capture assignment sheet before the capture starts. */
 "ui.capture.ready" = "수신 대기할 준비가 되었습니다.";
 /* Status in the capture assignment sheet while the app waits for a controller control. */
-"ui.capture.listening" = "컨트롤러 조작을 수신 대기하는 중입니다.";
+"ui.capture.listening" = "컨트롤러 조작을 수신 대기하는 중입니다…";
 /* VoiceOver announcement while the app waits for a controller control. Escape is the name of the Escape key. */
-"ui.capture.listeningCancel" = "컨트롤러 조작을 수신 대기하는 중입니다. 취소하려면 Escape를 누르세요.";
-/* Status text in the capture assignment sheet while the app waits for a controller control. Keep the three dots. */
-"ui.capture.listeningEllipsis" = "컨트롤러 조작을 수신 대기하는 중…";
+"ui.capture.listeningCancel" = "컨트롤러 조작을 수신 대기하는 중입니다… 취소하려면 Escape를 누르세요.";
 /* Status in the capture assignment sheet after a control is detected. %@ is the name of the control. The sentence ends with a period. */
 "ui.capture.detected" = "감지됨: %@.";
 /* Label with the detected control in the capture assignment sheet. %@ is the name of the control. It has no final period because other text follows or the label stands alone. */
@@ -384,8 +406,12 @@
 "ui.profiles.addLayer" = "레이어 추가";
 /* Title of the sheet that adds an assignment to a layer. %@ is the name of the layer. */
 "ui.profiles.addLayerAssignment" = "%@에 할당 추가";
+/* Button in the behavior sheet that adds an entry for a tap count, such as a triple tap, to the control. */
+"ui.profiles.addMultiTap" = "탭 횟수 추가";
 /* Button of the combination sheet that adds a sequence. A sequence is a set of controls pressed one after the other. */
 "ui.profiles.addSequence" = "시퀀스 추가";
+/* Heading in the behavior sheet of the entries that send another destination when the control is tapped two to five times. */
+"ui.profiles.multiTap" = "여러 번 탭";
 /* Title of the empty state in the profile editor when the profile has no assignment. */
 "ui.profiles.noAssignments" = "아직 할당 없음";
 /* Instruction in the empty state of the profile editor. The destination is a key, a mouse button or a pointer movement. */
@@ -412,6 +438,16 @@
 "ui.profiles.changedElsewhere" = "프로파일이 다른 곳에서 변경되었습니다.";
 /* Error in the profile editor when the service saved the profile but the app cannot read the state afterwards. */
 "ui.profiles.savedButUnavailable" = "프로파일은 저장되었지만 최신 상태를 사용할 수 없습니다.";
+/* Label of the picker in the behavior sheet that sets how many taps of a control fire an entry. The choices are the numbers 2 to 5. */
+"ui.profiles.tapCount" = "탭 횟수";
+/* Note in the behavior sheet under the tap-count entries. %@ is the longest tap window with its unit, such as 300 ms; the assignment's own destination fires only after that wait. */
+"ui.profiles.tapDelay" = "기본 대상이 최대 %@ 기다릴 수 있음";
+/* Label of the field in the behavior sheet that sets the time from the press to the first repeat of turbo. The value is in milliseconds. */
+"ui.profiles.turboDelay" = "첫 반복 전 지연";
+/* Switch in the behavior sheet that makes turbo stop after a number of repeats. */
+"ui.profiles.turboLimit" = "반복 횟수 제한";
+/* Label of the field in the behavior sheet that sets how many repeats turbo makes after the press before it stops. The value is a number. */
+"ui.profiles.turboMax" = "최대 반복 횟수";
 /* Save status of the profile editor: there are changes that are not saved. */
 "ui.profiles.unsaved" = "저장하지 않은 변경 사항";
 /* Save status of the profile editor while the profile is being saved. Keep the three dots. */
@@ -462,8 +498,6 @@
 "ui.profiles.details" = "프로파일 세부 사항";
 /* Note on an assignment row when the controller or its protocol cannot do what the assignment needs. */
 "ui.profiles.notSupportedByController" = "이 컨트롤러 또는 프로토콜에서 지원하지 않습니다.";
-/* Label of the field in the behavior sheet for the destination of a double tap of a control. */
-"ui.profiles.doubleTap" = "두 번 탭";
 /* Toolbar button in the Profiles area that exports the profile to a file. */
 "ui.profiles.export" = "프로파일 내보내기";
 /* Option of the activation popup in the layer sheet: the layer is on while the control is held. */
@@ -504,7 +538,7 @@
 "ui.profiles.sequenceWindow" = "완료 허용 시간";
 /* Heading of the sequences section in the profile editor. */
 "ui.profiles.sequences" = "시퀀스";
-/* Label of the field in the behavior sheet that sets the time within which a second tap counts as a double tap. The value is in milliseconds. */
+/* Label of the field in the behavior sheet that sets the time from one tap's release to the next press within which the taps of a tap-count entry count together. The value is in milliseconds. */
 "ui.profiles.tapWindow" = "탭 허용 시간";
 /* Label of the popup in the profile creation sheet that picks which apps the profile applies to. */
 "ui.profiles.target" = "대상";
@@ -512,6 +546,14 @@
 "ui.profiles.targetApplication" = "앱 하나";
 /* Option of the target popup: the profile applies to all apps. */
 "ui.profiles.targetGlobal" = "모든 앱";
+/* Label of the popup in the profile creation sheet that picks what the new profile starts from. */
+"ui.profiles.template" = "템플릿";
+/* Option of the template popup in the profile creation sheet: the profile starts empty. */
+"ui.profiles.templateEmpty" = "비어 있음";
+/* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
+"ui.profiles.templateGyroStick" = "자이로를 스틱으로";
+/* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
+"ui.profiles.templateNoMotion" = "%@에는 모션 센서가 없습니다.";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "토글";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -570,8 +612,32 @@
 "ui.mapping.axisDirection" = "%1$@ %2$@";
 /* Name of a mouse button destination. %@ is the button, for example left or right. */
 "ui.mapping.mouseButton" = "마우스 %@ 버튼";
+/* Name of a MIDI note destination. %1$@ is the note number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiNote" = "MIDI 노트 %1$@, 채널 %2$@";
+/* Name of a MIDI control change destination. %1$@ is the controller number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiControlChange" = "MIDI 컨트롤러 %1$@, 채널 %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "포인터 %@ 이동";
+/* Name of a pointer position destination. %@ is the axis whose value places the pointer across the main display. */
+"ui.mapping.pointerPosition" = "포인터 %@ 위치";
+/* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
+"ui.mapping.profileNext" = "다음 프로파일";
+/* Name of the destination that activates the previous profile of the controller's model and scope in name order, wrapping at the start. */
+"ui.mapping.profilePrevious" = "이전 프로파일";
+/* Name of the destination that activates a specific profile of the same controller model. */
+"ui.mapping.profileSwitch" = "프로파일 전환";
+/* Name of the destination that turns a layer on. %@ is the layer name. */
+"ui.mapping.layerOn" = "레이어 %@ 켜기";
+/* Name of the destination that turns a layer off. %@ is the layer name. */
+"ui.mapping.layerOff" = "레이어 %@ 끄기";
+/* Name of the destination that flips a layer between on and off. %@ is the layer name. */
+"ui.mapping.layerToggle" = "레이어 %@ 전환";
+/* Name of the destination that pauses the controller so its input passes through unmapped. */
+"ui.mapping.pauseOn" = "컨트롤러 일시 정지";
+/* Name of the destination that resumes a paused controller so its mappings apply again. */
+"ui.mapping.pauseOff" = "컨트롤러 재개";
+/* Name of the destination that flips the controller between paused and resumed. */
+"ui.mapping.pauseToggle" = "일시 정지 전환";
 /* Name of a scroll destination. %@ is the direction of the scroll. */
 "ui.mapping.scroll" = "%@ 스크롤";
 /* Name of the bottom face button: A on Xbox, Cross on PlayStation. The slash stays. */
@@ -606,6 +672,14 @@
 "ui.mapping.touchGridCell" = "%1$@ 그리드 %2$d×%3$d 셀 %4$d,%5$d";
 /* Name of a touch swipe as a control. %1$@ is the touch surface and %2$@ is the swipe direction. */
 "ui.mapping.touchSwipe" = "%1$@ 스와이프 %2$@";
+/* Name of a stick ring as a control. %1$@ is the stick, %2$.2f is the inner radius and %3$.2f is the outer radius, both from 0 to 1. */
+"ui.mapping.stickRegion" = "%1$@ 링 %2$.2f~%3$.2f";
+/* Name of a stick ring with a sector as a control. %1$@ is the stick, %2$.2f is the inner radius, %3$.2f is the outer radius, %4$.0f is the sector start and %5$.0f is the sector end, both in degrees clockwise from up. */
+"ui.mapping.stickRegionSector" = "%1$@ 링 %2$.2f~%3$.2f, %4$.0f°~%5$.0f°";
+/* Name of a trigger pressure band as a control. %1$@ is the trigger, %2$.2f is the start and %3$.2f is the end of the band, both from 0 to 1. */
+"ui.mapping.triggerBand" = "%1$@ 구간 %2$.2f~%3$.2f";
+/* Name of a touch area as a control. %1$@ is the touch surface, %2$.2f is the left edge, %3$.2f is the top edge, %4$.2f is the width and %5$.2f is the height, all as fractions of the surface. The multiplication sign stays between the width and the height. */
+"ui.mapping.touchArea" = "%1$@ 영역 %2$.2f, %3$.2f, %4$.2f×%5$.2f";
 /* Option of the touch surface popup: the main touch surface of the controller. */
 "ui.mapping.touchSurfacePrimary" = "주 표면";
 /* Option of the touch surface popup: the left touch surface of the controller. */
@@ -634,6 +708,74 @@
 "ui.profiles.touch.stickRadius" = "전체 스틱 반경(표면 비율)";
 /* Label of the field in the touch sheet that sets the stick deadzone. The deadzone is the part of the travel near the center that is ignored. */
 "ui.profiles.touch.deadzone" = "스틱 데드존";
+/* Title of the row of the Controller section and of the sheet that adds a stick ring, trigger band or touch area as an assignment. */
+"ui.profiles.region.title" = "영역";
+/* Summary under the regions row of the Controller section: what a region is. */
+"ui.profiles.region.summary" = "스틱 링, 트리거 구간, 터치 영역";
+/* Label of the segmented control in the regions sheet that picks between a stick ring, a trigger band and a touch area. */
+"ui.profiles.region.kind" = "영역 유형";
+/* Segment of the region type control in the regions sheet: a ring around the center of a stick. */
+"ui.profiles.region.stick" = "스틱 링";
+/* Segment of the region type control in the regions sheet: a band of the pull of a trigger. */
+"ui.profiles.region.trigger" = "트리거 구간";
+/* Segment of the region type control in the regions sheet: a rectangle of a touch surface. */
+"ui.profiles.region.touch" = "터치 영역";
+/* Label of the popup in the regions sheet that picks the stick, trigger or touch surface that the region reads. */
+"ui.profiles.region.input" = "입력";
+/* Label of the field in the regions sheet that sets where a stick ring starts, from 0 at the center to 1 at the edge. */
+"ui.profiles.region.innerRadius" = "안쪽 반지름 (0...1)";
+/* Label of the field in the regions sheet that sets where a stick ring ends, from 0 at the center to 1 at the edge. */
+"ui.profiles.region.outerRadius" = "바깥쪽 반지름 (0...1)";
+/* Label of the field in the regions sheet that sets the start of the sector of a stick ring, in degrees clockwise from up. Leaving it and the end empty makes a full ring. */
+"ui.profiles.region.fromDegrees" = "섹터 시작 (위쪽 기준 각도, 비워 두면 전체 링)";
+/* Label of the field in the regions sheet that sets the end of the sector of a stick ring, in degrees clockwise from up. */
+"ui.profiles.region.toDegrees" = "섹터 끝 (위쪽 기준 각도)";
+/* Label of the field in the regions sheet that sets where a trigger band starts, from 0 for released to 1 for fully pulled. */
+"ui.profiles.region.from" = "구간 시작 (0...1)";
+/* Label of the field in the regions sheet that sets where a trigger band ends, from 0 for released to 1 for fully pulled. */
+"ui.profiles.region.to" = "구간 끝 (0...1)";
+/* Label of the field in the regions sheet that sets the left edge of a touch area as a fraction of the surface width. */
+"ui.profiles.region.x" = "왼쪽 가장자리 (표면 대비 비율)";
+/* Label of the field in the regions sheet that sets the top edge of a touch area as a fraction of the surface height. */
+"ui.profiles.region.y" = "위쪽 가장자리 (표면 대비 비율)";
+/* Label of the field in the regions sheet that sets the width of a touch area as a fraction of the surface width. */
+"ui.profiles.region.width" = "너비 (표면 대비 비율)";
+/* Label of the field in the regions sheet that sets the height of a touch area as a fraction of the surface height. */
+"ui.profiles.region.height" = "높이 (표면 대비 비율)";
+/* Heading of the drawing in the regions sheet that shows where the stick, trigger or touch is now. */
+"ui.profiles.region.live" = "실시간 위치";
+/* Note in the regions sheet shown while no controller is connected, so there is no live position. */
+"ui.profiles.region.noController" = "컨트롤러를 연결하면 실시간 위치를 볼 수 있습니다.";
+/* Line under the live position of the touch area in the regions sheet while nothing touches the surface. */
+"ui.profiles.region.noContact" = "터치 없음";
+/* Line under the live stick position in the regions sheet. %1$.2f is the deflection from 0 to 1 and %2$.0f is the angle in degrees clockwise from up. */
+"ui.profiles.region.liveStick" = "기울기 %1$.2f, 각도 %2$.0f°";
+/* Line under the live trigger position in the regions sheet. %.2f is the pull from 0 to 1. */
+"ui.profiles.region.liveTrigger" = "누름 %.2f";
+/* Line under the live touch position in the regions sheet. %1$.2f is the horizontal and %2$.2f is the vertical position, both as fractions of the surface. */
+"ui.profiles.region.liveTouch" = "%1$.2f, %2$.2f 위치 터치";
+/* Title of the sheet that sets the pointer speed of a profile, and label of its row in the controller section. The pointer speed scales all pointer movement. */
+"ui.profiles.pointerSpeed.title" = "포인터 속도";
+/* Label of the switch in the pointer speed sheet that turns on scaling of the pointer movement. */
+"ui.profiles.pointerSpeed.enabled" = "포인터 속도 배율 적용";
+/* Label of the popup in the pointer speed sheet that picks the control whose value sets the scale. */
+"ui.profiles.pointerSpeed.driver" = "구동 입력";
+/* Option of the driver popup in the pointer speed sheet: the value of a trigger sets the scale. Also the summary of the pointer speed row when a trigger drives it. */
+"ui.profiles.pointerSpeed.driverTrigger" = "트리거";
+/* Option of the driver popup in the pointer speed sheet: how far a stick is pushed from the center sets the scale. Also the summary of the pointer speed row when a stick drives it. */
+"ui.profiles.pointerSpeed.driverStickDepth" = "스틱 기울기";
+/* Label of the popup in the pointer speed sheet that picks the left or the right trigger or stick as the driver. */
+"ui.profiles.pointerSpeed.side" = "방향";
+/* Option of the side popup in the pointer speed sheet: the left trigger or stick. */
+"ui.profiles.pointerSpeed.sideLeft" = "왼쪽";
+/* Option of the side popup in the pointer speed sheet: the right trigger or stick. */
+"ui.profiles.pointerSpeed.sideRight" = "오른쪽";
+/* Label of the field in the pointer speed sheet that sets the pointer scale while the driver is at rest. The scale multiplies the pointer movement. */
+"ui.profiles.pointerSpeed.minScale" = "0일 때 배율";
+/* Label of the field in the pointer speed sheet that sets the pointer scale while the trigger is fully pulled or the stick is at its rim. The scale multiplies the pointer movement. */
+"ui.profiles.pointerSpeed.maxScale" = "1일 때 배율";
+/* Line in the pointer speed sheet that shows the scale the pointer has now. %@ is the scale, a number. */
+"ui.profiles.pointerSpeed.live" = "현재 배율: %@";
 /* Label of the stepper that sets the number of columns of a touch grid in the capture assignment sheet. %d is the number of columns. */
 "ui.capture.touchColumns" = "그리드 열: %d";
 /* Label of the stepper that sets the number of rows of a touch grid in the capture assignment sheet. %d is the number of rows. */
@@ -702,6 +844,10 @@
 "term.keyboardPointer" = "키보드 및 포인터";
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "손쉬운 사용";
+/* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
+"platform.macos.term.postEventAccess" = "Post Event 접근";
+/* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
+"platform.macos.term.automationAccess" = "자동화 접근";
 /* Button of the combination sheets that adds the chosen entry to the combination. */
 "action.add" = "추가";
 /* Button of the input test window that sends the chosen player indicator or lightbar color to the controller. */
@@ -745,7 +891,7 @@
 /* Message about a request to the system extension manager that failed. %1$@ is the error domain, %2$d is the error code and %3$@ is the description from the system. Keep code= as written. */
 "cli.transportExtension.group.failed" = "시스템 확장 요청 실패: %1$@ code=%2$d %3$@";
 /* Message when the system extension manager replaces an installed driver extension. %1$@ is the extension bundle identifier, %2$@ is the installed version and %3$@ is the version that replaces it. Keep the v before the numbers. */
-"cli.transportExtension.group.replacing" = "%1$@ v%2$@을(를) v%3$@로 교체하는 중입니다.";
+"cli.transportExtension.group.replacing" = "%1$@ v%2$@을(를) v%3$@로 교체하는 중입니다…";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller, which OJD reads by the layout its HID report descriptor declares. Keep HID as written. */
 "term.protocolFamily.hidDescriptor" = "일반 HID";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller whose input report layout comes from its controller record, the file OJD keeps for each controller model. Keep HID as written. */
@@ -756,6 +902,8 @@
 "term.protocolFamily.nintendoSwitch2" = "Nintendo Switch 2";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a wired Switch controller that sends input reports and takes no commands. Keep Nintendo Switch as written. */
 "term.protocolFamily.nintendoSwitchInputOnly" = "Nintendo Switch (입력 전용)";
+/* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the Wii Remote protocol, used by the Wii Remote and the Wii U Pro Controller over Bluetooth. Nintendo Wii Remote is a brand and product name: keep it as written. */
+"term.protocolFamily.nintendoWii" = "Nintendo Wii Remote";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controller of the PlayStation 5, which Sony names DualSense. Sony DualSense is a brand and product name: keep it as written. */
 "term.protocolFamily.sonyDualSense" = "Sony DualSense";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controller of the PlayStation 4, which Sony names DualShock 4. Sony DualShock 4 is a brand and product name: keep it as written. */
@@ -801,7 +949,7 @@
 /* Label in the controller summary of the developer tools. The value is a list of the pressed buttons. */
 "ui.developer.buttons" = "버튼";
 /* Status next to the Start Capture button while the packet capture runs. */
-"ui.developer.capturing" = "캡처 중";
+"ui.developer.capturing" = "캡처 중…";
 /* Label of the connection kind in the controller summary of the developer tools, for example USB or Bluetooth. */
 "ui.developer.connection" = "연결";
 /* Label of the controller name in the controller summary of the developer tools. */
@@ -869,7 +1017,7 @@
 /* Label of the USB vendor and product ID in the controller summary of the developer tools. */
 "ui.developer.usbID" = "USB ID";
 /* Message in the packet list of the developer tools while a capture waits for packets. */
-"ui.developer.waitingForPackets" = "USB 패킷을 기다리는 중입니다. 컨트롤러 버튼을 누르세요.";
+"ui.developer.waitingForPackets" = "USB 패킷을 기다리는 중입니다… 컨트롤러 버튼을 누르세요.";
 /* Heading of the soak test section in the developer tools. A soak test measures the service over a long time. */
 "ui.developer.soakTest" = "장시간 테스트";
 /* Description of the soak test section in the developer tools. The test samples memory, file descriptors and CPU of the service. */
@@ -970,6 +1118,8 @@
 "ui.inputTest.playerIndicator" = "플레이어 표시등";
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "누름";
+/* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
+"ui.inputTest.receiving" = "컨트롤이 움직이기를 기다리는 중…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "뗌";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */
@@ -1061,7 +1211,7 @@
 /* Detail line of the problem banner when the driver extension waits for approval. System Settings is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. */
 "platform.macos.ui.setup.approvalDetail" = "지원되는 Microsoft USB 컨트롤러를 사용하려면 시스템 설정에서 드라이버를 승인하세요.";
 /* Detail line in the Driver section of the settings window while the app checks the driver extension for Xbox USB controllers. */
-"ui.setup.checkingDetail" = "설치된 Xbox USB 드라이버를 확인하는 중입니다.";
+"ui.setup.checkingDetail" = "설치된 Xbox USB 드라이버를 확인하는 중입니다…";
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "Xbox USB 드라이버";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
@@ -1078,6 +1228,28 @@
 "ui.setup.uninstallDetail" = "드라이버를 다시 설치할 때까지 Xbox USB 컨트롤러가 작동하지 않습니다.";
 /* Button of the problem banner that repairs the driver extension for Xbox USB controllers. */
 "ui.setup.repairDriver" = "Xbox USB 드라이버 복구";
+/* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
+"platform.macos.cli.controller.show.labelServedBy" = "기본 드라이버";
+/* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
+"platform.macos.cli.controller.show.servedByMacOS" = "macOS가 처리 중입니다. 확장 프로그램을 활성화하고 컨트롤러를 가져오려면 `ojd controller claim %@`를 실행하세요.";
+/* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
+"platform.macos.ui.controllers.servedByMacOS" = "macOS가 처리 중";
+/* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
+"platform.macos.ui.controllers.servedByMacOSDetail" = "Apple의 드라이버가 이 컨트롤러를 점유하고 있습니다. 가져오면 OpenJoystickDriver 확장 프로그램이 활성화됩니다.";
+/* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
+"ui.controllers.claim" = "가져오기";
+/* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.runningDetail" = "Xbox USB 드라이버를 설치하는 중…";
+/* Disabled button of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.repairRunning" = "복구하는 중…";
+/* Detail line of the problem banner when the state of the driver extension for Xbox USB controllers cannot be read. The banner has no button then. */
+"ui.setup.unavailableDetail" = "Xbox USB 드라이버의 상태를 읽을 수 없어 요청을 보낼 수 없습니다.";
+/* Detail line of the problem banner when the request for the driver extension failed. %1$@ is the error domain, %2$lld is the error code and %3$@ is the error text. */
+"ui.setup.failedDetail" = "Xbox USB 드라이버 요청이 실패했습니다: %3$@(%1$@, 코드 %2$lld).";
+/* Detail line of the problem banner when the request for the driver extension was cancelled. The Try Again button follows. */
+"ui.setup.cancelledDetail" = "Xbox USB 드라이버 요청이 취소되었습니다. 드라이버를 설치하려면 다시 시도하세요.";
+/* Detail line of the problem banner when the system did not answer the request for the driver extension in time. The Try Again button follows. */
+"ui.setup.timedOutDetail" = "시스템이 Xbox USB 드라이버 요청에 제때 응답하지 않았습니다. 다시 시도하세요.";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver가 서비스에 연결할 수 없습니다";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
@@ -1221,6 +1393,12 @@
 /* Name of the click of the right trackpad of a controller. */
 "ui.mapping.rightPadClick" = "오른쪽 패드 클릭";
 
+/* Name of the touch sensor on the grip on the back of a controller on the left side. */
+"ui.mapping.leftGripTouch" = "왼쪽 그립 터치";
+
+/* Name of the touch sensor on the grip on the back of a controller on the right side. */
+"ui.mapping.rightGripTouch" = "오른쪽 그립 터치";
+
 /* Title of the sheet that tunes the motion sensor of a controller in a profile. */
 "ui.profiles.motion.title" = "모션 조정";
 /* Label of the popup in the motion sheet that picks the coordinate space of the motion. */
@@ -1255,7 +1433,7 @@
 /* Hint under the motion calibration controls of the input test window: keep the controller still on a surface while the gyro bias, the small constant rotation the sensor reports at rest, is collected. */
 "ui.motion.calibration.instructions" = "자이로 편향을 수집하는 동안 컨트롤러를 가만히 두세요.";
 /* Status line in the motion calibration controls while the service collects gyro bias samples. Bias is the constant rotation offset of the gyro sensor at rest. */
-"ui.motion.calibration.collecting" = "편향 수집 중";
+"ui.motion.calibration.collecting" = "편향 수집 중…";
 /* Status line in the motion calibration controls when the user paused collecting gyro bias samples by hand. */
 "ui.motion.calibration.paused" = "수동 수집 일시 중지됨";
 /* Line in the motion calibration controls that shows the gyro bias found so far, in degrees per second. %1$.3f, %2$.3f and %3$.3f are the X, Y and Z components. Keep the axis letters and the unit. */
@@ -1272,7 +1450,7 @@
 /* Guidance in the motion calibration controls when the controller has no usable motion data: turn on a profile for this controller and check that motion data is available. */
 "ui.motion.calibration.motionUnavailable" = "이 컨트롤러에 리매핑 프로파일을 활성화하고 모션을 사용할 수 있는지 확인하세요.";
 /* Status line in the motion calibration controls while the service has no motion samples yet; Refresh checks again. */
-"ui.motion.calibration.waiting" = "모션 샘플을 기다리는 중입니다. 새로 고쳐 다시 확인하세요.";
+"ui.motion.calibration.waiting" = "모션 샘플을 기다리는 중입니다… 새로 고쳐 다시 확인하세요.";
 /* Note in the motion calibration controls: collecting gyro bias keeps running in the service after the window closes, and the Pause button stops it. */
 "ui.motion.calibration.continues" = "이 창을 닫아도 수집은 계속됩니다. 중지하려면 “일시 중지”를 사용하세요.";
 
@@ -1523,6 +1701,22 @@
 "ui.profiles.physical.startPosition" = "저항 시작 위치";
 /* Label of the slider in the output destination editor that sets how strong the resistance of the adaptive trigger is. */
 "ui.profiles.physical.strength" = "저항 세기";
+/* Label of the text field in the output destination editor for the phrase that a Speak destination says. */
+"ui.profiles.speak.text" = "텍스트";
+/* Label of the text field in the output destination editor for the identifier of the voice that a Speak destination uses. */
+"ui.profiles.speak.voice" = "음성 식별자";
+/* Placeholder of the voice field in the output destination editor when a Speak destination uses the system voice. */
+"ui.profiles.speak.voicePlaceholder" = "시스템 음성";
+/* Phrase that a new Speak destination says until the user changes it. */
+"ui.profiles.speak.defaultText" = "안녕하세요";
+/* Label of the text field in the output destination editor for the bundle identifier of the application that an Open application destination opens. */
+"ui.profiles.system.application" = "앱 식별자";
+/* Label of the text field in the output destination editor for the address that an Open URL destination opens. */
+"ui.profiles.system.url" = "URL";
+/* Label of the text field in the output destination editor for the name of the Shortcut that a Run Shortcut destination runs. */
+"ui.profiles.system.shortcut" = "단축어 이름";
+/* Name that a new Run Shortcut destination holds until the user changes it. */
+"ui.profiles.system.defaultShortcut" = "단축어";
 
 /* Menu item in the profile editor that removes all inputs of the profile. Keep the three dots. */
 "ui.profiles.clearInputs" = "모든 입력 지우기…";
@@ -1544,6 +1738,10 @@
 "ui.profiles.emptyActivationMessage" = "이 프로파일은 모든 컨트롤러 입력을 억제합니다.";
 /* Title of the alert shown before the app activates a profile that sends no input. */
 "ui.profiles.emptyActivationTitle" = "컨트롤러 입력이 없는 프로파일을 활성화할까요?";
+/* Title of the alert shown before the app activates a profile that launches actions or needs a permission that is missing. */
+"ui.profiles.activationTitle" = "이 프로필을 활성화할까요?";
+/* Part of the message of the profile activation alert. %@ is the list of actions that open applications or URLs, run shortcuts or type text, one per line. */
+"ui.profiles.activationActions" = "이 프로필은 다음 동작을 실행합니다:\n%@";
 /* Warning in the profile editor when the profile sends no input. */
 "ui.profiles.emptyInputWarning" = "이 프로파일은 모든 컨트롤러 입력을 억제합니다.";
 /* Menu item in the profile editor that sets the inputs of the profile to the default. */
@@ -1564,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "손상된 데이터가 제거되기 전에 백업이 생성됩니다.";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "이 저장된 프로파일을 읽을 수 없습니다. 유효한 프로파일을 계속 사용하려면 삭제하세요.";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "%@은(는) 이전 버전에서 저장되어 사용할 수 없습니다. 다시 사용하려면 이전하거나 삭제하세요.";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "활성 프로파일 목록을 읽을 수 없습니다. 계속하려면 재설정하세요. 프로파일은 유지됩니다.";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -1644,7 +1844,7 @@
 /* Examples block at the end of the help of 'ojd binding set'. The command lines, option names and sources stay as written; translate only the lines that start with #. */
 "cli.binding.set.examples" = "예시:\n  # 남쪽 버튼을 누르고 있는 동안 Space 누름 유지\n  ojd binding set Racing button:south key:space\n  # 누를 때마다 J 켜기와 끄기 전환\n  ojd binding set Racing button:west key:key-j --behavior toggle\n  # 누르고 있는 동안 J를 초당 10번 반복\n  ojd binding set Racing button:west key:key-j --turbo-rate 10 --turbo-duty 0.5";
 /* Examples block at the end of the help of 'ojd record install'. The command lines and file names stay as written; translate only the lines that start with #. */
-"cli.record.install.examples" = "예시:\n  # 레코드 파일 설치\n  ojd record install 045E-028E.json\n  # 표준 입력에서 레코드 읽기\n  ojd record install - < 045E-028E.json";
+"cli.record.install.examples" = "예시:\n  # 레코드 파일 설치\n  ojd record install 045e-028e.plist\n  # 표준 입력에서 레코드 읽기\n  ojd record install - < 045e-028e.plist";
 /* Examples block at the end of the help of 'ojd access grant'. The command lines and option names stay as written; translate only the lines that start with #. */
 "cli.access.grant.examples" = "예시:\n  # 프로그램이 서비스를 사용하도록 허용\n  ojd access grant /Applications/Example.app\n  # 한 출처에서 제공되는 페이지용 토큰 만들기\n  ojd access grant --token overlay --origin http://127.0.0.1:8080";
 /* One-line summary of 'ojd service' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
@@ -1829,6 +2029,16 @@
 "cli.access.web.portRange" = "--port는 1024에서 65535 사이여야 합니다.";
 /* One-line summary of 'ojd diagnose' in the command list and at the top of its help. */
 "cli.diagnose.group.abstract" = "모든 검사를 실행하고 문제를 보고합니다.";
+/* Detail of the input mapping check of 'ojd diagnose' when no connected controller has a rejected database line. SDL_GameControllerDB is a project name and stays as written. */
+"cli.diagnose.group.inputMappingApplied" = "거부된 SDL_GameControllerDB 줄 없음";
+/* Detail of the input mapping check of 'ojd diagnose' for one controller whose database line was rejected. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller name, %2$@ is the reason in English and %3$@ is the error code, which stays as written. */
+"cli.diagnose.group.inputMappingRejected" = "%1$@의 SDL_GameControllerDB 줄이 거부되었습니다: %2$@ (%3$@)";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no 057E:2009 controller is connected. 057E:2009 stays as written. */
+"cli.diagnose.group.switchSerialNone" = "연결된 057E:2009 컨트롤러 없음";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no connected 057E:2009 controller reports the serial 000000000001. 057E:2009 and the serial stay as written. */
+"cli.diagnose.group.switchSerialOther" = "일련번호 000000000001을 보고하는 057E:2009 컨트롤러 없음";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' for one controller. Nintendo Switch Pro Controller is a product name and stays as written. %1$@ is the controller name, %2$@ is the VID:PID and %3$@ is the serial number, both of which stay as written. */
+"cli.diagnose.group.switchSerialPlaceholder" = "%1$@이(가) Nintendo Switch Pro Controller의 ID인 %2$@와 일련번호 %3$@을(를) 보고합니다. 다른 컨트롤러도 같은 일련번호를 보고할 수 있습니다. OpenJoystickDriver는 이를 Pro Controller로 취급합니다.";
 /* Help text of the --output option of 'ojd diagnose'. A support bundle is a file with the diagnostic report for a bug report. */
 "cli.diagnose.group.output" = "지원용 번들도 이 파일에 기록합니다.";
 /* Error of 'ojd diagnose --output' when the support bundle could not be written. %@ is the reason from the system. --output stays as written. */
@@ -2045,8 +2255,8 @@
 "cli.permission.request.unknownId" = "알 수 없는 권한 ‘%1$@’입니다. %2$@을(를) 사용하세요.";
 /* One-line summary of 'ojd config' in the command list and at the top of its help. */
 "cli.config.group.abstract" = "OpenJoystickDriver가 적용하는 구성을 표시하거나 변경하고, 각 값을 설정한 레이어를 표시합니다.";
-/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.json is a file name that stays as written. */
-"cli.config.group.discussion" = "값은 낮은 순서부터 레이어로 쌓입니다: 드라이버 기본값, 번들 레코드, 패키지 레코드, all.patch.json, 사용자 레코드, 활성 프로파일. 각 튜닝 키는 그 키를 설정하는 가장 높은 레이어의 값을 사용합니다.";
+/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.plist is a file name that stays as written. */
+"cli.config.group.discussion" = "값은 낮은 순서부터 레이어로 쌓입니다: 드라이버 기본값, 번들 레코드, 패키지 레코드, all.patch.plist, 사용자 레코드, 활성 프로파일. 각 튜닝 키는 그 키를 설정하는 가장 높은 레이어의 값을 사용합니다.";
 /* Help text of the --controller option of 'ojd config set' and 'ojd config unset'. VVVV:PPPP stands for the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.config.group.controller" = "모든 컨트롤러 대신 이 컨트롤러 모델만 VVVV:PPPP 형식으로 변경합니다.";
 /* Error of 'ojd config set' and 'ojd config unset' when a record cannot take the change. %1$@ is the tuning key and %2$@ is the description of the problem. */
@@ -2065,20 +2275,20 @@
 "cli.config.show.controller" = "전역 기본값 대신 컨트롤러 하나의 유효한 튜닝을 VVVV:PPPP 형식으로 표시합니다.";
 /* Warning printed by 'ojd config show' when a part of the defaults file is invalid. %1$@ is the file path and %2$@ is the description of the problem. */
 "cli.config.show.defaultsIgnored" = "%1$@ 무시됨: %2$@";
-/* Long description in the help of 'ojd config show'. --controller and all.patch.json stay as written. */
-"cli.config.show.discussion" = "--controller가 없으면 모든 튜닝 키와 all.patch.json의 값, 그리고 레코드가 해당 키를 읽는 패밀리를 출력합니다. 지정하면 번들 레코드, 패키지 레코드, all.patch.json, 사용자 레코드를 쌓은 뒤의 컨트롤러 레코드를 출력합니다. 어떤 레이어도 설정하지 않는 키는 ‘드라이버 기본값’으로 표시됩니다.";
+/* Long description in the help of 'ojd config show'. --controller and all.patch.plist stay as written. */
+"cli.config.show.discussion" = "--controller가 없으면 모든 튜닝 키와 all.patch.plist의 값, 그리고 레코드가 해당 키를 읽는 패밀리를 출력합니다. 지정하면 번들 레코드, 패키지 레코드, all.patch.plist, 사용자 레코드를 쌓은 뒤의 컨트롤러 레코드를 출력합니다. 어떤 레이어도 설정하지 않는 키는 ‘드라이버 기본값’으로 표시됩니다.";
 /* Indented line below a tuning key of 'ojd config show' that lists the controller families whose records read the key. %@ is the comma-separated list of family names. */
 "cli.config.show.readBy" = "읽는 패밀리: %@";
-/* Warning of 'ojd config show' about a key in all.patch.json that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
-"cli.config.show.unread" = "all.patch.json이 %1$@을(를) 설정했지만 연결된 컨트롤러 중 이 키를 읽는 것이 없습니다. 이 키를 읽는 패밀리: %2$@.";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoController" = "연결된 컨트롤러가 없어 어떤 컨트롤러도 읽지 않는 all.patch.json 키 확인을 건너뛰었습니다.";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoService" = "서비스가 실행 중이 아니어서 연결된 어떤 컨트롤러도 읽지 않는 all.patch.json 키 확인을 건너뛰었습니다.";
+/* Warning of 'ojd config show' about a key in all.patch.plist that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
+"cli.config.show.unread" = "all.patch.plist이 %1$@을(를) 설정했지만 연결된 컨트롤러 중 이 키를 읽는 것이 없습니다. 이 키를 읽는 패밀리: %2$@.";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoController" = "연결된 컨트롤러가 없어 어떤 컨트롤러도 읽지 않는 all.patch.plist 키 확인을 건너뛰었습니다.";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoService" = "서비스가 실행 중이 아니어서 연결된 어떤 컨트롤러도 읽지 않는 all.patch.plist 키 확인을 건너뛰었습니다.";
 /* One-line summary of 'ojd config set' in the command list and at the top of its help. */
 "cli.config.set.abstract" = "사용자 컨트롤러 레코드에 튜닝 값을 설정합니다.";
-/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.json and stickDeadzone stay as written. */
-"cli.config.set.discussion" = "KEY를 --controller로 지정한 컨트롤러의 사용자 레코드에 쓰며, 지정하지 않으면 모든 컨트롤러용 all.patch.json에 씁니다. 레코드 규칙이 적용됩니다. stickDeadzone은 0보다 크고 1보다 작아야 합니다. 규칙에 어긋나는 값은 거부되며 아무것도 바뀌지 않습니다. 실행 중인 서비스가 변경을 적용합니다.";
+/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.plist and stickDeadzone stay as written. */
+"cli.config.set.discussion" = "KEY를 --controller로 지정한 컨트롤러의 사용자 레코드에 쓰며, 지정하지 않으면 모든 컨트롤러용 all.patch.plist에 씁니다. 레코드 규칙이 적용됩니다. stickDeadzone은 0보다 크고 1보다 작아야 합니다. 규칙에 어긋나는 값은 거부되며 아무것도 바뀌지 않습니다. 실행 중인 서비스가 변경을 적용합니다.";
 /* Message printed by 'ojd config set' after it wrote a value. %1$@ is the tuning key, which stays as written, %2$@ is the value and %3$@ is the path of the record file. */
 "cli.config.set.success" = "%1$@을(를) %2$@(으)로 설정했습니다(%3$@). 실행 중인 서비스가 지금 적용합니다.";
 /* Help text of the VALUE argument of 'ojd config set'. */
@@ -2182,7 +2392,7 @@
 /* Message printed by 'ojd controller capture' when the capture ends without a packet. */
 "cli.controller.capture.noPackets" = "받은 패킷이 없습니다.";
 /* First line of 'ojd controller capture'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
-"cli.controller.capture.started" = "%1$@(%2$@)의 패킷을 캡처하는 중입니다. 컨트롤러 버튼을 누르세요.";
+"cli.controller.capture.started" = "%1$@(%2$@)의 패킷을 캡처하는 중입니다… 컨트롤러 버튼을 누르세요.";
 /* Warning printed by 'ojd controller capture' before the packets. Packets can hold data of the user's controller. */
 "cli.controller.capture.warning" = "패킷 내용은 컨트롤러마다 다릅니다. 공유하기 전에 확인하세요.";
 /* One-line summary of 'ojd controller disconnect' in the command list and at the top of its help. */
@@ -2211,6 +2421,8 @@
 "cli.controller.group.featurePlayer" = "플레이어 표시등";
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureRumble" = "진동 모터";
+/* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
+"cli.controller.group.featureSpeaker" = "스피커";
 /* One-line summary of 'ojd controller light' in the command list and at the top of its help. */
 "cli.controller.light.abstract" = "컨트롤러의 조명 색상 또는 밝기를 설정합니다.";
 /* Help text of the --brightness option of 'ojd controller light'. LED means light-emitting diode. */
@@ -2241,12 +2453,12 @@
 "cli.controller.group.outputUnsupported" = "%1$@에는 %2$@이(가) 없습니다. 지원 기능을 보려면 ‘ojd controller show %3$@’를 실행하세요.";
 /* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To serve a model means to read its input and publish it as a virtual gamepad. */
 "cli.controller.claim.abstract" = "컨트롤러 모델을 OpenJoystickDriver가 처리하게 합니다.";
-/* Long description in the help of 'ojd controller claim'. server, ojd, VVVV-PPPP.json and the record terms stay as written. */
-"platform.macos.cli.controller.claim.discussion" = "해당 모델의 레코드(레코드 디렉터리의 VVVV-PPPP.json)에서 server를 ojd(으)로 설정하고 레코드의 다른 필드는 그대로 둡니다. 모델의 모든 컨트롤러에 적용됩니다. 실행 중인 서비스는 다시 연결하지 않아도 적용합니다. 컨트롤러를 찾으려면 서비스가 필요합니다. --dry-run은 아무것도 쓰지 않습니다. 원시 USB를 사용해 OpenJoystickDriver가 항상 처리하는 컨트롤러이거나 macOS가 기본적으로 처리하지 않는 컨트롤러는 E2023과 함께 종료 코드 1로 끝납니다.";
+/* Long description in the help of 'ojd controller claim'. server, ojd, vvvv-pppp.plist and the record terms stay as written. */
+"platform.macos.cli.controller.claim.discussion" = "해당 모델의 레코드(레코드 디렉터리의 vvvv-pppp.plist)에서 server를 ojd(으)로 설정하고 레코드의 다른 필드는 그대로 둡니다. 모델의 모든 컨트롤러에 적용됩니다. 실행 중인 서비스는 다시 연결하지 않아도 적용합니다. 컨트롤러를 찾으려면 서비스가 필요합니다. --dry-run은 아무것도 쓰지 않습니다. 원시 USB를 사용해 OpenJoystickDriver가 항상 처리하는 컨트롤러이거나 macOS가 기본적으로 처리하지 않는 컨트롤러는 E2023과 함께 종료 코드 1로 끝납니다.";
 /* One-line summary of 'ojd controller release' in the command list and at the top of its help. */
 "platform.macos.cli.controller.release.abstract" = "컨트롤러 모델을 macOS에 돌려줍니다.";
-/* Long description in the help of 'ojd controller release'. server, system and VVVV-PPPP.json stay as written. */
-"platform.macos.cli.controller.release.discussion" = "해당 모델의 레코드(레코드 디렉터리의 VVVV-PPPP.json)에서 server를 system(으)로 설정하고 레코드의 다른 필드는 그대로 둡니다. 모델의 모든 컨트롤러에 적용됩니다. 실행 중인 서비스는 다시 연결하지 않아도 적용합니다. 컨트롤러를 찾으려면 서비스가 필요합니다. --dry-run은 아무것도 쓰지 않습니다. 원시 USB를 사용해 OpenJoystickDriver가 항상 처리하는 컨트롤러이거나 macOS가 기본적으로 처리하지 않는 컨트롤러는 E2023과 함께 종료 코드 1로 끝납니다.";
+/* Long description in the help of 'ojd controller release'. server, system and vvvv-pppp.plist stay as written. */
+"platform.macos.cli.controller.release.discussion" = "해당 모델의 레코드(레코드 디렉터리의 vvvv-pppp.plist)에서 server를 system(으)로 설정하고 레코드의 다른 필드는 그대로 둡니다. 모델의 모든 컨트롤러에 적용됩니다. 실행 중인 서비스는 다시 연결하지 않아도 적용합니다. 컨트롤러를 찾으려면 서비스가 필요합니다. --dry-run은 아무것도 쓰지 않습니다. 원시 USB를 사용해 OpenJoystickDriver가 항상 처리하는 컨트롤러이거나 macOS가 기본적으로 처리하지 않는 컨트롤러는 E2023과 함께 종료 코드 1로 끝납니다.";
 /* Message printed by 'ojd controller claim' and related commands with --dry-run instead of writing the record. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. */
 "cli.controller.group.serverDryRun" = "실행하면 %1$@을(를) %2$@(으)로 설정합니다(%3$@).";
 /* Error when the record file of a controller cannot be changed. %1$@ is the path of the record file and %2$@ is the description of the problem. */
@@ -2337,6 +2549,10 @@
 "cli.controller.show.labelProtocol" = "프로토콜";
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "레코드";
+/* Row label in the output of 'ojd controller show' and in the controller detail. Where the HID usage map of the controller comes from follows. */
+"cli.controller.show.labelInputMapping" = "입력 매핑";
+/* Row label in the output of 'ojd controller show' and in the controller detail. The controls that the SDL_GameControllerDB line names but the driver cannot map follow. */
+"cli.controller.show.labelUnmapped" = "매핑되지 않은 컨트롤";
 /* Row label in the output of 'ojd controller show'. The list of rumble motors the controller has follows. */
 "cli.controller.show.labelRumble" = "진동";
 /* Row label in the output of 'ojd controller show'. The state of the session follows, such as active or suspended. */
@@ -2361,6 +2577,38 @@
 "cli.controller.show.recordNone" = "없음 (일치하는 레코드 없음)";
 /* Value of the Record row of 'ojd controller show' when the record is the user's own file. %@ is the file name. */
 "cli.controller.show.recordUser" = "사용자 레코드, %@";
+/* Value of the Input mapping row of 'ojd controller show' and of the controller detail when a controller record sets the map. */
+"cli.controller.show.inputMappingRecord" = "레코드";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line sets the map. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingSDL" = "SDL_GameControllerDB에서 매핑됨 (%1$@ 일치, GUID %2$@)";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when the standard HID usage map applies. */
+"cli.controller.show.inputMappingStandard" = "표준 HID 사용 맵";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line matched but cannot drive the controller. SDL_GameControllerDB is a project name and stays as written. %@ is the reason. */
+"cli.controller.show.inputMappingRejected" = "표준 HID 사용 맵 (SDL_GameControllerDB 행 거부됨: %@)";
+/* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingUnbound" = "적용되지 않음, 디스크립터 계약을 충족하지 않음 (SDL_GameControllerDB 행 발견, %1$@ 일치, GUID %2$@)";
+/* One-line summary of 'ojd controller speaker' in the command list and at the top of its help. */
+"cli.controller.speaker.abstract" = "컨트롤러의 스피커에서 소리를 재생합니다.";
+/* One-line summary of 'ojd controller speaker play' in the command list and at the top of its help. */
+"cli.controller.speaker.play.abstract" = "컨트롤러의 스피커에서 WAV 파일을 재생합니다.";
+/* Help text of the FILE argument of 'ojd controller speaker play'. PCM and WAV are audio format names and stay as written. */
+"cli.controller.speaker.play.file" = "재생할 비압축 PCM WAV 파일입니다.";
+/* Help text of the --volume option of 'ojd controller speaker play'. The limits 0 and 1 are fixed. */
+"cli.controller.speaker.play.volume" = "재생 볼륨, 0에서 1까지.";
+/* Error of 'ojd controller speaker play' when --volume is outside the allowed range. --volume stays as written. */
+"cli.controller.speaker.play.errorVolume" = "--volume에는 0에서 1 사이의 숫자가 필요합니다.";
+/* Error of 'ojd controller speaker play' when the audio file cannot be read. %1$@ is the file path and %2$@ is the reason the system gives. */
+"cli.controller.speaker.play.errorUnreadable" = "%1$@을(를) 읽을 수 없습니다: %2$@";
+/* Warning of 'ojd controller speaker play' when the clip is longer than the speaker plays and is cut. %@ is the longest clip length in seconds. */
+"cli.controller.speaker.play.trimmed" = "warning: 클립의 처음 %@초만 재생됩니다.";
+/* Message printed after 'ojd controller speaker play' finished the clip. %1$@ is the file name and %2$@ is the controller name. */
+"cli.controller.speaker.play.played" = "%2$@에서 %1$@을(를) 재생했습니다.";
+/* Message printed when the playback of 'ojd controller speaker play' was cut by 'ojd controller speaker stop' or by a newer clip. %@ is the controller name. */
+"cli.controller.speaker.play.stopped" = "%@의 재생을 멈췄습니다.";
+/* One-line summary of 'ojd controller speaker stop' in the command list and at the top of its help. */
+"cli.controller.speaker.stop.abstract" = "컨트롤러의 스피커 소리를 멈춥니다.";
+/* Message printed after 'ojd controller speaker stop' stopped the speaker. %@ is the controller name. */
+"cli.controller.speaker.stop.stopped" = "%@의 스피커를 멈췄습니다.";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
 "cli.controller.suspend.abstract" = "재개할 때까지 OpenJoystickDriver가 컨트롤러를 구동하지 않게 합니다.";
 /* Message of 'ojd controller suspend' when the controller is suspended. %@ is the controller name. */
@@ -2372,7 +2620,7 @@
 /* Help text of the --all flag of 'ojd controller watch'. */
 "cli.controller.watch.all" = "모든 컨트롤러를 지켜보고 연결되거나 연결 해제되는 컨트롤러를 각각 보고합니다.";
 /* First line of 'ojd controller watch --all'. */
-"cli.controller.watch.allStarted" = "모든 컨트롤러를 지켜보는 중입니다. 컨트롤러 버튼을 누르세요.";
+"cli.controller.watch.allStarted" = "모든 컨트롤러를 지켜보는 중입니다… 컨트롤러 버튼을 누르세요.";
 /* Line of 'ojd controller watch --all' when a controller connects. %1$@ is the controller ID, %2$@ is the controller name and %3$@ is its vendor and product ID. */
 "cli.controller.watch.connected" = "%1$@ 연결됨: %2$@ (%3$@)";
 /* Line of 'ojd controller watch --all' when a controller disconnects. %@ is the controller ID. */
@@ -2396,17 +2644,51 @@
 /* Prompt of 'ojd controller watch --first-press'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.controller.watch.pressPrompt" = "%1$@(%2$@)에서 컨트롤을 누르세요.";
 /* First line of 'ojd controller watch'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
-"cli.controller.watch.started" = "%1$@(%2$@)를 지켜보는 중입니다. 컨트롤러 버튼을 누르세요.";
+"cli.controller.watch.started" = "%1$@(%2$@)를 지켜보는 중입니다… 컨트롤러 버튼을 누르세요.";
 /* Message printed when the user answers no to a confirmation question. */
 "cli.shared.error.confirmDeclined" = "변경된 것이 없습니다.";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "이 변경은 되돌릴 수 없습니다. 확인 없이 진행하려면 --force를 추가하세요.";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "프로필의 매크로를 나열, 표시, 설정, 제거합니다.";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "‘%1$@’에 ‘%2$@’ 매크로가 없습니다. 변경된 내용이 없습니다.";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "매크로 이름입니다.";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "‘%@’은(는) 단계가 아닙니다. tap:TARGET, press:TARGET, release:TARGET, wait:MS 또는 chord:MS:TARGET+TARGET을 사용하세요.";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "프로필의 매크로를 나열합니다.";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "‘%@’에 매크로가 없습니다.";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "매크로와 그 단계를 표시합니다.";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "매크로를 만들거나 이름이 같은 매크로를 바꿉니다.";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "매크로의 한 단계를 순서대로 지정합니다: tap:TARGET, press:TARGET, release:TARGET, wait:MS 또는 chord:MS:TARGET+TARGET. 단계를 더 추가하려면 옵션을 반복하세요.";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "단계를 실행하는 횟수입니다. while-held는 소스를 놓을 때까지 반복합니다.";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "매크로가 실행되는 동안 소스를 누르면 일어나는 동작: ignore 또는 restart.";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "소스를 놓을 때 매크로를 멈출지 여부입니다.";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "‘%@’은(는) 횟수도 while-held도 아닙니다.";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "매크로 ‘%2$@’을(를) ‘%1$@’에 저장했습니다.";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "프로필에서 매크로를 제거합니다.";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "‘%2$@’에서 매크로 ‘%1$@’을(를) 제거할까요?";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "‘%2$@’에서 매크로 ‘%1$@’을(를) 제거했습니다.";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "모드 패키지를 검증, 설치, 나열 또는 제거합니다.";
-/* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "모드 패키지는 mod.json 매니페스트와 Controllers, Profiles, VirtualDevices 폴더가 있는 폴더입니다. 설치된 패키지는 ~/Library/Application Support/OpenJoystickDriver/Packages에 있습니다. 실행 중인 서비스는 해당 폴더가 바뀌면 변경 사항을 적용합니다. 이 명령에는 서비스가 필요하지 않습니다.";
-/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.json stays as written. */
-"cli.mod.group.folder" = "mod.json이 들어 있는 패키지 폴더입니다.";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
+"cli.mod.group.discussion" = "모드 패키지는 mod.plist 매니페스트와 Controllers, Profiles, VirtualDevices 폴더가 있는 폴더입니다. 설치된 패키지는 ~/Library/Application Support/OpenJoystickDriver/Packages에 있습니다. 실행 중인 서비스는 해당 폴더가 바뀌면 변경 사항을 적용합니다. 이 명령에는 서비스가 필요하지 않습니다.";
+/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
+"cli.mod.group.folder" = "mod.plist이 들어 있는 패키지 폴더입니다.";
 /* Help text of the NAME argument of 'ojd mod remove'. */
 "cli.mod.group.name" = "패키지 이름입니다.";
 /* Error of the 'ojd mod' commands when a package is refused. %1$@ is the package folder or name and %2$@ is the reason. */
@@ -2437,6 +2719,34 @@
 "cli.mod.list.discussion" = "각 패키지를 버전, 작성자, 파일과 함께 나열합니다. requires가 이 버전을 제외하는 등 OJD가 사용하지 않는 패키지는 E4xxx 또는 E5001 코드와 함께 이유를 보여 줍니다.";
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  사용 안 함: %@";
+/* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
+"cli.protocol.group.abstract" = "프로토콜 설명을 검증, 설치, 나열합니다.";
+/* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
+"cli.protocol.group.discussion" = "프로토콜 설명은 OJD에 내장되지 않은 컨트롤러 계열을 정의하는 .plist 파일입니다. 설치된 설명은 ~/Library/Application Support/OpenJoystickDriver/Protocols에 있으며, 모드 패키지에도 담을 수 있습니다. 이 명령은 서비스가 필요하지 않습니다.";
+/* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
+"cli.protocol.group.file" = "계열 이름을 딴 설명 파일입니다. 예: VendorAcmePad.plist.";
+/* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
+"cli.protocol.validate.abstract" = "프로토콜 설명 파일을 설치하지 않고 확인합니다.";
+/* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
+"cli.protocol.validate.discussion" = "파일이 올바른 설명인지, 계열 이름이 UpperCamelCase이고 파일 이름과 같은지, 내장 계열이 아닌지, 표시 이름과 입력 레이아웃을 지정했는지 확인합니다. 파일이 거부되면 E5xxx 코드와 함께 1로 종료합니다.";
+/* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
+"cli.protocol.validate.valid" = "%1$@은(는) %2$@(%3$@) 계열의 올바른 설명입니다. 'ojd protocol install'로 설치하세요.";
+/* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
+"cli.protocol.install.abstract" = "프로토콜 설명을 확인하고 사용자용으로 설치합니다.";
+/* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
+"cli.protocol.install.discussion" = "파일을 Protocols/FAMILY.plist로 복사합니다. 같은 계열로 설치된 설명은 교체됩니다. --dry-run은 파일을 확인만 하고 아무것도 쓰지 않습니다.";
+/* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
+"cli.protocol.install.success" = "%@을(를) 설치했습니다.";
+/* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
+"cli.protocol.list.abstract" = "내장 및 문서화된 프로토콜 계열과 각 출처를 나열합니다.";
+/* Long description in the help of 'ojd protocol list'. */
+"cli.protocol.list.discussion" = "각 계열을 표시 이름과 출처(내장, Protocols 폴더, 모드 패키지)와 함께 나열합니다. 거부된 설명은 나열되지 않습니다.";
+/* Source shown by 'ojd protocol list' for a family that OJD builds in. */
+"cli.protocol.list.builtIn" = "내장";
+/* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
+"cli.protocol.list.user" = "Protocols 폴더";
+/* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
+"cli.protocol.list.package" = "패키지 %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
 "cli.mod.remove.abstract" = "설치된 모드 패키지 하나를 제거합니다.";
 /* Long description in the help of 'ojd mod remove'. Packages/NAME, --force, --dry-run and E4006 stay as written. */
@@ -2488,7 +2798,7 @@
 /* Help text of the profile argument of 'ojd virtual feed'. */
 "cli.virtual.feed.profile" = "게시할 가상 게임패드 프로파일.";
 /* First line of 'ojd virtual feed'. %@ is the profile name. Control-C is the key combination that stops a program in a terminal. */
-"cli.virtual.feed.started" = "%@ 가상 게임패드를 게시하는 중입니다. 프레임을 stdin에 쓰세요. 중지하려면 입력을 끝내거나 Control-C를 누르세요.";
+"cli.virtual.feed.started" = "%@ 가상 게임패드를 게시하는 중입니다… 프레임을 stdin에 쓰세요. 중지하려면 입력을 끝내거나 Control-C를 누르세요.";
 /* One-line summary of 'ojd virtual launch' in the command list and at the top of its help. SDL is a game controller library and stays as written. */
 "cli.virtual.launch.abstract" = "연결된 가상 게임패드의 SDL 매핑으로 프로그램을 실행합니다.";
 /* Help text of the program argument of 'ojd virtual launch'. PATH is the environment variable, .app is the app bundle extension, and -- stays as written. */
@@ -2547,8 +2857,8 @@
 "cli.virtual.show.unavailable" = "맞는 가상 게임패드 없음";
 /* Detail of the records check of 'ojd diagnose'. %lld is the number of the user's controller records that the driver applies. */
 "cli.diagnose.group.recordsApplied" = "적용된 사용자 레코드: %lld";
-/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.json is a file name that stays as written. */
-"cli.diagnose.group.recordsConfigOk" = "all.patch.json 및 페르소나 파일이 유효합니다";
+/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.plist is a file name that stays as written. */
+"cli.diagnose.group.recordsConfigOk" = "all.patch.plist 및 페르소나 파일이 유효합니다";
 /* Detail of the records check of 'ojd diagnose' when parts of the configuration are ignored or skipped. %@ is the list of those parts. The command in quotes stays as written. */
 "cli.diagnose.group.recordsConfigProblems" = "무시 또는 건너뜀: %@; 수정한 뒤 ‘ojd status’로 확인하세요";
 /* Detail of the records check of 'ojd diagnose' when records are skipped. %@ is the list of skipped records. The command in quotes stays as written. */
@@ -2581,10 +2891,22 @@
 "cli.record.draft.discussion" = "컨트롤러의 HID 리포트 디스크립터를 읽고 각 컨트롤을 누르는 동안 입력 리포트를 캡처한 다음, 시작점이 될 레코드를 출력합니다. 레코드는 디스크립터가 명확하게 밝히는 버튼, 스틱, 트리거, 방향 패드를 매핑합니다. 캡처 중에 바뀐 바이트로 나머지 컨트롤의 위치를 알 수 있습니다. 서비스가 필요합니다.";
 /* Help text of the duration option of 'ojd record draft'. */
 "cli.record.draft.duration" = "입력 리포트를 캡처할 시간(초)입니다.";
+/* Help text of the --from-sdl flag of 'ojd record draft'. SDL_GameControllerDB is a project name and stays as written. */
+"cli.record.draft.fromSDL" = "입력 보고서를 캡처하는 대신 컨트롤러의 SDL_GameControllerDB 줄로 초안을 만듭니다.";
 /* Hint printed after 'ojd record draft'. The command in quotes stays as written, including FILE. */
 "cli.record.draft.next" = "레코드를 파일로 저장하고 각 컨트롤을 확인한 다음 ‘ojd record validate FILE’을 실행하세요.";
 /* Message of 'ojd record draft' when the descriptor of the controller yields no controls and the bundled record names the family. %1$@ is the controller identity, VVVV:PPPP, and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
 "cli.record.draft.noLayout" = "%1$@의 HID 리포트 디스크립터에서 읽을 수 있는 컨트롤이 없고, 번들 레코드가 이미 프로토콜 계열을 지정합니다. ‘ojd record show %2$@’로 해당 레코드를 확인할 수 있습니다.";
+/* Message of 'ojd record draft --from-sdl' when the HID report descriptor of the controller fails the HIDDescriptor contract. SDL_GameControllerDB is a project name and HIDDescriptor is a protocol family name; both stay as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the name of the violated rule, which stays as written. */
+"cli.record.draft.sdl.contract" = "%1$@의 HID 보고서 디스크립터가 HIDDescriptor 규약(%2$@)을 위반하므로 어떤 SDL_GameControllerDB 줄도 이를 연결할 수 없습니다.";
+/* Message of 'ojd record draft --from-sdl' when the controller model already has a bundled record. SDL_GameControllerDB is a project name and stays as written. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.hasRecord" = "%@에는 번들 레코드가 있으며 어떤 SDL_GameControllerDB 줄도 이를 대체하지 않습니다.";
+/* Message of 'ojd record draft --from-sdl' when the database has no line for the controller. SDL_GameControllerDB is a project name and stays as written. GUID is the SDL controller identifier. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is its GUID, which stays as written. */
+"cli.record.draft.sdl.noLine" = "SDL_GameControllerDB에 %1$@(GUID %2$@)의 줄이 없습니다.";
+/* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.noPad" = "%@은(는) 이 명령이 읽을 수 있는 HID 기기로 연결되어 있지 않습니다.";
+/* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
+"cli.record.draft.sdl.rejected" = "%1$@의 SDL_GameControllerDB 줄이 거부되었습니다: %2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.record.draft.started" = "%1$@(%2$@)의 모든 컨트롤을 누르고 각 스틱과 트리거를 움직이세요.";
 /* Error of the 'ojd record' commands when a record file cannot be read. %1$@ is the file path and %2$@ is the reason from the system. */
@@ -2597,8 +2919,8 @@
 "cli.record.install.abstract" = "컨트롤러 레코드를 확인하고 현재 사용자용으로 설치합니다.";
 /* Yes or no question that 'ojd record install' asks on a terminal before it replaces an installed record. %@ is the path of the installed file. */
 "cli.record.install.confirm" = "%@을(를) 교체하시겠습니까?";
-/* Long description in the help of 'ojd record install'. VVVV-PPPP.json and --force stay as written. */
-"cli.record.install.discussion" = "레코드를 VVVV-PPPP.json으로 레코드 디렉터리에 기록합니다. 실행 중인 서비스가 즉시 적용합니다. 해당 모델에 이미 설치된 레코드를 교체할 때는 터미널에서 확인을 요청하고, 그렇지 않으면 --force가 필요합니다. --dry-run은 레코드를 확인하기만 하고 아무것도 기록하지 않습니다. 레코드가 올바르지 않으면 아무것도 기록하지 않고 종료 코드 1로 끝납니다.";
+/* Long description in the help of 'ojd record install'. vvvv-pppp.plist and --force stay as written. */
+"cli.record.install.discussion" = "레코드를 vvvv-pppp.plist으로 레코드 디렉터리에 기록합니다. 실행 중인 서비스가 즉시 적용합니다. 해당 모델에 이미 설치된 레코드를 교체할 때는 터미널에서 확인을 요청하고, 그렇지 않으면 --force가 필요합니다. --dry-run은 레코드를 확인하기만 하고 아무것도 기록하지 않습니다. 레코드가 올바르지 않으면 아무것도 기록하지 않고 종료 코드 1로 끝납니다.";
 /* Message printed by 'ojd record install --dry-run' instead of installing. %@ is the target file path. */
 "cli.record.install.dryRun" = "%@을(를) 설치합니다.";
 /* Error when the record file cannot be written. %1$@ is the target file path and %2$@ is the reason from the system. */
@@ -2685,6 +3007,12 @@
 "error.E2036.message" = "제때 테스트 알림에 응답한 OpenJoystickDriver 앱이 없습니다. 앱이 실행 중인지 확인하고 다시 시도하세요.";
 /* Error E2037, shown by ojd and the app when notifications are not allowed for the app, so the test notification could not be shown. */
 "error.E2037.message" = "OpenJoystickDriver의 알림이 허용되지 않았습니다. 시스템 알림 설정에서 허용한 다음 다시 시도하세요.";
+/* Error E2038, shown by ojd and the app when the selected controller has no speaker to play sound on. */
+"error.E2038.message" = "컨트롤러에 스피커가 없습니다. 소리를 재생할 수 있는 컨트롤러를 선택한 다음 다시 시도하세요.";
+/* Error E2039, shown by ojd when the audio file given to the speaker command is not an uncompressed PCM WAV file. */
+"error.E2039.message" = "지원하지 않는 오디오 파일입니다. 압축하지 않은 PCM WAV 파일을 사용한 다음 다시 시도하세요.";
+/* Error E2040, shown by ojd and the app when the extension plugged into the controller did not answer its setup. */
+"error.E2040.message" = "컨트롤러의 확장 장치가 설정에 응답하지 않았습니다. 확장 장치를 다시 연결한 다음 다시 시도하세요.";
 /* Note about a controller record whose raw USB family the USB extension cannot claim because Apple signs its product list. OJD is the short product name. */
 "platform.macos.cli.record.group.usbNotClaimed" = "이 제품군은 원시 USB를 사용하며, 제품 목록이 Apple에서 서명되어 있으므로 USB 확장 프로그램이 이 컨트롤러를 점유할 수 없습니다. OJD는 macOS가 허용하는 경우에만 직접 USB 접근으로 이 컨트롤러에 도달합니다.";
 /* Note about a Switch 2 controller record that connects over USB only. bluetoothLE.vibrationCharacteristic is a field of the record and stays as written. */
@@ -2709,7 +3037,7 @@
 "cli.binding.group.actionsInvalid" = "--actions-json이 올바른 동작 목록이 아닙니다: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
 "cli.binding.group.actionsTooLarge" = "--actions-json이 너무 큽니다.";
-/* Error of 'ojd binding set' when the value of --double-tap or --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
+/* Error of 'ojd binding set' when the value of --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
 "cli.binding.group.alternateFormat" = "%@에는 MS:TARGET 형식이 필요합니다. 예: 500:key:key-b";
 /* Error of 'ojd binding set' when an axis option is used with a source that is not an axis. The option names stay as written. */
 "cli.binding.group.axisOptionsSource" = "--deadzone, --gain, --invert, --response-curve, --digital-threshold에는 축 소스가 필요합니다.";
@@ -2734,11 +3062,13 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "소스를 하나 이상 지정하거나 --all을 사용하세요.";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "할당은 컨트롤러의 SOURCE가 사용될 때 TARGET을 보냅니다.\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW 또는 touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME 또는 진동, 조명, 어댑티브 트리거용 physical:....\n\n‘ojd profile show’는 할당을 이 형식으로 출력합니다. 코드, 시퀀스, 레이어는 ‘ojd profile edit’로 편집하세요.";
+"cli.binding.group.discussion" = "할당은 컨트롤러의 SOURCE가 사용될 때 TARGET을 보냅니다.\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW 또는 touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, position:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER 또는 진동, 조명, 어댑티브 트리거용 physical:....\n\n‘ojd profile show’는 할당을 이 형식으로 출력합니다. 코드, 시퀀스, 레이어는 ‘ojd profile edit’로 편집하세요.";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "프로파일의 할당을 나열합니다.";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
 "cli.binding.list.empty" = "‘%@’에는 할당이 없습니다. ‘ojd binding set’으로 추가하세요.";
+/* Error of 'ojd binding set' when a value of --multi-tap does not have the form COUNT:MS:TARGET. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.multiTapFormat" = "--multi-tap에는 COUNT:MS:TARGET 형식이 필요합니다. 예: 2:300:key:key-c";
 /* Help text of the --actions-json option of 'ojd binding set'. 'ojd profile export' stays as written. */
 "cli.binding.group.optionActionsJson" = "추가 동작을 ‘ojd profile export’가 쓰는 형식의 JSON 배열로 지정합니다.";
 /* Help text of the --behavior option of 'ojd binding set'. The behavior hold is a value the user types. */
@@ -2747,20 +3077,28 @@
 "cli.binding.group.optionDeadzone" = "축 소스: 무시할 이동 범위이며 0~0.95입니다. 기본값: 0.1.";
 /* Help text of the --digital-threshold option of 'ojd binding set'. It sets the axis travel that counts as a press. */
 "cli.binding.group.optionDigitalThreshold" = "축 소스: 버튼 타깃에서 누름으로 간주하는 이동량입니다. 기본값: 0.5.";
-/* Help text of the --double-tap option of 'ojd binding set'. The example 300:key:key-c stays as written. */
-"cli.binding.group.optionDoubleTap" = "이 시간 안에 소스를 두 번 누르면 다른 타깃을 보냅니다. 예: 300:key:key-c";
 /* Help text of the --gain option of 'ojd binding set'. Gain scales the axis output. */
 "cli.binding.group.optionGain" = "축 소스: 출력 배율이며 0.1~10입니다. 기본값: 1.";
 /* Help text of the --invert flag of 'ojd binding set'. */
 "cli.binding.group.optionInvert" = "축 소스: 방향을 반전합니다.";
 /* Help text of the --long-hold option of 'ojd binding set'. The example 500:key:key-b stays as written. */
 "cli.binding.group.optionLongHold" = "소스를 이 시간 동안 누르고 있으면 다른 타깃을 보냅니다. 예: 500:key:key-b";
+/* Help text of the --multi-tap option of 'ojd binding set'. COUNT is the number of taps, MS the milliseconds allowed after the last release. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.optionMultiTap" = "소스를 COUNT번 탭하면 다른 타깃을 보냅니다. 각 누름은 마지막으로 뗀 뒤 MS 안에 있어야 합니다. 예: 2:300:key:key-c. 횟수마다 옵션을 반복할 수 있습니다.";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "펄스가 타깃을 유지하는 시간이며 1~5000ms입니다. 기본값: 100.";
+/* Help text of the --voice option of 'ojd binding set'. The option name and speak:TEXT stay as written. */
+"cli.binding.group.optionVoice" = "speak:TEXT 대상에 사용할 음성 식별자입니다. 기본값: 시스템 음성.";
+/* Error of 'ojd binding set' when --voice is given with a target that is not speak:TEXT. The option name and speak:TEXT stay as written. */
+"cli.binding.group.voiceNeedsSpeak" = "--voice에는 speak:TEXT 대상이 필요합니다.";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "축 소스: 이동량에 따라 출력이 커지는 방식입니다. 기본값: linear.";
+/* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
+"cli.binding.group.optionTurboDelay" = "첫 반복 전에 이만큼 기다립니다. 0~2500 ms. --turbo-rate와 --turbo-duty가 필요합니다.";
 /* Help text of the --turbo-duty option of 'ojd binding set'. The duty is the share of each turbo cycle in which the target is held. */
 "cli.binding.group.optionTurboDuty" = "각 터보 주기 중 타깃을 유지하는 비율이며 0보다 크고 1보다 작아야 합니다.";
+/* Help text of the --turbo-max option of 'ojd binding set'. The option names stay as written. */
+"cli.binding.group.optionTurboMax" = "이 횟수만큼 반복한 뒤 멈춥니다. 1~500. --turbo-rate와 --turbo-duty가 필요합니다.";
 /* Help text of the --turbo-rate option of 'ojd binding set'. --turbo-duty stays as written. */
 "cli.binding.group.optionTurboRate" = "누르고 있는 동안 타깃을 초당 이 횟수만큼 반복합니다. --turbo-duty가 필요합니다.";
 /* One-line summary of 'ojd binding set' in the command list and at the top of its help. */
@@ -2775,8 +3113,10 @@
 "cli.binding.group.sourceInvalid" = "‘%@’은(는) 소스가 아닙니다. ‘ojd binding set --help’에서 소스 형식을 확인할 수 있습니다.";
 /* Error of 'ojd binding set' when the target cannot be parsed. %@ is the text the user gave. The command in quotes stays as written. */
 "cli.binding.group.targetInvalid" = "‘%@’은(는) 타깃이 아닙니다. ‘ojd binding set --help’에서 타깃 형식을 확인할 수 있습니다.";
-/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given. Both option names stay as written. */
-"cli.binding.group.turboPair" = "--turbo-rate와 --turbo-duty는 함께 지정해야 합니다.";
+/* Error of 'ojd binding set' when the profile has no layer with the name in a layer:NAME:MODE target. %1$@ is the profile name and %2$@ is the layer name. */
+"cli.binding.group.layerMissing" = "‘%1$@’에 ‘%2$@’ 레이어가 없습니다. 변경된 내용이 없습니다.";
+/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given, or --turbo-delay or --turbo-max is given without both. All four option names stay as written. */
+"cli.binding.group.turboPair" = "--turbo-rate와 --turbo-duty는 함께 지정해야 하며, --turbo-delay와 --turbo-max에는 둘 다 필요합니다.";
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "터보는 포인터 이동 또는 스크롤 타깃에서 사용할 수 없습니다.";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
@@ -2823,26 +3163,40 @@
 "cli.profile.activate.abstract" = "프로파일을 해당 컨트롤러 모델에 적용합니다.";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
 "cli.profile.activate.allowEmpty" = "출력을 전혀 만들지 않는 프로파일이라도 활성화합니다.";
+/* Help text of the --confirm-actions flag of 'ojd profile activate'. --confirm-actions stays as written. */
+"cli.profile.activate.confirmActions" = "프로필이 App과 URL 열기, 단축어 실행, 텍스트 입력 같은 동작을 실행해도 되는지 확인합니다.";
 /* Long description in the help of 'ojd profile activate'. It explains the profile that replaces the active one and the profile that produces no output. The words mapped and --allow-empty stay as written. */
 "cli.profile.activate.discussion" = "이 프로파일은 같은 컨트롤러 모델과 앱 범위에서 활성 상태인 프로파일을 대체합니다. 가상 게임패드를 mapped로 설정하고 게임패드, 키보드, 포인터, 컨트롤러 어디에도 아무것도 보내지 않고 조명 색상도 설정하지 않는 프로파일은 출력을 만들지 않으며, 이런 프로파일을 활성화하려면 --allow-empty가 필요합니다.";
 /* Message printed after 'ojd profile activate'. %1$@ is the profile name, shown in quotes, and %2$@ is the controller model it applies to. */
 "cli.profile.activate.done" = "‘%1$@’을(를) %2$@에 활성화했습니다.";
 /* Error of 'ojd profile activate' for a profile that produces no output. --allow-empty stays as written. */
 "cli.profile.activate.empty" = "이 프로파일은 출력을 만들지 않습니다. 활성화하려면 --allow-empty를 추가하세요.";
+/* Error of 'ojd profile activate' for a profile that opens applications or URLs, runs shortcuts or types text. --confirm-actions stays as written. %@ is the list of actions, one per line, with each URL in full. */
+"cli.profile.activate.actionsNeedConfirmation" = "이 프로필은 동작을 실행합니다. 활성화하려면 --confirm-actions를 추가하세요:\n%@";
 /* Marker appended to the line of the active profile in 'ojd profile list'. Keep the parentheses. */
 "cli.profile.group.activeMarker" = "(활성)";
 /* Help text of the PROFILE argument shared by the 'ojd profile' commands. The command in quotes stays as written. */
 "cli.profile.group.argument" = "프로파일: ID 또는 ‘ojd profile list’에 나오는 이름입니다.";
 /* One-line summary of 'ojd profile create' in the command list and at the top of its help. */
 "cli.profile.create.abstract" = "컨트롤러 모델 하나를 위한 빈 프로파일을 만듭니다.";
+/* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.activation" = "자이로 출력을 위해 누르고 있어야 하는 컨트롤 (gyro-stick 템플릿). 지정하지 않으면 자이로 출력은 항상 켜져 있습니다.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "이 앱(앱 ID로 지정)이 맨 앞에 있을 때만 프로파일을 적용합니다.";
+"cli.profile.create.app" = "이 앱(앱 ID 기준)이 맨 앞에 있을 때만 프로필을 적용합니다. 앱을 더 지정하려면 옵션을 반복하세요.";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "컨트롤러 모델: VVVV:PPPP 또는 연결된 컨트롤러의 ID입니다.";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
 "cli.profile.create.discussion" = "--app으로 앱을 지정하지 않으면 프로파일은 모든 앱에 적용됩니다. 기본적으로 가상 게임패드는 어떤 할당도 사용하지 않는 모든 컨트롤을 그대로 전달합니다. 프로파일은 비활성 상태로 시작하며, ‘ojd profile activate’로 활성화하세요.";
 /* Message printed after 'ojd profile create'. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.create.done" = "‘%1$@’(%2$@)을(를) 만들었습니다.";
+/* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
+"cli.profile.create.noMotion" = "%@에는 모션 센서가 없습니다.";
+/* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.stick" = "gyro-stick 템플릿이 조작하는 스틱: left 또는 right. 기본값은 right입니다.";
+/* Help text of the --template option of 'ojd profile create'. gyro-stick is the only template, the user types it, and it stays as written. */
+"cli.profile.create.template" = "템플릿으로 시작합니다. 템플릿은 gyro-stick 하나뿐입니다.";
+/* Error of 'ojd profile create' when --stick or --activation is given without --template. The three option names stay as written. */
+"cli.profile.create.templateRequired" = "--stick과 --activation에는 --template이 필요합니다.";
 /* Help text of the physical input option of 'ojd profile create'. shared and exclusive are values the user types and stay as written. */
 "platform.macos.cli.profile.create.physicalInput" = "macOS가 컨트롤러를 계속 볼 수 있는지(shared), OJD가 가져가는지(exclusive)를 정합니다.";
 /* Help text of the --virtual-gamepad option of 'ojd profile create'. disabled, mapped and passthrough are values the user types and stay as written. */
@@ -2896,7 +3250,7 @@
 /* One-line summary of 'ojd profile export' in the command list and at the top of its help. The command in quotes stays as written. */
 "cli.profile.export.abstract" = "‘ojd profile import’가 읽을 수 있는 파일로 프로파일을 출력합니다.";
 /* Long description in the help of 'ojd profile export'. --json and --plain stay as written. */
-"cli.profile.export.discussion" = "프로파일은 JSON이므로 --json과 --plain은 출력을 바꾸지 않습니다.";
+"cli.profile.export.discussion" = "프로파일은 속성 목록이므로 --json과 --plain은 출력을 바꾸지 않습니다.";
 /* Message printed after 'ojd profile export --output'. %1$@ is the profile name, shown in quotes, and %2$@ is the file path. */
 "cli.profile.export.done" = "‘%1$@’을(를) %2$@에 썼습니다.";
 /* Help text of the --output option of 'ojd profile export'. stdout is the standard output stream and stays as written. */
@@ -2913,6 +3267,8 @@
 "cli.profile.import.abstract" = "‘ojd profile export’가 쓴 파일에서 프로파일을 추가합니다.";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "‘%1$@’(%2$@)을(를) 가져왔습니다.";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "파일에 있는 범위 대신, 이 앱(앱 ID 기준)이 맨 앞에 있을 때만 가져온 프로필을 적용합니다. 앱을 더 지정하려면 옵션을 반복하세요.";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "stdin에서 프로파일을 읽으려면 - 를 사용합니다. 기존 프로파일과 ID가 같은 프로파일은 기존 프로파일을 대체합니다.";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */
@@ -3579,6 +3935,58 @@
 "ui.shortcuts.action.getControllers.description" = "연결된 컨트롤러를 반환합니다.";
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "컨트롤러 가져오기";
+/* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.description" = "리매핑 프로파일의 값 하나를 변경합니다(예: 이름).";
+/* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
+"ui.shortcuts.action.setProfileValue.key" = "키";
+/* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.title" = "프로파일 값 설정";
+/* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
+"ui.shortcuts.action.setProfileValue.value" = "값";
+/* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
+"ui.shortcuts.error.profileKey" = "프로필 값의 키에는 빈 부분이 있을 수 없습니다.";
+/* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.title" = "컨트롤러 진동시키기";
+/* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.description" = "컨트롤러의 진동 모터를 잠시 동작시킵니다.";
+/* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
+"ui.shortcuts.action.rumble.intensity" = "세기 (0-255)";
+/* Label in the Shortcuts app of the rumble action's duration in seconds. */
+"ui.shortcuts.action.rumble.duration" = "지속 시간(초)";
+/* Name in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.title" = "플레이어 표시등 설정";
+/* Description in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.description" = "컨트롤러의 플레이어 표시등을 설정합니다.";
+/* Label in the Shortcuts app of the player number from 1 to 4, or 0 for none. */
+"ui.shortcuts.action.player.number" = "플레이어 번호(0은 없음)";
+/* Name in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.title" = "컨트롤러 조명 설정";
+/* Description in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.description" = "컨트롤러의 라이트바 색상, LED 밝기 또는 둘 다 설정합니다.";
+/* Label in the Shortcuts app of the lightbar color given as six hexadecimal digits, RRGGBB. */
+"ui.shortcuts.action.light.color" = "색상(RRGGBB)";
+/* Label in the Shortcuts app of the LED brightness from 0 to 255. */
+"ui.shortcuts.action.light.brightness" = "LED 밝기(0-255)";
+/* Error in the Shortcuts app when the light action has no color or brightness, or the color is not RRGGBB. */
+"ui.shortcuts.error.lightRequest" = "16진수 여섯 자리 색상, 밝기 또는 둘 다 지정하세요.";
+/* Name in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.title" = "모드 패키지 목록 보기";
+/* Description in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.description" = "설치된 모드 패키지의 이름을 반환합니다.";
+/* Name in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.title" = "모드 패키지 설치";
+/* Description in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.description" = "폴더에서 모드 패키지를 설치하고 그 이름을 반환합니다.";
+/* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
+"ui.shortcuts.action.installMod.folder" = "폴더";
+/* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
+"ui.shortcuts.action.installMod.replace" = "설치된 패키지 교체";
+/* Name in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.title" = "모드 패키지 제거";
+/* Description in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.description" = "설치된 모드 패키지를 이름으로 제거합니다.";
+/* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
+"ui.shortcuts.action.removeMod.name" = "이름";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "모델";
 /* Name of the name property of a controller in the Shortcuts app. */
@@ -3729,12 +4137,22 @@
 "error.E3028.message" = "요청이 실행되는 동안 컨트롤러의 리매핑 세션이 바뀌었습니다. 다시 시도하세요.";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
 "error.E3029.message" = "설치된 패키지에서 온 프로파일은 변경할 수 없습니다. 프로파일을 복제한 뒤 복사본을 변경하세요.";
-/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
-"error.E4001.message" = "패키지 매니페스트 mod.json이 없거나 올바르지 않습니다. mod-package 스키마에 맞는지 확인한 뒤 명령을 다시 실행하세요.";
+/* Text of error E3030, returned when an action needs Post Event access and it is not granted. */
+"error.E3030.message" = "Post Event 접근 권한이 허용되지 않아 동작이 실행되지 않았습니다. OpenJoystickDriver에 권한을 허용하고 다시 시도하십시오.";
+/* Text of error E3031, returned when an action needs Automation access and it is not granted. */
+"error.E3031.message" = "자동화 접근 권한이 허용되지 않아 동작이 실행되지 않았습니다. OpenJoystickDriver에 권한을 허용하고 다시 시도하십시오.";
+/* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
+"error.E3032.message" = "Secure Input이 켜져 있어 동작이 실행되지 않았습니다. 암호 입력란처럼 이를 켠 앱을 닫고 다시 시도하세요.";
+/* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
+"error.E3033.message" = "동작에 실패했습니다.";
+/* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
+"error.E3034.message" = "시스템이 MIDI 소스 OpenJoystickDriver 생성을 거부하여 MIDI 동작이 실행되지 않았습니다. 다시 시도하십시오.";
+/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.plist stays as written. */
+"error.E4001.message" = "패키지 매니페스트 mod.plist이 없거나 올바르지 않습니다. mod-package 스키마에 맞는지 확인한 뒤 명령을 다시 실행하세요.";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */
 "error.E4002.message" = "이 패키지는 실행 중인 버전과 다른 OpenJoystickDriver 버전이 필요합니다. 이 버전을 지원하는 패키지 버전을 설치하거나 OpenJoystickDriver를 업데이트하세요.";
-/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.json stays as written. */
-"error.E4003.message" = "패키지의 파일이 올바르지 않거나 없거나 mod.json에 나열되어 있지 않습니다. 명령이 알려 주는 파일을 고친 뒤 다시 실행하세요.";
+/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.plist stays as written. */
+"error.E4003.message" = "패키지의 파일이 올바르지 않거나 없거나 mod.plist에 나열되어 있지 않습니다. 명령이 알려 주는 파일을 고친 뒤 다시 실행하세요.";
 /* Text of error E4004, printed when a mod package covers a controller, persona or profile that the user's files or another package hold. */
 "error.E4004.message" = "이 패키지는 사용자 파일이나 설치된 다른 패키지에 이미 있는 컨트롤러, 페르소나 또는 프로파일을 다룹니다. 충돌하는 파일이나 패키지를 제거하거나 패키지를 수정한 뒤 명령을 다시 실행하세요.";
 /* Text of error E4005, printed when a mod package of the same name is installed. --force stays as written. */
@@ -3751,12 +4169,26 @@
 "error.E5003.message" = "프로토콜 설명이 파일 이름과 다른 패밀리를 지정합니다. 파일 이름을 패밀리 이름으로 지정하세요.";
 /* Text of error E5004, printed when a protocol description lists a variant that its family lacks. */
 "error.E5004.message" = "프로토콜 설명이 해당 패밀리에 없는 변형을 나열합니다. 패밀리의 변형 중 하나를 사용하세요.";
-/* Text of error E5005, printed when the access file is damaged. AccessGrants.json is a file name and stays as written. */
-"error.E5005.message" = "접근 파일 AccessGrants.json이(가) 손상되었습니다. 파일을 고치거나 삭제한 다음 접근을 다시 허용하세요.";
+/* Text of error E5005, printed when the access file is damaged. AccessGrants.plist is a file name and stays as written. */
+"error.E5005.message" = "접근 파일 AccessGrants.plist이(가) 손상되었습니다. 파일을 고치거나 삭제한 다음 접근을 다시 허용하세요.";
 /* Text of error E5006, printed when the key file of the unit IDs cannot be read or has the wrong size. PortKeyInstallation.key is a file name and stays as written. OpenJoystickDriver is the product name. */
 "error.E5006.message" = "유닛 ID의 키 파일 PortKeyInstallation.key를 읽을 수 없거나 크기가 32바이트가 아닙니다. 백업에서 파일을 복원하세요. 대신 삭제하면 OpenJoystickDriver가 새 키를 만들고 모든 유닛 ID가 바뀝니다.";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "컨트롤러 레코드 또는 patch가 올바르지 않습니다. 해당 스키마로 파일을 확인하고 메시지가 알려 주는 필드를 고치세요.";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "이 레코드 파일";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "내장 카탈로그의 Controllers 폴더: 카탈로그에 레코드 파일이 없습니다. 규칙: 카탈로그에는 컨트롤러 레코드가 하나 이상 있어야 합니다. 해결: OpenJoystickDriver를 다시 설치하세요.";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@, vendorID 및 productID: 파일 이름은 두 ID를 16진수로 쓴 %2$@이어야 합니다. 해결: 파일 이름을 %2$@(으)로 바꾸거나 파일 안의 ID를 고치세요.";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@, vendorID 및 productID: %2$@은(는) 이미 %3$@의 레코드 식별자입니다. 해결: 두 파일 중 하나를 삭제하거나 이 파일의 ID를 바꾸세요.";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@, document: 값을 JSON으로 쓸 수 없습니다(%2$@). 해결: 이유에 나온 값을 문자열, 숫자, 불리언, 목록 또는 딕셔너리로 바꾸세요.";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@, vendorID 및 productID: vendorID는 1...65535, productID는 0...65535여야 합니다. 해결: 각각 범위 안의 정수로 설정하세요.";
+/* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
+"error.E5008.message" = "컨트롤러의 SDL_GameControllerDB 줄로는 그 컨트롤러를 구동할 수 없습니다. 이유는 메시지에 나와 있습니다. ojd record draft로 해당 컨트롤러의 레코드를 작성하세요.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */
 "ui.error.withCode" = "%1$@ (%2$@)";
 /* Message printed by 'ojd update check' when the installed version is newer than the latest release. %1$@ is the installed version and %2$@ is the latest release. */
@@ -3811,6 +4243,8 @@
 "ui.activity.check.transportExtensionRegistration" = "드라이버 확장 등록";
 /* Name of the check in the diagnostics table that validates the configuration files. */
 "ui.activity.check.configFiles" = "설정 파일";
+/* Name of the check in the diagnostics table that reports a controller with the Nintendo Switch Pro Controller identity and serial 000000000001. Nintendo Switch Pro Controller is a product name and stays as written. */
+"ui.activity.check.switchSerial" = "Switch Pro Controller 일련번호";
 /* Name of the check in the diagnostics table that tests whether the app can read USB controllers. */
 "ui.activity.check.usbAccess" = "USB 접근";
 /* Button of a failed check in the diagnostics table that opens the Library area. */
@@ -3871,6 +4305,10 @@
 "ui.controllers.draftRecord.title" = "컨트롤러 레코드 초안 작성";
 /* Message when a record cannot be drafted. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.controllers.draftRecord.noLayout" = "%@의 HID 리포트 디스크립터에서 읽을 수 있는 컨트롤이 없고, 내장 레코드가 이미 패밀리를 지정하고 있습니다.";
+/* Button in the Controllers detail that drafts a controller record from the SDL_GameControllerDB line of the controller. SDL stays as written. Keep the three dots. */
+"ui.controllers.draftRecordFromSDL" = "SDL에서 레코드 초안…";
+/* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
+"ui.controllers.draftRecordFromSDL.noPad" = "%@은(는) OpenJoystickDriver가 읽을 수 있는 HID 기기로 연결되어 있지 않습니다.";
 /* Button in the Controllers detail that starts a packet capture of the controller. Keep the three dots. */
 "ui.controllers.capturePackets" = "패킷 캡처…";
 /* Title of the sheet that captures packets of the controller. */
@@ -3889,12 +4327,14 @@
 "ui.controllers.publication.notPublished" = "게시되지 않음";
 /* Value of the publication fact: the publication failed. */
 "ui.controllers.publication.failed" = "실패";
+/* Value of the input health fact: the session has read no input report yet. */
+"ui.controllers.inputHealth.awaitingInput" = "첫 입력을 기다리는 중…";
 /* Value of the input health fact: input arrives as expected. */
 "ui.controllers.inputHealth.healthy" = "정상";
 /* Value of the input health fact: input stopped arriving. */
 "ui.controllers.inputHealth.stale" = "업데이트 없음";
 /* Value of the input health fact: the app waits until all controls are at rest before it sends input again. */
-"ui.controllers.inputHealth.waitingForNeutral" = "중립 위치 대기 중";
+"ui.controllers.inputHealth.waitingForNeutral" = "중립 위치 대기 중…";
 /* Error shown when the settings file is damaged. %@ is the path of the file. The command in backticks stays as written, and Trash is the macOS name. */
 "ui.settings.advanced.errorDamaged" = "설정 파일 %@이(가) 손상되었습니다. 수정하거나 `ojd setting reset`을 실행해 휴지통으로 이동하세요.";
 /* Error shown when the settings file has an unsupported version. %@ is the path of the file. apiVersion and the command in backticks stay as written, and Trash is the macOS name. */
@@ -3915,8 +4355,8 @@
 "platform.macos.ui.settings.advanced.unreadableShowInFinder" = "Finder에서 보기";
 /* One-line summary of 'ojd setting reset' in the command list and at the top of its help. */
 "cli.setting.reset.abstract" = "설정 파일을 휴지통으로 이동합니다.";
-/* Long description in the help of 'ojd setting reset'. Settings.json is a file name and stays as written. */
-"cli.setting.reset.discussion" = "Settings.json을 휴지통으로 이동해 모든 설정을 기본값으로 되돌립니다. 파일이 손상되었거나 거부될 때 사용하세요.";
+/* Long description in the help of 'ojd setting reset'. Settings.plist is a file name and stays as written. */
+"cli.setting.reset.discussion" = "Settings.plist을 휴지통으로 이동해 모든 설정을 기본값으로 되돌립니다. 파일이 손상되었거나 거부될 때 사용하세요.";
 /* Yes or no question that 'ojd setting reset' asks on a terminal. */
 "cli.setting.reset.confirm" = "설정 파일을 휴지통으로 이동하고 모든 설정을 기본값으로 되돌릴까요?";
 /* Message printed after 'ojd setting reset'. %@ is the path of the settings file. */
@@ -3938,7 +4378,7 @@
 /* Reason the controller has no virtual gamepad: the output is paused. */
 "ui.controllers.publication.reason.suppressed" = "출력 일시 중지됨";
 /* Reason the controller has no virtual gamepad: the first input has not arrived. */
-"ui.controllers.publication.reason.noInputYet" = "첫 입력을 기다리는 중";
+"ui.controllers.publication.reason.noInputYet" = "첫 입력을 기다리는 중…";
 /* Reason the controller has no virtual gamepad: another app holds its input. */
 "ui.controllers.publication.reason.heldByAnotherClient" = "다른 앱이 사용 중임";
 /* Publication state with its reason or failure, for example "Not published (Waiting for the first input)". %1$@ is the state and %2$@ the reason. */
@@ -4040,3 +4480,155 @@
 "ui.controllers.exclusiveOwner" = "단독 접근";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
 "ui.controllers.alsoListedBySystem" = "시스템에도 표시됨";
+/* Label of a macro as the destination of an assignment when the profile has no macro of that identifier, and name of the macro destination kind. */
+"term.macro" = "매크로";
+/* Label of a layer as the destination of an assignment when the profile has no layer of that identifier, and name of the layer destination kind. */
+"term.layer" = "레이어";
+/* Name of the Speak destination kind in the destination popup; the destination says a short text aloud. */
+"term.speak" = "말하기";
+/* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
+"ui.profiles.macros" = "매크로";
+/* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */
+"ui.profiles.addMacro" = "매크로 추가";
+/* Tooltip and VoiceOver label of the button on a macro row in the profile editor that opens the sheet to edit the macro. */
+"ui.profiles.editMacro" = "매크로 편집";
+/* Message in the macros section of the profile editor when none exists. */
+"ui.profiles.noMacros" = "구성된 매크로가 없습니다.";
+/* Label of the name field in the macro editor sheet. */
+"ui.macros.name" = "매크로 이름";
+/* Heading of the list of steps in the macro editor sheet. */
+"ui.macros.steps" = "단계";
+/* Title of the menu in the macro editor sheet that adds a step to the macro. */
+"ui.macros.addStep" = "단계 추가";
+/* Name of the macro step that presses and releases a key or button at once. Also the label of its destination picker. */
+"ui.macros.stepTap" = "탭";
+/* Name of the macro step that presses a key or button and keeps it down. Also the label of its destination picker. */
+"ui.macros.stepPress" = "누름";
+/* Name of the macro step that releases a key or button that a press step holds. Also the label of its destination picker. */
+"ui.macros.stepRelease" = "뗌";
+/* Name of the macro step that presses several keys or buttons together, holds them, and releases them. Also the label of each destination picker of the step. */
+"ui.macros.stepChord" = "동시 입력";
+/* Name of the macro step that waits before the next step, and the label of its time slider. */
+"ui.macros.stepWait" = "대기";
+/* Label of the slider in a chord step of the macro editor for how long the chord is held. */
+"ui.macros.holdTime" = "누르는 시간";
+/* Button in a chord step of the macro editor that adds one more key or button to the chord. */
+"ui.macros.addChordKey" = "동시 입력에 키 추가";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place earlier. */
+"ui.macros.moveUp" = "단계 위로 이동";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place later. */
+"ui.macros.moveDown" = "단계 아래로 이동";
+/* Tooltip and VoiceOver label of the button in the macro editor that removes a step. */
+"ui.macros.removeStep" = "단계 삭제";
+/* Label of the popup in the macro editor that chooses how often the macro runs its steps. */
+"ui.macros.repeat" = "반복";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps a set number of times. */
+"ui.macros.repeatCounted" = "지정한 횟수";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps again and again until the control is released. */
+"ui.macros.repeatWhileHeld" = "누르는 동안";
+/* Label of the stepper in the macro editor for how many times the macro runs its steps. The number follows the label. */
+"ui.macros.repeatTimes" = "회";
+/* Label of the popup in the macro editor for what happens when the control is pressed again while the macro runs. */
+"ui.macros.whileRunning" = "실행 중 다시 눌렀을 때";
+/* Choice of the popup in the macro editor: the macro keeps running and the new press does nothing. */
+"ui.macros.whileRunningIgnore" = "무시";
+/* Choice of the popup in the macro editor: the macro stops, releases everything it holds, and starts again. */
+"ui.macros.whileRunningRestart" = "다시 시작";
+/* Label of the switch in the macro editor: releasing the control stops the macro and releases everything it holds. */
+"ui.macros.interruptOnRelease" = "뗄 때 중지";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. The report mode the driver chose follows, a hex byte such as 0x31. */
+"cli.controller.show.labelReportMode" = "보고서 모드";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. The extension plugged into the remote follows, such as a Nunchuk. This is the accessory on the controller, not a system extension. */
+"cli.controller.show.labelExtension" = "확장 장치";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. Motion Plus is a Nintendo product name: keep it as written. The value that follows is off, calibrating or ready. */
+"cli.controller.show.labelMotionPlus" = "Motion Plus";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Nunchuk is a Nintendo product name: keep it as written. */
+"term.wiiExtension.nunchuk" = "Nunchuk";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Classic Controller is a Nintendo product name: keep it as written. */
+"term.wiiExtension.classicController" = "Classic Controller";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Classic Controller Pro is a Nintendo product name: keep it as written. */
+"term.wiiExtension.classicControllerPro" = "Classic Controller Pro";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: a Motion Plus that is plugged in but not switched on yet. Motion Plus is a Nintendo product name: keep it as written. */
+"term.wiiExtension.motionPlusInactive" = "Motion Plus (비활성)";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with nothing plugged into it. Motion Plus is a Nintendo product name: keep it as written. */
+"term.wiiExtension.motionPlus" = "Motion Plus";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with a Nunchuk plugged into it. Motion Plus and Nunchuk are Nintendo product names: keep them as written. */
+"term.wiiExtension.motionPlusNunchuk" = "Motion Plus (Nunchuk 연결)";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with a Classic Controller plugged into it. Motion Plus and Classic Controller are Nintendo product names: keep them as written. */
+"term.wiiExtension.motionPlusClassic" = "Motion Plus (Classic Controller 연결)";
+/* Value of the extension row for a Wii Remote extension the driver does not know. %@ is the six ID bytes as twelve hex digits and stays as written. */
+"status.wiiExtensionUnknown" = "알 수 없음 (ID %@)";
+/* Value of the Motion Plus row for a Wii Remote whose Motion Plus is not switched on. */
+"status.motionPlusOff" = "꺼짐";
+/* Value of the Motion Plus row for a Wii Remote while the driver measures the resting value of the gyro. The remote must lie still. */
+"status.gyroCalibrating" = "보정 중";
+/* Value of the Motion Plus row for a Wii Remote once the driver has measured the resting value of the gyro. */
+"status.gyroReady" = "준비됨";
+/* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
+"error.E5009.message" = "이전 버전의 저장된 문서는 자동 변환 방법이 없어서 ojd migrate가 그대로 둡니다. 메시지에 파일과 필드가 표시됩니다. 파일을 직접 지원되는 apiVersion으로 수정하세요.";
+/* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
+"error.E5010.message" = "저장된 문서가 XML 속성 목록이 아니거나 날짜 또는 데이터 값을 포함합니다. 메시지에 파일과 형식 또는 키 경로가 표시됩니다. plutil -convert xml1로 파일을 XML 속성 목록으로 저장하세요.";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "생성기 스크립트를 실행하고 반환된 문서를 기록합니다.";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "파일과 네트워크에 접근할 수 없는 보조 프로세스에서 스크립트를 실행하고, generate 함수가 반환한 문서를 검사한 뒤 각각을 --output에 속성 목록 파일로 기록합니다. --output이 없으면 문서를 출력합니다. --timeout은 제한 시간을 초 단위로 정합니다(기본값 5).";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "생성기 스크립트(.js 파일).";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "스크립트 보조 프로세스를 시작할 수 없습니다: %@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "%1$@이(가) %2$@초 안에 끝나지 않아 중단되었습니다.";
+/* Help text of the --output option of 'ojd generate'. */
+"cli.generate.group.output" = "파일을 받을 폴더입니다. 없으면 문서를 출력하고 파일은 기록하지 않습니다.";
+/* Help text of the --replace flag of 'ojd generate'. */
+"cli.generate.group.replace" = "내용이 문서와 다른 파일을 교체합니다.";
+/* Error of 'ojd generate' when the script file cannot be read. %@ is the script path. */
+"cli.generate.group.unreadable" = "%@을(를) 읽을 수 없습니다.";
+/* Error of 'ojd generate' when the script defines no function named generate. %@ is the script path; generate stays as written. */
+"cli.generate.group.missingGenerate" = "%@에 generate 함수가 정의되어 있지 않습니다.";
+/* Error of 'ojd generate' when the script throws a value that has no line number. %1$@ is the script path and %2$@ is the message. */
+"cli.generate.group.scriptFailed" = "스크립트 %1$@이(가) 실패했습니다: %2$@";
+/* Error of 'ojd generate' for a syntax error or an exception of the script. %1$@ is the script path, %2$@ is the line number and %3$@ is the message. */
+"cli.generate.group.scriptFailedAtLine" = "스크립트 %1$@이(가) %2$@번째 줄에서 실패했습니다: %3$@";
+/* Error of 'ojd generate' when generate returns null, no value, or something that is not a document or a list of documents. generate stays as written. */
+"cli.generate.group.notDocuments" = "generate는 문서 하나 또는 문서 목록을 반환해야 합니다.";
+/* Error of 'ojd generate' for a returned document that fails its checks. %1$@ is the position of the document in the result, counted from 1, and %2$@ is the key path and the rule it breaks. */
+"cli.generate.group.documentInvalid" = "문서 %1$@이(가) 올바르지 않아 파일을 기록하지 않았습니다: %2$@";
+/* Error of 'ojd generate' when two returned documents have the same file name. %1$@ and %2$@ are their positions in the result, counted from 1, and %3$@ is the file name. */
+"cli.generate.group.duplicate" = "문서 %1$@과(와) %2$@이(가) 모두 %3$@에 기록되므로 파일을 기록하지 않았습니다.";
+/* Error of 'ojd generate' when a file holds other content than the generated document. %@ is the file path; --replace stays as written. */
+"cli.generate.group.conflict" = "%@에 다른 내용이 있어 파일을 기록하지 않았습니다. 덮어쓰려면 --replace를 사용하세요.";
+/* Error of 'ojd generate' when a file cannot be written. %1$@ is the file path and %2$@ is the reason. */
+"cli.generate.group.writeFailed" = "%1$@을(를) 기록할 수 없습니다: %2$@";
+/* Line of 'ojd generate' for a file that it wrote anew. %@ is the file path. */
+"cli.generate.group.created" = "%@을(를) 만들었습니다.";
+/* Line of 'ojd generate' for a file whose other content it replaced. %@ is the file path. */
+"cli.generate.group.replaced" = "%@을(를) 교체했습니다.";
+/* Line of 'ojd generate' for a file that already held the generated document. %@ is the file path. */
+"cli.generate.group.unchanged" = "%@은(는) 변경되지 않았습니다.";
+/* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
+"cli.migrate.group.abstract" = "이전 버전의 저장된 문서를 현재 버전으로 변환합니다.";
+/* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
+"cli.migrate.group.discussion" = "이전 apiVersion을 가진 Settings.plist, AccessGrants.plist, 프로필, 사용자 컨트롤러 레코드와 패치, 가상 장치 파일을 변환합니다. 각 원본은 지원 폴더의 Migrated 폴더에 보관됩니다. 모드 패키지도 변환됩니다. 지원 폴더 대신 검사할 폴더를 지정할 수 있습니다. 각 파일은 Migrated, Current, Failed, Foreign 중 하나의 판정을 받습니다.";
+/* Help text of the --dry-run option of 'ojd migrate'. */
+"cli.migrate.group.dryRun" = "변환될 문서를 나열하고 아무것도 변경하지 않습니다.";
+/* Message printed by 'ojd migrate' when no stored document has an older version. */
+"cli.migrate.group.none" = "마이그레이션이 필요한 문서가 없습니다.";
+/* Line printed by 'ojd migrate' for a converted document. %@ is the path of the document in the support folder. Migrated is a folder name and stays as written. */
+"cli.migrate.group.converted" = "%@을(를) 변환했습니다. 원본은 Migrated 폴더에 있습니다.";
+/* Line printed by 'ojd migrate --dry-run' for a document it would convert. %@ is the path of the document in the support folder. */
+"cli.migrate.group.wouldConvert" = "%@을(를) 변환합니다.";
+/* Line printed by 'ojd migrate' for a document it cannot convert. %1$@ is the path of the document, %2$@ is the reason. */
+"cli.migrate.group.failed" = "%1$@은(는) 변경되지 않습니다: %2$@";
+/* Error text of 'ojd migrate' when at least one document could not be converted. */
+"cli.migrate.group.failedSummary" = "일부 문서를 변환하지 못해 그대로 남아 있습니다. 출력에 각 문서가 표시됩니다.";
+/* Help text of the folder argument of 'ojd migrate'. */
+"cli.migrate.group.folder" = "지원 폴더 대신 검사할 폴더.";
+/* Line printed by 'ojd migrate' for a file that is in the current format. %@ is the path of the file. */
+"cli.migrate.group.current" = "%@은(는) 이미 최신입니다.";
+/* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
+"cli.migrate.group.foreign" = "%@은(는) OpenJoystickDriver 문서가 아니며 변경되지 않습니다.";
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
+"ui.migrate.action" = "마이그레이션";
+/* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
+"platform.macos.ui.migrate.failed" = "일부 문서를 변환하지 못해 그대로 남아 있습니다. 어떤 문서인지는 터미널에서 ojd migrate를 실행해 확인하세요.";

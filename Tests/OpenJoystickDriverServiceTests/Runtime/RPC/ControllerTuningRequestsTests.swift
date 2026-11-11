@@ -38,7 +38,7 @@ struct ControllerTuningRequestsTests {
       #expect(written.failure == nil)
       #expect(written.created)
       #expect(written.previous == nil)
-      #expect(written.file?.hasSuffix("Controllers/2c22-2000.patch.json") == true)
+      #expect(written.file?.hasSuffix("Controllers/2c22-2000.patch.plist") == true)
       let model = ControllerModelID(vendorID: 0x2C22, productID: 0x2000)
       let loaded = ControllerRecordSet.load(userDirectory: directory)
       #expect(loaded.records[model]?.tuning.stickDeadzone == 0.08)
@@ -95,7 +95,7 @@ struct ControllerTuningRequestsTests {
       key: .stickDeadzone,
       value: 0.08,
       previous: nil,
-      file: "/tmp/2c22-2000.patch.json",
+      file: "/tmp/2c22-2000.patch.plist",
       created: true,
       failure: nil
     )

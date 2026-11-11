@@ -1,14 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/error-codes.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/error-codes.schema.json",
   "title": "OpenJoystickDriver error codes",
-  "description": "The authored catalog Resources/ErrorCodes.json. Each entry gives one stable E#### code. A code is never reused for another error. The English explanation of a code is the localization key error.E####.",
+  "description": "The catalog of stable error codes.",
   "type": "object",
   "required": ["apiVersion", "kind", "codes"],
   "additionalProperties": false,
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha1"
+      "const": "openjoystickdriver/v1alpha3"
     },
     "kind": {
       "const": "ErrorCatalog"
@@ -29,7 +29,7 @@
         "code": {
           "type": "string",
           "pattern": "^E[1-5][0-9]{3}$",
-          "description": "E1xxx is Endpoint, E2xxx is CLI, E3xxx is Remapping, E4xxx is Mod, and E5xxx is Document."
+          "description": "A stable error code: E1xxx endpoint, E2xxx CLI, E3xxx remapping, E4xxx mod, E5xxx document."
         },
         "domain": {
           "enum": ["Endpoint", "CLI", "Remapping", "Mod", "Document"]
@@ -37,18 +37,18 @@
         "name": {
           "type": "string",
           "pattern": "^[a-z][A-Za-z0-9]*$",
-          "description": "The lowerCamelCase name of the Swift ErrorCode case."
+          "description": "The lowerCamelCase name of the error code case."
         },
         "exitCode": {
           "type": "integer",
           "minimum": 1,
           "maximum": 255,
-          "description": "The exit status of ojd; cli entries only."
+          "description": "The exit status of the command-line tool."
         },
         "wire": {
           "type": "string",
           "pattern": "^[a-z][a-z0-9_]*$",
-          "description": "The code value of the remapping RPC that this code stands for; remapping and document entries only."
+          "description": "The code value of the remapping RPC that this code stands for."
         }
       },
       "allOf": [

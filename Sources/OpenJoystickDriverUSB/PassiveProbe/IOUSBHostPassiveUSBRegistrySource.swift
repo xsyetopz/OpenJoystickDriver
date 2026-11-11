@@ -1,12 +1,16 @@
 import Foundation
 import IOKit
 
+/// Reads USB device nodes from the IORegistry without opening any device.
 struct IOUSBHostPassiveUSBRegistrySource: PassiveUSBRegistrySource {
-  /// Registry levels read below each matched service; nil reads the whole subtree. Runtime
-  /// observation reads only the device's direct children (its interfaces), so a hub's downstream
-  /// devices are never walked.
+  /// Registry levels read below each matched service; nil reads the whole subtree.
+  ///
+  /// Runtime observation reads only the device's direct children (its interfaces), so a hub's
+  /// downstream devices are never walked.
   var childDepth: Int?
 
+  /// Returns the nodes of the services of `className` whose numeric properties equal
+  /// `numericProperties`, with their children to `childDepth` levels.
   func matchingServices(
     className: String,
     numericProperties: [String: UInt64]
@@ -14,14 +18,16 @@ struct IOUSBHostPassiveUSBRegistrySource: PassiveUSBRegistrySource {
     try enumerate(className: className, numericProperties: numericProperties, depth: childDepth)
   }
 
+  /// Returns the nodes of the services of `className` whose numeric properties equal
+  /// `numericProperties`, with their children to `depth` levels.
   private func enumerate(
     className: String,
     numericProperties: [String: UInt64],
     depth: Int?
   ) throws -> [PassiveUSBRegistryNode] {
     let matching = IOServiceMatching(className)
-    numericProperties.forEach { key, value in
-      var value = Int64(bitPattern: value)
+    for (key, rawValue) in numericProperties {
+      var value = Int64(bitPattern: rawValue)
       if let number = CFNumberCreate(kCFAllocatorDefault, .sInt64Type, &value) {
         let cfKey = key as CFString
         CFDictionarySetValue(
@@ -45,6 +51,7 @@ struct IOUSBHostPassiveUSBRegistrySource: PassiveUSBRegistrySource {
     return nodes
   }
 
+  /// Reads `service` into a node, with its children to `depth` levels.
   private func node(
     _ service: io_service_t,
     className: String,
@@ -105,11 +112,14 @@ struct IOUSBHostPassiveUSBRegistrySource: PassiveUSBRegistrySource {
     )
   }
 
+  /// Returns the registry entry ID of `service`, or nil when IOKit cannot give one.
   private func registryEntryID(_ service: io_service_t) -> UInt64? {
     var value: UInt64 = 0
     return IORegistryEntryGetRegistryEntryID(service, &value) == kIOReturnSuccess ? value : nil
   }
 
+  /// Returns the registry path of `service` in the service plane, or an empty string when IOKit
+  /// cannot give one.
   private func registryPath(_ service: io_service_t) -> String {
     var buffer = [CChar](repeating: 0, count: 4_096)
     guard IORegistryEntryGetPath(service, kIOServicePlane, &buffer) == kIOReturnSuccess else {
@@ -119,21 +129,25 @@ struct IOUSBHostPassiveUSBRegistrySource: PassiveUSBRegistrySource {
     return String(bytes: bytes, encoding: .utf8) ?? ""
   }
 
+  /// Reads the registry property `key` of `service`.
   private func property(_ service: io_service_t, key: String) -> AnyObject? {
     IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?
       .takeRetainedValue()
   }
 
+  /// Returns the unsigned integer property `key` of `node`, or nil when it has none.
   private func uint64(_ node: PassiveUSBRegistryNode, _ key: String) -> UInt64? {
     guard case .unsignedInteger(let value) = node.properties[key] else { return nil }
     return value
   }
 
+  /// Returns the next service of `iterator`, or nil at its end.
   private func next(_ iterator: io_iterator_t) -> io_service_t? {
     let service = IOIteratorNext(iterator)
     return service == 0 ? nil : service
   }
 
+  /// Returns the class name of `service`, `IORegistryEntry` when IOKit cannot give one.
   private func registryClass(_ service: io_service_t) -> String {
     var buffer = [CChar](repeating: 0, count: 128)
     guard IOObjectGetClass(service, &buffer) == kIOReturnSuccess else { return "IORegistryEntry" }

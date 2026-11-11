@@ -4,8 +4,9 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 /// Report-`0x03` segments and chunked state packets in the layout of SDL `SDL_hidapi_steam.c`
-/// (`WriteSegmentToSteamControllerPacketAssembler`, `UpdateBLESteamControllerState`). They come
-/// from the source, not from a hardware capture.
+/// (`WriteSegmentToSteamControllerPacketAssembler`, `UpdateBLESteamControllerState`).
+///
+/// They come from the source, not from a hardware capture.
 private enum BLEReport {
   /// One 20-byte segment: report ID, header, and up to 18 payload bytes.
   static func segment(_ payload: [UInt8], number: UInt8 = 0, last: Bool = true) -> Data {
@@ -66,13 +67,14 @@ struct SteamControllerBluetoothTests {
   @Test
   func featureCommandsTravelAsReportThreeSegments() {
     let startup = SteamControllerDriver(isBluetooth: true).activationWrites().hidFeatures
-    #expect(startup.map(\.reportID) == [3, 3])
-    #expect(startup.map(\.bytes.count) == [20, 20])
+    #expect(startup.map(\.reportID) == [3, 3, 3])
+    #expect(startup.map(\.bytes.count) == [20, 20, 20])
     #expect(Array(startup[0].bytes.prefix(3)) == [0x03, 0xC0, 0x81])
+    #expect(Array(startup[1].bytes.prefix(3)) == [0x03, 0xC0, 0x8E])
     // Lizard-mode settings plus SETTING_WIRELESS_PACKET_VERSION 2.
     #expect(
-      Array(startup[1].bytes.prefix(16)) == [
-        0x03, 0xC0, 0x87, 12, 7, 7, 0, 8, 7, 0, 48, 0x18, 0, 49, 2, 0,
+      Array(startup[2].bytes.prefix(19)) == [
+        0x03, 0xC0, 0x87, 15, 7, 7, 0, 8, 7, 0, 24, 0, 0, 48, 0x18, 0, 49, 2, 0,
       ]
     )
 

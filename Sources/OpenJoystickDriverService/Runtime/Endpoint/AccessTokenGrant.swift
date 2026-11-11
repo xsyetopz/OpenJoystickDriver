@@ -4,8 +4,9 @@ import OpenJoystickDriverKit
 import Security
 
 /// A named secret that lets a client use the endpoint without a signature check, such as a
-/// script or a browser overlay; `AccessGrants.json` keeps only its SHA-256.
+/// script or a browser overlay; `AccessGrants.plist` keeps only its SHA-256.
 struct AccessTokenGrant: Codable, Equatable, Sendable {
+  /// The name of the token, which a client sends in its `Hello`.
   let name: String
   /// Lowercase hex.
   let tokenSHA256: String
@@ -14,15 +15,19 @@ struct AccessTokenGrant: Codable, Equatable, Sendable {
   let origins: [String]
   /// Sorted, without repeats.
   let scopes: [EndpointScope]
+  /// The time of the grant, as an ISO 8601 string.
   let grantedAt: String
   /// Set whenever the grant holds `control`, marking it as granted after the scope worked; a file
   /// with a `control` scope but no mark is damaged.
   let controlGrantedAt: String?
 
+  /// The keys of the persisted grant.
   private enum CodingKeys: String, CodingKey, CaseIterable {
+    /// The keys of the name, the token hash, the origins, the scopes and the grant times.
     case name, tokenSHA256, origins, scopes, grantedAt, controlGrantedAt
   }
 
+  /// Decodes the grant and rejects unknown keys.
   init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -34,6 +39,7 @@ struct AccessTokenGrant: Codable, Equatable, Sendable {
     controlGrantedAt = try container.decodeIfPresent(String.self, forKey: .controlGrantedAt)
   }
 
+  /// Creates a grant; a grant with the `control` scope records the grant time as its control mark.
   init(
     name: String,
     tokenSHA256: String,
@@ -49,8 +55,10 @@ struct AccessTokenGrant: Codable, Equatable, Sendable {
     controlGrantedAt = scopes.contains(.control) ? grantedAt : nil
   }
 
+  /// The ID of the grant: `token:` and the name.
   var id: String { "token:\(name)" }
 
+  /// The grant as the summary that clients list.
   var summary: AccessTokenSummary {
     AccessTokenSummary(name: name, origins: origins, scopes: scopes, grantTime: grantedAt)
   }
@@ -68,6 +76,7 @@ struct AccessTokenGrant: Codable, Equatable, Sendable {
       .replacingOccurrences(of: "=", with: "")
   }
 
+  /// Returns the lowercase hex SHA-256 of `token`.
   static func hash(_ token: String) -> String {
     SHA256.hash(data: Data(token.utf8)).map { String(format: "%02x", $0) }.joined()
   }
@@ -78,6 +87,7 @@ struct AccessTokenGrant: Codable, Equatable, Sendable {
       && name.utf8.allSatisfy { $0.isASCIIAlphanumeric || "._-".utf8.contains($0) }
   }
 
+  /// Tells whether `hash` is 64 lowercase hex digits.
   static func isValidHash(_ hash: String) -> Bool {
     hash.utf8.count == 64 && hash.utf8.allSatisfy { "0123456789abcdef".utf8.contains($0) }
   }
@@ -126,6 +136,7 @@ struct AccessTokenGrant: Codable, Equatable, Sendable {
     return data
   }
 
+  /// Returns the value of the lowercase hex digit `digit`, or nil for any other byte.
   private static func hexValue(_ digit: UInt8) -> UInt8? {
     switch digit {
     case 0x30...0x39: digit - 0x30
@@ -143,21 +154,27 @@ struct AccessTokenGrant: Codable, Equatable, Sendable {
 
 /// The WebSocket's switch and port; off by default.
 package struct AccessWebSettings: Codable, Equatable, Sendable {
+  /// The ports that the WebSocket may use.
   package static let ports = AccessWebPorts.allowed
 
+  /// Whether the WebSocket is on.
   var enabled = false
   /// Nil until the first enable, which saves the port the system picked unless one was given.
   var port: Int?
 
+  /// The keys of the persisted settings.
   private enum CodingKeys: String, CodingKey, CaseIterable {
+    /// The keys of the switch and the port.
     case enabled, port
   }
 
+  /// Creates the settings.
   package init(enabled: Bool = false, port: Int? = nil) {
     self.enabled = enabled
     self.port = port
   }
 
+  /// Decodes the settings and rejects unknown keys.
   package init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -233,6 +250,7 @@ extension AccessGrantFile {
 }
 
 extension UInt8 {
+  /// Whether the byte is an ASCII letter or digit.
   var isASCIIAlphanumeric: Bool {
     (0x30...0x39).contains(self) || (0x41...0x5A).contains(self) || (0x61...0x7A).contains(self)
   }

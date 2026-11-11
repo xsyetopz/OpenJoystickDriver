@@ -7,22 +7,33 @@
 
   // MARK: - Axis adjustment and capture
 
+  /// The sheet that adjusts the axis tuning of an assignment: dead zone, gain, inversion,
+  /// response curve and digital activation threshold.
   struct AxisAdjustmentSheet: View {
+    /// The assignment whose axis tuning the sheet edits.
     let binding: RemappingBinding
+    /// Receives the tuning when the person chooses Save.
     let onSave: (RemappingAxisTuning) -> Void
+    /// Dismisses the sheet.
     @Environment(\.presentationMode)
     private var presentationMode
+    /// The dead zone.
     @State
     private var deadzone: Double
+    /// The gain.
     @State
     private var gain: Double
+    /// Whether the axis is inverted.
     @State
     private var inverted: Bool
+    /// The response curve.
     @State
     private var curve: RemappingResponseCurve
+    /// The digital activation threshold.
     @State
     private var threshold: Double
 
+    /// Creates the sheet on the axis tuning of `binding`, or the default tuning when it has none.
     init(binding: RemappingBinding, onSave: @escaping (RemappingAxisTuning) -> Void) {
       self.binding = binding
       self.onSave = onSave
@@ -34,6 +45,7 @@
       _threshold = State(initialValue: tuning.digitalActivationThreshold)
     }
 
+    /// The axis tuning form and its Cancel and Save buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
         Text(
@@ -60,7 +72,7 @@
           selection: $curve
         ) {
           ForEach(RemappingResponseCurve.allCases, id: \.self) { value in
-            Text(responseCurveLabel(value)).tag(value)
+            Text(value.label).tag(value)
           }
         }
         SliderRow(
@@ -89,9 +101,12 @@
         }
       }.padding(28).frame(width: 430)
     }
+  }
 
-    private func responseCurveLabel(_ value: RemappingResponseCurve) -> String {
-      switch value {
+  extension RemappingResponseCurve {
+    /// The name of the curve in the response curve popups.
+    var label: String {
+      switch self {
       case .linear: return OJDLocalized.string("ui.capture.linear")
       case .easeIn: return OJDLocalized.string("ui.capture.easeIn")
       case .easeOut: return OJDLocalized.string("ui.capture.easeOut")
@@ -100,13 +115,19 @@
     }
   }
 
+  /// A slider with `title` and the value beside it.
   private struct SliderRow: View {
+    /// The text above the slider.
     let title: String
+    /// The number to edit.
     @Binding
     var value: Double
+    /// The values the slider allows.
     let range: ClosedRange<Double>
+    /// The unit after the value; `%` shows the value as a percentage.
     let suffix: String
 
+    /// The slider and its value.
     var body: some View {
       VStack(alignment: .leading, spacing: 5) {
         HStack {
@@ -118,6 +139,7 @@
       }
     }
 
+    /// The value with its suffix.
     private var formattedValue: String {
       let percent = suffix == "%"
       let value = percent ? value * 100 : value
@@ -125,10 +147,14 @@
     }
   }
 
+  /// The banner that says the profile changed elsewhere, with Reload and Keep Editing buttons.
   struct ConflictBanner: View {
+    /// Reloads the stored profile.
     let reload: () -> Void
+    /// Keeps the edits in the draft.
     let keepEditing: () -> Void
 
+    /// The banner with its Reload and Keep Editing buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 7) {
         Text(

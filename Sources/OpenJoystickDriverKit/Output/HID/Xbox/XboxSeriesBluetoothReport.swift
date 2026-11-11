@@ -25,8 +25,10 @@ public enum XboxSeriesBluetoothHIDDescriptor {
   /// Bytes of the rumble output report after its ID.
   static let rumbleReportPayloadSize = 8
 
-  /// Maps stable OJD button bits to the button usages of report 1. The D-pad bits map to Button
-  /// usage 0, which names no field, because the hat carries the D-pad.
+  /// Maps stable OJD button bits to the button usages of report 1.
+  ///
+  /// The D-pad bits map to Button usage 0, which names no field, because the hat carries the
+  /// D-pad.
   static let buttonUsageMap: [Int: Int] = [
     GamepadHIDDescriptor.ButtonBit.x.rawValue: 4,
     GamepadHIDDescriptor.ButtonBit.y.rawValue: 5,
@@ -59,6 +61,7 @@ public enum XboxSeriesBluetoothHIDDescriptor {
     GamepadHIDDescriptor.ButtonBit.share.rawValue: HIDInputUsage(page: 0x0C, usage: 0xB2)
   ]
 
+  /// The report descriptor bytes.
   public static let descriptor: [UInt8] = [
     0x05, 0x01, 0x09, 0x05, 0xA1, 0x01, 0x85, 0x01, 0x09, 0x01, 0xA1, 0x00, 0x09, 0x30, 0x09, 0x31,
     0x15, 0x00, 0x27, 0xFF, 0xFF, 0x00, 0x00, 0x95, 0x02, 0x75, 0x10, 0x81, 0x02, 0xC0, 0x09, 0x01,
@@ -86,18 +89,28 @@ public enum XboxSeriesBluetoothHIDDescriptor {
   ]
 }
 
-/// The Xbox Series Bluetooth report layout of the `GameControllerCompatible` persona. The hat
-/// carries the D-pad. The report has no slot for the touchpad click,
-/// microphone, paddles, auxiliaries or touch controls.
+/// The Xbox Series Bluetooth report layout of the `GameControllerCompatible` persona.
+///
+/// The hat carries the D-pad. The report has no slot for the touchpad click, microphone, paddles,
+/// auxiliaries or touch controls.
 public struct XboxSeriesBluetoothHIDReportFormat: VirtualGamepadReportFormat {
+  /// The format that reads the descriptor and packs report 1.
   private let base: HIDDescriptorReportFormat
 
+  /// The descriptor of the Xbox Series Bluetooth report.
   public var descriptor: [UInt8] { base.descriptor }
+  /// The input report size without its ID.
   public var inputReportPayloadSize: Int { base.inputReportPayloadSize }
+  /// The report ID of report 1.
   public var inputReportID: UInt8? { base.inputReportID }
+  /// The rumble report size without its ID.
   public var outputReportPayloadSize: Int? { base.outputReportPayloadSize }
+  /// The report ID of the rumble report.
   public var outputReportID: UInt8? { base.outputReportID }
 
+  /// Creates the format.
+  ///
+  /// A descriptor that does not parse is a programming error and stops the process.
   public init() {
     do {
       base = try HIDDescriptorReportFormat(
@@ -113,6 +126,7 @@ public struct XboxSeriesBluetoothHIDReportFormat: VirtualGamepadReportFormat {
     }
   }
 
+  /// Report 1 of `state`.
   public func buildInputReport(from state: VirtualGamepadState) -> [UInt8] {
     base.buildInputReport(from: state)
   }

@@ -106,7 +106,7 @@ actor InputTestGatewayStub: InputTestDeviceGateway {
       )
     case .setPlayerIndicator(let indicator): playerCalls.append((selector, indicator))
     case .setLightBrightness(let brightness): brightnessCalls.append((selector, brightness.byte))
-    case .setRGB, .setAdaptiveTrigger: throw InputTestGatewayError.outputFailed
+    case .setRGB, .setAdaptiveTrigger, .speaker: throw InputTestGatewayError.outputFailed
     }
     return ControllerOutputResult(outputResult ? .delivered : .writeFailed)
   }

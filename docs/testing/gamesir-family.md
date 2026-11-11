@@ -13,6 +13,8 @@ Both enhanced HID models bind `VendorGameSir:EnhancedHID`; their catalog paramet
 
 `3537:1004` stays on the existing XUSB route because Linux identifies it as T4 Kaleid and the White G7 Pro dongle report shares that identity. Existing Linux-backed `3537:100F` and `1010` routes are also unchanged.
 
+`3537:1082` has no record. Two products report it: the G7 SE on firmware 6.6.4 (see Observed), and the wired GameSir K1 (K1 Kaleid) per the owner captures in pull request #47. Both report the same 15-button, hat, X/Y, Z/Rz layout with Simulation Brake as the left trigger and Accelerator as the right, so the generic HID descriptor driver reads either pad from its report descriptor. A record for `3537:1082` would have to name one product for both, so none is bundled.
+
 ## Observed
 
 2026-09-25, owner hardware, macOS 27, unsigned debug build of branch `feat/0.5.0-beta.5` (Xcode 26.6): the G7 SE `3537:1010` ("GameSir-G7 SE Controller for Xbox", `bcdDevice` `0x0640`, device class `FF/FF/FF`, unconfigured at attach) on a Genesys USB 2.1 hub was admitted through the `iousbhost` backend. OJD configured it, completed the handshake, and started the USB input loop on endpoint `0x82`. A development-signed build then reported the controller active on the GIP protocol with `startup=succeeded`, and its packet log showed the GIP keep-alive exchange every 20 seconds (host `03 20 00 03 00 00 00`, controller `03 20 03 04 80 00 00 00`) while idle. Parsed button, stick, and trigger input, physical output, and reconnect are not yet observed.

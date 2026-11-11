@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/virtual-device.schema.json",
-  "description": "A virtual device record. Without match it defines a persona: the HID layout, transport, identity and control labels a virtual controller publishes. With match it selects a persona for one controller model or unit; its identity and labels replace the persona's.",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/virtual-device.schema.json",
+  "description": "A virtual device record: a persona, or a selection of a persona for a controller model or unit.",
   "type": "object",
   "additionalProperties": false,
   "required": ["apiVersion", "kind", "persona"],
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha1"
+      "const": "openjoystickdriver/v1alpha3"
     },
     "kind": {
       "const": "VirtualDevice"
@@ -49,7 +49,7 @@
       "enum": ["Xbox", "Generic"]
     },
     "worksWithDefaultSDLHints": {
-      "description": "Whether SDL recognizes the published device with its default hints. A definition states it, and ojd virtual export-mapping and ojd virtual show tell the user when it is false.",
+      "description": "Whether SDL recognizes the published device with its default hints.",
       "type": "boolean"
     },
     "identity": {
@@ -68,7 +68,7 @@
           "maximum": 65535
         },
         "version": {
-          "description": "The published HID version number, which SDL puts in its controller GUID. A record with match that omits it keeps the persona's version.",
+          "description": "The published HID version number, which SDL puts in its controller GUID.",
           "type": "integer",
           "minimum": 0,
           "maximum": 65535

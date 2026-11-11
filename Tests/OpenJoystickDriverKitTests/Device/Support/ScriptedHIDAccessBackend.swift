@@ -203,8 +203,9 @@ actor ScriptedHIDAccessBackend: HIDAccessBackend {
     continuations[attempt]?.yield(event)
   }
 
-  /// Returns once the consumer of attempt `attempt`'s stream has taken every yielded event and
-  /// asked for the next one.
+  /// Returns once the consumer of the stream of attempt `attempt` has taken every yielded event.
+  ///
+  /// The consumer has also asked for the next one.
   func waitUntilConsumed(attempt: Int) async {
     await relays[attempt]?.waitUntilConsumed()
   }

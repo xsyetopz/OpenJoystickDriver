@@ -9,6 +9,7 @@ public final class ProtocolDriverRegistry: Sendable {
   /// The current catalog; it changes when the service applies new user controller records.
   private var catalog: DeviceCatalog { DeviceCatalog.current.withLock { $0 } }
 
+  /// Creates a registry that reads the current catalog.
   public init() {}
 
   /// Exact catalog models whose records declare raw USB access, read when called.
@@ -95,16 +96,18 @@ public final class ProtocolDriverRegistry: Sendable {
   }
 
   /// Whether passively observed USB facts carry a known Xbox USB interface or device signature.
+  ///
   /// Raw-USB enumeration admits an uncatalogued device only then, so classification can report it.
   public static func carriesProtocolSignature(_ device: PhysicalDevice) -> Bool {
     ProtocolClassifier.carriesSignature(device)
   }
 
   /// The runtime profile a binding runs with: its catalog record or, for an interface-signature
-  /// binding, the family defaults. GIP devices enumerate unconfigured on macOS (their device class
-  /// is vendor-specific), so a GIP signature binding sets configuration 1 before the claim whether
-  /// this attach saw the device or interface signature, like the catalogued G7 SE row. Nil for
-  /// `HIDDescriptor` without a record.
+  /// binding, the family defaults.
+  ///
+  /// GIP devices enumerate unconfigured on macOS (their device class is vendor-specific), so a GIP
+  /// signature binding sets configuration 1 before the claim whether this attach saw the device or
+  /// interface signature, like the catalogued G7 SE row. Nil for `HIDDescriptor` without a record.
   func runtimeProfile(for binding: ProtocolBinding) -> DeviceRuntimeProfile? {
     if let record = binding.record { return record }
     guard binding.rule == .interfaceSignature else { return nil }
@@ -141,7 +144,11 @@ public final class ProtocolDriverRegistry: Sendable {
     guard let record = runtimeProfile(for: binding) else {
       guard binding.protocolID == .hidDescriptor else { return .failure(.noProtocolMatch) }
       return .success(
-        HIDDescriptorDriver(model: model, reportDescriptor: reportDescriptor)
+        HIDDescriptorDriver(
+          model: model,
+          reportDescriptor: reportDescriptor,
+          usageMap: binding.sdl?.usageMap
+        )
       )
     }
     var transportProfile = record.transportProfile
@@ -167,9 +174,13 @@ public final class ProtocolDriverRegistry: Sendable {
     )
   }
 
-  /// Builds the driver for one family, variant and record without checking any observed
-  /// interface. Not a runtime path: profile capabilities and record rendering have no device,
-  /// and ``makeDriver(for:model:claimed:)`` calls it only after validation.
+  /// Builds the driver for one family, variant and record without checking any observed interface.
+  ///
+  /// Not a runtime path: profile capabilities and record rendering have no device, and
+  /// ``makeDriver(for:model:claimed:)`` calls it only after validation.
+  ///
+  /// A record's input layouts of a family that decodes with its own driver are layered over that
+  /// driver (``LayeredInputDriver``).
   static func makeUnobservedDriver(
     protocolID: PhysicalProtocolID,
     variant: PhysicalProtocolVariantID?,
@@ -179,27 +190,39 @@ public final class ProtocolDriverRegistry: Sendable {
     slotOrdinal: Int = 0,
     reportDescriptor: Data? = nil
   ) -> Result<any PhysicalProtocolDriver, ProtocolBindingReason> {
+    let family = makeFamilyDriver(
+      protocolID: protocolID,
+      variant: variant,
+      record: record,
+      model: model,
+      transportProfile: transportProfile,
+      slotOrdinal: slotOrdinal,
+      reportDescriptor: reportDescriptor
+    )
+    guard case .success(let driver) = family, let layouts = record.inputLayouts,
+      protocolID != .hidReportLayout, protocolID != .hidDescriptor
+    else { return family }
+    return .success(LayeredInputDriver(family: driver, layouts: layouts))
+  }
+
+  private static func makeFamilyDriver(
+    protocolID: PhysicalProtocolID,
+    variant: PhysicalProtocolVariantID?,
+    record: DeviceRuntimeProfile,
+    model: ControllerModelID,
+    transportProfile: DeviceTransportProfile,
+    slotOrdinal: Int,
+    reportDescriptor: Data?
+  ) -> Result<any PhysicalProtocolDriver, ProtocolBindingReason> {
     if !protocolID.variants.isEmpty {
       guard let variant, protocolID.variants.contains(variant) else {
         return .failure(.unsupportedProtocolVariant)
       }
     }
     let tuning = protocolID.driverTuning(variant: variant, record: record.tuning)
-    switch protocolID {
-    case .hidDescriptor:
-      return .success(
-        HIDDescriptorDriver(
-          model: model,
-          reportDescriptor: reportDescriptor,
-          usageMap: record.hidUsageMap
-        )
-      )
-    case .hidReportLayout:
-      // Only a record carries a layout; a family profile has nothing to decode with.
-      guard let layout = record.inputLayout else { return .failure(.noProtocolMatch) }
-      return .success(ReportLayoutDriver(layout: layout, rumbleTemplate: record.rumbleTemplate))
-    case .xboxXID, .nintendoSwitchInputOnly, .vendorFlydigi:
-      return .success(
+    // The families whose description sets the input layout: three built in, and every documented one.
+    func describedLayoutDriver() -> Result<any PhysicalProtocolDriver, ProtocolBindingReason> {
+      .success(
         ReportLayoutDriver(
           describedBy: protocolID,
           variant: variant,
@@ -208,6 +231,22 @@ public final class ProtocolDriverRegistry: Sendable {
           tuning: tuning
         )
       )
+    }
+    switch protocolID {
+    case .hidDescriptor:
+      return .success(
+        HIDDescriptorDriver(
+          model: model,
+          reportDescriptor: reportDescriptor,
+          usageMap: record.hidUsageMap,
+          rumbleTemplate: record.rumbleTemplate
+        )
+      )
+    case .hidReportLayout:
+      // Only a record carries a layout; a family profile has nothing to decode with.
+      guard let layouts = record.inputLayouts else { return .failure(.noProtocolMatch) }
+      return .success(ReportLayoutDriver(layouts: layouts, rumbleTemplate: record.rumbleTemplate))
+    case .xboxXID, .nintendoSwitchInputOnly, .vendorFlydigi: return describedLayoutDriver()
     case .xboxXUSB:
       guard variant == .receiver else {
         return .success(
@@ -316,6 +355,7 @@ public final class ProtocolDriverRegistry: Sendable {
           hatFromPressureOnly: record.parameters.hatSource == .dpadPressure
         )
       )
+    case .nintendoWii: return .success(WiiDriver(tuning: tuning))
     case .vendorNVIDIAShield:
       return .success(
         NVIDIAShieldDriver(
@@ -345,6 +385,7 @@ public final class ProtocolDriverRegistry: Sendable {
         )
       default: return .failure(.unsupportedProtocolVariant)
       }
+    default: return describedLayoutDriver()
     }
   }
 }

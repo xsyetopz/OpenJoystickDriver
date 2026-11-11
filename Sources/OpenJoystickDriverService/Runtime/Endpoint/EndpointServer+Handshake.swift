@@ -55,9 +55,12 @@ extension EndpointServer {
     guard welcomed else { return }
     connection.setReceiveTimeout(seconds: 0)
 
-    guard let request = readRequest(connection, accepting: ["Subscription", "FeedRequest"]) else {
-      return
+    var next = readRequest(connection, accepting: Self.requestKinds)
+    while let found = next, found.request.kind.isCommand {
+      guard perform(found.request.kind, line: found.line, on: connection) else { return }
+      next = readRequest(connection, accepting: Self.requestKinds)
     }
+    guard let request = next?.request else { return }
     if request.kind == .feedRequest {
       guard connection.session?.scopes.contains(.control) == true else {
         connection.close(
@@ -66,20 +69,24 @@ extension EndpointServer {
         return
       }
       guard let persona = request.as.flatMap(VirtualHIDProfileID.init(rawValue:)) else {
+        let accepted = VirtualHIDProfileID.allCases.map(\.rawValue).joined(separator: ", ")
+        let refused = request.as.map { "\($0) is not a persona the service publishes. " } ?? ""
         connection.close(
-          Self.invalid(
-            "Send FeedRequest with a persona: "
-              + VirtualHIDProfileID.allCases.map(\.rawValue).joined(separator: ", ") + "."
-          )
+          Self.invalid("\(refused)Send FeedRequest with a persona: \(accepted).")
         )
         return
       }
       feed(connection, persona: persona)
       return
     }
-    guard request.kind == .subscription, request.stream == "Controllers" else {
+    guard request.kind == .subscription, let stream = request.stream.flatMap(Self.SubscriptionStream.init),
+      stream == .controllers || request.output == nil
+    else {
       connection.close(
-        Self.invalid("Send Subscription with the Controllers stream, or FeedRequest.")
+        Self.invalid(
+          "Send Subscription with the Controllers, Profiles or Mods stream, or FeedRequest. "
+            + "Only Controllers takes output."
+        )
       )
       return
     }
@@ -89,10 +96,22 @@ extension EndpointServer {
       )
       return
     }
-    lock.withLock { subscribe(connection, output: request.output ?? false) }
+    let listing: Task<Void, Never>?
+    switch stream {
+    case .controllers:
+      lock.withLock { subscribe(connection, output: request.output ?? false) }
+      listing = nil
+    case .profiles:
+      let automation = automation
+      listing = watchList(connection) { EndpointProfiles(profiles: try await automation.profiles()) }
+    case .mods:
+      let modStore = modStore
+      listing = watchList(connection) { EndpointMods(mods: modStore.entries()) }
+    }
 
     // The protocol has no line after `Subscription`; any line ends the connection.
     _ = readRequest(connection, accepting: [])
+    listing?.cancel()
   }
 
   /// Answers `hello` with `welcome` or an error; true when the client was welcomed.
@@ -106,7 +125,7 @@ extension EndpointServer {
     origin: String?,
     challenge: Challenge
   ) -> Bool {
-    guard let hello = readRequest(connection, accepting: ["Hello"]) else { return false }
+    guard let hello = readRequest(connection, accepting: ["Hello"])?.request else { return false }
     guard let requested = hello.scopes, !requested.isEmpty else {
       connection.close(Self.invalid("Send Hello with at least one scope first."))
       return false
@@ -156,7 +175,9 @@ extension EndpointServer {
     }
   }
 
-  /// The session of a signed client, or nil after recording the refusal. Call with `lock` held.
+  /// The session of a signed client, or nil after recording the refusal.
+  ///
+  /// Call with `lock` held.
   private func clientSession(
     _ client: EndpointClient,
     scopes: [EndpointScope],
@@ -175,7 +196,9 @@ extension EndpointServer {
     return AccessConnection(identity: client.identity, scopes: scopes)
   }
 
-  /// The session of a token client, or nil after recording the refusal. Call with `lock` held.
+  /// The session of a token client, or nil after recording the refusal.
+  ///
+  /// Call with `lock` held.
   ///
   /// The refusal names the token only when the proof is right, so that a guessed name is not
   /// recorded as that token's.
@@ -217,11 +240,14 @@ extension EndpointServer {
 
   /// The next request, one of the `accepted` kinds; nil after the client closed, the timeout
   /// passed, or a line that is refused: see ``EndpointHeader`` for `E1009` to `E1011`, and `E1003`
-  /// for a line that is not a request. With no `accepted` kind, any request is refused.
+  /// for a line that is not a request.
+  ///
+  /// With no `accepted` kind, any request is refused. The line is returned with the request so
+  /// that a request with members of its own decodes from it.
   private func readRequest(
     _ connection: EndpointConnection,
     accepting accepted: [String]
-  ) -> EndpointRequest? {
+  ) -> (request: EndpointRequest, line: Data)? {
     switch connection.readMessage() {
     case .end: return nil
     case .tooLong:
@@ -239,17 +265,21 @@ extension EndpointServer {
         connection.close(Self.invalid("The message is not a valid request of its kind."))
         return nil
       }
-      return request
+      return (request, data)
     }
   }
 
   /// What a token client signs: the connection's nonce, and on the WebSocket its origin and port.
   struct Challenge {
+    /// The random value that the server sent for this connection.
     let nonce: String
+    /// The `Origin` of the connection, empty when it has none.
     let origin: String
+    /// The port the connection reached, as text.
     let port: String
   }
 
+  /// An `InvalidMessage` error with `message`.
   static func invalid(_ message: String) -> EndpointError {
     EndpointError(code: .invalidMessage, message: message)
   }

@@ -4,7 +4,7 @@ import OpenJoystickDriverKit
 
 /// Where `ojd log` reads logs, pages them, and asks about the terminal.
 ///
-/// Tests replace it through `LogCommand.environment`, so they never read the real logs,
+/// Tests replace it through ``LogCommand/environment``, so they never read the real logs,
 /// spawn a pager, or depend on how the test runner was started.
 struct LogEnvironment: Sendable {
   /// The folder that holds the service log files.
@@ -19,6 +19,7 @@ struct LogEnvironment: Sendable {
   /// Whether stdout is a terminal.
   var isTerminal: @Sendable () -> Bool
 
+  /// The environment that reads the real log files and starts the real pager.
   static let system = Self(
     directory: { ApplicationServiceLogService.directory },
     tail: { stream, lines in
@@ -32,6 +33,9 @@ struct LogEnvironment: Sendable {
 
 /// Pipes text to a pager process through the shell, like `git` does with `$PAGER`.
 enum SystemPager {
+  /// Shows `text` through the pager `command`.
+  ///
+  /// - Throws: What starting the pager process throws.
   static func show(_ text: String, command: String) throws {
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/bin/sh")

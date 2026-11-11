@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/controller.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/controller.schema.json",
   "type": "object",
   "required": ["apiVersion", "kind", "vendorID", "productID", "modes"],
   "additionalProperties": false,
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha1"
+      "const": "openjoystickdriver/v1alpha3"
     },
     "kind": {
       "const": "Controller"
@@ -51,11 +51,40 @@
     },
     "tuning": {
       "$ref": "#/$defs/tuning"
+    },
+    "idle": {
+      "description": "Marks an identity that OJD recognizes and serves nothing, such as a receiver with no controller.",
+      "const": true
+    }
+  },
+  "if": {
+    "required": ["idle"]
+  },
+  "then": {
+    "properties": {
+      "modes": {
+        "maxItems": 1,
+        "contains": {
+          "properties": {
+            "id": {
+              "const": "default"
+            }
+          },
+          "required": ["id"]
+        }
+      },
+      "usb": false,
+      "bluetoothLE": false,
+      "capabilities": false,
+      "server": false,
+      "route": false,
+      "input": false,
+      "tuning": false
     }
   },
   "$defs": {
     "modes": {
-      "description": "The modes of one model. Exactly one mode has the id default and no match: it runs when no other mode matches or a probe gets no reply. Every other mode has a match. Non-default modes are tried in order and the first whose match keys all hold is selected.",
+      "description": "The modes of one model.",
       "type": "array",
       "minItems": 1,
       "items": {
@@ -69,7 +98,7 @@
         },
         "required": ["id"]
       },
-      "minContains": 1,
+      "minContains": 0,
       "maxContains": 1
     },
     "mode": {
@@ -112,7 +141,6 @@
       },
       "allOf": [
         {
-          "$comment": "a rumble resendIntervalMilliseconds cannot be combined with a session keepAlive",
           "not": {
             "properties": {
               "session": {
@@ -130,7 +158,7 @@
       ]
     },
     "modeMatch": {
-      "description": "Keys that must all hold for a mode to be selected. Link, interface signature, strings and bcdDevice are read from the enumerated device; probes read a feature report and are tried last.",
+      "description": "The keys that select a mode: link, interface signature, strings, release number, and probes.",
       "type": "object",
       "minProperties": 1,
       "additionalProperties": false,
@@ -167,7 +195,7 @@
       }
     },
     "modeInterfaceSignature": {
-      "description": "An interface the device must expose, by USB class triple and, optionally, the HID primary usage and the whole endpoint set. Only a raw-USB mode may name endpoints: a HID route reports none.",
+      "description": "An interface of the device, by USB class triple, HID primary usage, and endpoint set.",
       "type": "object",
       "required": ["interfaceClass", "interfaceSubclass", "interfaceProtocol"],
       "additionalProperties": false,
@@ -192,7 +220,7 @@
           "maximum": 65535
         },
         "endpoints": {
-          "description": "The interface's whole endpoint set: each entry pairs with one distinct endpoint and none is left over.",
+          "description": "The interface's whole endpoint set.",
           "type": "array",
           "minItems": 1,
           "items": {
@@ -210,7 +238,7 @@
       "maximum": 255
     },
     "bcdDeviceRange": {
-      "description": "An inclusive range of the device release number, bcdDevice. min must not exceed max.",
+      "description": "An inclusive range of the device release number.",
       "type": "object",
       "required": ["min", "max"],
       "additionalProperties": false,
@@ -228,7 +256,7 @@
       }
     },
     "modeInterface": {
-      "description": "The interfaces this mode drives, an inclusive range of interface numbers; the lowest one the device exposes is bound. first must not exceed last.",
+      "description": "The interfaces this mode drives, as an inclusive range of interface numbers.",
       "type": "object",
       "required": ["first", "last"],
       "additionalProperties": false,
@@ -242,7 +270,7 @@
       }
     },
     "modeProbe": {
-      "description": "A read of one feature report. A probe never writes. answers: the read succeeds. stalls: the device refuses the read. bytes: the reply holds the given bytes at offset.",
+      "description": "A read of one feature report: whether it answers, stalls, or holds given bytes.",
       "type": "object",
       "required": ["report", "length", "expect"],
       "additionalProperties": false,
@@ -297,32 +325,14 @@
       "additionalProperties": false,
       "properties": {
         "family": {
-          "enum": [
-            "HIDDescriptor",
-            "HIDReportLayout",
-            "XboxXID",
-            "XboxXUSB",
-            "XboxGIP",
-            "SonySixaxis",
-            "SonyDualShock4",
-            "SonyDualSense",
-            "NintendoSwitch1",
-            "NintendoSwitch2",
-            "NintendoSwitchInputOnly",
-            "ValveSteamController",
-            "ValveSteamTriton",
-            "ValveSteamDeck",
-            "VendorFlydigi",
-            "VendorPS3ThirdParty",
-            "VendorGameSir",
-            "VendorNVIDIAShield"
-          ]
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z0-9]*$"
         },
         "variant": {
           "$ref": "protocol-description.schema.json#/$defs/variant"
         },
         "parameters": {
-          "description": "The parameters of the family's driver; the family's description declares their names, types and values, which a schema cannot say and the validators check.",
+          "description": "The parameters of the family's driver.",
           "type": "object",
           "minProperties": 1,
           "propertyNames": {
@@ -477,6 +487,22 @@
           "minimum": 1,
           "maximum": 60000
         },
+        "irWriteIntervalMs": {
+          "description": "The wait after each Wii Remote IR camera register write.",
+          "type": "integer",
+          "minimum": 50,
+          "maximum": 1000
+        },
+        "speakerMaxSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60
+        },
+        "replyTimeoutMs": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 10000
+        },
         "frameQueueCapacity": {
           "type": "integer",
           "minimum": 1,
@@ -489,7 +515,7 @@
       "enum": ["ExtensionOwned"]
     },
     "rumbleTemplate": {
-      "description": "A rumble report: its target, optional fixed bytes covering the whole report (the report ID leads a numbered HID report), one field per motor with the encoding of its value, an optional rolling-counter byte and an optional resend interval. That the bytes cover the report, start with the report ID and leave the motor and counter bytes distinct and inside the report, which a schema cannot say, the validators check.",
+      "description": "A rumble report: its target, fixed bytes, one field per motor, a counter byte, and a resend interval.",
       "type": "object",
       "additionalProperties": false,
       "required": ["report"],
@@ -646,6 +672,20 @@
     "input": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["layouts"],
+      "properties": {
+        "layouts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/inputLayout"
+          }
+        }
+      }
+    },
+    "inputLayout": {
+      "type": "object",
+      "additionalProperties": false,
       "required": ["report"],
       "minProperties": 2,
       "properties": {
@@ -660,7 +700,7 @@
               "maximum": 255
             },
             "length": {
-              "description": "atLeast decodes every report of at least that many bytes; exactly decodes only reports of that length. With an id, the length counts the id byte.",
+              "description": "The length of the input report, as a minimum or an exact size.",
               "oneOf": [
                 {
                   "type": "object",
@@ -731,7 +771,6 @@
       }
     },
     "hidUsageMap": {
-      "$comment": "Maps HID usages to canonical controls for HIDDescriptor. A record's map replaces the family's map whole. Each (page, usage) appears once, an axis range has min below max, and a hat range is 0...7 or 1...8: the schema checks the hat range, and the Swift decoder, the only validator, enforces all three. reportID, when present, limits the map to element values of that report.",
       "type": "object",
       "additionalProperties": false,
       "required": ["usages"],
@@ -760,6 +799,18 @@
         },
         {
           "$ref": "#/$defs/hidHatUsage"
+        },
+        {
+          "$ref": "#/$defs/hidHalfAxisUsage"
+        },
+        {
+          "$ref": "#/$defs/hidAxisDpadUsage"
+        },
+        {
+          "$ref": "#/$defs/hidAxisButtonUsage"
+        },
+        {
+          "$ref": "#/$defs/hidButtonTriggerUsage"
         }
       ]
     },
@@ -809,7 +860,6 @@
       }
     },
     "hidAxisUsage": {
-      "$comment": "A stick axis reads -1...1 and a trigger 0...1 from the element's logical range, or from range when set. deadZone is the fraction of travel around zero (the start of a trigger) that reads as zero; the rest rescales to full travel. inverted flips the sign of a stick or the travel of a trigger.",
       "type": "object",
       "additionalProperties": false,
       "required": ["kind", "page", "usage", "control"],
@@ -839,6 +889,107 @@
         }
       }
     },
+    "hidHalf": {
+      "enum": ["Positive", "Negative"]
+    },
+    "hidHalfAxisUsage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "page", "usage", "half", "control"],
+      "properties": {
+        "kind": {
+          "const": "HalfAxis"
+        },
+        "page": {
+          "$ref": "#/$defs/hidUsagePage"
+        },
+        "usage": {
+          "$ref": "#/$defs/hidUsageID"
+        },
+        "half": {
+          "$ref": "#/$defs/hidHalf"
+        },
+        "control": {
+          "$ref": "vocabulary.schema.json#/$defs/trigger"
+        },
+        "inverted": {
+          "type": "boolean"
+        }
+      }
+    },
+    "hidAxisDpadUsage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "page", "usage", "half", "control", "threshold"],
+      "properties": {
+        "kind": {
+          "const": "AxisDpad"
+        },
+        "page": {
+          "$ref": "#/$defs/hidUsagePage"
+        },
+        "usage": {
+          "$ref": "#/$defs/hidUsageID"
+        },
+        "half": {
+          "$ref": "#/$defs/hidHalf"
+        },
+        "control": {
+          "$ref": "vocabulary.schema.json#/$defs/dpadControl"
+        },
+        "threshold": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        }
+      }
+    },
+    "hidAxisButtonUsage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "page", "usage", "half", "control", "threshold"],
+      "properties": {
+        "kind": {
+          "const": "AxisButton"
+        },
+        "page": {
+          "$ref": "#/$defs/hidUsagePage"
+        },
+        "usage": {
+          "$ref": "#/$defs/hidUsageID"
+        },
+        "half": {
+          "$ref": "#/$defs/hidHalf"
+        },
+        "control": {
+          "$ref": "#/$defs/hidButtonUsage/properties/control"
+        },
+        "threshold": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        }
+      }
+    },
+    "hidButtonTriggerUsage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "page", "usage", "control"],
+      "properties": {
+        "kind": {
+          "const": "ButtonTrigger"
+        },
+        "page": {
+          "$ref": "#/$defs/hidUsagePage"
+        },
+        "usage": {
+          "$ref": "#/$defs/hidUsageID"
+        },
+        "control": {
+          "$ref": "vocabulary.schema.json#/$defs/trigger"
+        }
+      }
+    },
     "hidAxisRange": {
       "type": "object",
       "additionalProperties": false,
@@ -857,7 +1008,6 @@
       }
     },
     "hidHatUsage": {
-      "$comment": "A hat reads eight positions, north first and clockwise, from the first value of its range; any value outside the range is neutral. Without a range, the element's logical minimum is the first value.",
       "type": "object",
       "additionalProperties": false,
       "required": ["kind", "page", "usage"],
@@ -889,27 +1039,41 @@
         }
       }
     },
+    "reportBitOffset": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 511
+    },
+    "reportBitSize": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 32
+    },
+    "reportByteOrder": {
+      "enum": ["LittleEndian", "BigEndian"]
+    },
+    "reportRawValue": {
+      "type": "integer",
+      "minimum": -2147483648,
+      "maximum": 4294967295
+    },
     "inputField": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["byte", "mask"],
+      "required": ["bitOffset", "bitSize"],
       "properties": {
-        "byte": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 63
+        "bitOffset": {
+          "$ref": "#/$defs/reportBitOffset"
         },
-        "mask": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 255
+        "bitSize": {
+          "$ref": "#/$defs/reportBitSize"
         }
       }
     },
     "inputButton": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["control", "byte", "mask"],
+      "required": ["control", "bitOffset", "bitSize"],
       "properties": {
         "control": {
           "allOf": [
@@ -930,46 +1094,39 @@
             }
           ]
         },
-        "byte": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 63
+        "bitOffset": {
+          "$ref": "#/$defs/reportBitOffset"
         },
-        "mask": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 255
+        "bitSize": {
+          "$ref": "#/$defs/reportBitSize"
         }
       }
     },
     "inputAxis": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["control", "byte"],
+      "required": ["control", "bitOffset", "bitSize"],
       "properties": {
         "control": {
           "$ref": "vocabulary.schema.json#/$defs/stickAxis"
         },
-        "byte": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 63
+        "bitOffset": {
+          "$ref": "#/$defs/reportBitOffset"
         },
-        "bits": {
-          "enum": [8, 16]
+        "bitSize": {
+          "$ref": "#/$defs/reportBitSize"
+        },
+        "byteOrder": {
+          "$ref": "#/$defs/reportByteOrder"
         },
         "signed": {
           "type": "boolean"
         },
         "min": {
-          "type": "integer",
-          "minimum": -32768,
-          "maximum": 65535
+          "$ref": "#/$defs/reportRawValue"
         },
         "max": {
-          "type": "integer",
-          "minimum": -32768,
-          "maximum": 65535
+          "$ref": "#/$defs/reportRawValue"
         },
         "inverted": {
           "type": "boolean"
@@ -1006,20 +1163,18 @@
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["encoding", "byte", "mask"],
+          "required": ["encoding", "bitOffset", "bitSize"],
           "properties": {
             "encoding": {
               "const": "EightWay"
             },
-            "byte": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 63
+            "bitOffset": {
+              "$ref": "#/$defs/reportBitOffset"
             },
-            "mask": {
+            "bitSize": {
               "type": "integer",
-              "minimum": 7,
-              "maximum": 255
+              "minimum": 3,
+              "maximum": 8
             },
             "neutralUntilNonzero": {
               "type": "boolean"
@@ -1051,27 +1206,22 @@
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["encoding", "byte", "mask", "values"],
+          "required": ["encoding", "bitOffset", "bitSize", "values"],
           "properties": {
             "encoding": {
               "const": "Table"
             },
-            "byte": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 63
+            "bitOffset": {
+              "$ref": "#/$defs/reportBitOffset"
             },
-            "mask": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 255
+            "bitSize": {
+              "$ref": "#/$defs/reportBitSize"
             },
             "values": {
-              "$comment": "Every key must be a value the mask can hold: 0 up to the mask shifted right by its trailing zero bits. JSON Schema cannot compare a key with the mask, so the Swift decoder checks it.",
               "type": "object",
               "minProperties": 1,
               "propertyNames": {
-                "pattern": "^(0|[1-9][0-9]{0,2})$"
+                "pattern": "^(0|[1-9][0-9]{0,9})$"
               },
               "additionalProperties": {
                 "enum": [
@@ -1095,14 +1245,35 @@
       "additionalProperties": false,
       "minProperties": 1,
       "properties": {
-        "byte": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 63
+        "bitOffset": {
+          "$ref": "#/$defs/reportBitOffset"
+        },
+        "bitSize": {
+          "$ref": "#/$defs/reportBitSize"
+        },
+        "byteOrder": {
+          "$ref": "#/$defs/reportByteOrder"
+        },
+        "signed": {
+          "type": "boolean"
+        },
+        "min": {
+          "$ref": "#/$defs/reportRawValue"
+        },
+        "max": {
+          "$ref": "#/$defs/reportRawValue"
         },
         "button": {
           "$ref": "#/$defs/inputField"
         }
+      },
+      "dependentRequired": {
+        "bitOffset": ["bitSize"],
+        "bitSize": ["bitOffset"],
+        "byteOrder": ["bitOffset"],
+        "signed": ["bitOffset"],
+        "min": ["bitOffset"],
+        "max": ["bitOffset"]
       }
     },
     "startupReport": {
@@ -1126,7 +1297,6 @@
       }
     },
     "usbStartupWrite": {
-      "$comment": "A raw-USB startup packet: it has no report, so it never reads as a HID write.",
       "type": "object",
       "additionalProperties": false,
       "required": ["bytes"],
@@ -1164,7 +1334,7 @@
       "enum": ["System", "OJD"]
     },
     "modeEndpoint": {
-      "description": "One endpoint of an endpoint set; every key present must hold.",
+      "description": "One endpoint of an endpoint set.",
       "type": "object",
       "minProperties": 1,
       "additionalProperties": false,
@@ -1212,7 +1382,7 @@
       }
     },
     "controlTransfer": {
-      "description": "A vendor control transfer on the device. An IN transfer reads wLength bytes; an OUT transfer writes data, whose byte count equals wLength. match gates the transfer: it runs only for a device whose strings and bcdDevice hold.",
+      "description": "A vendor control transfer on the device, gated by a match on its strings and release number.",
       "type": "object",
       "required": ["bmRequestType", "bRequest", "wValue", "wIndex", "wLength"],
       "additionalProperties": false,
@@ -1318,7 +1488,7 @@
       ]
     },
     "session": {
-      "description": "The steps one mode runs. startup is one list of HID report writes or of raw-USB packets. keepAlive, settleMilliseconds, shutdown and control apply to raw-USB modes. control runs before startup, in order. rumble is the rumble report template.",
+      "description": "The steps one mode runs: startup, keep-alive, settle time, shutdown, control transfers, and rumble.",
       "type": "object",
       "minProperties": 1,
       "additionalProperties": false,
@@ -1384,7 +1554,6 @@
       }
     },
     "keepAliveWrite": {
-      "$comment": "A raw-USB keep-alive packet: a startup packet without the members only a startup sequence uses.",
       "type": "object",
       "additionalProperties": false,
       "required": ["bytes"],
@@ -1411,7 +1580,6 @@
       }
     },
     "namedPacketAction": {
-      "$comment": "A family name, a slash and the packet's name. The ids a family offers are in defaults.session.namedPackets of its description; a record naming one the description lacks is rejected by the validators.",
       "type": "string",
       "pattern": "^[A-Z][A-Za-z0-9]*/[a-z0-9]+(-[a-z0-9]+)*$"
     }

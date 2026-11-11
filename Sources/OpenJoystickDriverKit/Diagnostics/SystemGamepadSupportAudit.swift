@@ -2,8 +2,11 @@ import Foundation
 
 /// Location class for Apple's private, read-only GameController mapping database.
 public enum SystemGamepadCatalogSource: String, Codable, Sendable {
+  /// The catalog that the OS downloaded.
   case downloadedMobileAsset = "DownloadedMobileAsset"
+  /// The catalog that ships with the OS.
   case preinstalledMobileAsset = "PreinstalledMobileAsset"
+  /// The system has no readable catalog.
   case unavailable = "Unavailable"
 }
 
@@ -12,12 +15,18 @@ public enum SystemGamepadCatalogSource: String, Codable, Sendable {
 /// Catalog presence is evidence only. Runtime support can still depend on transport,
 /// firmware version, report descriptor, and GameController.framework behavior.
 public struct SystemGamepadCatalogEntry: Codable, Hashable, Sendable {
+  /// The USB vendor ID.
   public let vendorID: UInt16
+  /// The USB product ID.
   public let productID: UInt16
+  /// The catalog identifiers of the device, sorted.
   public let identifiers: [String]
+  /// The transports that the entry limits the device to, sorted; empty when it names none.
   public let transports: [String]
+  /// The version numbers that the entry limits the device to, sorted; empty when it names none.
   public let versionNumbers: [Int]
 
+  /// Creates an entry; it sorts the lists.
   public init(
     vendorID: UInt16,
     productID: UInt16,
@@ -35,12 +44,18 @@ public struct SystemGamepadCatalogEntry: Codable, Hashable, Sendable {
 
 /// Redacted snapshot of Apple's current-system GameController mapping catalog.
 public struct SystemGamepadCatalogSnapshot: Codable, Sendable {
+  /// Where the catalog was read from.
   public let source: SystemGamepadCatalogSource
+  /// The `CFBundleVersion` of each bundle read, sorted.
   public let bundleVersions: [String]
+  /// The devices with an exact vendor and product ID, sorted by vendor ID and product ID.
   public let entries: [SystemGamepadCatalogEntry]
+  /// The catalog devices without an exact numeric vendor and product ID.
   public let skippedDeviceCount: Int
+  /// The problems met while reading the catalog.
   public let warnings: [String]
 
+  /// Creates a snapshot; it sorts the bundle versions and the entries.
   public init(
     source: SystemGamepadCatalogSource,
     bundleVersions: [String],
@@ -61,52 +76,64 @@ public struct SystemGamepadCatalogSnapshot: Codable, Sendable {
 
 /// Exact current-system Apple catalog evidence for one OJD controller record.
 public struct SystemGamepadRecordAudit: Codable, Hashable, Sendable {
+  /// The USB vendor ID of the OJD controller record.
   public let vendorID: UInt16
+  /// The USB product ID of the OJD controller record.
   public let productID: UInt16
+  /// The record's name for the controller, from its vendor and product IDs.
   public let name: String
+  /// Whether the system catalog lists the vendor and product ID.
   public let catalogListed: Bool
+  /// The catalog identifiers of the device; empty when it is not listed.
   public let systemIdentifiers: [String]
+  /// The transports the catalog limits the device to; empty when it names none.
   public let transportConstraints: [String]
+  /// The version numbers the catalog limits the device to; empty when it names none.
   public let versionConstraints: [Int]
 }
 
 /// Comparison of OJD records with Apple's private current-system mapping database.
 public struct SystemGamepadSupportAudit: Codable, Sendable {
+  /// Where the catalog was read from.
   public let source: SystemGamepadCatalogSource
+  /// The `CFBundleVersion` of each catalog bundle read.
   public let bundleVersions: [String]
+  /// The number of devices with an exact vendor and product ID in the catalog.
   public let systemExactDeviceCount: Int
+  /// The number of catalog devices without an exact numeric vendor and product ID.
   public let skippedSystemDeviceCount: Int
+  /// The number of OJD controller records.
   public let ojdRecordCount: Int
+  /// The number of OJD controller records that the catalog lists.
   public let catalogListedOJDRecordCount: Int
+  /// One audit per OJD controller record; listed records come first.
   public let records: [SystemGamepadRecordAudit]
+  /// The problems met while reading the catalog.
   public let warnings: [String]
-  public let caveat: String
 }
 
 /// Deserializes Apple's private mapping plists, extracting only selected
 /// redacted keys without treating the asset as a supported API.
 public enum SystemGamepadSupportAuditor {
+  /// The values collected for one vendor and product ID.
   private struct EntryAccumulator {
+    /// The identifiers of the device.
     var identifiers: Set<String> = []
+    /// The transports the entry names.
     var transports: Set<String> = []
+    /// The version numbers the entry names.
     var versionNumbers: Set<Int> = []
   }
 
+  /// The catalog of one asset.
   private struct AssetCandidate {
+    /// The highest bundle version of the asset.
     let version: String
+    /// The devices of the asset.
     let snapshot: SystemGamepadCatalogSnapshot
   }
 
-  private struct ProfileDocument: Decodable {
-    let vendorID: Int
-    let productID: Int
-
-    enum CodingKeys: String, CodingKey {
-      case vendorID = "vendor_id"
-      case productID = "product_id"
-    }
-  }
-
+  /// The folders that hold the catalog assets, in the order to try them.
   private static let catalogRoots: [(SystemGamepadCatalogSource, URL)] = [
     (
       .downloadedMobileAsset,
@@ -121,10 +148,15 @@ public enum SystemGamepadSupportAuditor {
     ),
   ]
 
+  /// Compares the current system's catalog with the OJD controller records.
   public static func auditCurrentSystem() -> SystemGamepadSupportAudit {
     audit(snapshot: currentSystemSnapshot(), records: bundledOJDRecords())
   }
 
+  /// The catalog of the current system: the downloaded assets first, then the preinstalled ones.
+  ///
+  /// It reads the newest asset of the first folder that gives any entry, and returns an
+  /// `Unavailable` snapshot with a warning when none does.
   public static func currentSystemSnapshot() -> SystemGamepadCatalogSnapshot {
     for (source, root) in catalogRoots {
       if let snapshot = loadBestAsset(at: root, source: source), !snapshot.entries.isEmpty {
@@ -139,32 +171,15 @@ public enum SystemGamepadSupportAuditor {
     )
   }
 
+  /// The models of the bundled controller catalog, in ID order.
   public static func bundledOJDRecords() -> [ControllerModelID] {
-    let urls = Bundle.module.urls(forResourcesWithExtension: "json", subdirectory: nil) ?? []
-    let decoder = JSONDecoder()
-    var models: Set<ControllerModelID> = []
-    for url in urls where isControllerRecordFilename(url.lastPathComponent) {
-      guard let data = try? Data(contentsOf: url),
-        let document = try? decoder.decode(ProfileDocument.self, from: data),
-        (1...65_535).contains(document.vendorID), (0...65_535).contains(document.productID)
-      else { continue }
-      models.insert(
-        ControllerModelID(
-          vendorID: UInt16(document.vendorID),
-          productID: UInt16(document.productID)
-        )
-      )
-    }
-    return models.sorted()
+    ControllerRecordSet.bundled.records.keys.sorted()
   }
 
-  private static func isControllerRecordFilename(_ name: String) -> Bool {
-    guard name.count == 14, name.hasSuffix(".json") else { return false }
-    let stem = name.dropLast(5)
-    guard stem[stem.index(stem.startIndex, offsetBy: 4)] == "-" else { return false }
-    return stem.enumerated().allSatisfy { offset, character in offset == 4 || character.isHexDigit }
-  }
-
+  /// Compares `snapshot` with `records`.
+  ///
+  /// An entry that the snapshot lists twice for one ID merges into one. The rows list the records
+  /// that the catalog lists first, then sort by vendor ID and product ID.
   public static func audit(
     snapshot: SystemGamepadCatalogSnapshot,
     records: [ControllerModelID]
@@ -210,13 +225,14 @@ public enum SystemGamepadSupportAuditor {
       ojdRecordCount: rows.count,
       catalogListedOJDRecordCount: rows.filter(\.catalogListed).count,
       records: rows,
-      warnings: snapshot.warnings,
-      caveat: "Private current-system catalog observation only. A missing entry does not prove "
-        + "GameController incompatibility, and a listed entry does not replace a live "
-        + "GCController.supportsHIDDevice or hardware test."
+      warnings: snapshot.warnings
     )
   }
 
+  /// The catalog read from the `Info.plist` contents of GameController bundles.
+  ///
+  /// A bundle that does not parse or lists no devices, and a device without an exact numeric vendor
+  /// and product ID, add a warning.
   static func snapshot(
     bundleInfoData: [Data],
     source: SystemGamepadCatalogSource
@@ -299,6 +315,8 @@ public enum SystemGamepadSupportAuditor {
     )
   }
 
+  /// The snapshot of the asset with the highest bundle version under `root`; nil when `root` cannot
+  /// be read.
   private static func loadBestAsset(
     at root: URL,
     source: SystemGamepadCatalogSource
@@ -335,12 +353,15 @@ public enum SystemGamepadSupportAuditor {
     return candidates.max { versionIsLessThan($0.version, $1.version) }?.snapshot
   }
 
+  /// `value` as an integer, from an integer or an integer text; nil otherwise.
   private static func integer(_ value: Any?) -> Int? {
     if let value = value as? Int { return value }
     if let value = value as? String { return Int(value) }
     return nil
   }
 
+  /// Whether the dotted version `left` sorts before `right`; a part that is not a number counts as
+  /// 0.
   private static func versionIsLessThan(_ left: String, _ right: String) -> Bool {
     let leftParts = left.split(separator: ".").map { Int($0) ?? 0 }
     let rightParts = right.split(separator: ".").map { Int($0) ?? 0 }

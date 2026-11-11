@@ -1,6 +1,9 @@
 import OpenJoystickDriverKit
 
 extension DestinationOption {
+  /// The physical output destinations the destination pickers list: each rumble motor at full
+  /// intensity, each player indicator but off, four colors, full brightness and each adaptive
+  /// trigger with a resistance effect.
   static let physical: [Self] = {
     let destinations: [RemappingDestination] =
       PhysicalRumbleMotor.allCases.map { .physical(.rumble(motor: $0, intensity: 1)) }

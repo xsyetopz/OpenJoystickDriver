@@ -1,11 +1,17 @@
 import OpenJoystickDriverKit
 
-/// A permission `ojd` reports. The raw values are the ids in `--json`; the command line and
-/// `--plain` rows spell them in lowercase kebab-case, such as `input-read`.
+/// A permission `ojd` reports.
+///
+/// The raw values are the ids in `--json`; the command line and `--plain` rows spell them in
+/// lowercase kebab-case, such as `input-read`.
 enum PermissionID: String, CaseIterable, Sendable {
+  /// Reading input from controllers.
   case inputRead = "InputRead"
+  /// Injecting input into other apps.
   case inputInject = "InputInject"
+  /// Claiming USB controllers through the DriverKit extension.
   case usbTransport = "USBTransport"
+  /// Posting events to the system, which some profile outputs need.
   case postEvent = "PostEvent"
 
   /// The id on the command line and in `--plain` rows.
@@ -24,10 +30,13 @@ enum PermissionID: String, CaseIterable, Sendable {
     }
   }
 
+  /// The English name in `--json`.
   var name: String { inventoryEntry.name }
 
+  /// The English purpose in `--json`.
   var purpose: String { inventoryEntry.purpose }
 
+  /// The name in the user's language.
   var localizedName: String {
     switch self {
     case .inputRead: CLILocalized.text("platform.macos.cli.permission.group.nameInputRead")
@@ -37,6 +46,7 @@ enum PermissionID: String, CaseIterable, Sendable {
     }
   }
 
+  /// The purpose in the user's language.
   var localizedPurpose: String {
     switch self {
     case .inputRead: CLILocalized.text("cli.permission.group.purposeInputRead")
@@ -65,15 +75,22 @@ enum PermissionID: String, CaseIterable, Sendable {
 
 /// The `ojd permission request --json` result, and the items of `ojd permission list --json`.
 struct PermissionReport: Encodable, Equatable {
+  /// One permission in the report.
   struct Entry: Encodable, Equatable {
+    /// The permission id.
     let id: String
+    /// The English name.
     let name: String
+    /// The state of the permission.
     let state: PermissionManager.AccessState
+    /// The English purpose.
     let purpose: String
-    /// Whether the active profile needs the permission. Only `PostEvent` has it, and only when
-    /// the service reported the profiles.
+    /// Whether the active profile needs the permission.
+    ///
+    /// Only `PostEvent` has it, and only when the service reported the profiles.
     let requiredByActiveProfile: Bool?
 
+    /// Creates the entry for a permission.
     init(
       _ permission: PermissionID,
       state: PermissionManager.AccessState,
@@ -87,15 +104,23 @@ struct PermissionReport: Encodable, Equatable {
     }
   }
 
+  /// The permissions in report order.
   let permissions: [Entry]
 
   /// The Post Event access the service reports, and whether the active profile needs it.
   struct PostEvent: Equatable {
+    /// The state of Post Event access.
     let state: PermissionManager.AccessState
+    /// Whether the active profile needs Post Event access, when the service reported the profiles.
     let requiredByActiveProfile: Bool?
   }
 
-  /// `postEvent` is nil for a report that does not cover Post Event access.
+  /// Creates the report from the permission snapshot and the state of the DriverKit extension.
+  ///
+  /// - Parameters:
+  ///   - snapshot: The state of each permission.
+  ///   - extensionStatus: The registration state of the DriverKit extension.
+  ///   - postEvent: The Post Event access, or nil for a report that does not cover it.
   init(
     snapshot: PermissionManager.Snapshot,
     extensionStatus: ExtensionStatus,
@@ -124,6 +149,7 @@ struct PermissionReport: Encodable, Equatable {
     permissions = entries
   }
 
+  /// The state of `permission` in the report.
   func state(of permission: PermissionID) -> PermissionManager.AccessState {
     permissions.first { $0.id == permission.rawValue }?.state ?? .unknown
   }

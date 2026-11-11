@@ -2,6 +2,7 @@
 private let gipExpansionIndexMask: UInt8 = 0x07
 
 extension GIPDriver {
+  /// Default: a GIP controller reports no logical connection change.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
   /// Share presence varies by model, so only a row with the `shareButton` parameter, whose fixed
@@ -12,6 +13,7 @@ extension GIPDriver {
     )
   }
 
+  /// Rumble on all four motors when the row allows physical output; none otherwise.
   public var outputCapabilities: PhysicalControllerOutputCapabilities {
     allowsPhysicalOutput
       ? PhysicalControllerOutputCapabilities(rumbleMotors: [
@@ -19,6 +21,7 @@ extension GIPDriver {
       ]) : .none
   }
 
+  /// Default: no default color.
   public var defaultColor: ControllerColor? { nil }
 
   // MARK: - Frame builders and report decoders
@@ -42,10 +45,14 @@ extension GIPDriver {
     ]
   }
 
+  /// The left trigger, a little-endian 16-bit value at byte 2.
   func parseLT(from bytes: [UInt8]) -> UInt16 { UInt16(bytes[2]) | (UInt16(bytes[3]) << 8) }
 
+  /// The right trigger, a little-endian 16-bit value at byte 4.
   func parseRT(from bytes: [UInt8]) -> UInt16 { UInt16(bytes[4]) | (UInt16(bytes[5]) << 8) }
 
+  /// The left stick X and Y and the right stick X and Y, each a little-endian signed 16-bit value
+  /// starting at bytes 6, 8, 10 and 12.
   func parseSticks(from bytes: [UInt8]) -> (Int16, Int16, Int16, Int16) {
     let lsx = Int16(bitPattern: UInt16(bytes[6]) | (UInt16(bytes[7]) << 8))
     let lsy = Int16(bitPattern: UInt16(bytes[8]) | (UInt16(bytes[9]) << 8))
@@ -54,6 +61,7 @@ extension GIPDriver {
     return (lsx, lsy, rsx, rsy)
   }
 
+  /// The hat direction of the D-pad bits: up 1, down 2, left 4, right 8.
   func mapDpad(_ value: UInt8) -> HatDirection {
     // bits: up=1, down=2, left=4, right=8
     switch value {

@@ -1,0 +1,100 @@
+2026-11-10, 23:18 to 23:34. Pad over Bluetooth LE as 2DC8:301B, served by macOS ("Served by System",
+"native-pass-through", "not-published (system-gamepad)"), OJD 0.6.0-alpha.2, macOS 27.2.
+
+Question: does the GameController framework give a game a controller for this pad?
+Answer: no. No run lists a controller for the pad. The probe itself is sound (run 6).
+
+Probes:
+- gcprobe: gcprobe.swift in this folder (GCController.controllers() and .GCControllerDidConnect with
+  shouldMonitorBackgroundEvents = true).
+- repository probe: Sources/OpenJoystickDriverGameControllerProbe, run as `just diagnose-gamecontroller`
+  or as .build/debug/OpenJoystickDriverGameControllerProbe. It listens for at most 60 s.
+
+1. 23:25, the maintainer's own shell, `gcprobe 20 --rumble`:
+
+20.007 end, controllers listed: 0
+
+2. 23:26, `just diagnose-gamecontroller --seconds 5`:
+
+HID GamePad support:
+- 2DC8:301B "8BitDo Ultimate 2C Wireless" transport=Bluetooth Low Energy gamecontroller=yes
+
+Initial controllers: 0
+evidence supports_hid=true connect=false extended_profile=false live_input=false disconnect=false reconnect=false haptics=unclaimed
+
+3. 23:30, after the maintainer turned the pad off and on (switch on BT), repository probe for 8 s and
+gcprobe for 6 s: the same lines as run 2, and "6.002 end, controllers listed: 0".
+
+4. 23:31, after `ojd service stop` ("The service is stopped.", no OpenJoystickDriver process), repository
+probe for 10 s and gcprobe for 5 s: the same lines as run 2, and "5.002 end, controllers listed: 0".
+`ojd service start` followed.
+
+5. 23:31:58 to 23:32:58, repository probe for 60 s while the maintainer pressed A, B, and Guide and moved
+both sticks (answer "Done" before 23:32:23): the same lines as run 2. No "connect:" line and no input line.
+
+6. Known-good target, 23:33:19. `ojd virtual feed --as game-controller-compatible` published OJD's virtual
+gamepad 045E:0B13 for 12 s while the repository probe ran for 10 s:
+
+HID GamePad support:
+- 2DC8:301B "8BitDo Ultimate 2C Wireless" transport=Bluetooth Low Energy gamecontroller=yes
+
+Initial controllers: 0
+connect: vendor="Xbox Wireless Controller" category="Xbox One" extended=true micro=true haptics=true localities=[All,Default,Handles,Left Handle,Left Trigger,Right Handle,Right Trigger,Triggers]
+inputs: buttons=[Button A,Button B,Button Home,Button Menu,Button Options,Button Share,Button X,Button Y,Direction Pad Down,Direction Pad Left,Direction Pad Right,Direction Pad Up,Left Shoulder,Left Thumbstick Button,Left Thumbstick Down,Left Thumbstick Left,Left Thumbstick Right,Left Thumbstick Up,Left Trigger,Right Shoulder,Right Thumbstick Button,Right Thumbstick Down,Right Thumbstick Left,Right Thumbstick Right,Right Thumbstick Up,Right Trigger] xbox=true share=true paddles=0
+evidence supports_hid=true connect=true extended_profile=true live_input=false disconnect=false reconnect=false haptics=unclaimed
+
+So the probe lists a controller GameController serves, and in the same run lists none for the 2C.
+
+7. gcprobe runs from the agent's session at 23:18 to 23:21 (command-line tool, AppKit process, app bundle),
+while OJD served the pad and after the release: 0 controllers each. Run 1 shows the session was not the cause.
+
+8 to 10. 23:36:30 to 23:36:58, each of OJD's virtual gamepads published in turn with
+`ojd virtual feed --as <profile>` for 9 s, repository probe for 6 s and then gcprobe for 2 s:
+
+8. sdl-compatible (045E:0B0C): "Initial controllers: 0", connect=false; "2.003 end, controllers listed: 0".
+9. generic (1209:4A4F): "Initial controllers: 0", connect=false; "2.004 end, controllers listed: 0".
+10. game-controller-compatible (045E:0B13): the "connect:" and "inputs:" lines of run 6, connect=true; and from gcprobe:
+0.017 controller vendorName=Xbox Wireless Controller productCategory=Xbox One extended=true battery=0.0 hapticLocalities=["All", "Default", "Handles", "Left Handle", "Left Trigger", "Right Handle", "Right Trigger", "Triggers"]
+0.055 Xbox Wireless Controller: buttons=[] dpad=(0,0) LS=(0.0,0.0) RS=(0.0,0.0) LT=0.0 RT=0.0
+2.004 end, controllers listed: 1
+
+So gcprobe lists a controller too, and GameController lists only the game-controller-compatible gamepad.
+After `ojd controller claim 2DC8:301B` (serving.txt, step 2) OJD published sdl-compatible (automatic),
+which is why run 7 listed none while OJD served the pad.
+
+11. 23:42:23 to 23:43:35, the pad itself through OJD and GameController. `ojd controller claim 2DC8:301B`,
+then `ojd virtual set game-controller-compatible 2DC8:301B`; `ojd controller show` printed "Served by OJD
+(from user)", "Virtual gamepad game-controller-compatible (override)", "Publication published". Both probes
+ran for 60 s while the maintainer pressed, in order: A, B, X, Y, LB, RB, LT, RT, View, Menu, Guide, L3, R3,
+D-pad up, down, left, right, left stick, right stick (answer "Done, in that order").
+Files: gamecontroller-claimed-gccompat-gcprobe.txt, gamecontroller-claimed-gccompat-repo-probe.txt.
+
+- Both probes list one controller, "Xbox Wireless Controller", category "Xbox One".
+- gcprobe prints each control in the order pressed, under the right name: A, B, X, Y, Left Bumper, Right
+  Bumper, Left Trigger to 1.0, Right Trigger to 1.0, View, Menu, Left Stick Click, Right Stick Click, D-pad
+  up (0,1), down (0,-1), left (-1,0), right (1,0), then a full circle on LS and on RS with the other at 0.
+- Guide: no line in either probe, between Menu (8.5 s) and L3 (11.1 s). Both probes are command-line tools
+  with no window, and GameController sends Home only to the frontmost app
+  (Sources/OpenJoystickDriverGameControllerProbe/main.swift:217, XboxSeriesBluetoothReport.swift:7-8).
+  Guide in a frontmost GameController app is not tested for this pad.
+- The repository probe prints button elements only (main.swift:255), so it has no D-pad or stick line.
+
+After the run: `ojd virtual reset 2DC8:301B --force`, `ojd controller release 2DC8:301B`, and
+`ojd record remove 2DC8:301B --force`; `show` prints "Served by System (from default)", "Record bundled".
+
+The game controller daemon's log (`log show --predicate 'process == "gamecontrollerd"'`, 23:24 to 23:36):
+
+- For the virtual gamepad of an earlier run of step 6, at 23:27:07:
+    (GameControllerFoundation) [HID Event System Client] Notify HID Service Matched
+    (GameController) [Default Device Manager] Claim HID Service
+    (GameController) [Physical Device (Pending)] Try Prepare Device
+  and at 23:27:32, when the feed ended: "Notify HID Service Removed", "Relinquish HID Service".
+- From 23:27:33 to 23:31:10, which holds the pad's off and on of run 3: no "Notify HID Service Matched" and
+  no "Claim HID Service" line. The daemon never takes the 2C's HID service.
+
+IORegistry keys on the pad (serving.txt, step 1): "GameControllerSupport" = Yes, "GameControllerCategory" =
+"mfi", "GameControllerType" = 1 on its AppleUserHIDEventDriver; "GameControllerSupportedHIDDevice" = No on
+its IOHIDUserDevice. GCController.supportsHIDDevice answers yes in every run above.
+
+Not known: why the daemon does not match the service. Not tested: a second Mac, another macOS version,
+and whether a HID-reading game (SDL's HIDAPI driver) reads the pad while macOS serves it.

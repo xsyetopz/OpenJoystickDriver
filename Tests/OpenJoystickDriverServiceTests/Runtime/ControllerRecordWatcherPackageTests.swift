@@ -7,20 +7,20 @@ import Testing
 
 @MainActor
 struct ControllerRecordWatcherPackageTests {
-  private static let record = Data(
-    """
-    {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-     "vendorID": 4660,
-     "productID": 43981, "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
-    """.utf8
+  private static let record = PropertyListFixture.bytes(
+    json: """
+      {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
+       "vendorID": 4660,
+       "productID": 43981, "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
+      """
   )
 
-  private static let manifest = Data(
-    """
-    {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "\(ModPackageManifest.kind)",
-    "name": "arcade-pack", "version": "1.0.0",
-     "author": "Tester", "requires": {"minimum": "0.6.0"}, "controllers": ["1234-abcd.json"]}
-    """.utf8
+  private static let manifest = PropertyListFixture.bytes(
+    json: """
+      {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "\(ModPackageManifest.kind)",
+      "name": "arcade-pack", "version": "1.0.0",
+       "author": "Tester", "requires": {"minimum": "0.6.0"}, "controllers": ["1234-abcd.plist"]}
+      """
   )
 
   @Test
@@ -35,8 +35,8 @@ struct ControllerRecordWatcherPackageTests {
       at: staged.appendingPathComponent("Controllers"),
       withIntermediateDirectories: true
     )
-    try Self.manifest.write(to: staged.appendingPathComponent("mod.json"))
-    try Self.record.write(to: staged.appendingPathComponent("Controllers/1234-abcd.json"))
+    try Self.manifest.write(to: staged.appendingPathComponent("mod.plist"))
+    try Self.record.write(to: staged.appendingPathComponent("Controllers/1234-abcd.plist"))
 
     var applied: [Int] = []
     var changes = 0

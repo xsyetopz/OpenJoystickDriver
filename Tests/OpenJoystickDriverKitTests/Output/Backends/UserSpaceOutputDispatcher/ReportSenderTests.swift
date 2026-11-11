@@ -12,7 +12,7 @@ private actor ReportSendGate {
 
   func wait() async {
     entered = true
-    enteredWaiters.forEach { $0.resume() }
+    for waiter in enteredWaiters { waiter.resume() }
     enteredWaiters.removeAll()
     if !opened { await withCheckedContinuation { waiters.append($0) } }
   }
@@ -23,7 +23,7 @@ private actor ReportSendGate {
 
   func open() {
     opened = true
-    waiters.forEach { $0.resume() }
+    for waiter in waiters { waiter.resume() }
     waiters.removeAll()
   }
 }
@@ -67,7 +67,7 @@ private actor CancellableSendState {
 
   func markEntered() {
     entered = true
-    waiters.forEach { $0.resume() }
+    for waiter in waiters { waiter.resume() }
     waiters.removeAll()
   }
 
@@ -98,7 +98,7 @@ private actor NonCooperativeSendGate {
 
   func wait() async {
     entered = true
-    entryWaiters.forEach { $0.resume() }
+    for waiter in entryWaiters { waiter.resume() }
     entryWaiters.removeAll()
     if !released { await withCheckedContinuation { releaseWaiters.append($0) } }
   }
@@ -109,7 +109,7 @@ private actor NonCooperativeSendGate {
 
   func release() {
     released = true
-    releaseWaiters.forEach { $0.resume() }
+    for waiter in releaseWaiters { waiter.resume() }
     releaseWaiters.removeAll()
   }
 }
@@ -175,7 +175,7 @@ private final class ManualDeadlineTimer: @unchecked Sendable {
 
   func fireAll() {
     let due = lock.withLock { entries.filter { !$0.cancelled }.map(\.fire) }
-    due.forEach { $0() }
+    for fire in due { fire() }
   }
 }
 

@@ -1,5 +1,6 @@
-/// The steps one mode runs around a controller session: vendor control transfers, startup writes,
-/// a post-handshake settle, keep-alive packets, shutdown packets, and the rumble report template.
+/// The steps one mode runs around a controller session: vendor control transfers, startup writes, a
+/// post-handshake settle, keep-alive packets, shutdown packets, and the rumble report template.
+///
 /// A mode names every step it runs; a step it does not name does not run.
 public struct ControllerSession: Equatable, Sendable {
   /// Fixed HID reports sent when OJD starts the controller.
@@ -20,6 +21,7 @@ public struct ControllerSession: Equatable, Sendable {
   /// A session that runs nothing.
   public static let none = Self()
 
+  /// Creates a session from the steps a mode runs; every step not given does not run.
   init(
     startupWrites: [RecordStartupWrite] = [],
     usbStartupWrites: [USBStartupWrite] = [],
@@ -38,6 +40,7 @@ public struct ControllerSession: Equatable, Sendable {
     self.rumbleTemplate = rumbleTemplate
   }
 
+  /// The accepted values of `settleMilliseconds`.
   static let settleRange = 1...60_000
 }
 
@@ -45,12 +48,16 @@ public struct ControllerSession: Equatable, Sendable {
 public struct VendorControlTransfer: Equatable, Sendable {
   /// The device strings and release the transfer requires; a key that is nil does not constrain.
   public struct Gate: Equatable, Sendable {
+    /// The manufacturer string the device must report.
     public let manufacturer: String?
+    /// The product string the device must report.
     public let product: String?
+    /// The `bcdDevice` release range the device must report.
     public let bcdDevice: ClosedRange<UInt16>?
 
-    /// Whether every key present equals the device's own value. A key the device does not report
-    /// does not hold.
+    /// Whether every key present equals the device's own value.
+    ///
+    /// A key the device does not report does not hold.
     public func holds(manufacturer: String?, product: String?, release: UInt16?) -> Bool {
       if let expected = self.manufacturer, manufacturer != expected { return false }
       if let expected = self.product, product != expected { return false }
@@ -61,10 +68,15 @@ public struct VendorControlTransfer: Equatable, Sendable {
     }
   }
 
+  /// The USB `bmRequestType`; direction, type and recipient.
   public let bmRequestType: UInt8
+  /// The USB `bRequest`.
   public let bRequest: UInt8
+  /// The USB `wValue`.
   public let wValue: UInt16
+  /// The USB `wIndex`.
   public let wIndex: UInt16
+  /// The USB `wLength`; the data length of an IN transfer.
   public let wLength: UInt16
   /// The bytes an OUT transfer writes; nil for an IN transfer and for an OUT transfer without a
   /// data stage.
@@ -75,13 +87,20 @@ public struct VendorControlTransfer: Equatable, Sendable {
   public let delayMilliseconds: Int?
   /// Whether a rejected transfer is logged and skipped instead of failing startup.
   public let toleratesRejection: Bool
+  /// The device strings and release the transfer requires.
   public let match: Gate
 
+  /// The accepted values of `timeoutMilliseconds`.
   static let timeoutRange = 1...60_000
+  /// The accepted values of `delayMilliseconds`.
   static let delayRange = 0...1000
+  /// The accepted values of `wLength`.
   static let lengthRange = 0...64
+  /// The accepted values of `bmRequestType`: vendor requests, in either direction, to any
+  /// recipient.
   static let requestTypes: Set<UInt8> = [0x40, 0x41, 0x42, 0x43, 0xC0, 0xC1, 0xC2, 0xC3]
 
+  /// Whether the transfer reads from the device, by the direction bit of `bmRequestType`.
   var isInput: Bool { bmRequestType & 0x80 != 0 }
 
   /// The transfer for the USB transport.

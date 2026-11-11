@@ -12,16 +12,23 @@ public struct CodeSigningIdentity: Codable, Equatable, Hashable, Sendable {
     case adHoc = "AdHoc"
   }
 
+  /// The keys of the JSON encoding.
   private enum CodingKeys: String, CodingKey {
+    /// The `publisher` key.
     case publisher
+    /// The `identifier` key.
     case identifier
   }
 
+  /// The `publisher` object of the encoding.
   private struct Publisher: Codable {
+    /// Who signed the code.
     let kind: Kind
+    /// The publisher's ID; nil when the kind has none.
     let id: String?
   }
 
+  /// Decodes the value from `decoder`.
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let publisher = try container.decode(Publisher.self, forKey: .publisher)
@@ -32,17 +39,21 @@ public struct CodeSigningIdentity: Codable, Equatable, Hashable, Sendable {
     )
   }
 
+  /// Encodes the value into `encoder`.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(Publisher(kind: kind, id: publisherID), forKey: .publisher)
     try container.encode(identifier, forKey: .identifier)
   }
 
+  /// Who signed the code.
   public let kind: Kind
+  /// The code's signing identifier.
   public let identifier: String
   /// The publisher's ID: the signing team's identifier for a signed identity.
   public let publisherID: String?
 
+  /// Creates an identity from its values.
   public init(kind: Kind, identifier: String, publisherID: String?) {
     self.kind = kind
     self.identifier = identifier
@@ -62,6 +73,7 @@ public struct CodeSigningIdentity: Codable, Equatable, Hashable, Sendable {
     }
   }
 
+  /// Wraps `value` in double quotes and escapes backslashes and quotes for a code requirement.
   private static func quoted(_ value: String) -> String {
     let escaped = value.replacingOccurrences(of: "\\", with: "\\\\")
       .replacingOccurrences(of: "\"", with: "\\\"")

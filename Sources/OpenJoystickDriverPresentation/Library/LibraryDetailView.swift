@@ -8,11 +8,14 @@
   /// The detail column of the Library: everything `ojd record show` and `ojd mod list` print
   /// for the selected record or mod.
   struct LibraryDetailView: View {
+    /// The model of the app's view of the service, refreshed after a confirmed change.
     @ObservedObject
     var runtime: RuntimeViewModel
+    /// The model of the Library area.
     @ObservedObject
     var model: LibraryViewModel
 
+    /// The detail content with the sheet that confirms a pending change.
     var body: some View {
       content.sheet(item: $model.pending) { pending in
         LibraryConfirmationSheet(
@@ -25,6 +28,7 @@
       }
     }
 
+    /// The detail of the selected record or mod, or the empty state when nothing is selected.
     @ViewBuilder
     private var content: some View {
       if let detail = model.recordDetail {
@@ -53,6 +57,7 @@
       }
     }
 
+    /// The inline error and the notice of the latest operation, each with a Dismiss button.
     @ViewBuilder
     private var feedback: some View {
       if model.failure != nil || model.notice != nil {
@@ -78,7 +83,7 @@
               Spacer(minLength: 0)
               Button(OJDLocalized.string("ui.library.dismiss")) { model.dismissNotice() }
                 .ojdAccessibilityLabel(OJDLocalized.string("a11y.library.dismissNotice"))
-            }.ojdAccessibilityLabel(notice)
+            }.accessibilityElement(children: .contain).ojdAccessibilityLabel(notice)
           }
         }
       }
@@ -86,6 +91,8 @@
 
     // MARK: Record
 
+    /// The sections of a record: its identity and source, a test result when there is one, its
+    /// fields and layers, and its JSON.
     @ViewBuilder
     private func recordSections(_ detail: LibraryRecordDetail) -> some View {
       Section {
@@ -121,6 +128,7 @@
       }
     }
 
+    /// The Record section: the record JSON, or a line that says the text cannot be shown.
     @ViewBuilder
     private func recordDocument(_ detail: LibraryRecordDetail) -> some View {
       switch detail.record {
@@ -132,6 +140,7 @@
       }
     }
 
+    /// The Test Result section: whether the capture matched the expectation, with each difference.
     private func testSection(_ run: LibraryTestRun) -> some View {
       Section(header: Text(OJDLocalized.string("ui.library.section.testResult"))) {
         if run.result.matches {
@@ -167,6 +176,7 @@
 
     // MARK: Mod
 
+    /// The sections of a mod: its name, version, author and problem, and its files.
     @ViewBuilder
     private func modSections(_ mod: LibraryModItem) -> some View {
       Section {

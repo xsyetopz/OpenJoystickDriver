@@ -2,10 +2,18 @@ import OpenJoystickDriverKit
 
 /// What one automatic dispatch publishes through the backend it leased.
 enum AutomaticOutputDelivery: Sendable {
+  /// An input event of the controller.
   case input(ControllerEvent)
+  /// The activation of the controller's output.
   case activation
+  /// A gamepad state from the remapping engine.
   case remapped(RemappingGamepadState)
 
+  /// Publishes the delivery through `backend` for `identifier`; `onPublished` runs for an input
+  /// event once it has been published.
+  ///
+  /// - Throws: ``RemappingEventEngineError/sinkUnavailable`` when a remapped state meets a backend
+  ///   that takes none, or the failure of the backend.
   func publish(
     through backend: any VirtualOutputDispatching,
     for identifier: LogicalControllerID,

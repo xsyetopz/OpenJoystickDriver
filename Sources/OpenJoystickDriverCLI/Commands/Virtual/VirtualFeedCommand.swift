@@ -2,7 +2,10 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd virtual feed` command: reads frames from standard input as JSON lines and plays them on
+/// a virtual gamepad of a persona.
 struct VirtualFeedCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "feed",
     abstract: CLILocalized.text(
@@ -25,9 +28,11 @@ struct VirtualFeedCommand: AsyncParsableCommand {
     }
   }
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// `--as`: the persona that the virtual gamepad uses.
   @Option(
     name: .customLong("as"),
     help: ArgumentHelp(
@@ -37,6 +42,7 @@ struct VirtualFeedCommand: AsyncParsableCommand {
   )
   var profile: VirtualHIDProfileID
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       // Feedback is always JSON lines, so there is no plain form.
@@ -82,8 +88,10 @@ struct VirtualFeedCommand: AsyncParsableCommand {
     }
   }
 
-  /// The failure to print for a close that threw `error`. The close runs in a task that is not
-  /// cancelled, so a `CancellationError` is the close itself being interrupted.
+  /// The failure to print for a close that threw `error`.
+  ///
+  /// The close runs in a task that is not cancelled, so a `CancellationError` is the close itself
+  /// being interrupted.
   static func closeFailure(_ error: any Error) -> CLIFailure {
     switch ServiceConnection.failure(for: error) {
     case let failure as CLIFailure: failure
@@ -95,9 +103,11 @@ struct VirtualFeedCommand: AsyncParsableCommand {
     }
   }
 
-  /// Sends each frame as soon as it is read, in order, and a heartbeat when no frame arrives,
-  /// until the input ends and the feed has played every frame. Stops reading input while
-  /// ``VirtualFeedExchangeResult/maximumQueuedFrames`` frames wait to be sent.
+  /// Sends each frame as soon as it is read, in order, and a heartbeat when no frame arrives, until
+  /// the input ends and the feed has played every frame.
+  ///
+  /// Stops reading input while ``VirtualFeedExchangeResult/maximumQueuedFrames`` frames wait to be
+  /// sent.
   private static func feed(
     _ client: ApplicationServiceClient,
     token: UUID,
@@ -187,6 +197,7 @@ struct VirtualFeedCommand: AsyncParsableCommand {
   private struct Input: Sendable {
     /// Frames to send, oldest first.
     var pending: [VirtualFeedFrame] = []
+    /// True once the input has ended.
     var finished = false
     /// The 1-based number of the first line that is not a frame.
     var invalidLine: Int?

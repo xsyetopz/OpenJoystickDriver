@@ -2,14 +2,19 @@ import Foundation
 
 /// The connection lifetime that reported an unbound device.
 enum UnboundDeviceKey: Hashable {
+  /// A raw-USB service, by its address.
   case usb(ControllerConnectionAddress)
+  /// A HID connection, by its connection ID.
   case hid(UUID)
 }
 
 /// OJD's input claim on one rejected HID connection.
 struct UnboundHIDClaim: Equatable {
+  /// The controller identifier derived for the rejected connection.
   let identifier: LogicalControllerID
+  /// The routing address of the connection, which the claim acts on.
   let routingAddress: ControllerConnectionAddress
+  /// Whether OJD released the claim, so macOS delivers the device's input.
   var isReleased = false
 }
 
@@ -34,6 +39,7 @@ extension DeviceManager {
     return unboundDevices.sorted { order($0) < order($1) }.map(\.value)
   }
 
+  /// Records an unbound device under `key`, logs it and signals a service status change.
   func recordUnboundDevice(
     _ key: UnboundDeviceKey,
     vendorID: UInt16,
@@ -75,12 +81,15 @@ extension DeviceManager {
     notifyServiceStatusChanged()
   }
 
+  /// Forgets the unbound device under `key`, with the claim on it when it is a HID connection.
   func clearUnboundDevice(_ key: UnboundDeviceKey) {
     if case .hid(let connectionID) = key { unboundHIDClaims.removeValue(forKey: connectionID) }
     guard unboundDevices.removeValue(forKey: key) != nil else { return }
     notifyServiceStatusChanged()
   }
 
+  /// Forgets every unbound HID device, the claim on each, and the HID connections yielded to raw
+  /// USB.
   func clearUnboundHIDDevices() {
     let keys = unboundDevices.keys.filter {
       if case .hid = $0 { return true }
@@ -92,8 +101,9 @@ extension DeviceManager {
     if !keys.isEmpty { notifyServiceStatusChanged() }
   }
 
-  /// Records a rejected HID connection and reconciles OJD's claim on it. A native controller no
-  /// driver binds is left to macOS instead; OJD never claimed it.
+  /// Records a rejected HID connection and reconciles OJD's claim on it.
+  ///
+  /// A native controller no driver binds is left to macOS instead; OJD never claimed it.
   func rejectHIDDevice(
     _ connection: HIDDeviceConnection,
     identifier: LogicalControllerID,
@@ -128,9 +138,11 @@ extension DeviceManager {
 
   /// Holds OJD's claim on each rejected HID connection exactly while a bound pipeline shares its
   /// physical controller or routing location, which keeps macOS from delivering duplicate input;
-  /// otherwise releases it so a device no driver owns stays with macOS. An observe-only pipeline
-  /// never holds a claim, since macOS keeps every interface of a native controller. Pipelines come
-  /// and go independently of the rejected connection, so this runs whenever they change.
+  /// otherwise releases it so a device no driver owns stays with macOS.
+  ///
+  /// An observe-only pipeline never holds a claim, since macOS keeps every interface of a native
+  /// controller. Pipelines come and go independently of the rejected connection, so this runs
+  /// whenever they change.
   func reconcileUnboundHIDClaims() async {
     // A pass decides from the pipelines it saw before awaiting the claim change, so another
     // pass can interleave; repeat until a pass changes nothing.

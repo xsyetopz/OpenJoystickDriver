@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiVersion</key>
+	<string>openjoystickdriver/v1alpha3</string>
+	<key>kind</key>
+	<string>ControllerPatch</string>
+	<key>patch</key>
+	<dict>
+		<key>route</key>
+		<string>ExtensionOwned</string>
+		<key>usb</key>
+		<dict>
+			<key>configuration</key>
+			<string>SetConfiguration1BeforeClaim</string>
+			<key>endpoints</key>
+			<dict>
+				<key>in</key>
+				<integer>129</integer>
+				<key>out</key>
+				<integer>1</integer>
+			</dict>
+		</dict>
+	</dict>
+	<key>selector</key>
+	<dict>
+		<key>productID</key>
+		<integer>721</integer>
+		<key>vendorID</key>
+		<integer>1118</integer>
+	</dict>
+</dict>
+</plist>

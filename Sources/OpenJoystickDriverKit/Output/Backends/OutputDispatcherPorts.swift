@@ -18,6 +18,9 @@ public protocol VirtualOutputDispatching: OutputDispatcher {
 
 /// Optional activation surface used to enforce a deadline for each controller in a set.
 public protocol VirtualOutputControllerActivating: AnyObject, Sendable {
+  /// Creates and activates the virtual device of `identifier`.
+  ///
+  /// - Throws: An error when the controller's virtual device cannot be activated.
   func activate(controller identifier: LogicalControllerID) async throws
 }
 
@@ -26,11 +29,13 @@ public protocol VirtualOutputControllerActivating: AnyObject, Sendable {
 /// `DevicePipeline` calls this when a physical controller pipeline stops so output backends
 /// can tear down any per-controller virtual devices.
 public protocol ControllerLifecycleListener: AnyObject, Sendable {
+  /// Called when the pipeline of the controller `identifier` stops.
   func controllerDidStop(_ identifier: LogicalControllerID) async
 }
 
 /// Receives physical input ownership before controller input or virtual activation is admitted.
 public protocol ControllerInputOwnershipListener: AnyObject, Sendable {
+  /// Reports the ownership observed for the physical input of the controller `identifier`.
   func controllerInputOwnershipChanged(
     _ ownership: HIDInputOwnership,
     for identifier: LogicalControllerID
@@ -38,17 +43,32 @@ public protocol ControllerInputOwnershipListener: AnyObject, Sendable {
 }
 
 extension VirtualOutputDispatching {
+  /// Sets ``OutputDispatcher/suppressOutput``.
   public func setOutputSuppressed(_ suppressed: Bool) { suppressOutput = suppressed }
+  /// Activates output for `identifier`; this default reports no failure.
   public func activateOutputReportingFailure(for identifier: LogicalControllerID) async throws {
     await activateOutput(for: identifier)
   }
 }
 
 /// Tells an observe-only pipeline whether any consumer uses its controller's input, so a native
-/// gamepad with no remapping costs no per-report dispatch. The answer follows route changes, so
-/// a profile selected later takes effect without reconnecting.
+/// gamepad with no remapping costs no per-report dispatch.
+///
+/// The answer follows route changes, so a profile selected later takes effect without
+/// reconnecting.
 public protocol ObservedInputDemand: AnyObject, Sendable {
+  /// Whether any consumer uses the input of the controller `identifier`.
   func wantsObservedInput(from identifier: LogicalControllerID) -> Bool
+}
+
+/// Tells a pipeline whether the active profile of a controller binds a pointer axis, so the
+/// driver turns on the pointer hardware only while a consumer reads it.
+///
+/// The answer follows route changes, so a profile activated later takes effect without
+/// reconnecting.
+public protocol PointerInputDemand: AnyObject, Sendable {
+  /// Whether the active profile of the controller `identifier` binds `PointerX` or `PointerY`.
+  func wantsPointerInput(from identifier: LogicalControllerID) -> Bool
 }
 
 /// Takes controller state snapshots and sends them to an output target.
@@ -60,6 +80,7 @@ public protocol OutputDispatcher: OutputSink {
   /// When `true`, all report/event output is suppressed (e.g. during developer
   /// packet capture). Implementations should invalidate any cached state on change.
   var suppressOutput: Bool { get set }
+  /// Sets ``suppressOutput``.
   func setOutputSuppressed(_ suppressed: Bool) async
 
   /// Receives one controller's full state and writes it to the output.
@@ -91,6 +112,7 @@ public protocol OutputDispatcher: OutputSink {
 }
 
 extension OutputDispatcher {
+  /// Sets ``suppressOutput``.
   public func setOutputSuppressed(_ suppressed: Bool) { suppressOutput = suppressed }
 
   /// Dispatchers that do not publish to a virtual device never report a publication.
@@ -109,10 +131,12 @@ extension OutputDispatcher {
 /// Used for hardware validation and testing. Production output uses a transport adapter.
 public final class LoggingOutputDispatcher: OutputDispatcher, Sendable {
   // Suppression is ignored because this dispatcher is only for development.
+  /// The diagnostic log, which receives the frames.
   public var destination: OutputDestination { .diagnosticLog }
 
   /// Accepted but ignored; this dispatcher always logs.
   private let storedSuppression = Locked(false)
+  /// Whether output is suppressed; the dispatcher ignores it and always logs.
   public var suppressOutput: Bool {
     get { storedSuppression.withLock { $0 } }
     set { storedSuppression.withLock { $0 = newValue } }

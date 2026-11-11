@@ -2,6 +2,7 @@ import Foundation
 
 /// Raw bytes in a document: uppercase hex pairs separated by single spaces.
 enum HexBytes {
+  /// The problem text for bytes that are not written as uppercase hex pairs.
   static let message = "bytes are uppercase hex pairs separated by single spaces"
 
   /// The bytes of `text`; nil unless it is one or more uppercase hex pairs separated by single
@@ -32,10 +33,14 @@ extension ControllerRecordDocument {
   /// A `startup` list: 1...16 writes that are all HID reports, all raw-USB packets or all named
   /// packets of a protocol description.
   struct StartupList: Decodable {
+    /// The HID startup writes of the list.
     let hid: [RecordStartupWrite]
+    /// The raw-USB startup writes of the list.
     let usb: [USBStartupWrite]
+    /// The references to named packets of the list.
     let packets: [StartupPacketReference]
 
+    /// Decodes 1...16 startup entries and splits them by kind; any other count is rejected.
     init(from decoder: any Decoder) throws {
       let writes = try [StartupWrite](from: decoder)
       guard (1...16).contains(writes.count) else {
@@ -61,8 +66,11 @@ extension ControllerRecordDocument {
   /// A mode's `session`: the one shape every mode uses for its initialization, keep-alive,
   /// settle, shutdown, vendor control transfers and rumble template.
   struct SessionDocument: Decodable {
+    /// The decoded session.
     let session: ControllerSession
 
+    /// Decodes `startup`, `keepAlive`, `settleMilliseconds`, `shutdown`, `control` and `rumble`; an
+    /// unknown key, an empty section or a value outside its range is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
@@ -116,8 +124,11 @@ extension ControllerRecordDocument {
 
   /// A record's keep-alive: raw-USB packets repeated at an interval.
   struct RecordKeepAlive: Decodable {
+    /// The decoded keep-alive.
     let keepAlive: KeepAlive
 
+    /// Decodes `intervalMilliseconds` and `writes`; an unknown key or a keep-alive that `KeepAlive`
+    /// rejects is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["intervalMilliseconds", "writes"])
@@ -143,8 +154,11 @@ extension ControllerRecordDocument {
 
   /// One packet of a record's keep-alive.
   struct KeepAlivePacket: Decodable {
+    /// The decoded raw-USB write.
     let write: USBStartupWrite
 
+    /// Decodes a keep-alive packet's `bytes` with its optional `endpoint`, `timeoutMilliseconds`
+    /// and `sessionByte`; an unknown key or a write that `USBStartupWrite` rejects is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
@@ -162,8 +176,11 @@ extension ControllerRecordDocument {
 
   /// One entry of a session's `control`.
   struct ControlTransferDocument: Decodable {
+    /// The decoded transfer.
     let transfer: VendorControlTransfer
 
+    /// Decodes the USB request fields of a vendor control transfer, with optional `data`, timing
+    /// and gate keys; an unknown key or a value outside its range is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: [
@@ -232,8 +249,11 @@ extension ControllerRecordDocument {
 
   /// A control transfer's `match`: the device strings and release that must hold.
   struct ControlGateDocument: Decodable {
+    /// The decoded gate.
     let gate: VendorControlTransfer.Gate
 
+    /// Decodes `manufacturer`, `product` and `bcdDevice`; an unknown key or an empty gate is
+    /// rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["manufacturer", "product", "bcdDevice"])

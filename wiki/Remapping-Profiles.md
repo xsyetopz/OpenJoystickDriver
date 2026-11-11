@@ -48,6 +48,8 @@ OJD picks the profile for a controller in this order:
 
 If no profile is active, OJD passes the controller through to the virtual controller. An app-scoped profile picked by rule 3 does not work until its app is in front.
 
+A **Profile switch** assignment changes the active profile of a controller from a button. For more information, see [Switch profiles, set layers, and pause](Bindings-and-Actions.md#switch-profiles-set-layers-and-pause).
+
 OJD reads the front app when a controller connects, and when you activate, deactivate, or edit a profile. Whether OJD re-evaluates the choice at the instant you switch apps is not verified.
 
 > [!WARNING]
@@ -97,7 +99,7 @@ To import a profile instead, click **Import profile**. For more information, see
 ojd profile create "My controller" --controller 045E:02FD
 ```
 
-Add `--app BUNDLE-ID` to limit the profile to one app. The new profile is inactive and passes through every control until you add bindings. The command needs the running app. For more information, see [Command reference](Command-Reference.md).
+Add `--app BUNDLE-ID` to limit the profile to one app, and repeat it to name more apps. The new profile is inactive and passes through every control until you add bindings. The command needs the running app. For more information, see [Command reference](Command-Reference.md).
 
 ### Activate a Profile
 
@@ -115,7 +117,7 @@ ojd profile activate "My controller"
 ojd profile deactivate "My controller"
 ```
 
-The `activate` command refuses a profile that produces no output. Add `--allow-empty` to override. Paired Joy-Con profiles have no **Set active** button. For more information, see [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md).
+The `activate` command refuses a profile that produces no output. Add `--allow-empty` to override. A profile that opens applications or URLs, runs shortcuts, or types text needs `--confirm-actions`, and **Set active** asks first, listing each action and each missing permission. Paired Joy-Con profiles have no **Set active** button. For more information, see [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md).
 
 ### Save Changes
 
@@ -161,7 +163,7 @@ The command line has no equivalent that also clears input processing. `ojd bindi
 
 ## Importing and Exporting Profiles
 
-This section explains how to save a profile to a JSON file and how to load a profile from a file.
+This section explains how to save a profile to a property list file and how to load a profile from a file.
 
 Use export and import to keep a copy of a profile, to share it, or to move it to a different Mac.
 
@@ -170,26 +172,26 @@ Use export and import to keep a copy of a profile, to share it, or to move it to
 1. Open the **Profiles** area.
 2. Select the profile.
 3. Click **Profile actions**, then select **Export**.
-4. Select a folder and a file name. The default name is `PROFILE-NAME.json`.
+4. Select a folder and a file name. The default name is `PROFILE-NAME.plist`.
 5. Click **Save**.
 
-The command line equivalent prints the profile JSON, or writes it to a file. The examples use the `ojd` alias. For more information, see [Using the command line](Command-Line.md).
+The command line equivalent prints the profile, or writes it to a file. The examples use the `ojd` alias. For more information, see [Using the command line](Command-Line.md).
 
 ```shell
-ojd profile export PROFILE --output FILE.json
+ojd profile export PROFILE --output FILE.plist
 ```
 
 ### Import a Profile
 
 1. Open the **Profiles** area.
 2. Click **Import profile**.
-3. Select a JSON file.
+3. Select a profile file.
 4. Click **Open**.
 
 The command line equivalent is:
 
 ```shell
-ojd profile import FILE.json
+ojd profile import FILE.plist
 ```
 
 OJD checks the file before it adds the profile. OJD rejects a file with unknown keys, values out of range, or a size above 4 MiB.

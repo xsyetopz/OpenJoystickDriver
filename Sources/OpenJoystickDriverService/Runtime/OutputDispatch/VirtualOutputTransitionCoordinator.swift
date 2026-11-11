@@ -1,13 +1,24 @@
 import Foundation
 import OpenJoystickDriverKit
 
+/// The failure of a bounded step of a virtual output transition.
 enum VirtualOutputTransitionError: Error, Sendable {
+  /// A stage of the transition did not finish in time.
   case stageTimedOut
+  /// The neutral feedback writes did not finish in time.
   case feedbackTimedOut
+  /// Closing the candidate backend did not finish in time.
   case candidateCloseTimedOut
+  /// Activating the backend did not finish in time.
   case activationTimedOut
 }
 
+/// Runs `operation` and returns its value, or throws `error` when `timeout` nanoseconds pass first.
+///
+/// The operation keeps running after a timeout; `onLateSuccess` receives its value then.
+///
+/// - Throws: `error` on timeout, `CancellationError` when the caller is cancelled first, or
+///   the error of `operation`.
 func withVirtualOutputTimeout<Value: Sendable>(
   _ timeout: UInt64,
   clock: VirtualOutputTransitionClock,
@@ -50,19 +61,27 @@ func withVirtualOutputTimeout<Value: Sendable>(
   return result
 }
 
+/// A stop flag that the queued operations of a coordinator check.
 final class VirtualOutputTransitionCancellation: Sendable {
+  /// Whether the coordinator was stopped.
   private let stopped = Locked(false)
 
+  /// Whether ``stop()`` was called.
   var isStopped: Bool { stopped.withLock { $0 } }
+  /// Sets the flag.
   func stop() { stopped.withLock { $0 = true } }
 }
 
+/// Runs the operations of a virtual output transition one at a time, in the order they were queued.
 actor VirtualOutputTransitionCoordinator {
+  /// The last queued operation, which the next one waits for.
   private var tail: Task<Void, Never>?
+  /// The flag that stops queued operations from starting.
   private let cancellation = VirtualOutputTransitionCancellation()
   /// Operations accepted since creation, counted when queued, before they start.
   private(set) var queuedOperationCount = 0
 
+  /// Runs `operation` after every earlier operation; false when the coordinator stops first.
   func enqueue(_ operation: @escaping @Sendable () async -> Bool) async -> Bool {
     await enqueueResult(operation) ?? false
   }
@@ -90,6 +109,7 @@ actor VirtualOutputTransitionCoordinator {
     return await next.value
   }
 
+  /// Stops the queue: cancels the queued operations and refuses further ones.
   func stop() {
     cancellation.stop()
     tail?.cancel()
@@ -97,33 +117,49 @@ actor VirtualOutputTransitionCoordinator {
   }
 }
 
+/// Admits the feedback of the virtual gamepad to the physical controllers, and quiesces it during a
+/// transition.
 final class VirtualOutputFeedbackGate: Sendable {
+  /// Sends a feedback command to the physical controller.
   typealias SendFeedback = @Sendable (LogicalControllerID, ControllerOutputCommand) async -> Void
 
+  /// The admission state, guarded by a lock.
   private struct Admission {
+    /// Whether feedback is accepted.
     var accepting = true
+    /// Advances each time the whole gate closes or reopens, so earlier feedback is dropped.
     var generation: UInt64 = 0
+    /// The cancel action of each feedback in flight, with its controller.
     var cancellationHandlers:
       [UUID: (identifier: LogicalControllerID, cancel: @Sendable () -> Void)] =
         [:]
     /// Controllers whose own feedback is quiesced while the rest keep flowing.
     var quiescedControllers: [LogicalControllerID: Int] = [:]
+    /// Advances each time one controller is quiesced, so its earlier feedback is dropped.
     var controllerGenerations: [LogicalControllerID: UInt64] = [:]
 
+    /// Whether feedback admitted under `generation` for `identifier` may still be sent.
     func isCurrent(_ identifier: LogicalControllerID, generation: Generation) -> Bool {
       accepting && self.generation == generation.gate && quiescedControllers[identifier] == nil
         && controllerGenerations[identifier, default: 0] == generation.controller
     }
   }
 
+  /// The gate and controller generations that a feedback was admitted under.
   private struct Generation {
+    /// The gate generation.
     var gate: UInt64
+    /// The controller generation.
     var controller: UInt64
   }
 
+  /// Sends feedback to the physical controller.
   private let sendFeedback: SendFeedback
+  /// The admission state.
   private let admission = Locked(Admission())
 
+  /// Creates a gate that sends the physical feedback of a command to a connected controller of
+  /// `deviceManager`.
   init(deviceManager: DeviceManager) {
     sendFeedback = { identifier, command in
       guard let command = Self.physicalFeedback(for: command) else { return }
@@ -131,11 +167,14 @@ final class VirtualOutputFeedbackGate: Sendable {
     }
   }
 
+  /// Creates a gate that sends feedback with `sendFeedback`.
   init(sendFeedback: @escaping SendFeedback) { self.sendFeedback = sendFeedback }
 
   /// The physical command for consumer feedback: a bounded set-rumble, with its main motors
-  /// mirrored onto the Steam trackpad haptics, or stop-rumble. Other consumer commands, such as a
-  /// DualSense lightbar, and held rumble do not reach the physical controller.
+  /// mirrored onto the Steam trackpad haptics, or stop-rumble.
+  ///
+  /// Other consumer commands, such as a DualSense lightbar, and held rumble do not reach the
+  /// physical controller.
   static func physicalFeedback(for command: ControllerOutputCommand) -> ControllerOutputCommand? {
     switch command {
     case .setRumble(let intensities, .milliseconds(let durationMs)):
@@ -145,6 +184,7 @@ final class VirtualOutputFeedbackGate: Sendable {
     }
   }
 
+  /// Sends `command` for `identifier` unless the gate or the controller is quiesced.
   func submit(identifier: LogicalControllerID, command: ControllerOutputCommand) {
     let token = UUID()
     let currentGeneration = admission.withLock { admission -> Generation? in
@@ -173,9 +213,11 @@ final class VirtualOutputFeedbackGate: Sendable {
   }
 
   /// Closes feedback admission, cancels in-flight feedback, and queues one neutral write per
-  /// controller. With `resumeWhenComplete` only `identifiers` are quiesced, and admission for
-  /// each reopens afterwards, so other controllers' feedback is untouched; otherwise the whole
-  /// gate closes and stays closed until `resume()`.
+  /// controller.
+  ///
+  /// With `resumeWhenComplete` only `identifiers` are quiesced, and admission for each reopens
+  /// afterwards, so other controllers' feedback is untouched; otherwise the whole gate closes and
+  /// stays closed until `resume()`.
   func quiesceAndNeutralize(
     _ identifiers: [LogicalControllerID],
     timeout: UInt64 = VirtualOutputTransitionTimeouts.standard.feedbackNanoseconds,
@@ -202,7 +244,7 @@ final class VirtualOutputFeedbackGate: Sendable {
       }
       return cancellations
     }
-    cancellations.forEach { $0() }
+    for cancel in cancellations { cancel() }
 
     // A canceled HID/USB write is not required to cooperate with Swift task cancellation. Once
     // admission advances to a new generation, quarantine those writes instead of waiting for
@@ -233,6 +275,8 @@ final class VirtualOutputFeedbackGate: Sendable {
     return true
   }
 
+  /// Reopens feedback admission after
+  /// ``quiesceAndNeutralize(_:timeout:clock:resumeWhenComplete:)``.
   func resume() {
     admission.withLock { admission in
       admission.generation &+= 1
@@ -240,21 +284,28 @@ final class VirtualOutputFeedbackGate: Sendable {
     }
   }
 
+  /// Whether feedback admitted under `generation` may still be sent.
   private func isCurrent(_ identifier: LogicalControllerID, generation: Generation) -> Bool {
     admission.withLock { $0.isCurrent(identifier, generation: generation) }
   }
 
+  /// Forgets the in-flight feedback `token`.
   private func finish(_ token: UUID) {
     _ = admission.withLock { $0.cancellationHandlers.removeValue(forKey: token) }
   }
 }
 
+/// Closes a virtual output backend once, however many callers ask.
 final class VirtualOutputBackendCloseSlot: Sendable {
+  /// The backend to close.
   let backend: any VirtualOutputDispatching
+  /// The close task, created by the first caller.
   private let closeTask = Locked<Task<Void, Never>?>(nil)
 
+  /// Creates a slot for `backend`.
   init(_ backend: any VirtualOutputDispatching) { self.backend = backend }
 
+  /// Closes the backend and returns true, or returns false when `timeout` nanoseconds pass first.
   func close(timeout: UInt64, clock: VirtualOutputTransitionClock) async -> Bool {
     let backend = self.backend
     let task = closeTask.withLock { closeTask -> Task<Void, Never> in

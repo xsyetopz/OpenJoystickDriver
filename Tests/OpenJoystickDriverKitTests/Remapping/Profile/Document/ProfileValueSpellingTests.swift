@@ -161,14 +161,14 @@ struct ProfileValueSpellingTests {
     #expect(
       try decoder.decode(
         RemappingApplicationScope.self,
-        from: Data(#"{"type":"Application","appID":"com.example.game"}"#.utf8)
-      ) == .application(appID: "com.example.game")
+        from: Data(#"{"type":"Application","appIDs":["com.example.game","com.example.other"]}"#.utf8)
+      ) == .application(appIDs: ["com.example.game", "com.example.other"])
     )
     for type in ["global", "application"] {
       #expect(throws: DecodingError.self) {
         try decoder.decode(
           RemappingApplicationScope.self,
-          from: Data(#"{"type":"\#(type)","appID":"com.example.game"}"#.utf8)
+          from: Data(#"{"type":"\#(type)","appIDs":["com.example.game"]}"#.utf8)
         )
       }
     }

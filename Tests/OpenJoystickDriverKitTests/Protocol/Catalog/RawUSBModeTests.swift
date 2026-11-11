@@ -1,11 +1,14 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
 
 /// Raw-USB records may list alternative modes, selected from the passive facts of the enumerated
-/// device, and a raw-USB mode's session names USB packets. Every mode obeys the record-level rules
-/// the same way in a record with one mode and a record with several.
+/// device, and a raw-USB mode's session names USB packets.
+///
+/// Every mode obeys the record-level rules the same way in a record with one mode and a record with
+/// several.
 struct RawUSBModeTests {
   private static let model = ControllerModelID(vendorID: 0x1234, productID: 0xABCD)
 
@@ -21,7 +24,7 @@ struct RawUSBModeTests {
 
   private static func problem(_ record: [String: Any]) throws -> String? {
     do {
-      _ = try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record))
+      _ = try ControllerRecordSet.validate(PropertyListFixture.data(tree: record))
       return nil
     } catch { return ControllerRecordSet.problemDescription(error, document: "record") }
   }
@@ -53,7 +56,7 @@ struct RawUSBModeTests {
       ),
     ])
     let profile = try #require(
-      try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: document)).record
+      try ControllerRecordSet.validate(PropertyListFixture.data(tree: document)).record
     ).profile
     let matching = PhysicalDevice(
       vendorID: Self.model.vendorID,
@@ -105,7 +108,7 @@ struct RawUSBModeTests {
       Self.gip("default"), Self.gip("probed", match: ["probes": [probe]]),
     ])
     let profile = try #require(
-      try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: document)).record
+      try ControllerRecordSet.validate(PropertyListFixture.data(tree: document)).record
     ).profile
     let selection = await ControllerModeSelector.select(
       from: profile,
@@ -177,8 +180,12 @@ struct RawUSBModeTests {
   @Test
   func aSingleModeRecordObeysTheSamePerModeChecks() throws {
     let layout: [String: Any] = [
-      "report": ["length": ["atLeast": 8]],
-      "buttons": [["control": "South", "byte": 0, "mask": 1]],
+      "layouts": [
+        [
+          "report": ["length": ["atLeast": 8]],
+          "buttons": [["control": "South", "bitOffset": 0, "bitSize": 1]],
+        ]
+      ]
     ]
     let rumble: [String: Any] = [
       "rumble": [
@@ -197,8 +204,8 @@ struct RawUSBModeTests {
     }
     let rejected: [(String, [String: Any])] = [
       ("report-layout without a layout", single("HIDReportLayout")),
-      ("layout under another family", single("SonySixaxis", ["input": layout])),
-      ("template under HIDDescriptor", single("HIDDescriptor", session: rumble)),
+      ("layout under HIDDescriptor", single("HIDDescriptor", ["input": layout])),
+      ("template under a family that does not encode it", single("SonySixaxis", session: rumble)),
       ("template under a raw-USB family", single("XboxGIP", session: rumble)),
     ]
     for (name, document) in rejected {

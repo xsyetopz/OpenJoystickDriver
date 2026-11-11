@@ -1,10 +1,45 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverService
 
 extension ProfileLibraryTests {
+  @Test
+  func aJSONProfileOfAnEarlierAlphaIsNamedWithE5001() async throws {
+    try await withLibrary { library, _ in
+      let valid = makeProfile(name: "Valid")
+      try await library.create(valid)
+      let stale = library.profilesDirectory.appendingPathComponent("OLD.json")
+      try Data(#"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Profile"}"#.utf8)
+        .write(to: stale)
+      _ = try await library.reload()
+
+      let snapshot = try await library.snapshot()
+
+      #expect(snapshot.profiles == [valid])
+      #expect(snapshot.issues.map(\.code) == [.unsupportedAPIVersion])
+      #expect(snapshot.issues.first?.fileName == "OLD.json")
+      #expect(snapshot.issues.first?.message.contains("OLD.json") == true)
+      #expect(FileManager.default.fileExists(atPath: stale.path))
+    }
+  }
+
+  @Test
+  func aJSONFileOJDDidNotWriteIsLeftOutOfTheIssues() async throws {
+    try await withLibrary { library, _ in
+      try await library.create(makeProfile(name: "Valid"))
+      let notes = library.profilesDirectory.appendingPathComponent("notes.json")
+      try Data(#"{"apiVersion": "example.org/v1", "kind": "Profile"}"#.utf8).write(to: notes)
+      let text = library.profilesDirectory.appendingPathComponent("todo.json")
+      try Data("not json".utf8).write(to: text)
+      _ = try await library.reload()
+
+      #expect(try await library.snapshot().issues.isEmpty)
+    }
+  }
+
   @Test
   func profileWithUnknownFieldIsRecoveredAsDamaged() async throws {
     try await withLibrary { library, _ in
@@ -12,12 +47,11 @@ extension ProfileLibraryTests {
       let stored = makeProfile(name: "Unknown")
       try await library.create(valid)
       var storedObject = try #require(
-        JSONSerialization.jsonObject(
-          with: Data(RemappingProfileFileStore.encodedJSON(stored).utf8)
-        ) as? [String: Any]
+        PropertyListFixture.tree(Data(RemappingProfileFileStore.encodedPlist(stored).utf8))
+          as? [String: Any]
       )
       storedObject["notAField"] = true
-      try JSONSerialization.data(withJSONObject: storedObject)
+      try PropertyListFixture.data(tree: storedObject)
         .write(to: library.profileURL(stored.id))
       _ = try await library.reload()
 
@@ -37,9 +71,8 @@ extension ProfileLibraryTests {
       let stored = makeProfile(name: "Stored")
       try await library.create(valid)
       var object = try #require(
-        JSONSerialization.jsonObject(
-          with: Data(RemappingProfileFileStore.encodedJSON(stored).utf8)
-        ) as? [String: Any]
+        PropertyListFixture.tree(Data(RemappingProfileFileStore.encodedPlist(stored).utf8))
+          as? [String: Any]
       )
       object["bindings"] = [
         [
@@ -48,7 +81,7 @@ extension ProfileLibraryTests {
           "destination": ["type": "Keyboard", "key": "Space", "modifiers": [String]()],
         ] as [String: Any]
       ]
-      let bytes = try JSONSerialization.data(withJSONObject: object)
+      let bytes = try PropertyListFixture.data(tree: object)
       try bytes.write(to: library.profileURL(stored.id))
       _ = try await library.reload()
 
@@ -67,17 +100,19 @@ extension ProfileLibraryTests {
     try await withLibrary { library, _ in
       let valid = makeProfile(name: "Valid")
       try await library.create(valid)
-      let invalidHeader = Data(
-        #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"Profile","name":"Pad"}"#.utf8
+      let invalidHeader = PropertyListFixture.bytes(
+        json: #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"Profile","name":"Pad"}"#
       )
-      let unsupported = Data(#"{"apiVersion":"unsupported.example/v9","kind":"Profile"}"#.utf8)
+      let unsupported = PropertyListFixture.bytes(
+        json: #"{"apiVersion":"unsupported.example/v9","kind":"Profile"}"#
+      )
       let misnamed = makeProfile(name: "Misnamed")
       let duplicate = makeProfile(name: "valid")
       try invalidHeader.write(to: library.profileURL(UUID()))
       try unsupported.write(to: library.profileURL(UUID()))
-      try Data(RemappingProfileFileStore.encodedJSON(misnamed).utf8)
+      try Data(RemappingProfileFileStore.encodedPlist(misnamed).utf8)
         .write(to: library.profileURL(UUID()))
-      try Data(RemappingProfileFileStore.encodedJSON(duplicate).utf8)
+      try Data(RemappingProfileFileStore.encodedPlist(duplicate).utf8)
         .write(to: library.profileURL(duplicate.id))
       _ = try await library.reload()
 
@@ -100,9 +135,8 @@ extension ProfileLibraryTests {
       let stored = makeProfile(name: "Stored")
       try await library.create(valid)
       var object = try #require(
-        JSONSerialization.jsonObject(
-          with: Data(RemappingProfileFileStore.encodedJSON(stored).utf8)
-        ) as? [String: Any]
+        PropertyListFixture.tree(Data(RemappingProfileFileStore.encodedPlist(stored).utf8))
+          as? [String: Any]
       )
       object["bindings"] = [
         [
@@ -111,7 +145,7 @@ extension ProfileLibraryTests {
           "destination": ["type": "Keyboard", "key": "Space", "modifiers": [String]()],
         ] as [String: Any]
       ]
-      try JSONSerialization.data(withJSONObject: object).write(to: library.profileURL(stored.id))
+      try PropertyListFixture.data(tree: object).write(to: library.profileURL(stored.id))
       _ = try await library.reload()
 
       let snapshot = try await library.snapshot()
@@ -215,9 +249,8 @@ extension ProfileLibraryTests {
     as stored: RemappingProfile
   ) throws -> Data {
     var object = try #require(
-      JSONSerialization.jsonObject(
-        with: Data(RemappingProfileFileStore.encodedJSON(stored).utf8)
-      ) as? [String: Any]
+      PropertyListFixture.tree(Data(RemappingProfileFileStore.encodedPlist(stored).utf8))
+        as? [String: Any]
     )
     var text = document
     if let replaced, let current { text = text.replacingOccurrences(of: current, with: replaced) }
@@ -225,7 +258,7 @@ extension ProfileLibraryTests {
       JSONSerialization.jsonObject(with: Data(text.utf8)) as? [String: Any]
     )
     object.merge(members) { _, member in member }
-    let bytes = try JSONSerialization.data(withJSONObject: object)
+    let bytes = try PropertyListFixture.data(tree: object)
     try bytes.write(to: library.profileURL(stored.id))
     return bytes
   }

@@ -2,7 +2,10 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd transport-extension` command group: shows, activates and deactivates the DriverKit
+/// transport extension.
 struct TransportExtensionCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "transport-extension",
     abstract: CLILocalized.text(
@@ -14,19 +17,24 @@ struct TransportExtensionCommand: AsyncParsableCommand {
     ]
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
 /// The `ojd transport-extension status --json` result.
 ///
-/// `detail` is the `systemextensionsctl` record, the unexpected bundle identifier, or the
-/// reason the state is unavailable; it is absent when there is nothing to add.
+/// `detail` is the `systemextensionsctl` record, the unexpected bundle identifier, or the reason
+/// the state is unavailable; it is absent when there is nothing to add.
 struct TransportExtensionStatusReport: Encodable, Equatable {
+  /// Whether the extension is in the app bundle.
   let bundle: StatusReport.Extension.Bundle
+  /// Whether macOS has the extension registered.
   let registration: StatusReport.Extension.Registration
+  /// Extra text about the registration, when there is any.
   let detail: String?
 
+  /// Creates the report from the extension status.
   init(_ status: ExtensionStatus) {
     let summary = StatusReport.Extension(status)
     bundle = summary.bundle
@@ -35,7 +43,12 @@ struct TransportExtensionStatusReport: Encodable, Equatable {
   }
 }
 
+/// The `ojd transport-extension status` command: prints the bundle and registration state of the
+/// extension.
+///
+/// It fails with `systemRequestFailed` after the output when macOS cannot report the registration.
 struct TransportExtensionStatusCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "status",
     abstract: CLILocalized.text(
@@ -46,9 +59,11 @@ struct TransportExtensionStatusCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let status = StatusCommand.extensionProbe()
@@ -92,16 +107,28 @@ struct TransportExtensionStatusCommand: AsyncParsableCommand {
 
 /// The `--json` result of `transport-extension activate` and `transport-extension deactivate`.
 struct TransportExtensionResult: Encodable, Equatable {
+  /// The state after the request.
   enum State: String, Encodable {
+    /// The extension is active.
     case active = "Active"
+    /// The extension is inactive.
     case inactive = "Inactive"
+    /// macOS waits for the user to approve the extension.
     case awaitingApproval = "AwaitingApproval"
   }
 
+  /// The state after the request.
   let state: State
 }
 
-private func submit(
+/// Submits `action`, then prints the state it reached.
+///
+/// `done` is the state to report when macOS finishes the request, and `message` is the success line
+/// for it. An approval that macOS still waits for prints the approval hint on stderr instead.
+///
+/// - Throws: ``CancellationError`` when the request is cancelled, and ``CLIFailure`` with
+///   `systemRequestFailed` when the request times out or fails.
+func submitTransportExtension(
   _ action: TransportExtensionSubmission.Action,
   done state: TransportExtensionResult.State,
   message: String
@@ -143,7 +170,10 @@ private func submit(
   }
 }
 
+/// The `ojd transport-extension activate` command: asks macOS to activate the extension in the app
+/// bundle.
 struct TransportExtensionActivateCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "activate",
     abstract: CLILocalized.text(
@@ -154,12 +184,14 @@ struct TransportExtensionActivateCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
-      try await submit(
+      try await submitTransportExtension(
         .activate,
         done: .active,
         message: CLILocalized.text("cli.transportExtension.group.activated")
@@ -168,7 +200,9 @@ struct TransportExtensionActivateCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd transport-extension deactivate` command: asks macOS to deactivate the extension.
 struct TransportExtensionDeactivateCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "deactivate",
     abstract: CLILocalized.text(
@@ -179,12 +213,14 @@ struct TransportExtensionDeactivateCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
-      try await submit(
+      try await submitTransportExtension(
         .deactivate,
         done: .inactive,
         message: CLILocalized.text("cli.transportExtension.group.deactivated")

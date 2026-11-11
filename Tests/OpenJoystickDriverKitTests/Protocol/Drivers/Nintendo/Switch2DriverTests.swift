@@ -1,10 +1,13 @@
 import Foundation
+import ProtocolPacketFixtures
 import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// Reports and command replies in the layout of SDL `SDL_hidapi_switch2.c` and the Switch 2
-/// command notes it follows. They come from the source, not from a hardware capture.
+/// Reports and command replies in the layout of SDL `SDL_hidapi_switch2.c` and the Switch 2 command
+/// notes it follows.
+///
+/// They come from the source, not from a hardware capture.
 private enum Switch2Report {
   static func state(
     buttons: UInt32 = 0,
@@ -271,5 +274,69 @@ struct Switch2DriverTests {
       + (0..<3).compactMap { _ in driver.keepAliveWrites().hidOutputs.first?.bytes[2] }
     #expect(states == [1, 1, 0, 1])
     #expect(driver.encoded(.stopRumble).onlyReport.bytes[2] == 2)
+  }
+
+  @Test
+  func recordsBindTheLayoutOfTheirController() throws {
+    let layouts: [(UInt16, Switch2ControllerLayout)] = [
+      (0x2066, .rightJoyCon), (0x2067, .leftJoyCon), (0x2069, .pro), (0x2073, .gameCube),
+    ]
+    for (productID, layout) in layouts {
+      let model = ControllerModelID(vendorID: 0x057E, productID: productID)
+      let parser = try catalogParser(model)
+      let driver = try #require(parser as? Switch2Driver, "\(model)")
+      #expect(driver.layout == layout, "\(model)")
+    }
+  }
+
+  @Test
+  func captureKeepsAReportWhoseIDTheDriverIgnores() async throws {
+    var ignored = Array(Switch2Report.state(buttons: 1))
+    ignored[0] = 0x09
+    let pipeline = DevicePipeline(
+      identifier: LogicalControllerID(vendorID: 0x057E, productID: 0x2069),
+      transport: .hid(address: .ioKit(locationID: 1, interfaceNumber: nil)),
+      driver: Switch2Driver(),
+      dispatcher: CapturingOutputDispatcher()
+    )
+    await pipeline.start()
+    _ = await pipeline.getPacketLog()
+    await pipeline.feedHIDData(Data(ignored))
+
+    let received = await pipeline.getPacketLog().filter { $0.direction == .received }
+    #expect(received.map(\.reportBytes) == [ignored])
+    #expect(await pipeline.inputState().pressed.isEmpty)
+    await pipeline.stop()
+  }
+
+  @Test
+  func syntheticCaptureFileDecodesThroughTheDriver() throws {
+    let capture = try ProtocolPacketFixtures.Switch2.load("synthetic-pro-usb")
+    #expect(capture.isSynthetic)
+    #expect(capture.controller == "057E:2069")
+    #expect(capture.transport == "usb")
+    #expect(capture.reports.map(\.count) == [64, 64])
+
+    let driver = Switch2Driver(layout: .pro)
+    let idle = try #require(try driver.parseReport(Data(capture.reports[0])))
+    #expect(idle.state.pressed.isEmpty)
+    let pressed = try #require(try driver.parseReport(Data(capture.reports[1])))
+    #expect(pressed.state.pressed == [.south])
+    #expect(pressed.state.leftStick == StickPosition(x: 0.5, y: 0))
+  }
+
+  @Test
+  func captureTextRejectsMalformedFiles() {
+    typealias Capture = ProtocolPacketFixtures.Switch2
+    let header = "# controller: a\n# transport: usb\n# action: x\n# source: capture\n"
+    #expect(throws: Capture.CaptureError.noReports) { try Capture.parse(header) }
+    #expect(throws: Capture.CaptureError.malformedReport(line: 5)) {
+      try Capture.parse(header + "5 00\n")
+    }
+    #expect(throws: Capture.CaptureError.malformedHeader(line: 1)) { try Capture.parse("# x\n") }
+    #expect(throws: Capture.CaptureError.missingHeader("controller")) {
+      try Capture.parse("# transport: usb\n# action: x\n# source: capture\n05\n")
+    }
+    #expect(throws: Capture.CaptureError.missing("absent")) { try Capture.load("absent") }
   }
 }

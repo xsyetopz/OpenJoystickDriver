@@ -1,5 +1,17 @@
 /* Product name in the title of the application menu of the menu bar. It stays OpenJoystickDriver in every language. */
 "term.app.name" = "OpenJoystickDriver";
+/* Name of a destination that opens an application. %@ is the bundle identifier of the application. */
+"ui.mapping.openApplication" = "เปิด %@";
+/* Name of a destination that opens a URL. %@ is the URL. */
+"ui.mapping.openURL" = "เปิด URL %@";
+/* Name of a destination that runs a Shortcut. Shortcuts is the Apple app. %@ is the name of the shortcut. */
+"ui.mapping.runShortcut" = "เรียกใช้คำสั่งลัด %@";
+/* Name of a system action destination. %@ is the name of the action, such as Mission Control. */
+"ui.mapping.systemAction" = "การทำงานของระบบ %@";
+/* Name of a system key destination, such as volume up. %@ is the name of the key. */
+"ui.mapping.systemKey" = "ปุ่มระบบ %@";
+/* Name of a destination that types text. %@ is the text. */
+"ui.mapping.typeText" = "พิมพ์ %@";
 /* Button of the problem banner in the Access area that quits and opens the app again so that a granted permission takes effect. OpenJoystickDriver is the product name. */
 "ui.permissions.restartApplication" = "เริ่ม OpenJoystickDriver ใหม่";
 /* Menu item in the application menu that opens the project page on GitHub. GitHub is a product name and stays as written. */
@@ -50,6 +62,8 @@
 "status.allowed" = "อนุญาตแล้ว";
 /* Value of a permission row in the Access area when the active profiles do not use the permission. */
 "status.notNeeded" = "ไม่จำเป็น";
+/* Line of the profile activation alert and of 'ojd profile activate' that names the permissions that the actions of the profile need and that are not granted. %@ is the permission names, separated by commas. */
+"status.missingPermissions" = "สิทธิ์ที่ขาดอยู่: %@";
 /* Placeholder in the profile creation sheet shown instead of a controller model when no controller is connected. */
 "status.connectController" = "เชื่อมต่อคอนโทรลเลอร์";
 /* Line in the menu bar menu when no profile is active. */
@@ -152,8 +166,18 @@
 "ui.controllers.deviceInUse" = "โปรแกรมอื่นกำลังใช้คอนโทรลเลอร์นี้ ปิดโปรแกรมนั้นหรือเชื่อมต่อคอนโทรลเลอร์ใหม่";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose USB configuration OJD could not read. OJD tries again only when the controller reconnects, so the text asks for that. USB stays as written. */
 "ui.controllers.configurationUnreadable" = "อ่านการกำหนดค่า USB ของคอนโทรลเลอร์นี้ไม่ได้ เชื่อมต่อคอนโทรลเลอร์ใหม่";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
+"ui.controllers.bootloaderIdentity" = "คอนโทรลเลอร์นี้อยู่ในโหมดบูตโหลดเดอร์ OJD จะไม่ส่งข้อมูลใดๆ ไปยังคอนโทรลเลอร์นี้";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+"ui.controllers.noModeMatched" = "คอนโทรลเลอร์นี้ใช้ ID เดียวกับรุ่นอื่นและไม่ตรงกับรุ่นที่รองรับรุ่นใดเลย OJD จะไม่ส่งข้อมูลใดๆ ไปยังคอนโทรลเลอร์นี้";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected device whose ID OJD recognizes and serves nothing, such as a receiver with no controller connected. OJD sends such a device no data, and the text says so. OJD stays as written. */
+"ui.controllers.idleIdentity" = "อุปกรณ์นี้ไม่มีปุ่มควบคุมให้ใช้ เช่น ตัวรับสัญญาณที่ไม่มีคอนโทรลเลอร์เชื่อมต่ออยู่ OJD จะไม่ส่งข้อมูลใดๆ ไปยังอุปกรณ์นี้";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "แบตเตอรี่";
+/* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */
+"ui.controllers.paused.label" = "การแมปใหม่";
+/* Value of the pause fact in the Controllers detail, and menu bar menu row under a controller that a Pause assignment holds. */
+"ui.controllers.paused.value" = "หยุดชั่วคราวอยู่";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "แสดงเลขประจำเครื่อง";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */
@@ -183,7 +207,7 @@
 /* Label of the fact in the Controllers detail that shows the USB vendor ID and product ID. VID and PID are the usual short names. */
 "ui.controllers.usbIdentifier" = "USB VID/PID";
 /* VoiceOver sentence while the app checks which profile is active for the controller. */
-"ui.controllers.profileCheckingSentence" = "กำลังตรวจสอบโปรไฟล์ที่ใช้งานอยู่";
+"ui.controllers.profileCheckingSentence" = "กำลังตรวจสอบโปรไฟล์ที่ใช้งานอยู่…";
 /* VoiceOver sentence when the controller has no active profile. */
 "ui.controllers.noActiveProfileSentence" = "ไม่มีโปรไฟล์ที่ใช้งานอยู่";
 /* VoiceOver sentence that names the active profile. %@ is the profile name. The sentence ends with a period. */
@@ -311,11 +335,9 @@
 /* Status in the capture assignment sheet before the capture starts. */
 "ui.capture.ready" = "พร้อมรับฟัง";
 /* Status in the capture assignment sheet while the app waits for a controller control. */
-"ui.capture.listening" = "กำลังรับฟังตัวควบคุมของคอนโทรลเลอร์";
+"ui.capture.listening" = "กำลังรับฟังตัวควบคุมของคอนโทรลเลอร์…";
 /* VoiceOver announcement while the app waits for a controller control. Escape is the name of the Escape key. */
-"ui.capture.listeningCancel" = "กำลังรับฟังตัวควบคุมของคอนโทรลเลอร์ กด Escape เพื่อยกเลิก";
-/* Status text in the capture assignment sheet while the app waits for a controller control. Keep the three dots. */
-"ui.capture.listeningEllipsis" = "กำลังรับฟังตัวควบคุมของคอนโทรลเลอร์…";
+"ui.capture.listeningCancel" = "กำลังรับฟังตัวควบคุมของคอนโทรลเลอร์… กด Escape เพื่อยกเลิก";
 /* Status in the capture assignment sheet after a control is detected. %@ is the name of the control. The sentence ends with a period. */
 "ui.capture.detected" = "ตรวจพบ: %@";
 /* Label with the detected control in the capture assignment sheet. %@ is the name of the control. It has no final period because other text follows or the label stands alone. */
@@ -384,8 +406,12 @@
 "ui.profiles.addLayer" = "เพิ่มเลเยอร์";
 /* Title of the sheet that adds an assignment to a layer. %@ is the name of the layer. */
 "ui.profiles.addLayerAssignment" = "เพิ่มการกำหนดให้ %@";
+/* Button in the behavior sheet that adds an entry for a tap count, such as a triple tap, to the control. */
+"ui.profiles.addMultiTap" = "เพิ่มจำนวนการแตะ";
 /* Button of the combination sheet that adds a sequence. A sequence is a set of controls pressed one after the other. */
 "ui.profiles.addSequence" = "เพิ่มลำดับ";
+/* Heading in the behavior sheet of the entries that send another destination when the control is tapped two to five times. */
+"ui.profiles.multiTap" = "แตะหลายครั้ง";
 /* Title of the empty state in the profile editor when the profile has no assignment. */
 "ui.profiles.noAssignments" = "ยังไม่มีการกำหนด";
 /* Instruction in the empty state of the profile editor. The destination is a key, a mouse button or a pointer movement. */
@@ -412,6 +438,16 @@
 "ui.profiles.changedElsewhere" = "โปรไฟล์ถูกเปลี่ยนแปลงที่อื่น";
 /* Error in the profile editor when the service saved the profile but the app cannot read the state afterwards. */
 "ui.profiles.savedButUnavailable" = "บันทึกโปรไฟล์แล้ว แต่สถานะล่าสุดไม่พร้อมใช้งาน";
+/* Label of the picker in the behavior sheet that sets how many taps of a control fire an entry. The choices are the numbers 2 to 5. */
+"ui.profiles.tapCount" = "จำนวนการแตะ";
+/* Note in the behavior sheet under the tap-count entries. %@ is the longest tap window with its unit, such as 300 ms; the assignment's own destination fires only after that wait. */
+"ui.profiles.tapDelay" = "ปลายทางหลักอาจรอ %@";
+/* Label of the field in the behavior sheet that sets the time from the press to the first repeat of turbo. The value is in milliseconds. */
+"ui.profiles.turboDelay" = "หน่วงเวลาก่อนการทำซ้ำครั้งแรก";
+/* Switch in the behavior sheet that makes turbo stop after a number of repeats. */
+"ui.profiles.turboLimit" = "จำกัดการทำซ้ำ";
+/* Label of the field in the behavior sheet that sets how many repeats turbo makes after the press before it stops. The value is a number. */
+"ui.profiles.turboMax" = "จำนวนการทำซ้ำสูงสุด";
 /* Save status of the profile editor: there are changes that are not saved. */
 "ui.profiles.unsaved" = "การแก้ไขที่ยังไม่ได้บันทึก";
 /* Save status of the profile editor while the profile is being saved. Keep the three dots. */
@@ -462,8 +498,6 @@
 "ui.profiles.details" = "รายละเอียดโปรไฟล์";
 /* Note on an assignment row when the controller or its protocol cannot do what the assignment needs. */
 "ui.profiles.notSupportedByController" = "คอนโทรลเลอร์หรือโปรโตคอลนี้ไม่รองรับ";
-/* Label of the field in the behavior sheet for the destination of a double tap of a control. */
-"ui.profiles.doubleTap" = "แตะสองครั้ง";
 /* Toolbar button in the Profiles area that exports the profile to a file. */
 "ui.profiles.export" = "ส่งออกโปรไฟล์";
 /* Option of the activation popup in the layer sheet: the layer is on while the control is held. */
@@ -504,7 +538,7 @@
 "ui.profiles.sequenceWindow" = "ช่วงเวลาให้เสร็จสิ้น";
 /* Heading of the sequences section in the profile editor. */
 "ui.profiles.sequences" = "ลำดับ";
-/* Label of the field in the behavior sheet that sets the time within which a second tap counts as a double tap. The value is in milliseconds. */
+/* Label of the field in the behavior sheet that sets the time from one tap's release to the next press within which the taps of a tap-count entry count together. The value is in milliseconds. */
 "ui.profiles.tapWindow" = "ช่วงเวลาแตะ";
 /* Label of the popup in the profile creation sheet that picks which apps the profile applies to. */
 "ui.profiles.target" = "เป้าหมาย";
@@ -512,6 +546,14 @@
 "ui.profiles.targetApplication" = "หนึ่งแอปพลิเคชัน";
 /* Option of the target popup: the profile applies to all apps. */
 "ui.profiles.targetGlobal" = "ทุกแอปพลิเคชัน";
+/* Label of the popup in the profile creation sheet that picks what the new profile starts from. */
+"ui.profiles.template" = "เทมเพลต";
+/* Option of the template popup in the profile creation sheet: the profile starts empty. */
+"ui.profiles.templateEmpty" = "ว่างเปล่า";
+/* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
+"ui.profiles.templateGyroStick" = "ไจโรเป็นสติ๊ก";
+/* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
+"ui.profiles.templateNoMotion" = "%@ ไม่มีเซ็นเซอร์การเคลื่อนไหว";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "สลับ";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -570,8 +612,32 @@
 "ui.mapping.axisDirection" = "%1$@ %2$@";
 /* Name of a mouse button destination. %@ is the button, for example left or right. */
 "ui.mapping.mouseButton" = "ปุ่มเมาส์ %@";
+/* Name of a MIDI note destination. %1$@ is the note number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiNote" = "โน้ต MIDI %1$@ ช่อง %2$@";
+/* Name of a MIDI control change destination. %1$@ is the controller number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiControlChange" = "ตัวควบคุม MIDI %1$@ ช่อง %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "การเคลื่อนตัวชี้ %@";
+/* Name of a pointer position destination. %@ is the axis whose value places the pointer across the main display. */
+"ui.mapping.pointerPosition" = "ตำแหน่งตัวชี้ %@";
+/* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
+"ui.mapping.profileNext" = "โปรไฟล์ถัดไป";
+/* Name of the destination that activates the previous profile of the controller's model and scope in name order, wrapping at the start. */
+"ui.mapping.profilePrevious" = "โปรไฟล์ก่อนหน้า";
+/* Name of the destination that activates a specific profile of the same controller model. */
+"ui.mapping.profileSwitch" = "สลับโปรไฟล์";
+/* Name of the destination that turns a layer on. %@ is the layer name. */
+"ui.mapping.layerOn" = "เปิดเลเยอร์ %@";
+/* Name of the destination that turns a layer off. %@ is the layer name. */
+"ui.mapping.layerOff" = "ปิดเลเยอร์ %@";
+/* Name of the destination that flips a layer between on and off. %@ is the layer name. */
+"ui.mapping.layerToggle" = "สลับเลเยอร์ %@";
+/* Name of the destination that pauses the controller so its input passes through unmapped. */
+"ui.mapping.pauseOn" = "หยุดคอนโทรลเลอร์ชั่วคราว";
+/* Name of the destination that resumes a paused controller so its mappings apply again. */
+"ui.mapping.pauseOff" = "เล่นคอนโทรลเลอร์ต่อ";
+/* Name of the destination that flips the controller between paused and resumed. */
+"ui.mapping.pauseToggle" = "สลับการหยุดชั่วคราว";
 /* Name of a scroll destination. %@ is the direction of the scroll. */
 "ui.mapping.scroll" = "เลื่อน %@";
 /* Name of the bottom face button: A on Xbox, Cross on PlayStation. The slash stays. */
@@ -606,6 +672,14 @@
 "ui.mapping.touchGridCell" = "%1$@ กริด %2$d×%3$d เซลล์ %4$d,%5$d";
 /* Name of a touch swipe as a control. %1$@ is the touch surface and %2$@ is the swipe direction. */
 "ui.mapping.touchSwipe" = "%1$@ ปัด %2$@";
+/* Name of a stick ring as a control. %1$@ is the stick, %2$.2f is the inner radius and %3$.2f is the outer radius, both from 0 to 1. */
+"ui.mapping.stickRegion" = "%1$@ วงแหวน %2$.2f ถึง %3$.2f";
+/* Name of a stick ring with a sector as a control. %1$@ is the stick, %2$.2f is the inner radius, %3$.2f is the outer radius, %4$.0f is the sector start and %5$.0f is the sector end, both in degrees clockwise from up. */
+"ui.mapping.stickRegionSector" = "%1$@ วงแหวน %2$.2f ถึง %3$.2f, %4$.0f° ถึง %5$.0f°";
+/* Name of a trigger pressure band as a control. %1$@ is the trigger, %2$.2f is the start and %3$.2f is the end of the band, both from 0 to 1. */
+"ui.mapping.triggerBand" = "%1$@ ช่วง %2$.2f ถึง %3$.2f";
+/* Name of a touch area as a control. %1$@ is the touch surface, %2$.2f is the left edge, %3$.2f is the top edge, %4$.2f is the width and %5$.2f is the height, all as fractions of the surface. The multiplication sign stays between the width and the height. */
+"ui.mapping.touchArea" = "%1$@ พื้นที่ที่ %2$.2f, %3$.2f, %4$.2f×%5$.2f";
 /* Option of the touch surface popup: the main touch surface of the controller. */
 "ui.mapping.touchSurfacePrimary" = "พื้นผิวหลัก";
 /* Option of the touch surface popup: the left touch surface of the controller. */
@@ -634,6 +708,74 @@
 "ui.profiles.touch.stickRadius" = "รัศมีสติ๊กเต็ม (สัดส่วนของพื้นผิว)";
 /* Label of the field in the touch sheet that sets the stick deadzone. The deadzone is the part of the travel near the center that is ignored. */
 "ui.profiles.touch.deadzone" = "เดดโซนสติ๊ก";
+/* Title of the row of the Controller section and of the sheet that adds a stick ring, trigger band or touch area as an assignment. */
+"ui.profiles.region.title" = "ภูมิภาค";
+/* Summary under the regions row of the Controller section: what a region is. */
+"ui.profiles.region.summary" = "วงแหวนของสติ๊ก ช่วงของทริกเกอร์ และพื้นที่สัมผัส";
+/* Label of the segmented control in the regions sheet that picks between a stick ring, a trigger band and a touch area. */
+"ui.profiles.region.kind" = "ประเภทของภูมิภาค";
+/* Segment of the region type control in the regions sheet: a ring around the center of a stick. */
+"ui.profiles.region.stick" = "วงแหวนของสติ๊ก";
+/* Segment of the region type control in the regions sheet: a band of the pull of a trigger. */
+"ui.profiles.region.trigger" = "ช่วงของทริกเกอร์";
+/* Segment of the region type control in the regions sheet: a rectangle of a touch surface. */
+"ui.profiles.region.touch" = "พื้นที่สัมผัส";
+/* Label of the popup in the regions sheet that picks the stick, trigger or touch surface that the region reads. */
+"ui.profiles.region.input" = "อินพุต";
+/* Label of the field in the regions sheet that sets where a stick ring starts, from 0 at the center to 1 at the edge. */
+"ui.profiles.region.innerRadius" = "รัศมีด้านใน (0...1)";
+/* Label of the field in the regions sheet that sets where a stick ring ends, from 0 at the center to 1 at the edge. */
+"ui.profiles.region.outerRadius" = "รัศมีด้านนอก (0...1)";
+/* Label of the field in the regions sheet that sets the start of the sector of a stick ring, in degrees clockwise from up. Leaving it and the end empty makes a full ring. */
+"ui.profiles.region.fromDegrees" = "จุดเริ่มของเซกเตอร์ (องศาจากด้านบน เว้นว่างสำหรับวงแหวนเต็ม)";
+/* Label of the field in the regions sheet that sets the end of the sector of a stick ring, in degrees clockwise from up. */
+"ui.profiles.region.toDegrees" = "จุดสิ้นสุดของเซกเตอร์ (องศาจากด้านบน)";
+/* Label of the field in the regions sheet that sets where a trigger band starts, from 0 for released to 1 for fully pulled. */
+"ui.profiles.region.from" = "จุดเริ่มของช่วง (0...1)";
+/* Label of the field in the regions sheet that sets where a trigger band ends, from 0 for released to 1 for fully pulled. */
+"ui.profiles.region.to" = "จุดสิ้นสุดของช่วง (0...1)";
+/* Label of the field in the regions sheet that sets the left edge of a touch area as a fraction of the surface width. */
+"ui.profiles.region.x" = "ขอบซ้าย (สัดส่วนของพื้นผิว)";
+/* Label of the field in the regions sheet that sets the top edge of a touch area as a fraction of the surface height. */
+"ui.profiles.region.y" = "ขอบบน (สัดส่วนของพื้นผิว)";
+/* Label of the field in the regions sheet that sets the width of a touch area as a fraction of the surface width. */
+"ui.profiles.region.width" = "ความกว้าง (สัดส่วนของพื้นผิว)";
+/* Label of the field in the regions sheet that sets the height of a touch area as a fraction of the surface height. */
+"ui.profiles.region.height" = "ความสูง (สัดส่วนของพื้นผิว)";
+/* Heading of the drawing in the regions sheet that shows where the stick, trigger or touch is now. */
+"ui.profiles.region.live" = "ตำแหน่งแบบสด";
+/* Note in the regions sheet shown while no controller is connected, so there is no live position. */
+"ui.profiles.region.noController" = "เชื่อมต่อคอนโทรลเลอร์เพื่อดูตำแหน่งแบบสด";
+/* Line under the live position of the touch area in the regions sheet while nothing touches the surface. */
+"ui.profiles.region.noContact" = "ไม่มีการสัมผัส";
+/* Line under the live stick position in the regions sheet. %1$.2f is the deflection from 0 to 1 and %2$.0f is the angle in degrees clockwise from up. */
+"ui.profiles.region.liveStick" = "การเบี่ยงเบน %1$.2f มุม %2$.0f°";
+/* Line under the live trigger position in the regions sheet. %.2f is the pull from 0 to 1. */
+"ui.profiles.region.liveTrigger" = "การกด %.2f";
+/* Line under the live touch position in the regions sheet. %1$.2f is the horizontal and %2$.2f is the vertical position, both as fractions of the surface. */
+"ui.profiles.region.liveTouch" = "สัมผัสที่ %1$.2f, %2$.2f";
+/* Title of the sheet that sets the pointer speed of a profile, and label of its row in the controller section. The pointer speed scales all pointer movement. */
+"ui.profiles.pointerSpeed.title" = "ความเร็วตัวชี้";
+/* Label of the switch in the pointer speed sheet that turns on scaling of the pointer movement. */
+"ui.profiles.pointerSpeed.enabled" = "ปรับสเกลความเร็วตัวชี้";
+/* Label of the popup in the pointer speed sheet that picks the control whose value sets the scale. */
+"ui.profiles.pointerSpeed.driver" = "ตัวควบคุม";
+/* Option of the driver popup in the pointer speed sheet: the value of a trigger sets the scale. Also the summary of the pointer speed row when a trigger drives it. */
+"ui.profiles.pointerSpeed.driverTrigger" = "ทริกเกอร์";
+/* Option of the driver popup in the pointer speed sheet: how far a stick is pushed from the center sets the scale. Also the summary of the pointer speed row when a stick drives it. */
+"ui.profiles.pointerSpeed.driverStickDepth" = "ระยะเอียงของสติ๊ก";
+/* Label of the popup in the pointer speed sheet that picks the left or the right trigger or stick as the driver. */
+"ui.profiles.pointerSpeed.side" = "ด้าน";
+/* Option of the side popup in the pointer speed sheet: the left trigger or stick. */
+"ui.profiles.pointerSpeed.sideLeft" = "ซ้าย";
+/* Option of the side popup in the pointer speed sheet: the right trigger or stick. */
+"ui.profiles.pointerSpeed.sideRight" = "ขวา";
+/* Label of the field in the pointer speed sheet that sets the pointer scale while the driver is at rest. The scale multiplies the pointer movement. */
+"ui.profiles.pointerSpeed.minScale" = "สเกลที่ 0";
+/* Label of the field in the pointer speed sheet that sets the pointer scale while the trigger is fully pulled or the stick is at its rim. The scale multiplies the pointer movement. */
+"ui.profiles.pointerSpeed.maxScale" = "สเกลที่ 1";
+/* Line in the pointer speed sheet that shows the scale the pointer has now. %@ is the scale, a number. */
+"ui.profiles.pointerSpeed.live" = "สเกลปัจจุบัน: %@";
 /* Label of the stepper that sets the number of columns of a touch grid in the capture assignment sheet. %d is the number of columns. */
 "ui.capture.touchColumns" = "คอลัมน์กริด: %d";
 /* Label of the stepper that sets the number of rows of a touch grid in the capture assignment sheet. %d is the number of rows. */
@@ -702,6 +844,10 @@
 "term.keyboardPointer" = "แป้นพิมพ์และตัวชี้";
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "การช่วยการเข้าถึง";
+/* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
+"platform.macos.term.postEventAccess" = "สิทธิ์เข้าถึง Post Event";
+/* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
+"platform.macos.term.automationAccess" = "สิทธิ์เข้าถึงระบบอัตโนมัติ";
 /* Button of the combination sheets that adds the chosen entry to the combination. */
 "action.add" = "เพิ่ม";
 /* Button of the input test window that sends the chosen player indicator or lightbar color to the controller. */
@@ -745,7 +891,7 @@
 /* Message about a request to the system extension manager that failed. %1$@ is the error domain, %2$d is the error code and %3$@ is the description from the system. Keep code= as written. */
 "cli.transportExtension.group.failed" = "คำขอส่วนขยายระบบล้มเหลว: %1$@ code=%2$d %3$@";
 /* Message when the system extension manager replaces an installed driver extension. %1$@ is the extension bundle identifier, %2$@ is the installed version and %3$@ is the version that replaces it. Keep the v before the numbers. */
-"cli.transportExtension.group.replacing" = "กำลังแทนที่ %1$@ v%2$@ ด้วย v%3$@";
+"cli.transportExtension.group.replacing" = "กำลังแทนที่ %1$@ v%2$@ ด้วย v%3$@…";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller, which OJD reads by the layout its HID report descriptor declares. Keep HID as written. */
 "term.protocolFamily.hidDescriptor" = "HID ทั่วไป";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller whose input report layout comes from its controller record, the file OJD keeps for each controller model. Keep HID as written. */
@@ -756,6 +902,8 @@
 "term.protocolFamily.nintendoSwitch2" = "Nintendo Switch 2";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a wired Switch controller that sends input reports and takes no commands. Keep Nintendo Switch as written. */
 "term.protocolFamily.nintendoSwitchInputOnly" = "Nintendo Switch (เฉพาะอินพุต)";
+/* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the Wii Remote protocol, used by the Wii Remote and the Wii U Pro Controller over Bluetooth. Nintendo Wii Remote is a brand and product name: keep it as written. */
+"term.protocolFamily.nintendoWii" = "Nintendo Wii Remote";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controller of the PlayStation 5, which Sony names DualSense. Sony DualSense is a brand and product name: keep it as written. */
 "term.protocolFamily.sonyDualSense" = "Sony DualSense";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controller of the PlayStation 4, which Sony names DualShock 4. Sony DualShock 4 is a brand and product name: keep it as written. */
@@ -801,7 +949,7 @@
 /* Label in the controller summary of the developer tools. The value is a list of the pressed buttons. */
 "ui.developer.buttons" = "ปุ่ม";
 /* Status next to the Start Capture button while the packet capture runs. */
-"ui.developer.capturing" = "กำลังจับ";
+"ui.developer.capturing" = "กำลังจับ…";
 /* Label of the connection kind in the controller summary of the developer tools, for example USB or Bluetooth. */
 "ui.developer.connection" = "การเชื่อมต่อ";
 /* Label of the controller name in the controller summary of the developer tools. */
@@ -869,7 +1017,7 @@
 /* Label of the USB vendor and product ID in the controller summary of the developer tools. */
 "ui.developer.usbID" = "USB ID";
 /* Message in the packet list of the developer tools while a capture waits for packets. */
-"ui.developer.waitingForPackets" = "กำลังรอแพ็กเก็ต USB กดปุ่มบนคอนโทรลเลอร์";
+"ui.developer.waitingForPackets" = "กำลังรอแพ็กเก็ต USB… กดปุ่มบนคอนโทรลเลอร์";
 /* Heading of the soak test section in the developer tools. A soak test measures the service over a long time. */
 "ui.developer.soakTest" = "การทดสอบความทนทาน";
 /* Description of the soak test section in the developer tools. The test samples memory, file descriptors and CPU of the service. */
@@ -970,6 +1118,8 @@
 "ui.inputTest.playerIndicator" = "ไฟแสดงผู้เล่น";
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "กดอยู่";
+/* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
+"ui.inputTest.receiving" = "กำลังรอให้ตัวควบคุมเคลื่อนไหว…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "ปล่อยแล้ว";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */
@@ -1061,7 +1211,7 @@
 /* Detail line of the problem banner when the driver extension waits for approval. System Settings is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. */
 "platform.macos.ui.setup.approvalDetail" = "อนุญาตไดรเวอร์ในการตั้งค่าระบบเพื่อใช้คอนโทรลเลอร์ USB ของ Microsoft ที่รองรับ";
 /* Detail line in the Driver section of the settings window while the app checks the driver extension for Xbox USB controllers. */
-"ui.setup.checkingDetail" = "กำลังตรวจสอบไดรเวอร์ Xbox USB ที่ติดตั้งอยู่";
+"ui.setup.checkingDetail" = "กำลังตรวจสอบไดรเวอร์ Xbox USB ที่ติดตั้งอยู่…";
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "ไดรเวอร์ Xbox USB";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
@@ -1078,6 +1228,28 @@
 "ui.setup.uninstallDetail" = "คอนโทรลเลอร์ Xbox USB จะหยุดทำงานจนกว่าจะติดตั้งไดรเวอร์อีกครั้ง";
 /* Button of the problem banner that repairs the driver extension for Xbox USB controllers. */
 "ui.setup.repairDriver" = "ซ่อมแซมไดรเวอร์ Xbox USB";
+/* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
+"platform.macos.cli.controller.show.labelServedBy" = "ไดรเวอร์เนทีฟ";
+/* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
+"platform.macos.cli.controller.show.servedByMacOS" = "macOS เป็นผู้ให้บริการ เรียกใช้ `ojd controller claim %@` เพื่อเปิดใช้งานส่วนขยายและรับช่วงตัวควบคุม";
+/* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
+"platform.macos.ui.controllers.servedByMacOS" = "ให้บริการโดย macOS";
+/* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
+"platform.macos.ui.controllers.servedByMacOSDetail" = "ไดรเวอร์ของ Apple ถือครองตัวควบคุมนี้อยู่ รับช่วงเพื่อเปิดใช้งานส่วนขยายของ OpenJoystickDriver";
+/* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
+"ui.controllers.claim" = "รับช่วง";
+/* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.runningDetail" = "กำลังติดตั้งไดรเวอร์ Xbox USB…";
+/* Disabled button of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.repairRunning" = "กำลังซ่อมแซม…";
+/* Detail line of the problem banner when the state of the driver extension for Xbox USB controllers cannot be read. The banner has no button then. */
+"ui.setup.unavailableDetail" = "อ่านสถานะของไดรเวอร์ Xbox USB ไม่ได้ จึงส่งคำขอไม่ได้";
+/* Detail line of the problem banner when the request for the driver extension failed. %1$@ is the error domain, %2$lld is the error code and %3$@ is the error text. */
+"ui.setup.failedDetail" = "คำขอไดรเวอร์ Xbox USB ล้มเหลว: %3$@ (%1$@ รหัส %2$lld)";
+/* Detail line of the problem banner when the request for the driver extension was cancelled. The Try Again button follows. */
+"ui.setup.cancelledDetail" = "คำขอไดรเวอร์ Xbox USB ถูกยกเลิก ลองอีกครั้งเพื่อติดตั้งไดรเวอร์";
+/* Detail line of the problem banner when the system did not answer the request for the driver extension in time. The Try Again button follows. */
+"ui.setup.timedOutDetail" = "ระบบไม่ตอบคำขอไดรเวอร์ Xbox USB ทันเวลา ลองอีกครั้ง";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver ไม่สามารถเชื่อมต่อกับบริการของตนได้";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
@@ -1221,6 +1393,12 @@
 /* Name of the click of the right trackpad of a controller. */
 "ui.mapping.rightPadClick" = "การกดแพดขวา";
 
+/* Name of the touch sensor on the grip on the back of a controller on the left side. */
+"ui.mapping.leftGripTouch" = "สัมผัสกริปซ้าย";
+
+/* Name of the touch sensor on the grip on the back of a controller on the right side. */
+"ui.mapping.rightGripTouch" = "สัมผัสกริปขวา";
+
 /* Title of the sheet that tunes the motion sensor of a controller in a profile. */
 "ui.profiles.motion.title" = "การปรับแต่งการเคลื่อนไหว";
 /* Label of the popup in the motion sheet that picks the coordinate space of the motion. */
@@ -1255,7 +1433,7 @@
 /* Hint under the motion calibration controls of the input test window: keep the controller still on a surface while the gyro bias, the small constant rotation the sensor reports at rest, is collected. */
 "ui.motion.calibration.instructions" = "วางคอนโทรลเลอร์ให้นิ่งขณะรวบรวมค่าเบี่ยงเบนของไจโร";
 /* Status line in the motion calibration controls while the service collects gyro bias samples. Bias is the constant rotation offset of the gyro sensor at rest. */
-"ui.motion.calibration.collecting" = "กำลังรวบรวมค่าเบี่ยงเบน";
+"ui.motion.calibration.collecting" = "กำลังรวบรวมค่าเบี่ยงเบน…";
 /* Status line in the motion calibration controls when the user paused collecting gyro bias samples by hand. */
 "ui.motion.calibration.paused" = "หยุดการรวบรวมด้วยตนเองชั่วคราว";
 /* Line in the motion calibration controls that shows the gyro bias found so far, in degrees per second. %1$.3f, %2$.3f and %3$.3f are the X, Y and Z components. Keep the axis letters and the unit. */
@@ -1272,7 +1450,7 @@
 /* Guidance in the motion calibration controls when the controller has no usable motion data: turn on a profile for this controller and check that motion data is available. */
 "ui.motion.calibration.motionUnavailable" = "เปิดใช้งานโปรไฟล์การแมปใหม่สำหรับคอนโทรลเลอร์นี้ และตรวจสอบว่าการเคลื่อนไหวพร้อมใช้งาน";
 /* Status line in the motion calibration controls while the service has no motion samples yet; Refresh checks again. */
-"ui.motion.calibration.waiting" = "กำลังรอตัวอย่างการเคลื่อนไหว ดึงข้อมูลใหม่เพื่อตรวจสอบอีกครั้ง";
+"ui.motion.calibration.waiting" = "กำลังรอตัวอย่างการเคลื่อนไหว… ดึงข้อมูลใหม่เพื่อตรวจสอบอีกครั้ง";
 /* Note in the motion calibration controls: collecting gyro bias keeps running in the service after the window closes, and the Pause button stops it. */
 "ui.motion.calibration.continues" = "การรวบรวมจะดำเนินต่อไปเมื่อปิดหน้าต่างนี้ ใช้หยุดชั่วคราวเพื่อหยุด";
 
@@ -1523,6 +1701,22 @@
 "ui.profiles.physical.startPosition" = "จุดเริ่มแรงต้าน";
 /* Label of the slider in the output destination editor that sets how strong the resistance of the adaptive trigger is. */
 "ui.profiles.physical.strength" = "ความแรงของแรงต้าน";
+/* Label of the text field in the output destination editor for the phrase that a Speak destination says. */
+"ui.profiles.speak.text" = "ข้อความ";
+/* Label of the text field in the output destination editor for the identifier of the voice that a Speak destination uses. */
+"ui.profiles.speak.voice" = "ตัวระบุเสียง";
+/* Placeholder of the voice field in the output destination editor when a Speak destination uses the system voice. */
+"ui.profiles.speak.voicePlaceholder" = "เสียงของระบบ";
+/* Phrase that a new Speak destination says until the user changes it. */
+"ui.profiles.speak.defaultText" = "สวัสดี";
+/* Label of the text field in the output destination editor for the bundle identifier of the application that an Open application destination opens. */
+"ui.profiles.system.application" = "ตัวระบุแอป";
+/* Label of the text field in the output destination editor for the address that an Open URL destination opens. */
+"ui.profiles.system.url" = "URL";
+/* Label of the text field in the output destination editor for the name of the Shortcut that a Run Shortcut destination runs. */
+"ui.profiles.system.shortcut" = "ชื่อคำสั่งลัด";
+/* Name that a new Run Shortcut destination holds until the user changes it. */
+"ui.profiles.system.defaultShortcut" = "คำสั่งลัด";
 
 /* Menu item in the profile editor that removes all inputs of the profile. Keep the three dots. */
 "ui.profiles.clearInputs" = "ล้างอินพุตทั้งหมด…";
@@ -1544,6 +1738,10 @@
 "ui.profiles.emptyActivationMessage" = "โปรไฟล์นี้ระงับอินพุตของคอนโทรลเลอร์ทั้งหมด";
 /* Title of the alert shown before the app activates a profile that sends no input. */
 "ui.profiles.emptyActivationTitle" = "เปิดใช้งานโปรไฟล์ที่ไม่มีอินพุตของคอนโทรลเลอร์หรือไม่";
+/* Title of the alert shown before the app activates a profile that launches actions or needs a permission that is missing. */
+"ui.profiles.activationTitle" = "เปิดใช้งานโปรไฟล์นี้หรือไม่";
+/* Part of the message of the profile activation alert. %@ is the list of actions that open applications or URLs, run shortcuts or type text, one per line. */
+"ui.profiles.activationActions" = "โปรไฟล์นี้เริ่มการทำงานต่อไปนี้:\n%@";
 /* Warning in the profile editor when the profile sends no input. */
 "ui.profiles.emptyInputWarning" = "โปรไฟล์นี้ระงับอินพุตของคอนโทรลเลอร์ทั้งหมด";
 /* Menu item in the profile editor that sets the inputs of the profile to the default. */
@@ -1564,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "จะสร้างข้อมูลสำรองก่อนเอาข้อมูลที่เสียหายออก";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "ไม่สามารถอ่านโปรไฟล์ที่บันทึกไว้นี้ได้ ลบโปรไฟล์นี้เพื่อใช้โปรไฟล์ที่ถูกต้องต่อไป";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "%@ ถูกบันทึกโดยเวอร์ชันก่อนหน้าและใช้งานไม่ได้ ย้ายข้อมูลเพื่อใช้อีกครั้ง หรือลบทิ้ง";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "ไม่สามารถอ่านรายการโปรไฟล์ที่ใช้งานอยู่ได้ รีเซ็ตเพื่อดำเนินการต่อ โปรไฟล์ของคุณยังคงอยู่";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -1644,7 +1844,7 @@
 /* Examples block at the end of the help of 'ojd binding set'. The command lines, option names and sources stay as written; translate only the lines that start with #. */
 "cli.binding.set.examples" = "ตัวอย่าง:\n  # กด Space ค้างไว้ขณะที่กดปุ่มทิศใต้ค้างไว้\n  ojd binding set Racing button:south key:space\n  # สลับ J ทุกครั้งที่กด\n  ojd binding set Racing button:west key:key-j --behavior toggle\n  # กด J ซ้ำ 10 ครั้งต่อวินาทีขณะกดค้างไว้\n  ojd binding set Racing button:west key:key-j --turbo-rate 10 --turbo-duty 0.5";
 /* Examples block at the end of the help of 'ojd record install'. The command lines and file names stay as written; translate only the lines that start with #. */
-"cli.record.install.examples" = "ตัวอย่าง:\n  # ติดตั้งไฟล์เรคคอร์ด\n  ojd record install 045E-028E.json\n  # อ่านเรคคอร์ดจาก stdin\n  ojd record install - < 045E-028E.json";
+"cli.record.install.examples" = "ตัวอย่าง:\n  # ติดตั้งไฟล์เรคคอร์ด\n  ojd record install 045e-028e.plist\n  # อ่านเรคคอร์ดจาก stdin\n  ojd record install - < 045e-028e.plist";
 /* Examples block at the end of the help of 'ojd access grant'. The command lines and option names stay as written; translate only the lines that start with #. */
 "cli.access.grant.examples" = "ตัวอย่าง:\n  # อนุญาตให้โปรแกรมใช้บริการ\n  ojd access grant /Applications/Example.app\n  # สร้างโทเค็นสำหรับหน้าเว็บที่ให้บริการจากต้นทางเดียว\n  ojd access grant --token overlay --origin http://127.0.0.1:8080";
 /* One-line summary of 'ojd service' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
@@ -1829,6 +2029,16 @@
 "cli.access.web.portRange" = "--port ต้องอยู่ระหว่าง 1024 ถึง 65535";
 /* One-line summary of 'ojd diagnose' in the command list and at the top of its help. */
 "cli.diagnose.group.abstract" = "เรียกใช้การตรวจสอบทุกรายการและรายงานสิ่งที่ผิดปกติ";
+/* Detail of the input mapping check of 'ojd diagnose' when no connected controller has a rejected database line. SDL_GameControllerDB is a project name and stays as written. */
+"cli.diagnose.group.inputMappingApplied" = "ไม่มีบรรทัด SDL_GameControllerDB ที่ถูกปฏิเสธ";
+/* Detail of the input mapping check of 'ojd diagnose' for one controller whose database line was rejected. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller name, %2$@ is the reason in English and %3$@ is the error code, which stays as written. */
+"cli.diagnose.group.inputMappingRejected" = "บรรทัด SDL_GameControllerDB ของ %1$@ ถูกปฏิเสธ: %2$@ (%3$@)";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no 057E:2009 controller is connected. 057E:2009 stays as written. */
+"cli.diagnose.group.switchSerialNone" = "ไม่มีคอนโทรลเลอร์ 057E:2009 เชื่อมต่ออยู่";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no connected 057E:2009 controller reports the serial 000000000001. 057E:2009 and the serial stay as written. */
+"cli.diagnose.group.switchSerialOther" = "ไม่มีคอนโทรลเลอร์ 057E:2009 ที่รายงานหมายเลขซีเรียล 000000000001";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' for one controller. Nintendo Switch Pro Controller is a product name and stays as written. %1$@ is the controller name, %2$@ is the VID:PID and %3$@ is the serial number, both of which stay as written. */
+"cli.diagnose.group.switchSerialPlaceholder" = "%1$@ รายงาน %2$@ พร้อมหมายเลขซีเรียล %3$@ ซึ่งเป็นตัวตนและหมายเลขซีเรียลของ Nintendo Switch Pro Controller คอนโทรลเลอร์อื่นอาจรายงานหมายเลขซีเรียลเดียวกัน OpenJoystickDriver ถือว่าเป็น Pro Controller";
 /* Help text of the --output option of 'ojd diagnose'. A support bundle is a file with the diagnostic report for a bug report. */
 "cli.diagnose.group.output" = "เขียนบันเดิลการสนับสนุนลงในไฟล์นี้ด้วย";
 /* Error of 'ojd diagnose --output' when the support bundle could not be written. %@ is the reason from the system. --output stays as written. */
@@ -2045,8 +2255,8 @@
 "cli.permission.request.unknownId" = "ไม่รู้จักสิทธิ์ “%1$@” ใช้ %2$@";
 /* One-line summary of 'ojd config' in the command list and at the top of its help. */
 "cli.config.group.abstract" = "แสดงหรือเปลี่ยนการกำหนดค่าที่ OpenJoystickDriver ใช้ และเลเยอร์ที่กำหนดแต่ละค่า";
-/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.json is a file name that stays as written. */
-"cli.config.group.discussion" = "ค่าจะซ้อนกันเป็นเลเยอร์ เรียงจากต่ำสุดก่อน: ค่าเริ่มต้นของไดรเวอร์, ระเบียนที่มากับแอป, ระเบียนของแพ็กเกจ, all.patch.json, ระเบียนของคุณ, โปรไฟล์ที่ใช้งานอยู่ คีย์การปรับแต่งแต่ละคีย์จะใช้ค่าจากเลเยอร์สูงสุดที่กำหนดคีย์นั้น";
+/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.plist is a file name that stays as written. */
+"cli.config.group.discussion" = "ค่าจะซ้อนกันเป็นเลเยอร์ เรียงจากต่ำสุดก่อน: ค่าเริ่มต้นของไดรเวอร์, ระเบียนที่มากับแอป, ระเบียนของแพ็กเกจ, all.patch.plist, ระเบียนของคุณ, โปรไฟล์ที่ใช้งานอยู่ คีย์การปรับแต่งแต่ละคีย์จะใช้ค่าจากเลเยอร์สูงสุดที่กำหนดคีย์นั้น";
 /* Help text of the --controller option of 'ojd config set' and 'ojd config unset'. VVVV:PPPP stands for the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.config.group.controller" = "เปลี่ยนเฉพาะรุ่นคอนโทรลเลอร์นี้ในรูปแบบ VVVV:PPPP แทนคอนโทรลเลอร์ทุกตัว";
 /* Error of 'ojd config set' and 'ojd config unset' when a record cannot take the change. %1$@ is the tuning key and %2$@ is the description of the problem. */
@@ -2065,20 +2275,20 @@
 "cli.config.show.controller" = "แสดงการปรับแต่งที่มีผลของคอนโทรลเลอร์หนึ่งตัวในรูปแบบ VVVV:PPPP แทนค่าเริ่มต้นส่วนกลาง";
 /* Warning printed by 'ojd config show' when a part of the defaults file is invalid. %1$@ is the file path and %2$@ is the description of the problem. */
 "cli.config.show.defaultsIgnored" = "ละเว้น %1$@ แล้ว: %2$@";
-/* Long description in the help of 'ojd config show'. --controller and all.patch.json stay as written. */
-"cli.config.show.discussion" = "หากไม่ระบุ --controller จะพิมพ์คีย์การปรับแต่งทั้งหมดพร้อมค่าจาก all.patch.json และกลุ่มที่ระเบียนอ่านคีย์เหล่านั้น หากระบุ จะพิมพ์ระเบียนของคอนโทรลเลอร์หลังซ้อนระเบียนที่มากับแอป ระเบียนของแพ็กเกจ all.patch.json และระเบียนของคุณเป็นเลเยอร์แล้ว คีย์ที่ไม่มีเลเยอร์ใดกำหนดจะแสดงเป็น “ค่าเริ่มต้นของไดรเวอร์”";
+/* Long description in the help of 'ojd config show'. --controller and all.patch.plist stay as written. */
+"cli.config.show.discussion" = "หากไม่ระบุ --controller จะพิมพ์คีย์การปรับแต่งทั้งหมดพร้อมค่าจาก all.patch.plist และกลุ่มที่ระเบียนอ่านคีย์เหล่านั้น หากระบุ จะพิมพ์ระเบียนของคอนโทรลเลอร์หลังซ้อนระเบียนที่มากับแอป ระเบียนของแพ็กเกจ all.patch.plist และระเบียนของคุณเป็นเลเยอร์แล้ว คีย์ที่ไม่มีเลเยอร์ใดกำหนดจะแสดงเป็น “ค่าเริ่มต้นของไดรเวอร์”";
 /* Indented line below a tuning key of 'ojd config show' that lists the controller families whose records read the key. %@ is the comma-separated list of family names. */
 "cli.config.show.readBy" = "อ่านโดย: %@";
-/* Warning of 'ojd config show' about a key in all.patch.json that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
-"cli.config.show.unread" = "all.patch.json ตั้งค่า %1$@ แต่ไม่มีคอนโทรลเลอร์ที่เชื่อมต่ออยู่อ่านคีย์นี้ กลุ่มที่อ่านคีย์นี้: %2$@";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoController" = "ไม่มีคอนโทรลเลอร์เชื่อมต่ออยู่ จึงข้ามการตรวจสอบคีย์ใน all.patch.json ที่ไม่มีคอนโทรลเลอร์ใดอ่าน";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoService" = "บริการไม่ได้ทำงานอยู่ จึงข้ามการตรวจสอบคีย์ใน all.patch.json ที่ไม่มีคอนโทรลเลอร์ที่เชื่อมต่ออยู่ตัวใดอ่าน";
+/* Warning of 'ojd config show' about a key in all.patch.plist that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
+"cli.config.show.unread" = "all.patch.plist ตั้งค่า %1$@ แต่ไม่มีคอนโทรลเลอร์ที่เชื่อมต่ออยู่อ่านคีย์นี้ กลุ่มที่อ่านคีย์นี้: %2$@";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoController" = "ไม่มีคอนโทรลเลอร์เชื่อมต่ออยู่ จึงข้ามการตรวจสอบคีย์ใน all.patch.plist ที่ไม่มีคอนโทรลเลอร์ใดอ่าน";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoService" = "บริการไม่ได้ทำงานอยู่ จึงข้ามการตรวจสอบคีย์ใน all.patch.plist ที่ไม่มีคอนโทรลเลอร์ที่เชื่อมต่ออยู่ตัวใดอ่าน";
 /* One-line summary of 'ojd config set' in the command list and at the top of its help. */
 "cli.config.set.abstract" = "ตั้งค่าการปรับแต่งในระเบียนคอนโทรลเลอร์ของคุณ";
-/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.json and stickDeadzone stay as written. */
-"cli.config.set.discussion" = "เขียน KEY ลงในระเบียนของคุณสำหรับคอนโทรลเลอร์ที่ระบุด้วย --controller หรือลงใน all.patch.json สำหรับคอนโทรลเลอร์ทุกตัว กฎของระเบียนมีผล: stickDeadzone ต้องมากกว่า 0 และน้อยกว่า 1 ค่าที่กฎปฏิเสธจะไม่เปลี่ยนอะไร บริการที่ทำงานอยู่จะใช้การเปลี่ยนแปลงนี้";
+/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.plist and stickDeadzone stay as written. */
+"cli.config.set.discussion" = "เขียน KEY ลงในระเบียนของคุณสำหรับคอนโทรลเลอร์ที่ระบุด้วย --controller หรือลงใน all.patch.plist สำหรับคอนโทรลเลอร์ทุกตัว กฎของระเบียนมีผล: stickDeadzone ต้องมากกว่า 0 และน้อยกว่า 1 ค่าที่กฎปฏิเสธจะไม่เปลี่ยนอะไร บริการที่ทำงานอยู่จะใช้การเปลี่ยนแปลงนี้";
 /* Message printed by 'ojd config set' after it wrote a value. %1$@ is the tuning key, which stays as written, %2$@ is the value and %3$@ is the path of the record file. */
 "cli.config.set.success" = "ตั้งค่า %1$@ เป็น %2$@ ใน %3$@ แล้ว บริการที่ทำงานอยู่จะใช้ตอนนี้";
 /* Help text of the VALUE argument of 'ojd config set'. */
@@ -2182,7 +2392,7 @@
 /* Message printed by 'ojd controller capture' when the capture ends without a packet. */
 "cli.controller.capture.noPackets" = "ไม่ได้รับแพ็กเก็ต";
 /* First line of 'ojd controller capture'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
-"cli.controller.capture.started" = "กำลังจับแพ็กเก็ตจาก %1$@ (%2$@) กดปุ่มบนคอนโทรลเลอร์";
+"cli.controller.capture.started" = "กำลังจับแพ็กเก็ตจาก %1$@ (%2$@)… กดปุ่มบนคอนโทรลเลอร์";
 /* Warning printed by 'ojd controller capture' before the packets. Packets can hold data of the user's controller. */
 "cli.controller.capture.warning" = "เนื้อหาแพ็กเก็ตแตกต่างกันไปตามคอนโทรลเลอร์ ตรวจสอบก่อนแชร์";
 /* One-line summary of 'ojd controller disconnect' in the command list and at the top of its help. */
@@ -2211,6 +2421,8 @@
 "cli.controller.group.featurePlayer" = "ไฟแสดงผู้เล่น";
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureRumble" = "มอเตอร์แรงสั่น";
+/* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
+"cli.controller.group.featureSpeaker" = "ลำโพง";
 /* One-line summary of 'ojd controller light' in the command list and at the top of its help. */
 "cli.controller.light.abstract" = "ตั้งค่าสีหรือความสว่างของไฟคอนโทรลเลอร์";
 /* Help text of the --brightness option of 'ojd controller light'. LED means light-emitting diode. */
@@ -2241,12 +2453,12 @@
 "cli.controller.group.outputUnsupported" = "%1$@ ไม่มี %2$@ เรียกใช้ “ojd controller show %3$@” เพื่อดูสิ่งที่รองรับ";
 /* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To serve a model means to read its input and publish it as a virtual gamepad. */
 "cli.controller.claim.abstract" = "ให้ OpenJoystickDriver ดูแลรุ่นคอนโทรลเลอร์";
-/* Long description in the help of 'ojd controller claim'. server, ojd, VVVV-PPPP.json and the record terms stay as written. */
-"platform.macos.cli.controller.claim.discussion" = "ตั้งค่า server เป็น ojd ในเรคคอร์ดของคุณสำหรับรุ่นนั้น คือ VVVV-PPPP.json ในไดเรกทอรีเรคคอร์ดของคุณ และคงฟิลด์อื่นของเรคคอร์ดไว้ มีผลกับคอนโทรลเลอร์ทุกตัวของรุ่น บริการที่กำลังทำงานจะนำไปใช้โดยไม่ต้องเสียบใหม่ ต้องใช้บริการเพื่อค้นหาคอนโทรลเลอร์ --dry-run ไม่เขียนอะไร จบด้วยรหัส 1 และ E2023 สำหรับคอนโทรลเลอร์ที่ใช้ USB แบบดิบ ซึ่ง OpenJoystickDriver ดูแลเสมอ หรือที่ macOS ไม่ดูแลแบบเนทีฟ";
+/* Long description in the help of 'ojd controller claim'. server, ojd, vvvv-pppp.plist and the record terms stay as written. */
+"platform.macos.cli.controller.claim.discussion" = "ตั้งค่า server เป็น ojd ในเรคคอร์ดของคุณสำหรับรุ่นนั้น คือ vvvv-pppp.plist ในไดเรกทอรีเรคคอร์ดของคุณ และคงฟิลด์อื่นของเรคคอร์ดไว้ มีผลกับคอนโทรลเลอร์ทุกตัวของรุ่น บริการที่กำลังทำงานจะนำไปใช้โดยไม่ต้องเสียบใหม่ ต้องใช้บริการเพื่อค้นหาคอนโทรลเลอร์ --dry-run ไม่เขียนอะไร จบด้วยรหัส 1 และ E2023 สำหรับคอนโทรลเลอร์ที่ใช้ USB แบบดิบ ซึ่ง OpenJoystickDriver ดูแลเสมอ หรือที่ macOS ไม่ดูแลแบบเนทีฟ";
 /* One-line summary of 'ojd controller release' in the command list and at the top of its help. */
 "platform.macos.cli.controller.release.abstract" = "คืนรุ่นคอนโทรลเลอร์ให้ macOS";
-/* Long description in the help of 'ojd controller release'. server, system and VVVV-PPPP.json stay as written. */
-"platform.macos.cli.controller.release.discussion" = "ตั้งค่า server เป็น system ในเรคคอร์ดของคุณสำหรับรุ่นนั้น คือ VVVV-PPPP.json ในไดเรกทอรีเรคคอร์ดของคุณ และคงฟิลด์อื่นของเรคคอร์ดไว้ มีผลกับคอนโทรลเลอร์ทุกตัวของรุ่น บริการที่กำลังทำงานจะนำไปใช้โดยไม่ต้องเสียบใหม่ ต้องใช้บริการเพื่อค้นหาคอนโทรลเลอร์ --dry-run ไม่เขียนอะไร จบด้วยรหัส 1 และ E2023 สำหรับคอนโทรลเลอร์ที่ใช้ USB แบบดิบ ซึ่ง OpenJoystickDriver ดูแลเสมอ หรือที่ macOS ไม่ดูแลแบบเนทีฟ";
+/* Long description in the help of 'ojd controller release'. server, system and vvvv-pppp.plist stay as written. */
+"platform.macos.cli.controller.release.discussion" = "ตั้งค่า server เป็น system ในเรคคอร์ดของคุณสำหรับรุ่นนั้น คือ vvvv-pppp.plist ในไดเรกทอรีเรคคอร์ดของคุณ และคงฟิลด์อื่นของเรคคอร์ดไว้ มีผลกับคอนโทรลเลอร์ทุกตัวของรุ่น บริการที่กำลังทำงานจะนำไปใช้โดยไม่ต้องเสียบใหม่ ต้องใช้บริการเพื่อค้นหาคอนโทรลเลอร์ --dry-run ไม่เขียนอะไร จบด้วยรหัส 1 และ E2023 สำหรับคอนโทรลเลอร์ที่ใช้ USB แบบดิบ ซึ่ง OpenJoystickDriver ดูแลเสมอ หรือที่ macOS ไม่ดูแลแบบเนทีฟ";
 /* Message printed by 'ojd controller claim' and related commands with --dry-run instead of writing the record. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. */
 "cli.controller.group.serverDryRun" = "หากดำเนินการจริง จะตั้งค่า %1$@ เป็น %2$@ ใน %3$@";
 /* Error when the record file of a controller cannot be changed. %1$@ is the path of the record file and %2$@ is the description of the problem. */
@@ -2337,6 +2549,10 @@
 "cli.controller.show.labelProtocol" = "โปรโตคอล";
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "ระเบียน";
+/* Row label in the output of 'ojd controller show' and in the controller detail. Where the HID usage map of the controller comes from follows. */
+"cli.controller.show.labelInputMapping" = "การแมปอินพุต";
+/* Row label in the output of 'ojd controller show' and in the controller detail. The controls that the SDL_GameControllerDB line names but the driver cannot map follow. */
+"cli.controller.show.labelUnmapped" = "ตัวควบคุมที่ไม่ได้แมป";
 /* Row label in the output of 'ojd controller show'. The list of rumble motors the controller has follows. */
 "cli.controller.show.labelRumble" = "แรงสั่น";
 /* Row label in the output of 'ojd controller show'. The state of the session follows, such as active or suspended. */
@@ -2361,6 +2577,38 @@
 "cli.controller.show.recordNone" = "ไม่มี (ไม่มีระเบียนที่ตรงกัน)";
 /* Value of the Record row of 'ojd controller show' when the record is the user's own file. %@ is the file name. */
 "cli.controller.show.recordUser" = "ระเบียนของคุณ, %@";
+/* Value of the Input mapping row of 'ojd controller show' and of the controller detail when a controller record sets the map. */
+"cli.controller.show.inputMappingRecord" = "ระเบียน";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line sets the map. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingSDL" = "แมปจาก SDL_GameControllerDB (ตรงกัน %1$@, GUID %2$@)";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when the standard HID usage map applies. */
+"cli.controller.show.inputMappingStandard" = "แมปการใช้งาน HID มาตรฐาน";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line matched but cannot drive the controller. SDL_GameControllerDB is a project name and stays as written. %@ is the reason. */
+"cli.controller.show.inputMappingRejected" = "แมปการใช้งาน HID มาตรฐาน (ปฏิเสธบรรทัด SDL_GameControllerDB: %@)";
+/* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingUnbound" = "ไม่ได้ใช้ เพราะไม่เป็นไปตามสัญญาของตัวบอกลักษณะ (พบบรรทัด SDL_GameControllerDB, ตรงกัน %1$@, GUID %2$@)";
+/* One-line summary of 'ojd controller speaker' in the command list and at the top of its help. */
+"cli.controller.speaker.abstract" = "เล่นเสียงบนลำโพงของคอนโทรลเลอร์";
+/* One-line summary of 'ojd controller speaker play' in the command list and at the top of its help. */
+"cli.controller.speaker.play.abstract" = "เล่นไฟล์ WAV บนลำโพงของคอนโทรลเลอร์";
+/* Help text of the FILE argument of 'ojd controller speaker play'. PCM and WAV are audio format names and stay as written. */
+"cli.controller.speaker.play.file" = "ไฟล์ PCM WAV แบบไม่บีบอัดที่จะเล่น";
+/* Help text of the --volume option of 'ojd controller speaker play'. The limits 0 and 1 are fixed. */
+"cli.controller.speaker.play.volume" = "ระดับเสียงเล่น ตั้งแต่ 0 ถึง 1";
+/* Error of 'ojd controller speaker play' when --volume is outside the allowed range. --volume stays as written. */
+"cli.controller.speaker.play.errorVolume" = "--volume ต้องการตัวเลขตั้งแต่ 0 ถึง 1";
+/* Error of 'ojd controller speaker play' when the audio file cannot be read. %1$@ is the file path and %2$@ is the reason the system gives. */
+"cli.controller.speaker.play.errorUnreadable" = "ไม่สามารถอ่าน %1$@: %2$@";
+/* Warning of 'ojd controller speaker play' when the clip is longer than the speaker plays and is cut. %@ is the longest clip length in seconds. */
+"cli.controller.speaker.play.trimmed" = "คำเตือน: เล่นเฉพาะ %@ วินาทีแรกของคลิป";
+/* Message printed after 'ojd controller speaker play' finished the clip. %1$@ is the file name and %2$@ is the controller name. */
+"cli.controller.speaker.play.played" = "เล่น %1$@ บน %2$@ แล้ว";
+/* Message printed when the playback of 'ojd controller speaker play' was cut by 'ojd controller speaker stop' or by a newer clip. %@ is the controller name. */
+"cli.controller.speaker.play.stopped" = "หยุดการเล่นบน %@ แล้ว";
+/* One-line summary of 'ojd controller speaker stop' in the command list and at the top of its help. */
+"cli.controller.speaker.stop.abstract" = "หยุดเสียงบนลำโพงของคอนโทรลเลอร์";
+/* Message printed after 'ojd controller speaker stop' stopped the speaker. %@ is the controller name. */
+"cli.controller.speaker.stop.stopped" = "หยุดลำโพงบน %@ แล้ว";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
 "cli.controller.suspend.abstract" = "หยุด OpenJoystickDriver จากการควบคุมคอนโทรลเลอร์จนกว่าคุณจะทำต่อ";
 /* Message of 'ojd controller suspend' when the controller is suspended. %@ is the controller name. */
@@ -2372,7 +2620,7 @@
 /* Help text of the --all flag of 'ojd controller watch'. */
 "cli.controller.watch.all" = "เฝ้าดูคอนโทรลเลอร์ทุกตัว และรายงานตัวที่เชื่อมต่อหรือเลิกเชื่อมต่อ";
 /* First line of 'ojd controller watch --all'. */
-"cli.controller.watch.allStarted" = "กำลังเฝ้าดูคอนโทรลเลอร์ทุกตัว กดปุ่มบนคอนโทรลเลอร์";
+"cli.controller.watch.allStarted" = "กำลังเฝ้าดูคอนโทรลเลอร์ทุกตัว… กดปุ่มบนคอนโทรลเลอร์";
 /* Line of 'ojd controller watch --all' when a controller connects. %1$@ is the controller ID, %2$@ is the controller name and %3$@ is its vendor and product ID. */
 "cli.controller.watch.connected" = "%1$@ เชื่อมต่อแล้ว: %2$@ (%3$@)";
 /* Line of 'ojd controller watch --all' when a controller disconnects. %@ is the controller ID. */
@@ -2396,17 +2644,51 @@
 /* Prompt of 'ojd controller watch --first-press'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.controller.watch.pressPrompt" = "กดตัวควบคุมบน %1$@ (%2$@)";
 /* First line of 'ojd controller watch'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
-"cli.controller.watch.started" = "กำลังเฝ้าดู %1$@ (%2$@) กดปุ่มบนคอนโทรลเลอร์";
+"cli.controller.watch.started" = "กำลังเฝ้าดู %1$@ (%2$@)… กดปุ่มบนคอนโทรลเลอร์";
 /* Message printed when the user answers no to a confirmation question. */
 "cli.shared.error.confirmDeclined" = "ไม่มีการเปลี่ยนแปลง";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "การเปลี่ยนแปลงนี้ไม่สามารถเลิกทำได้ เพิ่ม --force เพื่อยืนยันโดยไม่ต้องถาม";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "แสดงรายการ แสดง ตั้งค่า และลบแมโครของโปรไฟล์";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "“%1$@” ไม่มีแมโครชื่อ “%2$@” ไม่มีอะไรเปลี่ยนแปลง";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "ชื่อของแมโคร";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "“%@” ไม่ใช่ขั้นตอน ใช้ tap:TARGET, press:TARGET, release:TARGET, wait:MS หรือ chord:MS:TARGET+TARGET";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "แสดงรายการแมโครของโปรไฟล์";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "“%@” ไม่มีแมโคร";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "แสดงแมโครและขั้นตอนของแมโคร";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "สร้างแมโคร หรือแทนที่แมโครที่มีชื่อเดียวกัน";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "หนึ่งขั้นตอนของแมโครตามลำดับ: tap:TARGET, press:TARGET, release:TARGET, wait:MS หรือ chord:MS:TARGET+TARGET ระบุตัวเลือกซ้ำเพื่อเพิ่มขั้นตอน";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "จำนวนครั้งที่ขั้นตอนทำงาน หรือ while-held เพื่อทำซ้ำจนกว่าจะปล่อยแหล่งอินพุต";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "สิ่งที่เกิดขึ้นเมื่อกดแหล่งอินพุตขณะแมโครทำงาน: ignore หรือ restart";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "ระบุว่าการปล่อยแหล่งอินพุตจะหยุดแมโครหรือไม่";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "“%@” ไม่ใช่จำนวนหรือ while-held";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "บันทึกแมโคร “%2$@” ใน “%1$@” แล้ว";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "ลบแมโครออกจากโปรไฟล์";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "ลบแมโคร “%1$@” ออกจาก “%2$@” หรือไม่";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "ลบแมโคร “%1$@” ออกจาก “%2$@” แล้ว";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "ตรวจสอบ ติดตั้ง แสดงรายการ หรือลบแพ็กเกจม็อด";
-/* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "แพ็กเกจม็อดคือโฟลเดอร์ที่มีไฟล์ระบุรายการ mod.json และโฟลเดอร์ Controllers, Profiles และ VirtualDevices แพ็กเกจที่ติดตั้งอยู่ใน ~/Library/Application Support/OpenJoystickDriver/Packages บริการที่กำลังทำงานจะใช้การเปลี่ยนแปลงเมื่อโฟลเดอร์นั้นเปลี่ยน คำสั่งเหล่านี้ไม่ต้องใช้บริการ";
-/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.json stays as written. */
-"cli.mod.group.folder" = "โฟลเดอร์แพ็กเกจที่มี mod.json";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
+"cli.mod.group.discussion" = "แพ็กเกจม็อดคือโฟลเดอร์ที่มีไฟล์ระบุรายการ mod.plist และโฟลเดอร์ Controllers, Profiles และ VirtualDevices แพ็กเกจที่ติดตั้งอยู่ใน ~/Library/Application Support/OpenJoystickDriver/Packages บริการที่กำลังทำงานจะใช้การเปลี่ยนแปลงเมื่อโฟลเดอร์นั้นเปลี่ยน คำสั่งเหล่านี้ไม่ต้องใช้บริการ";
+/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
+"cli.mod.group.folder" = "โฟลเดอร์แพ็กเกจที่มี mod.plist";
 /* Help text of the NAME argument of 'ojd mod remove'. */
 "cli.mod.group.name" = "ชื่อแพ็กเกจ";
 /* Error of the 'ojd mod' commands when a package is refused. %1$@ is the package folder or name and %2$@ is the reason. */
@@ -2437,6 +2719,34 @@
 "cli.mod.list.discussion" = "แสดงแต่ละแพ็กเกจพร้อมเวอร์ชัน ผู้เขียน และไฟล์ แพ็กเกจที่ OJD ไม่ใช้ เช่นแพ็กเกจที่ requires ไม่รวมเวอร์ชันนี้ จะแสดงเหตุผลพร้อมรหัส E4xxx หรือ E5001";
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  ไม่ได้ใช้: %@";
+/* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
+"cli.protocol.group.abstract" = "ตรวจสอบ ติดตั้ง หรือแสดงรายการคำอธิบายโปรโตคอล";
+/* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
+"cli.protocol.group.discussion" = "คำอธิบายโปรโตคอลคือไฟล์ .plist ที่กำหนดตระกูลคอนโทรลเลอร์ซึ่ง OJD ไม่ได้มีในตัว คำอธิบายที่ติดตั้งอยู่ใน ~/Library/Application Support/OpenJoystickDriver/Protocols และแพ็กเกจม็อดก็ใส่ไว้ได้ คำสั่งเหล่านี้ไม่ต้องใช้บริการ";
+/* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
+"cli.protocol.group.file" = "ไฟล์คำอธิบายที่ตั้งชื่อตามตระกูล เช่น VendorAcmePad.plist";
+/* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
+"cli.protocol.validate.abstract" = "ตรวจสอบไฟล์คำอธิบายโปรโตคอลโดยไม่ติดตั้ง";
+/* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
+"cli.protocol.validate.discussion" = "ตรวจว่าไฟล์เป็นคำอธิบายที่ถูกต้อง ชื่อตระกูลเป็น UpperCamelCase และตรงกับชื่อไฟล์ ไม่ใช่ตระกูลในตัว และกำหนดชื่อที่แสดงกับเลย์เอาต์อินพุต จะจบด้วยรหัส 1 พร้อมรหัส E5xxx เมื่อไฟล์ถูกปฏิเสธ";
+/* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
+"cli.protocol.validate.valid" = "%1$@ เป็นคำอธิบายที่ถูกต้องของตระกูล %2$@ (%3$@) ติดตั้งด้วย 'ojd protocol install'";
+/* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
+"cli.protocol.install.abstract" = "ตรวจสอบคำอธิบายโปรโตคอลและติดตั้งสำหรับผู้ใช้ของคุณ";
+/* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
+"cli.protocol.install.discussion" = "คัดลอกไฟล์ไปที่ Protocols/FAMILY.plist คำอธิบายของตระกูลเดียวกันที่ติดตั้งอยู่จะถูกแทนที่ --dry-run ตรวจไฟล์และไม่เขียนอะไร";
+/* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
+"cli.protocol.install.success" = "ติดตั้ง %@ แล้ว";
+/* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
+"cli.protocol.list.abstract" = "แสดงรายการตระกูลโปรโตคอลในตัวและที่มีเอกสาร พร้อมแหล่งที่มาของแต่ละตระกูล";
+/* Long description in the help of 'ojd protocol list'. */
+"cli.protocol.list.discussion" = "แสดงแต่ละตระกูลพร้อมชื่อที่แสดงและแหล่งที่มา: ในตัว โฟลเดอร์ Protocols ของคุณ หรือแพ็กเกจม็อด คำอธิบายที่ถูกปฏิเสธจะไม่แสดง";
+/* Source shown by 'ojd protocol list' for a family that OJD builds in. */
+"cli.protocol.list.builtIn" = "ในตัว";
+/* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
+"cli.protocol.list.user" = "โฟลเดอร์ Protocols ของคุณ";
+/* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
+"cli.protocol.list.package" = "แพ็กเกจ %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
 "cli.mod.remove.abstract" = "ลบแพ็กเกจม็อดที่ติดตั้งหนึ่งรายการ";
 /* Long description in the help of 'ojd mod remove'. Packages/NAME, --force, --dry-run and E4006 stay as written. */
@@ -2488,7 +2798,7 @@
 /* Help text of the profile argument of 'ojd virtual feed'. */
 "cli.virtual.feed.profile" = "โปรไฟล์เกมแพดเสมือนที่จะเผยแพร่";
 /* First line of 'ojd virtual feed'. %@ is the profile name. Control-C is the key combination that stops a program in a terminal. */
-"cli.virtual.feed.started" = "กำลังเผยแพร่เกมแพดเสมือน %@ เขียนเฟรมลงในอินพุตมาตรฐาน ปิดอินพุตหรือกด Control-C เพื่อหยุด";
+"cli.virtual.feed.started" = "กำลังเผยแพร่เกมแพดเสมือน %@… เขียนเฟรมลงในอินพุตมาตรฐาน ปิดอินพุตหรือกด Control-C เพื่อหยุด";
 /* One-line summary of 'ojd virtual launch' in the command list and at the top of its help. SDL is a game controller library and stays as written. */
 "cli.virtual.launch.abstract" = "เรียกใช้โปรแกรมพร้อมการแมป SDL ของเกมแพดเสมือนที่เชื่อมต่ออยู่";
 /* Help text of the program argument of 'ojd virtual launch'. PATH is the environment variable, .app is the app bundle extension, and -- stays as written. */
@@ -2547,8 +2857,8 @@
 "cli.virtual.show.unavailable" = "ไม่มีเกมแพดเสมือนที่เหมาะสม";
 /* Detail of the records check of 'ojd diagnose'. %lld is the number of the user's controller records that the driver applies. */
 "cli.diagnose.group.recordsApplied" = "ใช้ระเบียนของผู้ใช้แล้ว: %lld";
-/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.json is a file name that stays as written. */
-"cli.diagnose.group.recordsConfigOk" = "all.patch.json และไฟล์เพอร์โซนาถูกต้อง";
+/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.plist is a file name that stays as written. */
+"cli.diagnose.group.recordsConfigOk" = "all.patch.plist และไฟล์เพอร์โซนาถูกต้อง";
 /* Detail of the records check of 'ojd diagnose' when parts of the configuration are ignored or skipped. %@ is the list of those parts. The command in quotes stays as written. */
 "cli.diagnose.group.recordsConfigProblems" = "ละเว้นหรือข้าม: %@; แก้ไขแล้วตรวจสอบด้วย “ojd status”";
 /* Detail of the records check of 'ojd diagnose' when records are skipped. %@ is the list of skipped records. The command in quotes stays as written. */
@@ -2581,10 +2891,22 @@
 "cli.record.draft.discussion" = "อ่านตัวอธิบายรายงาน HID ของคอนโทรลเลอร์ และจับรายงานอินพุตขณะที่คุณกดตัวควบคุมแต่ละตัว แล้วพิมพ์ระเบียนเพื่อใช้เป็นจุดเริ่มต้น ระเบียนจะจับคู่ปุ่ม สติ๊ก ทริกเกอร์ และฮัตที่ตัวอธิบายระบุไว้ชัดเจน ไบต์ที่เปลี่ยนแปลงระหว่างการจับแสดงตำแหน่งของตัวควบคุมอื่น ต้องใช้บริการ";
 /* Help text of the duration option of 'ojd record draft'. */
 "cli.record.draft.duration" = "จับรายงานอินพุตตามจำนวนวินาทีนี้";
+/* Help text of the --from-sdl flag of 'ojd record draft'. SDL_GameControllerDB is a project name and stays as written. */
+"cli.record.draft.fromSDL" = "สร้างฉบับร่างจากบรรทัด SDL_GameControllerDB ของคอนโทรลเลอร์ แทนการจับรายงานอินพุต";
 /* Hint printed after 'ojd record draft'. The command in quotes stays as written, including FILE. */
 "cli.record.draft.next" = "บันทึกระเบียนลงไฟล์ ตรวจสอบตัวควบคุมแต่ละตัว แล้วเรียกใช้ “ojd record validate FILE”";
 /* Message of 'ojd record draft' when the descriptor of the controller yields no controls and the bundled record names the family. %1$@ is the controller identity, VVVV:PPPP, and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
 "cli.record.draft.noLayout" = "อ่านตัวควบคุมของ %1$@ จากตัวอธิบายรายงาน HID ไม่ได้ และระเบียนที่รวมมาให้ระบุกลุ่มของคอนโทรลเลอร์นี้อยู่แล้ว “ojd record show %2$@” แสดงระเบียนนั้น";
+/* Message of 'ojd record draft --from-sdl' when the HID report descriptor of the controller fails the HIDDescriptor contract. SDL_GameControllerDB is a project name and HIDDescriptor is a protocol family name; both stay as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the name of the violated rule, which stays as written. */
+"cli.record.draft.sdl.contract" = "ตัวบรรยายรายงาน HID ของ %1$@ ไม่เป็นไปตามข้อกำหนด HIDDescriptor (%2$@) จึงไม่มีบรรทัด SDL_GameControllerDB ใดผูกกับมันได้";
+/* Message of 'ojd record draft --from-sdl' when the controller model already has a bundled record. SDL_GameControllerDB is a project name and stays as written. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.hasRecord" = "%@ มีระเบียนที่มากับแอปอยู่แล้ว และไม่มีบรรทัด SDL_GameControllerDB ใดมาแทนที่ได้";
+/* Message of 'ojd record draft --from-sdl' when the database has no line for the controller. SDL_GameControllerDB is a project name and stays as written. GUID is the SDL controller identifier. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is its GUID, which stays as written. */
+"cli.record.draft.sdl.noLine" = "SDL_GameControllerDB ไม่มีบรรทัดสำหรับ %1$@ (GUID %2$@)";
+/* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.noPad" = "%@ ไม่ได้เชื่อมต่อเป็นอุปกรณ์ HID ที่คำสั่งนี้อ่านได้";
+/* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
+"cli.record.draft.sdl.rejected" = "บรรทัด SDL_GameControllerDB ของ %1$@ ถูกปฏิเสธ: %2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.record.draft.started" = "กดตัวควบคุมทุกตัวบน %1$@ (%2$@) และขยับสติ๊กและทริกเกอร์แต่ละตัว";
 /* Error of the 'ojd record' commands when a record file cannot be read. %1$@ is the file path and %2$@ is the reason from the system. */
@@ -2597,8 +2919,8 @@
 "cli.record.install.abstract" = "ตรวจสอบระเบียนคอนโทรลเลอร์และติดตั้งสำหรับผู้ใช้ของคุณ";
 /* Yes or no question that 'ojd record install' asks on a terminal before it replaces an installed record. %@ is the path of the installed file. */
 "cli.record.install.confirm" = "แทนที่ %@ หรือไม่";
-/* Long description in the help of 'ojd record install'. VVVV-PPPP.json and --force stay as written. */
-"cli.record.install.discussion" = "เขียนระเบียนเป็น VVVV-PPPP.json ในไดเรกทอรีระเบียนของคุณ บริการที่ทำงานอยู่จะใช้ทันที การแทนที่ระเบียนที่ติดตั้งไว้แล้วของรุ่นนั้นจะถามเพื่อยืนยันบนเทอร์มินัล และต้องใช้ --force ในกรณีอื่น --dry-run ตรวจสอบระเบียนและไม่เขียนสิ่งใด ออกด้วยรหัส 1 และไม่เขียนสิ่งใดเมื่อระเบียนไม่ถูกต้อง";
+/* Long description in the help of 'ojd record install'. vvvv-pppp.plist and --force stay as written. */
+"cli.record.install.discussion" = "เขียนระเบียนเป็น vvvv-pppp.plist ในไดเรกทอรีระเบียนของคุณ บริการที่ทำงานอยู่จะใช้ทันที การแทนที่ระเบียนที่ติดตั้งไว้แล้วของรุ่นนั้นจะถามเพื่อยืนยันบนเทอร์มินัล และต้องใช้ --force ในกรณีอื่น --dry-run ตรวจสอบระเบียนและไม่เขียนสิ่งใด ออกด้วยรหัส 1 และไม่เขียนสิ่งใดเมื่อระเบียนไม่ถูกต้อง";
 /* Message printed by 'ojd record install --dry-run' instead of installing. %@ is the target file path. */
 "cli.record.install.dryRun" = "จะติดตั้ง %@";
 /* Error when the record file cannot be written. %1$@ is the target file path and %2$@ is the reason from the system. */
@@ -2685,6 +3007,12 @@
 "error.E2036.message" = "ไม่มีแอป OpenJoystickDriver ตอบกลับการแจ้งเตือนทดสอบทันเวลา ตรวจสอบว่าแอปกำลังทำงานอยู่ แล้วลองอีกครั้ง";
 /* Error E2037, shown by ojd and the app when notifications are not allowed for the app, so the test notification could not be shown. */
 "error.E2037.message" = "ไม่อนุญาตการแจ้งเตือนสำหรับ OpenJoystickDriver อนุญาตในการตั้งค่าการแจ้งเตือนของระบบ แล้วลองอีกครั้ง";
+/* Error E2038, shown by ojd and the app when the selected controller has no speaker to play sound on. */
+"error.E2038.message" = "คอนโทรลเลอร์ไม่มีลำโพง เลือกคอนโทรลเลอร์ที่เล่นเสียงได้ แล้วลองอีกครั้ง";
+/* Error E2039, shown by ojd when the audio file given to the speaker command is not an uncompressed PCM WAV file. */
+"error.E2039.message" = "ไม่รองรับไฟล์เสียงนี้ ใช้ไฟล์ WAV แบบ PCM ที่ไม่ถูกบีบอัด แล้วลองอีกครั้ง";
+/* Error E2040, shown by ojd and the app when the extension plugged into the controller did not answer its setup. */
+"error.E2040.message" = "อุปกรณ์เสริมของคอนโทรลเลอร์ไม่ตอบสนองต่อการตั้งค่า เชื่อมต่ออุปกรณ์เสริมใหม่ แล้วลองอีกครั้ง";
 /* Note about a controller record whose raw USB family the USB extension cannot claim because Apple signs its product list. OJD is the short product name. */
 "platform.macos.cli.record.group.usbNotClaimed" = "กลุ่มนี้ใช้ USB ดิบ และส่วนขยาย USB ครอบครองคอนโทรลเลอร์นี้ไม่ได้ เพราะรายการผลิตภัณฑ์ลงนามโดย Apple OJD เข้าถึงได้ผ่านการเข้าถึง USB โดยตรงเท่านั้น เมื่อ macOS อนุญาต";
 /* Note about a Switch 2 controller record that connects over USB only. bluetoothLE.vibrationCharacteristic is a field of the record and stays as written. */
@@ -2709,7 +3037,7 @@
 "cli.binding.group.actionsInvalid" = "--actions-json ไม่ใช่รายการการทำงานที่ถูกต้อง: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
 "cli.binding.group.actionsTooLarge" = "--actions-json ใหญ่เกินไป";
-/* Error of 'ojd binding set' when the value of --double-tap or --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
+/* Error of 'ojd binding set' when the value of --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
 "cli.binding.group.alternateFormat" = "%@ รับ MS:TARGET เช่น 500:key:key-b";
 /* Error of 'ojd binding set' when an axis option is used with a source that is not an axis. The option names stay as written. */
 "cli.binding.group.axisOptionsSource" = "--deadzone, --gain, --invert, --response-curve และ --digital-threshold ต้องใช้ต้นทางที่เป็นแกน";
@@ -2734,11 +3062,13 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "ระบุต้นทางอย่างน้อยหนึ่งรายการ หรือ --all";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "การกำหนดจะส่ง TARGET เมื่อมีการใช้ SOURCE ของคอนโทรลเลอร์\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW หรือ touch:SURFACE:swipe:DIRECTION:DISTANCE\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME หรือ physical:... สำหรับแรงสั่น ไฟ และทริกเกอร์แบบปรับได้\n\n“ojd profile show” พิมพ์การกำหนดในรูปแบบเหล่านี้ แก้ไขคอร์ด ลำดับ และเลเยอร์ด้วย “ojd profile edit”";
+"cli.binding.group.discussion" = "การกำหนดจะส่ง TARGET เมื่อมีการใช้ SOURCE ของคอนโทรลเลอร์\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW หรือ touch:SURFACE:swipe:DIRECTION:DISTANCE\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, position:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER หรือ physical:... สำหรับแรงสั่น ไฟ และทริกเกอร์แบบปรับได้\n\n“ojd profile show” พิมพ์การกำหนดในรูปแบบเหล่านี้ แก้ไขคอร์ด ลำดับ และเลเยอร์ด้วย “ojd profile edit”";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "แสดงรายการการกำหนดของโปรไฟล์";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
 "cli.binding.list.empty" = "“%@” ไม่มีการกำหนด เพิ่มด้วย “ojd binding set”";
+/* Error of 'ojd binding set' when a value of --multi-tap does not have the form COUNT:MS:TARGET. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.multiTapFormat" = "--multi-tap รับ COUNT:MS:TARGET เช่น 2:300:key:key-c";
 /* Help text of the --actions-json option of 'ojd binding set'. 'ojd profile export' stays as written. */
 "cli.binding.group.optionActionsJson" = "การทำงานเพิ่มเติมเป็นอาร์เรย์ JSON ในรูปแบบที่ “ojd profile export” เขียน";
 /* Help text of the --behavior option of 'ojd binding set'. The behavior hold is a value the user types. */
@@ -2747,20 +3077,28 @@
 "cli.binding.group.optionDeadzone" = "ต้นทางที่เป็นแกน: ส่วนของระยะเคลื่อนที่ที่ถูกละเว้น 0 ถึง 0.95 ค่าเริ่มต้น: 0.1";
 /* Help text of the --digital-threshold option of 'ojd binding set'. It sets the axis travel that counts as a press. */
 "cli.binding.group.optionDigitalThreshold" = "ต้นทางที่เป็นแกน: ระยะเคลื่อนที่ที่นับเป็นการกดสำหรับปลายทางที่เป็นปุ่ม ค่าเริ่มต้น: 0.5";
-/* Help text of the --double-tap option of 'ojd binding set'. The example 300:key:key-c stays as written. */
-"cli.binding.group.optionDoubleTap" = "ส่งปลายทางอีกรายการเมื่อกดต้นทางสองครั้งภายในเวลานี้ เช่น 300:key:key-c";
 /* Help text of the --gain option of 'ojd binding set'. Gain scales the axis output. */
 "cli.binding.group.optionGain" = "ต้นทางที่เป็นแกน: สเกลของเอาต์พุต 0.1 ถึง 10 ค่าเริ่มต้น: 1";
 /* Help text of the --invert flag of 'ojd binding set'. */
 "cli.binding.group.optionInvert" = "ต้นทางที่เป็นแกน: กลับทิศทาง";
 /* Help text of the --long-hold option of 'ojd binding set'. The example 500:key:key-b stays as written. */
 "cli.binding.group.optionLongHold" = "ส่งปลายทางอีกรายการเมื่อกดต้นทางค้างไว้นานเท่านี้ เช่น 500:key:key-b";
+/* Help text of the --multi-tap option of 'ojd binding set'. COUNT is the number of taps, MS the milliseconds allowed after the last release. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.optionMultiTap" = "ส่งปลายทางอีกรายการเมื่อแตะต้นทาง COUNT ครั้ง โดยแต่ละครั้งที่กดต้องอยู่ภายใน MS หลังปล่อยครั้งก่อน เช่น 2:300:key:key-c ใช้ตัวเลือกซ้ำได้สำหรับจำนวนครั้งอื่น";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "ระยะเวลาที่พัลส์ค้างปลายทางไว้ 1 ถึง 5000 มิลลิวินาที ค่าเริ่มต้น: 100";
+/* Help text of the --voice option of 'ojd binding set'. The option name and speak:TEXT stay as written. */
+"cli.binding.group.optionVoice" = "ตัวระบุเสียงสำหรับเป้าหมาย speak:TEXT ค่าเริ่มต้น: เสียงของระบบ";
+/* Error of 'ojd binding set' when --voice is given with a target that is not speak:TEXT. The option name and speak:TEXT stay as written. */
+"cli.binding.group.voiceNeedsSpeak" = "--voice ต้องใช้กับเป้าหมาย speak:TEXT";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "ต้นทางที่เป็นแกน: เอาต์พุตเพิ่มขึ้นตามระยะเคลื่อนที่อย่างไร ค่าเริ่มต้น: linear";
+/* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
+"cli.binding.group.optionTurboDelay" = "รอเท่านี้ก่อนทำซ้ำครั้งแรก 0 ถึง 2500 ms ต้องใช้ --turbo-rate และ --turbo-duty";
 /* Help text of the --turbo-duty option of 'ojd binding set'. The duty is the share of each turbo cycle in which the target is held. */
 "cli.binding.group.optionTurboDuty" = "สัดส่วนของแต่ละรอบเทอร์โบที่ปลายทางถูกค้างไว้ มากกว่า 0 และน้อยกว่า 1";
+/* Help text of the --turbo-max option of 'ojd binding set'. The option names stay as written. */
+"cli.binding.group.optionTurboMax" = "หยุดหลังทำซ้ำครบเท่านี้ครั้ง 1 ถึง 500 ต้องใช้ --turbo-rate และ --turbo-duty";
 /* Help text of the --turbo-rate option of 'ojd binding set'. --turbo-duty stays as written. */
 "cli.binding.group.optionTurboRate" = "ทำซ้ำปลายทางตามจำนวนครั้งต่อวินาทีนี้ขณะกดค้าง ต้องใช้ --turbo-duty";
 /* One-line summary of 'ojd binding set' in the command list and at the top of its help. */
@@ -2775,8 +3113,10 @@
 "cli.binding.group.sourceInvalid" = "“%@” ไม่ใช่ต้นทาง “ojd binding set --help” แสดงรูปแบบของต้นทาง";
 /* Error of 'ojd binding set' when the target cannot be parsed. %@ is the text the user gave. The command in quotes stays as written. */
 "cli.binding.group.targetInvalid" = "“%@” ไม่ใช่ปลายทาง “ojd binding set --help” แสดงรูปแบบของปลายทาง";
-/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given. Both option names stay as written. */
-"cli.binding.group.turboPair" = "ต้องระบุ --turbo-rate และ --turbo-duty ด้วยกัน";
+/* Error of 'ojd binding set' when the profile has no layer with the name in a layer:NAME:MODE target. %1$@ is the profile name and %2$@ is the layer name. */
+"cli.binding.group.layerMissing" = "“%1$@” ไม่มีเลเยอร์ชื่อ “%2$@” ไม่มีอะไรเปลี่ยนแปลง";
+/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given, or --turbo-delay or --turbo-max is given without both. All four option names stay as written. */
+"cli.binding.group.turboPair" = "ต้องระบุ --turbo-rate และ --turbo-duty ด้วยกัน และ --turbo-delay กับ --turbo-max ต้องใช้ทั้งสองอย่าง";
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "เทอร์โบใช้กับปลายทางการเคลื่อนตัวชี้หรือการเลื่อนไม่ได้";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
@@ -2823,26 +3163,40 @@
 "cli.profile.activate.abstract" = "ใช้โปรไฟล์กับรุ่นคอนโทรลเลอร์ของโปรไฟล์";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
 "cli.profile.activate.allowEmpty" = "เปิดใช้งานโปรไฟล์แม้ว่าจะไม่มีเอาต์พุตใดเลย";
+/* Help text of the --confirm-actions flag of 'ojd profile activate'. --confirm-actions stays as written. */
+"cli.profile.activate.confirmActions" = "ยืนยันว่าโปรไฟล์สามารถเริ่มการทำงานของตัวเองได้ เช่น เปิดแอปและ URL เรียกใช้คำสั่งลัด และพิมพ์ข้อความ";
 /* Long description in the help of 'ojd profile activate'. It explains the profile that replaces the active one and the profile that produces no output. The words mapped and --allow-empty stay as written. */
 "cli.profile.activate.discussion" = "โปรไฟล์จะแทนที่โปรไฟล์ที่ใช้งานอยู่ของรุ่นคอนโทรลเลอร์และขอบเขตแอปเดียวกัน โปรไฟล์ที่ตั้งเกมแพดเสมือนเป็น mapped และไม่ส่งสิ่งใดไปยังเกมแพด คีย์บอร์ด ตัวชี้ หรือคอนโทรลเลอร์ และไม่ตั้งสีของไฟ จะไม่มีเอาต์พุต การเปิดใช้งานโปรไฟล์เช่นนั้นต้องใช้ --allow-empty";
 /* Message printed after 'ojd profile activate'. %1$@ is the profile name, shown in quotes, and %2$@ is the controller model it applies to. */
 "cli.profile.activate.done" = "เปิดใช้งาน “%1$@” สำหรับ %2$@ แล้ว";
 /* Error of 'ojd profile activate' for a profile that produces no output. --allow-empty stays as written. */
 "cli.profile.activate.empty" = "โปรไฟล์นี้ไม่มีเอาต์พุต เพิ่ม --allow-empty เพื่อเปิดใช้งาน";
+/* Error of 'ojd profile activate' for a profile that opens applications or URLs, runs shortcuts or types text. --confirm-actions stays as written. %@ is the list of actions, one per line, with each URL in full. */
+"cli.profile.activate.actionsNeedConfirmation" = "โปรไฟล์นี้เริ่มการทำงานบางอย่าง เพิ่ม --confirm-actions เพื่อเปิดใช้งาน:\n%@";
 /* Marker appended to the line of the active profile in 'ojd profile list'. Keep the parentheses. */
 "cli.profile.group.activeMarker" = "(ใช้งานอยู่)";
 /* Help text of the PROFILE argument shared by the 'ojd profile' commands. The command in quotes stays as written. */
 "cli.profile.group.argument" = "โปรไฟล์: ID หรือชื่อจาก “ojd profile list”";
 /* One-line summary of 'ojd profile create' in the command list and at the top of its help. */
 "cli.profile.create.abstract" = "สร้างโปรไฟล์ว่างสำหรับคอนโทรลเลอร์หนึ่งรุ่น";
+/* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.activation" = "ตัวควบคุมที่ต้องกดค้างไว้สำหรับเอาต์พุตไจโร (เทมเพลต gyro-stick) หากไม่ระบุ เอาต์พุตไจโรจะเปิดอยู่เสมอ";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "ใช้โปรไฟล์เฉพาะขณะที่แอปนี้ ตามรหัสแอป อยู่ด้านหน้า";
+"cli.profile.create.app" = "ใช้โปรไฟล์เฉพาะเมื่อแอปนี้ ตามรหัสแอป อยู่ด้านหน้า ระบุตัวเลือกซ้ำเพื่อเพิ่มแอปอื่น";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "รุ่นคอนโทรลเลอร์: VVVV:PPPP หรือ ID ของคอนโทรลเลอร์ที่เชื่อมต่ออยู่";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
 "cli.profile.create.discussion" = "โปรไฟล์ใช้ได้ในทุกแอป เว้นแต่ --app ระบุแอปหนึ่ง โดยค่าเริ่มต้น เกมแพดเสมือนจะส่งผ่านตัวควบคุมทุกตัวที่ไม่มีการกำหนดใช้ โปรไฟล์เริ่มต้นเป็นไม่ใช้งาน เปิดใช้งานด้วย “ojd profile activate”";
 /* Message printed after 'ojd profile create'. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.create.done" = "สร้าง “%1$@” (%2$@) แล้ว";
+/* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
+"cli.profile.create.noMotion" = "%@ ไม่มีเซ็นเซอร์การเคลื่อนไหว";
+/* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.stick" = "สติ๊กที่เทมเพลต gyro-stick ควบคุม: left หรือ right ค่าเริ่มต้นคือ right";
+/* Help text of the --template option of 'ojd profile create'. gyro-stick is the only template, the user types it, and it stays as written. */
+"cli.profile.create.template" = "เริ่มจากเทมเพลต เทมเพลตเดียวที่มีคือ gyro-stick";
+/* Error of 'ojd profile create' when --stick or --activation is given without --template. The three option names stay as written. */
+"cli.profile.create.templateRequired" = "--stick และ --activation ต้องใช้ร่วมกับ --template";
 /* Help text of the physical input option of 'ojd profile create'. shared and exclusive are values the user types and stay as written. */
 "platform.macos.cli.profile.create.physicalInput" = "ว่า macOS ยังเห็นคอนโทรลเลอร์อยู่ (shared) หรือ OJD ใช้คอนโทรลเลอร์แต่เพียงผู้เดียว (exclusive)";
 /* Help text of the --virtual-gamepad option of 'ojd profile create'. disabled, mapped and passthrough are values the user types and stay as written. */
@@ -2896,7 +3250,7 @@
 /* One-line summary of 'ojd profile export' in the command list and at the top of its help. The command in quotes stays as written. */
 "cli.profile.export.abstract" = "พิมพ์โปรไฟล์เป็นไฟล์ที่ “ojd profile import” อ่านได้";
 /* Long description in the help of 'ojd profile export'. --json and --plain stay as written. */
-"cli.profile.export.discussion" = "โปรไฟล์เป็น JSON ดังนั้น --json และ --plain จะไม่เปลี่ยนเอาต์พุต";
+"cli.profile.export.discussion" = "โปรไฟล์เป็นรายการคุณสมบัติ ดังนั้น --json และ --plain จะไม่เปลี่ยนเอาต์พุต";
 /* Message printed after 'ojd profile export --output'. %1$@ is the profile name, shown in quotes, and %2$@ is the file path. */
 "cli.profile.export.done" = "เขียน “%1$@” ไปที่ %2$@ แล้ว";
 /* Help text of the --output option of 'ojd profile export'. stdout is the standard output stream and stays as written. */
@@ -2913,6 +3267,8 @@
 "cli.profile.import.abstract" = "เพิ่มโปรไฟล์จากไฟล์ที่ “ojd profile export” เขียน";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "นำเข้า “%1$@” (%2$@) แล้ว";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "ใช้โปรไฟล์ที่นำเข้าเฉพาะเมื่อแอปนี้ ตามรหัสแอป อยู่ด้านหน้า แทนขอบเขตในไฟล์ ระบุตัวเลือกซ้ำเพื่อเพิ่มแอปอื่น";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "ใช้ - เพื่ออ่านโปรไฟล์จาก stdin โปรไฟล์ที่มี ID เดียวกับโปรไฟล์ที่มีอยู่จะแทนที่โปรไฟล์นั้น";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */
@@ -3362,7 +3718,7 @@
 /* Title of the Controller menu in the menu bar. */
 "ui.menu.controller.title" = "คอนโทรลเลอร์";
 /* Button and menu item that stops the remapping of one controller. */
-"ui.menu.controller.suspend" = "หยุดชั่วคราว";
+"ui.menu.controller.suspend" = "ระงับ";
 /* Button and menu item that starts the remapping of one controller again. */
 "ui.menu.controller.resume" = "ทำต่อ";
 /* Item of the Controller menu that opens the input test of the selected controller. */
@@ -3464,7 +3820,7 @@
 /* Heading of the controllers section in the menu bar menu. */
 "ui.extra.controllers" = "คอนโทรลเลอร์";
 /* Menu item in the menu bar menu that stops the service from remapping. */
-"ui.extra.suspend" = "หยุดชั่วคราว";
+"ui.extra.suspend" = "ระงับ";
 /* Menu item in the menu bar menu that lets the service remap again. */
 "ui.extra.resume" = "ทำต่อ";
 /* Menu item in the menu bar menu that opens the input test of a controller. */
@@ -3579,6 +3935,58 @@
 "ui.shortcuts.action.getControllers.description" = "ส่งคืนคอนโทรลเลอร์ที่เชื่อมต่ออยู่";
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "รับคอนโทรลเลอร์";
+/* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.description" = "เปลี่ยนค่าหนึ่งค่าของโปรไฟล์การแมปใหม่ เช่น ชื่อ";
+/* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
+"ui.shortcuts.action.setProfileValue.key" = "คีย์";
+/* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.title" = "ตั้งค่าของโปรไฟล์";
+/* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
+"ui.shortcuts.action.setProfileValue.value" = "ค่า";
+/* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
+"ui.shortcuts.error.profileKey" = "คีย์ของค่าในโปรไฟล์ต้องไม่มีส่วนที่ว่างเปล่า";
+/* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.title" = "สั่นคอนโทรลเลอร์";
+/* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.description" = "สั่งมอเตอร์สั่นของคอนโทรลเลอร์ให้ทำงานช่วงสั้น ๆ";
+/* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
+"ui.shortcuts.action.rumble.intensity" = "ความแรง (0-255)";
+/* Label in the Shortcuts app of the rumble action's duration in seconds. */
+"ui.shortcuts.action.rumble.duration" = "ระยะเวลา (วินาที)";
+/* Name in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.title" = "ตั้งค่าไฟแสดงผู้เล่น";
+/* Description in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.description" = "ตั้งค่าไฟแสดงผู้เล่นของคอนโทรลเลอร์";
+/* Label in the Shortcuts app of the player number from 1 to 4, or 0 for none. */
+"ui.shortcuts.action.player.number" = "หมายเลขผู้เล่น (0 คือไม่มี)";
+/* Name in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.title" = "ตั้งค่าไฟคอนโทรลเลอร์";
+/* Description in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.description" = "ตั้งค่าสีของแถบไฟ ความสว่างของ LED หรือทั้งสองอย่างบนคอนโทรลเลอร์";
+/* Label in the Shortcuts app of the lightbar color given as six hexadecimal digits, RRGGBB. */
+"ui.shortcuts.action.light.color" = "สี (RRGGBB)";
+/* Label in the Shortcuts app of the LED brightness from 0 to 255. */
+"ui.shortcuts.action.light.brightness" = "ความสว่าง LED (0-255)";
+/* Error in the Shortcuts app when the light action has no color or brightness, or the color is not RRGGBB. */
+"ui.shortcuts.error.lightRequest" = "ระบุสีเป็นเลขฐานสิบหกหกหลัก ความสว่าง หรือทั้งสองอย่าง";
+/* Name in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.title" = "แสดงรายการแพ็กเกจม็อด";
+/* Description in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.description" = "ส่งคืนชื่อของแพ็กเกจม็อดที่ติดตั้งแล้ว";
+/* Name in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.title" = "ติดตั้งแพ็กเกจม็อด";
+/* Description in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.description" = "ติดตั้งแพ็กเกจม็อดจากโฟลเดอร์และส่งคืนชื่อของแพ็กเกจ";
+/* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
+"ui.shortcuts.action.installMod.folder" = "โฟลเดอร์";
+/* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
+"ui.shortcuts.action.installMod.replace" = "แทนที่แพ็กเกจที่ติดตั้งแล้ว";
+/* Name in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.title" = "ลบแพ็กเกจม็อด";
+/* Description in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.description" = "ลบแพ็กเกจม็อดที่ติดตั้งแล้วตามชื่อ";
+/* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
+"ui.shortcuts.action.removeMod.name" = "ชื่อ";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "รุ่น";
 /* Name of the name property of a controller in the Shortcuts app. */
@@ -3729,12 +4137,22 @@
 "error.E3028.message" = "เซสชันการแมปใหม่ของคอนโทรลเลอร์เปลี่ยนไประหว่างที่คำขอทำงาน ลองอีกครั้ง";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
 "error.E3029.message" = "ไม่สามารถเปลี่ยนโปรไฟล์ที่มาจากแพ็กเกจที่ติดตั้งไว้ได้ ทำสำเนาโปรไฟล์แล้วเปลี่ยนสำเนา";
-/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
-"error.E4001.message" = "ไม่พบไฟล์ระบุรายการแพ็กเกจ mod.json หรือไฟล์ไม่ถูกต้อง ตรวจสอบกับสคีมา mod-package แล้วเรียกใช้คำสั่งอีกครั้ง";
+/* Text of error E3030, returned when an action needs Post Event access and it is not granted. */
+"error.E3030.message" = "ไม่ได้ดำเนินการเพราะยังไม่ได้ให้สิทธิ์เข้าถึง Post Event ให้สิทธิ์นี้แก่ OpenJoystickDriver แล้วลองอีกครั้ง";
+/* Text of error E3031, returned when an action needs Automation access and it is not granted. */
+"error.E3031.message" = "ไม่ได้ดำเนินการเพราะยังไม่ได้ให้สิทธิ์เข้าถึงระบบอัตโนมัติ ให้สิทธิ์นี้แก่ OpenJoystickDriver แล้วลองอีกครั้ง";
+/* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
+"error.E3032.message" = "ไม่ได้เรียกใช้การทำงานเพราะ Secure Input เปิดอยู่ ปิดแอปที่เปิดไว้ เช่น ช่องรหัสผ่าน แล้วลองอีกครั้ง";
+/* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
+"error.E3033.message" = "การทำงานล้มเหลว";
+/* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
+"error.E3034.message" = "ไม่ได้ดำเนินการ MIDI เพราะระบบปฏิเสธการสร้างแหล่ง MIDI OpenJoystickDriver ลองอีกครั้ง";
+/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.plist stays as written. */
+"error.E4001.message" = "ไม่พบไฟล์ระบุรายการแพ็กเกจ mod.plist หรือไฟล์ไม่ถูกต้อง ตรวจสอบกับสคีมา mod-package แล้วเรียกใช้คำสั่งอีกครั้ง";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */
 "error.E4002.message" = "แพ็กเกจต้องใช้ OpenJoystickDriver คนละเวอร์ชันกับที่กำลังทำงานอยู่ ติดตั้งแพ็กเกจเวอร์ชันที่รองรับเวอร์ชันนี้ หรืออัปเดต OpenJoystickDriver";
-/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.json stays as written. */
-"error.E4003.message" = "ไฟล์ของแพ็กเกจไม่ถูกต้อง ขาดหาย หรือไม่ได้ระบุไว้ใน mod.json แก้ไขไฟล์ที่คำสั่งระบุ แล้วเรียกใช้อีกครั้ง";
+/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.plist stays as written. */
+"error.E4003.message" = "ไฟล์ของแพ็กเกจไม่ถูกต้อง ขาดหาย หรือไม่ได้ระบุไว้ใน mod.plist แก้ไขไฟล์ที่คำสั่งระบุ แล้วเรียกใช้อีกครั้ง";
 /* Text of error E4004, printed when a mod package covers a controller, persona or profile that the user's files or another package hold. */
 "error.E4004.message" = "แพ็กเกจครอบคลุมคอนโทรลเลอร์ เพอร์โซนา หรือโปรไฟล์ที่มีอยู่แล้วในไฟล์ของคุณเองหรือในแพ็กเกจอื่นที่ติดตั้งไว้ ลบไฟล์หรือแพ็กเกจที่ขัดแย้งกัน หรือแก้ไขแพ็กเกจ แล้วเรียกใช้คำสั่งอีกครั้ง";
 /* Text of error E4005, printed when a mod package of the same name is installed. --force stays as written. */
@@ -3751,12 +4169,26 @@
 "error.E5003.message" = "คำอธิบายโปรโตคอลระบุแฟมิลีที่ต่างจากชื่อไฟล์ ตั้งชื่อไฟล์ตามแฟมิลีของมัน";
 /* Text of error E5004, printed when a protocol description lists a variant that its family lacks. */
 "error.E5004.message" = "คำอธิบายโปรโตคอลระบุตัวแปรที่แฟมิลีของมันไม่มี ใช้หนึ่งในตัวแปรของแฟมิลี";
-/* Text of error E5005, printed when the access file is damaged. AccessGrants.json is a file name and stays as written. */
-"error.E5005.message" = "ไฟล์การเข้าถึง AccessGrants.json เสียหาย แก้ไขหรือลบไฟล์นั้น แล้วให้สิทธิ์การเข้าถึงอีกครั้ง";
+/* Text of error E5005, printed when the access file is damaged. AccessGrants.plist is a file name and stays as written. */
+"error.E5005.message" = "ไฟล์การเข้าถึง AccessGrants.plist เสียหาย แก้ไขหรือลบไฟล์นั้น แล้วให้สิทธิ์การเข้าถึงอีกครั้ง";
 /* Text of error E5006, printed when the key file of the unit IDs cannot be read or has the wrong size. PortKeyInstallation.key is a file name and stays as written. OpenJoystickDriver is the product name. */
 "error.E5006.message" = "อ่านไฟล์คีย์ของ ID ยูนิต PortKeyInstallation.key ไม่ได้ หรือไฟล์ไม่ได้มีขนาด 32 ไบต์ กู้คืนไฟล์จากข้อมูลสำรอง หากคุณลบไฟล์แทน OpenJoystickDriver จะสร้างคีย์ใหม่ และ ID ยูนิตทุกรายการจะเปลี่ยน";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "ระเบียนคอนโทรลเลอร์หรือ patch ไม่ถูกต้อง ตรวจสอบไฟล์กับสคีมาของไฟล์นั้นแล้วแก้ฟิลด์ที่ข้อความระบุ";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "ไฟล์เรกคอร์ดนี้";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "โฟลเดอร์ Controllers ของแค็ตตาล็อกที่มาพร้อมแอป: แค็ตตาล็อกไม่มีไฟล์เรกคอร์ด กฎ: แค็ตตาล็อกมีเรกคอร์ดคอนโทรลเลอร์อย่างน้อยหนึ่งรายการ วิธีแก้: ติดตั้ง OpenJoystickDriver ใหม่";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@, vendorID และ productID: ชื่อไฟล์ต้องเป็น %2$@ ซึ่งเป็น ID ทั้งสองในรูปเลขฐานสิบหก วิธีแก้: เปลี่ยนชื่อไฟล์เป็น %2$@ หรือแก้ ID ในไฟล์";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@, vendorID และ productID: %2$@ เป็นตัวตนของเรกคอร์ดใน %3$@ อยู่แล้ว วิธีแก้: ลบไฟล์ใดไฟล์หนึ่งจากสองไฟล์ หรือเปลี่ยน ID ของไฟล์นี้";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@, document: ไม่สามารถเขียนค่าเป็น JSON ได้ (%2$@) วิธีแก้: แทนที่ค่าที่เหตุผลระบุด้วยสตริง ตัวเลข ค่าบูลีน รายการ หรือดิกชันนารี";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@, vendorID และ productID: vendorID ต้องอยู่ที่ 1...65535 และ productID ที่ 0...65535 วิธีแก้: ตั้งค่าแต่ละตัวเป็นจำนวนเต็มในช่วงของมัน";
+/* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
+"error.E5008.message" = "บรรทัด SDL_GameControllerDB ของคอนโทรลเลอร์ใช้ควบคุมคอนโทรลเลอร์นั้นไม่ได้ ข้อความระบุสาเหตุไว้ เขียนระเบียนคอนโทรลเลอร์ให้ด้วย ojd record draft";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */
 "ui.error.withCode" = "%1$@ (%2$@)";
 /* Message printed by 'ojd update check' when the installed version is newer than the latest release. %1$@ is the installed version and %2$@ is the latest release. */
@@ -3811,6 +4243,8 @@
 "ui.activity.check.transportExtensionRegistration" = "การลงทะเบียนส่วนขยายไดรเวอร์";
 /* Name of the check in the diagnostics table that validates the configuration files. */
 "ui.activity.check.configFiles" = "ไฟล์การกำหนดค่า";
+/* Name of the check in the diagnostics table that reports a controller with the Nintendo Switch Pro Controller identity and serial 000000000001. Nintendo Switch Pro Controller is a product name and stays as written. */
+"ui.activity.check.switchSerial" = "หมายเลขซีเรียลของ Switch Pro Controller";
 /* Name of the check in the diagnostics table that tests whether the app can read USB controllers. */
 "ui.activity.check.usbAccess" = "การเข้าถึง USB";
 /* Button of a failed check in the diagnostics table that opens the Library area. */
@@ -3871,6 +4305,10 @@
 "ui.controllers.draftRecord.title" = "ร่างเรกคอร์ดของคอนโทรลเลอร์";
 /* Message when a record cannot be drafted. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.controllers.draftRecord.noLayout" = "ไม่สามารถอ่านตัวควบคุมใดของ %@ จากตัวอธิบายรายงาน HID ได้ และเรกคอร์ดที่มากับแอประบุตระกูลของมันไว้แล้ว";
+/* Button in the Controllers detail that drafts a controller record from the SDL_GameControllerDB line of the controller. SDL stays as written. Keep the three dots. */
+"ui.controllers.draftRecordFromSDL" = "ร่างเรกคอร์ดจาก SDL…";
+/* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
+"ui.controllers.draftRecordFromSDL.noPad" = "%@ ไม่ได้เชื่อมต่อเป็นอุปกรณ์ HID ที่ OpenJoystickDriver อ่านได้";
 /* Button in the Controllers detail that starts a packet capture of the controller. Keep the three dots. */
 "ui.controllers.capturePackets" = "จับแพ็กเก็ต…";
 /* Title of the sheet that captures packets of the controller. */
@@ -3889,12 +4327,14 @@
 "ui.controllers.publication.notPublished" = "ยังไม่เผยแพร่";
 /* Value of the publication fact: the publication failed. */
 "ui.controllers.publication.failed" = "ล้มเหลว";
+/* Value of the input health fact: the session has read no input report yet. */
+"ui.controllers.inputHealth.awaitingInput" = "กำลังรออินพุตแรก…";
 /* Value of the input health fact: input arrives as expected. */
 "ui.controllers.inputHealth.healthy" = "ปกติ";
 /* Value of the input health fact: input stopped arriving. */
 "ui.controllers.inputHealth.stale" = "ไม่มีการอัปเดต";
 /* Value of the input health fact: the app waits until all controls are at rest before it sends input again. */
-"ui.controllers.inputHealth.waitingForNeutral" = "กำลังรอตำแหน่งกลาง";
+"ui.controllers.inputHealth.waitingForNeutral" = "กำลังรอตำแหน่งกลาง…";
 /* Error shown when the settings file is damaged. %@ is the path of the file. The command in backticks stays as written, and Trash is the macOS name. */
 "ui.settings.advanced.errorDamaged" = "ไฟล์การตั้งค่า %@ เสียหาย แก้ไขไฟล์ หรือย้ายไปที่ถังขยะด้วย `ojd setting reset`";
 /* Error shown when the settings file has an unsupported version. %@ is the path of the file. apiVersion and the command in backticks stay as written, and Trash is the macOS name. */
@@ -3915,8 +4355,8 @@
 "platform.macos.ui.settings.advanced.unreadableShowInFinder" = "แสดงใน Finder";
 /* One-line summary of 'ojd setting reset' in the command list and at the top of its help. */
 "cli.setting.reset.abstract" = "ย้ายไฟล์การตั้งค่าไปที่ถังขยะ";
-/* Long description in the help of 'ojd setting reset'. Settings.json is a file name and stays as written. */
-"cli.setting.reset.discussion" = "ย้าย Settings.json ไปที่ถังขยะเพื่อให้ทุกการตั้งค่ากลับเป็นค่าเริ่มต้น ใช้เมื่อไฟล์เสียหายหรือถูกปฏิเสธ";
+/* Long description in the help of 'ojd setting reset'. Settings.plist is a file name and stays as written. */
+"cli.setting.reset.discussion" = "ย้าย Settings.plist ไปที่ถังขยะเพื่อให้ทุกการตั้งค่ากลับเป็นค่าเริ่มต้น ใช้เมื่อไฟล์เสียหายหรือถูกปฏิเสธ";
 /* Yes or no question that 'ojd setting reset' asks on a terminal. */
 "cli.setting.reset.confirm" = "ย้ายไฟล์การตั้งค่าไปที่ถังขยะและคืนทุกการตั้งค่าเป็นค่าเริ่มต้นหรือไม่";
 /* Message printed after 'ojd setting reset'. %@ is the path of the settings file. */
@@ -3938,7 +4378,7 @@
 /* Reason the controller has no virtual gamepad: the output is paused. */
 "ui.controllers.publication.reason.suppressed" = "เอาต์พุตถูกหยุดชั่วคราว";
 /* Reason the controller has no virtual gamepad: the first input has not arrived. */
-"ui.controllers.publication.reason.noInputYet" = "กำลังรออินพุตแรก";
+"ui.controllers.publication.reason.noInputYet" = "กำลังรออินพุตแรก…";
 /* Reason the controller has no virtual gamepad: another app holds its input. */
 "ui.controllers.publication.reason.heldByAnotherClient" = "แอปอื่นกำลังใช้งานอยู่";
 /* Publication state with its reason or failure, for example "Not published (Waiting for the first input)". %1$@ is the state and %2$@ the reason. */
@@ -4040,3 +4480,155 @@
 "ui.controllers.exclusiveOwner" = "การเข้าถึงแบบเฉพาะ";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
 "ui.controllers.alsoListedBySystem" = "แสดงโดยระบบด้วย";
+/* Label of a macro as the destination of an assignment when the profile has no macro of that identifier, and name of the macro destination kind. */
+"term.macro" = "มาโคร";
+/* Label of a layer as the destination of an assignment when the profile has no layer of that identifier, and name of the layer destination kind. */
+"term.layer" = "เลเยอร์";
+/* Name of the Speak destination kind in the destination popup; the destination says a short text aloud. */
+"term.speak" = "พูด";
+/* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
+"ui.profiles.macros" = "มาโคร";
+/* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */
+"ui.profiles.addMacro" = "เพิ่มมาโคร";
+/* Tooltip and VoiceOver label of the button on a macro row in the profile editor that opens the sheet to edit the macro. */
+"ui.profiles.editMacro" = "แก้ไขมาโคร";
+/* Message in the macros section of the profile editor when none exists. */
+"ui.profiles.noMacros" = "ยังไม่ได้ตั้งค่ามาโคร";
+/* Label of the name field in the macro editor sheet. */
+"ui.macros.name" = "ชื่อมาโคร";
+/* Heading of the list of steps in the macro editor sheet. */
+"ui.macros.steps" = "ขั้นตอน";
+/* Title of the menu in the macro editor sheet that adds a step to the macro. */
+"ui.macros.addStep" = "เพิ่มขั้นตอน";
+/* Name of the macro step that presses and releases a key or button at once. Also the label of its destination picker. */
+"ui.macros.stepTap" = "แตะ";
+/* Name of the macro step that presses a key or button and keeps it down. Also the label of its destination picker. */
+"ui.macros.stepPress" = "กด";
+/* Name of the macro step that releases a key or button that a press step holds. Also the label of its destination picker. */
+"ui.macros.stepRelease" = "ปล่อย";
+/* Name of the macro step that presses several keys or buttons together, holds them, and releases them. Also the label of each destination picker of the step. */
+"ui.macros.stepChord" = "คอร์ด";
+/* Name of the macro step that waits before the next step, and the label of its time slider. */
+"ui.macros.stepWait" = "รอ";
+/* Label of the slider in a chord step of the macro editor for how long the chord is held. */
+"ui.macros.holdTime" = "ระยะเวลากดค้าง";
+/* Button in a chord step of the macro editor that adds one more key or button to the chord. */
+"ui.macros.addChordKey" = "เพิ่มปุ่มในคอร์ด";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place earlier. */
+"ui.macros.moveUp" = "เลื่อนขั้นตอนขึ้น";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place later. */
+"ui.macros.moveDown" = "เลื่อนขั้นตอนลง";
+/* Tooltip and VoiceOver label of the button in the macro editor that removes a step. */
+"ui.macros.removeStep" = "ลบขั้นตอน";
+/* Label of the popup in the macro editor that chooses how often the macro runs its steps. */
+"ui.macros.repeat" = "ทำซ้ำ";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps a set number of times. */
+"ui.macros.repeatCounted" = "จำนวนครั้งที่กำหนด";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps again and again until the control is released. */
+"ui.macros.repeatWhileHeld" = "ขณะกดค้าง";
+/* Label of the stepper in the macro editor for how many times the macro runs its steps. The number follows the label. */
+"ui.macros.repeatTimes" = "ครั้ง";
+/* Label of the popup in the macro editor for what happens when the control is pressed again while the macro runs. */
+"ui.macros.whileRunning" = "เมื่อกดซ้ำขณะทำงาน";
+/* Choice of the popup in the macro editor: the macro keeps running and the new press does nothing. */
+"ui.macros.whileRunningIgnore" = "เพิกเฉย";
+/* Choice of the popup in the macro editor: the macro stops, releases everything it holds, and starts again. */
+"ui.macros.whileRunningRestart" = "เริ่มใหม่";
+/* Label of the switch in the macro editor: releasing the control stops the macro and releases everything it holds. */
+"ui.macros.interruptOnRelease" = "หยุดเมื่อปล่อย";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. The report mode the driver chose follows, a hex byte such as 0x31. */
+"cli.controller.show.labelReportMode" = "โหมดรายงาน";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. The extension plugged into the remote follows, such as a Nunchuk. This is the accessory on the controller, not a system extension. */
+"cli.controller.show.labelExtension" = "อุปกรณ์เสริม";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. Motion Plus is a Nintendo product name: keep it as written. The value that follows is off, calibrating or ready. */
+"cli.controller.show.labelMotionPlus" = "Motion Plus";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Nunchuk is a Nintendo product name: keep it as written. */
+"term.wiiExtension.nunchuk" = "Nunchuk";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Classic Controller is a Nintendo product name: keep it as written. */
+"term.wiiExtension.classicController" = "Classic Controller";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Classic Controller Pro is a Nintendo product name: keep it as written. */
+"term.wiiExtension.classicControllerPro" = "Classic Controller Pro";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: a Motion Plus that is plugged in but not switched on yet. Motion Plus is a Nintendo product name: keep it as written. */
+"term.wiiExtension.motionPlusInactive" = "Motion Plus (ไม่ทำงาน)";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with nothing plugged into it. Motion Plus is a Nintendo product name: keep it as written. */
+"term.wiiExtension.motionPlus" = "Motion Plus";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with a Nunchuk plugged into it. Motion Plus and Nunchuk are Nintendo product names: keep them as written. */
+"term.wiiExtension.motionPlusNunchuk" = "Motion Plus ร่วมกับ Nunchuk";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with a Classic Controller plugged into it. Motion Plus and Classic Controller are Nintendo product names: keep them as written. */
+"term.wiiExtension.motionPlusClassic" = "Motion Plus ร่วมกับ Classic Controller";
+/* Value of the extension row for a Wii Remote extension the driver does not know. %@ is the six ID bytes as twelve hex digits and stays as written. */
+"status.wiiExtensionUnknown" = "ไม่ทราบ (ID %@)";
+/* Value of the Motion Plus row for a Wii Remote whose Motion Plus is not switched on. */
+"status.motionPlusOff" = "ปิดอยู่";
+/* Value of the Motion Plus row for a Wii Remote while the driver measures the resting value of the gyro. The remote must lie still. */
+"status.gyroCalibrating" = "กำลังปรับเทียบ";
+/* Value of the Motion Plus row for a Wii Remote once the driver has measured the resting value of the gyro. */
+"status.gyroReady" = "พร้อม";
+/* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
+"error.E5009.message" = "เอกสารที่บันทึกไว้จากเวอร์ชันเก่าไม่มีการแปลงอัตโนมัติ ojd migrate จึงปล่อยไว้โดยไม่เปลี่ยนแปลง ข้อความระบุไฟล์และฟิลด์ ให้แก้ไขไฟล์ด้วยตนเองเป็น apiVersion ที่รองรับ";
+/* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
+"error.E5010.message" = "เอกสารที่จัดเก็บไม่ใช่รายการคุณสมบัติ XML หรือมีค่าวันที่หรือข้อมูล ข้อความระบุไฟล์และรูปแบบหรือเส้นทางของคีย์ บันทึกไฟล์เป็นรายการคุณสมบัติ XML ด้วย plutil -convert xml1";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "เรียกใช้สคริปต์ตัวสร้างและเขียนเอกสารที่สคริปต์ส่งกลับ";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "เรียกใช้สคริปต์ในโพรเซสตัวช่วยที่เข้าถึงไฟล์และเครือข่ายไม่ได้ ตรวจสอบเอกสารที่ฟังก์ชัน generate ส่งกลับ แล้วเขียนแต่ละเอกสารเป็นไฟล์รายการคุณสมบัติใน --output หากไม่ระบุ --output จะพิมพ์เอกสารออกมา --timeout กำหนดเวลาสูงสุดเป็นวินาที (ค่าเริ่มต้น 5)";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "สคริปต์ตัวสร้าง ซึ่งเป็นไฟล์ .js";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "เริ่มโพรเซสตัวช่วยของสคริปต์ไม่ได้: %@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "%1$@ ไม่เสร็จภายใน %2$@ วินาทีและถูกยุติแล้ว";
+/* Help text of the --output option of 'ojd generate'. */
+"cli.generate.group.output" = "โฟลเดอร์ที่รับไฟล์ หากไม่ระบุ คำสั่งจะพิมพ์เอกสารและไม่เขียนไฟล์";
+/* Help text of the --replace flag of 'ojd generate'. */
+"cli.generate.group.replace" = "แทนที่ไฟล์ที่เนื้อหาต่างจากเอกสาร";
+/* Error of 'ojd generate' when the script file cannot be read. %@ is the script path. */
+"cli.generate.group.unreadable" = "อ่าน %@ ไม่ได้";
+/* Error of 'ojd generate' when the script defines no function named generate. %@ is the script path; generate stays as written. */
+"cli.generate.group.missingGenerate" = "%@ ไม่ได้กำหนดฟังก์ชัน generate";
+/* Error of 'ojd generate' when the script throws a value that has no line number. %1$@ is the script path and %2$@ is the message. */
+"cli.generate.group.scriptFailed" = "สคริปต์ %1$@ ล้มเหลว: %2$@";
+/* Error of 'ojd generate' for a syntax error or an exception of the script. %1$@ is the script path, %2$@ is the line number and %3$@ is the message. */
+"cli.generate.group.scriptFailedAtLine" = "สคริปต์ %1$@ ล้มเหลวที่บรรทัด %2$@: %3$@";
+/* Error of 'ojd generate' when generate returns null, no value, or something that is not a document or a list of documents. generate stays as written. */
+"cli.generate.group.notDocuments" = "generate ต้องส่งกลับเอกสารเดียวหรือรายการเอกสาร";
+/* Error of 'ojd generate' for a returned document that fails its checks. %1$@ is the position of the document in the result, counted from 1, and %2$@ is the key path and the rule it breaks. */
+"cli.generate.group.documentInvalid" = "เอกสาร %1$@ ไม่ถูกต้องและไม่มีการเขียนไฟล์: %2$@";
+/* Error of 'ojd generate' when two returned documents have the same file name. %1$@ and %2$@ are their positions in the result, counted from 1, and %3$@ is the file name. */
+"cli.generate.group.duplicate" = "เอกสาร %1$@ และ %2$@ จะถูกเขียนลงใน %3$@ ทั้งคู่ จึงไม่มีการเขียนไฟล์";
+/* Error of 'ojd generate' when a file holds other content than the generated document. %@ is the file path; --replace stays as written. */
+"cli.generate.group.conflict" = "%@ มีเนื้อหาอื่นอยู่ จึงไม่มีการเขียนไฟล์ ใช้ --replace เพื่อเขียนทับ";
+/* Error of 'ojd generate' when a file cannot be written. %1$@ is the file path and %2$@ is the reason. */
+"cli.generate.group.writeFailed" = "เขียน %1$@ ไม่ได้: %2$@";
+/* Line of 'ojd generate' for a file that it wrote anew. %@ is the file path. */
+"cli.generate.group.created" = "สร้าง %@ แล้ว";
+/* Line of 'ojd generate' for a file whose other content it replaced. %@ is the file path. */
+"cli.generate.group.replaced" = "แทนที่ %@ แล้ว";
+/* Line of 'ojd generate' for a file that already held the generated document. %@ is the file path. */
+"cli.generate.group.unchanged" = "%@ ไม่เปลี่ยนแปลง";
+/* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
+"cli.migrate.group.abstract" = "แปลงเอกสารที่บันทึกไว้จากเวอร์ชันเก่าเป็นเวอร์ชันปัจจุบัน";
+/* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
+"cli.migrate.group.discussion" = "แปลง Settings.plist, AccessGrants.plist, โปรไฟล์, ระเบียนและแพตช์คอนโทรลเลอร์ของคุณ และไฟล์อุปกรณ์เสมือนที่มี apiVersion เก่า ไฟล์ต้นฉบับแต่ละไฟล์จะเก็บไว้ในโฟลเดอร์ Migrated ของโฟลเดอร์สนับสนุน แพ็กเกจม็อดจะถูกแปลงด้วย ระบุโฟลเดอร์เพื่อสแกนแทนโฟลเดอร์สนับสนุน แต่ละไฟล์จะได้รับผลตัดสินหนึ่งอย่าง: Migrated, Current, Failed หรือ Foreign";
+/* Help text of the --dry-run option of 'ojd migrate'. */
+"cli.migrate.group.dryRun" = "แสดงรายการเอกสารที่จะถูกแปลงโดยไม่เปลี่ยนแปลงสิ่งใด";
+/* Message printed by 'ojd migrate' when no stored document has an older version. */
+"cli.migrate.group.none" = "ไม่มีเอกสารที่ต้องย้ายข้อมูล";
+/* Line printed by 'ojd migrate' for a converted document. %@ is the path of the document in the support folder. Migrated is a folder name and stays as written. */
+"cli.migrate.group.converted" = "แปลง %@ แล้ว ไฟล์ต้นฉบับอยู่ในโฟลเดอร์ Migrated";
+/* Line printed by 'ojd migrate --dry-run' for a document it would convert. %@ is the path of the document in the support folder. */
+"cli.migrate.group.wouldConvert" = "จะแปลง %@";
+/* Line printed by 'ojd migrate' for a document it cannot convert. %1$@ is the path of the document, %2$@ is the reason. */
+"cli.migrate.group.failed" = "%1$@ ไม่เปลี่ยนแปลง: %2$@";
+/* Error text of 'ojd migrate' when at least one document could not be converted. */
+"cli.migrate.group.failedSummary" = "แปลงเอกสารบางรายการไม่ได้และยังไม่เปลี่ยนแปลง ผลลัพธ์ระบุแต่ละรายการ";
+/* Help text of the folder argument of 'ojd migrate'. */
+"cli.migrate.group.folder" = "โฟลเดอร์ที่จะสแกนแทนโฟลเดอร์สนับสนุน";
+/* Line printed by 'ojd migrate' for a file that is in the current format. %@ is the path of the file. */
+"cli.migrate.group.current" = "%@ เป็นเวอร์ชันปัจจุบันอยู่แล้ว";
+/* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
+"cli.migrate.group.foreign" = "%@ ไม่ใช่เอกสารของ OpenJoystickDriver และไม่เปลี่ยนแปลง";
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
+"ui.migrate.action" = "ย้ายข้อมูล";
+/* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
+"platform.macos.ui.migrate.failed" = "แปลงเอกสารบางรายการไม่ได้และยังไม่เปลี่ยนแปลง เรียกใช้ ojd migrate ใน Terminal เพื่อดูว่ารายการใด";

@@ -22,7 +22,7 @@ struct RuntimeProfileOutputPolicyTests {
       pulseDurationMs: behavior == .pulse ? 375 : nil,
       turbo: nil,
       longHold: nil,
-      doubleTap: nil,
+      multiTap: [],
       for: binding.id
     )
     #expect(edited.profile.bindings.first?.behavior == behavior)
@@ -39,7 +39,7 @@ struct RuntimeProfileOutputPolicyTests {
         behavior: .hold,
         turbo: nil,
         longHold: nil,
-        doubleTap: nil,
+        multiTap: [],
         for: binding.id
       )
       #expect(

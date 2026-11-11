@@ -1,9 +1,14 @@
 import Foundation
 import LiveKitWebRTC
 
-/// Which side creates the offer. The offerer also opens the data channel.
+/// The side of the signaling that a link plays.
+///
+/// The offerer creates the offer and opens the data channel; the answerer receives the channel from
+/// the offerer.
 public enum SignalingRole: String, Sendable {
+  /// Creates the offer and opens the data channel.
   case offer
+  /// Applies the offer and creates the answer.
   case answer
 }
 
@@ -14,21 +19,41 @@ public enum SignalingRole: String, Sendable {
 /// no trickle exchange is needed. The link opens no listening socket: ICE binds UDP sockets for
 /// the data channel, and TCP candidates are off.
 public final class PeerLink: NSObject, @unchecked Sendable {
+  /// The label of the data channel that the offerer opens.
   public static let channelLabel = "ojd"
 
   /// Called on a WebRTC thread with each message of the data channel.
   public var onMessage: (@Sendable (Data) -> Void)?
+  /// Called on a WebRTC thread when the data channel opens.
   public var onOpen: (@Sendable () -> Void)?
 
+  /// The factory that creates the peer connection of every link.
   private static let factory = LKRTCPeerConnectionFactory()
 
+  /// The side of the signaling that this link plays.
   private let role: SignalingRole
+  /// Guards `channel`, `gatheringWaiters` and `openWaiters`.
   private let lock = NSLock()
+  // swift-format-ignore: NeverUseImplicitlyUnwrappedOptionals
+  // The factory takes `self` as delegate, so `init` assigns this after `super.init()`.
+  /// The peer connection, assigned in `init`.
   private var connection: LKRTCPeerConnection!
+  /// The data channel, set by `attach(_:)`.
   private var channel: LKRTCDataChannel?
+  /// The tasks that wait in `waitForGathering` for the end of ICE gathering.
   private var gatheringWaiters: [CheckedContinuation<Void, Never>] = []
+  /// The tasks that wait in `waitUntilOpen` for the data channel to open.
   private var openWaiters: [CheckedContinuation<Void, Never>] = []
 
+  /// Creates the peer connection, and for the offerer the data channel.
+  ///
+  /// TCP candidates are off, so ICE binds only UDP sockets.
+  ///
+  /// - Parameters:
+  ///   - role: The side of the signaling that this link plays.
+  ///   - iceServers: The URLs of one ICE server; none leaves the configuration without one.
+  /// - Throws: ``BridgeError/signaling(_:)`` when WebRTC cannot create the connection or the
+  ///   channel.
   public init(role: SignalingRole, iceServers: [String] = []) throws {
     self.role = role
     super.init()
@@ -58,7 +83,13 @@ public final class PeerLink: NSObject, @unchecked Sendable {
     }
   }
 
-  /// For the offerer: the offer blob. For the answerer: call ``accept(_:)`` first, then this.
+  /// Creates the local description, waits for ICE gathering to finish, and encodes the result.
+  ///
+  /// The answerer calls ``accept(_:)`` first.
+  ///
+  /// - Returns: The offer blob for the offerer, and the answer blob for the answerer.
+  /// - Throws: ``BridgeError/signaling(_:)`` when WebRTC creates no description, or the error of
+  ///   WebRTC.
   public func localBlob() async throws -> String {
     let constraints = LKRTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
     let description: LKRTCSessionDescription =
@@ -98,6 +129,7 @@ public final class PeerLink: NSObject, @unchecked Sendable {
     }
   }
 
+  /// Returns when the data channel is open, at once when it already is.
   public func waitUntilOpen() async {
     await withCheckedContinuation { continuation in
       lock.lock()
@@ -111,6 +143,9 @@ public final class PeerLink: NSObject, @unchecked Sendable {
     }
   }
 
+  /// Sends the data as a text message over the data channel.
+  ///
+  /// - Returns: Whether the channel accepted the message; false when there is no channel.
   @discardableResult
   public func send(_ data: Data) -> Bool {
     lock.lock()
@@ -119,11 +154,13 @@ public final class PeerLink: NSObject, @unchecked Sendable {
     return channel?.sendData(LKRTCDataBuffer(data: data, isBinary: false)) ?? false
   }
 
+  /// Closes the data channel and the peer connection.
   public func close() {
     channel?.close()
     connection.close()
   }
 
+  /// Applies the description as the local description of the peer connection.
   private func setLocal(_ description: LKRTCSessionDescription) async throws {
     try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
       connection.setLocalDescription(description) { error in
@@ -132,6 +169,7 @@ public final class PeerLink: NSObject, @unchecked Sendable {
     }
   }
 
+  /// Returns when ICE gathering is complete, at once when it already is.
   private func waitForGathering() async {
     await withCheckedContinuation { continuation in
       lock.lock()
@@ -145,6 +183,7 @@ public final class PeerLink: NSObject, @unchecked Sendable {
     }
   }
 
+  /// Stores the data channel and makes this link its delegate.
   private func attach(_ channel: LKRTCDataChannel) {
     lock.lock()
     self.channel = channel
@@ -152,6 +191,7 @@ public final class PeerLink: NSObject, @unchecked Sendable {
     channel.delegate = self
   }
 
+  /// The blob of a description: base64 of a JSON object with `type` and `sdp`.
   private static func encode(_ description: LKRTCSessionDescription) throws -> String {
     let object = [
       "type": LKRTCSessionDescription.string(for: description.type), "sdp": description.sdp,
@@ -159,6 +199,10 @@ public final class PeerLink: NSObject, @unchecked Sendable {
     return try JSONSerialization.data(withJSONObject: object).base64EncodedString()
   }
 
+  /// The description in a blob.
+  ///
+  /// - Throws: ``BridgeError/signaling(_:)`` when the blob is longer than
+  ///   `PeerMessage.maximumBytes` or is not a session description.
   static func decode(_ blob: String) throws -> LKRTCSessionDescription {
     guard blob.utf8.count <= PeerMessage.maximumBytes else {
       throw BridgeError.signaling("The blob is longer than \(PeerMessage.maximumBytes) bytes.")
@@ -172,32 +216,40 @@ public final class PeerLink: NSObject, @unchecked Sendable {
 }
 
 extension PeerLink: LKRTCPeerConnectionDelegate {
+  /// Ignores signaling state changes.
   public func peerConnection(
     _ peerConnection: LKRTCPeerConnection,
     didChange stateChanged: LKRTCSignalingState
   ) {}
+  /// Ignores added media streams; the link carries only a data channel.
   public func peerConnection(
     _ peerConnection: LKRTCPeerConnection,
     didAdd stream: LKRTCMediaStream
   ) {}
+  /// Ignores removed media streams.
   public func peerConnection(
     _ peerConnection: LKRTCPeerConnection,
     didRemove stream: LKRTCMediaStream
   ) {}
+  /// Ignores negotiation requests; the offer is made once, by ``localBlob()``.
   public func peerConnectionShouldNegotiate(_ peerConnection: LKRTCPeerConnection) {}
+  /// Ignores ICE connection state changes.
   public func peerConnection(
     _ peerConnection: LKRTCPeerConnection,
     didChange newState: LKRTCIceConnectionState
   ) {}
+  /// Ignores single candidates; the blob carries them after gathering completes.
   public func peerConnection(
     _ peerConnection: LKRTCPeerConnection,
     didGenerate candidate: LKRTCIceCandidate
   ) {}
+  /// Ignores removed candidates.
   public func peerConnection(
     _ peerConnection: LKRTCPeerConnection,
     didRemove candidates: [LKRTCIceCandidate]
   ) {}
 
+  /// Resumes the tasks that wait for gathering when ICE gathering completes.
   public func peerConnection(
     _ peerConnection: LKRTCPeerConnection,
     didChange newState: LKRTCIceGatheringState
@@ -207,9 +259,10 @@ extension PeerLink: LKRTCPeerConnectionDelegate {
     let waiters = gatheringWaiters
     gatheringWaiters = []
     lock.unlock()
-    waiters.forEach { $0.resume() }
+    for waiter in waiters { waiter.resume() }
   }
 
+  /// Attaches the data channel that the offerer opened, and reports it when it is open.
   public func peerConnection(
     _ peerConnection: LKRTCPeerConnection,
     didOpen dataChannel: LKRTCDataChannel
@@ -220,10 +273,12 @@ extension PeerLink: LKRTCPeerConnectionDelegate {
 }
 
 extension PeerLink: LKRTCDataChannelDelegate {
+  /// Reports the channel when its state is open.
   public func dataChannelDidChangeState(_ dataChannel: LKRTCDataChannel) {
     if dataChannel.readyState == .open { opened() }
   }
 
+  /// Passes the message to ``onMessage``.
   public func dataChannel(
     _ dataChannel: LKRTCDataChannel,
     didReceiveMessageWith buffer: LKRTCDataBuffer
@@ -231,12 +286,13 @@ extension PeerLink: LKRTCDataChannelDelegate {
     onMessage?(buffer.data)
   }
 
+  /// Resumes the tasks that wait for the channel to open, and calls ``onOpen``.
   private func opened() {
     lock.lock()
     let waiters = openWaiters
     openWaiters = []
     lock.unlock()
-    waiters.forEach { $0.resume() }
+    for waiter in waiters { waiter.resume() }
     onOpen?()
   }
 }

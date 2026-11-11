@@ -1,11 +1,13 @@
 import Darwin
 import Foundation
 
-/// Why the service's request listener stopped. The service writes it beside the RPC socket when
-/// the accept loop ends on a fatal error, because the socket cannot carry the reason once it is
-/// gone; the file is `service-listener-failure.schema.json`. `ojd` reads it when the
-/// service cannot be reached, and reports the failure only while the process that wrote it runs.
-/// A successful listener start and an orderly stop delete the file.
+/// Why the service's request listener stopped.
+///
+/// The service writes it beside the RPC socket when the accept loop ends on a fatal error,
+/// because the socket cannot carry the reason once it is gone; the file is
+/// `service-listener-failure.schema.json`. `ojd` reads it when the service cannot be reached, and
+/// reports the failure only while the process that wrote it runs. A successful listener start and
+/// an orderly stop delete the file.
 public struct ServiceListenerFailure: Equatable, Sendable {
   /// The `kind` of the file.
   public static let kind = "ServiceListenerFailure"
@@ -23,6 +25,7 @@ public struct ServiceListenerFailure: Equatable, Sendable {
   /// The process that wrote the record.
   public let process: ProcessIdentity
 
+  /// Creates a record; `time` is rounded down to whole seconds.
   public init(errorNumber: Int32, time: Date, process: ProcessIdentity) {
     self.errorNumber = errorNumber
     self.process = process
@@ -47,9 +50,12 @@ public struct ServiceListenerFailure: Equatable, Sendable {
 
   /// Why the file beside the socket cannot be used.
   public struct Problem: Error, Equatable, Sendable, LocalizedError {
+    /// The file that cannot be used.
     public let path: String
+    /// Why the file cannot be used.
     public let detail: String
 
+    /// Creates a problem for the file `path`.
     public init(path: String, detail: String) {
       self.path = path
       self.detail = detail
@@ -86,10 +92,14 @@ public struct ServiceListenerFailure: Equatable, Sendable {
   /// A process told apart from a later process that gets the same identifier: the identifier and
   /// the time the process started.
   public struct ProcessIdentity: Equatable, Sendable {
+    /// The process identifier.
     public let identifier: Int32
+    /// The seconds part of the process start time.
     public let startSeconds: UInt64
+    /// The microseconds part of the process start time.
     public let startMicroseconds: UInt64
 
+    /// Creates an identity from its values.
     public init(identifier: Int32, startSeconds: UInt64, startMicroseconds: UInt64) {
       self.identifier = identifier
       self.startSeconds = startSeconds
@@ -106,6 +116,7 @@ public struct ServiceListenerFailure: Equatable, Sendable {
 
     /// What the system says about a process identifier.
     public enum Lookup: Equatable, Sendable {
+      /// The process runs; the value identifies it.
       case running(ProcessIdentity)
       /// No process has the identifier (`ESRCH`).
       case noSuchProcess
@@ -154,10 +165,12 @@ public struct ServiceListenerFailure: Equatable, Sendable {
 
   /// Why the file beside the socket could not be deleted.
   public struct ClearError: Error, Equatable, Sendable, LocalizedError {
+    /// The file that could not be deleted.
     public let path: String
     /// The error number of the failed `unlink`.
     public let errorNumber: Int32
 
+    /// The description of the error for the user.
     public var errorDescription: String? {
       "unlink of \(path) failed: \(String(cString: strerror(errorNumber))) (errno \(errorNumber))"
     }
@@ -175,16 +188,20 @@ public struct ServiceListenerFailure: Equatable, Sendable {
     read(socketPath: LocalServiceRPCTransport.defaultSocketPath)
   }
 
-  /// Reads the file beside `socketPath`. A file that is not a regular file, belongs to another
-  /// user, is too large, or does not decode strictly is a problem, never an absent file.
+  /// Reads the file beside `socketPath`.
+  ///
+  /// A file that is not a regular file, belongs to another user, is too large, or does not decode
+  /// strictly is a problem, never an absent file.
   public static func read(socketPath: String) -> Reading {
     read(socketPath: socketPath, effectiveUser: geteuid(), lookup: ProcessIdentity.lookup)
   }
 
-  /// ``read(socketPath:)`` for the user `effectiveUser`, whose files are the only ones it trusts,
-  /// asking `lookup` about the writing process. The record is current only while a process with
-  /// the writer's identifier and start time runs; a process of another user, or none, is not the
-  /// writer, and a lookup that fails for another reason is a problem, not a guess.
+  /// Reads the file beside `socketPath` for the user `effectiveUser`, asking `lookup` about the
+  /// writing process.
+  ///
+  /// The files of `effectiveUser` are the only ones it trusts. The record is current only while a
+  /// process with the writer's identifier and start time runs; a process of another user, or none,
+  /// is not the writer, and a lookup that fails for another reason is a problem, not a guess.
   static func read(
     socketPath: String,
     effectiveUser: uid_t,
@@ -245,10 +262,27 @@ public struct ServiceListenerFailure: Equatable, Sendable {
 }
 
 extension ServiceListenerFailure: Codable {
+  /// The keys of the JSON encoding.
   private enum CodingKeys: String, CodingKey, CaseIterable {
-    case apiVersion, kind, code, errno, time, pid, pidStartSeconds, pidStartMicroseconds
+    /// The `apiVersion` key.
+    case apiVersion
+    /// The `kind` key.
+    case kind
+    /// The `code` key.
+    case code
+    /// The `errno` key.
+    case errno
+    /// The `time` key.
+    case time
+    /// The `pid` key.
+    case pid
+    /// The `pidStartSeconds` key.
+    case pidStartSeconds
+    /// The `pidStartMicroseconds` key.
+    case pidStartMicroseconds
   }
 
+  /// Decodes the value from `decoder`.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -286,6 +320,7 @@ extension ServiceListenerFailure: Codable {
     )
   }
 
+  /// Encodes the value into `encoder`.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(OpenJoystickDriverAPI.version, forKey: .apiVersion)
@@ -300,6 +335,7 @@ extension ServiceListenerFailure: Codable {
 }
 
 extension JSONEncoder {
+  /// An encoder that prints sorted keys and does not escape slashes.
   static var sorted: JSONEncoder {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]

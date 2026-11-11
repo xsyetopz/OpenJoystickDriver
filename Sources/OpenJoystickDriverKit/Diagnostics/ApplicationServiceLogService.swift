@@ -1,19 +1,30 @@
 import Darwin
 import Foundation
 
+/// The two log files of the service process.
 public enum ApplicationServiceLogStream: String, CaseIterable, Codable, Sendable {
+  /// The log of standard output, `OpenJoystickDriver.out.log`.
   case standardOutput = "StandardOutput"
+  /// The log of standard error, `OpenJoystickDriver.err.log`.
   case standardError = "StandardError"
 }
 
+/// The tail of one log file with the facts that tell a short result from a missing file.
 public struct ApplicationServiceLogSnapshot: Codable, Equatable, Sendable {
+  /// The log the lines come from.
   public let stream: ApplicationServiceLogStream
+  /// The path of the log file.
   public let path: String
+  /// Whether the log file exists.
   public let exists: Bool
+  /// The size of the whole file in bytes; 0 when it does not exist.
   public let fileSizeBytes: UInt64
+  /// The last lines of the file, oldest first.
   public let lines: [String]
+  /// Whether the file holds more than `lines` shows.
   public let truncated: Bool
 
+  /// Creates a snapshot from its values.
   public init(
     stream: ApplicationServiceLogStream,
     path: String,
@@ -31,8 +42,12 @@ public struct ApplicationServiceLogSnapshot: Codable, Equatable, Sendable {
   }
 }
 
+/// Reads, follows and exports the log files of the service process.
 public enum ApplicationServiceLogService {
+  /// The line count of ``tail(stream:maximumLines:maximumBytes:)`` unless the caller sets one.
   public static let defaultMaximumLines = 100
+  /// The most bytes ``tail(stream:maximumLines:maximumBytes:)`` reads, counted from the end of the
+  /// file, unless the caller sets one.
   public static let defaultMaximumBytes = 262_144
   /// The accepted range of a requested line count.
   public static let linesRange = 1...10_000
@@ -46,6 +61,7 @@ public enum ApplicationServiceLogService {
     url(for: .standardOutput).deletingLastPathComponent()
   }
 
+  /// The log file of `stream` in the `.logs` location of `dataDirectory`.
   public static func url(
     for stream: ApplicationServiceLogStream,
     dataDirectory: any DataDirectory = MacOSDataDirectory()
@@ -87,9 +103,10 @@ public enum ApplicationServiceLogService {
     setvbuf(stderr, nil, _IOLBF, 0)
   }
 
-  /// Takes the lock that makes this process the one writer of the session logs in `directory`
-  /// and returns its descriptor; closing the descriptor releases the lock. Throws while another
-  /// process holds it.
+  /// Takes the lock that makes this process the one writer of the session logs in `directory` and
+  /// returns its descriptor; closing the descriptor releases the lock.
+  ///
+  /// Throws while another process holds it.
   static func claimSessionLogs(in directory: URL) throws -> Int32 {
     let path = directory.appendingPathComponent("OpenJoystickDriver.log.lock").path
     let lock = open(path, O_CREAT | O_RDWR | O_CLOEXEC, S_IRUSR | S_IWUSR)
@@ -110,6 +127,13 @@ public enum ApplicationServiceLogService {
     return lock
   }
 
+  /// The last lines of the log of `stream`.
+  ///
+  /// It reads at most `maximumBytes` from the end of the file and drops the line that the cut
+  /// splits, then keeps the last `maximumLines` lines.
+  ///
+  /// - Throws: An error when `maximumLines` or `maximumBytes` is not positive, or when the file
+  ///   exists and cannot be read.
   public static func tail(
     stream: ApplicationServiceLogStream,
     maximumLines: Int = defaultMaximumLines,
@@ -123,6 +147,10 @@ public enum ApplicationServiceLogService {
     )
   }
 
+  /// The tail of the log file at `url`; the public overload passes the file of `stream`.
+  ///
+  /// - Throws: An error when `maximumLines` or `maximumBytes` is not positive, or when the file
+  ///   exists and cannot be read.
   static func tail(
     url: URL,
     stream: ApplicationServiceLogStream,
@@ -204,10 +232,14 @@ public enum ApplicationServiceLogService {
   }
 }
 
+/// The failure of a log operation, with a message for the user.
 private struct ApplicationServiceLogError: LocalizedError, Sendable {
+  /// The message that `errorDescription` returns.
   let message: String
 
+  /// Creates an error with `message`.
   init(_ message: String) { self.message = message }
 
+  /// The description of the error for the user.
   var errorDescription: String? { message }
 }

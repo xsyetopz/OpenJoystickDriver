@@ -11,13 +11,16 @@ public struct ProtocolParameters: Codable, Equatable, Sendable {
   /// Where a GIP packet carries the Share button, counted back from the packet's end (Linux
   /// xpad `MAP_SHARE_BUTTON` 18, `MAP_SHARE_OFFSET` 26); a pad without it has no Share. `XboxGIP`.
   public struct ShareButton: Codable, Equatable, Sendable {
+    /// The offset of the Share button from the end of the packet, in bytes.
     public let fromEnd: Int
 
+    /// Creates the parameter from a packet-end offset.
     public init(fromEnd: Int) { self.fromEnd = fromEnd }
 
     /// The packet-end offsets a record may name.
     static let fromEndRange = 1...255
 
+    /// Decodes `fromEnd`, which must be in `fromEndRange`; any other key is rejected.
     public init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["fromEnd"])
@@ -33,14 +36,19 @@ public struct ProtocolParameters: Codable, Equatable, Sendable {
     }
   }
 
-  /// The axis and button permutation of a Nintendo controller. `NintendoSwitch1` takes `Pro`,
-  /// `JoyConLeft` and `JoyConRight`; `NintendoSwitch2` also takes `GameCube`, the NSO GameCube
-  /// controller with analog triggers and flash trigger calibration. On `NintendoSwitch2` the
-  /// Joy-Con values select the Joy-Con 2 layout.
+  /// The axis and button permutation of a Nintendo controller.
+  ///
+  /// `NintendoSwitch1` takes `Pro`, `JoyConLeft` and `JoyConRight`; `NintendoSwitch2` also takes
+  /// `GameCube`, the NSO GameCube controller with analog triggers and flash trigger calibration. On
+  /// `NintendoSwitch2` the Joy-Con values select the Joy-Con 2 layout.
   public enum Layout: String, Codable, CaseIterable, Sendable {
+    /// The Switch Pro Controller layout.
     case pro = "Pro"
+    /// The left Joy-Con layout.
     case joyConLeft = "JoyConLeft"
+    /// The right Joy-Con layout.
     case joyConRight = "JoyConRight"
+    /// The NSO GameCube controller layout.
     case gameCube = "GameCube"
   }
 
@@ -49,6 +57,7 @@ public struct ProtocolParameters: Codable, Equatable, Sendable {
   /// `HIDAPI_DriverSwitch_IsSupportedDevice`, Linux `hid-nintendo.c` device table).
   /// `NintendoSwitch1`.
   public enum USBProtocol: String, Codable, CaseIterable, Sendable {
+    /// The pad enumerates over USB for charging only.
     case chargingOnly = "ChargingOnly"
   }
 
@@ -56,6 +65,8 @@ public struct ProtocolParameters: Codable, Equatable, Sendable {
   /// active slot at startup, tracks it, and writes color and brightness into that slot.
   /// `VendorGameSir` enhanced HID.
   public enum LightingMemory: String, Codable, CaseIterable, Sendable {
+    /// The driver reads the active lighting slot at startup and writes colour and brightness into
+    /// it.
     case profileSlots = "ProfileSlots"
   }
 
@@ -63,13 +74,16 @@ public struct ProtocolParameters: Codable, Equatable, Sendable {
   /// any nonzero D-pad pressure byte holds its direction (SDL `SDL_hidapi_ps3.c`, Saitek Cyborg
   /// V.3 Rumble Pad). `VendorPS3ThirdParty`.
   public enum HatSource: String, Codable, CaseIterable, Sendable {
+    /// Any nonzero D-pad pressure byte holds its direction.
     case dpadPressure = "DpadPressure"
   }
 
-  /// Which motion calibration report a DualShock 4 trusts. `Factory`: the report is trusted. SDL
-  /// `SDL_hidapi_ps4.c` reads it only on Sony's own controllers; other pads keep the nominal
-  /// scale. `SonyDualShock4`.
+  /// Which motion calibration report a DualShock 4 trusts.
+  ///
+  /// `Factory`: the report is trusted. SDL `SDL_hidapi_ps4.c` reads it only on Sony's own
+  /// controllers; other pads keep the nominal scale. `SonyDualShock4`.
   public enum MotionCalibration: String, Codable, CaseIterable, Sendable {
+    /// The factory calibration report is trusted.
     case factory = "Factory"
   }
 
@@ -78,7 +92,9 @@ public struct ProtocolParameters: Codable, Equatable, Sendable {
   /// calibration uses the Bluetooth gyro order. `Receiver` (`SonyDualSense`) is a third-party
   /// wireless receiver that keeps reporting with no controller paired.
   public enum Role: String, Codable, CaseIterable, Sendable {
+    /// Sony's DualShock 4 wireless adapter.
     case wirelessAdapter = "WirelessAdapter"
+    /// A third-party wireless receiver.
     case receiver = "Receiver"
   }
 
@@ -86,6 +102,7 @@ public struct ProtocolParameters: Codable, Equatable, Sendable {
   /// `USB_PRODUCT_SONY_DS4_STRIKEPAD`): doubled gyro scale and doubled, negated accelerometer
   /// scale. `SonyDualShock4`.
   public enum MotionScale: String, Codable, CaseIterable, Sendable {
+    /// The STRIKEPAD grip.
     case strikePad = "StrikePad"
   }
 
@@ -93,32 +110,47 @@ public struct ProtocolParameters: Codable, Equatable, Sendable {
   /// controller (SDL `SDL_hidapi_shield.c` V103): plain rumble output report and a touchpad
   /// click; without it the driver runs the input-only 2017 controller. `VendorNVIDIAShield`.
   public enum ReportRevision: String, Codable, CaseIterable, Sendable {
+    /// The 2015 SHIELD controller.
     case shield2015 = "Shield2015"
   }
 
-  /// Who made a DualSense-protocol controller. `ThirdParty` is one that Sony did not make: the
-  /// driver follows SDL's non-Sony path, probing for features. The other `SonyDualSense`
-  /// fields describe a third-party DualSense and need this one.
+  /// Who made a DualSense-protocol controller.
+  ///
+  /// `ThirdParty` is one that Sony did not make: the driver follows SDL's non-Sony path, probing
+  /// for features. The other `SonyDualSense` fields describe a third-party DualSense and need this
+  /// one.
   public enum Maker: String, Codable, CaseIterable, Sendable {
+    /// A DualSense-protocol controller that Sony did not make.
     case thirdParty = "ThirdParty"
   }
 
+  /// Where a GIP packet carries the Share button; nil for a pad without one.
   public var shareButton: ShareButton?
+  /// The axis and button permutation of a Nintendo controller.
   public var layout: Layout?
+  /// What a Switch pad's USB link does.
   public var usbProtocol: USBProtocol?
   /// GameSir enhanced HID reports the inner grips in extras-byte bits 0x40 and 0x80.
   public var innerGrips: Bool?
+  /// How GameSir enhanced HID lighting memory is organized.
   public var lightingMemory: LightingMemory?
+  /// Where a third-party PS3 pad's hat comes from.
   public var hatSource: HatSource?
+  /// Which motion calibration report a DualShock 4 trusts.
   public var motionCalibration: MotionCalibration?
+  /// The part a Sony device plays.
   public var role: Role?
+  /// The motion scale of a DualShock 4 model.
   public var motionScale: MotionScale?
+  /// The input report revision of an NVIDIA SHIELD controller.
   public var reportRevision: ReportRevision?
+  /// Who made a DualSense-protocol controller.
   public var maker: Maker?
   /// Third-party DualSense with sensors though it does not answer the probe (SDL's Razer list).
   public var unprobedSensors: Bool?
-  /// Third-party DualSense with a touchpad though it does not answer the probe (SDL's Razer
-  /// list). Either unprobed field also selects the alternate report without a probe reply.
+  /// Third-party DualSense with a touchpad though it does not answer the probe (SDL's Razer list).
+  ///
+  /// Either unprobed field also selects the alternate report without a probe reply.
   public var unprobedTouchpad: Bool?
   /// Third-party DualSense whose probe reply omits the vibration it has (SDL's NACON entry).
   public var forcedVibration: Bool?
@@ -126,6 +158,7 @@ public struct ProtocolParameters: Codable, Equatable, Sendable {
   /// A record that names no parameter.
   public static let none = Self()
 
+  /// Creates parameters; every field not given keeps the driver's default.
   public init(
     shareButton: ShareButton? = nil,
     layout: Layout? = nil,
@@ -229,6 +262,7 @@ public struct ProtocolParameters: Codable, Equatable, Sendable {
   /// One line for CLI and log output: the entries joined by commas, or `none`.
   public var summary: String { entries.isEmpty ? "none" : entries.joined(separator: ",") }
 
+  /// Whether the record names no parameter.
   public var isEmpty: Bool { entries.isEmpty }
 
   /// The names of the set parameters.
@@ -295,8 +329,9 @@ public struct ProtocolParameters: Codable, Equatable, Sendable {
     }
   }
 
-  /// Why a set parameter holds a value its family's description does not declare, or nil. The
-  /// enum values and integer ranges come from the description, not from this type.
+  /// Why a set parameter holds a value its family's description does not declare, or nil.
+  ///
+  /// The enum values and integer ranges come from the description, not from this type.
   private func valueViolation(family: PhysicalProtocolID) -> String? {
     guard let declared = ProtocolDescription.bundled[family]?.parameters else { return nil }
     for name in Self.enumerationNames.sorted() {

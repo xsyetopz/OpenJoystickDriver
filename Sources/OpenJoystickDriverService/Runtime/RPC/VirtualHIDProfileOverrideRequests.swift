@@ -11,8 +11,9 @@ extension ApplicationServiceServer {
   }
 
   /// Stores `profile` as the override for the selected controller's model and retargets every
-  /// connected controller of that model to it. With `unit`, stores it for the selected unit only
-  /// and retargets only that controller.
+  /// connected controller of that model to it.
+  ///
+  /// With `unit`, stores it for the selected unit only and retargets only that controller.
   public func setVirtualHIDProfileOverride(
     _ profile: String,
     for controller: ControllerReference,
@@ -22,8 +23,10 @@ extension ApplicationServiceServer {
   }
 
   /// Returns the selected controller's model to automatic selection and retargets every connected
-  /// controller of that model. With `unit`, removes the selected unit's override only, so its
-  /// model's override applies again, and retargets only that controller.
+  /// controller of that model.
+  ///
+  /// With `unit`, removes the selected unit's override only, so its model's override applies again,
+  /// and retargets only that controller.
   public func resetVirtualHIDProfileOverride(
     for controller: ControllerReference,
     unit: Bool = false
@@ -60,6 +63,8 @@ extension ApplicationServiceServer {
     )
   }
 
+  /// Applies `change` to the stored override of `controller` and retargets the controllers it
+  /// covers.
   private func performVirtualHIDProfileOverrideChange(
     _ change: VirtualHIDProfileOverrideChange,
     for controller: ControllerReference,
@@ -120,8 +125,10 @@ extension ApplicationServiceServer {
     return result(requested, nil)
   }
 
-  /// Retargets every controller in `matches`. When one fails, restores `prior` as the scope's
-  /// stored override, returns the already switched controllers to it, and names the failure.
+  /// Retargets every controller in `matches`.
+  ///
+  /// When one fails, restores `prior` as the scope's stored override, returns the already switched
+  /// controllers to it, and names the failure.
   private func retargetModel(
     _ matches: [LogicalControllerID],
     with automatic: AutomaticUserSpaceOutputDispatcher,
@@ -145,10 +152,12 @@ extension ApplicationServiceServer {
     return nil
   }
 
-  /// Retargets one controller within the per-controller timeout. A retarget that finishes after
-  /// the timeout runs again, after every change queued by then, so the controller follows the
-  /// stored override current at that point. `AutomaticUserSpaceOutputDispatcher.retarget` records
-  /// the selection it read before replacing the backend, so it must not overlap another retarget.
+  /// Retargets one controller within the per-controller timeout.
+  ///
+  /// A retarget that finishes after the timeout runs again, after every change queued by then, so
+  /// the controller follows the stored override current at that point.
+  /// `AutomaticUserSpaceOutputDispatcher.retarget` records the selection it read before replacing
+  /// the backend, so it must not overlap another retarget.
   private func retargetWithinTimeout(
     _ identifier: LogicalControllerID,
     with automatic: AutomaticUserSpaceOutputDispatcher
@@ -167,6 +176,8 @@ extension ApplicationServiceServer {
     }
   }
 
+  /// Returns the failure that a failed retarget of `identifier` reports, with the failure to
+  /// restore the prior override when there was one.
   private func retargetFailure(
     _ error: any Error,
     of identifier: LogicalControllerID,
@@ -183,10 +194,15 @@ extension ApplicationServiceServer {
 
   /// The stored override a change writes: a controller model's, or one unit's of it.
   private struct OverrideScope {
+    /// The controller model whose override changes.
     let model: ControllerModelID
+    /// The port key of the unit; nil for the whole model.
     var unit: String?
   }
 
+  /// Stores `profile` as the override of `scope`, or removes the override when it is nil.
+  ///
+  /// - Throws: ``VirtualHIDProfileOverrideError`` when the override file cannot be written.
   private func storeVirtualHIDProfileOverride(
     _ profile: VirtualHIDProfileID?,
     for scope: OverrideScope
@@ -207,8 +223,10 @@ extension ApplicationServiceServer {
     }
   }
 
-  /// The controller whose override changes. A model override applies to every controller of the
-  /// model, so a model reference names any of them; a unit override needs exactly one controller.
+  /// The controller whose override changes.
+  ///
+  /// A model override applies to every controller of the model, so a model reference names any of
+  /// them; a unit override needs exactly one controller.
   private func overrideTarget(
     _ controller: ControllerReference,
     unit: Bool
@@ -233,6 +251,7 @@ extension ApplicationServiceServer {
     await connectedIdentifierProvider().filter { $0.model == model }.sorted()
   }
 
+  /// Builds the result of an override change from the selection that `identifier` has.
   private func virtualHIDProfileOverrideResult(
     requested: VirtualHIDProfileID?,
     for identifier: LogicalControllerID?,
@@ -273,10 +292,12 @@ extension ApplicationServiceServer {
   /// Describes each controller with its virtual HID profile selection and stored override.
   func describingVirtualHIDProfiles(
     _ controllers: [(identifier: LogicalControllerID, device: ApplicationServiceDeviceDescription)]
-  ) -> [ApplicationServiceDeviceDescription] {
+  ) async -> [ApplicationServiceDeviceDescription] {
     let automatic = automaticUserSpaceDispatcher()
-    return controllers.map { identifier, device in
+    var result: [ApplicationServiceDeviceDescription] = []
+    for (identifier, device) in controllers {
       var described = device
+      described.paused = await remappingRouter.isPaused(identifier)
       let unitOverride = device.portKey.flatMap {
         virtualHIDProfileOverrides.storedOverride(
           vendorID: device.vendorID,
@@ -309,8 +330,9 @@ extension ApplicationServiceServer {
         automatic: automatic,
         unavailable: unavailable
       )
-      return described
+      result.append(described)
     }
+    return result
   }
 
   /// The publication reason a route gives for publishing nothing; nil when the route publishes a
@@ -365,8 +387,10 @@ extension ApplicationServiceServer {
     }
   }
 
-  /// Applies a change to the persona files. A connected controller whose persona identity or
-  /// profile changed gets a new virtual device, and the others keep theirs.
+  /// Applies a change to the persona files.
+  ///
+  /// A connected controller whose persona identity or profile changed gets a replacement virtual
+  /// device, and the others keep theirs.
   func reloadPersonas() async {
     let retargeted = await virtualOutputTransitionCoordinator.enqueueResult { [weak self] in
       guard let self else { return true }

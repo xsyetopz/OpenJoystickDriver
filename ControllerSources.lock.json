@@ -38,5 +38,19 @@
         "sha256": "2cebec9ad712ca2e7bb83826de4a5142d8b8fa4d7243343dd6546f9144e621f7"
       }
     }
+  },
+  "sdlGameControllerDB": {
+    "repository": "mdqinc/SDL_GameControllerDB",
+    "commit": "07af1d50187e94c861c9f9f5d8a55b148f11306b",
+    "files": {
+      "gamecontrollerdb": {
+        "path": "gamecontrollerdb.txt",
+        "sha256": "4ef169fcee14ef9563e36ebf731dc6950494e553bf8b56b5fc8aa70181f0d25c"
+      },
+      "license": {
+        "path": "LICENSE",
+        "sha256": "97f35b302b361680ec1e891e95d2d52097bb95abff361434916d99dc1305f127"
+      }
+    }
   }
 }

@@ -1,5 +1,17 @@
 /* Product name in the title of the application menu of the menu bar. It stays OpenJoystickDriver in every language. */
 "term.app.name" = "OpenJoystickDriver";
+/* Name of a destination that opens an application. %@ is the bundle identifier of the application. */
+"ui.mapping.openApplication" = "Buka %@";
+/* Name of a destination that opens a URL. %@ is the URL. */
+"ui.mapping.openURL" = "Buka URL %@";
+/* Name of a destination that runs a Shortcut. Shortcuts is the Apple app. %@ is the name of the shortcut. */
+"ui.mapping.runShortcut" = "Jalankan pintasan %@";
+/* Name of a system action destination. %@ is the name of the action, such as Mission Control. */
+"ui.mapping.systemAction" = "Tindakan sistem %@";
+/* Name of a system key destination, such as volume up. %@ is the name of the key. */
+"ui.mapping.systemKey" = "Tombol sistem %@";
+/* Name of a destination that types text. %@ is the text. */
+"ui.mapping.typeText" = "Ketik %@";
 /* Button of the problem banner in the Access area that quits and opens the app again so that a granted permission takes effect. OpenJoystickDriver is the product name. */
 "ui.permissions.restartApplication" = "Mulai Ulang OpenJoystickDriver";
 /* Menu item in the application menu that opens the project page on GitHub. GitHub is a product name and stays as written. */
@@ -50,6 +62,8 @@
 "status.allowed" = "Diizinkan";
 /* Value of a permission row in the Access area when the active profiles do not use the permission. */
 "status.notNeeded" = "Tidak diperlukan";
+/* Line of the profile activation alert and of 'ojd profile activate' that names the permissions that the actions of the profile need and that are not granted. %@ is the permission names, separated by commas. */
+"status.missingPermissions" = "Izin yang belum ada: %@";
 /* Placeholder in the profile creation sheet shown instead of a controller model when no controller is connected. */
 "status.connectController" = "Hubungkan pengontrol";
 /* Line in the menu bar menu when no profile is active. */
@@ -152,8 +166,18 @@
 "ui.controllers.deviceInUse" = "Program lain sedang menggunakan pengontrol ini. Tutup program itu atau hubungkan ulang pengontrol.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose USB configuration OJD could not read. OJD tries again only when the controller reconnects, so the text asks for that. USB stays as written. */
 "ui.controllers.configurationUnreadable" = "Konfigurasi USB pengontrol ini tidak dapat dibaca. Hubungkan ulang pengontrol.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
+"ui.controllers.bootloaderIdentity" = "Pengontrol ini dalam mode bootloader. OJD tidak mengirim data apa pun ke pengontrol ini.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+"ui.controllers.noModeMatched" = "Pengontrol ini memakai ID yang sama dengan model lain dan tidak cocok dengan model yang didukung. OJD tidak mengirim data apa pun ke pengontrol ini.";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected device whose ID OJD recognizes and serves nothing, such as a receiver with no controller connected. OJD sends such a device no data, and the text says so. OJD stays as written. */
+"ui.controllers.idleIdentity" = "Perangkat ini tidak menyediakan kontrol, misalnya penerima tanpa pengontrol yang terhubung. OJD tidak mengirim data apa pun ke perangkat ini.";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "Baterai";
+/* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */
+"ui.controllers.paused.label" = "Pemetaan ulang";
+/* Value of the pause fact in the Controllers detail, and menu bar menu row under a controller that a Pause assignment holds. */
+"ui.controllers.paused.value" = "Dijeda";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "Tampilkan nomor seri";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */
@@ -183,7 +207,7 @@
 /* Label of the fact in the Controllers detail that shows the USB vendor ID and product ID. VID and PID are the usual short names. */
 "ui.controllers.usbIdentifier" = "VID/PID USB";
 /* VoiceOver sentence while the app checks which profile is active for the controller. */
-"ui.controllers.profileCheckingSentence" = "Profil aktif sedang diperiksa.";
+"ui.controllers.profileCheckingSentence" = "Profil aktif sedang diperiksa…";
 /* VoiceOver sentence when the controller has no active profile. */
 "ui.controllers.noActiveProfileSentence" = "Tidak ada profil aktif.";
 /* VoiceOver sentence that names the active profile. %@ is the profile name. The sentence ends with a period. */
@@ -311,11 +335,9 @@
 /* Status in the capture assignment sheet before the capture starts. */
 "ui.capture.ready" = "Siap mendengarkan.";
 /* Status in the capture assignment sheet while the app waits for a controller control. */
-"ui.capture.listening" = "Mendengarkan kontrol pengontrol.";
+"ui.capture.listening" = "Mendengarkan kontrol pengontrol…";
 /* VoiceOver announcement while the app waits for a controller control. Escape is the name of the Escape key. */
-"ui.capture.listeningCancel" = "Mendengarkan kontrol pengontrol. Tekan Escape untuk membatalkan.";
-/* Status text in the capture assignment sheet while the app waits for a controller control. Keep the three dots. */
-"ui.capture.listeningEllipsis" = "Mendengarkan kontrol pengontrol…";
+"ui.capture.listeningCancel" = "Mendengarkan kontrol pengontrol… Tekan Escape untuk membatalkan.";
 /* Status in the capture assignment sheet after a control is detected. %@ is the name of the control. The sentence ends with a period. */
 "ui.capture.detected" = "Terdeteksi: %@.";
 /* Label with the detected control in the capture assignment sheet. %@ is the name of the control. It has no final period because other text follows or the label stands alone. */
@@ -384,8 +406,12 @@
 "ui.profiles.addLayer" = "Tambah lapisan";
 /* Title of the sheet that adds an assignment to a layer. %@ is the name of the layer. */
 "ui.profiles.addLayerAssignment" = "Tambah penetapan ke %@";
+/* Button in the behavior sheet that adds an entry for a tap count, such as a triple tap, to the control. */
+"ui.profiles.addMultiTap" = "Tambah jumlah ketukan";
 /* Button of the combination sheet that adds a sequence. A sequence is a set of controls pressed one after the other. */
 "ui.profiles.addSequence" = "Tambah urutan";
+/* Heading in the behavior sheet of the entries that send another destination when the control is tapped two to five times. */
+"ui.profiles.multiTap" = "Ketukan berganda";
 /* Title of the empty state in the profile editor when the profile has no assignment. */
 "ui.profiles.noAssignments" = "Belum ada penetapan";
 /* Instruction in the empty state of the profile editor. The destination is a key, a mouse button or a pointer movement. */
@@ -412,6 +438,16 @@
 "ui.profiles.changedElsewhere" = "Profil berubah di tempat lain.";
 /* Error in the profile editor when the service saved the profile but the app cannot read the state afterwards. */
 "ui.profiles.savedButUnavailable" = "Profil telah disimpan, tetapi status terbarunya tidak tersedia.";
+/* Label of the picker in the behavior sheet that sets how many taps of a control fire an entry. The choices are the numbers 2 to 5. */
+"ui.profiles.tapCount" = "Jumlah ketukan";
+/* Note in the behavior sheet under the tap-count entries. %@ is the longest tap window with its unit, such as 300 ms; the assignment's own destination fires only after that wait. */
+"ui.profiles.tapDelay" = "Tujuan dasar dapat menunggu %@";
+/* Label of the field in the behavior sheet that sets the time from the press to the first repeat of turbo. The value is in milliseconds. */
+"ui.profiles.turboDelay" = "Jeda sebelum pengulangan pertama";
+/* Switch in the behavior sheet that makes turbo stop after a number of repeats. */
+"ui.profiles.turboLimit" = "Batasi pengulangan";
+/* Label of the field in the behavior sheet that sets how many repeats turbo makes after the press before it stops. The value is a number. */
+"ui.profiles.turboMax" = "Pengulangan maksimum";
 /* Save status of the profile editor: there are changes that are not saved. */
 "ui.profiles.unsaved" = "Perubahan belum disimpan";
 /* Save status of the profile editor while the profile is being saved. Keep the three dots. */
@@ -462,8 +498,6 @@
 "ui.profiles.details" = "Detail profil";
 /* Note on an assignment row when the controller or its protocol cannot do what the assignment needs. */
 "ui.profiles.notSupportedByController" = "Tidak didukung oleh pengontrol atau protokol ini.";
-/* Label of the field in the behavior sheet for the destination of a double tap of a control. */
-"ui.profiles.doubleTap" = "Ketuk dua kali";
 /* Toolbar button in the Profiles area that exports the profile to a file. */
 "ui.profiles.export" = "Ekspor profil";
 /* Option of the activation popup in the layer sheet: the layer is on while the control is held. */
@@ -504,7 +538,7 @@
 "ui.profiles.sequenceWindow" = "Rentang waktu penyelesaian";
 /* Heading of the sequences section in the profile editor. */
 "ui.profiles.sequences" = "Urutan";
-/* Label of the field in the behavior sheet that sets the time within which a second tap counts as a double tap. The value is in milliseconds. */
+/* Label of the field in the behavior sheet that sets the time from one tap's release to the next press within which the taps of a tap-count entry count together. The value is in milliseconds. */
 "ui.profiles.tapWindow" = "Rentang waktu ketukan";
 /* Label of the popup in the profile creation sheet that picks which apps the profile applies to. */
 "ui.profiles.target" = "Target";
@@ -512,6 +546,14 @@
 "ui.profiles.targetApplication" = "Satu aplikasi";
 /* Option of the target popup: the profile applies to all apps. */
 "ui.profiles.targetGlobal" = "Semua aplikasi";
+/* Label of the popup in the profile creation sheet that picks what the new profile starts from. */
+"ui.profiles.template" = "Templat";
+/* Option of the template popup in the profile creation sheet: the profile starts empty. */
+"ui.profiles.templateEmpty" = "Kosong";
+/* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
+"ui.profiles.templateGyroStick" = "Giroskop ke stik";
+/* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
+"ui.profiles.templateNoMotion" = "%@ tidak memiliki sensor gerak.";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "Sakelar";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -570,8 +612,32 @@
 "ui.mapping.axisDirection" = "%1$@ %2$@";
 /* Name of a mouse button destination. %@ is the button, for example left or right. */
 "ui.mapping.mouseButton" = "Tombol %@ tetikus";
+/* Name of a MIDI note destination. %1$@ is the note number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiNote" = "Not MIDI %1$@, kanal %2$@";
+/* Name of a MIDI control change destination. %1$@ is the controller number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiControlChange" = "Kontroler MIDI %1$@, kanal %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "Gerakan penunjuk %@";
+/* Name of a pointer position destination. %@ is the axis whose value places the pointer across the main display. */
+"ui.mapping.pointerPosition" = "Posisi penunjuk %@";
+/* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
+"ui.mapping.profileNext" = "Profil berikutnya";
+/* Name of the destination that activates the previous profile of the controller's model and scope in name order, wrapping at the start. */
+"ui.mapping.profilePrevious" = "Profil sebelumnya";
+/* Name of the destination that activates a specific profile of the same controller model. */
+"ui.mapping.profileSwitch" = "Ganti profil";
+/* Name of the destination that turns a layer on. %@ is the layer name. */
+"ui.mapping.layerOn" = "Aktifkan lapisan %@";
+/* Name of the destination that turns a layer off. %@ is the layer name. */
+"ui.mapping.layerOff" = "Nonaktifkan lapisan %@";
+/* Name of the destination that flips a layer between on and off. %@ is the layer name. */
+"ui.mapping.layerToggle" = "Alihkan lapisan %@";
+/* Name of the destination that pauses the controller so its input passes through unmapped. */
+"ui.mapping.pauseOn" = "Jeda pengontrol";
+/* Name of the destination that resumes a paused controller so its mappings apply again. */
+"ui.mapping.pauseOff" = "Lanjutkan pengontrol";
+/* Name of the destination that flips the controller between paused and resumed. */
+"ui.mapping.pauseToggle" = "Alihkan jeda";
 /* Name of a scroll destination. %@ is the direction of the scroll. */
 "ui.mapping.scroll" = "Gulir %@";
 /* Name of the bottom face button: A on Xbox, Cross on PlayStation. The slash stays. */
@@ -606,6 +672,14 @@
 "ui.mapping.touchGridCell" = "%1$@ grid %2$d×%3$d sel %4$d,%5$d";
 /* Name of a touch swipe as a control. %1$@ is the touch surface and %2$@ is the swipe direction. */
 "ui.mapping.touchSwipe" = "%1$@ gesek %2$@";
+/* Name of a stick ring as a control. %1$@ is the stick, %2$.2f is the inner radius and %3$.2f is the outer radius, both from 0 to 1. */
+"ui.mapping.stickRegion" = "%1$@ cincin %2$.2f sampai %3$.2f";
+/* Name of a stick ring with a sector as a control. %1$@ is the stick, %2$.2f is the inner radius, %3$.2f is the outer radius, %4$.0f is the sector start and %5$.0f is the sector end, both in degrees clockwise from up. */
+"ui.mapping.stickRegionSector" = "%1$@ cincin %2$.2f sampai %3$.2f, %4$.0f° sampai %5$.0f°";
+/* Name of a trigger pressure band as a control. %1$@ is the trigger, %2$.2f is the start and %3$.2f is the end of the band, both from 0 to 1. */
+"ui.mapping.triggerBand" = "%1$@ rentang %2$.2f sampai %3$.2f";
+/* Name of a touch area as a control. %1$@ is the touch surface, %2$.2f is the left edge, %3$.2f is the top edge, %4$.2f is the width and %5$.2f is the height, all as fractions of the surface. The multiplication sign stays between the width and the height. */
+"ui.mapping.touchArea" = "%1$@ area di %2$.2f, %3$.2f, %4$.2f×%5$.2f";
 /* Option of the touch surface popup: the main touch surface of the controller. */
 "ui.mapping.touchSurfacePrimary" = "Permukaan utama";
 /* Option of the touch surface popup: the left touch surface of the controller. */
@@ -634,6 +708,74 @@
 "ui.profiles.touch.stickRadius" = "Radius stik penuh (pecahan permukaan)";
 /* Label of the field in the touch sheet that sets the stick deadzone. The deadzone is the part of the travel near the center that is ignored. */
 "ui.profiles.touch.deadzone" = "Zona mati stik";
+/* Title of the row of the Controller section and of the sheet that adds a stick ring, trigger band or touch area as an assignment. */
+"ui.profiles.region.title" = "Wilayah";
+/* Summary under the regions row of the Controller section: what a region is. */
+"ui.profiles.region.summary" = "Cincin stik, rentang pemicu, dan area sentuh";
+/* Label of the segmented control in the regions sheet that picks between a stick ring, a trigger band and a touch area. */
+"ui.profiles.region.kind" = "Jenis wilayah";
+/* Segment of the region type control in the regions sheet: a ring around the center of a stick. */
+"ui.profiles.region.stick" = "Cincin stik";
+/* Segment of the region type control in the regions sheet: a band of the pull of a trigger. */
+"ui.profiles.region.trigger" = "Rentang pemicu";
+/* Segment of the region type control in the regions sheet: a rectangle of a touch surface. */
+"ui.profiles.region.touch" = "Area sentuh";
+/* Label of the popup in the regions sheet that picks the stick, trigger or touch surface that the region reads. */
+"ui.profiles.region.input" = "Masukan";
+/* Label of the field in the regions sheet that sets where a stick ring starts, from 0 at the center to 1 at the edge. */
+"ui.profiles.region.innerRadius" = "Radius dalam (0...1)";
+/* Label of the field in the regions sheet that sets where a stick ring ends, from 0 at the center to 1 at the edge. */
+"ui.profiles.region.outerRadius" = "Radius luar (0...1)";
+/* Label of the field in the regions sheet that sets the start of the sector of a stick ring, in degrees clockwise from up. Leaving it and the end empty makes a full ring. */
+"ui.profiles.region.fromDegrees" = "Awal sektor (derajat dari atas; kosong untuk cincin penuh)";
+/* Label of the field in the regions sheet that sets the end of the sector of a stick ring, in degrees clockwise from up. */
+"ui.profiles.region.toDegrees" = "Akhir sektor (derajat dari atas)";
+/* Label of the field in the regions sheet that sets where a trigger band starts, from 0 for released to 1 for fully pulled. */
+"ui.profiles.region.from" = "Awal rentang (0...1)";
+/* Label of the field in the regions sheet that sets where a trigger band ends, from 0 for released to 1 for fully pulled. */
+"ui.profiles.region.to" = "Akhir rentang (0...1)";
+/* Label of the field in the regions sheet that sets the left edge of a touch area as a fraction of the surface width. */
+"ui.profiles.region.x" = "Tepi kiri (pecahan permukaan)";
+/* Label of the field in the regions sheet that sets the top edge of a touch area as a fraction of the surface height. */
+"ui.profiles.region.y" = "Tepi atas (pecahan permukaan)";
+/* Label of the field in the regions sheet that sets the width of a touch area as a fraction of the surface width. */
+"ui.profiles.region.width" = "Lebar (pecahan permukaan)";
+/* Label of the field in the regions sheet that sets the height of a touch area as a fraction of the surface height. */
+"ui.profiles.region.height" = "Tinggi (pecahan permukaan)";
+/* Heading of the drawing in the regions sheet that shows where the stick, trigger or touch is now. */
+"ui.profiles.region.live" = "Posisi langsung";
+/* Note in the regions sheet shown while no controller is connected, so there is no live position. */
+"ui.profiles.region.noController" = "Hubungkan pengontrol untuk melihat posisi langsung.";
+/* Line under the live position of the touch area in the regions sheet while nothing touches the surface. */
+"ui.profiles.region.noContact" = "Tidak ada sentuhan";
+/* Line under the live stick position in the regions sheet. %1$.2f is the deflection from 0 to 1 and %2$.0f is the angle in degrees clockwise from up. */
+"ui.profiles.region.liveStick" = "Defleksi %1$.2f, sudut %2$.0f°";
+/* Line under the live trigger position in the regions sheet. %.2f is the pull from 0 to 1. */
+"ui.profiles.region.liveTrigger" = "Tarikan %.2f";
+/* Line under the live touch position in the regions sheet. %1$.2f is the horizontal and %2$.2f is the vertical position, both as fractions of the surface. */
+"ui.profiles.region.liveTouch" = "Sentuhan di %1$.2f, %2$.2f";
+/* Title of the sheet that sets the pointer speed of a profile, and label of its row in the controller section. The pointer speed scales all pointer movement. */
+"ui.profiles.pointerSpeed.title" = "Kecepatan penunjuk";
+/* Label of the switch in the pointer speed sheet that turns on scaling of the pointer movement. */
+"ui.profiles.pointerSpeed.enabled" = "Skalakan kecepatan penunjuk";
+/* Label of the popup in the pointer speed sheet that picks the control whose value sets the scale. */
+"ui.profiles.pointerSpeed.driver" = "Pengendali";
+/* Option of the driver popup in the pointer speed sheet: the value of a trigger sets the scale. Also the summary of the pointer speed row when a trigger drives it. */
+"ui.profiles.pointerSpeed.driverTrigger" = "Pemicu";
+/* Option of the driver popup in the pointer speed sheet: how far a stick is pushed from the center sets the scale. Also the summary of the pointer speed row when a stick drives it. */
+"ui.profiles.pointerSpeed.driverStickDepth" = "Kedalaman stik";
+/* Label of the popup in the pointer speed sheet that picks the left or the right trigger or stick as the driver. */
+"ui.profiles.pointerSpeed.side" = "Sisi";
+/* Option of the side popup in the pointer speed sheet: the left trigger or stick. */
+"ui.profiles.pointerSpeed.sideLeft" = "Kiri";
+/* Option of the side popup in the pointer speed sheet: the right trigger or stick. */
+"ui.profiles.pointerSpeed.sideRight" = "Kanan";
+/* Label of the field in the pointer speed sheet that sets the pointer scale while the driver is at rest. The scale multiplies the pointer movement. */
+"ui.profiles.pointerSpeed.minScale" = "Skala pada 0";
+/* Label of the field in the pointer speed sheet that sets the pointer scale while the trigger is fully pulled or the stick is at its rim. The scale multiplies the pointer movement. */
+"ui.profiles.pointerSpeed.maxScale" = "Skala pada 1";
+/* Line in the pointer speed sheet that shows the scale the pointer has now. %@ is the scale, a number. */
+"ui.profiles.pointerSpeed.live" = "Skala saat ini: %@";
 /* Label of the stepper that sets the number of columns of a touch grid in the capture assignment sheet. %d is the number of columns. */
 "ui.capture.touchColumns" = "Kolom grid: %d";
 /* Label of the stepper that sets the number of rows of a touch grid in the capture assignment sheet. %d is the number of rows. */
@@ -702,6 +844,10 @@
 "term.keyboardPointer" = "Papan ketik & penunjuk";
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "Aksesibilitas";
+/* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
+"platform.macos.term.postEventAccess" = "Akses Post Event";
+/* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
+"platform.macos.term.automationAccess" = "Akses Otomatisasi";
 /* Button of the combination sheets that adds the chosen entry to the combination. */
 "action.add" = "Tambah";
 /* Button of the input test window that sends the chosen player indicator or lightbar color to the controller. */
@@ -745,7 +891,7 @@
 /* Message about a request to the system extension manager that failed. %1$@ is the error domain, %2$d is the error code and %3$@ is the description from the system. Keep code= as written. */
 "cli.transportExtension.group.failed" = "Permintaan ekstensi sistem gagal: %1$@ code=%2$d %3$@";
 /* Message when the system extension manager replaces an installed driver extension. %1$@ is the extension bundle identifier, %2$@ is the installed version and %3$@ is the version that replaces it. Keep the v before the numbers. */
-"cli.transportExtension.group.replacing" = "Mengganti %1$@ v%2$@ dengan v%3$@.";
+"cli.transportExtension.group.replacing" = "Mengganti %1$@ v%2$@ dengan v%3$@…";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller, which OJD reads by the layout its HID report descriptor declares. Keep HID as written. */
 "term.protocolFamily.hidDescriptor" = "HID generik";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller whose input report layout comes from its controller record, the file OJD keeps for each controller model. Keep HID as written. */
@@ -756,6 +902,8 @@
 "term.protocolFamily.nintendoSwitch2" = "Nintendo Switch 2";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a wired Switch controller that sends input reports and takes no commands. Keep Nintendo Switch as written. */
 "term.protocolFamily.nintendoSwitchInputOnly" = "Nintendo Switch (hanya input)";
+/* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the Wii Remote protocol, used by the Wii Remote and the Wii U Pro Controller over Bluetooth. Nintendo Wii Remote is a brand and product name: keep it as written. */
+"term.protocolFamily.nintendoWii" = "Nintendo Wii Remote";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controller of the PlayStation 5, which Sony names DualSense. Sony DualSense is a brand and product name: keep it as written. */
 "term.protocolFamily.sonyDualSense" = "Sony DualSense";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controller of the PlayStation 4, which Sony names DualShock 4. Sony DualShock 4 is a brand and product name: keep it as written. */
@@ -801,7 +949,7 @@
 /* Label in the controller summary of the developer tools. The value is a list of the pressed buttons. */
 "ui.developer.buttons" = "Tombol";
 /* Status next to the Start Capture button while the packet capture runs. */
-"ui.developer.capturing" = "Menangkap";
+"ui.developer.capturing" = "Menangkap…";
 /* Label of the connection kind in the controller summary of the developer tools, for example USB or Bluetooth. */
 "ui.developer.connection" = "Koneksi";
 /* Label of the controller name in the controller summary of the developer tools. */
@@ -869,7 +1017,7 @@
 /* Label of the USB vendor and product ID in the controller summary of the developer tools. */
 "ui.developer.usbID" = "ID USB";
 /* Message in the packet list of the developer tools while a capture waits for packets. */
-"ui.developer.waitingForPackets" = "Menunggu paket USB. Tekan tombol pengontrol.";
+"ui.developer.waitingForPackets" = "Menunggu paket USB… Tekan tombol pengontrol.";
 /* Heading of the soak test section in the developer tools. A soak test measures the service over a long time. */
 "ui.developer.soakTest" = "Uji Ketahanan";
 /* Description of the soak test section in the developer tools. The test samples memory, file descriptors and CPU of the service. */
@@ -970,6 +1118,8 @@
 "ui.inputTest.playerIndicator" = "Indikator pemain";
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "Ditekan";
+/* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
+"ui.inputTest.receiving" = "Menunggu kontrol digerakkan…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "Dilepas";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */
@@ -1061,7 +1211,7 @@
 /* Detail line of the problem banner when the driver extension waits for approval. System Settings is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. */
 "platform.macos.ui.setup.approvalDetail" = "Setujui driver di Pengaturan Sistem untuk menggunakan pengontrol USB Microsoft yang didukung.";
 /* Detail line in the Driver section of the settings window while the app checks the driver extension for Xbox USB controllers. */
-"ui.setup.checkingDetail" = "Memeriksa driver USB Xbox yang terinstal.";
+"ui.setup.checkingDetail" = "Memeriksa driver USB Xbox yang terinstal…";
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "Driver USB Xbox";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
@@ -1078,6 +1228,28 @@
 "ui.setup.uninstallDetail" = "Pengontrol USB Xbox berhenti berfungsi sampai driver diinstal ulang.";
 /* Button of the problem banner that repairs the driver extension for Xbox USB controllers. */
 "ui.setup.repairDriver" = "Perbaiki Driver USB Xbox";
+/* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
+"platform.macos.cli.controller.show.labelServedBy" = "Driver bawaan";
+/* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
+"platform.macos.cli.controller.show.servedByMacOS" = "Dilayani macOS. Jalankan `ojd controller claim %@` untuk mengaktifkan ekstensi dan mengambil alih kontroler.";
+/* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
+"platform.macos.ui.controllers.servedByMacOS" = "Dilayani macOS";
+/* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
+"platform.macos.ui.controllers.servedByMacOSDetail" = "Driver Apple memegang kontroler ini. Klaim untuk mengaktifkan ekstensi OpenJoystickDriver.";
+/* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
+"ui.controllers.claim" = "Klaim";
+/* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.runningDetail" = "Memasang driver USB Xbox…";
+/* Disabled button of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.repairRunning" = "Memperbaiki…";
+/* Detail line of the problem banner when the state of the driver extension for Xbox USB controllers cannot be read. The banner has no button then. */
+"ui.setup.unavailableDetail" = "Status driver USB Xbox tidak dapat dibaca, sehingga tidak ada permintaan yang bisa dikirim.";
+/* Detail line of the problem banner when the request for the driver extension failed. %1$@ is the error domain, %2$lld is the error code and %3$@ is the error text. */
+"ui.setup.failedDetail" = "Permintaan driver USB Xbox gagal: %3$@ (%1$@, kode %2$lld).";
+/* Detail line of the problem banner when the request for the driver extension was cancelled. The Try Again button follows. */
+"ui.setup.cancelledDetail" = "Permintaan driver USB Xbox dibatalkan. Coba lagi untuk memasang driver.";
+/* Detail line of the problem banner when the system did not answer the request for the driver extension in time. The Try Again button follows. */
+"ui.setup.timedOutDetail" = "Sistem tidak menjawab permintaan driver USB Xbox tepat waktu. Coba lagi.";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver tidak dapat terhubung ke layanannya";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
@@ -1221,6 +1393,12 @@
 /* Name of the click of the right trackpad of a controller. */
 "ui.mapping.rightPadClick" = "Klik pad kanan";
 
+/* Name of the touch sensor on the grip on the back of a controller on the left side. */
+"ui.mapping.leftGripTouch" = "Sentuhan grip kiri";
+
+/* Name of the touch sensor on the grip on the back of a controller on the right side. */
+"ui.mapping.rightGripTouch" = "Sentuhan grip kanan";
+
 /* Title of the sheet that tunes the motion sensor of a controller in a profile. */
 "ui.profiles.motion.title" = "Penyetelan sensor gerak";
 /* Label of the popup in the motion sheet that picks the coordinate space of the motion. */
@@ -1255,7 +1433,7 @@
 /* Hint under the motion calibration controls of the input test window: keep the controller still on a surface while the gyro bias, the small constant rotation the sensor reports at rest, is collected. */
 "ui.motion.calibration.instructions" = "Jaga pengontrol tetap diam saat mengumpulkan bias giroskop.";
 /* Status line in the motion calibration controls while the service collects gyro bias samples. Bias is the constant rotation offset of the gyro sensor at rest. */
-"ui.motion.calibration.collecting" = "Mengumpulkan bias";
+"ui.motion.calibration.collecting" = "Mengumpulkan bias…";
 /* Status line in the motion calibration controls when the user paused collecting gyro bias samples by hand. */
 "ui.motion.calibration.paused" = "Pengumpulan manual dijeda";
 /* Line in the motion calibration controls that shows the gyro bias found so far, in degrees per second. %1$.3f, %2$.3f and %3$.3f are the X, Y and Z components. Keep the axis letters and the unit. */
@@ -1272,7 +1450,7 @@
 /* Guidance in the motion calibration controls when the controller has no usable motion data: turn on a profile for this controller and check that motion data is available. */
 "ui.motion.calibration.motionUnavailable" = "Aktifkan profil pemetaan ulang untuk pengontrol ini dan pastikan sensor gerak tersedia.";
 /* Status line in the motion calibration controls while the service has no motion samples yet; Refresh checks again. */
-"ui.motion.calibration.waiting" = "Menunggu sampel gerak. Segarkan untuk memeriksa lagi.";
+"ui.motion.calibration.waiting" = "Menunggu sampel gerak… Segarkan untuk memeriksa lagi.";
 /* Note in the motion calibration controls: collecting gyro bias keeps running in the service after the window closes, and the Pause button stops it. */
 "ui.motion.calibration.continues" = "Pengumpulan berlanjut saat jendela ini ditutup. Gunakan Jeda untuk menghentikannya.";
 
@@ -1523,6 +1701,22 @@
 "ui.profiles.physical.startPosition" = "Awal resistansi";
 /* Label of the slider in the output destination editor that sets how strong the resistance of the adaptive trigger is. */
 "ui.profiles.physical.strength" = "Kekuatan resistansi";
+/* Label of the text field in the output destination editor for the phrase that a Speak destination says. */
+"ui.profiles.speak.text" = "Teks";
+/* Label of the text field in the output destination editor for the identifier of the voice that a Speak destination uses. */
+"ui.profiles.speak.voice" = "Pengenal suara";
+/* Placeholder of the voice field in the output destination editor when a Speak destination uses the system voice. */
+"ui.profiles.speak.voicePlaceholder" = "Suara sistem";
+/* Phrase that a new Speak destination says until the user changes it. */
+"ui.profiles.speak.defaultText" = "Halo";
+/* Label of the text field in the output destination editor for the bundle identifier of the application that an Open application destination opens. */
+"ui.profiles.system.application" = "ID aplikasi";
+/* Label of the text field in the output destination editor for the address that an Open URL destination opens. */
+"ui.profiles.system.url" = "URL";
+/* Label of the text field in the output destination editor for the name of the Shortcut that a Run Shortcut destination runs. */
+"ui.profiles.system.shortcut" = "Nama pintasan";
+/* Name that a new Run Shortcut destination holds until the user changes it. */
+"ui.profiles.system.defaultShortcut" = "Pintasan";
 
 /* Menu item in the profile editor that removes all inputs of the profile. Keep the three dots. */
 "ui.profiles.clearInputs" = "Hapus semua input…";
@@ -1544,6 +1738,10 @@
 "ui.profiles.emptyActivationMessage" = "Profil ini memblokir semua input pengontrol.";
 /* Title of the alert shown before the app activates a profile that sends no input. */
 "ui.profiles.emptyActivationTitle" = "Aktifkan profil tanpa input pengontrol?";
+/* Title of the alert shown before the app activates a profile that launches actions or needs a permission that is missing. */
+"ui.profiles.activationTitle" = "Aktifkan profil ini?";
+/* Part of the message of the profile activation alert. %@ is the list of actions that open applications or URLs, run shortcuts or type text, one per line. */
+"ui.profiles.activationActions" = "Profil ini menjalankan aksi berikut:\n%@";
 /* Warning in the profile editor when the profile sends no input. */
 "ui.profiles.emptyInputWarning" = "Profil ini memblokir semua input pengontrol.";
 /* Menu item in the profile editor that sets the inputs of the profile to the default. */
@@ -1564,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "Cadangan akan dibuat sebelum data yang rusak dihapus.";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "Profil tersimpan ini tidak dapat dibaca. Hapus untuk terus menggunakan profil yang valid.";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "%@ disimpan oleh versi sebelumnya dan tidak dapat dipakai. Migrasikan agar dapat dipakai lagi, atau hapus.";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "Daftar profil aktif tidak dapat dibaca. Atur ulang untuk melanjutkan. Profil Anda tetap disimpan.";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -1644,7 +1844,7 @@
 /* Examples block at the end of the help of 'ojd binding set'. The command lines, option names and sources stay as written; translate only the lines that start with #. */
 "cli.binding.set.examples" = "Contoh:\n  # Tahan Space selama tombol selatan ditahan\n  ojd binding set Racing button:south key:space\n  # Alihkan J pada setiap penekanan\n  ojd binding set Racing button:west key:key-j --behavior toggle\n  # Ulangi J 10 kali per detik selama ditahan\n  ojd binding set Racing button:west key:key-j --turbo-rate 10 --turbo-duty 0.5";
 /* Examples block at the end of the help of 'ojd record install'. The command lines and file names stay as written; translate only the lines that start with #. */
-"cli.record.install.examples" = "Contoh:\n  # Instal file rekaman\n  ojd record install 045E-028E.json\n  # Baca rekaman dari stdin\n  ojd record install - < 045E-028E.json";
+"cli.record.install.examples" = "Contoh:\n  # Instal file rekaman\n  ojd record install 045e-028e.plist\n  # Baca rekaman dari stdin\n  ojd record install - < 045e-028e.plist";
 /* Examples block at the end of the help of 'ojd access grant'. The command lines and option names stay as written; translate only the lines that start with #. */
 "cli.access.grant.examples" = "Contoh:\n  # Izinkan program menggunakan layanan\n  ojd access grant /Applications/Example.app\n  # Buat token untuk halaman yang disajikan dari satu origin\n  ojd access grant --token overlay --origin http://127.0.0.1:8080";
 /* One-line summary of 'ojd service' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
@@ -1829,6 +2029,16 @@
 "cli.access.web.portRange" = "--port harus antara 1024 dan 65535.";
 /* One-line summary of 'ojd diagnose' in the command list and at the top of its help. */
 "cli.diagnose.group.abstract" = "Jalankan semua pemeriksaan dan laporkan apa yang salah.";
+/* Detail of the input mapping check of 'ojd diagnose' when no connected controller has a rejected database line. SDL_GameControllerDB is a project name and stays as written. */
+"cli.diagnose.group.inputMappingApplied" = "tidak ada baris SDL_GameControllerDB yang ditolak";
+/* Detail of the input mapping check of 'ojd diagnose' for one controller whose database line was rejected. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller name, %2$@ is the reason in English and %3$@ is the error code, which stays as written. */
+"cli.diagnose.group.inputMappingRejected" = "baris SDL_GameControllerDB untuk %1$@ ditolak: %2$@ (%3$@)";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no 057E:2009 controller is connected. 057E:2009 stays as written. */
+"cli.diagnose.group.switchSerialNone" = "tidak ada kontroler 057E:2009 yang terhubung";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no connected 057E:2009 controller reports the serial 000000000001. 057E:2009 and the serial stay as written. */
+"cli.diagnose.group.switchSerialOther" = "tidak ada kontroler 057E:2009 yang melaporkan serial 000000000001";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' for one controller. Nintendo Switch Pro Controller is a product name and stays as written. %1$@ is the controller name, %2$@ is the VID:PID and %3$@ is the serial number, both of which stay as written. */
+"cli.diagnose.group.switchSerialPlaceholder" = "%1$@ melaporkan %2$@ dengan serial %3$@, identitas dan serial Nintendo Switch Pro Controller; kontroler lain dapat melaporkan serial yang sama. OpenJoystickDriver memperlakukannya sebagai Pro Controller.";
 /* Help text of the --output option of 'ojd diagnose'. A support bundle is a file with the diagnostic report for a bug report. */
 "cli.diagnose.group.output" = "Tulis juga bundel dukungan ke file ini.";
 /* Error of 'ojd diagnose --output' when the support bundle could not be written. %@ is the reason from the system. --output stays as written. */
@@ -2045,8 +2255,8 @@
 "cli.permission.request.unknownId" = "Izin tidak dikenal “%1$@”. Gunakan %2$@.";
 /* One-line summary of 'ojd config' in the command list and at the top of its help. */
 "cli.config.group.abstract" = "Tampilkan atau ubah konfigurasi yang diterapkan OpenJoystickDriver dan lapisan yang menetapkan setiap nilai.";
-/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.json is a file name that stays as written. */
-"cli.config.group.discussion" = "Nilai disusun berlapis, dari yang terendah: default driver, catatan bawaan, catatan paket, all.patch.json, catatan Anda, profil aktif. Setiap kunci penyetelan memakai nilai dari lapisan tertinggi yang menetapkannya.";
+/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.plist is a file name that stays as written. */
+"cli.config.group.discussion" = "Nilai disusun berlapis, dari yang terendah: default driver, catatan bawaan, catatan paket, all.patch.plist, catatan Anda, profil aktif. Setiap kunci penyetelan memakai nilai dari lapisan tertinggi yang menetapkannya.";
 /* Help text of the --controller option of 'ojd config set' and 'ojd config unset'. VVVV:PPPP stands for the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.config.group.controller" = "Ubah hanya model pengontrol ini, sebagai VVVV:PPPP, bukan semua pengontrol.";
 /* Error of 'ojd config set' and 'ojd config unset' when a record cannot take the change. %1$@ is the tuning key and %2$@ is the description of the problem. */
@@ -2065,20 +2275,20 @@
 "cli.config.show.controller" = "Tampilkan penyetelan efektif satu pengontrol, sebagai VVVV:PPPP, bukan default global.";
 /* Warning printed by 'ojd config show' when a part of the defaults file is invalid. %1$@ is the file path and %2$@ is the description of the problem. */
 "cli.config.show.defaultsIgnored" = "%1$@ diabaikan: %2$@";
-/* Long description in the help of 'ojd config show'. --controller and all.patch.json stay as written. */
-"cli.config.show.discussion" = "Tanpa --controller, mencetak setiap kunci penyetelan beserta nilainya dari all.patch.json, dan keluarga yang catatannya membaca kunci tersebut. Dengan opsi itu, mencetak catatan pengontrol setelah catatan bawaan, catatan paket, all.patch.json, dan catatan Anda disusun berlapis. Kunci yang tidak ditetapkan lapisan mana pun menampilkan “default driver”.";
+/* Long description in the help of 'ojd config show'. --controller and all.patch.plist stay as written. */
+"cli.config.show.discussion" = "Tanpa --controller, mencetak setiap kunci penyetelan beserta nilainya dari all.patch.plist, dan keluarga yang catatannya membaca kunci tersebut. Dengan opsi itu, mencetak catatan pengontrol setelah catatan bawaan, catatan paket, all.patch.plist, dan catatan Anda disusun berlapis. Kunci yang tidak ditetapkan lapisan mana pun menampilkan “default driver”.";
 /* Indented line below a tuning key of 'ojd config show' that lists the controller families whose records read the key. %@ is the comma-separated list of family names. */
 "cli.config.show.readBy" = "dibaca oleh: %@";
-/* Warning of 'ojd config show' about a key in all.patch.json that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
-"cli.config.show.unread" = "all.patch.json mengatur %1$@, tetapi tidak ada pengontrol terhubung yang membacanya. Keluarga yang membacanya: %2$@.";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoController" = "Tidak ada pengontrol yang terhubung, sehingga pemeriksaan kunci all.patch.json yang tidak dibaca pengontrol mana pun dilewati.";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoService" = "Layanan tidak berjalan, sehingga pemeriksaan kunci all.patch.json yang tidak dibaca pengontrol terhubung mana pun dilewati.";
+/* Warning of 'ojd config show' about a key in all.patch.plist that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
+"cli.config.show.unread" = "all.patch.plist mengatur %1$@, tetapi tidak ada pengontrol terhubung yang membacanya. Keluarga yang membacanya: %2$@.";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoController" = "Tidak ada pengontrol yang terhubung, sehingga pemeriksaan kunci all.patch.plist yang tidak dibaca pengontrol mana pun dilewati.";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoService" = "Layanan tidak berjalan, sehingga pemeriksaan kunci all.patch.plist yang tidak dibaca pengontrol terhubung mana pun dilewati.";
 /* One-line summary of 'ojd config set' in the command list and at the top of its help. */
 "cli.config.set.abstract" = "Tetapkan nilai penyetelan di catatan pengontrol Anda.";
-/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.json and stickDeadzone stay as written. */
-"cli.config.set.discussion" = "Menulis KEY ke catatan Anda untuk pengontrol yang ditentukan dengan --controller, atau ke all.patch.json untuk semua pengontrol. Aturan catatan berlaku: stickDeadzone harus lebih besar dari 0 dan lebih kecil dari 1. Nilai yang ditolak aturan tidak mengubah apa pun. Layanan yang berjalan menerapkan perubahan.";
+/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.plist and stickDeadzone stay as written. */
+"cli.config.set.discussion" = "Menulis KEY ke catatan Anda untuk pengontrol yang ditentukan dengan --controller, atau ke all.patch.plist untuk semua pengontrol. Aturan catatan berlaku: stickDeadzone harus lebih besar dari 0 dan lebih kecil dari 1. Nilai yang ditolak aturan tidak mengubah apa pun. Layanan yang berjalan menerapkan perubahan.";
 /* Message printed by 'ojd config set' after it wrote a value. %1$@ is the tuning key, which stays as written, %2$@ is the value and %3$@ is the path of the record file. */
 "cli.config.set.success" = "%1$@ ditetapkan ke %2$@ di %3$@. Layanan yang berjalan menerapkannya sekarang.";
 /* Help text of the VALUE argument of 'ojd config set'. */
@@ -2182,7 +2392,7 @@
 /* Message printed by 'ojd controller capture' when the capture ends without a packet. */
 "cli.controller.capture.noPackets" = "Tidak ada paket yang diterima.";
 /* First line of 'ojd controller capture'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
-"cli.controller.capture.started" = "Menangkap paket dari %1$@ (%2$@). Tekan tombol pengontrol.";
+"cli.controller.capture.started" = "Menangkap paket dari %1$@ (%2$@)… Tekan tombol pengontrol.";
 /* Warning printed by 'ojd controller capture' before the packets. Packets can hold data of the user's controller. */
 "cli.controller.capture.warning" = "Isi paket berbeda pada tiap pengontrol. Periksa sebelum membagikan.";
 /* One-line summary of 'ojd controller disconnect' in the command list and at the top of its help. */
@@ -2211,6 +2421,8 @@
 "cli.controller.group.featurePlayer" = "lampu indikator pemain";
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureRumble" = "motor getaran";
+/* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
+"cli.controller.group.featureSpeaker" = "pengeras suara";
 /* One-line summary of 'ojd controller light' in the command list and at the top of its help. */
 "cli.controller.light.abstract" = "Atur warna atau kecerahan lampu pengontrol.";
 /* Help text of the --brightness option of 'ojd controller light'. LED means light-emitting diode. */
@@ -2241,12 +2453,12 @@
 "cli.controller.group.outputUnsupported" = "%1$@ tidak memiliki %2$@. Jalankan “ojd controller show %3$@” untuk melihat apa yang didukungnya.";
 /* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To serve a model means to read its input and publish it as a virtual gamepad. */
 "cli.controller.claim.abstract" = "Buat OpenJoystickDriver melayani model pengontrol.";
-/* Long description in the help of 'ojd controller claim'. server, ojd, VVVV-PPPP.json and the record terms stay as written. */
-"platform.macos.cli.controller.claim.discussion" = "Mengatur server ke ojd di rekam Anda untuk model tersebut, VVVV-PPPP.json di direktori rekam Anda, dan mempertahankan kolom rekam lainnya. Berlaku untuk setiap pengontrol model tersebut. Layanan yang berjalan menerapkannya tanpa mencabut dan memasang ulang. Memerlukan layanan untuk menemukan pengontrol. --dry-run tidak menulis apa pun. Keluar dengan 1 dan E2023 untuk pengontrol yang memakai USB mentah, yang selalu dilayani OpenJoystickDriver, atau yang tidak dilayani macOS secara native.";
+/* Long description in the help of 'ojd controller claim'. server, ojd, vvvv-pppp.plist and the record terms stay as written. */
+"platform.macos.cli.controller.claim.discussion" = "Mengatur server ke ojd di rekam Anda untuk model tersebut, vvvv-pppp.plist di direktori rekam Anda, dan mempertahankan kolom rekam lainnya. Berlaku untuk setiap pengontrol model tersebut. Layanan yang berjalan menerapkannya tanpa mencabut dan memasang ulang. Memerlukan layanan untuk menemukan pengontrol. --dry-run tidak menulis apa pun. Keluar dengan 1 dan E2023 untuk pengontrol yang memakai USB mentah, yang selalu dilayani OpenJoystickDriver, atau yang tidak dilayani macOS secara native.";
 /* One-line summary of 'ojd controller release' in the command list and at the top of its help. */
 "platform.macos.cli.controller.release.abstract" = "Kembalikan model pengontrol ke macOS.";
-/* Long description in the help of 'ojd controller release'. server, system and VVVV-PPPP.json stay as written. */
-"platform.macos.cli.controller.release.discussion" = "Mengatur server ke system di rekam Anda untuk model tersebut, VVVV-PPPP.json di direktori rekam Anda, dan mempertahankan kolom rekam lainnya. Berlaku untuk setiap pengontrol model tersebut. Layanan yang berjalan menerapkannya tanpa mencabut dan memasang ulang. Memerlukan layanan untuk menemukan pengontrol. --dry-run tidak menulis apa pun. Keluar dengan 1 dan E2023 untuk pengontrol yang memakai USB mentah, yang selalu dilayani OpenJoystickDriver, atau yang tidak dilayani macOS secara native.";
+/* Long description in the help of 'ojd controller release'. server, system and vvvv-pppp.plist stay as written. */
+"platform.macos.cli.controller.release.discussion" = "Mengatur server ke system di rekam Anda untuk model tersebut, vvvv-pppp.plist di direktori rekam Anda, dan mempertahankan kolom rekam lainnya. Berlaku untuk setiap pengontrol model tersebut. Layanan yang berjalan menerapkannya tanpa mencabut dan memasang ulang. Memerlukan layanan untuk menemukan pengontrol. --dry-run tidak menulis apa pun. Keluar dengan 1 dan E2023 untuk pengontrol yang memakai USB mentah, yang selalu dilayani OpenJoystickDriver, atau yang tidak dilayani macOS secara native.";
 /* Message printed by 'ojd controller claim' and related commands with --dry-run instead of writing the record. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. */
 "cli.controller.group.serverDryRun" = "Jika dijalankan, %1$@ akan ditetapkan ke %2$@ di %3$@.";
 /* Error when the record file of a controller cannot be changed. %1$@ is the path of the record file and %2$@ is the description of the problem. */
@@ -2337,6 +2549,10 @@
 "cli.controller.show.labelProtocol" = "Protokol";
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "Catatan";
+/* Row label in the output of 'ojd controller show' and in the controller detail. Where the HID usage map of the controller comes from follows. */
+"cli.controller.show.labelInputMapping" = "Pemetaan input";
+/* Row label in the output of 'ojd controller show' and in the controller detail. The controls that the SDL_GameControllerDB line names but the driver cannot map follow. */
+"cli.controller.show.labelUnmapped" = "Kontrol tanpa pemetaan";
 /* Row label in the output of 'ojd controller show'. The list of rumble motors the controller has follows. */
 "cli.controller.show.labelRumble" = "Getaran";
 /* Row label in the output of 'ojd controller show'. The state of the session follows, such as active or suspended. */
@@ -2361,6 +2577,38 @@
 "cli.controller.show.recordNone" = "tidak ada (tidak ada catatan yang cocok)";
 /* Value of the Record row of 'ojd controller show' when the record is the user's own file. %@ is the file name. */
 "cli.controller.show.recordUser" = "catatan Anda, %@";
+/* Value of the Input mapping row of 'ojd controller show' and of the controller detail when a controller record sets the map. */
+"cli.controller.show.inputMappingRecord" = "catatan";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line sets the map. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingSDL" = "dipetakan dari SDL_GameControllerDB (kecocokan %1$@, GUID %2$@)";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when the standard HID usage map applies. */
+"cli.controller.show.inputMappingStandard" = "peta penggunaan HID standar";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line matched but cannot drive the controller. SDL_GameControllerDB is a project name and stays as written. %@ is the reason. */
+"cli.controller.show.inputMappingRejected" = "peta penggunaan HID standar (baris SDL_GameControllerDB ditolak: %@)";
+/* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingUnbound" = "tidak diterapkan, kontrak deskriptor tidak terpenuhi (baris SDL_GameControllerDB ditemukan, kecocokan %1$@, GUID %2$@)";
+/* One-line summary of 'ojd controller speaker' in the command list and at the top of its help. */
+"cli.controller.speaker.abstract" = "Putar suara di speaker pengontrol.";
+/* One-line summary of 'ojd controller speaker play' in the command list and at the top of its help. */
+"cli.controller.speaker.play.abstract" = "Putar berkas WAV di speaker pengontrol.";
+/* Help text of the FILE argument of 'ojd controller speaker play'. PCM and WAV are audio format names and stay as written. */
+"cli.controller.speaker.play.file" = "Berkas PCM WAV tanpa kompresi yang akan diputar.";
+/* Help text of the --volume option of 'ojd controller speaker play'. The limits 0 and 1 are fixed. */
+"cli.controller.speaker.play.volume" = "Volume pemutaran dari 0 sampai 1.";
+/* Error of 'ojd controller speaker play' when --volume is outside the allowed range. --volume stays as written. */
+"cli.controller.speaker.play.errorVolume" = "--volume memerlukan angka dari 0 sampai 1.";
+/* Error of 'ojd controller speaker play' when the audio file cannot be read. %1$@ is the file path and %2$@ is the reason the system gives. */
+"cli.controller.speaker.play.errorUnreadable" = "Tidak dapat membaca %1$@: %2$@";
+/* Warning of 'ojd controller speaker play' when the clip is longer than the speaker plays and is cut. %@ is the longest clip length in seconds. */
+"cli.controller.speaker.play.trimmed" = "peringatan: hanya %@ detik pertama klip yang diputar.";
+/* Message printed after 'ojd controller speaker play' finished the clip. %1$@ is the file name and %2$@ is the controller name. */
+"cli.controller.speaker.play.played" = "%1$@ diputar di %2$@.";
+/* Message printed when the playback of 'ojd controller speaker play' was cut by 'ojd controller speaker stop' or by a newer clip. %@ is the controller name. */
+"cli.controller.speaker.play.stopped" = "Pemutaran di %@ dihentikan.";
+/* One-line summary of 'ojd controller speaker stop' in the command list and at the top of its help. */
+"cli.controller.speaker.stop.abstract" = "Hentikan suara di speaker pengontrol.";
+/* Message printed after 'ojd controller speaker stop' stopped the speaker. %@ is the controller name. */
+"cli.controller.speaker.stop.stopped" = "Speaker di %@ dihentikan.";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
 "cli.controller.suspend.abstract" = "Hentikan OpenJoystickDriver mengendalikan pengontrol hingga Anda melanjutkannya.";
 /* Message of 'ojd controller suspend' when the controller is suspended. %@ is the controller name. */
@@ -2372,7 +2620,7 @@
 /* Help text of the --all flag of 'ojd controller watch'. */
 "cli.controller.watch.all" = "Pantau setiap pengontrol, dan laporkan yang terhubung atau terputus.";
 /* First line of 'ojd controller watch --all'. */
-"cli.controller.watch.allStarted" = "Memantau setiap pengontrol. Tekan tombol pengontrol.";
+"cli.controller.watch.allStarted" = "Memantau setiap pengontrol… Tekan tombol pengontrol.";
 /* Line of 'ojd controller watch --all' when a controller connects. %1$@ is the controller ID, %2$@ is the controller name and %3$@ is its vendor and product ID. */
 "cli.controller.watch.connected" = "%1$@ terhubung: %2$@ (%3$@)";
 /* Line of 'ojd controller watch --all' when a controller disconnects. %@ is the controller ID. */
@@ -2396,17 +2644,51 @@
 /* Prompt of 'ojd controller watch --first-press'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.controller.watch.pressPrompt" = "Tekan sebuah kontrol pada %1$@ (%2$@).";
 /* First line of 'ojd controller watch'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
-"cli.controller.watch.started" = "Memantau %1$@ (%2$@). Tekan tombol pengontrol.";
+"cli.controller.watch.started" = "Memantau %1$@ (%2$@)… Tekan tombol pengontrol.";
 /* Message printed when the user answers no to a confirmation question. */
 "cli.shared.error.confirmDeclined" = "Tidak ada yang berubah.";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "Perubahan ini tidak dapat dibatalkan. Tambahkan --force untuk mengonfirmasinya tanpa prompt.";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "Daftar, tampilkan, atur, dan hapus makro dalam profil.";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "‘%1$@’ tidak memiliki makro bernama ‘%2$@’. Tidak ada yang diubah.";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "Nama makro.";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "‘%@’ bukan langkah. Gunakan tap:TARGET, press:TARGET, release:TARGET, wait:MS, atau chord:MS:TARGET+TARGET.";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "Daftar makro dalam profil.";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "‘%@’ tidak memiliki makro.";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "Tampilkan makro dan langkahnya.";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "Buat makro, atau ganti makro dengan nama yang sama.";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "Satu langkah makro, berurutan: tap:TARGET, press:TARGET, release:TARGET, wait:MS, atau chord:MS:TARGET+TARGET. Ulangi opsi untuk langkah lain.";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "Berapa kali langkah dijalankan, atau while-held untuk mengulanginya sampai sumber dilepas.";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "Yang dilakukan penekanan sumber saat makro berjalan: ignore atau restart.";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "Apakah melepas sumber menghentikan makro.";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "‘%@’ bukan angka atau while-held.";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "Makro ‘%2$@’ disimpan di ‘%1$@’.";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "Hapus makro dari profil.";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "Hapus makro ‘%1$@’ dari ‘%2$@’?";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "Makro ‘%1$@’ dihapus dari ‘%2$@’.";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "Validasi, instal, daftar, atau hapus paket mod.";
-/* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "Paket mod adalah folder dengan manifes mod.json serta folder Controllers, Profiles, dan VirtualDevices. Paket terinstal berada di ~/Library/Application Support/OpenJoystickDriver/Packages. Layanan yang berjalan menerapkan perubahan saat folder itu berubah. Perintah ini tidak memerlukan layanan.";
-/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.json stays as written. */
-"cli.mod.group.folder" = "Folder paket yang berisi mod.json.";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
+"cli.mod.group.discussion" = "Paket mod adalah folder dengan manifes mod.plist serta folder Controllers, Profiles, dan VirtualDevices. Paket terinstal berada di ~/Library/Application Support/OpenJoystickDriver/Packages. Layanan yang berjalan menerapkan perubahan saat folder itu berubah. Perintah ini tidak memerlukan layanan.";
+/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
+"cli.mod.group.folder" = "Folder paket yang berisi mod.plist.";
 /* Help text of the NAME argument of 'ojd mod remove'. */
 "cli.mod.group.name" = "Nama paket.";
 /* Error of the 'ojd mod' commands when a package is refused. %1$@ is the package folder or name and %2$@ is the reason. */
@@ -2437,6 +2719,34 @@
 "cli.mod.list.discussion" = "Menampilkan daftar setiap paket dengan versi, penulis, dan filenya. Paket yang tidak dipakai OJD, misalnya karena requires-nya tidak mencakup versi ini, menampilkan alasannya dengan kode E4xxx atau E5001.";
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  Tidak dipakai: %@";
+/* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
+"cli.protocol.group.abstract" = "Validasi, instal, atau daftarkan deskripsi protokol.";
+/* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
+"cli.protocol.group.discussion" = "Deskripsi protokol adalah berkas .plist yang mendefinisikan keluarga pengontrol yang tidak dibangun dalam OJD. Deskripsi yang terpasang ada di ~/Library/Application Support/OpenJoystickDriver/Protocols, dan paket mod juga dapat membawanya. Perintah ini tidak memerlukan layanan.";
+/* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
+"cli.protocol.group.file" = "Berkas deskripsi yang dinamai sesuai keluarganya, misalnya VendorAcmePad.plist.";
+/* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
+"cli.protocol.validate.abstract" = "Periksa berkas deskripsi protokol tanpa memasangnya.";
+/* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
+"cli.protocol.validate.discussion" = "Memeriksa bahwa berkas adalah deskripsi yang valid, nama keluarga berformat UpperCamelCase dan sama dengan nama berkas, bukan keluarga bawaan, serta menetapkan nama tampilan dan tata letak input. Keluar dengan kode 1 dan kode E5xxx jika berkas ditolak.";
+/* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
+"cli.protocol.validate.valid" = "%1$@ adalah deskripsi valid untuk keluarga %2$@ (%3$@). Pasang dengan 'ojd protocol install'.";
+/* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
+"cli.protocol.install.abstract" = "Periksa deskripsi protokol dan pasang untuk pengguna Anda.";
+/* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
+"cli.protocol.install.discussion" = "Menyalin berkas ke Protocols/FAMILY.plist. Deskripsi terpasang dari keluarga yang sama akan diganti. --dry-run memeriksa berkas dan tidak menulis apa pun.";
+/* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
+"cli.protocol.install.success" = "%@ terpasang.";
+/* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
+"cli.protocol.list.abstract" = "Daftarkan keluarga protokol bawaan dan terdokumentasi beserta asalnya.";
+/* Long description in the help of 'ojd protocol list'. */
+"cli.protocol.list.discussion" = "Mendaftarkan setiap keluarga dengan nama tampilan dan asalnya: bawaan, folder Protocols Anda, atau paket mod. Deskripsi yang ditolak tidak didaftarkan.";
+/* Source shown by 'ojd protocol list' for a family that OJD builds in. */
+"cli.protocol.list.builtIn" = "bawaan";
+/* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
+"cli.protocol.list.user" = "folder Protocols Anda";
+/* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
+"cli.protocol.list.package" = "paket %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
 "cli.mod.remove.abstract" = "Hapus satu paket mod terinstal.";
 /* Long description in the help of 'ojd mod remove'. Packages/NAME, --force, --dry-run and E4006 stay as written. */
@@ -2488,7 +2798,7 @@
 /* Help text of the profile argument of 'ojd virtual feed'. */
 "cli.virtual.feed.profile" = "Profil gamepad virtual yang dipublikasikan.";
 /* First line of 'ojd virtual feed'. %@ is the profile name. Control-C is the key combination that stops a program in a terminal. */
-"cli.virtual.feed.started" = "Mempublikasikan gamepad virtual %@. Tulis frame di input standar; akhiri input atau tekan Control-C untuk berhenti.";
+"cli.virtual.feed.started" = "Mempublikasikan gamepad virtual %@… Tulis frame di input standar; akhiri input atau tekan Control-C untuk berhenti.";
 /* One-line summary of 'ojd virtual launch' in the command list and at the top of its help. SDL is a game controller library and stays as written. */
 "cli.virtual.launch.abstract" = "Menjalankan program dengan pemetaan SDL dari gamepad virtual yang terhubung.";
 /* Help text of the program argument of 'ojd virtual launch'. PATH is the environment variable, .app is the app bundle extension, and -- stays as written. */
@@ -2547,8 +2857,8 @@
 "cli.virtual.show.unavailable" = "tidak ada gamepad virtual yang cocok";
 /* Detail of the records check of 'ojd diagnose'. %lld is the number of the user's controller records that the driver applies. */
 "cli.diagnose.group.recordsApplied" = "catatan pengguna diterapkan: %lld";
-/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.json is a file name that stays as written. */
-"cli.diagnose.group.recordsConfigOk" = "all.patch.json dan file persona valid";
+/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.plist is a file name that stays as written. */
+"cli.diagnose.group.recordsConfigOk" = "all.patch.plist dan file persona valid";
 /* Detail of the records check of 'ojd diagnose' when parts of the configuration are ignored or skipped. %@ is the list of those parts. The command in quotes stays as written. */
 "cli.diagnose.group.recordsConfigProblems" = "diabaikan atau dilewati: %@; perbaiki lalu periksa dengan “ojd status”";
 /* Detail of the records check of 'ojd diagnose' when records are skipped. %@ is the list of skipped records. The command in quotes stays as written. */
@@ -2581,10 +2891,22 @@
 "cli.record.draft.discussion" = "Membaca deskriptor laporan HID pengontrol dan menangkap laporan inputnya saat Anda menekan setiap kontrol, lalu mencetak catatan sebagai titik awal. Catatan itu memetakan tombol, stik, pemicu, dan hat yang dinyatakan jelas oleh deskriptor. Byte yang berubah selama penangkapan menunjukkan letak kontrol lainnya. Memerlukan layanan.";
 /* Help text of the duration option of 'ojd record draft'. */
 "cli.record.draft.duration" = "Tangkap laporan input selama sekian detik ini.";
+/* Help text of the --from-sdl flag of 'ojd record draft'. SDL_GameControllerDB is a project name and stays as written. */
+"cli.record.draft.fromSDL" = "Buat draf dari baris SDL_GameControllerDB milik pengontrol, bukan dengan menangkap laporan masukan.";
 /* Hint printed after 'ojd record draft'. The command in quotes stays as written, including FILE. */
 "cli.record.draft.next" = "Simpan catatan ke file, periksa setiap kontrol, lalu jalankan “ojd record validate FILE”.";
 /* Message of 'ojd record draft' when the descriptor of the controller yields no controls and the bundled record names the family. %1$@ is the controller identity, VVVV:PPPP, and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
 "cli.record.draft.noLayout" = "Tidak ada kontrol %1$@ yang dapat dibaca dari deskriptor laporan HID-nya, dan catatan bawaannya sudah menyebut familinya. “ojd record show %2$@” menampilkan catatan itu.";
+/* Message of 'ojd record draft --from-sdl' when the HID report descriptor of the controller fails the HIDDescriptor contract. SDL_GameControllerDB is a project name and HIDDescriptor is a protocol family name; both stay as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the name of the violated rule, which stays as written. */
+"cli.record.draft.sdl.contract" = "Deskriptor laporan HID milik %1$@ melanggar kontrak HIDDescriptor (%2$@), sehingga tidak ada baris SDL_GameControllerDB yang dapat mengikatnya.";
+/* Message of 'ojd record draft --from-sdl' when the controller model already has a bundled record. SDL_GameControllerDB is a project name and stays as written. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.hasRecord" = "%@ memiliki catatan bawaan, yang tidak digantikan oleh baris SDL_GameControllerDB mana pun.";
+/* Message of 'ojd record draft --from-sdl' when the database has no line for the controller. SDL_GameControllerDB is a project name and stays as written. GUID is the SDL controller identifier. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is its GUID, which stays as written. */
+"cli.record.draft.sdl.noLine" = "SDL_GameControllerDB tidak memiliki baris untuk %1$@ (GUID %2$@).";
+/* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.noPad" = "%@ tidak terhubung sebagai perangkat HID yang dapat dibaca perintah ini.";
+/* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
+"cli.record.draft.sdl.rejected" = "Baris SDL_GameControllerDB untuk %1$@ ditolak: %2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.record.draft.started" = "Tekan setiap kontrol pada %1$@ (%2$@), dan gerakkan setiap stik dan pemicu.";
 /* Error of the 'ojd record' commands when a record file cannot be read. %1$@ is the file path and %2$@ is the reason from the system. */
@@ -2597,8 +2919,8 @@
 "cli.record.install.abstract" = "Periksa catatan pengontrol dan instal untuk pengguna Anda.";
 /* Yes or no question that 'ojd record install' asks on a terminal before it replaces an installed record. %@ is the path of the installed file. */
 "cli.record.install.confirm" = "Ganti %@?";
-/* Long description in the help of 'ojd record install'. VVVV-PPPP.json and --force stay as written. */
-"cli.record.install.discussion" = "Menulis catatan sebagai VVVV-PPPP.json di direktori catatan Anda. Layanan yang berjalan langsung menerapkannya. Mengganti catatan yang sudah terinstal untuk model itu meminta konfirmasi di terminal; memerlukan --force jika tidak. --dry-run memeriksa catatan dan tidak menulis apa pun. Keluar dengan kode 1 dan tidak menulis apa pun jika catatan tidak valid.";
+/* Long description in the help of 'ojd record install'. vvvv-pppp.plist and --force stay as written. */
+"cli.record.install.discussion" = "Menulis catatan sebagai vvvv-pppp.plist di direktori catatan Anda. Layanan yang berjalan langsung menerapkannya. Mengganti catatan yang sudah terinstal untuk model itu meminta konfirmasi di terminal; memerlukan --force jika tidak. --dry-run memeriksa catatan dan tidak menulis apa pun. Keluar dengan kode 1 dan tidak menulis apa pun jika catatan tidak valid.";
 /* Message printed by 'ojd record install --dry-run' instead of installing. %@ is the target file path. */
 "cli.record.install.dryRun" = "Akan menginstal %@.";
 /* Error when the record file cannot be written. %1$@ is the target file path and %2$@ is the reason from the system. */
@@ -2685,6 +3007,12 @@
 "error.E2036.message" = "Tidak ada app OpenJoystickDriver yang menjawab notifikasi tes tepat waktu. Pastikan app berjalan, lalu coba lagi.";
 /* Error E2037, shown by ojd and the app when notifications are not allowed for the app, so the test notification could not be shown. */
 "error.E2037.message" = "Notifikasi tidak diizinkan untuk OpenJoystickDriver. Izinkan di pengaturan notifikasi sistem, lalu coba lagi.";
+/* Error E2038, shown by ojd and the app when the selected controller has no speaker to play sound on. */
+"error.E2038.message" = "Pengontrol tidak punya speaker. Pilih pengontrol yang dapat memutar suara, lalu coba lagi.";
+/* Error E2039, shown by ojd when the audio file given to the speaker command is not an uncompressed PCM WAV file. */
+"error.E2039.message" = "File audio tidak didukung. Gunakan file WAV PCM tanpa kompresi, lalu coba lagi.";
+/* Error E2040, shown by ojd and the app when the extension plugged into the controller did not answer its setup. */
+"error.E2040.message" = "Ekstensi pada pengontrol tidak menjawab penyiapannya. Sambungkan ulang ekstensi, lalu coba lagi.";
 /* Note about a controller record whose raw USB family the USB extension cannot claim because Apple signs its product list. OJD is the short product name. */
 "platform.macos.cli.record.group.usbNotClaimed" = "Famili ini menggunakan USB mentah, dan ekstensi USB tidak dapat mengklaim pengontrol ini, karena daftar produknya ditandatangani Apple. OJD hanya menjangkaunya melalui akses USB langsung, jika macOS mengizinkan.";
 /* Note about a Switch 2 controller record that connects over USB only. bluetoothLE.vibrationCharacteristic is a field of the record and stays as written. */
@@ -2709,7 +3037,7 @@
 "cli.binding.group.actionsInvalid" = "--actions-json bukan daftar tindakan yang valid: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
 "cli.binding.group.actionsTooLarge" = "--actions-json terlalu besar.";
-/* Error of 'ojd binding set' when the value of --double-tap or --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
+/* Error of 'ojd binding set' when the value of --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
 "cli.binding.group.alternateFormat" = "%@ menerima MS:TARGET, seperti 500:key:key-b.";
 /* Error of 'ojd binding set' when an axis option is used with a source that is not an axis. The option names stay as written. */
 "cli.binding.group.axisOptionsSource" = "--deadzone, --gain, --invert, --response-curve, dan --digital-threshold memerlukan sumber sumbu.";
@@ -2734,11 +3062,13 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "Berikan satu sumber atau lebih, atau --all.";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "Penetapan mengirim TARGET saat SOURCE pengontrol digunakan.\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW, atau touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, atau physical:... untuk getaran, lampu, dan pemicu adaptif.\n\n“ojd profile show” mencetak penetapan dalam bentuk ini. Ubah kombinasi tombol, urutan, dan lapisan dengan “ojd profile edit”.";
+"cli.binding.group.discussion" = "Penetapan mengirim TARGET saat SOURCE pengontrol digunakan.\n\nSOURCE: button:NAME, dpad:DIRECTION, axis:NAME[:negative|positive], trigger:NAME:STAGE, motion:lean:DIRECTION, touch:SURFACE:contact, touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW, atau touch:SURFACE:swipe:DIRECTION:DISTANCE.\n\nTARGET: key:KEY[:mods=meta,control,alt,shift], mouse:BUTTON, move:x|y, position:x|y, scroll:x|y, gamepad:button:NAME, gamepad:dpad:DIRECTION, gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER, atau physical:... untuk getaran, lampu, dan pemicu adaptif.\n\n“ojd profile show” mencetak penetapan dalam bentuk ini. Ubah kombinasi tombol, urutan, dan lapisan dengan “ojd profile edit”.";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "Tampilkan daftar penetapan suatu profil.";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
 "cli.binding.list.empty" = "“%@” tidak memiliki penetapan. Tambahkan dengan “ojd binding set”.";
+/* Error of 'ojd binding set' when a value of --multi-tap does not have the form COUNT:MS:TARGET. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.multiTapFormat" = "--multi-tap menerima COUNT:MS:TARGET, seperti 2:300:key:key-c.";
 /* Help text of the --actions-json option of 'ojd binding set'. 'ojd profile export' stays as written. */
 "cli.binding.group.optionActionsJson" = "Tindakan tambahan sebagai array JSON, dalam bentuk yang ditulis “ojd profile export”.";
 /* Help text of the --behavior option of 'ojd binding set'. The behavior hold is a value the user types. */
@@ -2747,20 +3077,28 @@
 "cli.binding.group.optionDeadzone" = "Sumber sumbu: bagian gerakan yang diabaikan, 0 sampai 0.95. Default: 0.1.";
 /* Help text of the --digital-threshold option of 'ojd binding set'. It sets the axis travel that counts as a press. */
 "cli.binding.group.optionDigitalThreshold" = "Sumber sumbu: gerakan yang dihitung sebagai tekanan untuk target tombol. Default: 0.5.";
-/* Help text of the --double-tap option of 'ojd binding set'. The example 300:key:key-c stays as written. */
-"cli.binding.group.optionDoubleTap" = "Kirim target lain saat sumber ditekan dua kali dalam waktu ini, seperti 300:key:key-c.";
 /* Help text of the --gain option of 'ojd binding set'. Gain scales the axis output. */
 "cli.binding.group.optionGain" = "Sumber sumbu: skala output, 0.1 sampai 10. Default: 1.";
 /* Help text of the --invert flag of 'ojd binding set'. */
 "cli.binding.group.optionInvert" = "Sumber sumbu: balikkan arah.";
 /* Help text of the --long-hold option of 'ojd binding set'. The example 500:key:key-b stays as written. */
 "cli.binding.group.optionLongHold" = "Kirim target lain saat sumber ditahan selama ini, seperti 500:key:key-b.";
+/* Help text of the --multi-tap option of 'ojd binding set'. COUNT is the number of taps, MS the milliseconds allowed after the last release. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.optionMultiTap" = "Kirim target lain saat sumber diketuk COUNT kali, setiap tekanan dalam MS sejak pelepasan terakhir, seperti 2:300:key:key-c. Ulangi opsi untuk jumlah lain.";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "Berapa lama pulsa menahan target, 1 sampai 5000 ms. Default: 100.";
+/* Help text of the --voice option of 'ojd binding set'. The option name and speak:TEXT stay as written. */
+"cli.binding.group.optionVoice" = "Pengenal suara untuk target speak:TEXT. Default: suara sistem.";
+/* Error of 'ojd binding set' when --voice is given with a target that is not speak:TEXT. The option name and speak:TEXT stay as written. */
+"cli.binding.group.voiceNeedsSpeak" = "--voice memerlukan target speak:TEXT.";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "Sumber sumbu: cara output bertambah seiring gerakan. Default: linear.";
+/* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
+"cli.binding.group.optionTurboDelay" = "Tunggu selama ini sebelum pengulangan pertama, 0 sampai 2500 ms. Memerlukan --turbo-rate dan --turbo-duty.";
 /* Help text of the --turbo-duty option of 'ojd binding set'. The duty is the share of each turbo cycle in which the target is held. */
 "cli.binding.group.optionTurboDuty" = "Bagian setiap siklus turbo saat target ditahan, di atas 0 dan di bawah 1.";
+/* Help text of the --turbo-max option of 'ojd binding set'. The option names stay as written. */
+"cli.binding.group.optionTurboMax" = "Berhenti setelah pengulangan sebanyak ini, 1 sampai 500. Memerlukan --turbo-rate dan --turbo-duty.";
 /* Help text of the --turbo-rate option of 'ojd binding set'. --turbo-duty stays as written. */
 "cli.binding.group.optionTurboRate" = "Ulangi target sekian kali per detik selama ditahan. Memerlukan --turbo-duty.";
 /* One-line summary of 'ojd binding set' in the command list and at the top of its help. */
@@ -2775,8 +3113,10 @@
 "cli.binding.group.sourceInvalid" = "“%@” bukan sumber. “ojd binding set --help” mencantumkan bentuk sumber.";
 /* Error of 'ojd binding set' when the target cannot be parsed. %@ is the text the user gave. The command in quotes stays as written. */
 "cli.binding.group.targetInvalid" = "“%@” bukan target. “ojd binding set --help” mencantumkan bentuk target.";
-/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given. Both option names stay as written. */
-"cli.binding.group.turboPair" = "--turbo-rate dan --turbo-duty harus diberikan bersamaan.";
+/* Error of 'ojd binding set' when the profile has no layer with the name in a layer:NAME:MODE target. %1$@ is the profile name and %2$@ is the layer name. */
+"cli.binding.group.layerMissing" = "‘%1$@’ tidak memiliki lapisan bernama ‘%2$@’. Tidak ada yang diubah.";
+/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given, or --turbo-delay or --turbo-max is given without both. All four option names stay as written. */
+"cli.binding.group.turboPair" = "--turbo-rate dan --turbo-duty harus diberikan bersamaan, dan --turbo-delay serta --turbo-max memerlukan keduanya.";
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "Turbo tidak berfungsi dengan target gerakan penunjuk atau pengguliran.";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
@@ -2823,26 +3163,40 @@
 "cli.profile.activate.abstract" = "Terapkan profil ke model pengontrolnya.";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
 "cli.profile.activate.allowEmpty" = "Aktifkan profil meskipun tidak menghasilkan output.";
+/* Help text of the --confirm-actions flag of 'ojd profile activate'. --confirm-actions stays as written. */
+"cli.profile.activate.confirmActions" = "Konfirmasi bahwa profil boleh menjalankan aksinya: membuka aplikasi dan URL, menjalankan pintasan, dan mengetik teks.";
 /* Long description in the help of 'ojd profile activate'. It explains the profile that replaces the active one and the profile that produces no output. The words mapped and --allow-empty stay as written. */
 "cli.profile.activate.discussion" = "Profil menggantikan profil aktif dengan model pengontrol dan cakupan app yang sama. Profil dengan gamepad virtual diatur ke mapped yang tidak mengirim apa pun ke gamepad, keyboard, penunjuk, atau pengontrol dan tidak menetapkan warna lampu tidak menghasilkan output; mengaktifkannya memerlukan --allow-empty.";
 /* Message printed after 'ojd profile activate'. %1$@ is the profile name, shown in quotes, and %2$@ is the controller model it applies to. */
 "cli.profile.activate.done" = "“%1$@” diaktifkan untuk %2$@.";
 /* Error of 'ojd profile activate' for a profile that produces no output. --allow-empty stays as written. */
 "cli.profile.activate.empty" = "Profil ini tidak menghasilkan output. Tambahkan --allow-empty untuk mengaktifkannya.";
+/* Error of 'ojd profile activate' for a profile that opens applications or URLs, runs shortcuts or types text. --confirm-actions stays as written. %@ is the list of actions, one per line, with each URL in full. */
+"cli.profile.activate.actionsNeedConfirmation" = "Profil ini menjalankan aksi. Tambahkan --confirm-actions untuk mengaktifkannya:\n%@";
 /* Marker appended to the line of the active profile in 'ojd profile list'. Keep the parentheses. */
 "cli.profile.group.activeMarker" = "(aktif)";
 /* Help text of the PROFILE argument shared by the 'ojd profile' commands. The command in quotes stays as written. */
 "cli.profile.group.argument" = "Profil: ID atau namanya dari “ojd profile list”.";
 /* One-line summary of 'ojd profile create' in the command list and at the top of its help. */
 "cli.profile.create.abstract" = "Buat profil kosong untuk satu model pengontrol.";
+/* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.activation" = "Kontrol yang ditahan untuk keluaran giroskop (templat gyro-stick). Tanpa ini, keluaran giroskop selalu aktif.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "Terapkan profil hanya saat app ini, berdasarkan ID app, berada di depan.";
+"cli.profile.create.app" = "Terapkan profil hanya saat app ini, menurut ID app, berada di depan. Ulangi opsi untuk app lain.";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "Model pengontrol: VVVV:PPPP, atau ID pengontrol yang terhubung.";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
 "cli.profile.create.discussion" = "Profil berlaku di setiap app kecuali --app menyebutkan satu. Secara default gamepad virtual meneruskan setiap kontrol yang tidak dipakai penetapan mana pun. Profil dimulai dalam keadaan tidak aktif; aktifkan dengan “ojd profile activate”.";
 /* Message printed after 'ojd profile create'. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.create.done" = "“%1$@” (%2$@) dibuat.";
+/* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
+"cli.profile.create.noMotion" = "%@ tidak memiliki sensor gerak.";
+/* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.stick" = "Stik yang dikendalikan templat gyro-stick: left atau right. Default-nya right.";
+/* Help text of the --template option of 'ojd profile create'. gyro-stick is the only template, the user types it, and it stays as written. */
+"cli.profile.create.template" = "Mulai dari templat. Satu-satunya templat adalah gyro-stick.";
+/* Error of 'ojd profile create' when --stick or --activation is given without --template. The three option names stay as written. */
+"cli.profile.create.templateRequired" = "--stick dan --activation memerlukan --template.";
 /* Help text of the physical input option of 'ojd profile create'. shared and exclusive are values the user types and stay as written. */
 "platform.macos.cli.profile.create.physicalInput" = "Apakah macOS masih melihat pengontrol (shared) atau OJD mengambilnya (exclusive).";
 /* Help text of the --virtual-gamepad option of 'ojd profile create'. disabled, mapped and passthrough are values the user types and stay as written. */
@@ -2896,7 +3250,7 @@
 /* One-line summary of 'ojd profile export' in the command list and at the top of its help. The command in quotes stays as written. */
 "cli.profile.export.abstract" = "Cetak profil sebagai file yang dibaca “ojd profile import”.";
 /* Long description in the help of 'ojd profile export'. --json and --plain stay as written. */
-"cli.profile.export.discussion" = "Profil berupa JSON, sehingga --json dan --plain tidak mengubah output.";
+"cli.profile.export.discussion" = "Profil berupa daftar properti, sehingga --json dan --plain tidak mengubah output.";
 /* Message printed after 'ojd profile export --output'. %1$@ is the profile name, shown in quotes, and %2$@ is the file path. */
 "cli.profile.export.done" = "“%1$@” ditulis ke %2$@.";
 /* Help text of the --output option of 'ojd profile export'. stdout is the standard output stream and stays as written. */
@@ -2913,6 +3267,8 @@
 "cli.profile.import.abstract" = "Tambahkan profil dari file yang ditulis “ojd profile export”.";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "“%1$@” (%2$@) diimpor.";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "Terapkan profil yang diimpor hanya saat app ini, menurut ID app, berada di depan, menggantikan cakupan di dalam file. Ulangi opsi untuk app lain.";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "Gunakan - untuk membaca profil dari stdin. Profil dengan ID yang sama dengan yang sudah ada menggantikannya.";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */
@@ -3579,6 +3935,58 @@
 "ui.shortcuts.action.getControllers.description" = "Menampilkan pengontrol yang terhubung.";
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "Dapatkan Pengontrol";
+/* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.description" = "Mengubah satu nilai profil pemetaan ulang, misalnya namanya.";
+/* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
+"ui.shortcuts.action.setProfileValue.key" = "Kunci";
+/* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.title" = "Atur Nilai Profil";
+/* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
+"ui.shortcuts.action.setProfileValue.value" = "Nilai";
+/* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
+"ui.shortcuts.error.profileKey" = "Kunci nilai profil tidak boleh memiliki bagian yang kosong.";
+/* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.title" = "Getarkan Pengontrol";
+/* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.description" = "Menjalankan motor getar pengontrol dalam waktu singkat.";
+/* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
+"ui.shortcuts.action.rumble.intensity" = "Intensitas (0-255)";
+/* Label in the Shortcuts app of the rumble action's duration in seconds. */
+"ui.shortcuts.action.rumble.duration" = "Durasi dalam Detik";
+/* Name in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.title" = "Atur Indikator Pemain";
+/* Description in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.description" = "Mengatur lampu indikator pemain pada pengontrol.";
+/* Label in the Shortcuts app of the player number from 1 to 4, or 0 for none. */
+"ui.shortcuts.action.player.number" = "Nomor Pemain (0 untuk mati)";
+/* Name in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.title" = "Atur Lampu Pengontrol";
+/* Description in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.description" = "Mengatur warna lightbar, kecerahan LED, atau keduanya pada pengontrol.";
+/* Label in the Shortcuts app of the lightbar color given as six hexadecimal digits, RRGGBB. */
+"ui.shortcuts.action.light.color" = "Warna (RRGGBB)";
+/* Label in the Shortcuts app of the LED brightness from 0 to 255. */
+"ui.shortcuts.action.light.brightness" = "Kecerahan LED (0-255)";
+/* Error in the Shortcuts app when the light action has no color or brightness, or the color is not RRGGBB. */
+"ui.shortcuts.error.lightRequest" = "Berikan warna dalam enam digit heksadesimal, kecerahan, atau keduanya.";
+/* Name in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.title" = "Daftar Paket Mod";
+/* Description in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.description" = "Mengembalikan nama paket mod yang terpasang.";
+/* Name in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.title" = "Pasang Paket Mod";
+/* Description in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.description" = "Memasang paket mod dari sebuah folder dan mengembalikan namanya.";
+/* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
+"ui.shortcuts.action.installMod.folder" = "Folder";
+/* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
+"ui.shortcuts.action.installMod.replace" = "Ganti Paket yang Terpasang";
+/* Name in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.title" = "Hapus Paket Mod";
+/* Description in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.description" = "Menghapus paket mod yang terpasang berdasarkan namanya.";
+/* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
+"ui.shortcuts.action.removeMod.name" = "Nama";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "Model";
 /* Name of the name property of a controller in the Shortcuts app. */
@@ -3729,12 +4137,22 @@
 "error.E3028.message" = "Sesi pemetaan ulang pengontrol berubah saat permintaan berjalan. Coba lagi.";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
 "error.E3029.message" = "Profil dari paket terinstal tidak dapat diubah. Duplikasi profil dan ubah salinannya.";
-/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
-"error.E4001.message" = "Manifes paket mod.json hilang atau tidak valid. Periksa dengan skema mod-package lalu jalankan perintah lagi.";
+/* Text of error E3030, returned when an action needs Post Event access and it is not granted. */
+"error.E3030.message" = "Tindakan tidak dijalankan karena akses Post Event belum diberikan. Berikan akses itu ke OpenJoystickDriver dan coba lagi.";
+/* Text of error E3031, returned when an action needs Automation access and it is not granted. */
+"error.E3031.message" = "Tindakan tidak dijalankan karena akses Otomatisasi belum diberikan. Berikan akses itu ke OpenJoystickDriver dan coba lagi.";
+/* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
+"error.E3032.message" = "Tindakan tidak dijalankan karena Secure Input aktif. Tutup aplikasi yang mengaktifkannya, misalnya kolom kata sandi, lalu coba lagi.";
+/* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
+"error.E3033.message" = "Tindakan gagal.";
+/* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
+"error.E3034.message" = "Tindakan MIDI tidak dijalankan karena sistem menolak membuat sumber MIDI OpenJoystickDriver. Coba lagi.";
+/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.plist stays as written. */
+"error.E4001.message" = "Manifes paket mod.plist hilang atau tidak valid. Periksa dengan skema mod-package lalu jalankan perintah lagi.";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */
 "error.E4002.message" = "Paket memerlukan versi OpenJoystickDriver yang berbeda dari yang sedang berjalan. Instal versi paket yang mendukung versi ini atau perbarui OpenJoystickDriver.";
-/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.json stays as written. */
-"error.E4003.message" = "Sebuah file paket tidak valid, hilang, atau tidak tercantum di mod.json. Perbaiki file yang disebut perintah, lalu jalankan lagi.";
+/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.plist stays as written. */
+"error.E4003.message" = "Sebuah file paket tidak valid, hilang, atau tidak tercantum di mod.plist. Perbaiki file yang disebut perintah, lalu jalankan lagi.";
 /* Text of error E4004, printed when a mod package covers a controller, persona or profile that the user's files or another package hold. */
 "error.E4004.message" = "Paket mencakup pengontrol, persona, atau profil yang sudah ada di file Anda sendiri atau di paket terinstal lain. Hapus file atau paket yang bentrok, atau ubah paket, lalu jalankan perintah lagi.";
 /* Text of error E4005, printed when a mod package of the same name is installed. --force stays as written. */
@@ -3751,12 +4169,26 @@
 "error.E5003.message" = "Deskripsi protokol menyebut keluarga yang berbeda dari nama berkasnya. Beri nama file sesuai keluarganya.";
 /* Text of error E5004, printed when a protocol description lists a variant that its family lacks. */
 "error.E5004.message" = "Deskripsi protokol mencantumkan varian yang tidak dimiliki keluarganya. Gunakan salah satu varian keluarga tersebut.";
-/* Text of error E5005, printed when the access file is damaged. AccessGrants.json is a file name and stays as written. */
-"error.E5005.message" = "File akses AccessGrants.json rusak. Perbaiki atau hapus file itu, lalu berikan akses lagi.";
+/* Text of error E5005, printed when the access file is damaged. AccessGrants.plist is a file name and stays as written. */
+"error.E5005.message" = "File akses AccessGrants.plist rusak. Perbaiki atau hapus file itu, lalu berikan akses lagi.";
 /* Text of error E5006, printed when the key file of the unit IDs cannot be read or has the wrong size. PortKeyInstallation.key is a file name and stays as written. OpenJoystickDriver is the product name. */
 "error.E5006.message" = "File kunci ID perangkat, PortKeyInstallation.key, tidak dapat dibaca atau ukurannya bukan 32 byte. Pulihkan file dari cadangan. Jika Anda menghapusnya, OpenJoystickDriver membuat kunci baru dan setiap ID perangkat berubah.";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "Catatan pengontrol atau patch tidak valid. Periksa file dengan skemanya dan perbaiki kolom yang disebut pesan.";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "file rekaman ini";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "Folder Controllers dari katalog bawaan: katalog tidak memiliki file rekaman. Aturan: katalog berisi minimal satu rekaman kontroler. Perbaikan: instal ulang OpenJoystickDriver.";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@, vendorID dan productID: nama file harus %2$@, kedua ID dalam heksadesimal. Perbaikan: ganti nama file menjadi %2$@, atau perbaiki ID di dalamnya.";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@, vendorID dan productID: %2$@ sudah menjadi identitas rekaman di %3$@. Perbaikan: hapus salah satu dari kedua file, atau ubah ID file ini.";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@, document: sebuah nilai tidak dapat ditulis sebagai JSON (%2$@). Perbaikan: ganti nilai yang disebut alasan dengan string, angka, boolean, daftar, atau kamus.";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@, vendorID dan productID: vendorID harus 1...65535 dan productID 0...65535. Perbaikan: atur masing-masing ke bilangan bulat dalam rentangnya.";
+/* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
+"error.E5008.message" = "Baris SDL_GameControllerDB untuk sebuah pengontrol tidak dapat menjalankannya. Pesan menyebut alasannya. Tulis catatan pengontrol untuknya dengan ojd record draft.";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */
 "ui.error.withCode" = "%1$@ (%2$@)";
 /* Message printed by 'ojd update check' when the installed version is newer than the latest release. %1$@ is the installed version and %2$@ is the latest release. */
@@ -3811,6 +4243,8 @@
 "ui.activity.check.transportExtensionRegistration" = "Pendaftaran ekstensi driver";
 /* Name of the check in the diagnostics table that validates the configuration files. */
 "ui.activity.check.configFiles" = "File konfigurasi";
+/* Name of the check in the diagnostics table that reports a controller with the Nintendo Switch Pro Controller identity and serial 000000000001. Nintendo Switch Pro Controller is a product name and stays as written. */
+"ui.activity.check.switchSerial" = "Serial Switch Pro Controller";
 /* Name of the check in the diagnostics table that tests whether the app can read USB controllers. */
 "ui.activity.check.usbAccess" = "Akses USB";
 /* Button of a failed check in the diagnostics table that opens the Library area. */
@@ -3871,6 +4305,10 @@
 "ui.controllers.draftRecord.title" = "Buat draf catatan pengontrol";
 /* Message when a record cannot be drafted. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.controllers.draftRecord.noLayout" = "Tidak ada kontrol %@ yang dapat dibaca dari deskriptor laporan HID-nya, dan catatan bawaannya sudah menyebut familinya.";
+/* Button in the Controllers detail that drafts a controller record from the SDL_GameControllerDB line of the controller. SDL stays as written. Keep the three dots. */
+"ui.controllers.draftRecordFromSDL" = "Buat draf catatan dari SDL…";
+/* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
+"ui.controllers.draftRecordFromSDL.noPad" = "%@ tidak terhubung sebagai perangkat HID yang dapat dibaca OpenJoystickDriver.";
 /* Button in the Controllers detail that starts a packet capture of the controller. Keep the three dots. */
 "ui.controllers.capturePackets" = "Tangkap paket…";
 /* Title of the sheet that captures packets of the controller. */
@@ -3889,12 +4327,14 @@
 "ui.controllers.publication.notPublished" = "Tidak dipublikasikan";
 /* Value of the publication fact: the publication failed. */
 "ui.controllers.publication.failed" = "Gagal";
+/* Value of the input health fact: the session has read no input report yet. */
+"ui.controllers.inputHealth.awaitingInput" = "Menunggu input pertama…";
 /* Value of the input health fact: input arrives as expected. */
 "ui.controllers.inputHealth.healthy" = "Sehat";
 /* Value of the input health fact: input stopped arriving. */
 "ui.controllers.inputHealth.stale" = "Tidak diperbarui";
 /* Value of the input health fact: the app waits until all controls are at rest before it sends input again. */
-"ui.controllers.inputHealth.waitingForNeutral" = "Menunggu posisi netral";
+"ui.controllers.inputHealth.waitingForNeutral" = "Menunggu posisi netral…";
 /* Error shown when the settings file is damaged. %@ is the path of the file. The command in backticks stays as written, and Trash is the macOS name. */
 "ui.settings.advanced.errorDamaged" = "File pengaturan %@ rusak. Perbaiki, atau pindahkan ke Tong Sampah dengan `ojd setting reset`.";
 /* Error shown when the settings file has an unsupported version. %@ is the path of the file. apiVersion and the command in backticks stay as written, and Trash is the macOS name. */
@@ -3915,8 +4355,8 @@
 "platform.macos.ui.settings.advanced.unreadableShowInFinder" = "Tampilkan di Finder";
 /* One-line summary of 'ojd setting reset' in the command list and at the top of its help. */
 "cli.setting.reset.abstract" = "Pindahkan file pengaturan ke Tong Sampah.";
-/* Long description in the help of 'ojd setting reset'. Settings.json is a file name and stays as written. */
-"cli.setting.reset.discussion" = "Memindahkan Settings.json ke Tong Sampah sehingga setiap pengaturan kembali ke nilai default. Gunakan saat file rusak atau ditolak.";
+/* Long description in the help of 'ojd setting reset'. Settings.plist is a file name and stays as written. */
+"cli.setting.reset.discussion" = "Memindahkan Settings.plist ke Tong Sampah sehingga setiap pengaturan kembali ke nilai default. Gunakan saat file rusak atau ditolak.";
 /* Yes or no question that 'ojd setting reset' asks on a terminal. */
 "cli.setting.reset.confirm" = "Pindahkan file pengaturan ke Tong Sampah dan kembalikan setiap pengaturan ke nilai default?";
 /* Message printed after 'ojd setting reset'. %@ is the path of the settings file. */
@@ -3938,7 +4378,7 @@
 /* Reason the controller has no virtual gamepad: the output is paused. */
 "ui.controllers.publication.reason.suppressed" = "Output dijeda";
 /* Reason the controller has no virtual gamepad: the first input has not arrived. */
-"ui.controllers.publication.reason.noInputYet" = "Menunggu input pertama";
+"ui.controllers.publication.reason.noInputYet" = "Menunggu input pertama…";
 /* Reason the controller has no virtual gamepad: another app holds its input. */
 "ui.controllers.publication.reason.heldByAnotherClient" = "App lain sedang menggunakannya";
 /* Publication state with its reason or failure, for example "Not published (Waiting for the first input)". %1$@ is the state and %2$@ the reason. */
@@ -4040,3 +4480,155 @@
 "ui.controllers.exclusiveOwner" = "Akses eksklusif";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
 "ui.controllers.alsoListedBySystem" = "Juga dicantumkan oleh sistem";
+/* Label of a macro as the destination of an assignment when the profile has no macro of that identifier, and name of the macro destination kind. */
+"term.macro" = "Makro";
+/* Label of a layer as the destination of an assignment when the profile has no layer of that identifier, and name of the layer destination kind. */
+"term.layer" = "Lapisan";
+/* Name of the Speak destination kind in the destination popup; the destination says a short text aloud. */
+"term.speak" = "Ucapkan";
+/* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
+"ui.profiles.macros" = "Makro";
+/* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */
+"ui.profiles.addMacro" = "Tambah makro";
+/* Tooltip and VoiceOver label of the button on a macro row in the profile editor that opens the sheet to edit the macro. */
+"ui.profiles.editMacro" = "Edit makro";
+/* Message in the macros section of the profile editor when none exists. */
+"ui.profiles.noMacros" = "Belum ada makro yang dikonfigurasi.";
+/* Label of the name field in the macro editor sheet. */
+"ui.macros.name" = "Nama makro";
+/* Heading of the list of steps in the macro editor sheet. */
+"ui.macros.steps" = "Langkah";
+/* Title of the menu in the macro editor sheet that adds a step to the macro. */
+"ui.macros.addStep" = "Tambah langkah";
+/* Name of the macro step that presses and releases a key or button at once. Also the label of its destination picker. */
+"ui.macros.stepTap" = "Ketuk";
+/* Name of the macro step that presses a key or button and keeps it down. Also the label of its destination picker. */
+"ui.macros.stepPress" = "Tekan";
+/* Name of the macro step that releases a key or button that a press step holds. Also the label of its destination picker. */
+"ui.macros.stepRelease" = "Lepas";
+/* Name of the macro step that presses several keys or buttons together, holds them, and releases them. Also the label of each destination picker of the step. */
+"ui.macros.stepChord" = "Akor";
+/* Name of the macro step that waits before the next step, and the label of its time slider. */
+"ui.macros.stepWait" = "Tunggu";
+/* Label of the slider in a chord step of the macro editor for how long the chord is held. */
+"ui.macros.holdTime" = "Lama penahanan";
+/* Button in a chord step of the macro editor that adds one more key or button to the chord. */
+"ui.macros.addChordKey" = "Tambah tombol ke akor";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place earlier. */
+"ui.macros.moveUp" = "Naikkan langkah";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place later. */
+"ui.macros.moveDown" = "Turunkan langkah";
+/* Tooltip and VoiceOver label of the button in the macro editor that removes a step. */
+"ui.macros.removeStep" = "Hapus langkah";
+/* Label of the popup in the macro editor that chooses how often the macro runs its steps. */
+"ui.macros.repeat" = "Ulangi";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps a set number of times. */
+"ui.macros.repeatCounted" = "Jumlah tetap";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps again and again until the control is released. */
+"ui.macros.repeatWhileHeld" = "Selama ditahan";
+/* Label of the stepper in the macro editor for how many times the macro runs its steps. The number follows the label. */
+"ui.macros.repeatTimes" = "Kali";
+/* Label of the popup in the macro editor for what happens when the control is pressed again while the macro runs. */
+"ui.macros.whileRunning" = "Saat ditekan lagi selagi berjalan";
+/* Choice of the popup in the macro editor: the macro keeps running and the new press does nothing. */
+"ui.macros.whileRunningIgnore" = "Abaikan";
+/* Choice of the popup in the macro editor: the macro stops, releases everything it holds, and starts again. */
+"ui.macros.whileRunningRestart" = "Mulai ulang";
+/* Label of the switch in the macro editor: releasing the control stops the macro and releases everything it holds. */
+"ui.macros.interruptOnRelease" = "Berhenti saat dilepas";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. The report mode the driver chose follows, a hex byte such as 0x31. */
+"cli.controller.show.labelReportMode" = "Mode laporan";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. The extension plugged into the remote follows, such as a Nunchuk. This is the accessory on the controller, not a system extension. */
+"cli.controller.show.labelExtension" = "Ekstensi";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. Motion Plus is a Nintendo product name: keep it as written. The value that follows is off, calibrating or ready. */
+"cli.controller.show.labelMotionPlus" = "Motion Plus";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Nunchuk is a Nintendo product name: keep it as written. */
+"term.wiiExtension.nunchuk" = "Nunchuk";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Classic Controller is a Nintendo product name: keep it as written. */
+"term.wiiExtension.classicController" = "Classic Controller";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Classic Controller Pro is a Nintendo product name: keep it as written. */
+"term.wiiExtension.classicControllerPro" = "Classic Controller Pro";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: a Motion Plus that is plugged in but not switched on yet. Motion Plus is a Nintendo product name: keep it as written. */
+"term.wiiExtension.motionPlusInactive" = "Motion Plus (tidak aktif)";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with nothing plugged into it. Motion Plus is a Nintendo product name: keep it as written. */
+"term.wiiExtension.motionPlus" = "Motion Plus";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with a Nunchuk plugged into it. Motion Plus and Nunchuk are Nintendo product names: keep them as written. */
+"term.wiiExtension.motionPlusNunchuk" = "Motion Plus dengan Nunchuk";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with a Classic Controller plugged into it. Motion Plus and Classic Controller are Nintendo product names: keep them as written. */
+"term.wiiExtension.motionPlusClassic" = "Motion Plus dengan Classic Controller";
+/* Value of the extension row for a Wii Remote extension the driver does not know. %@ is the six ID bytes as twelve hex digits and stays as written. */
+"status.wiiExtensionUnknown" = "Tidak dikenal (ID %@)";
+/* Value of the Motion Plus row for a Wii Remote whose Motion Plus is not switched on. */
+"status.motionPlusOff" = "Mati";
+/* Value of the Motion Plus row for a Wii Remote while the driver measures the resting value of the gyro. The remote must lie still. */
+"status.gyroCalibrating" = "Mengkalibrasi";
+/* Value of the Motion Plus row for a Wii Remote once the driver has measured the resting value of the gyro. */
+"status.gyroReady" = "Siap";
+/* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
+"error.E5009.message" = "Dokumen tersimpan dari versi lama tidak punya konversi otomatis, jadi ojd migrate membiarkannya tidak berubah. Pesan menyebut file dan kolomnya. Ubah file secara manual ke apiVersion yang didukung.";
+/* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
+"error.E5010.message" = "Dokumen tersimpan bukan daftar properti XML, atau berisi nilai tanggal atau data. Pesan menyebut berkas dan bentuk atau jalur kuncinya. Simpan berkas sebagai daftar properti XML dengan plutil -convert xml1.";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "Jalankan skrip generator dan tulis dokumen yang dikembalikannya.";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "Menjalankan skrip dalam proses pembantu tanpa akses file atau jaringan, memeriksa dokumen yang dikembalikan fungsi generate-nya, lalu menulis tiap dokumen sebagai file daftar properti di --output. Tanpa --output, perintah mencetak dokumen. --timeout menetapkan batas waktu dalam detik (bawaan 5).";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "Skrip generator, berupa file .js.";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "Proses pembantu skrip tidak dapat dimulai: %@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "%1$@ tidak selesai dalam %2$@ detik dan dihentikan.";
+/* Help text of the --output option of 'ojd generate'. */
+"cli.generate.group.output" = "Folder yang menerima file. Tanpa folder ini, perintah mencetak dokumen dan tidak menulis file.";
+/* Help text of the --replace flag of 'ojd generate'. */
+"cli.generate.group.replace" = "Ganti file yang isinya berbeda dari dokumen.";
+/* Error of 'ojd generate' when the script file cannot be read. %@ is the script path. */
+"cli.generate.group.unreadable" = "%@ tidak dapat dibaca.";
+/* Error of 'ojd generate' when the script defines no function named generate. %@ is the script path; generate stays as written. */
+"cli.generate.group.missingGenerate" = "%@ tidak mendefinisikan fungsi generate.";
+/* Error of 'ojd generate' when the script throws a value that has no line number. %1$@ is the script path and %2$@ is the message. */
+"cli.generate.group.scriptFailed" = "Skrip %1$@ gagal: %2$@";
+/* Error of 'ojd generate' for a syntax error or an exception of the script. %1$@ is the script path, %2$@ is the line number and %3$@ is the message. */
+"cli.generate.group.scriptFailedAtLine" = "Skrip %1$@ gagal di baris %2$@: %3$@";
+/* Error of 'ojd generate' when generate returns null, no value, or something that is not a document or a list of documents. generate stays as written. */
+"cli.generate.group.notDocuments" = "generate harus mengembalikan satu dokumen atau daftar dokumen.";
+/* Error of 'ojd generate' for a returned document that fails its checks. %1$@ is the position of the document in the result, counted from 1, and %2$@ is the key path and the rule it breaks. */
+"cli.generate.group.documentInvalid" = "Dokumen %1$@ tidak valid dan tidak ada file yang ditulis: %2$@";
+/* Error of 'ojd generate' when two returned documents have the same file name. %1$@ and %2$@ are their positions in the result, counted from 1, and %3$@ is the file name. */
+"cli.generate.group.duplicate" = "Dokumen %1$@ dan %2$@ sama-sama akan ditulis ke %3$@, sehingga tidak ada file yang ditulis.";
+/* Error of 'ojd generate' when a file holds other content than the generated document. %@ is the file path; --replace stays as written. */
+"cli.generate.group.conflict" = "%@ berisi konten lain, sehingga tidak ada file yang ditulis. Gunakan --replace untuk menimpanya.";
+/* Error of 'ojd generate' when a file cannot be written. %1$@ is the file path and %2$@ is the reason. */
+"cli.generate.group.writeFailed" = "Tidak dapat menulis %1$@: %2$@";
+/* Line of 'ojd generate' for a file that it wrote anew. %@ is the file path. */
+"cli.generate.group.created" = "%@ dibuat.";
+/* Line of 'ojd generate' for a file whose other content it replaced. %@ is the file path. */
+"cli.generate.group.replaced" = "%@ diganti.";
+/* Line of 'ojd generate' for a file that already held the generated document. %@ is the file path. */
+"cli.generate.group.unchanged" = "%@ tidak berubah.";
+/* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
+"cli.migrate.group.abstract" = "Mengonversi dokumen tersimpan dari versi lama ke versi saat ini.";
+/* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
+"cli.migrate.group.discussion" = "Mengonversi Settings.plist, AccessGrants.plist, profil, rekaman dan patch pengontrol Anda, serta file perangkat virtual yang memiliki apiVersion lama. Setiap file asli disimpan di folder Migrated pada folder dukungan. Paket mod juga dikonversi. Sebutkan sebuah folder untuk dipindai sebagai ganti folder dukungan. Setiap file mendapat satu putusan: Migrated, Current, Failed, atau Foreign.";
+/* Help text of the --dry-run option of 'ojd migrate'. */
+"cli.migrate.group.dryRun" = "Menampilkan daftar dokumen yang akan dikonversi tanpa mengubah apa pun.";
+/* Message printed by 'ojd migrate' when no stored document has an older version. */
+"cli.migrate.group.none" = "Tidak ada dokumen yang perlu dimigrasikan.";
+/* Line printed by 'ojd migrate' for a converted document. %@ is the path of the document in the support folder. Migrated is a folder name and stays as written. */
+"cli.migrate.group.converted" = "%@ dikonversi. File aslinya ada di folder Migrated.";
+/* Line printed by 'ojd migrate --dry-run' for a document it would convert. %@ is the path of the document in the support folder. */
+"cli.migrate.group.wouldConvert" = "%@ akan dikonversi.";
+/* Line printed by 'ojd migrate' for a document it cannot convert. %1$@ is the path of the document, %2$@ is the reason. */
+"cli.migrate.group.failed" = "%1$@ tetap tidak berubah: %2$@";
+/* Error text of 'ojd migrate' when at least one document could not be converted. */
+"cli.migrate.group.failedSummary" = "Beberapa dokumen tidak dapat dikonversi dan tetap tidak berubah. Keluaran menyebut masing-masing.";
+/* Help text of the folder argument of 'ojd migrate'. */
+"cli.migrate.group.folder" = "Folder yang dipindai sebagai ganti folder dukungan.";
+/* Line printed by 'ojd migrate' for a file that is in the current format. %@ is the path of the file. */
+"cli.migrate.group.current" = "%@ sudah mutakhir.";
+/* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
+"cli.migrate.group.foreign" = "%@ bukan dokumen OpenJoystickDriver dan tetap tidak berubah.";
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
+"ui.migrate.action" = "Migrasikan";
+/* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
+"platform.macos.ui.migrate.failed" = "Beberapa dokumen tidak dapat dikonversi dan tetap tidak berubah. Jalankan ojd migrate di Terminal untuk melihat yang mana.";

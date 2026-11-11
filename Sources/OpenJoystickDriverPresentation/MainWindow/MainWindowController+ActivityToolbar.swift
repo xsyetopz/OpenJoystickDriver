@@ -4,8 +4,9 @@
   import OpenJoystickDriverKit
 
   extension MainWindowController {
-    /// The Activity toolbar items that are not plain buttons: the view switch, the stream
-    /// filter, the line count and the search field. Nil for every other action.
+    /// Returns the Activity toolbar item for `action` when it is not a plain button, else nil.
+    ///
+    /// The items are the view switch, the stream filter, the line count and the search field.
     func makeActivityControlItem(for action: MainWindowToolbarAction) -> NSToolbarItem? {
       switch action {
       case .activityMode:
@@ -26,6 +27,8 @@
       }
     }
 
+    /// Returns a segmented toolbar group that selects one of `titleKeys`, starting at
+    /// `selectedIndex`.
     private func makeSegmentedItem(
       for action: MainWindowToolbarAction,
       titleKeys: [String],
@@ -48,8 +51,10 @@
       return group
     }
 
-    /// One menu holds the stream filter and the line count, so the toolbar fits at the window's
-    /// minimum width without an overflow chevron.
+    /// Returns the filter menu item: the stream filter choices and the line count choices.
+    ///
+    /// One menu holds both, so the toolbar fits at the window's minimum width without an overflow
+    /// chevron.
     private func makeFilterItem(for action: MainWindowToolbarAction) -> NSToolbarItem {
       let item = NSMenuToolbarItem(itemIdentifier: action.identifier)
       item.label = OJDLocalized.string(action.labelKey)
@@ -93,6 +98,7 @@
       return item
     }
 
+    /// Returns the search field item of the Activity toolbar, filled with the current search text.
     private func makeSearchItem(for action: MainWindowToolbarAction) -> NSToolbarItem {
       let item = NSSearchToolbarItem(itemIdentifier: action.identifier)
       item.label = OJDLocalized.string(action.labelKey)
@@ -107,31 +113,37 @@
       return item
     }
 
+    /// Switches the Activity area between its views.
     @objc
     func selectActivityMode(_ sender: NSToolbarItemGroup) {
       guard let mode = ActivityMode(rawValue: sender.selectedIndex) else { return }
       screens.activity.mode = mode
     }
 
+    /// Sets the Activity log's stream filter from the chosen menu item.
     @objc
     func selectActivityFilter(_ sender: NSMenuItem) {
       guard let filter = ActivityLogFilter(rawValue: sender.tag) else { return }
       screens.activity.log.filter = filter
     }
 
+    /// Sets how many log lines the Activity area shows and the support report exports.
     @objc
     func selectActivityLineCount(_ sender: NSMenuItem) {
       screens.activity.log.setLineCount(sender.tag)
       screens.supportReport.logExportLines = sender.tag
     }
 
+    /// Filters the Activity log by the text in the toolbar search field.
     @objc
     func searchActivityLog(_ sender: NSSearchField) {
       screens.activity.log.searchText = sender.stringValue
     }
 
-    /// Asks where to save the end of the logs, then writes them as `ojd log export` does, through
-    /// the same model as the Save Activity Log menu item.
+    /// Asks where to save the end of the logs, then writes them as `ojd log export` does.
+    ///
+    /// Uses the same model as the Save Activity Log menu item. A failed save shows in the Activity
+    /// area.
     func saveActivityLog() {
       guard let window else { return }
       let panel = NSSavePanel()
@@ -154,6 +166,8 @@
       }
     }
 
+    /// Reveals the Activity log file in Finder, and shows a failure in the Activity area when it
+    /// cannot.
     func showActivityLogInFinder() {
       if !screens.activity.log.showInFinder() {
         screens.activity.failure = ActivityActionFailure(
@@ -164,7 +178,8 @@
     }
 
     /// Follows the logs while the window is visible and shows the log, and stops otherwise.
-    /// `area` is the selected area; the area observer passes the area being selected, because
+    ///
+    /// `area` is the selected area. The area observer passes the area being selected, because
     /// `@Published` sends it before `navigation.selectedArea` holds it.
     func updateLogFollowing(area: MainWindowArea) {
       guard let window else { return }
@@ -179,6 +194,10 @@
   }
 
   extension MainWindowController: NSMenuItemValidation {
+    /// Marks the selected line count or filter in the Activity menus and keeps every item enabled.
+    ///
+    /// - Parameter menuItem: The menu item to check.
+    /// - Returns: Always true.
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
       if menuItem.action == #selector(selectActivityLineCount(_:)) {
         menuItem.state = menuItem.tag == screens.activity.log.lineCount ? .on : .off

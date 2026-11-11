@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/cli-output.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/cli-output.schema.json",
   "title": "ojd --json output",
-  "description": "The --json output of each ojd command. Each command's entry in $defs is its command path in lowerCamelCase, such as controllerShow for 'ojd controller show'. Every document has apiVersion, and kind: the kind of the object it prints, such as Controller for 'ojd controller show', or Status for an action that leaves no object to print, whose details hold the command's own result. A list command prints its listed items in items, with no apiVersion or kind of their own, and an empty metadata. Entries that start with 'shared' are shapes that several commands use. A command that streams prints one document per line, and each line matches the entry.",
+  "description": "The JSON output of one command of the command-line tool.",
   "$defs": {
     "accessDisable": {
       "type": "object",
@@ -55,7 +55,7 @@
         },
         {
           "type": "object",
-          "description": "With --token: the token, shown only this once, and its grant.",
+          "description": "A token, shown once, and its grant.",
           "required": ["grant", "token"],
           "additionalProperties": false,
           "properties": {
@@ -345,6 +345,20 @@
       "$ref": "#/$defs/sharedConfigChange"
     },
     "configShow": {
+      "if": {
+        "required": ["controller"]
+      },
+      "then": {
+        "properties": {
+          "values": {
+            "items": {
+              "not": {
+                "required": ["families"]
+              }
+            }
+          }
+        }
+      },
       "type": "object",
       "required": ["apiVersion", "kind", "defaultsFile", "values"],
       "additionalProperties": false,
@@ -356,31 +370,46 @@
           "const": "Configuration"
         },
         "controller": {
-          "description": "The controller whose record was layered, as VVVV:PPPP. Absent without --controller.",
+          "description": "The controller whose record was layered, as a vendor and product pair.",
           "type": "string",
           "pattern": "^[0-9A-F]{4}:[0-9A-F]{4}$"
         },
         "defaultsFile": {
-          "description": "The all.patch.json path, whether or not the file exists.",
+          "description": "The defaults patch file of the user.",
           "type": "string"
         },
         "profile": {
-          "description": "The active profile whose stick values the profile rows show. Absent without --controller, without a running service, or without an active profile for the controller.",
+          "description": "The active profile whose stick values the profile rows show.",
           "type": "string"
         },
         "defaultsProblem": {
-          "description": "Why OJD ignored all.patch.json. Absent when it applies or does not exist.",
+          "description": "Why the defaults patch file was ignored.",
           "type": "string"
         },
         "values": {
           "type": "array",
           "items": {
+            "if": {
+              "properties": {
+                "layer": {
+                  "const": "Driver"
+                }
+              }
+            },
+            "then": {
+              "not": {
+                "required": ["value"]
+              }
+            },
+            "else": {
+              "required": ["value"]
+            },
             "type": "object",
             "required": ["key", "layer"],
             "additionalProperties": false,
             "properties": {
               "key": {
-                "description": "A record tuning key, or for a profile row the profile file path of the value.",
+                "description": "A record tuning key, or for a profile row the profile file of the value.",
                 "anyOf": [
                   {
                     "$ref": "#/$defs/sharedTuningKey"
@@ -402,11 +431,11 @@
                 ]
               },
               "value": {
-                "description": "Absent while only the Driver default applies.",
+                "description": "The value the layer set.",
                 "type": "number"
               },
               "families": {
-                "description": "The protocol families whose drivers read the key. Present for a tuning key without --controller.",
+                "description": "The protocol families whose drivers read the key.",
                 "type": "array",
                 "uniqueItems": true,
                 "items": {
@@ -509,16 +538,29 @@
       "$ref": "#/$defs/sharedConfigChange"
     },
     "controllerClaim": {
-      "required": ["apiVersion", "kind"],
-      "properties": {
-        "kind": {
-          "const": "ControllerServer"
+      "oneOf": [
+        {
+          "required": ["apiVersion", "kind"],
+          "properties": {
+            "kind": {
+              "const": "ControllerServer"
+            },
+            "server": {
+              "const": "OJD"
+            }
+          },
+          "$ref": "#/$defs/sharedControllerServer"
         },
-        "server": {
-          "const": "OJD"
+        {
+          "required": ["apiVersion", "kind"],
+          "properties": {
+            "kind": {
+              "const": "ControllerServer"
+            }
+          },
+          "$ref": "#/$defs/sharedTransportExtensionState"
         }
-      },
-      "$ref": "#/$defs/sharedControllerServer"
+      ]
     },
     "controllerDisconnect": {
       "required": ["apiVersion", "kind"],
@@ -576,7 +618,7 @@
             "additionalProperties": false,
             "properties": {
               "alsoListedBySystem": {
-                "description": "Whether the system also lists the controller as a second controller that gives no input while OJD serves it.",
+                "description": "Whether the system also lists the controller as a second, silent controller.",
                 "type": "boolean"
               },
               "connection": {
@@ -599,7 +641,7 @@
                 "$ref": "#/$defs/sharedExclusiveOwner"
               },
               "power": {
-                "description": "The latest power state the controller reports. Absent when the service reports none.",
+                "description": "The latest power state the controller reported.",
                 "$ref": "report.schema.json#/$defs/controllerConnectionState/properties/power"
               },
               "productID": {
@@ -616,7 +658,7 @@
               "unit": {
                 "type": "string",
                 "pattern": "^U-[A-Za-z0-9_-]{16}$",
-                "description": "The persistent unit ID: stays the same while the controller uses the same port. Absent without a location ID."
+                "description": "The persistent unit identifier, stable while the controller stays on the same port."
               },
               "vendorID": {
                 "type": "integer",
@@ -624,7 +666,7 @@
                 "maximum": 65535
               },
               "waitsForGuidePress": {
-                "description": "Whether the controller has sent no input since its session started and waits for a press of its home button, the PS button of a DualShock 3.",
+                "description": "Whether the controller has sent no input yet and waits for a press of its home button.",
                 "type": "boolean"
               }
             }
@@ -729,6 +771,9 @@
             "adaptiveTriggers": {
               "$ref": "report.schema.json#/$defs/physicalOutputCapabilities/properties/adaptiveTriggers"
             },
+            "speaker": {
+              "$ref": "report.schema.json#/$defs/physicalOutputCapabilities/properties/speaker"
+            },
             "binaryRumbleMotors": {
               "type": "array",
               "items": {
@@ -742,7 +787,7 @@
               }
             },
             "digitalTriggers": {
-              "description": "Triggers the controller reports only as buttons. The others are analog and also derive a button.",
+              "description": "The triggers the controller reports only as buttons.",
               "type": "array",
               "uniqueItems": true,
               "items": {
@@ -756,7 +801,7 @@
               "type": "boolean"
             },
             "outputOwner": {
-              "description": "Who drives the controller's output. With System, macOS serves the controller natively, so the rumble and lighting lists hold only what macOS leaves undone.",
+              "description": "Who drives the controller's output.",
               "enum": ["System", "OJD"]
             },
             "rumbleMotors": {
@@ -842,7 +887,7 @@
               "$ref": "#/$defs/sharedServer"
             },
             "serverSource": {
-              "description": "The record layer that sets server, Default when no layer sets it, or Route when the system cannot serve the controller, so server is OJD.",
+              "description": "Where the server setting comes from: a record layer, the default, or a route.",
               "enum": ["Bundled", "Package", "User", "Default", "Route"]
             },
             "discoverySource": {
@@ -884,8 +929,11 @@
           }
         },
         "power": {
-          "description": "The latest power state the controller reports. Absent when the service reports none.",
+          "description": "The latest power state the controller reported.",
           "$ref": "report.schema.json#/$defs/controllerConnectionState/properties/power"
+        },
+        "wiiRemote": {
+          "$ref": "report.schema.json#/$defs/controllerConnectionState/properties/wiiRemote"
         },
         "productID": {
           "type": "integer",
@@ -935,7 +983,7 @@
           ],
           "properties": {
             "failure": {
-              "description": "The text of the failed send. Present exactly when the state is Failed.",
+              "description": "The text of the failed send.",
               "type": "string",
               "minLength": 1
             },
@@ -950,7 +998,7 @@
               "minimum": 0
             },
             "reason": {
-              "description": "Why no virtual device publishes the controller. Present exactly when the state is NotPublished.",
+              "description": "Why no virtual device publishes the controller.",
               "enum": [
                 "OutputDisabled",
                 "SystemGamepad",
@@ -977,8 +1025,12 @@
             "type": "string"
           }
         },
+        "inputMapping": {
+          "description": "Where the HID usage map comes from.",
+          "$ref": "report.schema.json#/$defs/inputMapping"
+        },
         "record": {
-          "description": "The effective record for the controller's model. Absent when no record matches.",
+          "description": "The effective record for the controller's model.",
           "type": "object",
           "required": ["layer"],
           "additionalProperties": false,
@@ -992,17 +1044,55 @@
           }
         },
         "serving": {
+          "if": {
+            "properties": {
+              "route": {
+                "const": "OutputDisabled"
+              }
+            }
+          },
+          "then": {
+            "required": ["reason"]
+          },
+          "else": {
+            "not": {
+              "required": ["reason"]
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "route": {
+                    "enum": ["NativePassThrough", "OutputDisabled"]
+                  }
+                }
+              },
+              "then": {
+                "not": {
+                  "required": ["persona"]
+                }
+              },
+              "else": {
+                "required": ["persona"]
+              }
+            }
+          ],
           "description": "How OJD serves the controller, as the serving policy decides it.",
           "type": "object",
           "required": ["route"],
           "additionalProperties": false,
           "properties": {
+            "heldByAppleDriver": {
+              "description": "True when Apple's driver holds the controller; a claim then activates the extension.",
+              "const": true
+            },
             "persona": {
-              "description": "The persona OJD publishes. Absent for a route that publishes nothing.",
+              "description": "The persona that is published.",
               "enum": ["SDLCompatible", "Generic", "GameControllerCompatible"]
             },
             "reason": {
-              "description": "Why the route publishes nothing. Present only with OutputDisabled.",
+              "description": "Why the route publishes nothing.",
               "enum": [
                 "UserDisabled",
                 "UpstreamVirtualDevice",
@@ -1026,13 +1116,13 @@
           "type": "string"
         },
         "tuning": {
-          "description": "The effective record's tuning as applied. Absent when the record sets no tuning.",
+          "description": "The effective tuning of the record, as applied.",
           "$ref": "controller.schema.json#/$defs/tuning"
         },
         "unit": {
           "type": "string",
           "pattern": "^U-[A-Za-z0-9_-]{16}$",
-          "description": "The persistent unit ID: stays the same while the controller uses the same port. Absent without a location ID."
+          "description": "The persistent unit identifier, stable while the controller stays on the same port."
         },
         "vendorID": {
           "type": "integer",
@@ -1064,6 +1154,28 @@
         }
       }
     },
+    "controllerSpeakerPlay": {
+      "$ref": "#/$defs/sharedStatus",
+      "properties": {
+        "status": {
+          "const": "Success"
+        },
+        "details": {
+          "$ref": "#/$defs/sharedControllerOutput"
+        }
+      }
+    },
+    "controllerSpeakerStop": {
+      "$ref": "#/$defs/sharedStatus",
+      "properties": {
+        "status": {
+          "const": "Success"
+        },
+        "details": {
+          "$ref": "#/$defs/sharedControllerOutput"
+        }
+      }
+    },
     "controllerSuspend": {
       "required": ["apiVersion", "kind"],
       "properties": {
@@ -1083,7 +1195,7 @@
       "$ref": "#/$defs/sharedControllerPair"
     },
     "controllerWatch": {
-      "description": "With --first-press, the first control pressed; with --all, one event per line for every controller; with --output, one controller state and the virtual gamepad's values per line; otherwise one controller state per line.",
+      "description": "One watch line for a controller, a first press, or an output state.",
       "oneOf": [
         {
           "type": "object",
@@ -1137,7 +1249,7 @@
               "$ref": "#/$defs/sharedControllerState"
             },
             "output": {
-              "description": "Absent when the controller is not published.",
+              "description": "The virtual gamepad's values.",
               "$ref": "#/$defs/sharedVirtualOutput"
             }
           }
@@ -1160,7 +1272,7 @@
           "const": "Diagnosis"
         },
         "timings": {
-          "description": "The newest frames of each connected controller, oldest first; empty while the service is stopped. Nanoseconds are on the service's monotonic uptime clock. frames lists the newest 8 frames of each controller; summary covers the window of its newest 15000 frames. The endpoint polls, so DeliveryEndpoint goes on the newest frame at the poll and a frame replaced by a newer one before the poll gets none.",
+          "description": "The newest frames of each connected controller, oldest first, with a summary.",
           "type": "array",
           "items": {
             "type": "object",
@@ -1177,6 +1289,7 @@
                 "$ref": "#/$defs/sharedFrameTimingSummary"
               },
               "frames": {
+                "maxItems": 8,
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -1424,6 +1537,219 @@
         }
       ]
     },
+    "macroList": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "metadata", "items"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "MacroList"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["macro", "profile"],
+            "additionalProperties": false,
+            "properties": {
+              "macro": {
+                "$ref": "#/$defs/sharedMacroSummary"
+              },
+              "profile": {
+                "$ref": "#/$defs/sharedProfileSummary"
+              }
+            }
+          }
+        }
+      }
+    },
+    "macroRemove": {
+      "$ref": "#/$defs/sharedStatus",
+      "properties": {
+        "details": {
+          "type": "object",
+          "required": ["profile", "removed"],
+          "additionalProperties": false,
+          "properties": {
+            "profile": {
+              "$ref": "#/$defs/sharedProfileSummary"
+            },
+            "removed": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "macroSet": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "macro", "profile", "replaced"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "Macro"
+        },
+        "macro": {
+          "$ref": "#/$defs/sharedMacroSummary"
+        },
+        "profile": {
+          "$ref": "#/$defs/sharedProfileSummary"
+        },
+        "replaced": {
+          "type": "boolean"
+        }
+      }
+    },
+    "macroShow": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "macro", "profile"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "Macro"
+        },
+        "macro": {
+          "$ref": "#/$defs/sharedMacroSummary"
+        },
+        "profile": {
+          "$ref": "#/$defs/sharedProfileSummary"
+        }
+      }
+    },
+    "generate": {
+      "description": "The documents a generator script returned, with what happened to each file.",
+      "type": "object",
+      "required": ["apiVersion", "kind", "metadata", "items"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "GenerationReport"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "output": {
+              "type": "string",
+              "description": "The folder that received the files; absent when the command wrote none."
+            }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["file", "kind", "status"],
+            "additionalProperties": false,
+            "properties": {
+              "document": {
+                "type": "string",
+                "description": "The document as an XML property list; present when the command wrote no file."
+              },
+              "file": {
+                "type": "string",
+                "description": "The name of the file of the document."
+              },
+              "kind": {
+                "enum": ["Controller", "ControllerPatch", "Profile", "VirtualDevice"]
+              },
+              "status": {
+                "enum": ["Created", "NotWritten", "Replaced", "Unchanged"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "migrate": {
+      "description": "Each file that migrate scanned, with its verdict.",
+      "type": "object",
+      "required": ["apiVersion", "kind", "metadata", "items"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "MigrationReport"
+        },
+        "metadata": {
+          "type": "object",
+          "required": ["dryRun"],
+          "additionalProperties": false,
+          "properties": {
+            "dryRun": {
+              "type": "boolean"
+            }
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "if": {
+              "properties": {
+                "verdict": {
+                  "enum": ["Failed", "Foreign"]
+                }
+              }
+            },
+            "then": {
+              "required": ["detail"]
+            },
+            "else": {
+              "not": {
+                "required": ["detail"]
+              }
+            },
+            "type": "object",
+            "required": ["file", "verdict"],
+            "additionalProperties": false,
+            "properties": {
+              "detail": {
+                "type": "string",
+                "description": "Why the file failed or is foreign."
+              },
+              "file": {
+                "type": "string",
+                "description": "The file's location below the scanned folder."
+              },
+              "kind": {
+                "enum": [
+                  "AccessGrants",
+                  "ActiveProfiles",
+                  "Controller",
+                  "ControllerPatch",
+                  "ModPackage",
+                  "Profile",
+                  "Settings",
+                  "VirtualDevice"
+                ]
+              },
+              "verdict": {
+                "description": "What became of the file; Migrated also means a dry run would convert it.",
+                "enum": ["Current", "Failed", "Foreign", "Migrated"]
+              }
+            }
+          }
+        }
+      }
+    },
     "modInstall": {
       "type": "object",
       "required": [
@@ -1631,7 +1957,7 @@
           "minLength": 1
         },
         "value": {
-          "description": "The value at key in the profile file, which profile.schema.json describes.",
+          "description": "The value at the key in the profile file.",
           "type": ["array", "boolean", "number", "object", "string"]
         }
       }
@@ -1740,7 +2066,7 @@
       "type": "object",
       "required": ["apiVersion", "kind", "valid"],
       "additionalProperties": false,
-      "description": "A valid profile has every property except problem. An invalid profile has only valid and problem.",
+      "description": "A profile check result: the profile's properties, or a validity flag and a problem.",
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/sharedAPIVersion"
@@ -1809,6 +2135,120 @@
         }
       ]
     },
+    "protocolInstall": {
+      "type": "object",
+      "required": [
+        "apiVersion",
+        "kind",
+        "displayName",
+        "dryRun",
+        "installed",
+        "name",
+        "replaced"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "ProtocolInstall"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dryRun": {
+          "type": "boolean"
+        },
+        "installed": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z0-9]*$"
+        },
+        "replaced": {
+          "type": "boolean"
+        }
+      }
+    },
+    "protocolList": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "metadata", "items"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "ProtocolList"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["displayName", "name", "source"],
+            "additionalProperties": false,
+            "properties": {
+              "displayName": {
+                "type": "string",
+                "minLength": 1
+              },
+              "file": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string",
+                "pattern": "^[A-Z][A-Za-z0-9]*$"
+              },
+              "package": {
+                "type": "string"
+              },
+              "source": {
+                "enum": ["BuiltIn", "User", "Package"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "protocolValidate": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "valid"],
+      "additionalProperties": false,
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/sharedAPIVersion"
+        },
+        "kind": {
+          "const": "ProtocolValidation"
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^E50[0-9]{2}$"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z0-9]*$"
+        },
+        "problem": {
+          "type": "string",
+          "minLength": 1
+        },
+        "valid": {
+          "type": "boolean"
+        }
+      }
+    },
     "recordTest": {
       "type": "object",
       "required": [
@@ -1828,7 +2268,7 @@
           "const": "RecordTestResult"
         },
         "differences": {
-          "description": "The fields of the controller state that differ. Empty when the states match.",
+          "description": "The fields of the controller state that differ.",
           "type": "array",
           "items": {
             "type": "object",
@@ -1926,7 +2366,7 @@
           "enum": ["Add", "Patch"]
         },
         "record": {
-          "description": "The drafted controller record, as 'ojd record install' reads it.",
+          "description": "The drafted controller record.",
           "oneOf": [
             {
               "$ref": "controller.schema.json"
@@ -2237,8 +2677,8 @@
       "$ref": "#/$defs/sharedSetting"
     },
     "sharedAPIVersion": {
-      "description": "The version of the ojd --json output format.",
-      "const": "openjoystickdriver/v1alpha1"
+      "description": "The version of the JSON output format.",
+      "const": "openjoystickdriver/v1alpha3"
     },
     "sharedAccessGrant": {
       "type": "object",
@@ -2328,7 +2768,7 @@
         "reason": {
           "type": "string",
           "pattern": "^E1[0-9]{3}$",
-          "description": "The endpoint error code of the refusal; see the wiki page Error-Codes."
+          "description": "The endpoint error code of the refusal."
         },
         "refusalTime": {
           "type": "string"
@@ -2342,22 +2782,34 @@
       }
     },
     "sharedAccessRefusedToken": {
+      "if": {
+        "properties": {
+          "transport": {
+            "const": "Socket"
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": ["origin"]
+        }
+      },
       "type": "object",
       "required": ["reason", "refusalTime", "scopes", "transport"],
       "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
-          "description": "The grant the token belongs to; absent for a token that matches no grant."
+          "description": "The grant the token belongs to."
         },
         "origin": {
           "type": "string",
-          "description": "The page's origin; WebSocket only."
+          "description": "The origin of the page that sent the token."
         },
         "reason": {
           "type": "string",
           "pattern": "^E1[0-9]{3}$",
-          "description": "The endpoint error code of the refusal; see the wiki page Error-Codes."
+          "description": "The endpoint error code of the refusal."
         },
         "refusalTime": {
           "type": "string"
@@ -2464,7 +2916,7 @@
       }
     },
     "sharedConfigChange": {
-      "description": "The result of config set and config unset: the tuning key and its value before the change.",
+      "description": "A tuning key and its value before a configuration change.",
       "type": "object",
       "required": ["created", "file", "key", "removesFile"],
       "additionalProperties": false,
@@ -2476,7 +2928,7 @@
           "const": "ConfigChange"
         },
         "controller": {
-          "description": "The controller model whose record the change writes, as VVVV:PPPP. Absent for all.patch.json.",
+          "description": "The controller model whose record the change writes, as a vendor and product pair.",
           "type": "string",
           "pattern": "^[0-9A-F]{4}:[0-9A-F]{4}$"
         },
@@ -2492,7 +2944,7 @@
           "$ref": "#/$defs/sharedTuningKey"
         },
         "previous": {
-          "description": "The effective value before the change. Absent while only the Driver default applies.",
+          "description": "The effective value before the change.",
           "type": "number"
         },
         "removesFile": {
@@ -2500,7 +2952,7 @@
           "type": "boolean"
         },
         "value": {
-          "description": "The value set. Absent for config unset.",
+          "description": "The value that was set.",
           "type": "number"
         }
       }
@@ -2552,7 +3004,7 @@
       }
     },
     "sharedControllerServer": {
-      "description": "The result of claim and release: the model's server setting before and after.",
+      "description": "A model's server setting before and after a claim or release.",
       "type": "object",
       "required": [
         "controller",
@@ -2625,6 +3077,7 @@
         "hat",
         "leftStick",
         "leftTrigger",
+        "pointer",
         "pressed",
         "rightStick",
         "rightTrigger",
@@ -2661,6 +3114,10 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 65535
+        },
+        "pointer": {
+          "description": "The aim of a pointing device, such as the Wii Remote IR camera; positive y is down.",
+          "$ref": "#/$defs/sharedStick"
         },
         "pressed": {
           "type": "array",
@@ -2736,7 +3193,7 @@
       }
     },
     "sharedControllerWatchEvent": {
-      "description": "A watch line: ADDED for a controller that connected, including those connected when the stream starts (the endpoint's snapshot carries the full current object); MODIFIED when its input changes; DELETED when it disconnected, with the last object. The line has no apiVersion and kind of its own; its object does. Lines of ojd controller watch --all and of the endpoint's controllers stream.",
+      "description": "A watch line: a controller added, modified, or deleted.",
       "type": "object",
       "required": ["object", "type"],
       "additionalProperties": false,
@@ -2750,34 +3207,76 @@
       }
     },
     "sharedExclusiveOwner": {
-      "description": "The client that holds the controller's USB interface exclusively, as the interface names it. Absent when none does or the interface names none.",
+      "description": "The client that holds the controller's USB interface exclusively.",
       "type": "object",
       "required": ["name"],
       "additionalProperties": false,
       "properties": {
         "name": {
-          "description": "The process name, which the kernel truncates to 16 characters, or the class of the kernel driver.",
+          "description": "The process name, or the class of the kernel driver.",
           "type": "string"
         },
         "processID": {
-          "description": "The owning process. Absent when a kernel driver holds the interface.",
+          "description": "The owning process.",
           "type": "integer"
         }
       }
     },
     "sharedFrameTimingSummary": {
-      "description": "What the frame window of one controller says about stutter. A gap lists median, 99th percentile (nearest rank) and maximum over the frames that reached both of its stages, and is absent when no frame did. ReadToRead is the time between the Read stamps of consecutive frames. A stall is a read interval longer than 3 times the median ReadToRead; the threshold follows the report rate of the controller. ReadToRead and stalls are measured only on a window of lastSeconds, which the user fills with constant input, because a controller that reports only when an input changes leaves a gap for each pause; the whole ring, without lastSeconds, has neither. stalls is also absent when the window holds fewer than two frames.",
+      "allOf": [
+        {
+          "if": {
+            "not": {
+              "required": ["lastSeconds"]
+            }
+          },
+          "then": {
+            "not": {
+              "required": ["stalls"]
+            },
+            "properties": {
+              "gaps": {
+                "items": {
+                  "properties": {
+                    "gap": {
+                      "not": {
+                        "const": "ReadToRead"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "frames": {
+                "maximum": 1
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": ["stalls"]
+            }
+          }
+        }
+      ],
+      "description": "What the frame window of one controller says about stutter.",
       "type": "object",
       "required": ["frames", "spanNanoseconds", "gaps"],
       "additionalProperties": false,
       "properties": {
         "lastSeconds": {
-          "description": "The seconds before the service answered that the window covers (ojd diagnose --frames); absent for the whole ring.",
+          "description": "The number of seconds before the answer that the window covers.",
           "type": "integer",
           "minimum": 1,
           "maximum": 15
         },
         "frames": {
+          "maximum": 15000,
           "type": "integer",
           "minimum": 0
         },
@@ -2833,12 +3332,12 @@
           "additionalProperties": false,
           "properties": {
             "thresholdNanoseconds": {
-              "description": "3 times the median ReadToRead.",
+              "description": "The read interval above which a read counts as a stall.",
               "type": "integer",
               "minimum": 0
             },
             "count": {
-              "description": "The read intervals longer than the threshold.",
+              "description": "The read intervals that are stalls.",
               "type": "integer",
               "minimum": 0
             }
@@ -2847,7 +3346,7 @@
       }
     },
     "sharedTuningKey": {
-      "description": "A tuning key of a controller record or of all.patch.json.",
+      "description": "A tuning key of a controller record or of the defaults patch.",
       "enum": [
         "stickDeadzone",
         "inputLivenessTimeoutMs",
@@ -2862,15 +3361,18 @@
         "usbStartupIntervalMs",
         "usbStartupRetryDelayMs",
         "usbTransferTimeoutMs",
+        "irWriteIntervalMs",
+        "speakerMaxSeconds",
+        "replyTimeoutMs",
         "frameQueueCapacity"
       ]
     },
     "sharedServer": {
-      "description": "Who serves the controller model, the server setting: System leaves it to the system, OJD lets OpenJoystickDriver seize it and publish a virtual gamepad.",
+      "description": "Who serves the controller model: the system, or OpenJoystickDriver through a virtual gamepad.",
       "enum": ["System", "OJD"]
     },
     "sharedWatchedController": {
-      "description": "A Controller: the fields of an item of ojd controller list, and the latest input and output once the controller has any.",
+      "description": "A controller, with its latest input and output.",
       "type": "object",
       "required": [
         "alsoListedBySystem",
@@ -2911,7 +3413,7 @@
           "$ref": "#/$defs/controllerList/properties/items/items/properties/hasSerialNumber"
         },
         "id": {
-          "description": "The ID from ojd controller list.",
+          "description": "The controller identifier.",
           "type": "string"
         },
         "name": {
@@ -2939,11 +3441,11 @@
           "$ref": "#/$defs/controllerList/properties/items/items/properties/waitsForGuidePress"
         },
         "input": {
-          "description": "The latest input; absent until the controller has input state.",
+          "description": "The latest input state.",
           "$ref": "#/$defs/sharedControllerState"
         },
         "output": {
-          "description": "With --output, or a subscription that asked for output. Absent when the controller is not published.",
+          "description": "The virtual gamepad's output state.",
           "$ref": "#/$defs/sharedVirtualOutput"
         }
       }
@@ -3010,6 +3512,35 @@
         "session": {
           "type": "string",
           "pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$"
+        }
+      }
+    },
+    "sharedMacroSummary": {
+      "type": "object",
+      "required": ["id", "interruptOnRelease", "name", "repeat", "steps", "whileRunning"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$"
+        },
+        "interruptOnRelease": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "repeat": {
+          "type": "string"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "whileRunning": {
+          "enum": ["Ignore", "Restart"]
         }
       }
     },
@@ -3112,6 +3643,10 @@
         },
         "message": {
           "type": "string"
+        },
+        "fileName": {
+          "type": "string",
+          "description": "The stale .json file of an earlier alpha."
         }
       }
     },
@@ -3265,7 +3800,7 @@
       }
     },
     "sharedStatus": {
-      "description": "A Kubernetes Status: the result of an action that leaves no object to print. details is the command's own result; each command's entry in $defs constrains it.",
+      "description": "The result of an action that leaves no object to print.",
       "type": "object",
       "required": ["apiVersion", "kind", "status", "details"],
       "additionalProperties": false,
@@ -3336,7 +3871,7 @@
       }
     },
     "sharedVirtualFeedLine": {
-      "description": "One output command per line that the host sent to the virtual gamepad, oldest first. Virtual gamepads receive only rumble commands.",
+      "description": "One output command that the host sent to the virtual gamepad, oldest first.",
       "oneOf": [
         {
           "type": "object",
@@ -3397,7 +3932,7 @@
               }
             },
             "durationMilliseconds": {
-              "description": "How long the rumble lasts. Absent while it is held until the next rumble command.",
+              "description": "How long the rumble lasts.",
               "type": "integer",
               "minimum": 0,
               "maximum": 5000
@@ -3423,12 +3958,13 @@
       ]
     },
     "sharedVirtualSDL": {
-      "description": "The SDL mapping of a virtual gamepad profile, derived from its report descriptor and report codec. The GUID carries a zero CRC.",
+      "description": "The SDL mapping of a virtual gamepad profile.",
       "type": "object",
       "required": ["guid", "mapping", "worksWithDefaultSDLHints"],
       "additionalProperties": false,
       "properties": {
         "guid": {
+          "pattern": "^0[35]000000[0-9a-f]{24}$",
           "type": "string",
           "pattern": "^[0-9a-f]{32}$"
         },
@@ -3443,7 +3979,7 @@
       }
     },
     "sharedVirtualW3C": {
-      "description": "The W3C Gamepad description of a virtual gamepad profile: for each index of the standard layout, the control and the input of the virtual gamepad that supplies it. A source is bN for a button, aN for an axis and h0.MASK for a hat direction, numbered as SDL numbers them.",
+      "description": "The W3C Gamepad description of a virtual gamepad profile.",
       "type": "object",
       "required": ["id", "buttons", "axes"],
       "additionalProperties": false,
@@ -3484,7 +4020,7 @@
       }
     },
     "sharedVirtualOutput": {
-      "description": "What the virtual gamepad last reported, after stick transfer and remapping. Stick Y points down, as in the HID report.",
+      "description": "What the virtual gamepad last reported, after stick transfer and remapping.",
       "type": "object",
       "required": [
         "buttons",
@@ -3568,7 +4104,22 @@
           "const": "SystemStatus"
         },
         "commandLineTool": {
-          "description": "The ojd link the app installs: Installed when it points to this app's executable, LinkedElsewhere when it points to another existing file such as another app copy, Broken when its target does not exist, BlockedByFile when the path is a file or folder that is not a link, and Missing when nothing is at the path. target is what the link points to and appears only for a link.",
+          "if": {
+            "properties": {
+              "state": {
+                "enum": ["Missing", "BlockedByFile"]
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": ["target"]
+            }
+          },
+          "else": {
+            "required": ["target"]
+          },
+          "description": "The state of the command-line tool link that the app installs.",
           "type": "object",
           "required": ["path", "state"],
           "additionalProperties": false,
@@ -3594,7 +4145,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["connection", "id", "name", "productID", "vendorID"],
+            "required": ["connection", "id", "name", "paused", "productID", "vendorID"],
             "additionalProperties": false,
             "properties": {
               "connection": {
@@ -3603,8 +4154,15 @@
               "id": {
                 "type": "string"
               },
+              "inputMapping": {
+                "$ref": "report.schema.json#/$defs/inputMapping"
+              },
               "name": {
                 "type": "string"
+              },
+              "paused": {
+                "description": "Whether a Pause has the controller pass through unmapped.",
+                "type": "boolean"
               },
               "productID": {
                 "type": "integer",
@@ -3652,6 +4210,25 @@
           }
         },
         "service": {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "Running"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["listenerFailure"]
+                },
+                {
+                  "required": ["listenerFailureProblem"]
+                }
+              ]
+            }
+          },
           "type": "object",
           "required": ["state"],
           "additionalProperties": false,
@@ -3663,7 +4240,7 @@
               "type": "string"
             },
             "listenerFailure": {
-              "description": "Present while the service is stopped and left a record that its request listener stopped.",
+              "description": "The record of a stopped request listener.",
               "type": "object",
               "required": ["code", "errno", "time", "message", "current"],
               "additionalProperties": false,
@@ -3684,13 +4261,13 @@
                   "type": "string"
                 },
                 "current": {
-                  "description": "True while the process that recorded the failure runs; false when the service is not running and the failure is why its last listener stopped.",
+                  "description": "Whether the process that recorded the failure is still running.",
                   "type": "boolean"
                 }
               }
             },
             "listenerFailureProblem": {
-              "description": "Present while the service is stopped and the record of its listener failure cannot be used: the localized problem.",
+              "description": "The localized problem with the record of a listener failure.",
               "type": "string"
             }
           }
@@ -3724,6 +4301,9 @@
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 65535
+              },
+              "inputMapping": {
+                "$ref": "report.schema.json#/$defs/inputMapping"
               },
               "reason": {
                 "$ref": "report.schema.json#/$defs/bindingReason"
@@ -3844,7 +4424,7 @@
       "required": ["apiVersion", "kind"],
       "oneOf": [
         {
-          "description": "With --all.",
+          "description": "A reset of every controller.",
           "$ref": "#/$defs/sharedStatus",
           "properties": {
             "details": {
@@ -3919,7 +4499,7 @@
               },
               "sdl": {
                 "$ref": "#/$defs/sharedVirtualSDL",
-                "description": "The SDL mapping of the controller's live virtual gamepad. Absent with no virtual gamepad."
+                "description": "The SDL mapping of the controller's live virtual gamepad."
               },
               "source": {
                 "type": "string"
@@ -3934,7 +4514,7 @@
               },
               "w3c": {
                 "$ref": "#/$defs/sharedVirtualW3C",
-                "description": "The W3C Gamepad description of the controller's live virtual gamepad. Absent with no virtual gamepad."
+                "description": "The W3C Gamepad description of the controller's live virtual gamepad."
               }
             }
           }

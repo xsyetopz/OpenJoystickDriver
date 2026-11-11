@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/vocabulary.schema.json",
-  "description": "The control vocabulary: the one definition of the control ids every document, endpoint message, profile and controller record uses. A Swift enum (Control) mirrors $defs/control, and a test keeps them equal. The other definitions are subsets for places that accept only some controls.",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/vocabulary.schema.json",
+  "description": "The control vocabulary: the control ids that documents and messages use.",
   "$defs": {
     "control": {
-      "description": "A control on a gamepad, UpperCamelCase. South, East, West and North are the face buttons by position. A stick or trigger axis is also a control.",
+      "description": "A control on a gamepad, in UpperCamelCase.",
       "enum": [
         "South",
         "East",
@@ -47,7 +47,12 @@
         "LeftTrackpadClick",
         "RightTrackpadClick",
         "LeftTrackpadTouch",
-        "RightTrackpadTouch"
+        "RightTrackpadTouch",
+        "PointerX",
+        "PointerY",
+        "PointerTracking",
+        "LeftGripTouch",
+        "RightGripTouch"
       ]
     },
     "dpadControl": {
@@ -59,7 +64,20 @@
       "enum": ["LeftStickX", "LeftStickY", "RightStickX", "RightStickY"]
     },
     "axis": {
-      "description": "An analog axis: a stick axis or a trigger.",
+      "description": "An analog axis: a stick axis, a trigger or a pointer axis.",
+      "enum": [
+        "LeftStickX",
+        "LeftStickY",
+        "RightStickX",
+        "RightStickY",
+        "LeftTrigger",
+        "RightTrigger",
+        "PointerX",
+        "PointerY"
+      ]
+    },
+    "gamepadAxis": {
+      "description": "An analog axis the virtual gamepad outputs: a stick axis or a trigger.",
       "enum": [
         "LeftStickX",
         "LeftStickY",

@@ -31,9 +31,9 @@ INIT_PATTERN = re.compile(
     r"(0x[0-9a-fA-F]+)\s*,\s*([A-Za-z0-9_]+)\s*\)"
 )
 
-# Rule tables from `Resources/CatalogRules/linux-xpad.json`.
+# Rule tables from `Resources/CatalogRules/linux-xpad.plist`.
 _XPAD_RULES = load_rules(
-    "linux-xpad.json",
+    "linux-xpad.plist",
     "LinuxXpadRules",
     frozenset(
         {

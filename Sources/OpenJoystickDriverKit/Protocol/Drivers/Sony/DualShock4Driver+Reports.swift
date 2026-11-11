@@ -1,8 +1,10 @@
 import Foundation
 
 extension DualShock4Driver {
+  /// The lightbar color a DualShock 4 shows before the host sets one: dark blue.
   public var defaultColor: ControllerColor? { ControllerColor(red: 0, green: 0, blue: 64) }
 
+  /// Rumble on both motors and a programmable lightbar color.
   public var outputCapabilities: PhysicalControllerOutputCapabilities {
     PhysicalControllerOutputCapabilities(
       rumbleMotors: [.lowFrequency, .highFrequency],
@@ -10,29 +12,47 @@ extension DualShock4Driver {
     )
   }
 
+  /// The controls of the description.
   public var capabilities: ControllerCapabilities {
     PhysicalProtocolID.sonyDualShock4.describedControls
   }
 
+  /// The byte offsets of the fields in the input payload that follows the report header.
   enum ReportOffset {
+    /// The left stick X.
     static let leftStickX: Int = 0
+    /// The left stick Y.
     static let leftStickY: Int = 1
+    /// The right stick X.
     static let rightStickX: Int = 2
+    /// The right stick Y.
     static let rightStickY: Int = 3
+    /// The first button byte: the face buttons and the D-pad hat.
     static let buttons0: Int = 4
+    /// The second button byte: the shoulders, triggers, stick clicks, Back and Start.
     static let buttons1: Int = 5
+    /// The third button byte: the Guide and touchpad click buttons.
     static let buttons2: Int = 6
+    /// The left trigger.
     static let l2Trigger: Int = 7
+    /// The right trigger.
     static let r2Trigger: Int = 8
   }
 
+  /// Whether the startup follows the Bluetooth sequence.
   private var usesBluetoothStartup: Bool { isBluetoothVariant || transport == .bluetooth }
 
+  /// The calibration feature report to read: the Bluetooth one (ID 5) over Bluetooth, otherwise the
+  /// USB one (ID 2).
   public func startupFeatureReads() -> [PhysicalHIDFeatureReadRequest] {
     if usesBluetoothStartup { return [PhysicalHIDFeatureReadRequest(reportID: 5, length: 41)] }
     return [PhysicalHIDFeatureReadRequest(reportID: 2, length: 37)]
   }
 
+  /// Installs the factory motion calibration from a feature reply.
+  /// - Returns: Whether the reply was valid. A reply with the wrong length or ID, or a Bluetooth
+  ///   reply that fails the CRC, is rejected, and so is an unusable calibration when
+  ///   ``usesFactoryCalibration`` is true.
   public func consumeFeatureReply(_ data: Data, request: PhysicalHIDFeatureReadRequest) -> Bool {
     let bluetooth = usesBluetoothStartup
     guard request.length == data.count, data.first == request.reportID else { return false }
@@ -107,10 +127,12 @@ extension DualShock4Driver {
     (5, 0x80, .rightStickClick), (6, 0x01, .guide), (6, 0x02, .touchpadClick),
   ]
 
+  /// The stick axis `raw` as -1...1, centered on 128.
   private static func normalize(_ raw: UInt8) -> Float {
     (Float(raw) - ds4AxisCenter) / ds4AxisCenter
   }
 
+  /// The hat direction of the D-pad nibble.
   private static func direction(for hat: UInt8) -> HatDirection {
     switch hat {
     case 0: .north
@@ -125,6 +147,8 @@ extension DualShock4Driver {
     }
   }
 
+  /// Encodes a rumble or lightbar color command as one output report for the current transport.
+  /// - Throws: ``ControllerOutputError/unsupportedCapability(_:)`` for any other command.
   public func encode(
     _ command: ControllerOutputCommand
   ) throws(ControllerOutputError) -> PhysicalOutputPlan {
@@ -149,6 +173,8 @@ extension DualShock4Driver {
     return PhysicalOutputPlan(writes: [.hidOutput(report)])
   }
 
+  /// One output report carrying the valid flags and the motor and color bytes, laid out for the
+  /// current transport; a Bluetooth report ends with its CRC.
   private func makeOutputReport(
     validFlags: UInt8,
     leftMotor: UInt8 = 0,
@@ -183,6 +209,10 @@ extension DualShock4Driver {
     }
   }
 
+  /// The input payload of `data` without its report header and Bluetooth trailer, and the transport
+  /// and report format it implies.
+  /// - Throws: ``DualShock4DriverError/invalidReportFraming`` for an unknown framing, and
+  ///   ``DualShock4DriverError/invalidBluetoothCRC`` when a Bluetooth report fails its CRC.
   private func reportPayload(from data: Data) throws -> [UInt8] {
     let bytes = Array(data)
     if bytes.first == ds4USBInputReportID, bytes.count == 64 {
@@ -219,6 +249,9 @@ extension DualShock4Driver {
     throw DualShock4DriverError.invalidReportFraming
   }
 
+  /// Checks the length and CRC trailer of a complete Bluetooth input report.
+  /// - Throws: ``DualShock4DriverError/invalidReportFraming`` when the length is not 78, and
+  ///   ``DualShock4DriverError/invalidBluetoothCRC`` when the trailer does not match.
   private func validateBluetoothInputCRC(_ report: [UInt8]) throws {
     guard report.count == 78 else { throw DualShock4DriverError.invalidReportFraming }
     guard SonyBluetoothCRC32.isValid(seed: ds4BluetoothHIDInputTransaction, report: report) else {

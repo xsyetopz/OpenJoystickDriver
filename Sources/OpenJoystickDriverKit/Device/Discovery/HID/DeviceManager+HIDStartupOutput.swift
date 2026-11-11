@@ -2,6 +2,11 @@ import Foundation
 
 extension DeviceManager {
 
+  /// Reads the startup feature reports that the pipeline requests.
+  ///
+  /// A read is retried up to three times when the session plan validates replies. An exhausted read
+  /// is logged and the next request still goes out. The run ends when the pipeline or its
+  /// connection stops being current.
   func sendHIDStartupFeatureReadRequestsIfNeeded(
     pipeline: DevicePipeline,
     connection: HIDDeviceConnection
@@ -30,6 +35,13 @@ extension DeviceManager {
     }
   }
 
+  /// Makes one attempt at a startup feature read through the output queue of the controller, so it
+  /// never interleaves with a write.
+  ///
+  /// - Returns: ``HIDFeatureReadAttempt/accepted`` when the read gave data and, with
+  ///   `validatesReply`, the pipeline accepted it; ``HIDFeatureReadAttempt/retry`` for a failed
+  ///   read or a rejected reply; ``HIDFeatureReadAttempt/stopped`` when the pipeline or connection
+  ///   stops being current.
   private func attemptHIDStartupFeatureRead(
     pipeline: DevicePipeline,
     request: PhysicalHIDFeatureReadRequest,
@@ -65,6 +77,8 @@ extension DeviceManager {
     return accepted ? .accepted : .retry
   }
 
+  /// Sends the activation writes of the driver, then those of the controller record, to a HID
+  /// controller; does nothing unless `pipeline` is current for `connection`.
   func sendHIDActivationWritesIfNeeded(
     pipeline: DevicePipeline,
     connection: HIDDeviceConnection
@@ -83,8 +97,9 @@ extension DeviceManager {
   }
 
   /// Sends the activation-phase startup writes of the record or its description in order, each
-  /// after its delay. A failed write is logged and the rest still go out, as with the driver's
-  /// activation writes.
+  /// after its delay.
+  ///
+  /// A failed write is logged and the rest still go out, as with the driver's activation writes.
   private func sendRecordStartupWrites(
     pipeline: DevicePipeline,
     connection: HIDDeviceConnection
@@ -106,9 +121,10 @@ extension DeviceManager {
     }
   }
 
-  /// Sends startup writes in order at `intervalNanoseconds` spacing. A write that names its own
-  /// delay waits that long first, in place of the interval; the writes between two such writes
-  /// go out as one batch.
+  /// Sends startup writes in order at `intervalNanoseconds` spacing.
+  ///
+  /// A write that names its own delay waits that long first, in place of the interval; the writes
+  /// between two such writes go out as one batch.
   private func sendHIDStartupWrites(
     _ writes: [PhysicalOutputWrite],
     intervalNanoseconds: UInt64,
@@ -146,6 +162,10 @@ extension DeviceManager {
     return succeeded
   }
 
+  /// Sends the HID startup output reports and records their result for the controller details, then
+  /// runs the startup recovery that the session plan names.
+  ///
+  /// - Returns: Whether every startup write went out; false when the pipeline stops being current.
   func sendHIDStartupOutputReportsIfNeeded(
     pipeline: DevicePipeline,
     connection: HIDDeviceConnection
@@ -177,6 +197,11 @@ extension DeviceManager {
     return succeeded
   }
 
+  /// Repeats the startup recovery writes for the rounds that `plan` names, one round per recovery
+  /// interval, and then expires the recovery.
+  ///
+  /// A failed recovery write is not retried within its round. The run ends when the pipeline stops
+  /// being current.
   private func runHIDStartupRecovery(
     pipeline: DevicePipeline,
     connection: HIDDeviceConnection,
@@ -213,6 +238,7 @@ extension DeviceManager {
     }
   }
 
+  /// Whether `pipeline` is active and `connection` is still its current startup connection.
   func isCurrentHIDStartupPipeline(
     _ pipeline: DevicePipeline,
     connection: HIDDeviceConnection
@@ -221,6 +247,11 @@ extension DeviceManager {
     return isCurrentHIDStartupConnection(pipeline, connection: connection)
   }
 
+  /// Whether `connection` is the HID connection that `pipeline` serves.
+  ///
+  /// The manager must not be stopping, the initialization must be current, and the pipeline, its
+  /// routing address and the device information must still match. Another client must not own the
+  /// input.
   func isCurrentHIDStartupConnection(
     _ pipeline: DevicePipeline,
     connection: HIDDeviceConnection
@@ -236,6 +267,8 @@ extension DeviceManager {
     return true
   }
 
+  /// Sends the presence request of the pipeline to find out whether the controller's input
+  /// connection is up, and logs a failed write; does nothing when the pipeline has no such request.
   func requestHIDInputConnectionStatusIfNeeded(
     pipeline: DevicePipeline,
     connection: HIDDeviceConnection

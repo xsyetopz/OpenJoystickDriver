@@ -39,16 +39,60 @@ A tester used the controller on real hardware, and it worked. The table names th
 | --- | --- | --- | --- | --- |
 | 8BitDo Ultimate 2C Wireless | `2DC8:310A` | 2.4 GHz dongle, XInput mode | Buttons, sticks, triggers at rest, D-pad, stick clicks, rumble | Not recorded |
 | ZD Ultimate Legend | `413D:2204` | 2.4 GHz dongle, XInput mode | Input, OJD rumble, back-button keyboard bindings, mode switching | Not recorded |
+| Xbox Nano Controller | `045E:0B4F` | Bluetooth LE, `game-controller-compatible` profile | Buttons, sticks, triggers, D-pad, stick clicks. The Xbox button and Share do not work | Rumble, Steam |
 
 Two testers tested the 8BitDo Ultimate 2C Wireless on tester build `1.5.71`. One tester (gornobatov) tested the ZD Ultimate Legend on macOS 26.7.1. For the 8BitDo details, see [the test record](../docs/testing/8bitdo-ultimate-2c.md).
 
-The 8BitDo Ultimate 2C Wireless has a different VID:PID in each mode. The Bluetooth mode `2DC8:301B` and the HID receiver mode `2DC8:301C` have no verification. They may work.
+One tester tested the Xbox Nano Controller on macOS 26.5.2. For the details, see [the test record](../docs/testing/xbox-nano.md).
+
+The 8BitDo Ultimate 2C Wireless has a different VID:PID in each mode. The Bluetooth mode `2DC8:301B` and the wired DInput mode `2DC8:301D` have no verification. They may work; the rear buttons repeat L3 and R3 and map no paddle. The HID receiver `2DC8:301C` is an idle identity: OJD sends it no data and creates no gamepad, and the pad is assumed to re-enumerate as `2DC8:310A` once it connects. The USB adapter `2DC8:3109` stays an `XboxXUSB` wired record, also unverified.
+
+The 8BitDo Ultimate 2 in DInput mode (`2DC8:6012`, cable and 2.4 GHz dongle) has an unverified record that uses the Ultimate 2C layout and maps no rear button. Its receiver `2DC8:6013` and dongle `2DC8:3107` are idle identities: OJD sends them no data and creates no gamepad. For the details, see [the Ultimate 2 test record](../docs/testing/8bitdo-ultimate-2.md).
+
+The 8BitDo bootloader identities `2DC8:3208` and `2DC8:5750` are never served. OJD sends them no data, because a write to a pad in bootloader state risks a bad firmware image. The Controllers page lists such a pad as unserved with the reason `BootloaderIdentity`. For the rule, see [the test record](../docs/testing/8bitdo-ultimate-2c.md#bootloader-identities).
+
+Every 8BitDo `2DC8` identity that has a record. Only `2DC8:310A` is Community-Verified; every other row is Unverified.
+
+| VID:PID | Model and mode | Protocol |
+| --- | --- | --- |
+| `2DC8:2000`, `2DC8:2002` | No source names the model | `XboxGIP` |
+| `2DC8:200F` | No source names the model | `XboxGIP`, with the Share button read from the end of the report |
+| `2DC8:3106`, `2DC8:6001` | No source names the model | `XboxXUSB`, wired |
+| `2DC8:3107` | Ultimate 2 dongle | Idle |
+| `2DC8:3109` | Ultimate 2C USB adapter | `XboxXUSB`, wired |
+| `2DC8:310A` | Ultimate 2C, 2.4 GHz dongle, XInput | `XboxXUSB`, wired |
+| `2DC8:310B` | Ultimate 2 and Pro 3 may share this identity; no capture confirms it or shows how the host tells them apart | `XboxXUSB`, wired |
+| `2DC8:301B` | Ultimate 2C, Bluetooth LE | `HIDDescriptor` |
+| `2DC8:301C` | Ultimate 2C HID receiver | Idle |
+| `2DC8:301D` | Ultimate 2C, wired, DInput | `HIDDescriptor` |
+| `2DC8:6012` | Ultimate 2, DInput, cable and 2.4 GHz dongle | `HIDDescriptor` |
+| `2DC8:6013` | Ultimate 2 receiver | Idle |
+| `2DC8:901B` | Ultimate 3-mode, Bluetooth, Xbox mode | `HIDDescriptor`, Xbox button order |
+
+The Ultimate 3-mode record (`2DC8:901B`) has no capture; see [the Ultimate 2 test record](../docs/testing/8bitdo-ultimate-2.md).
 
 ### Unverified
 
-OJD includes a built-in catalog of 696 controller records. The Unverified tier is every catalog controller that this page does not list as Official or Community-verified. A record does not prove that the controller works. Nobody tested these controllers on real hardware. The catalog includes the NVIDIA SHIELD controllers of 2015 (`0955:7210`) and 2017 (`0955:7214`). On macOS the 2017 controller sends input only, with no rumble.
+The Wii Remote (`057E:0306` and `057E:0330`) has bundled records and no hardware test. For what OJD reads from it, see [Wii Remote](Wii-Remote.md).
+
+OJD includes a built-in catalog of 706 controller records. The Unverified tier is every catalog controller that this page does not list as Official or Community-verified. A record does not prove that the controller works. Nobody tested these controllers on real hardware. The catalog includes the NVIDIA SHIELD controllers of 2015 (`0955:7210`) and 2017 (`0955:7214`). On macOS the 2017 controller sends input only, with no rumble.
 
 An unverified controller may work, may partly work, or may not work. The tier does not mean that the controller is broken or fake.
+
+### Flydigi Records
+
+These Flydigi records are source-derived and unverified. The files a tester sends decide what each record maps; the checks are in [Flydigi tester checks](../docs/testing/flydigi-tester-checks.md).
+
+| Controller | VID:PID | Mode | Tier | Test record |
+| --- | --- | --- | --- | --- |
+| Flydigi Vader 4 Pro | `D7D7:0041` | Bluetooth LE | Unverified | [Vader 4 Pro](../docs/testing/flydigi-vader-4-pro.md) |
+| Flydigi Vader 5S | `37D7:2801` | USB; GIP, or XUSB when the pad shows interface `FF/5D/01` | Unverified | [Vader 5S](../docs/testing/flydigi-vader-5s.md) |
+| Flydigi Vader 5 Pro dongle | `37D7:2401` | 2.4 GHz USB; HID extended report after startup writes | Unverified | [Vader 5 Pro](../docs/testing/flydigi-vader-5-pro.md) |
+| Flydigi Apex 4 | `04B4:2412` | DInput; the XInput mode is the Microsoft `045E:028E` record | Unverified | [Apex 4](../docs/testing/flydigi-apex-4.md) |
+
+### SteelSeries Nimbus Record
+
+The SteelSeries Nimbus (`1038:1420`, USB) has a source-derived, unverified record. The record maps its eight pressure-sensitive buttons, its pressure D-pad and its Menu button, and it reads the left and right sticks and the L2 and R2 triggers. The record sets no `server`, so macOS serves the Nimbus as its own game controller and OJD only reads its input. The Nimbus has four player LEDs on an output report that records cannot yet describe, so OJD does not drive them. Bluetooth identity `0111:1420` appears only in SDL's database and has no record. The Menu button, the trigger threshold and the axis directions wait for a capture from the pad.
 
 To find out whether your controller is in the catalog:
 
@@ -117,6 +161,19 @@ ojd status
 For more information about `ojd`, see [Using the command line](Command-Line.md).
 
 Some controllers are not standard. Their descriptor may put sticks or triggers on unusual axes. These controllers need a record.
+
+### Mapping Source
+
+A controller without a record that passes the descriptor checks gets its mapping from one of two places. OJD ships the Mac lines of [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB). When a line matches the controller, OJD applies it to the controller's elements, and `ojd controller show` reads "mapped from SDL_GameControllerDB" with the GUID and the match tier. The tiers, in order, are:
+
+1. `ExactGUID`: the version and the name hash match.
+2. `GUIDWithoutNameCRC`: the version matches and the line has no name hash.
+3. `GUIDWithoutVersion`: the name hash matches and the version does not.
+4. `GUIDWithoutVersionAndNameCRC`: only the vendor and product match.
+
+When a GUID has several lines, the last one wins. An axis that stands for a button presses it when it moves past half of its range from the center. A line can name controls OJD cannot express, such as a D-pad direction on a button. `ojd controller show` lists them as unmapped and the other controls still work.
+
+When no line matches, the controller keeps the standard map described under What Works and the row reads "standard HID usage map". When a line matches but names an element the controller lacks, OJD rejects the whole line, keeps the standard map, and the row says why. A controller whose descriptor fails the checks stays unbound whatever the database holds, and `ojd controller show` says a line exists. A controller with a record never reads the database.
 
 ## Further Reading
 

@@ -4,14 +4,17 @@ import OpenJoystickDriverKit
 
 /// The head of an HTTP/1.1 request on the WebSocket port.
 struct EndpointWebRequest {
+  /// The outcome of reading a request head.
   enum ReadResult {
     /// `rest` holds the bytes that arrived after the head.
     case request(EndpointWebRequest, rest: Data)
+    /// The head is not a valid request.
     case malformed
     /// The peer closed or the deadline passed.
     case closed
   }
 
+  /// The request method.
   let method: String
   /// The target without its query or fragment, still percent-encoded.
   let path: String
@@ -57,6 +60,7 @@ struct EndpointWebRequest {
       .contains { $0.trimmingCharacters(in: .whitespaces).lowercased() == token } ?? false
   }
 
+  /// Parses a request head, or returns nil when it is malformed.
   private static func parse(_ head: String) -> Self? {
     let lines = head.components(separatedBy: "\r\n")
     let parts = lines[0].split(separator: " ", omittingEmptySubsequences: false)
@@ -80,7 +84,9 @@ struct EndpointWebRequest {
   }
 }
 
+/// Writes the HTTP responses of the WebSocket port.
 enum EndpointWebResponse {
+  /// The reason phrase of each status that the port sends.
   private static let reasons = [
     101: "Switching Protocols", 200: "OK", 400: "Bad Request", 403: "Forbidden",
     404: "Not Found", 405: "Method Not Allowed", 426: "Upgrade Required",
@@ -110,8 +116,9 @@ enum EndpointWebResponse {
 
 /// Files in the overlay pages folder.
 enum EndpointWebPages {
-  /// The real path of the file that `path` names inside `root`; nil for a path with a dot
-  /// component or an encoded slash, and for anything that resolves outside `root`.
+  /// The real path of the file that `path` names inside `root`; nil for a path with a dot component
+  /// or an encoded slash, and for anything that resolves outside `root`.
+  ///
   /// A folder serves its `index.html`.
   static func file(for path: String, root: String) -> String? {
     guard let base = resolved(root) else { return nil }
@@ -132,6 +139,7 @@ enum EndpointWebPages {
     return real
   }
 
+  /// The `Content-Type` for the extension of `path`; unknown extensions are binary.
   static func contentType(of path: String) -> String {
     switch URL(fileURLWithPath: path).pathExtension.lowercased() {
     case "html", "htm": "text/html; charset=utf-8"
@@ -150,12 +158,14 @@ enum EndpointWebPages {
     }
   }
 
+  /// Returns the real path of `path`, or nil when it does not exist.
   private static func resolved(_ path: String) -> String? {
     guard let pointer = realpath(path, nil) else { return nil }
     defer { free(pointer) }
     return String(cString: pointer)
   }
 
+  /// Returns the file type bits of `path`, or 0 when it cannot be read.
   private static func kind(of path: String) -> mode_t {
     var information = stat()
     guard stat(path, &information) == 0 else { return 0 }

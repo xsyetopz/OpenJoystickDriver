@@ -1,5 +1,5 @@
-import OpenJoystickDriverTestSupport
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -163,6 +163,99 @@ struct LogicalControllerIDTests {
       UserSpaceVirtualDeviceConstants.locationID(for: before)
         == UserSpaceVirtualDeviceConstants.locationID(for: after)
     )
+  }
+
+  private static func sharedSerialPad(locationID: UInt32) -> LogicalControllerID {
+    LogicalControllerID(
+      vendorID: 0x057E,
+      productID: 0x2009,
+      serialNumber: "000000000001",
+      locationID: locationID
+    )
+  }
+
+  /// Two keys, `057E:2009` with these serials, whose hashes share the low 16 bits (0x0F74).
+  private static func collidingPads() -> (LogicalControllerID, LogicalControllerID) {
+    func pad(_ serial: String) -> LogicalControllerID {
+      LogicalControllerID(
+        vendorID: 0x057E,
+        productID: 0x2009,
+        serialNumber: serial,
+        locationID: 1
+      )
+    }
+    return (pad("S565"), pad("S950"))
+  }
+
+  @Test
+  func sameSerialControllersGetDistinctVirtualIdentities() {
+    var registry = VirtualIdentityRegistry()
+    let first = registry.reserve(Self.sharedSerialPad(locationID: 0x1400_0000))
+    let second = registry.reserve(Self.sharedSerialPad(locationID: 0x1500_0000))
+
+    #expect(first.serialNumber != second.serialNumber)
+    #expect(first.locationID != second.locationID)
+  }
+
+  @Test
+  func firstSameSerialControllerKeepsThePlainIdentity() {
+    var registry = VirtualIdentityRegistry()
+    let first = registry.reserve(Self.sharedSerialPad(locationID: 0x1400_0000))
+
+    #expect(first.serialNumber == "OpenJoystickDriver-UserSpace:d7b8ce84d34c45a2")
+  }
+
+  @Test
+  func identitiesStayStableWhileBothAreConnected() {
+    var registry = VirtualIdentityRegistry()
+    let a = Self.sharedSerialPad(locationID: 0x1400_0000)
+    let b = Self.sharedSerialPad(locationID: 0x1500_0000)
+    let firstA = registry.reserve(a)
+    let firstB = registry.reserve(b)
+
+    #expect(registry.reserve(a) == firstA)
+    #expect(registry.reserve(b) == firstB)
+    registry.release(a)
+    #expect(registry.reserve(b) == firstB)
+  }
+
+  @Test
+  func stoppedControllerReleasesItsIdentity() {
+    var registry = VirtualIdentityRegistry()
+    let a = Self.sharedSerialPad(locationID: 0x1400_0000)
+    let first = registry.reserve(a)
+    _ = registry.reserve(Self.sharedSerialPad(locationID: 0x1500_0000))
+    registry.release(a)
+
+    #expect(registry.reserve(Self.sharedSerialPad(locationID: 0x1600_0000)) == first)
+  }
+
+  @Test
+  func locationIDCollisionResolvesToTheNextFreeValue() {
+    let (a, b) = Self.collidingPads()
+    #expect(
+      UserSpaceVirtualDeviceConstants.locationID(for: a)
+        == UserSpaceVirtualDeviceConstants.locationID(for: b)
+    )
+    var registry = VirtualIdentityRegistry()
+    let first = registry.reserve(a)
+    let second = registry.reserve(b)
+
+    #expect(first.locationID == UserSpaceVirtualDeviceConstants.locationID(for: a))
+    #expect(second.locationID == first.locationID + 1)
+    #expect(first.serialNumber != second.serialNumber)
+  }
+
+  @Test
+  func locationIDResolutionIsDeterministic() {
+    let (a, b) = Self.collidingPads()
+    func run() -> [VirtualDeviceIdentity] {
+      var registry = VirtualIdentityRegistry()
+      return [registry.reserve(a), registry.reserve(b)]
+    }
+    let firstRun = run()
+    let secondRun = run()
+    #expect(firstRun == secondRun)
   }
 
   @Test

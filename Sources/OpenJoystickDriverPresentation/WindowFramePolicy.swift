@@ -2,13 +2,16 @@
 
   import AppKit
 
+  /// Sizes and places an OJD window so that it respects its minimum size and stays on a screen.
   enum WindowFramePolicy {
+    /// Returns `frame` grown to at least `minimumSize`, with its top-left corner unchanged.
     static func fittingFrame(_ frame: NSRect, minimumSize: NSSize) -> NSRect {
       let width = max(frame.width, minimumSize.width)
       let height = max(frame.height, minimumSize.height)
       return NSRect(x: frame.minX, y: frame.maxY - height, width: width, height: height)
     }
 
+    /// Returns `size` grown to at least `minimumSize` in each dimension.
     static func fittingSize(_ size: NSSize, minimumSize: NSSize) -> NSSize {
       NSSize(
         width: max(size.width, minimumSize.width),
@@ -16,6 +19,9 @@
       )
     }
 
+    /// Returns `frame` grown to `minimumSize`, shrunk to fit `visibleFrame`, and moved inside it.
+    ///
+    /// The minimum size wins over the visible frame when they conflict.
     static func clampedFrame(
       _ frame: NSRect,
       to visibleFrame: NSRect,
@@ -29,6 +35,9 @@
       return NSRect(x: x, y: y, width: width, height: height)
     }
 
+    /// Keeps `window` at least `minimumSize` large and inside the visible frame of its screen.
+    ///
+    /// Uses the main screen when the window has none. Does nothing when no screen exists.
     @MainActor
     static func clamp(_ window: NSWindow, minimumSize: NSSize = .zero) {
       guard let screen = window.screen ?? NSScreen.main else { return }

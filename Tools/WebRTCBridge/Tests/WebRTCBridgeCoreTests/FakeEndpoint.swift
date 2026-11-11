@@ -1,27 +1,41 @@
+import BridgeCore
 import Darwin
 import Foundation
-import BridgeCore
 import WebRTCBridgeCore
 
-/// A stand-in endpoint on a Unix socket. It speaks the handshake of `docs/sdk/endpoint.md`,
-/// checks the token proof, and then runs one scripted connection. It stops listening after the
-/// last expected connection, so a socket scan sees only the bridges.
+/// A stand-in endpoint on a Unix socket.
+///
+/// It speaks the handshake of `docs/sdk/endpoint.md`, checks the token proof, and then runs one
+/// scripted connection. It stops listening after the last expected connection, so a socket scan
+/// sees only the bridges.
 final class FakeEndpoint: @unchecked Sendable {
+  /// The token that the endpoint accepts.
   static let token = "ojd_test_token"
+  /// The token name that the endpoint accepts.
   static let tokenName = "bridge"
 
+  /// The path of the socket.
   let path: String
+  /// The listening socket, closed by `serve(connections:)`.
   private var listener: Int32 = -1
+  /// Guards the recorded frames, requests, proofs and keep-alives.
   private let lock = NSLock()
+  /// The `Frame` lines that feeds sent.
   private(set) var framesReceived: [[String: Any]] = []
+  /// The first request line of each connection.
   private(set) var requests: [[String: Any]] = []
+  /// Whether each `Hello` proof is valid.
   private(set) var proofsValid: [Bool] = []
+  /// The count of `KeepAlive` lines.
   private var keepAlives = 0
+  /// The lines that a subscription gets after its request.
   let watchLines: [[String: Any]]
+  /// The line that a feed gets after its first frame with a button.
   let rumble: [String: Any]
   /// Lines that a feed gets right after its `FeedSession`.
   let feedLines: [[String: Any]]
 
+  /// Binds a listening socket at a path that is unique to the process and the call.
   init(
     watchLines: [[String: Any]] = [],
     rumble: [String: Any] = [:],
@@ -57,12 +71,14 @@ final class FakeEndpoint: @unchecked Sendable {
     }
   }
 
+  /// Runs the body under the lock.
   private func record(_ body: () -> Void) {
     lock.lock()
     body()
     lock.unlock()
   }
 
+  /// The frames, requests and proof results recorded so far.
   func snapshot() -> (frames: [[String: Any]], requests: [[String: Any]], proofs: [Bool]) {
     lock.lock()
     defer { lock.unlock() }
@@ -76,12 +92,19 @@ final class FakeEndpoint: @unchecked Sendable {
     return keepAlives
   }
 
+  /// Writes one JSON line to the client.
   private func write(_ client: Int32, _ line: [String: Any]) {
     guard var data = try? JSONSerialization.data(withJSONObject: line) else { return }
     data.append(0x0A)
-    _ = data.withUnsafeBytes { Darwin.write(client, $0.baseAddress!, data.count) }
+    _ = data.withUnsafeBytes { buffer in
+      guard let base = buffer.baseAddress else {
+        preconditionFailure("A line ends in a newline, so its data is not empty.")
+      }
+      return Darwin.write(client, base, data.count)
+    }
   }
 
+  /// Runs one connection: the handshake, the scripted lines, then waits for the client to close.
   private func handle(_ client: Int32) {
     var pending = Data()
     func next() -> [String: Any]? {

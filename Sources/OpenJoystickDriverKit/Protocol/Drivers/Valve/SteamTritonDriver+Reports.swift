@@ -2,33 +2,53 @@ import Foundation
 
 extension SteamTritonDriver {
 
+  /// The IDs of the reports the driver reads.
   private enum ReportID {
+    /// A state report over USB or a dongle.
     static let state: UInt8 = 0x42
+    /// A battery report.
     static let battery: UInt8 = 0x43
+    /// A state report over Bluetooth.
     static let bluetoothState: UInt8 = 0x45
+    /// A wireless status report.
     static let wirelessStatusX: UInt8 = 0x46
+    /// A state report with 16-bit timestamps.
     static let timestampedState: UInt8 = 0x47
+    /// A wireless status report.
     static let wirelessStatus: UInt8 = 0x79
   }
 
   /// Byte offsets with the report ID at 0. `0x47` shares everything through the right stick.
   private enum Offset {
+    /// The button words.
     static let buttons = 2
+    /// The left trigger.
     static let leftTrigger = 6
+    /// The right trigger.
     static let rightTrigger = 8
+    /// The left stick X.
     static let leftStickX = 10
+    /// The left stick Y.
     static let leftStickY = 12
+    /// The right stick X.
     static let rightStickX = 14
+    /// The right stick Y.
     static let rightStickY = 16
+    /// The accelerometer vector.
     static let imuAccel = 34
+    /// The gyro vector.
     static let imuGyro = 40
   }
 
   /// Pad and IMU timestamp offsets, which differ between the two state layouts.
   private struct PadLayout {
+    /// The offset of the left pad X coordinate.
     let leftX: Int
+    /// The offset of the right pad X coordinate.
     let rightX: Int
+    /// The offset of the IMU timestamp.
     let imuTimestamp: Int
+    /// Whether the IMU timestamp is 32 bits; otherwise it is 16 bits.
     let imuTimestampIs32Bit: Bool
 
     /// `TritonMTUNoQuat_t`: a 32-bit IMU timestamp in microseconds.
@@ -48,8 +68,11 @@ extension SteamTritonDriver {
     )
   }
 
+  /// The shortest state report that is decoded.
   private static let stateReportMinimumLength = 46
+  /// The maximum value of a trigger.
   private static let triggerMax: Float = 32767
+  /// The maximum positive value of a stick axis.
   private static let stickMax: Float = 32767
 
   /// Signed 16-bit pad coordinates centered on 0; raw Y grows upward.
@@ -61,8 +84,10 @@ extension SteamTritonDriver {
     rawYIncreasesUpward: true
   )
 
-  /// SDL's output mapping per button bit. SDL names bit `0x40` VIEW and bit `0x4000` MENU but
-  /// reports them as Start and Back, so they map to `.start` and `.back` here.
+  /// SDL's output mapping per button bit.
+  ///
+  /// SDL names bit `0x40` VIEW and bit `0x4000` MENU but reports them as Start and Back, so they
+  /// map to `.start` and `.back` here.
   private static let buttonTable: [(UInt32, Control)] = [
     (0x0000_0001, .south), (0x0000_0002, .east), (0x0000_0004, .west),
     (0x0000_0008, .north), (0x0000_0010, .auxiliary1), (0x0000_0020, .rightStickClick),
@@ -73,13 +98,19 @@ extension SteamTritonDriver {
     (0x0020_0000, .rightTrackpadTouch), (0x0040_0000, .rightTrackpadClick),
     (0x0080_0000, .rightTrigger), (0x0100_0000, .leftStickTouch),
     (0x0200_0000, .leftTrackpadTouch), (0x0400_0000, .leftTrackpadClick),
-    (0x0800_0000, .leftTrigger),
+    (0x0800_0000, .leftTrigger), (0x1000_0000, .rightGripTouch), (0x2000_0000, .leftGripTouch),
   ]
+  /// The D-pad down bit of the button word.
   private static let dpadDown: UInt32 = 0x0400
+  /// The D-pad right bit of the button word.
   private static let dpadRight: UInt32 = 0x0800
+  /// The D-pad left bit of the button word.
   private static let dpadLeft: UInt32 = 0x1000
+  /// The D-pad up bit of the button word.
   private static let dpadUp: UInt32 = 0x2000
+  /// The bit that shows a finger on the right pad.
   private static let rightPadTouch: UInt32 = 0x0020_0000
+  /// The bit that shows a finger on the left pad.
   private static let leftPadTouch: UInt32 = 0x0200_0000
 
   /// Decodes a state report; battery and wireless status reports update state and carry no input.
@@ -101,6 +132,9 @@ extension SteamTritonDriver {
     }
   }
 
+  /// The event of a state report in `layout`; nil when the report is too short.
+  ///
+  /// A state report shows a dongle's controller connected.
   private func decodeState(
     _ bytes: [UInt8],
     layout: PadLayout,
@@ -144,8 +178,9 @@ extension SteamTritonDriver {
     return ControllerEvent(timestamp: receivedAt, state: next, motion: motion, touchFrames: touch)
   }
 
-  /// SDL's sensor frame is (x, z, -y) of the raw axes: X right, Y up, Z toward the player. The
-  /// canonical frame takes SDL's +Z as -Y and SDL's +Y as +Z, so it equals the raw axes. SDL
+  /// SDL's sensor frame is (x, z, -y) of the raw axes: X right, Y up, Z toward the player.
+  ///
+  /// The canonical frame takes SDL's +Z as -Y and SDL's +Y as +Z, so it equals the raw axes. SDL
   /// scales 2000 °/s and 2 g per 32768 counts and skips a sample whose timestamp repeats.
   private func motionSample(
     _ bytes: [UInt8],
@@ -177,6 +212,8 @@ extension SteamTritonDriver {
     )
   }
 
+  /// The touch frame of the pad whose X coordinate is at `x`, with the pressure that follows the Y
+  /// coordinate while a finger is on it.
   private func touchFrame(
     _ surface: ControllerTouchSurface,
     _ bytes: [UInt8],
@@ -206,6 +243,7 @@ extension SteamTritonDriver {
     )
   }
 
+  /// Stores the charging state and battery level of a battery report.
   private func updatePower(_ bytes: [UInt8]) {
     let charging: ControllerConnectionState.Charging =
       switch bytes[1] {
@@ -222,6 +260,8 @@ extension SteamTritonDriver {
     )
   }
 
+  /// Applies a wireless status: 1 disconnects and 2 connects the logical controller; other values
+  /// change nothing.
   private func updateWirelessStatus(_ status: UInt8) {
     switch status {
     case 1: if isLogicalControllerConnected { setConnected(false) }
@@ -230,6 +270,8 @@ extension SteamTritonDriver {
     }
   }
 
+  /// Sets the connection of the logical controller, queues the change, and resets the input state,
+  /// the IMU clock and, on a disconnect, the power.
   private func setConnected(_ connected: Bool) {
     isLogicalControllerConnected = connected
     pendingConnectionStateChange = connected ? .connected : .disconnected
@@ -239,6 +281,7 @@ extension SteamTritonDriver {
     if !connected { storedPower = nil }
   }
 
+  /// The hat direction of the D-pad bits of `buttons`.
   private static func hat(_ buttons: UInt32) -> HatDirection {
     let up = buttons & dpadUp != 0
     let down = buttons & dpadDown != 0
@@ -269,6 +312,7 @@ extension SteamTritonDriver {
     return StickPosition(x: max(-1, min(1, rawX)), y: max(-1, min(1, rawY)))
   }
 
+  /// The vector of three signed 16-bit values at `offset`, multiplied by `scale`.
   private func vector(_ bytes: [UInt8], _ offset: Int, scale: Double) -> ControllerMotionVector {
     ControllerMotionVector(
       x: Double(s16(bytes, offset)) * scale,
@@ -277,10 +321,12 @@ extension SteamTritonDriver {
     )
   }
 
+  /// The little-endian unsigned 16-bit value at `offset`.
   private func u16(_ bytes: [UInt8], _ offset: Int) -> UInt16 {
     UInt16(bytes[offset]) | (UInt16(bytes[offset + 1]) << 8)
   }
 
+  /// The little-endian signed 16-bit value at `offset`.
   private func s16(_ bytes: [UInt8], _ offset: Int) -> Int16 {
     Int16(bitPattern: u16(bytes, offset))
   }

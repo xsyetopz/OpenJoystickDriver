@@ -489,7 +489,7 @@ expected_dependencies = [] if local_swifterkit else [
     {
         "identity": "swifterkit",
         "location": "https://github.com/xsyetopz/SwifterKit.git",
-        "requirement": {"range": [{"lowerBound": "0.3.0", "upperBound": "1.0.0"}]},
+        "requirement": {"range": [{"lowerBound": "0.4.1", "upperBound": "1.0.0"}]},
     },
 ]
 expected_dependencies += [

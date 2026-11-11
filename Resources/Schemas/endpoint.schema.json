@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/endpoint.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/endpoint.schema.json",
   "title": "OpenJoystickDriver endpoint protocol",
-  "description": "One JSON object per line on the endpoint socket, or per text message on the WebSocket. Every line except a watch line carries apiVersion and kind. A client sends Hello, waits for Welcome, then sends Subscription or FeedRequest. After Subscription the service sends watch lines, {type, object}, identical to 'ojd controller watch --all --json'; after FeedRequest and FeedSession the client sends Frame lines, and KeepAlive lines while it has no frame to send, and a Drain line to learn when its frames have played, which the service answers with Drained; the service also sends the host's RumbleCommand lines. A Status line with status Failure is the last line before the service closes the connection. A line that is not a JSON object is answered with Status E1003. For any other line the service reads the header first: a line without apiVersion or kind is answered with E1011, another apiVersion with E1009, and an unknown kind, or one that is not accepted at that point, with E1010; each of these carries details.supportedAPIVersions.",
+  "description": "One line of the endpoint protocol.",
   "oneOf": [
     {
       "$ref": "#/$defs/clientLine"
@@ -22,6 +22,15 @@
         },
         {
           "$ref": "#/$defs/feedRequest"
+        },
+        {
+          "$ref": "#/$defs/profileRequest"
+        },
+        {
+          "$ref": "#/$defs/modListRequest"
+        },
+        {
+          "$ref": "#/$defs/outputRequest"
         },
         {
           "$ref": "#/$defs/frame"
@@ -44,6 +53,21 @@
         },
         {
           "$ref": "#/$defs/error"
+        },
+        {
+          "$ref": "#/$defs/requestFailure"
+        },
+        {
+          "$ref": "#/$defs/profileResult"
+        },
+        {
+          "$ref": "#/$defs/mods"
+        },
+        {
+          "$ref": "#/$defs/profiles"
+        },
+        {
+          "$ref": "#/$defs/outputResult"
         },
         {
           "$ref": "cli-output.schema.json#/$defs/sharedControllerWatchEvent"
@@ -80,17 +104,17 @@
           "items": {
             "$ref": "access-grants.schema.json#/$defs/scope"
           },
-          "description": "The scopes the client needs; each must be granted."
+          "description": "The scopes the client needs."
         },
         "tokenName": {
           "type": "string",
           "pattern": "^[A-Za-z0-9._-]{1,64}$",
-          "description": "The name of a token from 'ojd access grant --token'; required on the WebSocket. A client with a token is not checked by its signature."
+          "description": "The name of the token that the client presents."
         },
         "proof": {
           "type": "string",
           "pattern": "^[0-9a-f]{64}$",
-          "description": "The lowercase hex HMAC-SHA256, keyed with the SHA-256 of the token, of four lines that each end with a newline: 'OpenJoystickDriver endpoint hello 1', the challenge's nonce, the page's origin, and the WebSocket's port. On the socket, the origin and port lines are empty."
+          "description": "The lowercase hex HMAC-SHA256 proof of the token, keyed with the SHA-256 of the token."
         }
       },
       "if": {
@@ -115,7 +139,7 @@
         "nonce": {
           "type": "string",
           "pattern": "^[A-Za-z0-9_-]{43}$",
-          "description": "32 random bytes in unpadded base64url, new for each connection."
+          "description": "Random bytes in unpadded base64url, new for each connection."
         }
       }
     },
@@ -156,11 +180,23 @@
           "const": "Subscription"
         },
         "stream": {
-          "const": "Controllers"
+          "enum": ["Controllers", "Profiles", "Mods"]
         },
         "output": {
           "type": "boolean",
-          "description": "Adds the virtual gamepad's values to the objects of the watch lines. Defaults to false."
+          "description": "Whether the watch lines add the virtual gamepad's values."
+        }
+      },
+      "if": {
+        "properties": {
+          "stream": {
+            "const": "Controllers"
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "required": ["output"]
         }
       }
     },
@@ -168,7 +204,7 @@
       "type": "object",
       "required": ["apiVersion", "as", "kind"],
       "additionalProperties": false,
-      "description": "Publishes a virtual gamepad that the connection drives; needs the control scope. Closing the connection removes the gamepad.",
+      "description": "A request to publish a virtual gamepad that the connection drives.",
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/apiVersion"
@@ -178,6 +214,388 @@
         },
         "as": {
           "$ref": "#/$defs/persona"
+        }
+      }
+    },
+    "modListRequest": {
+      "type": "object",
+      "required": ["apiVersion", "kind"],
+      "additionalProperties": false,
+      "description": "A request, with the read scope, for the installed mod packages.",
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "kind": {
+          "const": "ModList"
+        }
+      }
+    },
+    "outputRequest": {
+      "type": "object",
+      "required": ["action", "apiVersion", "controller", "kind"],
+      "additionalProperties": false,
+      "description": "A request, with the control scope, to rumble, set the player indicator, or set the light of a controller.",
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "kind": {
+          "const": "OutputRequest"
+        },
+        "controller": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The port key, the session token, or the vendor and product ID of one connected controller."
+        },
+        "action": {
+          "enum": ["Rumble", "Player", "Light"]
+        },
+        "left": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "The intensity of the left main motor."
+        },
+        "right": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "The intensity of the right main motor."
+        },
+        "leftTrigger": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "The intensity of the left trigger motor."
+        },
+        "rightTrigger": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "The intensity of the right trigger motor."
+        },
+        "duration": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 5,
+          "description": "The seconds that the motors run; 0.45 when absent."
+        },
+        "player": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4,
+          "description": "The player number from 1 to 4, or 0 for none."
+        },
+        "color": {
+          "type": "string",
+          "pattern": "^#?[0-9A-Fa-f]{6}$",
+          "description": "The lightbar color as six hexadecimal digits."
+        },
+        "brightness": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "The LED brightness."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "Rumble"
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["player"]
+                },
+                {
+                  "required": ["color"]
+                },
+                {
+                  "required": ["brightness"]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "Player"
+              }
+            }
+          },
+          "then": {
+            "required": ["player"],
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["left"]
+                },
+                {
+                  "required": ["right"]
+                },
+                {
+                  "required": ["leftTrigger"]
+                },
+                {
+                  "required": ["rightTrigger"]
+                },
+                {
+                  "required": ["duration"]
+                },
+                {
+                  "required": ["color"]
+                },
+                {
+                  "required": ["brightness"]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "Light"
+              }
+            }
+          },
+          "then": {
+            "anyOf": [
+              {
+                "required": ["color"]
+              },
+              {
+                "required": ["brightness"]
+              }
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": ["left"]
+                },
+                {
+                  "required": ["right"]
+                },
+                {
+                  "required": ["leftTrigger"]
+                },
+                {
+                  "required": ["rightTrigger"]
+                },
+                {
+                  "required": ["duration"]
+                },
+                {
+                  "required": ["player"]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "outputResult": {
+      "description": "The answer to an output request: what the controller did with each command.",
+      "allOf": [
+        {
+          "$ref": "cli-output.schema.json#/$defs/sharedControllerOutput"
+        },
+        {
+          "required": ["apiVersion", "kind"],
+          "properties": {
+            "kind": {
+              "const": "OutputResult"
+            }
+          }
+        }
+      ]
+    },
+    "mods": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "mods"],
+      "additionalProperties": false,
+      "description": "Every installed package in name order, sent as an answer or after a change.",
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "kind": {
+          "const": "Mods"
+        },
+        "mods": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["files", "name"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": "string"
+              },
+              "author": {
+                "type": "string"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "problem": {
+                "type": "string",
+                "description": "Why the package is not used; absent when it is used."
+              }
+            }
+          }
+        }
+      }
+    },
+    "profileRequest": {
+      "type": "object",
+      "required": ["action", "apiVersion", "kind", "profile"],
+      "additionalProperties": false,
+      "description": "A request, with the control scope, to activate, deactivate, or change one value of a remapping profile.",
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "kind": {
+          "const": "ProfileRequest"
+        },
+        "action": {
+          "enum": ["Activate", "Deactivate", "Set"]
+        },
+        "profile": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The UUID or the name of the profile."
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The dotted key of the profile value to set."
+        },
+        "value": {
+          "description": "The value to set; null removes a member."
+        }
+      },
+      "if": {
+        "properties": {
+          "action": {
+            "const": "Set"
+          }
+        }
+      },
+      "then": {
+        "required": ["key", "value"]
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": ["key"]
+            },
+            {
+              "required": ["value"]
+            }
+          ]
+        }
+      }
+    },
+    "profileResult": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "profile"],
+      "additionalProperties": false,
+      "description": "The answer to ProfileRequest: the profile as the service reports it afterward.",
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "kind": {
+          "const": "ProfileResult"
+        },
+        "profile": {
+          "type": "object",
+          "required": ["id", "isActive", "model", "name"],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "name": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string",
+              "description": "VVVV:PPPP of the controller model."
+            },
+            "isActive": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "profiles": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "profiles"],
+      "additionalProperties": false,
+      "description": "Every saved profile, sent at once and again after each change.",
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "kind": {
+          "const": "Profiles"
+        },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/profileResult/properties/profile"
+          }
+        }
+      }
+    },
+    "requestFailure": {
+      "type": "object",
+      "required": ["apiVersion", "code", "kind", "message", "status"],
+      "additionalProperties": false,
+      "description": "A Status line that refuses one request and leaves the connection open.",
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "kind": {
+          "const": "Status"
+        },
+        "status": {
+          "const": "Failure"
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^E[0-9]{4}$",
+          "not": {
+            "$ref": "#/$defs/error/properties/code"
+          }
+        },
+        "message": {
+          "type": "string",
+          "description": "English text for logs; clients branch on code."
         }
       }
     },
@@ -206,7 +624,7 @@
       "type": "object",
       "required": ["apiVersion", "kind"],
       "additionalProperties": false,
-      "description": "One input frame after FeedSession, as in 'ojd virtual feed', which takes the same line without apiVersion and kind. Missing controls are neutral. The service shows frames in order, each for at least 8 ms; it stops reading while 256 frames wait. Closing the connection removes the virtual gamepad at once and drops the frames that have not played, unlike 'ojd virtual feed', so a client stays connected until its last frame has played.",
+      "description": "One input frame for the virtual gamepad.",
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/apiVersion"
@@ -231,12 +649,12 @@
         "axes": {
           "type": "object",
           "propertyNames": {
-            "$ref": "vocabulary.schema.json#/$defs/axis"
+            "$ref": "vocabulary.schema.json#/$defs/gamepadAxis"
           },
           "additionalProperties": {
             "type": "number"
           },
-          "description": "Sticks run from -1 to 1 with positive Y down; triggers run from 0 to 1. Values out of range are clamped."
+          "description": "The axis values: sticks from -1 to 1 and triggers from 0 to 1."
         },
         "holdMilliseconds": {
           "type": "integer",
@@ -250,7 +668,7 @@
       "type": "object",
       "required": ["apiVersion", "kind"],
       "additionalProperties": false,
-      "description": "Accepted after FeedSession. It resets the 2-second idle timeout of the feed and changes nothing else: the service sends no reply and the virtual gamepad keeps its state. Before FeedSession it is answered with E1010.",
+      "description": "A line that keeps a feed from going idle.",
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/apiVersion"
@@ -264,7 +682,7 @@
       "type": "object",
       "required": ["apiVersion", "kind"],
       "additionalProperties": false,
-      "description": "Accepted after FeedSession. It asks the service to answer Drained once every Frame sent before it has played, the last one for its full time. It counts as activity for the 2-second idle timeout, and the frames that wait keep the feed from going idle. The service reads no line while it waits. Before FeedSession it is answered with E1010.",
+      "description": "A request for an answer once every frame sent before it has played.",
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/apiVersion"
@@ -278,7 +696,7 @@
       "type": "object",
       "required": ["apiVersion", "kind"],
       "additionalProperties": false,
-      "description": "The answer to Drain: every Frame sent before it has played, the last one for its full time. Closing the connection after it drops no frame.",
+      "description": "The answer to a drain: every frame sent before it has played.",
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/apiVersion"
@@ -304,7 +722,7 @@
           "const": "Failure"
         },
         "code": {
-          "description": "A stable E#### code from Resources/ErrorCodes.json; ./Scripts/ojd errors regenerate keeps the enum equal to the active endpoint codes.",
+          "description": "A stable endpoint error code.",
           "enum": [
             "E1001",
             "E1002",
@@ -334,7 +752,7 @@
               "items": {
                 "$ref": "#/$defs/apiVersion"
               },
-              "description": "The apiVersion values the service speaks; only with E1009, E1010 and E1011."
+              "description": "The API versions the service speaks."
             }
           }
         }

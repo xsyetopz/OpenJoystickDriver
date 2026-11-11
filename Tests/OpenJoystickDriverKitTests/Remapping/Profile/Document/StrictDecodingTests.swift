@@ -41,8 +41,23 @@ struct RemappingProfileStrictDecodingTests {
     #expect(throws: DecodingError.self) {
       try decoder.decode(
         RemappingApplicationScope.self,
-        from: Data(#"{"type":"Global","appID":"com.example.app"}"#.utf8)
+        from: Data(#"{"type":"Global","appIDs":["com.example.app"]}"#.utf8)
       )
+    }
+  }
+
+  @Test
+  func anApplicationScopeWithAppIDIsRefusedByName() {
+    do {
+      _ = try JSONDecoder().decode(
+        RemappingApplicationScope.self,
+        from: Data(#"{"type":"Application","appID":"com.example.app"}"#.utf8)
+      )
+      Issue.record("appID was accepted")
+    } catch DecodingError.dataCorrupted(let context) {
+      #expect(context.debugDescription.contains("appID is not a key; use appIDs"))
+    } catch {
+      Issue.record("\(error)")
     }
   }
 
@@ -58,7 +73,7 @@ struct RemappingProfileStrictDecodingTests {
       id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
       name: "Strict",
       device: RemappingDeviceScope(vendorID: 1, productID: 2),
-      applicationScope: .application(appID: "com.example.app"),
+      applicationScope: .application(appIDs: ["com.example.app"]),
       outputPolicy: RemappingOutputPolicy(virtualGamepad: .mapped),
       gyroOutput: RemappingGyroOutput(mode: .mouse),
       stickMappings: [RemappingStickMapping(source: .right, mode: .flick)],

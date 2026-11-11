@@ -4,16 +4,24 @@
 
   /// The menus ``MainMenuRenderer`` built, with the ones AppKit tracks by role.
   struct RenderedMainMenu {
+    /// The menu bar.
     let menu: NSMenu
+    /// The Services submenu, which macOS fills.
     let servicesMenu: NSMenu
+    /// The Window menu.
     let windowMenu: NSMenu
+    /// The Help menu.
     let helpMenu: NSMenu
   }
 
-  /// Renders ``MainMenuModel`` to an `NSMenu`. Items that act through the responder chain keep a
-  /// nil target; every other item targets the coordinator, which performs the action by item id.
+  /// Renders ``MainMenuModel`` to an `NSMenu`.
+  ///
+  /// Items that act through the responder chain keep a nil target; every other item targets the
+  /// coordinator, which performs the action by item id.
   @MainActor
   enum MainMenuRenderer {
+    /// Returns the menus built from ``MainMenuModel``; `target` performs the actions that do not go
+    /// through the responder chain.
     static func render(target: MenuBarCoordinator) -> RenderedMainMenu {
       let appName = OJDLocalized.string("term.app.name")
       let menu = NSMenu(title: appName)
@@ -66,11 +74,14 @@
       menuItem.setAccessibilityIdentifier(id)
     }
 
+    /// Returns the localized title for `key`, with the app name filled in when the text has a
+    /// placeholder.
     static func title(_ key: String, appName: String) -> String {
       let text = OJDLocalized.string(key)
       return text.contains("%@") ? String(format: text, appName) : text
     }
 
+    /// Returns the menu item for `item`, attached as ``routing(for:)`` says.
     private static func makeItem(
       _ item: MainMenuItem,
       appName: String,
@@ -105,14 +116,19 @@
     /// How a menu item is attached: submenu parents carry no action, so the coordinator never
     /// receives an action that only has a submenu.
     enum Routing {
+      /// The item opens the Services submenu.
       case services
+      /// The item opens a submenu that the coordinator fills with profiles.
       case profileSubmenu
+      /// The item sends the selector down the responder chain.
       case responder(Selector)
+      /// The coordinator performs the action by item id.
       case coordinator
       /// A row that shows text and has no action.
       case informational
     }
 
+    /// Returns how the item of the action is attached.
     static func routing(for action: MainMenuAction) -> Routing {
       if action == .services { return .services }
       if action == .activateProfile { return .profileSubmenu }
@@ -121,6 +137,7 @@
       return .coordinator
     }
 
+    /// Returns the AppKit modifier flags of the modifiers.
     static func modifierMask(_ modifiers: MainMenuModifiers) -> NSEvent.ModifierFlags {
       var mask: NSEvent.ModifierFlags = []
       if modifiers.contains(.command) { mask.insert(.command) }

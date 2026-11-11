@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiVersion</key>
+	<string>openjoystickdriver/v1alpha3</string>
+	<key>identity</key>
+	<dict>
+		<key>manufacturer</key>
+		<string>Microsoft</string>
+		<key>productID</key>
+		<integer>2828</integer>
+		<key>productName</key>
+		<string>Xbox Adaptive Controller</string>
+		<key>vendorID</key>
+		<integer>1118</integer>
+		<key>version</key>
+		<integer>0</integer>
+	</dict>
+	<key>kind</key>
+	<string>VirtualDevice</string>
+	<key>labels</key>
+	<string>Xbox</string>
+	<key>layout</key>
+	<string>XboxOneGIP</string>
+	<key>persona</key>
+	<string>SDLCompatible</string>
+	<key>transport</key>
+	<string>USB</string>
+	<key>worksWithDefaultSDLHints</key>
+	<true/>
+</dict>
+</plist>

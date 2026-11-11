@@ -2,17 +2,23 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension RemappingRoutingCore {
+  /// Returns the status of the route of `identifier`, or nil when it has no route.
   func status(for identifier: LogicalControllerID) -> RemappingRouteStatus? {
     guard let route = routes[identifier] else { return nil }
     return makeStatus(identifier: identifier, route: route)
   }
 
+  /// Returns the status of every route, in controller order.
   func statuses() -> [RemappingRouteStatus] {
     sortedIdentifiers.compactMap { identifier in
       routes[identifier].map { makeStatus(identifier: identifier, route: $0) }
     }
   }
 
+  /// Applies `proposedControls` when they are no older than the current ones, refreshes the
+  /// eligibility of every route and returns the routes and pairs.
+  ///
+  /// A failure of the refresh stays in the route statuses; this function does not throw.
   func statusSnapshot(
     applying proposedControls: RemappingRoutingControls,
     requiring permit: RemappingEmissionPermit?
@@ -44,6 +50,7 @@ extension RemappingRoutingCore {
     )
   }
 
+  /// Reconciles the eligibility of every route in `environment`.
   private func refreshEligibility(
     environment: RemappingEligibilityEnvironment,
     requiring permit: RemappingEmissionPermit?
@@ -53,6 +60,7 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Builds the status of `route`.
   private func makeStatus(
     identifier: LogicalControllerID,
     route: RemappingControllerRoute

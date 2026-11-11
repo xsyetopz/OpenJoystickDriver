@@ -9,28 +9,44 @@ import OpenJoystickDriverKit
 /// `RuntimeViewModel.applyRemappingSnapshot(_:)`.
 @MainActor
 final class ProfileLibraryModel: ObservableObject {
+  /// The model of the app's view of the service, whose exclusive operation slot the requests
+  /// claim.
   let runtime: RuntimeViewModel
 
+  /// The state of the latest request: idle, saving, or how it ended.
   @Published
   var mutationState: RuntimeMutationState = .idle
+  /// Whether a recovery of a damaged library runs.
   @Published
   var profileRecoveryInFlight = false
   /// The message of the latest failed profile request, cleared when a request succeeds.
   @Published
   var lastError: String?
+  /// The operation in flight, or nil.
   @Published
   var activeMutationOperation: RuntimeMutationOperation?
+  /// The identifier of the request in flight, or nil.
   @Published
   var activeMutationID: UUID?
+  /// The operation of the latest finished request, or nil.
   @Published
   var lastMutationOperation: RuntimeMutationOperation?
+  /// The identifier of the latest finished request, or nil.
   @Published
   var lastMutationID: UUID?
 
+  /// Creates the model on `runtime`.
   init(runtime: RuntimeViewModel) { self.runtime = runtime }
 
+  /// The service gateway of the runtime.
   private var gateway: any ApplicationServiceGateway { runtime.gateway }
 
+  /// Creates a profile through the service.
+  ///
+  /// - Parameters:
+  ///   - profile: The profile to create.
+  ///   - request: The identifier and operation of the request.
+  /// - Returns: How the request ended; a request made while another change runs is rejected.
   @discardableResult
   func createRemappingProfile(
     _ profile: RemappingProfile,
@@ -44,6 +60,15 @@ final class ProfileLibraryModel: ObservableObject {
     }
   }
 
+  /// Updates a profile through the service, which refuses the update when the stored profile no
+  /// longer equals `expectedCurrent`.
+  ///
+  /// - Parameters:
+  ///   - profile: The edited profile.
+  ///   - expectedCurrent: The stored profile that the edit started from.
+  ///   - request: The identifier and operation of the request.
+  /// - Returns: How the request ended; a stored profile that changed elsewhere ends it as a
+  ///   conflict, and a request made while another change runs is rejected.
   @discardableResult
   func updateRemappingProfile(
     _ profile: RemappingProfile,
@@ -58,6 +83,12 @@ final class ProfileLibraryModel: ObservableObject {
     }
   }
 
+  /// Imports a profile through the service.
+  ///
+  /// - Parameters:
+  ///   - profile: The profile to import.
+  ///   - request: The identifier and operation of the request.
+  /// - Returns: How the request ended; a request made while another change runs is rejected.
   @discardableResult
   func importRemappingProfile(
     _ profile: RemappingProfile,
@@ -71,6 +102,12 @@ final class ProfileLibraryModel: ObservableObject {
     }
   }
 
+  /// Deletes a profile through the service.
+  ///
+  /// - Parameters:
+  ///   - id: The identifier of the profile.
+  ///   - request: The identifier and operation of the request.
+  /// - Returns: How the request ended; a request made while another change runs is rejected.
   @discardableResult
   func deleteRemappingProfile(
     id: UUID,
@@ -83,6 +120,10 @@ final class ProfileLibraryModel: ObservableObject {
     }
   }
 
+  /// Deletes a damaged profile file through the service.
+  ///
+  /// - Parameter issueID: The identifier of the profile issue.
+  /// - Returns: The message of the failure, or nil when the file was deleted.
   func deleteDamagedRemappingProfile(issueID: UUID) async -> String? {
     let gateway = self.gateway
     return await performProfileRecovery {
@@ -90,6 +131,10 @@ final class ProfileLibraryModel: ObservableObject {
     }
   }
 
+  /// Resets the profile library through the service, which recovers an unusable library.
+  ///
+  /// - Parameter issueID: The identifier of the profile issue.
+  /// - Returns: The message of the failure, or nil when the library was reset.
   func resetRemappingProfileLibrary(issueID: UUID) async -> String? {
     let gateway = self.gateway
     return await performProfileRecovery {
@@ -97,6 +142,13 @@ final class ProfileLibraryModel: ObservableObject {
     }
   }
 
+  /// Activates a profile through the service.
+  ///
+  /// - Parameters:
+  ///   - id: The identifier of the profile.
+  ///   - allowEmpty: Whether the profile may be activated when it produces no output.
+  ///   - request: The identifier and operation of the request.
+  /// - Returns: How the request ended; a request made while another change runs is rejected.
   @discardableResult
   func activateRemappingProfile(
     id: UUID,
@@ -110,6 +162,13 @@ final class ProfileLibraryModel: ObservableObject {
     }
   }
 
+  /// Deactivates the active profile of a controller model through the service.
+  ///
+  /// - Parameters:
+  ///   - vendorID: The vendor ID of the model.
+  ///   - productID: The product ID of the model.
+  ///   - request: The identifier and operation of the request.
+  /// - Returns: How the request ended; a request made while another change runs is rejected.
   @discardableResult
   func deactivateRemappingProfile(
     vendorID: UInt16,
@@ -123,6 +182,12 @@ final class ProfileLibraryModel: ObservableObject {
     }
   }
 
+  /// Deactivates a profile through the service.
+  ///
+  /// - Parameters:
+  ///   - profileID: The identifier of the profile.
+  ///   - request: The identifier and operation of the request.
+  /// - Returns: How the request ended; a request made while another change runs is rejected.
   @discardableResult
   func deactivateRemappingProfile(
     profileID: UUID,
@@ -135,6 +200,17 @@ final class ProfileLibraryModel: ObservableObject {
     }
   }
 
+  /// Runs a profile request in the runtime's exclusive operation slot and records how it ended.
+  ///
+  /// A snapshot that comes back goes to the runtime. A stored profile that changed elsewhere ends
+  /// as a conflict for `conflictProfileID`, any other error as a failure, and a slot that is taken
+  /// as a rejection.
+  ///
+  /// - Parameters:
+  ///   - mutationRequest: The identifier and operation of the request.
+  ///   - conflictProfileID: The profile that a conflict concerns, or nil.
+  ///   - request: Sends the request to the service.
+  /// - Returns: How the request ended.
   private func performMutation(
     request mutationRequest: RuntimeMutationRequest,
     conflictProfileID: UUID?,
@@ -183,6 +259,10 @@ final class ProfileLibraryModel: ObservableObject {
     }
   }
 
+  /// Runs the recovery of a damaged library once the runtime's exclusive access is free.
+  ///
+  /// - Parameter request: Sends the recovery to the service.
+  /// - Returns: The message of the failure or of a change that is in flight, or nil on success.
   private func performProfileRecovery(
     request: @escaping @Sendable () async throws -> ApplicationServiceRemappingSnapshotPayload
   ) async -> String? {
@@ -214,6 +294,10 @@ final class ProfileLibraryModel: ObservableObject {
     }
   }
 
+  /// Records that the request was refused because another change runs.
+  ///
+  /// - Parameter request: The refused request.
+  /// - Returns: The rejection with the message that an action is in progress.
   @discardableResult
   private func rejectMutation(_ request: RuntimeMutationRequest) -> RuntimeMutationResult {
     lastMutationOperation = request.operation
@@ -226,6 +310,12 @@ final class ProfileLibraryModel: ObservableObject {
     return .rejected(id: request.id, operation: request.operation, message: message)
   }
 
+  /// Validates the profile before it is sent.
+  ///
+  /// - Parameters:
+  ///   - profile: The profile to check.
+  ///   - request: The identifier and operation of the request.
+  /// - Returns: The failure, recorded as the latest request, or nil when the profile is valid.
   private func locallyValid(
     _ profile: RemappingProfile,
     request: RuntimeMutationRequest

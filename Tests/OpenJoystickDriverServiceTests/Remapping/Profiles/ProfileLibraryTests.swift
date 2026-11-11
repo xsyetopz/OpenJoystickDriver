@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverService
@@ -21,8 +22,8 @@ struct ProfileLibraryTests {
       try await library.create(profile)
       #expect(
         try libraryFiles(in: directory) == [
-          "Profiles/\(profile.id.uuidString).json": Data(
-            try RemappingProfileFileStore.encodedJSON(profile).utf8
+          "Profiles/\(profile.id.uuidString).plist": Data(
+            try RemappingProfileFileStore.encodedPlist(profile).utf8
           )
         ]
       )
@@ -215,7 +216,7 @@ struct ProfileLibraryTests {
       await #expect(throws: RemappingProfileLibraryError.profileRecoveryRequired) {
         try await library.create(makeProfile(name: "Primary"))
       }
-      #expect(try libraryFiles(in: directory) == ["ActiveProfiles.json": corrupt])
+      #expect(try libraryFiles(in: directory) == ["ActiveProfiles.plist": corrupt])
     }
   }
 
@@ -225,7 +226,7 @@ struct ProfileLibraryTests {
       let valid = makeProfile(name: "Valid")
       try await library.create(valid)
       let damagedURL = library.profileURL(UUID())
-      let damaged = Data(#"{"name":"Damaged"}"#.utf8)
+      let damaged = PropertyListFixture.bytes(json: #"{"name":"Damaged"}"#)
       try damaged.write(to: damagedURL)
 
       let restored = RemappingProfileLibrary(directory: directory)
@@ -263,7 +264,7 @@ struct ProfileLibraryTests {
       try RemappingProfileFileStore.write(
         profile,
         to: library.profilesDirectory.appendingPathComponent(
-          profile.id.uuidString.lowercased() + ".json"
+          profile.id.uuidString.lowercased() + ".plist"
         )
       )
 
@@ -280,7 +281,7 @@ struct ProfileLibraryTests {
       let damaged = makeProfile(name: "Damaged", vendorID: 1356, productID: 2508)
       let missing = makeProfile(name: "Missing", vendorID: 1406, productID: 8201)
       try await library.create(valid)
-      try Data("{}".utf8).write(to: library.profileURL(damaged.id))
+      try PropertyListFixture.bytes(json: "{}").write(to: library.profileURL(damaged.id))
       try writeSelections(
         [valid, damaged, missing].map {
           RemappingPersistedActiveProfile(model: RemappingProfileModel($0.device), profileID: $0.id)
@@ -306,7 +307,7 @@ struct ProfileLibraryTests {
         at: library.profilesDirectory,
         withIntermediateDirectories: true
       )
-      try Data("{}".utf8).write(to: library.profileURL(UUID()))
+      try PropertyListFixture.bytes(json: "{}").write(to: library.profileURL(UUID()))
       let issue = try #require(try await library.snapshot().issues.first)
       try await library.deleteDamagedProfile(issueID: issue.id)
       await #expect(throws: RemappingProfileLibraryError.profileIssueNotFound(issue.id)) {
@@ -320,7 +321,7 @@ struct ProfileLibraryTests {
     try await withLibrary { library, _ in
       try Data("not json".utf8).write(to: library.selectionsURL)
       let issue = try #require(try await library.snapshot().issues.first)
-      let replacement = Data("[]".utf8)
+      let replacement = try DocumentCoder.encode([RemappingPersistedActiveProfile]())
       try replacement.write(to: library.selectionsURL, options: .atomic)
 
       await #expect(throws: RemappingProfileLibraryError.profileIssueNotFound(issue.id)) {
@@ -335,7 +336,7 @@ struct ProfileLibraryTests {
     try await withLibrary { library, directory in
       let profile = makeProfile(name: "Primary")
       try await library.create(profile)
-      let malformed = Data(#"{"profiles":[],"schemaVersion":2}"#.utf8)
+      let malformed = PropertyListFixture.bytes(json: #"{"profiles":[],"schemaVersion":2}"#)
       try malformed.write(to: library.selectionsURL)
 
       let restored = RemappingProfileLibrary(directory: directory)
@@ -349,9 +350,12 @@ struct ProfileLibraryTests {
       let reset = try await restored.snapshot()
       #expect(reset.profiles == [profile])
       #expect(reset.issues.isEmpty)
-      #expect(try Data(contentsOf: library.selectionsURL) == Data("[]".utf8))
+      #expect(
+        try Data(contentsOf: library.selectionsURL)
+          == (try DocumentCoder.encode([RemappingPersistedActiveProfile]()))
+      )
       let backups = try libraryFiles(in: directory).filter {
-        $0.key.hasPrefix("ActiveProfiles.json.backup-")
+        $0.key.hasPrefix("ActiveProfiles.plist.backup-")
       }
       #expect(Array(backups.values) == [malformed])
     }
@@ -448,8 +452,8 @@ struct ProfileLibraryTests {
   }
 
   func writeSelections(_ selections: [RemappingPersistedActiveProfile], in directory: URL) throws {
-    try JSONEncoder().encode(selections).write(
-      to: directory.appendingPathComponent("ActiveProfiles.json")
+    try DocumentCoder.encode(selections).write(
+      to: directory.appendingPathComponent("ActiveProfiles.plist")
     )
   }
 

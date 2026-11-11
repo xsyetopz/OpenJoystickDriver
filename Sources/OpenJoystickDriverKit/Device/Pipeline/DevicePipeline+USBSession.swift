@@ -7,8 +7,10 @@ extension DevicePipeline {
   /// The session of the mode this pipeline runs; a pipeline without a record runs none.
   var recordSession: ControllerSession { binding?.record?.session ?? .none }
 
-  /// Runs the mode's vendor control transfers in the order listed, each only when its `match`
-  /// holds for `device`. A rejected transfer fails startup unless it tolerates rejection.
+  /// Runs the mode's vendor control transfers in the order listed, each only when its `match` holds
+  /// for `device`.
+  ///
+  /// A rejected transfer fails startup unless it tolerates rejection.
   func performControlTransfers(
     handle: any USBTransportSession,
     device: USBTransportDevice?,
@@ -64,16 +66,36 @@ extension DevicePipeline {
     }
   }
 
-  /// Sends the mode's shutdown packets. The session is closing, so a failed packet is logged and
-  /// the rest still go out.
+  /// Sends the mode's shutdown packets.
+  ///
+  /// The session is closing, so a failed packet is logged and the rest still go out.
   func sendUSBShutdownWrites(handle: any USBTransportSession) async {
-    for write in recordSession.shutdownWrites {
-      guard
-        case .usb(let packet, _) = write.write(
+    await sendUSBClosingWrites(
+      recordSession.shutdownWrites.map {
+        $0.write(
           defaultEndpoint: transportProfile.outputEndpoint,
           defaultTimeoutMilliseconds: Int(usbSessionDefaultTimeoutMilliseconds)
         )
-      else { continue }
+      },
+      handle: handle
+    )
+  }
+
+  /// Sends the driver's power-off packets.
+  ///
+  /// Only a deliberate stop calls this: an I/O error or an unplug closes through
+  /// `invalidateUSBHandle`, because a transient error must not turn a controller off.
+  func sendUSBPowerOffWrites(handle: any USBTransportSession) async {
+    await sendUSBClosingWrites(driver.powerOffWrites(), handle: handle)
+  }
+
+  /// Sends each raw-USB write in order; a failed write is logged and the rest still go out.
+  private func sendUSBClosingWrites(
+    _ writes: [PhysicalOutputWrite],
+    handle: any USBTransportSession
+  ) async {
+    for write in writes {
+      guard case .usb(let packet, _) = write else { continue }
       do {
         try await handle.write(
           endpoint: packet.endpoint,

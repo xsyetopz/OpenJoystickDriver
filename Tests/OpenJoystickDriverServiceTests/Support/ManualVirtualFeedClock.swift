@@ -72,7 +72,10 @@ final class ManualVirtualFeedClock: @unchecked Sendable {
     try await withTaskCancellationHandler {
       try await withCheckedThrowingContinuation {
         (continuation: CheckedContinuation<Void, Error>) in
-        enum Arrival { case due, cancelled, parked([CheckedContinuation<Void, Never>]) }
+        enum Arrival {
+          case due, cancelled
+          case parked([CheckedContinuation<Void, Never>])
+        }
         let arrival = lock.withLock { () -> Arrival in
           if cancelledEarly.remove(id) != nil { return .cancelled }
           if due <= time { return .due }

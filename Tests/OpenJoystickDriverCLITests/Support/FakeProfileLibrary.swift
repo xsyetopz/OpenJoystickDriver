@@ -11,14 +11,17 @@ final class FakeProfileLibrary: @unchecked Sendable {
   private var pairs: [ApplicationServiceJoyConPairPayload] = []
   private var issues: [ApplicationServiceRemappingProfileIssue]
   private let connected: [ApplicationServiceDeviceDescription]
+  private let postEventAccess: RemappingPostEventAccessState
 
   /// `connected` devices get a route to the active profile of their model, as the service reports.
   init(
     _ profiles: [RemappingProfile],
     active: Set<UUID> = [],
     connected: [ApplicationServiceDeviceDescription] = [],
-    issues: [ApplicationServiceRemappingProfileIssue] = []
+    issues: [ApplicationServiceRemappingProfileIssue] = [],
+    postEventAccess: RemappingPostEventAccessState = .granted
   ) {
+    self.postEventAccess = postEventAccess
     self.profiles = profiles
     self.active = active
     self.issues = issues
@@ -77,7 +80,7 @@ final class FakeProfileLibrary: @unchecked Sendable {
         routes: routes,
         joyConPairs: pairs,
         profileIssues: issues,
-        postEventAccess: .granted
+        postEventAccess: postEventAccess
       )
     }
   }

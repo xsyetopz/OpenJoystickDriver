@@ -1,6 +1,8 @@
-/// What OJD still sends to a controller macOS serves natively: only what macOS leaves undone.
-/// The protocol family's default covers what its driver does on its own, and the controller
-/// record adds its output templates. Every other write is refused.
+/// The output that OJD still sends to a controller that macOS serves natively.
+///
+/// That is only what macOS leaves undone: the protocol family's default covers what its driver does
+/// on its own, and the controller record adds its output templates. The write executors refuse
+/// every other write.
 struct MacOSOwnedOutput: Equatable, Sendable {
   /// Lighting OJD drives because macOS does not.
   let lightingFeatures: Set<PhysicalLightingFeature>
@@ -8,21 +10,20 @@ struct MacOSOwnedOutput: Equatable, Sendable {
   let drivesRumble: Bool
   /// The only reports the write executors send, matched by kind, report ID and length.
   let reports: Set<ControllerTemplateReport>
-  /// Whether OJD sets a player indicator after the controller's first input report. The manager
-  /// picks the slot per controller, so two controllers of one model never share it.
+  /// Whether OJD sets a player indicator after the controller's first input report.
+  ///
+  /// The manager picks the slot per controller, so two controllers of one model never share it.
   let setsStartupPlayerIndicator: Bool
   /// Whether OJD makes the driver's startup feature reads, which macOS does not.
   let readsStartupFeatures: Bool
-  /// Why macOS leaves this output undone, in the description's words; nil when it states none.
-  let rationale: String?
 
+  /// The allowance that permits no output.
   static let none = Self(
     lightingFeatures: [],
     drivesRumble: false,
     reports: [],
     setsStartupPlayerIndicator: false,
-    readsStartupFeatures: false,
-    rationale: nil
+    readsStartupFeatures: false
   )
 
   /// The family default with the record's rumble template added.
@@ -34,8 +35,7 @@ struct MacOSOwnedOutput: Equatable, Sendable {
       drivesRumble: true,
       reports: family.reports.union([report]),
       setsStartupPlayerIndicator: family.setsStartupPlayerIndicator,
-      readsStartupFeatures: family.readsStartupFeatures,
-      rationale: family.rationale
+      readsStartupFeatures: family.readsStartupFeatures
     )
   }
 

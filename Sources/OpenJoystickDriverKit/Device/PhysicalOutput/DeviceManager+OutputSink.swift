@@ -2,8 +2,12 @@ import Foundation
 
 /// The physical-output path: the manager takes output commands for a connected controller.
 extension DeviceManager: OutputSink {
+  /// The destination that this sink delivers to: the physical output of a controller.
   nonisolated public var destination: OutputDestination { .physicalOutput }
 
+  /// Sends a controller output command to the connected controller.
+  ///
+  /// - Throws: `StreamBoundaryError.rejected` when the controller does not deliver the command.
   public func consume(
     _ command: ControllerOutputCommand,
     for controller: LogicalControllerID
@@ -16,6 +20,9 @@ extension DeviceManager: OutputSink {
     }
   }
 
+  /// Applies a mapping output claim to the controller.
+  ///
+  /// - Throws: `StreamBoundaryError.rejected` when the claim is not applied.
   public func consume(_ claim: MappingOutputClaim, for controller: LogicalControllerID) async throws
   {
     let applied = await setMappingPhysicalOutput(
@@ -29,6 +36,9 @@ extension DeviceManager: OutputSink {
     }
   }
 
+  /// Releases every mapping output of the controller.
+  ///
+  /// - Throws: `StreamBoundaryError.rejected` when the outputs are not released.
   public func consume(
     _ release: MappingOutputRelease,
     for controller: LogicalControllerID
@@ -38,6 +48,9 @@ extension DeviceManager: OutputSink {
     }
   }
 
+  /// Applies the profile color claim to the controller.
+  ///
+  /// - Throws: `StreamBoundaryError.rejected` when the color is not applied.
   public func consume(_ color: ProfileColorClaim, for controller: LogicalControllerID) async throws
   {
     guard await setProfilePhysicalColor(color.color, for: controller) else {

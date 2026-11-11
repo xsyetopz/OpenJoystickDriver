@@ -3,7 +3,9 @@ import Darwin
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd service` command group: start or stop the service, or wait until it accepts requests.
 struct ServiceCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "service",
     abstract: CLILocalized.text(
@@ -12,19 +14,25 @@ struct ServiceCommand: AsyncParsableCommand {
     subcommands: [ServiceStartCommand.self, ServiceStopCommand.self, ServiceWaitCommand.self]
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
 /// The `--json` result of the `service` commands.
 struct ServiceStateResult: Encodable {
+  /// Whether the service accepts requests.
   enum State: String, Encodable {
+    /// The service accepts requests.
     case running = "Running"
+    /// The service does not run.
     case stopped = "Stopped"
   }
 
+  /// The state of the service.
   let state: State
 
+  /// Prints `state` as JSON, as a `--plain` row, or `message` as a success line.
   static func print(_ state: State, message: @autoclosure () -> String) throws {
     switch CLIContext.current.format {
     case .json: try CLIOutput.json(Self(state: state))
@@ -34,7 +42,12 @@ struct ServiceStateResult: Encodable {
   }
 }
 
+/// The `ojd service start` command: opens the app in the background and waits until its service
+/// accepts requests.
+///
+/// It does nothing when the service already runs.
 struct ServiceStartCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "start",
     abstract: CLILocalized.text(
@@ -42,9 +55,11 @@ struct ServiceStartCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       if ServiceConnection.processIdentifier() == nil {
@@ -58,6 +73,9 @@ struct ServiceStartCommand: AsyncParsableCommand {
     }
   }
 
+  /// Opens the app bundle in the background.
+  ///
+  /// - Throws: ``CLIFailure`` when the app bundle cannot be found or opened.
   private static func launchApplication() throws {
     guard let bundle = applicationBundleURL() else {
       throw CLIFailure(
@@ -84,7 +102,9 @@ struct ServiceStartCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd service stop` command: stops the service and waits until it exits.
 struct ServiceStopCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "stop",
     abstract: CLILocalized.text(
@@ -92,9 +112,11 @@ struct ServiceStopCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       if let processIdentifier = ServiceConnection.processIdentifier() {
@@ -116,6 +138,9 @@ struct ServiceStopCommand: AsyncParsableCommand {
     }
   }
 
+  /// Waits until no service answers on the socket.
+  ///
+  /// - Throws: ``CLIFailure`` when `timeout` seconds pass first.
   private static func waitUntilStopped(timeout: Double) async throws {
     let deadline = Date().addingTimeInterval(timeout)
     while ServiceConnection.processIdentifier() != nil {
@@ -133,7 +158,11 @@ struct ServiceStopCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd service wait` command: waits until the service accepts requests.
+///
+/// It exits with code 69 when the time runs out.
 struct ServiceWaitCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "wait",
     abstract: CLILocalized.text(
@@ -141,9 +170,11 @@ struct ServiceWaitCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       try await Self.waitUntilReady(timeout: CLIContext.current.waitTimeout)

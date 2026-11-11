@@ -1,5 +1,5 @@
-import OpenJoystickDriverTestSupport
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -96,7 +96,7 @@ struct HIDLifecycleWriteTests {
       locationID: 302,
       rejecting: [activation[0]]
     )
-    #expect(await started.backend.recordedFeatureReports() == [activation[1]])
+    #expect(await started.backend.recordedFeatureReports() == Array(activation.dropFirst()))
     await started.manager.stop()
   }
 

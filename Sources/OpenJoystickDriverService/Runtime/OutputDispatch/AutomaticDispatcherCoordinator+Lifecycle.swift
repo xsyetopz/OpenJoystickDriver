@@ -3,6 +3,9 @@ import OpenJoystickDriverKit
 
 extension AutomaticDispatcherCoordinator {
 
+  /// Applies the current suppression value, retiring every backend when it is on.
+  ///
+  /// Turning suppression off publishes again for each controller that has a session and a context.
   func synchronizeSuppression(_ currentValue: @Sendable () -> Bool) async {
     guard !closed else { return }
     let wasSuppressed = suppressed
@@ -14,7 +17,7 @@ extension AutomaticDispatcherCoordinator {
       for identifier in identifiers {
         guard let entry = entries[identifier] else { continue }
         entries[identifier]?.publicationGeneration &+= 1
-        entries[identifier]?.tasks.values.forEach { $0.task.cancel() }
+        for pending in entry.tasks.values { pending.task.cancel() }
         entries[identifier]?.pending = nil
         guard let installed = entry.installed else { continue }
         entries[identifier]?.installed = nil
@@ -73,6 +76,7 @@ extension AutomaticDispatcherCoordinator {
     }
   }
 
+  /// Clears the retiring slot and publishes again when the controller was left without a backend.
   private func retirementFinished(identifier: LogicalControllerID, slot: AutomaticBackendSlot) async
   {
     guard entries[identifier]?.retiring === slot else { return }
@@ -91,6 +95,7 @@ extension AutomaticDispatcherCoordinator {
     } catch { return }
   }
 
+  /// Returns the profile that each installed backend publishes.
   func installedTargets() -> [LogicalControllerID: VirtualHIDProfileID] {
     entries.reduce(into: [:]) { targets, element in
       guard element.value.installed != nil, let target = element.value.target else { return }
@@ -98,16 +103,19 @@ extension AutomaticDispatcherCoordinator {
     }
   }
 
+  /// Records that a send to the virtual gamepad of `controller` was attempted.
   func recordPublicationAttempt(for controller: LogicalControllerID) {
     entries[controller]?.lastAttemptedSend = DispatchTime.now().uptimeNanoseconds
   }
 
+  /// Records that a send for `controller` completed, which clears its failure and ends recovery.
   func recordPublicationCompletion(for controller: LogicalControllerID) {
     entries[controller]?.lastCompletedSend = DispatchTime.now().uptimeNanoseconds
     entries[controller]?.lastFailure = nil
     entries[controller]?.recoveryState = "idle"
   }
 
+  /// Returns one sorted status line per controller that has a target.
   func publicationDiagnostics() -> [String] {
     entries.compactMap { identifier, entry in
       guard let target = entry.target ?? entry.context?.target else { return nil }
@@ -170,6 +178,7 @@ extension AutomaticDispatcherCoordinator {
     }
   }
 
+  /// Applies the current remapping suppression value to every installed backend that supports it.
   func synchronizeRemappingSuppression(_ currentValue: @Sendable () -> Bool) async {
     guard !closed else { return }
     remappingSuppressed = currentValue()
@@ -188,9 +197,10 @@ extension AutomaticDispatcherCoordinator {
     }
   }
 
-  /// Records whether another client holds the controller's input. Holding retires the live
-  /// publication, whose virtual device could never move; the physical session stays, so the next
-  /// activation or input after the release publishes again.
+  /// Records whether another client holds the controller's input.
+  ///
+  /// Holding retires the live publication, whose virtual device could never move; the physical
+  /// session stays, so the next activation or input after the release publishes again.
   func setHeldByAnotherClient(_ held: Bool, for controller: LogicalControllerID) async {
     guard !closed else { return }
     var entry = entries[controller] ?? Entry()
@@ -201,7 +211,7 @@ extension AutomaticDispatcherCoordinator {
       return
     }
     entry.publicationGeneration &+= 1
-    entry.tasks.values.forEach { $0.task.cancel() }
+    for pending in entry.tasks.values { pending.task.cancel() }
     entry.pending = nil
     let installed = entry.installed
     entry.installed = nil
@@ -221,6 +231,7 @@ extension AutomaticDispatcherCoordinator {
   }
 
   /// A failed publication is retired before an eligible replacement is considered.
+  ///
   /// The physical session remains valid, so a later report can recover without a mode change.
   func recoverPublication(for controller: LogicalControllerID, failure: any Error) async {
     guard !closed, !suppressed, var entry = entries[controller], entry.physicalSessionActive,
@@ -234,7 +245,7 @@ extension AutomaticDispatcherCoordinator {
     entry.installedToken = nil
     entry.target = nil
     entry.retiring = old
-    entry.tasks.values.forEach { $0.task.cancel() }
+    for pending in entry.tasks.values { pending.task.cancel() }
     entry.pending = nil
     entries[controller] = entry
     if let old, !(await old.retireAndWait()) {
@@ -249,6 +260,7 @@ extension AutomaticDispatcherCoordinator {
     beginRecoveryRetry(controller, generation: entry.publicationGeneration)
   }
 
+  /// Starts the retry of `controller` once the retirement of `slot` has finished.
   private func resumeRecovery(
     _ controller: LogicalControllerID,
     after slot: AutomaticBackendSlot,
@@ -260,6 +272,7 @@ extension AutomaticDispatcherCoordinator {
     beginRecoveryRetry(controller, generation: generation)
   }
 
+  /// Gates the retry of `controller` for the recovery delay, unless `generation` is stale.
   private func beginRecoveryRetry(_ controller: LogicalControllerID, generation: UInt64) {
     guard entries[controller]?.publicationGeneration == generation else { return }
     entries[controller]?.retiring = nil
@@ -269,6 +282,7 @@ extension AutomaticDispatcherCoordinator {
     scheduleRecoveryRetry(controller, token: token)
   }
 
+  /// Tries to publish `controller` again; a failure records its text and schedules another retry.
   private func retryPublication(_ controller: LogicalControllerID, token: UUID) async {
     guard !closed, !suppressed, let entry = entries[controller], entry.physicalSessionActive,
       entry.recoveryToken == token, let context = entry.context
@@ -291,6 +305,7 @@ extension AutomaticDispatcherCoordinator {
     }
   }
 
+  /// Retries the publication of `token` after the recovery delay.
   private func scheduleRecoveryRetry(_ controller: LogicalControllerID, token: UUID) {
     Task { [weak self] in
       guard let self else { return }
@@ -299,6 +314,7 @@ extension AutomaticDispatcherCoordinator {
     }
   }
 
+  /// Ends the physical session of `controller`, cancelling its work and retiring its backend.
   func stop(_ controller: LogicalControllerID) async {
     var entry = entries[controller] ?? Entry()
     entry.sessionGeneration &+= 1
@@ -311,7 +327,7 @@ extension AutomaticDispatcherCoordinator {
     entry.pending = nil
     entry.retiring = installed
     entries[controller] = entry
-    tasks.forEach { $0.cancel() }
+    for task in tasks { task.cancel() }
     let retired = await installed?.retireAndWait() ?? true
     for task in tasks { _ = await task.result }
     if retired, entries[controller]?.sessionGeneration == entry.sessionGeneration {
@@ -321,6 +337,7 @@ extension AutomaticDispatcherCoordinator {
     }
   }
 
+  /// Closes the coordinator, retiring every installed backend; later callers wait for the first.
   func close() async {
     if closed {
       if !closeFinished { await withCheckedContinuation { closeWaiters.append($0) } }
@@ -335,13 +352,13 @@ extension AutomaticDispatcherCoordinator {
       entries[identifier]?.installed = nil
       entries[identifier]?.pending = nil
     }
-    tasks.forEach { $0.cancel() }
+    for task in tasks { task.cancel() }
     for slot in slots { _ = await slot.retireAndWait() }
     for task in tasks { _ = await task.result }
     entries.removeAll()
     closeFinished = true
     let waiters = closeWaiters
     closeWaiters.removeAll()
-    waiters.forEach { $0.resume() }
+    for waiter in waiters { waiter.resume() }
   }
 }

@@ -65,8 +65,8 @@ struct ExplainCommandTests {
       .deletingLastPathComponent()  // OpenJoystickDriverCLITests
       .deletingLastPathComponent()  // Tests
       .deletingLastPathComponent()  // repository root
-      .appendingPathComponent("Resources/ErrorCodes.json")
-    let catalog = try JSONDecoder().decode(Catalog.self, from: Data(contentsOf: url))
+      .appendingPathComponent("Resources/ErrorCodes.plist")
+    let catalog = try PropertyListDecoder().decode(Catalog.self, from: Data(contentsOf: url))
     let documented = Dictionary(
       uniqueKeysWithValues: catalog.codes.compactMap { entry in
         entry.exitCode.map { (entry.code, $0) }

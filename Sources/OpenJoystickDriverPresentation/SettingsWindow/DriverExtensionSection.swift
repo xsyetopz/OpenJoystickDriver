@@ -4,13 +4,18 @@
   import SwiftUI
 
   /// The Xbox USB driver extension section of Settings > Advanced: its state, and Uninstall while
-  /// it is active. Problems with the driver show in the main window's problem banner.
+  /// it is active.
+  ///
+  /// Problems with the driver show in the main window's problem banner.
   struct DriverExtensionSection: View {
+    /// The driver extension state and its uninstall action.
     @ObservedObject
     var runtime: RuntimeViewModel
+    /// Whether the Uninstall confirmation alert is open.
     @State
     private var confirmsUninstall = false
 
+    /// The driver extension status and its uninstall button, with the confirmation.
     var body: some View {
       Section(OJDLocalized.string("ui.setup.driverTitle")) {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -35,14 +40,20 @@
       }
     }
 
+    /// The localization key of the sentence that describes the driver extension state.
     private var detailKey: String {
       switch runtime.systemExtensionSetupState {
       case .checking: return "ui.setup.checkingDetail"
       case .active: return "ui.setup.activeDetail"
       case .missingEmbedded: return "ui.setup.missingDetail"
       case .invalid: return "ui.setup.invalidDetail"
-      case .awaitingApproval: return "platform.macos.ui.setup.approvalDetail"
-      case .needsActivation, .replacementNeeded, .failed: return "ui.setup.repairDetail"
+      case .unavailable: return "ui.setup.unavailableDetail"
+      case .running: return "ui.setup.runningDetail"
+      case .needsApproval: return "platform.macos.ui.setup.approvalDetail"
+      case .cancelled: return "ui.setup.cancelledDetail"
+      case .timedOut: return "ui.setup.timedOutDetail"
+      case .failed: return "ui.setup.failedDetail"
+      case .needsActivation, .replacementNeeded: return "ui.setup.repairDetail"
       }
     }
   }

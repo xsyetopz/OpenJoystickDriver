@@ -1,14 +1,18 @@
-/// One HID report a controller record names by kind, report ID and byte length. The length
-/// counts the report-ID byte, which leads the report when the ID is nonzero.
+/// One HID report a controller record names by kind, report ID and byte length.
+///
+/// The length counts the report-ID byte, which leads the report when the ID is nonzero.
 public struct ControllerTemplateReport: Hashable, Sendable {
   /// `output` or `feature`; a record never writes an input report.
   public let kind: PhysicalHIDReportKind
+  /// The report ID; zero means the report is unnumbered.
   public let reportID: UInt8
+  /// The report length in bytes, counting the report-ID byte of a numbered report.
   public let length: Int
 
   /// The byte offsets a template may set: every byte after a nonzero report ID.
   var writableBytes: Range<Int> { (reportID == 0 ? 0 : 1)..<length }
 
+  /// Creates a report description from its kind, ID and length.
   init(kind: PhysicalHIDReportKind, reportID: UInt8, length: Int) {
     self.kind = kind
     self.reportID = reportID
@@ -48,11 +52,14 @@ public enum RumbleMotorEncoding: String, CaseIterable, Sendable {
   }
 }
 
-/// A controller's rumble report: fixed bytes with one encoded intensity per motor and, for a
-/// family that numbers its output reports, the session's rolling counter. It drives a rumble
-/// report without code of its own for the report's layout.
+/// A controller's rumble report: fixed bytes with one encoded intensity per motor and, for a family
+/// that numbers its output reports, the session's rolling counter.
+///
+/// It drives a rumble report without code of its own for the report's layout.
 public struct RumbleOutputTemplate: Equatable, Sendable {
-  /// Motors a template may name. Trackpad haptics belong to the Steam drivers.
+  /// Motors a template may name.
+  ///
+  /// Trackpad haptics belong to the Steam drivers.
   static let templateMotors: [PhysicalRumbleMotor] = [
     .lowFrequency, .highFrequency, .leftTrigger, .rightTrigger,
   ]
@@ -75,6 +82,7 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
     /// A raw-USB packet of `length` bytes to the family's output endpoint.
     case usb(length: Int)
 
+    /// The length in bytes of the packet or report.
     var length: Int {
       switch self {
       case .hid(let report): report.length
@@ -95,28 +103,35 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
   public struct MotorField: Hashable, Sendable {
     /// The offset of the first byte.
     public let byte: Int
+    /// How the intensity is encoded.
     public let encoding: RumbleMotorEncoding
 
+    /// Creates a field at a byte offset with an encoding.
     public init(byte: Int, encoding: RumbleMotorEncoding = .uInt8) {
       self.byte = byte
       self.encoding = encoding
     }
 
+    /// The byte offsets the encoded intensity occupies.
     var bytes: Range<Int> { byte..<(byte + encoding.width) }
   }
 
+  /// Where the template's bytes go.
   public let target: Target
   /// Every byte of the report before the motors and counter are written; the report ID leads a
   /// numbered HID report.
   public let bytes: [UInt8]
+  /// The field of each motor the template drives.
   public let motors: [PhysicalRumbleMotor: MotorField]
   /// The byte that carries the session's rolling output counter; nil when the report has none.
   public let counterByte: Int?
-  /// How often the driver's keep-alive sends the last report again while a motor runs; nil
-  /// sends it once. A resend encodes the last motor intensities again, so a counter byte takes
-  /// the session's next value. A zero report stops the resends. A template with a resend interval
-  /// is refused beside a mode's keep-alive and in a family whose description declares one, so the
-  /// interval alone times the keep-alive.
+  /// How often the driver's keep-alive sends the last report again while a motor runs; nil sends it
+  /// once.
+  ///
+  /// A resend encodes the last motor intensities again, so a counter byte takes the session's next
+  /// value. A zero report stops the resends. A template with a resend interval is refused beside a
+  /// mode's keep-alive and in a family whose description declares one, so the interval alone times
+  /// the keep-alive.
   public let resendIntervalMilliseconds: Int?
 
   /// The HID report this template writes; nil for a raw-USB packet.
@@ -209,6 +224,7 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
     return bytes
   }
 
+  /// The rumble motors the template drives.
   public var outputCapabilities: PhysicalControllerOutputCapabilities {
     PhysicalControllerOutputCapabilities(rumbleMotors: Array(motors.keys))
   }
@@ -247,8 +263,10 @@ public struct RumbleOutputTemplate: Equatable, Sendable {
     }
   }
 
-  /// The HID report carrying these intensities. A raw-USB template has no HID report; its
-  /// driver sends ``reportBytes(_:counter:)`` to its endpoint.
+  /// The HID report carrying these intensities.
+  ///
+  /// A raw-USB template has no HID report; its driver sends ``reportBytes(_:counter:)`` to its
+  /// endpoint.
   func write(_ intensities: RumbleIntensities, counter: UInt8 = 0) -> PhysicalOutputWrite {
     guard let report else {
       preconditionFailure("a raw-USB rumble template is sent by its driver")

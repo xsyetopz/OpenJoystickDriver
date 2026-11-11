@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import json
 import pathlib
+import plistlib
 from typing import Any
 
 from Scripts.Quality.repository_tool import api_version
@@ -25,11 +25,11 @@ def load_rules(
     """Returns the document `name` after checking its `apiVersion`, `kind` and key set."""
     path = directory / name
     try:
-        document = json.loads(path.read_text())
-    except (OSError, json.JSONDecodeError) as error:
+        document = plistlib.loads(path.read_bytes())
+    except (OSError, plistlib.InvalidFileException, ValueError) as error:
         raise RulesError(f"{path}: {error}") from error
     if not isinstance(document, dict):
-        raise RulesError(f"{path}: expected a JSON object")
+        raise RulesError(f"{path}: expected a property list dictionary")
     expected = api_version()
     if document.get("apiVersion") != expected:
         raise RulesError(

@@ -1,10 +1,14 @@
 import Foundation
 import OpenJoystickDriverKit
 
-/// The localization key of each state the Controllers detail names. Every switch lists all cases,
-/// so a new case fails to compile until it has text.
+/// The localization key of each state the Controllers detail names.
+///
+/// Every switch lists all cases, so an added case fails to compile until it has text.
 enum ControllerDetailLabels {
-  /// The localization key of the reason a controller publishes no virtual device.
+  /// Returns the localization key of the reason a controller publishes no virtual device.
+  ///
+  /// - Parameter reason: The reason.
+  /// - Returns: The localization key of the reason a controller publishes no virtual device.
   static func notPublishedReasonKey(
     _ reason: ApplicationServicePublicationStatus.NotPublishedReason
   ) -> String {
@@ -21,6 +25,10 @@ enum ControllerDetailLabels {
     }
   }
 
+  /// Returns the localization key of the reason the output is disabled.
+  ///
+  /// - Parameter reason: The reason.
+  /// - Returns: The localization key of the reason the output is disabled.
   static func servingReasonKey(_ reason: OutputDisabledReason) -> String {
     switch reason {
     case .userDisabled: return notPublishedReasonKey(.outputDisabled)
@@ -29,6 +37,10 @@ enum ControllerDetailLabels {
     }
   }
 
+  /// Returns the localization key of the reason the input health failed.
+  ///
+  /// - Parameter reason: The reason.
+  /// - Returns: The localization key of the reason the input health failed.
   static func inputHealthReasonKey(_ reason: ControllerInputHealthFailureReason) -> String {
     switch reason {
     case .missingReports: return "ui.controllers.inputHealth.reason.missingReports"
@@ -37,6 +49,10 @@ enum ControllerDetailLabels {
     }
   }
 
+  /// Returns the localization key of how the controller was found.
+  ///
+  /// - Parameter source: The discovery source.
+  /// - Returns: The localization key of how the controller was found.
   static func discoveryKey(_ source: DeviceDiscoverySource) -> String {
     switch source {
     case .hid: return "ui.controllers.discovery.hid"
@@ -44,6 +60,10 @@ enum ControllerDetailLabels {
     }
   }
 
+  /// Returns the localization key of the physical ownership.
+  ///
+  /// - Parameter ownership: The ownership the service observed.
+  /// - Returns: The localization key of the physical ownership.
   static func physicalOwnershipKey(_ ownership: ControllerOwnershipObservation) -> String {
     switch ownership {
     case .exclusiveHID: return "ui.controllers.physicalOwnership.exclusiveHID"
@@ -56,6 +76,10 @@ enum ControllerDetailLabels {
     }
   }
 
+  /// Returns the localization key of the HID input ownership.
+  ///
+  /// - Parameter ownership: The ownership.
+  /// - Returns: The localization key of the HID input ownership.
   static func hidInputOwnershipKey(_ ownership: HIDInputOwnership) -> String {
     switch ownership {
     case .unknown: return "ui.controllers.hidInputOwnership.unknown"
@@ -67,8 +91,12 @@ enum ControllerDetailLabels {
     }
   }
 
-  /// The failure of a wireless disconnect, localized. The stage, system code, and detail stay in
-  /// the log and in `ojd controller disconnect`.
+  /// Returns the failure of a wireless disconnect, localized.
+  ///
+  /// The stage, system code, and detail stay in the log and in `ojd controller disconnect`.
+  ///
+  /// - Parameter failure: The failure.
+  /// - Returns: The failure of a wireless disconnect, localized.
   static func wirelessDisconnectFailureText(
     _ failure: WirelessControllerDisconnectFailure
   ) -> String {

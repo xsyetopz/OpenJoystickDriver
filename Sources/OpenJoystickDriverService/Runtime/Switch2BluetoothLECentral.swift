@@ -8,27 +8,45 @@ import OpenJoystickDriverKit
 /// order. The central never reads an encrypted characteristic: an SMP pairing attempt makes the
 /// controller disconnect.
 final class Switch2BluetoothLECentral: NSObject, @unchecked Sendable {
+  /// A discovered controller and the characteristics of its GATT link.
   private struct Link {
+    /// The peripheral of the controller.
     let peripheral: CBPeripheral
+    /// The product ID that the advertisement reports.
     let productID: UInt16
+    /// The name that the advertisement or the peripheral reports.
     let name: String?
+    /// The characteristic that notifies input reports.
     var input: CBCharacteristic?
+    /// The characteristic that takes commands.
     var command: CBCharacteristic?
+    /// The characteristic that notifies command replies.
     var reply: CBCharacteristic?
+    /// The characteristic that takes vibration writes.
     var vibration: CBCharacteristic?
+    /// The link that the hub reads once the notifications are on.
     var gatt: GATTPeripheralLink?
   }
 
+  /// The hub that receives the GATT links.
   private let hub: Switch2BluetoothLEHub
+  /// The serial queue of every CoreBluetooth call and callback.
   private let queue = DispatchQueue(label: "com.openjoystickdriver.switch2-bluetooth-le")
+  /// The central manager; nil until ``start()`` and after ``stop()``.
   private var central: CBCentralManager?
+  /// The discovered controllers by peripheral identifier.
   private var links: [UUID: Link] = [:]
 
+  /// The UUID of the controller's GATT service.
   private let serviceUUID = CBUUID(string: Switch2BluetoothLEProfile.serviceUUID)
+  /// The UUID of the input characteristic.
   private let inputUUID = CBUUID(string: Switch2BluetoothLEProfile.inputUUID)
+  /// The UUID of the command characteristic.
   private let commandUUID = CBUUID(string: Switch2BluetoothLEProfile.commandUUID)
+  /// The UUID of the command reply characteristic.
   private let replyUUID = CBUUID(string: Switch2BluetoothLEProfile.commandReplyUUID)
 
+  /// Creates a central that feeds `hub`.
   init(hub: Switch2BluetoothLEHub) { self.hub = hub }
 
   /// Creates the central, which asks for Bluetooth access on first use.
@@ -39,6 +57,7 @@ final class Switch2BluetoothLECentral: NSObject, @unchecked Sendable {
     }
   }
 
+  /// Stops scanning, disconnects every controller and releases the central manager.
   func stop() {
     queue.sync {
       central?.stopScan()
@@ -61,6 +80,7 @@ final class Switch2BluetoothLECentral: NSObject, @unchecked Sendable {
     )
   }
 
+  /// Forgets the peripheral, disconnects it and scans again.
   private func drop(_ peripheral: CBPeripheral) {
     guard let link = links.removeValue(forKey: peripheral.identifier) else { return }
     link.gatt?.disconnected()
@@ -70,6 +90,7 @@ final class Switch2BluetoothLECentral: NSObject, @unchecked Sendable {
 }
 
 extension Switch2BluetoothLECentral: CBCentralManagerDelegate {
+  /// Scans when Bluetooth powers on; otherwise drops every link.
   func centralManagerDidUpdateState(_ central: CBCentralManager) {
     guard central.state == .poweredOn else {
       for link in links.values { link.gatt?.disconnected() }
@@ -79,12 +100,13 @@ extension Switch2BluetoothLECentral: CBCentralManagerDelegate {
     scan()
   }
 
+  /// Connects a peripheral whose advertisement carries Switch 2 manufacturer data.
   func centralManager(
     _ central: CBCentralManager,
     didDiscover peripheral: CBPeripheral,
     advertisementData: [String: Any],
     // swiftlint:disable:next legacy_objc_type
-    rssi RSSI: NSNumber
+    rssi: NSNumber
   ) {
     guard links[peripheral.identifier] == nil,
       let data = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data,
@@ -95,17 +117,20 @@ extension Switch2BluetoothLECentral: CBCentralManagerDelegate {
     central.connect(peripheral)
   }
 
+  /// Discovers the GATT service of the connected peripheral.
   func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
     peripheral.delegate = self
     peripheral.discoverServices([serviceUUID])
   }
 
+  /// Drops the peripheral that failed to connect.
   func centralManager(
     _ central: CBCentralManager,
     didFailToConnect peripheral: CBPeripheral,
     error: (any Error)?
   ) { drop(peripheral) }
 
+  /// Drops the peripheral that disconnected.
   func centralManager(
     _ central: CBCentralManager,
     didDisconnectPeripheral peripheral: CBPeripheral,
@@ -114,6 +139,7 @@ extension Switch2BluetoothLECentral: CBCentralManagerDelegate {
 }
 
 extension Switch2BluetoothLECentral: CBPeripheralDelegate {
+  /// Discovers the characteristics of the service, or drops a peripheral that lacks it.
   func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: (any Error)?) {
     guard let link = links[peripheral.identifier],
       let service = peripheral.services?.first(where: { $0.uuid == serviceUUID }),
@@ -128,6 +154,8 @@ extension Switch2BluetoothLECentral: CBPeripheralDelegate {
     )
   }
 
+  /// Subscribes to the input and reply notifications once every characteristic is found, or drops
+  /// the peripheral when one is missing.
   func peripheral(
     _ peripheral: CBPeripheral,
     didDiscoverCharacteristicsFor service: CBService,
@@ -155,6 +183,7 @@ extension Switch2BluetoothLECentral: CBPeripheralDelegate {
     peripheral.setNotifyValue(true, for: reply)
   }
 
+  /// Admits the GATT link to the hub once the input and reply notifications are on.
   func peripheral(
     _ peripheral: CBPeripheral,
     didUpdateNotificationStateFor characteristic: CBCharacteristic,
@@ -182,6 +211,7 @@ extension Switch2BluetoothLECentral: CBPeripheralDelegate {
     gatt.admit()
   }
 
+  /// Passes a notified value to the GATT link of the peripheral.
   func peripheral(
     _ peripheral: CBPeripheral,
     didUpdateValueFor characteristic: CBCharacteristic,
@@ -194,15 +224,20 @@ extension Switch2BluetoothLECentral: CBPeripheralDelegate {
   }
 }
 
-/// A `CBPeripheral` as a ``GATTPeripheral``. It writes without response on the central's queue;
-/// callers are pipeline tasks, never that queue.
+/// A ``GATTPeripheral`` over a connected `CBPeripheral`.
 private struct CoreBluetoothGATTPeripheral: GATTPeripheral, @unchecked Sendable {
+  /// The central's serial queue.
   let queue: DispatchQueue
+  /// The peripheral to write to.
   let peripheral: CBPeripheral
+  /// The characteristics that accept writes.
   let writable: [CBCharacteristic]
 
+  /// The identifier of the peripheral.
   var identifier: UUID { peripheral.identifier }
 
+  /// Writes `bytes` to the characteristic without response; false when the peripheral is not
+  /// connected, the bytes exceed the write length, or the characteristic is not writable.
   func writeWithoutResponse(_ bytes: [UInt8], to characteristic: String) -> Bool {
     guard let target = writable.first(where: { $0.uuid.uuidString == characteristic.uppercased() })
     else { return false }

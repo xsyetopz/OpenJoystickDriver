@@ -17,15 +17,142 @@ struct EndpointFixture {
   let directory: URL
   let store: AccessGrantStore
   let source: FakeWatchSource
+  let automation: FakeAutomation
 
   var pagesDirectory: URL { directory.appendingPathComponent("Overlays", isDirectory: true) }
 }
 
+/// An automation service that keeps its profiles in memory.
+final class FakeAutomation: AutomationService, @unchecked Sendable {
+  private let lock = NSLock()
+  private var profiles: [RemappingProfile]
+  private var active: Set<UUID>
+  private var connected: [ApplicationServiceDeviceDescription] = []
+  private var outcome = ControllerOutputResult.Outcome.delivered
+  private var outputs: [ControllerOutputCommand] = []
+  private var dropped: [PhysicalRumbleMotor] = []
+
+  init(profiles: [RemappingProfile] = [], active: Set<UUID> = []) {
+    self.profiles = profiles
+    self.active = active
+  }
+
+  /// A profile of a DualSense that Shortcuts can name.
+  static func profile(_ name: String) -> RemappingProfile {
+    RemappingProfile(
+      id: UUID(),
+      name: name,
+      device: RemappingDeviceScope(vendorID: 0x054C, productID: 0x0CE6),
+      applicationScope: .global,
+      outputPolicy: RemappingOutputPolicy(virtualGamepad: .passthrough),
+      bindings: []
+    )
+  }
+
+  /// Replaces the profile list and the active set, as a change made outside the endpoint does.
+  func replace(profiles: [RemappingProfile], active: Set<UUID> = []) {
+    lock.withLock {
+      self.profiles = profiles
+      self.active = active
+    }
+  }
+
+  /// The controllers that `connectedDevices()` returns.
+  var devices: [ApplicationServiceDeviceDescription] {
+    get { lock.withLock { connected } }
+    set { lock.withLock { connected = newValue } }
+  }
+
+  /// The outcome that `sendControllerOutput` reports.
+  var outputOutcome: ControllerOutputResult.Outcome {
+    get { lock.withLock { outcome } }
+    set { lock.withLock { outcome = newValue } }
+  }
+
+  /// The rumble channels that `sendControllerOutput` reports as dropped.
+  var droppedChannels: [PhysicalRumbleMotor] {
+    get { lock.withLock { dropped } }
+    set { lock.withLock { dropped = newValue } }
+  }
+
+  /// The output commands received, in order.
+  var sentOutputs: [ControllerOutputCommand] { lock.withLock { outputs } }
+
+  func connectedDevices() async -> [ApplicationServiceDeviceDescription] { devices }
+
+  func sendControllerOutput(
+    _ command: ControllerOutputCommand,
+    for controller: ControllerReference
+  ) async -> ControllerOutputResult {
+    lock.withLock {
+      outputs.append(command)
+      return ControllerOutputResult(outcome, droppedRumbleChannels: dropped)
+    }
+  }
+
+  func getRemappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {
+    lock.withLock { snapshot() }
+  }
+
+  func activateRemappingProfile(
+    id: UUID,
+    allowEmpty: Bool
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+    lock.withLock {
+      active.insert(id)
+      return snapshot()
+    }
+  }
+
+  func deactivateRemappingProfile(
+    id: UUID
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+    lock.withLock {
+      active.remove(id)
+      return snapshot()
+    }
+  }
+
+  func updateRemappingProfile(
+    _ profile: RemappingProfile,
+    expectedCurrent: RemappingProfile
+  ) async throws -> ApplicationServiceRemappingSnapshotPayload {
+    try lock.withLock {
+      guard let index = profiles.firstIndex(of: expectedCurrent) else {
+        throw RemappingProfileLibraryError.profileNotFound(expectedCurrent.id)
+      }
+      profiles[index] = profile
+      return snapshot()
+    }
+  }
+
+  /// Call with `lock` held.
+  private func snapshot() -> ApplicationServiceRemappingSnapshotPayload {
+    ApplicationServiceRemappingSnapshotPayload(
+      profiles: profiles,
+      activeProfiles: profiles.filter { active.contains($0.id) }.map {
+        ApplicationServiceRemappingActiveProfilePayload(
+          vendorID: $0.device.vendorID,
+          productID: $0.device.productID,
+          profileID: $0.id,
+          profileName: $0.name,
+          applicationScope: $0.applicationScope
+        )
+      },
+      routes: [],
+      postEventAccess: .granted
+    )
+  }
+}
+
 /// Runs `body` with an endpoint on a private socket whose clients have `identity`; nil makes
-/// every signature unreadable. `feeds` serves `feed` requests.
+/// every signature unreadable. `feeds` serves `feed` requests, and `automation` answers the
+/// profile requests. `modStore` answers `ModList`; the default is empty.
 func withEndpointServer(
   identity: CodeSigningIdentity? = EndpointFixture.tool,
   feeds: VirtualFeedRegistry? = nil,
+  automation: FakeAutomation = FakeAutomation(),
+  modStore: ModPackageStore? = nil,
   streamDelivered: (@Sendable (ControllerSessionToken, UInt64) async -> Void)? = nil,
   beforeAcceptWait: (@Sendable (AccessTransport, Int) -> Void)? = nil,
   acceptCall: @escaping @Sendable (Int32) -> Int32 = { Darwin.accept($0, nil, nil) },
@@ -40,7 +167,8 @@ func withEndpointServer(
   let fixture = EndpointFixture(
     directory: directory,
     store: AccessGrantStore(directory: directory),
-    source: FakeWatchSource()
+    source: FakeWatchSource(),
+    automation: automation
   )
   let client = identity.map { EndpointClient(identity: $0, path: "/Tool") }
   let server = EndpointServer(
@@ -50,6 +178,8 @@ func withEndpointServer(
     source: fixture.source,
     version: "1.2.3",
     feeds: feeds,
+    automation: automation,
+    modStore: modStore ?? ModPackageStore(directory: directory.appendingPathComponent("Packages")),
     identify: { _ in client },
     streamDelivered: streamDelivered,
     beforeAcceptWait: beforeAcceptWait,
@@ -75,6 +205,7 @@ func offPool<Result: Sendable>(_ work: @escaping @Sendable () -> Result) async -
 /// Whether the kernel reports that this process's dispatch workqueue reached
 /// `kern.wq_max_constrained_threads`, the limit on threads that Grand Central Dispatch's global
 /// queues run blocked work on (`WQ_EXCEEDED_CONSTRAINED_THREAD_LIMIT` in `sys/proc_info.h`).
+///
 /// The flag is set while blocked items queue behind the limit and clears once they finish. A
 /// process with no workqueue, which `proc_pidinfo` answers with `ESRCH`, has not reached it.
 func dispatchPoolIsSaturated() -> Bool {
@@ -87,8 +218,9 @@ func dispatchPoolIsSaturated() -> Bool {
 }
 
 /// Parks blocked work items on Grand Central Dispatch's global queues until the kernel reports the
-/// pool's thread limit reached (`dispatchPoolIsSaturated`), runs `body`, then releases them. A
-/// connection that depends on a pool thread starves meanwhile.
+/// pool's thread limit reached (`dispatchPoolIsSaturated`), runs `body`, then releases them.
+///
+/// A connection that depends on a pool thread starves meanwhile.
 func withSaturatedDispatchPool(_ body: () async throws -> Void) async rethrows {
   let release = DispatchSemaphore(value: 0)
   let items = 512
@@ -125,7 +257,9 @@ func clientLine(_ kind: String, _ fields: String = "") -> String {
 }
 
 /// An endpoint client whose socket calls block with a 5-second read timeout, so each runs off the
-/// cooperative pool. The calls of one client never overlap.
+/// cooperative pool.
+///
+/// The calls of one client never overlap.
 final class EndpointTestClient: @unchecked Sendable {
   /// The nonce of the challenge that the service sent first.
   private(set) var nonce = ""
@@ -211,7 +345,9 @@ final class EndpointTestClient: @unchecked Sendable {
 
 /// An HTTP and WebSocket client on `127.0.0.1` whose socket calls block with a 5-second read
 /// timeout, so each runs off the cooperative pool; written against RFC 6455 so the tests control
-/// every header and frame. The calls of one client never overlap.
+/// every header and frame.
+///
+/// The calls of one client never overlap.
 final class EndpointWebTestClient: @unchecked Sendable {
   struct Response {
     let status: Int

@@ -1,5 +1,5 @@
-import OpenJoystickDriverTestSupport
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -103,6 +103,7 @@ struct SupportReportBindingTests {
     #expect(
       Set(keys) == [
         "outcome", "accessBackend", "interfaces", "rule", "matchedPredicates", "rejectedCandidates",
+        "inputMapping",
       ]
     )
     let interfaceKeys = try #require((encoded as? [String: Any])?["interfaces"] as? [[String: Any]])

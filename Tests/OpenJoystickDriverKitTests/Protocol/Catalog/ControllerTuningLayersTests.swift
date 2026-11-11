@@ -4,7 +4,7 @@ import Testing
 @testable import OpenJoystickDriverKit
 
 struct ControllerTuningLayersTests {
-  /// A directory that holds `Controllers/` and its `all.patch.json` for one test.
+  /// A directory that holds `Controllers/` and its `all.patch.plist` for one test.
   private final class Root {
     let url = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-layers-\(UUID().uuidString)",
@@ -17,20 +17,33 @@ struct ControllerTuningLayersTests {
       _ tuning: String,
       apiVersion: String = OpenJoystickDriverAPI.version
     ) throws {
+      try writeDefaultsPatch(#"{"tuning":\#(tuning)}"#, apiVersion: apiVersion)
+    }
+
+    func writeDefaultsPatch(
+      _ set: String,
+      apiVersion: String = OpenJoystickDriverAPI.version
+    ) throws {
       try FileManager.default.createDirectory(at: controllers, withIntermediateDirectories: true)
       let json =
         #"{"apiVersion":"\#(apiVersion)","kind":"ControllerPatch","selector":{"all":true},"#
-        + #""patch":{"tuning":\#(tuning)}}"#
-      try Data(json.utf8).write(to: defaultsFile)
+        + #""patch":\#(set)}"#
+      try OrderedJSON.parse(Data(json.utf8)).plistData().write(to: defaultsFile)
     }
 
-    func writePatch(_ set: String, for identity: ControllerModelID) throws {
+    func writePatch(
+      _ set: String,
+      remove: [String] = [],
+      for identity: ControllerModelID
+    ) throws {
       try FileManager.default.createDirectory(at: controllers, withIntermediateDirectories: true)
+      let paths = remove.map { "\"" + $0 + "\"" }.joined(separator: ",")
+      let removed = remove.isEmpty ? "" : #""remove":[\#(paths)],"#
       let json =
         #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"ControllerPatch","#
         + #""selector":{"vendorID":\#(identity.vendorID),"productID":\#(identity.productID)},"#
-        + #""patch":\#(set)}"#
-      try Data(json.utf8).write(
+        + #"\#(removed)"patch":\#(set)}"#
+      try OrderedJSON.parse(Data(json.utf8)).plistData().write(
         to: controllers.appendingPathComponent(
           ControllerPatch.Selector.identity(identity).fileName
         )
@@ -117,15 +130,46 @@ struct ControllerTuningLayersTests {
   }
 
   @Test
-  func aNullInAUserPatchDeletesABundledTuningKey() throws {
+  func aRemoveOfATuningKeyDeletesItFromTheBundledRecord() throws {
     let root = Root()
     let identity = ControllerModelID(vendorID: 0x11C1, productID: 0x5600)
-    try root.writePatch(#"{"tuning":null}"#, for: identity)
+    try root.writePatch(
+      #"{"tuning":{"hidStartupIntervalMs":20}}"#,
+      remove: ["tuning.stickDeadzone"],
+      for: identity
+    )
 
     let record = try #require(root.load().records[identity])
 
     #expect(record.tuning.stickDeadzone == nil)
     #expect(record.tuningLayers["stickDeadzone"] == nil)
+    #expect(record.tuningLayers["hidStartupIntervalMs"] == .user)
+  }
+
+  @Test
+  func aRemoveOfTheTuningSectionClearsEveryKeyLayer() throws {
+    let root = Root()
+    let identity = ControllerModelID(vendorID: 0x11C1, productID: 0x5600)
+    try root.writePatch(
+      #"{"tuning":{"hidStartupIntervalMs":20}}"#,
+      remove: ["tuning"],
+      for: identity
+    )
+
+    let record = try #require(root.load().records[identity])
+
+    #expect(record.tuning.stickDeadzone == nil)
+    #expect(record.tuningLayers["stickDeadzone"] == nil)
+    #expect(record.tuning.hidStartupIntervalMilliseconds == 20)
+    #expect(record.tuningLayers["hidStartupIntervalMs"] == .user)
+  }
+
+  @Test
+  func anAllPatchOfAnotherSectionMakesTheDefaultsFileInvalid() throws {
+    let root = Root()
+    try root.writeDefaultsPatch(#"{"usb":{"interface":1}}"#)
+
+    #expect(root.load().defaults?.problem != nil)
   }
 
   @Test

@@ -2,25 +2,31 @@
 import Foundation
 import PackageDescription
 
+/// The directory that holds this manifest.
 let packageDirectory = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
-// OJD_USE_LOCAL_SWIFTERKIT=1 builds the sibling ../SwifterKit working tree instead of the pinned
-// remote.
+/// Whether `OJD_USE_LOCAL_SWIFTERKIT=1` asks for the sibling `../SwifterKit` working tree instead
+/// of the pinned remote.
 let useLocalSwifterKit = ProcessInfo.processInfo.environment["OJD_USE_LOCAL_SWIFTERKIT"] == "1"
+/// The path of the sibling SwifterKit working tree.
 let localSwifterKitPath = packageDirectory.appendingPathComponent("../SwifterKit")
   .standardizedFileURL.path
+/// The SwifterKit package: the local working tree when asked for and present, else the remote.
 let swifterKitDependency: Package.Dependency =
   useLocalSwifterKit && FileManager.default.fileExists(atPath: localSwifterKitPath)
   ? .package(path: localSwifterKitPath)
-  : .package(url: "https://github.com/xsyetopz/SwifterKit.git", from: "0.3.0")
+  : .package(url: "https://github.com/xsyetopz/SwifterKit.git", from: "0.4.1")
 
 #if arch(arm64)
+  /// The target triple of the Swift Testing targets on this host.
   let testTargetTriple = "arm64-apple-macosx14.0"
 #elseif arch(x86_64)
+  /// The target triple of the Swift Testing targets on this host.
   let testTargetTriple = "x86_64-apple-macosx14.0"
 #else
   #error("Unsupported host architecture for Swift Testing target triple")
 #endif
 
+/// The OpenJoystickDriver package.
 let package = Package(
   name: "OpenJoystickDriver",
   defaultLocalization: "en-US",
@@ -166,13 +172,17 @@ let package = Package(
         "ProtocolPacketFixtures",
       ],
       path: "Tests/OpenJoystickDriverKitTests",
-      resources: [.copy("Protocol/Catalog/SchemaRejections")],
+      resources: [
+        .copy("Protocol/Catalog/SchemaRejections"), .copy("Protocol/Catalog/SDLMappingFixtures"),
+        .copy("Protocol/Drivers/Nintendo/Fixtures/Wii"),
+      ],
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
       linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
     ),
     .target(
       name: "ProtocolPacketFixtures",
       path: "Tests/ProtocolPacketFixtures",
+      resources: [.copy("Switch2")],
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
       linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
     ),
@@ -209,6 +219,8 @@ let package = Package(
       dependencies: [
         "OpenJoystickDriverKit", "OpenJoystickDriverService", "OpenJoystickDriverCLI",
         "OpenJoystickDriverTestSupport",
+        // `ojd generate` starts this executable as its helper process.
+        "OpenJoystickDriver",
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
       ],
       path: "Tests/OpenJoystickDriverCLITests",
@@ -218,7 +230,7 @@ let package = Package(
     ),
     .testTarget(
       name: "OJDRepositoryToolTests",
-      dependencies: ["OpenJoystickDriverKit", "OJDRepositoryTool"],
+      dependencies: ["OpenJoystickDriverKit", "OJDRepositoryTool", "OpenJoystickDriverTestSupport"],
       path: "Tests/OJDRepositoryToolTests",
       swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
       linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]

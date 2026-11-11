@@ -3,9 +3,11 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// Reports in SDL `SDL_hidapi_shield.c` layouts. V103 (16 bytes): buttons at 1, system at 2, hat at
-/// 3, sticks at 4–11, triggers at 12–15. V104 (23+ bytes): hat at 2, buttons at 3, start at 4,
-/// sticks at 9–16, guide/back at 17, triggers at 19–22. Axes are 16-bit LE centered on 0x8000.
+/// Reports in SDL `SDL_hidapi_shield.c` layouts.
+///
+/// V103 (16 bytes): buttons at 1, system at 2, hat at 3, sticks at 4–11, triggers at 12–15. V104
+/// (23+ bytes): hat at 2, buttons at 3, start at 4, sticks at 9–16, guide/back at 17, triggers at
+/// 19–22. Axes are 16-bit LE centered on 0x8000.
 private enum ShieldReport {
   static func v103(_ bytes: [Int: UInt8] = [:]) -> Data {
     report(length: 16, hat: 3, sticks: 4, bytes)

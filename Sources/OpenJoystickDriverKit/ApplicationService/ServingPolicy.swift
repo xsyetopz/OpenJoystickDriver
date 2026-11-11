@@ -8,7 +8,9 @@ public enum OutputDisabledReason: String, Codable, CaseIterable, Equatable, Send
   case noVirtualProfile = "NoVirtualProfile"
 }
 
-/// The one way OJD serves a controller. Exactly one route holds for each controller.
+/// The one way OJD serves a controller.
+///
+/// Exactly one route holds for each controller.
 public enum ServingRoute: Equatable, Sendable {
   /// The system serves the controller and OJD publishes nothing. The allowance is what OJD may
   /// still drive on the physical controller: the motors and lighting the system leaves undone.
@@ -21,8 +23,9 @@ public enum ServingRoute: Equatable, Sendable {
   case outputDisabled(OutputDisabledReason)
 }
 
-/// Everything the serving policy reads about one controller. The serving-routes spec names four
-/// inputs; each maps to fields here.
+/// Everything the serving policy reads about one controller.
+///
+/// The serving-routes spec names four inputs; each maps to fields here.
 ///
 /// - The record: ``server`` (who the record says serves the model, after the bundled, package and
 ///   user layers) and ``accessRoute`` (how the record reaches the controller: the signed USB
@@ -51,6 +54,7 @@ public struct ServingInput: Equatable, Sendable {
   /// What OJD may drive on the physical controller when the system serves it.
   public var allowance: PhysicalControllerOutputCapabilities
 
+  /// Creates the input from its values.
   public init(
     observation: ControllerOwnershipObservation,
     server: ControllerServer = .system,
@@ -88,10 +92,12 @@ public struct ServingInput: Equatable, Sendable {
     )
   }
 
-  /// The inputs for the question "which persona does OJD publish if it serves this controller",
-  /// whoever serves it now: the record gives the model to OJD, output is on, and a system or
-  /// upstream observation no longer holds. A live toggle of the `server` setting changes the
-  /// answer to "who serves", never the persona.
+  /// The inputs for the question "which persona does OJD publish if it serves this controller".
+  ///
+  /// The inputs assume that OJD serves the controller: the server is ``ControllerServer/ojd``, and
+  /// an observation that the system or an upstream virtual device serves it is reset to unknown.
+  ///
+  /// A live toggle of the `server` setting changes the answer to "who serves", never the persona.
   public init(
     serving device: ApplicationServiceDeviceDescription,
     override: VirtualHIDProfileID? = nil
@@ -107,21 +113,26 @@ public struct ServingInput: Equatable, Sendable {
 
 /// The policy's answer: the route, and the persona selection behind it when the route publishes.
 public struct ServingDecision: Equatable, Sendable {
+  /// How OJD serves the controller.
   public let route: ServingRoute
   /// The persona and how it was chosen; nil for a route that publishes nothing.
   public let selection: VirtualHIDProfileSelector.Selection?
 
+  /// Creates a decision from a route and the selection behind it.
   init(route: ServingRoute, selection: VirtualHIDProfileSelector.Selection? = nil) {
     self.route = route
     self.selection = selection
   }
 }
 
-/// The single pure decision of how OJD serves a controller. The service, the CLI, the GUI and the
-/// endpoint ask it and decide nothing themselves. It is the only caller of
-/// ``VirtualHIDProfileSelector``.
+/// The single pure decision of how OJD serves a controller.
+///
+/// The service, the CLI, the GUI and the endpoint ask it and decide nothing themselves. It is the
+/// only caller of ``VirtualHIDProfileSelector``.
 public enum ServingPolicy {
-  /// The route for `input`. Equal inputs give equal routes.
+  /// The route for `input`.
+  ///
+  /// Equal inputs give equal routes.
   public static func route(_ input: ServingInput) -> ServingRoute { decision(input).route }
 
   /// The route for `input` with the persona selection behind it.
@@ -130,6 +141,7 @@ public enum ServingPolicy {
     if input.observation == .upstreamVirtualDevice {
       return ServingDecision(route: .outputDisabled(.upstreamVirtualDevice))
     }
+    if isHeldByAppleDriver(input) { return ServingDecision(route: .nativePassThrough(input.allowance)) }
     // A record that gives a natively served model to OJD turns passthrough into a virtual gamepad.
     if input.observation.isServedBySystem && input.server == .system
       && input.accessRoute == .system
@@ -166,6 +178,12 @@ public enum ServingPolicy {
     decision(ServingInput(serving: device, override: override)).selection
   }
 
+  /// Whether Apple's driver holds the controller: the system serves it natively although OJD's
+  /// record reaches it through the extension. Claiming it means activating the extension.
+  public static func isHeldByAppleDriver(_ input: ServingInput) -> Bool {
+    input.accessRoute == .extensionOwned && input.observation == .systemGamepad
+  }
+
   /// Whether the user can choose between the system and OJD serving a controller: the system
   /// serves it natively, or its record already gives it to OJD, and its record does not reach it
   /// through raw USB or the extension, which always belong to OJD.
@@ -175,16 +193,22 @@ public enum ServingPolicy {
 }
 
 extension ApplicationServiceDeviceDescription {
-  /// The serving decision for this controller, with the persona override it reports. Every caller
-  /// that shows or checks a route or persona reads it here instead of deciding on its own.
+  /// Whether Apple's driver holds this controller; see ``ServingPolicy/isHeldByAppleDriver(_:)``.
+  public var isHeldByAppleDriver: Bool { ServingPolicy.isHeldByAppleDriver(ServingInput(self)) }
+
+  /// The serving decision for this controller, with the persona override it reports.
+  ///
+  /// Every caller that shows or checks a route or persona reads it here instead of deciding on
+  /// its own.
   public var servingDecision: ServingDecision {
     ServingPolicy.decision(ServingInput(self, override: virtualHIDProfile?.override))
   }
 }
 
 extension ServingRoute {
-  /// The name of the route in the serving-routes spec, such as `VirtualHID`. The CLI prints it and
-  /// the schema lists it.
+  /// The name of the route in the serving-routes spec, such as `VirtualHID`.
+  ///
+  /// The CLI prints it and the schema lists it.
   public var id: String {
     switch self {
     case .nativePassThrough: "NativePassThrough"

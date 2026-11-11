@@ -7,12 +7,12 @@ import Testing
 
 @MainActor
 struct ProfileWatcherPackageTests {
-  private static let manifest = Data(
-    """
-    {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "\(ModPackageManifest.kind)",
-    "name": "arcade-pack", "version": "1.0.0",
-     "author": "Tester", "requires": {"minimum": "0.6.0"}, "profiles": ["arcade.json"]}
-    """.utf8
+  private static let manifest = PropertyListFixture.bytes(
+    json: """
+      {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "\(ModPackageManifest.kind)",
+      "name": "arcade-pack", "version": "1.0.0",
+       "author": "Tester", "requires": {"minimum": "0.6.0"}, "profiles": ["arcade.plist"]}
+      """
   )
 
   /// The service's profile watcher reloads when a package is installed into, and removed from,
@@ -30,15 +30,15 @@ struct ProfileWatcherPackageTests {
       at: staged.appendingPathComponent("Profiles"),
       withIntermediateDirectories: true
     )
-    try Self.manifest.write(to: staged.appendingPathComponent("mod.json"))
+    try Self.manifest.write(to: staged.appendingPathComponent("mod.plist"))
     let profile = RemappingProfile(
       name: "Arcade",
       device: RemappingDeviceScope(vendorID: 1118, productID: 654),
       applicationScope: .global,
       bindings: []
     )
-    try Data(try RemappingProfileFileStore.encodedJSON(profile).utf8).write(
-      to: staged.appendingPathComponent("Profiles/arcade.json")
+    try Data(try RemappingProfileFileStore.encodedPlist(profile).utf8).write(
+      to: staged.appendingPathComponent("Profiles/arcade.plist")
     )
 
     let targets = ApplicationServiceRuntime.profileWatchTargets(for: library)

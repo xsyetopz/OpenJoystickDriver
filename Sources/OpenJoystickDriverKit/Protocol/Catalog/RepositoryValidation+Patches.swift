@@ -3,7 +3,9 @@ import Foundation
 extension RepositoryValidation {
   /// Applies the built-in patches under `patches` to the Controller files under `controllers` with
   /// ``ControllerPatchMerge`` and writes each effective record to the same relative path under
-  /// `output`. Nothing is written when any problem is found.
+  /// `output`.
+  ///
+  /// Nothing is written when any problem is found.
   ///
   /// A record's members are written in the order of its file, then the members that patches add
   /// in the order of the patch that adds them, at every depth. An array or value that a patch
@@ -63,7 +65,7 @@ extension RepositoryValidation {
           at: destination.deletingLastPathComponent(),
           withIntermediateDirectories: true
         )
-        try document.formattedData().write(to: destination, options: .atomic)
+        try document.plistData().write(to: destination, options: .atomic)
       }
     } catch {
       return [
@@ -73,23 +75,33 @@ extension RepositoryValidation {
     return []
   }
 
+  /// A patch file read from the patch directory.
   private struct PatchFile {
+    /// The location of the file.
     let url: URL
+    /// The parsed patch.
     let patch: ControllerPatch
   }
 
+  /// A record file read from the record directory.
   private struct RecordFile {
+    /// The path of the file below the record directory.
     let relativePath: String
+    /// The controller model that the record describes.
     let model: ControllerModelID
+    /// The record as written, with its member order.
     let document: OrderedJSON
   }
 
+  /// Reads each property list file under `directory` as a record and appends a problem to `problems` for
+  /// each file that is not a valid record.
+  /// - Returns: The records that read.
   private static func readRecords(
     under directory: URL,
     problems: inout [RepositoryProblem]
   ) -> [RecordFile] {
     let urls: [URL]
-    switch jsonFiles(under: directory) {
+    switch plistFiles(under: directory) {
     case .failure(let problem):
       problems.append(problem)
       return []
@@ -99,9 +111,7 @@ extension RepositoryValidation {
     for url in urls {
       do {
         let data = try RepositoryProblem.read(url)
-        try ControllerRecordSet.requireUTF8(data)
-        _ = try ControllerRecordSet.jsonObject(data)
-        let document = try ControllerRecordSet.ordered(data)
+        let document = try ControllerRecordSet.ordered(data, file: url.lastPathComponent)
         guard let vendorID = document["vendorID"]?.integer.flatMap(UInt16.init(exactly:)),
           let productID = document["productID"]?.integer.flatMap(UInt16.init(exactly:))
         else {
@@ -124,12 +134,15 @@ extension RepositoryValidation {
     return files
   }
 
+  /// Reads each property list file under `directory` as a patch and appends a problem to `problems` for each
+  /// file that is not a valid patch or that is not stored at the path of its selector.
+  /// - Returns: The patches that read.
   private static func readPatches(
     under directory: URL,
     problems: inout [RepositoryProblem]
   ) -> [PatchFile] {
     let urls: [URL]
-    switch jsonFiles(under: directory) {
+    switch plistFiles(under: directory) {
     case .failure(let problem):
       problems.append(problem)
       return []
@@ -139,9 +152,7 @@ extension RepositoryValidation {
     for url in urls {
       do {
         let data = try RepositoryProblem.read(url)
-        try ControllerRecordSet.requireUTF8(data)
-        let order = try ControllerRecordSet.ordered(data)
-        _ = try ControllerRecordSet.jsonObject(data)
+        let order = try ControllerRecordSet.ordered(data, file: url.lastPathComponent)
         let patch = try ControllerPatch.parse(order, file: url.lastPathComponent)
         let expected = patchPath(of: patch.selector)
         guard relativePath(of: url, under: directory) == expected else {
@@ -164,6 +175,7 @@ extension RepositoryValidation {
     return String(format: "%04x/", model.vendorID) + selector.fileName
   }
 
+  /// The path of `url` below `directory`, with `/` between components.
   private static func relativePath(of url: URL, under directory: URL) -> String {
     let root = directory.standardizedFileURL.pathComponents
     return url.standardizedFileURL.pathComponents.dropFirst(root.count).joined(separator: "/")

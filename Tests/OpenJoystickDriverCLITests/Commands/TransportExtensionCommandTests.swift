@@ -125,7 +125,11 @@ struct TransportExtensionCommandTests {
     #expect(try json.json()["state"] as? String == "AwaitingApproval")
   }
 
-  @Test(arguments: [SystemExtensionSetupRequestResult.failed, .timedOut])
+  @Test(arguments: [
+    SystemExtensionSetupRequestResult.failed(
+      SystemExtensionRequestFailure(domain: "OSSystemExtensionErrorDomain", code: 4, text: "x")
+    ), .timedOut,
+  ])
   func activateThatMacOSRejectsOrDoesNotFinishExitsOne(
     outcome: SystemExtensionSetupRequestResult
   ) async {

@@ -1,0 +1,4 @@
+Packet contents vary by controller. Check them before sharing.
+Capturing packets from 8BitDo Ultimate 2C Wireless Controller (2DC8:310A)... Press controller buttons.
+1794343941.514 tx len=8 00 08 00 00 C8 00 00 00
+1794343943.059 tx len=8 00 08 00 00 00 00 00 00

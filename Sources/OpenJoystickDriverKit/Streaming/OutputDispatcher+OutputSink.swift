@@ -3,8 +3,13 @@ import Foundation
 /// The virtual-device path: every ``OutputDispatcher`` is an ``OutputSink`` for controller frames,
 /// and for gamepad frames when it is also a ``RemappingGamepadSink``.
 extension OutputDispatcher {
+  /// The virtual device.
   public var destination: OutputDestination { .virtualDevice }
 
+  /// Passes the frame to the dispatcher.
+  ///
+  /// - Throws: ``StreamBoundaryError/unsupported(_:)`` for a frame the dispatcher does not take, or
+  ///   the error of the dispatcher.
   @preconcurrency
   public func consume(
     _ frame: StreamFrame,

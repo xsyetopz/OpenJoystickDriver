@@ -20,10 +20,10 @@ Set the F310 switch to X. Quit Steam and any controller utilities, then run:
 
 ```bash
 ./Scripts/ojd diagnose record \
-  Sources/OpenJoystickDriverKit/Resources/Controllers/046d/046d-c21d.json --validate-only
+  Sources/OpenJoystickDriverKit/Resources/Controllers/046d/046d-c21d.plist --validate-only
 
 ./Scripts/ojd diagnose record \
-  Sources/OpenJoystickDriverKit/Resources/Controllers/046d/046d-c21d.json --seconds 45
+  Sources/OpenJoystickDriverKit/Resources/Controllers/046d/046d-c21d.plist --seconds 45
 ```
 
 Press and release one control at a time in this order:

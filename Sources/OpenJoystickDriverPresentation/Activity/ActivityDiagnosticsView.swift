@@ -5,17 +5,22 @@
   import SwiftUI
 
   /// The `ojd diagnose` checks as a table: each check with its result, its details and, for a
-  /// warning or failure the app can fix, a button for the fix. A table row has one line, so the
-  /// tooltip of a long detail shows it in full.
+  /// warning or failure the app can fix, a button for the fix.
+  ///
+  /// A table row has one line, so the tooltip of a long detail shows it in full.
   struct ActivityDiagnosticsView: View {
+    /// Runs the checks and holds their rows.
     @ObservedObject
     var model: ActivityDiagnosticsModel
+    /// Runs the fix of a check.
     let perform: (ActivityCheckFix) -> Void
 
+    /// The diagnostics content; the checks run once when the view appears.
     var body: some View {
       content.task { await model.runIfNeeded() }
     }
 
+    /// The progress indicator while the checks run, then the table.
     @ViewBuilder
     private var content: some View {
       switch model.state {
@@ -46,6 +51,7 @@
       }
     }
 
+    /// Returns the color of the result.
     static func color(of status: DiagnoseStatus) -> Color {
       switch status {
       case .pass: return Color(NSColor.systemGreen)

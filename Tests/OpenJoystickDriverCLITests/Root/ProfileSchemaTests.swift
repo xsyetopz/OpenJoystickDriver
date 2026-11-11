@@ -10,12 +10,12 @@ struct ProfileSchemaTests {
   /// Uses every kind of source, destination, physical output, and mapping.
   static let richDocument = #"""
     {
-      "apiVersion": "openjoystickdriver/v1alpha1",
+      "apiVersion": "openjoystickdriver/v1alpha3",
       "kind": "Profile",
       "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E",
       "name": "Everything",
       "device": {"vendorID": 1356, "productID": 3302, "unit": "U-AbCd_123-xyzW09q"},
-      "applicationScope": {"type": "Application", "appID": "com.example.game"},
+      "applicationScope": {"type": "Application", "appIDs": ["com.example.game", "com.example.other"]},
       "outputPolicy": {"virtualGamepad": "Mapped", "physicalInput": "Exclusive"},
       "physicalColor": {"red": 255, "green": 32, "blue": 0},
       "motionTuning": {
@@ -91,11 +91,34 @@ struct ProfileSchemaTests {
           }
         },
         {
+          "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D74",
+          "source": {"type": "Axis", "axis": "PointerX"},
+          "destination": {"type": "MouseMovement", "axis": "X"},
+          "axisTuning": {
+            "deadzone": 0.1, "gain": 1, "inverted": false, "responseCurve": "Linear",
+            "digitalActivationThreshold": 0.6
+          }
+        },
+        {
           "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D71",
           "source": {"type": "Axis", "axis": "RightTrigger"},
           "destination": {"type": "Scroll", "axis": "Y"},
           "axisTuning": {
             "deadzone": 0.2, "gain": 1, "inverted": false, "responseCurve": "Linear",
+            "digitalActivationThreshold": 0.6
+          }
+        },
+        {
+          "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D72",
+          "source": {"type": "Button", "button": "North"},
+          "destination": {"type": "MidiNote", "channel": 1, "note": 60, "velocity": 100}
+        },
+        {
+          "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D73",
+          "source": {"type": "Axis", "axis": "LeftTrigger"},
+          "destination": {"type": "MidiControlChange", "channel": 16, "controller": 127},
+          "axisTuning": {
+            "deadzone": 0, "gain": 1, "inverted": false, "responseCurve": "Linear",
             "digitalActivationThreshold": 0.6
           }
         },
@@ -148,9 +171,10 @@ struct ProfileSchemaTests {
               "effect": {"kind": "Resistance", "startPosition": 0.3, "strength": 0.7}
             }
           },
-          "doubleTap": {
-            "windowMs": 250, "destination": {"type": "GamepadButton", "button": "North"}
-          }
+          "multiTap": [{
+            "count": 2, "windowMs": 250,
+            "destination": {"type": "GamepadButton", "button": "North"}
+          }]
         }
       ],
       "chords": [
@@ -191,9 +215,11 @@ struct ProfileSchemaTests {
 
   @Test
   func aRichProfileIsAcceptedByTheDecoderAndTheSchema() throws {
-    let profile = try RemappingProfileFileStore.load(from: Data(Self.richDocument.utf8))
-    #expect(try CLIOutputSchema.profileIssues(in: Self.richDocument).isEmpty)
-    let encoded = try RemappingProfileFileStore.encodedJSON(profile)
+    let profile = try RemappingProfileFileStore.load(
+      from: PropertyListFixture.data(json: Self.richDocument)
+    )
+    #expect(try CLIOutputSchema.profileIssues(inJSON: Self.richDocument).isEmpty)
+    let encoded = try RemappingProfileFileStore.encodedPlist(profile)
     #expect(try CLIOutputSchema.profileIssues(in: encoded).isEmpty)
   }
 
@@ -201,6 +227,10 @@ struct ProfileSchemaTests {
     ("unknown key", #""name": "Everything""#, #""name": "Everything", "unexpected": true"#),
     ("deadzone out of range", #""deadzone": 0.1, "gain""#, #""deadzone": 0.96, "gain""#),
     ("unknown curve", #""EaseIn""#, #""quadratic""#),
+    (
+      "pointer as a gamepad axis", #""GamepadAxis", "axis": "RightStickX""#,
+      #""GamepadAxis", "axis": "PointerX""#
+    ),
     (
       "unknown D-pad direction", #"{"type": "Dpad", "direction": "DpadUp"}"#,
       #"{"type": "Dpad", "direction": "notAName"}"#
@@ -224,9 +254,33 @@ struct ProfileSchemaTests {
     ("bad app ID", #""com.example.game""#, #""not an app""#),
     ("unknown button", #""button": "South""#, #""button": "a""#),
     ("malformed unit ID", #""U-AbCd_123-xyzW09q""#, #""U-AbCd+123""#),
+    ("MIDI channel 0", #""channel": 1, "note": 60"#, #""channel": 0, "note": 60"#),
+    ("MIDI channel 17", #""channel": 16, "controller""#, #""channel": 17, "controller""#),
+    ("MIDI note 128", #""note": 60"#, #""note": 128"#),
+    ("MIDI velocity 0", #""velocity": 100"#, #""velocity": 0"#),
     (
       "axis in a chord", #"{"type": "Button", "button": "Back"}"#,
       #"{"type": "Axis", "axis": "LeftTrigger"}"#
+    ),
+    (
+      "profile name over 80 characters", #""name": "Everything""#,
+      "\"name\": \"" + String(repeating: "a", count: 81) + "\""
+    ),
+    ("profile name with a control character", #""name": "Everything""#, #""name": "Every\u007fthing""#),
+    ("profile name with a space at the end", #""name": "Everything""#, #""name": "Everything ""#),
+    (
+      "layer name over 40 characters", #""name": "Menus""#,
+      "\"name\": \"" + String(repeating: "a", count: 41) + "\""
+    ),
+    ("layer name with a control character", #""name": "Menus""#, #""name": "Me\u007fnus""#),
+    (
+      "gyro activation source with the Always mode", #""activationMode": "WhileHeld""#,
+      #""activationMode": "Always""#
+    ),
+    (
+      "Off adaptive trigger effect with a strength",
+      #""kind": "Resistance", "startPosition": 0.3, "strength": 0.7"#,
+      #""kind": "Off", "startPosition": 0, "strength": 0.7"#
     ),
   ])
   func aBrokenProfileIsRejectedByTheDecoderAndTheSchema(
@@ -237,12 +291,45 @@ struct ProfileSchemaTests {
     #expect(Self.richDocument.contains(original), "\(problem)")
     let broken = Self.richDocument.replacingOccurrences(of: original, with: replacement)
     do {
-      _ = try RemappingProfileFileStore.load(from: Data(broken.utf8))
+      _ = try RemappingProfileFileStore.load(from: PropertyListFixture.data(json: broken))
       Issue.record("\(problem): the profile loads")
     } catch {
       #expect(RemappingProfileFileStore.problemCode(error) == .invalidProfile, "\(problem)")
     }
-    #expect(try !CLIOutputSchema.profileIssues(in: broken).isEmpty, "\(problem)")
+    #expect(try !CLIOutputSchema.profileIssues(inJSON: broken).isEmpty, "\(problem)")
+  }
+
+  /// Rules between fields, which the schema cannot state: the decoder refuses the profile and the
+  /// schema accepts it. `wiki/Profile-File-Reference.md` lists them.
+  @Test(arguments: [
+    ("lean hysteresis above threshold", #""hysteresisDegrees": 5"#, #""hysteresisDegrees": 25"#),
+    ("steering deadzone above full scale", #""deadzoneDegrees": 2"#, #""deadzoneDegrees": 50"#),
+    (
+      "flick hysteresis above threshold", #""flickThreshold": 0.8, "flickHysteresis": 0.2"#,
+      #""flickThreshold": 0.3, "flickHysteresis": 0.4"#
+    ),
+    (
+      "stick deadzones fill the travel", #""innerDeadzone": 0.1, "outerDeadzone": 0.05"#,
+      #""innerDeadzone": 0.9, "outerDeadzone": 0.5"#
+    ),
+    ("soft threshold above full", #""softThreshold": 0.2"#, #""softThreshold": 0.95"#),
+    ("grid column outside the grid", #""column": 1, "row": 0"#, #""column": 2, "row": 0"#),
+    ("pulse duration without the Pulse behavior", #""multiTap": [{"#, #""pulseDurationMs": 200, "multiTap": [{"#),
+  ])
+  func aRuleAcrossFieldsIsRefusedByTheDecoderOnly(
+    problem: String,
+    original: String,
+    replacement: String
+  ) throws {
+    #expect(Self.richDocument.contains(original), "\(problem)")
+    let broken = Self.richDocument.replacingOccurrences(of: original, with: replacement)
+    do {
+      _ = try RemappingProfileFileStore.load(from: PropertyListFixture.data(json: broken))
+      Issue.record("\(problem): the profile loads")
+    } catch {
+      #expect(RemappingProfileFileStore.problemCode(error) == .invalidProfile, "\(problem)")
+    }
+    #expect(try CLIOutputSchema.profileIssues(inJSON: broken).isEmpty, "\(problem)")
   }
 
   @Test
@@ -303,6 +390,10 @@ struct ProfileSchemaTests {
     )
     let dpad = try #require((vocabulary["dpadControl"] as? [String: Any])?["enum"] as? [String])
     #expect(dpad == Self.raw(RemappingDpadDirection.self))
+    let gamepadAxes = try #require(
+      (vocabulary["gamepadAxis"] as? [String: Any])?["enum"] as? [String]
+    )
+    #expect(gamepadAxes == RemappingAxis.allCases.filter { !$0.isPointer }.map(\.rawValue))
     let definitions = try #require(
       try CLIOutputSchema.document(named: CLIOutputSchema.profileFileName)["$defs"]
         as? [String: Any]

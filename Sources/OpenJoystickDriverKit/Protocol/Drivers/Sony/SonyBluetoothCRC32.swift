@@ -4,8 +4,10 @@
 /// The checksum covers a one-byte seed (the HID transaction header: `0xA1` input, `0xA2`
 /// output, `0xA3` feature) followed by every report byte before the trailer.
 enum SonyBluetoothCRC32 {
+  /// The length of the CRC trailer in bytes.
   static let trailerLength = 4
 
+  /// The checksum of `seed` followed by `bytes`.
   static func checksum(seed: UInt8, bytes: some Sequence<UInt8>) -> UInt32 {
     var crc = update(0xFFFF_FFFF, byte: seed)
     for byte in bytes { crc = update(crc, byte: byte) }
@@ -31,6 +33,7 @@ enum SonyBluetoothCRC32 {
     }
   }
 
+  /// Folds `byte` into the running checksum `current`.
   private static func update(_ current: UInt32, byte: UInt8) -> UInt32 {
     var crc = current ^ UInt32(byte)
     for _ in 0..<8 { if crc & 1 == 1 { crc = (crc >> 1) ^ 0xEDB8_8320 } else { crc >>= 1 } }

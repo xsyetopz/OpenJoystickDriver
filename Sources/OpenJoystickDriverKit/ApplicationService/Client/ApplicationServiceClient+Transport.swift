@@ -1,10 +1,17 @@
 import Foundation
 
 extension ApplicationServiceClient {
+  /// Calls the RPC `method` with `arguments` and decodes the reply as `Value`.
+  ///
+  /// `closedWithoutReply` names the error for a connection that closes before the service replies.
+  ///
+  /// - Throws: ``ApplicationServiceClientError/notConnected`` before the client is connected, and
+  ///   ``ApplicationServiceClientError/timeout`` when no reply arrives within `timeoutSeconds`,
+  ///   or within ``replyTimeoutSeconds`` when the call sets none.
   func call<Arguments: Encodable & Sendable, Value: Decodable & Sendable>(
     _ method: ApplicationServiceRPCMethod,
     _ arguments: Arguments,
-    timeoutSeconds: TimeInterval = applicationServiceDefaultReplyTimeoutSeconds,
+    timeoutSeconds: TimeInterval? = nil,
     closedWithoutReply: LocalServiceRPCClosedWithoutReply = .peerRejected
   ) async throws -> Value {
     guard stateLock.withLock({ connected }) else {
@@ -14,7 +21,7 @@ extension ApplicationServiceClient {
       return try await LocalServiceRPCClient.call(
         method: method.rawValue,
         arguments: arguments,
-        timeoutSeconds: timeoutSeconds,
+        timeoutSeconds: timeoutSeconds ?? replyTimeoutSeconds,
         socketPath: socketPath,
         closedWithoutReply: closedWithoutReply
       )

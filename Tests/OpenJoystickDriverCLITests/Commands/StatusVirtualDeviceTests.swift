@@ -83,6 +83,21 @@ struct StatusVirtualDeviceTests {
   }
 
   @Test
+  func statusReportsWhichControllerAPauseHolds() async throws {
+    var paused = ApplicationServiceDeviceDescription.fixture(id: "pad-1", name: "Held")
+    paused.paused = true
+    let devices = [paused, ApplicationServiceDeviceDescription.fixture(id: "pad-2", name: "Free")]
+
+    let json = try await Self.runStatus(["--json"], devices: devices, virtualStatus: .error("x"))
+      .json()
+    let controllers = try #require(json["controllers"] as? [[String: Any]])
+    #expect(controllers.map { $0["paused"] as? Bool } == [true, false])
+
+    let human = try await Self.runStatus([], devices: devices, virtualStatus: .error("x"))
+    #expect(human.standardOutput.contains(CLILocalized.text("ui.controllers.paused.value")))
+  }
+
+  @Test
   func humanStatusNamesTheBackendError() async throws {
     let human = try await Self.runStatus(
       [],

@@ -8,20 +8,27 @@
 public enum VirtualHIDProfileSelector {
   /// The outcome of selection.
   public struct Selection: Equatable, Sendable {
+    /// How the profile was chosen.
     public enum Source: Equatable, Sendable {
+      /// Automatic selection chose it.
       case automatic
+      /// The Advanced override chose it.
       case override
       /// The controller could not satisfy this override, so automatic selection ran instead.
       case automaticAfterRejecting(VirtualHIDProfileID)
     }
 
+    /// The selected profile.
     public let profileID: VirtualHIDProfileID
+    /// How the profile was chosen.
     public let source: Source
   }
 
   /// Controls whose representation decides the profile: the Xbox layout plus the digital trigger
-  /// buttons. System controls other than `view` and `menu`, and every extended control, stay in
-  /// OJD's normalized API and never force a persona.
+  /// buttons.
+  ///
+  /// System controls other than `view` and `menu`, and every extended control, stay in OJD's
+  /// normalized API and never force a persona.
   public static let primaryControls: Set<Control> = Control.xboxLayout.union([
     .leftTrigger, .rightTrigger,
   ])
@@ -40,8 +47,8 @@ public enum VirtualHIDProfileSelector {
     try select(controls: controls, override: override, slots: \.representableControls)
   }
 
-  /// `select(controls:override:)` over explicit profile slots, so tests can reach the branches
-  /// today's two profiles never take.
+  /// `select(controls:override:)` over explicit profile slots, so tests can reach the branches that
+  /// the two profiles never take.
   static func select(
     controls: Set<Control>,
     override: VirtualHIDProfileID?,
@@ -61,9 +68,11 @@ public enum VirtualHIDProfileSelector {
     )
   }
 
-  /// Whether `slots` carry every control in `required`. A trigger button fits the analog trigger
-  /// slot, published at `0` or `65535` when the trigger is digital-only; a controller declaring
-  /// both shares that one slot, because the report encoder merges them.
+  /// Whether `slots` carry every control in `required`.
+  ///
+  /// A trigger button fits the analog trigger slot, published at `0` or `65535` when the trigger is
+  /// digital-only; a controller declaring both shares that one slot, because the report encoder
+  /// merges them.
   static func represents(_ required: Set<Control>, in slots: Set<Control>) -> Bool {
     required.allSatisfy { control in
       switch control {

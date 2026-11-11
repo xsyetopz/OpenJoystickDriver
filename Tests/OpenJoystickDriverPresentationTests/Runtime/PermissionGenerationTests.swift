@@ -166,7 +166,7 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
 
   private func markReadStarted() {
     readStarted = true
-    readWaiters.forEach { $0.resume() }
+    for waiter in readWaiters { waiter.resume() }
     readWaiters.removeAll()
   }
 

@@ -9,6 +9,7 @@
     "SonyDualSense": "sony-dual-sense",
     "VendorGameSir": "vendor-game-sir",
     "VendorNVIDIAShield": "vendor-nvidia-shield",
+    "NintendoWii": "nintendo-wii",
     "BluetoothLE": "bluetooth-le",
     "USB": "usb",
     "ExclusiveRawUSB": "exclusive-raw-usb",
@@ -16,6 +17,7 @@
     "XboxOneGIP": "xbox-one-gip",
     "W3C": "w3c",
     "read": "read",
+    "generate": "generate",
     "raw-usb": "raw-usb"
   },
   "values": [
@@ -37,6 +39,7 @@
     "VendorPS3ThirdParty",
     "VendorGameSir",
     "VendorNVIDIAShield",
+    "NintendoWii",
     "USB",
     "W3C",
     "SDL",

@@ -1,18 +1,30 @@
 import Foundation
 
-/// Per-device angular velocity retained while a trackball control is held.
-/// Callers reset this state on activation, calibration, profile, and sample-clock discontinuities.
+/// Angular velocity of one controller, kept while a trackball control is held.
+///
+/// Callers reset it on activation, calibration, profile changes and sample-clock discontinuities.
 struct RemappingMotionTrackball {
+  /// Held pitch and yaw velocity in degrees per second.
   private var velocity = SIMD2<Double>.zero
 
+  /// Rotation of one trackball step.
   struct Step {
+    /// Velocity after the step.
     let velocity: RemappingGyroProjection
+    /// Pitch rotation over the step, in degrees.
     let pitchDegrees: Double
+    /// Yaw rotation over the step, in degrees.
     let yawDegrees: Double
   }
 
+  /// Clears the held velocity.
   mutating func reset() { velocity = .zero }
 
+  /// Advances the trackball by a time step and returns the rotation of the step.
+  ///
+  /// A held axis keeps its velocity and decays it exponentially, halving it
+  /// `decayHalvingsPerSecond` times each second. An axis that is not held takes the input velocity.
+  /// Invalid input, or a time step of zero, resets the trackball and returns `nil`.
   mutating func process(
     _ input: RemappingGyroProjection,
     deltaTime: Double,

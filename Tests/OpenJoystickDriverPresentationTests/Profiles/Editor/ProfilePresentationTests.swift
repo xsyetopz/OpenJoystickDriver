@@ -8,7 +8,9 @@ struct ProfilePresentationTests {
   @Test
   func focusedEditorContainsEverySectionInTaskOrder() {
     #expect(
-      ProfilePresentationPolicy.sectionOrder == [.assignments, .combinations, .layers, .controller]
+      ProfilePresentationPolicy.sectionOrder == [
+        .assignments, .combinations, .layers, .macros, .controller,
+      ]
     )
     #expect(ProfilePresentationPolicy.defaultSection == .assignments)
   }

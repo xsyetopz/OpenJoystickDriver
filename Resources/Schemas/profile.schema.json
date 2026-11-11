@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/profile.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/profile.schema.json",
   "title": "OpenJoystickDriver profile",
-  "description": "A remapping profile, as 'ojd profile export' writes it and 'ojd profile import' reads it. The schema checks the shape and the range of each field. 'ojd profile validate' also checks the rules that span fields, such as duplicate sources and IDs.",
+  "description": "A remapping profile.",
   "type": "object",
   "required": [
     "apiVersion",
@@ -16,7 +16,7 @@
   "additionalProperties": false,
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha1"
+      "const": "openjoystickdriver/v1alpha3"
     },
     "kind": {
       "const": "Profile"
@@ -35,14 +35,20 @@
         },
         {
           "type": "object",
-          "required": ["appID", "type"],
+          "required": ["appIDs", "type"],
           "additionalProperties": false,
           "properties": {
-            "appID": {
-              "type": "string",
-              "minLength": 3,
-              "maxLength": 255,
-              "pattern": "^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?)+$"
+            "appIDs": {
+              "description": "The bundle identifiers of the apps that the profile applies to, any one of which may be in front.",
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 255,
+                "pattern": "^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?)+$"
+              }
             },
             "type": {
               "const": "Application"
@@ -61,6 +67,13 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/chord"
+      }
+    },
+    "macros": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "$ref": "#/$defs/macro"
       }
     },
     "device": {
@@ -82,12 +95,15 @@
         "unit": {
           "type": "string",
           "pattern": "^U-[A-Za-z0-9_-]{16}$",
-          "description": "A unit ID from `ojd controller list`. The profile applies only to that unit; other units of the model ignore it."
+          "description": "The unit identifier of one controller of the model."
         }
       }
     },
     "gyroOutput": {
       "$ref": "#/$defs/gyroOutput"
+    },
+    "pointerSpeed": {
+      "$ref": "#/$defs/pointerSpeed"
     },
     "id": {
       "$ref": "#/$defs/uuid"
@@ -114,8 +130,9 @@
     "name": {
       "type": "string",
       "minLength": 1,
-      "pattern": "^\\S(.*\\S)?$",
-      "description": "At most 80 characters, with no space at either end and no control characters."
+      "maxLength": 80,
+      "pattern": "^(?![\\s\\S]*[\\u0000-\\u001f\\u007f-\\u009f])\\S(.*\\S)?$",
+      "description": "The display name of the profile."
     },
     "outputPolicy": {
       "type": "object",
@@ -180,21 +197,24 @@
         "destination": {
           "$ref": "#/$defs/destination"
         },
-        "doubleTap": {
-          "$ref": "#/$defs/doubleTap"
-        },
         "id": {
           "$ref": "#/$defs/uuid"
         },
         "longHold": {
           "$ref": "#/$defs/longHold"
         },
+        "multiTap": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/multiTap"
+          }
+        },
         "pulseDurationMs": {
           "type": "number",
           "minimum": 1,
           "maximum": 5000,
           "default": 100,
-          "description": "Only a pulse binding sets a value other than 100."
+          "description": "How long a pulse lasts, in milliseconds."
         },
         "turbo": {
           "$ref": "#/$defs/turbo"
@@ -203,7 +223,7 @@
     },
     "adaptiveTriggerEffect": {
       "type": "object",
-      "description": "An off effect has startPosition and strength 0.",
+      "description": "An adaptive trigger effect, with its start position and strength.",
       "required": ["kind", "startPosition", "strength"],
       "additionalProperties": false,
       "properties": {
@@ -304,21 +324,24 @@
         "destination": {
           "$ref": "#/$defs/destination"
         },
-        "doubleTap": {
-          "$ref": "#/$defs/doubleTap"
-        },
         "id": {
           "$ref": "#/$defs/uuid"
         },
         "longHold": {
           "$ref": "#/$defs/longHold"
         },
+        "multiTap": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/multiTap"
+          }
+        },
         "pulseDurationMs": {
           "type": "number",
           "minimum": 1,
           "maximum": 5000,
           "default": 100,
-          "description": "Only a pulse binding sets a value other than 100."
+          "description": "How long a pulse lasts, in milliseconds."
         },
         "source": {
           "$ref": "#/$defs/source"
@@ -338,7 +361,7 @@
     },
     "chord": {
       "type": "object",
-      "description": "Sources pressed together. Their order does not matter.",
+      "description": "Sources pressed together.",
       "required": ["destination", "id", "sources"],
       "additionalProperties": false,
       "properties": {
@@ -508,7 +531,7 @@
               "const": "Keyboard"
             }
           },
-          "description": "OJD writes modifiers sorted and without repeats."
+          "description": "A key press with its modifiers."
         },
         {
           "type": "object",
@@ -542,7 +565,7 @@
           "additionalProperties": false,
           "properties": {
             "axis": {
-              "$ref": "#/$defs/axis"
+              "$ref": "vocabulary.schema.json#/$defs/gamepadAxis"
             },
             "type": {
               "const": "GamepadAxis"
@@ -584,6 +607,19 @@
               "enum": ["X", "Y"]
             },
             "type": {
+              "const": "PointerPosition"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["axis", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "axis": {
+              "enum": ["X", "Y"]
+            },
+            "type": {
               "const": "Scroll"
             }
           }
@@ -600,11 +636,241 @@
               "const": "Physical"
             }
           }
+        },
+        {
+          "type": "object",
+          "required": ["macro", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "macro": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "type": {
+              "const": "Macro"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["systemKey", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "systemKey": {
+              "enum": [
+                "PlayPause",
+                "NextTrack",
+                "PreviousTrack",
+                "FastForward",
+                "Rewind",
+                "VolumeUp",
+                "VolumeDown",
+                "Mute",
+                "BrightnessUp",
+                "BrightnessDown",
+                "KeyboardIlluminationUp",
+                "KeyboardIlluminationDown"
+              ]
+            },
+            "type": {
+              "const": "SystemKey"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["action", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "enum": ["MissionControl"]
+            },
+            "type": {
+              "const": "SystemAction"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["bundleIdentifier", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "bundleIdentifier": {
+              "type": "string",
+              "minLength": 1
+            },
+            "type": {
+              "const": "OpenApplication"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "url"],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "OpenURL"
+            },
+            "url": {
+              "description": "The URL to open.",
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^(?![Ff][Ii][Ll][Ee]:)[A-Za-z][A-Za-z0-9+.-]*:"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["name", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            "type": {
+              "const": "RunShortcut"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["text", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "type": {
+              "const": "TypeText"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["profile", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "profile": {
+              "description": "The profile to switch to: a profile identifier, the next, or the previous.",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "enum": ["Next", "Previous"]
+                }
+              ]
+            },
+            "type": {
+              "const": "ProfileSwitch"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["layer", "mode", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "layer": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "mode": {
+              "enum": ["On", "Off", "Toggle"]
+            },
+            "type": {
+              "const": "LayerSet"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["mode", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "enum": ["On", "Off", "Toggle"]
+            },
+            "type": {
+              "const": "Pause"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["text", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "voice": {
+              "description": "The identifier of the speech voice.",
+              "type": "string",
+              "minLength": 1
+            },
+            "type": {
+              "const": "Speak"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["channel", "note", "type", "velocity"],
+          "additionalProperties": false,
+          "properties": {
+            "channel": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16
+            },
+            "note": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 127
+            },
+            "type": {
+              "const": "MidiNote"
+            },
+            "velocity": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 127
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["channel", "controller", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "channel": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 16
+            },
+            "controller": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 127
+            },
+            "type": {
+              "const": "MidiControlChange"
+            }
+          }
         }
       ]
     },
     "discreteSource": {
-      "description": "A source that is pressed or released, so any source but a whole axis.",
+      "description": "A source that is pressed or released.",
       "allOf": [
         {
           "$ref": "#/$defs/source"
@@ -622,24 +888,43 @@
         }
       ]
     },
-    "doubleTap": {
+    "pointerSpeed": {
       "type": "object",
-      "required": ["destination", "windowMs"],
+      "description": "A scale on pointer movement that a trigger or a stick sets, shaped by a curve.",
+      "required": ["curve", "driver", "maxScale", "minScale"],
       "additionalProperties": false,
       "properties": {
-        "destination": {
-          "$ref": "#/$defs/destination"
+        "curve": {
+          "enum": ["Linear", "EaseIn", "EaseOut", "SmoothStep"]
         },
-        "windowMs": {
+        "driver": {
+          "type": "object",
+          "required": ["side", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "side": {
+              "enum": ["Left", "Right"]
+            },
+            "type": {
+              "enum": ["Trigger", "StickDepth"]
+            }
+          }
+        },
+        "maxScale": {
           "type": "number",
-          "minimum": 50,
-          "maximum": 1000
+          "minimum": 0,
+          "maximum": 10
+        },
+        "minScale": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
         }
       }
     },
     "gyroOutput": {
       "type": "object",
-      "description": "activationSource is set exactly when activationMode is not always.",
+      "description": "A gyro output: its mode, activation, and scale.",
       "additionalProperties": false,
       "properties": {
         "activationMode": {
@@ -754,8 +1039,9 @@
         "name": {
           "type": "string",
           "minLength": 1,
-          "pattern": "^\\S(.*\\S)?$",
-          "description": "At most 40 characters, with no space at either end and no control characters."
+          "maxLength": 40,
+          "pattern": "^(?![\\s\\S]*[\\u0000-\\u001f\\u007f-\\u009f])\\S(.*\\S)?$",
+          "description": "The display name of the layer."
         },
         "sequences": {
           "type": "array",
@@ -767,7 +1053,7 @@
     },
     "lean": {
       "type": "object",
-      "description": "hysteresisDegrees is less than thresholdDegrees.",
+      "description": "A lean gesture, with its threshold and hysteresis in degrees.",
       "required": ["hysteresisDegrees", "thresholdDegrees"],
       "additionalProperties": false,
       "properties": {
@@ -865,6 +1151,123 @@
           "minimum": 0,
           "maximum": 100,
           "default": 1
+        }
+      }
+    },
+    "macro": {
+      "description": "A named list of timed output steps that a Macro destination runs.",
+      "type": "object",
+      "required": ["id", "interruptOnRelease", "name", "repeat", "steps", "whileRunning"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "interruptOnRelease": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "repeat": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500
+            },
+            {
+              "const": "WhileHeld"
+            }
+          ]
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/macroStep"
+          }
+        },
+        "whileRunning": {
+          "enum": ["Ignore", "Restart"]
+        }
+      }
+    },
+    "macroStep": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["destination", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "destination": {
+              "$ref": "#/$defs/destination"
+            },
+            "type": {
+              "enum": ["Tap", "Press", "Release"]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["destinations", "holdMs", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "destinations": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/destination"
+              }
+            },
+            "holdMs": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 5000
+            },
+            "type": {
+              "const": "Chord"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["durationMs", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "durationMs": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 5000
+            },
+            "type": {
+              "const": "Wait"
+            }
+          }
+        }
+      ]
+    },
+    "multiTap": {
+      "type": "object",
+      "required": ["count", "destination", "windowMs"],
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 5
+        },
+        "destination": {
+          "$ref": "#/$defs/destination"
+        },
+        "windowMs": {
+          "type": "number",
+          "minimum": 50,
+          "maximum": 1000
         }
       }
     },
@@ -1115,7 +1518,7 @@
               "const": "TouchGrid"
             }
           },
-          "description": "column is less than columns, and row is less than rows."
+          "description": "A cell of a grid on a touch surface."
         },
         {
           "type": "object",
@@ -1137,12 +1540,131 @@
               "const": "TouchSwipe"
             }
           }
+        },
+        {
+          "type": "object",
+          "required": ["hysteresis", "innerRadius", "outerRadius", "stick", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "fromDegrees": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMaximum": 360
+            },
+            "hysteresis": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 0.25
+            },
+            "innerRadius": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMaximum": 1
+            },
+            "outerRadius": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "stick": {
+              "$ref": "#/$defs/stickSide"
+            },
+            "toDegrees": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 360
+            },
+            "type": {
+              "const": "StickRegion"
+            }
+          },
+          "oneOf": [
+            {
+              "required": ["fromDegrees", "toDegrees"]
+            },
+            {
+              "not": {
+                "anyOf": [
+                  {
+                    "required": ["fromDegrees"]
+                  },
+                  {
+                    "required": ["toDegrees"]
+                  }
+                ]
+              }
+            }
+          ],
+          "description": "A sector of a stick, between two angles and two radii."
+        },
+        {
+          "type": "object",
+          "required": ["from", "hysteresis", "to", "trigger", "type"],
+          "additionalProperties": false,
+          "properties": {
+            "from": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMaximum": 1
+            },
+            "hysteresis": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 0.25
+            },
+            "to": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "trigger": {
+              "$ref": "#/$defs/triggerSide"
+            },
+            "type": {
+              "const": "TriggerBand"
+            }
+          },
+          "description": "A band of a trigger, between two positions."
+        },
+        {
+          "type": "object",
+          "required": ["height", "surface", "type", "width", "x", "y"],
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "surface": {
+              "$ref": "#/$defs/touchSurface"
+            },
+            "type": {
+              "const": "TouchArea"
+            },
+            "width": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "x": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMaximum": 1
+            },
+            "y": {
+              "type": "number",
+              "minimum": 0,
+              "exclusiveMaximum": 1
+            }
+          },
+          "description": "A rectangle on a touch surface."
         }
       ]
     },
     "steering": {
       "type": "object",
-      "description": "deadzoneDegrees is less than fullScaleDegrees.",
+      "description": "A steering mapping from controller tilt, with its dead zone and full scale in degrees.",
       "required": [
         "deadzoneDegrees",
         "fullScaleDegrees",
@@ -1177,7 +1699,7 @@
     },
     "stickMapping": {
       "type": "object",
-      "description": "flickHysteresis is less than flickThreshold.",
+      "description": "A mapping of one stick, with its mode and flick settings.",
       "required": ["source"],
       "additionalProperties": false,
       "properties": {
@@ -1277,7 +1799,7 @@
     },
     "stickTuning": {
       "type": "object",
-      "description": "innerDeadzone plus outerDeadzone is less than 1.",
+      "description": "The dead zones, inversion, and response of a stick.",
       "additionalProperties": false,
       "properties": {
         "innerDeadzone": {
@@ -1351,7 +1873,7 @@
     },
     "triggerMapping": {
       "type": "object",
-      "description": "softThreshold is less than fullThreshold, and hysteresis is less than softThreshold.",
+      "description": "A mapping of one trigger, with its soft and full thresholds and hysteresis.",
       "required": ["source"],
       "additionalProperties": false,
       "properties": {
@@ -1411,6 +1933,17 @@
           "type": "number",
           "minimum": 0.05,
           "maximum": 0.95
+        },
+        "initialDelayMs": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2500,
+          "default": 0
+        },
+        "maxRepeats": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
         },
         "repeatRateHz": {
           "type": "number",

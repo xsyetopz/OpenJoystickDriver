@@ -30,9 +30,9 @@ struct SettingsFileRecoveryTests {
       at: store.folderURL,
       withIntermediateDirectories: true
     )
-    try Data(
-      (#"{"apiVersion": "\#(OpenJoystickDriverAPI.version)", "kind": "Settings", "#
-        + #""showInMenuBar": false}"#).utf8
+    try PropertyListFixture.data(
+      json: #"{"apiVersion": "\#(OpenJoystickDriverAPI.version)", "kind": "Settings", "#
+        + #""showInMenuBar": false}"#
     ).write(to: store.userFileURL)
   }
 
@@ -117,7 +117,7 @@ struct SettingsFileRecoveryTests {
 
   @Test
   func theStartupOffersRecoveryOnlyForAnUnusableFile() {
-    let error = SettingsStoreError.damaged(file: "/tmp/Settings.json")
+    let error = SettingsStoreError.damaged(file: "/tmp/Settings.plist")
 
     #expect(SettingsFileStartup.decide(settingsError: nil) == .proceed)
     #expect(SettingsFileStartup.decide(settingsError: error) == .offerRecovery(error))
@@ -125,7 +125,7 @@ struct SettingsFileRecoveryTests {
 
   @Test(arguments: [true, false])
   func theMenuBarItemShowsWhileTheSettingsFileCannotBeRead(showInMenuBar: Bool) {
-    let error = SettingsStoreError.damaged(file: "/tmp/Settings.json")
+    let error = SettingsStoreError.damaged(file: "/tmp/Settings.plist")
 
     #expect(
       SettingsFileStartup.statusItemIsShown(showInMenuBar: showInMenuBar, settingsError: error)
@@ -165,8 +165,22 @@ struct SettingsFileRecoveryTests {
 
   @Test
   @MainActor
+  func anAlertThatOffersMigrationHasMigrateFirstAndMapsItsButtons() {
+    let alert = SettingsUnreadableAlert.make(reason: "Reason", offersMigration: true)
+
+    #expect(alert.buttons.map(\.title).first == OJDLocalized.string("ui.migrate.action"))
+    #expect(alert.buttons.count == 4)
+    let choices = [
+      NSApplication.ModalResponse.alertFirstButtonReturn, .alertSecondButtonReturn,
+      .alertThirdButtonReturn, NSApplication.ModalResponse(rawValue: 1003),
+    ].map { SettingsUnreadableChoice(response: $0, offersMigration: true) }
+    #expect(choices == [.migrate, .showInFinder, .resetSettings, .quit])
+  }
+
+  @Test
+  @MainActor
   func theLaunchUpdateCheckSkipsWhileTheSettingsFileCannotBeRead() {
-    let error = SettingsStoreError.damaged(file: "/tmp/Settings.json")
+    let error = SettingsStoreError.damaged(file: "/tmp/Settings.plist")
     var checks = 0
 
     let outcome = LaunchUpdateCheck(
@@ -202,15 +216,15 @@ struct SettingsFileRecoveryTests {
 
   @Test
   func theSkipLogNamesTheFeatureTheFileAndTheReason() {
-    let error = SettingsStoreError.damaged(file: "/tmp/Settings.json")
+    let error = SettingsStoreError.damaged(file: "/tmp/Settings.plist")
 
     let message = SettingsSkipLog.message(
       feature: "the launch update check",
-      file: "/tmp/Settings.json",
+      file: "/tmp/Settings.plist",
       error: error
     )
 
-    #expect(message.hasPrefix("[Settings] /tmp/Settings.json cannot be read, skipping the launch"))
+    #expect(message.hasPrefix("[Settings] /tmp/Settings.plist cannot be read, skipping the launch"))
     #expect(message.contains(error.localizedDescription))
   }
 
@@ -227,12 +241,10 @@ struct SettingsFileRecoveryTests {
 
     try store.set(.showInDock, to: true)
     let url = store.userFileURL
-    var document = try #require(
-      try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
-    )
+    var document = try PropertyListFixture.dictionary(at: url)
     document["showInDock"] = false
     document["showInMenuBar"] = false
-    try JSONSerialization.data(withJSONObject: document).write(to: url)
+    try PropertyListFixture.data(tree: document).write(to: url)
     #expect(throws: SettingsStoreError.self) { try store.load() }
     monitor.observe(RuntimeNotificationSnapshot(controllers: [:], activeProfiles: [:]))
     monitor.observe(RuntimeNotificationSnapshot(controllers: ["b": "Pad 2"], activeProfiles: [:]))

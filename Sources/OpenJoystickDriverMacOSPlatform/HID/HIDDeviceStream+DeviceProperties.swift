@@ -11,6 +11,7 @@ extension HIDDeviceStream {
     IOHIDDeviceGetProperty(device, key as CFString) as? Int ?? 0
   }
 
+  /// Reads the identity, usages and report layout of `device` into an observation.
   func physicalDeviceObservation(
     for device: IOHIDDevice,
     vendorID: UInt16,
@@ -70,7 +71,8 @@ extension HIDDeviceStream {
       primaryUsage: primaryUsage.usagePage == nil && primaryUsage.usage == nil ? nil : primaryUsage,
       collectionUsages: collectionUsages,
       reportDescriptor: descriptor,
-      reports: reports
+      reports: reports,
+      elements: elements.map(HIDElementDescription.inputs(of:)) ?? []
     )
     return PhysicalDevice(
       platformUniqueIdentifier: IOHIDDeviceGetProperty(
@@ -103,9 +105,10 @@ extension HIDDeviceStream {
   }
 
   /// The `bInterfaceNumber` of the USB interface a HID device is published on, read from the
-  /// nearest `IOUSBHostInterface` among its IORegistry service-plane parents. Nil when there is
-  /// none. Callers read it only for USB-hosted devices, since a Bluetooth radio can itself sit on
-  /// an internal USB interface.
+  /// nearest `IOUSBHostInterface` among its IORegistry service-plane parents.
+  ///
+  /// Nil when there is none. Callers read it only for USB-hosted devices, since a Bluetooth radio
+  /// can itself sit on an internal USB interface.
   static func usbInterfaceNumber(for device: IOHIDDevice) -> UInt8? {
     guard let entry = retainedUSBInterfaceEntry(for: device) else { return nil }
     defer { IOObjectRelease(entry) }
@@ -128,11 +131,14 @@ extension HIDDeviceStream {
     }
   }
 
+  /// Reads the integer property `key` of `device` as an unsigned value, or nil when it is missing
+  /// or negative.
   func unsignedProperty(_ device: IOHIDDevice, _ key: String) -> UInt64? {
     guard let value = IOHIDDeviceGetProperty(device, key as CFString) as? Int else { return nil }
     return UInt64(exactly: value)
   }
 
+  /// Tells whether `usage` is the Generic Desktop GamePad or Joystick usage.
   private static func isGamePadOrJoystick(_ usage: HIDUsageSignature) -> Bool {
     guard usage.usagePage == UInt32(kHIDPage_GenericDesktop), let value = usage.usage else {
       return false
@@ -140,7 +146,9 @@ extension HIDDeviceStream {
     return value == UInt32(kHIDUsage_GD_GamePad) || value == UInt32(kHIDUsage_GD_Joystick)
   }
 
-  private static func reportKind(for element: IOHIDElement) -> PhysicalHIDReportKind? {
+  /// Returns the kind of report that `element` belongs to, or nil for an element that is not part
+  /// of a report.
+  static func reportKind(for element: IOHIDElement) -> PhysicalHIDReportKind? {
     switch IOHIDElementGetType(element) {
     case kIOHIDElementTypeInput_Misc, kIOHIDElementTypeInput_Button, kIOHIDElementTypeInput_Axis,
       kIOHIDElementTypeInput_ScanCodes, kIOHIDElementTypeInput_NULL:

@@ -4,10 +4,14 @@ import Foundation
 public struct ControllerRecordTestResult: Equatable, Sendable {
   /// One field of the controller state that differs; `expected` and `actual` are its JSON.
   public struct Difference: Equatable, Sendable {
+    /// The name of the state field that differs.
     public let field: String
+    /// The expected value of the field, as JSON.
     public let expected: String
+    /// The actual value of the field, as JSON.
     public let actual: String
 
+    /// Creates a difference from a field name and the expected and actual JSON.
     public init(field: String, expected: String, actual: String) {
       self.field = field
       self.expected = expected
@@ -20,8 +24,10 @@ public struct ControllerRecordTestResult: Equatable, Sendable {
   /// Empty when the states match.
   public let differences: [Difference]
 
+  /// Whether the replayed state equals the expected state.
   public var matches: Bool { differences.isEmpty }
 
+  /// Creates a result from the input report count and the differences.
   public init(inputReports: Int, differences: [Difference]) {
     self.inputReports = inputReports
     self.differences = differences
@@ -63,14 +69,22 @@ extension ControllerRecord {
     )
   }
 
+  /// One line of a capture file: a logged packet.
   private struct CaptureLine: Decodable {
+    /// Whether the packet was sent or received.
     let direction: PacketLogDirection
+    /// The packet bytes as hex text.
     let hex: String
+    /// The packet length in bytes.
     let length: Int
 
+    /// The packet bytes decoded from `hex`.
     var bytes: [UInt8] { PacketLogEntry.bytes(hex: hex) }
   }
 
+  /// The payloads of the received packets in the JSON-lines capture `data`, in file order.
+  /// - Throws: ``ControllerRecordTestError/capture(line:problem:)`` when the text is not UTF-8, a
+  ///   line is not a capture entry, or an entry's length differs from its hex.
   private static func receivedReports(in data: Data) throws -> [[UInt8]] {
     guard let text = String(bytes: data, encoding: .utf8) else {
       throw ControllerRecordTestError.capture(line: 1, problem: "not UTF-8 text")
@@ -96,6 +110,9 @@ extension ControllerRecord {
     return reports
   }
 
+  /// The fields of `expected` whose value differs in `actual`, sorted by field name; `connection`
+  /// is not compared.
+  /// - Throws: An encoding error when a state cannot be rendered as JSON.
   private static func differences(
     expected: ControllerState,
     actual: ControllerState

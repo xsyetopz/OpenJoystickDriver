@@ -1,6 +1,5 @@
 # Localization Review 0.6.0
 
-Task H11 of `openspec/changes/platform-neutral-redesign`.
 The AI agent reviewed the 20 non-English locales against `LOCALIZATION.md` (Meaning, Punctuation), Apple's localized macOS terms, CLDR plural categories, and the English source with its translator comment.
 Native speakers have not reviewed them, so the plural bundles keep their first-draft comment.
 

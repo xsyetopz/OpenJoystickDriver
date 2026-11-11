@@ -1,6 +1,13 @@
 import Foundation
 
 extension DeviceManager {
+  /// Admits one HID connection: binds it to a driver, starts its device pipeline and runs its
+  /// startup output.
+  ///
+  /// A native pass-through connection binds observe-only and leaves every other interface at its
+  /// location to macOS. A connection that no driver binds, or that a raw-USB pipeline of the same
+  /// controller serves, is recorded as unbound. Every await checks that this initialization is
+  /// still current, because a later connection can replace it.
   func handleHIDDeviceConnected(connection: HIDDeviceConnection, ownership: HIDInputOwnership) async
   {
     let physicalDevice = connection.physicalDevice
@@ -292,6 +299,8 @@ extension DeviceManager {
     scheduleHIDPeriodicOutput(for: identifier, pipeline: pipeline, connection: connection)
   }
 
+  /// Whether `connection` is still the initialization to finish: the manager is not stopping, the
+  /// task is not cancelled, and no other connection holds its initialization key.
   func isCurrentHIDInitialization(_ connection: HIDDeviceConnection) -> Bool {
     guard !Task.isCancelled, !isStopping else { return false }
     guard let initialization = hidInitializationTasks[hidInitializationKey(for: connection)] else {
@@ -300,6 +309,11 @@ extension DeviceManager {
     return initialization.connection.connectionID == connection.connectionID
   }
 
+  /// Repeats the keep-alive output of a HID controller at the interval of the pipeline until the
+  /// pipeline or its connection is replaced.
+  ///
+  /// A failed write is logged. Does nothing when `connection` is not the startup connection of
+  /// `pipeline`.
   func scheduleHIDPeriodicOutput(
     for identifier: LogicalControllerID,
     pipeline: DevicePipeline,

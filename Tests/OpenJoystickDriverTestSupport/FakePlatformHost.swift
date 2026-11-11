@@ -16,11 +16,19 @@ package struct FakePlatformHost: PlatformHost {
     ExtensionStatus(bundle: .missing, registration: .absent)
   }
 
-  package func requestExtensionActivation() async -> SystemExtensionSetupRequestResult { .failed }
+  package func requestExtensionActivation() async -> SystemExtensionSetupRequestResult {
+    .failed(Self.failure)
+  }
 
   package func requestExtensionDeactivation() async -> SystemExtensionSetupRequestResult {
-    .failed
+    .failed(Self.failure)
   }
+
+  private static let failure = SystemExtensionRequestFailure(
+    domain: "FakePlatformHost",
+    code: 1,
+    text: "The fake host does not submit requests."
+  )
 
   package func countVendorSpecificUSBControllers() async throws -> Int { 0 }
 
@@ -35,6 +43,8 @@ package struct FakePlatformHost: PlatformHost {
   package func codeSigningIdentity(ofPath url: URL) -> CodeSigningIdentity? { nil }
 
   package func physicalReportDescriptor(vendorID: Int, productID: Int) -> [UInt8]? { nil }
+
+  package func physicalDevice(vendorID: Int, productID: Int) -> PhysicalDevice? { nil }
 
   package func droppedHIDInputReports(processID: Int32) -> [HIDInputDropObservation] { [] }
 

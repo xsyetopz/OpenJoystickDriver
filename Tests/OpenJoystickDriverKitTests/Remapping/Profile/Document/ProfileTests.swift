@@ -39,7 +39,7 @@ struct RemappingProfileTests {
       id: fixedUUID(10),
       name: "Adventure",
       device: RemappingDeviceScope(vendorID: 0x045E, productID: 0x02EA),
-      applicationScope: .application(appID: "com.example.Adventure"),
+      applicationScope: .application(appIDs: ["com.example.Adventure"]),
       bindings: [
         binding(
           id: fixedUUID(1),
@@ -84,7 +84,7 @@ struct RemappingProfileTests {
       id: fixedUUID(10),
       name: "Keyboard",
       device: RemappingDeviceScope(vendorID: 1, productID: 2),
-      applicationScope: .application(appID: "com.example.Game"),
+      applicationScope: .application(appIDs: ["com.example.Game"]),
       bindings: [
         binding(
           id: fixedUUID(1),
@@ -107,7 +107,8 @@ struct RemappingProfileTests {
     #expect(Set(device.keys) == ["vendorID", "productID"])
     let scope = try #require(root["applicationScope"] as? [String: Any])
     #expect(scope["type"] as? String == "Application")
-    #expect(scope["appID"] as? String == "com.example.Game")
+    #expect(scope["appIDs"] as? [String] == ["com.example.Game"])
+    #expect(scope["appID"] == nil)
 
     let bindings = try #require(root["bindings"] as? [[String: Any]])
     let firstBinding = try #require(bindings.first)

@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -10,7 +11,7 @@ extension ProtocolClassifierTests {
   func protocolDescriptionDecodesItsSignatures() throws {
     let signatures = try ProtocolDescription.decode(
       protocolDescription(signature: #""variant": "USB", "interfaceNumber": 0"#),
-      fileName: "xbox-gip.json"
+      fileName: "xbox-gip.plist"
     ).interfaceSignatures
     #expect(
       signatures == [
@@ -48,11 +49,11 @@ extension ProtocolClassifierTests {
     let error = #expect(throws: ProtocolDescriptionProblem.self) {
       try ProtocolDescription.decode(
         protocolDescription(signature: signature),
-        fileName: "xbox-gip.json"
+        fileName: "xbox-gip.plist"
       )
     }
     #expect(error?.code == code)
-    #expect(error?.detail.hasPrefix("xbox-gip.json: ") == true)
+    #expect(error?.detail.hasPrefix("xbox-gip.plist: ") == true)
     #expect(error?.description.contains(problem) == true)
   }
 
@@ -80,7 +81,7 @@ extension ProtocolClassifierTests {
       ),
       (
         protocolDescription(signature: #""variant": "USB""#, family: "XboxXUSB"),
-        "file name must be xbox-xusb.json",
+        "file name must be xbox-xusb.plist",
         .protocolDescriptionFamilyMismatch
       ),
     ]
@@ -88,7 +89,7 @@ extension ProtocolClassifierTests {
       let error = #expect(throws: ProtocolDescriptionProblem.self) {
         try ProtocolDescription.decode(
           data,
-          fileName: "xbox-gip.json"
+          fileName: "xbox-gip.plist"
         )
       }
       #expect(error?.code == code)
@@ -123,25 +124,25 @@ extension ProtocolClassifierTests {
   ) -> Data {
     let protocolID = PhysicalProtocolID(rawValue: family)
     let keys = protocolID.map(ProtocolDescriptionFixture.sessionKeyMembers) ?? ""
-    return Data(
-      """
-      {
-        \(extra)
-        "apiVersion": "\(apiVersion)",
-        "kind": "\(kind)",
-        "family": "\(family)",
-        \(PhysicalProtocolID(rawValue: family).map(ProtocolDescriptionFixture.variantMembers) ?? "")
-        \(keys)
-        "endpoints": {"in": 130, "out": 2},
-        "defaults": {"session": {"handshakeAttempts": 3, "announceResendLimit": 8,
-          "namedPackets": [
-          {"id": "XboxGIP/power-on", "bytes": "05 20 00 01 00", "sessionByte": 2}
-         ]}},
-        "interfaceSignatures": [
-          {\(signature), "interfaceClass": 255, "interfaceSubclass": 71, "interfaceProtocol": 208}
-        ]
-      }
-      """.utf8
+    return PropertyListFixture.bytes(
+      json: """
+        {
+          \(extra)
+          "apiVersion": "\(apiVersion)",
+          "kind": "\(kind)",
+          "family": "\(family)",
+          \(PhysicalProtocolID(rawValue: family).map(ProtocolDescriptionFixture.variantMembers) ?? "")
+          \(keys)
+          "endpoints": {"in": 130, "out": 2},
+          "defaults": {"session": {"handshakeAttempts": 3, "announceResendLimit": 8,
+            "namedPackets": [
+            {"id": "XboxGIP/power-on", "bytes": "05 20 00 01 00", "sessionByte": 2}
+           ]}},
+          "interfaceSignatures": [
+            {\(signature), "interfaceClass": 255, "interfaceSubclass": 71, "interfaceProtocol": 208}
+          ]
+        }
+        """
     )
   }
 }

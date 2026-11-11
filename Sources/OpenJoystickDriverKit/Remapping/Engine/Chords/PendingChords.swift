@@ -1,21 +1,34 @@
 import Foundation
 
+/// A source press held back while a chord may still complete.
 struct RemappingPendingChordPress {
+  /// Source that was pressed.
   let source: RemappingSource
+  /// Uptime of the press, in nanoseconds.
   let uptime: UInt64
+  /// Uptime at which the press is replayed if no chord completes.
   let deadline: UInt64
+  /// Raw axis value when the source is an axis direction, so the replay can restore it.
   let axisValue: Float?
 }
 
 extension RemappingDeviceState {
+  /// Earliest time at which a held-back press resolves, or `nil` when none is held back.
   var pendingChordDeadline: UInt64? {
     chords.pendingChordPresses.map { resolvedDeadline($0) }.min()
   }
 
+  /// Returns the time at which a held-back press resolves.
+  ///
+  /// It is the deadline of a chord that may still complete with the press source, otherwise the
+  /// deadline of the press.
   func resolvedDeadline(_ press: RemappingPendingChordPress) -> UInt64 {
     deferredChordDeadline(for: press.source) ?? press.deadline
   }
 
+  /// Holds back a press when a simultaneous chord contains the source, and reports whether it did.
+  ///
+  /// The press waits for the longest window among those chords.
   mutating func bufferChordPress(_ source: RemappingSource, at uptime: UInt64) -> Bool {
     let windows = effectiveChords.filter { $0.mode == .simultaneous && $0.sources.contains(source) }
       .map(\.windowMs)
@@ -40,6 +53,8 @@ extension RemappingDeviceState {
 }
 
 extension RemappingEngineState {
+  /// Replays the held-back presses that are due, or that belong to the `source` being released, as
+  /// normal presses.
   mutating func replayPendingChordPresses(
     device: inout RemappingDeviceState,
     at uptime: UInt64,

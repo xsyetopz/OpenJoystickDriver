@@ -55,7 +55,9 @@ struct RemappingRPCTests {
         #expect(error.code.errorCode == .invalidProfile)
       }
     }
-    do { _ = try RemappingProfileFileStore.load(from: Data(document.utf8)) } catch {
+    do {
+      _ = try RemappingProfileFileStore.load(from: PropertyListFixture.bytes(json: document))
+    } catch {
       #expect(RemappingProfileFileStore.problemCode(error) == .invalidProfile)
     }
   }
@@ -90,7 +92,9 @@ struct RemappingRPCTests {
       } catch let error as ApplicationServiceRemappingRPCError {
         #expect(error.code.errorCode == .unsupportedAPIVersion)
       }
-      do { _ = try RemappingProfileFileStore.load(from: Data(document.utf8)) } catch {
+      do {
+        _ = try RemappingProfileFileStore.load(from: PropertyListFixture.bytes(json: document))
+      } catch {
         #expect(RemappingProfileFileStore.problemCode(error) == .unsupportedAPIVersion)
       }
     }
@@ -121,7 +125,7 @@ struct RemappingRPCTests {
       )
     }
     let active = [
-      entry("Global", .global), entry("Game", .application(appID: "com.example.game")),
+      entry("Global", .global), entry("Game", .application(appIDs: ["com.example.game"])),
       entry("Other", .global, productID: 3),
     ]
 
@@ -422,7 +426,7 @@ struct RemappingRPCTests {
     return RemappingProfile(
       name: String(repeating: "P", count: 77) + suffix,
       device: RemappingDeviceScope(vendorID: UInt16(index), productID: UInt16(index)),
-      applicationScope: .application(appID: "com." + String(repeating: "a", count: 251)),
+      applicationScope: .application(appIDs: ["com." + String(repeating: "a", count: 251)]),
       bindings: bindings
     )
   }

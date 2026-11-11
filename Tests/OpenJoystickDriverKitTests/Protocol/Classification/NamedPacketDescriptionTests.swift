@@ -3,10 +3,11 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// The GIP named startup packets come from `defaults.session.namedPackets` in the
-/// family's description. The decoder is the only validator of these documents
-/// (the protocol description tests); the bytes the driver sends are pinned in
-/// `GIPStartupPacketBytesTests`.
+/// The GIP named startup packets come from `defaults.session.namedPackets` in the family's
+/// description.
+///
+/// The decoder is the only validator of these documents (the protocol description tests); the bytes
+/// the driver sends are pinned in `GIPStartupPacketBytesTests`.
 struct NamedPacketDescriptionTests {
   private static let powerOn =
     #"{"id": "XboxGIP/power-on", "bytes": "05 20 00 01 00", "sessionByte": 2}"#

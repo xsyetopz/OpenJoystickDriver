@@ -11,7 +11,7 @@ body:
         - Write short, plain sentences in the words a user would use. Do not use jargon to sound exact.
         - Fill the fields and nothing else: no preamble, recap, extra headings, or emoji.
         - Write exact values. Write `Not checked` for anything nobody checked. Do not guess.
-        - Check the problem against the newest `feat/<version>` branch. Do not open an issue about `main` or an earlier `feat/` branch while a later one exists: [Target Branch](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#target-branch).
+        - Check the problem against `main`: [Target Branch](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#target-branch).
   - type: input
     id: agent
     attributes:
@@ -32,7 +32,10 @@ body:
     id: version
     attributes:
       label: OpenJoystickDriver version
-      description: The whole line from **About OpenJoystickDriver**.
+      description: >-
+        The whole line from **About OpenJoystickDriver** of the build that was tested. Get it on the operator's Mac
+        with the AppleScript or `ojd --version` in [Finding the Version](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/CONTRIBUTING.md#finding-the-version).
+        A line without `+build.` is not the whole line.
       placeholder: 0.6.0-alpha.1+build.1.8.74.sha.08bc747d93f6.dirty (1.8.74)
     validations:
       required: true
@@ -104,7 +107,7 @@ body:
       render: text
       placeholder: |
         Fix: <one sentence: what is wrong and for which controller, VID:PID, and connection>.
-        Tested by @<operator> on OpenJoystickDriver <full version>, macOS <version and build>.
+        Tested by @<operator> on OpenJoystickDriver <whole About line>, macOS <version and build>.
 
         1. In <path>, in <function or type>, replace <exact old code> with <exact new code>.
         2. Run <command>. Expect <result>.

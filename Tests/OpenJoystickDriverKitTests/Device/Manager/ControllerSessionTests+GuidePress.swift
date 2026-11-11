@@ -31,6 +31,27 @@ extension ControllerSessionTests {
     await pipeline.stop()
   }
 
+  /// A session that has read no input is awaiting input, with no failure reason, until its first
+  /// input report.
+  @Test
+  func aSessionIsAwaitingInputUntilItsFirstInputReport() async throws {
+    let pipeline = DevicePipeline(
+      identifier: LogicalControllerID(vendorID: 0x054C, productID: 0x0268),
+      transport: .hid(address: .ioKit(locationID: 6, interfaceNumber: nil)),
+      driver: SixaxisDriver(),
+      dispatcher: ControllerSessionOutputProbe(),
+      uptimeNanoseconds: ManualUptime().now
+    )
+    await pipeline.start()
+    let awaiting = await pipeline.inputHealth()
+    #expect(awaiting.state == .awaitingInput)
+    #expect(awaiting.failureReason == nil)
+
+    await pipeline.feedHIDData(ProtocolPacketFixtures.DS3.inputReport())
+    #expect(await pipeline.inputHealth().state == .healthy)
+    await pipeline.stop()
+  }
+
   /// A report with no input that arrives after the timeout ends a session that never had input,
   /// so there is no input to wait for neutral from and the recovery is not one.
   @Test

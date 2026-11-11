@@ -1,13 +1,21 @@
 - **[Home](Home.md)**
 - **Start here**
+  - [Play a game](Start-Play-a-Game.md)
+  - [Control the Mac](Start-Control-the-Mac.md)
+  - [Set up several Macs](Start-Set-Up-Several-Macs.md)
+  - [Add support for a controller](Start-Add-Support-for-a-Controller.md)
+- **About OJD**
   - [Getting started](Getting-Started.md)
   - [Using the app](Using-the-App.md)
   - [Testing a controller](Testing-a-Controller.md)
 - **Controllers**
   - [Supported controllers](Supported-Controllers.md)
   - [Connecting controllers](Connecting-Controllers.md)
+  - [Wii Remote](Wii-Remote.md)
+  - [Support ladder](Support-Ladder.md)
   - [Controller records](Controller-Records.md)
   - [Writing controller mods](Writing-Controller-Mods.md)
+  - [Generating documents with scripts](Generating-Documents-with-Scripts.md)
 - **Games**
   - [Playing games](Playing-Games.md)
 - **Remapping**

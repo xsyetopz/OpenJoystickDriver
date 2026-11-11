@@ -4,6 +4,12 @@ import OpenJoystickDriverKit
 
 /// Decodes and validates a profile document, turning any error into a failure with the code of
 /// ``RemappingProfileFileStore/problemCode(_:)``.
+///
+/// - Parameters:
+///   - data: The profile document.
+///   - source: The file name that the failure names.
+/// - Returns: The decoded profile.
+/// - Throws: ``CLIFailure`` when the document is not a valid profile.
 func decodeProfile(_ data: Data, source: String) throws -> RemappingProfile {
   do { return try RemappingProfileFileStore.load(from: data) } catch {
     throw CLIFailure(
@@ -17,7 +23,11 @@ func decodeProfile(_ data: Data, source: String) throws -> RemappingProfile {
   }
 }
 
+/// The `ojd profile import` command: adds a profile from a file that `profile export` wrote.
+///
+/// A profile with the same ID as an installed profile replaces it.
 struct ProfileImportCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "import",
     abstract: CLILocalized.text(
@@ -30,10 +40,13 @@ struct ProfileImportCommand: AsyncParsableCommand {
 
   /// The `--json` result. `replaced` is true when a profile with the same ID existed.
   struct Result: Encodable, Equatable {
+    /// The imported profile.
     let profile: ProfileSummary
+    /// Whether the import replaced a profile.
     let replaced: Bool
   }
 
+  /// The file to read, or `-` for standard input.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.profile.import.file"),
@@ -42,13 +55,27 @@ struct ProfileImportCommand: AsyncParsableCommand {
   )
   var file: String
 
+  /// `--app`: the bundle ID of an app that the imported profile applies to, repeated for more
+  /// apps; without it the profile keeps the scope of the file.
+  @Option(
+    help: ArgumentHelp(
+      CLILocalized.text("cli.profile.import.app"),
+      valueName: "app-id"
+    )
+  )
+  var app: [String] = []
+
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let source = file == "-" ? "stdin" : file
-      let imported = try decodeProfile(try RecordStore.read(file), source: source)
+      let decoded = try decodeProfile(try RecordStore.read(file), source: source)
+      let imported = try (app.isEmpty ? decoded : decoded.withApplicationScope(.application(appIDs: app)))
+        .checkingPointerSpeedDriver()
       let (before, after) = try await ServiceConnection.request { client in
         let before = try await client.getRemappingSnapshot()
         return (before, try await client.importRemappingProfile(imported))
@@ -79,7 +106,11 @@ struct ProfileImportCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd profile validate` command: checks a profile file without importing it.
+///
+/// It needs no running service.
 struct ProfileValidateCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "validate",
     abstract: CLILocalized.text(
@@ -91,15 +122,23 @@ struct ProfileValidateCommand: AsyncParsableCommand {
   )
 
   /// The `--json` result.
+  ///
   /// An invalid profile has only `valid` and `problem`.
   struct Result: Encodable, Equatable {
+    /// Whether the profile is valid.
     let valid: Bool
+    /// Why the profile is not valid.
     let problem: String?
+    /// The profile ID.
     let id: String?
+    /// The profile name.
     let name: String?
+    /// The controller model of the profile.
     let controller: String?
+    /// The app scope of the profile.
     let scope: String?
 
+    /// Describes a valid `profile`.
     init(_ profile: RemappingProfile) {
       valid = true
       problem = nil
@@ -112,6 +151,7 @@ struct ProfileValidateCommand: AsyncParsableCommand {
       scope = ProfileText.scope(profile.applicationScope)
     }
 
+    /// Describes an invalid profile by its `problem`.
     init(problem: String) {
       valid = false
       self.problem = problem
@@ -122,6 +162,7 @@ struct ProfileValidateCommand: AsyncParsableCommand {
     }
   }
 
+  /// The file to read, or `-` for standard input.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.profile.validate.file"),
@@ -130,9 +171,11 @@ struct ProfileValidateCommand: AsyncParsableCommand {
   )
   var file: String
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let data = try RecordStore.read(file)
@@ -171,7 +214,10 @@ struct ProfileValidateCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd profile export` command: prints a profile file to standard output, or writes it to
+/// `--output`.
 struct ProfileExportCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "export",
     abstract: CLILocalized.text(
@@ -182,9 +228,11 @@ struct ProfileExportCommand: AsyncParsableCommand {
     )
   )
 
+  /// The profile to export.
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// `--output`: the file to write instead of standard output.
   @Option(
     name: [.short, .long],
     help: ArgumentHelp(
@@ -196,9 +244,11 @@ struct ProfileExportCommand: AsyncParsableCommand {
   )
   var output: String?
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let selector = profile
@@ -206,7 +256,7 @@ struct ProfileExportCommand: AsyncParsableCommand {
         try await selector.resolve(with: $0)
       }
       guard let output else {
-        CLIOutput.raw(try RemappingProfileFileStore.encodedJSON(document))
+        CLIOutput.raw(try RemappingProfileFileStore.encodedPlist(document))
         return
       }
       do { try RemappingProfileFileStore.write(document, to: URL(fileURLWithPath: output)) } catch {
@@ -228,6 +278,7 @@ struct ProfileExportCommand: AsyncParsableCommand {
 
 /// Runs the user's editor on a file; tests replace it.
 enum ProfileEditor {
+  /// Opens the file in the editor.
   @TaskLocal
   static var open: @Sendable (URL) throws -> Void = { try run(on: $0) }
 
@@ -242,6 +293,9 @@ enum ProfileEditor {
     return "vi"
   }
 
+  /// Runs the editor command on the file at `url` and waits for it.
+  ///
+  /// - Throws: ``CLIFailure`` when the editor cannot be started or does not succeed.
   private static func run(on url: URL) throws {
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/bin/sh")
@@ -261,7 +315,11 @@ enum ProfileEditor {
   }
 }
 
+/// The `ojd profile edit` command: opens a profile file in the editor, then checks and saves it.
+///
+/// It needs a terminal.
 struct ProfileEditCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "edit",
     abstract: CLILocalized.text("cli.profile.edit.abstract"),
@@ -270,12 +328,15 @@ struct ProfileEditCommand: AsyncParsableCommand {
     )
   )
 
+  /// The profile to edit.
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       guard CLITerminal.canPrompt() else {
@@ -308,6 +369,9 @@ struct ProfileEditCommand: AsyncParsableCommand {
   }
 
   /// Opens `profile` in the editor and returns the valid profile the user saved.
+  ///
+  /// - Throws: ``CLIFailure`` when the saved file is not a valid profile or leaves the profile
+  ///   unchanged.
   static func edit(_ profile: RemappingProfile) throws -> RemappingProfile {
     let directory = MacOSDataDirectory().url(for: .temporary).appendingPathComponent(
       "ojd-profile-\(UUID().uuidString)",

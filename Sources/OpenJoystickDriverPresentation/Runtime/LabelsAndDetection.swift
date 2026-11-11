@@ -1,7 +1,10 @@
 import Foundation
 import OpenJoystickDriverKit
 
+/// Localized text for runtime states, remapping sources and destinations, and the detection of the
+/// control that the user presses.
 enum RuntimePresentation {
+  /// Returns Allowed for a granted permission, and Needs Attention for any other.
   static func permissionLabel(_ state: RuntimePermissionState) -> String {
     switch state {
     case .granted: return OJDLocalized.string("status.allowed")
@@ -10,6 +13,7 @@ enum RuntimePresentation {
     }
   }
 
+  /// Returns the label of the readiness: Ready, Needs Attention or Connect a Controller.
   static func readinessLabel(_ readiness: RuntimeReadiness) -> String {
     switch readiness {
     case .ready: return OJDLocalized.string("status.ready")
@@ -20,6 +24,7 @@ enum RuntimePresentation {
     }
   }
 
+  /// Returns the label of the Post Event access: Allowed, Needs Attention, or Checking for nil.
   static func postEventAccessLabel(_ state: RemappingPostEventAccessState?) -> String {
     switch state {
     case .granted: return OJDLocalized.string("status.allowed")
@@ -29,6 +34,7 @@ enum RuntimePresentation {
     }
   }
 
+  /// Returns the phrase for the number of connected controllers.
   static func deviceCountLabel(_ count: Int) -> String {
     OJDLocalized.plural(
       "status.controllerConnected",
@@ -36,8 +42,10 @@ enum RuntimePresentation {
     )
   }
 
+  /// Returns the name of the profile.
   static func profileLabel(_ profile: RemappingProfile) -> String { profile.name }
 
+  /// Returns the label of the scope of a profile: all apps or a specific app.
   static func profileScopeLabel(_ scope: RemappingApplicationScope) -> String {
     switch scope {
     case .global: return OJDLocalized.string("ui.mapping.allApps")
@@ -45,11 +53,13 @@ enum RuntimePresentation {
     }
   }
 
+  /// The label for no virtual HID profile.
   static var noVirtualHIDProfileLabel: String {
     OJDLocalized.string("ui.virtualProfile.none")
   }
 
-  /// The label of how a virtual HID profile was selected.
+  /// Returns the label of how a virtual HID profile is selected: automatically, by an override, or
+  /// automatically after an override is rejected.
   static func virtualHIDProfileSourceLabel(_ source: VirtualHIDProfileSource) -> String {
     switch source {
     case .automatic: OJDLocalized.string("ui.mapping.automatic")
@@ -59,7 +69,8 @@ enum RuntimePresentation {
     }
   }
 
-  /// A failed virtual HID profile override request. Says whether the override was stored.
+  /// Returns the message of a failed virtual HID profile override request, which says whether the
+  /// override is stored.
   static func virtualHIDProfileOverrideFailure(
     _ failure: VirtualHIDProfileOverrideFailure
   ) -> String {
@@ -101,7 +112,8 @@ enum RuntimePresentation {
     }
   }
 
-  /// A refused controller server change, followed by the service's detail text when it has one.
+  /// Returns the message of a refused controller server change, followed by the detail of the
+  /// service when it has one.
   static func controllerServerFailure(
     _ failure: ControllerServerFailure,
     detail: String?
@@ -118,7 +130,8 @@ enum RuntimePresentation {
     return [message, detail].compactMap { $0 }.joined(separator: " ")
   }
 
-  /// A refused controller tuning change, followed by the service's detail text when it has one.
+  /// Returns the message of a refused controller tuning change, followed by the detail of the
+  /// service when it has one.
   static func controllerTuningFailure(
     _ failure: ControllerTuningFailure,
     detail: String?
@@ -135,6 +148,7 @@ enum RuntimePresentation {
     return [message, detail].compactMap { $0 }.joined(separator: " ")
   }
 
+  /// Returns the label of a remapping source.
   static func sourceLabel(_ source: RemappingSource) -> String {
     switch source {
     case .button(let button): return buttonLabel(button)
@@ -181,10 +195,49 @@ enum RuntimePresentation {
         touchSurfaceLabel(swipe.surface),
         humanized(swipe.direction.rawValue)
       )
+    case .stickRegion(let region):
+      let stick = OJDLocalized.string(
+        region.stick == .left ? "ui.profiles.gyro.leftStick" : "ui.profiles.gyro.rightStick"
+      )
+      guard let from = region.fromDegrees, let to = region.toDegrees else {
+        return OJDLocalized.formatted(
+          "ui.mapping.stickRegion",
+          stick,
+          region.innerRadius,
+          region.outerRadius
+        )
+      }
+      return OJDLocalized.formatted(
+        "ui.mapping.stickRegionSector",
+        stick,
+        region.innerRadius,
+        region.outerRadius,
+        from,
+        to
+      )
+    case .triggerBand(let band):
+      return OJDLocalized.formatted(
+        "ui.mapping.triggerBand",
+        OJDLocalized.string(
+          band.trigger == .left ? "ui.profiles.trigger.left" : "ui.profiles.trigger.right"
+        ),
+        band.from,
+        band.to
+      )
+    case .touchArea(let area):
+      return OJDLocalized.formatted(
+        "ui.mapping.touchArea",
+        touchSurfaceLabel(area.surface),
+        area.x,
+        area.y,
+        area.width,
+        area.height
+      )
     }
   }
 
-  private static func touchSurfaceLabel(_ surface: RemappingTouchSurface) -> String {
+  /// Returns the label of a touch surface.
+  static func touchSurfaceLabel(_ surface: RemappingTouchSurface) -> String {
     switch surface {
     case .primary: OJDLocalized.string("ui.mapping.touchSurfacePrimary")
     case .left: OJDLocalized.string("ui.mapping.touchSurfaceLeft")
@@ -192,8 +245,52 @@ enum RuntimePresentation {
     }
   }
 
-  static func destinationLabel(_ destination: RemappingDestination) -> String {
+  /// Returns the label of a remapping destination.
+  ///
+  /// A macro shows its name when `macros` holds it, and a layer when `layers` does.
+  static func destinationLabel(
+    _ destination: RemappingDestination,
+    macros: [RemappingMacro] = [],
+    layers: [RemappingLayer] = []
+  ) -> String {
     switch destination {
+    case .macro(let id):
+      return macros.first { $0.id == id }?.name ?? OJDLocalized.string("term.macro")
+    case .profileSwitch(.next): return OJDLocalized.string("ui.mapping.profileNext")
+    case .profileSwitch(.previous): return OJDLocalized.string("ui.mapping.profilePrevious")
+    case .profileSwitch(.profile): return OJDLocalized.string("ui.mapping.profileSwitch")
+    case .layerSet(let layer, let mode):
+      let key =
+        switch mode {
+        case .on: "ui.mapping.layerOn"
+        case .off: "ui.mapping.layerOff"
+        case .toggle: "ui.mapping.layerToggle"
+        }
+      return OJDLocalized.formatted(
+        key,
+        layers.first { $0.id == layer }?.name ?? OJDLocalized.string("term.layer")
+      )
+    case .pause(.on): return OJDLocalized.string("ui.mapping.pauseOn")
+    case .pause(.off): return OJDLocalized.string("ui.mapping.pauseOff")
+    case .pause(.toggle): return OJDLocalized.string("ui.mapping.pauseToggle")
+    case .systemKey(let key):
+      return OJDLocalized.formatted("ui.mapping.systemKey", upperCamelWords(key.rawValue))
+    case .systemAction(let action):
+      return OJDLocalized.formatted("ui.mapping.systemAction", upperCamelWords(action.rawValue))
+    case .openApplication(let identifier):
+      return OJDLocalized.formatted("ui.mapping.openApplication", identifier)
+    case .openURL(let url): return OJDLocalized.formatted("ui.mapping.openURL", url)
+    case .runShortcut(let name): return OJDLocalized.formatted("ui.mapping.runShortcut", name)
+    case .typeText(let text): return OJDLocalized.formatted("ui.mapping.typeText", text)
+    case .speak: return OJDLocalized.string("term.speak")
+    case .midiNote(let channel, let note, _):
+      return OJDLocalized.formatted("ui.mapping.midiNote", String(note), String(channel))
+    case .midiControlChange(let channel, let controller):
+      return OJDLocalized.formatted(
+        "ui.mapping.midiControlChange",
+        String(controller),
+        String(channel)
+      )
     case .gamepadAxis(let axis): return axisLabel(axis)
     case .gamepadDpad(let direction): return sourceLabel(.dpad(direction))
     case .gamepadButton(let button): return buttonLabel(button)
@@ -212,6 +309,11 @@ enum RuntimePresentation {
         "ui.mapping.pointerMovement",
         humanized(axis.rawValue)
       )
+    case .pointerPosition(let axis):
+      return OJDLocalized.formatted(
+        "ui.mapping.pointerPosition",
+        humanized(axis.rawValue)
+      )
     case .scroll(let axis):
       return OJDLocalized.formatted(
         "ui.mapping.scroll",
@@ -221,6 +323,7 @@ enum RuntimePresentation {
     }
   }
 
+  /// Returns the label of a physical output.
   static func physicalOutputLabel(_ output: RemappingPhysicalOutput) -> String {
     switch output {
     case .rumble(let motor, let intensity):
@@ -255,8 +358,10 @@ enum RuntimePresentation {
     }
   }
 
-  /// Buttons in capture priority order. Guide/Home/logo is reserved for the operating system and
-  /// is intentionally excluded from automatic capture, just like the manual SourceOption catalog.
+  /// The buttons that automatic capture considers, in priority order.
+  ///
+  /// Guide, Home and the logo button are reserved for the operating system and are left out, as in
+  /// the manual list of sources.
   private static let captureButtonOrder: [Control] = [
     .auxiliary1, .auxiliary2, .leftPaddle1, .rightPaddle1, .auxiliary3, .auxiliary4, .auxiliary5,
     .auxiliary6, .leftPaddle2, .rightPaddle2, .leftTrackpadClick, .rightTrackpadClick, .south,
@@ -264,6 +369,8 @@ enum RuntimePresentation {
     .start, .back, .capture, .touchpadClick, .microphone, .leftTrigger, .rightTrigger,
   ]
 
+  /// Returns the source that the state shows in use: an active touch, a pressed button or D-pad
+  /// direction, or an axis moved at least half its range; nil when there is none.
   static func detectedSource(
     from state: ControllerState
   ) -> RemappingSource? {
@@ -274,6 +381,10 @@ enum RuntimePresentation {
       ?? detectedAxis(in: state)
   }
 
+  /// Returns the source that the state `current` adds to `previous`: a touch that starts, a button
+  /// or D-pad direction pressed since, or an axis that crosses half its range or reverses past it.
+  ///
+  /// A release gives nil.
   static func detectedTransition(
     from previous: ControllerState,
     to current: ControllerState
@@ -303,11 +414,13 @@ enum RuntimePresentation {
       return .axisDirection(axis, direction)
     }
 
-    // A source becoming unrecognized or disappearing is a release, not a new assignment.  Only
-    // newly pressed controls and axis activation/direction transitions above count as input.
+    // A source that becomes unrecognized or disappears is a release, not an assignment. Only
+    // controls pressed since `previous` and axis activation or direction transitions count.
     return nil
   }
 
+  /// Returns the first pressed button in capture order, else the first D-pad direction in the order
+  /// up, down, left, right; nil when there is none.
   private static func detectedButton(
     pressed: Set<Control>,
     dpad: Set<RemappingDpadDirection>
@@ -319,6 +432,7 @@ enum RuntimePresentation {
     return order.first(where: dpad.contains).map(RemappingSource.dpad)
   }
 
+  /// Returns the first axis moved at least half its range, in the direction of the movement.
   private static func detectedAxis(in state: ControllerState) -> RemappingSource? {
     for (value, axis) in axisValues(state) where abs(value) >= 0.5 {
       let direction: RemappingAxisDirection = value < 0 ? .negative : .positive
@@ -327,7 +441,8 @@ enum RuntimePresentation {
     return nil
   }
 
-  /// Axis values in the remapping frame; stick Y points down, as in the controller state.
+  /// Returns the axis values in the remapping frame; stick Y points down, as in the controller
+  /// state.
   private static func axisValues(_ state: ControllerState) -> [(value: Float, axis: RemappingAxis)]
   {
     [
@@ -337,6 +452,7 @@ enum RuntimePresentation {
     ]
   }
 
+  /// Returns the touch surfaces with an active contact.
   private static func activeTouchSurfaces(_ state: ControllerState) -> Set<RemappingTouchSurface> {
     Set(
       state.touch.compactMap { sample in
@@ -345,6 +461,7 @@ enum RuntimePresentation {
     )
   }
 
+  /// Returns the D-pad directions that the hat direction presses.
   static func dpadDirections(_ hat: HatDirection) -> Set<RemappingDpadDirection> {
     switch hat {
     case .neutral: []

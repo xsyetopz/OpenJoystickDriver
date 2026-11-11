@@ -1,17 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/crosswalk.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/crosswalk.schema.json",
   "title": "OpenJoystickDriver control crosswalk",
-  "description": "The authored table Resources/Vocabulary/crosswalk.json. It maps each control id to the name the W3C Gamepad, SDL3, Linux evdev, HID and Apple GameController documents give the same control, and records the source of each column. It is documentation: no schema accepts or maps any name in it.",
+  "description": "The name each other system gives each control id, with the source of each column.",
   "type": "object",
   "required": ["apiVersion", "kind", "sources", "controls"],
   "additionalProperties": false,
   "properties": {
-    "$comment": {
-      "type": "string"
-    },
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha1"
+      "const": "openjoystickdriver/v1alpha3"
     },
     "kind": {
       "const": "Crosswalk"
@@ -42,7 +39,7 @@
   },
   "$defs": {
     "source": {
-      "description": "The document one column is checked against. pages gives the number of each HID usage page the hid column names.",
+      "description": "The document one column is checked against.",
       "type": "object",
       "required": ["document", "version", "url", "checkedOn"],
       "additionalProperties": false,
@@ -80,38 +77,26 @@
       }
     },
     "row": {
-      "description": "One control. A null column means the system has no such name.",
+      "description": "One control and its name in each system.",
       "type": "object",
-      "required": ["w3cButton", "w3cAxis", "sdl", "evdev", "hid", "apple"],
       "additionalProperties": false,
       "properties": {
-        "w3cButton": { "type": ["integer", "null"], "minimum": 0 },
-        "w3cAxis": { "type": ["integer", "null"], "minimum": 0 },
-        "sdl": { "type": ["string", "null"], "minLength": 1 },
-        "evdev": { "type": ["string", "null"], "minLength": 1 },
-        "apple": { "type": ["string", "null"], "minLength": 1 },
+        "w3cButton": { "type": "integer", "minimum": 0 },
+        "w3cAxis": { "type": "integer", "minimum": 0 },
+        "sdl": { "type": "string", "minLength": 1 },
+        "evdev": { "type": "string", "minLength": 1 },
+        "apple": { "type": "string", "minLength": 1 },
         "hid": {
           "type": "array",
+          "minItems": 1,
           "items": { "$ref": "#/$defs/hidUsage" }
-        },
-        "notes": {
-          "type": "object",
-          "minProperties": 1,
-          "additionalProperties": false,
-          "properties": {
-            "w3c": { "type": "string", "minLength": 1 },
-            "sdl": { "type": "string", "minLength": 1 },
-            "evdev": { "type": "string", "minLength": 1 },
-            "hid": { "type": "string", "minLength": 1 },
-            "apple": { "type": "string", "minLength": 1 }
-          }
         }
       }
     },
     "hidUsage": {
-      "description": "A usage on a page. A null usage is the one the device's report descriptor assigns.",
+      "description": "A usage on a HID usage page.",
       "type": "object",
-      "required": ["page", "usage"],
+      "required": ["page"],
       "additionalProperties": false,
       "properties": {
         "page": {
@@ -123,7 +108,7 @@
             "Consumer"
           ]
         },
-        "usage": { "type": ["integer", "null"], "minimum": 0 }
+        "usage": { "type": "integer", "minimum": 0 }
       }
     }
   }

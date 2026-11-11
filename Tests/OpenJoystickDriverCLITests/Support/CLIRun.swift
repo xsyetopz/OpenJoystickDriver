@@ -1,9 +1,8 @@
 import ArgumentParser
 import Foundation
-import Testing
-
 import OpenJoystickDriverKit
 import OpenJoystickDriverTestSupport
+import Testing
 
 @testable import OpenJoystickDriverCLI
 
@@ -121,6 +120,8 @@ enum CLICommandTree {
       ["045E:028E"]
     case ["controller", "light"]: ["045E:028E", "--color", "FF0000"]
     case ["controller", "player"]: ["045E:028E", "1"]
+    case ["controller", "speaker", "play"]: ["045E:028E", "clip.wav"]
+    case ["controller", "speaker", "stop"]: ["045E:028E"]
     case ["virtual", "set"]: ["generic", "045E:028E"]
     case ["virtual", "feed"]: ["--as", "generic"]
     case ["virtual", "launch"]: ["/usr/bin/true"]
@@ -130,15 +131,20 @@ enum CLICommandTree {
       ["profile", "validate"]:
       ["-"]
     case ["mod", "validate"], ["mod", "install"]: ["/tmp/pack"]
+    case ["protocol", "validate"], ["protocol", "install"]: ["/tmp/Family.plist"]
     case ["mod", "remove"]: ["arcade-pack"]
+    case ["generate"]: ["script.js"]
     case ["controller", "calibrate"]: ["045E:028E", "start"]
     case ["controller", "pair"]: ["057E:2006", "057E:2007", "--profile", "Pair"]
     case ["controller", "unpair"]: ["057E:2006"]
     case ["profile", "create"]: ["Pad", "--controller", "045E:028E"]
     case ["profile", "duplicate"], ["profile", "rename"]: ["Pad", "Copy"]
     case ["profile", "show"], ["profile", "delete"], ["profile", "activate"],
-      ["profile", "deactivate"], ["profile", "export"], ["profile", "edit"], ["binding", "list"]:
+      ["profile", "deactivate"], ["profile", "export"], ["profile", "edit"], ["binding", "list"],
+      ["macro", "list"]:
       ["Pad"]
+    case ["macro", "show"], ["macro", "remove"]: ["Pad", "combo"]
+    case ["macro", "set"]: ["Pad", "combo", "--step", "tap:key:key-a"]
     case ["profile", "get"]: ["Pad", "name"]
     case ["profile", "set"]: ["Pad", "name", "Main"]
     case ["binding", "set"]: ["Pad", "button:south", "key:space"]

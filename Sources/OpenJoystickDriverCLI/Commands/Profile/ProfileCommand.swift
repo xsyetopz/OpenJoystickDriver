@@ -2,7 +2,9 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd profile` command group: create, change, activate and move remapping profiles.
 struct ProfileCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "profile",
     abstract: CLILocalized.text(
@@ -20,13 +22,16 @@ struct ProfileCommand: AsyncParsableCommand {
     ]
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
 /// The `--json` result of commands that create or change one profile.
 struct ProfileResult: Encodable, Equatable {
+  /// The profile after the command.
   let profile: ProfileSummary
+  /// Whether the command changed the profile.
   let changed: Bool
 }
 
@@ -55,7 +60,10 @@ func savedSummary(
   return ProfileSummary(profile, snapshot: snapshot)
 }
 
+/// The `ojd profile list` command: prints each profile with its ID, name, controller model, app
+/// scope and active state, and reports each saved profile that cannot be loaded on stderr.
 struct ProfileListCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "list",
     abstract: CLILocalized.text("cli.profile.list.abstract")
@@ -63,20 +71,29 @@ struct ProfileListCommand: AsyncParsableCommand {
 
   /// The listed profiles. `issues` names each saved profile the service could not load.
   struct Result: Encodable, Equatable {
+    /// A saved profile that the service could not load.
     struct Issue: Encodable, Equatable {
+      /// The ID of the issue.
       let id: String
+      /// The kind of issue.
       let kind: String
+      /// The error code of the issue.
       let code: String
+      /// What is wrong.
       let message: String
     }
 
+    /// The loaded profiles.
     let profiles: [ProfileSummary]
+    /// The profiles that could not be loaded.
     let issues: [Issue]
   }
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let snapshot = try await ServiceConnection.request { try await $0.getRemappingSnapshot() }
@@ -124,7 +141,9 @@ struct ProfileListCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd profile show` command: prints a profile's settings and bindings.
 struct ProfileShowCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "show",
     abstract: CLILocalized.text(
@@ -134,16 +153,21 @@ struct ProfileShowCommand: AsyncParsableCommand {
 
   /// The `--json` result. `document` is the whole profile, as `ojd profile export` writes it.
   struct Result: Encodable, Equatable {
+    /// The summary of the profile.
     let profile: ProfileSummary
+    /// The whole profile.
     let document: RemappingProfile
   }
 
+  /// The profile to show.
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let selector = profile
@@ -162,7 +186,9 @@ struct ProfileShowCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd profile create` command: creates an empty, inactive profile for one controller model.
 struct ProfileCreateCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "create",
     abstract: CLILocalized.text(
@@ -173,6 +199,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
     ) + "\n\n" + CLILocalized.text("cli.profile.create.examples")
   )
 
+  /// The name of the profile.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.profile.group.name"),
@@ -181,6 +208,7 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   )
   var name: String
 
+  /// `--controller`: the controller model as `VVVV:PPPP`, or the ID of a connected controller.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -191,6 +219,8 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   )
   var controller: ControllerSelector
 
+  /// `--app`: the bundle ID of an app that the profile applies to, repeated for more apps;
+  /// without it the profile applies in every app.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -199,8 +229,10 @@ struct ProfileCreateCommand: AsyncParsableCommand {
       valueName: "app-id"
     )
   )
-  var app: String?
+  var app: [String] = []
 
+  /// `--virtual-gamepad`: `disabled` publishes no virtual gamepad, `mapped` sends only the bound
+  /// controls, and `passthrough` also sends the unbound controls.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -210,6 +242,8 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   )
   var virtualGamepad: RemappingVirtualGamepadPolicy = .passthrough
 
+  /// `--physical-input`: `shared` lets the profile emit input while the native physical input stays
+  /// visible, and `exclusive` requires confirmed exclusive ownership of the controller.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -219,13 +253,47 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   )
   var physicalInput: RemappingPhysicalInputPolicy = .shared
 
+  /// `--template`: starts the profile from a template instead of empty.
+  @Option(
+    help: ArgumentHelp(
+      CLILocalized.text("cli.profile.create.template"),
+      valueName: "template"
+    )
+  )
+  var template: ProfileTemplate?
+
+  /// `--stick`: the stick that the `gyro-stick` template drives.
+  @Option(
+    help: ArgumentHelp(
+      CLILocalized.text("cli.profile.create.stick"),
+      valueName: "stick"
+    )
+  )
+  var stick: RemappingGyroStickTemplate.Stick?
+
+  /// `--activation`: the control that must be held for gyro output; without it gyro output is
+  /// always on.
+  @Option(
+    help: ArgumentHelp(
+      CLILocalized.text("cli.profile.create.activation"),
+      valueName: "control"
+    )
+  )
+  var activation: String?
+
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
+      guard template != nil || (stick == nil && activation == nil) else {
+        throw CLIFailure.usage(CLILocalized.text("cli.profile.create.templateRequired"))
+      }
+      let activationSource = try activation.map(parseSource)
       let selector = controller
-      let scope = app.map { RemappingApplicationScope.application(appID: $0) } ?? .global
+      let scope = app.isEmpty ? RemappingApplicationScope.global : .application(appIDs: app)
       let policy = RemappingOutputPolicy(
         virtualGamepad: virtualGamepad,
         physicalInput: physicalInput
@@ -240,13 +308,34 @@ struct ProfileCreateCommand: AsyncParsableCommand {
           let found = try await selector.resolve(with: client)
           device = RemappingDeviceScope(vendorID: found.vendorID, productID: found.productID)
         }
-        let profile = try RemappingProfile(
-          name: name,
-          device: device,
-          applicationScope: scope,
-          outputPolicy: policy,
-          bindings: []
-        ).validatedForCLI()
+        let profile: RemappingProfile
+        switch template {
+        case .gyroStick:
+          let model = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
+          do {
+            profile = try RemappingGyroStickTemplate.profile(
+              name: name,
+              device: device,
+              applicationScope: scope,
+              stick: stick ?? .right,
+              activation: activationSource,
+              capabilities: ProtocolDriverRegistry().profileCapabilities(for: model) ?? .unknown
+            ).validatedForCLI()
+          } catch RemappingGyroStickTemplate.Failure.noMotionSensor(let model) {
+            throw CLIFailure(
+              .invalidProfile,
+              CLILocalized.format("cli.profile.create.noMotion", model.description)
+            )
+          }
+        case nil:
+          profile = try RemappingProfile(
+            name: name,
+            device: device,
+            applicationScope: scope,
+            outputPolicy: policy,
+            bindings: []
+          ).validatedForCLI()
+        }
         return (profile, try await client.createRemappingProfile(profile))
       }
       try printProfile(
@@ -261,7 +350,11 @@ struct ProfileCreateCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd profile duplicate` command: copies a profile under another name.
+///
+/// The copy is inactive.
 struct ProfileDuplicateCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "duplicate",
     abstract: CLILocalized.text(
@@ -269,9 +362,11 @@ struct ProfileDuplicateCommand: AsyncParsableCommand {
     )
   )
 
+  /// The profile to copy.
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// The name of the copy.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.profile.duplicate.name"),
@@ -280,9 +375,11 @@ struct ProfileDuplicateCommand: AsyncParsableCommand {
   )
   var name: String
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let (selector, name) = (profile, name)
@@ -303,15 +400,19 @@ struct ProfileDuplicateCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd profile rename` command: gives a profile another name of 1 to 80 characters.
 struct ProfileRenameCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "rename",
     abstract: CLILocalized.text("cli.profile.rename.abstract")
   )
 
+  /// The profile to rename.
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// The name to give.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.profile.rename.name"),
@@ -320,9 +421,11 @@ struct ProfileRenameCommand: AsyncParsableCommand {
   )
   var name: String
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let (selector, name) = (profile, name)
@@ -339,7 +442,9 @@ struct ProfileRenameCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd profile delete` command: deletes a profile, which stops applying if it is active.
 struct ProfileDeleteCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "delete",
     abstract: CLILocalized.text("cli.profile.delete.abstract"),
@@ -350,19 +455,24 @@ struct ProfileDeleteCommand: AsyncParsableCommand {
 
   /// The `--json` result.
   struct Result: Encodable, Equatable {
+    /// The profile that the command deletes.
     let deleted: ProfileSummary
+    /// Whether `--dry-run` is set, so nothing is deleted.
     let dryRun: Bool
   }
 
+  /// The profile to delete.
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// `-f`, `--force`: skip the confirmation.
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
   )
   var force = false
 
+  /// `-n`, `--dry-run`: print what would change and change nothing.
   @Flag(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
@@ -371,9 +481,11 @@ struct ProfileDeleteCommand: AsyncParsableCommand {
   )
   var dryRun = false
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let selector = profile
@@ -430,6 +542,7 @@ extension RemappingProfile {
       motionTuning: motionTuning,
       gyroOutput: gyroOutput,
       joyConPair: joyConPair,
+      pointerSpeed: pointerSpeed,
       stickMappings: stickMappings,
       triggerMappings: triggerMappings,
       touchMappings: touchMappings,

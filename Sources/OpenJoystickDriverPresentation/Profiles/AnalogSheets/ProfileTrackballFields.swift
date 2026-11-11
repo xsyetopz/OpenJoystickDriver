@@ -2,10 +2,13 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The fields of the gyro trackball: the source, axes, decay and whether it consumes the source.
   struct ProfileTrackballFields: View {
+    /// The trackball being edited.
     @Binding
     var draft: ProfileTrackballDraft
 
+    /// The enabled toggle and, while it is on, the source and the settings of the trackball.
     var body: some View {
       VStack(alignment: .leading, spacing: 12) {
         Toggle(label("enabled"), isOn: $draft.enabled)
@@ -32,6 +35,7 @@
       }
     }
 
+    /// The sources that can drive the trackball; an axis cannot.
     private var sources: [SourceOption] {
       SourceOption.options(including: draft.source).filter {
         if case .axis = $0.source { return false }
@@ -39,6 +43,7 @@
       }
     }
 
+    /// Returns the text of the trackball field called `key`.
     private func label(_ key: String) -> String {
       OJDLocalized.string("ui.profiles.trackball." + key)
     }

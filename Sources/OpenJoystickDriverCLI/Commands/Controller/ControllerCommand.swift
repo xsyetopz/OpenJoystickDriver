@@ -2,7 +2,9 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd controller` command group: list, inspect, watch and test the connected controllers.
 struct ControllerCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "controller",
     abstract: CLILocalized.text(
@@ -17,18 +19,20 @@ struct ControllerCommand: AsyncParsableCommand {
     subcommands: [
       ControllerListCommand.self, ControllerShowCommand.self, ControllerWatchCommand.self,
       ControllerCaptureCommand.self, ControllerRumbleCommand.self, ControllerLightCommand.self,
-      ControllerPlayerCommand.self, ControllerSuspendCommand.self, ControllerResumeCommand.self,
+      ControllerPlayerCommand.self, ControllerSpeakerCommand.self, ControllerSuspendCommand.self,
+      ControllerResumeCommand.self,
       ControllerDisconnectCommand.self, ControllerCalibrateCommand.self, ControllerPairCommand.self,
       ControllerUnpairCommand.self, ControllerClaimCommand.self,
       ControllerReleaseCommand.self,
     ]
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
-/// The shared `CONTROLLER` argument help.
+/// The shared help of the `CONTROLLER` argument.
 let controllerArgumentHelp = ArgumentHelp(
   CLILocalized.text(
     "cli.controller.group.argument"
@@ -36,15 +40,19 @@ let controllerArgumentHelp = ArgumentHelp(
   valueName: "controller"
 )
 
+/// The `ojd controller list` command: prints the connected controllers.
 struct ControllerListCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "list",
     abstract: CLILocalized.text("cli.controller.list.abstract")
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let devices = try await ServiceConnection.request { try await $0.getStatus() }
@@ -118,7 +126,10 @@ struct ControllerListCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd controller show` command: prints one controller's identity, ownership, capabilities,
+/// effective record and virtual gamepad.
 struct ControllerShowCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "show",
     abstract: CLILocalized.text(
@@ -129,12 +140,15 @@ struct ControllerShowCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// The controller to show.
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let selector = controller
@@ -157,6 +171,7 @@ struct ControllerShowCommand: AsyncParsableCommand {
     }
   }
 
+  /// The `--plain` rows of `controller show`, one per field.
   static func plainRows(_ detail: ControllerShowReport.Detail) -> [[String]] {
     var rows = [["id", detail.id]]
     if let unit = detail.unit { rows.append(["unit", unit]) }
@@ -172,6 +187,16 @@ struct ControllerShowCommand: AsyncParsableCommand {
         power.wiredPower.map(String.init) ?? "",
       ])
     }
+    if let wii = detail.wiiRemote {
+      let motionPlus =
+        wii.motionPlusActive ? (wii.isGyroRestReady ? "ready" : "calibrating") : "off"
+      rows += [
+        ["report-mode", wii.reportModeText],
+        ["extension", wii.extensionKind.map { CommandLineName.kebab($0.rawValue) } ?? ""],
+        ["unknown-extension-id", wii.unknownExtensionID ?? ""],
+        ["motion-plus", motionPlus],
+      ]
+    }
     rows += [
       ["input-health", CommandLineName.kebab(detail.inputHealth.state)],
       ["ownership", CommandLineName.kebab(detail.ownership.physical)],
@@ -184,6 +209,9 @@ struct ControllerShowCommand: AsyncParsableCommand {
         detail.serving.reason.map(CommandLineName.kebab) ?? "",
       ],
       ["persona", detail.serving.persona.map(CommandLineName.kebab) ?? ""],
+    ]
+    if detail.serving.heldByAppleDriver == true { rows.append(["served-by", "macos"]) }
+    rows += [
       ["controls", detail.capabilities.controls.map(CommandLineName.kebab).joined(separator: ",")],
       [
         "rumble-motors",
@@ -199,6 +227,9 @@ struct ControllerShowCommand: AsyncParsableCommand {
       "record", detail.record.map { CommandLineName.kebab($0.layer) } ?? "none",
       detail.record?.file ?? "",
     ])
+    if let mapping = detail.inputMapping {
+      rows.append(["input-mapping"] + mapping.plainFields)
+    }
     if let tuning = detail.tuning { rows.append(["tuning"] + tuning.rows) }
     if let virtual = detail.virtual {
       rows.append([
@@ -228,6 +259,7 @@ struct ControllerShowCommand: AsyncParsableCommand {
     }
   }
 
+  /// Prints the labelled rows of `controller show` for people.
   private static func printHuman(_ detail: ControllerShowReport.Detail) {
     let none = CLILocalized.text("cli.controller.show.none")
     func list(_ values: [String]) -> String {
@@ -260,6 +292,13 @@ struct ControllerShowCommand: AsyncParsableCommand {
           (power.battery.percentageText ?? none) + charging
         )
       )
+    }
+    if let wii = detail.wiiRemote {
+      rows += [
+        (CLILocalized.text("cli.controller.show.labelReportMode"), wii.reportModeText),
+        (CLILocalized.text("cli.controller.show.labelExtension"), wii.extensionText()),
+        (CLILocalized.text("cli.controller.show.labelMotionPlus"), wii.motionPlusText()),
+      ]
     }
     // A controller that another client holds runs no input session, so it has no input health.
     if detail.ownership.hidInput != HIDInputOwnership.ownedByAnotherClient.rawValue {
@@ -299,6 +338,32 @@ struct ControllerShowCommand: AsyncParsableCommand {
         detail.serving.persona.map(CommandLineName.kebab) ?? none
       ),
       (CLILocalized.text("cli.controller.show.labelRecord"), recordText(detail.record)),
+    ]
+    if detail.serving.heldByAppleDriver == true {
+      rows.append(
+        (
+          CLILocalized.text("platform.macos.cli.controller.show.labelServedBy"),
+          CLILocalized.format("platform.macos.cli.controller.show.servedByMacOS", detail.id)
+        )
+      )
+    }
+    if let mapping = detail.inputMapping {
+      rows.append(
+        (
+          CLILocalized.text("cli.controller.show.labelInputMapping"),
+          mapping.rowText(localize: CLILocalized.text)
+        )
+      )
+      if !mapping.unmapped.isEmpty {
+        rows.append(
+          (
+            CLILocalized.text("cli.controller.show.labelUnmapped"),
+            mapping.unmapped.joined(separator: ", ")
+          )
+        )
+      }
+    }
+    rows += [
       (
         CLILocalized.text("cli.controller.show.labelControls"),
         list(detail.capabilities.controls.map(CommandLineName.kebab))

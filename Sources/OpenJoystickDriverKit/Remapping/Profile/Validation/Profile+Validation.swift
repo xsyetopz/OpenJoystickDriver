@@ -2,6 +2,11 @@ import Foundation
 
 extension RemappingProfile {
   /// Validates the complete persistence and dispatch contract for this profile.
+  ///
+  /// Checks the name, the Joy-Con pair device, every stick, trigger, touch, gyro and motion
+  /// setting, the application scope, the mapping count, each binding, chord, sequence and layer,
+  /// and the encoded size.
+  /// - Throws: ``RemappingValidationError``.
   public func validate() throws {
     try validateName()
     if joyConPair != nil,
@@ -9,6 +14,7 @@ extension RemappingProfile {
     {
       throw RemappingValidationError.invalidJoyConPairDevice
     }
+    if pointerSpeed?.isValid == false { throw RemappingValidationError.invalidPointerSpeed }
     var stickSources: Set<RemappingStickSource> = []
     for mapping in stickMappings {
       guard stickSources.insert(mapping.source).inserted else {
@@ -75,12 +81,14 @@ extension RemappingProfile {
       throw RemappingValidationError.tooManyBindings(mappingCount)
     }
 
+    try validateMacros()
     var bindingIDs: Set<UUID> = []
     for mapping in touchMappings { try validateIdentifier(mapping.id, identifiers: &bindingIDs) }
     try validateBindings(bindings, identifiers: &bindingIDs)
     try validateChords(chords, identifiers: &bindingIDs)
     try validateSequences(sequences, identifiers: &bindingIDs)
     try validateLayers(identifiers: &bindingIDs)
+    try validateRegionOverlap()
 
     let encodedSize: Int
     do { encodedSize = try JSONEncoder().encode(self).count } catch {
@@ -91,6 +99,8 @@ extension RemappingProfile {
     }
   }
 
+  /// Checks the bindings of one scope: unique identifiers and sources, valid sources and
+  /// destinations, and each binding's rules, together with its additional actions.
   private func validateBindings(_ bindings: [RemappingBinding], identifiers: inout Set<UUID>) throws
   {
     var sources: Set<RemappingSource> = []
@@ -111,12 +121,16 @@ extension RemappingProfile {
     }
   }
 
+  /// Records an identifier and rejects one that was already seen.
+  /// - Throws: ``RemappingValidationError/duplicateBindingID(_:)``.
   private func validateIdentifier(_ id: UUID, identifiers: inout Set<UUID>) throws {
     guard identifiers.insert(id).inserted else {
       throw RemappingValidationError.duplicateBindingID(id)
     }
   }
 
+  /// Checks the chords of one scope: window, destination, at least two discrete sources, and no
+  /// repeated source set.
   private func validateChords(_ chords: [RemappingChord], identifiers: inout Set<UUID>) throws {
     var seenSourceSets: Set<Set<RemappingSource>> = []
     for (index, chord) in chords.enumerated() {
@@ -133,7 +147,7 @@ extension RemappingProfile {
         switch source {
         case .axis: throw RemappingValidationError.chordContinuousSource(index: index)
         case .button, .dpad, .axisDirection, .triggerStage, .motionLean, .touchContact, .touchGrid,
-          .touchSwipe:
+          .touchSwipe, .stickRegion, .triggerBand, .touchArea:
           break
         }
       }
@@ -146,6 +160,8 @@ extension RemappingProfile {
     }
   }
 
+  /// Checks the sequences of one scope: destination, at least two discrete sources, window, and no
+  /// repeated source order.
   private func validateSequences(
     _ sequences: [RemappingSequence],
     identifiers: inout Set<UUID>
@@ -162,7 +178,7 @@ extension RemappingProfile {
         switch source {
         case .axis: throw RemappingValidationError.sequenceContinuousSource(index: index)
         case .button, .dpad, .axisDirection, .triggerStage, .motionLean, .touchContact, .touchGrid,
-          .touchSwipe:
+          .touchSwipe, .stickRegion, .triggerBand, .touchArea:
           break
         }
       }
@@ -182,6 +198,8 @@ extension RemappingProfile {
     }
   }
 
+  /// Checks every layer: its motion tuning, its contents, its name, and an activator that is
+  /// discrete, unique and not bound elsewhere.
   private func validateLayers(identifiers: inout Set<UUID>) throws {
     var layerIDs: Set<UUID> = []
     var activators: Set<RemappingSource> = []
@@ -206,7 +224,7 @@ extension RemappingProfile {
       switch layer.activator {
       case .axis: throw RemappingValidationError.layerActivatorNotDiscrete(index: index)
       case .button, .dpad, .axisDirection, .triggerStage, .motionLean, .touchContact, .touchGrid,
-        .touchSwipe:
+        .touchSwipe, .stickRegion, .triggerBand, .touchArea:
         break
       }
       guard activators.insert(layer.activator).inserted else {
@@ -218,6 +236,8 @@ extension RemappingProfile {
     }
   }
 
+  /// Checks that the profile name is 1 to 80 characters, has no surrounding whitespace and no
+  /// control characters.
   private func validateName() throws {
     let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
     guard trimmed == name, Self.profileNameLengthRange.contains(name.count),
@@ -225,25 +245,60 @@ extension RemappingProfile {
     else { throw RemappingValidationError.invalidProfileName }
   }
 
+  /// Checks the bundle identifier of an application scope.
   private func validateApplicationScope() throws {
-    guard case .application(let identifier) = applicationScope else { return }
-    guard Self.isValidAppID(identifier) else {
-      throw RemappingValidationError.invalidAppID(identifier)
+    guard case .application(let identifiers) = applicationScope else { return }
+    guard !identifiers.isEmpty else { throw RemappingValidationError.noAppIDs }
+    var seen = Set<String>()
+    for identifier in identifiers {
+      guard Self.isValidAppID(identifier) else {
+        throw RemappingValidationError.invalidAppID(identifier)
+      }
+      guard seen.insert(identifier).inserted else {
+        throw RemappingValidationError.duplicateAppID(identifier)
+      }
     }
   }
 
-  private func validateDestination(_ destination: RemappingDestination) throws {
+  /// Checks that a destination is supported and that virtual gamepad destinations have a virtual
+  /// gamepad.
+  func validateDestination(_ destination: RemappingDestination) throws {
     if case .gamepadButton(let button) = destination, !button.supportsVirtualOutput {
       throw RemappingValidationError.unsupportedGamepadButton(button)
     }
+    if case .gamepadAxis(let axis) = destination, axis.isPointer {
+      throw RemappingValidationError.unsupportedGamepadAxis(axis)
+    }
     if case .physical(let output) = destination {
       do { try output.validate() } catch { throw RemappingValidationError.invalidPhysicalOutput }
+    }
+    if case .macro(let id) = destination, !macros.contains(where: { $0.id == id }) {
+      throw RemappingValidationError.unknownMacro(id)
+    }
+    if let action = destination.invalidSystemActionName {
+      throw RemappingValidationError.invalidSystemAction(action: action)
+    }
+    if case .layerSet(let id, _) = destination, !layers.contains(where: { $0.id == id }) {
+      throw RemappingValidationError.unknownLayer(id)
+    }
+    if case .speak(let text, let voice) = destination {
+      guard (1...Self.maximumSpeechCharacters).contains(text.unicodeScalars.count) else {
+        throw RemappingValidationError.invalidSpeech(field: "text")
+      }
+      guard voice?.isEmpty != true else {
+        throw RemappingValidationError.invalidSpeech(field: "voice")
+      }
+    }
+    guard destination.midiFieldsAreInRange else {
+      throw RemappingValidationError.invalidMIDIDestination
     }
     if destination.isVirtualGamepad, outputPolicy.virtualGamepad == .disabled {
       throw RemappingValidationError.virtualOutputRequired
     }
   }
 
+  /// Checks that a source has what it needs: a trigger mapping for a trigger stage, motion lean
+  /// tuning for a lean, a grid in range, a swipe distance in range.
   private func validateSource(_ source: RemappingSource) throws {
     switch source {
     case .triggerStage(let trigger, _):
@@ -262,10 +317,21 @@ extension RemappingProfile {
       guard swipe.minimumDistance.isFinite,
         RemappingTouchSwipeSource.minimumDistanceRange.contains(swipe.minimumDistance)
       else { throw RemappingValidationError.invalidTouchSwipe }
+    case .stickRegion(let region):
+      guard region.isValid else { throw RemappingValidationError.invalidStickRegion }
+    case .triggerBand(let band):
+      guard band.isValid else { throw RemappingValidationError.invalidTriggerBand }
+      guard !triggerMappings.contains(where: { $0.source == band.trigger }) else {
+        throw RemappingValidationError.triggerBandWithDualStage(band.trigger)
+      }
+    case .touchArea(let area):
+      guard area.isValid else { throw RemappingValidationError.invalidTouchArea }
     case .button, .dpad, .axis, .axisDirection, .touchContact: break
     }
   }
 
+  /// Checks one binding: behavior, pulse duration, destinations, axis tuning, source and
+  /// destination fit, turbo, long hold and multi-tap.
   private func validate(_ binding: RemappingBinding, at index: Int) throws {
     guard binding.pulseDurationMs.isFinite,
       RemappingBinding.pulseDurationRange.contains(binding.pulseDurationMs),
@@ -274,16 +340,28 @@ extension RemappingProfile {
     else { throw RemappingValidationError.bindingBehaviorConflict(index: index) }
     if binding.behavior != .hold {
       guard !binding.destination.isContinuous, binding.turbo == nil, binding.longHold == nil,
-        binding.doubleTap == nil
+        binding.multiTap.isEmpty
       else { throw RemappingValidationError.bindingBehaviorConflict(index: index) }
+    }
+    if binding.destination.isSpeak, ![.hold, .tapOnPress].contains(binding.behavior) {
+      throw RemappingValidationError.bindingBehaviorConflict(index: index)
+    }
+    if binding.destination.isProfileControl, ![.hold, .tapOnPress].contains(binding.behavior) {
+      throw RemappingValidationError.bindingBehaviorConflict(index: index)
+    }
+    if binding.destination.isSystemTrigger,
+      ![.hold, .tapOnPress, .tapOnRelease, .press].contains(binding.behavior)
+    {
+      throw RemappingValidationError.bindingBehaviorConflict(index: index)
     }
     try validateDestination(binding.destination)
     if let hold = binding.longHold { try validateDestination(hold.destination) }
-    if let tap = binding.doubleTap { try validateDestination(tap.destination) }
+    for tap in binding.multiTap { try validateDestination(tap.destination) }
     let isAxisSource: Bool
     switch binding.source {
     case .axis, .axisDirection: isAxisSource = true
-    case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe:
+    case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe,
+      .stickRegion, .triggerBand, .touchArea:
       isAxisSource = false
     }
 
@@ -298,11 +376,11 @@ extension RemappingProfile {
 
     switch binding.source {
     case .axis:
-      guard binding.destination.isContinuous else {
+      guard binding.destination.isContinuous || binding.destination.isMIDIControlChange else {
         throw RemappingValidationError.incompatibleSourceAndDestination(index: index)
       }
     case .axisDirection, .triggerStage, .motionLean, .button, .dpad, .touchContact, .touchGrid,
-      .touchSwipe:
+      .touchSwipe, .stickRegion, .triggerBand, .touchArea:
       guard !binding.destination.isContinuous else {
         throw RemappingValidationError.incompatibleSourceAndDestination(index: index)
       }
@@ -315,7 +393,7 @@ extension RemappingProfile {
       try Self.validate(turbo, at: index)
     }
 
-    if binding.longHold != nil || binding.doubleTap != nil {
+    if binding.longHold != nil || !binding.multiTap.isEmpty {
       guard !isAxisSource else { throw RemappingValidationError.longHoldNotSupported(index: index) }
       guard !binding.destination.isContinuous else {
         throw RemappingValidationError.longHoldNotSupported(index: index)
@@ -327,7 +405,7 @@ extension RemappingProfile {
 
     if let longHold = binding.longHold { try Self.validate(longHold, at: index) }
 
-    if let doubleTap = binding.doubleTap { try Self.validate(doubleTap, at: index) }
+    try Self.validate(binding.multiTap, at: index)
   }
 
 }

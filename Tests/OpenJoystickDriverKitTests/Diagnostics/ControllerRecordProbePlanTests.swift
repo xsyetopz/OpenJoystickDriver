@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import ProtocolPacketFixtures
 import Testing
 
@@ -154,6 +155,40 @@ struct ControllerRecordProbePlanTests {
   }
 
   @Test
+  func validationAcceptsAHIDReportLayoutRecordThatNoProbeCanDrive() throws {
+    let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+      .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+    let data = try Data(
+      contentsOf: root.appending(path: "Resources/Controllers/04b4/04b4-2412.plist")
+    )
+    let protocolID = try ControllerRecordProbePlan.validate(data: data)
+    #expect(protocolID == .hidReportLayout)
+    #expect(!ControllerRecordProbePlan.probeableProtocols.contains(protocolID))
+    #expect(throws: ControllerRecordProbeError.unsupportedProtocol("HIDReportLayout")) {
+      try ControllerRecordProbePlan(data: data)
+    }
+  }
+
+  @Test
+  func validationRejectsAnInvalidRecord() throws {
+    let data = try mutatedRecord { $0["vendorID"] = "not a number" }
+    #expect(throws: ControllerRecordProbeError.self) {
+      try ControllerRecordProbePlan.validate(data: data)
+    }
+  }
+
+  @Test(arguments: [0x3208, 0x5750])
+  func rejectsABootloaderIdentityBeforeHardwareAccess(productID: Int) throws {
+    let data = try mutatedRecord {
+      $0["vendorID"] = 0x2DC8
+      $0["productID"] = productID
+    }
+    #expect(throws: ControllerRecordProbeError.bootloaderIdentity) {
+      try ControllerRecordProbePlan(data: data)
+    }
+  }
+
+  @Test
   func rejectsHIDFamilyBeforeHardwareAccess() {
     #expect(throws: ControllerRecordProbeError.self) {
       try ControllerRecordProbePlan(data: try recordData(family: "SonyDualShock4", variant: nil))
@@ -215,6 +250,13 @@ struct ControllerRecordProbePlanTests {
   }
 
   @Test
+  func aBundledModelStillBuildsAPlan() throws {
+    let plan = try ControllerRecordProbePlan(data: try recordData())
+    let model = ControllerModelID(vendorID: plan.vendorID, productID: plan.productID)
+    #expect(ControllerRecordSet.bundled.records[model] != nil)
+  }
+
+  @Test
   func rejectsUnknownFields() {
     #expect(throws: ControllerRecordProbeError.self) {
       try ControllerRecordProbePlan(data: try recordData(extraRootField: "notAField"))
@@ -232,7 +274,6 @@ struct ControllerRecordProbePlanTests {
       { (record: inout [String: Any]) in
         Self.setSession(["settleMilliseconds": 60_001], in: &record)
       },
-      { (record: inout [String: Any]) in record["usb"] = NSNull() },
       { (record: inout [String: Any]) in
         var protocolConfig = Self.defaultProtocol(of: record)
         protocolConfig["parameters"] = [String: Any]()
@@ -311,13 +352,13 @@ struct ControllerRecordProbePlanTests {
     if let kind { record["kind"] = kind }
     if let extraRootField { record[extraRootField] = ["source": "unknown"] }
     if !usb.isEmpty { record["usb"] = usb }
-    return try JSONSerialization.data(withJSONObject: record)
+    return try PropertyListFixture.data(tree: record)
   }
 
   private func mutatedRecord(_ mutation: (inout [String: Any]) -> Void) throws -> Data {
     let data = try recordData()
-    var record = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+    var record = try #require(PropertyListFixture.tree(data) as? [String: Any])
     mutation(&record)
-    return try JSONSerialization.data(withJSONObject: record)
+    return try PropertyListFixture.data(tree: record)
   }
 }

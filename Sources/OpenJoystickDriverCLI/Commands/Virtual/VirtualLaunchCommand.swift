@@ -2,7 +2,10 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd virtual launch` command: runs a program with the environment set for virtual gamepads
+/// and exits with its status.
 struct VirtualLaunchCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "launch",
     abstract: CLILocalized.text("cli.virtual.launch.abstract"),
@@ -13,14 +16,17 @@ struct VirtualLaunchCommand: AsyncParsableCommand {
   @TaskLocal
   static var baseEnvironment = ProcessInfo.processInfo.environment
 
-  /// Where the program writes its standard output; nil leaves it on this process's standard
-  /// output. Tests replace it to read what the program printed.
+  /// Where the program writes its standard output; nil leaves it on this process's standard output.
+  ///
+  /// Tests replace it to read what the program printed.
   @TaskLocal
   static var programStandardOutput: FileHandle?
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// `--sdl-gamecontroller-backend`: set the program up to use the SDL game controller backend.
   @Flag(
     name: .customLong("sdl-gamecontroller-backend"),
     help: ArgumentHelp(
@@ -29,12 +35,14 @@ struct VirtualLaunchCommand: AsyncParsableCommand {
   )
   var sdlGameControllerBackend = false
 
+  /// The program and its arguments.
   @Argument(
     parsing: .remaining,
     help: ArgumentHelp(CLILocalized.text("cli.virtual.launch.command"), valueName: "program")
   )
   var command: [String] = []
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       // The program owns standard output, so there is no JSON or plain form.
@@ -100,8 +108,10 @@ enum ProgramLauncher {
   }
 
   /// Runs `executable` with `environment` and the standard input, error, and output of this
-  /// process, or `standardOutput` when given. Returns its exit status, or 128 plus the signal
-  /// that ended it. Stopping `ojd` with SIGINT or SIGTERM ends the program with SIGTERM first.
+  /// process, or `standardOutput` when given.
+  ///
+  /// Returns its exit status, or 128 plus the signal that ended it. Stopping `ojd` with SIGINT or
+  /// SIGTERM ends the program with SIGTERM first.
   static func run(
     executable: URL,
     arguments: [String],
@@ -131,6 +141,7 @@ enum ProgramLauncher {
     }
   }
 
+  /// Returns the failure for a program that did not start, with `reason`.
   private static func failure(_ program: String, _ reason: String) -> CLIFailure {
     CLIFailure(
       .launchFailed,

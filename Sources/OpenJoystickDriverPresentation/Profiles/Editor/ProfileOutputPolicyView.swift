@@ -2,10 +2,15 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The pickers of the profile's output policy: the virtual output, and whether the profile takes
+  /// the controller's input exclusively.
   struct ProfileOutputPolicyView: View {
+    /// The policy being edited.
     let policy: RemappingOutputPolicy
+    /// Receives the policy when the person changes it.
     let onChange: (RemappingOutputPolicy) -> Void
 
+    /// The virtual output picker and the exclusive input toggle.
     var body: some View {
       Group {
         Picker(
@@ -26,7 +31,7 @@
               "ui.profiles.virtualPassthrough"
             )
           ).tag(RemappingVirtualGamepadPolicy.passthrough)
-        }
+        }.ojdAccessibilityLabel(OJDLocalized.string("ui.profiles.virtualOutput"))
         Toggle(
           OJDLocalized.string(
             "ui.profiles.exclusiveInput"
@@ -46,11 +51,18 @@
       }
     }
 
-    /// The policy after the virtual output changes. The exclusive toggle applies only while the
-    /// virtual output is disabled; with any other virtual output it is disabled and shows
-    /// exclusive input as on, because a virtual output always takes exclusive input. Any other
-    /// virtual output therefore returns the physical input to `ojd profile create`'s default,
-    /// shared, so an earlier choice that the toggle does not show is not kept.
+    /// Returns the policy after the virtual output changes.
+    ///
+    /// The exclusive input toggle applies only while the virtual output is disabled; with any other
+    /// virtual output it is off and shows exclusive input as on, because a virtual output always
+    /// takes exclusive input. Any other virtual output therefore returns the physical input to the
+    /// default of `ojd profile create`, shared, so an earlier choice that the toggle does not show
+    /// is not kept.
+    ///
+    /// - Parameters:
+    ///   - virtualGamepad: The virtual output the person chose.
+    ///   - policy: The policy before the change.
+    /// - Returns: The policy after the virtual output changes.
     static func policy(
       selecting virtualGamepad: RemappingVirtualGamepadPolicy,
       from policy: RemappingOutputPolicy

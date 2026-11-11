@@ -2,7 +2,9 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd binding` command group: list, set and clear the bindings of a profile.
 struct BindingCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "binding",
     abstract: CLILocalized.text(
@@ -14,26 +16,35 @@ struct BindingCommand: AsyncParsableCommand {
     subcommands: [BindingListCommand.self, BindingSetCommand.self, BindingClearCommand.self]
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
 /// One binding in `--json` output.
 struct BindingSummary: Encodable, Equatable {
+  /// The binding ID.
   let id: String
+  /// The source in the `SOURCE` form of `ojd binding set`, such as `button:south`.
   let source: String
+  /// The target in the `TARGET` form of `ojd binding set`, such as `key:key-a`.
   let target: String
+  /// When the target fires, in kebab-case, such as `hold` or `tap-on-press`.
   let behavior: String
 
-  init(_ binding: RemappingBinding) {
+  /// Creates the summary from `binding`; `macros` and `layers` name a `Macro` and a `LayerSet`
+  /// target.
+  init(_ binding: RemappingBinding, macros: [RemappingMacro] = [], layers: [RemappingLayer] = []) {
     id = binding.id.uuidString
     source = ProfileText.source(binding.source)
-    target = ProfileText.destination(binding.destination)
+    target = ProfileText.destination(binding.destination, macros: macros, layers: layers)
     behavior = binding.behavior.rawValue
   }
 }
 
+/// The `ojd binding list` command: prints the bindings of a profile.
 struct BindingListCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "list",
     abstract: CLILocalized.text("cli.binding.list.abstract")
@@ -41,14 +52,25 @@ struct BindingListCommand: AsyncParsableCommand {
 
   /// One item of the `--json` list: a binding and the profile it came from.
   struct Item: Encodable, Equatable {
+    /// The profile that holds the binding.
     let profile: ProfileSummary
+    /// The binding ID.
     let id: String
+    /// The source in the `SOURCE` form.
     let source: String
+    /// The target in the `TARGET` form.
     let target: String
+    /// When the target fires.
     let behavior: String
 
-    init(_ binding: RemappingBinding, profile: ProfileSummary) {
-      let summary = BindingSummary(binding)
+    /// Creates the item from `binding` and the `profile` that holds it.
+    init(
+      _ binding: RemappingBinding,
+      profile: ProfileSummary,
+      macros: [RemappingMacro],
+      layers: [RemappingLayer]
+    ) {
+      let summary = BindingSummary(binding, macros: macros, layers: layers)
       self.profile = profile
       id = summary.id
       source = summary.source
@@ -57,12 +79,15 @@ struct BindingListCommand: AsyncParsableCommand {
     }
   }
 
+  /// The profile to list, by ID or name.
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let selector = profile
@@ -73,11 +98,17 @@ struct BindingListCommand: AsyncParsableCommand {
       case .json:
         let profile = ProfileSummary(document, snapshot: snapshot)
         try CLIOutput.json(
-          CLIList(items: document.bindings.map { Item($0, profile: profile) })
+          CLIList(
+            items: document.bindings.map {
+              Item($0, profile: profile, macros: document.macros, layers: document.layers)
+            }
+          )
         )
       case .plain:
         CLIOutput.plain(
-          document.bindings.map(BindingSummary.init).map {
+          document.bindings.map {
+            BindingSummary($0, macros: document.macros, layers: document.layers)
+          }.map {
             [$0.source, $0.target, CommandLineName.kebab($0.behavior)]
           }
         )
@@ -90,13 +121,35 @@ struct BindingListCommand: AsyncParsableCommand {
             )
           )
         }
-        for binding in document.bindings { CLIOutput.stdout(ProfileText.binding(binding)) }
+        for binding in document.bindings {
+          CLIOutput.stdout(ProfileText.binding(binding, macros: document.macros))
+        }
       }
     }
   }
 }
 
+extension RemappingProfile {
+  /// The layer whose name equals `name`, ignoring case.
+  ///
+  /// - Throws: ``CLIFailure`` with the not-found code when the profile has no such layer.
+  func layer(named name: String) throws -> RemappingLayer {
+    let wanted = Self.normalizedName(name)
+    guard let layer = layers.first(where: { Self.normalizedName($0.name) == wanted }) else {
+      throw CLIFailure(
+        .notFound,
+        CLILocalized.format("cli.binding.group.layerMissing", self.name, name)
+      )
+    }
+    return layer
+  }
+}
+
+/// The `ojd binding set` command: binds a source to a target in a profile.
+///
+/// A source has one binding, so this replaces the binding that the source has and keeps its ID.
 struct BindingSetCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "set",
     abstract: CLILocalized.text(
@@ -106,15 +159,24 @@ struct BindingSetCommand: AsyncParsableCommand {
       + CLILocalized.text("cli.binding.set.examples")
   )
 
+  /// The prefix of a target that runs a macro of the profile by name.
+  private static let macroPrefix = "macro:"
+
+  /// The `--json` result of `binding set`.
   struct Result: Encodable, Equatable {
+    /// The profile that the command changes.
     let profile: ProfileSummary
+    /// The binding that the command writes.
     let binding: BindingSummary
+    /// Whether the source already had a binding that this one replaced.
     let replaced: Bool
   }
 
+  /// The profile to change, by ID or name.
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// The `SOURCE` to bind, such as `button:south` or `axis:left-stick-x:positive`.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.binding.set.source"),
@@ -123,6 +185,7 @@ struct BindingSetCommand: AsyncParsableCommand {
   )
   var source: String
 
+  /// The `TARGET` to send, such as `key:key-a` or `gamepad:button:south`.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.binding.set.target"),
@@ -131,22 +194,39 @@ struct BindingSetCommand: AsyncParsableCommand {
   )
   var target: String
 
+  /// The options that shape how the binding fires.
   @OptionGroup
   var options: BindingOptions
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let source = try parseSource(source)
-      let target = try parseTarget(target)
+      let macroName =
+        target.hasPrefix(Self.macroPrefix) ? target.dropFirst(Self.macroPrefix.count) : nil
+      let layerTarget = RemappingCommandValueParser.layerTarget(target)
+      let parsed: RemappingDestination =
+        try macroName == nil && layerTarget == nil ? options.destination(target) : .macro(UUID())
       // Reports option errors before the service is contacted.
-      _ = try options.binding(source: source, target: target, existing: nil)
+      _ = try options.binding(source: source, target: parsed, existing: nil)
       let (selector, options) = (profile, options)
       let (binding, replaced, updated, after) = try await ServiceConnection.request { client in
         let (current, _) = try await selector.resolve(with: client)
         let existing = current.bindings.first { $0.source == source }
+        let target =
+          try macroName.map {
+            RemappingDestination.macro(try current.macro(named: String($0)).id)
+          }
+          ?? layerTarget.map {
+            RemappingDestination.layerSet(
+              layer: try current.layer(named: $0.name).id,
+              mode: $0.mode
+            )
+          } ?? parsed
         let binding = try options.binding(source: source, target: target, existing: existing)
         let bindings = current.bindings.map { $0.source == source ? binding : $0 }
         let updated = try current.replacing(
@@ -157,7 +237,7 @@ struct BindingSetCommand: AsyncParsableCommand {
       }
       let result = Result(
         profile: try savedSummary(updated.id, in: after),
-        binding: BindingSummary(binding),
+        binding: BindingSummary(binding, macros: updated.macros, layers: updated.layers),
         replaced: replaced
       )
       switch CLIContext.current.format {
@@ -168,7 +248,7 @@ struct BindingSetCommand: AsyncParsableCommand {
           CLILocalized.format(
             "cli.binding.set.done",
             updated.name,
-            ProfileText.binding(binding)
+            ProfileText.binding(binding, macros: updated.macros, layers: updated.layers)
           )
         )
       }
@@ -176,7 +256,12 @@ struct BindingSetCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd binding clear` command: removes the bindings of the given sources, or every binding
+/// with `--all`.
+///
+/// It changes nothing and fails when a source has no binding.
 struct BindingClearCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "clear",
     abstract: CLILocalized.text(
@@ -187,16 +272,23 @@ struct BindingClearCommand: AsyncParsableCommand {
     )
   )
 
+  /// The `--json` result of `binding clear`.
   struct Result: Encodable, Equatable {
+    /// The profile that the command changes.
     let profile: ProfileSummary
+    /// The sources whose bindings were or would be removed.
     let removed: [String]
+    /// Whether `--all` is set.
     let all: Bool
+    /// Whether `--dry-run` is set, so nothing changes.
     let dryRun: Bool
   }
 
+  /// The profile to change, by ID or name.
   @Argument(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// The sources whose bindings to remove.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.binding.clear.sources"),
@@ -205,6 +297,7 @@ struct BindingClearCommand: AsyncParsableCommand {
   )
   var sources: [String] = []
 
+  /// `--all`: remove every binding, chord, sequence and layer.
   @Flag(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -214,12 +307,14 @@ struct BindingClearCommand: AsyncParsableCommand {
   )
   var all = false
 
+  /// `-f`, `--force`: skip the confirmation that `--all` asks for.
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
   )
   var force = false
 
+  /// `-n`, `--dry-run`: print what would change and change nothing.
   @Flag(
     name: [.customShort("n"), .long],
     help: ArgumentHelp(
@@ -228,9 +323,13 @@ struct BindingClearCommand: AsyncParsableCommand {
   )
   var dryRun = false
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Checks that the command names either `--all` or at least one source, and not both.
+  ///
+  /// - Throws: ``ValidationError`` otherwise.
   func validate() throws {
     guard all != !sources.isEmpty else {
       throw ValidationError(
@@ -239,6 +338,7 @@ struct BindingClearCommand: AsyncParsableCommand {
     }
   }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let parsed = try sources.map(parseSource)
@@ -318,6 +418,7 @@ struct BindingClearCommand: AsyncParsableCommand {
     }
   }
 
+  /// `profile` without the bindings of `sources`, or without any binding when `all` is true.
   static func clearing(
     _ profile: RemappingProfile,
     sources: [RemappingSource],

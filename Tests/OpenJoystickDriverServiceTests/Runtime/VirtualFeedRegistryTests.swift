@@ -313,8 +313,9 @@ struct VirtualFeedRegistryTests {
     await time.waitForSleepers(1)
     #expect(registry.openFeedCount == 1)
     time.advance(by: 0.0625)
-    await waitUntil("registry.openFeedCount == 0") { registry.openFeedCount == 0 }
-    #expect(device.closeCount == 1)
+    // The registry drops the session before it awaits the close, so wait for the close itself.
+    await waitUntil("device.closeCount == 1") { device.closeCount == 1 }
+    #expect(registry.openFeedCount == 0)
     #expect(registry.exchange(token: session.token, frames: []).closed)
   }
 

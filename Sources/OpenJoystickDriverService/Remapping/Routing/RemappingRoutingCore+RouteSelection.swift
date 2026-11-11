@@ -2,6 +2,12 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension RemappingRoutingCore {
+  /// Selects the route of `identifier` from its active profile and transitions to it.
+  ///
+  /// A Joy-Con pair member reconciles its pair session instead.
+  ///
+  /// - Throws: ``RemappingOutputRoutingError/library(_:)`` when the profile library fails, and the
+  ///   errors of ``transition(to:for:requiring:)``.
   func loadSelection(
     for identifier: LogicalControllerID,
     requiring permit: RemappingEmissionPermit?
@@ -34,6 +40,13 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Moves the route of `identifier` to `selection`, releasing the output of the route it leaves.
+  ///
+  /// A virtual gamepad to virtual gamepad change only refreshes the route, and an unchanged profile
+  /// only reconciles eligibility.
+  ///
+  /// - Throws: ``RemappingOutputRoutingError`` when the permit is not valid or the engine
+  ///   fails.
   internal func transition(
     to selection: RemappingSelectedRoute,
     for identifier: LogicalControllerID,
@@ -103,6 +116,7 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Records the input ownership of `identifier` and reconciles its eligibility.
   func updateInputOwnership(
     _ ownership: HIDInputOwnership,
     for identifier: LogicalControllerID
@@ -118,6 +132,9 @@ extension RemappingRoutingCore {
     try await reconcileEligibility(for: identifier, requiring: permit)
   }
 
+  /// Returns the eligibility of `profile` for `identifier` in `environment`.
+  ///
+  /// A profile that requires exclusive input is not eligible while the controller input is shared.
   func remappingEligibility(
     _ profile: RemappingProfile,
     for identifier: LogicalControllerID,
@@ -137,6 +154,17 @@ extension RemappingRoutingCore {
     return .eligible
   }
 
+  /// Brings the route of `identifier` in line with its eligibility, starting or releasing the
+  /// engine.
+  ///
+  /// - Parameters:
+  ///   - identifier: The controller to reconcile.
+  ///   - proposedEnvironment: The environment to judge by; sampled when nil.
+  ///   - proposedPermit: The emission permit that the engine calls require.
+  ///   - forceOutputState: Applies the engine change even while a profile transaction blocks
+  ///     output.
+  /// - Throws: ``RemappingOutputRoutingError/shutDown`` once shutdown was requested, and
+  ///   ``RemappingOutputRoutingError/engine(_:)`` when the engine fails.
   func reconcileEligibility(
     for identifier: LogicalControllerID,
     environment proposedEnvironment: RemappingEligibilityEnvironment? = nil,
@@ -211,6 +239,7 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Recovers the engine when the error of `route` is an engine failure.
   internal func recoverEngineIfNeeded(
     for route: RemappingControllerRoute,
     requiring permit: RemappingEmissionPermit
@@ -219,6 +248,10 @@ extension RemappingRoutingCore {
     try await engine.recover(requiring: permit)
   }
 
+  /// Moves each of `identifiers` to an unavailable route that carries `libraryError`.
+  ///
+  /// - Throws: ``RemappingOutputRoutingError/libraryAndEngine(_:_:)`` when an engine failure
+  ///   occurs as well.
   internal func markLibraryUnavailable(
     _ libraryError: RemappingProfileLibraryError,
     identifiers: [LogicalControllerID],

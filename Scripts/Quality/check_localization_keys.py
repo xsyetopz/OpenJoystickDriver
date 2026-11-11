@@ -202,6 +202,7 @@ NOT_A_COUNT: dict[str, str] = {
     "ui.profiles.controlNumber": (
         "the number is a position in a sequence, not a quantity (the number that names a control)"
     ),
+    "ui.setup.failedDetail": ("the number is an error code"),
 }
 STRINGS_ENTRY = re.compile(
     r"(?:/\*(?P<comment>(?:(?!\*/).)*)\*/[ \t]*\n?)?"

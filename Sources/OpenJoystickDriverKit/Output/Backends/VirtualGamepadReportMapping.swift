@@ -3,11 +3,16 @@ import Foundation
 /// The mapping from canonical and remapped controller state to the virtual gamepad state, shared
 /// by the user-space dispatcher and the `VirtualHIDProfile` encoders.
 enum VirtualGamepadReportMapping {
+  /// The deadzone treatment of a controller's sticks.
   struct StickTransfer: Equatable, Sendable {
+    /// The radius of the deadzone, as a share of full deflection.
     let deadzone: Float
+    /// Whether the deflection past the deadzone is scaled up to the full range.
     let rescalesDeadzone: Bool
   }
 
+  /// The stick treatment of `identifier`: the deadzone of its controller record with rescaling, or
+  /// none.
   static func stickTransfer(for identifier: LogicalControllerID) -> StickTransfer {
     let catalog = DeviceCatalog.current.withLock { $0 }
     if let deadzone = catalog.record(for: identifier.model)?.tuning.stickDeadzone {
@@ -16,15 +21,16 @@ enum VirtualGamepadReportMapping {
     return StickTransfer(deadzone: 0, rescalesDeadzone: false)
   }
 
-  /// How many frames may wait behind a send for `identifier`'s virtual device.
+  /// How many frames may wait behind a send for the virtual device of `identifier`.
   static func frameQueueCapacity(for identifier: LogicalControllerID) -> Int {
     let catalog = DeviceCatalog.current.withLock { $0 }
     return frameQueueCapacity(of: catalog.record(for: identifier.model))
   }
 
   /// The effective `frameQueueCapacity` of `record`, else the `defaults.tuning` of its family's
-  /// protocol description, else ``ControllerTuning/defaultFrameQueueCapacity``. A controller
-  /// with no record gets the default.
+  /// protocol description, else ``ControllerTuning/defaultFrameQueueCapacity``.
+  ///
+  /// A controller with no record gets the default.
   static func frameQueueCapacity(
     of record: DeviceRuntimeProfile?,
     descriptions: [PhysicalProtocolID: ProtocolDescription] = ProtocolDescription.bundled
@@ -37,8 +43,10 @@ enum VirtualGamepadReportMapping {
 
   // MARK: - State mapping (called inside reportLock.withLock)
 
-  /// Replaces every input field of `state` with `input`. This is the one canonical-state
-  /// mapping; the dispatcher and the `VirtualHIDProfile` encoders share it.
+  /// Replaces every input field of `state` with `input`.
+  ///
+  /// This is the one canonical-state mapping; the dispatcher and the `VirtualHIDProfile` encoders
+  /// share it.
   static func apply(
     _ input: ControllerState,
     stickTransfer: StickTransfer,
@@ -101,10 +109,12 @@ enum VirtualGamepadReportMapping {
 
   /// Whether the controller's right pad is its right stick, read from its resolved record: the
   /// controls it has (the family's, corrected by the record's `capabilityDelta`) include a right
-  /// pad click and no right stick click. The classic Steam Controller's record
-  /// (`remove: ["RightStickClick"]`) is that, so its pad click is R3. A Steam Deck or Triton has
-  /// both controls, so its pad click stays its own control, which no virtual persona carries. A
-  /// record or patch that adds or removes either control changes the answer.
+  /// pad click and no right stick click.
+  ///
+  /// The classic Steam Controller's record (`remove: ["RightStickClick"]`) is that, so its pad
+  /// click is R3. A Steam Deck or Triton has both controls, so its pad click stays its own control,
+  /// which no virtual persona carries. A record or patch that adds or removes either control
+  /// changes the answer.
   static func rightPadIsRightStick(_ identifier: LogicalControllerID) -> Bool {
     let catalog = DeviceCatalog.current.withLock { $0 }
     return rightPadIsRightStick(record: catalog.record(for: identifier.model))
@@ -119,15 +129,18 @@ enum VirtualGamepadReportMapping {
     return controls.contains(.rightTrackpadClick) && !controls.contains(.rightStickClick)
   }
 
-  /// The control a virtual persona carries for `control`. This is the one rule the report mapping
-  /// and the remapping passthrough share.
+  /// The control a virtual persona carries for `control`.
+  ///
+  /// This is the one rule the report mapping and the remapping passthrough share.
   static func virtualControl(_ control: Control, rightPadIsRightStick: Bool) -> Control {
     control == .rightTrackpadClick && rightPadIsRightStick ? .rightStickClick : control
   }
 
-  /// The one control-to-bit table. A control is the same bit whatever the physical label: PS4
-  /// Share, PS Create and Xbox View are `back` (bit 9); PS Options, Xbox Menu and Switch Plus are
-  /// `start` (bit 8); Xbox Share and Switch Capture are `capture` (bit 15).
+  /// The one control-to-bit table.
+  ///
+  /// A control is the same bit whatever the physical label: PS4 Share, PS Create and Xbox View
+  /// are `back` (bit 9); PS Options, Xbox Menu and Switch Plus are `start` (bit 8); Xbox Share and
+  /// Switch Capture are `capture` (bit 15).
   ///
   /// Carried by neither persona, so `nil`, for these reasons:
   /// - `touchpadClick`, `microphone`, paddles, `auxiliary1...8`, stick and trackpad touch,
@@ -158,7 +171,8 @@ enum VirtualGamepadReportMapping {
       .leftPaddle1,
       .leftPaddle2, .rightPaddle1, .rightPaddle2, .auxiliary1, .auxiliary2, .auxiliary3,
       .auxiliary4, .auxiliary5, .auxiliary6, .auxiliary7, .auxiliary8, .leftStickTouch,
-      .rightStickTouch, .leftTrackpadClick, .leftTrackpadTouch, .rightTrackpadTouch:
+      .rightStickTouch, .leftTrackpadClick, .leftTrackpadTouch, .rightTrackpadTouch,
+      .pointerX, .pointerY, .pointerTracking, .leftGripTouch, .rightGripTouch:
       return nil
     }
   }
@@ -182,18 +196,22 @@ enum VirtualGamepadReportMapping {
     return (axis(x), axis(y))
   }
 
-  /// The report's 15-bit trigger, scaled down with truncation. Every 8-bit source (`u = v * 257`)
-  /// reaches exactly the value the float path gave it.
+  /// The report's 15-bit trigger, scaled down with truncation.
+  ///
+  /// Every 8-bit source (`u = v * 257`) reaches exactly the value the float path gave it.
   static func triggerValue(_ value: UnipolarValue) -> Int16 {
     Int16(UInt32(value.rawValue) * UInt32(Int16.max) / UInt32(UInt16.max))
   }
 
+  /// The 16-bit axis value of a remapped axis value, limited to -1...1.
   static func remappedAxisValue(_ value: Double) -> Int16 {
     let clamped = Float(value).clamped(to: -1...1)
     guard clamped != 0 else { return 0 }
     return Int16(clamped * 32_767)
   }
 
+  /// Whether a remapped trigger counts as pressed: when `click` is set, or when the trigger button
+  /// derivation reads `value` as pressed given `wasPressed`.
   static func remappedTriggerPressed(_ value: Double, click: Bool, wasPressed: Bool) -> Bool {
     click
       || TriggerButtonDerivation.isPressed(
@@ -202,10 +220,12 @@ enum VirtualGamepadReportMapping {
       )
   }
 
+  /// The 15-bit trigger value of a remapped trigger value, limited to 0...1.
   static func remappedTriggerValue(_ value: Double) -> Int16 {
     Int16(Float(value).clamped(to: 0...1) * 32_767)
   }
 
+  /// The descriptor's hat value for `direction`.
   static func hatValue(for direction: HatDirection) -> GamepadHIDDescriptor.Hat {
     switch direction {
     case .neutral: return .neutral

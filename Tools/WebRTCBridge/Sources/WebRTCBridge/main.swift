@@ -1,13 +1,16 @@
 import Foundation
 import WebRTCBridgeCore
 
+/// Prints the text to standard error and exits with status 1.
 func fail(_ text: String) -> Never {
   FileHandle.standardError.write(Data((text + "\n").utf8))
   exit(1)
 }
 
+/// The usage text of the tool.
 let usage = BridgeCommandLine.usage
 
+/// The `--name value` options of the command line.
 let options: [String: [String]]
 switch BridgeCommandLine.parse(Array(CommandLine.arguments.dropFirst())) {
 case .help:
@@ -22,10 +25,14 @@ guard let role = options["role"]?.first, role == "host" || role == "player" else
 guard let token = ProcessInfo.processInfo.environment["OJD_TOKEN"], !token.isEmpty else {
   fail("Set OJD_TOKEN to the endpoint token.")
 }
+/// The signaling role: `--signal`, else `offer` for the player and `answer` for the host.
 let signal =
   SignalingRole(rawValue: options["signal"]?.first ?? (role == "player" ? "offer" : "answer"))
 guard let signal else { fail(usage) }
 
+/// The endpoint socket path: `--socket`, else the `socketPath` of `ojd --json access status`.
+///
+/// Exits with an error text when `ojd` cannot run or reports no path.
 func socketPath() -> String {
   if let path = options["socket"]?.first { return path }
   let process = Process()
@@ -41,12 +48,18 @@ func socketPath() -> String {
   return path
 }
 
+/// Reads the peer's blob, one line, from standard input.
+///
+/// Exits with an error text when the line is missing or empty.
 func readPeerBlob() -> String {
   FileHandle.standardError.write(Data("Paste the peer's blob, then press Return.\n".utf8))
   guard let line = readLine(), !line.isEmpty else { fail("No blob on stdin.") }
   return line
 }
 
+/// Exchanges the blobs, waits for the data channel, and runs the bridge of the role until it ends.
+///
+/// The offerer prints its blob first; the answerer reads the peer's blob first.
 func run() async throws {
   let link = try PeerLink(role: signal, iceServers: options["ice-server"] ?? [])
   if signal == .offer {

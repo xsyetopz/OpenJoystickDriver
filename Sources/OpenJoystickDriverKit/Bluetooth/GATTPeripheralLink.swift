@@ -8,12 +8,19 @@ import Foundation
 /// enabled, ``notified(characteristic:value:)`` for each notification, and ``disconnected()``
 /// when the peripheral goes.
 public final class GATTPeripheralLink: Switch2BluetoothLEWriter, Sendable {
+  /// The connected peripheral.
   public let peripheral: any GATTPeripheral
+  /// The USB product ID of the controller model.
   public let productID: UInt16
+  /// The name the peripheral advertises; nil when it advertises none.
   public let productName: String?
+  /// The weak reference to the hub that this link feeds.
   private let hubReference: WeakHub
+  /// The hub, while it exists.
   private var hub: Switch2BluetoothLEHub? { hubReference.hub }
+  /// The UUID of the command characteristic.
   private let commandUUID: String
+  /// The UUID of the model's vibration characteristic.
   private let vibrationUUID: String
 
   /// Returns nil when no controller record of `productID` declares a vibration characteristic.
@@ -43,8 +50,9 @@ public final class GATTPeripheralLink: Switch2BluetoothLEWriter, Sendable {
     )
   }
 
-  /// Delivers one notification. Input frames and command replies reach the hub; any other
-  /// characteristic is ignored.
+  /// Delivers one notification.
+  ///
+  /// Input frames and command replies reach the hub; any other characteristic is ignored.
   public func notified(characteristic: String, value: [UInt8]) {
     switch characteristic.uppercased() {
     case Switch2BluetoothLEProfile.inputUUID:
@@ -56,19 +64,26 @@ public final class GATTPeripheralLink: Switch2BluetoothLEWriter, Sendable {
     }
   }
 
+  /// Tells the hub that the link is gone.
   public func disconnected() { hub?.linkDisconnected(peripheralID: peripheral.identifier) }
 
+  /// Writes `bytes` to the command characteristic without a response; returns whether the write was
+  /// accepted.
   public func writeCommand(_ bytes: [UInt8]) -> Bool {
     peripheral.writeWithoutResponse(bytes, to: commandUUID)
   }
 
+  /// Writes `bytes` to the vibration characteristic without a response; returns whether the write
+  /// was accepted.
   public func writeVibration(_ bytes: [UInt8]) -> Bool {
     peripheral.writeWithoutResponse(bytes, to: vibrationUUID)
   }
 }
 
-/// Holds the hub weakly, because the hub holds the link as the connection's writer. The hub is
-/// itself `@unchecked Sendable`, and a weak reference only ever clears.
+/// Holds the hub weakly, because the hub holds the link as the connection's writer.
+///
+/// The hub is itself `@unchecked Sendable`, and a weak reference only ever clears.
 private struct WeakHub: @unchecked Sendable {
+  /// The hub; clears when the hub is released.
   weak var hub: Switch2BluetoothLEHub?
 }

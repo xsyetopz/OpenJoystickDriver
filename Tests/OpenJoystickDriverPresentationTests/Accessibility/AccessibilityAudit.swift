@@ -23,8 +23,9 @@ enum AccessibilityAudit {
     "ColorPicker", "DatePicker", "Link", "NavigationLink", "TextEditor",
   ]
 
-  /// Controls whose trailing closure is the label. A `Picker` or `Menu` trailing closure is the
-  /// content, so only a `label:` closure names them.
+  /// Controls whose trailing closure is the label.
+  ///
+  /// A `Picker` or `Menu` trailing closure is the content, so only a `label:` closure names them.
   static let trailingLabelControls: Set<String> = [
     "Button", "Toggle", "Slider", "Stepper", "Link", "NavigationLink", "ColorPicker",
     "DatePicker",
@@ -142,8 +143,9 @@ enum AccessibilityAudit {
     return "\(name) without a title or accessibility label"
   }
 
-  /// An image inside another control's arguments or label closures is part of that control. The
-  /// content closure of a `Picker` or `Menu` and modifier closures are not.
+  /// An image inside another control's arguments or label closures is part of that control.
+  ///
+  /// The content closure of a `Picker` or `Menu` and modifier closures are not.
   private static func isInsideLabel(_ image: Extent, of other: Extent) -> Bool {
     guard other.start < image.start, image.end <= other.end else { return false }
     if let range = other.argumentsRange, range.contains(image.start) { return true }

@@ -3,10 +3,14 @@ import Foundation
 
 /// Terminal facts that decide whether `ojd` may use color or prompt.
 enum CLITerminal {
+  /// A standard stream that `ojd` writes text to.
   enum Stream {
+    /// Standard output.
     case standardOutput
+    /// Standard error.
     case standardError
 
+    /// The file descriptor of the stream.
     var descriptor: Int32 {
       switch self {
       case .standardOutput: STDOUT_FILENO
@@ -15,9 +19,13 @@ enum CLITerminal {
     }
   }
 
+  /// An ANSI foreground color that `ojd` uses for status text.
   enum Color: String {
+    /// Green, the SGR code 32.
     case green = "32"
+    /// Yellow, the SGR code 33.
     case yellow = "33"
+    /// Red, the SGR code 31.
     case red = "31"
   }
 
@@ -43,8 +51,14 @@ enum CLITerminal {
   }
 
   /// Confirms a destructive action: passes with `force`, asks `question` on a terminal, and
-  /// otherwise fails with a confirmation error that names `--force`;
-  /// `needsForce` replaces its message.
+  /// otherwise fails with a confirmation error that names `--force`.
+  ///
+  /// - Parameters:
+  ///   - question: The question to ask.
+  ///   - force: Skips the question.
+  ///   - needsForce: Replaces the message of that error.
+  /// - Throws: ``CLIFailure`` with `confirmationRequired` when no question can be asked, or
+  ///   `aborted` when the answer is not `y` or `yes`.
   static func confirm(_ question: String, force: Bool, needsForce: String? = nil) throws {
     if force { return }
     guard canPrompt() else {
@@ -66,6 +80,8 @@ enum CLITerminal {
     }
   }
 
+  /// `text` wrapped in the ANSI sequence of `color` when color is allowed on `stream`, and `text`
+  /// unchanged otherwise.
   static func colored(_ text: String, _ color: Color, on stream: Stream) -> String {
     guard usesColor(on: stream) else { return text }
     return "\u{1B}[\(color.rawValue)m\(text)\u{1B}[0m"

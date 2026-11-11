@@ -11,48 +11,83 @@ import Security
 ///   field) that the compiler cannot check; every other stored property is an immutable `let` of a
 ///   `Sendable` type. An actor would force the synchronous output and builder callbacks to hop.
 public final class ApplicationServiceServer: @unchecked Sendable {
+  /// The source of controllers and their sessions.
   let deviceManager: DeviceManager
+  /// The permission checks of the service.
   let permissionManager: PermissionManager
+  /// The router that sends controller events to the active output backend.
   let dispatcher: VirtualOutputRouter
+  /// The remapping profiles on disk.
   let remappingProfileLibrary: RemappingProfileLibrary
+  /// The router that sends remapped state to the virtual gamepad.
   let remappingRouter: RemappingOutputRouter
+  /// The access to posting system input events.
   let postEventAccess: CoreGraphicsPostEventAccess
   /// The key under which the port keys of connected controllers are computed.
   let installationKey: SymmetricKey
+  /// Serializes the remapping requests of the clients.
   let remappingRequests: RemappingRequestCoordinator
+  /// Runs the steps of a virtual output transition one at a time.
   let virtualOutputTransitionCoordinator = VirtualOutputTransitionCoordinator()
+  /// The time limits of a virtual output transition.
   let virtualOutputTransitionTimeouts: VirtualOutputTransitionTimeouts
+  /// The clock of a virtual output transition.
   let virtualOutputTransitionClock: VirtualOutputTransitionClock
+  /// Returns the controllers that are connected.
   let connectedIdentifierProvider: @Sendable () async -> [LogicalControllerID]
+  /// Admits the feedback of the virtual gamepad to the physical controllers.
   let feedbackGate: VirtualOutputFeedbackGate
   /// The user settings file that every `ojd setting` key reads and writes.
   let settings: SettingsStore
+  /// Turns launch at login on and off.
   let launchAtLogin: LaunchAtLoginControl
+  /// The store of the Advanced profile overrides.
   let virtualHIDProfileOverrides: VirtualHIDProfileOverrideStore
+  /// Builds each user-space dispatcher candidate.
   let userSpaceDispatcherFactory: UserSpaceDispatcherFactory
+  /// The virtual gamepads that endpoint clients feed.
   let virtualFeeds: VirtualFeedRegistry
   /// Counts status changes for `waitForServiceStatusChange`.
   let statusChanges: ServiceStatusChanges
   /// Guards `userSpaceDispatcher`, `userSpaceEnabled`, `userSpaceStatus`, `userSpaceCloseSlot`,
   /// and `virtualOutputServerStopped`.
   let userSpaceLock = NSLock()
+  /// The live user-space dispatcher; nil while none runs.
+  ///
+  /// Guarded by `userSpaceLock`.
   var userSpaceDispatcher: (any VirtualOutputDispatching)?
   /// Written only under `userSpaceLock`; a change sets `userSpaceChangePending`, and
   /// ``withUserSpaceState(_:)`` announces it after the lock is released.
   var userSpaceEnabled: Bool {
     didSet { if oldValue != userSpaceEnabled { userSpaceChangePending = true } }
   }
+  /// The status of the user-space output, as recorded by an activation.
+  ///
+  /// Guarded by `userSpaceLock`.
   var userSpaceStatus: VirtualOutputBackendStatus = .off {
     didSet { if oldValue != userSpaceStatus { userSpaceChangePending = true } }
   }
+  /// Whether a change was made that ``withUserSpaceState(_:)`` has not announced yet.
   var userSpaceChangePending = false
+  /// The slot that closes the live dispatcher.
+  ///
+  /// Guarded by `userSpaceLock`.
   var userSpaceCloseSlot: VirtualOutputBackendCloseSlot?
   /// Guards `rpcServer` and `endpointServer`.
   let rpcServerLock = NSLock()
+  /// The local RPC server; nil while the service is stopped.
+  ///
+  /// Guarded by `rpcServerLock`.
   var rpcServer: LocalServiceRPCServer?
   /// Whether the request listener runs, and the way to start it again after it stopped.
   package let listenerState = ServiceListenerState()
+  /// The endpoint server; nil while the service is stopped.
+  ///
+  /// Guarded by `rpcServerLock`.
   var endpointServer: EndpointServer?
+  /// Whether the service stopped, after which no virtual output starts.
+  ///
+  /// Guarded by `userSpaceLock`.
   var virtualOutputServerStopped = false
 
   /// Creates a server backed by the device manager, permissions, and output dispatchers.
@@ -128,6 +163,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
     let endpoint = EndpointServer(
       source: ApplicationServiceWatchSource(server: self),
       feeds: virtualFeeds,
+      automation: self,
       streamDelivered: streamDelivered
     )
     endpoint.start()
@@ -135,7 +171,7 @@ public final class ApplicationServiceServer: @unchecked Sendable {
       rpcServer = server
       endpointServer = endpoint
     }
-    // A restart takes the same lock as `stop()` and refuses once the server is no longer current,
+    // A restart takes the same lock as `stop()` and refuses unless the server is current,
     // so it never starts a listener on a service that is stopping.
     state.setRestart { [weak self, weak server] in
       guard let self, let server else { throw LocalServiceRPCError.stopping }
@@ -147,11 +183,16 @@ public final class ApplicationServiceServer: @unchecked Sendable {
 
 extension ApplicationServiceServer {
 
+  /// A user-space dispatcher that was built but is not yet published, with its close slot.
   struct UserSpaceDispatcherBuild: Sendable {
+    /// The dispatcher to activate.
     let dispatcher: any VirtualOutputDispatching
+    /// The status of the dispatcher when it was built.
     let status: VirtualOutputBackendStatus
+    /// The slot that closes the dispatcher.
     let closeSlot: VirtualOutputBackendCloseSlot
 
+    /// Creates a build of `dispatcher`; the close slot defaults to a slot of its own.
     init(
       dispatcher: any VirtualOutputDispatching,
       status: VirtualOutputBackendStatus,
@@ -163,9 +204,11 @@ extension ApplicationServiceServer {
     }
   }
 
-  /// Starts the listener of `server` again. It takes the lock that `stop()` takes and refuses with
-  /// `LocalServiceRPCError.stopping` once `server` is no longer the current one, so a restart never
-  /// starts a listener on a service that is stopping.
+  /// Starts the listener of `server` again.
+  ///
+  /// It takes the lock that `stop()` takes and refuses with `LocalServiceRPCError.stopping` unless
+  /// `server` is the current one, so a restart never starts a listener on a service that is
+  /// stopping.
   func restartListener(of server: LocalServiceRPCServer) throws {
     try rpcServerLock.withLock {
       guard rpcServer === server else { throw LocalServiceRPCError.stopping }
@@ -173,6 +216,7 @@ extension ApplicationServiceServer {
     }
   }
 
+  /// Stops the listeners, the feeds and the transitions, and closes the virtual output backend.
   public func stop() async {
     let (server, endpoint) = rpcServerLock.withLock {
       () -> (LocalServiceRPCServer?, EndpointServer?) in
@@ -206,6 +250,8 @@ extension ApplicationServiceServer {
     _ = await closeVirtualOutputBackend(slot)
   }
 
+  /// Whether `peer` may call the service: this process, or one with the signing identity of the
+  /// service.
   static func isTrustedClient(peer: LocalSocketPeer) -> Bool {
     // The app's own UI calls this service over the socket. Security cannot resolve a running
     // process's code once its bundle is replaced on disk (a rebuild or an update before relaunch),
@@ -220,6 +266,9 @@ extension ApplicationServiceServer {
 
   // MARK: - Private
 
+  /// Builds a user-space dispatcher with the factory and the collaborators of the server.
+  ///
+  /// - Throws: The failure of the factory.
   func buildUserSpaceDispatcher() throws -> UserSpaceDispatcherBuild {
     let dispatcher = try userSpaceDispatcherFactory(
       UserSpaceDispatcherFactoryContext(
@@ -233,6 +282,7 @@ extension ApplicationServiceServer {
     return UserSpaceDispatcherBuild(dispatcher: dispatcher, status: dispatcher.status)
   }
 
+  /// The status of the user-space output, as ``userSpaceStatusSnapshot()`` reports it.
   func currentUserSpaceStatus() -> VirtualOutputBackendStatus { userSpaceStatusSnapshot().status }
 
   /// Runs `body` under `userSpaceLock` and announces a status change it made after the lock is
@@ -247,8 +297,11 @@ extension ApplicationServiceServer {
     return result
   }
 
+  /// Whether the user-space output is enabled, and its status.
   struct UserSpaceStatusSnapshot: Sendable {
+    /// Whether the user-space output is enabled.
     let enabled: Bool
+    /// The status of the user-space output.
     let status: VirtualOutputBackendStatus
   }
 
@@ -276,6 +329,7 @@ extension ApplicationServiceServer {
     }
   }
 
+  /// Whether the service stopped.
   func isVirtualOutputServerStopped() -> Bool {
     userSpaceLock.withLock { virtualOutputServerStopped }
   }

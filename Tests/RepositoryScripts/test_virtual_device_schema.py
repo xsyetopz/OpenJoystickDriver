@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import copy
-import json
+import plistlib
 import unittest
 from pathlib import Path
 from typing import Any
@@ -12,11 +12,11 @@ from Scripts.Quality import validate_schemas
 
 ROOT = Path(__file__).resolve().parents[2]
 BUNDLED = ROOT / "Resources" / "VirtualDevices"
-HEADER = {"apiVersion": "openjoystickdriver/v1alpha1", "kind": "VirtualDevice"}
+HEADER = {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "VirtualDevice"}
 
 
 def load(name: str) -> dict[str, Any]:
-    return json.loads((BUNDLED / name).read_text(encoding="utf-8"))
+    return plistlib.loads((BUNDLED / name).read_bytes())
 
 
 class VirtualDeviceSchemaTests(unittest.TestCase):
@@ -34,8 +34,8 @@ class VirtualDeviceSchemaTests(unittest.TestCase):
 
     def test_the_bundled_definitions_are_accepted(self) -> None:
         for name in (
-            "virtual-device.generic.json",
-            "virtual-device.sdl-compatible.json",
+            "virtual-device.generic.plist",
+            "virtual-device.sdl-compatible.plist",
         ):
             with self.subTest(record=name):
                 self.validator.validate(load(name))
@@ -63,7 +63,7 @@ class VirtualDeviceSchemaTests(unittest.TestCase):
         for persona in ("NotAPersona", "SdlCompatible", "quokka", ""):
             with self.subTest(persona=persona):
                 self.refuses(
-                    {**load("virtual-device.generic.json"), "persona": persona}
+                    {**load("virtual-device.generic.plist"), "persona": persona}
                 )
 
     def test_a_match_record_holds_no_layout_or_transport(self) -> None:
@@ -111,10 +111,10 @@ class VirtualDeviceSchemaTests(unittest.TestCase):
             "identity",
         ):
             with self.subTest(missing=member):
-                document = load("virtual-device.generic.json")
+                document = load("virtual-device.generic.plist")
                 del document[member]
                 self.refuses(document)
-        document = load("virtual-device.generic.json")
+        document = load("virtual-device.generic.plist")
         del document["identity"]["version"]
         self.refuses(document)
 
@@ -131,7 +131,7 @@ class VirtualDeviceSchemaTests(unittest.TestCase):
             ("extra", 1),
         ):
             with self.subTest(member=member):
-                document = copy.deepcopy(load("virtual-device.generic.json"))
+                document = copy.deepcopy(load("virtual-device.generic.plist"))
                 document[member] = value
                 self.refuses(document)
 

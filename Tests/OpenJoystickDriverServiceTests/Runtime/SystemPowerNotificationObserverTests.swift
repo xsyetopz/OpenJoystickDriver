@@ -1,4 +1,3 @@
-import AppKit
 import Foundation
 import Testing
 
@@ -7,18 +6,18 @@ import Testing
 struct SystemPowerNotificationObserverTests {
   @Test
   func deliversSleepAndWakeInFIFOOrderToOneAsyncHandler() async {
-    let center = NotificationCenter()
+    let center = FakePowerSource()
     let recorder = PowerNotificationRecorder(blockWillSleep: true)
-    let observer = SystemPowerNotificationObserver(notificationCenter: center) { event in
+    let observer = SystemPowerNotificationObserver(powerSource: center) { event in
       await recorder.receive(event)
     }
 
     observer.start()
     observer.start()
-    center.post(name: NSWorkspace.willSleepNotification, object: nil)
+    center.send(.systemWillSleep(notificationID: 7))
     await recorder.waitForEventCount(1)
     await recorder.waitForSleepHandlerSuspended()
-    center.post(name: NSWorkspace.didWakeNotification, object: nil)
+    center.send(.systemHasPoweredOn)
 
     try? await Task.sleep(for: .milliseconds(20))
     #expect(await recorder.events == [.willSleep])
@@ -31,17 +30,17 @@ struct SystemPowerNotificationObserverTests {
 
   @Test
   func stopJoinsInFlightHandlerAndDropsBufferedEvents() async {
-    let center = NotificationCenter()
+    let center = FakePowerSource()
     let recorder = PowerNotificationRecorder(blockWillSleep: true)
-    let observer = SystemPowerNotificationObserver(notificationCenter: center) { event in
+    let observer = SystemPowerNotificationObserver(powerSource: center) { event in
       await recorder.receive(event)
     }
 
     observer.start()
-    center.post(name: NSWorkspace.willSleepNotification, object: nil)
+    center.send(.systemWillSleep(notificationID: 7))
     await recorder.waitForEventCount(1)
     await recorder.waitForSleepHandlerSuspended()
-    center.post(name: NSWorkspace.didWakeNotification, object: nil)
+    center.send(.systemHasPoweredOn)
 
     let completion = StopCompletionRecorder()
     let firstStop = Task {
@@ -66,23 +65,119 @@ struct SystemPowerNotificationObserverTests {
 
   @Test
   func stopRemovesObserversAndIsIdempotent() async {
-    let center = NotificationCenter()
+    let center = FakePowerSource()
     let recorder = PowerNotificationRecorder(blockWillSleep: false)
-    let observer = SystemPowerNotificationObserver(notificationCenter: center) { event in
+    let observer = SystemPowerNotificationObserver(powerSource: center) { event in
       await recorder.receive(event)
     }
 
     observer.start()
-    center.post(name: NSWorkspace.didWakeNotification, object: nil)
+    center.send(.systemHasPoweredOn)
     await recorder.waitForEventCount(1)
 
     await observer.stop()
     await observer.stop()
-    center.post(name: NSWorkspace.willSleepNotification, object: nil)
+    center.send(.systemWillSleep(notificationID: 7))
     observer.start()
     try? await Task.sleep(for: .milliseconds(20))
 
     #expect(await recorder.events == [.didWake])
+  }
+
+  @Test
+  func acknowledgesSleepOnceAfterTeardownReturns() async {
+    let source = FakePowerSource()
+    let recorder = PowerNotificationRecorder(blockWillSleep: true)
+    let observer = SystemPowerNotificationObserver(powerSource: source) { event in
+      await recorder.receive(event)
+    }
+
+    observer.start()
+    source.send(.systemWillSleep(notificationID: 7))
+    await recorder.waitForSleepHandlerSuspended()
+    source.send(.systemHasPoweredOn)
+    try? await Task.sleep(for: .milliseconds(20))
+    #expect(source.acknowledgements.isEmpty)
+
+    await recorder.resumeWillSleep()
+    await source.waitForAcknowledgements(1)
+    await recorder.waitForEventCount(2)
+    try? await Task.sleep(for: .milliseconds(20))
+    #expect(source.acknowledgements == [7])
+    #expect(await recorder.events == [.willSleep, .didWake])
+    await observer.stop()
+  }
+
+  @Test
+  func allowsIdleSleepAtOnceWithoutAnEvent() async {
+    let source = FakePowerSource()
+    let recorder = PowerNotificationRecorder(blockWillSleep: false)
+    let observer = SystemPowerNotificationObserver(powerSource: source) { event in
+      await recorder.receive(event)
+    }
+
+    observer.start()
+    source.send(.canSystemSleep(notificationID: 3))
+    #expect(source.acknowledgements == [3])
+    #expect(await recorder.events.isEmpty)
+    await observer.stop()
+  }
+
+  @Test
+  func stopAcknowledgesInFlightSleepOnceAfterHandlerReturns() async {
+    let source = FakePowerSource()
+    let recorder = PowerNotificationRecorder(blockWillSleep: true)
+    let observer = SystemPowerNotificationObserver(powerSource: source) { event in
+      await recorder.receive(event)
+    }
+
+    observer.start()
+    source.send(.systemWillSleep(notificationID: 7))
+    await recorder.waitForSleepHandlerSuspended()
+    let stop = Task { await observer.stop() }
+    await recorder.waitForHandlerCancellation()
+    #expect(source.acknowledgements.isEmpty)
+
+    await recorder.resumeWillSleep()
+    await stop.value
+    #expect(source.acknowledgements == [7])
+    #expect(source.stopCount == 1)
+  }
+}
+
+private final class FakePowerSource: SystemPowerSource, @unchecked Sendable {
+  private let lock = NSLock()
+  private var onMessage: (@Sendable (SystemPowerMessage) -> Void)?
+  private var storedAcknowledgements: [Int] = []
+  private var storedStopCount = 0
+
+  var acknowledgements: [Int] { lock.withLock { storedAcknowledgements } }
+  var stopCount: Int { lock.withLock { storedStopCount } }
+
+  func start(onMessage: @escaping @Sendable (SystemPowerMessage) -> Void) {
+    lock.withLock { self.onMessage = onMessage }
+  }
+
+  func allowPowerChange(notificationID: Int) {
+    lock.withLock { storedAcknowledgements.append(notificationID) }
+  }
+
+  func stop() {
+    lock.withLock {
+      onMessage = nil
+      storedStopCount += 1
+    }
+  }
+
+  func send(_ message: SystemPowerMessage) {
+    let onMessage = lock.withLock { self.onMessage }
+    onMessage?(message)
+  }
+
+  func waitForAcknowledgements(_ count: Int) async {
+    for _ in 0..<200 where acknowledgements.count < count {
+      try? await Task.sleep(for: .milliseconds(10))
+    }
   }
 }
 

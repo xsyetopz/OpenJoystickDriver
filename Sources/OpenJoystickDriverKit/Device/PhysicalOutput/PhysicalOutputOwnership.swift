@@ -1,12 +1,20 @@
 import Foundation
 
+/// A physical output of a controller that claims compete for: one rumble motor, the player
+/// indicator, the colour, the brightness or one adaptive trigger.
 enum PhysicalOutputChannel: Equatable, Hashable, Sendable {
+  /// One rumble motor.
   case rumble(PhysicalRumbleMotor)
+  /// The player indicator.
   case playerIndicator
+  /// The lighting colour.
   case color
+  /// The lighting brightness.
   case brightness
+  /// One adaptive trigger.
   case adaptiveTrigger(PhysicalAdaptiveTrigger)
 
+  /// A stable text key that orders channels.
   var sortKey: String {
     switch self {
     case .rumble(let motor): "rumble:\(motor.rawValue)"
@@ -19,6 +27,7 @@ enum PhysicalOutputChannel: Equatable, Hashable, Sendable {
 }
 
 extension RemappingPhysicalOutput {
+  /// The channel that this output drives.
   var channel: PhysicalOutputChannel {
     switch self {
     case .rumble(let motor, _): .rumble(motor)
@@ -29,6 +38,8 @@ extension RemappingPhysicalOutput {
     }
   }
 
+  /// Whether this output is the neutral one: zero rumble or brightness intensity, an off player
+  /// indicator, black, or an off adaptive trigger.
   var isNeutral: Bool {
     switch self {
     case .rumble(_, let intensity), .brightness(let intensity): intensity == 0
@@ -39,30 +50,48 @@ extension RemappingPhysicalOutput {
   }
 }
 
+/// The claims on the physical output channels of each controller, resolved to the effective output
+/// of a channel.
+///
+/// A colour preview wins over a manual claim, a manual claim over a mapping claim, and the profile
+/// colour is the baseline of the colour channel only.
 struct PhysicalOutputOwnership {
+  /// One request for an output, ordered by its sequence.
   struct Claim: Sendable {
+    /// The requested output.
     let output: RemappingPhysicalOutput
+    /// The order in which claims are made; a greater number is newer.
     let sequence: UInt64
   }
 
+  /// The sequence of the latest claim.
   private var nextSequence: UInt64 = 0
+  /// The mapping claims of the remapping layer, by controller, channel and owner.
   private var mappingClaims: [LogicalControllerID: [PhysicalOutputChannel: [UUID: Claim]]] = [:]
   /// Each channel's manual claims, oldest first: the newest wins, a failed command withdraws only
   /// its own, and a delivered one drops the older ones it replaced.
   private var manualClaims: [LogicalControllerID: [PhysicalOutputChannel: [Claim]]] = [:]
+  /// The colour previews by controller and preview token, which win over every other colour claim.
   private var temporaryColorPreviews: [LogicalControllerID: [UUID: Claim]] = [:]
+  /// The profile colour of each controller, which the colour channel falls back to.
   private var profileBaselines: [LogicalControllerID: RemappingPhysicalOutput] = [:]
   /// Counts the clearings of each controller's claims and of all claims, so a state captured
   /// before a clearing (neutralization, disconnect, teardown) is never restored after it.
   private var deviceClearings: [LogicalControllerID: UInt64] = [:]
+  /// Counts the clearings of all claims.
   private var allClearings: UInt64 = 0
 
+  /// The number of mapping claims over all controllers and channels.
   var mappingClaimCount: Int {
     mappingClaims.values.reduce(0) { deviceTotal, channels in
       deviceTotal + channels.values.reduce(0) { $0 + $1.count }
     }
   }
 
+  /// Sets the mapping claim of `owner` on the channel of `output` when `active`, and removes it
+  /// otherwise.
+  ///
+  /// - Returns: The channel of `output`.
   @discardableResult
   mutating func setMapping(
     _ output: RemappingPhysicalOutput,
@@ -84,14 +113,19 @@ struct PhysicalOutputOwnership {
     return channel
   }
 
+  /// Removes every mapping claim of `identifier`.
+  ///
+  /// - Returns: The channels that held one.
   mutating func releaseMappings(for identifier: LogicalControllerID) -> Set<PhysicalOutputChannel> {
     guard let claims = mappingClaims.removeValue(forKey: identifier) else { return [] }
     return Set(claims.keys)
   }
 
   /// Adds one command's manual claims under one sequence and returns it, for `commitManual` or
-  /// `withdrawManual` once the command's write finishes. A neutral claim lets mapping claims show
-  /// through, except a colour, where black is a real claim.
+  /// `withdrawManual` once the command's write finishes.
+  ///
+  /// A neutral claim lets mapping claims show through, except a colour, where black is a real
+  /// claim.
   @discardableResult
   mutating func setManual(
     _ outputs: [RemappingPhysicalOutput],
@@ -106,6 +140,7 @@ struct PhysicalOutputOwnership {
     return nextSequence
   }
 
+  /// Adds `output` as one manual claim under a sequence and returns it.
   @discardableResult
   mutating func setManual(
     _ output: RemappingPhysicalOutput,
@@ -143,6 +178,7 @@ struct PhysicalOutputOwnership {
     return wasNewest
   }
 
+  /// Sets the colour preview claim of `token`, which wins over every other colour claim.
   mutating func setTemporaryColor(
     _ output: RemappingPhysicalOutput,
     token: UUID,
@@ -155,6 +191,7 @@ struct PhysicalOutputOwnership {
     )
   }
 
+  /// Removes the colour preview claim of `token`.
   mutating func releaseTemporaryColor(token: UUID, for identifier: LogicalControllerID) {
     temporaryColorPreviews[identifier]?[token] = nil
     if temporaryColorPreviews[identifier]?.isEmpty == true {
@@ -162,11 +199,15 @@ struct PhysicalOutputOwnership {
     }
   }
 
+  /// Sets the profile colour that the colour channel falls back to; nil removes it.
   mutating func setProfileColor(
     _ output: RemappingPhysicalOutput?,
     for identifier: LogicalControllerID
   ) { profileBaselines[identifier] = output }
 
+  /// Removes every manual rumble claim of `identifier`.
+  ///
+  /// - Returns: The channels that held one.
   mutating func releaseManualRumble(
     for identifier: LogicalControllerID
   ) -> Set<PhysicalOutputChannel> {
@@ -184,6 +225,11 @@ struct PhysicalOutputOwnership {
     return channels
   }
 
+  /// The output that wins on `channel` of `identifier`, or nil when nothing claims it.
+  ///
+  /// A colour preview wins first, then the newest manual claim, which counts only when it is not
+  /// neutral unless the channel is the colour, then the newest mapping claim, then the profile
+  /// colour.
   func effectiveOutput(
     for channel: PhysicalOutputChannel,
     device identifier: LogicalControllerID
@@ -208,17 +254,26 @@ struct PhysicalOutputOwnership {
   }
 
   /// Mapping claims, colour previews and the profile colour on some channels of one controller, so
-  /// a failed mapping or preview write rolls back only what it changed. Manual claims are not part
-  /// of it: a failed manual command withdraws its own claim instead.
+  /// a failed mapping or preview write rolls back only what it changed.
+  ///
+  /// Manual claims are not part of it: a failed manual command withdraws its own claim instead.
   struct ChannelState {
+    /// The controller.
     let identifier: LogicalControllerID
+    /// The clearing count when the state was captured.
     let clearing: UInt64
+    /// The mapping claims on `channels`.
     let mappingClaims: [PhysicalOutputChannel: [UUID: Claim]]
+    /// The colour previews of the controller.
     let colorPreviews: [UUID: Claim]?
+    /// The profile colour of the controller.
     let profileBaseline: RemappingPhysicalOutput?
+    /// The channels that the state covers.
     let channels: Set<PhysicalOutputChannel>
   }
 
+  /// Captures the mapping claims on `channels`, with the colour previews and the profile colour, of
+  /// `identifier`.
   func state(
     of channels: Set<PhysicalOutputChannel>,
     for identifier: LogicalControllerID
@@ -247,6 +302,7 @@ struct PhysicalOutputOwnership {
     }
   }
 
+  /// Removes every claim of `identifier` and counts the clearing.
   mutating func removeDevice(_ identifier: LogicalControllerID) {
     deviceClearings[identifier, default: 0] &+= 1
     mappingClaims[identifier] = nil
@@ -255,6 +311,7 @@ struct PhysicalOutputOwnership {
     profileBaselines[identifier] = nil
   }
 
+  /// Removes every claim of every controller and counts the clearing.
   mutating func removeAll() {
     allClearings &+= 1
     mappingClaims.removeAll()
@@ -263,10 +320,12 @@ struct PhysicalOutputOwnership {
     profileBaselines.removeAll()
   }
 
+  /// The number of clearings that affect `identifier`: its own plus those of all claims.
   private func clearing(of identifier: LogicalControllerID) -> UInt64 {
     (deviceClearings[identifier] ?? 0) &+ allClearings
   }
 
+  /// Removes the empty mapping storage of `channel`, and of `identifier` when nothing else is left.
   private mutating func removeEmptyMappingStorage(
     for identifier: LogicalControllerID,
     channel: PhysicalOutputChannel
@@ -277,6 +336,7 @@ struct PhysicalOutputOwnership {
     if mappingClaims[identifier]?.isEmpty == true { mappingClaims[identifier] = nil }
   }
 
+  /// Removes the empty manual storage of `channel`, and of `identifier` when nothing else is left.
   private mutating func removeEmptyManualStorage(
     for identifier: LogicalControllerID,
     channel: PhysicalOutputChannel

@@ -7,14 +7,22 @@
 
   // MARK: - Native keyboard destination capture
 
+  /// The key control of a keyboard destination: the captured key or No Key, with the Capture Key
+  /// and Clear buttons.
+  ///
+  /// While it captures, the next key press becomes the destination and Escape ends the capture.
   struct KeyboardDestinationCaptureView: View {
+    /// The destination that the control shows and sets.
     @Binding
     var destination: RemappingDestination
+    /// Whether the destination is cleared, which shows No Key.
     @Binding
     var isCleared: Bool
+    /// Whether the control waits for a key press.
     @Binding
     var isCapturing: Bool
 
+    /// The captured key or No Key, with the Capture Key and Clear buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 7) {
         HStack {
@@ -76,6 +84,7 @@
       }
     }
 
+    /// Announces `message` to VoiceOver.
     private static func announce(_ message: String) {
       NSAccessibility.post(
         element: NSApp as Any,
@@ -85,14 +94,26 @@
     }
   }
 
+  /// Hosts ``KeyboardDestinationCaptureNSView`` in SwiftUI.
   struct KeyboardDestinationCaptureRepresentable: NSViewRepresentable {
+    /// Called with the destination of the pressed key.
     let onCapture: (RemappingDestination) -> Void
+    /// Called when the user presses Escape.
     let onCancel: () -> Void
 
+    /// Creates the view that captures the next key.
+    ///
+    /// - Parameter context: The context of the representable.
+    /// - Returns: The view.
     func makeNSView(context: Context) -> KeyboardDestinationCaptureNSView {
       KeyboardDestinationCaptureNSView(onCapture: onCapture, onCancel: onCancel)
     }
 
+    /// Gives the view the current callbacks and makes it the first responder.
+    ///
+    /// - Parameters:
+    ///   - nsView: The view that captures the key.
+    ///   - context: The context of the representable.
     func updateNSView(_ nsView: KeyboardDestinationCaptureNSView, context: Context) {
       nsView.onCapture = onCapture
       nsView.onCancel = onCancel
@@ -100,10 +121,14 @@
     }
   }
 
+  /// Takes keyboard focus and reports the next key press as a keyboard destination.
   final class KeyboardDestinationCaptureNSView: NSView {
+    /// Called with the destination of the pressed key.
     var onCapture: (RemappingDestination) -> Void
+    /// Called when the user presses Escape.
     var onCancel: () -> Void
 
+    /// Creates the view with the callbacks for a captured key and for Escape.
     init(onCapture: @escaping (RemappingDestination) -> Void, onCancel: @escaping () -> Void) {
       self.onCapture = onCapture
       self.onCancel = onCancel
@@ -115,6 +140,9 @@
       )
     }
 
+    /// Unavailable, because the view is created in code only.
+    ///
+    /// - Parameter coder: The decoder, which is not used.
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
@@ -142,7 +170,9 @@
     }
   }
 
+  /// Maps key events to the keys and modifiers of keyboard destinations.
   private enum KeyboardDestinationKeyMapper {
+    /// Returns the key of the event: by its key code, else by its character; nil when it has none.
     static func key(for event: NSEvent) -> RemappingKeyboardKey? {
       if let key = keyCodeMap(event.keyCode) { return key }
       if let character = event.charactersIgnoringModifiers?.lowercased().first {
@@ -171,6 +201,7 @@
       return nil
     }
 
+    /// Returns the modifiers held for the event; Command is meta and Option is alt.
     static func modifiers(for event: NSEvent) -> Set<RemappingKeyModifier> {
       var modifiers = Set<RemappingKeyModifier>()
       if event.modifierFlags.contains(.command) { modifiers.insert(.meta) }
@@ -180,6 +211,7 @@
       return modifiers
     }
 
+    /// Returns the key of a hardware key code, or nil for a code without a key.
     private static func keyCodeMap(_ keyCode: UInt16) -> RemappingKeyboardKey? {
       switch keyCode {
       case 36: return .returnKey
@@ -243,29 +275,51 @@
     }
   }
 
+  /// Calls `onEscape` when Escape is pressed, unless a key capture runs and handles Escape itself.
   struct EscapeKeyMonitor: NSViewRepresentable {
+    /// Returns whether a key capture runs.
     let isCapturing: () -> Bool
+    /// Called when Escape is pressed outside a key capture.
     let onEscape: () -> Void
 
+    /// Creates the view that monitors the Escape key.
+    ///
+    /// - Parameter context: The context of the representable.
+    /// - Returns: The view.
     func makeNSView(context: Context) -> EscapeKeyMonitorNSView {
       EscapeKeyMonitorNSView(isCapturing: isCapturing, onEscape: onEscape)
     }
 
+    /// Gives the view the current callbacks.
+    ///
+    /// - Parameters:
+    ///   - nsView: The view that monitors the key.
+    ///   - context: The context of the representable.
     func updateNSView(_ nsView: EscapeKeyMonitorNSView, context: Context) {
       nsView.isCapturing = isCapturing
       nsView.onEscape = onEscape
     }
 
+    /// Stops the monitor of the view when SwiftUI removes it.
+    ///
+    /// - Parameters:
+    ///   - nsView: The view that monitors the key.
+    ///   - coordinator: The coordinator, which is not used.
     static func dismantleNSView(_ nsView: EscapeKeyMonitorNSView, coordinator: ()) {
       nsView.stopMonitoring()
     }
   }
 
+  /// Watches the key presses of the app and reports Escape.
   final class EscapeKeyMonitorNSView: NSView {
+    /// Returns whether a key capture runs.
     var isCapturing: () -> Bool
+    /// Called when Escape is pressed outside a key capture.
     var onEscape: () -> Void
+    /// The local key down monitor, or nil while monitoring is stopped.
     private var eventMonitor: Any?
 
+    /// Creates the view and starts monitoring.
     init(isCapturing: @escaping () -> Bool, onEscape: @escaping () -> Void) {
       self.isCapturing = isCapturing
       self.onEscape = onEscape
@@ -273,6 +327,9 @@
       startMonitoring()
     }
 
+    /// Unavailable, because the view is created in code only.
+    ///
+    /// - Parameter coder: The decoder, which is not used.
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
@@ -281,6 +338,9 @@
       if window == nil { stopMonitoring() } else { startMonitoring() }
     }
 
+    /// Starts the key down monitor; does nothing while it runs.
+    ///
+    /// Escape reaches `onEscape` and is consumed, unless a key capture runs.
     func startMonitoring() {
       guard eventMonitor == nil else { return }
       eventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
@@ -291,6 +351,7 @@
       }
     }
 
+    /// Removes the key down monitor.
     func stopMonitoring() {
       if let eventMonitor { NSEvent.removeMonitor(eventMonitor) }
       eventMonitor = nil

@@ -26,6 +26,8 @@ extension EquivalenceSnapshotCatalogTests {
     case .vendorPS3ThirdParty: "vendor-ps3-third-party"
     case .vendorGameSir: "vendor-game-sir"
     case .vendorNVIDIAShield: "vendor-nvidia-shield"
+    case .nintendoWii: "nintendo-wii"
+    default: id.commandLineName
     }
   }
 
@@ -91,6 +93,9 @@ extension EquivalenceSnapshotCatalogTests {
     case .usbStartupRetryDelayMs: "usbStartupRetryDelayMs"
     case .usbTransferTimeoutMs: "usbTransferTimeoutMs"
     case .frameQueueCapacity: "frameQueueCapacity"
+    case .irWriteIntervalMs: "irWriteIntervalMs"
+    case .speakerMaxSeconds: "speakerMaxSeconds"
+    case .replyTimeoutMs: "replyTimeoutMs"
     }
   }
 

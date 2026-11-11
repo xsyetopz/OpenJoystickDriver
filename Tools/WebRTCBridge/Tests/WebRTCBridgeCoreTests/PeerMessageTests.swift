@@ -3,17 +3,22 @@ import XCTest
 @testable import BridgeCore
 @testable import WebRTCBridgeCore
 
+/// Checks ``PeerMessage`` and ``FrameMailbox`` against the schemas and invalid input.
 final class PeerMessageTests: XCTestCase {
-  private static let header = #""apiVersion":"openjoystickdriver/v1alpha1""#
+  /// The `apiVersion` member of every message, as JSON text.
+  private static let header = #""apiVersion":"openjoystickdriver/v1alpha3""#
 
+  /// A `Frame` message with the given extra members, as data.
   private func frame(_ members: String = "") -> Data {
     Data(#"{\#(Self.header),"kind":"Frame"\#(members)}"#.utf8)
   }
 
+  /// A `RumbleCommand` message with the given extra members, as data.
   private func rumble(_ members: String = #","type":"SetRumble""#) -> Data {
     Data(#"{\#(Self.header),"kind":"RumbleCommand"\#(members)}"#.utf8)
   }
 
+  /// The `enum` values of a `$defs` entry of a file in `Resources/Schemas`.
   private func schemaEnum(_ file: String, _ definition: String) throws -> Set<String> {
     let root = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
@@ -25,15 +30,17 @@ final class PeerMessageTests: XCTestCase {
     return Set(try XCTUnwrap(entry["enum"] as? [String]))
   }
 
+  /// The frame lists of ``PeerMessage`` equal the enumerations of the schemas.
   func testTheFrameListsMatchTheSchemas() throws {
     let control = try schemaEnum("vocabulary.schema.json", "control")
     let withoutButtons = try schemaEnum("vocabulary.schema.json", "dpadControl")
       .union(schemaEnum("vocabulary.schema.json", "stickAxis"))
     XCTAssertEqual(PeerMessage.buttons, control.subtracting(withoutButtons))
-    XCTAssertEqual(PeerMessage.axes, try schemaEnum("vocabulary.schema.json", "axis"))
+    XCTAssertEqual(PeerMessage.axes, try schemaEnum("vocabulary.schema.json", "gamepadAxis"))
     XCTAssertEqual(PeerMessage.dpad, try schemaEnum("vocabulary.schema.json", "dpadControl"))
   }
 
+  /// A valid frame is rebuilt from the checked fields.
   func testAValidFrameIsRebuiltFromTheCheckedFields() throws {
     let line = try XCTUnwrap(
       PeerMessage.frame(
@@ -48,11 +55,13 @@ final class PeerMessageTests: XCTestCase {
     XCTAssertEqual((line["axes"] as? [String: Double])?["LeftStickX"], 0.5)
   }
 
+  /// A frame longer than `maximumBytes` is rejected.
   func testAFrameThatIsTooLongIsRejected() {
     let padding = String(repeating: " ", count: PeerMessage.maximumBytes)
     XCTAssertNil(PeerMessage.frame(from: Data((frame().utf8String + padding).utf8)))
   }
 
+  /// Frames with the wrong shape, values or members are rejected.
   func testAFrameThatIsNotShapedLikeAFrameIsRejected() {
     let rejected = [
       Data("not json".utf8),
@@ -80,10 +89,12 @@ final class PeerMessageTests: XCTestCase {
     }
   }
 
+  /// The `intensities` member with all six intensities, as JSON text.
   private static let allIntensities =
     #""intensities":{"lowFrequency":65535,"highFrequency":0,"leftTrigger":1,"rightTrigger":2,"#
     + #""leftHaptic":3,"rightHaptic":4}"#
 
+  /// Valid `SetRumble` and `StopRumble` commands are accepted.
   func testAValidRumbleCommandIsAccepted() throws {
     let line = try XCTUnwrap(
       PeerMessage.rumble(
@@ -99,6 +110,7 @@ final class PeerMessageTests: XCTestCase {
     XCTAssertNotNil(PeerMessage.rumble(from: rumble(#","type":"StopRumble""#)))
   }
 
+  /// Rumble commands with the wrong shape, values or length are rejected.
   func testARumbleCommandThatIsNotShapedLikeOneIsRejected() {
     let all = Self.allIntensities
     let rejected = [
@@ -136,6 +148,7 @@ final class PeerMessageTests: XCTestCase {
     )
   }
 
+  /// A mailbox returns only the newest frame, and then nothing.
   func testTheMailboxKeepsOnlyTheNewestFrame() {
     let mailbox = FrameMailbox()
     for index in 1...3 { mailbox.post(["n": index]) }
@@ -143,6 +156,7 @@ final class PeerMessageTests: XCTestCase {
     XCTAssertNil(mailbox.next(timeout: 0.05))
   }
 
+  /// A post that races the timeout is returned once and leaves nothing behind.
   func testAPostThatRacesTheTimeoutIsNeitherLostNorRepeated() {
     let mailbox = FrameMailbox()
     var received = 0
@@ -162,6 +176,7 @@ final class PeerMessageTests: XCTestCase {
     XCTAssertEqual(received, 300)
   }
 
+  /// A blob longer than `maximumBytes` is refused, with the limit in the error.
   func testABlobThatIsTooLongIsRefused() {
     let blob = String(repeating: "A", count: PeerMessage.maximumBytes + 1)
     XCTAssertThrowsError(try PeerLink.decode(blob)) { error in
@@ -171,5 +186,6 @@ final class PeerMessageTests: XCTestCase {
 }
 
 extension Data {
+  /// The data as UTF-8 text, or an empty string when it is not UTF-8.
   var utf8String: String { String(bytes: self, encoding: .utf8) ?? "" }
 }

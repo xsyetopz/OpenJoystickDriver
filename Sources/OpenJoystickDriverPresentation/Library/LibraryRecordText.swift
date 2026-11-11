@@ -2,11 +2,20 @@ import Foundation
 
 /// The Record section of a Library record, read once when the record is selected.
 enum LibraryRecordDocument: Equatable {
+  /// The record JSON.
   case text(LibraryRecordText)
   /// The tokenizer cannot read the document the catalog produced, with the reason. The section
   /// says the record text cannot be shown, and the reason goes to the log through `log`.
   case unreadable(JSONSyntaxError)
 
+  /// Reads `document`.
+  ///
+  /// When the tokenizer cannot read it, the case is ``unreadable(_:)``.
+  ///
+  /// - Parameters:
+  ///   - document: The record text the catalog produced.
+  ///   - log: Receives the log line of an unreadable document; the default writes to standard
+  ///     error.
   init(document: String, log: (String) -> Void = Self.writeToStandardError) {
     do throws(JSONSyntaxError) {
       self = .text(try LibraryRecordText(document: document))
@@ -21,6 +30,7 @@ enum LibraryRecordDocument: Equatable {
     "[Library] The record text cannot be shown: \(error.description)\n"
   }
 
+  /// Writes `line` to standard error.
   static func writeToStandardError(_ line: String) {
     FileHandle.standardError.write(Data(line.utf8))
   }
@@ -45,13 +55,17 @@ struct LibraryRecordText: Equatable {
 
   /// The document, exactly as the catalog holds it.
   let copyText: String
+  /// The colored runs of the document, spaces included.
   let tokens: [JSONSyntaxToken]
   /// The lines of the document without line breaks, the last empty line left out.
   let lines: [String]
   /// The hexadecimal reading of the identifier on a line, by line index.
   let identifierReadings: [Int: Reading]
 
-  /// Reads `document`, which the catalog produced. Throws when it is not JSON the tokenizer reads.
+  /// Reads `document`, which the catalog produced, and works out the readings.
+  ///
+  /// - Parameter document: The record text the catalog produced.
+  /// - Throws: ``JSONSyntaxError`` when the tokenizer cannot read the document.
   init(document: String) throws(JSONSyntaxError) {
     copyText = document
     tokens = try JSONSyntax.tokens(in: document)

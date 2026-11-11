@@ -1,6 +1,9 @@
 /// A family's named packets (`defaults.session.namedPackets` in its protocol description): the
-/// fixed packets a record selects by id in `protocol.initialization`. Only `XboxGIP` has them.
+/// fixed packets a record selects by id in `protocol.initialization`.
+///
+/// Only `XboxGIP` has them.
 struct NamedPacketPlan: Equatable, Sendable {
+  /// The accepted number of named packets.
   static let countRange = 1...16
   /// The index of the byte the driver stamps with the GIP sequence number.
   static let sequenceByteIndex = 2
@@ -8,6 +11,8 @@ struct NamedPacketPlan: Equatable, Sendable {
   /// The packets, in the order the description lists them.
   let packets: [NamedPacket]
 
+  /// Creates a plan; throws when the packet count is outside `countRange` or two packets share an
+  /// id.
   init(packets: [NamedPacket]) throws(ControllerRecordProblem) {
     guard Self.countRange.contains(packets.count) else {
       throw ControllerRecordProblem(
@@ -38,9 +43,13 @@ struct NamedPacketPlan: Equatable, Sendable {
 /// One named packet: its id and the raw-USB write that sends it, with the sequence number byte
 /// left for the driver to stamp.
 struct NamedPacket: Equatable, Sendable {
+  /// The id that records select the packet by.
   let id: String
+  /// The raw-USB write that sends the packet.
   let write: USBStartupWrite
 
+  /// Creates a named packet; throws when the id is malformed, the packet has fewer than 3 bytes, or
+  /// the session byte is not `NamedPacketPlan.sequenceByteIndex`.
   init(id: String, bytes: [UInt8], sessionByte: Int) throws(ControllerRecordProblem) {
     guard Self.isWellFormed(id) else {
       throw ControllerRecordProblem(

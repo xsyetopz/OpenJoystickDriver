@@ -4,15 +4,17 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// A changed `ownership` reaches a connected controller without a replug. The GameSir connections
-/// are synthetic, as in `HIDLocationRoutingTests`.
+/// A changed `ownership` reaches a connected controller without a replug.
+///
+/// The GameSir connections are synthetic, as in `HIDLocationRoutingTests`.
 @Suite(.timeLimit(.minutes(2)))
 struct OwnershipReapplyTests {
   private static let changedModel = ControllerModelID(vendorID: 0x3537, productID: 0x100B)
 
-  /// A record reload lets the HID backend admit a changed model again with its new native flag,
-  /// and `readmitHIDConnections` does not admit it a second time. Other models keep their
-  /// sessions.
+  /// A record reload lets the HID backend admit a changed model again with its changed native flag,
+  /// and `readmitHIDConnections` does not admit it a second time.
+  ///
+  /// Other models keep their sessions.
   @Test
   func recordReloadReadmitsTheChangedModelOnceWithItsNewNativeFlag() async throws {
     let scripted = ScriptedHIDAccessBackend()
@@ -127,13 +129,13 @@ struct OwnershipReapplyTests {
     )
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
-    try JSONSerialization.data(
-      withJSONObject: ControllerPatch.document(
+    try PropertyListFixture.data(
+      tree: ControllerPatch.document(
         selector: .identity(ControllerModelID(vendorID: 0x3537, productID: 0x100B)),
         body: ["server": "OJD"]
       )
     )
-    .write(to: directory.appendingPathComponent("3537-100b.patch.json"))
+    .write(to: directory.appendingPathComponent("3537-100b.patch.plist"))
     let records = ControllerRecordSet.load(userDirectory: directory)
     #expect(records.problems.isEmpty)
     return records

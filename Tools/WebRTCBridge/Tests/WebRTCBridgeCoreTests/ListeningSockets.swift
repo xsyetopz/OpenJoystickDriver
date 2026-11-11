@@ -1,9 +1,11 @@
 import Darwin
 import Foundation
 
-/// Lists the sockets of this process that are in the listening state (`SO_ACCEPTCONN`), of any
-/// family. A socket scan of the process, with no external tool.
+/// Lists the sockets of this process that are in the listening state (`SO_ACCEPTCONN`).
+///
+/// It scans the descriptors of the process for sockets of any family, with no external tool.
 enum ListeningSockets {
+  /// The listening sockets of this process, each as `fd <number> family <number>`.
   static func ofThisProcess() -> [String] {
     let pid = getpid()
     let bytes = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, nil, 0)

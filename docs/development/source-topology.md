@@ -20,6 +20,8 @@ OpenJoystickDriver splits the package into SwiftPM targets whose dependencies en
 | `OpenJoystickDriverGameControllerProbe` | isolated GameController visibility probe |
 | `OpenJoystickDriverGameControllerViewer` | window that shows every GameController input element of each connected controller and prints each change as a JSON line, to test GameController input by hand; not shipped |
 
+`OpenJoystickDriverHIDTool` is internal. `OJDRepositoryTool` is a development tool that neither the app nor `ojd` ships; it needs no localization, because its message text is the Kit error description, and it depends only on Kit. It prints one JSON line `{code, file, message}` for each problem and exits 1 when there is one, and 64 for a call it refuses: `swift run OJDRepositoryTool validate controllers|descriptions <directory>`, `validate profiles|virtual-devices <path>...`, and `apply-patches --controllers <directory> --patches <directory> --out <directory>`.
+
 ## Dependency Graph
 
 `Package.swift` declares these dependencies; the compiler rejects any import outside them.
@@ -70,7 +72,7 @@ Sources/OpenJoystickDriverKit/
   Remapping/           reusable profile and mapping engine
   Resources/           generated controller records (Controllers/), protocol descriptions
                        (Protocols/), virtual devices (VirtualDevices/), and localization tables
-  Settings/            the `Settings.json` store, document, and watcher (defaults, then the user file)
+  Settings/            the `Settings.plist` store, document, and watcher (defaults, then the user file)
   Storage/             DataDirectory port and its macOS implementation; the only path builder
   Streaming/           `InputSource` and `OutputSink`, the frame boundary every path attaches to
   Update/              release version parsing and update checking
@@ -115,7 +117,7 @@ Sources/OpenJoystickDriver/
 
 The neutral targets are `Sources/OpenJoystickDriverKit`, `Sources/OpenJoystickDriverCLI`, and the executable's files outside `Sources/OpenJoystickDriver/platform`.
 Kit may import CryptoKit, Darwin, Dispatch, and Foundation. Neutral means free of macOS device, security, and application frameworks: Darwin (POSIX calls) and CryptoKit (hashing) ship on every Apple platform the package declares, so Kit builds on Apple platforms only.
-The CLI may import ArgumentParser, Darwin, Dispatch, Foundation, Glibc, and Kit; the executable may import Dispatch, Foundation, CLI, and Kit. `Scripts/Quality/check_neutral_core_imports.py` scans these directories in `just check-fast`, CI, and the release workflow, and `Tests/RepositoryScripts/test_neutral_core_imports.py` runs it on planted violations in fixtures.
+The CLI may import ArgumentParser, Darwin, Dispatch, Foundation, Glibc, and Kit; the executable may import Dispatch, Foundation, CLI, and Kit.
 
 Kit `Diagnostics/` holds reports and health types that both the CLI and app read.
 

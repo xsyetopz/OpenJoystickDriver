@@ -9,6 +9,7 @@ Check for a new OpenJoystickDriver version, and remove the app and its data when
   - [Release Builds and Tester Builds](#release-builds-and-tester-builds)
   - [Check For Updates](#check-for-updates)
   - [Install a New Version](#install-a-new-version)
+  - [Update from an Earlier Alpha](#update-from-an-earlier-alpha)
   - [Get a Fix](#get-a-fix)
 - [Uninstall](#uninstall)
   - [Remove the App](#remove-the-app)
@@ -36,7 +37,7 @@ A tester build is a private, notarized DMG that the maintainer sends to testers.
 
 An update check does not find tester builds. The maintainer sends them directly.
 
-### Check For Updates
+### Check for Updates
 
 1. Open OJD.
 2. Open **Settings**.
@@ -57,6 +58,25 @@ ojd update check
 4. Open OJD.
 
 Your profiles stay in place because they are stored outside the app.
+
+### Update from an Earlier Alpha
+
+OJD 0.6.0-alpha.3 reads only XML property list files (`.plist`) with `apiVersion: openjoystickdriver/v1alpha3`. Files from 0.6.0-alpha.1 are JSON with `openjoystickdriver/v1alpha1`, and files from 0.6.0-alpha.2 are JSON with `openjoystickdriver/v1alpha2`. OJD opens neither. A file with another version fails with error `E5001`, and a file that is not an XML property list fails with `E5010`. Migrate the files first. The message names the file, the version or form it found, and the supported one.
+
+OJD converts these files for you. The service runs the migration each time it starts, before anything reads a file, and logs one verdict per file. You can run it yourself:
+
+```sh
+ojd migrate --dry-run
+ojd migrate
+```
+
+`--dry-run` lists what would be converted and writes nothing. `ojd migrate` writes each converted file as a `.plist` beside the original and copies the original to `Migrated/` in the OJD support folder, with its relative path. A backup is never overwritten. Each file gets one verdict: `Migrated`, `Current`, `Failed` or `Foreign`. A file it cannot convert stays unchanged, the other files still convert, and the command exits with error `E5009` and names the file and the reason. `ojd migrate FOLDER` scans a folder you name, such as a copy of your old files or a mod you wrote, and keeps its backups in `FOLDER/Migrated/`.
+
+When OJD shows `E5001` for a file, the app offers **Migrate** next to the error, before it offers to delete the file. A `.json` file left in a store folder is named in the message.
+
+A file from 0.5 has no `apiVersion`. It gets the verdict `failed` with "written by 0.5; re-create it": create the profile again in the app.
+
+`ojd mod validate` refuses a mod package that is not a `v1alpha3` package. Install a version of the mod made for 0.6.0-alpha.3.
 
 ### Get a Fix
 
@@ -92,7 +112,7 @@ Removing the app alone leaves a login item, privacy entries, a system extension,
 
 Both commands work only from the copy in `/Applications`.
 
-### Files That Stay On Your Mac
+### Files That Stay on Your Mac
 
 Removing the app does not remove these items.
 
@@ -104,7 +124,7 @@ Removing the app does not remove these items.
 | Settings | Preferences domain `com.openjoystickdriver` |
 | Privacy entries | **System Settings** > **Privacy & Security** |
 
-Each profile is a file in `Profiles/`, and `ActiveProfiles.json` lists the active profiles. Files whose names contain `.backup-` are recovery copies.
+Each profile is a file in `Profiles/`, and `ActiveProfiles.plist` lists the active profiles. Files whose names contain `.backup-` are recovery copies.
 
 ### Remove the Data
 

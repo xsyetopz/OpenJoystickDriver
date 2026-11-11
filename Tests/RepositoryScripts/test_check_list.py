@@ -6,7 +6,7 @@ Documented exemptions, kept deliberately small:
 - the justfile's whitespace check on the working tree (`JUSTFILE_ONLY`) has no CI counterpart,
   and the justfile prefixes swiftlint with a DEVELOPER_DIR lookup that CI sets through
   `env:`; the lookup is stripped before comparing.
-- CI steps that only prepare the runner (toolchain probe, Homebrew cleanup and installs, bun and
+- CI steps that only prepare the runner (toolchain probe, Homebrew cleanup and installs, and
   venv setup) and the `OJD_USE_LOCAL_SWIFTERKIT` guard are not checks of the tree.
 """
 

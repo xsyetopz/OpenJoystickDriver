@@ -1,6 +1,6 @@
 import Foundation
 
-/// The contents of one `Settings.json` layer; every setting is optional, and a setting a layer
+/// The contents of one `Settings.plist` layer; every setting is optional, and a setting a layer
 /// leaves out falls through to the layer below it.
 ///
 /// See `Resources/Schemas/settings.schema.json`.
@@ -10,34 +10,50 @@ public struct SettingsDocument: Equatable, Sendable {
 
   /// Which events post a notification.
   public struct Notify: Equatable, Sendable {
+    /// Whether a connected controller posts a notification.
     public var controllerConnected: Bool?
+    /// Whether a disconnected controller posts a notification.
     public var controllerDisconnected: Bool?
+    /// Whether an activated profile posts a notification.
     public var profileActivated: Bool?
+    /// Whether a deactivated profile posts a notification.
     public var profileDeactivated: Bool?
+    /// Whether notifications play sounds.
     public var sounds: Bool?
 
+    /// Creates a layer that leaves every notification setting out.
     public init() {}
   }
 
   /// How update checks behave.
   public struct Updates: Equatable, Sendable {
+    /// Whether the app checks for updates by itself.
     public var checkAutomatically: Bool?
+    /// Whether update checks offer prereleases.
     public var includePrereleases: Bool?
 
+    /// Creates a layer that leaves every update setting out.
     public init() {}
   }
 
-  /// Internal state, not a setting: true after the user turned launch at login off through the
-  /// app or `ojd setting`, so the app does not register itself on its next start. The public key
-  /// `launchAtLogin` is read from and written to the macOS login item, which stays the source of
-  /// truth; a change made in System Settings does not update this field.
+  /// Internal state, not a setting: true after the user turned launch at login off through the app
+  /// or `ojd setting`, so the app does not register itself on its next start.
+  ///
+  /// The public key `launchAtLogin` is read from and written to the macOS login item, which stays
+  /// the source of truth; a change made in System Settings does not update this field.
   public var launchAtLoginOptOut: Bool?
+  /// Whether the app shows an item in the menu bar.
   public var showInMenuBar: Bool?
+  /// Whether the app shows an icon in the Dock.
   public var showInDock: Bool?
+  /// Which events post a notification.
   public var notify = Notify()
+  /// How update checks behave.
   public var updates = Updates()
+  /// Whether the Settings window shows the developer tools.
   public var developerTools: Bool?
 
+  /// Creates a layer that leaves every setting out.
   public init() {}
 
   /// Whether this document, with its defaults filled in, turns off both Show in menu bar and
@@ -96,13 +112,19 @@ public struct SettingsDocument: Equatable, Sendable {
 }
 
 /// A header that is not the supported `apiVersion` and `kind`; the store names the file.
-struct SettingsHeaderProblem: Error, Equatable, Sendable { let problem: DocumentHeaderProblem }
+struct SettingsHeaderProblem: Error, Equatable, Sendable {
+  /// The problem of the header.
+  let problem: DocumentHeaderProblem
+}
 
 extension SettingsDocument.Notify: Codable {
+  /// The keys of the notification settings.
   private enum CodingKeys: String, CodingKey, CaseIterable {
+    /// The settings that post a notification.
     case controllerConnected, controllerDisconnected, profileActivated, profileDeactivated, sounds
   }
 
+  /// Decodes the notification settings; a key that the schema does not name is refused.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -116,6 +138,7 @@ extension SettingsDocument.Notify: Codable {
     sounds = try container.decodeIfPresent(Bool.self, forKey: .sounds)
   }
 
+  /// Encodes the notification settings that are set.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encodeIfPresent(controllerConnected, forKey: .controllerConnected)
@@ -127,10 +150,13 @@ extension SettingsDocument.Notify: Codable {
 }
 
 extension SettingsDocument.Updates: Codable {
+  /// The keys of the update settings.
   private enum CodingKeys: String, CodingKey, CaseIterable {
+    /// The update settings.
     case checkAutomatically, includePrereleases
   }
 
+  /// Decodes the update settings; a key that the schema does not name is refused.
   public init(from decoder: any Decoder) throws {
     try decoder.rejectUnknownKeys(CodingKeys.self)
     let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -138,6 +164,7 @@ extension SettingsDocument.Updates: Codable {
     includePrereleases = try container.decodeIfPresent(Bool.self, forKey: .includePrereleases)
   }
 
+  /// Encodes the update settings that are set.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encodeIfPresent(checkAutomatically, forKey: .checkAutomatically)
@@ -146,11 +173,16 @@ extension SettingsDocument.Updates: Codable {
 }
 
 extension SettingsDocument: Codable {
+  /// The keys of a settings document.
   private enum CodingKeys: String, CodingKey, CaseIterable {
+    /// The header, the settings and their groups.
     case apiVersion, kind, launchAtLoginOptOut, showInMenuBar, showInDock, notify, updates,
       developerTools
   }
 
+  /// Decodes a settings layer; a key that the schema does not name is refused.
+  ///
+  /// - Throws: `SettingsHeaderProblem` when `apiVersion` or `kind` is not the supported one.
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     if let problem = OpenJoystickDriverAPI.headerProblem(
@@ -169,6 +201,7 @@ extension SettingsDocument: Codable {
     developerTools = try container.decodeIfPresent(Bool.self, forKey: .developerTools)
   }
 
+  /// Encodes the header and the settings that are set.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(OpenJoystickDriverAPI.version, forKey: .apiVersion)

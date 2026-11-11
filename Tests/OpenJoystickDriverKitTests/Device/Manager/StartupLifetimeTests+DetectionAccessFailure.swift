@@ -7,7 +7,7 @@ import Testing
 
 extension StartupLifetimeTests {
   @Test
-  func HIDAccessFailureTearsDownPhysicalStateAndWaitsForPermissionWatchRetry() async {
+  func hidAccessFailureTearsDownPhysicalStateAndWaitsForPermissionWatchRetry() async {
     let backend = ScriptedHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),

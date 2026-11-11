@@ -16,7 +16,7 @@ struct SettingsStoreTests {
       at: url.deletingLastPathComponent(),
       withIntermediateDirectories: true
     )
-    try Data(json.utf8).write(to: url)
+    try PropertyListFixture.bytes(json: json).write(to: url)
   }
 
   private func header(_ body: String = "") -> String {
@@ -99,8 +99,7 @@ struct SettingsStoreTests {
   func theUserFileCarriesTheHeaderAndTheDocumentedShape() throws {
     try store.update([.notifySounds: false, .updatesIncludePrereleases: true])
 
-    let data = try Data(contentsOf: store.userFileURL)
-    let object = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+    let object = try PropertyListFixture.dictionary(at: store.userFileURL)
     #expect(object["apiVersion"] as? String == OpenJoystickDriverAPI.version)
     #expect(object["kind"] as? String == "Settings")
     #expect((object["notify"] as? [String: Bool]) == ["sounds": false])
@@ -157,10 +156,7 @@ struct SettingsStoreTests {
     try store.set(.launchAtLogin, to: false)
 
     #expect(try store.launchAtLoginOptOut())
-    let object = try #require(
-      try JSONSerialization.jsonObject(with: Data(contentsOf: store.userFileURL))
-        as? [String: Any]
-    )
+    let object = try PropertyListFixture.dictionary(at: store.userFileURL)
     #expect(object["launchAtLoginOptOut"] as? Bool == true)
     try store.set(.launchAtLogin, to: true)
     #expect(try store.launchAtLoginOptOut() == false)
@@ -169,6 +165,7 @@ struct SettingsStoreTests {
   @Test(arguments: [
     #"{"kind": "Settings"}"#,
     #"{"apiVersion": "openjoystickdriver/v0", "kind": "Settings"}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Settings"}"#,
   ])
   func aMissingOrUnsupportedAPIVersionIsE5001NamingTheFile(json: String) throws {
     try write(json, to: .applicationData)
@@ -200,10 +197,10 @@ struct SettingsStoreTests {
   }
 
   @Test(arguments: [
-    "not json",
-    #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Settings", "mystery": true}"#,
-    #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Settings", "notify": {"mystery": 1}}"#,
-    #"{"apiVersion": "openjoystickdriver/v1alpha1", "kind": "Settings", "developerTools": "yes"}"#,
+    "not a property list",
+    #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "mystery": true}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "notify": {"mystery": 1}}"#,
+    #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Settings", "developerTools": "yes"}"#,
   ])
   func aDamagedFileIsAnErrorNotAnEmptyLayer(json: String) throws {
     try write(json, to: .applicationData)
@@ -269,7 +266,7 @@ struct SettingsStoreTests {
 
   @Test
   func everyErrorIsLocalizedAndNamesTheRecovery() throws {
-    let file = "/tmp/Settings.json"
+    let file = "/tmp/Settings.plist"
     let errors: [SettingsStoreError] = [
       .damaged(file: file), .unwritable(file: file), .cannotReset(file: file),
       .storedNoVisibleEntryPoint(file: file), .noVisibleEntryPoint,

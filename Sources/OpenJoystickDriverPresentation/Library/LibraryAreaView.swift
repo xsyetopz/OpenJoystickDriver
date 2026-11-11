@@ -7,16 +7,21 @@
   import UniformTypeIdentifiers
 
   /// The Library area: the controller records and mod packages that `ojd record` and `ojd mod`
-  /// manage. The list column holds the records and mods; the detail column shows the selected
-  /// one in full.
+  /// manage.
+  ///
+  /// The list column holds the records and mods; the detail column shows the selected one in full.
   struct LibraryAreaView: View {
+    /// The model of the app's view of the service.
     @ObservedObject
     var runtime: RuntimeViewModel
+    /// The model of the Library area.
     @ObservedObject
     var model: LibraryViewModel
 
+    /// The column of the main window that this view fills.
     let column: MainWindowColumn
 
+    /// The list or the detail column of the Library area.
     @ViewBuilder
     var body: some View {
       switch column {
@@ -26,10 +31,14 @@
     }
   }
 
+  /// The list column of the Library: the Installed and Built-in switch, and the records and
+  /// mods that match the search field.
   struct LibraryListView: View {
+    /// The model of the Library area.
     @ObservedObject
     var model: LibraryViewModel
 
+    /// The scope picker above the record list.
     var body: some View {
       VStack(spacing: 0) {
         Picker(OJDLocalized.string("ui.library.records"), selection: $model.scope) {
@@ -64,15 +73,18 @@
       }.onAppear { model.reload() }
     }
 
+    /// Whether the search field holds text other than spaces.
     private var isSearching: Bool {
       !model.searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    /// The selected row, which reads and sets the selection of ``model``.
     private var selection: Binding<LibrarySelection?> {
       Binding(get: { model.selection }, set: { model.select($0) })
     }
 
-    /// The built-in records show their number beside the title.
+    /// The header of the records section; the Built-in scope shows the number of records beside
+    /// the title.
     @ViewBuilder
     private var recordsHeader: some View {
       switch model.scope {
@@ -86,10 +98,12 @@
       }
     }
 
+    /// A secondary-colored line for an empty list, with the text of `key`.
     private func emptyLine(_ key: String) -> some View {
       Text(OJDLocalized.string(key)).foregroundColor(.secondary)
     }
 
+    /// The row of a record: its identity, then its family and layer, and the file that patches it.
     private func recordRow(_ item: LibraryRecordItem) -> some View {
       let summary = OJDLocalized.formatted(
         "ui.library.record.detail",
@@ -107,6 +121,7 @@
         .ojdAccessibilityValue(summary)
     }
 
+    /// The row of a file that OJD skipped, with its path and the problem.
     private func skippedRow(_ skipped: LibrarySkippedFile) -> some View {
       VStack(alignment: .leading, spacing: 2) {
         Text(skipped.displayPath)
@@ -115,6 +130,7 @@
       }.ojdAccessibilityLabel(skipped.path).ojdAccessibilityValue(skipped.problem)
     }
 
+    /// The row of a mod: its name, then its version and author.
     private func modRow(_ mod: LibraryModItem) -> some View {
       VStack(alignment: .leading, spacing: 2) {
         Text(mod.name)
@@ -138,11 +154,16 @@
     }
   }
 
+  /// The sheet that asks the person to confirm installing, replacing or removing a record or mod.
   struct LibraryConfirmationSheet: View {
+    /// The text and button of the sheet.
     let confirmation: LibraryConfirmation
+    /// The action of the Cancel button.
     let cancel: () -> Void
+    /// The action of the confirming button.
     let confirm: () -> Void
 
+    /// The title, the message and the Cancel and confirm buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 14) {
         Text(confirmation.title).font(.headline).fixedSize(horizontal: false, vertical: true)
@@ -160,11 +181,15 @@
     }
   }
 
+  /// Opens the file panels of the Library area.
   @MainActor
   enum LibraryFilePicker {
+    /// Asks the person to choose a record file or a mod folder.
+    ///
+    /// Returns its URL, or nil when the person cancels.
     static func chooseRecordOrModFolder() -> URL? {
       let panel = NSOpenPanel()
-      panel.allowedContentTypes = [.json, .folder]
+      panel.allowedContentTypes = [.propertyList, .folder]
       panel.allowsMultipleSelection = false
       panel.canChooseDirectories = true
       panel.canChooseFiles = true
@@ -173,15 +198,26 @@
       return panel.runModal() == .OK ? panel.url : nil
     }
 
-    /// The packet capture: JSON lines, which no content type names.
+    /// Asks the person to choose a packet capture, which is JSON lines that no content type names.
+    ///
+    /// Returns its URL, or nil when the person cancels.
     static func chooseCapture() -> URL? {
       chooseFile(message: "ui.library.test.packets.pick")
     }
 
+    /// Asks the person to choose an expectation file.
+    ///
+    /// Returns its URL, or nil when the person cancels.
     static func chooseExpectation() -> URL? {
       chooseFile(message: "ui.library.test.expect.pick", type: .json)
     }
 
+    /// Asks the person to choose one file.
+    ///
+    /// - Parameters:
+    ///   - message: The localization key of the text the panel shows.
+    ///   - type: The content type the panel allows, or nil for any file.
+    /// - Returns: The URL of the file, or nil when the person cancels.
     private static func chooseFile(message: String, type: UTType? = nil) -> URL? {
       let panel = NSOpenPanel()
       if let type { panel.allowedContentTypes = [type] }

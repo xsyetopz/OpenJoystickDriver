@@ -23,15 +23,19 @@ public enum SDLLaunchEnvironment {
     "SDL_JOYSTICK_HIDAPI": "0",
   ]
 
+  /// Why the environment cannot be built.
   public enum Failure: Error, Equatable, Sendable {
     /// No profile was given, so there is no mapping to set.
     case noProfile
+    /// The SDL mapping of a profile could not be built.
     case mapping(VirtualGamepadMappingError)
   }
 
-  /// `base` with ``variable`` set to the mapping lines of `profiles`, each once, in the order of
-  /// ``VirtualHIDProfileID/allCases``. When `gameControllerBackend` is true, the variables of
-  /// ``gameControllerBackend`` are set too and replace values already in `base`.
+  /// Returns `base` with ``variable`` set to the mapping lines of `profiles`.
+  ///
+  /// Each profile appears once, in the order of ``VirtualHIDProfileID/allCases``. When
+  /// `gameControllerBackend` is true, the variables of ``gameControllerBackend`` are set too and
+  /// replace values already in `base`.
   public static func environment(
     adding profiles: [VirtualHIDProfileID],
     to base: [String: String],

@@ -7,6 +7,7 @@ import Testing
 struct ControllerDetailFactsTests {
   private func device(
     power: ControllerConnectionState.Power? = nil,
+    wiiRemote: WiiRemoteStatus? = nil,
     ownership: ControllerOwnershipObservation = .unknown,
     override: VirtualHIDProfileID? = nil,
     publication: ApplicationServicePublicationStatus? = nil,
@@ -28,8 +29,14 @@ struct ControllerDetailFactsTests {
       recordServer: .system,
       recordAccessRoute: .system,
       capabilities: ControllerCapabilities(controls: [], motion: motion),
-      connectionState: power.map {
-        ControllerConnectionState(transport: nil, backend: .hid, isConnected: true, power: $0)
+      connectionState: (power ?? (wiiRemote == nil ? nil : .unknown)).map {
+        ControllerConnectionState(
+          transport: nil,
+          backend: .hid,
+          isConnected: true,
+          power: $0,
+          wiiRemote: wiiRemote
+        )
       },
       sessionToken: .fixture("facts-device")
     )
@@ -59,6 +66,26 @@ struct ControllerDetailFactsTests {
       kinds == [.publication, .serving, .controllerProtocol, .serialNumber, .inputHealth]
     )
     #expect(ControllerDetailFacts.general(for: device()).map(\.kind) == kinds)
+  }
+
+  @Test
+  func aWiiRemoteListsItsModeExtensionAndMotionPlus() {
+    let status = WiiRemoteStatus(
+      reportMode: 0x35,
+      extensionKind: .motionPlusClassic,
+      unknownExtensionID: nil,
+      motionPlusActive: true,
+      isGyroRestReady: false
+    )
+    let facts = ControllerDetailFacts.general(for: device(wiiRemote: status))
+    #expect(
+      facts.map(\.kind).suffix(3) == [.wiiReportMode, .wiiExtension, .wiiMotionPlus]
+    )
+    #expect(Self.value(.wiiReportMode, in: facts) == .text("0x35"))
+    #expect(Self.value(.wiiExtension, in: facts) == .text(status.extensionText()))
+    #expect(
+      !ControllerDetailFacts.general(for: device()).map(\.kind).contains(.wiiReportMode)
+    )
   }
 
   @Test

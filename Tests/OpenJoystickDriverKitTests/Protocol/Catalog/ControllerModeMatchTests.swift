@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -37,7 +38,7 @@ struct ControllerModeMatchTests {
       "vendorID": Int(model.vendorID), "productID": Int(model.productID),
       "modes": [["id": "default", "protocol": ["family": family]]] + modes,
     ]
-    return try JSONSerialization.data(withJSONObject: record)
+    return try PropertyListFixture.data(tree: record)
   }
 
   private static func mode(
@@ -142,7 +143,9 @@ struct ControllerModeMatchTests {
 
   /// A receiver or dongle record is the evidence of the radio link: macOS reports the dongle as a
   /// USB device, so discovery sees the host link `usb` and the record supplies the controller-side
-  /// link. A model whose record is no receiver never reports it.
+  /// link.
+  ///
+  /// A model whose record is no receiver never reports it.
   @Test
   func aReceiverRecordReportsTheRadioLinkAndSelectsItsMode() async throws {
     func profile(variant: String?) throws -> DeviceRuntimeProfile {
@@ -158,7 +161,7 @@ struct ControllerModeMatchTests {
         "modes": [["id": "default", "protocol": protocolKeys], radio],
       ]
       return try #require(
-        try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record)).record
+        try ControllerRecordSet.validate(PropertyListFixture.data(tree: record)).record
       ).profile
     }
     let dongle = try profile(variant: "Dongle")
@@ -322,7 +325,9 @@ struct ControllerModeMatchTests {
   }
 
   /// A HID route reports no endpoint set, so a HID mode that names `endpoints` could never be
-  /// selected; the record is refused. The same signature on a raw-USB mode is accepted.
+  /// selected; the record is refused.
+  ///
+  /// The same signature on a raw-USB mode is accepted.
   @Test
   func aHIDModeWithEndpointsIsRefusedAndARawUSBModeIsNot() throws {
     let endpoints: [[String: Any]] = [["direction": "In", "transferType": "Interrupt"]]
@@ -416,7 +421,7 @@ struct ControllerModeMatchTests {
       ],
     ]
     let profile = try #require(
-      try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record)).record
+      try ControllerRecordSet.validate(PropertyListFixture.data(tree: record)).record
     ).profile
     #expect(profile.startupWrites.count == 1)
     #expect(profile.applying(modeID: "plain")?.startupWrites.isEmpty == true)
@@ -482,7 +487,7 @@ struct ControllerModeMatchTests {
       extras: ["interface": ["first": 2, "last": 3]]
     )
     try Self.recordData(modes: [ranged]).write(
-      to: directory.appendingPathComponent("1234-abcd.json")
+      to: directory.appendingPathComponent("1234-abcd.plist")
     )
     let set = ControllerRecordSet.load(userDirectory: directory)
     #expect(set.problems.isEmpty)
@@ -606,8 +611,51 @@ struct ControllerModeMatchTests {
     }
   }
 
+  /// A record without a `default` mode leaves a device that matches none of its modes unsupported.
   @Test
-  func theDecoderRejectsAModeListWithoutExactlyOneDefault() throws {
+  func aRecordWithoutADefaultModeLeavesAnUnmatchedDeviceUnsupported() async throws {
+    let record: [String: Any] = [
+      "apiVersion": OpenJoystickDriverAPI.version, "kind": ControllerRecordDocument.kind,
+      "vendorID": Int(Self.model.vendorID), "productID": Int(Self.model.productID),
+      "modes": [Self.mode("named", match: ["product": "Wireless Controller"])],
+    ]
+    let validated = try #require(
+      try ControllerRecordSet.validate(PropertyListFixture.data(tree: record)).record
+    )
+    let catalog = DeviceCatalog(
+      records: ControllerRecordSet(records: [Self.model: validated], userFiles: [])
+    )
+    let profile = validated.profile
+    #expect(!profile.hasDefaultMode)
+    let reader = CountingProbeReader()
+    let matching = Self.device(product: "Wireless Controller")
+    let other = Self.device(product: "Other")
+    let matched = await Self.select(profile, matching, reader: reader)
+    let unmatched = await Self.select(profile, other, reader: reader)
+    #expect(matched == .matched("named"))
+    #expect(unmatched == .noModeMatched)
+    #expect(reader.readCount == 0)
+    #expect(
+      ProtocolClassifier.classify(
+        matching,
+        backend: .hid,
+        catalog: catalog,
+        modeID: matched.modeID
+      ) != .unsupported(.noModeMatched)
+    )
+    #expect(
+      ProtocolClassifier.classify(
+        other,
+        backend: .hid,
+        catalog: catalog,
+        modeID: unmatched.modeID
+      ) == .unsupported(.noModeMatched)
+    )
+    #expect(ProtocolBindingReason.noModeMatched.explanationKey == "ui.controllers.noModeMatched")
+  }
+
+  @Test
+  func theDecoderRejectsAModeListWithTwoDefaults() throws {
     func decode(_ modes: [[String: Any]]?) throws -> String? {
       var record: [String: Any] = [
         "apiVersion": OpenJoystickDriverAPI.version, "kind": ControllerRecordDocument.kind,
@@ -615,7 +663,7 @@ struct ControllerModeMatchTests {
       ]
       record["modes"] = modes
       do {
-        _ = try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record))
+        _ = try ControllerRecordSet.validate(PropertyListFixture.data(tree: record))
         return nil
       } catch { return ControllerRecordSet.problemDescription(error, document: "record") }
     }
@@ -623,9 +671,9 @@ struct ControllerModeMatchTests {
     let plainDefault: [String: Any] = ["id": "default", "protocol": ["family": "SonySixaxis"]]
     #expect(try decode(nil) != nil)
     #expect(try decode([]) != nil)
-    #expect(try decode([other])?.contains("exactly one mode with the id default") == true)
+    #expect(try decode([other]) == nil)
     #expect(
-      try decode([plainDefault, plainDefault])?.contains("exactly one mode with the id default")
+      try decode([plainDefault, plainDefault])?.contains("at most one mode with the id default")
         == true
     )
     #expect(
@@ -649,8 +697,89 @@ struct ControllerModeMatchTests {
       ]
       record["modes"] = [rawDefault.merging(extras) { $1 }]
       #expect(throws: (any Error).self, Comment(rawValue: name)) {
-        try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record))
+        try ControllerRecordSet.validate(PropertyListFixture.data(tree: record))
       }
+    }
+  }
+
+  /// Vader 5S: the GIP mode is the default and the XUSB mode is keyed on `FF/5D/01`.
+  @Test
+  func theVader5SRunsGIPOrXUSBFromItsInterfaceSignature() async throws {
+    let vader = ControllerModelID(vendorID: 0x37D7, productID: 0x2801)
+    let profile = try #require(ControllerRecordSet.bundled.records[vader]?.profile)
+    func run(_ triple: (UInt8, UInt8, UInt8)?) async -> (PhysicalProtocolID, [String]) {
+      let interfaces = triple.map {
+        [
+          PhysicalInterfaceSignature(
+            interfaceNumber: 0,
+            interfaceClass: $0.0,
+            interfaceSubclass: $0.1,
+            interfaceProtocol: $0.2,
+            hostTransport: .usb
+          )
+        ]
+      }
+      let lines = Locked<[String]>([])
+      let selection = await ControllerModeSelector.select(
+        from: profile,
+        model: vader,
+        backend: .rawUSB,
+        reader: CountingProbeReader(),
+        device: PhysicalDevice(
+          vendorID: vader.vendorID,
+          productID: vader.productID,
+          interfaces: interfaces
+        )
+      ) { line in lines.withLock { $0.append(line) } }
+      let running = profile.applying(modeID: selection.modeID)
+      return (running?.physicalProtocolID ?? .hidDescriptor, lines.withLock { $0 })
+    }
+    let gip = await run((0xFF, 0x47, 0xD0))
+    let xusb = await run((0xFF, 0x5D, 0x01))
+    let neither = await run((0x03, 0x00, 0x00))
+    #expect(gip.0 == .xboxGIP)
+    #expect(gip.1.contains { $0.contains("interface classes seen: FF/47/D0") })
+    #expect(xusb.0 == .xboxXUSB)
+    #expect(xusb.1.contains { $0.contains("selected mode xusb") })
+    #expect(neither.0 == .xboxGIP)
+    #expect(neither.1.contains { $0.contains("interface classes seen: 03/00/00") })
+  }
+
+  /// "Shared product ID": the Balance Board and the Wii U Pro Controller share the Wii Remote
+  /// VID:PID, and the records, which have no default mode, match neither.
+  @Test
+  func theWiiRecordsMatchOnlyTheirProductString() async throws {
+    let cases: [(ControllerModelID, own: String, other: String)] = [
+      (
+        ControllerModelID(vendorID: 0x057E, productID: 0x0306), "Nintendo RVL-CNT-01",
+        "Nintendo RVL-WBC-01"
+      ),
+      (
+        ControllerModelID(vendorID: 0x057E, productID: 0x0330), "Nintendo RVL-CNT-01-TR",
+        "Nintendo RVL-CNT-01-UC"
+      ),
+    ]
+    for (model, own, other) in cases {
+      let profile = try #require(ControllerRecordSet.bundled.records[model]?.profile)
+      func select(_ product: String) async -> ControllerModeSelection {
+        let device = PhysicalDevice(
+          vendorID: model.vendorID,
+          productID: model.productID,
+          productName: product,
+          interfaces: [
+            PhysicalInterfaceSignature(interfaceNumber: 0, hostTransport: .bluetoothClassic)
+          ]
+        )
+        return await ControllerModeSelector.select(
+          from: profile,
+          model: model,
+          backend: .hid,
+          reader: CountingProbeReader(),
+          device: device
+        ) { _ in }
+      }
+      #expect(await select(own) == .matched("wii-remote"))
+      #expect(await select(other) == .noModeMatched)
     }
   }
 }

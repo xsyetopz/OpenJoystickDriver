@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -11,7 +12,7 @@ struct ControllerRecordSetTests {
   private static let unbundled = ControllerModelID(vendorID: 0x1234, productID: 0xABCD)
 
   private static func json(_ object: [String: Any]) throws -> Data {
-    try JSONSerialization.data(withJSONObject: object)
+    try PropertyListFixture.data(tree: object)
   }
 
   private static func patch(_ identity: ControllerModelID, set: [String: Any]) throws -> Data {
@@ -57,7 +58,7 @@ struct ControllerRecordSetTests {
     )
     let record = try #require(validated.record)
     #expect(validated.operation == .patch)
-    #expect(validated.fileName == "366c-0005.patch.json")
+    #expect(validated.fileName == "366c-0005.patch.plist")
     #expect(record.fieldLayers == ["modes": .user])
     #expect(record.profile.gipKeepAlivePolicy == .disabled)
     #expect(record.usesRawUSB)
@@ -79,10 +80,10 @@ struct ControllerRecordSetTests {
     }
   }
 
-  /// A patch overrides `modes` as an array, so a restated default mode keeps only the parameters it
-  /// names.
+  /// A patch merges `modes` by `id`, so a restated default mode keeps the bundled parameters it does
+  /// not name.
   @Test
-  func modesPatchOverridesTheDefaultModeWholesale() throws {
+  func modesPatchMergesIntoTheDefaultMode() throws {
     let shareOffsetGIP = ControllerModelID(vendorID: 0x045E, productID: 0x0B12)
     let bundledShare = try #require(ControllerRecordSet.bundled.records[shareOffsetGIP])
     #expect(bundledShare.profile.parameters == ProtocolParameters(shareButton: .init(fromEnd: 26)))
@@ -94,7 +95,7 @@ struct ControllerRecordSetTests {
         ]
       )
     )
-    #expect(replaced.profile.parameters == ProtocolParameters())
+    #expect(replaced.profile.parameters == bundledShare.profile.parameters)
     #expect(replaced.profile.gipKeepAlivePolicy == .disabled)
     let refamilied = try Self.record(
       Self.patch(
@@ -124,7 +125,10 @@ struct ControllerRecordSetTests {
         ]
       )
     )
-    #expect(patched.profile.parameters == ProtocolParameters(motionScale: .strikePad))
+    #expect(
+      patched.profile.parameters
+        == ProtocolParameters(motionCalibration: .factory, motionScale: .strikePad)
+    )
   }
 
   @Test
@@ -141,7 +145,7 @@ struct ControllerRecordSetTests {
     let validated = try ControllerRecordSet.validate(Self.add(Self.unbundled, family: "XboxGIP"))
     let record = try #require(validated.record)
     #expect(validated.operation == .add)
-    #expect(validated.fileName == "1234-abcd.json")
+    #expect(validated.fileName == "1234-abcd.plist")
     #expect(record.model == Self.unbundled)
     #expect(record.fieldLayers == ["modes": .user])
     #expect(record.family == "XboxGIP")
@@ -190,15 +194,15 @@ struct ControllerRecordSetTests {
         == "record.usb: USB overrides require a raw-USB protocol family"
     )
     #expect(
-      Self.problem(try Self.patch(Self.bundledGIP, set: ["capabilities": ["rumble": "Absent"]]))
-        == "patch must hold modes, usb, bluetoothLE, server, "
-        + "route, input, or tuning"
+      Self.problem(try Self.patch(Self.bundledGIP, set: ["name": "Other"]))
+        == "patch must hold modes, usb, bluetoothLE, capabilities, server, "
+        + "route, input, tuning, or idle; the selector names the identity"
     )
     #expect(
       Self.problem(try Self.patch(Self.bundledGIP, set: ["tuning": ["hidStartupIntervalMs": 5]]))
         == "record.tuning: hidStartupIntervalMs is not read by the XboxGIP driver"
     )
-    #expect(Self.problem(Data("[]".utf8)) == "the file is not a JSON object")
+    #expect(Self.problem(PropertyListFixture.bytes(json: "[]")) == "the file is not a dictionary")
     var withNote = ControllerPatch.document(
       selector: .identity(Self.bundledGIP),
       body: ["usb": ["configuration": "SetConfiguration1BeforeClaim"]]
@@ -206,14 +210,16 @@ struct ControllerRecordSetTests {
     withNote["note"] = "x"
     #expect(
       Self.problem(try Self.json(withNote))
-        == "the file must hold exactly apiVersion, kind, selector, and patch"
+        == "the file must hold apiVersion, kind, selector, and patch or remove"
     )
     let badFamily = try Self.add(Self.unbundled, family: "xbox.unknown")
     #expect(Self.problem(badFamily) == "record.modes.[0].protocol: unknown family xbox.unknown")
   }
 
-  /// A file declares its version through `apiVersion` and its type through `kind`. A missing or
-  /// unsupported version, or a kind that is not one it is read as, is rejected and named.
+  /// A file declares its version through `apiVersion` and its type through `kind`.
+  ///
+  /// A missing or unsupported version, or a kind that is not one it is read as, is rejected and
+  /// named.
   @Test
   func aMissingOrUnsupportedHeaderIsRejected() throws {
     let supported = "the supported apiVersion is \(OpenJoystickDriverAPI.version)"
@@ -263,8 +269,9 @@ struct ControllerRecordSetTests {
       _ = try ControllerDefaults.validate(unsupportedDefaults)
       Issue.record("the defaults with an unsupported apiVersion were accepted")
     } catch { #expect(ControllerRecordSet.problemCode(error) == .unsupportedAPIVersion) }
-    let defaultsWrongKind = Data(
-      #"{"apiVersion": "\#(OpenJoystickDriverAPI.version)", "kind": "NotAKind", "tuning": {}}"#.utf8
+    let defaultsWrongKind = PropertyListFixture.bytes(
+      json:
+        #"{"apiVersion": "\#(OpenJoystickDriverAPI.version)", "kind": "NotAKind", "tuning": {}}"#
     )
     do {
       _ = try ControllerDefaults.validate(defaultsWrongKind)
@@ -281,24 +288,24 @@ struct ControllerRecordSetTests {
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
     try Self.add(Self.unbundled, family: "XboxGIP").write(
-      to: directory.appendingPathComponent("1234-abcd.json")
+      to: directory.appendingPathComponent("1234-abcd.plist")
     )
     try Self.patch(Self.bundledGIP, set: ["usb": ["configuration": "SetConfiguration1BeforeClaim"]])
       .write(
-        to: directory.appendingPathComponent("wrong-name.json")
+        to: directory.appendingPathComponent("wrong-name.plist")
       )
-    try Data("{".utf8).write(to: directory.appendingPathComponent("broken.json"))
+    try Data("{".utf8).write(to: directory.appendingPathComponent("broken.plist"))
 
     let set = ControllerRecordSet.load(userDirectory: directory)
     #expect(
       set.userFiles.map(\.url.lastPathComponent) == [
-        "1234-abcd.json", "broken.json", "wrong-name.json",
+        "1234-abcd.plist", "broken.plist", "wrong-name.plist",
       ]
     )
     #expect(set.records[Self.unbundled]?.layer == .user)
     #expect(set.records[Self.bundledGIP]?.layer == .bundled)
-    #expect(set.problems.map(\.url.lastPathComponent) == ["broken.json", "wrong-name.json"])
-    #expect(set.problems.last?.problem == "the file name must be 366c-0005.patch.json")
+    #expect(set.problems.map(\.url.lastPathComponent) == ["broken.plist", "wrong-name.plist"])
+    #expect(set.problems.last?.problem == "the file name must be 366c-0005.patch.plist")
     #expect(set.records.count == ControllerRecordSet.bundled.records.count + 1)
 
     let catalog = DeviceCatalog(records: set)
@@ -323,12 +330,14 @@ struct ControllerRecordSetTests {
       #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"ControllerPatch","#
       + #""selector":{"vendorID":13932,"productID":5},"patch":{"modes":[{"id":"default","#
       + #""protocol":{"family":"XboxGIP","keepAlive":false}}]}}"#
-    try Data(document.utf8).write(to: directory.appendingPathComponent("366c-0005.patch.json"))
+    try PropertyListFixture.bytes(json: document).write(
+      to: directory.appendingPathComponent("366c-0005.patch.plist")
+    )
 
     let set = ControllerRecordSet.load(userDirectory: directory)
 
     #expect(set.problems.isEmpty)
-    #expect(set.userFiles.map(\.url.lastPathComponent) == ["366c-0005.patch.json"])
+    #expect(set.userFiles.map(\.url.lastPathComponent) == ["366c-0005.patch.plist"])
   }
 
   @Test(arguments: [
@@ -343,7 +352,9 @@ struct ControllerRecordSetTests {
     )
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
-    try Data(document.utf8).write(to: directory.appendingPathComponent("366c-0005.patch.json"))
+    try PropertyListFixture.bytes(json: document).write(
+      to: directory.appendingPathComponent("366c-0005.patch.plist")
+    )
 
     let set = ControllerRecordSet.load(userDirectory: directory)
 
@@ -351,8 +362,10 @@ struct ControllerRecordSetTests {
     #expect(set.problems.first?.problem?.hasPrefix("E5001: ") == true)
   }
 
-  /// The stored-file rule: OJD does not migrate a stored file. A file it can read keeps working;
-  /// a file it cannot read is dropped, reported with its reason, and left as it was.
+  /// The stored-file rule: OJD does not migrate a stored file.
+  ///
+  /// A file it can read keeps working; a file it cannot read is dropped, reported with its reason,
+  /// and left as it was.
   @Test
   func aStoredFileKeepsWorkingOrIsDroppedUnchanged() throws {
     let directory = MacOSDataDirectory().url(for: .temporary).appendingPathComponent(
@@ -361,28 +374,28 @@ struct ControllerRecordSetTests {
     )
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
-    let current = Data(
-      (#"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","#
+    let current = PropertyListFixture.bytes(
+      json: (#"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","#
         + #""kind":"ControllerPatch","selector":{"vendorID":13932,"productID":5},"#
         + #""patch":{"modes":[{"id":"default","#
-        + #""protocol":{"family":"XboxGIP","keepAlive":false}}]}}"#).utf8
+        + #""protocol":{"family":"XboxGIP","keepAlive":false}}]}}"#)
     )
-    let currentURL = directory.appendingPathComponent("366c-0005.patch.json")
+    let currentURL = directory.appendingPathComponent("366c-0005.patch.plist")
     try current.write(to: currentURL)
     // A Controller file with an unsupported apiVersion.
-    let unsupported = Data(
-      (#"{"apiVersion":"unsupported.example/v9","#
+    let unsupported = PropertyListFixture.bytes(
+      json: (#"{"apiVersion":"unsupported.example/v9","#
         + #""kind":"\#(ControllerRecordDocument.kind)","vendorID":4660,"productID":43981,"#
-        + #""modes":[{"id":"default","protocol":{"family":"XboxGIP"}}]}"#).utf8
+        + #""modes":[{"id":"default","protocol":{"family":"XboxGIP"}}]}"#)
     )
-    let unsupportedURL = directory.appendingPathComponent("1234-abcd.json")
+    let unsupportedURL = directory.appendingPathComponent("1234-abcd.plist")
     try unsupported.write(to: unsupportedURL)
     // A file of an unknown kind.
-    let wrongKind = Data(
-      (#"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"NotAKind","#
-        + #""operation":"patch","vendorID":13932,"productID":5,"set":{"usb":{}}}"#).utf8
+    let wrongKind = PropertyListFixture.bytes(
+      json: (#"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"NotAKind","#
+        + #""operation":"patch","vendorID":13932,"productID":5,"set":{"usb":{}}}"#)
     )
-    let wrongKindURL = directory.appendingPathComponent("366c-0005.json")
+    let wrongKindURL = directory.appendingPathComponent("366c-0005.plist")
     try wrongKind.write(to: wrongKindURL)
 
     let set = ControllerRecordSet.load(userDirectory: directory)
@@ -391,15 +404,15 @@ struct ControllerRecordSetTests {
     #expect(kept.fieldLayers["modes"] == .user)
     #expect(kept.profile.gipKeepAlivePolicy == .disabled)
     #expect(set.records[Self.unbundled] == nil)
-    #expect(set.problems.map(\.url.lastPathComponent) == ["1234-abcd.json", "366c-0005.json"])
+    #expect(set.problems.map(\.url.lastPathComponent) == ["1234-abcd.plist", "366c-0005.plist"])
     #expect(
       set.problems.first?.problem
-        == "E5001: 1234-abcd.json: apiVersion unsupported.example/v9 is not supported; "
+        == "E5001: 1234-abcd.plist: apiVersion unsupported.example/v9 is not supported; "
         + "the supported apiVersion is \(OpenJoystickDriverAPI.version)"
     )
     #expect(
       set.problems.last?.problem
-        == "366c-0005.json: expected ControllerPatch, found NotAKind"
+        == "366c-0005.plist: expected ControllerPatch, found NotAKind"
     )
     #expect(try Data(contentsOf: unsupportedURL) == unsupported)
     #expect(try Data(contentsOf: currentURL) == current)
@@ -416,7 +429,7 @@ struct ControllerRecordSetTests {
   }
 
   @Test
-  func loadIgnoresFilesThatAreNotJSON() throws {
+  func loadIgnoresFilesThatAreNotPropertyLists() throws {
     let directory = MacOSDataDirectory().url(for: .temporary).appendingPathComponent(
       "ojd-records-\(UUID().uuidString)",
       isDirectory: true
@@ -424,7 +437,7 @@ struct ControllerRecordSetTests {
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
     try Data("notes".utf8).write(to: directory.appendingPathComponent("README.txt"))
-    try Data("{".utf8).write(to: directory.appendingPathComponent("1234-abcd.json.bak"))
+    try Data("{".utf8).write(to: directory.appendingPathComponent("1234-abcd.plist.bak"))
 
     #expect(ControllerRecordSet.load(userDirectory: directory).userFiles.isEmpty)
   }
@@ -449,94 +462,94 @@ struct ControllerRecordSetTests {
     #expect(ControllerRecordSet.bundled.activate().isEmpty)
   }
 
-  /// The text of a Controller file and of a ControllerPatch file of the bundled `XboxGIP`
-  /// record, which the encoding and repeated-name checks below change.
-  private static let controllerText = """
-    {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-     "vendorID": 4660, "productID": 43981,
-     "modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]}
-    """
-  private static let patchText = """
-    {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-     "selector": {"vendorID": 13932, "productID": 5},
-     "patch": {"tuning": {"stickDeadzone": 0.08}}}
-    """
-
-  private static func utf16(_ text: String) -> Data {
-    Data(text.utf16.flatMap { [UInt8($0 & 0xFF), UInt8($0 >> 8)] })
+  /// The merged record keeps the member order of the bundled record where the patch merges into an
+  /// object and appends the members the patch adds in the patch's order.
+  ///
+  /// A mode the patch names merges into the bundled mode of the same `id` in the bundled member
+  /// order.
+  @Test
+  func aPatchMergeWritesTheMergedRecordAsAPropertyList() throws {
+    let record = try Self.record(
+      PropertyListFixture.bytes(
+        json: """
+          {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
+           "selector": {"vendorID": 13932, "productID": 5},
+           "patch": {"tuning": {"stickDeadzone": 0.08},
+                     "modes": [{"protocol": {"keepAlive": false, "family": "XboxGIP"},
+                                "id": "default"}]}}
+          """
+      )
+    )
+    let expected = PropertyListFixture.bytes(
+      json: """
+        {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
+         "vendorID": 13932, "productID": 5,
+         "modes": [{"id": "default", "protocol": {"family": "XboxGIP",
+           "parameters": {"shareButton": {"fromEnd": 18}}, "keepAlive": false}}],
+         "tuning": {"stickDeadzone": 0.08}}
+        """
+    )
+    #expect(record.text == String(decoding: expected, as: UTF8.self))
   }
 
-  /// Both file kinds refuse a byte order mark, UTF-16 text and a member named twice, with the
-  /// same words and `invalidControllerRecord`, though `JSONSerialization` reads all three.
-  @Test(arguments: [controllerText, patchText])
-  func textThatIsNotPlainUTF8OrNamesAMemberTwiceIsRefusedByName(_ text: String) throws {
-    #expect(try Self.record(Data(text.utf8)).model.vendorID != 0)
-    let cases: [(Data, String)] = [
-      (
-        Data([0xEF, 0xBB, 0xBF]) + Data(text.utf8),
-        "JSON text, byte 0: the text starts with a byte order mark; save the file as UTF-8 "
-          + "without one"
-      ),
-      (
-        Data([0xFF, 0xFE]) + Self.utf16(text),
-        "JSON text, byte 0: the text is UTF-16 or UTF-32; save the file as UTF-8"
-      ),
-      (
-        Self.utf16(text),
-        "JSON text, byte 1: the text is UTF-16 or UTF-32; save the file as UTF-8"
-      ),
-      (
-        Data(
-          text.replacingOccurrences(of: "\"kind\"", with: "\"apiVersion\": \"x\", \"kind\"").utf8
-        ),
-        #"JSON text, byte 46: the member "apiVersion" appears twice in one object"#
-      ),
+  @Test
+  func idRangeMessageNamesFileKeyPathRuleAndFix() throws {
+    let document: [String: Any] = [
+      "apiVersion": OpenJoystickDriverAPI.version, "kind": ControllerRecordDocument.kind,
+      "vendorID": 70_000, "productID": 1,
+      "modes": [["id": "default", "protocol": ["family": "XboxGIP"]]],
     ]
-    for (data, words) in cases {
-      #expect(try JSONSerialization.jsonObject(with: data) is [String: Any])
-      #expect(Self.problem(data) == words)
-      #expect(Self.problemCode(data) == .invalidControllerRecord)
+    let data = try Self.json(document)
+    let english = Localization(preferredLanguages: ["en-US"])
+    let error = try #require(throws: ControllerRecordProblem.self) {
+      try ControllerRecordSet.validate(data)
+    }
+    #expect(error.key == "error.E5007.record.idRange")
+    #expect(
+      ControllerRecordSet.problemDescription(
+        error,
+        includingCode: false,
+        document: "record",
+        localization: english,
+        file: "1234-abcd.plist"
+      )
+        == "1234-abcd.plist, vendorID and productID: vendorID must be 1...65535 and productID "
+        + "0...65535. Fix: set each to a whole number in its range."
+    )
+    #expect(
+      ControllerRecordSet.problemDescription(error, document: "record")
+        == "vendorID must be 1...65535 and productID 0...65535"
+    )
+    for locale in english.availableLocalizations where locale != "en-US" && locale != "C" {
+      let text = ControllerRecordSet.problemDescription(
+        error,
+        document: "record",
+        localization: Localization(preferredLanguages: [locale]),
+        file: "1234-abcd.plist"
+      )
+      #expect(text.contains("1234-abcd.plist"), "\(locale)")
+      #expect(text.contains("vendorID"), "\(locale)")
+      #expect(text != error.description, "\(locale)")
     }
   }
 
-  /// The merged record keeps the member order of the bundled record where the patch merges into
-  /// an object and appends the members the patch adds in the patch's order. An array the patch
-  /// replaces has the patch's order.
   @Test
-  func aPatchMergeKeepsTheOrderOfTheBundledRecord() throws {
-    let record = try Self.record(
-      Data(
-        """
-        {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-         "selector": {"vendorID": 13932, "productID": 5},
-         "patch": {"tuning": {"stickDeadzone": 0.08},
-                   "modes": [{"protocol": {"keepAlive": false, "family": "XboxGIP"},
-                              "id": "default"}]}}
-        """.utf8
-      )
+  func fileNameMessageNamesTheExpectedName() {
+    let error = ControllerRecordProblem(
+      code: .invalidControllerRecord,
+      key: "error.E5007.record.fileName",
+      arguments: ["1234-abcd.plist"],
+      "filename must be 1234-abcd.plist"
     )
     #expect(
-      record.text == """
-        {
-          "apiVersion": "\(OpenJoystickDriverAPI.version)",
-          "kind": "Controller",
-          "vendorID": 13932,
-          "productID": 5,
-          "modes": [
-            {
-              "protocol": {
-                "keepAlive": false,
-                "family": "XboxGIP"
-              },
-              "id": "default"
-            }
-          ],
-          "tuning": {
-            "stickDeadzone": 0.08
-          }
-        }
-
-        """
+      ControllerRecordSet.problemDescription(
+        error,
+        document: "record",
+        localization: Localization(preferredLanguages: ["en-US"]),
+        file: "wrong.plist"
+      )
+        == "wrong.plist, vendorID and productID: the file name must be 1234-abcd.plist, the two "
+        + "IDs in hex. Fix: rename the file to 1234-abcd.plist, or correct the IDs in it."
     )
   }
 }

@@ -2,7 +2,9 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd diagnose` command: runs every check and reports what is wrong.
 struct DiagnoseCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "diagnose",
     abstract: CLILocalized.text(
@@ -53,9 +55,11 @@ struct DiagnoseCommand: AsyncParsableCommand {
     SystemGamepadSupportAuditor.auditCurrentSystem()
   }
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// `--output`: also write a support report to this path.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text("cli.diagnose.group.output"),
@@ -64,6 +68,8 @@ struct DiagnoseCommand: AsyncParsableCommand {
   )
   var output: String?
 
+  /// `--soak`: sample the service's memory, file descriptors and CPU for this many seconds, which
+  /// runs the `runtime-health` check.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -74,6 +80,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
   )
   var soak: Int?
 
+  /// `--interval-ms`: the milliseconds between soak samples.
   @Option(
     name: .customLong("interval-ms"),
     help: ArgumentHelp(
@@ -85,6 +92,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
   )
   var intervalMilliseconds = 1_000
 
+  /// `--rss-limit-mib`: the resident memory in MiB that fails the soak; 0 sets no limit.
   @Option(
     name: .customLong("rss-limit-mib"),
     help: ArgumentHelp(
@@ -96,6 +104,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
   )
   var residentLimitMiB = 0
 
+  /// `--footprint-limit-mib`: the memory footprint in MiB that fails the soak.
   @Option(
     name: .customLong("footprint-limit-mib"),
     help: ArgumentHelp(
@@ -107,6 +116,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
   )
   var footprintLimitMiB = 512
 
+  /// `--frames`: summarize only the frames read in the last this many seconds.
   @Option(
     help: ArgumentHelp(
       CLILocalized.text("cli.diagnose.group.frames"),
@@ -115,6 +125,9 @@ struct DiagnoseCommand: AsyncParsableCommand {
   )
   var frames: Int?
 
+  /// Checks the output path, the frame window and the soak seconds.
+  ///
+  /// - Throws: ``ValidationError`` when a value is outside its range.
   func validate() throws {
     if let output { _ = try Self.outputURL(output) }
     if let frames, !FrameTimingRecorder.windowSecondsRange.contains(frames) {
@@ -159,8 +172,12 @@ struct DiagnoseCommand: AsyncParsableCommand {
     }
   }
 
-  /// Resolves `path` against the working directory; an existing directory gets the default
-  /// file name. The parent directory must exist.
+  /// Resolves `path` against the working directory; an existing directory gets the default file
+  /// name.
+  ///
+  /// The parent directory must exist.
+  ///
+  /// - Throws: `ValidationError` when the parent directory does not exist.
   static func outputURL(_ path: String) throws -> URL {
     let current = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     var url = URL(fileURLWithPath: path, relativeTo: current).standardizedFileURL
@@ -184,6 +201,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
     return url
   }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       if let frames {
@@ -262,6 +280,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
     }
   }
 
+  /// Prints the check table and the frame timing blocks for people.
   private static func printTable(_ report: DiagnoseReport, frameSeconds: Int?) {
     let idWidth = report.checks.map(\.id.count).max() ?? 0
     for check in report.checks {
@@ -300,6 +319,7 @@ struct DiagnoseCommand: AsyncParsableCommand {
     }
   }
 
+  /// Writes the support report bundle to `url`.
   private static func writeBundle(to url: URL, snapshot: DiagnoseServiceSnapshot) throws {
     let processIdentifier = ServiceConnection.processIdentifier()
     let report = SupportReportService.make(

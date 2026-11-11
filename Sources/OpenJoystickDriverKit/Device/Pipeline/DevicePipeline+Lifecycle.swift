@@ -1,16 +1,18 @@
 import Foundation
 
 extension DevicePipeline {
+  /// The route by which the pipeline reaches its controller.
   enum Transport {
     /// Vendor-specific interface owned by the selected Apple USB transport backend.
     case usb(device: USBTransportDevice)
-    /// Class 0x03 via IOKit
+    /// A class 0x03 HID connection, which the device manager feeds with reports.
     case hid(address: ControllerConnectionAddress)
   }
 
-  /// Start pipeline: open device, handshake, begin input loop. A stopped pipeline stays stopped:
-  /// admission publishes it before starting it, so a detach can stop it first, and a later start
-  /// would open a session no stop closes.
+  /// Starts the USB run, or readies the HID route, of a pipeline that never stopped.
+  ///
+  /// A stopped pipeline stays stopped: admission publishes it before starting it, so a detach can
+  /// stop it first, and a later start would open a session that no stop closes.
   func start() {
     guard !isActive, !hasStopped else { return }
     isActive = true
@@ -28,7 +30,7 @@ extension DevicePipeline {
     }
   }
 
-  /// Stop pipeline and clean up resources.
+  /// Stops the pipeline and releases its resources.
   ///
   /// Only the first stop tears down: it reports ownership, neutralizes output and ends the
   /// controller. A repeated stop, such as an admission rollback that raced a detach, only keeps
@@ -60,7 +62,10 @@ extension DevicePipeline {
     await neutralizeOutput()
     await closeUSBCommandSession()
     await notifyControllerDidStop()
-    if let handle { await sendUSBShutdownWrites(handle: handle) }
+    if let handle {
+      await sendUSBPowerOffWrites(handle: handle)
+      await sendUSBShutdownWrites(handle: handle)
+    }
     await handle?.close()
     driver.resetProtocolState()
     if shouldAwaitRunTask { await task?.value }
@@ -71,6 +76,7 @@ extension DevicePipeline {
     print("[DevicePipeline] Stopped: \(identifier)")
   }
 
+  /// Starts the task of a new USB run for `device`; does nothing while the pipeline is inactive.
   func startUSBRun(device: USBTransportDevice) {
     guard isActive else { return }
     usbRunGeneration &+= 1
@@ -78,19 +84,27 @@ extension DevicePipeline {
     runTask = Task { await self.startUSBPipeline(device: device, generation: generation) }
   }
 
-  /// Feed HID input report data (called by DeviceManager for class 0x03 devices).
+  /// Feeds one HID input report to the pipeline, as the device manager does for a class 0x03
+  /// controller.
   ///
-  /// `laterReportQueued` tells that a later report of this controller already waits; an input
-  /// that changes only analog controls is then left for that report to publish.
+  /// `laterReportQueued` tells that a later report of this controller already waits; an input that
+  /// changes only analog controls is then left for that report to publish.
+  ///
+  /// - Returns: The HID writes that a change of the input connection asks for, then the writes
+  ///   the driver deferred while it parsed (the Wii Remote's memory exchanges, IR setup included).
   @discardableResult
   func feedHIDData(_ data: Data, laterReportQueued: Bool = false) async -> [PhysicalOutputWrite] {
     guard isActive else { return [] }
     appendToPacketLog(bytes: Array(data), direction: .received)
     var connectionWrites: [PhysicalOutputWrite] = []
+    driver.setPointerInputWanted(
+      (dispatcher as? any PointerInputDemand)?.wantsPointerInput(from: identifier) == true
+    )
     do {
       let receivedAt = uptimeNanoseconds()
       let event = try parseReport(data, receivedAt: receivedAt)
-      connectionWrites = await handleInputConnectionStateChangeIfNeeded()
+      connectionWrites =
+        await handleInputConnectionStateChangeIfNeeded() + driver.drainPendingWrites()
       if inputConnectionActive {
         await handleParsedEvent(event, now: receivedAt, laterReportQueued: laterReportQueued)
       }
@@ -101,16 +115,22 @@ extension DevicePipeline {
     return connectionWrites
   }
 
-  /// Whether the startup player indicator is due, true once. The caller asks after an input
-  /// report, because a USB Sixaxis ignores the LED report until it streams input.
+  /// Whether the startup player indicator is due, true once.
+  ///
+  /// The caller asks after an input report, because a USB Sixaxis ignores the LED report until it
+  /// streams input.
   func takeStartupPlayerIndicatorDue() -> Bool {
     guard startupPlayerIndicatorPending else { return false }
     startupPlayerIndicatorPending = false
     return true
   }
 
+  /// The driver's session plan with the bound record's tuning applied.
   func sessionPlan() -> DriverSessionPlan { plan }
 
+  /// Hands a feature read reply to the driver.
+  ///
+  /// - Returns: False when the pipeline is inactive or the driver rejects the reply.
   func consumeFeatureReply(_ data: Data, request: PhysicalHIDFeatureReadRequest) -> Bool {
     guard isActive else { return false }
     return driver.consumeFeatureReply(data, request: request)
@@ -126,6 +146,7 @@ extension DevicePipeline {
     return resolvedStartupWrites(phase: .startup) + driver.startupWrites() + slot
   }
 
+  /// The startup recovery writes of the driver; none while the pipeline is inactive.
   func hidStartupRecoveryWrites() -> [PhysicalOutputWrite] {
     guard isActive else { return [] }
     return driver.startupRecoveryWrites()
@@ -136,11 +157,13 @@ extension DevicePipeline {
     !observesOnly && plan.requiresStartupOutput
   }
 
+  /// The feature reads that the driver makes at startup; none while the pipeline is inactive.
   func hidStartupFeatureReads() -> [PhysicalHIDFeatureReadRequest] {
     guard isActive else { return [] }
     return driver.startupFeatureReads()
   }
 
+  /// The activation writes of the driver; none while the pipeline is inactive.
   func hidActivationWrites() -> [PhysicalOutputWrite] {
     guard isActive else { return [] }
     return driver.activationWrites()
@@ -153,8 +176,9 @@ extension DevicePipeline {
     return resolvedStartupWrites(phase: .activation)
   }
 
-  /// The HID startup writes of `phase` for the observed host transport. A record that carries
-  /// HID startup writes replaces the family description's.
+  /// The HID startup writes of `phase` for the observed host transport.
+  ///
+  /// A record that carries HID startup writes replaces the family description's.
   func resolvedStartupWrites(phase: StartupPhase) -> [PhysicalOutputWrite] {
     guard let binding else { return [] }
     let recordWrites = binding.record?.startupWrites ?? []
@@ -169,28 +193,36 @@ extension DevicePipeline {
     return writes.filter { $0.applies(to: interface?.hostTransport) }.map(\.write)
   }
 
+  /// The write that asks the controller whether its input connection is up; nil when the driver has
+  /// none.
   func hidPresenceRequestWrite() -> PhysicalOutputWrite? { driver.presenceRequestWrite() }
 
+  /// Ends the startup recovery of the driver.
   func expireHIDStartupRecovery() { driver.expireStartupRecovery() }
 
-  /// Feed one descriptor-decoded value to the Generic HID fallback.
+  /// Feeds one descriptor-decoded value to the Generic HID fallback.
   func feedHIDElementValue(_ value: HIDElementValue) async {
     guard isActive, inputConnectionActive else { return }
     let receivedAt = uptimeNanoseconds()
     await handleParsedEvent(parseElementValue(value, receivedAt: receivedAt), now: receivedAt)
   }
 
+  /// Whether the session plan holds output until the input connection is up.
   func requiresInputConnectionBeforeOutput() -> Bool {
     plan.requiresInputConnectionBeforeOutput
   }
 
+  /// Whether the pipeline has a connected controller.
   func hasConnectedController() -> Bool { inputConnectionActive }
 
+  /// The deactivation writes of the driver; none while the plan waits for an input connection that
+  /// is not up.
   func hidDeactivationWrites() -> [PhysicalOutputWrite] {
     if requiresInputConnectionBeforeOutput(), !inputConnectionActive { return [] }
     return driver.deactivationWrites()
   }
 
+  /// The capabilities of the controller as the driver reports them.
   func capabilities() -> ControllerCapabilities { driver.capabilities }
 
   /// For an observe-only pipeline, only what its native allowance names: macOS owns the rest.
@@ -198,6 +230,7 @@ extension DevicePipeline {
     macOSOwnedOutput?.narrowing(driver.outputCapabilities) ?? driver.outputCapabilities
   }
 
+  /// Whether the controller has a rumble output that OJD may drive.
   func supportsPhysicalRumble() -> Bool { physicalOutputCapabilities().supportsRumble }
 
   // MARK: - Input state and packet log
@@ -208,10 +241,12 @@ extension DevicePipeline {
     state.connection = currentConnectionState()
     return state
   }
+  /// The state of the controller session.
   func controllerSessionState() -> ControllerSessionState { sessionState }
-  /// Link and power state: transport and backend from the binding, presence from this session.
+  /// The link and power state of the controller.
   ///
-  /// The controller-side link comes from evidence only: a receiver variant, a cabled variant, a
+  /// The transport and backend come from `binding`, the presence from this session. The
+  /// controller-side link comes from evidence only: a receiver variant, a cabled variant, a
   /// Bluetooth host link (the pad itself is the Bluetooth peer), or an observed physical link. A
   /// USB host link alone can be a vendor radio dongle, so it leaves the transport unknown.
   func connectionState(
@@ -234,11 +269,14 @@ extension DevicePipeline {
       transport: transport,
       backend: binding.accessBackend,
       isConnected: inputConnectionActive,
-      power: currentPower ?? .unknown
+      power: currentPower ?? .unknown,
+      wiiRemote: currentWiiRemote
     )
   }
+  /// The result of the latest startup output; nil before any.
   func startupCommandStatus() -> String? { startupOutputStatus }
 
+  /// Records `status` as the result of the startup output.
   func recordStartupOutputStatus(_ status: String) { startupOutputStatus = status }
   /// Returns captured packets and renews the capture lease; reading is what enables capture.
   func getPacketLog() -> [PacketLogEntry] {
@@ -247,8 +285,9 @@ extension DevicePipeline {
   }
 
   /// Announces a status change once the input reports are overdue, because the stale state of
-  /// ``inputHealth()`` follows time and no event announces it. One watch runs at a time; a later
-  /// report arms it again after it fires.
+  /// ``inputHealth()`` follows time and no event announces it.
+  ///
+  /// One watch runs at a time; a later report arms it again after it fires.
   func armStaleWatch() {
     guard staleWatchTask == nil, let timeout = plan.inputReportLivenessTimeoutNanoseconds else {
       return
@@ -266,17 +305,26 @@ extension DevicePipeline {
     }
   }
 
+  /// The uptime at which the input reports become overdue by `timeout`; nil when monitoring has not
+  /// begun.
   private func staleDeadline(timeout: UInt64) -> UInt64? {
     (lastLiveInputReportNanoseconds ?? inputHealthMonitoringStartedNanoseconds).map {
       $0 &+ timeout
     }
   }
 
+  /// Posts a service status change for the overdue input reports and clears the watch.
   private func announceStale() {
     staleWatchTask = nil
     NotificationCenter.postServiceStatusChanged(from: self)
   }
 
+  /// The freshness and recovery state of the controller's input reports.
+  ///
+  /// A session that has read no input yet is awaiting input, and stale once the liveness timeout
+  /// passes. A stale or waiting session has a failure reason that tells the likely cause: reports
+  /// arrive but their freshness does not advance, the guide button was not pressed, or no reports
+  /// arrive.
   func inputHealth() -> ControllerInputHealth {
     let now = uptimeNanoseconds()
     let reference = lastLiveInputReportNanoseconds ?? inputHealthMonitoringStartedNanoseconds
@@ -290,11 +338,13 @@ extension DevicePipeline {
       age >= timeout
     {
       state = .stale
+    } else if lastObservedInputReportNanoseconds == nil {
+      state = .awaitingInput
     } else {
       state = .healthy
     }
     let failureReason: ControllerInputHealthFailureReason?
-    if state == .healthy {
+    if state == .healthy || state == .awaitingInput {
       failureReason = nil
     } else if let timeout = plan.inputReportLivenessTimeoutNanoseconds,
       let observationAge, observationAge < timeout
@@ -314,6 +364,8 @@ extension DevicePipeline {
     )
   }
 
+  /// Sets the foreground gate: closing it neutralizes the output, and opening it hides input held
+  /// at that moment until the controller returns to neutral or changes it.
   func setExternalOutputAllowed(_ allowed: Bool) async {
     let changed = externalOutputAllowed != allowed
     guard changed else { return }
@@ -341,6 +393,6 @@ extension DevicePipeline {
     }
   }
 
-  /// Called when controller teardown starts; later writes must come from the teardown scope.
+  /// Limits output to what the teardown scope writes once controller teardown starts.
   func acceptOnlyTeardownOutput() { acceptsOnlyTeardownOutput = true }
 }

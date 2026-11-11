@@ -4,10 +4,15 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The Raw Packet Capture section of the developer tools: the capture state, the packet filter,
+  /// the Start, Stop, Clear, Copy All and Export buttons, and the packet table.
   struct DeveloperPacketCaptureView: View {
+    /// The state of the developer tools.
     @ObservedObject
     var model: DeveloperToolsViewModel
 
+    /// The Packet capture section: the status, the filter, the capture buttons, the packets and a
+    /// sharing warning.
     var body: some View {
       let displayedPackets = model.displayedPackets
       Section(OJDLocalized.string("ui.developer.packetCapture")) {
@@ -46,6 +51,7 @@
       }
     }
 
+    /// The label of the capture state.
     @ViewBuilder
     private var captureStatus: some View {
       switch model.captureState {
@@ -81,6 +87,7 @@
       }
     }
 
+    /// Returns the packet table, or a note that no packet has arrived.
     @ViewBuilder
     private func packetList(_ packets: [PacketLogEntry]) -> some View {
       if packets.isEmpty {
@@ -99,6 +106,7 @@
       }
     }
 
+    /// Returns a label with the SF Symbol `symbol` and `text`, read by VoiceOver as one element.
     private func statusLabel(_ text: String, symbol: String) -> some View {
       HStack(spacing: 6) {
         OJDSystemSymbol(
@@ -110,11 +118,21 @@
     }
   }
 
+  /// The table of packets: each packet's time since the first one, direction, length and bytes.
   private struct DeveloperPacketTable: NSViewRepresentable {
+    /// The packets to list.
     let packets: [PacketLogEntry]
 
+    /// Creates the data source and delegate of the table.
+    ///
+    /// - Returns: The coordinator.
     func makeCoordinator() -> Coordinator { Coordinator() }
 
+    /// Creates the scroll view that holds the table with its time, direction, bytes and data
+    /// columns.
+    ///
+    /// - Parameter context: The context of the representable, whose coordinator supplies the rows.
+    /// - Returns: The scroll view.
     func makeNSView(context: Context) -> NSScrollView {
       let table = NSTableView()
       table.headerView = NSTableHeaderView()
@@ -147,16 +165,37 @@
       return scrollView
     }
 
+    /// Gives the table the packets and reloads it.
+    ///
+    /// - Parameters:
+    ///   - scrollView: The scroll view that holds the table.
+    ///   - context: The context of the representable, whose coordinator supplies the rows.
     func updateNSView(_ scrollView: NSScrollView, context: Context) {
       context.coordinator.packets = packets
       (scrollView.documentView as? NSTableView)?.reloadData()
     }
 
+    /// Supplies the rows of the packet table.
     final class Coordinator: NSObject, NSTableViewDataSource, NSTableViewDelegate {
+      /// The packets to list.
       var packets: [PacketLogEntry] = []
 
+      /// Returns the number of packets.
+      ///
+      /// - Parameter tableView: The packet table.
+      /// - Returns: The number of packets.
       func numberOfRows(in tableView: NSTableView) -> Int { packets.count }
 
+      /// Returns the cell that shows one field of a packet.
+      ///
+      /// The column picks the field: the time since the first packet, the direction, the length or
+      /// the bytes.
+      ///
+      /// - Parameters:
+      ///   - tableView: The packet table.
+      ///   - tableColumn: The column of the cell.
+      ///   - row: The index of the packet.
+      /// - Returns: The cell.
       func tableView(
         _ tableView: NSTableView,
         viewFor tableColumn: NSTableColumn?,

@@ -37,7 +37,8 @@ struct ControllerDomainTests {
       "Auxiliary1", "Auxiliary2", "Auxiliary3", "Auxiliary4", "Auxiliary5", "Auxiliary6",
       "Auxiliary7", "Auxiliary8", "LeftStickX", "LeftStickY", "RightStickX", "RightStickY",
       "LeftStickTouch", "RightStickTouch", "LeftTrackpadClick", "RightTrackpadClick",
-      "LeftTrackpadTouch", "RightTrackpadTouch",
+      "LeftTrackpadTouch", "RightTrackpadTouch", "PointerX", "PointerY", "PointerTracking",
+      "LeftGripTouch", "RightGripTouch",
     ]
 
     #expect(Control.allCases.map(\.rawValue) == standardControls)

@@ -17,7 +17,9 @@ extension AppleGameControllerSyntheticHID {
     matching.merging(ioHIDMatchingExclusion) { _, new in new }
   }
 
-  /// Reads IORegistry properties on `service`. Does not `IOServiceOpen`.
+  /// Reads IORegistry properties on `service`.
+  ///
+  /// Does not `IOServiceOpen`.
   package static func isSynthetic(service: io_service_t) -> Bool {
     guard service != 0 else { return false }
     var className = [CChar](repeating: 0, count: 128)
@@ -36,6 +38,8 @@ extension AppleGameControllerSyntheticHID {
     )
   }
 
+  /// Tells whether `device` is a synthetic HID device that Apple's GameController framework
+  /// creates.
   package static func isSynthetic(device: IOHIDDevice) -> Bool {
     let service = IOHIDDeviceGetService(device)
     if service != 0, isSynthetic(service: service) { return true }
@@ -44,15 +48,18 @@ extension AppleGameControllerSyntheticHID {
     )
   }
 
+  /// Reads the IORegistry property `key` of `service`.
   private static func cfProperty(_ service: io_service_t, _ key: String) -> Any? {
     IORegistryEntryCreateCFProperty(service, key as CFString, kCFAllocatorDefault, 0)?
       .takeRetainedValue()
   }
 
+  /// Reads the string IORegistry property `key` of `service`.
   private static func stringProperty(_ service: io_service_t, _ key: String) -> String? {
     cfProperty(service, key) as? String
   }
 
+  /// Returns the plug-in paths that `service` lists in `IOCFPlugInTypes`.
   private static func pluginPaths(_ service: io_service_t) -> [String] {
     guard let types = cfProperty(service, "IOCFPlugInTypes") as? [String: String] else { return [] }
     return Array(types.values)

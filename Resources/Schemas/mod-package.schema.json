@@ -1,14 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/mod-package.schema.json",
+  "$id": "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/mod-package.schema.json",
   "title": "OpenJoystickDriver mod package manifest",
-  "description": "The mod.json of a package folder. The folder holds Controllers/, Profiles/, and VirtualDevices/; each list names the files of one document kind in the subfolder that holds it.",
+  "description": "The manifest of a mod package.",
   "type": "object",
   "additionalProperties": false,
   "required": ["apiVersion", "kind", "name", "version", "author", "requires"],
   "properties": {
     "apiVersion": {
-      "const": "openjoystickdriver/v1alpha1"
+      "const": "openjoystickdriver/v1alpha3"
     },
     "kind": {
       "const": "ModPackage"
@@ -16,7 +16,7 @@
     "name": {
       "type": "string",
       "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
-      "description": "Lowercase letters, digits, and hyphens. The installed folder has this name."
+      "description": "The package name, which names the installed folder."
     },
     "version": {
       "$ref": "#/$defs/semver"
@@ -41,31 +41,38 @@
       }
     },
     "controllers": {
-      "description": "Controller files in Controllers/, named vvvv-pppp.json after the model they describe.",
+      "description": "The controller files of the package, one per model.",
       "$ref": "#/$defs/files",
       "items": {
-        "pattern": "^[0-9a-f]{4}-[0-9a-f]{4}\\.json$"
+        "pattern": "^[0-9a-f]{4}-[0-9a-f]{4}\\.plist$"
       }
     },
     "patches": {
-      "description": "ControllerPatch files in Controllers/, named vvvv-pppp.patch.json, model-vvvv-pppp.patch.json, or all.patch.json after the selector they carry.",
+      "description": "The controller patch files of the package, one per selector.",
       "$ref": "#/$defs/files",
       "items": {
-        "pattern": "^((model-)?[0-9a-f]{4}-[0-9a-f]{4}\\.patch\\.json|all\\.patch\\.json)$"
+        "pattern": "^((model-)?[0-9a-f]{4}-[0-9a-f]{4}\\.patch\\.plist|all\\.patch\\.plist)$"
       }
     },
     "profiles": {
-      "description": "Files in Profiles/.",
+      "description": "The profile files of the package.",
       "$ref": "#/$defs/files",
       "items": {
-        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*\\.json$"
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*\\.plist$"
       }
     },
     "virtualDevices": {
-      "description": "VirtualDevice files in VirtualDevices/, named vvvv-pppp.json or vvvv-pppp-U-<unit>.json after the match they cover.",
+      "description": "The virtual device files of the package, one per match.",
       "$ref": "#/$defs/files",
       "items": {
-        "pattern": "^[0-9a-f]{4}-[0-9a-f]{4}(-U-[A-Za-z0-9_-]{16})?\\.json$"
+        "pattern": "^[0-9a-f]{4}-[0-9a-f]{4}(-U-[A-Za-z0-9_-]{16})?\\.plist$"
+      }
+    },
+    "protocols": {
+      "description": "The protocol description files of the package, one per documented family.",
+      "$ref": "#/$defs/files",
+      "items": {
+        "pattern": "^[A-Z][A-Za-z0-9]*\\.plist$"
       }
     }
   },
@@ -81,6 +88,9 @@
     },
     {
       "required": ["virtualDevices"]
+    },
+    {
+      "required": ["protocols"]
     }
   ],
   "$defs": {

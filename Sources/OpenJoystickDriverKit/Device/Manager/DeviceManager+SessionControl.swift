@@ -1,6 +1,14 @@
 import Foundation
 
 extension DeviceManager {
+  /// Suspends the session of `controller` and neutralizes its physical outputs.
+  ///
+  /// The suspension lasts until ``resumeController(_:)``, a physical disconnect or ``stop()``;
+  /// sleep keeps it.
+  ///
+  /// - Returns: The result with the failure ``ControllerSessionMutationFailure/notFound`` when no
+  ///   connected controller matches, and ``ControllerSessionMutationFailure/alreadySuspended``
+  ///   when the session is suspended already.
   public func suspendController(
     _ controller: ControllerReference
   ) async -> ControllerSuspendResult {
@@ -20,6 +28,15 @@ extension DeviceManager {
     return ControllerSuspendResult(state: .suspended)
   }
 
+  /// Resumes the suspended session of `controller`.
+  ///
+  /// The pipeline sends its startup output again first. Each step checks that the pipeline and its
+  /// HID connection are still current, because a detach can replace them while resume awaits. A
+  /// stale or failed resume leaves the session suspended with the failure
+  /// ``ControllerSessionMutationFailure/notFound``.
+  ///
+  /// - Returns: The result with the failure ``ControllerSessionMutationFailure/alreadyActive``
+  ///   when the session is active already.
   public func resumeController(
     _ controller: ControllerReference
   ) async -> ControllerResumeResult {
@@ -76,6 +93,19 @@ extension DeviceManager {
     return ControllerResumeResult(state: .active)
   }
 
+  /// Disconnects a Bluetooth Classic controller at the host and leaves its session suspended.
+  ///
+  /// The session is suspended and OJD's HID input claim released before the disconnect. A failed
+  /// disconnect restores the claim and the earlier session state. A Bluetooth LE link has no
+  /// supported disconnect path: CoreBluetooth cancels only connections the calling app holds, and
+  /// IOBluetooth
+  /// closes only classic baseband links.
+  ///
+  /// - Parameters:
+  ///   - controller: The controller to disconnect.
+  ///   - timeoutNanoseconds: How long to wait for Bluetooth to confirm the disconnection.
+  /// - Returns: The suspended state without a failure on success, and a failure with the step that
+  ///   failed otherwise.
   public func disconnectWirelessController(
     _ controller: ControllerReference,
     timeoutNanoseconds: UInt64 = UInt64(ServiceTimeouts.bluetoothDisconnect * 1_000_000_000)
@@ -176,6 +206,13 @@ extension DeviceManager {
     }
   }
 
+  /// Undoes a failed wireless disconnect and reports `failure` at `stage`.
+  ///
+  /// It reacquires the HID claim when `restoreHIDClaim` is set, then resumes the session when
+  /// `priorState` is active. A restore that fails reports ``WirelessControllerDisconnectStage`` of
+  /// ``WirelessControllerDisconnectStage/restoreHIDClaim`` or
+  /// ``WirelessControllerDisconnectStage/restoreControllerSession`` and leaves the session
+  /// suspended.
   func restoreAfterFailedWirelessDisconnect(
     identifier: LogicalControllerID,
     pipeline: DevicePipeline,
@@ -223,6 +260,7 @@ extension DeviceManager {
     )
   }
 
+  /// Describes a HID claim result as text for a failure detail.
   static func hidClaimFailureDescription(_ result: PhysicalHIDClaimResult) -> String {
     switch result {
     case .released: "released"
@@ -232,6 +270,8 @@ extension DeviceManager {
     }
   }
 
+  /// The upper-case, colon-separated Bluetooth address that `serialNumber` spells, or nil when it
+  /// is not 12 hex digits with only colons or hyphens between them.
   static func bluetoothAddress(from serialNumber: String?) -> String? {
     guard let serialNumber else { return nil }
     let hexadecimal = serialNumber.filter(\.isHexDigit)

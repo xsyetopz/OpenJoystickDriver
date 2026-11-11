@@ -2,10 +2,17 @@ import Foundation
 import OpenJoystickDriverKit
 import OpenJoystickDriverUSB
 
+/// Reads the state of the transport extension from the app bundle and from `systemextensionsctl`.
 package enum ExtensionProbe {
+  /// The bundle identifier of the transport extension.
   package static let extensionID = USBDriverKitExtensionConfiguration.extensionID
+  /// The path of the extension inside an app bundle.
   static let relativePath = "Contents/Library/SystemExtensions/\(extensionID).dext"
 
+  /// Returns the bundle state, the registration, and the embedded and installed versions of the
+  /// extension.
+  ///
+  /// A failure of `systemextensionsctl` makes the registration unavailable.
   package static func currentStatus(bundleURL: URL = Bundle.main.bundleURL) -> ExtensionStatus {
     let bundle = bundleState(in: bundleURL)
     let embedded = embeddedFacts(in: bundleURL)
@@ -32,6 +39,7 @@ package enum ExtensionProbe {
     }
   }
 
+  /// Returns whether the extension is missing from `bundleURL`, present, or has another identifier.
   static func bundleState(in bundleURL: URL) -> ExtensionBundleState {
     let extensionURL = bundleURL.appendingPathComponent(relativePath)
     guard FileManager.default.fileExists(atPath: extensionURL.path) else { return .missing }
@@ -42,6 +50,11 @@ package enum ExtensionProbe {
     return .present
   }
 
+  /// Returns the registration that the output of `systemextensionsctl list` shows.
+  ///
+  /// A matching line with "activated enabled" is active, any other matching line is inactive, and
+  /// no match is absent. A timeout, a failed exit or a truncated output without a match is
+  /// unavailable.
   static func registration(from result: BoundedProcessResult) -> ExtensionRegistrationState {
     if result.timedOut { return .unavailable("systemextensionsctl timed out after 5 seconds.") }
     guard result.terminationStatus == 0 else {
@@ -67,6 +80,8 @@ package enum ExtensionProbe {
     return .absent
   }
 
+  /// Returns the version that the first line of `output` for the extension shows, or nil when the
+  /// line has none.
   static func installedFacts(from output: String) -> ExtensionVersionFacts? {
     guard
       let line = output.components(separatedBy: .newlines).first(where: {
@@ -99,6 +114,8 @@ package enum ExtensionProbe {
     return expression.firstMatch(in: value, range: range)?.range == range
   }
 
+  /// Returns the identifier and versions in the embedded extension's `Info.plist`, or nil when one
+  /// is missing.
   static func embeddedFacts(in bundleURL: URL) -> ExtensionVersionFacts? {
     let url = bundleURL.appendingPathComponent(relativePath)
     guard let info = Bundle(url: url)?.infoDictionary,

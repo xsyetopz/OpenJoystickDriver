@@ -74,7 +74,7 @@ struct SystemWordsTests {
   @Test
   func theDiagnoseDocumentWithOutputPassesTheSchema() throws {
     let document: [String: Any] = [
-      "apiVersion": "openjoystickdriver/v1alpha1", "kind": "Diagnosis", "checks": [],
+      "apiVersion": "openjoystickdriver/v1alpha3", "kind": "Diagnosis", "checks": [],
       "timings": [], "output": "/tmp/support.json",
     ]
 
@@ -95,7 +95,7 @@ struct SystemWordsTests {
   func anUnknownFieldInTheDiagnoseDocumentFailsTheSchema() throws {
     let unknown = "x\(UUID().uuidString.prefix(8).lowercased())"
     let document: [String: Any] = [
-      "apiVersion": "openjoystickdriver/v1alpha1", "kind": "Diagnosis", "checks": [],
+      "apiVersion": "openjoystickdriver/v1alpha3", "kind": "Diagnosis", "checks": [],
       "timings": [], unknown: "/tmp/support.json",
     ]
 

@@ -6,6 +6,7 @@ enum TestNotificationReportError: Error, LocalizedError, Equatable {
   /// The report's outcome is `noAnswer`, which only the service decides when no app answers.
   case noAnswerReported
 
+  /// The localized message of the refusal.
   var errorDescription: String? {
     switch self {
     case .noAnswerReported:
@@ -19,6 +20,7 @@ enum FrameTimingsRequestError: Error, LocalizedError, Equatable {
   /// `lastSeconds` is outside ``FrameTimingRecorder/windowSecondsRange``.
   case invalidRequest
 
+  /// The localized message of the refusal.
   var errorDescription: String? {
     switch self {
     case .invalidRequest:
@@ -37,6 +39,12 @@ extension ApplicationServiceServer {
     }
   }
 
+  /// Dispatches `request` to the handler of its method and encodes the result.
+  ///
+  /// Remapping methods bound the argument and response sizes and report failures as
+  /// ``ApplicationServiceRemappingRPCError``.
+  ///
+  /// - Throws: An error for an unknown method, malformed arguments or a failed handler.
   private func response(to request: LocalServiceRPCRequest) async throws -> LocalServiceRPCResponse
   {
     func decode<Value: Decodable>(_ type: Value.Type) throws -> Value {
@@ -135,6 +143,12 @@ extension ApplicationServiceServer {
           for: value.controller
         )
       )
+    case .playControllerSpeaker:
+      let value = try decode(LocalServiceRPCSpeakerArguments.self)
+      return try send(await playControllerSpeaker(value.audio, for: value.controller))
+    case .stopControllerSpeaker:
+      let value = try decode(LocalServiceRPCDeviceArguments.self)
+      return try send(await stopControllerSpeaker(for: value.controller))
     case .previewPhysicalColor:
       let value = try decode(LocalServiceRPCColorPreviewArguments.self)
       return try send(

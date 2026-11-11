@@ -1,5 +1,6 @@
 /// The command line of `ojd-webrtc-bridge`: its usage text and how its arguments split.
 public enum BridgeCommandLine {
+  /// The text that `--help` prints, and that a bad command line prints to standard error.
   public static let usage = """
     usage: ojd-webrtc-bridge --role host|player [--signal offer|answer] [--socket PATH]
            [--token-name NAME] [--controller ID] [--persona Generic|SDLCompatible]
@@ -9,8 +10,9 @@ public enum BridgeCommandLine {
     peer's from stdin. The player offers by default and the host answers.
     """
 
+  /// The result of splitting the arguments.
   public enum Parsed: Equatable {
-    /// `--help` was given: print `usage` to standard output and exit 0.
+    /// `--help` is among the arguments: print `usage` to standard output and exit 0.
     case help
     /// Each `--name value` pair, grouped by name.
     case options([String: [String]])
@@ -18,6 +20,12 @@ public enum BridgeCommandLine {
     case invalid
   }
 
+  /// Splits the arguments into `--name value` pairs.
+  ///
+  /// `--help` anywhere in the arguments wins over every other argument.
+  ///
+  /// - Parameter arguments: The arguments without the program name.
+  /// - Returns: `.help` when `--help` is present, `.invalid` for a bad argument, else the options.
   public static func parse(_ arguments: [String]) -> Parsed {
     if arguments.contains("--help") { return .help }
     var parsed: [String: [String]] = [:]

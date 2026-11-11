@@ -241,6 +241,9 @@ system ownership=macos
 ## 046D:F301
 raw-access
 
+## 04B4:2412
+system ownership=macos
+
 ## 0502:1305
 raw-access
 
@@ -278,6 +281,12 @@ system ownership=macos
 raw-access
 
 ## 056E:2013
+system ownership=macos
+
+## 057E:0306
+system ownership=macos
+
+## 057E:0330
 system ownership=macos
 
 ## 057E:2006
@@ -1129,6 +1138,9 @@ raw-access
 ## 102C:FF0C
 raw-access
 
+## 1038:1420
+system ownership=macos
+
 ## 1038:1430
 raw-access
 
@@ -1870,8 +1882,14 @@ system ownership=macos
 ## 2DC8:301C
 system ownership=macos
 
+## 2DC8:301D
+system ownership=macos
+
 ## 2DC8:3106
 raw-access
+
+## 2DC8:3107
+system ownership=macos
 
 ## 2DC8:3109
 raw-access
@@ -1884,6 +1902,15 @@ raw-access
 
 ## 2DC8:6001
 raw-access
+
+## 2DC8:6012
+system ownership=macos
+
+## 2DC8:6013
+system ownership=macos
+
+## 2DC8:901B
+system ownership=macos
 
 ## 2E24:0423
 raw-access
@@ -2058,6 +2085,9 @@ raw-access
 
 ## 3767:0101
 raw-access
+
+## 37D7:2401
+system ownership=macos
 
 ## 37D7:2501
 raw-access

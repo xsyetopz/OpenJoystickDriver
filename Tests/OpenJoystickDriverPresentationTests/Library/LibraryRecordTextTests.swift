@@ -10,7 +10,7 @@ import Testing
 struct LibraryRecordTextTests {
   private static let document = """
     {
-      "apiVersion": "openjoystickdriver/v1alpha1",
+      "apiVersion": "openjoystickdriver/v1alpha3",
       "kind": "Controller",
       "vendorID": 13629,
       "productID": 4296,
@@ -102,9 +102,10 @@ struct LibraryRecordTextTests {
     #expect(!shown.contains("0x"))
   }
 
-  /// The WCAG contrast ratio of `color` against `textBackgroundColor` in `appearance`. AppKit
-  /// gives the light or dark appearance for a high-contrast name, so the background is the one
-  /// of the light or dark appearance.
+  /// The WCAG contrast ratio of `color` against `textBackgroundColor` in `appearance`.
+  ///
+  /// AppKit gives the light or dark appearance for a high-contrast name, so the background is the
+  /// one of the light or dark appearance.
   private static func contrast(_ color: NSColor, in appearance: NSAppearance.Name) throws -> Double
   {
     let shown = try #require(NSAppearance(named: appearance))

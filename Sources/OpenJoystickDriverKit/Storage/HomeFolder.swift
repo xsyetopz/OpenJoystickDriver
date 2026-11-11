@@ -1,10 +1,13 @@
 import Foundation
 
 /// How text for a person shows paths under the user's home folder: as `~`, so output and screens
-/// stay short and leave out the account name. Machine-readable output keeps absolute paths.
+/// stay short and leave out the account name.
+///
+/// Machine-readable output keeps absolute paths.
 public enum HomeFolder {
-  /// `text` with each path under `home` written as `~`. A longer folder name that starts with
-  /// `home` is left alone.
+  /// `text` with each path under `home` written as `~`.
+  ///
+  /// A longer folder name that starts with `home` is left alone.
   public static func redacting(_ text: String, home: String) -> String {
     let home = home.hasSuffix("/") ? String(home.dropLast()) : home
     guard !home.isEmpty,

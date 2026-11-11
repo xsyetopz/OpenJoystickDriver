@@ -9,11 +9,17 @@ import Foundation
 /// Reassembled packets are either the wired `0x0001`-versioned layout or the chunked state packet,
 /// which the driver rewrites into the 64-byte wired state report its wired decoder reads.
 enum SteamBluetooth {
+  /// The report ID of a segment.
   static let reportID: UInt8 = 0x03
+  /// The length of a segment in bytes.
   static let segmentLength = 20
+  /// The payload bytes in a segment.
   static let segmentPayloadLength = 18
+  /// The header bit that marks a data segment.
   static let dataFlag: UInt8 = 0x80
+  /// The header bit that marks the last segment of a packet.
   static let lastFlag: UInt8 = 0x40
+  /// The header bits that hold the segment number.
   static let segmentNumberMask: UInt8 = 0x07
 
   /// Splits one feature command into report-`0x03` segments.
@@ -33,7 +39,9 @@ enum SteamBluetooth {
 
 /// Reassembles report-`0x03` segments into one packet, as SDL's packet assembler does.
 struct SteamBluetoothAssembler {
+  /// The payload bytes of the segments received so far.
   private var buffer: [UInt8] = []
+  /// The number of the next segment.
   private var expectedSegment: UInt8 = 0
 
   /// The completed packet, or nil while segments are still missing or after a framing error.
@@ -59,6 +67,7 @@ struct SteamBluetoothAssembler {
     return buffer
   }
 
+  /// Drops the segments received so far.
   mutating func reset() {
     buffer = []
     expectedSegment = 0
@@ -67,44 +76,77 @@ struct SteamBluetoothAssembler {
 
 /// Keeps the chunked Bluetooth state, since each packet carries only the chunks that changed.
 struct SteamBluetoothState {
+  /// The bits of the chunk mask, one per field of a chunked state packet.
   private enum Chunk {
+    /// The first button bytes.
     static let buttons0 = 0x0010
+    /// The triggers.
     static let triggers = 0x0020
+    /// The second button bytes.
     static let buttons1 = 0x0040
+    /// The left stick.
     static let leftStick = 0x0080
+    /// The left pad.
     static let leftPad = 0x0100
+    /// The right pad.
     static let rightPad = 0x0200
+    /// The accelerometer.
     static let accel = 0x0400
+    /// The gyro.
     static let gyro = 0x0800
+    /// The orientation quaternion.
     static let quaternion = 0x1000
   }
 
+  /// The offsets of the fields in the 64-byte wired report.
   private enum Wired {
+    /// The packet number.
     static let packetNumber = 4
+    /// The button bytes.
     static let buttons = 8
+    /// The triggers.
     static let leftTrigger = 11
+    /// The left stick or left pad axes.
     static let leftAxes = 16
+    /// The right pad axes.
     static let rightPad = 20
+    /// The accelerometer vector.
     static let accel = 28
+    /// The gyro vector.
     static let gyro = 34
+    /// The orientation quaternion.
     static let quaternion = 40
+    /// The data type of the IMU vector in a type 7 packet.
     static let bleGyroType = 24
+    /// The IMU vector in a type 7 packet.
     static let bleGyro = 25
+    /// The button bit that shows a finger on the left pad.
     static let leftPadFinger: UInt8 = 0x08
+    /// The button bit that marks the left axis pair as the pad's while the stick keeps its value.
     static let interleavedLeft: UInt8 = 0x80
   }
 
+  /// The low nibble of the first byte of a chunked state packet.
   private static let chunkedStateType: UInt8 = 4
+  /// The message type of a wired-layout packet that carries one IMU vector.
   private static let bleStateMessageID: UInt8 = 7
+  /// The gyro data type of a quaternion vector.
   private static let gyroTypeQuaternion: UInt8 = 1
+  /// The gyro data type of an accelerometer vector.
   private static let gyroTypeAccel: UInt8 = 2
+  /// The gyro data type of a gyro vector.
   private static let gyroTypeGyro: UInt8 = 3
 
+  /// The latest wired report, which each packet updates.
   private var report: [UInt8] = Self.emptyReport
+  /// The latest left stick bytes, X then Y.
   private var leftStick: [UInt8] = [0, 0, 0, 0]
+  /// The latest left pad bytes, X then Y.
   private var leftPad: [UInt8] = [0, 0, 0, 0]
+  /// The counter written to the wired report's packet number field.
   private var packetNumber: UInt32 = 0
 
+  /// A wired state report with no input.
   private static var emptyReport: [UInt8] {
     var bytes = [UInt8](repeating: 0, count: steamControllerReportLength)
     bytes[0] = steamControllerReportPrefix0
@@ -115,6 +157,7 @@ struct SteamBluetoothState {
   }
 
   /// The wired 64-byte report for one reassembled packet, or nil for a packet with no state.
+  ///
   /// A chunked packet also returns its left stick, which the wired report carries only while the
   /// left pad is idle.
   mutating func wiredReport(
@@ -152,6 +195,8 @@ struct SteamBluetoothState {
     return next
   }
 
+  /// Applies the chunks of `packet` to the held wired report and returns it; nil when a chunk is
+  /// cut short.
   private mutating func chunkedReport(_ packet: [UInt8]) -> [UInt8]? {
     let mask = Int(packet[0] & 0xF0) | Int(packet[1]) << 8
     var cursor = 2

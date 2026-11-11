@@ -1,18 +1,25 @@
 import Foundation
 
 /// Decodes the output reports a consumer sends to a virtual format into the output command it
-/// requests. The Xbox One GIP rumble report (report ID 9) and the Xbox Series Bluetooth rumble
-/// report (report ID 3) are the only output reports any format declares; the generic format is
-/// input-only.
+/// requests.
+///
+/// The Xbox One GIP rumble report (report ID 9) and the Xbox Series Bluetooth rumble report
+/// (report ID 3) are the only output reports any format declares; the generic format is input-only.
 enum ConsumerOutputCodec {
+  /// The report ID of the Xbox One GIP rumble report.
   static let xboxOneReportID = XboxOneGIPHIDDescriptor.rumbleReportID
+  /// The size of the Xbox One GIP rumble report after its ID.
   static let xboxOneReportPayloadSize = XboxOneGIPHIDDescriptor.rumbleReportPayloadSize
+  /// The report ID of the Xbox Series Bluetooth rumble report.
   static let xboxSeriesReportID = XboxSeriesBluetoothHIDDescriptor.rumbleReportID
+  /// The size of the Xbox Series Bluetooth rumble report after its ID.
   static let xboxSeriesReportPayloadSize = XboxSeriesBluetoothHIDDescriptor.rumbleReportPayloadSize
 
   /// The GIP rumble packet's length field and sub-command, which follow its options and sequence.
   private static let gipRumbleLength: UInt8 = 9
+  /// The sub-command of the GIP rumble packet.
   private static let gipRumbleSubCommand: UInt8 = 0
+  /// The index in the GIP rumble report where the rumble body starts.
   private static let gipRumbleBodyOffset = 4
 
   /// Duration of a rumble report that carries none.
@@ -21,15 +28,21 @@ enum ConsumerOutputCodec {
   /// Motor bits of the GIP Direct Motor Command ([MS-GIPUSB] Table 56), which the Xbox Series
   /// Bluetooth report shares (xpadneo `enum xpadneo_rumble_motors`).
   private static let rumbleActivationAllMotors: UInt8 = 0x0F
+  /// The activation bit of the right motor.
   private static let rumbleActivationRight: UInt8 = 0x01
+  /// The activation bit of the left motor.
   private static let rumbleActivationLeft: UInt8 = 0x02
+  /// The activation bit of the right trigger motor.
   private static let rumbleActivationRightTrigger: UInt8 = 0x04
+  /// The activation bit of the left trigger motor.
   private static let rumbleActivationLeftTrigger: UInt8 = 0x08
+  /// The milliseconds that one unit of the duration byte stands for.
   private static let rumbleDurationByteMultiplier = 10
 
-  /// The command an output report addressed to `format`'s output report requests. A report
-  /// `format` does not declare is unsupported; one whose length or header does not match its
-  /// report ID is malformed.
+  /// The command that an output report requests, read in the output report format of `format`.
+  ///
+  /// A report `format` does not declare is unsupported; one whose length or header does not match
+  /// its report ID is malformed.
   static func decode(
     _ request: VirtualHostReportRequest,
     in format: some VirtualGamepadReportFormat

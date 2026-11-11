@@ -46,7 +46,13 @@ struct AccessGrantStoreTests {
 
       #expect(try store.load() == file)
       let text = try String(contentsOf: store.url, encoding: .utf8)
-      #expect(try JSONSchemaFiles.issues(in: text, against: "access-grants.schema.json").isEmpty)
+      #expect(
+        try JSONSchemaFiles.issues(
+          inPropertyList: Data(text.utf8),
+          against: "access-grants.schema.json"
+        )
+        .isEmpty
+      )
       let mode = try FileManager.default.attributesOfItem(atPath: store.url.path)[.posixPermissions]
       #expect(mode as? Int == 0o600)
     }
@@ -102,9 +108,9 @@ struct AccessGrantStoreTests {
           + #""scopes":[],"#
           + #""grantedAt":"x","path":"/x"}],"tokens":[],"web":{"enabled":false,"port":47614}}"#,
       ] {
-        try Data(text.utf8).write(to: store.url)
+        try PropertyListFixture.bytes(json: text).write(to: store.url)
         #expect(throws: AccessGrantStoreError.damaged) { try store.load() }
-        #expect(try String(contentsOf: store.url, encoding: .utf8) == text)
+        #expect(try Data(contentsOf: store.url) == PropertyListFixture.bytes(json: text))
       }
     }
   }
@@ -131,10 +137,10 @@ struct AccessGrantStoreTests {
         + #""enabled":true,"grants":[{\#(grant),"#
         + #""scopes":["Read"],"grantedAt":"x","path":"/a.out"}],"tokens":[],"#
         + #""web":{"enabled":false,"port":47614}}"#
-      try Data(text.utf8).write(to: store.url)
+      try PropertyListFixture.bytes(json: text).write(to: store.url)
 
       #expect(throws: AccessGrantStoreError.damaged) { try store.load() }
-      #expect(try String(contentsOf: store.url, encoding: .utf8) == text)
+      #expect(try Data(contentsOf: store.url) == PropertyListFixture.bytes(json: text))
     }
   }
 
@@ -151,10 +157,10 @@ struct AccessGrantStoreTests {
       let text =
         #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"\#(AccessGrantFile.kind)","#
         + #""enabled":true,"grants":[],"# + rest + "}"
-      try Data(text.utf8).write(to: store.url)
+      try PropertyListFixture.bytes(json: text).write(to: store.url)
 
       #expect(throws: AccessGrantStoreError.damaged) { try store.load() }
-      #expect(try String(contentsOf: store.url, encoding: .utf8) == text)
+      #expect(try Data(contentsOf: store.url) == PropertyListFixture.bytes(json: text))
     }
   }
 
@@ -173,6 +179,11 @@ struct AccessGrantStoreTests {
         "apiVersion unsupported.example/v9 is not supported; \(supported)"
       ),
       (
+        #"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"AccessGrants","# + body,
+        .unsupportedAPIVersion,
+        "apiVersion openjoystickdriver/v1alpha1 is not supported; \(supported)"
+      ),
+      (
         #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","# + body,
         nil, "no kind found; expected AccessGrants"
       ),
@@ -184,18 +195,18 @@ struct AccessGrantStoreTests {
     try withStore { store, directory in
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       for (text, code, reason) in cases {
-        try Data(text.utf8).write(to: store.url)
+        try PropertyListFixture.bytes(json: text).write(to: store.url)
         do {
           _ = try store.load()
           Issue.record("the header was accepted")
         } catch let AccessGrantStoreError.unsupported(problem) {
           #expect(problem.code == code)
-          #expect(problem.message == reason)
+          #expect(problem.message == "\(store.url.path): \(reason)")
           #expect(
             AccessGrantStoreError.unsupported(problem).code == code ?? .damagedAccessGrants
           )
         }
-        #expect(try String(contentsOf: store.url, encoding: .utf8) == text)
+        #expect(try Data(contentsOf: store.url) == PropertyListFixture.bytes(json: text))
       }
     }
   }
@@ -221,7 +232,13 @@ struct AccessGrantStoreTests {
       let text = try String(contentsOf: store.url, encoding: .utf8)
       #expect(!text.contains(token))
       #expect(text.contains(grant.tokenSHA256))
-      #expect(try JSONSchemaFiles.issues(in: text, against: "access-grants.schema.json").isEmpty)
+      #expect(
+        try JSONSchemaFiles.issues(
+          inPropertyList: Data(text.utf8),
+          against: "access-grants.schema.json"
+        )
+        .isEmpty
+      )
     }
   }
 
@@ -306,26 +323,26 @@ struct AccessGrantStoreTests {
           #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"\#(AccessGrantFile.kind)","#
           + #""enabled":true,"grants":[],"tokens":[\#(tokens)],"#
           + #""web":{"enabled":false,"port":47614}}"#
-        try Data(text.utf8).write(to: store.url)
+        try PropertyListFixture.bytes(json: text).write(to: store.url)
         #expect(throws: AccessGrantStoreError.damaged, "\(text)") { try store.load() }
       }
       for port in [0, 80, 70_000] {
         let text =
           #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"\#(AccessGrantFile.kind)","#
           + #""enabled":true,"grants":[],"tokens":[],"web":{"enabled":true,"port":\#(port)}}"#
-        try Data(text.utf8).write(to: store.url)
+        try PropertyListFixture.bytes(json: text).write(to: store.url)
         #expect(throws: AccessGrantStoreError.damaged, "\(text)") { try store.load() }
       }
       // The port is chosen at the first enable, so only a WebSocket that was never on lacks one.
       let off =
         #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"\#(AccessGrantFile.kind)","#
         + #""enabled":true,"grants":[],"tokens":[],"web":{"enabled":false}}"#
-      try Data(off.utf8).write(to: store.url)
+      try PropertyListFixture.bytes(json: off).write(to: store.url)
       #expect(try store.load().web.port == nil)
       let on =
         #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"\#(AccessGrantFile.kind)","#
         + #""enabled":true,"grants":[],"tokens":[],"web":{"enabled":true}}"#
-      try Data(on.utf8).write(to: store.url)
+      try PropertyListFixture.bytes(json: on).write(to: store.url)
       #expect(throws: AccessGrantStoreError.damaged) { try store.load() }
     }
   }
@@ -342,7 +359,13 @@ struct AccessGrantStoreTests {
       #expect(try store.load().grants.first?.scopes == [.control])
       #expect(try store.load().tokens.first?.scopes == [.control])
       let text = try String(contentsOf: store.url, encoding: .utf8)
-      #expect(try JSONSchemaFiles.issues(in: text, against: "access-grants.schema.json").isEmpty)
+      #expect(
+        try JSONSchemaFiles.issues(
+          inPropertyList: Data(text.utf8),
+          against: "access-grants.schema.json"
+        )
+        .isEmpty
+      )
     }
   }
 
@@ -370,9 +393,9 @@ struct AccessGrantStoreTests {
             !(try JSONSchemaFiles.issues(in: text, against: "access-grants.schema.json").isEmpty),
             "\(text)"
           )
-          try Data(text.utf8).write(to: store.url)
+          try PropertyListFixture.bytes(json: text).write(to: store.url)
           #expect(throws: AccessGrantStoreError.damaged, "\(text)") { try store.load() }
-          #expect(try String(contentsOf: store.url, encoding: .utf8) == text)
+          #expect(try Data(contentsOf: store.url) == PropertyListFixture.bytes(json: text))
         }
       }
       // Without `control`, the same grants load as they are.
@@ -381,7 +404,7 @@ struct AccessGrantStoreTests {
         + #""enabled":true,"grants":["#
         + grant(#"["Read"]"#) + #"],"tokens":["#
         + token(#"["Read"]"#) + #"],"web":{"enabled":false}}"#
-      try Data(text.utf8).write(to: store.url)
+      try PropertyListFixture.bytes(json: text).write(to: store.url)
       let file = try store.load()
       #expect(file.grants.first?.scopes == [.read])
       #expect(file.tokens.first?.scopes == [.read])
@@ -413,10 +436,10 @@ struct AccessGrantStoreTests {
         + #""origins":["http://localhost:8080"],"scopes":\#(scopes),"#
         + #""grantedAt":"1970-01-01T00:00:00Z","controlGrantedAt":"1970-01-01T00:00:00Z"}],"#
         + #""web":{"enabled":false}}"#
-      try Data(text.utf8).write(to: store.url)
+      try PropertyListFixture.bytes(json: text).write(to: store.url)
 
       #expect(throws: AccessGrantStoreError.damaged) { try store.load() }
-      #expect(try String(contentsOf: store.url, encoding: .utf8) == text)
+      #expect(try Data(contentsOf: store.url) == PropertyListFixture.bytes(json: text))
     }
   }
 

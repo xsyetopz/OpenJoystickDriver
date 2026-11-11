@@ -9,6 +9,7 @@ glossaries/
 
 # Internal planning and evidence (local only)
 /.claude/worktrees/
+/.claude/claudetto/
 /.claudetto/
 
 # Session exports of `/export` (YYYY-MM-DD-HHMMSS-<slug>.txt)
@@ -171,8 +172,6 @@ fastlane/test_output/
 
 # Node.js
 node_modules/
-
-HANDOVER.md
 
 # Local GUI review captures (./Scripts/ojd shots capture)
 .ojd-shots/

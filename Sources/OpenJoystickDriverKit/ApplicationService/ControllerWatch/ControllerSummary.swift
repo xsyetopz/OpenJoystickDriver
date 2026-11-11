@@ -8,12 +8,19 @@ public struct ControllerSummary: Encodable, Equatable, Sendable {
   public let id: String
   /// The port key; see ``ControllerPortKey``.
   public let unit: String?
+  /// The controller's name.
   public let name: String
+  /// The USB vendor ID.
   public let vendorID: Int
+  /// The USB product ID.
   public let productID: Int
+  /// The connection type, such as USB or Bluetooth.
   public let connection: String
+  /// The protocol family bound to the controller.
   public let `protocol`: String
+  /// The state of the controller's session.
   public let session: String
+  /// Whether the controller reports a serial number.
   public let hasSerialNumber: Bool
   /// Whether another client holds the controller's USB interface exclusively.
   public let ownedByAnotherClient: Bool
@@ -27,6 +34,7 @@ public struct ControllerSummary: Encodable, Equatable, Sendable {
   /// Absent when the service reports no power state.
   public let power: ControllerConnectionState.Power?
 
+  /// Creates the summary of the controller `device` describes.
   public init(_ device: ApplicationServiceDeviceDescription) {
     id = device.sessionToken.rawValue
     unit = device.portKey?.rawValue

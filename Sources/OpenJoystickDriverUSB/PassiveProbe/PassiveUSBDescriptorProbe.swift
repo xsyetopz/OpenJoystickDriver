@@ -2,19 +2,27 @@ import Foundation
 import IOKit
 import OpenJoystickDriverKit
 
+/// Reads the descriptor facts of a connected device from the registry without opening it.
 public enum PassiveUSBDescriptorProbe {
+  /// The vendor and product ID pairs that the probe may read.
   public static let authorizedTuples: Set<PassiveUSBDescriptorTuple> = [
     PassiveUSBDescriptorTuple(vendorID: 0x3537, productID: 0x1010)
   ]
 
-  /// Reads the registry facts of the one connected device of an authorized tuple. The read claims
-  /// no interface and issues no USB transfer, as the passive read of USB detection does.
+  /// Reads the registry facts of the one connected device of an authorized tuple.
+  ///
+  /// The read claims no interface and issues no USB transfer, as the passive read of USB detection
+  /// does.
   public static func scan(
     authorizedTuple tuple: PassiveUSBDescriptorTuple
   ) throws -> PassiveUSBProbeResult {
     try scan(authorizedTuple: tuple, source: IOUSBHostPassiveUSBRegistrySource())
   }
 
+  /// Reads the facts of `tuple` from `source`.
+  ///
+  /// - Throws: ``PassiveUSBDescriptorProbeError`` when the pair is not authorized or the registry
+  ///   holds no single match.
   static func scan(
     authorizedTuple tuple: PassiveUSBDescriptorTuple,
     source: any PassiveUSBRegistrySource
@@ -44,9 +52,11 @@ public enum PassiveUSBDescriptorProbe {
     )
   }
 
-  /// Reads descriptor-backed transport facts without claiming an interface or
-  /// issuing a USB transfer. It takes any device, not only an authorized tuple, and does not
-  /// participate in raw-USB admission.
+  /// Reads descriptor-backed transport facts without claiming an interface or issuing a USB
+  /// transfer.
+  ///
+  /// It takes any device, not only an authorized tuple, and does not participate in raw-USB
+  /// admission.
   ///
   /// `configurationDescriptor` is the device's own descriptor of its current configuration, read by
   /// the transport; it replaces any registry descriptor bytes, so its endpoints become observable.
@@ -61,6 +71,8 @@ public enum PassiveUSBDescriptorProbe {
     )
   }
 
+  /// Builds the physical device observation for `device` from the registry, using
+  /// `configurationDescriptor` for its interfaces when it is given.
   static func physicalDeviceObservation(
     for device: USBTransportDevice,
     source: any PassiveUSBRegistrySource,
@@ -112,17 +124,19 @@ public enum PassiveUSBDescriptorProbe {
     )
   }
 
+  /// Returns the unsigned integer property `key` of `node`, or nil when it has none.
   private static func unsignedInteger(_ node: PassiveUSBRegistryNode, _ key: String) -> UInt64? {
     guard case .unsignedInteger(let value) = node.properties[key] else { return nil }
     return value
   }
 
-  /// Interfaces come from the parsed configuration descriptor. When the strict parser rejects a
-  /// transport-read descriptor, a structural walk keeps every interface it can decode, so a
-  /// malformed alternate setting OJD never claims does not discard the rest. Without descriptor
-  /// bytes, the device's own `IOUSBHostInterface` children supply number, alternate setting and
-  /// class triple, with endpoints left absent; children of a hub's downstream devices are never
-  /// read.
+  /// Interfaces come from the parsed configuration descriptor.
+  ///
+  /// When the strict parser rejects a transport-read descriptor, a structural walk keeps every
+  /// interface it can decode, so a malformed alternate setting OJD never claims does not discard
+  /// the rest. Without descriptor bytes, the device's own `IOUSBHostInterface` children supply
+  /// number, alternate setting and class triple, with endpoints left absent; children of a hub's
+  /// downstream devices are never read.
   static func physicalDevice(
     from result: PassiveUSBProbeResult,
     for device: USBTransportDevice,
@@ -184,6 +198,8 @@ public enum PassiveUSBDescriptorProbe {
     )
   }
 
+  /// Returns the interface signatures of the interface nodes among `children`, or nil when there
+  /// are none.
   private static func registryInterfaces(
     _ children: [PassiveUSBRegistryNode],
     configurationValue: UInt8?,
@@ -207,10 +223,12 @@ public enum PassiveUSBDescriptorProbe {
     return interfaces.isEmpty ? nil : interfaces
   }
 
+  /// Returns the property `key` of `node` as an 8-bit value, or nil when it does not fit.
   private static func uint8(_ node: PassiveUSBRegistryNode, _ key: String) -> UInt8? {
     unsignedInteger(node, key).flatMap(UInt8.init(exactly:))
   }
 
+  /// Returns the endpoint transfer type that the registry name `value` names.
   private static func endpointTransferType(_ value: String) -> USBEndpointTransferType {
     switch value.lowercased() {
     case "control": return .control

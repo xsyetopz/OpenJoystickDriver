@@ -25,16 +25,28 @@ extension XUSBDriverTests {
   }
 
   @Test
-  func testWirelessReceiverInputEstablishesPresenceWithoutNotification() throws {
+  func testWirelessReceiverPadDataBeforePresenceConnectsAndDecodes() throws {
     let parser = XUSBDriver(isWirelessReceiver: true)
 
     #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)).contains(.press(.south)))
     #expect(parser.consumeInputConnectionStateChange() == .connected)
+    #expect(parser.consumeInputConnectionStateChange() == nil)
     #expect(parser.drainPendingWrites().isEmpty)
 
+    // A later presence report for the same state is not a change.
     #expect(try parser.parseReport(Receiver.presenceConnected) == nil)
     #expect(parser.consumeInputConnectionStateChange() == nil)
-    #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)).contains(.press(.south)))
+  }
+
+  @Test
+  func testWirelessReceiverShortOrWrongTypePadDataDoesNotConnect() throws {
+    let parser = XUSBDriver(isWirelessReceiver: true)
+    var wrongType = Receiver.padData()
+    wrongType[4] = 0x01
+
+    #expect(try parser.parseReport(Receiver.padDataTooShort) == nil)
+    #expect(try parser.parseReport(wrongType) == nil)
+    #expect(parser.consumeInputConnectionStateChange() == nil)
     #expect(parser.drainPendingWrites().isEmpty)
   }
 
@@ -66,6 +78,25 @@ extension XUSBDriverTests {
     #expect(input.state.hat == .north)
     #expect(input.state.leftTrigger == .max)
     #expect(input.state.rightTrigger == UnipolarValue(normalized: Float(128) / 255))
+  }
+
+  @Test
+  func testWirelessReceiverHeadsetPresenceConnects() throws {
+    let parser = XUSBDriver(isWirelessReceiver: true)
+
+    #expect(try parser.parseReport(Receiver.presenceConnectedWithHeadset) == nil)
+    #expect(parser.consumeInputConnectionStateChange() == .connected)
+  }
+
+  @Test
+  func testWirelessReceiverDisconnectAfterPadDataResetsState() throws {
+    let parser = XUSBDriver(isWirelessReceiver: true)
+    _ = try parser.parseReport(Receiver.padData(buttons: 1 << 12))
+    #expect(parser.consumeInputConnectionStateChange() == .connected)
+
+    #expect(try parser.parseReport(Receiver.presenceDisconnected) == nil)
+    #expect(parser.consumeInputConnectionStateChange() == .disconnected)
+    #expect(try parser.parseReport(Receiver.padData(buttons: 1 << 12)).contains(.press(.south)))
   }
 
   @Test

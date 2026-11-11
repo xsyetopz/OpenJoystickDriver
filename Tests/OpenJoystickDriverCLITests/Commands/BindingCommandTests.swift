@@ -34,6 +34,28 @@ struct BindingCommandTests {
   }
 
   @Test
+  func setStoresASpokenPhraseWithItsVoiceAndRejectsAVoiceOnAnotherTarget() async throws {
+    let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
+    let service = try FakeService(devices: [], respond: library.respond)
+
+    let spoken = await service.run([
+      "binding", "set", "Pad", "button:south", "speak:Hello: there", "--voice", "com.example.voice",
+      "--json",
+    ])
+    let stray = await service.run([
+      "binding", "set", "Pad", "button:north", "key:space", "--voice", "com.example.voice",
+    ])
+
+    #expect(spoken.code == 0, "\(spoken.standardError)")
+    let binding = try #require(library.stored.first?.bindings.first)
+    #expect(binding.destination == .speak(text: "Hello: there", voice: "com.example.voice"))
+    let shown = try #require(try spoken.json()["binding"] as? [String: Any])
+    #expect(shown["target"] as? String == "speak:Hello: there")
+    #expect(stray.code != 0)
+    #expect(library.stored.first?.bindings.count == 1)
+  }
+
+  @Test
   func setBuildsAxisTuningTurboAndAlternateTargets() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try FakeService(devices: [], respond: library.respond)
@@ -48,8 +70,7 @@ struct BindingCommandTests {
     ])
     let alternates = await service.run([
       "binding", "set", "Pad", "button:north", "key:key-k", "--long-hold", "500:key:key-b",
-      "--double-tap",
-      "300:key:key-c",
+      "--multi-tap", "3:300:key:key-c", "--multi-tap", "2:200:key:key-d",
     ])
 
     #expect(axis.code == 0, "\(axis.standardError)")
@@ -62,7 +83,83 @@ struct BindingCommandTests {
     #expect(bindings.dropFirst().first?.turbo == RemappingTurbo(repeatRateHz: 10, dutyCycle: 0.5))
     #expect(bindings.last?.longHold?.durationMs == 500)
     #expect(bindings.last?.longHold?.destination == .keyboard(key: .b, modifiers: []))
-    #expect(bindings.last?.doubleTap?.windowMs == 300)
+    #expect(bindings.last?.multiTap.map(\.count) == [3, 2])
+    #expect(bindings.last?.multiTap.first?.windowMs == 300)
+  }
+
+  @Test
+  func setBuildsTurboDelayAndCapAndRejectsThemWithoutRateAndDuty() async throws {
+    let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
+    let service = try FakeService(devices: [], respond: library.respond)
+
+    let turbo = await service.run([
+      "binding", "set", "Pad", "button:west", "key:key-j", "--turbo-rate", "10", "--turbo-duty",
+      "0.5", "--turbo-delay", "400", "--turbo-max", "20",
+    ])
+    let alone = await service.run([
+      "binding", "set", "Pad", "button:east", "key:key-k", "--turbo-delay", "400",
+    ])
+
+    #expect(turbo.code == 0, "\(turbo.standardError)")
+    #expect(
+      library.stored.first?.bindings.first?.turbo
+        == RemappingTurbo(repeatRateHz: 10, dutyCycle: 0.5, initialDelayMs: 400, maxRepeats: 20)
+    )
+    #expect(alone.code != 0)
+    #expect(library.stored.first?.bindings.count == 1)
+  }
+
+  @Test
+  func setRejectsTurboDelayWithoutRateAndDuty() async throws {
+    let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
+    let service = try FakeService(devices: [], respond: library.respond)
+
+    let result = await service.run([
+      "binding", "set", "Pad", "button:south", "key:key-a", "--turbo-delay", "400",
+    ])
+
+    #expect(result.code != 0)
+    #expect(result.standardError.contains("--turbo-delay"))
+    #expect(library.stored.first?.bindings.isEmpty == true)
+  }
+
+  @Test
+  func setRejectsDoubleTapAndAMalformedMultiTap() async throws {
+    let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
+    let service = try FakeService(devices: [], respond: library.respond)
+
+    let old = await service.run([
+      "binding", "set", "Pad", "button:south", "key:key-a", "--double-tap", "300:key:key-b",
+    ])
+    let malformed = await service.run([
+      "binding", "set", "Pad", "button:south", "key:key-a", "--multi-tap", "300:key:key-b",
+    ])
+
+    #expect(old.code != 0)
+    #expect(old.standardError.contains("--double-tap"))
+    #expect(malformed.code != 0)
+    #expect(library.stored.first?.bindings.isEmpty == true)
+  }
+
+  @Test
+  func listShowsTurboDelayAndMultiTapWithTheAddedWait() async throws {
+    let binding = RemappingBinding(
+      source: .button(.south),
+      destination: .keyboard(key: .space, modifiers: []),
+      turbo: RemappingTurbo(repeatRateHz: 10, dutyCycle: 0.5, initialDelayMs: 400, maxRepeats: 20),
+      multiTap: [
+        RemappingMultiTap(count: 3, windowMs: 300, destination: .keyboard(key: .b, modifiers: [])),
+        RemappingMultiTap(count: 2, windowMs: 200, destination: .keyboard(key: .a, modifiers: [])),
+      ]
+    )
+    let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad", bindings: [binding])])
+    let service = try FakeService(devices: [], respond: library.respond)
+
+    let human = await service.run(["binding", "list", "Pad"])
+
+    #expect(human.standardOutput.contains("delay:400.0ms max:20"))
+    #expect(human.standardOutput.contains("multi-tap:2x200.0ms -> key:key-a"))
+    #expect(human.standardOutput.contains("multi-tap:3x300.0ms -> key:key-b  tap-delay:300.0ms"))
   }
 
   @Test

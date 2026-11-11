@@ -7,8 +7,8 @@ import Testing
 @Suite
 struct ProtocolDescriptionTests {
   private static let minimalInput =
-    #"{"report": {"length": {"atLeast": 1}}, "#
-    + #""buttons": [{"control": "South", "byte": 0, "mask": 1}]}"#
+    #"{"layouts": [{"report": {"length": {"atLeast": 1}}, "#
+    + #""buttons": [{"control": "South", "bitOffset": 0, "bitSize": 1}]}]}"#
   private static let rumbleTemplate =
     #"{"report": {"kind": "Output", "id": 1, "length": 4}, "lowFrequency": {"byte": 1}}"#
   private static let startupWrite =
@@ -130,9 +130,7 @@ struct ProtocolDescriptionTests {
     )
     #expect(
       ControllerTuning.scope(protocolID: .xboxXUSB, variant: nil)
-        == [
-          .stickDeadzone, .frameQueueCapacity, .usbTransferTimeoutMs,
-        ]
+        == [.stickDeadzone, .frameQueueCapacity, .usbTransferTimeoutMs]
     )
     #expect(
       ControllerTuning.scope(protocolID: .xboxXID, variant: nil)
@@ -196,7 +194,7 @@ struct ProtocolDescriptionTests {
       #""recordSections": ["input"], "#
         + #""defaults": {"input": \#(Self.minimalInput), "tuning": {"stickDeadzone": 0.1}}"#
     )
-    #expect(layout.inputLayout?.controls == [.south])
+    #expect(layout.inputLayouts?.controls == [.south])
     #expect(layout.tuning == ControllerTuning(stickDeadzone: 0.1))
 
     let hid = try decode(
@@ -220,7 +218,7 @@ struct ProtocolDescriptionTests {
       #""rawUSB": true, "recordSections": ["input"], "#
         + #""defaults": {"input": \#(Self.minimalInput)}"#
     )
-    #expect(description.inputLayout?.controls == [.south])
+    #expect(description.inputLayouts?.controls == [.south])
   }
 
   @Test
@@ -283,7 +281,7 @@ struct ProtocolDescriptionTests {
       (.xboxGIP, #""rawUSB": true, "tuningKeys": ["keepAliveIntervalMs"]"#),
       (.sonyDualSense, #""rawUSBTuningKeys": ["keepAliveIntervalMs"]"#),
       (.sonyDualSense, #""defaults": {"variants": {"USB": {"tuning": {"stickDeadzone": 5}}}}"#),
-      (.sonyDualSense, #""macOSOwnedOutput": {"rationale": 5}"#),
+      (.sonyDualSense, #""macOSOwnedOutput": {"rationale": "macOS does not write it."}"#),
       (.xboxGIP, #""defaults": {"session": {"rumble": \#(Self.rumbleTemplate)}}"#),
       (.sonyDualSense, #""tuningKeys": ["stickDeadzone"]"#),
       (.xboxGIP, #""rawUSB": true, "rawUSBTuningKeys": ["stickDeadzone"]"#),
@@ -553,6 +551,44 @@ struct ProtocolDescriptionTests {
     )
   }
 
+  private static let powerOff =
+    #""rawUSB": true, "defaults": {"receiverPowerOff": "#
+    + #"{"bytes": "00 00 08 C0 00 00 00 00 00 00 00 00", "variants": ["Receiver"]}}"#
+
+  @Test
+  func readsTheReceiverPowerOffPacketForItsVariantOnly() throws {
+    let description = try decode(family: .xboxXUSB, Self.powerOff)
+
+    #expect(description.receiverPowerOffWrite(variant: .receiver)?.bytes.count == 12)
+    #expect(description.receiverPowerOffWrite(variant: .wired) == nil)
+    #expect(description.receiverPowerOffWrite(variant: nil) == nil)
+  }
+
+  @Test
+  func rejectsAReceiverPowerOffPacketOfAnotherFamily() {
+    #expect(
+      rejection(family: .xboxGIP, #""defaults": {"receiverPowerOff": {"bytes": "00"}}"#)?.code
+        == .invalidProtocolDescription
+    )
+  }
+
+  @Test(
+    arguments: [
+      #"{"bytes": "00 00", "report": {"kind": "Output", "id": 1, "length": 4}}"#,
+      #"{"bytes": "00 00", "delayMilliseconds": 5}"#,
+      #"{"bytes": "00 00", "variants": ["Mobile"]}"#,
+      #"{"bytes": "00 00", "variants": ["Wired", "Wired"]}"#,
+      #"{"bytes": "00 00", "endpoint": 0}"#,
+      #"{"bytes": ""}"#,
+      #"{}"#,
+    ]
+  )
+  func rejectsAnInvalidReceiverPowerOffPacket(packet: String) {
+    let body = #""rawUSB": true, "defaults": {"receiverPowerOff": \#(packet)}"#
+
+    #expect(rejection(family: .xboxXUSB, body) != nil)
+  }
+
   @Test
   func rejectsARumbleResendIntervalInAFamilyWithAKeepAlive() {
     let keepAlive = #""keepAlive": {"intervalMilliseconds": 100}"#
@@ -757,8 +793,10 @@ struct ProtocolDescriptionTests {
     #expect(mixed.rumbleTemplate(variant: .bluetoothClassic)?.report?.reportID == 2)
   }
 
-  /// The spec scenario: a family's interval is edited in its description, and every record of
-  /// the family follows it. A record has no interval of its own.
+  /// The spec scenario: a family's interval is edited in its description, and every record of the
+  /// family follows it.
+  ///
+  /// A record has no interval of its own.
   @Test
   func aFamilysKeepAliveIntervalComesFromItsDescription() throws {
     let edited = try decode(
@@ -904,8 +942,8 @@ struct ProtocolDescriptionTests {
         """
       do {
         _ = try ProtocolDescription.decode(
-          Data(json.utf8),
-          fileName: "xbox-gip.json"
+          PropertyListFixture.bytes(json: json),
+          fileName: "xbox-gip.plist"
         )
         return nil
       } catch { return error }
@@ -928,6 +966,37 @@ struct ProtocolDescriptionTests {
     #expect(!PhysicalProtocolID.sonyDualSense.storesVariant)
   }
 
+  @Test
+  func theWiiDescriptionLoadsItsWireFacts() throws {
+    let description = try #require(ProtocolDescription.bundled[.nintendoWii])
+    let wii = try #require(description.wiiRemote)
+    #expect(PhysicalProtocolID.nintendoWii.rawValue == "NintendoWii")
+    #expect(PhysicalProtocolID.nintendoWii.descriptionFileStem == "nintendo-wii")
+    #expect(description.variants == [.bluetoothClassic])
+    #expect(description.presentSessionFields == ["wiiRemote"])
+    #expect(wii.rumbleBit == 0)
+    #expect(wii.ledReport == 0x11 && wii.ledFirstBit == 4)
+    let modeIDs = wii.reportModes.map(\.id)
+    #expect(modeIDs == [0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x3D, 0x3E, 0x3F])
+    #expect(wii.coreButtons.first { $0.control == .south }?.field == .init(byte: 1, mask: 0x08))
+    let nunchuk = wii.extensions.first { $0.kind == "Nunchuk" }
+    #expect(nunchuk?.id == [0x00, 0x00, 0xA4, 0x20, 0x00, 0x00])
+    #expect(description.tuning?.irWriteIntervalMilliseconds == 50)
+    #expect(description.tuning?.speakerMaxSeconds == 10)
+    #expect(description.tuning?.replyTimeoutMilliseconds == 500)
+    #expect(wii.defaultIRSensitivityLevel == 3)
+    #expect(wii.scripts.ir.count == 7)
+    #expect(wii.scripts.handshake.first == .write(address: 0xA400F0, bytes: [0x55]))
+    #expect(wii.scripts.speaker.contains(.write(address: 0xA20009, bytes: [0x01])))
+  }
+
+  @Test
+  func everyFamilyButWiiHasNoWiiRemoteField() {
+    for (family, description) in ProtocolDescription.bundled where family != .nintendoWii {
+      #expect(description.wiiRemote == nil, "\(family.rawValue)")
+    }
+  }
+
   /// The drivers branch on these variants, so a description that adds, drops or reorders one must
   /// change this table together with the driver that handles it.
   @Test
@@ -946,7 +1015,7 @@ struct ProtocolDescriptionTests {
       .valveSteamTriton: ([.wired, .dongle, .bluetoothLE], true),
       .valveSteamDeck: ([], false), .vendorFlydigi: ([], false),
       .vendorPS3ThirdParty: ([], false), .vendorGameSir: ([.usb, .enhancedHID], true),
-      .vendorNVIDIAShield: ([], false),
+      .vendorNVIDIAShield: ([], false), .nintendoWii: ([.bluetoothClassic], false),
     ]
     #expect(Set(expected.keys) == Set(PhysicalProtocolID.allCases))
     for (protocolID, facts) in expected {
@@ -958,7 +1027,7 @@ struct ProtocolDescriptionTests {
   @Test
   func everyRejectionCarriesACatalogCode() {
     let problem = rejection(family: .xboxGIP, #""interfaceSignatures": []"#)
-    #expect(problem?.description.hasPrefix("E5002: xbox-gip.json: ") == true)
+    #expect(problem?.description.hasPrefix("E5002: xbox-gip.plist: ") == true)
     #expect(ErrorCode.invalidProtocolDescription.domain == .document)
     #expect(ErrorCode.protocolDescriptionFamilyMismatch.domain == .document)
     #expect(ErrorCode.unknownProtocolVariant.domain == .document)
@@ -996,8 +1065,8 @@ enum ProtocolDescriptionFixture {
        "endpoints": {"in": 130, "out": 2}, \(body)}
       """
     return try ProtocolDescription.decode(
-      Data(json.utf8),
-      fileName: "\(family.descriptionFileStem).json"
+      PropertyListFixture.bytes(json: json),
+      fileName: "\(family.descriptionFileStem).plist"
     )
   }
 

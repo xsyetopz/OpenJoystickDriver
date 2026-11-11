@@ -1,19 +1,19 @@
 """Check or rebuild the control crosswalk table of the wiki.
 
-`Resources/Vocabulary/crosswalk.json` is the only authored crosswalk.
+`Resources/Vocabulary/crosswalk.plist` is the only authored crosswalk.
 This script rewrites the generated block of `wiki/Controller-Records.md` from it.
 """
 
 from __future__ import annotations
 
 import argparse
-import json
+import plistlib
 import sys
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
-CROSSWALK = Path("Resources/Vocabulary/crosswalk.json")
+CROSSWALK = Path("Resources/Vocabulary/crosswalk.plist")
 WIKI_PAGE = Path("wiki/Controller-Records.md")
 BEGIN = "<!-- BEGIN GENERATED: control-crosswalk -->"
 END = "<!-- END GENERATED: control-crosswalk -->"
@@ -31,7 +31,7 @@ class CrosswalkError(Exception):
 
 
 def load(root: Path) -> dict[str, Any]:
-    document = json.loads((root / CROSSWALK).read_text(encoding="utf-8"))
+    document = plistlib.loads((root / CROSSWALK).read_bytes())
     for key in ("sources", "controls"):
         if not isinstance(document.get(key), dict):
             raise CrosswalkError(f"{CROSSWALK} needs the object {key}")
@@ -44,6 +44,7 @@ def load(root: Path) -> dict[str, Any]:
 
 
 def code(value: object) -> str:
+    """A cell: the name in code font, or a dash for an absent key (no equivalent)."""
     return "-" if value is None else f"`{value}`"
 
 
@@ -60,8 +61,8 @@ def w3c_cell(row: dict[str, Any]) -> str:
 
 def hid_cell(row: dict[str, Any]) -> str:
     entries = [
-        f"`{entry['page']}:{'device' if entry['usage'] is None else hex(entry['usage'])}`"
-        for entry in row["hid"]
+        f"`{entry['page']}:{hex(entry['usage']) if 'usage' in entry else 'device'}`"
+        for entry in row.get("hid", [])
     ]
     return ", ".join(entries) if entries else "-"
 
@@ -71,7 +72,7 @@ def cell(row: dict[str, Any], column: str) -> str:
         return w3c_cell(row)
     if column == "hid":
         return hid_cell(row)
-    return code(row[column])
+    return code(row.get(column))
 
 
 def wiki_block(document: dict[str, Any]) -> str:
@@ -97,26 +98,6 @@ def wiki_block(document: dict[str, Any]) -> str:
         lines.append(
             f"| {title} | {name} | {source['version']} | {revision} | {source['checkedOn']} |"
         )
-    titles = dict(COLUMNS)
-    notes = [
-        (control, column, text)
-        for control, row in controls.items()
-        for column, text in row.get("notes", {}).items()
-    ]
-    if notes:
-        lines += [
-            "",
-            "Notes on single cells:",
-            "",
-            "| Control | Column | Note |",
-            "| --- | --- | --- |",
-        ]
-        for control, column, text in notes:
-            if column not in titles:
-                raise CrosswalkError(
-                    f"{control} has a note for the unknown column {column}"
-                )
-            lines.append(f"| `{control}` | {titles[column]} | {text} |")
     lines += ["", END]
     return "\n".join(lines)
 
@@ -153,7 +134,7 @@ def main() -> int:
     args = parser.parse_args()
     try:
         stale = regenerate(ROOT, write=args.write)
-    except (CrosswalkError, OSError, json.JSONDecodeError) as error:
+    except (CrosswalkError, OSError, plistlib.InvalidFileException, ValueError) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1
     if args.check and stale:

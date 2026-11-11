@@ -2,7 +2,7 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension ControllerRecordLayer {
-  /// The layer's name for the person, as the Library and the Controllers detail show it.
+  /// The name of a record layer in the Library list and detail, and in the Controllers detail.
   var libraryTitle: String {
     switch self {
     case .driver: return OJDLocalized.string("ui.library.layer.driver")

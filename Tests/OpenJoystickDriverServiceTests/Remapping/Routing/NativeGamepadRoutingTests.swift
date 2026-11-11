@@ -1,9 +1,9 @@
-import OpenJoystickDriverTestSupport
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
-@testable import OpenJoystickDriverService
 @testable import OpenJoystickDriverKit
+@testable import OpenJoystickDriverService
 
 private final class NativePublicationProbe: VirtualOutputDispatching,
   VirtualOutputControllerActivating, @unchecked Sendable
@@ -99,6 +99,43 @@ struct NativeGamepadRoutingTests {
   }
 
   @Test
+  func theRouterWantsPointerInputOnlyWhileTheActiveProfileBindsThePointer() async throws {
+    let plain = Self.profile(policy: .systemInput)
+    let harness = try await RemappingRouterHarness.make(profile: plain)
+    defer { harness.removeFiles() }
+    let manager = DeviceManager(
+      dispatcher: harness.router,
+      installationKey: testPortKeyInstallationKey
+    )
+    let identifier = try await Self.connect(native: true, to: manager, locationID: 185)
+    #expect(!harness.router.wantsPointerInput(from: identifier))
+
+    let aiming = RemappingProfile(
+      name: "Aiming",
+      device: plain.device,
+      applicationScope: plain.applicationScope,
+      outputPolicy: .systemInput,
+      bindings: [
+        RemappingBinding(
+          source: .axis(.pointerX),
+          destination: .mouseMovement(.x),
+          axisTuning: RemappingAxisTuning(deadzone: 0, gain: 1)
+        )
+      ]
+    )
+    try await harness.library.create(aiming)
+    try await harness.library.activate(profileID: aiming.id)
+    try await harness.router.refresh(identifier)
+    #expect(harness.router.wantsPointerInput(from: identifier))
+
+    try await harness.library.activate(profileID: plain.id)
+    try await harness.router.refresh(identifier)
+    #expect(!harness.router.wantsPointerInput(from: identifier))
+    await manager.stop()
+    try await harness.router.shutdown()
+  }
+
+  @Test
   func virtualGamepadRemappingIsRejectedForANativePad() async throws {
     let profile = Self.profile(policy: RemappingOutputPolicy(virtualGamepad: .mapped))
     let harness = try await RemappingRouterHarness.make(profile: profile)
@@ -150,7 +187,7 @@ struct NativeGamepadRoutingTests {
     RemappingProfile(
       name: "Native",
       device: RemappingDeviceScope(vendorID: 0x054C, productID: 0x09CC),
-      applicationScope: .application(appID: "com.example.Game"),
+      applicationScope: .application(appIDs: ["com.example.Game"]),
       outputPolicy: policy,
       bindings: [
         RemappingBinding(

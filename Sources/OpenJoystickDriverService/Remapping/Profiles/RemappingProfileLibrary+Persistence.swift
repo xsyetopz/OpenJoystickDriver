@@ -3,8 +3,10 @@ import OpenJoystickDriverKit
 
 extension RemappingProfileLibrary {
 
-  /// Reads every profile file and the selections. A profile file that cannot be used becomes a
-  /// damaged-profile issue, and selections that cannot be read become an unusable-library issue.
+  /// Reads every profile file and the selections.
+  ///
+  /// A profile file that cannot be used becomes a damaged-profile issue, and selections that cannot
+  /// be read become an unusable-library issue.
   func loadIfNeeded() throws -> RemappingProfileLibraryState {
     if let library { return library }
     var issues: [RecoveryIssue] = []
@@ -12,8 +14,17 @@ extension RemappingProfileLibrary {
     var profiles: [RemappingProfile] = []
     for url in try profileFileURLs() {
       let data = try Self.read(url)
+      if url.pathExtension == "json" {
+        let header = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        if (header?["apiVersion"] as? String)?.hasPrefix("openjoystickdriver/") == true {
+          issues.append(
+            .damagedProfile(fileName: url.lastPathComponent, data: data, code: .unsupportedAPIVersion)
+          )
+        }
+        continue
+      }
       do {
-        let profile = try RemappingProfileFileStore.load(from: data)
+        let profile = try RemappingProfileFileStore.load(from: data, file: url.path)
         guard url.lastPathComponent == Self.profileFileName(profile.id) else {
           throw RemappingProfileLibraryError.corruptLibrary
         }
@@ -34,7 +45,11 @@ extension RemappingProfileLibrary {
     if FileManager.default.fileExists(atPath: selectionsURL.path) {
       let data = try Self.read(selectionsURL)
       if data.count <= Self.maximumEncodedBytes,
-        let decoded = try? JSONDecoder().decode([RemappingPersistedActiveProfile].self, from: data)
+        let decoded = try? DocumentCoder.decode(
+          [RemappingPersistedActiveProfile].self,
+          from: data,
+          file: selectionsURL.path
+        )
       {
         let profilesByID = Dictionary(
           uniqueKeysWithValues: allProfiles(
@@ -80,13 +95,11 @@ extension RemappingProfileLibrary {
       try Self.createPrivateDirectory(profilesDirectory)
       try manager.setAttributes([.posixPermissions: 0o700], ofItemAtPath: directory.path)
       for profile in proposed.profiles where !current.profiles.contains(profile) {
-        let data = Data(try RemappingProfileFileStore.encodedJSON(profile).utf8)
+        let data = Data(try RemappingProfileFileStore.encodedPlist(profile).utf8)
         try Self.writePrivate(data, to: profileURL(profile.id))
       }
       if proposed.activeProfiles != current.activeProfiles {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        try Self.writePrivate(encoder.encode(proposed.activeProfiles), to: selectionsURL)
+        try Self.writePrivate(DocumentCoder.encode(proposed.activeProfiles), to: selectionsURL)
       }
       let keptIDs = Set(proposed.profiles.map(\.id))
       for profile in current.profiles where !keptIDs.contains(profile.id) {
@@ -97,7 +110,8 @@ extension RemappingProfileLibrary {
     library = proposed
   }
 
-  /// The `*.json` files in `Profiles/`, sorted by name.
+  /// The `*.plist` files in `Profiles/`, and the `.json` files an earlier alpha left, sorted by
+  /// name.
   func profileFileURLs() throws -> [URL] {
     guard FileManager.default.fileExists(atPath: profilesDirectory.path) else { return [] }
     do {
@@ -106,15 +120,21 @@ extension RemappingProfileLibrary {
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
       )
-      .filter { $0.pathExtension == "json" }
+      .filter { ["plist", "json"].contains($0.pathExtension) }
       .sorted { $0.lastPathComponent < $1.lastPathComponent }
     } catch { throw RemappingProfileLibraryError.unreadableLibrary }
   }
 
+  /// Throws unless every issue of the library is fixed.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError/profileRecoveryRequired``.
   func requireRecoveredLibrary() throws {
     guard profileIssues.isEmpty else { throw RemappingProfileLibraryError.profileRecoveryRequired }
   }
 
+  /// Throws when the list of active profiles is unusable.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError/corruptLibrary``.
   func requireUsableLibrary() throws {
     guard
       !profileIssues.values.contains(where: {
@@ -124,12 +144,16 @@ extension RemappingProfileLibrary {
     else { throw RemappingProfileLibraryError.corruptLibrary }
   }
 
+  /// Reads the file at `url`.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError/unreadableLibrary``.
   static func read(_ url: URL) throws -> Data {
     do { return try Data(contentsOf: url) } catch {
       throw RemappingProfileLibraryError.unreadableLibrary
     }
   }
 
+  /// Creates the directory `url` with owner-only permissions.
   static func createPrivateDirectory(_ url: URL) throws {
     try FileManager.default.createDirectory(
       at: url,
@@ -139,11 +163,16 @@ extension RemappingProfileLibrary {
     try FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: url.path)
   }
 
+  /// Writes `data` atomically to `url` with owner-only permissions.
   static func writePrivate(_ data: Data, to url: URL) throws {
     try data.write(to: url, options: .atomic)
     try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path)
   }
 
+  /// Throws unless `profile` is valid and no profile of `peers` has its name.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError/invalidProfile(_:)`` or
+  ///   ``RemappingProfileLibraryError/duplicateName(_:)``.
   func validate(_ profile: RemappingProfile, in peers: [RemappingProfile]) throws {
     do { try profile.validate() } catch let error as RemappingValidationError {
       throw RemappingProfileLibraryError.invalidProfile(error)
@@ -154,6 +183,10 @@ extension RemappingProfileLibrary {
     }
   }
 
+  /// Throws unless the profiles of `library` and its active selections are consistent.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError/profileCountExceeded(_:)`` or
+  ///   ``RemappingProfileLibraryError/corruptLibrary``, and the failures of the profile check.
   func validate(_ library: RemappingProfileLibraryState) throws {
     guard library.profiles.count <= Self.maximumProfileCount else {
       throw RemappingProfileLibraryError.profileCountExceeded(library.profiles.count)
@@ -200,10 +233,12 @@ extension RemappingProfileLibrary {
     return kept.reversed()
   }
 
+  /// Returns `name` in the form that the name check compares.
   static func normalizedName(_ name: String) -> String {
     RemappingProfile.normalizedName(name)
   }
 
+  /// Orders profiles by normalized name, then by ID.
   static func profileOrder(_ lhs: RemappingProfile, _ rhs: RemappingProfile) -> Bool {
     let leftName = normalizedName(lhs.name)
     let rightName = normalizedName(rhs.name)
@@ -211,6 +246,10 @@ extension RemappingProfileLibrary {
     return lhs.id.uuidString < rhs.id.uuidString
   }
 
+  /// Returns the POSIX permissions of `url`, or nil when `ifPresent` is false.
+  ///
+  /// - Throws: ``RemappingProfileLibraryError/unreadableLibrary`` when the attributes cannot be
+  ///   read.
   static func permissions(at url: URL, ifPresent: Bool) throws -> Int? {
     guard ifPresent else { return nil }
     do {
@@ -218,6 +257,7 @@ extension RemappingProfileLibrary {
     } catch { throw RemappingProfileLibraryError.unreadableLibrary }
   }
 
+  /// Orders active selections by vendor ID, product ID, then profile ID.
   static func activeProfileOrder(
     _ lhs: RemappingActiveProfileSelection,
     _ rhs: RemappingActiveProfileSelection

@@ -82,7 +82,14 @@ struct ControllerCapabilitiesTests {
         motion: true
       )
     ),
-    ("Flydigi", 0xD7D7, 0x0041, ControllerCapabilities(controls: xboxGuide.union(triggerButtons))),
+    (
+      "Flydigi", 0xD7D7, 0x0041,
+      ControllerCapabilities(
+        controls: xboxGuide.union(triggerButtons).union([
+          .auxiliary1, .auxiliary2, .leftPaddle1, .leftPaddle2, .rightPaddle1, .rightPaddle2,
+        ])
+      )
+    ),
     ("GameSir G7 Pro", 0x3537, 0x1003, ControllerCapabilities(controls: gameSirG7Pro)),
     // GameSir motion has no verified scale or frame, so no GameSir row declares motion.
     ("GameSir G7 Pro 8K", 0x3537, 0x10C5, ControllerCapabilities(controls: gameSirG7Pro)),
@@ -91,7 +98,8 @@ struct ControllerCapabilitiesTests {
       ControllerCapabilities(
         controls: normalizedXboxGuide.union([.leftPaddle1, .rightPaddle1, .auxiliary1])
       )
-    ), ("Generic HID", 0x2E95, 0x434D, ControllerCapabilities(controls: normalizedXboxGuide)),
+    ),
+    ("Generic HID", 0x2E95, 0x434D, ControllerCapabilities(controls: normalizedXboxGuide)),
     (
       "GIP analog triggers absent", 0x0738, 0x4A01,
       ControllerCapabilities(

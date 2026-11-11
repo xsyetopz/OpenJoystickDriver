@@ -1,4 +1,8 @@
 extension RemappingEngineState {
+  /// Feeds a trigger value to its dual-stage runtime and applies the stage changes as source
+  /// changes.
+  ///
+  /// Returns no actions when the profile has no mapping for the trigger.
   mutating func processAdvancedTrigger(
     _ source: RemappingTriggerSource,
     value: Float,
@@ -16,6 +20,7 @@ extension RemappingEngineState {
     return applyTriggerChanges(changes, source: source, identifier: identifier, at: uptime)
   }
 
+  /// Advances every trigger runtime of a controller to an uptime and applies the stage changes.
   mutating func advanceTriggers(
     for identifier: LogicalControllerID,
     at uptime: UInt64
@@ -40,6 +45,7 @@ extension RemappingEngineState {
     return actions
   }
 
+  /// Turns stage changes of a trigger into source changes of the controller.
   private mutating func applyTriggerChanges(
     _ changes: [RemappingTriggerStageChange],
     source: RemappingTriggerSource,

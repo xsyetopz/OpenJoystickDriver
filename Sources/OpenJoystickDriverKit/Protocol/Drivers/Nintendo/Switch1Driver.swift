@@ -1,13 +1,21 @@
 import Foundation
 
+/// The report ID of the full input report.
 private let switchProFullReportID: UInt8 = 0x30
+/// The shortest full input report that is decoded.
 private let switchProFullReportMinLength = 12
+/// The raw value of a centered 12-bit stick axis.
 private let switchProStickCenter: UInt16 = 2048
+/// The largest distance of a raw stick axis from its center.
 private let switchProStickMax: Float = 2047
 
+/// The shape of the controller that the driver decodes.
 public enum NintendoControllerLayout: Sendable {
+  /// A Pro Controller.
   case pro
+  /// A left Joy-Con.
   case leftJoyCon
+  /// A right Joy-Con.
   case rightJoyCon
 }
 
@@ -18,36 +26,55 @@ public enum NintendoControllerLayout: Sendable {
 /// center calibration until physical hardware can verify SPI calibration reads.
 public final class Switch1Driver: PhysicalProtocolDriver {
 
+  /// The byte offsets of the full input report.
   private enum ReportOffset {
+    /// The offset of the report ID.
     static let reportID = 0
+    /// The offset of the packed 24-bit button field.
     static let buttons = 3
+    /// The offset of the packed 12-bit left stick values.
     static let leftStick = 6
+    /// The offset of the packed 12-bit right stick values.
     static let rightStick = 9
   }
 
+  /// The shape of the controller that the driver decodes.
   public let layout: NintendoControllerLayout
   /// The bound variant: only a wired Pro Controller takes the USB setup commands, and Bluetooth
   /// startup reports need wider spacing.
   private let isBluetooth: Bool
+  /// The decoder of motion samples.
   private var sensorSamples = NintendoSensorSamples()
+  /// The calibration of motion samples; nominal until the calibration replies arrive.
   private var motionCalibration = NintendoMotionCalibration.nominal
+  /// The SPI calibration reads whose reply has not arrived.
   private var pendingMotionCalibration: Set<SubcommandRequest.SPIRead.Purpose> = []
   /// The subcommand report, counter rule and startup requests from the family's description.
   private let subcommands: SubcommandPlan
   /// The 0x10 rumble-only report: the record's template, otherwise the description's.
   private let rumbleTemplate: RumbleOutputTemplate
+  /// The factory motion calibration bytes read from SPI flash; nil until the reply arrives.
   private var factoryMotionBytes: [UInt8]?
+  /// The user motion calibration bytes read from SPI flash; nil until a valid reply arrives.
   private var userMotionBytes: [UInt8]?
+  /// The state after the latest report.
   private var state = ControllerState.neutral
+  /// The counter of the next output report.
   private var outputPacketNumber: UInt8 = 0
   /// The motor intensities of the last 0x10 rumble report, after each Joy-Con's side filter.
   private var lastRumble = RumbleIntensities.off
-  /// The rumble bytes embedded in every subcommand report, from `SwitchProRumbleCodec`. A record's
-  /// rumble template changes only the 0x10 report, not these.
+  /// The rumble bytes embedded in every subcommand report, from `SwitchProRumbleCodec`.
+  ///
+  /// A record's rumble template changes only the 0x10 report, not these.
   private var physicalRumbleData =
     SwitchProRumbleCodec.encode(intensity: 0) + SwitchProRumbleCodec.encode(intensity: 0)
 
-  /// - Parameter rumbleTemplate: The record's rumble template; the description's when nil.
+  /// Creates a driver for a controller of `layout` on the USB or the Bluetooth variant.
+  ///
+  /// - Parameters:
+  ///   - layout: The shape of the controller that the driver decodes.
+  ///   - isBluetooth: Whether the controller runs on the Bluetooth variant instead of USB.
+  ///   - rumbleTemplate: The record's rumble template; the description's when nil.
   public init(
     layout: NintendoControllerLayout = .pro,
     isBluetooth: Bool = false,
@@ -66,13 +93,15 @@ public final class Switch1Driver: PhysicalProtocolDriver {
     self.subcommands = subcommands
   }
 
-  /// A new transport session starts from neutral input and re-anchors motion time.
+  /// Clears the state of the session: neutral input and motion time re-anchored.
   public func resetProtocolState() {
     state = .neutral
     lastRumble = .off
     sensorSamples.reset()
   }
 
+  /// The rumble motors of the layout (both on a Pro Controller, one on each Joy-Con) and the player
+  /// indicator.
   public var outputCapabilities: PhysicalControllerOutputCapabilities {
     let motors: [PhysicalRumbleMotor]
     switch layout {
@@ -86,8 +115,11 @@ public final class Switch1Driver: PhysicalProtocolDriver {
     )
   }
 
+  /// No default colour: the controller has no light to restore.
   public var defaultColor: ControllerColor? { nil }
 
+  /// The session plan: startup recovery, the family description's defaults for the variant, and the
+  /// rumble resend.
   public var sessionPlan: DriverSessionPlan {
     DriverSessionPlan(hasStartupRecovery: true)
       .withDefaults(of: .nintendoSwitch1, variant: isBluetooth ? .bluetoothClassic : .usb)
@@ -95,6 +127,7 @@ public final class Switch1Driver: PhysicalProtocolDriver {
   }
 
   /// The last rumble report again while a motor runs, when the template names a resend interval.
+  ///
   /// It carries the session's next output counter value.
   public func keepAliveWrites() -> [PhysicalOutputWrite] {
     rumbleTemplate.resendIntensities(after: lastRumble).map {
@@ -102,8 +135,10 @@ public final class Switch1Driver: PhysicalProtocolDriver {
     } ?? []
   }
 
+  /// Always nil: the full report carries no logical connection.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
+  /// The controls of the layout, with digital triggers and motion.
   public var capabilities: ControllerCapabilities {
     let controls: Set<Control>
     switch layout {
@@ -136,8 +171,9 @@ public final class Switch1Driver: PhysicalProtocolDriver {
     startupReports().map { .hidOutput($0) }
   }
 
-  /// Each Joy-Con drives only its own side. The player subcommand repeats the last rumble and
-  /// shares the rumble report's counter.
+  /// Each Joy-Con drives only its own side.
+  ///
+  /// The player subcommand repeats the last rumble and shares the rumble report's counter.
   public func encode(
     _ command: ControllerOutputCommand
   ) throws(ControllerOutputError) -> PhysicalOutputPlan {
@@ -153,6 +189,7 @@ public final class Switch1Driver: PhysicalProtocolDriver {
     }
   }
 
+  /// Plans the rumble report for `intensities`, silencing the side the layout does not have.
   private func rumblePlan(_ intensities: RumbleIntensities) -> PhysicalOutputPlan {
     let left = layout == .rightJoyCon ? UnipolarValue.min : intensities.lowFrequency
     let right = layout == .leftJoyCon ? UnipolarValue.min : intensities.highFrequency
@@ -219,6 +256,7 @@ public final class Switch1Driver: PhysicalProtocolDriver {
     }
   }
 
+  /// The button masks of a Pro Controller.
   private static let proButtonTable: [(UInt32, Control)] = [
     (0x0000_0008, .east), (0x0000_0004, .south), (0x0000_0002, .north),
     (0x0000_0001, .west), (0x0040_0000, .leftShoulder), (0x0000_0040, .rightShoulder),
@@ -226,8 +264,10 @@ public final class Switch1Driver: PhysicalProtocolDriver {
     (0x0000_0200, .start), (0x0000_0800, .leftStickClick), (0x0000_0400, .rightStickClick),
     (0x0000_1000, .guide), (0x0000_2000, .capture),
   ]
+  /// The button masks of a left Joy-Con: its SL and SR followed by the Pro Controller's.
   private static let leftJoyConButtonTable: [(UInt32, Control)] =
     [(0x0020_0000, .auxiliary3), (0x0010_0000, .auxiliary4)] + proButtonTable
+  /// The button masks of a right Joy-Con: its SL and SR followed by the Pro Controller's.
   private static let rightJoyConButtonTable: [(UInt32, Control)] =
     [(0x0000_0020, .auxiliary5), (0x0000_0010, .auxiliary6)] + proButtonTable
 
@@ -239,6 +279,7 @@ public final class Switch1Driver: PhysicalProtocolDriver {
     return subcommands.requests.map { subcommand($0.subcommand, data: $0.data) }
   }
 
+  /// The subcommand reports that re-request the SPI reads still pending.
   public func startupRecoveryWrites() -> [PhysicalOutputWrite] {
     pendingMotionCalibrationRequests().map { .hidOutput($0) }
   }
@@ -250,12 +291,17 @@ public final class Switch1Driver: PhysicalProtocolDriver {
       .map { subcommand($0.subcommand, data: $0.data) }
   }
 
+  /// Ends startup recovery: no SPI reply is awaited and the partial calibration bytes are dropped.
   public func expireStartupRecovery() {
     pendingMotionCalibration.removeAll()
     factoryMotionBytes = nil
     userMotionBytes = nil
   }
 
+  /// Reads a `0x21` subcommand reply to an SPI calibration read; a short reply, an unknown request
+  /// or a purpose that is not pending is ignored.
+  ///
+  /// The motion calibration is installed once the factory data has arrived.
   private func consumeMotionCalibrationReply(_ bytes: [UInt8]) {
     guard bytes.count >= 20, bytes[13] & 0x80 != 0 else { return }
     let address =
@@ -287,6 +333,8 @@ public final class Switch1Driver: PhysicalProtocolDriver {
     motionCalibration = calibrated.installed(after: motionCalibration)
   }
 
+  /// Builds the output report of subcommand `id` with `data`, carrying the next counter value and
+  /// the current rumble bytes.
   private func subcommand(_ id: UInt8, data: [UInt8]) -> PhysicalHIDOutputReport {
     var bytes = [UInt8](repeating: 0, count: 11 + data.count)
     bytes[0] = subcommands.reportID
@@ -297,26 +345,32 @@ public final class Switch1Driver: PhysicalProtocolDriver {
     return PhysicalHIDOutputReport(reportID: subcommands.reportID, bytes: bytes)
   }
 
+  /// Returns the current output counter value and advances it by the description's rule.
   private func nextPacketNumber() -> UInt8 {
     defer { outputPacketNumber = subcommands.nextCounter(after: outputPacketNumber) }
     return outputPacketNumber
   }
 
+  /// Reads three bytes of `bytes` at `offset` as a little-endian number.
   private func readUInt24LE(_ bytes: [UInt8], offset: Int) -> UInt32 {
     UInt32(bytes[offset]) | (UInt32(bytes[offset + 1]) << 8) | (UInt32(bytes[offset + 2]) << 16)
   }
 
+  /// Reads the two packed 12-bit stick values at `offset`.
   private func readStick(_ bytes: [UInt8], offset: Int) -> (x: UInt16, y: UInt16) {
     let x = UInt16(bytes[offset]) | (UInt16(bytes[offset + 1] & 0x0F) << 8)
     let y = (UInt16(bytes[offset + 1]) >> 4) | (UInt16(bytes[offset + 2]) << 4)
     return (x, y)
   }
 
+  /// Maps a raw 12-bit stick value to -1...1 around the center, clamped.
   private func normalizeStick(_ value: UInt16) -> Float {
     let centered = Float(Int(value) - Int(switchProStickCenter)) / switchProStickMax
     return max(-1, min(1, centered))
   }
 
+  /// The hat direction of four D-pad flags; opposing directions cancel to neutral only through the
+  /// neutral case.
   private func mapDpad(up: Bool, right: Bool, down: Bool, left: Bool) -> HatDirection {
     switch (up, right, down, left) {
     case (true, false, false, false): return .north

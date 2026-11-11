@@ -2,53 +2,87 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension AutomaticDispatcherCoordinator {
+  /// Decides whether a controller may publish a profile.
   typealias Eligibility = @Sendable (LogicalControllerID, VirtualHIDProfileID) async -> Bool
+  /// Builds the backend that publishes a profile.
   typealias Factory = @Sendable (VirtualHIDProfileID) throws -> any VirtualOutputDispatching
   /// The controller's selected profile; nil when no profile can represent it.
   typealias ProfileProvider =
     @Sendable (LogicalControllerID, ApplicationServiceDeviceDescription) -> VirtualHIDProfileID?
 
+  /// An installation request for a controller, valid only for the generations it carries.
   struct Request: Sendable {
+    /// The controller that the backend publishes for.
     let controller: LogicalControllerID
+    /// The identity of the request, which the installed backend records.
     let token: UUID
+    /// The physical session generation that the request belongs to.
     let sessionGeneration: UInt64
+    /// The publication generation that the request belongs to.
     let publicationGeneration: UInt64
+    /// The profile to publish.
     let target: VirtualHIDProfileID
   }
 
+  /// An installation in flight.
   struct Pending {
+    /// The request that the task serves.
     let request: Request
+    /// The task that builds, activates and installs the backend.
     let task: Task<Void, Error>
   }
 
+  /// The publication state of one controller.
   struct Entry {
     /// Physical-session state survives temporary publication suppression.
     var sessionGeneration: UInt64 = 0
+    /// Whether the physical session is live.
     var physicalSessionActive = true
     /// Invalidates only virtual publication work for the current physical session.
     var publicationGeneration: UInt64 = 0
+    /// The profile that the installed backend publishes.
     var target: VirtualHIDProfileID?
+    /// How to publish again after a failure or a suppression.
     var context: PublicationContext?
+    /// The backend that publishes.
     var installed: AutomaticBackendSlot?
+    /// The token of the request that installed the backend.
     var installedToken: UUID?
+    /// The backend that is closing and must finish before another publishes.
     var retiring: AutomaticBackendSlot?
+    /// The installation in flight that is current.
     var pending: Pending?
+    /// Every installation in flight, by request token.
     var tasks: [UUID: Pending] = [:]
+    /// When a send was last attempted, in uptime nanoseconds.
     var lastAttemptedSend: UInt64?
+    /// When a send last completed, in uptime nanoseconds.
     var lastCompletedSend: UInt64?
+    /// The text of the last publication failure.
     var lastFailure: String?
+    /// Where recovery stands: idle, retiring, waiting-for-retirement, retry-gated or recovering.
     var recoveryState = "idle"
+    /// The identity of the scheduled retry, so a stale retry does nothing.
     var recoveryToken: UUID?
     /// Another client holds the controller's input; nothing installs until it lets go.
     var heldByAnotherClient = false
   }
 
+  /// What a controller needs to publish again without a caller.
   struct PublicationContext: Sendable {
+    /// The profile to publish.
     let target: VirtualHIDProfileID
+    /// Decides whether the controller may publish.
     let isEligible: Eligibility
+    /// Builds the backend.
     let factory: Factory
   }
 
+  /// Starts the session of `identifier` and publishes its selected profile.
+  ///
+  /// A controller without a profile publishes nothing.
+  ///
+  /// - Throws: `CancellationError` when the coordinator is closed, or the failure of the build.
   func activateOne(
     identifier: LogicalControllerID,
     descriptions: [LogicalControllerID: ApplicationServiceDeviceDescription],
@@ -75,8 +109,10 @@ extension AutomaticDispatcherCoordinator {
     await lease?.release()
   }
 
-  /// Starts a new physical session for a controller that `stop` ended, as when the same
-  /// controller starts again after system sleep. Work from the ended session stays invalid.
+  /// Begins a physical session for a controller that `stop` ended, as when the same controller
+  /// starts again after system sleep.
+  ///
+  /// Work from the ended session stays invalid.
   func beginSession(_ identifier: LogicalControllerID) {
     guard !closed, entries[identifier]?.physicalSessionActive == false else { return }
     entries[identifier]?.physicalSessionActive = true
@@ -84,6 +120,10 @@ extension AutomaticDispatcherCoordinator {
     entries[identifier]?.publicationGeneration &+= 1
   }
 
+  /// Publishes the profile of each of `identifiers` once, closing the coordinator when one fails.
+  ///
+  /// - Throws: ``UserSpaceOutputDispatcher/CreationError/createFailed`` when the coordinator is
+  ///   closed or already holds controllers, and the failure of the first controller that fails.
   func activate(
     identifiers: [LogicalControllerID],
     descriptions: [LogicalControllerID: ApplicationServiceDeviceDescription],
@@ -122,6 +162,8 @@ extension AutomaticDispatcherCoordinator {
     return nil
   }
 
+  /// Returns a lease on the backend that publishes `profile` for `controller`, or nil when none
+  /// can.
   func leaseForDispatch(
     controller: LogicalControllerID,
     profile: VirtualHIDProfileID,
@@ -132,11 +174,12 @@ extension AutomaticDispatcherCoordinator {
   }
 
   /// Replaces the controller's live backend with one for `target`, keeping the live backend
-  /// publishing until the replacement has activated. A live backend that already publishes
-  /// `target` is left unchanged unless `rebuildsLiveTarget` is set, as when only the persona
-  /// identity changed, which is fixed when the device is created. Without a live backend, as
-  /// during suppression or recovery, the publication context adopts `target`, so the next
-  /// installation publishes it.
+  /// publishing until the replacement has activated.
+  ///
+  /// A live backend that already publishes `target` is left unchanged unless `rebuildsLiveTarget`
+  /// is set, as when only the persona identity changed, which is fixed when the device is created.
+  /// Without a live backend, as during suppression or recovery, the publication context adopts
+  /// `target`, so the next installation publishes it.
   ///
   /// - Throws: The build or activation failure, or `CancellationError` when the controller
   ///   stopped, the coordinator closed, or the replacement could not be installed.
@@ -174,6 +217,14 @@ extension AutomaticDispatcherCoordinator {
     await lease.release()
   }
 
+  /// Returns a lease on the backend that publishes `target`, installing or replacing it as needed.
+  ///
+  /// Nil when the coordinator is closed or suppressed, the session ended, another client holds the
+  /// controller, or the controller is not eligible. A caller that finds a request for the same
+  /// target in flight waits for it.
+  ///
+  /// - Throws: `CancellationError` when the generations changed while the request ran, or the
+  ///   failure of the build or activation.
   func acquire(
     _ controller: LogicalControllerID,
     target: VirtualHIDProfileID,
@@ -261,6 +312,7 @@ extension AutomaticDispatcherCoordinator {
     return installed.installed?.acquire()
   }
 
+  /// Throws `CancellationError` unless `request` is still the current request of its controller.
   private func validate(_ request: Request) throws {
     try Task.checkCancellation()
     guard !closed, !suppressed, let entry = entries[request.controller],
@@ -270,6 +322,12 @@ extension AutomaticDispatcherCoordinator {
     else { throw CancellationError() }
   }
 
+  /// Installs `candidate` for `request` after the previous backend has retired.
+  ///
+  /// A failed activation restores the previous target.
+  ///
+  /// - Throws: `CancellationError` when the request is stale or the previous backend does not
+  ///   close, and the failure of the activation.
   private func install(
     _ candidate: AutomaticBackendSlot,
     request: Request,
@@ -352,6 +410,8 @@ extension AutomaticDispatcherCoordinator {
     await lease.release()
   }
 
+  /// Activates `candidate` and applies the current suppression, repeating when it changed
+  /// meanwhile.
   private func activateAndSynchronize(
     _ candidate: AutomaticBackendSlot,
     request: Request
@@ -369,6 +429,7 @@ extension AutomaticDispatcherCoordinator {
     } while true
   }
 
+  /// Publishes `target` again on a backend that rolls back a failed installation.
   private func restore(
     target: VirtualHIDProfileID,
     request: Request,

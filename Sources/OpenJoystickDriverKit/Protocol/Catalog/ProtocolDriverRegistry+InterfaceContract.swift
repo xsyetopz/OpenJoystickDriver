@@ -1,7 +1,7 @@
 import Foundation
 
 extension ProtocolDriverRegistry {
-  /// Controller slots of one Xbox 360 wireless receiver; `XUSBDriver` lights players 1–4.
+  /// Controller slots of one Xbox 360 wireless receiver; the manager gives each a player LED.
   static let receiverSlotCount = 4
 
   /// The protocol roles a raw-USB claim runs, one pipeline each, in slot order.
@@ -79,6 +79,7 @@ extension ProtocolDriverRegistry {
     )
   }
 
+  /// `profile` with the configuration left as it is, so the driver does not select it again.
   private static func leavingConfiguration(
     _ profile: DeviceTransportProfile
   ) -> DeviceTransportProfile {
@@ -135,6 +136,10 @@ extension ProtocolDriverRegistry {
     return nil
   }
 
+  /// Whether the class of `interface` is one that the family of `binding` drives.
+  ///
+  /// Xbox USB families need a signature of the binding's variant and interface number, XID accepts
+  /// any interface, and GameSir needs the vendor-specific class (0xFF). No other family is raw USB.
   private static func acceptsInterfaceClass(
     _ interface: PhysicalInterfaceSignature,
     for binding: ProtocolBinding
@@ -149,13 +154,12 @@ extension ProtocolDriverRegistry {
       }
     case .xboxXID: return true
     case .vendorGameSir: return interface.interfaceClass == 0xFF
-    case .hidDescriptor, .hidReportLayout, .sonySixaxis, .sonyDualShock4, .sonyDualSense,
-      .nintendoSwitch1, .nintendoSwitch2, .nintendoSwitchInputOnly, .valveSteamController,
-      .valveSteamTriton, .valveSteamDeck, .vendorFlydigi, .vendorPS3ThirdParty, .vendorNVIDIAShield:
-      return false
+    default: return false
     }
   }
 
+  /// Whether `interface` has interrupt endpoints at the profile's IN and OUT addresses; `exactPair`
+  /// also requires that they are its only two endpoints.
   private static func hasProfileEndpoints(
     _ interface: PhysicalInterfaceSignature,
     _ profile: DeviceTransportProfile,

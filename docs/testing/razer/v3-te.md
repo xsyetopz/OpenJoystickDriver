@@ -14,7 +14,7 @@ Run from the repository root:
 
 ```bash
 ./Scripts/ojd diagnose record \
-  Sources/OpenJoystickDriverKit/Resources/Controllers/1532/1532-0a43.json \
+  Sources/OpenJoystickDriverKit/Resources/Controllers/1532/1532-0a43.plist \
   --validate-only
 ```
 
@@ -30,7 +30,7 @@ Quit Steam, games, and controller utilities. Connect the controller directly by 
 
 ```bash
 ./Scripts/ojd diagnose record \
-  Sources/OpenJoystickDriverKit/Resources/Controllers/1532/1532-0a43.json \
+  Sources/OpenJoystickDriverKit/Resources/Controllers/1532/1532-0a43.plist \
   --seconds 30
 ```
 

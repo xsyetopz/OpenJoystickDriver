@@ -27,7 +27,7 @@ Grants matter for privacy because controller input needs the input-read permissi
 
 ## Transport
 
-- A new Unix socket, separate from the internal one, at `$(getconf DARWIN_USER_TEMP_DIR)com.openjoystickdriver.endpoint.sock`. The per-user temporary folder has mode `0700`, so other users cannot reach the socket path. The socket has mode `0600`.
+- A Unix socket, separate from the internal one, at `$(getconf DARWIN_USER_TEMP_DIR)com.openjoystickdriver.endpoint.sock`. The per-user temporary folder has mode `0700`, so other users cannot reach the socket path. The socket has mode `0600`.
 - The service creates the socket only while the endpoint is enabled, and removes it when it is disabled or the service stops.
 - `getpeereid` must give the service's user, as on the internal socket.
 - The service identifies the peer by its audit token (`LOCAL_PEERTOKEN`, then `SecCodeCopyGuestWithAttributes` with `kSecGuestAttributeAudit`), not by its PID. A PID can be reused between `accept` and the signature check. The service then checks the client's code with `SecCodeCheckValidity`, so a modified binary fails.
@@ -39,8 +39,8 @@ Grants matter for privacy because controller input needs the input-read permissi
 The service sends a challenge first, on every connection, and the client answers with a `Hello`. Every line except a watch line has `apiVersion` and `kind`:
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha1","kind":"Challenge","nonce":"..."}
-{"apiVersion":"openjoystickdriver/v1alpha1","kind":"Hello","scopes":["Read"]}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Challenge","nonce":"..."}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Hello","scopes":["Read"]}
 ```
 
 The nonce is 32 random bytes from `SecRandomCopyBytes` in unpadded base64url, new for each connection. A signed client ignores it; a token client signs it (see Token Grants).
@@ -48,30 +48,30 @@ The nonce is 32 random bytes from `SecRandomCopyBytes` in unpadded base64url, ne
 The service answers with one line and then either streams or closes the connection:
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha1","kind":"Welcome","version":"0.6.0-alpha.1","scopes":["Read"]}
-{"apiVersion":"openjoystickdriver/v1alpha1","kind":"Status","status":"Failure","code":"E1002","message":"..."}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Welcome","version":"0.6.0-alpha.3","scopes":["Read"]}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Status","status":"Failure","code":"E1002","message":"..."}
 ```
 
-- `apiVersion` negotiates the version. The service accepts only `openjoystickdriver/v1alpha1`. For any other value it answers `E1009` with `details.supportedAPIVersions: ["openjoystickdriver/v1alpha1"]` and closes. The proof label `OpenJoystickDriver endpoint hello 1` is a fixed domain-separation label, not a version.
+- `apiVersion` negotiates the version. The service accepts only `openjoystickdriver/v1alpha3`. For any other value it answers `E1009` with `details.supportedAPIVersions: ["openjoystickdriver/v1alpha3"]` and closes. The proof label `OpenJoystickDriver endpoint hello 1` is a fixed domain-separation label, not a version.
 - `scopes` lists the scopes the client asks for. The service grants all of them or refuses with `E1002`. It never grants a subset silently.
-- Error codes are stable identifiers, `E1001` to `E1011`, listed in `Resources/ErrorCodes.json` and explained on the wiki page Error-Codes. `message` is English text for logs, not for parsing. An error line is a `Status` with `status` `Failure`.
+- Error codes are stable identifiers, `E1001` to `E1011`, listed in `Resources/ErrorCodes.plist` and explained on the wiki page Error-Codes. `message` is English text for logs, not for parsing. An error line is a `Status` with `status` `Failure`.
 
 ## Read Stream (Slice 3.3)
 
-After the `Welcome`, the client sends `{"apiVersion":"openjoystickdriver/v1alpha1","kind":"Subscription","stream":"Controllers","output":false}`. The service then sends the same lines as `ojd controller watch --all --json`: watch lines with `type` (`ADDED`, `MODIFIED`, or `DELETED`) and `object`, a `Controller` with its own `apiVersion` and `kind`, and no `apiVersion` or `kind` on the line. `output: true` adds `output` to the object, as `--output` does.
+After the `Welcome`, the client sends `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Subscription","stream":"Controllers","output":false}`. The service then sends the same lines as `ojd controller watch --all --json`: watch lines with `type` (`ADDED`, `MODIFIED`, or `DELETED`) and `object`, a `Controller` with its own `apiVersion` and `kind`, and no `apiVersion` or `kind` on the line. `output: true` adds `output` to the object, as `--output` does.
 
 - One poller in the service serves every subscriber. It starts with the first subscriber and stops with the last, so an idle endpoint costs nothing. The polling logic of `watchAll()` moves into `OpenJoystickDriverKit`, so the CLI and the endpoint use the same code.
 - A client that reads too slowly gets the latest `input` line for each controller, and earlier ones are dropped. `connected` and `disconnected` lines are never dropped. When 256 lines are waiting, the service closes the connection with the error `E1006`.
-- `cli-output.schema.json` already describes the event lines. A new `endpoint.schema.json` describes `Hello`, `Welcome`, `Status`, and `Subscription`, and refers to the `sharedControllerWatchEvent` and `sharedVirtualFeedLine` shapes, so the two cannot drift apart.
+- `cli-output.schema.json` already describes the event lines. `endpoint.schema.json` describes `Hello`, `Welcome`, `Status`, and `Subscription`, and refers to the `sharedControllerWatchEvent` and `sharedVirtualFeedLine` shapes, so the two cannot drift apart.
 
 ## Control Stream (Milestone 4)
 
 With the `control` scope, the client sends a `FeedRequest`. The service answers a `FeedSession` once the virtual gamepad exists. Each following line is one `Frame`, the keys of an `ojd virtual feed` input line with `apiVersion` and `kind`, and the service sends `RumbleCommand` lines in the `virtualFeed` shape. `endpoint.schema.json` describes `FeedRequest`, `FeedSession`, and `Frame`.
 
 ```json
-{"apiVersion":"openjoystickdriver/v1alpha1","kind":"FeedRequest","as":"Generic"}
-{"apiVersion":"openjoystickdriver/v1alpha1","kind":"FeedSession","as":"Generic"}
-{"apiVersion":"openjoystickdriver/v1alpha1","kind":"Status","status":"Failure","code":"E1007","message":"..."}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedRequest","as":"Generic"}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedSession","as":"Generic"}
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Status","status":"Failure","code":"E1007","message":"..."}
 ```
 
 - **Transport:** `control` works on the Unix socket, for a signed client or a token. On the WebSocket, it works only with a token that has no origins, from a client that sends no `Origin` header. Any site can script a page, so a page never drives a pad. A `hello` that this rule refuses is recorded in `refusals`. `ojd access grant --token` refuses `--origin` together with `--scope control`. A grants file from an earlier build that holds the combination still loads; the service drops `control` from that token, and the token itself when `control` was its only scope. A grants file with a `control` scope that lacks `controlGrantedAt`, which a build before the scope worked wrote, is damaged, so the service never honors that scope.
@@ -86,7 +86,7 @@ With the `control` scope, the client sends a `FeedRequest`. The service answers 
 
 ## Grants
 
-The service stores grants in `~/Library/Application Support/OpenJoystickDriver/AccessGrants.json`, a new schema-described file. Only the service writes it: `ojd access` asks the service through the internal socket, so a revoke takes effect at once.
+The service stores grants in `~/Library/Application Support/OpenJoystickDriver/AccessGrants.plist`, a schema-described XML property list. Only the service writes it: `ojd access` asks the service through the internal socket, so a revoke takes effect at once.
 
 A grant is keyed by the client's code signature:
 
@@ -130,19 +130,19 @@ The signature checks need a client signed with a team ID, which a unit test cann
 
 `ojd access grant --token NAME --scope read [--origin URL]...` creates a token grant and prints its token once.
 
-- The token is `ojd_` and 32 random bytes from `SecRandomCopyBytes` in base64url. `AccessGrants.json` stores only its SHA-256, in a `tokens` array next to `grants`. The token cannot be shown again; a lost token is revoked and granted again.
+- The token is `ojd_` and 32 random bytes from `SecRandomCopyBytes` in base64url. `AccessGrants.plist` stores only its SHA-256, in a `tokens` array next to `grants`. The token cannot be shown again; a lost token is revoked and granted again.
 - A token grant's ID is `token:NAME`. Names are unique and match `[A-Za-z0-9._-]{1,64}`.
-- The client never sends the token. It sends the token's name and a proof in `hello`: `{"apiVersion":"openjoystickdriver/v1alpha1","kind":"Hello","scopes":["Read"],"tokenName":"NAME","proof":"..."}`. The proof is the lowercase hex HMAC-SHA256, keyed with the SHA-256 of the token, of four lines that each end with `\n`: `OpenJoystickDriver endpoint hello 1`, the nonce, the normalized `Origin`, and the WebSocket's port. On the Unix socket, the origin and port lines are empty. The service compares the HMAC in constant time.
+- The client never sends the token. It sends the token's name and a proof in `hello`: `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Hello","scopes":["Read"],"tokenName":"NAME","proof":"..."}`. The proof is the lowercase hex HMAC-SHA256, keyed with the SHA-256 of the token, of four lines that each end with `\n`: `OpenJoystickDriver endpoint hello 1`, the nonce, the normalized `Origin`, and the WebSocket's port. On the Unix socket, the origin and port lines are empty. The service compares the HMAC in constant time.
 - Because the proof covers the nonce, origin, and port, a listener that impersonates the service learns no token and can replay no proof to the real service: each connection has its own nonce, and a proof made for one origin or port fails on another.
 - With a token, the service skips the signature lookup, so ad-hoc signed tools and scripts work. Any process of the user that reads the token can use it.
-- `AccessGrants.json` is a secret. Its SHA-256 hashes are the HMAC keys, so whoever reads the file can sign challenges as any token in it. The service writes it with mode 0600 in a 0700 folder, and the support report does not include it. Keep it out of shared reports, exports, and backups; when it leaks, revoke every token.
+- `AccessGrants.plist` is a secret. Its SHA-256 hashes are the HMAC keys, so whoever reads the file can sign challenges as any token in it. The service writes it with mode 0600 in a 0700 folder, and the support report does not include it. Keep it out of shared reports, exports, and backups; when it leaks, revoke every token.
 - `--origin` binds the token to web pages. A token without origins works on the Unix socket, and on the WebSocket only for a client that sends no `Origin`. The service stores each origin as `scheme://host[:port]`, with `http` or `https` only. `null` is never accepted: any website can make a browser send `Origin: null` from a sandboxed frame or a `data:` URL, so it proves nothing.
 - A wrong proof, an unknown token name, or a token used from another origin gets `E1002`. `ojd access list` shows the refusal by token name only when the proof was right, such as for a missing scope or origin; otherwise it shows an unknown token, so a guessed name is not recorded. Refusals are kept for 24 hours.
 - `ojd access revoke token:NAME` removes the grant and closes its connections with `E1005`.
 
 ### WebSocket
 
-`ojd access web enable [--port N]` opens a TCP listener on `127.0.0.1`. Without `--port`, it reuses the saved port; the first time, the system picks a free port and the service saves it, so no fixed, well-known port can be taken first by another user. `ojd access status` shows the port. It has its own switch in `AccessGrants.json` (`web.enabled`, `web.port`), off by default and independent of `ojd access enable`. `ojd access web disable` closes it and its connections with `E1001`.
+`ojd access web enable [--port N]` opens a TCP listener on `127.0.0.1`. Without `--port`, it reuses the saved port; the first time, the system picks a free port and the service saves it, so no fixed, well-known port can be taken first by another user. `ojd access status` shows the port. It has its own switch in `AccessGrants.plist` (`web.enabled`, `web.port`), off by default and independent of `ojd access enable`. `ojd access web disable` closes it and its connections with `E1001`.
 
 - WebSocket clients connect to `ws://127.0.0.1:PORT/endpoint`. The upgrade is refused unless `Host` is `127.0.0.1:PORT`, which stops DNS rebinding, and `Origin` is an origin of some token grant. An upgrade without `Origin` is accepted when some token grant has no origins.
 - The challenge is the first WebSocket message after the `101`. `hello` must carry the name of a token whose grant names the connection's `Origin`, and a proof over that origin and the port. Without `Origin`, the token's grant must have no origins, and the proof has an empty origin line and the port. The token never goes on the wire, so it stays out of logs, browser history, and any listener that impersonates the service.

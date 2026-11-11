@@ -1,19 +1,26 @@
 import Foundation
 
 extension ControllerRecordDocument {
-  /// A record's or description's `input` section, which is either a byte layout or, for
-  /// `HIDDescriptor`, a HID usage map. The keys decide which: `hidUsageMap` and
-  /// `descriptorShapes` are usage-map keys, any other key belongs to the byte layout.
+  /// A record's or description's `input` section, which is either report layouts or, for
+  /// `HIDDescriptor`, a HID usage map.
+  ///
+  /// The keys decide which: `hidUsageMap` and `descriptorShapes` are usage-map keys, any other key
+  /// belongs to the report layouts.
   struct Input: Decodable {
-    let layout: ControllerInputLayout?
+    /// The report layouts of the section; nil when it holds usage-map keys.
+    let layouts: ControllerInputLayouts?
+    /// The HID usage map; nil when the section has none.
     let usageMap: HIDUsageMap?
+    /// The descriptor shapes that select the usage map; empty when the section has none.
     let shapes: [HIDUsageShape]
 
+    /// Decodes either report layouts or the keys `hidUsageMap` and `descriptorShapes`; unknown
+    /// usage-map keys, an empty section and an empty `descriptorShapes` are rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       let usageKeys: Set<String> = ["hidUsageMap", "descriptorShapes"]
       if Set(container.allKeys.map(\.stringValue)).isDisjoint(with: usageKeys) {
-        layout = try InputLayout(from: decoder).layout
+        layouts = try InputLayouts(from: decoder).layouts
         usageMap = nil
         shapes = []
         return
@@ -24,7 +31,7 @@ extension ControllerRecordDocument {
           .init(codingPath: decoder.codingPath, debugDescription: "input must not be empty")
         )
       }
-      layout = nil
+      layouts = nil
       usageMap = try container.decodeOptional(UsageMap.self, for: "hidUsageMap")?.map
       shapes =
         try container.decodeOptional([UsageShape].self, for: "descriptorShapes")?
@@ -40,9 +47,13 @@ extension ControllerRecordDocument {
     }
   }
 
+  /// A HID usage map with an optional report ID and its usage entries.
   struct UsageMap: Decodable {
+    /// The decoded usage map.
     let map: HIDUsageMap
 
+    /// Decodes `reportID` (1...255) and `usages`; an unknown key or a map that `HIDUsageMap`
+    /// rejects is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["reportID", "usages"])
@@ -66,9 +77,12 @@ extension ControllerRecordDocument {
     }
   }
 
+  /// A HID usage named by its page and usage number.
   struct UsageRef: Decodable {
+    /// The decoded usage.
     let usage: HIDUsage
 
+    /// Decodes `page` and `usage`; any other key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["page", "usage"])
@@ -76,9 +90,14 @@ extension ControllerRecordDocument {
     }
   }
 
+  /// One entry of a usage map: a usage and the control binding it drives.
   struct UsageEntry: Decodable {
+    /// The decoded entry.
     let entry: HIDUsageMap.Entry
 
+    /// Decodes a `Button`, `Axis`, `Hat`, `HalfAxis`, `AxisDpad`, `AxisButton` or `ButtonTrigger`
+    /// entry with the keys that kind allows; any other kind or
+    /// key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       let kind = try container.decode(String.self, for: "kind")
@@ -107,17 +126,59 @@ extension ControllerRecordDocument {
         binding = .hat(
           HIDUsageMap.Hat(range: try container.decodeOptional(UsageRange.self, for: "range")?.range)
         )
+      case "HalfAxis":
+        try container.rejectUnknown(allowed: [
+          "kind", "page", "usage", "half", "control", "inverted",
+        ])
+        binding = .halfAxis(
+          HIDUsageMap.HalfAxis(
+            half: try Self.half(in: container),
+            control: try container.decode(Control.self, for: "control"),
+            isInverted: try container.decodeOptional(Bool.self, for: "inverted") ?? false
+          )
+        )
+      case "AxisDpad", "AxisButton":
+        try container.rejectUnknown(allowed: [
+          "kind", "page", "usage", "half", "control", "threshold",
+        ])
+        let half = HIDUsageMap.HalfThreshold(
+          half: try Self.half(in: container),
+          control: try container.decode(Control.self, for: "control"),
+          threshold: Float(try container.decode(Double.self, for: "threshold"))
+        )
+        binding = kind == "AxisDpad" ? .axisDpad(half) : .axisButton(half)
+      case "ButtonTrigger":
+        try container.rejectUnknown(allowed: ["kind", "page", "usage", "control"])
+        binding = .buttonTrigger(try container.decode(Control.self, for: "control"))
       default:
         throw DecodingError.dataCorrupted(
           .init(
             codingPath: decoder.codingPath + [DocumentKey("kind")],
-            debugDescription: "kind is Button, Axis or Hat"
+            debugDescription:
+              "kind is Button, Axis, Hat, HalfAxis, AxisDpad, AxisButton or ButtonTrigger"
           )
         )
       }
       entry = HIDUsageMap.Entry(usage: usage, binding: binding)
     }
 
+    /// Reads `half`, which is `Positive` or `Negative`.
+    private static func half(
+      in container: KeyedDecodingContainer<DocumentKey>
+    ) throws -> HIDUsageMap.Half {
+      let name = try container.decode(String.self, for: "half")
+      guard let half = HIDUsageMap.Half(rawValue: name) else {
+        throw DecodingError.dataCorrupted(
+          .init(
+            codingPath: container.codingPath + [DocumentKey("half")],
+            debugDescription: "half is Positive or Negative"
+          )
+        )
+      }
+      return half
+    }
+
+    /// Reads `page` (1...65535) and `usage` (0...65535) from a container that may hold other keys.
     static func usage(
       in container: KeyedDecodingContainer<DocumentKey>,
       codingPath: [any CodingKey]
@@ -133,9 +194,12 @@ extension ControllerRecordDocument {
     }
   }
 
+  /// An inclusive range of raw usage values.
   struct UsageRange: Decodable {
+    /// The decoded range.
     let range: ClosedRange<Int>
 
+    /// Decodes `min` and `max`, which must be 32-bit integers with `min` at most `max`.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["min", "max"])
@@ -155,9 +219,13 @@ extension ControllerRecordDocument {
     }
   }
 
+  /// A descriptor shape: the usages that select a usage map, and the map.
   struct UsageShape: Decodable {
+    /// The decoded shape.
     let shape: HIDUsageShape
 
+    /// Decodes `present` (required), `absent`, `anyOf` and `hidUsageMap`; a usage list must be
+    /// nonempty and unique.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["present", "absent", "anyOf", "hidUsageMap"])

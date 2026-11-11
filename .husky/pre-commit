@@ -1,4 +1,0 @@
-# Every worktree runs this file from the main checkout; a branch from before the Biome step has no script.
-if [ -f Scripts/Quality/format-staged-json.sh ]; then
-  bash Scripts/Quality/format-staged-json.sh
-fi

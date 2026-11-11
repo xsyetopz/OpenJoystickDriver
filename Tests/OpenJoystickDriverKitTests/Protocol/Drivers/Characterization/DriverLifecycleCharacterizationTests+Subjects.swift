@@ -174,8 +174,10 @@ extension DriverLifecycleCharacterizationTests {
     variant: nil
   )
 
-  /// Catalog rows outside ``subjects``. Only the output capability sweep uses them, so the
-  /// transcripts over ``subjects`` stay unchanged.
+  /// Catalog rows outside ``subjects``.
+  ///
+  /// Only the output capability sweep uses them, so the transcripts over ``subjects`` stay
+  /// unchanged.
   static let switchInputOnly = Subject(
     model: model(0x0F0D, 0x00C1),
     host: .usb,
@@ -313,7 +315,9 @@ extension DriverLifecycleCharacterizationTests {
   }()
 
   /// A factory motion-calibration reply shaped like the request; 41-byte replies carry the
-  /// Bluetooth feature CRC. DualShock 4 Bluetooth groups the gyro endpoints.
+  /// Bluetooth feature CRC.
+  ///
+  /// DualShock 4 Bluetooth groups the gyro endpoints.
   func sonyFactoryReply(for request: PhysicalHIDFeatureReadRequest, groupedEndpoints: Bool) -> Data
   {
     var data = [UInt8](repeating: 0, count: request.length)

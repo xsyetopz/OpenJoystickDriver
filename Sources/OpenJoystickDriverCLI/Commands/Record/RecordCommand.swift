@@ -2,7 +2,9 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd record` command group: draft, list, check, install, test and remove controller records.
 struct RecordCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "record",
     abstract: CLILocalized.text(
@@ -18,11 +20,15 @@ struct RecordCommand: AsyncParsableCommand {
     ]
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
+/// The `ojd record list` command: lists every controller record with its model, protocol family,
+/// layer and file.
 struct RecordListCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "list",
     abstract: CLILocalized.text(
@@ -33,6 +39,7 @@ struct RecordListCommand: AsyncParsableCommand {
     )
   )
 
+  /// `--bundled`: list the bundled records alone.
   @Flag(
     help: ArgumentHelp(
       CLILocalized.text("cli.record.list.bundled")
@@ -40,9 +47,11 @@ struct RecordListCommand: AsyncParsableCommand {
   )
   var bundled = false
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let set = bundled ? ControllerRecordSet.bundled : RecordStore.load()
@@ -78,7 +87,10 @@ struct RecordListCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd record show` command: prints one model's effective record and the layer of each
+/// top-level field.
 struct RecordShowCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "show",
     abstract: CLILocalized.text(
@@ -88,16 +100,25 @@ struct RecordShowCommand: AsyncParsableCommand {
 
   /// The `--json` result. `fields` maps each top-level record field to its layer.
   struct Result: Encodable, Equatable {
+    /// The controller model as `VVVV:PPPP`.
     let identity: String
+    /// The protocol family of the record.
     let family: String
+    /// The record layer: `Bundled`, `Package` or `User`.
     let layer: String
+    /// The user record file, when the record comes from one.
     let file: String?
+    /// How OJD reaches the controller.
     let transport: RecordTransport
+    /// Whether the DriverKit extension can claim a raw-USB controller.
     let transportClaim: RecordTransportClaim?
+    /// The layer of each top-level record field.
     let fields: [String: String]
+    /// The effective record.
     let record: OrderedJSON
   }
 
+  /// The model of the record.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.record.group.identity"),
@@ -106,9 +127,11 @@ struct RecordShowCommand: AsyncParsableCommand {
   )
   var model: ControllerModelID
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let set = RecordStore.load()
@@ -134,7 +157,7 @@ struct RecordShowCommand: AsyncParsableCommand {
             transport: RecordTransport(record),
             transportClaim: RecordTransportClaim(record),
             fields: fields,
-            record: try OrderedJSON.parse(record.document)
+            record: try OrderedJSON(document: record.document, file: "record")
           )
         )
       case .plain:

@@ -2,12 +2,25 @@
 // Julian "Jibb" Smart. MIT license; see THIRD_PARTY_NOTICES.md for the complete notice.
 import Foundation
 
+/// Gyro rotation rate projected onto pitch and yaw.
 struct RemappingGyroProjection: Equatable {
+  /// Pitch rate in degrees per second.
   let pitchDegreesPerSecond: Double
+  /// Yaw rate in degrees per second.
   let yawDegreesPerSecond: Double
 }
 
+/// Projects a gyro vector onto pitch and yaw for a motion space.
 enum RemappingMotionProjection {
+  /// Returns the pitch and yaw rates of a gyro vector, or `nil` for input that is not finite or out
+  /// of range.
+  ///
+  /// The local space reads pitch from X and yaw from Y. The player space takes yaw about gravity
+  /// from the Y and Z rates, scaled by `yawRelaxation` and limited by the combined Y and Z rate.
+  /// The world space projects the rate onto the controller's X axis made perpendicular to gravity
+  /// for pitch, and onto gravity for yaw. In the world space,
+  /// pitch is zero while the larger Y or Z gravity component is at or below
+  /// `sideReductionThreshold`, and full from twice that.
   static func project(
     _ gyro: ControllerMotionVector,
     gravity: ControllerMotionVector,

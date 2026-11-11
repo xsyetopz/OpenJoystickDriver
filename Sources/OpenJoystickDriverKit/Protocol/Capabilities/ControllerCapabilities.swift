@@ -1,15 +1,23 @@
 /// Normalized controls and sample formats a parser can emit, not a claim of hardware validation.
+///
 /// Motion means gyroscope and accelerometer samples in SI units and the canonical controller frame.
 public struct ControllerCapabilities: Codable, Hashable, Sendable {
+  /// The normalized controls the parser can emit.
   public let controls: Set<Control>
   /// The triggers (`leftTrigger`, `rightTrigger`) whose press the protocol reports as its own
-  /// digital signal. For any other trigger in `controls`, normalization derives the press from the
-  /// analog value.
+  /// digital signal.
+  ///
+  /// For any other trigger in `controls`, normalization derives the press from the analog value.
   public let digitalTriggers: Set<Control>
-  /// Maximum contacts in one decoded touch frame. Zero means touch decoding is unavailable.
+  /// Maximum contacts in one decoded touch frame.
+  ///
+  /// Zero means touch decoding is unavailable.
   public let touchContactCount: UInt8
+  /// Whether the parser emits gyroscope and accelerometer samples.
   public let motion: Bool
 
+  /// Creates capabilities; `digitalTriggers` are added to `controls` and limited to the two
+  /// triggers.
   public init(
     controls: Set<Control>,
     digitalTriggers: Set<Control> = [],
@@ -31,6 +39,8 @@ public struct ControllerCapabilities: Codable, Hashable, Sendable {
     return trackpads.isEmpty ? [.primary] : trackpads
   }
 
+  /// Returns the capabilities both sides share: common controls, the smaller contact count, and
+  /// motion only if both have it.
   public func intersecting(_ other: Self) -> Self {
     Self(
       controls: controls.intersection(other.controls),
@@ -40,6 +50,8 @@ public struct ControllerCapabilities: Codable, Hashable, Sendable {
     )
   }
 
+  /// Returns the capabilities either side has: all controls, the larger contact count, and motion
+  /// if either has it.
   public func union(_ other: Self) -> Self {
     Self(
       controls: controls.union(other.controls),
@@ -49,10 +61,20 @@ public struct ControllerCapabilities: Codable, Hashable, Sendable {
     )
   }
 
+  /// The JSON keys of the capability fields.
   private enum CodingKeys: String, CodingKey {
-    case controls, digitalTriggers, touchContactCount, motion
+    /// The key of the controls.
+    case controls
+    /// The key of the digital triggers.
+    case digitalTriggers
+    /// The key of the touch contact count.
+    case touchContactCount
+    /// The key of the motion flag.
+    case motion
   }
 
+  /// Decodes the four fields; `digitalTriggers` may be absent, and `controls`, `touchContactCount`
+  /// and `motion` are required.
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.init(
@@ -64,6 +86,7 @@ public struct ControllerCapabilities: Codable, Hashable, Sendable {
     )
   }
 
+  /// Encodes controls in `Control.allCases` order, and omits `digitalTriggers` when it is empty.
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(Control.allCases.filter(controls.contains), forKey: .controls)
@@ -80,6 +103,7 @@ public struct ControllerCapabilities: Codable, Hashable, Sendable {
 
 /// Evidenced capability corrections a catalog row applies to its parser's declared defaults.
 public struct ControllerCapabilityDelta: Equatable, Sendable {
+  /// The delta that changes nothing.
   public static let none = Self(absentControls: [], presentControls: [], rumbleAbsent: false)
 
   /// Declared controls this model does not have.
@@ -89,6 +113,7 @@ public struct ControllerCapabilityDelta: Equatable, Sendable {
   /// The model has no rumble channel.
   public let rumbleAbsent: Bool
 
+  /// Creates a delta from the absent and present controls and the rumble flag.
   public init(absentControls: Set<Control>, presentControls: Set<Control>, rumbleAbsent: Bool) {
     self.absentControls = absentControls
     self.presentControls = presentControls

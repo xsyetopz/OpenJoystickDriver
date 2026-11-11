@@ -6,14 +6,18 @@ import Foundation
 /// to ``outEndpoint``, and reads one reply from ``inEndpoint`` into
 /// ``PhysicalProtocolDriver/consumeUSBCommandReply(_:)``.
 public struct USBCommandChannel: Equatable, Sendable {
+  /// The USB interface number that carries the commands.
   public let interfaceNumber: UInt8
+  /// The address of the OUT endpoint that commands are written to.
   public let outEndpoint: UInt8
+  /// The address of the IN endpoint that replies are read from.
   public let inEndpoint: UInt8
   /// Largest reply read after each command.
   public let replyLength: Int
   /// Timeout of each reply read; a command without a reply costs this much.
   public let replyTimeoutMilliseconds: UInt32
 
+  /// Creates a description of the command channel.
   public init(
     interfaceNumber: UInt8,
     outEndpoint: UInt8,
@@ -53,8 +57,9 @@ public struct DriverSessionPlan: Equatable, Sendable {
   public internal(set) var usbStartupRetryDelays: [UInt64]
   /// The channels the driver keeps alive; empty when the protocol sends no keep-alive.
   public internal(set) var keepAliveChannels: Set<KeepAliveChannel>
-  /// Interval between keep-alive writes on every channel in ``keepAliveChannels``. The family's
-  /// description holds it (`defaults.session.keepAlive.intervalMilliseconds`) and
+  /// Interval between keep-alive writes on every channel in ``keepAliveChannels``.
+  ///
+  /// The family's description holds it (`defaults.session.keepAlive.intervalMilliseconds`) and
   /// ``withKeepAlive(of:)`` fills it; nil until then and for a driver without a channel.
   public internal(set) var keepAliveIntervalNanoseconds: UInt64?
   /// Interval between USB keep-alive writes; nil when the protocol sends none over USB.
@@ -91,10 +96,15 @@ public struct DriverSessionPlan: Equatable, Sendable {
   public let hidPlayerIndicatorFollowsFirstInput: Bool
   /// USB command interface for `.usb` writes of a controller bound over HID; nil when none.
   public let usbCommandChannel: USBCommandChannel?
+  /// True when the session has an interrupt IN read pending before it sends the USB startup
+  /// writes, for a pad that sends its first report only to a read already waiting.
+  public let armsInputBeforeStartup: Bool
   /// What the user does before the controller sends input, from the family's description for the
   /// bound variant (``withDefaults(of:variant:)``); nil when input starts on its own.
   public internal(set) var inputStartAction: InputStartAction?
 
+  /// Creates a session plan; each parameter defaults to the value of a protocol without that
+  /// concern.
   public init(
     inputReportLivenessTimeoutNanoseconds: UInt64? = nil,
     requiresInputConnectionBeforeOutput: Bool = false,
@@ -113,7 +123,8 @@ public struct DriverSessionPlan: Equatable, Sendable {
     minimumHIDOutputIntervalNanoseconds: UInt64 = 0,
     assignsStartupPlayerIndicator: Bool = false,
     hidPlayerIndicatorFollowsFirstInput: Bool = false,
-    usbCommandChannel: USBCommandChannel? = nil
+    usbCommandChannel: USBCommandChannel? = nil,
+    armsInputBeforeStartup: Bool = false
   ) {
     self.inputReportLivenessTimeoutNanoseconds = inputReportLivenessTimeoutNanoseconds
     self.requiresInputConnectionBeforeOutput = requiresInputConnectionBeforeOutput
@@ -133,10 +144,13 @@ public struct DriverSessionPlan: Equatable, Sendable {
     self.assignsStartupPlayerIndicator = assignsStartupPlayerIndicator
     self.hidPlayerIndicatorFollowsFirstInput = hidPlayerIndicatorFollowsFirstInput
     self.usbCommandChannel = usbCommandChannel
+    self.armsInputBeforeStartup = armsInputBeforeStartup
   }
 
-  /// This plan with the timings that `family`'s protocol description defaults for `variant` in
-  /// place of the plan's own, and the description's input start action for `variant`.
+  /// This plan with the timings and the input start action that the protocol description of
+  /// `family` defaults for `variant`.
+  ///
+  /// The timings replace the plan's own.
   func withDefaults(
     of family: PhysicalProtocolID,
     variant: PhysicalProtocolVariantID? = nil
@@ -146,9 +160,10 @@ public struct DriverSessionPlan: Equatable, Sendable {
     return family.protocolDescription.tuning(variant: variant).map(plan.tuned) ?? plan
   }
 
-  /// This plan with the keep-alive interval of `family`'s description. A plan with channels needs
-  /// a description that has a keep-alive; without one the interval stays nil and the plan sends no
-  /// keep-alive, which the driver tests catch.
+  /// This plan with the keep-alive interval of the description of `family`.
+  ///
+  /// A plan with channels needs a description that has a keep-alive; without one the interval stays
+  /// nil and the plan sends no keep-alive, which the driver tests catch.
   func withKeepAlive(of family: PhysicalProtocolID) -> Self {
     withKeepAlive(of: family.protocolDescription)
   }
@@ -164,8 +179,11 @@ public struct DriverSessionPlan: Equatable, Sendable {
     return plan
   }
 
-  /// This plan with a keep-alive at `template`'s resend interval on the channel the template
-  /// writes to, when the template names an interval and the plan has no keep-alive of its own.
+  /// This plan with a keep-alive at the resend interval of `template` on the channel the template
+  /// writes to.
+  ///
+  /// The keep-alive is added when the template names an interval and the plan has no keep-alive of
+  /// its own.
   func withRumbleResend(of template: RumbleOutputTemplate?) -> Self {
     guard let milliseconds = template?.resendIntervalMilliseconds,
       let target = template?.target, keepAliveChannels.isEmpty
@@ -219,11 +237,12 @@ extension PhysicalProtocolID {
   }
 
   /// The value of `key` that a driver of this family reads: from `tuning` when the registry
-  /// supplies the record's, otherwise (or where it sets none) from the description's defaults. A
-  /// description that defaults none for a key its driver reads is a defect.
+  /// supplies the record's, otherwise (or where it sets none) from the description's defaults.
+  ///
+  /// A description that defaults none for a key its driver reads is a defect.
   func described(_ key: KeyPath<ControllerTuning, Int?>, in tuning: ControllerTuning?) -> Int {
     guard let value = driverTuning().overlaid(by: tuning ?? .none)[keyPath: key] else {
-      preconditionFailure("\(descriptionFileStem).json defaults no \(key)")
+      preconditionFailure("\(descriptionFileStem).plist defaults no \(key)")
     }
     return value
   }
@@ -237,34 +256,37 @@ extension PhysicalProtocolID {
     record ?? protocolDescription.rumbleTemplate(variant: variant)
   }
 
-  /// The rumble template of a family whose description always sets one for `variant`. A
-  /// description that sets none is a defect.
+  /// The rumble template of a family whose description always sets one for `variant`.
+  ///
+  /// A description that sets none is a defect.
   func describedRumbleTemplate(
     variant: PhysicalProtocolVariantID?,
     record: RumbleOutputTemplate?
   ) -> RumbleOutputTemplate {
     guard let template = rumbleTemplate(variant: variant, record: record) else {
-      preconditionFailure("\(descriptionFileStem).json sets no rumble template")
+      preconditionFailure("\(descriptionFileStem).plist sets no rumble template")
     }
     return template
   }
 
-  /// The count `limit` that the family's description sets for its driver. A description that sets
-  /// none for a count its driver reads is a defect.
+  /// The count `limit` that the family's description sets for its driver.
+  ///
+  /// A description that sets none for a count its driver reads is a defect.
   func described(limit: KeyPath<ProtocolDescription, Int?>) -> Int {
     guard let value = protocolDescription[keyPath: limit] else {
-      preconditionFailure("\(descriptionFileStem).json sets no \(limit)")
+      preconditionFailure("\(descriptionFileStem).plist sets no \(limit)")
     }
     return value
   }
 }
 
 extension PhysicalProtocolID {
-  /// The controls that the family's description gives every controller of it. A driver adds only
-  /// what its record or layout makes true.
+  /// The controls that the family's description gives every controller of it.
+  ///
+  /// A driver adds only what its record or layout makes true.
   var describedControls: ControllerCapabilities {
     guard let controls = protocolDescription.controls else {
-      preconditionFailure("\(descriptionFileStem).json describes no controls")
+      preconditionFailure("\(descriptionFileStem).plist describes no controls")
     }
     return controls
   }
@@ -307,6 +329,9 @@ public protocol PhysicalProtocolDriver: AnyObject {
   /// until the device reports it.
   var power: ControllerConnectionState.Power? { get }
 
+  /// The Wii Remote session facts; `nil` for every other family.
+  var wiiRemoteStatus: WiiRemoteStatus? { get }
+
   /// Returns and clears the most recent logical connection state change, if any.
   func consumeInputConnectionStateChange() -> ControllerInputConnectionState?
 
@@ -346,6 +371,14 @@ public protocol PhysicalProtocolDriver: AnyObject {
   /// Writes for one keep-alive tick at the plan's USB or HID keep-alive interval.
   func keepAliveWrites() -> [PhysicalOutputWrite]
 
+  /// Writes that turn the controller off, sent once by the pipeline's deliberate stop and never
+  /// after an I/O error or an unplug.
+  func powerOffWrites() -> [PhysicalOutputWrite]
+
+  /// Tells the driver whether the active profile binds a pointer axis; the pipeline calls it
+  /// before each report is parsed.
+  func setPointerInputWanted(_ wanted: Bool)
+
   /// Returns and clears the writes produced while parsing input, such as acknowledgements.
   ///
   /// Parsing stays synchronous and deterministic; the pipeline performs these writes in order.
@@ -370,30 +403,53 @@ public protocol PhysicalProtocolDriver: AnyObject {
 }
 
 extension PhysicalProtocolDriver {
+  /// Default: no element value maps to a control.
   public func parse(
     elementValue _: HIDElementValue,
     receivedAt _: MonotonicTimestamp
   ) -> ControllerEvent? { nil }
+  /// Default: no input report format.
   public var latestInputReportFormat: String? { nil }
+  /// Default: no power state.
   public var power: ControllerConnectionState.Power? { nil }
+  /// Default: no Wii Remote facts.
+  public var wiiRemoteStatus: WiiRemoteStatus? { nil }
+  /// Default: the driver keeps no protocol state to reset.
   public func resetProtocolState() {}
+  /// Default: no startup writes.
   public func startupWrites() -> [PhysicalOutputWrite] { [] }
+  /// Default: no activation writes.
   public func activationWrites() -> [PhysicalOutputWrite] { [] }
+  /// Default: no deactivation writes.
   public func deactivationWrites() -> [PhysicalOutputWrite] { [] }
+  /// Default: no startup feature reads.
   public func startupFeatureReads() -> [PhysicalHIDFeatureReadRequest] { [] }
+  /// Default: rejects every reply.
   public func consumeFeatureReply(_: Data, request _: PhysicalHIDFeatureReadRequest) -> Bool {
     false
   }
+  /// Default: ignores the reply.
   public func consumeUSBCommandReply(_: [UInt8]) {}
+  /// Default: no startup recovery writes.
   public func startupRecoveryWrites() -> [PhysicalOutputWrite] { [] }
+  /// Default: no startup reply is awaited, so there is nothing to end.
   public func expireStartupRecovery() {}
+  /// Default: no presence request.
   public func presenceRequestWrite() -> PhysicalOutputWrite? { nil }
+  /// Default: no keep-alive writes.
   public func keepAliveWrites() -> [PhysicalOutputWrite] { [] }
+  /// Default: the controller is left on.
+  public func powerOffWrites() -> [PhysicalOutputWrite] { [] }
+  /// Default: the driver has no pointer hardware to turn on.
+  public func setPointerInputWanted(_: Bool) {}
+  /// Default: no pending writes.
   public func drainPendingWrites() -> [PhysicalOutputWrite] { [] }
 
+  /// Default: no connection writes.
   public func inputConnectionWrites(for _: ControllerInputConnectionState) -> [PhysicalOutputWrite]
   { [] }
 
+  /// Default: throws ``ControllerOutputError/unsupportedCapability(_:)`` for every command.
   public func encode(
     _ command: ControllerOutputCommand
   ) throws(ControllerOutputError) -> PhysicalOutputPlan {

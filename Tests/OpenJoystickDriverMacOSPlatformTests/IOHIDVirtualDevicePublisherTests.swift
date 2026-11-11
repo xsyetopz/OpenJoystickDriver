@@ -7,6 +7,11 @@ import Testing
 @testable import OpenJoystickDriverMacOSPlatform
 
 struct IOHIDVirtualDevicePublisherTests {
+  private static func identity(of identifier: LogicalControllerID) -> VirtualDeviceIdentity {
+    var registry = VirtualIdentityRegistry()
+    return registry.reserve(identifier)
+  }
+
   @Test
   func failedCreateIsExplainedByMissingPermissionsOrReportedAsCreateFailure() {
     let classify = IOHIDVirtualDevicePublisher.creationFailure
@@ -48,7 +53,7 @@ struct IOHIDVirtualDevicePublisherTests {
     let properties = IOHIDVirtualDevicePublisher.deviceProperties(
       profile: .sdlCompatible,
       format: format,
-      identifier: LogicalControllerID(vendorID: 13623, productID: 4112)
+      identity: Self.identity(of: LogicalControllerID(vendorID: 13623, productID: 4112))
     )
 
     let inputSize = properties[kIOHIDMaxInputReportSizeKey as String] as? Int
@@ -64,7 +69,7 @@ struct IOHIDVirtualDevicePublisherTests {
     let properties = IOHIDVirtualDevicePublisher.deviceProperties(
       profile: profile,
       format: format,
-      identifier: LogicalControllerID(vendorID: 13623, productID: 4112)
+      identity: Self.identity(of: LogicalControllerID(vendorID: 13623, productID: 4112))
     )
 
     #expect(properties[kIOHIDReportDescriptorKey as String] as? Data == Data(format.descriptor))
@@ -99,7 +104,7 @@ struct IOHIDVirtualDevicePublisherTests {
     let properties = IOHIDVirtualDevicePublisher.deviceProperties(
       profile: profile,
       format: OJDGenericGamepadFormat(),
-      identifier: LogicalControllerID(vendorID: 1, productID: 1)
+      identity: Self.identity(of: LogicalControllerID(vendorID: 1, productID: 1))
     )
     #expect(properties[kIOHIDTransportKey as String] as? String == expected)
   }
@@ -136,7 +141,7 @@ struct IOHIDVirtualDevicePublisherTests {
     let properties = IOHIDVirtualDevicePublisher.deviceProperties(
       profile: profile.identity,
       format: profile.reportFormat,
-      identifier: LogicalControllerID(vendorID: 1, productID: 2)
+      identity: Self.identity(of: LogicalControllerID(vendorID: 1, productID: 2))
     )
     #expect(properties[kIOHIDVendorIDKey as String] as? Int == vendorID)
     #expect(properties[kIOHIDProductIDKey as String] as? Int == productID)
@@ -174,7 +179,7 @@ struct IOHIDVirtualDevicePublisherTests {
       IOHIDVirtualDevicePublisher.deviceProperties(
         profile: profile,
         format: builtIn.reportFormat,
-        identifier: identifier
+        identity: Self.identity(of: identifier)
       )
     }
     let plain = properties(builtIn.identity)
@@ -210,7 +215,7 @@ struct IOHIDVirtualDevicePublisherTests {
     let properties = IOHIDVirtualDevicePublisher.deviceProperties(
       profile: identity,
       format: format,
-      identifier: identifier
+      identity: Self.identity(of: identifier)
     )
 
     #expect(properties[kIOHIDVendorIDKey as String] as? Int == Int(identity.vendorID))
@@ -224,11 +229,11 @@ struct IOHIDVirtualDevicePublisherTests {
     )
     #expect(
       properties[kIOHIDSerialNumberKey as String] as? String
-        == UserSpaceVirtualDeviceConstants.serialNumber(for: identifier)
+        == Self.identity(of: identifier).serialNumber
     )
     #expect(
       properties[kIOHIDLocationIDKey as String] as? Int64
-        == Int64(UserSpaceVirtualDeviceConstants.locationID(for: identifier))
+        == Int64(Self.identity(of: identifier).locationID)
     )
     #expect(properties[kIOHIDPrimaryUsagePageKey as String] as? Int == Int(kHIDPage_GenericDesktop))
     #expect(properties[kIOHIDPrimaryUsageKey as String] as? Int == Int(kHIDUsage_GD_GamePad))
@@ -272,12 +277,12 @@ struct IOHIDVirtualDevicePublisherTests {
     let first = IOHIDVirtualDevicePublisher.deviceProperties(
       profile: profile.identity,
       format: profile.reportFormat,
-      identifier: identifier
+      identity: Self.identity(of: identifier)
     )
     let second = IOHIDVirtualDevicePublisher.deviceProperties(
       profile: profile.identity,
       format: profile.reportFormat,
-      identifier: identifier
+      identity: Self.identity(of: identifier)
     )
 
     #expect(Self.samePublishedProperties(first, second))
@@ -292,12 +297,12 @@ struct IOHIDVirtualDevicePublisherTests {
     var firstProperties = IOHIDVirtualDevicePublisher.deviceProperties(
       profile: profile.identity,
       format: profile.reportFormat,
-      identifier: first
+      identity: Self.identity(of: first)
     )
     var secondProperties = IOHIDVirtualDevicePublisher.deviceProperties(
       profile: profile.identity,
       format: profile.reportFormat,
-      identifier: second
+      identity: Self.identity(of: second)
     )
 
     #expect(firstProperties[kIOHIDSerialNumberKey as String] is String)

@@ -1,0 +1,40 @@
+# Changelog Entries For Task 18.1
+
+Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
+
+## Added
+
+- The endpoint takes a `ProfileRequest` line with the `Control` scope to activate, deactivate or set one value of a remapping profile, and answers a `ProfileResult`. A refusal by the service is a `Status` failure with the code that `ojd` prints and keeps the connection open. Shortcuts lists a Set Profile Value action that does the same as `ojd profile set`. See the [endpoint protocol](docs/sdk/endpoint.md#profilerequest). (6.11)
+- The endpoint takes a `ModList` line with the `Read` scope and answers `Mods`, the installed mod packages, as `ojd mod list --json` does. Shortcuts lists the actions List Mod Packages, Install Mod Package and Remove Mod Package, which run the code of `ojd mod list`, `install` and `remove`. See the [endpoint protocol](docs/sdk/endpoint.md#modlist). (6.12)
+- The endpoint takes an `OutputRequest` line with the `Control` scope to rumble a controller, set its player number, or set its light, and answers `OutputResult`. Shortcuts lists the actions Rumble Controller, Set Player Indicator and Set Controller Light. Both run the code of `ojd controller rumble`, `player` and `light`, and refuse an output that the controller lacks with the code that `ojd` prints. See the [endpoint protocol](docs/sdk/endpoint.md#outputrequest). (6.13)
+- The endpoint takes the `Subscription` streams `Profiles` and `Mods` beside `Controllers`, with the `Read` scope. Each sends the whole list at once and again each time it changes, as a `Profiles` or a `Mods` line. See the [endpoint protocol](docs/sdk/endpoint.md#subscription). (6.14)
+
+- `ojd generate <script> [--output <folder>] [--replace] [--timeout <seconds>]` runs a JavaScript file's `generate` function in a helper process with no file or network access, checks every document it returns with the reader for its kind, and writes the files with the store's names. It writes nothing when one document fails, reports the document, key path and rule, reports a script error with its line, leaves an equal file unchanged, and stops at a differing file unless `--replace`. See [Generating Documents with Scripts](wiki/Generating-Documents-with-Scripts.md). (6.1–6.5, 6.8)
+- A mod package skips its `.js` files and never runs them. (6.6)
+- A description document in `Protocols/` can name a protocol family that OJD lacks, with an UpperCamelCase name and `defaults.input.layouts`; a record that names the family decodes its reports with those layouts. The family loads from the user's `Protocols/` folder and from a mod package, takes its display name from the document, and is refused when its name equals a built-in family, when it has no input layouts, or when its file stem differs from its name. (9.19, 9.20)
+- `ojd protocol validate <file>`, `ojd protocol install <file> [--dry-run]` and `ojd protocol list`, which lists the built-in and documented families with their source (`BuiltIn`, `User` or `Package`). (9.21)
+- The wiki page [Support Ladder](wiki/Support-Ladder.md) lists the five ways to support a controller (nothing, a patch, a record, a generator script, source) with the command for each and a complete patch and record; `llms.txt` and `llms-full.txt` list the same steps. (9.10)
+
+## Changed
+
+- The app sends the driver extension activation request only after a user action: the banner button, the **Claim** button, `ojd controller claim` for a model that Apple's driver holds, or `ojd transport-extension activate`. Launch, service start and a controller arrival send none. (4.3, 4.5)
+- A controller on a model that Apple's driver holds (`045E:02EA`, `045E:0B00`, `045E:0B12`) is listed as served by macOS, with **Claim**, in the Controllers list and in `ojd controller show` (`served-by` and `heldByAppleDriver`). The Microsoft models `045E:02D1`, `045E:02DD`, `045E:02E3` and `045E:0B0A` take the direct route when the extension does not own them. (4.2, 4.4)
+- The driver banner shows each state of the request: running with a disabled button, needs approval with a button that opens the approval pane, cancelled, timed out, and failed with the error domain, code and text. It shows only while a connected controller uses the extension route. (4.6)
+- The wiki heading `extension` is `transport-extension`. (4.7)
+- A controller session reports its input as `AwaitingInput` (`awaiting-input` in `ojd controller show`, "Waiting for the first input..." in the controller detail) until its first input report, and `Healthy` after it. (3.3)
+
+- `ojd migrate [FOLDER]` converts the documents an earlier alpha wrote (`v1alpha1` and `v1alpha2` JSON) to `v1alpha3` property lists, gives each file one verdict (`Migrated`, `Current`, `Failed`, `Foreign`), keeps each original under `Migrated/`, never overwrites a backup, and exits `E5009` when a file failed. `--dry-run` writes nothing. A file that OJD 0.5 wrote fails with "re-create it". (5.2, 5.3, 5.4, 5.6)
+- The service migrates the stored documents when it starts, before any store opens, and logs each verdict. (5.5)
+- The app offers Migrate wherever it reports `E5001`, and the Profiles area names an earlier alpha's `.json` profile. (5.7)
+- The implementation status and `Scripts/SDK/reference_client.py` name `openjoystickdriver/v1alpha3`. (18.4)
+- A controller record's `input.layouts` applies under every protocol family: a layout decodes the controls it names in the reports it selects, and the family's decoder reads the rest. A `HIDDescriptor` mode refuses a layout. (9.2)
+- A controller patch may set every record property except the identity, including `capabilities` and `idle`. `patch.modes` merges by `id`: an entry with a known `id` changes that mode, a new `id` adds a mode, and the `remove` path `modes.<id>` drops one. A record's `capabilities` may name a control that the driver of any of its modes declares. `ojd migrate` gives a `v1alpha2` patch that sets `modes` the `remove` path `modes`, so it still replaces the record's modes. (9.15)
+- **Breaking:** a profile's `applicationScope` holds `appIDs`, a list of one or more bundle identifiers, and the profile applies while any of those apps is in front. A document with `appID` is refused with a named error, and `ojd migrate` converts it, `ActiveProfiles` entries included. `ojd profile create` and `ojd profile import` take `--app` more than once; on import it replaces the scope in the file. (15.1)
+- The wiki, the README and the `llms` files show every document example as an XML property list and give the `plutil -convert` commands in both directions. `ojd record install --help` names a `.plist` file. (18.3)
+
+## Fixed
+
+- A GIP pad that announces nothing and sends its first report to an input read that is already pending gets that read before the startup writes. Not checked on hardware. (3.2)
+- A transfer on an interrupt pipe through the driver extension passes timeout 0, which the pipe requires, so the Xbox Elite Series 1 no longer fails with `kIOReturnBadArgument` ([#55](https://github.com/xsyetopz/OpenJoystickDriver/issues/55)). Not checked on hardware. (8.1)
+- A USB session start that keeps failing its handshake stops after 5 failures in a row, and the controller shows the last error ([#55](https://github.com/xsyetopz/OpenJoystickDriver/issues/55)). (8.2)
+- OJD no longer seizes the HID device of a model that a record serves over raw USB or the extension, so it leaves that device to other apps such as Steam ([#18](https://github.com/xsyetopz/OpenJoystickDriver/issues/18)). Not checked on hardware. (9.17)

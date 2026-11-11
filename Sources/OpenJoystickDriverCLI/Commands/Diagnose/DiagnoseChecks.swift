@@ -2,8 +2,11 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension DiagnoseServiceSnapshot {
-  /// Asks the service once; a stopped or failing service never throws. `frameSeconds` limits the
-  /// frame timings to the frames read within that many seconds; nil asks for the whole ring.
+  /// Asks the service once; a stopped or failing service never throws.
+  ///
+  /// - Parameter frameSeconds: Limits the frame timings to the frames read within that many
+  ///   seconds; nil asks for the whole ring.
+  /// - Returns: The report of the service, or the report of an unavailable service.
   static func fetch(frameSeconds: Int?) async -> Self {
     let socketPath = ServiceConnection.socketPath
     do {
@@ -45,12 +48,17 @@ extension DiagnoseServiceSnapshot {
 
 /// The soak options of `ojd diagnose --soak`.
 struct DiagnoseSoak: Sendable, Equatable {
+  /// The seconds to sample the service.
   let seconds: Int
+  /// The milliseconds between samples.
   let intervalMilliseconds: Int
+  /// The resident memory limit in MiB that fails the check; 0 sets no limit.
   let residentLimitMiB: Int
+  /// The memory footprint limit in MiB that fails the check.
   let footprintLimitMiB: Int
 }
 
+/// The checks of `ojd diagnose`, including the two that read the service process.
 enum DiagnoseChecks {
   /// Every check in report order.
   static func run(
@@ -72,6 +80,8 @@ enum DiagnoseChecks {
     return checks
   }
 
+  /// The `hid-input-drops` check: reports input reports that the system dropped for the service,
+  /// or skips when the service is not running.
   private static func hidInputDropsCheck(snapshot: DiagnoseServiceSnapshot) -> DiagnoseCheck {
     let id = "hid-input-drops"
     guard snapshot.availability == .running, let processID = ServiceConnection.processIdentifier()
@@ -79,6 +89,7 @@ enum DiagnoseChecks {
     return DiagnosticsService.hidInputDropsCheck(DiagnoseCommand.hidDropProbe(processID))
   }
 
+  /// The `runtime-health` check: samples the service process for the soak, or skips without one.
   private static func soakCheck(
     snapshot: DiagnoseServiceSnapshot,
     soak: DiagnoseSoak?

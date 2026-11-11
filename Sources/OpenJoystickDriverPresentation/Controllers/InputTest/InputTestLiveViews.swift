@@ -4,19 +4,30 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The live input of the controller: shoulders, D-pad, system and face buttons, sticks and any
+  /// other pressed button.
   struct InputTestLiveInputView: View {
+    /// The high-frequency input state.
     @ObservedObject
     var liveState: InputTestLiveState
+    /// The glyphs of the controller's identity.
     let presentation: VirtualIdentityPresentation
   }
 
+  /// One stick: a circle with a dot at its position, the numbers, and its click.
   struct InputTestStickView: View {
+    /// The name of the stick.
     let title: String
+    /// The horizontal position, -1 to 1.
     let x: Float
+    /// The vertical position, -1 to 1.
     let y: Float
+    /// The title and symbols of the stick click.
     let clickPresentation: InputTestControllerSymbolSet.Control
+    /// Whether the stick is clicked.
     let clickActive: Bool
 
+    /// The stick.
     var body: some View {
       VStack(spacing: 7) {
         Text(title).font(.subheadline.weight(.semibold))
@@ -50,15 +61,30 @@
     }
   }
 
+  /// One button or trigger of the live input, drawn filled while it is pressed.
   struct InputTestIndicator: View {
+    /// The name of the button.
     let title: String
     /// The analog value drawn beside the label, for a control that reports one.
     var displayedText: String?
+    /// The name of the SF Symbol, or nil to show the text.
     var symbol: String?
+    /// The name of the SF Symbol to try when `symbol` does not exist, or nil.
     var fallbackSymbol: String?
+    /// The text to show when no symbol exists.
     var fallbackText: String?
+    /// Whether the button is pressed.
     let active: Bool
 
+    /// Creates the indicator.
+    ///
+    /// - Parameters:
+    ///   - title: The name of the button.
+    ///   - displayedText: The analog value, or nil.
+    ///   - symbol: The name of the SF Symbol, or nil.
+    ///   - fallbackSymbol: The name of the SF Symbol to try when `symbol` does not exist, or nil.
+    ///   - fallbackText: The text to show when no symbol exists.
+    ///   - active: Whether the button is pressed.
     init(
       title: String,
       displayedText: String? = nil,
@@ -75,6 +101,7 @@
       self.active = active
     }
 
+    /// The symbol or text, and the value beside it.
     var body: some View {
       HStack(spacing: 5) {
         if let symbol {

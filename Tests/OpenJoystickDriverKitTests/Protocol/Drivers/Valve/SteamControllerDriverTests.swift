@@ -139,11 +139,12 @@ struct SteamControllerDriverTests {
     let parser = SteamControllerDriver()
 
     let startup = parser.activationWrites().hidFeatures
-    #expect(startup.map(\.reportID) == [0, 0])
-    #expect(startup.map { $0.bytes.count } == [64, 64])
+    #expect(startup.map(\.reportID) == [0, 0, 0])
+    #expect(startup.map { $0.bytes.count } == [64, 64, 64])
     #expect(startup[0].bytes[0] == 0x81)
+    #expect(startup[1].bytes[0] == 0x8E)
     #expect(
-      Array(startup[1].bytes.prefix(11)) == ProtocolPacketFixtures.Steam.startupSettingsPrefix
+      Array(startup[2].bytes.prefix(14)) == ProtocolPacketFixtures.Steam.startupSettingsPrefix
     )
 
     let shutdown = parser.deactivationWrites().hidFeatures

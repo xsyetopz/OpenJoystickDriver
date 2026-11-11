@@ -164,6 +164,20 @@ struct FlydigiParserTests {
     }
   }
 
+  /// The order of the four back buttons is a proposal until a tester names them.
+  @Test(arguments: [
+    (UInt8(0x01), Control.auxiliary1), (0x02, .auxiliary2), (0x04, .leftPaddle1),
+    (0x08, .leftPaddle2), (0x10, .rightPaddle1), (0x20, .rightPaddle2),
+  ])
+  func testByteElevenButtonsPressAndRelease(mask: UInt8, button: Control) throws {
+    let parser = flydigiDriver()
+    settled(parser)
+    let pressed = try parser.parseReport(CapturedReport.with(extras: mask))
+    #expect(pressed.contains(.press(button)))
+    #expect(pressed?.state.pressed == [button])
+    #expect(try parser.parseReport(Data(CapturedReport.neutral)).contains(.release(button)))
+  }
+
   @Test
   func testGuideUsesSystemByte() throws {
     let parser = flydigiDriver()

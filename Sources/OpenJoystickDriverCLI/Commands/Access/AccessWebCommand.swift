@@ -2,7 +2,9 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd access web` command group: turn the endpoint's WebSocket on or off.
 struct AccessWebCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "web",
     abstract: CLILocalized.text(
@@ -14,11 +16,16 @@ struct AccessWebCommand: AsyncParsableCommand {
     subcommands: [AccessWebEnableCommand.self, AccessWebDisableCommand.self]
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
+/// The `ojd access web enable` command: turns on the WebSocket on `127.0.0.1` after a confirmation.
+///
+/// Without `--port` it uses the saved port, and the first time the system picks a free port.
 struct AccessWebEnableCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "enable",
     abstract: CLILocalized.text("cli.access.web.enableAbstract"),
@@ -27,6 +34,7 @@ struct AccessWebEnableCommand: AsyncParsableCommand {
     )
   )
 
+  /// `--port`: the port to listen on, within the allowed range.
   @Option(
     name: .long,
     help: ArgumentHelp(
@@ -36,21 +44,28 @@ struct AccessWebEnableCommand: AsyncParsableCommand {
   )
   var port: Int?
 
+  /// `--automatic`: let the system pick a free port even when one is saved; it cannot be combined
+  /// with `--port`.
   @Flag(
     name: .long,
     help: ArgumentHelp(CLILocalized.text("cli.access.web.automatic"))
   )
   var automatic = false
 
+  /// `-f`, `--force`: skip the confirmation.
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
   )
   var force = false
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Checks that `--automatic` does not come with a port and that the port is allowed.
+  ///
+  /// - Throws: ``ValidationError`` otherwise.
   func validate() throws {
     if automatic, port != nil {
       throw ValidationError(CLILocalized.text("cli.access.web.automaticConflict"))
@@ -62,6 +77,7 @@ struct AccessWebEnableCommand: AsyncParsableCommand {
     }
   }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       try CLITerminal.confirm(
@@ -80,7 +96,11 @@ struct AccessWebEnableCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd access web disable` command: turns off the WebSocket and closes its connections.
+///
+/// The tokens stay.
 struct AccessWebDisableCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "disable",
     abstract: CLILocalized.text(
@@ -88,9 +108,11 @@ struct AccessWebDisableCommand: AsyncParsableCommand {
     )
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let status = try await ServiceConnection.request {

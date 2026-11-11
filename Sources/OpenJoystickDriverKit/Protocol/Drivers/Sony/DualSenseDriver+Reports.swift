@@ -1,6 +1,7 @@
 import Foundation
 
 extension DualSenseDriver {
+  /// The lightbar color a DualSense shows before the host sets one: blue.
   public var defaultColor: ControllerColor? { ControllerColor(red: 0, green: 0, blue: 255) }
 
   /// DualSense Edge function buttons and back paddles: the description's record capability.
@@ -8,6 +9,8 @@ extension DualSenseDriver {
     PhysicalProtocolID.sonyDualSense.protocolDescription.recordCapabilities.presentControls
   }
 
+  /// Output waits for a connected controller on a third-party dongle, and feature replies are
+  /// validated.
   public var sessionPlan: DriverSessionPlan {
     DriverSessionPlan(
       requiresInputConnectionBeforeOutput: thirdParty?.isDongle == true,
@@ -15,11 +18,13 @@ extension DualSenseDriver {
     )
   }
 
+  /// Returns and clears the connection change that is pending.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? {
     defer { pendingConnectionState = nil }
     return pendingConnectionState
   }
 
+  /// The controls of the description, with the Edge buttons added when ``hasEdgeButtons`` is true.
   public var capabilities: ControllerCapabilities {
     let edge = PhysicalProtocolID.sonyDualSense.protocolDescription.recordCapabilities
       .presentControls
@@ -28,15 +33,26 @@ extension DualSenseDriver {
     )
   }
 
+  /// The byte offsets of the fields in the input payload that follows the report header.
   private enum ReportOffset {
+    /// The left stick X.
     static let leftStickX = 0
+    /// The left stick Y.
     static let leftStickY = 1
+    /// The right stick X.
     static let rightStickX = 2
+    /// The right stick Y.
     static let rightStickY = 3
+    /// The left trigger.
     static let l2Trigger = 4
+    /// The right trigger.
     static let r2Trigger = 5
+    /// The first button byte: the face buttons and the D-pad hat.
     static let buttons0 = 7
+    /// The second button byte: the shoulders, triggers, stick clicks, Back and Start.
     static let buttons1 = 8
+    /// The third button byte: the Guide, touchpad click and microphone buttons, and the Edge
+    /// buttons.
     static let buttons2 = 9
   }
 
@@ -63,6 +79,10 @@ extension DualSenseDriver {
     return [probe, calibration]
   }
 
+  /// Installs the factory motion calibration, or the third-party capability probe, from a feature
+  /// reply.
+  /// - Returns: Whether the reply was valid and installed. A calibration reply with the wrong
+  ///   length or ID, or that fails the Bluetooth CRC, is rejected.
   public func consumeFeatureReply(_ data: Data, request: PhysicalHIDFeatureReadRequest) -> Bool {
     let bytes = Array(data)
     if request.reportID == dualSenseCapabilitiesReportID { return applyCapabilityReply(bytes) }
@@ -155,6 +175,10 @@ extension DualSenseDriver {
     ]
   }
 
+  /// Encodes a rumble, player indicator, lightbar color or adaptive trigger command as one output
+  /// report for the current connection.
+  /// - Throws: ``ControllerOutputError/unsupportedCapability(_:)`` when the controller lacks the
+  ///   feature or the command is a light brightness change.
   public func encode(
     _ command: ControllerOutputCommand
   ) throws(ControllerOutputError) -> PhysicalOutputPlan {
@@ -190,10 +214,11 @@ extension DualSenseDriver {
       case .right:
         return output(validFlag0: dualSenseRightTriggerEffectFlag, rightTriggerEffect: encoded)
       }
-    case .setLightBrightness: throw .unsupportedCapability(command.capability)
+    case .setLightBrightness, .speaker: throw .unsupportedCapability(command.capability)
     }
   }
 
+  /// Whether the controller has the output feature that `command` needs.
   private func supports(_ command: ControllerOutputCommand) -> Bool {
     let output = outputCapabilities
     switch command {
@@ -202,9 +227,12 @@ extension DualSenseDriver {
     case .setRGB: return output.lightingFeatures.contains(.programmableColor)
     case .setAdaptiveTrigger: return output.supportsAdaptiveTriggers
     case .setLightBrightness: return true
+    case .speaker: return false
     }
   }
 
+  /// The 11-byte trigger effect field of `effect`: a resistance effect, or all zeros for any other
+  /// kind or an invalid effect.
   static func encodedAdaptiveTriggerEffect(_ effect: PhysicalAdaptiveTriggerEffect) -> [UInt8] {
     var bytes = [UInt8](repeating: 0, count: 11)
     guard (try? effect.validate()) != nil, effect.kind == .resistance else { return bytes }
@@ -268,6 +296,11 @@ extension DualSenseDriver {
     }
   }
 
+  /// The input payload of `data` without its report header and Bluetooth trailer; empty when the
+  /// report is not a DualSense input report.
+  ///
+  /// Sets the connection mode to the report's transport.
+  /// - Throws: ``DualSenseDriverError/invalidBluetoothCRC`` when a Bluetooth report fails its CRC.
   private func reportPayload(from data: Data) throws -> [UInt8] {
     let bytes = Array(data)
     // SDL reads a third-party report of any length but 10, its simple Bluetooth report.
@@ -295,12 +328,15 @@ extension DualSenseDriver {
     return []
   }
 
+  /// Checks the CRC trailer of a Bluetooth input report.
+  /// - Throws: ``DualSenseDriverError/invalidBluetoothCRC`` when the trailer does not match.
   private func validateBluetoothCRC(report: [UInt8]) throws {
     guard SonyBluetoothCRC32.isValid(seed: dualSenseInputCRC32Seed, report: report) else {
       throw DualSenseDriverError.invalidBluetoothCRC
     }
   }
 
+  /// The stick axis `raw` as -1...1, centered on 128.
   private func normalizeHID(_ raw: UInt8) -> Float {
     let centered = Float(raw) - dualSenseAxisCenter
     let divisor = centered >= 0 ? dualSenseAxisPositiveMax : dualSenseAxisNegativeMax
@@ -308,6 +344,7 @@ extension DualSenseDriver {
     return max(-1, min(1, normalized))
   }
 
+  /// The hat direction of the D-pad nibble.
   private func mapHat(_ hat: UInt8) -> HatDirection {
     switch hat {
     case 0: .north

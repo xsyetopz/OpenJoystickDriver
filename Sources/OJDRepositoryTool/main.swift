@@ -1,13 +1,17 @@
 import Foundation
 import OpenJoystickDriverKit
 
-/// A call that the tool refuses. It exits with ``exitCode``, which no check result uses, and names
-/// the call on standard error.
+/// A call that the tool refuses.
+///
+/// It exits with ``exitCode``, which no check result uses, and names the call on standard error.
 struct UsageError: Error {
+  /// The exit status of a refused call.
   static let exitCode: Int32 = 64
+  /// What is wrong with the call.
   let message: String
 }
 
+/// The usage text that the tool prints on standard error after a refused call.
 private let usage = """
   usage:
     OJDRepositoryTool validate controllers <directory>
@@ -19,7 +23,10 @@ private let usage = """
     OJDRepositoryTool facts
     OJDRepositoryTool kebab <value>...
     OJDRepositoryTool mask-image <png> <frame> <keep>...
-  A path is a file, or a directory whose .json files are checked.
+    OJDRepositoryTool format-json <file>...
+    OJDRepositoryTool to-plist <file.json>...
+    OJDRepositoryTool format-plist <file.plist>...
+  A path is a file, or a directory whose .plist files are checked.
   validate controllers and descriptions read a directory at any depth. apply-patches reads
   Controller files at any depth and writes each to its relative path, and refuses a patch file
   that is not at the path its selector gives: a vendor directory for a vendorID with productID,
@@ -34,10 +41,23 @@ private let usage = """
   x,y,width,height in global points, and each <keep> lies inside <frame>. The pixels per point
   are the image size over the frame size. It prints nothing and exits 0, or 64 for an image it
   cannot read or write.
+  format-json rewrites each file in the record file text of OrderedJSON.formatted(), keeping the
+  order of keys and the text of numbers. It prints nothing and exits 0, or 64 for a file that is
+  not JSON or cannot be read or written.
+  to-plist reads each JSON file and writes the canonical XML property list beside it, with the
+  extension .plist, in the form DocumentCoder writes: sorted keys, an integer for a number written
+  as an integer and a real for any other number. It leaves the JSON file, prints nothing and exits
+  0, or 64 for a file that is not JSON, holds null (a property list has no null), or cannot be
+  read or written.
+  format-plist rewrites each property list file in that canonical form, and exits 0 or 64 as
+  to-plist does.
   Each problem is one JSON line {"code", "file", "message"} on standard output. The exit status is
   0 without a problem, 1 with one, and 64 for a call that the tool refuses.
   """
 
+/// The folder at `path`.
+///
+/// - Throws: ``UsageError`` when `path` is not a directory.
 private func directory(_ path: String) throws -> URL {
   var isDirectory: ObjCBool = false
   guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory),
@@ -46,8 +66,10 @@ private func directory(_ path: String) throws -> URL {
   return URL(fileURLWithPath: path, isDirectory: true)
 }
 
-/// The files that `paths` name, in the order given; a directory stands for its `.json` files in
+/// The files that `paths` name, in the order given; a directory stands for its `.plist` files in
 /// file-name order.
+///
+/// - Throws: ``UsageError`` when no path is given or a path does not exist.
 private func files(_ paths: [String]) throws -> [URL] {
   guard !paths.isEmpty else { throw UsageError(message: "no path given") }
   return try paths.flatMap { path -> [URL] in
@@ -60,10 +82,13 @@ private func files(_ paths: [String]) throws -> [URL] {
       at: URL(fileURLWithPath: path, isDirectory: true),
       includingPropertiesForKeys: nil,
       options: [.skipsHiddenFiles]
-    ).filter { $0.pathExtension == "json" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+    ).filter { $0.pathExtension == "plist" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
   }
 }
 
+/// The values of the `names` options in `arguments`, which are option and value pairs.
+///
+/// - Throws: ``UsageError`` when an option is unknown, has no value, is given twice, or is missing.
 private func options(_ arguments: [String], names: [String]) throws -> [String: String] {
   var values: [String: String] = [:]
   var index = 0
@@ -81,6 +106,9 @@ private func options(_ arguments: [String], names: [String]) throws -> [String: 
   return values
 }
 
+/// Runs a `validate` or `apply-patches` subcommand and returns the problems it found.
+///
+/// - Throws: ``UsageError`` when the subcommand, its kind or its arguments are not valid.
 private func run(_ arguments: [String]) throws -> [RepositoryProblem] {
   guard let command = arguments.first else { throw UsageError(message: "no subcommand given") }
   let rest = Array(arguments.dropFirst())
@@ -112,6 +140,54 @@ private func run(_ arguments: [String]) throws -> [RepositoryProblem] {
   }
 }
 
+/// Rewrites each of `paths` as ``OrderedJSON/formatted()``.
+///
+/// - Throws: ``UsageError`` when no path is given or a file cannot be read, parsed or written.
+private func formatJSON(_ paths: [String]) throws {
+  guard !paths.isEmpty else { throw UsageError(message: "format-json needs a file") }
+  for path in paths {
+    let url = URL(fileURLWithPath: path)
+    do {
+      try OrderedJSON.parse(Data(contentsOf: url)).formattedData().write(to: url)
+    } catch {
+      throw UsageError(message: "\(path): \(error)")
+    }
+  }
+}
+
+/// Writes each of `paths`, a JSON file, as a canonical property list beside it.
+///
+/// - Throws: ``UsageError`` when no path is given or a file cannot be read, parsed or written.
+private func toPlist(_ paths: [String]) throws {
+  guard !paths.isEmpty else { throw UsageError(message: "to-plist needs a file") }
+  for path in paths {
+    let url = URL(fileURLWithPath: path)
+    do {
+      let data = try OrderedJSON.parse(Data(contentsOf: url)).plistData()
+      try data.write(to: url.deletingPathExtension().appendingPathExtension("plist"))
+    } catch {
+      throw UsageError(message: "\(path): \(error)")
+    }
+  }
+}
+
+/// Rewrites each of `paths`, an XML property list, in the canonical form.
+///
+/// - Throws: ``UsageError`` when no path is given or a file cannot be read, parsed or written.
+private func formatPlist(_ paths: [String]) throws {
+  guard !paths.isEmpty else { throw UsageError(message: "format-plist needs a file") }
+  for path in paths {
+    let url = URL(fileURLWithPath: path)
+    do {
+      let tree = try DocumentCoder.read(Data(contentsOf: url), file: url.lastPathComponent)
+      try DocumentCoder.write(tree).write(to: url)
+    } catch {
+      throw UsageError(message: "\(path): \(error)")
+    }
+  }
+}
+
+/// The JSON line, ending in a newline, that reports `problem` on standard output.
 private func line(_ problem: RepositoryProblem) throws -> Data {
   let object: [String: Any] = [
     "file": problem.file, "code": problem.code.rawValue, "message": problem.message,
@@ -122,7 +198,10 @@ private func line(_ problem: RepositoryProblem) throws -> Data {
   ) + Data("\n".utf8)
 }
 
-/// The JSON object a fact subcommand prints, or nil when `arguments` name a check.
+/// The JSON object that the `facts` or `kebab` subcommand prints, or nil when `arguments` name a
+/// check.
+///
+/// - Throws: ``UsageError`` when `facts` takes an argument or `kebab` has no value.
 private func document(_ arguments: [String]) throws -> [String: Any]? {
   let rest = Array(arguments.dropFirst())
   switch arguments.first {
@@ -153,6 +232,18 @@ do {
   let arguments = Array(CommandLine.arguments.dropFirst())
   if arguments.first == "mask-image" {
     try MaskImage.run(Array(arguments.dropFirst()))
+    exit(0)
+  }
+  if arguments.first == "format-json" {
+    try formatJSON(Array(arguments.dropFirst()))
+    exit(0)
+  }
+  if arguments.first == "to-plist" {
+    try toPlist(Array(arguments.dropFirst()))
+    exit(0)
+  }
+  if arguments.first == "format-plist" {
+    try formatPlist(Array(arguments.dropFirst()))
     exit(0)
   }
   if let object = try document(arguments) {

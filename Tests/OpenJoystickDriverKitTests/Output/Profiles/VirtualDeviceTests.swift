@@ -1,10 +1,12 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
 
 struct VirtualDeviceTests {
-  private static let header = #""apiVersion":"openjoystickdriver/v1alpha1","kind":"VirtualDevice""#
+  private static let header =
+    #""apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"VirtualDevice""#
 
   @Test
   func theBundledRecordsDefineBothPersonasWithTheirIdentities() throws {
@@ -25,12 +27,10 @@ struct VirtualDeviceTests {
     let url = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent()
-      .appendingPathComponent("Resources/VirtualDevices/virtual-device.generic.json")
-    var document = try #require(
-      try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
-    )
+      .appendingPathComponent("Resources/VirtualDevices/virtual-device.generic.plist")
+    var document = try PropertyListFixture.dictionary(at: url)
     _ = try VirtualDevice.decode(
-      JSONSerialization.data(withJSONObject: document),
+      PropertyListFixture.data(tree: document),
       source: .unnamed,
       requiresMatch: false
     )
@@ -38,7 +38,7 @@ struct VirtualDeviceTests {
       document["worksWithDefaultSDLHints"] = value
       #expect(throws: ControllerRecordProblem.self, "\(String(describing: value))") {
         try VirtualDevice.decode(
-          JSONSerialization.data(withJSONObject: document),
+          PropertyListFixture.data(tree: document),
           source: .unnamed,
           requiresMatch: false
         )
@@ -52,19 +52,27 @@ struct VirtualDeviceTests {
       "{\(Self.header),\"persona\":\"Generic\","
       + "\"match\":{\"vendorID\":1,\"productID\":2},\"worksWithDefaultSDLHints\":true}"
     #expect(throws: ControllerRecordProblem.self) {
-      try VirtualDevice.decode(Data(document.utf8), source: .unnamed, requiresMatch: false)
+      try VirtualDevice.decode(
+        PropertyListFixture.bytes(json: document),
+        source: .unnamed,
+        requiresMatch: false
+      )
     }
   }
 
   @Test(arguments: [
     #"{"apiVersion":"openjoystickdriver/v2","kind":"VirtualDevice","persona":"Generic"}"#,
     #"{"kind":"VirtualDevice","persona":"Generic"}"#,
-    #"{"apiVersion":"openjoystickdriver/v1alpha1","kind":"Persona","persona":"Generic"}"#,
-    #"{"apiVersion":"openjoystickdriver/v1alpha1","persona":"Generic"}"#,
+    #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"Persona","persona":"Generic"}"#,
+    #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","persona":"Generic"}"#,
   ])
   func aBadHeaderIsRefusedWithE5001(document: String) {
     let problem = #expect(throws: DocumentHeaderProblem.self) {
-      try VirtualDevice.decode(Data(document.utf8), source: .unnamed, requiresMatch: false)
+      try VirtualDevice.decode(
+        PropertyListFixture.bytes(json: document),
+        source: .unnamed,
+        requiresMatch: false
+      )
     }
     #expect(problem?.code == .unsupportedAPIVersion)
     #expect(problem?.description.hasPrefix("E5001") == true)
@@ -74,7 +82,11 @@ struct VirtualDeviceTests {
   func aDocumentWithAnUnknownPersonaIsRefused() {
     let document = "{\(Self.header),\"persona\":\"NotAPersona\"}"
     #expect(throws: ControllerRecordProblem.self) {
-      try VirtualDevice.decode(Data(document.utf8), source: .unnamed, requiresMatch: false)
+      try VirtualDevice.decode(
+        PropertyListFixture.bytes(json: document),
+        source: .unnamed,
+        requiresMatch: false
+      )
     }
   }
 
@@ -82,9 +94,81 @@ struct VirtualDeviceTests {
   func aProblemWithAVirtualDeviceIsAnInvalidControllerRecord() {
     let document = "{\(Self.header),\"persona\":\"NotAPersona\"}"
     let problem = #expect(throws: ControllerRecordProblem.self) {
-      try VirtualDevice.decode(Data(document.utf8), source: .unnamed, requiresMatch: false)
+      try VirtualDevice.decode(
+        PropertyListFixture.bytes(json: document),
+        source: .unnamed,
+        requiresMatch: false
+      )
     }
     #expect(problem?.code == .invalidControllerRecord)
     #expect(problem.flatMap { ControllerRecordSet.problemCode($0) } == .invalidControllerRecord)
+  }
+
+  @Test(arguments: [
+    #""persona":"Generic","colour":1"#,
+    #""persona":7"#,
+    #""persona":"Generic","match":{"vendorID":"1","productID":2}"#,
+    #""persona":"Generic","match":{"vendorID":1,"productID":2,"colour":1}"#,
+  ])
+  func aFileThatIsNotTheSchemaIsRefusedWithE5007(members: String) {
+    let document = "{\(Self.header),\(members)}"
+    let problem = #expect(throws: ControllerRecordProblem.self) {
+      try VirtualDevice.decode(
+        PropertyListFixture.bytes(json: document),
+        source: .unnamed,
+        requiresMatch: false
+      )
+    }
+    #expect(problem?.code == .invalidControllerRecord)
+  }
+
+  @Test
+  func anArrayIsRefusedWithE5007() {
+    let problem = #expect(throws: ControllerRecordProblem.self) {
+      try VirtualDevice.decode(
+        PropertyListFixture.bytes(json: "[]"),
+        source: .unnamed,
+        requiresMatch: false
+      )
+    }
+    #expect(problem?.code == .invalidControllerRecord)
+  }
+
+  @Test
+  func textThatIsNoPropertyListIsRefusedWithTheDocumentFormCode() {
+    let problem = #expect(throws: ControllerRecordProblem.self) {
+      try VirtualDevice.decode(
+        PropertyListFixture.bytes(json: "{"),
+        source: .unnamed,
+        requiresMatch: false
+      )
+    }
+    #expect(problem?.code == .invalidDocumentForm)
+  }
+
+  @Test
+  func aKindOfAnotherDocumentIsRefusedWithE5001() {
+    let document =
+      #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"Controller","colour":1}"#
+    let problem = #expect(throws: DocumentHeaderProblem.self) {
+      try VirtualDevice.decode(
+        PropertyListFixture.bytes(json: document),
+        source: .file("a.plist"),
+        requiresMatch: false
+      )
+    }
+    #expect(problem?.code == .unsupportedAPIVersion)
+  }
+
+  @Test
+  func aSelectionIsDecodedWithItsMatch() throws {
+    let document =
+      "{\(Self.header),\"persona\":\"Generic\",\"match\":{\"vendorID\":1,\"productID\":2}}"
+    let device = try VirtualDevice.decode(
+      PropertyListFixture.bytes(json: document),
+      source: .unnamed,
+      requiresMatch: true
+    )
+    #expect(device.match == .init(vendorID: 1, productID: 2, unit: nil))
   }
 }

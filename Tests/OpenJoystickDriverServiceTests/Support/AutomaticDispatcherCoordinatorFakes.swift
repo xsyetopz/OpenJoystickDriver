@@ -14,7 +14,7 @@ actor InstallationGate {
 
   func suspend() async {
     entered = true
-    entryWaiters.forEach { $0.resume() }
+    for waiter in entryWaiters { waiter.resume() }
     entryWaiters.removeAll()
     await withTaskCancellationHandler {
       if !released { await withCheckedContinuation { waiters.append($0) } }
@@ -33,13 +33,13 @@ actor InstallationGate {
 
   private func markCancelled() {
     cancelled = true
-    cancellationWaiters.forEach { $0.resume() }
+    for waiter in cancellationWaiters { waiter.resume() }
     cancellationWaiters.removeAll()
   }
 
   func release() {
     released = true
-    waiters.forEach { $0.resume() }
+    for waiter in waiters { waiter.resume() }
     waiters.removeAll()
   }
 }

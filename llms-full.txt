@@ -6,7 +6,7 @@ The signed app owns the runtime, virtual HID, and authenticated local CLI. Physi
 
 `OpenJoystickDriverKit` owns parsers, records, HID/USB ports, and policy. It must not import SwifterKit. `OpenJoystickDriverUSB` and `DriverKitGenerator` are the SwifterKit boundaries. `OpenJoystickDriver` composes the app, CLI, and adapters.
 
-Do not edit `Sources/OpenJoystickDriverKit/Resources/Controllers/` or `.build/driverkit/generated/`. Catalog write: `./Scripts/ojd catalog regenerate --write`. DriverKit: `./Scripts/ojd driverkit generate`. Controller JSON uses decimal numbers. Support status lives in `wiki/Supported-Controllers.md`; do not duplicate it here.
+Do not edit `Sources/OpenJoystickDriverKit/Resources/Controllers/` or `.build/driverkit/generated/`. Catalog write: `./Scripts/ojd catalog regenerate --write`. DriverKit: `./Scripts/ojd driverkit generate`. Every stored document (record, patch, profile, virtual device, mod manifest) is an XML property list with `apiVersion` `openjoystickdriver/v1alpha3`; numbers are decimal. `plutil -convert json -o - FILE.plist` reads one as JSON and `plutil -convert xml1 -o FILE.plist FILE.json` writes one from JSON. Messages (`--json` output, the endpoint, report files) stay JSON. Support status lives in `wiki/Supported-Controllers.md`; do not duplicate it here.
 
 Production and development USBDriverKit personalities match only Apple's approved Microsoft GIP pairs: `045E:02D1`, `045E:02DD`, `045E:02E3`, `045E:02EA`, `045E:0B00`, `045E:0B0A`, `045E:0B12`. Accessible third-party GIP devices such as GameSir G7 SE `3537:1010` stay on direct IOUSBHost. The host user-client allowlist must be exactly `com.openjoystickdriver.XboxUSBDevice`, the only DriverKit extension. `com.apple.developer.hid.virtual.device` belongs only to the app.
 
@@ -23,7 +23,19 @@ swift test
 
 Parser/protocol: `./Scripts/ojd test parsers-macos14`. Hardware, signing, notarization, and permission behavior need the focused local diagnostics in `docs/testing/`. Unsigned generation does not prove those facts.
 
+## Support ladder
+
+Support a controller with the first step that works. A fact about one model is a record field, never a model branch in Swift. The full page is `wiki/Support-Ladder.md`.
+
+1. Nothing: OJD binds the pad by interface signature or HID descriptor. Check with `ojd controller list` and `ojd controller show VVVV:PPPP`.
+2. A patch (`ControllerPatch`, for a model with a bundled record): `ojd record draft VVVV:PPPP > VVVV-PPPP.patch.plist`, `ojd record validate FILE`, `ojd record install FILE`.
+3. A record (`Controller`, for a model with no bundled record): `ojd record draft VVVV:PPPP > VVVV-PPPP.plist` (or `--from-sdl`), `ojd record validate FILE`, `ojd record test VVVV:PPPP --packets CAPTURE --expect STATE`, `ojd record install FILE`.
+4. A generator script: one JavaScript file whose `generate` function returns the records of a product family; `ojd generate family.js --output Controllers` writes them after it checks each one.
+5. Source: only for a protocol family OJD lacks (a handshake, an encryption, or a transport no document can state).
+
 ## Docs
+
+- [Support ladder](wiki/Support-Ladder.md): the five steps with a complete patch and record
 
 - [Short index](llms.txt): curated llms.txt v2 entry point
 - [README](README.md): project summary and links to the wiki

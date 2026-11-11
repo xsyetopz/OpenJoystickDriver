@@ -57,14 +57,14 @@ struct ServiceCommandTests {
     )
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
-    try Data("{".utf8).write(to: directory.appendingPathComponent("broken.json"))
+    try Data("{".utf8).write(to: directory.appendingPathComponent("broken.plist"))
 
     let withFile = await runStatus(["--plain"], records: directory)
     let withoutFile = await runStatus(["--plain"])
 
     #expect(withFile.code == 0, "\(withFile.standardError)")
     #expect(withFile.standardOutput.contains("skipped-record\t"))
-    #expect(withFile.standardOutput.contains("/broken.json\t"))
+    #expect(withFile.standardOutput.contains("/broken.plist\t"))
     #expect(!withoutFile.standardOutput.contains("skipped-record"))
   }
 
@@ -81,8 +81,8 @@ struct ServiceCommandTests {
     )
     try FileManager.default.createDirectory(at: devices, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: support) }
-    try Data("{".utf8).write(to: support.appendingPathComponent("Controllers/all.patch.json"))
-    try Data("{".utf8).write(to: devices.appendingPathComponent("broken.json"))
+    try Data("{".utf8).write(to: support.appendingPathComponent("Controllers/all.patch.plist"))
+    try Data("{".utf8).write(to: devices.appendingPathComponent("broken.plist"))
 
     let json = await runStatus(["--json"], records: support.appendingPathComponent("Controllers"))
     let plain = await runStatus(["--plain"], records: support.appendingPathComponent("Controllers"))
@@ -90,10 +90,10 @@ struct ServiceCommandTests {
 
     let report = try json.json()
     let defaults = try #require(report["ignoredDefaults"] as? [String: String])
-    #expect(defaults["file"]?.hasSuffix("/Controllers/all.patch.json") == true)
-    #expect(defaults["problem"] == "the file is not a JSON object")
+    #expect(defaults["file"]?.hasSuffix("/Controllers/all.patch.plist") == true)
+    #expect(defaults["problem"] == "all.patch.plist is not an XML property list")
     let skipped = try #require(report["skippedVirtualDevices"] as? [[String: String]])
-    #expect(skipped.map { $0["file"]?.hasSuffix("/VirtualDevices/broken.json") } == [true])
+    #expect(skipped.map { $0["file"]?.hasSuffix("/VirtualDevices/broken.plist") } == [true])
     #expect(plain.standardOutput.contains("ignored-defaults\t"))
     #expect(plain.standardOutput.contains("skipped-virtual-device\t"))
     let cleanReport = try clean.json()
@@ -110,7 +110,9 @@ struct ServiceCommandTests {
     let unread = support.appendingPathComponent("Personas", isDirectory: true)
     try FileManager.default.createDirectory(at: unread, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: support) }
-    try Data("{}".utf8).write(to: unread.appendingPathComponent("1209-0001.json"))
+    try PropertyListFixture.data(json: "{}").write(
+      to: unread.appendingPathComponent("1209-0001.plist")
+    )
     let records = support.appendingPathComponent("Controllers")
 
     let json = await runStatus(["--json"], records: records)

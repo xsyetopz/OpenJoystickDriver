@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverPresentation
@@ -9,7 +10,7 @@ final class FakeLibraryStore: LibraryStore, @unchecked Sendable {
   var mods: [LibraryModItem] = []
   var recordCheck = LibraryRecordCheck(
     identity: "045E:028E",
-    fileName: "045e-028e.json",
+    fileName: "045e-028e.plist",
     replaces: false
   )
   var modCheck = LibraryModCheck(
@@ -80,7 +81,7 @@ final class FakeLibraryStore: LibraryStore, @unchecked Sendable {
 
 @MainActor
 struct LibraryViewModelTests {
-  private let file = URL(fileURLWithPath: "/tmp/045e-028e.json")
+  private let file = URL(fileURLWithPath: "/tmp/045e-028e.plist")
 
   private func temporaryFile() -> URL {
     let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
@@ -123,7 +124,7 @@ struct LibraryViewModelTests {
     let store = FakeLibraryStore()
     store.recordCheck = LibraryRecordCheck(
       identity: "045E:028E",
-      fileName: "045e-028e.patch.json",
+      fileName: "045e-028e.patch.plist",
       replaces: true
     )
     let model = makeModel(store)
@@ -326,7 +327,9 @@ struct DirectoryLibraryStoreTests {
   @Test
   func aSkippedFileCarriesItsReason() throws {
     let directory = try directory()
-    try Data("{}".utf8).write(to: directory.appendingPathComponent("bad.json"))
+    try PropertyListFixture.data(json: "{}").write(
+      to: directory.appendingPathComponent("bad.plist")
+    )
     let store = DirectoryLibraryStore(recordsDirectory: directory)
 
     let skipped = store.records().skipped

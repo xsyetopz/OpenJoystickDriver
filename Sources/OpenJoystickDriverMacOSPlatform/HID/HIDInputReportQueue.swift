@@ -19,8 +19,11 @@ enum HIDInputReportQueue {
   /// Bytes an entry carries beside the report itself.
   static let entryOverheadBytes = 32
 
+  /// The size of one queue entry and the number of reports the queue holds.
   struct Sizing: Equatable {
+    /// The bytes of one entry.
     let entrySize: Int
+    /// The reports the queue holds.
     let reportCount: Int
   }
 
@@ -36,9 +39,11 @@ enum HIDInputReportQueue {
     )
   }
 
-  /// Sets the queue size on the open client connection of `device`. The kernel takes the
-  /// properties only on an open connection: set before `IOHIDDeviceOpen` they are refused.
-  /// Returns false when the device refused either property, which leaves the default queue.
+  /// Sets the queue size on the open client connection of `device`.
+  ///
+  /// The kernel takes the properties only on an open connection: set before `IOHIDDeviceOpen` they
+  /// are refused. Returns false when the device refused either property, which leaves the default
+  /// queue.
   static func size(_ device: IOHIDDevice, maxInputReportSize: Int) -> Bool {
     guard let sizing = sizing(maxInputReportSize: maxInputReportSize) else { return false }
     let entry = IOHIDDeviceSetProperty(
@@ -111,6 +116,7 @@ package enum HIDInputReportDrops {
     return result
   }
 
+  /// Copies the registry properties of `entry`, or returns nil when they cannot be read.
   private static func registryProperties(_ entry: io_registry_entry_t) -> [String: Any]? {
     var properties: Unmanaged<CFMutableDictionary>?
     guard

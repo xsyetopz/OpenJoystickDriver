@@ -6,6 +6,8 @@ extension ControllerRecordDocument {
     /// An uppercase UUID string, as the schema requires.
     let vibrationCharacteristic: String
 
+    /// Decodes the Bluetooth LE section, which holds exactly `vibrationCharacteristic`; any other
+    /// key is rejected.
     init(from decoder: any Decoder) throws {
       let container = try decoder.container(keyedBy: DocumentKey.self)
       try container.rejectUnknown(allowed: ["vibrationCharacteristic"])

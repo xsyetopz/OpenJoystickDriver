@@ -1,10 +1,15 @@
 extension DevicePipeline {
+  /// The least spacing between physical HID writes that the session plan names.
   func minimumPhysicalOutputIntervalNanoseconds() -> UInt64 {
     plan.minimumHIDOutputIntervalNanoseconds
   }
 
+  /// The default colour of the controller from the driver; nil when it has none.
   func defaultColor() -> ControllerColor? { driver.defaultColor }
 
+  /// Encodes `command` into the writes of the driver.
+  ///
+  /// - Throws: ``ControllerOutputError`` from the driver.
   func encode(
     _ command: ControllerOutputCommand
   ) throws(ControllerOutputError) -> PhysicalOutputPlan { try driver.encode(command) }
@@ -31,9 +36,10 @@ extension DevicePipeline {
     isActive ? driver.keepAliveWrites() : nil
   }
 
-  /// Sends packets in order on the current USB session at `intervalNanoseconds` spacing,
-  /// stopping at the first failure; a disconnected session is invalidated. Without a USB session,
-  /// the packets go to the driver's USB command channel, if it has one.
+  /// Sends packets in order on the current USB session at `intervalNanoseconds` spacing, stopping
+  /// at the first failure; a disconnected session is invalidated.
+  ///
+  /// Without a USB session, the packets go to the driver's USB command channel, if it has one.
   func sendUSBOutput(
     _ packets: [PhysicalUSBOutputPacket],
     intervalNanoseconds: UInt64 = 0

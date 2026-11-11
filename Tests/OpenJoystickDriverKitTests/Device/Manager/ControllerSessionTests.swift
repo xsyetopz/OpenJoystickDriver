@@ -1,6 +1,6 @@
-import OpenJoystickDriverTestSupport
 import Foundation
 import IOKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit

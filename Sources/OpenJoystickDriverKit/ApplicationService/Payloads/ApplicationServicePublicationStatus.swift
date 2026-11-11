@@ -34,6 +34,7 @@ public struct ApplicationServicePublicationStatus: Codable, Equatable, Sendable 
     case heldByAnotherClient = "HeldByAnotherClient"
   }
 
+  /// Whether the controller is published, and how its last send ended.
   public let state: State
   /// Why the controller is not published; set exactly when `state` is `NotPublished`.
   public let reason: NotPublishedReason?
@@ -46,6 +47,7 @@ public struct ApplicationServicePublicationStatus: Codable, Equatable, Sendable 
   /// System uptime in nanoseconds of the last send the virtual device accepted.
   public let lastCompletedNanoseconds: UInt64?
 
+  /// Creates a status; the public factories pass the combination of values each state allows.
   private init(
     state: State,
     reason: NotPublishedReason?,
@@ -113,12 +115,19 @@ public struct ApplicationServicePublicationStatus: Codable, Equatable, Sendable 
     )
   }
 
+  /// The keys of the JSON encoding.
   private enum CodingKeys: String, CodingKey {
+    /// The `state` key.
     case state
+    /// The `reason` key.
     case reason
+    /// The `failure` key.
     case failure
+    /// The `target` key.
     case target
+    /// The `lastAttemptedNanoseconds` key.
     case lastAttemptedNanoseconds
+    /// The `lastCompletedNanoseconds` key.
     case lastCompletedNanoseconds
   }
 
@@ -159,6 +168,7 @@ public struct ApplicationServicePublicationStatus: Codable, Equatable, Sendable 
     )
   }
 
+  /// Builds the decoding error for a combination of values that the `state` does not allow.
   private static func mismatch(
     _ container: KeyedDecodingContainer<CodingKeys>,
     _ description: String

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiVersion</key>
+	<string>openjoystickdriver/v1alpha3</string>
+	<key>endpoints</key>
+	<dict>
+		<key>in</key>
+		<integer>130</integer>
+		<key>out</key>
+		<integer>2</integer>
+	</dict>
+	<key>family</key>
+	<string>HIDReportLayout</string>
+	<key>kind</key>
+	<string>ProtocolDescription</string>
+	<key>recordSections</key>
+	<array>
+		<string>input</string>
+		<string>rumble</string>
+	</array>
+	<key>sessionKeys</key>
+	<array>
+		<string>startup</string>
+	</array>
+	<key>tuningKeys</key>
+	<array>
+		<string>hidStartupIntervalMs</string>
+		<string>minimumHIDOutputIntervalMs</string>
+	</array>
+</dict>
+</plist>

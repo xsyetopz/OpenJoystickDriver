@@ -20,26 +20,55 @@ struct GUICoverageEntry: Equatable {
 
 /// A leaf or option that a window cannot naturally perform (D10).
 struct CLIOnlyItem: Equatable {
-  /// The command path. For an option, nil means every command that has it.
+  /// The command path.
+  ///
+  /// For an option, nil means every command that has it.
   let command: [String]?
   let option: String?
   let reason: String
 }
 
-/// The per-leaf and per-option coverage of the real command tree. D10 says what a window cannot
-/// naturally do; everything else names the GUI symbol that does it.
+/// The per-leaf and per-option coverage of the real command tree.
+///
+/// D10 says what a window cannot naturally do; everything else names the GUI symbol that does it.
 enum GUICoverageEntries {
   static let entries: [GUICoverageEntry] =
     status + controller + profile + binding + virtual + record + mod + access + system
 
-  /// Leaves and options only a terminal or script performs. The D10 text names each of them, and
-  /// `GUICoverageTests` checks that.
+  /// Leaves and options only a terminal or script performs.
+  ///
+  /// The D10 text names each of them, and `GUICoverageTests` checks that.
   static let cliOnly: [CLIOnlyItem] =
     [
+      CLIOnlyItem(
+        command: ["profile", "import"],
+        option: "--app",
+        reason: "a script replaces the scope of the file it imports; the window edits the scope after import"
+      ),
       CLIOnlyItem(
         command: ["virtual", "feed"],
         option: nil,
         reason: "reads controller frames from standard input"
+      ),
+      CLIOnlyItem(
+        command: ["controller", "speaker", "play"],
+        option: nil,
+        reason: "no window plays a sound file on a controller's speaker"
+      ),
+      CLIOnlyItem(
+        command: ["controller", "speaker", "stop"],
+        option: nil,
+        reason: "no window plays a sound file on a controller's speaker"
+      ),
+      CLIOnlyItem(
+        command: ["controller", "speaker", "play"],
+        option: "--volume",
+        reason: "no window plays a sound file on a controller's speaker"
+      ),
+      CLIOnlyItem(
+        command: ["generate"],
+        option: nil,
+        reason: "runs a script file in a helper process, which no window does"
       ),
       CLIOnlyItem(
         command: ["service", "start"],
@@ -55,6 +84,21 @@ enum GUICoverageEntries {
         command: ["service", "wait"],
         option: nil,
         reason: "a window exists only once the service listens, so nothing waits"
+      ),
+      CLIOnlyItem(
+        command: ["protocol", "validate"],
+        option: nil,
+        reason: "no window edits protocol descriptions"
+      ),
+      CLIOnlyItem(
+        command: ["protocol", "install"],
+        option: nil,
+        reason: "no window edits protocol descriptions"
+      ),
+      CLIOnlyItem(
+        command: ["protocol", "list"],
+        option: nil,
+        reason: "no window edits protocol descriptions"
       ),
       CLIOnlyItem(
         command: ["help"],
@@ -150,11 +194,16 @@ enum GUICoverageEntries {
     option("profile create", "--app", "ProfileCreationFields"),
     option("profile create", "--virtual-gamepad", "ProfileOutputPolicyView"),
     option("profile create", "--physical-input", "ProfileOutputPolicyView"),
+    option("profile create", "--template", "ProfileCreationTemplate"),
+    option("profile create", "--stick", "ProfileCreationFields"),
+    // The sheet leaves the gyro always on; the gyro section of the editor sets the control.
+    option("profile create", "--activation", "ProfileGyroDraft"),
     leaf("profile duplicate", "ProfileDuplicateSheet"),
     leaf("profile rename", "updateMetadata"),
     leaf("profile delete", "deleteProfile"),
     leaf("profile activate", "activateProfile"),
     option("profile activate", "--allow-empty", "requestActivation"),
+    option("profile activate", "--confirm-actions", "requestActivation"),
     leaf("profile deactivate", "deactivateProfile"),
     leaf("profile import", "chooseProfileToImport"),
     leaf("profile validate", "validateProfileFile"),
@@ -171,6 +220,7 @@ enum GUICoverageEntries {
     leaf("binding set", "addBinding"),
     option("binding set", "--behavior", "BindingBehaviorSheet"),
     option("binding set", "--pulse-ms", "pulseDurationMs"),
+    option("binding set", "--voice", "PhysicalOutputDestinationFields"),
     option("binding set", "--deadzone", "AxisAdjustmentSheet"),
     option("binding set", "--gain", "AxisAdjustmentSheet"),
     option("binding set", "--invert", "AxisAdjustmentSheet"),
@@ -178,11 +228,22 @@ enum GUICoverageEntries {
     option("binding set", "--digital-threshold", "AxisAdjustmentSheet"),
     option("binding set", "--turbo-rate", "turboRate"),
     option("binding set", "--turbo-duty", "turboDuty"),
+    option("binding set", "--turbo-delay", "turboDelay"),
+    option("binding set", "--turbo-max", "turboMax"),
     option("binding set", "--long-hold", "longHoldDuration"),
-    option("binding set", "--double-tap", "doubleTapWindow"),
+    option("binding set", "--multi-tap", "multiTapSection"),
     option("binding set", "--actions-json", "ProfileAdditionalActionsView"),
     leaf("binding clear", "removeBinding"),
     option("binding clear", "--all", "removeAllAssignments"),
+    leaf("macro list", "ProfileMacrosSection"),
+    leaf("macro show", "ProfileMacrosSection"),
+    leaf("macro set", "MacroEditorSheet"),
+    option("macro set", "--step", "MacroEditorSheet"),
+    option("macro set", "--repeat", "MacroEditorSheet"),
+    option("macro set", "--while-running", "MacroEditorSheet"),
+    option("macro set", "--interrupt-on-release", "MacroEditorSheet"),
+    option("macro set", "--no-interrupt-on-release", "MacroEditorSheet"),
+    leaf("macro remove", "removeMacro"),
   ]
 
   private static let virtual = [
@@ -201,6 +262,7 @@ enum GUICoverageEntries {
   private static let record = [
     leaf("record draft", "ControllerRecordDrafting"),
     option("record draft", "--duration", "ControllerTimedActionSheet"),
+    option("record draft", "--from-sdl", "draftFromSDL"),
     leaf("record list", "LibraryListView"),
     option("record list", "--bundled", "LibraryScope"),
     leaf("record show", "LibraryRecordDetail"),
@@ -257,6 +319,7 @@ enum GUICoverageEntries {
     leaf("update check", "checkForUpdates"),
     option("update check", "--prerelease", "setIncludePrereleaseUpdates"),
     leaf("explain", "ErrorCodeExplainerView"),
+    leaf("migrate", "migrate"),
   ]
 
   // MARK: Builders
@@ -297,8 +360,9 @@ enum GUISources {
     let description: String
   }
 
-  /// Every GUI Swift file's code, joined, with comments and string literals removed. A missing
-  /// directory or an unreadable file stops the test run.
+  /// Every GUI Swift file's code, joined, with comments and string literals removed.
+  ///
+  /// A missing directory or an unreadable file stops the test run.
   static let text: String = {
     do {
       return try readCode()
@@ -356,8 +420,9 @@ enum GUISources {
     )
   }
 
-  /// Swift source without line comments, nested block comments or string literal text. The code
-  /// inside string interpolations stays, because it runs.
+  /// Swift source without line comments, nested block comments or string literal text.
+  ///
+  /// The code inside string interpolations stays, because it runs.
   static func strippingCommentsAndStrings(_ source: String) -> String {
     let chars = Array(source)
     var output = ""
@@ -444,8 +509,9 @@ enum GUISources {
 }
 
 /// The CLI surface read from the real command tree: leaves and their options and flags, hidden ones
-/// included, named by the long name or, where there is none, the short one. Positional operands are
-/// excluded.
+/// included, named by the long name or, where there is none, the short one.
+///
+/// Positional operands are excluded.
 struct CLISurfaceItem: Hashable {
   let command: [String]
   let option: String?

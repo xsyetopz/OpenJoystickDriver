@@ -7,7 +7,7 @@ struct RemappingActivationSchedulingTests {
   @Test(arguments: [false, true])
   func expiredTapDoesNotCombineWithNextPress(tickBeforePress: Bool) {
     var state = RemappingEngineState()
-    let profile = profile(doubleTap: true)
+    let profile = profile(multiTap: true)
     _ = state.process(
       inputs: [.press(.south), .release(.south)],
       from: identifier,
@@ -33,9 +33,9 @@ struct RemappingActivationSchedulingTests {
   }
 
   @Test
-  func completedDoubleTapDoesNotCombineWithThirdPress() {
+  func completedMultiTapDoesNotCombineWithThirdPress() {
     var state = RemappingEngineState()
-    let profile = profile(doubleTap: true)
+    let profile = profile(multiTap: true)
     #expect(
       state.process(
         inputs: [
@@ -60,7 +60,7 @@ struct RemappingActivationSchedulingTests {
   @Test
   func earlyLongHoldReleaseLeavesNoScheduledWork() {
     var state = RemappingEngineState()
-    let profile = profile(doubleTap: false)
+    let profile = profile(multiTap: false)
     _ = state.process(inputs: [.press(.south)], from: identifier, profile: profile, at: 0)
     #expect(state.hasScheduledOutput)
     #expect(
@@ -73,9 +73,9 @@ struct RemappingActivationSchedulingTests {
   }
 
   @Test
-  func doubleTapSchedulesOnlyAfterReleaseAndStopsAfterExpiry() {
+  func multiTapSchedulesOnlyAfterReleaseAndStopsAfterExpiry() {
     var state = RemappingEngineState()
-    let profile = profile(doubleTap: true)
+    let profile = profile(multiTap: true)
     _ = state.process(inputs: [.press(.south)], from: identifier, profile: profile, at: 0)
     #expect(!state.hasScheduledOutput)
     _ = state.process(inputs: [.release(.south)], from: identifier, profile: profile, at: 1)
@@ -87,7 +87,7 @@ struct RemappingActivationSchedulingTests {
   @Test
   func firedLongHoldDoesNotScheduleWhileOutputIsHeld() {
     var state = RemappingEngineState()
-    let profile = profile(doubleTap: false)
+    let profile = profile(multiTap: false)
     _ = state.process(inputs: [.press(.south)], from: identifier, profile: profile, at: 0)
     #expect(state.tick(at: 500_000_000) == [.system(.keyDown(.b))])
     #expect(!state.hasScheduledOutput)
@@ -104,7 +104,7 @@ struct RemappingActivationSchedulingTests {
 
   private let identifier = LogicalControllerID(vendorID: 1, productID: 2, locationID: 1)
 
-  private func profile(doubleTap: Bool) -> RemappingProfile {
+  private func profile(multiTap: Bool) -> RemappingProfile {
     let alternate = RemappingDestination.keyboard(key: .b, modifiers: [])
     return RemappingProfile(
       name: "Activation scheduling",
@@ -114,8 +114,9 @@ struct RemappingActivationSchedulingTests {
         RemappingBinding(
           source: .button(.south),
           destination: .keyboard(key: .a, modifiers: []),
-          longHold: doubleTap ? nil : RemappingLongHold(durationMs: 500, destination: alternate),
-          doubleTap: doubleTap ? RemappingDoubleTap(windowMs: 200, destination: alternate) : nil
+          longHold: multiTap ? nil : RemappingLongHold(durationMs: 500, destination: alternate),
+          multiTap: multiTap
+            ? [RemappingMultiTap(count: 2, windowMs: 200, destination: alternate)] : []
         )
       ]
     )

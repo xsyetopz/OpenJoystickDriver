@@ -15,9 +15,13 @@ protocol EndpointTransport: AnyObject, Sendable {
   func writeClose()
 }
 
+/// The result of reading one message.
 enum EndpointReadResult: Equatable {
+  /// A whole message.
   case message(Data)
+  /// The peer closed the stream.
   case end
+  /// The message is longer than the limit.
   case tooLong
   /// A frame the endpoint does not accept, described for the `E1003` error.
   case invalid(String)
@@ -26,9 +30,10 @@ enum EndpointReadResult: Equatable {
 /// Writes all of `data` to `descriptor`; false when the peer is gone.
 func endpointSendAll(_ descriptor: Int32, _ data: Data) -> Bool {
   data.withUnsafeBytes { buffer in
+    guard let base = buffer.baseAddress else { return true }
     var offset = 0
     while offset < buffer.count {
-      let sent = Darwin.send(descriptor, buffer.baseAddress! + offset, buffer.count - offset, 0)
+      let sent = Darwin.send(descriptor, base + offset, buffer.count - offset, 0)
       if sent < 0, errno == EINTR { continue }
       guard sent > 0 else { return false }
       offset += sent
@@ -41,11 +46,15 @@ func endpointSendAll(_ descriptor: Int32, _ data: Data) -> Bool {
 ///
 /// - Note: `@unchecked Sendable` because `buffer` is touched only by the reading thread.
 final class EndpointLineTransport: EndpointTransport, @unchecked Sendable {
+  /// The connected socket.
   private let descriptor: Int32
+  /// The bytes read and not yet returned as a line.
   private var buffer = Data()
 
+  /// Creates the transport on `descriptor`.
   init(descriptor: Int32) { self.descriptor = descriptor }
 
+  /// Reads up to the next newline, and returns a line that is not too long as a message.
   func readMessage() -> EndpointReadResult {
     var chunk = [UInt8](repeating: 0, count: 4_096)
     while true {
@@ -62,9 +71,11 @@ final class EndpointLineTransport: EndpointTransport, @unchecked Sendable {
     }
   }
 
+  /// Writes `data` and a newline.
   func writeMessage(_ data: Data) -> Bool {
     endpointSendAll(descriptor, data + [UInt8(ascii: "\n")])
   }
 
+  /// Does nothing; a line stream has no closing frame.
   func writeClose() {}
 }

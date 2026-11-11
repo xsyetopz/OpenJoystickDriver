@@ -82,8 +82,8 @@ COMMAND_HELP = """Commands:
   catalog regenerate --write Rebuild the runtime catalog from pinned sources and overrides
   errors regenerate --check   Verify the error code schema enum and wiki table against the catalog
   errors regenerate --write   Rebuild the error code schema enum and wiki table from the catalog
-  vocabulary regenerate --check   Verify the wiki control crosswalk table against crosswalk.json
-  vocabulary regenerate --write   Rebuild the wiki control crosswalk table from crosswalk.json
+  vocabulary regenerate --check   Verify the wiki control crosswalk table against crosswalk.plist
+  vocabulary regenerate --write   Rebuild the wiki control crosswalk table from crosswalk.plist
   check profiles              Check canonical controller records
   check schemas               Validate canonical schemas and a live support report
   check swift                 Build the package and its tests, failing on any warning, then test

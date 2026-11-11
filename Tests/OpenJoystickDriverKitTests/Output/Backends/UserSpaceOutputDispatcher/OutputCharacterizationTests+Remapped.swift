@@ -132,10 +132,11 @@ extension OutputCharacterizationTests {
     )
   }
 
-  /// Passthrough carries each family's controls as engine sources. A real DualSense report drives
-  /// the PlayStation family: Create reaches Share (bit 15, not View bit 9), Options reaches
-  /// Start, PS reaches Guide. Standard View, Menu, Guide and the right pad click follow as parser
-  /// events.
+  /// Passthrough carries each family's controls as engine sources.
+  ///
+  /// A real DualSense report drives the PlayStation family: Create reaches Share (bit 15, not View
+  /// bit 9), Options reaches Start, PS reaches Guide. Standard View, Menu, Guide and the right pad
+  /// click follow as parser events.
   @Test
   func passthroughFamilyControls() async throws {
     let playStation = EngineSession(Self.profile(.passthrough), device: Self.playStation)

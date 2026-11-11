@@ -1,11 +1,18 @@
 import Foundation
 
+/// The report ID of the state report.
 private let shieldStateReportID: UInt8 = 0x01
+/// The report ID of the touch report.
 private let shieldTouchReportID: UInt8 = 0x02
+/// The length of the state report of the 2015 Shield controller (V103).
 private let shieldV103StateLength = 16
+/// The shortest V104 state report.
 private let shieldV104StateLength = 23
+/// The raw value of a centered stick axis.
 private let shieldAxisCenter = 0x8000
+/// The largest distance of a raw stick axis from its center.
 private let shieldAxisMagnitude: Float = 32767
+/// The maximum raw value of a trigger.
 private let shieldTriggerMax: Float = 65535
 
 /// Driver for the NVIDIA SHIELD controllers: the 2015 controller (`0955:7210`, V103) and the 2017
@@ -18,27 +25,42 @@ private let shieldTriggerMax: Float = 65535
 /// write hangs for several seconds; this driver follows SDL and exposes V104 as input-only.
 public final class NVIDIAShieldDriver: PhysicalProtocolDriver {
 
+  /// The bit masks of the face buttons, shoulders and stick clicks in the button byte.
   private enum FaceMask {
+    /// The south button.
     static let south: UInt8 = 0x01
+    /// The east button.
     static let east: UInt8 = 0x02
+    /// The west button.
     static let west: UInt8 = 0x04
+    /// The north button.
     static let north: UInt8 = 0x08
+    /// The left shoulder.
     static let leftShoulder: UInt8 = 0x10
+    /// The right shoulder.
     static let rightShoulder: UInt8 = 0x20
+    /// The left stick click.
     static let leftStick: UInt8 = 0x40
+    /// The right stick click.
     static let rightStick: UInt8 = 0x80
   }
 
+  /// Whether the controller is the 2015 controller (V103).
   private let isV103: Bool
   /// The V103 rumble report; nil for the 2017 controller, which has no plain rumble.
   private let rumbleTemplate: RumbleOutputTemplate?
+  /// The state after the latest report.
   private var state = ControllerState.neutral
+  /// The rumble that the latest command set.
   private var lastRumble = RumbleIntensities.off
 
   /// Creates a driver for the 2017 controller, or for the 2015 controller when its record declares
   /// the `reportRevision: Shield2015` parameter; only the 2015 controller has plain rumble.
-  /// - Parameter rumbleTemplate: The record's rumble template for the 2015 controller; the
-  ///   description's when nil.
+  ///
+  /// - Parameters:
+  ///   - isShield2015: Whether the controller is the 2015 controller.
+  ///   - rumbleTemplate: The record's rumble template for the 2015 controller; the description's
+  ///     when nil.
   public init(isShield2015: Bool, rumbleTemplate: RumbleOutputTemplate? = nil) {
     isV103 = isShield2015
     self.rumbleTemplate =
@@ -49,11 +71,13 @@ public final class NVIDIAShieldDriver: PhysicalProtocolDriver {
       ) : nil
   }
 
+  /// Clears the state and the latest rumble, so the next report starts from neutral.
   public func resetProtocolState() {
     state = .neutral
     lastRumble = .off
   }
 
+  /// The session plan: the rumble resend of the template, if there is one.
   public var sessionPlan: DriverSessionPlan {
     DriverSessionPlan().withRumbleResend(of: rumbleTemplate)
   }
@@ -64,13 +88,17 @@ public final class NVIDIAShieldDriver: PhysicalProtocolDriver {
     else { return [] }
     return [rumbleTemplate.write(intensities)]
   }
+  /// The rumble motors of the rumble template; none without a template.
   public var outputCapabilities: PhysicalControllerOutputCapabilities {
     rumbleTemplate?.outputCapabilities ?? .none
   }
+  /// No default colour: the controller has no light to restore.
   public var defaultColor: ControllerColor? { nil }
 
+  /// Always nil: the report carries no logical connection.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
+  /// The controls of the description, plus the touchpad click on the 2015 controller.
   public var capabilities: ControllerCapabilities {
     PhysicalProtocolID.vendorNVIDIAShield.describedControls.union(
       ControllerCapabilities(controls: isV103 ? [.touchpadClick] : [])
@@ -87,6 +115,8 @@ public final class NVIDIAShieldDriver: PhysicalProtocolDriver {
     return plan
   }
 
+  /// Decodes a state report (16 bytes for V103, 23 or more for V104) or a V103 touch report; any
+  /// other report is ignored.
   public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
     let bytes = [UInt8](data)
     var next = state
@@ -103,6 +133,7 @@ public final class NVIDIAShieldDriver: PhysicalProtocolDriver {
     return ControllerEvent(timestamp: receivedAt, state: next)
   }
 
+  /// Applies a V103 state report to `next`.
   private static func applyV103State(_ bytes: [UInt8], to next: inout ControllerState) {
     next.hat = direction(for: bytes[3])
     applyFaceAndShoulders(bytes[1], to: &next)
@@ -112,6 +143,7 @@ public final class NVIDIAShieldDriver: PhysicalProtocolDriver {
     applyAxes(bytes, sticks: 4, triggers: 12, to: &next)
   }
 
+  /// Applies a V104 state report to `next`.
   private static func applyV104State(_ bytes: [UInt8], to next: inout ControllerState) {
     next.hat = direction(for: bytes[2])
     applyFaceAndShoulders(bytes[3], to: &next)
@@ -121,6 +153,7 @@ public final class NVIDIAShieldDriver: PhysicalProtocolDriver {
     applyAxes(bytes, sticks: 9, triggers: 19, to: &next)
   }
 
+  /// Applies the face buttons, shoulders and stick clicks of `byte` to `next`.
   private static func applyFaceAndShoulders(_ byte: UInt8, to next: inout ControllerState) {
     for (mask, control) in [
       (FaceMask.south, Control.south), (FaceMask.east, .east), (FaceMask.west, .west),

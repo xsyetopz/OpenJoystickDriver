@@ -56,6 +56,65 @@ struct HIDUsageLayoutEquivalenceTests {
         "descriptor Rx Ry",
         HIDDescriptorDriver(model: model, reportDescriptor: Self.rxRyDescriptor)
       ),
+    ] + (try Self.halfAndButtonMaps()).map { ($0, HIDDescriptorDriver(model: model, usageMap: $1)) }
+  }
+
+  /// One map per kind that binds part of an element: a combined trigger axis on Z, D-pad
+  /// directions on X, buttons on Rz, and a button that reads as a trigger.
+  private static func halfAndButtonMaps() throws -> [(String, HIDUsageMap)] {
+    func usage(_ number: Int, page: Int = 0x01) -> HIDUsage {
+      HIDUsage(usagePage: page, usage: number)
+    }
+    func entry(_ usage: HIDUsage, _ binding: HIDUsageMap.Binding) -> HIDUsageMap.Entry {
+      .init(usage: usage, binding: binding)
+    }
+    func half(
+      _ half: HIDUsageMap.Half,
+      _ control: Control,
+      _ threshold: Float
+    ) -> HIDUsageMap.Binding {
+      .axisButton(.init(half: half, control: control, threshold: threshold))
+    }
+    return [
+      (
+        "HalfAxis Z",
+        try HIDUsageMap(entries: [
+          entry(
+            usage(0x32),
+            .halfAxis(.init(half: .positive, control: .leftTrigger, isInverted: false))
+          ),
+          entry(
+            usage(0x32),
+            .halfAxis(.init(half: .negative, control: .rightTrigger, isInverted: true))
+          ),
+        ])
+      ),
+      (
+        "AxisDpad X",
+        try HIDUsageMap(entries: [
+          entry(
+            usage(0x30),
+            .axisDpad(.init(half: .negative, control: .dpadLeft, threshold: 0.5))
+          ),
+          entry(
+            usage(0x30),
+            .axisDpad(.init(half: .positive, control: .dpadRight, threshold: 0.5))
+          ),
+        ])
+      ),
+      (
+        "AxisButton Rz",
+        try HIDUsageMap(entries: [
+          entry(usage(0x35), half(.positive, .east, 0.5)),
+          entry(usage(0x35), half(.negative, .west, 0.75)),
+        ])
+      ),
+      (
+        "ButtonTrigger 7",
+        try HIDUsageMap(entries: [
+          entry(usage(7, page: 0x09), .buttonTrigger(.rightTrigger))
+        ])
+      ),
     ]
   }
 

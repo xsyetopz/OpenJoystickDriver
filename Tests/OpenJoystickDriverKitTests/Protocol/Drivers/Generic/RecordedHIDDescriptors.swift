@@ -1,10 +1,11 @@
 import Foundation
 
-/// HID report descriptors recorded by xpadneo (`docs/descriptors`, GPL-3.0) from Linux sysfs,
-/// kept here as byte evidence only.
+/// HID report descriptors that xpadneo recorded from Linux sysfs (`docs/descriptors`), kept here as
+/// byte evidence only.
 enum RecordedHIDDescriptors {
-  /// Xbox One S (`045E:02FD`) over Bluetooth, Linux mode (`xb1s_linux.md`). It ends with a zero
-  /// byte after the last End Collection.
+  /// Xbox One S (`045E:02FD`) over Bluetooth, Linux mode (`xb1s_linux.md`).
+  ///
+  /// It ends with a zero byte after the last End Collection.
   static let xboxOneSLinux = descriptor(
     """
     05 01 09 05 a1 01 85 01 09 01 a1 00 09 30 09 31 15 00 27 ff
@@ -85,6 +86,13 @@ enum RecordedHIDDescriptors {
   )
 
   private static func descriptor(_ hex: String) -> Data {
-    Data(hex.split(whereSeparator: \.isWhitespace).map { UInt8($0, radix: 16)! })
+    Data(
+      hex.split(whereSeparator: \.isWhitespace).map { token in
+        guard let byte = UInt8(token, radix: 16) else {
+          preconditionFailure("every token of a recorded descriptor is a hex byte")
+        }
+        return byte
+      }
+    )
   }
 }

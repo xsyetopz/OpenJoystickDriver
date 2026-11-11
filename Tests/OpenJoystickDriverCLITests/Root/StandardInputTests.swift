@@ -38,7 +38,7 @@ struct StandardInputTests {
     )
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: directory) }
-    try Self.patch.write(to: directory.appendingPathComponent("366c-0005.patch.json"))
+    try Self.patch.write(to: directory.appendingPathComponent("366c-0005.patch.plist"))
 
     let leaves = CLICommandTree.leafPaths.filter { !Self.systemCommands.contains($0) }
       .map { $0 + CLICommandTree.sampleOperands(for: $0) }
@@ -63,7 +63,7 @@ struct StandardInputTests {
       }
       #expect(library.stored.map(\.bindings) == [[binding]])
       let records = try FileManager.default.contentsOfDirectory(atPath: directory.path)
-      #expect(records == ["366c-0005.patch.json"])
+      #expect(records == ["366c-0005.patch.plist"])
       for arguments in leaves {
         await Task.yield()
         let result = await RecordStore.$directory.withValue(directory) {

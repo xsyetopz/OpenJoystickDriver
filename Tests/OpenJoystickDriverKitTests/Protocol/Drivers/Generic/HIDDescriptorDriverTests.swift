@@ -35,8 +35,10 @@ struct HIDDescriptorDriverTests {
     #expect(parse(parser, axis(usage: 0x34, integer: 255)).contains(.rightStick(x: -1, y: 1)))
   }
 
-  /// HID Generic Desktop Y and Ry put the logical minimum away from the user (up), so canonical
-  /// Y, which points up, is at its maximum there. The elements carry this descriptor's ranges.
+  /// HID Generic Desktop Y and Ry put the logical minimum away from the user (up), so canonical Y,
+  /// which points up, is at its maximum there.
+  ///
+  /// The elements carry this descriptor's ranges.
   @Test
   func explicitDescriptorLogicalMinimumYIsUp() {
     // Usage Page (Generic Desktop), Usage (Game Pad), Collection (Application),
@@ -98,8 +100,9 @@ struct HIDDescriptorDriverTests {
   }
 
   /// SDL's two `0079:0006` gamepad mappings agree on the buttons: 1-4 are Y, B, A, X, 7-8 are
-  /// digital L2 and R2, and 9-12 are back, start, and the stick clicks. Z and Rz carry the right
-  /// stick.
+  /// digital L2 and R2, and 9-12 are back, start, and the stick clicks.
+  ///
+  /// Z and Rz carry the right stick.
   @Test
   func dragonRiseUsesItsButtonOrderAndZRzRightStick() throws {
     let parser = HIDDescriptorDriver(
@@ -137,6 +140,32 @@ struct HIDDescriptorDriverTests {
 
     let next = parse(parser, value(page: 0x09, usage: 2, minimum: 0, maximum: 1, integer: 0))
     #expect(next?.state == .neutral)
+  }
+
+  @Test
+  func theHalvesOfOneUsageDriveSeparateControlsAndASessionResetReleasesThem() throws {
+    let z = HIDUsage(usagePage: 1, usage: 50)
+    let map = try HIDUsageMap(entries: [
+      .init(
+        usage: z,
+        binding: .axisDpad(.init(half: .negative, control: .dpadLeft, threshold: 0.5))
+      ),
+      .init(
+        usage: z,
+        binding: .axisButton(.init(half: .positive, control: .east, threshold: 0.5))
+      ),
+    ])
+    let parser = HIDDescriptorDriver(model: model, usageMap: map)
+    func zValue(_ integer: Int) -> HIDElementValue {
+      value(page: 1, usage: 50, minimum: -100, maximum: 100, integer: integer)
+    }
+    #expect(parse(parser, zValue(-80))?.state.hat == .west)
+    #expect(parse(parser, zValue(80))?.state == snapshot(.press(.east)))
+    #expect(parse(parser, zValue(-80)).contains(.release(.east)))
+
+    parser.resetProtocolState()
+
+    #expect(parse(parser, zValue(0))?.state == .neutral)
   }
 
   @Test

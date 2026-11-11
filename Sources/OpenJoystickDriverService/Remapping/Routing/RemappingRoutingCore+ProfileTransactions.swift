@@ -2,6 +2,11 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension RemappingRoutingCore {
+  /// Opens `transaction` and stops the output of every route, so the profile library can change.
+  ///
+  /// - Throws: ``RemappingOutputRoutingError/profileTransactionAlreadyActive`` when a transaction
+  ///   is active, the failure of an unreconciled transaction, and the first failure to stop a
+  ///   route.
   func beginProfileTransaction(
     _ transaction: RemappingProfileTransaction,
     requiring proposedPermit: RemappingEmissionPermit?
@@ -33,6 +38,10 @@ extension RemappingRoutingCore {
     if let firstError { throw firstError }
   }
 
+  /// Ends `transaction` by loading the selections that are missing and installing the routes.
+  ///
+  /// - Throws: ``RemappingOutputRoutingError/profileTransactionViolation`` when `transaction` is
+  ///   not the active one.
   func acceptProfileTransaction(
     _ transaction: RemappingProfileTransaction,
     requiring permit: RemappingEmissionPermit?
@@ -47,6 +56,10 @@ extension RemappingRoutingCore {
     profileTransactionState = .inactive
   }
 
+  /// Ends `transaction` by reloading every selection from the library and installing the routes.
+  ///
+  /// - Throws: ``RemappingOutputRoutingError/profileTransactionViolation`` when `transaction` is
+  ///   not the active one.
   func rollBackProfileTransaction(
     _ transaction: RemappingProfileTransaction,
     requiring permit: RemappingEmissionPermit?
@@ -61,6 +74,7 @@ extension RemappingRoutingCore {
     profileTransactionState = .inactive
   }
 
+  /// Marks `transaction` as unreconciled with `error` and makes every route unavailable.
   func markProfileTransactionUnreconciled(
     _ transaction: RemappingProfileTransaction,
     error: RemappingOutputRoutingError
@@ -72,6 +86,10 @@ extension RemappingRoutingCore {
     markRoutesUnreconciled(error)
   }
 
+  /// Reloads the selections and installs the routes after a transaction failed to reconcile.
+  ///
+  /// - Throws: ``RemappingOutputRoutingError`` that describes the failure; the transaction stays
+  ///   unreconciled.
   func recoverProfileTransaction(requiring permit: RemappingEmissionPermit?) async throws {
     defer { schedulingRevision &+= 1 }
     try ensureRunning()
@@ -93,6 +111,8 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Returns the emission permit of the active or unreconciled transaction, or nil when there is
+  /// none.
   func profileTransactionPermit() -> RemappingEmissionPermit? {
     switch profileTransactionState {
     case .active(let transaction), .unreconciled(let transaction, _):
@@ -101,6 +121,7 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Loads the selection of every controller that has no route yet.
   private func loadPendingSelections(requiring permit: RemappingEmissionPermit?) async throws {
     for identifier in sortedIdentifiers where routes[identifier] == nil {
       _ = try requireOperationalPermit(permit)
@@ -108,6 +129,7 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Reloads the selection of every controller from the active profiles, in controller order.
   private func reloadAllSelections(requiring permit: RemappingEmissionPermit?) async throws {
     let environment = sampleEligibilityEnvironment()
     for identifier in sortedIdentifiers {
@@ -134,6 +156,8 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Recovers the engine, then reconciles the eligibility of every route and forces its output
+  /// state.
   private func installCurrentRoutes(requiring proposedPermit: RemappingEmissionPermit?) async throws
   {
     let permit = try requireOperationalPermit(proposedPermit)
@@ -159,6 +183,7 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Returns the route for `selection` with the eligibility computed in `environment`.
   private func route(
     for selection: RemappingSelectedRoute,
     identifier: LogicalControllerID,
@@ -187,6 +212,7 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Returns the route that has no output because of `error`.
   private func unavailableRoute(
     _ error: RemappingOutputRoutingError,
     environment: RemappingEligibilityEnvironment
@@ -201,17 +227,20 @@ extension RemappingRoutingCore {
     )
   }
 
+  /// Throws unless `transaction` is the active one.
   private func requireActiveProfileTransaction(_ transaction: RemappingProfileTransaction) throws {
     guard case .active(let active) = profileTransactionState, active == transaction else {
       throw RemappingOutputRoutingError.profileTransactionViolation
     }
   }
 
+  /// Makes the route of `identifier` unavailable when a transaction is unreconciled.
   func recordUnreconciledRouteIfNeeded(for identifier: LogicalControllerID) {
     guard case .unreconciled(_, let error) = profileTransactionState else { return }
     routes[identifier] = unavailableRoute(error, environment: sampleEligibilityEnvironment())
   }
 
+  /// Makes every route unavailable with `error`.
   func markRoutesUnreconciled(
     _ error: RemappingOutputRoutingError,
     environment proposedEnvironment: RemappingEligibilityEnvironment? = nil
@@ -231,6 +260,8 @@ extension RemappingRoutingCore {
     }
   }
 
+  /// Converts `error` to a routing error; any error of another type becomes an unreconciled
+  /// transaction.
   private static func routingError(_ error: any Error) -> RemappingOutputRoutingError {
     if let error = error as? RemappingOutputRoutingError { return error }
     if let error = error as? RemappingEventEngineError { return .engine(error) }

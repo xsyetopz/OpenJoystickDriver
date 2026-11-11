@@ -76,8 +76,9 @@ _SWIFT_PINNED="$(tr -d '[:space:]' < "$PROJECT_DIR/.swift-version")"
 _SWIFT_FOUND="$("$SWIFT_PATH" --version 2>&1 |
   sed -nE 's/.*Swift version ([0-9]+\.[0-9]+(\.[0-9]+)?).*/\1/p' | head -n1)"
 [[ "$_SWIFT_FOUND" == *.*.* ]] || _SWIFT_FOUND="$_SWIFT_FOUND.0"
-[[ "$_SWIFT_FOUND" == "$_SWIFT_PINNED" ]] ||
-  die "$SWIFT_PATH is Swift $_SWIFT_FOUND; .swift-version names $_SWIFT_PINNED: select the Xcode that ships it with DEVELOPER_DIR"
+# `.swift-version` names the oldest Swift that builds for the macOS 12 floor.
+[[ "$(printf '%s\n%s\n' "$_SWIFT_PINNED" "$_SWIFT_FOUND" | sort -V | head -n1)" == "$_SWIFT_PINNED" ]] ||
+  die "$SWIFT_PATH is Swift $_SWIFT_FOUND; .swift-version needs $_SWIFT_PINNED or newer: select a newer Xcode with DEVELOPER_DIR"
 unset _SWIFT_PINNED _SWIFT_FOUND
 
 # Export SDKROOT so swift build, xcodebuild, and clang skip the xcrun lookup, which can hang, and

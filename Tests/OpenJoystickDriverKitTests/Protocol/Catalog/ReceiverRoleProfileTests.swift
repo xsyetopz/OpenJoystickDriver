@@ -37,6 +37,25 @@ struct ReceiverRoleProfileTests {
   }
 
   @Test
+  func slotOrdinalFollowsAscendingInterfaceNumberInEveryDescriptorOrder() throws {
+    let binding = try bound(0x045E, 0x0719)
+    // Synthetic: odd interfaces carry another triple, the audio-interleaved layout.
+    let layouts: [[UInt8]] = [
+      [0, 2, 4, 6],
+      [0, 1, 2, 3, 4, 5, 6, 7],
+      [7, 6, 5, 4, 3, 2, 1, 0],
+    ]
+    for layout in layouts {
+      let roles = registry.roleProfiles(
+        for: binding,
+        resolution: claim(of: layout.map(Self.syntheticInterface))
+      )
+
+      #expect(roles.map(\.profile.interfaceNumber) == [0, 2, 4, 6], "\(layout)")
+    }
+  }
+
+  @Test
   func interfaceWithThreeEndpointsOrAnotherTripleIsNotARole() throws {
     let binding = try bound(0x045E, 0x0719)
     // Synthetic: interface 2 carries an extra endpoint and interface 1 the non-slot triple.

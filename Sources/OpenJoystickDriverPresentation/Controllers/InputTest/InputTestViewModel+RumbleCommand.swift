@@ -6,6 +6,8 @@
 
   extension InputTestViewModel {
 
+    /// Returns the rumble command for the intensities that the sliders hold: a motor without
+    /// intensity control is full or off, and the two haptics join the main motors.
     func rumbleCommand() -> (left: UInt8, right: UInt8, leftTrigger: UInt8, rightTrigger: UInt8) {
       var left: UInt8 = 0
       var right: UInt8 = 0
@@ -25,6 +27,10 @@
       return (left, right, leftTrigger, rightTrigger)
     }
 
+    /// Returns the value as a byte, rounded and clamped to 0 through 255.
+    ///
+    /// - Parameter value: The value to convert.
+    /// - Returns: The value as a byte, rounded and clamped to 0 through 255.
     static func byte(_ value: Double) -> UInt8 {
       UInt8(clamping: Int(max(0, min(255, value)).rounded()))
     }

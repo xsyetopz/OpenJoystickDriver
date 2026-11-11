@@ -11,6 +11,7 @@ enum ModStore {
   @TaskLocal
   static var runningVersion: String?
 
+  /// The package store at ``directory``.
   static var store: ModPackageStore {
     ModPackageStore(directory: directory, runningVersion: runningVersion)
   }
@@ -20,20 +21,28 @@ enum ModStore {
 
   /// The failure that reports `error` with its E4xxx code.
   static func failure(_ error: ModPackageError, subject: String) -> CLIFailure {
-    CLIFailure(error.code, CLILocalized.format("cli.mod.group.refused", subject, error.detail))
+    ModPackageStore.failure(error, subject: subject)
   }
 }
 
 /// The `--json` result of `mod validate`, and the `package` of `mod install`.
 struct ModPackageValidation: Encodable, Equatable {
+  /// Whether the package is accepted.
   let valid: Bool
+  /// Why the package is refused.
   let problem: String?
+  /// The E4xxx or E5001 code of the refusal.
   let code: String?
+  /// The package name.
   let name: String?
+  /// The package version.
   let version: String?
+  /// The package author.
   let author: String?
+  /// The files the package lists.
   let files: [String]?
 
+  /// Describes an accepted package.
   init(_ manifest: ModPackageManifest) {
     valid = true
     problem = nil
@@ -44,6 +53,7 @@ struct ModPackageValidation: Encodable, Equatable {
     files = manifest.listedFiles
   }
 
+  /// Describes the refusal `error`.
   init(_ error: ModPackageError) {
     valid = false
     problem = error.detail
@@ -54,8 +64,12 @@ struct ModPackageValidation: Encodable, Equatable {
     files = nil
   }
 
-  /// Validates `folder`. A refused package prints `valid: false` with `--json` and fails with
-  /// the E4xxx code of the refusal.
+  /// Validates `folder`.
+  ///
+  /// A refused package prints `valid: false` with `--json` and fails with the E4xxx code of the
+  /// refusal.
+  ///
+  /// - Throws: ``CLIFailure`` with the code of the refusal.
   static func check(_ folder: String) throws -> ModPackageManifest {
     do { return try ModStore.store.validate(ModStore.folder(folder)) } catch let error
       as ModPackageError
@@ -63,22 +77,5 @@ struct ModPackageValidation: Encodable, Equatable {
       if CLIContext.current.format == .json { try CLIOutput.json(Self(error)) }
       throw ModStore.failure(error, subject: folder)
     }
-  }
-}
-
-/// One installed package in `mod list --json`. `problem` is why the package is not used.
-struct ModPackageEntry: Encodable, Equatable {
-  let name: String
-  let version: String?
-  let author: String?
-  let files: [String]
-  let problem: String?
-
-  init(_ package: ModPackage) {
-    name = package.name
-    version = package.manifest?.version
-    author = package.manifest?.author
-    files = package.manifest.map(\.listedFiles) ?? []
-    problem = package.problem
   }
 }

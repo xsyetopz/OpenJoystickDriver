@@ -15,7 +15,7 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.6.0-alpha.1</string>
+    <string>0.6.0-alpha.2</string>
     <key>CFBundleVersion</key>
     <string>1</string>
     <key>LSMinimumSystemVersion</key>
@@ -26,6 +26,8 @@
     <true/>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>NSHumanReadableCopyright</key>
+    <string>© 2026 Krystian J. PolyForm Noncommercial 1.0.0.</string>
     <!-- Required when the app submits OSSystemExtensionRequest — shown in
          System Settings -> Privacy & Security when user approves the extension. -->
     <key>NSInputMonitoringUsageDescription</key>

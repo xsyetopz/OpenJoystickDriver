@@ -2,10 +2,12 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension PassiveUSBDescriptorProbe {
-  /// Walks a configuration descriptor by length and type only. Nil when the descriptor framing
-  /// itself is broken. An interface alternate setting whose endpoints do not decode (a reserved
-  /// address bit, a duplicate address, or a count other than declared) keeps its class triple but
-  /// reports no endpoints, so claimed-interface validation rejects it if OJD would claim it.
+  /// Walks a configuration descriptor by length and type only.
+  ///
+  /// Nil when the descriptor framing itself is broken. An interface alternate setting whose
+  /// endpoints do not decode (a reserved address bit, a duplicate address, or a count other than
+  /// declared) keeps its class triple but reports no endpoints, so claimed-interface validation
+  /// rejects it if OJD would claim it.
   static func structuralInterfaces(
     _ bytes: [UInt8],
     configurationValue: UInt8?,
@@ -29,13 +31,19 @@ extension PassiveUSBDescriptorProbe {
   }
 }
 
+/// One alternate setting of an interface with its endpoints, as a structural walk reads it.
 private struct StructuralAlternate {
+  /// The interface descriptor bytes.
   let header: [UInt8]
+  /// The endpoints in the order the walk read them.
   var endpoints: [PhysicalEndpointSignature] = []
+  /// Whether an endpoint is invalid or repeated.
   var isMalformed = false
 
+  /// Creates an alternate setting from its interface descriptor bytes.
   init(header: [UInt8]) { self.header = header }
 
+  /// Adds the endpoint descriptor `chunk`.
   mutating func add(endpoint chunk: [UInt8]) {
     let address = chunk[2]
     guard address & 0x70 == 0, address & 0x0F != 0,
@@ -62,6 +70,8 @@ private struct StructuralAlternate {
     )
   }
 
+  /// Returns the interface signature of the alternate setting; it is complete when no endpoint is
+  /// malformed and every declared endpoint is present.
   func signature(configurationValue: UInt8?, route: USBTransportRoute) -> PhysicalInterfaceSignature
   {
     let isComplete = !isMalformed && endpoints.count == Int(header[4])

@@ -1,0 +1,7 @@
+# controller: 057E:2069
+# transport: usb
+# action: idle, then the south button with the left stick at x 3072, y 2048
+# source: synthetic
+# note: built from the SDL HandleSwitchProState offsets (buttons 5 to 8, left stick 11, right stick 14); not a hardware capture
+05 00 00 00 00 00 00 00 00 00 00 00 08 80 00 08 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+05 00 00 00 00 04 00 00 00 00 00 00 0C 80 00 08 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00

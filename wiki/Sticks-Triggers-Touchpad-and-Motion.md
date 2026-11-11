@@ -8,7 +8,10 @@ Analog settings change how a stick, a trigger, a touch surface, or a motion sens
 - [Set a Stick Mode](#set-a-stick-mode)
 - [Set Trigger Stages](#set-trigger-stages)
 - [Set Touch Mapping](#set-touch-mapping)
+- [Set Regions](#set-regions)
+- [Set Pointer Speed](#set-pointer-speed)
 - [Set Motion Tuning and Gyro Output](#set-motion-tuning-and-gyro-output)
+- [Create a Gyro to Stick Profile](#create-a-gyro-to-stick-profile)
 - [Pair Two Joy-Con Controllers](#pair-two-joy-con-controllers)
 - [Set the Lighting Color](#set-the-lighting-color)
 - [Further Reading](#further-reading)
@@ -94,6 +97,49 @@ You can also use touch contact, touch grid, and touch swipe as assignment source
 
 On the command line, the settings are the `touchMappings` entries of the profile. Change one with `ojd profile set`, for example `ojd profile set Racing touchMappings.0.mode Pointer`, or open the profile with `ojd profile edit`.
 
+## Set Regions
+
+A region is a source that is on while a stick, a trigger, or a touch contact is in a part of its range. Assign it like a button. For example, a stick ring can hold Shift while you push the stick all the way.
+
+1. In the **Controller** section, click **Adjust** in the **Regions** group.
+2. Select a **Region type**: **Stick ring**, **Trigger band**, or **Touch area**.
+3. Select the **Input**: the stick, the trigger, or the touch surface.
+4. Set the numbers.
+5. Select a **Destination**.
+6. Click **Add assignment**, then **Save** in the profile editor.
+
+While a controller is connected, the **Live position** drawing shows the region and a dot at the current position of the stick, trigger, or touch.
+
+- **Stick ring**: **Inner radius** and **Outer radius** are fractions of the deflection after the stick dead zone, from 0 to 1, with the inner radius below the outer one. **Sector start** and **Sector end** are degrees clockwise from up, from 0 to 360. A sector may pass 0, as 315 to 45 does. Leave both empty for the whole ring. The live dot uses the dead zone of the stick mapping.
+- **Trigger band**: **Band start** and **Band end** are pulls from 0 to 1. A trigger with bands cannot also have dual-stage trigger mappings.
+- **Touch area**: the edges, **Width**, and **Height** are fractions of the surface. The area is on while any contact is in it.
+
+Rings and sectors of one stick cannot overlap, and neither can bands of one trigger; OJD rejects the profile when you save it. A ring or band keeps its output while the input stays within the **Release hysteresis** (0 to 0.25, default 0.05) past an edge. When the input moves from one region into the next, OJD releases the first output before it presses the second.
+
+On the command line, the sources are `stick-region:SIDE:INNER-OUTER[:FROM-TO]`, `trigger-band:SIDE:FROM-TO`, and `touch:SURFACE:area:X:Y:W:H`, for example `ojd binding set Racing stick-region:left:0.8-1 key:key-a`. For the other source syntax, see [Assigning buttons and actions](Bindings-and-Actions.md#region-sources).
+
+## Set Pointer Speed
+
+Pointer speed scales all pointer movement by the value of a trigger or a stick. It covers the stick pointer modes, the touch pointer, the gyro mouse, and the **Mouse movement** destination. Scrolling does not change.
+
+1. In the **Controller** section, click **Adjust** in the **Pointer speed** group.
+2. Select **Scale pointer speed**.
+3. Select the **Driver**: **Trigger** or **Stick depth**, and the **Side**.
+4. Set the **Scale at 0** and the **Scale at 1**, and select a **Curve**.
+5. Click **Save**.
+
+The scale is the **Scale at 0** when the driver is at rest and the **Scale at 1** when the trigger is fully pulled or the stick is at its rim. The curve shapes the values in between. Both scales range from 0 to 10. A scale of 0 stops the pointer. While the controller is connected, the editor shows the current scale.
+
+Only a trigger or stick that the controller reports can be the driver.
+
+With several controllers that each have a pointer speed, the scales of all of them apply to the one pointer.
+
+On the command line, the setting is the `pointerSpeed` field of the profile. For example, to slow the pointer to a quarter while the left trigger is fully pulled:
+
+```sh
+ojd profile set Racing pointerSpeed '{"driver":{"type":"Trigger","side":"Left"},"minScale":1,"maxScale":0.25,"curve":"Linear"}'
+```
+
 ## Set Motion Tuning and Gyro Output
 
 1. In the **Controller** section, click **Adjust** in the **Motion tuning** group.
@@ -118,6 +164,18 @@ To change these settings with the command line, run `ojd profile edit PROFILE` a
 A gyro trackball keeps motion going after you hold a control. **Velocity halvings per second** ranges from 0 to 1000. Zero keeps a constant speed.
 
 Motion sources need a controller with motion sensors. Some controllers provide none.
+
+## Create a Gyro to Stick Profile
+
+The **Gyro to stick** template makes a profile in which turning the controller moves a stick of the virtual gamepad, so a game that reads only sticks gets gyro aiming.
+
+1. Click **New profile** and choose the controller.
+2. Set **Template** to **Gyro to stick**, then choose the **Left stick** or the **Right stick**.
+3. Click **Create**.
+
+The profile turns the virtual gamepad on with every unmapped control passing through, and gyro output is always on. To make it active only while a control is held, set the activation in the motion sheet. With the command line, run `ojd profile create NAME --controller VVVV:PPPP --template gyro-stick`, and add `--stick left` or `--activation button:left-shoulder` to change the stick or to hold a control. If the controller model has no motion sensor, OpenJoystickDriver does not create the profile and says which model lacks one.
+
+Hardware behavior: Not checked. The engine and its tests cover stick output, and [the hardware check](../docs/testing/gyro-stick.md) has not been run on a controller.
 
 ## Pair Two Joy-Con Controllers
 

@@ -6,9 +6,11 @@
 
   /// Launch at login, the menu bar item, the Dock icon and update checks.
   struct GeneralPaneView: View {
+    /// The switches of General and the update state.
     @ObservedObject
     var preferences: SettingsPreferencesModel
 
+    /// The General form: the settings error, if any, and the switches.
     var body: some View {
       Form {
         SettingsErrorSection(preferences: preferences)
@@ -53,6 +55,8 @@
       }.ojdGroupedForm()
     }
 
+    /// The Updates section: the check state, View Update while a release is available, Check for
+    /// Updates and the automatic and prerelease switches.
     private var updates: some View {
       Section(OJDLocalized.string("ui.settings.general.updates")) {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -98,6 +102,7 @@
       }
     }
 
+    /// Returns the indicator at the start of the update status label.
     @ViewBuilder
     private func indicator(_ indicator: UpdateStatusPresentation.Indicator) -> some View {
       switch indicator {
@@ -109,6 +114,7 @@
       }
     }
 
+    /// Returns the system color of a tone.
     private static func color(of tone: UpdateStatusPresentation.Tone) -> NSColor {
       switch tone {
       case .positive: return SemanticState.healthy.presentation.tone.color
@@ -118,6 +124,7 @@
       }
     }
 
+    /// The update status that the section shows for the update check state.
     private var status: UpdateStatusPresentation {
       UpdateStatusPresentation(
         state: preferences.updateState,

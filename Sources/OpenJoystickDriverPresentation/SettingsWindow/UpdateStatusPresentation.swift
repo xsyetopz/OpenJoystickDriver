@@ -1,18 +1,25 @@
 import Foundation
 import OpenJoystickDriverKit
 
-/// The Updates status row of Settings > General for an update check state: the status as the
-/// row's label, a version number as its value, and, only while the running version is newer
-/// than the latest release, a line naming that release. Versions show without the leading `v` of
-/// a release tag.
+/// The Updates status row of Settings > General for an update check state: the status as the row's
+/// label, a version number as its value, and, only while the running version is newer than the
+/// latest release, a line naming that release.
+///
+/// Versions show without the leading `v` of a release tag.
 struct UpdateStatusPresentation: Equatable {
-  /// What leads the status label. It repeats what the label says, so it is hidden from VoiceOver.
+  /// What leads the status label.
+  ///
+  /// It repeats what the label says, so it is hidden from VoiceOver.
   enum Indicator: Equatable {
+    /// No indicator.
     case none
+    /// A progress indicator while the check runs.
     case progress
+    /// An SF Symbol named `name`, colored by `tone`.
     case symbol(name: String, tone: Tone)
   }
 
+  /// How the color of the status symbol reads.
   enum Tone: Equatable {
     /// The running version is the latest release.
     case positive
@@ -20,14 +27,24 @@ struct UpdateStatusPresentation: Equatable {
     case attention
     /// The running version is newer than the latest release.
     case informational
+    /// The check failed.
     case failure
   }
 
+  /// What leads the status label.
   let indicator: Indicator
+  /// The status label.
   let title: String
+  /// The version number.
   let version: String
+  /// The line that names the latest release, or nil for none.
   let latestRelease: String?
 
+  /// Creates the presentation for an update check state.
+  ///
+  /// - Parameters:
+  ///   - state: the result of the update check.
+  ///   - runningVersion: the version of the running app.
   init(state: UpdateCheckState, runningVersion: String) {
     var version = runningVersion
     var latestRelease: String?

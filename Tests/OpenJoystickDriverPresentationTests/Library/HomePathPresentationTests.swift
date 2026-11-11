@@ -24,7 +24,7 @@ struct HomePathPresentationTests {
 
   @Test
   func theLibraryDetailShowsTheRecordFileWithATildeAndNothingForABundledRecord() {
-    let file = URL(fileURLWithPath: "\(Self.home)/Records/054c-0268.patch.json")
+    let file = URL(fileURLWithPath: "\(Self.home)/Records/054c-0268.patch.plist")
     let user = LibraryRecordItem(
       model: ControllerModelID(vendorID: 0x054C, productID: 0x0268),
       family: .sonySixaxis,
@@ -38,7 +38,7 @@ struct HomePathPresentationTests {
       file: nil
     )
 
-    #expect(user.fileDisplayPath == "~/Records/054c-0268.patch.json")
+    #expect(user.fileDisplayPath == "~/Records/054c-0268.patch.plist")
     #expect(user.file == file)
     #expect(bundled.fileDisplayPath == nil)
   }
@@ -55,14 +55,14 @@ struct HomePathPresentationTests {
   @Test
   func theControllerDetailRecordRowShowsTheUserRecordFileWithATilde() {
     let row = ControllerDetailFacts.recordLocation(
-      "\(Self.home)/Records/054c-0268.patch.json"
+      "\(Self.home)/Records/054c-0268.patch.plist"
     )
 
     #expect(
       row
         == OJDLocalized.formatted(
           "cli.controller.show.recordUser",
-          "~/Records/054c-0268.patch.json"
+          "~/Records/054c-0268.patch.plist"
         )
     )
   }

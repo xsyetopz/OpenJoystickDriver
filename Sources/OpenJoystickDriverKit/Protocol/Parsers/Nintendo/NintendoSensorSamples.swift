@@ -1,21 +1,30 @@
-/// Nintendo reports contain three IMU samples but no reliable device sample timestamp.
-/// Estimates their spacing from bounded host receipt intervals, retaining gaps after packet loss.
-/// Sample time is the first report's receipt time plus the estimated elapsed time, so the newest
-/// sample of each report lands up to 10 ms after that report's receipt.
+/// Decodes the three IMU samples of a Nintendo report, which carries no reliable device sample
+/// timestamp.
+///
+/// The spacing of the samples comes from bounded host receipt intervals, and gaps after packet loss
+/// are kept. Sample time is the first report's receipt time plus the estimated elapsed time, so
+/// the newest sample of each report lands up to 10 ms after that report's receipt.
 struct NintendoSensorSamples {
+  /// The receipt time of the first report of the session.
   private var firstReceipt: UInt64?
+  /// The receipt time of the previous report.
   private var previousReceipt: UInt64 = 0
+  /// The sample time of the newest sample of the previous report.
   private var previousEnd: UInt64 = 0
+  /// The smoothed interval between reports in nanoseconds, starting at 15 ms.
   private var averageInterval: UInt64 = 15_000_000
+  /// The sequence index of the next sample; ``reset()`` keeps it.
   private var sequence: UInt64 = 0
 
-  /// Starts a new time session at the next report; the sequence index keeps counting.
+  /// Starts a fresh time session at the next report; the sequence index keeps counting.
   mutating func reset() {
     let next = sequence
     self = Self()
     sequence = next
   }
 
+  /// Decodes the samples of the report `bytes`, received at `receivedAt` nanoseconds.
+  /// - Returns: Three samples, oldest first; none when the report is shorter than 49 bytes.
   mutating func decode(
     _ bytes: [UInt8],
     receivedAt: UInt64,
@@ -63,6 +72,7 @@ struct NintendoSensorSamples {
     }
   }
 
+  /// The raw vector of the three little-endian values that start at `offset`.
   private static func vector(_ bytes: [UInt8], at offset: Int) -> ControllerRawSensorVector {
     ControllerRawSensorVector(
       x: signed16(bytes, at: offset),
@@ -71,6 +81,7 @@ struct NintendoSensorSamples {
     )
   }
 
+  /// The little-endian signed 16-bit value at `offset`.
   private static func signed16(_ bytes: [UInt8], at offset: Int) -> Int16 {
     Int16(bitPattern: UInt16(bytes[offset]) | (UInt16(bytes[offset + 1]) << 8))
   }

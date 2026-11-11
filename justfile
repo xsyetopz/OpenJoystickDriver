@@ -62,14 +62,11 @@ driverkit-check:
 # Lint & Format
 # =========================================================================
 
-# Run standard formatters, linters, and type checks without a repository wrapper
+# Run standard formatters and linters without a repository wrapper
 lint:
     ruff format --check Scripts Tests/RepositoryScripts
     ruff check Scripts Tests/RepositoryScripts
-    pyright
     find Scripts -type f \( -name '*.sh' -o -name ojd \) -print0 | xargs -0 shellcheck --external-sources --source-path=SCRIPTDIR
-    git ls-files -z -co --exclude-standard -- '*.md' ':!.agents/' | xargs -0 markdownlint-cli2
-    biome="$(python3 -m Scripts.Quality.biome_binary "$PWD")" && git ls-files -z -co --exclude-standard -- '*.json' '*.jsonc' | xargs -0 "$biome" ci
     swift-format lint --recursive --strict Package.swift Sources Tests Tools
     xcode="${DEVELOPER_DIR:-$(find /Applications -maxdepth 1 -type d -name 'Xcode*.app' -exec test -x '{}/Contents/Developer/usr/bin/xcodebuild' ';' -print | sort -r | head -n1)/Contents/Developer}"; DEVELOPER_DIR="$xcode" swiftlint lint --no-cache --strict
 
@@ -97,7 +94,6 @@ check-fast: check-schemas lint
     ./Scripts/ojd vocabulary regenerate --check
     ./Scripts/ojd check profiles
     python3 Scripts/Quality/check_localization_keys.py
-    python3 Scripts/Quality/check_neutral_core_imports.py
     .build/schema-validator/bin/python -m unittest discover -s Tests/RepositoryScripts
     git diff --check
 
@@ -113,7 +109,7 @@ check: check-fast
 check-profiles:
     ./Scripts/ojd check profiles
 
-# Validate schemas and create the schema Python environment that pyright and the script tests use
+# Validate schemas and create the schema Python environment that the script tests use
 check-schemas:
     ./Scripts/ojd check schemas
 

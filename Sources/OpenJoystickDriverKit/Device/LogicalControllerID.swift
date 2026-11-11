@@ -20,7 +20,9 @@ public struct LogicalControllerID: Hashable, Sendable {
   }
 
   /// Creates the logical controller of a model and serial number at an IOKit location and
-  /// interface. An interface number needs a location ID.
+  /// interface.
+  ///
+  /// An interface number needs a location ID.
   public init(
     vendorID: UInt16,
     productID: UInt16,
@@ -57,8 +59,9 @@ extension LogicalControllerID: Comparable {
 }
 
 extension LogicalControllerID: CustomStringConvertible {
-  /// Returns a human-readable representation of the logical controller for logs. It never
-  /// includes the serial number, only whether one is present.
+  /// Returns a human-readable representation of the logical controller for logs.
+  ///
+  /// It never includes the serial number, only whether one is present.
   public var description: String {
     let vid = String(format: "0x%04X", model.vendorID)
     let pid = String(format: "0x%04X", model.productID)

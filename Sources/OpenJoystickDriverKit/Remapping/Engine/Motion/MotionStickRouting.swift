@@ -1,11 +1,16 @@
 import Foundation
 
+/// A change of one lean direction.
 struct RemappingMotionLeanChange {
+  /// Direction that changed.
   let direction: RemappingMotionLeanDirection
+  /// Whether the direction became active.
   let isActive: Bool
 }
 
 extension RemappingEngineState {
+  /// Clears tilt steering and lean sources of a controller when the motion stick deadline has
+  /// passed.
   mutating func expireMotionStick(
     for identifier: LogicalControllerID,
     at uptime: UInt64
@@ -16,6 +21,7 @@ extension RemappingEngineState {
     return clearMotionStick(for: identifier, at: uptime)
   }
 
+  /// Clears tilt steering and lean sources of a controller.
   mutating func clearMotionStick(
     for identifier: LogicalControllerID,
     at uptime: UInt64
@@ -38,6 +44,11 @@ extension RemappingEngineState {
 }
 
 extension RemappingDeviceState {
+  /// Updates tilt steering and lean from the gravity of a processed sample.
+  ///
+  /// Returns the gamepad actions and the lean changes. Without a sample while a baseline exists,
+  /// nothing changes. A sample without a time step, or with unusable gravity, clears both. When
+  /// lean or steering is configured, the output expires 100 ms after the latest uptime.
   mutating func updateMotionStick(
     _ processed: RemappingProcessedMotion?
   ) -> (actions: [RemappingEngineAction], leanChanges: [RemappingMotionLeanChange]) {
@@ -95,6 +106,7 @@ extension RemappingDeviceState {
     return (actions, setLeanStates(left: left, right: right))
   }
 
+  /// Clears the tilt steering contribution and returns the action that neutralizes it.
   mutating func clearMotionSteering() -> [RemappingEngineAction] {
     guard let state = outputs.gamepad.update(.neutral, for: motion.motionSteeringBindingID) else {
       return []
@@ -102,10 +114,12 @@ extension RemappingDeviceState {
     return [.gamepad(state, identifier)]
   }
 
+  /// Switches every lean direction off and returns the changes.
   mutating func clearMotionLeanStates() -> [RemappingMotionLeanChange] {
     setLeanStates(left: false, right: false)
   }
 
+  /// Sets the lean directions and returns those that changed.
   private mutating func setLeanStates(left: Bool, right: Bool) -> [RemappingMotionLeanChange] {
     var changes: [RemappingMotionLeanChange] = []
     for (direction, active) in [
@@ -123,6 +137,10 @@ extension RemappingDeviceState {
     return changes
   }
 
+  /// Returns the sideways tilt in degrees from the X component of gravity, or `nil` for unusable
+  /// gravity.
+  ///
+  /// A positive angle leans right.
   private static func leanAngle(gravity: ControllerMotionVector) -> Double? {
     guard gravity.isFinite else { return nil }
     let length = sqrt(gravity.x * gravity.x + gravity.y * gravity.y + gravity.z * gravity.z)
@@ -130,6 +148,10 @@ extension RemappingDeviceState {
     return asin(min(1, max(-1, gravity.x / length))) * 180 / .pi
   }
 
+  /// Whether a lean direction is active.
+  ///
+  /// It becomes active at the threshold and stays active while the magnitude is above the threshold
+  /// minus the hysteresis.
   private static func leanIsActive(
     magnitude: Double,
     threshold: Double,

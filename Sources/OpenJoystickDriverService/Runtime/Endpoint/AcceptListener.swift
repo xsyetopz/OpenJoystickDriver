@@ -10,18 +10,26 @@ import OpenJoystickDriverKit
 /// the descriptor's number with the placeholder (an open `/dev/null`), so the address is free for
 /// the next listener at once while the number stays taken.
 final class AcceptListener: @unchecked Sendable {
+  /// The listening socket.
   let descriptor: Int32
+  /// The TCP port, or 0 for a Unix socket.
   let port: Int
   /// The read end of the wake pipe; it hangs up when `wake` runs.
   let wakeRead: Int32
+  /// The write end of the wake pipe.
   private let wakeWrite: Int32
   /// Takes one connection from `descriptor`, as `accept` does; tests replace it to fail the call.
   private let acceptCall: @Sendable (Int32) -> Int32
+  /// The lock that guards the descriptors.
   private let lock = NSLock()
+  /// The open `/dev/null` that replaces the socket when the listener is woken, or -1 once closed.
   private var placeholder: Int32
+  /// Whether the wake pipe's write end is open.
   private var wakeWriteOpen = true
+  /// Whether the listening socket is open.
   private var descriptorOpen = true
 
+  /// What the accept loop is waiting for.
   enum Wait: Equatable {
     /// A connection is waiting.
     case ready

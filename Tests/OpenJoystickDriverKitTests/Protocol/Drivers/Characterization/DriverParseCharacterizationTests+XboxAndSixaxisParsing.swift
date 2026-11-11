@@ -138,7 +138,8 @@ extension DriverParseCharacterizationTests {
     )
   }
 
-  /// Receiver input establishes presence; the pipeline handles disconnect neutralization.
+  /// Receiver pad data; a decodable pad report connects the slot, and a disconnect releases
+  /// nothing.
   @Test
   func xusbReceiver() throws {
     let lines = try transcript(Subjects.xusbReceiver, Self.xusbReceiverSteps)

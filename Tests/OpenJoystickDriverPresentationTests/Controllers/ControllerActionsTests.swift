@@ -353,7 +353,7 @@ struct ControllerActionsTests {
 
   @Test
   func recordDraftNeedsAReadableLayout() {
-    #expect(ControllerRecordDrafting.fileName(for: Self.device()) == "1234-5678.json")
+    #expect(ControllerRecordDrafting.fileName(for: Self.device()) == "1234-5678.plist")
     let packets = [Self.packet(1, .received, "00 10 20"), Self.packet(2, .received, "00 11 20")]
     let draft = try? ControllerRecordDrafting.draft(
       for: Self.device(),

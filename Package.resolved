@@ -1,5 +1,5 @@
 {
-  "originHash" : "43d1440dbaf9f30712b6f4b2f35396ab489e602fc3df1f4439e38a19d01e74b3",
+  "originHash" : "3a899dc1595e3c177cd3a7d3a192828a21f2a6be0d87f64d3ad91ff16200a8c2",
   "pins" : [
     {
       "identity" : "swift-argument-parser",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/xsyetopz/SwifterKit.git",
       "state" : {
-        "revision" : "0e0b4b8bac08cf82cd08e701e90dce6ce5903ddf",
-        "version" : "0.3.0"
+        "revision" : "7f3710656d6c3d69947987abee2e567010ae75cb",
+        "version" : "0.4.1"
       }
     }
   ],

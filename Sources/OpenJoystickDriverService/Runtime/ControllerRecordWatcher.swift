@@ -9,10 +9,16 @@ import OpenJoystickDriverKit
 /// `echo ... > file`.
 @MainActor
 final class ControllerRecordWatcher {
+  /// The directory of the user's controller records.
   private let directory: URL
+  /// Runs with the models whose effective record changed.
   private let onChange: @MainActor (Set<ControllerModelID>) -> Void
+  /// Makes a loaded record set current and returns the models whose record changed.
   private let activate: @MainActor (ControllerRecordSet) -> Set<ControllerModelID>
+  /// The watcher of the record and package directories; nil while stopped.
   private var watcher: FileChangeWatcher?
+  /// The set last activated: a file that applied in it and fails now leaves it in force.
+  private var current: ControllerRecordSet?
 
   /// `onChange` runs with the models whose effective record a change to the directory
   /// changed, when there are any. `activate` makes a loaded set current and returns those
@@ -29,8 +35,10 @@ final class ControllerRecordWatcher {
     self.onChange = onChange
   }
 
-  /// Applies the current records and starts watching. A directory that cannot be created or opened
-  /// is watched once it exists; until then the bundled catalog and any records already read apply.
+  /// Applies the current records and starts watching.
+  ///
+  /// A directory that cannot be created or opened is watched once it exists; until then the bundled
+  /// catalog and any records already read apply.
   func start() {
     guard watcher == nil else { return }
     let packages = ModPackageStore.directory(besides: directory)
@@ -47,7 +55,7 @@ final class ControllerRecordWatcher {
     let watcher = FileChangeWatcher(
       directories: [directory, packages],
       watchesFile: {
-        $0.pathExtension == "json"
+        $0.pathExtension == "plist"
           || $0.deletingLastPathComponent().standardizedFileURL == packages.standardizedFileURL
       },
       onChange: { [weak self] in
@@ -60,6 +68,7 @@ final class ControllerRecordWatcher {
     watcher.start()
   }
 
+  /// Stops watching.
   func stop() {
     watcher?.stop()
     watcher = nil
@@ -75,6 +84,11 @@ final class ControllerRecordWatcher {
     if let problem = records.defaults?.problem, let url = records.defaults?.url {
       fputs("[Records] Ignored \(url.path): \(problem)\n", stderr)
     }
+    let failing = Set(records.problems.map(\.url))
+    if let current, current.userFiles.contains(where: { $0.problem == nil && failing.contains($0.url) }) {
+      return []
+    }
+    current = records
     let applied = records.userFiles.count - records.problems.count
     print("[Records] Applied \(applied) user controller record(s)")
     return activate(records)

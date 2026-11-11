@@ -33,6 +33,7 @@ extension ApplicationServiceDeviceDescription {
     name: String = "Test Pad",
     vendorID: UInt16 = 0x045E,
     productID: UInt16 = 0x028E,
+    serialNumber: String? = nil,
     outputs: PhysicalControllerOutputCapabilities = .none,
     unit: String? = nil,
     power: ControllerConnectionState.Power? = nil,
@@ -42,7 +43,8 @@ extension ApplicationServiceDeviceDescription {
     duplicateExposureRisk: DuplicateExposureRisk = .unknownOwnership,
     physicalOutputOwner: ControllerServer = .ojd,
     tuning: ControllerTuning = .none,
-    protocolBinding: ProtocolBindingID = ProtocolBindingID(.hidDescriptor)
+    protocolBinding: ProtocolBindingID = ProtocolBindingID(.hidDescriptor),
+    bindingResult: ProtocolBindingResult = .hidDescriptorFixture
   ) -> ApplicationServiceDeviceDescription {
     ApplicationServiceDeviceDescription(
       name: name,
@@ -54,8 +56,8 @@ extension ApplicationServiceDeviceDescription {
       hidInputOwnership: hidInputOwnership,
       inputOwner: inputOwner,
       duplicateExposureRisk: duplicateExposureRisk,
-      serialNumber: nil,
-      bindingResult: .hidDescriptorFixture,
+      serialNumber: serialNumber,
+      bindingResult: bindingResult,
       physicalOutputCapabilities: outputs,
       physicalOutputOwner: physicalOutputOwner,
       recordServer: .system,

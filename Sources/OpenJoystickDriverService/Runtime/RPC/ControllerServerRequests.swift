@@ -2,8 +2,10 @@ import Foundation
 import OpenJoystickDriverKit
 
 extension ApplicationServiceServer {
-  /// Sets who serves the controller model in the user's record for it. The record watcher then
-  /// applies the change to every connected controller of the model without a replug.
+  /// Sets who serves the controller model in the user's record for it.
+  ///
+  /// The record watcher then applies the change to every connected controller of the model without
+  /// a replug.
   public func setControllerServer(
     vendorID: Int,
     productID: Int,
@@ -23,9 +25,12 @@ extension ApplicationServiceServer {
     return result
   }
 
-  /// Writes `server` to the model's user record in `directory`. A raw-USB family, or a model
-  /// macOS does not serve natively, is refused; a model whose record already gives it to OJD
-  /// counts as native, because OJD seized a controller macOS would serve.
+  /// Writes `server` to the model's user record in `directory`.
+  ///
+  /// A model whose record reaches it through raw USB or the extension, or that macOS does not serve
+  /// natively, is refused; the extension claims a model Apple's driver holds only through an
+  /// activation request, never through this record. a model whose record
+  /// already gives it to OJD counts as native, because OJD seized a controller macOS would serve.
   static func setControllerServer(
     vendorID: Int,
     productID: Int,
@@ -54,7 +59,7 @@ extension ApplicationServiceServer {
     let model = ControllerModelID(vendorID: vendor, productID: product)
     let record = records.records[model]
     let previous = record?.server ?? .system
-    if record?.usesRawUSB == true { return refused(.rawUSB, previous) }
+    if let record, record.accessRoute != .system { return refused(.rawUSB, previous) }
     guard systemGamepadConnected || previous == .ojd else { return refused(.notNative, previous) }
     let change: ControllerRecordWriter.Change
     do {

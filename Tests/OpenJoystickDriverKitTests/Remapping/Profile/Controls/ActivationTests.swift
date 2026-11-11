@@ -71,14 +71,16 @@ struct RemappingActivationTests {
   }
 
   @Test
-  func doubleTapFiresAlternateOnSecondPress() async throws {
+  func multiTapFiresAlternateOnSecondPress() async throws {
     let sink = RemappingTestSink()
     let engine = RemappingEventEngine(sink: sink)
     let currentProfile = profile(bindings: [
       RemappingBinding(
         source: .button(.south),
         destination: .keyboard(key: .a, modifiers: []),
-        doubleTap: RemappingDoubleTap(windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
+        multiTap: [
+          RemappingMultiTap(count: 2, windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
+        ]
       )
     ])
     let start: UInt64 = 1_000_000_000
@@ -117,14 +119,16 @@ struct RemappingActivationTests {
   }
 
   @Test
-  func doubleTapWindowExpiryFiresDefault() async throws {
+  func multiTapWindowExpiryFiresDefault() async throws {
     let sink = RemappingTestSink()
     let engine = RemappingEventEngine(sink: sink)
     let currentProfile = profile(bindings: [
       RemappingBinding(
         source: .button(.south),
         destination: .keyboard(key: .a, modifiers: []),
-        doubleTap: RemappingDoubleTap(windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
+        multiTap: [
+          RemappingMultiTap(count: 2, windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
+        ]
       )
     ])
     let start: UInt64 = 1_000_000_000
@@ -175,7 +179,9 @@ struct RemappingActivationTests {
           durationMs: 500,
           destination: .keyboard(key: .b, modifiers: [])
         ),
-        doubleTap: RemappingDoubleTap(windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
+        multiTap: [
+          RemappingMultiTap(count: 2, windowMs: 300, destination: .keyboard(key: .c, modifiers: []))
+        ]
       )
     ])
     let start: UInt64 = 1_000_000_000

@@ -4,20 +4,29 @@ import Foundation
 ///
 /// Kit owns the resource bundle so the app cannot ship a second catalog.
 public struct Localization: Sendable {
+  /// The localization of the source catalog.
   public static let sourceLocalization = "en-US"
 
-  /// SwiftPM resource bundle. Tests pin this instead of `Bundle.main`.
+  /// SwiftPM resource bundle.
+  ///
+  /// Tests pin this instead of `Bundle.main`.
   public static var moduleBundle: Bundle { .module }
 
   /// Sentinel that tells a missing key apart from any catalog value.
   private static let missingValue = "\u{0}OJD.missing"
 
+  /// The localizations that the bundle packages.
   private let localizationNames: [String]
+  /// The localization selected for the preferred languages; nil when none matches.
   private let localizedLanguage: String?
   /// Preferred locale first, then the `en-US` source catalog.
   private let lookupBundles: [Bundle]
+  /// The locale that formats plurals; the current locale when no localization is selected.
   private let formattingLocale: Locale
 
+  /// Creates a resolver for the strings of `bundle`, which defaults to the Kit resource bundle.
+  ///
+  /// `preferredLanguages` picks the localization; a key it lacks falls back to the source catalog.
   public init(bundle: Bundle? = nil, preferredLanguages: [String] = Locale.preferredLanguages) {
     let bundle = bundle ?? Self.moduleBundle
     let localizationNames = Self.availableLocalizations(in: bundle)
@@ -59,24 +68,29 @@ public struct Localization: Sendable {
   }
 
   /// Formats `count` through a `Localizable.stringsdict` plural (`%#@count@`).
+  ///
   /// Foundation picks the CLDR category; callers should not branch on `count == 1`.
   public func plural(_ key: String, count: Int) -> String {
     plural(key, arguments: [count])
   }
 
-  /// Formats a `Localizable.stringsdict` plural whose count is one of `arguments`, in the order
-  /// of the positions in the entry (`%2$#@count@` reads the second argument). Foundation picks the
-  /// CLDR category with the locale of the selected localization, so a Russian entry gets the
-  /// Russian categories whatever the process locale is. Pass the count as an `Int`.
+  /// Formats a `Localizable.stringsdict` plural whose count is one of `arguments`, in the order of
+  /// the positions in the entry (`%2$#@count@` reads the second argument ).
+  ///
+  /// Foundation picks the CLDR category with the locale of the selected localization, so a Russian
+  /// entry gets the Russian categories whatever the process locale is. Pass the count as an `Int`.
   public func plural(_ key: String, arguments: [CVarArg]) -> String {
     String(format: string(key), locale: formattingLocale, arguments: arguments)
   }
 
-  /// Formats with the user's locale. Placeholder types stay those in the source catalog.
+  /// Formats with the user's locale.
+  ///
+  /// Placeholder types stay those in the source catalog.
   public func string(_ key: String, _ arguments: CVarArg...) -> String {
     formatted(key, arguments: arguments)
   }
 
+  /// Formats the string for `key` with `arguments` in `locale`.
   public func formatted(_ key: String, locale: Locale = .current, arguments: [CVarArg]) -> String {
     String(format: string(key), locale: locale, arguments: arguments)
   }
@@ -107,6 +121,7 @@ public struct Localization: Sendable {
       .sorted()
   }
 
+  /// The entry of `localizations` that best matches `preferredLanguages`; nil when none does.
   private static func localizedLanguage(
     among localizations: [String],
     preferredLanguages: [String]
@@ -120,6 +135,7 @@ public struct Localization: Sendable {
     return localizations.first { $0.caseInsensitiveCompare(preferred) == .orderedSame }
   }
 
+  /// The `lproj` bundle of `language` inside `bundle`; nil when there is none.
   private static func localizedBundle(for language: String?, in bundle: Bundle) -> Bundle? {
     guard let language, let path = bundle.path(forResource: language, ofType: "lproj") else {
       return nil
@@ -127,6 +143,7 @@ public struct Localization: Sendable {
     return Bundle(path: path)
   }
 
+  /// The `lproj` bundle of the source catalog inside `bundle`; tries `en-US`, `en`, then `C`.
   private static func sourceEnglishBundle(in bundle: Bundle) -> Bundle? {
     for language in [Self.sourceLocalization, "en", "C"] {
       guard let path = bundle.path(forResource: language, ofType: "lproj"),

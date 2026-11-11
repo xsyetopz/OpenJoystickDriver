@@ -53,15 +53,17 @@ struct VirtualHIDProfileSelectorTests {
       .guide, .capture, .capture, .touchpadClick, .microphone, .leftPaddle1, .leftPaddle2,
       .rightPaddle1, .rightPaddle2, .auxiliary1, .auxiliary2, .auxiliary3, .auxiliary4, .auxiliary5,
       .auxiliary6, .auxiliary7, .auxiliary8, .leftStickTouch, .rightStickTouch, .leftTrackpadClick,
-      .rightTrackpadClick, .leftTrackpadTouch, .rightTrackpadTouch,
+      .rightTrackpadClick, .leftTrackpadTouch, .rightTrackpadTouch, .pointerX, .pointerY,
+      .pointerTracking, .leftGripTouch, .rightGripTouch,
     ]
     #expect(Set(Control.allCases).subtracting(Selector.primaryControls) == nonPrimary)
   }
 
   /// Both profiles carry every primary control today, so automatic selection always takes
-  /// `SDLCompatible`, an override is always satisfiable, and
-  /// `virtual-profile-unavailable` cannot occur with the real profiles. The synthetic-slot tests
-  /// below cover those branches.
+  /// `SDLCompatible`, an override is always satisfiable, and `virtual-profile-unavailable` cannot
+  /// occur with the real profiles.
+  ///
+  /// The synthetic-slot tests below cover those branches.
   @Test(arguments: VirtualHIDProfileID.allCases)
   func everyProfileRepresentsEveryPrimaryControl(profile: VirtualHIDProfileID) {
     #expect(Selector.represents(Selector.primaryControls, in: profile.representableControls))

@@ -4,35 +4,65 @@ import OpenJoystickDriverKit
 import OpenJoystickDriverMacOSPlatform
 import OpenJoystickDriverUSB
 
+/// Composes and runs the service: device manager, remapping, virtual output, the request server and
+/// the watchers.
+///
+/// Runs on the main actor, and stops itself on SIGTERM and SIGINT unless a handler takes over.
 @MainActor
 package final class ApplicationServiceRuntime {
+  /// The permission checks of the service.
   private let permissionManager: PermissionManager
+  /// The router that sends controller events to the active output backend.
   private let dispatcher: VirtualOutputRouter
+  /// The router that applies remapping profiles to the controllers.
   private let remappingRouter: RemappingOutputRouter
+  /// The source of controllers and their sessions.
   private let manager: DeviceManager
+  /// The Bluetooth LE central that connects Switch 2 controllers.
   private let bluetoothLECentral: Switch2BluetoothLECentral
+  /// The server that answers the RPC and endpoint clients.
   private let applicationServiceServer: ApplicationServiceServer
+  /// The remapping profiles on disk.
   private let remappingProfileLibrary: RemappingProfileLibrary
+  /// The observer of system sleep and wake; nil while the runtime is stopped.
   private var systemPowerObserver: SystemPowerNotificationObserver?
+  /// The watcher of the controller record files; nil while the runtime is stopped.
   private var controllerRecordWatcher: ControllerRecordWatcher?
+  /// The watcher of the remapping profile files; nil while the runtime is stopped.
   private var profileWatcher: FileChangeWatcher?
+  /// The watcher of the virtual device and mod package files; nil while the runtime is stopped.
   private var personaWatcher: FileChangeWatcher?
+  /// The sleep and wake session of the device manager; nil while the runtime is stopped.
   private var systemPowerEventSession: DeviceManagerSystemPowerEventSession?
+  /// Whether ``start()`` ran and ``stop()`` has not.
   private var started = false
+  /// The signal sources of SIGTERM and SIGINT.
   private var shutdownSignalSources: [DispatchSourceSignal] = []
+  /// The handler that runs on a shutdown signal instead of stopping and exiting.
   private var shutdownSignalHandler: (@MainActor @Sendable () -> Void)?
 
+  /// Creates the service components; nothing runs until ``start()``.
+  ///
+  /// - Throws: The failure to load the installation key.
   package init() throws {
+    StoredDocumentMigration.run { print($0) }
     let installationKey = try PortKeyInstallationStore(directory: MacOSDataDirectory()).load()
     let permissionManager = PermissionManager(system: MacOSAccessControlSystem())
     let dispatcher = VirtualOutputRouter()
-    let remappingProfileLibrary = RemappingProfileLibrary()
+    let speechOutput = AVSpeechOutput()
+    let remappingProfileLibrary = RemappingProfileLibrary(speechOutput: speechOutput)
     let postEventAccess = CoreGraphicsPostEventAccess()
     let physicalOutputBridge = RemappingPhysicalOutputBridge()
+    let profileSwitchBridge = RemappingProfileSwitchBridge(library: remappingProfileLibrary)
     let remappingEngine = RemappingEventEngine(
       sink: CoreGraphicsSystemInputSink(access: postEventAccess),
       gamepadSink: dispatcher,
-      physicalOutputSink: physicalOutputBridge
+      physicalOutputSink: physicalOutputBridge,
+      profileSwitcher: profileSwitchBridge,
+      systemActionPerformer: MacOSSystemActionPerformer(),
+      reportSystemActionFailure: { print("System action failed: \($0.localizedDescription)") },
+      speechOutput: speechOutput,
+      midiOutput: CoreMIDIOutput()
     )
     let remappingRouter = RemappingOutputRouter(
       library: remappingProfileLibrary,
@@ -65,6 +95,7 @@ package final class ApplicationServiceRuntime {
       userSpaceDispatcherFactory: Self.makeAutomaticUserSpaceDispatcher(context:)
     )
 
+    profileSwitchBridge.attach(applicationServiceServer)
     self.permissionManager = permissionManager
     self.dispatcher = dispatcher
     self.remappingRouter = remappingRouter
@@ -79,6 +110,11 @@ package final class ApplicationServiceRuntime {
   /// The service state that the app's Shortcuts actions read.
   package var automationService: any AutomationService { applicationServiceServer }
 
+  /// Starts the server, the watchers, the device manager and the Bluetooth LE central.
+  ///
+  /// Does nothing when the runtime already started.
+  ///
+  /// - Throws: The failure to start the server.
   package func start() throws {
     guard !started else { return }
     started = true
@@ -117,7 +153,7 @@ package final class ApplicationServiceRuntime {
     }
   }
 
-  /// Replaces `stop()` + `exit(0)` on SIGTERM/SIGINT.
+  /// Sets the handler that runs on SIGTERM and SIGINT instead of stopping and exiting.
   ///
   /// The menu-bar host uses this so AppKit can remove the status item before the
   /// process exits. Install the handler before `start()`.
@@ -125,6 +161,8 @@ package final class ApplicationServiceRuntime {
     shutdownSignalHandler = handler
   }
 
+  /// Stops the watchers, the Bluetooth LE central, the server and the device manager, and shuts the
+  /// remapping router down.
   package func stop() async {
     guard started else { return }
     started = false
@@ -195,9 +233,11 @@ package final class ApplicationServiceRuntime {
     )
   }
 
-  /// Re-creates a connected controller's virtual device when a change to the virtual device
-  /// files changes its identity. The service creates the VirtualDevices and package folders,
-  /// which are absent until first use; a folder removed later is watched once it exists again.
+  /// Re-creates a connected controller's virtual device when a change to the virtual device files
+  /// changes its identity.
+  ///
+  /// The service creates the VirtualDevices and package folders, which are absent until first use;
+  /// a folder removed later is watched once it exists again.
   private func startPersonaWatcher() {
     let applicationServiceServer = applicationServiceServer
     let packages = ModPackageStore.rootDirectory
@@ -211,7 +251,7 @@ package final class ApplicationServiceRuntime {
     let personaWatcher = FileChangeWatcher(
       directories: [VirtualHIDProfileOverrideStore.userDirectory, packages],
       watchesFile: {
-        $0.pathExtension == "json"
+        $0.pathExtension == "plist"
           || $0.deletingLastPathComponent().standardizedFileURL == packages.standardizedFileURL
       },
       onChange: { Task { await applicationServiceServer.reloadPersonas() } }
@@ -220,10 +260,13 @@ package final class ApplicationServiceRuntime {
     personaWatcher.start()
   }
 
+  /// Prints `message`.
   private func serviceLog(_ message: String) { print(message) }
 
+  /// Prints `message` to standard error.
   private func serviceError(_ message: String) { fputs("\(message)\n", stderr) }
 
+  /// Installs the handlers of SIGTERM and SIGINT.
   private func setupGracefulShutdown() {
     guard shutdownSignalSources.isEmpty else { return }
     shutdownSignalSources = [SIGTERM, SIGINT].map { signalNumber in
@@ -246,6 +289,7 @@ package final class ApplicationServiceRuntime {
     }
   }
 
+  /// Cancels the handlers of SIGTERM and SIGINT.
   private func cancelGracefulShutdown() {
     let sources = shutdownSignalSources
     shutdownSignalSources.removeAll()
@@ -253,6 +297,7 @@ package final class ApplicationServiceRuntime {
   }
 }
 
+/// Delivers a sleep or wake event to the device manager and returns when it has been handled.
 private func deliverSystemPowerEvent(
   _ event: SystemPowerNotificationObserver.Event,
   to manager: DeviceManager,
@@ -276,13 +321,17 @@ private func deliverSystemPowerEvent(
 }
 
 /// Lets observer shutdown join its delivery task while a manager power call is still tearing down
-/// controllers. The revoked runtime session rejects late actor entry; `DeviceManager.stop()`
-/// clears the sleep state of a power operation that entered before invalidation.
+/// controllers.
+///
+/// The revoked runtime session rejects late actor entry; `DeviceManager.stop()` clears the sleep
+/// state of a power operation that entered before invalidation.
 private final class RuntimePowerEventCompletion: Sendable {
+  /// The continuation and whether the delivery finished.
   private let state = Locked<(continuation: CheckedContinuation<Void, Never>?, isFinished: Bool)>(
     (nil, false)
   )
 
+  /// Stores `continuation`, or resumes it at once when the delivery already finished.
   func install(_ continuation: CheckedContinuation<Void, Never>) {
     let isFinished = state.withLock { state in
       if !state.isFinished { state.continuation = continuation }
@@ -291,6 +340,7 @@ private final class RuntimePowerEventCompletion: Sendable {
     if isFinished { continuation.resume() }
   }
 
+  /// Marks the delivery finished and resumes the continuation.
   func finish() {
     let continuation = state.withLock { state -> CheckedContinuation<Void, Never>? in
       guard !state.isFinished else { return nil }

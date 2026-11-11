@@ -1,27 +1,33 @@
 import Foundation
 
-public extension Notification.Name {
+extension Notification.Name {
   /// Posted in-process after anything `getStatus` or the remapping snapshot reports changes.
-  static let ojdServiceStatusDidChange = Notification.Name(
+  public static let ojdServiceStatusDidChange = Notification.Name(
     "OpenJoystickDriver.serviceStatusDidChange"
   )
 }
 
-public extension NotificationCenter {
+extension NotificationCenter {
   /// Announces that the service's reported status changed. `source` is the object whose state
   /// changed, so a test can observe one source.
-  static func postServiceStatusChanged(from source: AnyObject) {
+  public static func postServiceStatusChanged(from source: AnyObject) {
     Self.default.post(name: .ojdServiceStatusDidChange, object: source)
   }
 }
 
 /// Observed result of acquiring one physical HID interface, independent of virtual output.
 public enum HIDInputOwnership: String, Codable, Equatable, Sendable {
+  /// The ownership has not been observed.
   case unknown = "Unknown"
+  /// OJD owns the interface exclusively.
   case exclusive = "Exclusive"
+  /// OJD holds the interface, but other clients can read it.
   case shared = "Shared"
+  /// The system refused access to the interface.
   case accessDenied = "AccessDenied"
+  /// Another client holds the interface.
   case ownedByAnotherClient = "OwnedByAnotherClient"
+  /// The attempt to acquire the interface failed.
   case acquisitionFailed = "AcquisitionFailed"
 
   /// Every interface must be exclusively owned before the location can promise isolation.
@@ -29,6 +35,7 @@ public enum HIDInputOwnership: String, Codable, Equatable, Sendable {
     observations.min { $0.priority < $1.priority } ?? .unknown
   }
 
+  /// The rank of the state when states combine; the lowest rank wins.
   private var priority: Int {
     switch self {
     case .ownedByAnotherClient: 0
@@ -43,13 +50,20 @@ public enum HIDInputOwnership: String, Codable, Equatable, Sendable {
 
 /// A semantic value decoded by the active app HID backend from one input element.
 public struct HIDElementValue: Sendable, Equatable {
+  /// The ID of the report that holds the element; nil when the device uses no report IDs.
   public let reportID: UInt32?
+  /// The HID usage page of the element.
   public let usagePage: UInt32
+  /// The HID usage of the element.
   public let usage: UInt32
+  /// The least value the element reports.
   public let logicalMinimum: Int
+  /// The greatest value the element reports.
   public let logicalMaximum: Int
+  /// The value of the element.
   public let integerValue: Int
 
+  /// Creates a value from its fields.
   public init(
     usagePage: UInt32,
     usage: UInt32,
@@ -80,6 +94,7 @@ public struct HIDDeviceConnection: Equatable, Sendable {
   /// an IOKit location without an interface for IOHID, or a GATT peripheral.
   public let routingAddress: ControllerConnectionAddress
 
+  /// Creates a connection; `connectionID` defaults to a new UUID.
   public init(
     connectionID: UUID = UUID(),
     physicalDevice: PhysicalDevice,
@@ -96,6 +111,7 @@ public struct HIDDeviceConnection: Equatable, Sendable {
   }
 }
 
+/// What a HID access backend reports about a controller.
 public enum HIDDeviceEvent: Sendable {
   /// A HID controller was plugged in with the immutable facts available from its
   /// OS HID service. `routingAddress` remains the backend's runtime routing key;
@@ -105,8 +121,7 @@ public enum HIDDeviceEvent: Sendable {
   case ownershipChanged(address: ControllerConnectionAddress, ownership: HIDInputOwnership)
   /// The active HID access stream failed. Cancellation is not reported as an access failure.
   case accessFailure(PhysicalHIDFailure)
-  /// A previously connected HID controller was unplugged; this is the same snapshot and
-  /// connection token that were emitted when it connected.
+  /// A HID controller was unplugged; the event carries the connection that `connected` carried.
   case disconnected(connection: HIDDeviceConnection)
   /// The controller sent a raw input report (button presses, stick positions, etc.) on the
   /// connection `connectionID` at routing address `address`.

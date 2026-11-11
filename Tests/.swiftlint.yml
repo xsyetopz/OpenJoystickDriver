@@ -1,3 +1,7 @@
+# Test code is not a public surface.
+disabled_rules:
+  - missing_docs
+
 file_length:
   warning: 1000
   error: 1000

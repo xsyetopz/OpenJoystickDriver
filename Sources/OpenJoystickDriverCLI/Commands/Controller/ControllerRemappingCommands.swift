@@ -2,7 +2,10 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd controller calibrate` command: shows the motion calibration of a controller with a
+/// gyro, and starts, pauses or resets it.
 struct ControllerCalibrateCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "calibrate",
     abstract: CLILocalized.text(
@@ -15,21 +18,31 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
 
   /// The `--json` result.
   struct Result: Encodable, Equatable {
+    /// The gyro offset of the calibration.
     struct Offset: Encodable, Equatable {
+      /// The offset around the x axis, in degrees per second.
       let x: Double
+      /// The offset around the y axis, in degrees per second.
       let y: Double
+      /// The offset around the z axis, in degrees per second.
       let z: Double
     }
 
+    /// The session ID of the controller.
     let controller: String
+    /// Whether the controller has a calibration.
     let calibrated: Bool
+    /// Whether the service is collecting gyro drift.
     let collecting: Bool
+    /// The gyro offset of the calibration.
     let offsetDegreesPerSecond: Offset
   }
 
+  /// The controller to calibrate.
   @Argument(help: controllerArgumentHelp)
   var controller: ControllerSelector
 
+  /// The action: `start`, `pause` or `reset`; without one the command only shows the calibration.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -40,9 +53,11 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
   )
   var action: RemappingMotionCalibrationCommand?
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let (selector, action) = (controller, action)
@@ -130,12 +145,18 @@ struct ControllerCalibrateCommand: AsyncParsableCommand {
 
 /// The `--json` result of `ojd controller pair` and `unpair`.
 struct JoyConPairResult: Encodable, Equatable {
+  /// The session ID of the pair.
   let session: String
+  /// The ID of the left Joy-Con.
   let left: String
+  /// The ID of the right Joy-Con.
   let right: String
+  /// The name of the profile that the pair uses.
   let profile: String
+  /// Which Joy-Con supplies the gyro.
   let gyro: String
 
+  /// Creates the result from the service's `pair`.
   init(_ pair: ApplicationServiceJoyConPairPayload) {
     session = pair.sessionID.uuidString
     left = pair.left.rawValue
@@ -144,10 +165,14 @@ struct JoyConPairResult: Encodable, Equatable {
     gyro = pair.gyroSelection.rawValue
   }
 
+  /// The `--plain` row of the result.
   var row: [String] { [session, left, right, profile, gyro] }
 }
 
+/// The `ojd controller pair` command: combines a left and a right Joy-Con into one controller that
+/// uses a profile.
 struct ControllerPairCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "pair",
     abstract: CLILocalized.text(
@@ -158,6 +183,7 @@ struct ControllerPairCommand: AsyncParsableCommand {
     )
   )
 
+  /// The left Joy-Con.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.controller.pair.left"),
@@ -166,6 +192,7 @@ struct ControllerPairCommand: AsyncParsableCommand {
   )
   var left: ControllerSelector
 
+  /// The right Joy-Con.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.controller.pair.right"),
@@ -174,12 +201,15 @@ struct ControllerPairCommand: AsyncParsableCommand {
   )
   var right: ControllerSelector
 
+  /// `--profile`: the paired Joy-Con profile that the pair uses.
   @Option(help: profileArgumentHelp)
   var profile: ProfileSelector
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let (left, right, selector) = (left, right, profile)
@@ -217,6 +247,7 @@ struct ControllerPairCommand: AsyncParsableCommand {
     }
   }
 
+  /// Prints `result` as JSON, as a `--plain` row, or as `message` on stderr.
   static func print(_ result: JoyConPairResult, message: String) throws {
     switch CLIContext.current.format {
     case .json: try CLIOutput.json(result)
@@ -226,7 +257,9 @@ struct ControllerPairCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd controller unpair` command: separates a Joy-Con pair.
 struct ControllerUnpairCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "unpair",
     abstract: CLILocalized.text(
@@ -234,6 +267,7 @@ struct ControllerUnpairCommand: AsyncParsableCommand {
     )
   )
 
+  /// The pair: the session ID that `controller pair` prints, or the ID of either Joy-Con.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text(
@@ -244,9 +278,11 @@ struct ControllerUnpairCommand: AsyncParsableCommand {
   )
   var pair: String
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let text = pair

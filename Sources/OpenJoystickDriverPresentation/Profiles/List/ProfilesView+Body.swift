@@ -8,55 +8,69 @@
 
   extension ProfilesView {
 
+    /// The selected profile, kept in ``screen``.
     var selectedProfileID: UUID? {
       get { screen.selectedProfileID }
       nonmutating set { screen.selectedProfileID = newValue }
     }
+    /// The selected damaged profile or unusable library, kept in ``screen``.
     var selectedRecoveryIssueID: UUID? {
       get { screen.selectedRecoveryIssueID }
       nonmutating set { screen.selectedRecoveryIssueID = newValue }
     }
+    /// Whether the profile creation sheet is open, kept in ``screen``.
     var isCreatingProfile: Bool {
       get { screen.isCreatingProfile }
       nonmutating set { screen.isCreatingProfile = newValue }
     }
+    /// The editor's dirty state, waiting action and owned request, kept in ``screen``.
     var profileEditorTransition: ProfileEditorTransitionState {
       get { screen.editorTransition }
       nonmutating set { screen.editorTransition = newValue }
     }
+    /// The alert that is open, or nil, kept in ``screen``.
     var activeAlert: ProfilesAlert? {
       get { screen.activeAlert }
       nonmutating set { screen.activeAlert = newValue }
     }
+    /// The message of the latest failed profile action, or nil, kept in ``screen``.
     var profileActionError: String? {
       get { screen.profileActionError }
       nonmutating set { screen.profileActionError = newValue }
     }
+    /// The discard count of the main window that the screen has seen, kept in ``screen``.
     var observedDiscardGeneration: Int {
       get { screen.observedDiscardGeneration }
       nonmutating set { screen.observedDiscardGeneration = newValue }
     }
+    /// The latest snapshot the service sent, kept in ``screen``.
     var lastKnownSnapshot: ApplicationServiceRemappingSnapshotPayload? {
       get { screen.lastKnownSnapshot }
       nonmutating set { screen.lastKnownSnapshot = newValue }
     }
+    /// The profile of the editor when the selected profile left the library with unsaved edits,
+    /// kept in ``screen``.
     var preservedEditorProfile: RemappingProfile? {
       get { screen.preservedEditorProfile }
       nonmutating set { screen.preservedEditorProfile = newValue }
     }
+    /// A count that grows to make the screen build a fresh editor model, kept in ``screen``.
     var profileEditorGeneration: Int {
       get { screen.editorGeneration }
       nonmutating set { screen.editorGeneration = newValue }
     }
+    /// The profile whose Joy-Con pair sheet is open, or nil, kept in ``screen``.
     var pairingProfile: RemappingProfile? {
       get { screen.pairingProfile }
       nonmutating set { screen.pairingProfile = newValue }
     }
+    /// The section of the profile editor that is shown, kept in ``screen``.
     var selectedEditorSection: ProfileEditorSection {
       get { screen.selectedEditorSection }
       nonmutating set { screen.selectedEditorSection = newValue }
     }
 
+    /// The profile list column, or the detail column, of the Profiles area.
     @ViewBuilder
     var body: some View {
       switch column {
@@ -65,6 +79,8 @@
       }
     }
 
+    /// The detail column: the error banner, the profile detail, and the sheets and alerts of the
+    /// screen.
     private var detailColumn: some View {
       VStack(alignment: .leading, spacing: 0) {
         if let profileActionError {
@@ -224,6 +240,8 @@
       }
     }
 
+    /// The profiles of the snapshot, or those of the last snapshot while the state is not
+    /// available.
     var profiles: [RemappingProfile] {
       switch viewModel.remappingState {
       case .available(let snapshot): return snapshot.profiles
@@ -231,6 +249,8 @@
       }
     }
 
+    /// The selected profile; the first profile when the selection is not in the library, unless the
+    /// editor preserves the selected profile after its deletion.
     var selectedProfile: RemappingProfile? {
       if let selectedProfileID {
         if let current = profiles.first(where: { $0.id == selectedProfileID }) { return current }
@@ -241,11 +261,13 @@
       return profiles.first
     }
 
+    /// The selected damaged profile or unusable library, or nil.
     var selectedRecoveryIssue: ApplicationServiceRemappingProfileIssue? {
       guard let selectedRecoveryIssueID else { return nil }
       return currentSnapshot?.profileIssues.first { $0.id == selectedRecoveryIssueID }
     }
 
+    /// The profile list column: the loading state, the load error with Try Again, or the rows.
     var profileList: some View {
       VStack(alignment: .leading, spacing: 8) {
         switch viewModel.remappingState {
@@ -274,6 +296,7 @@
       }
     }
 
+    /// The rows of the profiles, then those of the damaged entries.
     var profileListRows: some View {
       List(selection: profileListSelection) {
         ForEach(profiles) { profile in

@@ -4,9 +4,14 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
+  /// The Controller section of the developer tools: a picker of the connected controllers, Refresh
+  /// and the facts of the selected controller.
   struct DeveloperControllerSummaryView: View {
+    /// The state of the developer tools.
     @ObservedObject
     var model: DeveloperToolsViewModel
+    /// The Controller details section: the controller picker, the facts of the selected controller
+    /// and Refresh.
     var body: some View {
       Section(OJDLocalized.string("ui.developer.controllerDetails")) {
         Picker(
@@ -26,6 +31,7 @@
       }
     }
 
+    /// Returns the rows that describe `device` and its latest input.
     @ViewBuilder
     private func controllerFacts(_ device: ApplicationServiceDeviceDescription) -> some View {
       OJDLabeledValue(
@@ -66,12 +72,14 @@
       )
     }
 
-    /// Raw canonical values; Y points down.
+    /// Returns the raw x and y values of the stick, or the centered position for nil; y points
+    /// down.
     private func stickValue(_ stick: StickPosition?) -> String {
       let stick = stick ?? .center
       return "\(stick.x.rawValue), \(stick.y.rawValue)"
     }
 
+    /// Returns the names of the pressed controls, or None when nothing is pressed.
     private func buttonValue(_ pressed: Set<Control>?) -> String {
       guard let pressed, !pressed.isEmpty else {
         return OJDLocalized.string("status.none")
@@ -79,6 +87,7 @@
       return Control.allCases.filter(pressed.contains).map(\.rawValue).joined(separator: ", ")
     }
 
+    /// Returns the name of the route the controller is discovered on.
     private func routeName(_ value: DeviceDiscoverySource) -> String {
       switch value {
       case .hid: return OJDLocalized.string("ui.developer.hid")
@@ -89,10 +98,13 @@
 
   /// The serial number row; it is blurred until revealed, and starts blurred for each controller.
   private struct DeveloperSerialRow: View {
+    /// The serial number to show.
     let serial: OJDValue
+    /// Whether the serial number is blurred or revealed.
     @State
     private var visibility = SerialNumberVisibility()
 
+    /// The Serial number row with the visibility of the serial number.
     var body: some View {
       SerialNumberRow(
         label: OJDLocalized.string("term.serialNumber"),

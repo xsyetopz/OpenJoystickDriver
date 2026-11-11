@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -35,24 +36,27 @@ struct ControllerRecordDraftTests {
     )
     #expect(draft.operation == .add && draft.family == .hidReportLayout)
     #expect(draft.reportID == 1 && draft.reportLength == 6)
-    let document = try #require(
-      JSONSerialization.jsonObject(with: draft.document) as? [String: Any]
+    let document = try #require(PropertyListFixture.tree(draft.document) as? [String: Any])
+    let layouts = try #require(
+      (document["input"] as? [String: Any])?["layouts"] as? [[String: Any]]
     )
-    let input = try #require(document["input"] as? [String: Any])
+    let input = try #require(layouts.first)
+    #expect(layouts.count == 1)
     let report = input["report"] as? [String: Any]
     #expect((report?["length"] as? [String: Int]) == ["atLeast": 6])
     #expect(report?["id"] as? Int == 1)
     let buttons = try #require(input["buttons"] as? [[String: Any]])
     #expect(buttons.compactMap { $0["control"] as? String }.first == "South")
-    #expect(buttons.compactMap { $0["mask"] as? Int } == [1, 2, 4, 8, 16, 32, 64, 128])
-    #expect(buttons.allSatisfy { $0["byte"] as? Int == 1 })
+    #expect(buttons.compactMap { $0["bitOffset"] as? Int } == Array(8...15))
+    #expect(buttons.allSatisfy { $0["bitSize"] as? Int == 1 })
     let axes = try #require(input["axes"] as? [[String: Any]])
-    #expect(axes.map { $0.count } == [2, 2])
-    #expect(axes.compactMap { $0["byte"] as? Int } == [3, 4])
+    #expect(axes.map { $0.count } == [3, 3])
+    #expect(axes.compactMap { $0["bitOffset"] as? Int } == [24, 32])
+    #expect(axes.allSatisfy { $0["bitSize"] as? Int == 8 })
     let hat = try #require((input["hat"] as? [[String: Any]])?.first)
-    #expect(hat["encoding"] as? String == "EightWay" && hat["byte"] as? Int == 2)
-    #expect(hat["mask"] as? Int == 15)
-    #expect(input["leftTrigger"] as? [String: Int] == ["byte": 5])
+    #expect(hat["encoding"] as? String == "EightWay" && hat["bitOffset"] as? Int == 16)
+    #expect(hat["bitSize"] as? Int == 4)
+    #expect(input["leftTrigger"] as? [String: Int] == ["bitOffset": 40, "bitSize": 8])
     #expect(input["rightTrigger"] == nil)
 
     let validated = try ControllerRecordSet.validate(draft.document)
@@ -82,7 +86,10 @@ struct ControllerRecordDraftTests {
   @Test
   func patchesABundledModel() throws {
     let bundled = try #require(
-      ControllerRecordSet.bundled.records.values.first { $0.family == "HIDDescriptor" }
+      ControllerRecordSet.bundled.records.values.sorted { $0.model < $1.model }.first {
+        $0.family == "HIDDescriptor"
+          && ProtocolDriverRegistry().record(for: $0.model)?.isIdle == false
+      }
     )
     let draft = try #require(
       ControllerRecordDraft(
@@ -123,8 +130,7 @@ struct ControllerRecordDraftTests {
     )
   }
 
-  /// The draft is in the record file format: the header members in file order, then the other
-  /// members sorted, and every nested object sorted, since only the top level has a guide.
+  /// The draft is a canonical property list: reading it and writing it again gives its bytes.
   @Test
   func theDraftIsInTheRecordFileFormat() throws {
     let draft = try #require(
@@ -135,23 +141,12 @@ struct ControllerRecordDraftTests {
         reports: Self.reports
       )
     )
-    let text = draft.text
-    #expect(try OrderedJSON.parse(draft.document).formatted() == text)
-    guard case .object(let members) = try OrderedJSON.parse(draft.document) else {
-      Issue.record("the draft is not an object")
-      return
-    }
+    let document = try OrderedJSON(document: draft.document, file: "draft")
+    #expect(try document.plistData() == draft.document)
+    let tree = try #require(PropertyListFixture.tree(draft.document) as? [String: Any])
     #expect(
-      members.map(\.key) == ["apiVersion", "kind", "vendorID", "productID", "modes", "input"]
+      Set(tree.keys) == ["apiVersion", "kind", "vendorID", "productID", "modes", "input"]
     )
-    #expect(text.hasPrefix("{\n  \"apiVersion\": \"\(OpenJoystickDriverAPI.version)\",\n"))
-    #expect(text.contains("\n  \"vendorID\": 4660,\n  \"productID\": 22136,\n"))
-    #expect(
-      text.contains(
-        "\"report\": {\n      \"id\": 1,\n      \"length\": {\n"
-          + "        \"atLeast\": 6\n      }\n    }"
-      )
-    )
-    #expect(text.contains("{\n      \"id\": \"default\",\n      \"protocol\": {\n"))
+    #expect(tree["vendorID"] as? Int == 4660 && tree["productID"] as? Int == 22136)
   }
 }

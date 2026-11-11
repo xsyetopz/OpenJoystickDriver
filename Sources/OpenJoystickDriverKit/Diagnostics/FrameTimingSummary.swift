@@ -1,7 +1,9 @@
 import Foundation
 
-/// A span between two points of a controller's frames. The raw values are the stable identifiers
-/// that `ojd diagnose` prints and `cli-output.schema.json` lists.
+/// A span between two points of a controller's frames.
+///
+/// The raw values are the stable identifiers that `ojd diagnose` prints and
+/// `cli-output.schema.json` lists.
 public enum FrameGap: String, Codable, CaseIterable, Sendable {
   /// From a frame's `Read` stage to its `Parse` stage.
   case readToParse = "ReadToParse"
@@ -17,13 +19,18 @@ public enum FrameGap: String, Codable, CaseIterable, Sendable {
 
 /// The median, the 99th percentile and the maximum of one ``FrameGap`` over a window.
 public struct FrameGapSummary: Codable, Equatable, Sendable {
+  /// The gap that the figures describe.
   public let gap: FrameGap
   /// The spans the gap was measured on; a frame that did not reach both stages adds none.
   public let samples: Int
+  /// The median span in nanoseconds.
   public let p50Nanoseconds: UInt64
+  /// The 99th percentile span in nanoseconds.
   public let p99Nanoseconds: UInt64
+  /// The longest span in nanoseconds.
   public let maxNanoseconds: UInt64
 
+  /// Creates a summary from its values.
   public init(
     gap: FrameGap,
     samples: Int,
@@ -46,6 +53,7 @@ public struct FrameStalls: Codable, Equatable, Sendable {
   /// The read intervals longer than ``thresholdNanoseconds``.
   public let count: Int
 
+  /// Creates stalls from their threshold and count.
   public init(thresholdNanoseconds: UInt64, count: Int) {
     self.thresholdNanoseconds = thresholdNanoseconds
     self.count = count
@@ -85,6 +93,7 @@ public struct FrameTimingSummary: Codable, Equatable, Sendable {
   /// Absent for the whole ring and when the window holds fewer than two frames.
   public let stalls: FrameStalls?
 
+  /// Creates a summary from its values.
   public init(
     lastSeconds: Int?,
     frames: Int,
@@ -149,10 +158,13 @@ public struct FrameTimingSummary: Codable, Equatable, Sendable {
     )
   }
 
+  /// The time from `start` to `end`; nil when `end` is earlier.
   private static func elapsed(from start: UInt64, to end: UInt64) -> UInt64? {
     end >= start ? end - start : nil
   }
 
+  /// The spans from stage `first` to stage `second` of each frame of `window` that has both stamps
+  /// in order.
   private static func elapsed(
     in window: [FrameTiming],
     from first: FrameStage,
@@ -165,10 +177,13 @@ public struct FrameTimingSummary: Codable, Equatable, Sendable {
     }
   }
 
+  /// The stamp of `stage` on `frame`, in nanoseconds of the uptime clock; nil when the frame did
+  /// not reach it.
   static func time(of stage: FrameStage, in frame: FrameTiming) -> UInt64? {
     frame.stages.first { $0.stage == stage }?.nanoseconds
   }
 
+  /// The nearest-rank `percent` percentile of `sorted`; nil when `sorted` is empty.
   private static func percentile(_ percent: Int, of sorted: [UInt64]) -> UInt64? {
     guard !sorted.isEmpty else { return nil }
     return sorted[(percent * sorted.count + 99) / 100 - 1]

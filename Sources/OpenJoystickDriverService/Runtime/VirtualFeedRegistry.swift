@@ -3,8 +3,13 @@ import OpenJoystickDriverKit
 
 /// The virtual controller one feed publishes.
 protocol VirtualFeedDevice: AnyObject, Sendable {
+  /// Publishes the virtual controller of `identifier`.
+  ///
+  /// - Throws: The failure to create the virtual device.
   func activate(controller identifier: LogicalControllerID) async throws
+  /// Updates the virtual controller of `identifier` to `state`.
   func send(_ state: RemappingGamepadState, for identifier: LogicalControllerID) async throws
+  /// Removes the virtual controller.
   func close() async
 }
 
@@ -18,17 +23,24 @@ typealias VirtualFeedDeviceFactory =
 /// Who opened a feed; each pool has its own `VirtualFeedRegistry.maximumFeeds`, so endpoint
 /// clients cannot take the feeds of `ojd virtual feed`.
 enum VirtualFeedPool: Hashable {
+  /// A feed that an endpoint client opened.
   case endpoint
   /// The local service RPC, which `ojd virtual feed` uses.
   case rpc
 }
 
+/// Why a feed cannot be opened.
 enum VirtualFeedError: LocalizedError, Equatable {
+  /// The profile name is not a virtual HID profile.
   case unknownProfile(String)
+  /// The pool already holds the most feeds, with that limit.
   case tooManyFeeds(Int)
+  /// The service is stopping.
   case serviceStopped
+  /// The virtual controller did not start, with the reason.
   case activationFailed(String)
 
+  /// The message that the client sees.
   var errorDescription: String? {
     switch self {
     case .unknownProfile(let profile): "Unknown virtual HID profile: \(profile)."
@@ -66,11 +78,17 @@ final class VirtualFeedRegistry: @unchecked Sendable {
   /// their sink.
   /// - Note: `@unchecked Sendable` because the registry's `lock` guards every mutable member.
   private final class Session: InputSource, @unchecked Sendable {
+    /// The virtual controller that the feed publishes.
     let device: any VirtualFeedDevice
+    /// Which kind of client feeds the session.
     let origin: InputOrigin
+    /// The sink that carries the frames to the device.
     let sink: any OutputSink
+    /// The identity of the virtual controller.
     let identifier: LogicalControllerID
+    /// The pool that the feed counts against.
     let pool: VirtualFeedPool
+    /// The host's output commands that the client has not collected.
     var feedback: [ControllerOutputCommand] = []
     /// Where the host's output commands go as they arrive, in order; nil when the client polls
     /// `exchange` for them.
@@ -87,11 +105,13 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     var frameDeadline: TimeInterval?
     /// `clock` time of the last exchange.
     var lastExchange: TimeInterval
+    /// The task that closes an idle feed.
     var watchdog: Task<Void, Never>?
     /// Callers of ``VirtualFeedRegistry/waitUntilPlayed(token:)``; each resumes with whether the
     /// queued frames played.
     var playWaiters: [UUID: CheckedContinuation<Bool, Never>] = [:]
 
+    /// Creates the session of a feed that was just built.
     init(
       device: any VirtualFeedDevice,
       identifier: LogicalControllerID,
@@ -109,16 +129,24 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     }
   }
 
+  /// Builds the device of a feed.
   private let factory: VirtualFeedDeviceFactory
+  /// How long a feed may go without an exchange before it closes, in seconds.
   let idleTimeout: TimeInterval
+  /// How long a virtual controller may take to start, in seconds.
   private let activationTimeout: TimeInterval
+  /// The time source and sleep of the feeds.
   private let clock: VirtualFeedClock
+  /// Guards `sessions`, `reserved` and `stopped`.
   private let lock = NSLock()
+  /// The open feeds by token.
   private var sessions: [UUID: Session] = [:]
+  /// Whether the registry stopped.
   private var stopped = false
   /// Feeds whose device is being built, so concurrent opens count against the limit.
   private var reserved: [VirtualFeedPool: Int] = [:]
 
+  /// Creates a registry that builds feed devices with `factory`.
   init(
     factory: @escaping VirtualFeedDeviceFactory,
     idleTimeout: TimeInterval = VirtualFeedExchangeResult.idleTimeoutSeconds,
@@ -131,7 +159,9 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     self.clock = clock
   }
 
-  /// Opens a feed. With a `returnSink`, the host's output commands go to it in order through
+  /// Opens a feed.
+  ///
+  /// With a `returnSink`, the host's output commands go to it in order through
   /// `OutputSink.consume(_:for:)` once ``startReturningFeedback(token:)`` runs, and
   /// ``exchange(token:frames:countsAsActivity:)`` returns no feedback.
   func open(
@@ -226,9 +256,11 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     }
   }
 
-  /// Queues as many of `frames` as fit and returns the queued output commands; a token with no
-  /// open feed returns `closed`. An exchange counts as activity for the idle timeout unless
-  /// `countsAsActivity` is false, which a caller that polls for feedback on its own passes.
+  /// Queues as many of `frames` as fit and returns the queued output commands; a token with no open
+  /// feed returns `closed`.
+  ///
+  /// An exchange counts as activity for the idle timeout unless `countsAsActivity` is false, which
+  /// a caller that polls for feedback on its own passes.
   func exchange(
     token: UUID,
     frames: [VirtualFeedFrame],
@@ -261,7 +293,9 @@ final class VirtualFeedRegistry: @unchecked Sendable {
   func origin(of token: UUID) -> InputOrigin? { lock.withLock { sessions[token]?.origin } }
 
   /// Starts delivering the host's output commands to the feed's `returnSink`, those queued so far
-  /// first. The client calls it once it can take them.
+  /// first.
+  ///
+  /// The client calls it once it can take them.
   func startReturningFeedback(token: UUID) {
     lock.withLock {
       guard let session = sessions[token] else { return }
@@ -271,8 +305,10 @@ final class VirtualFeedRegistry: @unchecked Sendable {
   }
 
   /// Suspends until every frame queued so far has played, the last one for its full time, and
-  /// returns true. Returns false when the feed closes first, when no open feed has the token, or
-  /// when the calling task is cancelled.
+  /// returns true.
+  ///
+  /// Returns false when the feed closes first, when no open feed has the token, or when the calling
+  /// task is cancelled.
   func waitUntilPlayed(token: UUID) async -> Bool {
     let waiter = UUID()
     return await withTaskCancellationHandler {
@@ -293,7 +329,9 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     }
   }
 
-  /// Resumes and forgets the waiters of `session`. The caller does not hold `lock`.
+  /// Resumes and forgets the waiters of `session`.
+  ///
+  /// The caller does not hold `lock`.
   private func resumePlayWaiters(of session: Session, played: Bool) {
     let waiters = lock.withLock { () -> [CheckedContinuation<Bool, Never>] in
       defer { session.playWaiters.removeAll() }
@@ -316,7 +354,7 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     return true
   }
 
-  /// Closes every feed and refuses new ones.
+  /// Closes every feed and refuses further ones.
   func stop() async {
     let closing = lock.withLock { () -> [Session] in
       stopped = true
@@ -332,8 +370,11 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     }
   }
 
+  /// The number of open feeds.
   var openFeedCount: Int { lock.withLock { sessions.count } }
 
+  /// Queues the host's output command for the client of the feed `token`, dropping the oldest ones
+  /// past the limit.
   private func enqueue(_ command: ControllerOutputCommand, for token: UUID) {
     lock.withLock {
       guard let session = sessions[token] else { return }
@@ -344,8 +385,9 @@ final class VirtualFeedRegistry: @unchecked Sendable {
     }
   }
 
-  /// Starts the session's `returner` when it has a sink that is ready and one is not running. The
-  /// caller holds `lock`.
+  /// Starts the session's `returner` when it has a sink that is ready and one is not running.
+  ///
+  /// The caller holds `lock`.
   private func scheduleReturn(of session: Session, token: UUID) {
     guard session.returnSink != nil, session.returnsFeedback, session.returner == nil,
       !session.feedback.isEmpty
@@ -375,7 +417,9 @@ final class VirtualFeedRegistry: @unchecked Sendable {
   }
 
   /// Adds `frames` to the session's queue, oldest first, until it is full; returns how many it
-  /// took. The caller holds `lock`.
+  /// took.
+  ///
+  /// The caller holds `lock`.
   private static func enqueue(_ frames: [VirtualFeedFrame], in session: Session) -> Int {
     var accepted = 0
     for frame in frames {
@@ -399,7 +443,9 @@ final class VirtualFeedRegistry: @unchecked Sendable {
   }
 
   /// Sends the feed's queued frames in order and waits out each one's time from the moment its send
-  /// returns; stops when the queue is empty. A failed send closes the feed.
+  /// returns; stops when the queue is empty.
+  ///
+  /// A failed send closes the feed.
   private func play(_ token: UUID) async {
     var playedUntil: TimeInterval?
     var finished: Session?
@@ -471,11 +517,18 @@ final class VirtualFeedRegistry: @unchecked Sendable {
 
 /// The virtual device of one feed as the sink of the feed's frames.
 final class VirtualFeedDeviceSink: OutputSink {
+  /// Marks the frames as delivered to a virtual device.
   let destination = OutputDestination.virtualDevice
+  /// The device that takes the frames.
   private let device: any VirtualFeedDevice
 
+  /// Creates a sink for `device`.
   init(_ device: any VirtualFeedDevice) { self.device = device }
 
+  /// Sends the gamepad state of `frame` to the device.
+  ///
+  /// - Throws: ``StreamBoundaryError/unsupported(_:)`` for a frame that is not a gamepad state, or
+  ///   the failure of the device.
   func consume(
     _ frame: StreamFrame,
     onDelivered: @escaping @Sendable () -> Void

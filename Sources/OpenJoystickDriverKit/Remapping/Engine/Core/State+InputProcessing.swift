@@ -2,6 +2,10 @@ import Foundation
 
 extension RemappingEngineState {
 
+  /// Replaces the profile of a controller, or removes its mapping with `nil`.
+  ///
+  /// Returns the actions that release what the earlier session held. A profile equal to the current
+  /// one changes nothing.
   mutating func setProfile(
     _ profile: RemappingProfile?,
     for identifier: LogicalControllerID
@@ -15,6 +19,10 @@ extension RemappingEngineState {
   }
 
   /// Applies the changes of one snapshot in order, as one transition of `identifier`.
+  ///
+  /// The profile is applied first. Each change is preceded by chord processing and the replay of
+  /// due held-back presses, and followed by an update of the passthrough contribution. The uptime
+  /// of a controller never goes back.
   mutating func process(
     changes: [RemappingInputChange],
     from identifier: LogicalControllerID,
@@ -39,11 +47,43 @@ extension RemappingEngineState {
     return actions
   }
 
+  /// Applies one input change.
+  ///
+  /// Sticks run their stick mapping first and then their axis sources. Triggers run their trigger
+  /// mapping first and then their axis source.
   mutating func process(
     change: RemappingInputChange,
     from identifier: LogicalControllerID,
     at uptimeNanoseconds: UInt64
   ) -> [RemappingEngineAction] {
+    if devices[identifier]?.isPaused == true {
+      switch change {
+      case .leftStick(let x, let y):
+        return processAxes(
+          [(.leftStickX, x), (.leftStickY, y)],
+          for: identifier,
+          at: uptimeNanoseconds
+        )
+      case .rightStick(let x, let y):
+        return processAxes(
+          [(.rightStickX, x), (.rightStickY, y)],
+          for: identifier,
+          at: uptimeNanoseconds
+        )
+      case .pointer(let x, let y):
+        return processAxes(
+          [(.pointerX, x), (.pointerY, y)],
+          for: identifier,
+          at: uptimeNanoseconds
+        )
+      case .leftTrigger(let value):
+        return processAxes([(.leftTrigger, value)], for: identifier, at: uptimeNanoseconds)
+      case .rightTrigger(let value):
+        return processAxes([(.rightTrigger, value)], for: identifier, at: uptimeNanoseconds)
+      case .motion, .touch: return []
+      case .button, .dpad: break
+      }
+    }
     switch change {
     case .button(let button, let isPressed):
       return setSource(.button(button), isActive: isPressed, for: identifier, at: uptimeNanoseconds)
@@ -52,6 +92,7 @@ extension RemappingEngineState {
       let actions = processAdvancedStick(.left, x: x, y: y, for: identifier, at: uptimeNanoseconds)
       return actions
         + processAxes([(.leftStickX, x), (.leftStickY, y)], for: identifier, at: uptimeNanoseconds)
+        + processStickRegions(.left, x: x, y: y, for: identifier, at: uptimeNanoseconds)
     case .rightStick(let x, let y):
       let actions = processAdvancedStick(.right, x: x, y: y, for: identifier, at: uptimeNanoseconds)
       return actions
@@ -59,18 +100,25 @@ extension RemappingEngineState {
           [(.rightStickX, x), (.rightStickY, y)],
           for: identifier,
           at: uptimeNanoseconds
-        )
+        ) + processStickRegions(.right, x: x, y: y, for: identifier, at: uptimeNanoseconds)
+    case .pointer(let x, let y):
+      return processAxes([(.pointerX, x), (.pointerY, y)], for: identifier, at: uptimeNanoseconds)
     case .leftTrigger(let value):
       return processAdvancedTrigger(.left, value: value, for: identifier, at: uptimeNanoseconds)
         + processAxes([(.leftTrigger, value)], for: identifier, at: uptimeNanoseconds)
+        + processTriggerBands(.left, value: value, for: identifier, at: uptimeNanoseconds)
     case .rightTrigger(let value):
       return processAdvancedTrigger(.right, value: value, for: identifier, at: uptimeNanoseconds)
         + processAxes([(.rightTrigger, value)], for: identifier, at: uptimeNanoseconds)
+        + processTriggerBands(.right, value: value, for: identifier, at: uptimeNanoseconds)
     case .motion(let sample): return processMotion(sample, for: identifier)
     case .touch(let sample): return processTouch(sample, for: identifier, at: uptimeNanoseconds)
     }
   }
 
+  /// Applies a hat direction as changes of the cardinal d-pad sources.
+  ///
+  /// Releases come before presses.
   mutating func setDpad(
     _ direction: HatDirection,
     for identifier: LogicalControllerID,
@@ -98,6 +146,7 @@ extension RemappingEngineState {
     return actions
   }
 
+  /// Applies several axis values in order.
   mutating func processAxes(
     _ values: [(RemappingAxis, Float)],
     for identifier: LogicalControllerID,
@@ -110,6 +159,11 @@ extension RemappingEngineState {
     return actions
   }
 
+  /// Applies one axis value.
+  ///
+  /// The raw value is recorded. Axis bindings drive gamepad axis and continuous destinations. The
+  /// negative and positive direction sources then follow their threshold and hysteresis. Continuous
+  /// output that stopped gets a zero action.
   mutating func processAxis(
     _ axis: RemappingAxis,
     value rawValue: Float,
@@ -131,6 +185,21 @@ extension RemappingEngineState {
         ) {
           actions.append(.gamepad(state, identifier))
         }
+      }
+
+      actions += midiControlChange(binding, rawValue: rawValue, device: &device)
+
+      if let tuning = binding.axisTuning,
+        case .pointerPosition(let pointerAxis) = binding.destination
+      {
+        actions.append(
+          .system(
+            .pointerPlaced(
+              axis: pointerAxis,
+              position: Double(RemappingTransform.value(rawValue, tuning: tuning))
+            )
+          )
+        )
       }
 
       if let tuning = binding.axisTuning,
@@ -169,6 +238,13 @@ extension RemappingEngineState {
     return actions
   }
 
+  /// Applies a source becoming active or inactive, and returns the output actions.
+  ///
+  /// Does nothing when the source is already in that state. Chords that end with a release settle
+  /// first, and due held-back presses are replayed. The gyro activation and layer activators are
+  /// handled next; a layer activator ends the processing. Other sources run their actions, unless a
+  /// chord or a held-back press suppresses them. The press then enters the sequence history, and
+  /// chords and sequences are evaluated.
   mutating func setSource(
     _ source: RemappingSource,
     isActive: Bool,
@@ -204,7 +280,9 @@ extension RemappingEngineState {
     }
 
     let oldContinuous = continuousTotals()
-    if let layerActions = handleLayerActivator(source, isActive: isActive, device: &device) {
+    if !device.isPaused,
+      let layerActions = handleLayerActivator(source, isActive: isActive, device: &device)
+    {
       devices[identifier] = device
       return actions + layerActions + stoppedContinuousActions(previous: oldContinuous)
     }
@@ -217,7 +295,8 @@ extension RemappingEngineState {
     let suppress =
       buffered || wasConsumed || modifierOwned
       || (isActive && sourceCompletesChord(source, in: device))
-    for binding in device.binding(for: source)?.expandedActions ?? [] {
+    for binding in device.binding(for: source)?.expandedActions ?? []
+    where !device.isPaused || binding.destination.isPause {
       actions += processAction(
         binding,
         isActive: isActive,
@@ -245,6 +324,7 @@ extension RemappingEngineState {
     return actions
   }
 
+  /// Returns the cardinal d-pad directions that a hat direction holds.
   private static func cardinalDirections(for direction: HatDirection) -> Set<RemappingDpadDirection>
   {
     switch direction {
@@ -260,6 +340,7 @@ extension RemappingEngineState {
     }
   }
 
+  /// Orders d-pad directions by their raw value.
   private static func dpadLessThan(
     _ lhs: RemappingDpadDirection,
     _ rhs: RemappingDpadDirection

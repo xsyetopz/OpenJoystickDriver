@@ -8,9 +8,12 @@ import Foundation
 /// inside `withLock`; copy what you need out of the closure and act on it after the lock is
 /// released.
 package final class Locked<Value: Sendable>: @unchecked Sendable {
+  /// The lock that guards `value`.
   private let lock = NSLock()
+  /// The guarded value.
   private var value: Value
 
+  /// Creates the guard with the initial `value`.
   package init(_ value: Value) { self.value = value }
 
   /// Runs `body` with exclusive access to the guarded value.

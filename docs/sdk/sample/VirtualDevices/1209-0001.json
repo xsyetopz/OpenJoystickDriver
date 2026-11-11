@@ -1,9 +1,0 @@
-{
-  "apiVersion": "openjoystickdriver/v1alpha1",
-  "kind": "VirtualDevice",
-  "persona": "SDLCompatible",
-  "match": {
-    "vendorID": 4617,
-    "productID": 1
-  }
-}

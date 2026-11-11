@@ -245,7 +245,8 @@ struct ServiceStatusChangesTests {
     changes.announcementWillReachWait = {
       guard
         !handedOver.withLock({ value in
-          defer { value = true }; return value
+          defer { value = true }
+          return value
         })
       else { return }
       first.cancel()

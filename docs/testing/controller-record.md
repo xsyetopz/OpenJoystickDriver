@@ -1,6 +1,6 @@
 # Test a Controller Record
 
-Validate candidate OJD JSON records without Apple Developer Program membership. A raw USB probe uses direct IOUSBHost when macOS permits app ownership. A device claimed by OJD's restricted USBDriverKit route also requires the signed application and extension.
+Validate candidate OJD property list records without Apple Developer Program membership. A raw USB probe uses direct IOUSBHost when macOS permits app ownership. A device claimed by OJD's restricted USBDriverKit route also requires the signed application and extension.
 
 The probe supports raw-USB `GIP` records and wired or wireless-receiver `XUSB` records. HID, Bluetooth, and unknown protocols need their own tools.
 
@@ -18,13 +18,13 @@ cd OpenJoystickDriver
 
 ## 1. Save the Candidate Record
 
-Save the proposed controller JSON outside the bundled record directory until you verify its VID, PID, interface, endpoints, and startup behavior. For example:
+Save the proposed controller record outside the bundled record directory until you verify its VID, PID, interface, endpoints, and startup behavior. For example:
 
 ```text
-/tmp/controller-candidate.json
+/tmp/controller-candidate.plist
 ```
 
-Use decimal numbers in the JSON. Before probing, review `protocol.initialization`. The command sends only OJD-modeled startup behavior:
+Use decimal numbers in the property list. Before probing, review `protocol.initialization`. The command sends only OJD-modeled startup behavior:
 
 - GIP: the named initialization actions (the driver default when omitted); profiles may disable the default keep-alive when hardware evidence requires it.
 - Xbox 360 wired: the steady Player 1 ring-light packet.
@@ -36,7 +36,7 @@ Use decimal numbers in the JSON. Before probing, review `protocol.initialization
 ## 2. Validate Without Opening Hardware
 
 ```bash
-./Scripts/ojd diagnose record /tmp/controller-candidate.json --validate-only
+./Scripts/ojd diagnose record /tmp/controller-candidate.plist --validate-only
 ```
 
 Expected output ends with:
@@ -52,7 +52,7 @@ Validation rejects unsupported protocol drivers, HID transports, invalid endpoin
 Quit games, Steam, and other controller tools first. Install and approve a signed development build, connect the controller directly by USB, then run:
 
 ```bash
-./Scripts/ojd diagnose record /tmp/controller-candidate.json --seconds 30
+./Scripts/ojd diagnose record /tmp/controller-candidate.plist --seconds 30
 ```
 
 During the capture, press one control at a time and return it to neutral. The probe prints:
@@ -90,7 +90,7 @@ Attach the complete command, output, and these details to the controller's GitHu
 - exact OJD commit
 - shared tester DMG filename and build-info file when testing an installed artifact
 - tester `version` (SemVer with `+build.<number>.sha.<commit>` metadata) and `bundle_version` from the build-info file when testing an installed artifact
-- exact record JSON
+- exact record property list
 - selected USB route; include DriverKit extension version and activation state when applicable
 - whether the controller stayed powered on
 - neutral plus one press/release for every control

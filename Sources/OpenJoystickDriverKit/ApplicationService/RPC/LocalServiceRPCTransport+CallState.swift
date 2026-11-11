@@ -2,16 +2,23 @@ import Darwin
 import Foundation
 
 extension LocalServiceRPCClient {
-  /// Owns one call's descriptor. Cancellation shuts the socket down under the lock, so a blocked
-  /// read or write returns at once; only the I/O thread closes the descriptor, so its number
-  /// cannot be reused while cancellation still refers to it.
+  /// Owns one call's descriptor.
+  ///
+  /// Cancellation shuts the socket down under the lock, so a blocked read or write returns at
+  /// once; only the I/O thread closes the descriptor, so its number cannot be reused while
+  /// cancellation still refers to it.
   final class CallState: @unchecked Sendable {
+    /// Guards `descriptor` and `cancelled`.
     private let lock = NSLock()
+    /// The call's socket; nil before ``install(_:)`` and after ``close()``.
     private var descriptor: Int32?
+    /// Whether the call was cancelled.
     private var cancelled = false
 
+    /// Whether the call was cancelled.
     var isCancelled: Bool { lock.withLock { cancelled } }
 
+    /// Stores the call's socket; returns false when the call is already cancelled.
     func install(_ descriptor: Int32) -> Bool {
       lock.withLock {
         guard !cancelled else { return false }
@@ -20,6 +27,7 @@ extension LocalServiceRPCClient {
       }
     }
 
+    /// Cancels the call and shuts down its socket, so a blocked read or write returns.
     func cancel() {
       lock.withLock {
         cancelled = true
@@ -27,6 +35,7 @@ extension LocalServiceRPCClient {
       }
     }
 
+    /// Closes the call's socket.
     func close() {
       lock.withLock {
         guard let descriptor else { return }
@@ -36,12 +45,16 @@ extension LocalServiceRPCClient {
     }
   }
 
+  /// Whether a server answers on the service's default socket.
   public static func isAvailable() -> Bool { serverProcessIdentifier() != nil }
 
+  /// The process identifier of the server on the service's default socket; nil when none answers.
   public static func serverProcessIdentifier() -> Int32? {
     serverProcessIdentifier(socketPath: LocalServiceRPCTransport.defaultSocketPath)
   }
 
+  /// The process identifier of the server on the socket at `socketPath`; nil when none answers
+  /// within 0.2 s.
   package static func serverProcessIdentifier(socketPath: String) -> Int32? {
     guard
       let descriptor = try? LocalServiceRPCTransport.openConnectedSocket(
@@ -58,6 +71,11 @@ extension LocalServiceRPCClient {
     return processIdentifier
   }
 
+  /// Calls `method` with `arguments` on the server at `socketPath` and decodes the result as
+  /// `Value`.
+  ///
+  /// - Throws: ``LocalServiceRPCError``, ``ApplicationServiceRemappingRPCError`` when the response
+  ///   carries a remapping failure, and `CancellationError` when the task is cancelled.
   static func call<Arguments: Encodable & Sendable, Value: Decodable & Sendable>(
     method: String,
     arguments: Arguments,

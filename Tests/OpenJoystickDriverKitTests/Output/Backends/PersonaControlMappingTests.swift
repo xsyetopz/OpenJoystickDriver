@@ -158,7 +158,7 @@ extension DeviceRuntimeProfile {
       assemblyPolicy: assemblyPolicy,
       server: server,
       session: session,
-      inputLayout: inputLayout,
+      inputLayouts: inputLayouts,
       hidUsageMap: hidUsageMap,
       tuning: tuning,
       modes: modes

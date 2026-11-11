@@ -11,9 +11,11 @@ extension DeviceManager {
     return queue
   }
 
-  /// Cancels the interface's queued output and removes its queue, when it is still `expected`
-  /// (any queue when nil). An operation may still be running on it, so the next queue created for
-  /// the interface waits until it drains.
+  /// Cancels the interface's queued output and removes its queue, when it is still `expected` (any
+  /// queue when nil).
+  ///
+  /// An operation may still be running on it, so the next queue created for the interface waits
+  /// until it drains.
   func retireOutputQueue(
     for identifier: LogicalControllerID,
     expected: PhysicalHIDOutputSerialQueue? = nil
@@ -27,11 +29,13 @@ extension DeviceManager {
   }
 
   /// Performs driver-produced lifecycle writes on a HID device in order, as one operation on the
-  /// interface's output queue. A run of output reports goes out as one lifecycle output plan at
-  /// `intervalNanoseconds` spacing and a run of feature reports as one feature batch, each through
-  /// its write body and so behind the native write gate. Every write is attempted; the result is
-  /// false if any failed or the operation was cancelled. A run of USB writes goes to the pipeline,
-  /// which sends it on the driver's USB command channel; without one it fails the result.
+  /// interface's output queue.
+  ///
+  /// A run of output reports goes out as one lifecycle output plan at `intervalNanoseconds` spacing
+  /// and a run of feature reports as one feature batch, each through its write body and so behind
+  /// the native write gate. Every write is attempted; the result is false if any failed or the
+  /// operation was cancelled. A run of USB writes goes to the pipeline, which sends it on the
+  /// driver's USB command channel; without one it fails the result.
   func sendHIDWrites(
     _ writes: [PhysicalOutputWrite],
     intervalNanoseconds: UInt64 = 0,
@@ -65,11 +69,12 @@ extension DeviceManager {
     return outcome == .completed(true)
   }
 
-  /// Sends one HID keep-alive run. The pipeline produces the run's writes inside the output
-  /// queue operation, so a rumble command queued before the run is encoded first and the run
-  /// resends the state it left. A run with no writes sends nothing. The result is false if a write
-  /// failed or the operation was cancelled. An inactive session sends nothing and is not a
-  /// failure; the loop ends at its next interval check.
+  /// Sends one HID keep-alive run.
+  ///
+  /// The pipeline produces the run's writes inside the output queue operation, so a rumble command
+  /// queued before the run is encoded first and the run resends the state it left. A run with no
+  /// writes sends nothing. The result is false if a write failed or the operation was cancelled. An
+  /// inactive session sends nothing and is not a failure; the loop ends at its next interval check.
   func sendHIDKeepAlive(
     address: ControllerConnectionAddress,
     identifier: LogicalControllerID,
@@ -95,6 +100,12 @@ extension DeviceManager {
     return outcome == .completed(true)
   }
 
+  /// Writes `writes` in order inside the output queue operation `operation`.
+  ///
+  /// Consecutive USB packets and consecutive HID output reports each go out as one batch, spaced by
+  /// `intervalNanoseconds`.
+  ///
+  /// - Returns: Whether every write succeeded.
   private func performHIDWrites(
     _ writes: [PhysicalOutputWrite],
     intervalNanoseconds: UInt64,
@@ -155,8 +166,10 @@ extension DeviceManager {
     return succeeded
   }
 
-  /// Writes feature reports in order inside an output queue operation. User output stops at the
-  /// first failed report; a `lifecycle` batch sends every report and fails if any report failed.
+  /// Writes feature reports in order inside an output queue operation.
+  ///
+  /// User output stops at the first failed report; a `lifecycle` batch sends every report and fails
+  /// if any report failed.
   func performHIDFeatureReports(
     _ reports: [PhysicalHIDOutputReport],
     address: ControllerConnectionAddress,
@@ -227,6 +240,9 @@ extension DeviceManager {
     return succeeded
   }
 
+  /// Whether a HID feature write for `identifier` may be made now: the task is not cancelled, the
+  /// manager is not stopping unless teardown output runs, and the pipeline, the startup connection
+  /// or the detached device information is current.
   private func isCurrentHIDFeatureOutput(
     identifier: LogicalControllerID,
     pipeline: DevicePipeline,

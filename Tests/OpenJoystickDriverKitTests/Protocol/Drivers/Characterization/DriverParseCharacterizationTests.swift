@@ -202,8 +202,10 @@ struct DriverParseCharacterizationTests {
     }
   }
 
-  /// Signed 16-bit stick extremes, then centre: `Int16.min`, `-Int16.max`, `Int16.max`, 0. Ending
-  /// on centre returns the report to neutral, so a following repeat of the base is identical.
+  /// Signed 16-bit stick extremes, then centre: `Int16.min`, `-Int16.max`, `Int16.max`, 0.
+  ///
+  /// Ending on centre returns the report to neutral, so a following repeat of the base is
+  /// identical.
   static let signedWordExtremes: [UInt16] = [0x8000, 0x8001, 0x7FFF, 0]
   /// Unsigned byte extremes and centres around 0x80: 0, 0x7F, 0x80, 0x81, 0xFF.
   static let byteExtremes: [UInt8] = [0x00, 0x7F, 0x80, 0x81, 0xFF]

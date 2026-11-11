@@ -5,11 +5,14 @@
   import SwiftUI
 
   extension BindingBehaviorSheet {
+    /// Receives the behavior, pulse duration in milliseconds, turbo, long hold, tap counts and
+    /// additional actions when the person chooses Apply.
     typealias SaveAction = (
-      RemappingBindingBehavior, Double, RemappingTurbo?, RemappingLongHold?, RemappingDoubleTap?,
+      RemappingBindingBehavior, Double, RemappingTurbo?, RemappingLongHold?, [RemappingMultiTap],
       [RemappingAction]
     ) -> Void
 
+    /// The behavior sheet's fields and its Cancel and Apply buttons.
     var body: some View {
       VStack(alignment: .leading, spacing: 16) {
         Text(OJDLocalized.string("ui.profiles.bindingBehavior")).font(
@@ -41,7 +44,8 @@
             RemappingBindingBehavior.release
           )
         }.disabled(
-          binding.destination.isContinuous || turboEnabled || longHoldEnabled || doubleTapEnabled
+          binding.destination.isContinuous || turboEnabled || longHoldEnabled
+            || !multiTapEntries.isEmpty
         )
         if behavior == .pulse {
           valueSlider(
@@ -60,7 +64,7 @@
         }
         Toggle(OJDLocalized.string("ui.profiles.turbo"), isOn: $turboEnabled)
           .disabled(
-            !binding.destination.acceptsTurbo || longHoldEnabled || doubleTapEnabled
+            !binding.destination.acceptsTurbo || longHoldEnabled || !multiTapEntries.isEmpty
               || behavior != .hold
           )
         if turboEnabled {
@@ -77,6 +81,25 @@
             format: "%.0f%%",
             multiplier: 100
           )
+          valueSlider(
+            title: OJDLocalized.string("ui.profiles.turboDelay"),
+            value: $turboDelay,
+            range: RemappingTurbo.initialDelayMsRange,
+            format: "%.0f ms"
+          )
+          Toggle(OJDLocalized.string("ui.profiles.turboLimit"), isOn: $turboLimitEnabled)
+          if turboLimitEnabled {
+            valueSlider(
+              title: OJDLocalized.string("ui.profiles.turboMax"),
+              value: $turboMax,
+              range: Double(
+                RemappingTurbo.maxRepeatsRange.lowerBound
+              )...Double(
+                RemappingTurbo.maxRepeatsRange.upperBound
+              ),
+              format: "%.0f"
+            )
+          }
         }
         Divider()
         Toggle(
@@ -92,19 +115,7 @@
           )
           destinationPicker(selection: $longHoldDestination)
         }
-        Toggle(
-          OJDLocalized.string("ui.profiles.doubleTap"),
-          isOn: $doubleTapEnabled
-        ).disabled(!supportsActivation || turboEnabled || behavior != .hold)
-        if doubleTapEnabled {
-          valueSlider(
-            title: OJDLocalized.string("ui.profiles.tapWindow"),
-            value: $doubleTapWindow,
-            range: RemappingDoubleTap.windowRange,
-            format: "%.0f ms"
-          )
-          destinationPicker(selection: $doubleTapDestination)
-        }
+        multiTapSection
         HStack {
           Spacer()
           Button(OJDLocalized.string("action.cancel")) { dismiss() }
@@ -112,13 +123,17 @@
             onSave(
               behavior,
               pulseDurationMs,
-              turboEnabled ? RemappingTurbo(repeatRateHz: turboRate, dutyCycle: turboDuty) : nil,
+              turboEnabled
+                ? RemappingTurbo(
+                  repeatRateHz: turboRate,
+                  dutyCycle: turboDuty,
+                  initialDelayMs: turboDelay,
+                  maxRepeats: turboLimitEnabled ? Int(turboMax.rounded()) : nil
+                ) : nil,
               longHoldEnabled
                 ? RemappingLongHold(durationMs: longHoldDuration, destination: longHoldDestination)
                 : nil,
-              doubleTapEnabled
-                ? RemappingDoubleTap(windowMs: doubleTapWindow, destination: doubleTapDestination)
-                : nil,
+              multiTapEntries,
               additionalActions
             )
             dismiss()
@@ -127,15 +142,27 @@
       }.padding(28).frame(width: 470)
     }
 
-    private var supportsActivation: Bool {
+    /// Whether the assignment's source can start a long hold or tap count: any discrete source
+    /// with a discrete destination.
+    var supportsActivation: Bool {
       switch binding.source {
-      case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe:
+      case .button, .dpad, .triggerStage, .motionLean, .touchContact, .touchGrid, .touchSwipe,
+        .stickRegion, .triggerBand, .touchArea:
         return !binding.destination.isContinuous
       case .axis, .axisDirection: return false
       }
     }
 
-    private func valueSlider(
+    /// A slider for `value` with `title` and the formatted value beside it.
+    ///
+    /// - Parameters:
+    ///   - title: The text above the slider.
+    ///   - value: The number to edit.
+    ///   - range: The values the slider allows.
+    ///   - format: The `String(format:)` pattern of the value shown.
+    ///   - multiplier: Scales the value before it is formatted, such as 100 for a percentage.
+    /// - Returns: The slider with the title and the formatted value.
+    func valueSlider(
       title: String,
       value: Binding<Double>,
       range: ClosedRange<Double>,
@@ -154,7 +181,8 @@
       }
     }
 
-    private func destinationPicker(selection: Binding<RemappingDestination>) -> some View {
+    /// A picker of the discrete destinations, with the fields of a physical output.
+    func destinationPicker(selection: Binding<RemappingDestination>) -> some View {
       VStack(alignment: .leading, spacing: 8) {
         Picker(
           OJDLocalized.string("term.destination"),
@@ -168,6 +196,7 @@
       }
     }
 
+    /// Dismisses the sheet.
     func dismiss() { presentationMode.wrappedValue.dismiss() }
   }
 

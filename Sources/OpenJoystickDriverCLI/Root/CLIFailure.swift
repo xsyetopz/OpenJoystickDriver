@@ -3,16 +3,24 @@ import OpenJoystickDriverKit
 
 /// The exit codes `ojd` documents in its root help and the command-line docs.
 enum CLIExitCode: Int32, Sendable {
+  /// The command succeeded.
   case success = 0
+  /// The command failed.
   case failure = 1
+  /// The command line is wrong.
   case usage = 64
+  /// The service is not running or did not answer.
   case serviceUnavailable = 69
+  /// A macOS permission is missing.
   case permissionDenied = 77
   /// The `ojd` of a repository build could not hand the command to the installed app.
   case installedCLIFailed = 127
+  /// The command is interrupted by SIGINT or cancelled.
   case interrupted = 130
 
   /// The exit code of the failure that `id` names.
+  ///
+  /// The exit status of `id` must be one of the cases; anything else stops the process.
   init(for id: ErrorCode) {
     guard let code = Self(rawValue: id.commandLineExitStatus) else {
       preconditionFailure("\(id.rawValue) has an exit status that CLIExitCode does not list.")
@@ -25,10 +33,10 @@ enum CLIExitCode: Int32, Sendable {
 ///
 /// `id` is the stable error code, and the exit code follows from it. `message` states what
 /// failed and how to fix it, already localized.
-struct CLIFailure: Error, Equatable, Sendable {
-  let id: ErrorCode
-  let message: String
+typealias CLIFailure = CodedFailure
 
+extension CLIFailure {
+  /// The exit code that follows from ``id``.
   var code: CLIExitCode { CLIExitCode(for: id) }
 
   /// The line `ojd` writes on stderr.
@@ -37,11 +45,7 @@ struct CLIFailure: Error, Equatable, Sendable {
   /// The start of each error line of `ojd`, which names the stable code.
   static func prefix(_ id: ErrorCode) -> String { "error[\(id.rawValue)]: " }
 
-  init(_ id: ErrorCode, _ message: String) {
-    self.id = id
-    self.message = message
-  }
-
+  /// The service is not running; the exit code is 69.
   static var serviceUnavailable: Self {
     Self(
       .serviceUnavailable,
@@ -74,6 +78,4 @@ struct CLIFailure: Error, Equatable, Sendable {
       )
     )
   }
-
-  static func usage(_ message: String) -> Self { Self(.usage, message) }
 }

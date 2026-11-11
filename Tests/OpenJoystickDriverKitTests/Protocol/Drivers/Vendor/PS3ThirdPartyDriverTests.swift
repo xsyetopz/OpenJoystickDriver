@@ -3,10 +3,12 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// Reports in SDL's `HIDAPI_DriverPS3ThirdParty` layouts. The 19-byte-or-longer layout has digital
-/// bits in byte 0, system bits in byte 1, the hat in the low nibble of byte 2, sticks at 3–6,
-/// pressure at 7–16 and analog triggers at 17–18; the 18-byte layout moves the hat to the high
-/// nibble of byte 1 and shifts sticks, pressure and triggers down by one.
+/// Reports in SDL's `HIDAPI_DriverPS3ThirdParty` layouts.
+///
+/// The 19-byte-or-longer layout has digital bits in byte 0, system bits in byte 1, the hat in the
+/// low nibble of byte 2, sticks at 3–6, pressure at 7–16 and analog triggers at 17–18; the 18-byte
+/// layout moves the hat to the high nibble of byte 1 and shifts sticks, pressure and triggers down
+/// by one.
 private enum ThirdPartyReport {
   static func standard(_ bytes: [Int: UInt8] = [:], length: Int = 27) -> Data {
     var report = [UInt8](repeating: 0, count: length)

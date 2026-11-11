@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -16,6 +17,39 @@ struct ControllerProfileCapabilitiesTests {
       registry.profileCapabilities(for: ControllerModelID(vendorID: 0xFFFF, productID: 0xFFFF))
         == nil
     )
+  }
+
+  @Test
+  func speakerCapabilityRoundTripsThroughCodableAndIsKeptOnlyWhenShared() throws {
+    let wii = PhysicalControllerOutputCapabilities(
+      rumbleMotors: [.lowFrequency],
+      binaryRumbleMotors: [.lowFrequency],
+      speaker: .yamahaADPCM4Bit
+    )
+    let encoded = try JSONEncoder().encode(wii)
+    let decoded = try JSONDecoder().decode(PhysicalControllerOutputCapabilities.self, from: encoded)
+    #expect(decoded == wii)
+    #expect(
+      String(bytes: encoded, encoding: .utf8)?.contains("\"speaker\":\"YamahaADPCM4Bit\"") == true
+    )
+    #expect(wii.supportsSpeaker)
+    #expect(!PhysicalControllerOutputCapabilities.none.supportsSpeaker)
+    let none = try JSONDecoder().decode(
+      PhysicalControllerOutputCapabilities.self,
+      from: Data("{}".utf8)
+    )
+    #expect(none.speaker == nil)
+    #expect(throws: DecodingError.self) {
+      try JSONDecoder().decode(
+        PhysicalControllerOutputCapabilities.self,
+        from: Data(#"{"speaker":"PCM"}"#.utf8)
+      )
+    }
+    let input = ControllerCapabilities(controls: [])
+    let shared = ControllerProfileCapabilities(physicalInput: input, physicalOutput: wii)
+    #expect(shared.intersecting(shared).physicalOutput.speaker == .yamahaADPCM4Bit)
+    let silent = ControllerProfileCapabilities(physicalInput: input, physicalOutput: .none)
+    #expect(shared.intersecting(silent).physicalOutput.speaker == nil)
   }
 
   @Test

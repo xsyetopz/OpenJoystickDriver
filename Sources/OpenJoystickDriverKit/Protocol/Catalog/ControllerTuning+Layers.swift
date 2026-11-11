@@ -1,26 +1,48 @@
 import Foundation
 
 extension ControllerTuning {
-  /// One tuning value, named as in a record's and `all.patch.json`'s `tuning` section. The cases
-  /// are in the order `validateTuning` reports a family-scope violation.
+  /// One tuning value, named as in the `tuning` section of a record and of `all.patch.plist`.
+  ///
+  /// The cases are in the order `validateTuning` reports a family-scope violation.
   public enum Key: String, CaseIterable, Codable, Sendable {
+    /// The stick deadzone.
     case stickDeadzone
+    /// The input liveness timeout.
     case inputLivenessTimeoutMs
+    /// The interval of the HID startup recovery.
     case hidStartupRecoveryIntervalMs
+    /// The number of HID startup recovery rounds.
     case hidStartupRecoveryRounds
+    /// The interval between HID startup writes.
     case hidStartupIntervalMs
+    /// The minimum interval between HID output reports.
     case minimumHIDOutputIntervalMs
+    /// The number of keep-alive ticks between resends of lizard mode off.
     case lizardResendTicks
+    /// The timeout of a USB command.
     case usbCommandTimeoutMs
+    /// The number of reports between presence inquiry resends.
     case presenceResendReports
+    /// The delay after which a silent adapter counts as disconnected.
     case adapterDisconnectDelayMs
+    /// The interval between USB startup writes.
     case usbStartupIntervalMs
+    /// The delay before a USB startup retry.
     case usbStartupRetryDelayMs
+    /// The timeout of a USB transfer.
     case usbTransferTimeoutMs
+    /// The wait after each Wii Remote IR register write.
+    case irWriteIntervalMs
+    /// The longest clip the Wii Remote speaker plays.
+    case speakerMaxSeconds
+    /// The wait for the reply to a Wii Remote read or write.
+    case replyTimeoutMs
+    /// The capacity of the frame queue.
     case frameQueueCapacity
 
-    /// Whether the driver picks a value while no layer sets the key. No driver picks a stick
-    /// deadzone, so none applies until a layer sets one.
+    /// Whether the driver picks a value while no layer sets the key.
+    ///
+    /// No driver picks a stick deadzone, so none applies until a layer sets one.
     public var hasDriverValue: Bool { self != .stickDeadzone }
 
     /// The keys every driver reads, whatever its family.
@@ -46,11 +68,14 @@ extension ControllerTuning {
     case .usbStartupIntervalMs: usbStartupIntervalMilliseconds.map(String.init)
     case .usbStartupRetryDelayMs: usbStartupRetryDelayMilliseconds.map(String.init)
     case .usbTransferTimeoutMs: usbTransferTimeoutMilliseconds.map(String.init)
+    case .irWriteIntervalMs: irWriteIntervalMilliseconds.map(String.init)
+    case .speakerMaxSeconds: speakerMaxSeconds.map(String.init)
+    case .replyTimeoutMs: replyTimeoutMilliseconds.map(String.init)
     case .frameQueueCapacity: frameQueueCapacity.map(String.init)
     }
   }
 
-  /// This tuning with every key `higher` sets replaced by `higher`'s value.
+  /// This tuning with every key that `higher` sets replaced by the value of `higher`.
   public func overlaid(by higher: Self) -> Self {
     Self(
       stickDeadzone: higher.stickDeadzone ?? stickDeadzone,
@@ -75,6 +100,10 @@ extension ControllerTuning {
         ?? usbStartupRetryDelayMilliseconds,
       usbTransferTimeoutMilliseconds: higher.usbTransferTimeoutMilliseconds
         ?? usbTransferTimeoutMilliseconds,
+      irWriteIntervalMilliseconds: higher.irWriteIntervalMilliseconds
+        ?? irWriteIntervalMilliseconds,
+      speakerMaxSeconds: higher.speakerMaxSeconds ?? speakerMaxSeconds,
+      replyTimeoutMilliseconds: higher.replyTimeoutMilliseconds ?? replyTimeoutMilliseconds,
       frameQueueCapacity: higher.frameQueueCapacity ?? frameQueueCapacity
     )
   }
@@ -105,20 +134,26 @@ extension ControllerTuning {
         ? usbStartupRetryDelayMilliseconds : nil,
       usbTransferTimeoutMilliseconds: keys.contains(.usbTransferTimeoutMs)
         ? usbTransferTimeoutMilliseconds : nil,
+      irWriteIntervalMilliseconds: keys.contains(.irWriteIntervalMs)
+        ? irWriteIntervalMilliseconds : nil,
+      speakerMaxSeconds: keys.contains(.speakerMaxSeconds) ? speakerMaxSeconds : nil,
+      replyTimeoutMilliseconds: keys.contains(.replyTimeoutMs) ? replyTimeoutMilliseconds : nil,
       frameQueueCapacity: keys.contains(.frameQueueCapacity) ? frameQueueCapacity : nil
     )
   }
 }
 
 extension ControllerRecord {
-  /// Whether this controller's driver reads `key`; `all.patch.json` sets it only where this holds.
+  /// Whether this controller's driver reads `key`; `all.patch.plist` sets it only where this holds.
   public func reads(_ key: ControllerTuning.Key) -> Bool { tuningScope.contains(key) }
 }
 
 extension ControllerTuning {
   /// Why `key` does not apply to a controller of this family and stored variant, or nil when a
-  /// driver reads it. A nil `protocolID` is a record with no known family: it reads only
-  /// `stickDeadzone` and `frameQueueCapacity`. The family's description holds the keys.
+  /// driver reads it.
+  ///
+  /// A nil `protocolID` is a record with no known family: it reads only `stickDeadzone` and
+  /// `frameQueueCapacity`. The family's description holds the keys.
   static func scopeViolation(
     _ key: Key,
     protocolID: PhysicalProtocolID?,

@@ -45,9 +45,11 @@ extension DriverParseCharacterizationTests {
     ],
   ]
 
-  /// Sixaxis (054C:0268): three consecutive 49-byte 0x01 reports. The frame does not tell the
-  /// transport apart and only `controller packets` was run, so the transport is not recorded;
-  /// the USB-bound driver parses them, and the Sixaxis parse path does not depend on transport.
+  /// Sixaxis (054C:0268): three consecutive 49-byte 0x01 reports.
+  ///
+  /// The frame does not tell the transport apart and only `controller packets` was run, so the
+  /// transport is not recorded; the USB-bound driver parses them, and the Sixaxis parse path does
+  /// not depend on transport.
   static let capturedSixaxis: [[UInt8]] = [
     [
       0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7B, 0x81, 0x81, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00,

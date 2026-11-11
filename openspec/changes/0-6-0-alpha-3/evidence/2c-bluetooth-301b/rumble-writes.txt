@@ -1,0 +1,17 @@
+2026-11-10, about 23:11. Pad over Bluetooth LE as 2DC8:301B.
+Each line is the output of `hidcap 2dc8 301b <seconds> <bytes>` (source in ../2c-receiver-301c/hidcap.swift):
+IOHIDDeviceSetReport, output type, report 5. `result=e00002f0` is kIOReturnNotFound.
+
+Payload with the report ID byte in front:
+0.001 tx len=5 05 64 00 00 00 result=e00002f0
+0.001 tx len=5 05 00 00 00 00 result=e00002f0
+0.001 tx len=5 05 00 64 00 00 result=e00002f0
+0.001 tx len=5 05 00 00 00 00 result=e00002f0
+
+Payload without the report ID byte (HIDCAP_NO_ID=1):
+0.001 tx len=5 05 64 00 00 00 result=e00002f0
+0.001 tx len=5 05 00 00 00 00 result=e00002f0
+0.001 tx len=5 05 00 64 00 00 result=e00002f0
+0.001 tx len=5 05 00 00 00 00 result=e00002f0
+
+Every write failed, so none tests the motors. The maintainer reports that the pad rumbled once when it connected.

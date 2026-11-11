@@ -6,9 +6,11 @@
 
   /// Per-event notifications, the notification permission and Send Test Notification.
   struct NotificationsPaneView: View {
+    /// The notification switches and the permission state.
     @ObservedObject
     var preferences: SettingsPreferencesModel
 
+    /// The Notifications form: the settings error, if any, and the switches for each event.
     var body: some View {
       Form {
         SettingsErrorSection(preferences: preferences)
@@ -53,6 +55,8 @@
       }.ojdGroupedForm()
     }
 
+    /// The notification delivery status, with Open Notification Settings while macOS hides banners
+    /// or sounds and the Send Test Notification button.
     private var deliveryRow: some View {
       HStack(alignment: .firstTextBaseline, spacing: 8) {
         Text(deliveryStatus).foregroundColor(
@@ -71,6 +75,7 @@
       }
     }
 
+    /// Returns the switch of one notification event, with the VoiceOver label `accessibilityKey`.
     private func eventToggle(
       _ titleKey: String,
       _ accessibilityKey: String,
@@ -83,12 +88,14 @@
       ).ojdAccessibilityLabel(OJDLocalized.string(accessibilityKey))
     }
 
+    /// Whether notifications are allowed but macOS shows no banner or plays no sound.
     private var deliveryNeedsAttention: Bool {
       guard preferences.notificationAuthorization == .allowed else { return false }
       return preferences.notificationSystemSettings.alertStyle == .none
         || preferences.notificationSystemSettings.soundsEnabled == false
     }
 
+    /// The text that says whether notifications reach the user.
     private var deliveryStatus: String {
       guard preferences.notificationAuthorization == .allowed else {
         return OJDLocalized.string("ui.settings.notifications.notificationPermissionRequired")

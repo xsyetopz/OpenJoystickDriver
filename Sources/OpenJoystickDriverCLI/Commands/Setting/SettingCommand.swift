@@ -2,7 +2,10 @@ import ArgumentParser
 import Foundation
 import OpenJoystickDriverKit
 
+/// The `ojd setting` command group: list, read, change and reset the application settings, and send
+/// a test notification.
 struct SettingCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "setting",
     abstract: CLILocalized.text(
@@ -17,12 +20,14 @@ struct SettingCommand: AsyncParsableCommand {
     ]
   )
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 }
 
 /// The settings `ojd setting` names, with their help text and value parsing.
 enum SettingCatalog {
+  /// The help text of `key`.
   static func description(of key: ApplicationSettingKey) -> String {
     switch key {
     case .launchAtLogin:
@@ -54,10 +59,14 @@ enum SettingCatalog {
     }
   }
 
+  /// The names of every setting, as shown in help and error text.
   static var keyNames: String {
     ApplicationSettingKey.allCases.map(\.rawValue).joined(separator: ", ")
   }
 
+  /// Returns the setting that `name` names.
+  ///
+  /// - Throws: ``ValidationError`` when no setting has that name.
   static func key(_ name: String) throws -> ApplicationSettingKey {
     guard let key = ApplicationSettingKey(rawValue: name) else {
       throw ValidationError(
@@ -71,7 +80,9 @@ enum SettingCatalog {
     return key
   }
 
-  /// Every setting is on or off, written `true` or `false`.
+  /// Parses `text` as the value of `key`, which is `true` or `false`.
+  ///
+  /// - Throws: ``ValidationError`` when `text` is neither.
   static func value(_ text: String, for key: ApplicationSettingKey) throws -> Bool {
     switch text {
     case "true": return true
@@ -87,6 +98,7 @@ enum SettingCatalog {
     }
   }
 
+  /// Reads every setting from the service.
   static func read() async throws -> ApplicationSettingsPayload {
     try await ServiceConnection.request { client in try await client.getSettings() }
   }
@@ -94,9 +106,12 @@ enum SettingCatalog {
 
 /// The `--json` result of `setting get` and `setting set`.
 struct SettingResult: Encodable, Equatable {
+  /// The setting name.
   let key: String
+  /// The setting value.
   let value: Bool
 
+  /// Prints `key` and `value` as JSON, or as the value alone.
   static func print(_ key: ApplicationSettingKey, value: Bool) throws {
     switch CLIContext.current.format {
     case .json: try CLIOutput.json(Self(key: key.rawValue, value: value))
@@ -105,7 +120,9 @@ struct SettingResult: Encodable, Equatable {
   }
 }
 
+/// The `ojd setting list` command: prints every setting with its value and description.
 struct SettingListCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "list",
     abstract: CLILocalized.text("cli.setting.list.abstract")
@@ -113,14 +130,19 @@ struct SettingListCommand: AsyncParsableCommand {
 
   /// One setting in the `--json` result.
   struct Entry: Encodable, Equatable {
+    /// The setting name.
     let key: String
+    /// The setting value.
     let value: Bool
+    /// The help text of the setting.
     let description: String
   }
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let entries = try await SettingCatalog.read().settings.map {
@@ -144,7 +166,9 @@ struct SettingListCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd setting get` command: prints the value of one setting, the default when none is stored.
 struct SettingGetCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "get",
     abstract: CLILocalized.text("cli.setting.get.abstract"),
@@ -153,6 +177,7 @@ struct SettingGetCommand: AsyncParsableCommand {
     )
   )
 
+  /// The setting name.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.setting.group.key"),
@@ -161,11 +186,14 @@ struct SettingGetCommand: AsyncParsableCommand {
   )
   var key: String
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Checks that `key` names a setting.
   func validate() throws { _ = try SettingCatalog.key(key) }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let key = try SettingCatalog.key(key)
@@ -175,7 +203,9 @@ struct SettingGetCommand: AsyncParsableCommand {
   }
 }
 
+/// The `ojd setting set` command: changes one setting through the service.
 struct SettingSetCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "set",
     abstract: CLILocalized.text("cli.setting.set.abstract"),
@@ -184,6 +214,7 @@ struct SettingSetCommand: AsyncParsableCommand {
     )
   )
 
+  /// The setting name.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.setting.set.key"),
@@ -192,6 +223,7 @@ struct SettingSetCommand: AsyncParsableCommand {
   )
   var key: String
 
+  /// The value to store, `true` or `false`.
   @Argument(
     help: ArgumentHelp(
       CLILocalized.text("cli.setting.set.value"),
@@ -200,11 +232,14 @@ struct SettingSetCommand: AsyncParsableCommand {
   )
   var value: String
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Checks that `key` names a setting and that `value` is a value for it.
   func validate() throws { _ = try SettingCatalog.value(value, for: SettingCatalog.key(key)) }
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let key = try SettingCatalog.key(key)
@@ -238,9 +273,13 @@ struct SettingSetCommand: AsyncParsableCommand {
   }
 }
 
-/// Moves `Settings.json` to the Trash, so every setting returns to its default. It works on the
-/// file itself, so it also fixes a file the service rejects and needs no running service.
+/// The `ojd setting reset` command: moves `Settings.plist` to the Trash, so every setting returns to
+/// its default.
+///
+/// It works on the file itself, so it also fixes a file the service rejects and needs no running
+/// service.
 struct SettingResetCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "reset",
     abstract: CLILocalized.text("cli.setting.reset.abstract"),
@@ -253,19 +292,24 @@ struct SettingResetCommand: AsyncParsableCommand {
 
   /// The `--json` result. `moved` is false when there was no file.
   struct Result: Encodable, Equatable {
+    /// The path of the settings file.
     let file: String
+    /// Whether the command moved a file.
     let moved: Bool
   }
 
+  /// `-f`, `--force`: skip the confirmation.
   @Flag(
     name: [.short, .long],
     help: ArgumentHelp(CLILocalized.text("cli.shared.option.force"))
   )
   var force = false
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let store = Self.store
@@ -289,14 +333,16 @@ struct SettingResetCommand: AsyncParsableCommand {
   }
 }
 
-/// Asks the service to announce a test notification to the app and reports how it ended.
+/// The `ojd setting test-notification` command: asks the service to announce a test notification to
+/// the app and reports how it ended.
 ///
 /// The app answers with `shown`, `denied` or `failed`; the service answers `noAnswer` when no app
-/// took the announcement or reported in time (`TestNotificationDeadlines`). Each other outcome
-/// is a named failure: E2037 for denied notifications, E2006 with the system's reason for a
-/// failed delivery, and E2036 for no answer. The service holds the request until then, so
-/// without `--timeout` the command waits `ServiceTimeouts.testNotification`.
+/// took the announcement or reported in time (`TestNotificationDeadlines`). Each other outcome is a
+/// named failure: E2037 for denied notifications, E2006 with the system's reason for a failed
+/// delivery, and E2036 for no answer. The service holds the request until then, so without
+/// `--timeout` the command waits `ServiceTimeouts.testNotification`.
 struct SettingTestNotificationCommand: AsyncParsableCommand {
+  /// The name, help text and subcommands of the command.
   static let configuration = CommandConfiguration(
     commandName: "test-notification",
     abstract: CLILocalized.text("cli.setting.testNotification.abstract"),
@@ -308,12 +354,15 @@ struct SettingTestNotificationCommand: AsyncParsableCommand {
 
   /// The `--json` result.
   struct Result: Encodable, Equatable {
+    /// The outcome of the notification.
     let outcome: String
   }
 
+  /// The global options.
   @OptionGroup(visibility: GlobalOptions.subcommandVisibility)
   var global: GlobalOptions
 
+  /// Runs the command.
   func run() async throws {
     try await global.run {
       let outcome = try await ServiceConnection.request(

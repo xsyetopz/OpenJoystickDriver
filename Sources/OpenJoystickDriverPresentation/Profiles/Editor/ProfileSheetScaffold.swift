@@ -3,13 +3,28 @@
   import AppKit
   import SwiftUI
 
+  /// The layout shared by the profile sheets: a title, optional help text, the content, an
+  /// optional error and a row of footer buttons.
   struct ProfileSheetScaffold<Content: View, Footer: View>: View {
+    /// The title.
     let title: String
+    /// The help text, or nil.
     let help: String?
+    /// The error text, or nil.
     let error: String?
+    /// The content.
     private let content: Content
+    /// The footer buttons.
     private let footer: Footer
 
+    /// Creates the scaffold.
+    ///
+    /// - Parameters:
+    ///   - title: The title.
+    ///   - help: The help text, or nil.
+    ///   - error: The error text, or nil.
+    ///   - content: The content.
+    ///   - footer: The footer buttons.
     init(
       title: String,
       help: String? = nil,
@@ -24,6 +39,7 @@
       self.footer = footer()
     }
 
+    /// The scaffold.
     var body: some View {
       VStack(alignment: .leading, spacing: 15) {
         Text(title).font(.headline.weight(.semibold))

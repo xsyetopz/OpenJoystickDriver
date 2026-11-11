@@ -207,7 +207,7 @@ extension RemappingOutputRouterTests {
     let profile = RemappingProfile(
       name: "Pointer",
       device: RemappingDeviceScope(vendorID: 1118, productID: 654),
-      applicationScope: .application(appID: "com.example.Game"),
+      applicationScope: .application(appIDs: ["com.example.Game"]),
       bindings: [
         RemappingBinding(
           source: .axis(.rightStickX),

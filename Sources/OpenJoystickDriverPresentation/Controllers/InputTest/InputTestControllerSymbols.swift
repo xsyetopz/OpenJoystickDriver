@@ -2,13 +2,26 @@
 
   import OpenJoystickDriverKit
 
+  /// The titles and symbols of the buttons that the live input view draws, for one glyph family.
   struct InputTestControllerSymbolSet: Equatable {
+    /// The title and symbols of one button.
     struct Control: Equatable {
+      /// The name VoiceOver reads and the indicator shows when no symbol is drawn.
       let title: String
+      /// The name of the SF Symbol, or nil to show the text.
       let symbol: String?
+      /// The name of the SF Symbol to try when `symbol` does not exist, or nil.
       let fallbackSymbol: String?
+      /// The text to show when no symbol exists.
       let fallbackText: String
 
+      /// Creates the button.
+      ///
+      /// - Parameters:
+      ///   - title: The name of the button.
+      ///   - symbol: The name of the SF Symbol, or nil.
+      ///   - fallbackSymbol: The name of the SF Symbol to try when `symbol` does not exist, or nil.
+      ///   - fallbackText: The text to show when no symbol exists; the title when nil.
       init(
         _ title: String,
         symbol: String? = nil,
@@ -22,20 +35,37 @@
       }
     }
 
+    /// The left shoulder button.
     let leftShoulder: Control
+    /// The left trigger.
     let leftTrigger: Control
+    /// The right trigger.
     let rightTrigger: Control
+    /// The right shoulder button.
     let rightShoulder: Control
+    /// The View button.
     let view: Control
+    /// The guide button.
     let guide: Control
+    /// The Menu button.
     let menu: Control
+    /// The north face button.
     let northFace: Control
+    /// The west face button.
     let westFace: Control
+    /// The east face button.
     let eastFace: Control
+    /// The south face button.
     let southFace: Control
+    /// The click of the left stick.
     let leftStickClick: Control
+    /// The click of the right stick.
     let rightStickClick: Control
 
+    /// Returns the set of the glyph family.
+    ///
+    /// - Parameter glyphFamily: Whether the controller shows Xbox or generic glyphs.
+    /// - Returns: The set of the glyph family.
     static func resolve(for glyphFamily: VirtualIdentityGlyphFamily) -> Self {
       switch glyphFamily {
       case .xbox: return xbox
@@ -43,6 +73,7 @@
       }
     }
 
+    /// The Xbox set: bumpers, triggers, View, Menu and lettered face buttons.
     private static var xbox: Self {
       Self(
         leftShoulder: Control(
@@ -119,6 +150,7 @@
       )
     }
 
+    /// The generic set: shoulders and triggers by name, and face buttons by their shape.
     private static var generic: Self {
       Self(
         leftShoulder: Control(

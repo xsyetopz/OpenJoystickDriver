@@ -6,7 +6,9 @@ import Foundation
 /// The process identifier and the code both come from one audit token, so a process that exits
 /// after it connects cannot hand its identifier to another process before the check.
 public struct LocalSocketPeer: Sendable {
+  /// The peer's process identifier, read from `auditToken`.
   public let processIdentifier: pid_t
+  /// The peer's audit token.
   public let auditToken: audit_token_t
 
   /// Reads the peer of `descriptor`; nil when the peer runs as another user or has no token.

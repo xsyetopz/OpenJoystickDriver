@@ -3,11 +3,16 @@ import Foundation
 
 /// Captured result from a child process whose runtime and output are bounded.
 public struct BoundedProcessResult: Equatable, Sendable {
+  /// The exit status of the child; -1 when it still ran after the runner tried to stop it.
   public let terminationStatus: Int32
+  /// The output of the child, standard output and standard error together, as UTF-8 text.
   public let output: String
+  /// Whether the child outlived the timeout.
   public let timedOut: Bool
+  /// Whether the output exceeded the maximum and was cut.
   public let outputWasTruncated: Bool
 
+  /// Creates a result from its values.
   public init(terminationStatus: Int32, output: String, timedOut: Bool, outputWasTruncated: Bool) {
     self.terminationStatus = terminationStatus
     self.output = output
@@ -18,9 +23,17 @@ public struct BoundedProcessResult: Equatable, Sendable {
 
 /// Runs short system tools without allowing a stuck child or full pipe to hang OJD.
 public enum BoundedProcessRunner {
+  /// The seconds a child may run.
   public static let defaultTimeoutSeconds: TimeInterval = 10
+  /// The most output bytes that the runner keeps.
   public static let defaultMaximumOutputBytes = 1_048_576
 
+  /// Runs the tool at `executableURL` and waits for it to exit, up to `timeoutSeconds`.
+  ///
+  /// The runner terminates a child that outlives the timeout, then kills it when it still runs a
+  /// second later. It keeps at most `maximumOutputBytes` bytes of output.
+  ///
+  /// - Throws: The error of `Process.run()` when the tool cannot start.
   public static func run(
     executableURL: URL,
     arguments: [String] = [],
@@ -117,12 +130,17 @@ public enum BoundedProcessRunner {
   }
 }
 
+/// Collects a child's output up to a byte limit.
 private final class ProcessOutputCapture: Sendable {
+  /// The most bytes to keep.
   private let maximumBytes: Int
+  /// The kept bytes and whether more arrived than the limit.
   private let output = Locked((data: Data(), wasTruncated: false))
 
+  /// Creates a capture that keeps at most `maximumBytes` bytes.
   init(maximumBytes: Int) { self.maximumBytes = maximumBytes }
 
+  /// Adds `chunk` up to the limit and records when it dropped bytes.
   func append(_ chunk: Data) {
     output.withLock { output in
       let remaining = max(0, maximumBytes - output.data.count)
@@ -131,5 +149,6 @@ private final class ProcessOutputCapture: Sendable {
     }
   }
 
+  /// The kept bytes and whether bytes were dropped.
   func snapshot() -> (data: Data, wasTruncated: Bool) { output.withLock { $0 } }
 }

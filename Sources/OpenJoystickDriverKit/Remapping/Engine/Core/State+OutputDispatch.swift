@@ -1,10 +1,16 @@
 import Foundation
 
 extension RemappingEngineState {
+  /// Whether any output needs a future tick.
   var hasScheduledOutput: Bool {
     nextScheduledTick(after: 0, continuousIntervalNanoseconds: 1) != nil
   }
 
+  /// Returns the earliest uptime at which output needs a tick, or `nil` when none does.
+  ///
+  /// The deadlines come from the expiry of gyro and motion stick output, trigger skip windows,
+  /// held-back chord presses, pulses, turbo repeats, long-hold and multi-tap timers, and the
+  /// sequence history. Continuous output and sticks that need ticks use the given interval.
   func nextScheduledTick(
     after uptimeNanoseconds: UInt64,
     continuousIntervalNanoseconds: UInt64
@@ -39,6 +45,9 @@ extension RemappingEngineState {
         let turboDeadline = turbo.nextTransition(after: currentUptime)
         deadline = min(deadline ?? turboDeadline, turboDeadline)
       }
+      for run in device.outputs.macros.values {
+        deadline = min(deadline ?? run.nextAt, run.nextAt)
+      }
       for (id, tracker) in device.outputs.activations {
         guard let binding = device.actionBinding(id: id) else { continue }
         if let longHold = binding.longHold, let pressTime = tracker.pressUptime,
@@ -50,12 +59,15 @@ extension RemappingEngineState {
           )
           deadline = min(deadline ?? holdDeadline, holdDeadline)
         }
-        if let doubleTap = binding.doubleTap, let releaseTime = tracker.releaseUptime,
+        if !binding.multiTap.isEmpty, let releaseTime = tracker.releaseUptime,
           tracker.pendingDefault
         {
           let windowDeadline = Self.saturatingAdd(
             releaseTime,
-            UInt64(doubleTap.windowMs * nanosecondsPerMillisecond)
+            UInt64(
+              binding.multiTap.continuationWindowMs(after: tracker.tapCount)
+                * nanosecondsPerMillisecond
+            )
           )
           deadline = min(deadline ?? windowDeadline, windowDeadline)
         }
@@ -67,6 +79,7 @@ extension RemappingEngineState {
     return deadline
   }
 
+  /// Keyboard, modifier and pointer button outputs that are down.
   var heldOutputs: Set<RemappingHeldOutput> {
     var outputs = Set(keyReferences.keys.map(RemappingHeldOutput.key))
     outputs.formUnion(modifierReferences.keys.map(RemappingHeldOutput.modifier))
@@ -74,6 +87,11 @@ extension RemappingEngineState {
     return outputs
   }
 
+  /// Advances time-driven output to an uptime and returns the actions.
+  ///
+  /// Controllers advance in sorted order. Each one runs triggers, motion stick expiry, sticks, gyro
+  /// expiry, chords, held-back presses, sequences, pulses, turbo repeats, long holds and
+  /// multi-taps. Continuous output comes last, across all controllers.
   mutating func tick(at uptimeNanoseconds: UInt64) -> [RemappingEngineAction] {
     var actions: [RemappingEngineAction] = []
     for identifier in sortedLogicalControllerIDs {
@@ -113,6 +131,10 @@ extension RemappingEngineState {
         }
       }
 
+      for owner in device.outputs.macros.keys.sorted(by: Self.uuidLessThan) {
+        actions += advanceMacro(owner, device: &device, at: tickUptime)
+      }
+
       for id in device.outputs.activations.keys.sorted(by: Self.uuidLessThan) {
         guard let binding = device.actionBinding(id: id) else { continue }
         guard var tracker = device.outputs.activations[id] else { continue }
@@ -136,15 +158,18 @@ extension RemappingEngineState {
           }
         }
 
-        if let doubleTap = binding.doubleTap, let releaseTime = tracker.releaseUptime,
+        if !binding.multiTap.isEmpty, let releaseTime = tracker.releaseUptime,
           tracker.pendingDefault
         {
           let windowEnd = Self.saturatingAdd(
             releaseTime,
-            UInt64(doubleTap.windowMs * nanosecondsPerMillisecond)
+            UInt64(
+              binding.multiTap.continuationWindowMs(after: tracker.tapCount)
+                * nanosecondsPerMillisecond
+            )
           )
           if tickUptime >= windowEnd {
-            actions += tapBinding(binding.id, destination: binding.destination, device: &device)
+            actions += resolveTaps(binding, tapCount: tracker.tapCount, device: &device)
             tracker = RemappingActivationTracker()
           }
         }
@@ -158,11 +183,15 @@ extension RemappingEngineState {
     return actions
   }
 
+  /// Removes the mapping session of a controller and returns the actions that release its outputs.
+  ///
+  /// Held bindings and the gamepad contribution of the session are released, and continuous output
+  /// that it alone drove is stopped.
   mutating func releaseController(_ identifier: LogicalControllerID) -> [RemappingEngineAction] {
     guard var device = devices[identifier] else { return [] }
     let oldContinuous = continuousTotals()
     devices.removeValue(forKey: identifier)
-    var actions: [RemappingEngineAction] = []
+    var actions = stopMacros(device: &device) + stopSpeech(device: &device)
     for bindingID in device.outputs.heldBindings.keys.sorted(by: Self.uuidLessThan) {
       guard let destination = device.outputs.heldBindings[bindingID] else { continue }
       actions += setBinding(bindingID, destination: destination, isDown: false, device: &device)
@@ -172,6 +201,7 @@ extension RemappingEngineState {
     return actions
   }
 
+  /// Forgets all source baselines and releases every controller.
   mutating func drain() -> [RemappingEngineAction] {
     sourceBaselines.removeAll()
     var actions: [RemappingEngineAction] = []
@@ -179,6 +209,12 @@ extension RemappingEngineState {
     return actions
   }
 
+  /// Presses or releases the destination of a binding owner.
+  ///
+  /// Does nothing when the owner is already in that state. Gamepad buttons and d-pad directions
+  /// become contributions to the virtual gamepad, physical destinations become physical actions,
+  /// and keyboard and pointer button destinations go through reference counts. A release uses the
+  /// destination that was pressed.
   mutating func setBinding(
     _ bindingID: UUID,
     destination: RemappingDestination,
@@ -194,6 +230,40 @@ extension RemappingEngineState {
       device.outputs.heldBindings.removeValue(forKey: bindingID)
     }
     let effectiveDestination = isDown ? destination : heldDestination
+    if case .macro(let macroID) = effectiveDestination {
+      return isDown
+        ? startMacro(macroID, owner: bindingID, device: &device)
+        : endMacroSource(owner: bindingID, device: &device)
+    }
+    if case .speak(let text, let voice) = effectiveDestination {
+      guard isDown else { return [] }
+      device.outputs.isSpeaking = true
+      return [.speak(text, voice: voice, device.identifier)]
+    }
+    if effectiveDestination.isProfileControl {
+      return isDown ? runProfileControl(effectiveDestination, device: &device) : []
+    }
+    switch effectiveDestination {
+    case .midiNote(let channel, let note, let velocity):
+      return [
+        .midi(
+          isDown
+            ? .noteOn(channel: channel, note: note, velocity: velocity)
+            : .noteOff(channel: channel, note: note)
+        )
+      ]
+    case .midiControlChange(let channel, let controller):
+      return [
+        .midi(
+          .controlChange(
+            channel: channel,
+            controller: controller,
+            value: isDown ? RemappingDestination.midiMaxData : 0
+          )
+        )
+      ]
+    default: break
+    }
     let virtualContribution: RemappingGamepadState?
     switch effectiveDestination {
     case .gamepadButton(let button): virtualContribution = RemappingGamepadState(buttons: [button])
@@ -213,6 +283,7 @@ extension RemappingEngineState {
     return isDown ? press(effectiveDestination) : release(effectiveDestination)
   }
 
+  /// Presses and releases a destination at once.
   mutating func tapBinding(
     _ bindingID: UUID,
     destination: RemappingDestination,
@@ -222,6 +293,7 @@ extension RemappingEngineState {
       + setBinding(bindingID, destination: destination, isDown: false, device: &device)
   }
 
+  /// Returns zero-amount actions for continuous destinations whose total went from nonzero to zero.
   func stoppedContinuousActions(
     previous: [RemappingContinuousDestination: Double]
   ) -> [RemappingEngineAction] {
@@ -234,6 +306,7 @@ extension RemappingEngineState {
     }
   }
 
+  /// Sums the continuous output of all controllers per destination, clamped to `-1...1`.
   func continuousTotals() -> [RemappingContinuousDestination: Double] {
     var totals: [RemappingContinuousDestination: Double] = [:]
     for device in devices.values {
@@ -244,6 +317,10 @@ extension RemappingEngineState {
     return totals.mapValues { min(max($0, -1), 1) }
   }
 
+  /// Presses a destination and returns the system actions it causes.
+  ///
+  /// A key, modifier or pointer button goes down with its first holder. Modifiers go down before
+  /// the key, in a stable order.
   mutating func press(_ destination: RemappingDestination) -> [RemappingEngineAction] {
     switch destination {
     case .keyboard(let key, let modifiers):
@@ -258,10 +335,19 @@ extension RemappingEngineState {
     case .mouseButton(let button):
       return Self.increment(&mouseButtonReferences, key: button) == 1
         ? [.system(.mouseButtonDown(button))] : []
-    case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical: return []
+    case .mouseMovement, .pointerPosition, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis,
+      .physical, .macro, .profileSwitch, .layerSet, .pause, .speak, .midiNote,
+      .midiControlChange:
+      return []
+    case .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText:
+      return destination.systemActionRequest(isDown: true).map { [.systemAction($0)] } ?? []
     }
   }
 
+  /// Releases a destination and returns the system actions it causes.
+  ///
+  /// A key, modifier or pointer button goes up with its last holder. The key goes up before the
+  /// modifiers, which go up in reverse order.
   mutating func release(_ destination: RemappingDestination) -> [RemappingEngineAction] {
     switch destination {
     case .keyboard(let key, let modifiers):
@@ -276,10 +362,16 @@ extension RemappingEngineState {
     case .mouseButton(let button):
       return Self.decrement(&mouseButtonReferences, key: button) == 0
         ? [.system(.mouseButtonUp(button))] : []
-    case .mouseMovement, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis, .physical: return []
+    case .mouseMovement, .pointerPosition, .scroll, .gamepadButton, .gamepadDpad, .gamepadAxis,
+      .physical, .macro, .profileSwitch, .layerSet, .pause, .speak, .midiNote,
+      .midiControlChange:
+      return []
+    case .systemKey, .systemAction, .openApplication, .openURL, .runShortcut, .typeText:
+      return destination.systemActionRequest(isDown: false).map { [.systemAction($0)] } ?? []
     }
   }
 
+  /// Returns an action for each continuous destination with a nonzero total.
   private func continuousActions() -> [RemappingEngineAction] {
     let totals = continuousTotals()
     return RemappingContinuousDestination.allCases.compactMap { destination in
@@ -288,30 +380,38 @@ extension RemappingEngineState {
     }
   }
 
+  /// Adds a holder of a key and returns the count after adding.
   private static func increment<Key: Hashable>(_ references: inout [Key: Int], key: Key) -> Int {
     let count = references[key, default: 0] + 1
     references[key] = count
     return count
   }
 
+  /// Removes a holder of a key, never going below zero, and returns the remaining count.
+  ///
+  /// A count of zero removes the entry.
   private static func decrement<Key: Hashable>(_ references: inout [Key: Int], key: Key) -> Int {
     let count = max(references[key, default: 0] - 1, 0)
     if count == 0 { references.removeValue(forKey: key) } else { references[key] = count }
     return count
   }
 
+  /// Controller identifiers in sorted order.
   private var sortedLogicalControllerIDs: [LogicalControllerID] {
     devices.keys.sorted()
   }
 
+  /// Returns modifiers ordered by their raw value.
   private static func sortedModifiers(
     _ modifiers: Set<RemappingKeyModifier>
   ) -> [RemappingKeyModifier] { modifiers.sorted { $0.rawValue < $1.rawValue } }
 
-  private static func uuidLessThan(_ lhs: UUID, _ rhs: UUID) -> Bool {
+  /// Orders identifiers by their string form.
+  static func uuidLessThan(_ lhs: UUID, _ rhs: UUID) -> Bool {
     lhs.uuidString < rhs.uuidString
   }
 
+  /// Adds two values, saturating at `UInt64.max` instead of overflowing.
   static func saturatingAdd(_ lhs: UInt64, _ rhs: UInt64) -> UInt64 {
     let (sum, overflowed) = lhs.addingReportingOverflow(rhs)
     return overflowed ? .max : sum

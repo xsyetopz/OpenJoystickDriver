@@ -1,10 +1,12 @@
 import Foundation
 
+/// The failures of reading or changing the user settings file.
 public enum SettingsStoreError: Error, Equatable, LocalizedError, Sendable {
-  /// The file is not valid JSON of the `Settings` kind (including an unknown key).
+  /// The file is not an XML property list of the `Settings` kind (including an unknown key).
   case damaged(file: String)
   /// The file's `apiVersion` or `kind` is not the supported one; the problem names the file.
   case unsupported(file: String, problem: DocumentHeaderProblem)
+  /// The file, or its lock file, cannot be opened or written.
   case unwritable(file: String)
   /// The file could not be moved to the Trash.
   case cannotReset(file: String)
@@ -13,6 +15,7 @@ public enum SettingsStoreError: Error, Equatable, LocalizedError, Sendable {
   /// The file turns off both Show in menu bar and Show in Dock, which leaves no entry point.
   case storedNoVisibleEntryPoint(file: String)
 
+  /// The localization of the error descriptions.
   private static let localization = Localization()
 
   /// The settings file the error is about; `nil` when the error is about a change, not a file.
@@ -26,6 +29,7 @@ public enum SettingsStoreError: Error, Equatable, LocalizedError, Sendable {
   }
 
   /// Whether the file itself cannot be used, so a reset (moving it to the Trash) fixes the error.
+  ///
   /// A file that cannot be written or moved is not fixed by a reset.
   public var fileIsUnusable: Bool {
     switch self {
@@ -34,6 +38,7 @@ public enum SettingsStoreError: Error, Equatable, LocalizedError, Sendable {
     }
   }
 
+  /// The description of the error for the user.
   public var errorDescription: String? {
     switch self {
     case .damaged(let file):
@@ -56,7 +61,7 @@ public enum SettingsStoreError: Error, Equatable, LocalizedError, Sendable {
   }
 }
 
-/// Reads and writes the `Settings.json` file through the `DataDirectory` port.
+/// Reads and writes the `Settings.plist` file through the `DataDirectory` port.
 ///
 /// The layers, lowest to highest precedence:
 /// 1. the built-in defaults (``ApplicationSettingKey/defaultValue``);
@@ -67,13 +72,16 @@ public enum SettingsStoreError: Error, Equatable, LocalizedError, Sendable {
 /// An update holds an advisory lock on a sidecar file while it reads, changes, and writes, so the
 /// app, the service, and the CLI cannot lose each other's updates.
 public struct SettingsStore: Sendable {
-  public static let fileName = "Settings.json"
+  /// The name of the user settings file.
+  public static let fileName = "Settings.plist"
   /// The sidecar file whose advisory lock serializes updates.
-  public static let lockFileName = "Settings.json.lock"
-  /// The location whose `Settings.json` is read and written.
+  public static let lockFileName = "Settings.plist.lock"
+  /// The location whose `Settings.plist` is read and written.
   public static let location = DataLocation.applicationData
 
+  /// The data directory that locates the settings folder.
   private let directory: any DataDirectory
+  /// Moves a file to the Trash.
   private let trash: @Sendable (URL) throws -> Void
 
   /// `trash` moves the settings file to the Trash; the default is the user's Trash.
@@ -133,9 +141,7 @@ public struct SettingsStore: Sendable {
       {
         throw SettingsStoreError.noVisibleEntryPoint
       }
-      let encoder = JSONEncoder()
-      encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-      do { try encoder.encode(document).write(to: url, options: .atomic) } catch {
+      do { try DocumentCoder.encode(document).write(to: url, options: .atomic) } catch {
         throw SettingsStoreError.unwritable(file: url.path)
       }
     }
@@ -172,13 +178,18 @@ public struct SettingsStore: Sendable {
     return try body()
   }
 
+  /// Reads the settings document at `url`; an absent file gives an empty document.
+  ///
+  /// - Throws: ``SettingsStoreError/storedNoVisibleEntryPoint(file:)`` when the file turns off both
+  ///   entry points, ``SettingsStoreError/unsupported(file:problem:)`` for an unsupported header,
+  ///   and ``SettingsStoreError/damaged(file:)`` for a file that cannot be read or decoded.
   private func read(_ url: URL) throws -> SettingsDocument {
     let data: Data
     do { data = try Data(contentsOf: url) } catch CocoaError.fileReadNoSuchFile {
       return SettingsDocument()
     } catch { throw SettingsStoreError.damaged(file: url.path) }
     do {
-      let document = try JSONDecoder().decode(SettingsDocument.self, from: data)
+      let document = try DocumentCoder.decode(SettingsDocument.self, from: data, file: url.path)
       if document.hasNoVisibleEntryPoint {
         throw SettingsStoreError.storedNoVisibleEntryPoint(file: url.path)
       }

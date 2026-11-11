@@ -1,6 +1,6 @@
 import Foundation
-import ProtocolPacketFixtures
 import OpenJoystickDriverKit
+import ProtocolPacketFixtures
 
 func runSteamStatusFallbackCheck() throws {
   let parser = SteamControllerDriver(isWirelessReceiver: true)

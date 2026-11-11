@@ -268,7 +268,7 @@ struct ProfileCreationFieldsTests {
     fields.appID = "com.apple.Safari"
     #expect(
       fields.proposedProfile(in: context)?.applicationScope
-        == .application(appID: "com.apple.Safari")
+        == .application(appIDs: ["com.apple.Safari"])
     )
   }
 
@@ -296,5 +296,27 @@ struct ProfileCreationFieldsTests {
       physicalInput: .exclusive
     )
     #expect(fields.proposedProfile(in: context)?.outputPolicy == fields.outputPolicy)
+  }
+
+  @Test
+  func theGyroStickTemplateProposesAStickProfileForAModelWithMotion() {
+    let dualSense = Self.device("DualSense", token: "d", vendorID: 0x054C, productID: 0x0CE6)
+    let context = Self.context(devices: [dualSense])
+    var fields = ProfileCreationFields()
+    fields.template = .gyroStick
+    fields.gyroStick = .left
+
+    #expect(fields.lacksMotion(in: context) == false)
+    #expect(fields.proposedProfile(in: context)?.gyroOutput.mode == .leftStick)
+  }
+
+  @Test
+  func theGyroStickTemplateProposesNothingForAModelWithoutMotion() {
+    let context = Self.context(devices: [Self.padA])
+    var fields = ProfileCreationFields()
+    fields.template = .gyroStick
+
+    #expect(fields.lacksMotion(in: context))
+    #expect(fields.proposedProfile(in: context) == nil)
   }
 }

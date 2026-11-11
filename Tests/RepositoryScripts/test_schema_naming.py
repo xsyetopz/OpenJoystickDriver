@@ -13,6 +13,7 @@ what the rule does not cover:
 from __future__ import annotations
 
 import json
+import plistlib
 import re
 import unittest
 from collections.abc import Iterator
@@ -175,7 +176,7 @@ API_VERSION = "the apiVersion value `group/version` (Kubernetes grammar)"
 CLOUD_EVENTS = "CloudEvents 1.0 envelope attribute"
 HID_PAGE = "HID Usage Table page name used as a property name"
 REPORT_DATA_SCHEMA = (
-    "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha1/"
+    "https://xsyetopz.github.io/OpenJoystickDriver/schemas/v1alpha3/"
     "report.schema.json#/$defs/supportDiagnosticData"
 )
 MODE_ID = "a mode id is a name with an RFC 1123 label pattern, not an enum value"
@@ -183,7 +184,7 @@ MODE_ID = "a mode id is a name with an RFC 1123 label pattern, not an enum value
 # (schema, pointer) -> (values excused at that pointer, reason).
 EXCEPTIONS: dict[tuple[str, str], tuple[tuple[str, ...], str]] = {
     **{
-        (schema, pointer): (("openjoystickdriver/v1alpha1",), API_VERSION)
+        (schema, pointer): (("openjoystickdriver/v1alpha3",), API_VERSION)
         for schema, pointer in (
             ("access-grants", "/properties/apiVersion/const"),
             ("cli-output", "/$defs/sharedAPIVersion/const"),
@@ -217,10 +218,6 @@ EXCEPTIONS: dict[tuple[str, str], tuple[tuple[str, ...], str]] = {
         (REPORT_DATA_SCHEMA,),
         CLOUD_EVENTS,
     ),
-    ("crosswalk", "/properties"): (
-        ("$comment",),
-        "a JSON Schema keyword used as a property name",
-    ),
     ("crosswalk", "/$defs/source/properties/pages/properties"): (
         ("GenericDesktop", "Simulation", "Button", "Telephony", "Consumer"),
         HID_PAGE,
@@ -234,6 +231,10 @@ EXCEPTIONS: dict[tuple[str, str], tuple[tuple[str, ...], str]] = {
         MODE_ID,
     ),
     ("controller", "/$defs/mode/if/properties/id/const"): (("default",), MODE_ID),
+    ("controller", "/then/properties/modes/contains/properties/id/const"): (
+        ("default",),
+        MODE_ID,
+    ),
 }
 
 # Property-name maps a field-name enum is checked against. A source is a list of
@@ -244,7 +245,7 @@ SESSION = [("controller", "/$defs/session/properties")]
 PROTOCOL = [("controller", "/$defs/protocol/properties")]
 HID_INPUT = [("controller", "/$defs/hidInput/properties")]
 SETTING_PATHS = "dotted paths through the properties of settings"
-PROTOCOL_PARAMETERS = "the keys of `parameters` in Resources/Protocols/*.json"
+PROTOCOL_PARAMETERS = "the keys of `parameters` in Resources/Protocols/*.plist"
 
 # Settings the command line names that the settings document does not store.
 UNSTORED_SETTINGS = {
@@ -345,9 +346,8 @@ def setting_paths(node: Any, prefix: str = "") -> set[str]:
 
 def protocol_parameters() -> set[str]:
     names: set[str] = set()
-    for path in sorted(PROTOCOLS.glob("*.json")):
-        with path.open(encoding="utf-8") as source:
-            names.update(json.load(source).get("parameters", {}))
+    for path in sorted(PROTOCOLS.glob("*.plist")):
+        names.update(plistlib.loads(path.read_bytes()).get("parameters", {}))
     return names
 
 

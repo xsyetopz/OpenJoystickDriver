@@ -45,6 +45,22 @@ package enum JSONSchemaFiles {
   /// `endpoint.schema.json#/$defs/welcome`.
   package static func issues(in text: String, against reference: String) throws -> [String] {
     let value = try JSONSerialization.jsonObject(with: Data(text.utf8), options: .fragmentsAllowed)
+    return try issues(inObject: value, against: reference)
+  }
+
+  /// The issues in the stored document `data`, an XML property list, against the schema at
+  /// `reference`. The validator checks the objects the property list holds.
+  package static func issues(
+    inPropertyList data: Data,
+    against reference: String
+  ) throws
+    -> [String]
+  {
+    try issues(inObject: PropertyListFixture.tree(data), against: reference)
+  }
+
+  /// The issues in the Foundation tree `value` against the schema at `reference`.
+  package static func issues(inObject value: Any, against reference: String) throws -> [String] {
     let file = String(reference.prefix { $0 != "#" })
     return try Validator().validate(value, against: ["$ref": reference], in: file, at: "$")
   }

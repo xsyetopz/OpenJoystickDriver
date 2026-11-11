@@ -5,68 +5,98 @@
   import OpenJoystickDriverKit
 
   extension InputTestViewModel {
+    /// Where the sampling of the controller's input is.
     enum SessionState: Equatable {
+      /// No sampling runs.
       case idle
+      /// The first sample is awaited.
       case starting
+      /// Samples arrive and every control is at rest.
+      case receiving
+      /// Samples arrive and a control has left its rest value.
       case live
+      /// Samples stopped arriving after some had come.
       case stale
+      /// The controller is not connected.
       case disconnected
+      /// Reading the input needs a permission that is not granted.
       case permissionRequired
+      /// No sample ever arrived.
       case unavailable
+      /// The session failed; the status reads Failed.
       case error
     }
 
+    /// The output test.
     enum OutputOperation: Equatable {
+      /// The rumble test.
       case rumble
+      /// The player indicator.
       case playerIndicator
+      /// The color.
       case color
+      /// The brightness.
       case brightness
     }
 
+    /// Where the latest output test is.
     enum OutputState: Equatable {
+      /// No output test runs.
       case idle
+      /// The output test runs.
       case running(OutputOperation)
+      /// The controller received the output.
       case succeeded(OutputOperation)
+      /// The output failed.
       case failed(OutputOperation)
     }
 
+    /// Waits for a number of nanoseconds.
     typealias Sleep = @Sendable (UInt64) async throws -> Void
 
+    /// The rumble intensity of each motor, kept in the output settings.
     var rumbleIntensities: [PhysicalRumbleMotor: Double] {
       get { outputSettings.rumbleIntensities }
       set { outputSettings.rumbleIntensities = newValue }
     }
 
+    /// The rumble test length in milliseconds, kept in the output settings.
     var rumbleDurationMilliseconds: Double {
       get { outputSettings.rumbleDurationMilliseconds }
       set { outputSettings.rumbleDurationMilliseconds = newValue }
     }
 
+    /// The player indicator to apply, kept in the output settings.
     var playerIndicator: PhysicalPlayerIndicator {
       get { outputSettings.playerIndicator }
       set { outputSettings.playerIndicator = newValue }
     }
 
+    /// The red component of the color to apply, kept in the output settings.
     var red: Double {
       get { outputSettings.red }
       set { outputSettings.red = newValue }
     }
 
+    /// The green component of the color to apply, kept in the output settings.
     var green: Double {
       get { outputSettings.green }
       set { outputSettings.green = newValue }
     }
 
+    /// The blue component of the color to apply, kept in the output settings.
     var blue: Double {
       get { outputSettings.blue }
       set { outputSettings.blue = newValue }
     }
 
+    /// The brightness to apply, kept in the output settings.
     var brightness: Double {
       get { outputSettings.brightness }
       set { outputSettings.brightness = newValue }
     }
 
+    /// What the selected controller can do as output; none without a controller.
     var capabilities: PhysicalControllerOutputCapabilities {
       device?.physicalOutputCapabilities ?? .none
     }
@@ -87,6 +117,10 @@
     /// `ojd controller rumble --duration` also allows.
     static let rumbleDurationRange = 100...maxRumbleDurationMs
 
+    /// Returns the length in milliseconds, rounded and clamped to ``rumbleDurationRange``.
+    ///
+    /// - Parameter milliseconds: The length the slider holds.
+    /// - Returns: The length in milliseconds, rounded and clamped to ``rumbleDurationRange``.
     static func clampedRumbleDuration(_ milliseconds: Double) -> Int {
       max(
         rumbleDurationRange.lowerBound,
@@ -94,18 +128,29 @@
       )
     }
 
+    /// The latest input of the controller.
     var latestInput: ControllerState { liveState.snapshot }
 
+    /// Whether the input is being sampled.
     var isSampling: Bool { samplingTask != nil }
 
+    /// Whether an output test runs.
     var isOutputBusy: Bool {
       if case .running = outputState { return true }
       return false
     }
 
+    /// Whether the controller is connected, so an output can be sent.
     var canSendOutput: Bool { isDeviceConnected && device != nil }
+    /// Whether the running output test is a rumble that Stop can end.
     var canStopRumble: Bool { outputMayRequireRumbleStop }
 
+    /// Selects the controller.
+    ///
+    /// A different controller resets the input, the rumble intensities and the output state, and
+    /// stops the output of the previous one.
+    ///
+    /// - Parameter selectedDevice: The controller to test.
     func selectDevice(_ selectedDevice: ApplicationServiceDeviceDescription) {
       motionCalibration.select(ControllerReference.session(selectedDevice.sessionToken))
       guard device?.sessionToken.rawValue != selectedDevice.sessionToken.rawValue else {
@@ -130,6 +175,10 @@
       startSamplingIfNeeded()
     }
 
+    /// Follows the connected controllers: the selected controller's entry is refreshed, or the
+    /// controller counts as disconnected and its output stops.
+    ///
+    /// - Parameter devices: The connected controllers.
     func reconcileConnectedDevices(_ devices: [ApplicationServiceDeviceDescription]) {
       guard let current = device else { return }
       guard
@@ -152,6 +201,10 @@
       startSamplingIfNeeded()
     }
 
+    /// Follows the runtime status: the connected controllers, and a missing input permission for a
+    /// controller found over HID that is not connected.
+    ///
+    /// - Parameter status: The status of the service.
     func reconcileStatus(_ status: RuntimeStatusPresentation) {
       reconcileConnectedDevices(status.devices)
       guard !isDeviceConnected, status.permissions.inputRead != .granted,
@@ -160,11 +213,13 @@
       sessionState = .permissionRequired
     }
 
+    /// Marks the window as open and starts sampling.
     func open() {
       isWindowActive = true
       startSamplingIfNeeded()
     }
 
+    /// Starts sampling the input of the selected controller when the window is open and none runs.
     private func startSamplingIfNeeded() {
       guard isWindowActive, samplingTask == nil, isDeviceConnected else { return }
       guard let device else {
@@ -180,6 +235,7 @@
       }
     }
 
+    /// Marks the window as closed and ends sampling and output.
     func close() {
       isWindowActive = false
       cancelSampling(nextState: device == nil ? .disconnected : .idle)
@@ -187,6 +243,10 @@
       motionCalibration.select(nil)
     }
 
+    /// Rumbles the controller for the chosen length.
+    ///
+    /// The service stops the rumble when the length ends. Does nothing without a connected
+    /// controller that has rumble.
     func testRumble() {
       guard let device, canSendOutput, capabilities.supportsRumble else { return }
       let command = rumbleCommand()
@@ -210,11 +270,15 @@
       }
     }
 
+    /// Stops the running rumble.
     func stopRumble() {
       guard outputMayRequireRumbleStop, let device else { return }
       cancelOutput(stopSelector: ControllerReference.session(device.sessionToken))
     }
 
+    /// Applies the player indicator.
+    ///
+    /// Does nothing without a controller that has one.
     func applyPlayerIndicator() {
       guard let device, canSendOutput, capabilities.supportsPlayerIndicator else { return }
       let selector = ControllerReference.session(device.sessionToken)
@@ -225,6 +289,9 @@
       }
     }
 
+    /// Previews the color on the controller.
+    ///
+    /// Does nothing without a controller that has a programmable color.
     func applyColor() {
       guard let device, canSendOutput, capabilities.lightingFeatures.contains(.programmableColor)
       else { return }
@@ -243,6 +310,9 @@
       }
     }
 
+    /// Applies the brightness.
+    ///
+    /// Does nothing without a controller that has programmable brightness.
     func applyBrightness() {
       guard let device, canSendOutput, capabilities.supportsProgrammableBrightness else { return }
       let selector = ControllerReference.session(device.sessionToken)
@@ -255,6 +325,15 @@
       }
     }
 
+    /// Reads the controller's input every sample interval until sampling is canceled or replaced.
+    ///
+    /// A read without input counts as a failure, and three failures in a row end sampling. The state
+    /// is `live` from the first sample in which a control is off its rest value, and stays `live`
+    /// while samples arrive.
+    ///
+    /// - Parameters:
+    ///   - selector: The controller.
+    ///   - generation: The count that names this sampling.
     private func sampleLoop(selector: ControllerReference, generation: UInt64) async {
       var receivedSnapshot = false
       var consecutiveFailures = 0
@@ -265,7 +344,9 @@
           guard generation == samplingGeneration else { return }
           if let snapshot {
             liveState.update(snapshot)
-            if sessionState != .live { sessionState = .live }
+            let next: SessionState =
+              sessionState == .live || snapshot.hasControlOffRest ? .live : .receiving
+            if sessionState != next { sessionState = next }
             receivedSnapshot = true
             consecutiveFailures = 0
           } else {
@@ -288,6 +369,9 @@
       }
     }
 
+    /// Cancels the sampling and sets the session state.
+    ///
+    /// - Parameter nextState: The state after cancellation.
     private func cancelSampling(nextState: SessionState) {
       samplingGeneration &+= 1
       samplingTask?.cancel()
@@ -295,6 +379,12 @@
       sessionState = nextState
     }
 
+    /// Runs an output test, after canceling the previous one and stopping its rumble.
+    ///
+    /// - Parameters:
+    ///   - operation: The output test.
+    ///   - selector: The controller.
+    ///   - body: Sends the output and returns whether the controller received it.
     private func beginOutputOperation(
       _ operation: OutputOperation,
       selector: ControllerReference,
@@ -342,12 +432,17 @@
       }
     }
 
+    /// Forgets the finished output test.
     private func clearOutputOperation() {
       outputTask = nil
       outputSelector = nil
       outputMayRequireRumbleStop = false
     }
 
+    /// Cancels the output test and releases the color preview, and stops a rumble on the
+    /// controller.
+    ///
+    /// - Parameter selector: The controller to stop when no output test names one.
     private func cancelOutput(stopSelector selector: ControllerReference?) {
       outputGeneration &+= 1
       let previousTask = outputTask

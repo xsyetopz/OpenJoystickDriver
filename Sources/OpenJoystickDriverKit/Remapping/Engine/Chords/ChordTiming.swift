@@ -1,7 +1,12 @@
 import Foundation
 
 extension RemappingDeviceState {
+  /// Chords that apply now.
+  ///
+  /// A chord of an active layer replaces the profile chord with the same sources, and is added when
+  /// no profile chord has them.
   var effectiveChords: [RemappingChord] {
+    guard !isPaused else { return [] }
     var chords = profile.chords
     for layerID in layers.activeLayers {
       guard let layer = profile.layers.first(where: { $0.id == layerID }) else { continue }
@@ -16,6 +21,7 @@ extension RemappingDeviceState {
     return chords
   }
 
+  /// Effective chords ordered by source count, largest first, then by profile order.
   private var prioritizedChords: [RemappingChord] {
     effectiveChords.enumerated().sorted {
       if $0.element.sources.count != $1.element.sources.count {
@@ -25,6 +31,11 @@ extension RemappingDeviceState {
     }.map(\.element)
   }
 
+  /// Returns the chords that are selected now, largest first.
+  ///
+  /// A chord is selected when it matches, shares no source with a chord already selected, and no
+  /// earlier chord that shares a source can still complete. A chord that contains the `source`
+  /// being released skips the last condition.
   func selectedChords(releasing source: RemappingSource? = nil) -> [RemappingChord] {
     let candidates = prioritizedChords
     var consumed: Set<RemappingSource> = []
@@ -42,6 +53,8 @@ extension RemappingDeviceState {
     }
   }
 
+  /// Returns the latest time at which a larger chord that shares a source with a matching chord of
+  /// `source` may still complete, or `nil` when none can.
   func deferredChordDeadline(for source: RemappingSource) -> UInt64? {
     let candidates = prioritizedChords
     var deadline: UInt64?
@@ -55,6 +68,11 @@ extension RemappingDeviceState {
     return deadline
   }
 
+  /// Returns the end of the window in which a simultaneous chord can still complete, or `nil` when
+  /// it cannot.
+  ///
+  /// A chord cannot complete when it is not simultaneous, already matches, has a replayed source,
+  /// has all sources active, has no pressed source, or its window has ended.
   private func completionDeadline(_ chord: RemappingChord) -> UInt64? {
     guard chord.mode == .simultaneous, !matches(chord),
       chord.sources.isDisjoint(with: chords.replayedChordSources),
@@ -66,6 +84,10 @@ extension RemappingDeviceState {
     return lastUptime < deadline ? deadline : nil
   }
 
+  /// Whether a chord is satisfied.
+  ///
+  /// All sources are active and none is claimed by another recognizer. A simultaneous chord also
+  /// needs no replayed source and all its presses inside its window.
   func matches(_ chord: RemappingChord) -> Bool {
     guard chord.sources.isSubset(of: activeSources) else { return false }
     let activeChordSources = effectiveChords.filter { chords.activeChords.contains($0.id) }.reduce(

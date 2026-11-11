@@ -2,9 +2,11 @@ import Foundation
 
 /// A HID connection left to macOS, with the routing address that identifies its controller.
 struct PassThroughHIDDevice: Equatable {
+  /// The routing address of the connection.
   let routingAddress: ControllerConnectionAddress
   /// True for a native gamepad no driver bound; false for another interface of a native one.
   let nativePassThrough: Bool
+  /// The device as the service status reports it.
   let description: PassThroughDeviceSnapshot
 }
 
@@ -17,8 +19,9 @@ extension DeviceManager {
     }
   }
 
-  /// Whether a native controller holds the routing address, bound or left to macOS. Location 0
-  /// identifies no controller.
+  /// Whether a native controller holds the routing address, bound or left to macOS.
+  ///
+  /// Location 0 identifies no controller.
   func hasNativeHIDDevice(at address: ControllerConnectionAddress) -> Bool {
     guard address.locationID != 0 else { return false }
     return passThroughDevices.values.contains {
@@ -29,11 +32,12 @@ extension DeviceManager {
       }
   }
 
-  /// Gives a native connection its routing address before it binds: cancels a sibling
-  /// interface's initialization and tears down any other HID device OJD bound there (a sibling
-  /// interface or a stale connection of the same controller), releasing its input claim, so
-  /// macOS keeps every other interface of the controller. IOKit location 0 identifies no
-  /// controller.
+  /// Gives a native connection its routing address before it binds: cancels a sibling interface's
+  /// initialization and tears down any other HID device OJD bound there (a sibling interface or a
+  /// stale connection of the same controller), releasing its input claim, so macOS keeps every
+  /// other interface of the controller.
+  ///
+  /// IOKit location 0 identifies no controller.
   func prepareNativeHIDLocation(_ connection: HIDDeviceConnection) async {
     let address = connection.routingAddress
     guard address.locationID != 0 else { return }
@@ -58,8 +62,9 @@ extension DeviceManager {
     _ = await hidManager.releaseInputClaim(address: address)
   }
 
-  /// Records a HID connection left to macOS. OJD does not bind it, so it gets no pipeline, no
-  /// virtual device, and no claim reconciliation.
+  /// Records a HID connection left to macOS.
+  ///
+  /// OJD does not bind it, so it gets no pipeline, no virtual device, and no claim reconciliation.
   func recordPassThroughDevice(
     _ connection: HIDDeviceConnection,
     vendorID: UInt16,
@@ -82,11 +87,13 @@ extension DeviceManager {
     )
   }
 
+  /// Forgets the pass-through device of `connectionID`.
   func clearPassThroughDevice(_ connectionID: UUID) {
     guard passThroughDevices.removeValue(forKey: connectionID) != nil else { return }
     notifyServiceStatusChanged()
   }
 
+  /// Forgets every pass-through device.
   func clearPassThroughDevices() {
     guard !passThroughDevices.isEmpty else { return }
     passThroughDevices.removeAll()

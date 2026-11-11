@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -61,7 +62,7 @@ struct ControllerRecordWriterTests {
   }
 
   static func object(_ data: Data) throws -> [String: Any] {
-    try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+    try #require(try PropertyListFixture.tree(data) as? [String: Any])
   }
 
   @Test
@@ -70,7 +71,7 @@ struct ControllerRecordWriterTests {
       let change = try Self.change(Self.bundledHID, to: .ojd, in: directory)
       #expect(change.created)
       #expect(change.previousServer == .system)
-      #expect(change.file.lastPathComponent == "2c22-2000.patch.json")
+      #expect(change.file.lastPathComponent == "2c22-2000.patch.plist")
       try ControllerRecordWriter.write(change)
       let written = try Self.object(Data(contentsOf: change.file))
       #expect(written["kind"] as? String == "ControllerPatch")
@@ -86,9 +87,9 @@ struct ControllerRecordWriterTests {
   @Test
   func existingFileKeepsItsOtherKeys() throws {
     try Self.withDirectory { directory, _ in
-      let file = directory.appendingPathComponent("2c22-2000.patch.json")
-      try JSONSerialization.data(
-        withJSONObject: ControllerPatch.document(
+      let file = directory.appendingPathComponent("2c22-2000.patch.plist")
+      try PropertyListFixture.data(
+        tree: ControllerPatch.document(
           selector: .identity(Self.bundledHID),
           body: ["server": "OJD", "tuning": ["stickDeadzone": 0.1]]
         )
@@ -116,7 +117,7 @@ struct ControllerRecordWriterTests {
         "modes": [["id": "default", "protocol": ["family": "HIDDescriptor"]]],
       ]
       let package = try fixture.makePackage(
-        controllers: [("1234-abcd.json", try JSONSerialization.data(withJSONObject: record))]
+        controllers: [("1234-abcd.plist", try PropertyListFixture.data(tree: record))]
       )
       try fixture.store().install(package, replace: true)
       let change = try Self.change(Self.unbundled, to: .ojd, in: directory)
@@ -133,10 +134,12 @@ struct ControllerRecordWriterTests {
   @Test
   func invalidFileIsRefusedAndKept() throws {
     try Self.withDirectory { directory, _ in
-      let file = directory.appendingPathComponent("2c22-2000.patch.json")
+      let file = directory.appendingPathComponent("2c22-2000.patch.plist")
       try Data("{".utf8).write(to: file)
       #expect(
-        throws: ControllerRecordWriter.Failure.invalidFile("the file is not a JSON object")
+        throws: ControllerRecordWriter.Failure.invalidFile(
+          "2c22-2000.patch.plist is not an XML property list"
+        )
       ) { try Self.change(Self.bundledHID, to: .ojd, in: directory) }
       #expect(try Data(contentsOf: file) == Data("{".utf8))
     }
@@ -179,57 +182,22 @@ struct ControllerRecordWriterTests {
     }
   }
 
-  /// The written file keeps the user's member order and number text; only `server` changes.
+  /// The written file is the canonical property list of the patch with only `server` changed.
   @Test
-  func existingFileKeepsItsOrderAndStyle() throws {
+  func existingFileIsWrittenAsACanonicalPropertyList() throws {
     try Self.withDirectory { directory, _ in
-      let file = directory.appendingPathComponent("2c22-2000.patch.json")
-      func text(_ server: String) -> String {
-        """
-        {
-          "kind": "ControllerPatch",
-          "apiVersion": "\(OpenJoystickDriverAPI.version)",
-          "selector": {
-            "productID": 8192,
-            "vendorID": 11298
-          },
-          "patch": {
-            "tuning": {
-              "stickDeadzone": 0.10
-            },
-            "server": "\(server)"
-          }
-        }
-
-        """
-      }
-      try Data(text("OJD").utf8).write(to: file)
-      let change = try Self.change(Self.bundledHID, to: .system, in: directory)
-      let data = try #require(change.data)
-      #expect(String(bytes: data, encoding: .utf8) == text("System"))
-    }
-  }
-
-  @Test
-  func aFileWithAByteOrderMarkIsRefusedByName() throws {
-    try Self.withDirectory { directory, _ in
-      let file = directory.appendingPathComponent("2c22-2000.patch.json")
-      let data =
-        Data([0xEF, 0xBB, 0xBF])
-        + (try JSONSerialization.data(
-          withJSONObject: ControllerPatch.document(
+      let file = directory.appendingPathComponent("2c22-2000.patch.plist")
+      func data(_ server: String) throws -> Data {
+        try PropertyListFixture.data(
+          tree: ControllerPatch.document(
             selector: .identity(Self.bundledHID),
-            body: ["server": "OJD"]
+            body: ["tuning": ["stickDeadzone": 0.1], "server": server]
           )
-        ))
-      try data.write(to: file)
-      #expect(
-        throws: ControllerRecordWriter.Failure.invalidFile(
-          "JSON text, byte 0: the text starts with a byte order mark; save the file as UTF-8 "
-            + "without one"
         )
-      ) { try Self.change(Self.bundledHID, to: .ojd, in: directory) }
-      #expect(try Data(contentsOf: file) == data)
+      }
+      try data("OJD").write(to: file)
+      let change = try Self.change(Self.bundledHID, to: .system, in: directory)
+      #expect(change.data == (try data("System")))
     }
   }
 }

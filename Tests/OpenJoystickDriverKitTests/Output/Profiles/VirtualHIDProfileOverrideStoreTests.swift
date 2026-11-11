@@ -18,7 +18,7 @@ struct VirtualHIDProfileOverrideStoreTests {
 
   private func write(_ json: String, named name: String, in directory: URL) throws {
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-    try Data(json.utf8).write(to: directory.appendingPathComponent(name))
+    try PropertyListFixture.bytes(json: json).write(to: directory.appendingPathComponent(name))
   }
 
   private func persona(
@@ -47,7 +47,7 @@ struct VirtualHIDProfileOverrideStoreTests {
       #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"\#(Store.kind)","#
       + #""persona":"Generic"}"#
     let problem = #expect(throws: ControllerRecordProblem.self) {
-      try Store.parse(Data(document.utf8))
+      try Store.parse(PropertyListFixture.bytes(json: document))
     }
     #expect(problem?.description == "the file must hold match")
     #expect(problem?.code == .invalidControllerRecord)
@@ -70,9 +70,8 @@ struct VirtualHIDProfileOverrideStoreTests {
       try Store(directory: directory).set(.generic, vendorID: 0x045E, productID: 0x02EA)
 
       #expect(Store(directory: directory).override(vendorID: 0x045E, productID: 0x02EA) == .generic)
-      let url = directory.appendingPathComponent("045e-02ea.json")
-      let object = try JSONSerialization.jsonObject(with: Data(contentsOf: url))
-      let document = try #require(object as? [String: Any])
+      let url = directory.appendingPathComponent("045e-02ea.plist")
+      let document = try PropertyListFixture.dictionary(at: url)
       #expect(document["$schema"] == nil)
       #expect(document["apiVersion"] as? String == OpenJoystickDriverAPI.version)
       #expect(document["kind"] as? String == Store.kind)
@@ -121,11 +120,11 @@ struct VirtualHIDProfileOverrideStoreTests {
   @Test
   func aFileThatIsNotAPersonaIsSkippedAndTheRestApply() throws {
     try withDirectory { directory in
-      try write(persona(vendorID: 1, productID: 2), named: "a.json", in: directory)
-      try write(#"{"match":{}}"#, named: "b.json", in: directory)
+      try write(persona(vendorID: 1, productID: 2), named: "a.plist", in: directory)
+      try write(#"{"match":{}}"#, named: "b.plist", in: directory)
       try write(
         persona(vendorID: 3, productID: 4, descriptor: "xbox-360"),
-        named: "c.json",
+        named: "c.plist",
         in: directory
       )
       let store = Store(directory: directory)
@@ -133,7 +132,7 @@ struct VirtualHIDProfileOverrideStoreTests {
       #expect(store.loadError == nil)
       #expect(store.override(vendorID: 1, productID: 2) == .generic)
       #expect(store.override(vendorID: 3, productID: 4) == nil)
-      #expect(store.problems.map(\.url.lastPathComponent) == ["b.json", "c.json"])
+      #expect(store.problems.map(\.url.lastPathComponent) == ["b.plist", "c.plist"])
       #expect(store.files.first?.problem == nil)
     }
   }
@@ -145,7 +144,7 @@ struct VirtualHIDProfileOverrideStoreTests {
         of: OpenJoystickDriverAPI.version,
         with: "unsupported.example/v9"
       )
-      try write(unsupported, named: "unsupported.json", in: directory)
+      try write(unsupported, named: "unsupported.plist", in: directory)
       let store = Store(directory: directory)
 
       #expect(store.override(vendorID: 1, productID: 2) == nil)
@@ -166,7 +165,7 @@ struct VirtualHIDProfileOverrideStoreTests {
         of: #""apiVersion":"\#(OpenJoystickDriverAPI.version)","#,
         with: ""
       )
-      try write(missing, named: "missing.json", in: directory)
+      try write(missing, named: "missing.plist", in: directory)
       let store = Store(directory: directory)
 
       #expect(store.override(vendorID: 1, productID: 2) == nil)
@@ -178,17 +177,17 @@ struct VirtualHIDProfileOverrideStoreTests {
   @Test
   func theSecondFileWithTheSameMatchIsSkipped() throws {
     try withDirectory { directory in
-      try write(persona(vendorID: 1, productID: 2), named: "a.json", in: directory)
+      try write(persona(vendorID: 1, productID: 2), named: "a.plist", in: directory)
       try write(
         persona(vendorID: 1, productID: 2, descriptor: "SDLCompatible"),
-        named: "b.json",
+        named: "b.plist",
         in: directory
       )
       let store = Store(directory: directory)
 
       #expect(store.override(vendorID: 1, productID: 2) == .generic)
-      #expect(store.problems.map(\.url.lastPathComponent) == ["b.json"])
-      #expect(store.problems.first?.problem?.contains("a.json") == true)
+      #expect(store.problems.map(\.url.lastPathComponent) == ["b.plist"])
+      #expect(store.problems.first?.problem?.contains("a.plist") == true)
     }
   }
 
@@ -197,7 +196,7 @@ struct VirtualHIDProfileOverrideStoreTests {
     try withDirectory { directory in
       try write(
         persona(vendorID: 1, productID: 2, identity: Self.identityJSON),
-        named: "stick.json",
+        named: "stick.plist",
         in: directory
       )
       let found = try #require(Store(directory: directory).persona(vendorID: 1, productID: 2))
@@ -216,7 +215,7 @@ struct VirtualHIDProfileOverrideStoreTests {
     try withDirectory { directory in
       try write(
         persona(vendorID: 1, productID: 2, identity: #"{"vendorID":4660,"productID":1}"#),
-        named: "stick.json",
+        named: "stick.plist",
         in: directory
       )
       let store = Store(directory: directory)
@@ -233,19 +232,19 @@ struct VirtualHIDProfileOverrideStoreTests {
       try store.set(.generic, vendorID: 5, productID: 6)
       try write(
         persona(vendorID: 1, productID: 2, identity: Self.identityJSON),
-        named: "stick.json",
+        named: "stick.plist",
         in: directory
       )
-      try write("not json", named: "broken.json", in: directory)
+      try write("not json", named: "broken.plist", in: directory)
 
       let kept = try store.resetAll()
 
       #expect(
-        kept == [directory.appendingPathComponent("stick.json").realPath]
+        kept == [directory.appendingPathComponent("stick.plist").realPath]
       )
       #expect(store.override(vendorID: 5, productID: 6) == nil)
       #expect(store.persona(vendorID: 1, productID: 2)?.identity != nil)
-      #expect(store.files.map(\.url.lastPathComponent) == ["broken.json", "stick.json"])
+      #expect(store.files.map(\.url.lastPathComponent) == ["broken.plist", "stick.plist"])
     }
   }
 
@@ -254,11 +253,11 @@ struct VirtualHIDProfileOverrideStoreTests {
     try withDirectory { directory in
       try write(
         persona(vendorID: 1, productID: 2, identity: Self.identityJSON),
-        named: "stick.json",
+        named: "stick.plist",
         in: directory
       )
       let store = Store(directory: directory)
-      let path = directory.appendingPathComponent("stick.json").realPath
+      let path = directory.appendingPathComponent("stick.plist").realPath
 
       #expect(throws: VirtualHIDProfileOverrideError.keptFile(path)) {
         try store.reset(vendorID: 1, productID: 2)
@@ -272,7 +271,7 @@ struct VirtualHIDProfileOverrideStoreTests {
     try withDirectory { directory in
       try write(
         persona(vendorID: 1, productID: 2, identity: Self.identityJSON),
-        named: "stick.json",
+        named: "stick.plist",
         in: directory
       )
       let store = Store(directory: directory)
@@ -282,7 +281,7 @@ struct VirtualHIDProfileOverrideStoreTests {
       let found = try #require(store.persona(vendorID: 1, productID: 2))
       #expect(found.descriptor == .sdlCompatible)
       #expect(found.identity?.productName == "Arcade Stick")
-      #expect(store.files.map(\.url.lastPathComponent) == ["stick.json"])
+      #expect(store.files.map(\.url.lastPathComponent) == ["stick.plist"])
     }
   }
 

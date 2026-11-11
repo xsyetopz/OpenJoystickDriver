@@ -1,5 +1,6 @@
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverPresentation
@@ -19,7 +20,7 @@ struct ProfileListModelTests {
 
   @Test
   func aDuplicateCarriesTheContentUnderTheTypedName() {
-    let source = Self.profile(named: "Racing", scope: .application(appID: "com.example.Game"))
+    let source = Self.profile(named: "Racing", scope: .application(appIDs: ["com.example.Game"]))
     let copy = duplicatedProfile(source, named: " Racing 2 ", in: [source])
     #expect(copy?.name == "Racing 2")
     #expect(copy?.id != source.id)
@@ -48,13 +49,13 @@ struct ProfileListModelTests {
     let count = "12 assignments"
     #expect(ProfileScopeCaption.text(for: .global, assignments: count) { _ in "x" } == count)
     let safari = ProfileScopeCaption.text(
-      for: .application(appID: "com.apple.Safari"),
+      for: .application(appIDs: ["com.apple.Safari"]),
       assignments: count
     ) { _ in "Safari" }
     #expect(safari == OJDLocalized.formatted("ui.profiles.scopedCaption", "Safari", count))
     #expect(safari.contains("Safari") && safari.contains(count))
     let gone = ProfileScopeCaption.text(
-      for: .application(appID: "com.example.Gone"),
+      for: .application(appIDs: ["com.example.Gone"]),
       assignments: count
     ) { _ in nil }
     #expect(gone.contains("com.example.Gone") && gone.contains(count))
@@ -80,7 +81,10 @@ struct ProfileListModelTests {
 
   @Test
   func aValidProfileFileShowsWhatItTargets() {
-    let result = ProfileFileValidation.check(Data(Self.validDocument.utf8), fileName: "pad.json")
+    let result = ProfileFileValidation.check(
+      PropertyListFixture.bytes(json: Self.validDocument),
+      fileName: "pad.plist"
+    )
     #expect(
       result
         == .valid(
@@ -94,15 +98,20 @@ struct ProfileListModelTests {
 
   @Test
   func anInvalidProfileFileShowsItsErrorCodeAndProblem() {
-    let result = ProfileFileValidation.check(Data("not json".utf8), fileName: "bad.json")
+    let result = ProfileFileValidation.check(
+      PropertyListFixture.bytes(
+        json: #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"Profile","name":"Pad"}"#
+      ),
+      fileName: "bad.plist"
+    )
     guard case .invalid(let fileName, let code, let problem) = result else {
       Issue.record("expected an invalid result")
       return
     }
-    #expect(fileName == "bad.json")
+    #expect(fileName == "bad.plist")
     #expect(code == ErrorCode.invalidProfile.rawValue)
     #expect(!problem.isEmpty)
     #expect(result.message.contains(code))
-    #expect(result.message.contains("bad.json"))
+    #expect(result.message.contains("bad.plist"))
   }
 }

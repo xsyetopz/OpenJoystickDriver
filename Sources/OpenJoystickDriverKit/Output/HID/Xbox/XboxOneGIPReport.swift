@@ -35,8 +35,9 @@ public enum XboxOneGIPHIDDescriptor {
   static let guidePayloadLength: UInt8 = 2
   /// The key code that follows the Guide byte in a virtual key packet.
   static let guideKeyCode: UInt8 = 0x5B
-  /// The sequence byte of the packets sent. SDL reads the sequence only to acknowledge or chunk
-  /// packets, and neither option is set.
+  /// The sequence byte of the packets sent.
+  ///
+  /// SDL reads the sequence only to acknowledge or chunk packets, and neither option is set.
   static let sequence: UInt8 = 0x00
 
   /// Report 0x20 is the command, 3 more header bytes and the 14-byte state payload.
@@ -46,6 +47,7 @@ public enum XboxOneGIPHIDDescriptor {
   /// 8-byte rumble body.
   static let rumbleReportPayloadSize = 12
 
+  /// The report descriptor bytes.
   public static let descriptor: [UInt8] = [
     0x05, 0x01,  // Usage Page (Generic Desktop)
     0x09, 0x05,  // Usage (Game Pad)
@@ -111,14 +113,21 @@ public enum XboxOneGIPHIDDescriptor {
 /// touch controls. Sticks are signed 16-bit values; SDL reads both Y axes inverted, so the report
 /// carries the bitwise complement of the state's Y.
 public struct XboxOneGIPHIDReportFormat: VirtualGamepadReportFormat {
+  /// The Xbox One GIP descriptor.
   public var descriptor: [UInt8] { XboxOneGIPHIDDescriptor.descriptor }
+  /// The input report size without its ID.
   public var inputReportPayloadSize: Int { XboxOneGIPHIDDescriptor.inputReportSize - 1 }
+  /// The report ID of the input state packet.
   public var inputReportID: UInt8? { XboxOneGIPHIDDescriptor.inputReportID }
+  /// The rumble report size without its ID.
   public var outputReportPayloadSize: Int? { XboxOneGIPHIDDescriptor.rumbleReportPayloadSize }
+  /// The report ID of the rumble packet.
   public var outputReportID: UInt8? { XboxOneGIPHIDDescriptor.rumbleReportID }
 
+  /// Creates the format.
   public init() {}
 
+  /// The GIP input state packet of `state`.
   public func buildInputReport(from state: VirtualGamepadState) -> [UInt8] {
     func pressed(_ button: GamepadHIDDescriptor.ButtonBit) -> Bool {
       state.buttons & (1 << UInt32(button.rawValue)) != 0

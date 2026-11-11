@@ -1,14 +1,21 @@
 import Foundation
 
+/// The report ID of the state report.
 private let switch2StateReportID: UInt8 = 0x05
+/// The shortest state report that is decoded.
 private let switch2StateReportLength = 64
 /// SDL `RUMBLE_MAX`: the HD rumble amplitude cap.
 private let switch2RumbleMaxAmplitude = 29_000
 
+/// The shape of the Switch 2 controller that the driver decodes.
 public enum Switch2ControllerLayout: Sendable {
+  /// A Switch 2 Pro Controller.
   case pro
+  /// A left Joy-Con 2.
   case leftJoyCon
+  /// A right Joy-Con 2.
   case rightJoyCon
+  /// An NSO GameCube controller.
   case gameCube
 
   /// The description's `layout` parameter value for this layout.
@@ -22,19 +29,29 @@ public enum Switch2ControllerLayout: Sendable {
   }
 }
 
-/// The link a Switch 2 controller runs on. Both carry the same input report and command set.
-/// Byte 2 of every command names the link: `0x00` USB, `0x01` Bluetooth LE.
+/// The link a Switch 2 controller runs on.
+///
+/// Both carry the same input report and command set. Byte 2 of every command names the link: `0x00`
+/// USB, `0x01` Bluetooth LE.
 public enum Switch2Link: Sendable {
+  /// The USB link.
   case usb
+  /// The Bluetooth LE link.
   case bluetoothLE
 
+  /// The value of byte 2 of every command on this link.
   var commandTransportByte: UInt8 { self == .usb ? 0x00 : 0x01 }
 }
 
-/// One stick axis from flash calibration. Zero fields mean no calibration, as in SDL.
+/// One stick axis from flash calibration.
+///
+/// Zero fields mean no calibration, as in SDL.
 struct Switch2AxisCalibration: Equatable {
+  /// The raw value at the stick's center.
   var neutral: UInt16 = 0
+  /// The raw value at the stick's maximum.
   var max: UInt16 = 0
+  /// The raw value at the stick's minimum.
   var min: UInt16 = 0
 
   /// SDL `MapJoystickAxis`: scales by the side's range around neutral, or maps `0...4096` to
@@ -46,8 +63,11 @@ struct Switch2AxisCalibration: Equatable {
   }
 }
 
+/// The flash calibration of both axes of one stick.
 struct Switch2StickCalibration: Equatable {
+  /// The calibration of the horizontal axis.
   var x = Switch2AxisCalibration()
+  /// The calibration of the vertical axis.
   var y = Switch2AxisCalibration()
 
   /// SDL `ParseStickCalibration`: three packed 12-bit pairs, neutral then max then min.
@@ -59,6 +79,7 @@ struct Switch2StickCalibration: Equatable {
     y = Switch2AxisCalibration(neutral: pairs[0].y, max: pairs[1].y, min: pairs[2].y)
   }
 
+  /// Creates a stick calibration without calibration data.
   init() {}
 }
 
@@ -75,17 +96,29 @@ struct Switch2StickCalibration: Equatable {
 /// ``Switch2BluetoothLEHub`` presents it as the HID and command-channel transports.
 public final class Switch2Driver: PhysicalProtocolDriver {
 
+  /// The shape of the controller that the driver decodes.
   public let layout: Switch2ControllerLayout
+  /// The link the controller runs on.
   public let link: Switch2Link
+  /// The state after the latest report.
   private var state = ControllerState.neutral
+  /// The calibration of the left stick.
   private var leftStick = Switch2StickCalibration()
+  /// The calibration of the right stick.
   private var rightStick = Switch2StickCalibration()
+  /// The flash zero point of the left analog trigger.
   private var leftTriggerZero: UInt8 = 0
+  /// The flash zero point of the right analog trigger.
   private var rightTriggerZero: UInt8 = 0
+  /// The low-frequency rumble amplitude.
   private var rumbleLow: UInt16 = 0
+  /// The high-frequency rumble amplitude.
   private var rumbleHigh: UInt16 = 0
+  /// The rolling sequence number of the rumble reports.
   private var rumbleSequence: UInt8 = 0
+  /// The error accumulator that dithers the GameCube rumble motor.
   private var gameCubeRumbleError = 0
+  /// The number of stop packets still to send after rumble ends.
   private var pendingStopPackets = 0
 
   /// Bulk command timeout (`usbCommandTimeoutMs`).
@@ -98,12 +131,13 @@ public final class Switch2Driver: PhysicalProtocolDriver {
     PhysicalProtocolID.nintendoSwitch2.descriptionOutputEndpoint
   }
 
-  /// The USB interface that carries commands and replies, from the description. Loading refuses
-  /// a NintendoSwitch2 description without one, so the guard cannot fail.
+  /// The USB interface that carries commands and replies, from the description.
+  ///
+  /// Loading refuses a NintendoSwitch2 description without one, so the guard cannot fail.
   static var commandChannel: ProtocolDescription.CommandChannel {
     guard let channel = PhysicalProtocolID.nintendoSwitch2.protocolDescription.commandChannel
     else {
-      preconditionFailure("nintendo-switch2.json sets no commandChannel")
+      preconditionFailure("nintendo-switch2.plist sets no commandChannel")
     }
     return channel
   }
@@ -124,8 +158,10 @@ public final class Switch2Driver: PhysicalProtocolDriver {
     )
   }
 
+  /// Clears the state, so the next report starts from neutral.
   public func resetProtocolState() { state = .neutral }
 
+  /// The controls of the layout, with digital triggers.
   public var capabilities: ControllerCapabilities {
     let controls: Set<Control>
     switch layout {
@@ -164,11 +200,13 @@ public final class Switch2Driver: PhysicalProtocolDriver {
     )
   }
 
+  /// No default colour: the controller has no light to restore.
   public var defaultColor: ControllerColor? { nil }
 
-  /// SDL reads USB replies of up to `0x50` bytes in 64-byte chunks, 100 ms each. A BLE reply
-  /// waits for a connection interval, so its read timeout is longer. The description's command
-  /// channel sets both. SDL `RUMBLE_INTERVAL`: the description's keep-alive interval is the
+  /// SDL reads USB replies of up to `0x50` bytes in 64-byte chunks, 100 ms each.
+  ///
+  /// A BLE reply waits for a connection interval, so its read timeout is longer. The description's
+  /// command channel sets both. SDL `RUMBLE_INTERVAL`: the description's keep-alive interval is the
   /// period the rumble packet is re-sent while any motor runs.
   public var sessionPlan: DriverSessionPlan {
     let channel = Self.commandChannel
@@ -185,12 +223,14 @@ public final class Switch2Driver: PhysicalProtocolDriver {
     ).withKeepAlive(of: .nintendoSwitch2)
   }
 
+  /// Always nil: the state report carries no logical connection.
   public func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
   /// SDL `HIDAPI_DriverSwitch2_InitUSB`: flash reads for the stick and trigger calibration, then
-  /// the init sequence. The last packet starts the input reports. The packets are the
-  /// description's startup writes for this link and layout; the driver stamps each one's link
-  /// byte.
+  /// the init sequence.
+  ///
+  /// The last packet starts the input reports. The packets are the description's startup writes for
+  /// this link and layout; the driver stamps each one's link byte.
   ///
   /// Over BLE the console sends the first five of the init packets, ending with the feature
   /// enable (ndeadly's captures and joycon2cpp's replay). The rest are the NFC, charging-grip,
@@ -225,7 +265,9 @@ public final class Switch2Driver: PhysicalProtocolDriver {
   }
 
   /// A flash read reply: command `0x02` response, subcommand `0x01`, then the read length, the
-  /// address, and the 64 data bytes from offset 16. Replies to other commands are ignored.
+  /// address, and the 64 data bytes from offset 16.
+  ///
+  /// Replies to other commands are ignored.
   public func consumeUSBCommandReply(_ bytes: [UInt8]) {
     guard bytes.count >= 0x50, bytes[0] == 0x02, bytes[1] == 0x01, bytes[3] == 0x01 else { return }
     let address = (0..<4).reduce(UInt32(0)) { $0 | (UInt32(bytes[12 + $1]) << ($1 * 8)) }
@@ -243,6 +285,7 @@ public final class Switch2Driver: PhysicalProtocolDriver {
     }
   }
 
+  /// Encodes a rumble or player indicator command; any other command is rejected as unsupported.
   public func encode(
     _ command: ControllerOutputCommand
   ) throws(ControllerOutputError) -> PhysicalOutputPlan {
@@ -277,9 +320,11 @@ public final class Switch2Driver: PhysicalProtocolDriver {
     return [.hidOutput(rumbleReport())]
   }
 
-  /// SDL `UpdateRumble`. Joy-Con reports use ID 1 and the Pro Controller ID 2, with its second
-  /// actuator's copy at `0x11`. The GameCube controller's ID 3 report carries on (1), off (0), or
-  /// stop (2), dithered by an error accumulator.
+  /// SDL `UpdateRumble`.
+  ///
+  /// Joy-Con reports use ID 1 and the Pro Controller ID 2, with its second actuator's copy at
+  /// `0x11`. The GameCube controller's ID 3 report carries on (1), off (0), or stop (2), dithered
+  /// by an error accumulator.
   private func rumbleReport() -> PhysicalHIDOutputReport {
     var bytes = [UInt8](repeating: 0, count: 64)
     bytes[1] = 0x50 | (rumbleSequence & 0x0F)
@@ -329,6 +374,7 @@ public final class Switch2Driver: PhysicalProtocolDriver {
     ]
   }
 
+  /// Decodes a `0x05` state report of at least 64 bytes; any other report is ignored.
   public func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
     let bytes = Array(data)
     guard bytes.count >= switch2StateReportLength, bytes[0] == switch2StateReportID else {
@@ -365,10 +411,12 @@ public final class Switch2Driver: PhysicalProtocolDriver {
     }
   }
 
+  /// The button masks shared by the face buttons.
   private static let faceButtons: [(UInt32, Control)] = [
     (0x0000_0001, .west), (0x0000_0002, .north), (0x0000_0004, .south),
     (0x0000_0008, .east),
   ]
+  /// The button masks of a Pro Controller.
   private static let proButtons: [(UInt32, Control)] =
     faceButtons + [
       (0x0000_0040, .rightShoulder), (0x0000_0080, .rightTrigger), (0x0000_0100, .back),
@@ -383,6 +431,7 @@ public final class Switch2Driver: PhysicalProtocolDriver {
     (0x0010_0000, .auxiliary4), (0x0020_0000, .auxiliary3), (0x0040_0000, .leftShoulder),
     (0x0080_0000, .leftTrigger),
   ]
+  /// The button masks of a right Joy-Con 2.
   private static let rightJoyConButtons: [(UInt32, Control)] =
     faceButtons + [
       (0x0000_0010, .auxiliary6), (0x0000_0020, .auxiliary5), (0x0000_0040, .rightShoulder),
@@ -398,6 +447,8 @@ public final class Switch2Driver: PhysicalProtocolDriver {
       (0x0040_0000, .leftTrigger), (0x0080_0000, .leftShoulder),
     ]
 
+  /// Reads the stick at `offset` and normalizes it with `calibration`; the vertical axis is
+  /// inverted.
   private func stick(
     _ bytes: [UInt8],
     at offset: Int,
@@ -412,6 +463,7 @@ public final class Switch2Driver: PhysicalProtocolDriver {
     UnipolarValue(normalized: (Float(value) - Float(zero)) / (232 - Float(zero)))
   }
 
+  /// Reads two packed 12-bit values at `offset`.
   static func twelveBitPair(_ bytes: [UInt8], at offset: Int) -> (x: UInt16, y: UInt16) {
     let x = UInt16(bytes[offset]) | (UInt16(bytes[offset + 1] & 0x0F) << 8)
     let y = (UInt16(bytes[offset + 1]) >> 4) | (UInt16(bytes[offset + 2]) << 4)

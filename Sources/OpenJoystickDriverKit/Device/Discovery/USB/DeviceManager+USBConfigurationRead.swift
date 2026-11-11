@@ -1,8 +1,9 @@
 import Foundation
 
 /// Polls in a row in which a raw-USB service's configuration descriptor read may fail before the
-/// service is left unclaimed with ``ProtocolBindingReason/configurationUnreadable``. At the 500 ms
-/// detection cadence the service gets about 2.5 s after it appears to settle.
+/// service is left unclaimed with ``ProtocolBindingReason/configurationUnreadable``.
+///
+/// At the 500 ms detection cadence the service gets about 2.5 s after it appears to settle.
 let usbConfigurationReadAttempts = 5
 
 extension DeviceManager {
@@ -82,10 +83,11 @@ extension DeviceManager {
   }
 
   /// Makes the polling loop attach a held service again once the host reports no exclusive owner
-  /// for it, while the USB device stays attached. A service whose owner changes stays held. When
-  /// the owner can no longer be read, the service is no longer watched: its record changes to
-  /// ``ProtocolBindingReason/configurationUnreadable`` and it waits for re-enumeration, logged
-  /// once.
+  /// for it, while the USB device stays attached.
+  ///
+  /// A service whose owner changes stays held. When the owner cannot be read, the service is not
+  /// watched further: its record changes to ``ProtocolBindingReason/configurationUnreadable`` and
+  /// it waits for re-enumeration, logged once.
   func releaseHeldUSBServices(
     in enumeration: inout USBEnumerationTracker,
     provider: any USBTransportProvider,
@@ -118,13 +120,14 @@ extension DeviceManager {
     }
   }
 
-  /// Drops the failed-read counts of services the last successful poll no longer lists, which
+  /// Drops the failed-read counts of services that the last successful poll does not list, which
   /// left before the tracker acknowledged them and so produce no detach.
   func pruneUSBConfigurationReadFailures(keeping devices: [USBTransportDevice]) {
     let present = Set(devices.map(\.serviceAddress))
     usbConfigurationReadFailures = usbConfigurationReadFailures.filter { present.contains($0.key) }
   }
 
+  /// Records the service as unbound for `reason`, with the interfaces observed.
   private func recordUnreadableConfiguration(
     _ device: USBTransportDevice,
     reason: ProtocolBindingReason,

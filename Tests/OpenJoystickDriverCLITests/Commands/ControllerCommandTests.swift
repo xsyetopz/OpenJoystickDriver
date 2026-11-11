@@ -121,6 +121,47 @@ struct ControllerCommandTests {
   }
 
   @Test
+  func rumbleOnAWiiRemoteSendsTheLowFrequencyLevelOfItsOneBinaryMotor() async throws {
+    let wii = PhysicalControllerOutputCapabilities(
+      rumbleMotors: [.lowFrequency],
+      lightingFeatures: [.playerIndicator],
+      binaryRumbleMotors: [.lowFrequency],
+      speaker: .yamahaADPCM4Bit
+    )
+    let service = try FakeService(
+      devices: [ApplicationServiceDeviceDescription.fixture(id: "wii-1", outputs: wii)],
+      respond: Self.delivered(dropping: [.highFrequency])
+    )
+    let result = await service.run(["controller", "rumble", token("wii-1"), "--left", "255"])
+    #expect(result.code == 0, "\(result.standardError)")
+    guard case .setRumble(let intensities, _) = try Self.sentCommands(service).first else {
+      Issue.record("expected setRumble")
+      return
+    }
+    #expect(intensities.lowFrequency != .min)
+  }
+
+  @Test
+  func rumbleWithLeftAndRightSendsOneCommandWithBothLevels() async throws {
+    let service = try FakeService(
+      devices: [ApplicationServiceDeviceDescription.fixture(id: "pad-1")],
+      respond: Self.delivered()
+    )
+    let result = await service.run([
+      "controller", "rumble", token("pad-1"), "--left", "128", "--right", "64",
+    ])
+    #expect(result.code == 0, "\(result.standardError)")
+    let commands = try Self.sentCommands(service)
+    #expect(commands.count == 1)
+    guard case .setRumble(let intensities, _) = commands.first else {
+      Issue.record("expected setRumble")
+      return
+    }
+    #expect(intensities.lowFrequency == UnipolarValue(byte: 128))
+    #expect(intensities.highFrequency == UnipolarValue(byte: 64))
+  }
+
+  @Test
   func playerNamesTheControllerLikeTheOtherOutputMessages() async throws {
     let service = try FakeService(
       devices: [ApplicationServiceDeviceDescription.fixture(id: "pad-1")],
@@ -556,7 +597,7 @@ struct ControllerCommandTests {
       isDirectory: true
     )
     defer { try? FileManager.default.removeItem(at: directory) }
-    let file = directory.appendingPathComponent("366c-0005.patch.json")
+    let file = directory.appendingPathComponent("366c-0005.patch.plist")
     if let userRecord {
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       try userRecord.write(to: file)
@@ -571,15 +612,15 @@ struct ControllerCommandTests {
     let result = await RecordStore.$directory.withValue(directory) {
       await service.run(["controller", "show", token("pad-1")] + flags)
     }
-    return (result, "\(directory.lastPathComponent)/366c-0005.patch.json")
+    return (result, "\(directory.lastPathComponent)/366c-0005.patch.plist")
   }
 
-  private static let userPatch = Data(
-    """
-    {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-     "selector": {"vendorID": 13932, "productID": 5},
-     "patch": {"tuning": {"stickDeadzone": 0.08}}}
-    """.utf8
+  private static let userPatch = PropertyListFixture.bytes(
+    json: """
+      {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
+       "selector": {"vendorID": 13932, "productID": 5},
+       "patch": {"tuning": {"stickDeadzone": 0.08}}}
+      """
   )
 
   @Test
@@ -627,6 +668,19 @@ struct ControllerCommandTests {
     let none = CLILocalized.text("cli.controller.show.recordNone")
     #expect(Self.rows(human.result, endingIn: none).count == 1)
     #expect(plain.result.standardOutput.contains("record\tnone\t\n"))
+  }
+
+  @Test
+  func showReportsTheInputMapping() async throws {
+    let json = try await Self.show(["--json"])
+    let human = try await Self.show([])
+    let plain = try await Self.show(["--plain"])
+
+    let mapping = try #require(try json.result.json()["inputMapping"] as? [String: Any])
+    #expect(mapping["source"] as? String == "StandardHIDUsageMap")
+    let standard = CLILocalized.text("cli.controller.show.inputMappingStandard")
+    #expect(Self.rows(human.result, endingIn: standard).count == 1)
+    #expect(plain.result.standardOutput.contains("input-mapping\t"))
   }
 
   @Test(arguments: [
@@ -684,7 +738,7 @@ struct ControllerCommandTests {
     #expect(result.code == 0, "\(result.standardError)")
     #expect(
       result.standardOutput
-        == #"{"apiVersion":"openjoystickdriver/v1alpha1","captureTime":"1970-01-01T00:00:01.500Z","#
+        == #"{"apiVersion":"openjoystickdriver/v1alpha3","captureTime":"1970-01-01T00:00:01.500Z","#
         + #""direction":"Rx","hex":"01 02","kind":"RawReport","length":2}"# + "\n"
     )
   }
@@ -739,7 +793,7 @@ struct ControllerCommandTests {
     #expect(lines.allSatisfy { $0["apiVersion"] == nil && $0["kind"] == nil })
     #expect(
       objects.allSatisfy {
-        $0["apiVersion"] as? String == "openjoystickdriver/v1alpha1"
+        $0["apiVersion"] as? String == "openjoystickdriver/v1alpha3"
           && $0["kind"] as? String == "Controller"
       }
     )

@@ -42,7 +42,9 @@ private let shared = IOOptionBits(kIOHIDOptionsTypeNone)
 
 struct HIDInputClaimTests {
   /// A second open from one client is ignored by the kernel and reports success, so a seize that
-  /// follows a shared open is never granted. The seize is the only open of the device object.
+  /// follows a shared open is never granted.
+  ///
+  /// The seize is the only open of the device object.
   @Test
   func aSeizeIsTheFirstAndOnlyOpen() {
     let recorder = RecordingPort()

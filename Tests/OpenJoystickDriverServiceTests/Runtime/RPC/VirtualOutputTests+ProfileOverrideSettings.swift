@@ -133,7 +133,7 @@ extension VirtualOutputTests {
     _ = await fixture.change(.set("Generic"))
 
     let other = LogicalControllerID(vendorID: 5, productID: 6)
-    let devices = fixture.server.describingVirtualHIDProfiles([
+    let devices = await fixture.server.describingVirtualHIDProfiles([
       (id, description(id)), (other, description(other)),
     ])
 
@@ -178,7 +178,7 @@ extension VirtualOutputTests {
       recordAccessRoute: .system
     )
 
-    let described = fixture.server.describingVirtualHIDProfiles([
+    let described = await fixture.server.describingVirtualHIDProfiles([
       (id, native), (id, description(id)),
     ])
 
@@ -229,13 +229,12 @@ extension VirtualOutputTests {
     var file: URL?
     let fixture = try await profileOverrideServer { directory in
       try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-      let url = directory.appendingPathComponent("stick.json")
+      let url = directory.appendingPathComponent("stick.plist")
       let identity =
         #"{"vendorID":4660,"productID":22136,"productName":"Stick","manufacturer":"Acme"}"#
-      try? Data(
-        (#"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"VirtualDevice","#
-          + #""match":{"vendorID":1,"productID":2},"persona":"Generic","identity":\#(identity)}"#)
-          .utf8
+      try? PropertyListFixture.bytes(
+        json: #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"VirtualDevice","#
+          + #""match":{"vendorID":1,"productID":2},"persona":"Generic","identity":\#(identity)}"#
       ).write(to: url)
       file = url
     }
@@ -275,7 +274,7 @@ extension VirtualOutputTests {
         requested: nil,
         live: .generic,
         source: .override,
-        failure: .overrideFileKept(path: "/VirtualDevices/stick.json")
+        failure: .overrideFileKept(path: "/VirtualDevices/stick.plist")
       ),
     ]
     for result in results {

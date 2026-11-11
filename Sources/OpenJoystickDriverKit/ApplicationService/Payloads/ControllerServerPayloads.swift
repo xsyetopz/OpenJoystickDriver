@@ -3,10 +3,14 @@ import Foundation
 /// Arguments of `setControllerServer`: the controller model and who serves it, `system` or
 /// `ojd`.
 public struct LocalServiceRPCControllerServerArguments: Codable, Sendable {
+  /// The USB vendor ID of the controller model.
   public let vendorID: Int
+  /// The USB product ID of the controller model.
   public let productID: Int
+  /// Who serves the model.
   public let server: ControllerServer
 
+  /// Creates the arguments from a model and a server.
   public init(vendorID: Int, productID: Int, server: ControllerServer) {
     self.vendorID = vendorID
     self.productID = productID
@@ -14,7 +18,9 @@ public struct LocalServiceRPCControllerServerArguments: Codable, Sendable {
   }
 }
 
-/// Why a `setControllerServer` request changed nothing. The user record stays as it was.
+/// Why a `setControllerServer` request changed nothing.
+///
+/// The user record stays as it was.
 public enum ControllerServerFailure: String, Codable, Equatable, Sendable {
   /// The model's family uses raw USB, so OJD always serves it.
   case rawUSB
@@ -41,10 +47,12 @@ public struct ControllerServerResult: Codable, Equatable, Sendable {
   public let file: String?
   /// Whether the request created the user record.
   public let created: Bool
+  /// Why the request changed nothing; nil when it succeeded.
   public let failure: ControllerServerFailure?
   /// The problem text of `invalidRecord` or `persistenceFailed`.
   public let detail: String?
 
+  /// Creates the result from its values.
   public init(
     server: ControllerServer,
     previous: ControllerServer,
@@ -61,5 +69,6 @@ public struct ControllerServerResult: Codable, Equatable, Sendable {
     self.detail = detail
   }
 
+  /// Whether the request succeeded.
   public var succeeded: Bool { failure == nil }
 }

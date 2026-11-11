@@ -1,4 +1,6 @@
 extension SubcommandPlan: Decodable {
+  /// Decodes `reportID`, `counterModulus`, `requests` and `playerIndicator`; an unknown key or a
+  /// plan that `SubcommandPlan` rejects is rejected.
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: DocumentKey.self)
     try container.rejectUnknown(allowed: [
@@ -89,6 +91,7 @@ extension SubcommandRequest: Decodable {
 }
 
 extension SubcommandRequest.SPIRead: Decodable {
+  /// Decodes `address`, `length` and `purpose`; an unknown key or an unknown purpose is rejected.
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: DocumentKey.self)
     try container.rejectUnknown(allowed: ["address", "length", "purpose"])

@@ -1,5 +1,17 @@
 /* Product name in the title of the application menu of the menu bar. It stays OpenJoystickDriver in every language. */
 "term.app.name" = "OpenJoystickDriver";
+/* Name of a destination that opens an application. %@ is the bundle identifier of the application. */
+"ui.mapping.openApplication" = "%@ を開く";
+/* Name of a destination that opens a URL. %@ is the URL. */
+"ui.mapping.openURL" = "URL %@ を開く";
+/* Name of a destination that runs a Shortcut. Shortcuts is the Apple app. %@ is the name of the shortcut. */
+"ui.mapping.runShortcut" = "ショートカット %@ を実行";
+/* Name of a system action destination. %@ is the name of the action, such as Mission Control. */
+"ui.mapping.systemAction" = "システムアクション %@";
+/* Name of a system key destination, such as volume up. %@ is the name of the key. */
+"ui.mapping.systemKey" = "システムキー %@";
+/* Name of a destination that types text. %@ is the text. */
+"ui.mapping.typeText" = "%@ を入力";
 /* Button of the problem banner in the Access area that quits and opens the app again so that a granted permission takes effect. OpenJoystickDriver is the product name. */
 "ui.permissions.restartApplication" = "OpenJoystickDriver を再起動";
 /* Menu item in the application menu that opens the project page on GitHub. GitHub is a product name and stays as written. */
@@ -50,6 +62,8 @@
 "status.allowed" = "許可済み";
 /* Value of a permission row in the Access area when the active profiles do not use the permission. */
 "status.notNeeded" = "不要";
+/* Line of the profile activation alert and of 'ojd profile activate' that names the permissions that the actions of the profile need and that are not granted. %@ is the permission names, separated by commas. */
+"status.missingPermissions" = "不足している権限: %@";
 /* Placeholder in the profile creation sheet shown instead of a controller model when no controller is connected. */
 "status.connectController" = "コントローラを接続";
 /* Line in the menu bar menu when no profile is active. */
@@ -152,8 +166,18 @@
 "ui.controllers.deviceInUse" = "別のプログラムがこのコントローラを使用しています。そのプログラムを終了するか、コントローラを再接続してください。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose USB configuration OJD could not read. OJD tries again only when the controller reconnects, so the text asks for that. USB stays as written. */
 "ui.controllers.configurationUnreadable" = "このコントローラの USB 構成を読み取れませんでした。コントローラを再接続してください。";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that is an 8BitDo bootloader identity. OJD sends such a controller no data, and the text says so. OJD stays as written. */
+"ui.controllers.bootloaderIdentity" = "このコントローラはブートローダ モードです。OJD はデータを送信しません。";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller whose ID several models share and that matches none of the supported ones. OJD sends such a controller no data, and the text says so. ID and OJD stay as written. */
+"ui.controllers.noModeMatched" = "このコントローラは ID を他のモデルと共有しており、対応モデルのどれにも一致しません。OJD はデータを送信しません。";
+/* Reason shown in the Controllers list and in the output of 'ojd status' for a connected device whose ID OJD recognizes and serves nothing, such as a receiver with no controller connected. OJD sends such a device no data, and the text says so. OJD stays as written. */
+"ui.controllers.idleIdentity" = "このデバイスは操作系を提供しません。コントローラが接続されていないレシーバなどが該当します。OJD はデータを送信しません。";
 /* Label of the battery fact in the Controllers detail. */
 "ui.controllers.battery" = "バッテリー";
+/* Label of the pause fact in the Controllers detail, which shows only while a Pause assignment holds the controller. */
+"ui.controllers.paused.label" = "リマッピング";
+/* Value of the pause fact in the Controllers detail, and menu bar menu row under a controller that a Pause assignment holds. */
+"ui.controllers.paused.value" = "一時停止中";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "シリアル番号を表示";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */
@@ -183,7 +207,7 @@
 /* Label of the fact in the Controllers detail that shows the USB vendor ID and product ID. VID and PID are the usual short names. */
 "ui.controllers.usbIdentifier" = "USB VID/PID";
 /* VoiceOver sentence while the app checks which profile is active for the controller. */
-"ui.controllers.profileCheckingSentence" = "アクティブなプロファイルを確認しています。";
+"ui.controllers.profileCheckingSentence" = "アクティブなプロファイルを確認しています…";
 /* VoiceOver sentence when the controller has no active profile. */
 "ui.controllers.noActiveProfileSentence" = "アクティブなプロファイルはありません。";
 /* VoiceOver sentence that names the active profile. %@ is the profile name. The sentence ends with a period. */
@@ -311,11 +335,9 @@
 /* Status in the capture assignment sheet before the capture starts. */
 "ui.capture.ready" = "待機の準備ができました。";
 /* Status in the capture assignment sheet while the app waits for a controller control. */
-"ui.capture.listening" = "コントローラの操作を待機しています。";
+"ui.capture.listening" = "コントローラの操作を待機しています…";
 /* VoiceOver announcement while the app waits for a controller control. Escape is the name of the Escape key. */
-"ui.capture.listeningCancel" = "コントローラの操作を待機しています。キャンセルするには Escape を押します。";
-/* Status text in the capture assignment sheet while the app waits for a controller control. Keep the three dots. */
-"ui.capture.listeningEllipsis" = "コントローラの操作を待機しています…";
+"ui.capture.listeningCancel" = "コントローラの操作を待機しています…キャンセルするには Escape を押します。";
 /* Status in the capture assignment sheet after a control is detected. %@ is the name of the control. The sentence ends with a period. */
 "ui.capture.detected" = "検出: %@。";
 /* Label with the detected control in the capture assignment sheet. %@ is the name of the control. It has no final period because other text follows or the label stands alone. */
@@ -384,8 +406,12 @@
 "ui.profiles.addLayer" = "レイヤーを追加";
 /* Title of the sheet that adds an assignment to a layer. %@ is the name of the layer. */
 "ui.profiles.addLayerAssignment" = "%@ に割り当てを追加";
+/* Button in the behavior sheet that adds an entry for a tap count, such as a triple tap, to the control. */
+"ui.profiles.addMultiTap" = "タップ回数を追加";
 /* Button of the combination sheet that adds a sequence. A sequence is a set of controls pressed one after the other. */
 "ui.profiles.addSequence" = "シーケンスを追加";
+/* Heading in the behavior sheet of the entries that send another destination when the control is tapped two to five times. */
+"ui.profiles.multiTap" = "複数回タップ";
 /* Title of the empty state in the profile editor when the profile has no assignment. */
 "ui.profiles.noAssignments" = "割り当てはまだありません";
 /* Instruction in the empty state of the profile editor. The destination is a key, a mouse button or a pointer movement. */
@@ -412,6 +438,16 @@
 "ui.profiles.changedElsewhere" = "プロファイルはほかの場所で変更されました。";
 /* Error in the profile editor when the service saved the profile but the app cannot read the state afterwards. */
 "ui.profiles.savedButUnavailable" = "プロファイルは保存されましたが、最新の状態を利用できません。";
+/* Label of the picker in the behavior sheet that sets how many taps of a control fire an entry. The choices are the numbers 2 to 5. */
+"ui.profiles.tapCount" = "タップ回数";
+/* Note in the behavior sheet under the tap-count entries. %@ is the longest tap window with its unit, such as 300 ms; the assignment's own destination fires only after that wait. */
+"ui.profiles.tapDelay" = "基本の出力先は最大 %@ 待つことがあります";
+/* Label of the field in the behavior sheet that sets the time from the press to the first repeat of turbo. The value is in milliseconds. */
+"ui.profiles.turboDelay" = "最初の繰り返しまでの遅延";
+/* Switch in the behavior sheet that makes turbo stop after a number of repeats. */
+"ui.profiles.turboLimit" = "繰り返し回数を制限";
+/* Label of the field in the behavior sheet that sets how many repeats turbo makes after the press before it stops. The value is a number. */
+"ui.profiles.turboMax" = "最大繰り返し回数";
 /* Save status of the profile editor: there are changes that are not saved. */
 "ui.profiles.unsaved" = "保存していない変更";
 /* Save status of the profile editor while the profile is being saved. Keep the three dots. */
@@ -462,8 +498,6 @@
 "ui.profiles.details" = "プロファイルの詳細";
 /* Note on an assignment row when the controller or its protocol cannot do what the assignment needs. */
 "ui.profiles.notSupportedByController" = "このコントローラまたはプロトコルではサポートされていません。";
-/* Label of the field in the behavior sheet for the destination of a double tap of a control. */
-"ui.profiles.doubleTap" = "ダブルタップ";
 /* Toolbar button in the Profiles area that exports the profile to a file. */
 "ui.profiles.export" = "プロファイルを書き出す";
 /* Option of the activation popup in the layer sheet: the layer is on while the control is held. */
@@ -504,7 +538,7 @@
 "ui.profiles.sequenceWindow" = "完了までの制限時間";
 /* Heading of the sequences section in the profile editor. */
 "ui.profiles.sequences" = "シーケンス";
-/* Label of the field in the behavior sheet that sets the time within which a second tap counts as a double tap. The value is in milliseconds. */
+/* Label of the field in the behavior sheet that sets the time from one tap's release to the next press within which the taps of a tap-count entry count together. The value is in milliseconds. */
 "ui.profiles.tapWindow" = "タップの受付時間";
 /* Label of the popup in the profile creation sheet that picks which apps the profile applies to. */
 "ui.profiles.target" = "対象";
@@ -512,6 +546,14 @@
 "ui.profiles.targetApplication" = "1 つの App";
 /* Option of the target popup: the profile applies to all apps. */
 "ui.profiles.targetGlobal" = "すべての App";
+/* Label of the popup in the profile creation sheet that picks what the new profile starts from. */
+"ui.profiles.template" = "テンプレート";
+/* Option of the template popup in the profile creation sheet: the profile starts empty. */
+"ui.profiles.templateEmpty" = "空";
+/* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
+"ui.profiles.templateGyroStick" = "ジャイロからスティック";
+/* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
+"ui.profiles.templateNoMotion" = "%@ にはモーションセンサーがありません。";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "切り替え";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -570,8 +612,32 @@
 "ui.mapping.axisDirection" = "%1$@ %2$@";
 /* Name of a mouse button destination. %@ is the button, for example left or right. */
 "ui.mapping.mouseButton" = "マウスの「%@」ボタン";
+/* Name of a MIDI note destination. %1$@ is the note number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiNote" = "MIDIノート %1$@、チャンネル %2$@";
+/* Name of a MIDI control change destination. %1$@ is the controller number from 0 to 127 and %2$@ is the channel from 1 to 16. */
+"ui.mapping.midiControlChange" = "MIDIコントローラ %1$@、チャンネル %2$@";
 /* Name of a pointer movement destination. %@ is the direction of the movement. */
 "ui.mapping.pointerMovement" = "ポインタの %@ 移動";
+/* Name of a pointer position destination. %@ is the axis whose value places the pointer across the main display. */
+"ui.mapping.pointerPosition" = "ポインタの %@ 位置";
+/* Name of the destination that activates the next profile of the controller's model and scope in name order, wrapping at the end. */
+"ui.mapping.profileNext" = "次のプロファイル";
+/* Name of the destination that activates the previous profile of the controller's model and scope in name order, wrapping at the start. */
+"ui.mapping.profilePrevious" = "前のプロファイル";
+/* Name of the destination that activates a specific profile of the same controller model. */
+"ui.mapping.profileSwitch" = "プロファイルを切り替え";
+/* Name of the destination that turns a layer on. %@ is the layer name. */
+"ui.mapping.layerOn" = "レイヤー %@ をオン";
+/* Name of the destination that turns a layer off. %@ is the layer name. */
+"ui.mapping.layerOff" = "レイヤー %@ をオフ";
+/* Name of the destination that flips a layer between on and off. %@ is the layer name. */
+"ui.mapping.layerToggle" = "レイヤー %@ を切り替え";
+/* Name of the destination that pauses the controller so its input passes through unmapped. */
+"ui.mapping.pauseOn" = "コントローラを一時停止";
+/* Name of the destination that resumes a paused controller so its mappings apply again. */
+"ui.mapping.pauseOff" = "コントローラを再開";
+/* Name of the destination that flips the controller between paused and resumed. */
+"ui.mapping.pauseToggle" = "一時停止を切り替え";
 /* Name of a scroll destination. %@ is the direction of the scroll. */
 "ui.mapping.scroll" = "%@ スクロール";
 /* Name of the bottom face button: A on Xbox, Cross on PlayStation. The slash stays. */
@@ -606,6 +672,14 @@
 "ui.mapping.touchGridCell" = "%1$@ グリッド %2$d×%3$d セル %4$d,%5$d";
 /* Name of a touch swipe as a control. %1$@ is the touch surface and %2$@ is the swipe direction. */
 "ui.mapping.touchSwipe" = "%1$@ スワイプ %2$@";
+/* Name of a stick ring as a control. %1$@ is the stick, %2$.2f is the inner radius and %3$.2f is the outer radius, both from 0 to 1. */
+"ui.mapping.stickRegion" = "%1$@ のリング %2$.2f～%3$.2f";
+/* Name of a stick ring with a sector as a control. %1$@ is the stick, %2$.2f is the inner radius, %3$.2f is the outer radius, %4$.0f is the sector start and %5$.0f is the sector end, both in degrees clockwise from up. */
+"ui.mapping.stickRegionSector" = "%1$@ のリング %2$.2f～%3$.2f、%4$.0f°～%5$.0f°";
+/* Name of a trigger pressure band as a control. %1$@ is the trigger, %2$.2f is the start and %3$.2f is the end of the band, both from 0 to 1. */
+"ui.mapping.triggerBand" = "%1$@ の範囲 %2$.2f～%3$.2f";
+/* Name of a touch area as a control. %1$@ is the touch surface, %2$.2f is the left edge, %3$.2f is the top edge, %4$.2f is the width and %5$.2f is the height, all as fractions of the surface. The multiplication sign stays between the width and the height. */
+"ui.mapping.touchArea" = "%1$@ のエリア %2$.2f、%3$.2f、%4$.2f×%5$.2f";
 /* Option of the touch surface popup: the main touch surface of the controller. */
 "ui.mapping.touchSurfacePrimary" = "メインの面";
 /* Option of the touch surface popup: the left touch surface of the controller. */
@@ -634,6 +708,74 @@
 "ui.profiles.touch.stickRadius" = "スティックの最大半径（面に対する割合）";
 /* Label of the field in the touch sheet that sets the stick deadzone. The deadzone is the part of the travel near the center that is ignored. */
 "ui.profiles.touch.deadzone" = "スティックのデッドゾーン";
+/* Title of the row of the Controller section and of the sheet that adds a stick ring, trigger band or touch area as an assignment. */
+"ui.profiles.region.title" = "リージョン";
+/* Summary under the regions row of the Controller section: what a region is. */
+"ui.profiles.region.summary" = "スティックのリング、トリガーの範囲、タッチエリア";
+/* Label of the segmented control in the regions sheet that picks between a stick ring, a trigger band and a touch area. */
+"ui.profiles.region.kind" = "リージョンの種類";
+/* Segment of the region type control in the regions sheet: a ring around the center of a stick. */
+"ui.profiles.region.stick" = "スティックのリング";
+/* Segment of the region type control in the regions sheet: a band of the pull of a trigger. */
+"ui.profiles.region.trigger" = "トリガーの範囲";
+/* Segment of the region type control in the regions sheet: a rectangle of a touch surface. */
+"ui.profiles.region.touch" = "タッチエリア";
+/* Label of the popup in the regions sheet that picks the stick, trigger or touch surface that the region reads. */
+"ui.profiles.region.input" = "入力";
+/* Label of the field in the regions sheet that sets where a stick ring starts, from 0 at the center to 1 at the edge. */
+"ui.profiles.region.innerRadius" = "内側の半径 (0...1)";
+/* Label of the field in the regions sheet that sets where a stick ring ends, from 0 at the center to 1 at the edge. */
+"ui.profiles.region.outerRadius" = "外側の半径 (0...1)";
+/* Label of the field in the regions sheet that sets the start of the sector of a stick ring, in degrees clockwise from up. Leaving it and the end empty makes a full ring. */
+"ui.profiles.region.fromDegrees" = "扇形の開始 (上からの度数。空欄で全周)";
+/* Label of the field in the regions sheet that sets the end of the sector of a stick ring, in degrees clockwise from up. */
+"ui.profiles.region.toDegrees" = "扇形の終了 (上からの度数)";
+/* Label of the field in the regions sheet that sets where a trigger band starts, from 0 for released to 1 for fully pulled. */
+"ui.profiles.region.from" = "範囲の開始 (0...1)";
+/* Label of the field in the regions sheet that sets where a trigger band ends, from 0 for released to 1 for fully pulled. */
+"ui.profiles.region.to" = "範囲の終了 (0...1)";
+/* Label of the field in the regions sheet that sets the left edge of a touch area as a fraction of the surface width. */
+"ui.profiles.region.x" = "左端 (面に対する割合)";
+/* Label of the field in the regions sheet that sets the top edge of a touch area as a fraction of the surface height. */
+"ui.profiles.region.y" = "上端 (面に対する割合)";
+/* Label of the field in the regions sheet that sets the width of a touch area as a fraction of the surface width. */
+"ui.profiles.region.width" = "幅 (面に対する割合)";
+/* Label of the field in the regions sheet that sets the height of a touch area as a fraction of the surface height. */
+"ui.profiles.region.height" = "高さ (面に対する割合)";
+/* Heading of the drawing in the regions sheet that shows where the stick, trigger or touch is now. */
+"ui.profiles.region.live" = "リアルタイムの位置";
+/* Note in the regions sheet shown while no controller is connected, so there is no live position. */
+"ui.profiles.region.noController" = "コントローラを接続すると、リアルタイムの位置が表示されます。";
+/* Line under the live position of the touch area in the regions sheet while nothing touches the surface. */
+"ui.profiles.region.noContact" = "タッチなし";
+/* Line under the live stick position in the regions sheet. %1$.2f is the deflection from 0 to 1 and %2$.0f is the angle in degrees clockwise from up. */
+"ui.profiles.region.liveStick" = "傾き %1$.2f、角度 %2$.0f°";
+/* Line under the live trigger position in the regions sheet. %.2f is the pull from 0 to 1. */
+"ui.profiles.region.liveTrigger" = "押し込み %.2f";
+/* Line under the live touch position in the regions sheet. %1$.2f is the horizontal and %2$.2f is the vertical position, both as fractions of the surface. */
+"ui.profiles.region.liveTouch" = "%1$.2f、%2$.2f をタッチ";
+/* Title of the sheet that sets the pointer speed of a profile, and label of its row in the controller section. The pointer speed scales all pointer movement. */
+"ui.profiles.pointerSpeed.title" = "ポインタ速度";
+/* Label of the switch in the pointer speed sheet that turns on scaling of the pointer movement. */
+"ui.profiles.pointerSpeed.enabled" = "ポインタ速度をスケールする";
+/* Label of the popup in the pointer speed sheet that picks the control whose value sets the scale. */
+"ui.profiles.pointerSpeed.driver" = "ドライバ";
+/* Option of the driver popup in the pointer speed sheet: the value of a trigger sets the scale. Also the summary of the pointer speed row when a trigger drives it. */
+"ui.profiles.pointerSpeed.driverTrigger" = "トリガー";
+/* Option of the driver popup in the pointer speed sheet: how far a stick is pushed from the center sets the scale. Also the summary of the pointer speed row when a stick drives it. */
+"ui.profiles.pointerSpeed.driverStickDepth" = "スティックの倒し量";
+/* Label of the popup in the pointer speed sheet that picks the left or the right trigger or stick as the driver. */
+"ui.profiles.pointerSpeed.side" = "側";
+/* Option of the side popup in the pointer speed sheet: the left trigger or stick. */
+"ui.profiles.pointerSpeed.sideLeft" = "左";
+/* Option of the side popup in the pointer speed sheet: the right trigger or stick. */
+"ui.profiles.pointerSpeed.sideRight" = "右";
+/* Label of the field in the pointer speed sheet that sets the pointer scale while the driver is at rest. The scale multiplies the pointer movement. */
+"ui.profiles.pointerSpeed.minScale" = "0のときのスケール";
+/* Label of the field in the pointer speed sheet that sets the pointer scale while the trigger is fully pulled or the stick is at its rim. The scale multiplies the pointer movement. */
+"ui.profiles.pointerSpeed.maxScale" = "1のときのスケール";
+/* Line in the pointer speed sheet that shows the scale the pointer has now. %@ is the scale, a number. */
+"ui.profiles.pointerSpeed.live" = "現在のスケール: %@";
 /* Label of the stepper that sets the number of columns of a touch grid in the capture assignment sheet. %d is the number of columns. */
 "ui.capture.touchColumns" = "グリッドの列数: %d";
 /* Label of the stepper that sets the number of rows of a touch grid in the capture assignment sheet. %d is the number of rows. */
@@ -702,6 +844,10 @@
 "term.keyboardPointer" = "キーボードとポインタ";
 /* Name of the macOS Accessibility permission in the Access area. It is written as macOS names it in System Settings. */
 "platform.macos.term.inputInject" = "アクセシビリティ";
+/* Name of the macOS permission to post keyboard, pointer and system key events, in the activation alert and in 'ojd profile activate'. Post Event is the macOS name of the permission; the Access area calls it Accessibility. */
+"platform.macos.term.postEventAccess" = "Post Event アクセス";
+/* Name of the macOS Automation permission, which lets an action send an Apple Event to another application, in the activation alert and in 'ojd profile activate'. */
+"platform.macos.term.automationAccess" = "オートメーションのアクセス";
 /* Button of the combination sheets that adds the chosen entry to the combination. */
 "action.add" = "追加";
 /* Button of the input test window that sends the chosen player indicator or lightbar color to the controller. */
@@ -745,7 +891,7 @@
 /* Message about a request to the system extension manager that failed. %1$@ is the error domain, %2$d is the error code and %3$@ is the description from the system. Keep code= as written. */
 "cli.transportExtension.group.failed" = "システム拡張の要求に失敗しました: %1$@ code=%2$d %3$@";
 /* Message when the system extension manager replaces an installed driver extension. %1$@ is the extension bundle identifier, %2$@ is the installed version and %3$@ is the version that replaces it. Keep the v before the numbers. */
-"cli.transportExtension.group.replacing" = "%1$@ v%2$@ を v%3$@ に置き換えています。";
+"cli.transportExtension.group.replacing" = "%1$@ v%2$@ を v%3$@ に置き換えています…";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller, which OJD reads by the layout its HID report descriptor declares. Keep HID as written. */
 "term.protocolFamily.hidDescriptor" = "汎用 HID";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller whose input report layout comes from its controller record, the file OJD keeps for each controller model. Keep HID as written. */
@@ -756,6 +902,8 @@
 "term.protocolFamily.nintendoSwitch2" = "Nintendo Switch 2";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a wired Switch controller that sends input reports and takes no commands. Keep Nintendo Switch as written. */
 "term.protocolFamily.nintendoSwitchInputOnly" = "Nintendo Switch（入力のみ）";
+/* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the Wii Remote protocol, used by the Wii Remote and the Wii U Pro Controller over Bluetooth. Nintendo Wii Remote is a brand and product name: keep it as written. */
+"term.protocolFamily.nintendoWii" = "Nintendo Wii Remote";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controller of the PlayStation 5, which Sony names DualSense. Sony DualSense is a brand and product name: keep it as written. */
 "term.protocolFamily.sonyDualSense" = "Sony DualSense";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: the controller of the PlayStation 4, which Sony names DualShock 4. Sony DualShock 4 is a brand and product name: keep it as written. */
@@ -801,7 +949,7 @@
 /* Label in the controller summary of the developer tools. The value is a list of the pressed buttons. */
 "ui.developer.buttons" = "ボタン";
 /* Status next to the Start Capture button while the packet capture runs. */
-"ui.developer.capturing" = "キャプチャ中";
+"ui.developer.capturing" = "キャプチャ中…";
 /* Label of the connection kind in the controller summary of the developer tools, for example USB or Bluetooth. */
 "ui.developer.connection" = "接続";
 /* Label of the controller name in the controller summary of the developer tools. */
@@ -869,7 +1017,7 @@
 /* Label of the USB vendor and product ID in the controller summary of the developer tools. */
 "ui.developer.usbID" = "USB ID";
 /* Message in the packet list of the developer tools while a capture waits for packets. */
-"ui.developer.waitingForPackets" = "USB パケットを待機中です。コントローラのボタンを押してください。";
+"ui.developer.waitingForPackets" = "USB パケットを待機中です…コントローラのボタンを押してください。";
 /* Heading of the soak test section in the developer tools. A soak test measures the service over a long time. */
 "ui.developer.soakTest" = "耐久テスト";
 /* Description of the soak test section in the developer tools. The test samples memory, file descriptors and CPU of the service. */
@@ -970,6 +1118,8 @@
 "ui.inputTest.playerIndicator" = "プレイヤーインジケータ";
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "押下";
+/* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
+"ui.inputTest.receiving" = "操作を待機中…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "解放";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */
@@ -1061,7 +1211,7 @@
 /* Detail line of the problem banner when the driver extension waits for approval. System Settings is the name of the macOS app. The extension is needed for supported Microsoft USB controllers. */
 "platform.macos.ui.setup.approvalDetail" = "対応する Microsoft USB コントローラを使うには、システム設定でドライバを承認してください。";
 /* Detail line in the Driver section of the settings window while the app checks the driver extension for Xbox USB controllers. */
-"ui.setup.checkingDetail" = "インストール済みの Xbox USB ドライバを確認しています。";
+"ui.setup.checkingDetail" = "インストール済みの Xbox USB ドライバを確認しています…";
 /* Title of the problem banner and of the Driver section of the settings window for the driver extension that serves Xbox USB controllers. */
 "ui.setup.driverTitle" = "Xbox USB ドライバ";
 /* Detail line of the problem banner when the driver extension inside the app is damaged. The user reinstalls the app. */
@@ -1078,6 +1228,28 @@
 "ui.setup.uninstallDetail" = "ドライバを再インストールするまで、Xbox USB コントローラは動作しません。";
 /* Button of the problem banner that repairs the driver extension for Xbox USB controllers. */
 "ui.setup.repairDriver" = "Xbox USB ドライバを修復";
+/* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
+"platform.macos.cli.controller.show.labelServedBy" = "標準ドライバ";
+/* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
+"platform.macos.cli.controller.show.servedByMacOS" = "macOSが処理しています。拡張機能を有効にしてコントローラを引き継ぐには `ojd controller claim %@` を実行してください。";
+/* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
+"platform.macos.ui.controllers.servedByMacOS" = "macOSが処理中";
+/* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
+"platform.macos.ui.controllers.servedByMacOSDetail" = "Appleのドライバがこのコントローラを保持しています。引き継ぐと、OpenJoystickDriverの拡張機能が有効になります。";
+/* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
+"ui.controllers.claim" = "引き継ぐ";
+/* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.runningDetail" = "Xbox USBドライバをインストールしています…";
+/* Disabled button of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.repairRunning" = "修復しています…";
+/* Detail line of the problem banner when the state of the driver extension for Xbox USB controllers cannot be read. The banner has no button then. */
+"ui.setup.unavailableDetail" = "Xbox USBドライバの状態を読み取れないため、要求を送信できません。";
+/* Detail line of the problem banner when the request for the driver extension failed. %1$@ is the error domain, %2$lld is the error code and %3$@ is the error text. */
+"ui.setup.failedDetail" = "Xbox USBドライバの要求に失敗しました: %3$@（%1$@、コード %2$lld）。";
+/* Detail line of the problem banner when the request for the driver extension was cancelled. The Try Again button follows. */
+"ui.setup.cancelledDetail" = "Xbox USBドライバの要求が取り消されました。もう一度試してドライバをインストールしてください。";
+/* Detail line of the problem banner when the system did not answer the request for the driver extension in time. The Try Again button follows. */
+"ui.setup.timedOutDetail" = "システムがXbox USBドライバの要求に時間内に応答しませんでした。もう一度お試しください。";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver がサービスに接続できません";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
@@ -1221,6 +1393,12 @@
 /* Name of the click of the right trackpad of a controller. */
 "ui.mapping.rightPadClick" = "右パッドクリック";
 
+/* Name of the touch sensor on the grip on the back of a controller on the left side. */
+"ui.mapping.leftGripTouch" = "左グリップのタッチ";
+
+/* Name of the touch sensor on the grip on the back of a controller on the right side. */
+"ui.mapping.rightGripTouch" = "右グリップのタッチ";
+
 /* Title of the sheet that tunes the motion sensor of a controller in a profile. */
 "ui.profiles.motion.title" = "モーション調整";
 /* Label of the popup in the motion sheet that picks the coordinate space of the motion. */
@@ -1255,7 +1433,7 @@
 /* Hint under the motion calibration controls of the input test window: keep the controller still on a surface while the gyro bias, the small constant rotation the sensor reports at rest, is collected. */
 "ui.motion.calibration.instructions" = "ジャイロのバイアスを収集している間は、コントローラを静止させてください。";
 /* Status line in the motion calibration controls while the service collects gyro bias samples. Bias is the constant rotation offset of the gyro sensor at rest. */
-"ui.motion.calibration.collecting" = "バイアスを収集中";
+"ui.motion.calibration.collecting" = "バイアスを収集中…";
 /* Status line in the motion calibration controls when the user paused collecting gyro bias samples by hand. */
 "ui.motion.calibration.paused" = "手動収集は一時停止中";
 /* Line in the motion calibration controls that shows the gyro bias found so far, in degrees per second. %1$.3f, %2$.3f and %3$.3f are the X, Y and Z components. Keep the axis letters and the unit. */
@@ -1272,7 +1450,7 @@
 /* Guidance in the motion calibration controls when the controller has no usable motion data: turn on a profile for this controller and check that motion data is available. */
 "ui.motion.calibration.motionUnavailable" = "このコントローラのリマッピングプロファイルを有効にし、モーションが利用できることを確認してください。";
 /* Status line in the motion calibration controls while the service has no motion samples yet; Refresh checks again. */
-"ui.motion.calibration.waiting" = "モーションのサンプルを待っています。もう一度確認するには更新してください。";
+"ui.motion.calibration.waiting" = "モーションのサンプルを待っています…もう一度確認するには更新してください。";
 /* Note in the motion calibration controls: collecting gyro bias keeps running in the service after the window closes, and the Pause button stops it. */
 "ui.motion.calibration.continues" = "このウインドウを閉じても収集は続きます。停止するには「一時停止」を使用してください。";
 
@@ -1523,6 +1701,22 @@
 "ui.profiles.physical.startPosition" = "抵抗の開始位置";
 /* Label of the slider in the output destination editor that sets how strong the resistance of the adaptive trigger is. */
 "ui.profiles.physical.strength" = "抵抗の強さ";
+/* Label of the text field in the output destination editor for the phrase that a Speak destination says. */
+"ui.profiles.speak.text" = "テキスト";
+/* Label of the text field in the output destination editor for the identifier of the voice that a Speak destination uses. */
+"ui.profiles.speak.voice" = "音声ID";
+/* Placeholder of the voice field in the output destination editor when a Speak destination uses the system voice. */
+"ui.profiles.speak.voicePlaceholder" = "システム音声";
+/* Phrase that a new Speak destination says until the user changes it. */
+"ui.profiles.speak.defaultText" = "こんにちは";
+/* Label of the text field in the output destination editor for the bundle identifier of the application that an Open application destination opens. */
+"ui.profiles.system.application" = "アプリケーション識別子";
+/* Label of the text field in the output destination editor for the address that an Open URL destination opens. */
+"ui.profiles.system.url" = "URL";
+/* Label of the text field in the output destination editor for the name of the Shortcut that a Run Shortcut destination runs. */
+"ui.profiles.system.shortcut" = "ショートカット名";
+/* Name that a new Run Shortcut destination holds until the user changes it. */
+"ui.profiles.system.defaultShortcut" = "ショートカット";
 
 /* Menu item in the profile editor that removes all inputs of the profile. Keep the three dots. */
 "ui.profiles.clearInputs" = "すべての入力を消去…";
@@ -1544,6 +1738,10 @@
 "ui.profiles.emptyActivationMessage" = "このプロファイルは、コントローラのすべての入力を抑制します。";
 /* Title of the alert shown before the app activates a profile that sends no input. */
 "ui.profiles.emptyActivationTitle" = "コントローラの入力がないプロファイルを有効にしますか？";
+/* Title of the alert shown before the app activates a profile that launches actions or needs a permission that is missing. */
+"ui.profiles.activationTitle" = "このプロファイルを有効にしますか？";
+/* Part of the message of the profile activation alert. %@ is the list of actions that open applications or URLs, run shortcuts or type text, one per line. */
+"ui.profiles.activationActions" = "このプロファイルは次のアクションを起動します:\n%@";
 /* Warning in the profile editor when the profile sends no input. */
 "ui.profiles.emptyInputWarning" = "このプロファイルは、コントローラのすべての入力を抑制します。";
 /* Menu item in the profile editor that sets the inputs of the profile to the default. */
@@ -1564,6 +1762,8 @@
 "ui.profiles.recoveryBackupMessage" = "破損したデータが削除される前にバックアップが作成されます。";
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "この保存されたプロファイルを読み取れませんでした。有効なプロファイルを引き続き使用するには、削除してください。";
+/* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
+"ui.profiles.staleProfileMessage" = "%@ は以前のバージョンで保存されたため使用できません。再び使うには移行するか、削除してください。";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "アクティブなプロファイルの一覧を読み取れませんでした。続行するにはリセットしてください。プロファイルは保持されます。";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -1644,7 +1844,7 @@
 /* Examples block at the end of the help of 'ojd binding set'. The command lines, option names and sources stay as written; translate only the lines that start with #. */
 "cli.binding.set.examples" = "例:\n  # 南ボタンを押している間 Space を押し続ける\n  ojd binding set Racing button:south key:space\n  # 押すたびに J のオンとオフを切り替える\n  ojd binding set Racing button:west key:key-j --behavior toggle\n  # 押している間、J を 1 秒に 10 回繰り返す\n  ojd binding set Racing button:west key:key-j --turbo-rate 10 --turbo-duty 0.5";
 /* Examples block at the end of the help of 'ojd record install'. The command lines and file names stay as written; translate only the lines that start with #. */
-"cli.record.install.examples" = "例:\n  # レコードファイルをインストール\n  ojd record install 045E-028E.json\n  # 標準入力からレコードを読み込む\n  ojd record install - < 045E-028E.json";
+"cli.record.install.examples" = "例:\n  # レコードファイルをインストール\n  ojd record install 045e-028e.plist\n  # 標準入力からレコードを読み込む\n  ojd record install - < 045e-028e.plist";
 /* Examples block at the end of the help of 'ojd access grant'. The command lines and option names stay as written; translate only the lines that start with #. */
 "cli.access.grant.examples" = "例:\n  # プログラムにサービスの使用を許可\n  ojd access grant /Applications/Example.app\n  # 1 つのオリジンから配信されるページ用のトークンを作成\n  ojd access grant --token overlay --origin http://127.0.0.1:8080";
 /* One-line summary of 'ojd service' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
@@ -1829,6 +2029,16 @@
 "cli.access.web.portRange" = "--port は 1024 から 65535 の間で指定してください。";
 /* One-line summary of 'ojd diagnose' in the command list and at the top of its help. */
 "cli.diagnose.group.abstract" = "すべてのチェックを実行し、問題点を報告します。";
+/* Detail of the input mapping check of 'ojd diagnose' when no connected controller has a rejected database line. SDL_GameControllerDB is a project name and stays as written. */
+"cli.diagnose.group.inputMappingApplied" = "拒否された SDL_GameControllerDB の行はありません";
+/* Detail of the input mapping check of 'ojd diagnose' for one controller whose database line was rejected. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller name, %2$@ is the reason in English and %3$@ is the error code, which stays as written. */
+"cli.diagnose.group.inputMappingRejected" = "%1$@ の SDL_GameControllerDB の行が拒否されました: %2$@ (%3$@)";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no 057E:2009 controller is connected. 057E:2009 stays as written. */
+"cli.diagnose.group.switchSerialNone" = "057E:2009 のコントローラは接続されていません";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' when no connected 057E:2009 controller reports the serial 000000000001. 057E:2009 and the serial stay as written. */
+"cli.diagnose.group.switchSerialOther" = "シリアル番号 000000000001 を報告する 057E:2009 のコントローラはありません";
+/* Detail of the switch placeholder serial check of 'ojd diagnose' for one controller. Nintendo Switch Pro Controller is a product name and stays as written. %1$@ is the controller name, %2$@ is the VID:PID and %3$@ is the serial number, both of which stay as written. */
+"cli.diagnose.group.switchSerialPlaceholder" = "%1$@ は、Nintendo Switch Pro Controller の ID である %2$@ とシリアル番号 %3$@ を報告しています。ほかのコントローラが同じシリアル番号を報告することもあります。OpenJoystickDriver はこれを Pro Controller として扱います。";
 /* Help text of the --output option of 'ojd diagnose'. A support bundle is a file with the diagnostic report for a bug report. */
 "cli.diagnose.group.output" = "サポート用バンドルもこのファイルに書き出します。";
 /* Error of 'ojd diagnose --output' when the support bundle could not be written. %@ is the reason from the system. --output stays as written. */
@@ -2045,8 +2255,8 @@
 "cli.permission.request.unknownId" = "不明な権限「%1$@」です。%2$@ を使用してください。";
 /* One-line summary of 'ojd config' in the command list and at the top of its help. */
 "cli.config.group.abstract" = "OpenJoystickDriver が適用する構成を表示または変更し、各値を設定したレイヤを表示します。";
-/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.json is a file name that stays as written. */
-"cli.config.group.discussion" = "値は下位から順にレイヤとして重なります: ドライバのデフォルト、同梱レコード、パッケージのレコード、all.patch.json、ユーザのレコード、有効なプロファイル。各チューニングキーは、そのキーを設定する最上位レイヤの値を使用します。";
+/* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.plist is a file name that stays as written. */
+"cli.config.group.discussion" = "値は下位から順にレイヤとして重なります: ドライバのデフォルト、同梱レコード、パッケージのレコード、all.patch.plist、ユーザのレコード、有効なプロファイル。各チューニングキーは、そのキーを設定する最上位レイヤの値を使用します。";
 /* Help text of the --controller option of 'ojd config set' and 'ojd config unset'. VVVV:PPPP stands for the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.config.group.controller" = "すべてのコントローラではなく、このコントローラモデルだけを VVVV:PPPP の形式で変更します。";
 /* Error of 'ojd config set' and 'ojd config unset' when a record cannot take the change. %1$@ is the tuning key and %2$@ is the description of the problem. */
@@ -2065,20 +2275,20 @@
 "cli.config.show.controller" = "グローバルのデフォルトではなく、1 台のコントローラの有効なチューニングを VVVV:PPPP の形式で表示します。";
 /* Warning printed by 'ojd config show' when a part of the defaults file is invalid. %1$@ is the file path and %2$@ is the description of the problem. */
 "cli.config.show.defaultsIgnored" = "%1$@ を無視しました: %2$@";
-/* Long description in the help of 'ojd config show'. --controller and all.patch.json stay as written. */
-"cli.config.show.discussion" = "--controller を指定しない場合は、すべてのチューニングキーとその all.patch.json の値、およびそのキーを読み取るレコードを持つファミリーを出力します。指定した場合は、同梱レコード、パッケージのレコード、all.patch.json、ユーザのレコードを重ねたあとのコントローラのレコードを出力します。どのレイヤも設定しないキーには「ドライバのデフォルト」と表示されます。";
+/* Long description in the help of 'ojd config show'. --controller and all.patch.plist stay as written. */
+"cli.config.show.discussion" = "--controller を指定しない場合は、すべてのチューニングキーとその all.patch.plist の値、およびそのキーを読み取るレコードを持つファミリーを出力します。指定した場合は、同梱レコード、パッケージのレコード、all.patch.plist、ユーザのレコードを重ねたあとのコントローラのレコードを出力します。どのレイヤも設定しないキーには「ドライバのデフォルト」と表示されます。";
 /* Indented line below a tuning key of 'ojd config show' that lists the controller families whose records read the key. %@ is the comma-separated list of family names. */
 "cli.config.show.readBy" = "読み取るファミリー: %@";
-/* Warning of 'ojd config show' about a key in all.patch.json that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
-"cli.config.show.unread" = "all.patch.json は %1$@ を設定していますが、接続中のコントローラはこのキーを読み取りません。読み取るファミリー: %2$@。";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoController" = "コントローラが接続されていないため、どのコントローラも読み取らない all.patch.json のキーの確認をスキップしました。";
-/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.json stays as written. */
-"cli.config.show.unreadSkippedNoService" = "サービスが実行されていないため、接続中のどのコントローラも読み取らない all.patch.json のキーの確認をスキップしました。";
+/* Warning of 'ojd config show' about a key in all.patch.plist that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
+"cli.config.show.unread" = "all.patch.plist は %1$@ を設定していますが、接続中のコントローラはこのキーを読み取りません。読み取るファミリー: %2$@。";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because no controller is connected. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoController" = "コントローラが接続されていないため、どのコントローラも読み取らない all.patch.plist のキーの確認をスキップしました。";
+/* Note printed by 'ojd config show' when it cannot check for unread keys because the service is not running. all.patch.plist stays as written. */
+"cli.config.show.unreadSkippedNoService" = "サービスが実行されていないため、接続中のどのコントローラも読み取らない all.patch.plist のキーの確認をスキップしました。";
 /* One-line summary of 'ojd config set' in the command list and at the top of its help. */
 "cli.config.set.abstract" = "ユーザのコントローラレコードにチューニング値を設定します。";
-/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.json and stickDeadzone stay as written. */
-"cli.config.set.discussion" = "KEY を、--controller で指定したコントローラのユーザのレコードに書き込みます。指定しない場合は、すべてのコントローラ向けに all.patch.json に書き込みます。レコードの規則が適用されます。stickDeadzone は 0 より大きく 1 より小さい値にしてください。規則に反する値は拒否され、何も変更されません。実行中のサービスが変更を適用します。";
+/* Long description in the help of 'ojd config set'. KEY, --controller, all.patch.plist and stickDeadzone stay as written. */
+"cli.config.set.discussion" = "KEY を、--controller で指定したコントローラのユーザのレコードに書き込みます。指定しない場合は、すべてのコントローラ向けに all.patch.plist に書き込みます。レコードの規則が適用されます。stickDeadzone は 0 より大きく 1 より小さい値にしてください。規則に反する値は拒否され、何も変更されません。実行中のサービスが変更を適用します。";
 /* Message printed by 'ojd config set' after it wrote a value. %1$@ is the tuning key, which stays as written, %2$@ is the value and %3$@ is the path of the record file. */
 "cli.config.set.success" = "%1$@ を %2$@ に設定しました（%3$@）。実行中のサービスが今すぐ適用します。";
 /* Help text of the VALUE argument of 'ojd config set'. */
@@ -2182,7 +2392,7 @@
 /* Message printed by 'ojd controller capture' when the capture ends without a packet. */
 "cli.controller.capture.noPackets" = "パケットを受信していません。";
 /* First line of 'ojd controller capture'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
-"cli.controller.capture.started" = "%1$@ (%2$@) のパケットをキャプチャしています。コントローラのボタンを押してください。";
+"cli.controller.capture.started" = "%1$@ (%2$@) のパケットをキャプチャしています…コントローラのボタンを押してください。";
 /* Warning printed by 'ojd controller capture' before the packets. Packets can hold data of the user's controller. */
 "cli.controller.capture.warning" = "パケットの内容はコントローラによって異なります。共有する前に内容を確認してください。";
 /* One-line summary of 'ojd controller disconnect' in the command list and at the top of its help. */
@@ -2211,6 +2421,8 @@
 "cli.controller.group.featurePlayer" = "プレイヤーインジケータライト";
 /* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
 "cli.controller.group.featureRumble" = "振動モーター";
+/* Noun phrase for a controller capability. It is inserted after 'has no' in the message that a controller lacks a feature, so it must fit there. */
+"cli.controller.group.featureSpeaker" = "スピーカー";
 /* One-line summary of 'ojd controller light' in the command list and at the top of its help. */
 "cli.controller.light.abstract" = "コントローラのライトの色または明るさを設定します。";
 /* Help text of the --brightness option of 'ojd controller light'. LED means light-emitting diode. */
@@ -2241,12 +2453,12 @@
 "cli.controller.group.outputUnsupported" = "%1$@ には %2$@ がありません。対応している機能は「ojd controller show %3$@」で確認できます。";
 /* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To serve a model means to read its input and publish it as a virtual gamepad. */
 "cli.controller.claim.abstract" = "コントローラのモデルを OpenJoystickDriver に扱わせます。";
-/* Long description in the help of 'ojd controller claim'. server, ojd, VVVV-PPPP.json and the record terms stay as written. */
-"platform.macos.cli.controller.claim.discussion" = "そのモデル用のレコード（レコードフォルダ内の VVVV-PPPP.json）の server を ojd に設定し、レコードのほかのフィールドはそのまま残します。モデルのすべてのコントローラに適用されます。実行中のサービスは、抜き差しなしで適用します。コントローラを探すためにサービスが必要です。--dry-run は何も書き込みません。Raw USB を使い OpenJoystickDriver が常に扱うコントローラ、または macOS がネイティブに扱わないコントローラでは、E2023 とともに終了コード 1 で終了します。";
+/* Long description in the help of 'ojd controller claim'. server, ojd, vvvv-pppp.plist and the record terms stay as written. */
+"platform.macos.cli.controller.claim.discussion" = "そのモデル用のレコード（レコードフォルダ内の vvvv-pppp.plist）の server を ojd に設定し、レコードのほかのフィールドはそのまま残します。モデルのすべてのコントローラに適用されます。実行中のサービスは、抜き差しなしで適用します。コントローラを探すためにサービスが必要です。--dry-run は何も書き込みません。Raw USB を使い OpenJoystickDriver が常に扱うコントローラ、または macOS がネイティブに扱わないコントローラでは、E2023 とともに終了コード 1 で終了します。";
 /* One-line summary of 'ojd controller release' in the command list and at the top of its help. */
 "platform.macos.cli.controller.release.abstract" = "コントローラのモデルを macOS に戻します。";
-/* Long description in the help of 'ojd controller release'. server, system and VVVV-PPPP.json stay as written. */
-"platform.macos.cli.controller.release.discussion" = "そのモデル用のレコード（レコードフォルダ内の VVVV-PPPP.json）の server を system に設定し、レコードのほかのフィールドはそのまま残します。モデルのすべてのコントローラに適用されます。実行中のサービスは、抜き差しなしで適用します。コントローラを探すためにサービスが必要です。--dry-run は何も書き込みません。Raw USB を使い OpenJoystickDriver が常に扱うコントローラ、または macOS がネイティブに扱わないコントローラでは、E2023 とともに終了コード 1 で終了します。";
+/* Long description in the help of 'ojd controller release'. server, system and vvvv-pppp.plist stay as written. */
+"platform.macos.cli.controller.release.discussion" = "そのモデル用のレコード（レコードフォルダ内の vvvv-pppp.plist）の server を system に設定し、レコードのほかのフィールドはそのまま残します。モデルのすべてのコントローラに適用されます。実行中のサービスは、抜き差しなしで適用します。コントローラを探すためにサービスが必要です。--dry-run は何も書き込みません。Raw USB を使い OpenJoystickDriver が常に扱うコントローラ、または macOS がネイティブに扱わないコントローラでは、E2023 とともに終了コード 1 で終了します。";
 /* Message printed by 'ojd controller claim' and related commands with --dry-run instead of writing the record. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. */
 "cli.controller.group.serverDryRun" = "実行した場合、%1$@ を %2$@ に設定します（%3$@）。";
 /* Error when the record file of a controller cannot be changed. %1$@ is the path of the record file and %2$@ is the description of the problem. */
@@ -2337,6 +2549,10 @@
 "cli.controller.show.labelProtocol" = "プロトコル";
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "レコード";
+/* Row label in the output of 'ojd controller show' and in the controller detail. Where the HID usage map of the controller comes from follows. */
+"cli.controller.show.labelInputMapping" = "入力の割り当て";
+/* Row label in the output of 'ojd controller show' and in the controller detail. The controls that the SDL_GameControllerDB line names but the driver cannot map follow. */
+"cli.controller.show.labelUnmapped" = "割り当てられていない操作部";
 /* Row label in the output of 'ojd controller show'. The list of rumble motors the controller has follows. */
 "cli.controller.show.labelRumble" = "振動";
 /* Row label in the output of 'ojd controller show'. The state of the session follows, such as active or suspended. */
@@ -2361,6 +2577,38 @@
 "cli.controller.show.recordNone" = "なし (一致するレコードはありません)";
 /* Value of the Record row of 'ojd controller show' when the record is the user's own file. %@ is the file name. */
 "cli.controller.show.recordUser" = "ユーザのレコード、%@";
+/* Value of the Input mapping row of 'ojd controller show' and of the controller detail when a controller record sets the map. */
+"cli.controller.show.inputMappingRecord" = "レコード";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line sets the map. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingSDL" = "SDL_GameControllerDB から割り当て (一致: %1$@、GUID %2$@)";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when the standard HID usage map applies. */
+"cli.controller.show.inputMappingStandard" = "標準の HID 使用状況マップ";
+/* Value of the Input mapping row of 'ojd controller show', 'ojd status' and the controller detail when an SDL_GameControllerDB line matched but cannot drive the controller. SDL_GameControllerDB is a project name and stays as written. %@ is the reason. */
+"cli.controller.show.inputMappingRejected" = "標準の HID 使用状況マップ (SDL_GameControllerDB の行を拒否: %@)";
+/* Value of the Input mapping row under an unsupported device in 'ojd status' when an SDL_GameControllerDB line exists but the HID descriptor contract fails. SDL_GameControllerDB is a project name and stays as written. %1$@ is the match tier name and %2$@ is the GUID, both of which stay as written. */
+"cli.controller.show.inputMappingUnbound" = "未適用、記述子の契約を満たしません (SDL_GameControllerDB の行あり、一致: %1$@、GUID %2$@)";
+/* One-line summary of 'ojd controller speaker' in the command list and at the top of its help. */
+"cli.controller.speaker.abstract" = "コントローラのスピーカーで音を再生します。";
+/* One-line summary of 'ojd controller speaker play' in the command list and at the top of its help. */
+"cli.controller.speaker.play.abstract" = "コントローラのスピーカーで WAV ファイルを再生します。";
+/* Help text of the FILE argument of 'ojd controller speaker play'. PCM and WAV are audio format names and stay as written. */
+"cli.controller.speaker.play.file" = "再生する非圧縮の PCM WAV ファイル。";
+/* Help text of the --volume option of 'ojd controller speaker play'. The limits 0 and 1 are fixed. */
+"cli.controller.speaker.play.volume" = "再生音量。0 から 1 まで。";
+/* Error of 'ojd controller speaker play' when --volume is outside the allowed range. --volume stays as written. */
+"cli.controller.speaker.play.errorVolume" = "--volume には 0 から 1 までの数値を指定してください。";
+/* Error of 'ojd controller speaker play' when the audio file cannot be read. %1$@ is the file path and %2$@ is the reason the system gives. */
+"cli.controller.speaker.play.errorUnreadable" = "%1$@ を読み取れません: %2$@";
+/* Warning of 'ojd controller speaker play' when the clip is longer than the speaker plays and is cut. %@ is the longest clip length in seconds. */
+"cli.controller.speaker.play.trimmed" = "warning: クリップの最初の %@ 秒だけを再生します。";
+/* Message printed after 'ojd controller speaker play' finished the clip. %1$@ is the file name and %2$@ is the controller name. */
+"cli.controller.speaker.play.played" = "%2$@ で %1$@ を再生しました。";
+/* Message printed when the playback of 'ojd controller speaker play' was cut by 'ojd controller speaker stop' or by a newer clip. %@ is the controller name. */
+"cli.controller.speaker.play.stopped" = "%@ の再生を停止しました。";
+/* One-line summary of 'ojd controller speaker stop' in the command list and at the top of its help. */
+"cli.controller.speaker.stop.abstract" = "コントローラのスピーカーの音を止めます。";
+/* Message printed after 'ojd controller speaker stop' stopped the speaker. %@ is the controller name. */
+"cli.controller.speaker.stop.stopped" = "%@ のスピーカーを停止しました。";
 /* One-line summary of 'ojd controller suspend' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
 "cli.controller.suspend.abstract" = "再開するまで、OpenJoystickDriver によるコントローラの制御を止めます。";
 /* Message of 'ojd controller suspend' when the controller is suspended. %@ is the controller name. */
@@ -2372,7 +2620,7 @@
 /* Help text of the --all flag of 'ojd controller watch'. */
 "cli.controller.watch.all" = "すべてのコントローラを監視し、接続または切断されたコントローラをそれぞれ報告します。";
 /* First line of 'ojd controller watch --all'. */
-"cli.controller.watch.allStarted" = "すべてのコントローラを監視しています。コントローラのボタンを押してください。";
+"cli.controller.watch.allStarted" = "すべてのコントローラを監視しています…コントローラのボタンを押してください。";
 /* Line of 'ojd controller watch --all' when a controller connects. %1$@ is the controller ID, %2$@ is the controller name and %3$@ is its vendor and product ID. */
 "cli.controller.watch.connected" = "%1$@ が接続されました: %2$@ (%3$@)";
 /* Line of 'ojd controller watch --all' when a controller disconnects. %@ is the controller ID. */
@@ -2396,17 +2644,51 @@
 /* Prompt of 'ojd controller watch --first-press'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.controller.watch.pressPrompt" = "%1$@ (%2$@) の操作部を押してください。";
 /* First line of 'ojd controller watch'. %1$@ is the controller name and %2$@ is its vendor and product ID. */
-"cli.controller.watch.started" = "%1$@ (%2$@) を監視しています。コントローラのボタンを押してください。";
+"cli.controller.watch.started" = "%1$@ (%2$@) を監視しています…コントローラのボタンを押してください。";
 /* Message printed when the user answers no to a confirmation question. */
 "cli.shared.error.confirmDeclined" = "何も変更していません。";
 /* Error of the commands that ask for confirmation when the input is not a terminal. --force stays as written. */
 "cli.shared.error.confirmNeedsForce" = "この変更は元に戻せません。確認なしで実行するには --force を付けてください。";
+/* One-line summary of 'ojd macro' in the command list and at the top of its help. */
+"cli.macro.group.abstract" = "プロファイルのマクロを一覧表示、表示、設定、削除します。";
+/* Message of 'ojd macro show', 'set' and 'remove' and of 'ojd binding set' when a profile has no macro of the given name. %1$@ is the profile name and %2$@ is the macro name the user gave. */
+"cli.macro.group.missing" = "「%1$@」には「%2$@」という名前のマクロがありません。何も変更していません。";
+/* Help text of the NAME argument of the 'ojd macro' commands. */
+"cli.macro.group.name" = "マクロの名前。";
+/* Error of 'ojd macro set' when a --step value is not a step. %@ is the value the user gave. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.group.stepInvalid" = "「%@」はステップではありません。tap:TARGET、press:TARGET、release:TARGET、wait:MS、chord:MS:TARGET+TARGET のいずれかを使います。";
+/* One-line summary of 'ojd macro list' in the command list and at the top of its help. */
+"cli.macro.list.abstract" = "プロファイルのマクロを一覧表示します。";
+/* Message of 'ojd macro list' when the profile has no macros. %@ is the profile name. */
+"cli.macro.list.empty" = "「%@」にはマクロがありません。";
+/* One-line summary of 'ojd macro show' in the command list and at the top of its help. */
+"cli.macro.show.abstract" = "マクロとそのステップを表示します。";
+/* One-line summary of 'ojd macro set' in the command list and at the top of its help. */
+"cli.macro.set.abstract" = "マクロを作成するか、同じ名前のマクロを置き換えます。";
+/* Help text of the --step option of 'ojd macro set'. The step forms tap:TARGET, press:TARGET, release:TARGET, wait:MS and chord:MS:TARGET+TARGET stay as written. */
+"cli.macro.set.step" = "マクロのステップを順に指定します: tap:TARGET、press:TARGET、release:TARGET、wait:MS、chord:MS:TARGET+TARGET。ステップを増やすにはこのオプションを繰り返します。";
+/* Help text of the --repeat option of 'ojd macro set'. The value while-held stays as written. */
+"cli.macro.set.repeat" = "ステップを実行する回数。while-held を指定すると、ソースを離すまで繰り返します。";
+/* Help text of the --while-running option of 'ojd macro set'. The values ignore and restart stay as written. */
+"cli.macro.set.whileRunning" = "マクロの実行中にソースを押したときの動作: ignore または restart。";
+/* Help text of the --interrupt-on-release flag of 'ojd macro set'. */
+"cli.macro.set.interrupt" = "ソースを離したときにマクロを停止するかどうか。";
+/* Error of 'ojd macro set' when the --repeat value is neither a count nor while-held. %@ is the value the user gave. while-held stays as written. */
+"cli.macro.set.repeatInvalid" = "「%@」は回数でも while-held でもありません。";
+/* Message printed after 'ojd macro set' stored a macro. %1$@ is the profile name and %2$@ is the macro name. */
+"cli.macro.set.done" = "マクロ「%2$@」を「%1$@」に保存しました。";
+/* One-line summary of 'ojd macro remove' in the command list and at the top of its help. */
+"cli.macro.remove.abstract" = "プロファイルからマクロを削除します。";
+/* Yes or no question that 'ojd macro remove' asks on a terminal. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.confirm" = "マクロ「%1$@」を「%2$@」から削除しますか?";
+/* Message printed after 'ojd macro remove'. %1$@ is the macro name and %2$@ is the profile name. */
+"cli.macro.remove.done" = "マクロ「%1$@」を「%2$@」から削除しました。";
 /* One-line summary of 'ojd mod' in the command list and at the top of its help. A mod package adds controller support. */
 "cli.mod.group.abstract" = "MOD パッケージを検証、インストール、一覧表示、削除します。";
-/* Long description in the help of 'ojd mod'. mod.json, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
-"cli.mod.group.discussion" = "MOD パッケージは、mod.json マニフェストと、Controllers、Profiles、VirtualDevices フォルダを含むフォルダです。インストール済みのパッケージは ~/Library/Application Support/OpenJoystickDriver/Packages にあります。実行中のサービスは、そのフォルダが変わると変更を反映します。これらのコマンドにサービスは不要です。";
-/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.json stays as written. */
-"cli.mod.group.folder" = "mod.json を含むパッケージフォルダ。";
+/* Long description in the help of 'ojd mod'. mod.plist, the folder names Controllers, Profiles and VirtualDevices, and the path stay as written. */
+"cli.mod.group.discussion" = "MOD パッケージは、mod.plist マニフェストと、Controllers、Profiles、VirtualDevices フォルダを含むフォルダです。インストール済みのパッケージは ~/Library/Application Support/OpenJoystickDriver/Packages にあります。実行中のサービスは、そのフォルダが変わると変更を反映します。これらのコマンドにサービスは不要です。";
+/* Help text of the FOLDER argument of 'ojd mod validate' and 'ojd mod install'. mod.plist stays as written. */
+"cli.mod.group.folder" = "mod.plist を含むパッケージフォルダ。";
 /* Help text of the NAME argument of 'ojd mod remove'. */
 "cli.mod.group.name" = "パッケージ名。";
 /* Error of the 'ojd mod' commands when a package is refused. %1$@ is the package folder or name and %2$@ is the reason. */
@@ -2437,6 +2719,34 @@
 "cli.mod.list.discussion" = "各パッケージを、バージョン、作者、ファイルとともに表示します。requires がこのバージョンを除外しているなど、OJD が使わないパッケージは、E4xxx または E5001 のコードとともに理由を表示します。";
 /* Indented line below a package in 'ojd mod list' that the driver does not use. %@ is the reason with its error code. Keep the two leading spaces. */
 "cli.mod.list.problem" = "  使用されていません: %@";
+/* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
+"cli.protocol.group.abstract" = "プロトコル記述を検証、インストール、一覧表示します。";
+/* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
+"cli.protocol.group.discussion" = "プロトコル記述は、OJD が内蔵していないコントローラーファミリーを定義する .plist ファイルです。インストール済みの記述は ~/Library/Application Support/OpenJoystickDriver/Protocols にあり、MOD パッケージにも含められます。これらのコマンドにサービスは不要です。";
+/* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
+"cli.protocol.group.file" = "ファミリー名を付けた記述ファイル。例: VendorAcmePad.plist。";
+/* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
+"cli.protocol.validate.abstract" = "プロトコル記述ファイルをインストールせずに確認します。";
+/* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
+"cli.protocol.validate.discussion" = "ファイルが有効な記述であること、ファミリー名が UpperCamelCase でファイル名と一致すること、内蔵ファミリーでないこと、表示名と入力レイアウトを設定していることを確認します。ファイルが拒否されると E5xxx コードとともに 1 で終了します。";
+/* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
+"cli.protocol.validate.valid" = "%1$@ はファミリー %2$@ (%3$@) の有効な記述です。'ojd protocol install' でインストールできます。";
+/* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
+"cli.protocol.install.abstract" = "プロトコル記述を確認し、ユーザー用にインストールします。";
+/* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
+"cli.protocol.install.discussion" = "ファイルを Protocols/FAMILY.plist にコピーします。同じファミリーのインストール済みの記述は置き換えられます。--dry-run はファイルを確認するだけで何も書き込みません。";
+/* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
+"cli.protocol.install.success" = "%@ をインストールしました。";
+/* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
+"cli.protocol.list.abstract" = "内蔵および文書化されたプロトコルファミリーと、それぞれの提供元を一覧表示します。";
+/* Long description in the help of 'ojd protocol list'. */
+"cli.protocol.list.discussion" = "各ファミリーを表示名と提供元(内蔵、Protocols フォルダー、MOD パッケージ)とともに一覧表示します。拒否された記述は表示されません。";
+/* Source shown by 'ojd protocol list' for a family that OJD builds in. */
+"cli.protocol.list.builtIn" = "内蔵";
+/* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
+"cli.protocol.list.user" = "Protocols フォルダー";
+/* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
+"cli.protocol.list.package" = "パッケージ %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
 "cli.mod.remove.abstract" = "インストール済みの MOD パッケージを 1 つ削除します。";
 /* Long description in the help of 'ojd mod remove'. Packages/NAME, --force, --dry-run and E4006 stay as written. */
@@ -2488,7 +2798,7 @@
 /* Help text of the profile argument of 'ojd virtual feed'. */
 "cli.virtual.feed.profile" = "公開する仮想ゲームパッドのプロファイル。";
 /* First line of 'ojd virtual feed'. %@ is the profile name. Control-C is the key combination that stops a program in a terminal. */
-"cli.virtual.feed.started" = "%@ の仮想ゲームパッドを公開しています。フレームを stdin に書き込みます。停止するには、入力を終了するか Control-C を押してください。";
+"cli.virtual.feed.started" = "%@ の仮想ゲームパッドを公開しています…フレームを stdin に書き込みます。停止するには、入力を終了するか Control-C を押してください。";
 /* One-line summary of 'ojd virtual launch' in the command list and at the top of its help. SDL is a game controller library and stays as written. */
 "cli.virtual.launch.abstract" = "接続中の仮想ゲームパッドの SDL マッピングを付けてプログラムを実行します。";
 /* Help text of the program argument of 'ojd virtual launch'. PATH is the environment variable, .app is the app bundle extension, and -- stays as written. */
@@ -2547,8 +2857,8 @@
 "cli.virtual.show.unavailable" = "適合する仮想ゲームパッドなし";
 /* Detail of the records check of 'ojd diagnose'. %lld is the number of the user's controller records that the driver applies. */
 "cli.diagnose.group.recordsApplied" = "適用されたユーザレコード: %lld";
-/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.json is a file name that stays as written. */
-"cli.diagnose.group.recordsConfigOk" = "all.patch.json とペルソナファイルは有効です";
+/* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.plist is a file name that stays as written. */
+"cli.diagnose.group.recordsConfigOk" = "all.patch.plist とペルソナファイルは有効です";
 /* Detail of the records check of 'ojd diagnose' when parts of the configuration are ignored or skipped. %@ is the list of those parts. The command in quotes stays as written. */
 "cli.diagnose.group.recordsConfigProblems" = "無視またはスキップ: %@。修正して「ojd status」で確認してください";
 /* Detail of the records check of 'ojd diagnose' when records are skipped. %@ is the list of skipped records. The command in quotes stays as written. */
@@ -2581,10 +2891,22 @@
 "cli.record.draft.discussion" = "コントローラの HID レポート記述子を読み取り、各操作部を押している間の入力レポートを取得してから、たたき台となるレコードを出力します。レコードには、記述子に明記されたボタン、スティック、トリガー、方向キーが割り当てられます。取得中に変化したバイトから、ほかの操作部の位置がわかります。サービスが必要です。";
 /* Help text of the duration option of 'ojd record draft'. */
 "cli.record.draft.duration" = "入力レポートを取得する秒数。";
+/* Help text of the --from-sdl flag of 'ojd record draft'. SDL_GameControllerDB is a project name and stays as written. */
+"cli.record.draft.fromSDL" = "入力レポートを取り込む代わりに、コントローラの SDL_GameControllerDB の行から下書きを作成します。";
 /* Hint printed after 'ojd record draft'. The command in quotes stays as written, including FILE. */
 "cli.record.draft.next" = "レコードをファイルに保存し、各操作部を確認してから「ojd record validate FILE」を実行してください。";
 /* Message of 'ojd record draft' when the descriptor of the controller yields no controls and the bundled record names the family. %1$@ is the controller identity, VVVV:PPPP, and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
 "cli.record.draft.noLayout" = "%1$@ の HID レポート記述子から読み取れる操作部がなく、同梱のレコードがすでにファミリーを指定しています。「ojd record show %2$@」でそのレコードを確認できます。";
+/* Message of 'ojd record draft --from-sdl' when the HID report descriptor of the controller fails the HIDDescriptor contract. SDL_GameControllerDB is a project name and HIDDescriptor is a protocol family name; both stay as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the name of the violated rule, which stays as written. */
+"cli.record.draft.sdl.contract" = "%1$@ の HID レポートディスクリプタは HIDDescriptor の規約 (%2$@) に違反しているため、SDL_GameControllerDB の行では割り当てできません。";
+/* Message of 'ojd record draft --from-sdl' when the controller model already has a bundled record. SDL_GameControllerDB is a project name and stays as written. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.hasRecord" = "%@ には同梱のレコードがあり、SDL_GameControllerDB の行では置き換えられません。";
+/* Message of 'ojd record draft --from-sdl' when the database has no line for the controller. SDL_GameControllerDB is a project name and stays as written. GUID is the SDL controller identifier. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is its GUID, which stays as written. */
+"cli.record.draft.sdl.noLine" = "SDL_GameControllerDB に %1$@ (GUID %2$@) の行はありません。";
+/* Message of 'ojd record draft --from-sdl' when the controller is not connected as a HID device that the command can read. %@ is the controller identity, VVVV:PPPP. */
+"cli.record.draft.sdl.noPad" = "%@ は、このコマンドで読み取れる HID デバイスとして接続されていません。";
+/* Message of 'ojd record draft --from-sdl' when the database line of the controller cannot drive it. SDL_GameControllerDB is a project name and stays as written. %1$@ is the controller identity, VVVV:PPPP, and %2$@ is the reason in English. */
+"cli.record.draft.sdl.rejected" = "%1$@ の SDL_GameControllerDB の行が拒否されました: %2$@";
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.record.draft.started" = "%1$@ (%2$@) のすべての操作部を押し、各スティックとトリガーを動かしてください。";
 /* Error of the 'ojd record' commands when a record file cannot be read. %1$@ is the file path and %2$@ is the reason from the system. */
@@ -2597,8 +2919,8 @@
 "cli.record.install.abstract" = "コントローラのレコードを確認し、現在のユーザ用にインストールします。";
 /* Yes or no question that 'ojd record install' asks on a terminal before it replaces an installed record. %@ is the path of the installed file. */
 "cli.record.install.confirm" = "%@ を置き換えますか？";
-/* Long description in the help of 'ojd record install'. VVVV-PPPP.json and --force stay as written. */
-"cli.record.install.discussion" = "レコードを VVVV-PPPP.json としてレコードディレクトリに書き込みます。実行中のサービスはすぐに適用します。そのモデル用にすでにインストールされているレコードを置き換える場合、ターミナルでは確認を求め、それ以外の場合は --force が必要です。--dry-run はレコードを確認するだけで、何も書き込みません。レコードが無効な場合は何も書き込まず、終了コード 1 で終了します。";
+/* Long description in the help of 'ojd record install'. vvvv-pppp.plist and --force stay as written. */
+"cli.record.install.discussion" = "レコードを vvvv-pppp.plist としてレコードディレクトリに書き込みます。実行中のサービスはすぐに適用します。そのモデル用にすでにインストールされているレコードを置き換える場合、ターミナルでは確認を求め、それ以外の場合は --force が必要です。--dry-run はレコードを確認するだけで、何も書き込みません。レコードが無効な場合は何も書き込まず、終了コード 1 で終了します。";
 /* Message printed by 'ojd record install --dry-run' instead of installing. %@ is the target file path. */
 "cli.record.install.dryRun" = "%@ をインストールします。";
 /* Error when the record file cannot be written. %1$@ is the target file path and %2$@ is the reason from the system. */
@@ -2685,6 +3007,12 @@
 "error.E2036.message" = "テスト通知に時間内に応答した OpenJoystickDriver App がありません。App が実行中か確認してから、もう一度お試しください。";
 /* Error E2037, shown by ojd and the app when notifications are not allowed for the app, so the test notification could not be shown. */
 "error.E2037.message" = "OpenJoystickDriver の通知は許可されていません。システムの通知設定で許可してから、もう一度お試しください。";
+/* Error E2038, shown by ojd and the app when the selected controller has no speaker to play sound on. */
+"error.E2038.message" = "このコントローラにはスピーカーがありません。音を再生できるコントローラを選んで、もう一度お試しください。";
+/* Error E2039, shown by ojd when the audio file given to the speaker command is not an uncompressed PCM WAV file. */
+"error.E2039.message" = "このオーディオファイルには対応していません。非圧縮の PCM WAV ファイルを使って、もう一度お試しください。";
+/* Error E2040, shown by ojd and the app when the extension plugged into the controller did not answer its setup. */
+"error.E2040.message" = "コントローラの拡張機器が設定に応答しませんでした。拡張機器を接続し直して、もう一度お試しください。";
 /* Note about a controller record whose raw USB family the USB extension cannot claim because Apple signs its product list. OJD is the short product name. */
 "platform.macos.cli.record.group.usbNotClaimed" = "このファミリーは生の USB を使用しますが、製品リストが Apple によって署名されているため、USB 機能拡張はこのコントローラを占有できません。OJD は、macOS が許可する場合にのみ、直接 USB アクセスでこのコントローラに接続します。";
 /* Note about a Switch 2 controller record that connects over USB only. bluetoothLE.vibrationCharacteristic is a field of the record and stays as written. */
@@ -2709,7 +3037,7 @@
 "cli.binding.group.actionsInvalid" = "--actions-json は有効なアクションリストではありません: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
 "cli.binding.group.actionsTooLarge" = "--actions-json が大きすぎます。";
-/* Error of 'ojd binding set' when the value of --double-tap or --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
+/* Error of 'ojd binding set' when the value of --long-hold does not have the form MS:TARGET. %@ is the option name. MS:TARGET and the example stay as written. */
 "cli.binding.group.alternateFormat" = "%@ には MS:TARGET の形式で指定します。例: 500:key:key-b";
 /* Error of 'ojd binding set' when an axis option is used with a source that is not an axis. The option names stay as written. */
 "cli.binding.group.axisOptionsSource" = "--deadzone、--gain、--invert、--response-curve、--digital-threshold には軸のソースが必要です。";
@@ -2734,11 +3062,13 @@
 /* Error of 'ojd binding clear' when neither sources nor --all are given. --all stays as written. */
 "cli.binding.clear.usage" = "ソースを 1 つ以上指定するか、--all を指定してください。";
 /* Long description in the help of 'ojd binding'. It lists the SOURCE and TARGET forms. Words in capitals, forms such as button:NAME and all option names stay as written. */
-"cli.binding.group.discussion" = "割り当ては、コントローラの SOURCE が使われたときに TARGET を送信します。\n\nSOURCE: button:NAME、dpad:DIRECTION、axis:NAME[:negative|positive]、trigger:NAME:STAGE、motion:lean:DIRECTION、touch:SURFACE:contact、touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW、または touch:SURFACE:swipe:DIRECTION:DISTANCE。\n\nTARGET: key:KEY[:mods=meta,control,alt,shift]、mouse:BUTTON、move:x|y、scroll:x|y、gamepad:button:NAME、gamepad:dpad:DIRECTION、gamepad:axis:NAME、または振動、ライト、アダプティブトリガー用の physical:...。\n\n「ojd profile show」はこれらの形式で割り当てを表示します。コード、シーケンス、レイヤーは「ojd profile edit」で編集します。";
+"cli.binding.group.discussion" = "割り当ては、コントローラの SOURCE が使われたときに TARGET を送信します。\n\nSOURCE: button:NAME、dpad:DIRECTION、axis:NAME[:negative|positive]、trigger:NAME:STAGE、motion:lean:DIRECTION、touch:SURFACE:contact、touch:SURFACE:grid:COLUMNS:ROWS:COLUMN:ROW、または touch:SURFACE:swipe:DIRECTION:DISTANCE。\n\nTARGET: key:KEY[:mods=meta,control,alt,shift]、mouse:BUTTON、move:x|y、position:x|y、scroll:x|y、gamepad:button:NAME、gamepad:dpad:DIRECTION、gamepad:axis:NAME, midi-note:CHANNEL:NOTE[:VELOCITY], midi-cc:CHANNEL:CONTROLLER、または振動、ライト、アダプティブトリガー用の physical:...。\n\n「ojd profile show」はこれらの形式で割り当てを表示します。コード、シーケンス、レイヤーは「ojd profile edit」で編集します。";
 /* One-line summary of 'ojd binding list' in the command list and at the top of its help. */
 "cli.binding.list.abstract" = "プロファイルの割り当てを一覧表示します。";
 /* Message of 'ojd binding list' when the profile has no bindings. %@ is the profile name. The command in quotes stays as written. */
 "cli.binding.list.empty" = "「%@」には割り当てがありません。「ojd binding set」で追加してください。";
+/* Error of 'ojd binding set' when a value of --multi-tap does not have the form COUNT:MS:TARGET. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.multiTapFormat" = "--multi-tap には COUNT:MS:TARGET の形式で指定します。例: 2:300:key:key-c";
 /* Help text of the --actions-json option of 'ojd binding set'. 'ojd profile export' stays as written. */
 "cli.binding.group.optionActionsJson" = "追加のアクション。「ojd profile export」が書き出す形式の JSON 配列で指定します。";
 /* Help text of the --behavior option of 'ojd binding set'. The behavior hold is a value the user types. */
@@ -2747,20 +3077,28 @@
 "cli.binding.group.optionDeadzone" = "軸ソース: 無視する移動量の範囲。0 から 0.95。デフォルト: 0.1。";
 /* Help text of the --digital-threshold option of 'ojd binding set'. It sets the axis travel that counts as a press. */
 "cli.binding.group.optionDigitalThreshold" = "軸ソース: ボタンのターゲットに対して押下とみなす移動量。デフォルト: 0.5。";
-/* Help text of the --double-tap option of 'ojd binding set'. The example 300:key:key-c stays as written. */
-"cli.binding.group.optionDoubleTap" = "この時間内にソースを 2 回押したときに別のターゲットを送信します。例: 300:key:key-c";
 /* Help text of the --gain option of 'ojd binding set'. Gain scales the axis output. */
 "cli.binding.group.optionGain" = "軸ソース: 出力のスケール。0.1 から 10。デフォルト: 1。";
 /* Help text of the --invert flag of 'ojd binding set'. */
 "cli.binding.group.optionInvert" = "軸ソース: 方向を反転します。";
 /* Help text of the --long-hold option of 'ojd binding set'. The example 500:key:key-b stays as written. */
 "cli.binding.group.optionLongHold" = "ソースをこの時間押し続けたときに別のターゲットを送信します。例: 500:key:key-b";
+/* Help text of the --multi-tap option of 'ojd binding set'. COUNT is the number of taps, MS the milliseconds allowed after the last release. COUNT:MS:TARGET and the example stay as written. */
+"cli.binding.group.optionMultiTap" = "ソースを COUNT 回タップしたときに別のターゲットを送信します。各押下は直前の離しから MS 以内です。例: 2:300:key:key-c。回数ごとにオプションを繰り返せます。";
 /* Help text of the --pulse-ms option of 'ojd binding set'. ms means milliseconds. */
 "cli.binding.group.optionPulseMs" = "パルスがターゲットを保持する時間。1 から 5000 ミリ秒。デフォルト: 100。";
+/* Help text of the --voice option of 'ojd binding set'. The option name and speak:TEXT stay as written. */
+"cli.binding.group.optionVoice" = "speak:TEXTターゲットに使う音声ID。デフォルト: システム音声。";
+/* Error of 'ojd binding set' when --voice is given with a target that is not speak:TEXT. The option name and speak:TEXT stay as written. */
+"cli.binding.group.voiceNeedsSpeak" = "--voiceにはspeak:TEXTターゲットが必要です。";
 /* Help text of the --response-curve option of 'ojd binding set'. linear is a value the user types. */
 "cli.binding.group.optionResponseCurve" = "軸ソース: 移動量に対して出力がどう増えるか。デフォルト: linear。";
+/* Help text of the --turbo-delay option of 'ojd binding set'. The delay is the time before the first repeat. ms means milliseconds. The option names stay as written. */
+"cli.binding.group.optionTurboDelay" = "最初の繰り返しまでこの時間待ちます。0 〜 2500 ms。--turbo-rate と --turbo-duty が必要です。";
 /* Help text of the --turbo-duty option of 'ojd binding set'. The duty is the share of each turbo cycle in which the target is held. */
 "cli.binding.group.optionTurboDuty" = "各ターボサイクルのうちターゲットを保持する割合。0 より大きく 1 より小さい値。";
+/* Help text of the --turbo-max option of 'ojd binding set'. The option names stay as written. */
+"cli.binding.group.optionTurboMax" = "この回数繰り返したら止めます。1 〜 500。--turbo-rate と --turbo-duty が必要です。";
 /* Help text of the --turbo-rate option of 'ojd binding set'. --turbo-duty stays as written. */
 "cli.binding.group.optionTurboRate" = "押している間、ターゲットを 1 秒あたりこの回数繰り返します。--turbo-duty が必要です。";
 /* One-line summary of 'ojd binding set' in the command list and at the top of its help. */
@@ -2775,8 +3113,10 @@
 "cli.binding.group.sourceInvalid" = "「%@」はソースではありません。「ojd binding set --help」でソースの形式を確認できます。";
 /* Error of 'ojd binding set' when the target cannot be parsed. %@ is the text the user gave. The command in quotes stays as written. */
 "cli.binding.group.targetInvalid" = "「%@」はターゲットではありません。「ojd binding set --help」でターゲットの形式を確認できます。";
-/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given. Both option names stay as written. */
-"cli.binding.group.turboPair" = "--turbo-rate と --turbo-duty は一緒に指定する必要があります。";
+/* Error of 'ojd binding set' when the profile has no layer with the name in a layer:NAME:MODE target. %1$@ is the profile name and %2$@ is the layer name. */
+"cli.binding.group.layerMissing" = "「%1$@」には「%2$@」という名前のレイヤーがありません。何も変更していません。";
+/* Error of 'ojd binding set' when only one of --turbo-rate and --turbo-duty is given, or --turbo-delay or --turbo-max is given without both. All four option names stay as written. */
+"cli.binding.group.turboPair" = "--turbo-rate と --turbo-duty は一緒に指定する必要があり、--turbo-delay と --turbo-max には両方が必要です。";
 /* Error of 'ojd binding set' when turbo is requested for a pointer movement or scrolling target. */
 "cli.binding.group.turboUnsupported" = "ターボはポインタ移動やスクロールのターゲットでは使えません。";
 /* One-line summary of 'ojd controller calibrate' in the command list and at the top of its help. */
@@ -2823,26 +3163,40 @@
 "cli.profile.activate.abstract" = "プロファイルを対象のコントローラモデルに適用します。";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
 "cli.profile.activate.allowEmpty" = "出力を一切生成しないプロファイルでも有効にします。";
+/* Help text of the --confirm-actions flag of 'ojd profile activate'. --confirm-actions stays as written. */
+"cli.profile.activate.confirmActions" = "プロファイルがアクションを起動してよいことを確認します。App や URL を開く、ショートカットを実行する、テキストを入力するアクションです。";
 /* Long description in the help of 'ojd profile activate'. It explains the profile that replaces the active one and the profile that produces no output. The words mapped and --allow-empty stay as written. */
 "cli.profile.activate.discussion" = "このプロファイルは、同じコントローラモデルと App の範囲で有効なプロファイルを置き換えます。仮想ゲームパッドが mapped に設定され、ゲームパッド、キーボード、ポインタ、コントローラのいずれにも何も送らず、ライトの色も設定しないプロファイルは、出力を生成しません。そのようなプロファイルを有効にするには --allow-empty が必要です。";
 /* Message printed after 'ojd profile activate'. %1$@ is the profile name, shown in quotes, and %2$@ is the controller model it applies to. */
 "cli.profile.activate.done" = "「%1$@」を %2$@ 用に有効にしました。";
 /* Error of 'ojd profile activate' for a profile that produces no output. --allow-empty stays as written. */
 "cli.profile.activate.empty" = "このプロファイルは出力を一切生成しません。有効にするには --allow-empty を付けてください。";
+/* Error of 'ojd profile activate' for a profile that opens applications or URLs, runs shortcuts or types text. --confirm-actions stays as written. %@ is the list of actions, one per line, with each URL in full. */
+"cli.profile.activate.actionsNeedConfirmation" = "このプロファイルはアクションを起動します。有効にするには --confirm-actions を付けてください:\n%@";
 /* Marker appended to the line of the active profile in 'ojd profile list'. Keep the parentheses. */
 "cli.profile.group.activeMarker" = "(アクティブ)";
 /* Help text of the PROFILE argument shared by the 'ojd profile' commands. The command in quotes stays as written. */
 "cli.profile.group.argument" = "プロファイル: その ID、または「ojd profile list」に表示される名前。";
 /* One-line summary of 'ojd profile create' in the command list and at the top of its help. */
 "cli.profile.create.abstract" = "1 つのコントローラモデル用の空のプロファイルを作成します。";
+/* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.activation" = "ジャイロ出力のために押し続けるコントロール (gyro-stick テンプレート)。指定しない場合、ジャイロ出力は常にオンです。";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "この App (App ID で指定) が最前面にある間だけプロファイルを適用します。";
+"cli.profile.create.app" = "このアプリ（App ID で指定）が最前面にあるときだけプロファイルを適用します。複数のアプリにはオプションを繰り返します。";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "コントローラモデル: VVVV:PPPP、または接続中のコントローラの ID。";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
 "cli.profile.create.discussion" = "--app で App を指定しない限り、プロファイルはすべての App で適用されます。デフォルトでは、仮想ゲームパッドは割り当てのないすべての操作部をそのまま通します。プロファイルは無効の状態で作成されます。「ojd profile activate」で有効にしてください。";
 /* Message printed after 'ojd profile create'. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.create.done" = "「%1$@」(%2$@) を作成しました。";
+/* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
+"cli.profile.create.noMotion" = "%@ にはモーションセンサーがありません。";
+/* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
+"cli.profile.create.stick" = "gyro-stick テンプレートが操作するスティック: left または right。既定値は right です。";
+/* Help text of the --template option of 'ojd profile create'. gyro-stick is the only template, the user types it, and it stays as written. */
+"cli.profile.create.template" = "テンプレートから開始します。テンプレートは gyro-stick のみです。";
+/* Error of 'ojd profile create' when --stick or --activation is given without --template. The three option names stay as written. */
+"cli.profile.create.templateRequired" = "--stick と --activation には --template が必要です。";
 /* Help text of the physical input option of 'ojd profile create'. shared and exclusive are values the user types and stay as written. */
 "platform.macos.cli.profile.create.physicalInput" = "macOS がコントローラを引き続き認識するか (shared)、OJD が占有するか (exclusive)。";
 /* Help text of the --virtual-gamepad option of 'ojd profile create'. disabled, mapped and passthrough are values the user types and stay as written. */
@@ -2896,7 +3250,7 @@
 /* One-line summary of 'ojd profile export' in the command list and at the top of its help. The command in quotes stays as written. */
 "cli.profile.export.abstract" = "「ojd profile import」が読み込めるファイルとしてプロファイルを出力します。";
 /* Long description in the help of 'ojd profile export'. --json and --plain stay as written. */
-"cli.profile.export.discussion" = "プロファイルは JSON なので、--json と --plain では出力は変わりません。";
+"cli.profile.export.discussion" = "プロファイルはプロパティリストなので、--json と --plain では出力は変わりません。";
 /* Message printed after 'ojd profile export --output'. %1$@ is the profile name, shown in quotes, and %2$@ is the file path. */
 "cli.profile.export.done" = "「%1$@」を %2$@ に書き込みました。";
 /* Help text of the --output option of 'ojd profile export'. stdout is the standard output stream and stays as written. */
@@ -2913,6 +3267,8 @@
 "cli.profile.import.abstract" = "「ojd profile export」が書き出したファイルからプロファイルを追加します。";
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "「%1$@」(%2$@) を読み込みました。";
+/* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
+"cli.profile.import.app" = "ファイル内の適用範囲の代わりに、このアプリ（App ID で指定）が最前面にあるときだけ読み込んだプロファイルを適用します。複数のアプリにはオプションを繰り返します。";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "- を指定すると stdin からプロファイルを読み込みます。既存のプロファイルと同じ ID のプロファイルは、それを置き換えます。";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */
@@ -3579,6 +3935,58 @@
 "ui.shortcuts.action.getControllers.description" = "接続されているコントローラを返します。";
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "コントローラを取得";
+/* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.description" = "リマッピングプロファイルの値を1つ変更します（名前など）。";
+/* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
+"ui.shortcuts.action.setProfileValue.key" = "キー";
+/* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
+"ui.shortcuts.action.setProfileValue.title" = "プロファイルの値を設定";
+/* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
+"ui.shortcuts.action.setProfileValue.value" = "値";
+/* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
+"ui.shortcuts.error.profileKey" = "プロファイルの値のキーに空の部分を含めることはできません。";
+/* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.title" = "コントローラを振動させる";
+/* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
+"ui.shortcuts.action.rumble.description" = "コントローラの振動モーターを短時間動かします。";
+/* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
+"ui.shortcuts.action.rumble.intensity" = "強さ (0-255)";
+/* Label in the Shortcuts app of the rumble action's duration in seconds. */
+"ui.shortcuts.action.rumble.duration" = "継続時間 (秒)";
+/* Name in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.title" = "プレイヤーインジケータを設定";
+/* Description in the Shortcuts app of the action that sets the player indicator of a controller. */
+"ui.shortcuts.action.player.description" = "コントローラのプレイヤーインジケータのライトを設定します。";
+/* Label in the Shortcuts app of the player number from 1 to 4, or 0 for none. */
+"ui.shortcuts.action.player.number" = "プレイヤー番号 (0 でなし)";
+/* Name in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.title" = "コントローラのライトを設定";
+/* Description in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
+"ui.shortcuts.action.light.description" = "コントローラのライトバーの色、LED の明るさ、またはその両方を設定します。";
+/* Label in the Shortcuts app of the lightbar color given as six hexadecimal digits, RRGGBB. */
+"ui.shortcuts.action.light.color" = "色 (RRGGBB)";
+/* Label in the Shortcuts app of the LED brightness from 0 to 255. */
+"ui.shortcuts.action.light.brightness" = "LED の明るさ (0-255)";
+/* Error in the Shortcuts app when the light action has no color or brightness, or the color is not RRGGBB. */
+"ui.shortcuts.error.lightRequest" = "6 桁の16進数の色、明るさ、またはその両方を指定してください。";
+/* Name in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.title" = "Mod パッケージを一覧表示";
+/* Description in the Shortcuts app of the action that returns the installed mod packages. */
+"ui.shortcuts.action.listMods.description" = "インストール済みの Mod パッケージの名前を返します。";
+/* Name in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.title" = "Mod パッケージをインストール";
+/* Description in the Shortcuts app of the action that installs a mod package from a folder. */
+"ui.shortcuts.action.installMod.description" = "フォルダから Mod パッケージをインストールし、その名前を返します。";
+/* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
+"ui.shortcuts.action.installMod.folder" = "フォルダ";
+/* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
+"ui.shortcuts.action.installMod.replace" = "インストール済みのパッケージを置き換える";
+/* Name in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.title" = "Mod パッケージを削除";
+/* Description in the Shortcuts app of the action that removes an installed mod package. */
+"ui.shortcuts.action.removeMod.description" = "インストール済みの Mod パッケージを名前で削除します。";
+/* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
+"ui.shortcuts.action.removeMod.name" = "名前";
 /* Name of the model property of a controller in the Shortcuts app. */
 "ui.shortcuts.controller.model" = "モデル";
 /* Name of the name property of a controller in the Shortcuts app. */
@@ -3729,12 +4137,22 @@
 "error.E3028.message" = "リクエストの実行中にコントローラのリマッピングセッションが変わりました。もう一度お試しください。";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
 "error.E3029.message" = "インストール済みパッケージのプロファイルは変更できません。プロファイルを複製して、コピーを変更してください。";
-/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.json stays as written. */
-"error.E4001.message" = "パッケージのマニフェスト mod.json が見つからないか無効です。mod-package スキーマに照らして確認し、コマンドをもう一度実行してください。";
+/* Text of error E3030, returned when an action needs Post Event access and it is not granted. */
+"error.E3030.message" = "Post Eventアクセスが許可されていないため、アクションは実行されませんでした。OpenJoystickDriverに許可して、もう一度お試しください。";
+/* Text of error E3031, returned when an action needs Automation access and it is not granted. */
+"error.E3031.message" = "オートメーションのアクセスが許可されていないため、アクションは実行されませんでした。OpenJoystickDriverに許可して、もう一度お試しください。";
+/* Text of error E3032, returned when an action needs to send keys while Secure Input blocks them. */
+"error.E3032.message" = "Secure Inputが有効なため、アクションは実行されませんでした。有効にしているアプリ(パスワード欄など)を閉じて、もう一度お試しください。";
+/* Text of error E3033, returned when a system action fails. The action name and the reason follow it. */
+"error.E3033.message" = "アクションに失敗しました。";
+/* Text of error E3034, returned when the system refuses to create the MIDI source of a MIDI action. */
+"error.E3034.message" = "システムがMIDIソース「OpenJoystickDriver」の作成を拒否したため、MIDIアクションは実行されませんでした。もう一度お試しください。";
+/* Text of error E4001, printed when the manifest of a mod package is missing or invalid. mod.plist stays as written. */
+"error.E4001.message" = "パッケージのマニフェスト mod.plist が見つからないか無効です。mod-package スキーマに照らして確認し、コマンドをもう一度実行してください。";
 /* Text of error E4002, printed when a mod package requires another version of the app than the one that runs. OpenJoystickDriver is the product name. */
 "error.E4002.message" = "このパッケージは、実行中のバージョンとは別のバージョンの OpenJoystickDriver を必要とします。このバージョンに対応するパッケージをインストールするか、OpenJoystickDriver を更新してください。";
-/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.json stays as written. */
-"error.E4003.message" = "パッケージのファイルが無効、不足、または mod.json に記載されていません。コマンドが示すファイルを修正して、もう一度実行してください。";
+/* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.plist stays as written. */
+"error.E4003.message" = "パッケージのファイルが無効、不足、または mod.plist に記載されていません。コマンドが示すファイルを修正して、もう一度実行してください。";
 /* Text of error E4004, printed when a mod package covers a controller, persona or profile that the user's files or another package hold. */
 "error.E4004.message" = "このパッケージは、あなたのファイルまたはインストール済みの別のパッケージにすでにあるコントローラ、ペルソナ、またはプロファイルを含んでいます。競合するファイルまたはパッケージを削除するか、パッケージを変更して、コマンドをもう一度実行してください。";
 /* Text of error E4005, printed when a mod package of the same name is installed. --force stays as written. */
@@ -3751,12 +4169,26 @@
 "error.E5003.message" = "プロトコル記述が、ファイル名と異なるファミリーを指定しています。ファイル名をファミリー名にしてください。";
 /* Text of error E5004, printed when a protocol description lists a variant that its family lacks. */
 "error.E5004.message" = "プロトコル記述に、そのファミリーにないバリアントが記載されています。ファミリーのバリアントのいずれかを使ってください。";
-/* Text of error E5005, printed when the access file is damaged. AccessGrants.json is a file name and stays as written. */
-"error.E5005.message" = "アクセスファイル AccessGrants.json が破損しています。ファイルを修正するか削除してから、もう一度アクセスを許可してください。";
+/* Text of error E5005, printed when the access file is damaged. AccessGrants.plist is a file name and stays as written. */
+"error.E5005.message" = "アクセスファイル AccessGrants.plist が破損しています。ファイルを修正するか削除してから、もう一度アクセスを許可してください。";
 /* Text of error E5006, printed when the key file of the unit IDs cannot be read or has the wrong size. PortKeyInstallation.key is a file name and stays as written. OpenJoystickDriver is the product name. */
 "error.E5006.message" = "ユニット ID の鍵ファイル PortKeyInstallation.key を読み取れないか、サイズが 32 バイトではありません。バックアップからファイルを復元してください。削除すると、OpenJoystickDriver が新しい鍵を作成し、すべてのユニット ID が変わります。";
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "コントローラレコードまたは patch が無効です。ファイルをそのスキーマで確認し、メッセージが示すフィールドを修正してください。";
+/* Error E5007, in place of a file path when the message does not know which file failed. */
+"error.E5007.thisFile" = "このレコードファイル";
+/* Error E5007, shown when the bundled controller catalog holds no record file. */
+"error.E5007.record.catalogEmpty" = "同梱カタログの Controllers フォルダ: カタログにレコードファイルがありません。ルール: カタログにはコントローラレコードが 1 つ以上あります。対処: OpenJoystickDriver を再インストールしてください。";
+/* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
+"error.E5007.record.fileName" = "%1$@、vendorID と productID: ファイル名は 2 つの ID を 16 進数にした %2$@ にする必要があります。対処: ファイル名を %2$@ に変更するか、ファイル内の ID を修正してください。";
+/* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
+"error.E5007.record.duplicateIdentity" = "%1$@、vendorID と productID: %2$@ はすでに %3$@ のレコードの識別子です。対処: どちらかのファイルを削除するか、このファイルの ID を変更してください。";
+/* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
+"error.E5007.record.unwritableValue" = "%1$@、document: ある値を JSON として書き出せません (%2$@)。対処: 理由が示す値を、文字列、数値、ブール値、リスト、または辞書に置き換えてください。";
+/* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
+"error.E5007.record.idRange" = "%1$@、vendorID と productID: vendorID は 1...65535、productID は 0...65535 にする必要があります。対処: それぞれを範囲内の整数に設定してください。";
+/* Error E5008, shown when the SDL_GameControllerDB line of a controller cannot drive it; the message names the reason. */
+"error.E5008.message" = "コントローラの SDL_GameControllerDB の行では、そのコントローラを動かせません。理由はメッセージに示されます。ojd record draft でそのコントローラのレコードを作成してください。";
 /* Error text with the error code. %1$@ is the message and %2$@ is the code, for example E2011. The code is in parentheses. */
 "ui.error.withCode" = "%1$@（%2$@）";
 /* Message printed by 'ojd update check' when the installed version is newer than the latest release. %1$@ is the installed version and %2$@ is the latest release. */
@@ -3811,6 +4243,8 @@
 "ui.activity.check.transportExtensionRegistration" = "ドライバ拡張機能の登録";
 /* Name of the check in the diagnostics table that validates the configuration files. */
 "ui.activity.check.configFiles" = "設定ファイル";
+/* Name of the check in the diagnostics table that reports a controller with the Nintendo Switch Pro Controller identity and serial 000000000001. Nintendo Switch Pro Controller is a product name and stays as written. */
+"ui.activity.check.switchSerial" = "Switch Pro Controller のシリアル番号";
 /* Name of the check in the diagnostics table that tests whether the app can read USB controllers. */
 "ui.activity.check.usbAccess" = "USB アクセス";
 /* Button of a failed check in the diagnostics table that opens the Library area. */
@@ -3871,6 +4305,10 @@
 "ui.controllers.draftRecord.title" = "コントローラのレコードを下書きする";
 /* Message when a record cannot be drafted. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.controllers.draftRecord.noLayout" = "%@ の HID レポート記述子からコントロールを読み取れず、同梱のレコードがすでにファミリーを示しています。";
+/* Button in the Controllers detail that drafts a controller record from the SDL_GameControllerDB line of the controller. SDL stays as written. Keep the three dots. */
+"ui.controllers.draftRecordFromSDL" = "SDL からレコードの下書き…";
+/* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
+"ui.controllers.draftRecordFromSDL.noPad" = "%@ は、OpenJoystickDriver で読み取れる HID デバイスとして接続されていません。";
 /* Button in the Controllers detail that starts a packet capture of the controller. Keep the three dots. */
 "ui.controllers.capturePackets" = "パケットをキャプチャ…";
 /* Title of the sheet that captures packets of the controller. */
@@ -3889,12 +4327,14 @@
 "ui.controllers.publication.notPublished" = "未公開";
 /* Value of the publication fact: the publication failed. */
 "ui.controllers.publication.failed" = "失敗";
+/* Value of the input health fact: the session has read no input report yet. */
+"ui.controllers.inputHealth.awaitingInput" = "最初の入力を待っています…";
 /* Value of the input health fact: input arrives as expected. */
 "ui.controllers.inputHealth.healthy" = "正常";
 /* Value of the input health fact: input stopped arriving. */
 "ui.controllers.inputHealth.stale" = "更新なし";
 /* Value of the input health fact: the app waits until all controls are at rest before it sends input again. */
-"ui.controllers.inputHealth.waitingForNeutral" = "ニュートラル待ち";
+"ui.controllers.inputHealth.waitingForNeutral" = "ニュートラル待ち…";
 /* Error shown when the settings file is damaged. %@ is the path of the file. The command in backticks stays as written, and Trash is the macOS name. */
 "ui.settings.advanced.errorDamaged" = "設定ファイル %@ が破損しています。修正するか、`ojd setting reset` でゴミ箱に移動してください。";
 /* Error shown when the settings file has an unsupported version. %@ is the path of the file. apiVersion and the command in backticks stay as written, and Trash is the macOS name. */
@@ -3915,8 +4355,8 @@
 "platform.macos.ui.settings.advanced.unreadableShowInFinder" = "Finder に表示";
 /* One-line summary of 'ojd setting reset' in the command list and at the top of its help. */
 "cli.setting.reset.abstract" = "設定ファイルをゴミ箱に移動します。";
-/* Long description in the help of 'ojd setting reset'. Settings.json is a file name and stays as written. */
-"cli.setting.reset.discussion" = "Settings.json をゴミ箱に移動し、すべての設定をデフォルト値に戻します。ファイルが破損しているか受け付けられない場合に使います。";
+/* Long description in the help of 'ojd setting reset'. Settings.plist is a file name and stays as written. */
+"cli.setting.reset.discussion" = "Settings.plist をゴミ箱に移動し、すべての設定をデフォルト値に戻します。ファイルが破損しているか受け付けられない場合に使います。";
 /* Yes or no question that 'ojd setting reset' asks on a terminal. */
 "cli.setting.reset.confirm" = "設定ファイルをゴミ箱に移動して、すべての設定をデフォルト値に戻しますか？";
 /* Message printed after 'ojd setting reset'. %@ is the path of the settings file. */
@@ -3938,7 +4378,7 @@
 /* Reason the controller has no virtual gamepad: the output is paused. */
 "ui.controllers.publication.reason.suppressed" = "出力は一時停止中です";
 /* Reason the controller has no virtual gamepad: the first input has not arrived. */
-"ui.controllers.publication.reason.noInputYet" = "最初の入力を待っています";
+"ui.controllers.publication.reason.noInputYet" = "最初の入力を待っています…";
 /* Reason the controller has no virtual gamepad: another app holds its input. */
 "ui.controllers.publication.reason.heldByAnotherClient" = "別の App が使用中です";
 /* Publication state with its reason or failure, for example "Not published (Waiting for the first input)". %1$@ is the state and %2$@ the reason. */
@@ -4040,3 +4480,155 @@
 "ui.controllers.exclusiveOwner" = "排他アクセス";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
 "ui.controllers.alsoListedBySystem" = "システムにも表示";
+/* Label of a macro as the destination of an assignment when the profile has no macro of that identifier, and name of the macro destination kind. */
+"term.macro" = "マクロ";
+/* Label of a layer as the destination of an assignment when the profile has no layer of that identifier, and name of the layer destination kind. */
+"term.layer" = "レイヤー";
+/* Name of the Speak destination kind in the destination popup; the destination says a short text aloud. */
+"term.speak" = "読み上げ";
+/* Heading of the macros section in the profile editor. A macro is a named list of timed key and button steps. */
+"ui.profiles.macros" = "マクロ";
+/* Tooltip and VoiceOver label of the button in the macros section of the profile editor that opens the sheet to add a macro. */
+"ui.profiles.addMacro" = "マクロを追加";
+/* Tooltip and VoiceOver label of the button on a macro row in the profile editor that opens the sheet to edit the macro. */
+"ui.profiles.editMacro" = "マクロを編集";
+/* Message in the macros section of the profile editor when none exists. */
+"ui.profiles.noMacros" = "マクロは設定されていません。";
+/* Label of the name field in the macro editor sheet. */
+"ui.macros.name" = "マクロ名";
+/* Heading of the list of steps in the macro editor sheet. */
+"ui.macros.steps" = "ステップ";
+/* Title of the menu in the macro editor sheet that adds a step to the macro. */
+"ui.macros.addStep" = "ステップを追加";
+/* Name of the macro step that presses and releases a key or button at once. Also the label of its destination picker. */
+"ui.macros.stepTap" = "タップ";
+/* Name of the macro step that presses a key or button and keeps it down. Also the label of its destination picker. */
+"ui.macros.stepPress" = "押す";
+/* Name of the macro step that releases a key or button that a press step holds. Also the label of its destination picker. */
+"ui.macros.stepRelease" = "離す";
+/* Name of the macro step that presses several keys or buttons together, holds them, and releases them. Also the label of each destination picker of the step. */
+"ui.macros.stepChord" = "コード";
+/* Name of the macro step that waits before the next step, and the label of its time slider. */
+"ui.macros.stepWait" = "待機";
+/* Label of the slider in a chord step of the macro editor for how long the chord is held. */
+"ui.macros.holdTime" = "保持時間";
+/* Button in a chord step of the macro editor that adds one more key or button to the chord. */
+"ui.macros.addChordKey" = "コードにキーを追加";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place earlier. */
+"ui.macros.moveUp" = "ステップを上へ";
+/* Tooltip and VoiceOver label of the button in the macro editor that moves a step one place later. */
+"ui.macros.moveDown" = "ステップを下へ";
+/* Tooltip and VoiceOver label of the button in the macro editor that removes a step. */
+"ui.macros.removeStep" = "ステップを削除";
+/* Label of the popup in the macro editor that chooses how often the macro runs its steps. */
+"ui.macros.repeat" = "繰り返し";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps a set number of times. */
+"ui.macros.repeatCounted" = "回数を指定";
+/* Choice of the repeat popup in the macro editor: the macro runs its steps again and again until the control is released. */
+"ui.macros.repeatWhileHeld" = "押している間";
+/* Label of the stepper in the macro editor for how many times the macro runs its steps. The number follows the label. */
+"ui.macros.repeatTimes" = "回";
+/* Label of the popup in the macro editor for what happens when the control is pressed again while the macro runs. */
+"ui.macros.whileRunning" = "実行中に再度押したとき";
+/* Choice of the popup in the macro editor: the macro keeps running and the new press does nothing. */
+"ui.macros.whileRunningIgnore" = "無視";
+/* Choice of the popup in the macro editor: the macro stops, releases everything it holds, and starts again. */
+"ui.macros.whileRunningRestart" = "再起動";
+/* Label of the switch in the macro editor: releasing the control stops the macro and releases everything it holds. */
+"ui.macros.interruptOnRelease" = "離したら停止";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. The report mode the driver chose follows, a hex byte such as 0x31. */
+"cli.controller.show.labelReportMode" = "レポートモード";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. The extension plugged into the remote follows, such as a Nunchuk. This is the accessory on the controller, not a system extension. */
+"cli.controller.show.labelExtension" = "拡張コントローラ";
+/* Row label in the output of 'ojd controller show' and in the Controllers detail, present for a Wii Remote. Motion Plus is a Nintendo product name: keep it as written. The value that follows is off, calibrating or ready. */
+"cli.controller.show.labelMotionPlus" = "Motion Plus";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Nunchuk is a Nintendo product name: keep it as written. */
+"term.wiiExtension.nunchuk" = "Nunchuk";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Classic Controller is a Nintendo product name: keep it as written. */
+"term.wiiExtension.classicController" = "Classic Controller";
+/* Name of an extension of the Wii Remote, shown as the plugged extension. Classic Controller Pro is a Nintendo product name: keep it as written. */
+"term.wiiExtension.classicControllerPro" = "Classic Controller Pro";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: a Motion Plus that is plugged in but not switched on yet. Motion Plus is a Nintendo product name: keep it as written. */
+"term.wiiExtension.motionPlusInactive" = "Motion Plus (非アクティブ)";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with nothing plugged into it. Motion Plus is a Nintendo product name: keep it as written. */
+"term.wiiExtension.motionPlus" = "Motion Plus";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with a Nunchuk plugged into it. Motion Plus and Nunchuk are Nintendo product names: keep them as written. */
+"term.wiiExtension.motionPlusNunchuk" = "Motion Plus (Nunchuk 接続)";
+/* Name of an extension of the Wii Remote, shown as the plugged extension: an active Motion Plus with a Classic Controller plugged into it. Motion Plus and Classic Controller are Nintendo product names: keep them as written. */
+"term.wiiExtension.motionPlusClassic" = "Motion Plus (Classic Controller 接続)";
+/* Value of the extension row for a Wii Remote extension the driver does not know. %@ is the six ID bytes as twelve hex digits and stays as written. */
+"status.wiiExtensionUnknown" = "不明 (ID %@)";
+/* Value of the Motion Plus row for a Wii Remote whose Motion Plus is not switched on. */
+"status.motionPlusOff" = "オフ";
+/* Value of the Motion Plus row for a Wii Remote while the driver measures the resting value of the gyro. The remote must lie still. */
+"status.gyroCalibrating" = "キャリブレーション中";
+/* Value of the Motion Plus row for a Wii Remote once the driver has measured the resting value of the gyro. */
+"status.gyroReady" = "準備完了";
+/* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
+"error.E5009.message" = "古いバージョンの保存済みドキュメントには機械的な変換がないため、ojd migrate は変更せずに残します。メッセージにファイルとフィールドが示されます。ファイルを手作業でサポートされている apiVersion に書き換えてください。";
+/* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
+"error.E5010.message" = "保存された書類が XML プロパティリストではないか、日付またはデータの値を含んでいます。メッセージにはファイルと形式またはキーのパスが示されます。plutil -convert xml1 でファイルを XML プロパティリストとして保存してください。";
+/* One-line summary of 'ojd generate' in the command list and at the top of its help. */
+"cli.generate.group.abstract" = "ジェネレータースクリプトを実行し、返されたドキュメントを書き出します。";
+/* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
+"cli.generate.group.discussion" = "ファイルやネットワークにアクセスできない補助プロセスでスクリプトを実行し、generate 関数が返すドキュメントを検査して、それぞれを --output にプロパティリストファイルとして書き出します。--output を省略するとドキュメントを表示します。--timeout で制限時間を秒単位で指定します（既定値は 5）。";
+/* Help text of the script argument of 'ojd generate'. .js is a file extension and stays as written. */
+"cli.generate.group.script" = "ジェネレータースクリプト（.js ファイル）。";
+/* Error of 'ojd generate' when the helper process cannot start. %@ is the reason. */
+"cli.generate.group.helperFailed" = "スクリプトの補助プロセスを開始できませんでした: %@";
+/* Error of 'ojd generate' when the script ran past the time limit and was ended. %1$@ is the script path and %2$@ is the limit in seconds. */
+"cli.generate.group.timedOut" = "%1$@ は %2$@ 秒以内に終了しなかったため、中断されました。";
+/* Help text of the --output option of 'ojd generate'. */
+"cli.generate.group.output" = "ファイルの書き出し先フォルダ。省略するとドキュメントを表示し、ファイルは書き出しません。";
+/* Help text of the --replace flag of 'ojd generate'. */
+"cli.generate.group.replace" = "内容がドキュメントと異なるファイルを置き換えます。";
+/* Error of 'ojd generate' when the script file cannot be read. %@ is the script path. */
+"cli.generate.group.unreadable" = "%@ を読み取れません。";
+/* Error of 'ojd generate' when the script defines no function named generate. %@ is the script path; generate stays as written. */
+"cli.generate.group.missingGenerate" = "%@ は generate 関数を定義していません。";
+/* Error of 'ojd generate' when the script throws a value that has no line number. %1$@ is the script path and %2$@ is the message. */
+"cli.generate.group.scriptFailed" = "スクリプト %1$@ が失敗しました: %2$@";
+/* Error of 'ojd generate' for a syntax error or an exception of the script. %1$@ is the script path, %2$@ is the line number and %3$@ is the message. */
+"cli.generate.group.scriptFailedAtLine" = "スクリプト %1$@ が %2$@ 行目で失敗しました: %3$@";
+/* Error of 'ojd generate' when generate returns null, no value, or something that is not a document or a list of documents. generate stays as written. */
+"cli.generate.group.notDocuments" = "generate は 1 つのドキュメント、またはドキュメントのリストを返す必要があります。";
+/* Error of 'ojd generate' for a returned document that fails its checks. %1$@ is the position of the document in the result, counted from 1, and %2$@ is the key path and the rule it breaks. */
+"cli.generate.group.documentInvalid" = "ドキュメント %1$@ が無効なため、ファイルは書き出されませんでした: %2$@";
+/* Error of 'ojd generate' when two returned documents have the same file name. %1$@ and %2$@ are their positions in the result, counted from 1, and %3$@ is the file name. */
+"cli.generate.group.duplicate" = "ドキュメント %1$@ と %2$@ はどちらも %3$@ に書き出されるため、ファイルは書き出されませんでした。";
+/* Error of 'ojd generate' when a file holds other content than the generated document. %@ is the file path; --replace stays as written. */
+"cli.generate.group.conflict" = "%@ には別の内容があるため、ファイルは書き出されませんでした。上書きするには --replace を使います。";
+/* Error of 'ojd generate' when a file cannot be written. %1$@ is the file path and %2$@ is the reason. */
+"cli.generate.group.writeFailed" = "%1$@ を書き込めませんでした: %2$@";
+/* Line of 'ojd generate' for a file that it wrote anew. %@ is the file path. */
+"cli.generate.group.created" = "%@ を作成しました。";
+/* Line of 'ojd generate' for a file whose other content it replaced. %@ is the file path. */
+"cli.generate.group.replaced" = "%@ を置き換えました。";
+/* Line of 'ojd generate' for a file that already held the generated document. %@ is the file path. */
+"cli.generate.group.unchanged" = "%@ は変更ありません。";
+/* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
+"cli.migrate.group.abstract" = "古いバージョンの保存済みドキュメントを現在のバージョンに変換します。";
+/* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
+"cli.migrate.group.discussion" = "古い apiVersion を持つ Settings.plist、AccessGrants.plist、プロファイル、自分のコントローラーレコードとパッチ、仮想デバイスファイルを変換します。元のファイルはサポートフォルダ内の Migrated フォルダに残ります。モッドパッケージも変換されます。サポートフォルダの代わりにスキャンするフォルダを指定できます。各ファイルには Migrated、Current、Failed、Foreign のいずれかの判定が付きます。";
+/* Help text of the --dry-run option of 'ojd migrate'. */
+"cli.migrate.group.dryRun" = "変換されるドキュメントを一覧表示し、何も変更しません。";
+/* Message printed by 'ojd migrate' when no stored document has an older version. */
+"cli.migrate.group.none" = "移行が必要なドキュメントはありません。";
+/* Line printed by 'ojd migrate' for a converted document. %@ is the path of the document in the support folder. Migrated is a folder name and stays as written. */
+"cli.migrate.group.converted" = "%@ を変換しました。元のファイルは Migrated フォルダにあります。";
+/* Line printed by 'ojd migrate --dry-run' for a document it would convert. %@ is the path of the document in the support folder. */
+"cli.migrate.group.wouldConvert" = "%@ を変換します。";
+/* Line printed by 'ojd migrate' for a document it cannot convert. %1$@ is the path of the document, %2$@ is the reason. */
+"cli.migrate.group.failed" = "%1$@ は変更されません: %2$@";
+/* Error text of 'ojd migrate' when at least one document could not be converted. */
+"cli.migrate.group.failedSummary" = "変換できなかったドキュメントがあり、変更されていません。出力にそれぞれが示されます。";
+/* Help text of the folder argument of 'ojd migrate'. */
+"cli.migrate.group.folder" = "サポートフォルダの代わりにスキャンするフォルダ。";
+/* Line printed by 'ojd migrate' for a file that is in the current format. %@ is the path of the file. */
+"cli.migrate.group.current" = "%@ はすでに最新です。";
+/* Line printed by 'ojd migrate' for a file that is not an OpenJoystickDriver document. %@ is the path of the file. OpenJoystickDriver is a product name and stays as written. */
+"cli.migrate.group.foreign" = "%@ は OpenJoystickDriver のドキュメントではなく、変更されません。";
+/* Title of the button that converts the stored documents of an older version, in the access error card in the alert about refused settings, and in the Profiles area. */
+"ui.migrate.action" = "移行";
+/* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
+"platform.macos.ui.migrate.failed" = "変換できなかったドキュメントがあり、変更されていません。どれかは「ターミナル」で ojd migrate を実行して確認してください。";

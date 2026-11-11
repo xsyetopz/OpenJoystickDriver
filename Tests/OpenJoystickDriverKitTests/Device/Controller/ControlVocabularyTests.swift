@@ -57,7 +57,20 @@ struct ControlVocabularyTests {
       let evdev: String?
       let hid: [HID]
       let apple: String?
-      let notes: [String: String]?
+
+      init(from decoder: any Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        w3cButton = try values.decodeIfPresent(Int.self, forKey: .w3cButton)
+        w3cAxis = try values.decodeIfPresent(Int.self, forKey: .w3cAxis)
+        sdl = try values.decodeIfPresent(String.self, forKey: .sdl)
+        evdev = try values.decodeIfPresent(String.self, forKey: .evdev)
+        hid = try values.decodeIfPresent([HID].self, forKey: .hid) ?? []
+        apple = try values.decodeIfPresent(String.self, forKey: .apple)
+      }
+
+      private enum CodingKeys: String, CodingKey {
+        case w3cButton, w3cAxis, sdl, evdev, hid, apple
+      }
     }
     struct Source: Decodable {
       let document: String
@@ -73,8 +86,8 @@ struct ControlVocabularyTests {
 
   private static func crosswalk() throws -> Crosswalk {
     let url = JSONSchemaFiles.directory.deletingLastPathComponent()
-      .appendingPathComponent("Vocabulary/crosswalk.json")
-    return try JSONDecoder().decode(Crosswalk.self, from: Data(contentsOf: url))
+      .appendingPathComponent("Vocabulary/crosswalk.plist")
+    return try PropertyListDecoder().decode(Crosswalk.self, from: Data(contentsOf: url))
   }
 
   private static func vocabularyDefinitions() throws -> [String: Any] {
@@ -93,6 +106,7 @@ struct ControlVocabularyTests {
   }
 
   /// Each system name leads back to the control: the reverse index of a name contains its id.
+  ///
   /// Two ids may share a name (`MISC1` is Capture and Microphone), so the index holds sets.
   @Test
   func crosswalkRoundTripsEveryControl() throws {
@@ -154,7 +168,6 @@ struct ControlVocabularyTests {
     let pages = Set(crosswalk.sources["hid"]?.pages?.keys.sorted() ?? [])
     for (id, row) in crosswalk.controls {
       #expect(row.hid.allSatisfy { pages.contains($0.page) }, "\(id) hid page")
-      #expect((row.notes ?? [:]).keys.allSatisfy { crosswalk.sources[$0] != nil }, "\(id) note")
     }
   }
 
@@ -171,31 +184,29 @@ struct ControlVocabularyTests {
     #expect(rows["LeftPaddle2"]?.apple == "XboxPaddleFour")
     #expect(rows["DpadUp"]?.hid.first == .init(page: "GenericDesktop", usage: 144))
     #expect(rows["Capture"]?.hid == [.init(page: "Consumer", usage: 178)])
-    for id in ["LeftStickTouch", "LeftTrackpadClick", "RightTrackpadTouch"] {
+    for id in [
+      "LeftStickTouch", "LeftTrackpadClick", "RightTrackpadTouch", "LeftGripTouch",
+      "RightGripTouch",
+    ] {
       let row = try #require(rows[id])
       #expect(row.hid.isEmpty && row.sdl == nil && row.evdev == nil && row.apple == nil, "\(id)")
     }
   }
 
-  private static func crosswalkText(
+  private static func crosswalkTree(
     editing edit: (inout [String: Any]) -> Void = { _ in }
-  ) throws
-    -> String
-  {
+  ) throws -> [String: Any] {
     let url = JSONSchemaFiles.directory.deletingLastPathComponent()
-      .appendingPathComponent("Vocabulary/crosswalk.json")
-    var document = try #require(
-      try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
-    )
+      .appendingPathComponent("Vocabulary/crosswalk.plist")
+    var document = try PropertyListFixture.dictionary(at: url)
     edit(&document)
-    let data = try JSONSerialization.data(withJSONObject: document)
-    return try #require(String(bytes: data, encoding: .utf8))
+    return document
   }
 
   @Test
   func crosswalkMatchesItsSchema() throws {
     let issues = try JSONSchemaFiles.issues(
-      in: Self.crosswalkText(),
+      inObject: Self.crosswalkTree(),
       against: "crosswalk.schema.json#"
     )
     #expect(issues.isEmpty, "\(issues)")
@@ -205,7 +216,7 @@ struct ControlVocabularyTests {
   func crosswalkSchemaRejectsAPlantedBadFile() throws {
     func rejects(_ name: String, _ edit: @escaping (inout [String: Any]) -> Void) throws {
       let issues = try JSONSchemaFiles.issues(
-        in: Self.crosswalkText(editing: edit),
+        inObject: Self.crosswalkTree(editing: edit),
         against: "crosswalk.schema.json#"
       )
       #expect(!issues.isEmpty, "\(name)")
@@ -236,13 +247,6 @@ struct ControlVocabularyTests {
       change(&$0, "controls") { controls in
         var row = controls["South"] as? [String: Any] ?? [:]
         row["gcc"] = "ButtonA"
-        controls["South"] = row
-      }
-    }
-    try rejects("row without a column") {
-      change(&$0, "controls") { controls in
-        var row = controls["South"] as? [String: Any] ?? [:]
-        row["evdev"] = nil
         controls["South"] = row
       }
     }

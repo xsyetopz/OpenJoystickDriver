@@ -193,6 +193,8 @@ extension OutputCharacterizationTests {
         parts.append("ls=\(state.leftStick.x.rawValue),\(state.leftStick.y.rawValue)")
       case .rightStick:
         parts.append("rs=\(state.rightStick.x.rawValue),\(state.rightStick.y.rawValue)")
+      case .pointer:
+        parts.append("pointer=\(state.pointer.x.rawValue),\(state.pointer.y.rawValue)")
       case .leftTrigger: parts.append("lt=\(state.leftTrigger.rawValue)")
       case .rightTrigger: parts.append("rt=\(state.rightTrigger.rawValue)")
       case .motion, .touch: break
@@ -220,6 +222,7 @@ extension OutputCharacterizationTests {
     case .mouseButtonDown(let button): "mouse-down \(button.rawValue)"
     case .mouseButtonUp(let button): "mouse-up \(button.rawValue)"
     case .mouseMoved(let axis, let amount): "mouse-moved \(axis.rawValue) \(amount)"
+    case .pointerPlaced(let axis, let position): "pointer-placed \(axis.rawValue) \(position)"
     case .pointerDelta(let x, let y): "pointer \(x),\(y)"
     case .scrolled(let axis, let amount): "scrolled \(axis.rawValue) \(amount)"
     case .scrollDelta(let x, let y): "scroll \(x),\(y)"

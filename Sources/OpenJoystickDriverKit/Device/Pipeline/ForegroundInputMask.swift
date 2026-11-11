@@ -3,18 +3,28 @@
 /// A field whose input still equals the value it had when the mask was taken shows the value last
 /// dispatched instead; once it differs it is revealed for the rest of the mask's life.
 struct ForegroundInputMask {
+  /// One part of the controller state that is revealed independently of the others.
   private enum Field: Hashable {
+    /// One control button.
     case control(Control)
+    /// The hat switch.
     case hat
+    /// The left stick.
     case leftStick
+    /// The right stick.
     case rightStick
+    /// The left trigger.
     case leftTrigger
+    /// The right trigger.
     case rightTrigger
   }
 
+  /// The input at the time the mask was taken.
   private let hidden: ControllerState
+  /// The fields whose input changed since the mask was taken.
   private var revealed: Set<Field> = []
 
+  /// Creates a mask that hides `hidden`.
   init(hiding hidden: ControllerState) { self.hidden = hidden }
 
   /// `input` with every still-hidden field taken from `shown`.

@@ -8,8 +8,10 @@ extension PhysicalHIDFailure {
   /// DualShock 3 clone returns for a feature report it does not have.
   private static let hostPipeStalled = IOReturn(bitPattern: 0xE000_5000)
 
-  /// The failure an IOKit status code stands for. A device's own refusal (a stalled pipe or an
-  /// unsupported request) is `declined`; a code without a name stays `hostStatus`.
+  /// The failure an IOKit status code stands for.
+  ///
+  /// A device's own refusal (a stalled pipe or an unsupported request) is `declined`; a code
+  /// without a name stays `hostStatus`.
   init(ioReturn code: IOReturn) {
     switch code {
     case kIOReturnTimeout: self = .timedOut
