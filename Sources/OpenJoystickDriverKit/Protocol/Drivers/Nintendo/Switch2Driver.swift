@@ -137,7 +137,7 @@ public final class Switch2Driver: PhysicalProtocolDriver {
   static var commandChannel: ProtocolDescription.CommandChannel {
     guard let channel = PhysicalProtocolID.nintendoSwitch2.protocolDescription.commandChannel
     else {
-      preconditionFailure("nintendo-switch2.json sets no commandChannel")
+      preconditionFailure("nintendo-switch2.plist sets no commandChannel")
     }
     return channel
   }

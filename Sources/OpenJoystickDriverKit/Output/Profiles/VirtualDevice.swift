@@ -67,7 +67,7 @@ struct VirtualDevice: Equatable, Sendable {
   private static func loadBundled() throws -> [VirtualHIDProfileID: Self] {
     var devices: [VirtualHIDProfileID: Self] = [:]
     for persona in VirtualHIDProfileID.allCases {
-      guard let url = Bundle.module.url(forResource: persona.bundledFileName, withExtension: "json")
+      guard let url = Bundle.module.url(forResource: persona.bundledFileName, withExtension: "plist")
       else {
         throw ControllerRecordProblem(
           code: .invalidControllerRecord,

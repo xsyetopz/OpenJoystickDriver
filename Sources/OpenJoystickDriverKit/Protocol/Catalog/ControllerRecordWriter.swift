@@ -12,7 +12,7 @@ public enum ControllerRecordWriter {
   public enum Target: Equatable, Sendable {
     /// One controller model: its user Controller file, or else its ControllerPatch file.
     case model(ControllerModelID)
-    /// Every controller: `all.patch.json`.
+    /// Every controller: `all.patch.plist`.
     case allControllers
   }
 
@@ -184,10 +184,7 @@ public enum ControllerRecordWriter {
     let data: Data?
     do {
       data = try document.map { document in
-        let data = try OrderedJSON(
-          foundation: document,
-          order: try existing.map { try ControllerRecordSet.ordered($0) } ?? .recordKeys
-        ).formattedData()
+        let data = try DocumentCoder.write(document)
         _ = try ControllerRecordSet.validate(data, file: file, packages: packages)
         return data
       }
@@ -231,8 +228,10 @@ public enum ControllerRecordWriter {
         .invalidFile(ControllerRecordSet.problemDescription(error, document: "record"))
       )
     }
-    guard var document = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
-      throw .record(.invalidFile("the file is not a JSON object"))
+    guard var document = (try? DocumentCoder.read(data, file: file.lastPathComponent))
+      as? [String: Any]
+    else {
+      throw .record(.invalidFile("the file is not a dictionary"))
     }
     if operation == .add {
       do { try edit(&document) } catch { throw .edit(error) }
@@ -257,9 +256,7 @@ extension ControllerRecordWriter {
     case .set(let key, let value):
       tuning[key.rawValue] = Int(exactly: value).map { $0 as Any } ?? value
     case .remove(let key):
-      guard let value = tuning.removeValue(forKey: key.rawValue), !(value is NSNull) else {
-        throw NotSet(key: key)
-      }
+      guard tuning.removeValue(forKey: key.rawValue) != nil else { throw NotSet(key: key) }
     }
     fields["tuning"] = tuning.isEmpty ? nil : tuning
   }

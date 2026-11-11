@@ -13,7 +13,7 @@ extension ProfileLibraryTests {
       try await library.create(valid)
       var storedObject = try #require(
         JSONSerialization.jsonObject(
-          with: Data(RemappingProfileFileStore.encodedJSON(stored).utf8)
+          with: Data(RemappingProfileFileStore.encodedPlist(stored).utf8)
         ) as? [String: Any]
       )
       storedObject["notAField"] = true
@@ -38,7 +38,7 @@ extension ProfileLibraryTests {
       try await library.create(valid)
       var object = try #require(
         JSONSerialization.jsonObject(
-          with: Data(RemappingProfileFileStore.encodedJSON(stored).utf8)
+          with: Data(RemappingProfileFileStore.encodedPlist(stored).utf8)
         ) as? [String: Any]
       )
       object["bindings"] = [
@@ -75,9 +75,9 @@ extension ProfileLibraryTests {
       let duplicate = makeProfile(name: "valid")
       try invalidHeader.write(to: library.profileURL(UUID()))
       try unsupported.write(to: library.profileURL(UUID()))
-      try Data(RemappingProfileFileStore.encodedJSON(misnamed).utf8)
+      try Data(RemappingProfileFileStore.encodedPlist(misnamed).utf8)
         .write(to: library.profileURL(UUID()))
-      try Data(RemappingProfileFileStore.encodedJSON(duplicate).utf8)
+      try Data(RemappingProfileFileStore.encodedPlist(duplicate).utf8)
         .write(to: library.profileURL(duplicate.id))
       _ = try await library.reload()
 
@@ -101,7 +101,7 @@ extension ProfileLibraryTests {
       try await library.create(valid)
       var object = try #require(
         JSONSerialization.jsonObject(
-          with: Data(RemappingProfileFileStore.encodedJSON(stored).utf8)
+          with: Data(RemappingProfileFileStore.encodedPlist(stored).utf8)
         ) as? [String: Any]
       )
       object["bindings"] = [
@@ -216,7 +216,7 @@ extension ProfileLibraryTests {
   ) throws -> Data {
     var object = try #require(
       JSONSerialization.jsonObject(
-        with: Data(RemappingProfileFileStore.encodedJSON(stored).utf8)
+        with: Data(RemappingProfileFileStore.encodedPlist(stored).utf8)
       ) as? [String: Any]
     )
     var text = document

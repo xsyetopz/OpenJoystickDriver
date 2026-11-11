@@ -78,7 +78,9 @@ public struct ControllerRecordProbePlan: Equatable, Sendable {
     profile: DeviceRuntimeProfile
   ) {
     do {
-      let decoded = try ControllerRecordSet.decode(ControllerRecordSet.ordered(data))
+      let decoded = try ControllerRecordSet.decode(
+        ControllerRecordSet.ordered(data, file: "record")
+      )
       return (decoded, try DeviceCatalog.makeRuntimeProfile(decoded.document))
     } catch {
       // A coded reason leads with its code, like every other `E5001: ...` message.

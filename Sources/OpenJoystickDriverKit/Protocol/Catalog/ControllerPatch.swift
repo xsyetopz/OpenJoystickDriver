@@ -39,10 +39,10 @@ public struct ControllerPatch: Equatable, Sendable {
     /// The file name of a patch with this selector in a `Controllers` folder.
     public var fileName: String {
       switch self {
-      case .all: "all.patch.json"
+      case .all: "all.patch.plist"
       case .identity(let model):
-        String(format: "%04x-%04x.patch.json", model.vendorID, model.productID)
-      case .model(let id): "model-\(id).patch.json"
+        String(format: "%04x-%04x.patch.plist", model.vendorID, model.productID)
+      case .model(let id): "model-\(id).patch.plist"
       }
     }
 

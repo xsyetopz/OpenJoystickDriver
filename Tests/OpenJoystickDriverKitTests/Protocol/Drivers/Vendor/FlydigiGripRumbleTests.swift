@@ -27,7 +27,7 @@ struct FlydigiGripRumbleTests {
   }()
 
   private static func driver() throws -> any PhysicalProtocolDriver {
-    let decoded = try ControllerRecordSet.decode(ControllerRecordSet.ordered(record))
+    let decoded = try ControllerRecordSet.decode(ControllerRecordSet.ordered(record, file: "record"))
     let profile = try DeviceCatalog.makeRuntimeProfile(decoded.document)
     let result = ProtocolDriverRegistry.makeUnobservedDriver(
       protocolID: profile.physicalProtocolID,

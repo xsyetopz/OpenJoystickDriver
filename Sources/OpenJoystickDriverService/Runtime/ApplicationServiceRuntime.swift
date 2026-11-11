@@ -250,7 +250,7 @@ package final class ApplicationServiceRuntime {
     let personaWatcher = FileChangeWatcher(
       directories: [VirtualHIDProfileOverrideStore.userDirectory, packages],
       watchesFile: {
-        $0.pathExtension == "json"
+        $0.pathExtension == "plist"
           || $0.deletingLastPathComponent().standardizedFileURL == packages.standardizedFileURL
       },
       onChange: { Task { await applicationServiceServer.reloadPersonas() } }

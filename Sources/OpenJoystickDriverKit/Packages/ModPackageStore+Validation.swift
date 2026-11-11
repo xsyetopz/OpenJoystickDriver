@@ -118,7 +118,7 @@ extension ModPackageStore {
         throw ModPackageError(.invalidPackageContent, "\(kind)/\(file) is listed and missing")
       }
       if let file = present.subtracting(listed).min() {
-        throw ModPackageError(.invalidPackageContent, "\(kind)/\(file) is not listed in mod.json")
+        throw ModPackageError(.invalidPackageContent, "\(kind)/\(file) is not listed in mod.plist")
       }
     }
     // A patch may apply over a Controller file of the same package, so those are read first.
@@ -177,14 +177,14 @@ extension ModPackageStore {
     of data: Data,
     listedAs operation: ControllerRecordOperation
   ) throws {
-    let found = (try? OrderedJSON.parse(data))?["kind"]?.string
+    let found = ((try? DocumentCoder.read(data, file: "package file")) as? [String: Any])?["kind"] as? String
     let kinds = [ControllerRecordDocument.kind, ControllerPatch.kind]
     let expected = operation == .add ? ControllerRecordDocument.kind : ControllerPatch.kind
     guard let found, found != expected, kinds.contains(found) else { return }
     let list = operation == .add ? "controllers" : "patches"
     throw ControllerRecordProblem(
       code: .invalidControllerRecord,
-      "a \(found) file is listed under \(list) in mod.json; \(list) lists \(expected) files"
+      "a \(found) file is listed under \(list) in mod.plist; \(list) lists \(expected) files"
     )
   }
 
@@ -260,7 +260,7 @@ extension ModPackageStore {
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
       )
-      return (urls ?? []).filter { $0.pathExtension == "json" }
+      return (urls ?? []).filter { $0.pathExtension == "plist" }
     }
     var claims = ModPackageClaims()
     claims.controllerFiles = Set(files("Controllers").map(\.lastPathComponent))

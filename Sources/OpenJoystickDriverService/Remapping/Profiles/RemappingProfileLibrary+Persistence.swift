@@ -15,7 +15,7 @@ extension RemappingProfileLibrary {
     for url in try profileFileURLs() {
       let data = try Self.read(url)
       do {
-        let profile = try RemappingProfileFileStore.load(from: data)
+        let profile = try RemappingProfileFileStore.load(from: data, file: url.path)
         guard url.lastPathComponent == Self.profileFileName(profile.id) else {
           throw RemappingProfileLibraryError.corruptLibrary
         }
@@ -36,7 +36,11 @@ extension RemappingProfileLibrary {
     if FileManager.default.fileExists(atPath: selectionsURL.path) {
       let data = try Self.read(selectionsURL)
       if data.count <= Self.maximumEncodedBytes,
-        let decoded = try? JSONDecoder().decode([RemappingPersistedActiveProfile].self, from: data)
+        let decoded = try? DocumentCoder.decode(
+          [RemappingPersistedActiveProfile].self,
+          from: data,
+          file: selectionsURL.path
+        )
       {
         let profilesByID = Dictionary(
           uniqueKeysWithValues: allProfiles(
@@ -82,13 +86,11 @@ extension RemappingProfileLibrary {
       try Self.createPrivateDirectory(profilesDirectory)
       try manager.setAttributes([.posixPermissions: 0o700], ofItemAtPath: directory.path)
       for profile in proposed.profiles where !current.profiles.contains(profile) {
-        let data = Data(try RemappingProfileFileStore.encodedJSON(profile).utf8)
+        let data = Data(try RemappingProfileFileStore.encodedPlist(profile).utf8)
         try Self.writePrivate(data, to: profileURL(profile.id))
       }
       if proposed.activeProfiles != current.activeProfiles {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        try Self.writePrivate(encoder.encode(proposed.activeProfiles), to: selectionsURL)
+        try Self.writePrivate(DocumentCoder.encode(proposed.activeProfiles), to: selectionsURL)
       }
       let keptIDs = Set(proposed.profiles.map(\.id))
       for profile in current.profiles where !keptIDs.contains(profile.id) {
@@ -99,7 +101,7 @@ extension RemappingProfileLibrary {
     library = proposed
   }
 
-  /// The `*.json` files in `Profiles/`, sorted by name.
+  /// The `*.plist` files in `Profiles/`, sorted by name.
   func profileFileURLs() throws -> [URL] {
     guard FileManager.default.fileExists(atPath: profilesDirectory.path) else { return [] }
     do {
@@ -108,7 +110,7 @@ extension RemappingProfileLibrary {
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
       )
-      .filter { $0.pathExtension == "json" }
+      .filter { $0.pathExtension == "plist" }
       .sorted { $0.lastPathComponent < $1.lastPathComponent }
     } catch { throw RemappingProfileLibraryError.unreadableLibrary }
   }

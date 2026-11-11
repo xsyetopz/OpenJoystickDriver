@@ -196,7 +196,7 @@ extension ReportLayoutDriver {
     tuning: ControllerTuning?
   ) {
     guard let layouts = family.protocolDescription.inputLayouts else {
-      preconditionFailure("\(family.descriptionFileStem).json sets no input layouts")
+      preconditionFailure("\(family.descriptionFileStem).plist sets no input layouts")
     }
     let template = family.rumbleTemplate(variant: variant, record: record)
     var usbOutput: USBOutput?

@@ -85,15 +85,6 @@ public struct ControllerRecordDraft: Sendable {
       {
         restatedModes = .array(modes.map { $0["id"]?.string == "default" ? defaultJSON : $0 })
       }
-      if ControllerRecordSet.bundled.records[model]?.family != family.rawValue {
-        // The byte layout replaces the old record's usage map instead of merging into it.
-        if ControllerRecordSet.bundled.records[model]?.profile.hidUsageMap != nil,
-          var input = fields["input"] as? [String: Any]
-        {
-          input["hidUsageMap"] = NSNull()
-          fields["input"] = input
-        }
-      }
       body = ControllerPatch.document(selector: .identity(model), body: fields)
     } else {
       fields["apiVersion"] = OpenJoystickDriverAPI.version
@@ -102,21 +93,22 @@ public struct ControllerRecordDraft: Sendable {
       fields["productID"] = Int(model.productID)
       body = fields
     }
-    guard var json = try? OrderedJSON(foundation: body, order: .recordKeys) else { return nil }
+    guard var json = try? OrderedJSON(foundation: body) else { return nil }
     if let restatedModes {
       json = ControllerPatchMerge.mergePatch(
         json,
         .object([.init(key: "patch", value: .object([.init(key: "modes", value: restatedModes)]))])
       )
     }
-    text = json.formatted()
+    guard let data = try? json.plistData() else { return nil }
+    text = String(decoding: data, as: UTF8.self)
   }
 
   /// The `modes` of the bundled record of `model`, as written in its document: member order and
   /// number text are the file's.
   private static func bundledModes(of model: ControllerModelID) -> [OrderedJSON]? {
     guard let data = ControllerRecordSet.bundled.records[model]?.document,
-      case .array(let modes)? = (try? OrderedJSON.parse(data))?["modes"]
+      case .array(let modes)? = (try? OrderedJSON(document: data, file: "record"))?["modes"]
     else { return nil }
     return modes
   }

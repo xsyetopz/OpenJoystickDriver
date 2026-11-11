@@ -81,7 +81,7 @@ struct ModPackageFixture {
       applicationScope: .global,
       bindings: []
     )
-    return ("\(name).json", Data(try RemappingProfileFileStore.encodedJSON(profile).utf8))
+    return ("\(name).json", Data(try RemappingProfileFileStore.encodedPlist(profile).utf8))
   }
 
   /// Writes `files` into `folder/kind`.

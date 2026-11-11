@@ -189,7 +189,7 @@
     /// Returns its URL, or nil when the person cancels.
     static func chooseRecordOrModFolder() -> URL? {
       let panel = NSOpenPanel()
-      panel.allowedContentTypes = [.json, .folder]
+      panel.allowedContentTypes = [.propertyList, .folder]
       panel.allowsMultipleSelection = false
       panel.canChooseDirectories = true
       panel.canChooseFiles = true

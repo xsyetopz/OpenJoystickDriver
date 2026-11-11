@@ -58,12 +58,17 @@ public enum DocumentCoder {
     return tree
   }
 
-  /// The document in `data` as a `T`.
-  public static func decode<T: Decodable>(_ type: T.Type, from data: Data, file: String) throws
-    -> T
-  {
+  /// The document in `data` as a `T`; `userInfo` goes to the decoder.
+  public static func decode<T: Decodable>(
+    _ type: T.Type,
+    from data: Data,
+    file: String,
+    userInfo: [CodingUserInfoKey: Any] = [:]
+  ) throws -> T {
     _ = try read(data, file: file)
-    return try PropertyListDecoder().decode(type, from: data)
+    let decoder = PropertyListDecoder()
+    decoder.userInfo = userInfo
+    return try decoder.decode(type, from: data)
   }
 
   /// `value` as a canonical document.

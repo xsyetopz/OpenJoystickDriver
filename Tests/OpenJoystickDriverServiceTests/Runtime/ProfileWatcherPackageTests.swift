@@ -37,7 +37,7 @@ struct ProfileWatcherPackageTests {
       applicationScope: .global,
       bindings: []
     )
-    try Data(try RemappingProfileFileStore.encodedJSON(profile).utf8).write(
+    try Data(try RemappingProfileFileStore.encodedPlist(profile).utf8).write(
       to: staged.appendingPathComponent("Profiles/arcade.json")
     )
 

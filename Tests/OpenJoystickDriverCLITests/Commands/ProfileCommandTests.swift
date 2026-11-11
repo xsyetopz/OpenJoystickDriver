@@ -307,7 +307,7 @@ struct ProfileCommandTests {
   @Test
   func validateChecksAFileWithoutTheService() async throws {
     let profile = FakeProfileLibrary.profile("Pad")
-    let document = Data(try RemappingProfileFileStore.encodedJSON(profile).utf8)
+    let document = Data(try RemappingProfileFileStore.encodedPlist(profile).utf8)
     let run = { (data: Data, arguments: [String]) in
       await RecordStore.$standardInput.withValue(
         { data },

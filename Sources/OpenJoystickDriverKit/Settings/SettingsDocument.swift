@@ -1,6 +1,6 @@
 import Foundation
 
-/// The contents of one `Settings.json` layer; every setting is optional, and a setting a layer
+/// The contents of one `Settings.plist` layer; every setting is optional, and a setting a layer
 /// leaves out falls through to the layer below it.
 ///
 /// See `Resources/Schemas/settings.schema.json`.

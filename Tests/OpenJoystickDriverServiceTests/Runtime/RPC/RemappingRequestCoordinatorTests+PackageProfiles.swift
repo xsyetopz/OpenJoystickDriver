@@ -36,7 +36,7 @@ extension RemappingRequestCoordinatorTests {
     for (index, profile) in profiles.enumerated() {
       let fileName = "profile-\(index).json"
       fileNames.append(fileName)
-      try Data(try RemappingProfileFileStore.encodedJSON(profile).utf8).write(
+      try Data(try RemappingProfileFileStore.encodedPlist(profile).utf8).write(
         to: profileFolder.appendingPathComponent(fileName)
       )
     }

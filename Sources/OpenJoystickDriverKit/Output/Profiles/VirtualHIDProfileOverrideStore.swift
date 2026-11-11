@@ -51,7 +51,7 @@ public struct VirtualPersonaFile: Equatable, Sendable {
 /// A folder named ``unreadFolderName`` beside the directory is not read, and ``files`` lists it
 /// with the reason when it holds a visible file, so that the files a user keeps there are not
 /// ignored without a word.
-/// `set` writes `vvvv-pppp.json` or `vvvv-pppp-<unit>.json`, and keeps the identity of a persona
+/// `set` writes `vvvv-pppp.plist` or `vvvv-pppp-<unit>.json`, and keeps the identity of a persona
 /// that already matches.
 public struct VirtualHIDProfileOverrideStore: Sendable {
   /// The `kind` of a persona file.
@@ -85,10 +85,10 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
     /// The unit ID of one controller of the model; nil for the whole model.
     var unit: String?
 
-    /// The name of the persona file: `vvvv-pppp.json`, with `-<unit>` before the extension for a
+    /// The name of the persona file: `vvvv-pppp.plist`, with `-<unit>` before the extension for a
     /// unit.
     var fileName: String {
-      String(format: "%04x-%04x", vendorID, productID) + (unit.map { "-\($0)" } ?? "") + ".json"
+      String(format: "%04x-%04x", vendorID, productID) + (unit.map { "-\($0)" } ?? "") + ".plist"
     }
   }
 
@@ -230,11 +230,7 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
     }
     do {
       try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-      let data = try JSONSerialization.data(
-        withJSONObject: document,
-        options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-      )
-      try data.write(
+      try DocumentCoder.write(document).write(
         to: existing.flatMap { $0.fromPackage ? nil : $0.url }
           ?? directory.appendingPathComponent(model.fileName),
         options: .atomic
@@ -343,7 +339,7 @@ public struct VirtualHIDProfileOverrideStore: Sendable {
         at: directory,
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
-      ).filter { $0.pathExtension == "json" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+      ).filter { $0.pathExtension == "plist" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
     } catch CocoaError.fileReadNoSuchFile {
       return .success(Loaded())
     } catch { return .failure(.unreadableDirectory(error.localizedDescription)) }

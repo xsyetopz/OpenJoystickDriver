@@ -237,7 +237,7 @@ extension PhysicalProtocolID {
   /// A description that defaults none for a key its driver reads is a defect.
   func described(_ key: KeyPath<ControllerTuning, Int?>, in tuning: ControllerTuning?) -> Int {
     guard let value = driverTuning().overlaid(by: tuning ?? .none)[keyPath: key] else {
-      preconditionFailure("\(descriptionFileStem).json defaults no \(key)")
+      preconditionFailure("\(descriptionFileStem).plist defaults no \(key)")
     }
     return value
   }
@@ -259,7 +259,7 @@ extension PhysicalProtocolID {
     record: RumbleOutputTemplate?
   ) -> RumbleOutputTemplate {
     guard let template = rumbleTemplate(variant: variant, record: record) else {
-      preconditionFailure("\(descriptionFileStem).json sets no rumble template")
+      preconditionFailure("\(descriptionFileStem).plist sets no rumble template")
     }
     return template
   }
@@ -269,7 +269,7 @@ extension PhysicalProtocolID {
   /// A description that sets none for a count its driver reads is a defect.
   func described(limit: KeyPath<ProtocolDescription, Int?>) -> Int {
     guard let value = protocolDescription[keyPath: limit] else {
-      preconditionFailure("\(descriptionFileStem).json sets no \(limit)")
+      preconditionFailure("\(descriptionFileStem).plist sets no \(limit)")
     }
     return value
   }
@@ -281,7 +281,7 @@ extension PhysicalProtocolID {
   /// A driver adds only what its record or layout makes true.
   var describedControls: ControllerCapabilities {
     guard let controls = protocolDescription.controls else {
-      preconditionFailure("\(descriptionFileStem).json describes no controls")
+      preconditionFailure("\(descriptionFileStem).plist describes no controls")
     }
     return controls
   }

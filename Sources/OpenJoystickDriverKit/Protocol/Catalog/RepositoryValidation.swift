@@ -64,7 +64,7 @@ package enum RepositoryValidation {
   /// ``ControllerRecordSet``: each file's record rules, the file name its record needs, and an
   /// identity that is not held twice.
   package static func controllers(in directory: URL) -> [RepositoryProblem] {
-    switch jsonFiles(under: directory) {
+    switch plistFiles(under: directory) {
     case .failure(let problem): return [problem]
     case .success(let urls):
       guard !urls.isEmpty else {
@@ -83,7 +83,7 @@ package enum RepositoryValidation {
   /// The problems of the protocol descriptions under `directory`: each file's own rules, the
   /// family its file name must name, and a family without a file.
   package static func descriptions(in directory: URL) -> [RepositoryProblem] {
-    switch jsonFiles(under: directory) {
+    switch plistFiles(under: directory) {
     case .failure(let problem): return [problem]
     case .success(let urls):
       return ProtocolDescription.loadCatalog(urls, missing: directory.path).problems
@@ -124,8 +124,8 @@ package enum RepositoryValidation {
     return nil
   }
 
-  /// The `.json` files under `directory`, found recursively, in path order.
-  static func jsonFiles(under directory: URL) -> Result<[URL], RepositoryProblem> {
+  /// The `.plist` files under `directory`, found recursively, in path order.
+  static func plistFiles(under directory: URL) -> Result<[URL], RepositoryProblem> {
     guard
       let walker = FileManager.default.enumerator(
         at: directory,
@@ -141,7 +141,7 @@ package enum RepositoryValidation {
         )
       )
     }
-    let urls = walker.compactMap { $0 as? URL }.filter { $0.pathExtension == "json" }
+    let urls = walker.compactMap { $0 as? URL }.filter { $0.pathExtension == "plist" }
     return .success(urls.sorted { $0.path < $1.path })
   }
 }

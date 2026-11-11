@@ -10,10 +10,10 @@ struct ControllerLayerEntry {
 
 extension ControllerRecordSet {
   /// The bundled catalog with the records and patches of the installed packages applied, then those
-  /// of the valid `.json` files in `directory`.
+  /// of the valid `.plist` files in `directory`.
   ///
   /// A missing directory holds no records; one that cannot be read is listed in ``userFiles`` with
-  /// its reason. `all.patch.json` in `directory` is the user's global ``ControllerDefaults``; it is
+  /// its reason. `all.patch.plist` in `directory` is the user's global ``ControllerDefaults``; it is
   /// the first patch of the user layer and is reported in ``defaults`` rather than in
   /// ``userFiles``.
   public static func load(userDirectory directory: URL = userDirectory) -> Self {
@@ -25,7 +25,7 @@ extension ControllerRecordSet {
         at: directory,
         includingPropertiesForKeys: nil,
         options: [.skipsHiddenFiles]
-      ).filter { $0.pathExtension == "json" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+      ).filter { $0.pathExtension == "plist" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
     } catch CocoaError.fileReadNoSuchFile {
       urls = []
     } catch {
@@ -168,13 +168,11 @@ extension ControllerRecordSet {
   /// Reads one Controller or ControllerPatch file.
   ///
   /// A document of any other kind is refused by the ControllerPatch header check. Both kinds
-  /// refuse, by ``ordered(_:)``, text that is not plain UTF-8 and an object that names a member
-  /// twice.
+  /// refuse, by ``ordered(_:file:)``, a file that is not an XML property list.
   static func parse(_ data: Data, file: URL?, layer: ControllerRecordLayer) throws -> ParsedFile {
-    try requireUTF8(data)
-    let document = try ordered(data)
+    let document = try ordered(data, file: file?.lastPathComponent ?? "record")
     guard document.members != nil else {
-      throw ControllerRecordProblem(code: .invalidControllerRecord, "the file is not a JSON object")
+      throw ControllerRecordProblem(code: .invalidControllerRecord, "the file is not a dictionary")
     }
     if document["kind"]?.string == ControllerRecordDocument.kind {
       try OpenJoystickDriverAPI.requireHeader(
@@ -256,11 +254,11 @@ extension ControllerRecordSet {
     layer: ControllerRecordLayer,
     file: URL?
   ) throws -> ControllerRecord {
-    let base = try ordered(upstream.document)
+    let base = try ordered(upstream.document, file: "record")
     guard base.members != nil else {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,
-        "the record is not a JSON object"
+        "the record is not a dictionary"
       )
     }
     let isAll = patch.selector == .all

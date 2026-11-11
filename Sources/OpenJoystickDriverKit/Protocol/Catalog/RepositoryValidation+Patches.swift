@@ -65,7 +65,7 @@ extension RepositoryValidation {
           at: destination.deletingLastPathComponent(),
           withIntermediateDirectories: true
         )
-        try document.formattedData().write(to: destination, options: .atomic)
+        try document.plistData().write(to: destination, options: .atomic)
       }
     } catch {
       return [
@@ -93,7 +93,7 @@ extension RepositoryValidation {
     let document: OrderedJSON
   }
 
-  /// Reads each JSON file under `directory` as a record and appends a problem to `problems` for
+  /// Reads each property list file under `directory` as a record and appends a problem to `problems` for
   /// each file that is not a valid record.
   /// - Returns: The records that read.
   private static func readRecords(
@@ -101,7 +101,7 @@ extension RepositoryValidation {
     problems: inout [RepositoryProblem]
   ) -> [RecordFile] {
     let urls: [URL]
-    switch jsonFiles(under: directory) {
+    switch plistFiles(under: directory) {
     case .failure(let problem):
       problems.append(problem)
       return []
@@ -111,8 +111,7 @@ extension RepositoryValidation {
     for url in urls {
       do {
         let data = try RepositoryProblem.read(url)
-        try ControllerRecordSet.requireUTF8(data)
-        let document = try ControllerRecordSet.ordered(data)
+        let document = try ControllerRecordSet.ordered(data, file: url.lastPathComponent)
         guard let vendorID = document["vendorID"]?.integer.flatMap(UInt16.init(exactly:)),
           let productID = document["productID"]?.integer.flatMap(UInt16.init(exactly:))
         else {
@@ -135,7 +134,7 @@ extension RepositoryValidation {
     return files
   }
 
-  /// Reads each JSON file under `directory` as a patch and appends a problem to `problems` for each
+  /// Reads each property list file under `directory` as a patch and appends a problem to `problems` for each
   /// file that is not a valid patch or that is not stored at the path of its selector.
   /// - Returns: The patches that read.
   private static func readPatches(
@@ -143,7 +142,7 @@ extension RepositoryValidation {
     problems: inout [RepositoryProblem]
   ) -> [PatchFile] {
     let urls: [URL]
-    switch jsonFiles(under: directory) {
+    switch plistFiles(under: directory) {
     case .failure(let problem):
       problems.append(problem)
       return []
@@ -153,8 +152,7 @@ extension RepositoryValidation {
     for url in urls {
       do {
         let data = try RepositoryProblem.read(url)
-        try ControllerRecordSet.requireUTF8(data)
-        let order = try ControllerRecordSet.ordered(data)
+        let order = try ControllerRecordSet.ordered(data, file: url.lastPathComponent)
         let patch = try ControllerPatch.parse(order, file: url.lastPathComponent)
         let expected = patchPath(of: patch.selector)
         guard relativePath(of: url, under: directory) == expected else {

@@ -22,7 +22,7 @@ struct ProfileLibraryTests {
       #expect(
         try libraryFiles(in: directory) == [
           "Profiles/\(profile.id.uuidString).json": Data(
-            try RemappingProfileFileStore.encodedJSON(profile).utf8
+            try RemappingProfileFileStore.encodedPlist(profile).utf8
           )
         ]
       )

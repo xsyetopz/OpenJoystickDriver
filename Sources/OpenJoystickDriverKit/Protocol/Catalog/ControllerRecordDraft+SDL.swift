@@ -58,7 +58,7 @@ extension ControllerRecordDraft {
       ],
       "input": ["hidUsageMap": converted.usageMap.json],
     ]
-    guard let json = try? OrderedJSON(foundation: document, order: .recordKeys) else {
+    guard let json = try? OrderedJSON(foundation: document), let data = try? json.plistData() else {
       throw .rejected("the record cannot be written")
     }
     operation = .add
@@ -67,7 +67,7 @@ extension ControllerRecordDraft {
     reportLength = nil
     capturedReports = 0
     changedBytes = []
-    text = json.formatted()
+    text = String(decoding: data, as: UTF8.self)
   }
 }
 

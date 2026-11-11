@@ -420,16 +420,3 @@ public indirect enum OrderedJSON: Equatable, Sendable {
     return output + "\""
   }
 }
-
-extension OrderedJSON {
-  /// The order of the top-level members of a Controller file and a ControllerPatch file, and of a
-  /// patch's `selector`.
-  static let recordKeys: OrderedJSON = .object(
-    ["apiVersion", "kind", "vendorID", "productID", "selector", "modes", "patch"].map { key in
-      let selector: [Member] = [
-        Member(key: "vendorID", value: .null), Member(key: "productID", value: .null),
-      ]
-      return Member(key: key, value: key == "selector" ? .object(selector) : .null)
-    }
-  )
-}

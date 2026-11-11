@@ -5,7 +5,7 @@ import Foundation
 /// extension handshake.
 ///
 /// The report layouts, the button and accelerometer bits, the report-mode choice and the register
-/// scripts come from the `wiiRemote` field of `nintendo-wii.json`. Facts are from WiiBrew's
+/// scripts come from the `wiiRemote` field of `nintendo-wii.plist`. Facts are from WiiBrew's
 /// Wiimote page. Nunchuk, Classic and Motion Plus data and the remote's motion sample are
 /// decoded, and so are the IR camera, the LEDs and the rumble motor;
 /// the speaker plays through `encode`.
@@ -128,7 +128,7 @@ public final class WiiDriver: PhysicalProtocolDriver {
   /// `irFormat` is the IR format the camera runs in; nil leaves IR off.
   init(tuning: ControllerTuning?, irFormat: ProtocolDescription.WiiRemote.BlockKind?) {
     guard let wii = PhysicalProtocolID.nintendoWii.protocolDescription.wiiRemote else {
-      preconditionFailure("nintendo-wii.json describes no wiiRemote field")
+      preconditionFailure("nintendo-wii.plist describes no wiiRemote field")
     }
     self.wii = wii
     self.irFormat = irFormat
@@ -242,7 +242,7 @@ public final class WiiDriver: PhysicalProtocolDriver {
   func reportModeWrite() -> PhysicalOutputWrite {
     let choice = modeChoice
     guard let mode = wii.reportModes.first(where: { $0.id == choice.mode }) else {
-      preconditionFailure("nintendo-wii.json chooses no mode for \(chosenFeatures)")
+      preconditionFailure("nintendo-wii.plist chooses no mode for \(chosenFeatures)")
     }
     let continuous = mode.blocks.contains { $0.kind != .buttons }
     return outputReport([
@@ -253,7 +253,7 @@ public final class WiiDriver: PhysicalProtocolDriver {
   /// The description's choice for `chosenFeatures`.
   private var modeChoice: ProtocolDescription.WiiRemote.ModeChoice {
     guard let choice = wii.modeChoices.first(where: { $0.features == chosenFeatures }) else {
-      preconditionFailure("nintendo-wii.json chooses no mode for \(chosenFeatures)")
+      preconditionFailure("nintendo-wii.plist chooses no mode for \(chosenFeatures)")
     }
     return choice
   }

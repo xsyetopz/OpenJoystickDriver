@@ -38,6 +38,39 @@ extension OrderedJSON {
     )
   }
 
+  /// The value of the document `data`, an XML property list; `file` names it in a refusal.
+  init(document data: Data, file: String) throws {
+    self = try Self(foundation: DocumentCoder.read(data, file: file))
+  }
+
+  /// The value as a canonical document.
+  ///
+  /// A number written as an integer is an `integer` and any other number a `real`. `null` has no
+  /// property list form and is refused.
+  func plistData() throws -> Data { try DocumentCoder.write(plistValue()) }
+
+  private func plistValue() throws -> Any {
+    switch self {
+    case .object(let members):
+      return try Dictionary(uniqueKeysWithValues: members.map { ($0.key, try $0.value.plistValue()) })
+    case .array(let items): return try items.map { try $0.plistValue() }
+    case .string(let text): return text
+    case .bool(let flag): return flag
+    case .number(let text):
+      if let integer = Int64(text) { return integer }
+      if let wide = UInt64(text) { return wide }
+      guard let real = Double(text), real.isFinite else {
+        throw OrderedJSON.Problem(reason: .notAJSONValue("\(text) is not a number"), offset: nil)
+      }
+      return real
+    case .null:
+      throw OrderedJSON.Problem(
+        reason: .notAJSONValue("a property list cannot hold null; remove the key"),
+        offset: nil
+      )
+    }
+  }
+
   /// Whether the two values are the same JSON value: object members in any order, and numbers by
   /// value at any length, so `8E-2` and `0.08` are the same and two integers of 40 digits that
   /// differ in the last digit are not.

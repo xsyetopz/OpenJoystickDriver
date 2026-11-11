@@ -127,7 +127,7 @@ extension ProfileLibraryTests {
   }
 
   private func profileData(_ profile: RemappingProfile) throws -> Data {
-    Data(try RemappingProfileFileStore.encodedJSON(profile).utf8)
+    Data(try RemappingProfileFileStore.encodedPlist(profile).utf8)
   }
 
   /// Writes the package folder `Packages/<name>` with `profiles` as its profile files.

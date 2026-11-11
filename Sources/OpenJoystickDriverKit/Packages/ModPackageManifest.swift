@@ -17,12 +17,12 @@ public struct ModPackageError: Error, Equatable, Sendable, CustomStringConvertib
   public var description: String { "\(code.rawValue): \(detail)" }
 }
 
-/// The `mod.json` of a package folder, from `mod-package.schema.json`.
+/// The `mod.plist` of a package folder, from `mod-package.schema.json`.
 public struct ModPackageManifest: Equatable, Sendable {
   /// The `kind` of a manifest.
   public static let kind = "ModPackage"
   /// The file name of a manifest.
-  public static let fileName = "mod.json"
+  public static let fileName = "mod.plist"
 
   /// The OJD versions the package runs on: `minimum` up to, but not including, `below`.
   public struct Requires: Equatable, Sendable {
@@ -55,13 +55,15 @@ public struct ModPackageManifest: Equatable, Sendable {
       + profiles.map { "Profiles/\($0)" } + virtualDevices.map { "VirtualDevices/\($0)" }
   }
 
-  /// Decodes and checks one `mod.json`.
+  /// Decodes and checks one `mod.plist`.
   ///
   /// - Throws: ``ModPackageError`` with ``ErrorCode/invalidManifest``.
   public static func parse(_ data: Data) throws -> Self {
-    do { return try JSONDecoder().decode(Self.self, from: data) } catch let error
+    do { return try DocumentCoder.decode(Self.self, from: data, file: fileName) } catch let error
       as ModPackageError
-    { throw error } catch let DecodingError.dataCorrupted(context) {
+    { throw error } catch let error as DocumentCoderError {
+      throw ModPackageError(.invalidManifest, error.description)
+    } catch let DecodingError.dataCorrupted(context) {
       throw ModPackageError(.invalidManifest, located(context))
     } catch let DecodingError.keyNotFound(key, context) {
       throw ModPackageError(.invalidManifest, located(context, "missing field \(key.stringValue)"))
@@ -133,15 +135,15 @@ extension ModPackageManifest: Decodable {
   // The patterns of `mod-package.schema.json`, with `\A` and `\z` for the ECMA `^` and `$`, so
   // that a trailing newline fails. `ModPackageManifestSchemaTests` feeds both the same manifests.
   /// The file name of a `Controller` file: `vvvv-pppp.json`.
-  private static let controllerFilePattern = "\\A[0-9a-f]{4}-[0-9a-f]{4}\\.json\\z"
+  private static let controllerFilePattern = "\\A[0-9a-f]{4}-[0-9a-f]{4}\\.plist\\z"
   /// The file name of a `ControllerPatch` file: a model patch or `all.patch.json`.
   private static let patchFilePattern =
-    "\\A(?:(?:model-)?[0-9a-f]{4}-[0-9a-f]{4}\\.patch\\.json|all\\.patch\\.json)\\z"
+    "\\A(?:(?:model-)?[0-9a-f]{4}-[0-9a-f]{4}\\.patch\\.plist|all\\.patch\\.plist)\\z"
   /// The file name of a profile file.
-  private static let profileFilePattern = "\\A[A-Za-z0-9][A-Za-z0-9._-]*\\.json\\z"
+  private static let profileFilePattern = "\\A[A-Za-z0-9][A-Za-z0-9._-]*\\.plist\\z"
   /// The file name of a `VirtualDevice` file: `vvvv-pppp.json`, with an optional unit.
   private static let virtualDeviceFilePattern =
-    "\\A[0-9a-f]{4}-[0-9a-f]{4}(-U-[A-Za-z0-9_-]{16})?\\.json\\z"
+    "\\A[0-9a-f]{4}-[0-9a-f]{4}(-U-[A-Za-z0-9_-]{16})?\\.plist\\z"
   /// A SemVer 2.0.0 version.
   private static let semanticVersionPattern =
     "\\A(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)"

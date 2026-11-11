@@ -24,7 +24,7 @@ private let usage = """
     OJDRepositoryTool kebab <value>...
     OJDRepositoryTool mask-image <png> <frame> <keep>...
     OJDRepositoryTool format-json <file>...
-  A path is a file, or a directory whose .json files are checked.
+  A path is a file, or a directory whose .plist files are checked.
   validate controllers and descriptions read a directory at any depth. apply-patches reads
   Controller files at any depth and writes each to its relative path, and refuses a patch file
   that is not at the path its selector gives: a vendor directory for a vendorID with productID,
@@ -57,7 +57,7 @@ private func directory(_ path: String) throws -> URL {
   return URL(fileURLWithPath: path, isDirectory: true)
 }
 
-/// The files that `paths` name, in the order given; a directory stands for its `.json` files in
+/// The files that `paths` name, in the order given; a directory stands for its `.plist` files in
 /// file-name order.
 ///
 /// - Throws: ``UsageError`` when no path is given or a path does not exist.
@@ -73,7 +73,7 @@ private func files(_ paths: [String]) throws -> [URL] {
       at: URL(fileURLWithPath: path, isDirectory: true),
       includingPropertiesForKeys: nil,
       options: [.skipsHiddenFiles]
-    ).filter { $0.pathExtension == "json" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+    ).filter { $0.pathExtension == "plist" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
   }
 }
 

@@ -63,8 +63,8 @@ enum RemappingProfileLibraryError: Error, Equatable, LocalizedError, Sendable {
 
 /// The single application-service writer for locally authored remapping profiles.
 ///
-/// Each profile is its own `Profiles/<id>.json` file in the profile-file format, and the active
-/// selections are `ActiveProfiles.json`, both under `directory`. The profiles of the installed
+/// Each profile is its own `Profiles/<id>.plist` file in the profile-file format, and the active
+/// selections are `ActiveProfiles.plist`, both under `directory`. The profiles of the installed
 /// packages in `Packages/` are served read-only beside them; they are never written, counted
 /// against the profile limit, or deleted.
 actor RemappingProfileLibrary {
@@ -73,7 +73,7 @@ actor RemappingProfileLibrary {
   /// The most bytes of one encoded profile.
   static let maximumEncodedBytes = RemappingPayloadLimits.maximumEncodedBytes
   /// The name of the selections file.
-  static let selectionsFileName = "ActiveProfiles.json"
+  static let selectionsFileName = "ActiveProfiles.plist"
 
   /// The directory of the library files.
   let directory: URL
@@ -118,5 +118,5 @@ actor RemappingProfileLibrary {
   }
 
   /// Returns the file name of the profile `id`.
-  static func profileFileName(_ id: UUID) -> String { "\(id.uuidString).json" }
+  static func profileFileName(_ id: UUID) -> String { "\(id.uuidString).plist" }
 }

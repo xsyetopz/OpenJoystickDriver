@@ -125,7 +125,7 @@
       panel.canChooseDirectories = false
       panel.canChooseFiles = true
       panel.title = OJDLocalized.string("ui.profiles.import")
-      panel.allowedContentTypes = [.json]
+      panel.allowedContentTypes = [.propertyList]
       guard panel.runModal() == .OK, let url = panel.url else { return }
       Task { @MainActor in
         do {
@@ -172,7 +172,7 @@
       panel.canChooseDirectories = false
       panel.canChooseFiles = true
       panel.title = OJDLocalized.string("ui.profiles.validateFile")
-      panel.allowedContentTypes = [.json]
+      panel.allowedContentTypes = [.propertyList]
       guard panel.runModal() == .OK, let url = panel.url else { return }
       Task { @MainActor in
         do {
@@ -189,8 +189,8 @@
     func exportProfile(_ profile: RemappingProfile) {
       let panel = NSSavePanel()
       panel.title = OJDLocalized.string("ui.profiles.export")
-      panel.nameFieldStringValue = "\(profile.name).json"
-      panel.allowedContentTypes = [.json]
+      panel.nameFieldStringValue = "\(profile.name).plist"
+      panel.allowedContentTypes = [.propertyList]
       guard panel.runModal() == .OK, let url = panel.url else { return }
       Task { @MainActor in
         do {

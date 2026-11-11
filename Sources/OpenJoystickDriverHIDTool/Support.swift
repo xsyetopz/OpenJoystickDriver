@@ -287,7 +287,7 @@ func printUsageAndExit(_ code: Int32) -> Never {
       OpenJoystickDriverHIDTool --monitor [--vid <int> --pid <int>] [--seconds 10]
       OpenJoystickDriverHIDTool --usb-monitor --vid 0x1209
         [--endpoint 0x81] [--length 64] [--seconds 20]
-      OpenJoystickDriverHIDTool --record-probe <record.json>
+      OpenJoystickDriverHIDTool --record-probe <record.plist>
         [--seconds 30] [--validate-only]
       OpenJoystickDriverHIDTool --usb-passive --vid 0x3537 --pid 0x1010
 

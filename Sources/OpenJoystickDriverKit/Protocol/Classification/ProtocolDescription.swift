@@ -304,7 +304,7 @@ struct ProtocolDescription: Sendable {
   /// Loads the descriptions bundled with the module; throws on the first invalid one.
   private static func loadBundled() throws -> [PhysicalProtocolID: Self] {
     let urls = PhysicalProtocolID.allCases.compactMap {
-      Bundle.module.url(forResource: $0.descriptionFileStem, withExtension: "json")
+      Bundle.module.url(forResource: $0.descriptionFileStem, withExtension: "plist")
     }
     let catalog = loadCatalog(urls, missing: "the bundle")
     if let problem = catalog.problems.first {
@@ -357,7 +357,7 @@ struct ProtocolDescription: Sendable {
       ($0.lastPathComponent, $0.path) < ($1.lastPathComponent, $1.path)
     }
     for protocolID in PhysicalProtocolID.allCases {
-      let name = "\(protocolID.descriptionFileStem).json"
+      let name = "\(protocolID.descriptionFileStem).plist"
       let files = byName.filter { $0.lastPathComponent == name }
       if files.isEmpty {
         problems.append(
@@ -370,7 +370,7 @@ struct ProtocolDescription: Sendable {
       }
       files.forEach(load)
     }
-    let names = Set(PhysicalProtocolID.allCases.map { "\($0.descriptionFileStem).json" })
+    let names = Set(PhysicalProtocolID.allCases.map { "\($0.descriptionFileStem).plist" })
     byName.filter { !names.contains($0.lastPathComponent) }.forEach(load)
     return (descriptions, problems)
   }
@@ -402,9 +402,12 @@ struct ProtocolDescription: Sendable {
   ) throws(ProtocolDescriptionProblem) -> Self {
     let document: Document
     do {
-      let decoder = JSONDecoder()
-      decoder.userInfo[.startupConditionsAllowed] = true
-      document = try decoder.decode(Document.self, from: data)
+      document = try DocumentCoder.decode(
+        Document.self,
+        from: data,
+        file: fileName,
+        userInfo: [.startupConditionsAllowed: true]
+      )
     } catch {
       throw ProtocolDescriptionProblem(
         .invalidProtocolDescription,
@@ -457,7 +460,7 @@ struct ProtocolDescription: Sendable {
     guard let protocolID, family == protocolID else {
       throw ProtocolDescriptionProblem(
         .protocolDescriptionFamilyMismatch,
-        "\(fileName): file name must be \(family.descriptionFileStem).json"
+        "\(fileName): file name must be \(family.descriptionFileStem).plist"
       )
     }
     var signatures: [ProtocolInterfaceSignature] = []

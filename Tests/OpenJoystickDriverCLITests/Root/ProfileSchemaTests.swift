@@ -217,7 +217,7 @@ struct ProfileSchemaTests {
   func aRichProfileIsAcceptedByTheDecoderAndTheSchema() throws {
     let profile = try RemappingProfileFileStore.load(from: Data(Self.richDocument.utf8))
     #expect(try CLIOutputSchema.profileIssues(in: Self.richDocument).isEmpty)
-    let encoded = try RemappingProfileFileStore.encodedJSON(profile)
+    let encoded = try RemappingProfileFileStore.encodedPlist(profile)
     #expect(try CLIOutputSchema.profileIssues(in: encoded).isEmpty)
   }
 

@@ -53,12 +53,12 @@ indirect enum ProfileValue: Codable, Equatable {
     }
   }
 
-  /// The profile as the JSON tree that `ojd profile export` writes.
+  /// The profile as a JSON tree.
   ///
-  /// - Throws: What the profile encoder or the JSON decoder throws.
+  /// - Throws: The error of ``RemappingProfile/validate()``, or what the encoder or decoder throws.
   init(_ profile: RemappingProfile) throws {
-    let text = try RemappingProfileFileStore.encodedJSON(profile)
-    self = try JSONDecoder().decode(Self.self, from: Data(text.utf8))
+    try profile.validate()
+    self = try JSONDecoder().decode(Self.self, from: JSONEncoder().encode(profile))
   }
 
   /// `text` read as JSON, or as a string when it is not JSON.

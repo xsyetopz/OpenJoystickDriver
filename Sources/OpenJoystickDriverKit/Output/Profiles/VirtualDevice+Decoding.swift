@@ -172,10 +172,14 @@ extension VirtualDevice {
     source: Source,
     requiresMatch: Bool
   ) throws -> Self {
-    let decoder = JSONDecoder()
+    let file =
+      switch source {
+      case .file(let name): name
+      case .unnamed: "virtual device"
+      }
     let document: Document
     do {
-      let header = try decoder.decode(Header.self, from: data)
+      let header = try DocumentCoder.decode(Header.self, from: data, file: file)
       if let problem = OpenJoystickDriverAPI.headerProblem(
         apiVersion: header.apiVersion?.text,
         kind: header.kind?.text,
@@ -188,7 +192,9 @@ extension VirtualDevice {
         }
         throw DocumentHeaderProblem(code: .unsupportedAPIVersion, located)
       }
-      document = try decoder.decode(Document.self, from: data)
+      document = try DocumentCoder.decode(Document.self, from: data, file: file)
+    } catch let error as DocumentCoderError {
+      throw ControllerRecordProblem(code: error.code, error.description)
     } catch let error as DecodingError {
       throw ControllerRecordProblem(
         code: .invalidControllerRecord,

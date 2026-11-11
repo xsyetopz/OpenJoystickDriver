@@ -273,7 +273,7 @@ struct SettingSetCommand: AsyncParsableCommand {
   }
 }
 
-/// The `ojd setting reset` command: moves `Settings.json` to the Trash, so every setting returns to
+/// The `ojd setting reset` command: moves `Settings.plist` to the Trash, so every setting returns to
 /// its default.
 ///
 /// It works on the file itself, so it also fixes a file the service rejects and needs no running

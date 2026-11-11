@@ -135,7 +135,7 @@ struct CommandValueParserTests {
 
     try RemappingProfileFileStore.write(profile, to: url)
     #expect(try RemappingProfileFileStore.load(from: url) == profile)
-    #expect(try RemappingProfileFileStore.encodedJSON(profile).contains("Portable"))
+    #expect(try RemappingProfileFileStore.encodedPlist(profile).contains("Portable"))
 
     var object = try #require(
       JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
