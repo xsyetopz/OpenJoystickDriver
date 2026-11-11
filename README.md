@@ -72,6 +72,8 @@ ojd mod install ~/Downloads/my-controller-mod --dry-run
 ojd mod install ~/Downloads/my-controller-mod
 ```
 
+Records, patches, profiles and mod manifests are XML property lists (`.plist`). Check one with `plutil -lint FILE.plist`, read one as JSON with `plutil -convert json -o - FILE.plist`, and write one from JSON with `plutil -convert xml1 -o FILE.plist FILE.json`.
+
 The wiki covers the rest: [Getting started][wiki-start], [Using the app][wiki-app], [Remapping profiles][wiki-remap] and the [Command reference][wiki-cli].
 
 <details>

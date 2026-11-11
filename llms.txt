@@ -6,6 +6,8 @@ The same binary is the CLI. Ground support claims in source, tests, schemas, or 
 
 Do not edit generated controller records or `.build/driverkit/generated/`. `OpenJoystickDriverKit` must not import SwifterKit. The host user-client entitlement must be exactly `com.openjoystickdriver.XboxUSBDevice`, the only DriverKit extension. The virtual-device entitlement stays on the app, never the DriverKit extension.
 
+Every stored document (record, patch, profile, virtual device, mod manifest) is an XML property list with `apiVersion` `openjoystickdriver/v1alpha3`. `plutil -convert json -o - FILE.plist` reads one as JSON and `plutil -convert xml1 -o FILE.plist FILE.json` writes one from JSON. Messages (`--json` output, the endpoint, report files) stay JSON.
+
 ## Docs
 
 - [README](README.md): project summary and links to the wiki
