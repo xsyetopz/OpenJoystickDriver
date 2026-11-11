@@ -143,7 +143,9 @@
             Text(unserved.nextStep).font(.caption).foregroundColor(
               Color(NSColor.secondaryLabelColor)
             )
-          }.padding(.vertical, 4).ojdAccessibilityLabel(unserved.identity)
+          }.padding(.vertical, 4).tag(Self.unservedTag(unserved)).ojdAccessibilityLabel(
+            unserved.identity
+          )
             .ojdAccessibilityValue("\(unserved.explanation) \(unserved.nextStep)")
         }
       }.listStyle(InsetListStyle()).alert(item: $wirelessDisconnectRequest) { request in
@@ -193,9 +195,18 @@
     /// The binding between the list selection and the selected controller's session token.
     private var selectedDeviceIdentifier: Binding<String?> {
       Binding(
-        get: { selectedDevice?.sessionToken.rawValue },
+        get: {
+          screen.selectedUnserved.map(Self.unservedTag) ?? selectedDevice?.sessionToken.rawValue
+        },
         set: { identifier in
-          guard let identifier,
+          guard let identifier else { return }
+          if let unserved = screen.unservedDevices.first(where: {
+            Self.unservedTag($0) == identifier
+          }) {
+            screen.select(unserved: unserved)
+            return
+          }
+          guard
             let device = devices.first(where: { $0.sessionToken.rawValue == identifier })
           else { return }
           screen.select(device)
@@ -203,10 +214,17 @@
       )
     }
 
+    /// The list tag of a device that OJD does not serve; it cannot equal a session token.
+    private static func unservedTag(_ device: RuntimeUnservedDevice) -> String {
+      "unserved:\(device.id)"
+    }
+
     /// The detail of the selected controller, or the state of the load.
     @ViewBuilder
     private var controllerDetail: some View {
-      if let selectedDevice {
+      if let unserved = screen.selectedUnserved {
+        UnservedDeviceDetailView(device: unserved).id(unserved.id)
+      } else if let selectedDevice {
         ControllerDetailView(
           device: selectedDevice,
           activeProfile: activeProfileState(for: selectedDevice),

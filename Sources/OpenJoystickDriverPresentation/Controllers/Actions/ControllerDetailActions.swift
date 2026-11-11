@@ -202,6 +202,34 @@ final class ControllerDetailActions: ObservableObject {
     } catch { notice = Notice(source: .timedCapture, text: error.message, isError: true) }
   }
 
+  /// Drafts a record from the interfaces of a connected device that OJD does not serve, then asks
+  /// for a place to save it.
+  ///
+  /// A failure becomes the notice under the action.
+  ///
+  /// - Parameters:
+  ///   - model: The vendor and product ID of the device.
+  ///   - read: Reads the device from the system by vendor and product ID.
+  func draftUnserved(
+    model: ControllerModelID,
+    _ read: (Int, Int) -> PhysicalDevice? = { PlatformHosts.current.physicalDevice(vendorID: $0, productID: $1) }
+  ) {
+    guard let draft = ControllerRecordDrafting.unservedDraft(model: model, read) else {
+      notice = Notice(
+        source: .timedCapture,
+        text: OJDLocalized.formatted("ui.controllers.draftRecordFromSDL.noPad", model.description),
+        isError: true
+      )
+      return
+    }
+    pendingSave = SaveRequest(
+      data: draft.document,
+      fileName: ControllerRecordDrafting.fileName(for: model),
+      directory: Self.recordDirectory,
+      summary: nil
+    )
+  }
+
   /// Stops a running capture and closes the sheet.
   func cancelTimed() {
     timedTask?.cancel()

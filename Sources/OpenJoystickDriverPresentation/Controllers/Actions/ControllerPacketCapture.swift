@@ -201,11 +201,36 @@ enum ControllerRecordDrafting {
     }
   }
 
+  /// Returns the record drafted from the interfaces of a connected device that OJD does not serve,
+  /// as `ojd record draft` does.
+  ///
+  /// - Parameters:
+  ///   - model: The vendor and product ID of the device.
+  ///   - read: Reads the device from the system by vendor and product ID.
+  /// - Returns: The drafted record, or nil when the system does not list the device or no
+  ///   interface reports its class triple.
+  static func unservedDraft(
+    model: ControllerModelID,
+    _ read: (Int, Int) -> PhysicalDevice? = { PlatformHosts.current.physicalDevice(vendorID: $0, productID: $1) }
+  ) -> ControllerRecordDraft? {
+    read(Int(model.vendorID), Int(model.productID)).flatMap {
+      ControllerRecordDraft(model: model, device: $0)
+    }
+  }
+
   /// Returns the suggested file name of the record, `vvvv-pppp.plist`.
   ///
   /// - Parameter device: The controller.
   /// - Returns: The suggested file name of the record, `vvvv-pppp.plist`.
   static func fileName(for device: ApplicationServiceDeviceDescription) -> String {
-    String(format: "%04x-%04x.plist", device.vendorID, device.productID)
+    fileName(for: ControllerModelID(vendorID: device.vendorID, productID: device.productID))
+  }
+
+  /// Returns the suggested file name of the record, `vvvv-pppp.plist`.
+  ///
+  /// - Parameter model: The controller model.
+  /// - Returns: The suggested file name of the record, `vvvv-pppp.plist`.
+  static func fileName(for model: ControllerModelID) -> String {
+    String(format: "%04x-%04x.plist", model.vendorID, model.productID)
   }
 }

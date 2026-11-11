@@ -11,6 +11,10 @@
     /// The session token of the selected controller, or nil before a selection.
     @Published
     private(set) var selectedSessionToken: String?
+    /// The ID of the selected device that OJD does not serve, or nil; it replaces the selected
+    /// controller.
+    @Published
+    private(set) var selectedUnservedID: String?
 
     /// The model of the app's view of the service.
     let runtime: RuntimeViewModel
@@ -46,14 +50,23 @@
     /// Whether the controller inventory is refreshing.
     var isRefreshing: Bool { runtime.isScopedRefreshInFlight }
 
+    /// The selected device that OJD does not serve, or nil when none is selected or it left.
+    var selectedUnserved: RuntimeUnservedDevice? {
+      unservedDevices.first { $0.id == selectedUnservedID }
+    }
+
     /// The selected controller, or the first one when none is selected or the selection left.
+    ///
+    /// Nil while a device that OJD does not serve is selected.
     var selectedDevice: ApplicationServiceDeviceDescription? {
+      if selectedUnserved != nil { return nil }
       guard let selectedSessionToken else { return devices.first }
       return devices.first { $0.sessionToken.rawValue == selectedSessionToken } ?? devices.first
     }
 
     /// Selects the first controller when the selection is not connected.
     func synchronizeSelection() {
+      if selectedUnserved != nil { return }
       guard let selectedSessionToken,
         devices.contains(where: { $0.sessionToken.rawValue == selectedSessionToken })
       else {
@@ -66,7 +79,15 @@
     ///
     /// - Parameter device: The controller to select.
     func select(_ device: ApplicationServiceDeviceDescription) {
+      selectedUnservedID = nil
       selectedSessionToken = device.sessionToken.rawValue
+    }
+
+    /// Selects the device that OJD does not serve.
+    ///
+    /// - Parameter device: The device to select.
+    func select(unserved device: RuntimeUnservedDevice) {
+      selectedUnservedID = device.id
     }
 
     /// Selects the controller with this session token, for "Show in Window".

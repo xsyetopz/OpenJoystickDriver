@@ -189,6 +189,10 @@ struct RuntimeUnservedDevice: Sendable, Equatable, Identifiable {
   let explanation: String
   /// The sentence that says what to do about it.
   let nextStep: String
+  /// The vendor and product ID of the device.
+  let modelID: ControllerModelID
+  /// Whether the detail offers Draft Record: the device is a HID pad.
+  let offersDraft: Bool
 
   /// The identity and the connection, which together identify the entry.
   var id: String { "\(identity) \(connection)" }
@@ -199,6 +203,8 @@ struct RuntimeUnservedDevice: Sendable, Equatable, Identifiable {
     connection = device.connection
     explanation = OJDLocalized.string(device.reason.explanationKey)
     nextStep = OJDLocalized.string(device.reason.nextStepKey)
+    modelID = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
+    offersDraft = device.isHIDGamepad
   }
 }
 
