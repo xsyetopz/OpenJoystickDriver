@@ -17,54 +17,80 @@ A mod package is a folder that holds controllers, controller patches, remapping 
 
 A package adds files to the layers that OpenJoystickDriver (OJD) already reads. It holds no code. A package record for a raw-USB controller works only when macOS lets OJD open the device directly.
 
-A package is a folder with a `mod.json` manifest and up to three subfolders:
+A package is a folder with a `mod.plist` manifest and up to three subfolders:
 
 ```text
 ojd-sample/
-  mod.json
-  Controllers/1209-0001.json
-  Profiles/sample-pad.json
-  VirtualDevices/1209-0001.json
+  mod.plist
+  Controllers/1209-0001.plist
+  Profiles/sample-pad.plist
+  VirtualDevices/1209-0001.plist
 ```
 
-- `Controllers/` holds [controller records](Controller-Records.md). Name a `Controller` file `vvvv-pppp.json` after its model, in lowercase hexadecimal. Name a `ControllerPatch` file `vvvv-pppp.patch.json`, `model-vvvv-pppp.patch.json`, or `all.patch.json`. Both kinds share the folder, as they do in your own `Controllers` folder, because OpenJoystickDriver reads the records and patches of one layer from one folder.
+- `Controllers/` holds [controller records](Controller-Records.md). Name a `Controller` file `vvvv-pppp.plist` after its model, in lowercase hexadecimal. Name a `ControllerPatch` file `vvvv-pppp.patch.plist`, `model-vvvv-pppp.patch.plist`, or `all.patch.plist`. Both kinds share the folder, as they do in your own `Controllers` folder, because OpenJoystickDriver reads the records and patches of one layer from one folder.
 - `Profiles/` holds [remapping profiles](Profile-File-Reference.md).
-- `VirtualDevices/` holds `VirtualDevice` files, which choose the virtual gamepad that games see. Name each file `vvvv-pppp.json` after the model it matches, or `vvvv-pppp-U-UNIT.json` for one controller, where `UNIT` is the 16-character unit ID that `ojd controller show` prints.
+- `VirtualDevices/` holds `VirtualDevice` files, which choose the virtual gamepad that games see. Name each file `vvvv-pppp.plist` after the model it matches, or `vvvv-pppp-U-UNIT.plist` for one controller, where `UNIT` is the 16-character unit ID that `ojd controller show` prints.
 
 The sample package, `ojd-sample`, is in the [`docs/sdk/sample`](../docs/sdk/sample) folder of the repository. It adds a generic HID pad (`1209:0001`), a profile that maps Start to the space key, and a virtual device. `1209:0001` is a pid.codes test ID: it is not unique to one product, so use it only for testing, and use the real VID and PID of your controller in a package you share.
+
+Every file of a package is an XML property list. `plutil -lint FILE.plist` checks one, `plutil -convert xml1 -o FILE.plist FILE.json` writes one from JSON, and `plutil -convert json -o - FILE.plist` prints one as JSON.
 
 A package folder holds nothing else. OJD refuses a package with a file or folder that is not in the layout, and a package with a link. It skips hidden files.
 
 ## The Manifest
 
-The `mod.json` file names the package and lists every file it holds. This is the sample manifest:
+The `mod.plist` file names the package and lists every file it holds. Each file of a package is an XML property list. This is the sample manifest:
 
-```json
-{
-  "apiVersion": "openjoystickdriver/v1alpha2",
-  "kind": "ModPackage",
-  "name": "ojd-sample",
-  "version": "1.0.0",
-  "author": "OpenJoystickDriver",
-  "requires": { "minimum": "0.6.0-alpha.1", "below": "0.7.0" },
-  "controllers": ["1209-0001.json"],
-  "profiles": ["sample-pad.json"],
-  "virtualDevices": ["1209-0001.json"]
-}
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>apiVersion</key>
+	<string>openjoystickdriver/v1alpha3</string>
+	<key>author</key>
+	<string>OpenJoystickDriver</string>
+	<key>controllers</key>
+	<array>
+		<string>1209-0001.plist</string>
+	</array>
+	<key>kind</key>
+	<string>ModPackage</string>
+	<key>name</key>
+	<string>ojd-sample</string>
+	<key>profiles</key>
+	<array>
+		<string>sample-pad.plist</string>
+	</array>
+	<key>requires</key>
+	<dict>
+		<key>below</key>
+		<string>0.7.0</string>
+		<key>minimum</key>
+		<string>0.6.0-alpha.1</string>
+	</dict>
+	<key>version</key>
+	<string>1.0.0</string>
+	<key>virtualDevices</key>
+	<array>
+		<string>1209-0001.plist</string>
+	</array>
+</dict>
+</plist>
 ```
 
-- `apiVersion`: `openjoystickdriver/v1alpha2`. OJD rejects a missing or any other version, and names the file, the version it found, and the supported one.
+- `apiVersion`: `openjoystickdriver/v1alpha3`. OJD rejects a missing or any other version, and names the file, the version it found, and the supported one.
 - `kind`: `ModPackage`.
 - `name`: Lowercase letters, digits, and hyphens. The package installs into a folder of this name.
 - `version`: A SemVer version without a `v` prefix.
 - `author`: Text that is not empty.
 - `requires`: The OJD versions the package runs on. `minimum` is the first version, and `below` is the first version that is too new. `below` is optional. Prerelease versions follow SemVer order.
-- `controllers`: The `Controller` files in `Controllers/`. Each name is `vvvv-pppp.json`.
-- `patches`: The `ControllerPatch` files in `Controllers/`. Each name is `vvvv-pppp.patch.json`, `model-vvvv-pppp.patch.json`, or `all.patch.json`.
+- `controllers`: The `Controller` files in `Controllers/`. Each name is `vvvv-pppp.plist`.
+- `patches`: The `ControllerPatch` files in `Controllers/`. Each name is `vvvv-pppp.patch.plist`, `model-vvvv-pppp.patch.plist`, or `all.patch.plist`.
 - `profiles`: The `Profile` files in `Profiles/`.
 - `virtualDevices`: The `VirtualDevice` files in `VirtualDevices/`.
 
-A list that you include must name at least one file, and at least one list must name a file. OJD refuses a `mod.json` with any other key, such as `records` or `personas`, with E4001. It refuses a `Controller` file listed under `patches` and a `ControllerPatch` file listed under `controllers` with E4003.
+A list that you include must name at least one file, and at least one list must name a file. OJD refuses a `mod.plist` with any other key, such as `records` or `personas`, with E4001. It refuses a `Controller` file listed under `patches` and a `ControllerPatch` file listed under `controllers` with E4003.
 
 A file that is in a subfolder but not in the manifest, or in the manifest but not in the folder, makes OJD refuse the package. Each listed file must be valid for its kind.
 

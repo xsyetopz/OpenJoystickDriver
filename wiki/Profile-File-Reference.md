@@ -1,6 +1,6 @@
 # Profile File Reference
 
-OpenJoystickDriver stores each profile in its own JSON file, and this page describes their location, shape, and limits.
+OpenJoystickDriver stores each profile in its own XML property list file, and this page describes their location, shape, and limits.
 
 ## File Location
 
@@ -8,54 +8,65 @@ Profiles and the active profile selections are in this folder:
 
 ```text
 ~/Library/Application Support/OpenJoystickDriver/
-  Profiles/<UUID>.json
-  ActiveProfiles.json
+  Profiles/<UUID>.plist
+  ActiveProfiles.plist
 ```
 
-Each profile file is named after the profile's `id`, in uppercase, such as `Profiles/0F8C2A4E-6B1D-4E7A-9C3F-2D5B8A1E7C40.json`. OJD writes the files with mode `0600` in folders with mode `0700`. OJD replaces each file in one atomic write. For more information, see [Importing and exporting profiles](Remapping-Profiles.md#importing-and-exporting-profiles).
+Each profile file is named after the profile's `id`, in uppercase, such as `Profiles/0F8C2A4E-6B1D-4E7A-9C3F-2D5B8A1E7C40.plist`. OJD writes the files with mode `0600` in folders with mode `0700`. OJD replaces each file in one atomic write. For more information, see [Importing and exporting profiles](Remapping-Profiles.md#importing-and-exporting-profiles).
 
 OJD watches the folder. When you add, change, or remove a profile file while OJD runs, OJD reads the folder again and applies the change to connected controllers.
 
 ## Damaged Files
 
-OJD skips a profile file that it cannot read, that fails validation, or whose name does not match its `id`. OJD drops an active selection that names a missing or skipped profile. The other profiles stay available. If OJD cannot read `ActiveProfiles.json`, no profile is active.
+OJD skips a profile file that it cannot read, that fails validation, or whose name does not match its `id`. OJD drops an active selection that names a missing or skipped profile. The other profiles stay available. If OJD cannot read `ActiveProfiles.plist`, no profile is active.
 
-OJD reports each damaged file in Settings and in `ojd profile list`. You cannot create, change, or activate profiles until every damaged file is resolved. When you remove a damaged profile file, OJD saves a backup named `<file>.backup-<time>-<UUID>` beside it and then deletes the file. When you reset damaged selections, OJD saves a backup of `ActiveProfiles.json` the same way and replaces it with an empty list. Your profiles are kept.
+OJD reports each damaged file in Settings and in `ojd profile list`. You cannot create, change, or activate profiles until every damaged file is resolved. When you remove a damaged profile file, OJD saves a backup named `<file>.backup-<time>-<UUID>` beside it and then deletes the file. When you reset damaged selections, OJD saves a backup of `ActiveProfiles.plist` the same way and replaces it with an empty list. Your profiles are kept.
 
 ## Error Codes
 
 A profile that cannot be used gets the same code wherever OJD reads it: `ojd profile import`, `edit`, `set`, and `validate`, the damaged-file report of `ojd profile list` and `ojd profile recover`, the service requests that carry a profile, and `Scripts/Quality/validate_schemas.py`.
 
 - `E5001`: `apiVersion` is missing or not supported.
-- `E3008`: the file is too large, is not JSON, or does not decode or validate as a profile. This includes a `kind` other than `Profile`, an unknown field, and an unknown control name.
+- `E3008`: the file is too large, is not an XML property list, or does not decode or validate as a profile. This includes a `kind` other than `Profile`, an unknown field, and an unknown control name.
 - `E3006`: another profile already uses the name.
 - `E3005`: the file name does not match the profile `id`, or a selection cannot be used.
 
 ## File Shape
 
-A profile file contains one profile object. An exported profile file has the same shape.
+A profile file contains one profile dictionary. An exported profile file has the same shape.
 
-`ActiveProfiles.json` contains a list. Each entry has a controller `model` with `vendorID` and `productID`, a `profileID`, and an optional `applicationScope`.
+`ActiveProfiles.plist` contains an array. Each entry is a dictionary with a controller `model` with `vendorID` and `productID`, a `profileID`, and an optional `applicationScope`.
 
-```json
-[
-  {
-    "model": { "productID": 654, "vendorID": 1118 },
-    "profileID": "0F8C2A4E-6B1D-4E7A-9C3F-2D5B8A1E7C40"
-  }
-]
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>model</key>
+		<dict>
+			<key>productID</key>
+			<integer>654</integer>
+			<key>vendorID</key>
+			<integer>1118</integer>
+		</dict>
+		<key>profileID</key>
+		<string>0F8C2A4E-6B1D-4E7A-9C3F-2D5B8A1E7C40</string>
+	</dict>
+</array>
+</plist>
 ```
 
 ## Profile Fields
 
 | Field | Required | Meaning |
 | --- | --- | --- |
-| `apiVersion` | Yes | `openjoystickdriver/v1alpha2` |
+| `apiVersion` | Yes | `openjoystickdriver/v1alpha3` |
 | `kind` | Yes | `Profile` |
 | `id` | Yes | UUID of the profile |
 | `name` | Yes | 1 to 80 printable characters |
 | `device` | Yes | `vendorID` and `productID` of the controller model, and an optional `unit`: a unit ID from `ojd controller list` that limits the profile to that one controller |
-| `applicationScope` | Yes | `{"type":"Global"}` or `{"type":"Application","appID":"ID"}` |
+| `applicationScope` | Yes | a dictionary with `type` `Global`, or with `type` `Application` and `appID` set to the application ID |
 | `bindings` | Yes | The assignments |
 | `outputPolicy` | No | `virtualGamepad` and `physicalInput` |
 | `physicalColor` | No | Lighting color |
@@ -67,7 +78,7 @@ A profile file contains one profile object. An exported profile file has the sam
 
 A profile with `device.unit` applies only to the controller with that unit ID, and wins over an active profile for the whole model in the same application scope. Activating it replaces only the active profile of that unit and scope.
 
-OJD rejects unknown keys anywhere in a profile. The file declares `apiVersion: openjoystickdriver/v1alpha2` and `kind: Profile`, and OJD rejects a file without them. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes the file. Rules that span fields, such as a source used twice, are not in the schema. Check a file against both with `ojd profile validate FILE`.
+OJD rejects unknown keys anywhere in a profile, and a file that holds a `date` or `data` value. The file declares `apiVersion: openjoystickdriver/v1alpha3` and `kind: Profile`, and OJD rejects a file without them. [`profile.schema.json`](../Resources/Schemas/profile.schema.json) describes the file. Rules that span fields, such as a source used twice, are not in the schema. Check a file against both with `ojd profile validate FILE`.
 
 ## Turbo and Multi-Tap Fields
 
@@ -79,7 +90,7 @@ A binding's `multiTap` list has entries with `count` (2 to 5, unique in the list
 
 `pointerSpeed` has `driver`, `minScale`, `maxScale`, and `curve`, and no other key. All four are required.
 
-- `driver` is `{"type":"Trigger","side":SIDE}` or `{"type":"StickDepth","side":SIDE}`. `SIDE` is `Left` or `Right`.
+- `driver` is a dictionary with `type` `Trigger` or `StickDepth` and `side` `Left` or `Right`.
 - `minScale` applies at driver value 0 and `maxScale` at 1. Both are numbers from 0 to 10.
 - `curve` is `Linear`, `EaseIn`, `EaseOut`, or `SmoothStep`.
 
@@ -87,16 +98,16 @@ A binding's `multiTap` list has entries with `count` (2 to 5, unique in the list
 
 ## Pointer Position Destination
 
-`{"type":"PointerPosition","axis":AXIS}` places the cursor along one axis, with `AXIS` as `X` or `Y`. It has no other key. Only an axis source can drive it, with an `axisTuning` like `MouseMovement`. The axis value from -1 to 1 maps linearly across the main display, and the other coordinate keeps its value. `pointerSpeed` does not scale it.
+A destination with `type` `PointerPosition` and `axis` `X` or `Y` places the cursor along one axis. It has no other key. Only an axis source can drive it, with an `axisTuning` like `MouseMovement`. The axis value from -1 to 1 maps linearly across the main display, and the other coordinate keeps its value. `pointerSpeed` does not scale it.
 
 ## Macro Fields
 
-A macro in `macros` has `id` (UUID), `name`, `steps`, `repeat`, `whileRunning`, and `interruptOnRelease`, and no other key. A binding runs it with the destination `{"type":"Macro","macro":"ID"}`.
+A macro in `macros` has `id` (UUID), `name`, `steps`, `repeat`, `whileRunning`, and `interruptOnRelease`, and no other key. A binding runs it with a destination that has `type` `Macro` and `macro` set to the macro `id`.
 
 - `repeat` is a count from 1 to 500, or the string `WhileHeld`.
 - `whileRunning` is `Ignore` or `Restart`.
 - `interruptOnRelease` is `true` or `false`.
-- A step is one of `{"type":"Tap","destination":D}`, `{"type":"Press","destination":D}`, `{"type":"Release","destination":D}`, `{"type":"Chord","destinations":[D],"holdMs":MS}`, or `{"type":"Wait","durationMs":MS}`. `D` is a keyboard, mouse button, gamepad button, or gamepad D-pad destination. A `Macro` destination in a step is rejected.
+- A step is a dictionary with `type` `Tap`, `Press` or `Release` and a `destination` `D`; with `type` `Chord`, a `destinations` array of `D` and `holdMs`; or with `type` `Wait` and `durationMs`. `D` is a keyboard, mouse button, gamepad button, or gamepad D-pad destination. A `Macro` destination in a step is rejected.
 - `holdMs` and `durationMs` are 0 to 5000.
 - A `MidiNote` or `MidiControlChange` destination in a step is rejected.
 
@@ -108,7 +119,7 @@ OJD rejects a macro name that is not unique without regard to case, a `Macro` de
 | --- | --- |
 | Assignments in one profile | 512 |
 | Profiles | 128 |
-| Size of one profile file or `ActiveProfiles.json` | 4 MiB |
+| Size of one profile file or `ActiveProfiles.plist` | 4 MiB |
 | Profile name length | 1 to 80 characters |
 | Layer name length | 1 to 40 characters |
 | Macros in one profile | 16 |
