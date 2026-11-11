@@ -27,6 +27,20 @@ extension ProfileLibraryTests {
   }
 
   @Test
+  func aJSONFileOJDDidNotWriteIsLeftOutOfTheIssues() async throws {
+    try await withLibrary { library, _ in
+      try await library.create(makeProfile(name: "Valid"))
+      let notes = library.profilesDirectory.appendingPathComponent("notes.json")
+      try Data(#"{"apiVersion": "example.org/v1", "kind": "Profile"}"#.utf8).write(to: notes)
+      let text = library.profilesDirectory.appendingPathComponent("todo.json")
+      try Data("not json".utf8).write(to: text)
+      _ = try await library.reload()
+
+      #expect(try await library.snapshot().issues.isEmpty)
+    }
+  }
+
+  @Test
   func profileWithUnknownFieldIsRecoveredAsDamaged() async throws {
     try await withLibrary { library, _ in
       let valid = makeProfile(name: "Valid")

@@ -15,9 +15,12 @@ extension RemappingProfileLibrary {
     for url in try profileFileURLs() {
       let data = try Self.read(url)
       if url.pathExtension == "json" {
-        issues.append(
-          .damagedProfile(fileName: url.lastPathComponent, data: data, code: .unsupportedAPIVersion)
-        )
+        let header = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        if (header?["apiVersion"] as? String)?.hasPrefix("openjoystickdriver/") == true {
+          issues.append(
+            .damagedProfile(fileName: url.lastPathComponent, data: data, code: .unsupportedAPIVersion)
+          )
+        }
         continue
       }
       do {
