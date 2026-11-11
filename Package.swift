@@ -16,16 +16,6 @@ let swifterKitDependency: Package.Dependency =
   ? .package(path: localSwifterKitPath)
   : .package(url: "https://github.com/xsyetopz/SwifterKit.git", from: "0.4.1")
 
-#if arch(arm64)
-  /// The target triple of the Swift Testing targets on this host.
-  let testTargetTriple = "arm64-apple-macosx14.0"
-#elseif arch(x86_64)
-  /// The target triple of the Swift Testing targets on this host.
-  let testTargetTriple = "x86_64-apple-macosx14.0"
-#else
-  #error("Unsupported host architecture for Swift Testing target triple")
-#endif
-
 /// The OpenJoystickDriver package.
 let package = Package(
   name: "OpenJoystickDriver",
@@ -161,9 +151,7 @@ let package = Package(
     .executableTarget(
       name: "ParserCompatibilityHarness",
       dependencies: ["OpenJoystickDriverKit", "ProtocolPacketFixtures"],
-      path: "Tests/ParserCompatibilityHarness",
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      path: "Tests/ParserCompatibilityHarness"
     ),
     .testTarget(
       name: "OpenJoystickDriverKitTests",
@@ -175,16 +163,12 @@ let package = Package(
       resources: [
         .copy("Protocol/Catalog/SchemaRejections"), .copy("Protocol/Catalog/SDLMappingFixtures"),
         .copy("Protocol/Drivers/Nintendo/Fixtures/Wii"),
-      ],
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      ]
     ),
     .target(
       name: "ProtocolPacketFixtures",
       path: "Tests/ProtocolPacketFixtures",
-      resources: [.copy("Switch2")],
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      resources: [.copy("Switch2")]
     ),
     .testTarget(
       name: "OpenJoystickDriverUSBTests",
@@ -192,16 +176,12 @@ let package = Package(
         "OpenJoystickDriverKit", "OpenJoystickDriverUSB", "ProtocolPacketFixtures",
         .product(name: "SwifterKit", package: "SwifterKit"),
       ],
-      path: "Tests/OpenJoystickDriverUSBTests",
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      path: "Tests/OpenJoystickDriverUSBTests"
     ),
     .target(
       name: "OpenJoystickDriverTestSupport",
       dependencies: ["OpenJoystickDriverKit"],
-      path: "Tests/OpenJoystickDriverTestSupport",
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      path: "Tests/OpenJoystickDriverTestSupport"
     ),
     .testTarget(
       name: "OpenJoystickDriverServiceTests",
@@ -210,9 +190,7 @@ let package = Package(
         "OpenJoystickDriverPresentation", "OpenJoystickDriverTestSupport",
         .product(name: "BridgeCore", package: "BridgeCore"),
       ],
-      path: "Tests/OpenJoystickDriverServiceTests",
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      path: "Tests/OpenJoystickDriverServiceTests"
     ),
     .testTarget(
       name: "OpenJoystickDriverCLITests",
@@ -224,27 +202,21 @@ let package = Package(
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
       ],
       path: "Tests/OpenJoystickDriverCLITests",
-      exclude: ["Fixtures"],
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      exclude: ["Fixtures"]
     ),
     .testTarget(
       name: "OJDRepositoryToolTests",
       dependencies: [
         "OpenJoystickDriverKit", "OJDRepositoryTool", "OpenJoystickDriverTestSupport",
       ],
-      path: "Tests/OJDRepositoryToolTests",
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      path: "Tests/OJDRepositoryToolTests"
     ),
     .testTarget(
       name: "OpenJoystickDriverMacOSPlatformTests",
       dependencies: [
         "OpenJoystickDriverKit", "OpenJoystickDriverMacOSPlatform", "OpenJoystickDriverTestSupport",
       ],
-      path: "Tests/OpenJoystickDriverMacOSPlatformTests",
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      path: "Tests/OpenJoystickDriverMacOSPlatformTests"
     ),
     .testTarget(
       name: "OpenJoystickDriverPresentationTests",
@@ -252,9 +224,7 @@ let package = Package(
         "OpenJoystickDriverKit", "OpenJoystickDriverUSB", "OpenJoystickDriverPresentation",
         "OpenJoystickDriverTestSupport",
       ],
-      path: "Tests/OpenJoystickDriverPresentationTests",
-      swiftSettings: [.unsafeFlags(["-target", testTargetTriple])],
-      linkerSettings: [.unsafeFlags(["-target", testTargetTriple])]
+      path: "Tests/OpenJoystickDriverPresentationTests"
     ),
   ]
 )
