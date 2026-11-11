@@ -53,7 +53,7 @@ OJD is under the Mozilla Public License 2.0, which permits commercial use. Sign 
 
 ## Issues and Pull Requests
 
-Use the issue forms; each has a human and an **(AI Agent)** variant. A pull request holds one logical change and fills every section of its template, with the checks run and whether you tested on your own hardware. Report security problems privately, as [`SECURITY.md`](SECURITY.md) describes. Open tasks: [issues](https://github.com/xsyetopz/OpenJoystickDriver/issues).
+Use the issue forms: Bug Report, Controller Support, and Feature Request. Each form serves a person and the AI tool that the person uses. The person fills the hardware, macOS and test fields. An AI tool can draft the other fields, and the person confirms them. One optional section records the AI tool. A pull request holds one logical change and fills every section of its template, with the checks run and whether you tested on your own hardware. Report security problems privately, as [`SECURITY.md`](SECURITY.md) describes. Open tasks: [issues](https://github.com/xsyetopz/OpenJoystickDriver/issues).
 
 Write exact values; vague or missing details get the issue sent back.
 
@@ -62,7 +62,8 @@ Write exact values; vague or missing details get the issue sent back.
 - Controller: model name, VID:PID, and connection.
 - Steps: numbered, one action each.
 - Results: what you saw, with error text and codes copied exactly.
-- Anything nobody checked: `Not checked`.
+- Evidence: each claim has pasted command output, a file, a log excerpt, or a screenshot. Run the command first. Do not write "not verified", "unsure", or "not checked".
+- A command that you cannot run: write the exact step that failed or was missing, the exact error or reason (for example, the Xcode version that you found), and what you tried instead, with its output.
 
 ### Finding the Version
 
@@ -79,11 +80,12 @@ Copy the version from the build that ran, while it runs. A line without `+build.
 
 ## AI Agents
 
-A human operator stands behind every issue, comment and pull request an agent writes, reads it before it is posted, and is named in the form.
+A human operator stands behind every issue, comment and pull request an agent writes, and reads it before it is posted. The operator posts it under their own account, and fills the hardware, macOS and "I tested this" fields. In the issue forms, the **AI tool** section records the tool and model, what it produced, the commands it ran with their output, and the claims the operator checked by hand. The pull request template has the same section.
 
 - Keep the attribution your harness adds to commits and pull requests. If it adds none, end each commit message with a trailer that names the model, such as `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. The operator stays the commit author.
 - Write plainly and briefly, in the words a user would use. No preamble, recap, extra headings, or emoji: fill the fields and stop.
-- State only what a command, the source, or the operator showed. Write `Not checked` instead of guessing.
+- State only what a command, the source, or the operator showed. Do not guess. Do not mark an item as done without the command output that shows it.
+- Run the command before you write the claim. Do not write "not verified", "unsure", or "not checked". If you cannot run a command, write three things: the exact step that failed or was missing, the exact error or reason, and what you tried instead.
 - Install each missing tool before you run a check: `./Scripts/ojd setup` offers the Homebrew formulas, such as `just`, and an Xcode whose Swift is `.swift-version` or newer comes from Apple. "Not installed" or "unavailable" is not a check result. Report a check as blocked only when the operator's Mac cannot run the tool, and name the tool version and the macOS version that it needs.
 - Get the version yourself on the operator's Mac, as [Finding the Version](#finding-the-version) shows, while the build that was tested runs. A commit or "not recorded" does not replace it. When the command fails, ask the operator to copy the line from the About window.
 
