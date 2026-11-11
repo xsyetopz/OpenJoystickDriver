@@ -240,6 +240,15 @@ A program with the `control` scope can drive one controller, as `ojd controller 
 
 The Shortcuts actions Rumble Controller, Set Player Indicator and Set Controller Light run the same code.
 
+### Watch Profiles and Mod Packages Through the Endpoint
+
+A program with the `Read` scope can watch the profile list or the mod package list instead of the controllers:
+
+1. Send a `Hello` with `"scopes":["Read"]`, as in the section above.
+2. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Subscription","stream":"Profiles"}`, or `"stream":"Mods"`. These streams refuse `output`.
+3. The endpoint answers a `Profiles` line with every profile and whether it is active, or a `Mods` line as for a `ModList`, and sends the whole list again each time it changes. It reads the lists twice a second.
+4. Any line after the `Subscription` ends the connection.
+
 ### List Mod Packages Through the Endpoint
 
 A program with the `Read` scope can list the installed mod packages, as `ojd mod list --json` does:

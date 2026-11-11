@@ -64,6 +64,9 @@
           "$ref": "#/$defs/mods"
         },
         {
+          "$ref": "#/$defs/profiles"
+        },
+        {
           "$ref": "#/$defs/outputResult"
         },
         {
@@ -177,11 +180,23 @@
           "const": "Subscription"
         },
         "stream": {
-          "const": "Controllers"
+          "enum": ["Controllers", "Profiles", "Mods"]
         },
         "output": {
           "type": "boolean",
           "description": "Whether the watch lines add the virtual gamepad's values."
+        }
+      },
+      "if": {
+        "properties": {
+          "stream": {
+            "const": "Controllers"
+          }
+        }
+      },
+      "else": {
+        "not": {
+          "required": ["output"]
         }
       }
     },
@@ -409,7 +424,7 @@
       "type": "object",
       "required": ["apiVersion", "kind", "mods"],
       "additionalProperties": false,
-      "description": "The answer to a mod list request: every installed package in name order.",
+      "description": "Every installed package in name order, sent as an answer or after a change.",
       "properties": {
         "apiVersion": {
           "$ref": "#/$defs/apiVersion"
@@ -532,6 +547,26 @@
             "isActive": {
               "type": "boolean"
             }
+          }
+        }
+      }
+    },
+    "profiles": {
+      "type": "object",
+      "required": ["apiVersion", "kind", "profiles"],
+      "additionalProperties": false,
+      "description": "Every saved profile, sent at once and again after each change.",
+      "properties": {
+        "apiVersion": {
+          "$ref": "#/$defs/apiVersion"
+        },
+        "kind": {
+          "const": "Profiles"
+        },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/profileResult/properties/profile"
           }
         }
       }

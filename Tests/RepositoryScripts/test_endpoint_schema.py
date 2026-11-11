@@ -66,6 +66,10 @@ class EndpointSchemaTests(unittest.TestCase):
             line("ProfileResult", profile=PROFILE),
             line("ModList"),
             line("Mods", mods=[]),
+            line("Subscription", stream="Profiles"),
+            line("Subscription", stream="Mods"),
+            line("Profiles", profiles=[]),
+            line("Profiles", profiles=[PROFILE]),
             line("Mods", mods=[MOD, {"name": "broken", "files": [], "problem": "text"}]),
             line("OutputRequest", controller="U-1", action="Rumble"),
             line(
@@ -166,6 +170,19 @@ class EndpointSchemaTests(unittest.TestCase):
             line("OutputResult", controller="E-1"),
             line("OutputResult", controller="E-1", results=[{**RESULT, "outcome": "Nope"}]),
             line("OutputResult", controller="E-1", results=[{"command": "rumble"}]),
+        ]
+        for message in refused:
+            self.assertFalse(self.valid(message), message)
+
+    def test_a_list_subscription_and_its_lines_are_refused_when_malformed(self) -> None:
+        refused = [
+            line("Subscription", stream="Profiles", output=True),
+            line("Subscription", stream="Mods", output=False),
+            line("Subscription", stream="profiles"),
+            line("Subscription", stream="Logs"),
+            line("Profiles"),
+            line("Profiles", profiles={"name": "x"}),
+            line("Profiles", profiles=[{**PROFILE, "extra": 1}]),
         ]
         for message in refused:
             self.assertFalse(self.valid(message), message)

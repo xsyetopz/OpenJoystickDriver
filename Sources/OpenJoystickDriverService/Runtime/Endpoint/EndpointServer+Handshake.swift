@@ -79,9 +79,14 @@ extension EndpointServer {
       feed(connection, persona: persona)
       return
     }
-    guard request.kind == .subscription, request.stream == "Controllers" else {
+    guard request.kind == .subscription, let stream = request.stream.flatMap(Self.SubscriptionStream.init),
+      stream == .controllers || request.output == nil
+    else {
       connection.close(
-        Self.invalid("Send Subscription with the Controllers stream, or FeedRequest.")
+        Self.invalid(
+          "Send Subscription with the Controllers, Profiles or Mods stream, or FeedRequest. "
+            + "Only Controllers takes output."
+        )
       )
       return
     }
@@ -91,10 +96,22 @@ extension EndpointServer {
       )
       return
     }
-    lock.withLock { subscribe(connection, output: request.output ?? false) }
+    let listing: Task<Void, Never>?
+    switch stream {
+    case .controllers:
+      lock.withLock { subscribe(connection, output: request.output ?? false) }
+      listing = nil
+    case .profiles:
+      let automation = automation
+      listing = watchList(connection) { EndpointProfiles(profiles: try await automation.profiles()) }
+    case .mods:
+      let modStore = modStore
+      listing = watchList(connection) { EndpointMods(mods: modStore.entries()) }
+    }
 
     // The protocol has no line after `Subscription`; any line ends the connection.
     _ = readRequest(connection, accepting: [])
+    listing?.cancel()
   }
 
   /// Answers `hello` with `welcome` or an error; true when the client was welcomed.

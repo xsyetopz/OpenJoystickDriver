@@ -74,7 +74,7 @@ The endpoint answers a valid `Hello` with the OpenJoystickDriver `version` and t
 
 ### Subscription
 
-The program sends it after the `Welcome` to read the controllers. `Controllers` is the only stream. Add `"output":true` for the values of the virtual gamepad in the watch lines.
+The program sends it after the `Welcome` to read a stream. `stream` is `Controllers`, `Profiles` or `Mods`, and each needs the `Read` scope. Add `"output":true` to `Controllers` for the values of the virtual gamepad in the watch lines; `Profiles` and `Mods` refuse `output` with `E1003`. Any line after a `Subscription` ends the connection.
 
 ```json
 {"apiVersion":"openjoystickdriver/v1alpha3","kind":"Subscription","stream":"Controllers"}
@@ -84,6 +84,12 @@ The endpoint answers with the same `ADDED`, `MODIFIED`, and `DELETED` watch line
 
 ```json
 {"type":"ADDED","object":{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Controller","id":"pad-1","name":"Test Pad","vendorID":1118,"productID":654,"connection":"usb","hasSerialNumber":false,"ownedByAnotherClient":false,"alsoListedBySystem":false,"protocol":"XboxXUSB:Wired","session":"Active","waitsForGuidePress":false}}
+```
+
+A `Profiles` or `Mods` subscription sends the whole list at once, then the whole list again each time it differs from the one last sent. The endpoint reads the list twice a second, so a burst of changes inside that time gives one line. `Profiles` sends a `Profiles` line with the profiles as a `ProfileResult` shows them, including whether each is active; `Mods` sends the `Mods` line of a `ModList`. A read that fails sends nothing and is tried again.
+
+```json
+{"apiVersion":"openjoystickdriver/v1alpha3","kind":"Profiles","profiles":[{"id":"7B6B3C5E-9A4D-4A6E-8C55-1B2D3E4F5A6B","name":"Rally","model":"054C:0CE6","isActive":true}]}
 ```
 
 ### ProfileRequest

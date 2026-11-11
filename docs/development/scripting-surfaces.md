@@ -73,7 +73,7 @@ The endpoint is a local socket, plus a WebSocket on `127.0.0.1` that is turned o
 | Line | `file:line` | Use |
 |------|-------------|-----|
 | `Hello` | `Sources/OpenJoystickDriverService/Runtime/Endpoint/EndpointMessages.swift:25` | names `scopes`, and for a token a `tokenName` and `proof` (`:37-42`) |
-| `Subscription` | `EndpointMessages.swift:27`, `:44` | asks for the `Controllers` stream; `output` adds the virtual gamepad values (`:46`) |
+| `Subscription` | `EndpointMessages.swift:27`, `:44` | asks for the `Controllers`, `Profiles`, or `Mods` stream; `output` adds the virtual gamepad values to `Controllers` only (`:46`; `EndpointServer+Lists.swift:5`) |
 | `FeedRequest` | `EndpointMessages.swift:29`, `:48` | asks for a virtual gamepad with persona `as` |
 | `ProfileRequest` | `EndpointMessages.swift:31`, `:57`; `EndpointServer+Requests.swift:14` | activates, deactivates, or sets one value of a profile; answered with `ProfileResult` |
 | `ModList` | `EndpointMessages.swift:34`; `EndpointServer+Requests.swift:19`, `:29` | lists the installed mod packages with the `Read` scope; answered with `Mods` |
@@ -91,6 +91,7 @@ The endpoint is a local socket, plus a WebSocket on `127.0.0.1` that is turned o
 | `ADDED`, `MODIFIED`, `DELETED` | `wiki/Automating-OpenJoystickDriver.md:75` | the watch lines of `ojd controller watch --all --json` |
 | `ProfileResult` | `EndpointMessages.swift:120` | the profile after a `ProfileRequest` |
 | `Mods` | `EndpointMessages.swift:133`; `EndpointServer+Requests.swift:30` | the installed mod packages, after a `ModList` |
+| `Profiles` | `EndpointMessages.swift:265`; `EndpointServer+Handshake.swift:106` | the saved profiles, after a `Profiles` subscription and each change |
 | `OutputResult` | `EndpointMessages.swift:237`; `EndpointServer+Requests.swift:41` | the commands that ran, after an `OutputRequest` |
 | `FeedSession` | `EndpointMessages.swift:68-70` | the persona of the virtual gamepad |
 | `Drained` | `EndpointMessages.swift:78`; `EndpointServer+Feed.swift:63` | every earlier frame has played |
@@ -103,7 +104,7 @@ The endpoint is a local socket, plus a WebSocket on `127.0.0.1` that is turned o
 |------|-------------|-------|
 | Scope `Read` | `Sources/OpenJoystickDriverKit/ApplicationService/Payloads/AccessPayloads.swift:7` | receive controller events |
 | Scope `Control` | `AccessPayloads.swift:9`; checked at `EndpointServer+Handshake.swift:62` | drive a virtual gamepad |
-| Stream | `EndpointServer+Handshake.swift:80` | `Controllers` is the only one |
+| Stream | `EndpointServer+Handshake.swift:82`; `EndpointServer+Lists.swift:5`, `:19` | `Controllers`, `Profiles`, and `Mods`; the last two send the list on change |
 | Personas | `wiki/Automating-OpenJoystickDriver.md:214` | `Generic` and `SDLCompatible` |
 | Token with origins | `AccessTokenGrant.swift:202` (`Sources/OpenJoystickDriverService/Runtime/Endpoint/`) | cannot hold `Control` |
 | Connections | `wiki/Automating-OpenJoystickDriver.md:193` | 8 on the socket, 8 on the WebSocket |
@@ -120,7 +121,7 @@ Each item rests on the tables above. A surface that is not listed for an item do
 5. Validate a mod package through the intents or the endpoint. The intents list, install and remove a package, and the endpoint lists them; only `ojd mod validate` validates a folder without installing it. An install through an intent runs the validation that `ojd mod install` runs.
 6. Drive the speaker through the endpoint or the intents. Only `ojd controller speaker` does it (`CLI/Commands/Controller/ControllerSpeakerCommands.swift:69`). Rumble, player numbers, and lights have an endpoint message and an intent each.
 7. Receive an event inside the service. The endpoint streams `Controllers` to an outside program, and no surface takes a handler that the service runs.
-8. Subscribe to anything but `Controllers` (`EndpointServer+Handshake.swift:80`). No stream carries logs, profile changes, or mod changes.
+8. Subscribe to anything but `Controllers`, `Profiles`, and `Mods` (`EndpointServer+Handshake.swift:82`). No stream carries logs, bindings, or macros.
 9. Use the endpoint without a grant by the user. The program needs `ojd access grant` first, and a token with origins cannot hold `Control` (`AccessTokenGrant.swift:202`).
 10. Choose a virtual gamepad persona beyond `Generic` and `SDLCompatible` through the endpoint (`wiki/Automating-OpenJoystickDriver.md:214`).
 11. Call an intent from a program without Shortcuts. The wiki points to `shortcuts run` and `shortcuts://` links (`wiki/Automating-OpenJoystickDriver.md:320-321`).

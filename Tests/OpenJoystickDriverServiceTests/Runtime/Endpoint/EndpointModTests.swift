@@ -29,7 +29,7 @@ struct EndpointModTests {
   }
 
   /// A store that holds the package `name`, which holds one controller record.
-  private func store(holding name: String?) throws -> ModPackageStore {
+  func store(holding name: String?) throws -> ModPackageStore {
     let root = FileManager.default.temporaryDirectory.appendingPathComponent(
       "ojd-endpoint-mods-\(UUID().uuidString)",
       isDirectory: true

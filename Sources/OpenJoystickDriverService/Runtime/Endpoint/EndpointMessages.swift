@@ -252,13 +252,23 @@ struct EndpointOutputResult: Encodable, Sendable {
 }
 
 /// The answer to a `ModList`:the installed mod packages, as `ojd mod list` prints them.
-struct EndpointMods: Encodable, Sendable {
+struct EndpointMods: Encodable, Equatable, Sendable {
   /// The version of the endpoint API.
   let apiVersion = OpenJoystickDriverAPI.version
   /// The kind of the line, `Mods`.
   let kind = "Mods"
   /// The packages of the store in name order, with the ones that cannot be used included.
   let mods: [ModPackageEntry]
+}
+
+/// The saved profiles that a `Profiles` subscription sends at once and after each change.
+struct EndpointProfiles: Encodable, Equatable, Sendable {
+  /// The version of the endpoint API.
+  let apiVersion = OpenJoystickDriverAPI.version
+  /// The kind of the line, `Profiles`.
+  let kind = "Profiles"
+  /// The profiles as the service reports them.
+  let profiles: [AutomationProfile]
 }
 
 /// The answer to a `Hello` that is accepted.
