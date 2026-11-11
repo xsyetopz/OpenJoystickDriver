@@ -2,7 +2,7 @@ Thanks for pull request #56 and the endpoint findings.
 
 I am taking the Elite Series 1 endpoints (`0x81` in, `0x01` out) into the `045E:02E3` record. Could you confirm them on a tester build?
 
-1. Install the tester build posted in Discord `#tester-builds`.
+1. Install the tester build I send you, as [Test a tester build](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/docs/testing/tester-builds.md) shows.
 2. Plug the Elite Series 1 in by cable and run:
    ```
    ojd controller list

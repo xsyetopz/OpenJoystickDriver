@@ -2,7 +2,7 @@ Could you confirm the Xbox One controller (model 1537, `045E:02D1`) on a tester 
 
 I want to know whether OJD reads it and serves it with no extension installed.
 
-1. Install the tester build posted in Discord `#tester-builds`. It ships without the transport extension.
+1. Install the tester build I send you, as [Test a tester build](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/docs/testing/tester-builds.md) shows. It ships without the transport extension.
 2. Check that no extension is active:
    ```
    ojd transport-extension status

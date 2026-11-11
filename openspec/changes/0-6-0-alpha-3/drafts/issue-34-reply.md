@@ -7,7 +7,7 @@ Two things your patch assumed that the captures show differently:
 - Over Bluetooth LE, L4 sets bit 2 and R4 sets bit 5 of the button bytes, so each rear button has its own bit there. As `2DC8:301C`, an unassigned R4 sets bit 5.
 - The Bluetooth LE battery byte reads 0 in every capture.
 
-To check this on your pad, install the tester build posted in Discord `#tester-builds` and run:
+To check this on your pad, install the tester build I send you, as [Test a tester build](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/docs/testing/tester-builds.md) shows, and run:
 
 ```
 ojd controller list

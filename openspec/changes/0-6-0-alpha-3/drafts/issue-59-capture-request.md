@@ -2,7 +2,7 @@ Could you capture what the controller sends on macOS? I need this for `2DC8:2027
 
 I add a record only from a capture, so I cannot add either pad without one.
 
-1. Install the tester build posted in Discord `#tester-builds`.
+1. Install the tester build I send you, as [Test a tester build](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/docs/testing/tester-builds.md) shows.
 2. Plug the pad in. Run:
    ```
    ojd controller list

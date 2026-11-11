@@ -1,6 +1,6 @@
 Could you capture every control of the GameSir G7 Pro through the dongle? The dongle's HID gamepad interface needs its own mode, and I add the controls only from a capture.
 
-1. Install the tester build posted in Discord `#tester-builds`.
+1. Install the tester build I send you, as [Test a tester build](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/docs/testing/tester-builds.md) shows.
 2. With the dongle plugged in and the pad linked, run:
    ```
    ojd controller list

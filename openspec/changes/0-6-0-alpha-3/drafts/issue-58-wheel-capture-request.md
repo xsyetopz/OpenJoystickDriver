@@ -1,6 +1,6 @@
 Could you capture every pedal and button on the Ferrari 458 Spider (`044F:B671`)? I will write the layout from your packets and check it with `ojd record test`, so I need each control pressed on its own.
 
-1. Install the tester build posted in Discord `#tester-builds`.
+1. Install the tester build I send you, as [Test a tester build](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/docs/testing/tester-builds.md) shows.
 2. Connect the wheel and run:
    ```
    ojd controller list

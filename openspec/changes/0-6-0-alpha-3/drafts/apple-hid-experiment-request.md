@@ -2,7 +2,7 @@ Request for owners of an Xbox controller with identity `045E:02EA`, `045E:0B00` 
 
 Apple's driver holds these three controllers and shows them to games as a macOS gamepad. I want to know whether OJD can read the pad through Apple's HID device and hide that device from games, because that decides whether a later release can drop the extension.
 
-1. Install the tester build posted in Discord `#tester-builds`.
+1. Install the tester build I send you, as [Test a tester build](https://github.com/xsyetopz/OpenJoystickDriver/blob/main/docs/testing/tester-builds.md) shows.
 2. Plug the controller in by cable and run:
    ```
    ojd controller list
