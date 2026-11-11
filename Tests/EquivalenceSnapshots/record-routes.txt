@@ -94,6 +94,9 @@ system ownership=macos
 ## 044F:B326
 raw-access
 
+## 044F:B671
+raw-access
+
 ## 044F:D007
 system ownership=macos
 
