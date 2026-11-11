@@ -34,7 +34,7 @@
             )
           )
         }
-        if preferences.developerToolsEnabled {
+        if preferences.developerToolsVisible {
           DeveloperToolsView(model: developerTools)
           DeveloperSoakTestSection(model: developerTools.soakTest)
         }

@@ -422,6 +422,32 @@ struct PreferencesTests {
 
   @Test
   @MainActor
+  func developerToolsShowOnlyAtTheAdvancedLevelWithTheSwitchOn() throws {
+    let settings = SettingsStore(directory: RootedDataDirectory.temporary())
+    let model = SettingsPreferencesModel(
+      testNotifications: TestNotificationRequestStub(),
+      settings: settings,
+      launchAtLogin: LaunchAtLoginStub(isEnabled: false),
+      notificationAuthorization: NotificationAuthorizationStub(state: .denied)
+    )
+    #expect(model.interfaceLevel == .simple)
+    #expect(!model.developerToolsVisible)
+
+    model.setDeveloperToolsEnabled(true)
+    #expect(model.developerToolsEnabled)
+    #expect(!model.developerToolsVisible)
+
+    try settings.setInterfaceLevel(.advanced)
+    model.reloadSettings()
+    #expect(model.interfaceLevel == .advanced)
+    #expect(model.developerToolsVisible)
+
+    model.setDeveloperToolsEnabled(false)
+    #expect(!model.developerToolsVisible)
+  }
+
+  @Test
+  @MainActor
   func aChangeFromAnotherStoreReachesTheModel() async throws {
     let directory = RootedDataDirectory.temporary()
     let loginItem = LaunchAtLoginStub(isEnabled: false)
