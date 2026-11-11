@@ -5056,3 +5056,5 @@
 "ui.settings.general.pauseShortcutTaken" = "Une autre app utilise déjà ce raccourci. Enregistrez-en un autre.";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
 "cli.setting.set.badShortcut" = "« %1$@ » n’est pas un raccourci. Utilisez des modificateurs et une touche reliés par +, comme control+option+P, ou none.";
+/* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
+"ui.whatsNew.title" = "Nouveautés de %@";

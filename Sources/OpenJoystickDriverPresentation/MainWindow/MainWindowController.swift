@@ -131,6 +131,7 @@
           return nil
         },
         errorCodeExplainer: ErrorCodeExplainerModel(),
+        whatsNew: WhatsNewModel(),
         libraryArea: LibraryViewModel(),
         access: AccessViewModel(),
         restartApplication: restartApplication,
@@ -233,6 +234,7 @@
     func showMainWindow(area: MainWindowArea?) {
       if let area { navigation.requestArea(area) }
       present()
+      screens.whatsNew.presentIfNeeded()
     }
 
     /// Shows Access and has its permission rows scroll to the permission.

@@ -283,6 +283,9 @@ Click **View Update** to open the release page.
 OJD does not download or install anything.
 Select **Include prerelease updates** to include beta versions.
 
+The first time you open the app window after an update, a **What's New** sheet shows the changes of the installed version from the changelog, once.
+Click **Done** to close it.
+
 ### Notifications
 
 ![The Notifications pane of the Settings window](../docs/screenshots/settings-notifications.png)
