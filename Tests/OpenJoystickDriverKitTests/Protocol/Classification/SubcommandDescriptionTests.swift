@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -29,8 +30,8 @@ struct SubcommandDescriptionTests {
        "endpoints": {"in": 130, "out": 2}, \(body)}
       """
     return try ProtocolDescription.decode(
-      Data(json.utf8),
-      fileName: "\(family.descriptionFileStem).json"
+      PropertyListFixture.bytes(json: json),
+      fileName: "\(family.descriptionFileStem).plist"
     )
   }
 

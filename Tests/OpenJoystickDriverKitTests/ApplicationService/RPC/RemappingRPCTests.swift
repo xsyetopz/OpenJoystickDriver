@@ -55,7 +55,9 @@ struct RemappingRPCTests {
         #expect(error.code.errorCode == .invalidProfile)
       }
     }
-    do { _ = try RemappingProfileFileStore.load(from: Data(document.utf8)) } catch {
+    do {
+      _ = try RemappingProfileFileStore.load(from: PropertyListFixture.bytes(json: document))
+    } catch {
       #expect(RemappingProfileFileStore.problemCode(error) == .invalidProfile)
     }
   }
@@ -90,7 +92,9 @@ struct RemappingRPCTests {
       } catch let error as ApplicationServiceRemappingRPCError {
         #expect(error.code.errorCode == .unsupportedAPIVersion)
       }
-      do { _ = try RemappingProfileFileStore.load(from: Data(document.utf8)) } catch {
+      do {
+        _ = try RemappingProfileFileStore.load(from: PropertyListFixture.bytes(json: document))
+      } catch {
         #expect(RemappingProfileFileStore.problemCode(error) == .unsupportedAPIVersion)
       }
     }

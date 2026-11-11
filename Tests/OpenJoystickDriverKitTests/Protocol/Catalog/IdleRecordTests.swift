@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -18,7 +19,7 @@ struct IdleRecordTests {
       "vendorID": Int(model.vendorID), "productID": Int(model.productID),
       "modes": [defaultMode],
     ].merging(fields) { $1 }
-    return try JSONSerialization.data(withJSONObject: record)
+    return try PropertyListFixture.data(tree: record)
   }
 
   private static func problem(_ fields: [String: Any]) throws -> String? {

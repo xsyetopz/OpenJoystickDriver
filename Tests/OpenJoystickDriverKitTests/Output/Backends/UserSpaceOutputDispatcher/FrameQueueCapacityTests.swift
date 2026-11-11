@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -95,7 +96,7 @@ struct FrameQueueCapacityTests {
       #"{"apiVersion":"\#(OpenJoystickDriverAPI.version)","kind":"ControllerPatch","#
       + #""selector":{"vendorID":\#(model.vendorID),"productID":\#(model.productID)},"#
       + #""patch":{"tuning":{"frameQueueCapacity":4}}}"#
-    try Data(json.utf8).write(
+    try PropertyListFixture.bytes(json: json).write(
       to: directory.appendingPathComponent(ControllerPatch.Selector.identity(model).fileName)
     )
     let records = ControllerRecordSet.load(userDirectory: directory)

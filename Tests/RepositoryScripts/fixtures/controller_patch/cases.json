@@ -2145,7 +2145,7 @@
         },
         "operation": "patch"
       },
-      "message": "the file must hold exactly apiVersion, kind, selector, and patch",
+      "message": "the file must hold apiVersion, kind, selector, and patch or remove",
       "code": "E5007"
     },
     {
@@ -2371,7 +2371,7 @@
           1
         ]
       },
-      "message": "the file must hold exactly apiVersion, kind, selector, and patch",
+      "message": "patch must hold modes, usb, bluetoothLE, server, route, input, or tuning",
       "code": "E5007"
     }
   ]

@@ -86,7 +86,7 @@ struct DocumentMigratorTests {
 
   @Test
   func aStaleSettingsFileAndVirtualDeviceAreConverted() throws {
-    try write(Self.document("Settings", #""showInDock": true"#), "Settings.json")
+    try write(Self.document("Settings", #""showInDock": true"#), "Settings.plist")
     try write(
       Self.document(
         "VirtualDevice",
@@ -97,16 +97,16 @@ struct DocumentMigratorTests {
     let entries = DocumentMigrator(directory: directory).run(dryRun: false)
     #expect(entries.map(\.status) == [.converted, .converted])
     #expect(try SettingsStore(directory: directory).load().showInDock == true)
-    #expect(exists("Migrated/Settings.json"))
+    #expect(exists("Migrated/Settings.plist"))
   }
 
   @Test
   func anAccessGrantsFileIsConvertedByVersionOnly() throws {
-    try write(Self.document("AccessGrants", #""enabled": true"#), "AccessGrants.json")
+    try write(Self.document("AccessGrants", #""enabled": true"#), "AccessGrants.plist")
     #expect(
       DocumentMigrator(directory: directory).run(dryRun: false).map(\.status) == [.converted]
     )
-    let document = try OrderedJSON.parse(read("AccessGrants.json"))
+    let document = try OrderedJSON.parse(read("AccessGrants.plist"))
     #expect(document["apiVersion"]?.string == OpenJoystickDriverAPI.version)
   }
 
@@ -141,7 +141,7 @@ struct DocumentMigratorTests {
       with: OpenJoystickDriverAPI.version
     )
     try write(current, "Profiles/a.json")
-    try write(#"{"active": []}"#, "Profiles/ActiveProfiles.json")
+    try write(#"{"active": []}"#, "Profiles/ActiveProfiles.plist")
     #expect(DocumentMigrator(directory: directory).run(dryRun: false).isEmpty)
   }
 

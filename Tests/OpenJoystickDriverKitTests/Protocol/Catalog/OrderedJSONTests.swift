@@ -17,7 +17,7 @@ struct OrderedJSONTests {
     let walker = try #require(
       FileManager.default.enumerator(at: root, includingPropertiesForKeys: nil)
     )
-    return (walker.allObjects as? [URL] ?? []).filter { $0.pathExtension == "json" }
+    return (walker.allObjects as? [URL] ?? []).filter { $0.pathExtension == "plist" }
       .sorted { $0.path < $1.path }
   }
 
@@ -30,8 +30,8 @@ struct OrderedJSONTests {
     ] {
       for url in try Self.recordFiles(under: directory) {
         let data = try Data(contentsOf: url)
-        let text = try OrderedJSON.parse(data).formatted()
-        #expect(text == String(bytes: data, encoding: .utf8), "\(url.path)")
+        let written = try OrderedJSON(document: data, file: url.lastPathComponent).plistData()
+        #expect(written == data, "\(url.path)")
         checked += 1
       }
     }
@@ -41,7 +41,10 @@ struct OrderedJSONTests {
   @Test
   func everyLoadedBundledRecordDocumentIsItsFileText() throws {
     for url in try Self.recordFiles(under: "Sources/OpenJoystickDriverKit/Resources/Controllers") {
-      let document = try OrderedJSON.parse(Data(contentsOf: url))
+      let document = try OrderedJSON(
+        document: Data(contentsOf: url),
+        file: url.lastPathComponent
+      )
       guard case .object(let members) = document,
         case .number(let vendor)? = members.first(where: { $0.key == "vendorID" })?.value,
         case .number(let product)? = members.first(where: { $0.key == "productID" })?.value,

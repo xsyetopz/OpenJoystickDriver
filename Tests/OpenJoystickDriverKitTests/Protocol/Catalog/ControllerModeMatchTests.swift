@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -37,7 +38,7 @@ struct ControllerModeMatchTests {
       "vendorID": Int(model.vendorID), "productID": Int(model.productID),
       "modes": [["id": "default", "protocol": ["family": family]]] + modes,
     ]
-    return try JSONSerialization.data(withJSONObject: record)
+    return try PropertyListFixture.data(tree: record)
   }
 
   private static func mode(
@@ -160,7 +161,7 @@ struct ControllerModeMatchTests {
         "modes": [["id": "default", "protocol": protocolKeys], radio],
       ]
       return try #require(
-        try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record)).record
+        try ControllerRecordSet.validate(PropertyListFixture.data(tree: record)).record
       ).profile
     }
     let dongle = try profile(variant: "Dongle")
@@ -420,7 +421,7 @@ struct ControllerModeMatchTests {
       ],
     ]
     let profile = try #require(
-      try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record)).record
+      try ControllerRecordSet.validate(PropertyListFixture.data(tree: record)).record
     ).profile
     #expect(profile.startupWrites.count == 1)
     #expect(profile.applying(modeID: "plain")?.startupWrites.isEmpty == true)
@@ -486,7 +487,7 @@ struct ControllerModeMatchTests {
       extras: ["interface": ["first": 2, "last": 3]]
     )
     try Self.recordData(modes: [ranged]).write(
-      to: directory.appendingPathComponent("1234-abcd.json")
+      to: directory.appendingPathComponent("1234-abcd.plist")
     )
     let set = ControllerRecordSet.load(userDirectory: directory)
     #expect(set.problems.isEmpty)
@@ -619,7 +620,7 @@ struct ControllerModeMatchTests {
       "modes": [Self.mode("named", match: ["product": "Wireless Controller"])],
     ]
     let validated = try #require(
-      try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record)).record
+      try ControllerRecordSet.validate(PropertyListFixture.data(tree: record)).record
     )
     let catalog = DeviceCatalog(
       records: ControllerRecordSet(records: [Self.model: validated], userFiles: [])
@@ -662,7 +663,7 @@ struct ControllerModeMatchTests {
       ]
       record["modes"] = modes
       do {
-        _ = try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record))
+        _ = try ControllerRecordSet.validate(PropertyListFixture.data(tree: record))
         return nil
       } catch { return ControllerRecordSet.problemDescription(error, document: "record") }
     }
@@ -696,7 +697,7 @@ struct ControllerModeMatchTests {
       ]
       record["modes"] = [rawDefault.merging(extras) { $1 }]
       #expect(throws: (any Error).self, Comment(rawValue: name)) {
-        try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record))
+        try ControllerRecordSet.validate(PropertyListFixture.data(tree: record))
       }
     }
   }

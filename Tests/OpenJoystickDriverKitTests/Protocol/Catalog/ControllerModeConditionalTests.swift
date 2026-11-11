@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -33,7 +34,7 @@ struct ControllerModeConditionalTests {
 
   private static func problem(_ record: [String: Any]) -> String? {
     do {
-      _ = try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record))
+      _ = try ControllerRecordSet.validate(PropertyListFixture.data(tree: record))
       return nil
     } catch { return ControllerRecordSet.problemDescription(error, document: "record") }
   }

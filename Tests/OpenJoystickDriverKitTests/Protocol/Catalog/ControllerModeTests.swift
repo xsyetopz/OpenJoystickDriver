@@ -63,7 +63,7 @@ struct ControllerModeTests {
       "vendorID": Int(model.vendorID), "productID": Int(model.productID),
     ]
     record["modes"] = [["id": "default", "protocol": ["family": family]]] + (modes ?? [])
-    return try JSONSerialization.data(withJSONObject: record.merging(extras) { $1 })
+    return try PropertyListFixture.data(tree: record.merging(extras) { $1 })
   }
 
   private static func profile(
@@ -423,8 +423,8 @@ struct ControllerModeTests {
 
   @Test
   func aUserPatchMayReplaceTheModes() throws {
-    let patch = try JSONSerialization.data(
-      withJSONObject: ControllerPatch.document(
+    let patch = try PropertyListFixture.data(
+      tree: ControllerPatch.document(
         selector: .identity(ControllerModelID(vendorID: 0x2C22, productID: 0x2000)),
         body: [
           "modes": [["id": "default", "protocol": ["family": "HIDDescriptor"]]] + Self.twoModes

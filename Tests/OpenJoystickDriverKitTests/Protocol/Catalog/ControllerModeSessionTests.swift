@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -16,7 +17,7 @@ struct ControllerModeSessionTests {
   }
 
   private static func validated(_ record: [String: Any]) throws -> ValidatedControllerRecord {
-    try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record))
+    try ControllerRecordSet.validate(PropertyListFixture.data(tree: record))
   }
 
   private static func problem(_ record: [String: Any]) -> String? {

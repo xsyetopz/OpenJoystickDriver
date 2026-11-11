@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -35,9 +36,7 @@ struct ControllerRecordDraftTests {
     )
     #expect(draft.operation == .add && draft.family == .hidReportLayout)
     #expect(draft.reportID == 1 && draft.reportLength == 6)
-    let document = try #require(
-      JSONSerialization.jsonObject(with: draft.document) as? [String: Any]
-    )
+    let document = try #require(PropertyListFixture.tree(draft.document) as? [String: Any])
     let layouts = try #require(
       (document["input"] as? [String: Any])?["layouts"] as? [[String: Any]]
     )
@@ -131,8 +130,7 @@ struct ControllerRecordDraftTests {
     )
   }
 
-  /// The draft is in the record file format: the header members in file order, then the other
-  /// members sorted, and every nested object sorted, since only the top level has a guide.
+  /// The draft is a canonical property list: reading it and writing it again gives its bytes.
   @Test
   func theDraftIsInTheRecordFileFormat() throws {
     let draft = try #require(
@@ -143,23 +141,12 @@ struct ControllerRecordDraftTests {
         reports: Self.reports
       )
     )
-    let text = draft.text
-    #expect(try OrderedJSON.parse(draft.document).formatted() == text)
-    guard case .object(let members) = try OrderedJSON.parse(draft.document) else {
-      Issue.record("the draft is not an object")
-      return
-    }
+    let document = try OrderedJSON(document: draft.document, file: "draft")
+    #expect(try document.plistData() == draft.document)
+    let tree = try #require(PropertyListFixture.tree(draft.document) as? [String: Any])
     #expect(
-      members.map(\.key) == ["apiVersion", "kind", "vendorID", "productID", "modes", "input"]
+      Set(tree.keys) == ["apiVersion", "kind", "vendorID", "productID", "modes", "input"]
     )
-    #expect(text.hasPrefix("{\n  \"apiVersion\": \"\(OpenJoystickDriverAPI.version)\",\n"))
-    #expect(text.contains("\n  \"vendorID\": 4660,\n  \"productID\": 22136,\n"))
-    #expect(
-      text.contains(
-        "\"report\": {\n          \"id\": 1,\n          \"length\": {\n"
-          + "            \"atLeast\": 6\n          }\n        }"
-      )
-    )
-    #expect(text.contains("{\n      \"id\": \"default\",\n      \"protocol\": {\n"))
+    #expect(tree["vendorID"] as? Int == 4660 && tree["productID"] as? Int == 22136)
   }
 }

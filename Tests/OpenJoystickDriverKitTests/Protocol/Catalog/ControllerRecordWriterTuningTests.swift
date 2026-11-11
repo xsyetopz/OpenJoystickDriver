@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -15,7 +16,7 @@ extension ControllerRecordWriterTests {
       )
       #expect(change.created)
       #expect(change.previousTuning == nil)
-      #expect(change.file.lastPathComponent == "2c22-2000.patch.json")
+      #expect(change.file.lastPathComponent == "2c22-2000.patch.plist")
       try ControllerRecordWriter.write(change)
       let written = try Self.object(Data(contentsOf: change.file))
       #expect(written["kind"] as? String == "ControllerPatch")
@@ -58,7 +59,8 @@ extension ControllerRecordWriterTests {
         in: directory
       )
       let text = String(bytes: change.data ?? Data(), encoding: .utf8) ?? ""
-      #expect(text.contains("\"frameQueueCapacity\": 32\n"))
+      #expect(text.contains("<key>frameQueueCapacity</key>"))
+      #expect(text.contains("<integer>32</integer>"))
     }
   }
 
@@ -155,9 +157,9 @@ extension ControllerRecordWriterTests {
   @Test
   func removingOneKeyKeepsTheOthers() throws {
     try Self.withDirectory { directory, _ in
-      let file = directory.appendingPathComponent("2c22-2000.patch.json")
-      try JSONSerialization.data(
-        withJSONObject: ControllerPatch.document(
+      let file = directory.appendingPathComponent("2c22-2000.patch.plist")
+      try PropertyListFixture.data(
+        tree: ControllerPatch.document(
           selector: .identity(Self.bundledHID),
           body: ["tuning": ["stickDeadzone": 0.1, "frameQueueCapacity": 32]]
         )
@@ -178,9 +180,9 @@ extension ControllerRecordWriterTests {
   @Test
   func removingTheLastKeyRemovesTheSection() throws {
     try Self.withDirectory { directory, _ in
-      let file = directory.appendingPathComponent("2c22-2000.patch.json")
-      try JSONSerialization.data(
-        withJSONObject: ControllerPatch.document(
+      let file = directory.appendingPathComponent("2c22-2000.patch.plist")
+      try PropertyListFixture.data(
+        tree: ControllerPatch.document(
           selector: .identity(Self.bundledHID),
           body: ["server": "OJD", "tuning": ["stickDeadzone": 0.1]]
         )
@@ -204,7 +206,7 @@ extension ControllerRecordWriterTests {
         "modes": [["id": "default", "protocol": ["family": "HIDDescriptor"]]],
         "tuning": ["stickDeadzone": 0.1],
       ]
-      try JSONSerialization.data(withJSONObject: record).write(to: file)
+      try PropertyListFixture.data(tree: record).write(to: file)
       try Self.write(.remove(.stickDeadzone), for: .model(Self.unbundled), in: directory)
       #expect(try Self.object(Data(contentsOf: file))["tuning"] == nil)
       #expect(ControllerRecordSet.load(userDirectory: directory).problems.isEmpty)

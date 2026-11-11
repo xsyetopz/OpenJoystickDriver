@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -130,18 +131,16 @@ struct CommandValueParserTests {
       ]
     )
     let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-      .appendingPathExtension("json")
+      .appendingPathExtension("plist")
     defer { try? FileManager.default.removeItem(at: url) }
 
     try RemappingProfileFileStore.write(profile, to: url)
     #expect(try RemappingProfileFileStore.load(from: url) == profile)
     #expect(try RemappingProfileFileStore.encodedPlist(profile).contains("Portable"))
 
-    var object = try #require(
-      JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
-    )
+    var object = try PropertyListFixture.dictionary(at: url)
     object["schemaVersion"] = 2
-    try JSONSerialization.data(withJSONObject: object).write(to: url)
+    try PropertyListFixture.data(tree: object).write(to: url)
     #expect(throws: DecodingError.self) { try RemappingProfileFileStore.load(from: url) }
   }
 }

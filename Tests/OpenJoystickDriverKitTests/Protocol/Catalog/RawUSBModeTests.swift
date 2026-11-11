@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -23,7 +24,7 @@ struct RawUSBModeTests {
 
   private static func problem(_ record: [String: Any]) throws -> String? {
     do {
-      _ = try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: record))
+      _ = try ControllerRecordSet.validate(PropertyListFixture.data(tree: record))
       return nil
     } catch { return ControllerRecordSet.problemDescription(error, document: "record") }
   }
@@ -55,7 +56,7 @@ struct RawUSBModeTests {
       ),
     ])
     let profile = try #require(
-      try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: document)).record
+      try ControllerRecordSet.validate(PropertyListFixture.data(tree: document)).record
     ).profile
     let matching = PhysicalDevice(
       vendorID: Self.model.vendorID,
@@ -107,7 +108,7 @@ struct RawUSBModeTests {
       Self.gip("default"), Self.gip("probed", match: ["probes": [probe]]),
     ])
     let profile = try #require(
-      try ControllerRecordSet.validate(JSONSerialization.data(withJSONObject: document)).record
+      try ControllerRecordSet.validate(PropertyListFixture.data(tree: document)).record
     ).profile
     let selection = await ControllerModeSelector.select(
       from: profile,

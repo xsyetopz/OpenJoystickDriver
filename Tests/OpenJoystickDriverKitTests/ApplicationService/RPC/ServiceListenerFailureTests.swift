@@ -59,21 +59,21 @@ struct ServiceListenerFailureTests {
       "[]",
       "{}",
       "{\"apiVersion\":\"openjoystickdriver/v0\",\"kind\":\"ServiceListenerFailure\"}",
-      "{\"apiVersion\":\"openjoystickdriver/v1alpha2\",\"kind\":\"Settings\"}",
+      "{\"apiVersion\":\"openjoystickdriver/v1alpha3\",\"kind\":\"Settings\"}",
       """
-      {"apiVersion":"openjoystickdriver/v1alpha2","kind":"ServiceListenerFailure",\
+      {"apiVersion":"openjoystickdriver/v1alpha3","kind":"ServiceListenerFailure",\
       "code":"E2035","errno":9,"time":"2027-01-15T08:00:00Z","pid":1}
       """,
       """
-      {"apiVersion":"openjoystickdriver/v1alpha2","kind":"ServiceListenerFailure",\
+      {"apiVersion":"openjoystickdriver/v1alpha3","kind":"ServiceListenerFailure",\
       "code":"E2034","errno":9,"time":"yesterday","pid":1}
       """,
       """
-      {"apiVersion":"openjoystickdriver/v1alpha2","kind":"ServiceListenerFailure",\
+      {"apiVersion":"openjoystickdriver/v1alpha3","kind":"ServiceListenerFailure",\
       "code":"E2034","errno":9,"time":"2027-01-15T08:00:00Z","pid":1,"extra":1}
       """,
       """
-      {"apiVersion":"openjoystickdriver/v1alpha2","kind":"ServiceListenerFailure",\
+      {"apiVersion":"openjoystickdriver/v1alpha3","kind":"ServiceListenerFailure",\
       "code":"E2034","errno":9,"time":"2027-01-15T08:00:00Z"}
       """,
     ]

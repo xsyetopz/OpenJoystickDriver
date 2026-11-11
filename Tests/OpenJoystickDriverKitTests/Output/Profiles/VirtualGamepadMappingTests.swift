@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -35,10 +36,8 @@ struct VirtualGamepadMappingTests {
     let url = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent()
-      .appendingPathComponent("Resources/Vocabulary/crosswalk.json")
-    let root = try #require(
-      try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
-    )
+      .appendingPathComponent("Resources/Vocabulary/crosswalk.plist")
+    let root = try PropertyListFixture.dictionary(at: url)
     let controls = try #require(root["controls"] as? [String: [String: Any]])
     var buttons: [Int: String] = [:]
     var axes: [Int: String] = [:]
@@ -63,10 +62,8 @@ struct VirtualGamepadMappingTests {
     let url = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent()
-      .appendingPathComponent("Resources/Vocabulary/crosswalk.json")
-    let root = try #require(
-      try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
-    )
+      .appendingPathComponent("Resources/Vocabulary/crosswalk.plist")
+    let root = try PropertyListFixture.dictionary(at: url)
     let controls = try #require(root["controls"] as? [String: [String: Any]])
     // SDL3's element names as the crosswalk spells them, and the field a mapping string writes.
     let mappingKeys = [

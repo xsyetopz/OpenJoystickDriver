@@ -46,11 +46,22 @@ struct SchemaRejectionTests {
     _ document: [String: Any],
     fileName: String
   ) throws -> String?? {
-    let data = try JSONSerialization.data(withJSONObject: document)
+    let data = try PropertyListFixture.data(tree: document)
     do {
       _ = try ProtocolDescription.decode(data, fileName: fileName)
       return .none
     } catch { return .some(error.code.rawValue) }
+  }
+
+  /// A property list cannot hold `null`, so a description case that states one has no stored form;
+  /// the schema test refuses it from the JSON text.
+  private static func holdsNull(_ value: Any) -> Bool {
+    switch value {
+    case is NSNull: true
+    case let object as [String: Any]: object.values.contains(where: holdsNull)
+    case let array as [Any]: array.contains(where: holdsNull)
+    default: false
+    }
   }
 
   @Test
@@ -80,6 +91,7 @@ struct SchemaRejectionTests {
         case "controller": refusal = Self.controllerRefusal(document)
         case "controller-patch": refusal = Self.patchRefusal(document)
         default:
+          if Self.holdsNull(document) { continue }
           refusal = try Self.descriptionRefusal(
             document,
             fileName: try #require(fixture["fileName"] as? String)

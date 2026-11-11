@@ -39,7 +39,7 @@ struct GatedControlTransferTests {
       "vendorID": 0x1234, "productID": 0xABCD, "modes": [mode],
     ]
     let validated = try ControllerRecordSet.validate(
-      JSONSerialization.data(withJSONObject: document)
+      PropertyListFixture.data(tree: document)
     )
     let profile = try #require(validated.record).profile
     let pipeline = DevicePipeline(

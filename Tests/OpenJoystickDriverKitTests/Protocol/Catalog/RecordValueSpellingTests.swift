@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverKit
@@ -211,7 +212,7 @@ struct RecordValueSpellingTests {
       "vendorID": 4660, "productID": 22136, \(fields)}
       """
     do {
-      _ = try ControllerRecordSet.validate(Data(json.utf8))
+      _ = try ControllerRecordSet.validate(PropertyListFixture.data(json: json))
       return nil
     } catch { return ControllerRecordSet.problemCode(error) }
   }

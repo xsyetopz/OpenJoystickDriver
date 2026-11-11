@@ -1,4 +1,5 @@
 import Foundation
+import OpenJoystickDriverTestSupport
 import ProtocolPacketFixtures
 import Testing
 
@@ -158,7 +159,7 @@ struct ControllerRecordProbePlanTests {
     let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
     let data = try Data(
-      contentsOf: root.appending(path: "Resources/Controllers/04b4/04b4-2412.json")
+      contentsOf: root.appending(path: "Resources/Controllers/04b4/04b4-2412.plist")
     )
     let protocolID = try ControllerRecordProbePlan.validate(data: data)
     #expect(protocolID == .hidReportLayout)
@@ -256,25 +257,6 @@ struct ControllerRecordProbePlanTests {
   }
 
   @Test
-  func aMemberNamedTwiceIsRefusedLikeTheCatalogDoes() throws {
-    let text = try #require(String(bytes: try recordData(), encoding: .utf8))
-    let doubled = Data(text.replacingOccurrences(of: "{", with: #"{"productID":2627,"#).utf8)
-    let error = #expect(throws: ControllerRecordProbeError.self) {
-      try ControllerRecordProbePlan(data: doubled)
-    }
-    #expect(error?.errorDescription?.hasPrefix("E5007: ") == true)
-  }
-
-  @Test
-  func aByteOrderMarkIsRefusedLikeTheCatalogDoes() throws {
-    let marked = Data([0xEF, 0xBB, 0xBF]) + (try recordData())
-    let error = #expect(throws: ControllerRecordProbeError.self) {
-      try ControllerRecordProbePlan(data: marked)
-    }
-    #expect(error?.errorDescription?.hasPrefix("E5007: ") == true)
-  }
-
-  @Test
   func rejectsUnknownFields() {
     #expect(throws: ControllerRecordProbeError.self) {
       try ControllerRecordProbePlan(data: try recordData(extraRootField: "notAField"))
@@ -292,7 +274,6 @@ struct ControllerRecordProbePlanTests {
       { (record: inout [String: Any]) in
         Self.setSession(["settleMilliseconds": 60_001], in: &record)
       },
-      { (record: inout [String: Any]) in record["usb"] = NSNull() },
       { (record: inout [String: Any]) in
         var protocolConfig = Self.defaultProtocol(of: record)
         protocolConfig["parameters"] = [String: Any]()
@@ -371,13 +352,13 @@ struct ControllerRecordProbePlanTests {
     if let kind { record["kind"] = kind }
     if let extraRootField { record[extraRootField] = ["source": "unknown"] }
     if !usb.isEmpty { record["usb"] = usb }
-    return try JSONSerialization.data(withJSONObject: record)
+    return try PropertyListFixture.data(tree: record)
   }
 
   private func mutatedRecord(_ mutation: (inout [String: Any]) -> Void) throws -> Data {
     let data = try recordData()
-    var record = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+    var record = try #require(PropertyListFixture.tree(data) as? [String: Any])
     mutation(&record)
-    return try JSONSerialization.data(withJSONObject: record)
+    return try PropertyListFixture.data(tree: record)
   }
 }

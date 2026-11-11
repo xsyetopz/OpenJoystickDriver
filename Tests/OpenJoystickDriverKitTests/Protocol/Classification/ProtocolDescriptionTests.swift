@@ -942,8 +942,8 @@ struct ProtocolDescriptionTests {
         """
       do {
         _ = try ProtocolDescription.decode(
-          Data(json.utf8),
-          fileName: "xbox-gip.json"
+          PropertyListFixture.bytes(json: json),
+          fileName: "xbox-gip.plist"
         )
         return nil
       } catch { return error }
@@ -1027,7 +1027,7 @@ struct ProtocolDescriptionTests {
   @Test
   func everyRejectionCarriesACatalogCode() {
     let problem = rejection(family: .xboxGIP, #""interfaceSignatures": []"#)
-    #expect(problem?.description.hasPrefix("E5002: xbox-gip.json: ") == true)
+    #expect(problem?.description.hasPrefix("E5002: xbox-gip.plist: ") == true)
     #expect(ErrorCode.invalidProtocolDescription.domain == .document)
     #expect(ErrorCode.protocolDescriptionFamilyMismatch.domain == .document)
     #expect(ErrorCode.unknownProtocolVariant.domain == .document)
@@ -1065,8 +1065,8 @@ enum ProtocolDescriptionFixture {
        "endpoints": {"in": 130, "out": 2}, \(body)}
       """
     return try ProtocolDescription.decode(
-      Data(json.utf8),
-      fileName: "\(family.descriptionFileStem).json"
+      PropertyListFixture.bytes(json: json),
+      fileName: "\(family.descriptionFileStem).plist"
     )
   }
 
