@@ -59,6 +59,7 @@ struct DeveloperToolsTests {
     let gateway = GatewayStub(statusPayload: statusPayload(device: device()))
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     try settings.set(.developerTools, to: true)
+    try settings.setInterfaceLevel(.advanced)
     let preferences = SettingsPreferencesModel(
       testNotifications: TestNotificationRequestStub(),
       settings: settings,

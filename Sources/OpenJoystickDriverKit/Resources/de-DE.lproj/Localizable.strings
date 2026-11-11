@@ -4407,6 +4407,10 @@
 "ui.menu.view.showSidebar" = "Seitenleiste einblenden";
 /* Item of the View menu that hides the sidebar. It replaces Show Sidebar while the sidebar is visible. */
 "ui.menu.view.hideSidebar" = "Seitenleiste ausblenden";
+/* Item of the View menu that sets the interface level to Simple, the reduced interface. A checkmark shows while it is the level. */
+"ui.menu.view.interfaceSimple" = "Einfach";
+/* Item of the View menu that sets the interface level to Advanced, the full interface. A checkmark shows while it is the level. */
+"ui.menu.view.interfaceAdvanced" = "Erweitert";
 /* Item of the View menu that shows the toolbar. */
 "ui.menu.view.showToolbar" = "Symbolleiste einblenden";
 /* Item of the View menu that hides the toolbar. It replaces Show Toolbar while the toolbar is visible. */
@@ -4501,6 +4505,12 @@
 "ui.settings.general.showInMenuBar" = "In der Menüleiste anzeigen";
 /* Description under the Show in menu bar switch in the General pane of the settings window. OpenJoystickDriver is the product name. */
 "ui.settings.general.showInMenuBarDescription" = "Das Symbol von OpenJoystickDriver in der Menüleiste anzeigen.";
+/* Label of the pop-up button in the General pane of the settings window that sets how much of the interface shows. */
+"ui.settings.general.interface" = "Benutzeroberfläche";
+/* Choice of the Interface pop-up button in the General pane of the settings window that shows the reduced interface. */
+"ui.settings.general.interfaceSimple" = "Einfach";
+/* Choice of the Interface pop-up button in the General pane of the settings window that shows the full interface. */
+"ui.settings.general.interfaceAdvanced" = "Erweitert";
 /* Title of the switch in the Updates section of the settings window that checks for an update at startup. */
 "ui.settings.general.checkUpdatesAutomatically" = "Automatisch nach Updates suchen";
 /* Description under the automatic update check switch in the Updates section of the settings window. */

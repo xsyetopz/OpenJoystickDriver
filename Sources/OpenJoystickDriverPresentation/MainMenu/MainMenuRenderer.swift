@@ -68,6 +68,11 @@
       }
     }
 
+    /// The checkmark state of the menu item of `item`.
+    static func checkmark(of item: MainMenuItem, state: MainMenuState) -> NSControl.StateValue {
+      MainMenuModel.isChecked(item, state: state) ? .on : .off
+    }
+
     /// Gives the item its model id as its identifier, which the coordinator looks items up by,
     /// and as its accessibility identifier, so Accessibility clients such as
     /// `Scripts/GUI/ax.js` find it in every language.
@@ -185,7 +190,7 @@
         .controllerTarget, .suspendOrResumeController, .testInput, .disconnectWirelessLink,
         .showControllerInWindow, .activateProfile, .deactivateProfile, .showActivityLog,
         .explainErrorCode, .copySupportReport, .reportProblem, .openProjectWebsite, .find,
-        .toolbar:
+        .toolbar, .setInterfaceLevel:
         return nil
       }
     }

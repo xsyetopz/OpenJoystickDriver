@@ -387,6 +387,14 @@
       developerToolsEnabled = enabled
     }
 
+    /// Stores the interface level; a failure shows in ``errorMessage``.
+    func setInterfaceLevel(_ level: InterfaceLevel) {
+      do {
+        try settings.setInterfaceLevel(level)
+        interfaceLevel = level
+      } catch { report(error) }
+    }
+
     /// Checks for a newer version and shows the result in `updateState`.
     ///
     /// With `announcingAvailableUpdate`, a newer version also posts a notification; an up-to-date

@@ -45,6 +45,7 @@
       state.disabledToolbarActions = mainWindow?.disabledToolbarActions ?? []
       state.hasSearchFieldInView = mainWindow?.searchFieldInView != nil
       state.hasSettingsWindow = settingsWindow != nil
+      state.interfaceLevel = preferences.interfaceLevel
       if let window = NSApplication.shared.keyWindow {
         state.isFullScreen = window.styleMask.contains(.fullScreen)
         state.isToolbarVisible = window.toolbar?.isVisible == true
@@ -72,6 +73,7 @@
         guard let id = menuItem.identifier?.rawValue,
           let item = MainMenuModel.allItems.first(where: { $0.id == id })
         else { continue }
+        menuItem.state = MainMenuRenderer.checkmark(of: item, state: state)
         if item.action == .controllerTarget {
           menuItem.title = MainMenuRenderer.text(
             of: MainMenuModel.controllerTargetTitle(state: state)
@@ -119,6 +121,7 @@
         preconditionFailure("\(action) opens a submenu")
       case .saveSupportReport: beginSaveSupportReport()
       case .saveActivityLog: beginSaveActivityLog()
+      case .setInterfaceLevel(let level): preferences.setInterfaceLevel(level)
       case .showArea(let area): mainWindow?.showMainWindow(area: area)
       case .find: mainWindow?.focusSearchField()
       case .toolbar(let toolbarAction): mainWindow?.perform(toolbarAction)
