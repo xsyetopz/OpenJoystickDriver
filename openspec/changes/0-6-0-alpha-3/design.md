@@ -229,6 +229,8 @@ Common to the five utilities: the item per device or profile sits at the top lev
 - Every control of the app acts when used, or shows beside itself why it cannot.
 - The menu bar item has one stated purpose, and each row of its menu serves it.
 - A person who only wants to play meets no identifier and no protocol term; a person who tunes or contributes reaches every control by one setting.
+- A protocol description document registers a family that the general layout driver runs, with no source change (tasks 9.19 to 9.22, from the measurement of 9.9).
+- Each gap a mod author meets in `docs/development/scripting-surfaces.md` is opened through a surface or kept closed with its reason and its outside route (tasks 6.11 to 6.17, from the list of 6.10).
 - One term names one concept in the app, the command line's prose, and the wiki.
 - Each change to the interface rests on a measurement of OJD and a named reference: a guideline page, an Apple app, or an open-source app at a commit.
 
@@ -237,7 +239,6 @@ Common to the five utilities: the item per device or profile sits at the top lev
 - Running scripts inside the service or the app.
 - A TypeScript compiler inside OJD.
 - An AppleScript dictionary. AppleScript and JavaScript for Automation reach OJD through `do shell script` and Shortcuts.
-- A protocol family supplied as a user document. Task 9.9 measures what it takes; the result goes to a later change.
 - A press-to-learn mapper for raw USB reports. `ojd record draft` drafts controls only from a HID descriptor; for a device with no HID gamepad interface it drafts the identity and the interface signatures (D17).
 - Removing or restyling the toolbar buttons of the main window. The maintainer chose that form (D20).
 - A popover or a window under the menu bar item. The item opens a menu (D19).
@@ -378,7 +379,7 @@ Alternative considered: a wheel driver in Swift. Rejected by D13: the next wheel
 
 This release already breaks the contract (D1, D3). It also takes the changes that a later release would otherwise break it for: the `remove` list (D12), idle as a mode state (D8), output for `HIDDescriptor` (D9), layouts for every family (D14), the removal of prose properties (D7), patches that reach every section and merge `modes` by `id` (D17), and `appIDs` in a profile's `applicationScope` (D25). After `v1alpha3`, a change to a document shape needs a defect that data cannot fix; a preference is not a reason. Additions (a property, an enumeration value, a kind) stay open.
 
-The parts this release leaves unsettled are named, each with its task: whether the driver extension stays (4.9), whether scripts get type declarations (6.7), whether a family can come from a document (9.9), and how a served pad reaches a GameController game with no profile command (9.13, 9.14), and whether a profile can leave out `device` (16.4).
+The parts this release leaves unsettled are named, each with its task: whether the driver extension stays (4.9), whether scripts get type declarations (6.7), and how a served pad reaches a GameController game with no profile command (9.13, 9.14), and whether a profile can leave out `device` (16.4).
 
 ### D16. macOS serves a pad only when GameController lists a controller for it
 
@@ -585,7 +586,6 @@ Groups 10 to 12, 14, and 17 fix what users and the maintainer report. Groups 13,
 - A pad OJD serves reaches a GameController game only after the user sets the `GameControllerCompatible` profile, because automatic selection never picks it and SDL reads no input from it (`wiki/Playing-Games.md:24,34`). Can one profile serve both, or can OJD pick the profile by the app in front? The maintainer chose research on both for this release (tasks 9.13, 9.14); no task in this change alters profile selection.
 - Can OJD serve `045E:02EA`, `0B00`, and `0B12` through Apple's HID device, which would allow removing the extension? (task 4.9)
 - Should OJD ship a type declaration file for generator scripts? (task 6.7)
-- Can a protocol description document register a family that the general layout driver runs, so that step 5 of the ladder shrinks to protocols with a handshake? (task 9.9)
 - Which terms does the maintainer choose from the table in D22? In particular "Handled by" against the "Served by" the command line prints, and the three names of the virtual gamepad kinds. (task 14.1)
 - Which of the feature groups 13 (Simple and Advanced), 15 (per-app profiles), and 16 (mapper features) stay in 0.6.0-alpha.3?
 - Does the maintainer accept the HID fallback of D18, which reverses `wiki/Supported-Controllers.md:134`? (task 9.18)
