@@ -219,10 +219,10 @@ Each task stands alone and can leave the release (D24). Each is written for OJD'
 - [ ] 16.3 Add profile templates that bind controls by their standard names beside `empty` and `gyroStick` (`ProfileCreationFields.swift:185`); a template skips a binding whose control the controller lacks, and the sheet lists each one skipped. Caller: the profile creation sheet and `ojd profile create`.
 - [ ] 16.4 Decide from the profile reader and `profile.schema.json:7-15,76` whether a profile can leave out `device`, and record the result in `design.md`. Then add the conversion of a profile to another controller model, in the app and as an `ojd profile` subcommand named in `Tests/CommandLineNames`: it keeps each binding whose source control the target has, lists each one left out, and leaves the original unchanged.
 - [ ] 16.5 Sort the profile list by name, by controller, or by last use, and add a note to a binding (schema, reader, editor). `profile.note` is a MIDI note number, so the property takes another name.
-- [ ] 16.6 Add one system-wide keyboard shortcut that pauses and resumes every controller, unset on a fresh installation. Caller: Settings and the pause RPC.
+- [x] 16.6 Add one system-wide keyboard shortcut that pauses and resumes every controller, unset on a fresh installation. Caller: Settings and the pause RPC.
 - [ ] 16.7 Add a setting that disconnects a Bluetooth controller after a time with no changed input, off by default. **Hardware (maintainer)**: confirm with the 2C over Bluetooth LE. Caller: the session's input path.
 - [ ] 16.8 Add bindings that open Launchpad, lock the screen, take a screenshot, show the desktop, and type a text. For each, name the public macOS API it uses and the permission it needs before writing it; drop an action that has no public API and report it.
-- [ ] 16.9 Show the changes of the installed version from `CHANGELOG.md` at the first opening of the main window after an update, once.
+- [x] 16.9 Show the changes of the installed version from `CHANGELOG.md` at the first opening of the main window after an update, once.
 - [x] 16.10 Measure an importer for InputConfig's preset library (commit `958bdd97`): how one preset maps to an OJD profile, how many of the 456 map without loss, and what the MIT notice requires. Save the result as `docs/development/inputconfig-presets.md`. Write no importer.
 
 ## 17. Status text and tester builds
