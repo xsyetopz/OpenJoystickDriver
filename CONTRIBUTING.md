@@ -23,7 +23,7 @@ Run `just check` before opening a pull request; CI repeats it.
 ## Adding a Controller
 
 1. Run `system_profiler SPUSBDataType`. `bDeviceClass` `0xff` is vendor-specific (often GIP); `0x03` is HID.
-2. Do not hand-edit generated records. Update the pinned importer (`docs/development/xpad-import.md`), or add `Resources/Controllers/<vid>/<vid>-<pid>.json` (a `Controller` for a model no pinned source knows) or `Resources/ControllerPatches/<vid>/<vid>-<pid>.patch.json` (a `ControllerPatch`). Decimal JSON, no display names, no protocol defaults. Then run `./Scripts/ojd catalog regenerate --write`.
+2. Do not hand-edit generated records. Update the pinned importer (`docs/development/xpad-import.md`), or add `Resources/Controllers/<vid>/<vid>-<pid>.plist` (a `Controller` for a model no pinned source knows) or `Resources/ControllerPatches/<vid>/<vid>-<pid>.patch.plist` (a `ControllerPatch`). Each is a canonical XML property list: decimal integers, no `null`, `date`, or `data`, no display names, no protocol defaults. Run `swift run OJDRepositoryTool format-plist <file.plist>` on a hand-edited file, then `./Scripts/ojd catalog regenerate --write`. `Resources/Schemas/README.md` has the property-list rules.
 3. A new protocol only: a `PhysicalProtocolDriver` in `Sources/OpenJoystickDriverKit/Protocol/Drivers/`, with tests under `Tests/OpenJoystickDriverKitTests/`.
 4. Run `just check`.
 
@@ -34,7 +34,7 @@ Capture a candidate with `./Scripts/ojd diagnose record /tmp/controller-candidat
 - Toolchain: `.swift-version` and `Package.swift`. Warnings are errors. Justify `nonisolated(unsafe)` on the same line.
 - Style: `.swift-format` and `.swiftlint.yml`. Do not copy them here or add SwiftLint rules that fight the formatter. Run SwiftLint with `--no-cache --strict`. No `// swiftlint:disable` except for an `@objc` callback that cannot comply, with the reason on that line.
 - GUI and CLI text: `LOCALIZATION.md`. Tests check codes, routes, identifiers, paths and structure, not help text, and do not read `.swift` source.
-- Decimal integers in JSON. The one exception is raw bytes in a `session` (`bytes`, `data`, a probe's expected bytes): uppercase hex pairs separated by single spaces, such as `42 03 00 00`.
+- Decimal integers in stored documents (`.plist`) and in JSON messages. The one exception is raw bytes in a `session` (`bytes`, `data`, a probe's expected bytes): uppercase hex pairs separated by single spaces, such as `42 03 00 00`.
 - Keep the existing `print` diagnostics; add no logging stack. Parser errors stay local: log and skip.
 - Deployment floor: macOS 12; future iOS and iPadOS companion apps: 15.
 - Kit has no SwifterKit. USB adapter: `Sources/OpenJoystickDriverUSB/`. DriverKit generator: `Sources/DriverKitGenerator/` and `Scripts/Build/driverkit.sh`; no manual DriverKit build or post-generation patch (`./Scripts/ojd check driverkit`).
