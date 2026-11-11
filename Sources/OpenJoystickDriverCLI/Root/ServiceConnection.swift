@@ -36,7 +36,10 @@ enum ServiceConnection {
   /// - Returns: The connected client.
   /// - Throws: ``CLIFailure`` with the service-unavailable code when nothing answers.
   static func open(
-    client: ApplicationServiceClient = ApplicationServiceClient(socketPath: socketPath)
+    client: ApplicationServiceClient = ApplicationServiceClient(
+      socketPath: socketPath,
+      requestTimeoutSeconds: CLIContext.current.requestTimeout
+    )
   ) async throws -> ApplicationServiceClient {
     await client.connect(timeoutSeconds: 0)
     guard client.isConnected else { throw CLIFailure.serviceUnavailable }

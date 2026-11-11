@@ -34,6 +34,8 @@ public final class ApplicationServiceClient: @unchecked Sendable {
   let stateLock = NSLock()
   /// The path of the service's local socket.
   let socketPath: String
+  /// Seconds a call waits for the service's reply unless the call sets its own deadline.
+  package let replyTimeoutSeconds: TimeInterval
   /// Whether a probe found the service's local server and no disconnect followed.
   var connected = false
   /// The probes of the local server that found no answer, across all `connect` calls.
@@ -43,8 +45,17 @@ public final class ApplicationServiceClient: @unchecked Sendable {
   package var unansweredProbeCount: Int { stateLock.withLock { unansweredProbes } }
 
   /// Creates a client for the service's default local socket.
-  public init() { socketPath = LocalServiceRPCTransport.defaultSocketPath }
+  public init() {
+    socketPath = LocalServiceRPCTransport.defaultSocketPath
+    replyTimeoutSeconds = applicationServiceDefaultReplyTimeoutSeconds
+  }
 
   /// Creates a client for the service socket at `socketPath`.
-  package init(socketPath: String) { self.socketPath = socketPath }
+  ///
+  /// A call waits for a reply for `requestTimeoutSeconds`, or for the default reply limit when
+  /// that is longer.
+  package init(socketPath: String, requestTimeoutSeconds: TimeInterval = 0) {
+    self.socketPath = socketPath
+    replyTimeoutSeconds = max(requestTimeoutSeconds, applicationServiceDefaultReplyTimeoutSeconds)
+  }
 }
