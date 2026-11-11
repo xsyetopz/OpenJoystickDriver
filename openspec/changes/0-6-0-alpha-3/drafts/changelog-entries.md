@@ -21,6 +21,8 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 - The service migrates the stored documents when it starts, before any store opens, and logs each verdict. (5.5)
 - The app offers Migrate wherever it reports `E5001`, and the Profiles area names an earlier alpha's `.json` profile. (5.7)
 - The implementation status and `Scripts/SDK/reference_client.py` name `openjoystickdriver/v1alpha3`. (18.4)
+- A controller record's `input.layouts` applies under every protocol family: a layout decodes the controls it names in the reports it selects, and the family's decoder reads the rest. A `HIDDescriptor` mode refuses a layout. (9.2)
+- A controller patch may set every record property except the identity, including `capabilities` and `idle`. `patch.modes` merges by `id`: an entry with a known `id` changes that mode, a new `id` adds a mode, and the `remove` path `modes.<id>` drops one. A record's `capabilities` may name a control that the driver of any of its modes declares. `ojd migrate` gives a `v1alpha2` patch that sets `modes` the `remove` path `modes`, so it still replaces the record's modes. (9.15)
 
 ## Fixed
 
