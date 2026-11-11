@@ -298,6 +298,14 @@
 "ui.virtualProfile.sourceAutomaticAfterRejecting" = "स्वचालित, ओवरराइड अस्वीकृत";
 /* Value of the virtual HID profile when the controller has none. */
 "ui.virtualProfile.none" = "कोई वर्चुअल HID प्रोफ़ाइल नहीं";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
+"ui.virtualProfile.inForce" = "उपयोग में: %1$@। सहेजा गया ओवरराइड: %2$@।";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
+"ui.virtualProfile.unchanged" = "यह विकल्प पहले से लागू है। कुछ नहीं बदला।";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.model" = "लागू ओवरराइड इस मॉडल के हर कंट्रोलर के लिए सहेजा गया है, इसलिए केवल इस कंट्रोलर के लिए हटाने को कुछ नहीं है। कुछ नहीं बदला।";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.unit" = "लागू ओवरराइड केवल इस कंट्रोलर के लिए सहेजा गया है, इसलिए मॉडल के लिए हटाने को कुछ नहीं है। कुछ नहीं बदला।";
 /* Status shown while the app changes the virtual HID profile. Keep the three dots. */
 "ui.virtualProfile.updating" = "वर्चुअल HID प्रोफ़ाइल अपडेट हो रही है…";
 /* Error when the user picks a virtual HID profile that the service does not know. The service stored nothing. */

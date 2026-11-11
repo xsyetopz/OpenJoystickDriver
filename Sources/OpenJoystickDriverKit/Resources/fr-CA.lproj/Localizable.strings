@@ -298,6 +298,14 @@
 "ui.virtualProfile.sourceAutomaticAfterRejecting" = "Automatique, remplacement refusé";
 /* Value of the virtual HID profile when the controller has none. */
 "ui.virtualProfile.none" = "Aucun profil HID virtuel";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
+"ui.virtualProfile.inForce" = "En cours d’utilisation : %1$@. Remplacement enregistré : %2$@.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
+"ui.virtualProfile.unchanged" = "Ce choix est déjà appliqué. Rien n’a changé.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.model" = "Le remplacement en vigueur est enregistré pour toutes les manettes de ce modèle, il n’y a donc rien à effacer pour cette manette seule. Rien n’a changé.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.unit" = "Le remplacement en vigueur est enregistré pour cette manette seulement, il n’y a donc rien à effacer pour le modèle. Rien n’a changé.";
 /* Status shown while the app changes the virtual HID profile. Keep the three dots. */
 "ui.virtualProfile.updating" = "Mise à jour du profil HID virtuel…";
 /* Error when the user picks a virtual HID profile that the service does not know. The service stored nothing. */

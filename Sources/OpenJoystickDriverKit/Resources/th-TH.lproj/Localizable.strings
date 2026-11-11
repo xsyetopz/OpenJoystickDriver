@@ -298,6 +298,14 @@
 "ui.virtualProfile.sourceAutomaticAfterRejecting" = "อัตโนมัติ การแทนที่ถูกปฏิเสธ";
 /* Value of the virtual HID profile when the controller has none. */
 "ui.virtualProfile.none" = "ไม่มีโปรไฟล์ HID เสมือน";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
+"ui.virtualProfile.inForce" = "ที่ใช้อยู่: %1$@ การแทนที่ที่บันทึกไว้: %2$@";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
+"ui.virtualProfile.unchanged" = "ตัวเลือกนี้ใช้อยู่แล้ว ไม่มีอะไรเปลี่ยนแปลง";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.model" = "การแทนที่ที่มีผลถูกบันทึกไว้สำหรับคอนโทรลเลอร์ทุกตัวของรุ่นนี้ จึงไม่มีสิ่งที่ต้องล้างสำหรับคอนโทรลเลอร์ตัวนี้เพียงตัวเดียว ไม่มีอะไรเปลี่ยนแปลง";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.unit" = "การแทนที่ที่มีผลถูกบันทึกไว้สำหรับคอนโทรลเลอร์ตัวนี้เท่านั้น จึงไม่มีสิ่งที่ต้องล้างสำหรับรุ่น ไม่มีอะไรเปลี่ยนแปลง";
 /* Status shown while the app changes the virtual HID profile. Keep the three dots. */
 "ui.virtualProfile.updating" = "กำลังอัปเดตโปรไฟล์ HID เสมือน…";
 /* Error when the user picks a virtual HID profile that the service does not know. The service stored nothing. */

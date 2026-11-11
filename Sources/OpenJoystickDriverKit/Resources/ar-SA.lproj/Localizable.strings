@@ -298,6 +298,14 @@
 "ui.virtualProfile.sourceAutomaticAfterRejecting" = "تلقائي، تم رفض التجاوز";
 /* Value of the virtual HID profile when the controller has none. */
 "ui.virtualProfile.none" = "لا يوجد ملف تعريف HID افتراضي";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
+"ui.virtualProfile.inForce" = "قيد الاستخدام: %1$@. التجاوز المخزَّن: %2$@.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
+"ui.virtualProfile.unchanged" = "هذا الاختيار مطبَّق بالفعل. لم يتغير شيء.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.model" = "التجاوز الساري مخزَّن لكل وحدات التحكم من هذا الطراز، لذا لا يوجد ما يُمسح لوحدة التحكم هذه وحدها. لم يتغير شيء.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.unit" = "التجاوز الساري مخزَّن لوحدة التحكم هذه فقط، لذا لا يوجد ما يُمسح للطراز. لم يتغير شيء.";
 /* Status shown while the app changes the virtual HID profile. Keep the three dots. */
 "ui.virtualProfile.updating" = "جارٍ تحديث ملف تعريف HID الافتراضي…";
 /* Error when the user picks a virtual HID profile that the service does not know. The service stored nothing. */

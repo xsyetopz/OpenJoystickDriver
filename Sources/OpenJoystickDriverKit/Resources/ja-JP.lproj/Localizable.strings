@@ -298,6 +298,14 @@
 "ui.virtualProfile.sourceAutomaticAfterRejecting" = "自動（上書きは拒否）";
 /* Value of the virtual HID profile when the controller has none. */
 "ui.virtualProfile.none" = "仮想 HID プロファイルなし";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
+"ui.virtualProfile.inForce" = "使用中: %1$@。保存されている上書き: %2$@。";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
+"ui.virtualProfile.unchanged" = "この選択はすでに適用されています。変更はありません。";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.model" = "有効な上書きはこのモデルのすべてのコントローラ用に保存されているため、このコントローラだけで消去するものはありません。変更はありません。";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.unit" = "有効な上書きはこのコントローラだけに保存されているため、モデルで消去するものはありません。変更はありません。";
 /* Status shown while the app changes the virtual HID profile. Keep the three dots. */
 "ui.virtualProfile.updating" = "仮想 HID プロファイルを更新中…";
 /* Error when the user picks a virtual HID profile that the service does not know. The service stored nothing. */

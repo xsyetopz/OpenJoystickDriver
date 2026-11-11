@@ -298,6 +298,14 @@
 "ui.virtualProfile.sourceAutomaticAfterRejecting" = "Otomatis, penimpaan ditolak";
 /* Value of the virtual HID profile when the controller has none. */
 "ui.virtualProfile.none" = "Tidak ada profil HID virtual";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
+"ui.virtualProfile.inForce" = "Sedang dipakai: %1$@. Penggantian tersimpan: %2$@.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
+"ui.virtualProfile.unchanged" = "Pilihan ini sudah berlaku. Tidak ada yang berubah.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.model" = "Penggantian yang berlaku disimpan untuk setiap pengontrol model ini, jadi tidak ada yang perlu dihapus untuk pengontrol ini saja. Tidak ada yang berubah.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.unit" = "Penggantian yang berlaku disimpan hanya untuk pengontrol ini, jadi tidak ada yang perlu dihapus untuk model. Tidak ada yang berubah.";
 /* Status shown while the app changes the virtual HID profile. Keep the three dots. */
 "ui.virtualProfile.updating" = "Memperbarui profil HID virtual…";
 /* Error when the user picks a virtual HID profile that the service does not know. The service stored nothing. */

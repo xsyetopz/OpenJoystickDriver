@@ -298,6 +298,14 @@
 "ui.virtualProfile.sourceAutomaticAfterRejecting" = "자동, 재정의 거부됨";
 /* Value of the virtual HID profile when the controller has none. */
 "ui.virtualProfile.none" = "가상 HID 프로파일 없음";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
+"ui.virtualProfile.inForce" = "사용 중: %1$@. 저장된 재정의: %2$@.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
+"ui.virtualProfile.unchanged" = "이 선택은 이미 적용되어 있습니다. 변경된 내용이 없습니다.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.model" = "적용 중인 재정의가 이 모델의 모든 컨트롤러에 저장되어 있으므로 이 컨트롤러만을 위해 지울 항목이 없습니다. 변경된 내용이 없습니다.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.unit" = "적용 중인 재정의가 이 컨트롤러에만 저장되어 있으므로 모델에서 지울 항목이 없습니다. 변경된 내용이 없습니다.";
 /* Status shown while the app changes the virtual HID profile. Keep the three dots. */
 "ui.virtualProfile.updating" = "가상 HID 프로파일 업데이트 중…";
 /* Error when the user picks a virtual HID profile that the service does not know. The service stored nothing. */

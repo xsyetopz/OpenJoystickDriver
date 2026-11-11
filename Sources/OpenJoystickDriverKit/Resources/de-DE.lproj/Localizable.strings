@@ -298,6 +298,14 @@
 "ui.virtualProfile.sourceAutomaticAfterRejecting" = "Automatisch, Überschreibung abgelehnt";
 /* Value of the virtual HID profile when the controller has none. */
 "ui.virtualProfile.none" = "Kein virtuelles HID-Profil";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
+"ui.virtualProfile.inForce" = "In Verwendung: %1$@. Gespeicherte Überschreibung: %2$@.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
+"ui.virtualProfile.unchanged" = "Diese Auswahl ist bereits aktiv. Es hat sich nichts geändert.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.model" = "Die geltende Überschreibung gilt für jeden Controller dieses Modells, daher gibt es für diesen Controller allein nichts zu löschen. Es hat sich nichts geändert.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.unit" = "Die geltende Überschreibung gilt nur für diesen Controller, daher gibt es für das Modell nichts zu löschen. Es hat sich nichts geändert.";
 /* Status shown while the app changes the virtual HID profile. Keep the three dots. */
 "ui.virtualProfile.updating" = "Virtuelles HID-Profil wird aktualisiert…";
 /* Error when the user picks a virtual HID profile that the service does not know. The service stored nothing. */

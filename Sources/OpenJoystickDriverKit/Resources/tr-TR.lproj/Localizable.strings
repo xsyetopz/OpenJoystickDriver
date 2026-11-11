@@ -298,6 +298,14 @@
 "ui.virtualProfile.sourceAutomaticAfterRejecting" = "Otomatik, Geçersiz Kılma Reddedildi";
 /* Value of the virtual HID profile when the controller has none. */
 "ui.virtualProfile.none" = "Sanal HID Profili Yok";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
+"ui.virtualProfile.inForce" = "Kullanımda: %1$@. Kayıtlı geçersiz kılma: %2$@.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
+"ui.virtualProfile.unchanged" = "Bu seçim zaten geçerli. Hiçbir şey değişmedi.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.model" = "Geçerli olan geçersiz kılma bu modelin tüm kontrolcüleri için kayıtlı, bu yüzden yalnızca bu kontrolcü için temizlenecek bir şey yok. Hiçbir şey değişmedi.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.unit" = "Geçerli olan geçersiz kılma yalnızca bu kontrolcü için kayıtlı, bu yüzden model için temizlenecek bir şey yok. Hiçbir şey değişmedi.";
 /* Status shown while the app changes the virtual HID profile. Keep the three dots. */
 "ui.virtualProfile.updating" = "Sanal HID Profili Güncelleniyor…";
 /* Error when the user picks a virtual HID profile that the service does not know. The service stored nothing. */

@@ -298,6 +298,14 @@
 "ui.virtualProfile.sourceAutomaticAfterRejecting" = "Автоматически, переопределение отклонено";
 /* Value of the virtual HID profile when the controller has none. */
 "ui.virtualProfile.none" = "Нет виртуального профиля HID";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
+"ui.virtualProfile.inForce" = "Используется: %1$@. Сохранённое переопределение: %2$@.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
+"ui.virtualProfile.unchanged" = "Этот выбор уже действует. Ничего не изменилось.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.model" = "Действующее переопределение сохранено для всех контроллеров этой модели, поэтому очищать для одного этого контроллера нечего. Ничего не изменилось.";
+/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
+"ui.virtualProfile.otherScopeHolds.unit" = "Действующее переопределение сохранено только для этого контроллера, поэтому для модели очищать нечего. Ничего не изменилось.";
 /* Status shown while the app changes the virtual HID profile. Keep the three dots. */
 "ui.virtualProfile.updating" = "Обновление виртуального профиля HID…";
 /* Error when the user picks a virtual HID profile that the service does not know. The service stored nothing. */
