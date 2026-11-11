@@ -147,6 +147,38 @@ struct ProfileCommandTests {
   }
 
   @Test
+  func convertCreatesACopyForTheTargetModelAndListsWhatItLeavesOut() async throws {
+    let kept = RemappingBinding(
+      source: .button(.south),
+      destination: .keyboard(key: .space, modifiers: [])
+    )
+    let lost = RemappingBinding(
+      source: .button(.leftPaddle1),
+      destination: .keyboard(key: .escape, modifiers: [])
+    )
+    let original = FakeProfileLibrary.profile("Pad", bindings: [kept, lost])
+    let library = FakeProfileLibrary([original])
+    let service = try Self.service(library)
+
+    let result = await service.run(
+      ["profile", "convert", "Pad", "--controller", "054C:0CE6", "--json"]
+    )
+
+    #expect(result.code == 0, "\(result.standardError)")
+    let stored = library.stored
+    #expect(stored.count == 2)
+    #expect(stored.first { $0.id == original.id } == original)
+    let converted = try #require(stored.first { $0.id != original.id })
+    #expect(converted.device == RemappingDeviceScope(vendorID: 0x054C, productID: 0x0CE6))
+    #expect(converted.name == "Pad 054C:0CE6")
+    #expect(converted.bindings == [kept])
+    let leftOut = try #require(try result.json()["leftOut"] as? [[String: Any]])
+    #expect(leftOut.count == 1)
+    #expect(leftOut.first?["section"] as? String == "Binding")
+    #expect(leftOut.first?["sources"] as? [String] == ["button:left-paddle1"])
+  }
+
+  @Test
   func deleteNeedsForceWithoutATerminalAndDryRunChangesNothing() async throws {
     let library = FakeProfileLibrary([FakeProfileLibrary.profile("Pad")])
     let service = try Self.service(library)

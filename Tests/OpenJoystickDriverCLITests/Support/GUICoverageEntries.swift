@@ -48,6 +48,11 @@ enum GUICoverageEntries {
           + "the window edits the scope after import"
       ),
       CLIOnlyItem(
+        command: ["profile", "convert"],
+        option: nil,
+        reason: "the window offers no conversion yet; it will call RemappingProfileConversion"
+      ),
+      CLIOnlyItem(
         command: ["virtual", "feed"],
         option: nil,
         reason: "reads controller frames from standard input"

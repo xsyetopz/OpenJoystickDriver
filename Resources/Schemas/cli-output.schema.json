@@ -1979,6 +1979,15 @@
         }
       }
     },
+    "profileConvert": {
+      "required": ["apiVersion", "kind", "leftOut"],
+      "properties": {
+        "kind": {
+          "const": "Profile"
+        }
+      },
+      "$ref": "#/$defs/sharedProfileResult"
+    },
     "profileDuplicate": {
       "required": ["apiVersion", "kind"],
       "properties": {
@@ -3721,6 +3730,37 @@
         },
         "profile": {
           "$ref": "#/$defs/sharedProfileSummary"
+        },
+        "leftOut": {
+          "description": "The parts of the profile that the target controller cannot take, each with the sources it lacks.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["section", "sources"],
+            "additionalProperties": false,
+            "properties": {
+              "section": {
+                "enum": [
+                  "Binding",
+                  "Chord",
+                  "Sequence",
+                  "Layer",
+                  "StickMapping",
+                  "TriggerMapping",
+                  "TouchMapping",
+                  "GyroOutput",
+                  "PointerSpeed",
+                  "JoyConPair"
+                ]
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         },
         "skippedControls": {
           "description": "The controls of the template that the controller lacks, so the template left them unbound.",

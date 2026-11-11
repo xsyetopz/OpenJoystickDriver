@@ -3327,6 +3327,18 @@
 "cli.shared.document.wrongType" = "o campo “%@” tem o tipo errado";
 /* Reason fragment of a document problem for one field. %1$@ is the field path, which stays as written and is shown in quotes, and %2$@ is the problem found. */
 "cli.shared.document.fieldProblem" = "“%1$@”: %2$@";
+/* One-line summary of 'ojd profile convert' in the command list and at the top of its help. */
+"cli.profile.convert.abstract" = "Copia um perfil para outro modelo de controle, mantendo as atribuições que esse modelo pode usar.";
+/* Help text of the --controller option of 'ojd profile convert'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
+"cli.profile.convert.controller" = "O modelo de controle de destino: VVVV:PPPP ou o ID de um controle conectado.";
+/* Help text of the --name option of 'ojd profile convert'. */
+"cli.profile.convert.name" = "O nome do perfil convertido. Por padrão, é o nome do perfil seguido do modelo.";
+/* Message printed after 'ojd profile convert'. %1$@ is the name of the converted profile, shown in quotes, %2$@ is its profile ID, and %3$@ is the target controller as VVVV:PPPP. */
+"cli.profile.convert.done" = "“%1$@” (%2$@) criado para %3$@. O original não muda.";
+/* Line printed after 'ojd profile convert' for each part of the profile that the target controller cannot take. %1$@ is the kind of part, such as binding, and stays as written. %2$@ is the comma-separated list of sources the controller lacks; they stay as written. */
+"cli.profile.convert.leftOut" = "%1$@ omitido (o controle não tem: %2$@).";
+/* Line printed after 'ojd profile convert' for a part of the profile that the target controller cannot take for a reason that names no source. %@ is the kind of part, such as gyro-output, and stays as written. */
+"cli.profile.convert.leftOutPart" = "%@ omitido (falta ao controle uma parte de que ele precisa).";
 /* One-line summary of 'ojd profile duplicate' in the command list and at the top of its help. */
 "cli.profile.duplicate.abstract" = "Copia um perfil com um novo nome. A cópia começa inativa.";
 /* Message printed after 'ojd profile duplicate'. %1$@ is the name of the copy, shown in quotes, and %2$@ is its profile ID. */

@@ -121,6 +121,7 @@ ojd profile validate FILE|-
 ojd profile export PROFILE [--output FILE]
 ojd profile get PROFILE KEY
 ojd profile set PROFILE KEY VALUE
+ojd profile convert PROFILE --controller CONTROLLER [--name NAME]
 ```
 
 `PROFILE` is a profile ID, or a profile name in any letter case. A name that two profiles share is rejected, and the error lists their IDs. Use an ID to pick one.
@@ -140,6 +141,7 @@ ojd profile set PROFILE KEY VALUE
 - `profile export`: Print a profile file to stdout, or write it to `--output`. The file is an XML property list, so `--json` and `--plain` do not change the output.
 - `profile get`: Print one value from the profile file. `KEY` is a path of member names and array indexes joined by dots, such as `stickMappings.0.tuning.innerDeadzone`. A string prints alone, and any other value prints as JSON. A key with no value exits 1.
 - `profile set`: Change one value in the profile file. `VALUE` is read as JSON, or as a string when it is not JSON, so `0.2` is a number and `space` is a string. To set the string `true`, write `'"true"'`. `null` removes the key or the array item, and the index one past the end of an array adds an item. OJD checks the whole profile before it saves it and refuses a change that makes it invalid or changes `id`. For example, `ojd profile set Racing physicalColor '{"red":255,"green":0,"blue":0}'`.
+- `profile convert`: Copy a profile for another controller model. `--controller` is the target as `VVVV:PPPP` or the ID of a connected controller. The copy is inactive, applies to the whole model (the unit of the original is dropped), and is named `NAME`, or the profile name followed by the model when `--name` is not given. It keeps each binding, chord, sequence, layer, stick mapping, trigger mapping, and touch mapping whose source controls the target has, and prints one line for each part it leaves out, with the sources the target lacks. It also leaves out the gyro output, pointer speed, and Joy-Con pair settings that the target cannot take. The original profile does not change. `--json` adds `leftOut`, a list of `section` and `sources`.
 
 With `--json`, a profile is an object with `id`, `name`, `controller`, `scope` (`global` or `app:BUNDLE-ID`), `active`, and `bindings`, the number of bindings. `profile list` prints a `ProfileList` with `items`, one profile each, and an empty `metadata`. The issues it finds go to stderr as warnings, one line each. `profile show` prints a `Profile` with `profile` and `document`, the full profile file. `profile create`, `duplicate`, `rename`, `activate`, `deactivate`, `edit`, `set`, and `import` print a `Profile` too, with `profile` and `changed` (`replaced` for `import`). `profile get` prints a `ProfileValue` with `key` and `value`. `profile delete` and `profile recover` print a `Status`, and `details` holds `deleted` and `dryRun` for `delete`, and `recovered`, each with `id`, `kind`, `code`, and `message`, and `dryRun` for `recover`. `profile validate` prints a `ProfileValidation` with `valid`, then `id`, `name`, `controller`, and `scope` for a valid profile or `problem` for an invalid one.
 
