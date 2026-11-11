@@ -19,6 +19,7 @@ struct ProfileCommand: AsyncParsableCommand {
       ProfileActivateCommand.self, ProfileDeactivateCommand.self, ProfileImportCommand.self,
       ProfileValidateCommand.self, ProfileExportCommand.self, ProfileGetCommand.self,
       ProfileSetCommand.self, ProfileEditCommand.self, ProfileRecoverCommand.self,
+      ProfileConvertCommand.self,
     ]
   )
 
@@ -34,6 +35,8 @@ struct ProfileResult: Encodable, Equatable {
   /// Whether the command changed the profile.
   let changed: Bool
   var skippedControls: [Control]?
+  /// The parts that `profile convert` left out; `nil` for a command that converts nothing.
+  var leftOut: [ProfileLeftOut]?
 }
 
 /// Prints `result`, with `message` as the human success line.

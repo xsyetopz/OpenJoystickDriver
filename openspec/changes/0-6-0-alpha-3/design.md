@@ -574,6 +574,10 @@ What 8.11 did for #35: records `045e-02e0` (Bluetooth XInput, two layouts by rep
 
 Groups 10 to 12, 14, and 17 fix what users and the maintainer report. Groups 13, 15, and 16 add features, and each can leave this release without changing another group. Within group 16 each task stands alone. The maintainer decides which stay (Open Questions).
 
+### D20. A profile cannot leave out `device`, so a profile moves to another model by conversion
+
+`profile.schema.json` lists `device` among the required keys (`:7-15`, `:12`) and defines it with required `productID` and `vendorID` (`:79-83`). The reader agrees: `RemappingProfile.init(from:)` calls `decode`, not `decodeIfPresent`, for `.device` (`Profile.swift:592`), so a document without it fails, and the encoder always writes it (`Profile+Coding.swift:58`). Profile switching also assumes a model: `Next` and `Previous` walk the profiles "of the same model and scope" (`ProfileControl.swift:28,30`). Omitting it would need a schema change, a new rule for which controllers a profile reaches, and a migration; none of the three is in this change. Conversion (task 16.4) copies the profile for the target model instead: `RemappingProfileConversion` keeps each binding whose source control the target reports, lists each one it leaves out, and leaves the original unchanged.
+
 ## Risks / Trade-offs
 
 - A layout that overrides a family decoder can hide a control the family decodes correctly → a layout changes only the controls it names, and `ojd record test` replays a capture against the record before it ships.
@@ -626,6 +630,6 @@ Groups 10 to 12, 14, and 17 fix what users and the maintainer report. Groups 13,
 - The deployment target is macOS 12 (`Package.swift:33`). `NavigationSplitView` and `MenuBarExtra` need macOS 13. Does the target stay?
 - Should the toolbar be customizable, as Notes offers through "Customize Toolbar…"? No spec asks for it.
 - "Businesses" (resolved): MPL-2.0 permits commercial use, so a company may deploy OJD without a separate license. Open: is a managed installation (a configuration profile that approves the driver extension and the permissions) in scope for a later change? The wiki start page "set up OJD on several Macs" states what the license and macOS allow.
-- Can a profile leave out `device` and apply to every controller that has its source controls, which would make conversion unnecessary? (task 16.4)
+- "Can a profile leave out `device`?" (task 16.4) resolved: no, see D20.
 - Is an importer for InputConfig's preset library wanted, with its MIT notice? (task 16.10)
 - Which users reported that dropdowns do nothing, and on which view? No issue names it; a pointer from the maintainer lets task 10.5 start at that view.
