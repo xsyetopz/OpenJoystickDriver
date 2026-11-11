@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "apple-docs": {
+      "type": "stdio",
+      "command": "bun",
+      "args": [
+        "run"
+      ],
+      "env": {}
+    }
+  }
+}
