@@ -1226,6 +1226,28 @@
 "ui.setup.uninstallDetail" = "ड्राइवर फिर से इंस्टॉल होने तक Xbox USB कंट्रोलर काम करना बंद कर देते हैं।";
 /* Button of the problem banner that repairs the driver extension for Xbox USB controllers. */
 "ui.setup.repairDriver" = "Xbox USB ड्राइवर ठीक करें";
+/* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
+"platform.macos.cli.controller.show.labelServedBy" = "मूल ड्राइवर";
+/* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
+"platform.macos.cli.controller.show.servedByMacOS" = "macOS द्वारा चलाया जा रहा है। एक्सटेंशन सक्रिय करने और कंट्रोलर लेने के लिए `ojd controller claim %@` चलाएँ।";
+/* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
+"platform.macos.ui.controllers.servedByMacOS" = "macOS द्वारा चलाया जा रहा";
+/* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
+"platform.macos.ui.controllers.servedByMacOSDetail" = "Apple का ड्राइवर इस कंट्रोलर को थामे हुए है। OpenJoystickDriver एक्सटेंशन सक्रिय करने के लिए इसे अपने नाम करें।";
+/* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
+"ui.controllers.claim" = "अपने नाम करें";
+/* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.runningDetail" = "Xbox USB ड्राइवर इंस्टॉल हो रहा है…";
+/* Disabled button of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.repairRunning" = "मरम्मत हो रही है…";
+/* Detail line of the problem banner when the state of the driver extension for Xbox USB controllers cannot be read. The banner has no button then. */
+"ui.setup.unavailableDetail" = "Xbox USB ड्राइवर की स्थिति पढ़ी नहीं जा सकती, इसलिए कोई अनुरोध नहीं भेजा जा सकता।";
+/* Detail line of the problem banner when the request for the driver extension failed. %1$@ is the error domain, %2$lld is the error code and %3$@ is the error text. */
+"ui.setup.failedDetail" = "Xbox USB ड्राइवर का अनुरोध विफल रहा: %3$@ (%1$@, कोड %2$lld)।";
+/* Detail line of the problem banner when the request for the driver extension was cancelled. The Try Again button follows. */
+"ui.setup.cancelledDetail" = "Xbox USB ड्राइवर का अनुरोध रद्द किया गया। ड्राइवर इंस्टॉल करने के लिए फिर कोशिश करें।";
+/* Detail line of the problem banner when the system did not answer the request for the driver extension in time. The Try Again button follows. */
+"ui.setup.timedOutDetail" = "सिस्टम ने Xbox USB ड्राइवर के अनुरोध का समय पर उत्तर नहीं दिया। फिर कोशिश करें।";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver अपनी सेवा तक नहीं पहुँच पा रहा है";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */

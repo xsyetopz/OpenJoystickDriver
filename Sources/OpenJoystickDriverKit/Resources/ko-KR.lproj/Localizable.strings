@@ -1226,6 +1226,28 @@
 "ui.setup.uninstallDetail" = "드라이버를 다시 설치할 때까지 Xbox USB 컨트롤러가 작동하지 않습니다.";
 /* Button of the problem banner that repairs the driver extension for Xbox USB controllers. */
 "ui.setup.repairDriver" = "Xbox USB 드라이버 복구";
+/* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
+"platform.macos.cli.controller.show.labelServedBy" = "기본 드라이버";
+/* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
+"platform.macos.cli.controller.show.servedByMacOS" = "macOS가 처리 중입니다. 확장 프로그램을 활성화하고 컨트롤러를 가져오려면 `ojd controller claim %@`를 실행하세요.";
+/* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
+"platform.macos.ui.controllers.servedByMacOS" = "macOS가 처리 중";
+/* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
+"platform.macos.ui.controllers.servedByMacOSDetail" = "Apple의 드라이버가 이 컨트롤러를 점유하고 있습니다. 가져오면 OpenJoystickDriver 확장 프로그램이 활성화됩니다.";
+/* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
+"ui.controllers.claim" = "가져오기";
+/* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.runningDetail" = "Xbox USB 드라이버를 설치하는 중…";
+/* Disabled button of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.repairRunning" = "복구하는 중…";
+/* Detail line of the problem banner when the state of the driver extension for Xbox USB controllers cannot be read. The banner has no button then. */
+"ui.setup.unavailableDetail" = "Xbox USB 드라이버의 상태를 읽을 수 없어 요청을 보낼 수 없습니다.";
+/* Detail line of the problem banner when the request for the driver extension failed. %1$@ is the error domain, %2$lld is the error code and %3$@ is the error text. */
+"ui.setup.failedDetail" = "Xbox USB 드라이버 요청이 실패했습니다: %3$@(%1$@, 코드 %2$lld).";
+/* Detail line of the problem banner when the request for the driver extension was cancelled. The Try Again button follows. */
+"ui.setup.cancelledDetail" = "Xbox USB 드라이버 요청이 취소되었습니다. 드라이버를 설치하려면 다시 시도하세요.";
+/* Detail line of the problem banner when the system did not answer the request for the driver extension in time. The Try Again button follows. */
+"ui.setup.timedOutDetail" = "시스템이 Xbox USB 드라이버 요청에 제때 응답하지 않았습니다. 다시 시도하세요.";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver가 서비스에 연결할 수 없습니다";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */

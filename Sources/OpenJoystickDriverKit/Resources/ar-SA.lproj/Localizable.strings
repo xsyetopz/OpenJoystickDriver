@@ -1226,6 +1226,28 @@
 "ui.setup.uninstallDetail" = "تتوقف وحدات تحكم Xbox USB عن العمل إلى أن يُثبَّت برنامج التشغيل مرة أخرى.";
 /* Button of the problem banner that repairs the driver extension for Xbox USB controllers. */
 "ui.setup.repairDriver" = "إصلاح برنامج تشغيل Xbox USB";
+/* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
+"platform.macos.cli.controller.show.labelServedBy" = "المشغّل الأصلي";
+/* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
+"platform.macos.cli.controller.show.servedByMacOS" = "تخدمه macOS. شغّل `ojd controller claim %@` لتفعيل الامتداد وتولّي وحدة التحكم.";
+/* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
+"platform.macos.ui.controllers.servedByMacOS" = "تخدمه macOS";
+/* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
+"platform.macos.ui.controllers.servedByMacOSDetail" = "مشغّل Apple يحتفظ بوحدة التحكم هذه. طالب بها لتفعيل امتداد OpenJoystickDriver.";
+/* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
+"ui.controllers.claim" = "مطالبة";
+/* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.runningDetail" = "جارٍ تثبيت مشغّل Xbox USB…";
+/* Disabled button of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
+"ui.setup.repairRunning" = "جارٍ الإصلاح…";
+/* Detail line of the problem banner when the state of the driver extension for Xbox USB controllers cannot be read. The banner has no button then. */
+"ui.setup.unavailableDetail" = "تعذّرت قراءة حالة مشغّل Xbox USB، لذا لا يمكن إرسال طلب.";
+/* Detail line of the problem banner when the request for the driver extension failed. %1$@ is the error domain, %2$lld is the error code and %3$@ is the error text. */
+"ui.setup.failedDetail" = "فشل طلب مشغّل Xbox USB: ‏%3$@ (‏%1$@، الرمز %2$lld).";
+/* Detail line of the problem banner when the request for the driver extension was cancelled. The Try Again button follows. */
+"ui.setup.cancelledDetail" = "أُلغي طلب مشغّل Xbox USB. حاول مرة أخرى لتثبيت المشغّل.";
+/* Detail line of the problem banner when the system did not answer the request for the driver extension in time. The Try Again button follows. */
+"ui.setup.timedOutDetail" = "لم يستجب النظام لطلب مشغّل Xbox USB في الوقت المناسب. حاول مرة أخرى.";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "لا يستطيع OpenJoystickDriver الوصول إلى خدمته";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */

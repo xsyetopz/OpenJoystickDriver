@@ -20,6 +20,8 @@ struct MainWindowProblemTests {
     )
   }
 
+  private static let failure = SystemExtensionRequestFailure(domain: "OSSystemExtensionErrorDomain", code: 4, text: "No")
+
   private func permissions(_ read: RuntimePermissionState) -> RuntimePermissionLoadState {
     .available(RuntimePermissionSummary(inputRead: read, inputInject: .granted))
   }
@@ -31,6 +33,7 @@ struct MainWindowProblemTests {
         permissions: permissions(.granted),
         status: status(inputRead: .granted),
         driver: .active,
+        extensionRouteConnected: true,
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       ).isEmpty
@@ -40,6 +43,7 @@ struct MainWindowProblemTests {
         permissions: .loading,
         status: .loading,
         driver: .checking,
+        extensionRouteConnected: true,
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       ).isEmpty
@@ -63,6 +67,7 @@ struct MainWindowProblemTests {
         permissions: reading,
         status: payload,
         driver: .active,
+        extensionRouteConnected: true,
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       )
@@ -73,6 +78,7 @@ struct MainWindowProblemTests {
         permissions: permissions(.granted),
         status: status(inputRead: .denied),
         driver: .active,
+        extensionRouteConnected: true,
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       ).contains(.accessMissing)
@@ -85,39 +91,86 @@ struct MainWindowProblemTests {
       MainWindowProblem.current(
         permissions: .unavailable,
         status: .unavailable("down"),
-        driver: .awaitingApproval,
+        driver: .needsApproval,
+        extensionRouteConnected: true,
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       )
-        == [.serviceUnavailable("down"), .driver(.awaitingApproval)]
+        == [.serviceUnavailable("down"), .driver(.needsApproval)]
     )
     #expect(
       MainWindowProblem.current(
         permissions: permissions(.denied),
         status: status(inputRead: .denied),
-        driver: .failed,
+        driver: .failed(Self.failure),
+        extensionRouteConnected: true,
         liveUpdatesFallbackReason: nil,
         listenerFailure: nil
       )
-        == [.driver(.failed), .accessMissing]
+        == [.driver(.failed(Self.failure)), .accessMissing]
     )
   }
 
   @Test
   func eachProblemNamesItsAction() {
     #expect(MainWindowProblem.serviceUnavailable("down").action == .retryService)
-    #expect(MainWindowProblem.driver(.awaitingApproval).action == .openDriverApproval)
+    #expect(MainWindowProblem.driver(.needsApproval).action == .openDriverApproval)
     #expect(MainWindowProblem.driver(.needsActivation).action == .repairDriver)
-    #expect(MainWindowProblem.driver(.invalid).action == .repairDriver)
+    #expect(MainWindowProblem.driver(.invalid).action == nil)
+    #expect(MainWindowProblem.driver(.unavailable("probe failed")).action == nil)
     #expect(MainWindowProblem.driver(.missingEmbedded).action == nil)
     #expect(MainWindowProblem.accessMissing.action == .showAccess)
+  }
+
+  @Test
+  func theDriverProblemNeedsAConnectedControllerRoutedThroughTheExtension() {
+    for connected in [false, true] {
+      let problems = MainWindowProblem.current(
+        permissions: permissions(.granted),
+        status: status(inputRead: .granted),
+        driver: .needsActivation,
+        extensionRouteConnected: connected,
+        liveUpdatesFallbackReason: nil,
+        listenerFailure: nil
+      )
+      #expect(problems.contains(.driver(.needsActivation)) == connected)
+    }
+    #expect(!RuntimeStatusState.loading.hasExtensionRouteController)
+  }
+
+  @Test
+  func aRunningRequestShowsProgressWithADisabledButton() {
+    let problem = MainWindowProblem.driver(.running)
+    #expect(problem.detailKey == "ui.setup.runningDetail")
+    #expect(problem.actionTitleKey == "ui.setup.repairRunning")
+    #expect(!problem.isActionEnabled)
+    #expect(MainWindowProblem.driver(.needsActivation).isActionEnabled)
+  }
+
+  @Test
+  func eachRequestOutcomeHasItsOwnTextAndButton() {
+    let cases: [(SystemExtensionSetupState, String, MainWindowProblemAction?)] = [
+      (.needsApproval, "platform.macos.ui.setup.approvalDetail", .openDriverApproval),
+      (.cancelled, "ui.setup.cancelledDetail", .repairDriver),
+      (.timedOut, "ui.setup.timedOutDetail", .repairDriver),
+      (.failed(Self.failure), "ui.setup.failedDetail", .repairDriver),
+      (.unavailable("probe failed"), "ui.setup.unavailableDetail", nil),
+      (.missingEmbedded, "ui.setup.missingDetail", nil),
+      (.invalid, "ui.setup.invalidDetail", nil),
+    ]
+    for (state, detailKey, action) in cases {
+      let problem = MainWindowProblem.driver(state)
+      #expect(problem.detailKey == detailKey, "\(state)")
+      #expect(problem.action == action, "\(state)")
+      #expect((problem.actionTitleKey == nil) == (action == nil), "\(state)")
+    }
   }
 
   @Test
   func onlyProblemsThatNeedTheServiceOrAReinstallAreFailures() {
     #expect(MainWindowProblem.serviceUnavailable("down").isFailure)
     #expect(MainWindowProblem.driver(.missingEmbedded).isFailure)
-    #expect(!MainWindowProblem.driver(.awaitingApproval).isFailure)
+    #expect(!MainWindowProblem.driver(.needsApproval).isFailure)
     #expect(!MainWindowProblem.accessMissing.isFailure)
   }
 
@@ -127,6 +180,7 @@ struct MainWindowProblemTests {
       permissions: permissions(.granted),
       status: status(inputRead: .granted),
       driver: .active,
+      extensionRouteConnected: true,
       liveUpdatesFallbackReason: .timeout,
       listenerFailure: nil
     )
