@@ -25,4 +25,6 @@ Entries the task workers wrote, held here until task 18.1 writes `CHANGELOG.md`.
 ## Fixed
 
 - A GIP pad that announces nothing and sends its first report to an input read that is already pending gets that read before the startup writes. Not checked on hardware. (3.2)
+- A transfer on an interrupt pipe through the driver extension passes timeout 0, which the pipe requires, so the Xbox Elite Series 1 no longer fails with `kIOReturnBadArgument` ([#55](https://github.com/xsyetopz/OpenJoystickDriver/issues/55)). Not checked on hardware. (8.1)
+- A USB session start that keeps failing its handshake stops after 5 failures in a row, and the controller shows the last error ([#55](https://github.com/xsyetopz/OpenJoystickDriver/issues/55)). (8.2)
 - OJD no longer seizes the HID device of a model that a record serves over raw USB or the extension, so it leaves that device to other apps such as Steam ([#18](https://github.com/xsyetopz/OpenJoystickDriver/issues/18)). Not checked on hardware. (9.17)
