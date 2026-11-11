@@ -419,7 +419,10 @@ struct ProtocolDriverRegistryTests {
   /// reads that layout and advertises the description's controls.
   static func driver(_ driver: any PhysicalProtocolDriver, belongsTo id: PhysicalProtocolID) -> Bool
   {
-    switch id {
+    if let layered = driver as? LayeredInputDriver {
+      return Self.driver(layered.family, belongsTo: id)
+    }
+    return switch id {
     case .hidDescriptor: driver is HIDDescriptorDriver
     case .hidReportLayout: driver is ReportLayoutDriver
     case .xboxXID, .nintendoSwitchInputOnly, .vendorFlydigi:

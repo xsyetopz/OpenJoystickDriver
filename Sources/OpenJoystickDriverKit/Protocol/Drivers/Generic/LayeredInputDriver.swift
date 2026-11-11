@@ -7,7 +7,7 @@ import Foundation
 /// A report no layout selects, and every control no selected layout names, stay the family
 /// driver's.
 final class LayeredInputDriver: PhysicalProtocolDriver {
-  private let family: any PhysicalProtocolDriver
+  let family: any PhysicalProtocolDriver
   private let layers: ReportLayoutDriver
   /// The family driver's latest state, which a report only the layouts select starts from.
   private var lastState = ControllerState.neutral
