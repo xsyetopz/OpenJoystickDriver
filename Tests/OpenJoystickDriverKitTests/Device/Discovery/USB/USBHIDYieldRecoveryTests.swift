@@ -16,16 +16,16 @@ private actor OpenRefusingProvider: USBTransportProvider {
 
   func devices() -> [USBTransportDevice] { [device] }
 
-  func physicalDeviceObservation(for device: USBTransportDevice) -> PhysicalDevice? { observation }
+  func physicalDeviceObservation(for _: USBTransportDevice) -> PhysicalDevice? { observation }
 
   func configurationObservation(
-    for device: USBTransportDevice,
-    configurationValue: UInt8
+    for _: USBTransportDevice,
+    configurationValue _: UInt8
   ) -> PhysicalDevice? { observation }
 
   func open(
-    _ device: USBTransportDevice,
-    options: USBTransportOpenOptions
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
   ) throws -> any USBTransportSession { throw USBTransportError.accessDenied }
 }
 
@@ -62,7 +62,7 @@ struct USBHIDYieldRecoveryTests {
   }
 
   @Test
-  func refusedRawUSBOpenReadmitsTheYieldedHIDConnection() async throws {
+  func refusedRawUSBOpenReadmitsTheYieldedHIDConnection() async {
     let backend = ClaimRecordingHIDAccessBackend()
     let provider = OpenRefusingProvider(device: device, observation: observation)
     let manager = DeviceManager(

@@ -11,7 +11,7 @@ struct ProfileWatcherPackageTests {
     json: """
       {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "\(ModPackageManifest.kind)",
       "name": "arcade-pack", "version": "1.0.0",
-       "author": "Tester", "requires": {"minimum": "0.6.0"}, "profiles": ["arcade.plist"]}
+        "author": "Tester", "requires": {"minimum": "0.6.0"}, "profiles": ["arcade.plist"]}
       """
   )
 

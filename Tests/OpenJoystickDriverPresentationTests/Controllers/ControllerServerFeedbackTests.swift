@@ -174,7 +174,10 @@ struct ControllerServerFeedbackTests {
     let model = RuntimeControllerModel(device)
 
     await viewModel.setControllerServer(.ojd, for: device)
-    #expect(viewModel.controllerServerFailures[model] == OJDLocalized.string("ui.controllers.server.noRecord"))
+    #expect(
+      viewModel.controllerServerFailures[model]
+        == OJDLocalized.string("ui.controllers.server.noRecord")
+    )
     #expect(viewModel.controllerActionFailures[device.sessionToken.rawValue] == nil)
 
     await gateway.setServerFailure(nil)

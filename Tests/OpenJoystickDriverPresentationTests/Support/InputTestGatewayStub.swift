@@ -19,8 +19,8 @@ enum InputTestGatewayError: Error { case outputFailed }
 
 actor InputTestGatewayStub: InputTestDeviceGateway {
   func motionCalibration(
-    for selector: ControllerReference,
-    command: RemappingMotionCalibrationCommand?
+    for _: ControllerReference,
+    command _: RemappingMotionCalibrationCommand?
   ) throws -> RemappingMotionCalibrationStatus {
     throw RemappingMotionCalibrationError.motionUnavailable
   }
@@ -124,7 +124,7 @@ actor InputTestGatewayStub: InputTestDeviceGateway {
     return outputResult
   }
 
-  func releaseColorPreview(for selector: ControllerReference, token: UUID) async throws -> Bool {
+  func releaseColorPreview(for selector: ControllerReference, token: UUID) async -> Bool {
     await Task.yield()
     colorReleaseCalls.append((selector, token))
     return outputResult

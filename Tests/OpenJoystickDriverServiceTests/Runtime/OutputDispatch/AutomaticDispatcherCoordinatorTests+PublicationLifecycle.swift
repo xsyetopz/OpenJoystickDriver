@@ -23,7 +23,7 @@ extension AutomaticDispatcherCoordinatorTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-  func installationUsesSuppressionChangedDuringSuspension() async throws {
+  func installationUsesSuppressionChangedDuringSuspension() async {
     let coordinator = AutomaticDispatcherCoordinator()
     let gate = InstallationGate()
 
@@ -45,7 +45,6 @@ extension AutomaticDispatcherCoordinatorTests {
   }
 
   @Test(.timeLimit(.minutes(1)))
-
 
   func suppressionRetiresOnlyPublicationAndRecreatesForTheCurrentSession() async throws {
     let coordinator = AutomaticDispatcherCoordinator()

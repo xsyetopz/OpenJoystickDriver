@@ -49,10 +49,13 @@ struct RumbleOutputTemplateMessageTests {
   func aDecodedResendIntervalProblemReadsInTheChosenLanguage() {
     let json = """
       {"report": {"kind": "USB", "length": 8}, "lowFrequency": {"byte": 1},
-       "resendIntervalMilliseconds": 0}
+        "resendIntervalMilliseconds": 0}
       """
     do {
-      _ = try JSONDecoder().decode(ControllerRecordDocument.RumbleTemplate.self, from: Data(json.utf8))
+      _ = try JSONDecoder().decode(
+        ControllerRecordDocument.RumbleTemplate.self,
+        from: Data(json.utf8)
+      )
       Issue.record("a zero resend interval was accepted")
     } catch {
       #expect(

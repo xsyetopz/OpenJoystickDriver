@@ -35,7 +35,9 @@ struct RemappingForegroundPolicyTests {
 
   @Test
   func applicationScopeWithTwoAppsIsEligibleForEitherOne() {
-    let scope = RemappingApplicationScope.application(appIDs: ["com.example.One", "com.example.Two"])
+    let scope = RemappingApplicationScope.application(appIDs: [
+      "com.example.One", "com.example.Two",
+    ])
     for (front, expected) in [
       ("com.example.One", RemappingRouteEligibility.eligible),
       ("com.example.Two", .eligible),

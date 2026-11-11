@@ -5,7 +5,7 @@ import Testing
 
 struct UserSpaceInputReportStateTests {
   @Test
-  func currentInputReportTracksChangesForHostGetReportRequests() throws {
+  func currentInputReportTracksChangesForHostGetReportRequests() {
     let state = UserSpaceInputReportState(format: XboxOneGIPHIDReportFormat())
     let neutral = state.currentReport()
 
@@ -24,14 +24,14 @@ struct UserSpaceInputReportStateTests {
   }
 
   @Test
-  func xboxOneGIPIdleReportMatchesInterruptGetReportLayout() throws {
+  func xboxOneGIPIdleReportMatchesInterruptGetReportLayout() {
     let format = XboxOneGIPHIDReportFormat()
     let report = UserSpaceInputReportState(format: format).currentReport()
     #expect(report == ProtocolPacketFixtures.XboxOneGIP.neutralInputReport)
   }
 
   @Test
-  func guideChangesClaimTheSeparateGuideReportOnce() throws {
+  func guideChangesClaimTheSeparateGuideReportOnce() {
     let state = UserSpaceInputReportState(format: XboxOneGIPHIDReportFormat())
     #expect(state.claimChangedAuxiliaryReports().isEmpty)
 
@@ -66,7 +66,7 @@ struct UserSpaceInputReportStateTests {
   }
 
   @Test
-  func xboxOneGIPNeverSetsShareAndKeepsViewOnItsButton() throws {
+  func xboxOneGIPNeverSetsShareAndKeepsViewOnItsButton() {
     let format = XboxOneGIPHIDReportFormat()
     let state = UserSpaceInputReportState(format: format)
     let neutral = state.currentReport()
@@ -81,9 +81,9 @@ struct UserSpaceInputReportStateTests {
   }
 
   @Test
-  func everyVirtualHIDProfileFormatPreservesCompoundStateAcrossUpdatesAndRelease() throws {
+  func everyVirtualHIDProfileFormatPreservesCompoundStateAcrossUpdatesAndRelease() {
     for profile in VirtualHIDProfileID.allCases {
-      let format = try profile.makeProfile().reportFormat
+      let format = profile.makeProfile().reportFormat
       let reportState = UserSpaceInputReportState(format: format)
       let neutral = reportState.currentReport()
       var expected = compoundState()
@@ -102,14 +102,14 @@ struct UserSpaceInputReportStateTests {
   }
 
   @Test
-  func everyVirtualHIDProfileFormatExplicitlyClassifiesSpecialControlSupport() throws {
+  func everyVirtualHIDProfileFormatExplicitlyClassifiesSpecialControlSupport() {
     let supported: [VirtualHIDProfileID: Set<SpecialControl>] = [
       .sdlCompatible: [], .generic: [.share], .gameControllerCompatible: [.share],
     ]
     #expect(Set(supported.keys) == Set(VirtualHIDProfileID.allCases))
 
     for profile in VirtualHIDProfileID.allCases {
-      let format = try profile.makeProfile().reportFormat
+      let format = profile.makeProfile().reportFormat
       let neutral = format.buildInputReport(from: VirtualGamepadState())
       let supportedControls = supported[profile] ?? []
       for control in SpecialControl.allCases {

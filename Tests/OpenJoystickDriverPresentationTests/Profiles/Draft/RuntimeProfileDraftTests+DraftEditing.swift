@@ -55,7 +55,6 @@ extension RuntimeProfileDraftTests {
 
   @Test
 
-
   func profileDraftPreservesCompatibleDestinationWhenChangingSource() throws {
     let binding = RemappingBinding(
       source: .button(.south),

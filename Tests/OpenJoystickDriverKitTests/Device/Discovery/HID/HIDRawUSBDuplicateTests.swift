@@ -8,7 +8,7 @@ import Testing
 /// interfaces.
 struct HIDRawUSBDuplicateTests {
   @Test
-  func cataloguedRawUSBRowObservedOverHIDStaysUnboundWhileItsPipelineRuns() async throws {
+  func cataloguedRawUSBRowObservedOverHIDStaysUnboundWhileItsPipelineRuns() async {
     let device = USBTransportDevice(
       route: .rawUSB,
       serviceID: 1,
@@ -52,7 +52,7 @@ struct HIDRawUSBDuplicateTests {
   }
 
   @Test
-  func signatureBoundDeviceKeepsItsHIDInterfaceUnbound() async throws {
+  func signatureBoundDeviceKeepsItsHIDInterfaceUnbound() async {
     let device = USBTransportDevice(
       route: .rawUSB,
       serviceID: 90,

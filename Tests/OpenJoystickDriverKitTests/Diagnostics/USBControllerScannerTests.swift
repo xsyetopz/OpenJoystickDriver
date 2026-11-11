@@ -282,22 +282,22 @@ private actor ScannerProvider: USBPhysicalDeviceObservationProvider {
     self.observation = observation
   }
 
-  func devices() throws -> [USBTransportDevice] { [device] }
+  func devices() -> [USBTransportDevice] { [device] }
 
-  func physicalDeviceObservations() throws -> [PhysicalDevice] { [observation] }
+  func physicalDeviceObservations() -> [PhysicalDevice] { [observation] }
 
   func open(
-    _ device: USBTransportDevice,
-    options: USBTransportOpenOptions
-  ) throws -> any USBTransportSession { ScannerSession() }
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
+  ) -> any USBTransportSession { ScannerSession() }
 }
 
 private final class ScannerSession: USBTransportSession, @unchecked Sendable {
-  func controlTransfer(_ request: USBControlTransferRequest, timeout: UInt32) throws -> [UInt8] {
+  func controlTransfer(_: USBControlTransferRequest, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.notSupported
   }
 
-  func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) throws -> Int { 0 }
+  func write(endpoint _: UInt8, data _: [UInt8], timeout _: UInt32) -> Int { 0 }
 
-  func read(endpoint: UInt8, length: Int, timeout: UInt32) throws -> [UInt8] { [] }
+  func read(endpoint _: UInt8, length _: Int, timeout _: UInt32) -> [UInt8] { [] }
 }

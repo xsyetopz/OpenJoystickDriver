@@ -113,7 +113,7 @@ extension StartupLifetimeTests {
   }
 
   @Test
-  func outputRequestedDuringSleepTeardownCannotReenableRumble() async throws {
+  func outputRequestedDuringSleepTeardownCannotReenableRumble() async {
     let backend = ScriptedHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),

@@ -41,8 +41,8 @@ struct ControllerPatchModesTests {
     {"vendorID": 4660, "productID": 43981, "modes": [
       {"id": "default", "protocol": {"family": "XboxGIP"}},
       {"id": "usb-b", "protocol": {"family": "XboxGIP"},
-       "match": {"interfaceSignature": {"interfaceClass": 255, "interfaceSubclass": 71,
-         "interfaceProtocol": 208, "endpoints": [{"direction": "In", "transferType": "Bulk"}]}}}
+        "match": {"interfaceSignature": {"interfaceClass": 255, "interfaceSubclass": 71,
+        "interfaceProtocol": 208, "endpoints": [{"direction": "In", "transferType": "Bulk"}]}}}
     ]}
     """
 
@@ -60,9 +60,9 @@ struct ControllerPatchModesTests {
       {"vendorID": 4660, "productID": 43981, "modes": [
         {"id": "default", "protocol": {"family": "XboxGIP"}},
         {"id": "usb-b", "protocol": {"family": "XboxGIP"},
-         "match": {"interfaceSignature": {"interfaceClass": 255, "interfaceSubclass": 71,
-           "interfaceProtocol": 208,
-           "endpoints": [{"direction": "In", "transferType": "Interrupt"}]}}}
+          "match": {"interfaceSignature": {"interfaceClass": 255, "interfaceSubclass": 71,
+          "interfaceProtocol": 208,
+          "endpoints": [{"direction": "In", "transferType": "Interrupt"}]}}}
       ]}
       """
     )
@@ -105,14 +105,17 @@ struct ControllerPatchModesTests {
     )
     let result = ControllerPatchMerge.apply(patch, to: try Self.json(Self.twoModes))
     #expect(Self.modes(result).count == 2)
-    #expect(Self.modes(result).last?["protocol"] == (try Self.json(#"{"family": "HIDDescriptor"}"#)))
+    #expect(
+      Self.modes(result).last?["protocol"] == (try Self.json(#"{"family": "HIDDescriptor"}"#))
+    )
     #expect(Self.modes(result).last?["match"] == nil)
   }
 
   @Test
   func aPatchSetsCapabilitiesAndTheIdleOfAMode() throws {
     let patch = try Self.patch(
-      patch: #"{"capabilities": {"rumble": "Absent"}, "modes": [{"id": "usb-b", "idle": "Bootloader"}]}"#
+      patch:
+        #"{"capabilities": {"rumble": "Absent"}, "modes": [{"id": "usb-b", "idle": "Bootloader"}]}"#
     )
     let result = ControllerPatchMerge.apply(patch, to: try Self.json(Self.twoModes))
     #expect(result["capabilities"] == (try Self.json(#"{"rumble": "Absent"}"#)))
@@ -176,9 +179,9 @@ struct ControllerPatchModesTests {
         from: Data(
           """
           {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-           "vendorID": 4660, "productID": 43981, "capabilities": \(capabilities),
-           "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}},
-             {"id": "hid", "protocol": {"family": "\(family)"},
+            "vendorID": 4660, "productID": 43981, "capabilities": \(capabilities),
+          "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}},
+            {"id": "hid", "protocol": {"family": "\(family)"},
               "match": {"interfaceSignature": {"interfaceClass": 3, "interfaceSubclass": 0,
                 "interfaceProtocol": 0}}}]}
           """.utf8

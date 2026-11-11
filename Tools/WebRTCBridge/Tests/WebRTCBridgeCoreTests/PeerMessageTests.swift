@@ -1,10 +1,10 @@
-import XCTest
+import Testing
 
 @testable import BridgeCore
 @testable import WebRTCBridgeCore
 
 /// Checks ``PeerMessage`` and ``FrameMailbox`` against the schemas and invalid input.
-final class PeerMessageTests: XCTestCase {
+final class PeerMessageTests {
   /// The `apiVersion` member of every message, as JSON text.
   private static let header = #""apiVersion":"openjoystickdriver/v1alpha3""#
 
@@ -24,25 +24,27 @@ final class PeerMessageTests: XCTestCase {
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent()
     let data = try Data(contentsOf: root.appendingPathComponent("Resources/Schemas/\(file)"))
-    let schema = try XCTUnwrap(try JSONSerialization.jsonObject(with: data) as? [String: Any])
-    let definitions = try XCTUnwrap(schema["$defs"] as? [String: Any])
-    let entry = try XCTUnwrap(definitions[definition] as? [String: Any])
-    return Set(try XCTUnwrap(entry["enum"] as? [String]))
+    let schema = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+    let definitions = try #require(schema["$defs"] as? [String: Any])
+    let entry = try #require(definitions[definition] as? [String: Any])
+    return Set(try #require(entry["enum"] as? [String]))
   }
 
   /// The frame lists of ``PeerMessage`` equal the enumerations of the schemas.
-  func testTheFrameListsMatchTheSchemas() throws {
+  @Test
+  func theFrameListsMatchTheSchemas() throws {
     let control = try schemaEnum("vocabulary.schema.json", "control")
     let withoutButtons = try schemaEnum("vocabulary.schema.json", "dpadControl")
       .union(schemaEnum("vocabulary.schema.json", "stickAxis"))
-    XCTAssertEqual(PeerMessage.buttons, control.subtracting(withoutButtons))
-    XCTAssertEqual(PeerMessage.axes, try schemaEnum("vocabulary.schema.json", "gamepadAxis"))
-    XCTAssertEqual(PeerMessage.dpad, try schemaEnum("vocabulary.schema.json", "dpadControl"))
+    #expect(PeerMessage.buttons == control.subtracting(withoutButtons))
+    #expect(try PeerMessage.axes == schemaEnum("vocabulary.schema.json", "gamepadAxis"))
+    #expect(try PeerMessage.dpad == schemaEnum("vocabulary.schema.json", "dpadControl"))
   }
 
   /// A valid frame is rebuilt from the checked fields.
-  func testAValidFrameIsRebuiltFromTheCheckedFields() throws {
-    let line = try XCTUnwrap(
+  @Test
+  func aValidFrameIsRebuiltFromTheCheckedFields() throws {
+    let line = try #require(
       PeerMessage.frame(
         from: frame(
           #","buttons":["South"],"dpad":["DpadUp"],"axes":{"LeftStickX":0.5}"#
@@ -50,19 +52,21 @@ final class PeerMessageTests: XCTestCase {
         )
       )
     )
-    XCTAssertEqual(line["buttons"] as? [String], ["South"])
-    XCTAssertEqual(line["holdMilliseconds"] as? Int, 60000)
-    XCTAssertEqual((line["axes"] as? [String: Double])?["LeftStickX"], 0.5)
+    #expect((line["buttons"] as? [String]) == ["South"])
+    #expect((line["holdMilliseconds"] as? Int) == 60000)
+    #expect((line["axes"] as? [String: Double])?["LeftStickX"] == 0.5)
   }
 
   /// A frame longer than `maximumBytes` is rejected.
-  func testAFrameThatIsTooLongIsRejected() {
+  @Test
+  func aFrameThatIsTooLongIsRejected() {
     let padding = String(repeating: " ", count: PeerMessage.maximumBytes)
-    XCTAssertNil(PeerMessage.frame(from: Data((frame().utf8String + padding).utf8)))
+    #expect(PeerMessage.frame(from: Data((frame().utf8String + padding).utf8)) == nil)
   }
 
   /// Frames with the wrong shape, values or members are rejected.
-  func testAFrameThatIsNotShapedLikeAFrameIsRejected() {
+  @Test
+  func aFrameThatIsNotShapedLikeAFrameIsRejected() {
     let rejected = [
       Data("not json".utf8),
       Data("[]".utf8),
@@ -85,7 +89,7 @@ final class PeerMessageTests: XCTestCase {
       frame(#","axes":{"LeftStickX":1e999}"#),
     ]
     for data in rejected {
-      XCTAssertNil(PeerMessage.frame(from: data), data.utf8String)
+      #expect(PeerMessage.frame(from: data) == nil, Comment(rawValue: data.utf8String))
     }
   }
 
@@ -95,23 +99,25 @@ final class PeerMessageTests: XCTestCase {
     + #""leftHaptic":3,"rightHaptic":4}"#
 
   /// Valid `SetRumble` and `StopRumble` commands are accepted.
-  func testAValidRumbleCommandIsAccepted() throws {
-    let line = try XCTUnwrap(
+  @Test
+  func aValidRumbleCommandIsAccepted() throws {
+    let line = try #require(
       PeerMessage.rumble(
         from: rumble(#","type":"SetRumble",\#(Self.allIntensities),"durationMilliseconds":5000"#)
       )
     )
-    XCTAssertEqual(line["type"] as? String, "SetRumble")
-    XCTAssertEqual((line["intensities"] as? [String: Int])?["lowFrequency"], 65535)
-    XCTAssertEqual(line["durationMilliseconds"] as? Int, 5000)
-    XCTAssertNotNil(
-      PeerMessage.rumble(from: rumble(#","type":"SetRumble",\#(Self.allIntensities)"#))
+    #expect((line["type"] as? String) == "SetRumble")
+    #expect((line["intensities"] as? [String: Int])?["lowFrequency"] == 65535)
+    #expect((line["durationMilliseconds"] as? Int) == 5000)
+    #expect(
+      PeerMessage.rumble(from: rumble(#","type":"SetRumble",\#(Self.allIntensities)"#)) != nil
     )
-    XCTAssertNotNil(PeerMessage.rumble(from: rumble(#","type":"StopRumble""#)))
+    #expect(PeerMessage.rumble(from: rumble(#","type":"StopRumble""#)) != nil)
   }
 
   /// Rumble commands with the wrong shape, values or length are rejected.
-  func testARumbleCommandThatIsNotShapedLikeOneIsRejected() {
+  @Test
+  func aRumbleCommandThatIsNotShapedLikeOneIsRejected() {
     let all = Self.allIntensities
     let rejected = [
       Data("not json".utf8),
@@ -132,7 +138,7 @@ final class PeerMessageTests: XCTestCase {
       rumble(#","type":"stopRumble""#),
     ]
     for data in rejected {
-      XCTAssertNil(PeerMessage.rumble(from: data), data.utf8String)
+      #expect(PeerMessage.rumble(from: data) == nil, Comment(rawValue: data.utf8String))
     }
     let outOfRange = [
       all.replacingOccurrences(of: "65535", with: "65536"),
@@ -140,24 +146,27 @@ final class PeerMessageTests: XCTestCase {
       all.replacingOccurrences(of: "\"highFrequency\":0", with: "\"highFrequency\":0.5"),
     ]
     for intensities in outOfRange {
-      XCTAssertNil(PeerMessage.rumble(from: rumble(#","type":"SetRumble",\#(intensities)"#)))
+      #expect(PeerMessage.rumble(from: rumble(#","type":"SetRumble",\#(intensities)"#)) == nil)
     }
     let padding = String(repeating: " ", count: PeerMessage.maximumBytes)
-    XCTAssertNil(
+    #expect(
       PeerMessage.rumble(from: Data((rumble(#","type":"StopRumble""#).utf8String + padding).utf8))
+        == nil
     )
   }
 
   /// A mailbox returns only the newest frame, and then nothing.
-  func testTheMailboxKeepsOnlyTheNewestFrame() {
+  @Test
+  func theMailboxKeepsOnlyTheNewestFrame() {
     let mailbox = FrameMailbox()
     for index in 1...3 { mailbox.post(["n": index]) }
-    XCTAssertEqual(mailbox.next(timeout: 1)?["n"] as? Int, 3)
-    XCTAssertNil(mailbox.next(timeout: 0.05))
+    #expect((mailbox.next(timeout: 1)?["n"] as? Int) == 3)
+    #expect(mailbox.next(timeout: 0.05) == nil)
   }
 
   /// A post that races the timeout is returned once and leaves nothing behind.
-  func testAPostThatRacesTheTimeoutIsNeitherLostNorRepeated() {
+  @Test
+  func aPostThatRacesTheTimeoutIsNeitherLostNorRepeated() {
     let mailbox = FrameMailbox()
     var received = 0
     for index in 0..<300 {
@@ -170,18 +179,18 @@ final class PeerMessageTests: XCTestCase {
       received += 1
       // Nothing is left over: the next wait lasts for its whole timeout.
       let start = Date()
-      XCTAssertNil(mailbox.next(timeout: 0.01))
-      XCTAssertGreaterThanOrEqual(Date().timeIntervalSince(start), 0.009)
+      #expect(mailbox.next(timeout: 0.01) == nil)
+      #expect(Date().timeIntervalSince(start) >= 0.009)
     }
-    XCTAssertEqual(received, 300)
+    #expect(received == 300)
   }
 
   /// A blob longer than `maximumBytes` is refused, with the limit in the error.
-  func testABlobThatIsTooLongIsRefused() {
+  @Test
+  func aBlobThatIsTooLongIsRefused() {
     let blob = String(repeating: "A", count: PeerMessage.maximumBytes + 1)
-    XCTAssertThrowsError(try PeerLink.decode(blob)) { error in
-      XCTAssertTrue("\(error)".contains("65536"), "\(error)")
-    }
+    let error = #expect(throws: BridgeError.self) { try PeerLink.decode(blob) }
+    #expect(error.map { "\($0)".contains("65536") } == true, "\(String(describing: error))")
   }
 }
 

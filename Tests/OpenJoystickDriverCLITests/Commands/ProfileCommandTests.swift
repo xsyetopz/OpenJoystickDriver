@@ -344,7 +344,9 @@ struct ProfileCommandTests {
     #expect(result.code == 0, "\(result.standardError)")
     let stored = try #require(library.stored.first)
     #expect(stored.id == original.id)
-    #expect(stored.applicationScope == .application(appIDs: ["com.example.one", "com.example.two"]))
+    #expect(
+      stored.applicationScope == .application(appIDs: ["com.example.one", "com.example.two"])
+    )
   }
 
   @Test

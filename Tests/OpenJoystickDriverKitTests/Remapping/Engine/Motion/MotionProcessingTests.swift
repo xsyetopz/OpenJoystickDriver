@@ -4,7 +4,7 @@ import Testing
 
 struct MotionProcessingTests {
   @Test
-  func manualCalibrationRequiresLiveSamplesAndCancelsOnDiscontinuity() throws {
+  func manualCalibrationRequiresLiveSamplesAndCancelsOnDiscontinuity() {
     var motion = RemappingMotionProcessor()
     let unavailable = motion.startCalibration()
     #expect(!unavailable)
@@ -82,7 +82,7 @@ struct MotionProcessingTests {
   }
 
   @Test
-  func gapAndCalibrationChangeRebaselineWithoutIntegratingMissingTime() throws {
+  func gapAndCalibrationChangeRebaselineWithoutIntegratingMissingTime() {
     var motion = RemappingMotionProcessor()
     motion.process(sample(sequence: 0, time: 0))
     motion.process(sample(sequence: 1, time: 10_000_000))

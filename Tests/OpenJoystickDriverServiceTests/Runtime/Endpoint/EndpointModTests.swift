@@ -34,7 +34,10 @@ struct EndpointModTests {
       "ojd-endpoint-mods-\(UUID().uuidString)",
       isDirectory: true
     )
-    let store = ModPackageStore(directory: root.appendingPathComponent("Packages"), runningVersion: "0.6.0")
+    let store = ModPackageStore(
+      directory: root.appendingPathComponent("Packages"),
+      runningVersion: "0.6.0"
+    )
     guard let name else { return store }
     let folder = root.appendingPathComponent("Staging/\(name)", isDirectory: true)
     try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
@@ -45,13 +48,16 @@ struct EndpointModTests {
       "productID": 0xABCD, "modes": [["id": "default", "protocol": ["family": "XboxGIP"]]],
     ]
     try PropertyListFixture.data(tree: record).write(
-      to: controllers.appendingPathComponent("1234-abcd.plist"))
+      to: controllers.appendingPathComponent("1234-abcd.plist")
+    )
     let manifest: [String: Any] = [
       "apiVersion": OpenJoystickDriverAPI.version, "kind": ModPackageManifest.kind, "name": name,
       "version": "1.2.3", "author": "Tester", "requires": ["minimum": "0.6.0"],
       "controllers": ["1234-abcd.plist"],
     ]
-    try PropertyListFixture.data(tree: manifest).write(to: folder.appendingPathComponent("mod.plist"))
+    try PropertyListFixture.data(tree: manifest).write(
+      to: folder.appendingPathComponent("mod.plist")
+    )
     try store.install(folder)
     return store
   }

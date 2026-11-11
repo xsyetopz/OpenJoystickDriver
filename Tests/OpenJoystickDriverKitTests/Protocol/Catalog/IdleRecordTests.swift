@@ -4,8 +4,8 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// A mode with `idle` names an identity OJD recognizes and serves nothing while the mode matches:
-/// no traffic and no virtual gamepad. Its value names the reason.
+// A mode with `idle` serves nothing while the mode matches: no traffic and no virtual gamepad.
+// Its value names the reason.
 struct IdleRecordTests {
   private static let model = ControllerModelID(vendorID: 0x1234, productID: 0xABCD)
   private static let receiver = ControllerModelID(vendorID: 0x2DC8, productID: 0x301C)
@@ -30,7 +30,7 @@ struct IdleRecordTests {
     return try PropertyListFixture.data(tree: record)
   }
 
-  private static func problem(_ fields: [String: Any]) throws -> String? {
+  private static func problem(_ fields: [String: Any]) -> String? {
     do {
       _ = try ControllerRecordSet.validate(data(fields))
       return nil
@@ -104,27 +104,27 @@ struct IdleRecordTests {
   }
 
   @Test
-  func idleIsAReasonOfTheRecordsModeNotARecordKey() throws {
-    #expect(try Self.problem(["idle": "NoControllerLinked"]) != nil)
-    #expect(try Self.problem(["modes": [Self.defaultMode(idle: "Sleeping")]]) != nil)
+  func idleIsAReasonOfTheRecordsModeNotARecordKey() {
+    #expect(Self.problem(["idle": "NoControllerLinked"]) != nil)
+    #expect(Self.problem(["modes": [Self.defaultMode(idle: "Sleeping")]]) != nil)
     var mode = Self.defaultMode()
     mode["idle"] = true
-    #expect(try Self.problem(["modes": [mode]]) != nil)
+    #expect(Self.problem(["modes": [mode]]) != nil)
   }
 
   @Test
-  func anIdleModeRefusesASessionAndAnInterface() throws {
+  func anIdleModeRefusesASessionAndAnInterface() {
     for extra: (String, Any) in [
       ("session", ["settleMilliseconds": 100]), ("interface", ["first": 0, "last": 0]),
     ] {
       var mode = Self.defaultMode(idle: "NoControllerLinked")
       mode[extra.0] = extra.1
-      #expect(try Self.problem(["modes": [mode]]) != nil, "\(extra.0)")
+      #expect(Self.problem(["modes": [mode]]) != nil, "\(extra.0)")
     }
   }
 
   @Test
-  func aRecordOfOnlyIdleModesRefusesASectionThatServesControls() throws {
+  func aRecordOfOnlyIdleModesRefusesASectionThatServesControls() {
     let sections: [String: Any] = [
       "input": ["hidUsageMap": ["usages": [["kind": "Hat", "page": 1, "usage": 57]]]],
       "tuning": ["stickDeadzone": 0.1],
@@ -135,13 +135,15 @@ struct IdleRecordTests {
       let fields: [String: Any] = [
         "modes": [Self.defaultMode(idle: "NoControllerLinked")], section: value,
       ]
-      #expect(try Self.problem(fields) != nil, "\(section)")
+      #expect(Self.problem(fields) != nil, "\(section)")
     }
   }
 
   @Test
-  func aRecordWithAnIdleModeAndAServingModeKeepsItsSections() throws {
-    #expect(try Self.problem(["modes": [Self.defaultMode(), Self.idleMode], "server": "OJD"]) == nil)
+  func aRecordWithAnIdleModeAndAServingModeKeepsItsSections() {
+    #expect(
+      Self.problem(["modes": [Self.defaultMode(), Self.idleMode], "server": "OJD"]) == nil
+    )
   }
 
   private static func receiverDevice(product: String) -> PhysicalDevice {
@@ -178,7 +180,7 @@ struct IdleRecordTests {
   }
 
   @Test
-  func theBundledReceiverServesWhileAPadIsLinked() async throws {
+  func theBundledReceiverServesWhileAPadIsLinked() async {
     let catalog = DeviceCatalog()
     let product = "8BitDo Ultimate 2C Wireless Controller"
     let selection = await Self.selection(product: product)

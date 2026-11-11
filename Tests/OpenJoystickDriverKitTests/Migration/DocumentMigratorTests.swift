@@ -69,7 +69,9 @@ struct DocumentMigratorTests {
     #expect(
       DocumentMigrator(directory: directory).run(dryRun: false).map(\.verdict) == [.migrated]
     )
-    let layout = try #require(document("Controllers/054c-0ce6.patch.plist")["patch"]?["input"]?["layouts"])
+    let layout = try #require(
+      document("Controllers/054c-0ce6.patch.plist")["patch"]?["input"]?["layouts"]
+    )
     #expect(layout.formatted().contains(#""bitOffset": 10"#))
     #expect(layout.formatted().contains(#""bitSize": 16"#))
   }

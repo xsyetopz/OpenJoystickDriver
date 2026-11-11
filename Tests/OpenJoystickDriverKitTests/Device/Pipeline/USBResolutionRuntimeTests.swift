@@ -6,7 +6,7 @@ import Testing
 
 struct USBResolutionRuntimeTests {
   @Test
-  func deviceManagerResolvedProfileReachesOpenStartupWriteAndFirstRead() async throws {
+  func deviceManagerResolvedProfileReachesOpenStartupWriteAndFirstRead() async {
     let identifier = LogicalControllerID(vendorID: 0x045E, productID: 0x028E)
     let resolved = DeviceTransportProfile(
       inputEndpoint: 0x84,
@@ -64,7 +64,7 @@ struct USBResolutionRuntimeTests {
   }
 
   @Test
-  func usbDiscoveryRetainsObservationUntilTheExactServiceDetaches() async throws {
+  func usbDiscoveryRetainsObservationUntilTheExactServiceDetaches() async {
     let device = USBTransportDevice(
       route: .rawUSB,
       serviceID: 27,

@@ -1,4 +1,4 @@
-import XCTest
+import Testing
 
 @testable import BridgeCore
 @testable import WebRTCBridgeCore
@@ -32,7 +32,7 @@ private final class FakeChannel: PeerChannel, @unchecked Sendable {
 }
 
 /// Checks that ``HostBridge`` passes valid peer frames to the endpoint and rumble to the peer.
-final class HostBridgeTests: XCTestCase {
+final class HostBridgeTests {
   /// The `apiVersion` member that every message carries, as JSON text.
   private static let header = #""apiVersion":"openjoystickdriver/v1alpha3""#
 
@@ -54,7 +54,8 @@ final class HostBridgeTests: XCTestCase {
   }
 
   /// Invalid peer messages produce no write to the endpoint.
-  func testAnInvalidPeerMessageProducesNoEndpointWrite() async throws {
+  @Test
+  func anInvalidPeerMessageProducesNoEndpointWrite() async throws {
     let endpoint = try FakeEndpoint()
     let (bridge, channel) = try started(endpoint)
     channel.peerSends("not json")
@@ -63,26 +64,28 @@ final class HostBridgeTests: XCTestCase {
     channel.peerSends(#"{\#(Self.header),"kind":"KeepAlive"}"#)
     try await Task.sleep(nanoseconds: 300_000_000)
 
-    XCTAssertEqual(endpoint.snapshot().frames.count, 0)
+    #expect(endpoint.snapshot().frames.isEmpty)
     bridge.stop()
   }
 
   /// One frame is sent once, and an idle feed gets only `KeepAlive` lines.
-  func testAFrameIsSentOnceAndAnIdleFeedGetsOnlyKeepAlive() async throws {
+  @Test
+  func aFrameIsSentOnceAndAnIdleFeedGetsOnlyKeepAlive() async throws {
     let endpoint = try FakeEndpoint()
     let (bridge, channel) = try started(endpoint)
     channel.peerSends(#"{\#(Self.header),"kind":"Frame","buttons":["South"]}"#)
     try await Task.sleep(nanoseconds: 1_700_000_000)
 
     let frames = endpoint.snapshot().frames
-    XCTAssertEqual(frames.count, 1)
-    XCTAssertEqual(frames.first?["buttons"] as? [String], ["South"])
-    XCTAssertGreaterThanOrEqual(endpoint.keepAliveCount(), 2)
+    #expect(frames.count == 1)
+    #expect((frames.first?["buttons"] as? [String]) == ["South"])
+    #expect(endpoint.keepAliveCount() >= 2)
     bridge.stop()
   }
 
   /// Only a valid, short `RumbleCommand` of the endpoint is sent to the peer.
-  func testOnlyAValidRumbleCommandOfTheEndpointGoesToThePeer() async throws {
+  @Test
+  func onlyAValidRumbleCommandOfTheEndpointGoesToThePeer() async throws {
     let rumble: [String: Any] = [
       "apiVersion": endpointAPIVersion, "kind": "RumbleCommand", "type": "StopRumble",
     ]
@@ -105,9 +108,9 @@ final class HostBridgeTests: XCTestCase {
     let sent = channel.sent.compactMap {
       try? JSONSerialization.jsonObject(with: $0) as? [String: Any]
     }
-    XCTAssertEqual(sent.count, 1)
-    XCTAssertEqual(sent.first?["kind"] as? String, "RumbleCommand")
-    XCTAssertEqual(sent.first?["type"] as? String, "StopRumble")
+    #expect(sent.count == 1)
+    #expect((sent.first?["kind"] as? String) == "RumbleCommand")
+    #expect((sent.first?["type"] as? String) == "StopRumble")
     bridge.stop()
   }
 }

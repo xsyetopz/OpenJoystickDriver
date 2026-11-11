@@ -41,8 +41,8 @@ actor USBManagerResolutionProvider: USBTransportProvider {
   }
 
   func resolveTransport(
-    for device: USBTransportDevice,
-    configured: DeviceTransportProfile
+    for _: USBTransportDevice,
+    configured _: DeviceTransportProfile
   ) async -> USBTransportResolution {
     resolutionCount += 1
     signalWaiters(&resolutionWaiters, count: resolutionCount)
@@ -71,7 +71,7 @@ actor USBManagerResolutionProvider: USBTransportProvider {
   func failNextEnumeration(_ error: USBTransportError) { pendingEnumerationFailures.append(error) }
 
   func open(
-    _ device: USBTransportDevice,
+    _: USBTransportDevice,
     options: USBTransportOpenOptions
   ) -> any USBTransportSession {
     self.options = options
@@ -112,7 +112,7 @@ actor USBManagerResolutionProvider: USBTransportProvider {
 }
 
 actor USBManagerResolutionSession: USBTransportSession {
-  func controlTransfer(_ request: USBControlTransferRequest, timeout: UInt32) throws -> [UInt8] {
+  func controlTransfer(_: USBControlTransferRequest, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.notSupported
   }
 
@@ -141,7 +141,7 @@ actor USBManagerResolutionSession: USBTransportSession {
     await withCheckedContinuation { neutralRumbleWaiter = $0 }
   }
 
-  func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) async throws -> Int {
+  func write(endpoint: UInt8, data: [UInt8], timeout _: UInt32) async -> Int {
     writes.append(USBWriteRecord(endpoint: endpoint, data: data))
     if data == [0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], neutralRumbleWritesSuspended {
       didEnterNeutralRumbleWrite = true
@@ -152,7 +152,7 @@ actor USBManagerResolutionSession: USBTransportSession {
     return data.count
   }
 
-  func read(endpoint: UInt8, length: Int, timeout: UInt32) throws -> [UInt8] {
+  func read(endpoint: UInt8, length _: Int, timeout _: UInt32) throws -> [UInt8] {
     readEndpoints.append(endpoint)
     if !didRead {
       didRead = true

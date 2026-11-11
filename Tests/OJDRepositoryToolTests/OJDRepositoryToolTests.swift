@@ -332,7 +332,7 @@ struct OJDRepositoryToolTests {
         PropertyListFixture.bytes(
           json: """
             {"apiVersion": "openjoystickdriver/v1alpha3", "kind": "VirtualDevice",
-             "match": {"vendorID": 1118, "productID": 654}, "persona": "\(persona)"}
+              "match": {"vendorID": 1118, "productID": 654}, "persona": "\(persona)"}
             """
         )
       }
@@ -390,8 +390,8 @@ struct OJDRepositoryToolTests {
       #expect(result.standardOutput.isEmpty)
       let written = try Data(contentsOf: output.appendingPathComponent("057e/057e-2066.plist"))
       #expect(
-        try PropertyListFixture.tree(written) as? NSDictionary
-          == PropertyListFixture.tree(effective) as? NSDictionary
+        try DocumentCoder.write(PropertyListFixture.tree(written))
+          == DocumentCoder.write(PropertyListFixture.tree(effective))
       )
 
       // Over the written record, the same patch changes nothing and writes no output.
@@ -445,15 +445,15 @@ struct OJDRepositoryToolTests {
   private static func patchDocument(selector: String, body: String) -> String {
     """
     {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-     "selector": \(selector), "patch": \(body)}
+      "selector": \(selector), "patch": \(body)}
     """
   }
 
   private static let upstream = """
     {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-     "vendorID": 1406, "productID": 8294,
-     "modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}],
-     "tuning": {"stickDeadzone": 0.10, "frameQueueCapacity": 4}}
+      "vendorID": 1406, "productID": 8294,
+    "modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}],
+    "tuning": {"stickDeadzone": 0.10, "frameQueueCapacity": 4}}
     """
   private static let identity = #"{"vendorID": 1406, "productID": 8294}"#
 
@@ -647,13 +647,14 @@ struct OJDRepositoryToolTests {
       let file = directory.appendingPathComponent("a.plist")
       let loose = """
         <?xml version="1.0" encoding="UTF-8"?>
-        <plist version="1.0"><dict><key>b</key><integer>1</integer><key>a</key><string>x</string></dict></plist>
+        <plist version="1.0"><dict><key>b</key><integer>1</integer>
+        <key>a</key><string>x</string></dict></plist>
         """
       try Data(loose.utf8).write(to: file)
       #expect(try Self.run(["format-plist", file.path]).status == 0)
       let data = try Data(contentsOf: file)
       #expect(try DocumentCoder.write(DocumentCoder.read(data, file: "a.plist")) == data)
-      #expect(String(decoding: data, as: UTF8.self).contains("<key>a</key>"))
+      #expect(try #require(String(bytes: data, encoding: .utf8)).contains("<key>a</key>"))
     }
   }
 }

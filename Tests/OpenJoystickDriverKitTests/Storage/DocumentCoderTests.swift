@@ -97,7 +97,7 @@ struct DocumentCoderTests {
   }
 
   @Test
-  func whitespaceAfterThePropertyListIsRead() throws {
+  func whitespaceAfterThePropertyListIsRead() {
     let data = plist("<dict><key>kind</key><string>Sample</string></dict>") + Data(" \n\t\n".utf8)
     #expect(refusal(data) == nil)
   }
@@ -147,7 +147,7 @@ struct DocumentCoderTests {
 
   @Test
   func theCanonicalFormIsXMLWithSortedKeys() throws {
-    let text = String(decoding: try DocumentCoder.encode(Self.sample), as: UTF8.self)
+    let text = try #require(String(bytes: DocumentCoder.encode(Self.sample), encoding: .utf8))
     #expect(text.hasPrefix("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"))
     let keys = text.split(separator: "\n").compactMap { line -> String? in
       guard let start = line.range(of: "<key>"), let end = line.range(of: "</key>") else {
@@ -162,7 +162,7 @@ struct DocumentCoderTests {
   @Test
   func integersKeepTheirTypeAcrossTheSixtyFourBitRange() throws {
     let data = try DocumentCoder.encode(Self.sample)
-    let text = String(decoding: data, as: UTF8.self)
+    let text = try #require(String(bytes: data, encoding: .utf8))
     for value in ["-9223372036854775808", "9223372036854775807", "18446744073709551615"] {
       #expect(text.contains("<integer>\(value)</integer>"), "\(value)")
     }
@@ -184,10 +184,14 @@ struct DocumentCoderTests {
     let real = try #require(tree["real"] as? NSNumber)
     #expect(!CFNumberIsFloatType(integer))
     #expect(CFNumberIsFloatType(real))
-    let text = String(decoding: try DocumentCoder.write(tree), as: UTF8.self)
+    let text = try #require(String(bytes: DocumentCoder.write(tree), encoding: .utf8))
     #expect(text.contains("<integer>1</integer>"))
     #expect(text.contains("<real>1</real>"))
-    let typed = try DocumentCoder.decode(Sample.self, from: DocumentCoder.encode(Self.sample), file: "")
+    let typed = try DocumentCoder.decode(
+      Sample.self,
+      from: DocumentCoder.encode(Self.sample),
+      file: ""
+    )
     #expect(typed.whole == 1 && typed.half == 0.5)
   }
 }

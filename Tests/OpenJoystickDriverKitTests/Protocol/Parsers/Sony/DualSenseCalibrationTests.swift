@@ -75,7 +75,7 @@ struct DualSenseCalibrationTests {
   }
 
   @Test
-  func stoppedPipelineRejectsCalibrationReplies() async throws {
+  func stoppedPipelineRejectsCalibrationReplies() async {
     let parser = DualSenseDriver()
     let pipeline = DevicePipeline(
       identifier: LogicalControllerID(vendorID: 0x054C, productID: 0x0CE6),

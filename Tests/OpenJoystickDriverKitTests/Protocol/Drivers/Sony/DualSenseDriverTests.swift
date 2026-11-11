@@ -72,7 +72,7 @@ struct DualSenseDriverTests {
   }
 
   @Test
-  func testDualSenseBluetoothReportRejectsInvalidCRC() throws {
+  func testDualSenseBluetoothReportRejectsInvalidCRC() {
     let parser = DualSenseDriver()
     var report = Array(ProtocolPacketFixtures.DualSense.bluetoothInputReport(buttons: (0x28, 0, 0)))
     report[77] ^= 0xFF
@@ -225,7 +225,7 @@ extension DualSenseDriverTests {
   }
 
   @Test
-  func adaptiveTriggerResistanceUsesBoundedUSBEffectPayload() throws {
+  func adaptiveTriggerResistanceUsesBoundedUSBEffectPayload() {
     let parser = DualSenseDriver()
     let report = parser.encoded(
       .setAdaptiveTrigger(
@@ -241,7 +241,7 @@ extension DualSenseDriverTests {
   }
 
   @Test
-  func adaptiveTriggerBluetoothReportCarriesCRCAndExactSide() throws {
+  func adaptiveTriggerBluetoothReportCarriesCRCAndExactSide() {
     let parser = DualSenseDriver(prefersBluetooth: true)
     let report = parser.encoded(
       .setAdaptiveTrigger(

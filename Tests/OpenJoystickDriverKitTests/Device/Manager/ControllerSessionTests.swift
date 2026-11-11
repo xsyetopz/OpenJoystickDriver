@@ -58,7 +58,7 @@ private final class AbsoluteStickParser: PhysicalProtocolDriver {
   func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
   /// Each report carries the full right stick; report 1 pushes it right, any other centers it.
-  func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     ControllerEvent(data.first == 1 ? [.rightStick(x: 1, y: 0)] : [], at: receivedAt.nanoseconds)
   }
 }

@@ -1,7 +1,7 @@
-import XCTest
+import Testing
 
 /// Runs the built `ojd-webrtc-bridge` binary and checks its usage output and exit status.
-final class BridgeProcessTests: XCTestCase {
+final class BridgeProcessTests {
   /// The exit status and the captured output of one run.
   private struct Result {
     /// The exit status.
@@ -16,7 +16,7 @@ final class BridgeProcessTests: XCTestCase {
   private func run(_ arguments: [String]) throws -> Result {
     let products = Bundle(for: Self.self).bundleURL.deletingLastPathComponent()
     let binary = products.appendingPathComponent("ojd-webrtc-bridge")
-    XCTAssertTrue(
+    #expect(
       FileManager.default.isExecutableFile(atPath: binary.path),
       "the bridge is not built next to the test bundle at \(binary.path)"
     )
@@ -39,18 +39,20 @@ final class BridgeProcessTests: XCTestCase {
   }
 
   /// `--help` prints the usage to standard output and exits with status 0.
-  func testHelpPrintsUsageToStandardOutputAndExitsZero() throws {
+  @Test
+  func helpPrintsUsageToStandardOutputAndExitsZero() throws {
     let result = try run(["--help"])
-    XCTAssertEqual(result.status, 0)
-    XCTAssertTrue(result.output.hasPrefix("usage: ojd-webrtc-bridge"), result.output)
-    XCTAssertEqual(result.error, "")
+    #expect(result.status == 0)
+    #expect(result.output.hasPrefix("usage: ojd-webrtc-bridge"), Comment(rawValue: result.output))
+    #expect(result.error.isEmpty)
   }
 
   /// A bad argument prints the usage to standard error and exits with status 1.
-  func testABadArgumentPrintsUsageToStandardErrorAndExitsNonZero() throws {
+  @Test
+  func aBadArgumentPrintsUsageToStandardErrorAndExitsNonZero() throws {
     let result = try run(["--bad"])
-    XCTAssertEqual(result.status, 1)
-    XCTAssertTrue(result.error.hasPrefix("usage: ojd-webrtc-bridge"), result.error)
-    XCTAssertEqual(result.output, "")
+    #expect(result.status == 1)
+    #expect(result.error.hasPrefix("usage: ojd-webrtc-bridge"), Comment(rawValue: result.error))
+    #expect(result.output.isEmpty)
   }
 }

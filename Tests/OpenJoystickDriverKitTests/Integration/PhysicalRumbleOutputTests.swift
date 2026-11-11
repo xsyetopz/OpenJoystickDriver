@@ -330,7 +330,7 @@ struct PhysicalRumbleOutputTests {
   }
 
   @Test
-  func testDs4PhysicalRumbleReportUsesBluetoothReportAfterBluetoothInput() throws {
+  func testDs4PhysicalRumbleReportUsesBluetoothReportAfterBluetoothInput() {
     let parser = DualShock4Driver(prefersBluetooth: true)
 
     let report = parser.rumblePlan(left: 180, right: 90, lt: 255, rt: 64).onlyReport

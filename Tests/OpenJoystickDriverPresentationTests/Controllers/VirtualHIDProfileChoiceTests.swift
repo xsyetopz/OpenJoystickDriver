@@ -131,7 +131,9 @@ struct VirtualHIDProfileChoiceTests {
   func automaticForAUnitWhoseModelHoldsTheOverrideSaysSo() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
-    let device = Self.device(profile: Self.status(inForce: .generic, stored: .generic, scope: .model))
+    let device = Self.device(
+      profile: Self.status(inForce: .generic, stored: .generic, scope: .model)
+    )
 
     await viewModel.chooseVirtualHIDProfile(nil, scope: .unit, for: device)
 
@@ -146,7 +148,9 @@ struct VirtualHIDProfileChoiceTests {
   func automaticForTheModelWhoseUnitHoldsTheOverrideSaysSo() async {
     let gateway = GatewayStub()
     let viewModel = RuntimeViewModel(gateway: gateway)
-    let device = Self.device(profile: Self.status(inForce: .generic, stored: .generic, scope: .unit))
+    let device = Self.device(
+      profile: Self.status(inForce: .generic, stored: .generic, scope: .unit)
+    )
 
     await viewModel.chooseVirtualHIDProfile(nil, scope: .model, for: device)
 

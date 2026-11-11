@@ -312,7 +312,7 @@ struct DiagnoseCommandTests {
   }
 
   @Test
-  func aStoppedServiceStillFailsOnAnotherFailingCheck() async throws {
+  func aStoppedServiceStillFailsOnAnotherFailingCheck() async {
     let result = await run(
       ["--plain"],
       socketPath: temporarySocketPath(),

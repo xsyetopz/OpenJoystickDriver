@@ -41,7 +41,9 @@ struct ProfileIssuePresentationTests {
     #expect(presentation.message.contains("OLD.json"))
     #expect(presentation.message != OJDLocalized.string("ui.profiles.damagedProfileMessage"))
     #expect(!ProfileIssuePresentation(Self.issue(.damagedProfile, .invalidProfile)).offersMigration)
-    #expect(ProfileIssuePresentation(Self.issue(.damagedProfile, .unsupportedAPIVersion)).offersMigration)
+    #expect(
+      ProfileIssuePresentation(Self.issue(.damagedProfile, .unsupportedAPIVersion)).offersMigration
+    )
   }
 
   @Test

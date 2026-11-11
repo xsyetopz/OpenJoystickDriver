@@ -9,7 +9,7 @@ final class BarrierQueryingSink: RemappingSystemInputSink, @unchecked Sendable {
 
   var actions: [RemappingSystemInputAction] { lock.withLock { recordedActions } }
 
-  func send(_ action: RemappingSystemInputAction) throws {
+  func send(_ action: RemappingSystemInputAction) {
     _ = barrier?.currentPermit()
     _ = barrier?.isTerminated
     lock.withLock { recordedActions.append(action) }

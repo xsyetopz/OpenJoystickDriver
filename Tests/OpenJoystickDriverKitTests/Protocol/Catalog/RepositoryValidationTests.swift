@@ -103,7 +103,8 @@ struct RepositoryValidationTests {
   @Test
   func aSecondRecordOfOneIdentityIsReportedWithBothFiles() throws {
     try Self.scratch { directory in
-      let text = #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Controller","#
+      let text =
+        #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "Controller","#
         + #" "vendorID": 13623, "productID": 4226, "modes": [{"id": "default","#
         + #" "protocol": {"family": "XboxGIP"}}]}"#
       let first = directory.appendingPathComponent("3537/3537-1082.plist")

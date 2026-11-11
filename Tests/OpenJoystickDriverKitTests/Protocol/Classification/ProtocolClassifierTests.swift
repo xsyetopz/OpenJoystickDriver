@@ -215,7 +215,11 @@ struct ProtocolClassifierTests {
   /// vendor usage; the bundled record's `HIDDescriptor` mode binds the gamepad one.
   @Test
   func theGameSirDongleBindsItsHIDDescriptorMode() async throws {
-    func hid(_ number: UInt8, _ usage: HIDUsageSignature, _ descriptor: Data?)
+    func hid(
+      _ number: UInt8,
+      _ usage: HIDUsageSignature,
+      _ descriptor: Data?
+    )
       -> PhysicalInterfaceSignature
     {
       PhysicalInterfaceSignature(

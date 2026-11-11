@@ -85,7 +85,7 @@ struct ServingPolicyCallersTests {
     outputEnabled: Bool,
     _ body: (ProfileOverrideServerFixture) async throws -> Void
   ) async throws {
-    let server = try await VirtualOutputTests().profileOverrideServer(
+    let server = await VirtualOutputTests().profileOverrideServer(
       identifiers,
       outputEnabled: outputEnabled
     )

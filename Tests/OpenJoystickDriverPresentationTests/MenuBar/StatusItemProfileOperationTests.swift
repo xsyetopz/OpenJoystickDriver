@@ -14,21 +14,21 @@ struct StatusItemProfileOperationTests {
     var selectedControllerID: String? { nil }
     var enabledToolbarActions: Set<MainWindowToolbarAction> { [] }
     var searchFieldInView: NSSearchField? { nil }
-    func perform(_ action: MainWindowToolbarAction) {}
+    func perform(_: MainWindowToolbarAction) {}
     func focusSearchField() {}
 
-    func showMainWindow(area: MainWindowArea?) {}
-    func showAccess(permission: AccessPermissionRow.Kind) {}
+    func showMainWindow(area _: MainWindowArea?) {}
+    func showAccess(permission _: AccessPermissionRow.Kind) {}
     func showErrorCodeExplainer() {}
-    func showController(id: String) {}
-    func showInputTest(controllerID: String) {}
+    func showController(id _: String) {}
+    func showInputTest(controllerID _: String) {}
     func importProfile() {}
     func exportProfile() {}
     func installRecordOrMod() {}
 
     func performMenuProfileMutation(
       _ request: RuntimeMutationRequest,
-      _ mutation: @MainActor (ProfileLibraryModel) async -> RuntimeMutationResult
+      _: @MainActor (ProfileLibraryModel) async -> RuntimeMutationResult
     ) async -> MenuProfileMutationOutcome? {  // swiftlint:disable:this async_without_await
       requests.append(request)
       return nil

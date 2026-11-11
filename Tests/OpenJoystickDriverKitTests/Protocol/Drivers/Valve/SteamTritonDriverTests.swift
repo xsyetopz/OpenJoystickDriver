@@ -198,7 +198,7 @@ struct SteamTritonDriverTests {
   }
 
   @Test
-  func rumbleRepeatsEveryTickUntilStoppedAndLizardModeOffEveryThreeSeconds() throws {
+  func rumbleRepeatsEveryTickUntilStoppedAndLizardModeOffEveryThreeSeconds() {
     let driver = SteamTritonDriver()
     #expect(driver.sessionPlan.hidKeepAliveIntervalNanoseconds == 40_000_000)
     let intensities = RumbleIntensities(
@@ -222,7 +222,7 @@ struct SteamTritonDriverTests {
   /// SDL `MsgHapticRumble`: id `0x80`, bytes 1 to 3 zero, left speed at 4 to 5, left gain 6 zero,
   /// right speed at 7 to 8, right gain 9 zero, 10 bytes.
   @Test
-  func rumbleReportKeepsTheReferenceLayout() throws {
+  func rumbleReportKeepsTheReferenceLayout() {
     let driver = SteamTritonDriver()
     let intensities = RumbleIntensities(
       lowFrequency: UnipolarValue(0x0102),

@@ -33,7 +33,6 @@ extension RemappingOutputRouterTests {
 
   @Test(arguments: [false, true])
 
-
   func releaseFailureStillRetiresVirtualRoutes(transaction: Bool) async throws {
     let original = remappingRouterProfile()
     let profile = RemappingProfile(
@@ -72,7 +71,6 @@ extension RemappingOutputRouterTests {
 
   @Test
 
-
   func shutdownRetiresVirtualBackendEvenWhenNeutralDeliveryFails() async throws {
     let original = remappingRouterProfile()
     let profile = RemappingProfile(
@@ -100,7 +98,6 @@ extension RemappingOutputRouterTests {
   }
 
   @Test(arguments: [false, true])
-
 
   func virtualRouteRetiresAfterNeutralization(transaction: Bool) async throws {
     let original = remappingRouterProfile()
@@ -136,7 +133,6 @@ extension RemappingOutputRouterTests {
   }
 
   @Test
-
 
   func outputSuppressionNeutralizesAndRestoresRemappedGamepad() async throws {
     let original = remappingRouterProfile()
@@ -191,7 +187,6 @@ extension RemappingOutputRouterTests {
   }
 
   @Test
-
 
   func exclusiveProfileWaitsForOwnershipAndReleasesOnLoss() async throws {
     let original = remappingRouterProfile()

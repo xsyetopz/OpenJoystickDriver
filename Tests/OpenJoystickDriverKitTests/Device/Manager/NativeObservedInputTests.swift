@@ -72,7 +72,7 @@ struct NativeObservedInputTests {
   }
 
   @Test
-  func nativeSixaxisControllersOfOneModelTakeDistinctReusablePlayerSlots() async throws {
+  func nativeSixaxisControllersOfOneModelTakeDistinctReusablePlayerSlots() async {
     let backend = ScriptedHIDAccessBackend()
     await backend.enableOutputReports()
     await backend.enableFeatureReports()

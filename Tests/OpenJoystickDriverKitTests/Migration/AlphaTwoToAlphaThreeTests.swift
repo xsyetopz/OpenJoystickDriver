@@ -35,7 +35,8 @@ struct AlphaTwoToAlphaThreeTests {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "ControllerPatch",
-      #""selector": {"all": true}, "patch": {"modes": [{"id": "default"}], "tuning": {"replyTimeoutMs": null}}"#
+      #""selector": {"all": true}, "patch": {"modes": [{"id": "default"}], "#
+        + #""tuning": {"replyTimeoutMs": null}}"#
     )
     let converted = try convert(text, .controllerPatch)
     #expect(converted["remove"] == .array([.string("tuning.replyTimeoutMs"), .string("modes")]))
@@ -47,7 +48,8 @@ struct AlphaTwoToAlphaThreeTests {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "Controller",
-      #""vendorID": 1, "productID": 2, "notes": "x", "modes": [{"id": "default", "rationale": "y"}]"#
+      #""vendorID": 1, "productID": 2, "notes": "x", "#
+        + #""modes": [{"id": "default", "rationale": "y"}]"#
     )
     let converted = try convert(text, .controller)
     #expect(converted["notes"] == nil)
@@ -98,7 +100,9 @@ struct AlphaTwoToAlphaThreeTests {
       #""applicationScope": {"type": "Global"}"#
     )
     let converted = try convert(text, .profile)
-    #expect(converted["applicationScope"] == .object([.init(key: "type", value: .string("Global"))]))
+    #expect(
+      converted["applicationScope"] == .object([.init(key: "type", value: .string("Global"))])
+    )
   }
 
   @Test
@@ -116,7 +120,8 @@ struct AlphaTwoToAlphaThreeTests {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "Controller",
-      #""vendorID": 1, "productID": 2, "idle": true, "modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]"#
+      #""vendorID": 1, "productID": 2, "idle": true, "#
+        + #""modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]"#
     )
     let converted = try convert(text, .controller)
     #expect(converted["idle"] == nil)
@@ -128,7 +133,8 @@ struct AlphaTwoToAlphaThreeTests {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "Controller",
-      #""vendorID": 1, "productID": 2, "modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]"#
+      #""vendorID": 1, "productID": 2, "#
+        + #""modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]"#
     )
     #expect(try convert(text, .controller)["modes"]?.array?.first?["idle"] == nil)
   }
@@ -153,7 +159,8 @@ struct AlphaTwoToAlphaThreeTests {
     let text = MigrationFixtures.document(
       MigrationFixtures.alphaTwo,
       "ControllerPatch",
-      #""selector": {"vendorID": 1, "productID": 2}, "patch": {"idle": true, "modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]}"#
+      #""selector": {"vendorID": 1, "productID": 2}, "patch": {"idle": true, "#
+        + #""modes": [{"id": "default", "protocol": {"family": "HIDDescriptor"}}]}"#
     )
     let patch = try #require(try convert(text, .controllerPatch)["patch"])
     let modes = try #require(patch["modes"]?.array)
@@ -173,7 +180,7 @@ struct AlphaTwoToAlphaThreeTests {
   }
 
   @Test
-  func theChainStartsAtVersionOneAndEndsAtVersionThree() throws {
+  func theChainStartsAtVersionOneAndEndsAtVersionThree() {
     let steps = DocumentMigrationStep.all.filter { $0.kind == DocumentKind.profile.rawValue }
     #expect(steps.map(\.from) == [MigrationFixtures.alphaOne, MigrationFixtures.alphaTwo])
     #expect(steps.last?.to == OpenJoystickDriverAPI.version)

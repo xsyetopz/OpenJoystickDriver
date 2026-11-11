@@ -11,8 +11,8 @@ final class RecordingReportFormat: VirtualGamepadReportFormat, @unchecked Sendab
   private var states: [[UInt8]: VirtualGamepadState] = [:]
 
   /// The format `persona` publishes.
-  init(persona: VirtualHIDProfileID) throws {
-    base = try persona.makeProfile().reportFormat
+  init(persona: VirtualHIDProfileID) {
+    base = persona.makeProfile().reportFormat
   }
 
   var descriptor: [UInt8] { base.descriptor }

@@ -290,7 +290,7 @@ struct Switch2DriverTests {
   }
 
   @Test
-  func captureKeepsAReportWhoseIDTheDriverIgnores() async throws {
+  func captureKeepsAReportWhoseIDTheDriverIgnores() async {
     var ignored = Array(Switch2Report.state(buttons: 1))
     ignored[0] = 0x09
     let pipeline = DevicePipeline(

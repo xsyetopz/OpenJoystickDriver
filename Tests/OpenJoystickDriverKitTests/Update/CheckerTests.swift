@@ -230,7 +230,7 @@ private func failureDescription<Success>(of result: Result<Success, any Error>) 
 }
 
 private final class UpdateURLProtocolStub: URLProtocol, @unchecked Sendable {
-  override static func canInit(with request: URLRequest) -> Bool { true }
+  override static func canInit(with _: URLRequest) -> Bool { true }
   override static func canonicalRequest(for request: URLRequest) -> URLRequest { request }
 
   /// Yields once each time a `/stalled` request starts loading; that request never finishes.

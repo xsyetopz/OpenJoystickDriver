@@ -260,7 +260,7 @@ struct ControllerRecordStartupWriteTests {
 /// A reader that never answers, so a probed mode is never selected.
 private struct UnansweredProbeReader: ControllerModeProbeReader {
   func readFeatureReport(
-    _ request: PhysicalHIDFeatureReadRequest
+    _: PhysicalHIDFeatureReadRequest
   ) -> PhysicalHIDReportResult<Data> {
     return .unavailable
   }

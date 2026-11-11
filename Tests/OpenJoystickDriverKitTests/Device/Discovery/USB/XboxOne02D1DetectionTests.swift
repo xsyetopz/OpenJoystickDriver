@@ -11,7 +11,7 @@ private struct SingleServiceTransport: DriverTransport {
 
   let service: DriverService
 
-  func services(matching _: DriverServiceMatch) throws -> [DriverService] { [service] }
+  func services(matching _: DriverServiceMatch) -> [DriverService] { [service] }
 
   func open(_: DriverService, type _: UInt32) throws -> any DriverConnection {
     throw OpenRefused()
@@ -121,7 +121,7 @@ struct XboxOne02D1DetectionTests {
     ) { _ in parent }
 
     let devices = try await provider.devices()
-    let observations = try await provider.physicalDeviceObservations()
+    let observations = await provider.physicalDeviceObservations()
 
     #expect(devices == [Self.dextDevice])
     #expect(observations.count == 1)

@@ -149,7 +149,10 @@ struct MainMenuModelTests {
     #expect(
       groups == [
         [.importProfile, .installRecordOrMod],
-        [.toolbar(.validateLibraryItem), .toolbar(.testLibraryRecord), .toolbar(.removeLibraryItem)],
+        [
+          .toolbar(.validateLibraryItem), .toolbar(.testLibraryRecord),
+          .toolbar(.removeLibraryItem),
+        ],
         [.toolbar(.grantProgram), .toolbar(.createToken)], [.close],
         [.exportProfile, .saveSupportReport, .saveActivityLog, .toolbar(.showActivityLogInFinder)],
       ]

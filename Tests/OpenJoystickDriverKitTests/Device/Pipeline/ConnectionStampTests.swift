@@ -97,7 +97,7 @@ private final class StatusFrameDriver: PhysicalProtocolDriver {
 
   func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
-  func parse(report: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  func parse(report: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     switch report.first {
     case Self.status:
       power = Self.charging

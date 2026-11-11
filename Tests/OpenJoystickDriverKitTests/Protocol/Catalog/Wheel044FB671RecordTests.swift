@@ -5,7 +5,7 @@ import Testing
 
 /// The bundled `044F:B671` wheel reads steering from bytes 6 to 7 and the brake from bytes 10 to 11
 /// of GIP report `0x20`; the packets are the reporter's of issue #58.
-struct ThrustmasterWheelRecordTests {
+struct Wheel044FB671RecordTests {
   private static let model = ControllerModelID(vendorID: 0x044F, productID: 0xB671)
 
   private func capture(_ reports: [String]) -> Data {
@@ -33,12 +33,17 @@ struct ThrustmasterWheelRecordTests {
   @Test
   func steeringReadsAsTheLeftStickInsteadOfTheLeftTrigger() throws {
     let report = "20 00 61 11 00 00 B8 03 00 00 00 00 00 00 00 00 00 F0 00 00 C0"
-    #expect(try difference([report], expectation(leftStickX: -31815, leftTrigger: 0, rightTrigger: 0)) == 0)
+    #expect(
+      try difference([report], expectation(leftStickX: -31815, leftTrigger: 0, rightTrigger: 0))
+        == 0
+    )
   }
 
   @Test
   func theBrakeReadsAsTheLeftTrigger() throws {
     let report = "20 00 61 11 00 00 00 80 00 00 FF 03 00 00 00 00 00 F0 00 00 C0"
-    #expect(try difference([report], expectation(leftStickX: 0, leftTrigger: 65535, rightTrigger: 0)) == 0)
+    #expect(
+      try difference([report], expectation(leftStickX: 0, leftTrigger: 65535, rightTrigger: 0)) == 0
+    )
   }
 }

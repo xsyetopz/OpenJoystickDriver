@@ -118,15 +118,15 @@ private final class StubSystemActionPerformer: RemappingSystemActionPerforming,
     sent.append(action)
   }
 
-  func postSystemKey(_ key: RemappingSystemKey, pressed: Bool) async throws {
+  func postSystemKey(_ key: RemappingSystemKey, pressed _: Bool) async throws {
     try send(key.rawValue, needs: .postEvent)
   }
 
-  func typeText(_ text: String) async throws { try send("TypeText", needs: .postEvent) }
-  func runShortcut(name: String) async throws { try send("RunShortcut", needs: .automation) }
+  func typeText(_: String) async throws { try send("TypeText", needs: .postEvent) }
+  func runShortcut(name _: String) async throws { try send("RunShortcut", needs: .automation) }
   func openMissionControl() async throws { try send("MissionControl") }
-  func openApplication(bundleIdentifier: String) async throws { try send("OpenApplication") }
-  func openURL(_ url: URL) async throws { try send("OpenURL") }
+  func openApplication(bundleIdentifier _: String) async throws { try send("OpenApplication") }
+  func openURL(_: URL) async throws { try send("OpenURL") }
 }
 
 // swiftlint:enable async_without_await

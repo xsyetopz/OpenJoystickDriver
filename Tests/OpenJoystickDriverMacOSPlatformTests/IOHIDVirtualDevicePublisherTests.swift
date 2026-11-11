@@ -48,7 +48,7 @@ struct IOHIDVirtualDevicePublisherTests {
   }
 
   @Test
-  func sdlCompatibleIdentityAdvertisesNumberedReportSizes() throws {
+  func sdlCompatibleIdentityAdvertisesNumberedReportSizes() {
     let format = XboxOneGIPHIDReportFormat()
     let properties = IOHIDVirtualDevicePublisher.deviceProperties(
       profile: .sdlCompatible,
@@ -63,7 +63,7 @@ struct IOHIDVirtualDevicePublisherTests {
   }
 
   @Test
-  func propertiesPreserveDescriptorAndIdentity() throws {
+  func propertiesPreserveDescriptorAndIdentity() {
     let format = XboxOneGIPHIDReportFormat()
     let profile = VirtualDeviceProfile.sdlCompatible
     let properties = IOHIDVirtualDevicePublisher.deviceProperties(
@@ -137,7 +137,7 @@ struct IOHIDVirtualDevicePublisherTests {
     _ descriptorFNV1a: UInt64,
     _ maxOutputReportSize: Int?
   ) throws {
-    let profile = try profileID.makeProfile()
+    let profile = profileID.makeProfile()
     let properties = IOHIDVirtualDevicePublisher.deviceProperties(
       profile: profile.identity,
       format: profile.reportFormat,
@@ -164,8 +164,8 @@ struct IOHIDVirtualDevicePublisherTests {
   /// A custom persona replaces the identity strings and IDs of the published device, and keeps the
   /// built-in descriptor, the transport, and the virtual LocationID.
   @Test(arguments: VirtualHIDProfileID.allCases)
-  func personaIdentityIsPublishedOverTheBuiltInDescriptor(_ profileID: VirtualHIDProfileID) throws {
-    let builtIn = try profileID.makeProfile()
+  func personaIdentityIsPublishedOverTheBuiltInDescriptor(_ profileID: VirtualHIDProfileID) {
+    let builtIn = profileID.makeProfile()
     let persona = VirtualPersona.Identity(
       vendorID: 0x1234,
       productID: 0x5678,
@@ -207,7 +207,7 @@ struct IOHIDVirtualDevicePublisherTests {
   func publishedIdentityMatchesTheProfileForEveryProductionProfile(
     _ profileID: VirtualHIDProfileID
   ) throws {
-    let profile = try profileID.makeProfile()
+    let profile = profileID.makeProfile()
     let identity = profile.identity
     let format = profile.reportFormat
     let identifier = LogicalControllerID(vendorID: 1, productID: 2, locationID: 3)
@@ -270,8 +270,8 @@ struct IOHIDVirtualDevicePublisherTests {
   @Test(arguments: VirtualHIDProfileID.allCases)
   func publishedIdentityIsByteIdenticalAcrossCallsForTheSameIdentifier(
     _ profileID: VirtualHIDProfileID
-  ) throws {
-    let profile = try profileID.makeProfile()
+  ) {
+    let profile = profileID.makeProfile()
     let identifier = LogicalControllerID(vendorID: 7, productID: 9, locationID: 11)
 
     let first = IOHIDVirtualDevicePublisher.deviceProperties(
@@ -289,8 +289,8 @@ struct IOHIDVirtualDevicePublisherTests {
   }
 
   @Test(arguments: VirtualHIDProfileID.allCases)
-  func differentIdentifiersDifferOnlyInSerialAndLocation(_ profileID: VirtualHIDProfileID) throws {
-    let profile = try profileID.makeProfile()
+  func differentIdentifiersDifferOnlyInSerialAndLocation(_ profileID: VirtualHIDProfileID) {
+    let profile = profileID.makeProfile()
     let first = LogicalControllerID(vendorID: 7, productID: 9, locationID: 11)
     let second = LogicalControllerID(vendorID: 7, productID: 9, locationID: 12)
 

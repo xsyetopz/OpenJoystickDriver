@@ -78,7 +78,7 @@ struct ControllerDetailFactsTests {
     var everywhere = device()
     everywhere.profileInForce = ApplicationServiceProfileInForce(name: "Everywhere", appID: nil)
 
-    let facts = ControllerDetailFacts.general(for: selected, appName: { _ in "Racer" })
+    let facts = ControllerDetailFacts.general(for: selected) { _ in "Racer" }
 
     #expect(Self.value(.profileSelectedBy, in: facts) == .text("Racer"))
     #expect(facts.first?.kind == .profileSelectedBy)

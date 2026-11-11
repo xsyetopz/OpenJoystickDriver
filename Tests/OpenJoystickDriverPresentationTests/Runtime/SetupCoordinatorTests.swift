@@ -8,11 +8,11 @@ import Testing
 @MainActor
 struct SetupCoordinatorTests {
   @Test
-  func activeExtensionDoesNotSubmit() async {
+  func activeExtensionDoesNotSubmit() {
     let client = FakeSetupClient(status: Self.currentActiveStatus)
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
-    await coordinator.launch()
+    coordinator.launch()
 
     #expect(coordinator.state == .active)
     #expect(client.requestCount == 0)
@@ -23,7 +23,7 @@ struct SetupCoordinatorTests {
     let client = FakeSetupClient(status: Self.currentActiveStatus, deactivationResult: .inactive)
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
-    await coordinator.launch()
+    coordinator.launch()
     await coordinator.uninstall()
 
     #expect(coordinator.state == .needsActivation)
@@ -31,13 +31,13 @@ struct SetupCoordinatorTests {
   }
 
   @Test
-  func launchForegroundAndRefreshSendNoActivationRequest() async {
+  func launchForegroundAndRefreshSendNoActivationRequest() {
     let client = FakeSetupClient(status: Self.inactiveStatus, result: .awaitingApproval)
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
-    await coordinator.launch()
-    await coordinator.foreground()
-    await coordinator.refresh()
+    coordinator.launch()
+    coordinator.foreground()
+    coordinator.refresh()
 
     #expect(coordinator.state == .needsActivation)
     #expect(client.requestCount == 0)
@@ -48,7 +48,7 @@ struct SetupCoordinatorTests {
     let client = FakeSetupClient(status: Self.olderActiveStatus)
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
-    await coordinator.launch()
+    coordinator.launch()
     #expect(coordinator.state == .replacementNeeded)
     #expect(client.requestCount == 0)
 
@@ -63,8 +63,8 @@ struct SetupCoordinatorTests {
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
     await coordinator.repair()
-    await coordinator.foreground()
-    await coordinator.refresh()
+    coordinator.foreground()
+    coordinator.refresh()
 
     #expect(coordinator.state == .needsApproval)
     #expect(client.requestCount == 1)
@@ -77,7 +77,7 @@ struct SetupCoordinatorTests {
     )
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
-    await coordinator.launch()
+    coordinator.launch()
     await coordinator.repair()
 
     #expect(coordinator.state == .invalid)
@@ -85,7 +85,7 @@ struct SetupCoordinatorTests {
   }
 
   @Test
-  func historicalIntegerBuildSendsNoRequestAtLaunch() async {
+  func historicalIntegerBuildSendsNoRequestAtLaunch() {
     let client = FakeSetupClient(
       status: ExtensionStatus(
         bundle: .present,
@@ -100,9 +100,9 @@ struct SetupCoordinatorTests {
     )
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
-    await coordinator.launch()
-    await coordinator.foreground()
-    await coordinator.refresh()
+    coordinator.launch()
+    coordinator.foreground()
+    coordinator.refresh()
 
     #expect(client.requestCount == 0)
   }
@@ -112,7 +112,7 @@ struct SetupCoordinatorTests {
     let client = FakeSetupClient(status: Self.currentActiveStatus)
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
-    await coordinator.launch()
+    coordinator.launch()
     await coordinator.repair()
 
     #expect(client.requestCount == 0)
@@ -120,7 +120,7 @@ struct SetupCoordinatorTests {
   }
 
   @Test
-  func unknownInstalledVersionNeedsAReplacementClick() async {
+  func unknownInstalledVersionNeedsAReplacementClick() {
     let client = FakeSetupClient(
       status: ExtensionStatus(
         bundle: .present,
@@ -131,7 +131,7 @@ struct SetupCoordinatorTests {
     )
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
-    await coordinator.launch()
+    coordinator.launch()
 
     #expect(coordinator.state == .replacementNeeded)
     #expect(client.requestCount == 0)
@@ -148,7 +148,7 @@ struct SetupCoordinatorTests {
     )
     let coordinator = SystemExtensionSetupCoordinator(client: client)
 
-    await coordinator.launch()
+    coordinator.launch()
     await coordinator.repair()
 
     #expect(coordinator.state == .unavailable("probe failed"))
@@ -171,7 +171,7 @@ struct SetupCoordinatorTests {
       let coordinator = SystemExtensionSetupCoordinator(client: client)
 
       await coordinator.repair()
-      await coordinator.foreground()
+      coordinator.foreground()
 
       #expect(coordinator.state == expected)
       #expect(client.requestCount == 1)

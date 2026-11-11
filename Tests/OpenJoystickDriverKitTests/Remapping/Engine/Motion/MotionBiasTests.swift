@@ -11,7 +11,7 @@ struct MotionBiasTests {
   }
 
   @Test
-  func steadyBiasRequiresTimeAndDoesNotAlterFactoryReading() throws {
+  func steadyBiasRequiresTimeAndDoesNotAlterFactoryReading() {
     var bias = RemappingMotionBias()
     let input = reading(0.8)
     for _ in 0..<100 { _ = bias.update(input, deltaTime: 0.01, automatic: true) }
@@ -23,7 +23,7 @@ struct MotionBiasTests {
   }
 
   @Test
-  func movementAndGapsCannotAccumulateStillness() throws {
+  func movementAndGapsCannotAccumulateStillness() {
     var bias = RemappingMotionBias()
     for index in 0..<1000 {
       _ = bias.update(reading(index.isMultiple(of: 2) ? 1 : 2), deltaTime: 0.01, automatic: true)
@@ -38,7 +38,7 @@ struct MotionBiasTests {
   }
 
   @Test
-  func manualCollectionIsTimeWeightedAndPauseRetainsOffset() throws {
+  func manualCollectionIsTimeWeightedAndPauseRetainsOffset() {
     var bias = RemappingMotionBias()
     bias.startManualCollection()
     _ = bias.update(reading(1), deltaTime: 0.01, automatic: false)

@@ -6,7 +6,7 @@ import Testing
 /// Report values are UpperCamelCase with upper-case acronyms; any other spelling is an unknown
 /// value like a random word.
 struct ReportValueNamesTests {
-  private func decodes<T: Decodable>(_ type: T.Type, _ word: String) -> Bool {
+  private func decodes<T: Decodable>(_: T.Type, _ word: String) -> Bool {
     (try? JSONDecoder().decode([T].self, from: Data("[\"\(word)\"]".utf8))) != nil
   }
 
@@ -57,7 +57,10 @@ struct ReportValueNamesTests {
   func stateValuesRefuseOtherSpellings() {
     refuses(ControllerSessionState.self, ["active", "suspended"])
     refuses(BuildIdentity.SourceState.self, ["clean", "dirty", "unknown"])
-    refuses(ControllerInputHealthState.self, ["awaitingInput", "healthy", "stale", "waitingForNeutral"])
+    refuses(
+      ControllerInputHealthState.self,
+      ["awaitingInput", "healthy", "stale", "waitingForNeutral"]
+    )
     refuses(
       ControllerInputHealthFailureReason.self,
       ["missingReports", "freshnessNotAdvancing", "guideNotPressed"]

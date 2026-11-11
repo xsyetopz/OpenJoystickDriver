@@ -1,6 +1,6 @@
-import Foundation
+package import Foundation
 
-@testable import OpenJoystickDriverKit
+@testable package import OpenJoystickDriverKit
 
 // The protocol requires `async`; the fake answers immediately.
 // swiftlint:disable async_without_await
@@ -12,7 +12,7 @@ package struct FakePlatformHost: PlatformHost {
 
   package var extensionID: String { "com.openjoystickdriver.fake-extension" }
 
-  package func extensionStatus(bundleURL: URL) -> ExtensionStatus {
+  package func extensionStatus(bundleURL _: URL) -> ExtensionStatus {
     ExtensionStatus(bundle: .missing, registration: .absent)
   }
 
@@ -30,9 +30,9 @@ package struct FakePlatformHost: PlatformHost {
     text: "The fake host does not submit requests."
   )
 
-  package func countVendorSpecificUSBControllers() async throws -> Int { 0 }
+  package func countVendorSpecificUSBControllers() async -> Int { 0 }
 
-  package func extensionEntitlementCovers(vendorID: UInt16, productID: UInt16) -> Bool { false }
+  package func extensionEntitlementCovers(vendorID _: UInt16, productID _: UInt16) -> Bool { false }
 
   package var accessControl: any AccessControlSystem { FixedAccessControlSystem() }
 
@@ -40,13 +40,13 @@ package struct FakePlatformHost: PlatformHost {
     FakeMainAppRegistration()
   }
 
-  package func codeSigningIdentity(ofPath url: URL) -> CodeSigningIdentity? { nil }
+  package func codeSigningIdentity(ofPath _: URL) -> CodeSigningIdentity? { nil }
 
-  package func physicalReportDescriptor(vendorID: Int, productID: Int) -> [UInt8]? { nil }
+  package func physicalReportDescriptor(vendorID _: Int, productID _: Int) -> [UInt8]? { nil }
 
-  package func physicalDevice(vendorID: Int, productID: Int) -> PhysicalDevice? { nil }
+  package func physicalDevice(vendorID _: Int, productID _: Int) -> PhysicalDevice? { nil }
 
-  package func droppedHIDInputReports(processID: Int32) -> [HIDInputDropObservation] { [] }
+  package func droppedHIDInputReports(processID _: Int32) -> [HIDInputDropObservation] { [] }
 
   @MainActor
   package func runApplication() -> Never { fatalError("Tests never run the application.") }

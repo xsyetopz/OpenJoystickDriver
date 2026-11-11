@@ -78,7 +78,7 @@ final class InstallationBackend: VirtualOutputDispatching, @unchecked Sendable {
     self.failsActivation = failsActivation
   }
 
-  func activate(for identifiers: [LogicalControllerID]) async throws {
+  func activate(for _: [LogicalControllerID]) async throws {
     lock.withLock { activations += 1 }
     if stage == .activation { await gate.suspend() }
     if failsActivation { throw UserSpaceOutputDispatcher.CreationError.createFailed }

@@ -1,5 +1,5 @@
-import Foundation
-import Testing
+package import Foundation
+package import Testing
 
 /// Suspends until `condition` holds.
 ///
@@ -9,7 +9,7 @@ import Testing
 package func waitUntil(
   _ description: String,
   deadline: TimeInterval = 60,
-  isolation: isolated (any Actor)? = #isolation,
+  isolation _: isolated (any Actor)? = #isolation,
   sourceLocation: SourceLocation = #_sourceLocation,
   _ condition: () async -> Bool
 ) async {

@@ -104,7 +104,6 @@ extension RemappingRequestCoordinatorTests {
 
   @Test
 
-
   func activeUpdateAndDeleteReleaseHeldStateBeforeSuccess() async throws {
     let harness = try await makeHarness()
     defer { harness.routerHarness.removeFiles() }
@@ -274,7 +273,6 @@ extension RemappingRequestCoordinatorTests {
   }
 
   @Test
-
 
   func failedActiveModelMoveRestoresExactLibraryAndBothRoutes() async throws {
     let harness = try makeRollbackHarness()

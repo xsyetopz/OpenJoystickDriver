@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Byte-exact input reports and packets of each protocol family, for tests that feed a driver or
 /// parser.
@@ -352,7 +352,8 @@ public enum ProtocolPacketFixtures {
     ])
     /// A real non-input report an empty or idle slot sends (issue #9).
     ///
-    /// Header `00 00 00 F0 00 00`. The issue records only the six header bytes; the 29-byte length is the state report's.
+    /// Header `00 00 00 F0 00 00`. The issue records only the six header bytes; the 29-byte length
+    /// is the state report's.
     public static let idleReport = Data(
       [0x00, 0x00, 0x00, 0xF0, 0x00, 0x00] + [UInt8](repeating: 0, count: 23)
     )

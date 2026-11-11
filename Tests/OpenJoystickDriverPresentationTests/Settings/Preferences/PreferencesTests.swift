@@ -46,7 +46,7 @@ struct PreferencesTests {
 
   @Test
   @MainActor
-  func staleRefreshDoesNotOverwriteANewerAuthorizationResult() async throws {
+  func staleRefreshDoesNotOverwriteANewerAuthorizationResult() async {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     let authorization = HeldSettingsAuthorizationStub()
     let model = SettingsPreferencesModel(
@@ -557,7 +557,7 @@ actor UpdateCheckerStub: ApplicationUpdateChecking {
 
   init(result: UpdateCheckState) { self.result = result }
 
-  func check(currentVersion: String, includePrereleases: Bool) async -> UpdateCheckState {
+  func check(currentVersion _: String, includePrereleases: Bool) async -> UpdateCheckState {
     await Task.yield()
     includePrereleaseArguments.append(includePrereleases)
     return result
@@ -570,7 +570,7 @@ private final class PreferencesNotificationDeliverySpy: RuntimeNotificationDeliv
   /// What `deliverAwaitingSystem` throws, or nil to accept the notification.
   var failure: (any Error)?
 
-  func deliver(title: String, body: String, sound: Bool) {
+  func deliver(title _: String, body _: String, sound: Bool) {
     deliveryCount += 1
     lastSound = sound
   }

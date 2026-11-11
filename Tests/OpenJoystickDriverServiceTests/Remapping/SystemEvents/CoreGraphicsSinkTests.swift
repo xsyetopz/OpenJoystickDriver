@@ -7,7 +7,7 @@ import Testing
 
 struct CoreGraphicsSinkTests {
   @Test
-  func everySymbolicKeyboardKeyHasAnOfficialVirtualKey() throws {
+  func everySymbolicKeyboardKeyHasAnOfficialVirtualKey() {
     let translator = MacVirtualKeyTranslator()
     for key in RemappingKeyboardKey.allCases {
       #expect(translator.virtualKey(for: key) != nil, "Missing virtual key for \(key)")
@@ -292,7 +292,7 @@ private final class RecordingPoster: CoreGraphicsEventPosting, @unchecked Sendab
     return pointerLocation
   }
 
-  func mainDisplayBounds() throws -> CGRect { CGRect(x: 0, y: 0, width: 1001, height: 501) }
+  func mainDisplayBounds() -> CGRect { CGRect(x: 0, y: 0, width: 1001, height: 501) }
 
   func post(_ event: CoreGraphicsPreparedEvent) throws {
     if failure == .creation { throw CoreGraphicsEventPosterError.eventCreationFailed }

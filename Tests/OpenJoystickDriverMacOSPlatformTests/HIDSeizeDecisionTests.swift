@@ -57,11 +57,19 @@ struct HIDSeizeDecisionTests {
 
     #expect(
       !HIDDeviceStream.seizesInput(
-        model: model, nativePassThrough: true, siblingIsNative: false, catalog: catalog)
+        model: model,
+        nativePassThrough: true,
+        siblingIsNative: false,
+        catalog: catalog
+      )
     )
     #expect(
       !HIDDeviceStream.seizesInput(
-        model: model, nativePassThrough: false, siblingIsNative: true, catalog: catalog)
+        model: model,
+        nativePassThrough: false,
+        siblingIsNative: true,
+        catalog: catalog
+      )
     )
   }
 }

@@ -93,9 +93,8 @@ extension InputTestTests {
     let recorder = SessionStateRecorder()
     let model = InputTestViewModel(
       gateway: gateway,
-      sampleIntervalNanoseconds: 1_000_000,
-      sleep: { _ in await recorder.record() }
-    )
+      sampleIntervalNanoseconds: 1_000_000
+    ) { _ in await recorder.record() }
     recorder.model = model
     model.selectDevice(makeInputTestDevice())
 

@@ -3,9 +3,9 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// Reports of a Flydigi Vader 4 Pro, firmware 6.9.5.5, macOS 26.5.2, captured through a per-device
-/// input-report callback (issue #35, pull request #36), and the rumble frame the reporter drove
-/// on the dongle. The hardware is the reporter's; none of ours has been tested.
+// Captured through a per-device input-report callback (issue #35, pull request #36), plus the
+// rumble frame the reporter drove on the dongle. The hardware is the reporter's; none of ours has
+// been tested.
 private enum Capture {
   /// Dongle DInput `04B4:2412`: the neutral vendor report, 32 bytes, as PR #36 captured it.
   static let dongleNeutral: [UInt8] = [

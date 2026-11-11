@@ -205,7 +205,7 @@ struct SupportReportBindingTests {
 
   /// `support-report-binding.json` in `Tests/EquivalenceSnapshots`, which
   /// `Tests/RepositoryScripts/test_report_schema.py` validates against `report.schema.json`.
-  /// `./Scripts/ojd snapshots write` rewrites it from this test.
+  /// `just snapshots-write` rewrites it from this test.
   private static let snapshotName = "support-report-binding.json"
 
   /// The report as the snapshot stores it: sorted members, two-space indent and the CloudEvents

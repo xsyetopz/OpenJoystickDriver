@@ -69,7 +69,7 @@ struct XboxXIDFieldSweepTests {
       tuning: nil
     )
     let receivedAt = MonotonicTimestamp(nanoseconds: DriverParseCharacterizationTests.receivedAt)
-    let actual = try Self.render { try driver.parse(report: $0, receivedAt: receivedAt)?.state }
+    let actual = try Self.render { driver.parse(report: $0, receivedAt: receivedAt)?.state }
     let expected = try String(contentsOf: Self.goldenFile, encoding: .utf8)
       .split(separator: "\n").map(String.init)
     #expect(actual.count == expected.count)

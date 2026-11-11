@@ -157,7 +157,7 @@ struct OwnershipReapplyTests {
   /// A changed HID ownership announces a status change from the manager once, and an unchanged
   /// one announces nothing.
   @Test
-  func aChangedHIDOwnershipAnnouncesOnceAndTheSameOwnershipAnnouncesNothing() async throws {
+  func aChangedHIDOwnershipAnnouncesOnceAndTheSameOwnershipAnnouncesNothing() async {
     let backend = ScriptedHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: HIDRoleEventRecorder(),

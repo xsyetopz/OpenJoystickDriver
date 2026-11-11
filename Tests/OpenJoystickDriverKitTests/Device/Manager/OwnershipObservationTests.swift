@@ -394,10 +394,10 @@ private final class OwnershipOutputRecorder: OutputDispatcher, ControllerLifecyc
 
   func activateOutput(for _: LogicalControllerID) { lock.withLock { sentCount += 1 } }
 
-  func controllerDidStop(_ identifier: LogicalControllerID) { lock.withLock { stoppedCount += 1 } }
+  func controllerDidStop(_: LogicalControllerID) { lock.withLock { stoppedCount += 1 } }
 
   func controllerInputOwnershipChanged(
     _ ownership: HIDInputOwnership,
-    for identifier: LogicalControllerID
+    for _: LogicalControllerID
   ) { lock.withLock { recordedOwnerships.append(ownership) } }
 }

@@ -36,7 +36,7 @@ private final class FirstSendHeldBackend: VirtualDeviceBackend,
   @unchecked Sendable
 {
   /// The test reads only the reports sent; it answers no host request.
-  func activate(hostReports: UserSpaceHostReportHandler) {}
+  func activate(hostReports _: UserSpaceHostReportHandler) {}
 
   private let gate = HoldGate()
   private let lock = NSLock()
@@ -190,8 +190,8 @@ struct StickDeliveryLatencyTests {
   @Test(arguments: VirtualHIDProfileID.allCases)
   func newestStickPositionFollowsTheSlowSendWithoutStaleBacklog(
     persona: VirtualHIDProfileID
-  ) async throws {
-    let format = try RecordingReportFormat(persona: persona)
+  ) async {
+    let format = RecordingReportFormat(persona: persona)
     let positions: [Float] = (0..<10).map { 0.05 + Float($0) * 0.09 }
     let result = await Self.deliverBurst(
       positions.map { [.leftStick(x: $0, y: 0)] },
@@ -214,8 +214,8 @@ struct StickDeliveryLatencyTests {
   /// Every button edge inside a burst reaches the virtual device in order; a coalescing fix must
   /// keep this green, for the report format of each persona.
   @Test(arguments: VirtualHIDProfileID.allCases)
-  func everyButtonEdgeInsideABurstIsDelivered(persona: VirtualHIDProfileID) async throws {
-    let format = try RecordingReportFormat(persona: persona)
+  func everyButtonEdgeInsideABurstIsDelivered(persona: VirtualHIDProfileID) async {
+    let format = RecordingReportFormat(persona: persona)
     let batches: [[InputChange]] = [
       [.leftStick(x: 0.1, y: 0)], [.press(.south)], [.leftStick(x: 0.2, y: 0)],
       [.release(.south)], [.leftStick(x: 0.3, y: 0)], [.press(.south)],
@@ -238,8 +238,8 @@ struct StickDeliveryLatencyTests {
   @Test(arguments: VirtualHIDProfileID.allCases)
   func longBurstKeepsTheDeviceOpenAndEndsOnTheNewestPosition(
     persona: VirtualHIDProfileID
-  ) async throws {
-    let format = try RecordingReportFormat(persona: persona)
+  ) async {
+    let format = RecordingReportFormat(persona: persona)
     // Starts off neutral, so the first position is published and its send is held.
     let positions: [Float] = (1...100).map { Float($0) / 100 }
     let result = await Self.deliverBurst(

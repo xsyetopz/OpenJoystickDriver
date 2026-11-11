@@ -195,7 +195,7 @@ struct SupportDiagnosticsTests {
   }
 
   @Test
-  func collectingDiagnosticsDoesNotLeaveReportSaving() async throws {
+  func collectingDiagnosticsDoesNotLeaveReportSaving() async {
     let gateway = SupportDiagnosticsGatewayStub(diagnosticsDelayNanoseconds: [100_000_000, 0])
     let supportReport = await MainActor.run { SupportReportModel(gateway: gateway) }
     let outputURL = FileManager.default.temporaryDirectory.appendingPathComponent(
@@ -259,7 +259,7 @@ private actor SupportDiagnosticsGatewayStub: ApplicationServiceGateway {
     self.diagnosticsShouldFail = diagnosticsShouldFail
   }
 
-  func status() throws -> ApplicationServiceStatusPayload { statusPayload }
+  func status() -> ApplicationServiceStatusPayload { statusPayload }
 
   func frameTimings(lastSeconds _: Int?) throws -> ApplicationServiceFrameTimingsPayload {
     guard let frameTimingsPayload else { throw ApplicationServiceClientError.timeout }
@@ -278,19 +278,19 @@ private actor SupportDiagnosticsGatewayStub: ApplicationServiceGateway {
     return diagnosticsPayloads[index]
   }
 
-  func requestPermissions() throws -> PermissionManager.Snapshot {
+  func requestPermissions() -> PermissionManager.Snapshot {
     PermissionManager.Snapshot(inputRead: .granted, inputInject: .granted)
   }
 
   func requestPermission(
-    _ requirement: PermissionManager.Requirement
-  ) throws -> PermissionManager.Snapshot { try requestPermissions() }
+    _: PermissionManager.Requirement
+  ) -> PermissionManager.Snapshot { requestPermissions() }
 
-  func controllerState(for _: ControllerReference) throws -> ControllerState? { nil }
+  func controllerState(for _: ControllerReference) -> ControllerState? { nil }
 
-  func packetLog(for _: ControllerReference) throws -> [PacketLogEntry] { [] }
+  func packetLog(for _: ControllerReference) -> [PacketLogEntry] { [] }
 
-  func remappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload {
+  func remappingSnapshot() -> ApplicationServiceRemappingSnapshotPayload {
     ApplicationServiceRemappingSnapshotPayload(
       profiles: [],
       activeProfiles: [],
@@ -299,61 +299,62 @@ private actor SupportDiagnosticsGatewayStub: ApplicationServiceGateway {
     )
   }
 
-  func remappingProfile(id: UUID) throws -> RemappingProfile {
+  func remappingProfile(id _: UUID) throws -> RemappingProfile {
     throw ApplicationServiceClientError.invalidResponse
   }
 
   func createRemappingProfile(
-    _ profile: RemappingProfile
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { try remappingSnapshot() }
+    _: RemappingProfile
+  ) -> ApplicationServiceRemappingSnapshotPayload { remappingSnapshot() }
 
   func updateRemappingProfile(
-    _ profile: RemappingProfile,
-    expectedCurrent: RemappingProfile
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { try remappingSnapshot() }
+    _: RemappingProfile,
+    expectedCurrent _: RemappingProfile
+  ) -> ApplicationServiceRemappingSnapshotPayload { remappingSnapshot() }
 
   func importRemappingProfile(
-    _ profile: RemappingProfile
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { try remappingSnapshot() }
+    _: RemappingProfile
+  ) -> ApplicationServiceRemappingSnapshotPayload { remappingSnapshot() }
 
-  func deleteRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
-    try remappingSnapshot()
+  func deleteRemappingProfile(id _: UUID) -> ApplicationServiceRemappingSnapshotPayload {
+    remappingSnapshot()
   }
 
   func activateRemappingProfile(
-    id: UUID,
-    allowEmpty: Bool
-  ) throws -> ApplicationServiceRemappingSnapshotPayload {
-    try remappingSnapshot()
+    id _: UUID,
+    allowEmpty _: Bool
+  ) -> ApplicationServiceRemappingSnapshotPayload {
+    remappingSnapshot()
   }
 
   func deactivateRemappingProfile(
-    vendorID: UInt16,
-    productID: UInt16
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { try remappingSnapshot() }
+    vendorID _: UInt16,
+    productID _: UInt16
+  ) -> ApplicationServiceRemappingSnapshotPayload { remappingSnapshot() }
 
   func deactivateRemappingProfile(
-    profileID: UUID
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { try remappingSnapshot() }
+    profileID _: UUID
+  ) -> ApplicationServiceRemappingSnapshotPayload { remappingSnapshot() }
 
-  func remappingPostEventAccess() throws -> RemappingPostEventAccessState { .granted }
+  func remappingPostEventAccess() -> RemappingPostEventAccessState { .granted }
 
-  func requestRemappingPostEventAccess() throws -> RemappingPostEventAccessState { .granted }
+  func requestRemappingPostEventAccess() -> RemappingPostEventAccessState { .granted }
 
   func pairRemappingJoyCons(
-    left: ControllerReference,
-    right: ControllerReference,
-    profileID: UUID
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { try remappingSnapshot() }
+    left _: ControllerReference,
+    right _: ControllerReference,
+    profileID _: UUID
+  ) -> ApplicationServiceRemappingSnapshotPayload { remappingSnapshot() }
 
-  func unpairRemappingJoyCons(sessionID: UUID) throws -> ApplicationServiceRemappingSnapshotPayload
-  { try remappingSnapshot() }
+  func unpairRemappingJoyCons(
+    sessionID _: UUID
+  ) -> ApplicationServiceRemappingSnapshotPayload { remappingSnapshot() }
 
   func setVirtualHIDProfileOverride(
     _ profile: VirtualHIDProfileID,
-    for selector: ControllerReference,
-    scope: VirtualHIDProfileOverrideScope
-  ) throws -> VirtualHIDProfileOverrideResult {
+    for _: ControllerReference,
+    scope _: VirtualHIDProfileOverrideScope
+  ) -> VirtualHIDProfileOverrideResult {
     VirtualHIDProfileOverrideResult(
       requested: profile,
       live: profile,
@@ -363,9 +364,9 @@ private actor SupportDiagnosticsGatewayStub: ApplicationServiceGateway {
   }
 
   func resetVirtualHIDProfileOverride(
-    for selector: ControllerReference,
-    scope: VirtualHIDProfileOverrideScope
-  ) throws -> VirtualHIDProfileOverrideResult {
+    for _: ControllerReference,
+    scope _: VirtualHIDProfileOverrideScope
+  ) -> VirtualHIDProfileOverrideResult {
     VirtualHIDProfileOverrideResult(
       requested: nil,
       live: .generic,
@@ -374,12 +375,12 @@ private actor SupportDiagnosticsGatewayStub: ApplicationServiceGateway {
     )
   }
 
-  func resetAllVirtualHIDProfileOverrides() throws -> Bool { true }
+  func resetAllVirtualHIDProfileOverrides() -> Bool { true }
 
   func setControllerTuning(
-    model: ControllerModelID,
-    key: ControllerTuning.Key,
-    value: Double?
+    model _: ControllerModelID,
+    key _: ControllerTuning.Key,
+    value _: Double?
   ) throws -> ControllerTuningResult {
     throw ApplicationServiceClientError.invalidResponse
   }
@@ -387,34 +388,34 @@ private actor SupportDiagnosticsGatewayStub: ApplicationServiceGateway {
 
 extension SupportDiagnosticsGatewayStub {
   func setControllerServer(
-    model: ControllerModelID,
-    server: ControllerServer
+    model _: ControllerModelID,
+    server _: ControllerServer
   ) throws -> ControllerServerResult {
     throw ApplicationServiceClientError.invalidResponse
   }
 
-  func suspendController(_ selector: ControllerReference) throws -> ControllerSuspendResult {
+  func suspendController(_: ControllerReference) throws -> ControllerSuspendResult {
     throw ApplicationServiceClientError.invalidResponse
   }
 
-  func resumeController(_ selector: ControllerReference) throws -> ControllerResumeResult {
+  func resumeController(_: ControllerReference) throws -> ControllerResumeResult {
     throw ApplicationServiceClientError.invalidResponse
   }
 
   func disconnectWirelessController(
-    _ selector: ControllerReference
+    _: ControllerReference
   ) throws -> WirelessControllerDisconnectResult {
     throw ApplicationServiceClientError.invalidResponse
   }
 
   func deleteDamagedRemappingProfile(
-    issueID: UUID
+    issueID _: UUID
   ) throws -> ApplicationServiceRemappingSnapshotPayload {
     throw ApplicationServiceClientError.invalidResponse
   }
 
   func resetRemappingProfileLibrary(
-    issueID: UUID
+    issueID _: UUID
   ) throws -> ApplicationServiceRemappingSnapshotPayload {
     throw ApplicationServiceClientError.invalidResponse
   }

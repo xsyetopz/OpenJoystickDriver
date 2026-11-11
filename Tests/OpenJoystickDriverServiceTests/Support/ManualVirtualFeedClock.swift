@@ -13,7 +13,7 @@ final class ManualVirtualFeedClock: @unchecked Sendable {
   private struct Sleeper {
     let id: UInt64
     let due: TimeInterval
-    let continuation: CheckedContinuation<Void, Error>
+    let continuation: CheckedContinuation<Void, any Error>
   }
 
   private let lock = NSLock()

@@ -67,7 +67,7 @@ extension OutputCharacterizationTests {
     func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
     /// Applies the batch the report's first byte indexes to the previous snapshot.
-    func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+    func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
       data.first.map { script.event(batches[Int($0)], at: receivedAt) }
     }
   }

@@ -219,7 +219,7 @@ private final class StartupInputParser: PhysicalProtocolDriver {
   let outputCapabilities = PhysicalControllerOutputCapabilities.none
   let defaultColor: ControllerColor? = nil
   func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
-  func parse(report _: Data, receivedAt _: MonotonicTimestamp) throws -> ControllerEvent? { nil }
+  func parse(report _: Data, receivedAt _: MonotonicTimestamp) -> ControllerEvent? { nil }
 }
 
 private actor ScriptedUSBTransportProvider: USBTransportProvider {
@@ -228,11 +228,11 @@ private actor ScriptedUSBTransportProvider: USBTransportProvider {
 
   init(failuresBeforeSuccess: Int) { self.failuresBeforeSuccess = failuresBeforeSuccess }
 
-  func devices() throws -> [USBTransportDevice] { [] }
+  func devices() -> [USBTransportDevice] { [] }
 
   func open(
-    _ device: USBTransportDevice,
-    options: USBTransportOpenOptions
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
   ) throws -> any USBTransportSession {
     attempts += 1
     if attempts <= failuresBeforeSuccess { throw USBTransportError.accessDenied }
@@ -243,14 +243,14 @@ private actor ScriptedUSBTransportProvider: USBTransportProvider {
 }
 
 private actor StartupUSBTransportSession: USBTransportSession {
-  func controlTransfer(_ request: USBControlTransferRequest, timeout: UInt32) throws -> [UInt8] {
+  func controlTransfer(_: USBControlTransferRequest, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.notSupported
   }
 
   var inputOwnership: HIDInputOwnership { .exclusive }
-  func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) throws -> Int { data.count }
+  func write(endpoint _: UInt8, data: [UInt8], timeout _: UInt32) -> Int { data.count }
 
-  func read(endpoint: UInt8, length: Int, timeout: UInt32) throws -> [UInt8] {
+  func read(endpoint _: UInt8, length _: Int, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.timeout
   }
 }
@@ -262,12 +262,12 @@ private actor SuspendedSuccessfulUSBTransportProvider: USBTransportProvider {
 
   init(session: ClosingUSBTransportSession) { self.session = session }
 
-  func devices() throws -> [USBTransportDevice] { [] }
+  func devices() -> [USBTransportDevice] { [] }
 
   func open(
-    _ device: USBTransportDevice,
-    options: USBTransportOpenOptions
-  ) async throws -> any USBTransportSession {
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
+  ) async -> any USBTransportSession {
     startedOpen = true
     await withCheckedContinuation { continuation = $0 }
     return session
@@ -282,16 +282,16 @@ private actor SuspendedSuccessfulUSBTransportProvider: USBTransportProvider {
 }
 
 private actor ClosingUSBTransportSession: USBTransportSession {
-  func controlTransfer(_ request: USBControlTransferRequest, timeout: UInt32) throws -> [UInt8] {
+  func controlTransfer(_: USBControlTransferRequest, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.notSupported
   }
 
   var inputOwnership: HIDInputOwnership { closes == 0 ? .exclusive : .unknown }
   private var closes = 0
 
-  func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) throws -> Int { data.count }
+  func write(endpoint _: UInt8, data: [UInt8], timeout _: UInt32) -> Int { data.count }
 
-  func read(endpoint: UInt8, length: Int, timeout: UInt32) throws -> [UInt8] {
+  func read(endpoint _: UInt8, length _: Int, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.timeout
   }
 
@@ -315,7 +315,7 @@ private final class StartupRecordingOutputDispatcher: OutputDispatcher,
 
   func controllerInputOwnershipChanged(
     _ ownership: HIDInputOwnership,
-    for identifier: LogicalControllerID
+    for _: LogicalControllerID
   ) { lock.withLock { recordedOwnership.append(ownership) } }
 
   var activations: Int { lock.withLock { recordedActivations } }
@@ -337,7 +337,7 @@ struct HIDStartupPlayerIndicatorTests {
   /// A USB Sixaxis ignores the LED report written right after its startup feature reads, so the
   /// assigned slot follows its first input report. Three pads of one model light three slots.
   @Test
-  func sixaxisServedByOJDLightsItsPlayerSlotAfterItsFirstInputReport() async throws {
+  func sixaxisServedByOJDLightsItsPlayerSlotAfterItsFirstInputReport() async {
     #expect(SixaxisDriver().sessionPlan.assignsStartupPlayerIndicator)
     let backend = ScriptedHIDAccessBackend()
     await backend.enableOutputReports()

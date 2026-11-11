@@ -10,8 +10,8 @@ struct ControllerRecordWatcherTests {
   private static let addRecord = PropertyListFixture.bytes(
     json: """
       {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-       "vendorID": 4660, "productID": 43981,
-       "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
+        "vendorID": 4660, "productID": 43981,
+      "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
       """
   )
 

@@ -6,7 +6,7 @@ import Testing
 
 extension ControllerSessionTests {
   @Test
-  func ds4LivenessLossNeutralizesAndRequiresFreshNeutralReport() async throws {
+  func ds4LivenessLossNeutralizesAndRequiresFreshNeutralReport() async {
     let identifier = LogicalControllerID(vendorID: 0x054C, productID: 0x09CC)
     let clock = ManualUptime()
     let output = ControllerSessionOutputProbe()
@@ -29,7 +29,7 @@ extension ControllerSessionTests {
   }
 
   @Test
-  func freshHeldReportsDoNotRecoverRetiredDS4Output() async throws {
+  func freshHeldReportsDoNotRecoverRetiredDS4Output() async {
     let identifier = LogicalControllerID(vendorID: 0x054C, productID: 0x09CC)
     let clock = ManualUptime()
     let output = ControllerSessionOutputProbe()
@@ -61,7 +61,7 @@ extension ControllerSessionTests {
   }
 
   @Test
-  func repeatedNonAdvancingDS4ReportsBecomeStaleAndRetireOnce() async throws {
+  func repeatedNonAdvancingDS4ReportsBecomeStaleAndRetireOnce() async {
     let identifier = LogicalControllerID(vendorID: 0x054C, productID: 0x09CC)
     let clock = ManualUptime()
     let output = ControllerSessionOutputProbe()
@@ -86,7 +86,7 @@ extension ControllerSessionTests {
   }
 
   @Test
-  func missingDS4ReportsRetireOutputAndFreshNeutralRecovers() async throws {
+  func missingDS4ReportsRetireOutputAndFreshNeutralRecovers() async {
     let identifier = LogicalControllerID(vendorID: 0x054C, productID: 0x09CC)
     let clock = ManualUptime()
     let output = ControllerSessionOutputProbe()
@@ -113,7 +113,7 @@ extension ControllerSessionTests {
   }
 
   @Test
-  func minimalBluetoothDS4ReportsKeepInputLivePastTheLivenessTimeout() async throws {
+  func minimalBluetoothDS4ReportsKeepInputLivePastTheLivenessTimeout() async {
     let identifier = LogicalControllerID(vendorID: 0x054C, productID: 0x09CC)
     let clock = ManualUptime()
     let output = ControllerSessionOutputProbe()

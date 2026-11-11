@@ -50,7 +50,9 @@ struct ControllerOutputRequestsTests {
     let request = ControllerOutput.player(.player1)
     try ControllerOutput.check(ControllerOutputResult(.delivered), request, pad)
     for outcome in ControllerOutputResult.Outcome.allCases where outcome != .delivered {
-      let thrown = failure { try ControllerOutput.check(ControllerOutputResult(outcome), request, pad) }
+      let thrown = failure {
+        try ControllerOutput.check(ControllerOutputResult(outcome), request, pad)
+      }
       #expect(thrown?.id == .controllerRequestFailed, "\(outcome)")
       #expect(thrown?.message.contains("Pad A") == true, "\(outcome)")
     }
@@ -87,8 +89,11 @@ struct ControllerOutputRequestsTests {
     let other = ApplicationServiceDeviceDescription.fixture(id: "B", name: "Pad B", unit: "Q")
     #expect(try ControllerReference.device(named: token("A"), in: [pad, other]).name == "Pad A")
     #expect(
-      try ControllerReference.device(named: ControllerPortKey.fixture("Q").rawValue, in: [pad, other])
-        .name == "Pad B"
+      try ControllerReference.device(
+        named: ControllerPortKey.fixture("Q").rawValue,
+        in: [pad, other]
+      )
+      .name == "Pad B"
     )
     #expect(try ControllerReference.device(named: "045E:028E", in: [pad]).name == "Pad A")
     for (text, devices) in [

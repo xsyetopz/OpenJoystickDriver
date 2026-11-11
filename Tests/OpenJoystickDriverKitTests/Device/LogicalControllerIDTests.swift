@@ -349,9 +349,9 @@ struct LogicalControllerIDTests {
 }
 
 private struct AnyEncodable: Encodable {
-  private let encodeValue: (Encoder) throws -> Void
+  private let encodeValue: (any Encoder) throws -> Void
 
   init(_ value: any Encodable) { self.encodeValue = value.encode }
 
-  func encode(to encoder: Encoder) throws { try encodeValue(encoder) }
+  func encode(to encoder: any Encoder) throws { try encodeValue(encoder) }
 }

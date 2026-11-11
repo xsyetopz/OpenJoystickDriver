@@ -20,8 +20,8 @@ struct RemappingProfileSwitchBridgeTests {
     func connectedDevices() -> [ApplicationServiceDeviceDescription] { [] }
 
     func sendControllerOutput(
-      _ command: ControllerOutputCommand,
-      for controller: ControllerReference
+      _: ControllerOutputCommand,
+      for _: ControllerReference
     ) -> ControllerOutputResult {
       ControllerOutputResult(.notFound)
     }
@@ -32,7 +32,7 @@ struct RemappingProfileSwitchBridgeTests {
 
     func activateRemappingProfile(
       id: UUID,
-      allowEmpty: Bool
+      allowEmpty _: Bool
     ) throws -> ApplicationServiceRemappingSnapshotPayload {
       if let failure { throw failure }
       state.withLock { $0.append(id) }
@@ -45,12 +45,12 @@ struct RemappingProfileSwitchBridgeTests {
     }
 
     func deactivateRemappingProfile(
-      id: UUID
+      id _: UUID
     ) throws -> ApplicationServiceRemappingSnapshotPayload { throw Failure() }
 
     func updateRemappingProfile(
-      _ profile: RemappingProfile,
-      expectedCurrent: RemappingProfile
+      _: RemappingProfile,
+      expectedCurrent _: RemappingProfile
     ) throws -> ApplicationServiceRemappingSnapshotPayload { throw Failure() }
   }
 

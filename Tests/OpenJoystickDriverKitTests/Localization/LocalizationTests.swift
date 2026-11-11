@@ -228,7 +228,7 @@ struct LocalizationTests {
 
   @Test
   func countedTextPicksTheFormOfTheSelectedLanguage() {
-    func text(_ language: String, _ key: String, _ arguments: CVarArg...) -> String {
+    func text(_ language: String, _ key: String, _ arguments: any CVarArg...) -> String {
       Localization(preferredLanguages: [language]).plural(key, arguments: arguments)
     }
     #expect(
@@ -401,7 +401,7 @@ struct LocalizationTests {
 
     let area = resolver.formatted(
       "cli.explain.group.area",
-      arguments: ["Endpoint" as CVarArg]
+      arguments: ["Endpoint" as any CVarArg]
     )
     #expect(area == "Area: Endpoint")
   }

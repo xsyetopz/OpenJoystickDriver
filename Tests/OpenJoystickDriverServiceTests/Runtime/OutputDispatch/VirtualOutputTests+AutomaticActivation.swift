@@ -56,7 +56,6 @@ extension VirtualOutputTests {
 
   @Test
 
-
   func automaticActivationBuildsOneCoherentChildPerController() async throws {
     let identifiers = [
       LogicalControllerID(vendorID: 1, productID: 2),
@@ -120,7 +119,6 @@ extension VirtualOutputTests {
 
   @Test
 
-
   func concurrentFirstDispatchCoalescesAndKeepsBothEvents() async {
     let id = LogicalControllerID(vendorID: 0x3537, productID: 0x1010)
     let probe = ConcurrentFactoryProbe()
@@ -180,7 +178,6 @@ extension VirtualOutputTests {
   }
 
   @Test
-
 
   func stopDuringBuildDoesNotResurrect() async {
     let id = LogicalControllerID(vendorID: 0x3537, productID: 0x1010)
@@ -254,7 +251,6 @@ extension VirtualOutputTests {
   }
 
   @Test
-
 
   func suppressionRetiresPublicationThenRecreatesAndResumesOutput() async {
     let id = LogicalControllerID(vendorID: 0x3537, productID: 0x1010)

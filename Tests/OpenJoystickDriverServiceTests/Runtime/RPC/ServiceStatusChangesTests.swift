@@ -280,7 +280,7 @@ struct ServiceStatusChangesTests {
   }
 
   @Test
-  func aReportForAnAnnouncementNobodyTookIsRefused() async throws {
+  func aReportForAnAnnouncementNobodyTookIsRefused() async {
     let changes = ServiceStatusChanges(center: NotificationCenter(), pickupSeconds: 0.2)
 
     #expect(!changes.reportTestNotification(UUID(), outcome: .shown))

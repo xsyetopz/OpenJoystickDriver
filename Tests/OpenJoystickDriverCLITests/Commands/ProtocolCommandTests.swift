@@ -28,7 +28,9 @@ struct ProtocolCommandTests {
     ) throws -> String {
       let source = URL(fileURLWithPath: #filePath)
         .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        .deletingLastPathComponent().appendingPathComponent("Resources/Protocols/vendor-flydigi.plist")
+        .deletingLastPathComponent().appendingPathComponent(
+          "Resources/Protocols/vendor-flydigi.plist"
+        )
       var tree = try #require(
         try PropertyListFixture.tree(Data(contentsOf: source)) as? [String: Any]
       )
@@ -49,7 +51,10 @@ struct ProtocolCommandTests {
       let protocols = folder.appendingPathComponent("Protocols", isDirectory: true)
       try FileManager.default.createDirectory(at: protocols, withIntermediateDirectories: true)
       let name = URL(fileURLWithPath: file).lastPathComponent
-      try FileManager.default.copyItem(atPath: file, toPath: protocols.appendingPathComponent(name).path)
+      try FileManager.default.copyItem(
+        atPath: file,
+        toPath: protocols.appendingPathComponent(name).path
+      )
       let manifest: [String: Any] = [
         "apiVersion": OpenJoystickDriverAPI.version, "kind": ModPackageManifest.kind,
         "name": "family-pack", "version": "1.0.0", "author": "Tester",

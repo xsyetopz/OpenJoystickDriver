@@ -59,11 +59,14 @@ struct EndpointProfileTests {
       let client = try await welcomed(server)
 
       await client.send(
-        clientLine("ProfileRequest", #","action":"Set","profile":"Racing","key":"name","value":"Rally""#)
+        clientLine(
+          "ProfileRequest",
+          #","action":"Set","profile":"Racing","key":"name","value":"Rally""#
+        )
       )
       let renamed = try await schemaLine(client)
       #expect((renamed["profile"] as? [String: Any])?["name"] as? String == "Rally")
-      #expect(try await automation.getRemappingSnapshot().profiles.map(\.name) == ["Rally"])
+      #expect(automation.getRemappingSnapshot().profiles.map(\.name) == ["Rally"])
 
       await client.send(
         clientLine("ProfileRequest", #","action":"Activate","profile":"Rally""#)
@@ -84,7 +87,10 @@ struct EndpointProfileTests {
       #expect(missing["code"] as? String == ErrorCode.notFound.rawValue)
 
       await client.send(
-        clientLine("ProfileRequest", #","action":"Set","profile":"Racing","key":"name","value":null"#)
+        clientLine(
+          "ProfileRequest",
+          #","action":"Set","profile":"Racing","key":"name","value":null"#
+        )
       )
       let removed = try await schemaLine(client)
       #expect(removed["kind"] as? String == "Status")

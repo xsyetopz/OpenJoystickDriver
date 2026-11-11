@@ -1,4 +1,4 @@
-@testable import OpenJoystickDriverKit
+@testable package import OpenJoystickDriverKit
 
 extension ControllerSessionToken {
   /// The token `E-` and `label` padded with `0` to 16 characters, so tests can name one.

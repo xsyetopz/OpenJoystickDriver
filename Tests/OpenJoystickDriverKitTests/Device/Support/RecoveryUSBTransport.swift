@@ -24,7 +24,7 @@ actor RecoveryUSBProvider: USBTransportProvider {
 
   func open(
     _ device: USBTransportDevice,
-    options: USBTransportOpenOptions
+    options _: USBTransportOpenOptions
   ) throws -> any USBTransportSession {
     openCount += 1
     openedDevices.append(device)
@@ -47,7 +47,7 @@ actor RecoveryUSBProvider: USBTransportProvider {
 
   func failNextOpens(with errors: [USBTransportError]) { openFailures = errors }
 
-  func waitForRelease(of _: USBTransportDevice, interfaceNumber _: UInt8) async throws {
+  func waitForRelease(of _: USBTransportDevice, interfaceNumber _: UInt8) async {
     releaseWaitCount += 1
     await withCheckedContinuation { releaseWaiter = $0 }
   }
@@ -69,7 +69,7 @@ actor RecoveryUSBProvider: USBTransportProvider {
 }
 
 actor RecoveryUSBSession: USBTransportSession {
-  func controlTransfer(_ request: USBControlTransferRequest, timeout: UInt32) throws -> [UInt8] {
+  func controlTransfer(_: USBControlTransferRequest, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.notSupported
   }
 
@@ -92,14 +92,14 @@ actor RecoveryUSBSession: USBTransportSession {
     self.readError = readError
   }
 
-  func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) throws -> Int {
+  func write(endpoint: UInt8, data: [UInt8], timeout _: UInt32) throws -> Int {
     guard closeCount == 0 else { throw USBTransportError.disconnected }
     writes.append(data)
     writeEndpoints.append(endpoint)
     return data.count
   }
 
-  func read(endpoint: UInt8, length: Int, timeout: UInt32) throws -> [UInt8] {
+  func read(endpoint _: UInt8, length _: Int, timeout _: UInt32) throws -> [UInt8] {
     readCount += 1
     if !readResults.isEmpty {
       switch readResults.removeFirst() {

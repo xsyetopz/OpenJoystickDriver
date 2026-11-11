@@ -131,7 +131,7 @@ struct SteamDeckDriverTests {
   }
 
   @Test
-  func lizardModeSettingsWatchdogAndRumbleBytes() throws {
+  func lizardModeSettingsWatchdogAndRumbleBytes() {
     let driver = SteamDeckDriver()
     let startup = driver.activationWrites().hidFeatures
     #expect(startup.map(\.reportID) == [0, 0])

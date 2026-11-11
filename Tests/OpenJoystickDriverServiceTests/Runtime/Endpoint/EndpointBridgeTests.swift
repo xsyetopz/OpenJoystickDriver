@@ -16,7 +16,7 @@ private final class FakePeerChannel: PeerChannel, @unchecked Sendable {
     set { lock.withLock { handler = newValue } }
   }
 
-  func send(_ data: Data) -> Bool { true }
+  func send(_: Data) -> Bool { true }
 
   func peerSends(_ text: String) { onMessage?(Data(text.utf8)) }
 }

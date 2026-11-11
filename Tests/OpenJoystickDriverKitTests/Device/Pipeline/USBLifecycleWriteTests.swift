@@ -219,7 +219,7 @@ private final class LifecycleWriteDriver: PhysicalProtocolDriver, @unchecked Sen
 
   func announce(_ state: ControllerInputConnectionState) { lock.withLock { pendingState = state } }
 
-  func parse(report _: Data, receivedAt _: MonotonicTimestamp) throws -> ControllerEvent? { nil }
+  func parse(report _: Data, receivedAt _: MonotonicTimestamp) -> ControllerEvent? { nil }
 
   func consumeInputConnectionStateChange() -> ControllerInputConnectionState? {
     lock.withLock {

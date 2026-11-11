@@ -17,7 +17,7 @@ actor USBResolutionRaceProvider: USBTransportProvider {
   func devices() -> [USBTransportDevice] { [device] }
 
   func resolveTransport(
-    for device: USBTransportDevice,
+    for _: USBTransportDevice,
     configured: DeviceTransportProfile
   ) async -> USBTransportResolution {
     resolutionCount += 1
@@ -27,8 +27,8 @@ actor USBResolutionRaceProvider: USBTransportProvider {
   }
 
   func open(
-    _ device: USBTransportDevice,
-    options: USBTransportOpenOptions
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
   ) -> any USBTransportSession {
     openCount += 1
     signalWaiters(&openWaiters, count: openCount)

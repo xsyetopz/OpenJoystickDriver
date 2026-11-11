@@ -19,7 +19,7 @@ struct MotionProjectionTests {
   }
 
   @Test
-  func sidewaysPoseDistinguishesAllThreeSpaces() throws {
+  func sidewaysPoseDistinguishesAllThreeSpaces() {
     let gyro = ControllerMotionVector(x: 3, y: 4, z: 0)
     let gravity = ControllerMotionVector(x: 1, y: 0, z: 0)
     let local = RemappingMotionProjection.project(gyro, gravity: gravity, space: .local)

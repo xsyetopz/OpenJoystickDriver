@@ -18,7 +18,7 @@ struct VirtualInputEventTests {
   }
 
   /// The `SDLCompatible` input report for `state`.
-  private func xboxOneGIPReport(_ state: VirtualGamepadState) throws -> [UInt8] {
+  private func xboxOneGIPReport(_ state: VirtualGamepadState) -> [UInt8] {
     XboxOneGIPHIDReportFormat().buildInputReport(from: state)
   }
 
@@ -49,7 +49,7 @@ struct VirtualInputEventTests {
     let events = try parser.parseReport(Data(packet))
     var state = VirtualGamepadState()
     apply(events, to: &state)
-    let virtualReport = try xboxOneGIPReport(state)
+    let virtualReport = xboxOneGIPReport(state)
 
     #expect(events.contains(.press(.south)))
     #expect(events.contains(.press(.leftShoulder)))
@@ -83,13 +83,13 @@ struct VirtualInputEventTests {
     apply(try parser.parseReport(Data(packet)), to: &state)
     #expect(state.leftTriggerPressed)
     #expect(state.rightTriggerPressed)
-    #expect(Array(try xboxOneGIPReport(state)[6...9]) == [0xFF, 0x03, 0xFF, 0x03])
+    #expect(Array(xboxOneGIPReport(state)[6...9]) == [0xFF, 0x03, 0xFF, 0x03])
     packet[3] = 0
     packet[5] = 0
     apply(try parser.parseReport(Data(packet)), to: &state)
     #expect(state.leftTriggerPressed == false)
     #expect(state.rightTriggerPressed == false)
-    #expect(Array(try xboxOneGIPReport(state)[6...9]) == [0, 0, 0, 0])
+    #expect(Array(xboxOneGIPReport(state)[6...9]) == [0, 0, 0, 0])
   }
 
   @Test
@@ -163,9 +163,9 @@ struct VirtualInputEventTests {
     var state = VirtualGamepadState()
     let parser = xidDriver()
     apply(try parser.parseReport(Data(packet)), to: &state)
-    #expect(try xboxOneGIPReport(state)[5] & 0x0F == 0x0A)
+    #expect(xboxOneGIPReport(state)[5] & 0x0F == 0x0A)
     packet[2] = 0
     apply(try parser.parseReport(Data(packet)), to: &state)
-    #expect(try xboxOneGIPReport(state)[5] & 0x0F == 0)
+    #expect(xboxOneGIPReport(state)[5] & 0x0F == 0)
   }
 }

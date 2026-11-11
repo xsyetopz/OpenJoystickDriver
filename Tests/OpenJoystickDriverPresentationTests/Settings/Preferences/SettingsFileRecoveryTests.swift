@@ -301,7 +301,7 @@ struct SettingsFileRecoveryTests {
   func theFollowUpRunsTheUpdateCheckAndTheLoginRegistration() {
     var checks = 0
     var registrations = 0
-    let register: () throws -> Void = { registrations += 1 }
+    let register: () -> Void = { registrations += 1 }
 
     let followUp = SettingsRecoveryFollowUp(
       updateCheck: LaunchUpdateCheck(
@@ -321,12 +321,12 @@ struct SettingsFileRecoveryTests {
 private final class RecoveryDeliverySpy: RuntimeNotificationDelivering {
   private(set) var total = 0
 
-  func deliver(title: String, body: String, sound: Bool) { total += 1 }
+  func deliver(title _: String, body _: String, sound _: Bool) { total += 1 }
   nonisolated(nonsending) func deliverAwaitingSystem(
-    title: String,
-    body: String,
-    sound: Bool
-  ) async throws {
+    title _: String,
+    body _: String,
+    sound _: Bool
+  ) async {
     await Task.yield()
     total += 1
   }
@@ -336,7 +336,7 @@ private final class RecoveryLaunchAtLoginStub: LaunchAtLoginControlling {
   let isAvailable = true
   let isEnabled = false
 
-  func setEnabled(_ enabled: Bool) {}
+  func setEnabled(_: Bool) {}
 }
 
 private final class RecoveryAuthorizationStub: NotificationAuthorizationControlling,

@@ -1,6 +1,6 @@
-import CryptoKit
+public import CryptoKit
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 /// The installation key that tests pass wherever the service computes port keys, so a test never
 /// reads or creates the user's `PortKeyInstallation.key`.

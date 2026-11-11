@@ -51,21 +51,25 @@ private final class FailingStartupDriver: PhysicalProtocolDriver {
   let outputCapabilities = PhysicalControllerOutputCapabilities.none
   let defaultColor: ControllerColor? = nil
   func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
-  func parse(report _: Data, receivedAt _: MonotonicTimestamp) throws -> ControllerEvent? { nil }
+  func parse(report _: Data, receivedAt _: MonotonicTimestamp) -> ControllerEvent? { nil }
   func startupWrites() -> [PhysicalOutputWrite] {
-    [.usb(PhysicalUSBOutputPacket(endpoint: 0x01, bytes: [0x05, 0x20], timeoutMilliseconds: 2_000))]
+    [
+      .usb(
+        PhysicalUSBOutputPacket(endpoint: 0x01, bytes: [0x05, 0x20], timeoutMilliseconds: 2_000)
+      )
+    ]
   }
 }
 
 private actor FailingHandshakeProvider: USBTransportProvider {
   private var attempts = 0
 
-  func devices() throws -> [USBTransportDevice] { [] }
+  func devices() -> [USBTransportDevice] { [] }
 
   func open(
-    _ device: USBTransportDevice,
-    options: USBTransportOpenOptions
-  ) throws -> any USBTransportSession {
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
+  ) -> any USBTransportSession {
     attempts += 1
     return FailingWriteSession()
   }
@@ -76,15 +80,15 @@ private actor FailingHandshakeProvider: USBTransportProvider {
 private actor FailingWriteSession: USBTransportSession {
   var inputOwnership: HIDInputOwnership { .exclusive }
 
-  func controlTransfer(_ request: USBControlTransferRequest, timeout: UInt32) throws -> [UInt8] {
+  func controlTransfer(_: USBControlTransferRequest, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.notSupported
   }
 
-  func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) throws -> Int {
+  func write(endpoint _: UInt8, data _: [UInt8], timeout _: UInt32) throws -> Int {
     throw USBTransportError.inputOutput
   }
 
-  func read(endpoint: UInt8, length: Int, timeout: UInt32) throws -> [UInt8] {
+  func read(endpoint _: UInt8, length _: Int, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.timeout
   }
 }

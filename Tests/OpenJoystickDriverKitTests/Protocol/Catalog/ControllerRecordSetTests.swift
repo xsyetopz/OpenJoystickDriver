@@ -80,8 +80,8 @@ struct ControllerRecordSetTests {
     }
   }
 
-  /// A patch merges `modes` by `id`, so a restated default mode keeps the bundled parameters it does
-  /// not name.
+  /// A patch merges `modes` by `id`, so a restated default mode keeps the bundled parameters it
+  /// does not name.
   @Test
   func modesPatchMergesIntoTheDefaultMode() throws {
     let shareOffsetGIP = ControllerModelID(vendorID: 0x045E, productID: 0x0B12)
@@ -480,23 +480,24 @@ struct ControllerRecordSetTests {
       PropertyListFixture.bytes(
         json: """
           {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-           "selector": {"vendorID": 13932, "productID": 5},
-           "patch": {"tuning": {"stickDeadzone": 0.08},
-                     "modes": [{"protocol": {"keepAlive": false, "family": "XboxGIP"},
-                                "id": "default"}]}}
+            "selector": {"vendorID": 13932, "productID": 5},
+          "patch": {"tuning": {"stickDeadzone": 0.08},
+            "modes": [{"protocol": {"keepAlive": false, "family": "XboxGIP"},
+              "id": "default"}]}}
           """
       )
     )
     let expected = PropertyListFixture.bytes(
       json: """
         {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-         "vendorID": 13932, "productID": 5,
-         "modes": [{"id": "default", "protocol": {"family": "XboxGIP",
-           "parameters": {"shareButton": {"fromEnd": 18}}, "keepAlive": false}}],
-         "tuning": {"stickDeadzone": 0.08}}
+          "vendorID": 13932, "productID": 5,
+        "modes": [{"id": "default", "protocol": {"family": "XboxGIP",
+          "parameters": {"shareButton": {"fromEnd": 18}}, "keepAlive": false}}],
+        "tuning": {"stickDeadzone": 0.08}}
         """
     )
-    #expect(record.text == String(decoding: expected, as: UTF8.self))
+    let expectedText = try #require(String(bytes: expected, encoding: .utf8))
+    #expect(record.text == expectedText)
   }
 
   @Test

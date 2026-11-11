@@ -22,6 +22,7 @@
       )
       let model = ProfileEditorViewModel(profile: draftProfile ?? profile)
       model.expectedCurrent = profile
+      let ignoreResult: (RuntimeMutationResult) -> Void = { _ in }
       let view = ProfileEditorView(
         profile: profile,
         capabilities: .unknown,
@@ -33,7 +34,7 @@
         selectedSection: .constant(.assignments),
         onEditingStateChanged: { _ in },
         onMutationStarted: onMutationStarted,
-        onMutationResult: { _ in }
+        onMutationResult: ignoreResult
       )
       return (view, model)
     }
@@ -69,9 +70,8 @@
     @Test
     func aSaveThatTheListRefusesSaysSo() {
       let (view, model) = Self.editor(
-        draftProfile: makeProfile().replacing(name: "Changed"),
-        onMutationStarted: { _ in false }
-      )
+        draftProfile: makeProfile().replacing(name: "Changed")
+      ) { _ in false }
       view.save()
       #expect(model.localError == OJDLocalized.string("ui.profiles.editBlockedChange"))
       #expect(!view.saveInFlight)

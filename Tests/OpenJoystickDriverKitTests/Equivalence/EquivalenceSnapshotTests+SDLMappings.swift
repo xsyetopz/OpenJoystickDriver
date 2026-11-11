@@ -14,7 +14,7 @@ struct EquivalenceSnapshotSDLMappingTests {
   ) throws -> (
     title: String, lines: [String]
   ) {
-    let profile = try id.makeProfile()
+    let profile = id.makeProfile()
     let mapping = try id.gamepadMapping()
     let identity = profile.identity
     var lines = [

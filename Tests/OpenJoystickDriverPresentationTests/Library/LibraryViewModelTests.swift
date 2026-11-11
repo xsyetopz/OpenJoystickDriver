@@ -35,17 +35,17 @@ final class FakeLibraryStore: LibraryStore, @unchecked Sendable {
 
   func testRecord(
     _ model: ControllerModelID,
-    capture: Data,
-    captureName: String,
-    expectation: Data,
-    expectationName: String
+    capture _: Data,
+    captureName _: String,
+    expectation _: Data,
+    expectationName _: String
   ) throws -> ControllerRecordTestResult {
     if let refusal { throw refusal }
     testedRecords.append(model)
     return testOutcome
   }
 
-  func checkRecord(_ data: Data) throws -> LibraryRecordCheck {
+  func checkRecord(_: Data) throws -> LibraryRecordCheck {
     if let refusal { throw refusal }
     return recordCheck
   }
@@ -63,7 +63,7 @@ final class FakeLibraryStore: LibraryStore, @unchecked Sendable {
 
   func installedMods() -> [LibraryModItem] { mods }
 
-  func checkMod(folder: URL) throws -> LibraryModCheck {
+  func checkMod(folder _: URL) throws -> LibraryModCheck {
     if let refusal { throw refusal }
     return modCheck
   }

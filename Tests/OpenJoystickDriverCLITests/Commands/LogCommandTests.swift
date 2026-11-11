@@ -106,7 +106,7 @@ struct LogCommandTests {
   }
 
   @Test
-  func followStreamsLinesAndJSONLines() async throws {
+  func followStreamsLinesAndJSONLines() async {
     let paged = Locked<[String]>([])
     let env = environment(terminal: true, paged: paged, followed: ["new"])
 

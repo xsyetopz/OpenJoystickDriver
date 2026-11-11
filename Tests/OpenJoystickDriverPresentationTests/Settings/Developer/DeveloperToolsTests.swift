@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import OpenJoystickDriverKit
 import OpenJoystickDriverTestSupport
@@ -96,7 +97,7 @@ struct DeveloperToolsTests {
 
   @Test
   @MainActor
-  func aFailedExportOfThePacketCaptureShowsItsReason() throws {
+  func aFailedExportOfThePacketCaptureShowsItsReason() {
     let model = DeveloperToolsViewModel(gateway: GatewayStub())
     let missing = FileManager.default.temporaryDirectory
       .appendingPathComponent(UUID().uuidString).appendingPathComponent("capture.json")
@@ -142,7 +143,7 @@ struct DeveloperToolsTests {
 
   @Test
   @MainActor
-  func sharePressIsListedAsAnExtraInput() async throws {
+  func sharePressIsListedAsAnExtraInput() async {
     let gateway = GatewayStub(
       statusPayload: statusPayload(device: device()),
       inputState: inputState(button: .capture),

@@ -50,7 +50,10 @@ extension ProfileLibraryTests {
   func theSelectionNamesTheAppThatChoseTheProfile() async throws {
     try await withLibrary { library, _ in
       let global = makeProfile(name: "Everywhere")
-      let scoped = makeAppProfile(name: "Second", appIDs: ["com.example.First", "com.example.Second"])
+      let scoped = makeAppProfile(
+        name: "Second",
+        appIDs: ["com.example.First", "com.example.Second"]
+      )
       for profile in [scoped, global] {
         try await library.create(profile)
         try await library.activate(profileID: profile.id)

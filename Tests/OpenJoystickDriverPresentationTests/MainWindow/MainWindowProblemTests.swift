@@ -20,7 +20,11 @@ struct MainWindowProblemTests {
     )
   }
 
-  private static let failure = SystemExtensionRequestFailure(domain: "OSSystemExtensionErrorDomain", code: 4, text: "No")
+  private static let failure = SystemExtensionRequestFailure(
+    domain: "OSSystemExtensionErrorDomain",
+    code: 4,
+    text: "No"
+  )
 
   private func permissions(_ read: RuntimePermissionState) -> RuntimePermissionLoadState {
     .available(RuntimePermissionSummary(inputRead: read, inputInject: .granted))

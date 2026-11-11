@@ -18,7 +18,8 @@ struct ProfileAppChoicesTests {
     try FileManager.default.createDirectory(at: contents, withIntermediateDirectories: true)
     var plist: [String: Any] = ["CFBundleName": name]
     if let identifier { plist["CFBundleIdentifier"] = identifier }
-    try (plist as NSDictionary).write(to: contents.appendingPathComponent("Info.plist"))
+    try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0)
+      .write(to: contents.appendingPathComponent("Info.plist"))
   }
 
   private static func temporaryFolder() throws -> URL {
@@ -54,16 +55,15 @@ struct ProfileAppChoicesTests {
   @Test
   func anIdentifierOfAnInstalledAppShowsItsName() {
     let entry = ProfileAppChoices.entry(
-      for: "a.Two",
-      lookup: { $0 == "a.Two" ? Self.app("a.Two", "Two") : nil }
-    )
+      for: "a.Two"
+    ) { $0 == "a.Two" ? Self.app("a.Two", "Two") : nil }
     #expect(entry.title == "Two")
     #expect(entry.isInstalled)
   }
 
   @Test
   func anIdentifierOfAnAppThatIsNotInstalledShowsTheIdentifier() {
-    let entry = ProfileAppChoices.entry(for: "gone.App", lookup: { _ in nil })
+    let entry = ProfileAppChoices.entry(for: "gone.App") { _ in nil }
     #expect(entry.title == "gone.App")
     #expect(!entry.isInstalled)
   }

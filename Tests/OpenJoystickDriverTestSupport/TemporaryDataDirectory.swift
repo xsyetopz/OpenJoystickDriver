@@ -1,5 +1,5 @@
 import Foundation
-import OpenJoystickDriverKit
+public import OpenJoystickDriverKit
 
 extension RootedDataDirectory {
   /// A fresh data directory under the temp location of the port, so a test never touches the

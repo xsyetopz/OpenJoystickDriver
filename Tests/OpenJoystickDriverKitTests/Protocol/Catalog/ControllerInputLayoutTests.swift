@@ -114,7 +114,7 @@ struct ControllerInputLayoutTests {
       try inputLayout(
         """
         {"report": {"length": {"exactly": 2}},
-         "buttons": [{"control": "South", "bitOffset": 8, "bitSize": 1}]}
+          "buttons": [{"control": "South", "bitOffset": 8, "bitSize": 1}]}
         """
       )
     )
@@ -229,7 +229,7 @@ struct ControllerInputLayoutTests {
   }
 
   @Test
-  func messagesNameFileKeyPathRuleAndFix() throws {
+  func messagesNameFileKeyPathRuleAndFix() {
     let english = Localization(preferredLanguages: ["en-US"])
     func message(reportID: UInt8?, minimumLength: Int) -> String? {
       do {

@@ -10,8 +10,8 @@ struct ControllerRecordWatcherPackageTests {
   private static let record = PropertyListFixture.bytes(
     json: """
       {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-       "vendorID": 4660,
-       "productID": 43981, "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
+        "vendorID": 4660,
+      "productID": 43981, "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
       """
   )
 
@@ -19,7 +19,7 @@ struct ControllerRecordWatcherPackageTests {
     json: """
       {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "\(ModPackageManifest.kind)",
       "name": "arcade-pack", "version": "1.0.0",
-       "author": "Tester", "requires": {"minimum": "0.6.0"}, "controllers": ["1234-abcd.plist"]}
+        "author": "Tester", "requires": {"minimum": "0.6.0"}, "controllers": ["1234-abcd.plist"]}
       """
   )
 

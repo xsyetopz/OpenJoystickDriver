@@ -495,7 +495,7 @@ private final class BlockedTransport: EndpointTransport, @unchecked Sendable {
     return .end
   }
 
-  func writeMessage(_ data: Data) -> Bool {
+  func writeMessage(_: Data) -> Bool {
     waitForRelease()
     return false
   }

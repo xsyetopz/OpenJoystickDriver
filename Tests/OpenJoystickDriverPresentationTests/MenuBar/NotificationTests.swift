@@ -202,7 +202,7 @@ private final class NotificationDeliverySpy: RuntimeNotificationDelivering {
     title: String,
     body: String,
     sound: Bool
-  ) async throws {
+  ) async {
     await Task.yield()
     messages.append((title, body, sound))
   }

@@ -7,9 +7,9 @@ import Testing
 
 extension VirtualOutputTests {
   @Test
-  func anOverrideChangeAndASettingsResetRunOneAtATime() async throws {
+  func anOverrideChangeAndASettingsResetRunOneAtATime() async {
     let gate = InstallationGate()
-    let fixture = try await profileOverrideServer(activationGate: (.generic, gate))
+    let fixture = await profileOverrideServer(activationGate: (.generic, gate))
     let resetFinished = CompletionFlag()
 
     let server = fixture.server
@@ -45,9 +45,9 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func aHangingRetargetDuringResetSettingsTimesOut() async throws {
+  func aHangingRetargetDuringResetSettingsTimesOut() async {
     let gate = InstallationGate()
-    let fixture = try await profileOverrideServer(
+    let fixture = await profileOverrideServer(
       activationGate: (.sdlCompatible, gate),
       timeouts: VirtualOutputTransitionTimeouts(
         stageNanoseconds: 2_000_000_000,
@@ -74,12 +74,12 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func aLateRetargetReselectsOnlyAfterEarlierQueuedChanges() async throws {
+  func aLateRetargetReselectsOnlyAfterEarlierQueuedChanges() async {
     let gate = InstallationGate()
     // The per-controller timeout fires when the test says, once the activation waits at the gate.
     // A real 50 ms timer also bounded the setup activation, which a loaded machine overran.
     let trigger = VirtualOutputTimeoutTrigger()
-    let fixture = try await profileOverrideServer(
+    let fixture = await profileOverrideServer(
       activationGate: (.sdlCompatible, gate),
       timeouts: VirtualOutputTransitionTimeouts(
         stageNanoseconds: 2_000_000_000,
@@ -127,9 +127,9 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func statusReportsEachControllersProfileAndTheStoredOverride() async throws {
+  func statusReportsEachControllersProfileAndTheStoredOverride() async {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
-    let fixture = try await profileOverrideServer([id])
+    let fixture = await profileOverrideServer([id])
     _ = await fixture.change(.set("Generic"))
 
     let other = LogicalControllerID(vendorID: 5, productID: 6)
@@ -160,7 +160,7 @@ extension VirtualOutputTests {
   @Test
   func statusNamesTheProfileInForceForEachController() async throws {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
-    let fixture = try await profileOverrideServer([id])
+    let fixture = await profileOverrideServer([id])
     let profile = RemappingProfile(
       name: "Everywhere",
       device: RemappingDeviceScope(vendorID: 1, productID: 2),
@@ -187,9 +187,9 @@ extension VirtualOutputTests {
   @Test(arguments: ControllerOwnershipObservation.allCases)
   func statusDropsAStaleSelectionExactlyWhenTheSystemServesTheController(
     ownership: ControllerOwnershipObservation
-  ) async throws {
+  ) async {
     let id = LogicalControllerID(vendorID: 1, productID: 2)
-    let fixture = try await profileOverrideServer([id])
+    let fixture = await profileOverrideServer([id])
     _ = await fixture.change(.set("Generic"))
     let native = ApplicationServiceDeviceDescription(
       name: "probe",
@@ -223,7 +223,7 @@ extension VirtualOutputTests {
   @Test
   func statusSurfacesUnreadableOverrides() async throws {
     // A regular file where the persona directory belongs cannot be listed.
-    let fixture = try await profileOverrideServer { try? Data().write(to: $0) }
+    let fixture = await profileOverrideServer { try? Data().write(to: $0) }
 
     let data = await fixture.server.getStatus()
     let status = try JSONDecoder().decode(ApplicationServiceStatusPayload.self, from: data)
@@ -236,8 +236,8 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func resetSettingsClearsOverrides() async throws {
-    let fixture = try await profileOverrideServer()
+  func resetSettingsClearsOverrides() async {
+    let fixture = await profileOverrideServer()
     _ = await fixture.change(.set("Generic"))
 
     let reset = await fixture.server.resetSettings()
@@ -254,7 +254,7 @@ extension VirtualOutputTests {
   @Test
   func aResetThatKeepsAPersonaWithAnIdentityFails() async throws {
     var file: URL?
-    let fixture = try await profileOverrideServer { directory in
+    let fixture = await profileOverrideServer { directory in
       try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
       let url = directory.appendingPathComponent("stick.plist")
       let identity =

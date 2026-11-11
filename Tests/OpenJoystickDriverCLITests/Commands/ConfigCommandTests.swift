@@ -150,7 +150,7 @@ struct ConfigCommandTests {
     let identity = try bareIdentity()
 
     let run = await ServiceConnection.$socketPath.withValue(temporarySocketPath()) {
-      await self.run(["show", "--controller", identity, "--json"], in: Root())
+      await run(["show", "--controller", identity, "--json"], in: Root())
     }
 
     #expect(run.code == 0, "\(run.standardError)")
@@ -261,7 +261,7 @@ struct ConfigCommandTests {
     try root.writeDefaults(#"{"inputLivenessTimeoutMs":900}"#)
 
     let run = await ServiceConnection.$socketPath.withValue(temporarySocketPath()) {
-      await self.run(["show", "--json"], in: root)
+      await run(["show", "--json"], in: root)
     }
 
     #expect(run.code == 0, "\(run.standardError)")
@@ -277,7 +277,7 @@ struct ConfigCommandTests {
     try root.writeDefaults("{}")
 
     let run = await ServiceConnection.$socketPath.withValue(temporarySocketPath()) {
-      await self.run(["show", "--json"], in: root)
+      await run(["show", "--json"], in: root)
     }
 
     #expect(run.code == 0, "\(run.standardError)")

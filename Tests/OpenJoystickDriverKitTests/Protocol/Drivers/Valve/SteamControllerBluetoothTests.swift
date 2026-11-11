@@ -46,7 +46,7 @@ struct SteamControllerBluetoothTests {
   }
 
   @Test
-  func assemblerJoinsSegmentsAndDropsBrokenSequences() throws {
+  func assemblerJoinsSegmentsAndDropsBrokenSequences() {
     var assembler = SteamBluetoothAssembler()
     let head = [UInt8](repeating: 1, count: 18)
     let tail: [UInt8] = [2, 2]

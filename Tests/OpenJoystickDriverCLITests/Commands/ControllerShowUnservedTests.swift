@@ -78,7 +78,7 @@ struct ControllerShowUnservedTests {
     #expect(json["kind"] as? String == "UnservedController")
     #expect(json["reason"] as? String == "NoProtocolMatch")
     #expect(json["vendorID"] as? Int == 0x3537)
-    #expect(json["captureCommand"] as? String != nil)
+    #expect(json["captureCommand"] is String)
     #expect(json["draftCommand"] == nil)
   }
 

@@ -25,7 +25,7 @@ struct ProtocolDriverRegistryTests {
   }
 
   @Test
-  func rawUSBIdentityFactsClassifyLikeFullInterfaceFacts() throws {
+  func rawUSBIdentityFactsClassifyLikeFullInterfaceFacts() {
     for model in registry.rawUSBModels {
       let full = PhysicalDevice(
         vendorID: model.vendorID,

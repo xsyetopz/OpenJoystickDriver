@@ -162,7 +162,7 @@ extension UserSpaceOutputDispatcherLifecycleTests {
   }
 
   @Test
-  func virtualOutputSuppressionNeutralizesWithoutRetiringDevice() async throws {
+  func virtualOutputSuppressionNeutralizesWithoutRetiringDevice() async {
     let backend = UserSpaceDispatcherTestBackend()
     let dispatcher = UserSpaceOutputDispatcher { _ in backend }
     let identifier = LogicalControllerID(vendorID: 1, productID: 2)
@@ -338,7 +338,6 @@ extension UserSpaceOutputDispatcherLifecycleTests {
   }
 
   @Test
-
 
   func activationSendFailureClosesPartialDevicesForEveryFailurePosition() async {
     let identifiers = [

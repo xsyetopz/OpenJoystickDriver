@@ -14,7 +14,9 @@ struct DocumentedFamilyTests {
   /// The Flydigi description under `name`, with a display name and no interface signatures.
   static func description(named name: String) throws -> Data {
     let source = repository.appendingPathComponent("Resources/Protocols/vendor-flydigi.plist")
-    var tree = try #require(try PropertyListFixture.tree(Data(contentsOf: source)) as? [String: Any])
+    var tree = try #require(
+      try PropertyListFixture.tree(Data(contentsOf: source)) as? [String: Any]
+    )
     tree["family"] = name
     tree["displayName"] = "Acme Pad"
     tree["interfaceSignatures"] = nil

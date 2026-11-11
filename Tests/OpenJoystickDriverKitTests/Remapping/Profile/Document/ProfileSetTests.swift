@@ -25,7 +25,11 @@ struct ProfileSetTests {
   func aValueIsSetAtItsKey() throws {
     let racing = Self.profile("Racing")
 
-    let edited = try ProfileSetting.change(racing, key: Self.profileKey("name"), to: .string("Rally"))
+    let edited = try ProfileSetting.change(
+      racing,
+      key: Self.profileKey("name"),
+      to: .string("Rally")
+    )
 
     #expect(edited.name == "Rally")
     #expect(edited.id == racing.id)
@@ -46,7 +50,11 @@ struct ProfileSetTests {
   @Test
   func aValueThatMakesTheProfileInvalidIsRefusedWithTheProfileCode() throws {
     let failure = #expect(throws: CodedFailure.self) {
-      try ProfileSetting.change(Self.profile("Racing"), key: Self.profileKey("name"), to: .integer(7))
+      try ProfileSetting.change(
+        Self.profile("Racing"),
+        key: Self.profileKey("name"),
+        to: .integer(7)
+      )
     }
     #expect(failure?.id == .invalidProfile)
   }

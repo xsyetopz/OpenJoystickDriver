@@ -9,7 +9,7 @@ import Testing
 @Suite(.serialized)
 struct StatusTests {
   @Test
-  func translatesStatus() async throws {
+  func translatesStatus() async {
     let device = testPad(sessionToken: "device-7")
     let gateway = GatewayStub(
       statusPayload: ApplicationServiceStatusPayload(
@@ -417,7 +417,9 @@ struct StatusTests {
     #expect(
       title("IDLE", .noControllerLinked) == OJDLocalized.string("ui.controllers.wirelessReceiver")
     )
-    #expect(title(nil, .noControllerLinked) == OJDLocalized.string("ui.controllers.wirelessReceiver"))
+    #expect(
+      title(nil, .noControllerLinked) == OJDLocalized.string("ui.controllers.wirelessReceiver")
+    )
     #expect(title(nil, .deviceInUse) == "2dc8:310a")
   }
 

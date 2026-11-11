@@ -13,7 +13,7 @@ final class RecoveryInputParser: PhysicalProtocolDriver, @unchecked Sendable {
 
   var resetCount: Int { lock.withLock { storedResetCount } }
 
-  func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     data == Data([1]) ? ControllerEvent([.press(.south)], at: receivedAt.nanoseconds) : nil
   }
 
@@ -29,7 +29,7 @@ final class RecoveryRumbleParser: PhysicalProtocolDriver, @unchecked Sendable {
   let defaultColor: ControllerColor? = nil
   func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
-  func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     data == Data([1]) ? ControllerEvent([.press(.south)], at: receivedAt.nanoseconds) : nil
   }
 

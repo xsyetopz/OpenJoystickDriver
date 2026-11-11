@@ -47,13 +47,13 @@ final class RecoveryGatedOutputDispatcher: OutputDispatcher, ControllerInputOwne
 
   func controllerInputOwnershipChanged(
     _ ownership: HIDInputOwnership,
-    for identifier: LogicalControllerID
+    for _: LogicalControllerID
   ) async {
     if ownership == .accessDenied { await gate.blockAccessDeniedReport() }
     stateLock.withLock { storedOwnershipReports.append(ownership) }
   }
 
-  func controllerDidStop(_ identifier: LogicalControllerID) {
+  func controllerDidStop(_: LogicalControllerID) {
     stateLock.withLock { storedDidStopController = true }
   }
 }
@@ -83,6 +83,6 @@ final class RecoveryOutputDispatcher: OutputDispatcher, ControllerInputOwnership
 
   func controllerInputOwnershipChanged(
     _ ownership: HIDInputOwnership,
-    for identifier: LogicalControllerID
+    for _: LogicalControllerID
   ) { stateLock.withLock { storedOwnershipReports.append(ownership) } }
 }

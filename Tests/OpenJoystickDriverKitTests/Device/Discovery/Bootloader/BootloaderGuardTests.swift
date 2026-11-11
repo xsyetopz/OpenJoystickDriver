@@ -153,7 +153,7 @@ private struct CountingProbeReader: ControllerModeProbeReader {
   var reads: Int { get async { await count.value } }
 
   func readFeatureReport(
-    _ request: PhysicalHIDFeatureReadRequest
+    _: PhysicalHIDFeatureReadRequest
   ) async -> PhysicalHIDReportResult<Data> {
     await count.increment()
     return .unavailable

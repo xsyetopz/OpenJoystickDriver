@@ -13,7 +13,7 @@ struct SteamHIDRoleTests {
   static let dongleLocation: UInt32 = 0x0031_0000
 
   @Test
-  func dongleRunsOneRolePerSlotAndRoutesEachConnection() async throws {
+  func dongleRunsOneRolePerSlotAndRoutesEachConnection() async {
     let backend = ScriptedHIDAccessBackend()
     await backend.enableFeatureReports()
     let recorder = HIDRoleEventRecorder()
@@ -86,7 +86,7 @@ struct SteamHIDRoleTests {
   }
 
   @Test
-  func wiredControllerBindsOnlyInterfaceTwoAndHoldsItsSiblingsClaim() async throws {
+  func wiredControllerBindsOnlyInterfaceTwoAndHoldsItsSiblingsClaim() async {
     let backend = ClaimRecordingHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
@@ -154,7 +154,7 @@ struct SteamHIDRoleTests {
   }
 
   @Test
-  func onlyTheSteamFamilyDeclaresRoles() throws {
+  func onlyTheSteamFamilyDeclaresRoles() {
     let registry = ProtocolDriverRegistry()
     #expect(
       Set(registry.hidRoleModels)

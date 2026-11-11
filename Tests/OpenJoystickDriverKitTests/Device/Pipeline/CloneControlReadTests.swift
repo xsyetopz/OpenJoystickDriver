@@ -92,17 +92,17 @@ struct CloneControlReadTests {
 private actor EventRecordingUSBTransportSession: USBTransportSession {
   private var recorded: [String] = []
 
-  func controlTransfer(_ request: USBControlTransferRequest, timeout: UInt32) throws -> [UInt8] {
+  func controlTransfer(_ request: USBControlTransferRequest, timeout _: UInt32) -> [UInt8] {
     recorded.append("control \(request.requestType) \(request.request) \(request.value)")
     return []
   }
 
-  func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) throws -> Int {
+  func write(endpoint _: UInt8, data: [UInt8], timeout _: UInt32) -> Int {
     recorded.append("write")
     return data.count
   }
 
-  func read(endpoint: UInt8, length: Int, timeout: UInt32) throws -> [UInt8] {
+  func read(endpoint _: UInt8, length _: Int, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.timeout
   }
 

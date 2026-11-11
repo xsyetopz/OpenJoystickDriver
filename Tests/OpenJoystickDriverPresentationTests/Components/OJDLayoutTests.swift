@@ -1,3 +1,4 @@
+import CoreFoundation
 import Testing
 
 @testable import OpenJoystickDriverPresentation

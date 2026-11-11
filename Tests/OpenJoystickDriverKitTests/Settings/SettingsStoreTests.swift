@@ -28,8 +28,8 @@ struct SettingsStoreTests {
     for key in ApplicationSettingKey.allCases {
       for value in [true, false] {
         // Show in menu bar and Show in Dock are never both off.
-        if key == .showInMenuBar && !value { try store.set(.showInDock, to: true) }
-        if key == .showInDock && !value { try store.set(.showInMenuBar, to: true) }
+        if key == .showInMenuBar, !value { try store.set(.showInDock, to: true) }
+        if key == .showInDock, !value { try store.set(.showInMenuBar, to: true) }
         try store.set(key, to: value)
         #expect(try store.value(of: key) == value, "\(key.rawValue)")
       }

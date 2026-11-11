@@ -139,7 +139,7 @@ struct StartupLifetimeTests {
   }
 
   @Test
-  func immediateRemovalCancelsDelayedInitialization() async throws {
+  func immediateRemovalCancelsDelayedInitialization() async {
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
       installationKey: testPortKeyInstallationKey
@@ -166,7 +166,7 @@ struct StartupLifetimeTests {
   }
 
   @Test
-  func staleDetachDoesNotCancelANewerPendingConnectionAtTheSameRoute() async throws {
+  func staleDetachDoesNotCancelANewerPendingConnectionAtTheSameRoute() async {
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
       installationKey: testPortKeyInstallationKey
@@ -202,7 +202,7 @@ struct StartupLifetimeTests {
   }
 
   @Test
-  func staleDetachCannotTearDownTheCurrentReconnectedSnapshot() async throws {
+  func staleDetachCannotTearDownTheCurrentReconnectedSnapshot() async {
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),
       installationKey: testPortKeyInstallationKey

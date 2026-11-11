@@ -88,14 +88,14 @@ struct GatedControlTransferTests {
 private actor ControlRecordingUSBTransportSession: USBTransportSession {
   private var sent: [UInt8] = []
 
-  func controlTransfer(_ request: USBControlTransferRequest, timeout: UInt32) throws -> [UInt8] {
+  func controlTransfer(_ request: USBControlTransferRequest, timeout _: UInt32) -> [UInt8] {
     sent.append(request.request)
     return []
   }
 
-  func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) throws -> Int { data.count }
+  func write(endpoint _: UInt8, data: [UInt8], timeout _: UInt32) -> Int { data.count }
 
-  func read(endpoint: UInt8, length: Int, timeout: UInt32) throws -> [UInt8] {
+  func read(endpoint _: UInt8, length _: Int, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.timeout
   }
 

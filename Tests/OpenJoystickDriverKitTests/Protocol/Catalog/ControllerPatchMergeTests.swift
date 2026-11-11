@@ -105,14 +105,18 @@ struct ControllerPatchMergeTests {
   @Test
   func mergingAPatchOrdersTheRecordFirstThenThePatchsNewMembers() throws {
     let record = try Self.json(#"{"b": {"y": 1, "x": 2}, "a": [1, 2], "c": 3}"#)
-    let patch = try Self.json(#"{"d": {"q": 1, "p": 0}, "b": {"z": 1, "x": 5}, "a": [{"k": 1, "j": 2}]}"#)
+    let patch = try Self.json(
+      #"{"d": {"q": 1, "p": 0}, "b": {"z": 1, "x": 5}, "a": [{"k": 1, "j": 2}]}"#
+    )
     let removed = ControllerPatchMerge.removing(["c"], from: record)
     let merged = ControllerPatchMerge.mergePatch(
       ControllerPatchMerge.removing(["d", "p"], from: removed),
       patch
     )
     #expect(
-      try Self.json(#"{"b": {"y": 1, "x": 5, "z": 1}, "a": [{"k": 1, "j": 2}], "d": {"q": 1, "p": 0}}"#)
+      try Self.json(
+        #"{"b": {"y": 1, "x": 5, "z": 1}, "a": [{"k": 1, "j": 2}], "d": {"q": 1, "p": 0}}"#
+      )
         == merged
     )
     // A member removed and added again, and an object over a scalar, take the patch's order.

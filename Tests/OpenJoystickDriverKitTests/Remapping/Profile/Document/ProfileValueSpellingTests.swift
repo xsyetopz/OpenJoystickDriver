@@ -161,7 +161,9 @@ struct ProfileValueSpellingTests {
     #expect(
       try decoder.decode(
         RemappingApplicationScope.self,
-        from: Data(#"{"type":"Application","appIDs":["com.example.game","com.example.other"]}"#.utf8)
+        from: Data(
+          #"{"type":"Application","appIDs":["com.example.game","com.example.other"]}"#.utf8
+        )
       ) == .application(appIDs: ["com.example.game", "com.example.other"])
     )
     for type in ["global", "application"] {

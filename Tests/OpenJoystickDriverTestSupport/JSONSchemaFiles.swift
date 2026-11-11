@@ -1,4 +1,4 @@
-import Foundation
+package import Foundation
 import OpenJoystickDriverKit
 
 /// Reads the schemas in `Resources/Schemas` and validates JSON values against them.
@@ -48,8 +48,7 @@ package enum JSONSchemaFiles {
     return try issues(inObject: value, against: reference)
   }
 
-  /// The issues in the stored document `data`, an XML property list, against the schema at
-  /// `reference`. The validator checks the objects the property list holds.
+  // The validator checks the objects the property list holds.
   package static func issues(
     inPropertyList data: Data,
     against reference: String

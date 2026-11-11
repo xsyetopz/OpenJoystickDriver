@@ -37,13 +37,13 @@ struct VirtualHIDProfileTests {
   }
 
   @Test
-  func everyIDResolvesToItsProfile() throws {
-    for id in VirtualHIDProfileID.allCases { #expect(try id.makeProfile().id == id) }
+  func everyIDResolvesToItsProfile() {
+    for id in VirtualHIDProfileID.allCases { #expect(id.makeProfile().id == id) }
   }
 
   @Test
-  func sdlCompatibleProfileAdaptsTheXboxOneGIPLayout() throws {
-    let profile = try VirtualHIDProfileID.sdlCompatible.makeProfile()
+  func sdlCompatibleProfileAdaptsTheXboxOneGIPLayout() {
+    let profile = VirtualHIDProfileID.sdlCompatible.makeProfile()
     #expect(profile.identity == .sdlCompatible)
     #expect(profile.identity.vendorID == 0x045E && profile.identity.productID == 0x0B0C)
     #expect(profile.descriptor == XboxOneGIPHIDDescriptor.descriptor)
@@ -53,8 +53,8 @@ struct VirtualHIDProfileTests {
   }
 
   @Test
-  func genericProfileAdaptsTheCurrentOJDGenericGamepad() throws {
-    let profile = try VirtualHIDProfileID.generic.makeProfile()
+  func genericProfileAdaptsTheCurrentOJDGenericGamepad() {
+    let profile = VirtualHIDProfileID.generic.makeProfile()
     #expect(profile.identity == .generic)
     #expect(profile.descriptor == GamepadHIDDescriptor.descriptor)
     let neutral = profile.inputReport(for: .neutral)
@@ -75,7 +75,7 @@ struct VirtualHIDProfileTests {
 
   @Test
   func xboxProfileDecodesOnlyItsOwnRumbleReport() throws {
-    let profile = try VirtualHIDProfileID.sdlCompatible.makeProfile()
+    let profile = VirtualHIDProfileID.sdlCompatible.makeProfile()
     let report = gipRumbleReport(
       activation: 0x0F,
       leftTrigger: 10,
@@ -124,8 +124,8 @@ struct VirtualHIDProfileTests {
   }
 
   @Test
-  func genericProfileIsInputOnlyAndDecodesNoOutputReport() throws {
-    let profile = try VirtualHIDProfileID.generic.makeProfile()
+  func genericProfileIsInputOnlyAndDecodesNoOutputReport() {
+    let profile = VirtualHIDProfileID.generic.makeProfile()
     #expect(profile.identity.vendorID == 0x1209)
     #expect(profile.identity.productID == 0x4A4F)
     #expect(profile.reportFormat.outputReportPayloadSize == nil)

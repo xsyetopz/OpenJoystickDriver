@@ -8,7 +8,7 @@ import Testing
 @Suite(.serialized)
 struct ProfileMutationTests {
   @Test
-  func updatePreservesCompareAndSwapAndSurfacesConflict() async throws {
+  func updatePreservesCompareAndSwapAndSurfacesConflict() async {
     let original = makeProfile(name: "Original")
     let proposed = makeProfile(id: original.id, name: "Proposed")
     let gateway = GatewayStub(

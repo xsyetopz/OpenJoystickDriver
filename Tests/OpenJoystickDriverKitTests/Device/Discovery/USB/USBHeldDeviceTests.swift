@@ -88,10 +88,12 @@ struct USBHeldDeviceTests {
 
   /// The unbound device carries the product string the transport observed, and none when the
   /// string is missing or blank.
-  @Test(arguments: [
-    ("8BitDo Ultimate 2C Wireless Controller", "8BitDo Ultimate 2C Wireless Controller"),
-    ("  IDLE \n", "IDLE"), ("   ", nil), ("", nil), (nil, nil),
-  ] as [(String?, String?)])
+  @Test(
+    arguments: [
+      ("8BitDo Ultimate 2C Wireless Controller", "8BitDo Ultimate 2C Wireless Controller"),
+      ("  IDLE \n", "IDLE"), ("   ", nil), ("", nil), (nil, nil),
+    ] as [(String?, String?)]
+  )
   func theUnboundDeviceCarriesTheObservedProductName(observed: String?, name: String?) async {
     let named = USBTransportDevice(
       route: .rawUSB,
@@ -383,15 +385,15 @@ actor HeldDeviceProvider: USBTransportProvider {
 
   func devices() -> [USBTransportDevice] { [device] }
 
-  func physicalDeviceObservation(for device: USBTransportDevice) -> PhysicalDevice? { passive }
+  func physicalDeviceObservation(for _: USBTransportDevice) -> PhysicalDevice? { passive }
 
   func resolveTransport(
-    for device: USBTransportDevice,
+    for _: USBTransportDevice,
     configured profile: DeviceTransportProfile
   ) -> USBTransportResolution { USBTransportResolution(profile: profile, physicalDevice: passive) }
 
   func configurationObservation(
-    for device: USBTransportDevice,
+    for _: USBTransportDevice,
     configurationValue: UInt8
   ) throws -> PhysicalDevice? {
     descriptorReads.append(configurationValue)
@@ -399,15 +401,15 @@ actor HeldDeviceProvider: USBTransportProvider {
     return configured
   }
 
-  func exclusiveOwner(of device: USBTransportDevice) async throws -> String? {
+  func exclusiveOwner(of _: USBTransportDevice) async throws -> String? {
     ownerReads += 1
     if ownerReadBlocked { await withCheckedContinuation { ownerReadWaiter = $0 } }
     return try owner.get()
   }
 
   func open(
-    _ device: USBTransportDevice,
-    options: USBTransportOpenOptions
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
   ) -> any USBTransportSession {
     openCount += 1
     return session

@@ -45,7 +45,7 @@ extension UserSpaceOutputDispatcherLifecycleTests {
   }
 
   @Test
-  func closeCancelsBackendBeforeDrainingCapturedDispatch() async throws {
+  func closeCancelsBackendBeforeDrainingCapturedDispatch() async {
     let sendGate = UserSpaceDispatcherTestGate()
     let backend = UserSpaceDispatcherTestBackend(sendGate: sendGate)
     let dispatcher = UserSpaceOutputDispatcher { _ in backend }

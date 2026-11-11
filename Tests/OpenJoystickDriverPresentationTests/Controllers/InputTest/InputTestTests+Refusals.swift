@@ -121,7 +121,11 @@ extension InputTestTests {
   @Test
   @MainActor
   func stopIsUnavailableWhileNoRumbleRuns() {
-    let model = model(capabilities: Self.allOutputs, connected: true, gateway: InputTestGatewayStub())
+    let model = model(
+      capabilities: Self.allOutputs,
+      connected: true,
+      gateway: InputTestGatewayStub()
+    )
     #expect(!model.canStopRumble)
     model.stopRumble()
     #expect(model.outputState == .idle)

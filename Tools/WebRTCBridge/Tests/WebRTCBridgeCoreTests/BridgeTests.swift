@@ -1,59 +1,61 @@
-import XCTest
+import Testing
 
 @testable import BridgeCore
 @testable import WebRTCBridgeCore
 
 /// Checks the proof, the frame translation, the handshake and a loopback of both bridges.
-final class BridgeTests: XCTestCase {
+final class BridgeTests {
   /// The proof equals the values that the reference client computes.
-  func testProofMatchesTheReferenceClientVectors() {
+  @Test
+  func proofMatchesTheReferenceClientVectors() {
     // Computed with `proof()` of Scripts/SDK/reference_client.py, not with this package.
-    XCTAssertEqual(
-      EndpointSession.proof(token: "ojd_x", nonce: "abc"),
-      "7ec5c93f68b657c0ecffc781972b4f9f330a1015402afd3d0ff980c90c26a738"
+    #expect(
+      EndpointSession.proof(token: "ojd_x", nonce: "abc")
+        == "7ec5c93f68b657c0ecffc781972b4f9f330a1015402afd3d0ff980c90c26a738"
     )
-    XCTAssertEqual(
+    #expect(
       EndpointSession.proof(
         token: "ojd_test_token",
         nonce: "ICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj8"
-      ),
-      "5944d41d5cf05ebd966fe93b5273fdaf0ed5d19c337f3176139f9c18455952ff"
+      ) == "5944d41d5cf05ebd966fe93b5273fdaf0ed5d19c337f3176139f9c18455952ff"
     )
   }
 
   /// A `MODIFIED` watch line becomes a `Frame` with only known buttons and scaled axes.
-  func testAWatchLineBecomesAFrame() throws {
+  @Test
+  func aWatchLineBecomesAFrame() throws {
     let line = Self.modified(pressed: ["South", "unknown-control"], hat: "NorthEast")
-    let (id, frame) = try XCTUnwrap(FrameTranslation.frame(fromWatchLine: line))
-    XCTAssertEqual(id, "pad-1")
-    XCTAssertEqual(frame["kind"] as? String, "Frame")
-    XCTAssertEqual(frame["buttons"] as? [String], ["South"])
-    XCTAssertEqual(frame["dpad"] as? [String], ["DpadUp", "DpadRight"])
-    let axes = try XCTUnwrap(frame["axes"] as? [String: Double])
-    XCTAssertEqual(axes["LeftStickY"], 1)
-    XCTAssertEqual(axes["RightTrigger"], 1)
-    XCTAssertNil(FrameTranslation.frame(fromWatchLine: ["type": "ADDED", "object": [:]]))
+    let (id, frame) = try #require(FrameTranslation.frame(fromWatchLine: line))
+    #expect(id == "pad-1")
+    #expect((frame["kind"] as? String) == "Frame")
+    #expect((frame["buttons"] as? [String]) == ["South"])
+    #expect((frame["dpad"] as? [String]) == ["DpadUp", "DpadRight"])
+    let axes = try #require(frame["axes"] as? [String: Double])
+    #expect(axes["LeftStickY"] == 1)
+    #expect(axes["RightTrigger"] == 1)
+    #expect(FrameTranslation.frame(fromWatchLine: ["type": "ADDED", "object": [:]]) == nil)
   }
 
   /// The endpoint refuses a wrong token, and the error carries the endpoint's code.
-  func testAWrongTokenIsRefused() throws {
+  @Test
+  func aWrongTokenIsRefused() throws {
     let endpoint = try FakeEndpoint()
     endpoint.serve(connections: 1)
-    XCTAssertThrowsError(
+    let error = #expect(throws: BridgeError.self) {
       try EndpointSession.connect(
         socketPath: endpoint.path,
         token: "wrong",
         tokenName: FakeEndpoint.tokenName,
         scopes: ["Read"]
       )
-    ) { error in
-      XCTAssertEqual((error as? BridgeError)?.description.hasPrefix("E1002"), true)
     }
+    #expect(error?.description.hasPrefix("E1002") == true)
   }
 
   /// Two bridges in one process, joined by a real data channel: a controller frame goes from the
   /// player to the host's virtual gamepad, and the rumble command goes back.
-  func testLoopbackPassesAFrameOneWayAndRumbleBack() async throws {
+  @Test
+  func loopbackPassesAFrameOneWayAndRumbleBack() async throws {
     let rumble: [String: Any] = [
       "apiVersion": endpointAPIVersion, "kind": "RumbleCommand", "type": "SetRumble",
       "intensities": [
@@ -82,13 +84,14 @@ final class BridgeTests: XCTestCase {
     await player.waitUntilOpen()
     await host.waitUntilOpen()
 
-    let received = expectation(description: "the player receives the rumble command")
+    let (received, receivedSignal) = AsyncStream.makeStream(of: Void.self)
     let hostBridge = HostBridge(link: host)
     let playerBridge = PlayerBridge(link: player)
     nonisolated(unsafe) var rumbleLine: [String: Any]?
     playerBridge.onRumble = { line in
       rumbleLine = line
-      received.fulfill()
+      receivedSignal.yield()
+      receivedSignal.finish()
     }
     try hostBridge.start(
       EndpointCredentials(
@@ -105,26 +108,32 @@ final class BridgeTests: XCTestCase {
       )
     )
 
-    await fulfillment(of: [received], timeout: 20)
-    XCTAssertEqual(rumbleLine?["type"] as? String, "SetRumble")
-    XCTAssertEqual((rumbleLine?["intensities"] as? [String: Int])?["lowFrequency"], 65535)
+    // The player receives the rumble command, or the stream ends after 20 seconds without it.
+    let timeout = Task {
+      try await Task.sleep(nanoseconds: 20_000_000_000)
+      receivedSignal.finish()
+    }
+    for await _ in received { break }
+    timeout.cancel()
+    #expect((rumbleLine?["type"] as? String) == "SetRumble")
+    #expect((rumbleLine?["intensities"] as? [String: Int])?["lowFrequency"] == 65535)
 
     let host1 = hostEndpoint.snapshot()
-    XCTAssertEqual(host1.requests.first?["kind"] as? String, "FeedRequest")
-    XCTAssertEqual(host1.proofs, [true])
-    XCTAssertTrue(host1.frames.contains { ($0["buttons"] as? [String]) == ["South"] })
+    #expect((host1.requests.first?["kind"] as? String) == "FeedRequest")
+    #expect(host1.proofs == [true])
+    #expect(host1.frames.contains { ($0["buttons"] as? [String]) == ["South"] })
     let player1 = playerEndpoint.snapshot()
-    XCTAssertEqual(player1.requests.first?["kind"] as? String, "Subscription")
-    XCTAssertEqual(player1.proofs, [true])
+    #expect((player1.requests.first?["kind"] as? String) == "Subscription")
+    #expect(player1.proofs == [true])
 
     // Both fake endpoints closed their listening sockets after one accept; the bridges and the
     // WebRTC stack must not hold any listening socket.
     try await Task.sleep(nanoseconds: 300_000_000)
-    XCTAssertEqual(ListeningSockets.ofThisProcess(), [])
+    #expect(ListeningSockets.ofThisProcess().isEmpty)
 
     // The peer sent no frame after the first, so the host keeps the feed open with KeepAlive.
     try await Task.sleep(nanoseconds: 1_200_000_000)
-    XCTAssertGreaterThanOrEqual(hostEndpoint.keepAliveCount(), 1)
+    #expect(hostEndpoint.keepAliveCount() >= 1)
 
     hostBridge.stop()
     playerBridge.stop()
@@ -133,9 +142,10 @@ final class BridgeTests: XCTestCase {
   }
 
   /// The scan finds the listening socket of a fake endpoint that has not served.
-  func testTheScanSeesAListeningSocket() throws {
+  @Test
+  func theScanSeesAListeningSocket() throws {
     let endpoint = try FakeEndpoint()
-    XCTAssertEqual(ListeningSockets.ofThisProcess().count, 1)
+    #expect(ListeningSockets.ofThisProcess().count == 1)
     endpoint.serve(connections: 0)
   }
 

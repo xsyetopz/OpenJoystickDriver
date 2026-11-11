@@ -124,6 +124,7 @@ extension ProtocolClassifierTests {
   ) -> Data {
     let protocolID = PhysicalProtocolID(rawValue: family)
     let keys = protocolID.map(ProtocolDescriptionFixture.sessionKeyMembers) ?? ""
+    let variants = protocolID.map(ProtocolDescriptionFixture.variantMembers) ?? ""
     return PropertyListFixture.bytes(
       json: """
         {
@@ -131,13 +132,13 @@ extension ProtocolClassifierTests {
           "apiVersion": "\(apiVersion)",
           "kind": "\(kind)",
           "family": "\(family)",
-          \(PhysicalProtocolID(rawValue: family).map(ProtocolDescriptionFixture.variantMembers) ?? "")
+          \(variants)
           \(keys)
           "endpoints": {"in": 130, "out": 2},
           "defaults": {"session": {"handshakeAttempts": 3, "announceResendLimit": 8,
             "namedPackets": [
             {"id": "XboxGIP/power-on", "bytes": "05 20 00 01 00", "sessionByte": 2}
-           ]}},
+          ]}},
           "interfaceSignatures": [
             {\(signature), "interfaceClass": 255, "interfaceSubclass": 71, "interfaceProtocol": 208}
           ]

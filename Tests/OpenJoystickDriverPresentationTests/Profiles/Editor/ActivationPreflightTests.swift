@@ -17,7 +17,7 @@ struct ActivationPreflightTests {
   }
 
   @Test
-  func launchingActionsAskForConfirmationAndListTheUrlInFull() throws {
+  func launchingActionsAskForConfirmationAndListTheUrlInFull() {
     let url = "steam://run/440?launch=1"
     let confirmation = ProfileEditorConfirmation.activation(
       of: Self.profile(.openURL(url)),
@@ -31,7 +31,7 @@ struct ActivationPreflightTests {
   }
 
   @Test
-  func theAlertNamesAMissingPostEventAccess() throws {
+  func theAlertNamesAMissingPostEventAccess() {
     let confirmation = ProfileEditorConfirmation.activation(
       of: Self.profile(.keyboard(key: .a, modifiers: [])),
       postEventAccess: .notAuthorized

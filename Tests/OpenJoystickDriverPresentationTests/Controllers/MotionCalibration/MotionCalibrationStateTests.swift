@@ -108,7 +108,7 @@
         from: Data(
           """
           {"hasMotionBaseline":\(baseline),"isCollecting":\(collecting),
-           "offsetDegreesPerSecond":{"x":0,"y":0,"z":0}}
+            "offsetDegreesPerSecond":{"x":0,"y":0,"z":0}}
           """.utf8
         )
       )
@@ -218,7 +218,7 @@
     private var waiter: (count: Int, continuation: CheckedContinuation<Void, Never>)?
 
     func motionCalibration(
-      for selector: ControllerReference,
+      for _: ControllerReference,
       command: RemappingMotionCalibrationCommand?
     ) async throws -> RemappingMotionCalibrationStatus {
       commands.append(command)
@@ -254,8 +254,8 @@
 
     // swiftlint:disable async_without_await
     func motionCalibration(
-      for selector: ControllerReference,
-      command: RemappingMotionCalibrationCommand?
+      for _: ControllerReference,
+      command _: RemappingMotionCalibrationCommand?
     ) async throws -> RemappingMotionCalibrationStatus {
       reads += 1
       return try results.removeFirst().get()
@@ -291,7 +291,7 @@
       let data = Data(
         """
         {"hasMotionBaseline":true,"isCollecting":true,
-         "offsetDegreesPerSecond":{"x":0,"y":0,"z":0}}
+          "offsetDegreesPerSecond":{"x":0,"y":0,"z":0}}
         """.utf8
       )
       let status = try JSONDecoder().decode(RemappingMotionCalibrationStatus.self, from: data)

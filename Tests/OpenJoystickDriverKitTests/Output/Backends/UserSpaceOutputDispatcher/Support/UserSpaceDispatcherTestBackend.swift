@@ -23,7 +23,7 @@ final class UserSpaceDispatcherTestBackend: VirtualDeviceBackend,
     self.failsSend = failsSend
   }
 
-  func activate(hostReports: UserSpaceHostReportHandler) {
+  func activate(hostReports _: UserSpaceHostReportHandler) {
     lock.withLock { activationCount += 1 }
   }
 

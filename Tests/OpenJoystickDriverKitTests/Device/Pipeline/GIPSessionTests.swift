@@ -24,7 +24,7 @@ struct GIPSessionTests {
   )
 
   @Test
-  func aPadThatSendsInputAndNoAnnounceDeliversItsFirstInput() async throws {
+  func aPadThatSendsInputAndNoAnnounceDeliversItsFirstInput() async {
     let pad = SilentGIPPadSession()
     let dispatcher = InputRecordingDispatcher()
     let pipeline = DevicePipeline(
@@ -53,12 +53,12 @@ private actor SilentGIPPadProvider: USBTransportProvider {
 
   init(session: SilentGIPPadSession) { self.session = session }
 
-  func devices() throws -> [USBTransportDevice] { [] }
+  func devices() -> [USBTransportDevice] { [] }
 
   func open(
-    _ device: USBTransportDevice,
-    options: USBTransportOpenOptions
-  ) throws -> any USBTransportSession { session }
+    _: USBTransportDevice,
+    options _: USBTransportOpenOptions
+  ) -> any USBTransportSession { session }
 }
 
 /// A pad that sends no announce packet. Its status frame and first input go to the interrupt IN
@@ -75,11 +75,11 @@ private actor SilentGIPPadSession: USBTransportSession {
     [0x03, 0x20, 0x01, 0x04, 0x80, 0x00, 0x00, 0x00] + [0x20, 0x00, 0x01, 0x20, 0x10, 0x00]
     + [UInt8](repeating: 0, count: 30)
 
-  func controlTransfer(_ request: USBControlTransferRequest, timeout: UInt32) throws -> [UInt8] {
+  func controlTransfer(_: USBControlTransferRequest, timeout _: UInt32) throws -> [UInt8] {
     throw USBTransportError.notSupported
   }
 
-  func write(endpoint: UInt8, data: [UInt8], timeout: UInt32) -> Int {
+  func write(endpoint _: UInt8, data: [UInt8], timeout _: UInt32) -> Int {
     events.append("write \(String(data[0], radix: 16))")
     if data[0] == 0x05, let waiting = pending {
       pending = nil
@@ -88,7 +88,7 @@ private actor SilentGIPPadSession: USBTransportSession {
     return data.count
   }
 
-  func read(endpoint: UInt8, length: Int, timeout: UInt32) async throws -> [UInt8] {
+  func read(endpoint _: UInt8, length _: Int, timeout: UInt32) async throws -> [UInt8] {
     events.append("read")
     nextID += 1
     let id = nextID

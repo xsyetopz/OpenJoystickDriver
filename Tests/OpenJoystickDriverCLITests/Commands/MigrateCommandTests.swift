@@ -42,8 +42,12 @@ struct MigrateCommandTests {
     #expect(json.code == 0, "\(json.standardError)")
     #expect(json.standardOutput.contains(#""verdict": "Migrated""#))
     #expect(json.standardOutput.contains(#""dryRun": true"#))
-    #expect(!FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.plist").path))
-    #expect(FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.json").path))
+    #expect(
+      !FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.plist").path)
+    )
+    #expect(
+      FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.json").path)
+    )
   }
 
   @Test
@@ -76,7 +80,10 @@ struct MigrateCommandTests {
   func everyScannedFileGetsAVerdictAndAForeignFileDoesNotFail() async throws {
     try write(Self.settings, "Settings.json")
     try write(#"{"name": "mine"}"#, "Profiles/notes.json")
-    try write(#"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "AccessGrants"}"#, "AccessGrants.plist")
+    try write(
+      #"{"apiVersion": "openjoystickdriver/v1alpha3", "kind": "AccessGrants"}"#,
+      "AccessGrants.plist"
+    )
 
     let result = await run(["--plain"])
 
@@ -94,8 +101,14 @@ struct MigrateCommandTests {
     let result = await run([folder])
 
     #expect(result.code == 0, "\(result.standardError)")
-    #expect(FileManager.default.fileExists(atPath: support.appendingPathComponent("Other/Settings.plist").path))
-    #expect(FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.json").path))
+    #expect(
+      FileManager.default.fileExists(
+        atPath: support.appendingPathComponent("Other/Settings.plist").path
+      )
+    )
+    #expect(
+      FileManager.default.fileExists(atPath: support.appendingPathComponent("Settings.json").path)
+    )
   }
 
   @Test

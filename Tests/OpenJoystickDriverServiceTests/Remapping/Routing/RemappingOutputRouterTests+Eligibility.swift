@@ -7,7 +7,6 @@ import Testing
 extension RemappingOutputRouterTests {
   @Test
 
-
   func targetApplicationLossReleasesAndNeverFallsBack() async throws {
     let harness = try await RemappingRouterHarness.make(profile: remappingRouterProfile())
     defer { harness.removeFiles() }

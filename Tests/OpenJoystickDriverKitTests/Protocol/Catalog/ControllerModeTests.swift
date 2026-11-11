@@ -81,7 +81,7 @@ struct ControllerModeTests {
     modes: [[String: Any]]?,
     family: String,
     extras: [String: Any]
-  ) throws -> String? {
+  ) -> String? {
     do {
       _ = try ControllerRecordSet.validate(recordData(modes: modes, family: family, extras: extras))
       return nil
@@ -436,7 +436,7 @@ struct ControllerModeTests {
   }
 
   @Test
-  func invalidModesAreRejected() throws {
+  func invalidModesAreRejected() {
     let probe: [String: Any] = ["report": 160, "length": 8, "expect": "Answers"]
     func mode(
       _ id: String,
@@ -606,7 +606,7 @@ struct ControllerModeTests {
       ),
     ]
     for rejection in rejected {
-      let problem = try Self.problem(
+      let problem = Self.problem(
         modes: rejection.modes,
         family: rejection.family,
         extras: rejection.extras

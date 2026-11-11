@@ -265,7 +265,7 @@ extension StartupLifetimeTests {
     )
   }
 
-  func verifyNewConnectionSurvivesOldTeardown(trigger: HIDTeardownRaceTrigger) async throws {
+  func verifyNewConnectionSurvivesOldTeardown(trigger: HIDTeardownRaceTrigger) async {
     let backend = ScriptedHIDAccessBackend()
     let manager = DeviceManager(
       dispatcher: LoggingOutputDispatcher(),

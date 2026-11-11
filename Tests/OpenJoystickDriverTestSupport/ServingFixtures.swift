@@ -1,4 +1,4 @@
-@testable import OpenJoystickDriverKit
+@testable package import OpenJoystickDriverKit
 
 /// One controller situation with the answers every caller of the serving policy must give.
 package struct ServingFixture: Sendable {

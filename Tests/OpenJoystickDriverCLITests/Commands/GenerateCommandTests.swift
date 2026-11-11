@@ -81,11 +81,15 @@ struct GenerateCommandTests {
   @Test(arguments: [
     ("\n\nthrow new Error('boom');\nfunction generate() {}", "line 3", "boom"),
     ("function generate() {\n  throw new Error('inside');\n}", "line 2", "inside"),
-    ("function generate() {\n\n  return fetch('https://example.com');\n}", "line 3", "ReferenceError"),
+    (
+      "function generate() {\n\n  return fetch('https://example.com');\n}", "line 3",
+      "ReferenceError"
+    ),
     ("function generate( {", "line 1", "SyntaxError"),
     ("const pad: number = 1;\nfunction generate() {}", "line 1", "SyntaxError"),
   ])
-  func aScriptErrorIsReportedWithItsLine(source: String, line: String, message: String) async throws {
+  func aScriptErrorIsReportedWithItsLine(source: String, line: String, message: String) async throws
+  {
     let path = try script(source)
 
     let result = await run([path, "--output", out])
@@ -107,7 +111,7 @@ struct GenerateCommandTests {
   }
 
   @Test
-  func aMissingScriptIsRefused() async throws {
+  func aMissingScriptIsRefused() async {
     let result = await run([folder.appendingPathComponent("none.js").path])
 
     #expect(result.code == 1)
@@ -122,15 +126,19 @@ struct GenerateCommandTests {
 
     #expect(result.code == 0, "\(result.standardError)")
     #expect(files() == ["fff1-0001.plist"])
-    let text = try String(contentsOf: folder.appendingPathComponent("out/fff1-0001.plist"), encoding: .utf8)
+    let text = try String(
+      contentsOf: folder.appendingPathComponent("out/fff1-0001.plist"),
+      encoding: .utf8
+    )
     #expect(text.contains("<key>vendorID</key>\n\t<integer>65521</integer>"), "\(text)")
     #expect(result.standardOutput.contains("Created"), "\(result.standardOutput)")
   }
 
   @Test
   func aListOfRecordsWritesOneFileEach() async throws {
+    let record = Self.record(0).replacingOccurrences(of: "productID: 0", with: "productID: id")
     let path = try script(
-      "function generate() { return [1, 2, 3].map(function (id) { return \(Self.record(0).replacingOccurrences(of: "productID: 0", with: "productID: id")); }); }"
+      "function generate() { return [1, 2, 3].map(function (id) { return \(record); }); }"
     )
 
     let result = await run([path, "--output", out, "--json"])
@@ -144,7 +152,9 @@ struct GenerateCommandTests {
   @Test
   func oneInvalidDocumentWritesNoFileAndNamesTheDocumentAndKeyPath() async throws {
     let broken = Self.record(2).replacingOccurrences(of: "vendorID: 0xFFF1", with: "vendorID: 'x'")
-    let path = try script("function generate() { return [\(Self.record(1)), \(broken), \(Self.record(3))]; }")
+    let path = try script(
+      "function generate() { return [\(Self.record(1)), \(broken), \(Self.record(3))]; }"
+    )
 
     let result = await run([path, "--output", out])
 

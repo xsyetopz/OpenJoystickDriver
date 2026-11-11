@@ -19,7 +19,11 @@ struct NamedPacketPlanMessageTests {
     }
   }
 
-  private static func packet(id: String = "xbox/start-input", bytes: String = "05 20 00", sessionByte: Int = 2)
+  private static func packet(
+    id: String = "xbox/start-input",
+    bytes: String = "05 20 00",
+    sessionByte: Int = 2
+  )
     -> String
   {
     #"{"id": "\#(id)", "bytes": "\#(bytes)", "sessionByte": \#(sessionByte)}"#

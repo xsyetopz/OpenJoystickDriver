@@ -38,7 +38,7 @@ private final class FakeAccessService: AccessService, @unchecked Sendable {
     _ identity: CodeSigningIdentity,
     path: String,
     scopes: [EndpointScope]
-  ) throws -> AccessGrantSummary {
+  ) -> AccessGrantSummary {
     calls.append("grant:\(identity.identifier)")
     grantedScopes = scopes
     return AccessGrantSummary(
@@ -50,7 +50,7 @@ private final class FakeAccessService: AccessService, @unchecked Sendable {
     name: String,
     origins: [String],
     scopes: [EndpointScope]
-  ) throws -> AccessTokenGrantResult {
+  ) -> AccessTokenGrantResult {
     calls.append("token:\(name)")
     return AccessTokenGrantResult(
       token: "secret",
@@ -63,7 +63,7 @@ private final class FakeAccessService: AccessService, @unchecked Sendable {
     )
   }
 
-  func revoke(id: String, scopes: [EndpointScope]?) throws -> AccessRevokeResult {
+  func revoke(id: String, scopes: [EndpointScope]?) -> AccessRevokeResult {
     calls.append(
       "revoke:\(id):\(scopes.map { $0.map(\.rawValue).joined(separator: ",") } ?? "all")"
     )

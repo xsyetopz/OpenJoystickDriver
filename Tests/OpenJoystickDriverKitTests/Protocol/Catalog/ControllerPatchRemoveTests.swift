@@ -3,8 +3,7 @@ import Testing
 
 @testable import OpenJoystickDriverKit
 
-/// The `remove` list of a `ControllerPatch`: dotted key paths applied before `patch`. The tests
-/// use fixture records and documents and never load the bundled catalog.
+// The tests use fixture records and documents and never load the bundled catalog.
 struct ControllerPatchRemoveTests {
   private static let identity = ControllerModelID(vendorID: 0x1234, productID: 0xABCD)
 
@@ -41,9 +40,9 @@ struct ControllerPatchRemoveTests {
 
   private static let record = #"""
     {"vendorID": 4660, "productID": 43981,
-     "usb": {"interface": 0, "configuration": "SetConfiguration1BeforeClaim"},
-     "input": {"hidUsageMap": {"reportID": 1, "usages": [1, 2]}},
-     "tuning": {"stickDeadzone": 0.1, "frameQueueCapacity": 4}}
+      "usb": {"interface": 0, "configuration": "SetConfiguration1BeforeClaim"},
+    "input": {"hidUsageMap": {"reportID": 1, "usages": [1, 2]}},
+    "tuning": {"stickDeadzone": 0.1, "frameQueueCapacity": 4}}
     """#
 
   @Test
@@ -53,8 +52,8 @@ struct ControllerPatchRemoveTests {
     let expected = try Self.json(
       #"""
       {"vendorID": 4660, "productID": 43981, "usb": {"interface": 0},
-       "input": {"hidUsageMap": {"reportID": 1, "usages": [1, 2]}},
-       "tuning": {"stickDeadzone": 0.1, "frameQueueCapacity": 4}}
+        "input": {"hidUsageMap": {"reportID": 1, "usages": [1, 2]}},
+      "tuning": {"stickDeadzone": 0.1, "frameQueueCapacity": 4}}
       """#
     )
     #expect(result == expected)
@@ -151,7 +150,8 @@ struct ControllerPatchRemoveTests {
     }
     #expect(
       try message(["usb", "usb"])
-        == "a.patch.plist, remove: The path usb is listed twice. Fix: Delete one of the two entries."
+        == "a.patch.plist, remove: The path usb is listed twice. "
+        + "Fix: Delete one of the two entries."
     )
     #expect(
       try message(["bogus"])

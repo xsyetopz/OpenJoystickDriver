@@ -32,7 +32,7 @@ struct DevicePipelineStatusAnnouncementTests {
     func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
 
     /// Report 1 pushes the right stick, any other report centers it.
-    func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+    func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
       ControllerEvent(data.first == 1 ? [.rightStick(x: 1, y: 0)] : [], at: receivedAt.nanoseconds)
     }
   }
@@ -50,7 +50,7 @@ struct DevicePipelineStatusAnnouncementTests {
     )
   }
 
-  private func observe(_ pipeline: DevicePipeline) -> (Posts, NSObjectProtocol) {
+  private func observe(_ pipeline: DevicePipeline) -> (Posts, any NSObjectProtocol) {
     let posts = Posts()
     let observer = NotificationCenter.default.addObserver(
       forName: .ojdServiceStatusDidChange,

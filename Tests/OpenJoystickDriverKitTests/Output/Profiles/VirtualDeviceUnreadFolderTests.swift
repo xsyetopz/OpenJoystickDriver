@@ -22,7 +22,7 @@ struct VirtualDeviceUnreadFolderTests {
   private static let document = PropertyListFixture.bytes(
     json: """
       {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "VirtualDevice",
-       "match": {"vendorID": 4617, "productID": 1}, "persona": "SDLCompatible"}
+        "match": {"vendorID": 4617, "productID": 1}, "persona": "SDLCompatible"}
       """
   )
 

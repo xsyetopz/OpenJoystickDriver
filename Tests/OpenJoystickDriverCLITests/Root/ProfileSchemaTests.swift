@@ -15,7 +15,8 @@ struct ProfileSchemaTests {
       "id": "6F1C2D3E-4A5B-4C6D-8E7F-901A2B3C4D5E",
       "name": "Everything",
       "device": {"vendorID": 1356, "productID": 3302, "unit": "U-AbCd_123-xyzW09q"},
-      "applicationScope": {"type": "Application", "appIDs": ["com.example.game", "com.example.other"]},
+      "applicationScope": {"type": "Application",
+        "appIDs": ["com.example.game", "com.example.other"]},
       "outputPolicy": {"virtualGamepad": "Mapped", "physicalInput": "Exclusive"},
       "physicalColor": {"red": 255, "green": 32, "blue": 0},
       "motionTuning": {
@@ -266,7 +267,10 @@ struct ProfileSchemaTests {
       "profile name over 80 characters", #""name": "Everything""#,
       "\"name\": \"" + String(repeating: "a", count: 81) + "\""
     ),
-    ("profile name with a control character", #""name": "Everything""#, #""name": "Every\u007fthing""#),
+    (
+      "profile name with a control character", #""name": "Everything""#,
+      #""name": "Every\u007fthing""#
+    ),
     ("profile name with a space at the end", #""name": "Everything""#, #""name": "Everything ""#),
     (
       "layer name over 40 characters", #""name": "Menus""#,
@@ -314,7 +318,10 @@ struct ProfileSchemaTests {
     ),
     ("soft threshold above full", #""softThreshold": 0.2"#, #""softThreshold": 0.95"#),
     ("grid column outside the grid", #""column": 1, "row": 0"#, #""column": 2, "row": 0"#),
-    ("pulse duration without the Pulse behavior", #""multiTap": [{"#, #""pulseDurationMs": 200, "multiTap": [{"#),
+    (
+      "pulse duration without the Pulse behavior", #""multiTap": [{"#,
+      #""pulseDurationMs": 200, "multiTap": [{"#
+    ),
   ])
   func aRuleAcrossFieldsIsRefusedByTheDecoderOnly(
     problem: String,

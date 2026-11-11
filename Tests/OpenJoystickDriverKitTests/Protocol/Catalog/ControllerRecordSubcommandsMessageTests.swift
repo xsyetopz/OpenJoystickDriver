@@ -31,7 +31,9 @@ struct ControllerRecordSubcommandsMessageTests {
   @Test
   func aDecodedDataCountOutsideItsRangeKeepsItsOwnMessage() {
     #expect(
-      Self.message(#"{"subcommand": 1, "data": "00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10"}"#)
+      Self.message(
+        #"{"subcommand": 1, "data": "00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10"}"#
+      )
         == "057e-2009.plist, session.subcommands.requests[].data: A subcommand request must "
         + "name 1...16 data bytes. Fix: Give data 1...16 bytes."
     )

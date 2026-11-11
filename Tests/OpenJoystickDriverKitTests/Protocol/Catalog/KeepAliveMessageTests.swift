@@ -50,7 +50,9 @@ struct KeepAliveMessageTests {
   @Test
   func aWrongResendTuningNamesTheKey() {
     #expect(
-      Self.message(#"{"intervalMilliseconds": 100, "writes": [{"bytes": "01", "resendTuning": "x"}]}"#)
+      Self.message(
+        #"{"intervalMilliseconds": 100, "writes": [{"bytes": "01", "resendTuning": "x"}]}"#
+      )
         == "28de-1205.plist, session.keepAlive.writes[].resendTuning: A keep-alive resendTuning "
         + "must be lizardResendTicks. Fix: Set resendTuning to lizardResendTicks, or leave it out."
     )

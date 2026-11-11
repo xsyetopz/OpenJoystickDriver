@@ -176,11 +176,11 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
     return statusPayload
   }
 
-  func frameTimings(lastSeconds _: Int?) throws -> ApplicationServiceFrameTimingsPayload {
+  func frameTimings(lastSeconds _: Int?) -> ApplicationServiceFrameTimingsPayload {
     ApplicationServiceFrameTimingsPayload(controllers: [])
   }
 
-  func virtualDeviceDiagnostics() throws -> ApplicationServiceVirtualDeviceDiagnosticsPayload {
+  func virtualDeviceDiagnostics() -> ApplicationServiceVirtualDeviceDiagnosticsPayload {
     ApplicationServiceVirtualDeviceDiagnosticsPayload(
       userSpaceVirtualDeviceEnabled: true,
       userSpaceVirtualDeviceStatus: .backend("ready"),
@@ -188,17 +188,17 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
     )
   }
 
-  func requestPermissions() throws -> PermissionManager.Snapshot {
+  func requestPermissions() -> PermissionManager.Snapshot {
     PermissionManager.Snapshot(inputRead: .granted, inputInject: .granted)
   }
 
   func requestPermission(
-    _ requirement: PermissionManager.Requirement
-  ) throws -> PermissionManager.Snapshot { try requestPermissions() }
+    _: PermissionManager.Requirement
+  ) -> PermissionManager.Snapshot { requestPermissions() }
 
-  func controllerState(for selector: ControllerReference) throws -> ControllerState? { nil }
+  func controllerState(for _: ControllerReference) -> ControllerState? { nil }
 
-  func packetLog(for selector: ControllerReference) throws -> [PacketLogEntry] { [] }
+  func packetLog(for _: ControllerReference) -> [PacketLogEntry] { [] }
 
   func remappingSnapshot() async throws -> ApplicationServiceRemappingSnapshotPayload {
     markReadStarted()
@@ -214,37 +214,37 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
   }
 
   func createRemappingProfile(
-    _ profile: RemappingProfile
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
+    _: RemappingProfile
+  ) -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
   func updateRemappingProfile(
-    _ profile: RemappingProfile,
-    expectedCurrent: RemappingProfile
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
+    _: RemappingProfile,
+    expectedCurrent _: RemappingProfile
+  ) -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
   func importRemappingProfile(
-    _ profile: RemappingProfile
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
+    _: RemappingProfile
+  ) -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
-  func deleteRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
+  func deleteRemappingProfile(id _: UUID) -> ApplicationServiceRemappingSnapshotPayload {
     snapshotPayload
   }
 
   func activateRemappingProfile(
-    id: UUID,
-    allowEmpty: Bool
-  ) throws -> ApplicationServiceRemappingSnapshotPayload {
+    id _: UUID,
+    allowEmpty _: Bool
+  ) -> ApplicationServiceRemappingSnapshotPayload {
     snapshotPayload
   }
 
   func deactivateRemappingProfile(
-    vendorID: UInt16,
-    productID: UInt16
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
+    vendorID _: UInt16,
+    productID _: UInt16
+  ) -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
   func deactivateRemappingProfile(
-    profileID: UUID
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
+    profileID _: UUID
+  ) -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
   func remappingPostEventAccess() async throws -> RemappingPostEventAccessState {
     markReadStarted()
@@ -254,24 +254,25 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
     return snapshotPayload.postEventAccess
   }
 
-  func requestRemappingPostEventAccess() throws -> RemappingPostEventAccessState {
+  func requestRemappingPostEventAccess() -> RemappingPostEventAccessState {
     requestedPostEventAccess
   }
 
   func pairRemappingJoyCons(
-    left: ControllerReference,
-    right: ControllerReference,
-    profileID: UUID
-  ) throws -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
+    left _: ControllerReference,
+    right _: ControllerReference,
+    profileID _: UUID
+  ) -> ApplicationServiceRemappingSnapshotPayload { snapshotPayload }
 
-  func unpairRemappingJoyCons(sessionID: UUID) throws -> ApplicationServiceRemappingSnapshotPayload
-  { snapshotPayload }
+  func unpairRemappingJoyCons(sessionID _: UUID) -> ApplicationServiceRemappingSnapshotPayload {
+    snapshotPayload
+  }
 
   func setVirtualHIDProfileOverride(
     _ profile: VirtualHIDProfileID,
-    for selector: ControllerReference,
-    scope: VirtualHIDProfileOverrideScope
-  ) throws -> VirtualHIDProfileOverrideResult {
+    for _: ControllerReference,
+    scope _: VirtualHIDProfileOverrideScope
+  ) -> VirtualHIDProfileOverrideResult {
     VirtualHIDProfileOverrideResult(
       requested: profile,
       live: profile,
@@ -281,9 +282,9 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
   }
 
   func resetVirtualHIDProfileOverride(
-    for selector: ControllerReference,
-    scope: VirtualHIDProfileOverrideScope
-  ) throws -> VirtualHIDProfileOverrideResult {
+    for _: ControllerReference,
+    scope _: VirtualHIDProfileOverrideScope
+  ) -> VirtualHIDProfileOverrideResult {
     VirtualHIDProfileOverrideResult(
       requested: nil,
       live: .generic,
@@ -292,45 +293,45 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
     )
   }
 
-  func resetAllVirtualHIDProfileOverrides() throws -> Bool { true }
+  func resetAllVirtualHIDProfileOverrides() -> Bool { true }
 
   func setControllerTuning(
-    model: ControllerModelID,
-    key: ControllerTuning.Key,
-    value: Double?
+    model _: ControllerModelID,
+    key _: ControllerTuning.Key,
+    value _: Double?
   ) throws -> ControllerTuningResult {
     throw ApplicationServiceClientError.invalidResponse
   }
 
   func setControllerServer(
-    model: ControllerModelID,
-    server: ControllerServer
+    model _: ControllerModelID,
+    server _: ControllerServer
   ) throws -> ControllerServerResult {
     throw ApplicationServiceClientError.invalidResponse
   }
 
-  func suspendController(_ selector: ControllerReference) throws -> ControllerSuspendResult {
+  func suspendController(_: ControllerReference) throws -> ControllerSuspendResult {
     throw ApplicationServiceClientError.invalidResponse
   }
 
-  func resumeController(_ selector: ControllerReference) throws -> ControllerResumeResult {
+  func resumeController(_: ControllerReference) throws -> ControllerResumeResult {
     throw ApplicationServiceClientError.invalidResponse
   }
 
   func disconnectWirelessController(
-    _ selector: ControllerReference
+    _: ControllerReference
   ) throws -> WirelessControllerDisconnectResult {
     throw ApplicationServiceClientError.invalidResponse
   }
 
   func deleteDamagedRemappingProfile(
-    issueID: UUID
+    issueID _: UUID
   ) throws -> ApplicationServiceRemappingSnapshotPayload {
     throw ApplicationServiceClientError.invalidResponse
   }
 
   func resetRemappingProfileLibrary(
-    issueID: UUID
+    issueID _: UUID
   ) throws -> ApplicationServiceRemappingSnapshotPayload {
     throw ApplicationServiceClientError.invalidResponse
   }

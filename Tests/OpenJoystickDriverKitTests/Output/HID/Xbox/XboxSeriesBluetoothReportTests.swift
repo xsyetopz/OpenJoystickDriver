@@ -106,8 +106,8 @@ struct XboxSeriesBluetoothHIDReportFormatTests {
   }
 
   @Test
-  func thePersonaPublishesTheXboxSeriesBluetoothIdentity() throws {
-    let profile = try VirtualHIDProfileID.gameControllerCompatible.makeProfile()
+  func thePersonaPublishesTheXboxSeriesBluetoothIdentity() {
+    let profile = VirtualHIDProfileID.gameControllerCompatible.makeProfile()
     #expect(profile.identity.vendorID == 0x045E)
     #expect(profile.identity.productID == 0x0B13)
     #expect(profile.identity.productName == "Xbox Wireless Controller")

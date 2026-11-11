@@ -42,7 +42,7 @@ private final class ReceiptTimeParser: PhysicalProtocolDriver {
 
   init(continuation: AsyncStream<Call>.Continuation) { self.continuation = continuation }
 
-  func parse(report _: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  func parse(report _: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     continuation.yield(.timed(receivedAt.nanoseconds))
     return nil
   }

@@ -59,14 +59,14 @@ final class FakeEndpoint: @unchecked Sendable {
 
   /// Serves `count` connections on background threads, then closes the listening socket.
   func serve(connections count: Int) {
-    let listener = listener
+    let listenSocket = listener
     Thread.detachNewThread { [self] in
       for _ in 0..<count {
-        let client = accept(listener, nil, nil)
+        let client = accept(listenSocket, nil, nil)
         guard client >= 0 else { break }
         Thread.detachNewThread { self.handle(client) }
       }
-      Darwin.close(listener)
+      Darwin.close(listenSocket)
       unlink(path)
     }
   }
@@ -166,7 +166,7 @@ final class FakeEndpoint: @unchecked Sendable {
         }
         guard line["kind"] as? String == "Frame" else { continue }
         record { framesReceived.append(line) }
-        if !sentRumble && (line["buttons"] as? [String])?.isEmpty == false {
+        if !sentRumble, (line["buttons"] as? [String])?.isEmpty == false {
           sentRumble = true
           write(client, rumble)
         }

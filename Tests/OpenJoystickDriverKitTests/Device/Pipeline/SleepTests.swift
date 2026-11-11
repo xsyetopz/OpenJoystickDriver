@@ -255,7 +255,7 @@ private final class ScriptedInputParser: PhysicalProtocolDriver {
   let defaultColor: ControllerColor? = nil
   private var script = ScriptedState()
   func consumeInputConnectionStateChange() -> ControllerInputConnectionState? { nil }
-  func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     let changes: [InputChange]
     switch data.first {
     case 1: changes = [.press(.south)]
@@ -301,7 +301,7 @@ private final class ScriptedLifecycleInputParser: PhysicalProtocolDriver {
     return state
   }
 
-  func parse(report data: Data, receivedAt: MonotonicTimestamp) throws -> ControllerEvent? {
+  func parse(report data: Data, receivedAt: MonotonicTimestamp) -> ControllerEvent? {
     switch data.first {
     case 7:
       connected = true

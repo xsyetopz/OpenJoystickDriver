@@ -14,7 +14,7 @@ private final class CountingProbeReader: ControllerModeProbeReader {
   var readCount: Int { reads.withLock { $0 } }
 
   func readFeatureReport(
-    _ request: PhysicalHIDFeatureReadRequest
+    _: PhysicalHIDFeatureReadRequest
   ) -> PhysicalHIDReportResult<Data> {
     reads.withLock { $0 += 1 }
     return reply
@@ -64,7 +64,7 @@ struct ControllerModeMatchTests {
   private static func problem(
     _ modes: [[String: Any]],
     family: String = "SonySixaxis"
-  ) throws
+  )
     -> String?
   {
     do {
@@ -329,17 +329,17 @@ struct ControllerModeMatchTests {
   ///
   /// The same signature on a raw-USB mode is accepted.
   @Test
-  func aHIDModeWithEndpointsIsRefusedAndARawUSBModeIsNot() throws {
+  func aHIDModeWithEndpointsIsRefusedAndARawUSBModeIsNot() {
     let endpoints: [[String: Any]] = [["direction": "In", "transferType": "Interrupt"]]
     let match: [String: Any] = ["interfaceSignature": Self.signature(endpoints: endpoints)]
-    let hid = try Self.problem([Self.mode("x", match: match)])
+    let hid = Self.problem([Self.mode("x", match: match)])
     #expect(hid?.contains("endpoints") == true)
-    let rawUSB = try Self.problem(
+    let rawUSB = Self.problem(
       [Self.mode("x", match: match, family: "XboxGIP")],
       family: "XboxGIP"
     )
     #expect(rawUSB == nil)
-    let withoutEndpoints = try Self.problem([
+    let withoutEndpoints = Self.problem([
       Self.mode(
         "x",
         match: [
@@ -515,7 +515,7 @@ struct ControllerModeMatchTests {
   // MARK: Decoder rejections, matched by the Python schema tests
 
   @Test
-  func theDecoderRejectsTheSameBadModesAsTheSchema() throws {
+  func theDecoderRejectsTheSameBadModesAsTheSchema() {
     let usb = ["link": "USB"]
     let cases: [(String, [[String: Any]], String)] = [
       ("no match", [["id": "x", "protocol": ["family": "SonySixaxis"]]], "match"),
@@ -603,7 +603,7 @@ struct ControllerModeMatchTests {
       ),
     ]
     for (name, modes, fragment) in cases {
-      let problem = try Self.problem(modes)
+      let problem = Self.problem(modes)
       #expect(
         problem?.contains(fragment) == true,
         Comment(rawValue: "\(name): \(problem ?? "accepted")")
@@ -655,8 +655,8 @@ struct ControllerModeMatchTests {
   }
 
   @Test
-  func theDecoderRejectsAModeListWithTwoDefaults() throws {
-    func decode(_ modes: [[String: Any]]?) throws -> String? {
+  func theDecoderRejectsAModeListWithTwoDefaults() {
+    func decode(_ modes: [[String: Any]]?) -> String? {
       var record: [String: Any] = [
         "apiVersion": OpenJoystickDriverAPI.version, "kind": ControllerRecordDocument.kind,
         "vendorID": 1, "productID": 2,
@@ -669,15 +669,15 @@ struct ControllerModeMatchTests {
     }
     let other = Self.mode("x", match: ["link": "USB"])
     let plainDefault: [String: Any] = ["id": "default", "protocol": ["family": "SonySixaxis"]]
-    #expect(try decode(nil) != nil)
-    #expect(try decode([]) != nil)
-    #expect(try decode([other]) == nil)
+    #expect(decode(nil) != nil)
+    #expect(decode([]) != nil)
+    #expect(decode([other]) == nil)
     #expect(
-      try decode([plainDefault, plainDefault])?.contains("at most one mode with the id default")
+      decode([plainDefault, plainDefault])?.contains("at most one mode with the id default")
         == true
     )
     #expect(
-      try decode([plainDefault, other, other])?.contains("mode IDs must be unique") == true
+      decode([plainDefault, other, other])?.contains("mode IDs must be unique") == true
     )
   }
 

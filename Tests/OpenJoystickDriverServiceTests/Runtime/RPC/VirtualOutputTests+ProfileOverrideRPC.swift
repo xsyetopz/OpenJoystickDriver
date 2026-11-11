@@ -16,7 +16,7 @@ extension VirtualOutputTests {
     timeouts: VirtualOutputTransitionTimeouts = .standard,
     clock: VirtualOutputTransitionClock = .system,
     configure: (URL) -> Void = { _ in }
-  ) async throws -> ProfileOverrideServerFixture {
+  ) async -> ProfileOverrideServerFixture {
     let suiteName = "OpenJoystickDriverTests.ProfileOverrideRPC.\(UUID().uuidString)"
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     let personaDirectory = MacOSDataDirectory().url(for: .temporary)
@@ -87,8 +87,8 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func settingAnOverridePersistsAndRetargetsTheController() async throws {
-    let fixture = try await profileOverrideServer()
+  func settingAnOverridePersistsAndRetargetsTheController() async {
+    let fixture = await profileOverrideServer()
 
     let result = await fixture.change(.set("Generic"))
 
@@ -107,8 +107,8 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func resettingAnOverrideReturnsTheControllerToAutomaticSelection() async throws {
-    let fixture = try await profileOverrideServer()
+  func resettingAnOverrideReturnsTheControllerToAutomaticSelection() async {
+    let fixture = await profileOverrideServer()
     _ = await fixture.change(.set("Generic"))
 
     let result = await fixture.change(.reset)
@@ -128,8 +128,8 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func anUnknownProfileIsRejectedWithoutPersisting() async throws {
-    let fixture = try await profileOverrideServer()
+  func anUnknownProfileIsRejectedWithoutPersisting() async {
+    let fixture = await profileOverrideServer()
 
     let result = await fixture.change(.set("xone-hid"))
 
@@ -142,8 +142,8 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func anUnmatchedControllerIsNotFoundAndNothingIsPersisted() async throws {
-    let fixture = try await profileOverrideServer()
+  func anUnmatchedControllerIsNotFoundAndNothingIsPersisted() async {
+    let fixture = await profileOverrideServer()
 
     let otherModel = await fixture.change(
       .set("Generic"),
@@ -161,8 +161,8 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func disabledOutputStillPersistsTheOverride() async throws {
-    let fixture = try await profileOverrideServer(outputEnabled: false)
+  func disabledOutputStillPersistsTheOverride() async {
+    let fixture = await profileOverrideServer(outputEnabled: false)
 
     let result = await fixture.change(.set("Generic"))
 
@@ -180,8 +180,8 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func aStoppedServerRejectsOverrideChangesWithoutPersisting() async throws {
-    let fixture = try await profileOverrideServer()
+  func aStoppedServerRejectsOverrideChangesWithoutPersisting() async {
+    let fixture = await profileOverrideServer()
     await fixture.server.stop()
 
     let result = await fixture.change(.set("Generic"))
@@ -193,8 +193,8 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func failedActivationRestoresThePriorStoredOverride() async throws {
-    let fixture = try await profileOverrideServer(failure: (.sdlCompatible, .activation)) {
+  func failedActivationRestoresThePriorStoredOverride() async {
+    let fixture = await profileOverrideServer(failure: (.sdlCompatible, .activation)) {
       VirtualHIDProfileOverrideStore(directory: $0).setGenericForTest()
     }
     #expect(fixture.log.built().map(\.profile) == [.generic])
@@ -215,10 +215,10 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func anOverrideRetargetsEveryControllerOfTheModel() async throws {
+  func anOverrideRetargetsEveryControllerOfTheModel() async {
     let first = LogicalControllerID(vendorID: 1, productID: 2, locationID: 1)
     let second = LogicalControllerID(vendorID: 1, productID: 2, locationID: 2)
-    let fixture = try await profileOverrideServer([first, second])
+    let fixture = await profileOverrideServer([first, second])
 
     let result = await fixture.change(.set("Generic"))
     let unmatched = await fixture.change(.reset, controller: .session(.fixture("missing")))
@@ -237,7 +237,7 @@ extension VirtualOutputTests {
 
   @Test
   func overrideRequestsRoundTripThroughTheLocalRPCBridge() async throws {
-    let fixture = try await profileOverrideServer()
+    let fixture = await profileOverrideServer()
     let set = try await localRPC(
       fixture.server,
       method: "setVirtualHIDProfileOverride",
@@ -293,9 +293,9 @@ extension VirtualOutputTests {
   }
 
   @Test
-  func aTimedOutRetargetRestoresThePriorStoredOverride() async throws {
+  func aTimedOutRetargetRestoresThePriorStoredOverride() async {
     let gate = InstallationGate()
-    let fixture = try await profileOverrideServer(
+    let fixture = await profileOverrideServer(
       activationGate: (.sdlCompatible, gate),
       timeouts: VirtualOutputTransitionTimeouts(
         stageNanoseconds: 2_000_000_000,

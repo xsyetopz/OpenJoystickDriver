@@ -17,7 +17,7 @@ struct VirtualDeviceTests {
   }
 
   @Test
-  func theRecordsStateWhichPersonaWorksWithDefaultSDLHints() throws {
+  func theRecordsStateWhichPersonaWorksWithDefaultSDLHints() {
     #expect(VirtualDevice.definition(of: .generic).worksWithDefaultSDLHints == true)
     #expect(VirtualDevice.definition(of: .sdlCompatible).worksWithDefaultSDLHints == true)
   }

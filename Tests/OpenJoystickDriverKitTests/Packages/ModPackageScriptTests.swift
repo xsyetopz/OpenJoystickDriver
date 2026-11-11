@@ -70,7 +70,10 @@ struct ModPackageScriptTests {
     var root = URL(fileURLWithPath: #filePath)
     for _ in 0..<4 { root.deleteLastPathComponent() }
     let enumerator = try #require(
-      FileManager.default.enumerator(at: root.appendingPathComponent(folder), includingPropertiesForKeys: nil)
+      FileManager.default.enumerator(
+        at: root.appendingPathComponent(folder),
+        includingPropertiesForKeys: nil
+      )
     )
     var importing: [String] = []
     for case let url as URL in enumerator where url.pathExtension == "swift" {

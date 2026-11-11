@@ -86,7 +86,10 @@ struct BootloaderRecordTests {
   }
 
   @Test(arguments: identities, layers)
-  func aControllerFileForTheIdentityIsRefused(productID: UInt16, layer: ControllerRecordLayer)
+  func aControllerFileForTheIdentityIsRefused(
+    productID: UInt16,
+    layer: ControllerRecordLayer
+  )
     throws
   {
     let data = try Self.controllerFile(productID)
@@ -94,7 +97,10 @@ struct BootloaderRecordTests {
   }
 
   @Test(arguments: identities, layers)
-  func aPatchThatServesTheIdentityIsRefused(productID: UInt16, layer: ControllerRecordLayer)
+  func aPatchThatServesTheIdentityIsRefused(
+    productID: UInt16,
+    layer: ControllerRecordLayer
+  )
     throws
   {
     let data = try Self.patchFile(

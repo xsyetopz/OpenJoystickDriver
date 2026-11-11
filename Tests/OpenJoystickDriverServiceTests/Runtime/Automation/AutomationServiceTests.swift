@@ -15,13 +15,13 @@ struct AutomationServiceTests {
     func connectedDevices() -> [ApplicationServiceDeviceDescription] { devices }
 
     func sendControllerOutput(
-      _ command: ControllerOutputCommand,
-      for controller: ControllerReference
+      _: ControllerOutputCommand,
+      for _: ControllerReference
     ) -> ControllerOutputResult {
       ControllerOutputResult(.delivered)
     }
 
-    func getRemappingSnapshot() throws -> ApplicationServiceRemappingSnapshotPayload {
+    func getRemappingSnapshot() -> ApplicationServiceRemappingSnapshotPayload {
       snapshot(active: active)
     }
 
@@ -36,7 +36,7 @@ struct AutomationServiceTests {
       return snapshot(active: active.union([id]))
     }
 
-    func deactivateRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
+    func deactivateRemappingProfile(id: UUID) -> ApplicationServiceRemappingSnapshotPayload {
       snapshot(active: active.subtracting([id]))
     }
 
@@ -80,8 +80,8 @@ struct AutomationServiceTests {
     func connectedDevices() -> [ApplicationServiceDeviceDescription] { [] }
 
     func sendControllerOutput(
-      _ command: ControllerOutputCommand,
-      for controller: ControllerReference
+      _: ControllerOutputCommand,
+      for _: ControllerReference
     ) -> ControllerOutputResult {
       ControllerOutputResult(.notFound)
     }
@@ -91,19 +91,20 @@ struct AutomationServiceTests {
     }
 
     func activateRemappingProfile(
-      id: UUID,
-      allowEmpty: Bool
+      id _: UUID,
+      allowEmpty _: Bool
     ) throws -> ApplicationServiceRemappingSnapshotPayload {
       throw SnapshotUnavailable()
     }
 
-    func deactivateRemappingProfile(id: UUID) throws -> ApplicationServiceRemappingSnapshotPayload {
+    func deactivateRemappingProfile(id _: UUID) throws -> ApplicationServiceRemappingSnapshotPayload
+    {
       throw SnapshotUnavailable()
     }
 
     func updateRemappingProfile(
-      _ profile: RemappingProfile,
-      expectedCurrent: RemappingProfile
+      _: RemappingProfile,
+      expectedCurrent _: RemappingProfile
     ) throws -> ApplicationServiceRemappingSnapshotPayload {
       throw SnapshotUnavailable()
     }

@@ -130,7 +130,7 @@ extension GIPDriverTests {
     for sequence in 0..<UInt8(64) {
       #expect(try parser.parseReport(Self.announce(sequence: sequence)) == nil)
       let output = parser.drainPendingWrites().usbBytes
-      if sequence.isMultiple(of: 4) && Int(sequence) < 4 * limit {
+      if sequence.isMultiple(of: 4), Int(sequence) < 4 * limit {
         #expect(output.map(\.first) == startupCommands)
         resends += 1
       } else {

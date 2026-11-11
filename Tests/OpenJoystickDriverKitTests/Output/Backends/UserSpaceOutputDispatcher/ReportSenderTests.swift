@@ -32,7 +32,7 @@ private final class OrderedReportBackend: VirtualDeviceBackend,
   @unchecked Sendable
 {
   /// The sender under test feeds the device directly; nothing publishes it.
-  func activate(hostReports: UserSpaceHostReportHandler) {}
+  func activate(hostReports _: UserSpaceHostReportHandler) {}
 
   private let lock = NSLock()
   private var reports: [[UInt8]] = []
@@ -78,11 +78,11 @@ private final class CancellableReportBackend: VirtualDeviceBackend,
   @unchecked Sendable
 {
   /// The sender under test feeds the device directly; nothing publishes it.
-  func activate(hostReports: UserSpaceHostReportHandler) {}
+  func activate(hostReports _: UserSpaceHostReportHandler) {}
 
   let state = CancellableSendState()
 
-  func send(_ report: [UInt8]) async throws {
+  func send(_: [UInt8]) async throws {
     await state.markEntered()
     try await Task.sleep(nanoseconds: .max)
   }
@@ -118,13 +118,13 @@ private final class NonCooperativeReportBackend: VirtualDeviceBackend,
   @unchecked Sendable
 {
   /// The sender under test feeds the device directly; nothing publishes it.
-  func activate(hostReports: UserSpaceHostReportHandler) {}
+  func activate(hostReports _: UserSpaceHostReportHandler) {}
 
   private let lock = NSLock()
   let gate = NonCooperativeSendGate()
   private var closes = 0
 
-  func send(_ report: [UInt8]) async { await gate.wait() }
+  func send(_: [UInt8]) async { await gate.wait() }
   func close() { lock.withLock { closes += 1 } }
   func closeCount() -> Int { lock.withLock { closes } }
 }
@@ -134,13 +134,13 @@ private final class SlowTeardownBackend: VirtualDeviceBackend,
   @unchecked Sendable
 {
   /// The sender under test feeds the device directly; nothing publishes it.
-  func activate(hostReports: UserSpaceHostReportHandler) {}
+  func activate(hostReports _: UserSpaceHostReportHandler) {}
 
   let gate = ReportSendGate()
   private let lock = NSLock()
   private var closes = 0
 
-  func send(_ report: [UInt8]) async { await Task.yield() }
+  func send(_: [UInt8]) async { await Task.yield() }
   func close() { lock.withLock { closes += 1 } }
   func waitUntilClosed() async { await gate.wait() }
   func closeCount() -> Int { lock.withLock { closes } }

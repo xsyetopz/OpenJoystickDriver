@@ -132,8 +132,8 @@ struct HomePathOutputTests {
     let patch = PropertyListFixture.bytes(
       json: """
         {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-         "selector": {"vendorID": 13932, "productID": 5},
-         "patch": {"tuning": {"stickDeadzone": 0.08}}}
+          "selector": {"vendorID": 13932, "productID": 5},
+        "patch": {"tuning": {"stickDeadzone": 0.08}}}
         """
     )
     let records = Self.unusedFolder("records")

@@ -10,8 +10,8 @@ struct RecordCommandTests {
   private static let patch = PropertyListFixture.bytes(
     json: """
       {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-       "selector": {"vendorID": 13932, "productID": 5},
-       "patch": {"tuning": {"stickDeadzone": 0.08}}}
+        "selector": {"vendorID": 13932, "productID": 5},
+      "patch": {"tuning": {"stickDeadzone": 0.08}}}
       """
   )
 
@@ -86,12 +86,12 @@ struct RecordCommandTests {
   }
 
   @Test
-  func aRecordThatBreaksARuleReportsE5007() async throws {
+  func aRecordThatBreaksARuleReportsE5007() async {
     let directory = Directory()
     let invalid = PropertyListFixture.bytes(
       json: """
         {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-         "selector": {"all": false}, "patch": {"tuning": {"stickDeadzone": 0.08}}}
+          "selector": {"all": false}, "patch": {"tuning": {"stickDeadzone": 0.08}}}
         """
     )
 
@@ -173,8 +173,8 @@ struct RecordCommandTests {
     let switch2 = PropertyListFixture.bytes(
       json: """
         {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-         "vendorID": 1406, "productID": 8447,
-         "modes": [{"id": "default", "protocol": {"family": "NintendoSwitch2"}}]}
+          "vendorID": 1406, "productID": 8447,
+        "modes": [{"id": "default", "protocol": {"family": "NintendoSwitch2"}}]}
         """
     )
     try directory.write(switch2, as: "057e-20ff.plist")
@@ -246,8 +246,8 @@ struct RecordCommandTests {
     let reads = Counter()
     let packets = """
       [{"direction":"Rx","hex":"00 01 02","length":3,"timestamp":1},
-       {"direction":"Tx","hex":"00 00 00","length":3,"timestamp":2},
-       {"direction":"Rx","hex":"00 01 05","length":3,"timestamp":3}]
+        {"direction":"Tx","hex":"00 00 00","length":3,"timestamp":2},
+      {"direction":"Rx","hex":"00 01 05","length":3,"timestamp":3}]
       """
     let service = try FakeService(
       devices: [
@@ -281,7 +281,7 @@ struct RecordCommandTests {
     let reads = Counter()
     let packets = """
       [{"direction":"Rx","hex":"00 01 02","length":3,"timestamp":1},
-       {"direction":"Rx","hex":"00 01 05","length":3,"timestamp":3}]
+        {"direction":"Rx","hex":"00 01 05","length":3,"timestamp":3}]
       """
     let service = try FakeService(
       devices: [
@@ -326,7 +326,11 @@ struct RecordCommandTests {
 
   /// Runs `record draft` for the model `identity` while the service serves no controller and the
   /// system lists `pad`.
-  private func draftUnserved(_ identity: String, pad: PhysicalDevice?, _ flags: [String] = [])
+  private func draftUnserved(
+    _ identity: String,
+    pad: PhysicalDevice?,
+    _ flags: [String] = []
+  )
     async throws -> CLIRun
   {
     let service = try FakeService(devices: [])
@@ -358,7 +362,7 @@ struct RecordCommandTests {
     #expect(json["operation"] as? String == "Patch")
     #expect(json["family"] as? String == "HIDDescriptor")
     #expect(json["identity"] as? String == "3537:1022")
-    #expect(json["missingSections"] as? [String] == [])
+    #expect((json["missingSections"] as? [String])?.isEmpty == true)
   }
 
   /// A device with only vendor-class interfaces gets one mode for each signature, and the command
@@ -481,8 +485,8 @@ struct RecordCommandTests {
     let record = PropertyListFixture.bytes(
       json: """
         {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "Controller",
-         "vendorID": 4617, "productID": 2,
-         "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
+          "vendorID": 4617, "productID": 2,
+        "modes": [{"id": "default", "protocol": {"family": "XboxGIP"}}]}
         """
     )
     try directory.write(record, as: "1209-0002.plist")
@@ -501,13 +505,13 @@ struct RecordCommandTests {
   /// No record field takes an integer of 25 digits, so the command refuses it and does not
   /// round it to a `Double` and accept it.
   @Test
-  func anIntegerBeyond64BitsInATuningValueIsRefused() async throws {
+  func anIntegerBeyond64BitsInATuningValueIsRefused() async {
     let directory = Directory()
     let patch = PropertyListFixture.bytes(
       json: """
         {"apiVersion": "\(OpenJoystickDriverAPI.version)", "kind": "ControllerPatch",
-         "selector": {"vendorID": 13932, "productID": 5},
-         "patch": {"tuning": {"usbTransferTimeoutMs": 1234567890123456789012345}}}
+          "selector": {"vendorID": 13932, "productID": 5},
+        "patch": {"tuning": {"usbTransferTimeoutMs": 1234567890123456789012345}}}
         """
     )
 
