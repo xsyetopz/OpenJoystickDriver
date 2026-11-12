@@ -35,6 +35,26 @@
     }
   }
 
+  /// The control that started a profile request that failed.
+  enum ProfileActionOrigin: Equatable {
+    /// A toolbar or menu command, which has no room for text.
+    case command
+    /// The Delete or Reset Library button of a damaged entry.
+    case recovery
+    /// The Migrate button of a damaged entry.
+    case migration
+    /// The Pair or Unpair Joy-Cons buttons of a profile.
+    case joyCon
+  }
+
+  /// A failed profile request and the control that started it.
+  struct ProfileActionFailure: Equatable {
+    /// Why the request failed.
+    let message: String
+    /// The control that started it.
+    let origin: ProfileActionOrigin
+  }
+
   /// The state of the Profiles screen: the selection, the sheets and alerts, and the editor.
   @MainActor
   final class ProfilesViewModel: ObservableObject {
@@ -57,9 +77,40 @@
     /// The alert that is open, or nil.
     @Published
     var activeAlert: ProfilesAlert?
-    /// The message of the latest failed profile action, or nil.
+    /// The latest failed profile action with the control that started it, or nil.
     @Published
-    var profileActionError: String?
+    var profileActionFailure: ProfileActionFailure?
+    /// The message of the latest failed profile action, or nil.
+    ///
+    /// A message set here comes from a toolbar or menu command; ``failProfileAction(_:beside:)``
+    /// names a control in the detail column instead.
+    var profileActionError: String? {
+      get { profileActionFailure?.message }
+      set {
+        profileActionFailure = newValue.map { ProfileActionFailure(message: $0, origin: .command) }
+      }
+    }
+    /// Records the failure of a request that a control of the detail column started, or clears the
+    /// failure when `message` is nil.
+    ///
+    /// - Parameters:
+    ///   - message: Why the request failed, or nil when it succeeded.
+    ///   - origin: The control that started the request.
+    func failProfileAction(_ message: String?, beside origin: ProfileActionOrigin) {
+      profileActionFailure = message.map { ProfileActionFailure(message: $0, origin: origin) }
+    }
+
+    /// The failure that belongs beside the control `origin`, or nil.
+    ///
+    /// - Parameter origin: The control to ask about.
+    /// - Returns: The message of the failure that `origin` started, or nil.
+    func profileActionError(beside origin: ProfileActionOrigin) -> String? {
+      profileActionFailure?.origin == origin ? profileActionFailure?.message : nil
+    }
+
+    /// The failure of a toolbar or menu command, which the strip above the detail shows.
+    var commandActionError: String? { profileActionError(beside: .command) }
+
     /// The profile whose Joy-Con pair sheet is open, or nil.
     @Published
     var pairingProfile: RemappingProfile?

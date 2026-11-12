@@ -25,7 +25,7 @@
     }
 
     /// Deletes a damaged profile file or resets an unusable library through the service, closes the
-    /// alert and shows a failure in the error banner.
+    /// alert and shows a failure beside the button.
     ///
     /// - Parameters:
     ///   - issueID: The identifier of the profile issue.
@@ -33,11 +33,12 @@
     func recoverProfileIssue(_ issueID: UUID, resetLibrary: Bool) {
       activeAlert = nil
       Task { @MainActor in
-        profileActionError =
+        let failure =
           resetLibrary
           ? await library.resetRemappingProfileLibrary(issueID: issueID)
           : await library.deleteDamagedRemappingProfile(issueID: issueID)
-        if profileActionError == nil {
+        screen.failProfileAction(failure, beside: .recovery)
+        if failure == nil {
           selectedRecoveryIssueID = nil
           selectFirstProfileIfNeeded()
         }
@@ -45,13 +46,15 @@
     }
 
     /// Converts the stored documents of an earlier alpha, then refreshes the profiles; a document
-    /// that cannot be converted shows in the error banner.
+    /// that cannot be converted shows beside the Migrate button.
     func migrateStoredDocuments() {
       Task { @MainActor in
         let failed = DocumentMigrator().run(dryRun: false).contains { $0.verdict == .failed }
         await viewModel.refresh()
-        profileActionError =
-          failed ? OJDLocalized.string("platform.macos.ui.migrate.failed") : nil
+        screen.failProfileAction(
+          failed ? OJDLocalized.string("platform.macos.ui.migrate.failed") : nil,
+          beside: .migration
+        )
       }
     }
 

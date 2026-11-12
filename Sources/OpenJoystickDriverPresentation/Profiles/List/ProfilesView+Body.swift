@@ -84,8 +84,8 @@
     /// screen.
     private var detailColumn: some View {
       VStack(alignment: .leading, spacing: OJDSpacing.none) {
-        if let profileActionError {
-          ProfileActionErrorBanner(message: profileActionError) { self.profileActionError = nil }
+        if let commandError = screen.commandActionError {
+          ProfileActionErrorBanner(message: commandError) { self.profileActionError = nil }
         }
         if let profileActionBlock {
           Text(profileActionBlock.message).font(.caption)
@@ -137,10 +137,13 @@
         EmptyView().sheet(item: $screen.pairingProfile) { profile in
           ProfileJoyConPairSheet(profile: profile, devices: connectedDevices) { left, right in
             Task { @MainActor in
-              profileActionError = await viewModel.pairRemappingJoyCons(
-                left: .session(left),
-                right: .session(right),
-                profileID: profile.id
+              screen.failProfileAction(
+                await viewModel.pairRemappingJoyCons(
+                  left: .session(left),
+                  right: .session(right),
+                  profileID: profile.id
+                ),
+                beside: .joyCon
               )
             }
           }
