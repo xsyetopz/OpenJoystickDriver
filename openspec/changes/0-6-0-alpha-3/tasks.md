@@ -209,8 +209,8 @@ Each of 12.1 to 12.7 starts from its row in the audit (10.5) and from a failing 
 
 ## 14. Terminology
 
-- [ ] 14.1 List every term the English strings, the prose of `ojd --help`, and the wiki use for each concept in the table of D22, with counts, and give the maintainer the table to settle. Write `wiki/Glossary.md` from the settled table: each term, its definition in one sentence, the words it replaces, and the command-line value it stands for.
-  - Note: the counted table is `docs/development/terminology-survey.md` (`eae5c5bae`); it waits on the maintainer to settle, and 14.2 to 14.6 wait on it.
+- [x] 14.1 List every term the English strings, the prose of `ojd --help`, and the wiki use for each concept in the table of D22, with counts, and give the maintainer the table to settle. Write `wiki/Glossary.md` from the settled table: each term, its definition in one sentence, the words it replaces, and the command-line value it stands for.
+  - Note: the counted table is `docs/development/terminology-survey.md` (`eae5c5bae`); the maintainer adopted the terms D22 proposes, and `wiki/Glossary.md` holds them, with two rules for 14.2 and 14.3: an error message keeps a file key such as `persona` as written, and a System Settings place keeps the name macOS shows ("Driver Extensions"). Linked from `wiki/Home.md` and `wiki/_Sidebar.md`.
 - [ ] 14.2 Change the English strings to the glossary's terms, and each language by the rules in `LOCALIZATION.md`, one term per commit. Change no command, flag, schema value, or error code.
 - [ ] 14.3 Add the repository check that fails when an English string holds a word the glossary lists as replaced, and the check that one language translates one term one way.
 - [ ] 14.4 Name each virtual gamepad kind by what reads it in the window, and show the raw identifier beside it only in Advanced (`VirtualHIDProfileOverrideView.swift:34`). Caller: the controller detail.

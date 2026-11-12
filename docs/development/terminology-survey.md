@@ -1,6 +1,6 @@
 # Terminology survey
 
-Input to task 14.1 of `openspec/changes/0-6-0-alpha-3`: which terms the app, the command line, and the wiki use for each concept of the table in design D22. It settles nothing. The maintainer settles the table first; `wiki/Glossary.md` and every string stay as they are until then.
+Input to task 14.1 of `openspec/changes/0-6-0-alpha-3`: which terms the app, the command line, and the wiki use for each concept of the table in design D22. The maintainer adopted the terms D22 proposes, and `wiki/Glossary.md` holds them.
 
 ## How the counts are made
 
