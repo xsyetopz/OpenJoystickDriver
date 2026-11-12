@@ -201,13 +201,13 @@
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.bootloaderIdentity" = "このコントローラはブートローダ モードです。OJD はデータを送信しません。";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because it is an 8BitDo bootloader identity. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.bootloaderIdentity.nextStep" = "コントローラをブートローダ モードから戻し、再接続してください。";
+"ui.controllers.bootloaderIdentity.nextStep" = "コントローラをブートローダモードから戻し、再接続してください。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noModeMatched" = "このコントローラは ID を他のモデルと共有しており、対応モデルのどれにも一致しません。OJD はデータを送信しません。";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noModeMatched.nextStep" = "コントローラのモデルを添えてサポートレポートを送信してください。照合できるようになります。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. OJD sends such a receiver no data, and the text says so. OJD stays as written. */
-"ui.controllers.noControllerLinked" = "このレシーバにはコントローラがリンクされていません。OJD はデータを送信しません。";
+"ui.controllers.noControllerLinked" = "このレシーバーにはコントローラがリンクされていません。OJD はデータを送信しません。";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. It tells the person what to do. OJD stays as written. */
 "ui.controllers.noControllerLinked.nextStep" = "コントローラを接続するか、コントローラの電源を入れてください。";
 /* Title of a row and of the detail in the Controllers list for a connected 2.4 GHz wireless receiver that has no controller linked to it. Its own product string is not shown. It is a noun phrase. */
@@ -349,7 +349,7 @@
 /* Message when the service stores the override of the virtual gamepad kind but the controller cannot use it, so the app picks a kind itself. */
 "ui.virtualProfile.failure.overrideRejected" = "上書きは保存されましたが、このコントローラでは使用できないため、自動で選択します。";
 /* Error when a virtual gamepad kind fails to activate and the app restores the last working kind. %@ is the reason. */
-"ui.virtualProfile.failure.activationFailed" = "有効化に失敗したため、以前の仮想ゲームパッドの種類に戻しました：%@";
+"ui.virtualProfile.failure.activationFailed" = "有効化に失敗したため、以前の仮想ゲームパッドの種類に戻しました: %@";
 /* Message when the service stores the override while virtual output is off. The override takes effect when the user turns virtual output on. */
 "ui.virtualProfile.failure.outputDisabled" = "上書きは保存され、仮想出力が有効になると適用されます。";
 /* Error when the service stops while the user changes the virtual gamepad kind. The stored override stays unchanged. */
@@ -531,9 +531,9 @@
 /* Heading above the list of parts that a profile conversion left out, in the sheet shown after a profile was converted. */
 "ui.profiles.convert.leftOutHeading" = "除外";
 /* Line in the sheet shown after a profile was converted, for a part left out. %1$@ is the kind of part, such as binding. %2$@ is the comma-separated list of controls the target controller lacks; they stay as written. */
-"ui.profiles.convert.leftOut" = "%1$@：コントローラに%2$@がありません";
+"ui.profiles.convert.leftOut" = "%1$@: コントローラに%2$@がありません";
 /* Line in the sheet shown after a profile was converted, for a part left out for a reason that names no control. %@ is the kind of part, such as gyro output. */
-"ui.profiles.convert.leftOutPart" = "%@：コントローラに必要な部分がありません";
+"ui.profiles.convert.leftOutPart" = "%@: コントローラに必要な部分がありません";
 /* Kind of profile part in the list of parts that a profile conversion left out: a binding of one control to an action. */
 "ui.profiles.convert.section.binding" = "バインド";
 /* Kind of profile part in the list of parts that a profile conversion left out: a chord, buttons pressed together. */
@@ -1259,7 +1259,7 @@
 /* Label of the popup in the input test that sets the player indicator, the lights that show which player a controller is. */
 "ui.inputTest.playerIndicator" = "プレイヤーインジケータ";
 /* Name of the pointer cluster in the input test, which shows where a pointing device aims. */
-"ui.inputTest.pointer" = "ポインター";
+"ui.inputTest.pointer" = "ポインタ";
 /* Name of the indicator in the input test that lights while a pointing device sees its target. */
 "ui.inputTest.pointerTracking" = "トラッキング";
 /* Shown under a touch surface in the input test while nothing touches it. */
@@ -1273,7 +1273,7 @@
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "押下";
 /* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
-"ui.inputTest.receiving" = "操作を待機中…";
+"ui.inputTest.receiving" = "操作を待っています…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "解放";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */
@@ -1385,27 +1385,27 @@
 /* Button of the problem banner that repairs the driver extension for Xbox USB controllers. */
 "ui.setup.repairDriver" = "Xbox USB ドライバを修復";
 /* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
-"platform.macos.cli.controller.show.labelServedBy" = "標準ドライバ";
+"platform.macos.cli.controller.show.labelServedBy" = "ネイティブドライバ";
 /* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
-"platform.macos.cli.controller.show.servedByMacOS" = "macOSが処理しています。拡張機能を有効にしてコントローラを引き継ぐには `ojd controller claim %@` を実行してください。";
+"platform.macos.cli.controller.show.servedByMacOS" = "macOS が処理しています。拡張機能を有効にしてコントローラを引き継ぐには `ojd controller claim %@` を実行してください。";
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
-"platform.macos.ui.controllers.servedByMacOS" = "macOSが処理中";
+"platform.macos.ui.controllers.servedByMacOS" = "macOS が処理";
 /* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
 "platform.macos.ui.controllers.servedByMacOSDetail" = "Appleのドライバがこのコントローラを保持しています。引き継ぐと、Xbox USB ドライバが有効になります。";
 /* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
 "ui.controllers.claim" = "引き継ぐ";
 /* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
-"ui.setup.runningDetail" = "Xbox USBドライバをインストールしています…";
+"ui.setup.runningDetail" = "Xbox USB ドライバをインストールしています…";
 /* Disabled button of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
 "ui.setup.repairRunning" = "修復しています…";
 /* Detail line of the problem banner when the state of the driver extension for Xbox USB controllers cannot be read. The banner has no button then. */
-"ui.setup.unavailableDetail" = "Xbox USBドライバの状態を読み取れないため、要求を送信できません。";
+"ui.setup.unavailableDetail" = "Xbox USB ドライバの状態を読み取れないため、要求を送信できません。";
 /* Detail line of the problem banner when the request for the driver extension failed. %1$@ is the error domain, %2$lld is the error code and %3$@ is the error text. */
-"ui.setup.failedDetail" = "Xbox USBドライバの要求に失敗しました: %3$@（%1$@、コード %2$lld）。";
+"ui.setup.failedDetail" = "Xbox USB ドライバの要求に失敗しました: %3$@（%1$@、コード %2$lld）。";
 /* Detail line of the problem banner when the request for the driver extension was cancelled. The Try Again button follows. */
-"ui.setup.cancelledDetail" = "Xbox USBドライバの要求が取り消されました。もう一度試してドライバをインストールしてください。";
+"ui.setup.cancelledDetail" = "Xbox USB ドライバの要求が取り消されました。もう一度試してドライバをインストールしてください。";
 /* Detail line of the problem banner when the system did not answer the request for the driver extension in time. The Try Again button follows. */
-"ui.setup.timedOutDetail" = "システムがXbox USBドライバの要求に時間内に応答しませんでした。もう一度お試しください。";
+"ui.setup.timedOutDetail" = "システムがXbox USB ドライバの要求に時間内に応答しませんでした。もう一度お試しください。";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver がサービスに接続できません";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu while the app has not yet read the service. Keep the three dots. */
@@ -1415,13 +1415,13 @@
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the request listener of the service stopped. */
 "ui.service.state.listenerStopped.message" = "サービスがリクエストの待ち受けを停止しました。";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the service answered but the app could not read its status. */
-"ui.service.state.readFailed.message" = "アプリはサービスの状態を読み取れませんでした。";
+"ui.service.state.readFailed.message" = "Appはサービスの状態を読み取れませんでした。";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the service has no login item and does not answer. */
 "ui.service.state.notInstalled.message" = "サービスはインストールされていません。";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the user must approve the service before it can start. */
 "ui.service.state.needsApproval.message" = "サービスを開始するには、承認が必要です。";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the service runs a different version than the app. */
-"ui.service.state.versionMismatch.message" = "サービスはアプリと異なるバージョンで動作しています。";
+"ui.service.state.versionMismatch.message" = "サービスはAppと異なるバージョンで動作しています。";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
 "ui.banner.access.title" = "権限が必要です";
 /* Detail line of the problem banner when macOS has not allowed all that the driver needs. OpenJoystickDriver is the product name. */
@@ -2056,7 +2056,7 @@
 /* Row label in the output of 'ojd status'. The reason why the stored profile overrides could not be read follows. */
 "cli.status.group.labelOverrideError" = "上書きエラー";
 /* Heading in the output of 'ojd status' above the list of controllers that macOS handles natively. %lld is the number of controllers. */
-"platform.macos.cli.status.group.labelPassThrough" = "macOS が処理するデバイス (%lld)";
+"platform.macos.cli.status.group.labelPassThrough" = "macOS が処理 (%lld)";
 /* Row label in the output of 'ojd status'. The state and version of the service follow. */
 "cli.status.group.labelService" = "サービス";
 /* Heading in the output of 'ojd status' above the list of connected devices that the driver does not support. %lld is the number of devices. */
@@ -3706,7 +3706,7 @@
 /* Sentence under a permission row in the Access area when the permission is allowed. */
 "ui.access.permission.granted.message" = "この権限は許可されています。";
 /* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. */
-"platform.macos.ui.access.permission.denied.message" = "macOSがこの権限を拒否したか、状態を読み取れませんでした。システム設定で許可してください。";
+"platform.macos.ui.access.permission.denied.message" = "macOS がこの権限を拒否したか、状態を読み取れませんでした。システム設定で許可してください。";
 /* Sentence under a permission row in the Access area when the permission has not been requested yet. */
 "ui.access.permission.notAsked.message" = "この権限はまだ要求されていません。";
 /* Sentence under a permission row in the Access area while the permission is being read. Keep the three dots. */
@@ -4008,9 +4008,9 @@
 /* Sentence of the main-window tour that says what the Profiles area is for. It is shown under the title of the area. */
 "ui.tour.profiles.summary" = "コントローラのボタンやスティックを割り当て直すプロファイルを作成、編集します。";
 /* Sentence of the main-window tour that says what the Library area is for. It is shown under the title of the area. */
-"ui.tour.library.summary" = "アプリに付属またはインストール済みのコントローラレコードとMODを閲覧します。";
+"ui.tour.library.summary" = "Appに付属またはインストール済みのコントローラレコードとMODを閲覧します。";
 /* Sentence of the main-window tour that says what the Access area is for. It is shown under the title of the area. */
-"ui.tour.access.summary" = "アプリが必要とする権限と、アクセスできるクライアントを確認します。";
+"ui.tour.access.summary" = "Appが必要とする権限と、アクセスできるクライアントを確認します。";
 /* Sentence of the main-window tour that says what the Activity area is for. It is shown under the title of the area. */
 "ui.tour.activity.summary" = "うまく動作しないときに、ログを読み、診断を実行します。";
 /* Button of the main-window tour that goes to the next area. */
@@ -4058,11 +4058,11 @@
 /* Menu item in the controller submenu of the menu bar menu that stops the service from remapping that controller. */
 "ui.extra.pause" = "一時停止";
 /* Menu item in the controller submenu of the menu bar menu that turns off the profile of that controller. It has a checkmark while no profile is in force. */
-"ui.extra.noProfile" = "プロファイルを使わない";
+"ui.extra.noProfile" = "プロファイルの指定なし";
 /* Menu item in the controller submenu of the menu bar menu that opens the Profiles area of the main window when a controller has more than ten profiles. */
 "ui.extra.moreProfiles" = "その他のプロファイル";
 /* Title of a controller row in the menu bar menu. %1$@ is the controller name and %2$@ is a list of its battery level, active profile and paused state. The parentheses may change. */
-"ui.extra.controllerRow" = "%1$@（%2$@）";
+"ui.extra.controllerRow" = "%1$@ (%2$@)";
 /* Menu item in the menu bar menu that opens the input test of a controller. */
 "ui.extra.testInput" = "入力をテスト";
 /* Menu item in the menu bar menu that ends the wireless link of a controller. */
@@ -4072,7 +4072,7 @@
 /* Button of the problem banner that opens the Access area so the user can grant access. */
 "ui.extra.grantAccess" = "アクセスを許可";
 /* Menu item at the top of the menu bar menu while a permission is missing; choosing it opens the Access area at that permission. %@ is the name of the permission. */
-"ui.extra.problemPermission" = "権限がありません：%@";
+"ui.extra.problemPermission" = "権限がありません: %@";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "%@ を開く";
 /* Title of the alert shown when an action of the menu bar menu fails. */
@@ -4198,21 +4198,21 @@
 /* Error in the Shortcuts app when the light action has no color or brightness, or the color is not RRGGBB. */
 "ui.shortcuts.error.lightRequest" = "6 桁の16進数の色、明るさ、またはその両方を指定してください。";
 /* Name in the Shortcuts app of the action that returns the installed mod packages. */
-"ui.shortcuts.action.listMods.title" = "Mod パッケージを一覧表示";
+"ui.shortcuts.action.listMods.title" = "MOD パッケージを一覧表示";
 /* Description in the Shortcuts app of the action that returns the installed mod packages. */
-"ui.shortcuts.action.listMods.description" = "インストール済みの Mod パッケージの名前を返します。";
+"ui.shortcuts.action.listMods.description" = "インストール済みの MOD パッケージの名前を返します。";
 /* Name in the Shortcuts app of the action that installs a mod package from a folder. */
-"ui.shortcuts.action.installMod.title" = "Mod パッケージをインストール";
+"ui.shortcuts.action.installMod.title" = "MOD パッケージをインストール";
 /* Description in the Shortcuts app of the action that installs a mod package from a folder. */
-"ui.shortcuts.action.installMod.description" = "フォルダから Mod パッケージをインストールし、その名前を返します。";
+"ui.shortcuts.action.installMod.description" = "フォルダから MOD パッケージをインストールし、その名前を返します。";
 /* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
 "ui.shortcuts.action.installMod.folder" = "フォルダ";
 /* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
 "ui.shortcuts.action.installMod.replace" = "インストール済みのパッケージを置き換える";
 /* Name in the Shortcuts app of the action that removes an installed mod package. */
-"ui.shortcuts.action.removeMod.title" = "Mod パッケージを削除";
+"ui.shortcuts.action.removeMod.title" = "MOD パッケージを削除";
 /* Description in the Shortcuts app of the action that removes an installed mod package. */
-"ui.shortcuts.action.removeMod.description" = "インストール済みの Mod パッケージを名前で削除します。";
+"ui.shortcuts.action.removeMod.description" = "インストール済みの MOD パッケージを名前で削除します。";
 /* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
 "ui.shortcuts.action.removeMod.name" = "名前";
 /* Name of the model property of a controller in the Shortcuts app. */
@@ -4504,7 +4504,7 @@
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
 "error.E5007.virtualDevice.definition" = "%1$@、persona: 仮想ゲームパッドの定義には layout、transport、labels、worksWithDefaultSDLHints、version を持つ identity が必要です。対処: 足りないキーを追加するか、match を追加して仮想ゲームパッドを選んでください。";
 /* Error E5007, shown when a virtual gamepad file fails: a match unit is not a unit ID. %1$@ is the file. */
-"error.E5007.virtualDevice.matchUnit" = "%1$@、match.unit: match.unit はユニット ID である必要があります。対処: unit をコントローラーのユニット ID にするか、省略してください。";
+"error.E5007.virtualDevice.matchUnit" = "%1$@、match.unit: match.unit はユニット ID である必要があります。対処: unit をコントローラのユニット ID にするか、省略してください。";
 /* Error E5007, shown when a virtual gamepad file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
 "error.E5007.virtualDevice.identityText" = "%1$@、identity.%2$@: 仮想ゲームパッドの identity には空でない %2$@ が必要です。対処: %2$@ に空でない文字列を指定してください。";
 /* Error E5007, shown when a virtual gamepad file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
@@ -5160,11 +5160,11 @@
 /* Name of the touch sensor of the right trackpad of a controller, in the list of controls in the Advanced section of the controller detail. */
 "ui.controllers.control.rightTrackpadTouch" = "右パッドのタッチ";
 /* Name of the horizontal position of the pointer of a controller, in the list of controls in the Advanced section of the controller detail. */
-"ui.controllers.control.pointerX" = "ポインターの水平位置";
+"ui.controllers.control.pointerX" = "ポインタの水平位置";
 /* Name of the vertical position of the pointer of a controller, in the list of controls in the Advanced section of the controller detail. */
-"ui.controllers.control.pointerY" = "ポインターの垂直位置";
+"ui.controllers.control.pointerY" = "ポインタの垂直位置";
 /* Name of the control that says whether the pointer of a controller is tracked, in the list of controls in the Advanced section of the controller detail. */
-"ui.controllers.control.pointerTracking" = "ポインターの追跡";
+"ui.controllers.control.pointerTracking" = "ポインタの追跡";
 /* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID is the controller's. It fills %1$@ of the Input mapping text. GUID stays as written. */
 "ui.controllers.sdlMatch.exactGUID" = "完全一致のGUID";
 /* Words in the Input mapping row of the controller detail for a SDL_GameControllerDB line whose GUID matches when the name checksum bytes are ignored. GUID stays as written. */
@@ -5198,13 +5198,13 @@
 /* Title of the row in the General pane of the settings window where the user records the system-wide keyboard shortcut that pauses and resumes every controller. */
 "ui.settings.general.pauseShortcut" = "一時停止のショートカット";
 /* Explanation under the pause shortcut title in the General pane of the settings window. */
-"ui.settings.general.pauseShortcutDescription" = "どのアプリからでも、すべてのコントローラを一時停止または再開します。キーと一緒にControl、Option、Commandのいずれかを押し続けます。";
+"ui.settings.general.pauseShortcutDescription" = "どのAppからでも、すべてのコントローラを一時停止または再開します。キーと一緒にControl、Option、Commandのいずれかを押し続けます。";
 /* Button in the General pane of the settings window that starts recording the pause shortcut. */
 "ui.settings.general.pauseShortcutRecord" = "ショートカットを記録";
 /* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
 "ui.settings.general.pauseShortcutRecording" = "ショートカットを押してください…";
 /* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
-"ui.settings.general.pauseShortcutTaken" = "このショートカットはすでに別のアプリが使用しています。別のショートカットを記録してください。";
+"ui.settings.general.pauseShortcutTaken" = "このショートカットはすでに別のAppが使用しています。別のショートカットを記録してください。";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
 "cli.setting.set.badShortcut" = "「%1$@」はショートカットではありません。+でつないだ修飾キーとキーを指定してください(例: control+option+P)。解除するにはnoneを指定します。";
 /* Error of 'ojd setting set' when the value is not an interface level. %1$@ is the text the user gave. Simple and Advanced stay as written. */
@@ -5224,7 +5224,7 @@
 /* Button at the top of the Controllers detail for a controller that needs a permission. It opens the Access area of the main window; Access is the name of that area. */
 "ui.controllers.readiness.needsStep.access.action" = "アクセスを開く";
 /* One sentence at the top of the Controllers detail for a controller that needs the driver extension for Xbox USB controllers to be set up. Xbox USB stays as written. */
-"ui.controllers.readiness.needsStep.driver.message" = "このコントローラには、Xbox USBドライバの設定が必要です。";
+"ui.controllers.readiness.needsStep.driver.message" = "このコントローラには、Xbox USB ドライバの設定が必要です。";
 /* Button at the top of the Controllers detail for a controller that needs the driver extension. It approves, claims or repairs the driver. */
 "ui.controllers.readiness.needsStep.driver.action" = "ドライバを設定";
 /* One sentence at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove, such as another program holding it. The detail names the next step. */
@@ -5234,6 +5234,6 @@
 /* Title of the state of a connected controller that OJD has no support for, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
 "ui.controllers.readiness.notSupported.title" = "未対応";
 /* One sentence at the top of the detail of a controller in the Not supported yet state. OpenJoystickDriver is the product name. */
-"ui.controllers.readiness.notSupported.message" = "OpenJoystickDriverはこのコントローラをまだ使用できません。";
+"ui.controllers.readiness.notSupported.message" = "OpenJoystickDriver はこのコントローラをまだ使用できません。";
 /* Button at the top of the detail of a controller in the Not supported yet state. It opens the Supported Controllers page of the wiki. */
 "ui.controllers.readiness.notSupported.action" = "対応コントローラを見る";
