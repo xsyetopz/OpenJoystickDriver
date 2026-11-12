@@ -187,9 +187,9 @@
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant.nextStep" = "Hãy kết nối bộ điều khiển theo cách khác, chẳng hạn bằng cáp, hoặc gửi báo cáo hỗ trợ.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.virtualProfileUnavailable" = "OJD không có hồ sơ gamepad ảo nào cho bộ điều khiển này.";
+"ui.controllers.virtualProfileUnavailable" = "OJD không có cấu hình tay cầm ảo nào cho bộ điều khiển này.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.virtualProfileUnavailable.nextStep" = "Hãy gửi báo cáo hỗ trợ để có thể thêm hồ sơ cho nó.";
+"ui.controllers.virtualProfileUnavailable.nextStep" = "Hãy gửi báo cáo hỗ trợ để có thể thêm cấu hình cho nó.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.deviceInUse" = "Một chương trình khác đang dùng bộ điều khiển này.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
@@ -205,9 +205,9 @@
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noModeMatched" = "Bộ điều khiển này dùng chung ID với các mẫu khác và không khớp với mẫu nào được hỗ trợ. OJD không gửi dữ liệu nào đến bộ điều khiển này.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.noModeMatched.nextStep" = "Hãy gửi báo cáo hỗ trợ kèm mẫu của bộ điều khiển để có thể nhận diện nó.";
+"ui.controllers.noModeMatched.nextStep" = "Hãy gửi báo cáo hỗ trợ kèm kiểu máy của bộ điều khiển để có thể nhận diện nó.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. OJD sends such a receiver no data, and the text says so. OJD stays as written. */
-"ui.controllers.noControllerLinked" = "Không có bộ điều khiển nào được liên kết với bộ thu này. OJD không gửi dữ liệu nào đến thiết bị này.";
+"ui.controllers.noControllerLinked" = "Không có bộ điều khiển nào được liên kết với bộ thu này. OJD không gửi dữ liệu nào đến bộ thu này.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. It tells the person what to do. OJD stays as written. */
 "ui.controllers.noControllerLinked.nextStep" = "Hãy kết nối một bộ điều khiển với nó hoặc bật bộ điều khiển.";
 /* Title of a row and of the detail in the Controllers list for a connected 2.4 GHz wireless receiver that has no controller linked to it. Its own product string is not shown. It is a noun phrase. */
@@ -309,7 +309,7 @@
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "không có tay cầm ảo";
 /* Value of the calibration row in the controller detail while the service has reported no stick or trigger values yet. */
-"ui.controllers.calibration.waiting" = "Đang chờ dữ liệu nhập…";
+"ui.controllers.calibration.waiting" = "Đang chờ đầu vào…";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "Yêu cầu nêu một ID nhà cung cấp hoặc ID sản phẩm nằm ngoài phạm vi. Không có gì thay đổi.";
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
@@ -337,9 +337,9 @@
 /* Caption under the Virtual gamepad kind pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
 "ui.virtualProfile.unchanged" = "Lựa chọn này đã được áp dụng. Không có gì thay đổi.";
 /* Caption under the Virtual gamepad kind pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
-"ui.virtualProfile.otherScopeHolds.model" = "Ghi đè đang có hiệu lực được lưu cho mọi bộ điều khiển của mẫu này, nên không có gì để xóa riêng cho bộ điều khiển này. Không có gì thay đổi.";
+"ui.virtualProfile.otherScopeHolds.model" = "Ghi đè đang có hiệu lực được lưu cho mọi bộ điều khiển của kiểu máy này, nên không có gì để xóa riêng cho bộ điều khiển này. Không có gì thay đổi.";
 /* Caption under the Virtual gamepad kind pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
-"ui.virtualProfile.otherScopeHolds.unit" = "Ghi đè đang có hiệu lực chỉ được lưu cho bộ điều khiển này, nên không có gì để xóa cho mẫu. Không có gì thay đổi.";
+"ui.virtualProfile.otherScopeHolds.unit" = "Ghi đè đang có hiệu lực chỉ được lưu cho bộ điều khiển này, nên không có gì để xóa cho kiểu máy. Không có gì thay đổi.";
 /* Status shown while the app changes the virtual gamepad kind. Keep the three dots. */
 "ui.virtualProfile.updating" = "Đang cập nhật loại tay cầm ảo…";
 /* Error when the user picks a virtual gamepad kind that the service does not know. The service stored nothing. */
@@ -535,7 +535,7 @@
 /* Line in the sheet shown after a profile was converted, for a part left out for a reason that names no control. %@ is the kind of part, such as gyro output. */
 "ui.profiles.convert.leftOutPart" = "%@: bộ điều khiển thiếu một phần cần thiết";
 /* Kind of profile part in the list of parts that a profile conversion left out: a binding of one control to an action. */
-"ui.profiles.convert.section.binding" = "Gán nút";
+"ui.profiles.convert.section.binding" = "Liên kết";
 /* Kind of profile part in the list of parts that a profile conversion left out: a chord, buttons pressed together. */
 "ui.profiles.convert.section.chord" = "Tổ hợp nút";
 /* Kind of profile part in the list of parts that a profile conversion left out: a sequence of presses. */
@@ -597,7 +597,7 @@
 /* Accessibility label of the button that removes an app from the list of apps of a profile. %@ is the name of the app. */
 "ui.profiles.removeAppNamed" = "Xóa %@";
 /* Message of the open panel that Other... opens in the Add App menu of a profile. */
-"ui.profiles.appPanelMessage" = "Chọn một ứng dụng cho hồ sơ này.";
+"ui.profiles.appPanelMessage" = "Chọn một ứng dụng cho cấu hình này.";
 /* Help text of the chord sheet. The destination fires while all chosen controls are held down. */
 "ui.profiles.chordHelp" = "Đích được kích hoạt khi tất cả thành phần đã chọn đang được nhấn.";
 /* Label of the popup in the chord sheet that picks how the chord works. */
@@ -691,7 +691,7 @@
 /* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
 "ui.profiles.templateNoMotion" = "%@ không có cảm biến chuyển động.";
 /* Message in the profile creation sheet under the template popup. %@ is the comma-separated list of controls that the template could not bind because the controller lacks them. */
-"ui.profiles.templateSkipped" = "Không gán vì bộ điều khiển không có: %@.";
+"ui.profiles.templateSkipped" = "Không liên kết vì bộ điều khiển không có: %@.";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "Chuyển đổi";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -1273,7 +1273,7 @@
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "Đã nhấn";
 /* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
-"ui.inputTest.receiving" = "Đang chờ một điều khiển di chuyển…";
+"ui.inputTest.receiving" = "Đang chờ một nút hoặc cần di chuyển…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "Đã nhả";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */
@@ -1387,11 +1387,11 @@
 /* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
 "platform.macos.cli.controller.show.labelServedBy" = "Trình điều khiển gốc";
 /* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
-"platform.macos.cli.controller.show.servedByMacOS" = "Do macOS xử lý. Chạy `ojd controller claim %@` để kích hoạt tiện ích mở rộng và tiếp quản tay cầm.";
+"platform.macos.cli.controller.show.servedByMacOS" = "Do macOS xử lý. Chạy `ojd controller claim %@` để kích hoạt tiện ích mở rộng và tiếp quản bộ điều khiển.";
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
 "platform.macos.ui.controllers.servedByMacOS" = "Do macOS xử lý";
 /* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
-"platform.macos.ui.controllers.servedByMacOSDetail" = "Trình điều khiển của Apple đang giữ tay cầm này. Hãy tiếp quản để kích hoạt trình điều khiển Xbox USB.";
+"platform.macos.ui.controllers.servedByMacOSDetail" = "Trình điều khiển của Apple đang giữ bộ điều khiển này. Hãy tiếp quản để kích hoạt trình điều khiển Xbox USB.";
 /* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
 "ui.controllers.claim" = "Tiếp quản";
 /* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
@@ -2624,11 +2624,11 @@
 /* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To handle a model means to read its input and publish it as a virtual gamepad. */
 "cli.controller.claim.abstract" = "Để OpenJoystickDriver xử lý một kiểu máy bộ điều khiển.";
 /* Long description in the help of 'ojd controller claim'. server, ojd, vvvv-pppp.plist and the record terms stay as written. */
-"platform.macos.cli.controller.claim.discussion" = "Đặt server thành ojd trong bản ghi của bạn cho mẫu đó, vvvv-pppp.plist trong thư mục bản ghi của bạn, và giữ các trường khác của bản ghi. Áp dụng cho mọi bộ điều khiển của mẫu. Dịch vụ đang chạy áp dụng mà không cần cắm lại. Cần dịch vụ để tìm bộ điều khiển. --dry-run không ghi gì. Thoát với mã 1 và E2023 cho bộ điều khiển dùng USB thô, luôn do OpenJoystickDriver phục vụ, hoặc do macOS không phục vụ ở chế độ gốc.";
+"platform.macos.cli.controller.claim.discussion" = "Đặt server thành ojd trong bản ghi của bạn cho kiểu máy đó, vvvv-pppp.plist trong thư mục bản ghi của bạn, và giữ các trường khác của bản ghi. Áp dụng cho mọi bộ điều khiển của kiểu máy. Dịch vụ đang chạy áp dụng mà không cần cắm lại. Cần dịch vụ để tìm bộ điều khiển. --dry-run không ghi gì. Thoát với mã 1 và E2023 cho bộ điều khiển dùng USB thô, luôn do OpenJoystickDriver phục vụ, hoặc do macOS không phục vụ ở chế độ gốc.";
 /* One-line summary of 'ojd controller release' in the command list and at the top of its help. */
 "platform.macos.cli.controller.release.abstract" = "Trả một mẫu bộ điều khiển về cho macOS.";
 /* Long description in the help of 'ojd controller release'. server, system and vvvv-pppp.plist stay as written. */
-"platform.macos.cli.controller.release.discussion" = "Đặt server thành system trong bản ghi của bạn cho mẫu đó, vvvv-pppp.plist trong thư mục bản ghi của bạn, và giữ các trường khác của bản ghi. Áp dụng cho mọi bộ điều khiển của mẫu. Dịch vụ đang chạy áp dụng mà không cần cắm lại. Cần dịch vụ để tìm bộ điều khiển. --dry-run không ghi gì. Thoát với mã 1 và E2023 cho bộ điều khiển dùng USB thô, luôn do OpenJoystickDriver phục vụ, hoặc do macOS không phục vụ ở chế độ gốc.";
+"platform.macos.cli.controller.release.discussion" = "Đặt server thành system trong bản ghi của bạn cho kiểu máy đó, vvvv-pppp.plist trong thư mục bản ghi của bạn, và giữ các trường khác của bản ghi. Áp dụng cho mọi bộ điều khiển của kiểu máy. Dịch vụ đang chạy áp dụng mà không cần cắm lại. Cần dịch vụ để tìm bộ điều khiển. --dry-run không ghi gì. Thoát với mã 1 và E2023 cho bộ điều khiển dùng USB thô, luôn do OpenJoystickDriver phục vụ, hoặc do macOS không phục vụ ở chế độ gốc.";
 /* Message printed by 'ojd controller claim' and related commands with --dry-run instead of writing the record. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. */
 "cli.controller.group.serverDryRun" = "Nếu chạy, sẽ đặt %1$@ thành %2$@ trong %3$@.";
 /* Error when the record file of a controller cannot be changed. %1$@ is the path of the record file and %2$@ is the description of the problem. */
@@ -3714,7 +3714,7 @@
 /* Sentence under a permission row in the Access area while the permission is being read. Keep the three dots. */
 "ui.access.permission.checking.message" = "Đang kiểm tra quyền này…";
 /* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
-"ui.access.permission.notNeeded.message" = "Các hồ sơ đang dùng không sử dụng quyền này.";
+"ui.access.permission.notNeeded.message" = "Các cấu hình đang dùng không sử dụng quyền này.";
 /* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
 "ui.access.permission.limited.message" = "Đã cho phép, nhưng biểu ngữ hoặc âm thanh đang tắt, nên bạn có thể bỏ lỡ thông báo.";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
@@ -4174,11 +4174,11 @@
 /* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
 "ui.shortcuts.action.setProfileValue.value" = "Giá trị";
 /* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
-"ui.shortcuts.error.profileKey" = "Khóa của một giá trị hồ sơ không được có phần trống.";
+"ui.shortcuts.error.profileKey" = "Khóa của một giá trị cấu hình không được có phần trống.";
 /* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
-"ui.shortcuts.action.rumble.title" = "Rung tay cầm";
+"ui.shortcuts.action.rumble.title" = "Rung bộ điều khiển";
 /* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
-"ui.shortcuts.action.rumble.description" = "Chạy các mô-tơ rung của tay cầm trong thời gian ngắn.";
+"ui.shortcuts.action.rumble.description" = "Chạy các mô-tơ rung của bộ điều khiển trong thời gian ngắn.";
 /* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
 "ui.shortcuts.action.rumble.intensity" = "Cường độ (0-255)";
 /* Label in the Shortcuts app of the rumble action's duration in seconds. */
@@ -4186,13 +4186,13 @@
 /* Name in the Shortcuts app of the action that sets the player indicator of a controller. */
 "ui.shortcuts.action.player.title" = "Đặt đèn báo người chơi";
 /* Description in the Shortcuts app of the action that sets the player indicator of a controller. */
-"ui.shortcuts.action.player.description" = "Đặt đèn báo người chơi của tay cầm.";
+"ui.shortcuts.action.player.description" = "Đặt đèn báo người chơi của bộ điều khiển.";
 /* Label in the Shortcuts app of the player number from 1 to 4, or 0 for none. */
 "ui.shortcuts.action.player.number" = "Số người chơi (0 là không có)";
 /* Name in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
-"ui.shortcuts.action.light.title" = "Đặt đèn tay cầm";
+"ui.shortcuts.action.light.title" = "Đặt đèn bộ điều khiển";
 /* Description in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
-"ui.shortcuts.action.light.description" = "Đặt màu thanh đèn, độ sáng LED hoặc cả hai trên tay cầm.";
+"ui.shortcuts.action.light.description" = "Đặt màu thanh đèn, độ sáng LED hoặc cả hai trên bộ điều khiển.";
 /* Label in the Shortcuts app of the lightbar color given as six hexadecimal digits, RRGGBB. */
 "ui.shortcuts.action.light.color" = "Màu (RRGGBB)";
 /* Label in the Shortcuts app of the LED brightness from 0 to 255. */
@@ -4494,7 +4494,7 @@
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad name is not a known virtual gamepad. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@, persona: persona phải là một trong %2$@. Cách sửa: đặt persona thành một trong số đó.";
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file selects no model, and a user file must. %1$@ is the file. */
-"error.E5007.virtualDevice.matchRequired" = "%1$@, match: tệp trong thư mục người dùng phải có match. Cách sửa: thêm match với vendorID và productID của mẫu máy.";
+"error.E5007.virtualDevice.matchRequired" = "%1$@, match: tệp trong thư mục người dùng phải có match. Cách sửa: thêm match với vendorID và productID của kiểu máy.";
 /* Error E5007, shown when a virtual gamepad file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
 "error.E5007.virtualDevice.layout" = "%1$@, layout: layout phải là một trong %2$@. Cách sửa: đặt layout thành một trong số đó.";
 /* Error E5007, shown when a virtual gamepad file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
@@ -4506,7 +4506,7 @@
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
 "error.E5007.virtualDevice.definition" = "%1$@, persona: định nghĩa tay cầm ảo phải có layout, transport, labels, worksWithDefaultSDLHints và identity kèm version. Cách sửa: thêm các khóa còn thiếu, hoặc thêm match để chọn một tay cầm ảo.";
 /* Error E5007, shown when a virtual gamepad file fails: a match unit is not a unit ID. %1$@ is the file. */
-"error.E5007.virtualDevice.matchUnit" = "%1$@, match.unit: match.unit phải là ID của một thiết bị. Cách sửa: đặt unit thành ID thiết bị của một tay cầm, hoặc bỏ qua.";
+"error.E5007.virtualDevice.matchUnit" = "%1$@, match.unit: match.unit phải là ID của một thiết bị. Cách sửa: đặt unit thành ID thiết bị của một bộ điều khiển, hoặc bỏ qua.";
 /* Error E5007, shown when a virtual gamepad file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
 "error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: danh tính tay cầm ảo cần %2$@ không rỗng. Cách sửa: cho %2$@ một chuỗi không rỗng.";
 /* Error E5007, shown when a virtual gamepad file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
@@ -4540,9 +4540,9 @@
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
 "error.E5007.startupWrite.crcSeedRange" = "%1$@, session.startup[].crc32Seed: crc32Seed khởi động phải trong 0...255. Cách sửa: đặt crc32Seed trong 0...255, hoặc bỏ đi.";
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: tệp tay cầm ảo không được lặp lại match của tệp người dùng %2$@. Cách sửa: cho mỗi mẫu một tệp tay cầm ảo, hoặc đổi match ở một trong hai tệp.";
+"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: tệp tay cầm ảo không được lặp lại match của tệp người dùng %2$@. Cách sửa: cho mỗi kiểu máy một tệp tay cầm ảo, hoặc đổi match ở một trong hai tệp.";
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: tệp tay cầm ảo không được lặp lại match của tệp gói %2$@. Cách sửa: cho mỗi mẫu một tệp tay cầm ảo, hoặc đổi match ở một trong hai tệp.";
+"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: tệp tay cầm ảo không được lặp lại match của tệp gói %2$@. Cách sửa: cho mỗi kiểu máy một tệp tay cầm ảo, hoặc đổi match ở một trong hai tệp.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: khoảng keep-alive phải là 1...60000 ms. Cách sửa: đặt intervalMilliseconds thành 1...60000.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
@@ -4990,7 +4990,7 @@
 /* Says that another app uses the USB interface of a controller exclusively and that OpenJoystickDriver serves the controller when the app releases it, when the interface names no holder, in the controller detail and the controller list. */
 "status.controllerOwner.unnamed" = "Đang được ứng dụng khác sử dụng. Bộ điều khiển này đang được đọc trực tiếp. OpenJoystickDriver sẽ phục vụ ngay khi nó được nhả.";
 /* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual gamepad of OpenJoystickDriver in a game, in the controller detail and the controller list. */
-"status.controllerAlsoListedBySystem" = "Hệ thống cũng liệt kê bộ điều khiển này như một bộ điều khiển thứ hai không có đầu vào. Trong trò chơi, hãy chọn tay cầm ảo mà OpenJoystickDriver cung cấp.";
+"status.controllerAlsoListedBySystem" = "Hệ thống cũng liệt kê bộ điều khiển này như một bộ điều khiển thứ hai không có đầu vào. Trong game, hãy chọn tay cầm ảo mà OpenJoystickDriver cung cấp.";
 /* Label in the controller detail for who holds the USB interface of the controller exclusively. */
 "ui.controllers.exclusiveOwner" = "Quyền truy cập độc quyền";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
@@ -5180,13 +5180,13 @@
 /* Note under the profile editor in the Profiles area while another profile change runs and edits are ignored. */
 "ui.profiles.editBlockedChange" = "Chưa thể chỉnh sửa cho đến khi thay đổi đang chạy hoàn tất.";
 /* Note under the profile editor in the Profiles area while the profile list holds the editor because a change runs or damaged profiles need attention. */
-"ui.profiles.editBlockedHold" = "Chưa thể chỉnh sửa cho đến khi thay đổi đang chạy hoàn tất hoặc các hồ sơ bị hỏng được xử lý.";
+"ui.profiles.editBlockedHold" = "Chưa thể chỉnh sửa cho đến khi thay đổi đang chạy hoàn tất hoặc các cấu hình bị hỏng được xử lý.";
 /* Note above the profile editor in the Profiles area while a profile change runs and profile actions such as New, Import and Delete wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedChange" = "Các thao tác với hồ sơ chưa dùng được cho đến khi thay đổi đang chạy hoàn tất.";
+"ui.profiles.actionBlockedChange" = "Các thao tác với cấu hình chưa dùng được cho đến khi thay đổi đang chạy hoàn tất.";
 /* Note above the profile editor in the Profiles area while a repair of the profile library runs and profile actions wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedRecovery" = "Các thao tác với hồ sơ chưa dùng được cho đến khi việc sửa thư viện hoàn tất.";
+"ui.profiles.actionBlockedRecovery" = "Các thao tác với cấu hình chưa dùng được cho đến khi việc sửa thư viện hoàn tất.";
 /* Note above the profile editor in the Profiles area while the profile library lists damaged profiles and profile actions wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedDamaged" = "Các thao tác với hồ sơ chưa dùng được cho đến khi các hồ sơ bị hỏng được xóa hoặc thư viện được đặt lại.";
+"ui.profiles.actionBlockedDamaged" = "Các thao tác với cấu hình chưa dùng được cho đến khi các cấu hình bị hỏng được xóa hoặc thư viện được đặt lại.";
 /* Note beside the Pair Joy-Cons button of a Joy-Con pair profile in the Profiles area when the button is unavailable because a left or a right Joy-Con is not connected. */
 "ui.profiles.joyConPairNeedsBoth" = "Hãy kết nối Joy-Con trái và phải để ghép đôi.";
 /* Note under the Virtual gamepad pop-up in the profile editor, shown after a virtual gamepad was chosen while exclusive physical input was on. */

@@ -187,7 +187,7 @@
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant.nextStep" = "請改用其他方式（例如接上傳輸線）連線控制器，或傳送支援報告。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.virtualProfileUnavailable" = "OJD 沒有適用於此控制器的虛擬遊戲手把設定檔。";
+"ui.controllers.virtualProfileUnavailable" = "OJD 沒有適用於此控制器的虛擬遊戲控制器設定檔。";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.virtualProfileUnavailable.nextStep" = "請傳送支援報告，以便為其新增設定檔。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. The next step has its own text. OJD, USB, HID and ID stay as written. */
@@ -207,7 +207,7 @@
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its ID is shared by several models and matches none of the supported ones. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.noModeMatched.nextStep" = "請附上控制器的型號傳送支援報告，以便識別它。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. OJD sends such a receiver no data, and the text says so. OJD stays as written. */
-"ui.controllers.noControllerLinked" = "此接收器未配對任何控制器。OJD 不會向其傳送任何資料。";
+"ui.controllers.noControllerLinked" = "此接收器未連結任何控制器。OJD 不會向其傳送任何資料。";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected receiver that has no controller linked to it. It tells the person what to do. OJD stays as written. */
 "ui.controllers.noControllerLinked.nextStep" = "請為其連接一個控制器，或開啟控制器電源。";
 /* Title of a row and of the detail in the Controllers list for a connected 2.4 GHz wireless receiver that has no controller linked to it. Its own product string is not shown. It is a noun phrase. */
@@ -293,7 +293,7 @@
 /* Message in the controller detail when removing the stick deadzone fails because the user's controller record does not set it. The deadzone is the part of the travel near the center that is ignored. */
 "ui.controllers.stickDeadzone.notSet" = "您的控制器記錄沒有設定搖桿死區，因此沒有可重置的內容。";
 /* Label of the calibration row in the controller detail while the service has reported no stick or trigger values yet. Calibration shows each stick and trigger as the controller reports it and after tuning. */
-"ui.controllers.calibration.title" = "校正";
+"ui.controllers.calibration.title" = "校準";
 /* Label of the left stick row of the calibration view in the controller detail. */
 "ui.controllers.calibration.leftStick" = "左搖桿";
 /* Label of the right stick row of the calibration view in the controller detail. */
@@ -307,7 +307,7 @@
 /* Value of a stick row of the calibration view in the controller detail. %1$@ is the raw and tuned values text, and %2$@ is the stick deadzone, such as 10%. The deadzone is the part of the travel near the center that is ignored. */
 "ui.controllers.calibration.readingWithDeadZone" = "%1$@，死區 %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
-"ui.controllers.calibration.noOutput" = "沒有虛擬遊戲手把";
+"ui.controllers.calibration.noOutput" = "沒有虛擬遊戲控制器";
 /* Value of the calibration row in the controller detail while the service has reported no stick or trigger values yet. */
 "ui.controllers.calibration.waiting" = "正在等待輸入…";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
@@ -535,7 +535,7 @@
 /* Line in the sheet shown after a profile was converted, for a part left out for a reason that names no control. %@ is the kind of part, such as gyro output. */
 "ui.profiles.convert.leftOutPart" = "%@：控制器缺少所需的部分";
 /* Kind of profile part in the list of parts that a profile conversion left out: a binding of one control to an action. */
-"ui.profiles.convert.section.binding" = "綁定";
+"ui.profiles.convert.section.binding" = "按鍵對應";
 /* Kind of profile part in the list of parts that a profile conversion left out: a chord, buttons pressed together. */
 "ui.profiles.convert.section.chord" = "組合鍵";
 /* Kind of profile part in the list of parts that a profile conversion left out: a sequence of presses. */
@@ -691,7 +691,7 @@
 /* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
 "ui.profiles.templateNoMotion" = "%@ 沒有動作感應器。";
 /* Message in the profile creation sheet under the template popup. %@ is the comma-separated list of controls that the template could not bind because the controller lacks them. */
-"ui.profiles.templateSkipped" = "未綁定，因為控制器沒有：%@。";
+"ui.profiles.templateSkipped" = "未對應，因為控制器沒有：%@。";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "切換";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -1273,7 +1273,7 @@
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "已按下";
 /* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
-"ui.inputTest.receiving" = "正在等待操作…";
+"ui.inputTest.receiving" = "正在等待控制項移動…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "已放開";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */
@@ -1419,7 +1419,7 @@
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the service has no login item and does not answer. */
 "ui.service.state.notInstalled.message" = "服務未安裝。";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the user must approve the service before it can start. */
-"ui.service.state.needsApproval.message" = "服務需要你的核准才能啟動。";
+"ui.service.state.needsApproval.message" = "服務需要您的核准才能啟動。";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the service runs a different version than the app. */
 "ui.service.state.versionMismatch.message" = "服務執行的版本與 App 不同。";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
@@ -2624,11 +2624,11 @@
 /* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To handle a model means to read its input and publish it as a virtual gamepad. */
 "cli.controller.claim.abstract" = "讓 OpenJoystickDriver 處理某個控制器型號。";
 /* Long description in the help of 'ojd controller claim'. server, ojd, vvvv-pppp.plist and the record terms stay as written. */
-"platform.macos.cli.controller.claim.discussion" = "在你為該型號建立的記錄（記錄目錄中的 vvvv-pppp.plist）中將 server 設為 ojd，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
+"platform.macos.cli.controller.claim.discussion" = "在您為該型號建立的記錄（記錄目錄中的 vvvv-pppp.plist）中將 server 設為 ojd，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
 /* One-line summary of 'ojd controller release' in the command list and at the top of its help. */
 "platform.macos.cli.controller.release.abstract" = "把某個控制器型號交還給 macOS。";
 /* Long description in the help of 'ojd controller release'. server, system and vvvv-pppp.plist stay as written. */
-"platform.macos.cli.controller.release.discussion" = "在你為該型號建立的記錄（記錄目錄中的 vvvv-pppp.plist）中將 server 設為 system，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
+"platform.macos.cli.controller.release.discussion" = "在您為該型號建立的記錄（記錄目錄中的 vvvv-pppp.plist）中將 server 設為 system，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
 /* Message printed by 'ojd controller claim' and related commands with --dry-run instead of writing the record. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. */
 "cli.controller.group.serverDryRun" = "如果執行，將會把 %1$@ 設為 %2$@（%3$@）。";
 /* Error when the record file of a controller cannot be changed. %1$@ is the path of the record file and %2$@ is the description of the problem. */
@@ -4076,7 +4076,7 @@
 /* Menu item at the top of the menu bar menu while a permission is missing; choosing it opens the Access area at that permission. %@ is the name of the permission. */
 "ui.extra.problemPermission" = "缺少權限：%@";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
-"ui.extra.openWindow" = "打開 %@";
+"ui.extra.openWindow" = "開啟 %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */
 "ui.extra.actionFailedTitle" = "操作未完成";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */
@@ -4166,7 +4166,7 @@
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "取得控制器";
 /* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
-"ui.shortcuts.action.setProfileValue.description" = "更改設定檔的其中一個值，例如名稱。";
+"ui.shortcuts.action.setProfileValue.description" = "變更設定檔的其中一個值，例如名稱。";
 /* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
 "ui.shortcuts.action.setProfileValue.key" = "鍵";
 /* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
@@ -5178,15 +5178,15 @@
 /* Note under the profile editor in the Profiles area while a save runs and edits are ignored. */
 "ui.profiles.editBlockedSaving" = "儲存完成之前無法編輯。";
 /* Note under the profile editor in the Profiles area while another profile change runs and edits are ignored. */
-"ui.profiles.editBlockedChange" = "進行中的更改完成之前無法編輯。";
+"ui.profiles.editBlockedChange" = "進行中的變更完成之前無法編輯。";
 /* Note under the profile editor in the Profiles area while the profile list holds the editor because a change runs or damaged profiles need attention. */
-"ui.profiles.editBlockedHold" = "進行中的更改完成或損壞的設定檔處理完畢之前無法編輯。";
+"ui.profiles.editBlockedHold" = "進行中的變更完成或損壞的設定檔處理完畢之前無法編輯。";
 /* Note above the profile editor in the Profiles area while a profile change runs and profile actions such as New, Import and Delete wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedChange" = "進行中的更改完成之前，無法對設定檔執行操作。";
+"ui.profiles.actionBlockedChange" = "進行中的變更完成之前，無法對設定檔執行操作。";
 /* Note above the profile editor in the Profiles area while a repair of the profile library runs and profile actions wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedRecovery" = "資料庫修復完成之前，無法對設定檔執行操作。";
+"ui.profiles.actionBlockedRecovery" = "資源庫修復完成之前，無法對設定檔執行操作。";
 /* Note above the profile editor in the Profiles area while the profile library lists damaged profiles and profile actions wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedDamaged" = "損壞的設定檔被刪除或資料庫被重置之前，無法對設定檔執行操作。";
+"ui.profiles.actionBlockedDamaged" = "損壞的設定檔被刪除或資源庫被重置之前，無法對設定檔執行操作。";
 /* Note beside the Pair Joy-Cons button of a Joy-Con pair profile in the Profiles area when the button is unavailable because a left or a right Joy-Con is not connected. */
 "ui.profiles.joyConPairNeedsBoth" = "連接左右 Joy-Con 以進行配對。";
 /* Note under the Virtual gamepad pop-up in the profile editor, shown after a virtual gamepad was chosen while exclusive physical input was on. */
@@ -5220,7 +5220,7 @@
 /* Button at the top of the Controllers detail for a controller in the Working state. It opens the Input Test window. */
 "ui.controllers.readiness.working.action" = "開啟輸入測試";
 /* Title of the state of a connected controller that waits for a step from the user, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
-"ui.controllers.readiness.needsStep.title" = "需要你完成一個步驟";
+"ui.controllers.readiness.needsStep.title" = "需要您完成一個步驟";
 /* One sentence at the top of the Controllers detail for a controller that needs a permission that is not allowed yet. */
 "ui.controllers.readiness.needsStep.access.message" = "此控制器需要一項尚未允許的權限。";
 /* Button at the top of the Controllers detail for a controller that needs a permission. It opens the Access area of the main window; Access is the name of that area. */
