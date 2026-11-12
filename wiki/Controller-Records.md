@@ -387,7 +387,7 @@ ojd config set stickDeadzone 0.15 --controller 1532:0A15
 ojd config show --controller 1532:0A15
 ```
 
-`ojd config unset stickDeadzone --controller 1532:0A15` removes it. The **Stick deadzone** stepper above the **Tuning** group of the controller detail in the app writes the same key. `stickDeadzone` is radial and applies to both sticks, so size it for the stick that rests furthest off center.
+`ojd config unset stickDeadzone --controller 1532:0A15` removes it. The **Stick deadzone** stepper (needs the **Advanced** interface) above the **Tuning** group of the controller detail in the app writes the same key. `stickDeadzone` is radial and applies to both sticks, so size it for the stick that rests furthest off center.
 
 The default for `frameQueueCapacity` is 64, the `default` of `tuning.frameQueueCapacity` in `controller.schema.json`. It also applies to a controller that has no record. A protocol description's `defaults.tuning` (`Resources/Protocols/<file stem>.plist`) may set another value for its family, and a record, a patch, or `all.patch.plist` overrides both, per model or for every controller. Reports queue only while the system takes a long time to accept the previous one; button changes that arrive in the same moment still reach the virtual gamepad in order until the queue is full.
 

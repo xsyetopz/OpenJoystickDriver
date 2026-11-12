@@ -32,9 +32,15 @@
           ForEach(
             ControllerDetailFacts.general(for: device, appName: ProfileAppChoices.appName)
           ) { fact in
-            if fact.kind == .serialNumber {
+            switch fact.kind {
+            case .serialNumber:
               SerialNumberRow(label: fact.label, serial: fact.value, visibility: $serialVisibility)
-            } else {
+                .ojdInterfaceRow(ControllerDetailRow.serialNumber)
+            case .publication, .serving, .controllerProtocol:
+              OJDLabeledValue(fact.label, fact.value).ojdInterfaceRow(
+                ControllerDetailRow.servingFacts
+              )
+            default:
               OJDLabeledValue(fact.label, fact.value)
             }
           }
@@ -62,7 +68,7 @@
                 ControllerDetailFacts.serverSourceText(record)
               )
             }
-          }
+          }.ojdInterfaceRow(ControllerDetailRow.servedBy)
         }
         if device.physicalOwnership != .systemGamepad {
           // A per-controller identity resets the picker state on a different selection.
@@ -86,11 +92,11 @@
               viewModel: viewModel,
               device: device,
               setting: StickDeadzoneSetting(record: record)
-            ) { await loadRecord() }
-            tuningDisclosure(for: record)
-          }
+            ) { await loadRecord() }.ojdInterfaceRow(ControllerDetailRow.stickDeadzone)
+            tuningDisclosure(for: record).ojdInterfaceRow(ControllerDetailRow.tuning)
+          }.ojdInterfaceRow(ControllerDetailRow.tuning)
         }
-        Section { advancedDisclosure }
+        Section { advancedDisclosure }.ojdInterfaceRow(ControllerDetailRow.identifiers)
       }.task(id: recordLoadID) { await loadRecord() }.sheet(item: $actions.timedKind) { kind in
         ControllerTimedActionSheet(
           kind: kind,
@@ -167,6 +173,7 @@
           OJDLabeledValue(fact.label, fact.value)
         }
         ControllerTimedActionRows(device: device, actions: actions)
+          .ojdInterfaceRow(ControllerDetailRow.developerActions)
       } label: {
         Button(OJDLocalized.string("ui.virtualProfile.advanced")) { showsAdvanced.toggle() }
           .buttonStyle(.plain).frame(maxWidth: .infinity, alignment: .leading)

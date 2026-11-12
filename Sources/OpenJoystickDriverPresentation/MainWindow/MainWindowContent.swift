@@ -163,6 +163,7 @@
         } else {
           area.id(navigation.selectedArea).frame(maxWidth: .infinity, maxHeight: .infinity)
             .environment(\.ojdInterfaceLevel, preferences.interfaceLevel)
+            .environment(\.ojdDeveloperToolsEnabled, preferences.developerToolsEnabled)
         }
       }.onChange(of: openSetupSteps) { steps in
         setupSteps.update(loaded: runtime.loadState == .available, openSteps: steps.count)
