@@ -2712,7 +2712,7 @@
 /* Row label in the output of 'ojd controller show'. The route that the input of the controller takes follows, with the reason in parentheses. */
 "cli.controller.show.labelServing" = "Sunma yolu";
 /* Row label in the output of 'ojd controller show'. The gamepad model that the virtual gamepad presents follows. */
-"cli.controller.show.labelPersona" = "Sanal oyun kontrolcüsü";
+"cli.controller.show.labelPersona" = "Sanal Oyun Kontrolcüsü";
 /* Value of the Handled by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
 "cli.controller.show.server" = "%1$@ (%2$@ kaynağından)";
 /* Row label in the output of 'ojd controller show'. The protocol family the driver speaks to the controller follows. */
@@ -2720,7 +2720,7 @@
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "Kayıt";
 /* Row label in the output of 'ojd controller show'. The sentence that says why OpenJoystickDriver does not serve the connected device follows. */
-"cli.controller.show.labelNotServed" = "Sunulmuyor";
+"cli.controller.show.labelNotServed" = "Yönetilmiyor";
 /* Row label in the output of 'ojd controller show'. The sentence that says what to do about a device that is not served follows. */
 "cli.controller.show.labelNextStep" = "Sonraki adım";
 /* Row label in the output of 'ojd controller show'. The command that drafts a controller record for a HID gamepad that is not served follows. */
@@ -2900,7 +2900,7 @@
 /* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
 "cli.protocol.group.abstract" = "Protokol açıklamalarını doğrular, yükler veya listeler.";
 /* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
-"cli.protocol.group.discussion" = "Protokol açıklaması, OJD'nin yerleşik olarak içermediği bir kumanda ailesini tanımlayan .plist dosyasıdır. Yüklü açıklamalar ~/Library/Application Support/OpenJoystickDriver/Protocols içinde durur; bir mod paketi de bunları taşıyabilir. Bu komutlar hizmete ihtiyaç duymaz.";
+"cli.protocol.group.discussion" = "Protokol açıklaması, OJD’nin yerleşik olarak içermediği bir kontrolcü ailesini tanımlayan .plist dosyasıdır. Yüklü açıklamalar ~/Library/Application Support/OpenJoystickDriver/Protocols içinde durur; bir mod paketi de bunları taşıyabilir. Bu komutlar servise ihtiyaç duymaz.";
 /* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
 "cli.protocol.group.file" = "Ailesinin adını taşıyan bir açıklama dosyası, örneğin VendorAcmePad.plist.";
 /* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
@@ -2908,7 +2908,7 @@
 /* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
 "cli.protocol.validate.discussion" = "Dosyanın geçerli bir açıklama olduğunu, aile adının UpperCamelCase olduğunu ve dosya adıyla eşleştiğini, yerleşik bir aile olmadığını, bir görünen ad ve giriş düzenleri belirlediğini denetler. Dosya reddedilirse E5xxx koduyla 1 ile çıkar.";
 /* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
-"cli.protocol.validate.valid" = "%1$@, %2$@ (%3$@) ailesinin geçerli bir açıklamasıdır. 'ojd protocol install' ile yükleyin.";
+"cli.protocol.validate.valid" = "%1$@, %2$@ (%3$@) ailesinin geçerli bir açıklamasıdır. “ojd protocol install” ile yükleyin.";
 /* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
 "cli.protocol.install.abstract" = "Bir protokol açıklamasını denetler ve kullanıcınız için yükler.";
 /* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
@@ -3374,7 +3374,7 @@
 /* Error of 'ojd profile create --template gyro-stick' when the controller model has no motion sensor. %@ is the model as VVVV:PPPP and stays as written. */
 "cli.profile.create.noMotion" = "%@ cihazında hareket sensörü yok.";
 /* Line printed after 'ojd profile create' with a template. %@ is the comma-separated list of control ids that the template skipped because the controller lacks them; the ids stay as written. */
-"cli.profile.create.skipped" = "Denetleyicide olmadığı için atlandı: %@.";
+"cli.profile.create.skipped" = "Kontrolcüde olmadığı için atlandı: %@.";
 /* Help text of the --stick option of 'ojd profile create'. left and right are values the user types and stay as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.stick" = "gyro-stick şablonunun denetlediği çubuk: left veya right. Varsayılan right.";
 /* Help text of the --template option of 'ojd profile create'. gyro-stick, keyboard-navigation and mouse-clicks are the template names the user types and stay as written. */
@@ -3412,17 +3412,17 @@
 /* Reason fragment of a document problem for one field. %1$@ is the field path, which stays as written and is shown in quotes, and %2$@ is the problem found. */
 "cli.shared.document.fieldProblem" = "“%1$@”: %2$@";
 /* One-line summary of 'ojd profile convert' in the command list and at the top of its help. */
-"cli.profile.convert.abstract" = "Bir profili başka bir kumanda modeli için kopyalar ve o modelin kullanabileceği atamaları korur.";
+"cli.profile.convert.abstract" = "Bir profili başka bir kontrolcü modeli için kopyalar ve o modelin kullanabileceği atamaları korur.";
 /* Help text of the --controller option of 'ojd profile convert'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
-"cli.profile.convert.controller" = "Dönüştürülecek kumanda modeli: VVVV:PPPP veya bağlı bir kumandanın kimliği.";
+"cli.profile.convert.controller" = "Dönüştürülecek kontrolcü modeli: VVVV:PPPP veya bağlı bir kontrolcünün kimliği.";
 /* Help text of the --name option of 'ojd profile convert'. */
 "cli.profile.convert.name" = "Dönüştürülen profilin adı. Varsayılan olarak profil adı ve ardından model gelir.";
 /* Message printed after 'ojd profile convert'. %1$@ is the name of the converted profile, shown in quotes, %2$@ is its profile ID, and %3$@ is the target controller as VVVV:PPPP. */
 "cli.profile.convert.done" = "%3$@ için “%1$@” (%2$@) oluşturuldu. Özgün profil değişmedi.";
 /* Line printed after 'ojd profile convert' for each part of the profile that the target controller cannot take. %1$@ is the kind of part, such as binding, and stays as written. %2$@ is the comma-separated list of sources the controller lacks; they stay as written. */
-"cli.profile.convert.leftOut" = "%1$@ dışarıda bırakıldı (kumandada yok: %2$@).";
+"cli.profile.convert.leftOut" = "%1$@ dışarıda bırakıldı (kontrolcüde yok: %2$@).";
 /* Line printed after 'ojd profile convert' for a part of the profile that the target controller cannot take for a reason that names no source. %@ is the kind of part, such as gyro-output, and stays as written. */
-"cli.profile.convert.leftOutPart" = "%@ dışarıda bırakıldı (kumandada gereken bir parça yok).";
+"cli.profile.convert.leftOutPart" = "%@ dışarıda bırakıldı (kontrolcüde gereken bir parça yok).";
 /* One-line summary of 'ojd profile duplicate' in the command list and at the top of its help. */
 "cli.profile.duplicate.abstract" = "Bir profili yeni bir adla kopyalar. Kopya etkin değilken başlar.";
 /* Message printed after 'ojd profile duplicate'. %1$@ is the name of the copy, shown in quotes, and %2$@ is its profile ID. */
@@ -4082,7 +4082,7 @@
 /* VoiceOver label of the menu bar status item while a controller is connected and nothing needs the user. The product name stays as written. */
 "a11y.menuBar.ready" = "OpenJoystickDriver, hazır";
 /* VoiceOver label of the menu bar status item while no controller is connected. The product name stays as written. */
-"a11y.menuBar.noController" = "OpenJoystickDriver, bağlı denetleyici yok";
+"a11y.menuBar.noController" = "OpenJoystickDriver, bağlı kontrolcü yok";
 /* VoiceOver label of the menu bar status item while a problem exists. The product name stays as written. %@ is the first problem, such as a missing permission. */
 "a11y.menuBar.problem" = "OpenJoystickDriver, dikkat gerekiyor: %@";
 /* VoiceOver label of the sidebar list of the main window, which switches between the areas of the app. */
@@ -4406,7 +4406,7 @@
 /* Error E5007, in place of a file path when the message does not know which file failed. */
 "error.E5007.thisFile" = "bu kayıt dosyası";
 /* Error E5007, shown when the bundled controller catalog holds no record file. */
-"error.E5007.record.catalogEmpty" = "Yerleşik kataloğun Controllers klasörü: katalogda kayıt dosyası yok. Kural: katalog en az bir denetleyici kaydı içerir. Düzeltme: OpenJoystickDriver’ı yeniden yükleyin.";
+"error.E5007.record.catalogEmpty" = "Pakete dahil kataloğun Controllers klasörü: katalogda kayıt dosyası yok. Kural: katalog en az bir kontrolcü kaydı içerir. Düzeltme: OpenJoystickDriver’ı yeniden yükleyin.";
 /* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
 "error.E5007.record.fileName" = "%1$@, vendorID ve productID: dosya adı %2$@ olmalıdır; bu, iki kimliğin on altılık gösterimidir. Düzeltme: dosyayı %2$@ olarak yeniden adlandırın veya içindeki kimlikleri düzeltin.";
 /* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
@@ -4468,7 +4468,7 @@
 /* Error E5007, shown when a record or protocol description breaks a rule: the defaults set a session key that sessionKeys does not list. %2$@ is the key. %1$@ is the file. */
 "error.E5007.protocolDescription.sessionKeyUnlisted" = "%1$@, defaults.session: varsayılanlar, sessionKeys’in listelemediği %2$@ oturum anahtarını ayarlıyor. Düzeltme: %2$@ anahtarını sessionKeys’e ekleyin veya varsayılanlardan kaldırın.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a family that is always raw USB has a HID keep-alive write. %1$@ is the file. */
-"error.E5007.protocolDescription.keepAliveHID" = "%1$@, defaults.session.keepAlive.writes: HID keep-alive yazması yalnızca HID denetleyicileri için geçerlidir. Düzeltme: HID yazmasını kaldırın veya raw-USB yazması kullanın.";
+"error.E5007.protocolDescription.keepAliveHID" = "%1$@, defaults.session.keepAlive.writes: HID keep-alive yazması yalnızca HID kontrolcüleri için geçerlidir. Düzeltme: HID yazmasını kaldırın veya raw-USB yazması kullanın.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant has a raw-USB keep-alive write. %1$@ is the file. */
 "error.E5007.protocolDescription.keepAliveUSB" = "%1$@, defaults.session.keepAlive.writes: raw-USB keep-alive yazması yalnızca raw-USB varyantı olan bir aile için geçerlidir. Düzeltme: raw-USB yazmasını kaldırın veya HID yazması kullanın.";
 /* Error E5007, shown when a record or protocol description breaks a rule: a keep-alive write names a resendTuning that the family does not read or default. %2$@ is the key. %1$@ is the file. */
@@ -4506,7 +4506,7 @@
 /* Error E5007, shown when a virtual gamepad file fails: a match unit is not a unit ID. %1$@ is the file. */
 "error.E5007.virtualDevice.matchUnit" = "%1$@, match.unit: match.unit bir birim kimliği olmalıdır. Düzeltme: unit’i bir kontrol cihazının birim kimliği yapın ya da çıkarın.";
 /* Error E5007, shown when a virtual gamepad file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
-"error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: bir sanal oyun kontrolcüsü kimliği için %2$@ boş olmayan bir değer gerektirir. Düzeltme: %2$@’e boş olmayan bir metin verin.";
+"error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: bir sanal oyun kontrolcüsü kimliği için %2$@ boş olmayan bir değer gerektirir. Düzeltme: %2$@’e boş olmayan bir dize verin.";
 /* Error E5007, shown when a virtual gamepad file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
 "error.E5007.virtualDevice.idRange" = "%1$@, %2$@: bir kimlik %3$@...65535 olmalıdır. Düzeltme: %2$@’i %3$@...65535 yapın.";
 /* Error E5007, shown when the subcommands of a record fail: a subcommand counterModulus is outside 2...256. %1$@ is the file. */
@@ -4548,9 +4548,9 @@
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: keep-alive resendTuning değeri lizardResendTicks olmalıdır. Düzeltme: resendTuning’i lizardResendTicks yapın veya çıkarın.";
 /* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: paketlenmiş kayıtlar %2$@ sanal oyun kontrolcüsü için bir kayıt içermelidir. Düzeltme: OpenJoystickDriver’ı yeniden yükleyin.";
+"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: pakete dahil kayıtlar %2$@ sanal oyun kontrolcüsü için bir kayıt içermelidir. Düzeltme: OpenJoystickDriver’ı yeniden yükleyin.";
 /* Error E5007, shown when a record file fails: a bundled virtual gamepad record does not define its virtual gamepad or holds a match. %2$@ is the virtual gamepad. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: paketlenmiş bir kayıt %2$@ sanal oyun kontrolcüsünü tanımlamalı ve match içermemelidir. Düzeltme: OpenJoystickDriver’ı yeniden yükleyin.";
+"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: pakete dahil bir kayıt %2$@ sanal oyun kontrolcüsünü tanımlamalı ve match içermemelidir. Düzeltme: OpenJoystickDriver’ı yeniden yükleyin.";
 /* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
 "error.E5007.modPackage.kindMismatch" = "%1$@, %2$@: bir %3$@ dosyası, %4$@ dosyalarını listeleyen mod.plist içindeki %2$@ altında listelenemez. Düzeltme: dosyayı türüne uyan listeye yazın.";
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
@@ -4565,7 +4565,7 @@
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@, patch.modes: her girdi bir id ve yalnızca id, protocol, match, interface, session veya idle içermelidir. Düzeltme: her girdiye bir id verin ve diğer anahtarları silin.";
 /* Error E5007, shown when a patch file fails: an all patch sets a section other than tuning. %1$@ is the file. */
-"error.E5007.patch.patchAllOnlyTuning" = "%1$@, patch: all yaması yalnızca tuning ayarlayabilir. Düzeltme: diğer bölümleri tek bir denetleyicinin yamasına taşıyın.";
+"error.E5007.patch.patchAllOnlyTuning" = "%1$@, patch: all yaması yalnızca tuning ayarlayabilir. Düzeltme: diğer bölümleri tek bir kontrolcünün yamasına taşıyın.";
 /* Error E5007, shown when a patch file fails: remove is not a nonempty list. %1$@ is the file. */
 "error.E5007.patch.removeNotList" = "%1$@, remove: remove, noktalı anahtar yollarından oluşan boş olmayan bir liste olmalıdır. Düzeltme: kaldırılacak anahtar yollarını listeleyin veya remove’u silin.";
 /* Error E5007, shown when a patch file fails: a remove entry is not text. %1$@ is the file. */
@@ -4575,7 +4575,7 @@
 /* Error E5007, shown when a patch file fails: a remove path is listed twice. %2$@ is the path. %1$@ is the file. */
 "error.E5007.patch.removeDuplicate" = "%1$@, remove: %2$@ yolu iki kez listelenmiş. Düzeltme: iki girdiden birini silin.";
 /* Error E5007, shown when a patch file fails: an all patch removes a key outside tuning. %2$@ is the path. %1$@ is the file. */
-"error.E5007.patch.removeAllNotTuning" = "%1$@, remove: all yaması yalnızca tuning anahtarlarını kaldırabilir, %2$@ yolunu değil. Düzeltme: burada yalnızca tuning anahtarlarını kaldırın veya tek bir denetleyici için yama kullanın.";
+"error.E5007.patch.removeAllNotTuning" = "%1$@, remove: all yaması yalnızca tuning anahtarlarını kaldırabilir, %2$@ yolunu değil. Düzeltme: burada yalnızca tuning anahtarlarını kaldırın veya tek bir kontrolcü için yama kullanın.";
 /* Error E5007, shown when a patch file fails: the selector is not a dictionary. %1$@ is the file. */
 "error.E5007.patch.selectorNotObject" = "%1$@, selector: selector all, model veya productID ile vendorID olmalıdır. Düzeltme: selector’ı bu biçimlerden birinin sözlüğü olarak yazın.";
 /* Error E5007, shown when a patch file fails: selector.all is not true. %1$@ is the file. */
@@ -4589,17 +4589,17 @@
 /* Error E5007, shown when a user or package record file is skipped: a Controller file is not named after its IDs. %2$@ is the name it must have. %1$@ is the file. */
 "error.E5007.userFile.fileNameRecord" = "%1$@, file name: dosya adı %2$@ olmalıdır. Düzeltme: dosyayı %2$@ olarak yeniden adlandırın veya içindeki kimlikleri düzeltin.";
 /* Error E5007, shown when a user or package record file is skipped: two packages give one controller. %2$@ is the other package. %1$@ is the file. */
-"error.E5007.userFile.packageSameController" = "%1$@, vendorID, productID: %2$@ paketi bu denetleyiciyi zaten sağlıyor. Düzeltme: iki paketten birini kaldırın veya bu kaydın kimliklerini değiştirin.";
+"error.E5007.userFile.packageSameController" = "%1$@, vendorID, productID: %2$@ paketi bu kontrolcüyü zaten sağlıyor. Düzeltme: iki paketten birini kaldırın veya bu kaydın kimliklerini değiştirin.";
 /* Error E5007, shown when a user or package record file is skipped: a patch file is not named after its selector. %2$@ is the name it must have. %1$@ is the file. */
 "error.E5007.userFile.fileNamePatch" = "%1$@, file name: dosya adı %2$@ olmalıdır. Düzeltme: dosyayı %2$@ olarak yeniden adlandırın veya içindeki seçiciyi düzeltin.";
 /* Error E5007, shown when a user or package record file is skipped: the file is not a dictionary. %1$@ is the file. */
 "error.E5007.userFile.notDictionary" = "%1$@, document: dosya bir sözlük değil. Düzeltme: özellik listesinin kökünü sözlük yapın.";
 /* Error E5007, shown when a user or package record file is skipped: a Controller file names a bundled controller. %2$@ is the model. %1$@ is the file. */
-"error.E5007.userFile.bundledController" = "%1$@, vendorID, productID: %2$@ yerleşik bir denetleyicidir, bu yüzden Controller dosyası onu ekleyemez. Düzeltme: bunun yerine bir yama dosyası yazın.";
+"error.E5007.userFile.bundledController" = "%1$@, vendorID, productID: %2$@ pakete dahil bir kontrolcüdür, bu yüzden Controller dosyası onu ekleyemez. Düzeltme: bunun yerine bir yama dosyası yazın.";
 /* Error E5007, shown when a user or package record file is skipped: the file adds or patches a bootloader identity. %2$@ is the model. %1$@ is the file. */
-"error.E5007.userFile.bootloaderController" = "%1$@, vendorID, productID: %2$@ bir bootloader kimliğidir, bu yüzden hiçbir kullanıcı veya paket dosyası onu ekleyemez ya da yamalayamaz. Düzeltme: dosyayı kaldırın; OJD bootloader durumundaki bir denetleyiciye veri göndermez.";
+"error.E5007.userFile.bootloaderController" = "%1$@, vendorID, productID: %2$@ bir bootloader kimliğidir, bu yüzden hiçbir kullanıcı veya paket dosyası onu ekleyemez ya da yamalayamaz. Düzeltme: dosyayı kaldırın; OJD bootloader durumundaki bir kontrolcüye veri göndermez.";
 /* Error E5007, shown when a user or package record file is skipped: a patch selects no known controller. %2$@ is the selector. %1$@ is the file. */
-"error.E5007.userFile.unknownController" = "%1$@, selector: %2$@ seçicisi bilinen hiçbir denetleyiciyle eşleşmiyor. Düzeltme: yeni denetleyici eklemek için Controller dosyası kullanın veya seçiciyi düzeltin.";
+"error.E5007.userFile.unknownController" = "%1$@, selector: %2$@ seçicisi bilinen hiçbir kontrolcüyle eşleşmiyor. Düzeltme: yeni kontrolcü eklemek için Controller dosyası kullanın veya seçiciyi düzeltin.";
 /* Error E5007, shown when a user or package record file is skipped: the record that a patch applies to is not a dictionary. %1$@ is the file. */
 "error.E5007.userFile.upstreamNotDictionary" = "%1$@, document: yamanın uygulandığı kayıt bir sözlük değil. Düzeltme: yamanın uygulandığı kayıt dosyasını onarın.";
 /* Error E5007, shown when a user or package record file is skipped: a patch changes nothing in the record. %1$@ is the file. */
@@ -4671,7 +4671,7 @@
 /* Error E5007, shown when a startup write of a record fails: a startup delay is outside 0...1000 ms. %1$@ is the file. */
 "error.E5007.startupWrite.delay" = "%1$@, session.startup[].delayMilliseconds: bir başlangıç gecikmesi 0...1000 ms olmalıdır. Düzeltme: delayMilliseconds’ı 0...1000 yapın ya da çıkarın.";
 /* Error E5007, shown when a startup write of a record fails: a startup transport is not USB, BluetoothClassic or BluetoothLE. %1$@ is the file. */
-"error.E5007.startupWrite.transport" = "%1$@, session.startup[].transport: bir başlangıç taşıması USB, BluetoothClassic veya BluetoothLE olmalıdır. Düzeltme: transport’u bunlardan biri yapın ya da çıkarın.";
+"error.E5007.startupWrite.transport" = "%1$@, session.startup[].transport: bir başlangıç aktarımı USB, BluetoothClassic veya BluetoothLE olmalıdır. Düzeltme: transport’u bunlardan biri yapın ya da çıkarın.";
 /* Error E5007, shown when a startup write of a record fails: a startup report with crc32Seed has no room for its 4-byte trailer. %1$@ is the file. */
 "error.E5007.startupWrite.crcRoom" = "%1$@, session.startup[].crc32Seed: crc32Seed içeren bir başlangıç raporunun 4 baytlık kuyruğuna yeri olmalıdır. Düzeltme: raporu 4 bayttan uzun yapın ya da crc32Seed’i kaldırın.";
 /* Error E5007, shown when a startup write of a record fails: a USB startup packet is not 1...64 bytes long. %1$@ is the file. */
@@ -5122,7 +5122,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Eski bir sürümden kaydedilmiş belgeleri geçerli sürüme dönüştürür.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "Eski apiVersion değerine sahip Settings.plist, AccessGrants.plist, profilleri, denetleyici kayıtlarınızı ve yamalarınızı ve sanal oyun kontrolcüsü dosyalarını dönüştürür. Her özgün dosya destek klasörünün Migrated klasöründe saklanır. Mod paketleri de dönüştürülür. Destek klasörü yerine taranacak bir klasör belirtin. Her dosya bir karar alır: Migrated, Current, Failed veya Foreign.";
+"cli.migrate.group.discussion" = "Eski apiVersion değerine sahip Settings.plist, AccessGrants.plist, profilleri, kontrolcü kayıtlarınızı ve yamalarınızı ve sanal oyun kontrolcüsü dosyalarını dönüştürür. Her özgün dosya destek klasörünün Migrated klasöründe saklanır. Mod paketleri de dönüştürülür. Destek klasörü yerine taranacak bir klasör belirtin. Her dosya bir karar alır: Migrated, Current, Failed veya Foreign.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "Dönüştürülecek belgeleri listeler ve hiçbir şeyi değiştirmez.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
@@ -5206,9 +5206,9 @@
 /* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
 "ui.settings.general.pauseShortcutTaken" = "Başka bir uygulama bu kısayolu zaten kullanıyor. Farklı bir kısayol kaydedin.";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
-"cli.setting.set.badShortcut" = "'%1$@' bir kısayol değil. + ile birleştirilmiş değiştirici tuşlar ve bir tuş kullanın, örneğin control+option+P, ya da none.";
+"cli.setting.set.badShortcut" = "“%1$@” bir kısayol değil. + ile birleştirilmiş değiştirici tuşlar ve bir tuş kullanın, örneğin control+option+P, ya da none.";
 /* Error of 'ojd setting set' when the value is not an interface level. %1$@ is the text the user gave. Simple and Advanced stay as written. */
-"cli.setting.set.badInterfaceLevel" = "'%1$@' bir arayüz düzeyi değil. Simple ya da Advanced kullanın.";
+"cli.setting.set.badInterfaceLevel" = "“%1$@” bir arayüz düzeyi değil. Simple ya da Advanced kullanın.";
 /* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
 "ui.whatsNew.title" = "%@ sürümündeki yenilikler";
 /* Title of the state of a connected controller that works, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
