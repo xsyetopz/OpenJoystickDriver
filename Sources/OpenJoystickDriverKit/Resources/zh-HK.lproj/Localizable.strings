@@ -175,7 +175,7 @@
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.interfaceContractMismatch.nextStep" = "請附上控制器的 ID 傳送支援報告，以便修正對它的支援。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.descriptorContractMismatch" = "此控制器的 HID 描述元不符合其協定的要求，因此 OJD 不為其提供服務。";
+"ui.controllers.descriptorContractMismatch" = "此控制器的 HID 描述符不符合其協定的要求，因此 OJD 不為其提供服務。";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its HID descriptor does not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.descriptorContractMismatch.nextStep" = "請附上控制器的 ID 傳送支援報告，以便修正對它的支援。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not implement the variant selected for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
@@ -187,7 +187,7 @@
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant.nextStep" = "請改用其他方式（例如連接線材）連接控制器，或傳送支援報告。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.virtualProfileUnavailable" = "OJD 沒有適用於此控制器的虛擬遊戲手把設定檔。";
+"ui.controllers.virtualProfileUnavailable" = "OJD 沒有適用於此控制器的虛擬遊戲控制器設定檔。";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.virtualProfileUnavailable.nextStep" = "請傳送支援報告，以便為其新增設定檔。";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. The next step has its own text. OJD, USB, HID and ID stay as written. */
@@ -307,7 +307,7 @@
 /* Value of a stick row of the calibration view in the controller detail. %1$@ is the raw and tuned values text, and %2$@ is the stick deadzone, such as 10%. The deadzone is the part of the travel near the center that is ignored. */
 "ui.controllers.calibration.readingWithDeadZone" = "%1$@，死區 %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
-"ui.controllers.calibration.noOutput" = "沒有虛擬手掣";
+"ui.controllers.calibration.noOutput" = "沒有虛擬遊戲控制器";
 /* Value of the calibration row in the controller detail while the service has reported no stick or trigger values yet. */
 "ui.controllers.calibration.waiting" = "正在等待輸入…";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
@@ -323,7 +323,7 @@
 /* Option of the virtual gamepad kind popup in the Controllers detail: the plain gamepad that any HID reader accepts. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.virtualProfile.kind.generic" = "通用 HID 遊戲控制器";
 /* Option of the virtual gamepad kind popup in the Controllers detail when the interface level is Advanced: the name of the kind, then its identifier in parentheses. %1$@ is the name of the kind. %2$@ is the identifier, which stays as written. */
-"ui.virtualProfile.kind.withIdentifier" = "%1$@ (%2$@)";
+"ui.virtualProfile.kind.withIdentifier" = "%1$@（%2$@）";
 /* Note under the virtual gamepad kind popup. The choice applies to all connected controllers of the model. */
 "ui.virtualProfile.modelScope" = "套用至此型號的所有已連接控制器。";
 /* Value of the virtual gamepad kind source: the user chose the kind. */
@@ -535,7 +535,7 @@
 /* Line in the sheet shown after a profile was converted, for a part left out for a reason that names no control. %@ is the kind of part, such as gyro output. */
 "ui.profiles.convert.leftOutPart" = "%@：控制器缺少所需的部分";
 /* Kind of profile part in the list of parts that a profile conversion left out: a binding of one control to an action. */
-"ui.profiles.convert.section.binding" = "綁定";
+"ui.profiles.convert.section.binding" = "對應項目";
 /* Kind of profile part in the list of parts that a profile conversion left out: a chord, buttons pressed together. */
 "ui.profiles.convert.section.chord" = "組合鍵";
 /* Kind of profile part in the list of parts that a profile conversion left out: a sequence of presses. */
@@ -691,7 +691,7 @@
 /* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
 "ui.profiles.templateNoMotion" = "%@ 沒有動作感應器。";
 /* Message in the profile creation sheet under the template popup. %@ is the comma-separated list of controls that the template could not bind because the controller lacks them. */
-"ui.profiles.templateSkipped" = "未綁定，因為控制器沒有：%@。";
+"ui.profiles.templateSkipped" = "未對應，因為控制器沒有：%@。";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "切換";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -1273,7 +1273,7 @@
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "已按下";
 /* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
-"ui.inputTest.receiving" = "正在等待操作…";
+"ui.inputTest.receiving" = "正在等待控制項移動…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "已放開";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */
@@ -1419,7 +1419,7 @@
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the service has no login item and does not answer. */
 "ui.service.state.notInstalled.message" = "服務未安裝。";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the user must approve the service before it can start. */
-"ui.service.state.needsApproval.message" = "服務需要你的批准才能啟動。";
+"ui.service.state.needsApproval.message" = "服務需要您的批准才能啟動。";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the service runs a different version than the app. */
 "ui.service.state.versionMismatch.message" = "服務執行的版本與 App 不同。";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
@@ -2056,7 +2056,7 @@
 /* Row label in the output of 'ojd status'. The reason why the stored profile overrides could not be read follows. */
 "cli.status.group.labelOverrideError" = "覆寫錯誤";
 /* Heading in the output of 'ojd status' above the list of controllers that macOS handles natively. %lld is the number of controllers. */
-"platform.macos.cli.status.group.labelPassThrough" = "由 macOS 處理 (%lld)";
+"platform.macos.cli.status.group.labelPassThrough" = "由 macOS 處理（%lld）";
 /* Row label in the output of 'ojd status'. The state and version of the service follow. */
 "cli.status.group.labelService" = "服務";
 /* Heading in the output of 'ojd status' above the list of connected devices that the driver does not support. %lld is the number of devices. */
@@ -2624,11 +2624,11 @@
 /* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To handle a model means to read its input and publish it as a virtual gamepad. */
 "cli.controller.claim.abstract" = "讓 OpenJoystickDriver 處理某個控制器型號。";
 /* Long description in the help of 'ojd controller claim'. server, ojd, vvvv-pppp.plist and the record terms stay as written. */
-"platform.macos.cli.controller.claim.discussion" = "在你為該型號建立的記錄（記錄目錄中的 vvvv-pppp.plist）中將 server 設為 ojd，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
+"platform.macos.cli.controller.claim.discussion" = "在您為該型號建立的記錄（記錄目錄中的 vvvv-pppp.plist）中將 server 設為 ojd，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
 /* One-line summary of 'ojd controller release' in the command list and at the top of its help. */
 "platform.macos.cli.controller.release.abstract" = "把某個控制器型號交還給 macOS。";
 /* Long description in the help of 'ojd controller release'. server, system and vvvv-pppp.plist stay as written. */
-"platform.macos.cli.controller.release.discussion" = "在你為該型號建立的記錄（記錄目錄中的 vvvv-pppp.plist）中將 server 設為 system，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
+"platform.macos.cli.controller.release.discussion" = "在您為該型號建立的記錄（記錄目錄中的 vvvv-pppp.plist）中將 server 設為 system，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
 /* Message printed by 'ojd controller claim' and related commands with --dry-run instead of writing the record. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. */
 "cli.controller.group.serverDryRun" = "如果執行，將會把 %1$@ 設為 %2$@（%3$@）。";
 /* Error when the record file of a controller cannot be changed. %1$@ is the path of the record file and %2$@ is the description of the problem. */
@@ -3714,7 +3714,7 @@
 /* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
 "ui.access.permission.notNeeded.message" = "使用中的設定檔不會使用此權限。";
 /* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
-"ui.access.permission.limited.message" = "已允許，但橫額或聲音已關閉，可能會錯過提示。";
+"ui.access.permission.limited.message" = "已允許，但橫幅或聲音已關閉，可能會錯過提示。";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
 "ui.access.web.closed" = "已開啟，但未在連接埠 %@ 上監聽";
 /* Help text of the WebSocket row. %@ is the path of the folder from which the endpoint serves pages. */
@@ -4074,7 +4074,7 @@
 /* Menu item at the top of the menu bar menu while a permission is missing; choosing it opens the Access area at that permission. %@ is the name of the permission. */
 "ui.extra.problemPermission" = "缺少權限：%@";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
-"ui.extra.openWindow" = "打開 %@";
+"ui.extra.openWindow" = "開啟 %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */
 "ui.extra.actionFailedTitle" = "操作未完成";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */
@@ -4178,7 +4178,7 @@
 /* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
 "ui.shortcuts.action.rumble.description" = "讓控制器的震動馬達運轉片刻。";
 /* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
-"ui.shortcuts.action.rumble.intensity" = "強度 (0-255)";
+"ui.shortcuts.action.rumble.intensity" = "強度（0-255）";
 /* Label in the Shortcuts app of the rumble action's duration in seconds. */
 "ui.shortcuts.action.rumble.duration" = "持續時間（秒）";
 /* Name in the Shortcuts app of the action that sets the player indicator of a controller. */
@@ -4192,9 +4192,9 @@
 /* Description in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
 "ui.shortcuts.action.light.description" = "設定控制器的燈條顏色、LED 亮度或兩者。";
 /* Label in the Shortcuts app of the lightbar color given as six hexadecimal digits, RRGGBB. */
-"ui.shortcuts.action.light.color" = "顏色 (RRGGBB)";
+"ui.shortcuts.action.light.color" = "顏色（RRGGBB）";
 /* Label in the Shortcuts app of the LED brightness from 0 to 255. */
-"ui.shortcuts.action.light.brightness" = "LED 亮度 (0-255)";
+"ui.shortcuts.action.light.brightness" = "LED 亮度（0-255）";
 /* Error in the Shortcuts app when the light action has no color or brightness, or the color is not RRGGBB. */
 "ui.shortcuts.error.lightRequest" = "請提供六位十六進位顏色、亮度，或兩者都提供。";
 /* Name in the Shortcuts app of the action that returns the installed mod packages. */
@@ -4204,9 +4204,9 @@
 /* Name in the Shortcuts app of the action that installs a mod package from a folder. */
 "ui.shortcuts.action.installMod.title" = "安裝模組套件";
 /* Description in the Shortcuts app of the action that installs a mod package from a folder. */
-"ui.shortcuts.action.installMod.description" = "從檔案夾安裝模組套件並傳回其名稱。";
+"ui.shortcuts.action.installMod.description" = "從資料夾安裝模組套件並傳回其名稱。";
 /* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
-"ui.shortcuts.action.installMod.folder" = "檔案夾";
+"ui.shortcuts.action.installMod.folder" = "資料夾";
 /* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
 "ui.shortcuts.action.installMod.replace" = "取代已安裝的套件";
 /* Name in the Shortcuts app of the action that removes an installed mod package. */
@@ -5080,7 +5080,7 @@
 /* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
 "error.E5009.message" = "舊版本的已儲存文件沒有自動轉換方式，因此 ojd migrate 會令它保持不變。訊息會指出檔案和欄位。請手動將檔案改為支援的 apiVersion。";
 /* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
-"error.E5010.message" = "儲存的文件不是 XML 屬性列表，或包含日期或資料值。訊息會列出檔案以及格式或鍵路徑。請用 plutil -convert xml1 將檔案儲存為 XML 屬性列表。";
+"error.E5010.message" = "儲存的文件不是 XML 屬性清單，或包含日期或資料值。訊息會列出檔案以及格式或鍵路徑。請用 plutil -convert xml1 將檔案儲存為 XML 屬性清單。";
 /* One-line summary of 'ojd generate' in the command list and at the top of its help. */
 "cli.generate.group.abstract" = "執行產生器腳本，並寫入它傳回的文件。";
 /* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
@@ -5146,7 +5146,7 @@
 /* Error text shown after the Migrate button could not convert every document. ojd migrate is a command name and stays as written. */
 "platform.macos.ui.migrate.failed" = "部分文件無法轉換，保持不變。請在「終端機」中執行 ojd migrate 查看是哪些。";
 /* Text of a technical value in the Advanced section of the controller detail: %1$@ is the value in words and %2$@ is the raw identifier that the files, the command line and the service use. The identifier stays as written. */
-"ui.controllers.withIdentifier" = "%1$@ (%2$@)";
+"ui.controllers.withIdentifier" = "%1$@（%2$@）";
 /* Name of the seventh extra button of a controller, in the list of controls in the Advanced section of the controller detail. */
 "ui.controllers.control.auxiliary7" = "額外按鈕 7";
 /* Name of the eighth extra button of a controller, in the list of controls in the Advanced section of the controller detail. */
@@ -5218,7 +5218,7 @@
 /* Button at the top of the Controllers detail for a controller in the Working state. It opens the Input Test window. */
 "ui.controllers.readiness.working.action" = "開啟輸入測試";
 /* Title of the state of a connected controller that waits for a step from the user, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
-"ui.controllers.readiness.needsStep.title" = "需要你完成一步";
+"ui.controllers.readiness.needsStep.title" = "需要您完成一步";
 /* One sentence at the top of the Controllers detail for a controller that needs a permission that is not allowed yet. */
 "ui.controllers.readiness.needsStep.access.message" = "此控制器需要一項尚未允許的權限。";
 /* Button at the top of the Controllers detail for a controller that needs a permission. It opens the Access area of the main window; Access is the name of that area. */
