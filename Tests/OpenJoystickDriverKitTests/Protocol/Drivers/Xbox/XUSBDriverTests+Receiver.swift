@@ -107,6 +107,39 @@ extension XUSBDriverTests {
   }
 
   @Test
+  func testWirelessReceiverRejectsTruncatedAndNonInputPacketsWithoutConnecting() throws {
+    let report = Array(Receiver.padData(buttons: 1 << 12))
+    for length in 0..<18 {
+      let parser = XUSBDriver(isWirelessReceiver: true)
+      #expect(try parser.parseReport(Data(report.prefix(length))) == nil)
+      #expect(parser.consumeInputConnectionStateChange() == nil)
+    }
+    for offset in [1, 4] {
+      let parser = XUSBDriver(isWirelessReceiver: true)
+      var invalid = report
+      invalid[offset] = 0x02
+      #expect(try parser.parseReport(Data(invalid)) == nil)
+      #expect(parser.consumeInputConnectionStateChange() == nil)
+    }
+  }
+
+  @Test
+  func testWirelessReceiverNeedsOnlyTheStateBytesButWiredValidationStaysStrict() throws {
+    var report = Array(Receiver.padData(buttons: 1 << 12).prefix(18))
+    report[5] = 0x13
+    let parser = XUSBDriver(isWirelessReceiver: true)
+    #expect(try parser.parseReport(Data(report)).contains(.press(.south)))
+
+    let wired = XUSBDriver()
+    var wiredReport = Array(report.dropFirst(4))
+    #expect(try wired.parseReport(Data(wiredReport)) == nil)
+    wiredReport += [UInt8](repeating: 0, count: 6)
+    #expect(try wired.parseReport(Data(wiredReport)) == nil)
+    wiredReport[1] = 0x14
+    #expect(try wired.parseReport(Data(wiredReport)).contains(.press(.south)))
+  }
+
+  @Test
   func testWirelessReceiverHeadsetPresenceConnects() throws {
     let parser = XUSBDriver(isWirelessReceiver: true)
 

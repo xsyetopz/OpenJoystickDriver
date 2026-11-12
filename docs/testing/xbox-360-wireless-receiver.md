@@ -14,6 +14,17 @@ Record validation is signing-free. These receiver pairs are not in the current p
 
 [1]: https://github.com/xsyetopz/OpenJoystickDriver/issues/9
 
+## Direct USB Input Evidence Reported in Pull Request #54
+
+On 2026-10-25, the pull request's author ran an Intel iMac20,1 on macOS 26.7.1 against `045e:02a9` on interface 0, endpoints `81`/`01`, with a patched `OpenJoystickDriverHIDTool --record-probe` and the bundled receiver record. This repository holds none of that capture; the figures are the author's report.
+
+- A 25-second capture received 903 packets and decoded 890 controller snapshots with zero parse errors.
+- Both axes of both sticks reached the canonical full range, `-32767...32767`; both triggers reached `0...65535`.
+- Every D-pad direction, A, X, Guide and both shoulders registered. A second 15-second capture decoded 13 snapshots from 14 packets with zero parse errors and registered B, Y, Start and Back.
+- The receiver sent disconnect and reconnect notifications during a deliberate reconnection, and decoding resumed.
+
+Stick clicks were not observed. Virtual-HID output was unavailable in that build, so empty-slot publication, games, rumble and LEDs still need a provisioned app test.
+
 ## Find and Validate the Receiver Record
 
 Use System Information or the OJD HID tool to identify the receiver PID, then select the matching JSON file under `Sources/OpenJoystickDriverKit/Resources/Controllers/`.
@@ -49,7 +60,7 @@ Attach the complete command output to issue #9 with macOS version, Mac model, re
 
 ## Capture Receiver Slots
 
-OJD runs one pipeline per receiver slot: each interface with triple FF/5D/81 and one interrupt IN and OUT endpoint, in interface order, at most four. Slot n (from 0) sends the presence inquiry at startup, connects when the slot reports a controller present or sends a valid state report, then lights player n+1. The observed `045e:02a9` and `045e:0719` slot 0 is interface 0 with endpoints `81`/`01`; the interface numbers of the other slots are not captured.
+OJD runs one pipeline per receiver slot: each interface with triple FF/5D/81 and one interrupt IN and OUT endpoint, in interface order, at most four. Slot n (from 0) sends the presence inquiry at startup, connects when the slot reports a controller present or sends a valid state report, then lights player n+1. The observed `045e:02a9` and `045e:0719` slot 0 is interface 0 with endpoints `81`/`01`; [pull request #54](https://github.com/xsyetopz/OpenJoystickDriver/pull/54) reports interfaces 0, 2, 4 and 6 with input endpoints `81`, `83`, `85` and `87` on `045e:02a9`, where only interface 0 delivered input.
 
 1. Record the configuration descriptor and interface numbers with the receiver plugged in:
 
