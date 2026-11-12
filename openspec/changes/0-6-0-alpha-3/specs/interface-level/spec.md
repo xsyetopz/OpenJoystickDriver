@@ -22,7 +22,7 @@ OJD SHALL offer one setting, "Interface", as a pop-up button with the options "S
 
 ### Requirement: Simple Shows What Connecting and Playing Need
 
-Simple SHALL show the controller list, each controller's state and its one next step, the profile choice, Test Input, and the permission steps. Advanced MUST add the virtual gamepad kind, the choice of who serves a controller, tuning, identifiers, records and patches, and the activity log.
+Simple SHALL show the controller list, each controller's state and its one next step, choosing, creating and editing a profile, Test Input, and the permission steps. Advanced MUST add the virtual gamepad kind, the choice of who serves a controller, tuning, identifiers, records and patches, and the activity log.
 
 #### Scenario: Controller detail in Simple
 
@@ -64,7 +64,7 @@ A view in Simple SHALL show one row when a control it hides holds a value other 
 
 ### Requirement: Developer Tools Are a Switch Inside Advanced
 
-OJD SHALL show packet streams, raw reports, and contributor diagnostics only when the interface is in Advanced and the developer switch is on.
+OJD SHALL show packet streams, raw reports, contributor diagnostics, and the programs, tokens, local endpoint and port of the Access area only when the interface is in Advanced and the developer switch is on.
 
 #### Scenario: Simple with the developer switch stored as on
 

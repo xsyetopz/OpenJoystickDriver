@@ -480,7 +480,7 @@ Alternative considered: a redesign of the main window on `NavigationSplitView`. 
 OBS Studio offers "Output Mode" with "Simple" and "Advanced" as a pop-up; MonitorControl offers a checkbox "Show advanced settings". OJD takes the OBS form the maintainer named: a pop-up button "Interface" in Settings > General, and the same two choices in the View menu.
 
 - A fresh installation starts in Simple. An installation that migrates from 0.6.0-alpha.2 starts in Advanced, so no control its user had disappears.
-- Simple shows the controller list, each controller's state and next step, the profile choice, Test Input, and the permission steps. Advanced adds the virtual gamepad kind, the choice of who serves a controller, tuning, identifiers, records and patches, and the activity log. Task 10.6 assigns every control to a level, and the maintainer confirms the list.
+- Simple shows the controller list, each controller's state and next step, choosing, creating and editing a profile, Test Input, and the permission steps. Advanced adds the virtual gamepad kind, the choice of who serves a controller, tuning, identifiers, records and patches, and the activity log. The developer switch adds the programs, tokens, local endpoint and port of the Access area. The maintainer confirmed the level of each control in `docs/development/interface-audit.md` (task 10.6).
 - The level hides controls and changes no behavior: the service never reads it, and `ojd` prints the same in both.
 - A view in Simple that hides a value the user changed shows one row with the count and a button that switches to Advanced. Without it, Simple would hide the cause of what the user sees.
 - The developer switch (`developerTools`) shows its tools only in Advanced.
