@@ -222,6 +222,7 @@ project-test: schema-env
 project-verify: project-format-check project-lint project-test check-schemas check-whitespace (catalog-regenerate "--check") (errors-regenerate "--check") (vocabulary-regenerate "--check") check-profiles driverkit-check test-parsers-macos14 snapshots-check check-tools
     python3 Scripts/Quality/check_localization_keys.py
     python3 Scripts/Quality/check_text_styles.py
+    python3 -m Scripts.Quality.check_glossary_terms
 
 project-pre-commit: project-format-check project-lint
 

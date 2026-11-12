@@ -229,7 +229,9 @@ Each of 12.1 to 12.7 starts from its row in the audit (10.5) and from a failing 
     - `check_localization_keys.py` exits 0.
     - `swift test --filter 'LocalizationTests|ControllerClaimCommandTests|VirtualHIDProfileOverride|VirtualGamepadKindTitle|ActivityLogFollowing|ControllerDetailFacts'` passes 112 tests.
   - No language-aware reviewer has read the translations back.
-- [ ] 14.3 Add the repository check that fails when an English string holds a word the glossary lists as replaced, and the check that one language translates one term one way.
+- [x] 14.3 Add the repository check that fails when an English string holds a word the glossary lists as replaced, and the check that one language translates one term one way.
+  - Note: `Scripts/Quality/check_glossary_terms.py`, run by `just verify` (`project.just`, `project-verify`), with `Tests/RepositoryScripts/test_check_glossary_terms.py` (9 tests). It reads the quoted words of the Replaces column of `wiki/Glossary.md`; 11 keys in `KEPT` name a file key or `%@.dext`, or (`error.E1004.message`) the endpoint's transports. The translation half compares the values whose English is only the term; measured on the bundles, a word-for-word search inside sentences misses 43 of 68 German "virtual gamepad" values and 87 of 200 Russian "profile" values to inflection, so it is not a check.
+  - Run against the bundles of `0ea4f7d27`, it reported `ui.virtualProfile.failure.overrideFileKept` ("virtual device"), pt-BR "Controle Virtual" beside "Gamepad virtual", and ar-SA "ملف تعريف" beside "ملف التعريف"; `777400357` fixes them. `0ea4f7d27` adds the duplicate-key rule to `check_localization_keys.py` after merge `7585def3a` left `cli.controller.show.labelPersona` twice in every bundle.
 - [x] 14.4 Name each virtual gamepad kind by what reads it in the window, and show the raw identifier beside it only in Advanced (`VirtualHIDProfileOverrideView.swift:34`). Caller: the controller detail.
   - Commit: `554571ffd`.
   - `VirtualHIDProfileKinds.optionTitle(for:level:)` gives the phrase, plus `(identifier)` in Advanced.
