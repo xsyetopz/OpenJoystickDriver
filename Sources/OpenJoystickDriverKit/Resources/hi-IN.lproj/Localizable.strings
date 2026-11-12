@@ -279,7 +279,7 @@
 /* Value of the serving route when OpenJoystickDriver serves a virtual gamepad. OpenJoystickDriver is the product name. */
 "ui.controllers.serving.virtualHID" = "OpenJoystickDriver, वर्चुअल गेमपैड";
 /* Value of the serving route when the driver extension owns the controller. */
-"ui.controllers.serving.extensionOwned" = "ड्राइवर एक्सटेंशन";
+"ui.controllers.serving.extensionOwned" = "Xbox USB ड्राइवर";
 /* Value of the serving route when the user turned the output off. */
 "ui.controllers.serving.outputDisabled" = "आउटपुट बंद";
 /* Message when the user changes the server or the stick deadzone of a controller that no controller record describes. */
@@ -1015,11 +1015,11 @@
 /* Error shown when the profile item that the user selected is gone, for example after a reload. */
 "ui.error.selectedProfileItemMissing" = "चयनित प्रोफ़ाइल आइटम अब उपलब्ध नहीं है।";
 /* Message about a request to the system extension manager that ends cancelled. The request installs or removes the driver extension. */
-"cli.transportExtension.group.cancelled" = "सिस्टम एक्सटेंशन अनुरोध रद्द किया गया।";
+"cli.transportExtension.group.cancelled" = "Xbox USB ड्राइवर अनुरोध रद्द किया गया।";
 /* Message about a request to the system extension manager that finished. %@ is the result name from the system and stays as written. */
-"cli.transportExtension.group.completed" = "सिस्टम एक्सटेंशन अनुरोध परिणाम %@ के साथ समाप्त हुआ।";
+"cli.transportExtension.group.completed" = "Xbox USB ड्राइवर अनुरोध परिणाम %@ के साथ समाप्त हुआ।";
 /* Message about a request to the system extension manager that failed. %1$@ is the error domain, %2$d is the error code and %3$@ is the description from the system. Keep code= as written. */
-"cli.transportExtension.group.failed" = "सिस्टम एक्सटेंशन अनुरोध विफल: %1$@ code=%2$d %3$@";
+"cli.transportExtension.group.failed" = "Xbox USB ड्राइवर अनुरोध विफल: %1$@ code=%2$d %3$@";
 /* Message when the system extension manager replaces an installed driver extension. %1$@ is the extension bundle identifier, %2$@ is the installed version and %3$@ is the version that replaces it. Keep the v before the numbers. */
 "cli.transportExtension.group.replacing" = "%1$@ v%2$@ को v%3$@ से बदला जा रहा है…";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller, which OJD reads by the layout its HID report descriptor declares. Keep HID as written. */
@@ -1383,7 +1383,7 @@
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
 "platform.macos.ui.controllers.servedByMacOS" = "macOS द्वारा चलाया जा रहा";
 /* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
-"platform.macos.ui.controllers.servedByMacOSDetail" = "Apple का ड्राइवर इस कंट्रोलर को थामे हुए है। OpenJoystickDriver एक्सटेंशन सक्रिय करने के लिए इसे अपने नाम करें।";
+"platform.macos.ui.controllers.servedByMacOSDetail" = "Apple का ड्राइवर इस कंट्रोलर को थामे हुए है। Xbox USB ड्राइवर सक्रिय करने के लिए इसे अपने नाम करें।";
 /* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
 "ui.controllers.claim" = "अपने नाम करें";
 /* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
@@ -2303,8 +2303,8 @@
 "cli.shared.error.permissionMissing" = "%@ की पहुँच नहीं है। “ojd permission request” से अनुमति दें।";
 /* Error of 'ojd permission request' when a permission is missing after the request. %1$@ is the permission name and %2$@ is the path of the pane in System Settings. The command in quotes stays as written. */
 "platform.macos.cli.shared.error.permissionStillMissing" = "%1$@ की पहुँच अब भी नहीं है। सिस्टम सेटिंग्स > %2$@ में OpenJoystickDriver को अनुमति दें, फिर “ojd permission request” दोबारा चलाएँ।";
-/* One-line summary of 'ojd transport-extension' in the command list and at the top of its help. DriverKit is an Apple framework name. */
-"platform.macos.cli.transportExtension.group.abstract" = "OpenJoystickDriver DriverKit सिस्टम एक्सटेंशन दिखाएँ, सक्रिय करें या निष्क्रिय करें।";
+/* One-line summary of 'ojd transport-extension' in the command list and at the top of its help. */
+"platform.macos.cli.transportExtension.group.abstract" = "Xbox USB ड्राइवर दिखाएँ, सक्रिय करें या निष्क्रिय करें।";
 /* One-line summary of 'ojd transport-extension activate' in the command list and at the top of its help. System Settings is the name of the macOS app. */
 "platform.macos.cli.transportExtension.activate.abstract" = "macOS से एक्सटेंशन सक्रिय करने को कहें। सिस्टम सेटिंग्स में स्वीकृति की ज़रूरत पड़ सकती है।";
 /* Long description in the help of 'ojd transport-extension activate'. The ojd program and the path stay as written. */
@@ -2384,7 +2384,7 @@
 /* Name of the Accessibility permission in the output of 'ojd permission list'. It is written as macOS names it. */
 "platform.macos.cli.permission.group.nameInputInject" = "ऐक्सेसिबिलिटी";
 /* Name of the permission for the approval of the driver extension, in the output of 'ojd permission list' and 'ojd diagnose'. */
-"cli.permission.group.nameUsbTransport" = "ड्राइवर एक्सटेंशन की स्वीकृति";
+"cli.permission.group.nameUsbTransport" = "Xbox USB ड्राइवर की स्वीकृति";
 /* Name of the Input Monitoring permission in the output of 'ojd permission list'. It is written as macOS names it. */
 "platform.macos.cli.permission.group.nameInputRead" = "इनपुट मॉनिटरिंग";
 /* Name of the permission to send keyboard and mouse events, in the output of 'ojd permission list' and 'ojd diagnose'. */
@@ -4741,9 +4741,9 @@
 /* Title of the toolbar popup in the Activity area that filters the log by stream. */
 "ui.activity.filter" = "फ़िल्टर";
 /* Name of the check in the diagnostics table that looks for the driver extension inside the app. */
-"ui.activity.check.transportExtensionBundle" = "ड्राइवर एक्सटेंशन बंडल";
+"ui.activity.check.transportExtensionBundle" = "Xbox USB ड्राइवर बंडल";
 /* Name of the check in the diagnostics table that asks macOS whether the driver extension is registered. */
-"ui.activity.check.transportExtensionRegistration" = "ड्राइवर एक्सटेंशन पंजीकरण";
+"ui.activity.check.transportExtensionRegistration" = "Xbox USB ड्राइवर पंजीकरण";
 /* Name of the check in the diagnostics table that validates the configuration files. */
 "ui.activity.check.configFiles" = "कॉन्फ़िगरेशन फ़ाइलें";
 /* Name of the check in the diagnostics table that reports a controller with the Nintendo Switch Pro Controller identity and serial 000000000001. Nintendo Switch Pro Controller is a product name and stays as written. */
