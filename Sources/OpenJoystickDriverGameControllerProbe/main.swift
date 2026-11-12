@@ -252,6 +252,11 @@ func observeInput(on controller: GCController, disableSystemGestures: Bool) {
   gamepad.valueChangedHandler = { _, _ in evidence.markInput() }
   if #available(macOS 13.0, *) {
     controller.physicalInputProfile.valueDidChangeHandler = { _, element in
+      if let pad = element as? GCControllerDirectionPad {
+        let name = pad.aliases.min() ?? pad.localizedName ?? "Direction Pad"
+        print("direction: \(name) x=\(pad.xAxis.value) y=\(pad.yAxis.value)")
+        return
+      }
       guard let button = element as? GCControllerButtonInput else { return }
       let name = button.aliases.min() ?? button.localizedName ?? "Button"
       print("button: \(name) value=\(button.value) pressed=\(button.isPressed)")
