@@ -357,7 +357,7 @@
 /* Error when the service cannot save the override of the virtual gamepad kind. Nothing is stored. */
 "ui.virtualProfile.failure.persistenceFailed" = "재정의를 저장할 수 없습니다. 저장된 항목이 없습니다.";
 /* Error when resetting the virtual gamepad kind finds a virtual device file that the reset does not remove. %@ is the path of the file. */
-"ui.virtualProfile.failure.overrideFileKept" = "가상 기기 파일 %@은(는) 자체 ID를 설정하거나 패키지에서 제공되므로 그대로 남습니다. 해당 파일을 편집하거나 삭제하세요. 변경된 내용이 없습니다.";
+"ui.virtualProfile.failure.overrideFileKept" = "가상 게임패드 파일 %@은(는) 자체 ID를 설정하거나 패키지에서 제공되므로 그대로 남습니다. 해당 파일을 편집하거나 삭제하세요. 변경된 내용이 없습니다.";
 /* Error when the stored virtual gamepad kind overrides cannot be read. %@ is the reason. Controllers pick a kind themselves. */
 "ui.virtualProfile.storeError" = "가상 게임패드 종류 재정의를 읽을 수 없습니다(%@). 컨트롤러가 자동으로 선택합니다.";
 /* Value of the key field in the capture assignment sheet before the user captures a key. */

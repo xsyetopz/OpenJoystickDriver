@@ -357,7 +357,7 @@
 /* Error when the service cannot save the override of the virtual gamepad kind. Nothing is stored. */
 "ui.virtualProfile.failure.persistenceFailed" = "Không thể lưu ghi đè. Không có gì được lưu.";
 /* Error when resetting the virtual gamepad kind finds a virtual device file that the reset does not remove. %@ is the path of the file. */
-"ui.virtualProfile.failure.overrideFileKept" = "Tệp thiết bị ảo %@ tự đặt danh tính riêng hoặc đến từ một gói, nên vẫn được giữ lại. Hãy sửa hoặc xóa tệp đó. Không có gì thay đổi.";
+"ui.virtualProfile.failure.overrideFileKept" = "Tệp tay cầm ảo %@ tự đặt danh tính riêng hoặc đến từ một gói, nên vẫn được giữ lại. Hãy sửa hoặc xóa tệp đó. Không có gì thay đổi.";
 /* Error when the stored virtual gamepad kind overrides cannot be read. %@ is the reason. Controllers pick a kind themselves. */
 "ui.virtualProfile.storeError" = "Không thể đọc các ghi đè loại tay cầm ảo (%@). Bộ điều khiển sẽ tự động chọn.";
 /* Value of the key field in the capture assignment sheet before the user captures a key. */

@@ -357,7 +357,7 @@
 /* Error when the service cannot save the override of the virtual gamepad kind. Nothing is stored. */
 "ui.virtualProfile.failure.persistenceFailed" = "ไม่สามารถบันทึกการแทนที่ได้ ไม่มีการจัดเก็บใดๆ";
 /* Error when resetting the virtual gamepad kind finds a virtual device file that the reset does not remove. %@ is the path of the file. */
-"ui.virtualProfile.failure.overrideFileKept" = "ไฟล์อุปกรณ์เสมือน %@ กำหนดข้อมูลระบุตัวตนของตัวเองหรือมาจากแพ็กเกจ จึงยังคงอยู่ แก้ไขหรือลบไฟล์นั้น ไม่มีการเปลี่ยนแปลงใดๆ";
+"ui.virtualProfile.failure.overrideFileKept" = "ไฟล์เกมแพดเสมือน %@ กำหนดข้อมูลระบุตัวตนของตัวเองหรือมาจากแพ็กเกจ จึงยังคงอยู่ แก้ไขหรือลบไฟล์นั้น ไม่มีการเปลี่ยนแปลงใดๆ";
 /* Error when the stored virtual gamepad kind overrides cannot be read. %@ is the reason. Controllers pick a kind themselves. */
 "ui.virtualProfile.storeError" = "ไม่สามารถอ่านการแทนที่ประเภทเกมแพดเสมือนได้ (%@) คอนโทรลเลอร์จะเลือกโดยอัตโนมัติ";
 /* Value of the key field in the capture assignment sheet before the user captures a key. */

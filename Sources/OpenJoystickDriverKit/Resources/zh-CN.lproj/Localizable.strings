@@ -357,7 +357,7 @@
 /* Error when the service cannot save the override of the virtual gamepad kind. Nothing is stored. */
 "ui.virtualProfile.failure.persistenceFailed" = "无法存储覆盖。未存储任何内容。";
 /* Error when resetting the virtual gamepad kind finds a virtual device file that the reset does not remove. %@ is the path of the file. */
-"ui.virtualProfile.failure.overrideFileKept" = "虚拟设备文件 %@ 设置了自己的身份或来自某个包，因此会保留。请编辑或删除该文件。未做任何更改。";
+"ui.virtualProfile.failure.overrideFileKept" = "虚拟游戏手柄文件 %@ 设置了自己的身份或来自某个包，因此会保留。请编辑或删除该文件。未做任何更改。";
 /* Error when the stored virtual gamepad kind overrides cannot be read. %@ is the reason. Controllers pick a kind themselves. */
 "ui.virtualProfile.storeError" = "无法读取虚拟游戏手柄类型覆盖（%@）。控制器将自动选择。";
 /* Value of the key field in the capture assignment sheet before the user captures a key. */

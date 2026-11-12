@@ -357,7 +357,7 @@
 /* Error when the service cannot save the override of the virtual gamepad kind. Nothing is stored. */
 "ui.virtualProfile.failure.persistenceFailed" = "No se pudo guardar la anulación. No se guardó nada.";
 /* Error when resetting the virtual gamepad kind finds a virtual device file that the reset does not remove. %@ is the path of the file. */
-"ui.virtualProfile.failure.overrideFileKept" = "El archivo de dispositivo virtual %@ define su propia identidad o viene de un paquete, así que se conserva. Edita o elimina ese archivo. No cambió nada.";
+"ui.virtualProfile.failure.overrideFileKept" = "El archivo de control virtual %@ define su propia identidad o viene de un paquete, así que se conserva. Edita o elimina ese archivo. No cambió nada.";
 /* Error when the stored virtual gamepad kind overrides cannot be read. %@ is the reason. Controllers pick a kind themselves. */
 "ui.virtualProfile.storeError" = "No se pueden leer las anulaciones del tipo de control virtual (%@). Los controles eligen automáticamente.";
 /* Value of the key field in the capture assignment sheet before the user captures a key. */

@@ -277,7 +277,7 @@
 /* Value of the serving route in the Controllers area: macOS serves the controller and the driver passes the input through. */
 "platform.macos.ui.controllers.serving.nativePassThrough" = "macOS (repassado)";
 /* Value of the serving route when OpenJoystickDriver serves a virtual gamepad. OpenJoystickDriver is the product name. */
-"ui.controllers.serving.virtualHID" = "OpenJoystickDriver, controle virtual";
+"ui.controllers.serving.virtualHID" = "OpenJoystickDriver, gamepad virtual";
 /* Value of the serving route when the driver extension owns the controller. */
 "ui.controllers.serving.extensionOwned" = "Driver USB Xbox";
 /* Value of the serving route when the user turned the output off. */
@@ -315,7 +315,7 @@
 /* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
 "ui.virtualProfile.advanced" = "Avançado";
 /* Heading of the virtual gamepad kind section in the Controllers detail. */
-"ui.virtualProfile.title" = "Tipo de controle virtual";
+"ui.virtualProfile.title" = "Tipo de gamepad virtual";
 /* Option of the virtual gamepad kind popup in the Controllers detail: the kind that Steam and games that use SDL read. Steam and SDL are product names. */
 "ui.virtualProfile.kind.sdlCompatible" = "Para jogos de Steam e SDL";
 /* Option of the virtual gamepad kind popup in the Controllers detail: the kind that games that use Apple's Game Controller framework read. Apple and Game Controller stay as written. */
@@ -331,7 +331,7 @@
 /* Value of the virtual gamepad kind source: the app chose the kind because the controller cannot use the kind that the user chose. */
 "ui.virtualProfile.sourceAutomaticAfterRejecting" = "Automático, substituição rejeitada";
 /* Value of the virtual gamepad kind when the controller has none. */
-"ui.virtualProfile.none" = "Nenhum tipo de controle virtual";
+"ui.virtualProfile.none" = "Nenhum tipo de gamepad virtual";
 /* Caption under the Virtual gamepad kind pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
 "ui.virtualProfile.inForce" = "Em uso: %1$@. Substituição salva: %2$@.";
 /* Caption under the Virtual gamepad kind pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
@@ -341,15 +341,15 @@
 /* Caption under the Virtual gamepad kind pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
 "ui.virtualProfile.otherScopeHolds.unit" = "A substituição em vigor está salva apenas para este controle, então não há nada para limpar no modelo. Nada foi alterado.";
 /* Status shown while the app changes the virtual gamepad kind. Keep the three dots. */
-"ui.virtualProfile.updating" = "Atualizando o tipo de controle virtual…";
+"ui.virtualProfile.updating" = "Atualizando o tipo de gamepad virtual…";
 /* Error when the user picks a virtual gamepad kind that the service does not know. The service stored nothing. */
-"ui.virtualProfile.failure.unknownProfile" = "Este tipo de controle virtual é desconhecido. Nada foi salvo.";
+"ui.virtualProfile.failure.unknownProfile" = "Este tipo de gamepad virtual é desconhecido. Nada foi salvo.";
 /* Error when the controller is gone while the user changes its virtual gamepad kind. The stored override stays unchanged. */
 "ui.virtualProfile.failure.controllerNotFound" = "O controle foi desconectado ou não foi encontrado. A substituição não mudou.";
 /* Message when the service stores the override of the virtual gamepad kind but the controller cannot use it, so the app picks a kind itself. */
 "ui.virtualProfile.failure.overrideRejected" = "A substituição foi salva, mas este controle não pode usá-la, então escolhe automaticamente.";
 /* Error when a virtual gamepad kind fails to activate and the app restores the last working kind. %@ is the reason. */
-"ui.virtualProfile.failure.activationFailed" = "A ativação falhou, então o tipo de controle virtual anterior foi restaurado: %@";
+"ui.virtualProfile.failure.activationFailed" = "A ativação falhou, então o tipo de gamepad virtual anterior foi restaurado: %@";
 /* Message when the service stores the override while virtual output is off. The override takes effect when the user turns virtual output on. */
 "ui.virtualProfile.failure.outputDisabled" = "A substituição foi salva e será aplicada quando a saída virtual estiver ativada.";
 /* Error when the service stops while the user changes the virtual gamepad kind. The stored override stays unchanged. */
@@ -357,9 +357,9 @@
 /* Error when the service cannot save the override of the virtual gamepad kind. Nothing is stored. */
 "ui.virtualProfile.failure.persistenceFailed" = "Não foi possível salvar a substituição. Nada foi salvo.";
 /* Error when resetting the virtual gamepad kind finds a virtual device file that the reset does not remove. %@ is the path of the file. */
-"ui.virtualProfile.failure.overrideFileKept" = "O arquivo de dispositivo virtual %@ define sua própria identidade ou vem de um pacote, por isso permanece. Edite ou apague esse arquivo. Nada foi alterado.";
+"ui.virtualProfile.failure.overrideFileKept" = "O arquivo de gamepad virtual %@ define sua própria identidade ou vem de um pacote, por isso permanece. Edite ou apague esse arquivo. Nada foi alterado.";
 /* Error when the stored virtual gamepad kind overrides cannot be read. %@ is the reason. Controllers pick a kind themselves. */
-"ui.virtualProfile.storeError" = "Não é possível ler as substituições do tipo de controle virtual (%@). Os controles escolhem automaticamente.";
+"ui.virtualProfile.storeError" = "Não é possível ler as substituições do tipo de gamepad virtual (%@). Os controles escolhem automaticamente.";
 /* Value of the key field in the capture assignment sheet before the user captures a key. */
 "ui.keyboard.noKey" = "Nenhuma Tecla Selecionada";
 /* Value of the key field while the app waits for a key press. Keep the three dots. */
@@ -1481,7 +1481,7 @@
 /* Error text the service returns to an app that reports the outcome noAnswer for a test notification, which only the service decides. The inline error of the Settings window shows it. shown, denied, failed and noAnswer are outcome names and stay as written. */
 "ui.settings.notifications.testReportNoAnswer" = "Um relatório da notificação de teste deve ser shown, denied ou failed; só o serviço decide noAnswer.";
 /* Label of the popup in the profile editor that sets what the virtual gamepad of the profile publishes. */
-"ui.profiles.virtualOutput" = "Controle Virtual";
+"ui.profiles.virtualOutput" = "Gamepad Virtual";
 /* Option of the virtual output popup: the profile publishes no virtual gamepad. */
 "ui.profiles.virtualDisabled" = "Desativado";
 /* Option of the virtual output popup: the virtual gamepad carries only the controls that the profile maps. */
@@ -2062,7 +2062,7 @@
 /* Heading in the output of 'ojd status' above the list of connected devices that the driver does not support. %lld is the number of devices. */
 "cli.status.group.labelUnbound" = "Dispositivos Não Compatíveis (%lld)";
 /* Row label in the output of 'ojd status'. The state of the virtual gamepad follows. */
-"cli.status.group.labelVirtualDevice" = "Controle Virtual";
+"cli.status.group.labelVirtualDevice" = "Gamepad Virtual";
 /* Value of the 'Virtual gamepad' row of 'ojd status' when virtual output is turned off. */
 "cli.status.group.virtualOff" = "Desligado";
 /* Value of the 'Virtual gamepad' row of 'ojd status' when the virtual gamepad reports an error. %@ is the error message of the system. */
@@ -2302,9 +2302,9 @@
 /* Detail of the hid-input-drops check of 'ojd diagnose', one entry per controller that lost input reports. %1$@ is the controller name, or its vendor and product ID when it has no name. %2$lld is the number of input reports the system dropped because the queue between the controller and the service was full. */
 "cli.diagnose.group.hidInputDropsFound" = "Relatórios de entrada perdidos de %1$@: %2$lld";
 /* Detail of the virtual gamepad check of 'ojd diagnose' when the user turned the virtual gamepad off. */
-"cli.diagnose.group.virtualDisabled" = "controle virtual desativado";
+"cli.diagnose.group.virtualDisabled" = "gamepad virtual desativado";
 /* Detail of the virtual gamepad check of 'ojd diagnose' when the virtual gamepad reports an error. %@ is the error message of the system. */
-"cli.diagnose.group.virtualError" = "erro do controle virtual: %@";
+"cli.diagnose.group.virtualError" = "erro do gamepad virtual: %@";
 /* Detail of the virtual gamepad check of 'ojd diagnose' when the stored profile overrides cannot be read. %@ is the error message. */
 "cli.diagnose.group.virtualOverride" = "não foi possível ler os ajustes de perfil armazenados: %@";
 /* Error of the commands that need a macOS permission. %@ is the permission name. The command in quotes stays as written. */
@@ -4790,7 +4790,7 @@
 /* Label of the row in the Controllers detail that holds the button that clears all virtual gamepad kind choices. */
 "ui.controllers.virtual.resetAll" = "Redefinir todas as substituições";
 /* Error when the service cannot clear the virtual gamepad kind choices. */
-"ui.controllers.virtual.resetAllFailed" = "O serviço não conseguiu limpar as escolhas de tipo de controle virtual.";
+"ui.controllers.virtual.resetAllFailed" = "O serviço não conseguiu limpar as escolhas de tipo de gamepad virtual.";
 /* Label of the row in the Controllers detail that holds the button that exports the mapping of the virtual gamepad. */
 "ui.controllers.exportMapping" = "Exportar mapeamento";
 /* Title of the save panel that exports the mapping of the virtual gamepad. */
@@ -5189,9 +5189,9 @@
 /* Note beside the Pair Joy-Cons button of a Joy-Con pair profile in the Profiles area when the button is unavailable because a left or a right Joy-Con is not connected. */
 "ui.profiles.joyConPairNeedsBoth" = "Conecte um Joy-Con esquerdo e um direito para emparelhá-los.";
 /* Note under the Virtual gamepad pop-up in the profile editor, shown after a virtual gamepad was chosen while exclusive physical input was on. */
-"ui.profiles.virtualOutputResetsExclusive" = "O acesso exclusivo à entrada física foi desativado, porque um controle virtual sempre toma a entrada com exclusividade.";
+"ui.profiles.virtualOutputResetsExclusive" = "O acesso exclusivo à entrada física foi desativado, porque um gamepad virtual sempre toma a entrada com exclusividade.";
 /* Note under the Virtual gamepad pop-up in the profile editor, beside the unavailable exclusive physical input switch while a virtual gamepad is chosen. */
-"ui.profiles.exclusiveInputUnavailable" = "Disponível apenas enquanto nenhum controle virtual estiver escolhido, porque um controle virtual sempre toma a entrada com exclusividade.";
+"ui.profiles.exclusiveInputUnavailable" = "Disponível apenas enquanto nenhum gamepad virtual estiver escolhido, porque um gamepad virtual sempre toma a entrada com exclusividade.";
 /* Note below the Start at login switch in Settings > General when this macOS version has no login item. */
 "platform.macos.ui.settings.general.startAtLoginUnavailable" = "Abrir ao iniciar a sessão requer macOS 13 ou posterior.";
 /* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
