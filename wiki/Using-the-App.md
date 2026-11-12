@@ -326,14 +326,15 @@ Click **Open Notification Settings** to fix this.
 
 ![The Advanced pane of the Settings window](../docs/screenshots/settings-advanced.png)
 
+- At **Simple**, this pane holds only **Xbox USB Driver**, and a settings error when one shows; the **Command-Line Tool** section and the developer switch need the **Advanced** interface.
 - **Command-Line Tool** links `ojd` to this app so that you can run it in Terminal.
-  **Install Command-Line Tool** asks for an administrator password.
+  **Install Command-Line Tool** (needs the **Advanced** interface) asks for an administrator password.
 - **Xbox USB Driver** shows the state of the Xbox USB driver.
   Only some Xbox One and Xbox Series controllers on USB need it.
   **Uninstall** appears while the driver is active; it asks you to approve and then deactivates the driver.
   For more information, see [Xbox USB driver](Connecting-Controllers.md#xbox-usb-driver).
-- **Enable Developer Tools** shows controller input and USB packet tools in this pane, together with a soak test section.
-  The tools show only while **Interface** is **Advanced** (needs the **Advanced** interface); the switch itself is always there.
+- **Enable Developer Tools** (needs the **Advanced** interface) shows controller input and USB packet tools in this pane, together with a soak test section.
+  At **Simple**, the switch and the tools are both hidden; at **Advanced**, the tools show while the switch is on.
   For more information, see [Finding your controller ID](Connecting-Controllers.md).
 
 If the settings file cannot be read, the app shows **Settings can't be read** with **Reset Settings**. `ojd setting reset` does the same from a terminal.

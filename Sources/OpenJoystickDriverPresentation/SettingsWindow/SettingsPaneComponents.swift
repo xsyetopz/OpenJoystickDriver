@@ -58,6 +58,18 @@
     }
   }
 
+  extension View {
+    /// Gives the pane the interface level and the developer switch of `preferences`; the Settings
+    /// window is a separate window and gets neither from the main window.
+    ///
+    /// - Parameter preferences: The preferences model that holds both.
+    /// - Returns: The view with both in its environment.
+    func ojdSettingsInterfaceLevel(_ preferences: SettingsPreferencesModel) -> some View {
+      environment(\.ojdInterfaceLevel, preferences.interfaceLevel)
+        .environment(\.ojdDeveloperToolsEnabled, preferences.developerToolsEnabled)
+    }
+  }
+
   /// The inline error of the preferences model as a form section, with the notification
   /// permission shortcut; it is empty while there is no error.
   struct SettingsErrorSection: View {

@@ -27,7 +27,7 @@
             \.controllerDisconnectedNotifications,
             preferences.setControllerDisconnectedNotifications
           )
-        }
+        }.ojdInterfaceRow(SettingsRow.controllerNotifications)
         Section(OJDLocalized.string("ui.settings.general.profiles")) {
           eventToggle(
             "ui.settings.notifications.profileActivatedShort",
@@ -41,7 +41,7 @@
             \.profileDeactivatedNotifications,
             preferences.setProfileDeactivatedNotifications
           )
-        }
+        }.ojdInterfaceRow(SettingsRow.profileNotifications)
         Section {
           Toggle(
             OJDLocalized.string("ui.settings.notifications.notificationSounds"),
@@ -50,9 +50,9 @@
               set: { preferences.setNotificationSounds($0) }
             )
           )
-        }
-        Section { deliveryRow }
-      }.ojdGroupedForm()
+        }.ojdInterfaceRow(SettingsRow.notificationSound)
+        Section { deliveryRow }.ojdInterfaceRow(SettingsRow.notificationPermission)
+      }.ojdGroupedForm().ojdSettingsInterfaceLevel(preferences)
     }
 
     /// The notification delivery status, with Open Notification Settings while macOS hides banners
