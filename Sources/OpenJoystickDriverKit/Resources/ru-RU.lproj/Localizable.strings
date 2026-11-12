@@ -2708,7 +2708,7 @@
 /* Value of the Ownership row of 'ojd controller show'. %1$@ is the route that found the controller, %2$@ is the physical connection and %3$@ is the HID input source, all in kebab case, which stays as written. */
 "cli.controller.show.ownership" = "маршрут: %1$@, физический доступ: %2$@, ввод HID: %3$@";
 /* Row label in the output of 'ojd controller show'. The component that handles the controller follows, with where that choice comes from. */
-"cli.controller.show.labelServer" = "Управляет";
+"cli.controller.show.labelServer" = "Управляется";
 /* Row label in the output of 'ojd controller show'. The route that the input of the controller takes follows, with the reason in parentheses. */
 "cli.controller.show.labelServing" = "Маршрут обслуживания";
 /* Row label in the output of 'ojd controller show'. The gamepad model that the virtual gamepad presents follows. */
@@ -2720,11 +2720,11 @@
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "Запись";
 /* Row label in the output of 'ojd controller show'. The sentence that says why OpenJoystickDriver does not serve the connected device follows. */
-"cli.controller.show.labelNotServed" = "Не обслуживается";
+"cli.controller.show.labelNotServed" = "Не управляется";
 /* Row label in the output of 'ojd controller show'. The sentence that says what to do about a device that is not served follows. */
 "cli.controller.show.labelNextStep" = "Следующий шаг";
 /* Row label in the output of 'ojd controller show'. The command that drafts a controller record for a HID gamepad that is not served follows. */
-"cli.controller.show.labelDraftCommand" = "Набросок записи";
+"cli.controller.show.labelDraftCommand" = "Набросать запись";
 /* Row label in the output of 'ojd controller show'. The command that captures the packets of a device that no protocol matches follows. */
 "cli.controller.show.labelCaptureCommand" = "Захватить пакеты";
 /* Row label in the output of 'ojd controller show' and in the controller detail. Where the HID usage map of the controller comes from follows. */
@@ -2908,7 +2908,7 @@
 /* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
 "cli.protocol.validate.discussion" = "Проверяет, что файл — допустимое описание, что имя семейства записано в UpperCamelCase и совпадает с именем файла, что это не встроенное семейство и что заданы отображаемое имя и раскладки ввода. Если файл отклонён, завершается с кодом 1 и кодом E5xxx.";
 /* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
-"cli.protocol.validate.valid" = "%1$@ — допустимое описание семейства %2$@ (%3$@). Установите его командой 'ojd protocol install'.";
+"cli.protocol.validate.valid" = "%1$@ — допустимое описание семейства %2$@ (%3$@). Установите его командой «ojd protocol install».";
 /* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
 "cli.protocol.install.abstract" = "Проверить описание протокола и установить его для вашего пользователя.";
 /* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
@@ -3412,7 +3412,7 @@
 /* Reason fragment of a document problem for one field. %1$@ is the field path, which stays as written and is shown in quotes, and %2$@ is the problem found. */
 "cli.shared.document.fieldProblem" = "«%1$@»: %2$@";
 /* One-line summary of 'ojd profile convert' in the command list and at the top of its help. */
-"cli.profile.convert.abstract" = "Копирует профиль для другой модели контроллера, сохраняя назначения, которые эта модель может использовать.";
+"cli.profile.convert.abstract" = "Копирует профиль для другой модели контроллера, сохраняя привязки, которые эта модель может использовать.";
 /* Help text of the --controller option of 'ojd profile convert'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.convert.controller" = "Целевая модель контроллера: VVVV:PPPP или ID подключённого контроллера.";
 /* Help text of the --name option of 'ojd profile convert'. */
@@ -4544,7 +4544,7 @@
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: интервал keep-alive должен быть 1...60000 мс. Исправление: задайте intervalMilliseconds в диапазоне 1...60000.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
-"error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: keep-alive должен содержать ни одной записи или 1...8 записей. Исправление: перечислите 1...8 записей или опустите writes.";
+"error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: keep-alive должен содержать 1...8 записей или не содержать ни одной. Исправление: перечислите 1...8 записей или опустите writes.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: resendTuning в keep-alive должен быть lizardResendTicks. Исправление: задайте resendTuning равным lizardResendTicks или опустите.";
 /* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
