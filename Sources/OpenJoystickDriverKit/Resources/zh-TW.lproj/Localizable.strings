@@ -264,14 +264,14 @@
 "ui.controllers.accessibilityDetails" = "%1$@。%2$@。協定：%3$@。解析器：%4$@。序號：%5$@。USB VID/PID：%6$@。輸入端點：%7$@。輸出端點：%8$@。";
 /* Note on a controller row in the Controllers area when macOS serves the controller natively and the driver does not publish a virtual gamepad for it. */
 "platform.macos.ui.controllers.systemGamepadNotPublished" = "macOS 原生遊戲控制器，未發佈";
-/* Label of the popup in the Controllers detail that picks which program serves the controller to games. */
+/* Label of the popup in the Controllers detail that picks which program handles the controller for games. */
 "ui.controllers.server.label" = "處理方";
-/* Entry of the server picker in the Controllers detail: macOS serves the controller itself. */
-"platform.macos.ui.controllers.server.system" = "macOS（原生）";
-/* Option of the server popup: OpenJoystickDriver serves the controller as a virtual gamepad. OpenJoystickDriver is the product name. */
-"ui.controllers.server.ojd" = "OpenJoystickDriver（虛擬）";
-/* Progress text under the Served by picker in the Controllers detail while the service applies the user's choice of who serves the controller. */
-"ui.controllers.server.updating" = "正在變更由誰來服務此控制器…";
+/* Entry of the server picker in the Controllers detail: macOS handles the controller itself. */
+"platform.macos.ui.controllers.server.system" = "macOS";
+/* Option of the server popup: OpenJoystickDriver handles the controller and shows a virtual gamepad. OpenJoystickDriver is the product name. */
+"ui.controllers.server.ojd" = "OpenJoystickDriver";
+/* Progress text under the Handled by picker in the Controllers detail while the service applies the user's choice of who handles the controller. */
+"ui.controllers.server.updating" = "正在變更由誰來處理此控制器…";
 /* Label of the serving route fact in the Controllers detail. The route is the way the input reaches games. */
 "ui.controllers.serving.label" = "處理路徑";
 /* Value of the serving route in the Controllers area: macOS serves the controller and the driver passes the input through. */
@@ -1379,9 +1379,9 @@
 /* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
 "platform.macos.cli.controller.show.labelServedBy" = "原生驅動程式";
 /* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
-"platform.macos.cli.controller.show.servedByMacOS" = "由 macOS 提供服務。執行 `ojd controller claim %@` 以啟用延伸功能並接管此控制器。";
+"platform.macos.cli.controller.show.servedByMacOS" = "由 macOS 處理。執行 `ojd controller claim %@` 以啟用延伸功能並接管此控制器。";
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
-"platform.macos.ui.controllers.servedByMacOS" = "由 macOS 提供服務";
+"platform.macos.ui.controllers.servedByMacOS" = "由 macOS 處理";
 /* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
 "platform.macos.ui.controllers.servedByMacOSDetail" = "Apple 的驅動程式正在占用此控制器。接管後即可啟用 OpenJoystickDriver 延伸功能。";
 /* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
@@ -2047,8 +2047,8 @@
 "platform.macos.cli.status.group.labelInputRead" = "輸入監控";
 /* Row label in the output of 'ojd status'. The reason why the stored profile overrides could not be read follows. */
 "cli.status.group.labelOverrideError" = "覆寫錯誤";
-/* Heading in the output of 'ojd status' above the list of controllers that macOS serves natively. %lld is the number of controllers. */
-"platform.macos.cli.status.group.labelPassThrough" = "交還 macOS (%lld)";
+/* Heading in the output of 'ojd status' above the list of controllers that macOS handles natively. %lld is the number of controllers. */
+"platform.macos.cli.status.group.labelPassThrough" = "由 macOS 處理 (%lld)";
 /* Row label in the output of 'ojd status'. The state and version of the service follow. */
 "cli.status.group.labelService" = "服務";
 /* Heading in the output of 'ojd status' above the list of connected devices that the driver does not support. %lld is the number of devices. */
@@ -2613,7 +2613,7 @@
 "cli.controller.group.outputSent" = "已將 %1$@ 傳送至 %2$@。";
 /* Error of the controller output commands when the controller lacks the feature. %1$@ is the controller name, %2$@ is the missing feature as a noun phrase and %3$@ is the session token for 'ojd controller show'. */
 "cli.controller.group.outputUnsupported" = "%1$@ 沒有 %2$@。請執行「ojd controller show %3$@」查看它支援的功能。";
-/* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To serve a model means to read its input and publish it as a virtual gamepad. */
+/* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To handle a model means to read its input and publish it as a virtual gamepad. */
 "cli.controller.claim.abstract" = "讓 OpenJoystickDriver 處理某個控制器型號。";
 /* Long description in the help of 'ojd controller claim'. server, ojd, vvvv-pppp.plist and the record terms stay as written. */
 "platform.macos.cli.controller.claim.discussion" = "在你為該型號建立的記錄（記錄目錄中的 vvvv-pppp.plist）中將 server 設為 ojd，並保留記錄的其他欄位。對該型號的每個控制器都適用。執行中的服務無需重新插拔即可套用。需要服務來尋找控制器。--dry-run 不會寫入任何內容。對使用原始 USB（一律由 OpenJoystickDriver 處理）或 macOS 不原生處理的控制器，以 E2023 結束，結束碼為 1。";
@@ -2627,7 +2627,7 @@
 "cli.controller.group.serverInvalid" = "無法變更 %1$@：%2$@";
 /* Error when a controller has no record to change. %1$@ is the controller identity and %2$@ repeats it as the argument of the command in quotes, which stays as written. */
 "cli.controller.group.serverNoRecord" = "%1$@ 沒有可變更的控制器記錄。請用「ojd record draft %2$@」建立一個。";
-/* Message when a controller cannot be released to macOS because macOS does not serve it natively. %@ is the controller identity. OpenJoystickDriver is the product name. */
+/* Message when a controller cannot be released to macOS because macOS does not handle it natively. %@ is the controller identity. OpenJoystickDriver is the product name. */
 "platform.macos.cli.controller.group.serverNotNative" = "macOS 不原生處理 %@，因此一律由 OpenJoystickDriver 處理。";
 /* Message when the server of a controller cannot be changed because it uses raw USB. %@ is the controller identity. OpenJoystickDriver is the product name. */
 "cli.controller.group.serverRawUsb" = "%@ 使用原始 USB，因此一律由 OpenJoystickDriver 處理。";
@@ -2699,13 +2699,13 @@
 "cli.controller.show.labelOwnership" = "擁有者";
 /* Value of the Ownership row of 'ojd controller show'. %1$@ is the route that found the controller, %2$@ is the physical connection and %3$@ is the HID input source, all in kebab case, which stays as written. */
 "cli.controller.show.ownership" = "路徑 %1$@，實體 %2$@，HID 輸入 %3$@";
-/* Row label in the output of 'ojd controller show'. The component that serves the controller follows, with where that choice comes from. */
+/* Row label in the output of 'ojd controller show'. The component that handles the controller follows, with where that choice comes from. */
 "cli.controller.show.labelServer" = "處理方";
 /* Row label in the output of 'ojd controller show'. The route that the input of the controller takes follows, with the reason in parentheses. */
 "cli.controller.show.labelServing" = "處理路徑";
 /* Row label in the output of 'ojd controller show'. The gamepad model that the virtual gamepad presents follows. */
 "cli.controller.show.labelPersona" = "呈現身分";
-/* Value of the Served by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
+/* Value of the Handled by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
 "cli.controller.show.server" = "%1$@（來自 %2$@）";
 /* Row label in the output of 'ojd controller show'. The protocol family the driver speaks to the controller follows. */
 "cli.controller.show.labelProtocol" = "通訊協定";
@@ -2736,7 +2736,7 @@
 /* Row label in the output of 'ojd controller show', present when the system owns the output. The explanation that the system sends rumble and light commands follows. */
 "cli.controller.show.labelOutputOwner" = "輸出由誰負責";
 /* Value of the Output owner row of 'ojd controller show'. Rumble and Lighting are the labels of two other rows and are written as in this catalog. */
-"platform.macos.cli.controller.show.outputOwnerMacos" = "macOS（原生）。震動和燈光只列出 macOS 未處理的部分。";
+"platform.macos.cli.controller.show.outputOwnerMacos" = "由 macOS 處理。震動和燈光只列出 macOS 未處理的部分。";
 /* Row label in the output of 'ojd controller show', present when tuning values apply. The comma-separated tuning values follow. */
 "cli.controller.show.labelTuning" = "調校";
 /* Value shown in a row of 'ojd controller show' that has nothing to report. */
@@ -3082,7 +3082,7 @@
 /* Prompt of 'ojd record draft' while it captures reports. %1$@ is the controller name and %2$@ is its vendor and product ID. */
 "cli.record.draft.started" = "按下 %1$@（%2$@）上的每個控制項，並移動每個搖桿和扳機。";
 /* Note printed by 'ojd record draft' before a draft of a controller the service does not serve. %1$@ is the controller name, %2$@ is its vendor and product ID. */
-"cli.record.draft.unserved" = "OpenJoystickDriver 未接管 %1$@（%2$@），因此沒有擷取任何內容。草稿來自其 USB 介面。";
+"cli.record.draft.unserved" = "OpenJoystickDriver 未處理 %1$@（%2$@），因此沒有擷取任何內容。草稿來自其 USB 介面。";
 /* Error of the 'ojd record' commands when a record file cannot be read. %1$@ is the file path and %2$@ is the reason from the system. */
 "cli.record.group.errorUnreadable" = "無法讀取 %1$@：%2$@";
 /* Help text of the file argument of the 'ojd record' commands. The single hyphen means stdin and stays as written. */
