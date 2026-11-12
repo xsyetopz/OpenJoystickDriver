@@ -289,8 +289,8 @@ Each task stands alone and can leave the release (D24). Each is written for OJD'
 
 ## 18. Documentation, localization, and changelog
 
-- [ ] 18.1 Write the 0.6.0-alpha.3 section of `CHANGELOG.md`: the format change, the removed properties, the patch `remove` list, patches that reach every section and merge `modes` by `id`, idle modes, layouts for every family, `appIDs`, the driver extension policy, the migrate command, the menu bar menu, the "Interface" setting, and the changed terms.
-  - Note: the section is in (`a6adebbb2`) except the changed terms, which wait on 14.1.
+- [x] 18.1 Write the 0.6.0-alpha.3 section of `CHANGELOG.md`: the format change, the removed properties, the patch `remove` list, patches that reach every section and merge `modes` by `id`, idle modes, layouts for every family, `appIDs`, the driver extension policy, the migrate command, the menu bar menu, the "Interface" setting, and the changed terms.
+  - Note: the section is in (`a6adebbb2`); the changed terms bullet follows `wiki/Glossary.md`, and each quoted UI string in it was found in the `en-US` catalog. The Xbox USB driver and Handled by bullets use the same terms.
 - [ ] 18.2 Add every string from groups 3, 4, 5, 9, and 11 to 17 to each language by the rules in `LOCALIZATION.md`.
 - [x] 18.3 Update `wiki/Controller-Records.md`, `wiki/Writing-Controller-Mods.md`, `README.md`, `llms.txt`, and `llms-full.txt` so every document example is a property list, and show `plutil -convert` in both directions.
 - [x] 18.4 Update `docs/development/implementation-status.md` and `Scripts/SDK/reference_client.py` for `v1alpha3`.
