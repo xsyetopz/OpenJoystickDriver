@@ -122,6 +122,10 @@ package final class ApplicationServiceRuntime {
       throw error
     }
     let deviceManager = manager
+    let settingsStore = SettingsStore()
+    Task {
+      await deviceManager.startIdleDisconnectMonitor { try? settingsStore.idleDisconnectMinutes() }
+    }
     // Records apply before detection starts, so the first admission already uses them.
     let recordWatcher = ControllerRecordWatcher { changed in
       Task { await deviceManager.reloadControllerRecords(changing: changed) }

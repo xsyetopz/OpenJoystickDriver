@@ -124,6 +124,8 @@ actor DevicePipeline {
   let interface: PhysicalInterfaceSignature?
   /// The controller's latest observed state, including input hidden from output.
   var currentInputState = ControllerState.neutral
+  /// When the input state last changed, for the idle disconnect.
+  var idleInput: IdleInputTracker
   /// The state last sent to the dispatcher, without connection; neutral once the dispatcher was
   /// told the controller stopped.
   var lastDispatchedState = ControllerState.neutral
@@ -292,6 +294,7 @@ actor DevicePipeline {
     self.idleMonitorIntervalNanoseconds = idleMonitorIntervalNanoseconds
     self.frameTimings = frameTimings
     self.uptimeNanoseconds = uptimeNanoseconds
+    self.idleInput = IdleInputTracker(now: uptimeNanoseconds())
     self.externalOutputAllowed = externalOutputAllowed
     self.sessionState = sessionState
     let tunedPlan = self.driver.sessionPlan.tuned(binding?.record?.tuning ?? .none)
