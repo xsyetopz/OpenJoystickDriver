@@ -34,6 +34,8 @@
   struct ControllerReadinessCard: View {
     /// The state.
     let readiness: ControllerReadiness
+    /// Whether the button can be pressed; Input Test reads nothing from a suspended session.
+    var isActionEnabled = true
     /// Runs what the button does.
     let perform: @MainActor (ControllerReadinessAction) -> Void
 
@@ -51,6 +53,7 @@
         }
         Spacer(minLength: 12)
         Button(OJDLocalized.string(readiness.actionTitleKey)) { perform(readiness.action) }
+          .disabled(!isActionEnabled)
       }.accessibilityElement(children: .contain).ojdAccessibilityLabel(
         OJDLocalized.string(readiness.titleKey)
       )

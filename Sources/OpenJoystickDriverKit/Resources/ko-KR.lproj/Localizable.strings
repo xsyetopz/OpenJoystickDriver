@@ -1244,8 +1244,6 @@
 "ui.inputTest.menu" = "메뉴";
 /* Option of the player indicator popup that turns the indicator off. */
 "ui.inputTest.off" = "끔";
-/* Button in the Controllers detail that opens the input test window. Keep the three dots. */
-"ui.inputTest.open" = "입력 테스트 열기…";
 /* Title of the error under the output tests in the input test window. */
 "ui.inputTest.outputError" = "물리적 출력 오류";
 /* Error in the input test window when the controller refuses a rumble or light test. */
@@ -1306,8 +1304,6 @@
 "ui.inputTest.status" = "입력 테스트 상태";
 /* Title of the button in the input test that makes the controller rumble. */
 "ui.inputTest.testRumble" = "진동 테스트";
-/* Label of the row in the Controllers detail that holds the button that opens the input test. */
-"ui.inputTest.title" = "입력 테스트";
 /* Status of the input test when the app cannot read input. */
 "ui.inputTest.unavailable" = "입력을 사용할 수 없음";
 /* Name of the view button of a controller, shown in the input test. It is the small button on the left of the Xbox home button. */

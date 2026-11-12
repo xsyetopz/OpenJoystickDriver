@@ -1244,8 +1244,6 @@
 "ui.inputTest.menu" = "Меню";
 /* Option of the player indicator popup that turns the indicator off. */
 "ui.inputTest.off" = "Выкл.";
-/* Button in the Controllers detail that opens the input test window. Keep the three dots. */
-"ui.inputTest.open" = "Открыть тест ввода…";
 /* Title of the error under the output tests in the input test window. */
 "ui.inputTest.outputError" = "Ошибка физического вывода";
 /* Error in the input test window when the controller refuses a rumble or light test. */
@@ -1306,8 +1304,6 @@
 "ui.inputTest.status" = "Состояние теста ввода";
 /* Title of the button in the input test that makes the controller rumble. */
 "ui.inputTest.testRumble" = "Проверить вибрацию";
-/* Label of the row in the Controllers detail that holds the button that opens the input test. */
-"ui.inputTest.title" = "Тест ввода";
 /* Status of the input test when the app cannot read input. */
 "ui.inputTest.unavailable" = "Ввод недоступен";
 /* Name of the view button of a controller, shown in the input test. It is the small button on the left of the Xbox home button. */

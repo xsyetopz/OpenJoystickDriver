@@ -8,7 +8,7 @@ enum ControllerDetailRow: InterfaceRow {
   case servingFacts
   /// C06 (Advanced part), C16: the serial number.
   case serialNumber
-  /// C07: Open Input Test.
+  /// C07: Open Input Test, the button of a working controller's state.
   case inputTest
   /// C08: Handled by.
   case servedBy

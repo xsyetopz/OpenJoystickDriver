@@ -7,13 +7,20 @@
 
   extension ControllerDetailView {
 
-    /// The detail form: the header, the suspended session, the facts, Input Test, the server
-    /// picker, the virtual gamepad rows, the Tuning section and Advanced.
+    /// The detail form: the header, the state with its one button, the suspended session, the
+    /// facts, the server picker, the virtual gamepad rows, the Tuning section and Advanced.
     var body: some View {
       Form {
         Section { controllerHeader }
         HiddenChangeNotice(content: .changed(hiddenChangeCount))
-        Section { ControllerReadinessCard(readiness: readiness, perform: perform) }
+        Section {
+          ControllerReadinessCard(
+            readiness: readiness,
+            isActionEnabled: readiness.action != .openInputTest
+              || device.sessionState != .suspended,
+            perform: perform
+          )
+        }
         if showsSessionState {
           Section {
             if device.sessionState == .suspended {
@@ -46,7 +53,6 @@
             }
           }
         }
-        Section { inputTestAction }
         if device.isHeldByAppleDriver {
           Section {
             OJDLabeledValue(
@@ -206,15 +212,6 @@
       }.ojdAccessibilityLabel(
         OJDLocalized.string("status.needsAttention")
       ).ojdAccessibilityValue(message)
-    }
-
-    /// The Input Test row with its Open button, disabled while the session is suspended.
-    private var inputTestAction: some View {
-      OJDLabeledRow(OJDLocalized.string("ui.inputTest.title")) {
-        Button(OJDLocalized.string("ui.inputTest.open")) {
-          openInputTest(device)
-        }.disabled(device.sessionState == .suspended)
-      }
     }
 
     /// The header: the controller's glyph, its name and its connection.

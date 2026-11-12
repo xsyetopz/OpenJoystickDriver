@@ -246,7 +246,6 @@
           activeProfile: activeProfileState(for: selectedDevice),
           retry: refresh,
           viewModel: viewModel,
-          openInputTest: openInputTest,
           readiness: readiness(for: selectedDevice),
           perform: performSelected
         ).id(selectedDevice.sessionToken.rawValue)

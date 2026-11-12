@@ -1244,8 +1244,6 @@
 "ui.inputTest.menu" = "القائمة";
 /* Option of the player indicator popup that turns the indicator off. */
 "ui.inputTest.off" = "متوقف";
-/* Button in the Controllers detail that opens the input test window. Keep the three dots. */
-"ui.inputTest.open" = "فتح اختبار الإدخال…";
 /* Title of the error under the output tests in the input test window. */
 "ui.inputTest.outputError" = "خطأ في الإخراج الفعلي";
 /* Error in the input test window when the controller refuses a rumble or light test. */
@@ -1306,8 +1304,6 @@
 "ui.inputTest.status" = "حالة اختبار الإدخال";
 /* Title of the button in the input test that makes the controller rumble. */
 "ui.inputTest.testRumble" = "اختبار الاهتزاز";
-/* Label of the row in the Controllers detail that holds the button that opens the input test. */
-"ui.inputTest.title" = "اختبار الإدخال";
 /* Status of the input test when the app cannot read input. */
 "ui.inputTest.unavailable" = "الإدخال غير متوفر";
 /* Name of the view button of a controller, shown in the input test. It is the small button on the left of the Xbox home button. */
