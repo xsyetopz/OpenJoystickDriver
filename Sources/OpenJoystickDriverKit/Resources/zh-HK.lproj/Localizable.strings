@@ -2426,7 +2426,7 @@
 /* One-line summary of 'ojd config' in the command list and at the top of its help. */
 "cli.config.group.abstract" = "顯示或變更 OpenJoystickDriver 套用的設定，以及設定每個值的層級。";
 /* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.plist is a file name that stays as written. */
-"cli.config.group.discussion" = "值按層級疊加，由最低層開始：驅動程式預設值、內建記錄、套件記錄、all.patch.plist、您的記錄、使用中的描述檔。每個調校鍵取設定它的最高層級的值。";
+"cli.config.group.discussion" = "值按層級疊加，由最低層開始：驅動程式預設值、內置記錄、套件記錄、all.patch.plist、您的記錄、使用中的設定檔。每個調校鍵取設定它的最高層級的值。";
 /* Help text of the --controller option of 'ojd config set' and 'ojd config unset'. VVVV:PPPP stands for the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.config.group.controller" = "僅變更此控制器型號，格式為 VVVV:PPPP，而非所有控制器。";
 /* Error of 'ojd config set' and 'ojd config unset' when a record cannot take the change. %1$@ is the tuning key and %2$@ is the description of the problem. */
@@ -2446,7 +2446,7 @@
 /* Warning printed by 'ojd config show' when a part of the defaults file is invalid. %1$@ is the file path and %2$@ is the description of the problem. */
 "cli.config.show.defaultsIgnored" = "已忽略 %1$@：%2$@";
 /* Long description in the help of 'ojd config show'. --controller and all.patch.plist stay as written. */
-"cli.config.show.discussion" = "不帶 --controller 時，列印所有調校鍵及其在 all.patch.plist 中的值，以及記錄會讀取這些鍵的系列。帶此選項時，會在內建記錄、套件記錄、all.patch.plist 和您的記錄疊加後，列印該控制器的記錄。沒有任何層級設定的鍵會顯示為「驅動程式預設值」。";
+"cli.config.show.discussion" = "不帶 --controller 時，列印所有調校鍵及其在 all.patch.plist 中的值，以及記錄會讀取這些鍵的系列。帶此選項時，會在內置記錄、套件記錄、all.patch.plist 和您的記錄疊加後，列印該控制器的記錄。沒有任何層級設定的鍵會顯示為「驅動程式預設值」。";
 /* Indented line below a tuning key of 'ojd config show' that lists the controller families whose records read the key. %@ is the comma-separated list of family names. */
 "cli.config.show.readBy" = "讀取它的系列：%@";
 /* Warning of 'ojd config show' about a key in all.patch.plist that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
@@ -2720,7 +2720,7 @@
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "記錄";
 /* Row label in the output of 'ojd controller show'. The sentence that says why OpenJoystickDriver does not serve the connected device follows. */
-"cli.controller.show.labelNotServed" = "未提供服務";
+"cli.controller.show.labelNotServed" = "未處理";
 /* Row label in the output of 'ojd controller show'. The sentence that says what to do about a device that is not served follows. */
 "cli.controller.show.labelNextStep" = "下一步";
 /* Row label in the output of 'ojd controller show'. The command that drafts a controller record for a HID gamepad that is not served follows. */
@@ -2900,7 +2900,7 @@
 /* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
 "cli.protocol.group.abstract" = "驗證、安裝或列出協定描述。";
 /* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
-"cli.protocol.group.discussion" = "協定描述是定義 OJD 未內置之手掣系列的 .plist 檔案。已安裝的描述位於 ~/Library/Application Support/OpenJoystickDriver/Protocols，模組套件亦可攜帶它們。這些指令不需要服務。";
+"cli.protocol.group.discussion" = "協定描述是定義 OJD 未內置之控制器系列的 .plist 檔案。已安裝的描述位於 ~/Library/Application Support/OpenJoystickDriver/Protocols，模組套件亦可攜帶它們。這些指令不需要服務。";
 /* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
 "cli.protocol.group.file" = "以系列命名的描述檔案，例如 VendorAcmePad.plist。";
 /* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
@@ -2908,7 +2908,7 @@
 /* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
 "cli.protocol.validate.discussion" = "檢查檔案是有效的描述、系列名稱為 UpperCamelCase 且與檔名相符、不是內置系列，並設定了顯示名稱和輸入配置。檔案被拒絕時會以 1 結束並給出 E5xxx 代碼。";
 /* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
-"cli.protocol.validate.valid" = "%1$@ 是系列 %2$@（%3$@）的有效描述。可用 'ojd protocol install' 安裝。";
+"cli.protocol.validate.valid" = "%1$@ 是系列 %2$@（%3$@）的有效描述。可用「ojd protocol install」安裝。";
 /* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
 "cli.protocol.install.abstract" = "檢查協定描述並為目前使用者安裝。";
 /* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
@@ -2918,11 +2918,11 @@
 /* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
 "cli.protocol.list.abstract" = "列出內置和有文件的協定系列及各自的來源。";
 /* Long description in the help of 'ojd protocol list'. */
-"cli.protocol.list.discussion" = "列出每個系列及其顯示名稱和來源：內置、你的 Protocols 資料夾或模組套件。被拒絕的描述不會列出。";
+"cli.protocol.list.discussion" = "列出每個系列及其顯示名稱和來源：內置、您的 Protocols 資料夾或模組套件。被拒絕的描述不會列出。";
 /* Source shown by 'ojd protocol list' for a family that OJD builds in. */
-"cli.protocol.list.builtIn" = "內置";
+"cli.protocol.list.builtIn" = "內置系列";
 /* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
-"cli.protocol.list.user" = "你的 Protocols 資料夾";
+"cli.protocol.list.user" = "您的 Protocols 資料夾";
 /* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
 "cli.protocol.list.package" = "套件 %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
@@ -3008,7 +3008,7 @@
 /* Message printed by 'ojd virtual reset --all --dry-run' instead of resetting. */
 "cli.virtual.reset.allDryRun" = "會讓所有控制器型號恢復自動選擇虛擬遊戲控制器。";
 /* Error of 'ojd virtual reset --all' when the service could not clear the choices, such as when a virtual gamepad file sets its own identity. The folder name VirtualDevices and the command in quotes stay as written. */
-"cli.virtual.reset.allFailed" = "服務無法清除所有虛擬遊戲控制器的選擇。VirtualDevices 檔案夾中設定了自己身分的虛擬遊戲控制器檔案會保留，直至你編輯或刪除它。請用「ojd status」檢查。";
+"cli.virtual.reset.allFailed" = "服務無法清除所有虛擬遊戲控制器的選擇。VirtualDevices 資料夾中設定了自己身分的虛擬遊戲控制器檔案會保留，直至您編輯或刪除它。請用「ojd status」檢查。";
 /* Yes or no question that 'ojd virtual reset --all' asks on a terminal. */
 "cli.virtual.reset.allSummary" = "要讓所有控制器型號恢復自動選擇虛擬遊戲控制器嗎？";
 /* Long description in the help of 'ojd virtual reset'. --all and --force stay as written. */
@@ -3364,7 +3364,7 @@
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "為陀螺儀輸出而按住的控制項 (gyro-stick 範本)。未指定時，陀螺儀輸出一律開啟。";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "只在此 App（按 App ID）位於最前時套用該描述檔。重複該選項可指定更多 App。";
+"cli.profile.create.app" = "只在此 App（按 App ID）位於最前時套用該設定檔。重複該選項可指定更多 App。";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "控制器型號：VVVV:PPPP，或已連接控制器的 ID。";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
@@ -3412,7 +3412,7 @@
 /* Reason fragment of a document problem for one field. %1$@ is the field path, which stays as written and is shown in quotes, and %2$@ is the problem found. */
 "cli.shared.document.fieldProblem" = "「%1$@」：%2$@";
 /* One-line summary of 'ojd profile convert' in the command list and at the top of its help. */
-"cli.profile.convert.abstract" = "為另一種控制器型號複製設定檔，並保留該型號可用的綁定。";
+"cli.profile.convert.abstract" = "為另一種控制器型號複製設定檔，並保留該型號可用的對應。";
 /* Help text of the --controller option of 'ojd profile convert'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.convert.controller" = "要轉換成的控制器型號：VVVV:PPPP，或已連接控制器的 ID。";
 /* Help text of the --name option of 'ojd profile convert'. */
@@ -3464,7 +3464,7 @@
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "已匯入「%1$@」（%2$@）。";
 /* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
-"cli.profile.import.app" = "只在此 App（按 App ID）位於最前時才套用匯入的描述檔，取代檔案中的範圍。重複該選項可指定更多 App。";
+"cli.profile.import.app" = "只在此 App（按 App ID）位於最前時才套用匯入的設定檔，取代檔案中的範圍。重複該選項可指定更多 App。";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "使用 - 從 stdin 讀取設定檔。ID 與現有設定檔相同的設定檔會取代它。";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */
@@ -4360,7 +4360,7 @@
 /* Text of error E3026, returned when a Joy-Con pair profile needs a gyro calibration of the other Joy-Con. Joy-Con is a Nintendo product name. */
 "error.E3026.message" = "Joy-Con 配對設定檔使用另一隻 Joy-Con 的陀螺儀。請校正該設定檔為陀螺儀所選的控制器的體感。";
 /* Text of error E3027, returned when a motion request names a controller with no active remapping profile. */
-"error.E3027.message" = "該控制器沒有已啟用的設定檔，因此不會處理體感資料。請為其啟用一個設定檔，將目標 App 切換到前景，然後重試。";
+"error.E3027.message" = "該控制器沒有已啟用的設定檔，因此不會處理體感資料。請為其啟用一個設定檔，將目標 App 切換到最前，然後重試。";
 /* Text of error E3028, returned when the remapping session of the controller changed while a request ran. */
 "error.E3028.message" = "要求執行期間，該控制器的重新對應工作階段已變更。請重試。";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
@@ -4406,13 +4406,13 @@
 /* Error E5007, in place of a file path when the message does not know which file failed. */
 "error.E5007.thisFile" = "此記錄檔案";
 /* Error E5007, shown when the bundled controller catalog holds no record file. */
-"error.E5007.record.catalogEmpty" = "內置目錄的 Controllers 檔案夾：目錄中沒有記錄檔案。規則：目錄至少包含一筆控制器記錄。修正：重新安裝 OpenJoystickDriver。";
+"error.E5007.record.catalogEmpty" = "內置目錄的 Controllers 資料夾：目錄中沒有記錄檔案。規則：目錄至少包含一筆控制器記錄。修正：重新安裝 OpenJoystickDriver。";
 /* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
-"error.E5007.record.fileName" = "%1$@，vendorID 和 productID：檔案名稱必須是 %2$@，即兩個 ID 的十六進制形式。修正：將檔案重新命名為 %2$@，或更正檔案中的 ID。";
+"error.E5007.record.fileName" = "%1$@，vendorID 和 productID：檔案名稱必須是 %2$@，即兩個 ID 的十六進位形式。修正：將檔案重新命名為 %2$@，或更正檔案中的 ID。";
 /* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
 "error.E5007.record.duplicateIdentity" = "%1$@，vendorID 和 productID：%2$@ 已是 %3$@ 中記錄的識別。修正：刪除兩個檔案之一，或更改此檔案的 ID。";
 /* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
-"error.E5007.record.unwritableValue" = "%1$@，document：某個值無法寫成 JSON（%2$@）。修正：將原因中指出的值替換為字串、數字、布林值、列表或字典。";
+"error.E5007.record.unwritableValue" = "%1$@，document：某個值無法寫成 JSON（%2$@）。修正：將原因中指出的值替換為字串、數字、布林值、清單或字典。";
 /* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
 "error.E5007.record.idRange" = "%1$@，vendorID 和 productID：vendorID 必須為 1...65535，productID 必須為 0...65535。修正：將兩者分別設為其範圍內的整數。";
 /* Error E5007, shown when a patch file fails: the file is not a dictionary. %1$@ is the file. */
@@ -4480,7 +4480,7 @@
 /* Error E5007, shown when a record or protocol description breaks a rule: the defaults set session fields that the family does not read. %2$@ is the family and %3$@ are the fields. %1$@ is the file. */
 "error.E5007.protocolDescription.sessionUnread" = "%1$@，defaults.session：%2$@ 不讀取工作階段欄位 %3$@。修正：從預設值中刪除 %3$@。";
 /* Error E5007, shown when a record or protocol description breaks a rule: a named packet id does not start with its family. %2$@ is the family. %1$@ is the file. */
-"error.E5007.protocolDescription.namedPacketPrefix" = "%1$@，namedPackets：每個具名封包的 id 都以 %2$@/ 開頭。修正：重新命名封包，使每個 id 都以 %2$@/ 開頭。";
+"error.E5007.protocolDescription.namedPacketPrefix" = "%1$@，namedPackets：每個命名封包的 id 都以 %2$@/ 開頭。修正：重新命名封包，使每個 id 都以 %2$@/ 開頭。";
 /* Error E5007, shown when a record or protocol description breaks a rule: a family that is always raw USB lists tuningKeys. %1$@ is the file. */
 "error.E5007.protocolDescription.tuningRawUSB" = "%1$@，tuningKeys：始終為 raw USB 的系列透過 rawUSBTuningKeys 讀取其調校。修正：將鍵從 tuningKeys 移到 rawUSBTuningKeys。";
 /* Error E5007, shown when a record or protocol description breaks a rule: a family without a raw-USB variant lists rawUSBTuningKeys. %1$@ is the file. */
@@ -4512,17 +4512,17 @@
 /* Error E5007, shown when the subcommands of a record fail: a subcommand counterModulus is outside 2...256. %1$@ is the file. */
 "error.E5007.subcommandPlan.counterModulus" = "%1$@，session.subcommands.counterModulus：子命令的 counterModulus 必須為 2...256。修正：將 counterModulus 設為 2...256。";
 /* Error E5007, shown when the subcommands of a record fail: subcommands name no request or more than 16. %1$@ is the file. */
-"error.E5007.subcommandPlan.requestsCount" = "%1$@，session.subcommands.requests：子命令必須列出 1...16 個請求。修正：列出 1...16 個請求。";
+"error.E5007.subcommandPlan.requestsCount" = "%1$@，session.subcommands.requests：子命令必須列出 1...16 個要求。修正：列出 1...16 個要求。";
 /* Error E5007, shown when the subcommands of a record fail: two SPI reads share a purpose. %1$@ is the file. */
 "error.E5007.subcommandPlan.spiPurpose" = "%1$@，session.subcommands.requests[].spiRead.purpose：每個 SPI 讀取的 purpose 最多出現一次。修正：給每個 SPI 讀取各自的 purpose。";
 /* Error E5007, shown when the subcommands of a record fail: a player indicator lacks a pattern for one of its indicators. %1$@ is the file. */
 "error.E5007.subcommandPlan.playerIndicator" = "%1$@，session.subcommands.playerIndicator.patterns：玩家指示燈必須為每個指示燈指定模式。修正：為 off、player1、player2、player3 和 player4 提供 patterns。";
 /* Error E5007, shown when the subcommands of a record fail: a subcommand request holds no data byte or more than 16. %1$@ is the file. */
-"error.E5007.subcommandPlan.dataCount" = "%1$@，session.subcommands.requests[].data：子命令請求必須列出 1...16 個資料位元組。修正：讓 data 有 1...16 個位元組。";
+"error.E5007.subcommandPlan.dataCount" = "%1$@，session.subcommands.requests[].data：子命令要求必須列出 1...16 個資料位元組。修正：讓 data 有 1...16 個位元組。";
 /* Error E5007, shown when the subcommands of a record fail: an SPI read length is outside 1...29. %1$@ is the file. */
 "error.E5007.subcommandPlan.spiLength" = "%1$@，session.subcommands.requests[].spiRead.length：SPI 讀取的 length 必須為 1...29。修正：將 length 設為 1...29。";
 /* Error E5007, shown when the subcommands of a record fail: a subcommand request names both data and spiRead, or neither. %1$@ is the file. */
-"error.E5007.subcommandPlan.dataOrSpiRead" = "%1$@，session.subcommands.requests[]：子命令請求必須恰好包含 data 和 spiRead 之一。修正：保留 data 或 spiRead，並移除另一個。";
+"error.E5007.subcommandPlan.dataOrSpiRead" = "%1$@，session.subcommands.requests[]：子命令要求必須恰好包含 data 和 spiRead 之一。修正：保留 data 或 spiRead，並移除另一個。";
 /* Error E5007, shown when the named packets of a record fail: the named packets are none or more than 16. %1$@ is the file. */
 "error.E5007.namedPacketPlan.count" = "%1$@，session.namedPackets：命名封包必須列出 1...16 個封包。修正：列出 1...16 個封包。";
 /* Error E5007, shown when the named packets of a record fail: two named packets share an id. %1$@ is the file. */
@@ -4548,9 +4548,9 @@
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@，session.keepAlive.writes[].resendTuning：keep-alive 的 resendTuning 必須是 lizardResendTicks。修正：將 resendTuning 設為 lizardResendTicks，或省略。";
 /* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledMissing" = "%1$@，persona：內建記錄必須包含虛擬遊戲控制器 %2$@ 的記錄。修正：重新安裝 OpenJoystickDriver。";
+"error.E5007.virtualDevice.bundledMissing" = "%1$@，persona：內置記錄必須包含虛擬遊戲控制器 %2$@ 的記錄。修正：重新安裝 OpenJoystickDriver。";
 /* Error E5007, shown when a record file fails: a bundled virtual gamepad record does not define its virtual gamepad or holds a match. %2$@ is the virtual gamepad. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledPersona" = "%1$@，persona：內建記錄必須定義虛擬遊戲控制器 %2$@，且不能包含 match。修正：重新安裝 OpenJoystickDriver。";
+"error.E5007.virtualDevice.bundledPersona" = "%1$@，persona：內置記錄必須定義虛擬遊戲控制器 %2$@，且不能包含 match。修正：重新安裝 OpenJoystickDriver。";
 /* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
 "error.E5007.modPackage.kindMismatch" = "%1$@，%2$@：%3$@ 檔案不能列在 mod.plist 的 %2$@ 下，該清單只列出 %4$@ 檔案。修正：將檔案列在與其類型相符的清單下。";
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
@@ -4558,7 +4558,7 @@
 /* Error E5007, shown when a record file fails: a controller names an unsupported USB configuration. %2$@ is the configuration. %1$@ is the file. */
 "error.E5007.deviceCatalog.usbConfiguration" = "%1$@，usb.configuration：USB 設定必須是 SetConfiguration1BeforeClaim，而不是 %2$@。修正：將 configuration 設為 SetConfiguration1BeforeClaim，或省略。";
 /* Error E5007, shown when a record file fails: a patch file sits at a path its selector does not give. %2$@ is the expected path. %1$@ is the file. */
-"error.E5007.patch.path" = "%1$@，selector：修補檔必須位於 %2$@。修正：將檔案移到那裡，或修改它的 selector。";
+"error.E5007.patch.path" = "%1$@，selector：補丁檔案必須位於 %2$@。修正：將檔案移到那裡，或修改它的 selector。";
 /* Error E5007, shown when a record file fails: the tuning defaults patch has a selector other than all. %1$@ is the file. */
 "error.E5007.tuningDefaults.selector" = "%1$@，selector：調校預設值的 selector 必須為 all。修正：將 selector 設為 all。";
 
@@ -4567,7 +4567,7 @@
 /* Error E5007, shown when a patch file fails: an all patch sets a section other than tuning. %1$@ is the file. */
 "error.E5007.patch.patchAllOnlyTuning" = "%1$@，patch：all 補丁只能設定 tuning。修正：將其他部分移到針對單一控制器的補丁中。";
 /* Error E5007, shown when a patch file fails: remove is not a nonempty list. %1$@ is the file. */
-"error.E5007.patch.removeNotList" = "%1$@，remove：remove 必須是由點分隔的鍵路徑組成的非空列表。修正：列出要移除的鍵路徑，或刪除 remove。";
+"error.E5007.patch.removeNotList" = "%1$@，remove：remove 必須是由點分隔的鍵路徑組成的非空清單。修正：列出要移除的鍵路徑，或刪除 remove。";
 /* Error E5007, shown when a patch file fails: a remove entry is not text. %1$@ is the file. */
 "error.E5007.patch.removeNotText" = "%1$@，remove：remove 必須以文字形式給出由點分隔的鍵路徑。修正：將每個項目寫成字串。";
 /* Error E5007, shown when a patch file fails: a remove path is not in the record schema. %2$@ is the path. %1$@ is the file. */
@@ -4595,9 +4595,9 @@
 /* Error E5007, shown when a user or package record file is skipped: the file is not a dictionary. %1$@ is the file. */
 "error.E5007.userFile.notDictionary" = "%1$@，document：檔案不是字典。修正：將屬性列表的根設為字典。";
 /* Error E5007, shown when a user or package record file is skipped: a Controller file names a bundled controller. %2$@ is the model. %1$@ is the file. */
-"error.E5007.userFile.bundledController" = "%1$@，vendorID, productID：%2$@ 是內建控制器，Controller 檔案無法新增它。修正：改為為它編寫補丁檔案。";
+"error.E5007.userFile.bundledController" = "%1$@，vendorID, productID：%2$@ 是內置控制器，Controller 檔案無法新增它。修正：改為為它撰寫補丁檔案。";
 /* Error E5007, shown when a user or package record file is skipped: the file adds or patches a bootloader identity. %2$@ is the model. %1$@ is the file. */
-"error.E5007.userFile.bootloaderController" = "%1$@，vendorID, productID：%2$@ 是開機載入程式識別，因此任何使用者檔案或套件檔案都無法新增或修補它。修正：刪除該檔案；OJD 不會向處於開機載入程式狀態的控制器傳送資料。";
+"error.E5007.userFile.bootloaderController" = "%1$@，vendorID, productID：%2$@ 是開機載入程式識別，因此任何使用者檔案或套件檔案都無法新增它或為它建立補丁。修正：刪除該檔案；OJD 不會向處於開機載入程式狀態的控制器傳送資料。";
 /* Error E5007, shown when a user or package record file is skipped: a patch selects no known controller. %2$@ is the selector. %1$@ is the file. */
 "error.E5007.userFile.unknownController" = "%1$@，selector：選擇器 %2$@ 不符合任何已知控制器。修正：使用 Controller 檔案新增控制器，或更正選擇器。";
 /* Error E5007, shown when a user or package record file is skipped: the record that a patch applies to is not a dictionary. %1$@ is the file. */
@@ -5104,7 +5104,7 @@
 /* Error of 'ojd generate' for a syntax error or an exception of the script. %1$@ is the script path, %2$@ is the line number and %3$@ is the message. */
 "cli.generate.group.scriptFailedAtLine" = "腳本 %1$@ 在第 %2$@ 行失敗：%3$@";
 /* Error of 'ojd generate' when generate returns null, no value, or something that is not a document or a list of documents. generate stays as written. */
-"cli.generate.group.notDocuments" = "generate 必須傳回一份文件或文件列表。";
+"cli.generate.group.notDocuments" = "generate 必須傳回一份文件或文件清單。";
 /* Error of 'ojd generate' for a returned document that fails its checks. %1$@ is the position of the document in the result, counted from 1, and %2$@ is the key path and the rule it breaks. */
 "cli.generate.group.documentInvalid" = "文件 %1$@ 無效，未寫入任何檔案：%2$@";
 /* Error of 'ojd generate' when two returned documents have the same file name. %1$@ and %2$@ are their positions in the result, counted from 1, and %3$@ is the file name. */
@@ -5122,7 +5122,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "將舊版本的已儲存文件轉換為目前版本。";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "轉換帶有舊 apiVersion 的 Settings.plist、AccessGrants.plist、設定檔、你的控制器記錄與修補檔，以及虛擬遊戲控制器檔案。每個原始檔案都保存在支援資料夾的 Migrated 資料夾中。模組套件也會被轉換。可指定一個資料夾來取代支援資料夾進行掃描。每個檔案會得到一個結論：Migrated、Current、Failed 或 Foreign。";
+"cli.migrate.group.discussion" = "轉換帶有舊 apiVersion 的 Settings.plist、AccessGrants.plist、設定檔、您的控制器記錄與修補檔，以及虛擬遊戲控制器檔案。每個原始檔案都保存在支援資料夾的 Migrated 資料夾中。模組套件也會被轉換。可指定一個資料夾來取代支援資料夾進行掃描。每個檔案會得到一個結論：Migrated、Current、Failed 或 Foreign。";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "列出將被轉換的文件，不作任何更改。";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
