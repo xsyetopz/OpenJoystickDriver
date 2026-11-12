@@ -6,6 +6,35 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ## [Unreleased]
 
+### Added
+
+- Layouts apply to every protocol family: a record of any family but `HIDDescriptor` may hold `input.layouts`. The family driver decodes every report and the layout that selects a report overrides the controls it names, so a device with its own report shape is a record. The Xbox wheel `044F:B671` reads its steering and brake through such a layout.
+- A patch reaches every record property (`capabilities`, `idle`, `modes`, `usb`, `bluetoothLE`, `server`, `route`, `input` and `tuning`), and the selector still names the identity. `patch.modes` merges by `id`: an entry with a known `id` changes that mode, a new `id` adds a mode, and the remove path `modes.<id>` drops one.
+- A patch has a `remove` list of dotted key paths, such as `input.hidUsageMap`, that OJD applies before `patch`. A path outside the record schema is refused with `E5007`.
+- `ojd migrate [--dry-run] [FOLDER]` converts `v1alpha1` and `v1alpha2` JSON documents of every kind to `v1alpha3` property lists. It scans the root files, `ActiveProfiles`, `Profiles/`, `Controllers/`, `VirtualDevices/`, `Personas/` and `Packages/`, gives each file the verdict `Migrated`, `Current`, `Failed` or `Foreign`, and keeps each original under `Migrated/` with its relative path. A file written by 0.5 fails with "written by 0.5; re-create it". The service migrates the stored documents at start and logs each verdict, and the app offers **Migrate** for `E5001` and names a stale `.json` profile.
+- The menu bar menu lists each controller as one row with its battery, profile and paused state. Its submenu holds a checkmarked profile list that ends in **No Profile** (**More Profiles** after ten), **Pause** or **Resume**, **Test Input**, **Show in Window** and, for a wireless controller, **Disconnect**. A row at the top of the menu names each problem, such as a missing permission, and opens its fix, and the menu bar icon and its label change with the state.
+- The menu bar item can be removed by dragging it out with Command held. OJD then stores **Show in menu bar** as off, turns **Show in Dock** on and opens the app window.
+- The setting `interfaceLevel` (`Simple` or `Advanced`, `Simple` by default) and the **Interface** pop-up in **Settings** > **General**, with **Simple** and **Advanced** in the **View** menu. The developer tools show only at the `Advanced` level with `developerTools` on. The service reads no `interfaceLevel`, and `ojd` prints the same for both values. `ojd migrate` writes `Advanced` into a `Settings.plist` it converts from an earlier version.
+
+### Changed
+
+- **BREAKING:** `apiVersion` is `openjoystickdriver/v1alpha3`, and the readers accept only that version.
+- **BREAKING:** stored documents are XML property lists (`.plist`): the bundled records, patches, protocol descriptions, catalog rules, the crosswalk and virtual devices, and every document a user keeps. OJD refuses a binary property list, JSON text, and a `date` or `data` value. `plutil -convert xml1 -o FILE.plist FILE.json` converts a JSON file, and `plutil -convert json -o - FILE.plist` reads a property list as JSON. A user-defined record or patch follows the same schema as a bundled one.
+- **BREAKING:** a patch deletes a key through `remove`, because a property list has no `null`. A `null` in a patch no longer deletes, and the migration turns each one into a `remove` entry. In the crosswalk an absent key states that a control has no equivalent.
+- **BREAKING:** `idle` moves from the record to the mode and names its reason, `NoControllerLinked` or `Bootloader`. An idle mode has no `interface` and no `session`. The `2DC8:301C` record has an idle mode for the product string `IDLE` and a default mode that serves the linked pad, and the bootloader identities `2DC8:3208` and `2DC8:5750` have a `Bootloader` mode. The Controllers page and `ojd status` show `ui.controllers.noControllerLinked` for the receiver with no controller linked. `ojd migrate` moves a `v1alpha2` `idle` to the default mode.
+- **BREAKING:** a profile's `applicationScope` holds `appIDs`, a list of bundle identifiers, where it held `appID`, and the profile applies while any listed app is in front. A document with `appID` is refused with a named error, and `ojd migrate` converts it, including the `ActiveProfiles` entries. `ojd profile create` and `ojd profile import` take a repeatable `--app`. The profile editor picks apps from a list of running and installed apps.
+- The app sends the driver extension activation request only after a user action: the banner button, the **Claim** button, `ojd controller claim` for a model that Apple's driver holds, or `ojd transport-extension activate`. Launch, service start and a controller arrival send none.
+- A controller on a model that Apple's driver holds (`045E:02EA`, `045E:0B00`, `045E:0B12`) is listed as served by macOS, with **Claim**, in the Controllers list and in `ojd controller show` (`served-by` and `heldByAppleDriver`). The Microsoft models `045E:02D1`, `045E:02DD`, `045E:02E3` and `045E:0B0A` take the direct route when the extension does not own them.
+- The driver banner shows each state of the request: running with a disabled button, needs approval with a button that opens the approval pane, cancelled, timed out, and failed with the error domain, code and text. It shows only while a connected controller uses the extension route.
+- The wiki heading `extension` is `transport-extension`.
+- The bundled `2DC8:301B` record names OJD as its server, because GameController lists no controller for that pad while macOS serves it.
+
+### Removed
+
+- **BREAKING:** the `idle` property of a record, which the `idle` property of a mode replaces, and the binding reason `IdleIdentity`, which `NoControllerLinked` replaces.
+- **BREAKING:** the `appID` property of a profile's `applicationScope`, which `appIDs` replaces.
+- The properties that held prose and no data: `rationale` of a protocol description, the `notes` of the catalog rules and of the crosswalk, `$comment` in the schemas, and the system audit caveat of the support report. The facts they stated are in `wiki/Controller-Records.md` and `docs/development/xpad-import.md`.
+
 ## [0.6.0-alpha.2] - 2026-11-07
 
 ### Added

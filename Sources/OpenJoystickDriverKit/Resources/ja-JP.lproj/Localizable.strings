@@ -3917,6 +3917,8 @@
 "ui.menu.help.reportProblem" = "問題を報告…";
 /* Item of the Help menu that opens the project website. */
 "ui.menu.help.projectWebsite" = "プロジェクトの Web サイト";
+/* Item of the Help menu that opens the wiki page of the main-window area in view. */
+"ui.menu.help.helpForThisArea" = "このエリアのヘルプ";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "サポートレポートをコピーしました";
 /* Message of the alert shown after the support report is copied. */

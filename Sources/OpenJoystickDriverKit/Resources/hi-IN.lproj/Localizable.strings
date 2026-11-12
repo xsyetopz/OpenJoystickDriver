@@ -3917,6 +3917,8 @@
 "ui.menu.help.reportProblem" = "समस्या की रिपोर्ट करें…";
 /* Item of the Help menu that opens the project website. */
 "ui.menu.help.projectWebsite" = "प्रोजेक्ट वेबसाइट";
+/* Item of the Help menu that opens the wiki page of the main-window area in view. */
+"ui.menu.help.helpForThisArea" = "इस क्षेत्र के लिए सहायता";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "सपोर्ट रिपोर्ट कॉपी हो गई";
 /* Message of the alert shown after the support report is copied. */

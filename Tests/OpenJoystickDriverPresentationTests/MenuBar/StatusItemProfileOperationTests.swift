@@ -12,6 +12,7 @@ struct StatusItemProfileOperationTests {
     private(set) var requests: [RuntimeMutationRequest] = []
     var hasSelectedProfile: Bool { false }
     var selectedControllerID: String? { nil }
+    var selectedArea: MainWindowArea { .controllers }
     var enabledToolbarActions: Set<MainWindowToolbarAction> { [] }
     var disabledToolbarActions: Set<MainWindowToolbarAction> { [] }
     var searchFieldInView: NSSearchField? { nil }

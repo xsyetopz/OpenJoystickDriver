@@ -4499,6 +4499,8 @@
 "ui.menu.help.reportProblem" = "Meld een probleem…";
 /* Item of the Help menu that opens the project website. */
 "ui.menu.help.projectWebsite" = "Projectwebsite";
+/* Item of the Help menu that opens the wiki page of the main-window area in view. */
+"ui.menu.help.helpForThisArea" = "Help bij dit gedeelte";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "Supportrapport gekopieerd";
 /* Message of the alert shown after the support report is copied. */

@@ -161,6 +161,8 @@
       case .showActivityLog: mainWindow?.showMainWindow(area: .activity)
       case .explainErrorCode: mainWindow?.showErrorCodeExplainer()
       case .copySupportReport: copySupportReportWithFeedback()
+      case .openAreaHelp:
+        NSWorkspace.shared.open((mainWindow?.selectedArea ?? .controllers).wikiURL)
       case .reportProblem: open(urlString: StatusItemModel.problemReport)
       case .openProjectWebsite: openProjectPage(nil)
       case .services, .hide, .hideOthers, .showAll, .undo, .redo, .cut, .copy, .paste, .delete,

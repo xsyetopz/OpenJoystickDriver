@@ -3917,6 +3917,8 @@
 "ui.menu.help.reportProblem" = "報告問題…";
 /* Item of the Help menu that opens the project website. */
 "ui.menu.help.projectWebsite" = "專案網站";
+/* Item of the Help menu that opens the wiki page of the main-window area in view. */
+"ui.menu.help.helpForThisArea" = "此區域的說明";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "已拷貝支援報告";
 /* Message of the alert shown after the support report is copied. */

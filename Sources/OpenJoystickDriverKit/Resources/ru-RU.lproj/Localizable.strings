@@ -3917,6 +3917,8 @@
 "ui.menu.help.reportProblem" = "Сообщить о проблеме…";
 /* Item of the Help menu that opens the project website. */
 "ui.menu.help.projectWebsite" = "Веб-сайт проекта";
+/* Item of the Help menu that opens the wiki page of the main-window area in view. */
+"ui.menu.help.helpForThisArea" = "Справка по этой области";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "Отчёт для поддержки скопирован";
 /* Message of the alert shown after the support report is copied. */
