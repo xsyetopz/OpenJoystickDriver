@@ -25,6 +25,7 @@
             isEnabled: preferences.launchAtLoginIsAvailable,
             disabledReason: preferences.startAtLoginUnavailableReason
           )
+          SettingsBesideError(preferences: preferences, origin: .loginItem)
           SettingsSwitchRow(
             title: OJDLocalized.string("ui.settings.general.showInMenuBar"),
             description: OJDLocalized.string("ui.settings.general.showInMenuBarDescription"),

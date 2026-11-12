@@ -17,6 +17,13 @@
     private var monitor: Any?
 
     var body: some View {
+      VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
+        controls
+        SettingsBesideError(preferences: preferences, origin: .pauseShortcut)
+      }
+    }
+
+    private var controls: some View {
       HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.small) {
         VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
           Text(OJDLocalized.string("ui.settings.general.pauseShortcut"))

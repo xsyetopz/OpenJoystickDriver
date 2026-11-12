@@ -40,6 +40,24 @@
     }
   }
 
+  /// The failure of the request that one control started, in red under that control; empty while
+  /// the control has no failure.
+  struct SettingsBesideError: View {
+    /// The preferences model that holds the failure.
+    @ObservedObject
+    var preferences: SettingsPreferencesModel
+    /// The control that started the request.
+    let origin: SettingsControlOrigin
+
+    /// The message, or nothing.
+    var body: some View {
+      if let message = preferences.failure(beside: origin) {
+        Text(message).foregroundColor(Color(NSColor.systemRed))
+          .fixedSize(horizontal: false, vertical: true)
+      }
+    }
+  }
+
   /// The inline error of the preferences model as a form section, with the notification
   /// permission shortcut; it is empty while there is no error.
   struct SettingsErrorSection: View {
