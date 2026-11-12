@@ -3,6 +3,8 @@ import OpenJoystickDriverKit
 
 /// How one permission reads in the Access area: its text, its tone and whether it can be acted on.
 struct AccessReadinessStatus: Equatable {
+  /// What the status means; it sets the symbol and the sentence.
+  let state: AccessPermissionState
   /// The text that the row shows, such as Allowed or Needs attention.
   let value: String
   /// The color role of the text.
@@ -86,6 +88,7 @@ struct AccessReadiness {
     else { return Self.checking(isActionable: true) }
     guard requiresPostEventAccess else {
       return AccessReadinessStatus(
+        state: .notNeeded,
         value: OJDLocalized.string("status.notNeeded"),
         tone: .neutral,
         isActionable: false
@@ -107,6 +110,7 @@ struct AccessReadiness {
     case .allowed:
       if notificationSettings.alertStyle == .none {
         return AccessReadinessStatus(
+          state: .limited,
           value: OJDLocalized.string("ui.settings.notifications.notificationBannersOff"),
           tone: .caution,
           isActionable: true
@@ -114,6 +118,7 @@ struct AccessReadiness {
       }
       if notificationSettings.soundsEnabled == false {
         return AccessReadinessStatus(
+          state: .limited,
           value: OJDLocalized.string("ui.settings.notifications.notificationSoundOff"),
           tone: .caution,
           isActionable: true
@@ -122,6 +127,7 @@ struct AccessReadiness {
       return Self.allowed
     case .notDetermined:
       return AccessReadinessStatus(
+        state: .notAsked,
         value: OJDLocalized.string("status.notRequested"),
         tone: .caution,
         isActionable: true
@@ -242,6 +248,7 @@ struct AccessReadiness {
   /// The status of an allowed permission.
   private static var allowed: AccessReadinessStatus {
     AccessReadinessStatus(
+      state: .granted,
       value: OJDLocalized.string("status.allowed"),
       tone: .positive,
       isActionable: false
@@ -251,6 +258,7 @@ struct AccessReadiness {
   /// The status of a permission that needs attention.
   private static var needsAttention: AccessReadinessStatus {
     AccessReadinessStatus(
+      state: .denied,
       value: OJDLocalized.string("status.needsAttention"),
       tone: .caution,
       isActionable: true
@@ -260,6 +268,7 @@ struct AccessReadiness {
   /// The status of a permission that is being checked.
   private static func checking(isActionable: Bool) -> AccessReadinessStatus {
     AccessReadinessStatus(
+      state: .checking,
       value: OJDLocalized.string("status.checking"),
       tone: .neutral,
       isActionable: isActionable

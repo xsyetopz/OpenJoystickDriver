@@ -3681,6 +3681,18 @@
 "ui.access.web.on" = "Bật tại %1$@, trang tại %2$@";
 /* Value of the WebSocket row when it is off. */
 "ui.access.web.off" = "Tắt";
+/* Sentence under a permission row in the Access area when the permission is allowed. */
+"ui.access.permission.granted.message" = "Quyền này đã được cấp.";
+/* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. */
+"platform.macos.ui.access.permission.denied.message" = "macOS đã từ chối quyền này, hoặc không đọc được trạng thái của nó. Hãy cho phép trong Cài đặt hệ thống.";
+/* Sentence under a permission row in the Access area when the permission has not been requested yet. */
+"ui.access.permission.notAsked.message" = "Quyền này chưa được yêu cầu.";
+/* Sentence under a permission row in the Access area while the permission is being read. Keep the three dots. */
+"ui.access.permission.checking.message" = "Đang kiểm tra quyền này…";
+/* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
+"ui.access.permission.notNeeded.message" = "Các hồ sơ đang dùng không sử dụng quyền này.";
+/* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
+"ui.access.permission.limited.message" = "Đã cho phép, nhưng biểu ngữ hoặc âm thanh đang tắt, nên bạn có thể bỏ lỡ thông báo.";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
 "ui.access.web.closed" = "Đã bật, nhưng không lắng nghe trên cổng %@";
 /* Help text of the WebSocket row. %@ is the path of the folder from which the endpoint serves pages. */

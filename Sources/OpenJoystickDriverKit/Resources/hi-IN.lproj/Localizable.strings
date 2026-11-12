@@ -3681,6 +3681,18 @@
 "ui.access.web.on" = "%1$@ पर चालू, पेज %2$@ पर";
 /* Value of the WebSocket row when it is off. */
 "ui.access.web.off" = "बंद";
+/* Sentence under a permission row in the Access area when the permission is allowed. */
+"ui.access.permission.granted.message" = "यह अनुमति दी गई है।";
+/* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. */
+"platform.macos.ui.access.permission.denied.message" = "macOS ने यह अनुमति अस्वीकार कर दी है, या इसकी स्थिति पढ़ी नहीं जा सकी। इसे सिस्टम सेटिंग्ज़ में अनुमति दें।";
+/* Sentence under a permission row in the Access area when the permission has not been requested yet. */
+"ui.access.permission.notAsked.message" = "यह अनुमति अभी तक माँगी नहीं गई है।";
+/* Sentence under a permission row in the Access area while the permission is being read. Keep the three dots. */
+"ui.access.permission.checking.message" = "इस अनुमति की जाँच हो रही है…";
+/* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
+"ui.access.permission.notNeeded.message" = "सक्रिय प्रोफ़ाइल इस अनुमति का उपयोग नहीं करतीं।";
+/* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
+"ui.access.permission.limited.message" = "अनुमति है, लेकिन बैनर या ध्वनियाँ बंद हैं, इसलिए अलर्ट छूट सकते हैं।";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
 "ui.access.web.closed" = "चालू है, पर पोर्ट %@ पर सुन नहीं रहा";
 /* Help text of the WebSocket row. %@ is the path of the folder from which the endpoint serves pages. */

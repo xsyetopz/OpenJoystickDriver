@@ -4263,6 +4263,18 @@
 "ui.access.web.on" = "Activado en %1$@, páginas en %2$@";
 /* Value of the WebSocket row when it is off. */
 "ui.access.web.off" = "Desactivado";
+/* Sentence under a permission row in the Access area when the permission is allowed. */
+"ui.access.permission.granted.message" = "Este permiso está concedido.";
+/* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. */
+"platform.macos.ui.access.permission.denied.message" = "macOS ha denegado este permiso o no se pudo leer su estado. Permítelo en Ajustes del Sistema.";
+/* Sentence under a permission row in the Access area when the permission has not been requested yet. */
+"ui.access.permission.notAsked.message" = "Este permiso aún no se ha solicitado.";
+/* Sentence under a permission row in the Access area while the permission is being read. Keep the three dots. */
+"ui.access.permission.checking.message" = "Comprobando este permiso…";
+/* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
+"ui.access.permission.notNeeded.message" = "Los perfiles activos no usan este permiso.";
+/* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
+"ui.access.permission.limited.message" = "Permitido, pero los avisos o los sonidos están desactivados, así que podrían pasar inadvertidas las alertas.";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
 "ui.access.web.closed" = "Activado, pero sin escuchar en el puerto %@";
 /* Help text of the WebSocket row. %@ is the path of the folder from which the endpoint serves pages. */

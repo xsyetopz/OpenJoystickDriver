@@ -142,16 +142,23 @@
     /// Returns the row for a permission, with a button when the permission is missing.
     private func permissionRow(_ row: AccessPermissionRow) -> some View {
       let title = OJDLocalized.string(row.titleKey)
+      let state = row.status.state
       return OJDLabeledRow(title) {
-        HStack {
-          Text(row.status.value)
-          if let key = row.actionTitleKey {
-            Button(OJDLocalized.string(key)) { requestPermission(row.kind) }
-              .ojdAccessibilityLabel(
-                OJDLocalized.formatted("ui.settings.notifications.requestAccess", title)
-              )
-              .ojdAccessibilityValue(row.status.value)
+        VStack(alignment: .trailing, spacing: OJDSpacing.xxSmall) {
+          HStack {
+            OJDSystemSymbol(name: state.symbolName, fallback: nil)
+              .foregroundColor(Color(row.status.tone.color)).accessibilityHidden(true)
+            Text(row.status.value)
+            if let key = row.actionTitleKey {
+              Button(OJDLocalized.string(key)) { requestPermission(row.kind) }
+                .ojdAccessibilityLabel(
+                  OJDLocalized.formatted("ui.settings.notifications.requestAccess", title)
+                )
+                .ojdAccessibilityValue(row.status.value)
+            }
           }
+          Text(OJDLocalized.string(state.messageKey)).font(.caption).foregroundStyle(.secondary)
+            .multilineTextAlignment(.trailing).fixedSize(horizontal: false, vertical: true)
         }
       }
     }
