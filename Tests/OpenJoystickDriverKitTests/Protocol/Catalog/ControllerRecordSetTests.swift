@@ -214,7 +214,7 @@ struct ControllerRecordSetTests {
     #expect(
       Self.problem(try Self.patch(Self.bundledGIP, set: ["name": "Other"]))
         == "patch must hold modes, usb, bluetoothLE, capabilities, server, "
-        + "route, input, or tuning; the selector names the identity"
+        + "route, heldByAppleDriver, input, or tuning; the selector names the identity"
     )
     #expect(
       Self.problem(try Self.patch(Self.bundledGIP, set: ["tuning": ["hidStartupIntervalMs": 5]]))

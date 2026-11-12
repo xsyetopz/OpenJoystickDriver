@@ -25,7 +25,7 @@
       "$ref": "#/$defs/modes"
     },
     "placeholderSerial": {
-      "description": "The serial number that firmware of this model reports when it has none of its own. A connected controller that reports it is flagged by `ojd diagnose`. A model without this field is never flagged.",
+      "description": "The serial number this model's firmware reports when it has none of its own; diagnosis flags a controller reporting it.",
       "type": "string",
       "minLength": 1
     },
@@ -43,6 +43,10 @@
     },
     "route": {
       "$ref": "#/$defs/route"
+    },
+    "heldByAppleDriver": {
+      "description": "Whether Apple's driver holds the USB interface, so only OJD's USB extension can open it.",
+      "type": "boolean"
     },
     "input": {
       "anyOf": [
@@ -75,6 +79,7 @@
       "capabilities": false,
       "server": false,
       "route": false,
+      "heldByAppleDriver": false,
       "input": false,
       "tuning": false
     }

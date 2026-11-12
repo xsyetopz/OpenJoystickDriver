@@ -77,6 +77,10 @@ public struct ControllerRecord: Sendable {
   /// The route the record asks for; nil leaves it to the family.
   public var route: ControllerRecordRoute? { profile.route }
 
+  /// Whether Apple's own driver extension holds the controller's USB interface, so only OJD's USB
+  /// extension can open it.
+  public var heldByAppleDriver: Bool { profile.heldByAppleDriver }
+
   /// Whether the record is a Switch 2 controller without `bluetoothLE`, which OJD reaches only
   /// over USB, because the Bluetooth LE central needs the vibration characteristic.
   public var isSwitch2WithoutBluetoothLE: Bool {

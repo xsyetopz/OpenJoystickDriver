@@ -4410,7 +4410,7 @@
 /* Error E5007, shown when a record or protocol description breaks a rule: bytes are not uppercase hex pairs. %2$@ is the field and %3$@ is what the bytes belong to. %1$@ is the file. */
 "error.E5007.record.hexBytes" = "%1$@, %2$@: %3$@ baytları, tek boşlukla ayrılmış büyük harfli onaltılık çiftler olmalıdır. Düzeltme: %2$@ alanını 42 03 00 gibi çiftlerle, büyük harf ve çiftler arasında tek boşlukla yazın.";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
-"error.E5007.patch.patchSections" = "%1$@, patch: patch modes, usb, bluetoothLE, capabilities, server, route, input veya tuning içermelidir. Düzeltme: yalnızca bu bölümleri tutun ve en az birini verin.";
+"error.E5007.patch.patchSections" = "%1$@, patch: patch modes, usb, bluetoothLE, capabilities, server, route, heldByAppleDriver, input veya tuning içermelidir. Düzeltme: yalnızca bu bölümleri tutun ve en az birini verin.";
 /* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@, persona: persona %2$@ değerlerinden biri olmalıdır. Düzeltme: persona’yı bunlardan biri yapın.";
 /* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */
