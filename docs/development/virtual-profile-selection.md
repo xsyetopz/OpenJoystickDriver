@@ -11,7 +11,7 @@ Measured on the maintainer's Mac (macOS 27, Darwin 27.2.0) with the installed ap
 | One profile read by both GameController and SDL's HIDAPI drivers | None found. GameController reads input only from the Xbox Bluetooth report layout. SDL's HIDAPI drivers read input only from `045E:0B0C` over the Xbox One GIP layout. |
 | A profile both read, with a condition | `045E:0B13` (`GameControllerCompatible`) or `045E:0B20` over the Bluetooth layout, when SDL runs with `SDL_JOYSTICK_HIDAPI=0`. SDL then reads the pad through its GameController backend. This is what `ojd virtual launch --sdl-gamecontroller-backend` sets up (`wiki/Playing-Games.md:24`). |
 | Home (Guide) | Reached OJD but neither probe in any run reported it. Both probes ran in the background. Unresolved. |
-| Replacing the published gamepad | SDL sees a remove within 36 ms, then an add 2.0 s later with a new instance ID. GameController sees connect or disconnect within 76 ms. See [Replacing the published gamepad](#replacing-the-published-gamepad). |
+| Replacing the published gamepad | SDL sees a remove within 36 ms, then an add 2.0 s later with a new instance ID. GameController sees connect or disconnect within 76 ms. See [What a running game observes when OJD replaces the gamepad](#what-a-running-game-observes-when-ojd-replaces-the-gamepad). |
 
 ## Method
 
