@@ -39,6 +39,17 @@ struct ControllerRecordOutputTests {
     #expect(sixaxis.server == .system)
   }
 
+  @Test
+  func aHIDDescriptorModeDecodesAHIDRumbleTemplate() throws {
+    let document = try decode(
+      "\"modes\": [{\"id\": \"default\", \"protocol\": {\"family\": \"HIDDescriptor\"}, "
+        + "\"session\": {\(Self.gp100Rumble)}}]"
+    )
+    let template = try #require(document.baseMode.session.rumbleTemplate)
+    #expect(template.report == ControllerTemplateReport(kind: .output, reportID: 2, length: 8))
+    #expect(template.outputCapabilities == .dualMainRumble)
+  }
+
   @Test(arguments: ["ojd", "system", "native", ""])
   func rejectsUnknownOwnership(name: String) {
     #expect(throws: DecodingError.self) {

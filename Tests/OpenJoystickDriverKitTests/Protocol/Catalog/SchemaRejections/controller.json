@@ -1388,6 +1388,90 @@
       }
     },
     {
+      "name": "rejects a rumble template on a HIDDescriptor mode: no motor field",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12315,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "rumble": {
+                "report": {
+                  "kind": "Output",
+                  "id": 5,
+                  "length": 8
+                },
+                "bytes": "05 00 00 00 00 00 00 00"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a rumble template on a HIDDescriptor mode: no report",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12315,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "rumble": {
+                "lowFrequency": {
+                  "byte": 2
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "rejects a rumble template on a HIDDescriptor mode: a motor byte outside the report",
+      "code": "E5007",
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 11720,
+        "productID": 12315,
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "HIDDescriptor"
+            },
+            "session": {
+              "rumble": {
+                "report": {
+                  "kind": "Output",
+                  "id": 5,
+                  "length": 4
+                },
+                "lowFrequency": {
+                  "byte": 4
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "validator rejects modes that break record level rules: present controls that no mode driver declares",
       "code": "E5007",
       "document": {

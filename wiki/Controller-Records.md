@@ -216,7 +216,7 @@ Name at least one control in each layout. `ojd record validate` checks that ever
 
 ## Add Rumble To a Controller
 
-A `HIDReportLayout` or `VendorPS3ThirdParty` controller is input-only unless its mode names its rumble report in `session.rumble`:
+A `HIDReportLayout`, `HIDDescriptor` or `VendorPS3ThirdParty` controller is input-only unless its mode names its rumble report in `session.rumble`:
 
 ```xml
 <key>session</key>
@@ -250,7 +250,7 @@ A `HIDReportLayout` or `VendorPS3ThirdParty` controller is input-only unless its
 - `lowFrequency`, `highFrequency`, `leftTrigger`, and `rightTrigger` each give the byte offset of that motor's intensity, from 0 to 255. Name at least one.
 - `resendIntervalMilliseconds` (optional, 1 to 60000): while any motor runs, the driver's keep-alive sends the last report again at this interval, and a report with every motor at zero stops the resends. A record that also sets a mode's `session.keepAlive`, or whose family's description declares a keep-alive (`VendorGameSir`), is rejected. Without it the report goes out once.
 
-OpenJoystickDriver sets the report ID in byte 0 when the ID is not 0, writes each motor's intensity, and sends 0 in every other byte. It sends this report even when macOS drives the controller, because macOS does not drive these motors. Only a family that encodes rumble from a template takes `session.rumble`.
+OpenJoystickDriver sets the report ID in byte 0 when the ID is not 0, writes each motor's intensity, and sends 0 in every other byte. It sends this report even when macOS drives the controller, because macOS does not drive these motors. Only a family that encodes rumble from a template takes `session.rumble`. A `HIDDescriptor` mode takes a HID report template only (`report.kind` `Output` or `Feature`, never `USB`) and sends it through the HID write path; OJD declares no such template in a bundled record until a write is felt on the hardware.
 
 ## Describe a Mode's Session
 
