@@ -207,7 +207,7 @@ Three destinations change what OJD does instead of sending input. Each fires whe
 
 - **Next profile** and **Previous profile** activate the neighbor of the active profile among the profiles for the same controller model and application scope. The order is the profile name without regard to case, then the profile identifier, and it wraps around. A profile switch to a named profile must name a profile for the same controller model. Otherwise OJD rejects the profile.
 - **Turn layer on**, **Turn layer off**, and **Toggle layer** set a layer of the same profile.
-- **Pause controller**, **Resume controller**, and **Toggle pause** pause the controller. A paused controller releases everything it holds, including running macros, drops its layers, and passes through unmapped. Only the pause assignment keeps working. A profile change or a disconnect ends the pause. While the pause lasts, the Controllers detail lists Remapping as Paused, the menu bar menu shows a disabled Paused row under the controller, and `ojd status` reports `paused`.
+- **Pause controller**, **Resume controller**, and **Toggle pause** pause the controller. A paused controller releases everything it holds, including running macros, drops its layers, and passes through unmapped. Only the pause assignment keeps working. A profile change or a disconnect ends the pause. While the pause lasts, the Controllers detail lists Remapping as Paused, and `ojd status` reports `paused`.
 
 Each switch writes a line to the service log with the old and new profile names, and a failed switch writes its error there. To read the log, run `ojd log`.
 

@@ -81,7 +81,7 @@ struct StatusItemEntry: Equatable {
   let submenu: [Self]?
   /// Whether the entry is a separator line.
   let isSeparator: Bool
-  /// What the entry adds to its title: battery level, profile name, state.
+  /// What the entry adds to its title: battery level.
   let details: [StatusItemTitle]
   /// The SF Symbol the item shows before its title, or nil for none.
   let symbolName: String?
@@ -137,14 +137,8 @@ struct StatusItemState: Equatable {
     let isSuspended: Bool
     /// Whether the controller is linked over Bluetooth, from the typed transport.
     let isWireless: Bool
-    /// Whether a `Pause` assignment has the controller pass through unmapped.
-    var isPaused = false
     /// The battery level as the service reports it, or nil when the controller reports none.
     var battery: String?
-    /// The name of the profile in force as the service reports it; nil when it reports none.
-    var profileInForce: String?
-    /// The name of the app in front that selected the profile in force; nil when none did.
-    var profileSelectedBy: String?
     /// The profiles that apply to this controller (same model, and its unit when a profile names
     /// one). ``Profile/isActive`` tells whether the profile is the one active for it.
     var profiles: [Profile] = []
@@ -239,21 +233,11 @@ enum StatusItemModel {
       ]
     }
     return state.controllers.map { controller in
-      let details =
-        (controller.battery.map { [StatusItemTitle.verbatim($0)] } ?? [])
-        + ((controller.profileInForce ?? controller.profiles.first(where: \.isActive)?.name).map {
-          [.verbatim($0)]
-        } ?? [])
-        + (controller.profileSelectedBy.map {
-          [.formatted("ui.extra.profileSelectedByApp", .verbatim($0))]
-        } ?? [])
-        + (controller.isPaused || controller.isSuspended
-          ? [.key("ui.controllers.paused.value")] : [])
       return StatusItemEntry(
         id: "controller.\(controller.id)",
         title: .verbatim(controller.name),
         submenu: controllerActions(controller, profileListRead: state.profileListRead),
-        details: details
+        details: controller.battery.map { [.verbatim($0)] } ?? []
       )
     }
   }

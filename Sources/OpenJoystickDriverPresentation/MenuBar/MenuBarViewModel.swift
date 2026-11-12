@@ -53,12 +53,9 @@
             name: $0.name,
             isSuspended: $0.sessionState == .suspended,
             isWireless: $0.supportsWirelessDisconnect,
-            isPaused: $0.paused,
             profiles: Self.profiles(applyingTo: $0, in: snapshot)
           )
           controller.battery = $0.connectionState?.power.battery.percentageText
-          controller.profileInForce = $0.profileInForce?.name
-          controller.profileSelectedBy = $0.profileInForce?.appID.map(ProfileAppChoices.appName)
           return controller
         },
         profileListRead: snapshot != nil

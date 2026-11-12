@@ -210,8 +210,6 @@
 "ui.controllers.paused.value" = "Приостановлен";
 /* Label of the fact in the Controllers detail that names the app in front that selected the profile in force. Its value is the name of the app. */
 "ui.controllers.profileSelectedBy.label" = "Выбран приложением";
-/* Note in the menu bar row of a controller that names the app in front that selected the profile in force. %@ is the name of the app. */
-"ui.extra.profileSelectedByApp" = "Выбрано: %@";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
 "ui.controllers.serial.show" = "Показать серийный номер";
 /* VoiceOver label of the button that hides the serial number in the Controllers detail. */
