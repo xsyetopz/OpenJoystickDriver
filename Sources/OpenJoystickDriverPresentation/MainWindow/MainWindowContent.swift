@@ -94,6 +94,7 @@
       list.id(navigation.selectedArea).frame(maxWidth: .infinity, maxHeight: .infinity)
         .environment(\.ojdInterfaceLevel, preferences.interfaceLevel)
         .environment(\.ojdDeveloperToolsEnabled, preferences.developerToolsEnabled)
+        .environment(\.ojdPreferences, preferences)
     }
 
     /// The list half of the selected area.
@@ -169,6 +170,7 @@
           area.id(navigation.selectedArea).frame(maxWidth: .infinity, maxHeight: .infinity)
             .environment(\.ojdInterfaceLevel, preferences.interfaceLevel)
             .environment(\.ojdDeveloperToolsEnabled, preferences.developerToolsEnabled)
+            .environment(\.ojdPreferences, preferences)
         }
       }.onChange(of: openSetupSteps) { steps in
         setupSteps.update(loaded: runtime.loadState == .available, openSteps: steps.count)

@@ -255,5 +255,30 @@
 			<string>%d Minuten</string>
 		</dict>
 	</dict>
+	<!-- Row of the Simple interface in the controller detail and the profile editor: how many advanced settings that Simple hides hold a value other than their default. %d is the number of changed advanced settings. The German plural forms are a first draft that a native speaker reviews. -->
+	<key>ui.interface.hiddenChanges</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>%d erweiterte Einstellungen wurden geändert</string>
+			<key>one</key>
+			<string>%d erweiterte Einstellung wurde geändert</string>
+			<key>two</key>
+			<string>%d erweiterte Einstellungen wurden geändert</string>
+			<key>few</key>
+			<string>%d erweiterte Einstellungen wurden geändert</string>
+			<key>many</key>
+			<string>%d erweiterte Einstellungen wurden geändert</string>
+			<key>other</key>
+			<string>%d erweiterte Einstellungen wurden geändert</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

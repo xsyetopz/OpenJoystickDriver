@@ -10,6 +10,10 @@
     /// Whether the developer switch is on; a developer row also needs Advanced.
     @Entry
     var ojdDeveloperToolsEnabled = false
+    /// The preferences that store the interface level, so a view can switch it; the main window
+    /// sets it.
+    @Entry
+    var ojdPreferences: SettingsPreferencesModel?
   }
 
   /// Hides a view when its row is not shown at the environment's level.

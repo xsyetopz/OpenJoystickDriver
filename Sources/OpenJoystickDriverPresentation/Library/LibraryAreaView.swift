@@ -27,7 +27,10 @@
       switch column {
       case .list: LibraryListView(model: model).ojdInterfaceRow(LibraryRow.list)
       case .detail:
-        LibraryDetailView(runtime: runtime, model: model).ojdInterfaceRow(LibraryRow.detail)
+        VStack(spacing: OJDSpacing.none) {
+          HiddenChangeNotice(content: .needsAdvanced).padding(.horizontal, OJDSpacing.medium)
+          LibraryDetailView(runtime: runtime, model: model).ojdInterfaceRow(LibraryRow.detail)
+        }
       }
     }
   }

@@ -5257,3 +5257,7 @@
 "platform.macos.ui.setupSteps.postEvent" = "اسمح بـ «تسهيلات الاستخدام» ليتمكن OpenJoystickDriver من إرسال أحداث لوحة المفاتيح والمؤشر.";
 /* One sentence of the setup steps in the main window, beside the button that asks for Bluetooth access or opens System Settings. OpenJoystickDriver is the product name; Switch 2 is a product name. */
 "ui.setupSteps.bluetooth" = "اسمح باستخدام Bluetooth ليتمكن OpenJoystickDriver من توصيل وحدات تحكم Switch 2.";
+/* Button of the Simple interface row that reports a changed or unavailable advanced setting; it switches the interface to Advanced. */
+"ui.interface.showAdvanced" = "إظهار الإعدادات المتقدمة";
+/* Text of the Simple interface row in the Library and Activity areas, whose controls all need the Advanced interface; a button beside it switches to Advanced. */
+"ui.interface.areaNeedsAdvanced" = "تتطلب هذه المنطقة الواجهة المتقدمة.";
