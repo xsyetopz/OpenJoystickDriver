@@ -24,6 +24,11 @@
     "modes": {
       "$ref": "#/$defs/modes"
     },
+    "placeholderSerial": {
+      "description": "The serial number that firmware of this model reports when it has none of its own. A connected controller that reports it is flagged by `ojd diagnose`. A model without this field is never flagged.",
+      "type": "string",
+      "minLength": 1
+    },
     "usb": {
       "$ref": "#/$defs/usbOverride"
     },

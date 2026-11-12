@@ -142,7 +142,7 @@ public enum DiagnosticsService {
     checks.append(virtualDeviceCheck(snapshot))
     checks.append(recordCheck(records))
     checks.append(inputMappingCheck(snapshot))
-    checks.append(switchSerialCheck(snapshot))
+    checks.append(switchSerialCheck(snapshot, records: records))
     checks.append(configFilesCheck(defaults: records.defaults, virtualDevices: virtualDevices))
     checks.append(usbCheck(usb))
     return checks
@@ -329,24 +329,30 @@ public enum DiagnosticsService {
 
   /// The `switch-placeholder-serial` check.
   ///
-  /// It is skipped without a status or without a connected `057E:2009` controller, warns for each
-  /// such controller whose serial is `000000000001`, and otherwise passes. It does not change
-  /// which driver binds the controller.
-  public static func switchSerialCheck(_ snapshot: DiagnoseServiceSnapshot) -> DiagnoseCheck {
+  /// It is skipped without a status or without a connected controller whose record in `records`
+  /// has a `placeholderSerial`, warns for each such controller whose serial equals it, and
+  /// otherwise passes. It does not change which driver binds the controller.
+  public static func switchSerialCheck(
+    _ snapshot: DiagnoseServiceSnapshot,
+    records: ControllerRecordSet
+  ) -> DiagnoseCheck {
     let id = "switch-placeholder-serial"
     guard let status = snapshot.status else { return skipped(id, snapshot) }
-    let switchPads = status.connectedDevices.filter {
-      $0.vendorID == 0x057E && $0.productID == 0x2009
+    let candidates = status.connectedDevices.compactMap {
+      device -> (device: ApplicationServiceDeviceDescription, placeholder: String)? in
+      let model = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
+      return records.records[model]?.placeholderSerial.map { (device, $0) }
     }
-    guard !switchPads.isEmpty else {
+    guard !candidates.isEmpty else {
       return DiagnoseCheck(id, .skip, localization.string("cli.diagnose.group.switchSerialNone"))
     }
-    let placeholder = "000000000001"
-    let flagged = switchPads.filter { $0.serialNumber == placeholder }.map {
+    let flagged = candidates.filter { $0.device.serialNumber == $0.placeholder }.map {
       localization.formatted(
         "cli.diagnose.group.switchSerialPlaceholder",
         arguments: [
-          $0.name, unsafe String(format: "%04X:%04X", $0.vendorID, $0.productID), placeholder,
+          $0.device.name,
+          unsafe String(format: "%04X:%04X", $0.device.vendorID, $0.device.productID),
+          $0.placeholder,
         ]
       )
     }

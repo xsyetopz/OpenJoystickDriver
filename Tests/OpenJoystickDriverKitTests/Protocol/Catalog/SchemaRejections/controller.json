@@ -1,6 +1,26 @@
 {
   "cases": [
     {
+      "name": "rejects an empty placeholderSerial",
+      "code": "E5007",
+      "schema": true,
+      "document": {
+        "apiVersion": "openjoystickdriver/v1alpha3",
+        "kind": "Controller",
+        "vendorID": 1406,
+        "productID": 8201,
+        "placeholderSerial": "",
+        "modes": [
+          {
+            "id": "default",
+            "protocol": {
+              "family": "NintendoSwitch1"
+            }
+          }
+        ]
+      }
+    },
+    {
       "name": "rejects invalid modes: empty modes",
       "code": "E5007",
       "schema": true,
