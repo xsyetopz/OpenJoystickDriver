@@ -3856,7 +3856,7 @@
 /* Item of the File menu that saves the Activity log to a file. Keep the three dots. */
 "ui.menu.file.saveActivityLog" = "حفظ سجل النشاط…";
 /* Title of the alert shown when saving a file from the File menu fails. */
-"ui.menu.file.saveFailed" = "تعذّر حفظ الملف";
+"ui.menu.file.saveFailed" = "تعذّر حفظ الملف.";
 /* Title of the Edit menu in the menu bar. */
 "ui.menu.edit.title" = "تحرير";
 /* Item of the Edit menu that undoes the last edit. */
@@ -3920,7 +3920,7 @@
 /* Disabled item of the status item's Profiles > Deactivate submenu while no profile is active. */
 "ui.menu.profile.noneActive" = "لا يوجد ملف تعريف نشط";
 /* Title of the alert shown when turning off a profile from the menu fails. */
-"ui.menu.profile.deactivateFailed" = "تعذّر إلغاء تفعيل ملف التعريف";
+"ui.menu.profile.deactivateFailed" = "تعذّر إلغاء تفعيل ملف التعريف.";
 /* Message of the alert shown when the profile changed elsewhere during the turn off. */
 "ui.menu.profile.deactivateConflict" = "تغيّر ملف التعريف أثناء إلغاء تفعيله. حاول مرة أخرى.";
 /* Title of the Window menu in the menu bar. */
@@ -3952,7 +3952,7 @@
 /* Message of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.doneDetail" = "تقرير الدعم موجود في الحافظة.";
 /* Title of the alert shown when the support report cannot be copied. */
-"ui.menu.copySupportReport.failed" = "تعذّر نسخ تقرير الدعم";
+"ui.menu.copySupportReport.failed" = "تعذّر نسخ تقرير الدعم.";
 /* Message of the alert shown when the support report cannot be copied. The user saves it to a file with the File menu. */
 "ui.menu.copySupportReport.failedDetail" = "تعذّر جمع التقرير. احفظه في ملف بدلًا من ذلك.";
 /* Title of the Controllers item in the sidebar of the main window and in the window title when it is selected. */
@@ -4034,7 +4034,7 @@
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "فتح %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */
-"ui.extra.actionFailedTitle" = "لم يكتمل الإجراء";
+"ui.extra.actionFailedTitle" = "لم يكتمل الإجراء.";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */
 "ui.extra.profileConflict" = "تغيّر ملف التعريف قبل تنفيذ هذا الإجراء. حاول مرة أخرى.";
 /* VoiceOver label of the menu bar status item while a controller is connected and nothing needs the user. The product name stays as written. */
@@ -4064,7 +4064,7 @@
 /* Message of the open panel in which the user picks a controller record file or a mod folder. */
 "ui.library.recordOrMod.pick" = "اختر ملف سجل وحدة تحكم أو مجلد مود.";
 /* Title of the alert shown when turning on a profile from the menu fails. */
-"ui.menu.profile.activateFailed" = "تعذّر تفعيل ملف التعريف";
+"ui.menu.profile.activateFailed" = "تعذّر تفعيل ملف التعريف.";
 /* Message of the alert shown when the profile changed elsewhere during the turn on. */
 "ui.menu.profile.activateConflict" = "تغيّر ملف التعريف أثناء تفعيله. حاول مرة أخرى.";
 /* Error when the user imports a profile while another profile change runs. Import Profile is the title of the toolbar button and is written as in this catalog. */
@@ -4817,7 +4817,7 @@
 /* Error shown when the user turns off both Show in menu bar and Show in Dock. The two switch names are written as in this catalog. */
 "platform.macos.ui.settings.advanced.errorNoVisibleEntryPoint" = "لا يمكن إيقاف «إظهار في شريط القوائم» و«إظهار في Dock» معًا: لن يكون للتطبيق نقطة دخول مرئية.";
 /* Title of the alert at startup when the settings file cannot be read. */
-"ui.settings.advanced.unreadableTitle" = "تعذّرت قراءة الإعدادات";
+"ui.settings.advanced.unreadableTitle" = "تعذّرت قراءة الإعدادات.";
 /* Destructive button of the alert at startup that resets the settings, which discards the unreadable settings file. */
 "ui.settings.advanced.unreadableResetSettings" = "إعادة ضبط الإعدادات";
 /* Button of the alert about an unreadable settings file at startup that shows the file in Finder, the macOS file manager. */

@@ -3856,7 +3856,7 @@
 /* Item of the File menu that saves the Activity log to a file. Keep the three dots. */
 "ui.menu.file.saveActivityLog" = "Lưu nhật ký hoạt động…";
 /* Title of the alert shown when saving a file from the File menu fails. */
-"ui.menu.file.saveFailed" = "Không thể lưu tệp";
+"ui.menu.file.saveFailed" = "Không thể lưu tệp.";
 /* Title of the Edit menu in the menu bar. */
 "ui.menu.edit.title" = "Sửa";
 /* Item of the Edit menu that undoes the last edit. */
@@ -3920,7 +3920,7 @@
 /* Disabled item of the status item's Profiles > Deactivate submenu while no profile is active. */
 "ui.menu.profile.noneActive" = "Không có cấu hình đang dùng";
 /* Title of the alert shown when turning off a profile from the menu fails. */
-"ui.menu.profile.deactivateFailed" = "Không thể hủy kích hoạt cấu hình";
+"ui.menu.profile.deactivateFailed" = "Không thể hủy kích hoạt cấu hình.";
 /* Message of the alert shown when the profile changed elsewhere during the turn off. */
 "ui.menu.profile.deactivateConflict" = "Cấu hình đã thay đổi trong khi đang hủy kích hoạt. Hãy thử lại.";
 /* Title of the Window menu in the menu bar. */
@@ -3952,7 +3952,7 @@
 /* Message of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.doneDetail" = "Báo cáo hỗ trợ đang ở trong bảng nhớ tạm.";
 /* Title of the alert shown when the support report cannot be copied. */
-"ui.menu.copySupportReport.failed" = "Không thể sao chép báo cáo hỗ trợ";
+"ui.menu.copySupportReport.failed" = "Không thể sao chép báo cáo hỗ trợ.";
 /* Message of the alert shown when the support report cannot be copied. The user saves it to a file with the File menu. */
 "ui.menu.copySupportReport.failedDetail" = "Không thể thu thập báo cáo. Hãy lưu vào một tệp.";
 /* Title of the Controllers item in the sidebar of the main window and in the window title when it is selected. */
@@ -4034,7 +4034,7 @@
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "Mở %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */
-"ui.extra.actionFailedTitle" = "Hành động chưa hoàn tất";
+"ui.extra.actionFailedTitle" = "Hành động chưa hoàn tất.";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */
 "ui.extra.profileConflict" = "Cấu hình đã thay đổi trước khi hành động này chạy. Hãy thử lại.";
 /* VoiceOver label of the menu bar status item while a controller is connected and nothing needs the user. The product name stays as written. */
@@ -4064,7 +4064,7 @@
 /* Message of the open panel in which the user picks a controller record file or a mod folder. */
 "ui.library.recordOrMod.pick" = "Chọn một tệp bản ghi bộ điều khiển hoặc một thư mục mod.";
 /* Title of the alert shown when turning on a profile from the menu fails. */
-"ui.menu.profile.activateFailed" = "Không thể kích hoạt cấu hình";
+"ui.menu.profile.activateFailed" = "Không thể kích hoạt cấu hình.";
 /* Message of the alert shown when the profile changed elsewhere during the turn on. */
 "ui.menu.profile.activateConflict" = "Cấu hình đã thay đổi trong khi đang kích hoạt. Hãy thử lại.";
 /* Error when the user imports a profile while another profile change runs. Import Profile is the title of the toolbar button and is written as in this catalog. */
@@ -4817,7 +4817,7 @@
 /* Error shown when the user turns off both Show in menu bar and Show in Dock. The two switch names are written as in this catalog. */
 "platform.macos.ui.settings.advanced.errorNoVisibleEntryPoint" = "Không thể tắt cả “Hiện trên thanh menu” và “Hiện trong Dock”: ứng dụng sẽ không có điểm vào nào hiển thị.";
 /* Title of the alert at startup when the settings file cannot be read. */
-"ui.settings.advanced.unreadableTitle" = "Không thể đọc cài đặt";
+"ui.settings.advanced.unreadableTitle" = "Không thể đọc cài đặt.";
 /* Destructive button of the alert at startup that resets the settings, which discards the unreadable settings file. */
 "ui.settings.advanced.unreadableResetSettings" = "Đặt lại cài đặt";
 /* Button of the alert about an unreadable settings file at startup that shows the file in Finder, the macOS file manager. */

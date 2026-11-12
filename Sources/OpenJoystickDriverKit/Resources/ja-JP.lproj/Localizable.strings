@@ -3856,7 +3856,7 @@
 /* Item of the File menu that saves the Activity log to a file. Keep the three dots. */
 "ui.menu.file.saveActivityLog" = "アクティビティログを保存…";
 /* Title of the alert shown when saving a file from the File menu fails. */
-"ui.menu.file.saveFailed" = "ファイルを保存できませんでした";
+"ui.menu.file.saveFailed" = "ファイルを保存できませんでした。";
 /* Title of the Edit menu in the menu bar. */
 "ui.menu.edit.title" = "編集";
 /* Item of the Edit menu that undoes the last edit. */
@@ -3920,7 +3920,7 @@
 /* Disabled item of the status item's Profiles > Deactivate submenu while no profile is active. */
 "ui.menu.profile.noneActive" = "有効なプロファイルなし";
 /* Title of the alert shown when turning off a profile from the menu fails. */
-"ui.menu.profile.deactivateFailed" = "プロファイルを無効にできませんでした";
+"ui.menu.profile.deactivateFailed" = "プロファイルを無効にできませんでした。";
 /* Message of the alert shown when the profile changed elsewhere during the turn off. */
 "ui.menu.profile.deactivateConflict" = "無効にしている間にプロファイルが変更されました。もう一度お試しください。";
 /* Title of the Window menu in the menu bar. */
@@ -3952,7 +3952,7 @@
 /* Message of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.doneDetail" = "サポートレポートがクリップボードにあります。";
 /* Title of the alert shown when the support report cannot be copied. */
-"ui.menu.copySupportReport.failed" = "サポートレポートをコピーできませんでした";
+"ui.menu.copySupportReport.failed" = "サポートレポートをコピーできませんでした。";
 /* Message of the alert shown when the support report cannot be copied. The user saves it to a file with the File menu. */
 "ui.menu.copySupportReport.failedDetail" = "レポートを収集できませんでした。代わりにファイルに保存してください。";
 /* Title of the Controllers item in the sidebar of the main window and in the window title when it is selected. */
@@ -4034,7 +4034,7 @@
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "%@ を開く";
 /* Title of the alert shown when an action of the menu bar menu fails. */
-"ui.extra.actionFailedTitle" = "操作を完了できませんでした";
+"ui.extra.actionFailedTitle" = "操作を完了できませんでした。";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */
 "ui.extra.profileConflict" = "この操作の実行前にプロファイルが変更されました。もう一度お試しください。";
 /* VoiceOver label of the menu bar status item while a controller is connected and nothing needs the user. The product name stays as written. */
@@ -4064,7 +4064,7 @@
 /* Message of the open panel in which the user picks a controller record file or a mod folder. */
 "ui.library.recordOrMod.pick" = "コントローラのレコードファイルまたは MOD フォルダを選択してください。";
 /* Title of the alert shown when turning on a profile from the menu fails. */
-"ui.menu.profile.activateFailed" = "プロファイルを有効にできませんでした";
+"ui.menu.profile.activateFailed" = "プロファイルを有効にできませんでした。";
 /* Message of the alert shown when the profile changed elsewhere during the turn on. */
 "ui.menu.profile.activateConflict" = "有効にしている間にプロファイルが変更されました。もう一度お試しください。";
 /* Error when the user imports a profile while another profile change runs. Import Profile is the title of the toolbar button and is written as in this catalog. */
@@ -4817,7 +4817,7 @@
 /* Error shown when the user turns off both Show in menu bar and Show in Dock. The two switch names are written as in this catalog. */
 "platform.macos.ui.settings.advanced.errorNoVisibleEntryPoint" = "「メニューバーに表示」と「Dock に表示」を両方オフにすることはできません。App を開くための表示がなくなります。";
 /* Title of the alert at startup when the settings file cannot be read. */
-"ui.settings.advanced.unreadableTitle" = "設定を読み込めません";
+"ui.settings.advanced.unreadableTitle" = "設定を読み込めません。";
 /* Destructive button of the alert at startup that resets the settings, which discards the unreadable settings file. */
 "ui.settings.advanced.unreadableResetSettings" = "設定をリセット";
 /* Button of the alert about an unreadable settings file at startup that shows the file in Finder, the macOS file manager. */

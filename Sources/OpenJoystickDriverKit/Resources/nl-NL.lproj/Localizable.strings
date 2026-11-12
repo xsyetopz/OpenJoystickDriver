@@ -4438,7 +4438,7 @@
 /* Item of the File menu that saves the Activity log to a file. Keep the three dots. */
 "ui.menu.file.saveActivityLog" = "Bewaar activiteitenlogboek…";
 /* Title of the alert shown when saving a file from the File menu fails. */
-"ui.menu.file.saveFailed" = "Het bestand kon niet worden bewaard";
+"ui.menu.file.saveFailed" = "Het bestand kon niet worden bewaard.";
 /* Title of the Edit menu in the menu bar. */
 "ui.menu.edit.title" = "Wijzig";
 /* Item of the Edit menu that undoes the last edit. */
@@ -4502,7 +4502,7 @@
 /* Disabled item of the status item's Profiles > Deactivate submenu while no profile is active. */
 "ui.menu.profile.noneActive" = "Geen actief profiel";
 /* Title of the alert shown when turning off a profile from the menu fails. */
-"ui.menu.profile.deactivateFailed" = "Het profiel kon niet worden gedeactiveerd";
+"ui.menu.profile.deactivateFailed" = "Het profiel kon niet worden gedeactiveerd.";
 /* Message of the alert shown when the profile changed elsewhere during the turn off. */
 "ui.menu.profile.deactivateConflict" = "Het profiel is gewijzigd tijdens het deactiveren. Probeer het opnieuw.";
 /* Title of the Window menu in the menu bar. */
@@ -4534,7 +4534,7 @@
 /* Message of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.doneDetail" = "Het supportrapport staat op het klembord.";
 /* Title of the alert shown when the support report cannot be copied. */
-"ui.menu.copySupportReport.failed" = "Het supportrapport kon niet worden gekopieerd";
+"ui.menu.copySupportReport.failed" = "Het supportrapport kon niet worden gekopieerd.";
 /* Message of the alert shown when the support report cannot be copied. The user saves it to a file with the File menu. */
 "ui.menu.copySupportReport.failedDetail" = "Het rapport kon niet worden verzameld. Bewaar het in plaats daarvan in een bestand.";
 /* Title of the Controllers item in the sidebar of the main window and in the window title when it is selected. */
@@ -4616,7 +4616,7 @@
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "%@ openen";
 /* Title of the alert shown when an action of the menu bar menu fails. */
-"ui.extra.actionFailedTitle" = "De actie is niet voltooid";
+"ui.extra.actionFailedTitle" = "De actie is niet voltooid.";
 /* Message of the alert shown when a profile changed elsewhere before an action of the menu bar menu ran. */
 "ui.extra.profileConflict" = "Het profiel is gewijzigd voordat deze actie werd uitgevoerd. Probeer het opnieuw.";
 /* VoiceOver label of the menu bar status item while a controller is connected and nothing needs the user. The product name stays as written. */
@@ -4646,7 +4646,7 @@
 /* Message of the open panel in which the user picks a controller record file or a mod folder. */
 "ui.library.recordOrMod.pick" = "Kies een controllerrecordbestand of een modmap.";
 /* Title of the alert shown when turning on a profile from the menu fails. */
-"ui.menu.profile.activateFailed" = "Het profiel kon niet worden geactiveerd";
+"ui.menu.profile.activateFailed" = "Het profiel kon niet worden geactiveerd.";
 /* Message of the alert shown when the profile changed elsewhere during the turn on. */
 "ui.menu.profile.activateConflict" = "Het profiel is gewijzigd tijdens het activeren. Probeer het opnieuw.";
 /* Error when the user imports a profile while another profile change runs. Import Profile is the title of the toolbar button and is written as in this catalog. */
@@ -4818,7 +4818,7 @@
 /* Error shown when the user turns off both Show in menu bar and Show in Dock. The two switch names are written as in this catalog. */
 "platform.macos.ui.settings.advanced.errorNoVisibleEntryPoint" = "‘Toon in menubalk’ en ‘Toon in Dock’ kunnen niet allebei uit staan: de app zou geen zichtbaar ingangspunt hebben.";
 /* Title of the alert at startup when the settings file cannot be read. */
-"ui.settings.advanced.unreadableTitle" = "Instellingen kunnen niet worden gelezen";
+"ui.settings.advanced.unreadableTitle" = "Instellingen kunnen niet worden gelezen.";
 /* Destructive button of the alert at startup that resets the settings, which discards the unreadable settings file. */
 "ui.settings.advanced.unreadableResetSettings" = "Instellingen terugzetten";
 /* Button of the alert about an unreadable settings file at startup that shows the file in Finder, the macOS file manager. */
