@@ -18,6 +18,13 @@ struct HIDDeviceStreamMappingTests {
   }
 
   @Test
+  func theTransportStringIOKitPublishesForABluetoothLEPadMapsToBluetoothLE() {
+    #expect(
+      HIDDeviceStream.hostTransport(forTransportProperty: "Bluetooth Low Energy") == .bluetoothLE
+    )
+  }
+
+  @Test
   func theBluetoothLEHubReportsTheIOHIDBluetoothLowEnergyTransport() {
     #expect(
       Switch2BluetoothLEProfile.hidTransportProperty == kIOHIDTransportBluetoothLowEnergyValue

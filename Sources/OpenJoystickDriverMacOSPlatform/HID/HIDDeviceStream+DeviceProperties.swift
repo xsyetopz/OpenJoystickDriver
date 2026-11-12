@@ -128,7 +128,9 @@ extension HIDDeviceStream {
     switch property {
     case kIOHIDTransportUSBValue: .usb
     case kIOHIDTransportBluetoothValue: .bluetoothClassic
-    case kIOHIDTransportBluetoothLowEnergyValue: .bluetoothLE
+    // macOS publishes "Bluetooth Low Energy" on a real BLE pad; the header constant is the
+    // spelling the Switch 2 hub synthesizes.
+    case kIOHIDTransportBluetoothLowEnergyValue, "Bluetooth Low Energy": .bluetoothLE
     default: nil
     }
   }
