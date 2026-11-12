@@ -185,7 +185,7 @@
                 "ui.capture.adjust",
                 RuntimePresentation.sourceLabel(binding.source)
               )
-            )
+            ).ojdInterfaceRow(ProfilesRow.axisAdjustment)
           }
           Button(OJDLocalized.string("ui.profiles.behavior")) {
             onBehavior(binding)

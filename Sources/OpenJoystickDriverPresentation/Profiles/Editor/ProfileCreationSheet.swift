@@ -109,6 +109,7 @@
             }
             if fields.template != .gyroStick {
               ProfileOutputPolicyView(policy: fields.outputPolicy) { fields.outputPolicy = $0 }
+                .ojdInterfaceRow(ProfilesRow.outputPolicy)
             }
             if fields.showsValidation(isValid: proposedProfile != nil), nameProblem == nil {
               Text(OJDLocalized.string("ui.profiles.creationValidation"))

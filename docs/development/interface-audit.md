@@ -10,12 +10,12 @@ The file holds 125 distinct controls (W01-W11, S01-S24, M01-M17, T01-T21, C01-C2
 
 | Level | Controls |
 | --- | --- |
-| Simple | 76 |
-| Advanced | 37 |
+| Simple | 77 |
+| Advanced | 36 |
 | Developer | 12 |
 | Total | 125 |
 
-Rows that one level holds only in part, with the part in the other level named in the basis: C06 (identifiers and route are Advanced), C24 (endpoint and lists are Developer), M08 and M17 (Activity Log and Explain Error Code are Advanced), S08 (the app identifier C20 is Advanced). Group 13 hides those parts row by row.
+Rows that one level holds only in part, with the part in the other level named in the basis: C06 (identifiers and route are Advanced), C24 (endpoint and lists are Developer), M08 and M17 (Activity Log and Explain Error Code are Advanced). Group 13 hides those parts row by row.
 
 ## How to read it
 
@@ -164,7 +164,7 @@ Every item is read in A1 and shown in `ojd-alpha2/main-<Area>.png`. All keep the
 | C17 | Profiles area | `Profiles/List/ProfilesView.swift` | 790 x 536; `ojd-alpha2/main-Profiles.png` | "No profiles", "Create a profile to start assigning controls." | `inclusion`: "Build in ways to learn how to use your app or game." | OpenTabletDriver: presets | an empty state with a sentence and no button | fix 12.15 | Simple | D21: profile choice |
 | C18 | Profile list and editor | `Profiles/List/ProfilesView+Body.swift` | not measured (no profile exists) | "Profile", "Virtual output" | `layout` | none | silent guards in the list actions and the editor | fix 12.5 | Simple | the list is the profile choice D21 puts in Simple, and the maintainer put its editor in Simple too (confirmation popup) |
 | C19 | Profile output policy | `Profiles/Editor/ProfileOutputPolicyView.swift` | not measured | "Virtual output" | `pop-up-buttons` | none | edits a draft until Save, resets `physicalInput` to `.shared` without a message | fix 12.5 | Advanced | D21: virtual gamepad kind |
-| C20 | App identifier field | `Profiles/Editor/ProfileCreationSheet.swift` | not measured | the bundle identifier as text | `inclusion` | none | the user types an identifier | fix 15.2 | Advanced | an identifier, which D21 puts in Advanced; group 13 hides it inside the Simple creation sheet S08 (decided by evidence) |
+| C20 | App chooser | `Profiles/Editor/ProfileAppChooser.swift`, used by `ProfileCreationSheet.swift` and `ProfileEditingSheets.swift` | not measured | the running and installed apps, and "Other..." | `inclusion` | none | replaces the identifier text field; the "One application" target needs it | fix 15.2 | Simple | the chooser is what the "One application" target needs, so it shows at every level while that target is chosen; hiding it would break the target (decided by evidence) |
 | C21 | Library area | `Library/LibraryAreaView.swift` | 790 x 536; `ojd-alpha2/main-Library.png` | "Installed", "Built-in", "No installed records", "No installed mods", "Select a record or mod." | `inclusion` | none | "record" and "mod" are not defined where they show | fix 14.2 | Advanced | D21: records and patches (Library) |
 | C22 | Library scope switch | `Library/LibraryAreaView.swift` | segments 75 x 24 (A2) | "Installed", "Built-in" | `pop-up-buttons`: "Use a pop-up button to present a flat list of mutually exclusive options or states." | System Settings | two states as a segmented control, not a pop-up | keep: two options fit segments; the quote calls for a pop-up for a flat list of more | Advanced | D21: records and patches (Library) |
 | C23 | Library detail | `Library/LibraryDetailView.swift` | not measured (no item selected) | "Select a record or mod." | `inclusion` | none | the detail was not read with an item | fix 10.5 (read the Library area) | Advanced | D21: records and patches (Library) |

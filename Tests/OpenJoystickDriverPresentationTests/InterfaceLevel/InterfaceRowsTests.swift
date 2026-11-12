@@ -46,7 +46,9 @@ struct InterfaceRowAuditTests {
         cells.count > 3
         && cells[1].range(of: #"^[A-Z]\d{2}$"#, options: .regularExpression) != nil
       guard isControl else { continue }
-      levels[cells[1]] = cells[cells.count - 3]
+      // The "12.12 comparison" table repeats S01-S24 later in another column order; the first row,
+      // in section 2, is the one with the Level column.
+      if levels[cells[1]] == nil { levels[cells[1]] = cells[cells.count - 3] }
     }
     return levels
   }
@@ -87,6 +89,22 @@ struct InterfaceRowAuditTests {
     #expect(
       Set(rows.flatMap(\.auditIDs)) == Set(["I01", "I02", "I03", "I04", "I05", "I06", "I07"])
     )
+  }
+
+  @Test
+  func profilesRowsMatchTheAuditLevels() throws {
+    let rows = ProfilesRow.allCases
+    try expectMatchesAudit(rows)
+    let ids = Set((18...20).map { "C\($0)" } + (8...24).map { $0 < 10 ? "S0\($0)" : "S\($0)" })
+    #expect(Set(rows.flatMap(\.auditIDs)) == ids)
+  }
+
+  @Test
+  func profilesSimpleRowsAreASubsetOfAdvanced() {
+    let simple = Set(ProfilesRow.shown(at: .simple, developerToolsEnabled: true))
+    let advanced = Set(ProfilesRow.shown(at: .advanced, developerToolsEnabled: false))
+    #expect(simple.isSubset(of: advanced))
+    #expect(simple != advanced)
   }
 
   @Test

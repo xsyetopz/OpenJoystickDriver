@@ -156,7 +156,7 @@
             label: OJDLocalized.string("ui.profiles.motion.title")
           ) { openSheet(.layerMotion(layer)) }.disabled(
             !capabilities.physicalInput.motion && layer.motionTuning == nil
-          )
+          ).ojdInterfaceRow(ProfilesRow.motion)
           removeButton { removeLayer(layer.id) }
         }
       ) {
@@ -173,7 +173,7 @@
             if binding.axisTuning != nil {
               Button(OJDLocalized.string("action.adjust")) {
                 openSheet(.layerAdjustment(layer.id, binding))
-              }
+              }.ojdInterfaceRow(ProfilesRow.axisAdjustment)
             }
             Button(OJDLocalized.string("ui.profiles.behavior")) {
               openSheet(.layerBehavior(layer.id, binding))
@@ -226,27 +226,31 @@
         }
         Section {
           ProfileOutputPolicyView(policy: profile.outputPolicy, onChange: updateOutputPolicy)
-        }
+        }.ojdInterfaceRow(ProfilesRow.outputPolicy)
         Section {
           configurationRow(
+            .motion,
             title: OJDLocalized.string("ui.profiles.motion.title"),
             summary: OJDLocalized.string("ui.profiles.motion.space")
               + " · " + OJDLocalized.string("ui.profiles.gyro.output"),
             supported: capabilities.physicalInput.motion
           ) { openSheet(.motion) }
           configurationRow(
+            .analogModes,
             title: OJDLocalized.string("ui.profiles.stick.title"),
             summary: assignmentCountLabel(profile.stickMappings.count),
             supported: capabilities.supportsStickAxes,
             enabled: capabilities.supportsStickAxes || !profile.stickMappings.isEmpty
           ) { openSheet(.sticks) }
           configurationRow(
+            .analogModes,
             title: OJDLocalized.string("ui.profiles.trigger.title"),
             summary: assignmentCountLabel(profile.triggerMappings.count),
             supported: capabilities.supportsAnalogTriggers,
             enabled: capabilities.supportsAnalogTriggers || !profile.triggerMappings.isEmpty
           ) { openSheet(.triggers) }
           configurationRow(
+            .analogModes,
             title: OJDLocalized.string("ui.profiles.touch.title"),
             summary: assignmentCountLabel(profile.touchMappings.count),
             supported: !capabilities.physicalInput.touchSurfaces.isEmpty,
@@ -254,12 +258,14 @@
               || !profile.touchMappings.isEmpty
           ) { openSheet(.touch) }
           configurationRow(
+            .regions,
             title: OJDLocalized.string("ui.profiles.region.title"),
             summary: OJDLocalized.string("ui.profiles.region.summary"),
             supported: capabilities.supportsStickAxes || capabilities.supportsAnalogTriggers
               || !capabilities.physicalInput.touchSurfaces.isEmpty
           ) { openSheet(.regions) }
           configurationRow(
+            .pointerSpeed,
             title: OJDLocalized.string("ui.profiles.pointerSpeed.title"),
             summary: profile.pointerSpeed.map {
               OJDLocalized.string(
@@ -270,7 +276,7 @@
             } ?? OJDLocalized.string("ui.inputTest.off"),
             supported: true
           ) { openSheet(.pointerSpeed) }
-        }
+        }.ojdInterfaceRow(ProfilesRow.analogModes)
         ProfileLightingEditor(color: profile.physicalColor, onChange: updatePhysicalColor).disabled(
           !capabilities.physicalOutput.lightingFeatures.contains(.programmableColor)
             && profile.physicalColor == nil
@@ -282,6 +288,7 @@
     /// an Adjust button.
     ///
     /// - Parameters:
+    ///   - row: The row of the setting.
     ///   - title: The name of the setting.
     ///   - summary: The text shown when the controller supports the setting.
     ///   - supported: Whether the controller supports the setting.
@@ -289,6 +296,7 @@
     ///   - action: Opens the sheet of the setting.
     /// - Returns: The row.
     private func configurationRow(
+      _ row: ProfilesRow,
       title: String,
       summary: String,
       supported: Bool,
@@ -308,7 +316,7 @@
           symbolName: "pencil",
           label: OJDLocalized.string("action.adjust")
         ) { action() }.disabled(!(enabled ?? supported))
-      }
+      }.ojdInterfaceRow(row)
     }
 
     /// Returns the text for the number of assignments.

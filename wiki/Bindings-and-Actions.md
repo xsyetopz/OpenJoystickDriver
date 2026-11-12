@@ -174,7 +174,7 @@ ojd binding set Racing button:north speak:Reloading --voice com.apple.voice.comp
 
 ### Tune an Analog Control
 
-When you assign a stick axis or trigger axis, the row has an **Adjust...** button. It opens a sheet with these settings:
+When you assign a stick axis or trigger axis, the row has an **Adjust...** button (needs the **Advanced** interface). It opens a sheet with these settings:
 
 - Deadzone, 0 to 0.95. The default is 0.1.
 - **Gain**, 0.1 to 10. The default is 1.

@@ -59,7 +59,7 @@ OJD reads the front app when a controller connects, and when you activate, deact
 
 ### Output Policy
 
-The output policy decides how a profile sends its results. It has two settings.
+The output policy decides how a profile sends its results. It has two settings. The pickers for them show only in the **Advanced** interface, in the **New profile** sheet and in the **Controller** section of the editor. In the **Simple** interface a profile keeps its output policy.
 
 | Setting | Values | Meaning |
 | --- | --- | --- |
@@ -88,7 +88,7 @@ This section explains how to create, activate, rename, duplicate, and delete a p
 1. In the **Profiles** area, click the **New profile** button.
 2. In the **New profile** sheet, enter a name. The default name is `My controller`.
 3. Select the controller from the **Controller** list.
-4. Select the application scope. For more information, see [About profiles](#about-profiles).
+4. Select the application scope. For more information, see [About profiles](#about-profiles). With **One application**, choose the app from the app chooser. It shows in both interfaces.
 5. Click **Create**.
 
 The new profile has no assignments. It appears in the list with the label **Not active**.
