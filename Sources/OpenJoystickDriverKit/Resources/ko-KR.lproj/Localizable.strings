@@ -187,9 +187,9 @@
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant.nextStep" = "케이블 등 다른 방법으로 컨트롤러를 연결하거나 지원 리포트를 보내 주세요.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.virtualProfileUnavailable" = "OJD에는 이 컨트롤러용 가상 게임패드 프로필이 없습니다.";
+"ui.controllers.virtualProfileUnavailable" = "OJD에는 이 컨트롤러용 가상 게임패드 프로파일이 없습니다.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.virtualProfileUnavailable.nextStep" = "지원 리포트를 보내 주세요. 프로필을 추가할 수 있습니다.";
+"ui.controllers.virtualProfileUnavailable.nextStep" = "지원 리포트를 보내 주세요. 프로파일을 추가할 수 있습니다.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.deviceInUse" = "다른 프로그램이 이 컨트롤러를 사용 중입니다.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
@@ -1933,7 +1933,7 @@
 /* Message in the Profiles area when a saved profile cannot be read. The user deletes it to go on with the other profiles. */
 "ui.profiles.damagedProfileMessage" = "이 저장된 프로파일을 읽을 수 없습니다. 유효한 프로파일을 계속 사용하려면 삭제하세요.";
 /* Message in the Profiles area when a saved profile is a .json file of an earlier version. %@ is the file name. The user migrates or deletes it. */
-"ui.profiles.staleProfileMessage" = "%@은(는) 이전 버전에서 저장되어 사용할 수 없습니다. 다시 사용하려면 이전하거나 삭제하세요.";
+"ui.profiles.staleProfileMessage" = "%@은(는) 이전 버전에서 저장되어 사용할 수 없습니다. 다시 사용하려면 마이그레이션하거나 삭제하세요.";
 /* Message in the Profiles area when the list of active profiles cannot be read. The user resets the list. The profiles stay. */
 "ui.profiles.damagedSelectionsMessage" = "활성 프로파일 목록을 읽을 수 없습니다. 계속하려면 재설정하세요. 프로파일은 유지됩니다.";
 /* Confirm button of the recovery alert that backs up and resets the list of active profiles. The ampersand stays. */
@@ -2056,7 +2056,7 @@
 /* Row label in the output of 'ojd status'. The reason why the stored profile overrides could not be read follows. */
 "cli.status.group.labelOverrideError" = "재정의 오류";
 /* Heading in the output of 'ojd status' above the list of controllers that macOS handles natively. %lld is the number of controllers. */
-"platform.macos.cli.status.group.labelPassThrough" = "macOS가 처리 (%lld)";
+"platform.macos.cli.status.group.labelPassThrough" = "macOS가 처리 중 (%lld)";
 /* Row label in the output of 'ojd status'. The state and version of the service follow. */
 "cli.status.group.labelService" = "서비스";
 /* Heading in the output of 'ojd status' above the list of connected devices that the driver does not support. %lld is the number of devices. */
@@ -4172,13 +4172,13 @@
 /* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
 "ui.shortcuts.action.setProfileValue.value" = "값";
 /* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
-"ui.shortcuts.error.profileKey" = "프로필 값의 키에는 빈 부분이 있을 수 없습니다.";
+"ui.shortcuts.error.profileKey" = "프로파일 값의 키에는 빈 부분이 있을 수 없습니다.";
 /* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
 "ui.shortcuts.action.rumble.title" = "컨트롤러 진동시키기";
 /* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
 "ui.shortcuts.action.rumble.description" = "컨트롤러의 진동 모터를 잠시 동작시킵니다.";
 /* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
-"ui.shortcuts.action.rumble.intensity" = "세기 (0-255)";
+"ui.shortcuts.action.rumble.intensity" = "세기(0-255)";
 /* Label in the Shortcuts app of the rumble action's duration in seconds. */
 "ui.shortcuts.action.rumble.duration" = "지속 시간(초)";
 /* Name in the Shortcuts app of the action that sets the player indicator of a controller. */
@@ -4988,7 +4988,7 @@
 /* Says that another app uses the USB interface of a controller exclusively and that OpenJoystickDriver serves the controller when the app releases it, when the interface names no holder, in the controller detail and the controller list. */
 "status.controllerOwner.unnamed" = "다른 앱이 사용 중입니다. 이 컨트롤러는 직접 읽히고 있습니다. 해제되면 OpenJoystickDriver가 처리합니다.";
 /* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual gamepad of OpenJoystickDriver in a game, in the controller detail and the controller list. */
-"status.controllerAlsoListedBySystem" = "시스템이 이 컨트롤러를 입력이 없는 두 번째 컨트롤러로도 표시합니다. 게임에서는 OpenJoystickDriver가 게시하는 가상 게임패드를 선택하십시오.";
+"status.controllerAlsoListedBySystem" = "시스템이 이 컨트롤러를 입력이 없는 두 번째 컨트롤러로도 표시합니다. 게임에서는 OpenJoystickDriver가 게시하는 가상 게임패드를 선택하세요.";
 /* Label in the controller detail for who holds the USB interface of the controller exclusively. */
 "ui.controllers.exclusiveOwner" = "단독 접근";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
@@ -5178,13 +5178,13 @@
 /* Note under the profile editor in the Profiles area while another profile change runs and edits are ignored. */
 "ui.profiles.editBlockedChange" = "진행 중인 변경이 끝날 때까지 편집할 수 없습니다.";
 /* Note under the profile editor in the Profiles area while the profile list holds the editor because a change runs or damaged profiles need attention. */
-"ui.profiles.editBlockedHold" = "진행 중인 변경이 끝나거나 손상된 프로필이 해결될 때까지 편집할 수 없습니다.";
+"ui.profiles.editBlockedHold" = "진행 중인 변경이 끝나거나 손상된 프로파일이 해결될 때까지 편집할 수 없습니다.";
 /* Note above the profile editor in the Profiles area while a profile change runs and profile actions such as New, Import and Delete wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedChange" = "진행 중인 변경이 끝날 때까지 프로필 동작을 사용할 수 없습니다.";
+"ui.profiles.actionBlockedChange" = "진행 중인 변경이 끝날 때까지 프로파일 동작을 사용할 수 없습니다.";
 /* Note above the profile editor in the Profiles area while a repair of the profile library runs and profile actions wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedRecovery" = "라이브러리 복구가 끝날 때까지 프로필 동작을 사용할 수 없습니다.";
+"ui.profiles.actionBlockedRecovery" = "라이브러리 복구가 끝날 때까지 프로파일 동작을 사용할 수 없습니다.";
 /* Note above the profile editor in the Profiles area while the profile library lists damaged profiles and profile actions wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedDamaged" = "손상된 프로필을 삭제하거나 라이브러리를 재설정할 때까지 프로필 동작을 사용할 수 없습니다.";
+"ui.profiles.actionBlockedDamaged" = "손상된 프로파일을 삭제하거나 라이브러리를 재설정할 때까지 프로파일 동작을 사용할 수 없습니다.";
 /* Note beside the Pair Joy-Cons button of a Joy-Con pair profile in the Profiles area when the button is unavailable because a left or a right Joy-Con is not connected. */
 "ui.profiles.joyConPairNeedsBoth" = "페어링하려면 왼쪽과 오른쪽 Joy-Con을 연결하세요.";
 /* Note under the Virtual gamepad pop-up in the profile editor, shown after a virtual gamepad was chosen while exclusive physical input was on. */
