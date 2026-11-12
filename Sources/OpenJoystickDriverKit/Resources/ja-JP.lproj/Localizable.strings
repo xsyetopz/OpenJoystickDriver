@@ -2400,7 +2400,7 @@
 /* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
 "platform.macos.cli.permission.group.paneInputRead" = "プライバシーとセキュリティ > 入力監視";
 /* Purpose column of the input injection permission in 'ojd permission list'. It says what the driver uses the permission for. */
-"cli.permission.group.purposeInputInject" = "仮想コントローラの出力を送信する";
+"cli.permission.group.purposeInputInject" = "仮想ゲームパッドの出力を送信する";
 /* Purpose column of the driver extension row in 'ojd permission list'. TCC is the macOS privacy permission system and stays as written. */
 "platform.macos.cli.permission.group.purposeUsbTransport" = "エンタイトルメントで制限された生の USB インターフェイスを占有する (TCC のプライバシー権限ではありません)";
 /* Purpose column of the input reading permission in 'ojd permission list'. It says what the driver uses the permission for. */
@@ -2704,7 +2704,7 @@
 /* Row label in the output of 'ojd controller show'. The route that the input of the controller takes follows, with the reason in parentheses. */
 "cli.controller.show.labelServing" = "処理経路";
 /* Row label in the output of 'ojd controller show'. The gamepad model that the virtual gamepad presents follows. */
-"cli.controller.show.labelPersona" = "ペルソナ";
+"cli.controller.show.labelPersona" = "仮想ゲームパッド";
 /* Value of the Served by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
 "cli.controller.show.server" = "%1$@（%2$@ から）";
 /* Row label in the output of 'ojd controller show'. The protocol family the driver speaks to the controller follows. */
@@ -2999,8 +2999,8 @@
 "cli.virtual.reset.allDone" = "すべてのコントローラモデルが、仮想ゲームパッドを自動で選択するようになりました。";
 /* Message printed by 'ojd virtual reset --all --dry-run' instead of resetting. */
 "cli.virtual.reset.allDryRun" = "すべてのコントローラモデルを、仮想ゲームパッドの自動選択に戻します。";
-/* Error of 'ojd virtual reset --all' when the service could not clear the choices, such as when a virtual device file sets its own identity. The folder name VirtualDevices and the command in quotes stay as written. */
-"cli.virtual.reset.allFailed" = "サービスが仮想ゲームパッドの選択をすべて消去できませんでした。VirtualDevices フォルダ内で独自の ID を設定している仮想デバイスファイルは、編集または削除するまで残ります。「ojd status」で確認してください。";
+/* Error of 'ojd virtual reset --all' when the service could not clear the choices, such as when a virtual gamepad file sets its own identity. The folder name VirtualDevices and the command in quotes stay as written. */
+"cli.virtual.reset.allFailed" = "サービスが仮想ゲームパッドの選択をすべて消去できませんでした。VirtualDevices フォルダ内で独自の ID を設定している仮想ゲームパッドファイルは、編集または削除するまで残ります。「ojd status」で確認してください。";
 /* Yes or no question that 'ojd virtual reset --all' asks on a terminal. */
 "cli.virtual.reset.allSummary" = "すべてのコントローラモデルを、仮想ゲームパッドの自動選択に戻しますか？";
 /* Long description in the help of 'ojd virtual reset'. --all and --force stay as written. */
@@ -3028,7 +3028,7 @@
 /* Detail of the records check of 'ojd diagnose'. %lld is the number of the user's controller records that the driver applies. */
 "cli.diagnose.group.recordsApplied" = "適用されたユーザレコード: %lld";
 /* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.plist is a file name that stays as written. */
-"cli.diagnose.group.recordsConfigOk" = "all.patch.plist とペルソナファイルは有効です";
+"cli.diagnose.group.recordsConfigOk" = "all.patch.plist と仮想ゲームパッドファイルは有効です";
 /* Detail of the records check of 'ojd diagnose' when parts of the configuration are ignored or skipped. %@ is the list of those parts. The command in quotes stays as written. */
 "cli.diagnose.group.recordsConfigProblems" = "無視またはスキップ: %@。修正して「ojd status」で確認してください";
 /* Detail of the records check of 'ojd diagnose' when records are skipped. %@ is the list of skipped records. The command in quotes stays as written. */
@@ -3199,9 +3199,9 @@
 "cli.record.validate.valid" = "%1$@ は有効な %2$@ レコードです。対象: %3$@ (%4$@)。「ojd record install」でインストールできます。";
 /* Heading in the output of 'ojd status' above the defaults file that the driver ignores. */
 "cli.status.group.labelIgnoredDefaults" = "無視されたデフォルトファイル";
-/* Heading in the output of 'ojd status' above the list of skipped virtual device files. %lld is the number of entries. */
-"cli.status.group.labelSkippedVirtualDevices" = "スキップされた仮想デバイスファイル (%lld)";
-/* Reason beside a folder named Personas in 'ojd status' and 'ojd diagnose': the folder is not read, because virtual device files live in VirtualDevices. %@ is the path of the VirtualDevices folder. OpenJoystickDriver is the product name. */
+/* Heading in the output of 'ojd status' above the list of skipped virtual gamepad files. %lld is the number of entries. */
+"cli.status.group.labelSkippedVirtualDevices" = "スキップされた仮想ゲームパッドファイル (%lld)";
+/* Reason beside a folder named Personas in 'ojd status' and 'ojd diagnose': the folder is not read, because virtual gamepad files live in VirtualDevices. %@ is the path of the VirtualDevices folder. OpenJoystickDriver is the product name. */
 "status.virtualDeviceFolderNotRead" = "OpenJoystickDriver はこのフォルダを読み込みません。中のファイルを %@ に移動してから、フォルダを削除してください。";
 /* Heading in the output of 'ojd status' above the list of skipped controller records. %lld is the number of records. */
 "cli.status.group.labelSkippedRecords" = "スキップされたコントローラレコード (%lld)";
@@ -3579,7 +3579,7 @@
 "ui.library.record.removed" = "%@ のレコードを削除しました。";
 /* Error when a record file cannot be removed. %1$@ is the file name and %2$@ is the reason. */
 "ui.library.record.removeFailed" = "%1$@ を削除できません: %2$@";
-/* Heading of the mods list in the Library area. A mod is a package of records, profiles and personas. */
+/* Heading of the mods list in the Library area. A mod is a package of records, profiles and virtual gamepads. */
 "ui.library.mods" = "MOD";
 /* Title of the empty state in the mods list of the Library area. */
 "ui.library.mods.empty.title" = "インストール済みの MOD はありません";
@@ -3601,8 +3601,8 @@
 "ui.library.mod.replace.message" = "%1$@ はすでにインストールされています。置き換えると、インストール済みのファイルを削除し、バージョン %2$@ をインストールします。";
 /* Title of the alert that removes a mod. %@ is the mod name. */
 "ui.library.mod.remove.title" = "MOD「%@」を削除しますか？";
-/* Message of the alert that removes a mod. OpenJoystickDriver is the product name. Personas are the identities that a virtual gamepad can show. */
-"ui.library.mod.remove.message" = "OpenJoystickDriver は、MOD と、その MOD が追加したレコード、プロファイル、ペルソナを削除します。";
+/* Message of the alert that removes a mod. OpenJoystickDriver is the product name. */
+"ui.library.mod.remove.message" = "OpenJoystickDriver は、MOD と、その MOD が追加したレコード、プロファイル、仮想ゲームパッドを削除します。";
 /* Notice after a mod is removed. %@ is the mod name. */
 "ui.library.mod.removed" = "MOD「%@」を削除しました。";
 /* Line in the records list for a record that a mod changes. %@ is the name of the mod. */
@@ -4373,8 +4373,8 @@
 "error.E4002.message" = "このパッケージは、実行中のバージョンとは別のバージョンの OpenJoystickDriver を必要とします。このバージョンに対応するパッケージをインストールするか、OpenJoystickDriver を更新してください。";
 /* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.plist stays as written. */
 "error.E4003.message" = "パッケージのファイルが無効、不足、または mod.plist に記載されていません。コマンドが示すファイルを修正して、もう一度実行してください。";
-/* Text of error E4004, printed when a mod package covers a controller, persona or profile that the user's files or another package hold. */
-"error.E4004.message" = "このパッケージは、あなたのファイルまたはインストール済みの別のパッケージにすでにあるコントローラ、ペルソナ、またはプロファイルを含んでいます。競合するファイルまたはパッケージを削除するか、パッケージを変更して、コマンドをもう一度実行してください。";
+/* Text of error E4004, printed when a mod package covers a controller, virtual gamepad or profile that the user's files or another package hold. */
+"error.E4004.message" = "このパッケージは、あなたのファイルまたはインストール済みの別のパッケージにすでにあるコントローラ、仮想ゲームパッド、またはプロファイルを含んでいます。競合するファイルまたはパッケージを削除するか、パッケージを変更して、コマンドをもう一度実行してください。";
 /* Text of error E4005, printed when a mod package of the same name is installed. --force stays as written. */
 "error.E4005.message" = "この名前のパッケージはすでにインストールされています。置き換えるには --force を付けてコマンドを実行してください。";
 /* Text of error E4006, printed when no installed mod package has the name. The command in quotes stays as written. */
@@ -4481,25 +4481,25 @@
 "error.E5007.record.hexBytes" = "%1$@、%2$@: %3$@ のバイトは、1 つのスペースで区切った大文字の 16 進数ペアである必要があります。対処: %2$@ を 42 03 00 のように、大文字でペアの間に 1 つのスペースを入れて書いてください。";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@、patch: patch には modes、placeholderSerial、usb、bluetoothLE、capabilities、server、route、heldByAppleDriver、input、tuning のいずれかが必要です。対処: これらのセクションだけを残し、少なくとも 1 つ指定してください。";
-/* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad name is not a known virtual gamepad. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@、persona: persona は %2$@ のいずれかである必要があります。対処: persona をそのいずれかにしてください。";
-/* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file selects no model, and a user file must. %1$@ is the file. */
 "error.E5007.virtualDevice.matchRequired" = "%1$@、match: ユーザーフォルダのファイルには match が必要です。対処: モデルの vendorID と productID を持つ match を追加してください。";
-/* Error E5007, shown when a virtual device file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
 "error.E5007.virtualDevice.layout" = "%1$@、layout: layout は %2$@ のいずれかである必要があります。対処: layout をそのいずれかにしてください。";
-/* Error E5007, shown when a virtual device file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
 "error.E5007.virtualDevice.transport" = "%1$@、transport: transport は USB または Bluetooth である必要があります。対処: transport を USB または Bluetooth にしてください。";
-/* Error E5007, shown when a virtual device file fails: labels are not Xbox or Generic. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: labels are not Xbox or Generic. %1$@ is the file. */
 "error.E5007.virtualDevice.labels" = "%1$@、labels: labels は Xbox または Generic である必要があります。対処: labels を Xbox または Generic にしてください。";
-/* Error E5007, shown when a virtual device file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
-"error.E5007.virtualDevice.matchExtras" = "%1$@、match: match を持つファイルはペルソナを選ぶため、layout、transport、worksWithDefaultSDLHints を持てません。対処: layout、transport、worksWithDefaultSDLHints を削除するか、match を削除してください。";
-/* Error E5007, shown when a virtual device file fails: a persona definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
-"error.E5007.virtualDevice.definition" = "%1$@、persona: ペルソナの定義には layout、transport、labels、worksWithDefaultSDLHints、version を持つ identity が必要です。対処: 足りないキーを追加するか、match を追加してペルソナを選んでください。";
-/* Error E5007, shown when a virtual device file fails: a match unit is not a unit ID. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
+"error.E5007.virtualDevice.matchExtras" = "%1$@、match: match を持つファイルは仮想ゲームパッドを選ぶため、layout、transport、worksWithDefaultSDLHints を持てません。対処: layout、transport、worksWithDefaultSDLHints を削除するか、match を削除してください。";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
+"error.E5007.virtualDevice.definition" = "%1$@、persona: 仮想ゲームパッドの定義には layout、transport、labels、worksWithDefaultSDLHints、version を持つ identity が必要です。対処: 足りないキーを追加するか、match を追加して仮想ゲームパッドを選んでください。";
+/* Error E5007, shown when a virtual gamepad file fails: a match unit is not a unit ID. %1$@ is the file. */
 "error.E5007.virtualDevice.matchUnit" = "%1$@、match.unit: match.unit はユニット ID である必要があります。対処: unit をコントローラーのユニット ID にするか、省略してください。";
-/* Error E5007, shown when a virtual device file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
-"error.E5007.virtualDevice.identityText" = "%1$@、identity.%2$@: ペルソナの identity には空でない %2$@ が必要です。対処: %2$@ に空でない文字列を指定してください。";
-/* Error E5007, shown when a virtual device file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
+"error.E5007.virtualDevice.identityText" = "%1$@、identity.%2$@: 仮想ゲームパッドの identity には空でない %2$@ が必要です。対処: %2$@ に空でない文字列を指定してください。";
+/* Error E5007, shown when a virtual gamepad file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
 "error.E5007.virtualDevice.idRange" = "%1$@、%2$@: ID は %3$@...65535 である必要があります。対処: %2$@ を %3$@...65535 にしてください。";
 /* Error E5007, shown when the subcommands of a record fail: a subcommand counterModulus is outside 2...256. %1$@ is the file. */
 "error.E5007.subcommandPlan.counterModulus" = "%1$@、session.subcommands.counterModulus: サブコマンドの counterModulus は 2...256 である必要があります。対処: counterModulus を 2...256 にしてください。";
@@ -4529,20 +4529,20 @@
 "error.E5007.startupWrite.phase" = "%1$@、session.startup[].phase: 起動フェーズは Startup または Activation である必要があります。対処: phase をどちらかに設定するか、省略してください。";
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
 "error.E5007.startupWrite.crcSeedRange" = "%1$@、session.startup[].crc32Seed: 起動の crc32Seed は 0...255 である必要があります。対処: crc32Seed を 0...255 に設定するか、省略してください。";
-/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@、match: ペルソナファイルはユーザーファイル %2$@ の match と同じにできません。対処: モデルごとにペルソナファイルを 1 つにするか、どちらかの match を変更してください。";
-/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@、match: ペルソナファイルはパッケージファイル %2$@ の match と同じにできません。対処: モデルごとにペルソナファイルを 1 つにするか、どちらかの match を変更してください。";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@、match: 仮想ゲームパッドファイルはユーザーファイル %2$@ の match と同じにできません。対処: モデルごとに仮想ゲームパッドファイルを 1 つにするか、どちらかの match を変更してください。";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@、match: 仮想ゲームパッドファイルはパッケージファイル %2$@ の match と同じにできません。対処: モデルごとに仮想ゲームパッドファイルを 1 つにするか、どちらかの match を変更してください。";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.keepAlive.interval" = "%1$@、session.keepAlive.intervalMilliseconds: keep-alive の間隔は 1...60000 ms である必要があります。対処: intervalMilliseconds を 1...60000 に設定してください。";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
 "error.E5007.keepAlive.writesCount" = "%1$@、session.keepAlive.writes: keep-alive の書き込みは 0 個または 1...8 個である必要があります。対処: 書き込みを 1...8 個列挙するか、writes を省略してください。";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@、session.keepAlive.writes[].resendTuning: keep-alive の resendTuning は lizardResendTicks である必要があります。対処: resendTuning を lizardResendTicks に設定するか、省略してください。";
-/* Error E5007, shown when a record file fails: the bundled virtual devices hold no record for a persona. %2$@ is the persona. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledMissing" = "%1$@、persona: 同梱レコードにはペルソナ %2$@ のレコードが必要です。対処: OpenJoystickDriver を再インストールしてください。";
-/* Error E5007, shown when a record file fails: a bundled virtual device record does not define its persona or holds a match. %2$@ is the persona. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledPersona" = "%1$@、persona: 同梱レコードはペルソナ %2$@ を定義し、match を持たない必要があります。対処: OpenJoystickDriver を再インストールしてください。";
+/* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledMissing" = "%1$@、persona: 同梱レコードには仮想ゲームパッド %2$@ のレコードが必要です。対処: OpenJoystickDriver を再インストールしてください。";
+/* Error E5007, shown when a record file fails: a bundled virtual gamepad record does not define its virtual gamepad or holds a match. %2$@ is the virtual gamepad. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledPersona" = "%1$@、persona: 同梱レコードは仮想ゲームパッド %2$@ を定義し、match を持たない必要があります。対処: OpenJoystickDriver を再インストールしてください。";
 /* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
 "error.E5007.modPackage.kindMismatch" = "%1$@、%2$@: %3$@ ファイルは、%4$@ ファイルを列挙する mod.plist の %2$@ に載せられません。対処: ファイルの種類に合う一覧に載せてください。";
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
@@ -4874,8 +4874,8 @@
 "ui.controllers.publication.reason.systemGamepad" = "システムがゲームパッドとして扱っています";
 /* Reason the controller has no virtual gamepad: macOS handles its input directly. */
 "ui.controllers.publication.reason.nativeHIDPassThrough" = "システムが入力を直接処理しています";
-/* Reason the controller has no virtual gamepad: another virtual device stands for it. */
-"ui.controllers.publication.reason.upstreamVirtualDevice" = "別の仮想デバイスがすでに代わりを務めています";
+/* Reason the controller has no virtual gamepad: another virtual gamepad stands for it. */
+"ui.controllers.publication.reason.upstreamVirtualDevice" = "別の仮想ゲームパッドがすでに代わりを務めています";
 /* Reason the controller has no virtual gamepad: the user suspended the session. */
 "ui.controllers.publication.reason.sessionSuspended" = "セッションは一時停止中です";
 /* Reason the controller has no virtual gamepad: no virtual profile fits the controller. */
@@ -4914,8 +4914,8 @@
 "ui.controllers.physicalOwnership.systemHIDVisible" = "システム HID";
 /* Value of the owner of the physical controller: macOS serves it as a gamepad. */
 "ui.controllers.physicalOwnership.systemGamepad" = "システムゲームパッド";
-/* Value of the owner of the physical controller: another virtual device holds it before the app sees it. */
-"ui.controllers.physicalOwnership.upstreamVirtualDevice" = "上流の仮想デバイス";
+/* Value of the owner of the physical controller: another virtual gamepad holds it before the app sees it. */
+"ui.controllers.physicalOwnership.upstreamVirtualDevice" = "上流の仮想ゲームパッド";
 /* Value of the owner of the physical controller when the app does not know it. */
 "ui.controllers.physicalOwnership.unknown" = "不明";
 /* Result of opening the HID input of a controller when the app does not know the result. */
@@ -4979,8 +4979,8 @@
 "status.controllerOwner.nameOnly" = "%@ が使用中です。コントローラは直接読み取られています。解放されると OpenJoystickDriver が処理します。";
 /* Says that another app uses the USB interface of a controller exclusively and that OpenJoystickDriver serves the controller when the app releases it, when the interface names no holder, in the controller detail and the controller list. */
 "status.controllerOwner.unnamed" = "別の App が使用中です。コントローラは直接読み取られています。解放されると OpenJoystickDriver が処理します。";
-/* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual controller of OpenJoystickDriver in a game, in the controller detail and the controller list. */
-"status.controllerAlsoListedBySystem" = "システムはこのコントローラを、入力のない 2 台目のコントローラとしても表示します。ゲームでは、OpenJoystickDriver が送信する仮想コントローラを選択してください。";
+/* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual gamepad of OpenJoystickDriver in a game, in the controller detail and the controller list. */
+"status.controllerAlsoListedBySystem" = "システムはこのコントローラを、入力のない 2 台目のコントローラとしても表示します。ゲームでは、OpenJoystickDriver が送信する仮想ゲームパッドを選択してください。";
 /* Label in the controller detail for who holds the USB interface of the controller exclusively. */
 "ui.controllers.exclusiveOwner" = "排他アクセス";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
@@ -5114,7 +5114,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "古いバージョンの保存済みドキュメントを現在のバージョンに変換します。";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "古い apiVersion を持つ Settings.plist、AccessGrants.plist、プロファイル、自分のコントローラーレコードとパッチ、仮想デバイスファイルを変換します。元のファイルはサポートフォルダ内の Migrated フォルダに残ります。モッドパッケージも変換されます。サポートフォルダの代わりにスキャンするフォルダを指定できます。各ファイルには Migrated、Current、Failed、Foreign のいずれかの判定が付きます。";
+"cli.migrate.group.discussion" = "古い apiVersion を持つ Settings.plist、AccessGrants.plist、プロファイル、自分のコントローラーレコードとパッチ、仮想ゲームパッドファイルを変換します。元のファイルはサポートフォルダ内の Migrated フォルダに残ります。モッドパッケージも変換されます。サポートフォルダの代わりにスキャンするフォルダを指定できます。各ファイルには Migrated、Current、Failed、Foreign のいずれかの判定が付きます。";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "変換されるドキュメントを一覧表示し、何も変更しません。";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */

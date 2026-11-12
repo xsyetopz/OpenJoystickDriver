@@ -2400,7 +2400,7 @@
 /* Path of the Input Monitoring pane in System Settings, shown in permission messages. It is written as macOS shows it. */
 "platform.macos.cli.permission.group.paneInputRead" = "गोपनीयता और सुरक्षा > इनपुट मॉनिटरिंग";
 /* Purpose column of the input injection permission in 'ojd permission list'. It says what the driver uses the permission for. */
-"cli.permission.group.purposeInputInject" = "वर्चुअल कंट्रोलर का आउटपुट प्रकाशित करना";
+"cli.permission.group.purposeInputInject" = "वर्चुअल गेमपैड का आउटपुट प्रकाशित करना";
 /* Purpose column of the driver extension row in 'ojd permission list'. TCC is the macOS privacy permission system and stays as written. */
 "platform.macos.cli.permission.group.purposeUsbTransport" = "एंटाइटलमेंट से सीमित रॉ USB इंटरफ़ेस का स्वामित्व लेना; यह TCC गोपनीयता अनुमति नहीं है";
 /* Purpose column of the input reading permission in 'ojd permission list'. It says what the driver uses the permission for. */
@@ -2704,7 +2704,7 @@
 /* Row label in the output of 'ojd controller show'. The route that the input of the controller takes follows, with the reason in parentheses. */
 "cli.controller.show.labelServing" = "सेवा मार्ग";
 /* Row label in the output of 'ojd controller show'. The gamepad model that the virtual gamepad presents follows. */
-"cli.controller.show.labelPersona" = "पर्सोना";
+"cli.controller.show.labelPersona" = "वर्चुअल गेमपैड";
 /* Value of the Served by row of 'ojd controller show'. %1$@ is the server name and %2$@ is where the choice comes from, in kebab case, which stays as written. */
 "cli.controller.show.server" = "%1$@ (%2$@ से)";
 /* Row label in the output of 'ojd controller show'. The protocol family the driver speaks to the controller follows. */
@@ -2999,8 +2999,8 @@
 "cli.virtual.reset.allDone" = "अब हर कंट्रोलर मॉडल अपना वर्चुअल गेमपैड स्वचालित रूप से चुनता है।";
 /* Message printed by 'ojd virtual reset --all --dry-run' instead of resetting. */
 "cli.virtual.reset.allDryRun" = "हर कंट्रोलर मॉडल को स्वचालित वर्चुअल गेमपैड चयन पर लौटा देता।";
-/* Error of 'ojd virtual reset --all' when the service could not clear the choices, such as when a virtual device file sets its own identity. The folder name VirtualDevices and the command in quotes stay as written. */
-"cli.virtual.reset.allFailed" = "सेवा वर्चुअल गेमपैड के सभी चुनाव साफ़ नहीं कर सकी। VirtualDevices फ़ोल्डर की जो वर्चुअल डिवाइस फ़ाइल अपनी पहचान खुद तय करती है, वह तब तक बनी रहती है जब तक आप उसे संपादित न करें या हटा न दें। “ojd status” से जाँचें।";
+/* Error of 'ojd virtual reset --all' when the service could not clear the choices, such as when a virtual gamepad file sets its own identity. The folder name VirtualDevices and the command in quotes stay as written. */
+"cli.virtual.reset.allFailed" = "सेवा वर्चुअल गेमपैड के सभी चुनाव साफ़ नहीं कर सकी। VirtualDevices फ़ोल्डर की जो वर्चुअल गेमपैड फ़ाइल अपनी पहचान खुद तय करती है, वह तब तक बनी रहती है जब तक आप उसे संपादित न करें या हटा न दें। “ojd status” से जाँचें।";
 /* Yes or no question that 'ojd virtual reset --all' asks on a terminal. */
 "cli.virtual.reset.allSummary" = "हर कंट्रोलर मॉडल को स्वचालित वर्चुअल गेमपैड चयन पर लौटाएँ?";
 /* Long description in the help of 'ojd virtual reset'. --all and --force stay as written. */
@@ -3028,7 +3028,7 @@
 /* Detail of the records check of 'ojd diagnose'. %lld is the number of the user's controller records that the driver applies. */
 "cli.diagnose.group.recordsApplied" = "लागू किए गए उपयोगकर्ता रिकॉर्ड: %lld";
 /* Detail of the records check of 'ojd diagnose' when the configuration files are valid. all.patch.plist is a file name that stays as written. */
-"cli.diagnose.group.recordsConfigOk" = "all.patch.plist और persona फ़ाइलें मान्य हैं";
+"cli.diagnose.group.recordsConfigOk" = "all.patch.plist और वर्चुअल गेमपैड फ़ाइलें मान्य हैं";
 /* Detail of the records check of 'ojd diagnose' when parts of the configuration are ignored or skipped. %@ is the list of those parts. The command in quotes stays as written. */
 "cli.diagnose.group.recordsConfigProblems" = "अनदेखा या छोड़ा गया: %@; इन्हें ठीक करें और “ojd status” से जाँचें";
 /* Detail of the records check of 'ojd diagnose' when records are skipped. %@ is the list of skipped records. The command in quotes stays as written. */
@@ -3199,9 +3199,9 @@
 "cli.record.validate.valid" = "%1$@ एक मान्य %2$@ रिकॉर्ड है, %3$@ (%4$@) के लिए। इसे “ojd record install” से इंस्टॉल करें।";
 /* Heading in the output of 'ojd status' above the defaults file that the driver ignores. */
 "cli.status.group.labelIgnoredDefaults" = "अनदेखी की गई डिफ़ॉल्ट फ़ाइल";
-/* Heading in the output of 'ojd status' above the list of skipped virtual device files. %lld is the number of entries. */
-"cli.status.group.labelSkippedVirtualDevices" = "छोड़ी गई वर्चुअल डिवाइस फ़ाइलें (%lld)";
-/* Reason beside a folder named Personas in 'ojd status' and 'ojd diagnose': the folder is not read, because virtual device files live in VirtualDevices. %@ is the path of the VirtualDevices folder. OpenJoystickDriver is the product name. */
+/* Heading in the output of 'ojd status' above the list of skipped virtual gamepad files. %lld is the number of entries. */
+"cli.status.group.labelSkippedVirtualDevices" = "छोड़ी गई वर्चुअल गेमपैड फ़ाइलें (%lld)";
+/* Reason beside a folder named Personas in 'ojd status' and 'ojd diagnose': the folder is not read, because virtual gamepad files live in VirtualDevices. %@ is the path of the VirtualDevices folder. OpenJoystickDriver is the product name. */
 "status.virtualDeviceFolderNotRead" = "OpenJoystickDriver इस फ़ोल्डर को नहीं पढ़ता। इसकी फ़ाइलें %@ में ले जाएँ और फिर फ़ोल्डर हटाएँ।";
 /* Heading in the output of 'ojd status' above the list of skipped controller records. %lld is the number of records. */
 "cli.status.group.labelSkippedRecords" = "छोड़े गए कंट्रोलर रिकॉर्ड (%lld)";
@@ -3579,7 +3579,7 @@
 "ui.library.record.removed" = "%@ का रिकॉर्ड हटा दिया गया।";
 /* Error when a record file cannot be removed. %1$@ is the file name and %2$@ is the reason. */
 "ui.library.record.removeFailed" = "%1$@ हटाया नहीं जा सकता: %2$@";
-/* Heading of the mods list in the Library area. A mod is a package of records, profiles and personas. */
+/* Heading of the mods list in the Library area. A mod is a package of records, profiles and virtual gamepads. */
 "ui.library.mods" = "मॉड";
 /* Title of the empty state in the mods list of the Library area. */
 "ui.library.mods.empty.title" = "कोई इंस्टॉल किया मॉड नहीं";
@@ -3601,8 +3601,8 @@
 "ui.library.mod.replace.message" = "%1$@ पहले से इंस्टॉल है। बदलने पर इंस्टॉल की गई फ़ाइलें हट जाती हैं और संस्करण %2$@ इंस्टॉल होता है।";
 /* Title of the alert that removes a mod. %@ is the mod name. */
 "ui.library.mod.remove.title" = "मॉड %@ हटाएँ?";
-/* Message of the alert that removes a mod. OpenJoystickDriver is the product name. Personas are the identities that a virtual gamepad can show. */
-"ui.library.mod.remove.message" = "OpenJoystickDriver मॉड और उसके जोड़े रिकॉर्ड, प्रोफ़ाइल और पर्सोना मिटा देता है।";
+/* Message of the alert that removes a mod. OpenJoystickDriver is the product name. */
+"ui.library.mod.remove.message" = "OpenJoystickDriver मॉड और उसके जोड़े रिकॉर्ड, प्रोफ़ाइल और वर्चुअल गेमपैड मिटा देता है।";
 /* Notice after a mod is removed. %@ is the mod name. */
 "ui.library.mod.removed" = "मॉड %@ हटा दिया गया।";
 /* Line in the records list for a record that a mod changes. %@ is the name of the mod. */
@@ -4373,8 +4373,8 @@
 "error.E4002.message" = "पैकेज को चल रहे संस्करण से अलग OpenJoystickDriver संस्करण चाहिए। ऐसा पैकेज संस्करण इंस्टॉल करें जो इस संस्करण को सपोर्ट करता हो, या OpenJoystickDriver अपडेट करें।";
 /* Text of error E4003, printed when a file of a mod package is invalid, missing or not listed in the manifest. mod.plist stays as written. */
 "error.E4003.message" = "पैकेज की कोई फ़ाइल अमान्य है, गायब है, या mod.plist में सूचीबद्ध नहीं है। कमांड में बताई गई फ़ाइल ठीक करें और उसे दोबारा चलाएँ।";
-/* Text of error E4004, printed when a mod package covers a controller, persona or profile that the user's files or another package hold. */
-"error.E4004.message" = "पैकेज ऐसे कंट्रोलर, पर्सोना या प्रोफ़ाइल को कवर करता है जो आपकी अपनी फ़ाइलों या इंस्टॉल किए गए किसी दूसरे पैकेज में पहले से है। टकराने वाली फ़ाइल या पैकेज हटाएँ, या पैकेज बदलें, और कमांड दोबारा चलाएँ।";
+/* Text of error E4004, printed when a mod package covers a controller, virtual gamepad or profile that the user's files or another package hold. */
+"error.E4004.message" = "पैकेज ऐसे कंट्रोलर, वर्चुअल गेमपैड या प्रोफ़ाइल को कवर करता है जो आपकी अपनी फ़ाइलों या इंस्टॉल किए गए किसी दूसरे पैकेज में पहले से है। टकराने वाली फ़ाइल या पैकेज हटाएँ, या पैकेज बदलें, और कमांड दोबारा चलाएँ।";
 /* Text of error E4005, printed when a mod package of the same name is installed. --force stays as written. */
 "error.E4005.message" = "इस नाम का पैकेज पहले से इंस्टॉल है। उसे बदलने के लिए कमांड को --force के साथ चलाएँ।";
 /* Text of error E4006, printed when no installed mod package has the name. The command in quotes stays as written. */
@@ -4481,25 +4481,25 @@
 "error.E5007.record.hexBytes" = "%1$@, %2$@: %3$@ के बाइट एक-एक स्पेस से अलग किए गए अपरकेस हेक्स जोड़े होने चाहिए। समाधान: %2$@ को 42 03 00 जैसे जोड़ों में लिखें, अपरकेस अंकों और जोड़ों के बीच एक स्पेस के साथ।";
 /* Error E5007, shown when a patch file fails: patch is empty or names a section that does not exist. %1$@ is the file. */
 "error.E5007.patch.patchSections" = "%1$@, patch: patch में modes, placeholderSerial, usb, bluetoothLE, capabilities, server, route, heldByAppleDriver, input या tuning होना चाहिए। समाधान: केवल ये अनुभाग रखें और कम से कम एक दें।";
-/* Error E5007, shown when a virtual device file fails: a persona name is not a known persona. %2$@ is the known names. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad name is not a known virtual gamepad. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@, persona: persona %2$@ में से एक होना चाहिए। समाधान: persona को उनमें से एक रखें।";
-/* Error E5007, shown when a virtual device file fails: a persona file selects no model, and a user file must. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file selects no model, and a user file must. %1$@ is the file. */
 "error.E5007.virtualDevice.matchRequired" = "%1$@, match: उपयोगकर्ता फ़ोल्डर की फ़ाइल में match होना चाहिए। समाधान: मॉडल के vendorID और productID के साथ match जोड़ें।";
-/* Error E5007, shown when a virtual device file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
 "error.E5007.virtualDevice.layout" = "%1$@, layout: layout %2$@ में से एक होना चाहिए। समाधान: layout को उनमें से एक रखें।";
-/* Error E5007, shown when a virtual device file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
 "error.E5007.virtualDevice.transport" = "%1$@, transport: transport USB या Bluetooth होना चाहिए। समाधान: transport को USB या Bluetooth रखें।";
-/* Error E5007, shown when a virtual device file fails: labels are not Xbox or Generic. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: labels are not Xbox or Generic. %1$@ is the file. */
 "error.E5007.virtualDevice.labels" = "%1$@, labels: labels Xbox या Generic होना चाहिए। समाधान: labels को Xbox या Generic रखें।";
-/* Error E5007, shown when a virtual device file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
-"error.E5007.virtualDevice.matchExtras" = "%1$@, match: match वाली फ़ाइल एक persona चुनती है, इसलिए उसमें layout, transport या worksWithDefaultSDLHints नहीं हो सकते। समाधान: layout, transport और worksWithDefaultSDLHints हटाएँ, या match हटा दें।";
-/* Error E5007, shown when a virtual device file fails: a persona definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
-"error.E5007.virtualDevice.definition" = "%1$@, persona: persona की परिभाषा में layout, transport, labels, worksWithDefaultSDLHints और version वाला identity होना चाहिए। समाधान: छूटी हुई कुंजियाँ जोड़ें, या persona चुनने के लिए match जोड़ें।";
-/* Error E5007, shown when a virtual device file fails: a match unit is not a unit ID. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: a file with match also holds layout, transport or worksWithDefaultSDLHints. %1$@ is the file. */
+"error.E5007.virtualDevice.matchExtras" = "%1$@, match: match वाली फ़ाइल एक वर्चुअल गेमपैड चुनती है, इसलिए उसमें layout, transport या worksWithDefaultSDLHints नहीं हो सकते। समाधान: layout, transport और worksWithDefaultSDLHints हटाएँ, या match हटा दें।";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
+"error.E5007.virtualDevice.definition" = "%1$@, persona: वर्चुअल गेमपैड की परिभाषा में layout, transport, labels, worksWithDefaultSDLHints और version वाला identity होना चाहिए। समाधान: छूटी हुई कुंजियाँ जोड़ें, या वर्चुअल गेमपैड चुनने के लिए match जोड़ें।";
+/* Error E5007, shown when a virtual gamepad file fails: a match unit is not a unit ID. %1$@ is the file. */
 "error.E5007.virtualDevice.matchUnit" = "%1$@, match.unit: match.unit एक यूनिट ID होना चाहिए। समाधान: unit को किसी कंट्रोलर की यूनिट ID पर रखें, या उसे छोड़ दें।";
-/* Error E5007, shown when a virtual device file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
-"error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: persona की पहचान में %2$@ खाली नहीं होना चाहिए। समाधान: %2$@ को एक गैर-खाली स्ट्रिंग दें।";
-/* Error E5007, shown when a virtual device file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
+/* Error E5007, shown when a virtual gamepad file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
+"error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: वर्चुअल गेमपैड की पहचान में %2$@ खाली नहीं होना चाहिए। समाधान: %2$@ को एक गैर-खाली स्ट्रिंग दें।";
+/* Error E5007, shown when a virtual gamepad file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
 "error.E5007.virtualDevice.idRange" = "%1$@, %2$@: ID %3$@...65535 होनी चाहिए। समाधान: %2$@ को %3$@...65535 पर रखें।";
 /* Error E5007, shown when the subcommands of a record fail: a subcommand counterModulus is outside 2...256. %1$@ is the file. */
 "error.E5007.subcommandPlan.counterModulus" = "%1$@, session.subcommands.counterModulus: सबकमांड का counterModulus 2...256 होना चाहिए। समाधान: counterModulus को 2...256 रखें।";
@@ -4529,20 +4529,20 @@
 "error.E5007.startupWrite.phase" = "%1$@, session.startup[].phase: स्टार्टअप फ़ेज़ Startup या Activation होना चाहिए। समाधान: phase को इनमें से एक पर सेट करें, या छोड़ दें।";
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
 "error.E5007.startupWrite.crcSeedRange" = "%1$@, session.startup[].crc32Seed: स्टार्टअप crc32Seed 0...255 के भीतर होना चाहिए। समाधान: crc32Seed को 0...255 पर सेट करें, या छोड़ दें।";
-/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: पर्सोना फ़ाइल उपयोगकर्ता फ़ाइल %2$@ का match दोहरा नहीं सकती। समाधान: हर मॉडल को एक पर्सोना फ़ाइल दें, या दोनों में से एक में match बदलें।";
-/* Error E5007, shown when a virtual device persona file fails: a persona file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: पर्सोना फ़ाइल पैकेज फ़ाइल %2$@ का match दोहरा नहीं सकती। समाधान: हर मॉडल को एक पर्सोना फ़ाइल दें, या दोनों में से एक में match बदलें।";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: वर्चुअल गेमपैड फ़ाइल उपयोगकर्ता फ़ाइल %2$@ का match दोहरा नहीं सकती। समाधान: हर मॉडल को एक वर्चुअल गेमपैड फ़ाइल दें, या दोनों में से एक में match बदलें।";
+/* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
+"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: वर्चुअल गेमपैड फ़ाइल पैकेज फ़ाइल %2$@ का match दोहरा नहीं सकती। समाधान: हर मॉडल को एक वर्चुअल गेमपैड फ़ाइल दें, या दोनों में से एक में match बदलें।";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: keep-alive अंतराल 1...60000 ms होना चाहिए। समाधान: intervalMilliseconds को 1...60000 पर सेट करें।";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
 "error.E5007.keepAlive.writesCount" = "%1$@, session.keepAlive.writes: keep-alive में कोई राइट नहीं या 1...8 राइट होने चाहिए। समाधान: 1...8 राइट सूचीबद्ध करें, या writes छोड़ दें।";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: keep-alive का resendTuning lizardResendTicks होना चाहिए। समाधान: resendTuning को lizardResendTicks पर सेट करें, या छोड़ दें।";
-/* Error E5007, shown when a record file fails: the bundled virtual devices hold no record for a persona. %2$@ is the persona. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: बंडल किए गए रिकॉर्ड में पर्सोना %2$@ का रिकॉर्ड होना चाहिए। समाधान: OpenJoystickDriver को फिर से इंस्टॉल करें।";
-/* Error E5007, shown when a record file fails: a bundled virtual device record does not define its persona or holds a match. %2$@ is the persona. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: बंडल किया गया रिकॉर्ड पर्सोना %2$@ को परिभाषित करे और उसमें match न हो। समाधान: OpenJoystickDriver को फिर से इंस्टॉल करें।";
+/* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: बंडल किए गए रिकॉर्ड में वर्चुअल गेमपैड %2$@ का रिकॉर्ड होना चाहिए। समाधान: OpenJoystickDriver को फिर से इंस्टॉल करें।";
+/* Error E5007, shown when a record file fails: a bundled virtual gamepad record does not define its virtual gamepad or holds a match. %2$@ is the virtual gamepad. %1$@ is the file. */
+"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: बंडल किया गया रिकॉर्ड वर्चुअल गेमपैड %2$@ को परिभाषित करे और उसमें match न हो। समाधान: OpenJoystickDriver को फिर से इंस्टॉल करें।";
 /* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
 "error.E5007.modPackage.kindMismatch" = "%1$@, %2$@: %3$@ फ़ाइल को mod.plist में %2$@ के अंतर्गत सूचीबद्ध नहीं किया जा सकता, जो %4$@ फ़ाइलें सूचीबद्ध करता है। समाधान: फ़ाइल को उसके प्रकार से मेल खाती सूची में रखें।";
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
@@ -4874,8 +4874,8 @@
 "ui.controllers.publication.reason.systemGamepad" = "सिस्टम इसे गेमपैड के रूप में संभालता है";
 /* Reason the controller has no virtual gamepad: macOS handles its input directly. */
 "ui.controllers.publication.reason.nativeHIDPassThrough" = "सिस्टम इसके इनपुट को सीधे संभालता है";
-/* Reason the controller has no virtual gamepad: another virtual device stands for it. */
-"ui.controllers.publication.reason.upstreamVirtualDevice" = "कोई दूसरा वर्चुअल डिवाइस पहले से इसका प्रतिनिधित्व करता है";
+/* Reason the controller has no virtual gamepad: another virtual gamepad stands for it. */
+"ui.controllers.publication.reason.upstreamVirtualDevice" = "कोई दूसरा वर्चुअल गेमपैड पहले से इसका प्रतिनिधित्व करता है";
 /* Reason the controller has no virtual gamepad: the user suspended the session. */
 "ui.controllers.publication.reason.sessionSuspended" = "सत्र निलंबित है";
 /* Reason the controller has no virtual gamepad: no virtual profile fits the controller. */
@@ -4914,8 +4914,8 @@
 "ui.controllers.physicalOwnership.systemHIDVisible" = "सिस्टम HID";
 /* Value of the owner of the physical controller: macOS serves it as a gamepad. */
 "ui.controllers.physicalOwnership.systemGamepad" = "सिस्टम गेमपैड";
-/* Value of the owner of the physical controller: another virtual device holds it before the app sees it. */
-"ui.controllers.physicalOwnership.upstreamVirtualDevice" = "अपस्ट्रीम वर्चुअल डिवाइस";
+/* Value of the owner of the physical controller: another virtual gamepad holds it before the app sees it. */
+"ui.controllers.physicalOwnership.upstreamVirtualDevice" = "अपस्ट्रीम वर्चुअल गेमपैड";
 /* Value of the owner of the physical controller when the app does not know it. */
 "ui.controllers.physicalOwnership.unknown" = "अज्ञात";
 /* Result of opening the HID input of a controller when the app does not know the result. */
@@ -4979,8 +4979,8 @@
 "status.controllerOwner.nameOnly" = "%@ के पास है। इस कंट्रोलर को सीधे पढ़ा जा रहा है। छोड़े जाने पर OpenJoystickDriver इसे संभाल लेगा।";
 /* Says that another app uses the USB interface of a controller exclusively and that OpenJoystickDriver serves the controller when the app releases it, when the interface names no holder, in the controller detail and the controller list. */
 "status.controllerOwner.unnamed" = "किसी दूसरे ऐप के पास है। इस कंट्रोलर को सीधे पढ़ा जा रहा है। छोड़े जाने पर OpenJoystickDriver इसे संभाल लेगा।";
-/* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual controller of OpenJoystickDriver in a game, in the controller detail and the controller list. */
-"status.controllerAlsoListedBySystem" = "सिस्टम इस कंट्रोलर को एक दूसरे कंट्रोलर के रूप में भी दिखाता है, जो कोई इनपुट नहीं देता। गेम में वह वर्चुअल कंट्रोलर चुनें जिसे OpenJoystickDriver प्रकाशित करता है।";
+/* Says that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input, and tells the user to choose the virtual gamepad of OpenJoystickDriver in a game, in the controller detail and the controller list. */
+"status.controllerAlsoListedBySystem" = "सिस्टम इस कंट्रोलर को एक दूसरे कंट्रोलर के रूप में भी दिखाता है, जो कोई इनपुट नहीं देता। गेम में वह वर्चुअल गेमपैड चुनें जिसे OpenJoystickDriver प्रकाशित करता है।";
 /* Label in the controller detail for who holds the USB interface of the controller exclusively. */
 "ui.controllers.exclusiveOwner" = "विशेष एक्सेस";
 /* Label in the controller detail for the fact that the system also lists a controller that OpenJoystickDriver serves as a second controller with no input. Also the duplicate exposure risk value for that case. */
@@ -5114,7 +5114,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "पुराने संस्करण के सहेजे गए दस्तावेज़ों को मौजूदा संस्करण में बदलता है।";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "पुराने apiVersion वाली Settings.plist, AccessGrants.plist, प्रोफ़ाइल, आपके कंट्रोलर रिकॉर्ड और पैच, और वर्चुअल डिवाइस फ़ाइलें बदलता है। हर मूल फ़ाइल सपोर्ट फ़ोल्डर के Migrated फ़ोल्डर में रखी जाती है। मॉड पैकेज भी बदले जाते हैं। सपोर्ट फ़ोल्डर की जगह स्कैन करने के लिए कोई फ़ोल्डर बताएँ। हर फ़ाइल को एक फ़ैसला मिलता है: Migrated, Current, Failed या Foreign।";
+"cli.migrate.group.discussion" = "पुराने apiVersion वाली Settings.plist, AccessGrants.plist, प्रोफ़ाइल, आपके कंट्रोलर रिकॉर्ड और पैच, और वर्चुअल गेमपैड फ़ाइलें बदलता है। हर मूल फ़ाइल सपोर्ट फ़ोल्डर के Migrated फ़ोल्डर में रखी जाती है। मॉड पैकेज भी बदले जाते हैं। सपोर्ट फ़ोल्डर की जगह स्कैन करने के लिए कोई फ़ोल्डर बताएँ। हर फ़ाइल को एक फ़ैसला मिलता है: Migrated, Current, Failed या Foreign।";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "जो दस्तावेज़ बदले जाएँगे उनकी सूची दिखाता है और कुछ नहीं बदलता।";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
