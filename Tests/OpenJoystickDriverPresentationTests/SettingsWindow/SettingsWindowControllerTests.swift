@@ -42,6 +42,7 @@ struct SettingsWindowControllerTests {
   ) throws -> (SettingsWindowController, SettingsPreferencesModel) {
     let settings = SettingsStore(directory: RootedDataDirectory.temporary())
     try settings.set(.developerTools, to: developerTools)
+    try settings.setInterfaceLevel(.advanced)
     let preferences = SettingsPreferencesModel(
       testNotifications: TestNotificationRequestStub(),
       settings: settings,
