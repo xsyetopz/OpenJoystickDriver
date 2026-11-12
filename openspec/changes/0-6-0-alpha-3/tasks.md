@@ -203,7 +203,8 @@ Each of 12.1 to 12.7 starts from its row in the audit (10.5) and from a failing 
 - [x] 13.2 Add the pop-up button "Interface" to Settings > General and the items "Simple" and "Advanced" with a checkmark to the View menu. Every open window follows a change without a restart. Caller: the Settings window and the main menu.
   - Note: `9fee83e59`; `GeneralPaneView` and `MenuBarCoordinator+ApplicationMenu` call `SettingsPreferencesModel.setInterfaceLevel`. `InterfaceLevelPreferencesTests` and `MainMenuInterfaceLevelTests` pass.
 - [ ] 13.3 Make each view show its rows by the level, from the list of 10.6. Add one test per view that the rows of Simple are a subset of the rows of Advanced.
-- [ ] 13.4 In Simple, show one row with the count of hidden controls that hold a value other than their default and a button that switches to Advanced. Caller: the controller detail and the profile editor.
+- [x] 13.4 In Simple, show one row with the count of hidden controls that hold a value other than their default and a button that switches to Advanced. Caller: the controller detail and the profile editor.
+  - Note: `edd432b88`; `HiddenChangeNotice` is called at `ControllerDetailView+Facts.swift:15` and `ProfileEditorView+Sections.swift:16`, and its area variant at `LibraryAreaView.swift:31` and `ActivityModel.swift:110`. `HiddenChangeNoticeTests` (12) pass. Open: the views have not been run in the installed app, and the plural forms in 21 locales are first drafts.
 - [x] 13.5 Show the developer tools only when the level is Advanced and `developerTools` is on.
   - Note: `05dd524e4`; `AdvancedPaneView` and `SettingsWindowController` read `developerToolsVisible`. `PreferencesTests` and `DeveloperToolsTests` pass.
 - [x] 13.6 Add a test that the service reads no `interfaceLevel` and that `ojd` output is the same for both values.
