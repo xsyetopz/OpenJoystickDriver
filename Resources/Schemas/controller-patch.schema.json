@@ -64,7 +64,7 @@
       "uniqueItems": true,
       "items": {
         "type": "string",
-        "pattern": "^(modes(\\.[a-z][a-z0-9]*(-[a-z0-9]+)*)?|(usb|bluetoothLE|capabilities|server|route|heldByAppleDriver|input|tuning)(\\.[A-Za-z0-9]+)*)$"
+        "pattern": "^(modes(\\.[a-z][a-z0-9]*(-[a-z0-9]+)*)?|(placeholderSerial|usb|bluetoothLE|capabilities|server|route|heldByAppleDriver|input|tuning)(\\.[A-Za-z0-9]+)*)$"
       }
     },
     "patch": {
@@ -104,6 +104,9 @@
         },
         "capabilities": {
           "$ref": "controller.schema.json#/$defs/capabilities"
+        },
+        "placeholderSerial": {
+          "$ref": "controller.schema.json#/properties/placeholderSerial"
         },
         "usb": {
           "type": "object"
