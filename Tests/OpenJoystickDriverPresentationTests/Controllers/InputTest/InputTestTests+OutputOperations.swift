@@ -236,6 +236,8 @@ extension InputTestTests {
   func makeInputTestDevice(
     capabilities: PhysicalControllerOutputCapabilities = .dualMainRumble,
     hasMotion: Bool = false,
+    controls: Set<Control> = [],
+    touchContactCount: UInt8 = 0,
     sessionToken: String = "input-device",
     connection: String = "USB",
     discoverySource: DeviceDiscoverySource = .rawUSB
@@ -252,7 +254,11 @@ extension InputTestTests {
       physicalOutputCapabilities: capabilities,
       recordServer: .system,
       recordAccessRoute: .system,
-      capabilities: ControllerCapabilities(controls: [], motion: hasMotion),
+      capabilities: ControllerCapabilities(
+        controls: controls,
+        touchContactCount: touchContactCount,
+        motion: hasMotion
+      ),
       sessionToken: .fixture(sessionToken)
     )
   }

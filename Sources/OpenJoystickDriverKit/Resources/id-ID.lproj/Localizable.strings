@@ -1232,6 +1232,18 @@
 "platform.macos.ui.inputTest.permissionRequired" = "Izin Pengawasan Input diperlukan";
 /* Label of the popup in the input test that sets the player indicator, the lights that show which player a controller is. */
 "ui.inputTest.playerIndicator" = "Indikator pemain";
+/* Name of the pointer cluster in the input test, which shows where a pointing device aims. */
+"ui.inputTest.pointer" = "Penunjuk";
+/* Name of the indicator in the input test that lights while a pointing device sees its target. */
+"ui.inputTest.pointerTracking" = "Pelacakan";
+/* Shown under a touch surface in the input test while nothing touches it. */
+"ui.inputTest.touchIdle" = "Tidak ada sentuhan";
+/* Name of the left touch surface of the controller in the input test. */
+"ui.inputTest.touchSurfaceLeft" = "Permukaan sentuh kiri";
+/* Name of the only or main touch surface of the controller in the input test. */
+"ui.inputTest.touchSurfacePrimary" = "Permukaan sentuh";
+/* Name of the right touch surface of the controller in the input test. */
+"ui.inputTest.touchSurfaceRight" = "Permukaan sentuh kanan";
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "Ditekan";
 /* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
