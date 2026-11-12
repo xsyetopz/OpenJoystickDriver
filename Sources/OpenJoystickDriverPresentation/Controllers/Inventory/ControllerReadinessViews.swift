@@ -26,7 +26,7 @@
           Color(readiness.tone.color)
         ).accessibilityHidden(true)
         Text(OJDLocalized.string(readiness.titleKey))
-      }.font(.caption).lineLimit(1)
+      }.font(.caption).foregroundStyle(.secondary).lineLimit(1)
     }
   }
 
