@@ -1232,6 +1232,18 @@
 "platform.macos.ui.inputTest.permissionRequired" = "يلزم إذن مراقبة الإدخال";
 /* Label of the popup in the input test that sets the player indicator, the lights that show which player a controller is. */
 "ui.inputTest.playerIndicator" = "مؤشر اللاعب";
+/* Name of the pointer cluster in the input test, which shows where a pointing device aims. */
+"ui.inputTest.pointer" = "المؤشر";
+/* Name of the indicator in the input test that lights while a pointing device sees its target. */
+"ui.inputTest.pointerTracking" = "التتبع";
+/* Shown under a touch surface in the input test while nothing touches it. */
+"ui.inputTest.touchIdle" = "لا يوجد تلامس";
+/* Name of the left touch surface of the controller in the input test. */
+"ui.inputTest.touchSurfaceLeft" = "سطح اللمس الأيسر";
+/* Name of the only or main touch surface of the controller in the input test. */
+"ui.inputTest.touchSurfacePrimary" = "سطح اللمس";
+/* Name of the right touch surface of the controller in the input test. */
+"ui.inputTest.touchSurfaceRight" = "سطح اللمس الأيمن";
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "مضغوط";
 /* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */

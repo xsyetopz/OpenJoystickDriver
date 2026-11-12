@@ -165,8 +165,11 @@
 
     /// The live input of the controller.
     var liveInput: some View {
-      InputTestLiveInputView(liveState: model.liveState, presentation: presentation)
-        .frame(maxWidth: .infinity, alignment: .topLeading)
+      InputTestLiveInputView(
+        liveState: model.liveState,
+        presentation: presentation,
+        layout: model.controlLayout
+      ).frame(maxWidth: .infinity, alignment: .topLeading)
     }
 
     /// The rumble controls, or the note that the controller has no rumble.

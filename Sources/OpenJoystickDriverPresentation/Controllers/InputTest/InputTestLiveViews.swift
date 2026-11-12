@@ -12,6 +12,97 @@
     var liveState: InputTestLiveState
     /// The glyphs of the controller's identity.
     let presentation: VirtualIdentityPresentation
+    /// The controls the controller declares, grouped by kind.
+    let layout: InputTestControlLayout
+  }
+
+  /// The aim of a pointing device: a square with a dot at the position, the numbers, and the
+  /// tracking state.
+  struct InputTestPointerView: View {
+    /// The horizontal position, -1 to 1.
+    let x: Float
+    /// The vertical position, -1 to 1.
+    let y: Float
+    /// Whether the device sees its target.
+    let tracking: Bool
+
+    /// The pointer.
+    var body: some View {
+      let title = OJDLocalized.string("ui.inputTest.pointer")
+      return VStack(spacing: OJDSpacing.small) {
+        Text(title).font(.subheadline.weight(.semibold))
+        ZStack {
+          Rectangle().fill(Color(NSColor.controlBackgroundColor)).frame(width: 86, height: 86)
+          Rectangle().stroke(Color(NSColor.separatorColor), lineWidth: 1).frame(
+            width: 86,
+            height: 86
+          )
+          Circle().fill(tracking ? Color.accentColor : Color(NSColor.tertiaryLabelColor)).frame(
+            width: 12,
+            height: 12
+          ).offset(x: CGFloat(max(-1, min(1, x))) * 37, y: CGFloat(max(-1, min(1, y))) * 37)
+        }.ojdAccessibilityLabel(title).ojdAccessibilityValue(
+          OJDLocalized.formatted("ui.inputTest.axisPair", x, y)
+        )
+        HStack(spacing: OJDSpacing.medium) {
+          Text(OJDLocalized.formatted("ui.inputTest.axisX", x))
+          Text(OJDLocalized.formatted("ui.inputTest.axisY", y))
+        }.font(.system(.caption, design: .monospaced)).foregroundColor(
+          Color(NSColor.secondaryLabelColor)
+        )
+        InputTestIndicator(
+          title: OJDLocalized.string("ui.inputTest.pointerTracking"),
+          active: tracking
+        )
+      }.frame(maxWidth: .infinity)
+    }
+  }
+
+  /// One touch surface: a rectangle with a dot for each active contact.
+  struct InputTestTouchSurfaceView: View {
+    /// The name of the surface.
+    let title: String
+    /// The latest frame of the surface, or nil before it reports one.
+    let frame: ControllerTouchSample?
+
+    /// The active contacts of the frame.
+    private var contacts: [ControllerTouchContact] { frame?.contacts.filter(\.isActive) ?? [] }
+
+    /// The surface.
+    var body: some View {
+      VStack(spacing: OJDSpacing.small) {
+        Text(title).font(.subheadline.weight(.semibold))
+        ZStack(alignment: .topLeading) {
+          RoundedRectangle(cornerRadius: 6).fill(Color(NSColor.controlBackgroundColor))
+          RoundedRectangle(cornerRadius: 6).stroke(Color(NSColor.separatorColor), lineWidth: 1)
+          ForEach(contacts, id: \.slot) { contact in
+            Circle().fill(Color.accentColor).frame(width: 10, height: 10).offset(
+              x: CGFloat(contact.x) / CGFloat(UInt16.max) * 150 - 5,
+              y: CGFloat(contact.y) / CGFloat(UInt16.max) * 80 - 5
+            )
+          }
+        }.frame(width: 150, height: 80).ojdAccessibilityLabel(title).ojdAccessibilityValue(
+          contacts.map {
+            OJDLocalized.formatted(
+              "ui.inputTest.axisPair",
+              Float($0.x) / Float(UInt16.max),
+              Float($0.y) / Float(UInt16.max)
+            )
+          }.joined(separator: ", ")
+        )
+        Text(
+          contacts.first.map {
+            OJDLocalized.formatted(
+              "ui.inputTest.axisPair",
+              Float($0.x) / Float(UInt16.max),
+              Float($0.y) / Float(UInt16.max)
+            )
+          } ?? OJDLocalized.string("ui.inputTest.touchIdle")
+        ).font(.system(.caption, design: .monospaced)).foregroundColor(
+          Color(NSColor.secondaryLabelColor)
+        )
+      }.frame(maxWidth: .infinity)
+    }
   }
 
   /// One stick: a circle with a dot at its position, the numbers, and its click.

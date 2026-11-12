@@ -101,6 +101,13 @@
       device?.physicalOutputCapabilities ?? .none
     }
 
+    /// What the live view draws for the selected controller.
+    var controlLayout: InputTestControlLayout {
+      InputTestControlLayout(
+        capabilities: device?.capabilities ?? ControllerCapabilities(controls: [])
+      )
+    }
+
     /// The sections shown for the selected controller: Motion calibration needs a gyroscope and
     /// Lighting needs a lighting feature; Rumble states when the controller has no motor.
     var visibleSections: [InputTestSection] {
