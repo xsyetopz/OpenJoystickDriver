@@ -103,7 +103,8 @@ A controller fix in groups 2, 3, and 8 lands as a record or a patch (D13). Where
   - Note: blocked. Issue #53 holds no Guide packet; it needs a capture of a Guide press from the reporter.
 - [ ] 8.6 Reproduce the Logitech F710 replug failure with a session test that removes and re-adds the device, and fix it. Caller: USB discovery. (#48)
   - Note: `USBReplugTests` (`410e19d20`) removes and re-adds the device and passes; its race on the session close is fixed in `d39179380` (5 of 5 runs pass). The reported symptom (status off until Steam runs) does not reproduce in the test, so it stays hardware-gated on an F710 capture.
-- [ ] 8.7 Rebase pull request #54 onto the branch, migrate its documents, and verify wireless input decoding and empty-slot hiding for `045E:02A9`. (#9, #54)
+- [x] 8.7 Rebase pull request #54 onto the branch, migrate its documents, and verify wireless input decoding and empty-slot hiding for `045E:02A9`. (#9, #54)
+  - Note: `f2e586a8f`. `XUSBDriverTests+Receiver` replays the 29-byte `045e:02a9` packets the #54 author captured, and `ReceiverSlotDiscoveryTests` covers the empty slot. Virtual output, rumble, and LEDs through OJD are not hardware-verified (`docs/testing/xbox-360-wireless-receiver.md:9`).
 - [x] 8.8 Migrate the Turtle Beach `10F5:711E` record from pull request #57 and run the record checks. (#57)
 - [x] 8.9 Re-create the PowerA Spectra `20D6:4002` record from pull request #50 as a `v1alpha3` record, with the author credited. (#62, #50)
 - [x] 8.10 Re-create the Razer Wolverine V3 TE endpoints from pull request #39 as `Resources/ControllerPatches/1532/1532-0a43.patch.plist`, with the author credited. (#14, #39)
@@ -173,6 +174,7 @@ Each of 12.1 to 12.7 starts from its row in the audit (10.5) and from a failing 
 - [x] 12.5 Profile editor and list: show unsaved changes with the Save button, say when "Virtual output" resets `physicalInput` (`Profiles/Editor/ProfileOutputPolicyView.swift:16-50`), and give each guard listed in `design.md` for `ProfileEditorActions.swift` and `ProfileListActions.swift` a message or an unavailable control. Caller: the Profiles area.
 - [x] 12.6 Settings: show the reason beside "Start at login" when it cannot change; show the lock reason of "Show in menu bar" and "Show in Dock" as text in the row (`SettingsWindow/SettingsPaneComponents.swift:28`); when macOS has denied notifications, say so with a button that opens the Notifications pane (`SettingsPreferencesModel.swift:207-227, 402-413`); apply "Automatic update check" in the session (`MenuBar/MenuBarCoordinator+Lifecycle.swift:79`); make the title or row of "Controller connected" name the notification for a controller that needs attention; make the developer controller pop-up unavailable with a reason when it has no option (`Settings/Developer/DeveloperControllerSummaryView.swift:17-27`). Caller: the Settings window.
 - [ ] 12.7 Show the failure of a request beside the control that started it in every view, and keep the banner (`MainWindow/MainWindowProblems.swift`) for problems that concern no single control. List the seven failure stores from `design.md` in the audit with the one each view keeps.
+  - Note: the store table is in `docs/development/interface-audit.md` ("Failure stores", `e9d96e984`). Profiles shows a failed Delete damaged, Reset Library, Migrate, and Joy-Con pairing beside its button (`c0fb87bd3`; `ProfileActionFailureTests` pass). Open: Profiles toolbar requests, Settings (login item, pause shortcut, test notification), the override view's store messages to the banner, and Activity fix rows.
 - [x] 12.8 Add a menu command for each of the 15 toolbar actions (`MainWindow/MainWindowToolbar.swift:7-47`) with the toolbar item's title and availability, and change no toolbar item. Add a test that every toolbar item has a menu command. Caller: the main menu.
 - [x] 12.9 Add Find to the Edit menu with Command-F, which focuses the search field of the list in view. Caller: the main menu.
   - Note: Edit ▸ Find calls `MainWindowController.focusSearchField()`, which expands the toolbar search item; checked in the installed app on Library (focus lands on the search text field) and disabled on Controllers.
@@ -180,9 +182,11 @@ Each of 12.1 to 12.7 starts from its row in the audit (10.5) and from a failing 
 - [x] 12.11 Replace the fixed point size at `Components/WorkbenchComponents.swift:62` with a text style, move each label, value, and error that uses `.caption` to the body style, and add the repository check that fails on a font set by point size under `Sources/OpenJoystickDriverPresentation`.
 - [x] 12.12 Define one spacing scale and three sheet widths in `Components/`, and move the 23 sheets and the 16 literal spacing values onto them. Compare each changed view with its row in the audit. Note: the comparison table is in `docs/development/interface-audit.md`, with captures in `evidence/sheet-layout/`. S08 New profile clipped at the compact width and moved to regular (`d77d7ea1d`). S03 and S04 open only after a token issue or a library change, and S20, S22 and S24 need touch, motion or Joy-Con hardware, so those five were compared from source.
 - [ ] 12.13 Show each state of a controller, a permission, and the service with a symbol that differs in shape and a sentence, and show each connected controller as "Working", "Needs a step from you", or "Not supported yet" with one sentence and one button. Caller: the controller list and detail.
+  - Note: the controller part is in (`88942ac17`; `ControllerReadinessTests` pass): each state has its own symbol, sentence, and button. Open: the permission and service symbols.
 - [ ] 12.14 Check every view with keyboard navigation and with VoiceOver: each control is reachable, and each icon-only control has an accessibility label. Write the result per view into the audit and fix each gap.
 - [ ] 12.15 Show the setup steps in the main window on a start with a step open, each with one sentence and one button, and ask for a permission only when the user chooses its step. Find every permission request the app sends at launch and remove each that no user action starts. Caller: main window start.
-- [ ] 12.16 Add to the Help menu a command that opens the wiki page of the area in view and a tour of the main window. Caller: the main menu.
+- [x] 12.16 Add to the Help menu a command that opens the wiki page of the area in view and a tour of the main window. Caller: the main menu.
+  - Note: "Help for This Area" opens `MainWindowArea.wikiURL` (`3da4a3a32`, `53934d32f`); "Main Window Tour" (`07204f758`) reaches `MenuBarCoordinator+ApplicationMenu.swift:166` and shows one alert per area. `MainWindowTourTests` pass; the alert loop has not been run in the app.
 - [x] 12.17 Rewrite `wiki/Home.md` around four start pages: play a game, control the Mac, set up OJD on several Macs, add support for a controller. The third states what the license and macOS allow and makes no claim about managed deployment.
 - [x] 12.18 Controller detail, Advanced: show the three action buttons in one row, and replace each raw value in its rows with words (`Controllers/Inventory/ControllerDetailFacts.swift:202-269`): the parser, record source, and input mapping identifiers, and the control names such as `DpadUp`. Keep the raw identifier only beside the words, per 14.4. Caller: `ControllerDetailView`.
 - [x] 12.19 Add `OJD_HIDDEN`: when it is `1`, `true`, or `yes`, the app never activates and orders each window it shows behind other apps' windows (`MenuBar/AppForeground.swift`), so a script captures a window with `screencapture -l` while the user works. Document it in `docs/development/environment.md`. Caller: every window controller and activation call.
@@ -199,11 +203,13 @@ Each of 12.1 to 12.7 starts from its row in the audit (10.5) and from a failing 
   - Note: `05dd524e4`; `AdvancedPaneView` and `SettingsWindowController` read `developerToolsVisible`. `PreferencesTests` and `DeveloperToolsTests` pass.
 - [x] 13.6 Add a test that the service reads no `interfaceLevel` and that `ojd` output is the same for both values.
   - Note: `b6787c9db`; `InterfaceLevelIsPresentationOnlyTests` passes.
-- [ ] 13.7 Describe the setting in `wiki/Using-the-App.md` and mark in each wiki page the controls that need Advanced.
+- [x] 13.7 Describe the setting in `wiki/Using-the-App.md` and mark in each wiki page the controls that need Advanced.
+  - Note: `2142e43eb`.
 
 ## 14. Terminology
 
 - [ ] 14.1 List every term the English strings, the prose of `ojd --help`, and the wiki use for each concept in the table of D22, with counts, and give the maintainer the table to settle. Write `wiki/Glossary.md` from the settled table: each term, its definition in one sentence, the words it replaces, and the command-line value it stands for.
+  - Note: the counted table is `docs/development/terminology-survey.md` (`eae5c5bae`); it waits on the maintainer to settle, and 14.2 to 14.6 wait on it.
 - [ ] 14.2 Change the English strings to the glossary's terms, and each language by the rules in `LOCALIZATION.md`, one term per commit. Change no command, flag, schema value, or error code.
 - [ ] 14.3 Add the repository check that fails when an English string holds a word the glossary lists as replaced, and the check that one language translates one term one way.
 - [ ] 14.4 Name each virtual gamepad kind by what reads it in the window, and show the raw identifier beside it only in Advanced (`VirtualHIDProfileOverrideView.swift:34`). Caller: the controller detail.
@@ -221,15 +227,18 @@ Each of 12.1 to 12.7 starts from its row in the audit (10.5) and from a failing 
 
 Each task stands alone and can leave the release (D24). Each is written for OJD's records; no code or preset file comes from InputConfig.
 
-- [ ] 16.1 Live view: draw every control a record or a HID descriptor declares, by control kind, with its live value. Add a test that builds the view's model for every bundled record and fails on a control with no drawing. Caller: the controller detail.
-- [ ] 16.2 Calibration view for sticks and triggers: the raw value, the value after tuning, and the dead zone, with the value the user sets stored as tuning for the controller. First read which values the status RPC carries. Caller: the controller detail.
+- [x] 16.1 Live view: draw every control a record or a HID descriptor declares, by control kind, with its live value. Add a test that builds the view's model for every bundled record and fails on a control with no drawing. Caller: the controller detail.
+  - Note: `6920108db`; the controller detail opens the Input Test window, whose `InputTestLiveInputView` draws extra buttons, the pointer, and touch surfaces. `liveViewDrawsEveryControlOfEveryBundledRecord` passes; it skips records with no profile capabilities. Not yet looked at on screen.
+- [x] 16.2 Calibration view for sticks and triggers: the raw value, the value after tuning, and the dead zone, with the value the user sets stored as tuning for the controller. First read which values the status RPC carries. Caller: the controller detail.
+  - Note: `9a9426f84`. `getControllerState` carries raw values and `getVirtualOutputState` the tuned ones; `ControllerDetailView+Facts.swift:85` shows `ControllerCalibrationSection`, whose dead zone row writes `stickDeadzone` through `setControllerTuning`. `ControllerCalibrationTests` pass; not run against a live service.
 - [x] 16.3 Add profile templates that bind controls by their standard names beside `empty` and `gyroStick` (`ProfileCreationFields.swift:185`); a template skips a binding whose control the controller lacks, and the sheet lists each one skipped. Caller: the profile creation sheet and `ojd profile create`.
 - [x] 16.4 Decide from the profile reader and `profile.schema.json:7-15,76` whether a profile can leave out `device`, and record the result in `design.md`. Then add the conversion of a profile to another controller model, in the app and as an `ojd profile` subcommand named in `Tests/CommandLineNames`: it keeps each binding whose source control the target has, lists each one left out, and leaves the original unchanged.
   - Note: the decision is D20 in `design.md`. `ojd profile convert` is in (`d0a00025d`, `602ab6682`; `ProfileConversionTests` and `ProfileCommandTests` pass). The app's Convert toolbar item and Profile menu entry open `ProfileConversionSheet` (`5d1681354`, `2a70c4721`); `ProfileConversionModelTests`, `MainWindowAreaTests` and `GUICoverageTests` pass.
 - [x] 16.5 Sort the profile list by name, by controller, or by last use, and add a note to a binding (schema, reader, editor). `profile.note` is a MIDI note number, so the property takes another name.
 - [x] 16.6 Add one system-wide keyboard shortcut that pauses and resumes every controller, unset on a fresh installation. Caller: Settings and the pause RPC.
 - [ ] 16.7 Add a setting that disconnects a Bluetooth controller after a time with no changed input, off by default. **Hardware (maintainer)**: confirm with the 2C over Bluetooth LE. Caller: the session's input path.
-- [ ] 16.8 Add bindings that open Launchpad, lock the screen, take a screenshot, show the desktop, and type a text. For each, name the public macOS API it uses and the permission it needs before writing it; drop an action that has no public API and report it.
+- [x] 16.8 Add bindings that open Launchpad, lock the screen, take a screenshot, show the desktop, and type a text. For each, name the public macOS API it uses and the permission it needs before writing it; drop an action that has no public API and report it.
+  - Note: `ffdafd6c5`. Launchpad (falling back to Apps) and Screenshot open their apps through `NSWorkspace.openApplication(at:configuration:)` with no permission on Apple's page; type text already existed (`CGEvent`, Post Event access). Lock Screen and Show Desktop are dropped: no public API. Table in `wiki/Bindings-and-Actions.md`; `SystemActionTests` pass; not run against a live system.
 - [x] 16.9 Show the changes of the installed version from `CHANGELOG.md` at the first opening of the main window after an update, once.
 - [x] 16.10 Measure an importer for InputConfig's preset library (commit `958bdd97`): how one preset maps to an OJD profile, how many of the 456 map without loss, and what the MIT notice requires. Save the result as `docs/development/inputconfig-presets.md`. Write no importer.
 
@@ -244,6 +253,7 @@ Each task stands alone and can leave the release (D24). Each is written for OJD'
 ## 18. Documentation, localization, and changelog
 
 - [ ] 18.1 Write the 0.6.0-alpha.3 section of `CHANGELOG.md`: the format change, the removed properties, the patch `remove` list, patches that reach every section and merge `modes` by `id`, idle modes, layouts for every family, `appIDs`, the driver extension policy, the migrate command, the menu bar menu, the "Interface" setting, and the changed terms.
+  - Note: the section is in (`a6adebbb2`) except the changed terms, which wait on 14.1.
 - [ ] 18.2 Add every string from groups 3, 4, 5, 9, and 11 to 17 to each language by the rules in `LOCALIZATION.md`.
 - [x] 18.3 Update `wiki/Controller-Records.md`, `wiki/Writing-Controller-Mods.md`, `README.md`, `llms.txt`, and `llms-full.txt` so every document example is a property list, and show `plutil -convert` in both directions.
 - [x] 18.4 Update `docs/development/implementation-status.md` and `Scripts/SDK/reference_client.py` for `v1alpha3`.
@@ -254,5 +264,6 @@ Each task stands alone and can leave the release (D24). Each is written for OJD'
   - Note: `just verify` at `2a70c4721` stops in `just swift::xcode build-for-testing`: `Sources/OpenJoystickDriver/platform/macos/PlatformHostInstallation.swift:6` cannot see `MacOSPlatformHost` and `PlatformHosts`, which are `package` access (`b453f2cfe`) and so hidden from the Xcode app target. `just cpp::lint` passes (`0a5cf0742`).
 - [ ] 19.2 Install the build over the alpha.2 data on the maintainer's Mac: the first start migrates every file, `Migrated/` holds the originals, no area shows `E5001`, and the interface is in Advanced.
 - [ ] 19.3 **Hardware (maintainer)**: run the procedure in `docs/testing/8bitdo-ultimate-2c.md` for cable, receiver, and Bluetooth LE on the release build, with rumble in each mode.
-- [ ] 19.4 Search the diff of the release for a Swift branch on one controller model, and move each one found into a record.
-- [ ] 19.5 Run the OpenSpec validation for `0-6-0-alpha-3`.
+- [x] 19.4 Search the diff of the release for a Swift branch on one controller model, and move each one found into a record.
+  - Note: four sites found; two moved into records (`placeholderSerial`, `heldByAppleDriver`; merge `791b9d34a`). Two stay and are listed in `Tests/RepositoryScripts/model_identifiers_allowed.json`: the Microsoft product IDs are the entitlement's grant list, and `3537:1010` is the passive probe's allow-list.
+- [x] 19.5 Run the OpenSpec validation for `0-6-0-alpha-3`.
