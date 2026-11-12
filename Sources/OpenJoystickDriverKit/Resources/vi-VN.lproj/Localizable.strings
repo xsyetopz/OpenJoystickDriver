@@ -442,8 +442,6 @@
 "ui.profiles.refreshError" = "Không thể làm mới trạng thái cấu hình";
 /* Title of the empty state in the Profiles area when no profile exists. */
 "ui.profiles.none" = "Không có cấu hình";
-/* Message of the empty state in the Profiles area. An assignment links a control of the controller to a destination. */
-"ui.profiles.createMessage" = "Tạo cấu hình để bắt đầu gán các thành phần điều khiển.";
 /* Status in the Profiles area while the app reads the state of the profiles. Keep the three dots. */
 "ui.profiles.refreshing" = "Đang làm mới trạng thái cấu hình…";
 /* Title of the message in the Profiles area when the state of the profiles cannot be read. */

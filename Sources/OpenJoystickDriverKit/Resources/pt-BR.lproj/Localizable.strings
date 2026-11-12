@@ -442,8 +442,6 @@
 "ui.profiles.refreshError" = "Não foi possível atualizar o estado do perfil";
 /* Title of the empty state in the Profiles area when no profile exists. */
 "ui.profiles.none" = "Nenhum Perfil";
-/* Message of the empty state in the Profiles area. An assignment links a control of the controller to a destination. */
-"ui.profiles.createMessage" = "Crie um perfil para começar a atribuir comandos.";
 /* Status in the Profiles area while the app reads the state of the profiles. Keep the three dots. */
 "ui.profiles.refreshing" = "Atualizando o estado do perfil…";
 /* Title of the message in the Profiles area when the state of the profiles cannot be read. */
