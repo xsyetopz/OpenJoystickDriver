@@ -3917,6 +3917,8 @@
 "ui.menu.help.reportProblem" = "الإبلاغ عن مشكلة…";
 /* Item of the Help menu that opens the project website. */
 "ui.menu.help.projectWebsite" = "موقع المشروع";
+/* Item of the Help menu that opens the wiki page of the main-window area in view. */
+"ui.menu.help.helpForThisArea" = "مساعدة حول هذا القسم";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "تم نسخ تقرير الدعم";
 /* Message of the alert shown after the support report is copied. */

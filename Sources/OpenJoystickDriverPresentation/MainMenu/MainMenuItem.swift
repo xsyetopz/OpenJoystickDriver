@@ -109,6 +109,8 @@ enum MainMenuAction: Hashable, Sendable {
   case explainErrorCode
   /// Copy the support report.
   case copySupportReport
+  /// Open the wiki page of the main-window area in view.
+  case openAreaHelp
   /// Open the page to report a problem.
   case reportProblem
   /// Open the project page in the default browser.

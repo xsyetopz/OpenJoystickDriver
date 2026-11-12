@@ -29,6 +29,23 @@ public enum MainWindowArea: String, CaseIterable, Identifiable, Hashable, Sendab
     }
   }
 
+  /// The name of the wiki page, without `.md`, that explains this area.
+  public var wikiPage: String {
+    switch self {
+    case .controllers: return "Connecting-Controllers"
+    case .profiles: return "Remapping-Profiles"
+    case .library: return "Controller-Records"
+    case .access: return "Permissions-and-Security"
+    case .activity: return "Troubleshooting"
+    }
+  }
+
+  /// The address of this area's page on the project's GitHub wiki.
+  public var wikiURL: URL {
+    URL(string: "https://github.com/xsyetopz/OpenJoystickDriver/wiki/\(wikiPage)")
+      ?? URL(fileURLWithPath: "/")
+  }
+
   /// The SF Symbol of the area's sidebar row, shown before its title.
   public var symbolName: String {
     switch self {
@@ -75,6 +92,8 @@ public protocol MainWindowPresenting: AnyObject {
   func showController(id: String)
   /// The session token of the controller selected in the Controllers area, if one is connected.
   var selectedControllerID: String? { get }
+  /// The area the main window shows.
+  var selectedArea: MainWindowArea { get }
   /// Opens Controllers > Input Test for the controller.
   func showInputTest(controllerID: String)
   /// Opens Profiles, asks for a profile file and imports it through the editor's checks.

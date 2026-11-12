@@ -505,8 +505,8 @@ enum MainMenuModel {
     ]
   )
 
-  /// The Help menu: the Activity area, Explain Error Code, Copy Support Report, Report Problem and
-  /// the project page.
+  /// The Help menu: the Activity area, Explain Error Code, Copy Support Report, Help for This Area,
+  /// Report Problem and the project page.
   private static let helpSection = MainMenuSection(
     id: "help",
     titleKey: "ui.menu.help.title",
@@ -532,6 +532,12 @@ enum MainMenuModel {
         gui: .area(.activity)
       ),
       .separator,
+      entry(
+        "openAreaHelp",
+        "ui.menu.help.helpForThisArea",
+        action: .openAreaHelp,
+        gui: .externalLink
+      ),
       entry(
         "reportProblem",
         "ui.menu.help.reportProblem",

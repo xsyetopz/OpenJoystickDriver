@@ -266,6 +266,9 @@
       screens.controllers.selectedDevice?.sessionToken.rawValue
     }
 
+    /// The area the window shows.
+    var selectedArea: MainWindowArea { navigation.selectedArea }
+
     /// Shows the Input Test window for the controller, after selecting it in Controllers.
     func showInputTest(controllerID: String) {
       guard navigation.requestArea(.controllers) else {
