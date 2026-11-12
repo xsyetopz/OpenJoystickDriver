@@ -287,11 +287,11 @@ It is unset until you click **Record Shortcut** and press a key with Control, Op
 Another app that uses the same combination makes the shortcut fail with an error here; record a different one.
 `ojd setting set pauseShortcut` sets it too.
 
-**Disconnect idle Bluetooth controllers** disconnects a Bluetooth controller whose input has not changed for the time you choose: 5, 10, 15, 30, or 60 minutes (needs the **All Controls** interface).
+**Disconnect idle Bluetooth controllers** disconnects a classic Bluetooth controller whose input has not changed for the time you choose: 5, 10, 15, 30, or 60 minutes (needs the **All Controls** interface).
 It is **Off** until you change it.
 It disconnects the way **Disconnect** in the menu does.
 A controller that stays on the same input, such as a stick held still, counts as idle.
-A controller on a cable or a receiver is never disconnected.
+A Bluetooth Low Energy controller and a controller on a cable or a receiver are never disconnected, because macOS keeps a Bluetooth Low Energy controller's link up when an app asks to close it.
 `ojd setting set idleDisconnectMinutes` sets it too, to any whole number of minutes from 1 to 480.
 
 **Interface** chooses how much of the app shows: **Simple** or **All Controls**.

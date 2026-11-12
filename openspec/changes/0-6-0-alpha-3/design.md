@@ -545,7 +545,7 @@ InputConfig is under the MIT license and OJD under MPL-2.0. MIT allows reuse wit
 | Conversion to another model | Same `source` names; a binding with no target control is listed and left out |
 | Sort and notes | Profile data only |
 | Pause shortcut | Calls the pause the menu already has |
-| Idle disconnect | Bluetooth only; uses the disconnect the menu already has |
+| Idle disconnect | Classic Bluetooth only (macOS keeps a Bluetooth LE HID link up after `closeConnection()`); uses the disconnect the menu already has |
 | System action bindings | Additions to the binding vocabulary |
 | What changed | Reads `CHANGELOG.md` |
 

@@ -29,16 +29,20 @@ struct IdleInputTracker: Sendable {
 /// Which links the idle disconnect applies to.
 enum IdleDisconnectPolicy {
   /// Whether a controller on `transport` that was idle for `idleNanoseconds` is due for the idle
-  /// disconnect after `minutes`; a cable, a receiver and an unknown link never are.
+  /// disconnect after `minutes`; a cable, a receiver, a Bluetooth LE link and an unknown link never
+  /// are.
+  ///
+  /// macOS keeps a Bluetooth LE HID link up after `IOBluetoothDevice.closeConnection()` reports
+  /// success, and CoreBluetooth does not list the system's HID peripherals, so only a classic link
+  /// can be ended.
   static func isDue(
     transport: PhysicalTransport?,
     idleNanoseconds: UInt64,
     afterMinutes minutes: Int
   ) -> Bool {
     switch transport {
-    case .bluetoothClassic, .bluetoothLE:
-      idleNanoseconds >= UInt64(minutes) * 60 * 1_000_000_000
-    case .usb, .proprietaryRadioReceiver, nil: false
+    case .bluetoothClassic: idleNanoseconds >= UInt64(minutes) * 60 * 1_000_000_000
+    case .bluetoothLE, .usb, .proprietaryRadioReceiver, nil: false
     }
   }
 }

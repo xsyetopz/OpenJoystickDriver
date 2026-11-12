@@ -73,15 +73,6 @@ struct IdleDisconnectTests {
   }
 
   @Test
-  func bluetoothLowEnergyIsDueToo() async {
-    let pipeline = pipeline(variant: .bluetoothLE)
-
-    clock.advance(minutes: 15)
-
-    #expect(await pipeline.isIdleDisconnectDue(afterMinutes: 15))
-  }
-
-  @Test
   func changedInputRestartsTheTime() async {
     let pipeline = pipeline(variant: .bluetoothClassic)
     clock.advance(minutes: 14)
@@ -107,8 +98,10 @@ struct IdleDisconnectTests {
     #expect(await pipeline.isIdleDisconnectDue(afterMinutes: 15))
   }
 
-  @Test(arguments: [PhysicalProtocolVariantID.usb, .wired, .receiver, .dongle])
-  func aCableOrReceiverNeverDisconnects(variant: PhysicalProtocolVariantID) async {
+  /// macOS keeps a Bluetooth LE HID link up after `IOBluetoothDevice.closeConnection()` returns
+  /// success, so no idle disconnect can end it.
+  @Test(arguments: [PhysicalProtocolVariantID.usb, .wired, .receiver, .dongle, .bluetoothLE])
+  func aCableReceiverOrBluetoothLELinkNeverDisconnects(variant: PhysicalProtocolVariantID) async {
     let pipeline = pipeline(variant: variant)
 
     clock.advance(minutes: 600)

@@ -5194,7 +5194,7 @@
 /* Title of the row in the General pane of the settings window that sets how long a Bluetooth controller may sit without a change in its input before OpenJoystickDriver disconnects it. Bluetooth is a product name. */
 "ui.settings.general.idleDisconnect" = "निष्क्रिय Bluetooth कंट्रोलर डिस्कनेक्ट करें";
 /* Explanation under the idle disconnect title in the General pane of the settings window. Bluetooth is a product name. A cable or a receiver is the other way a controller connects. */
-"ui.settings.general.idleDisconnectDescription" = "चुने गए समय तक जिस Bluetooth कंट्रोलर के इनपुट में कोई बदलाव नहीं हुआ, उसे डिस्कनेक्ट करता है। केबल या रिसीवर से जुड़े कंट्रोलर जुड़े रहते हैं।";
+"ui.settings.general.idleDisconnectDescription" = "चुने गए समय तक जिस क्लासिक Bluetooth कंट्रोलर के इनपुट में कोई बदलाव नहीं हुआ, उसे डिस्कनेक्ट करता है। Bluetooth Low Energy कंट्रोलर और केबल या रिसीवर से जुड़े कंट्रोलर जुड़े रहते हैं।";
 /* Title of the choice that turns the idle disconnect off in the General pane of the settings window. */
 "ui.settings.general.idleDisconnectOff" = "बंद";
 /* Error of 'ojd setting set' when the value is not a number of minutes for the idle disconnect. %1$@ is the text the user gave; %2$@ and %3$@ are the smallest and largest number of minutes. The word off stays as written. */

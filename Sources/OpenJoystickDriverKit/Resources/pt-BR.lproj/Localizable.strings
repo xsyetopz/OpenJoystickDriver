@@ -5195,7 +5195,7 @@
 /* Title of the row in the General pane of the settings window that sets how long a Bluetooth controller may sit without a change in its input before OpenJoystickDriver disconnects it. Bluetooth is a product name. */
 "ui.settings.general.idleDisconnect" = "Desconectar controles Bluetooth inativos";
 /* Explanation under the idle disconnect title in the General pane of the settings window. Bluetooth is a product name. A cable or a receiver is the other way a controller connects. */
-"ui.settings.general.idleDisconnectDescription" = "Desconecta um controle Bluetooth cuja entrada não mudou durante o tempo escolhido. Controles com cabo ou receptor continuam conectados.";
+"ui.settings.general.idleDisconnectDescription" = "Desconecta um controle Bluetooth clássico cuja entrada não mudou durante o tempo escolhido. Controles Bluetooth Low Energy e controles com cabo ou receptor continuam conectados.";
 /* Title of the choice that turns the idle disconnect off in the General pane of the settings window. */
 "ui.settings.general.idleDisconnectOff" = "Desligado";
 /* Error of 'ojd setting set' when the value is not a number of minutes for the idle disconnect. %1$@ is the text the user gave; %2$@ and %3$@ are the smallest and largest number of minutes. The word off stays as written. */

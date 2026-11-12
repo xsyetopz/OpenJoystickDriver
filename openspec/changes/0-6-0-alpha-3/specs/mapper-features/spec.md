@@ -71,16 +71,21 @@ OJD SHALL let the user set one system-wide keyboard shortcut that pauses and res
 
 ### Requirement: An Idle Wireless Controller Can Disconnect
 
-OJD SHALL offer a setting that disconnects a Bluetooth controller after a time with no input. The setting MUST be off on a fresh installation.
+OJD SHALL offer a setting that disconnects a classic Bluetooth controller after a time with no input. The setting MUST be off on a fresh installation. macOS keeps a Bluetooth LE HID link up after `IOBluetoothDevice.closeConnection()` reports success, so the setting does not apply to a Bluetooth LE controller.
 
 #### Scenario: Idle time passes
 
-- **WHEN** the setting is 15 minutes and a Bluetooth controller sends no changed input for 15 minutes
+- **WHEN** the setting is 15 minutes and a classic Bluetooth controller sends no changed input for 15 minutes
 - **THEN** OJD disconnects it
 
 #### Scenario: Cable
 
 - **WHEN** a controller is connected by cable
+- **THEN** the setting does not apply to it
+
+#### Scenario: Bluetooth LE
+
+- **WHEN** a controller is connected over Bluetooth LE
 - **THEN** the setting does not apply to it
 
 ### Requirement: Bindings Cover the Common System Actions
