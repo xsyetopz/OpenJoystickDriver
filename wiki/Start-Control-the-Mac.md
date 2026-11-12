@@ -10,7 +10,7 @@ Install OJD and connect the controller. See [Start: play a game with a controlle
 
 1. Open the **Profiles** area and click **New profile**.
 2. In the **New profile** sheet, enter a name, select the controller in the **Controller** list, and select the application scope. Click **Create**.
-3. Select the profile and open the **Assignments** section. Click **Add assignment**.
+3. Select the [profile](Glossary.md#terms) and open the **Assignments** section. Click **Add assignment**.
 4. In the **Press a controller control** sheet, click **Listen for control** and press a button on the controller.
 5. Select a **Destination**. For a key, click **Capture key** and press the key. Click **Add assignment**.
 6. Click **Save**, then click **Set active**.

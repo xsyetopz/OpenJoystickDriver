@@ -37,6 +37,7 @@
   - [Error codes](Error-Codes.md)
   - [FAQ](FAQ.md)
   - [Glossary](Glossary.md)
+  - [Glossary](Glossary.md)
   - [Reporting a bug](Reporting-a-Bug.md)
 - **Advanced**
   - [Building from source](Building-from-Source.md)

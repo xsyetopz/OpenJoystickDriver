@@ -1,12 +1,12 @@
 # Connecting Controllers
 
-This page explains how USB, Bluetooth, and 2.4 GHz dongle connections differ for OpenJoystickDriver (OJD), how to read the VID:PID of your controller, and how the Xbox USB driver extension works.
+This page explains how USB, Bluetooth, and 2.4 GHz dongle connections differ for OpenJoystickDriver (OJD), how to read the VID:PID of your controller, and how the [Xbox USB driver](Glossary.md#terms) works.
 
 ## Contents
 
 - [Connection Types](#connection-types)
 - [Finding Your Controller ID](#finding-your-controller-id)
-- [Xbox USB Driver Extension](#xbox-usb-driver-extension)
+- [Xbox USB Driver](#xbox-usb-driver)
 - [Further Reading](#further-reading)
 
 ## Connection Types
@@ -64,9 +64,9 @@ The developer tools need the **Advanced** interface: set **Interface** to **Adva
 At **Simple**, they stay hidden.
 The developer tools show the controller details, including its USB ID, connection type, and endpoints.
 
-## Xbox USB Driver Extension
+## Xbox USB Driver
 
-OJD has one DriverKit system extension, `com.openjoystickdriver.XboxUSBDevice`. It is embedded in the app and owns the USB interfaces of genuine Xbox One and Xbox Series controllers. It only serves Xbox One and Xbox Series controllers that connect by USB with one of these VID:PID values:
+The Xbox USB driver, `com.openjoystickdriver.XboxUSBDevice`, is a DriverKit driver that OJD installs. It is embedded in the app and owns the USB interfaces of genuine Xbox One and Xbox Series controllers. It only reads Xbox One and Xbox Series controllers that connect by USB with one of these VID:PID values:
 
 - `045E:02D1`
 - `045E:02DD`
@@ -76,19 +76,19 @@ OJD has one DriverKit system extension, `com.openjoystickdriver.XboxUSBDevice`. 
 - `045E:0B0A`
 - `045E:0B12`
 
-Every other controller does not need the extension. OJD reads those controllers directly from the app. The extension does not publish a virtual controller. The app publishes it.
+Every other controller does not need the driver. OJD reads those controllers directly from the app. The driver does not publish a [virtual gamepad](Glossary.md#terms). The app publishes it.
 
-A build whose app profile has no `userclient-access` grant for the extension has no driver extension, so **Driver Extensions** in **System Settings** lists nothing from OJD. See [Build options and limits](Building-from-Source.md).
+A build whose app profile has no `userclient-access` grant for the driver has no Xbox USB driver, so **Driver Extensions** in **System Settings** lists nothing from OJD. See [Build options and limits](Building-from-Source.md).
 
-### Approve the Extension
+### Approve the Driver
 
 Do these steps only if you use one of the controllers above.
 
-1. Open the app window. Until you approve the extension, the banner below the toolbar shows **Xbox USB Driver** and **Open System Settings**.
+1. Open the app window. Until you approve the driver, the banner below the toolbar shows **Xbox USB Driver** and **Open System Settings**.
 2. Click **Open System Settings**. OJD opens the **Login Items & Extensions** settings.
-3. Approve the OpenJoystickDriver extension in **System Settings** > **General** > **Login Items & Extensions** > **Driver Extensions**.
+3. Approve OpenJoystickDriver in **System Settings** > **General** > **Login Items & Extensions** > **Driver Extensions**.
 
-When the extension is active, the banner disappears, and **Xbox USB Driver** in **Settings** > **Advanced** says that the driver is installed and ready. If the extension needs repair, the banner shows **Repair Xbox USB Driver**. Click it.
+When the driver is active, the banner disappears, and **Xbox USB Driver** in **Settings** > **Advanced** says that the driver is installed and ready. If the driver needs repair, the banner shows **Repair Xbox USB Driver**. Click it.
 
 ![Settings, Advanced pane: the Xbox USB Driver section says that the driver is installed and ready](../docs/screenshots/settings-advanced.png)
 

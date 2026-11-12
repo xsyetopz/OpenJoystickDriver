@@ -39,7 +39,7 @@ ojd status
 
 The [command reference](Command-Reference.md) lists every command. `ojd --help` lists them too, and `ojd COMMAND --help` shows the options of one command.
 
-To start, run `ojd status` to check the service, extension, and permissions, `ojd diagnose` to run every check, and `ojd controller list` to list connected controllers.
+To start, run `ojd status` to check the service, [Xbox USB driver](Glossary.md#terms), and permissions, `ojd diagnose` to run every check, and `ojd controller list` to list connected controllers.
 
 ## Shell Completion
 
@@ -86,7 +86,7 @@ A command that needs the service exits with code 69 when the service is not runn
 
 ## Configuration
 
-`ojd config show` prints each effective tuning value and the layer that set it: the driver default, the bundled record, a package, your `all.patch.plist`, or your record. A key that no layer sets shows `Driver default`, except `stickDeadzone`, which shows `Not set` because the driver applies no deadzone of its own. It reads the files directly, so it works without the service. With `--controller` and the service running, it also lists the active profile's stick deadzones in the `profile` layer. `ojd config set KEY VALUE` and `ojd config unset KEY` change a key in your record of one controller with `--controller VVVV:PPPP`, or in `all.patch.plist` without it. See [Controller records](Controller-Records.md#set-a-default-for-every-controller) and [Set the Deadzone of a Stick That Rests Off Center](Controller-Records.md#set-the-deadzone-of-a-stick-that-rests-off-center).
+`ojd config show` prints each effective tuning value and the layer that set it: the driver default, the bundled record, a package, your `all.patch.plist`, or your record. A key that no layer sets shows `Driver default`, except `stickDeadzone`, which shows `Not set` because the driver applies no deadzone of its own. It reads the files directly, so it works without the service. With `--controller` and the service running, it also lists the active [profile](Glossary.md#terms)'s stick deadzones in the `profile` layer. `ojd config set KEY VALUE` and `ojd config unset KEY` change a key in your record of one controller with `--controller VVVV:PPPP`, or in `all.patch.plist` without it. See [Controller records](Controller-Records.md#set-a-default-for-every-controller) and [Set the Deadzone of a Stick That Rests Off Center](Controller-Records.md#set-the-deadzone-of-a-stick-that-rests-off-center).
 
 ## Mod Packages
 

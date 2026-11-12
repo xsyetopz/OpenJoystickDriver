@@ -38,7 +38,7 @@ Which of the two ways works on which macOS version, and whether macOS asks for a
 
 OJD never reconnects a Bluetooth controller by itself. Press a button on a paired remote to connect it again. Whether a button press reconnects the remote after the Mac sleeps is not verified.
 
-OJD starts a new session each time the remote connects. It asks the remote for its status, sets the report mode, and reads the accelerometer calibration again. It turns the IR camera on again when the active profile binds the pointer.
+OJD starts a new session each time the remote connects. It asks the remote for its status, sets the report mode, and reads the accelerometer calibration again. It turns the IR camera on again when the active [profile](Glossary.md#terms) binds the pointer.
 
 ## Buttons, motion, and battery
 
@@ -90,7 +90,7 @@ The remote has an IR camera that sees the two points of a sensor bar. The driver
 
 The IR points are touch contacts on the camera's 1024 by 768 grid, up to four. The driver also computes a pointer: the midpoint of the two largest points, turned by the roll of the remote and mirrored. The pointer is two axes, `PointerX` and `PointerY`, from -1 to 1 with Y positive down, plus the control `PointerTracking`, which is on while two points are visible. With fewer than two points, `PointerTracking` is off and `PointerX` and `PointerY` keep their last values.
 
-The pointer is raw geometry, without smoothing or screen calibration. A profile binds `PointerX` or `PointerY` as a source, and the position of the pointer sets the speed of the mouse: the further from the center, the faster the mouse moves. `PointerX` and `PointerY` are sources only. A binding that sends them to a `gamepad:axis:` target is rejected, because the virtual controllers that OJD publishes carry no pointer controls. For the list of controls, see [Controller records](Controller-Records.md).
+The pointer is raw geometry, without smoothing or screen calibration. A profile binds `PointerX` or `PointerY` as a source, and the position of the pointer sets the speed of the mouse: the further from the center, the faster the mouse moves. `PointerX` and `PointerY` are sources only. A binding that sends them to a `gamepad:axis:` target is rejected, because the [virtual gamepads](Glossary.md#terms) that OJD publishes carry no pointer controls. For the list of controls, see [Controller records](Controller-Records.md).
 
 The IR setup, the pointer signs and the sensitivity level are not verified on a real remote. These commands send the pointer to the mouse. A test verified that they bind and that the engine moves the mouse. They are not verified on hardware:
 
