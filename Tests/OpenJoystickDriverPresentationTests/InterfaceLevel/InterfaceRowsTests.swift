@@ -46,7 +46,9 @@ struct InterfaceRowAuditTests {
         cells.count > 3
         && cells[1].range(of: #"^[A-Z]\d{2}$"#, options: .regularExpression) != nil
       guard isControl else { continue }
-      levels[cells[1]] = cells[cells.count - 3]
+      // The 12.12 comparison table repeats S01 to S24 with text after the level.
+      let level = cells[cells.count - 3]
+      if InterfaceRowLevel(rawValue: level.lowercased()) != nil { levels[cells[1]] = level }
     }
     return levels
   }
@@ -86,6 +88,105 @@ struct InterfaceRowAuditTests {
     try expectMatchesAudit(rows)
     #expect(
       Set(rows.flatMap(\.auditIDs)) == Set(["I01", "I02", "I03", "I04", "I05", "I06", "I07"])
+    )
+  }
+
+  @Test
+  func accessRowsMatchTheAuditLevels() throws {
+    let rows = AccessRow.allCases
+    try expectMatchesAudit(rows)
+    #expect(
+      Set(rows.flatMap(\.auditIDs))
+        == Set(["C24", "C25", "C26", "C27", "S01", "S02", "S03"])
+    )
+  }
+
+  @Test
+  func activityRowsMatchTheAuditLevels() throws {
+    let rows = ActivityRow.allCases
+    try expectMatchesAudit(rows)
+    #expect(Set(rows.flatMap(\.auditIDs)) == Set(["C28", "C29", "S05"]))
+  }
+
+  @Test
+  func libraryRowsMatchTheAuditLevels() throws {
+    let rows = LibraryRow.allCases
+    try expectMatchesAudit(rows)
+    #expect(Set(rows.flatMap(\.auditIDs)) == Set(["C21", "C22", "C23", "S04"]))
+  }
+
+  @Test
+  func accessSimpleRowsAreASubsetOfAdvanced() {
+    let simple = Set(AccessRow.shown(at: .simple, developerToolsEnabled: true))
+    let advanced = Set(AccessRow.shown(at: .advanced, developerToolsEnabled: false))
+    let developer = Set(AccessRow.shown(at: .advanced, developerToolsEnabled: true))
+    #expect(simple == [.permissions])
+    #expect(simple.isSubset(of: advanced))
+    #expect(advanced.isSubset(of: developer))
+    #expect(developer == Set(AccessRow.allCases))
+  }
+
+  @Test
+  func activitySimpleRowsAreASubsetOfAdvanced() {
+    let simple = Set(ActivityRow.shown(at: .simple, developerToolsEnabled: true))
+    let advanced = Set(ActivityRow.shown(at: .advanced, developerToolsEnabled: false))
+    #expect(simple.isEmpty)
+    #expect(simple.isSubset(of: advanced))
+    #expect(advanced == Set(ActivityRow.allCases))
+  }
+
+  @Test
+  func librarySimpleRowsAreASubsetOfAdvanced() {
+    let simple = Set(LibraryRow.shown(at: .simple, developerToolsEnabled: true))
+    let advanced = Set(LibraryRow.shown(at: .advanced, developerToolsEnabled: false))
+    #expect(simple.isEmpty)
+    #expect(simple.isSubset(of: advanced))
+    #expect(advanced == Set(LibraryRow.allCases))
+  }
+
+  @Test
+  func toolbarItemsAreGatedByTheAuditLevels() throws {
+    let audit = try Self.auditLevels()
+    let gated: [(MainWindowToolbarAction, String)] = [
+      (.grantProgram, "T13"), (.createToken, "T14"), (.runDiagnostics, "T21"),
+    ]
+    for (action, id) in gated {
+      let level = try #require(audit[id])
+      #expect(action.interfaceRowLevel.rawValue == level.lowercased(), "\(id)")
+    }
+    let simple = MainWindowArea.access.toolbarActions(
+      activityMode: .log,
+      level: .simple,
+      developerToolsEnabled: true
+    )
+    #expect(simple.isEmpty)
+    #expect(
+      MainWindowArea.access.toolbarActions(
+        activityMode: .log,
+        level: .advanced,
+        developerToolsEnabled: false
+      ).isEmpty
+    )
+    #expect(
+      MainWindowArea.access.toolbarActions(
+        activityMode: .log,
+        level: .advanced,
+        developerToolsEnabled: true
+      ) == [.grantProgram, .createToken]
+    )
+    #expect(
+      !MainWindowArea.activity.toolbarActions(
+        activityMode: .diagnostics,
+        level: .simple,
+        developerToolsEnabled: false
+      ).contains(.runDiagnostics)
+    )
+    #expect(
+      MainWindowArea.activity.toolbarActions(
+        activityMode: .diagnostics,
+        level: .advanced,
+        developerToolsEnabled: false
+      ).contains(.runDiagnostics)
     )
   }
 

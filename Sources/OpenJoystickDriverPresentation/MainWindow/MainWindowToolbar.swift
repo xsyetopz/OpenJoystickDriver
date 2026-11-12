@@ -18,6 +18,32 @@
     }
   }
 
+  extension MainWindowToolbarAction {
+    /// The level of the item, from the audit.
+    ///
+    /// T13 and T14 are Developer, T21 is Advanced. The other items are not gated here.
+    var interfaceRowLevel: InterfaceRowLevel {
+      switch self {
+      case .grantProgram, .createToken: return .developer
+      case .runDiagnostics: return .advanced
+      default: return .simple
+      }
+    }
+  }
+
+  extension MainWindowArea {
+    /// The toolbar actions of the area that show at `level`.
+    func toolbarActions(
+      activityMode: ActivityMode,
+      level: InterfaceLevel,
+      developerToolsEnabled: Bool
+    ) -> [MainWindowToolbarAction] {
+      toolbarActions(activityMode: activityMode).filter {
+        $0.interfaceRowLevel.isShown(at: level, developerToolsEnabled: developerToolsEnabled)
+      }
+    }
+  }
+
   extension NSSearchToolbarItem {
     /// Keeps the search field at the toolbar's search width instead of growing into the free
     /// toolbar space.
