@@ -13,3 +13,34 @@ struct ActivityActionFailureTests {
     #expect(ActivityActionFailure(title: "Save failed", message: nil).text == "Save failed")
   }
 }
+
+@MainActor
+@Suite
+struct ActivityCheckFixFailureTests {
+  private func model(failing reason: String?) -> ActivityModel {
+    ActivityModel(
+      log: ActivityLogModel(),
+      diagnostics: ActivityDiagnosticsModel { [] }
+    ) { _ in reason }
+  }
+
+  @Test
+  func aFailedFixShowsOnItsCheckRowAndNotInTheAreaRow() {
+    let model = model(failing: "Could not request access")
+
+    model.perform(.requestInputRead, forCheck: "input-read")
+
+    #expect(model.fixFailures["input-read"] == "Could not request access")
+    #expect(model.failure == nil)
+  }
+
+  @Test
+  func aFixThatWorksClearsTheFailureOfItsCheckRow() {
+    let model = model(failing: nil)
+    model.fixFailures["input-read"] = "Could not request access"
+
+    model.perform(.requestInputRead, forCheck: "input-read")
+
+    #expect(model.fixFailures["input-read"] == nil)
+  }
+}

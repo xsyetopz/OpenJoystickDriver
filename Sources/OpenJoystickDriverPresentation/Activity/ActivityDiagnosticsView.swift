@@ -12,8 +12,10 @@
     /// Runs the checks and holds their rows.
     @ObservedObject
     var model: ActivityDiagnosticsModel
-    /// Runs the fix of a check.
-    let perform: (ActivityCheckFix) -> Void
+    /// Why the fix of a check failed, by check id.
+    let failures: [String: String]
+    /// Runs the fix of a check, given the check's id.
+    let perform: (ActivityCheckFix, String) -> Void
 
     /// The diagnostics content; the checks run once when the view appears.
     var body: some View {
@@ -38,12 +40,18 @@
             Text(row.nameKey.map { OJDLocalized.string($0) } ?? row.id).help(row.id)
           }.width(min: 140, ideal: 200, max: 240)
           TableColumn(OJDLocalized.string("ui.activity.column.details")) { row in
-            HStack {
-              Text(row.detail).lineLimit(1).truncationMode(.tail).textSelection(.enabled)
-                .help(row.detail)
-              Spacer(minLength: 8)
-              if let fix = row.fix {
-                Button(OJDLocalized.string(fix.titleKey)) { perform(fix) }
+            VStack(alignment: .leading, spacing: OJDSpacing.none) {
+              HStack {
+                Text(row.detail).lineLimit(1).truncationMode(.tail).textSelection(.enabled)
+                  .help(row.detail)
+                Spacer(minLength: 8)
+                if let fix = row.fix {
+                  Button(OJDLocalized.string(fix.titleKey)) { perform(fix, row.id) }
+                }
+              }
+              if let failure = failures[row.id] {
+                Text(failure).font(.caption).foregroundColor(Color(NSColor.systemRed))
+                  .lineLimit(2).textSelection(.enabled).help(failure)
               }
             }
           }
