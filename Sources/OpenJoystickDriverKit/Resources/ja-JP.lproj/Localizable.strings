@@ -2720,7 +2720,7 @@
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "レコード";
 /* Row label in the output of 'ojd controller show'. The sentence that says why OpenJoystickDriver does not serve the connected device follows. */
-"cli.controller.show.labelNotServed" = "未対応";
+"cli.controller.show.labelNotServed" = "処理されていません";
 /* Row label in the output of 'ojd controller show'. The sentence that says what to do about a device that is not served follows. */
 "cli.controller.show.labelNextStep" = "次の手順";
 /* Row label in the output of 'ojd controller show'. The command that drafts a controller record for a HID gamepad that is not served follows. */
@@ -2900,7 +2900,7 @@
 /* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
 "cli.protocol.group.abstract" = "プロトコル記述を検証、インストール、一覧表示します。";
 /* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
-"cli.protocol.group.discussion" = "プロトコル記述は、OJD が内蔵していないコントローラーファミリーを定義する .plist ファイルです。インストール済みの記述は ~/Library/Application Support/OpenJoystickDriver/Protocols にあり、MOD パッケージにも含められます。これらのコマンドにサービスは不要です。";
+"cli.protocol.group.discussion" = "プロトコル記述は、OJD が内蔵していないコントローラファミリーを定義する .plist ファイルです。インストール済みの記述は ~/Library/Application Support/OpenJoystickDriver/Protocols にあり、MOD パッケージにも含められます。これらのコマンドにサービスは不要です。";
 /* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
 "cli.protocol.group.file" = "ファミリー名を付けた記述ファイル。例: VendorAcmePad.plist。";
 /* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
@@ -2918,11 +2918,11 @@
 /* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
 "cli.protocol.list.abstract" = "内蔵および文書化されたプロトコルファミリーと、それぞれの提供元を一覧表示します。";
 /* Long description in the help of 'ojd protocol list'. */
-"cli.protocol.list.discussion" = "各ファミリーを表示名と提供元(内蔵、Protocols フォルダー、MOD パッケージ)とともに一覧表示します。拒否された記述は表示されません。";
+"cli.protocol.list.discussion" = "各ファミリーを表示名と提供元(内蔵、Protocols フォルダ、MOD パッケージ)とともに一覧表示します。拒否された記述は表示されません。";
 /* Source shown by 'ojd protocol list' for a family that OJD builds in. */
 "cli.protocol.list.builtIn" = "内蔵";
 /* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
-"cli.protocol.list.user" = "Protocols フォルダー";
+"cli.protocol.list.user" = "Protocols フォルダ";
 /* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
 "cli.protocol.list.package" = "パッケージ %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
@@ -4554,13 +4554,13 @@
 /* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
 "error.E5007.modPackage.kindMismatch" = "%1$@、%2$@: %3$@ ファイルは、%4$@ ファイルを列挙する mod.plist の %2$@ に載せられません。対処: ファイルの種類に合う一覧に載せてください。";
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
-"error.E5007.record.identityRange" = "%1$@、vendorID: コントローラーには 1...65535 の vendorID と 0...65535 の productID が必要です。対処: vendorID と productID をその範囲にしてください。";
+"error.E5007.record.identityRange" = "%1$@、vendorID: コントローラには 1...65535 の vendorID と 0...65535 の productID が必要です。対処: vendorID と productID をその範囲にしてください。";
 /* Error E5007, shown when a record file fails: a controller names an unsupported USB configuration. %2$@ is the configuration. %1$@ is the file. */
 "error.E5007.deviceCatalog.usbConfiguration" = "%1$@、usb.configuration: USB 構成は %2$@ ではなく SetConfiguration1BeforeClaim である必要があります。対処: configuration を SetConfiguration1BeforeClaim にするか、省略してください。";
 /* Error E5007, shown when a record file fails: a patch file sits at a path its selector does not give. %2$@ is the expected path. %1$@ is the file. */
 "error.E5007.patch.path" = "%1$@、selector: パッチファイルは %2$@ に置く必要があります。対処: ファイルをそこへ移すか、selector を変更してください。";
 /* Error E5007, shown when a record file fails: the tuning defaults patch has a selector other than all. %1$@ is the file. */
-"error.E5007.tuningDefaults.selector" = "%1$@、selector: 調整の既定値の selector は all である必要があります。対処: selector を all にしてください。";
+"error.E5007.tuningDefaults.selector" = "%1$@、selector: チューニングのデフォルトの selector は all である必要があります。対処: selector を all にしてください。";
 
 /* Error E5007, shown when a patch file fails: an entry of patch.modes has no id or holds a key that a mode does not have. %1$@ is the file. */
 "error.E5007.patch.patchModeEntries" = "%1$@、patch.modes: 各エントリには id が必要で、id、protocol、match、interface、session、idle 以外は使えません。対処: 各エントリに id を指定し、その他のキーを削除してください。";
@@ -5122,7 +5122,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "古いバージョンの保存済みドキュメントを現在のバージョンに変換します。";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "古い apiVersion を持つ Settings.plist、AccessGrants.plist、プロファイル、自分のコントローラーレコードとパッチ、仮想ゲームパッドファイルを変換します。元のファイルはサポートフォルダ内の Migrated フォルダに残ります。モッドパッケージも変換されます。サポートフォルダの代わりにスキャンするフォルダを指定できます。各ファイルには Migrated、Current、Failed、Foreign のいずれかの判定が付きます。";
+"cli.migrate.group.discussion" = "古い apiVersion を持つ Settings.plist、AccessGrants.plist、プロファイル、ユーザのコントローラレコードとパッチ、仮想ゲームパッドファイルを変換します。元のファイルはサポートフォルダ内の Migrated フォルダに残ります。MOD パッケージも変換されます。サポートフォルダの代わりにスキャンするフォルダを指定できます。各ファイルには Migrated、Current、Failed、Foreign のいずれかの判定が付きます。";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "変換されるドキュメントを一覧表示し、何も変更しません。";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
