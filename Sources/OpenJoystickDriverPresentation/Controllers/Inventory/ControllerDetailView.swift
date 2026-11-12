@@ -17,6 +17,10 @@
     var viewModel: RuntimeViewModel
     /// Opens the Input Test window for the controller.
     let openInputTest: @MainActor (ApplicationServiceDeviceDescription) -> Void
+    /// The state of the controller.
+    let readiness: ControllerReadiness
+    /// Runs the button of the state.
+    let perform: @MainActor (ControllerReadinessAction) -> Void
     /// Whether the serial number shows.
     @State
     var serialVisibility = SerialNumberVisibility()

@@ -17,6 +17,8 @@
     let column: MainWindowColumn
     /// Opens the Input Test window for a controller.
     let openInputTest: @MainActor (ApplicationServiceDeviceDescription) -> Void
+    /// Opens an area of the main window.
+    let openArea: @MainActor (MainWindowArea) -> Void
     /// The Bluetooth link closure that waits for confirmation, or nil.
     @State
     private var wirelessDisconnectRequest: WirelessDisconnectRequest?
@@ -27,14 +29,17 @@
     ///   - screen: The state of the Controllers list.
     ///   - column: The column of the main window that the view fills.
     ///   - openInputTest: Opens the Input Test window for a controller.
+    ///   - openArea: Opens an area of the main window.
     init(
       screen: ControllersViewModel,
       column: MainWindowColumn,
-      openInputTest: @escaping @MainActor (ApplicationServiceDeviceDescription) -> Void
+      openInputTest: @escaping @MainActor (ApplicationServiceDeviceDescription) -> Void,
+      openArea: @escaping @MainActor (MainWindowArea) -> Void
     ) {
       self.screen = screen
       self.column = column
       self.openInputTest = openInputTest
+      self.openArea = openArea
     }
 
     /// The model of the app's view of the service.
@@ -125,13 +130,17 @@
                   ? OJDLocalized.string("platform.macos.ui.controllers.servedByMacOS")
                   : device.protocolBinding.displayName
               ).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor)).lineLimit(1)
+              ControllerReadinessMark(readiness: readiness(for: device))
             }
             Spacer(minLength: 0)
             if device.isHeldByAppleDriver { ControllerClaimButton(viewModel: viewModel) }
           }.padding(.vertical, 4).tag(device.sessionToken.rawValue).ojdAccessibilityLabel(
             device.name
           )
-          .ojdAccessibilityValue(device.protocolBinding.displayName)
+          .ojdAccessibilityValue(
+            "\(device.protocolBinding.displayName), "
+              + OJDLocalized.string(readiness(for: device).titleKey)
+          )
           .contextMenu { sessionCommands(for: device) }
         }
         ForEach(screen.unservedDevices) { unserved in
@@ -146,10 +155,14 @@
             Text(unserved.nextStep).font(.caption).foregroundColor(
               Color(NSColor.secondaryLabelColor)
             )
+            ControllerReadinessMark(readiness: unserved.readiness)
           }.padding(.vertical, 4).tag(Self.unservedTag(unserved)).ojdAccessibilityLabel(
             unserved.title
           )
-          .ojdAccessibilityValue("\(unserved.explanation) \(unserved.nextStep)")
+          .ojdAccessibilityValue(
+            "\(OJDLocalized.string(unserved.readiness.titleKey)). "
+              + "\(unserved.explanation) \(unserved.nextStep)"
+          )
         }
       }.listStyle(InsetListStyle()).alert(item: $wirelessDisconnectRequest) { request in
         wirelessDisconnectAlert(for: request)
@@ -226,14 +239,16 @@
     @ViewBuilder
     private var controllerDetail: some View {
       if let unserved = screen.selectedUnserved {
-        UnservedDeviceDetailView(device: unserved).id(unserved.id)
+        UnservedDeviceDetailView(device: unserved, perform: performUnserved).id(unserved.id)
       } else if let selectedDevice {
         ControllerDetailView(
           device: selectedDevice,
           activeProfile: activeProfileState(for: selectedDevice),
           retry: refresh,
           viewModel: viewModel,
-          openInputTest: openInputTest
+          openInputTest: openInputTest,
+          readiness: readiness(for: selectedDevice),
+          perform: performSelected
         ).id(selectedDevice.sessionToken.rawValue)
       } else {
         switch viewModel.statusState {
@@ -273,6 +288,56 @@
       }
     }
 
+    /// Returns the state of a connected controller.
+    ///
+    /// - Parameter device: The controller.
+    /// - Returns: The state to show.
+    private func readiness(for device: ApplicationServiceDeviceDescription) -> ControllerReadiness {
+      .resolve(
+        ControllerReadinessInput(
+          device: device,
+          isPermissionMissing: AccessReadiness.hasMissingPermission(
+            permissionState: viewModel.permissionState,
+            statusState: viewModel.statusState
+          ),
+          driver: viewModel.systemExtensionSetupState
+        )
+      )
+    }
+
+    /// Runs the button of the state of the selected device that OJD does not serve.
+    private func performUnserved(_ action: ControllerReadinessAction) {
+      perform(action, device: nil)
+    }
+
+    /// Runs the button of the state of the selected controller.
+    private func performSelected(_ action: ControllerReadinessAction) {
+      perform(action, device: selectedDevice)
+    }
+
+    /// Runs the button of a controller's state.
+    ///
+    /// - Parameters:
+    ///   - action: What the button does.
+    ///   - device: The controller, or nil for a device that OJD does not serve.
+    private func perform(
+      _ action: ControllerReadinessAction,
+      device: ApplicationServiceDeviceDescription?
+    ) {
+      switch action {
+      case .openInputTest: if let device { openInputTest(device) }
+      case .openAccess: openArea(.access)
+      case .setUpDriver:
+        if viewModel.systemExtensionSetupState == .needsApproval {
+          _ = SystemExtensionApproval.openSystemSettings()
+        } else {
+          Task { @MainActor in await viewModel.repairSystemExtension() }
+        }
+      case .openSupportedControllers, .openTroubleshooting:
+        if let url = action.wikiURL { NSWorkspace.shared.open(url) }
+      }
+    }
+
     /// Refreshes the controller inventory.
     private func refresh() { screen.refresh() }
 
@@ -283,6 +348,11 @@
     private func activeProfileState(
       for device: ApplicationServiceDeviceDescription
     ) -> RuntimeActiveProfileState { screen.activeProfileState(for: device) }
+  }
+
+  extension RuntimeUnservedDevice {
+    /// The state of the device: OJD binds no protocol to it.
+    var readiness: ControllerReadiness { .resolve(.init(subject: .unserved(reason))) }
   }
 
   extension VirtualIdentityGlyphFamily {

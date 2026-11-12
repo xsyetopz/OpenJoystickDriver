@@ -5134,3 +5134,29 @@
 "cli.setting.set.badInterfaceLevel" = "„%1$@“ ist keine Oberflächenstufe. Verwende Simple oder Advanced.";
 /* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
 "ui.whatsNew.title" = "Neuerungen in %@";
+/* Title of the state of a connected controller that works, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
+"ui.controllers.readiness.working.title" = "Funktioniert";
+/* One sentence at the top of the Controllers detail for a controller in the Working state. */
+"ui.controllers.readiness.working.message" = "Dieser Controller ist einsatzbereit.";
+/* Button at the top of the Controllers detail for a controller in the Working state. It opens the Input Test window. */
+"ui.controllers.readiness.working.action" = "Eingabetest öffnen";
+/* Title of the state of a connected controller that waits for a step from the user, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
+"ui.controllers.readiness.needsStep.title" = "Du musst etwas tun";
+/* One sentence at the top of the Controllers detail for a controller that needs a permission that is not allowed yet. */
+"ui.controllers.readiness.needsStep.access.message" = "Dieser Controller braucht eine Berechtigung, die noch nicht erteilt wurde.";
+/* Button at the top of the Controllers detail for a controller that needs a permission. It opens the Access area of the main window; Access is the name of that area. */
+"ui.controllers.readiness.needsStep.access.action" = "Zugriff öffnen";
+/* One sentence at the top of the Controllers detail for a controller that needs the driver extension for Xbox USB controllers to be set up. Xbox USB stays as written. */
+"ui.controllers.readiness.needsStep.driver.message" = "Für diesen Controller muss der Xbox-USB-Treiber eingerichtet werden.";
+/* Button at the top of the Controllers detail for a controller that needs the driver extension. It approves, claims or repairs the driver. */
+"ui.controllers.readiness.needsStep.driver.action" = "Treiber einrichten";
+/* One sentence at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove, such as another program holding it. The detail names the next step. */
+"ui.controllers.readiness.needsStep.other.message" = "Dieser Controller kann noch nicht gelesen werden. Seine Details nennen den nächsten Schritt.";
+/* Button at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove. It opens the Troubleshooting page of the wiki. */
+"ui.controllers.readiness.needsStep.other.action" = "Fehlerbehebung öffnen";
+/* Title of the state of a connected controller that OJD has no support for, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
+"ui.controllers.readiness.notSupported.title" = "Noch nicht unterstützt";
+/* One sentence at the top of the detail of a controller in the Not supported yet state. OpenJoystickDriver is the product name. */
+"ui.controllers.readiness.notSupported.message" = "OpenJoystickDriver kann diesen Controller noch nicht verwenden.";
+/* Button at the top of the detail of a controller in the Not supported yet state. It opens the Supported Controllers page of the wiki. */
+"ui.controllers.readiness.notSupported.action" = "Unterstützte Controller ansehen";

@@ -99,7 +99,8 @@
         ControllersView(
           screen: screens.controllers,
           column: .list,
-          openInputTest: screens.openInputTest
+          openInputTest: screens.openInputTest,
+          openArea: navigation.showArea
         )
       case .profiles:
         ProfilesView(
@@ -193,7 +194,8 @@
         ControllersView(
           screen: screens.controllers,
           column: .detail,
-          openInputTest: screens.openInputTest
+          openInputTest: screens.openInputTest,
+          openArea: navigation.showArea
         )
       case .profiles:
         ProfilesView(

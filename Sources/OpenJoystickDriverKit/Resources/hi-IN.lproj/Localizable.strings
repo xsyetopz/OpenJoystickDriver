@@ -5133,3 +5133,29 @@
 "cli.setting.set.badInterfaceLevel" = "'%1$@' इंटरफ़ेस स्तर नहीं है। Simple या Advanced इस्तेमाल करें।";
 /* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
 "ui.whatsNew.title" = "%@ में नया क्या है";
+/* Title of the state of a connected controller that works, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
+"ui.controllers.readiness.working.title" = "काम कर रहा है";
+/* One sentence at the top of the Controllers detail for a controller in the Working state. */
+"ui.controllers.readiness.working.message" = "यह कंट्रोलर उपयोग के लिए तैयार है।";
+/* Button at the top of the Controllers detail for a controller in the Working state. It opens the Input Test window. */
+"ui.controllers.readiness.working.action" = "इनपुट टेस्ट खोलें";
+/* Title of the state of a connected controller that waits for a step from the user, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
+"ui.controllers.readiness.needsStep.title" = "आपकी ओर से एक कदम चाहिए";
+/* One sentence at the top of the Controllers detail for a controller that needs a permission that is not allowed yet. */
+"ui.controllers.readiness.needsStep.access.message" = "इस कंट्रोलर को एक अनुमति चाहिए जो अभी नहीं दी गई है।";
+/* Button at the top of the Controllers detail for a controller that needs a permission. It opens the Access area of the main window; Access is the name of that area. */
+"ui.controllers.readiness.needsStep.access.action" = "एक्सेस खोलें";
+/* One sentence at the top of the Controllers detail for a controller that needs the driver extension for Xbox USB controllers to be set up. Xbox USB stays as written. */
+"ui.controllers.readiness.needsStep.driver.message" = "इस कंट्रोलर के लिए Xbox USB ड्राइवर सेट अप करना होगा।";
+/* Button at the top of the Controllers detail for a controller that needs the driver extension. It approves, claims or repairs the driver. */
+"ui.controllers.readiness.needsStep.driver.action" = "ड्राइवर सेट अप करें";
+/* One sentence at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove, such as another program holding it. The detail names the next step. */
+"ui.controllers.readiness.needsStep.other.message" = "यह कंट्रोलर अभी पढ़ा नहीं जा सकता। इसके विवरण में अगला कदम बताया गया है।";
+/* Button at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove. It opens the Troubleshooting page of the wiki. */
+"ui.controllers.readiness.needsStep.other.action" = "समस्या निवारण खोलें";
+/* Title of the state of a connected controller that OJD has no support for, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
+"ui.controllers.readiness.notSupported.title" = "अभी समर्थित नहीं";
+/* One sentence at the top of the detail of a controller in the Not supported yet state. OpenJoystickDriver is the product name. */
+"ui.controllers.readiness.notSupported.message" = "OpenJoystickDriver अभी इस कंट्रोलर का उपयोग नहीं कर सकता।";
+/* Button at the top of the detail of a controller in the Not supported yet state. It opens the Supported Controllers page of the wiki. */
+"ui.controllers.readiness.notSupported.action" = "समर्थित कंट्रोलर देखें";

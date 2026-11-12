@@ -12,6 +12,7 @@
     var body: some View {
       Form {
         Section { controllerHeader }
+        Section { ControllerReadinessCard(readiness: readiness, perform: perform) }
         if showsSessionState {
           Section {
             if device.sessionState == .suspended {
