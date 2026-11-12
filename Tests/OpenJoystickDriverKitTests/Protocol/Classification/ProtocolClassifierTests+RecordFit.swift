@@ -42,7 +42,8 @@ extension ProtocolClassifierTests {
   private func fitCatalog(
     server: String?,
     family: String,
-    interface: [String: Int]?
+    interface: [String: Int]?,
+    idle: String? = nil
   ) throws -> DeviceCatalog {
     let directory = FileManager.default.temporaryDirectory
       .appendingPathComponent("ojd-record-fit-\(UUID().uuidString)", isDirectory: true)
@@ -50,6 +51,7 @@ extension ProtocolClassifierTests {
     defer { try? FileManager.default.removeItem(at: directory) }
     var mode: [String: Any] = ["id": "default", "protocol": ["family": family]]
     mode["interface"] = interface
+    mode["idle"] = idle
     var tree: [String: Any] = [
       "apiVersion": OpenJoystickDriverAPI.version, "kind": ControllerRecordDocument.kind,
       "vendorID": 0x1234, "productID": 0xAC02, "modes": [mode],
@@ -115,20 +117,21 @@ extension ProtocolClassifierTests {
   }
 
   @Test
-  func aMatchingIdleModeDoesNotFallBack() {
+  func anIdleRawUSBModeStaysIdleInsteadOfFallingBack() throws {
     let device = PhysicalDevice(
-      vendorID: 0x2DC8,
-      productID: 0x301C,
-      productName: "IDLE",
+      vendorID: 0x1234,
+      productID: 0xAC02,
       interfaces: [padInterface(0)]
     )
+    let idle = try fitCatalog(
+      server: nil,
+      family: "XboxGIP",
+      interface: nil,
+      idle: "NoControllerLinked"
+    )
     #expect(
-      ProtocolClassifier.classify(
-        device,
-        backend: .hid,
-        catalog: DeviceCatalog(),
-        modeID: "unlinked"
-      ) == .unsupported(.noControllerLinked)
+      ProtocolClassifier.classify(device, backend: .hid, catalog: idle)
+        == .unsupported(.noControllerLinked)
     )
   }
 
