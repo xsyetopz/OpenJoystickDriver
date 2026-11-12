@@ -848,7 +848,11 @@
           ]
         },
         "unmapped": { "type": "array", "items": { "type": "string" } },
-        "rejection": { "type": "string" }
+        "rejection": { "type": "string" },
+        "unfitRecordID": {
+          "description": "The controller record that fit no interface of the device, so the HIDDescriptor rule serves it.",
+          "$ref": "#/$defs/catalogRecordID"
+        }
       }
     },
     "catalogRecordID": {

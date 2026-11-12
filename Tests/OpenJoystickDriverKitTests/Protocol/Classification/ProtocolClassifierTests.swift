@@ -255,14 +255,23 @@ struct ProtocolClassifierTests {
   }
 
   @Test
-  func transportMismatchWithTheRecordIsUnsupportedAndNeverGenericHID() {
-    // A raw-USB record observed through IOHID, even with a valid gamepad descriptor.
+  func transportMismatchWithTheRecordIsUnsupportedAndNeverGenericHID() throws {
+    // A raw-USB record observed through IOHID with no usable HID interface.
     #expect(
+      classify(
+        device(0x045E, 0x028E, interfaces: [hidInterface(host: .usb, descriptor: vendorOnly)]),
+        backend: .hid
+      ) == rejection(.interfaceContractMismatch, .xboxXUSB, record: "045e-028e")
+    )
+    // With a gamepad descriptor the HIDDescriptor rule serves it and names the record.
+    let fallback = try bound(
       classify(
         device(0x045E, 0x028E, interfaces: [hidInterface(host: .usb, descriptor: gamepad)]),
         backend: .hid
-      ) == rejection(.unsupportedTransportVariant, .xboxXUSB, record: "045e-028e")
+      )
     )
+    #expect(fallback.rule == .hidDescriptor)
+    #expect(fallback.inputMapping?.unfitRecordID == "045e-028e")
     // A HID record observed through raw USB.
     for backend in [DeviceAccessBackend.rawUSB, .usbExtension] {
       #expect(

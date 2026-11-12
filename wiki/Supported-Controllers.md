@@ -131,7 +131,7 @@ The Ant Esports GP100 starts in XInput mode. In that mode macOS sees no input. T
 
 ## Generic HID Controllers
 
-OJD can read some HID gamepads that are not in its catalog. It reads the report descriptor that the controller sends. Generic HID support is not a fallback for a known controller. A controller with a record always uses its own driver, and OJD does not retry a failing known controller as generic HID.
+OJD can read some HID gamepads that are not in its catalog. It reads the report descriptor that the controller sends. A controller with a record uses its own driver. When no mode of the record fits the interfaces the device exposes, and a HID interface of the device passes the descriptor checks, OJD serves it as a controller with no record and `ojd controller show` says in the Input mapping row that the record did not fit and that rule `HIDDescriptor` serves it. A record that states `server` `System` keeps the pad with macOS, and a mode that matches and is idle (`Idle`) stays idle. OJD does not retry a failing known controller as generic HID.
 
 ### What Works
 
