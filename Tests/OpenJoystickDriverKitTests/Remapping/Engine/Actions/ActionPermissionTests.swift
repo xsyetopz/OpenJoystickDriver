@@ -125,6 +125,8 @@ private final class StubSystemActionPerformer: RemappingSystemActionPerforming,
   func typeText(_: String) async throws { try send("TypeText", needs: .postEvent) }
   func runShortcut(name _: String) async throws { try send("RunShortcut", needs: .automation) }
   func openMissionControl() async throws { try send("MissionControl") }
+  func openLaunchpad() async throws { try send("Launchpad") }
+  func openScreenshot() async throws { try send("Screenshot") }
   func openApplication(bundleIdentifier _: String) async throws { try send("OpenApplication") }
   func openURL(_: URL) async throws { try send("OpenURL") }
 }

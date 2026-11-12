@@ -40,6 +40,10 @@ public enum RemappingSystemKey: String, Codable, CaseIterable, Sendable {
 public enum RemappingSystemActionKind: String, Codable, CaseIterable, Sendable {
   /// Opens Mission Control.
   case missionControl = "MissionControl"
+  /// Opens Launchpad, or the Apps app that replaces it where Launchpad is gone.
+  case launchpad = "Launchpad"
+  /// Opens the Screenshot app, which shows the capture toolbar.
+  case screenshot = "Screenshot"
 }
 
 /// One call to a ``RemappingSystemActionPerforming``, as the engine produces it.
@@ -48,6 +52,10 @@ enum RemappingSystemActionRequest: Equatable, Sendable {
   case key(RemappingSystemKey, pressed: Bool)
   /// Open Mission Control.
   case missionControl
+  /// Open Launchpad.
+  case launchpad
+  /// Open the Screenshot app.
+  case screenshot
   /// Open the application with the bundle identifier.
   case openApplication(String)
   /// Open the URL.
@@ -97,6 +105,10 @@ public protocol RemappingSystemActionPerforming: Sendable {
   func postSystemKey(_ key: RemappingSystemKey, pressed: Bool) async throws
   /// Opens Mission Control.
   func openMissionControl() async throws
+  /// Opens Launchpad, or Apps where Launchpad is gone.
+  func openLaunchpad() async throws
+  /// Opens the Screenshot app.
+  func openScreenshot() async throws
   /// Opens the application with the bundle identifier.
   func openApplication(bundleIdentifier: String) async throws
   /// Opens the URL.
@@ -113,6 +125,8 @@ extension RemappingSystemActionPerforming {
     switch request {
     case .key(let key, let pressed): try await postSystemKey(key, pressed: pressed)
     case .missionControl: try await openMissionControl()
+    case .launchpad: try await openLaunchpad()
+    case .screenshot: try await openScreenshot()
     case .openApplication(let identifier): try await openApplication(bundleIdentifier: identifier)
     case .openURL(let text):
       guard let url = URL(string: text) else {

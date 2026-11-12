@@ -13,6 +13,8 @@ struct SystemActionTests {
     let cases: [(RemappingDestination, String)] = [
       (.systemKey(.volumeUp), #"{"systemKey":"VolumeUp","type":"SystemKey"}"#),
       (.systemAction(.missionControl), #"{"action":"MissionControl","type":"SystemAction"}"#),
+      (.systemAction(.launchpad), #"{"action":"Launchpad","type":"SystemAction"}"#),
+      (.systemAction(.screenshot), #"{"action":"Screenshot","type":"SystemAction"}"#),
       (
         .openApplication(bundleIdentifier: "com.apple.TextEdit"),
         #"{"bundleIdentifier":"com.apple.TextEdit","type":"OpenApplication"}"#
@@ -35,7 +37,7 @@ struct SystemActionTests {
     let rejected = [
       #"{"type":"SystemKey","systemKey":"Eject"}"#,
       #"{"type":"SystemKey","systemKey":"Mute","text":"a"}"#,
-      #"{"type":"SystemAction","action":"Launchpad"}"#,
+      #"{"type":"SystemAction","action":"LockScreen"}"#,
       #"{"type":"TypeText"}"#,
       #"{"type":"OpenURL","name":"x"}"#,
     ]
@@ -110,6 +112,8 @@ struct SystemActionTests {
   func triggerActionsFireOnPressOnly() {
     let cases: [(RemappingDestination, RemappingSystemActionRequest)] = [
       (.systemAction(.missionControl), .missionControl),
+      (.systemAction(.launchpad), .launchpad),
+      (.systemAction(.screenshot), .screenshot),
       (
         .openApplication(bundleIdentifier: "com.apple.TextEdit"),
         .openApplication("com.apple.TextEdit")
@@ -132,6 +136,8 @@ struct SystemActionTests {
     let engine = RemappingEventEngine(sink: RemappingTestSink(), systemActionPerformer: performer)
     let cases: [(RemappingDestination, String)] = [
       (.systemAction(.missionControl), "missionControl"),
+      (.systemAction(.launchpad), "launchpad"),
+      (.systemAction(.screenshot), "screenshot"),
       (.openApplication(bundleIdentifier: "com.apple.TextEdit"), "app:com.apple.TextEdit"),
       (.openURL("https://example.com"), "url:https://example.com"),
       (.runShortcut("Morning"), "shortcut:Morning"),
@@ -246,6 +252,8 @@ private final class StubPerformer: RemappingSystemActionPerforming, @unchecked S
     try record("key:\(key.rawValue):\(pressed ? "down" : "up")")
   }
   func openMissionControl() async throws { try record("missionControl") }
+  func openLaunchpad() async throws { try record("launchpad") }
+  func openScreenshot() async throws { try record("screenshot") }
   func openApplication(bundleIdentifier: String) async throws {
     try record("app:\(bundleIdentifier)")
   }

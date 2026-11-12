@@ -36,6 +36,29 @@ package struct MacOSSystemActionPerformer: RemappingSystemActionPerforming {
     )
   }
 
+  /// Opens Launchpad, or Apps where the system has no Launchpad.
+  package func openLaunchpad() async throws {
+    for identifier in ["com.apple.launchpad.launcher", "com.apple.apps.launcher"] {
+      if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifier) {
+        try await open(url, action: "Launchpad")
+        return
+      }
+    }
+    throw RemappingSystemActionError.failed(
+      action: "Launchpad",
+      reason: "com.apple.launchpad.launcher"
+    )
+  }
+
+  /// Opens the Screenshot application, which shows the capture toolbar.
+  package func openScreenshot() async throws {
+    let identifier = "com.apple.screenshot.launcher"
+    guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifier) else {
+      throw RemappingSystemActionError.failed(action: "Screenshot", reason: identifier)
+    }
+    try await open(url, action: "Screenshot")
+  }
+
   /// Opens the application with the bundle identifier.
   package func openApplication(bundleIdentifier: String) async throws {
     guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleIdentifier)

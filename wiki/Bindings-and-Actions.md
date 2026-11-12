@@ -38,7 +38,7 @@ An assignment connects one controller control to one destination, such as a keyb
 | Layer set | Turn a layer of the profile on or off, or flip it | Discrete sources only; fires on press |
 | Pause | Pause or resume the controller, or flip it | Discrete sources only; fires on press |
 | System key | Play/pause, next or previous track, fast-forward, rewind, volume up or down, mute, display brightness, keyboard backlight | Discrete sources only; needs Accessibility access; see [System actions](#system-actions) |
-| System action | Mission Control | Discrete sources only; fires on press; see [System actions](#system-actions) |
+| System action | Mission Control, Launchpad, Screenshot | Discrete sources only; fires on press; see [System actions](#system-actions) |
 | Open application | An application by bundle identifier | Discrete sources only; fires on press; command line or profile file only |
 | Open URL | A web or other non-file URL | Discrete sources only; fires on press; command line or profile file only |
 | Run Shortcut | A shortcut of the Shortcuts app, by name | Discrete sources only; fires on press; command line or profile file only |
@@ -228,10 +228,25 @@ These destinations make the Mac do something instead of sending a key or a butto
 
 - **System key** sends a media, volume, display brightness, or keyboard backlight key. It sends the key down when you press the control and the key up when you release it, so holding the control repeats the key as holding the key does. The names are `play-pause`, `next-track`, `previous-track`, `fast-forward`, `rewind`, `volume-up`, `volume-down`, `mute`, `brightness-up`, `brightness-down`, `keyboard-illumination-up`, and `keyboard-illumination-down`. It does not take turbo.
 - **Mission Control** opens Mission Control.
+- **Launchpad** opens Launchpad. On a macOS version that has no Launchpad, it opens the Apps app that replaces it.
+- **Screenshot** opens the Screenshot app, which shows the capture toolbar.
 - **Open application** opens an application by its bundle identifier, such as `com.apple.TextEdit`.
 - **Open URL** opens a URL in its default application. A `file:` URL is rejected.
 - **Run Shortcut** runs a shortcut of the Shortcuts app by name. A shortcut that asks for input waits for you. OJD does not wait for it to finish.
 - **Type text** types a fixed string as keyboard events. While macOS has secure input on, such as in a password field, macOS may not deliver the keys, and OJD reports that secure input is on.
+
+Each action uses one public macOS API. None of the new ones needs a permission in the Privacy & Security pane.
+
+| Action | Public API | Permission | Source |
+| --- | --- | --- | --- |
+| Mission Control | `NSWorkspace.openApplication(at:configuration:)` on the Mission Control app | None | [openApplication(at:configuration:completionHandler:)](https://developer.apple.com/documentation/appkit/nsworkspace/openapplication(at:configuration:completionhandler:)) |
+| Launchpad | `NSWorkspace.urlForApplication(withBundleIdentifier:)` for `com.apple.launchpad.launcher`, then `com.apple.apps.launcher`, and `openApplication(at:configuration:)` | None | [NSWorkspace](https://developer.apple.com/documentation/appkit/nsworkspace) |
+| Screenshot | `NSWorkspace.urlForApplication(withBundleIdentifier:)` for `com.apple.screenshot.launcher`, and `openApplication(at:configuration:)` | None | [NSWorkspace](https://developer.apple.com/documentation/appkit/nsworkspace) |
+| Type text | `CGEvent(keyboardEventSource:virtualKey:keyDown:)`, `keyboardSetUnicodeString`, and `CGEvent.post(tap:)` | Accessibility (Post Event) | [CGEvent](https://developer.apple.com/documentation/coregraphics/cgevent) |
+
+Apple's pages for `openApplication` state no permission for launching an app. The Launchpad, Screenshot, and bundle-identifier rows are read from the NSWorkspace API and the bundle identifiers on macOS 27.2, not stated by Apple's pages.
+
+**Lock Screen** and **Show Desktop** are not actions: macOS has no public API for either. Lock Screen would need the private `SACLockScreenImmediate` or the retired `CGSession` tool, and a search of Apple's documentation finds no call to show the desktop. To get either, assign the keyboard shortcut that you set in System Settings, such as <kbd>Control</kbd>+<kbd>Command</kbd>+<kbd>Q</kbd>, to a keyboard destination.
 
 All of them except System key act once when you press the control and do nothing on release. They take the behaviors **Hold**, **Tap on press**, **Tap on release**, and **Press**. **Toggle**, **Release**, and **Pulse** fail validation. A failed action writes its error to the Activity log and the service log, and the profile keeps working. To read the log, run `ojd log`.
 
@@ -240,13 +255,15 @@ To assign them with the command line, use these targets with `ojd binding set`:
 ```sh
 ojd binding set Racing button:north system-key:volume-up
 ojd binding set Racing button:west system:mission-control
+ojd binding set Racing button:select system:launchpad
+ojd binding set Racing button:guide system:screenshot
 ojd binding set Racing button:east open-app:com.apple.TextEdit
 ojd binding set Racing button:south open-url:https://example.com
 ojd binding set Racing button:start shortcut:"Dim Lights"
 ojd binding set Racing button:back text:hello
 ```
 
-The app lists the system keys, Mission Control, and one entry each for Open application, Open URL, Run Shortcut, and Type text in the destination pickers. Choosing one of the four shows a text field for its application identifier, URL, Shortcut name, or text.
+The app lists the system keys, Mission Control, Launchpad, Screenshot, and one entry each for Open application, Open URL, Run Shortcut, and Type text in the destination pickers. Choosing one of the four shows a text field for its application identifier, URL, Shortcut name, or text.
 
 OJD does not offer Show Desktop, App Exposé, Launchpad, or a display brightness setting that needs private macOS interfaces: DisplayServices, CoreDock, SkyLight, CGS, and MediaRemote. To get one of them, set a keyboard shortcut for it in **System Settings**, then assign a **Keyboard** destination with that shortcut.
 
