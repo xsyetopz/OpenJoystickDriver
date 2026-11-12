@@ -1610,7 +1610,7 @@
 /* Guidance in the motion calibration controls when the service cannot reach the controller: connect the controller again, then use Refresh to read the calibration status. */
 "ui.motion.calibration.controllerUnavailable" = "Verbind de controller opnieuw en vernieuw daarna de kalibratiestatus.";
 /* Guidance in the motion calibration controls when the controller has no usable motion data: turn on a profile for this controller and check that motion data is available. */
-"ui.motion.calibration.motionUnavailable" = "Schakel een hertoewijzingsprofiel in voor deze controller en controleer of beweging beschikbaar is.";
+"ui.motion.calibration.motionUnavailable" = "Schakel een profiel in voor deze controller en controleer of beweging beschikbaar is.";
 /* Status line in the motion calibration controls while the service has no motion samples yet; Refresh checks again. */
 "ui.motion.calibration.waiting" = "Wachten op bewegingsmetingen… Vernieuw om opnieuw te controleren.";
 /* Note in the motion calibration controls: collecting gyro bias keeps running in the service after the window closes, and the Pause button stops it. */
@@ -3206,7 +3206,7 @@
 /* Heading in the output of 'ojd status' above the list of skipped controller records. %lld is the number of records. */
 "cli.status.group.labelSkippedRecords" = "Overgeslagen controllerrecords (%lld)";
 /* One-line summary of 'ojd binding' in the command list and at the top of its help. */
-"cli.binding.group.abstract" = "Toon, stel in en wis de koppelingen van een toewijzingsprofiel.";
+"cli.binding.group.abstract" = "Toon, stel in en wis de koppelingen van een profiel.";
 /* Error of 'ojd binding set' when the JSON of --actions-json cannot be read. %@ is the description of the parse problem. --actions-json stays as written. */
 "cli.binding.group.actionsInvalid" = "--actions-json is geen geldige actielijst: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
@@ -3332,7 +3332,7 @@
 /* Help text of the PAIR argument of 'ojd controller unpair'. The command in quotes stays as written. */
 "cli.controller.unpair.pair" = "Het paar: de sessie-ID uit ‘ojd controller pair’, of de ID van een van beide Joy-Cons.";
 /* One-line summary of 'ojd profile' in the command list and at the top of its help. */
-"cli.profile.group.abstract" = "Maak toewijzingsprofielen, wijzig ze en activeer ze.";
+"cli.profile.group.abstract" = "Maak profielen, wijzig ze en activeer ze.";
 /* One-line summary of 'ojd profile activate' in the command list and at the top of its help. */
 "cli.profile.activate.abstract" = "Pas een profiel toe op het bijbehorende controllermodel.";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
@@ -3392,7 +3392,7 @@
 /* Message printed by 'ojd profile delete --dry-run' instead of deleting. %@ is the profile name, shown in quotes. */
 "cli.profile.delete.dryRun" = "Zou het profiel ‘%@’ verwijderen.";
 /* Long description in the help of 'ojd profile'. PROFILE and the commands in quotes stay as written. */
-"cli.profile.group.discussion" = "Een toewijzingsprofiel zet de bedieningselementen van één controllermodel om in gamepad-, toetsenbord- en aanwijzerinvoer. PROFILE is de ID of naam van een profiel uit ‘ojd profile list’. Wijzig koppelingen met ‘ojd binding’ en al het andere met ‘ojd profile set’ of ‘ojd profile edit’. Elke profielopdracht behalve ‘ojd profile validate’ vereist de service.";
+"cli.profile.group.discussion" = "Een profiel zet de bedieningselementen van één controllermodel om in gamepad-, toetsenbord- en aanwijzerinvoer. PROFILE is de ID of naam van een profiel uit ‘ojd profile list’. Wijzig koppelingen met ‘ojd binding’ en al het andere met ‘ojd profile set’ of ‘ojd profile edit’. Elke profielopdracht behalve ‘ojd profile validate’ vereist de service.";
 /* Error of the profile file commands when a profile document is invalid. %1$@ is the file path or the word stdin and %2$@ is the description of the problem. */
 "cli.profile.group.documentInvalid" = "%1$@ is geen geldig profiel: %2$@";
 /* Reason fragment of a document problem: the text is not JSON. It follows a file name in a message and starts in lowercase. */
@@ -3468,7 +3468,7 @@
 /* Help text of the KEY argument of 'ojd profile get' and 'ojd profile set'. The example bindings.0.behavior stays as written. */
 "cli.profile.group.key" = "De sleutel: namen en array-indexen verbonden met punten, zoals bindings.0.behavior.";
 /* One-line summary of 'ojd profile list' in the command list and at the top of its help. */
-"cli.profile.list.abstract" = "Toon toewijzingsprofielen.";
+"cli.profile.list.abstract" = "Toon profielen.";
 /* Message printed by 'ojd profile list' when no profile exists. The command in quotes stays as written. */
 "cli.profile.list.empty" = "Geen profielen. Maak er een met ‘ojd profile create’.";
 /* Warning printed by 'ojd profile list' for a stored profile that the service could not load. %@ is the description of the problem. */
@@ -3550,7 +3550,7 @@
 /* Text of error E1011, sent when a line has no apiVersion or no kind. apiVersion and kind are field names and stay as written. */
 "error.E1011.message" = "Een regel heeft geen apiVersion of geen kind. Elke regel bevat beide. Voeg ze toe en maak opnieuw verbinding.";
 /* Description in the Shortcuts app of the action that turns on a remapping profile. */
-"ui.shortcuts.action.activateProfile.description" = "Schakelt een toewijzingsprofiel in voor het bijbehorende controllermodel.";
+"ui.shortcuts.action.activateProfile.description" = "Schakelt een profiel in voor het bijbehorende controllermodel.";
 /* Name in the Shortcuts app of the action that turns on a remapping profile. */
 "ui.shortcuts.action.activateProfile.title" = "Activeer profiel";
 /* Description in the Shortcuts app of the action that returns the app version. */
@@ -3562,7 +3562,7 @@
 /* Name in the Shortcuts app of the action that returns the battery level of a controller. */
 "ui.shortcuts.action.batteryLevel.title" = "Haal batterijniveau op";
 /* Description in the Shortcuts app of the action that turns off a remapping profile. */
-"ui.shortcuts.action.deactivateProfile.description" = "Schakelt een toewijzingsprofiel uit.";
+"ui.shortcuts.action.deactivateProfile.description" = "Schakelt een profiel uit.";
 /* Name in the Shortcuts app of the action that turns off a remapping profile. */
 "ui.shortcuts.action.deactivateProfile.title" = "Deactiveer profiel";
 /* Description in the Shortcuts app of the action that returns the connected controllers. */
@@ -3570,7 +3570,7 @@
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "Haal controllers op";
 /* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
-"ui.shortcuts.action.setProfileValue.description" = "Wijzigt één waarde van een toewijzingsprofiel, zoals de naam.";
+"ui.shortcuts.action.setProfileValue.description" = "Wijzigt één waarde van een profiel, zoals de naam.";
 /* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
 "ui.shortcuts.action.setProfileValue.key" = "Sleutel";
 /* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
@@ -3640,7 +3640,7 @@
 /* Name of the name property of a profile in the Shortcuts app. */
 "ui.shortcuts.profile.name" = "Naam";
 /* Name of the profile type in the Shortcuts app. It is singular and names one remapping profile. */
-"ui.shortcuts.profile.type" = "Toewijzingsprofiel";
+"ui.shortcuts.profile.type" = "Profiel";
 /* One-line summary of 'ojd explain' in the command list and at the top of its help. */
 "cli.explain.group.abstract" = "Legt een foutcode uit: wat die betekent en hoe je het oplost.";
 /* Long description in the help of 'ojd explain'. ojd explain stays as written. The code case does not matter, so E2004 and e2004 are the same. */
@@ -3766,7 +3766,7 @@
 /* Text of error E3026, returned when a Joy-Con pair profile needs a gyro calibration of the other Joy-Con. Joy-Con is a Nintendo product name. */
 "error.E3026.message" = "Het profiel van het Joy-Con-paar haalt de gyro van de andere Joy-Con. Kalibreer de beweging van de controller die het profiel voor de gyro kiest.";
 /* Text of error E3027, returned when a motion request names a controller with no active remapping profile. */
-"error.E3027.message" = "Er is geen hertoewijzingsprofiel actief voor de controller, dus hij verwerkt geen beweging. Activeer een profiel ervoor, breng de doel-app naar voren en probeer het opnieuw.";
+"error.E3027.message" = "Er is geen profiel actief voor de controller, dus hij verwerkt geen beweging. Activeer een profiel ervoor, breng de doel-app naar voren en probeer het opnieuw.";
 /* Text of error E3028, returned when the remapping session of the controller changed while a request ran. */
 "error.E3028.message" = "De hertoewijzingssessie van de controller is gewijzigd tijdens het verzoek. Probeer het opnieuw.";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */

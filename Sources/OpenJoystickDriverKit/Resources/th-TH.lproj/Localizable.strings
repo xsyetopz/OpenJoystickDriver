@@ -1610,7 +1610,7 @@
 /* Guidance in the motion calibration controls when the service cannot reach the controller: connect the controller again, then use Refresh to read the calibration status. */
 "ui.motion.calibration.controllerUnavailable" = "เชื่อมต่อคอนโทรลเลอร์ใหม่ แล้วดึงข้อมูลสถานะการปรับเทียบใหม่";
 /* Guidance in the motion calibration controls when the controller has no usable motion data: turn on a profile for this controller and check that motion data is available. */
-"ui.motion.calibration.motionUnavailable" = "เปิดใช้งานโปรไฟล์การแมปใหม่สำหรับคอนโทรลเลอร์นี้ และตรวจสอบว่าการเคลื่อนไหวพร้อมใช้งาน";
+"ui.motion.calibration.motionUnavailable" = "เปิดใช้งานโปรไฟล์สำหรับคอนโทรลเลอร์นี้ และตรวจสอบว่าการเคลื่อนไหวพร้อมใช้งาน";
 /* Status line in the motion calibration controls while the service has no motion samples yet; Refresh checks again. */
 "ui.motion.calibration.waiting" = "กำลังรอตัวอย่างการเคลื่อนไหว… ดึงข้อมูลใหม่เพื่อตรวจสอบอีกครั้ง";
 /* Note in the motion calibration controls: collecting gyro bias keeps running in the service after the window closes, and the Pause button stops it. */
@@ -3206,7 +3206,7 @@
 /* Heading in the output of 'ojd status' above the list of skipped controller records. %lld is the number of records. */
 "cli.status.group.labelSkippedRecords" = "ระเบียนคอนโทรลเลอร์ที่ข้าม (%lld)";
 /* One-line summary of 'ojd binding' in the command list and at the top of its help. */
-"cli.binding.group.abstract" = "แสดงรายการ ตั้งค่า และล้างการกำหนดของโปรไฟล์การแมปใหม่";
+"cli.binding.group.abstract" = "แสดงรายการ ตั้งค่า และล้างการกำหนดของโปรไฟล์";
 /* Error of 'ojd binding set' when the JSON of --actions-json cannot be read. %@ is the description of the parse problem. --actions-json stays as written. */
 "cli.binding.group.actionsInvalid" = "--actions-json ไม่ใช่รายการการทำงานที่ถูกต้อง: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
@@ -3332,7 +3332,7 @@
 /* Help text of the PAIR argument of 'ojd controller unpair'. The command in quotes stays as written. */
 "cli.controller.unpair.pair" = "คู่: ID เซสชั่นจาก “ojd controller pair” หรือ ID ของ Joy-Con ตัวใดตัวหนึ่ง";
 /* One-line summary of 'ojd profile' in the command list and at the top of its help. */
-"cli.profile.group.abstract" = "สร้าง เปลี่ยน และเปิดใช้งานโปรไฟล์การแมปใหม่";
+"cli.profile.group.abstract" = "สร้าง เปลี่ยน และเปิดใช้งานโปรไฟล์";
 /* One-line summary of 'ojd profile activate' in the command list and at the top of its help. */
 "cli.profile.activate.abstract" = "ใช้โปรไฟล์กับรุ่นคอนโทรลเลอร์ของโปรไฟล์";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
@@ -3392,7 +3392,7 @@
 /* Message printed by 'ojd profile delete --dry-run' instead of deleting. %@ is the profile name, shown in quotes. */
 "cli.profile.delete.dryRun" = "จะลบโปรไฟล์ “%@”";
 /* Long description in the help of 'ojd profile'. PROFILE and the commands in quotes stay as written. */
-"cli.profile.group.discussion" = "โปรไฟล์การแมปใหม่เปลี่ยนตัวควบคุมของคอนโทรลเลอร์หนึ่งรุ่นให้เป็นอินพุตของเกมแพด แป้นพิมพ์ และตัวชี้ PROFILE คือ ID หรือชื่อโปรไฟล์จาก “ojd profile list” เปลี่ยนการกำหนดด้วย “ojd binding” และสิ่งอื่นทั้งหมดด้วย “ojd profile set” หรือ “ojd profile edit” คำสั่งโปรไฟล์ทุกคำสั่ง ยกเว้น “ojd profile validate” ต้องใช้บริการ";
+"cli.profile.group.discussion" = "โปรไฟล์เปลี่ยนตัวควบคุมของคอนโทรลเลอร์หนึ่งรุ่นให้เป็นอินพุตของเกมแพด แป้นพิมพ์ และตัวชี้ PROFILE คือ ID หรือชื่อโปรไฟล์จาก “ojd profile list” เปลี่ยนการกำหนดด้วย “ojd binding” และสิ่งอื่นทั้งหมดด้วย “ojd profile set” หรือ “ojd profile edit” คำสั่งโปรไฟล์ทุกคำสั่ง ยกเว้น “ojd profile validate” ต้องใช้บริการ";
 /* Error of the profile file commands when a profile document is invalid. %1$@ is the file path or the word stdin and %2$@ is the description of the problem. */
 "cli.profile.group.documentInvalid" = "%1$@ ไม่ใช่โปรไฟล์ที่ถูกต้อง: %2$@";
 /* Reason fragment of a document problem: the text is not JSON. It follows a file name in a message and starts in lowercase. */
@@ -3468,7 +3468,7 @@
 /* Help text of the KEY argument of 'ojd profile get' and 'ojd profile set'. The example bindings.0.behavior stays as written. */
 "cli.profile.group.key" = "คีย์: ชื่อและดัชนีอาร์เรย์ที่เชื่อมด้วยจุด เช่น bindings.0.behavior";
 /* One-line summary of 'ojd profile list' in the command list and at the top of its help. */
-"cli.profile.list.abstract" = "แสดงรายการโปรไฟล์การแมปใหม่";
+"cli.profile.list.abstract" = "แสดงรายการโปรไฟล์";
 /* Message printed by 'ojd profile list' when no profile exists. The command in quotes stays as written. */
 "cli.profile.list.empty" = "ไม่มีโปรไฟล์ สร้างด้วย “ojd profile create”";
 /* Warning printed by 'ojd profile list' for a stored profile that the service could not load. %@ is the description of the problem. */
@@ -4136,7 +4136,7 @@
 /* Text of error E1011, sent when a line has no apiVersion or no kind. apiVersion and kind are field names and stay as written. */
 "error.E1011.message" = "บรรทัดหนึ่งไม่มี apiVersion หรือ kind ทุกบรรทัดต้องมีทั้งสองอย่าง เพิ่มทั้งสองอย่างแล้วเชื่อมต่ออีกครั้ง";
 /* Description in the Shortcuts app of the action that turns on a remapping profile. */
-"ui.shortcuts.action.activateProfile.description" = "เปิดใช้งานโปรไฟล์การแมปใหม่สำหรับรุ่นคอนโทรลเลอร์ของโปรไฟล์";
+"ui.shortcuts.action.activateProfile.description" = "เปิดใช้งานโปรไฟล์สำหรับรุ่นคอนโทรลเลอร์ของโปรไฟล์";
 /* Name in the Shortcuts app of the action that turns on a remapping profile. */
 "ui.shortcuts.action.activateProfile.title" = "เปิดใช้งานโปรไฟล์";
 /* Description in the Shortcuts app of the action that returns the app version. */
@@ -4148,7 +4148,7 @@
 /* Name in the Shortcuts app of the action that returns the battery level of a controller. */
 "ui.shortcuts.action.batteryLevel.title" = "รับระดับแบตเตอรี่";
 /* Description in the Shortcuts app of the action that turns off a remapping profile. */
-"ui.shortcuts.action.deactivateProfile.description" = "ปิดใช้งานโปรไฟล์การแมปใหม่";
+"ui.shortcuts.action.deactivateProfile.description" = "ปิดใช้งานโปรไฟล์";
 /* Name in the Shortcuts app of the action that turns off a remapping profile. */
 "ui.shortcuts.action.deactivateProfile.title" = "ปิดใช้งานโปรไฟล์";
 /* Description in the Shortcuts app of the action that returns the connected controllers. */
@@ -4156,7 +4156,7 @@
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "รับคอนโทรลเลอร์";
 /* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
-"ui.shortcuts.action.setProfileValue.description" = "เปลี่ยนค่าหนึ่งค่าของโปรไฟล์การแมปใหม่ เช่น ชื่อ";
+"ui.shortcuts.action.setProfileValue.description" = "เปลี่ยนค่าหนึ่งค่าของโปรไฟล์ เช่น ชื่อ";
 /* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
 "ui.shortcuts.action.setProfileValue.key" = "คีย์";
 /* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
@@ -4226,7 +4226,7 @@
 /* Name of the name property of a profile in the Shortcuts app. */
 "ui.shortcuts.profile.name" = "ชื่อ";
 /* Name of the profile type in the Shortcuts app. It is singular and names one remapping profile. */
-"ui.shortcuts.profile.type" = "โปรไฟล์การแมปใหม่";
+"ui.shortcuts.profile.type" = "โปรไฟล์";
 /* One-line summary of 'ojd explain' in the command list and at the top of its help. */
 "cli.explain.group.abstract" = "อธิบายรหัสข้อผิดพลาด: ความหมายและวิธีแก้ไข";
 /* Long description in the help of 'ojd explain'. ojd explain stays as written. The code case does not matter, so E2004 and e2004 are the same. */
@@ -4352,7 +4352,7 @@
 /* Text of error E3026, returned when a Joy-Con pair profile needs a gyro calibration of the other Joy-Con. Joy-Con is a Nintendo product name. */
 "error.E3026.message" = "โปรไฟล์ของคู่ Joy-Con ใช้ไจโรจาก Joy-Con อีกตัว ปรับเทียบการเคลื่อนไหวของคอนโทรลเลอร์ที่โปรไฟล์เลือกสำหรับไจโร";
 /* Text of error E3027, returned when a motion request names a controller with no active remapping profile. */
-"error.E3027.message" = "ไม่มีโปรไฟล์การแมปใหม่ที่ใช้งานอยู่สำหรับคอนโทรลเลอร์ จึงไม่ประมวลผลการเคลื่อนไหว เปิดใช้งานโปรไฟล์ให้คอนโทรลเลอร์ นำแอปเป้าหมายมาไว้ด้านหน้า แล้วลองอีกครั้ง";
+"error.E3027.message" = "ไม่มีโปรไฟล์ที่ใช้งานอยู่สำหรับคอนโทรลเลอร์ จึงไม่ประมวลผลการเคลื่อนไหว เปิดใช้งานโปรไฟล์ให้คอนโทรลเลอร์ นำแอปเป้าหมายมาไว้ด้านหน้า แล้วลองอีกครั้ง";
 /* Text of error E3028, returned when the remapping session of the controller changed while a request ran. */
 "error.E3028.message" = "เซสชันการแมปใหม่ของคอนโทรลเลอร์เปลี่ยนไประหว่างที่คำขอทำงาน ลองอีกครั้ง";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
