@@ -50,7 +50,7 @@
                 }
               }
               if let failure = failures[row.id] {
-                Text(failure).font(.caption).foregroundColor(Color(NSColor.systemRed))
+                Text(failure).font(.body).foregroundColor(Color(NSColor.systemRed))
                   .lineLimit(2).textSelection(.enabled).help(failure)
               }
             }
