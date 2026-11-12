@@ -1023,11 +1023,11 @@
 /* Error shown when the profile item that the user selected is gone, for example after a reload. */
 "ui.error.selectedProfileItemMissing" = "รายการโปรไฟล์ที่เลือกไม่พร้อมใช้งานอีกต่อไป";
 /* Message about a request to the system extension manager that ends cancelled. The request installs or removes the driver extension. */
-"cli.transportExtension.group.cancelled" = "คำขอไดรเวอร์ Xbox USBถูกยกเลิก";
+"cli.transportExtension.group.cancelled" = "คำขอไดรเวอร์ Xbox USB ถูกยกเลิก";
 /* Message about a request to the system extension manager that finished. %@ is the result name from the system and stays as written. */
-"cli.transportExtension.group.completed" = "คำขอไดรเวอร์ Xbox USBเสร็จสิ้นด้วยผลลัพธ์ %@";
+"cli.transportExtension.group.completed" = "คำขอไดรเวอร์ Xbox USB เสร็จสิ้นด้วยผลลัพธ์ %@";
 /* Message about a request to the system extension manager that failed. %1$@ is the error domain, %2$d is the error code and %3$@ is the description from the system. Keep code= as written. */
-"cli.transportExtension.group.failed" = "คำขอไดรเวอร์ Xbox USBล้มเหลว: %1$@ code=%2$d %3$@";
+"cli.transportExtension.group.failed" = "คำขอไดรเวอร์ Xbox USB ล้มเหลว: %1$@ code=%2$d %3$@";
 /* Message when the system extension manager replaces an installed driver extension. %1$@ is the extension bundle identifier, %2$@ is the installed version and %3$@ is the version that replaces it. Keep the v before the numbers. */
 "cli.transportExtension.group.replacing" = "กำลังแทนที่ %1$@ v%2$@ ด้วย v%3$@…";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller, which OJD reads by the layout its HID report descriptor declares. Keep HID as written. */
@@ -2014,7 +2014,7 @@
 /* Examples block at the end of the help of 'ojd binding set'. The command lines, option names and sources stay as written; translate only the lines that start with #. */
 "cli.binding.set.examples" = "ตัวอย่าง:\n  # กด Space ค้างไว้ขณะที่กดปุ่มทิศใต้ค้างไว้\n  ojd binding set Racing button:south key:space\n  # สลับ J ทุกครั้งที่กด\n  ojd binding set Racing button:west key:key-j --behavior toggle\n  # กด J ซ้ำ 10 ครั้งต่อวินาทีขณะกดค้างไว้\n  ojd binding set Racing button:west key:key-j --turbo-rate 10 --turbo-duty 0.5";
 /* Examples block at the end of the help of 'ojd record install'. The command lines and file names stay as written; translate only the lines that start with #. */
-"cli.record.install.examples" = "ตัวอย่าง:\n  # ติดตั้งไฟล์เรคคอร์ด\n  ojd record install 045e-028e.plist\n  # อ่านเรคคอร์ดจาก stdin\n  ojd record install - < 045e-028e.plist";
+"cli.record.install.examples" = "ตัวอย่าง:\n  # ติดตั้งไฟล์ระเบียน\n  ojd record install 045e-028e.plist\n  # อ่านระเบียนจาก stdin\n  ojd record install - < 045e-028e.plist";
 /* Examples block at the end of the help of 'ojd access grant'. The command lines and option names stay as written; translate only the lines that start with #. */
 "cli.access.grant.examples" = "ตัวอย่าง:\n  # อนุญาตให้โปรแกรมใช้บริการ\n  ojd access grant /Applications/Example.app\n  # สร้างโทเค็นสำหรับหน้าเว็บที่ให้บริการจากต้นทางเดียว\n  ojd access grant --token overlay --origin http://127.0.0.1:8080";
 /* One-line summary of 'ojd service' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
@@ -2426,7 +2426,7 @@
 /* One-line summary of 'ojd config' in the command list and at the top of its help. */
 "cli.config.group.abstract" = "แสดงหรือเปลี่ยนการกำหนดค่าที่ OpenJoystickDriver ใช้ และเลเยอร์ที่กำหนดแต่ละค่า";
 /* Long description in the help of 'ojd config'. It lists the configuration layers from lowest to highest priority; all.patch.plist is a file name that stays as written. */
-"cli.config.group.discussion" = "ค่าจะซ้อนกันเป็นเลเยอร์ เรียงจากต่ำสุดก่อน: ค่าเริ่มต้นของไดรเวอร์, ระเบียนที่มากับแอป, ระเบียนของแพ็กเกจ, all.patch.plist, ระเบียนของคุณ, โปรไฟล์ที่ใช้งานอยู่ คีย์การปรับแต่งแต่ละคีย์จะใช้ค่าจากเลเยอร์สูงสุดที่กำหนดคีย์นั้น";
+"cli.config.group.discussion" = "ค่าจะซ้อนกันเป็นเลเยอร์ เรียงจากต่ำสุดก่อน: ค่าเริ่มต้นของไดรเวอร์, ระเบียนที่รวมมาให้, ระเบียนของแพ็กเกจ, all.patch.plist, ระเบียนของคุณ, โปรไฟล์ที่ใช้งานอยู่ คีย์การปรับแต่งแต่ละคีย์จะใช้ค่าจากเลเยอร์สูงสุดที่กำหนดคีย์นั้น";
 /* Help text of the --controller option of 'ojd config set' and 'ojd config unset'. VVVV:PPPP stands for the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.config.group.controller" = "เปลี่ยนเฉพาะรุ่นคอนโทรลเลอร์นี้ในรูปแบบ VVVV:PPPP แทนคอนโทรลเลอร์ทุกตัว";
 /* Error of 'ojd config set' and 'ojd config unset' when a record cannot take the change. %1$@ is the tuning key and %2$@ is the description of the problem. */
@@ -2446,7 +2446,7 @@
 /* Warning printed by 'ojd config show' when a part of the defaults file is invalid. %1$@ is the file path and %2$@ is the description of the problem. */
 "cli.config.show.defaultsIgnored" = "ละเว้น %1$@ แล้ว: %2$@";
 /* Long description in the help of 'ojd config show'. --controller and all.patch.plist stay as written. */
-"cli.config.show.discussion" = "หากไม่ระบุ --controller จะพิมพ์คีย์การปรับแต่งทั้งหมดพร้อมค่าจาก all.patch.plist และกลุ่มที่ระเบียนอ่านคีย์เหล่านั้น หากระบุ จะพิมพ์ระเบียนของคอนโทรลเลอร์หลังซ้อนระเบียนที่มากับแอป ระเบียนของแพ็กเกจ all.patch.plist และระเบียนของคุณเป็นเลเยอร์แล้ว คีย์ที่ไม่มีเลเยอร์ใดกำหนดจะแสดงเป็น “ค่าเริ่มต้นของไดรเวอร์”";
+"cli.config.show.discussion" = "หากไม่ระบุ --controller จะพิมพ์คีย์การปรับแต่งทั้งหมดพร้อมค่าจาก all.patch.plist และกลุ่มที่ระเบียนอ่านคีย์เหล่านั้น หากระบุ จะพิมพ์ระเบียนของคอนโทรลเลอร์หลังซ้อนระเบียนที่รวมมาให้ ระเบียนของแพ็กเกจ all.patch.plist และระเบียนของคุณเป็นเลเยอร์แล้ว คีย์ที่ไม่มีเลเยอร์ใดกำหนดจะแสดงเป็น “ค่าเริ่มต้นของไดรเวอร์”";
 /* Indented line below a tuning key of 'ojd config show' that lists the controller families whose records read the key. %@ is the comma-separated list of family names. */
 "cli.config.show.readBy" = "อ่านโดย: %@";
 /* Warning of 'ojd config show' about a key in all.patch.plist that no connected controller reads. %1$@ is the key and %2$@ lists the families that do read it. */
@@ -2720,11 +2720,11 @@
 /* Row label in the output of 'ojd controller show'. The controller record that describes the model follows. */
 "cli.controller.show.labelRecord" = "ระเบียน";
 /* Row label in the output of 'ojd controller show'. The sentence that says why OpenJoystickDriver does not serve the connected device follows. */
-"cli.controller.show.labelNotServed" = "ไม่ได้ให้บริการ";
+"cli.controller.show.labelNotServed" = "ไม่ได้ดูแล";
 /* Row label in the output of 'ojd controller show'. The sentence that says what to do about a device that is not served follows. */
 "cli.controller.show.labelNextStep" = "ขั้นตอนถัดไป";
 /* Row label in the output of 'ojd controller show'. The command that drafts a controller record for a HID gamepad that is not served follows. */
-"cli.controller.show.labelDraftCommand" = "ร่างเรกคอร์ด";
+"cli.controller.show.labelDraftCommand" = "ร่างระเบียน";
 /* Row label in the output of 'ojd controller show'. The command that captures the packets of a device that no protocol matches follows. */
 "cli.controller.show.labelCaptureCommand" = "จับแพ็กเก็ต";
 /* Row label in the output of 'ojd controller show' and in the controller detail. Where the HID usage map of the controller comes from follows. */
@@ -2900,25 +2900,25 @@
 /* One-line summary of 'ojd protocol' in the command list and at the top of its help. A protocol description defines a controller family. */
 "cli.protocol.group.abstract" = "ตรวจสอบ ติดตั้ง หรือแสดงรายการคำอธิบายโปรโตคอล";
 /* Long description in the help of 'ojd protocol'. The folder name Protocols, the path, and .plist stay as written. */
-"cli.protocol.group.discussion" = "คำอธิบายโปรโตคอลคือไฟล์ .plist ที่กำหนดตระกูลคอนโทรลเลอร์ซึ่ง OJD ไม่ได้มีในตัว คำอธิบายที่ติดตั้งอยู่ใน ~/Library/Application Support/OpenJoystickDriver/Protocols และแพ็กเกจม็อดก็ใส่ไว้ได้ คำสั่งเหล่านี้ไม่ต้องใช้บริการ";
+"cli.protocol.group.discussion" = "คำอธิบายโปรโตคอลคือไฟล์ .plist ที่กำหนดกลุ่มคอนโทรลเลอร์ซึ่ง OJD ไม่ได้มีในตัว คำอธิบายที่ติดตั้งอยู่ใน ~/Library/Application Support/OpenJoystickDriver/Protocols และแพ็กเกจม็อดก็ใส่ไว้ได้ คำสั่งเหล่านี้ไม่ต้องใช้บริการ";
 /* Help text of the FILE argument of 'ojd protocol validate' and 'ojd protocol install'. VendorAcmePad.plist is an example file name and stays as written. */
-"cli.protocol.group.file" = "ไฟล์คำอธิบายที่ตั้งชื่อตามตระกูล เช่น VendorAcmePad.plist";
+"cli.protocol.group.file" = "ไฟล์คำอธิบายที่ตั้งชื่อตามกลุ่ม เช่น VendorAcmePad.plist";
 /* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
 "cli.protocol.validate.abstract" = "ตรวจสอบไฟล์คำอธิบายโปรโตคอลโดยไม่ติดตั้ง";
 /* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
-"cli.protocol.validate.discussion" = "ตรวจว่าไฟล์เป็นคำอธิบายที่ถูกต้อง ชื่อตระกูลเป็น UpperCamelCase และตรงกับชื่อไฟล์ ไม่ใช่ตระกูลในตัว และกำหนดชื่อที่แสดงกับเลย์เอาต์อินพุต จะจบด้วยรหัส 1 พร้อมรหัส E5xxx เมื่อไฟล์ถูกปฏิเสธ";
+"cli.protocol.validate.discussion" = "ตรวจว่าไฟล์เป็นคำอธิบายที่ถูกต้อง ชื่อกลุ่มเป็น UpperCamelCase และตรงกับชื่อไฟล์ ไม่ใช่กลุ่มในตัว และกำหนดชื่อที่แสดงกับเลย์เอาต์อินพุต จะจบด้วยรหัส 1 พร้อมรหัส E5xxx เมื่อไฟล์ถูกปฏิเสธ";
 /* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
-"cli.protocol.validate.valid" = "%1$@ เป็นคำอธิบายที่ถูกต้องของตระกูล %2$@ (%3$@) ติดตั้งด้วย 'ojd protocol install'";
+"cli.protocol.validate.valid" = "%1$@ เป็นคำอธิบายที่ถูกต้องของกลุ่ม %2$@ (%3$@) ติดตั้งด้วย “ojd protocol install”";
 /* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
 "cli.protocol.install.abstract" = "ตรวจสอบคำอธิบายโปรโตคอลและติดตั้งสำหรับผู้ใช้ของคุณ";
 /* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
-"cli.protocol.install.discussion" = "คัดลอกไฟล์ไปที่ Protocols/FAMILY.plist คำอธิบายของตระกูลเดียวกันที่ติดตั้งอยู่จะถูกแทนที่ --dry-run ตรวจไฟล์และไม่เขียนอะไร";
+"cli.protocol.install.discussion" = "คัดลอกไฟล์ไปที่ Protocols/FAMILY.plist คำอธิบายของกลุ่มเดียวกันที่ติดตั้งอยู่จะถูกแทนที่ --dry-run ตรวจไฟล์และไม่เขียนอะไร";
 /* Message printed after 'ojd protocol install' copied a description. %@ is the installed file. */
 "cli.protocol.install.success" = "ติดตั้ง %@ แล้ว";
 /* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
-"cli.protocol.list.abstract" = "แสดงรายการตระกูลโปรโตคอลในตัวและที่มีเอกสาร พร้อมแหล่งที่มาของแต่ละตระกูล";
+"cli.protocol.list.abstract" = "แสดงรายการกลุ่มโปรโตคอลในตัวและที่มีเอกสาร พร้อมแหล่งที่มาของแต่ละกลุ่ม";
 /* Long description in the help of 'ojd protocol list'. */
-"cli.protocol.list.discussion" = "แสดงแต่ละตระกูลพร้อมชื่อที่แสดงและแหล่งที่มา: ในตัว โฟลเดอร์ Protocols ของคุณ หรือแพ็กเกจม็อด คำอธิบายที่ถูกปฏิเสธจะไม่แสดง";
+"cli.protocol.list.discussion" = "แสดงแต่ละกลุ่มพร้อมชื่อที่แสดงและแหล่งที่มา: ในตัว โฟลเดอร์ Protocols ของคุณ หรือแพ็กเกจม็อด คำอธิบายที่ถูกปฏิเสธจะไม่แสดง";
 /* Source shown by 'ojd protocol list' for a family that OJD builds in. */
 "cli.protocol.list.builtIn" = "ในตัว";
 /* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
@@ -3102,7 +3102,7 @@
 /* Yes or no question that 'ojd record install' asks on a terminal before it replaces an installed record. %@ is the path of the installed file. */
 "cli.record.install.confirm" = "แทนที่ %@ หรือไม่";
 /* Long description in the help of 'ojd record install'. vvvv-pppp.plist and --force stay as written. */
-"cli.record.install.discussion" = "เขียนระเบียนเป็น vvvv-pppp.plist ในไดเรกทอรีระเบียนของคุณ บริการที่ทำงานอยู่จะใช้ทันที การแทนที่ระเบียนที่ติดตั้งไว้แล้วของรุ่นนั้นจะถามเพื่อยืนยันบนเทอร์มินัล และต้องใช้ --force ในกรณีอื่น --dry-run ตรวจสอบระเบียนและไม่เขียนสิ่งใด ออกด้วยรหัส 1 และไม่เขียนสิ่งใดเมื่อระเบียนไม่ถูกต้อง";
+"cli.record.install.discussion" = "เขียนระเบียนเป็น vvvv-pppp.plist ในโฟลเดอร์ระเบียนของคุณ บริการที่ทำงานอยู่จะใช้ทันที การแทนที่ระเบียนที่ติดตั้งไว้แล้วของรุ่นนั้นจะถามเพื่อยืนยันบนเทอร์มินัล และต้องใช้ --force ในกรณีอื่น --dry-run ตรวจสอบระเบียนและไม่เขียนสิ่งใด ออกด้วยรหัส 1 และไม่เขียนสิ่งใดเมื่อระเบียนไม่ถูกต้อง";
 /* Message printed by 'ojd record install --dry-run' instead of installing. %@ is the target file path. */
 "cli.record.install.dryRun" = "จะติดตั้ง %@";
 /* Error when the record file cannot be written. %1$@ is the target file path and %2$@ is the reason from the system. */
@@ -3412,7 +3412,7 @@
 /* Reason fragment of a document problem for one field. %1$@ is the field path, which stays as written and is shown in quotes, and %2$@ is the problem found. */
 "cli.shared.document.fieldProblem" = "“%1$@”: %2$@";
 /* One-line summary of 'ojd profile convert' in the command list and at the top of its help. */
-"cli.profile.convert.abstract" = "คัดลอกโปรไฟล์สำหรับรุ่นคอนโทรลเลอร์อื่น โดยเก็บการกำหนดปุ่มที่รุ่นนั้นใช้ได้ไว้";
+"cli.profile.convert.abstract" = "คัดลอกโปรไฟล์สำหรับรุ่นคอนโทรลเลอร์อื่น โดยเก็บการกำหนดที่รุ่นนั้นใช้ได้ไว้";
 /* Help text of the --controller option of 'ojd profile convert'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.convert.controller" = "รุ่นคอนโทรลเลอร์ปลายทาง: VVVV:PPPP หรือ ID ของคอนโทรลเลอร์ที่เชื่อมต่ออยู่";
 /* Help text of the --name option of 'ojd profile convert'. */
@@ -4404,13 +4404,13 @@
 /* Error E5007, shown when a controller record or patch fails its schema; the message names the field. */
 "error.E5007.message" = "ระเบียนคอนโทรลเลอร์หรือ patch ไม่ถูกต้อง ตรวจสอบไฟล์กับสคีมาของไฟล์นั้นแล้วแก้ฟิลด์ที่ข้อความระบุ";
 /* Error E5007, in place of a file path when the message does not know which file failed. */
-"error.E5007.thisFile" = "ไฟล์เรกคอร์ดนี้";
+"error.E5007.thisFile" = "ไฟล์ระเบียนนี้";
 /* Error E5007, shown when the bundled controller catalog holds no record file. */
-"error.E5007.record.catalogEmpty" = "โฟลเดอร์ Controllers ของแค็ตตาล็อกที่มาพร้อมแอป: แค็ตตาล็อกไม่มีไฟล์เรกคอร์ด กฎ: แค็ตตาล็อกมีเรกคอร์ดคอนโทรลเลอร์อย่างน้อยหนึ่งรายการ วิธีแก้: ติดตั้ง OpenJoystickDriver ใหม่";
+"error.E5007.record.catalogEmpty" = "โฟลเดอร์ Controllers ของแค็ตตาล็อกที่รวมมาให้: แค็ตตาล็อกไม่มีไฟล์ระเบียน กฎ: แค็ตตาล็อกมีระเบียนคอนโทรลเลอร์อย่างน้อยหนึ่งรายการ วิธีแก้: ติดตั้ง OpenJoystickDriver ใหม่";
 /* Error E5007, shown when a record file is not named after its own vendorID and productID. %1$@ is the file, %2$@ the name it must have. */
 "error.E5007.record.fileName" = "%1$@, vendorID และ productID: ชื่อไฟล์ต้องเป็น %2$@ ซึ่งเป็น ID ทั้งสองในรูปเลขฐานสิบหก วิธีแก้: เปลี่ยนชื่อไฟล์เป็น %2$@ หรือแก้ ID ในไฟล์";
 /* Error E5007, shown when two record files give one controller model. %1$@ is the file, %2$@ the model, %3$@ the file that holds it first. */
-"error.E5007.record.duplicateIdentity" = "%1$@, vendorID และ productID: %2$@ เป็นตัวตนของเรกคอร์ดใน %3$@ อยู่แล้ว วิธีแก้: ลบไฟล์ใดไฟล์หนึ่งจากสองไฟล์ หรือเปลี่ยน ID ของไฟล์นี้";
+"error.E5007.record.duplicateIdentity" = "%1$@, vendorID และ productID: %2$@ เป็นตัวตนของระเบียนใน %3$@ อยู่แล้ว วิธีแก้: ลบไฟล์ใดไฟล์หนึ่งจากสองไฟล์ หรือเปลี่ยน ID ของไฟล์นี้";
 /* Error E5007, shown when a value of a record cannot be written as JSON. %1$@ is the file, %2$@ the reason. */
 "error.E5007.record.unwritableValue" = "%1$@, document: ไม่สามารถเขียนค่าเป็น JSON ได้ (%2$@) วิธีแก้: แทนที่ค่าที่เหตุผลระบุด้วยสตริง ตัวเลข ค่าบูลีน รายการ หรือดิกชันนารี";
 /* Error E5007, shown when the vendorID or productID of a record is out of range. %1$@ is the file. */
@@ -4446,7 +4446,7 @@
 /* Error E5007, shown when a record or protocol description breaks a rule: a HID mode names endpoints in its interfaceSignature. %1$@ is the file. */
 "error.E5007.modes.endpointsHID" = "%1$@, modes[].match.interfaceSignature.endpoints: interfaceSignature ของโหมด HID ไม่มี endpoints เพราะมีเพียงตัวสแกน raw-USB ที่อ่านชุดเอนด์พอยต์ วิธีแก้: ลบ endpoints ออกจาก interfaceSignature";
 /* Error E5007, shown when a record or protocol description breaks a rule: a mode that needs input layouts finds none in the record. %1$@ is the file. */
-"error.E5007.modes.inputLayoutNeeded" = "%1$@, input: โหมด HIDReportLayout ต้องใช้เลย์เอาต์อินพุตของเรคคอร์ด วิธีแก้: เพิ่ม input พร้อมเลย์เอาต์ หรือใช้โปรโตคอลอื่น";
+"error.E5007.modes.inputLayoutNeeded" = "%1$@, input: โหมด HIDReportLayout ต้องใช้เลย์เอาต์อินพุตของระเบียน วิธีแก้: เพิ่ม input พร้อมเลย์เอาต์ หรือใช้โปรโตคอลอื่น";
 /* Error E5007, shown when a record or protocol description breaks a rule: a HIDDescriptor mode finds input layouts in the record. %1$@ is the file. */
 "error.E5007.modes.usageMapNotLayouts" = "%1$@, input: โหมด HIDDescriptor อ่านแผนผังการใช้งาน ไม่ใช่เลย์เอาต์อินพุต วิธีแก้: แทนที่เลย์เอาต์อินพุตด้วยแผนผังการใช้งาน";
 /* Error E5007, shown when a record or protocol description breaks a rule: a usage map is in a record whose modes include a driver that does not read one. %1$@ is the file. */
@@ -4508,7 +4508,7 @@
 /* Error E5007, shown when a virtual gamepad file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
 "error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: ตัวตนของเกมแพดเสมือนต้องมี %2$@ ที่ไม่ว่าง วิธีแก้: ใส่สตริงที่ไม่ว่างให้ %2$@";
 /* Error E5007, shown when a virtual gamepad file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
-"error.E5007.virtualDevice.idRange" = "%1$@, %2$@: รหัสต้องเป็น %3$@...65535 วิธีแก้: ตั้ง %2$@ เป็น %3$@...65535";
+"error.E5007.virtualDevice.idRange" = "%1$@, %2$@: ID ต้องเป็น %3$@...65535 วิธีแก้: ตั้ง %2$@ เป็น %3$@...65535";
 /* Error E5007, shown when the subcommands of a record fail: a subcommand counterModulus is outside 2...256. %1$@ is the file. */
 "error.E5007.subcommandPlan.counterModulus" = "%1$@, session.subcommands.counterModulus: counterModulus ของซับคำสั่งต้องเป็น 2...256 วิธีแก้: ตั้ง counterModulus เป็น 2...256";
 /* Error E5007, shown when the subcommands of a record fail: subcommands name no request or more than 16. %1$@ is the file. */
@@ -4528,11 +4528,11 @@
 /* Error E5007, shown when the named packets of a record fail: two named packets share an id. %1$@ is the file. */
 "error.E5007.namedPacketPlan.uniqueId" = "%1$@, session.namedPackets[].id: id ของแพ็กเก็ตที่มีชื่อแต่ละรายการต้องปรากฏไม่เกินหนึ่งครั้ง วิธีแก้: ให้แต่ละแพ็กเก็ตมี id ของตัวเอง";
 /* Error E5007, shown when the named packets of a record fail: a named packet id is not a family, a slash and lowercase words joined by hyphens. %1$@ is the file. */
-"error.E5007.namedPacketPlan.idForm" = "%1$@, session.namedPackets[].id: id ของแพ็กเก็ตที่มีชื่อต้องเป็นตระกูล เครื่องหมายทับ และคำตัวพิมพ์เล็กที่เชื่อมด้วยยัติภังค์ วิธีแก้: เขียน id เช่น xbox/start-input";
+"error.E5007.namedPacketPlan.idForm" = "%1$@, session.namedPackets[].id: id ของแพ็กเก็ตที่มีชื่อต้องเป็นกลุ่ม เครื่องหมายทับ และคำตัวพิมพ์เล็กที่เชื่อมด้วยยัติภังค์ วิธีแก้: เขียน id เช่น xbox/start-input";
 /* Error E5007, shown when the named packets of a record fail: a named packet has fewer than 3 bytes or its session byte is not 2. %1$@ is the file. */
 "error.E5007.namedPacketPlan.shape" = "%1$@, session.namedPackets[].sessionByte: แพ็กเก็ตที่มีชื่อต้องมีอย่างน้อย 3 ไบต์ และไบต์เซสชันต้องเป็น 2 วิธีแก้: กำหนด bytes อย่างน้อย 3 ไบต์ และตั้ง sessionByte เป็น 2";
 /* Error E5007, shown when a startup write of a record fails: a startup packet reference sits in a record instead of a protocol description. %1$@ is the file. */
-"error.E5007.startupWrite.packetReference" = "%1$@, session.startup[].packet: การอ้างอิงแพ็กเก็ตเริ่มต้นใช้ได้เฉพาะในคำอธิบายโปรโตคอล วิธีแก้: เขียนไบต์ในเรกคอร์ดแทน packet";
+"error.E5007.startupWrite.packetReference" = "%1$@, session.startup[].packet: การอ้างอิงแพ็กเก็ตเริ่มต้นใช้ได้เฉพาะในคำอธิบายโปรโตคอล วิธีแก้: เขียนไบต์ในระเบียนแทน packet";
 /* Error E5007, shown when a startup write of a record fails: a startup phase is not Startup or Activation. %1$@ is the file. */
 "error.E5007.startupWrite.phase" = "%1$@, session.startup[].phase: เฟสเริ่มต้นต้องเป็น Startup หรือ Activation วิธีแก้: ตั้ง phase เป็นอย่างใดอย่างหนึ่ง หรือไม่ต้องระบุ";
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
@@ -4548,9 +4548,9 @@
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: resendTuning ของ keep-alive ต้องเป็น lizardResendTicks วิธีแก้: ตั้ง resendTuning เป็น lizardResendTicks หรือไม่ต้องระบุ";
 /* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: เรกคอร์ดที่มาพร้อมแอปต้องมีเรกคอร์ดสำหรับเกมแพดเสมือน %2$@ วิธีแก้: ติดตั้ง OpenJoystickDriver ใหม่";
+"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: ระเบียนที่รวมมาให้ต้องมีระเบียนสำหรับเกมแพดเสมือน %2$@ วิธีแก้: ติดตั้ง OpenJoystickDriver ใหม่";
 /* Error E5007, shown when a record file fails: a bundled virtual gamepad record does not define its virtual gamepad or holds a match. %2$@ is the virtual gamepad. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: เรกคอร์ดที่มาพร้อมแอปต้องกำหนดเกมแพดเสมือน %2$@ และต้องไม่มี match วิธีแก้: ติดตั้ง OpenJoystickDriver ใหม่";
+"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: ระเบียนที่รวมมาให้ต้องกำหนดเกมแพดเสมือน %2$@ และต้องไม่มี match วิธีแก้: ติดตั้ง OpenJoystickDriver ใหม่";
 /* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
 "error.E5007.modPackage.kindMismatch" = "%1$@, %2$@: ไฟล์ %3$@ ระบุไว้ใต้ %2$@ ใน mod.plist ไม่ได้ เพราะรายการนั้นรวมไฟล์ %4$@ วิธีแก้: ระบุไฟล์ไว้ในรายการที่ตรงกับชนิดของไฟล์";
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
@@ -4571,7 +4571,7 @@
 /* Error E5007, shown when a patch file fails: a remove entry is not text. %1$@ is the file. */
 "error.E5007.patch.removeNotText" = "%1$@, remove: remove ต้องมีเส้นทางคีย์ที่คั่นด้วยจุดในรูปข้อความ วิธีแก้: เขียนแต่ละรายการเป็นสตริง";
 /* Error E5007, shown when a patch file fails: a remove path is not in the record schema. %2$@ is the path. %1$@ is the file. */
-"error.E5007.patch.removePathUnknown" = "%1$@, remove: เส้นทาง %2$@ ไม่อยู่ในสคีมาของเรกคอร์ด วิธีแก้: ใช้เส้นทางคีย์ที่อยู่ในสคีมาของเรกคอร์ด หรือลบรายการนั้น";
+"error.E5007.patch.removePathUnknown" = "%1$@, remove: เส้นทาง %2$@ ไม่อยู่ในสคีมาของระเบียน วิธีแก้: ใช้เส้นทางคีย์ที่อยู่ในสคีมาของระเบียน หรือลบรายการนั้น";
 /* Error E5007, shown when a patch file fails: a remove path is listed twice. %2$@ is the path. %1$@ is the file. */
 "error.E5007.patch.removeDuplicate" = "%1$@, remove: เส้นทาง %2$@ อยู่ในรายการสองครั้ง วิธีแก้: ลบหนึ่งในสองรายการ";
 /* Error E5007, shown when a patch file fails: an all patch removes a key outside tuning. %2$@ is the path. %1$@ is the file. */
@@ -4589,21 +4589,21 @@
 /* Error E5007, shown when a user or package record file is skipped: a Controller file is not named after its IDs. %2$@ is the name it must have. %1$@ is the file. */
 "error.E5007.userFile.fileNameRecord" = "%1$@, file name: ชื่อไฟล์ต้องเป็น %2$@ วิธีแก้: เปลี่ยนชื่อไฟล์เป็น %2$@ หรือแก้ ID ในไฟล์";
 /* Error E5007, shown when a user or package record file is skipped: two packages give one controller. %2$@ is the other package. %1$@ is the file. */
-"error.E5007.userFile.packageSameController" = "%1$@, vendorID, productID: แพ็กเกจ %2$@ ให้คอนโทรลเลอร์นี้อยู่แล้ว วิธีแก้: เอาแพ็กเกจหนึ่งในสองออก หรือเปลี่ยน ID ของเรกคอร์ดนี้";
+"error.E5007.userFile.packageSameController" = "%1$@, vendorID, productID: แพ็กเกจ %2$@ ให้คอนโทรลเลอร์นี้อยู่แล้ว วิธีแก้: เอาแพ็กเกจหนึ่งในสองออก หรือเปลี่ยน ID ของระเบียนนี้";
 /* Error E5007, shown when a user or package record file is skipped: a patch file is not named after its selector. %2$@ is the name it must have. %1$@ is the file. */
 "error.E5007.userFile.fileNamePatch" = "%1$@, file name: ชื่อไฟล์ต้องเป็น %2$@ วิธีแก้: เปลี่ยนชื่อไฟล์เป็น %2$@ หรือแก้ selector ในไฟล์";
 /* Error E5007, shown when a user or package record file is skipped: the file is not a dictionary. %1$@ is the file. */
-"error.E5007.userFile.notDictionary" = "%1$@, document: ไฟล์ไม่ใช่ดิกชันนารี วิธีแก้: ทำให้รากของ property list เป็นดิกชันนารี";
+"error.E5007.userFile.notDictionary" = "%1$@, document: ไฟล์ไม่ใช่ดิกชันนารี วิธีแก้: ทำให้รากของรายการคุณสมบัติ เป็นดิกชันนารี";
 /* Error E5007, shown when a user or package record file is skipped: a Controller file names a bundled controller. %2$@ is the model. %1$@ is the file. */
-"error.E5007.userFile.bundledController" = "%1$@, vendorID, productID: %2$@ เป็นคอนโทรลเลอร์ที่มาพร้อมแอป ไฟล์ Controller จึงเพิ่มไม่ได้ วิธีแก้: เขียนไฟล์แพตช์สำหรับมันแทน";
+"error.E5007.userFile.bundledController" = "%1$@, vendorID, productID: %2$@ เป็นคอนโทรลเลอร์ที่รวมมาให้ ไฟล์ Controller จึงเพิ่มไม่ได้ วิธีแก้: เขียนไฟล์แพตช์สำหรับมันแทน";
 /* Error E5007, shown when a user or package record file is skipped: the file adds or patches a bootloader identity. %2$@ is the model. %1$@ is the file. */
 "error.E5007.userFile.bootloaderController" = "%1$@, vendorID, productID: %2$@ เป็นตัวตนของบูตโหลดเดอร์ ไฟล์ผู้ใช้หรือไฟล์แพ็กเกจจึงเพิ่มหรือแพตช์ไม่ได้ วิธีแก้: ลบไฟล์นั้น OJD ไม่ส่งข้อมูลให้คอนโทรลเลอร์ที่อยู่ในสถานะบูตโหลดเดอร์";
 /* Error E5007, shown when a user or package record file is skipped: a patch selects no known controller. %2$@ is the selector. %1$@ is the file. */
 "error.E5007.userFile.unknownController" = "%1$@, selector: selector %2$@ ไม่ตรงกับคอนโทรลเลอร์ที่รู้จักตัวใด วิธีแก้: ใช้ไฟล์ Controller เพื่อเพิ่มคอนโทรลเลอร์ใหม่ หรือแก้ selector";
 /* Error E5007, shown when a user or package record file is skipped: the record that a patch applies to is not a dictionary. %1$@ is the file. */
-"error.E5007.userFile.upstreamNotDictionary" = "%1$@, document: เรกคอร์ดที่แพตช์ใช้กับไม่ใช่ดิกชันนารี วิธีแก้: ซ่อมไฟล์เรกคอร์ดที่แพตช์ใช้กับ";
+"error.E5007.userFile.upstreamNotDictionary" = "%1$@, document: ระเบียนที่แพตช์ใช้กับไม่ใช่ดิกชันนารี วิธีแก้: ซ่อมไฟล์ระเบียนที่แพตช์ใช้กับ";
 /* Error E5007, shown when a user or package record file is skipped: a patch changes nothing in the record. %1$@ is the file. */
-"error.E5007.userFile.patchNoChange" = "%1$@, patch: แพตช์ไม่เปลี่ยนอะไรในเรกคอร์ด วิธีแก้: ลบแพตช์ หรือตั้งค่าที่ต่างจากเรกคอร์ด";
+"error.E5007.userFile.patchNoChange" = "%1$@, patch: แพตช์ไม่เปลี่ยนอะไรในระเบียน วิธีแก้: ลบแพตช์ หรือตั้งค่าที่ต่างจากระเบียน";
 /* Error E5007, shown when an input layout of a record fails: input lists no layout. %1$@ is the file. */
 "error.E5007.inputLayout.layoutsEmpty" = "%1$@, input.layouts: input ต้องมีเลย์เอาต์อย่างน้อยหนึ่งรายการ วิธีแก้: เพิ่มเลย์เอาต์ หรือลบ input";
 /* Error E5007, shown when an input layout of a record fails: two layouts select one report. %2$@ and %3$@ are the layouts. %1$@ is the file. */
@@ -4637,7 +4637,7 @@
 /* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
 "error.E5007.inputLayout.noControls" = "%1$@, input.layouts[]: เลย์เอาต์ต้องถอดรหัสตัวควบคุมอย่างน้อยหนึ่งตัว วิธีแก้: เพิ่มปุ่ม แกน hat หรือทริกเกอร์";
 /* Error E5007, shown when the HID usage map of a record fails: a usage map lists no usage. %1$@ is the file. */
-"error.E5007.usageMap.mapEmpty" = "%1$@, input.hidUsageMap.usages: แผนที่การใช้งานต้องมีการใช้งานอย่างน้อยหนึ่งรายการ วิธีแก้: เพิ่มการใช้งาน หรือลบ hidUsageMap";
+"error.E5007.usageMap.mapEmpty" = "%1$@, input.hidUsageMap.usages: แผนผังการใช้งานต้องมีการใช้งานอย่างน้อยหนึ่งรายการ วิธีแก้: เพิ่มการใช้งาน หรือลบ hidUsageMap";
 /* Error E5007, shown when the HID usage map of a record fails: two entries of one usage name the same half. %2$@ is the usage as page/usage, %3$@ the half. %1$@ is the file. */
 "error.E5007.usageMap.halfTwice" = "%1$@, input.hidUsageMap.usages[].half: การใช้งาน %2$@ ระบุครึ่ง %3$@ สองครั้ง วิธีแก้: กำหนดหนึ่งรายการให้แต่ละครึ่งของการใช้งาน";
 /* Error E5007, shown when the HID usage map of a record fails: a usage is named twice. %2$@ is the usage as page/usage. %1$@ is the file. */
@@ -4671,7 +4671,7 @@
 /* Error E5007, shown when a startup write of a record fails: a startup delay is outside 0...1000 ms. %1$@ is the file. */
 "error.E5007.startupWrite.delay" = "%1$@, session.startup[].delayMilliseconds: ความหน่วงตอนเริ่มต้นต้องเป็น 0...1000 ms วิธีแก้: ตั้ง delayMilliseconds เป็น 0...1000 หรือเว้นไว้";
 /* Error E5007, shown when a startup write of a record fails: a startup transport is not USB, BluetoothClassic or BluetoothLE. %1$@ is the file. */
-"error.E5007.startupWrite.transport" = "%1$@, session.startup[].transport: ทรานสปอร์ตตอนเริ่มต้นต้องเป็น USB, BluetoothClassic หรือ BluetoothLE วิธีแก้: ตั้ง transport เป็นอย่างใดอย่างหนึ่งนั้น หรือเว้นไว้";
+"error.E5007.startupWrite.transport" = "%1$@, session.startup[].transport: การส่งผ่านตอนเริ่มต้นต้องเป็น USB, BluetoothClassic หรือ BluetoothLE วิธีแก้: ตั้ง transport เป็นอย่างใดอย่างหนึ่งนั้น หรือเว้นไว้";
 /* Error E5007, shown when a startup write of a record fails: a startup report with crc32Seed has no room for its 4-byte trailer. %1$@ is the file. */
 "error.E5007.startupWrite.crcRoom" = "%1$@, session.startup[].crc32Seed: รายงานตอนเริ่มต้นที่มี crc32Seed ต้องมีที่ว่างสำหรับส่วนท้าย 4 ไบต์ วิธีแก้: ทำให้รายงานยาวกว่า 4 ไบต์ หรือลบ crc32Seed";
 /* Error E5007, shown when a startup write of a record fails: a USB startup packet is not 1...64 bytes long. %1$@ is the file. */
@@ -5206,9 +5206,9 @@
 /* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
 "ui.settings.general.pauseShortcutTaken" = "แอปอื่นใช้ทางลัดนี้อยู่แล้ว โปรดบันทึกทางลัดอื่น";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
-"cli.setting.set.badShortcut" = "'%1$@' ไม่ใช่ทางลัด ให้ใช้ปุ่มตัวปรับเปลี่ยนและปุ่มหนึ่งปุ่มที่เชื่อมด้วย + เช่น control+option+P หรือ none";
+"cli.setting.set.badShortcut" = "“%1$@” ไม่ใช่ทางลัด ให้ใช้ปุ่มตัวปรับเปลี่ยนและปุ่มหนึ่งปุ่มที่เชื่อมด้วย + เช่น control+option+P หรือ none";
 /* Error of 'ojd setting set' when the value is not an interface level. %1$@ is the text the user gave. Simple and Advanced stay as written. */
-"cli.setting.set.badInterfaceLevel" = "'%1$@' ไม่ใช่ระดับอินเทอร์เฟซ ให้ใช้ Simple หรือ Advanced";
+"cli.setting.set.badInterfaceLevel" = "“%1$@” ไม่ใช่ระดับอินเทอร์เฟซ ให้ใช้ Simple หรือ Advanced";
 /* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
 "ui.whatsNew.title" = "มีอะไรใหม่ใน %@";
 /* Title of the state of a connected controller that works, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
