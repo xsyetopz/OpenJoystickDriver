@@ -25,6 +25,11 @@ protocol RuntimeStatusGateway: Sendable {
 protocol ControllerDiagnosticsGateway: Sendable {
   /// Returns the latest input state of the controller, or nil when the service has none.
   func controllerState(for selector: ControllerReference) async throws -> ControllerState?
+  /// Returns the values the controller's virtual gamepad last reported, after stick transfer, dead
+  /// zone and remapping, or nil when no virtual gamepad publishes the controller.
+  func virtualOutputState(
+    for selector: ControllerReference
+  ) async throws -> ApplicationServiceVirtualOutputState?
   /// Returns the packet log of the controller.
   func packetLog(for selector: ControllerReference) async throws -> [PacketLogEntry]
 }

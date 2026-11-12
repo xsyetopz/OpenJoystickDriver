@@ -82,7 +82,7 @@
         }
         if let record {
           Section {
-            StickDeadzoneRow(
+            ControllerCalibrationSection(
               viewModel: viewModel,
               device: device,
               setting: StickDeadzoneSetting(record: record)

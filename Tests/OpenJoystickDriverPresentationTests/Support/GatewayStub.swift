@@ -207,6 +207,15 @@ actor GatewayStub: ApplicationServiceGateway {
     return inputState
   }
 
+  /// The values `virtualOutputState(for:)` returns.
+  private var virtualOutput: ApplicationServiceVirtualOutputState?
+
+  func setVirtualOutput(_ value: ApplicationServiceVirtualOutputState?) { virtualOutput = value }
+
+  func virtualOutputState(
+    for _: ControllerReference
+  ) -> ApplicationServiceVirtualOutputState? { virtualOutput }
+
   func packetLog(for selector: ControllerReference) async throws -> [PacketLogEntry] {
     activeDeviceReads += 1
     maximumConcurrentDeviceReads = max(maximumConcurrentDeviceReads, activeDeviceReads)

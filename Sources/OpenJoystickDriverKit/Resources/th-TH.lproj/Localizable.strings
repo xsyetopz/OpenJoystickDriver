@@ -292,6 +292,24 @@
 "ui.controllers.stickDeadzone.label" = "เดดโซนสติ๊ก";
 /* Message in the controller detail when removing the stick deadzone fails because the user's controller record does not set it. The deadzone is the part of the travel near the center that is ignored. */
 "ui.controllers.stickDeadzone.notSet" = "ระเบียนคอนโทรลเลอร์ของคุณไม่ได้ตั้งเดดโซนสติ๊ก จึงไม่มีอะไรให้รีเซ็ต";
+/* Label of the calibration row in the controller detail while the service has reported no stick or trigger values yet. Calibration shows each stick and trigger as the controller reports it and after tuning. */
+"ui.controllers.calibration.title" = "การปรับเทียบ";
+/* Label of the left stick row of the calibration view in the controller detail. */
+"ui.controllers.calibration.leftStick" = "จอยสติ๊กซ้าย";
+/* Label of the right stick row of the calibration view in the controller detail. */
+"ui.controllers.calibration.rightStick" = "จอยสติ๊กขวา";
+/* Label of the left trigger row of the calibration view in the controller detail. The trigger is the shoulder trigger. */
+"ui.controllers.calibration.leftTrigger" = "ทริกเกอร์ซ้าย";
+/* Label of the right trigger row of the calibration view in the controller detail. The trigger is the shoulder trigger. */
+"ui.controllers.calibration.rightTrigger" = "ทริกเกอร์ขวา";
+/* Value of a stick or trigger row of the calibration view in the controller detail. %1$@ is the value the controller reports, such as 40%, and %2$@ is the value after tuning, such as 0%. */
+"ui.controllers.calibration.reading" = "ค่าดิบ %1$@ หลังปรับแต่ง %2$@";
+/* Value of a stick row of the calibration view in the controller detail. %1$@ is the raw and tuned values text, and %2$@ is the stick deadzone, such as 10%. The deadzone is the part of the travel near the center that is ignored. */
+"ui.controllers.calibration.readingWithDeadZone" = "%1$@ โซนไร้ผล %2$@";
+/* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
+"ui.controllers.calibration.noOutput" = "ไม่มีเกมแพดเสมือน";
+/* Value of the calibration row in the controller detail while the service has reported no stick or trigger values yet. */
+"ui.controllers.calibration.waiting" = "กำลังรอข้อมูลอินพุต…";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "คำขอระบุรหัสผู้ผลิตหรือรหัสผลิตภัณฑ์ที่อยู่นอกช่วง ไม่มีการเปลี่ยนแปลงใดๆ";
 /* Button in the Controllers detail that shows or hides the advanced virtual HID profile choices. HID is the abbreviation of Human Interface Device and stays as written. */

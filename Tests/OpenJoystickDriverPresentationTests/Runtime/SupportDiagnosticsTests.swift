@@ -288,6 +288,10 @@ private actor SupportDiagnosticsGatewayStub: ApplicationServiceGateway {
 
   func controllerState(for _: ControllerReference) -> ControllerState? { nil }
 
+  func virtualOutputState(
+    for _: ControllerReference
+  ) -> ApplicationServiceVirtualOutputState? { nil }
+
   func packetLog(for _: ControllerReference) -> [PacketLogEntry] { [] }
 
   func remappingSnapshot() -> ApplicationServiceRemappingSnapshotPayload {
