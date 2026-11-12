@@ -301,6 +301,15 @@ struct ReceiverSlotDiscoveryTests {
     #expect(await manager.activeLogicalControllerIDs().isEmpty)
     #expect(await manager.controllerSessionState(for: slot) == nil)
     #expect(dispatcher.stops == [slot])
+    await selectedSession.enqueueReads([.success([UInt8](Receiver.padData(buttons: 1 << 13)))])
+    await waitUntil("input reconnects only the paired controller") {
+      await manager.connectedLogicalControllerIDs() == [slot]
+    }
+    #expect(await manager.activeLogicalControllerIDs() == [slot])
+    await waitUntil("the paired controller activates output again") {
+      dispatcher.activations == [slot, slot]
+    }
+    #expect(await manager.suspendController(.model(slot.model)).state == .suspended)
     await manager.stop()
   }
 
