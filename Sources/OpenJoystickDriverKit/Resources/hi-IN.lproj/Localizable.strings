@@ -5243,7 +5243,5 @@
 "ui.settings.general.idleDisconnectDescription" = "चुने गए समय तक जिस Bluetooth कंट्रोलर के इनपुट में कोई बदलाव नहीं हुआ, उसे डिस्कनेक्ट करता है। केबल या रिसीवर से जुड़े कंट्रोलर जुड़े रहते हैं।";
 /* Title of the choice that turns the idle disconnect off in the General pane of the settings window. */
 "ui.settings.general.idleDisconnectOff" = "बंद";
-/* Choice of the idle disconnect picker in the General pane of the settings window. %1$ld is a number of minutes, such as 15. */
-"ui.settings.general.idleDisconnectMinutes" = "%1$ld मिनट";
 /* Error of 'ojd setting set' when the value is not a number of minutes for the idle disconnect. %1$@ is the text the user gave; %2$@ and %3$@ are the smallest and largest number of minutes. The word off stays as written. */
 "cli.setting.set.badIdleDisconnect" = "“%1$@” मिनटों की संख्या नहीं है। %2$@ से %3$@ तक की पूर्ण संख्या या off इस्तेमाल करें।";

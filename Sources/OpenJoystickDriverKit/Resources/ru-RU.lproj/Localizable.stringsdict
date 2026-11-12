@@ -266,5 +266,30 @@
 			<string>Остановлено · %lld пакета</string>
 		</dict>
 	</dict>
+	<!-- Choice of the idle disconnect picker in the General pane of the settings window. %d is a number of minutes, such as 15. -->
+	<key>ui.settings.general.idleDisconnectMinutes</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>%d минут</string>
+			<key>one</key>
+			<string>%d минута</string>
+			<key>two</key>
+			<string>%d минуты</string>
+			<key>few</key>
+			<string>%d минуты</string>
+			<key>many</key>
+			<string>%d минут</string>
+			<key>other</key>
+			<string>%d минут</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

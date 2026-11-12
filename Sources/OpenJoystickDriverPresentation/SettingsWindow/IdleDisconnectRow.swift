@@ -29,7 +29,7 @@
         ) {
           Text(OJDLocalized.string("ui.settings.general.idleDisconnectOff")).tag(Int?.none)
           ForEach(options, id: \.self) { minutes in
-            Text(OJDLocalized.formatted("ui.settings.general.idleDisconnectMinutes", minutes))
+            Text(OJDLocalized.plural("ui.settings.general.idleDisconnectMinutes", count: minutes))
               .tag(Int?.some(minutes))
           }
         }.labelsHidden().fixedSize()
