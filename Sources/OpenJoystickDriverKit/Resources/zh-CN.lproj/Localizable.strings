@@ -279,7 +279,7 @@
 /* Value of the serving route when OpenJoystickDriver serves a virtual gamepad. OpenJoystickDriver is the product name. */
 "ui.controllers.serving.virtualHID" = "OpenJoystickDriver，虚拟游戏手柄";
 /* Value of the serving route when the driver extension owns the controller. */
-"ui.controllers.serving.extensionOwned" = "驱动扩展";
+"ui.controllers.serving.extensionOwned" = "Xbox USB 驱动程序";
 /* Value of the serving route when the user turned the output off. */
 "ui.controllers.serving.outputDisabled" = "输出已关闭";
 /* Message when the user changes the server or the stick deadzone of a controller that no controller record describes. */
@@ -1015,11 +1015,11 @@
 /* Error shown when the profile item that the user selected is gone, for example after a reload. */
 "ui.error.selectedProfileItemMissing" = "所选配置文件项目已不可用。";
 /* Message about a request to the system extension manager that ends cancelled. The request installs or removes the driver extension. */
-"cli.transportExtension.group.cancelled" = "系统扩展请求已取消。";
+"cli.transportExtension.group.cancelled" = "Xbox USB 驱动程序请求已取消。";
 /* Message about a request to the system extension manager that finished. %@ is the result name from the system and stays as written. */
-"cli.transportExtension.group.completed" = "系统扩展请求已完成，结果为 %@。";
+"cli.transportExtension.group.completed" = "Xbox USB 驱动程序请求已完成，结果为 %@。";
 /* Message about a request to the system extension manager that failed. %1$@ is the error domain, %2$d is the error code and %3$@ is the description from the system. Keep code= as written. */
-"cli.transportExtension.group.failed" = "系统扩展请求失败：%1$@ code=%2$d %3$@";
+"cli.transportExtension.group.failed" = "Xbox USB 驱动程序请求失败：%1$@ code=%2$d %3$@";
 /* Message when the system extension manager replaces an installed driver extension. %1$@ is the extension bundle identifier, %2$@ is the installed version and %3$@ is the version that replaces it. Keep the v before the numbers. */
 "cli.transportExtension.group.replacing" = "正在将 %1$@ v%2$@ 替换为 v%3$@…";
 /* Name of a protocol family, shown as a controller's protocol in Controllers, the Library, Developer settings and the New Profile controller picker: a generic HID controller, which OJD reads by the layout its HID report descriptor declares. Keep HID as written. */
@@ -1383,7 +1383,7 @@
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
 "platform.macos.ui.controllers.servedByMacOS" = "由 macOS 处理";
 /* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
-"platform.macos.ui.controllers.servedByMacOSDetail" = "Apple 的驱动正占用此控制器。接管它即可启用 OpenJoystickDriver 扩展。";
+"platform.macos.ui.controllers.servedByMacOSDetail" = "Apple 的驱动正占用此控制器。接管它即可启用 Xbox USB 驱动程序。";
 /* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
 "ui.controllers.claim" = "接管";
 /* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
@@ -2303,8 +2303,8 @@
 "cli.shared.error.permissionMissing" = "缺少 %@ 访问权限。请使用“ojd permission request”授权。";
 /* Error of 'ojd permission request' when a permission is missing after the request. %1$@ is the permission name and %2$@ is the path of the pane in System Settings. The command in quotes stays as written. */
 "platform.macos.cli.shared.error.permissionStillMissing" = "仍缺少 %1$@ 访问权限。请在“系统设置”> %2$@ 中允许 OpenJoystickDriver，然后再次运行“ojd permission request”。";
-/* One-line summary of 'ojd transport-extension' in the command list and at the top of its help. DriverKit is an Apple framework name. */
-"platform.macos.cli.transportExtension.group.abstract" = "显示、启用或停用 OpenJoystickDriver 的 DriverKit 系统扩展。";
+/* One-line summary of 'ojd transport-extension' in the command list and at the top of its help. */
+"platform.macos.cli.transportExtension.group.abstract" = "显示、启用或停用 Xbox USB 驱动程序。";
 /* One-line summary of 'ojd transport-extension activate' in the command list and at the top of its help. System Settings is the name of the macOS app. */
 "platform.macos.cli.transportExtension.activate.abstract" = "请求 macOS 启用该扩展。可能需要在“系统设置”中批准。";
 /* Long description in the help of 'ojd transport-extension activate'. The ojd program and the path stay as written. */
@@ -2384,7 +2384,7 @@
 /* Name of the Accessibility permission in the output of 'ojd permission list'. It is written as macOS names it. */
 "platform.macos.cli.permission.group.nameInputInject" = "辅助功能";
 /* Name of the permission for the approval of the driver extension, in the output of 'ojd permission list' and 'ojd diagnose'. */
-"cli.permission.group.nameUsbTransport" = "驱动程序扩展批准";
+"cli.permission.group.nameUsbTransport" = "Xbox USB 驱动程序批准";
 /* Name of the Input Monitoring permission in the output of 'ojd permission list'. It is written as macOS names it. */
 "platform.macos.cli.permission.group.nameInputRead" = "输入监控";
 /* Name of the permission to send keyboard and mouse events, in the output of 'ojd permission list' and 'ojd diagnose'. */
@@ -4743,9 +4743,9 @@
 /* Title of the toolbar popup in the Activity area that filters the log by stream. */
 "ui.activity.filter" = "筛选";
 /* Name of the check in the diagnostics table that looks for the driver extension inside the app. */
-"ui.activity.check.transportExtensionBundle" = "驱动扩展包";
+"ui.activity.check.transportExtensionBundle" = "Xbox USB 驱动程序包";
 /* Name of the check in the diagnostics table that asks macOS whether the driver extension is registered. */
-"ui.activity.check.transportExtensionRegistration" = "驱动扩展注册";
+"ui.activity.check.transportExtensionRegistration" = "Xbox USB 驱动程序注册";
 /* Name of the check in the diagnostics table that validates the configuration files. */
 "ui.activity.check.configFiles" = "设置文件";
 /* Name of the check in the diagnostics table that reports a controller with the Nintendo Switch Pro Controller identity and serial 000000000001. Nintendo Switch Pro Controller is a product name and stays as written. */
