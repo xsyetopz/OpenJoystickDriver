@@ -2737,8 +2737,8 @@
 "cli.controller.show.labelSession" = "세션";
 /* Row label in the output of 'ojd controller show'. The unit ID, which names the controller by model and USB port, follows. */
 "cli.controller.show.labelUnit" = "유닛 ID";
-/* Row label in the output of 'ojd controller show'. The profile that drives the virtual gamepad follows, with its source in parentheses. */
-"cli.controller.show.labelVirtual" = "가상 게임패드";
+/* Row label in the output of 'ojd controller show'. The virtual gamepad kind follows, with where it was chosen in parentheses. */
+"cli.controller.show.labelVirtual" = "가상 게임패드 종류";
 /* Row label in the output of 'ojd controller show'. The state of the virtual gamepad publication follows, with the reason in parentheses. */
 "cli.controller.show.labelPublication" = "게시 상태";
 /* Row label in the output of 'ojd controller show', present when the system owns the output. The explanation that the system sends rumble and light commands follows. */

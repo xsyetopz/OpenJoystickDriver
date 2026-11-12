@@ -55,6 +55,27 @@ struct ControllerShowServingTests {
   }
 
   @Test
+  func humanRowsHaveDistinctLabels() async throws {
+    var device = ApplicationServiceDeviceDescription.fixture(id: "pad-1")
+    device.virtualHIDProfile = ApplicationServiceVirtualHIDProfileStatus(
+      profile: .sdlCompatible,
+      source: .override,
+      override: .sdlCompatible,
+      unavailable: false
+    )
+    let service = try FakeService(devices: [device])
+    let human = await service.run(["controller", "show", token("pad-1")])
+    #expect(human.code == 0, "\(human.standardError)")
+    let labels = human.standardOutput.split(separator: "\n").compactMap { line in
+      line.components(separatedBy: "  ").first.map {
+        $0.trimmingCharacters(in: .whitespaces)
+      }
+    }.filter { !$0.isEmpty }
+    #expect(labels.contains(CLILocalized.text("cli.controller.show.labelVirtual")))
+    #expect(Set(labels).count == labels.count, "\(labels)")
+  }
+
+  @Test
   func everyRouteAppearsAcrossTheFixtures() {
     let ids = Set(ServingFixture.all.map(\.route.id))
     #expect(ids == ["NativePassThrough", "VirtualHID", "ExtensionOwned", "OutputDisabled"])
