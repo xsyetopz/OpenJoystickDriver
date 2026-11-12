@@ -23,6 +23,9 @@ struct ControllerRecordDocument: Decodable {
   /// The record's modes: `default` and the alternatives of an HID controller, which are tried in
   /// order.
   let modes: [ModeDocument]
+  /// The serial number that this model's firmware reports when it has none of its own; nil when
+  /// the record names none.
+  let placeholderSerial: String?
   /// The USB configuration and endpoint overrides; nil when the record sets none.
   let usb: USBOverride?
   /// Present exactly for Switch 2 controllers that connect over Bluetooth LE.
@@ -59,7 +62,7 @@ struct ControllerRecordDocument: Decodable {
       )
     }
     try container.rejectUnknown(allowed: [
-      "apiVersion", "kind", "vendorID", "productID", "modes", "usb",
+      "apiVersion", "kind", "vendorID", "productID", "modes", "placeholderSerial", "usb",
       "bluetoothLE", "capabilities", "server", "route", "input", "tuning",
     ])
     vendorID = try container.decode(Int.self, for: "vendorID")
@@ -87,6 +90,15 @@ struct ControllerRecordDocument: Decodable {
           )
         )
       }
+    }
+    placeholderSerial = try container.decodeOptional(String.self, for: "placeholderSerial")
+    guard placeholderSerial?.isEmpty != true else {
+      throw DecodingError.dataCorrupted(
+        .init(
+          codingPath: decoder.codingPath + [DocumentKey("placeholderSerial")],
+          debugDescription: "placeholderSerial must not be empty"
+        )
+      )
     }
     usb = try container.decodeOptional(USBOverride.self, for: "usb")
     bluetoothLE = try container.decodeOptional(BluetoothLE.self, for: "bluetoothLE")
