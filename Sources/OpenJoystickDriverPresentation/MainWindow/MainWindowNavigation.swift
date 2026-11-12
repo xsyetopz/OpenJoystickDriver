@@ -75,6 +75,9 @@
       selectedArea = persistence.loadArea() ?? .controllers
     }
 
+    /// Asks to show `area`, for a caller that does not need the answer.
+    func showArea(_ area: MainWindowArea) { requestArea(area) }
+
     /// Asks to show `area`.
     ///
     /// Returns true when the area is selected on return.

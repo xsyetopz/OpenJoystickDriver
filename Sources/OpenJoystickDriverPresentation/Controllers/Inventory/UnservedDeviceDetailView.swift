@@ -10,6 +10,8 @@
   struct UnservedDeviceDetailView: View {
     /// The device that OJD does not serve.
     let device: RuntimeUnservedDevice
+    /// Runs the button of the device's state.
+    let perform: @MainActor (ControllerReadinessAction) -> Void
     /// The state and results of the draft.
     @StateObject
     private var actions = ControllerDetailActions()
@@ -17,6 +19,7 @@
     /// The reason, the next step, and the action.
     var body: some View {
       Form {
+        Section { ControllerReadinessCard(readiness: device.readiness, perform: perform) }
         Section {
           Text(device.explanation).fixedSize(horizontal: false, vertical: true)
           VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {

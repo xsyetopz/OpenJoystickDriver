@@ -192,6 +192,8 @@ struct RuntimeUnservedDevice: Sendable, Equatable, Identifiable {
   let explanation: String
   /// The sentence that says what to do about it.
   let nextStep: String
+  /// Why no protocol is bound to the device.
+  let reason: ProtocolBindingReason
   /// The vendor and product ID of the device.
   let modelID: ControllerModelID
   /// Whether the detail offers Draft Record: the device is a HID pad.
@@ -209,6 +211,7 @@ struct RuntimeUnservedDevice: Sendable, Equatable, Identifiable {
     connection = device.connection
     explanation = OJDLocalized.string(device.reason.explanationKey)
     nextStep = OJDLocalized.string(device.reason.nextStepKey)
+    reason = device.reason
     modelID = ControllerModelID(vendorID: device.vendorID, productID: device.productID)
     offersDraft = device.isHIDGamepad
   }

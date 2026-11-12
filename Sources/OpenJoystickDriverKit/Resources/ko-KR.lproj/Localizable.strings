@@ -5133,3 +5133,29 @@
 "cli.setting.set.badInterfaceLevel" = "'%1$@'은(는) 인터페이스 수준이 아닙니다. Simple 또는 Advanced를 사용하세요.";
 /* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
 "ui.whatsNew.title" = "%@의 새로운 기능";
+/* Title of the state of a connected controller that works, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
+"ui.controllers.readiness.working.title" = "작동 중";
+/* One sentence at the top of the Controllers detail for a controller in the Working state. */
+"ui.controllers.readiness.working.message" = "이 컨트롤러는 사용할 준비가 되었습니다.";
+/* Button at the top of the Controllers detail for a controller in the Working state. It opens the Input Test window. */
+"ui.controllers.readiness.working.action" = "입력 테스트 열기";
+/* Title of the state of a connected controller that waits for a step from the user, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
+"ui.controllers.readiness.needsStep.title" = "사용자 조치 필요";
+/* One sentence at the top of the Controllers detail for a controller that needs a permission that is not allowed yet. */
+"ui.controllers.readiness.needsStep.access.message" = "이 컨트롤러에는 아직 허용되지 않은 권한이 필요합니다.";
+/* Button at the top of the Controllers detail for a controller that needs a permission. It opens the Access area of the main window; Access is the name of that area. */
+"ui.controllers.readiness.needsStep.access.action" = "접근 열기";
+/* One sentence at the top of the Controllers detail for a controller that needs the driver extension for Xbox USB controllers to be set up. Xbox USB stays as written. */
+"ui.controllers.readiness.needsStep.driver.message" = "이 컨트롤러에는 Xbox USB 드라이버 설정이 필요합니다.";
+/* Button at the top of the Controllers detail for a controller that needs the driver extension. It approves, claims or repairs the driver. */
+"ui.controllers.readiness.needsStep.driver.action" = "드라이버 설정";
+/* One sentence at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove, such as another program holding it. The detail names the next step. */
+"ui.controllers.readiness.needsStep.other.message" = "이 컨트롤러를 아직 읽을 수 없습니다. 세부 정보에 다음 단계가 나와 있습니다.";
+/* Button at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove. It opens the Troubleshooting page of the wiki. */
+"ui.controllers.readiness.needsStep.other.action" = "문제 해결 열기";
+/* Title of the state of a connected controller that OJD has no support for, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
+"ui.controllers.readiness.notSupported.title" = "아직 지원되지 않음";
+/* One sentence at the top of the detail of a controller in the Not supported yet state. OpenJoystickDriver is the product name. */
+"ui.controllers.readiness.notSupported.message" = "OpenJoystickDriver는 이 컨트롤러를 아직 사용할 수 없습니다.";
+/* Button at the top of the detail of a controller in the Not supported yet state. It opens the Supported Controllers page of the wiki. */
+"ui.controllers.readiness.notSupported.action" = "지원되는 컨트롤러 보기";
