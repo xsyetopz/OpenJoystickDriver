@@ -1420,8 +1420,6 @@
 "ui.console.loadError" = "ログを読み込めませんでした";
 /* Option of the stream filter in the Activity log that shows only output entries. */
 "ui.console.output" = "出力";
-/* Column title in the Activity log table. The column tells whether an entry is output or an error. */
-"ui.console.stream" = "ストリーム";
 /* Name of the notification setting for a controller that connects, in the Notifications pane of the settings window. */
 "notify.controllerConnected" = "コントローラ接続";
 /* Body of the notification shown when a controller connects. %@ is the controller name. */

@@ -45,9 +45,13 @@
       )
       group.controlRepresentation = .expanded
       group.selectedIndex = selectedIndex
-      group.label = OJDLocalized.string(action.labelKey)
-      group.paletteLabel = group.label
-      group.toolTip = OJDLocalized.string(action.descriptionKey)
+      // The segments name the views; the label would repeat the sidebar's Activity item, so only
+      // the palette and VoiceOver get it.
+      let label = OJDLocalized.string(action.labelKey)
+      group.label = ""
+      group.paletteLabel = label
+      group.toolTip = action.descriptionKey.map { OJDLocalized.string($0) }
+      group.view?.setAccessibilityLabel(label)
       return group
     }
 
@@ -59,10 +63,10 @@
       let item = NSMenuToolbarItem(itemIdentifier: action.identifier)
       item.label = OJDLocalized.string(action.labelKey)
       item.paletteLabel = item.label
-      item.toolTip = OJDLocalized.string(action.descriptionKey)
+      item.toolTip = action.descriptionKey.map { OJDLocalized.string($0) }
       item.image = NSImage(
         systemSymbolName: action.symbolName,
-        accessibilityDescription: item.toolTip
+        accessibilityDescription: item.toolTip ?? item.label
       )
       item.showsIndicator = true
       item.menu = Self.makeActivityFilterMenu(title: "", target: self)
@@ -138,7 +142,7 @@
       let item = NSSearchToolbarItem(itemIdentifier: action.identifier)
       item.label = OJDLocalized.string(action.labelKey)
       item.paletteLabel = item.label
-      item.toolTip = OJDLocalized.string(action.descriptionKey)
+      item.toolTip = action.descriptionKey.map { OJDLocalized.string($0) }
       item.fixSearchFieldWidth()
       item.searchField.placeholderString = item.label
       item.searchField.stringValue = screens.activity.log.searchText

@@ -81,13 +81,12 @@
         action == .searchLibrary
         ? NSSearchToolbarItem(itemIdentifier: action.identifier)
         : NSToolbarItem(itemIdentifier: action.identifier)
-      let description = OJDLocalized.string(action.descriptionKey)
       item.label = OJDLocalized.string(action.labelKey)
       item.paletteLabel = item.label
-      item.toolTip = description
+      item.toolTip = action.descriptionKey.map { OJDLocalized.string($0) }
       item.image = NSImage(
         systemSymbolName: action.symbolName,
-        accessibilityDescription: description
+        accessibilityDescription: item.toolTip ?? item.label
       )
       item.isBordered = true
       if let search = item as? NSSearchToolbarItem {

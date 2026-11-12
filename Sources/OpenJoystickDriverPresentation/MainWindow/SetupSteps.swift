@@ -34,14 +34,18 @@ enum SetupSteps {
   ///
   /// The permissions are the ones the Access area counts as missing. A Bluetooth access that macOS
   /// restricts, or that the service does not report, is no step, because the user cannot act on it.
+  /// Input Inject and Post Event both ask for Accessibility, so they are one step, the Input
+  /// Inject one, whose button requests both.
   static func open(
     permissionState: RuntimePermissionLoadState,
     statusState: RuntimeStatusState
   ) -> [SetupStep] {
-    var steps = AccessReadiness.missingPermissions(
+    var missing = AccessReadiness.missingPermissions(
       permissionState: permissionState,
       statusState: statusState
-    ).map { kind in
+    )
+    if missing.contains(.inputInject) { missing.removeAll { $0 == .postEvent } }
+    var steps = missing.map { kind in
       SetupStep(
         kind: .permission(kind),
         sentenceKey: sentenceKey(for: kind),

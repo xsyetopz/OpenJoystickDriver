@@ -1420,8 +1420,6 @@
 "ui.console.loadError" = "ไม่สามารถอ่านบันทึกการใช้งานได้";
 /* Option of the stream filter in the Activity log that shows only output entries. */
 "ui.console.output" = "เอาต์พุต";
-/* Column title in the Activity log table. The column tells whether an entry is output or an error. */
-"ui.console.stream" = "สตรีม";
 /* Name of the notification setting for a controller that connects, in the Notifications pane of the settings window. */
 "notify.controllerConnected" = "คอนโทรลเลอร์เชื่อมต่อแล้ว";
 /* Body of the notification shown when a controller connects. %@ is the controller name. */

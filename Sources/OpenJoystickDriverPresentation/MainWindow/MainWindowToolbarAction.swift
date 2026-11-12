@@ -117,30 +117,30 @@ enum MainWindowToolbarAction: String, CaseIterable {
     }
   }
 
-  /// The localization key of the item's tooltip and accessibility description.
-  var descriptionKey: String {
+  /// The localization key of the item's tooltip, or nil when the label already says it all.
+  var descriptionKey: String? {
     switch self {
-    case .newProfile: return "ui.profiles.new"
-    case .importProfile: return "ui.profiles.import"
-    case .validateProfileFile: return "ui.profiles.validateFile"
-    case .duplicateProfile: return "action.duplicate"
-    case .convertProfile: return "action.convert"
-    case .exportProfile: return "ui.profiles.export"
-    case .deleteProfile: return "action.delete"
+    case .newProfile: return nil
+    case .importProfile: return nil
+    case .validateProfileFile: return nil
+    case .duplicateProfile: return nil
+    case .convertProfile: return nil
+    case .exportProfile: return nil
+    case .deleteProfile: return nil
     case .installLibraryItem: return "ui.menu.file.installRecordOrMod"
     case .grantProgram: return "a11y.access.grantProgram"
     case .createToken: return "a11y.access.grantToken"
-    case .validateLibraryItem: return "ui.library.validate"
-    case .testLibraryRecord: return "ui.library.testRecord"
-    case .removeLibraryItem: return "ui.library.remove"
-    case .searchLibrary: return "ui.library.search"
-    case .activityMode: return "ui.sidebar.activity.title"
-    case .activityFilter: return "ui.activity.filter"
-    case .activitySearch: return "ui.activity.search"
-    case .copyActivityLog: return "action.copyAll"
-    case .saveActivityLog: return "ui.menu.file.saveActivityLog"
-    case .showActivityLogInFinder: return "platform.macos.ui.activity.showInFinder"
-    case .runDiagnostics: return "ui.activity.runChecks"
+    case .validateLibraryItem: return nil
+    case .testLibraryRecord: return nil
+    case .removeLibraryItem: return nil
+    case .searchLibrary: return nil
+    case .activityMode: return nil
+    case .activityFilter: return nil
+    case .activitySearch: return nil
+    case .copyActivityLog: return nil
+    case .saveActivityLog: return nil
+    case .showActivityLogInFinder: return nil
+    case .runDiagnostics: return nil
     }
   }
 
