@@ -219,7 +219,7 @@
 /* Value of the pause fact in the Controllers detail, and menu bar menu row under a controller that a Pause assignment holds. */
 "ui.controllers.paused.value" = "Dijeda";
 /* Label of the fact in the Controllers detail that names the app in front that selected the profile in force. Its value is the name of the app. */
-"ui.controllers.profileSelectedBy.label" = "Dipilih oleh apl";
+"ui.controllers.profileSelectedBy.label" = "Dipilih oleh app";
 /* Note in the menu bar row of a controller that names the app in front that selected the profile in force. %@ is the name of the app. */
 "ui.extra.profileSelectedByApp" = "Dipilih oleh %@";
 /* VoiceOver label of the button that shows the serial number in the Controllers detail. */
@@ -305,7 +305,7 @@
 /* Value of a stick or trigger row of the calibration view in the controller detail. %1$@ is the value the controller reports, such as 40%, and %2$@ is the value after tuning, such as 0%. */
 "ui.controllers.calibration.reading" = "Mentah %1$@, setelah penyetelan %2$@";
 /* Value of a stick row of the calibration view in the controller detail. %1$@ is the raw and tuned values text, and %2$@ is the stick deadzone, such as 10%. The deadzone is the part of the travel near the center that is ignored. */
-"ui.controllers.calibration.readingWithDeadZone" = "%1$@, zona mati %2$@";
+"ui.controllers.calibration.readingWithDeadZone" = "%1$@, deadzone %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
 "ui.controllers.calibration.noOutput" = "tidak ada gamepad virtual";
 /* Value of the calibration row in the controller detail while the service has reported no stick or trigger values yet. */
@@ -333,13 +333,13 @@
 /* Value of the virtual gamepad kind when the controller has none. */
 "ui.virtualProfile.none" = "Tidak ada jenis gamepad virtual";
 /* Caption under the Virtual gamepad kind pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
-"ui.virtualProfile.inForce" = "Sedang dipakai: %1$@. Penggantian tersimpan: %2$@.";
+"ui.virtualProfile.inForce" = "Sedang dipakai: %1$@. Penimpaan tersimpan: %2$@.";
 /* Caption under the Virtual gamepad kind pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
 "ui.virtualProfile.unchanged" = "Pilihan ini sudah berlaku. Tidak ada yang berubah.";
 /* Caption under the Virtual gamepad kind pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
-"ui.virtualProfile.otherScopeHolds.model" = "Penggantian yang berlaku disimpan untuk setiap pengontrol model ini, jadi tidak ada yang perlu dihapus untuk pengontrol ini saja. Tidak ada yang berubah.";
+"ui.virtualProfile.otherScopeHolds.model" = "Penimpaan yang berlaku disimpan untuk setiap pengontrol model ini, jadi tidak ada yang perlu dihapus untuk pengontrol ini saja. Tidak ada yang berubah.";
 /* Caption under the Virtual gamepad kind pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
-"ui.virtualProfile.otherScopeHolds.unit" = "Penggantian yang berlaku disimpan hanya untuk pengontrol ini, jadi tidak ada yang perlu dihapus untuk model. Tidak ada yang berubah.";
+"ui.virtualProfile.otherScopeHolds.unit" = "Penimpaan yang berlaku disimpan hanya untuk pengontrol ini, jadi tidak ada yang perlu dihapus untuk model. Tidak ada yang berubah.";
 /* Status shown while the app changes the virtual gamepad kind. Keep the three dots. */
 "ui.virtualProfile.updating" = "Memperbarui jenis gamepad virtual…";
 /* Error when the user picks a virtual gamepad kind that the service does not know. The service stored nothing. */
@@ -585,9 +585,9 @@
 /* Title of the behavior sheet of an assignment. The sheet sets turbo, hold and double tap. */
 "ui.profiles.bindingBehavior" = "Perilaku penetapan";
 /* Label above the list of apps that a profile applies to, in the profile creation sheet and the profile details sheet. */
-"ui.profiles.apps" = "Apl";
+"ui.profiles.apps" = "App";
 /* Title of the menu that adds an app to the list of apps of a profile. It lists running and installed apps and Other... */
-"ui.profiles.addApp" = "Tambah Apl";
+"ui.profiles.addApp" = "Tambah App";
 /* Header of the section of the Add App menu that lists the apps that run now. */
 "ui.profiles.appsRunning" = "Berjalan";
 /* Item of the Add App menu that opens a panel to choose an app that the menu does not list. */
@@ -597,7 +597,7 @@
 /* Accessibility label of the button that removes an app from the list of apps of a profile. %@ is the name of the app. */
 "ui.profiles.removeAppNamed" = "Hapus %@";
 /* Message of the open panel that Other... opens in the Add App menu of a profile. */
-"ui.profiles.appPanelMessage" = "Pilih apl untuk profil ini.";
+"ui.profiles.appPanelMessage" = "Pilih app untuk profil ini.";
 /* Help text of the chord sheet. The destination fires while all chosen controls are held down. */
 "ui.profiles.chordHelp" = "Tujuan dijalankan selama semua kontrol yang dipilih ditekan.";
 /* Label of the popup in the chord sheet that picks how the chord works. */
@@ -691,7 +691,7 @@
 /* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
 "ui.profiles.templateNoMotion" = "%@ tidak memiliki sensor gerak.";
 /* Message in the profile creation sheet under the template popup. %@ is the comma-separated list of controls that the template could not bind because the controller lacks them. */
-"ui.profiles.templateSkipped" = "Tidak dipetakan karena kontroler tidak memiliki: %@.";
+"ui.profiles.templateSkipped" = "Tidak dipetakan karena pengontrol tidak memiliki: %@.";
 /* Option of the activation popup in the layer sheet: pressing the control turns the layer on or off. */
 "ui.profiles.toggle" = "Sakelar";
 /* Title of the switch in the behavior sheet that repeats the destination while the control is held. */
@@ -1385,17 +1385,17 @@
 /* Button of the problem banner that repairs the driver extension for Xbox USB controllers. */
 "ui.setup.repairDriver" = "Perbaiki Driver USB Xbox";
 /* Row label in the output of 'ojd controller show' for a controller that Apple's driver holds. The line after it says that macOS serves the controller and how to claim it. */
-"platform.macos.cli.controller.show.labelServedBy" = "Driver bawaan";
+"platform.macos.cli.controller.show.labelServedBy" = "Driver native";
 /* Row value in the output of 'ojd controller show' for a controller that Apple's driver holds. %@ is the controller ID. The command in backticks stays as written. macOS is the operating system. */
-"platform.macos.cli.controller.show.servedByMacOS" = "Ditangani macOS. Jalankan `ojd controller claim %@` untuk mengaktifkan ekstensi dan mengambil alih kontroler.";
+"platform.macos.cli.controller.show.servedByMacOS" = "Ditangani macOS. Jalankan `ojd controller claim %@` untuk mengaktifkan ekstensi dan mengambil alih pengontrol.";
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
 "platform.macos.ui.controllers.servedByMacOS" = "Ditangani macOS";
 /* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
-"platform.macos.ui.controllers.servedByMacOSDetail" = "Driver Apple memegang kontroler ini. Klaim untuk mengaktifkan driver USB Xbox.";
+"platform.macos.ui.controllers.servedByMacOSDetail" = "Driver Apple memegang pengontrol ini. Klaim untuk mengaktifkan driver USB Xbox.";
 /* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
 "ui.controllers.claim" = "Klaim";
 /* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
-"ui.setup.runningDetail" = "Memasang driver USB Xbox…";
+"ui.setup.runningDetail" = "Menginstal driver USB Xbox…";
 /* Disabled button of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
 "ui.setup.repairRunning" = "Memperbaiki…";
 /* Detail line of the problem banner when the state of the driver extension for Xbox USB controllers cannot be read. The banner has no button then. */
@@ -1403,7 +1403,7 @@
 /* Detail line of the problem banner when the request for the driver extension failed. %1$@ is the error domain, %2$lld is the error code and %3$@ is the error text. */
 "ui.setup.failedDetail" = "Permintaan driver USB Xbox gagal: %3$@ (%1$@, kode %2$lld).";
 /* Detail line of the problem banner when the request for the driver extension was cancelled. The Try Again button follows. */
-"ui.setup.cancelledDetail" = "Permintaan driver USB Xbox dibatalkan. Coba lagi untuk memasang driver.";
+"ui.setup.cancelledDetail" = "Permintaan driver USB Xbox dibatalkan. Coba lagi untuk menginstal driver.";
 /* Detail line of the problem banner when the system did not answer the request for the driver extension in time. The Try Again button follows. */
 "ui.setup.timedOutDetail" = "Sistem tidak menjawab permintaan driver USB Xbox tepat waktu. Coba lagi.";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
@@ -1415,13 +1415,13 @@
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the request listener of the service stopped. */
 "ui.service.state.listenerStopped.message" = "Layanan berhenti mendengarkan permintaan.";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the service answered but the app could not read its status. */
-"ui.service.state.readFailed.message" = "Aplikasi tidak dapat membaca status layanan.";
+"ui.service.state.readFailed.message" = "App tidak dapat membaca status layanan.";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the service has no login item and does not answer. */
-"ui.service.state.notInstalled.message" = "Layanan belum dipasang.";
+"ui.service.state.notInstalled.message" = "Layanan belum terinstal.";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the user must approve the service before it can start. */
 "ui.service.state.needsApproval.message" = "Layanan memerlukan persetujuan Anda sebelum dapat dimulai.";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the service runs a different version than the app. */
-"ui.service.state.versionMismatch.message" = "Layanan menjalankan versi yang berbeda dari aplikasi.";
+"ui.service.state.versionMismatch.message" = "Layanan menjalankan versi yang berbeda dari app.";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
 "ui.banner.access.title" = "Izin diperlukan";
 /* Detail line of the problem banner when macOS has not allowed all that the driver needs. OpenJoystickDriver is the product name. */
@@ -2624,11 +2624,11 @@
 /* One-line summary of 'ojd controller claim' in the command list and at the top of its help. OpenJoystickDriver is the product name. To handle a model means to read its input and publish it as a virtual gamepad. */
 "cli.controller.claim.abstract" = "Buat OpenJoystickDriver menangani model pengontrol.";
 /* Long description in the help of 'ojd controller claim'. server, ojd, vvvv-pppp.plist and the record terms stay as written. */
-"platform.macos.cli.controller.claim.discussion" = "Mengatur server ke ojd di rekam Anda untuk model tersebut, vvvv-pppp.plist di direktori rekam Anda, dan mempertahankan kolom rekam lainnya. Berlaku untuk setiap pengontrol model tersebut. Layanan yang berjalan menerapkannya tanpa mencabut dan memasang ulang. Memerlukan layanan untuk menemukan pengontrol. --dry-run tidak menulis apa pun. Keluar dengan 1 dan E2023 untuk pengontrol yang memakai USB mentah, yang selalu dilayani OpenJoystickDriver, atau yang tidak dilayani macOS secara native.";
+"platform.macos.cli.controller.claim.discussion" = "Mengatur server ke ojd di catatan Anda untuk model tersebut, vvvv-pppp.plist di direktori catatan Anda, dan mempertahankan kolom catatan lainnya. Berlaku untuk setiap pengontrol model tersebut. Layanan yang berjalan menerapkannya tanpa mencabut dan memasang ulang. Memerlukan layanan untuk menemukan pengontrol. --dry-run tidak menulis apa pun. Keluar dengan 1 dan E2023 untuk pengontrol yang memakai USB mentah, yang selalu dilayani OpenJoystickDriver, atau yang tidak dilayani macOS secara native.";
 /* One-line summary of 'ojd controller release' in the command list and at the top of its help. */
 "platform.macos.cli.controller.release.abstract" = "Kembalikan model pengontrol ke macOS.";
 /* Long description in the help of 'ojd controller release'. server, system and vvvv-pppp.plist stay as written. */
-"platform.macos.cli.controller.release.discussion" = "Mengatur server ke system di rekam Anda untuk model tersebut, vvvv-pppp.plist di direktori rekam Anda, dan mempertahankan kolom rekam lainnya. Berlaku untuk setiap pengontrol model tersebut. Layanan yang berjalan menerapkannya tanpa mencabut dan memasang ulang. Memerlukan layanan untuk menemukan pengontrol. --dry-run tidak menulis apa pun. Keluar dengan 1 dan E2023 untuk pengontrol yang memakai USB mentah, yang selalu dilayani OpenJoystickDriver, atau yang tidak dilayani macOS secara native.";
+"platform.macos.cli.controller.release.discussion" = "Mengatur server ke system di catatan Anda untuk model tersebut, vvvv-pppp.plist di direktori catatan Anda, dan mempertahankan kolom catatan lainnya. Berlaku untuk setiap pengontrol model tersebut. Layanan yang berjalan menerapkannya tanpa mencabut dan memasang ulang. Memerlukan layanan untuk menemukan pengontrol. --dry-run tidak menulis apa pun. Keluar dengan 1 dan E2023 untuk pengontrol yang memakai USB mentah, yang selalu dilayani OpenJoystickDriver, atau yang tidak dilayani macOS secara native.";
 /* Message printed by 'ojd controller claim' and related commands with --dry-run instead of writing the record. %1$@ is the controller identity, %2$@ is the server name in kebab case and %3$@ is the record file. */
 "cli.controller.group.serverDryRun" = "Jika dijalankan, %1$@ akan ditetapkan ke %2$@ di %3$@.";
 /* Error when the record file of a controller cannot be changed. %1$@ is the path of the record file and %2$@ is the description of the problem. */
@@ -4004,11 +4004,11 @@
 /* Title of the Activity item in the sidebar of the main window. The area shows the log and the diagnostics. */
 "ui.sidebar.activity.title" = "Aktivitas";
 /* Sentence of the main-window tour that says what the Controllers area is for. It is shown under the title of the area. */
-"ui.tour.controllers.summary" = "Lihat pengontrol yang terhubung dan uji masukannya.";
+"ui.tour.controllers.summary" = "Lihat pengontrol yang terhubung dan uji inputnya.";
 /* Sentence of the main-window tour that says what the Profiles area is for. It is shown under the title of the area. */
 "ui.tour.profiles.summary" = "Buat dan edit profil yang memetakan ulang tombol dan stik pengontrol.";
 /* Sentence of the main-window tour that says what the Library area is for. It is shown under the title of the area. */
-"ui.tour.library.summary" = "Telusuri catatan pengontrol dan mod yang disertakan dengan app atau sudah terpasang.";
+"ui.tour.library.summary" = "Telusuri catatan pengontrol dan mod yang disertakan dengan app atau sudah terinstal.";
 /* Sentence of the main-window tour that says what the Access area is for. It is shown under the title of the area. */
 "ui.tour.access.summary" = "Periksa izin yang dibutuhkan app dan klien mana yang dapat menjangkaunya.";
 /* Sentence of the main-window tour that says what the Activity area is for. It is shown under the title of the area. */
@@ -4058,7 +4058,7 @@
 /* Menu item in the controller submenu of the menu bar menu that stops the service from remapping that controller. */
 "ui.extra.pause" = "Jeda";
 /* Menu item in the controller submenu of the menu bar menu that turns off the profile of that controller. It has a checkmark while no profile is in force. */
-"ui.extra.noProfile" = "Tanpa profil";
+"ui.extra.noProfile" = "Tanpa Profil";
 /* Menu item in the controller submenu of the menu bar menu that opens the Profiles area of the main window when a controller has more than ten profiles. */
 "ui.extra.moreProfiles" = "Profil Lainnya";
 /* Title of a controller row in the menu bar menu. %1$@ is the controller name and %2$@ is a list of its battery level, active profile and paused state. The parentheses may change. */
@@ -4072,7 +4072,7 @@
 /* Button of the problem banner that opens the Access area so the user can grant access. */
 "ui.extra.grantAccess" = "Beri Akses";
 /* Menu item at the top of the menu bar menu while a permission is missing; choosing it opens the Access area at that permission. %@ is the name of the permission. */
-"ui.extra.problemPermission" = "Izin tidak ada: %@";
+"ui.extra.problemPermission" = "Izin Tidak Ada: %@";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "Buka %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */
@@ -4186,7 +4186,7 @@
 /* Description in the Shortcuts app of the action that sets the player indicator of a controller. */
 "ui.shortcuts.action.player.description" = "Mengatur lampu indikator pemain pada pengontrol.";
 /* Label in the Shortcuts app of the player number from 1 to 4, or 0 for none. */
-"ui.shortcuts.action.player.number" = "Nomor Pemain (0 untuk mati)";
+"ui.shortcuts.action.player.number" = "Nomor Pemain (0 untuk tidak ada)";
 /* Name in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
 "ui.shortcuts.action.light.title" = "Atur Lampu Pengontrol";
 /* Description in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
@@ -4200,19 +4200,19 @@
 /* Name in the Shortcuts app of the action that returns the installed mod packages. */
 "ui.shortcuts.action.listMods.title" = "Daftar Paket Mod";
 /* Description in the Shortcuts app of the action that returns the installed mod packages. */
-"ui.shortcuts.action.listMods.description" = "Mengembalikan nama paket mod yang terpasang.";
+"ui.shortcuts.action.listMods.description" = "Mengembalikan nama paket mod yang terinstal.";
 /* Name in the Shortcuts app of the action that installs a mod package from a folder. */
-"ui.shortcuts.action.installMod.title" = "Pasang Paket Mod";
+"ui.shortcuts.action.installMod.title" = "Instal Paket Mod";
 /* Description in the Shortcuts app of the action that installs a mod package from a folder. */
-"ui.shortcuts.action.installMod.description" = "Memasang paket mod dari sebuah folder dan mengembalikan namanya.";
+"ui.shortcuts.action.installMod.description" = "Menginstal paket mod dari sebuah folder dan mengembalikan namanya.";
 /* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
 "ui.shortcuts.action.installMod.folder" = "Folder";
 /* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
-"ui.shortcuts.action.installMod.replace" = "Ganti Paket yang Terpasang";
+"ui.shortcuts.action.installMod.replace" = "Ganti Paket yang Terinstal";
 /* Name in the Shortcuts app of the action that removes an installed mod package. */
 "ui.shortcuts.action.removeMod.title" = "Hapus Paket Mod";
 /* Description in the Shortcuts app of the action that removes an installed mod package. */
-"ui.shortcuts.action.removeMod.description" = "Menghapus paket mod yang terpasang berdasarkan namanya.";
+"ui.shortcuts.action.removeMod.description" = "Menghapus paket mod yang terinstal berdasarkan namanya.";
 /* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
 "ui.shortcuts.action.removeMod.name" = "Nama";
 /* Name of the model property of a controller in the Shortcuts app. */
@@ -4492,7 +4492,7 @@
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad name is not a known virtual gamepad. %2$@ is the known names. %1$@ is the file. */
 "error.E5007.virtualDevice.persona" = "%1$@, persona: persona harus salah satu dari %2$@. Perbaikan: atur persona ke salah satunya.";
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file selects no model, and a user file must. %1$@ is the file. */
-"error.E5007.virtualDevice.matchRequired" = "%1$@, match: berkas di folder pengguna harus memuat match. Perbaikan: tambahkan match dengan vendorID dan productID model.";
+"error.E5007.virtualDevice.matchRequired" = "%1$@, match: file di folder pengguna harus memuat match. Perbaikan: tambahkan match dengan vendorID dan productID model.";
 /* Error E5007, shown when a virtual gamepad file fails: a layout is not a known layout. %2$@ is the known layouts. %1$@ is the file. */
 "error.E5007.virtualDevice.layout" = "%1$@, layout: layout harus salah satu dari %2$@. Perbaikan: atur layout ke salah satunya.";
 /* Error E5007, shown when a virtual gamepad file fails: a transport is not USB or Bluetooth. %1$@ is the file. */
@@ -4538,9 +4538,9 @@
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
 "error.E5007.startupWrite.crcSeedRange" = "%1$@, session.startup[].crc32Seed: crc32Seed startup harus 0...255. Perbaikan: atur crc32Seed ke 0...255, atau hilangkan.";
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: berkas gamepad virtual tidak boleh mengulang match dari berkas pengguna %2$@. Perbaikan: beri setiap model satu berkas gamepad virtual, atau ubah match di salah satunya.";
+"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: file gamepad virtual tidak boleh mengulang match dari file pengguna %2$@. Perbaikan: beri setiap model satu file gamepad virtual, atau ubah match di salah satunya.";
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: berkas gamepad virtual tidak boleh mengulang match dari berkas paket %2$@. Perbaikan: beri setiap model satu berkas gamepad virtual, atau ubah match di salah satunya.";
+"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: file gamepad virtual tidak boleh mengulang match dari file paket %2$@. Perbaikan: beri setiap model satu file gamepad virtual, atau ubah match di salah satunya.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: interval keep-alive harus 1...60000 ms. Perbaikan: atur intervalMilliseconds ke 1...60000.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
@@ -5080,7 +5080,7 @@
 /* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
 "error.E5009.message" = "Dokumen tersimpan dari versi lama tidak punya konversi otomatis, jadi ojd migrate membiarkannya tidak berubah. Pesan menyebut file dan kolomnya. Ubah file secara manual ke apiVersion yang didukung.";
 /* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
-"error.E5010.message" = "Dokumen tersimpan bukan daftar properti XML, atau berisi nilai tanggal atau data. Pesan menyebut berkas dan bentuk atau jalur kuncinya. Simpan berkas sebagai daftar properti XML dengan plutil -convert xml1.";
+"error.E5010.message" = "Dokumen tersimpan bukan daftar properti XML, atau berisi nilai tanggal atau data. Pesan menyebut file dan bentuk atau jalur kuncinya. Simpan file sebagai daftar properti XML dengan plutil -convert xml1.";
 /* One-line summary of 'ojd generate' in the command list and at the top of its help. */
 "cli.generate.group.abstract" = "Jalankan skrip generator dan tulis dokumen yang dikembalikannya.";
 /* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
@@ -5198,13 +5198,13 @@
 /* Title of the row in the General pane of the settings window where the user records the system-wide keyboard shortcut that pauses and resumes every controller. */
 "ui.settings.general.pauseShortcut" = "Pintasan jeda";
 /* Explanation under the pause shortcut title in the General pane of the settings window. */
-"ui.settings.general.pauseShortcutDescription" = "Menjeda dan melanjutkan semua pengontrol dari aplikasi mana pun. Tahan Control, Option, atau Command bersama sebuah tombol.";
+"ui.settings.general.pauseShortcutDescription" = "Menjeda dan melanjutkan semua pengontrol dari app mana pun. Tahan Control, Option, atau Command bersama sebuah tombol.";
 /* Button in the General pane of the settings window that starts recording the pause shortcut. */
 "ui.settings.general.pauseShortcutRecord" = "Rekam Pintasan";
 /* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
 "ui.settings.general.pauseShortcutRecording" = "Tekan pintasan…";
 /* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
-"ui.settings.general.pauseShortcutTaken" = "Aplikasi lain sudah memakai pintasan ini. Rekam pintasan yang berbeda.";
+"ui.settings.general.pauseShortcutTaken" = "App lain sudah memakai pintasan ini. Rekam pintasan yang berbeda.";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
 "cli.setting.set.badShortcut" = "“%1$@” bukan pintasan. Gunakan pengubah dan sebuah tombol yang digabung dengan +, seperti control+option+P, atau none.";
 /* Error of 'ojd setting set' when the value is not an interface level. %1$@ is the text the user gave. Simple and Advanced stay as written. */
