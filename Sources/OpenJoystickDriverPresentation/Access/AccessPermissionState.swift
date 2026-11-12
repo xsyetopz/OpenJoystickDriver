@@ -28,13 +28,12 @@ enum AccessPermissionState: String, CaseIterable, Equatable, Sendable {
     }
   }
 
-  /// The localization key of the one sentence that says what the state means.
-  var messageKey: String {
+  /// The localization key of the sentence that adds to the row's value; nil when the value says it
+  /// all.
+  var messageKey: String? {
     switch self {
-    case .granted: return "ui.access.permission.granted.message"
+    case .granted, .notAsked, .checking: return nil
     case .denied: return "platform.macos.ui.access.permission.denied.message"
-    case .notAsked: return "ui.access.permission.notAsked.message"
-    case .checking: return "ui.access.permission.checking.message"
     case .notNeeded: return "ui.access.permission.notNeeded.message"
     case .limited: return "ui.access.permission.limited.message"
     }

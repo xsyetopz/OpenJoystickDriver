@@ -126,8 +126,9 @@
     /// missing.
     private var permissionsSection: some View {
       let current = readiness
-      return Section(header: Text(OJDLocalized.string("ui.settings.notifications.accessReadiness")))
-      {
+      return Section(
+        header: Text(OJDLocalized.string("platform.macos.ui.access.permissions.title"))
+      ) {
         ForEach(current.rows) { row in permissionRow(row).id(row.id) }
         if current.needsRestart {
           Button(
@@ -139,11 +140,18 @@
       }
     }
 
-    /// Returns the row for a permission, with a button when the permission is missing.
+    /// Returns the row for a permission: its name and use, its value, a button when the permission
+    /// is missing, and a sentence when the value alone does not say what to know.
     private func permissionRow(_ row: AccessPermissionRow) -> some View {
       let title = OJDLocalized.string(row.titleKey)
       let state = row.status.state
-      return OJDLabeledRow(title) {
+      return HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.medium) {
+        VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
+          Text(title)
+          Text(OJDLocalized.string(row.kind.purposeKey)).font(.caption).foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+        Spacer(minLength: OJDSpacing.medium)
         VStack(alignment: .trailing, spacing: OJDSpacing.xxSmall) {
           HStack {
             OJDSystemSymbol(name: state.symbolName, fallback: nil)
@@ -157,8 +165,10 @@
                 .ojdAccessibilityValue(row.status.value)
             }
           }
-          Text(OJDLocalized.string(state.messageKey)).font(.caption).foregroundStyle(.secondary)
-            .multilineTextAlignment(.trailing).fixedSize(horizontal: false, vertical: true)
+          if let key = state.messageKey {
+            Text(OJDLocalized.string(key)).font(.caption).foregroundStyle(.secondary)
+              .multilineTextAlignment(.trailing).fixedSize(horizontal: false, vertical: true)
+          }
         }
       }
     }

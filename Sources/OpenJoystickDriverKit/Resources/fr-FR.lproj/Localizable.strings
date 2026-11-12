@@ -74,8 +74,6 @@
 "ui.settings.general.controllers" = "Manettes";
 /* Heading of the profile events section in the Notifications pane of the settings window. */
 "ui.settings.general.profiles" = "Profils";
-/* Heading of the section in the Access area that lists the readiness of permissions and notifications. */
-"ui.settings.notifications.accessReadiness" = "Accès et disponibilité";
 /* Button in the Updates section of the settings window that checks for an update. */
 "ui.settings.general.checkUpdates" = "Vérifier maintenant";
 /* Value of the connection state of a controller in the Controllers detail: the controller is connected. */
@@ -4283,18 +4281,22 @@
 "ui.access.web.on" = "Activé sur %1$@, pages sur %2$@";
 /* Value of the WebSocket row when it is off. */
 "ui.access.web.off" = "Désactivé";
-/* Sentence under a permission row in the Access area when the permission is allowed. */
-"ui.access.permission.granted.message" = "Cette autorisation est accordée.";
 /* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. */
 "platform.macos.ui.access.permission.denied.message" = "macOS a refusé cette autorisation, ou son état n’a pas pu être lu. Autorisez-la dans Réglages Système.";
-/* Sentence under a permission row in the Access area when the permission has not been requested yet. */
-"ui.access.permission.notAsked.message" = "Cette autorisation n’a pas encore été demandée.";
-/* Sentence under a permission row in the Access area while the permission is being read. Keep the three dots. */
-"ui.access.permission.checking.message" = "Vérification de cette autorisation…";
 /* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
 "ui.access.permission.notNeeded.message" = "Les profils actifs n’utilisent pas cette autorisation.";
 /* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
 "ui.access.permission.limited.message" = "Autorisée, mais les bannières ou les sons sont désactivés ; des alertes pourraient passer inaperçues.";
+/* Heading of the section in the Access area that lists the macOS permissions the app needs. */
+"platform.macos.ui.access.permissions.title" = "Autorisations macOS";
+/* Sentence under the Input Monitoring row in the Access area that says what the app uses the permission for. */
+"ui.access.permission.inputRead.purpose" = "Lit vos manettes.";
+/* Sentence under the Accessibility row in the Access area that says what the app uses the permission for. */
+"ui.access.permission.inputInject.purpose" = "Publie vos manettes dans les jeux.";
+/* Sentence under the Keyboard & pointer row in the Access area that says what the app uses the permission for. */
+"ui.access.permission.postEvent.purpose" = "Envoie les événements de clavier et de pointeur que vos profils associent.";
+/* Sentence under the Notifications row in the Access area that says what the app uses notifications for. */
+"ui.access.permission.notification.purpose" = "Vous avertit quand une manette se connecte ou qu’un profil change.";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
 "ui.access.web.closed" = "Activé, mais n’écoute pas sur le port %@";
 /* Help text of the WebSocket row. %@ is the path of the folder from which the endpoint serves pages. */

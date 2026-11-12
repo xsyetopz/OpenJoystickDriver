@@ -74,8 +74,6 @@
 "ui.settings.general.controllers" = "कंट्रोलर";
 /* Heading of the profile events section in the Notifications pane of the settings window. */
 "ui.settings.general.profiles" = "प्रोफ़ाइल";
-/* Heading of the section in the Access area that lists the readiness of permissions and notifications. */
-"ui.settings.notifications.accessReadiness" = "ऐक्सेस और तैयारी";
 /* Button in the Updates section of the settings window that checks for an update. */
 "ui.settings.general.checkUpdates" = "अब जाँचें";
 /* Value of the connection state of a controller in the Controllers detail: the controller is connected. */
@@ -3701,18 +3699,22 @@
 "ui.access.web.on" = "%1$@ पर चालू, पेज %2$@ पर";
 /* Value of the WebSocket row when it is off. */
 "ui.access.web.off" = "बंद";
-/* Sentence under a permission row in the Access area when the permission is allowed. */
-"ui.access.permission.granted.message" = "यह अनुमति दी गई है।";
 /* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. */
 "platform.macos.ui.access.permission.denied.message" = "macOS ने यह अनुमति अस्वीकार कर दी है, या इसकी स्थिति पढ़ी नहीं जा सकी। इसे सिस्टम सेटिंग्स में अनुमति दें।";
-/* Sentence under a permission row in the Access area when the permission has not been requested yet. */
-"ui.access.permission.notAsked.message" = "यह अनुमति अभी तक माँगी नहीं गई है।";
-/* Sentence under a permission row in the Access area while the permission is being read. Keep the three dots. */
-"ui.access.permission.checking.message" = "इस अनुमति की जाँच हो रही है…";
 /* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
 "ui.access.permission.notNeeded.message" = "सक्रिय प्रोफ़ाइल इस अनुमति का उपयोग नहीं करतीं।";
 /* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
 "ui.access.permission.limited.message" = "अनुमति है, लेकिन बैनर या ध्वनियाँ बंद हैं, इसलिए अलर्ट छूट सकते हैं।";
+/* Heading of the section in the Access area that lists the macOS permissions the app needs. */
+"platform.macos.ui.access.permissions.title" = "macOS अनुमतियाँ";
+/* Sentence under the Input Monitoring row in the Access area that says what the app uses the permission for. */
+"ui.access.permission.inputRead.purpose" = "आपके कंट्रोलर पढ़ता है।";
+/* Sentence under the Accessibility row in the Access area that says what the app uses the permission for. */
+"ui.access.permission.inputInject.purpose" = "आपके कंट्रोलर गेम में प्रकाशित करता है।";
+/* Sentence under the Keyboard & pointer row in the Access area that says what the app uses the permission for. */
+"ui.access.permission.postEvent.purpose" = "आपकी प्रोफ़ाइलों द्वारा मैप किए गए कीबोर्ड और पॉइंटर इवेंट भेजता है।";
+/* Sentence under the Notifications row in the Access area that says what the app uses notifications for. */
+"ui.access.permission.notification.purpose" = "कंट्रोलर कनेक्ट होने या प्रोफ़ाइल बदलने पर आपको सूचित करता है।";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
 "ui.access.web.closed" = "चालू है, पर पोर्ट %@ पर सुन नहीं रहा";
 /* Help text of the WebSocket row. %@ is the path of the folder from which the endpoint serves pages. */

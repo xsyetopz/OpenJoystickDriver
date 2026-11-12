@@ -42,6 +42,9 @@ struct AccessPermissionRow: Equatable, Identifiable {
       case .notification: return "ui.settings.notifications.notifications"
       }
     }
+
+    /// The localization key of the sentence that says what the app does with the permission.
+    var purposeKey: String { "ui.access.permission.\(rawValue).purpose" }
   }
 
   /// The permission.

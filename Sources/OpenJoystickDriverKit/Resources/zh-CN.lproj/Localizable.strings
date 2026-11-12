@@ -74,8 +74,6 @@
 "ui.settings.general.controllers" = "控制器";
 /* Heading of the profile events section in the Notifications pane of the settings window. */
 "ui.settings.general.profiles" = "配置文件";
-/* Heading of the section in the Access area that lists the readiness of permissions and notifications. */
-"ui.settings.notifications.accessReadiness" = "访问与就绪状态";
 /* Button in the Updates section of the settings window that checks for an update. */
 "ui.settings.general.checkUpdates" = "立即检查";
 /* Value of the connection state of a controller in the Controllers detail: the controller is connected. */
@@ -3701,18 +3699,22 @@
 "ui.access.web.on" = "已开启，位于 %1$@，页面位于 %2$@";
 /* Value of the WebSocket row when it is off. */
 "ui.access.web.off" = "关";
-/* Sentence under a permission row in the Access area when the permission is allowed. */
-"ui.access.permission.granted.message" = "此权限已允许。";
 /* Sentence under a permission row in the Access area when macOS has denied the permission or its state could not be read. */
 "platform.macos.ui.access.permission.denied.message" = "macOS 已拒绝此权限，或无法读取其状态。请在“系统设置”中允许。";
-/* Sentence under a permission row in the Access area when the permission has not been requested yet. */
-"ui.access.permission.notAsked.message" = "尚未请求此权限。";
-/* Sentence under a permission row in the Access area while the permission is being read. Keep the three dots. */
-"ui.access.permission.checking.message" = "正在检查此权限…";
 /* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
 "ui.access.permission.notNeeded.message" = "当前启用的配置文件不使用此权限。";
 /* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
 "ui.access.permission.limited.message" = "已允许，但横幅或声音已关闭，可能会错过提醒。";
+/* Heading of the section in the Access area that lists the macOS permissions the app needs. */
+"platform.macos.ui.access.permissions.title" = "macOS 权限";
+/* Sentence under the Input Monitoring row in the Access area that says what the app uses the permission for. */
+"ui.access.permission.inputRead.purpose" = "读取你的控制器。";
+/* Sentence under the Accessibility row in the Access area that says what the app uses the permission for. */
+"ui.access.permission.inputInject.purpose" = "将你的控制器发布到游戏。";
+/* Sentence under the Keyboard & pointer row in the Access area that says what the app uses the permission for. */
+"ui.access.permission.postEvent.purpose" = "发送你的配置文件所映射的键盘与指针事件。";
+/* Sentence under the Notifications row in the Access area that says what the app uses notifications for. */
+"ui.access.permission.notification.purpose" = "在控制器连接或配置文件切换时提醒你。";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
 "ui.access.web.closed" = "已开启，但未在端口 %@ 上监听";
 /* Help text of the WebSocket row. %@ is the path of the folder from which the endpoint serves pages. */

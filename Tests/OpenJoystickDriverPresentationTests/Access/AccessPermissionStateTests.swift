@@ -12,15 +12,18 @@ struct AccessPermissionStateTests {
     #expect(Set(shapes).count == names.count)
   }
 
-  @Test(arguments: AccessPermissionState.allCases)
-  func everyStateHasASentenceInEnglish(state: AccessPermissionState) {
-    #expect(OJDLocalized.string(state.messageKey) != state.messageKey)
+  @Test
+  func onlyStatesWhoseValueLeavesSomethingOutHaveASentence() {
+    let explained = AccessPermissionState.allCases.filter { $0.messageKey != nil }
+    #expect(explained == [.denied, .notNeeded, .limited])
+    let keys = explained.compactMap(\.messageKey)
+    #expect(Set(keys).count == keys.count)
+    for key in keys { #expect(OJDLocalized.string(key) != key) }
   }
 
-  @Test
-  func everyStateHasADistinctSentenceKey() {
-    let keys = AccessPermissionState.allCases.map(\.messageKey)
-    #expect(Set(keys).count == keys.count)
+  @Test(arguments: AccessPermissionRow.Kind.allCases)
+  func everyPermissionSaysWhatItIsFor(kind: AccessPermissionRow.Kind) {
+    #expect(OJDLocalized.string(kind.purposeKey) != kind.purposeKey)
   }
 
   @Test
