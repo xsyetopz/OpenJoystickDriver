@@ -120,6 +120,11 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
   ///
   /// Set by `init(payload:)`.
   var serviceBuild: BuildIdentity?
+  /// The Bluetooth access the service reports; nil for a presentation built from parts, or when
+  /// the service reports none.
+  ///
+  /// Set by `init(payload:)`.
+  var bluetoothAccess: BluetoothAccessState?
 
   /// Creates the presentation from the service status. `postEventAccess` and
   /// `requiresPostEventAccess` come from reads of their own; nil means not read.
@@ -142,6 +147,7 @@ struct RuntimeStatusPresentation: Sendable, Equatable {
 
     self.permissions = summary
     self.serviceBuild = payload.buildIdentity
+    self.bluetoothAccess = payload.bluetoothAccess
     self.devices = payload.connectedDevices
     self.unservedDevices = payload.unboundDevices.map(RuntimeUnservedDevice.init)
     self.virtualHIDProfileOverrideError = payload.virtualHIDProfileOverrideError

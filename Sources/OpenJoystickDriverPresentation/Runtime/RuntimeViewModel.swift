@@ -399,6 +399,19 @@ final class RuntimeViewModel: ObservableObject {
     }
   }
 
+  /// Asks macOS, through the service, for Bluetooth access.
+  ///
+  /// Returns the state at the answer, or nil when the request failed. The status shows it at once.
+  @discardableResult
+  func requestBluetoothAccess() async -> BluetoothAccessState? {
+    guard let access = try? await gateway.requestBluetoothAccess() else { return nil }
+    if case .available(var presentation) = statusState {
+      presentation.bluetoothAccess = access
+      statusState = .available(presentation)
+    }
+    return access
+  }
+
   /// Asks macOS for the Post Event access.
   ///
   /// Returns its state, or nil when the request failed or a later read or request replaced it.

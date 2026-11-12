@@ -33,6 +33,18 @@
       }
     }
 
+    /// Requests Bluetooth access, or opens its Privacy & Security pane when the user denied it.
+    static func requestBluetoothAccess(viewModel: RuntimeViewModel, opensSettings: Bool) {
+      Task { @MainActor in
+        AppForeground.activate()
+        if opensSettings {
+          openPrivacySettings(pane: "Privacy_Bluetooth")
+        } else {
+          await viewModel.requestBluetoothAccess()
+        }
+      }
+    }
+
     /// Requests the permission to post events and opens the Accessibility pane when it is not
     /// granted.
     static func requestPostEventAccess(viewModel: RuntimeViewModel) {

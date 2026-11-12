@@ -188,6 +188,14 @@ actor GatewayStub: ApplicationServiceGateway {
     _: PermissionManager.Requirement
   ) -> PermissionManager.Snapshot { requestPermissions() }
 
+  /// The Bluetooth access requests received.
+  private(set) var bluetoothRequests = 0
+
+  func requestBluetoothAccess() -> BluetoothAccessState {
+    bluetoothRequests += 1
+    return .granted
+  }
+
   func controllerState(for selector: ControllerReference) async throws -> ControllerState? {
     activeDeviceReads += 1
     maximumConcurrentDeviceReads = max(maximumConcurrentDeviceReads, activeDeviceReads)

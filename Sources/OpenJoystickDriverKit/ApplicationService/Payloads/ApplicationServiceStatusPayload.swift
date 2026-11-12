@@ -146,6 +146,8 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
   ///
   /// While set, every controller selects automatically.
   public let virtualHIDProfileOverrideError: String?
+  /// The Bluetooth access of the service; nil when the service does not report it.
+  public let bluetoothAccess: BluetoothAccessState?
 
   /// Creates a new ApplicationServiceStatusPayload.
   public init(
@@ -157,7 +159,8 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     passThroughDevices: [ApplicationServicePassThroughDevice] = [],
     userSpaceVirtualDeviceEnabled: Bool? = nil,
     userSpaceVirtualDeviceStatus: VirtualOutputBackendStatus? = nil,
-    virtualHIDProfileOverrideError: String? = nil
+    virtualHIDProfileOverrideError: String? = nil,
+    bluetoothAccess: BluetoothAccessState? = nil
   ) {
     self.buildIdentity = buildIdentity
     self.inputRead = inputRead
@@ -168,6 +171,7 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     self.userSpaceVirtualDeviceEnabled = userSpaceVirtualDeviceEnabled
     self.userSpaceVirtualDeviceStatus = userSpaceVirtualDeviceStatus
     self.virtualHIDProfileOverrideError = virtualHIDProfileOverrideError
+    self.bluetoothAccess = bluetoothAccess
   }
 
   /// The keys of the JSON encoding.
@@ -190,5 +194,7 @@ public struct ApplicationServiceStatusPayload: Codable, Sendable {
     case userSpaceVirtualDeviceStatus
     /// The `virtualHIDProfileOverrideError` key.
     case virtualHIDProfileOverrideError
+    /// The `bluetoothAccess` key.
+    case bluetoothAccess
   }
 }

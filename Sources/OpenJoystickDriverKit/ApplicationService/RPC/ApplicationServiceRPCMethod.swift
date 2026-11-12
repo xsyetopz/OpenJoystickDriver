@@ -6,6 +6,8 @@ package enum ApplicationServiceRPCMethod: String, CaseIterable, Sendable {
   case requestRequiredAccess
   /// Asks macOS for one permission.
   case requestAccess
+  /// Asks macOS for Bluetooth access.
+  case requestBluetoothAccess
   /// Reads a controller's input state.
   case getControllerState
   /// Reads a controller's packet log.

@@ -81,6 +81,17 @@ final class Switch2BluetoothLECentral: NSObject, @unchecked Sendable {
     createCentral()
   }
 
+  /// The Bluetooth access, read without a prompt.
+  var accessState: BluetoothAccessState {
+    switch authorization() {
+    case .notDetermined: return .notAsked
+    case .denied: return .denied
+    case .restricted: return .restricted
+    case .allowedAlways: return .granted
+    @unknown default: return .restricted
+    }
+  }
+
   /// Creates the central from a user action, which asks for Bluetooth access when undecided.
   func requestAccessAndStart() { createCentral() }
 
@@ -283,5 +294,34 @@ private struct CoreBluetoothGATTPeripheral: GATTPeripheral, @unchecked Sendable 
       peripheral.writeValue(Data(bytes), for: target, type: .withoutResponse)
       return true
     }
+  }
+}
+
+/// Reads and requests the Bluetooth access of the service for the RPC server.
+struct BluetoothAccessControl: Sendable {
+  /// Reads the access without a prompt.
+  let state: @Sendable () -> BluetoothAccessState
+  /// Asks for the access, which shows the Bluetooth prompt when the user has not decided, and
+  /// returns the state at that moment.
+  let request: @Sendable () -> BluetoothAccessState
+
+  /// Creates a control from its two closures.
+  init(
+    state: @escaping @Sendable () -> BluetoothAccessState,
+    request: @escaping @Sendable () -> BluetoothAccessState
+  ) {
+    self.state = state
+    self.request = request
+  }
+
+  /// Creates a control that reads and requests through `central`.
+  init(central: Switch2BluetoothLECentral) {
+    self.init(
+      state: { central.accessState },
+      request: {
+        central.requestAccessAndStart()
+        return central.accessState
+      }
+    )
   }
 }

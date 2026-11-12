@@ -51,6 +51,14 @@ extension ApplicationServiceClientGateway {
     return try await client.requestAccess(requirement)
   }
 
+  /// Asks macOS for Bluetooth access.
+  ///
+  /// - Returns: The state of the access after the request.
+  func requestBluetoothAccess() async throws -> BluetoothAccessState {
+    await ensureConnection()
+    return try await client.requestBluetoothAccess()
+  }
+
   /// Reads the latest input state of a controller.
   ///
   /// - Parameter selector: The controller.

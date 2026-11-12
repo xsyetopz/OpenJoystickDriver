@@ -43,6 +43,11 @@ extension ApplicationServiceClient {
     try await call(.requestAccess, LocalServiceRPCPermissionArguments(requirement: requirement))
   }
 
+  /// Asks macOS for Bluetooth access and returns the state of the access afterward.
+  public func requestBluetoothAccess() async throws -> BluetoothAccessState {
+    try await call(.requestBluetoothAccess, LocalServiceRPCEmptyArguments())
+  }
+
   /// Reads the input state of `controller`; nil when the controller has no input state.
   public func controllerState(
     for controller: ControllerReference

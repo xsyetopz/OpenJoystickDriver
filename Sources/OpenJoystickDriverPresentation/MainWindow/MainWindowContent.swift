@@ -137,6 +137,9 @@
     /// alert.
     @State
     private var driverApprovalFailed = false
+    /// Whether the setup steps show instead of the selected area.
+    @State
+    private var setupSteps = SetupStepsGate()
 
     /// The problem banner above the selected area, with the alerts of the main window.
     var body: some View {
@@ -153,8 +156,18 @@
           ),
           perform: perform
         )
-        area.id(navigation.selectedArea).frame(maxWidth: .infinity, maxHeight: .infinity)
-          .environment(\.ojdInterfaceLevel, preferences.interfaceLevel)
+        if setupSteps.isShown {
+          SetupStepsView(steps: openSetupSteps, perform: performSetupStep) {
+            setupSteps.dismiss()
+          }
+        } else {
+          area.id(navigation.selectedArea).frame(maxWidth: .infinity, maxHeight: .infinity)
+            .environment(\.ojdInterfaceLevel, preferences.interfaceLevel)
+        }
+      }.onChange(of: openSetupSteps) { steps in
+        setupSteps.update(loaded: runtime.loadState == .available, openSteps: steps.count)
+      }.onChange(of: runtime.loadState) { state in
+        setupSteps.update(loaded: state == .available, openSteps: openSetupSteps.count)
       }.frame(
         maxWidth: .infinity,
         minHeight: 0,
@@ -191,6 +204,11 @@
       }
     }
 
+    /// The setup steps that are still open.
+    private var openSetupSteps: [SetupStep] {
+      SetupSteps.open(permissionState: runtime.permissionState, statusState: runtime.statusState)
+    }
+
     /// The detail half of the selected area.
     @ViewBuilder
     private var area: some View {
@@ -218,6 +236,28 @@
           restartApplication: screens.restartApplication
         )
       case .activity: ActivityView(model: screens.activity)
+      }
+    }
+
+    /// Runs the fix that a problem in the banner offers.
+    private func performSetupStep(_ step: SetupStep) {
+      switch step.kind {
+      case .permission(.inputRead):
+        PermissionAccessActions.requestControllerAccess(viewModel: runtime, requirement: .inputRead)
+      case .permission(.inputInject):
+        PermissionAccessActions.requestControllerAccess(
+          viewModel: runtime,
+          requirement: .inputInject
+        )
+      case .permission(.postEvent):
+        PermissionAccessActions.requestPostEventAccess(viewModel: runtime)
+      case .permission(.notification):
+        preconditionFailure("A notification setting is never a setup step")
+      case .bluetooth:
+        PermissionAccessActions.requestBluetoothAccess(
+          viewModel: runtime,
+          opensSettings: step.buttonKey != "action.request"
+        )
       }
     }
 

@@ -8,6 +8,7 @@ extension RuntimeStatusPresentation {
   private func carryingUnservedDevices(to copy: Self) -> Self {
     var carrying = copy
     carrying.unservedDevices = unservedDevices
+    carrying.bluetoothAccess = bluetoothAccess
     return carrying
   }
 

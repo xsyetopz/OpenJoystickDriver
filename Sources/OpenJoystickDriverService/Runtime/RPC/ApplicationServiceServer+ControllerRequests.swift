@@ -26,7 +26,8 @@ extension ApplicationServiceServer {
       passThroughDevices: passThroughDevices,
       userSpaceVirtualDeviceEnabled: userSnapshot.enabled,
       userSpaceVirtualDeviceStatus: userSnapshot.status,
-      virtualHIDProfileOverrideError: virtualHIDProfileOverrides.loadError?.statusDescription
+      virtualHIDProfileOverrideError: virtualHIDProfileOverrides.loadError?.statusDescription,
+      bluetoothAccess: (bluetoothAccess?.state() ?? .unavailable)
     )
     do { return try JSONEncoder().encode(payload) } catch {
       print("[ApplicationServiceServer] getStatus encode error: \(error)")
@@ -43,6 +44,11 @@ extension ApplicationServiceServer {
   public func requestAccess(
     _ requirement: PermissionManager.Requirement
   ) async -> PermissionManager.Snapshot { await permissionManager.requestAccess(requirement) }
+
+  /// Asks macOS for Bluetooth access and returns the state of the access afterward.
+  public func requestBluetoothAccess() -> BluetoothAccessState {
+    bluetoothAccess?.request() ?? .unavailable
+  }
 
   /// Returns the current input state of the controller `controller` names as encoded JSON data.
   public func getControllerState(for controller: ControllerReference) async -> Data? {
