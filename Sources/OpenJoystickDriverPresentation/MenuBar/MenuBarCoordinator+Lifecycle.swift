@@ -55,6 +55,16 @@
         preferences.$settingsFileError
       ).map { SettingsFileStartup.statusItemIsShown(showInMenuBar: $0, settingsError: $1) }
         .removeDuplicates().sink { [weak self] shown in self?.applyShowInMenuBar(shown) }
+      mainMenuVisibilityObservation = Publishers.CombineLatest(
+        preferences.$interfaceLevel,
+        preferences.$developerToolsEnabled
+      ).dropFirst().sink {
+        [weak self] level, developer in
+        NSApplication.shared.mainMenu = self?.makeApplicationMenu(
+          level: level,
+          developerToolsEnabled: developer
+        )
+      }
       let hotKey = PauseHotKey { [weak self] in
         guard let self else { return }
         Task { @MainActor in await self.viewModel.togglePauseAll() }

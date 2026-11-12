@@ -31,7 +31,7 @@ struct InterfaceRowLevelTests {
 /// The rows of a view against the Level column of `docs/development/interface-audit.md`.
 struct InterfaceRowAuditTests {
   /// The audit's level of each control ID, read from the confirmed list.
-  private static func auditLevels() throws -> [String: String] {
+  static func auditLevels() throws -> [String: String] {
     let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
     let text = try String(
@@ -167,8 +167,16 @@ struct InterfaceRowAuditTests {
   func toolbarItemsAreGatedByTheAuditLevels() throws {
     let audit = try Self.auditLevels()
     let gated: [(MainWindowToolbarAction, String)] = [
-      (.grantProgram, "T13"), (.createToken, "T14"), (.runDiagnostics, "T21"),
+      (.newProfile, "T02"), (.importProfile, "T03"), (.validateProfileFile, "T04"),
+      (.duplicateProfile, "T05"), (.exportProfile, "T06"), (.deleteProfile, "T07"),
+      (.installLibraryItem, "T08"), (.validateLibraryItem, "T09"), (.testLibraryRecord, "T10"),
+      (.removeLibraryItem, "T11"), (.searchLibrary, "T12"), (.grantProgram, "T13"),
+      (.createToken, "T14"), (.activityMode, "T15"), (.activityFilter, "T16"),
+      (.activitySearch, "T17"), (.copyActivityLog, "T18"), (.saveActivityLog, "T19"),
+      (.showActivityLogInFinder, "T20"), (.runDiagnostics, "T21"),
     ]
+    #expect(Set(gated.map(\.0)).union([.convertProfile]) == Set(MainWindowToolbarAction.allCases))
+    #expect(try #require(audit["T01"]) == "Simple")
     for (action, id) in gated {
       let level = try #require(audit[id])
       #expect(action.interfaceRowLevel.rawValue == level.lowercased(), "\(id)")

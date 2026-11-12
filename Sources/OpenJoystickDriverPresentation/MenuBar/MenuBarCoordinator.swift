@@ -55,6 +55,8 @@
     let commandLineTool = CommandLineToolModel()
     /// Applies Show in menu bar when its setting changes.
     var showInMenuBarObservation: AnyCancellable?
+    /// Rebuilds the main menu when the interface level or the developer switch changes.
+    var mainMenuVisibilityObservation: AnyCancellable?
     /// Applies Show in Dock when its setting changes.
     var showInDockObservation: AnyCancellable?
     /// Pauses and resumes every controller from the pause shortcut.
