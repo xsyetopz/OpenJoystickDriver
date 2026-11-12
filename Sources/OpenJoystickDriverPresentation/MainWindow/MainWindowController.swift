@@ -63,7 +63,7 @@
     /// Reports to the app whether the window is visible.
     private let visibilityChanged: @MainActor (Bool) -> Void
     /// The split view that holds the sidebar, the list column and the detail column.
-    private let splitViewController = NSSplitViewController()
+    let splitViewController = NSSplitViewController()
     /// The content list column, collapsed for an area without a list.
     private let listItem: NSSplitViewItem
     /// The sidebar column, collapsed by the sidebar toggle.
@@ -78,6 +78,10 @@
     private var activityModeObservation: AnyCancellable?
     /// Keeps the window subtitle in step with the service status.
     private var summaryObservation: AnyCancellable?
+    /// Shows the toolbar items that the interface level and the developer switch allow.
+    private var interfaceLevelObservation: AnyCancellable?
+    /// The Settings preferences, which hold the interface level and the developer switch.
+    private let preferences: SettingsPreferencesModel
     /// Whether a resize is being corrected, so that the correction does not repeat.
     private var isEnforcingMinimumSize = false
 
@@ -103,6 +107,7 @@
       persistence: any MainWindowAreaPersistence = UserDefaultsMainWindowAreaPersistence()
     ) {
       self.visibilityChanged = visibilityChanged
+      self.preferences = preferences
       let navigationModel = MainWindowNavigationModel(persistence: persistence)
       self.navigation = navigationModel
       screens = MainWindowScreens(
@@ -159,7 +164,8 @@
             navigation: navigationModel,
             runtime: runtime,
             profiles: screens.profiles,
-            screens: screens
+            screens: screens,
+            preferences: preferences
           )
         )
       )
@@ -224,6 +230,11 @@
         showToolbarActions(of: navigationModel.selectedArea)
         updateLogFollowing(area: navigationModel.selectedArea)
       }
+      interfaceLevelObservation = preferences.objectWillChange.receive(on: DispatchQueue.main)
+        .sink { [weak self] in
+          guard let self else { return }
+          showToolbarActions(of: navigationModel.selectedArea)
+        }
       summaryObservation = runtime.$statusState.sink { [weak window] status in
         window?.subtitle = MainWindowSummary.text(for: navigationModel.selectedArea, status: status)
       }
@@ -260,6 +271,12 @@
 
     /// Shows the main window with the Explain Error Code sheet open.
     func showErrorCodeExplainer() {
+      guard
+        ActivityRow.explainErrorCode.rowLevel.isShown(
+          at: preferences.interfaceLevel,
+          developerToolsEnabled: preferences.developerToolsEnabled
+        )
+      else { return }
       present()
       screens.errorCodeExplainer.isPresented = true
     }
@@ -455,10 +472,19 @@
       guard let toolbar = window?.toolbar else { return }
       let fixedCount = MainWindowToolbarLayout.fixedItems.count
       while toolbar.items.count > fixedCount { toolbar.removeItem(at: toolbar.items.count - 1) }
-      let actions = area.toolbarActions(activityMode: screens.activity.mode)
+      let actions = shownToolbarActions(of: area)
       for (offset, action) in actions.enumerated() {
         toolbar.insertItem(withItemIdentifier: action.identifier, at: fixedCount + offset)
       }
+    }
+
+    /// The toolbar actions of `area` that the interface level and the developer switch show.
+    func shownToolbarActions(of area: MainWindowArea) -> [MainWindowToolbarAction] {
+      area.toolbarActions(
+        activityMode: screens.activity.mode,
+        level: preferences.interfaceLevel,
+        developerToolsEnabled: preferences.developerToolsEnabled
+      )
     }
 
     /// Runs the action of the clicked toolbar item when it is enabled.
@@ -472,9 +498,7 @@
     /// its commands for them.
     var enabledToolbarActions: Set<MainWindowToolbarAction> {
       Set(
-        navigation.selectedArea.toolbarActions(activityMode: screens.activity.mode).filter(
-          isEnabled
-        )
+        shownToolbarActions(of: navigation.selectedArea).filter(isEnabled)
       )
     }
 
@@ -482,9 +506,7 @@
     /// work from any area wait for them.
     var disabledToolbarActions: Set<MainWindowToolbarAction> {
       Set(
-        navigation.selectedArea.toolbarActions(activityMode: screens.activity.mode).filter {
-          !isEnabled($0)
-        }
+        shownToolbarActions(of: navigation.selectedArea).filter { !isEnabled($0) }
       )
     }
 
@@ -597,53 +619,6 @@
           : OJDLocalized.string(action.descriptionKey)
       }
       return isEnabled(action)
-    }
-  }
-
-  extension MainWindowController: NSToolbarDelegate {
-    /// Returns the fixed items and every area action.
-    func toolbarAllowedItemIdentifiers(_: NSToolbar) -> [NSToolbarItem.Identifier] {
-      MainWindowToolbarLayout.allowedItems
-    }
-
-    /// Returns the fixed items and the actions of the selected area.
-    func toolbarDefaultItemIdentifiers(_: NSToolbar) -> [NSToolbarItem.Identifier] {
-      MainWindowToolbarLayout.items(
-        for: navigation.selectedArea,
-        activityMode: screens.activity.mode
-      )
-    }
-
-    /// Returns no identifiers, because no toolbar item stays selected.
-    func toolbarSelectableItemIdentifiers(_: NSToolbar) -> [NSToolbarItem.Identifier] {
-      []
-    }
-
-    /// Returns the toolbar item for `itemIdentifier`: the sidebar separator or an area action.
-    func toolbar(
-      _: NSToolbar,
-      itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
-      willBeInsertedIntoToolbar _: Bool
-    ) -> NSToolbarItem? {
-      if itemIdentifier == .sidebarTrackingSeparator {
-        return NSTrackingSeparatorToolbarItem(
-          identifier: itemIdentifier,
-          splitView: splitViewController.splitView,
-          dividerIndex: 0
-        )
-      }
-      guard let action = MainWindowToolbarAction(identifier: itemIdentifier) else { return nil }
-      if let item = makeActivityControlItem(for: action) { return item }
-      let item = MainWindowToolbarLayout.makeItem(for: action)
-      if let search = item as? NSSearchToolbarItem {
-        search.searchField.stringValue = screens.libraryArea.searchText
-        search.searchField.target = self
-        search.searchField.action = #selector(librarySearchChanged(_:))
-        return search
-      }
-      item.target = self
-      item.action = #selector(performToolbarAction(_:))
-      return item
     }
   }
 

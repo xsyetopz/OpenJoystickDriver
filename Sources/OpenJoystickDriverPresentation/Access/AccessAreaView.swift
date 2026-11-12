@@ -65,7 +65,7 @@
             errorView(failure, actionTitle: "ui.access.dismiss", action: model.dismissFailure)
           }
         }
-        permissionsSection
+        permissionsSection.ojdInterfaceRow(AccessRow.permissions)
         switch model.load {
         case .loading:
           Section { LoadingStateView(message: OJDLocalized.string("ui.access.loading")) }
@@ -79,7 +79,7 @@
           }
         case .loaded(let status):
           endpointsSection(status)
-          listSections(status)
+          listSections(status).ojdInterfaceRow(AccessRow.lists)
         }
       }.ojdGroupedForm().onAppear { notificationPermission.refresh() }.onReceive(
         NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)
@@ -183,52 +183,66 @@
     /// Returns the section of the local endpoint toggle, the WebSocket toggle and the port field.
     private func endpointsSection(_ status: AccessStatusPayload) -> some View {
       Section {
-        Toggle(
-          OJDLocalized.string("ui.access.endpoint"),
-          isOn: Binding(
-            get: { status.enabled },
-            set: { isOn in
-              if isOn {
-                model.requestEnableEndpoint()
-              } else {
-                Task { await model.disableEndpoint() }
-              }
-            }
-          )
-        ).disabled(model.busy).help(OJDLocalized.formatted("ui.access.socket", status.socketPath))
-          .contextMenu { copySocketPathButton(status) }
-        if status.enabled { copySocketPathButton(status) }
-        Toggle(
-          OJDLocalized.string("ui.access.web"),
-          isOn: Binding(
-            get: { status.web.enabled },
-            set: { isOn in
-              if isOn { model.requestEnableWeb() } else { Task { await model.disableWeb() } }
-            }
-          )
-        ).disabled(model.busy).help(
-          OJDLocalized.formatted(
-            "ui.access.web.pages",
-            AccessPresentation.location(status.web.pagesPath)
-          )
-        )
-        if status.web.enabled {
-          Text(AccessPresentation.web(status.web)).font(.caption).foregroundColor(
-            Color(NSColor.secondaryLabelColor)
-          ).textSelection(.enabled)
-        } else {
-          OJDLabeledRow(OJDLocalized.string("ui.access.web.port")) {
-            HStack {
-              if model.canChooseAutomaticPort {
-                Button(OJDLocalized.string("ui.access.web.port.choose")) {
-                  model.chooseAutomaticPort()
-                }.ojdAccessibilityLabel(OJDLocalized.string("ui.access.web.port.choose"))
-              }
-              portField.labelsHidden().textFieldStyle(RoundedBorderTextFieldStyle())
-                .multilineTextAlignment(.trailing).frame(width: 120)
-                .ojdAccessibilityLabel(OJDLocalized.string("a11y.access.webPort"))
+        Group {
+          endpointToggles(status)
+        }.ojdInterfaceRow(AccessRow.endpoint)
+        if !status.web.enabled {
+          portRow.ojdInterfaceRow(AccessRow.port)
+        }
+      }
+    }
+
+    /// Returns the local endpoint and WebSocket switches, with the web pages line.
+    @ViewBuilder
+    private func endpointToggles(_ status: AccessStatusPayload) -> some View {
+      Toggle(
+        OJDLocalized.string("ui.access.endpoint"),
+        isOn: Binding(
+          get: { status.enabled },
+          set: { isOn in
+            if isOn {
+              model.requestEnableEndpoint()
+            } else {
+              Task { await model.disableEndpoint() }
             }
           }
+        )
+      ).disabled(model.busy).help(OJDLocalized.formatted("ui.access.socket", status.socketPath))
+        .contextMenu { copySocketPathButton(status) }
+      if status.enabled { copySocketPathButton(status) }
+      Toggle(
+        OJDLocalized.string("ui.access.web"),
+        isOn: Binding(
+          get: { status.web.enabled },
+          set: { isOn in
+            if isOn { model.requestEnableWeb() } else { Task { await model.disableWeb() } }
+          }
+        )
+      ).disabled(model.busy).help(
+        OJDLocalized.formatted(
+          "ui.access.web.pages",
+          AccessPresentation.location(status.web.pagesPath)
+        )
+      )
+      if status.web.enabled {
+        Text(AccessPresentation.web(status.web)).font(.caption).foregroundColor(
+          Color(NSColor.secondaryLabelColor)
+        ).textSelection(.enabled)
+      }
+    }
+
+    /// The port row, shown while the WebSocket is off.
+    private var portRow: some View {
+      OJDLabeledRow(OJDLocalized.string("ui.access.web.port")) {
+        HStack {
+          if model.canChooseAutomaticPort {
+            Button(OJDLocalized.string("ui.access.web.port.choose")) {
+              model.chooseAutomaticPort()
+            }.ojdAccessibilityLabel(OJDLocalized.string("ui.access.web.port.choose"))
+          }
+          portField.labelsHidden().textFieldStyle(RoundedBorderTextFieldStyle())
+            .multilineTextAlignment(.trailing).frame(width: 120)
+            .ojdAccessibilityLabel(OJDLocalized.string("a11y.access.webPort"))
         }
       }
     }

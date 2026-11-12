@@ -85,10 +85,15 @@
     var profiles: ProfilesViewModel
     /// The models of every area's screen.
     let screens: MainWindowScreens
+    /// The Settings preferences, which hold the interface level.
+    @ObservedObject
+    var preferences: SettingsPreferencesModel
 
     /// The list half of the selected area, rebuilt when the area changes.
     var body: some View {
       list.id(navigation.selectedArea).frame(maxWidth: .infinity, maxHeight: .infinity)
+        .environment(\.ojdInterfaceLevel, preferences.interfaceLevel)
+        .environment(\.ojdDeveloperToolsEnabled, preferences.developerToolsEnabled)
     }
 
     /// The list half of the selected area.

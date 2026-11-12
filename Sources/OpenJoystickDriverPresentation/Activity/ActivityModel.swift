@@ -115,13 +115,13 @@ struct ActivityActionFailure: Equatable {
     @ViewBuilder
     private var content: some View {
       switch model.mode {
-      case .log: ActivityLogView(model: model.log)
+      case .log: ActivityLogView(model: model.log).ojdInterfaceRow(ActivityRow.log)
       case .diagnostics:
         ActivityDiagnosticsView(
           model: model.diagnostics,
           failures: model.fixFailures,
           perform: model.perform
-        )
+        ).ojdInterfaceRow(ActivityRow.diagnostics)
       }
     }
   }

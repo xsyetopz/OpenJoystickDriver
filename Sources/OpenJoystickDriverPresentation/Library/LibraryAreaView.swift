@@ -25,8 +25,9 @@
     @ViewBuilder
     var body: some View {
       switch column {
-      case .list: LibraryListView(model: model)
-      case .detail: LibraryDetailView(runtime: runtime, model: model)
+      case .list: LibraryListView(model: model).ojdInterfaceRow(LibraryRow.list)
+      case .detail:
+        LibraryDetailView(runtime: runtime, model: model).ojdInterfaceRow(LibraryRow.detail)
       }
     }
   }
@@ -46,7 +47,7 @@
             Text(OJDLocalized.string(scope.titleKey)).tag(scope)
           }
         }.pickerStyle(SegmentedPickerStyle()).labelsHidden().padding(.horizontal, 16)
-          .padding(.vertical, 12)
+          .padding(.vertical, 12).ojdInterfaceRow(LibraryRow.scopeSwitch)
         List(selection: selection) {
           Section(header: recordsHeader) {
             if model.visibleRecords.isEmpty, isSearching || model.records.skipped.isEmpty {

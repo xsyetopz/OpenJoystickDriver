@@ -188,7 +188,7 @@ For more information, see [Profiles](Remapping-Profiles.md).
 
 ![The Library area with one installed controller record](../docs/screenshots/main-library.png)
 
-The **Library** area lists the **Controller records** and the **Mods** that are installed.
+The **Library** area lists the **Controller records** and the **Mods** that are installed (needs the **Advanced** interface).
 Select an item to see its fields and files.
 
 - **Install** adds a controller record file or a mod folder.
@@ -226,6 +226,8 @@ For more information, see [Permissions](Permissions-and-Security.md#permissions)
 The local endpoint lets other programs read controller state.
 It shows the socket path with **Copy Socket Path**, and the **WebSocket** with its **Port** and pages folder.
 Turning on **Local endpoint** or **WebSocket** asks you to confirm with **Turn On**.
+The two switches, **Port**, the lists below, **Grant a Program...**, and **Create a Token...** (needs the **Advanced** interface and **Enable Developer Tools**).
+The permission rows above show in both interfaces.
 
 - **Programs with access** lists each granted program with its scopes, **Read** and **Control**, and **Revoke**.
   **Grant a Program...** adds one.
@@ -242,15 +244,15 @@ For more information, see [Automating OpenJoystickDriver](Automating-OpenJoystic
 
 ![The Activity area showing the log with the newest line at the top](../docs/screenshots/main-activity.png)
 
-The **Activity** area has two modes.
+The **Activity** area has two modes (needs the **Advanced** interface).
 
 - **Log** shows the OpenJoystickDriver log.
   **Stream** selects **All**, **Output**, or **Errors**.
   **Lines** sets how many lines show, **Search** and **Filter** narrow them, and **Show in Finder** opens the log folder.
   If there are no lines, the area shows **No log entries.**
-- **Diagnostics** shows the result of **Run Checks**: one row per check with **Passed**, **Warning**, or **Skipped**, and its details.
+- **Diagnostics** shows the result of **Run Checks** (needs the **Advanced** interface): one row per check with **Passed**, **Warning**, or **Skipped**, and its details.
 
-**Explain Error Code...** in the **Help** menu shows what an error code means.
+**Explain Error Code...** in the **Help** menu shows what an error code means (needs the **Advanced** interface).
 For more information, see [Reporting a bug](Reporting-a-Bug.md).
 
 ## Settings Window
