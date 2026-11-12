@@ -17,6 +17,9 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
   /// The service's change notifications are unavailable for the reason, so the app reads the
   /// service repeatedly instead.
   case liveUpdatesPolling(ControllerLiveUpdateFailure)
+  /// The service cannot read the stored virtual HID profile overrides; the message says why. No
+  /// single control started it, so it is not shown beside the override pop-up.
+  case virtualProfileStore(String)
 
   /// The identity of the banner row; the two service problems share one row.
   var id: String {
@@ -25,6 +28,7 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     case .driver: return "driver"
     case .accessMissing: return "access"
     case .liveUpdatesPolling: return "liveUpdates"
+    case .virtualProfileStore: return "virtualProfileStore"
     }
   }
 
@@ -35,13 +39,14 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     case .driver: return "ui.setup.driverTitle"
     case .accessMissing: return "ui.banner.access.title"
     case .liveUpdatesPolling: return "ui.banner.liveUpdates.title"
+    case .virtualProfileStore: return "ui.virtualProfile.title"
     }
   }
 
   /// The localization key of the detail, or nil when the detail is the service's own message.
   var detailKey: String? {
     switch self {
-    case .serviceUnavailable, .listenerStopped: return nil
+    case .serviceUnavailable, .listenerStopped, .virtualProfileStore: return nil
     case .liveUpdatesPolling(let failure): return failure.detailKey
     case .driver(let state):
       switch state {
@@ -76,7 +81,7 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
         preconditionFailure("A driver problem is never made for \(state)")
       }
     case .accessMissing: return .showAccess
-    case .liveUpdatesPolling: return nil
+    case .liveUpdatesPolling, .virtualProfileStore: return nil
     }
   }
 
@@ -100,7 +105,7 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
     switch self {
     case .serviceUnavailable, .listenerStopped: return true
     case .driver(let state): return state == .missingEmbedded || state == .invalid
-    case .accessMissing, .liveUpdatesPolling: return false
+    case .accessMissing, .liveUpdatesPolling, .virtualProfileStore: return false
     }
   }
 
@@ -134,6 +139,11 @@ enum MainWindowProblem: Equatable, Sendable, Identifiable {
       problems.append(.accessMissing)
     }
     if let failure = liveUpdatesFallbackReason { problems.append(.liveUpdatesPolling(failure)) }
+    if case .available(let presentation) = status {
+      problems += presentation.virtualHIDProfileOverrideStoreMessages.map {
+        .virtualProfileStore($0)
+      }
+    }
     return problems
   }
 }

@@ -196,6 +196,37 @@ struct MainWindowProblemTests {
   }
 
   @Test
+  func anUnreadableOverrideStoreIsABannerProblemNotAControlProblem() {
+    let unreadable = RuntimeStatusState.available(
+      RuntimeStatusPresentation(
+        payload: ApplicationServiceStatusPayload(
+          inputRead: .granted,
+          inputInject: .granted,
+          connectedDevices: [],
+          virtualHIDProfileOverrideError: "unsupported-schema"
+        )
+      )
+    )
+    let problems = MainWindowProblem.current(
+      permissions: permissions(.granted),
+      status: unreadable,
+      driver: .active,
+      extensionRouteConnected: true,
+      liveUpdatesFallbackReason: nil,
+      listenerFailure: nil
+    )
+    #expect(problems.count == 1)
+    #expect(problems.first?.titleKey == "ui.virtualProfile.title")
+    #expect(problems.first?.isFailure == false)
+    #expect(problems.first?.action == nil)
+    guard case .virtualProfileStore(let message) = problems.first else {
+      Issue.record("expected the override store problem")
+      return
+    }
+    #expect(message.contains("unsupported-schema"))
+  }
+
+  @Test
   func anEmptyOrMissingValueShowsNone() {
     #expect(OJDValue(nil).displayText == OJDLocalized.string("status.none"))
     #expect(OJDValue("").displayText == OJDLocalized.string("status.none"))

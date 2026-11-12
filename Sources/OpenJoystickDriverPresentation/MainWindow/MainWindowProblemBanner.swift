@@ -57,6 +57,7 @@
     private func detailText(_ problem: MainWindowProblem) -> String {
       if case .serviceUnavailable(let message) = problem { return message }
       if case .listenerStopped(let message) = problem { return message }
+      if case .virtualProfileStore(let message) = problem { return message }
       guard let key = problem.detailKey else { return "" }
       if case .driver(.failed(let failure)) = problem {
         return OJDLocalized.formatted(key, failure.domain, failure.code, failure.text)
