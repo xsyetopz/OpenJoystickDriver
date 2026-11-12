@@ -48,7 +48,7 @@
     var body: some View {
       GeometryReader { proxy in
         VStack(alignment: .leading, spacing: OJDSpacing.none) {
-          editorHeader(width: proxy.size.width)
+          editorHeader
           Divider()
           sectionNavigation(width: proxy.size.width)
           Divider()
@@ -266,11 +266,8 @@
     }
 
     /// The header: the profile's name, the details and activation buttons, the actions menu, the
-    /// facts, the conflict banner and the warning about suppressed input.
-    ///
-    /// - Parameter width: The width of the editor, which decides how the facts are laid out.
-    /// - Returns: The header.
-    func editorHeader(width: CGFloat) -> some View {
+    /// conflict banner and the warning about suppressed input.
+    var editorHeader: some View {
       VStack(alignment: .leading, spacing: OJDSpacing.medium) {
         HStack(alignment: .center, spacing: OJDSpacing.medium) {
           Text(draft.profile.name).font(.headline.weight(.semibold)).frame(
@@ -285,11 +282,6 @@
           ) { activeSheet = .metadata }
           primaryActivationAction
           profileActionMenu
-        }
-        if width < ProfilePresentationPolicy.compactNavigationWidth {
-          VStack(alignment: .leading, spacing: OJDSpacing.xSmall) { profileFacts }
-        } else {
-          HStack(spacing: OJDSpacing.medium) { profileFacts }
         }
         if showingConflict {
           ConflictBanner(
@@ -323,18 +315,6 @@
           }.font(.body)
         }
       }.padding(.horizontal, 28).padding(.vertical, 18)
-    }
-
-    /// The target, the number of assignments and the activation state of the profile.
-    @ViewBuilder
-    var profileFacts: some View {
-      Text(RuntimePresentation.profileScopeLabel(draft.profile.applicationScope)).foregroundColor(
-        Color(NSColor.secondaryLabelColor)
-      )
-      Text(assignmentCountLabel(draft.profile.bindings.count)).foregroundColor(
-        Color(NSColor.secondaryLabelColor)
-      )
-      Text(activationLabel).foregroundColor(Color(NSColor.secondaryLabelColor))
     }
 
     /// The Set Active or Deactivate button; a Joy-Con pair profile has none.

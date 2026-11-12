@@ -48,22 +48,6 @@
       reportEditingState()
     }
 
-    /// The text that says whether the profile is active; a Joy-Con pair profile reads as the state
-    /// of its session.
-    var activationLabel: String {
-      if profile.joyConPair != nil {
-        return OJDLocalized.string("ui.profiles.joyConSessionState")
-      }
-      return OJDLocalized.string(
-        isActive ? "ui.profiles.active" : "ui.profiles.notActive"
-      )
-    }
-
-    /// Returns the text for the number of assignments.
-    func assignmentCountLabel(_ count: Int) -> String {
-      OJDLocalized.plural("ui.profiles.assignments", count: count)
-    }
-
     /// The actions of the editor's menu: Restore Default Input while the draft suppresses all
     /// controller input, Remove All Assignments while it has any assignment, Clear Inputs, and
     /// Deactivate All while the profile is active and is not a Joy-Con pair.

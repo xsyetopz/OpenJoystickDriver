@@ -17,7 +17,6 @@
     var body: some View {
       Section(
         header: HStack {
-          Text(OJDLocalized.string("ui.profiles.macros"))
           Spacer()
           OJDCompactSymbolButton(
             symbolName: "plus",

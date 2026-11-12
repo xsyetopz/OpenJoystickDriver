@@ -119,7 +119,6 @@
     var body: some View {
       Section(
         header: HStack {
-          Text(OJDLocalized.string("ui.profiles.layers"))
           Spacer()
           OJDCompactSymbolButton(
             symbolName: "plus",
@@ -219,10 +218,6 @@
               productID: profile.device.productID
             )
           )
-          OJDLabeledValue(
-            OJDLocalized.string("ui.profiles.target"),
-            RuntimePresentation.profileScopeLabel(profile.applicationScope)
-          )
         }
         Section {
           ProfileOutputPolicyView(policy: profile.outputPolicy, onChange: updateOutputPolicy)
@@ -231,8 +226,7 @@
           configurationRow(
             .motion,
             title: OJDLocalized.string("ui.profiles.motion.title"),
-            summary: OJDLocalized.string("ui.profiles.motion.space")
-              + " · " + OJDLocalized.string("ui.profiles.gyro.output"),
+            summary: motionSummary,
             supported: capabilities.physicalInput.motion
           ) { openSheet(.motion) }
           configurationRow(
@@ -260,7 +254,7 @@
           configurationRow(
             .regions,
             title: OJDLocalized.string("ui.profiles.region.title"),
-            summary: OJDLocalized.string("ui.profiles.region.summary"),
+            summary: assignmentCountLabel(regionAssignmentCount),
             supported: capabilities.supportsStickAxes || capabilities.supportsAnalogTriggers
               || !capabilities.physicalInput.touchSurfaces.isEmpty
           ) { openSheet(.regions) }
@@ -276,6 +270,10 @@
             } ?? OJDLocalized.string("ui.inputTest.off"),
             supported: true
           ) { openSheet(.pointerSpeed) }
+          if hasUnsupportedSetting {
+            Text(OJDLocalized.string("ui.profiles.notSupportedByController")).font(.caption)
+              .foregroundColor(Color(NSColor.systemOrange))
+          }
         }.ojdInterfaceRow(ProfilesRow.analogModes)
         ProfileLightingEditor(color: profile.physicalColor, onChange: updatePhysicalColor).disabled(
           !capabilities.physicalOutput.lightingFeatures.contains(.programmableColor)
@@ -284,8 +282,42 @@
       }
     }
 
-    /// A row with `title` and a `summary`, or a note that the controller does not support it, and
-    /// an Adjust button.
+    /// Whether the controller lacks any of the settings above; the section says so once.
+    private var hasUnsupportedSetting: Bool {
+      !capabilities.physicalInput.motion || !capabilities.supportsStickAxes
+        || !capabilities.supportsAnalogTriggers
+        || capabilities.physicalInput.touchSurfaces.isEmpty
+    }
+
+    /// The coordinate space and the gyro output of the profile.
+    private var motionSummary: String {
+      let space: String
+      switch profile.motionTuning.space {
+      case .local: space = OJDLocalized.string("ui.profiles.motion.local")
+      case .player: space = OJDLocalized.string("ui.profiles.motion.player")
+      case .world: space = OJDLocalized.string("ui.profiles.motion.world")
+      }
+      let output: String
+      switch profile.gyroOutput.mode {
+      case .disabled: output = OJDLocalized.string("ui.profiles.gyro.disabled")
+      case .mouse: output = OJDLocalized.string("ui.profiles.gyro.mouse")
+      case .leftStick: output = OJDLocalized.string("ui.profiles.gyro.leftStick")
+      case .rightStick: output = OJDLocalized.string("ui.profiles.gyro.rightStick")
+      }
+      return space + " · " + output
+    }
+
+    /// The number of assignments whose source is a stick ring, trigger band or touch area.
+    private var regionAssignmentCount: Int {
+      profile.bindings.filter {
+        switch $0.source {
+        case .stickRegion, .triggerBand, .touchArea: return true
+        default: return false
+        }
+      }.count
+    }
+
+    /// A row with `title` and, when the setting applies, a `summary`, and an Adjust button.
     ///
     /// - Parameters:
     ///   - row: The row of the setting.
@@ -306,10 +338,10 @@
       HStack(alignment: .firstTextBaseline, spacing: OJDSpacing.medium) {
         VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
           Text(title)
-          Text(supported ? summary : OJDLocalized.string("ui.profiles.notSupportedByController"))
-            .font(.caption).foregroundColor(
-              supported ? Color(NSColor.secondaryLabelColor) : Color(NSColor.systemOrange)
-            ).fixedSize(horizontal: false, vertical: true)
+          if supported || enabled == true {
+            Text(summary).font(.caption).foregroundColor(Color(NSColor.secondaryLabelColor))
+              .fixedSize(horizontal: false, vertical: true)
+          }
         }
         Spacer(minLength: 8)
         OJDCompactSymbolButton(

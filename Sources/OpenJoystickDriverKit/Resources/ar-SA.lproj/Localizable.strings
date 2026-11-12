@@ -846,8 +846,6 @@
 "ui.profiles.touch.deadzone" = "المنطقة الميتة للعصا";
 /* Title of the row of the Controller section and of the sheet that adds a stick ring, trigger band or touch area as an assignment. */
 "ui.profiles.region.title" = "المناطق";
-/* Summary under the regions row of the Controller section: what a region is. */
-"ui.profiles.region.summary" = "حلقات العصا ونطاقات الزناد ومناطق اللمس";
 /* Label of the segmented control in the regions sheet that picks between a stick ring, a trigger band and a touch area. */
 "ui.profiles.region.kind" = "نوع المنطقة";
 /* Segment of the region type control in the regions sheet: a ring around the center of a stick. */
@@ -1829,8 +1827,6 @@
 "ui.profiles.pair" = "اقتران";
 /* Error shown when two Joy-Cons cannot be combined into one controller. Joy-Con is a Nintendo product name. */
 "ui.error.joyConPairUnavailable" = "تعذّر اقتران وحدتي Joy-Con المحددتين. حدّث وحدات التحكم المتصلة وحاول مرة أخرى.";
-/* Status in the profile editor for a profile that applies to an explicit pairing of two Joy-Cons. */
-"ui.profiles.joyConSessionState" = "اقتران صريح";
 
 /* Name of a rumble output destination. %1$@ is the motor and %2$@ is the intensity as a number; %% is the percent sign. */
 "ui.mapping.physicalRumble" = "اهتزاز %1$@ (%2$@%%)";

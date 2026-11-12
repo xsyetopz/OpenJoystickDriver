@@ -846,8 +846,6 @@
 "ui.profiles.touch.deadzone" = "Vùng chết của cần";
 /* Title of the row of the Controller section and of the sheet that adds a stick ring, trigger band or touch area as an assignment. */
 "ui.profiles.region.title" = "Vùng";
-/* Summary under the regions row of the Controller section: what a region is. */
-"ui.profiles.region.summary" = "Vòng cần analog, dải cò và vùng cảm ứng";
 /* Label of the segmented control in the regions sheet that picks between a stick ring, a trigger band and a touch area. */
 "ui.profiles.region.kind" = "Loại vùng";
 /* Segment of the region type control in the regions sheet: a ring around the center of a stick. */
@@ -1829,8 +1827,6 @@
 "ui.profiles.pair" = "Ghép đôi";
 /* Error shown when two Joy-Cons cannot be combined into one controller. Joy-Con is a Nintendo product name. */
 "ui.error.joyConPairUnavailable" = "Không thể ghép đôi các Joy-Con đã chọn. Hãy làm mới các bộ điều khiển đã kết nối và thử lại.";
-/* Status in the profile editor for a profile that applies to an explicit pairing of two Joy-Cons. */
-"ui.profiles.joyConSessionState" = "Ghép đôi chủ động";
 
 /* Name of a rumble output destination. %1$@ is the motor and %2$@ is the intensity as a number; %% is the percent sign. */
 "ui.mapping.physicalRumble" = "%1$@ rung (%2$@%%)";
