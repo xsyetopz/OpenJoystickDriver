@@ -169,7 +169,7 @@
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.ambiguousProtocolMatch" = "Más de un protocolo compatible encaja con este control, así que OJD no puede elegir uno.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because more than one supported protocol matches. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.ambiguousProtocolMatch.nextStep" = "Envía un informe de soporte para poder indicar qué protocolo usa.";
+"ui.controllers.ambiguousProtocolMatch.nextStep" = "Envía un informe de soporte para poder indicar a OJD qué protocolo usa.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.interfaceContractMismatch" = "Las interfaces USB de este control no cumplen lo que exige su protocolo, así que OJD no lo atiende.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB interfaces do not meet what its protocol requires. It tells the person what to do. OJD, USB, HID and ID stay as written. */
@@ -187,7 +187,7 @@
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant.nextStep" = "Conecta el control de otra forma, por ejemplo con un cable, o envía un informe de soporte.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.virtualProfileUnavailable" = "OJD no tiene ningún perfil de gamepad virtual para este control.";
+"ui.controllers.virtualProfileUnavailable" = "OJD no tiene ningún perfil de control virtual para este control.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.virtualProfileUnavailable.nextStep" = "Envía un informe de soporte para poder añadirle un perfil.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. The next step has its own text. OJD, USB, HID and ID stay as written. */
@@ -295,9 +295,9 @@
 /* Label of the calibration row in the controller detail while the service has reported no stick or trigger values yet. Calibration shows each stick and trigger as the controller reports it and after tuning. */
 "ui.controllers.calibration.title" = "Calibración";
 /* Label of the left stick row of the calibration view in the controller detail. */
-"ui.controllers.calibration.leftStick" = "Palanca izquierda";
+"ui.controllers.calibration.leftStick" = "Stick izquierdo";
 /* Label of the right stick row of the calibration view in the controller detail. */
-"ui.controllers.calibration.rightStick" = "Palanca derecha";
+"ui.controllers.calibration.rightStick" = "Stick derecho";
 /* Label of the left trigger row of the calibration view in the controller detail. The trigger is the shoulder trigger. */
 "ui.controllers.calibration.leftTrigger" = "Gatillo izquierdo";
 /* Label of the right trigger row of the calibration view in the controller detail. The trigger is the shoulder trigger. */
@@ -3918,7 +3918,7 @@
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad definition lacks layout, transport, labels, worksWithDefaultSDLHints or identity with version. %1$@ is the file. */
 "error.E5007.virtualDevice.definition" = "%1$@, persona: una definición de control virtual debe contener layout, transport, labels, worksWithDefaultSDLHints e identity con version. Solución: añade las claves que faltan, o añade match para elegir un control virtual.";
 /* Error E5007, shown when a virtual gamepad file fails: a match unit is not a unit ID. %1$@ is the file. */
-"error.E5007.virtualDevice.matchUnit" = "%1$@, match.unit: match.unit debe ser un ID de unidad. Solución: asigna a unit el ID de unidad de un mando, o déjalo sin definir.";
+"error.E5007.virtualDevice.matchUnit" = "%1$@, match.unit: match.unit debe ser un ID de unidad. Solución: asigna a unit el ID de unidad de un control, o déjalo sin definir.";
 /* Error E5007, shown when a virtual gamepad file fails: an identity name is empty. %2$@ is the key, productName or manufacturer. %1$@ is the file. */
 "error.E5007.virtualDevice.identityText" = "%1$@, identity.%2$@: una identidad de control virtual necesita un valor no vacío en %2$@. Solución: da a %2$@ una cadena no vacía.";
 /* Error E5007, shown when a virtual gamepad file fails: an ID is outside its range. %2$@ is the key path of the ID and %3$@ is its lowest value. %1$@ is the file. */
@@ -4192,7 +4192,7 @@
 /* Title of the alert that removes a mod. %@ is the mod name. */
 "ui.library.mod.remove.title" = "¿Quitar el mod %@?";
 /* Message of the alert that removes a mod. OpenJoystickDriver is the product name. */
-"ui.library.mod.remove.message" = "OpenJoystickDriver elimina el mod y los registros, perfiles y controls virtuales que añadió.";
+"ui.library.mod.remove.message" = "OpenJoystickDriver elimina el mod y los registros, perfiles y controles virtuales que añadió.";
 /* Notice after a mod is removed. %@ is the mod name. */
 "ui.library.mod.removed" = "Se quitó el mod %@.";
 /* Line in the records list for a record that a mod changes. %@ is the name of the mod. */
@@ -5225,7 +5225,7 @@
 /* Button at the top of the Controllers detail for a controller that needs a permission. It opens the Access area of the main window; Access is the name of that area. */
 "ui.controllers.readiness.needsStep.access.action" = "Abrir Acceso";
 /* One sentence at the top of the Controllers detail for a controller that needs the driver extension for Xbox USB controllers to be set up. Xbox USB stays as written. */
-"ui.controllers.readiness.needsStep.driver.message" = "Este control necesita que se configure el controlador Xbox USB.";
+"ui.controllers.readiness.needsStep.driver.message" = "Este control necesita que se configure el controlador USB de Xbox.";
 /* Button at the top of the Controllers detail for a controller that needs the driver extension. It approves, claims or repairs the driver. */
 "ui.controllers.readiness.needsStep.driver.action" = "Configurar controlador";
 /* One sentence at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove, such as another program holding it. The detail names the next step. */
