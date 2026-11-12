@@ -23,6 +23,8 @@ public final class ApplicationServiceServer: @unchecked Sendable {
   let remappingRouter: RemappingOutputRouter
   /// The access to posting system input events.
   let postEventAccess: CoreGraphicsPostEventAccess
+  /// Reads and requests the Bluetooth access; nil when the service has no Bluetooth central.
+  let bluetoothAccess: BluetoothAccessControl?
   /// The key under which the port keys of connected controllers are computed.
   let installationKey: SymmetricKey
   /// Serializes the remapping requests of the clients.
@@ -113,8 +115,10 @@ public final class ApplicationServiceServer: @unchecked Sendable {
     settings: SettingsStore = SettingsStore(),
     personaDirectory: URL = VirtualHIDProfileOverrideStore.userDirectory,
     launchAtLogin: LaunchAtLoginControl? = nil,
-    statusChanges: ServiceStatusChanges = ServiceStatusChanges()
+    statusChanges: ServiceStatusChanges = ServiceStatusChanges(),
+    bluetoothAccess: BluetoothAccessControl? = nil
   ) {
+    self.bluetoothAccess = bluetoothAccess
     self.deviceManager = deviceManager
     self.statusChanges = statusChanges
     self.permissionManager = permissionManager

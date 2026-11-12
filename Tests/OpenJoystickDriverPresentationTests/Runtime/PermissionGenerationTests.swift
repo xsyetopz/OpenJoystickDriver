@@ -196,6 +196,8 @@ private actor PermissionRaceGatewayStub: ApplicationServiceGateway {
     _: PermissionManager.Requirement
   ) -> PermissionManager.Snapshot { requestPermissions() }
 
+  func requestBluetoothAccess() -> BluetoothAccessState { .granted }
+
   func controllerState(for _: ControllerReference) -> ControllerState? { nil }
 
   func virtualOutputState(

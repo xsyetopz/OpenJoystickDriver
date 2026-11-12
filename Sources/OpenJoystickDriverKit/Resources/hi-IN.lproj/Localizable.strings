@@ -5247,3 +5247,13 @@
 "ui.settings.general.idleDisconnectOff" = "बंद";
 /* Error of 'ojd setting set' when the value is not a number of minutes for the idle disconnect. %1$@ is the text the user gave; %2$@ and %3$@ are the smallest and largest number of minutes. The word off stays as written. */
 "cli.setting.set.badIdleDisconnect" = "“%1$@” मिनटों की संख्या नहीं है। %2$@ से %3$@ तक की पूर्ण संख्या या off इस्तेमाल करें।";
+/* Heading of the setup steps that the main window shows when the app starts with a step still open. */
+"ui.setupSteps.title" = "सेटअप पूरा करें";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Input Monitoring permission. OpenJoystickDriver is the product name. Input Monitoring is written as macOS names it in System Settings. */
+"platform.macos.ui.setupSteps.inputRead" = "“इनपुट मॉनिटरिंग” की अनुमति दें ताकि OpenJoystickDriver आपके कंट्रोलर पढ़ सके।";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that publishes virtual controllers. OpenJoystickDriver is the product name. Accessibility is written as macOS names it in System Settings. */
+"platform.macos.ui.setupSteps.inputInject" = "“ऐक्सेसिबिलिटी” की अनुमति दें ताकि OpenJoystickDriver आपके गेम में कंट्रोलर प्रकाशित कर सके।";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that sends keyboard and pointer events. OpenJoystickDriver is the product name. Accessibility is written as macOS names it in System Settings. */
+"platform.macos.ui.setupSteps.postEvent" = "“ऐक्सेसिबिलिटी” की अनुमति दें ताकि OpenJoystickDriver कीबोर्ड और पॉइंटर इवेंट भेज सके।";
+/* One sentence of the setup steps in the main window, beside the button that asks for Bluetooth access or opens System Settings. OpenJoystickDriver is the product name; Switch 2 is a product name. */
+"ui.setupSteps.bluetooth" = "ब्लूटूथ की अनुमति दें ताकि OpenJoystickDriver Switch 2 कंट्रोलर जोड़ सके।";

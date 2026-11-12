@@ -5248,3 +5248,13 @@
 "ui.settings.general.idleDisconnectOff" = "Uit";
 /* Error of 'ojd setting set' when the value is not a number of minutes for the idle disconnect. %1$@ is the text the user gave; %2$@ and %3$@ are the smallest and largest number of minutes. The word off stays as written. */
 "cli.setting.set.badIdleDisconnect" = "‘%1$@’ is geen aantal minuten. Gebruik een geheel getal van %2$@ tot %3$@, of off.";
+/* Heading of the setup steps that the main window shows when the app starts with a step still open. */
+"ui.setupSteps.title" = "Voltooi de configuratie";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Input Monitoring permission. OpenJoystickDriver is the product name. Input Monitoring is written as macOS names it in System Settings. */
+"platform.macos.ui.setupSteps.inputRead" = "Sta ‘Invoermonitoring’ toe zodat OpenJoystickDriver je controllers kan lezen.";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that publishes virtual controllers. OpenJoystickDriver is the product name. Accessibility is written as macOS names it in System Settings. */
+"platform.macos.ui.setupSteps.inputInject" = "Sta ‘Toegankelijkheid’ toe zodat OpenJoystickDriver controllers in je games kan publiceren.";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that sends keyboard and pointer events. OpenJoystickDriver is the product name. Accessibility is written as macOS names it in System Settings. */
+"platform.macos.ui.setupSteps.postEvent" = "Sta ‘Toegankelijkheid’ toe zodat OpenJoystickDriver toetsenbord- en aanwijzerevents kan sturen.";
+/* One sentence of the setup steps in the main window, beside the button that asks for Bluetooth access or opens System Settings. OpenJoystickDriver is the product name; Switch 2 is a product name. */
+"ui.setupSteps.bluetooth" = "Sta Bluetooth toe zodat OpenJoystickDriver Switch 2-controllers kan verbinden.";

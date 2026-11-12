@@ -5248,3 +5248,13 @@
 "ui.settings.general.idleDisconnectOff" = "Désactivé";
 /* Error of 'ojd setting set' when the value is not a number of minutes for the idle disconnect. %1$@ is the text the user gave; %2$@ and %3$@ are the smallest and largest number of minutes. The word off stays as written. */
 "cli.setting.set.badIdleDisconnect" = "« %1$@ » n’est pas un nombre de minutes. Utilisez un nombre entier de %2$@ à %3$@, ou off.";
+/* Heading of the setup steps that the main window shows when the app starts with a step still open. */
+"ui.setupSteps.title" = "Terminer la configuration";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Input Monitoring permission. OpenJoystickDriver is the product name. Input Monitoring is written as macOS names it in System Settings. */
+"platform.macos.ui.setupSteps.inputRead" = "Autorisez « Surveillance des entrées » pour qu’OpenJoystickDriver puisse lire vos manettes.";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that publishes virtual controllers. OpenJoystickDriver is the product name. Accessibility is written as macOS names it in System Settings. */
+"platform.macos.ui.setupSteps.inputInject" = "Autorisez « Accessibilité » pour qu’OpenJoystickDriver puisse publier des manettes dans vos jeux.";
+/* One sentence of the setup steps in the main window, beside the button that asks for the macOS Accessibility permission that sends keyboard and pointer events. OpenJoystickDriver is the product name. Accessibility is written as macOS names it in System Settings. */
+"platform.macos.ui.setupSteps.postEvent" = "Autorisez « Accessibilité » pour qu’OpenJoystickDriver puisse envoyer des événements de clavier et de pointeur.";
+/* One sentence of the setup steps in the main window, beside the button that asks for Bluetooth access or opens System Settings. OpenJoystickDriver is the product name; Switch 2 is a product name. */
+"ui.setupSteps.bluetooth" = "Autorisez le Bluetooth pour qu’OpenJoystickDriver puisse connecter les manettes Switch 2.";

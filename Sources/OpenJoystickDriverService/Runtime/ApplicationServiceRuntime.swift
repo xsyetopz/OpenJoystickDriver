@@ -92,7 +92,8 @@ package final class ApplicationServiceRuntime {
       remappingRouter: remappingRouter,
       postEventAccess: postEventAccess,
       installationKey: installationKey,
-      userSpaceDispatcherFactory: Self.makeAutomaticUserSpaceDispatcher(context:)
+      userSpaceDispatcherFactory: Self.makeAutomaticUserSpaceDispatcher(context:),
+      bluetoothAccess: BluetoothAccessControl(central: bluetoothLECentral)
     )
 
     profileSwitchBridge.attach(applicationServiceServer)

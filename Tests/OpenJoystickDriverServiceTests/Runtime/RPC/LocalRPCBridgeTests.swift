@@ -8,7 +8,8 @@ import Testing
 @Suite(.serialized, .timeLimit(.minutes(2)), .removingTemporarySockets)
 struct LocalRPCBridgeTests {
   private static let controllerMethodNames: Set = [
-    "getStatus", "requestRequiredAccess", "requestAccess", "getControllerState", "getPacketLog",
+    "getStatus", "requestRequiredAccess", "requestAccess", "requestBluetoothAccess",
+    "getControllerState", "getPacketLog",
     "getVirtualOutputState",
     "sendControllerOutput", "playControllerSpeaker", "stopControllerSpeaker",
     "previewPhysicalColor", "releasePhysicalColorPreview",
@@ -58,6 +59,35 @@ struct LocalRPCBridgeTests {
         #expect(response.error != nil)
         #expect(response.remappingError == nil)
       }
+    }
+  }
+
+  @Test
+  func requestBluetoothAccessAsksTheControlAndGetStatusReportsItsState() async throws {
+    let requests = RequestCounter()
+    let control = BluetoothAccessControl(
+      state: { requests.hasRequest ? .granted : .notAsked },
+      request: {
+        requests.increment()
+        return .granted
+      }
+    )
+    try await withServer(bluetoothAccess: control) { server in
+      let before = try JSONDecoder().decode(
+        ApplicationServiceStatusPayload.self,
+        from: await server.getStatus()
+      )
+      #expect(before.bluetoothAccess == .notAsked)
+      #expect(!requests.hasRequest)
+      #expect(server.requestBluetoothAccess() == .granted)
+      #expect(requests.count == 1)
+    }
+  }
+
+  @Test
+  func aServerWithoutBluetoothReportsItUnavailable() async throws {
+    try await withServer { server in
+      #expect(server.requestBluetoothAccess() == .unavailable)
     }
   }
 
@@ -431,6 +461,7 @@ struct LocalRPCBridgeTests {
   /// announcements of other tests in the process cannot answer a wait of this one.
   private func withServer(
     statusCenter: NotificationCenter = NotificationCenter(),
+    bluetoothAccess: BluetoothAccessControl? = nil,
     _ body: (ApplicationServiceServer) async throws -> Void
   ) async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(
@@ -467,7 +498,8 @@ struct LocalRPCBridgeTests {
       statusChanges: ServiceStatusChanges(
         center: statusCenter,
         workspaceCenter: NotificationCenter()
-      )
+      ),
+      bluetoothAccess: bluetoothAccess
     )
     try await body(server)
   }
@@ -485,4 +517,13 @@ private final class LockedFlag: @unchecked Sendable {
   private var flag = false
   var isSet: Bool { lock.withLock { flag } }
   func set() { lock.withLock { flag = true } }
+}
+
+/// Records the Bluetooth access requests that a test server received.
+private final class RequestCounter: @unchecked Sendable {
+  private let lock = NSLock()
+  private var requests: [Void] = []
+  var count: Int { lock.withLock { requests.count } }
+  var hasRequest: Bool { lock.withLock { !requests.isEmpty } }
+  func increment() { lock.withLock { requests.append(()) } }
 }

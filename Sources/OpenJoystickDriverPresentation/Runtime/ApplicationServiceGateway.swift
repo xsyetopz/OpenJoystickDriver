@@ -17,6 +17,8 @@ protocol RuntimeStatusGateway: Sendable {
   func requestPermission(
     _ requirement: PermissionManager.Requirement
   ) async throws -> PermissionManager.Snapshot
+  /// Asks macOS for Bluetooth access and returns its state.
+  func requestBluetoothAccess() async throws -> BluetoothAccessState
   /// Returns the latest input state of the controller, or nil when the service has none.
   func controllerState(for selector: ControllerReference) async throws -> ControllerState?
 }
