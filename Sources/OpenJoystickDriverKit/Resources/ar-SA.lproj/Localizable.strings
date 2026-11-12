@@ -87,7 +87,7 @@
 /* Title of the switch for notifications about a controller that disconnects, and value of the connection state of a controller that is not connected. */
 "ui.settings.notifications.controllerDisconnectedShort" = "غير متصل";
 /* VoiceOver label of the switch for notifications about a controller that connects or needs attention. */
-"ui.settings.notifications.controllerNotifications" = "تم توصيل وحدة التحكم أو تحتاج إلى انتباه";
+"ui.settings.notifications.controllerNotifications" = "وحدة التحكم متصلة أو تحتاج إلى انتباه";
 /* Heading of the developer tools section in the Advanced pane of the settings window. */
 "ui.settings.advanced.developerTools" = "أدوات المطوّر";
 /* Description of the switch that turns on the developer tools in the Advanced pane of the settings window. */
@@ -187,13 +187,13 @@
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its protocol does not support the way it is connected. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.unsupportedTransportVariant.nextStep" = "وصّل وحدة التحكم بطريقة أخرى، مثل كابل، أو أرسل تقرير الدعم.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. The next step has its own text. OJD, USB, HID and ID stay as written. */
-"ui.controllers.virtualProfileUnavailable" = "لا يملك OJD ملف تعريف لوحة ألعاب افتراضية لوحدة التحكم هذه.";
+"ui.controllers.virtualProfileUnavailable" = "لا يملك OJD ملف تعريف وحدة تحكم افتراضية لوحدة التحكم هذه.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because no virtual gamepad profile is available for it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
 "ui.controllers.virtualProfileUnavailable.nextStep" = "أرسل تقرير الدعم ليُضاف ملف تعريف لها.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.deviceInUse" = "برنامج آخر يستخدم وحدة التحكم هذه.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because another program holds it, so OJD cannot read it. It tells the person what to do. OJD, USB, HID and ID stay as written. */
-"ui.controllers.deviceInUse.nextStep" = "أغلقه أو أعد توصيل وحدة التحكم.";
+"ui.controllers.deviceInUse.nextStep" = "أغلق ذلك البرنامج أو أعد توصيل وحدة التحكم.";
 /* Reason shown in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. The next step has its own text. OJD, USB, HID and ID stay as written. */
 "ui.controllers.configurationUnreadable" = "تعذّرت قراءة تكوين USB لوحدة التحكم هذه.";
 /* Next step shown after the reason in the Controllers list and in the output of 'ojd status' for a connected controller that OJD does not serve because its USB configuration could not be read. It tells the person what to do. OJD, USB, HID and ID stay as written. */
@@ -307,7 +307,7 @@
 /* Value of a stick row of the calibration view in the controller detail. %1$@ is the raw and tuned values text, and %2$@ is the stick deadzone, such as 10%. The deadzone is the part of the travel near the center that is ignored. */
 "ui.controllers.calibration.readingWithDeadZone" = "%1$@، المنطقة الميتة %2$@";
 /* Value in the calibration view of the controller detail in place of the value after tuning when no virtual gamepad publishes the controller. */
-"ui.controllers.calibration.noOutput" = "لا يوجد جهاز تحكم افتراضي";
+"ui.controllers.calibration.noOutput" = "لا توجد وحدة تحكم افتراضية";
 /* Value of the calibration row in the controller detail while the service has reported no stick or trigger values yet. */
 "ui.controllers.calibration.waiting" = "في انتظار الإدخال…";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
@@ -349,7 +349,7 @@
 /* Message when the service stores the override of the virtual gamepad kind but the controller cannot use it, so the app picks a kind itself. */
 "ui.virtualProfile.failure.overrideRejected" = "تم حفظ التجاوز، لكن وحدة التحكم هذه لا يمكنها استخدامه، لذا يُختار ملف تعريف تلقائيًا.";
 /* Error when a virtual gamepad kind fails to activate and the app restores the last working kind. %@ is the reason. */
-"ui.virtualProfile.failure.activationFailed" = "فشل التنشيط، لذا تمت استعادة نوع وحدة التحكم الافتراضية السابق: %@";
+"ui.virtualProfile.failure.activationFailed" = "فشل التفعيل، لذا تمت استعادة نوع وحدة التحكم الافتراضية السابق: %@";
 /* Message when the service stores the override while virtual output is off. The override takes effect when the user turns virtual output on. */
 "ui.virtualProfile.failure.outputDisabled" = "تم حفظ التجاوز وسيُطبق عند تمكين الإخراج الافتراضي.";
 /* Error when the service stops while the user changes the virtual gamepad kind. The stored override stays unchanged. */
@@ -597,7 +597,7 @@
 /* Accessibility label of the button that removes an app from the list of apps of a profile. %@ is the name of the app. */
 "ui.profiles.removeAppNamed" = "إزالة %@";
 /* Message of the open panel that Other... opens in the Add App menu of a profile. */
-"ui.profiles.appPanelMessage" = "اختر تطبيقًا لهذا الملف الشخصي.";
+"ui.profiles.appPanelMessage" = "اختر تطبيقًا لملف التعريف هذا.";
 /* Help text of the chord sheet. The destination fires while all chosen controls are held down. */
 "ui.profiles.chordHelp" = "تُطلَق الوجهة ما دامت جميع عناصر التحكم المحددة مضغوطة.";
 /* Label of the popup in the chord sheet that picks how the chord works. */
@@ -1395,17 +1395,17 @@
 /* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
 "ui.controllers.claim" = "مطالبة";
 /* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
-"ui.setup.runningDetail" = "جارٍ تثبيت مشغّل Xbox USB…";
+"ui.setup.runningDetail" = "جارٍ تثبيت برنامج تشغيل Xbox USB…";
 /* Disabled button of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
 "ui.setup.repairRunning" = "جارٍ الإصلاح…";
 /* Detail line of the problem banner when the state of the driver extension for Xbox USB controllers cannot be read. The banner has no button then. */
-"ui.setup.unavailableDetail" = "تعذّرت قراءة حالة مشغّل Xbox USB، لذا لا يمكن إرسال طلب.";
+"ui.setup.unavailableDetail" = "تعذّرت قراءة حالة برنامج تشغيل Xbox USB، لذا لا يمكن إرسال طلب.";
 /* Detail line of the problem banner when the request for the driver extension failed. %1$@ is the error domain, %2$lld is the error code and %3$@ is the error text. */
-"ui.setup.failedDetail" = "فشل طلب مشغّل Xbox USB: ‏%3$@ (‏%1$@، الرمز %2$lld).";
+"ui.setup.failedDetail" = "فشل طلب برنامج تشغيل Xbox USB: ‏%3$@ (‏%1$@، الرمز %2$lld).";
 /* Detail line of the problem banner when the request for the driver extension was cancelled. The Try Again button follows. */
-"ui.setup.cancelledDetail" = "أُلغي طلب مشغّل Xbox USB. حاول مرة أخرى لتثبيت المشغّل.";
+"ui.setup.cancelledDetail" = "أُلغي طلب برنامج تشغيل Xbox USB. حاول مرة أخرى لتثبيت برنامج التشغيل.";
 /* Detail line of the problem banner when the system did not answer the request for the driver extension in time. The Try Again button follows. */
-"ui.setup.timedOutDetail" = "لم يستجب النظام لطلب مشغّل Xbox USB في الوقت المناسب. حاول مرة أخرى.";
+"ui.setup.timedOutDetail" = "لم يستجب النظام لطلب برنامج تشغيل Xbox USB في الوقت المناسب. حاول مرة أخرى.";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "لا يستطيع OpenJoystickDriver الوصول إلى خدمته";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu while the app has not yet read the service. Keep the three dots. */
@@ -3712,7 +3712,7 @@
 /* Sentence under a permission row in the Access area while the permission is being read. Keep the three dots. */
 "ui.access.permission.checking.message" = "جارٍ فحص هذا الإذن…";
 /* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
-"ui.access.permission.notNeeded.message" = "لا تستخدم الملفات الشخصية النشطة هذا الإذن.";
+"ui.access.permission.notNeeded.message" = "لا تستخدم ملفات التعريف النشطة هذا الإذن.";
 /* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
 "ui.access.permission.limited.message" = "مسموح، لكن اللافتات أو الأصوات متوقفة، فقد تفوتك التنبيهات.";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
@@ -3910,7 +3910,7 @@
 /* Item of the Edit menu that selects everything. */
 "ui.menu.edit.selectAll" = "تحديد الكل";
 /* Item of the Edit menu that moves the keyboard focus to the search field of the list in view. */
-"ui.menu.edit.find" = "إيجاد";
+"ui.menu.edit.find" = "بحث";
 /* Title of the View menu in the menu bar. */
 "ui.menu.view.title" = "عرض";
 /* Item of the View menu that makes the window full screen. */
@@ -4008,7 +4008,7 @@
 /* Sentence of the main-window tour that says what the Profiles area is for. It is shown under the title of the area. */
 "ui.tour.profiles.summary" = "أنشئ ملفات التعريف التي تعيد تعيين أزرار وحدة التحكم وعصيّها وعدّلها.";
 /* Sentence of the main-window tour that says what the Library area is for. It is shown under the title of the area. */
-"ui.tour.library.summary" = "تصفح سجلات وحدات التحكم والإضافات المرفقة بالتطبيق أو المثبّتة.";
+"ui.tour.library.summary" = "تصفح سجلات وحدات التحكم والمودات المرفقة بالتطبيق أو المثبّتة.";
 /* Sentence of the main-window tour that says what the Access area is for. It is shown under the title of the area. */
 "ui.tour.access.summary" = "تحقق من الأذونات التي يحتاج إليها التطبيق ومن العملاء الذين يمكنهم الوصول إليه.";
 /* Sentence of the main-window tour that says what the Activity area is for. It is shown under the title of the area. */
@@ -4164,7 +4164,7 @@
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "الحصول على وحدات التحكم";
 /* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
-"ui.shortcuts.action.setProfileValue.description" = "يغيّر قيمة واحدة في ملف تعريف، مثل اسمه.";
+"ui.shortcuts.action.setProfileValue.description" = "تغيّر قيمة واحدة في ملف تعريف، مثل اسمه.";
 /* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
 "ui.shortcuts.action.setProfileValue.key" = "المفتاح";
 /* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
@@ -4172,7 +4172,7 @@
 /* Name of the value parameter of the action that changes one value of a remapping profile in the Shortcuts app. The value is read as JSON, or as text when it is not JSON. */
 "ui.shortcuts.action.setProfileValue.value" = "القيمة";
 /* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
-"ui.shortcuts.error.profileKey" = "لا يمكن أن يحتوي مفتاح قيمة الملف الشخصي على جزء فارغ.";
+"ui.shortcuts.error.profileKey" = "لا يمكن أن يحتوي مفتاح قيمة ملف التعريف على جزء فارغ.";
 /* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
 "ui.shortcuts.action.rumble.title" = "تشغيل اهتزاز وحدة التحكم";
 /* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
@@ -4198,21 +4198,21 @@
 /* Error in the Shortcuts app when the light action has no color or brightness, or the color is not RRGGBB. */
 "ui.shortcuts.error.lightRequest" = "حدّد لونًا من ستة أرقام سداسية عشرية، أو سطوعًا، أو كليهما.";
 /* Name in the Shortcuts app of the action that returns the installed mod packages. */
-"ui.shortcuts.action.listMods.title" = "سرد حزم التعديلات";
+"ui.shortcuts.action.listMods.title" = "سرد حزم المودات";
 /* Description in the Shortcuts app of the action that returns the installed mod packages. */
-"ui.shortcuts.action.listMods.description" = "تعيد أسماء حزم التعديلات المثبّتة.";
+"ui.shortcuts.action.listMods.description" = "تعيد أسماء حزم المودات المثبّتة.";
 /* Name in the Shortcuts app of the action that installs a mod package from a folder. */
-"ui.shortcuts.action.installMod.title" = "تثبيت حزمة تعديلات";
+"ui.shortcuts.action.installMod.title" = "تثبيت حزمة مود";
 /* Description in the Shortcuts app of the action that installs a mod package from a folder. */
-"ui.shortcuts.action.installMod.description" = "تثبّت حزمة تعديلات من مجلد وتعيد اسمها.";
+"ui.shortcuts.action.installMod.description" = "تثبّت حزمة مود من مجلد وتعيد اسمها.";
 /* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
 "ui.shortcuts.action.installMod.folder" = "المجلد";
 /* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
 "ui.shortcuts.action.installMod.replace" = "استبدال الحزمة المثبّتة";
 /* Name in the Shortcuts app of the action that removes an installed mod package. */
-"ui.shortcuts.action.removeMod.title" = "إزالة حزمة تعديلات";
+"ui.shortcuts.action.removeMod.title" = "إزالة حزمة مود";
 /* Description in the Shortcuts app of the action that removes an installed mod package. */
-"ui.shortcuts.action.removeMod.description" = "تزيل حزمة تعديلات مثبّتة باسمها.";
+"ui.shortcuts.action.removeMod.description" = "تزيل حزمة مود مثبّتة باسمها.";
 /* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
 "ui.shortcuts.action.removeMod.name" = "الاسم";
 /* Name of the model property of a controller in the Shortcuts app. */
@@ -5178,13 +5178,13 @@
 /* Note under the profile editor in the Profiles area while another profile change runs and edits are ignored. */
 "ui.profiles.editBlockedChange" = "التحرير غير متاح إلى أن ينتهي التغيير الجاري.";
 /* Note under the profile editor in the Profiles area while the profile list holds the editor because a change runs or damaged profiles need attention. */
-"ui.profiles.editBlockedHold" = "التحرير غير متاح إلى أن ينتهي التغيير الجاري أو تُعالَج الملفات الشخصية التالفة.";
+"ui.profiles.editBlockedHold" = "التحرير غير متاح إلى أن ينتهي التغيير الجاري أو تُعالَج ملفات التعريف التالفة.";
 /* Note above the profile editor in the Profiles area while a profile change runs and profile actions such as New, Import and Delete wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedChange" = "إجراءات الملفات الشخصية غير متاحة إلى أن ينتهي التغيير الجاري.";
+"ui.profiles.actionBlockedChange" = "إجراءات ملفات التعريف غير متاحة إلى أن ينتهي التغيير الجاري.";
 /* Note above the profile editor in the Profiles area while a repair of the profile library runs and profile actions wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedRecovery" = "إجراءات الملفات الشخصية غير متاحة إلى أن ينتهي إصلاح المكتبة.";
+"ui.profiles.actionBlockedRecovery" = "إجراءات ملفات التعريف غير متاحة إلى أن ينتهي إصلاح المكتبة.";
 /* Note above the profile editor in the Profiles area while the profile library lists damaged profiles and profile actions wait. It is also the message when such an action is refused. */
-"ui.profiles.actionBlockedDamaged" = "إجراءات الملفات الشخصية غير متاحة إلى أن تُحذف الملفات الشخصية التالفة أو تُعاد تهيئة المكتبة.";
+"ui.profiles.actionBlockedDamaged" = "إجراءات ملفات التعريف غير متاحة إلى أن تُحذف ملفات التعريف التالفة أو تُعاد تهيئة المكتبة.";
 /* Note beside the Pair Joy-Cons button of a Joy-Con pair profile in the Profiles area when the button is unavailable because a left or a right Joy-Con is not connected. */
 "ui.profiles.joyConPairNeedsBoth" = "صِل وحدة Joy-Con يسرى ووحدة Joy-Con يمنى لاقترانهما.";
 /* Note under the Virtual gamepad pop-up in the profile editor, shown after a virtual gamepad was chosen while exclusive physical input was on. */
