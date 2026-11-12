@@ -3919,6 +3919,8 @@
 "ui.menu.help.projectWebsite" = "Proje Web Sitesi";
 /* Item of the Help menu that opens the wiki page of the main-window area in view. */
 "ui.menu.help.helpForThisArea" = "Bu Alan İçin Yardım";
+/* Item of the Help menu that starts a short tour of the main window, one step per area. */
+"ui.menu.help.mainWindowTour" = "Ana Pencere Turu";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "Destek raporu kopyalandı";
 /* Message of the alert shown after the support report is copied. */
@@ -3937,6 +3939,20 @@
 "ui.sidebar.access.title" = "Erişim";
 /* Title of the Activity item in the sidebar of the main window. The area shows the log and the diagnostics. */
 "ui.sidebar.activity.title" = "Etkinlik";
+/* Sentence of the main-window tour that says what the Controllers area is for. It is shown under the title of the area. */
+"ui.tour.controllers.summary" = "Bağlı kontrolcüleri görün ve girdilerini sınayın.";
+/* Sentence of the main-window tour that says what the Profiles area is for. It is shown under the title of the area. */
+"ui.tour.profiles.summary" = "Bir kontrolcünün düğmelerini ve çubuklarını yeniden eşleyen profilleri oluşturun ve düzenleyin.";
+/* Sentence of the main-window tour that says what the Library area is for. It is shown under the title of the area. */
+"ui.tour.library.summary" = "Uygulamayla gelen veya kurulmuş kontrolcü kayıtlarına ve modlara göz atın.";
+/* Sentence of the main-window tour that says what the Access area is for. It is shown under the title of the area. */
+"ui.tour.access.summary" = "Uygulamanın ihtiyaç duyduğu izinleri ve ona hangi istemcilerin erişebildiğini denetleyin.";
+/* Sentence of the main-window tour that says what the Activity area is for. It is shown under the title of the area. */
+"ui.tour.activity.summary" = "Bir şey çalışmadığında günlüğü okuyun ve tanılama çalıştırın.";
+/* Button of the main-window tour that goes to the next area. */
+"ui.tour.next" = "İleri";
+/* Button of the main-window tour that goes back to the previous area. */
+"ui.tour.back" = "Geri";
 /* Help text of the showInMenuBar setting in 'ojd setting list'. OpenJoystickDriver is the product name. */
 "cli.setting.group.showInMenuBar" = "OpenJoystickDriver öğesini menü çubuğunda gösterir.";
 /* Help text of the checkUpdatesAutomatically setting in 'ojd setting list'. */

@@ -539,6 +539,13 @@ enum MainMenuModel {
         gui: .externalLink
       ),
       entry(
+        "showMainWindowTour",
+        "ui.menu.help.mainWindowTour",
+        action: .showMainWindowTour,
+        enabled: needsMainWindow,
+        gui: .area(.controllers)
+      ),
+      entry(
         "reportProblem",
         "ui.menu.help.reportProblem",
         action: .reportProblem,

@@ -4501,6 +4501,8 @@
 "ui.menu.help.projectWebsite" = "Site do Projeto";
 /* Item of the Help menu that opens the wiki page of the main-window area in view. */
 "ui.menu.help.helpForThisArea" = "Ajuda para esta área";
+/* Item of the Help menu that starts a short tour of the main window, one step per area. */
+"ui.menu.help.mainWindowTour" = "Tour pela janela principal";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "Relatório de suporte copiado";
 /* Message of the alert shown after the support report is copied. */
@@ -4519,6 +4521,20 @@
 "ui.sidebar.access.title" = "Acesso";
 /* Title of the Activity item in the sidebar of the main window. The area shows the log and the diagnostics. */
 "ui.sidebar.activity.title" = "Atividade";
+/* Sentence of the main-window tour that says what the Controllers area is for. It is shown under the title of the area. */
+"ui.tour.controllers.summary" = "Veja os controles conectados e teste a entrada deles.";
+/* Sentence of the main-window tour that says what the Profiles area is for. It is shown under the title of the area. */
+"ui.tour.profiles.summary" = "Crie e edite os perfis que remapeiam os botões e os analógicos de um controle.";
+/* Sentence of the main-window tour that says what the Library area is for. It is shown under the title of the area. */
+"ui.tour.library.summary" = "Explore os registros de controles e os mods que acompanham o app ou estão instalados.";
+/* Sentence of the main-window tour that says what the Access area is for. It is shown under the title of the area. */
+"ui.tour.access.summary" = "Confira as permissões de que o app precisa e quais clientes podem acessá-lo.";
+/* Sentence of the main-window tour that says what the Activity area is for. It is shown under the title of the area. */
+"ui.tour.activity.summary" = "Leia o registro e execute diagnósticos quando algo não funcionar.";
+/* Button of the main-window tour that goes to the next area. */
+"ui.tour.next" = "Avançar";
+/* Button of the main-window tour that goes back to the previous area. */
+"ui.tour.back" = "Voltar";
 /* Help text of the showInMenuBar setting in 'ojd setting list'. OpenJoystickDriver is the product name. */
 "cli.setting.group.showInMenuBar" = "Mostrar o item do OpenJoystickDriver na barra de menus.";
 /* Help text of the checkUpdatesAutomatically setting in 'ojd setting list'. */

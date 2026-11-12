@@ -3919,6 +3919,8 @@
 "ui.menu.help.projectWebsite" = "موقع المشروع";
 /* Item of the Help menu that opens the wiki page of the main-window area in view. */
 "ui.menu.help.helpForThisArea" = "مساعدة حول هذا القسم";
+/* Item of the Help menu that starts a short tour of the main window, one step per area. */
+"ui.menu.help.mainWindowTour" = "جولة في النافذة الرئيسية";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "تم نسخ تقرير الدعم";
 /* Message of the alert shown after the support report is copied. */
@@ -3937,6 +3939,20 @@
 "ui.sidebar.access.title" = "الوصول";
 /* Title of the Activity item in the sidebar of the main window. The area shows the log and the diagnostics. */
 "ui.sidebar.activity.title" = "النشاط";
+/* Sentence of the main-window tour that says what the Controllers area is for. It is shown under the title of the area. */
+"ui.tour.controllers.summary" = "اطّلع على وحدات التحكم المتصلة واختبر مدخلاتها.";
+/* Sentence of the main-window tour that says what the Profiles area is for. It is shown under the title of the area. */
+"ui.tour.profiles.summary" = "أنشئ ملفات التعريف التي تعيد تعيين أزرار وحدة التحكم وعصيّها وعدّلها.";
+/* Sentence of the main-window tour that says what the Library area is for. It is shown under the title of the area. */
+"ui.tour.library.summary" = "تصفح سجلات وحدات التحكم والإضافات المرفقة بالتطبيق أو المثبّتة.";
+/* Sentence of the main-window tour that says what the Access area is for. It is shown under the title of the area. */
+"ui.tour.access.summary" = "تحقق من الأذونات التي يحتاج إليها التطبيق ومن العملاء الذين يمكنهم الوصول إليه.";
+/* Sentence of the main-window tour that says what the Activity area is for. It is shown under the title of the area. */
+"ui.tour.activity.summary" = "اقرأ السجل وشغّل التشخيصات عندما لا يعمل شيء ما.";
+/* Button of the main-window tour that goes to the next area. */
+"ui.tour.next" = "التالي";
+/* Button of the main-window tour that goes back to the previous area. */
+"ui.tour.back" = "رجوع";
 /* Help text of the showInMenuBar setting in 'ojd setting list'. OpenJoystickDriver is the product name. */
 "cli.setting.group.showInMenuBar" = "إظهار عنصر OpenJoystickDriver في شريط القوائم.";
 /* Help text of the checkUpdatesAutomatically setting in 'ojd setting list'. */

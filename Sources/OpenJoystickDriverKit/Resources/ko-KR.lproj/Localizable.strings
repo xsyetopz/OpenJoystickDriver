@@ -3919,6 +3919,8 @@
 "ui.menu.help.projectWebsite" = "프로젝트 웹 사이트";
 /* Item of the Help menu that opens the wiki page of the main-window area in view. */
 "ui.menu.help.helpForThisArea" = "이 영역 도움말";
+/* Item of the Help menu that starts a short tour of the main window, one step per area. */
+"ui.menu.help.mainWindowTour" = "주 윈도우 둘러보기";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "지원 리포트를 복사했습니다";
 /* Message of the alert shown after the support report is copied. */
@@ -3937,6 +3939,20 @@
 "ui.sidebar.access.title" = "접근";
 /* Title of the Activity item in the sidebar of the main window. The area shows the log and the diagnostics. */
 "ui.sidebar.activity.title" = "활동";
+/* Sentence of the main-window tour that says what the Controllers area is for. It is shown under the title of the area. */
+"ui.tour.controllers.summary" = "연결된 컨트롤러를 확인하고 입력을 테스트합니다.";
+/* Sentence of the main-window tour that says what the Profiles area is for. It is shown under the title of the area. */
+"ui.tour.profiles.summary" = "컨트롤러의 버튼과 스틱을 다시 매핑하는 프로파일을 만들고 편집합니다.";
+/* Sentence of the main-window tour that says what the Library area is for. It is shown under the title of the area. */
+"ui.tour.library.summary" = "앱에 포함되었거나 설치된 컨트롤러 레코드와 모드를 둘러봅니다.";
+/* Sentence of the main-window tour that says what the Access area is for. It is shown under the title of the area. */
+"ui.tour.access.summary" = "앱에 필요한 권한과 접근할 수 있는 클라이언트를 확인합니다.";
+/* Sentence of the main-window tour that says what the Activity area is for. It is shown under the title of the area. */
+"ui.tour.activity.summary" = "문제가 생기면 로그를 읽고 진단을 실행합니다.";
+/* Button of the main-window tour that goes to the next area. */
+"ui.tour.next" = "다음";
+/* Button of the main-window tour that goes back to the previous area. */
+"ui.tour.back" = "뒤로";
 /* Help text of the showInMenuBar setting in 'ojd setting list'. OpenJoystickDriver is the product name. */
 "cli.setting.group.showInMenuBar" = "메뉴 막대에 OpenJoystickDriver 항목을 표시합니다.";
 /* Help text of the checkUpdatesAutomatically setting in 'ojd setting list'. */

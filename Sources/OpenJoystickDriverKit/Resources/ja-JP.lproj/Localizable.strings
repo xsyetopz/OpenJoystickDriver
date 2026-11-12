@@ -3919,6 +3919,8 @@
 "ui.menu.help.projectWebsite" = "プロジェクトの Web サイト";
 /* Item of the Help menu that opens the wiki page of the main-window area in view. */
 "ui.menu.help.helpForThisArea" = "このエリアのヘルプ";
+/* Item of the Help menu that starts a short tour of the main window, one step per area. */
+"ui.menu.help.mainWindowTour" = "メインウインドウのツアー";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "サポートレポートをコピーしました";
 /* Message of the alert shown after the support report is copied. */
@@ -3937,6 +3939,20 @@
 "ui.sidebar.access.title" = "アクセス";
 /* Title of the Activity item in the sidebar of the main window. The area shows the log and the diagnostics. */
 "ui.sidebar.activity.title" = "アクティビティ";
+/* Sentence of the main-window tour that says what the Controllers area is for. It is shown under the title of the area. */
+"ui.tour.controllers.summary" = "接続されているコントローラを確認し、入力をテストします。";
+/* Sentence of the main-window tour that says what the Profiles area is for. It is shown under the title of the area. */
+"ui.tour.profiles.summary" = "コントローラのボタンやスティックを割り当て直すプロファイルを作成、編集します。";
+/* Sentence of the main-window tour that says what the Library area is for. It is shown under the title of the area. */
+"ui.tour.library.summary" = "アプリに付属またはインストール済みのコントローラレコードとMODを閲覧します。";
+/* Sentence of the main-window tour that says what the Access area is for. It is shown under the title of the area. */
+"ui.tour.access.summary" = "アプリが必要とする権限と、アクセスできるクライアントを確認します。";
+/* Sentence of the main-window tour that says what the Activity area is for. It is shown under the title of the area. */
+"ui.tour.activity.summary" = "うまく動作しないときに、ログを読み、診断を実行します。";
+/* Button of the main-window tour that goes to the next area. */
+"ui.tour.next" = "次へ";
+/* Button of the main-window tour that goes back to the previous area. */
+"ui.tour.back" = "戻る";
 /* Help text of the showInMenuBar setting in 'ojd setting list'. OpenJoystickDriver is the product name. */
 "cli.setting.group.showInMenuBar" = "OpenJoystickDriver の項目をメニューバーに表示します。";
 /* Help text of the checkUpdatesAutomatically setting in 'ojd setting list'. */
