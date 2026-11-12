@@ -1,0 +1,29 @@
+2026-11-13, macOS 27.2, build f8a498dfb. ./d16probe 30 from Terminal (a process that is not frontmost, background events on).
+At 4 s, 21 s: ojd virtual set sdl-compatible 2DC8:301B (publishes 045E:0B0C). At 12 s, 25 s: ojd virtual set game-controller-compatible 2DC8:301B (publishes 045E:0B13).
+   0.011 pid=58273 listening 30s
+   0.012 hid arrive  045E:028E product="GamePad-1" transport=Virtual location=0x0 supportsHIDDevice=true
+   0.012 hid arrive  045E:0B13 product="Xbox Wireless Controller" transport=Virtual location=0x4f4acf48 supportsHIDDevice=true
+   0.012 hid arrive  2DC8:301B product="8BitDo Ultimate 2C Wireless" transport=Bluetooth Low Energy location=0x44aa3c20 supportsHIDDevice=true
+   0.024 gc connect    vendorName="Xbox Wireless Controller" productCategory="Xbox One" extended=true attached=false
+   0.534 gc controllers() = 1: vendorName="Xbox Wireless Controller" productCategory="Xbox One" extended=true attached=false
+   4.480 hid arrive  045E:0B0C product="Xbox Adaptive Controller" transport=Virtual location=0x4f4acf48 supportsHIDDevice=true
+   4.480 gc disconnect vendorName="Xbox Wireless Controller" productCategory="Xbox One" extended=true attached=false
+   4.481 hid leave   045E:0B13 product="Xbox Wireless Controller" transport=Virtual location=0x4f4acf48 supportsHIDDevice=true
+   4.568 hid leave   045E:028E product="GamePad-1" transport=Virtual location=0x0 supportsHIDDevice=true
+   5.783 hid arrive  045E:028E product="GamePad-1" transport=Virtual location=0x0 supportsHIDDevice=true
+  12.983 hid arrive  045E:0B13 product="Xbox Wireless Controller" transport=Virtual location=0x4f4acf48 supportsHIDDevice=true
+  12.983 hid leave   045E:0B0C product="Xbox Adaptive Controller" transport=Virtual location=0x4f4acf48 supportsHIDDevice=true
+  13.001 gc connect    vendorName="Xbox Wireless Controller" productCategory="Xbox One" extended=true attached=false
+  13.035 hid leave   045E:028E product="GamePad-1" transport=Virtual location=0x0 supportsHIDDevice=true
+  14.178 hid arrive  045E:028E product="GamePad-1" transport=Virtual location=0x0 supportsHIDDevice=true
+  21.419 hid arrive  045E:0B0C product="Xbox Adaptive Controller" transport=Virtual location=0x4f4acf48 supportsHIDDevice=true
+  21.419 gc disconnect vendorName="Xbox Wireless Controller" productCategory="Xbox One" extended=true attached=false
+  21.419 hid leave   045E:0B13 product="Xbox Wireless Controller" transport=Virtual location=0x4f4acf48 supportsHIDDevice=true
+  21.439 hid leave   045E:028E product="GamePad-1" transport=Virtual location=0x0 supportsHIDDevice=true
+  22.586 hid arrive  045E:028E product="GamePad-1" transport=Virtual location=0x0 supportsHIDDevice=true
+  25.847 hid arrive  045E:0B13 product="Xbox Wireless Controller" transport=Virtual location=0x4f4acf48 supportsHIDDevice=true
+  25.847 hid leave   045E:0B0C product="Xbox Adaptive Controller" transport=Virtual location=0x4f4acf48 supportsHIDDevice=true
+  25.863 gc connect    vendorName="Xbox Wireless Controller" productCategory="Xbox One" extended=true attached=false
+  25.887 hid leave   045E:028E product="GamePad-1" transport=Virtual location=0x0 supportsHIDDevice=true
+  27.129 hid arrive  045E:028E product="GamePad-1" transport=Virtual location=0x0 supportsHIDDevice=true
+  31.511 gc controllers() = 1 at end

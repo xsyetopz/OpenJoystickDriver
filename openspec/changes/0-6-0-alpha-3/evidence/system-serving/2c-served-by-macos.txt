@@ -1,0 +1,17 @@
+2026-11-13, macOS 27.2, build f8a498dfb. ./d16probe 180 from Terminal.
+At 3 s: ojd controller release 2DC8:301B (user patch, server System; the service prints Serving route native-pass-through).
+At 41 s the maintainer turned the pad off, and at 49 s it reconnected over Bluetooth LE; the maintainer pressed A after it connected.
+   0.011 pid=59139 listening 180s
+   0.012 hid arrive  045E:0B13 product="Xbox Wireless Controller" transport=Virtual location=0x4f4acf48 supportsHIDDevice=true
+   0.012 hid arrive  045E:028E product="GamePad-1" transport=Virtual location=0x0 supportsHIDDevice=true
+   0.013 hid arrive  2DC8:301B product="8BitDo Ultimate 2C Wireless" transport=Bluetooth Low Energy location=0x44aa3c20 supportsHIDDevice=true
+   0.023 gc connect    vendorName="Xbox Wireless Controller" productCategory="Xbox One" extended=true attached=false
+   0.536 gc controllers() = 1: vendorName="Xbox Wireless Controller" productCategory="Xbox One" extended=true attached=false
+   3.923 hid leave   045E:0B13 product="Xbox Wireless Controller" transport=Virtual location=0x4f4acf48 supportsHIDDevice=true
+   3.924 gc disconnect vendorName="Xbox Wireless Controller" productCategory="Xbox One" extended=true attached=false
+   3.944 hid leave   045E:028E product="GamePad-1" transport=Virtual location=0x0 supportsHIDDevice=true
+  41.467 hid leave   2DC8:301B product="8BitDo Ultimate 2C Wireless" transport=Bluetooth Low Energy location=0x44aa3c20 supportsHIDDevice=true
+  49.119 hid arrive  2DC8:301B product="8BitDo Ultimate 2C Wireless" transport=Bluetooth Low Energy location=0x44aa3c20 supportsHIDDevice=true
+  50.707 hid arrive  045E:028E product="GamePad-1" transport=Virtual location=0x0 supportsHIDDevice=true
+ 189.011 gc controllers() = 0 at end
+After the run: ojd record remove 2DC8:301B --force; the pad is Handled by OJD (from bundled) again.

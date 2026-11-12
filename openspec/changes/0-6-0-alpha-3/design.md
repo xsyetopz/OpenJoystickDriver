@@ -409,6 +409,14 @@ The parts this release leaves unsettled are named, each with its task: whether t
 - A record's `server` overrides the detection in both directions, as it does today for `OJD`.
 - Task 9.11 measures, before any code, whether the service process sees GameController's list, how it ties a listed controller to a HID device, and the settle time. If the service cannot do it, the detection moves to a later change, and the record field stays the fix for each pad found (D9 for the 2C).
 
+Measured by task 9.11 (`evidence/system-serving/`), from a command-line process that is not frontmost, with `GCController.shouldMonitorBackgroundEvents` on:
+
+- The process sees GameController's list. `GCControllerDidConnect` posts for OJD's `045E:0B13` gamepad 16 to 18 ms after its HID device arrives, over two republications. It posts nothing for `045E:0B0C` or for the virtual `045E:028E` "GamePad-1", though both pass `supportsHIDDevice`.
+- With macOS serving the 2C (`ojd controller release`), the pad left and arrived again over Bluetooth LE, and no controller was listed in the 140 s after it arrived.
+- No public property ties a listed controller to a HID device: `GCController` exposes `vendorName` and `productCategory` (`GCDevice`), and no vendor ID, product ID, or registry ID. For `0B13`, `vendorName` equals the HID `Product` string. The tie is therefore a controller whose `vendorName` equals the device's `Product` and that connects within the settle time after the device arrives.
+- Settle time: 1 s, about 50 times the measured 18 ms. No physical pad that macOS lists was measured, so 9.12 records the settle time as a constant beside this measurement.
+- Not measured: the service process itself. The probe ran as a separate process; 9.12's test of the detection runs in the service.
+
 Alternative considered: fix only the `301B` record. Rejected as the whole answer: every other pad with this macOS behavior would need a patch from its user.
 
 Alternative considered: OJD serves every HID pad it has a record for. Rejected: for a pad macOS serves, macOS keeps a second controller that gives no input beside OJD's (`PhysicalInterfaceSignature.swift:295-297`).
