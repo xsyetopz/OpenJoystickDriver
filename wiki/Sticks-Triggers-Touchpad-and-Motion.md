@@ -18,7 +18,7 @@ Analog settings change how a stick, a trigger, a touch surface, or a motion sens
 
 ## Before You Begin
 
-- Create a profile. For more information, see [Creating a profile](Remapping-Profiles.md#creating-a-profile).
+- Create a [profile](Glossary.md#terms). For more information, see [Creating a profile](Remapping-Profiles.md#creating-a-profile).
 - Open the **Controller** section of the profile. Each group in this section has an **Adjust** button.
 - If a group shows **Not supported by this controller or protocol.**, the controller cannot provide that input.
 - Stick modes that move the pointer or scroll need Accessibility access. For more information, see [Permissions](Permissions-and-Security.md).
@@ -167,7 +167,7 @@ Motion sources need a controller with motion sensors. Some controllers provide n
 
 ## Create a Gyro to Stick Profile
 
-The **Gyro to stick** template makes a profile in which turning the controller moves a stick of the virtual gamepad, so a game that reads only sticks gets gyro aiming.
+The **Gyro to stick** template makes a profile in which turning the controller moves a stick of the [virtual gamepad](Glossary.md#terms), so a game that reads only sticks gets gyro aiming.
 
 1. Click **New profile** and choose the controller.
 2. Set **Template** to **Gyro to stick**, then choose the **Left stick** or the **Right stick**.

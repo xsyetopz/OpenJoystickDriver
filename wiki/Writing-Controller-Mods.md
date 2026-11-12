@@ -1,6 +1,6 @@
 # Writing controller mods
 
-The product list of the [Xbox USB driver extension](Connecting-Controllers.md#xbox-usb-driver-extension) is signed by Apple, and a mod package cannot add a controller to it.
+The product list of the [Xbox USB driver](Connecting-Controllers.md#xbox-usb-driver) is signed by Apple, and a mod package cannot add a controller to it.
 
 ## Contents
 
@@ -13,7 +13,7 @@ The product list of the [Xbox USB driver extension](Connecting-Controllers.md#xb
 
 ## Package Layout
 
-A mod package is a folder that holds controllers, controller patches, remapping profiles, virtual devices, and protocol descriptions. You can share the folder and install it with `ojd mod`.
+A mod package is a folder that holds controllers, controller patches, [profiles](Glossary.md#terms), [virtual gamepads](Glossary.md#terms), and protocol descriptions. You can share the folder and install it with `ojd mod`.
 
 A package adds files to the layers that OpenJoystickDriver (OJD) already reads. It holds no code. A package record for a raw-USB controller works only when macOS lets OJD open the device directly.
 
@@ -28,11 +28,11 @@ ojd-sample/
 ```
 
 - `Controllers/` holds [controller records](Controller-Records.md). Name a `Controller` file `vvvv-pppp.plist` after its model, in lowercase hexadecimal. Name a `ControllerPatch` file `vvvv-pppp.patch.plist`, `model-vvvv-pppp.patch.plist`, or `all.patch.plist`. Both kinds share the folder, as they do in your own `Controllers` folder, because OpenJoystickDriver reads the records and patches of one layer from one folder.
-- `Profiles/` holds [remapping profiles](Profile-File-Reference.md).
+- `Profiles/` holds [profiles](Profile-File-Reference.md).
 - `VirtualDevices/` holds `VirtualDevice` files, which choose the virtual gamepad that games see. Name each file `vvvv-pppp.plist` after the model it matches, or `vvvv-pppp-U-UNIT.plist` for one controller, where `UNIT` is the 16-character unit ID that `ojd controller show` prints.
 - `Protocols/` holds protocol description files that define a family the `Controller` files of the package or your own files can name. Name each file `FamilyName.plist` after the UpperCamelCase family it defines. See [Define a Family With a Description](Controller-Records.md#define-a-family-with-a-description).
 
-The sample package, `ojd-sample`, is in the [`docs/sdk/sample`](../docs/sdk/sample) folder of the repository. It adds a generic HID pad (`1209:0001`), a profile that maps Start to the space key, and a virtual device. `1209:0001` is a pid.codes test ID: it is not unique to one product, so use it only for testing, and use the real VID and PID of your controller in a package you share.
+The sample package, `ojd-sample`, is in the [`docs/sdk/sample`](../docs/sdk/sample) folder of the repository. It adds a generic HID pad (`1209:0001`), a profile that maps Start to the space key, and a virtual gamepad. `1209:0001` is a pid.codes test ID: it is not unique to one product, so use it only for testing, and use the real VID and PID of your controller in a package you share.
 
 Every file of a package is an XML property list. `plutil -lint FILE.plist` checks one, `plutil -convert xml1 -o FILE.plist FILE.json` writes one from JSON, and `plutil -convert json -o - FILE.plist` prints one as JSON.
 
@@ -102,8 +102,8 @@ OJD does not use a package whose `requires` leaves out the running version. It s
 
 A package is a read-only layer between the bundled catalog and your own files. When you and a package both have a `Controller` file for a model, OJD uses your file and ignores the package file. Your `ControllerPatch` applies over the package record and over a package patch, and wins over it. A package `Controller` file is for a model that has no bundled record, and a package `ControllerPatch` changes a bundled or packaged one. A package cannot add a `Controller` for a model that has a bundled record.
 
-- `ojd mod install` and `ojd mod validate` refuse a package whose controller, patch, or virtual device covers a model that your files or another package already hold, and one whose protocol description has the file name of one that you or another package already hold. They also refuse a profile that has the ID or the name of one that you or another package already hold. The code is E4004. `--force` does not override this.
-- A clash can also appear after the install, for example when you add a record later. Your file then wins. Among packages, the first by package name wins. `ojd record list` names each package record that OJD ignores and the reason. OJD does not report a package profile that it ignores because of a clash. `ojd status` and `ojd diagnose` list each virtual device file that OJD ignores and the reason.
+- `ojd mod install` and `ojd mod validate` refuse a package whose controller, patch, or virtual gamepad covers a model that your files or another package already hold, and one whose protocol description has the file name of one that you or another package already hold. They also refuse a profile that has the ID or the name of one that you or another package already hold. The code is E4004. `--force` does not override this.
+- A clash can also appear after the install, for example when you add a record later. Your file then wins. Among packages, the first by package name wins. `ojd record list` names each package record that OJD ignores and the reason. OJD does not report a package profile that it ignores because of a clash. `ojd status` and `ojd diagnose` list each virtual gamepad file that OJD ignores and the reason.
 - A `ControllerPatch` of yours for a model that only a package defines applies over the package record. If you remove the package later, OJD lists the patch as a problem and skips it.
 
 ## Package Profiles Are Read-Only

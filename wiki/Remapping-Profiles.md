@@ -1,6 +1,6 @@
 # Remapping Profiles
 
-Profiles change what your controller buttons, sticks, triggers, touchpad, and motion sensors do.
+[Profiles](Glossary.md#terms) change what your controller buttons, sticks, triggers, touchpad, and motion sensors do.
 
 ## Contents
 
@@ -46,7 +46,7 @@ OJD picks the profile for a controller in this order:
 2. The most recently activated global profile.
 3. The most recently activated profile for the model, even if its scope is an app that is not in front.
 
-If no profile is active, OJD passes the controller through to the virtual controller. An app-scoped profile picked by rule 3 does not work until its app is in front.
+If no profile is active, OJD passes the controller through to the [virtual gamepad](Glossary.md#terms). An app-scoped profile picked by rule 3 does not work until its app is in front.
 
 A **Profile switch** assignment changes the active profile of a controller from a button. For more information, see [Switch profiles, set layers, and pause](Bindings-and-Actions.md#switch-profiles-set-layers-and-pause).
 
@@ -63,10 +63,10 @@ The output policy decides how a profile sends its results. It has two settings.
 
 | Setting | Values | Meaning |
 | --- | --- | --- |
-| Virtual gamepad | Disabled, Mapped controls only, Include unmapped controls | Whether OJD publishes a virtual controller for this profile |
+| Virtual gamepad | Disabled, Mapped controls only, Include unmapped controls | Whether OJD publishes a virtual gamepad for this profile |
 | Require exclusive physical input | Off, On | Whether OJD takes exclusive ownership of the physical input |
 
-- **Disabled**: OJD sends keyboard and pointer events only. There is no virtual controller output.
+- **Disabled**: OJD sends keyboard and pointer events only. There is no virtual gamepad output.
 - **Mapped controls only**: OJD sends only the destinations that you assigned.
 - **Include unmapped controls**: OJD also forwards controls that no assignment uses.
 

@@ -31,11 +31,11 @@ The window has no tabs. It shows one scrolling page with these groups.
 
 ### Live Input
 
-Shows sticks, the D-pad, face buttons, bumpers, triggers, stick buttons, and extra buttons. Each control shows **Pressed** or **Released**. Button names follow the virtual controller profile. **Left stick** and **Right stick** show the X and Y value of each stick, and each trigger shows its value.
+Shows sticks, the D-pad, face buttons, bumpers, triggers, stick buttons, and extra buttons. Each control shows **Pressed** or **Released**. Button names follow the [virtual gamepad kind](Glossary.md#terms). **Left stick** and **Right stick** show the X and Y value of each stick, and each trigger shows its value.
 
 ### Motion Calibration
 
-For controllers with a gyroscope. Keep the controller still while OJD collects the gyro bias. The buttons are **Refresh**, **Start calibration**, **Pause**, and **Reset**. Collection continues after you close the window. Click **Pause** to stop it. Motion calibration needs an enabled profile for the controller. Not verified: whether the calibration survives a restart of OJD.
+For controllers with a gyroscope. Keep the controller still while OJD collects the gyro bias. The buttons are **Refresh**, **Start calibration**, **Pause**, and **Reset**. Collection continues after you close the window. Click **Pause** to stop it. Motion calibration needs an enabled [profile](Glossary.md#terms) for the controller. Not verified: whether the calibration survives a restart of OJD.
 
 ### Rumble
 

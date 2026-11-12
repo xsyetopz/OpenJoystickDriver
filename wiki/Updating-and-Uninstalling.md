@@ -59,7 +59,7 @@ ojd update check
 3. Drag **OpenJoystickDriver** to **Applications**. Replace the old app when macOS asks.
 4. Open OJD.
 
-Your profiles stay in place because they are stored outside the app.
+Your [profiles](Glossary.md#terms) stay in place because they are stored outside the app.
 
 ### Update from an Earlier Alpha
 
@@ -93,7 +93,7 @@ The `CHANGELOG.md` file in the repository lists what each build contains.
 
 This section explains how to remove OpenJoystickDriver (OJD) and the files it leaves on your Mac.
 
-Removing the app alone leaves a login item, privacy entries, a system extension, and data files. Follow the steps in order.
+Removing the app alone leaves a login item, privacy entries, the [Xbox USB driver](Glossary.md#terms), and data files. Follow the steps in order.
 
 ### Remove the App
 
@@ -103,7 +103,7 @@ Removing the app alone leaves a login item, privacy entries, a system extension,
    ojd setting set launchAtLogin false
    ```
 
-2. If you approved the OJD driver extension, remove it. In **Settings** > **Advanced**, under **Xbox USB Driver**, click **Uninstall**. Or run the following command.
+2. If you approved the Xbox USB driver, remove it. In **Settings** > **Advanced**, under **Xbox USB Driver**, click **Uninstall**. Or run the following command.
 
    ```shell
    ojd transport-extension deactivate

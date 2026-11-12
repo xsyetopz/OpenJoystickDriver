@@ -1,6 +1,6 @@
 # Profile File Reference
 
-OpenJoystickDriver stores each profile in its own XML property list file, and this page describes their location, shape, and limits.
+OpenJoystickDriver stores each [profile](Glossary.md#terms) in its own XML property list file, and this page describes their location, shape, and limits.
 
 ## File Location
 

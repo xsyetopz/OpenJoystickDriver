@@ -1,6 +1,6 @@
 # Start: set up OJD on several Macs
 
-Install OJD on more than one Mac by hand, and copy your profiles and controller records between them.
+Install OJD on more than one Mac by hand, and copy your [profiles](Glossary.md#terms) and controller records between them.
 
 This page covers what the license allows, what Apple documents for macOS, and how to repeat the setup on each Mac.
 
@@ -17,7 +17,7 @@ The license text names no number of copies or computers, and it permits commerci
 
 Apple documents these steps for one Mac. Each Mac needs them.
 
-- Allow a system extension: [If you get an alert about a system extension on Mac](https://support.apple.com/en-us/120363). Apple says you might be able to allow the extension in Login Items & Extensions settings on macOS Sequoia 15 or later, or in Privacy & Security settings on earlier versions.
+- Allow the [Xbox USB driver](Glossary.md#terms): [If you get an alert about a system extension on Mac](https://support.apple.com/en-us/120363). Apple says you might be able to allow it in Login Items & Extensions settings on macOS Sequoia 15 or later, or in Privacy & Security settings on earlier versions.
 - Allow an app to read your keyboard, mouse, or trackpad: [Control access to input monitoring on Mac](https://support.apple.com/guide/mac-help/control-access-to-input-monitoring-on-mac-mchl4cedafb6/mac). Apple says to open **System Settings**, click **Privacy & Security**, click **Input Monitoring**, and turn the app on.
 - Allow an app to control the Mac: [Allow accessibility apps to access your Mac](https://support.apple.com/guide/mac-help/allow-accessibility-apps-to-access-your-mac-mh43185/mac). Apple says to open **System Settings**, click **Privacy & Security**, click **Accessibility**, and turn the app on.
 
@@ -27,7 +27,7 @@ For what OJD asks for and when, see [Permissions and security](Permissions-and-S
 
 1. Install OJD from the disk image, as in [Start: play a game with a controller](Start-Play-a-Game.md).
 2. Grant **Input Monitoring** and **Accessibility** in the **Access** area, and click **Restart OpenJoystickDriver** if it shows. See [Grant Input Monitoring and Accessibility](Permissions-and-Security.md#grant-input-monitoring-and-accessibility).
-3. If you use an Xbox controller on USB, approve the Xbox USB driver. See [Xbox USB driver extension](Connecting-Controllers.md#xbox-usb-driver-extension).
+3. If you use an Xbox controller on USB, approve the Xbox USB driver. See [Xbox USB driver](Connecting-Controllers.md#xbox-usb-driver).
 4. Check the Mac: run `ojd status`.
 
 ## Copy your setup to another Mac

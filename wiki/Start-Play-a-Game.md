@@ -5,18 +5,18 @@ Install OpenJoystickDriver (OJD), connect a controller, and see it work in a gam
 ## Steps
 
 1. Open the OpenJoystickDriver disk image, drag **OpenJoystickDriver.app** onto the **Applications** shortcut, and open it from the Applications folder. Keep the app in `/Applications`.
-2. Open OpenJoystickDriver. If the window shows **Permission needed**, click **Grant Access**. In **System Settings** > **Privacy & Security**, allow **OpenJoystickDriver** in **Input Monitoring** and in **Accessibility**. Without the first, OJD cannot read your controller. Without the second, the virtual controller does not work.
+2. Open OpenJoystickDriver. If the window shows **Permission needed**, click **Grant Access**. In **System Settings** > **Privacy & Security**, allow **OpenJoystickDriver** in **Input Monitoring** and in **Accessibility**. Without the first, OJD cannot read your controller. Without the second, the [virtual gamepad](Glossary.md#terms) does not work.
 3. In the app window, open the **Access** area. If the button **Restart OpenJoystickDriver** shows, click it.
 4. Connect the controller with USB, Bluetooth, or a 2.4 GHz dongle.
 5. Open the **Controllers** area, select your controller, and click **Open Input Test...**. Press buttons and move sticks. The window shows each control. If it shows nothing, see [Controller not detected](Troubleshooting.md).
-6. Start the game. The game reads the virtual controller that OJD publishes.
+6. Start the game. The game reads the virtual gamepad that OJD publishes.
 
 To check from Terminal, run `ojd status` and `ojd controller list`. The [command line page](Command-Line.md#run-a-command) shows how to get `ojd`.
 
 ## If the game shows no input
 
-- Games made with SDL, and Steam, read the virtual controller that OJD chooses for you. Do nothing.
-- A game that uses Apple's GameController framework, such as Safari, needs another virtual controller. Run `ojd virtual set game-controller-compatible CONTROLLER`, where `CONTROLLER` is an ID from `ojd controller list`. Run `ojd virtual reset CONTROLLER` to go back to the automatic choice.
+- Games made with SDL, and Steam, read the virtual gamepad kind that OJD chooses for you. Do nothing.
+- A game that uses Apple's GameController framework, such as Safari, needs another virtual gamepad kind. Run `ojd virtual set game-controller-compatible CONTROLLER`, where `CONTROLLER` is an ID from `ojd controller list`. Run `ojd virtual reset CONTROLLER` to go back to the automatic choice.
 - Some games read neither. [Playing games](Playing-Games.md#game-and-app-compatibility) lists what testers found.
 
 ## Further reading

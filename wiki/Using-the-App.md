@@ -19,7 +19,7 @@ Learn the menu-bar item, the main menu, the five areas of the app window, and th
 
 ![The menu-bar item menu with one controller row, Open OpenJoystickDriver, Settings, and Quit](../docs/screenshots/menu-bar-item.png)
 
-The menu-bar item does five things: it shows the state of each connected controller, chooses a controller's profile, pauses or resumes a controller, opens the app window or **Settings**, and quits OJD.
+The menu-bar item does five things: it shows the state of each connected controller, chooses a controller's [profile](Glossary.md#terms), pauses or resumes a controller, opens the app window or **Settings**, and quits OJD.
 It holds nothing else.
 The logs, the error explanations, the support report and the project links are in the **Help** menu of the main menu.
 
@@ -79,8 +79,8 @@ Press <kbd>Command</kbd>+<kbd>1</kbd> to <kbd>Command</kbd>+<kbd>5</kbd> to sele
 
 | Area | Use it to |
 | --- | --- |
-| **Controllers** | See each connected controller, choose who serves it, and test it. |
-| **Profiles** | Edit remapping profiles. |
+| **Controllers** | See each connected controller, choose who handles it, and test it. |
+| **Profiles** | Edit profiles. |
 | **Library** | Install, test, and remove controller records and mods. |
 | **Access** | Check permissions, and manage the local endpoint for other programs. |
 | **Activity** | Read the log, run checks, and explain an error code. |
@@ -91,7 +91,7 @@ The window opens on **Controllers** until you choose another area.
 A banner below the toolbar shows a problem that stops OJD from working:
 
 - **OpenJoystickDriver cannot reach its service**.
-- **Xbox USB Driver**, when the driver extension needs approval, repair, or reinstalling.
+- **Xbox USB Driver**, when the [Xbox USB driver](Glossary.md#terms) needs approval, repair, or reinstalling.
 - **Permission needed**, with a button that opens **Access**.
 - **Live updates unavailable**, when the app cannot receive changes from the service.
   The app then reads the controller list from the service instead, and tries to receive changes again.
@@ -127,8 +127,8 @@ For more information, see [Controller not detected](Troubleshooting.md).
 The details include these fields when the controller reports them:
 
 - **Active profile**.
-- **Publication**: whether OJD publishes a virtual gamepad for the controller.
-  A controller that macOS serves itself shows **Native macOS gamepad, not published**.
+- **Publication**: whether OJD publishes a [virtual gamepad](Glossary.md#terms) for the controller.
+  A controller that is [handled by macOS](Glossary.md#terms) shows **Native macOS gamepad, not published**.
 - **Serving route**: how the input reaches games, for example **OpenJoystickDriver, virtual gamepad** or **macOS, passed through**.
 - **Protocol**.
 - **Serial number**, blurred until you click its eye button.
@@ -138,10 +138,10 @@ A **Suspended** row with a **Resume** button appears while the controller is sus
 **Open Input Test...** opens the test window.
 For more information, see [Testing a controller](Testing-a-Controller.md).
 
-### Who Serves the Controller
+### Who Handles the Controller
 
-The **Served by** picker appears for a controller that macOS serves natively, or whose record gives it to OpenJoystickDriver.
-It never appears for a controller that uses raw USB or the driver extension.
+The **Served by** picker appears for a controller that macOS can handle, or whose record gives it to OpenJoystickDriver.
+It never appears for a controller that uses raw USB or the Xbox USB driver.
 The choices are **macOS (native)** and **OpenJoystickDriver (virtual)**.
 **Set by** names the record layer that holds the choice.
 The change takes effect at once and stays after a restart.
@@ -150,12 +150,12 @@ For more information, see [Choose who drives the controller](Controller-Records.
 
 ### Virtual HID Profile
 
-The **Virtual HID profile** menu appears for controllers that macOS does not serve itself:
+The **Virtual HID profile** menu appears for controllers that macOS does not handle:
 
-- **Automatic (`<profile name>`)** lets OJD choose the virtual controller profile and names the profile it chose.
-- **Xbox Adaptive Controller (SDLCompatible)** forces the Xbox profile for SDL games and Steam.
-- **OpenJoystickDriver Generic HID Gamepad (Generic)** forces the generic profile.
-- **Xbox Wireless Controller (GameControllerCompatible)** forces the Xbox profile for Apple's Game Controller framework.
+- **Automatic (`<profile name>`)** lets OJD choose the [virtual gamepad kind](Glossary.md#terms) and names the kind it chose.
+- **Xbox Adaptive Controller (SDLCompatible)** forces the Xbox kind for SDL games and Steam.
+- **OpenJoystickDriver Generic HID Gamepad (Generic)** forces the generic kind.
+- **Xbox Wireless Controller (GameControllerCompatible)** forces the Xbox kind for Apple's Game Controller framework.
 
 **Apply to** chooses whether the override applies to every connected controller of the same model or to this controller only.
 **Reset all overrides** clears every override.
@@ -177,7 +177,7 @@ For more information, see [Finding your controller ID](Connecting-Controllers.md
 
 ## Profiles Area
 
-The **Profiles** area lists the remapping profiles and opens the editor for the selected profile.
+The **Profiles** area lists the profiles and opens the editor for the selected profile.
 For more information, see [Remapping profiles](Remapping-Profiles.md).
 
 ## Library Area
@@ -317,10 +317,10 @@ Click **Open Notification Settings** to fix this.
 
 - **Command-Line Tool** links `ojd` to this app so that you can run it in Terminal.
   **Install Command-Line Tool** asks for an administrator password.
-- **Xbox USB Driver** shows the state of the OJD driver extension.
+- **Xbox USB Driver** shows the state of the Xbox USB driver.
   Only some Xbox One and Xbox Series controllers on USB need it.
   **Uninstall** appears while the driver is active; it asks you to approve and then deactivates the driver.
-  For more information, see [Xbox USB driver extension](Connecting-Controllers.md#xbox-usb-driver-extension).
+  For more information, see [Xbox USB driver](Connecting-Controllers.md#xbox-usb-driver).
 - **Enable Developer Tools** shows controller input and USB packet tools in this pane, together with a soak test section.
   The tools show only while **Interface** is **Advanced** (needs the **Advanced** interface); the switch itself is always there.
   For more information, see [Finding your controller ID](Connecting-Controllers.md).

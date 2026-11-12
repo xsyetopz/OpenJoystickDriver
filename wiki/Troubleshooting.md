@@ -46,13 +46,13 @@ The built-in catalog has 710 records. A record without a physical test is unveri
 
 ### Special Cases
 
-- **Xbox One or Xbox Series controller on USB:** These controllers need the OJD driver extension. Check the **Xbox USB Driver** banner below the toolbar of the app window. If it shows **Open System Settings**, click it and approve the extension. If it shows **Repair Xbox USB Driver**, click it. **Xbox USB Driver** in **Settings** > **Advanced** shows the state of the extension. For more information, see [Xbox USB driver extension](Connecting-Controllers.md).
+- **Xbox One or Xbox Series controller on USB:** These controllers need the [Xbox USB driver](Glossary.md#terms). Check the **Xbox USB Driver** banner below the toolbar of the app window. If it shows **Open System Settings**, click it and approve the driver. If it shows **Repair Xbox USB Driver**, click it. **Xbox USB Driver** in **Settings** > **Advanced** shows the state of the driver. For more information, see [Xbox USB driver](Connecting-Controllers.md).
 - **Clone or fake controller:** It may report itself in a way the catalog does not cover. For more information, see [Clone and fake controllers](Supported-Controllers.md).
 - **Dongle:** A dongle problem is separate from a controller problem. Test the controller in another connection mode if it has one.
 - **The app shows OpenJoystickDriver cannot reach its service:** Run `ojd service start`, then run `ojd status`.
 - **SDL sees 0 controllers:** Grant **Input Monitoring** and **Accessibility**, restart OJD, and try again.
-- **Xbox USB driver extension install fails:** Rebuild the signed app, then run `ojd transport-extension activate`.
-- **The controller shows Used by another app:** That app reads the controller directly, so OJD cannot. You do not need to do anything for OJD. It serves the controller when the app lets go. The controller detail and `ojd controller list` show the app name.
+- **Xbox USB driver install fails:** Rebuild the signed app, then run `ojd transport-extension activate`.
+- **The controller shows Used by another app:** That app reads the controller directly, so OJD cannot. You do not need to do anything for OJD. OJD handles the controller again when the app lets go. The controller detail and `ojd controller list` show the app name.
 - **Input stays held, or the status says Needs attention:** Release the controls. Then check the controller input health with `ojd status --json`.
 
 ### Check from the Terminal
@@ -75,11 +75,11 @@ This section explains what to check when a controller works in OJD but not in a 
 
 1. Open the **Input Test** window for the controller. For more information, see [Testing a controller](Testing-a-Controller.md).
 2. Press buttons. If **Input Test** shows no input, see [Controller is not detected](#controller-is-not-detected).
-3. In the **Access** area, check **Accessibility**. OJD needs it to publish the virtual controller.
+3. In the **Access** area, check **Accessibility**. OJD needs it to publish the [virtual gamepad](Glossary.md#terms).
 
 ### Understand Why Apps Differ
 
-OJD publishes a virtual controller. Each app reads it with its own API, so an app can read one virtual profile and not see another. Apps that use SDL, such as Steam, read the `SDLCompatible` profile. Apps that use the Apple Game Controller framework, such as Safari and **System Settings**, read the `GameControllerCompatible` profile and do not see `SDLCompatible`.
+OJD publishes a virtual gamepad. Each app reads it with its own API, so an app can read one [virtual gamepad kind](Glossary.md#terms) and not see another. Apps that use SDL, such as Steam, read the `SDLCompatible` virtual gamepad kind. Apps that use the Apple Game Controller framework, such as Safari and **System Settings**, read the `GameControllerCompatible` virtual gamepad kind and do not see `SDLCompatible`.
 
 OJD cannot add SDL to other apps. Each app ships its own SDL version.
 
@@ -87,27 +87,27 @@ These results are not a guarantee.
 
 | App | Result |
 | --- | --- |
-| Steam | Reads input and rumble of the `SDLCompatible` profile in a maintainer test |
-| CrossOver and Wine | One tester saw no controller with the Xbox profile at `045E:02FD`. Not verified with the `SDLCompatible` profile at `045E:0B0C` |
-| RPCS3 | One tester saw a controller with no input with the Xbox profile at `045E:02FD`. Not verified with the `SDLCompatible` profile at `045E:0B0C` |
-| OpenEmu | One tester saw buttons map to wrong controls with the Xbox profile. Works with the `Generic` profile |
+| Steam | Reads input and rumble of the `SDLCompatible` virtual gamepad kind in a maintainer test |
+| CrossOver and Wine | One tester saw no controller with the Xbox [profile](Glossary.md#terms) at `045E:02FD`. Not verified with the `SDLCompatible` virtual gamepad kind at `045E:0B0C` |
+| RPCS3 | One tester saw a controller with no input with the Xbox profile at `045E:02FD`. Not verified with the `SDLCompatible` virtual gamepad kind at `045E:0B0C` |
+| OpenEmu | One tester saw buttons map to wrong controls with the Xbox profile. Works with the `Generic` virtual gamepad kind |
 
 For each result and its source, see [Game and app compatibility](Playing-Games.md#game-and-app-compatibility).
 
 ### Try the Other Virtual Profile
 
-The design of OJD is to pick the virtual profile by itself. Use this step only to find out whether the profile is the cause. If a profile fixes a game, report it.
+The design of OJD is to pick the virtual gamepad kind by itself. Use this step only to find out whether the virtual gamepad kind is the cause. If another kind fixes a game, report it.
 
 1. In **Controllers**, select the controller.
 2. In **Advanced**, find **Virtual HID profile**. It appears only for controllers that OJD publishes.
 3. Choose **Automatic** or one of the three profiles.
 4. Test the game again.
 
-OpenEmu worked with the `Generic` profile in the same test. Steam with that profile was erratic and slow to respond. The override applies to every controller of that model.
+OpenEmu worked with the `Generic` virtual gamepad kind in the same test. Steam with that profile was erratic and slow to respond. The override applies to every controller of that model.
 
 ### A Button Does Nothing in Steam
 
-Steam keeps its own mapping for each controller it has seen, and it does not read the mapping that OJD publishes. When Steam's mapping misses a button, Steam ignores that button even though OJD sends it. The maintainer saw this with the `Generic` profile: Steam's saved mapping had no Guide button, so the PS button of a DualShock 3 did nothing in Steam, while `ojd controller watch` showed `Guide` for each press.
+Steam keeps its own mapping for each controller it has seen, and it does not read the mapping that OJD publishes. When Steam's mapping misses a button, Steam ignores that button even though OJD sends it. The maintainer saw this with the `Generic` virtual gamepad kind: Steam's saved mapping had no Guide button, so the PS button of a DualShock 3 did nothing in Steam, while `ojd controller watch` showed `Guide` for each press.
 
 1. Run `ojd controller watch CONTROLLER --output` and press the button. If the line shows the button, OJD sends it.
 2. In Steam, open the controller's **Controller Layout** page and choose **Setup Device Inputs**.
@@ -117,13 +117,13 @@ After that setup, Guide and Select worked in Steam, and Guide opened Big Picture
 
 ### Try a Different Controller Mode
 
-Some controllers have a Switch Pro mode. In that mode macOS reads the controller itself, and OJD does not publish a virtual controller. One tester saw RPCS3, the browser, and **System Settings** work in that mode. HD rumble in that mode drives only the linear haptics. Not verified for other controllers.
+Some controllers have a Switch Pro mode. In that mode macOS reads the controller itself, and OJD does not publish a virtual gamepad. One tester saw RPCS3, the browser, and **System Settings** work in that mode. HD rumble in that mode drives only the linear haptics. Not verified for other controllers.
 
 For more information, see [Game and app compatibility](Playing-Games.md).
 
 ## The Home Button Opens Games
 
-macOS opens the Games app when you press the home button of a controller that it lists in **System Settings** > **Game Controllers**, which includes the OJD virtual controller with the `SDLCompatible` profile.
+macOS opens the Games app when you press the home button of a controller that it lists in **System Settings** > **Game Controllers**, which includes the OJD virtual gamepad with the `SDLCompatible` virtual gamepad kind.
 On a PlayStation controller the home button is the PS button.
 To keep the button for your game or for Steam:
 
@@ -157,7 +157,7 @@ If OJD crashes at every start, two global profiles may be active for one control
 
 ### Crash When You Unplug a Controller
 
-Unplugging a USB controller or dongle may crash OJD. Open OJD again. Restart OJD if stale virtual controllers stay in **System Settings**.
+Unplugging a USB controller or dongle may crash OJD. Open OJD again. Restart OJD if stale virtual gamepads stay in **System Settings**.
 
 ### Damaged Profile Files
 

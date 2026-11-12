@@ -1,6 +1,6 @@
 # Bindings and Actions
 
-Bindings connect controller controls to destinations, and combinations and layers let one profile do more with the same controls.
+Bindings connect controller controls to destinations, and combinations and layers let one [profile](Glossary.md#terms) do more with the same controls.
 
 ## Contents
 
@@ -14,7 +14,7 @@ Bindings connect controller controls to destinations, and combinations and layer
 
 ## Assigning Buttons and Actions
 
-An assignment connects one controller control to one destination, such as a keyboard key, a mouse button, or a virtual gamepad button.
+An assignment connects one controller control to one destination, such as a keyboard key, a mouse button, or a [virtual gamepad](Glossary.md#terms) button.
 
 ### Before You Begin
 
@@ -31,7 +31,7 @@ An assignment connects one controller control to one destination, such as a keyb
 | Pointer movement | Horizontal or vertical | Continuous; the axis sets the speed of the cursor |
 | Pointer position | Horizontal or vertical | Continuous; the axis value from -1 to 1 places the cursor across the main display, and the other coordinate keeps its value; needs Accessibility access |
 | Scroll | Horizontal or vertical | Continuous |
-| Gamepad button, D-pad, or axis | A virtual controller control | Needs virtual gamepad output |
+| Gamepad button, D-pad, or axis | A virtual gamepad control | Needs virtual gamepad output |
 | Physical output | Rumble, player indicator, color, brightness, adaptive trigger | Only on controllers that support it |
 | Macro | A macro of the profile | Discrete sources only; see [Macros](#macros) |
 | Profile switch | The next or previous profile, or a named profile of the same controller model | Discrete sources only; fires on press; see [Switch profiles, set layers, and pause](#switch-profiles-set-layers-and-pause) |
@@ -46,7 +46,7 @@ An assignment connects one controller control to one destination, such as a keyb
 | Speak | A phrase the Mac says aloud | Discrete sources only; see [Spoken Phrases](#spoken-phrases) |
 | MIDI note or control change | A note on a channel, or a controller number | Needs no access; see [MIDI output](#midi-output) |
 
-A gamepad destination fails validation if the profile output policy has the virtual gamepad disabled. Some controls, such as paddles, grips, and function buttons, cannot be a virtual controller output. For the controls each virtual controller carries, see [What the virtual controller carries](Automating-OpenJoystickDriver.md#what-the-virtual-controller-carries). For more information, see [About profiles](Remapping-Profiles.md#about-profiles).
+A gamepad destination fails validation if the profile output policy has the virtual gamepad disabled. Some controls, such as paddles, grips, and function buttons, cannot be a virtual gamepad output. For the controls each virtual gamepad carries, see [What the virtual gamepad carries](Automating-OpenJoystickDriver.md#what-the-virtual-gamepad-carries). For more information, see [About profiles](Remapping-Profiles.md#about-profiles).
 
 Each controller control can appear in only one assignment in a profile.
 

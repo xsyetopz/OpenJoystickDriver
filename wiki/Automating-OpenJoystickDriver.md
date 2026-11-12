@@ -1,6 +1,6 @@
 # Automating OpenJoystickDriver
 
-Use `ojd` in scripts and other programs to read controller state, change profiles, and drive a virtual gamepad.
+Use `ojd` in scripts and other programs to read controller state, change [profiles](Glossary.md#terms), and drive a [virtual gamepad](Glossary.md#terms).
 
 ## Choose the Interface
 
@@ -26,9 +26,9 @@ ojd --no-input --json controller list | jq -r '.items[] | [.id, .name, .unit // 
 
 Keys and values in `--json` output are stable identifiers, and OJD never translates them. A command that streams, such as `ojd controller watch` or `ojd virtual feed`, prints one JSON object per line.
 
-Each object has `apiVersion`, which is `openjoystickdriver/v1alpha3`, and `kind`, the singular UpperCamelCase name of what the command prints: `ojd controller show` prints `Controller`, or `UnservedController` for a connected device that OJD does not serve, and `ojd status` prints `SystemStatus`. The list commands `controller list`, `permission list`, `setting list`, `binding list`, `profile list`, and `record list` print a `kind` that ends in `List`, such as `ControllerList`, with the entries in `items` and an empty `metadata`. An item has no `apiVersion` or `kind` of its own. `binding list` gives each item a `profile`, the profile it came from. `profile list` and `record list` report the profiles that cannot be loaded and the records that were skipped as warnings on standard error, one line each. A command that changes or removes something and has no object to print, such as `ojd profile delete` or `ojd controller rumble`, prints a `Status`: `status` is `Success`, and `details` holds the command's data. A command that fails prints no JSON: it exits with a non-zero code and writes the error on standard error. Values that OJD defines in output, such as `NotFound` or `BluetoothLE`, are UpperCamelCase with upper-case acronyms. The `status` of a `Status` and the `type` of a watch line keep the Kubernetes spelling.
+Each object has `apiVersion`, which is `openjoystickdriver/v1alpha3`, and `kind`, the singular UpperCamelCase name of what the command prints: `ojd controller show` prints `Controller`, or `UnservedController` for a connected device that OJD does not handle, and `ojd status` prints `SystemStatus`. The list commands `controller list`, `permission list`, `setting list`, `binding list`, `profile list`, and `record list` print a `kind` that ends in `List`, such as `ControllerList`, with the entries in `items` and an empty `metadata`. An item has no `apiVersion` or `kind` of its own. `binding list` gives each item a `profile`, the profile it came from. `profile list` and `record list` report the profiles that cannot be loaded and the records that were skipped as warnings on standard error, one line each. A command that changes or removes something and has no object to print, such as `ojd profile delete` or `ojd controller rumble`, prints a `Status`: `status` is `Success`, and `details` holds the command's data. A command that fails prints no JSON: it exits with a non-zero code and writes the error on standard error. Values that OJD defines in output, such as `NotFound` or `BluetoothLE`, are UpperCamelCase with upper-case acronyms. The `status` of a `Status` and the `type` of a watch line keep the Kubernetes spelling.
 
-Enumerated values in `--json` output are UpperCamelCase, such as `NotPublished` and `InputRead`. `--plain` output and command-line arguments spell the same values in lowercase kebab-case, such as `not-published` and `input-read`; this includes serving routes, personas and protocol families (`virtual-hid`, `sdl-compatible`, `xbox-gip`).
+Enumerated values in `--json` output are UpperCamelCase, such as `NotPublished` and `InputRead`. `--plain` output and command-line arguments spell the same values in lowercase kebab-case, such as `not-published` and `input-read`; this includes routes, [virtual gamepad kinds](Glossary.md#terms) and protocol families (`virtual-hid`, `sdl-compatible`, `xbox-gip`).
 
 [`cli-output.schema.json`](../Resources/Schemas/cli-output.schema.json) describes the output of each command. Each command has one entry in `$defs`, named after its command path in lowerCamelCase: the entry for `ojd controller show` is `controllerShow`. Entries that start with `shared` are shapes that more than one command uses. The schema rejects keys that its release does not print, and a later release can add keys. Validate output against the schema from the same release.
 
@@ -211,7 +211,7 @@ A program with the `control` scope can drive a virtual gamepad through the endpo
 
 1. Grant the scope: `ojd access grant --token driver --scope control`. Add `--scope read` to grant both. A token that has `--origin` cannot have `control`, because a web page cannot use it.
 2. Send a `Hello` with `"scopes":["Control"]`.
-3. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedRequest","as":"Generic"}`. The persona ids are `Generic`, `SDLCompatible` and `GameControllerCompatible`; every persona the service publishes is open to a client with the `control` scope. An unknown id is refused with `E1003`, and the message names the id and lists the accepted personas.
+3. After the `Welcome`, send `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedRequest","as":"Generic"}`. The virtual gamepad kind IDs are `Generic`, `SDLCompatible` and `GameControllerCompatible`; every virtual gamepad kind the service publishes is open to a client with the `control` scope. An unknown id is refused with `E1003`, and the message names the id and lists the accepted kinds.
 4. The endpoint answers `{"apiVersion":"openjoystickdriver/v1alpha3","kind":"FeedSession","as":"Generic"}` when the virtual gamepad exists.
 5. Send one frame per line, each with `apiVersion` and `"kind":"Frame"`. A frame has the keys of an `ojd virtual feed` line, and the service plays frames with the same rules.
 6. The endpoint sends each rumble command that a game sends to the virtual gamepad as one `RumbleCommand` line, the same as `ojd virtual feed` prints. Its `type` is `SetRumble` or `StopRumble`. The `virtualFeed` entry of the output schema describes it.
@@ -277,7 +277,7 @@ To limit a profile to one controller, set `device.unit` to the controller's unit
 
 ## Drive a Virtual Gamepad
 
-`ojd virtual feed --as PROFILE` publishes a virtual gamepad and reads one JSON object per line from standard input. Each line gives the state of the whole gamepad. A control that the line does not name is neutral. The virtual gamepad profiles are `sdl-compatible` and `generic`.
+`ojd virtual feed --as PROFILE` publishes a virtual gamepad and reads one JSON object per line from standard input. Each line gives the state of the whole gamepad. A control that the line does not name is neutral. The virtual gamepad kinds are `sdl-compatible` and `generic`.
 
 ```shell
 {
@@ -307,9 +307,9 @@ printf '%s\n' '{"buttons":["South"],"holdMilliseconds":50}' '{}' | ojd virtual f
 
 Games and latency with `ojd virtual feed` are not verified.
 
-### What the virtual controller carries
+### What the virtual gamepad carries
 
-The virtual controller is a standard gamepad. Each profile has a fixed set of buttons, so some controls on a physical controller have no output. A control that is not carried does nothing on the virtual controller, whether it is passed through or assigned to a gamepad output.
+The virtual gamepad is a standard gamepad. Each profile has a fixed set of buttons, so some controls on a physical controller have no output. A control that is not carried does nothing on the virtual gamepad, whether it is passed through or assigned to a gamepad output.
 
 | Control | `generic` | `sdl-compatible` |
 | --- | --- | --- |
@@ -339,9 +339,9 @@ On macOS 13 or later, the Shortcuts app lists these OpenJoystickDriver actions:
 | --- | --- | --- |
 | Get Controllers | Nothing | The connected controllers, each with a name and a model |
 | Get Battery Level | A controller | The battery charge in percent |
-| Activate Profile | A remapping profile | The profile, now active |
-| Deactivate Profile | A remapping profile | The profile, now inactive |
-| Set Profile Value | A remapping profile, a key, and a value | The profile, with the value changed |
+| Activate Profile | A profile | The profile, now active |
+| Deactivate Profile | A profile | The profile, now inactive |
+| Set Profile Value | A profile, a key, and a value | The profile, with the value changed |
 | Get OpenJoystickDriver Version | Nothing | The version of the installed app |
 | List Mod Packages | Nothing | The names of the installed mod packages |
 | Install Mod Package | A folder, and whether to replace an installed package of the same name | The name of the installed package |
