@@ -30,12 +30,7 @@ public actor OpenJoystickDriverUSBTransportProvider: USBTransportProvider,
 
   /// The models Apple's own driver holds, which only the DEXT route may serve.
   static let driverKitRequiredModels = Set(
-    USBDriverKitExtensionConfiguration.appleHeldProductIDs.map {
-      ControllerModelID(
-        vendorID: USBDriverKitExtensionConfiguration.microsoftVendorID,
-        productID: $0
-      )
-    }
+    USBDriverKitExtensionConfiguration.appleHeldModels(in: ControllerRecordSet.bundled)
   )
 
   /// Creates the facade over the IOUSBHost and USBDriverKit providers and the protocol driver

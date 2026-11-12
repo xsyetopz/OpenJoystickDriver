@@ -4,7 +4,7 @@ Controller records and protocol implementations define OJD support, not Apple's 
 
 ## Route Policy
 
-`OpenJoystickDriverUSBTransportProvider.selectDevices` picks the route of each discovered USB device. `USBDriverKitExtensionConfiguration.appleHeldProductIDs` lists the models that Apple's `XboxGamepad.dext` holds.
+`OpenJoystickDriverUSBTransportProvider.selectDevices` picks the route of each discovered USB device. The bundled controller records mark the models that Apple's `XboxGamepad.dext` holds with `heldByAppleDriver`, and `USBDriverKitExtensionConfiguration.appleHeldModels(in:)` reads them.
 
 | Model | Held by Apple's driver | Route |
 | --- | --- | --- |
@@ -14,7 +14,7 @@ Controller records and protocol implementations define OJD support, not Apple's 
 
 - A model with no owner takes the direct route. `docs/testing/xbox-one-02d1.md` records the direct route on hardware for `045E:02D1`.
 - The extension route needs an active, matched extension. An inactive extension never makes OJD claim a device by another path.
-- The list is static. It is not read from the live registry, so a new Apple personality for another model needs an entry in `appleHeldProductIDs`.
+- The marking is static. It is not read from the live registry, so a new Apple personality for another model needs `heldByAppleDriver` set in that model's record.
 - `OpenJoystickDriverUSB` records the selected route with each discovered service. It does not infer transport from a brand name and does not retry an open failure through a different backend.
 
 ## Purpose of the Extension

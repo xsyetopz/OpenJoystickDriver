@@ -111,6 +111,7 @@ package struct DeviceCatalog: Sendable {
       hidUsageMap: record.hidUsageMap,
       tuning: record.tuning,
       route: record.route,
+      heldByAppleDriver: record.heldByAppleDriver,
       bluetoothLEVibrationCharacteristic: record.bluetoothLE?.vibrationCharacteristic,
       interfaceRange: record.baseMode.interfaceRange,
       modes: record.modes.filter { !$0.isDefault }.map(\.mode),

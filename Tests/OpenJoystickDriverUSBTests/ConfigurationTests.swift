@@ -27,6 +27,16 @@ struct USBDriverKitExtensionConfigurationTests {
   }
 
   @Test
+  func bundledRecordsMarkExactlyTheAppleHeldModels() {
+    let held = USBDriverKitExtensionConfiguration.appleHeldModels(in: ControllerRecordSet.bundled)
+
+    #expect(
+      held == [0x02EA, 0x0B00, 0x0B12].map { ControllerModelID(vendorID: 0x045E, productID: $0) }
+    )
+    #expect(OpenJoystickDriverUSBTransportProvider.driverKitRequiredModels == Set(held))
+  }
+
+  @Test
   func matchListComesFromExtensionOwnedRecordsWithinTheGrant() {
     let outside = ControllerModelID(vendorID: 0x045E, productID: 0x02FF)
     let otherVendor = ControllerModelID(vendorID: 0x0E6F, productID: 0x02D1)

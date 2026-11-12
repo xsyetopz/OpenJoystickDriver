@@ -39,6 +39,10 @@
     "route": {
       "$ref": "#/$defs/route"
     },
+    "heldByAppleDriver": {
+      "description": "Whether Apple's own driver extension holds the controller's USB interface, so only OJD's USB extension can open it. Leave it out for a controller Apple's driver does not hold.",
+      "type": "boolean"
+    },
     "input": {
       "anyOf": [
         {
@@ -70,6 +74,7 @@
       "capabilities": false,
       "server": false,
       "route": false,
+      "heldByAppleDriver": false,
       "input": false,
       "tuning": false
     }

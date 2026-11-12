@@ -62,7 +62,8 @@ public struct ControllerPatch: Equatable, Sendable {
   /// The top-level record properties a patch may set: every property but the identity
   /// (`apiVersion`, `kind`, `vendorID`, `productID`), which the selector names.
   static let sections: Set<String> = [
-    "modes", "usb", "bluetoothLE", "capabilities", "server", "route", "input", "tuning",
+    "modes", "usb", "bluetoothLE", "capabilities", "server", "route", "heldByAppleDriver", "input",
+    "tuning",
   ]
 
   /// The records the patch applies to.
@@ -145,7 +146,7 @@ public struct ControllerPatch: Equatable, Sendable {
           code: .invalidControllerRecord,
           key: "error.E5007.patch.patchSections",
           "patch must hold modes, usb, bluetoothLE, capabilities, server, "
-            + "route, input, or tuning; the selector names the identity"
+            + "route, heldByAppleDriver, input, or tuning; the selector names the identity"
         )
       }
       if case .array(let modes)? = patch["modes"],

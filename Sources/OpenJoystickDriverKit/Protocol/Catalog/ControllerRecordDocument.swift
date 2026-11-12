@@ -33,6 +33,8 @@ struct ControllerRecordDocument: Decodable {
   let server: ControllerServer?
   /// Set only on raw-USB records that OJD's USB extension serves.
   let route: ControllerRecordRoute?
+  /// Whether Apple's own driver extension holds the controller's USB interface.
+  let heldByAppleDriver: Bool
   /// Present exactly for the `HIDReportLayout` family.
   let inputLayouts: ControllerInputLayouts?
   /// Present only for the `HIDDescriptor` family, which then replaces the description's map.
@@ -60,7 +62,7 @@ struct ControllerRecordDocument: Decodable {
     }
     try container.rejectUnknown(allowed: [
       "apiVersion", "kind", "vendorID", "productID", "modes", "usb",
-      "bluetoothLE", "capabilities", "server", "route", "input", "tuning",
+      "bluetoothLE", "capabilities", "server", "route", "heldByAppleDriver", "input", "tuning",
     ])
     vendorID = try container.decode(Int.self, for: "vendorID")
     productID = try container.decode(Int.self, for: "productID")
@@ -76,7 +78,8 @@ struct ControllerRecordDocument: Decodable {
     defaultMode = modes.first(where: \.isDefault)
     if modes.allSatisfy({ $0.idle != nil }) {
       let controlSections: Set<String> = [
-        "usb", "bluetoothLE", "capabilities", "server", "route", "input", "tuning",
+        "usb", "bluetoothLE", "capabilities", "server", "route", "heldByAppleDriver", "input",
+        "tuning",
       ]
       guard container.allKeys.allSatisfy({ !controlSections.contains($0.stringValue) }) else {
         throw DecodingError.dataCorrupted(
@@ -112,6 +115,7 @@ struct ControllerRecordDocument: Decodable {
       }
       return parsed
     }
+    heldByAppleDriver = try container.decodeOptional(Bool.self, for: "heldByAppleDriver") ?? false
     let input = try container.decodeOptional(Input.self, for: "input")
     inputLayouts = input?.layouts
     hidUsageMap = input?.usageMap

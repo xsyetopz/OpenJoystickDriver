@@ -323,6 +323,8 @@ public struct DeviceRuntimeProfile: Equatable, Sendable {
   public internal(set) var tuning: ControllerTuning
   /// The record's route; nil leaves it to the family.
   public var route: ControllerRecordRoute?
+  /// Whether Apple's own driver extension holds the controller's USB interface.
+  public var heldByAppleDriver = false
   /// The record's Bluetooth LE vibration characteristic UUID; set only for Switch 2 controllers.
   public var bluetoothLEVibrationCharacteristic: String?
 
