@@ -194,8 +194,8 @@
       EmptyStateView(
         symbol: "slider.horizontal.3",
         title: OJDLocalized.string("ui.profiles.none"),
-        message: OJDLocalized.string("ui.profiles.createMessage")
-      )
+        actionTitle: OJDLocalized.string("ui.profiles.new")
+      ) { screen.beginCreatingProfile() }
     }
 
     /// Returns the text for the number of assignments.

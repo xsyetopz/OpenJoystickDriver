@@ -442,8 +442,6 @@
 "ui.profiles.refreshError" = "프로파일 상태를 새로 고칠 수 없음";
 /* Title of the empty state in the Profiles area when no profile exists. */
 "ui.profiles.none" = "프로파일 없음";
-/* Message of the empty state in the Profiles area. An assignment links a control of the controller to a destination. */
-"ui.profiles.createMessage" = "조작 할당을 시작하려면 프로파일을 생성하세요.";
 /* Status in the Profiles area while the app reads the state of the profiles. Keep the three dots. */
 "ui.profiles.refreshing" = "프로파일 상태 새로 고치는 중…";
 /* Title of the message in the Profiles area when the state of the profiles cannot be read. */

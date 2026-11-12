@@ -442,8 +442,6 @@
 "ui.profiles.refreshError" = "無法重新整理設定檔狀態";
 /* Title of the empty state in the Profiles area when no profile exists. */
 "ui.profiles.none" = "沒有設定檔";
-/* Message of the empty state in the Profiles area. An assignment links a control of the controller to a destination. */
-"ui.profiles.createMessage" = "建立設定檔以開始對應控制項。";
 /* Status in the Profiles area while the app reads the state of the profiles. Keep the three dots. */
 "ui.profiles.refreshing" = "正在重新整理設定檔狀態…";
 /* Title of the message in the Profiles area when the state of the profiles cannot be read. */

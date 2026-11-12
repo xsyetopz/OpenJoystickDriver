@@ -442,8 +442,6 @@
 "ui.profiles.refreshError" = "Profil durumu yenilenemedi";
 /* Title of the empty state in the Profiles area when no profile exists. */
 "ui.profiles.none" = "Profil Yok";
-/* Message of the empty state in the Profiles area. An assignment links a control of the controller to a destination. */
-"ui.profiles.createMessage" = "Denetim atamaya başlamak için bir profil oluştur.";
 /* Status in the Profiles area while the app reads the state of the profiles. Keep the three dots. */
 "ui.profiles.refreshing" = "Profil Durumu Yenileniyor…";
 /* Title of the message in the Profiles area when the state of the profiles cannot be read. */

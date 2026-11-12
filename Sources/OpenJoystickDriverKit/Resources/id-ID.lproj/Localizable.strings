@@ -442,8 +442,6 @@
 "ui.profiles.refreshError" = "Tidak dapat menyegarkan status profil";
 /* Title of the empty state in the Profiles area when no profile exists. */
 "ui.profiles.none" = "Tidak ada profil";
-/* Message of the empty state in the Profiles area. An assignment links a control of the controller to a destination. */
-"ui.profiles.createMessage" = "Buat profil untuk mulai menetapkan kontrol.";
 /* Status in the Profiles area while the app reads the state of the profiles. Keep the three dots. */
 "ui.profiles.refreshing" = "Menyegarkan status profil…";
 /* Title of the message in the Profiles area when the state of the profiles cannot be read. */

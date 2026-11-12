@@ -442,8 +442,6 @@
 "ui.profiles.refreshError" = "प्रोफ़ाइल स्थिति रीफ़्रेश नहीं हो सकी";
 /* Title of the empty state in the Profiles area when no profile exists. */
 "ui.profiles.none" = "कोई प्रोफ़ाइल नहीं";
-/* Message of the empty state in the Profiles area. An assignment links a control of the controller to a destination. */
-"ui.profiles.createMessage" = "नियंत्रण असाइन करना शुरू करने के लिए प्रोफ़ाइल बनाएँ।";
 /* Status in the Profiles area while the app reads the state of the profiles. Keep the three dots. */
 "ui.profiles.refreshing" = "प्रोफ़ाइल स्थिति रीफ़्रेश हो रही है…";
 /* Title of the message in the Profiles area when the state of the profiles cannot be read. */
