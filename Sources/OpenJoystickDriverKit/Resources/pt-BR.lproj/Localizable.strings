@@ -321,7 +321,7 @@
 /* Option of the virtual gamepad kind popup in the Controllers detail: the kind that games that use Apple's Game Controller framework read. Apple and Game Controller stay as written. */
 "platform.macos.ui.virtualProfile.kind.gameControllerCompatible" = "Para jogos de Apple Game Controller";
 /* Option of the virtual gamepad kind popup in the Controllers detail: the plain gamepad that any HID reader accepts. HID is the abbreviation of Human Interface Device and stays as written. */
-"ui.virtualProfile.kind.generic" = "Controle HID genérico";
+"ui.virtualProfile.kind.generic" = "Gamepad HID genérico";
 /* Option of the virtual gamepad kind popup in the Controllers detail when the interface level is Advanced: the name of the kind, then its identifier in parentheses. %1$@ is the name of the kind. %2$@ is the identifier, which stays as written. */
 "ui.virtualProfile.kind.withIdentifier" = "%1$@ (%2$@)";
 /* Note under the virtual gamepad kind popup. The choice applies to all connected controllers of the model. */
@@ -357,7 +357,7 @@
 /* Error when the service cannot save the override of the virtual gamepad kind. Nothing is stored. */
 "ui.virtualProfile.failure.persistenceFailed" = "Não foi possível salvar a substituição. Nada foi salvo.";
 /* Error when resetting the virtual gamepad kind finds a virtual device file that the reset does not remove. %@ is the path of the file. */
-"ui.virtualProfile.failure.overrideFileKept" = "O arquivo de gamepad virtual %@ define sua própria identidade ou vem de um pacote, por isso permanece. Edite ou apague esse arquivo. Nada foi alterado.";
+"ui.virtualProfile.failure.overrideFileKept" = "O arquivo de gamepad virtual %@ define sua própria identidade ou vem de um pacote, por isso permanece. Edite ou exclua esse arquivo. Nada foi alterado.";
 /* Error when the stored virtual gamepad kind overrides cannot be read. %@ is the reason. Controllers pick a kind themselves. */
 "ui.virtualProfile.storeError" = "Não é possível ler as substituições do tipo de gamepad virtual (%@). Os controles escolhem automaticamente.";
 /* Value of the key field in the capture assignment sheet before the user captures a key. */
@@ -585,9 +585,9 @@
 /* Title of the behavior sheet of an assignment. The sheet sets turbo, hold and double tap. */
 "ui.profiles.bindingBehavior" = "Comportamento de Atribuição";
 /* Label above the list of apps that a profile applies to, in the profile creation sheet and the profile details sheet. */
-"ui.profiles.apps" = "Aplicativos";
+"ui.profiles.apps" = "Apps";
 /* Title of the menu that adds an app to the list of apps of a profile. It lists running and installed apps and Other... */
-"ui.profiles.addApp" = "Adicionar app";
+"ui.profiles.addApp" = "Adicionar App";
 /* Header of the section of the Add App menu that lists the apps that run now. */
 "ui.profiles.appsRunning" = "Em execução";
 /* Item of the Add App menu that opens a panel to choose an app that the menu does not list. */
@@ -685,9 +685,9 @@
 /* Option of the template popup in the profile creation sheet: the profile starts with the gyro driving a stick of the virtual gamepad. */
 "ui.profiles.templateGyroStick" = "Giroscópio para analógico";
 /* Option of the template popup in the profile creation sheet: the profile binds the D-pad, South and East to keyboard navigation keys. */
-"ui.profiles.templateKeyboardNavigation" = "Navegação pelo Teclado";
+"ui.profiles.templateKeyboardNavigation" = "Navegação pelo teclado";
 /* Option of the template popup in the profile creation sheet: the profile binds South, East and North to the mouse buttons. */
-"ui.profiles.templateMouseClicks" = "Cliques do Mouse";
+"ui.profiles.templateMouseClicks" = "Cliques do mouse";
 /* Message in the profile creation sheet when the gyro to stick template is chosen for a controller with no motion sensor. %@ is the controller name or model. */
 "ui.profiles.templateNoMotion" = "%@ não tem sensor de movimento.";
 /* Message in the profile creation sheet under the template popup. %@ is the comma-separated list of controls that the template could not bind because the controller lacks them. */
@@ -1273,7 +1273,7 @@
 /* VoiceOver value of a button in the input test while it is pressed. */
 "ui.inputTest.pressed" = "Pressionado";
 /* Status of the input test while samples arrive and every control is at rest. Keep the three dots. */
-"ui.inputTest.receiving" = "Aguardando o movimento de um controle…";
+"ui.inputTest.receiving" = "Aguardando o movimento de um comando…";
 /* VoiceOver value of a button in the input test while it is not pressed. */
 "ui.inputTest.released" = "Solto";
 /* Name of the right bumper of an Xbox style controller, shown in the input test. */
@@ -1395,17 +1395,17 @@
 /* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
 "ui.controllers.claim" = "Reivindicar";
 /* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
-"ui.setup.runningDetail" = "Instalando o driver USB do Xbox…";
+"ui.setup.runningDetail" = "Instalando o driver USB Xbox…";
 /* Disabled button of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
 "ui.setup.repairRunning" = "Reparando…";
 /* Detail line of the problem banner when the state of the driver extension for Xbox USB controllers cannot be read. The banner has no button then. */
-"ui.setup.unavailableDetail" = "Não é possível ler o estado do driver USB do Xbox, então nenhuma solicitação pode ser enviada.";
+"ui.setup.unavailableDetail" = "Não é possível ler o estado do driver USB Xbox, então nenhuma solicitação pode ser enviada.";
 /* Detail line of the problem banner when the request for the driver extension failed. %1$@ is the error domain, %2$lld is the error code and %3$@ is the error text. */
-"ui.setup.failedDetail" = "A solicitação do driver USB do Xbox falhou: %3$@ (%1$@, código %2$lld).";
+"ui.setup.failedDetail" = "A solicitação do driver USB Xbox falhou: %3$@ (%1$@, código %2$lld).";
 /* Detail line of the problem banner when the request for the driver extension was cancelled. The Try Again button follows. */
-"ui.setup.cancelledDetail" = "A solicitação do driver USB do Xbox foi cancelada. Tente novamente para instalar o driver.";
+"ui.setup.cancelledDetail" = "A solicitação do driver USB Xbox foi cancelada. Tente novamente para instalar o driver.";
 /* Detail line of the problem banner when the system did not answer the request for the driver extension in time. The Try Again button follows. */
-"ui.setup.timedOutDetail" = "O sistema não respondeu a tempo à solicitação do driver USB do Xbox. Tente novamente.";
+"ui.setup.timedOutDetail" = "O sistema não respondeu a tempo à solicitação do driver USB Xbox. Tente novamente.";
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "O OpenJoystickDriver não consegue acessar o serviço";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu while the app has not yet read the service. Keep the three dots. */
@@ -3588,21 +3588,21 @@
 /* Error of an action in the Shortcuts app when the key of a profile value has an empty part, such as a trailing dot. */
 "ui.shortcuts.error.profileKey" = "A chave de um valor do perfil não pode ter uma parte vazia.";
 /* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
-"ui.shortcuts.action.rumble.title" = "Vibrar controle";
+"ui.shortcuts.action.rumble.title" = "Vibrar Controle";
 /* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
 "ui.shortcuts.action.rumble.description" = "Aciona os motores de vibração de um controle por um curto período.";
 /* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
 "ui.shortcuts.action.rumble.intensity" = "Intensidade (0-255)";
 /* Label in the Shortcuts app of the rumble action's duration in seconds. */
-"ui.shortcuts.action.rumble.duration" = "Duração em segundos";
+"ui.shortcuts.action.rumble.duration" = "Duração em Segundos";
 /* Name in the Shortcuts app of the action that sets the player indicator of a controller. */
-"ui.shortcuts.action.player.title" = "Definir indicador de jogador";
+"ui.shortcuts.action.player.title" = "Definir Indicador de Jogador";
 /* Description in the Shortcuts app of the action that sets the player indicator of a controller. */
 "ui.shortcuts.action.player.description" = "Define as luzes de indicador de jogador de um controle.";
 /* Label in the Shortcuts app of the player number from 1 to 4, or 0 for none. */
-"ui.shortcuts.action.player.number" = "Número do jogador (0 para nenhum)";
+"ui.shortcuts.action.player.number" = "Número do Jogador (0 para nenhum)";
 /* Name in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
-"ui.shortcuts.action.light.title" = "Definir luz do controle";
+"ui.shortcuts.action.light.title" = "Definir Luz do Controle";
 /* Description in the Shortcuts app of the action that sets the lightbar color or brightness of a controller. */
 "ui.shortcuts.action.light.description" = "Define a cor da barra de luz, o brilho do LED ou ambos em um controle.";
 /* Label in the Shortcuts app of the lightbar color given as six hexadecimal digits, RRGGBB. */
@@ -3612,19 +3612,19 @@
 /* Error in the Shortcuts app when the light action has no color or brightness, or the color is not RRGGBB. */
 "ui.shortcuts.error.lightRequest" = "Informe uma cor em seis dígitos hexadecimais, um brilho ou ambos.";
 /* Name in the Shortcuts app of the action that returns the installed mod packages. */
-"ui.shortcuts.action.listMods.title" = "Listar pacotes de mods";
+"ui.shortcuts.action.listMods.title" = "Listar Pacotes de Mods";
 /* Description in the Shortcuts app of the action that returns the installed mod packages. */
 "ui.shortcuts.action.listMods.description" = "Retorna os nomes dos pacotes de mods instalados.";
 /* Name in the Shortcuts app of the action that installs a mod package from a folder. */
-"ui.shortcuts.action.installMod.title" = "Instalar pacote de mods";
+"ui.shortcuts.action.installMod.title" = "Instalar Pacote de Mods";
 /* Description in the Shortcuts app of the action that installs a mod package from a folder. */
 "ui.shortcuts.action.installMod.description" = "Instala um pacote de mods de uma pasta e retorna o nome dele.";
 /* Name of the folder parameter of the action that installs a mod package in the Shortcuts app. The folder holds the package. */
 "ui.shortcuts.action.installMod.folder" = "Pasta";
 /* Name of the replace parameter of the action that installs a mod package in the Shortcuts app. When it is on, a package of the same name is replaced. */
-"ui.shortcuts.action.installMod.replace" = "Substituir o pacote instalado";
+"ui.shortcuts.action.installMod.replace" = "Substituir o Pacote Instalado";
 /* Name in the Shortcuts app of the action that removes an installed mod package. */
-"ui.shortcuts.action.removeMod.title" = "Remover pacote de mods";
+"ui.shortcuts.action.removeMod.title" = "Remover Pacote de Mods";
 /* Description in the Shortcuts app of the action that removes an installed mod package. */
 "ui.shortcuts.action.removeMod.description" = "Remove um pacote de mods instalado pelo nome.";
 /* Name of the name parameter of the action that removes a mod package in the Shortcuts app. The name is the one that the package list shows. */
@@ -4296,7 +4296,7 @@
 /* Sentence under a permission row in the Access area when the active profiles do not use the permission. */
 "ui.access.permission.notNeeded.message" = "Os perfis ativos não usam esta permissão.";
 /* Sentence under the notification row in the Access area when notifications are allowed but their banners or sounds are off. */
-"ui.access.permission.limited.message" = "Permitidas, mas banners ou sons estão desativados, então alertas podem passar despercebidos.";
+"ui.access.permission.limited.message" = "Concedida, mas banners ou sons estão desativados, então alertas podem passar despercebidos.";
 /* Value of the WebSocket row when it is on but cannot listen. %@ is the port number. */
 "ui.access.web.closed" = "Ativado, mas sem escutar na porta %@";
 /* Help text of the WebSocket row. %@ is the path of the folder from which the endpoint serves pages. */
@@ -4520,7 +4520,7 @@
 /* Item of the Controller menu that opens the input test of the selected controller. */
 "ui.menu.controller.testInput" = "Testar Entrada";
 /* Button and menu item that ends the wireless link of the selected controller. */
-"ui.menu.controller.disconnectWirelessLink" = "Desconectar conexão Bluetooth";
+"ui.menu.controller.disconnectWirelessLink" = "Desconectar Conexão Bluetooth";
 /* Item of the Controller menu that shows the selected controller in the main window. */
 "ui.menu.controller.showInWindow" = "Mostrar na Janela";
 /* Disabled item of the Controller menu and of the status item's Controllers submenu when no controller is connected. */
@@ -4564,9 +4564,9 @@
 /* Item of the Help menu that opens the project website. */
 "ui.menu.help.projectWebsite" = "Site do Projeto";
 /* Item of the Help menu that opens the wiki page of the main-window area in view. */
-"ui.menu.help.helpForThisArea" = "Ajuda para esta área";
+"ui.menu.help.helpForThisArea" = "Ajuda para Esta Área";
 /* Item of the Help menu that starts a short tour of the main window, one step per area. */
-"ui.menu.help.mainWindowTour" = "Tour pela janela principal";
+"ui.menu.help.mainWindowTour" = "Tour pela Janela Principal";
 /* Title of the alert shown after the support report is copied. */
 "ui.menu.copySupportReport.done" = "Relatório de suporte copiado";
 /* Message of the alert shown after the support report is copied. */
@@ -4648,13 +4648,13 @@
 /* Menu item in the menu bar menu that opens the input test of a controller. */
 "ui.extra.testInput" = "Testar Entrada";
 /* Menu item in the menu bar menu that ends the wireless link of a controller. */
-"ui.extra.disconnectWireless" = "Desconectar conexão Bluetooth";
+"ui.extra.disconnectWireless" = "Desconectar Conexão Bluetooth";
 /* Menu item in the menu bar menu that shows the controller in the main window. */
 "ui.extra.showInWindow" = "Mostrar na Janela";
 /* Button of the problem banner that opens the Access area so the user can grant access. */
 "ui.extra.grantAccess" = "Conceder Acesso";
 /* Menu item at the top of the menu bar menu while a permission is missing; choosing it opens the Access area at that permission. %@ is the name of the permission. */
-"ui.extra.problemPermission" = "Permissão ausente: %@";
+"ui.extra.problemPermission" = "Permissão Ausente: %@";
 /* Menu item in the menu bar menu that opens the main window. %@ is the product name. */
 "ui.extra.openWindow" = "Abrir %@";
 /* Title of the alert shown when an action of the menu bar menu fails. */
@@ -5081,7 +5081,7 @@
 /* Error E5009, shown when a stored document of an older version has no mechanical conversion; the message names the file and the field. ojd migrate is a command name, Migrated is a folder name, and apiVersion stays as written. */
 "error.E5009.message" = "Um documento salvo de uma versão anterior não tem conversão automática, então o ojd migrate o deixa sem alterações. A mensagem informa o arquivo e o campo. Edite o arquivo manualmente para a apiVersion compatível.";
 /* Error E5010, shown when a stored document is not an XML property list or holds a date or data value; the message names the file and the form or the key path. plutil -convert xml1 is a command and stays as written. */
-"error.E5010.message" = "Um documento armazenado não é uma lista de propriedades XML ou contém um valor de data ou de dados. A mensagem informa o arquivo e a forma ou o caminho da chave. Salve o arquivo como lista de propriedades XML com plutil -convert xml1.";
+"error.E5010.message" = "Um documento salvo não é uma lista de propriedades XML ou contém um valor de data ou de dados. A mensagem informa o arquivo e a forma ou o caminho da chave. Salve o arquivo como lista de propriedades XML com plutil -convert xml1.";
 /* One-line summary of 'ojd generate' in the command list and at the top of its help. */
 "cli.generate.group.abstract" = "Executa um script gerador e grava os documentos que ele retorna.";
 /* Help text of 'ojd generate'. generate is the name of the function that the script defines, --timeout is an option, and .js is a file extension; all three stay as written. */
@@ -5193,7 +5193,7 @@
 /* Note under the Virtual gamepad pop-up in the profile editor, beside the unavailable exclusive physical input switch while a virtual gamepad is chosen. */
 "ui.profiles.exclusiveInputUnavailable" = "Disponível apenas enquanto nenhum gamepad virtual estiver escolhido, porque um gamepad virtual sempre toma a entrada com exclusividade.";
 /* Note below the Start at login switch in Settings > General when this macOS version has no login item. */
-"platform.macos.ui.settings.general.startAtLoginUnavailable" = "Abrir ao iniciar a sessão requer macOS 13 ou posterior.";
+"platform.macos.ui.settings.general.startAtLoginUnavailable" = "Abrir ao fazer login requer macOS 13 ou posterior.";
 /* Title of the switch in Settings > Notifications for notifications about a controller that connects or needs attention. */
 "ui.settings.notifications.controllerConnectedOrAttention" = "Conectado ou precisa de atenção";
 /* Title of the row in the General pane of the settings window where the user records the system-wide keyboard shortcut that pauses and resumes every controller. */
@@ -5201,7 +5201,7 @@
 /* Explanation under the pause shortcut title in the General pane of the settings window. */
 "ui.settings.general.pauseShortcutDescription" = "Pausa e retoma todos os controles de qualquer app. Segure Control, Option ou Command junto com uma tecla.";
 /* Button in the General pane of the settings window that starts recording the pause shortcut. */
-"ui.settings.general.pauseShortcutRecord" = "Gravar atalho";
+"ui.settings.general.pauseShortcutRecord" = "Gravar Atalho";
 /* Label of the record button in the General pane of the settings window while it waits for the user to press the pause shortcut. */
 "ui.settings.general.pauseShortcutRecording" = "Pressione o atalho…";
 /* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
@@ -5217,24 +5217,24 @@
 /* One sentence at the top of the Controllers detail for a controller in the Working state. */
 "ui.controllers.readiness.working.message" = "Este controle está pronto para uso.";
 /* Button at the top of the Controllers detail for a controller in the Working state. It opens the Input Test window. */
-"ui.controllers.readiness.working.action" = "Abrir teste de entrada";
+"ui.controllers.readiness.working.action" = "Abrir Teste de Entrada";
 /* Title of the state of a connected controller that waits for a step from the user, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
-"ui.controllers.readiness.needsStep.title" = "Precisa de uma ação sua";
+"ui.controllers.readiness.needsStep.title" = "Requer uma etapa da sua parte";
 /* One sentence at the top of the Controllers detail for a controller that needs a permission that is not allowed yet. */
 "ui.controllers.readiness.needsStep.access.message" = "Este controle precisa de uma permissão que ainda não foi concedida.";
 /* Button at the top of the Controllers detail for a controller that needs a permission. It opens the Access area of the main window; Access is the name of that area. */
 "ui.controllers.readiness.needsStep.access.action" = "Abrir Acesso";
 /* One sentence at the top of the Controllers detail for a controller that needs the driver extension for Xbox USB controllers to be set up. Xbox USB stays as written. */
-"ui.controllers.readiness.needsStep.driver.message" = "Este controle precisa que o driver Xbox USB seja configurado.";
+"ui.controllers.readiness.needsStep.driver.message" = "Este controle precisa que o driver USB Xbox seja configurado.";
 /* Button at the top of the Controllers detail for a controller that needs the driver extension. It approves, claims or repairs the driver. */
-"ui.controllers.readiness.needsStep.driver.action" = "Configurar driver";
+"ui.controllers.readiness.needsStep.driver.action" = "Configurar Driver";
 /* One sentence at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove, such as another program holding it. The detail names the next step. */
-"ui.controllers.readiness.needsStep.other.message" = "Este controle ainda não pode ser lido. Os detalhes dele indicam o próximo passo.";
+"ui.controllers.readiness.needsStep.other.message" = "Este controle ainda não pode ser lido. Os detalhes dele indicam a próxima etapa.";
 /* Button at the top of the detail of a connected device that OJD cannot read yet, for a reason the user can remove. It opens the Troubleshooting page of the wiki. */
-"ui.controllers.readiness.needsStep.other.action" = "Abrir solução de problemas";
+"ui.controllers.readiness.needsStep.other.action" = "Abrir Solução de Problemas";
 /* Title of the state of a connected controller that OJD has no support for, shown under its name in the Controllers list and at the top of its detail. It is one of three states. */
 "ui.controllers.readiness.notSupported.title" = "Ainda não compatível";
 /* One sentence at the top of the detail of a controller in the Not supported yet state. OpenJoystickDriver is the product name. */
 "ui.controllers.readiness.notSupported.message" = "O OpenJoystickDriver ainda não consegue usar este controle.";
 /* Button at the top of the detail of a controller in the Not supported yet state. It opens the Supported Controllers page of the wiki. */
-"ui.controllers.readiness.notSupported.action" = "Ver controles compatíveis";
+"ui.controllers.readiness.notSupported.action" = "Ver Controles Compatíveis";
