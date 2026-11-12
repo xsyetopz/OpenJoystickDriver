@@ -5,8 +5,10 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
-  /// The detail of a connected device that OJD does not serve: the reason, the next step, and for
-  /// a HID pad the Draft Record action.
+  /// The detail of a connected device that OJD does not serve: its state, and for a HID pad the
+  /// Draft Record action.
+  ///
+  /// The list row beside it shows the name, identity, reason and next step.
   struct UnservedDeviceDetailView: View {
     /// The device that OJD does not serve.
     let device: RuntimeUnservedDevice
@@ -16,24 +18,10 @@
     @StateObject
     private var actions = ControllerDetailActions()
 
-    /// The reason, the next step, and the action.
+    /// The state and the action.
     var body: some View {
       Form {
         Section { ControllerReadinessCard(readiness: device.readiness, perform: perform) }
-        Section {
-          Text(device.explanation).fixedSize(horizontal: false, vertical: true)
-          VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
-            Text(OJDLocalized.string("ui.controllers.unserved.nextStepLabel")).font(.caption)
-              .foregroundColor(Color(NSColor.secondaryLabelColor))
-            Text(device.nextStep).fixedSize(horizontal: false, vertical: true)
-          }
-        } header: {
-          VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
-            Text(device.title)
-            Text("\(device.identity)  \(device.connection)").font(.caption)
-              .foregroundColor(Color(NSColor.secondaryLabelColor))
-          }
-        }
         if device.offersDraft {
           Section {
             Button(OJDLocalized.string("ui.controllers.draftRecord")) {
