@@ -36,6 +36,8 @@
     let readiness: ControllerReadiness
     /// Whether the button can be pressed; Input Test reads nothing from a suspended session.
     var isActionEnabled = true
+    /// Whether the button shows; it hides while the problem banner offers the same fix.
+    var showsAction = true
     /// Runs what the button does.
     let perform: @MainActor (ControllerReadinessAction) -> Void
 
@@ -52,8 +54,10 @@
           ).fixedSize(horizontal: false, vertical: true)
         }
         Spacer(minLength: 12)
-        Button(OJDLocalized.string(readiness.actionTitleKey)) { perform(readiness.action) }
-          .disabled(!isActionEnabled)
+        if showsAction {
+          Button(OJDLocalized.string(readiness.actionTitleKey)) { perform(readiness.action) }
+            .disabled(!isActionEnabled)
+        }
       }.accessibilityElement(children: .contain).ojdAccessibilityLabel(
         OJDLocalized.string(readiness.titleKey)
       )

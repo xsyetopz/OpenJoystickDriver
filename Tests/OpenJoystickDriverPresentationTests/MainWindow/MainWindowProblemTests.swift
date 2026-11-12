@@ -280,4 +280,25 @@ struct MainWindowProblemTests {
     #expect(!presentation.isObscured)
     #expect(presentation.displayText == OJDLocalized.string("status.none"))
   }
+
+  @Test
+  func aBannerRowWithAButtonOffersTheFixOfTheMatchingControllerCard() {
+    #expect(MainWindowProblem.driver(.needsApproval).offersFix(of: .setUpDriver))
+    #expect(MainWindowProblem.driver(.needsActivation).offersFix(of: .setUpDriver))
+    #expect(MainWindowProblem.accessMissing.offersFix(of: .openAccess))
+  }
+
+  @Test
+  func aDriverRowWithoutAButtonLeavesTheCardsButton() {
+    #expect(!MainWindowProblem.driver(.missingEmbedded).offersFix(of: .setUpDriver))
+    #expect(!MainWindowProblem.driver(.invalid).offersFix(of: .setUpDriver))
+  }
+
+  @Test
+  func aBannerRowOffersOnlyTheFixOfItsOwnProblem() {
+    #expect(!MainWindowProblem.accessMissing.offersFix(of: .setUpDriver))
+    #expect(!MainWindowProblem.driver(.needsApproval).offersFix(of: .openAccess))
+    #expect(!MainWindowProblem.accessMissing.offersFix(of: .openInputTest))
+    #expect(!MainWindowProblem.service(.stopped, "").offersFix(of: .openTroubleshooting))
+  }
 }

@@ -18,6 +18,9 @@
             readiness: readiness,
             isActionEnabled: readiness.action != .openInputTest
               || device.sessionState != .suspended,
+            showsAction: !viewModel.mainWindowProblems.contains {
+              $0.offersFix(of: readiness.action)
+            },
             perform: perform
           )
         }

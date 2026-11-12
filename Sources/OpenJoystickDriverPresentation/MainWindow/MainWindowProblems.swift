@@ -170,6 +170,37 @@ extension RuntimeStatusState {
   }
 }
 
+extension MainWindowProblem {
+  /// Whether the banner row's button already offers the fix that a controller's button offers.
+  ///
+  /// A row without a button offers none.
+  ///
+  /// - Parameter action: What the controller's button does.
+  /// - Returns: Whether this row's button and the controller's button fix the same problem.
+  func offersFix(of action: ControllerReadinessAction) -> Bool {
+    guard self.action != nil else { return false }
+    switch (self, action) {
+    case (.driver, .setUpDriver), (.accessMissing, .openAccess): return true
+    default: return false
+    }
+  }
+}
+
+extension RuntimeViewModel {
+  /// The problems that the main window's banner shows.
+  var mainWindowProblems: [MainWindowProblem] {
+    MainWindowProblem.current(
+      permissions: permissionState,
+      status: statusState,
+      driver: systemExtensionSetupState,
+      extensionRouteConnected: statusState.hasExtensionRouteController,
+      liveUpdatesFallbackReason: liveUpdatesFallbackReason,
+      listenerFailure: listenerFailure,
+      registration: ServiceReadiness.currentRegistration(for: statusState)
+    )
+  }
+}
+
 /// The fix that a banner row's button runs.
 enum MainWindowProblemAction: Equatable, Sendable {
   /// Reads the service again.
