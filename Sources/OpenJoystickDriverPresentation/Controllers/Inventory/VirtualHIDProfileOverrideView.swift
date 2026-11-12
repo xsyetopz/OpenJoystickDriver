@@ -128,14 +128,9 @@
       OJDLocalized.string("ui.virtualProfile.updating")
     }
 
-    /// The messages of the failed override and of the override store.
-    private var problems: [String] {
-      var messages = overrideState.failure.map { [$0] } ?? []
-      if case .available(let status) = viewModel.statusState {
-        messages += status.virtualHIDProfileOverrideStoreMessages
-      }
-      return messages
-    }
+    /// The message of the failed override; the override store's messages show in the main window
+    /// banner.
+    private var problems: [String] { overrideState.failure.map { [$0] } ?? [] }
   }
 
 #endif
