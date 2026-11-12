@@ -312,46 +312,54 @@
 "ui.controllers.calibration.waiting" = "Esperando entrada…";
 /* Message in the controller detail when the service refuses a server or stick deadzone change because the vendor or product ID of the request is out of range. */
 "ui.controllers.invalidRequest" = "La solicitud indica un ID de fabricante o de producto fuera de rango. No se cambió nada.";
-/* Button in the Controllers detail that shows or hides the advanced virtual HID profile choices. HID is the abbreviation of Human Interface Device and stays as written. */
+/* Button in the Controllers detail that shows or hides the advanced virtual gamepad kind choices. */
 "ui.virtualProfile.advanced" = "Avanzado";
-/* Heading of the virtual HID profile section in the Controllers detail. HID is the abbreviation of Human Interface Device and stays as written. */
-"ui.virtualProfile.title" = "Perfil HID virtual";
-/* Note under the virtual HID profile popup. The choice applies to all connected controllers of the model. */
+/* Heading of the virtual gamepad kind section in the Controllers detail. */
+"ui.virtualProfile.title" = "Tipo de control virtual";
+/* Option of the virtual gamepad kind popup in the Controllers detail: the kind that Steam and games that use SDL read. Steam and SDL are product names. */
+"ui.virtualProfile.kind.sdlCompatible" = "Para juegos de Steam y SDL";
+/* Option of the virtual gamepad kind popup in the Controllers detail: the kind that games that use Apple's Game Controller framework read. Apple and Game Controller stay as written. */
+"platform.macos.ui.virtualProfile.kind.gameControllerCompatible" = "Para juegos de Apple Game Controller";
+/* Option of the virtual gamepad kind popup in the Controllers detail: the plain gamepad that any HID reader accepts. HID is the abbreviation of Human Interface Device and stays as written. */
+"ui.virtualProfile.kind.generic" = "Control HID genérico";
+/* Option of the virtual gamepad kind popup in the Controllers detail when the interface level is Advanced: the name of the kind, then its identifier in parentheses. %1$@ is the name of the kind. %2$@ is the identifier, which stays as written. */
+"ui.virtualProfile.kind.withIdentifier" = "%1$@ (%2$@)";
+/* Note under the virtual gamepad kind popup. The choice applies to all connected controllers of the model. */
 "ui.virtualProfile.modelScope" = "Se aplica a todos los controles conectados de este modelo.";
-/* Value of the virtual HID profile source: the user chose the profile. */
+/* Value of the virtual gamepad kind source: the user chose the kind. */
 "ui.virtualProfile.sourceOverride" = "Anulación";
-/* Value of the virtual HID profile source: the app chose the profile because the controller cannot use the profile that the user chose. */
+/* Value of the virtual gamepad kind source: the app chose the kind because the controller cannot use the kind that the user chose. */
 "ui.virtualProfile.sourceAutomaticAfterRejecting" = "Automático, anulación rechazada";
-/* Value of the virtual HID profile when the controller has none. */
-"ui.virtualProfile.none" = "Ningún perfil HID virtual";
-/* Caption under the Virtual HID profile pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
+/* Value of the virtual gamepad kind when the controller has none. */
+"ui.virtualProfile.none" = "Ningún tipo de control virtual";
+/* Caption under the Virtual gamepad kind pop-up in the Controllers detail when the virtual gamepad kind in use differs from the stored override. %1$@ is the kind in use, %2$@ is the stored override. */
 "ui.virtualProfile.inForce" = "En uso: %1$@. Anulación guardada: %2$@.";
-/* Caption under the Virtual HID profile pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
+/* Caption under the Virtual gamepad kind pop-up in the Controllers detail when the chosen virtual gamepad kind is already the stored one, so nothing is sent. */
 "ui.virtualProfile.unchanged" = "Esta opción ya está aplicada. No cambió nada.";
-/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
+/* Caption under the Virtual gamepad kind pop-up in the Controllers detail when Automatic is chosen for one controller but the override in effect is stored for every controller of the model, so nothing is sent. */
 "ui.virtualProfile.otherScopeHolds.model" = "La anulación vigente está guardada para todos los controles de este modelo, así que no hay nada que borrar solo para este control. No cambió nada.";
-/* Caption under the Virtual HID profile pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
+/* Caption under the Virtual gamepad kind pop-up in the Controllers detail when Automatic is chosen for the model but the override in effect is stored for this controller only, so nothing is sent. */
 "ui.virtualProfile.otherScopeHolds.unit" = "La anulación vigente está guardada solo para este control, así que no hay nada que borrar para el modelo. No cambió nada.";
-/* Status shown while the app changes the virtual HID profile. Keep the three dots. */
-"ui.virtualProfile.updating" = "Actualizando el perfil HID virtual…";
-/* Error when the user picks a virtual HID profile that the service does not know. The service stored nothing. */
-"ui.virtualProfile.failure.unknownProfile" = "Este perfil HID virtual es desconocido. No se guardó nada.";
-/* Error when the controller is gone while the user changes its virtual HID profile. The stored override stays unchanged. */
+/* Status shown while the app changes the virtual gamepad kind. Keep the three dots. */
+"ui.virtualProfile.updating" = "Actualizando el tipo de control virtual…";
+/* Error when the user picks a virtual gamepad kind that the service does not know. The service stored nothing. */
+"ui.virtualProfile.failure.unknownProfile" = "Este tipo de control virtual es desconocido. No se guardó nada.";
+/* Error when the controller is gone while the user changes its virtual gamepad kind. The stored override stays unchanged. */
 "ui.virtualProfile.failure.controllerNotFound" = "El control se desconectó o no se encuentra. La anulación no cambió.";
-/* Message when the service stores the override of the virtual HID profile but the controller cannot use it, so the app picks a profile itself. */
+/* Message when the service stores the override of the virtual gamepad kind but the controller cannot use it, so the app picks a kind itself. */
 "ui.virtualProfile.failure.overrideRejected" = "La anulación se guardó, pero este control no puede usarla, así que elige automáticamente.";
-/* Error when a virtual HID profile fails to activate and the app restores the last working profile. %@ is the reason. */
-"ui.virtualProfile.failure.activationFailed" = "La activación falló y se restauró el perfil HID virtual anterior: %@";
+/* Error when a virtual gamepad kind fails to activate and the app restores the last working kind. %@ is the reason. */
+"ui.virtualProfile.failure.activationFailed" = "La activación falló y se restauró el tipo de control virtual anterior: %@";
 /* Message when the service stores the override while virtual output is off. The override takes effect when the user turns virtual output on. */
 "ui.virtualProfile.failure.outputDisabled" = "La anulación se guardó y se aplicará cuando se active la salida virtual.";
-/* Error when the service stops while the user changes the virtual HID profile. The stored override stays unchanged. */
+/* Error when the service stops while the user changes the virtual gamepad kind. The stored override stays unchanged. */
 "ui.virtualProfile.failure.serverStopped" = "El servicio se detuvo. La anulación no cambió.";
-/* Error when the service cannot save the override of the virtual HID profile. Nothing is stored. */
+/* Error when the service cannot save the override of the virtual gamepad kind. Nothing is stored. */
 "ui.virtualProfile.failure.persistenceFailed" = "No se pudo guardar la anulación. No se guardó nada.";
-/* Error when resetting the virtual HID profile finds a virtual device file that the reset does not remove. %@ is the path of the file. */
+/* Error when resetting the virtual gamepad kind finds a virtual device file that the reset does not remove. %@ is the path of the file. */
 "ui.virtualProfile.failure.overrideFileKept" = "El archivo de dispositivo virtual %@ define su propia identidad o viene de un paquete, así que se conserva. Edita o elimina ese archivo. No cambió nada.";
-/* Error when the stored virtual HID profile overrides cannot be read. %@ is the reason. Controllers pick a profile themselves. */
-"ui.virtualProfile.storeError" = "No se pueden leer las anulaciones del perfil HID virtual (%@). Los controles eligen automáticamente.";
+/* Error when the stored virtual gamepad kind overrides cannot be read. %@ is the reason. Controllers pick a kind themselves. */
+"ui.virtualProfile.storeError" = "No se pueden leer las anulaciones del tipo de control virtual (%@). Los controles eligen automáticamente.";
 /* Value of the key field in the capture assignment sheet before the user captures a key. */
 "ui.keyboard.noKey" = "Ninguna tecla seleccionada";
 /* Value of the key field while the app waits for a key press. Keep the three dots. */
@@ -1350,9 +1358,9 @@
 "term.key.alt" = "Opción";
 /* Name of the Shift modifier key in the text that describes a captured key press. */
 "term.key.shift" = "Mayús";
-/* Value of the virtual HID profile when the app picks it. HID is the abbreviation of Human Interface Device and stays as written. */
+/* Value of the virtual gamepad kind when the app picks it. */
 "ui.mapping.automatic" = "Automático";
-/* Value of the virtual HID profile when the app picks it. %@ is the name of the picked profile. */
+/* Value of the virtual gamepad kind when the app picks it. %@ is the name of the picked kind. */
 "ui.virtualProfile.automaticSelected" = "Automático (%@)";
 /* Detail line in the Driver section of the settings window when the driver extension for Xbox USB controllers is installed and works. */
 "ui.setup.activeDetail" = "El controlador USB de Xbox restringido está instalado y listo.";
@@ -4773,16 +4781,16 @@
 "ui.controllers.publicationCompleted" = "Último envío aceptado";
 /* Label of the fact in the Controllers detail that tells what chose the server of the controller: the controller record or the user. */
 "ui.controllers.server.source" = "Definido por";
-/* Label of the popup that sets whether a virtual HID profile choice applies to a controller model or to one controller. */
+/* Label of the popup that sets whether a virtual gamepad kind choice applies to a controller model or to one controller. */
 "ui.controllers.virtual.scope" = "Aplicar a";
 /* Option of the scope popup: the choice applies to all controllers of the model. */
 "ui.controllers.virtual.scope.model" = "Este modelo";
 /* Option of the scope popup: the choice applies to this controller only. */
 "ui.controllers.virtual.scope.unit" = "Este control";
-/* Label of the row in the Controllers detail that holds the button that clears all virtual HID profile choices. */
+/* Label of the row in the Controllers detail that holds the button that clears all virtual gamepad kind choices. */
 "ui.controllers.virtual.resetAll" = "Restablecer todas las anulaciones";
-/* Error when the service cannot clear the virtual HID profile choices. HID is the abbreviation of Human Interface Device and stays as written. */
-"ui.controllers.virtual.resetAllFailed" = "El servicio no pudo borrar las elecciones de perfil HID virtual.";
+/* Error when the service cannot clear the virtual gamepad kind choices. */
+"ui.controllers.virtual.resetAllFailed" = "El servicio no pudo borrar las elecciones del tipo de control virtual.";
 /* Label of the row in the Controllers detail that holds the button that exports the mapping of the virtual gamepad. */
 "ui.controllers.exportMapping" = "Exportar asignación";
 /* Title of the save panel that exports the mapping of the virtual gamepad. */
