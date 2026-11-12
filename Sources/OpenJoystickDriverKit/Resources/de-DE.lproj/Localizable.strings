@@ -271,7 +271,7 @@
 /* Option of the server popup: OpenJoystickDriver handles the controller and shows a virtual gamepad. OpenJoystickDriver is the product name. */
 "ui.controllers.server.ojd" = "OpenJoystickDriver";
 /* Progress text under the Handled by picker in the Controllers detail while the service applies the user's choice of who handles the controller. */
-"ui.controllers.server.updating" = "Ändere, wer diesen Controller verwaltet…";
+"ui.controllers.server.updating" = "Wer diesen Controller verwaltet, wird geändert…";
 /* Label of the serving route fact in the Controllers detail. The route is the way the input reaches games. */
 "ui.controllers.serving.label" = "Bedienweg";
 /* Value of the serving route in the Controllers area: macOS serves the controller and the driver passes the input through. */
@@ -585,7 +585,7 @@
 /* Title of the behavior sheet of an assignment. The sheet sets turbo, hold and double tap. */
 "ui.profiles.bindingBehavior" = "Zuweisungsverhalten";
 /* Label above the list of apps that a profile applies to, in the profile creation sheet and the profile details sheet. */
-"ui.profiles.apps" = "Anwendungen";
+"ui.profiles.apps" = "Apps";
 /* Title of the menu that adds an app to the list of apps of a profile. It lists running and installed apps and Other... */
 "ui.profiles.addApp" = "App hinzufügen";
 /* Header of the section of the Add App menu that lists the apps that run now. */
@@ -1409,7 +1409,7 @@
 /* Title of the problem banner when the app cannot reach its service. OpenJoystickDriver is the product name. */
 "ui.banner.service.title" = "OpenJoystickDriver kann seinen Dienst nicht erreichen";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu while the app has not yet read the service. Keep the three dots. */
-"ui.service.state.checking.message" = "Dienst wird geprüft …";
+"ui.service.state.checking.message" = "Dienst wird geprüft…";
 /* Sentence next to the service symbol when the service answers and runs the same version as the app. */
 "ui.service.state.running.message" = "Der Dienst läuft.";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the request listener of the service stopped. */
@@ -1419,7 +1419,7 @@
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the service has no login item and does not answer. */
 "ui.service.state.notInstalled.message" = "Der Dienst ist nicht installiert.";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the user must approve the service before it can start. */
-"ui.service.state.needsApproval.message" = "Der Dienst braucht Ihre Freigabe, bevor er starten kann.";
+"ui.service.state.needsApproval.message" = "Der Dienst braucht deine Freigabe, bevor er starten kann.";
 /* Sentence next to the service symbol in the problem banner and the menu bar menu when the service runs a different version than the app. */
 "ui.service.state.versionMismatch.message" = "Der Dienst läuft in einer anderen Version als die App.";
 /* Title of the problem banner when macOS has not allowed all that the app needs. */
@@ -3590,7 +3590,7 @@
 /* Name in the Shortcuts app of the action that runs the rumble motors of a controller. */
 "ui.shortcuts.action.rumble.title" = "Controller vibrieren lassen";
 /* Description in the Shortcuts app of the action that runs the rumble motors of a controller. */
-"ui.shortcuts.action.rumble.description" = "Lässt die Rumble-Motoren eines Controllers kurz laufen.";
+"ui.shortcuts.action.rumble.description" = "Lässt die Vibrationsmotoren eines Controllers kurz laufen.";
 /* Label in the Shortcuts app of the rumble action's intensity value, from 0 to 255. */
 "ui.shortcuts.action.rumble.intensity" = "Intensität (0-255)";
 /* Label in the Shortcuts app of the rumble action's duration in seconds. */
@@ -3952,9 +3952,9 @@
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
 "error.E5007.startupWrite.crcSeedRange" = "%1$@, session.startup[].crc32Seed: Ein crc32Seed für den Start muss 0...255 sein. Lösung: Setze crc32Seed auf 0...255 oder lass ihn weg.";
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier user file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: Eine Datei eines virtuellen Gamepads darf den Treffer der Benutzerdatei %2$@ nicht wiederholen. Lösung: Gib jedem Modell eine Datei eines virtuellen Gamepads oder ändere match in einer der beiden.";
+"error.E5007.virtualDevice.matchTakenByUserFile" = "%1$@, match: Eine Datei eines virtuellen Gamepads darf das match der Benutzerdatei %2$@ nicht wiederholen. Lösung: Gib jedem Modell eine Datei eines virtuellen Gamepads oder ändere match in einer der beiden.";
 /* Error E5007, shown when a virtual gamepad file fails: a virtual gamepad file repeats the match of an earlier package file. %2$@ is the name of that file. %1$@ is the file. */
-"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: Eine Datei eines virtuellen Gamepads darf den Treffer der Paketdatei %2$@ nicht wiederholen. Lösung: Gib jedem Modell eine Datei eines virtuellen Gamepads oder ändere match in einer der beiden.";
+"error.E5007.virtualDevice.matchTakenByPackageFile" = "%1$@, match: Eine Datei eines virtuellen Gamepads darf das match der Paketdatei %2$@ nicht wiederholen. Lösung: Gib jedem Modell eine Datei eines virtuellen Gamepads oder ändere match in einer der beiden.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive interval is outside 1...60000 ms. %1$@ is the file. */
 "error.E5007.keepAlive.interval" = "%1$@, session.keepAlive.intervalMilliseconds: Ein Keep-alive-Intervall muss 1...60000 ms betragen. Lösung: Setze intervalMilliseconds auf 1...60000.";
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive lists no writes or more than 8. %1$@ is the file. */
@@ -4192,7 +4192,7 @@
 /* Title of the alert that removes a mod. %@ is the mod name. */
 "ui.library.mod.remove.title" = "Mod %@ entfernen?";
 /* Message of the alert that removes a mod. OpenJoystickDriver is the product name. */
-"ui.library.mod.remove.message" = "OpenJoystickDriver löscht den Mod sowie die Einträge, Profile und virtuelle Gamepads, die er hinzugefügt hat.";
+"ui.library.mod.remove.message" = "OpenJoystickDriver löscht den Mod sowie die Einträge, Profile und virtuellen Gamepads, die er hinzugefügt hat.";
 /* Notice after a mod is removed. %@ is the mod name. */
 "ui.library.mod.removed" = "Der Mod %@ wurde entfernt.";
 /* Line in the records list for a record that a mod changes. %@ is the name of the mod. */
