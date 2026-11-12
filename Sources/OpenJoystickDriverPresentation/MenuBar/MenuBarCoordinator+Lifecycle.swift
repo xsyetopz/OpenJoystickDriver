@@ -208,6 +208,7 @@
       mainWindow = MainWindowController(
         runtime: viewModel,
         supportReport: supportReport,
+        preferences: preferences,
         restartApplication: { [weak self] in self?.restartApplication() },
         openInputTest: { [weak self] device in self?.openInputTest(for: device) },
         visibilityChanged: { [weak self] isOpen in self?.dockIcon.setOpen(.workbench, isOpen) }

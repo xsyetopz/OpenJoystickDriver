@@ -130,6 +130,9 @@
     var profiles: ProfilesViewModel
     /// The models of every area's screen.
     let screens: MainWindowScreens
+    /// The Settings preferences, which hold the interface level.
+    @ObservedObject
+    var preferences: SettingsPreferencesModel
     /// Whether opening System Settings for the driver extension approval failed, which shows an
     /// alert.
     @State
@@ -151,6 +154,7 @@
           perform: perform
         )
         area.id(navigation.selectedArea).frame(maxWidth: .infinity, maxHeight: .infinity)
+          .environment(\.ojdInterfaceLevel, preferences.interfaceLevel)
       }.frame(
         maxWidth: .infinity,
         minHeight: 0,

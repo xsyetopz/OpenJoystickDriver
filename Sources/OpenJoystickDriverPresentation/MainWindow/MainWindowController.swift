@@ -87,6 +87,7 @@
     /// - Parameters:
     ///   - runtime: The runtime state that every area reads.
     ///   - supportReport: The support report and log export model.
+    ///   - preferences: The Settings preferences, which hold the interface level.
     ///   - restartApplication: Restarts the app, for the Access area.
     ///   - openInputTest: Opens the Input Test window for a controller.
     ///   - visibilityChanged: Called with true when the window is shown and false when it is
@@ -95,6 +96,7 @@
     init(
       runtime: RuntimeViewModel,
       supportReport: SupportReportModel,
+      preferences: SettingsPreferencesModel,
       restartApplication: @escaping @MainActor () -> Void,
       openInputTest: @escaping @MainActor (ApplicationServiceDeviceDescription) -> Void,
       visibilityChanged: @escaping @MainActor (Bool) -> Void,
@@ -171,7 +173,8 @@
             navigation: navigationModel,
             runtime: runtime,
             profiles: screens.profiles,
-            screens: screens
+            screens: screens,
+            preferences: preferences
           )
         )
       )

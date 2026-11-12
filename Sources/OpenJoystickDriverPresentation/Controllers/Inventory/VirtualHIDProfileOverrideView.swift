@@ -5,7 +5,7 @@
   import OpenJoystickDriverKit
   import SwiftUI
 
-  /// The override of one controller model's virtual HID profile, matching
+  /// The override of one controller model's virtual gamepad kind, matching
   /// `ojd virtual set|reset`: Automatic clears the override.
   struct VirtualHIDProfileOverrideView: View {
     /// The model of the app's view of the service, which sends the override.
@@ -13,6 +13,9 @@
     var viewModel: RuntimeViewModel
     /// The controller.
     let device: ApplicationServiceDeviceDescription
+    /// How much of the interface shows: the identifier of a kind shows only in Advanced.
+    @Environment(\.ojdInterfaceLevel)
+    private var interfaceLevel
     /// The scope of the override: the model or only this controller.
     @State
     private var scope: VirtualHIDProfileScopeChoice
@@ -39,7 +42,7 @@
             VirtualHIDProfileID?.none
           )
           ForEach(VirtualHIDProfileKinds.offered(for: device), id: \.self) { profile in
-            Text("\(profile.identity.productName) (\(profile.rawValue))").tag(
+            Text(VirtualHIDProfileKinds.optionTitle(for: profile, level: interfaceLevel)).tag(
               VirtualHIDProfileID?.some(profile)
             )
           }

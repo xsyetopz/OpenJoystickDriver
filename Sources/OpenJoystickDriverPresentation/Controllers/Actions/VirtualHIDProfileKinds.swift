@@ -29,6 +29,28 @@ enum VirtualHIDProfileKinds {
     return accepted + [stored]
   }
 
+  /// Returns the title of a kind's option in the pop-up: the phrase for what reads the kind, and in
+  /// Advanced the identifier beside it.
+  ///
+  /// - Parameters:
+  ///   - kind: The kind.
+  ///   - level: The interface level.
+  /// - Returns: The title of the option.
+  static func optionTitle(for kind: VirtualHIDProfileID, level: InterfaceLevel) -> String {
+    let phrase = OJDLocalized.string(phraseKey(for: kind))
+    guard level == .advanced else { return phrase }
+    return OJDLocalized.formatted("ui.virtualProfile.kind.withIdentifier", phrase, kind.rawValue)
+  }
+
+  private static func phraseKey(for kind: VirtualHIDProfileID) -> String {
+    switch kind {
+    case .sdlCompatible: return "ui.virtualProfile.kind.sdlCompatible"
+    case .gameControllerCompatible:
+      return "platform.macos.ui.virtualProfile.kind.gameControllerCompatible"
+    case .generic: return "ui.virtualProfile.kind.generic"
+    }
+  }
+
   /// Returns the line that names the kind in force and the stored kind when they differ; nil when
   /// they are the same or nothing is stored.
   ///

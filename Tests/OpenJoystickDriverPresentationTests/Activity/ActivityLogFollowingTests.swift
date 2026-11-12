@@ -1,6 +1,7 @@
 import AppKit
 import Foundation
 import OpenJoystickDriverKit
+import OpenJoystickDriverTestSupport
 import Testing
 
 @testable import OpenJoystickDriverPresentation
@@ -116,6 +117,12 @@ extension ActivityLogFollowingTests {
     let controller = MainWindowController(
       runtime: runtime,
       supportReport: SupportReportModel(gateway: GatewayStub()),
+      preferences: SettingsPreferencesModel(
+        testNotifications: TestNotificationRequestStub(),
+        settings: SettingsStore(directory: RootedDataDirectory.temporary()),
+        launchAtLogin: LaunchAtLoginStub(isEnabled: false),
+        notificationAuthorization: NotificationAuthorizationStub(state: .denied)
+      ),
       restartApplication: {},
       openInputTest: { _ in },
       visibilityChanged: { _ in },
