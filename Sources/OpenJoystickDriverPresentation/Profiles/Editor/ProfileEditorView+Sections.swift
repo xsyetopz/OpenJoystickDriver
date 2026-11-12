@@ -13,6 +13,9 @@
     /// - Returns: The form.
     func editorContent(width: CGFloat) -> some View {
       Form {
+        HiddenChangeNotice(
+          content: .changed(ProfilesRow.changedHiddenRows(in: draft.profile).count)
+        )
         sectionContent(assignmentLayout: ProfilePresentationPolicy.assignmentRowLayout(for: width))
       }.ojdGroupedForm().id(selectedSection)
     }

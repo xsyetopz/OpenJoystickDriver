@@ -107,6 +107,7 @@ struct ActivityActionFailure: Equatable {
           }.padding(.horizontal, 12).padding(.vertical, 8)
           Divider()
         }
+        HiddenChangeNotice(content: .needsAdvanced).padding(.horizontal, OJDSpacing.medium)
         content
       }
     }

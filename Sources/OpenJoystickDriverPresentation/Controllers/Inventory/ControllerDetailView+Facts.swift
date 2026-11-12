@@ -12,6 +12,7 @@
     var body: some View {
       Form {
         Section { controllerHeader }
+        HiddenChangeNotice(content: .changed(hiddenChangeCount))
         Section { ControllerReadinessCard(readiness: readiness, perform: perform) }
         if showsSessionState {
           Section {
@@ -109,6 +110,14 @@
         ControllerFilePanels.save(request) { actions.finishSave(to: $0) }
       }.ojdGroupedForm().accessibilityElement(children: .contain)
         .ojdAccessibilityLabel(device.name).ojdAccessibilityValue(accessibilityValue)
+    }
+
+    /// How many hidden rows hold a value other than their default.
+    private var hiddenChangeCount: Int {
+      ControllerDetailRow.changedHiddenRows(
+        virtualGamepadOverride: device.virtualHIDProfile?.override,
+        stickDeadzone: record.map(StickDeadzoneSetting.init(record:))
+      ).count
     }
 
     /// Reloads the record when the controller or who serves its model changes.

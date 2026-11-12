@@ -327,5 +327,30 @@
 			<string>%d دقيقة</string>
 		</dict>
 	</dict>
+	<!-- Row of the Simple interface in the controller detail and the profile editor: how many advanced settings that Simple hides hold a value other than their default. %d is the number of changed advanced settings. The Arabic plural forms are a first draft that a native speaker reviews. -->
+	<key>ui.interface.hiddenChanges</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>لا توجد إعدادات متقدمة متغيرة (%d)</string>
+			<key>one</key>
+			<string>تم تغيير %d إعداد متقدم</string>
+			<key>two</key>
+			<string>تم تغيير %d إعدادين متقدمين</string>
+			<key>few</key>
+			<string>تم تغيير %d إعدادات متقدمة</string>
+			<key>many</key>
+			<string>تم تغيير %d إعدادًا متقدمًا</string>
+			<key>other</key>
+			<string>تم تغيير %d إعداد متقدم</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

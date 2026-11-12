@@ -302,6 +302,13 @@ At **Advanced**, the developer tools show in **Settings** > **Advanced** while *
 At **Simple**, they stay hidden even with **Enable Developer Tools** on.
 Wiki pages mark a control that needs **Advanced** with "(needs the **Advanced** interface)".
 
+At **Simple**, a row tells you when a hidden setting holds a value other than its default.
+In a controller detail it counts the virtual gamepad kind you set and a stick dead zone from your own record.
+In the profile editor it counts the output policy, axis adjustments, stick, trigger and touch mappings, pointer speed, motion settings and regions that differ from a new profile.
+The row reads, for example, "1 advanced setting is changed", and its **Show Advanced Settings** button switches **Interface** to **Advanced**.
+With every hidden setting at its default, no row shows.
+The Library and Activity areas hold only **Advanced** controls, so at **Simple** they show a row that says the area needs the **Advanced** interface, with the same button.
+
 Under **Updates**, **Check for updates automatically** looks for a newer version when the app starts.
 Click **Check Now** to look at once.
 OJD contacts GitHub only for these checks.

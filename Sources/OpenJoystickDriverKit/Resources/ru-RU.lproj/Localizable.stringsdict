@@ -291,5 +291,30 @@
 			<string>%d минут</string>
 		</dict>
 	</dict>
+	<!-- Row of the Simple interface in the controller detail and the profile editor: how many advanced settings that Simple hides hold a value other than their default. %d is the number of changed advanced settings. The Russian plural forms are a first draft that a native speaker reviews. -->
+	<key>ui.interface.hiddenChanges</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@count@</string>
+		<key>count</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>Изменено %d дополнительного параметра</string>
+			<key>one</key>
+			<string>Изменён %d дополнительный параметр</string>
+			<key>two</key>
+			<string>Изменено %d дополнительного параметра</string>
+			<key>few</key>
+			<string>Изменено %d дополнительных параметра</string>
+			<key>many</key>
+			<string>Изменено %d дополнительных параметров</string>
+			<key>other</key>
+			<string>Изменено %d дополнительного параметра</string>
+		</dict>
+	</dict>
 </dict>
 </plist>
