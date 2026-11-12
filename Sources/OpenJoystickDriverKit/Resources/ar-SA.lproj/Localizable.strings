@@ -3364,7 +3364,7 @@
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "عنصر التحكم الذي يُضغط باستمرار لإخراج الجيروسكوب (قالب gyro-stick). بدونه يكون إخراج الجيروسكوب مفعّلًا دائمًا.";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "طبّق الملف الشخصي فقط أثناء ظهور هذا التطبيق في المقدمة، بمعرّف التطبيق. كرّر الخيار لإضافة تطبيقات أخرى.";
+"cli.profile.create.app" = "طبّق ملف التعريف فقط أثناء ظهور هذا التطبيق في المقدمة، بمعرّف التطبيق. كرّر الخيار لإضافة تطبيقات أخرى.";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "طراز وحدة التحكم: VVVV:PPPP، أو معرّف وحدة تحكم متصلة.";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
@@ -3464,7 +3464,7 @@
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "تم استيراد «%1$@» (%2$@).";
 /* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
-"cli.profile.import.app" = "طبّق الملف الشخصي المستورد فقط أثناء ظهور هذا التطبيق في المقدمة، بمعرّف التطبيق، بدلًا من النطاق الموجود في الملف. كرّر الخيار لإضافة تطبيقات أخرى.";
+"cli.profile.import.app" = "طبّق ملف التعريف المستورد فقط أثناء ظهور هذا التطبيق في المقدمة، بمعرّف التطبيق، بدلًا من النطاق الموجود في الملف. كرّر الخيار لإضافة تطبيقات أخرى.";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "استخدم - لقراءة ملف التعريف من stdin. يستبدل ملف التعريف الذي له المعرّف نفسه ملف تعريف موجودًا.";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */
@@ -4575,7 +4575,7 @@
 /* Error E5007, shown when a patch file fails: a remove path is listed twice. %2$@ is the path. %1$@ is the file. */
 "error.E5007.patch.removeDuplicate" = "%1$@, remove: المسار %2$@ مذكور مرتين. الإصلاح: احذف أحد الإدخالين.";
 /* Error E5007, shown when a patch file fails: an all patch removes a key outside tuning. %2$@ is the path. %1$@ is the file. */
-"error.E5007.patch.removeAllNotTuning" = "%1$@, remove: لا يجوز لتصحيح all إزالة غير مفاتيح tuning، ومنها %2$@. الإصلاح: أزل هنا مفاتيح tuning فقط أو استخدم تصحيحًا لوحدة تحكم واحدة.";
+"error.E5007.patch.removeAllNotTuning" = "%1$@, remove: لا يجوز لتصحيح all إزالة إلا مفاتيح tuning، وليس %2$@. الإصلاح: أزل هنا مفاتيح tuning فقط أو استخدم تصحيحًا لوحدة تحكم واحدة.";
 /* Error E5007, shown when a patch file fails: the selector is not a dictionary. %1$@ is the file. */
 "error.E5007.patch.selectorNotObject" = "%1$@, selector: يجب أن يكون selector هو all أو model أو vendorID مع productID. الإصلاح: اكتب selector كقاموس بإحدى هذه الصيغ.";
 /* Error E5007, shown when a patch file fails: selector.all is not true. %1$@ is the file. */
@@ -5122,7 +5122,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "حوّل المستندات المخزّنة من إصدار أقدم إلى الإصدار الحالي.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "يحوّل Settings.plist وAccessGrants.plist والملفات الشخصية وسجلات وحدات التحكم الخاصة بك وتصحيحاتها وملفات وحدات التحكم الافتراضية التي لها apiVersion أقدم. يُحفظ كل أصل في مجلد Migrated داخل مجلد الدعم. تُحوَّل حزم الإضافات أيضًا. سمِّ مجلدًا لفحصه بدل مجلد الدعم. يحصل كل ملف على حكم واحد: Migrated أو Current أو Failed أو Foreign.";
+"cli.migrate.group.discussion" = "يحوّل Settings.plist وAccessGrants.plist وملفات التعريف وسجلات وحدات التحكم الخاصة بك وتصحيحاتها وملفات وحدات التحكم الافتراضية التي لها apiVersion أقدم. يُحفظ كل أصل في مجلد Migrated داخل مجلد الدعم. تُحوَّل حزم المودات أيضًا. سمِّ مجلدًا لفحصه بدل مجلد الدعم. يحصل كل ملف على حكم واحد: Migrated أو Current أو Failed أو Foreign.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "اعرض المستندات التي ستُحوَّل دون تغيير أي شيء.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
@@ -5206,7 +5206,7 @@
 /* Error in the settings window when the system refuses the recorded pause shortcut because another app uses it. */
 "ui.settings.general.pauseShortcutTaken" = "تطبيق آخر يستخدم هذا الاختصار بالفعل. سجّل اختصارًا مختلفًا.";
 /* Error of 'ojd setting set' when the value is not a pause shortcut. %1$@ is the text the user gave. control, option, command, shift, none and the key names stay as written. */
-"cli.setting.set.badShortcut" = "'%1$@' ليس اختصارًا. استخدم مفاتيح التعديل ومفتاحًا موصولة بـ +، مثل control+option+P، أو none.";
+"cli.setting.set.badShortcut" = "'%1$@' ليس اختصارًا. استخدم مفاتيح التعديل ومفتاحًا موصولًا بـ +، مثل control+option+P، أو none.";
 /* Error of 'ojd setting set' when the value is not an interface level. %1$@ is the text the user gave. Simple and Advanced stay as written. */
 "cli.setting.set.badInterfaceLevel" = "'%1$@' ليس مستوى واجهة. استخدم Simple أو Advanced.";
 /* Title of the sheet that shows the changes of the installed version at the first opening of the main window after an update. %@ is the version number, such as 0.6.0. */
