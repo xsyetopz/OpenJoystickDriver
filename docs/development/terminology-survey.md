@@ -77,8 +77,8 @@ perl -ne 'chomp; my ($l,$t)=split /\t/,$_,2; print "$l\n" if $t =~ /\bpersonas?\
 | 6 How a controller reaches the Mac | transport | `\btransports?\b` | 12 | 6 | 31 (9) | Localizable.strings:2173, Localizable.strings:2183 | ojd, ojd transport-extension | Building-from-Source.md:17, Building-from-Source.md:18 |
 | 6 How a controller reaches the Mac | Wireless Link | `wireless link` | 2 | 0 | 2 (1) | Localizable.strings:4459, Localizable.strings:4571 | - | Using-the-App.md:62, Using-the-App.md:109 |
 | 6 How a controller reaches the Mac | wireless | `\bwireless\b` | 4 | 0 | 14 (7) | Localizable.strings:214, Localizable.strings:1896 | - | Connecting-Controllers.md:24, Connecting-Controllers.md:32 |
-| 6 How a controller reaches the Mac | receiver / dongle | `\b(receivers?|dongles?)\b` | 4 | 0 | 33 (11) | Localizable.strings:210, Localizable.strings:214 | - | Command-Reference.md:88, Connecting-Controllers.md:3 |
-| 6 How a controller reaches the Mac | cable / wired | `\b(cables?|wired)\b` | 4 | 0 | 13 (4) | Localizable.strings:188, Localizable.strings:234 | - | Connecting-Controllers.md:20, Connecting-Controllers.md:24 |
+| 6 How a controller reaches the Mac | receiver / dongle | `\b(receivers?\|dongles?)\b` | 4 | 0 | 33 (11) | Localizable.strings:210, Localizable.strings:214 | - | Command-Reference.md:88, Connecting-Controllers.md:3 |
+| 6 How a controller reaches the Mac | cable / wired | `\b(cables?\|wired)\b` | 4 | 0 | 13 (4) | Localizable.strings:188, Localizable.strings:234 | - | Connecting-Controllers.md:20, Connecting-Controllers.md:24 |
 | 6 How a controller reaches the Mac | bus | `\bbus\b` | 0 | 0 | 1 (1) | - | - | Controller-Records.md:590 |
 | 7 What the controller's own switch selects | mode | `\bmodes?\b` | 21 | 0 | 94 (14) | Localizable.strings:202, Localizable.strings:204 | - | Bindings-and-Actions.md:223, Bindings-and-Actions.md:286 |
 | 7 What the controller's own switch selects | protocol | `\bprotocols?\b` | 29 | 17 | 66 (14) | Localizable.strings:166, Localizable.strings:170 | ojd, ojd protocol | Automating-OpenJoystickDriver.md:31, Command-Line.md:95 |
