@@ -1384,8 +1384,6 @@
 "platform.macos.cli.controller.show.servedByMacOS" = "Gestionado por macOS. Ejecuta `ojd controller claim %@` para activar la extensión y tomar el mando.";
 /* Caption of a controller in the Controllers list, and label in its detail, when Apple's driver holds the controller. macOS is the operating system. */
 "platform.macos.ui.controllers.servedByMacOS" = "Gestionado por macOS";
-/* Value in the Controllers detail for a controller that Apple's driver holds. The Claim button below it activates the extension. OpenJoystickDriver is the product name. */
-"platform.macos.ui.controllers.servedByMacOSDetail" = "El controlador de Apple retiene este mando. Reclámalo para activar el controlador USB de Xbox.";
 /* Button in the Controllers list and detail for a controller that Apple's driver holds. It sends the request that activates the driver extension. */
 "ui.controllers.claim" = "Reclamar";
 /* Detail line of the problem banner while the request for the driver extension for Xbox USB controllers runs. */
@@ -4899,8 +4897,6 @@
 "ui.controllers.publication.withReason" = "%1$@ (%2$@)";
 /* Reason shown with a failed publication. %@ is the reason the last send failed. */
 "ui.controllers.publication.failedSend" = "Falló el último envío: %@";
-/* Serving route with why it publishes nothing, for example "Output off (No virtual profile fits it)". %1$@ is the route and %2$@ the reason. */
-"ui.controllers.serving.withReason" = "%1$@ (%2$@)";
 /* Reason of failing input health: the controller sends no reports. */
 "ui.controllers.inputHealth.reason.missingReports" = "No llegan informes";
 /* Reason of failing input health: the reports arrive but their content does not change. */

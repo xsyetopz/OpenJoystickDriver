@@ -64,7 +64,7 @@ struct ControllerDetailFactsTests {
   func unknownBatteryChargingAndCableAreHidden() {
     let kinds = ControllerDetailFacts.general(for: device(power: .unknown)).map(\.kind)
     #expect(
-      kinds == [.publication, .serving, .controllerProtocol, .serialNumber, .inputHealth]
+      kinds == [.publication, .serving, .serialNumber, .inputHealth]
     )
     #expect(ControllerDetailFacts.general(for: device()).map(\.kind) == kinds)
   }
@@ -117,8 +117,29 @@ struct ControllerDetailFactsTests {
       wiredPower: true
     )
     let facts = ControllerDetailFacts.general(for: device(power: power))
-    #expect(facts.map(\.kind).suffix(3) == [.battery, .chargingState, .cableState])
+    #expect(facts.map(\.kind).suffix(2) == [.battery, .chargingState])
     #expect(Self.value(.battery, in: facts) == .text("80%"))
+  }
+
+  @Test
+  func theCableShowsOnlyWhileTheChargingStateIsUnknown() {
+    let cabled = ControllerConnectionState.Power(
+      charging: .unknown,
+      battery: BatteryLevel(percentage: 80...80),
+      wiredPower: true
+    )
+    let kinds = ControllerDetailFacts.general(for: device(power: cabled)).map(\.kind)
+    #expect(kinds.contains(.cableState))
+    #expect(!kinds.contains(.chargingState))
+  }
+
+  @Test
+  func publicationOmitsTheWaitForInputTheInputRowSays() {
+    let waiting = ApplicationServicePublicationStatus.notPublished(.noInputYet)
+    #expect(
+      ControllerDetailFacts.publicationText(waiting, omittingNoInputYet: true)
+        == OJDLocalized.string("ui.controllers.publication.notPublished")
+    )
   }
 
   @Test
@@ -141,20 +162,6 @@ struct ControllerDetailFactsTests {
     #expect(Self.value(.lighting, in: facts) == .text("Color"))
     #expect(Self.value(.adaptiveTriggers, in: facts) == .text("Left trigger"))
     #expect(Self.value(.motion, in: facts) == .text("Available"))
-  }
-
-  @Test
-  func theProtocolFactNamesTheFamilyAndTheStoredVariant() {
-    let binding = ProtocolBindingID(.xboxXUSB, variant: .receiver)
-    let facts = ControllerDetailFacts.general(for: device(binding: binding))
-    #expect(
-      Self.value(.controllerProtocol, in: facts)
-        == .text(binding.displayName)
-    )
-    #expect(
-      Self.value(.controllerProtocol, in: facts)
-        != .text(PhysicalProtocolID.xboxXUSB.displayName)
-    )
   }
 
   @Test
@@ -350,7 +357,6 @@ struct ControllerDetailFactsTests {
   @Test
   func advancedFactsThatDoNotApplyAreHidden() {
     let kinds = ControllerDetailFacts.advanced(for: device(), record: nil).map(\.kind)
-    #expect(!kinds.contains(.outputOwner))
     #expect(!kinds.contains(.startupStatus))
     #expect(!kinds.contains(.inputRecoveries))
     #expect(!kinds.contains(.publicationAttempted))
@@ -385,11 +391,10 @@ struct ControllerDetailFactsTests {
     ]
     .map(ControllerDetailLabels.hidInputOwnershipKey)
     keys += [DeviceDiscoverySource.hid, .rawUSB].map(ControllerDetailLabels.discoveryKey)
-    keys += OutputDisabledReason.allCases.map(ControllerDetailLabels.servingReasonKey)
     keys += ControllerInputHealthFailureReason.allCases
       .map(ControllerDetailLabels.inputHealthReasonKey)
     keys += [
-      "ui.controllers.publication.withReason", "ui.controllers.serving.withReason",
+      "ui.controllers.publication.withReason",
       "ui.controllers.inputHealth.withReason",
     ]
     for key in keys { #expect(OJDLocalized.string(key) != key, "\(key)") }

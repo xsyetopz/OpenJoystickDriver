@@ -44,7 +44,7 @@
             case .serialNumber:
               SerialNumberRow(label: fact.label, serial: fact.value, visibility: $serialVisibility)
                 .ojdInterfaceRow(ControllerDetailRow.serialNumber)
-            case .publication, .serving, .controllerProtocol:
+            case .publication, .serving:
               OJDLabeledValue(fact.label, fact.value).ojdInterfaceRow(
                 ControllerDetailRow.servingFacts
               )
@@ -55,10 +55,6 @@
         }
         if device.isHeldByAppleDriver {
           Section {
-            OJDLabeledValue(
-              OJDLocalized.string("platform.macos.ui.controllers.servedByMacOS"),
-              OJDLocalized.string("platform.macos.ui.controllers.servedByMacOSDetail")
-            )
             ControllerClaimButton(viewModel: viewModel)
           }.ojdInterfaceRow(ControllerDetailRow.appleDriverHold)
         }
