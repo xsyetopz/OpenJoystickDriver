@@ -54,16 +54,6 @@
     }
   }
 
-  extension ApplicationServiceLogStream {
-    /// The localization key of the stream's name in the Activity log.
-    var activityTitleKey: String {
-      switch self {
-      case .standardOutput: return "ui.console.output"
-      case .standardError: return "ui.console.errors"
-      }
-    }
-  }
-
   /// The line counts that the toolbar offers.
   ///
   /// The service accepts 1 to 10000 lines.

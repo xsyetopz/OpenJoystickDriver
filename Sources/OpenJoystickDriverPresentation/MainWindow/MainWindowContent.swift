@@ -253,10 +253,7 @@
       case .permission(.inputRead):
         PermissionAccessActions.requestControllerAccess(viewModel: runtime, requirement: .inputRead)
       case .permission(.inputInject):
-        PermissionAccessActions.requestControllerAccess(
-          viewModel: runtime,
-          requirement: .inputInject
-        )
+        PermissionAccessActions.requestAccessibilityAccess(viewModel: runtime)
       case .permission(.postEvent):
         PermissionAccessActions.requestPostEventAccess(viewModel: runtime)
       case .permission(.notification):

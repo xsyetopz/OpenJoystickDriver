@@ -1446,8 +1446,6 @@
 "ui.console.loadError" = "無法讀取日誌";
 /* Option of the stream filter in the Activity log that shows only output entries. */
 "ui.console.output" = "輸出";
-/* Column title in the Activity log table. The column tells whether an entry is output or an error. */
-"ui.console.stream" = "串流";
 /* Name of the notification setting for a controller that connects, in the Notifications pane of the settings window. */
 "notify.controllerConnected" = "控制器已連接";
 /* Body of the notification shown when a controller connects. %@ is the controller name. */

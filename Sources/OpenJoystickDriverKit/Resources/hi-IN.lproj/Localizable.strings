@@ -1446,8 +1446,6 @@
 "ui.console.loadError" = "लॉग पढ़े नहीं जा सके";
 /* Option of the stream filter in the Activity log that shows only output entries. */
 "ui.console.output" = "आउटपुट";
-/* Column title in the Activity log table. The column tells whether an entry is output or an error. */
-"ui.console.stream" = "स्ट्रीम";
 /* Name of the notification setting for a controller that connects, in the Notifications pane of the settings window. */
 "notify.controllerConnected" = "कंट्रोलर कनेक्ट हुआ";
 /* Body of the notification shown when a controller connects. %@ is the controller name. */

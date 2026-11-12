@@ -45,6 +45,23 @@
       }
     }
 
+    /// Requests Accessibility for publishing controllers, then the permission to post events when
+    /// it is still needed, and opens the Accessibility pane when either is not granted.
+    static func requestAccessibilityAccess(viewModel: RuntimeViewModel) {
+      Task { @MainActor in
+        AppForeground.activate()
+        guard let permissions = await viewModel.requestPermission(.inputInject) else { return }
+        var isGranted = permissions.inputInject == .granted
+        if case .available(let status) = viewModel.statusState,
+          AccessReadiness.postEventAccessNeedsRequest(in: status),
+          let access = await viewModel.requestPostEventAccess()
+        {
+          isGranted = isGranted && access == .granted
+        }
+        if !isGranted { openPrivacySettings(pane: "Privacy_Accessibility") }
+      }
+    }
+
     /// Requests the permission to post events and opens the Accessibility pane when it is not
     /// granted.
     static func requestPostEventAccess(viewModel: RuntimeViewModel) {

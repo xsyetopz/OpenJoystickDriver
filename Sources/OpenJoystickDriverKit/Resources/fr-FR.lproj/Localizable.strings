@@ -1446,8 +1446,6 @@
 "ui.console.loadError" = "Impossible de lire les journaux";
 /* Option of the stream filter in the Activity log that shows only output entries. */
 "ui.console.output" = "Sortie";
-/* Column title in the Activity log table. The column tells whether an entry is output or an error. */
-"ui.console.stream" = "Flux";
 /* Name of the notification setting for a controller that connects, in the Notifications pane of the settings window. */
 "notify.controllerConnected" = "Manette connectée";
 /* Body of the notification shown when a controller connects. %@ is the controller name. */

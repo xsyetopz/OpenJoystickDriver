@@ -253,7 +253,10 @@ struct LibraryListingTests {
   func theLibraryToolbarLabelsResolve() {
     for action in MainWindowArea.library.toolbarActions(activityMode: .log) {
       #expect(OJDLocalized.string(action.labelKey) != action.labelKey)
-      #expect(OJDLocalized.string(action.descriptionKey) != action.descriptionKey)
+      if let key = action.descriptionKey {
+        #expect(OJDLocalized.string(key) != key)
+        #expect(key != action.labelKey)
+      }
     }
   }
 

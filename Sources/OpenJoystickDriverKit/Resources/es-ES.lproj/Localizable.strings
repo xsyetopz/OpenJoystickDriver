@@ -1446,8 +1446,6 @@
 "ui.console.loadError" = "No se han podido leer los registros";
 /* Option of the stream filter in the Activity log that shows only output entries. */
 "ui.console.output" = "Salida";
-/* Column title in the Activity log table. The column tells whether an entry is output or an error. */
-"ui.console.stream" = "Flujo";
 /* Name of the notification setting for a controller that connects, in the Notifications pane of the settings window. */
 "notify.controllerConnected" = "Mando conectado";
 /* Body of the notification shown when a controller connects. %@ is the controller name. */

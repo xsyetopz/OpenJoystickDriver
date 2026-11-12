@@ -38,6 +38,25 @@ struct SetupStepsTests {
   }
 
   @Test
+  func accessibilityIsOneStepWhenInputInjectAndPostEventAreBothOpen() {
+    let payload = ApplicationServiceStatusPayload(
+      inputRead: .granted,
+      inputInject: .denied,
+      connectedDevices: []
+    )
+    let presentation = RuntimeStatusPresentation(
+      payload: payload,
+      postEventAccess: .notAuthorized,
+      requiresPostEventAccess: true
+    )
+    let steps = SetupSteps.open(
+      permissionState: .available(presentation.permissions),
+      statusState: .available(presentation)
+    )
+    #expect(steps.map(\.kind) == [.permission(.inputInject)])
+  }
+
+  @Test
   func anUndecidedBluetoothStepAsksAndADeniedOneOpensSystemSettings() {
     let (undecidedPermissions, undecided) = status(bluetooth: .notAsked)
     let asks = SetupSteps.open(permissionState: undecidedPermissions, statusState: undecided)

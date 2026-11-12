@@ -1446,8 +1446,6 @@
 "ui.console.loadError" = "Protokolle konnten nicht gelesen werden";
 /* Option of the stream filter in the Activity log that shows only output entries. */
 "ui.console.output" = "Ausgabe";
-/* Column title in the Activity log table. The column tells whether an entry is output or an error. */
-"ui.console.stream" = "Stream";
 /* Name of the notification setting for a controller that connects, in the Notifications pane of the settings window. */
 "notify.controllerConnected" = "Controller verbunden";
 /* Body of the notification shown when a controller connects. %@ is the controller name. */
