@@ -2014,7 +2014,7 @@
 /* Examples block at the end of the help of 'ojd binding set'. The command lines, option names and sources stay as written; translate only the lines that start with #. */
 "cli.binding.set.examples" = "Beispiele:\n  # Leertaste halten, solange die südliche Taste gehalten wird\n  ojd binding set Racing button:south key:space\n  # J bei jedem Drücken umschalten\n  ojd binding set Racing button:west key:key-j --behavior toggle\n  # J 10-mal pro Sekunde wiederholen, solange die Taste gehalten wird\n  ojd binding set Racing button:west key:key-j --turbo-rate 10 --turbo-duty 0.5";
 /* Examples block at the end of the help of 'ojd record install'. The command lines and file names stay as written; translate only the lines that start with #. */
-"cli.record.install.examples" = "Beispiele:\n  # Eine Record-Datei installieren\n  ojd record install 045e-028e.plist\n  # Den Record von stdin lesen\n  ojd record install - < 045e-028e.plist";
+"cli.record.install.examples" = "Beispiele:\n  # Eine Eintragsdatei installieren\n  ojd record install 045e-028e.plist\n  # Den Eintrag von stdin lesen\n  ojd record install - < 045e-028e.plist";
 /* Examples block at the end of the help of 'ojd access grant'. The command lines and option names stay as written; translate only the lines that start with #. */
 "cli.access.grant.examples" = "Beispiele:\n  # Einem Programm die Nutzung des Dienstes erlauben\n  ojd access grant /Applications/Example.app\n  # Ein Token für Seiten erstellen, die von einem Ursprung ausgeliefert werden\n  ojd access grant --token overlay --origin http://127.0.0.1:8080";
 /* One-line summary of 'ojd service' in the command list and at the top of its help. OpenJoystickDriver is the product name. */
@@ -3946,7 +3946,7 @@
 /* Error E5007, shown when the named packets of a record fail: a named packet has fewer than 3 bytes or its session byte is not 2. %1$@ is the file. */
 "error.E5007.namedPacketPlan.shape" = "%1$@, session.namedPackets[].sessionByte: Ein benanntes Paket muss mindestens 3 Bytes haben und sein Sitzungsbyte muss 2 sein. Lösung: Gib bytes mindestens 3 Bytes und setze sessionByte auf 2.";
 /* Error E5007, shown when a startup write of a record fails: a startup packet reference sits in a record instead of a protocol description. %1$@ is the file. */
-"error.E5007.startupWrite.packetReference" = "%1$@, session.startup[].packet: Eine Startpaket-Referenz ist nur für Protokollbeschreibungen vorgesehen. Lösung: Schreibe die Bytes stattdessen in den Datensatz statt packet.";
+"error.E5007.startupWrite.packetReference" = "%1$@, session.startup[].packet: Eine Startpaket-Referenz ist nur für Protokollbeschreibungen vorgesehen. Lösung: Schreibe die Bytes stattdessen in den Eintrag statt packet.";
 /* Error E5007, shown when a startup write of a record fails: a startup phase is not Startup or Activation. %1$@ is the file. */
 "error.E5007.startupWrite.phase" = "%1$@, session.startup[].phase: Eine Startphase muss Startup oder Activation sein. Lösung: Setze phase auf eines davon oder lass sie weg.";
 /* Error E5007, shown when a startup write of a record fails: a startup crc32Seed is outside 0...255. %1$@ is the file. */
@@ -3962,9 +3962,9 @@
 /* Error E5007, shown when the keep-alive of a record fails: a keep-alive resendTuning is not lizardResendTicks. %1$@ is the file. */
 "error.E5007.keepAlive.resendTuning" = "%1$@, session.keepAlive.writes[].resendTuning: ResendTuning eines Keep-alive muss lizardResendTicks sein. Lösung: Setze resendTuning auf lizardResendTicks oder lass es weg.";
 /* Error E5007, shown when a record file fails: the bundled virtual gamepads hold no record for a virtual gamepad. %2$@ is the virtual gamepad. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: Die gebündelten Datensätze müssen einen Datensatz für das virtuelle Gamepad %2$@ enthalten. Lösung: Installiere OpenJoystickDriver neu.";
+"error.E5007.virtualDevice.bundledMissing" = "%1$@, persona: Die mitgelieferten Einträge müssen einen Eintrag für das virtuelle Gamepad %2$@ enthalten. Lösung: Installiere OpenJoystickDriver neu.";
 /* Error E5007, shown when a record file fails: a bundled virtual gamepad record does not define its virtual gamepad or holds a match. %2$@ is the virtual gamepad. %1$@ is the file. */
-"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: Ein gebündelter Datensatz muss das virtuelle Gamepad %2$@ definieren und kein match enthalten. Lösung: Installiere OpenJoystickDriver neu.";
+"error.E5007.virtualDevice.bundledPersona" = "%1$@, persona: Ein mitgelieferter Eintrag muss das virtuelle Gamepad %2$@ definieren und kein match enthalten. Lösung: Installiere OpenJoystickDriver neu.";
 /* Error E5007, shown when a record file fails: a package file is listed under the wrong list in mod.plist. %2$@ is the list, %3$@ the kind the file has and %4$@ the kind the list takes. %1$@ is the file. */
 "error.E5007.modPackage.kindMismatch" = "%1$@, %2$@: Eine %3$@-Datei darf in mod.plist nicht unter %2$@ stehen, das %4$@-Dateien auflistet. Lösung: Führe die Datei unter der Liste auf, die zu ihrer Art passt.";
 /* Error E5007, shown when a record file fails: a controller names a vendorID or productID outside its range. %1$@ is the file. */
@@ -4051,7 +4051,7 @@
 /* Error E5007, shown when an input layout of a record fails: a layout decodes no control. %1$@ is the file. */
 "error.E5007.inputLayout.noControls" = "%1$@, input.layouts[]: Ein Layout muss mindestens ein Steuerelement dekodieren. Lösung: Füge eine Taste, Achse, einen Hat oder Trigger hinzu.";
 /* Error E5007, shown when the HID usage map of a record fails: a usage map lists no usage. %1$@ is the file. */
-"error.E5007.usageMap.mapEmpty" = "%1$@, input.hidUsageMap.usages: Eine Usage-Zuordnung muss mindestens eine Usage enthalten. Lösung: Füge eine Usage hinzu oder lösche hidUsageMap.";
+"error.E5007.usageMap.mapEmpty" = "%1$@, input.hidUsageMap.usages: Eine Usage-Map muss mindestens eine Usage enthalten. Lösung: Füge eine Usage hinzu oder lösche hidUsageMap.";
 /* Error E5007, shown when the HID usage map of a record fails: two entries of one usage name the same half. %2$@ is the usage as page/usage, %3$@ the half. %1$@ is the file. */
 "error.E5007.usageMap.halfTwice" = "%1$@, input.hidUsageMap.usages[].half: Usage %2$@ nennt die Hälfte %3$@ zweimal. Lösung: Gib jeder Hälfte einer Usage genau einen Eintrag.";
 /* Error E5007, shown when the HID usage map of a record fails: a usage is named twice. %2$@ is the usage as page/usage. %1$@ is the file. */
@@ -5123,7 +5123,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "Wandelt gespeicherte Dokumente einer älteren Version in die aktuelle Version um.";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "Wandelt Settings.plist, AccessGrants.plist, Profile, deine Controllerdatensätze und Patches sowie Dateien virtueller Gamepads mit älterer apiVersion um. Jedes Original bleibt im Ordner Migrated des Support-Ordners erhalten. Mod-Pakete werden ebenfalls umgewandelt. Nenne einen Ordner, um ihn statt des Support-Ordners zu durchsuchen. Jede Datei erhält ein Urteil: Migrated, Current, Failed oder Foreign.";
+"cli.migrate.group.discussion" = "Wandelt Settings.plist, AccessGrants.plist, Profile, deine Controllereinträge und Patches sowie Dateien virtueller Gamepads mit älterer apiVersion um. Jedes Original bleibt im Ordner Migrated des Support-Ordners erhalten. Mod-Pakete werden ebenfalls umgewandelt. Nenne einen Ordner, um ihn statt des Support-Ordners zu durchsuchen. Jede Datei erhält ein Urteil: Migrated, Current, Failed oder Foreign.";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "Listet die Dokumente auf, die umgewandelt würden, und ändert nichts.";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
