@@ -1610,7 +1610,7 @@
 /* Guidance in the motion calibration controls when the service cannot reach the controller: connect the controller again, then use Refresh to read the calibration status. */
 "ui.motion.calibration.controllerUnavailable" = "Hubungkan ulang pengontrol, lalu segarkan status kalibrasi.";
 /* Guidance in the motion calibration controls when the controller has no usable motion data: turn on a profile for this controller and check that motion data is available. */
-"ui.motion.calibration.motionUnavailable" = "Aktifkan profil pemetaan ulang untuk pengontrol ini dan pastikan sensor gerak tersedia.";
+"ui.motion.calibration.motionUnavailable" = "Aktifkan profil untuk pengontrol ini dan pastikan sensor gerak tersedia.";
 /* Status line in the motion calibration controls while the service has no motion samples yet; Refresh checks again. */
 "ui.motion.calibration.waiting" = "Menunggu sampel gerak… Segarkan untuk memeriksa lagi.";
 /* Note in the motion calibration controls: collecting gyro bias keeps running in the service after the window closes, and the Pause button stops it. */
@@ -3208,7 +3208,7 @@
 /* Heading in the output of 'ojd status' above the list of skipped controller records. %lld is the number of records. */
 "cli.status.group.labelSkippedRecords" = "Catatan pengontrol yang dilewati (%lld)";
 /* One-line summary of 'ojd binding' in the command list and at the top of its help. */
-"cli.binding.group.abstract" = "Tampilkan daftar, tetapkan, dan hapus penetapan profil pemetaan ulang.";
+"cli.binding.group.abstract" = "Tampilkan daftar, tetapkan, dan hapus penetapan profil.";
 /* Error of 'ojd binding set' when the JSON of --actions-json cannot be read. %@ is the description of the parse problem. --actions-json stays as written. */
 "cli.binding.group.actionsInvalid" = "--actions-json bukan daftar tindakan yang valid: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
@@ -3334,7 +3334,7 @@
 /* Help text of the PAIR argument of 'ojd controller unpair'. The command in quotes stays as written. */
 "cli.controller.unpair.pair" = "Pasangan: ID sesinya dari “ojd controller pair”, atau ID salah satu Joy-Con.";
 /* One-line summary of 'ojd profile' in the command list and at the top of its help. */
-"cli.profile.group.abstract" = "Buat, ubah, dan aktifkan profil pemetaan ulang.";
+"cli.profile.group.abstract" = "Buat, ubah, dan aktifkan profil.";
 /* One-line summary of 'ojd profile activate' in the command list and at the top of its help. */
 "cli.profile.activate.abstract" = "Terapkan profil ke model pengontrolnya.";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
@@ -3394,7 +3394,7 @@
 /* Message printed by 'ojd profile delete --dry-run' instead of deleting. %@ is the profile name, shown in quotes. */
 "cli.profile.delete.dryRun" = "Akan menghapus profil “%@”.";
 /* Long description in the help of 'ojd profile'. PROFILE and the commands in quotes stay as written. */
-"cli.profile.group.discussion" = "Profil pemetaan ulang mengubah kontrol satu model pengontrol menjadi input gamepad, keyboard, dan penunjuk. PROFILE adalah ID atau nama profil dari “ojd profile list”. Ubah penetapan dengan “ojd binding”, dan hal lainnya dengan “ojd profile set” atau “ojd profile edit”. Setiap perintah profil kecuali “ojd profile validate” memerlukan layanan.";
+"cli.profile.group.discussion" = "Profil mengubah kontrol satu model pengontrol menjadi input gamepad, keyboard, dan penunjuk. PROFILE adalah ID atau nama profil dari “ojd profile list”. Ubah penetapan dengan “ojd binding”, dan hal lainnya dengan “ojd profile set” atau “ojd profile edit”. Setiap perintah profil kecuali “ojd profile validate” memerlukan layanan.";
 /* Error of the profile file commands when a profile document is invalid. %1$@ is the file path or the word stdin and %2$@ is the description of the problem. */
 "cli.profile.group.documentInvalid" = "%1$@ bukan profil yang valid: %2$@";
 /* Reason fragment of a document problem: the text is not JSON. It follows a file name in a message and starts in lowercase. */
@@ -3470,7 +3470,7 @@
 /* Help text of the KEY argument of 'ojd profile get' and 'ojd profile set'. The example bindings.0.behavior stays as written. */
 "cli.profile.group.key" = "Kunci: nama dan indeks array yang digabung dengan titik, seperti bindings.0.behavior.";
 /* One-line summary of 'ojd profile list' in the command list and at the top of its help. */
-"cli.profile.list.abstract" = "Tampilkan daftar profil pemetaan ulang.";
+"cli.profile.list.abstract" = "Tampilkan daftar profil.";
 /* Message printed by 'ojd profile list' when no profile exists. The command in quotes stays as written. */
 "cli.profile.list.empty" = "Tidak ada profil. Buat dengan “ojd profile create”.";
 /* Warning printed by 'ojd profile list' for a stored profile that the service could not load. %@ is the description of the problem. */
@@ -4138,7 +4138,7 @@
 /* Text of error E1011, sent when a line has no apiVersion or no kind. apiVersion and kind are field names and stay as written. */
 "error.E1011.message" = "Sebuah baris tidak memiliki apiVersion atau kind. Setiap baris membawa keduanya. Tambahkan keduanya, lalu sambungkan lagi.";
 /* Description in the Shortcuts app of the action that turns on a remapping profile. */
-"ui.shortcuts.action.activateProfile.description" = "Mengaktifkan profil pemetaan ulang untuk model pengontrolnya.";
+"ui.shortcuts.action.activateProfile.description" = "Mengaktifkan profil untuk model pengontrolnya.";
 /* Name in the Shortcuts app of the action that turns on a remapping profile. */
 "ui.shortcuts.action.activateProfile.title" = "Aktifkan Profil";
 /* Description in the Shortcuts app of the action that returns the app version. */
@@ -4150,7 +4150,7 @@
 /* Name in the Shortcuts app of the action that returns the battery level of a controller. */
 "ui.shortcuts.action.batteryLevel.title" = "Dapatkan Level Baterai";
 /* Description in the Shortcuts app of the action that turns off a remapping profile. */
-"ui.shortcuts.action.deactivateProfile.description" = "Menonaktifkan profil pemetaan ulang.";
+"ui.shortcuts.action.deactivateProfile.description" = "Menonaktifkan profil.";
 /* Name in the Shortcuts app of the action that turns off a remapping profile. */
 "ui.shortcuts.action.deactivateProfile.title" = "Nonaktifkan Profil";
 /* Description in the Shortcuts app of the action that returns the connected controllers. */
@@ -4158,7 +4158,7 @@
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "Dapatkan Pengontrol";
 /* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
-"ui.shortcuts.action.setProfileValue.description" = "Mengubah satu nilai profil pemetaan ulang, misalnya namanya.";
+"ui.shortcuts.action.setProfileValue.description" = "Mengubah satu nilai profil, misalnya namanya.";
 /* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
 "ui.shortcuts.action.setProfileValue.key" = "Kunci";
 /* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
@@ -4228,7 +4228,7 @@
 /* Name of the name property of a profile in the Shortcuts app. */
 "ui.shortcuts.profile.name" = "Nama";
 /* Name of the profile type in the Shortcuts app. It is singular and names one remapping profile. */
-"ui.shortcuts.profile.type" = "Profil Pemetaan Ulang";
+"ui.shortcuts.profile.type" = "Profil";
 /* One-line summary of 'ojd explain' in the command list and at the top of its help. */
 "cli.explain.group.abstract" = "Jelaskan kode kesalahan: artinya dan cara memperbaikinya.";
 /* Long description in the help of 'ojd explain'. ojd explain stays as written. The code case does not matter, so E2004 and e2004 are the same. */
@@ -4354,7 +4354,7 @@
 /* Text of error E3026, returned when a Joy-Con pair profile needs a gyro calibration of the other Joy-Con. Joy-Con is a Nintendo product name. */
 "error.E3026.message" = "Profil pasangan Joy-Con mengambil giroskop dari Joy-Con lainnya. Kalibrasi gerak pengontrol yang dipilih profil untuk giroskop.";
 /* Text of error E3027, returned when a motion request names a controller with no active remapping profile. */
-"error.E3027.message" = "Tidak ada profil pemetaan ulang yang aktif untuk pengontrol, sehingga gerak tidak diproses. Aktifkan profil untuknya, bawa app target ke depan, lalu coba lagi.";
+"error.E3027.message" = "Tidak ada profil yang aktif untuk pengontrol, sehingga gerak tidak diproses. Aktifkan profil untuknya, bawa app target ke depan, lalu coba lagi.";
 /* Text of error E3028, returned when the remapping session of the controller changed while a request ran. */
 "error.E3028.message" = "Sesi pemetaan ulang pengontrol berubah saat permintaan berjalan. Coba lagi.";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */

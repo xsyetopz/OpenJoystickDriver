@@ -1610,7 +1610,7 @@
 /* Guidance in the motion calibration controls when the service cannot reach the controller: connect the controller again, then use Refresh to read the calibration status. */
 "ui.motion.calibration.controllerUnavailable" = "請重新連接控制器，然後重新整理校準狀態。";
 /* Guidance in the motion calibration controls when the controller has no usable motion data: turn on a profile for this controller and check that motion data is available. */
-"ui.motion.calibration.motionUnavailable" = "請為這個控制器啟用重新對應設定檔，並確認體感可用。";
+"ui.motion.calibration.motionUnavailable" = "請為這個控制器啟用設定檔，並確認體感可用。";
 /* Status line in the motion calibration controls while the service has no motion samples yet; Refresh checks again. */
 "ui.motion.calibration.waiting" = "正在等待體感樣本…重新整理以再次檢查。";
 /* Note in the motion calibration controls: collecting gyro bias keeps running in the service after the window closes, and the Pause button stops it. */
@@ -3208,7 +3208,7 @@
 /* Heading in the output of 'ojd status' above the list of skipped controller records. %lld is the number of records. */
 "cli.status.group.labelSkippedRecords" = "已略過的控制器記錄 (%lld)";
 /* One-line summary of 'ojd binding' in the command list and at the top of its help. */
-"cli.binding.group.abstract" = "列出、設定和清除重新對應設定檔的對應。";
+"cli.binding.group.abstract" = "列出、設定和清除設定檔的對應。";
 /* Error of 'ojd binding set' when the JSON of --actions-json cannot be read. %@ is the description of the parse problem. --actions-json stays as written. */
 "cli.binding.group.actionsInvalid" = "--actions-json 不是有效的動作清單：%@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
@@ -3334,7 +3334,7 @@
 /* Help text of the PAIR argument of 'ojd controller unpair'. The command in quotes stays as written. */
 "cli.controller.unpair.pair" = "配對：來自「ojd controller pair」的工作階段 ID，或任一 Joy-Con 的 ID。";
 /* One-line summary of 'ojd profile' in the command list and at the top of its help. */
-"cli.profile.group.abstract" = "建立、變更和啟用重新對應設定檔。";
+"cli.profile.group.abstract" = "建立、變更和啟用設定檔。";
 /* One-line summary of 'ojd profile activate' in the command list and at the top of its help. */
 "cli.profile.activate.abstract" = "將設定檔套用到其控制器型號。";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
@@ -3394,7 +3394,7 @@
 /* Message printed by 'ojd profile delete --dry-run' instead of deleting. %@ is the profile name, shown in quotes. */
 "cli.profile.delete.dryRun" = "將會刪除設定檔「%@」。";
 /* Long description in the help of 'ojd profile'. PROFILE and the commands in quotes stay as written. */
-"cli.profile.group.discussion" = "重新對應設定檔會把某一控制器型號的控制項轉換為遊戲控制器、鍵盤和指標輸入。PROFILE 是來自「ojd profile list」的設定檔 ID 或名稱。請用「ojd binding」變更對應，其他內容用「ojd profile set」或「ojd profile edit」變更。除「ojd profile validate」外，每個設定檔指令都需要服務。";
+"cli.profile.group.discussion" = "設定檔會把某一控制器型號的控制項轉換為遊戲控制器、鍵盤和指標輸入。PROFILE 是來自「ojd profile list」的設定檔 ID 或名稱。請用「ojd binding」變更對應，其他內容用「ojd profile set」或「ojd profile edit」變更。除「ojd profile validate」外，每個設定檔指令都需要服務。";
 /* Error of the profile file commands when a profile document is invalid. %1$@ is the file path or the word stdin and %2$@ is the description of the problem. */
 "cli.profile.group.documentInvalid" = "%1$@ 不是有效的設定檔：%2$@";
 /* Reason fragment of a document problem: the text is not JSON. It follows a file name in a message and starts in lowercase. */
@@ -3470,7 +3470,7 @@
 /* Help text of the KEY argument of 'ojd profile get' and 'ojd profile set'. The example bindings.0.behavior stays as written. */
 "cli.profile.group.key" = "鍵：以點連接的名稱和陣列索引，例如 bindings.0.behavior。";
 /* One-line summary of 'ojd profile list' in the command list and at the top of its help. */
-"cli.profile.list.abstract" = "列出重新對應設定檔。";
+"cli.profile.list.abstract" = "列出設定檔。";
 /* Message printed by 'ojd profile list' when no profile exists. The command in quotes stays as written. */
 "cli.profile.list.empty" = "沒有設定檔。請用「ojd profile create」建立。";
 /* Warning printed by 'ojd profile list' for a stored profile that the service could not load. %@ is the description of the problem. */
@@ -4138,7 +4138,7 @@
 /* Text of error E1011, sent when a line has no apiVersion or no kind. apiVersion and kind are field names and stay as written. */
 "error.E1011.message" = "某一行缺少 apiVersion 或 kind。每一行都必須同時包含兩者。請補上後重新連線。";
 /* Description in the Shortcuts app of the action that turns on a remapping profile. */
-"ui.shortcuts.action.activateProfile.description" = "為控制器型號啟用重新對應設定檔。";
+"ui.shortcuts.action.activateProfile.description" = "為控制器型號啟用設定檔。";
 /* Name in the Shortcuts app of the action that turns on a remapping profile. */
 "ui.shortcuts.action.activateProfile.title" = "啟用設定檔";
 /* Description in the Shortcuts app of the action that returns the app version. */
@@ -4150,7 +4150,7 @@
 /* Name in the Shortcuts app of the action that returns the battery level of a controller. */
 "ui.shortcuts.action.batteryLevel.title" = "取得電池電量";
 /* Description in the Shortcuts app of the action that turns off a remapping profile. */
-"ui.shortcuts.action.deactivateProfile.description" = "停用重新對應設定檔。";
+"ui.shortcuts.action.deactivateProfile.description" = "停用設定檔。";
 /* Name in the Shortcuts app of the action that turns off a remapping profile. */
 "ui.shortcuts.action.deactivateProfile.title" = "停用設定檔";
 /* Description in the Shortcuts app of the action that returns the connected controllers. */
@@ -4158,7 +4158,7 @@
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "取得控制器";
 /* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
-"ui.shortcuts.action.setProfileValue.description" = "更改重新對應設定檔的其中一個值，例如名稱。";
+"ui.shortcuts.action.setProfileValue.description" = "更改設定檔的其中一個值，例如名稱。";
 /* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
 "ui.shortcuts.action.setProfileValue.key" = "鍵";
 /* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
@@ -4228,7 +4228,7 @@
 /* Name of the name property of a profile in the Shortcuts app. */
 "ui.shortcuts.profile.name" = "名稱";
 /* Name of the profile type in the Shortcuts app. It is singular and names one remapping profile. */
-"ui.shortcuts.profile.type" = "重新對應設定檔";
+"ui.shortcuts.profile.type" = "設定檔";
 /* One-line summary of 'ojd explain' in the command list and at the top of its help. */
 "cli.explain.group.abstract" = "解釋錯誤代碼：它的含義以及如何修復。";
 /* Long description in the help of 'ojd explain'. ojd explain stays as written. The code case does not matter, so E2004 and e2004 are the same. */
@@ -4354,7 +4354,7 @@
 /* Text of error E3026, returned when a Joy-Con pair profile needs a gyro calibration of the other Joy-Con. Joy-Con is a Nintendo product name. */
 "error.E3026.message" = "Joy-Con 配對設定檔使用另一隻 Joy-Con 的陀螺儀。請校正該設定檔為陀螺儀所選的控制器的體感。";
 /* Text of error E3027, returned when a motion request names a controller with no active remapping profile. */
-"error.E3027.message" = "該控制器沒有已啟用的重新對應設定檔，因此不會處理體感資料。請為其啟用一個設定檔，將目標 App 切換到前景，然後重試。";
+"error.E3027.message" = "該控制器沒有已啟用的設定檔，因此不會處理體感資料。請為其啟用一個設定檔，將目標 App 切換到前景，然後重試。";
 /* Text of error E3028, returned when the remapping session of the controller changed while a request ran. */
 "error.E3028.message" = "要求執行期間，該控制器的重新對應工作階段已變更。請重試。";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */

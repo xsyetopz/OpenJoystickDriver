@@ -1610,7 +1610,7 @@
 /* Guidance in the motion calibration controls when the service cannot reach the controller: connect the controller again, then use Refresh to read the calibration status. */
 "ui.motion.calibration.controllerUnavailable" = "Reconnectez la manette, puis actualisez l’état de l’étalonnage.";
 /* Guidance in the motion calibration controls when the controller has no usable motion data: turn on a profile for this controller and check that motion data is available. */
-"ui.motion.calibration.motionUnavailable" = "Activez un profil de remappage pour cette manette et vérifiez que les données de mouvement sont disponibles.";
+"ui.motion.calibration.motionUnavailable" = "Activez un profil pour cette manette et vérifiez que les données de mouvement sont disponibles.";
 /* Status line in the motion calibration controls while the service has no motion samples yet; Refresh checks again. */
 "ui.motion.calibration.waiting" = "En attente de données de mouvement… Actualisez pour vérifier à nouveau.";
 /* Note in the motion calibration controls: collecting gyro bias keeps running in the service after the window closes, and the Pause button stops it. */
@@ -3208,7 +3208,7 @@
 /* Heading in the output of 'ojd status' above the list of skipped controller records. %lld is the number of records. */
 "cli.status.group.labelSkippedRecords" = "Fiches de manette ignorées (%lld)";
 /* One-line summary of 'ojd binding' in the command list and at the top of its help. */
-"cli.binding.group.abstract" = "Lister, définir et effacer les affectations d’un profil de remappage.";
+"cli.binding.group.abstract" = "Lister, définir et effacer les affectations d’un profil.";
 /* Error of 'ojd binding set' when the JSON of --actions-json cannot be read. %@ is the description of the parse problem. --actions-json stays as written. */
 "cli.binding.group.actionsInvalid" = "--actions-json n’est pas une liste d’actions valide : %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
@@ -3334,7 +3334,7 @@
 /* Help text of the PAIR argument of 'ojd controller unpair'. The command in quotes stays as written. */
 "cli.controller.unpair.pair" = "La paire : son identifiant de session issu de « ojd controller pair », ou l’identifiant de l’un des Joy-Con.";
 /* One-line summary of 'ojd profile' in the command list and at the top of its help. */
-"cli.profile.group.abstract" = "Créer, modifier et activer des profils de remappage.";
+"cli.profile.group.abstract" = "Créer, modifier et activer des profils.";
 /* One-line summary of 'ojd profile activate' in the command list and at the top of its help. */
 "cli.profile.activate.abstract" = "Appliquer un profil au modèle de sa manette.";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
@@ -3394,7 +3394,7 @@
 /* Message printed by 'ojd profile delete --dry-run' instead of deleting. %@ is the profile name, shown in quotes. */
 "cli.profile.delete.dryRun" = "Le profil « %@ » serait supprimé.";
 /* Long description in the help of 'ojd profile'. PROFILE and the commands in quotes stay as written. */
-"cli.profile.group.discussion" = "Un profil de remappage transforme les commandes d’un modèle de manette en entrées de manette, de clavier et de pointeur. PROFILE est l’identifiant ou le nom d’un profil issu de « ojd profile list ». Modifiez les affectations avec « ojd binding », et tout le reste avec « ojd profile set » ou « ojd profile edit ». Toutes les commandes de profil, sauf « ojd profile validate », exigent le service.";
+"cli.profile.group.discussion" = "Un profil transforme les commandes d’un modèle de manette en entrées de manette, de clavier et de pointeur. PROFILE est l’identifiant ou le nom d’un profil issu de « ojd profile list ». Modifiez les affectations avec « ojd binding », et tout le reste avec « ojd profile set » ou « ojd profile edit ». Toutes les commandes de profil, sauf « ojd profile validate », exigent le service.";
 /* Error of the profile file commands when a profile document is invalid. %1$@ is the file path or the word stdin and %2$@ is the description of the problem. */
 "cli.profile.group.documentInvalid" = "%1$@ n’est pas un profil valide : %2$@";
 /* Reason fragment of a document problem: the text is not JSON. It follows a file name in a message and starts in lowercase. */
@@ -3470,7 +3470,7 @@
 /* Help text of the KEY argument of 'ojd profile get' and 'ojd profile set'. The example bindings.0.behavior stays as written. */
 "cli.profile.group.key" = "La clé : noms et index de tableau reliés par des points, par exemple bindings.0.behavior.";
 /* One-line summary of 'ojd profile list' in the command list and at the top of its help. */
-"cli.profile.list.abstract" = "Lister les profils de remappage.";
+"cli.profile.list.abstract" = "Lister les profils.";
 /* Message printed by 'ojd profile list' when no profile exists. The command in quotes stays as written. */
 "cli.profile.list.empty" = "Aucun profil. Créez-en un avec « ojd profile create ».";
 /* Warning printed by 'ojd profile list' for a stored profile that the service could not load. %@ is the description of the problem. */
@@ -3552,7 +3552,7 @@
 /* Text of error E1011, sent when a line has no apiVersion or no kind. apiVersion and kind are field names and stay as written. */
 "error.E1011.message" = "Une ligne n’a pas d’apiVersion ou pas de kind. Chaque ligne contient les deux. Ajoutez-les, puis reconnectez-vous.";
 /* Description in the Shortcuts app of the action that turns on a remapping profile. */
-"ui.shortcuts.action.activateProfile.description" = "Active un profil de remappage pour le modèle de sa manette.";
+"ui.shortcuts.action.activateProfile.description" = "Active un profil pour le modèle de sa manette.";
 /* Name in the Shortcuts app of the action that turns on a remapping profile. */
 "ui.shortcuts.action.activateProfile.title" = "Activer le profil";
 /* Description in the Shortcuts app of the action that returns the app version. */
@@ -3564,7 +3564,7 @@
 /* Name in the Shortcuts app of the action that returns the battery level of a controller. */
 "ui.shortcuts.action.batteryLevel.title" = "Obtenir le niveau de batterie";
 /* Description in the Shortcuts app of the action that turns off a remapping profile. */
-"ui.shortcuts.action.deactivateProfile.description" = "Désactive un profil de remappage.";
+"ui.shortcuts.action.deactivateProfile.description" = "Désactive un profil.";
 /* Name in the Shortcuts app of the action that turns off a remapping profile. */
 "ui.shortcuts.action.deactivateProfile.title" = "Désactiver le profil";
 /* Description in the Shortcuts app of the action that returns the connected controllers. */
@@ -3572,7 +3572,7 @@
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "Obtenir les manettes";
 /* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
-"ui.shortcuts.action.setProfileValue.description" = "Modifie une valeur d’un profil de remappage, par exemple son nom.";
+"ui.shortcuts.action.setProfileValue.description" = "Modifie une valeur d’un profil, par exemple son nom.";
 /* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
 "ui.shortcuts.action.setProfileValue.key" = "Clé";
 /* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
@@ -3642,7 +3642,7 @@
 /* Name of the name property of a profile in the Shortcuts app. */
 "ui.shortcuts.profile.name" = "Nom";
 /* Name of the profile type in the Shortcuts app. It is singular and names one remapping profile. */
-"ui.shortcuts.profile.type" = "Profil de remappage";
+"ui.shortcuts.profile.type" = "Profil";
 /* One-line summary of 'ojd explain' in the command list and at the top of its help. */
 "cli.explain.group.abstract" = "Explique un code d’erreur : sa signification et comment y remédier.";
 /* Long description in the help of 'ojd explain'. ojd explain stays as written. The code case does not matter, so E2004 and e2004 are the same. */
@@ -3768,7 +3768,7 @@
 /* Text of error E3026, returned when a Joy-Con pair profile needs a gyro calibration of the other Joy-Con. Joy-Con is a Nintendo product name. */
 "error.E3026.message" = "Le profil de la paire de Joy-Con prend le gyroscope de l’autre Joy-Con. Calibrez le mouvement de la manette que le profil sélectionne pour le gyroscope.";
 /* Text of error E3027, returned when a motion request names a controller with no active remapping profile. */
-"error.E3027.message" = "Aucun profil de remappage n’est actif pour la manette, elle ne traite donc pas le mouvement. Activez un profil pour elle, amenez l’app cible au premier plan et réessayez.";
+"error.E3027.message" = "Aucun profil n’est actif pour la manette, elle ne traite donc pas le mouvement. Activez un profil pour elle, amenez l’app cible au premier plan et réessayez.";
 /* Text of error E3028, returned when the remapping session of the controller changed while a request ran. */
 "error.E3028.message" = "La session de remappage de la manette a changé pendant la requête. Réessayez.";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */

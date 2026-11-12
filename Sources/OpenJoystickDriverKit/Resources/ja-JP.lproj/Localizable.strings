@@ -1610,7 +1610,7 @@
 /* Guidance in the motion calibration controls when the service cannot reach the controller: connect the controller again, then use Refresh to read the calibration status. */
 "ui.motion.calibration.controllerUnavailable" = "コントローラを再接続してから、キャリブレーションの状態を更新してください。";
 /* Guidance in the motion calibration controls when the controller has no usable motion data: turn on a profile for this controller and check that motion data is available. */
-"ui.motion.calibration.motionUnavailable" = "このコントローラのリマッピングプロファイルを有効にし、モーションが利用できることを確認してください。";
+"ui.motion.calibration.motionUnavailable" = "このコントローラのプロファイルを有効にし、モーションが利用できることを確認してください。";
 /* Status line in the motion calibration controls while the service has no motion samples yet; Refresh checks again. */
 "ui.motion.calibration.waiting" = "モーションのサンプルを待っています…もう一度確認するには更新してください。";
 /* Note in the motion calibration controls: collecting gyro bias keeps running in the service after the window closes, and the Pause button stops it. */
@@ -3208,7 +3208,7 @@
 /* Heading in the output of 'ojd status' above the list of skipped controller records. %lld is the number of records. */
 "cli.status.group.labelSkippedRecords" = "スキップされたコントローラレコード (%lld)";
 /* One-line summary of 'ojd binding' in the command list and at the top of its help. */
-"cli.binding.group.abstract" = "リマッピングプロファイルの割り当てを一覧表示、設定、消去します。";
+"cli.binding.group.abstract" = "プロファイルの割り当てを一覧表示、設定、消去します。";
 /* Error of 'ojd binding set' when the JSON of --actions-json cannot be read. %@ is the description of the parse problem. --actions-json stays as written. */
 "cli.binding.group.actionsInvalid" = "--actions-json は有効なアクションリストではありません: %@";
 /* Error of 'ojd binding set' when the JSON of --actions-json exceeds the size limit. --actions-json stays as written. */
@@ -3334,7 +3334,7 @@
 /* Help text of the PAIR argument of 'ojd controller unpair'. The command in quotes stays as written. */
 "cli.controller.unpair.pair" = "ペア:「ojd controller pair」が表示するセッション ID、またはどちらかの Joy-Con の ID。";
 /* One-line summary of 'ojd profile' in the command list and at the top of its help. */
-"cli.profile.group.abstract" = "リマッピングプロファイルを作成、変更、有効化します。";
+"cli.profile.group.abstract" = "プロファイルを作成、変更、有効化します。";
 /* One-line summary of 'ojd profile activate' in the command list and at the top of its help. */
 "cli.profile.activate.abstract" = "プロファイルを対象のコントローラモデルに適用します。";
 /* Help text of the --allow-empty flag of 'ojd profile activate'. */
@@ -3394,7 +3394,7 @@
 /* Message printed by 'ojd profile delete --dry-run' instead of deleting. %@ is the profile name, shown in quotes. */
 "cli.profile.delete.dryRun" = "プロファイル「%@」を削除します。";
 /* Long description in the help of 'ojd profile'. PROFILE and the commands in quotes stay as written. */
-"cli.profile.group.discussion" = "リマッピングプロファイルは、1 つのコントローラモデルの操作部をゲームパッド、キーボード、ポインタの入力に変換します。PROFILE は「ojd profile list」に表示されるプロファイルの ID または名前です。割り当ては「ojd binding」で、それ以外は「ojd profile set」または「ojd profile edit」で変更します。「ojd profile validate」を除くプロファイルのコマンドはすべてサービスが必要です。";
+"cli.profile.group.discussion" = "プロファイルは、1 つのコントローラモデルの操作部をゲームパッド、キーボード、ポインタの入力に変換します。PROFILE は「ojd profile list」に表示されるプロファイルの ID または名前です。割り当ては「ojd binding」で、それ以外は「ojd profile set」または「ojd profile edit」で変更します。「ojd profile validate」を除くプロファイルのコマンドはすべてサービスが必要です。";
 /* Error of the profile file commands when a profile document is invalid. %1$@ is the file path or the word stdin and %2$@ is the description of the problem. */
 "cli.profile.group.documentInvalid" = "%1$@ は有効なプロファイルではありません: %2$@";
 /* Reason fragment of a document problem: the text is not JSON. It follows a file name in a message and starts in lowercase. */
@@ -3470,7 +3470,7 @@
 /* Help text of the KEY argument of 'ojd profile get' and 'ojd profile set'. The example bindings.0.behavior stays as written. */
 "cli.profile.group.key" = "キー: 名前と配列インデックスをドットでつないだもの。例: bindings.0.behavior。";
 /* One-line summary of 'ojd profile list' in the command list and at the top of its help. */
-"cli.profile.list.abstract" = "リマッピングプロファイルを一覧表示します。";
+"cli.profile.list.abstract" = "プロファイルを一覧表示します。";
 /* Message printed by 'ojd profile list' when no profile exists. The command in quotes stays as written. */
 "cli.profile.list.empty" = "プロファイルがありません。「ojd profile create」で作成してください。";
 /* Warning printed by 'ojd profile list' for a stored profile that the service could not load. %@ is the description of the problem. */
@@ -4138,7 +4138,7 @@
 /* Text of error E1011, sent when a line has no apiVersion or no kind. apiVersion and kind are field names and stay as written. */
 "error.E1011.message" = "行に apiVersion または kind がありません。すべての行に両方が必要です。追加して、もう一度接続してください。";
 /* Description in the Shortcuts app of the action that turns on a remapping profile. */
-"ui.shortcuts.action.activateProfile.description" = "リマッピングプロファイルを、対象のコントローラモデルに対して有効にします。";
+"ui.shortcuts.action.activateProfile.description" = "プロファイルを、対象のコントローラモデルに対して有効にします。";
 /* Name in the Shortcuts app of the action that turns on a remapping profile. */
 "ui.shortcuts.action.activateProfile.title" = "プロファイルを有効にする";
 /* Description in the Shortcuts app of the action that returns the app version. */
@@ -4150,7 +4150,7 @@
 /* Name in the Shortcuts app of the action that returns the battery level of a controller. */
 "ui.shortcuts.action.batteryLevel.title" = "バッテリー残量を取得";
 /* Description in the Shortcuts app of the action that turns off a remapping profile. */
-"ui.shortcuts.action.deactivateProfile.description" = "リマッピングプロファイルを無効にします。";
+"ui.shortcuts.action.deactivateProfile.description" = "プロファイルを無効にします。";
 /* Name in the Shortcuts app of the action that turns off a remapping profile. */
 "ui.shortcuts.action.deactivateProfile.title" = "プロファイルを無効にする";
 /* Description in the Shortcuts app of the action that returns the connected controllers. */
@@ -4158,7 +4158,7 @@
 /* Name in the Shortcuts app of the action that returns the connected controllers. */
 "ui.shortcuts.action.getControllers.title" = "コントローラを取得";
 /* Description in the Shortcuts app of the action that changes one value of a remapping profile. */
-"ui.shortcuts.action.setProfileValue.description" = "リマッピングプロファイルの値を1つ変更します（名前など）。";
+"ui.shortcuts.action.setProfileValue.description" = "プロファイルの値を1つ変更します（名前など）。";
 /* Name of the key parameter of the action that changes one value of a remapping profile in the Shortcuts app. The key is the dotted path of the value in the profile, such as name. */
 "ui.shortcuts.action.setProfileValue.key" = "キー";
 /* Name in the Shortcuts app of the action that changes one value of a remapping profile. */
@@ -4228,7 +4228,7 @@
 /* Name of the name property of a profile in the Shortcuts app. */
 "ui.shortcuts.profile.name" = "名前";
 /* Name of the profile type in the Shortcuts app. It is singular and names one remapping profile. */
-"ui.shortcuts.profile.type" = "リマッピングプロファイル";
+"ui.shortcuts.profile.type" = "プロファイル";
 /* One-line summary of 'ojd explain' in the command list and at the top of its help. */
 "cli.explain.group.abstract" = "エラーコードの意味と対処方法を説明します。";
 /* Long description in the help of 'ojd explain'. ojd explain stays as written. The code case does not matter, so E2004 and e2004 are the same. */
@@ -4354,7 +4354,7 @@
 /* Text of error E3026, returned when a Joy-Con pair profile needs a gyro calibration of the other Joy-Con. Joy-Con is a Nintendo product name. */
 "error.E3026.message" = "Joy-Con ペアのプロファイルは、もう一方の Joy-Con のジャイロを使います。プロファイルがジャイロに選んでいるコントローラのモーションをキャリブレーションしてください。";
 /* Text of error E3027, returned when a motion request names a controller with no active remapping profile. */
-"error.E3027.message" = "このコントローラにはリマッピングのプロファイルが有効になっていないため、モーションを処理しません。プロファイルを有効にし、対象 App を前面に出して、もう一度お試しください。";
+"error.E3027.message" = "このコントローラにはプロファイルが有効になっていないため、モーションを処理しません。プロファイルを有効にし、対象 App を前面に出して、もう一度お試しください。";
 /* Text of error E3028, returned when the remapping session of the controller changed while a request ran. */
 "error.E3028.message" = "リクエストの実行中にコントローラのリマッピングセッションが変わりました。もう一度お試しください。";
 /* Text of error E3029, returned when a profile that comes from an installed package is edited. */
