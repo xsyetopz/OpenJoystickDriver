@@ -5,8 +5,8 @@ import Testing
 
 @testable import OpenJoystickDriverPresentation
 
-/// The detail of a connected device that OJD does not serve: the reason, the next step, and the
-/// Draft Record action for a HID pad.
+/// The detail of a connected device that OJD does not serve: its state and the Draft Record
+/// action for a HID pad.
 struct UnservedDeviceDetailTests {
   private static let gamepad = PhysicalInterfaceSignature(
     interfaceClass: 3,

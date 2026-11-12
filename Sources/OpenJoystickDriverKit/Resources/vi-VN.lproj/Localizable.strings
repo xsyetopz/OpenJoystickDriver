@@ -4780,8 +4780,6 @@
 "ui.controllers.draftRecordFromSDL" = "Soạn nháp bản ghi từ SDL…";
 /* Message when the controller cannot be read to draft a record from SDL_GameControllerDB. %@ is the controller model. HID is the abbreviation of Human Interface Device and stays as written. */
 "ui.controllers.draftRecordFromSDL.noPad" = "%@ không được kết nối như một thiết bị HID mà OpenJoystickDriver đọc được.";
-/* Label above the sentence in the Controllers detail of a connected device that OpenJoystickDriver does not serve. The sentence says what to do about it. */
-"ui.controllers.unserved.nextStepLabel" = "Bước tiếp theo";
 /* Button in the Controllers detail that starts a packet capture of the controller. Keep the three dots. */
 "ui.controllers.capturePackets" = "Ghi gói tin…";
 /* Title of the sheet that captures packets of the controller. */
