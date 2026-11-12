@@ -202,6 +202,8 @@ enum GUICoverageEntries {
     option("profile create", "--activation", "ProfileGyroDraft"),
     leaf("profile duplicate", "ProfileDuplicateSheet"),
     leaf("profile convert", "ProfileConversionSheet"),
+    option("profile convert", "--controller", "ProfileConversionModel"),
+    option("profile convert", "--name", "ProfileConversionModel"),
     leaf("profile rename", "updateMetadata"),
     leaf("profile delete", "deleteProfile"),
     leaf("profile activate", "activateProfile"),
