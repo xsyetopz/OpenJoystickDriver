@@ -2906,9 +2906,9 @@
 /* One-line summary of 'ojd protocol validate' in the command list and at the top of its help. */
 "cli.protocol.validate.abstract" = "檢查協定描述檔案，不安裝。";
 /* Long description in the help of 'ojd protocol validate'. UpperCamelCase describes the spelling of a family name. E5xxx stays as written. */
-"cli.protocol.validate.discussion" = "檢查檔案是有效的描述、系列名稱為 UpperCamelCase 且與檔名相符、不是內建系列，並設定了顯示名稱和輸入配置。檔案被拒絕時會以 1 結束並給出 E5xxx 代碼。";
+"cli.protocol.validate.discussion" = "檢查檔案是有效的描述、系列名稱為 UpperCamelCase 且與檔名相符、不是內建系列，並設定了顯示名稱和輸入版面。檔案被拒絕時會以 1 結束並給出 E5xxx 代碼。";
 /* Message printed by 'ojd protocol validate' for a valid file. %1$@ is the file, %2$@ is the family name and %3$@ is its display name. The command in quotes stays as written. */
-"cli.protocol.validate.valid" = "%1$@ 是系列 %2$@（%3$@）的有效描述。可用 'ojd protocol install' 安裝。";
+"cli.protocol.validate.valid" = "%1$@ 是系列 %2$@（%3$@）的有效描述。可用「ojd protocol install」安裝。";
 /* One-line summary of 'ojd protocol install' in the command list and at the top of its help. */
 "cli.protocol.install.abstract" = "檢查協定描述並為目前使用者安裝。";
 /* Long description in the help of 'ojd protocol install'. Protocols/FAMILY.plist and --dry-run stay as written. */
@@ -2918,11 +2918,11 @@
 /* One-line summary of 'ojd protocol list' in the command list and at the top of its help. */
 "cli.protocol.list.abstract" = "列出內建和有文件的協定系列及各自的來源。";
 /* Long description in the help of 'ojd protocol list'. */
-"cli.protocol.list.discussion" = "列出每個系列及其顯示名稱和來源：內建、你的 Protocols 資料夾或模組套件。被拒絕的描述不會列出。";
+"cli.protocol.list.discussion" = "列出每個系列及其顯示名稱和來源：內建、您的 Protocols 資料夾或模組套件。被拒絕的描述不會列出。";
 /* Source shown by 'ojd protocol list' for a family that OJD builds in. */
 "cli.protocol.list.builtIn" = "內建系列";
 /* Source shown by 'ojd protocol list' for a family from a description in the user's Protocols folder. Protocols stays as written. */
-"cli.protocol.list.user" = "你的 Protocols 資料夾";
+"cli.protocol.list.user" = "您的 Protocols 資料夾";
 /* Source shown by 'ojd protocol list' for a family from a mod package. %@ is the package name. */
 "cli.protocol.list.package" = "套件 %@";
 /* One-line summary of 'ojd mod remove' in the command list and at the top of its help. */
@@ -3008,7 +3008,7 @@
 /* Message printed by 'ojd virtual reset --all --dry-run' instead of resetting. */
 "cli.virtual.reset.allDryRun" = "會讓所有控制器型號恢復自動選擇虛擬遊戲控制器。";
 /* Error of 'ojd virtual reset --all' when the service could not clear the choices, such as when a virtual gamepad file sets its own identity. The folder name VirtualDevices and the command in quotes stay as written. */
-"cli.virtual.reset.allFailed" = "服務無法清除所有虛擬遊戲控制器的選擇。VirtualDevices 資料夾中設定了自己身分的虛擬遊戲控制器檔案會保留，直到你編輯或刪除它。請用「ojd status」檢查。";
+"cli.virtual.reset.allFailed" = "服務無法清除所有虛擬遊戲控制器的選擇。VirtualDevices 資料夾中設定了自己身分的虛擬遊戲控制器檔案會保留，直到您編輯或刪除它。請用「ojd status」檢查。";
 /* Yes or no question that 'ojd virtual reset --all' asks on a terminal. */
 "cli.virtual.reset.allSummary" = "要讓所有控制器型號恢復自動選擇虛擬遊戲控制器嗎？";
 /* Long description in the help of 'ojd virtual reset'. --all and --force stay as written. */
@@ -3364,7 +3364,7 @@
 /* Help text of the --activation option of 'ojd profile create'. The value is a source such as button:left-shoulder and stays as written. gyro-stick is the template name and stays as written. */
 "cli.profile.create.activation" = "為陀螺儀輸出而按住的控制項 (gyro-stick 範本)。未指定時，陀螺儀輸出一律開啟。";
 /* Help text of the --app option of 'ojd profile create'. An app ID is the bundle identifier of an app, such as com.apple.Safari. */
-"cli.profile.create.app" = "僅在此 App（依 App ID）位於最前方時套用該描述檔。重複該選項可指定更多 App。";
+"cli.profile.create.app" = "僅在此 App（依 App ID）位於最前方時套用該設定檔。重複該選項可指定更多 App。";
 /* Help text of the --controller option of 'ojd profile create'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.create.controller" = "控制器型號：VVVV:PPPP，或已連接控制器的 ID。";
 /* Long description in the help of 'ojd profile create'. --app and the command in quotes stay as written. */
@@ -3412,7 +3412,7 @@
 /* Reason fragment of a document problem for one field. %1$@ is the field path, which stays as written and is shown in quotes, and %2$@ is the problem found. */
 "cli.shared.document.fieldProblem" = "「%1$@」：%2$@";
 /* One-line summary of 'ojd profile convert' in the command list and at the top of its help. */
-"cli.profile.convert.abstract" = "為另一種控制器型號複製設定檔，並保留該型號可用的綁定。";
+"cli.profile.convert.abstract" = "為另一種控制器型號複製設定檔，並保留該型號可用的對應。";
 /* Help text of the --controller option of 'ojd profile convert'. VVVV:PPPP is the vendor ID and product ID in hexadecimal and stays as written. */
 "cli.profile.convert.controller" = "要轉換成的控制器型號：VVVV:PPPP，或已連接控制器的 ID。";
 /* Help text of the --name option of 'ojd profile convert'. */
@@ -3464,7 +3464,7 @@
 /* Message printed after 'ojd profile import' added a profile. %1$@ is the profile name, shown in quotes, and %2$@ is the profile ID. */
 "cli.profile.import.added" = "已匯入「%1$@」（%2$@）。";
 /* Help text of the --app option of 'ojd profile import'. An app ID is the bundle identifier of an app, such as com.apple.Safari. --app stays as written. */
-"cli.profile.import.app" = "僅在此 App（依 App ID）位於最前方時才套用匯入的描述檔，取代檔案中的範圍。重複該選項可指定更多 App。";
+"cli.profile.import.app" = "僅在此 App（依 App ID）位於最前方時才套用匯入的設定檔，取代檔案中的範圍。重複該選項可指定更多 App。";
 /* Long description in the help of 'ojd profile import'. The single hyphen is the argument that means stdin and stays as written. */
 "cli.profile.import.discussion" = "使用 - 從 stdin 讀取設定檔。ID 與現有設定檔相同的設定檔會取代它。";
 /* Help text of the FILE argument of 'ojd profile import'. The single hyphen means stdin and stays as written. */
@@ -4558,7 +4558,7 @@
 /* Error E5007, shown when a record file fails: a controller names an unsupported USB configuration. %2$@ is the configuration. %1$@ is the file. */
 "error.E5007.deviceCatalog.usbConfiguration" = "%1$@，usb.configuration：USB 設定必須是 SetConfiguration1BeforeClaim，而不是 %2$@。修正：將 configuration 設為 SetConfiguration1BeforeClaim，或省略。";
 /* Error E5007, shown when a record file fails: a patch file sits at a path its selector does not give. %2$@ is the expected path. %1$@ is the file. */
-"error.E5007.patch.path" = "%1$@，selector：修補檔必須位於 %2$@。修正：將檔案移到那裡，或修改它的 selector。";
+"error.E5007.patch.path" = "%1$@，selector：補丁檔案必須位於 %2$@。修正：將檔案移到那裡，或修改它的 selector。";
 /* Error E5007, shown when a record file fails: the tuning defaults patch has a selector other than all. %1$@ is the file. */
 "error.E5007.tuningDefaults.selector" = "%1$@，selector：調校預設值的 selector 必須為 all。修正：將 selector 設為 all。";
 
@@ -4571,7 +4571,7 @@
 /* Error E5007, shown when a patch file fails: a remove entry is not text. %1$@ is the file. */
 "error.E5007.patch.removeNotText" = "%1$@，remove：remove 必須以文字形式給出由點分隔的鍵路徑。修正：將每個項目寫成字串。";
 /* Error E5007, shown when a patch file fails: a remove path is not in the record schema. %2$@ is the path. %1$@ is the file. */
-"error.E5007.patch.removePathUnknown" = "%1$@，remove：路徑 %2$@ 不在記錄架構中。修正：使用記錄架構中的鍵路徑，或刪除該項目。";
+"error.E5007.patch.removePathUnknown" = "%1$@，remove：路徑 %2$@ 不在記錄結構描述中。修正：使用記錄結構描述中的鍵路徑，或刪除該項目。";
 /* Error E5007, shown when a patch file fails: a remove path is listed twice. %2$@ is the path. %1$@ is the file. */
 "error.E5007.patch.removeDuplicate" = "%1$@，remove：路徑 %2$@ 列出了兩次。修正：刪除兩個項目之一。";
 /* Error E5007, shown when a patch file fails: an all patch removes a key outside tuning. %2$@ is the path. %1$@ is the file. */
@@ -5122,7 +5122,7 @@
 /* One-line summary of 'ojd migrate' in the command list and at the top of its help. */
 "cli.migrate.group.abstract" = "將舊版本的已儲存文件轉換為目前版本。";
 /* Help text of 'ojd migrate'. Settings.plist, AccessGrants.plist, apiVersion and Migrated are file, field and folder names and stay as written. */
-"cli.migrate.group.discussion" = "轉換帶有舊 apiVersion 的 Settings.plist、AccessGrants.plist、設定檔、你的控制器記錄與修補檔，以及虛擬遊戲控制器檔案。每個原始檔案都保留在支援資料夾的 Migrated 資料夾中。模組套件也會被轉換。可指定一個資料夾來取代支援資料夾進行掃描。每個檔案會得到一個結論：Migrated、Current、Failed 或 Foreign。";
+"cli.migrate.group.discussion" = "轉換帶有舊 apiVersion 的 Settings.plist、AccessGrants.plist、設定檔、您的控制器記錄與補丁檔案，以及虛擬遊戲控制器檔案。每個原始檔案都保留在支援資料夾的 Migrated 資料夾中。模組套件也會被轉換。可指定一個資料夾來取代支援資料夾進行掃描。每個檔案會得到一個結論：Migrated、Current、Failed 或 Foreign。";
 /* Help text of the --dry-run option of 'ojd migrate'. */
 "cli.migrate.group.dryRun" = "列出將被轉換的文件，不做任何變更。";
 /* Message printed by 'ojd migrate' when no stored document has an older version. */
