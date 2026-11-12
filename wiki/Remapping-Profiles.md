@@ -59,7 +59,7 @@ OJD reads the front app when a controller connects, and when you activate, deact
 
 ### Output Policy
 
-The output policy decides how a profile sends its results. It has two settings. The pickers for them show only in the **Advanced** interface, in the **New profile** sheet and in the **Controller** section of the editor. In the **Simple** interface a profile keeps its output policy.
+The output policy decides how a profile sends its results. It has two settings. The pickers for them show only in the **All Controls** interface, in the **New profile** sheet and in the **Controller** section of the editor. In the **Simple** interface a profile keeps its output policy.
 
 | Setting | Values | Meaning |
 | --- | --- | --- |

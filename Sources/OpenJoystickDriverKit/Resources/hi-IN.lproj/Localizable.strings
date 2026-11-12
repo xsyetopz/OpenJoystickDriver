@@ -3888,7 +3888,7 @@
 /* Item of the View menu that sets the interface level to Simple, the reduced interface. A checkmark shows while it is the level. */
 "ui.menu.view.interfaceSimple" = "सरल";
 /* Item of the View menu that sets the interface level to Advanced, the full interface. A checkmark shows while it is the level. */
-"ui.menu.view.interfaceAdvanced" = "उन्नत";
+"ui.menu.view.interfaceAdvanced" = "सभी नियंत्रण";
 /* Item of the View menu that shows the toolbar. */
 "ui.menu.view.showToolbar" = "टूलबार दिखाएँ";
 /* Item of the View menu that hides the toolbar. It replaces Show Toolbar while the toolbar is visible. */
@@ -4004,7 +4004,7 @@
 /* Choice of the Interface pop-up button in the General pane of the settings window that shows the reduced interface. */
 "ui.settings.general.interfaceSimple" = "सरल";
 /* Choice of the Interface pop-up button in the General pane of the settings window that shows the full interface. */
-"ui.settings.general.interfaceAdvanced" = "उन्नत";
+"ui.settings.general.interfaceAdvanced" = "सभी नियंत्रण";
 /* Title of the switch in the Updates section of the settings window that checks for an update at startup. */
 "ui.settings.general.checkUpdatesAutomatically" = "अपडेट अपने आप जाँचें";
 /* Title of the alert that removes the command-line tool. */
@@ -5213,7 +5213,7 @@
 "platform.macos.ui.setupSteps.postEvent" = "“ऐक्सेसिबिलिटी” की अनुमति दें ताकि OpenJoystickDriver कीबोर्ड और पॉइंटर इवेंट भेज सके।";
 /* One sentence of the setup steps in the main window, beside the button that asks for Bluetooth access or opens System Settings. OpenJoystickDriver is the product name; Switch 2 is a product name. */
 "ui.setupSteps.bluetooth" = "ब्लूटूथ की अनुमति दें ताकि OpenJoystickDriver Switch 2 कंट्रोलर जोड़ सके।";
-/* Button of the Simple interface row that reports a changed or unavailable advanced setting; it switches the interface to Advanced. */
-"ui.interface.showAdvanced" = "उन्नत सेटिंग दिखाएँ";
+/* Button of the Simple interface row that reports a changed or unavailable hidden setting; it switches the interface to All Controls. */
+"ui.interface.showAdvanced" = "सभी नियंत्रण दिखाएँ";
 /* Text of the Simple interface row in the Library and Activity areas, whose controls all need the Advanced interface; a button beside it switches to Advanced. */
 "ui.interface.areaNeedsAdvanced" = "इस क्षेत्र के लिए उन्नत इंटरफ़ेस ज़रूरी है।";

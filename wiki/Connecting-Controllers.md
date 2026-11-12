@@ -57,10 +57,10 @@ Use this method for a Bluetooth controller. Bluetooth controllers do not appear 
 
 1. Open **Settings**.
 2. Open the **Advanced** pane.
-3. Turn on **Enable Developer Tools** (needs the **Advanced** interface).
+3. Turn on **Enable Developer Tools** (needs the **All Controls** interface).
 4. Select your controller in the developer tools below it.
 
-The developer tools need the **Advanced** interface: set **Interface** to **Advanced** in **Settings** > **General**, or choose **View** > **Advanced**.
+The developer tools need the **All Controls** interface: set **Interface** to **All Controls** in **Settings** > **General**, or choose **View** > **All Controls**.
 At **Simple**, they stay hidden.
 The developer tools show the controller details, including its USB ID, connection type, and endpoints.
 

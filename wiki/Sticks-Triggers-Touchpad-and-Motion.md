@@ -19,7 +19,7 @@ Analog settings change how a stick, a trigger, a touch surface, or a motion sens
 ## Before You Begin
 
 - Create a [profile](Glossary.md#terms). For more information, see [Creating a profile](Remapping-Profiles.md#creating-a-profile).
-- Set **Interface** to **Advanced** in **Settings** > **General**, or choose **View** > **Advanced**. The **Adjust** groups below show only in the **Advanced** interface.
+- Set **Interface** to **All Controls** in **Settings** > **General**, or choose **View** > **All Controls**. The **Adjust** groups below show only in the **All Controls** interface.
 - Open the **Controller** section of the profile. Each group in this section has an **Adjust** button.
 - If a group shows **Not supported by this controller or protocol.**, the controller cannot provide that input.
 - Stick modes that move the pointer or scroll need Accessibility access. For more information, see [Permissions](Permissions-and-Security.md).

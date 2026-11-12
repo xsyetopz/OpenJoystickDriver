@@ -30,7 +30,7 @@ The support report, from `ojd diagnose --output` or the app, also lists `frameTi
 
 ## Get the Logs
 
-Open the **Activity** area and choose **Log**, or choose **Help** > **Activity Log** (needs the **Advanced** interface). Or run the following command.
+Open the **Activity** area and choose **Log**, or choose **Help** > **Activity Log** (needs the **All Controls** interface). Or run the following command.
 
 ```shell
 ojd log show --lines 200

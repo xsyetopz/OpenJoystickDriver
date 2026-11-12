@@ -237,7 +237,7 @@
 			<string>%d분</string>
 		</dict>
 	</dict>
-	<!-- Row of the Simple interface in the controller detail and the profile editor: how many advanced settings that Simple hides hold a value other than their default. %d is the number of changed advanced settings. The Korean plural forms are a first draft that a native speaker reviews. -->
+	<!-- Row of the Simple interface in the controller detail and the profile editor: how many hidden settings that Simple hides hold a value other than their default. %d is the number of changed hidden settings. The Korean plural forms are a first draft that a native speaker reviews. -->
 	<key>ui.interface.hiddenChanges</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -249,17 +249,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>변경된 고급 설정 %d개</string>
+			<string>변경된 숨겨진 설정 %d개</string>
 			<key>one</key>
-			<string>변경된 고급 설정 %d개</string>
+			<string>변경된 숨겨진 설정 %d개</string>
 			<key>two</key>
-			<string>변경된 고급 설정 %d개</string>
+			<string>변경된 숨겨진 설정 %d개</string>
 			<key>few</key>
-			<string>변경된 고급 설정 %d개</string>
+			<string>변경된 숨겨진 설정 %d개</string>
 			<key>many</key>
-			<string>변경된 고급 설정 %d개</string>
+			<string>변경된 숨겨진 설정 %d개</string>
 			<key>other</key>
-			<string>변경된 고급 설정 %d개</string>
+			<string>변경된 숨겨진 설정 %d개</string>
 		</dict>
 	</dict>
 </dict>

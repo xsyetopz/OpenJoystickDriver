@@ -4470,7 +4470,7 @@
 /* Item of the View menu that sets the interface level to Simple, the reduced interface. A checkmark shows while it is the level. */
 "ui.menu.view.interfaceSimple" = "Semplice";
 /* Item of the View menu that sets the interface level to Advanced, the full interface. A checkmark shows while it is the level. */
-"ui.menu.view.interfaceAdvanced" = "Avanzate";
+"ui.menu.view.interfaceAdvanced" = "Tutti i controlli";
 /* Item of the View menu that shows the toolbar. */
 "ui.menu.view.showToolbar" = "Mostra barra degli strumenti";
 /* Item of the View menu that hides the toolbar. It replaces Show Toolbar while the toolbar is visible. */
@@ -4586,7 +4586,7 @@
 /* Choice of the Interface pop-up button in the General pane of the settings window that shows the reduced interface. */
 "ui.settings.general.interfaceSimple" = "Semplice";
 /* Choice of the Interface pop-up button in the General pane of the settings window that shows the full interface. */
-"ui.settings.general.interfaceAdvanced" = "Avanzate";
+"ui.settings.general.interfaceAdvanced" = "Tutti i controlli";
 /* Title of the switch in the Updates section of the settings window that checks for an update at startup. */
 "ui.settings.general.checkUpdatesAutomatically" = "Cerca aggiornamenti automaticamente";
 /* Title of the alert that removes the command-line tool. */
@@ -5214,7 +5214,7 @@
 "platform.macos.ui.setupSteps.postEvent" = "Consenti “Accessibilità” così OpenJoystickDriver può inviare eventi di tastiera e puntatore.";
 /* One sentence of the setup steps in the main window, beside the button that asks for Bluetooth access or opens System Settings. OpenJoystickDriver is the product name; Switch 2 is a product name. */
 "ui.setupSteps.bluetooth" = "Consenti il Bluetooth così OpenJoystickDriver può collegare i controller Switch 2.";
-/* Button of the Simple interface row that reports a changed or unavailable advanced setting; it switches the interface to Advanced. */
-"ui.interface.showAdvanced" = "Mostra impostazioni avanzate";
+/* Button of the Simple interface row that reports a changed or unavailable hidden setting; it switches the interface to All Controls. */
+"ui.interface.showAdvanced" = "Mostra tutti i controlli";
 /* Text of the Simple interface row in the Library and Activity areas, whose controls all need the Advanced interface; a button beside it switches to Advanced. */
 "ui.interface.areaNeedsAdvanced" = "Quest’area richiede l’interfaccia avanzata.";

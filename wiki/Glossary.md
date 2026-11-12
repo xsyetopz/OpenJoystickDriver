@@ -18,7 +18,7 @@ Each term below names one concept in the app, the menus, the command line prose,
 ## Rules
 
 - The command line keeps every command, flag, schema value, and error code. The entry of a term names the value it stands for, so a script reads the same output as before.
-- In Advanced, the app shows the command line value beside the term. In Simple, it shows the term alone. See [Using the app](Using-the-App.md).
+- In All Controls, the app shows the command line value beside the term. In Simple, it shows the term alone. See [Using the app](Using-the-App.md).
 - An error message that names a key of a file writes the key as the file spells it, such as `persona`.
 - A text that names a place in System Settings writes the name as macOS shows it, such as "Driver Extensions".
 - "Protocol" keeps its meaning as the language that a controller and the Mac speak, as in `ojd protocol`.

@@ -3888,7 +3888,7 @@
 /* Item of the View menu that sets the interface level to Simple, the reduced interface. A checkmark shows while it is the level. */
 "ui.menu.view.interfaceSimple" = "シンプル";
 /* Item of the View menu that sets the interface level to Advanced, the full interface. A checkmark shows while it is the level. */
-"ui.menu.view.interfaceAdvanced" = "詳細";
+"ui.menu.view.interfaceAdvanced" = "すべてのコントロール";
 /* Item of the View menu that shows the toolbar. */
 "ui.menu.view.showToolbar" = "ツールバーを表示";
 /* Item of the View menu that hides the toolbar. It replaces Show Toolbar while the toolbar is visible. */
@@ -4004,7 +4004,7 @@
 /* Choice of the Interface pop-up button in the General pane of the settings window that shows the reduced interface. */
 "ui.settings.general.interfaceSimple" = "シンプル";
 /* Choice of the Interface pop-up button in the General pane of the settings window that shows the full interface. */
-"ui.settings.general.interfaceAdvanced" = "詳細";
+"ui.settings.general.interfaceAdvanced" = "すべてのコントロール";
 /* Title of the switch in the Updates section of the settings window that checks for an update at startup. */
 "ui.settings.general.checkUpdatesAutomatically" = "アップデートを自動的に確認";
 /* Title of the alert that removes the command-line tool. */
@@ -5213,7 +5213,7 @@
 "platform.macos.ui.setupSteps.postEvent" = "OpenJoystickDriverがキーボードとポインタのイベントを送信できるように、「アクセシビリティ」を許可してください。";
 /* One sentence of the setup steps in the main window, beside the button that asks for Bluetooth access or opens System Settings. OpenJoystickDriver is the product name; Switch 2 is a product name. */
 "ui.setupSteps.bluetooth" = "OpenJoystickDriverがSwitch 2コントローラを接続できるように、Bluetoothを許可してください。";
-/* Button of the Simple interface row that reports a changed or unavailable advanced setting; it switches the interface to Advanced. */
-"ui.interface.showAdvanced" = "詳細設定を表示";
+/* Button of the Simple interface row that reports a changed or unavailable hidden setting; it switches the interface to All Controls. */
+"ui.interface.showAdvanced" = "すべてのコントロールを表示";
 /* Text of the Simple interface row in the Library and Activity areas, whose controls all need the Advanced interface; a button beside it switches to Advanced. */
 "ui.interface.areaNeedsAdvanced" = "この領域には「詳細」インターフェイスが必要です。";

@@ -237,7 +237,7 @@
 			<string>%d phút</string>
 		</dict>
 	</dict>
-	<!-- Row of the Simple interface in the controller detail and the profile editor: how many advanced settings that Simple hides hold a value other than their default. %d is the number of changed advanced settings. The Vietnamese plural forms are a first draft that a native speaker reviews. -->
+	<!-- Row of the Simple interface in the controller detail and the profile editor: how many hidden settings that Simple hides hold a value other than their default. %d is the number of changed hidden settings. The Vietnamese plural forms are a first draft that a native speaker reviews. -->
 	<key>ui.interface.hiddenChanges</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -249,17 +249,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>%d cài đặt nâng cao đã thay đổi</string>
+			<string>%d cài đặt ẩn đã thay đổi</string>
 			<key>one</key>
-			<string>%d cài đặt nâng cao đã thay đổi</string>
+			<string>%d cài đặt ẩn đã thay đổi</string>
 			<key>two</key>
-			<string>%d cài đặt nâng cao đã thay đổi</string>
+			<string>%d cài đặt ẩn đã thay đổi</string>
 			<key>few</key>
-			<string>%d cài đặt nâng cao đã thay đổi</string>
+			<string>%d cài đặt ẩn đã thay đổi</string>
 			<key>many</key>
-			<string>%d cài đặt nâng cao đã thay đổi</string>
+			<string>%d cài đặt ẩn đã thay đổi</string>
 			<key>other</key>
-			<string>%d cài đặt nâng cao đã thay đổi</string>
+			<string>%d cài đặt ẩn đã thay đổi</string>
 		</dict>
 	</dict>
 </dict>

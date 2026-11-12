@@ -3888,7 +3888,7 @@
 /* Item of the View menu that sets the interface level to Simple, the reduced interface. A checkmark shows while it is the level. */
 "ui.menu.view.interfaceSimple" = "Đơn giản";
 /* Item of the View menu that sets the interface level to Advanced, the full interface. A checkmark shows while it is the level. */
-"ui.menu.view.interfaceAdvanced" = "Nâng cao";
+"ui.menu.view.interfaceAdvanced" = "Tất cả điều khiển";
 /* Item of the View menu that shows the toolbar. */
 "ui.menu.view.showToolbar" = "Hiện thanh công cụ";
 /* Item of the View menu that hides the toolbar. It replaces Show Toolbar while the toolbar is visible. */
@@ -4004,7 +4004,7 @@
 /* Choice of the Interface pop-up button in the General pane of the settings window that shows the reduced interface. */
 "ui.settings.general.interfaceSimple" = "Đơn giản";
 /* Choice of the Interface pop-up button in the General pane of the settings window that shows the full interface. */
-"ui.settings.general.interfaceAdvanced" = "Nâng cao";
+"ui.settings.general.interfaceAdvanced" = "Tất cả điều khiển";
 /* Title of the switch in the Updates section of the settings window that checks for an update at startup. */
 "ui.settings.general.checkUpdatesAutomatically" = "Tự động kiểm tra cập nhật";
 /* Title of the alert that removes the command-line tool. */
@@ -5213,7 +5213,7 @@
 "platform.macos.ui.setupSteps.postEvent" = "Cho phép “Trợ năng” để OpenJoystickDriver gửi được sự kiện bàn phím và con trỏ.";
 /* One sentence of the setup steps in the main window, beside the button that asks for Bluetooth access or opens System Settings. OpenJoystickDriver is the product name; Switch 2 is a product name. */
 "ui.setupSteps.bluetooth" = "Cho phép Bluetooth để OpenJoystickDriver kết nối được tay cầm Switch 2.";
-/* Button of the Simple interface row that reports a changed or unavailable advanced setting; it switches the interface to Advanced. */
-"ui.interface.showAdvanced" = "Hiện cài đặt nâng cao";
+/* Button of the Simple interface row that reports a changed or unavailable hidden setting; it switches the interface to All Controls. */
+"ui.interface.showAdvanced" = "Hiện tất cả điều khiển";
 /* Text of the Simple interface row in the Library and Activity areas, whose controls all need the Advanced interface; a button beside it switches to Advanced. */
 "ui.interface.areaNeedsAdvanced" = "Khu vực này cần giao diện Nâng cao.";

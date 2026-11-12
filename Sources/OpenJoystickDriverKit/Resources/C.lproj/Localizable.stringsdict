@@ -255,7 +255,7 @@
 			<string>%d minutes</string>
 		</dict>
 	</dict>
-	<!-- Row of the Simple interface in the controller detail and the profile editor: how many advanced settings that Simple hides hold a value other than their default. %d is the number of changed advanced settings. -->
+	<!-- Row of the Simple interface in the controller detail and the profile editor: how many hidden settings that Simple hides hold a value other than their default. %d is the number of changed hidden settings. -->
 	<key>ui.interface.hiddenChanges</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -267,17 +267,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>%d advanced settings are changed</string>
+			<string>%d hidden settings are changed</string>
 			<key>one</key>
-			<string>%d advanced setting is changed</string>
+			<string>%d hidden setting is changed</string>
 			<key>two</key>
-			<string>%d advanced settings are changed</string>
+			<string>%d hidden settings are changed</string>
 			<key>few</key>
-			<string>%d advanced settings are changed</string>
+			<string>%d hidden settings are changed</string>
 			<key>many</key>
-			<string>%d advanced settings are changed</string>
+			<string>%d hidden settings are changed</string>
 			<key>other</key>
-			<string>%d advanced settings are changed</string>
+			<string>%d hidden settings are changed</string>
 		</dict>
 	</dict>
 </dict>

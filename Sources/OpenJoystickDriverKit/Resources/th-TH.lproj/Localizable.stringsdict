@@ -237,7 +237,7 @@
 			<string>%d นาที</string>
 		</dict>
 	</dict>
-	<!-- Row of the Simple interface in the controller detail and the profile editor: how many advanced settings that Simple hides hold a value other than their default. %d is the number of changed advanced settings. The Thai plural forms are a first draft that a native speaker reviews. -->
+	<!-- Row of the Simple interface in the controller detail and the profile editor: how many hidden settings that Simple hides hold a value other than their default. %d is the number of changed hidden settings. The Thai plural forms are a first draft that a native speaker reviews. -->
 	<key>ui.interface.hiddenChanges</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -249,17 +249,17 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>เปลี่ยนการตั้งค่าขั้นสูง %d รายการ</string>
+			<string>เปลี่ยนการตั้งค่าที่ซ่อนอยู่ %d รายการ</string>
 			<key>one</key>
-			<string>เปลี่ยนการตั้งค่าขั้นสูง %d รายการ</string>
+			<string>เปลี่ยนการตั้งค่าที่ซ่อนอยู่ %d รายการ</string>
 			<key>two</key>
-			<string>เปลี่ยนการตั้งค่าขั้นสูง %d รายการ</string>
+			<string>เปลี่ยนการตั้งค่าที่ซ่อนอยู่ %d รายการ</string>
 			<key>few</key>
-			<string>เปลี่ยนการตั้งค่าขั้นสูง %d รายการ</string>
+			<string>เปลี่ยนการตั้งค่าที่ซ่อนอยู่ %d รายการ</string>
 			<key>many</key>
-			<string>เปลี่ยนการตั้งค่าขั้นสูง %d รายการ</string>
+			<string>เปลี่ยนการตั้งค่าที่ซ่อนอยู่ %d รายการ</string>
 			<key>other</key>
-			<string>เปลี่ยนการตั้งค่าขั้นสูง %d รายการ</string>
+			<string>เปลี่ยนการตั้งค่าที่ซ่อนอยู่ %d รายการ</string>
 		</dict>
 	</dict>
 </dict>

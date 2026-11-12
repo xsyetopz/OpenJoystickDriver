@@ -17,7 +17,7 @@ Install OJD, grant access, and connect the controller. See [Start: play a game w
 7. In the **Controllers** area, select the controller and click **Open Input Test...** to see each control.
 8. Check which records apply: run `ojd record list`.
 
-To remove your record, run `ojd record remove VVVV:PPPP`. In the app, **Install Record or Mod...** in the **File** menu installs a file too (needs the **Advanced** interface).
+To remove your record, run `ojd record remove VVVV:PPPP`. In the app, **Install Record or Mod...** in the **File** menu installs a file too (needs the **All Controls** interface).
 
 ## Share the result
 
