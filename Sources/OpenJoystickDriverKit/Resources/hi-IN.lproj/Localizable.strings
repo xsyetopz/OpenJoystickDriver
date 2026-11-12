@@ -3613,8 +3613,8 @@
 "ui.library.layer.driver" = "डिफ़ॉल्ट";
 /* Name of the source of a record: a global file of the user. */
 "ui.library.layer.global" = "आपकी वैश्विक फ़ाइल";
-/* Message in the detail pane of the Library area before an item is selected. */
-"ui.library.detail.empty" = "कोई रिकॉर्ड या मॉड चुनें।";
+/* Title in the detail pane of the Library area before a record or mod is selected. */
+"ui.library.detail.empty" = "कोई आइटम चयनित नहीं";
 /* Message of the open panel in which the user picks a packet capture for a record test. */
 "ui.library.test.packets.pick" = "कोई पैकेट कैप्चर चुनें।";
 /* Message of the open panel in which the user picks the file with the expected controller state for a record test. */

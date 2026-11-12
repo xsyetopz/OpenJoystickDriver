@@ -3613,8 +3613,8 @@
 "ui.library.layer.driver" = "기본값";
 /* Name of the source of a record: a global file of the user. */
 "ui.library.layer.global" = "내 전역 파일";
-/* Message in the detail pane of the Library area before an item is selected. */
-"ui.library.detail.empty" = "레코드 또는 모드를 선택하세요.";
+/* Title in the detail pane of the Library area before a record or mod is selected. */
+"ui.library.detail.empty" = "선택된 항목 없음";
 /* Message of the open panel in which the user picks a packet capture for a record test. */
 "ui.library.test.packets.pick" = "패킷 캡처를 선택하세요.";
 /* Message of the open panel in which the user picks the file with the expected controller state for a record test. */

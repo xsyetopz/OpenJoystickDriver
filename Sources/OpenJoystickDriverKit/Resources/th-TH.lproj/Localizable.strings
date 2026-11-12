@@ -3613,8 +3613,8 @@
 "ui.library.layer.driver" = "ค่าเริ่มต้น";
 /* Name of the source of a record: a global file of the user. */
 "ui.library.layer.global" = "ไฟล์ส่วนกลางของคุณ";
-/* Message in the detail pane of the Library area before an item is selected. */
-"ui.library.detail.empty" = "เลือกระเบียนหรือม็อด";
+/* Title in the detail pane of the Library area before a record or mod is selected. */
+"ui.library.detail.empty" = "ไม่ได้เลือกรายการ";
 /* Message of the open panel in which the user picks a packet capture for a record test. */
 "ui.library.test.packets.pick" = "เลือกไฟล์บันทึกแพ็กเก็ต";
 /* Message of the open panel in which the user picks the file with the expected controller state for a record test. */

@@ -4195,8 +4195,8 @@
 "ui.library.layer.driver" = "Padrão";
 /* Name of the source of a record: a global file of the user. */
 "ui.library.layer.global" = "Seu arquivo global";
-/* Message in the detail pane of the Library area before an item is selected. */
-"ui.library.detail.empty" = "Escolha um registro ou um mod.";
+/* Title in the detail pane of the Library area before a record or mod is selected. */
+"ui.library.detail.empty" = "Nenhum item selecionado";
 /* Message of the open panel in which the user picks a packet capture for a record test. */
 "ui.library.test.packets.pick" = "Escolha uma captura de pacotes.";
 /* Message of the open panel in which the user picks the file with the expected controller state for a record test. */
