@@ -251,9 +251,14 @@ struct PreferencesTests {
     )
 
     model.answerTestNotification(UUID())
-    await waitUntil("the lost report message") { model.errorMessage != nil }
+    await waitUntil("the lost report message") {
+      model.failure(beside: .testNotification) != nil
+    }
 
-    #expect(model.errorMessage == OJDLocalized.string("ui.settings.notifications.testReportLost"))
+    #expect(
+      model.failure(beside: .testNotification)
+        == OJDLocalized.string("ui.settings.notifications.testReportLost")
+    )
   }
 
   @Test
@@ -289,8 +294,8 @@ struct PreferencesTests {
         notificationAuthorization: NotificationAuthorizationStub(state: .allowed)
       )
       model.sendTestNotification()
-      await waitUntil("outcome shown") { model.errorMessage == message }
-      #expect(model.errorMessage == message)
+      await waitUntil("outcome shown") { model.failure(beside: .testNotification) == message }
+      #expect(model.failure(beside: .testNotification) == message)
     }
   }
 
@@ -305,13 +310,13 @@ struct PreferencesTests {
       notificationAuthorization: NotificationAuthorizationStub(state: .allowed)
     )
     model.sendTestNotification()
-    await waitUntil("message") { model.errorMessage != nil }
+    await waitUntil("message") { model.failure(beside: .testNotification) != nil }
 
     requester.setOutcome(.shown)
     model.sendTestNotification()
-    await waitUntil("cleared") { model.errorMessage == nil }
+    await waitUntil("cleared") { model.failure(beside: .testNotification) == nil }
 
-    #expect(model.errorMessage == nil)
+    #expect(model.failure(beside: .testNotification) == nil)
   }
 
   @Test
@@ -348,7 +353,7 @@ struct PreferencesTests {
     model.setStartAtLogin(true)
 
     #expect(!model.startAtLogin)
-    #expect(model.errorMessage != nil)
+    #expect(model.failure(beside: .loginItem) != nil)
   }
 
   @Test

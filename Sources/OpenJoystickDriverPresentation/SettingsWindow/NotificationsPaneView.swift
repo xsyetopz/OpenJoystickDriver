@@ -56,8 +56,16 @@
     }
 
     /// The notification delivery status, with Open Notification Settings while macOS hides banners
-    /// or sounds and the Send Test Notification button.
+    /// or sounds and the Send Test Notification button, and the failure of the test below.
     private var deliveryRow: some View {
+      VStack(alignment: .leading, spacing: OJDSpacing.xxSmall) {
+        deliveryControls
+        SettingsBesideError(preferences: preferences, origin: .testNotification)
+      }
+    }
+
+    /// The delivery status and its buttons.
+    private var deliveryControls: some View {
       let system = preferences.notificationSystemSettings
       let delivery = NotificationDeliveryPresentation(
         settings: RuntimeNotificationSettings(
