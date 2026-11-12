@@ -32,7 +32,8 @@ final class Switch2BluetoothLECentral: NSObject, @unchecked Sendable {
   private let hub: Switch2BluetoothLEHub
   /// The serial queue of every CoreBluetooth call and callback.
   private let queue = DispatchQueue(label: "com.openjoystickdriver.switch2-bluetooth-le")
-  /// The central manager; nil until ``start()`` and after ``stop()``.
+  /// The central manager; nil until ``start()`` or ``requestAccessAndStart()`` creates it, and
+  /// after ``stop()``.
   private var central: CBCentralManager?
   /// The discovered controllers by peripheral identifier.
   private var links: [UUID: Link] = [:]
@@ -46,14 +47,48 @@ final class Switch2BluetoothLECentral: NSObject, @unchecked Sendable {
   /// The UUID of the command reply characteristic.
   private let replyUUID = CBUUID(string: Switch2BluetoothLEProfile.commandReplyUUID)
 
-  /// Creates a central that feeds `hub`.
-  init(hub: Switch2BluetoothLEHub) { self.hub = hub }
+  /// Reads the Bluetooth authorization without showing a prompt.
+  private let authorization: @Sendable () -> CBManagerAuthorization
+  /// Creates the central manager, which shows the Bluetooth prompt; nil creates none.
+  private let makeManager:
+    @Sendable (any CBCentralManagerDelegate, DispatchQueue) -> CBCentralManager?
 
-  /// Creates the central, which asks for Bluetooth access on first use.
+  /// Creates a central that feeds `hub`.
+  ///
+  /// - Parameters:
+  ///   - hub: The hub that receives the GATT links.
+  ///   - authorization: Reads the Bluetooth authorization; the system's shows no prompt.
+  ///   - makeManager: Creates the central manager; defaults to `CBCentralManager`.
+  init(
+    hub: Switch2BluetoothLEHub,
+    authorization: @escaping @Sendable () -> CBManagerAuthorization = {
+      CBCentralManager.authorization
+    },
+    makeManager:
+      @escaping @Sendable (any CBCentralManagerDelegate, DispatchQueue) -> CBCentralManager? = {
+        CBCentralManager(delegate: $0, queue: $1)
+      }
+  ) {
+    self.hub = hub
+    self.authorization = authorization
+    self.makeManager = makeManager
+  }
+
+  /// Starts at app launch: creates the central only when Bluetooth access is already granted, so
+  /// launch never shows the Bluetooth prompt.
   func start() {
+    guard authorization() == .allowedAlways else { return }
+    createCentral()
+  }
+
+  /// Creates the central from a user action, which asks for Bluetooth access when undecided.
+  func requestAccessAndStart() { createCentral() }
+
+  /// Creates the central once.
+  private func createCentral() {
     queue.async {
       guard self.central == nil else { return }
-      self.central = CBCentralManager(delegate: self, queue: self.queue)
+      self.central = self.makeManager(self, self.queue)
     }
   }
 

@@ -84,7 +84,7 @@ Before the app posts an event, it checks Post Event access. If the permission is
 
 Not verified on hardware: the **Keyboard & pointer** row and the **Accessibility** row may use the same switch in **System Settings**.
 
-OJD does not use camera, microphone, or Full Disk Access permissions. It reads Bluetooth controllers as HID devices, so they need **Input Monitoring**. OJD uses Bluetooth only to disconnect a wireless controller. Whether macOS asks for Bluetooth permission for this is not verified.
+OJD does not use camera, microphone, or Full Disk Access permissions. It reads Bluetooth controllers as HID devices, so they need **Input Monitoring**. OJD uses Bluetooth only to disconnect a wireless controller, and to connect a Switch 2 controller over Bluetooth LE. OJD does not start the Bluetooth LE connection at launch unless macOS already granted Bluetooth access, so the app start shows no Bluetooth prompt. Whether macOS asks for Bluetooth permission for the disconnect is not verified.
 
 ### Grant Input Monitoring and Accessibility
 

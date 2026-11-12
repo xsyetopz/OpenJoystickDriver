@@ -104,7 +104,8 @@ package final class ApplicationServiceRuntime {
   /// The service state that the app's Shortcuts actions read.
   package var automationService: any AutomationService { applicationServiceServer }
 
-  /// Starts the server, the watchers, the device manager and the Bluetooth LE central.
+  /// Starts the server, the watchers and the device manager, and the Bluetooth LE central only when
+  /// Bluetooth access is already granted, so launch shows no Bluetooth prompt.
   ///
   /// Does nothing when the runtime already started.
   ///
