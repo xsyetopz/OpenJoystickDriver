@@ -59,7 +59,7 @@ Each controller row has its own submenu:
   While the controller is paused, the item reads **Resume**.
 - **Test Input** opens the Input Test window.
 - **Show in Window** opens the controller in the **Controllers** area.
-- **Disconnect Wireless Link** is on only for a controller that connects by Bluetooth.
+- **Disconnect Bluetooth Connection** is on only for a controller that connects by Bluetooth.
   OJD shows a **Disconnect Wireless Controller?** alert to confirm.
   The controller stays disconnected until you connect it again by hand.
   OJD cannot disconnect a Bluetooth Low Energy controller: turn it off or disconnect it in **System Settings** > **Bluetooth**.
@@ -106,7 +106,7 @@ The main menu follows the macOS layout:
   **Find** (Command-F) moves the keyboard focus to the search field of the list in view: the Library list, or the Activity log.
   It is unavailable in the other areas, in Activity's diagnostics view, and while the toolbar is hidden.
 - **View** selects the five areas, switches the Activity view (**Activity**), sets the log filter and line count (**Filter**), runs the diagnostic checks (**Run Checks**), and shows or hides the sidebar and the toolbar.
-- **Controller** has **Suspend**, **Resume**, **Test Input**, **Disconnect Wireless Link**, and **Show in Window** for the selected controller.
+- **Controller** has **Suspend**, **Resume**, **Test Input**, **Disconnect Bluetooth Connection**, and **Show in Window** for the selected controller.
 - **Profile** has **Activate Profile**, **Deactivate Profile**, **New profile**, **Duplicate**, **Delete**, and **Validate profile file**.
   While no profile exists, the **Activate Profile** submenu shows **No Profiles**; while the profile list is loading or cannot be read, it shows **Profiles Unavailable**.
 - The commands from **Validate...** to **Create a Token...**, **Show in Finder**, **Copy All**, **Activity**, **Filter**, **Run Checks**, **New profile**, **Duplicate**, **Delete**, and **Validate profile file** do what the toolbar button of the same name does, and are available while that button is shown and enabled.
@@ -140,29 +140,31 @@ For more information, see [Testing a controller](Testing-a-Controller.md).
 
 ### Who Handles the Controller
 
-The **Served by** picker appears for a controller that macOS can handle, or whose record gives it to OpenJoystickDriver.
+The **Handled by** picker appears for a controller that macOS can handle, or whose record gives it to OpenJoystickDriver.
 It never appears for a controller that uses raw USB or the Xbox USB driver.
-The choices are **macOS (native)** and **OpenJoystickDriver (virtual)**.
+The choices are **macOS** and **OpenJoystickDriver**.
 **Set by** names the record layer that holds the choice.
 The change takes effect at once and stays after a restart.
 The command line does the same with `ojd controller claim` and `ojd controller release`.
 For more information, see [Choose who drives the controller](Controller-Records.md#choose-who-drives-the-controller).
 
-### Virtual HID Profile
+### Virtual Gamepad Kind
 
-The **Virtual HID profile** menu appears for controllers that macOS does not handle:
+The **Virtual gamepad kind** menu appears for controllers that macOS does not handle:
 
-- **Automatic (`<profile name>`)** lets OJD choose the [virtual gamepad kind](Glossary.md#terms) and names the kind it chose.
-- **Xbox Adaptive Controller (SDLCompatible)** forces the Xbox kind for SDL games and Steam.
-- **OpenJoystickDriver Generic HID Gamepad (Generic)** forces the generic kind.
-- **Xbox Wireless Controller (GameControllerCompatible)** forces the Xbox kind for Apple's Game Controller framework.
+- **Automatic (`<product name>`)** lets OJD choose the [virtual gamepad kind](Glossary.md#terms) and shows the product name games see for it.
+- **For Steam and SDL games** forces the Xbox kind for SDL games and Steam.
+- **Generic HID gamepad** forces the generic kind.
+- **For Apple Game Controller games** forces the Xbox kind for Apple's Game Controller framework.
+
+In **Advanced**, each choice also shows its identifier, as in **For Steam and SDL games (SDLCompatible)**. The command line takes that identifier.
 
 **Apply to** chooses whether the override applies to every connected controller of the same model or to this controller only.
 **Reset all overrides** clears every override.
 
 The change takes effect at once.
-**Updating virtual HID profile...** shows while it applies.
-If activation fails, OJD restores the previous profile and shows a message.
+**Updating virtual gamepad kind...** shows while it applies.
+If activation fails, OJD restores the previous kind and shows a message.
 For more information, see [How games see your controller](Playing-Games.md).
 
 ### Virtual Gamepad Actions
@@ -178,7 +180,7 @@ For more information, see [Finding your controller ID](Connecting-Controllers.md
 ## Profiles Area
 
 The **Profiles** area lists the profiles and opens the editor for the selected profile.
-For more information, see [Remapping profiles](Remapping-Profiles.md).
+For more information, see [Profiles](Remapping-Profiles.md).
 
 ## Library Area
 

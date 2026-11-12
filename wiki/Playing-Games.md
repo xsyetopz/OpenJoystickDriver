@@ -35,7 +35,7 @@ Automatic selection never picks `GameControllerCompatible`.
 
 The choice does not depend on the game, the macOS version, or the vendor. Both kinds carry every main control, so OJD chooses the Xbox kind for every controller unless you set an override. PCSX2 2.8.2 (SDL 3.4.12) and DuckStation (SDL 3.4.16) map every control of the Xbox kind as an Xbox pad: A, B, X, Y, LB, RB, View, Menu, both sticks, both triggers, the D-pad, Xbox, and both rumble motors. With the `Generic` virtual gamepad kind, they report "No generic bindings were generated for device 'SDL-0'". The maintainer tested this on macOS 27 with the Xbox kind on `045E:02FD`. SDL reads `045E:0B0C` with the same code; these apps are not yet tested on it.
 
-OJD does not publish a virtual gamepad for a controller that is [handled by macOS](Glossary.md#terms). The controller detail shows this state as **Left to macOS**.
+OJD does not publish a virtual gamepad for a controller that is [handled by macOS](Glossary.md#terms). The controller detail shows this state as **Handled by macOS**.
 
 ### Change the Virtual Gamepad Kind for a Model
 
@@ -44,7 +44,7 @@ OJD is designed to choose the virtual gamepad kind for you. You do not need a di
 1. Open the **Controllers** area.
 2. Select your controller.
 3. Expand **Advanced**.
-4. In **Virtual HID profile**, select a kind.
+4. In **Virtual gamepad kind**, select a kind.
 
 Select **Automatic** to remove the override. The override applies to every connected controller of the same model. For more information, see [Controllers area](Using-the-App.md#controllers-area).
 
@@ -86,7 +86,7 @@ OJD is designed to make one automatic choice work across these interfaces. The f
 
 ### Workaround for One Controller
 
-The tester switched the ZD Ultimate Legend itself to Switch Pro mode (`057E:2009`). In that mode the controller is handled by macOS. The controller detail shows **Left to macOS**, and OJD does not publish a virtual gamepad. RPCS3, the browser, and System Settings then work. HD Rumble in that mode drives only the linear haptics.
+The tester switched the ZD Ultimate Legend itself to Switch Pro mode (`057E:2009`). In that mode the controller is handled by macOS. The controller detail shows **Handled by macOS**, and OJD does not publish a virtual gamepad. RPCS3, the browser, and System Settings then work. HD Rumble in that mode drives only the linear haptics.
 
 Not verified: this workaround for other controllers.
 

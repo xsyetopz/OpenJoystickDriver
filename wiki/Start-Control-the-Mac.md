@@ -27,7 +27,7 @@ Replace `045E:02FD` with the VID:PID of your controller, which `ojd controller l
 
 ## Further reading
 
-- [Remapping profiles](Remapping-Profiles.md#creating-a-profile)
+- [Profiles](Remapping-Profiles.md#creating-a-profile)
 - [Bindings and actions](Bindings-and-Actions.md#add-an-assignment-in-the-app)
 - [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md)
 - [Permissions and security](Permissions-and-Security.md#permissions)

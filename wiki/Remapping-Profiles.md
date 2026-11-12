@@ -1,4 +1,4 @@
-# Remapping Profiles
+# Profiles
 
 [Profiles](Glossary.md#terms) change what your controller buttons, sticks, triggers, touchpad, and motion sensors do.
 

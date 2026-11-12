@@ -99,8 +99,8 @@ For each result and its source, see [Game and app compatibility](Playing-Games.m
 The design of OJD is to pick the virtual gamepad kind by itself. Use this step only to find out whether the virtual gamepad kind is the cause. If another kind fixes a game, report it.
 
 1. In **Controllers**, select the controller.
-2. In **Advanced**, find **Virtual HID profile**. It appears only for controllers that OJD publishes.
-3. Choose **Automatic** or one of the three profiles.
+2. In **Advanced**, find **Virtual gamepad kind**. It appears only for controllers that OJD publishes.
+3. Choose **Automatic** or one of the three kinds.
 4. Test the game again.
 
 OpenEmu worked with the `Generic` virtual gamepad kind in the same test. Steam with that profile was erratic and slow to respond. The override applies to every controller of that model.

@@ -19,7 +19,7 @@
 - **Games**
   - [Playing games](Playing-Games.md)
 - **Remapping**
-  - [Remapping profiles](Remapping-Profiles.md)
+  - [Profiles](Remapping-Profiles.md)
   - [Bindings and actions](Bindings-and-Actions.md)
   - [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md)
   - [Profile file reference](Profile-File-Reference.md)

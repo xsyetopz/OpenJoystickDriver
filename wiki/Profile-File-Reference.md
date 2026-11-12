@@ -159,7 +159,7 @@ To read and change profiles from scripts, use `ojd profile get`, `ojd profile se
 
 ## Further Reading
 
-- [Remapping profiles](Remapping-Profiles.md)
+- [Profiles](Remapping-Profiles.md)
 - [Bindings and actions](Bindings-and-Actions.md)
 - [Automating OpenJoystickDriver](Automating-OpenJoystickDriver.md)
 - [Updating and uninstalling](Updating-and-Uninstalling.md)

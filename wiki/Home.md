@@ -33,7 +33,7 @@ Pick the goal that fits you.
 
 ## Remapping
 
-- [Remapping profiles](Remapping-Profiles.md): Create, activate, import, and export profiles.
+- [Profiles](Remapping-Profiles.md): Create, activate, import, and export profiles.
 - [Bindings and actions](Bindings-and-Actions.md): Assign buttons and actions, and use combinations, sequences, and layers.
 - [Sticks, triggers, touchpad, and motion](Sticks-Triggers-Touchpad-and-Motion.md): Change how analog controls produce output.
 - [Profile file reference](Profile-File-Reference.md): Read where OJD stores profiles, and their shape and limits.
